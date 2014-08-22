@@ -2,12 +2,12 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Unity"/>
-	<classpathentry kind="lib" path="../redist/eclipselink/com.sun.tools.xjc_2.2.0.jar"/>
-	<classpathentry kind="lib" path="../redist/eclipselink/com.sun.xml.bind_2.2.0.v201004141950.jar"/>
-	<classpathentry kind="lib" path="../redist/eclipselink/javax.xml.bind_2.2.0.v201105210648.jar"/>
+	<classpathentry kind="lib" path="../../redist/eclipselink/com.sun.tools.xjc_2.2.0.jar"/>
+	<classpathentry kind="lib" path="../../redist/eclipselink/com.sun.xml.bind_2.2.0.v201004141950.jar"/>
+	<classpathentry kind="lib" path="../../redist/eclipselink/javax.xml.bind_2.2.0.v201105210648.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.7.0_67"/>
-	<classpathentry kind="lib" path="../redist/commons/commons-lang-2.6.jar"/>
-	<classpathentry kind="lib" path="../redistjoda-time/joda-time-2.4.jar"/>
+	<classpathentry kind="lib" path="../../redist/commons/commons-lang-2.6.jar"/>
+	<classpathentry kind="lib" path="../../redist/joda-time/joda-time-2.4.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
