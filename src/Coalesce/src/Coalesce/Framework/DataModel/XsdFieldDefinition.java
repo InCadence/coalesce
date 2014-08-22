@@ -5,7 +5,7 @@ import org.joda.time.DateTime;
 import unity.core.runtime.CallResult;
 import unity.core.runtime.CallResult.CallResults;
 import Coalesce.Common.Helpers.XmlHelper;
-import Coalesce.Framework.DataModel.Entity.Section.Recordset.Fielddefinition;
+import Coalesce.Framework.GeneratedJAXB.*;
 
 public class XsdFieldDefinition extends XsdDataObject {
 

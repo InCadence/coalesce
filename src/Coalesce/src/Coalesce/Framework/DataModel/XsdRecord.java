@@ -8,8 +8,7 @@ import org.joda.time.DateTime;
 import unity.core.runtime.CallResult;
 import unity.core.runtime.CallResult.CallResults;
 import Coalesce.Common.Helpers.XmlHelper;
-import Coalesce.Framework.DataModel.Entity.Section.Recordset.Record;
-import Coalesce.Framework.DataModel.Entity.Section.Recordset.Record.Field;
+import Coalesce.Framework.GeneratedJAXB.*;
 
 public class XsdRecord extends XsdDataObject {
 
@@ -65,13 +64,23 @@ public class XsdRecord extends XsdDataObject {
 
 			_entityRecord = record;
 
-			for (Field entityField : record.field) {
+			List<Object> Fields = record.getField();
+			while (Fields.iterator().hasNext()){
+				Field entityField = (Field) Fields.iterator().next();
 				XsdField newField = new XsdField();
 				rst = newField.Initialize(this, entityField);
 
 				// Add to Child Collection
 				_childDataObjects.put(newField.GetKey(), newField);
 			}
+
+//			for (Field entityField : record.field) {
+//				XsdField newField = new XsdField();
+//				rst = newField.Initialize(this, entityField);
+//
+//				// Add to Child Collection
+//				_childDataObjects.put(newField.GetKey(), newField);
+//			}
 
 			// Add to Parent Collections (if we're Active)
 			if (GetStatus() == ECoalesceDataObjectStatus.ACTIVE) {
@@ -664,7 +673,13 @@ public class XsdRecord extends XsdDataObject {
     }
     
     protected List<Field> GetEntityFields() {
-    	return _entityRecord.field;
+    	List<Field> FieldList = new ArrayList<Field>();
+    	
+    	while (_entityRecord.getField().iterator().hasNext()){
+    		Field FieldItem = (Field) _entityRecord.getField().iterator().next();
+    		FieldList.add(FieldItem);
+    	}
+    	return FieldList;
     }
     
 }

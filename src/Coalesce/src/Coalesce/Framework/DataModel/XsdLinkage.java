@@ -4,7 +4,7 @@ import org.joda.time.DateTime;
 
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import Coalesce.Common.Helpers.XmlHelper;
-import Coalesce.Framework.DataModel.Entity.Linkagesection.Linkage;
+import Coalesce.Framework.GeneratedJAXB.*;
 import unity.core.runtime.CallResult;
 import unity.core.runtime.CallResult.CallResults;
 
@@ -20,7 +20,7 @@ public class XsdLinkage extends XsdDataObject {
 			if (newLinkage == null) newLinkage = new XsdLinkage();
 			
 			Linkage entityLinkage = new Linkage();
-			parent.GetEntityLinkageSection().linkage.add(entityLinkage);
+			parent.GetEntityLinkageSection().getLinkage().add(entityLinkage);
 
 			rst = newLinkage.Initialize(parent, entityLinkage);
 			if (!rst.getIsSuccess()) return rst;
@@ -34,7 +34,7 @@ public class XsdLinkage extends XsdDataObject {
 		}
 	}
 
-	public CallResult Initialize(XsdLinkageSection parent, Entity.Linkagesection.Linkage linkage)
+	public CallResult Initialize(XsdLinkageSection parent, Linkage linkage)
 	{
 		try {
 			@SuppressWarnings("unused")

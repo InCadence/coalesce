@@ -8,9 +8,7 @@ import org.joda.time.DateTime;
 import unity.core.runtime.CallResult;
 import unity.core.runtime.CallResult.CallResults;
 import Coalesce.Common.Helpers.XmlHelper;
-import Coalesce.Framework.DataModel.Entity.Section.Recordset;
-import Coalesce.Framework.DataModel.Entity.Section.Recordset.Fielddefinition;
-import Coalesce.Framework.DataModel.Entity.Section.Recordset.Record;
+import Coalesce.Framework.GeneratedJAXB.*;
 
 public class XsdRecordset extends XsdDataObject {
     
@@ -92,16 +90,32 @@ public class XsdRecordset extends XsdDataObject {
             _fieldDefinitions = new ArrayList<XsdFieldDefinition>();
             _records = new ArrayList<XsdRecord>();
 
-            for (Fielddefinition entityFieldDefinition : _entityRecordset.fielddefinition) {
+            List<Object> FieldDefs = _entityRecordset.getFielddefinition();
+            while (FieldDefs.iterator().hasNext()){
+            	Fielddefinition entityFieldDefinition = (Fielddefinition)FieldDefs.iterator().next();
+
                 XsdFieldDefinition newFieldDefinition = new XsdFieldDefinition();
                 rst = newFieldDefinition.Initialize(this, entityFieldDefinition);
-                
             }
 
-            for (Record entityRecord : _entityRecordset.record) {
+//            for (Fielddefinition entityFieldDefinition : _entityRecordset.fielddefinition) {
+//                XsdFieldDefinition newFieldDefinition = new XsdFieldDefinition();
+//                rst = newFieldDefinition.Initialize(this, entityFieldDefinition);
+//                
+//            }
+            
+            List<Object> Records = _entityRecordset.getRecord();
+            while (Records.iterator().hasNext()){
+            	Record entityRecord = (Record)Records.iterator().next();
+
                 XsdRecord newRecord = new XsdRecord();
                 rst = newRecord.Initialize(this, entityRecord);
             }
+
+//            for (Record entityRecord : _entityRecordset.record) {
+//                XsdRecord newRecord = new XsdRecord();
+//                rst = newRecord.Initialize(this, entityRecord);
+//            }
             
             rst = InitializeEntity();
             
@@ -481,11 +495,23 @@ public class XsdRecordset extends XsdDataObject {
     }
     
     protected List<Record> GetEntityRecords() {
-        return _entityRecordset.record;
+    	List<Record> RecordList = new ArrayList<Record>();
+    	
+    	while (_entityRecordset.getRecord().iterator().hasNext()){
+    		Record FieldItem = (Record) _entityRecordset.getRecord().iterator().next();
+    		RecordList.add(FieldItem);
+    	}
+    	return RecordList;
     }
     
     protected List<Fielddefinition> GetEntityFieldDefinitions() {
-        return _entityRecordset.fielddefinition;
+    	List<Fielddefinition> FieldDefList = new ArrayList<Fielddefinition>();
+    	
+    	while (_entityRecordset.getFielddefinition().iterator().hasNext()){
+    		Fielddefinition FieldDef = (Fielddefinition) _entityRecordset.getFielddefinition().iterator().next();
+    		FieldDefList.add(FieldDef);
+    	}
+    	return FieldDefList;
     }
 }
 

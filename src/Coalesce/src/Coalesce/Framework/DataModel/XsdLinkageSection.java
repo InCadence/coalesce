@@ -1,17 +1,19 @@
 package Coalesce.Framework.DataModel;
 
+import java.util.List;
+
 import org.joda.time.DateTime;
 
 import unity.core.runtime.CallResult;
 import unity.core.runtime.CallResult.CallResults;
 import Coalesce.Common.Helpers.XmlHelper;
-import Coalesce.Framework.DataModel.Entity.Linkagesection.Linkage;
+import Coalesce.Framework.GeneratedJAXB.*;
 
 public class XsdLinkageSection extends XsdDataObject {
 
 	private static String MODULE = "Coalesce.Framework.DataModel.CoalesceLinkageSection";
 
-	private Entity.Linkagesection _entityLinkageSection;
+	private Linkagesection _entityLinkageSection;
 
 	// -----------------------------------------------------------------------//
 	// Factory and Initialization
@@ -65,8 +67,10 @@ public class XsdLinkageSection extends XsdDataObject {
 			_parent = parent;
 			_entityLinkageSection = parent.GetEntityLinkageSection();
 
-			for (Linkage childLinkage : _entityLinkageSection.linkage) {
-
+			List<Object> Linkages = _entityLinkageSection.getLinkage();
+			while (Linkages.iterator().hasNext()){
+				Linkage childLinkage = (Linkage)Linkages.iterator().next();
+				
 				XsdLinkage newLinkage = new XsdLinkage();
 				rst = newLinkage.Initialize(this, childLinkage);
 				if (!rst.getIsSuccess()) continue;
@@ -75,6 +79,17 @@ public class XsdLinkageSection extends XsdDataObject {
 					_childDataObjects.put(newLinkage.GetKey(), newLinkage);
 				}
 			}
+
+//			for (Linkage childLinkage : _entityLinkageSection.linkage) {
+//
+//				XsdLinkage newLinkage = new XsdLinkage();
+//				rst = newLinkage.Initialize(this, childLinkage);
+//				if (!rst.getIsSuccess()) continue;
+//
+//				if (!_childDataObjects.containsKey(newLinkage.GetKey())) {
+//					_childDataObjects.put(newLinkage.GetKey(), newLinkage);
+//				}
+//			}
 
 			return CallResult.successCallResult;
 
@@ -245,7 +260,7 @@ public class XsdLinkageSection extends XsdDataObject {
 		}
 	}
 
-	protected Entity.Linkagesection GetEntityLinkageSection()
+	protected Linkagesection GetEntityLinkageSection()
 	{
 		return _entityLinkageSection;
 	}

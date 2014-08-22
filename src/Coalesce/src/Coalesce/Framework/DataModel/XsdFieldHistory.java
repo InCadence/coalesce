@@ -11,8 +11,7 @@ import unity.core.runtime.CallResult.CallResults;
 import Coalesce.Common.Helpers.DateTimeHelper;
 import Coalesce.Common.Helpers.GUIDHelper;
 import Coalesce.Common.Helpers.XmlHelper;
-import Coalesce.Framework.DataModel.Entity.Section.Recordset.Record.Field;
-import Coalesce.Framework.DataModel.Entity.Section.Recordset.Record.Field.Fieldhistory;
+import Coalesce.Framework.GeneratedJAXB.*;
 
 public class XsdFieldHistory extends XsdDataObject {
 
@@ -770,7 +769,7 @@ public class XsdFieldHistory extends XsdDataObject {
 			 * _entityFieldHistory.setHash(field.getHash());
 			 */
 			_entityFieldHistory.setValue(field.getValue());
-			_entityFieldHistory.setDatecreated(field.datecreated);
+			_entityFieldHistory.setDatecreated(field.getDatecreated());
 			_entityFieldHistory.setLastmodified(field.getLastmodified());
 			_entityFieldHistory.setStatus(field.getStatus());
 

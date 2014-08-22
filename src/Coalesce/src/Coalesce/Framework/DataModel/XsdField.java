@@ -14,8 +14,7 @@ import Coalesce.Common.Helpers.GUIDHelper;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.Helpers.XmlHelper;
-import Coalesce.Framework.DataModel.Entity.Section.Recordset.Record.Field;
-import Coalesce.Framework.DataModel.Entity.Section.Recordset.Record.Field.Fieldhistory;
+import Coalesce.Framework.GeneratedJAXB.*;
 
 public class XsdField extends XsdDataObject {
 
@@ -80,17 +79,29 @@ public class XsdField extends XsdDataObject {
             _parent = parent;
 
             _entityField = field;
+            _entityField.getFieldhistory();
+            //if (_entityField.fieldhistory == null) _entityField.fieldhistory = new ArrayList<Fieldhistory>();
 
-            if (_entityField.fieldhistory == null) _entityField.fieldhistory = new ArrayList<Fieldhistory>();
+			List<Object> fh = _entityField.getFieldhistory();
+			while (fh.iterator().hasNext()){
+				Fieldhistory entityFieldHistory = (Fieldhistory)fh.iterator().next();
+				
+				XsdFieldHistory fieldHistory = new XsdFieldHistory();
+				fieldHistory.Initialize(this, entityFieldHistory);
 
-            for (Fieldhistory entityFieldHistory : _entityField.fieldhistory) {
-
-                XsdFieldHistory fieldHistory = new XsdFieldHistory();
-                fieldHistory.Initialize(this, entityFieldHistory);
-
-                // Add to Child Collection
-                _childDataObjects.put(fieldHistory.GetKey(), fieldHistory);
-            }
+				// Add to Child Collection
+				_childDataObjects.put(fieldHistory.GetKey(), fieldHistory);
+			}
+			
+			
+//			for (Fieldhistory entityFieldHistory : _entityField.fieldhistory) {
+//
+//				XsdFieldHistory fieldHistory = new XsdFieldHistory();
+//				fieldHistory.Initialize(this, entityFieldHistory);
+//
+//				// Add to Child Collection
+//				_childDataObjects.put(fieldHistory.GetKey(), fieldHistory);
+//			}
 
             return CallResult.successCallResult;
 
@@ -1356,7 +1367,13 @@ public class XsdField extends XsdDataObject {
     }
         
     protected List<Fieldhistory> GetEntityFieldHistories() {
-        return _entityField.fieldhistory;
+    	List<Fieldhistory> FieldHistoryList = new ArrayList<Fieldhistory>();
+    	
+    	while (_entityField.getFieldhistory().iterator().hasNext()){
+    		Fieldhistory HistoryItem = (Fieldhistory) _entityField.getFieldhistory().iterator().next();
+    		FieldHistoryList.add(HistoryItem);
+    	}
+    	return FieldHistoryList;
     }
 
 }

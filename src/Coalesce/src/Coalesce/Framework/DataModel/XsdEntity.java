@@ -11,9 +11,7 @@ import org.joda.time.DateTime;
 
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import Coalesce.Common.Helpers.XmlHelper;
-import Coalesce.Framework.DataModel.Entity.Linkagesection;
-import Coalesce.Framework.DataModel.Entity.Linkagesection.Linkage;
-import Coalesce.Framework.DataModel.Entity.Section;
+import Coalesce.Framework.GeneratedJAXB.*;
 import unity.core.runtime.CallResult;
 import unity.core.runtime.CallResult.CallResults;
 
@@ -144,8 +142,8 @@ public class XsdEntity extends XsdDataObject {
             CallResult rst;
 
             _entity = new Entity();
-            _entity.linkagesection = new Linkagesection();
-            _entity.section = new ArrayList<Section>();
+            _entity.setLinkagesection(new Linkagesection());
+            _entity.getSection();
             
             rst = InitializeEntity();
             if (!rst.getIsSuccess()) return rst;
@@ -170,14 +168,25 @@ public class XsdEntity extends XsdDataObject {
     		
     		_childDataObjects.put(linkageSection.GetKey(), linkageSection);
     		
-    		for (Section entitySection : _entity.section) {
+    		List<Object> Sections = _entity.getSection();
+    		while (Sections.iterator().hasNext()){
+    			Section entitySection = (Section) Sections.iterator().next();
+    			
 	            XsdSection section = new XsdSection();
 	            rst = section.Initialize(this, entitySection);
 	            if (!rst.getIsSuccess()) return rst;
 	            
 	            _childDataObjects.put(section.GetKey(), section);
-	            
-            }
+    		}
+    		
+//    		for (Section entitySection : _entity.section) {
+//	            XsdSection section = new XsdSection();
+//	            rst = section.Initialize(this, entitySection);
+//	            if (!rst.getIsSuccess()) return rst;
+//	            
+//	            _childDataObjects.put(section.GetKey(), section);
+//	            
+//            }
     		
     		return CallResult.successCallResult;
     		    		
@@ -395,12 +404,24 @@ public class XsdEntity extends XsdDataObject {
 
             XsdLinkageSection linkageSection = new XsdLinkageSection();
             linkageSection.Initialize(this);
-            for (Linkage entityLinkage : _entity.linkagesection.linkage) {
+            
+            Linkagesection Linksection = (Linkagesection) _entity.getLinkagesection();
+            List<Object> Linkages = Linksection.getLinkage();
+            while (Linkages.iterator().hasNext()){
+            	Linkage entityLinkage = (Linkage) Linkages.iterator().next();
+            	
                 XsdLinkage linkage = new XsdLinkage();
                 rst = linkage.Initialize(linkageSection, entityLinkage);
 
                 if (rst.getIsSuccess()) d.put(linkage.GetKey(), linkage);
             }
+            
+//            for (Linkage entityLinkage : _entity.linkagesection.linkage) {
+//                XsdLinkage linkage = new XsdLinkage();
+//                rst = linkage.Initialize(linkageSection, entityLinkage);
+//
+//                if (rst.getIsSuccess()) d.put(linkage.GetKey(), linkage);
+//            }
 
             return d;
 
@@ -911,11 +932,18 @@ public class XsdEntity extends XsdDataObject {
 
     protected Linkagesection GetEntityLinkageSection()
     {
-        return _entity.getLinkagesection();
+    	Linkagesection SectionList = (Linkagesection) _entity.getLinkagesection();
+    	return SectionList;
     }
 
     protected List<Section> GetEntitySections()
     {
-        return _entity.section;
+    	List<Section> SectionList = new ArrayList<Section>();
+    	
+    	while (_entity.getSection().iterator().hasNext()){
+    		Section SectionItem = (Section) _entity.getSection().iterator().next();
+    		SectionList.add(SectionItem);
+    	}
+    	return SectionList;
     }
 }

@@ -1,6 +1,6 @@
 package Coalesce.Framework.Persistance;
 
-import Coalesce.Framework.DataModel.Entity;
+import Coalesce.Framework.GeneratedJAXB.*;
 import unity.core.runtime.CallResult;
 
 public interface ICoalescePersistor {

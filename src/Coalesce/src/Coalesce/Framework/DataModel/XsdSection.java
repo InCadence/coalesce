@@ -1,5 +1,6 @@
 package Coalesce.Framework.DataModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -7,8 +8,7 @@ import org.joda.time.DateTime;
 import unity.core.runtime.CallResult;
 import unity.core.runtime.CallResult.CallResults;
 import Coalesce.Common.Helpers.XmlHelper;
-import Coalesce.Framework.DataModel.Entity.Section;
-import Coalesce.Framework.DataModel.Entity.Section.Recordset;
+import Coalesce.Framework.GeneratedJAXB.*;
 
 public class XsdSection extends XsdDataObject {
 
@@ -137,9 +137,11 @@ public class XsdSection extends XsdDataObject {
             _entitySection = section;
             
             rst = InitializeEntity();
-
-            for (Recordset childRecordSet : _entitySection.recordset) {
-	            
+            
+            List<Object> Recset = _entitySection.getRecordset();
+            while (Recset.iterator().hasNext()){
+            	Recordset childRecordSet = (Recordset) Recset.iterator().next();
+            	
             	XsdRecordset newRecordSet = new XsdRecordset();
             	rst = newRecordSet.Initialize(this, childRecordSet);
             	if (!rst.getIsSuccess()) continue;
@@ -148,6 +150,17 @@ public class XsdSection extends XsdDataObject {
             		_childDataObjects.put(newRecordSet.GetKey(), newRecordSet);
             	}
             }
+
+//            for (Recordset childRecordSet : _entitySection.recordset) {
+//	            
+//            	XsdRecordset newRecordSet = new XsdRecordset();
+//            	rst = newRecordSet.Initialize(this, childRecordSet);
+//            	if (!rst.getIsSuccess()) continue;
+//            	
+//            	if (!_childDataObjects.containsKey(newRecordSet.GetKey())) {
+//            		_childDataObjects.put(newRecordSet.GetKey(), newRecordSet);
+//            	}
+//            }
 
             // TODO: Need to add another loop child Sections if they are added
 
@@ -318,7 +331,13 @@ public class XsdSection extends XsdDataObject {
     }
     
     protected List<Recordset> GetEntityRecordSets() {
-    	return _entitySection.recordset;
+    	List<Recordset> RecordsetList = new ArrayList<Recordset>();
+    	
+    	while (_entitySection.getRecordset().iterator().hasNext()){
+    		Recordset FieldItem = (Recordset) _entitySection.getRecordset().iterator().next();
+    		RecordsetList.add(FieldItem);
+    	}
+    	return RecordsetList;
     }
 
 }
