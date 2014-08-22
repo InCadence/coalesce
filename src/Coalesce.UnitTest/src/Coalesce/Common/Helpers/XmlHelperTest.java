@@ -7,9 +7,7 @@ import org.junit.Test;
 import unity.core.runtime.CallResult;
 import Coalesce.Common.Helpers.XmlHelper;
 import Coalesce.Common.UnitTest.CoalesceTypeInstances;
-import Coalesce.Framework.DataModel.Entity;
-import Coalesce.Framework.DataModel.Entity.Linkagesection;
-import Coalesce.Framework.DataModel.Entity.Section.Recordset;
+import Coalesce.Framework.GeneratedJAXB.*;
 
 public class XmlHelperTest {
 
@@ -83,9 +81,12 @@ public class XmlHelperTest {
 		assertTrue("Searialize failed", rst.getIsSuccess());
 		assertTrue("xml empty", xml.length() > 0);
 		
+		/* TODO: Resolve this error
 		assertEquals(4, entity.getLinkagesection().getLinkage().size());
 		assertEquals(16, entity.getSection().get(1).getRecordset().get(0).getFielddefinition().size());
 		assertEquals(16, entity.getSection().get(1).getRecordset().get(0).getRecord().get(0).getField().size());
+		*/
+		assertTrue("Fix this test case", false);
 	}
 
 	@Test
@@ -123,7 +124,10 @@ public class XmlHelperTest {
 		assertTrue("Searialize failed", rst.getIsSuccess());
 		assertTrue("xml empty", xml.length() > 0);
 		assertEquals(16, entityRecordSet.getFielddefinition().size());
+		/* TODO: Resolve this error
 		assertEquals(16, entityRecordSet.getRecord().get(0).getField().size());
-
+		 */
+		assertTrue("Fix this test case", false);
+		
 	}
 }

@@ -11,7 +11,7 @@ import org.junit.Test;
 import unity.core.runtime.CallResult;
 import Coalesce.Common.Helpers.XmlHelper;
 import Coalesce.Common.UnitTest.CoalesceTypeInstances;
-import Coalesce.Framework.DataModel.Entity;
+import Coalesce.Framework.GeneratedJAXB.*;
 
 public class EntityTest {
 
@@ -42,12 +42,13 @@ public class EntityTest {
         Entity entity = new Entity(); 
         
         
-        Entity.Linkagesection linkageSection = new Entity.Linkagesection();
+        Linkagesection linkageSection = new Linkagesection();
         entity.setLinkagesection(linkageSection);
         
-        List<Entity.Linkagesection.Linkage> linkageList = linkageSection.getLinkage();
+        // TODO: Remove Object
+        List<Object> linkageList = linkageSection.getLinkage();
         
-        Entity.Linkagesection.Linkage linkage = new Entity.Linkagesection.Linkage();
+        Linkage linkage = new Linkage();
                 
         linkage.setEntity1Key("1");
         
