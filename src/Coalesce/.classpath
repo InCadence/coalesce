@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Unity"/>
+	<classpathentry kind="lib" path="../3rd Party/eclipselink/com.sun.tools.xjc_2.2.0.jar"/>
+	<classpathentry kind="lib" path="../3rd Party/eclipselink/com.sun.xml.bind_2.2.0.v201004141950.jar"/>
+	<classpathentry kind="lib" path="../3rd Party/eclipselink/javax.xml.bind_2.2.0.v201105210648.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.7.0_67"/>
+	<classpathentry kind="lib" path="../3rd Party/commons/commons-lang-2.6.jar"/>
+	<classpathentry kind="lib" path="../3rd Party/joda-time/joda-time-2.4.jar"/>
+	<classpathentry kind="output" path="build/classes"/>
+</classpath>
