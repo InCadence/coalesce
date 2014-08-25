@@ -6,5 +6,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Unity"/>
 	<classpathentry kind="lib" path="../../redist/joda-time/joda-time-2.4.jar"/>
+	<classpathentry kind="lib" path="../../redist/commons/commons-lang-2.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

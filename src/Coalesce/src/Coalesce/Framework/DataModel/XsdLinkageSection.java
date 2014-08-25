@@ -1,7 +1,5 @@
 package Coalesce.Framework.DataModel;
 
-import java.util.List;
-
 import org.joda.time.DateTime;
 
 import unity.core.runtime.CallResult;
@@ -66,19 +64,6 @@ public class XsdLinkageSection extends XsdDataObject {
 			// Set References
 			_parent = parent;
 			_entityLinkageSection = parent.GetEntityLinkageSection();
-
-//			List<Object> Linkages = _entityLinkageSection.getLinkage();
-//			while (Linkages.iterator().hasNext()){
-//				Linkage childLinkage = (Linkage)Linkages.iterator().next();
-//				
-//				XsdLinkage newLinkage = new XsdLinkage();
-//				rst = newLinkage.Initialize(this, childLinkage);
-//				if (!rst.getIsSuccess()) continue;
-//
-//				if (!_childDataObjects.containsKey(newLinkage.GetKey())) {
-//					_childDataObjects.put(newLinkage.GetKey(), newLinkage);
-//				}
-//			}
 
 			for (Linkage childLinkage : _entityLinkageSection.getLink()) {
 

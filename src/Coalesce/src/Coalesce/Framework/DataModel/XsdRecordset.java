@@ -90,28 +90,12 @@ public class XsdRecordset extends XsdDataObject {
             _fieldDefinitions = new ArrayList<XsdFieldDefinition>();
             _records = new ArrayList<XsdRecord>();
 
-//            List<Object> FieldDefs = _entityRecordset.getFielddefinition();
-//            while (FieldDefs.iterator().hasNext()){
-//            	Fielddefinition entityFieldDefinition = (Fielddefinition)FieldDefs.iterator().next();
-//
-//                XsdFieldDefinition newFieldDefinition = new XsdFieldDefinition();
-//                rst = newFieldDefinition.Initialize(this, entityFieldDefinition);
-//            }
-
             for (Fielddefinition entityFieldDefinition : _entityRecordset.getFielddef()) {
                 XsdFieldDefinition newFieldDefinition = new XsdFieldDefinition();
                 rst = newFieldDefinition.Initialize(this, entityFieldDefinition);
                 
             }
             
-//            List<Object> Records = _entityRecordset.getRecord();
-//            while (Records.iterator().hasNext()){
-//            	Record entityRecord = (Record)Records.iterator().next();
-//
-//                XsdRecord newRecord = new XsdRecord();
-//                rst = newRecord.Initialize(this, entityRecord);
-//            }
-
             for (Record entityRecord : _entityRecordset.getRec()) {
                 XsdRecord newRecord = new XsdRecord();
                 rst = newRecord.Initialize(this, entityRecord);
@@ -496,24 +480,10 @@ public class XsdRecordset extends XsdDataObject {
     
     protected List<Record> GetEntityRecords() {
     	return _entityRecordset.getRec();
-//    	List<Record> RecordList = new ArrayList<Record>();
-//    	
-//    	while (_entityRecordset.getRecord().iterator().hasNext()){
-//    		Record FieldItem = (Record) _entityRecordset.getRecord().iterator().next();
-//    		RecordList.add(FieldItem);
-//    	}
-//    	return RecordList;
     }
     
     protected List<Fielddefinition> GetEntityFieldDefinitions() {
     	return _entityRecordset.getFielddef();
-//    	List<Fielddefinition> FieldDefList = new ArrayList<Fielddefinition>();
-//    	
-//    	while (_entityRecordset.getFielddefinition().iterator().hasNext()){
-//    		Fielddefinition FieldDef = (Fielddefinition) _entityRecordset.getFielddefinition().iterator().next();
-//    		FieldDefList.add(FieldDef);
-//    	}
-//    	return FieldDefList;
     }
 }
 

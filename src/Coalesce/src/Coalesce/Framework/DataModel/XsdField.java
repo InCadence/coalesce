@@ -10,27 +10,29 @@ import org.joda.time.DateTime;
 
 import unity.core.runtime.CallResult;
 import unity.core.runtime.CallResult.CallResults;
+import Coalesce.Common.Helpers.FileHelper;
 import Coalesce.Common.Helpers.GUIDHelper;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.Helpers.XmlHelper;
-import Coalesce.Framework.GeneratedJAXB.*;
+import Coalesce.Framework.GeneratedJAXB.Field;
+import Coalesce.Framework.GeneratedJAXB.Fieldhistory;
 
 public class XsdField extends XsdDataObject {
 
-    //-----------------------------------------------------------------------//
+    // -----------------------------------------------------------------------//
     // protected Member Variables
-    //-----------------------------------------------------------------------//
+    // -----------------------------------------------------------------------//
 
     private static String MODULE = "Coalesce.Framework.DataModel.XsdField";
 
     protected Field _entityField;
     private Boolean _suspendHistory = false;
 
-    //-----------------------------------------------------------------------//
+    // -----------------------------------------------------------------------//
     // Factory and Initialization
-    //-----------------------------------------------------------------------//
-    
+    // -----------------------------------------------------------------------//
+
     public static CallResult Create(XsdRecord parent, XsdField newField, XsdFieldDefinition fieldDefinition)
     {
         try {
@@ -51,7 +53,7 @@ public class XsdField extends XsdDataObject {
             newField.SetLabel(fieldDefinition.GetLabel());
 
             newField.SetSuspendHistory(false);
-            
+
             newField.SetNoIndex(true);
 
             // Boolean Type? If so then default initial value to false.
@@ -59,7 +61,7 @@ public class XsdField extends XsdDataObject {
                 newField.SetValue("false");
             }
 
-            // Add to Parent's Child Collection            
+            // Add to Parent's Child Collection
             if (!(parent._childDataObjects.containsKey(newField.GetKey()))) {
                 parent._childDataObjects.put(newField.GetKey(), newField);
             }
@@ -79,29 +81,15 @@ public class XsdField extends XsdDataObject {
             _parent = parent;
 
             _entityField = field;
-            _entityField.getFieldhist();
-            //if (_entityField.fieldhistory == null) _entityField.fieldhistory = new ArrayList<Fieldhistory>();
 
-//			List<Object> fh = _entityField.getFieldhistory();
-//			while (fh.iterator().hasNext()){
-//				Fieldhistory entityFieldHistory = (Fieldhistory)fh.iterator().next();
-//				
-//				XsdFieldHistory fieldHistory = new XsdFieldHistory();
-//				fieldHistory.Initialize(this, entityFieldHistory);
-//
-//				// Add to Child Collection
-//				_childDataObjects.put(fieldHistory.GetKey(), fieldHistory);
-//			}
-			
-			
-			for (Fieldhistory entityFieldHistory : _entityField.getFieldhist()) {
+            for (Fieldhistory entityFieldHistory : _entityField.getFieldhist()) {
+            
+                XsdFieldHistory fieldHistory = new XsdFieldHistory();
+                fieldHistory.Initialize(this, entityFieldHistory);
 
-				XsdFieldHistory fieldHistory = new XsdFieldHistory();
-				fieldHistory.Initialize(this, entityFieldHistory);
-
-				// Add to Child Collection
-				_childDataObjects.put(fieldHistory.GetKey(), fieldHistory);
-			}
+                // Add to Child Collection
+                _childDataObjects.put(fieldHistory.GetKey(), fieldHistory);
+            }
 
             return CallResult.successCallResult;
 
@@ -110,9 +98,9 @@ public class XsdField extends XsdDataObject {
         }
     }
 
-    // -----------------------------------------------------------------------// 
+    // -----------------------------------------------------------------------//
     // public Properties
-    // -----------------------------------------------------------------------// 
+    // -----------------------------------------------------------------------//
 
     protected String GetObjectKey()
     {
@@ -142,7 +130,7 @@ public class XsdField extends XsdDataObject {
     public void SetValue(String value)
     {
         String oldValue = _entityField.getValue();
-        
+
         _entityField.setValue(value);
         SetChanged(oldValue, value);
     }
@@ -151,7 +139,7 @@ public class XsdField extends XsdDataObject {
     {
         // TODO: Add Common.ClassificationMarking
         String val = GetValue();
-        //Marking mrk = new Marking(GetClassificationMarking());
+        // Marking mrk = new Marking(GetClassificationMarking());
         return GetClassificationMarking() + " " + val;
     }
 
@@ -258,7 +246,7 @@ public class XsdField extends XsdDataObject {
     public void SetFilename(String value)
     {
         String oldFilename = _entityField.getFilename();
-        
+
         _entityField.setFilename(value);
         SetChanged(oldFilename, value);
     }
@@ -271,7 +259,7 @@ public class XsdField extends XsdDataObject {
     public void SetExtension(String value)
     {
         String oldExtension = _entityField.getExtension();
-        
+
         _entityField.setExtension(value.replace(".", ""));
         SetChanged(oldExtension, value);
     }
@@ -294,7 +282,7 @@ public class XsdField extends XsdDataObject {
     public void SetHash(String value)
     {
         String oldHash = _entityField.getHash();
-        
+
         _entityField.setHash(value);
         SetChanged(oldHash, value);
     }
@@ -317,69 +305,28 @@ public class XsdField extends XsdDataObject {
 
     public String GetCoalesceFullFilename()
     {
-    	CallResult rst;
 
-        if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) == ECoalesceFieldDataTypes.FileType) {
-
-            String baseFilename = GetKey();
-            baseFilename = GUIDHelper.RemoveBrackets(baseFilename);
-
-            String fullDirectory;
-
-            // TODO: CoalesceSettings and System.IO
-            /*
-             * if (CoalesceSettings.SubDirectoryLength > 0 &&
-             * CoalesceSettings.SubDirectoryLength < baseFilename.length()) {
-             * fullDirectory =
-             * Path.Combine(CoalesceSettings.BinaryFileStoreBasePath,
-             * baseFilename.Substring(0, CoalesceSettings.SubDirectoryLength));
-             * } else { fullDirectory =
-             * CoalesceSettings.BinaryFileStoreBasePath; }
-             * 
-             * if ( !(System.IO.Directory.Exists(fullDirectory)) ) {
-             * System.IO.Directory.CreateDirectory(fullDirectory);
-             * 
-             * return Path.Combine(fullDirectory, baseFilename) + "." +
-             * GetExtension();
-             */
-
-            return "";
-        } else {
+        if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) != ECoalesceFieldDataTypes.FileType) {
             return "";
         }
+
+        String baseFilename = FileHelper.GetBaseFilenameWithFullDirectoryPathForKey(GetKey());
+
+        return baseFilename + "." + GetExtension();
+
     }
 
     public String GetCoalesceFullThumbnailFilename()
     {
-        CallResult rst;
 
-        if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) == ECoalesceFieldDataTypes.FileType) {
-
-            String baseFilename = GetKey();
-            baseFilename = GUIDHelper.RemoveBrackets(baseFilename);
-
-            String fullDirectory;
-
-            // TODO: CoalesceSettings and System.IO
-            /*
-             * if (CoalesceSettings.SubDirectoryLength > 0 &&
-             * CoalesceSettings.SubDirectoryLength < baseFilename.length())
-             * fullDirectory =
-             * Path.Combine(CoalesceSettings.BinaryFileStoreBasePath,
-             * baseFilename.Substring(0, CoalesceSettings.SubDirectoryLength));
-             * else fullDirectory = CoalesceSettings.BinaryFileStoreBasePath;
-             * 
-             * if (!(System.IO.Directory.Exists(fullDirectory)) )
-             * System.IO.Directory.CreateDirectory(fullDirectory);
-             * 
-             * return Path.Combine(bullDirectory, baseFilename) + "_thumb.jpg";
-             */
-
-            return "";
-
-        } else {
+        if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) != ECoalesceFieldDataTypes.FileType) {
             return "";
         }
+
+        String baseFilename = FileHelper.GetBaseFilenameWithFullDirectoryPathForKey(GetKey());
+
+        return baseFilename + "_thumb.jpg";
+
     }
 
     public String GetCoalesceFilenameWithLastModifiedTag()
@@ -427,7 +374,7 @@ public class XsdField extends XsdDataObject {
             return this.GetCoalesceThumbnailFilename();
         }
     }
-    
+
     public String GetCoalesceFilename()
     {
         CallResult rst;
@@ -450,7 +397,7 @@ public class XsdField extends XsdDataObject {
         if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) == ECoalesceFieldDataTypes.FileType) {
 
             String baseFilename = this.GetKey();
-            baseFilename= GUIDHelper.RemoveBrackets(baseFilename);
+            baseFilename = GUIDHelper.RemoveBrackets(baseFilename);
 
             return baseFilename + "_thumb.jpg";
 
@@ -541,7 +488,8 @@ public class XsdField extends XsdDataObject {
     {
         try {
 
-            //return new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityField.getDatecreated());
+            // return new
+            // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityField.getDatecreated());
             return _entityField.getDatecreated();
 
         } catch (Exception ex) {
@@ -553,9 +501,10 @@ public class XsdField extends XsdDataObject {
     public CallResult SetDateCreated(DateTime value)
     {
         try {
-            //_entityField.setDatecreated(new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
+            // _entityField.setDatecreated(new
+            // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
             _entityField.setDatecreated(value);
-            
+
             return CallResult.successCallResult;
 
         } catch (Exception ex) {
@@ -567,7 +516,8 @@ public class XsdField extends XsdDataObject {
     {
         try {
 
-            //return new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityField.getLastmodified());
+            // return new
+            // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityField.getLastmodified());
             return _entityField.getLastmodified();
 
         } catch (Exception ex) {
@@ -579,7 +529,8 @@ public class XsdField extends XsdDataObject {
     protected CallResult SetObjectLastModified(DateTime value)
     {
         try {
-            //_entityField.setLastmodified(new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
+            // _entityField.setLastmodified(new
+            // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
             _entityField.setLastmodified(value);
 
             return CallResult.successCallResult;
@@ -697,92 +648,103 @@ public class XsdField extends XsdDataObject {
         }
     }
 
-    //TODO: Microsoft.SqlServer.Types.SqlGeography
-//    public CallResult SetTypedValue(Microsoft.SqlServer.Types.SqlGeography Value){
-//        try{
-//            CoalesceFieldDefinition CFD = new CoalesceFieldDefinition();
-//            if ((CFD.GetCoalesceFieldDataTypeForCoalesceType(this.DataType) == ECoalesceFieldDataTypes.GeocoordinateType) ||
-//               (CFD.GetCoalesceFieldDataTypeForCoalesceType(this.DataType) == ECoalesceFieldDataTypes.GeocoordinateListType)) {
-//
-//                // Check Spatial Reference Identifier
-//                if (Value.STSrid = 4326) {
-//                    // Set
-//                    this.Value = String.valueOf(Value); //Value.ToString;  // ToString returns the OGC WKT representation.  http://msdn.microsoft.com/en-us/library/microsoft.sqlserver.types.sqlgeography.tostring.aspx
-//
-//                    // return Success
-//                    return CallResult.successCallResult;
-//                }else{
-//                    // return Failed
-//                    return new CallResult(CallResults.FAILED, "Invalid Spatial Reference Identifier (SRID). Coalesce requires SRID 4326 which is WGS 84.", this);
-//                }
-//            }else{
-//                // return Failed; Type Mismatch
-//                return new CallResult(CallResults.FAILED, "Type mismatch", this);
-//            }
-//
-//        }catch(Exception ex){
-//            // return Failed Error
-//            return new CallResult(CallResults.FAILED_ERROR, ex, this);
-//        }
-//    }
+    // TODO: Microsoft.SqlServer.Types.SqlGeography
+    // public CallResult SetTypedValue(Microsoft.SqlServer.Types.SqlGeography
+    // Value){
+    // try{
+    // CoalesceFieldDefinition CFD = new CoalesceFieldDefinition();
+    // if ((CFD.GetCoalesceFieldDataTypeForCoalesceType(this.DataType) ==
+    // ECoalesceFieldDataTypes.GeocoordinateType) ||
+    // (CFD.GetCoalesceFieldDataTypeForCoalesceType(this.DataType) ==
+    // ECoalesceFieldDataTypes.GeocoordinateListType)) {
+    //
+    // // Check Spatial Reference Identifier
+    // if (Value.STSrid = 4326) {
+    // // Set
+    // this.Value = String.valueOf(Value); //Value.ToString; // ToString returns
+    // the OGC WKT representation.
+    // http://msdn.microsoft.com/en-us/library/microsoft.sqlserver.types.sqlgeography.tostring.aspx
+    //
+    // // return Success
+    // return CallResult.successCallResult;
+    // }else{
+    // // return Failed
+    // return new CallResult(CallResults.FAILED,
+    // "Invalid Spatial Reference Identifier (SRID). Coalesce requires SRID 4326 which is WGS 84.",
+    // this);
+    // }
+    // }else{
+    // // return Failed; Type Mismatch
+    // return new CallResult(CallResults.FAILED, "Type mismatch", this);
+    // }
+    //
+    // }catch(Exception ex){
+    // // return Failed Error
+    // return new CallResult(CallResults.FAILED_ERROR, ex, this);
+    // }
+    // }
 
-    //TODO: Geolocation
-//    public CallResult SetTypedValue(Geolocation GeoLocation){
-//        try{
-//            CoalesceFieldDefinition CFD = new CoalesceFieldDefinition();
-//            if (CFD.GetCoalesceFieldDataTypeForCoalesceType(this.DataType) == ECoalesceFieldDataTypes.GeocoordinateType) {
-//                // Set
-//                Microsoft.SqlServer.Types.SqlGeographyBuilder Builder = new Microsoft.SqlServer.Types.SqlGeographyBuilder;
-//                Builder.SetSrid(4326); // WGS 84
-//                Builder.BeginGeography(Microsoft.SqlServer.Types.OpenGisGeographyType.Point);
-//                Builder.BeginFigure(GeoLocation.Latitude, GeoLocation.Longitude);
-//                Builder.EndFigure();
-//                Builder.EndGeography();
-//
-//                // Call on Overload
-//                return this.SetTypedValue(Builder.ConstructedGeography);
-//
-//            }else{
-//                // return Failed; Type Mismatch
-//                return new CallResult(CallResults.FAILED, "Type mismatch", this);
-//            }
-//
-//        }catch(Exception ex){
-//            // return Failed Error
-//            return new CallResult(CallResults.FAILED_ERROR, ex, this);
-//        }
-//    }
+    // TODO: Geolocation
+    // public CallResult SetTypedValue(Geolocation GeoLocation){
+    // try{
+    // CoalesceFieldDefinition CFD = new CoalesceFieldDefinition();
+    // if (CFD.GetCoalesceFieldDataTypeForCoalesceType(this.DataType) ==
+    // ECoalesceFieldDataTypes.GeocoordinateType) {
+    // // Set
+    // Microsoft.SqlServer.Types.SqlGeographyBuilder Builder = new
+    // Microsoft.SqlServer.Types.SqlGeographyBuilder;
+    // Builder.SetSrid(4326); // WGS 84
+    // Builder.BeginGeography(Microsoft.SqlServer.Types.OpenGisGeographyType.Point);
+    // Builder.BeginFigure(GeoLocation.Latitude, GeoLocation.Longitude);
+    // Builder.EndFigure();
+    // Builder.EndGeography();
+    //
+    // // Call on Overload
+    // return this.SetTypedValue(Builder.ConstructedGeography);
+    //
+    // }else{
+    // // return Failed; Type Mismatch
+    // return new CallResult(CallResults.FAILED, "Type mismatch", this);
+    // }
+    //
+    // }catch(Exception ex){
+    // // return Failed Error
+    // return new CallResult(CallResults.FAILED_ERROR, ex, this);
+    // }
+    // }
 
-    //TODO: GeocoordinateList 
-//    public CallResult SetTypedValue(List(Of Geolocation) GeoLocations){
-//        try{
-//            CoalesceFieldDefinition CFD = new CoalesceFieldDefinition();
-//            if (CFD.GetCoalesceFieldDataTypeForCoalesceType(this.DataType) == ECoalesceFieldDataTypes.GeocoordinateListType) {
-//                // Set
-//                Microsoft.SqlServer.Types.SqlGeographyBuilder Builder = new Microsoft.SqlServer.Types.SqlGeographyBuilder;
-//                Builder.SetSrid(4326); // WGS 84
-//                Builder.BeginGeography(Microsoft.SqlServer.Types.OpenGisGeographyType.MultiPoint);
-//                for(Geolocation Geolocation : GeoLocations){
-//                    Builder.BeginGeography(Microsoft.SqlServer.Types.OpenGisGeographyType.Point);
-//                    Builder.BeginFigure(Geolocation.Latitude, Geolocation.Longitude);
-//                    Builder.EndFigure();
-//                    Builder.EndGeography();
-//                }
-//                Builder.EndGeography();
-//
-//                // Call on Overload
-//                return this.SetTypedValue(Builder.ConstructedGeography);
-//
-//        }else{
-//                // return Failed; Type Mismatch
-//                return new CallResult(CallResults.FAILED, "Type mismatch", this);
-//            }
-//
-//        }catch(Exception ex){
-//            // return Failed Error
-//            return new CallResult(CallResults.FAILED_ERROR, ex, this);
-//        }
-//    }
+    // TODO: GeocoordinateList
+    // public CallResult SetTypedValue(List(Of Geolocation) GeoLocations){
+    // try{
+    // CoalesceFieldDefinition CFD = new CoalesceFieldDefinition();
+    // if (CFD.GetCoalesceFieldDataTypeForCoalesceType(this.DataType) ==
+    // ECoalesceFieldDataTypes.GeocoordinateListType) {
+    // // Set
+    // Microsoft.SqlServer.Types.SqlGeographyBuilder Builder = new
+    // Microsoft.SqlServer.Types.SqlGeographyBuilder;
+    // Builder.SetSrid(4326); // WGS 84
+    // Builder.BeginGeography(Microsoft.SqlServer.Types.OpenGisGeographyType.MultiPoint);
+    // for(Geolocation Geolocation : GeoLocations){
+    // Builder.BeginGeography(Microsoft.SqlServer.Types.OpenGisGeographyType.Point);
+    // Builder.BeginFigure(Geolocation.Latitude, Geolocation.Longitude);
+    // Builder.EndFigure();
+    // Builder.EndGeography();
+    // }
+    // Builder.EndGeography();
+    //
+    // // Call on Overload
+    // return this.SetTypedValue(Builder.ConstructedGeography);
+    //
+    // }else{
+    // // return Failed; Type Mismatch
+    // return new CallResult(CallResults.FAILED, "Type mismatch", this);
+    // }
+    //
+    // }catch(Exception ex){
+    // // return Failed Error
+    // return new CallResult(CallResults.FAILED_ERROR, ex, this);
+    // }
+    // }
 
     public CallResult SetTypedValue(byte[] dataBytes)
     {
@@ -805,10 +767,7 @@ public class XsdField extends XsdDataObject {
         }
     }
 
-    public CallResult SetTypedValue(byte[] dataBytes,
-                                    String filename, 
-                                    String extension,
-                                    String mimeType)
+    public CallResult SetTypedValue(byte[] dataBytes, String filename, String extension, String mimeType)
     {
         try {
             // TODO: make sure the string conversion is correct
@@ -826,10 +785,7 @@ public class XsdField extends XsdDataObject {
         }
     }
 
-    public CallResult SetTypedValue(String filename,
-                                    String extension,
-                                    String mimeType,
-                                    String hash)
+    public CallResult SetTypedValue(String filename, String extension, String mimeType, String hash)
     {
         try {
             // Set Bytes
@@ -846,70 +802,73 @@ public class XsdField extends XsdDataObject {
         }
     }
 
-    //TODO: DocumentProperties
-//    public CallResult SetTypedValue(Byte[] DataBytes, DocumentProperties DocProps){
-//        try{
-//            CoalesceFieldDefinition CFD = new CoalesceFieldDefinition();
-//            if (CFD.GetCoalesceFieldDataTypeForCoalesceType(this.DataType) == ECoalesceFieldDataTypes.FileType) {
-//
-//                // Set Bytes
-//                //TODO: make sure the string conversion is correct
-//              //this.Value = Convert.ToBase64String(DataBytes);
-//                  this.Value = DataBytes.toString();
-//                this.Filename = DocProps.Filename;
-//                this.Extension = DocProps.Extension;
-//                this.MimeType = DocProps.MimeType;
-//                this.Size = DataBytes.length;
-//
-//                // return Success
-//                return CallResult.successCallResult;
-//
-//            }else{
-//                // return Failed; Type Mismatch
-//                return new CallResult(CallResults.FAILED, "Type mismatch", this);
-//            }
-//
-//        }catch(Exception ex){
-//            // return Failed Error
-//            return new CallResult(CallResults.FAILED_ERROR, ex, this);
-//        }
-//    }
+    // TODO: DocumentProperties
+    // public CallResult SetTypedValue(Byte[] DataBytes, DocumentProperties
+    // DocProps){
+    // try{
+    // CoalesceFieldDefinition CFD = new CoalesceFieldDefinition();
+    // if (CFD.GetCoalesceFieldDataTypeForCoalesceType(this.DataType) ==
+    // ECoalesceFieldDataTypes.FileType) {
+    //
+    // // Set Bytes
+    // //TODO: make sure the string conversion is correct
+    // //this.Value = Convert.ToBase64String(DataBytes);
+    // this.Value = DataBytes.toString();
+    // this.Filename = DocProps.Filename;
+    // this.Extension = DocProps.Extension;
+    // this.MimeType = DocProps.MimeType;
+    // this.Size = DataBytes.length;
+    //
+    // // return Success
+    // return CallResult.successCallResult;
+    //
+    // }else{
+    // // return Failed; Type Mismatch
+    // return new CallResult(CallResults.FAILED, "Type mismatch", this);
+    // }
+    //
+    // }catch(Exception ex){
+    // // return Failed Error
+    // return new CallResult(CallResults.FAILED_ERROR, ex, this);
+    // }
+    // }
 
-    //TODO: DocumentProperties
-//    public CallResult SetTypedValue(DocumentProperties DocProps) { 
-//        try{
-//            CoalesceFieldDefinition CFD = new CoalesceFieldDefinition();
-//            if (CFD.GetCoalesceFieldDataTypeForCoalesceType(this.DataType) == ECoalesceFieldDataTypes.FileType) {
-//                // Does File Exist?
-//                if (File.Exists(DocProps.FullFilename)) {
-//                    // Read Bytes
-//                    Byte[]  FileBytes = File.ReadAllBytes(DocProps.FullFilename);
-//
-//                    // Set Bytes
-//                    //TODO: make sure the string conversion is correct
-//                  //this.Value = Convert.ToBase64String(FileBytes);
-//                      this.Value = FileBytes.toString();
-//                    this.Filename = DocProps.Filename;
-//                    this.Extension = DocProps.Extension;
-//                    this.MimeType = DocProps.MimeType;
-//                    this.Size = FileBytes.length;
-//
-//                    // return Success
-//                    return CallResult.successCallResult;
-//                }else{
-//                    // return Failed; Type Mismatch
-//                    return new CallResult(CallResults.FAILED, "File not found", this);
-//                }
-//            }else{
-//                // return Failed; Type Mismatch
-//                return new CallResult(CallResults.FAILED, "Type mismatch", this);
-//            }
-//
-//        }catch(Exception ex){
-//            // return Failed Error
-//            return new CallResult(CallResults.FAILED_ERROR, ex, this);
-//        }
-//    }
+    // TODO: DocumentProperties
+    // public CallResult SetTypedValue(DocumentProperties DocProps) {
+    // try{
+    // CoalesceFieldDefinition CFD = new CoalesceFieldDefinition();
+    // if (CFD.GetCoalesceFieldDataTypeForCoalesceType(this.DataType) ==
+    // ECoalesceFieldDataTypes.FileType) {
+    // // Does File Exist?
+    // if (File.Exists(DocProps.FullFilename)) {
+    // // Read Bytes
+    // Byte[] FileBytes = File.ReadAllBytes(DocProps.FullFilename);
+    //
+    // // Set Bytes
+    // //TODO: make sure the string conversion is correct
+    // //this.Value = Convert.ToBase64String(FileBytes);
+    // this.Value = FileBytes.toString();
+    // this.Filename = DocProps.Filename;
+    // this.Extension = DocProps.Extension;
+    // this.MimeType = DocProps.MimeType;
+    // this.Size = FileBytes.length;
+    //
+    // // return Success
+    // return CallResult.successCallResult;
+    // }else{
+    // // return Failed; Type Mismatch
+    // return new CallResult(CallResults.FAILED, "File not found", this);
+    // }
+    // }else{
+    // // return Failed; Type Mismatch
+    // return new CallResult(CallResults.FAILED, "Type mismatch", this);
+    // }
+    //
+    // }catch(Exception ex){
+    // // return Failed Error
+    // return new CallResult(CallResults.FAILED_ERROR, ex, this);
+    // }
+    // }
 
     // TODO: Need to test return type by value
     public CallResult GetTypedValue(Object value)
@@ -930,13 +889,13 @@ public class XsdField extends XsdDataObject {
             } else if (value instanceof Byte) {
                 return GetTypedValue((Byte) value);
             } else if (value instanceof UUID) {
-                value = (UUID)GetUuidValue();
+                value = (UUID) GetUuidValue();
                 if (value == null) {
-                	return new CallResult(CallResults.FAILED, "Invalid object", this);
+                    return new CallResult(CallResults.FAILED, "Invalid object", this);
                 } else {
-                	return CallResult.successCallResult;
+                    return CallResult.successCallResult;
                 }
-                
+
                 // }else if (Value.getClass().equals(Geolocation.class)){
                 // return GetTypedValue((Geolocation) Value);
                 // }else if (Value.getClass().equals(GeocoordinateList.class)){
@@ -960,11 +919,11 @@ public class XsdField extends XsdDataObject {
                 CallResult.log(CallResults.FAILED, "Type mismatch", this);
                 return null;
             }
-                        
+
             String validUuid = GUIDHelper.IsValid(GetValue());
-            
+
             if (validUuid == null) return null;
-            
+
             UUID value = GUIDHelper.GetGuid(GetValue());
 
             return value;
@@ -981,19 +940,19 @@ public class XsdField extends XsdDataObject {
             if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) == ECoalesceFieldDataTypes.DateTimeType) {
 
                 value = JodaDateTimeHelper.FromXmlDateTimeUTC(this.GetValue());
-                    
+
                 if (value == null) {
                     return new CallResult(CallResults.FAILED, "Date format error", this);
                 } else {
                     return CallResult.successCallResult;
                 }
-                
+
             } else {
                 CallResult.log(CallResults.FAILED, "Type mismatch", this);
             }
-            
+
             return null;
-            
+
         } catch (Exception ex) {
             CallResult.log(CallResults.FAILED_ERROR, ex, this);
             return null;
@@ -1044,77 +1003,83 @@ public class XsdField extends XsdDataObject {
         }
     }
 
-    //TODO: Geolocation type
-//    public CallResult GetTypedValue(Geolocation GeoLocation) {
-//        try{
-//            CoalesceFieldDefinition CFD = new CoalesceFieldDefinition();
-//            if (CFD.GetCoalesceFieldDataTypeForCoalesceType(this.DataType) == ECoalesceFieldDataTypes.GeocoordinateType) {
-//                // Basic Check
-//                if (!(this.Value.StartsWith("POINT"))) {
-//                    // return Failed; Type Mismatch
-//                    return new CallResult(CallResults.FAILED, "Type mismatch", this);
-//                }else{
-//                    // Get
-//                    Microsoft.SqlServer.Types.SqlGeography Geography = null;
-//                    Geography = Microsoft.SqlServer.Types.SqlGeography.STPointFromText(new System.Data.SqlTypes.SqlString(this.Value), 4326);
-//                    if (GeoLocation == null) {
-//                        GeoLocation = new Geolocation();
-//                    }
-//                    GeoLocation.Latitude = Geography.Lat;
-//                    GeoLocation.Longitude = Geography.Long;
-//
-//                    // return Success
-//                    return CallResult.successCallResult;
-//                }
-//            }else{
-//                // return Failed; Type Mismatch
-//                return new CallResult(CallResults.FAILED, "Type mismatch", this);
-//            }
-//
-//        }catch(Exception ex){
-//            // return Failed Error
-//            return new CallResult(CallResults.FAILED_ERROR, ex, this);
-//        }
-//    }
+    // TODO: Geolocation type
+    // public CallResult GetTypedValue(Geolocation GeoLocation) {
+    // try{
+    // CoalesceFieldDefinition CFD = new CoalesceFieldDefinition();
+    // if (CFD.GetCoalesceFieldDataTypeForCoalesceType(this.DataType) ==
+    // ECoalesceFieldDataTypes.GeocoordinateType) {
+    // // Basic Check
+    // if (!(this.Value.StartsWith("POINT"))) {
+    // // return Failed; Type Mismatch
+    // return new CallResult(CallResults.FAILED, "Type mismatch", this);
+    // }else{
+    // // Get
+    // Microsoft.SqlServer.Types.SqlGeography Geography = null;
+    // Geography = Microsoft.SqlServer.Types.SqlGeography.STPointFromText(new
+    // System.Data.SqlTypes.SqlString(this.Value), 4326);
+    // if (GeoLocation == null) {
+    // GeoLocation = new Geolocation();
+    // }
+    // GeoLocation.Latitude = Geography.Lat;
+    // GeoLocation.Longitude = Geography.Long;
+    //
+    // // return Success
+    // return CallResult.successCallResult;
+    // }
+    // }else{
+    // // return Failed; Type Mismatch
+    // return new CallResult(CallResults.FAILED, "Type mismatch", this);
+    // }
+    //
+    // }catch(Exception ex){
+    // // return Failed Error
+    // return new CallResult(CallResults.FAILED_ERROR, ex, this);
+    // }
+    // }
 
-    //TODO: GeocoordinateList type
-//    public CallResult GetTypedValue(ArrayList<Geolocation> GeoLocations){
-//        try{
-//            CoalesceFieldDefinition CFD = new CoalesceFieldDefinition();
-//            if (CFD.GetCoalesceFieldDataTypeForCoalesceType(this.DataType) == ECoalesceFieldDataTypes.GeocoordinateListType) {
-//                // Basic Check
-//                if (!(this.Value.StartsWith("MULTIPOINT"))) {
-//                    // return Failed; Type Mismatch
-//                    return new CallResult(CallResults.FAILED, "Type mismatch", this);
-//                }else{
-//                    // Get
-//                    ArrayList<Geolocation> TempGeoLocations = new ArrayList<Geolocation>();
-//                    Microsoft.SqlServer.Types.SqlGeography Geography = null;
-//
-//                    Geography = Microsoft.SqlServer.Types.SqlGeography.STMPointFromText(new System.Data.SqlTypes.SqlString(this.Value), 4326);
-//                    Dim geoPointCount = Geography.STNumGeometries();
-//                    for(int geoPointIndex = 1; geoPointIndex <= geoPointCount; geoPointCount++){
-//                        Microsoft.SqlServer.Types.SqlGeography geoPoint = Geography.STGeometryN(geoPointIndex);
-//                        TempGeoLocations.Add(new Geolocation(geoPoint.Lat, geoPoint.Long));
-//                    }
-//
-//                    // All points were valid so return the locations array
-//                    GeoLocations = TempGeoLocations;
-//
-//                    // return Success
-//                    return CallResult.successCallResult;
-//                }
-//                // Get
-//            }else{
-//                // return Failed; Type Mismatch
-//                return new CallResult(CallResults.FAILED, "Type mismatch", this);
-//            }
-//
-//        }catch(Exception ex){
-//            // return Failed Error
-//            return new CallResult(CallResults.FAILED_ERROR, ex, this);
-//        }
-//    }
+    // TODO: GeocoordinateList type
+    // public CallResult GetTypedValue(ArrayList<Geolocation> GeoLocations){
+    // try{
+    // CoalesceFieldDefinition CFD = new CoalesceFieldDefinition();
+    // if (CFD.GetCoalesceFieldDataTypeForCoalesceType(this.DataType) ==
+    // ECoalesceFieldDataTypes.GeocoordinateListType) {
+    // // Basic Check
+    // if (!(this.Value.StartsWith("MULTIPOINT"))) {
+    // // return Failed; Type Mismatch
+    // return new CallResult(CallResults.FAILED, "Type mismatch", this);
+    // }else{
+    // // Get
+    // ArrayList<Geolocation> TempGeoLocations = new ArrayList<Geolocation>();
+    // Microsoft.SqlServer.Types.SqlGeography Geography = null;
+    //
+    // Geography = Microsoft.SqlServer.Types.SqlGeography.STMPointFromText(new
+    // System.Data.SqlTypes.SqlString(this.Value), 4326);
+    // Dim geoPointCount = Geography.STNumGeometries();
+    // for(int geoPointIndex = 1; geoPointIndex <= geoPointCount;
+    // geoPointCount++){
+    // Microsoft.SqlServer.Types.SqlGeography geoPoint =
+    // Geography.STGeometryN(geoPointIndex);
+    // TempGeoLocations.Add(new Geolocation(geoPoint.Lat, geoPoint.Long));
+    // }
+    //
+    // // All points were valid so return the locations array
+    // GeoLocations = TempGeoLocations;
+    //
+    // // return Success
+    // return CallResult.successCallResult;
+    // }
+    // // Get
+    // }else{
+    // // return Failed; Type Mismatch
+    // return new CallResult(CallResults.FAILED, "Type mismatch", this);
+    // }
+    //
+    // }catch(Exception ex){
+    // // return Failed Error
+    // return new CallResult(CallResults.FAILED_ERROR, ex, this);
+    // }
+    // }
 
     public CallResult GetTypedValue(byte[] bytes)
     {
@@ -1166,7 +1131,7 @@ public class XsdField extends XsdDataObject {
     public CallResult GetHistoryRecord(String historyKey, XsdFieldHistory historyRecord)
     {
         try {
-            historyRecord = (XsdFieldHistory)_childDataObjects.get(historyKey);
+            historyRecord = (XsdFieldHistory) _childDataObjects.get(historyKey);
 
             return CallResult.successCallResult;
 
@@ -1176,9 +1141,9 @@ public class XsdField extends XsdDataObject {
 
     }
 
-    // -----------------------------------------------------------------------// 
+    // -----------------------------------------------------------------------//
     // protected Methods
-    // -----------------------------------------------------------------------// 
+    // -----------------------------------------------------------------------//
 
     protected CallResult SetChanged(Object oldValue, Object newValue)
     {
@@ -1202,10 +1167,10 @@ public class XsdField extends XsdDataObject {
                         // Don't Create History Entry for these types
                         break;
                     default:
-                        
+
                         // Does LastModified = DateCreated?
                         if (GetLastModified().compareTo(GetDateCreated()) != 0) {
-                            
+
                             // No; Create History Entry
                             XsdFieldHistory fieldHistory = new XsdFieldHistory();
                             rst = XsdFieldHistory.Create(this, fieldHistory);
@@ -1259,15 +1224,14 @@ public class XsdField extends XsdDataObject {
                     }
                 }
 
-                
                 // Change Values
-                if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) == ECoalesceFieldDataTypes.DateTimeType &&
-                    !StringHelper.IsNullOrEmpty(value)) {
-                    
+                if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) == ECoalesceFieldDataTypes.DateTimeType
+                && !StringHelper.IsNullOrEmpty(value)) {
+
                     DateTime valueDate = JodaDateTimeHelper.FromXmlDateTimeUTC(value);
 
                     SetTypedValue(valueDate);
-                    
+
                 } else {
                     SetValue(value);
                 }
@@ -1275,7 +1239,7 @@ public class XsdField extends XsdDataObject {
                 SetClassificationMarking(marking);
                 SetModifiedBy(user);
                 SetModifiedByIP(ip);
-                
+
                 // Set LastModified
                 DateTime utcNow = JodaDateTimeHelper.NowInUtc();
                 if (utcNow != null) SetLastModified(utcNow);
@@ -1289,59 +1253,47 @@ public class XsdField extends XsdDataObject {
         }
     }
 
-    //TODO: Unused.  Attribute set should be handled by each property.
-   /* protected CallResult ChangeDate(String AttributeName, Date Value) {
-        try{
-            CallResult rst;
+    // TODO: Unused. Attribute set should be handled by each property.
+    /*
+     * protected CallResult ChangeDate(String AttributeName, Date Value) { try{
+     * CallResult rst;
+     * 
+     * //TODO: XMLHelper // Does the new value differ from the existing? // if
+     * (_XmlHelper.GetAttribute(this._DataObjectNode, AttributeName) != Value) {
+     * 
+     * // Yes; should we create a FieldHistory entry to reflect the change? //
+     * We create FieldHistory entry if History is not Suspended; OR if DataType
+     * is binary; OR if DateCreated=LastModified and Value is unset if
+     * (!GetSuspendHistory()) {
+     * 
+     * switch (this.DataType.toUpperCase()){
+     * 
+     * case "BINARY": case "FILE": // Don't Create History Entry for these types
+     * break; default: // Does LastModified = DateCreated? if
+     * (this.LastModified.compareTo(this.DateCreated) != 0) { // No; Create
+     * History Entry CoalesceFieldHistory FieldHistory = null;
+     * CoalesceFieldHistory CFH = new CoalesceFieldHistory(); rst =
+     * CFH.Create(this, FieldHistory); if (!(rst.getIsSuccess())) return rst; }
+     * break; }
+     * 
+     * }
+     * 
+     * // Change Attribute Value using the Date Method rst =
+     * _XmlHelper.SetAttributeAsDate(this._DataObjectDocument,
+     * this._DataObjectNode, AttributeName, Value); if (!(rst.getIsSuccess()))
+     * return rst;
+     * 
+     * // Set LastModified Date UTCDate = new Date();
+     * DateTimeHelper.ConvertDateToGMT(UTCDate); this.LastModified = UTCDate;
+     * 
+     * // }
+     * 
+     * // return Success return CallResult.successCallResult;
+     * 
+     * }catch(Exception ex){ // return Failed Error return new
+     * CallResult(CallResults.FAILED_ERROR, ex, this); } }
+     */
 
-            //TODO: XMLHelper
-            // Does the new value differ from the existing?
-//            if (_XmlHelper.GetAttribute(this._DataObjectNode, AttributeName) != Value) {
-
-                // Yes; should we create a FieldHistory entry to reflect the change?
-                // We create FieldHistory entry if History is not Suspended; OR if DataType is binary; OR if DateCreated=LastModified and Value is unset
-                if (!GetSuspendHistory()) {
-
-                    switch (this.DataType.toUpperCase()){
-
-                        case "BINARY":
-                        case "FILE":
-                            // Don't Create History Entry for these types
-                            break;
-                        default:
-                            // Does LastModified = DateCreated?
-                            if (this.LastModified.compareTo(this.DateCreated) != 0) {
-                                // No; Create History Entry
-                                CoalesceFieldHistory FieldHistory = null;
-                                CoalesceFieldHistory CFH = new CoalesceFieldHistory();
-                                rst = CFH.Create(this, FieldHistory);
-                                if (!(rst.getIsSuccess())) return rst;
-                            }
-                            break;
-                    }
-
-                }
-
-                // Change Attribute Value using the Date Method
-                rst = _XmlHelper.SetAttributeAsDate(this._DataObjectDocument, this._DataObjectNode, AttributeName, Value);
-                if (!(rst.getIsSuccess())) return rst;
-
-                // Set LastModified
-                Date UTCDate = new Date();
-                DateTimeHelper.ConvertDateToGMT(UTCDate);
-                this.LastModified = UTCDate;
-
-//            }
-
-            // return Success
-            return CallResult.successCallResult;
-
-        }catch(Exception ex){
-            // return Failed Error
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
-        }
-    }*/
-    
     protected CallResult GetObjectStatus(String status)
     {
         try {
@@ -1365,16 +1317,10 @@ public class XsdField extends XsdDataObject {
             return new CallResult(CallResults.FAILED_ERROR, ex, this);
         }
     }
-        
-    protected List<Fieldhistory> GetEntityFieldHistories() {
-    	return _entityField.getFieldhist();
-//    	List<Fieldhistory> FieldHistoryList = new ArrayList<Fieldhistory>();
-//    	
-//    	while (_entityField.getFieldhistory().iterator().hasNext()){
-//    		Fieldhistory HistoryItem = (Fieldhistory) _entityField.getFieldhistory().iterator().next();
-//    		FieldHistoryList.add(HistoryItem);
-//    	}
-//    	return FieldHistoryList;
+
+    protected List<Fieldhistory> GetEntityFieldHistories() throws Exception
+    {
+         return _entityField.getFieldhist();
     }
 
 }
