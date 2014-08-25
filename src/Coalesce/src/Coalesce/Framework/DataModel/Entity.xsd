@@ -3,8 +3,8 @@
   <xs:element name="entity">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="linkagesection" minOccurs="1" maxOccurs="1" />
-        <xs:element name="section" minOccurs="0" maxOccurs="unbounded" />
+        <xs:element ref="linkagesec" minOccurs="1" maxOccurs="1" />
+        <xs:element ref="sec" minOccurs="0" maxOccurs="unbounded" />
 	  </xs:sequence>
       <xs:attribute name="key" type="xs:string" />
       <xs:attribute name="datecreated" type="xs:date" />
@@ -19,8 +19,6 @@
     </xs:complexType>
   </xs:element>
   
-<!--
-	could not have element="linkagesec", and so on for others.
   <xs:element name="linkagesec" type="linkagesection"/>
   <xs:element name="link" type="linkage"/>
   <xs:element name="sec" type="section"/>
@@ -29,12 +27,10 @@
   <xs:element name="rec" type="record"/>
   <xs:element name="fld" type="field"/>
   <xs:element name="fieldhist" type="fieldhistory"/>
-  -->
   
-  <xs:element name="linkagesection">
-    <xs:complexType>
+  <xs:complexType name="linkagesection">
 		<xs:sequence>
-			<xs:element name="linkage" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element ref="link" minOccurs="0" maxOccurs="unbounded" />
 		</xs:sequence>
 		<xs:attribute name="key" type="xs:string" />
 		<xs:attribute name="datecreated" type="xs:date" />
@@ -43,10 +39,8 @@
 		<xs:attribute name="noindex" type="xs:string" />
 		<xs:attribute name="status" type="xs:string" />
     </xs:complexType>
-  </xs:element>
   
-  <xs:element name="linkage">
-    <xs:complexType>
+	<xs:complexType name="linkage">
 	  <xs:attribute name="key" type="xs:string" />
 	  <xs:attribute name="datecreated" type="xs:date" />
 	  <xs:attribute name="lastmodified" type="xs:date" />
@@ -65,12 +59,10 @@
 	  <xs:attribute name="inputlang" type="xs:string" />
 	  <xs:attribute name="status" type="xs:string" />
 	</xs:complexType>
-  </xs:element>
 
-  <xs:element name="section">
-    <xs:complexType>
+  <xs:complexType name="section">
 		<xs:sequence>
-			<xs:element name="recordset" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element ref="recset" minOccurs="0" maxOccurs="unbounded" />
 		</xs:sequence>
 		<xs:attribute name="key" type="xs:string" />
 		<xs:attribute name="datecreated" type="xs:date" />
@@ -79,13 +71,11 @@
 		<xs:attribute name="noindex" type="xs:string" />
 		<xs:attribute name="status" type="xs:string" />
     </xs:complexType>
-  </xs:element>
 
-  <xs:element name="recordset">
-    <xs:complexType>
+  <xs:complexType name="recordset">
 		<xs:sequence>
-			<xs:element name="fielddefinition" minOccurs="0" maxOccurs="unbounded" />
-			<xs:element name="record" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element ref="fielddef" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element ref="rec" minOccurs="0" maxOccurs="unbounded" />
 		</xs:sequence>
 	  <xs:attribute name="key" type="xs:string" />
 	  <xs:attribute name="datecreated" type="xs:date" />
@@ -95,10 +85,8 @@
 	  <xs:attribute name="maxrecords" type="xs:string" />
 	  <xs:attribute name="status" type="xs:string" />
     </xs:complexType>
-  </xs:element>
 	
-  <xs:element name="fielddefinition">
-    <xs:complexType>
+	<xs:complexType name="fielddefinition">
 		<xs:attribute name="key" type="xs:string" />
 		<xs:attribute name="datecreated" type="xs:date" />
 		<xs:attribute name="lastmodified" type="xs:date" />
@@ -109,12 +97,10 @@
 		<xs:attribute name="datatype" type="xs:string" />
 		<xs:attribute name="label" type="xs:string" />
 	</xs:complexType>
-  </xs:element>
 
-  <xs:element name="record">
-    <xs:complexType>
+  <xs:complexType name="record">
 		<xs:sequence>
-			<xs:element name="field" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element ref="fld" minOccurs="0" maxOccurs="unbounded" />
 		</xs:sequence>
 		<xs:attribute name="key" type="xs:string" />
 		<xs:attribute name="datecreated" type="xs:date" />
@@ -122,12 +108,10 @@
 		<xs:attribute name="status" type="xs:string" />
 		<xs:attribute name="name" type="xs:string" />
     </xs:complexType>
-  </xs:element>
   
-  <xs:element name="field">
-    <xs:complexType>
+  <xs:complexType name="field">
 		<xs:sequence>
-			<xs:element name="fieldhistory" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element ref="fieldhist" minOccurs="0" maxOccurs="unbounded" />
 		</xs:sequence>
 	  <xs:attribute name="key" type="xs:string" />
 	  <xs:attribute name="datecreated" type="xs:date" />
@@ -147,10 +131,8 @@
 	  <xs:attribute name="size" type="xs:string" />
 	  <xs:attribute name="hash" type="xs:string" />
     </xs:complexType>
-  </xs:element>
   
-  <xs:element name="fieldhistory">
-    <xs:complexType>
+  <xs:complexType name="fieldhistory">
 	  <xs:attribute name="key" type="xs:string" />
 	  <xs:attribute name="datecreated" type="xs:date" />
 	  <xs:attribute name="lastmodified" type="xs:date" />
@@ -169,7 +151,6 @@
 	  <xs:attribute name="size" type="xs:string" />
 	  <xs:attribute name="hash" type="xs:string" />
     </xs:complexType>
-  </xs:element>
   
   <xs:element name="NewDataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true">
     <xs:complexType>

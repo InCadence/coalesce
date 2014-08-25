@@ -79,29 +79,29 @@ public class XsdField extends XsdDataObject {
             _parent = parent;
 
             _entityField = field;
-            _entityField.getFieldhistory();
+            _entityField.getFieldhist();
             //if (_entityField.fieldhistory == null) _entityField.fieldhistory = new ArrayList<Fieldhistory>();
 
-			List<Object> fh = _entityField.getFieldhistory();
-			while (fh.iterator().hasNext()){
-				Fieldhistory entityFieldHistory = (Fieldhistory)fh.iterator().next();
-				
-				XsdFieldHistory fieldHistory = new XsdFieldHistory();
-				fieldHistory.Initialize(this, entityFieldHistory);
-
-				// Add to Child Collection
-				_childDataObjects.put(fieldHistory.GetKey(), fieldHistory);
-			}
-			
-			
-//			for (Fieldhistory entityFieldHistory : _entityField.fieldhistory) {
-//
+//			List<Object> fh = _entityField.getFieldhistory();
+//			while (fh.iterator().hasNext()){
+//				Fieldhistory entityFieldHistory = (Fieldhistory)fh.iterator().next();
+//				
 //				XsdFieldHistory fieldHistory = new XsdFieldHistory();
 //				fieldHistory.Initialize(this, entityFieldHistory);
 //
 //				// Add to Child Collection
 //				_childDataObjects.put(fieldHistory.GetKey(), fieldHistory);
 //			}
+			
+			
+			for (Fieldhistory entityFieldHistory : _entityField.getFieldhist()) {
+
+				XsdFieldHistory fieldHistory = new XsdFieldHistory();
+				fieldHistory.Initialize(this, entityFieldHistory);
+
+				// Add to Child Collection
+				_childDataObjects.put(fieldHistory.GetKey(), fieldHistory);
+			}
 
             return CallResult.successCallResult;
 
@@ -1367,13 +1367,14 @@ public class XsdField extends XsdDataObject {
     }
         
     protected List<Fieldhistory> GetEntityFieldHistories() {
-    	List<Fieldhistory> FieldHistoryList = new ArrayList<Fieldhistory>();
-    	
-    	while (_entityField.getFieldhistory().iterator().hasNext()){
-    		Fieldhistory HistoryItem = (Fieldhistory) _entityField.getFieldhistory().iterator().next();
-    		FieldHistoryList.add(HistoryItem);
-    	}
-    	return FieldHistoryList;
+    	return _entityField.getFieldhist();
+//    	List<Fieldhistory> FieldHistoryList = new ArrayList<Fieldhistory>();
+//    	
+//    	while (_entityField.getFieldhistory().iterator().hasNext()){
+//    		Fieldhistory HistoryItem = (Fieldhistory) _entityField.getFieldhistory().iterator().next();
+//    		FieldHistoryList.add(HistoryItem);
+//    	}
+//    	return FieldHistoryList;
     }
 
 }

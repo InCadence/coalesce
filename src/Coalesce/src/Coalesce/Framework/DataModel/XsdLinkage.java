@@ -20,7 +20,7 @@ public class XsdLinkage extends XsdDataObject {
 			if (newLinkage == null) newLinkage = new XsdLinkage();
 			
 			Linkage entityLinkage = new Linkage();
-			parent.GetEntityLinkageSection().getLinkage().add(entityLinkage);
+			parent.GetEntityLinkageSection().getLink().add(entityLinkage);
 
 			rst = newLinkage.Initialize(parent, entityLinkage);
 			if (!rst.getIsSuccess()) return rst;

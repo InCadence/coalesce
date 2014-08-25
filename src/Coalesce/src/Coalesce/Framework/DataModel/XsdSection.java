@@ -138,21 +138,10 @@ public class XsdSection extends XsdDataObject {
             
             rst = InitializeEntity();
             
-            List<Object> Recset = _entitySection.getRecordset();
-            while (Recset.iterator().hasNext()){
-            	Recordset childRecordSet = (Recordset) Recset.iterator().next();
-            	
-            	XsdRecordset newRecordSet = new XsdRecordset();
-            	rst = newRecordSet.Initialize(this, childRecordSet);
-            	if (!rst.getIsSuccess()) continue;
-            	
-            	if (!_childDataObjects.containsKey(newRecordSet.GetKey())) {
-            		_childDataObjects.put(newRecordSet.GetKey(), newRecordSet);
-            	}
-            }
-
-//            for (Recordset childRecordSet : _entitySection.recordset) {
-//	            
+//            List<Object> Recset = _entitySection.getRecordset();
+//            while (Recset.iterator().hasNext()){
+//            	Recordset childRecordSet = (Recordset) Recset.iterator().next();
+//            	
 //            	XsdRecordset newRecordSet = new XsdRecordset();
 //            	rst = newRecordSet.Initialize(this, childRecordSet);
 //            	if (!rst.getIsSuccess()) continue;
@@ -161,6 +150,17 @@ public class XsdSection extends XsdDataObject {
 //            		_childDataObjects.put(newRecordSet.GetKey(), newRecordSet);
 //            	}
 //            }
+
+            for (Recordset childRecordSet : _entitySection.getRecset()) {
+	            
+            	XsdRecordset newRecordSet = new XsdRecordset();
+            	rst = newRecordSet.Initialize(this, childRecordSet);
+            	if (!rst.getIsSuccess()) continue;
+            	
+            	if (!_childDataObjects.containsKey(newRecordSet.GetKey())) {
+            		_childDataObjects.put(newRecordSet.GetKey(), newRecordSet);
+            	}
+            }
 
             // TODO: Need to add another loop child Sections if they are added
 
@@ -331,13 +331,14 @@ public class XsdSection extends XsdDataObject {
     }
     
     protected List<Recordset> GetEntityRecordSets() {
-    	List<Recordset> RecordsetList = new ArrayList<Recordset>();
-    	
-    	while (_entitySection.getRecordset().iterator().hasNext()){
-    		Recordset FieldItem = (Recordset) _entitySection.getRecordset().iterator().next();
-    		RecordsetList.add(FieldItem);
-    	}
-    	return RecordsetList;
+    	return _entitySection.getRecset();
+//    	List<Recordset> RecordsetList = new ArrayList<Recordset>();
+//    	
+//    	while (_entitySection.getRecordset().iterator().hasNext()){
+//    		Recordset FieldItem = (Recordset) _entitySection.getRecordset().iterator().next();
+//    		RecordsetList.add(FieldItem);
+//    	}
+//    	return RecordsetList;
     }
 
 }

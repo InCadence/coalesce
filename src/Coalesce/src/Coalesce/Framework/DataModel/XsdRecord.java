@@ -64,23 +64,23 @@ public class XsdRecord extends XsdDataObject {
 
 			_entityRecord = record;
 
-			List<Object> Fields = record.getField();
-			while (Fields.iterator().hasNext()){
-				Field entityField = (Field) Fields.iterator().next();
-				XsdField newField = new XsdField();
-				rst = newField.Initialize(this, entityField);
-
-				// Add to Child Collection
-				_childDataObjects.put(newField.GetKey(), newField);
-			}
-
-//			for (Field entityField : record.field) {
+//			List<Object> Fields = record.getField();
+//			while (Fields.iterator().hasNext()){
+//				Field entityField = (Field) Fields.iterator().next();
 //				XsdField newField = new XsdField();
 //				rst = newField.Initialize(this, entityField);
 //
 //				// Add to Child Collection
 //				_childDataObjects.put(newField.GetKey(), newField);
 //			}
+
+			for (Field entityField : record.getFld()) {
+				XsdField newField = new XsdField();
+				rst = newField.Initialize(this, entityField);
+
+				// Add to Child Collection
+				_childDataObjects.put(newField.GetKey(), newField);
+			}
 
 			// Add to Parent Collections (if we're Active)
 			if (GetStatus() == ECoalesceDataObjectStatus.ACTIVE) {
@@ -673,13 +673,14 @@ public class XsdRecord extends XsdDataObject {
     }
     
     protected List<Field> GetEntityFields() {
-    	List<Field> FieldList = new ArrayList<Field>();
-    	
-    	while (_entityRecord.getField().iterator().hasNext()){
-    		Field FieldItem = (Field) _entityRecord.getField().iterator().next();
-    		FieldList.add(FieldItem);
-    	}
-    	return FieldList;
+    	return _entityRecord.getFld();
+//    	List<Field> FieldList = new ArrayList<Field>();
+//    	
+//    	while (_entityRecord.getField().iterator().hasNext()){
+//    		Field FieldItem = (Field) _entityRecord.getField().iterator().next();
+//    		FieldList.add(FieldItem);
+//    	}
+//    	return FieldList;
     }
     
 }

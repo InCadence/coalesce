@@ -67,21 +67,10 @@ public class XsdLinkageSection extends XsdDataObject {
 			_parent = parent;
 			_entityLinkageSection = parent.GetEntityLinkageSection();
 
-			List<Object> Linkages = _entityLinkageSection.getLinkage();
-			while (Linkages.iterator().hasNext()){
-				Linkage childLinkage = (Linkage)Linkages.iterator().next();
-				
-				XsdLinkage newLinkage = new XsdLinkage();
-				rst = newLinkage.Initialize(this, childLinkage);
-				if (!rst.getIsSuccess()) continue;
-
-				if (!_childDataObjects.containsKey(newLinkage.GetKey())) {
-					_childDataObjects.put(newLinkage.GetKey(), newLinkage);
-				}
-			}
-
-//			for (Linkage childLinkage : _entityLinkageSection.linkage) {
-//
+//			List<Object> Linkages = _entityLinkageSection.getLinkage();
+//			while (Linkages.iterator().hasNext()){
+//				Linkage childLinkage = (Linkage)Linkages.iterator().next();
+//				
 //				XsdLinkage newLinkage = new XsdLinkage();
 //				rst = newLinkage.Initialize(this, childLinkage);
 //				if (!rst.getIsSuccess()) continue;
@@ -90,6 +79,17 @@ public class XsdLinkageSection extends XsdDataObject {
 //					_childDataObjects.put(newLinkage.GetKey(), newLinkage);
 //				}
 //			}
+
+			for (Linkage childLinkage : _entityLinkageSection.getLink()) {
+
+				XsdLinkage newLinkage = new XsdLinkage();
+				rst = newLinkage.Initialize(this, childLinkage);
+				if (!rst.getIsSuccess()) continue;
+
+				if (!_childDataObjects.containsKey(newLinkage.GetKey())) {
+					_childDataObjects.put(newLinkage.GetKey(), newLinkage);
+				}
+			}
 
 			return CallResult.successCallResult;
 

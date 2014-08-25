@@ -142,8 +142,9 @@ public class XsdEntity extends XsdDataObject {
             CallResult rst;
 
             _entity = new Entity();
-            _entity.setLinkagesection(new Linkagesection());
-            _entity.getSection();
+            _entity.setLinkagesec(new Linkagesection());
+            //_entity.sec = new ArrayList(Section);
+            _entity.getSec();
             
             rst = InitializeEntity();
             if (!rst.getIsSuccess()) return rst;
@@ -168,25 +169,25 @@ public class XsdEntity extends XsdDataObject {
     		
     		_childDataObjects.put(linkageSection.GetKey(), linkageSection);
     		
-    		List<Object> Sections = _entity.getSection();
-    		while (Sections.iterator().hasNext()){
-    			Section entitySection = (Section) Sections.iterator().next();
-    			
-	            XsdSection section = new XsdSection();
-	            rst = section.Initialize(this, entitySection);
-	            if (!rst.getIsSuccess()) return rst;
-	            
-	            _childDataObjects.put(section.GetKey(), section);
-    		}
-    		
-//    		for (Section entitySection : _entity.section) {
+    		List<Section> Sections = _entity.getSec();
+//    		while (Sections.iterator().hasNext()){
+//    			Section entitySection = (Section) Sections.iterator().next();
+//    			
 //	            XsdSection section = new XsdSection();
 //	            rst = section.Initialize(this, entitySection);
 //	            if (!rst.getIsSuccess()) return rst;
 //	            
 //	            _childDataObjects.put(section.GetKey(), section);
-//	            
-//            }
+//    		}
+    		
+    		for (Section entitySection : _entity.getSec()) {
+	            XsdSection section = new XsdSection();
+	            rst = section.Initialize(this, entitySection);
+	            if (!rst.getIsSuccess()) return rst;
+	            
+	            _childDataObjects.put(section.GetKey(), section);
+	            
+            }
     		
     		return CallResult.successCallResult;
     		    		
@@ -405,23 +406,23 @@ public class XsdEntity extends XsdDataObject {
             XsdLinkageSection linkageSection = new XsdLinkageSection();
             linkageSection.Initialize(this);
             
-            Linkagesection Linksection = (Linkagesection) _entity.getLinkagesection();
-            List<Object> Linkages = Linksection.getLinkage();
-            while (Linkages.iterator().hasNext()){
-            	Linkage entityLinkage = (Linkage) Linkages.iterator().next();
-            	
-                XsdLinkage linkage = new XsdLinkage();
-                rst = linkage.Initialize(linkageSection, entityLinkage);
-
-                if (rst.getIsSuccess()) d.put(linkage.GetKey(), linkage);
-            }
-            
-//            for (Linkage entityLinkage : _entity.linkagesection.linkage) {
+//            Linkagesection Linksection = (Linkagesection) _entity.getLinkagesection();
+//            List<Object> Linkages = Linksection.getLinkage();
+//            while (Linkages.iterator().hasNext()){
+//            	Linkage entityLinkage = (Linkage) Linkages.iterator().next();
+//            	
 //                XsdLinkage linkage = new XsdLinkage();
 //                rst = linkage.Initialize(linkageSection, entityLinkage);
 //
 //                if (rst.getIsSuccess()) d.put(linkage.GetKey(), linkage);
 //            }
+            
+            for (Linkage entityLinkage : _entity.getLinkagesec().getLink()) {
+                XsdLinkage linkage = new XsdLinkage();
+                rst = linkage.Initialize(linkageSection, entityLinkage);
+
+                if (rst.getIsSuccess()) d.put(linkage.GetKey(), linkage);
+            }
 
             return d;
 
@@ -932,18 +933,20 @@ public class XsdEntity extends XsdDataObject {
 
     protected Linkagesection GetEntityLinkageSection()
     {
-    	Linkagesection SectionList = (Linkagesection) _entity.getLinkagesection();
-    	return SectionList;
+    	return _entity.getLinkagesec();
+//    	Linkagesection SectionList = (Linkagesection) _entity.getLinkagesection();
+//    	return SectionList;
     }
 
     protected List<Section> GetEntitySections()
     {
-    	List<Section> SectionList = new ArrayList<Section>();
-    	
-    	while (_entity.getSection().iterator().hasNext()){
-    		Section SectionItem = (Section) _entity.getSection().iterator().next();
-    		SectionList.add(SectionItem);
-    	}
-    	return SectionList;
+    	return _entity.getSec();
+//    	List<Section> SectionList = new ArrayList<Section>();
+//    	
+//    	while (_entity.getSection().iterator().hasNext()){
+//    		Section SectionItem = (Section) _entity.getSection().iterator().next();
+//    		SectionList.add(SectionItem);
+//    	}
+//    	return SectionList;
     }
 }
