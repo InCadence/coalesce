@@ -2,6 +2,12 @@ package Coalesce.Common.Classification;
 
 import static org.junit.Assert.*;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 import org.apache.commons.lang.NullArgumentException;
 import org.junit.Test;
 
@@ -151,4 +157,114 @@ public class ISO3166CountryTest {
         assertEquals(country, otherCountry);
         
     }
+    
+    @Test
+    public void CountrySetAlpha2Test() {
+        
+        ISO3166Country country = ISO3166Country.USA();
+
+        country.SetAlpha2("Testing2");
+
+        assertEquals("Testing2", country.GetAlpha2());
+        assertEquals("USA", country.GetAlpha3());
+        assertEquals("UNITED STATES", country.GetName());
+    }
+    
+    @Test(expected=NullArgumentException.class)
+    public void CountrySetAlpha2NullTest() {
+        
+        ISO3166Country country = ISO3166Country.USA();
+
+        country.SetAlpha2(null);
+        
+    }
+ 
+    @Test
+    public void CountrySetAlpha3Test() {
+        
+        ISO3166Country country = ISO3166Country.USA();
+
+        country.SetAlpha3("Testing3");
+
+        assertEquals("US", country.GetAlpha2());
+        assertEquals("Testing3", country.GetAlpha3());
+        assertEquals("UNITED STATES", country.GetName());
+    }
+    
+    @Test(expected=NullArgumentException.class)
+    public void CountrySetAlpha3NullTest() {
+        
+        ISO3166Country country = ISO3166Country.USA();
+
+        country.SetAlpha3(null);
+        
+    }
+    
+    @Test
+    public void CountrySetNameTest() {
+        
+        ISO3166Country country = ISO3166Country.USA();
+
+        country.SetName("Testing3");
+
+        assertEquals("US", country.GetAlpha2());
+        assertEquals("USA", country.GetAlpha3());
+        assertEquals("Testing3", country.GetName());
+    }
+    
+    @Test(expected=NullArgumentException.class)
+    public void CountrySetNameNullTest() {
+        
+        ISO3166Country country = ISO3166Country.USA();
+
+        country.SetName(null);
+        
+    }
+    
+    @Test()
+    public void CountrySerializeDeserializeTest() throws IOException, ClassNotFoundException {
+        
+        ISO3166Country country = new ISO3166Country("AF", "AFG", "AFGHANISTAN");
+        
+        ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+        ObjectOutputStream out = new ObjectOutputStream(byteOut);
+        out.writeObject(country);
+        out.close();
+        byteOut.close();
+        
+        ISO3166Country desCountry = null;
+        ByteArrayInputStream byteIn = new ByteArrayInputStream(byteOut.toByteArray());
+        ObjectInputStream in = new ObjectInputStream(byteIn);
+        desCountry = (ISO3166Country)in.readObject();
+        in.close();
+        byteIn.close();
+        
+        assertEquals("AF", desCountry.GetAlpha2());
+        assertEquals("AFG", desCountry.GetAlpha3());
+        assertEquals("AFGHANISTAN", desCountry.GetName());
+    }
+    
+    @Test()
+    public void CountrySerializeDeserializeBlankCountryTest() throws IOException, ClassNotFoundException {
+        
+        ISO3166Country country = new ISO3166Country();
+        
+        ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+        ObjectOutputStream out = new ObjectOutputStream(byteOut);
+        out.writeObject(country);
+        out.close();
+        byteOut.close();
+        
+        ISO3166Country desCountry = null;
+        ByteArrayInputStream byteIn = new ByteArrayInputStream(byteOut.toByteArray());
+        ObjectInputStream in = new ObjectInputStream(byteIn);
+        desCountry = (ISO3166Country)in.readObject();
+        in.close();
+        byteIn.close();
+        
+        assertNull(desCountry.GetAlpha2());
+        assertNull(desCountry.GetAlpha3());
+        assertNull(desCountry.GetName());
+    }
+    
 }

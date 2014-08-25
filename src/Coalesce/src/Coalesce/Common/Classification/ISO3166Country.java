@@ -1,7 +1,5 @@
 package Coalesce.Common.Classification;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.Serializable;
 import org.apache.commons.lang.NullArgumentException;
 
@@ -60,34 +58,27 @@ public class ISO3166Country implements Serializable, Comparable<ISO3166Country> 
 		return _alpha2;
 	}
 	
-	public void SetAlpha2(String value) {
-    	if (value == null) throw new NullArgumentException("value");
-		_alpha2 = value;
+	public void SetAlpha2(String alpha2) {
+    	if (alpha2 == null) throw new NullArgumentException("alpha2");
+		_alpha2 = alpha2;
 	}
 	
 	public String GetAlpha3() {
 		return _alpha3;
 	}
 	
-	public void SetAlpha3(String value) {
-    	if (value == null) throw new NullArgumentException("value");
-		_alpha3 = value;
+	public void SetAlpha3(String alhpa3) {
+    	if (alhpa3 == null) throw new NullArgumentException("alhpa3");
+		_alpha3 = alhpa3;
 	}
 	
     public String GetName() {
     	return _name;
     }
     
-    public void SetName(String value) {
-    	if (value == null) throw new NullArgumentException("value");
-    	_name = value;
+    public void SetName(String name) {
+    	if (name == null) throw new NullArgumentException("name");
+    	_name = name;
     }
     
-    private void readObject(ObjectInputStream inputStream) throws ClassNotFoundException, IOException {
-    	
-    	inputStream.defaultReadObject();
-    	
-    	// TODO: need to finish processing
-    }
-
 }

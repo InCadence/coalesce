@@ -43,10 +43,9 @@ public class EntityTest {
         
         
         Linkagesection linkageSection = new Linkagesection();
-        entity.setLinkagesection(linkageSection);
+        entity.setLinkagesec(linkageSection);
         
-        // TODO: Remove Object
-        List<Object> linkageList = linkageSection.getLinkage();
+        List<Linkage> linkageList = linkageSection.getLink();
         
         Linkage linkage = new Linkage();
                 
