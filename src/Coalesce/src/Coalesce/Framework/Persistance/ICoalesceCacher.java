@@ -1,18 +1,17 @@
 package Coalesce.Framework.Persistance;
 
-import Coalesce.Framework.GeneratedJAXB.*;
-import unity.core.runtime.CallResult;
+import Coalesce.Framework.DataModel.XsdEntity;
 
 public interface ICoalesceCacher {
 
-    public CallResult ContainsEntity(String Key);
+    public boolean ContainsEntity(String Key);
 
-    public CallResult StoreEntity(Entity entity, boolean IsModified);
-    public CallResult RetrieveEntity(String Key, Entity entity);
-    public CallResult RemoveEntity(String Key);
+    public boolean StoreEntity(XsdEntity entity);
+    public XsdEntity RetrieveEntity(String Key);
+    public boolean RemoveEntity(String Key);
 
-    public CallResult EntityCount(long Count);
-    public CallResult ClearCache();
+    public long EntityCount();
+    public boolean ClearCache();
 
     public  ECoalesceCacheStates getState();
     public boolean getSupportsDelayedSave();

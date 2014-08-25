@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 
+import Coalesce.Framework.DataModel.XsdEntity;
 import Coalesce.Framework.GeneratedJAXB.*;
 import unity.core.runtime.CallResult;
 
@@ -17,14 +18,14 @@ public interface ICoalescePersistor {
 		
 	}
 	
-	public boolean Initialize(ICoalesceEncrypter Encrypter);
+	public boolean Initialize(ICoalesceCacher Cacher);
 	
 	public boolean SetEntity(Entity entity);
 	
 	// Get Entity
-	public Entity GetEntity(String Key);
-	public Entity GetEntity(String EntityId, String EntityIdType);
-	public Entity GetEntity(String Name, String EntityId, String EntityIdType);
+	public XsdEntity GetEntity(String Key);
+	public XsdEntity GetEntity(String EntityId, String EntityIdType);
+	public XsdEntity GetEntity(String Name, String EntityId, String EntityIdType);
 	
 	// Get Entity XML
 	public String GetEntityXml(String Key);
@@ -34,6 +35,14 @@ public interface ICoalescePersistor {
 	public Object GetFieldValue(String fieldKey);
 	public String GetXPath(String Key, String ObjectType, String EntityKey);
 	
+	public DateTime GetCoalesceDataObjectLastModified(String Key, String ObjectType);
+
+	public List<String> GetCoalesceEntityKeysForEntityId(String EntityId, String EntityIdType, String EntityName, String EntitySource);
+	
+	public EntityMetaData GetCoalesceEntityIdAndTypeForKey(String Key);
+	
+	public byte[] GetBinaryArray(String BinaryFieldKey);
+
 	//Deprecated Functions
 	public CallResult PersistEntityTemplate(/*CoalesceEntityTemplate EntityTemplate*/);
 	
@@ -43,10 +52,4 @@ public interface ICoalescePersistor {
 	public String GetEntityTemplateKey(String Name, String Source, String Version);
 	public String GetEntityTemplateMetadata();
 		
-	public DateTime GetCoalesceDataObjectLastModified(String Key, String ObjectType);
-	public List<String> GetCoalesceEntityKeysForEntityId(String EntityId, String EntityIdType, String EntityName, String EntitySource);
-	public EntityMetaData GetCoalesceEntityIdAndTypeForKey(String Key);
-	public byte[] GetBinaryArray(String BinaryFieldKey);
-
-	
 }
