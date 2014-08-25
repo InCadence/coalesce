@@ -137,7 +137,7 @@ public class XsdSection extends XsdDataObject {
             
             rst = InitializeEntity();
 
-            for (Recordset childRecordSet : _entitySection.getRecset()) {
+            for (Recordset childRecordSet : _entitySection.getRecordsetNode()) {
 	            
             	XsdRecordset newRecordSet = new XsdRecordset();
             	rst = newRecordSet.Initialize(this, childRecordSet);
@@ -317,7 +317,7 @@ public class XsdSection extends XsdDataObject {
     }
     
     protected List<Recordset> GetEntityRecordSets() {
-    	return _entitySection.getRecset();
+    	return _entitySection.getRecordsetNode();
     }
 
 }

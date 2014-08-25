@@ -65,7 +65,7 @@ public class XsdLinkageSection extends XsdDataObject {
 			_parent = parent;
 			_entityLinkageSection = parent.GetEntityLinkageSection();
 
-			for (Linkage childLinkage : _entityLinkageSection.getLink()) {
+			for (Linkage childLinkage : _entityLinkageSection.getLinkageNode()) {
 
 				XsdLinkage newLinkage = new XsdLinkage();
 				rst = newLinkage.Initialize(this, childLinkage);

@@ -142,8 +142,8 @@ public class XsdEntity extends XsdDataObject {
             CallResult rst;
 
             _entity = new Entity();
-            _entity.setLinkagesec(new Linkagesection());
-            _entity.getSec();
+            _entity.setLinkagesectionNode(new Linkagesection());
+            _entity.getSectionNode();
             
             rst = InitializeEntity();
             if (!rst.getIsSuccess()) return rst;
@@ -168,7 +168,7 @@ public class XsdEntity extends XsdDataObject {
     		
     		_childDataObjects.put(linkageSection.GetKey(), linkageSection);
     		
-    		for (Section entitySection : _entity.getSec()) {
+    		for (Section entitySection : _entity.getSectionNode()) {
 	            XsdSection section = new XsdSection();
 	            rst = section.Initialize(this, entitySection);
 	            if (!rst.getIsSuccess()) return rst;
@@ -394,7 +394,7 @@ public class XsdEntity extends XsdDataObject {
             XsdLinkageSection linkageSection = new XsdLinkageSection();
             linkageSection.Initialize(this);
             
-            for (Linkage entityLinkage : _entity.getLinkagesec().getLink()) {
+            for (Linkage entityLinkage : _entity.getLinkagesectionNode().getLinkageNode()) {
                 XsdLinkage linkage = new XsdLinkage();
                 rst = linkage.Initialize(linkageSection, entityLinkage);
 
@@ -910,11 +910,11 @@ public class XsdEntity extends XsdDataObject {
 
     protected Linkagesection GetEntityLinkageSection()
     {
-    	return _entity.getLinkagesec();
+    	return _entity.getLinkagesectionNode();
     }
 
     protected List<Section> GetEntitySections()
     {
-    	return _entity.getSec();
+    	return _entity.getSectionNode();
     }
 }

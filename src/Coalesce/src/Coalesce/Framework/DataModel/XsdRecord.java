@@ -64,7 +64,7 @@ public class XsdRecord extends XsdDataObject {
 
 			_entityRecord = record;
 
-			for (Field entityField : record.getFld()) {
+			for (Field entityField : record.getFieldNode()) {
 				XsdField newField = new XsdField();
 				rst = newField.Initialize(this, entityField);
 
@@ -663,7 +663,7 @@ public class XsdRecord extends XsdDataObject {
     }
     
     protected List<Field> GetEntityFields() {
-    	return _entityRecord.getFld();
+    	return _entityRecord.getFieldNode();
     }
     
 }

@@ -82,7 +82,7 @@ public class XsdField extends XsdDataObject {
 
             _entityField = field;
 
-            for (Fieldhistory entityFieldHistory : _entityField.getFieldhist()) {
+            for (Fieldhistory entityFieldHistory : _entityField.getFieldhistoryNode()) {
             
                 XsdFieldHistory fieldHistory = new XsdFieldHistory();
                 fieldHistory.Initialize(this, entityFieldHistory);
@@ -1320,7 +1320,7 @@ public class XsdField extends XsdDataObject {
 
     protected List<Fieldhistory> GetEntityFieldHistories() throws Exception
     {
-         return _entityField.getFieldhist();
+         return _entityField.getFieldhistoryNode();
     }
 
 }

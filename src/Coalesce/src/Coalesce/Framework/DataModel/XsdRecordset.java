@@ -90,13 +90,13 @@ public class XsdRecordset extends XsdDataObject {
             _fieldDefinitions = new ArrayList<XsdFieldDefinition>();
             _records = new ArrayList<XsdRecord>();
 
-            for (Fielddefinition entityFieldDefinition : _entityRecordset.getFielddef()) {
+            for (Fielddefinition entityFieldDefinition : _entityRecordset.getFielddefinitionNode()) {
                 XsdFieldDefinition newFieldDefinition = new XsdFieldDefinition();
                 rst = newFieldDefinition.Initialize(this, entityFieldDefinition);
                 
             }
             
-            for (Record entityRecord : _entityRecordset.getRec()) {
+            for (Record entityRecord : _entityRecordset.getRecordNode()) {
                 XsdRecord newRecord = new XsdRecord();
                 rst = newRecord.Initialize(this, entityRecord);
             }
@@ -479,11 +479,11 @@ public class XsdRecordset extends XsdDataObject {
     }
     
     protected List<Record> GetEntityRecords() {
-    	return _entityRecordset.getRec();
+    	return _entityRecordset.getRecordNode();
     }
     
     protected List<Fielddefinition> GetEntityFieldDefinitions() {
-    	return _entityRecordset.getFielddef();
+    	return _entityRecordset.getFielddefinitionNode();
     }
 }
 
