@@ -45,7 +45,7 @@ public class CoalescePersisterBase implements ICoalescePersistor {
 	}
 
 	@Override
-	public boolean SetEntity(Entity entity) {
+	public boolean SetEntity(XsdEntity entity) {
 		// TODO Auto-generated method stub
 		return false;
 	}

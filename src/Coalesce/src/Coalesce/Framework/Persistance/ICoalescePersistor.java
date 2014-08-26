@@ -36,7 +36,7 @@ public interface ICoalescePersistor {
 	
 	public boolean Initialize(ICoalesceCacher Cacher);
 	
-	public boolean SetEntity(Entity entity);
+	public boolean SetEntity(XsdEntity entity);
 	
 	// Get Entity
 	public XsdEntity GetEntity(String Key);
