@@ -11,6 +11,7 @@ package Coalesce.Framework.GeneratedJAXB;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -43,7 +44,8 @@ import org.joda.time.DateTime;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "fielddefinition")
+@XmlType(name = "")
+@XmlRootElement(name = "fielddefinition")
 public class Fielddefinition {
 
     @XmlAttribute(name = "key")
