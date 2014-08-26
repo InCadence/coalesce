@@ -2,12 +2,14 @@ package Coalesce.Framework.Persistance;
 
 import java.util.List;
 
+import javax.jws.WebService;
+
 import org.joda.time.DateTime;
 
 import unity.core.runtime.CallResult;
 import Coalesce.Framework.DataModel.XsdEntity;
 import Coalesce.Framework.GeneratedJAXB.Entity;
-
+@WebService
 public class CoalescePersisterBase implements ICoalescePersistor {
 
 	private ICoalesceCacher _Cacher = null;
@@ -166,7 +168,7 @@ public class CoalescePersisterBase implements ICoalescePersistor {
 	}
 
 	@Override
-	public CallResult PersistEntityTemplate() {
+	public String PersistEntityTemplate() {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -44,7 +44,7 @@ public interface ICoalescePersistor {
 	public byte[] GetBinaryArray(String BinaryFieldKey);
 
 	//Deprecated Functions
-	public CallResult PersistEntityTemplate(/*CoalesceEntityTemplate EntityTemplate*/);
+	public String PersistEntityTemplate(/*CoalesceEntityTemplate EntityTemplate*/);
 	
 	// Entity Templates
 	public String GetEntityTemplateXml(String Key);
