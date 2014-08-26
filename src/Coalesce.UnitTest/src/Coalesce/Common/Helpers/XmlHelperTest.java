@@ -106,7 +106,7 @@ public class XmlHelperTest {
 		String stripped = xml.toString().replace("<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"yes\"?>", "");
 		assertEquals(CoalesceTypeInstances.TestMissionLinkageSection.replaceAll("\\s+", ""), stripped.replace(" ", "").replaceAll("\\s+", ""));
 		
-		assertEquals(4, entityLinkageSection.getLink().size());
+		assertEquals(4, entityLinkageSection.getLinkageNode().size());
 
 	}
 	
@@ -123,7 +123,7 @@ public class XmlHelperTest {
 		
 		assertTrue("Searialize failed", rst.getIsSuccess());
 		assertTrue("xml empty", xml.length() > 0);
-		assertEquals(16, entityRecordSet.getFielddef().size());
+		assertEquals(16, entityRecordSet.getFielddefinitionNode().size());
 		/* TODO: Resolve this error
 		assertEquals(16, entityRecordSet.getRecord().get(0).getField().size());
 		 */
