@@ -3,11 +3,9 @@ package Coalesce.Framework.Persistance;
 import java.util.List;
 
 import org.joda.time.DateTime;
-
-import unity.core.runtime.CallResult;
 import Coalesce.Framework.DataModel.XsdEntity;
 import Coalesce.Framework.GeneratedJAXB.Entity;
-@WebService
+
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
 
