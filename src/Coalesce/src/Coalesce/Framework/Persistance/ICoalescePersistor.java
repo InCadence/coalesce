@@ -5,8 +5,7 @@ import java.util.List;
 import org.joda.time.DateTime;
 
 import Coalesce.Framework.DataModel.XsdEntity;
-import Coalesce.Framework.GeneratedJAXB.*;
-import unity.core.runtime.CallResult;
+import Coalesce.Framework.GeneratedJAXB.Entity;
 
 /*-----------------------------------------------------------------------------'
 Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
