@@ -60,6 +60,11 @@ public class XsdEntityTest {
 	}
 	
 	@Test
+	public void EmptyDateInitialization() {
+		fail("Not yet implemented");
+	}
+	
+	@Test
 	public void UpdateTitleThatUsesXpathTest() {
         fail("Not yet implemented");
 	}

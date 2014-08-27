@@ -43,9 +43,9 @@ public class EntityTest {
         
         
         Linkagesection linkageSection = new Linkagesection();
-        entity.setLinkagesec(linkageSection);
+        entity.setLinkagesectionNode(linkageSection);
         
-        List<Linkage> linkageList = linkageSection.getLink();
+        List<Linkage> linkageList = linkageSection.getLinkageNode();
         
         Linkage linkage = new Linkage();
                 

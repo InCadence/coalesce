@@ -38,10 +38,7 @@ public class MarkingValueTest {
         
         MarkingValue mv = new MarkingValue();
         
-        assertEquals("", mv.GetParent());
-        assertEquals("", mv.GetTitle());
-        assertEquals("", mv.GetAbbreviation());
-        assertEquals("", mv.GetPortion());
+        assertMarkingValue("", "", "", "", mv);
     }
     
     @Test
@@ -49,11 +46,7 @@ public class MarkingValueTest {
         
         MarkingValue mv = new MarkingValue("parent1", "title1", "abbreviation1", "portion1");
         
-        assertEquals("parent1", mv.GetParent());
-        assertEquals("title1", mv.GetTitle());
-        assertEquals("abbreviation1", mv.GetAbbreviation());
-        assertEquals("portion1", mv.GetPortion());
-        
+        assertMarkingValue("parent1", "title1", "abbreviation1", "portion1", mv);
     }
     
     @Test(expected=NullArgumentException.class)
@@ -95,10 +88,7 @@ public class MarkingValueTest {
     
         mv.SetParent("parent1");
         
-        assertEquals("parent1", mv.GetParent());
-        assertEquals("", mv.GetTitle());
-        assertEquals("", mv.GetAbbreviation());
-        assertEquals("", mv.GetPortion());
+        assertMarkingValue("parent1", "", "", "", mv);
     }
  
     @Test(expected=NullArgumentException.class)
@@ -117,10 +107,7 @@ public class MarkingValueTest {
     
         mv.SetTitle("title1");
         
-        assertEquals("", mv.GetParent());
-        assertEquals("title1", mv.GetTitle());
-        assertEquals("", mv.GetAbbreviation());
-        assertEquals("", mv.GetPortion());
+        assertMarkingValue("", "title1", "", "", mv);
     }
     
     @Test(expected=NullArgumentException.class)
@@ -139,10 +126,7 @@ public class MarkingValueTest {
     
         mv.SetAbbreviation("Abbreviation1");
         
-        assertEquals("", mv.GetParent());
-        assertEquals("", mv.GetTitle());
-        assertEquals("Abbreviation1", mv.GetAbbreviation());
-        assertEquals("", mv.GetPortion());
+        assertMarkingValue("", "", "Abbreviation1", "", mv);
     }
     
     @Test(expected=NullArgumentException.class)
@@ -161,10 +145,7 @@ public class MarkingValueTest {
     
         mv.SetPortion("Portion1");
         
-        assertEquals("", mv.GetParent());
-        assertEquals("", mv.GetTitle());
-        assertEquals("", mv.GetAbbreviation());
-        assertEquals("Portion1", mv.GetPortion());
+        assertMarkingValue("", "", "", "Portion1", mv);
     }
 
     @Test(expected=NullArgumentException.class)
@@ -196,10 +177,7 @@ public class MarkingValueTest {
         in.close();
         byteIn.close();
         
-        assertEquals("parent1", desMv.GetParent());
-        assertEquals("title1", desMv.GetTitle());
-        assertEquals("abbreviation1", desMv.GetAbbreviation());
-        assertEquals("portion1", desMv.GetPortion());
+        assertMarkingValue("parent1", "title1", "abbreviation1", "portion1", desMv);
     }
     
     @Test()
@@ -221,10 +199,31 @@ public class MarkingValueTest {
         in.close();
         byteIn.close();
         
-        assertEquals("", desMv.GetParent());
-        assertEquals("", desMv.GetTitle());
-        assertEquals("", desMv.GetAbbreviation());
-        assertEquals("", desMv.GetPortion());
+        assertMarkingValue("", "", "", "", desMv);
         
     }
+    
+    public static void assertMarkingValue(String expectedParent,
+                                          String expectedTitle,
+                                          String expectedAbbreviation,
+                                          String expectedPortion,
+                                          MarkingValue testValue)
+    {
+
+        assertEquals(expectedParent, testValue.GetParent());
+        assertEquals(expectedTitle, testValue.GetTitle());
+        assertEquals(expectedAbbreviation, testValue.GetAbbreviation());
+        assertEquals(expectedPortion, testValue.GetPortion());
+    }
+    
+    public static void assertMarkingValue(MarkingValue exptectedValue,
+                                          MarkingValue testValue)
+    {
+
+        assertEquals(exptectedValue.GetParent(), testValue.GetParent());
+        assertEquals(exptectedValue.GetTitle(), testValue.GetTitle());
+        assertEquals(exptectedValue.GetAbbreviation(), testValue.GetAbbreviation());
+        assertEquals(exptectedValue.GetPortion(), testValue.GetPortion());
+    }
+    
 }

@@ -45,7 +45,7 @@ public class ISO3166Country implements Serializable, Comparable<ISO3166Country> 
     	
     	ISO3166Country otherCountry = (ISO3166Country)other;
     	
-    	return GetName().equals(otherCountry.GetName());
+    	return GetAlpha3().equals(otherCountry.GetAlpha3());
     	
     }
 	@Override

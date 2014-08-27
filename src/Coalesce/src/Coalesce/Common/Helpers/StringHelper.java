@@ -8,7 +8,7 @@ public class StringHelper {
     public static boolean IsNullOrEmpty(String ... values){
 
     	for (String value : values) {
-    		if (value == null || value.trim().equals("")) {
+    		if (value == null || value.equals("")) {
     			return true;
     		}
     	}
@@ -16,4 +16,13 @@ public class StringHelper {
     	return false;
     }
     
+    public static String TrimParentheses(String value) {
+        
+        while (value.startsWith("(") || value.endsWith(")")) {
+            value = value.replaceAll("^\\(|\\)$", "");
+        }
+
+        return value;
+            
+    }
 }
