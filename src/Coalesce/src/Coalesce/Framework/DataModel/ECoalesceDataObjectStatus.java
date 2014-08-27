@@ -35,12 +35,29 @@ public enum ECoalesceDataObjectStatus {
         }
     }
  
-    public int getValue() {
-        return value;
+	public static ECoalesceDataObjectStatus fromLabel(String value)
+	{
+		try {
+			switch (value.toUpperCase()) {
+			case "ACTIVE":
+				return ECoalesceDataObjectStatus.ACTIVE;
+			case "DELETED":
+				return ECoalesceDataObjectStatus.DELETED;
+			default:
+				return ECoalesceDataObjectStatus.UNKNOWN;
+			}
+
+		} catch (Exception ex) {
+			return ECoalesceDataObjectStatus.UNKNOWN;
+		}
+	}
+
+    public int toValue() {
+        return this.value;
     }
  
-    public String getLabel() {
-        return label;
+    public String toLabel() {
+        return this.label;
     }
  
     @Override
@@ -53,9 +70,11 @@ public enum ECoalesceDataObjectStatus {
         return sb.toString();
     }
  
+    /*
     public static void main(String[] args) {
         System.out.println(ECoalesceDataObjectStatus.ACTIVE);
         System.out.println(ECoalesceDataObjectStatus.getStatus(1));
     }
+    */
 
 }

@@ -107,7 +107,7 @@ public abstract class XsdDataObject {
                 return ECoalesceDataObjectStatus.ACTIVE;
             }else{
                 // Return Status
-                return (XsdDataObject.GetStatusForString(statusString));
+                return (ECoalesceDataObjectStatus.fromLabel(statusString));
             }
     	}else{
             // Return Active (Default)
@@ -118,49 +118,11 @@ public abstract class XsdDataObject {
     public void SetStatus(ECoalesceDataObjectStatus value){
     	// Set
     	CallResult rst; 
-    	rst = SetObjectStatus(XsdDataObject.GetStringForStatus(value));
+    	rst = SetObjectStatus(value.toLabel());
     	if (!rst.getIsSuccess()) { return; }
 
     	SetLastModified(new DateTime());
     }
-
-	public static ECoalesceDataObjectStatus GetStatusForString(String StatusString)
-	{
-		try {
-			switch (StatusString.toUpperCase()) {
-			case "ACTIVE":
-				return ECoalesceDataObjectStatus.ACTIVE;
-			case "DELETED":
-				return ECoalesceDataObjectStatus.DELETED;
-			default:
-				return ECoalesceDataObjectStatus.UNKNOWN;
-			}
-
-		} catch (Exception ex) {
-			CallResult.log(CallResults.FAILED_ERROR, ex, "Coalesce.Common.Helpers.CoalesceDataObject");
-
-			return ECoalesceDataObjectStatus.UNKNOWN;
-		}
-	}
-
-	public static String GetStringForStatus(ECoalesceDataObjectStatus Status)
-	{
-		try {
-			switch (Status) {
-			case ACTIVE:
-				return "active";
-			case DELETED:
-				return "deleted";
-			default:
-				return "unknown";
-			}
-
-		} catch (Exception ex) {
-			CallResult.log(CallResults.FAILED_ERROR, ex, "Coalesce.Common.Helpers.CoalesceDataObject");
-
-			return "unknown";
-		}
-	}
     
 	public abstract CallResult ToXml(StringBuilder xml);
 	
@@ -186,7 +148,7 @@ public abstract class XsdDataObject {
     protected CallResult InitializeEntity() {
     	try {
     		
-            if (GetKey().equals("")) {
+            if (GetKey() == null || GetKey().equals("")) {
             	SetKey(java.util.UUID.randomUUID().toString());
             }
             
