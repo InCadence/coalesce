@@ -8,13 +8,29 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.lang.NullArgumentException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+/*-----------------------------------------------------------------------------'
+ Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
+
+ Notwithstanding any contractor copyright notice, the Government has Unlimited
+ Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+ of this work other than as specifically authorized by these DFARS Clauses may
+ violate Government rights in this work.
+
+ DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+ Unlimited Rights. The Government has the right to use, modify, reproduce,
+ perform, display, release or disclose this computer software and to have or
+ authorize others to do so.
+
+ Distribution Statement D. Distribution authorized to the Department of
+ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+ -----------------------------------------------------------------------------*/
+
 public class FieldValuesTest {
 
-    private static List<MarkingValue> _allClassifications;
+    public static List<MarkingValue> AllClassifications;
     private static List<MarkingValue> _natoClassifications;
     private static List<MarkingValue> _jointNotUSAClassifications;
     private static List<MarkingValue> _jointUSAClassifications;
@@ -65,7 +81,7 @@ public class FieldValuesTest {
         allClassifications.add(new MarkingValue("", "RESTRICTED", "", "R"));
         allClassifications.add(new MarkingValue("", "UNCLASSIFIED", "", "U"));
 
-        _allClassifications = Collections.unmodifiableList(allClassifications);
+        AllClassifications = Collections.unmodifiableList(allClassifications);
 
     }
 
@@ -463,7 +479,7 @@ public class FieldValuesTest {
         List<MarkingValue> classifications = FieldValues.GetListOfClassifications(mv, true);
 
         assertEquals(0, mv.GetSelectedCountries().size());
-        assertClassifications(_allClassifications, classifications);
+        assertClassifications(AllClassifications, classifications);
 
     }
 
@@ -478,7 +494,7 @@ public class FieldValuesTest {
         List<MarkingValue> classifications = FieldValues.GetListOfClassifications(mv, true);
 
         assertEquals(1, mv.GetSelectedCountries().size());
-        assertClassifications(_allClassifications, classifications);
+        assertClassifications(AllClassifications, classifications);
 
     }
 
@@ -493,7 +509,7 @@ public class FieldValuesTest {
         List<MarkingValue> classifications = FieldValues.GetListOfClassifications(mv, true);
 
         assertEquals(1, mv.GetSelectedCountries().size());
-        assertClassifications(_allClassifications, classifications);
+        assertClassifications(AllClassifications, classifications);
 
     }
 
@@ -508,7 +524,7 @@ public class FieldValuesTest {
         List<MarkingValue> classifications = FieldValues.GetListOfClassifications(mv, true);
 
         assertEquals(2, mv.GetSelectedCountries().size());
-        assertClassifications(_allClassifications, classifications);
+        assertClassifications(AllClassifications, classifications);
 
     }
 
@@ -523,7 +539,7 @@ public class FieldValuesTest {
         List<MarkingValue> classifications = FieldValues.GetListOfClassifications(mv, true);
 
         assertEquals(2, mv.GetSelectedCountries().size());
-        assertClassifications(_allClassifications, classifications);
+        assertClassifications(AllClassifications, classifications);
 
     }
 
@@ -539,7 +555,7 @@ public class FieldValuesTest {
         List<MarkingValue> classifications = FieldValues.GetListOfClassifications(mv, true);
 
         assertEquals(0, mv.GetSelectedCountries().size());
-        assertClassifications(_allClassifications, classifications);
+        assertClassifications(AllClassifications, classifications);
 
     }
 
@@ -554,7 +570,7 @@ public class FieldValuesTest {
         List<MarkingValue> classifications = FieldValues.GetListOfClassifications(mv, true);
 
         assertEquals(1, mv.GetSelectedCountries().size());
-        assertClassifications(_allClassifications, classifications);
+        assertClassifications(AllClassifications, classifications);
 
     }
 
@@ -569,7 +585,7 @@ public class FieldValuesTest {
         List<MarkingValue> classifications = FieldValues.GetListOfClassifications(mv, true);
 
         assertEquals(1, mv.GetSelectedCountries().size());
-        assertClassifications(_allClassifications, classifications);
+        assertClassifications(AllClassifications, classifications);
 
     }
 
@@ -584,7 +600,7 @@ public class FieldValuesTest {
         List<MarkingValue> classifications = FieldValues.GetListOfClassifications(mv, true);
 
         assertEquals(2, mv.GetSelectedCountries().size());
-        assertClassifications(_allClassifications, classifications);
+        assertClassifications(AllClassifications, classifications);
 
     }
 
@@ -599,7 +615,7 @@ public class FieldValuesTest {
         List<MarkingValue> classifications = FieldValues.GetListOfClassifications(mv, true);
 
         assertEquals(2, mv.GetSelectedCountries().size());
-        assertClassifications(_allClassifications, classifications);
+        assertClassifications(AllClassifications, classifications);
 
     }
 
@@ -756,175 +772,215 @@ public class FieldValuesTest {
     }
 
     @Test
-    public void GetListOfSCIcontrolSystemsTest() {
-        
+    public void GetListOfClassificationsNullMarkingAllTest()
+    {
+
+        List<MarkingValue> classifications = FieldValues.GetListOfClassifications(null, true);
+
+        assertClassifications(AllClassifications, classifications);
+
+    }
+
+    @Test
+    public void GetListOfClassificationsNullMarkingNotAllTest()
+    {
+
+        List<MarkingValue> classifications = FieldValues.GetListOfClassifications(null, false);
+
+        assertTrue(classifications.isEmpty());
+
+    }
+
+    @Test
+    public void GetListOfSCIcontrolSystemsTest()
+    {
+
         List<MarkingValue> systems = FieldValues.GetListOfSciControlSystems();
-        
+
         assertClassifications(_compartments, systems);
     }
-    
+
     @Test
-    public void GetListOfCompartmentsTest() {
+    public void GetListOfCompartmentsTest()
+    {
 
         List<MarkingValue> compartments = FieldValues.GetListOfCompartments();
-        
+
         assertClassifications(_compartments, compartments);
     }
-    
+
     @Test
-    public void GetListOfSubCompartmentsTest() {
-        
+    public void GetListOfSubCompartmentsTest()
+    {
+
         List<MarkingValue> subCompartments = FieldValues.GetListOfSubCompartments();
-        
+
         assertClassifications(_compartments, subCompartments);
     }
-    
+
     @Test
-    public void GetListOfCountriesTest() {
-        
+    public void GetListOfCountriesTest()
+    {
+
         List<ISO3166Country> countries = FieldValues.GetListOfCountries();
-        
+
         assertCountries(_countries, countries);
     }
-    
+
     @Test
-    public void GetCountryByNameTest() {
-        
+    public void GetCountryByNameTest()
+    {
+
         ISO3166Country country = FieldValues.GetCountryByName("SAN MARINO");
-        
+
         ISO3166CountryTest.assertCountry("SM", "SMR", "SAN MARINO", country);
     }
-    
+
     @Test
-    public void GetCountryByNameNullTest() {
-        
+    public void GetCountryByNameNullTest()
+    {
+
         ISO3166Country country = FieldValues.GetCountryByName(null);
-        
+
         assertNull(country);
-        
+
     }
-    
+
     @Test
-    public void GetCountryByNameEmptyTest() {
-        
+    public void GetCountryByNameEmptyTest()
+    {
+
         ISO3166Country country = FieldValues.GetCountryByName("");
-        
+
         assertNull(country);
-        
+
     }
-    
+
     @Test
-    public void GetCountryByNameUnknownTest() {
-        
+    public void GetCountryByNameUnknownTest()
+    {
+
         ISO3166Country country = FieldValues.GetCountryByName("Unknown");
-        
+
         assertNull(country);
-        
+
     }
-    
+
     @Test
-    public void GetCountryByAlhpa3Test() {
-        
+    public void GetCountryByAlhpa3Test()
+    {
+
         ISO3166Country country = FieldValues.GetCountryByAlpha3("SMR");
-        
+
         ISO3166CountryTest.assertCountry("SM", "SMR", "SAN MARINO", country);
     }
-    
+
     @Test
-    public void GetCountryByAlpha3NullTest() {
-        
+    public void GetCountryByAlpha3NullTest()
+    {
+
         ISO3166Country country = FieldValues.GetCountryByAlpha3(null);
-        
+
         assertNull(country);
-        
+
     }
-    
+
     @Test
-    public void GetCountryByAlpha3EmptyTest() {
-        
+    public void GetCountryByAlpha3EmptyTest()
+    {
+
         ISO3166Country country = FieldValues.GetCountryByAlpha3("");
-        
+
         assertNull(country);
-        
+
     }
-    
+
     @Test
-    public void GetCountryByAlpha3UnknownTest() {
-        
+    public void GetCountryByAlpha3UnknownTest()
+    {
+
         ISO3166Country country = FieldValues.GetCountryByAlpha3("Unknown");
-        
+
         assertNull(country);
-        
+
     }
-    
+
     @Test
-    public void GetMarkingValueByTitleTest() {
-        
-        MarkingValue mv = FieldValues.GetMarkingValueByTitle("COSMIC TOP SECRET", _allClassifications);
-        
+    public void GetMarkingValueByTitleTest()
+    {
+
+        MarkingValue mv = FieldValues.GetMarkingValueByTitle("COSMIC TOP SECRET", AllClassifications);
+
         MarkingValueTest.assertMarkingValue("", "COSMIC TOP SECRET", "", "CTS", mv);
     }
-    
+
     @Test
-    public void GetMarkingValueByTitleNullTest() {
-        
-        MarkingValue mv = FieldValues.GetMarkingValueByTitle(null, _allClassifications);
-        
+    public void GetMarkingValueByTitleNullTest()
+    {
+
+        MarkingValue mv = FieldValues.GetMarkingValueByTitle(null, AllClassifications);
+
         assertNull(mv);
-        
+
     }
-    
+
     @Test
-    public void GetMarkingValueByTitleEmptyTest() {
-        
-        MarkingValue mv = FieldValues.GetMarkingValueByTitle("", _allClassifications);
-        
+    public void GetMarkingValueByTitleEmptyTest()
+    {
+
+        MarkingValue mv = FieldValues.GetMarkingValueByTitle("", AllClassifications);
+
         assertNull(mv);
-        
+
     }
-    
+
     @Test
-    public void GetMarkingValueByTitleUnknownTest() {
-        
-        MarkingValue mv = FieldValues.GetMarkingValueByTitle("Unknown", _allClassifications);
-        
+    public void GetMarkingValueByTitleUnknownTest()
+    {
+
+        MarkingValue mv = FieldValues.GetMarkingValueByTitle("Unknown", AllClassifications);
+
         assertNull(mv);
     }
-    
+
     @Test
-    public void GetMarkingValueByPortionTest() {
-        
-        MarkingValue mv = FieldValues.GetMarkingValueByPortion("CTS", _allClassifications);
-        
+    public void GetMarkingValueByPortionTest()
+    {
+
+        MarkingValue mv = FieldValues.GetMarkingValueByPortion("CTS", AllClassifications);
+
         MarkingValueTest.assertMarkingValue("", "COSMIC TOP SECRET", "", "CTS", mv);
     }
-    
+
     @Test
-    public void GetMarkingValueByPortionNullTest() {
-        
-        MarkingValue mv = FieldValues.GetMarkingValueByPortion(null, _allClassifications);
-        
+    public void GetMarkingValueByPortionNullTest()
+    {
+
+        MarkingValue mv = FieldValues.GetMarkingValueByPortion(null, AllClassifications);
+
         assertNull(mv);
-        
+
     }
-    
+
     @Test
-    public void GetMarkingValueByPortionEmptyTest() {
-        
-        MarkingValue mv = FieldValues.GetMarkingValueByPortion("", _allClassifications);
-        
+    public void GetMarkingValueByPortionEmptyTest()
+    {
+
+        MarkingValue mv = FieldValues.GetMarkingValueByPortion("", AllClassifications);
+
         assertNull(mv);
-        
+
     }
-    
+
     @Test
-    public void GetMarkingValueByPortionUnknownTest() {
-        
-        MarkingValue mv = FieldValues.GetMarkingValueByPortion("Unknown", _allClassifications);
-        
+    public void GetMarkingValueByPortionUnknownTest()
+    {
+
+        MarkingValue mv = FieldValues.GetMarkingValueByPortion("Unknown", AllClassifications);
+
         assertNull(mv);
     }
-    
+
     @Test
     public void GetListOfClassifications()
     {
@@ -967,7 +1023,7 @@ public class FieldValuesTest {
         method.invoke(null, classList, parent, title, abbreviation, portion);
     }
 
-    private void assertClassifications(List<MarkingValue> expected, List<MarkingValue> actual)
+    public static void assertClassifications(List<MarkingValue> expected, List<MarkingValue> actual)
     {
 
         assertEquals(expected.size(), actual.size());
@@ -987,8 +1043,7 @@ public class FieldValuesTest {
             }
 
             assertTrue("MarkingValue: " + expectedValue.GetParent() + " " + expectedValue.GetTitle() + " "
-                                        + expectedValue.GetAbbreviation() + " " + expectedValue.GetPortion(),
-                       found);
+            + expectedValue.GetAbbreviation() + " " + expectedValue.GetPortion(), found);
 
         }
     }
@@ -1012,8 +1067,7 @@ public class FieldValuesTest {
             }
 
             assertTrue("MarkingValue: " + expectedValue.GetAlpha2() + " " + expectedValue.GetAlpha3() + " "
-                                        + expectedValue.GetName(),
-                       found);
+            + expectedValue.GetName(), found);
 
         }
     }
