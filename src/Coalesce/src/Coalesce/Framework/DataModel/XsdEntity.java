@@ -78,7 +78,7 @@ public class XsdEntity extends XsdDataObject {
         }
     }
 
-    public CallResult Create(XsdEntity newEntity,
+    public static CallResult Create(XsdEntity newEntity,
                              String name,
                              String source,
                              String version,
@@ -88,7 +88,7 @@ public class XsdEntity extends XsdDataObject {
         try {
             CallResult rst;
             
-            rst = this.Create(newEntity, name, source, version, entityId, entityIdType, null);
+            rst = XsdEntity.Create(newEntity, name, source, version, entityId, entityIdType, null);
 
             return rst;
             
@@ -97,7 +97,7 @@ public class XsdEntity extends XsdDataObject {
         }
     }
 
-    public CallResult Create(XsdEntity newEntity,
+    public static CallResult Create(XsdEntity newEntity,
                              String name,
                              String source,
                              String version,
