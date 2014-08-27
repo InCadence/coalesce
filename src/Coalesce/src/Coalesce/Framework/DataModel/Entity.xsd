@@ -63,18 +63,23 @@
                               <xs:sequence>
                                 <xs:element name="fieldhistory" minOccurs="0" maxOccurs="unbounded">
                                   <xs:complexType>
-                                    <xs:attribute name="key" type="xs:string" />
-                                    <xs:attribute name="datecreated" type="xs:date" />
-                                    <xs:attribute name="lastmodified" type="xs:date" />
-                                    <xs:attribute name="name" type="xs:string" />
-                                    <xs:attribute name="datatype" type="xs:string" />
-                                    <xs:attribute name="classificationmarking" type="xs:string" />
-                                    <xs:attribute name="label" type="xs:string" />
-                                    <xs:attribute name="status" type="xs:string" />
-                                    <xs:attribute name="previoushistorykey" type="xs:string" />
-                                    <xs:attribute name="value" type="xs:string" />
-                                    <xs:attribute name="modifiedby" type="xs:string" />
-                                    <xs:attribute name="modifiedbyip" type="xs:string" />
+									  <xs:attribute name="key" type="xs:string" />
+									  <xs:attribute name="datecreated" type="xs:date" />
+									  <xs:attribute name="lastmodified" type="xs:date" />
+									  <xs:attribute name="name" type="xs:string" />
+									  <xs:attribute name="datatype" type="xs:string" />
+									  <xs:attribute name="classificationmarking" type="xs:string" />
+									  <xs:attribute name="label" type="xs:string" />
+									  <xs:attribute name="value" type="xs:string" />
+									  <xs:attribute name="status" type="xs:string" />
+									  <xs:attribute name="previoushistorykey" type="xs:string" />
+									  <xs:attribute name="modifiedby" type="xs:string" />
+									  <xs:attribute name="modifiedbyip" type="xs:string" />
+									  <xs:attribute name="filename" type="xs:string" />
+									  <xs:attribute name="extension" type="xs:string" />
+									  <xs:attribute name="mimetype" type="xs:string" />
+									  <xs:attribute name="size" type="xs:string" />
+									  <xs:attribute name="hash" type="xs:string" />
                                   </xs:complexType>
                                 </xs:element>
                               </xs:sequence>

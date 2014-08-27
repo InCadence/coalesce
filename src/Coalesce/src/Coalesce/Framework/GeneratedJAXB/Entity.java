@@ -585,6 +585,7 @@ public class Entity {
     @XmlType(name = "", propOrder = {
         "linkage"
     })
+    @XmlRootElement(name = "linkagesection")
     public static class Linkagesection {
 
         protected List<Entity.Linkagesection.Linkage> linkage;
@@ -814,6 +815,7 @@ public class Entity {
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "")
+        @XmlRootElement(name = "linkage")
         public static class Linkage {
 
             @XmlAttribute(name = "key")
@@ -1392,6 +1394,7 @@ public class Entity {
     @XmlType(name = "", propOrder = {
         "recordset"
     })
+    @XmlRootElement(name = "section")
     public static class Section {
 
         protected List<Entity.Section.Recordset> recordset;
@@ -1695,6 +1698,7 @@ public class Entity {
             "fielddefinition",
             "record"
         })
+        @XmlRootElement(name = "recordset")
         public static class Recordset {
 
             protected List<Entity.Section.Recordset.Fielddefinition> fielddefinition;
@@ -1972,6 +1976,7 @@ public class Entity {
              */
             @XmlAccessorType(XmlAccessType.FIELD)
             @XmlType(name = "")
+            @XmlRootElement(name = "fielddefinition")
             public static class Fielddefinition {
 
                 @XmlAttribute(name = "key")
@@ -2290,6 +2295,7 @@ public class Entity {
             @XmlType(name = "", propOrder = {
                 "field"
             })
+            @XmlRootElement(name = "record")
             public static class Record {
 
                 protected List<Entity.Section.Recordset.Record.Field> field;
@@ -2517,6 +2523,7 @@ public class Entity {
                 @XmlType(name = "", propOrder = {
                     "fieldhistory"
                 })
+                @XmlRootElement(name = "field")
                 public static class Field {
 
                     protected List<Entity.Section.Recordset.Record.Field.Fieldhistory> fieldhistory;
@@ -3027,6 +3034,7 @@ public class Entity {
                      */
                     @XmlAccessorType(XmlAccessType.FIELD)
                     @XmlType(name = "")
+                    @XmlRootElement(name = "fieldhistory")
                     public static class Fieldhistory {
 
                         @XmlAttribute(name = "key")
