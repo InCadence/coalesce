@@ -2,11 +2,11 @@ package Coalesce.Framework.DataModel;
 
 import org.joda.time.DateTime;
 
-import Coalesce.Common.Helpers.JodaDateTimeHelper;
-import Coalesce.Common.Helpers.XmlHelper;
-import Coalesce.Framework.GeneratedJAXB.*;
 import unity.core.runtime.CallResult;
 import unity.core.runtime.CallResult.CallResults;
+import Coalesce.Common.Helpers.JodaDateTimeHelper;
+import Coalesce.Common.Helpers.XmlHelper;
+import Coalesce.Framework.GeneratedJAXB.Entity.Linkagesection.Linkage;
 
 /*-----------------------------------------------------------------------------'
 Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -37,7 +37,7 @@ public class XsdLinkage extends XsdDataObject {
 			if (newLinkage == null) newLinkage = new XsdLinkage();
 			
 			Linkage entityLinkage = new Linkage();
-			parent.GetEntityLinkageSection().getLinkageNode().add(entityLinkage);
+			parent.GetEntityLinkageSection().getLinkage().add(entityLinkage);
 
 			rst = newLinkage.Initialize(parent, entityLinkage);
 			if (!rst.getIsSuccess()) return rst;

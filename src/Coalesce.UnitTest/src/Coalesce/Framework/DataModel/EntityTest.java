@@ -1,6 +1,9 @@
 package Coalesce.Framework.DataModel;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.List;
 
@@ -11,7 +14,9 @@ import org.junit.Test;
 import unity.core.runtime.CallResult;
 import Coalesce.Common.Helpers.XmlHelper;
 import Coalesce.Common.UnitTest.CoalesceTypeInstances;
-import Coalesce.Framework.GeneratedJAXB.*;
+import Coalesce.Framework.GeneratedJAXB.Entity;
+import Coalesce.Framework.GeneratedJAXB.Entity.Linkagesection;
+import Coalesce.Framework.GeneratedJAXB.Entity.Linkagesection.Linkage;
 
 /*-----------------------------------------------------------------------------'
 Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -60,9 +65,9 @@ public class EntityTest {
         
         
         Linkagesection linkageSection = new Linkagesection();
-        entity.setLinkagesectionNode(linkageSection);
+        entity.setLinkagesection(linkageSection);
         
-        List<Linkage> linkageList = linkageSection.getLinkageNode();
+        List<Linkage> linkageList = linkageSection.getLinkage();
         
         Linkage linkage = new Linkage();
                 

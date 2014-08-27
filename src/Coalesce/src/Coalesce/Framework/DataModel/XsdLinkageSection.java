@@ -5,7 +5,8 @@ import org.joda.time.DateTime;
 import unity.core.runtime.CallResult;
 import unity.core.runtime.CallResult.CallResults;
 import Coalesce.Common.Helpers.XmlHelper;
-import Coalesce.Framework.GeneratedJAXB.*;
+import Coalesce.Framework.GeneratedJAXB.Entity.Linkagesection;
+import Coalesce.Framework.GeneratedJAXB.Entity.Linkagesection.Linkage;
 
 /*-----------------------------------------------------------------------------'
 Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -82,7 +83,7 @@ public class XsdLinkageSection extends XsdDataObject {
 			_parent = parent;
 			_entityLinkageSection = parent.GetEntityLinkageSection();
 
-			for (Linkage childLinkage : _entityLinkageSection.getLinkageNode()) {
+			for (Linkage childLinkage : _entityLinkageSection.getLinkage()) {
 
 				XsdLinkage newLinkage = new XsdLinkage();
 				rst = newLinkage.Initialize(this, childLinkage);

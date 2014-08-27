@@ -8,7 +8,8 @@ import org.joda.time.DateTime;
 import unity.core.runtime.CallResult;
 import unity.core.runtime.CallResult.CallResults;
 import Coalesce.Common.Helpers.XmlHelper;
-import Coalesce.Framework.GeneratedJAXB.*;
+import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record;
+import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record.Field;
 
 /*-----------------------------------------------------------------------------'
 Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -81,7 +82,7 @@ public class XsdRecord extends XsdDataObject {
 
 			_entityRecord = record;
 
-			for (Field entityField : record.getFieldNode()) {
+			for (Field entityField : record.getField()) {
 				XsdField newField = new XsdField();
 				rst = newField.Initialize(this, entityField);
 
@@ -680,7 +681,7 @@ public class XsdRecord extends XsdDataObject {
     }
     
     protected List<Field> GetEntityFields() {
-    	return _entityRecord.getFieldNode();
+    	return _entityRecord.getField();
     }
     
 }

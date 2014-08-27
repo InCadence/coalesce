@@ -1,13 +1,16 @@
 package Coalesce.Common.Helpers;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
 import unity.core.runtime.CallResult;
-import Coalesce.Common.Helpers.XmlHelper;
 import Coalesce.Common.UnitTest.CoalesceTypeInstances;
-import Coalesce.Framework.GeneratedJAXB.*;
+import Coalesce.Framework.GeneratedJAXB.Entity;
+import Coalesce.Framework.GeneratedJAXB.Entity.Linkagesection;
+import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset;
 
 /*-----------------------------------------------------------------------------'
 Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -123,7 +126,7 @@ public class XmlHelperTest {
 		String stripped = xml.toString().replace("<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"yes\"?>", "");
 		assertEquals(CoalesceTypeInstances.TestMissionLinkageSection.replaceAll("\\s+", ""), stripped.replace(" ", "").replaceAll("\\s+", ""));
 		
-		assertEquals(4, entityLinkageSection.getLinkageNode().size());
+		assertEquals(4, entityLinkageSection.getLinkage().size());
 
 	}
 	
@@ -140,7 +143,7 @@ public class XmlHelperTest {
 		
 		assertTrue("Searialize failed", rst.getIsSuccess());
 		assertTrue("xml empty", xml.length() > 0);
-		assertEquals(16, entityRecordSet.getFielddefinitionNode().size());
+		assertEquals(16, entityRecordSet.getFielddefinition().size());
 		/* TODO: Resolve this error
 		assertEquals(16, entityRecordSet.getRecord().get(0).getField().size());
 		 */

@@ -12,6 +12,8 @@ import org.joda.time.DateTime;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import Coalesce.Common.Helpers.XmlHelper;
 import Coalesce.Framework.GeneratedJAXB.*;
+import Coalesce.Framework.GeneratedJAXB.Entity.Linkagesection.Linkage;
+import Coalesce.Framework.GeneratedJAXB.Entity.Section;
 import unity.core.runtime.CallResult;
 import unity.core.runtime.CallResult.CallResults;
 
@@ -159,8 +161,8 @@ public class XsdEntity extends XsdDataObject {
             CallResult rst;
 
             _entity = new Entity();
-            _entity.setLinkagesectionNode(new Linkagesection());
-            _entity.getSectionNode();
+            _entity.setLinkagesection(new Entity.Linkagesection());
+            _entity.getSection();
             
             rst = InitializeEntity();
             if (!rst.getIsSuccess()) return rst;
@@ -185,7 +187,7 @@ public class XsdEntity extends XsdDataObject {
     		
     		_childDataObjects.put(linkageSection.GetKey(), linkageSection);
     		
-    		for (Section entitySection : _entity.getSectionNode()) {
+    		for (Section entitySection : _entity.getSection()) {
 	            XsdSection section = new XsdSection();
 	            rst = section.Initialize(this, entitySection);
 	            if (!rst.getIsSuccess()) return rst;
@@ -411,7 +413,7 @@ public class XsdEntity extends XsdDataObject {
             XsdLinkageSection linkageSection = new XsdLinkageSection();
             linkageSection.Initialize(this);
             
-            for (Linkage entityLinkage : _entity.getLinkagesectionNode().getLinkageNode()) {
+            for (Linkage entityLinkage : _entity.getLinkagesection().getLinkage()) {
                 XsdLinkage linkage = new XsdLinkage();
                 rst = linkage.Initialize(linkageSection, entityLinkage);
 
@@ -925,13 +927,13 @@ public class XsdEntity extends XsdDataObject {
         }
     }
 
-    protected Linkagesection GetEntityLinkageSection()
+    protected Entity.Linkagesection GetEntityLinkageSection()
     {
-    	return _entity.getLinkagesectionNode();
+    	return _entity.getLinkagesection();
     }
 
     protected List<Section> GetEntitySections()
     {
-    	return _entity.getSectionNode();
+    	return _entity.getSection();
     }
 }

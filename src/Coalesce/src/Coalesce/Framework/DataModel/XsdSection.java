@@ -7,7 +7,8 @@ import org.joda.time.DateTime;
 import unity.core.runtime.CallResult;
 import unity.core.runtime.CallResult.CallResults;
 import Coalesce.Common.Helpers.XmlHelper;
-import Coalesce.Framework.GeneratedJAXB.*;
+import Coalesce.Framework.GeneratedJAXB.Entity.Section;
+import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset;
 
 /*-----------------------------------------------------------------------------'
 Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -154,7 +155,7 @@ public class XsdSection extends XsdDataObject {
             
             rst = InitializeEntity();
 
-            for (Recordset childRecordSet : _entitySection.getRecordsetNode()) {
+            for (Recordset childRecordSet : _entitySection.getRecordset()) {
 	            
             	XsdRecordset newRecordSet = new XsdRecordset();
             	rst = newRecordSet.Initialize(this, childRecordSet);
@@ -334,7 +335,7 @@ public class XsdSection extends XsdDataObject {
     }
     
     protected List<Recordset> GetEntityRecordSets() {
-    	return _entitySection.getRecordsetNode();
+    	return _entitySection.getRecordset();
     }
 
 }

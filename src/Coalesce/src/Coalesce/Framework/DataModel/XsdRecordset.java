@@ -8,7 +8,9 @@ import org.joda.time.DateTime;
 import unity.core.runtime.CallResult;
 import unity.core.runtime.CallResult.CallResults;
 import Coalesce.Common.Helpers.XmlHelper;
-import Coalesce.Framework.GeneratedJAXB.*;
+import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset;
+import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Fielddefinition;
+import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record;
 
 /*-----------------------------------------------------------------------------'
 Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -107,13 +109,13 @@ public class XsdRecordset extends XsdDataObject {
             _fieldDefinitions = new ArrayList<XsdFieldDefinition>();
             _records = new ArrayList<XsdRecord>();
 
-            for (Fielddefinition entityFieldDefinition : _entityRecordset.getFielddefinitionNode()) {
+            for (Fielddefinition entityFieldDefinition : _entityRecordset.getFielddefinition()) {
                 XsdFieldDefinition newFieldDefinition = new XsdFieldDefinition();
                 rst = newFieldDefinition.Initialize(this, entityFieldDefinition);
                 
             }
             
-            for (Record entityRecord : _entityRecordset.getRecordNode()) {
+            for (Record entityRecord : _entityRecordset.getRecord()) {
                 XsdRecord newRecord = new XsdRecord();
                 rst = newRecord.Initialize(this, entityRecord);
             }
@@ -496,11 +498,11 @@ public class XsdRecordset extends XsdDataObject {
     }
     
     protected List<Record> GetEntityRecords() {
-    	return _entityRecordset.getRecordNode();
+    	return _entityRecordset.getRecord();
     }
     
     protected List<Fielddefinition> GetEntityFieldDefinitions() {
-    	return _entityRecordset.getFielddefinitionNode();
+    	return _entityRecordset.getFielddefinition();
     }
 }
 
