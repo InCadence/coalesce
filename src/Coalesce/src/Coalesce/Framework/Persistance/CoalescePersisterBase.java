@@ -3,6 +3,8 @@ package Coalesce.Framework.Persistance;
 import java.util.List;
 
 import org.joda.time.DateTime;
+
+import Coalesce.Framework.DataModel.CoalesceEntityTemplate;
 import Coalesce.Framework.DataModel.XsdEntity;
 import Coalesce.Framework.GeneratedJAXB.Entity;
 
@@ -187,9 +189,9 @@ public class CoalescePersisterBase implements ICoalescePersistor {
 	}
 
 	@Override
-	public String PersistEntityTemplate() {
+	public boolean PersistEntityTemplate(CoalesceEntityTemplate EntityTemplate) {
 		// TODO Auto-generated method stub
-		return null;
+		return false;
 	}
 
 	@Override

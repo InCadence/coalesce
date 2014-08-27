@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 
+import Coalesce.Framework.DataModel.CoalesceEntityTemplate;
 import Coalesce.Framework.DataModel.XsdEntity;
 import Coalesce.Framework.GeneratedJAXB.Entity;
 
@@ -60,7 +61,7 @@ public interface ICoalescePersistor {
 	public byte[] GetBinaryArray(String BinaryFieldKey);
 
 	//Deprecated Functions
-	public String PersistEntityTemplate(/*CoalesceEntityTemplate EntityTemplate*/);
+	public boolean PersistEntityTemplate(CoalesceEntityTemplate EntityTemplate);
 	
 	// Entity Templates
 	public String GetEntityTemplateXml(String Key);
