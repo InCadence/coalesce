@@ -2,97 +2,70 @@ package Coalesce.Common.Runtime;
 
 import org.apache.commons.io.FilenameUtils;
 
+import unity.core.runtime.SettingsBase;
 import Coalesce.Common.Helpers.StringHelper;
-import unity.configuration.SettingType;
-import unity.connector.rest.RestConfigConnector;
 
-public class CoalesceSettings {
+/*-----------------------------------------------------------------------------'
+Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
 
-	private static String _useBinaryFileStoreVal;
-	private static boolean _useBinaryFileStore = true;
-	private static String _useIndexingVal = "";
-	private static boolean _useIndexing = true;
-	private static String _binaryFileStoreBasePath;
-    private static String _defaultApplicationName;
+Notwithstanding any contractor copyright notice, the Government has Unlimited
+Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+of this work other than as specifically authorized by these DFARS Clauses may
+violate Government rights in this work.
+
+DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+Unlimited Rights. The Government has the right to use, modify, reproduce,
+perform, display, release or disclose this computer software and to have or
+authorize others to do so.
+
+Distribution Statement D. Distribution authorized to the Department of
+Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+-----------------------------------------------------------------------------*/
+
+public class CoalesceSettings extends SettingsBase {
+
+    /*--------------------------------------------------------------------------
+		Private Member Variables
+	--------------------------------------------------------------------------*/
+
+	private static String _defaultApplicationName;
     private static String _defaultApplicationRoot;
-	private static int _subDirectoryLength = -1;
-	private static String _useEncryptionVal;
-	private static boolean _useEncryption = false;
-	private static String _passPhrase;
-	private static boolean _auditSelectStatements = true;
-	private static String _auditSelectStatementsVal;
-	
 		
-	// Made class static
-	private CoalesceSettings() {
-		
-	}
-	
+    /*--------------------------------------------------------------------------
+		Public Configuration Functions
+	--------------------------------------------------------------------------*/
+
 	public static String GetConfigurationFileName() {
 		return _defaultApplicationName + ".Coalesce.config";
 	}
 	
 	public static boolean GetUseBinaryFileStore() {
-		if (StringHelper.IsNullOrEmpty(_useBinaryFileStoreVal)) {
-			_useBinaryFileStoreVal = RestConfigConnector.getSetting(GetConfigurationFileName(), "Coalesce.FileStore.UseFileStore", "True", SettingType.stBoolean, true);
-			_useBinaryFileStore = Boolean.parseBoolean(_useBinaryFileStoreVal);
-		}
-		
-		return _useBinaryFileStore;
+		return CoalesceSettings.GetSetting(GetConfigurationFileName(), "Coalesce.FileStore.UseFileStore", true, true);
 	}
 	
-	public static void SetUseBinaryFileSTore(boolean value) {
-		RestConfigConnector.setSetting(GetConfigurationFileName(), "Coalesce.FileStore.UseFileStore", Boolean.toString(value), SettingType.stBoolean);
-		_useBinaryFileStoreVal = Boolean.toString(value);
-		_useBinaryFileStore = value;
+	public static boolean SetUseBinaryFileStore(boolean value) {
+		return CoalesceSettings.SetSetting(GetConfigurationFileName(), "Coalesce.FileStore.UseFileStore", value);
 	}
 	
 	public static boolean GetUseIndexing() {
-		if (StringHelper.IsNullOrEmpty(_useIndexingVal)) {
-			_useIndexingVal = RestConfigConnector.getSetting(GetConfigurationFileName(), "Coalesce.FileStore.UseIndexing", "True", SettingType.stBoolean, true);
-			_useIndexing = Boolean.parseBoolean(_useIndexingVal);
-		}
-		
-		return _useIndexing;
-		
+		return CoalesceSettings.GetSetting(GetConfigurationFileName(), "Coalesce.FileStore.UseIndexing", true, true);
 	}
 	
-	public static void SetUseIndexing(boolean value) {
-		RestConfigConnector.setSetting(GetConfigurationFileName(), "Coalesce.FileStore.UseIndexing", Boolean.toString(value), SettingType.stBoolean);
-		_useIndexingVal = Boolean.toString(value);
-		_useIndexing = value;
+	public static boolean SetUseIndexing(boolean value) {
+		return CoalesceSettings.SetSetting(GetConfigurationFileName(), "Coalesce.FileStore.UseIndexing", value);
 	}
 	
 	public static int GetSubDirectoryLength() {
-
-		if (_subDirectoryLength == -1) {
-			
-			RestConfigConnector.getSetting(GetConfigurationFileName(), "Coalesce.FileStore.SubDirectoryLength", "2", SettingType.stInteger, true);
-			
-			if (_subDirectoryLength > 5) {
-				_subDirectoryLength = 2;
-			}
-		}
-		
-		return _subDirectoryLength;
+		return CoalesceSettings.GetSettingWithMax(GetConfigurationFileName(), "Coalesce.FileStore.SubDirectoryLength", 2, 5, true);
 	}
 	
 	public static String GetBinaryFileStoreBasePath() {
-		if (StringHelper.IsNullOrEmpty(_binaryFileStoreBasePath)) {
-			_binaryFileStoreBasePath = RestConfigConnector.getSetting(GetConfigurationFileName(),
-			                                                          "Coalesce.FileStore.BasePath",
-			                                                          FilenameUtils.concat(GetDefaultApplicationRoot(), "..\\images\\uploads\\"),
-			                                                          SettingType.stString,
-			                                                          true);
-		}
-		
-		return _binaryFileStoreBasePath;
+		return CoalesceSettings.GetSetting(GetConfigurationFileName(), "Coalesce.FileStore.BasePath", FilenameUtils.concat(GetDefaultApplicationRoot(), "..\\images\\uploads\\"), true);
 	}
 	
-	public static void SetBinaryFileStoreBasePath(String value)
+	public static boolean SetBinaryFileStoreBasePath(String value)
 	{
-		RestConfigConnector.setSetting(GetConfigurationFileName(), "Coalesce.FileStore.BasePath", value, SettingType.stString);
-		_binaryFileStoreBasePath = value;
+		return CoalesceSettings.SetSetting(GetConfigurationFileName(), "Coalesce.FileStore.BasePath", value);
 	}
 	
 	public static void SetDefaultApplicationName(String value)
@@ -113,50 +86,28 @@ public class CoalesceSettings {
 		_defaultApplicationRoot = value;
 	}
 	
-	public static boolean GetUseEncryption()
-	{
-		if (StringHelper.IsNullOrEmpty(_useEncryptionVal)) {
-			_useEncryptionVal = RestConfigConnector.getSetting(GetConfigurationFileName(), "Coalesce.Security.UseEncryption", "false", SettingType.stBoolean, true);
-			_useEncryption = Boolean.parseBoolean(_useEncryptionVal);
-		}
-		
-		return _useEncryption;
+	public static boolean GetUseEncryption() {
+		return CoalesceSettings.GetSetting(GetConfigurationFileName(), "Coalesce.Security.UseEncryption", false, true);
 	}
 	
-	public static void SetUseEncryption(boolean value) {
-		RestConfigConnector.setSetting(GetConfigurationFileName(), "Coalesce.Security.UseEncryption", Boolean.toString(value), SettingType.stBoolean);
-		_useEncryptionVal = Boolean.toString(value);
-		_useEncryption = value;
+	public static boolean SetUseEncryption(boolean value) {
+		return CoalesceSettings.SetSetting(GetConfigurationFileName(), "Coalesce.Security.UseEncryption", value);
 	}
 	
 	public static String GetPassPhrase() {
-		if (StringHelper.IsNullOrEmpty(_passPhrase)) {
-			_passPhrase = RestConfigConnector.getSetting(GetConfigurationFileName(), "Coalesce.Security.PassPhrase", "9UFAF8FI98BDLQEZ", SettingType.stEncryptedString, true);
-		}
-		
-		return _passPhrase;
-		
+		return CoalesceSettings.GetSetting(GetConfigurationFileName(), "Coalesce.Security.PassPhrase", "9UFAF8FI98BDLQEZ", true);
 	}
 	
-	public static void SetPassPhrase(String value) {
-		RestConfigConnector.setSetting(GetConfigurationFileName(), "Coalesce.Security.PassPhrase", value, SettingType.stEncryptedString);
-		_passPhrase = value;
+	public static boolean SetPassPhrase(String value) {
+		return CoalesceSettings.SetSetting(GetConfigurationFileName(), "Coalesce.Security.PassPhrase", value);
 	}
 	
 	public static boolean GetAuditSelectStatements() {
-		if (StringHelper.IsNullOrEmpty(_auditSelectStatementsVal)) {
-			_auditSelectStatementsVal = RestConfigConnector.getSetting(GetConfigurationFileName(), "Coalesce.Security.AuditSelectStatements", "True", SettingType.stBoolean, true);
-			_auditSelectStatements = Boolean.getBoolean(_auditSelectStatementsVal);
-		}
-		
-		return _auditSelectStatements;
-		
+		return CoalesceSettings.GetSetting(GetConfigurationFileName(), "Coalesce.Security.AuditSelectStatements", true, true);
 	}
 	
-	public static void SetAuditSelectStatements(boolean value) {
-		RestConfigConnector.setSetting(GetConfigurationFileName(), "Coalesce.Security.AuditSelectStatements", Boolean.toString(value), SettingType.stBoolean);
-		_auditSelectStatementsVal = Boolean.toString(value);
-		_auditSelectStatements = value;
+	public static boolean SetAuditSelectStatements(boolean value) {
+		return CoalesceSettings.SetSetting(GetConfigurationFileName(), "Coalesce.Security.AuditSelectStatements", value);
 	}
 	
 }

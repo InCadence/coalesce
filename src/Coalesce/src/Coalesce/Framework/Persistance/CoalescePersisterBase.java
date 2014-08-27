@@ -4,15 +4,38 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 
-import unity.core.runtime.CallResult;
+import Coalesce.Framework.DataModel.CoalesceEntityTemplate;
 import Coalesce.Framework.DataModel.XsdEntity;
 import Coalesce.Framework.GeneratedJAXB.Entity;
 
+/*-----------------------------------------------------------------------------'
+ Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
+
+ Notwithstanding any contractor copyright notice, the Government has Unlimited
+ Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+ of this work other than as specifically authorized by these DFARS Clauses may
+ violate Government rights in this work.
+
+ DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+ Unlimited Rights. The Government has the right to use, modify, reproduce,
+ perform, display, release or disclose this computer software and to have or
+ authorize others to do so.
+
+ Distribution Statement D. Distribution authorized to the Department of
+ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+-----------------------------------------------------------------------------*/
+
 public class CoalescePersisterBase implements ICoalescePersistor {
+
+    /*--------------------------------------------------------------------------
+		Private Member Variables
+	--------------------------------------------------------------------------*/
 
 	private ICoalesceCacher _Cacher = null;
 	
-	// Interface Implementation
+    /*--------------------------------------------------------------------------
+		Interface Implementation
+	--------------------------------------------------------------------------*/
 	
 	@Override
 	public boolean Initialize(ICoalesceCacher Cacher) {
@@ -24,7 +47,7 @@ public class CoalescePersisterBase implements ICoalescePersistor {
 	}
 
 	@Override
-	public boolean SetEntity(Entity entity) {
+	public boolean SetEntity(XsdEntity entity, boolean AllowRemoval) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -166,9 +189,9 @@ public class CoalescePersisterBase implements ICoalescePersistor {
 	}
 
 	@Override
-	public CallResult PersistEntityTemplate() {
+	public boolean PersistEntityTemplate(CoalesceEntityTemplate EntityTemplate) {
 		// TODO Auto-generated method stub
-		return null;
+		return false;
 	}
 
 	@Override
@@ -197,7 +220,9 @@ public class CoalescePersisterBase implements ICoalescePersistor {
 		return null;
 	}
 	
-	// Private Functions
+    /*--------------------------------------------------------------------------
+		Private Functions
+	--------------------------------------------------------------------------*/
 	
 	protected XsdEntity GetEntityFromCache(String Key) {
 		
