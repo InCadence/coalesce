@@ -68,7 +68,7 @@ public class XsdEntityTest {
         try
         {
 
-            XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TestMission);
+            XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TestMissionNoXpathTitle);
 
             String title = entity.GetTitle();
 
