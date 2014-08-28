@@ -26,165 +26,167 @@ import unity.core.runtime.CallResult;
 
 public class XsdEntityTest {
 
-	/*
-	 * @BeforeClass public static void setUpBeforeClass() throws Exception {
-	 * 
-	 * }
-	 * 
-	 * @AfterClass public static void tearDownAfterClass() throws Exception { }
-	 * 
-	 * @Before public void setUp() throws Exception {
-	 * 
-	 * }
-	 * 
-	 * @After public void tearDown() throws Exception { }
-	 */
+    /*
+     * @BeforeClass public static void setUpBeforeClass() throws Exception {
+     * 
+     * }
+     * 
+     * @AfterClass public static void tearDownAfterClass() throws Exception { }
+     * 
+     * @Before public void setUp() throws Exception {
+     * 
+     * }
+     * 
+     * @After public void tearDown() throws Exception { }
+     */
 
-	@Test
-	public void CreateXsdEntityFromXml() {
+    @Test
+    public void CreateXsdEntityFromXml()
+    {
 
-		try {
+        try
+        {
 
-			CallResult rst;
+            XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TestMission);
 
-			XsdEntity entity = XsdEntity
-					.Create(CoalesceTypeInstances.TestMission);
-			;
+            String title = entity.GetTitle();
+            assertEquals("NORTHCOM Volunteer Background Checks, NORTHCOM Volunteer Background Checks", title);
 
-			String title = entity.GetTitle();
-			assertEquals(
-					"NORTHCOM Volunteer Background Checks, NORTHCOM Volunteer Background Checks",
-					title);
+            String xml = entity.ToXml();
 
-			String xml = entity.ToXml();
+        }
+        catch (Exception ex)
+        {
+            fail(ex.getMessage());
+        }
 
-		} catch (Exception ex) {
-			fail(ex.getMessage());
-		}
+    }
 
-	}
+    @Test
+    public void GetTitleWithoutXpathTest()
+    {
+        try
+        {
 
-	@Test
-	public void GetTitleWithoutXpathTest() {
-		CallResult rst;
+            XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TestMission);
 
-		XsdEntity entity = XsdEntity
-				.Create(CoalesceTypeInstances.TestMission);
+            String title = entity.GetTitle();
 
-		String title = entity.GetTitle();
+            assertEquals("TREX Portal", title);
 
-		String entityXml = entity.ToXml();
-		
-		
-		//assertEquals(entityXml, CoalesceTypeInstances.TestMission);
-		assertEquals("TREX Portal", title);
+        }
+        catch (Exception ex)
+        {
+            fail(ex.getMessage());
+        }
+    }
+    
+    @Test 
+    public void testArbitraryAttributes() {
+        try
+        {
+            XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TestMission);
 
-	}
+            String entityXml = entity.ToXml();
 
-	@Test
-	public void EmptyDateInitialization() {
-		fail("Not yet implemented");
-	}
+            assertTrue(entityXml.contains("anthony=\"Test\""));
 
-	@Test
-	public void UpdateTitleThatUsesXpathTest() {
-		fail("Not yet implemented");
-	}
+        }
+        catch (Exception ex)
+        {
+            fail(ex.getMessage());
+        }
+    }
 
-	@Test
-	public void UpdateTitleThatDoesNotUseXpathTest() {
-		fail("Not yet implemented");
-	}
+    @Test
+    public void EmptyDateInitialization()
+    {
+        fail("Not yet implemented");
+    }
 
-	@Test
-	public void test() {
-		fail("Not yet implemented");
-	}
+    @Test
+    public void UpdateTitleThatUsesXpathTest()
+    {
+        fail("Not yet implemented");
+    }
 
-	@Test
-	public void CreateTREXOperation() {
+    @Test
+    public void UpdateTitleThatDoesNotUseXpathTest()
+    {
+        fail("Not yet implemented");
+    }
 
-		XsdEntity entity = null;
-		XsdSection section = null;
-		XsdRecordset recordSet = null;
+    @Test
+    public void testCreateTREXOperation()
+    {
 
-		// Create Entity
+        try
+        {
+            XsdEntity entity = null;
+            XsdSection section = null;
+            XsdRecordset recordSet = null;
 
+            // Create Entity
+            entity = XsdEntity.Create("TREXOperation",
+                                      "TREX Portal",
+                                      "1.0.0.0",
+                                      "",
+                                      "",
+                                      "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
-		
-		
-		entity = XsdEntity
-				.Create("TREXOperation",
-						"TREX Portal",
-						"1.0.0.0",
-						"",
-						"",
-						"TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+            // Verify Entity Creation
+            assertTrue(entity.GetSource().equals("TREX Portal"));
+            assertTrue(entity.GetLinkageSection() == null);
 
-		assertTrue(entity.GetSource() == "TREX Portal");
+            // Create Linkage Section
+            XsdLinkageSection.Create(entity, true);
 
-		XsdLinkageSection.Create(entity, true);
+            // Verify Link Section Creation
+            assertTrue(entity.GetLinkageSection() != null);
 
-		// Create Live Status Section
-		section = XsdSection.Create(entity, "Live Status Section", true);
-		recordSet = XsdRecordset.Create(section, "Live Status Recordset");
-		
-		XsdFieldDefinition.Create(recordSet, "CurrentStatus",
-				ECoalesceFieldDataTypes.StringType);
+            // Create Live Status Section
+            section = XsdSection.Create(entity, "Live Status Section", true);
+            recordSet = XsdRecordset.Create(section, "Live Status Recordset");
 
-		// Create Information Section
-		section = XsdSection.Create(entity, "Operation Information Section",
-				true);
-		recordSet = XsdRecordset.Create(section,
-				"Operation Information Recordset");
-		XsdFieldDefinition.Create(recordSet, "OperationName",
-				ECoalesceFieldDataTypes.StringType);
+            //Verify Live Status Section Creation
+            assertTrue(entity.GetSection("TREXOperation/Live Status Section") != null);
 
+            XsdFieldDefinition.Create(recordSet, "CurrentStatus", ECoalesceFieldDataTypes.StringType);
 
-		String entityXml = entity.ToXml();
-		
-		String test = null;
+            // Create Information Section
+            section = XsdSection.Create(entity, "Operation Information Section", true);
+            recordSet = XsdRecordset.Create(section, "Operation Information Recordset");
 
-	}
+            XsdFieldDefinition.Create(recordSet, "OperationName", ECoalesceFieldDataTypes.StringType);
 
-	
+            // Verify Information Section Creation
+            assertTrue(entity.GetSection("TREXOperation/Operation Information Section") != null);
+
+            // Serialize
+            String entityXml = entity.ToXml();
+
+            // Deserialize
+            XsdEntity entity2 = new XsdEntity(); 
+            assertTrue(entity2.Initialize(entityXml));
+            
+            // Verify Entity 
+            assertTrue(entity.GetSource().equals("TREX Portal"));
+
+            // Verify Link Section 
+            assertTrue(entity2.GetLinkageSection() != null);
+            
+            //Verify Live Status Section 
+            assertTrue(entity2.GetSection("TREXOperation/Live Status Section") != null);
+
+            // Verify Information Section 
+            assertTrue(entity2.GetSection("TREXOperation/Operation Information Section") != null);
+
+        }
+        catch (Exception ex)
+        {
+            fail(ex.getMessage());
+        }
+    }
+
 }
 
-/*
-public class OperationEntity() extends XsdEntity {
-	
-	public Initialize() {
-		
-		XsdEntity entity = null;
-		XsdSection section = null;
-		XsdRecordset recordSet = null;
-		
-		entity.SetName("TREXOperation");
-		entity.SetSource("TREX Portal");
-		entity.SetVersion("1.0.0.1");
-		entity.SetEntityId("");
-		entity.SetEntityIdType("");
-		
-		entity.
-		
-		XsdLinkageSection.Create(this, true);
-
-		// Create Live Status Section
-		section = XsdSection.Create(this, "Live Status Section", true);
-		recordSet = XsdRecordset.Create(section, "Live Status Recordset");
-		
-		XsdFieldDefinition.Create(recordSet, "CurrentStatus",
-				ECoalesceFieldDataTypes.StringType);
-
-		// Create Information Section
-		section = XsdSection.Create(this, "Operation Information Section",
-				true);
-		recordSet = XsdRecordset.Create(section,
-				"Operation Information Recordset");
-		XsdFieldDefinition.Create(recordSet, "OperationName",
-				ECoalesceFieldDataTypes.StringType);
-		
-	}
-	
-}
-*/
