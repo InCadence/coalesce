@@ -58,7 +58,7 @@ public class FileHelper {
             fullDirectory = FilenameUtils.concat(binaryFileStoreBasePath, baseFilename.substring(0, subDirectoryLength));
         }
         else {
-            fullDirectory = CoalesceSettings.GetBinaryFileStoreBasePath();
+            fullDirectory = binaryFileStoreBasePath;
         }
 
         if (createIfDoesNotExist) {

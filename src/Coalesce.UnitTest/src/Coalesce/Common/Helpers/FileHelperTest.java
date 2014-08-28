@@ -10,7 +10,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import unity.connector.rest.RestConfigurationsConnector;
-import Coalesce.Common.Classification.Marking;
 import Coalesce.Common.Runtime.CoalesceSettings;
 
 /*-----------------------------------------------------------------------------'
@@ -34,7 +33,6 @@ public class FileHelperTest {
 
     private static final String GUID = "313dab28-ac40-4cf2-b990-92f0e85eb15c";
 
-    private static final String _defaultApplicationRoot = "C:\\Program Files\\Java\\jre7\\bin";
     private static final String _binaryFileStoreBasePath = "C:\\Program Files\\Java\\jre7\\bin\\uploads\\";
 
     @BeforeClass
@@ -106,7 +104,7 @@ public class FileHelperTest {
 
         String filename = CallGetBaseFilenameWithFullDirectoryPathForKey(_binaryFileStoreBasePath, 0, GUID, false);
 
-        assertEquals(CoalesceSettings.GetBinaryFileStoreBasePath() + GUID.toUpperCase(), filename);
+        assertEquals(_binaryFileStoreBasePath + GUID.toUpperCase(), filename);
     }
 
     @Test
@@ -116,7 +114,7 @@ public class FileHelperTest {
 
         String filename = CallGetBaseFilenameWithFullDirectoryPathForKey(_binaryFileStoreBasePath, 1, GUID, false);
 
-        assertEquals(FilenameUtils.concat(CoalesceSettings.GetBinaryFileStoreBasePath(), GUID.substring(0, 1).toUpperCase()
+        assertEquals(FilenameUtils.concat(_binaryFileStoreBasePath, GUID.substring(0, 1).toUpperCase()
                              + "\\" + GUID.toUpperCase()),
                      filename);
     }
@@ -128,7 +126,7 @@ public class FileHelperTest {
 
         String filename = CallGetBaseFilenameWithFullDirectoryPathForKey(_binaryFileStoreBasePath, 35, GUID, false);
 
-        assertEquals(FilenameUtils.concat(CoalesceSettings.GetBinaryFileStoreBasePath(), GUID.substring(0, 35).toUpperCase()
+        assertEquals(FilenameUtils.concat(_binaryFileStoreBasePath, GUID.substring(0, 35).toUpperCase()
                              + "\\" + GUID.toUpperCase()),
                      filename);
     }
@@ -140,7 +138,7 @@ public class FileHelperTest {
 
         String filename = CallGetBaseFilenameWithFullDirectoryPathForKey(_binaryFileStoreBasePath, 36, GUID, false);
 
-        assertEquals(CoalesceSettings.GetBinaryFileStoreBasePath() + GUID.toUpperCase(), filename);
+        assertEquals(_binaryFileStoreBasePath + GUID.toUpperCase(), filename);
     }
 
     @Test
@@ -150,7 +148,7 @@ public class FileHelperTest {
 
         String filename = CallGetBaseFilenameWithFullDirectoryPathForKey(_binaryFileStoreBasePath, 37, GUID, false);
 
-        assertEquals(CoalesceSettings.GetBinaryFileStoreBasePath() + GUID.toUpperCase(), filename);
+        assertEquals(_binaryFileStoreBasePath + GUID.toUpperCase(), filename);
     }
 
     private String CallGetBaseFilenameWithFullDirectoryPathForKey(String binaryFileStoreBasePath,
