@@ -9,21 +9,21 @@ import Coalesce.Framework.GeneratedJAXB.Entity.Linkagesection;
 import Coalesce.Framework.GeneratedJAXB.Entity.Linkagesection.Linkage;
 
 /*-----------------------------------------------------------------------------'
-Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
+ Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
 
-Notwithstanding any contractor copyright notice, the Government has Unlimited
-Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
-of this work other than as specifically authorized by these DFARS Clauses may
-violate Government rights in this work.
+ Notwithstanding any contractor copyright notice, the Government has Unlimited
+ Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+ of this work other than as specifically authorized by these DFARS Clauses may
+ violate Government rights in this work.
 
-DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
-Unlimited Rights. The Government has the right to use, modify, reproduce,
-perform, display, release or disclose this computer software and to have or
-authorize others to do so.
+ DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+ Unlimited Rights. The Government has the right to use, modify, reproduce,
+ perform, display, release or disclose this computer software and to have or
+ authorize others to do so.
 
-Distribution Statement D. Distribution authorized to the Department of
-Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
------------------------------------------------------------------------------*/
+ Distribution Statement D. Distribution authorized to the Department of
+ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+ -----------------------------------------------------------------------------*/
 
 public class XsdLinkageSection extends XsdDataObject {
 
@@ -35,128 +35,85 @@ public class XsdLinkageSection extends XsdDataObject {
 	// Factory and Initialization
 	// -----------------------------------------------------------------------//
 
-	public static CallResult Create(XsdEntity parent, XsdLinkageSection newLinkageSection)
-	{
-		try {
-			boolean noIndex = false;
+	public static XsdLinkageSection Create(XsdEntity parent) {
 
-			return Create(parent, newLinkageSection, noIndex);
+		return XsdLinkageSection.Create(parent, false);
 
-		} catch (Exception ex) {
-			return new CallResult(CallResults.FAILED_ERROR, ex, XsdLinkageSection.MODULE);
-		}
 	}
 
-	public static CallResult Create(XsdEntity parent, XsdLinkageSection newLinkageSection, Boolean noIndex)
-	{
-		try {
-			CallResult rst;
+	public static XsdLinkageSection Create(XsdEntity parent, Boolean noIndex) {
 
-			newLinkageSection = new XsdLinkageSection();
-			rst = newLinkageSection.Initialize(parent);
-			if (!rst.getIsSuccess()) return rst;
+		XsdLinkageSection linkageSection = new XsdLinkageSection();
+		if (!linkageSection.Initialize(parent))
+			return null;
 
-			rst = newLinkageSection.InitializeEntity();
+		linkageSection.SetName("Linkages");
+		linkageSection.SetNoIndex(noIndex);
 
-			newLinkageSection.SetName("Linkages");
-
-			newLinkageSection.SetNoIndex(noIndex);
-
-			// Add to parent's child collection
-			if (parent._childDataObjects.containsKey(newLinkageSection.GetKey())) {
-				parent._childDataObjects.put(newLinkageSection.GetKey(), newLinkageSection);
-			}
-
-			return CallResult.successCallResult;
-
-		} catch (Exception ex) {
-			return new CallResult(CallResults.FAILED_ERROR, ex, XsdLinkageSection.MODULE);
+		// Add to parent's child collection
+		if (parent._childDataObjects.containsKey(linkageSection.GetKey())) {
+			parent._childDataObjects.put(linkageSection.GetKey(), linkageSection);
 		}
+
+		return linkageSection;
+
 	}
 
-	public CallResult Initialize(XsdEntity parent)
-	{
-		try {
-			CallResult rst;
+	public boolean Initialize(XsdEntity parent) {
 
-			// Set References
-			_parent = parent;
-			_entityLinkageSection = parent.GetEntityLinkageSection();
+		// Set References
+		_parent = parent;
+		_entityLinkageSection = parent.GetEntityLinkageSection();
+
+		if (_entityLinkageSection != null) {
 
 			for (Linkage childLinkage : _entityLinkageSection.getLinkage()) {
 
 				XsdLinkage newLinkage = new XsdLinkage();
-				rst = newLinkage.Initialize(this, childLinkage);
-				if (!rst.getIsSuccess()) continue;
+				if (!newLinkage.Initialize(this, childLinkage))
+					continue;
 
 				if (!_childDataObjects.containsKey(newLinkage.GetKey())) {
 					_childDataObjects.put(newLinkage.GetKey(), newLinkage);
 				}
 			}
 
-			return CallResult.successCallResult;
-
-		} catch (Exception ex) {
-			return new CallResult(CallResults.FAILED_ERROR, ex, this);
+			return super.Initialize();
+		} else {
+			return false;
 		}
+
 	}
 
 	// -----------------------------------------------------------------------//
 	// Public Methods
 	// -----------------------------------------------------------------------//
 
-	protected String GetObjectKey()
-	{
+	protected String GetObjectKey() {
 		return _entityLinkageSection.getKey();
 	}
 
-	public void SetKey(String value)
-	{
+	public void SetKey(String value) {
 		_entityLinkageSection.setKey(value);
 	}
 
-	public String GetName()
-	{
+	public String GetName() {
 		return _entityLinkageSection.getName();
 	}
 
-	public void SetName(String value)
-	{
+	public void SetName(String value) {
 		_entityLinkageSection.setName(value);
 	}
 
-	public CallResult CreateLinkage(XsdLinkage newLinkage)
-	{
-		try {
-			CallResult rst;
-
-			// Create new Linkage
-			rst = XsdLinkage.Create(this, newLinkage);
-			if (!rst.getIsSuccess()) return rst;
-
-			return CallResult.successCallResult;
-
-		} catch (Exception ex) {
-			return new CallResult(CallResults.FAILED_ERROR, ex, this);
-		}
+	public XsdLinkage CreateLinkage() {
+		return XsdLinkage.Create(this);
 	}
 
-	public CallResult ToXml(StringBuilder xml)
-	{
-		try {
-			CallResult rst;
-
-			rst = XmlHelper.Serialize(_entityLinkageSection, xml);
-
-			return rst;
-
-		} catch (Exception ex) {
-			return new CallResult(CallResults.FAILED_ERROR, ex, this);
-		}
+	public String ToXml() {
+		return XmlHelper.Serialize(_entityLinkageSection);
 	}
 
-	public DateTime GetDateCreated()
-	{
+	public DateTime GetDateCreated() {
 		try {
 
 			// return new
@@ -169,8 +126,7 @@ public class XsdLinkageSection extends XsdDataObject {
 		}
 	}
 
-	public CallResult SetDateCreated(DateTime value)
-	{
+	public CallResult SetDateCreated(DateTime value) {
 		try {
 			// _entityLinkageSection.setDatecreated(new
 			// SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
@@ -183,8 +139,7 @@ public class XsdLinkageSection extends XsdDataObject {
 		}
 	}
 
-	public DateTime GetLastModified()
-	{
+	public DateTime GetLastModified() {
 		try {
 
 			// return new
@@ -197,8 +152,7 @@ public class XsdLinkageSection extends XsdDataObject {
 		}
 	}
 
-	protected CallResult SetObjectLastModified(DateTime value)
-	{
+	protected CallResult SetObjectLastModified(DateTime value) {
 		try {
 			// _entityLinkageSection.setLastmodified(new
 			// SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
@@ -215,8 +169,7 @@ public class XsdLinkageSection extends XsdDataObject {
 	// Protected Methods
 	// -----------------------------------------------------------------------//
 
-	protected CallResult GetObjectStatus(String status)
-	{
+	protected CallResult GetObjectStatus(String status) {
 		try {
 			status = _entityLinkageSection.getStatus();
 
@@ -227,8 +180,7 @@ public class XsdLinkageSection extends XsdDataObject {
 		}
 	}
 
-	protected CallResult SetObjectStatus(String status)
-	{
+	protected CallResult SetObjectStatus(String status) {
 		try {
 			_entityLinkageSection.setStatus(status);
 
@@ -239,8 +191,7 @@ public class XsdLinkageSection extends XsdDataObject {
 		}
 	}
 
-	protected CallResult GetObjectNoIndex(String value)
-	{
+	protected CallResult GetObjectNoIndex(String value) {
 		try {
 			value = _entityLinkageSection.getNoindex();
 
@@ -251,8 +202,7 @@ public class XsdLinkageSection extends XsdDataObject {
 		}
 	}
 
-	protected CallResult SetObjectNoIndex(String value)
-	{
+	protected CallResult SetObjectNoIndex(String value) {
 		try {
 			_entityLinkageSection.setNoindex(value);
 
@@ -263,8 +213,7 @@ public class XsdLinkageSection extends XsdDataObject {
 		}
 	}
 
-	protected Linkagesection GetEntityLinkageSection()
-	{
+	protected Linkagesection GetEntityLinkageSection() {
 		return _entityLinkageSection;
 	}
 }

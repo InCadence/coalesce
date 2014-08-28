@@ -50,9 +50,7 @@ public class EntityTest {
     @Test
     public void EntityDeserializationMissionTest() {
     
-        Entity entity = new Entity();
-        
-        Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TestMission, entity);
+        Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TestMission, XsdEntity.class);
         assertNotNull("Failed to deserialize mission entity", desObj);
         assertTrue("Deserialized object no an Entity", desObj instanceof Entity);
 
@@ -117,11 +115,9 @@ public class EntityTest {
     @Test
     public void GetLastModifiedTest() {
 
-        Entity entity = new Entity();
-        
-        Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TestMission, entity);
+        Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TestMission, Entity.class);
 
-        entity = (Entity)desObj;
+        Entity entity = (Entity)desObj;
         
         DateTime lastModified = entity.getLastmodified();
         
@@ -138,11 +134,9 @@ public class EntityTest {
     @Test
     public void GetDateCreatedTest() {
 
-        Entity entity = new Entity();
-        
-        Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TestMission, entity);
+        Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TestMission, Entity.class);
 
-        entity = (Entity)desObj;
+        Entity entity = (Entity)desObj;
         
         DateTime dateCreated = entity.getDatecreated();
         
@@ -159,11 +153,9 @@ public class EntityTest {
     @Test
     public void SetLastModifiedDefinedTest() {
 
-        Entity entity = new Entity();
-        
-        Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TestMission, entity);
+        Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TestMission, Entity.class);
 
-        entity = (Entity)desObj;
+        Entity entity = (Entity)desObj;
 
         DateTime setLastModified = new DateTime(2222, 12, 5, 11, 44, 55, 666, DateTimeZone.UTC);
 
@@ -190,7 +182,7 @@ public class EntityTest {
     
         Entity entity = new Entity();
         
-        Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TestMission, entity);
+        Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TestMission, Entity.class);
 
         entity = (Entity)desObj;
 
@@ -198,14 +190,12 @@ public class EntityTest {
 
         entity.setLastmodified(setLastModified);
 
-        StringBuilder xml = new StringBuilder();
-        CallResult rst = XmlHelper.Serialize(entity, xml);
-        assertTrue(rst.getIsSuccess());
+        String xml =  XmlHelper.Serialize(entity);
+        assertTrue(xml != null);
         
-        Entity desSerEntity = new Entity();
-        Object desSerializedObj = XmlHelper.Deserialize(CoalesceTypeInstances.TestMission, desSerEntity);
+        Object desSerializedObj = XmlHelper.Deserialize(CoalesceTypeInstances.TestMission, Entity.class);
         
-        desSerEntity = (Entity)desSerializedObj;
+        Entity desSerEntity = (Entity)desSerializedObj;
         
         DateTime lastModified = entity.getLastmodified();
         
@@ -219,7 +209,7 @@ public class EntityTest {
 
         Entity entity = new Entity();
         
-        Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TestMission, entity);
+        Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TestMission, Entity.class);
 
         entity = (Entity)desObj;
 

@@ -37,43 +37,33 @@ public class XmlHelper {
 	
 	private static String MODULE = "Coalesce.Common.Helpers.XmlHelper";
 	
-	// Private constructor to make helper class static
-	//private XmlHelper() { }
-	
-	public static CallResult Serialize(Object obj, StringBuilder xml) {
+	public static String Serialize(Object obj) {
 		try {
 
-			String localXml;
-			
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			JAXBContext context = JAXBContext.newInstance(obj.getClass());
+			
 			Marshaller marshaller = context.createMarshaller();
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true); // pretty
 			marshaller.setProperty(Marshaller.JAXB_ENCODING, "ISO-8859-1"); // specify
-																			// encoding
-
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			marshaller.marshal(obj, out);
 
-			localXml = new String(out.toByteArray());
-
-			xml.append(localXml);
-			
-			return CallResult.successCallResult;
+			return new String(out.toByteArray());
 
 		} catch (Exception ex) {
-			return new CallResult(CallResults.FAILED_ERROR, ex, XmlHelper.MODULE);
+			CallResult.log(CallResults.FAILED_ERROR, ex, XmlHelper.MODULE);
+			return null;
 		}
 	}
 
-	public static Object Deserialize(String xml, Object obj) {
+	public static Object Deserialize(String xml, Class<?> classType) {
 		try {
 
 			InputStream in = new ByteArrayInputStream(xml.getBytes());
-			JAXBContext context = JAXBContext.newInstance(obj.getClass());
+			JAXBContext context = JAXBContext.newInstance(classType);
 			Unmarshaller unmarshaller = context.createUnmarshaller();
-			obj = unmarshaller.unmarshal(in);
-
-			return obj;
+			
+			return unmarshaller.unmarshal(in);
 
 		} catch (Exception ex) {
 			CallResult.log(CallResults.FAILED_ERROR, ex, XmlHelper.MODULE);

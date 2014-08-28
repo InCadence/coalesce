@@ -12,125 +12,112 @@ import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record.Field;
 
 /*-----------------------------------------------------------------------------'
-Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
+ Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
 
-Notwithstanding any contractor copyright notice, the Government has Unlimited
-Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
-of this work other than as specifically authorized by these DFARS Clauses may
-violate Government rights in this work.
+ Notwithstanding any contractor copyright notice, the Government has Unlimited
+ Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+ of this work other than as specifically authorized by these DFARS Clauses may
+ violate Government rights in this work.
 
-DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
-Unlimited Rights. The Government has the right to use, modify, reproduce,
-perform, display, release or disclose this computer software and to have or
-authorize others to do so.
+ DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+ Unlimited Rights. The Government has the right to use, modify, reproduce,
+ perform, display, release or disclose this computer software and to have or
+ authorize others to do so.
 
-Distribution Statement D. Distribution authorized to the Department of
-Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
------------------------------------------------------------------------------*/
+ Distribution Statement D. Distribution authorized to the Department of
+ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+ -----------------------------------------------------------------------------*/
 
 public class XsdRecord extends XsdDataObject {
 
-    //-----------------------------------------------------------------------//
-    // protected Member Variables
-    //-----------------------------------------------------------------------//
+	// -----------------------------------------------------------------------//
+	// protected Member Variables
+	// -----------------------------------------------------------------------//
 
 	private static String MODULE = "Coalesce.Framework.DataModel.XsdRecord";
-	
+
 	private Record _entityRecord;
-	
+
 	// -----------------------------------------------------------------------//
 	// Factory and Initialization
 	// -----------------------------------------------------------------------//
 
-	public static CallResult Create(XsdRecordset parent, XsdRecord newRecord, String name)
-	{
+	public static XsdRecord Create(XsdRecordset parent, String name) {
 		try {
+
 			CallResult rst;
 
 			Record newEntityRecord = new Record();
 			parent.GetEntityRecords().add(newEntityRecord);
-			
-			rst = newRecord.Initialize(parent, newEntityRecord);
-			if (!rst.getIsSuccess()) return rst;
+
+			XsdRecord newRecord = new XsdRecord();
+			if (!newRecord.Initialize(parent, newEntityRecord))
+				return null;
 
 			for (XsdFieldDefinition fieldDefinition : parent.GetFieldDefinitions()) {
-	            XsdField newField = new XsdField();
-	            rst = XsdField.Create(newRecord, newField, fieldDefinition);
-            }
-			
+				XsdField newField = XsdField.Create(newRecord, fieldDefinition);
+			}
+
 			newRecord.SetName(name);
 
 			// Add to parent's child collection
 			if (!parent._childDataObjects.containsKey(newRecord.GetKey())) {
 				parent._childDataObjects.put(newRecord.GetKey(), newRecord);
 			}
-			
-			return CallResult.successCallResult;
+
+			return newRecord;
 
 		} catch (Exception ex) {
-			return new CallResult(CallResults.FAILED_ERROR, ex, XsdRecord.MODULE);
+			return null;
 		}
 	}
 
-	public CallResult Initialize(XsdRecordset parent, Record record)
-	{
-		try {
-			CallResult rst;
+	public boolean Initialize(XsdRecordset parent, Record record) {
 
-			// Set References
-			_parent = parent;
+		// Set References
+		_parent = parent;
+		_entityRecord = record;
 
-			_entityRecord = record;
+		for (Field entityField : record.getField()) {
+			XsdField newField = new XsdField();
+			if (!newField.Initialize(this, entityField))
+				return false;
 
-			for (Field entityField : record.getField()) {
-				XsdField newField = new XsdField();
-				rst = newField.Initialize(this, entityField);
-
-				// Add to Child Collection
-				_childDataObjects.put(newField.GetKey(), newField);
-			}
-
-			// Add to Parent Collections (if we're Active)
-			if (GetStatus() == ECoalesceDataObjectStatus.ACTIVE) {
-				parent._childDataObjects.put(GetKey(), this);
-				parent.GetRecords().add(this);
-			}
-			 
-			rst = InitializeEntity();
-
-			return rst;
-
-		} catch (Exception ex) {
-			return new CallResult(CallResults.FAILED_ERROR, ex, this);
+			// Add to Child Collection
+			_childDataObjects.put(newField.GetKey(), newField);
 		}
+
+		// Add to Parent Collections (if we're Active)
+		if (GetStatus() == ECoalesceDataObjectStatus.ACTIVE) {
+			parent._childDataObjects.put(GetKey(), this);
+			parent.GetRecords().add(this);
+		}
+
+		return super.Initialize();
+
 	}
 
 	// -----------------------------------------------------------------------//
 	// Public Methods
 	// -----------------------------------------------------------------------//
 
-	protected String GetObjectKey()
-	{
+	protected String GetObjectKey() {
 		return _entityRecord.getKey();
 	}
 
-	public void SetKey(String value)
-	{
+	public void SetKey(String value) {
 		_entityRecord.setKey(value);
 	}
 
-	public String GetName()
-	{
+	public String GetName() {
 		return _entityRecord.getName();
 	}
 
-	public void SetName(String value)
-	{
+	public void SetName(String value) {
 		_entityRecord.setName(value);
 	}
 
-	public ArrayList<XsdField> GetFields()
-	{
+	public ArrayList<XsdField> GetFields() {
 		try {
 
 			ArrayList<XsdField> fields = new ArrayList<XsdField>();
@@ -149,18 +136,17 @@ public class XsdRecord extends XsdDataObject {
 		}
 	}
 
-	public ArrayList<String> GetFieldNames()
-	{
+	public ArrayList<String> GetFieldNames() {
 		try {
-			
+
 			ArrayList<String> fieldNames = new ArrayList<String>();
 
 			for (XsdDataObject dataObject : _childDataObjects.values()) {
-	            if (dataObject instanceof XsdField) {
-	            	fieldNames.add(dataObject.GetName());
-	            }
-            }
-			
+				if (dataObject instanceof XsdField) {
+					fieldNames.add(dataObject.GetName());
+				}
+			}
+
 			return fieldNames;
 
 		} catch (Exception ex) {
@@ -168,8 +154,7 @@ public class XsdRecord extends XsdDataObject {
 		}
 	}
 
-	public ArrayList<String> GetFieldKeys()
-	{
+	public ArrayList<String> GetFieldKeys() {
 		try {
 
 			ArrayList<String> fieldKeys = new ArrayList<String>();
@@ -187,32 +172,14 @@ public class XsdRecord extends XsdDataObject {
 		}
 	}
 
-	public XsdField GetFieldByKey(String key)
-	{
+	public XsdField GetFieldByKey(String key) {
 		try {
-			
-			for (XsdField field : GetFields()) {
-	            if (field.GetKey().equals(key)) {
-	            	return field;
-	            }
-            }
-			
-			return null;
 
-		} catch (Exception ex) {
-			return null;
-		}
-	}
-
-	public XsdField GetFieldByName(String name)
-	{
-		try {
-			
 			for (XsdField field : GetFields()) {
-	            if (field.GetName().equals(name)) {
-	            	return field;
-	            }
-            }
+				if (field.GetKey().equals(key)) {
+					return field;
+				}
+			}
 
 			return null;
 
@@ -221,8 +188,23 @@ public class XsdRecord extends XsdDataObject {
 		}
 	}
 
-	public XsdField GetFieldByIndex(int Index)
-	{
+	public XsdField GetFieldByName(String name) {
+		try {
+
+			for (XsdField field : GetFields()) {
+				if (field.GetName().equals(name)) {
+					return field;
+				}
+			}
+
+			return null;
+
+		} catch (Exception ex) {
+			return null;
+		}
+	}
+
+	public XsdField GetFieldByIndex(int Index) {
 		try {
 
 			return GetFields().get(Index);
@@ -232,8 +214,7 @@ public class XsdRecord extends XsdDataObject {
 		}
 	}
 
-	public String GetFieldValue(String fieldName)
-	{
+	public String GetFieldValue(String fieldName) {
 		try {
 			XsdField field = GetFieldByName(fieldName);
 
@@ -253,8 +234,7 @@ public class XsdRecord extends XsdDataObject {
 		}
 	}
 
-	public CallResult GetFieldValue(String fieldName, String value)
-	{
+	public CallResult GetFieldValue(String fieldName, String value) {
 		try {
 			XsdField field = GetFieldByName(fieldName);
 
@@ -276,8 +256,7 @@ public class XsdRecord extends XsdDataObject {
 		}
 	}
 
-	public CallResult GetFieldValue(String fieldName, boolean value)
-	{
+	public CallResult GetFieldValue(String fieldName, boolean value) {
 		try {
 			XsdField field = GetFieldByName(fieldName);
 
@@ -294,8 +273,7 @@ public class XsdRecord extends XsdDataObject {
 		}
 	}
 
-	public CallResult GetFieldValue(String fieldName, int value)
-	{
+	public CallResult GetFieldValue(String fieldName, int value) {
 		try {
 			XsdField field = GetFieldByName(fieldName);
 
@@ -312,8 +290,7 @@ public class XsdRecord extends XsdDataObject {
 		}
 	}
 
-	public CallResult GetFieldValue(String fieldName, DateTime value)
-	{
+	public CallResult GetFieldValue(String fieldName, DateTime value) {
 		try {
 			XsdField field = GetFieldByName(fieldName);
 
@@ -330,8 +307,7 @@ public class XsdRecord extends XsdDataObject {
 		}
 	}
 
-	public CallResult GetFieldValue(String fieldName, ArrayList<Byte> value)
-	{
+	public CallResult GetFieldValue(String fieldName, ArrayList<Byte> value) {
 		try {
 			XsdField field = GetFieldByName(fieldName);
 
@@ -348,11 +324,10 @@ public class XsdRecord extends XsdDataObject {
 		}
 	}
 
-	public String GetFieldValueAsString(String fieldName, String defaultValue)
-	{
+	public String GetFieldValueAsString(String fieldName, String defaultValue) {
 		try {
 			CallResult rst;
-			
+
 			String value = "";
 			rst = GetFieldValue(fieldName, value);
 
@@ -370,11 +345,10 @@ public class XsdRecord extends XsdDataObject {
 		}
 	}
 
-	public boolean GetFieldValueAsBoolean(String fieldName, boolean defaultValue)
-	{
+	public boolean GetFieldValueAsBoolean(String fieldName, boolean defaultValue) {
 		try {
 			CallResult rst;
-			
+
 			Boolean value = false;
 			rst = GetFieldValue(fieldName, value);
 
@@ -387,16 +361,15 @@ public class XsdRecord extends XsdDataObject {
 
 		} catch (Exception ex) {
 			CallResult.log(CallResults.FAILED_ERROR, ex, this);
-			
+
 			return defaultValue;
 		}
 	}
 
-	public int GetFieldValueAsInteger(String fieldName, int defaultValue)
-	{
+	public int GetFieldValueAsInteger(String fieldName, int defaultValue) {
 		try {
 			CallResult rst;
-			
+
 			Integer value = 0;
 			rst = GetFieldValue(fieldName, value);
 
@@ -409,16 +382,15 @@ public class XsdRecord extends XsdDataObject {
 
 		} catch (Exception ex) {
 			CallResult.log(CallResults.FAILED_ERROR, ex, this);
-			
+
 			return defaultValue;
 		}
 	}
 
-	public DateTime GetFieldValueAsDate(String fieldName, DateTime defaultValue)
-	{
+	public DateTime GetFieldValueAsDate(String fieldName, DateTime defaultValue) {
 		try {
 			CallResult rst;
-			
+
 			DateTime value = null;
 			rst = GetFieldValue(fieldName, value);
 
@@ -435,28 +407,27 @@ public class XsdRecord extends XsdDataObject {
 		}
 	}
 
-	public byte[] GetFieldValueAsByteArray(String fieldName, byte[] defaultValue)
-	{
+	public byte[] GetFieldValueAsByteArray(String fieldName, byte[] defaultValue) {
 		try {
 			CallResult rst;
-			
+
 			ArrayList<Byte> value = new ArrayList<Byte>();
 			rst = GetFieldValue(fieldName, value);
 
 			// Evaluate
 			if (rst.getIsSuccess()) {
-				
+
 				byte[] valueBytes = new byte[value.size()];
-				for (int i=0; i < value.size(); i++) {
+				for (int i = 0; i < value.size(); i++) {
 					valueBytes[i] = value.get(i);
 				}
-				
+
 				return valueBytes;
-				
+
 			} else {
 				return defaultValue;
 			}
-			
+
 		} catch (Exception ex) {
 			// Log exception and return nothing
 			CallResult.log(CallResults.FAILED_ERROR, ex, this);
@@ -464,18 +435,17 @@ public class XsdRecord extends XsdDataObject {
 		}
 	}
 
-	public CallResult SetFieldValue(String fieldName, String value)
-	{
+	public CallResult SetFieldValue(String fieldName, String value) {
 		try {
 			XsdField field = GetFieldByName(fieldName);
 
 			// Do we have this Field?
 			if (field != null) {
-				
+
 				field.SetValue(value);
 
 				return CallResult.successCallResult;
-				
+
 			} else {
 				return new CallResult(CallResults.FAILED, "Field not found.", this);
 			}
@@ -485,8 +455,7 @@ public class XsdRecord extends XsdDataObject {
 		}
 	}
 
-	public CallResult SetFieldValue(String fieldName, boolean value)
-	{
+	public CallResult SetFieldValue(String fieldName, boolean value) {
 		try {
 			XsdField field = GetFieldByName(fieldName);
 
@@ -502,8 +471,7 @@ public class XsdRecord extends XsdDataObject {
 		}
 	}
 
-	public CallResult SetFieldValue(String fieldName, int value)
-	{
+	public CallResult SetFieldValue(String fieldName, int value) {
 		try {
 			XsdField field = GetFieldByName(fieldName);
 
@@ -519,8 +487,7 @@ public class XsdRecord extends XsdDataObject {
 		}
 	}
 
-	public CallResult SetFieldValue(String fieldName, DateTime value)
-	{
+	public CallResult SetFieldValue(String fieldName, DateTime value) {
 		try {
 			XsdField field = GetFieldByName(fieldName);
 
@@ -537,8 +504,7 @@ public class XsdRecord extends XsdDataObject {
 		}
 	}
 
-	public CallResult SetFieldValue(String fieldName, byte[] value)
-	{
+	public CallResult SetFieldValue(String fieldName, byte[] value) {
 		try {
 			return SetFieldValue(fieldName, value, "");
 		} catch (Exception ex) {
@@ -546,20 +512,19 @@ public class XsdRecord extends XsdDataObject {
 		}
 	}
 
-	public CallResult SetFieldValue(String fieldName, byte[] value, String fileName)
-	{
+	public CallResult SetFieldValue(String fieldName, byte[] value, String fileName) {
 		try {
 			XsdField field = GetFieldByName(fieldName);
 
 			// Do we have this Field?
 			if (field != null) {
-				
+
 				if (fileName.equals("")) {
 					return field.SetTypedValue(value);
 				} else {
 					return field.SetTypedValue(value, "{" + fileName + "}", ".jpg", "");
 				}
-				
+
 			} else {
 				return new CallResult(CallResults.FAILED, "Field not found.", this);
 			}
@@ -569,13 +534,13 @@ public class XsdRecord extends XsdDataObject {
 		}
 	}
 
-	public Boolean HasField(String name)
-	{
+	public Boolean HasField(String name) {
 		try {
 			// Find Field
 			// For Each f As XsdField In this.GetFields
 			for (int i = 0; i < GetFields().size(); i++) {
-				if (GetFields().get(i).GetName().equals(name)) return true;
+				if (GetFields().get(i).GetName().equals(name))
+					return true;
 			}
 
 			return false;
@@ -587,25 +552,14 @@ public class XsdRecord extends XsdDataObject {
 		}
 	}
 
-	public CallResult ToXml(StringBuilder xml)
-	{
-		try {
-			CallResult rst;
-
-			rst = XmlHelper.Serialize(_entityRecord, xml);
-
-			return rst;
-
-		} catch (Exception ex) {
-			return new CallResult(CallResults.FAILED_ERROR, ex, this);
-		}
+	public String ToXml() {
+		return XmlHelper.Serialize(_entityRecord);
 	}
 
-	public DateTime GetDateCreated()
-	{
+	public DateTime GetDateCreated() {
 		try {
 
-			//return new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityRecord.getDatecreated());
+			// return new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityRecord.getDatecreated());
 			return _entityRecord.getDatecreated();
 
 		} catch (Exception ex) {
@@ -614,10 +568,9 @@ public class XsdRecord extends XsdDataObject {
 		}
 	}
 
-	public CallResult SetDateCreated(DateTime value)
-	{
+	public CallResult SetDateCreated(DateTime value) {
 		try {
-			//_entityRecord.setDatecreated(new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
+			// _entityRecord.setDatecreated(new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
 			_entityRecord.setDatecreated(value);
 
 			return CallResult.successCallResult;
@@ -627,11 +580,10 @@ public class XsdRecord extends XsdDataObject {
 		}
 	}
 
-	public DateTime GetLastModified()
-	{
+	public DateTime GetLastModified() {
 		try {
 
-			//return new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityRecord.getLastmodified());
+			// return new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityRecord.getLastmodified());
 			return _entityRecord.getLastmodified();
 
 		} catch (Exception ex) {
@@ -640,10 +592,9 @@ public class XsdRecord extends XsdDataObject {
 		}
 	}
 
-	protected CallResult SetObjectLastModified(DateTime value)
-	{
+	protected CallResult SetObjectLastModified(DateTime value) {
 		try {
-			//_entityRecord.setLastmodified(new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
+			// _entityRecord.setLastmodified(new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
 			_entityRecord.setLastmodified(value);
 
 			return CallResult.successCallResult;
@@ -653,35 +604,34 @@ public class XsdRecord extends XsdDataObject {
 		}
 	}
 
-    //-----------------------------------------------------------------------//
-    // Protected Methods
-    //-----------------------------------------------------------------------//
+	// -----------------------------------------------------------------------//
+	// Protected Methods
+	// -----------------------------------------------------------------------//
 
-    protected CallResult GetObjectStatus(String status)
-    {
-    	try {
-	    	status = _entityRecord.getStatus();
-	    	
-	    	return CallResult.successCallResult;
-    	
-    	} catch (Exception ex) {
-    		return new CallResult(CallResults.FAILED_ERROR,ex,this);    		
-    	}
-    }
-    protected CallResult SetObjectStatus(String status)
-    {
-    	try {
-    		_entityRecord.setStatus(status);
-    		
-    		return CallResult.successCallResult;
-    		
-    	} catch (Exception ex) {
-    		return new CallResult(CallResults.FAILED_ERROR, ex, this);
-    	}
-    }
-    
-    protected List<Field> GetEntityFields() {
+	protected CallResult GetObjectStatus(String status) {
+		try {
+			status = _entityRecord.getStatus();
+
+			return CallResult.successCallResult;
+
+		} catch (Exception ex) {
+			return new CallResult(CallResults.FAILED_ERROR, ex, this);
+		}
+	}
+
+	protected CallResult SetObjectStatus(String status) {
+		try {
+			_entityRecord.setStatus(status);
+
+			return CallResult.successCallResult;
+
+		} catch (Exception ex) {
+			return new CallResult(CallResults.FAILED_ERROR, ex, this);
+		}
+	}
+
+	protected List<Field> GetEntityFields() {
     	return _entityRecord.getField();
-    }
-    
+	}
+
 }
