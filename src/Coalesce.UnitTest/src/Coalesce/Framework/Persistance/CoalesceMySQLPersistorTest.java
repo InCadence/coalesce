@@ -41,7 +41,8 @@ public class CoalesceMySQLPersistorTest {
 		serCon.setURL("jdbc:mysql://localhost:3306/trse");
 		serCon.setUser("root");
 		serCon.setPassword("web23ler");
-		mp = new MySQLPersistor(serCon);
+		mp = new MySQLPersistor();
+		mp.Initialize(serCon);
 	    MySQLPersistor mySQLPersistor = new MySQLPersistor();
 	    
 	    CoalesceMySQLPersistorTest._coalesceFramework = new CoalesceFramework();
@@ -72,8 +73,8 @@ public class CoalesceMySQLPersistorTest {
 
 	@Test
 	public void TestGetFieldValue() {
-		String fieldValue=mp.GetFieldValue("d95604ea-16d6-46f4-9e8a-0663ffdfaa91");
-		assertFalse(fieldValue);
+		String fieldValue=mp.GetFieldValue("0fcdc9f8-8fa9-4069-95c2-001111f83ebc");
+		System.out.println(fieldValue);
 		fail("Not yet implemented");
 	}
 	
