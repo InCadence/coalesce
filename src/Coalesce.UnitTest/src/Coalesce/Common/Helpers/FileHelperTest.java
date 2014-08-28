@@ -34,128 +34,143 @@ public class FileHelperTest {
 
     private static final String GUID = "313dab28-ac40-4cf2-b990-92f0e85eb15c";
 
-    private static String _originalBinaryFileStoreBasePath;
-    
+    private static final String _defaultApplicationRoot = "C:\\Program Files\\Java\\jre7\\bin";
+    private static final String _binaryFileStoreBasePath = "C:\\Program Files\\Java\\jre7\\bin\\uploads\\";
+
     @BeforeClass
     public static void setUpBeforeClass()
     {
 
         CoalesceSettings.Initialize(new RestConfigurationsConnector("localhost", 2222));
-        CoalesceSettings.SetDefaultApplicationRoot("C:\\Program Files\\Java\\jre7\\bin");
-        
-        _originalBinaryFileStoreBasePath = CoalesceSettings.GetBinaryFileStoreBasePath();
-        CoalesceSettings.SetBinaryFileStoreBasePath("C:\\Program Files\\Java\\jre7\\bin\\uploads\\");
     }
-    
+
     @AfterClass
     public static void tearDownAfterClass()
     {
-        CoalesceSettings.SetDefaultApplicationRoot(null);
-        CoalesceSettings.SetBinaryFileStoreBasePath(_originalBinaryFileStoreBasePath);
     }
-    
-    /* @Before public void setUp() throws Exception { }
-     *
-     *
+
+    /*
+     * @Before public void setUp() throws Exception { }
+     * 
+     * 
      * @After public void tearDown() throws Exception { }
      */
-    
+
     @Test
-    public void GetBaseFilenameWithFullDirectoryPathForKeyNullTest() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
+    public void GetBaseFilenameWithFullDirectoryPathForKeyNullTest() throws NoSuchMethodException, SecurityException,
+            IllegalAccessException, IllegalArgumentException, InvocationTargetException
     {
 
-        String filename = CallGetBaseFilenameWithFullDirectoryPathForKey(0, null, false);
+        String filename = CallGetBaseFilenameWithFullDirectoryPathForKey(_binaryFileStoreBasePath, 0, null, false);
 
         assertNull(filename);
     }
 
     @Test
-    public void GetBaseFilenameWithFullDirectoryPathForKeyEmptyTest() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
+    public void GetBaseFilenameWithFullDirectoryPathForKeyEmptyTest() throws NoSuchMethodException, SecurityException,
+            IllegalAccessException, IllegalArgumentException, InvocationTargetException
     {
 
-        String filename = CallGetBaseFilenameWithFullDirectoryPathForKey(0, "", false);
-
-        assertNull(filename);
-
-    }
-
-    @Test
-    public void GetBaseFilenameWithFullDirectoryPathForKeyWhitespaceTest() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
-    {
-
-        String filename = CallGetBaseFilenameWithFullDirectoryPathForKey(0, " ", false);
+        String filename = CallGetBaseFilenameWithFullDirectoryPathForKey(_binaryFileStoreBasePath, 0, "", false);
 
         assertNull(filename);
 
     }
 
     @Test
-    public void GetBaseFilenameWithFullDirectoryPathForKeyInvalidGuidTest() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
+    public void GetBaseFilenameWithFullDirectoryPathForKeyWhitespaceTest() throws NoSuchMethodException, SecurityException,
+            IllegalAccessException, IllegalArgumentException, InvocationTargetException
     {
 
-        String filename = CallGetBaseFilenameWithFullDirectoryPathForKey(0,"ABCD", false);
+        String filename = CallGetBaseFilenameWithFullDirectoryPathForKey(_binaryFileStoreBasePath, 0, " ", false);
 
         assertNull(filename);
 
     }
 
     @Test
-    public void GetBaseFilenameWithFullDirectoryPathForKeySubDirZeroTest() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        
-        String filename = CallGetBaseFilenameWithFullDirectoryPathForKey(0, GUID, false);
-        
+    public void GetBaseFilenameWithFullDirectoryPathForKeyInvalidGuidTest() throws NoSuchMethodException, SecurityException,
+            IllegalAccessException, IllegalArgumentException, InvocationTargetException
+    {
+
+        String filename = CallGetBaseFilenameWithFullDirectoryPathForKey(_binaryFileStoreBasePath, 0, "ABCD", false);
+
+        assertNull(filename);
+
+    }
+
+    @Test
+    public void GetBaseFilenameWithFullDirectoryPathForKeySubDirZeroTest() throws NoSuchMethodException, SecurityException,
+            IllegalAccessException, IllegalArgumentException, InvocationTargetException
+    {
+
+        String filename = CallGetBaseFilenameWithFullDirectoryPathForKey(_binaryFileStoreBasePath, 0, GUID, false);
+
         assertEquals(CoalesceSettings.GetBinaryFileStoreBasePath() + GUID.toUpperCase(), filename);
     }
-    
+
     @Test
-    public void GetBaseFilenameWithFullDirectoryPathForKeySubDirOneTest() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        
-        String filename = CallGetBaseFilenameWithFullDirectoryPathForKey(1, GUID, false);
-        
-        assertEquals(FilenameUtils.concat(CoalesceSettings.GetBinaryFileStoreBasePath(),
-                                          GUID.substring(0, 1).toUpperCase() + "\\" + GUID.toUpperCase()),
+    public void GetBaseFilenameWithFullDirectoryPathForKeySubDirOneTest() throws NoSuchMethodException, SecurityException,
+            IllegalAccessException, IllegalArgumentException, InvocationTargetException
+    {
+
+        String filename = CallGetBaseFilenameWithFullDirectoryPathForKey(_binaryFileStoreBasePath, 1, GUID, false);
+
+        assertEquals(FilenameUtils.concat(CoalesceSettings.GetBinaryFileStoreBasePath(), GUID.substring(0, 1).toUpperCase()
+                             + "\\" + GUID.toUpperCase()),
                      filename);
     }
 
     @Test
-    public void GetBaseFilenameWithFullDirectoryPathForKeySubDirThirtyFiveTest() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        
-        String filename = CallGetBaseFilenameWithFullDirectoryPathForKey(35, GUID, false);
-        
-        assertEquals(FilenameUtils.concat(CoalesceSettings.GetBinaryFileStoreBasePath(),
-                                          GUID.substring(0, 35).toUpperCase() + "\\" + GUID.toUpperCase()),
+    public void GetBaseFilenameWithFullDirectoryPathForKeySubDirThirtyFiveTest() throws NoSuchMethodException,
+            SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
+    {
+
+        String filename = CallGetBaseFilenameWithFullDirectoryPathForKey(_binaryFileStoreBasePath, 35, GUID, false);
+
+        assertEquals(FilenameUtils.concat(CoalesceSettings.GetBinaryFileStoreBasePath(), GUID.substring(0, 35).toUpperCase()
+                             + "\\" + GUID.toUpperCase()),
                      filename);
     }
-    
+
     @Test
-    public void GetBaseFilenameWithFullDirectoryPathForKeySubDirThirtySixTest() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        
-        String filename = CallGetBaseFilenameWithFullDirectoryPathForKey(36, GUID, false);
-        
+    public void GetBaseFilenameWithFullDirectoryPathForKeySubDirThirtySixTest() throws NoSuchMethodException,
+            SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
+    {
+
+        String filename = CallGetBaseFilenameWithFullDirectoryPathForKey(_binaryFileStoreBasePath, 36, GUID, false);
+
         assertEquals(CoalesceSettings.GetBinaryFileStoreBasePath() + GUID.toUpperCase(), filename);
     }
-    
+
     @Test
-    public void GetBaseFilenameWithFullDirectoryPathForKeySubDirThirtySevenTest() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        
-        String filename = CallGetBaseFilenameWithFullDirectoryPathForKey(37, GUID, false);
-        
+    public void GetBaseFilenameWithFullDirectoryPathForKeySubDirThirtySevenTest() throws NoSuchMethodException,
+            SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
+    {
+
+        String filename = CallGetBaseFilenameWithFullDirectoryPathForKey(_binaryFileStoreBasePath, 37, GUID, false);
+
         assertEquals(CoalesceSettings.GetBinaryFileStoreBasePath() + GUID.toUpperCase(), filename);
     }
-    
-    private String CallGetBaseFilenameWithFullDirectoryPathForKey(int subDirectoryLength,
+
+    private String CallGetBaseFilenameWithFullDirectoryPathForKey(String binaryFileStoreBasePath,
+                                                                  int subDirectoryLength,
                                                                   String key,
-                                                                  boolean createIfDoesNotExist) throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        Class<?>[] args = new Class[3];
-        args[0] = int.class;
-        args[1] = String.class;
-        args[2] = boolean.class;
-        
+                                                                  boolean createIfDoesNotExist)
+            throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException,
+            InvocationTargetException
+    {
+        Class<?>[] args = new Class[4];
+        args[0] = String.class;
+        args[1] = int.class;
+        args[2] = String.class;
+        args[3] = boolean.class;
+
         Method method = FileHelper.class.getDeclaredMethod("GetBaseFilenameWithFullDirectoryPathForKey", args);
         method.setAccessible(true);
 
-        Object results = method.invoke(null, subDirectoryLength, key, createIfDoesNotExist);
+        Object results = method.invoke(null, binaryFileStoreBasePath, subDirectoryLength, key, createIfDoesNotExist);
 
-        return (String)results;
+        return (String) results;
     }
 }

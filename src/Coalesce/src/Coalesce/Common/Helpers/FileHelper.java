@@ -25,44 +25,51 @@ import Coalesce.Common.Runtime.CoalesceSettings;
 
 public class FileHelper {
 
-	// Make static
-	private FileHelper() {
+    // Make static
+    private FileHelper()
+    {
 
-	}
+    }
 
-	public static String GetBaseFilenameWithFullDirectoryPathForKey(String key) {
-		return GetBaseFilenameWithFullDirectoryPathForKey(CoalesceSettings.GetSubDirectoryLength(), key, true);
-	}
+    public static String GetBaseFilenameWithFullDirectoryPathForKey(String key)
+    {
+        return GetBaseFilenameWithFullDirectoryPathForKey(CoalesceSettings.GetBinaryFileStoreBasePath(),
+                                                          CoalesceSettings.GetSubDirectoryLength(),
+                                                          key,
+                                                          true);
+    }
 
-	private static String GetBaseFilenameWithFullDirectoryPathForKey(int subDirectoryLength, String key, boolean createIfDoesNotExist) {
+    private static String GetBaseFilenameWithFullDirectoryPathForKey(String binaryFileStoreBasePath,
+                                                                     int subDirectoryLength,
+                                                                     String key,
+                                                                     boolean createIfDoesNotExist)
+    {
 
-		if (key == null || StringHelper.IsNullOrEmpty(key.trim()))
-			return null;
+        if (key == null || StringHelper.IsNullOrEmpty(key.trim())) return null;
 
-		String baseFilename = GUIDHelper.RemoveBrackets(key);
+        String baseFilename = GUIDHelper.RemoveBrackets(key);
 
-		if (baseFilename == null)
-			return null;
+        if (baseFilename == null) return null;
 
-		String fullDirectory;
+        String fullDirectory;
 
-		if (subDirectoryLength > 0 && subDirectoryLength < baseFilename.length()) {
+        if (subDirectoryLength > 0 && subDirectoryLength < baseFilename.length()) {
 
-			fullDirectory = FilenameUtils.concat(CoalesceSettings.GetBinaryFileStoreBasePath(),
-					baseFilename.substring(0, subDirectoryLength));
-		} else {
-			fullDirectory = CoalesceSettings.GetBinaryFileStoreBasePath();
-		}
+            fullDirectory = FilenameUtils.concat(binaryFileStoreBasePath, baseFilename.substring(0, subDirectoryLength));
+        }
+        else {
+            fullDirectory = CoalesceSettings.GetBinaryFileStoreBasePath();
+        }
 
-		if (createIfDoesNotExist) {
-			File fileDir = new File(fullDirectory);
-			if (!fileDir.exists()) {
-				fileDir.mkdirs();
-			}
-		}
+        if (createIfDoesNotExist) {
+            File fileDir = new File(fullDirectory);
+            if (!fileDir.exists()) {
+                fileDir.mkdirs();
+            }
+        }
 
-		return FilenameUtils.concat(fullDirectory, baseFilename);
+        return FilenameUtils.concat(fullDirectory, baseFilename);
 
-	}
+    }
 
 }
