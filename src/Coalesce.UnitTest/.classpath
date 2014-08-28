@@ -8,5 +8,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/Coalesce"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Unity"/>
 	<classpathentry kind="lib" path="../../redist/commons/commons-io-2.4.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Coalesce.Persister"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

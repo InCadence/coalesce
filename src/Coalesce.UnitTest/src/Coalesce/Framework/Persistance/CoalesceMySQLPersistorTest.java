@@ -4,7 +4,14 @@ import static org.junit.Assert.*;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import com.database.persister.MySQLPersistor;
+
+import Coalesce.Common.UnitTest.CoalesceTypeInstances;
+import Coalesce.Framework.CoalesceFramework;
+import Coalesce.Framework.DataModel.XsdEntity;
 
 /*-----------------------------------------------------------------------------'
 Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -25,9 +32,16 @@ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
 
 public class CoalesceMySQLPersistorTest {
 
-	@Before
-	public void Initialize() {
+    private static CoalesceFramework _coalesceFramework;
+    
+	@BeforeClass
+	public static void Initialize() {
 		
+	    MySQLPersistor mySQLPersistor = new MySQLPersistor();
+	    
+	    CoalesceMySQLPersistorTest._coalesceFramework = new CoalesceFramework();
+	    CoalesceMySQLPersistorTest._coalesceFramework.Initialize(mySQLPersistor);
+	    
 	}
 	
 	@Test
@@ -36,8 +50,13 @@ public class CoalesceMySQLPersistorTest {
 	}
 
 	@Test
-	public void TestSetEntity() {
-		fail("Not yet implemented");
+	public void TestSaveEntity() {
+	    
+	    XsdEntity mission = new XsdEntity(); 
+	    mission.Initialize(CoalesceTypeInstances.TestMission);
+	    	    
+	    assertTrue(CoalesceMySQLPersistorTest._coalesceFramework.SaveCoalesceEntity(mission));
+	    
 	}
 	
 	@Test
