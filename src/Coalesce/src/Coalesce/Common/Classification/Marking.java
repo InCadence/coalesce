@@ -126,6 +126,10 @@ public class Marking implements Serializable, Comparable<Marking> {
         int index = 0;
         boolean isPortionMarking = false;
         
+        if (markingString == null) {
+            markingString = "";
+        }
+        
         // CLASSIFICATION//CONTROLSYSTEM1/CONTROLSYSTEM2-COMPARTMENT1 SUBCOMPARTMENT1 SUBCOMPARTMENT2-COMPARTMENT2//
         // SPECIAL ACCESS REQUIRED-PROGRAM NICKNAME/CODEWORD//" & _
         // RD-SG 1//FGI DEU//FOUO//LIMDIS
@@ -138,8 +142,14 @@ public class Marking implements Serializable, Comparable<Marking> {
         }
         
         // If it is blank or invalid make it Unclass
-        if (markingString.length() < (isPortionMarking ? 1 : 6)) {
-            markingString = "UNCLASSIFIED";
+        if (isPortionMarking) {
+            if (markingString.length() < 1) {
+                markingString = "U";
+            }
+        } else {
+            if (markingString.length() < 6) { 
+                markingString = "UNCLASSIFIED";
+            }
         }
         
         // If it does not have // assume it is the USA class level only
@@ -207,7 +217,7 @@ public class Marking implements Serializable, Comparable<Marking> {
                 
             } else if (parts[index].startsWith("COSMIC") ||
                        parts[index].startsWith("NATO") ||
-                       parts[index].startsWith("ATOMAL") ) {
+                       parts[index].contains("ATOMAL") ) {
                 
                 _isNATO = true;
                 _classification = FieldValues.GetMarkingValueByTitle(parts[index], GetClassifications());
@@ -223,7 +233,10 @@ public class Marking implements Serializable, Comparable<Marking> {
                 
                 if (fgc.size() < (fgc.contains("TOP") ? 3 : 2)) return; // Invalid FGC Classification marking
                 
-                GetSelectedCountries().add(FieldValues.GetCountryByAlpha3(fgc.get(0)));
+                ISO3166Country country = FieldValues.GetCountryByAlpha3(fgc.get(0));
+                if (country != null) {
+                    GetSelectedCountries().add(country);
+                }
                 
                 if (isPortionMarking) {
                     _classification = FieldValues.GetMarkingValueByPortion(fgc.get(1), GetClassifications());
@@ -397,12 +410,12 @@ public class Marking implements Serializable, Comparable<Marking> {
         return _isIMCON;
     }
     
-    public void GetIsIMCON(boolean value) {
+    public void SetIsIMCON(boolean value) {
         _isIMCON = value;
     }
     
     public boolean GetIsDISPLAY_ONLY() {
-        return _displayOnlyCountries.size() > 0;
+        return GetDisplayOnlyCountries().size() > 0;
     }
     
     public boolean GetIsDSEN() {
@@ -438,7 +451,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
     
     public boolean GetIsReleaseTo() {
-        return _releaseToCountries.size() > 0;
+        return GetReleaseToCountries().size() > 0;
     }
     
     public boolean GetIsNOFORN() {
@@ -533,6 +546,10 @@ public class Marking implements Serializable, Comparable<Marking> {
         return GetIsFOUO() || GetIsLES() || GetIsORCON() || GetIsIMCON() || GetIsDSEN() || GetIsDISPLAY_ONLY() ||
                GetIsFISA() || GetIsNOFORN() || GetIsPROPIN() || GetIsPROPIN() || GetIsReleaseTo() || GetIsRELIDO();
     }
+   
+    public boolean HasOtherDeseminationControls() {
+        return GetIsLIMDIS() || GetIsEXDIS() || GetIsSBU() || GetIsSBUNF() || GetIsACCM();
+    }
     
     public String ToPortionString() {
         return "(" + toString(true) + ")";
@@ -598,18 +615,17 @@ public class Marking implements Serializable, Comparable<Marking> {
             if (GetIsDSEN()) marking += "DSEN/";
             if (GetIsNOFORN()) marking += toPortion ? "NF/" : "NOFORN/";
             
-            marking = marking.substring(0, marking.length() - 2);
-            
+            marking = marking.substring(0, marking.length() - 1);
         }
         
-        if (HasDeseminationControls()) {
+        if (HasOtherDeseminationControls()) {
             
             marking += "//";
             
             if (GetIsLIMDIS()) marking += toPortion ? "DS/" : "LIMITED DISTRIBUTION/";
             if (GetIsEXDIS()) marking += toPortion ? "XD/" : "EXDIS/";
             if (GetIsSBU()) marking += "SBU/";
-            if (GetIsSBUNF()) marking += toPortion ? "SBU-NF" : "SBU NOFORN/";
+            if (GetIsSBUNF()) marking += toPortion ? "SBU-NF/" : "SBU NOFORN/";
             
             if (GetIsACCM()) {
                 
@@ -624,8 +640,7 @@ public class Marking implements Serializable, Comparable<Marking> {
             }
             
             // Remove trailing /
-            marking = marking.substring(0, marking.length() - 2);
-            
+            marking = marking.substring(0, marking.length() - 1);
         }
         
         return marking;
@@ -658,7 +673,7 @@ public class Marking implements Serializable, Comparable<Marking> {
             
             // Remove training ', '
             marking = marking.trim();
-            marking = marking.substring(0, marking.length() - 2);
+            marking = marking.substring(0, marking.length() - 1);
             marking += "/";
         }
         

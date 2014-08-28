@@ -4,7 +4,9 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import Coalesce.Common.Classification.AllCommonClassificationTests;
 import Coalesce.Common.Helpers.AllCommonHelpersTests;
+import Coalesce.Common.RunTime.AllCommonRunTimeTests;
 import Coalesce.Framework.DataModel.AllFrameworkDataModelTests;
 
 /*-----------------------------------------------------------------------------'
@@ -25,7 +27,11 @@ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
 -----------------------------------------------------------------------------*/
 
 @RunWith(Suite.class)
-@SuiteClasses({ AllCommonHelpersTests.class, AllFrameworkDataModelTests.class})
+@SuiteClasses({
+    AllCommonClassificationTests.class,
+    AllCommonHelpersTests.class,
+    AllCommonRunTimeTests.class,
+    AllFrameworkDataModelTests.class})
 public class AllCoalesceTests {
 
 }

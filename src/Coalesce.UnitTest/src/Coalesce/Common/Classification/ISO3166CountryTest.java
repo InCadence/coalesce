@@ -277,4 +277,12 @@ public class ISO3166CountryTest {
         assertEquals(expectedName, actual.GetName());
 
     }
+    
+    public static void assertCountry(ISO3166Country expected, ISO3166Country actual) {
+    
+        assertEquals(expected.GetAlpha2(), actual.GetAlpha2());
+        assertEquals(expected.GetAlpha3(), actual.GetAlpha3());
+        assertEquals(expected.GetName(), actual.GetName());
+
+    }
 }
