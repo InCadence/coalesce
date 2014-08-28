@@ -1,7 +1,8 @@
 package Coalesce.Common.Runtime;
 
-import org.apache.commons.io.FilenameUtils;
+import java.util.Map;
 
+import org.apache.commons.io.FilenameUtils;
 import unity.core.runtime.SettingsBase;
 import Coalesce.Common.Helpers.StringHelper;
 
@@ -36,7 +37,12 @@ public class CoalesceSettings extends SettingsBase {
 	--------------------------------------------------------------------------*/
 
 	public static String GetConfigurationFileName() {
-		return _defaultApplicationName + ".Coalesce.config";
+		
+		if (_defaultApplicationName == null) {
+			return ".Coalesce.config";
+		} else {
+			return _defaultApplicationName + ".Coalesce.config";
+		}
 	}
 	
 	public static boolean GetUseBinaryFileStore() {
@@ -74,8 +80,33 @@ public class CoalesceSettings extends SettingsBase {
 	}
 	
 	public static String GetDefaultApplicationRoot() {
+	    
 		if (StringHelper.IsNullOrEmpty(_defaultApplicationRoot)) {
-			// TODO: find executing application path
+
+		    Map<Thread, StackTraceElement[]> stackMap = Thread.getAllStackTraces();
+		    
+		    for (Map.Entry<Thread, StackTraceElement[]> threadStack : stackMap.entrySet()) {
+                
+		        if (threadStack.getKey().getId() == 1) {
+		            StackTraceElement[] stack = threadStack.getValue();
+		            StackTraceElement main = stack[stack.length - 1];
+		            String mainClassName = main.getClassName();
+		            
+		            try {
+    		            Class<?> cls = Class.forName(mainClassName);
+    		            
+    		            String classPath = cls.getProtectionDomain().getCodeSource().getLocation().getPath();
+    
+    		            _defaultApplicationRoot = classPath;
+    		            
+		            } catch (ClassNotFoundException cnfe) {
+		                _defaultApplicationRoot = null;
+		            }
+
+                    break;
+}
+            }
+		    
 		}
 		
 		return _defaultApplicationRoot;
