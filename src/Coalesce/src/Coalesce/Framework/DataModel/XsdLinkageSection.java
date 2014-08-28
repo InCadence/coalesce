@@ -51,7 +51,7 @@ public class XsdLinkageSection extends XsdDataObject {
 		linkageSection.SetNoIndex(noIndex);
 
 		// Add to parent's child collection
-		if (parent._childDataObjects.containsKey(linkageSection.GetKey())) {
+		if (!parent._childDataObjects.containsKey(linkageSection.GetKey())) {
 			parent._childDataObjects.put(linkageSection.GetKey(), linkageSection);
 		}
 
