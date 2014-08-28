@@ -168,39 +168,31 @@ public class CoalesceDataObject implements ICoalesceDataObject {
     public ECoalesceDataObjectStatus DataObjectStatus;
     @Override
     public ECoalesceDataObjectStatus GetDataObjectStatus(){
-    	CallResult rst;
-
     	// Get
     	String StatusString = "";
-    	rst = GetAttribute("status", StatusString);
+    	StatusString = GetAttribute("status");
 
     	// Evaluate
-    	if (rst.getIsSuccess()) {
+        if (StatusString == "") {
+            // Set to Active (Default)
+            DataObjectStatus = ECoalesceDataObjectStatus.ACTIVE;
 
-            if (StatusString == "") {
-                // Set to Active (Default)
-                DataObjectStatus = ECoalesceDataObjectStatus.ACTIVE;
-
-                // Return Active
-                return ECoalesceDataObjectStatus.ACTIVE;
-            }else{
-                // Return Status
-                return (this.GetDataObjectStatusForString(StatusString));
-            }
-    	}else{
-            // Return Active (Default)
+            // Return Active
             return ECoalesceDataObjectStatus.ACTIVE;
-    	}
+        }else{
+            // Return Status
+            return (this.GetDataObjectStatusForString(StatusString));
+        }
 
     }
     @Override
     public void SetDataObjectStatus(ECoalesceDataObjectStatus value){
     	// Set
-    	CallResult rst; 
+    	boolean rst; 
     	rst = SetAttribute("status", this.GetStringForDataObjectStatus(value));
 
     	// Evaluate
-    	if (rst.getIsSuccess()){
+    	if (rst){
     		// Touch LastModified
     		java.util.Date CurDate = new java.util.Date();
     		LastModified = CurDate;
@@ -372,27 +364,26 @@ public class CoalesceDataObject implements ICoalesceDataObject {
     /// <param name="Value">Value of the attribute</param>
     /// <returns>CallResult</returns>
     /// <remarks></remarks>
-    public CallResult SetAttribute(String Name, String Value) {
+    public boolean SetAttribute(String Name, String Value) {
+        
+        boolean retVal = false;
+        
         try{
             // Do we have a Document?
-            if (_DataObjectDocument == null) {
-	            // No; Return Failed
-	            return new CallResult(CallResults.FAILED, "No DataObjectDocument.", this);
-            }else{
+            if (_DataObjectDocument != null) {
                 // Yes; Do we have a Node?
-                if (_DataObjectNode == null) {
-	                // No; Return Failed
-	                return new CallResult(CallResults.FAILED, "No DataObjectNode.", this);
-                }else{
+                if (_DataObjectNode != null) {
                     // Yes; Set the Attribute
-                	XmlHelper xmlHelper = new XmlHelper();
-                    return xmlHelper.SetAttribute(_DataObjectDocument, _DataObjectNode, Name, Value);
+                    XmlHelper xmlHelper = new XmlHelper();
+                    retVal = xmlHelper.SetAttribute(_DataObjectDocument, _DataObjectNode, Name, Value);
                 }
             }
-
+            
+            return retVal;
+            
         }catch (Exception ex){
             // Return Failed Error
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
+            return retVal;
         }
     }
 
@@ -436,30 +427,25 @@ public class CoalesceDataObject implements ICoalesceDataObject {
     /// <param name="Value">Value of the attribute</param>
     /// <returns>CallResult</returns>
     /// <remarks></remarks>
-    public CallResult GetAttribute(String Name, String Value){
+    public String GetAttribute(String Name){
+        String Value = "";
         try{
+            
             // Do we have a Document?
-            if (_DataObjectDocument == null) {
-	            // No; Return Failed
-	            return new CallResult(CallResults.FAILED, "No DataObjectDocument.", "Coalesce.Framework.DataModel.CoalesceDataObject");
-            }else{
+            if (_DataObjectDocument != null) {
                 // Yes; Do we have a Node?
-                if (_DataObjectNode == null) {
-                    // No; Return Failed
-                    return new CallResult(CallResults.FAILED, "No DataObjectNode.", "Coalesce.Framework.DataModel.CoalesceDataObject");
-                }else{
+                if (_DataObjectNode != null) {
                     // Yes; Get the Attribute
-                	XmlHelper xmlHelper = new XmlHelper();
+                    XmlHelper xmlHelper = new XmlHelper();
                     Value = xmlHelper.GetAttribute(_DataObjectNode, Name);
-
-                    // Return Success
-                    return CallResult.successCallResult;
                 }
             }
-
+            
+            return Value;
+            
         }catch (Exception ex){
             // Return Failed Error
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
+            return Value;
         }
     }
 

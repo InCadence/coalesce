@@ -292,7 +292,7 @@ public class XmlHelper {
 //	}
 	
 	//shared
-	public CallResult SetAttribute(Document Doc, Node Node, String Name, String Value){
+	public boolean SetAttribute(Document Doc, Node Node, String Name, String Value){
 		try{
 			//TODO:
 //		    // Check for the Attribute Node
@@ -311,11 +311,11 @@ public class XmlHelper {
 //		    }
 		
 		    // return Success
-		    return CallResult.successCallResult;
+		    return true;
 		
 		}catch (Exception ex){
 		    // return Failed Error
-		    return new CallResult(CallResults.FAILED_ERROR, ex, "Coalesce.Common.Helpers.XmlHelper");
+		    return false;
 		}
 	}
 	
