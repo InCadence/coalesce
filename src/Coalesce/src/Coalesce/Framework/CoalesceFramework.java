@@ -185,8 +185,7 @@ public class CoalesceFramework {
 
     public boolean CreateFieldThumbnail(XsdField Field)
     {
-        // TODO: Not Implemented
-        return false;
+        return this.CreateFieldThumbnail(Field.GetCoalesceFullFilename());
     }
 
     public String GetCoalesceFieldValue(String FieldKey)
