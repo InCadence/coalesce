@@ -7,11 +7,15 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.database.persister.*;
+<<<<<<< Updated upstream
+import com.database.persister.MySQLPersistor;
 
 import Coalesce.Common.UnitTest.CoalesceTypeInstances;
 import Coalesce.Framework.CoalesceFramework;
 import Coalesce.Framework.DataModel.XsdEntity;
+=======
+import com.database.persister.*;
+>>>>>>> Stashed changes
 
 /*-----------------------------------------------------------------------------'
 Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -31,22 +35,29 @@ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
 -----------------------------------------------------------------------------*/
 
 public class CoalesceMySQLPersistorTest {
-	static ServerConn serCon;
-	static MySQLPersistor mp;
+<<<<<<< Updated upstream
+
     private static CoalesceFramework _coalesceFramework;
     
 	@BeforeClass
 	public static void Initialize() {
-		serCon = new ServerConn();
-		serCon.setURL("jdbc:mysql://localhost:3306/trse");
-		serCon.setUser("root");
-		serCon.setPassword("web23ler");
-		mp = new MySQLPersistor(serCon);
+		
 	    MySQLPersistor mySQLPersistor = new MySQLPersistor();
 	    
 	    CoalesceMySQLPersistorTest._coalesceFramework = new CoalesceFramework();
 	    CoalesceMySQLPersistorTest._coalesceFramework.Initialize(mySQLPersistor);
 	    
+=======
+	ServerConn serCon;
+	MySQLPersistor mp;
+	@Before
+	public void Initialize() {
+		serCon = new ServerConn();
+		serCon.setURL("jdbc:mysql://localhost:3306/trse");
+		serCon.setUser("root");
+		serCon.setPassword("web23ler");
+		mp = new MySQLPersistor(serCon);
+>>>>>>> Stashed changes
 	}
 	
 	@Test
