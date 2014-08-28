@@ -1206,9 +1206,11 @@ public class CoalesceField extends CoalesceDataObject implements ICoalesceField 
     // protected Methods
     // -----------------------------------------------------------------------// 
 
+    @SuppressWarnings("null")
     protected CallResult Change(String AttributeName, String Value) {
         try{
             CallResult rst;
+            boolean isSuccess = false;
 
             // Does the new value differ from the existing?
             if (_XmlHelper.GetAttribute(this._DataObjectNode, AttributeName) != Value) {
@@ -1240,8 +1242,8 @@ public class CoalesceField extends CoalesceDataObject implements ICoalesceField 
                 }
 
                 // Change Attribute Value
-                rst = _XmlHelper.SetAttribute(this._DataObjectDocument, this._DataObjectNode, AttributeName, Value);
-                if (!(rst.getIsSuccess())) return rst;
+                isSuccess = _XmlHelper.SetAttribute(this._DataObjectDocument, this._DataObjectNode, AttributeName, Value);
+                if (!(isSuccess)) return CallResult.failedCallResult;
 
                 // Set LastModified
                 Date UTCDate = new Date();
@@ -1263,6 +1265,7 @@ public class CoalesceField extends CoalesceDataObject implements ICoalesceField 
     public CallResult Change(String Value, String Marking, String User, String IP) {
         try{
             CallResult rst;
+            boolean isSuccess = false;
 
             // Does the new value differ from the existing?
             if ( (_XmlHelper.GetAttribute(this._DataObjectNode, "value") != Value) ||
@@ -1295,13 +1298,13 @@ public class CoalesceField extends CoalesceDataObject implements ICoalesceField 
                     // If a date field and not clearing the value
                     rst = _XmlHelper.SetAttributeAsDate(this._DataObjectDocument, this._DataObjectNode, "value", UTCDate);
                 }else{
-                    rst = _XmlHelper.SetAttribute(this._DataObjectDocument, this._DataObjectNode, "value", Value);
+                    isSuccess = _XmlHelper.SetAttribute(this._DataObjectDocument, this._DataObjectNode, "value", Value);
                 }
 
-                rst = _XmlHelper.SetAttribute(this._DataObjectDocument, this._DataObjectNode, "classificationmarking", Marking);
-                rst = _XmlHelper.SetAttribute(this._DataObjectDocument, this._DataObjectNode, "modifiedby", User);
-                rst = _XmlHelper.SetAttribute(this._DataObjectDocument, this._DataObjectNode, "modifiedbyip", IP);
-                if (!(rst.getIsSuccess())) return rst;
+                isSuccess = _XmlHelper.SetAttribute(this._DataObjectDocument, this._DataObjectNode, "classificationmarking", Marking);
+                isSuccess = _XmlHelper.SetAttribute(this._DataObjectDocument, this._DataObjectNode, "modifiedby", User);
+                isSuccess = _XmlHelper.SetAttribute(this._DataObjectDocument, this._DataObjectNode, "modifiedbyip", IP);
+                if (!(isSuccess)) return CallResult.failedCallResult;
 
                 // Set LastModified
             	UTCDate = new Date();

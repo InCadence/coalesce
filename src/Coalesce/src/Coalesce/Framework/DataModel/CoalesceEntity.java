@@ -367,10 +367,11 @@ public class CoalesceEntity extends CoalesceDataObject {
         if (value != this.Title) {
 
         	CallResult rst;
-            rst = _XmlHelper.SetAttribute(this._DataObjectDocument, this._DataObjectNode, "title", value);
+        	boolean isSuccess = false;
+        	isSuccess = _XmlHelper.SetAttribute(this._DataObjectDocument, this._DataObjectNode, "title", value);
 
             //TODO: Confirm GMT date is correct
-            if (rst.getIsSuccess()) {
+            if (isSuccess) {
                 // Set LastModified
     	    	SimpleDateFormat formatUTC = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ");
     	    	formatUTC.setTimeZone(TimeZone.getTimeZone("UTC"));

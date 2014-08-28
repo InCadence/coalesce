@@ -23,6 +23,7 @@ public class CoalesceFieldHistory extends CoalesceField {
     public CallResult Create(CoalesceField ParentField, CoalesceFieldHistory NewFieldHistory) { 
         try{
             CallResult rst;
+            boolean isSuccess = false;
             Node element = null; //xmlelement
 
             // Create CoalesceFieldHistory Node
@@ -55,7 +56,7 @@ public class CoalesceFieldHistory extends CoalesceField {
             //TODO: GUIDHelper
             //rst = GUIDHelper.GetGuidString(Guid.NewGuid, NewFieldHistory.Key);
             if (NewFieldHistory.GetKey() == "") NewFieldHistory.SetKey(java.util.UUID.randomUUID().toString());
-            rst = _XmlHelper.SetAttribute(NewFieldHistory._DataObjectDocument, NewFieldHistory._DataObjectNode, "previoushistorykey", ParentField.PreviousHistoryKey);
+            isSuccess = _XmlHelper.SetAttribute(NewFieldHistory._DataObjectDocument, NewFieldHistory._DataObjectNode, "previoushistorykey", ParentField.PreviousHistoryKey);
 
 
             // Append to parent's child node collection
