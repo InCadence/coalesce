@@ -8,23 +8,24 @@
             <xs:sequence>
               <xs:element name="linkage" minOccurs="0" maxOccurs="unbounded">
                 <xs:complexType>
-                  <xs:attribute name="key" type="xs:string" />
-                  <xs:attribute name="datecreated" type="xs:date" />
-                  <xs:attribute name="lastmodified" type="xs:date" />
-                  <xs:attribute name="name" type="xs:string" />
-                  <xs:attribute name="entity1key" type="xs:string" />
-                  <xs:attribute name="entity1name" type="xs:string" />
-                  <xs:attribute name="entity1source" type="xs:string" />
-                  <xs:attribute name="entity1version" type="xs:string" />
-                  <xs:attribute name="linktype" type="xs:string" />
-                  <xs:attribute name="entity2key" type="xs:string" />
-                  <xs:attribute name="entity2name" type="xs:string" />
-                  <xs:attribute name="entity2source" type="xs:string" />
-                  <xs:attribute name="entity2version" type="xs:string" />
-                  <xs:attribute name="classificationmarking" type="xs:string" />
-                  <xs:attribute name="modifiedby" type="xs:string" />
-                  <xs:attribute name="inputlang" type="xs:string" />
-                  <xs:attribute name="status" type="xs:string" />
+					  <xs:attribute name="key" type="xs:string" />
+					  <xs:attribute name="datecreated" type="xs:date" />
+					  <xs:attribute name="lastmodified" type="xs:date" />
+					  <xs:attribute name="name" type="xs:string" />
+					  <xs:attribute name="entity1key" type="xs:string" />
+					  <xs:attribute name="entity1name" type="xs:string" />
+					  <xs:attribute name="entity1source" type="xs:string" />
+					  <xs:attribute name="entity1version" type="xs:string" />
+					  <xs:attribute name="linktype" type="xs:string" />
+					  <xs:attribute name="entity2key" type="xs:string" />
+					  <xs:attribute name="entity2name" type="xs:string" />
+					  <xs:attribute name="entity2source" type="xs:string" />
+					  <xs:attribute name="entity2version" type="xs:string" />
+					  <xs:attribute name="classificationmarking" type="xs:string" />
+					  <xs:attribute name="modifiedby" type="xs:string" />
+					  <xs:attribute name="inputlang" type="xs:string" />
+					  <xs:attribute name="status" type="xs:string" />
+					  <xs:anyAttribute />
                 </xs:complexType>
               </xs:element>
             </xs:sequence>
@@ -34,6 +35,7 @@
             <xs:attribute name="name" type="xs:string" />
             <xs:attribute name="noindex" type="xs:string" />
             <xs:attribute name="status" type="xs:string" />
+			<xs:anyAttribute />
           </xs:complexType>
         </xs:element>
         <xs:element name="section" minOccurs="0" maxOccurs="unbounded">
@@ -53,6 +55,7 @@
                         <xs:attribute name="defaultvalue" type="xs:string" />
                         <xs:attribute name="datatype" type="xs:string" />
                         <xs:attribute name="label" type="xs:string" />
+						<xs:anyAttribute />
                       </xs:complexType>
                     </xs:element>
                     <xs:element name="record" minOccurs="0" maxOccurs="unbounded">
@@ -80,6 +83,7 @@
 									  <xs:attribute name="mimetype" type="xs:string" />
 									  <xs:attribute name="size" type="xs:string" />
 									  <xs:attribute name="hash" type="xs:string" />
+									  <xs:anyAttribute />
                                   </xs:complexType>
                                 </xs:element>
                               </xs:sequence>
@@ -100,6 +104,7 @@
                               <xs:attribute name="mimetype" type="xs:string" />
                               <xs:attribute name="size" type="xs:string" />
                               <xs:attribute name="hash" type="xs:string" />
+							  <xs:anyAttribute />
                             </xs:complexType>
                           </xs:element>
                         </xs:sequence>
@@ -108,6 +113,7 @@
                         <xs:attribute name="lastmodified" type="xs:date" />
                         <xs:attribute name="status" type="xs:string" />
                         <xs:attribute name="name" type="xs:string" />
+						<xs:anyAttribute />
                       </xs:complexType>
                     </xs:element>
                   </xs:sequence>
@@ -118,6 +124,7 @@
                   <xs:attribute name="minrecords" type="xs:string" />
                   <xs:attribute name="maxrecords" type="xs:string" />
                   <xs:attribute name="status" type="xs:string" />
+				  <xs:anyAttribute />
                 </xs:complexType>
               </xs:element>
             </xs:sequence>
@@ -127,6 +134,7 @@
             <xs:attribute name="name" type="xs:string" />
             <xs:attribute name="noindex" type="xs:string" />
             <xs:attribute name="status" type="xs:string" />
+			<xs:anyAttribute />
           </xs:complexType>
         </xs:element>
       </xs:sequence>
@@ -140,6 +148,7 @@
       <xs:attribute name="entityidtype" type="xs:string" />
       <xs:attribute name="title" type="xs:string" />
       <xs:attribute name="status" type="xs:string" />
+	  <xs:anyAttribute />
     </xs:complexType>
   </xs:element>
   <xs:element name="NewDataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true">
