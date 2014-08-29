@@ -47,7 +47,7 @@ public class XsdEntityTest {
         try
         {
 
-            XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TestMission);
+            XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
 
             String title = entity.GetTitle();
             assertEquals("NORTHCOM Volunteer Background Checks, NORTHCOM Volunteer Background Checks", title);
@@ -68,7 +68,7 @@ public class XsdEntityTest {
         try
         {
 
-            XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TestMissionNoXpathTitle);
+            XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSIONNOXPATHTITLE);
 
             String title = entity.GetTitle();
 
@@ -85,7 +85,7 @@ public class XsdEntityTest {
     public void testArbitraryAttributes() {
         try
         {
-            XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TestMission);
+            XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
 
             String entityXml = entity.ToXml();
 

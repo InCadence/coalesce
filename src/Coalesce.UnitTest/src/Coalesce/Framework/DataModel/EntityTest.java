@@ -50,7 +50,7 @@ public class EntityTest {
     @Test
     public void EntityDeserializationMissionTest() {
     
-        Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TestMission, XsdEntity.class);
+        Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TESTMISSION, XsdEntity.class);
         assertNotNull("Failed to deserialize mission entity", desObj);
         assertTrue("Deserialized object no an Entity", desObj instanceof Entity);
 
@@ -115,7 +115,7 @@ public class EntityTest {
     @Test
     public void GetLastModifiedTest() {
 
-        Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TestMission, Entity.class);
+        Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TESTMISSION, Entity.class);
 
         Entity entity = (Entity)desObj;
         
@@ -134,7 +134,7 @@ public class EntityTest {
     @Test
     public void GetDateCreatedTest() {
 
-        Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TestMission, Entity.class);
+        Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TESTMISSION, Entity.class);
 
         Entity entity = (Entity)desObj;
         
@@ -153,7 +153,7 @@ public class EntityTest {
     @Test
     public void SetLastModifiedDefinedTest() {
 
-        Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TestMission, Entity.class);
+        Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TESTMISSION, Entity.class);
 
         Entity entity = (Entity)desObj;
 
@@ -182,7 +182,7 @@ public class EntityTest {
     
         Entity entity = new Entity();
         
-        Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TestMission, Entity.class);
+        Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TESTMISSION, Entity.class);
 
         entity = (Entity)desObj;
 
@@ -193,7 +193,7 @@ public class EntityTest {
         String xml =  XmlHelper.Serialize(entity);
         assertTrue(xml != null);
         
-        Object desSerializedObj = XmlHelper.Deserialize(CoalesceTypeInstances.TestMission, Entity.class);
+        Object desSerializedObj = XmlHelper.Deserialize(CoalesceTypeInstances.TESTMISSION, Entity.class);
         
         Entity desSerEntity = (Entity)desSerializedObj;
         
@@ -209,7 +209,7 @@ public class EntityTest {
 
         Entity entity = new Entity();
         
-        Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TestMission, Entity.class);
+        Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TESTMISSION, Entity.class);
 
         entity = (Entity)desObj;
 

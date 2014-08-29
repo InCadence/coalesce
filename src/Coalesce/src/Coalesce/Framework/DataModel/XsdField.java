@@ -1,11 +1,12 @@
 package Coalesce.Framework.DataModel;
 
 import java.util.List;
+
 import org.joda.time.DateTime;
 
 import unity.core.runtime.CallResult;
 import unity.core.runtime.CallResult.CallResults;
-import Coalesce.Common.Classification.Marking;
+import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.Helpers.XmlHelper;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record.Field;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record.Field.Fieldhistory;
@@ -206,7 +207,7 @@ public class XsdField extends XsdFieldBase {
     public String GetPreviousHistoryKey()
     {
         String prevHistKey = _entityField.getPrevioushistorykey();
-        if (prevHistKey.equals(""))
+        if (StringHelper.IsNullOrEmpty(prevHistKey))
         {
             return "00000000-0000-0000-0000-000000000000";
         }
@@ -274,7 +275,6 @@ public class XsdField extends XsdFieldBase {
      * public String GetInputLang(){ return _entityField.getInputlang(); } public void SetInputLang(String value){
      * _entityField.setInputlang(value); }
      */
-
 
     public DateTime GetDateCreated()
     {
@@ -356,7 +356,6 @@ public class XsdField extends XsdFieldBase {
     // -----------------------------------------------------------------------//
     // protected Methods
     // -----------------------------------------------------------------------//
-
 
     protected CallResult GetObjectStatus(String status)
     {

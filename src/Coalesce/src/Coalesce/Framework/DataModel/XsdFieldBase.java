@@ -60,6 +60,10 @@ public abstract class XsdFieldBase extends XsdDataObject {
 
     public abstract String GetClassificationMarking();
 
+    public void SetClassificationMarking(Marking value) {
+        SetClassificationMarking(value.toString());
+    }
+    
     public abstract void SetClassificationMarking(String value);
 
     public String GetPortionMarking()
@@ -878,7 +882,6 @@ public abstract class XsdFieldBase extends XsdDataObject {
     {
         try
         {
-            CallResult rst;
 
             // Does the new value differ from the existing?
             if (!(GetValue().equals(value) && GetClassificationMarking().equals(marking)))

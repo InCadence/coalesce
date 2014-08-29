@@ -19,7 +19,10 @@ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
 
 public class CoalesceTypeInstances {
 
-    public static String TestMission =
+    public static final String TESTMISSIONNAMEPATH = "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionName";
+    public static final String TESTMISSIONNAMEKEY = "6CB12648-A061-4CC5-B593-3D0407EF4392";
+
+    public static final String TESTMISSION =
     "<entity key=\"62857EF8-3930-4F0E-BAE3-093344EBF389\" datecreated=\"2014-05-02T14:33:51.851575Z\" lastmodified=\"2014-05-20T16:17:13.2293139Z\" name=\"TREXMission\" source=\"TREX Portal\" version=\"1.0.0.0\" entityid=\"\" entityidtype=\"\" title=\"TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionName,TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/IncidentTitle\" status=\"active\" anthony=\"Test\">" +
       "<linkagesection key=\"F4F126AF-4658-4D7F-A67F-4833F7EADDC3\" datecreated=\"2014-05-02T14:33:51.851575Z\" lastmodified=\"2014-05-20T16:17:13.2293139Z\" name=\"Linkages\" noindex=\"True\" status=\"active\">" +
         "<linkage key=\"DB7E0EAF-F4EF-4473-94A9-B93A7F46281E\" datecreated=\"2014-05-02T14:33:51.8615756Z\" lastmodified=\"2014-05-02T14:33:51.8615756Z\" name=\"Linkage\" entity1key=\"62857EF8-3930-4F0E-BAE3-093344EBF389\" entity1name=\"TREXMission\" entity1source=\"TREX Portal\" entity1version=\"1.0.0.0\" linktype=\"IsChildOf\" entity2key=\"AEACD69E-5365-4401-87A1-D95E657E0785\" entity2name=\"TREXOperation\" entity2source=\"TREX Portal\" entity2version=\"1.0.0.0\" classificationmarking=\"U\" modifiedby=\"\" inputlang=\"en-US\" status=\"active\" />" +
@@ -75,7 +78,7 @@ public class CoalesceTypeInstances {
       "</section>" +
     "</entity>";
 
-    public static String TestMissionNoXpathTitle =
+    public static final String TESTMISSIONNOXPATHTITLE =
     "<entity key=\"62857EF8-3930-4F0E-BAE3-093344EBF389\" datecreated=\"2014-05-02T14:33:51.851575Z\" lastmodified=\"2014-05-20T16:17:13.2293139Z\" name=\"TREXMission\" source=\"TREX Portal\" version=\"1.0.0.0\" entityid=\"\" entityidtype=\"\" status=\"active\">" +
       "<linkagesection key=\"F4F126AF-4658-4D7F-A67F-4833F7EADDC3\" datecreated=\"2014-05-02T14:33:51.851575Z\" lastmodified=\"2014-05-20T16:17:13.2293139Z\" name=\"Linkages\" noindex=\"True\" status=\"active\">" +
         "<linkage key=\"DB7E0EAF-F4EF-4473-94A9-B93A7F46281E\" datecreated=\"2014-05-02T14:33:51.8615756Z\" lastmodified=\"2014-05-02T14:33:51.8615756Z\" name=\"Linkage\" entity1key=\"62857EF8-3930-4F0E-BAE3-093344EBF389\" entity1name=\"TREXMission\" entity1source=\"TREX Portal\" entity1version=\"1.0.0.0\" linktype=\"IsChildOf\" entity2key=\"AEACD69E-5365-4401-87A1-D95E657E0785\" entity2name=\"TREXOperation\" entity2source=\"TREX Portal\" entity2version=\"1.0.0.0\" classificationmarking=\"U\" modifiedby=\"\" inputlang=\"en-US\" status=\"active\" />" +
@@ -131,7 +134,7 @@ public class CoalesceTypeInstances {
       "</section>" +
     "</entity>";
     
-    public static String TestMissionLinkageSection =
+    public static final String TESTMISSIONLINKAGESECTION =
     "<linkagesection key=\"F4F126AF-4658-4D7F-A67F-4833F7EADDC3\" datecreated=\"2014-05-02T14:33:51.851Z\" lastmodified=\"2014-05-20T16:17:13.229Z\" name=\"Linkages\" noindex=\"True\" status=\"active\">" +
 	    "<linkage key=\"DB7E0EAF-F4EF-4473-94A9-B93A7F46281E\" datecreated=\"2014-05-02T14:33:51.861Z\" lastmodified=\"2014-05-02T14:33:51.861Z\" name=\"Linkage\" entity1key=\"62857EF8-3930-4F0E-BAE3-093344EBF389\" entity1name=\"TREXMission\" entity1source=\"TREX Portal\" entity1version=\"1.0.0.0\" linktype=\"IsChildOf\" entity2key=\"AEACD69E-5365-4401-87A1-D95E657E0785\" entity2name=\"TREXOperation\" entity2source=\"TREX Portal\" entity2version=\"1.0.0.0\" classificationmarking=\"U\" modifiedby=\"\" inputlang=\"en-US\" status=\"active\" />" +
 	    "<linkage key=\"9A04CBCD-297F-43E2-A590-F59D8438E386\" datecreated=\"2014-05-02T14:33:51.864Z\" lastmodified=\"2014-05-02T14:33:51.864Z\" name=\"Linkage\" entity1key=\"62857EF8-3930-4F0E-BAE3-093344EBF389\" entity1name=\"TREXMission\" entity1source=\"TREX Portal\" entity1version=\"1.0.0.0\" linktype=\"IsParentOf\" entity2key=\"C42DFD35-EA71-4F56-BC3B-D4287279123D\" entity2name=\"TREXComments\" entity2source=\"TREX Portal\" entity2version=\"1.0.0.0\" classificationmarking=\"U\" modifiedby=\"\" inputlang=\"en-US\" status=\"active\" />" +
@@ -139,7 +142,7 @@ public class CoalesceTypeInstances {
 	    "<linkage key=\"6AD08B0F-C492-4105-8033-A5E43056B864\" datecreated=\"2014-05-20T16:17:13.229Z\" lastmodified=\"2014-05-20T16:17:13.229Z\" name=\"Linkage\" entity1key=\"62857EF8-3930-4F0E-BAE3-093344EBF389\" entity1name=\"TREXMission\" entity1source=\"TREX Portal\" entity1version=\"1.0.0.0\" linktype=\"IsParentOf\" entity2key=\"55DFA165-0AB8-48B7-BF35-5DA6CADB5E1E\" entity2name=\"TREXCollection\" entity2source=\"TREXAction\" entity2version=\"1.0.0.0\" classificationmarking=\"U\" modifiedby=\"\" inputlang=\"en-US\" status=\"active\" />" +
     "</linkagesection>";
 
-    public static String TestMissionRecordSet =
+    public static final String TESTMISSIONRECORDSET =
     "<recordset key=\"7A158E39-B6C4-4912-A712-DF296375A368\" datecreated=\"2014-05-02T14:33:51.8525751Z\" lastmodified=\"2014-05-02T14:33:59.193995Z\" name=\"Mission Information Recordset\" minrecords=\"0\" maxrecords=\"0\" status=\"active\">" +
 	    "<fielddefinition key=\"93C6A209-AD86-4474-9FFB-D6801B2548AA\" datecreated=\"2014-05-02T14:33:51.8525751Z\" lastmodified=\"2014-05-02T14:33:51.8525751Z\" status=\"active\" name=\"ActionNumber\" defaultclassificationmarking=\"U\" defaultvalue=\"0\" datatype=\"string\" label=\"Action Number\" />" +
 	    "<fielddefinition key=\"DBBB6CEC-DD98-4B31-9995-8AF0A5E184EC\" datecreated=\"2014-05-02T14:33:51.8525751Z\" lastmodified=\"2014-05-02T14:33:51.8525751Z\" status=\"active\" name=\"IncidentNumber\" defaultclassificationmarking=\"U\" defaultvalue=\"\" datatype=\"string\" />" +

@@ -48,14 +48,16 @@ public class XsdFieldHistory extends XsdFieldBase {
 		try {
 
 			// Set References
-
+		    Fieldhistory newFieldHistory = new Fieldhistory();
+		    parent.GetEntityFieldHistories().add(newFieldHistory);
+		    
 			// TODO: What is this part?
 			// Copy attributes from parent node
 			XsdFieldHistory fieldHistory = new XsdFieldHistory();
+			if (!fieldHistory.Initialize(parent, newFieldHistory)) return null;
+			
 			fieldHistory.SetAttributes(parent._entityField);
 
-			fieldHistory._parent = parent;
-			fieldHistory.SetKey(java.util.UUID.randomUUID().toString());
 			fieldHistory.SetPreviousHistoryKey(parent.GetPreviousHistoryKey());
 
 			// Append to parent's child node collection

@@ -59,7 +59,7 @@ public class CoalesceMySQLPersistorTest {
 	public void TestSaveEntity() {
 	    
 	    XsdEntity mission = new XsdEntity(); 
-	    mission.Initialize(CoalesceTypeInstances.TestMission);
+	    mission.Initialize(CoalesceTypeInstances.TESTMISSION);
 	    	    
 	    assertTrue(CoalesceMySQLPersistorTest._coalesceFramework.SaveCoalesceEntity(mission));
 	    
