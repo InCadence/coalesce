@@ -116,9 +116,7 @@ public class XsdEntity extends XsdDataObject {
 
         if (!InitializeChildren()) return false;
 
-        if (!InitializeReferences()) return false;
-
-        return true;
+        return InitializeReferences();
 
     }
 

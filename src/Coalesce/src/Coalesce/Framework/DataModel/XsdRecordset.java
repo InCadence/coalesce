@@ -235,7 +235,7 @@ public class XsdRecordset extends XsdDataObject {
     // -----------------------------------------------------------------------//
 
     public XsdFieldDefinition CreateFieldDefinition(String name,
-                                                    String dataType,
+                                                    ECoalesceFieldDataTypes dataType,
                                                     String label,
                                                     String defaultClassificationMarking,
                                                     String defaultValue)
@@ -243,7 +243,7 @@ public class XsdRecordset extends XsdDataObject {
         return XsdFieldDefinition.Create(this, name, dataType, label, defaultClassificationMarking, defaultValue);
     }
 
-    public XsdFieldDefinition CreateFieldDefinition(String name, String dataType, String label)
+    public XsdFieldDefinition CreateFieldDefinition(String name, ECoalesceFieldDataTypes dataType)
     {
         return XsdFieldDefinition.Create(this, name, dataType);
     }
@@ -331,7 +331,7 @@ public class XsdRecordset extends XsdDataObject {
         }
     }
 
-    public Object AddNew()
+    public XsdRecord AddNew()
     { // As Object Implements System.ComponentModel.IBindingList.AddNew
         try
         {
@@ -355,7 +355,7 @@ public class XsdRecordset extends XsdDataObject {
         }
     }
 
-    public Object GetItem(int index)
+    public XsdRecord GetItem(int index)
     {
         try
         {

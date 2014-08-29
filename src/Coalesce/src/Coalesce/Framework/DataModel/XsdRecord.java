@@ -66,9 +66,8 @@ public class XsdRecord extends XsdDataObject {
 
             for (XsdFieldDefinition fieldDefinition : parent.GetFieldDefinitions())
             {
-                @SuppressWarnings("unused")
-                // Links field definition to Record
-                XsdField newField = XsdField.Create(newRecord, fieldDefinition);
+                // Creates New Field
+                XsdField.Create(newRecord, fieldDefinition);
             }
 
             newRecord.SetName(name);

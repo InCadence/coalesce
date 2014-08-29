@@ -44,7 +44,47 @@ public class XsdFieldDefinition extends XsdDataObject {
 
     public static XsdFieldDefinition Create(XsdRecordset parent,
                                             String name,
-                                            String dataType,
+                                            ECoalesceFieldDataTypes dataType,
+                                            String label,
+                                            String defaultClassificationMarking,
+                                            boolean defaultValue) {
+        return XsdFieldDefinition.Create(parent, name, dataType, label, defaultClassificationMarking, defaultValue, false);
+    }
+    
+    public static XsdFieldDefinition Create(XsdRecordset parent,
+                                            String name,
+                                            ECoalesceFieldDataTypes dataType,
+                                            String label,
+                                            String defaultClassificationMarking,
+                                            boolean defaultValue,
+                                            boolean noIndex)
+    {
+        return XsdFieldDefinition.Create(parent, name, dataType, label, defaultClassificationMarking, Boolean.toString(defaultValue), noIndex);
+    }
+    
+    public static XsdFieldDefinition Create(XsdRecordset parent,
+                                            String name,
+                                            ECoalesceFieldDataTypes dataType,
+                                            String label,
+                                            String defaultClassificationMarking,
+                                            int defaultValue) {
+        return XsdFieldDefinition.Create(parent, name, dataType, label, defaultClassificationMarking, defaultValue, false);
+    }
+    
+    public static XsdFieldDefinition Create(XsdRecordset parent,
+                                            String name,
+                                            ECoalesceFieldDataTypes dataType,
+                                            String label,
+                                            String defaultClassificationMarking,
+                                            int defaultValue,
+                                            boolean noIndex)
+    {
+        return XsdFieldDefinition.Create(parent, name, dataType, label, defaultClassificationMarking, Integer.toString(defaultValue), noIndex);
+    }
+    
+    public static XsdFieldDefinition Create(XsdRecordset parent,
+                                            String name,
+                                            ECoalesceFieldDataTypes dataType,
                                             String label,
                                             String defaultClassificationMarking,
                                             String defaultValue)
@@ -54,7 +94,7 @@ public class XsdFieldDefinition extends XsdDataObject {
 
     public static XsdFieldDefinition Create(XsdRecordset parent,
                                             String name,
-                                            String dataType,
+                                            ECoalesceFieldDataTypes dataType,
                                             String label,
                                             String defaultClassificationMarking,
                                             String defaultValue,
@@ -73,21 +113,22 @@ public class XsdFieldDefinition extends XsdDataObject {
 
     }
 
-    public static XsdFieldDefinition Create(XsdRecordset parent, String name, String dataType)
-    {
-        return Create(parent, name, dataType, false);
-    }
-
-    public static XsdFieldDefinition Create(XsdRecordset parent, String name, String dataType, boolean noIndex)
-    {
-        return Create(parent, name, ECoalesceFieldDataTypes.GetELinkTypeForLabel(dataType), noIndex);
-    }
-
     public static XsdFieldDefinition Create(XsdRecordset parent, String name, ECoalesceFieldDataTypes dataType)
     {
         return Create(parent, name, dataType, false);
     }
-
+/*
+    public static XsdFieldDefinition Create(XsdRecordset parent, String name, ECoalesceFieldDataTypes dataType, boolean noIndex)
+    {
+        return Create(parent, name, ECoalesceFieldDataTypes.GetELinkTypeForLabel(dataType), noIndex);
+    }
+*/
+/*
+    public static XsdFieldDefinition Create(XsdRecordset parent, String name, ECoalesceFieldDataTypes dataType)
+    {
+        return Create(parent, name, dataType, false);
+    }
+*/
     public static XsdFieldDefinition Create(XsdRecordset parent,
                                             String name,
                                             ECoalesceFieldDataTypes dataType,
