@@ -1,5 +1,9 @@
 package Coalesce.Common.UnitTest;
 
+import org.joda.time.DateTime;
+
+import Coalesce.Common.Helpers.JodaDateTimeHelper;
+
 /*-----------------------------------------------------------------------------'
 Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
 
@@ -21,7 +25,18 @@ public class CoalesceTypeInstances {
 
     public static final String TESTMISSIONNAMEPATH = "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionName";
     public static final String TESTMISSIONNAMEKEY = "6CB12648-A061-4CC5-B593-3D0407EF4392";
-
+    public static final String TESTMISSIONNAMENAME = "MissionName";
+    public static final String TESTMISSIONNAMEVALUE = "NORTHCOM Volunteer Background Checks";
+    public static final String TESTMISSIONNAMEXML = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"yes\"?><field key=\"6CB12648-A061-4CC5-B593-3D0407EF4392\" datecreated=\"2014-05-02T14:33:51.857Z\" lastmodified=\"2014-05-02T14:33:59.177Z\" name=\"MissionName\" datatype=\"string\" classificationmarking=\"U\" label=\"\" value=\"NORTHCOM Volunteer Background Checks\" status=\"active\"/>";
+    public static final DateTime TESTMISSIONNAMECREATED = JodaDateTimeHelper.FromXmlDateTimeUTC("2014-05-02T14:33:51.8575754Z");
+    public static final DateTime TESTMISSIONNAMEMODIFIED = JodaDateTimeHelper.FromXmlDateTimeUTC("2014-05-02T14:33:59.1779941Z");
+    public static final String TESTMISSIONBASE64PATH = "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionIndicatorNumberBASE10";
+    public static final int TESTMISSIONBASE64VALUE = 38601;
+    public static final String TESTMISSIONSTARTTIMEPATH = "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionStartDateTime";
+    public static final String TESTMISSIONSTARTTIMEVALUE = "2014-05-02T14:33:51.8605756Z";
+    public static final String TESTMISSIONACTIONNUMBERPATH = "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/ActionNumber";
+    public static final String TESTMISSIONACTIONNUMBERLABEL = "Action Number";
+    
     public static final String TESTMISSION =
     "<entity key=\"62857EF8-3930-4F0E-BAE3-093344EBF389\" datecreated=\"2014-05-02T14:33:51.851575Z\" lastmodified=\"2014-05-20T16:17:13.2293139Z\" name=\"TREXMission\" source=\"TREX Portal\" version=\"1.0.0.0\" entityid=\"\" entityidtype=\"\" title=\"TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionName,TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/IncidentTitle\" status=\"active\" anthony=\"Test\">" +
       "<linkagesection key=\"F4F126AF-4658-4D7F-A67F-4833F7EADDC3\" datecreated=\"2014-05-02T14:33:51.851575Z\" lastmodified=\"2014-05-20T16:17:13.2293139Z\" name=\"Linkages\" noindex=\"True\" status=\"active\">" +

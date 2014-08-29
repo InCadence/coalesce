@@ -232,4 +232,11 @@ public abstract class XsdDataObject {
         }
     }
 
+    protected String GetStringElement(String value)
+    {
+        if (value == null) return "";
+
+        return value;
+    }
+
 }

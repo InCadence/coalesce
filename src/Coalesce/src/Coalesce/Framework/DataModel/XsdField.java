@@ -102,7 +102,7 @@ public class XsdField extends XsdFieldBase {
     }
 
     // -----------------------------------------------------------------------//
-    // public Properties
+    // Public Properties
     // -----------------------------------------------------------------------//
 
     protected String GetObjectKey()
@@ -117,7 +117,7 @@ public class XsdField extends XsdFieldBase {
 
     public String GetName()
     {
-        return _entityField.getName();
+        return GetStringElement(_entityField.getName());
     }
 
     public void SetName(String value)
@@ -140,7 +140,7 @@ public class XsdField extends XsdFieldBase {
 
     public String GetDataType()
     {
-        return _entityField.getDatatype();
+        return GetStringElement(_entityField.getDatatype());
     }
 
     public void SetDataType(String value)
@@ -150,7 +150,7 @@ public class XsdField extends XsdFieldBase {
 
     public String GetLabel()
     {
-        return _entityField.getLabel();
+        return GetStringElement(_entityField.getLabel());
     }
 
     public void SetLabel(String value)
@@ -177,7 +177,7 @@ public class XsdField extends XsdFieldBase {
 
     public String GetModifiedBy()
     {
-        return _entityField.getModifiedby();
+        return GetStringElement(_entityField.getModifiedby());
     }
 
     public void SetModifiedBy(String value)
@@ -187,7 +187,7 @@ public class XsdField extends XsdFieldBase {
 
     public String GetModifiedByIP()
     {
-        return _entityField.getModifiedbyip();
+        return GetStringElement(_entityField.getModifiedbyip());
     }
 
     public void SetModifiedByIP(String value)
@@ -227,7 +227,7 @@ public class XsdField extends XsdFieldBase {
 
     public String GetFilename()
     {
-        return _entityField.getFilename();
+        return GetStringElement(_entityField.getFilename());
     }
 
     public void SetFilename(String value)
@@ -240,7 +240,7 @@ public class XsdField extends XsdFieldBase {
 
     public String GetExtension()
     {
-        return _entityField.getExtension();
+        return GetStringElement(_entityField.getExtension());
     }
 
     public void SetExtension(String value)
@@ -253,7 +253,7 @@ public class XsdField extends XsdFieldBase {
 
     public String GetMimeType()
     {
-        return _entityField.getMimetype();
+        return GetStringElement(_entityField.getMimetype());
     }
 
     public void SetMimeType(String value)
@@ -263,7 +263,7 @@ public class XsdField extends XsdFieldBase {
 
     public String GetHash()
     {
-        return _entityField.getHash();
+        return GetStringElement(_entityField.getHash());
     }
 
     public void SetHash(String value)

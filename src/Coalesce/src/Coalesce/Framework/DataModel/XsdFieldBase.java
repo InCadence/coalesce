@@ -17,14 +17,14 @@ import Coalesce.Common.Helpers.GUIDHelper;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import Coalesce.Common.Helpers.StringHelper;
 
-
 public abstract class XsdFieldBase extends XsdDataObject {
 
     private boolean _suspendHistory = false;
+
     public abstract String GetValue();
 
     public abstract void SetValue(String value);
-    
+
     public String GetValueWithMarking()
     {
         // TODO: Test
@@ -60,10 +60,11 @@ public abstract class XsdFieldBase extends XsdDataObject {
 
     public abstract String GetClassificationMarking();
 
-    public void SetClassificationMarking(Marking value) {
+    public void SetClassificationMarking(Marking value)
+    {
         SetClassificationMarking(value.toString());
     }
-    
+
     public abstract void SetClassificationMarking(String value);
 
     public String GetPortionMarking()
@@ -80,11 +81,11 @@ public abstract class XsdFieldBase extends XsdDataObject {
     public abstract String GetFilename();
 
     public abstract void SetFilename(String value);
-    
+
     public abstract String GetExtension();
 
     public abstract void SetExtension(String value);
-    
+
     public abstract String GetMimeType();
 
     public abstract void SetMimeType(String value);
@@ -92,7 +93,7 @@ public abstract class XsdFieldBase extends XsdDataObject {
     public abstract String GetHash();
 
     public abstract void SetHash(String value);
-    
+
     /*
      * public String GetInputLang(){ return _entityField.getInputlang(); } public void SetInputLang(String value){
      * _entityField.setInputlang(value); }
@@ -235,49 +236,49 @@ public abstract class XsdFieldBase extends XsdDataObject {
         switch (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType())) {
         case StringType:
         case UriType:
-            
+
             return GetValue();
-            
+
         case DateTimeType:
-            
+
             return GetDateTimeValue();
-            
+
         case BinaryType:
-            
+
             return GetByteArrayValue();
-            
+
         case BooleanType:
-            
+
             return GetBooleanValue();
-            
+
         case IntegerType:
-            
+
             return GetIntegerValue();
-            
+
         case GuidType:
-            
+
             return GetGuidValue();
-            
-        // case GeocoordinateType:
-        // Geolocation geocvar = new Geolocation();
-        // var = geocvar;
-        // value = var;
-        // break;
-        // case GeocoordinateListType:
-        // ArrayList<Geolocation> geolvar = new ArrayList<Geolocation>();
-        // var = geolvar;
-        // Data = var;
-        // break;
-        // case FileType:
-        // DocumentProperties dpvar = new DocumentProperties;
-        // var = dpvar;
-        // value = var;
-        // break;
+
+            // case GeocoordinateType:
+            // Geolocation geocvar = new Geolocation();
+            // var = geocvar;
+            // value = var;
+            // break;
+            // case GeocoordinateListType:
+            // ArrayList<Geolocation> geolvar = new ArrayList<Geolocation>();
+            // var = geolvar;
+            // Data = var;
+            // break;
+            // case FileType:
+            // DocumentProperties dpvar = new DocumentProperties;
+            // var = dpvar;
+            // value = var;
+            // break;
 
         }
 
         throw new NotImplementedException(GetDataType() + " not implemented");
-        
+
     }
 
     public void SetData(Object value)
@@ -292,7 +293,7 @@ public abstract class XsdFieldBase extends XsdDataObject {
     public abstract DateTime GetLastModified();
 
     protected abstract CallResult SetObjectLastModified(DateTime value);
- 
+
     public CallResult SetTypedValue(String value)
     {
         try
@@ -813,7 +814,7 @@ public abstract class XsdFieldBase extends XsdDataObject {
 
     public XsdFieldHistory GetHistoryRecord(String historyKey)
     {
-        XsdFieldHistory historyRecord = (XsdFieldHistory)_childDataObjects.get(historyKey);
+        XsdFieldHistory historyRecord = (XsdFieldHistory) _childDataObjects.get(historyKey);
 
         return historyRecord;
 
@@ -827,9 +828,9 @@ public abstract class XsdFieldBase extends XsdDataObject {
     {
         try
         {
- 
+
             // Does the new value differ from the existing?
-            if (!oldValue.equals(newValue))
+            if ((oldValue == null && newValue != null) || !oldValue.equals(newValue))
             {
 
                 // Yes; should we create a FieldHistory entry to reflect the
