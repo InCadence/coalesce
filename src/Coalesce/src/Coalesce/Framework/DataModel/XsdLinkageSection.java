@@ -113,6 +113,12 @@ public class XsdLinkageSection extends XsdDataObject {
 		_entityLinkageSection.setName(value);
 	}
 
+    @Override
+    public String getType()
+    {
+        return "linkagesection";
+    }
+    
 	public XsdLinkage CreateLinkage() {
 		return XsdLinkage.Create(this);
 	}

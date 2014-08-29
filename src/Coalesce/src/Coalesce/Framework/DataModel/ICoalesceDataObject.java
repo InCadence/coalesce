@@ -51,6 +51,8 @@ public interface ICoalesceDataObject {
     --------------------------------------------------------------------------*/
 
     public Map<String, XsdDataObject> GetChildDataObjects();
+    public String getType();
     public String GetNamePath();
+    
 
 }

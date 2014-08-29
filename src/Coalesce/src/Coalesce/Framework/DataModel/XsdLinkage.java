@@ -86,6 +86,12 @@ public class XsdLinkage extends XsdDataObject {
         _entityLinkage.setName(value);
     }
 
+    @Override
+    public String getType()
+    {
+        return "linkage";
+    }
+    
     public String GetModifiedBy()
     {
         return _entityLinkage.getModifiedby();

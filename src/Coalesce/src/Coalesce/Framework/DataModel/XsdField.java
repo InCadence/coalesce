@@ -129,6 +129,12 @@ public class XsdField extends XsdFieldBase {
         _entityField.setName(value);
     }
 
+    @Override
+    public String getType()
+    {
+        return "field";
+    }
+    
     public String GetValue()
     {
         return _entityField.getValue();

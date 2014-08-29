@@ -162,6 +162,12 @@ public class XsdSection extends XsdDataObject {
         _entitySection.setName(value);
     }
 
+    @Override
+    public String getType()
+    {
+        return "section";
+    }
+    
     // TODO: Need nested sections
     /*
      * public CallResult CreateSection(XsdSection newSection, String name) { try{ CallResult rst;

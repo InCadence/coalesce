@@ -41,7 +41,7 @@ public class CoalesceMySQLPersistorTest {
 		serCon = new ServerConn();
 		serCon.setURL("jdbc:mysql://localhost:3306/trse");
 		serCon.setUser("root");
-		serCon.setPassword("web23ler");
+		serCon.setPassword("Passw0rd");
 		mp = new MySQLPersistor();
 		mp.Initialize(serCon);
 	    MySQLPersistor mySQLPersistor = new MySQLPersistor();

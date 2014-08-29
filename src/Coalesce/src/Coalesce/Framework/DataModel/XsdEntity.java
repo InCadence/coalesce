@@ -189,6 +189,12 @@ public class XsdEntity extends XsdDataObject {
         _entity.setName(value);
     }
 
+    @Override
+    public String getType()
+    {
+        return "entity";
+    }
+    
     public String GetSource()
     {
         return _entity.getSource();

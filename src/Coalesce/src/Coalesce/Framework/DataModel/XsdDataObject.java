@@ -55,6 +55,9 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
 
     @Override
     public abstract DateTime GetLastModified();
+    
+    @Override 
+    public abstract String getType(); 
 
     public abstract String ToXml();
 

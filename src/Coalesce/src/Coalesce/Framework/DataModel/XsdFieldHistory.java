@@ -124,6 +124,12 @@ public class XsdFieldHistory extends XsdFieldBase {
         _entityFieldHistory.setName(value);
     }
 
+    @Override
+    public String getType()
+    {
+        return "fieldhistory";
+    }
+    
     public String GetValue()
     {
         return _entityFieldHistory.getValue();

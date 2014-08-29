@@ -196,6 +196,12 @@ public class XsdFieldDefinition extends XsdDataObject {
         _entityFieldDefinition.setName(value);
     }
 
+    @Override
+    public String getType()
+    {
+        return "fielddefinition";
+    }
+    
     public String GetLabel()
     {
         return _entityFieldDefinition.getLabel();

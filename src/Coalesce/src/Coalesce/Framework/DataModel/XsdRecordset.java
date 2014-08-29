@@ -141,6 +141,12 @@ public class XsdRecordset extends XsdDataObject {
         _entityRecordset.setName(value);
     }
 
+    @Override
+    public String getType()
+    {
+        return "recordset";
+    }
+    
     public ArrayList<XsdFieldDefinition> GetFieldDefinitions()
     {
         return this._fieldDefinitions;

@@ -142,6 +142,12 @@ public class XsdRecord extends XsdDataObject {
         _entityRecord.setName(value);
     }
 
+    @Override
+    public String getType()
+    {
+        return "record";
+    }
+    
     public ArrayList<XsdField> GetFields()
     {
         try
