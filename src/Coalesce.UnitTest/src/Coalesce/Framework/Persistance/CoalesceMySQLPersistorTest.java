@@ -1,17 +1,18 @@
 package Coalesce.Framework.Persistance;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.junit.After;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import com.database.persister.*;
 
 import Coalesce.Common.UnitTest.CoalesceTypeInstances;
 import Coalesce.Framework.CoalesceFramework;
 import Coalesce.Framework.DataModel.XsdEntity;
+
+import com.database.persister.MySQLPersistor;
+import com.database.persister.ServerConn;
 
 /*-----------------------------------------------------------------------------'
 Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved

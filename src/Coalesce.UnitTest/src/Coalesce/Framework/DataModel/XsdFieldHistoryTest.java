@@ -2,7 +2,6 @@ package Coalesce.Framework.DataModel;
 
 import org.junit.Test;
 
-import Coalesce.Common.UnitTest.CoalesceTypeInstances;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record;

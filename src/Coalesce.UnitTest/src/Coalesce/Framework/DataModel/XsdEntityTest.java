@@ -1,11 +1,12 @@
 package Coalesce.Framework.DataModel;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
 import Coalesce.Common.UnitTest.CoalesceTypeInstances;
-import unity.core.runtime.CallResult;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -52,8 +53,6 @@ public class XsdEntityTest {
             String title = entity.GetTitle();
             assertEquals("NORTHCOM Volunteer Background Checks, NORTHCOM Volunteer Background Checks", title);
 
-            String xml = entity.ToXml();
-
         }
         catch (Exception ex)
         {
@@ -80,9 +79,10 @@ public class XsdEntityTest {
             fail(ex.getMessage());
         }
     }
-    
-    @Test 
-    public void testArbitraryAttributes() {
+
+    @Test
+    public void testArbitraryAttributes()
+    {
         try
         {
             XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
@@ -140,7 +140,7 @@ public class XsdEntityTest {
             assertTrue(entity.GetLinkageSection() == null);
 
             entity.SetAttribute("testnewattribute", "test");
-            
+
             // Create Linkage Section
             XsdLinkageSection.Create(entity, true);
 
@@ -151,7 +151,7 @@ public class XsdEntityTest {
             section = XsdSection.Create(entity, "Live Status Section", true);
             recordSet = XsdRecordset.Create(section, "Live Status Recordset");
 
-            //Verify Live Status Section Creation
+            // Verify Live Status Section Creation
             assertTrue(entity.GetSection("TREXOperation/Live Status Section") != null);
 
             XsdFieldDefinition.Create(recordSet, "CurrentStatus", ECoalesceFieldDataTypes.StringType);
@@ -169,22 +169,22 @@ public class XsdEntityTest {
             String entityXml = entity.ToXml();
 
             // Deserialize
-            XsdEntity entity2 = new XsdEntity(); 
+            XsdEntity entity2 = new XsdEntity();
             assertTrue(entity2.Initialize(entityXml));
-            
+
             // Verify Custom Attribute
             assertTrue(entity.GetAttribute("testnewattribute").equals("test"));
-            
-            // Verify Entity 
+
+            // Verify Entity
             assertTrue(entity.GetSource().equals("TREX Portal"));
 
-            // Verify Link Section 
+            // Verify Link Section
             assertTrue(entity2.GetLinkageSection() != null);
-            
-            //Verify Live Status Section 
+
+            // Verify Live Status Section
             assertTrue(entity2.GetSection("TREXOperation/Live Status Section") != null);
 
-            // Verify Information Section 
+            // Verify Information Section
             assertTrue(entity2.GetSection("TREXOperation/Operation Information Section") != null);
 
         }
@@ -195,4 +195,3 @@ public class XsdEntityTest {
     }
 
 }
-
