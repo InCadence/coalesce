@@ -41,8 +41,14 @@ public class CoalesceMySQLPersistorTest {
 		serCon = new ServerConn();
 		serCon.setURL("jdbc:mysql://localhost:3306/coalescedatabase");
 		serCon.setUser("root");
+<<<<<<< Updated upstream
+		serCon.setPassword("Passw0rd");
+		mp = new MySQLPersistor();
+		mp.Initialize(serCon);
+=======
 		serCon.setPassword("web23ler");
 
+>>>>>>> Stashed changes
 	    MySQLPersistor mySQLPersistor = new MySQLPersistor();
 	    
 	    mySQLPersistor.Initialize(serCon);
@@ -69,17 +75,17 @@ public class CoalesceMySQLPersistorTest {
 	
 	@Test
 	public void TestGetEntity() {
-	    XsdEntity ent = new XsdEntity();
-	    ent=CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntity("62857EF8-3930-4F0E-BAE3-093344EBF389");
+		fail("Not yet implemented");
 	}
 
 	@Test
 	public void TestGetFieldValue() {
-	    assertFalse(CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceFieldValue("02e03da7-de93-4deb-8c7c-be65d25f918e"));
+	    CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceFieldAndEntityByFieldKey("02e03da7-de93-4deb-8c7c-be65d25f918e");
+		fail("Not yet implemented");
 	}
 	
-    private boolean assertFalse(String object) {
-		if(object!=null)
+	private boolean assertFalse(String fieldValue) {
+		if(fieldValue.length()>0)
 			return true;
 		return false;
 	}

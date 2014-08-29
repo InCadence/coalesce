@@ -190,8 +190,7 @@ public class CoalesceFramework {
 
     public String GetCoalesceFieldValue(String FieldKey)
     {
-        // TODO: Not Implemented
-        return null;
+        return (String) this._Persister.GetFieldValue(FieldKey);
     }
 
     public XsdRecord GetCoalesceRecord(String Key)
