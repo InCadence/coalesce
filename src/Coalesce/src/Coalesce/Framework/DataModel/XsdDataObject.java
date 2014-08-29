@@ -169,7 +169,6 @@ public abstract class XsdDataObject {
 
     }
 
-    // TODO: Need to test this logic
     protected XsdDataObject GetDataObjectForNamePath(String namePath)
     {
         try
