@@ -1,6 +1,9 @@
 package Coalesce.Framework.DataModel;
 
 import java.util.List;
+import java.util.Map;
+
+import javax.xml.namespace.QName;
 
 import org.joda.time.DateTime;
 
@@ -392,4 +395,10 @@ public class XsdField extends XsdFieldBase {
         return _entityField.getFieldhistory();
     }
 
+    @Override
+    protected Map<QName, String> getAttributes()
+    {
+        return this._entityField.getOtherAttributes();
+    }
+    
 }

@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.namespace.QName;
+
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 
@@ -785,4 +787,10 @@ public class XsdEntity extends XsdDataObject {
 	protected List<Section> GetEntitySections() {
     	return _entity.getSection();
 	}
+
+    @Override
+    protected Map<QName, String> getAttributes()
+    {
+        return this._entity.getOtherAttributes();
+    }
 }

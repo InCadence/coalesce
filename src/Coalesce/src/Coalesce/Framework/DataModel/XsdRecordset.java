@@ -2,6 +2,9 @@ package Coalesce.Framework.DataModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import javax.xml.namespace.QName;
 
 import org.joda.time.DateTime;
 
@@ -424,6 +427,12 @@ public class XsdRecordset extends XsdDataObject {
 	protected List<Fielddefinition> GetEntityFieldDefinitions() {
     	return _entityRecordset.getFielddefinition();
 	}
+	
+    @Override
+    protected Map<QName, String> getAttributes()
+    {
+        return this._entityRecordset.getOtherAttributes();
+    }
 }
 
 // TODO: CoalesceFieldDefinitionMemberDescriptor class

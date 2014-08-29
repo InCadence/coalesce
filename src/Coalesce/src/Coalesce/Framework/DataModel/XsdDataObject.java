@@ -1,6 +1,9 @@
 package Coalesce.Framework.DataModel;
 
 import java.util.HashMap;
+import java.util.Map;
+
+import javax.xml.namespace.QName;
 
 import org.joda.time.DateTime;
 
@@ -27,211 +30,206 @@ import unity.core.runtime.CallResult.CallResults;
 
 public abstract class XsdDataObject {
 
-	protected XsdDataObject _parent;
-	protected HashMap<String, XsdDataObject> _childDataObjects = new HashMap<String, XsdDataObject>();
+    protected XsdDataObject _parent;
+    protected HashMap<String, XsdDataObject> _childDataObjects = new HashMap<String, XsdDataObject>();
+
+    public String GetKey()
+    {
+        return GetObjectKey();
+    }
+
+    public abstract void SetKey(String value);
+
+    public abstract String GetName();
+
+    public abstract void SetName(String value);
+
+    public abstract DateTime GetDateCreated();
 
-	public String GetKey() {
-		return GetObjectKey();
-	}
+    public abstract CallResult SetDateCreated(DateTime value);
 
-	public abstract void SetKey(String value);
+    public abstract DateTime GetLastModified();
 
-	public abstract String GetName();
+    public boolean SetLastModified(DateTime value)
+    {
 
-	public abstract void SetName(String value);
+        CallResult rst = null;
 
-	public abstract DateTime GetDateCreated();
+        rst = SetObjectLastModified(value);
+        if (!rst.getIsSuccess())
+        {
+            return false;
+        }
 
-	public abstract CallResult SetDateCreated(DateTime value);
+        if (this._parent != null)
+        {
+            this._parent.SetLastModified(value);
+        }
 
-	public abstract DateTime GetLastModified();
+        return true;
 
-	public boolean SetLastModified(DateTime value) {
+    }
 
-		CallResult rst = null;
+    public boolean GetNoIndex()
+    {
+        return Boolean.parseBoolean(this.GetAttribute("noindex"));
+    }
 
-		rst = SetObjectLastModified(value);
-		if (!rst.getIsSuccess()) {
-			return false;
-		}
+    public void SetNoIndex(boolean value)
+    {
+        this.SetAttribute("noindex", Boolean.toString(value));
+    }
 
-		if (this._parent != null) {
-			this._parent.SetLastModified(value);
-		}
+    public String GetAttribute(String name) {
+        return this.getAttributes().get(new QName(name));
+    }
+    
+    public boolean SetAttribute(String name, String value){
+        this.getAttributes().put(new QName(name), value);
+        return true;
+    }
+    
+    public ECoalesceDataObjectStatus GetStatus()
+    {
+        CallResult rst;
 
-		return true;
+        // Get
+        String statusString = "";
+        rst = GetObjectStatus(statusString);
 
-	}
+        // Evaluate
+        if (rst.getIsSuccess())
+        {
 
-	public boolean GetNoIndex() {
-		try {
-			CallResult rst;
+            if (statusString.equals(""))
+            {
 
-			// Try-Parse the "noindex" attribute. If it's the empty string the
-			// result is considered false.
-			boolean bool = false;
-			String val = "";
-			rst = GetObjectNoIndex(val);
-			if (!rst.getIsSuccess())
-				return false;
+                // Return Active
+                return ECoalesceDataObjectStatus.ACTIVE;
+            }
+            else
+            {
+                // Return Status
+                return (ECoalesceDataObjectStatus.fromLabel(statusString));
+            }
+        }
+        else
+        {
+            // Return Active (Default)
+            return ECoalesceDataObjectStatus.ACTIVE;
+        }
 
-			if (val.equals("")) {
-				return false;
-			} else {
-				bool = Boolean.parseBoolean(val);
-			}
+    }
 
-			return bool;
+    public void SetStatus(ECoalesceDataObjectStatus value)
+    {
+        // Set
+        CallResult rst;
+        rst = SetObjectStatus(value.toLabel());
+        if (!rst.getIsSuccess())
+        {
+            return;
+        }
 
-		} catch (Exception ex) {
-			return false;
-		}
-	}
+        SetLastModified(new DateTime());
+    }
 
-	public void SetNoIndex(boolean value) {
-		try {
-			String val = "false";
-			if (value)
-				val = "true";
+    public abstract String ToXml();
 
-			SetObjectNoIndex(val);
+    protected abstract String GetObjectKey();
 
-		} catch (Exception ex) {
-			CallResult.log(CallResults.FAILED_ERROR, ex, this);
-		}
-	}
+    protected abstract CallResult SetObjectLastModified(DateTime value);
 
-	public ECoalesceDataObjectStatus GetStatus() {
-		CallResult rst;
+    protected abstract CallResult GetObjectStatus(String status);
 
-		// Get
-		String statusString = "";
-		rst = GetObjectStatus(statusString);
+    protected abstract CallResult SetObjectStatus(String status);
 
-		// Evaluate
-		if (rst.getIsSuccess()) {
+    protected abstract Map<QName, String> getAttributes();
 
-			if (statusString.equals("")) {
+    protected boolean Initialize()
+    {
 
-				// Return Active
-				return ECoalesceDataObjectStatus.ACTIVE;
-			} else {
-				// Return Status
-				return (ECoalesceDataObjectStatus.fromLabel(statusString));
-			}
-		} else {
-			// Return Active (Default)
-			return ECoalesceDataObjectStatus.ACTIVE;
-		}
+        if (GetKey() == null || GetKey().equals(""))
+        {
+            SetKey(java.util.UUID.randomUUID().toString());
+        }
 
-	}
+        DateTime utcDate = JodaDateTimeHelper.NowInUtc();
 
-	public void SetStatus(ECoalesceDataObjectStatus value) {
-		// Set
-		CallResult rst;
-		rst = SetObjectStatus(value.toLabel());
-		if (!rst.getIsSuccess()) {
-			return;
-		}
+        if (GetDateCreated() == null)
+        {
+            SetDateCreated(utcDate);
+        }
+        if (GetLastModified() == null)
+        {
+            SetLastModified(utcDate);
+        }
 
-		SetLastModified(new DateTime());
-	}
+        return true;
 
-	public abstract String ToXml();
+    }
 
-	protected abstract String GetObjectKey();
+    // TODO: Need to test this logic
+    protected XsdDataObject GetDataObjectForNamePath(String namePath)
+    {
+        try
+        {
 
-	protected abstract CallResult SetObjectLastModified(DateTime value);
+            String[] names = namePath.split("/");
 
-	protected CallResult GetObjectNoIndex(String value) {
+            switch (names.length) {
+            case 0:
 
-		value = "false";
+                // No path. Object not found.
+                break;
 
-		return CallResult.successCallResult;
-	}
+            case 1:
 
-	protected CallResult SetObjectNoIndex(String value) {
+                // End of the path, is our Base Object named the Name Path?
+                if (GetName().equals(names[0]))
+                {
+                    return this;
+                }
 
-		return CallResult.successCallResult;
+                // No object found
+                break;
 
-	}
+            default:
 
-	protected abstract CallResult GetObjectStatus(String status);
+                // Find next child
 
-	protected abstract CallResult SetObjectStatus(String status);
+                XsdDataObject dataObject = null;
 
-	protected boolean Initialize() {
+                for (XsdDataObject child : _childDataObjects.values())
+                {
+                    if (child.GetName().equals(names[1]))
+                    {
+                        dataObject = child;
+                        break;
+                    }
+                }
 
-		if (GetKey() == null || GetKey().equals("")) {
-			SetKey(java.util.UUID.randomUUID().toString());
-		}
+                if (dataObject != null)
+                {
 
-		DateTime utcDate = JodaDateTimeHelper.NowInUtc();
+                    String newPath = namePath.substring(namePath.indexOf("/") + 1);
 
-		if (GetDateCreated() == null) {
-			SetDateCreated(utcDate);
-		}
-		if (GetLastModified() == null) {
-			SetLastModified(utcDate);
-		}
+                    return dataObject.GetDataObjectForNamePath(newPath);
 
-		return true;
+                }
 
-	}
+                // No object found
+                break;
+            }
 
-	// TODO: Need to test this logic
-	protected XsdDataObject GetDataObjectForNamePath(String namePath) {
-		try {
+            return null;
 
-			String[] names = namePath.split("/");
-
-			switch (names.length) {
-			case 0:
-
-				// No path. Object not found.
-				break;
-
-			case 1:
-
-				// End of the path, is our Base Object named the Name Path?
-				if (GetName().equals(names[0])) {
-					return this;
-				}
-
-				// No object found
-				break;
-
-			default:
-
-				// Find next child
-
-				XsdDataObject dataObject = null;
-
-				for (XsdDataObject child : _childDataObjects.values()) {
-					if (child.GetName().equals(names[1])) {
-						dataObject = child;
-						break;
-					}
-				}
-
-				if (dataObject != null) {
-
-					String newPath = namePath.substring(namePath.indexOf("/") + 1);
-
-					return dataObject.GetDataObjectForNamePath(newPath);
-
-				}
-
-				// No object found
-				break;
-			}
-
-			return null;
-
-		} catch (Exception ex) {
-			CallResult.log(CallResults.FAILED_ERROR, ex, this);
-			return null;
-		}
-	}
+        }
+        catch (Exception ex)
+        {
+            CallResult.log(CallResults.FAILED_ERROR, ex, this);
+            return null;
+        }
+    }
 
 }

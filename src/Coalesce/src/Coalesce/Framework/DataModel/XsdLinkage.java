@@ -1,5 +1,9 @@
 package Coalesce.Framework.DataModel;
 
+import java.util.Map;
+
+import javax.xml.namespace.QName;
+
 import org.joda.time.DateTime;
 
 import unity.core.runtime.CallResult;
@@ -40,7 +44,7 @@ public class XsdLinkage extends XsdDataObject {
         if (!linkage.Initialize(parent, entityLinkage)) return null;
 
         linkage.SetName("Linkage");
-
+        
         return linkage;
 
     }
@@ -497,4 +501,9 @@ public class XsdLinkage extends XsdDataObject {
         }
     }
 
+    @Override
+    protected Map<QName, String> getAttributes()
+    {
+        return this._entityLinkage.getOtherAttributes();
+    }
 }

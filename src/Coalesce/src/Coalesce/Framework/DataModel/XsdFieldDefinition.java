@@ -1,5 +1,9 @@
 package Coalesce.Framework.DataModel;
 
+import java.util.Map;
+
+import javax.xml.namespace.QName;
+
 import org.joda.time.DateTime;
 
 import unity.core.runtime.CallResult;
@@ -306,5 +310,11 @@ public class XsdFieldDefinition extends XsdDataObject {
 			return new CallResult(CallResults.FAILED_ERROR, ex, this);
 		}
 	}
+	
+    @Override
+    protected Map<QName, String> getAttributes()
+    {
+        return this._entityFieldDefinition.getOtherAttributes();
+    }
 
 }

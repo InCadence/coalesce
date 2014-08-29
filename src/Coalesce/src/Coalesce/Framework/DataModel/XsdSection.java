@@ -1,6 +1,9 @@
 package Coalesce.Framework.DataModel;
 
 import java.util.List;
+import java.util.Map;
+
+import javax.xml.namespace.QName;
 
 import org.joda.time.DateTime;
 
@@ -266,4 +269,9 @@ public class XsdSection extends XsdDataObject {
     	return _entitySection.getRecordset();
 	}
 
+    @Override
+    protected Map<QName, String> getAttributes()
+    {
+        return this._entitySection.getOtherAttributes();
+    }
 }

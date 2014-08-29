@@ -90,6 +90,7 @@ public class XsdEntityTest {
             String entityXml = entity.ToXml();
 
             assertTrue(entityXml.contains("anthony=\"Test\""));
+            assertTrue(entity.GetAttribute("anthony").equals("Test"));
 
         }
         catch (Exception ex)
@@ -138,6 +139,8 @@ public class XsdEntityTest {
             assertTrue(entity.GetSource().equals("TREX Portal"));
             assertTrue(entity.GetLinkageSection() == null);
 
+            entity.SetAttribute("testnewattribute", "test");
+            
             // Create Linkage Section
             XsdLinkageSection.Create(entity, true);
 
@@ -168,6 +171,9 @@ public class XsdEntityTest {
             // Deserialize
             XsdEntity entity2 = new XsdEntity(); 
             assertTrue(entity2.Initialize(entityXml));
+            
+            // Verify Custom Attribute
+            assertTrue(entity.GetAttribute("testnewattribute").equals("test"));
             
             // Verify Entity 
             assertTrue(entity.GetSource().equals("TREX Portal"));
