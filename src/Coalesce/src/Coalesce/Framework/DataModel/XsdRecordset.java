@@ -34,400 +34,451 @@ import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record;
 
 public class XsdRecordset extends XsdDataObject {
 
-	// -----------------------------------------------------------------------//
-	// Public Events
-	// -----------------------------------------------------------------------//
+    // -----------------------------------------------------------------------//
+    // Public Events
+    // -----------------------------------------------------------------------//
 
-	// TODO: Java Events
-	// public Event ListChanged(ByVal sender As Object, ByVal e As System.ComponentModel.ListChangedEventArgs) Implements
-	// System.ComponentModel.IBindingList.ListChanged
+    // TODO: Java Events
+    // public Event ListChanged(ByVal sender As Object, ByVal e As System.ComponentModel.ListChangedEventArgs) Implements
+    // System.ComponentModel.IBindingList.ListChanged
 
-	// -----------------------------------------------------------------------//
-	// protected Member Variables
-	// -----------------------------------------------------------------------//
+    // -----------------------------------------------------------------------//
+    // protected Member Variables
+    // -----------------------------------------------------------------------//
 
-	private static String MODULE = "Coalesce.Framework.DataModel.XsdRecordSet";
+    private static String MODULE = "Coalesce.Framework.DataModel.XsdRecordSet";
 
-	private Recordset _entityRecordset;
+    private Recordset _entityRecordset;
 
-	protected ArrayList<XsdFieldDefinition> _fieldDefinitions;
-	protected ArrayList<XsdRecord> _records;
+    protected ArrayList<XsdFieldDefinition> _fieldDefinitions;
+    protected ArrayList<XsdRecord> _records;
 
-	// -----------------------------------------------------------------------//
-	// Factory and Initialization
-	// -----------------------------------------------------------------------//
+    // -----------------------------------------------------------------------//
+    // Factory and Initialization
+    // -----------------------------------------------------------------------//
 
-	public static XsdRecordset Create(XsdSection parent, String name) {
-		return Create(parent, name, 0, 0);
-	}
+    public static XsdRecordset Create(XsdSection parent, String name)
+    {
+        return Create(parent, name, 0, 0);
+    }
 
-	public static XsdRecordset Create(XsdSection parent, String name, int MinRecords, int MaxRecords) {
+    public static XsdRecordset Create(XsdSection parent, String name, int MinRecords, int MaxRecords)
+    {
+
+        Recordset newEntityRecordset = new Recordset();
+        parent.GetEntityRecordSets().add(newEntityRecordset);
+
+        XsdRecordset newRecordset = new XsdRecordset();
+        if (!newRecordset.Initialize(parent, newEntityRecordset)) return null;
+
+        newRecordset.SetName(name);
+        newRecordset.SetMinRecords(MinRecords);
+        newRecordset.SetMaxRecords(MaxRecords);
 
-		Recordset newEntityRecordset = new Recordset();
-		parent.GetEntityRecordSets().add(newEntityRecordset);
+        // Add to parent's child collection
+        if (!parent._childDataObjects.containsKey(newRecordset.GetKey()))
+        {
+            parent._childDataObjects.put(newRecordset.GetKey(), newRecordset);
+        }
+
+        return newRecordset;
+
+    }
+
+    public boolean Initialize(XsdSection parent, Recordset recordset)
+    {
+
+        // Set References
+        _parent = parent;
+        _entityRecordset = recordset;
+
+        // Create Collections
+        _fieldDefinitions = new ArrayList<XsdFieldDefinition>();
+        _records = new ArrayList<XsdRecord>();
+
+        for (Fielddefinition entityFieldDefinition : _entityRecordset.getFielddefinition())
+        {
+            XsdFieldDefinition newFieldDefinition = new XsdFieldDefinition();
+            newFieldDefinition.Initialize(this, entityFieldDefinition);
+
+        }
+
+        for (Record entityRecord : _entityRecordset.getRecord())
+        {
+            XsdRecord newRecord = new XsdRecord();
+            newRecord.Initialize(this, entityRecord);
+        }
+
+        return super.Initialize();
+
+    }
+
+    // -----------------------------------------------------------------------//
+    // public Properties
+    // -----------------------------------------------------------------------//
+
+    @Override
+    protected String GetObjectKey()
+    {
+        return _entityRecordset.getKey();
+    }
+
+    @Override
+    protected void SetObjectKey(String value)
+    {
+        _entityRecordset.setKey(value);
+    }
+
+    @Override
+    public String GetName()
+    {
+        return _entityRecordset.getName();
+    }
+
+    @Override
+    public void SetName(String value)
+    {
+        _entityRecordset.setName(value);
+    }
+
+    public ArrayList<XsdFieldDefinition> GetFieldDefinitions()
+    {
+        return this._fieldDefinitions;
+    }
+
+    public ArrayList<XsdRecord> GetRecords()
+    {
+        return this._records;
+    }
+
+    public int GetMaxRecords()
+    {
+        return Integer.parseInt(_entityRecordset.getMaxrecords());
+    }
+
+    public void SetMaxRecords(int value)
+    {
+        _entityRecordset.setMaxrecords(String.valueOf(value));
+    }
+
+    public int GetMinRecords()
+    {
+        return Integer.parseInt(_entityRecordset.getMinrecords());
+    }
+
+    public void SetMinRecords(int value)
+    {
+        _entityRecordset.setMinrecords(String.valueOf(value));
+    }
+
+    public boolean GetHasActiveRecords()
+    {
+
+        // Iterate Records
+        // For Each Record As CoalesceRecord In this._Records
+        for (XsdRecord record : GetRecords())
+        {
+            if (record.GetStatus() == ECoalesceDataObjectStatus.ACTIVE)
+            {
+                return true;
+            }
+        }
+
+        // No Active Records
+        return false;
+    }
+
+    public boolean GetHasRecords()
+    {
+        return (this.GetRecords().size() > 0);
+    }
+
+    public DateTime GetDateCreated()
+    {
+        try
+        {
+
+            // return new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityRecordset.getDatecreated());
+            return _entityRecordset.getDatecreated();
+
+        }
+        catch (Exception ex)
+        {
+            CallResult.log(CallResults.FAILED_ERROR, ex, this);
+            return null;
+        }
+    }
+
+    @Override
+    public void SetDateCreated(DateTime value)
+    {
+        // _entityRecordset.setDatecreated(new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
+        _entityRecordset.setDatecreated(value);
+    }
+
+    @Override
+    public DateTime GetLastModified()
+    {
+        // return new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityRecordset.getLastmodified());
+        return _entityRecordset.getLastmodified();
+    }
+
+    @Override
+    protected void SetObjectLastModified(DateTime value)
+    {
+        // _entityRecordset.setLastmodified(new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
+        _entityRecordset.setLastmodified(value);
+    }
+
+    // -----------------------------------------------------------------------//
+    // Public Methods
+    // -----------------------------------------------------------------------//
+
+    public XsdFieldDefinition CreateFieldDefinition(String name,
+                                                    String dataType,
+                                                    String label,
+                                                    String defaultClassificationMarking,
+                                                    String defaultValue)
+    {
+        return XsdFieldDefinition.Create(this, name, dataType, label, defaultClassificationMarking, defaultValue);
+    }
+
+    public XsdFieldDefinition CreateFieldDefinition(String name, String dataType, String label)
+    {
+        return XsdFieldDefinition.Create(this, name, dataType);
+    }
+
+    public String ToXml()
+    {
+        return XmlHelper.Serialize(_entityRecordset);
+    }
+
+    public XsdFieldDefinition GetFieldDefinition(String fieldName)
+    {
+        try
+        {
+
+            // Find
+            for (XsdFieldDefinition fieldDefinition : GetFieldDefinitions())
+            {
+                if (fieldDefinition.GetName().toUpperCase().equals(fieldName.toUpperCase()))
+                {
+
+                    return fieldDefinition;
+                }
+            }
+
+            // Not found
+            return null;
+
+        }
+        catch (Exception ex)
+        {
+            CallResult.log(CallResults.FAILED_ERROR, ex, XsdRecordset.MODULE);
+            return null;
+        }
+    }
+
+    public boolean GetAllowEdit()
+    {
+        return true;
+    }
+
+    public boolean GetAllowNew()
+    {
+        return true;
+    }
+
+    public boolean GetAllowRemove()
+    {
+        return true;
+    }
+
+    public int GetCount()
+    {
+        return GetRecords().size();
+    }
+
+    public boolean Contains(Object value)
+    { // As Boolean Implements System.Collections.IList.Contains
+        try
+        {
+
+            return this.GetRecords().contains(value);
+
+        }
+        catch (Exception ex)
+        {
+            CallResult.log(CallResults.FAILED_ERROR, ex, this);
+
+            return false;
+        }
+    }
+
+    public int IndexOf(Object value)
+    { // As Integer Implements System.Collections.IList.IndexOf
+        try
+        {
+            // Call on the from the Records Collection
+            return this.GetRecords().indexOf(value);
+
+        }
+        catch (Exception ex)
+        {
+            CallResult.log(CallResults.FAILED_ERROR, ex, this);
+
+            return -1;
+        }
+    }
+
+    public Object AddNew()
+    { // As Object Implements System.ComponentModel.IBindingList.AddNew
+        try
+        {
+
+            // Create new Record
+            XsdRecord newRecord = XsdRecord.Create(this, GetName() + " Record");
+
+            // TODO: Raise the Changed Event
+            // RaiseEvent ListChanged(this, new
+            // ListChangedEventArgs(ListChangedType.ItemAdded,
+            // this.GetRecords().Count - 1));
+
+            return newRecord;
+
+        }
+        catch (Exception ex)
+        {
+            CallResult.log(CallResults.FAILED_ERROR, ex, this);
+
+            return null;
+        }
+    }
+
+    public Object GetItem(int index)
+    {
+        try
+        {
+            // Iterate List
+            if (index >= 0 && index < this.GetRecords().size())
+            {
+                return GetRecords().get(index);
+            }
+            else
+            {
+                return null;
+            }
+
+        }
+        catch (Exception ex)
+        {
+            CallResult.log(CallResults.FAILED_ERROR, ex, this);
+
+            return null;
+        }
+    }
+
+    public void RemoveAt(Integer index)
+    { // Implements System.Collections.IList.RemoveAt
+        try
+        {
+            // Get Record
+            XsdRecord record = (XsdRecord) this.GetItem(index);
+
+            // Evaluate
+            if (record != null)
+            {
+
+                // Set as Status as Deleted
+                record.SetStatus(ECoalesceDataObjectStatus.DELETED);
+
+                // Remove from the Records Collection
+                GetRecords().remove(record);
+
+                // // Determine new Index
+                // int NewIndex;
+                // if (index == 0) {
+                // if (this.Count > 0) {
+                // NewIndex = 0;
+                // }else{
+                // NewIndex = -1;
+                // }
+                // }else{
+                // NewIndex = index - 1;
+                // }
+
+                // TODO: Raise ListChanged Event
+                // RaiseEvent ListChanged(this, new
+                // ListChangedEventArgs(ListChangedType.ItemDeleted, NewIndex));
+            }
+
+        }
+        catch (Exception ex)
+        {
+            CallResult.log(CallResults.FAILED_ERROR, ex, this);
+        }
+    }
+
+    public void Remove(String key)
+    {
+        try
+        {
+            XsdRecord recordToRemove = null;
+
+            // Find
+            // For Each Record As XsdRecord In this.Records
+            for (XsdRecord record : GetRecords())
+            {
+                if (record.GetKey().equals(key))
+                {
+                    recordToRemove = record;
+                    break;
+                }
+            }
+
+            // Evaluate
+            if (recordToRemove != null)
+            {
+                // Set as Status as Deleted
+                recordToRemove.SetStatus(ECoalesceDataObjectStatus.DELETED);
+
+                // Remove from the Records Collection
+                this.GetRecords().remove(recordToRemove);
+            }
+
+        }
+        catch (Exception ex)
+        {
+            CallResult.log(CallResults.FAILED_ERROR, ex, this);
+        }
+    }
+
+    // -----------------------------------------------------------------------//
+    // Protected Methods
+    // -----------------------------------------------------------------------//
+
+    @Override
+    protected String GetObjectStatus()
+    {
+        return _entityRecordset.getStatus();
+    }
+
+    @Override
+    protected void SetObjectStatus(String status)
+    {
+        _entityRecordset.setStatus(status);
+    }
+
+    protected List<Record> GetEntityRecords()
+    {
+        return _entityRecordset.getRecord();
+    }
+
+    protected List<Fielddefinition> GetEntityFieldDefinitions()
+    {
+        return _entityRecordset.getFielddefinition();
+    }
 
-		XsdRecordset newRecordset = new XsdRecordset();
-		if (!newRecordset.Initialize(parent, newEntityRecordset))
-			return null;
-
-		newRecordset.SetName(name);
-		newRecordset.SetMinRecords(MinRecords);
-		newRecordset.SetMaxRecords(MaxRecords);
-
-		// Add to parent's child collection
-		if (!parent._childDataObjects.containsKey(newRecordset.GetKey())) {
-			parent._childDataObjects.put(newRecordset.GetKey(), newRecordset);
-		}
-
-		return newRecordset;
-
-	}
-
-	public boolean Initialize(XsdSection parent, Recordset recordset) {
-
-		// Set References
-		_parent = parent;
-		_entityRecordset = recordset;
-
-		// Create Collections
-		_fieldDefinitions = new ArrayList<XsdFieldDefinition>();
-		_records = new ArrayList<XsdRecord>();
-
-            for (Fielddefinition entityFieldDefinition : _entityRecordset.getFielddefinition()) {
-			XsdFieldDefinition newFieldDefinition = new XsdFieldDefinition();
-			newFieldDefinition.Initialize(this, entityFieldDefinition);
-
-		}
-
-            for (Record entityRecord : _entityRecordset.getRecord()) {
-			XsdRecord newRecord = new XsdRecord();
-			newRecord.Initialize(this, entityRecord);
-		}
-
-		return super.Initialize();
-
-	}
-
-	// -----------------------------------------------------------------------//
-	// public Properties
-	// -----------------------------------------------------------------------//
-
-	protected String GetObjectKey() {
-		return _entityRecordset.getKey();
-	}
-
-	public void SetKey(String value) {
-		_entityRecordset.setKey(value);
-	}
-
-	public String GetName() {
-		return _entityRecordset.getName();
-	}
-
-	public void SetName(String value) {
-		_entityRecordset.setName(value);
-	}
-
-	public ArrayList<XsdFieldDefinition> GetFieldDefinitions() {
-		return this._fieldDefinitions;
-	}
-
-	public ArrayList<XsdRecord> GetRecords() {
-		return this._records;
-	}
-
-	public int GetMaxRecords() {
-		return Integer.parseInt(_entityRecordset.getMaxrecords());
-	}
-
-	public void SetMaxRecords(int value) {
-		_entityRecordset.setMaxrecords(String.valueOf(value));
-	}
-
-	public int GetMinRecords() {
-		return Integer.parseInt(_entityRecordset.getMinrecords());
-	}
-
-	public void SetMinRecords(int value) {
-		_entityRecordset.setMinrecords(String.valueOf(value));
-	}
-
-	public boolean GetHasActiveRecords() {
-
-		// Iterate Records
-		// For Each Record As CoalesceRecord In this._Records
-		for (XsdRecord record : GetRecords()) {
-			if (record.GetStatus() == ECoalesceDataObjectStatus.ACTIVE) {
-				return true;
-			}
-		}
-
-		// No Active Records
-		return false;
-	}
-
-	public boolean GetHasRecords() {
-		return (this.GetRecords().size() > 0);
-	}
-
-	public DateTime GetDateCreated() {
-		try {
-
-			// return new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityRecordset.getDatecreated());
-			return _entityRecordset.getDatecreated();
-
-		} catch (Exception ex) {
-			CallResult.log(CallResults.FAILED_ERROR, ex, this);
-			return null;
-		}
-	}
-
-	public CallResult SetDateCreated(DateTime value) {
-		try {
-			// _entityRecordset.setDatecreated(new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
-			_entityRecordset.setDatecreated(value);
-
-			return CallResult.successCallResult;
-
-		} catch (Exception ex) {
-			return new CallResult(CallResults.FAILED_ERROR, ex, this);
-		}
-	}
-
-	public DateTime GetLastModified() {
-		try {
-
-			// return new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityRecordset.getLastmodified());
-			return _entityRecordset.getLastmodified();
-
-		} catch (Exception ex) {
-			CallResult.log(CallResults.FAILED_ERROR, ex, this);
-			return null;
-		}
-	}
-
-	protected CallResult SetObjectLastModified(DateTime value) {
-		try {
-			// _entityRecordset.setLastmodified(new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
-			_entityRecordset.setLastmodified(value);
-
-			return CallResult.successCallResult;
-
-		} catch (Exception ex) {
-			return new CallResult(CallResults.FAILED_ERROR, ex, this);
-		}
-	}
-
-	// -----------------------------------------------------------------------//
-	// Public Methods
-	// -----------------------------------------------------------------------//
-
-	public XsdFieldDefinition CreateFieldDefinition(String name, String dataType, String label,
-			String defaultClassificationMarking, String defaultValue) {
-		return XsdFieldDefinition.Create(this, name, dataType, label, defaultClassificationMarking, defaultValue);
-	}
-
-	public XsdFieldDefinition CreateFieldDefinition(String name, String dataType, String label) {
-		return XsdFieldDefinition.Create(this, name, dataType);
-	}
-
-	public String ToXml() {
-		return XmlHelper.Serialize(_entityRecordset);
-	}
-
-	public XsdFieldDefinition GetFieldDefinition(String fieldName) {
-		try {
-
-			// Find
-			for (XsdFieldDefinition fieldDefinition : GetFieldDefinitions()) {
-				if (fieldDefinition.GetName().toUpperCase().equals(fieldName.toUpperCase())) {
-
-					return fieldDefinition;
-				}
-			}
-
-			// Not found
-			return null;
-
-		} catch (Exception ex) {
-			CallResult.log(CallResults.FAILED_ERROR, ex, XsdRecordset.MODULE);
-			return null;
-		}
-	}
-
-	public boolean GetAllowEdit() {
-		return true;
-	}
-
-	public boolean GetAllowNew() {
-		return true;
-	}
-
-	public boolean GetAllowRemove() {
-		return true;
-	}
-
-	public int GetCount() {
-		return GetRecords().size();
-	}
-
-	public boolean Contains(Object value) { // As Boolean Implements System.Collections.IList.Contains
-		try {
-
-			return this.GetRecords().contains(value);
-
-		} catch (Exception ex) {
-			CallResult.log(CallResults.FAILED_ERROR, ex, this);
-
-			return false;
-		}
-	}
-
-	public int IndexOf(Object value) { // As Integer Implements System.Collections.IList.IndexOf
-		try {
-			// Call on the from the Records Collection
-			return this.GetRecords().indexOf(value);
-
-		} catch (Exception ex) {
-			CallResult.log(CallResults.FAILED_ERROR, ex, this);
-
-			return -1;
-		}
-	}
-
-	public Object AddNew() { // As Object Implements System.ComponentModel.IBindingList.AddNew
-		try {
-
-			// Create new Record
-			XsdRecord newRecord = XsdRecord.Create(this, GetName() + " Record");
-
-			// TODO: Raise the Changed Event
-			// RaiseEvent ListChanged(this, new
-			// ListChangedEventArgs(ListChangedType.ItemAdded,
-			// this.GetRecords().Count - 1));
-
-			return newRecord;
-
-		} catch (Exception ex) {
-			CallResult.log(CallResults.FAILED_ERROR, ex, this);
-
-			return null;
-		}
-	}
-
-	public Object GetItem(int index) {
-		try {
-			// Iterate List
-			if (index >= 0 && index < this.GetRecords().size()) {
-				return GetRecords().get(index);
-			} else {
-				return null;
-			}
-
-		} catch (Exception ex) {
-			CallResult.log(CallResults.FAILED_ERROR, ex, this);
-
-			return null;
-		}
-	}
-
-	public void RemoveAt(Integer index) { // Implements System.Collections.IList.RemoveAt
-		try {
-			// Get Record
-			XsdRecord record = (XsdRecord) this.GetItem(index);
-
-			// Evaluate
-			if (record != null) {
-
-				// Set as Status as Deleted
-				record.SetStatus(ECoalesceDataObjectStatus.DELETED);
-
-				// Remove from the Records Collection
-				GetRecords().remove(record);
-
-				// // Determine new Index
-				// int NewIndex;
-				// if (index == 0) {
-				// if (this.Count > 0) {
-				// NewIndex = 0;
-				// }else{
-				// NewIndex = -1;
-				// }
-				// }else{
-				// NewIndex = index - 1;
-				// }
-
-				// TODO: Raise ListChanged Event
-				// RaiseEvent ListChanged(this, new
-				// ListChangedEventArgs(ListChangedType.ItemDeleted, NewIndex));
-			}
-
-		} catch (Exception ex) {
-			CallResult.log(CallResults.FAILED_ERROR, ex, this);
-		}
-	}
-
-	public void Remove(String key) {
-		try {
-			XsdRecord recordToRemove = null;
-
-			// Find
-			// For Each Record As XsdRecord In this.Records
-			for (XsdRecord record : GetRecords()) {
-				if (record.GetKey().equals(key)) {
-					recordToRemove = record;
-					break;
-				}
-			}
-
-			// Evaluate
-			if (recordToRemove != null) {
-				// Set as Status as Deleted
-				recordToRemove.SetStatus(ECoalesceDataObjectStatus.DELETED);
-
-				// Remove from the Records Collection
-				this.GetRecords().remove(recordToRemove);
-			}
-
-		} catch (Exception ex) {
-			CallResult.log(CallResults.FAILED_ERROR, ex, this);
-		}
-	}
-
-	// -----------------------------------------------------------------------//
-	// Protected Methods
-	// -----------------------------------------------------------------------//
-
-	protected CallResult GetObjectStatus(String status) {
-		try {
-			status = _entityRecordset.getStatus();
-
-			return CallResult.successCallResult;
-
-		} catch (Exception ex) {
-			return new CallResult(CallResults.FAILED_ERROR, ex, this);
-		}
-	}
-
-	protected CallResult SetObjectStatus(String status) {
-		try {
-			_entityRecordset.setStatus(status);
-
-			return CallResult.successCallResult;
-
-		} catch (Exception ex) {
-			return new CallResult(CallResults.FAILED_ERROR, ex, this);
-		}
-	}
-
-	protected List<Record> GetEntityRecords() {
-    	return _entityRecordset.getRecord();
-	}
-
-	protected List<Fielddefinition> GetEntityFieldDefinitions() {
-    	return _entityRecordset.getFielddefinition();
-	}
-	
     @Override
     protected Map<QName, String> getAttributes()
     {

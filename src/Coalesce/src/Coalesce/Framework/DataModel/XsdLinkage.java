@@ -44,7 +44,7 @@ public class XsdLinkage extends XsdDataObject {
         if (!linkage.Initialize(parent, entityLinkage)) return null;
 
         linkage.SetName("Linkage");
-        
+
         return linkage;
 
     }
@@ -62,21 +62,25 @@ public class XsdLinkage extends XsdDataObject {
     // public Properties
     // -----------------------------------------------------------------------//
 
+    @Override
     public String GetObjectKey()
     {
         return _entityLinkage.getKey();
     }
 
-    public void SetKey(String value)
+    @Override
+    public void SetObjectKey(String value)
     {
         _entityLinkage.setKey(value);
     }
 
+    @Override
     public String GetName()
     {
         return _entityLinkage.getName();
     }
 
+    @Override
     public void SetName(String value)
     {
         _entityLinkage.setName(value);
@@ -244,98 +248,44 @@ public class XsdLinkage extends XsdDataObject {
         }
     }
 
+    @Override
     public DateTime GetDateCreated()
     {
-        try
-        {
-
-            // return new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityLinkage.getDatecreated());
-            return _entityLinkage.getDatecreated();
-
-        }
-        catch (Exception ex)
-        {
-            CallResult.log(CallResults.FAILED_ERROR, ex, this);
-            return null;
-        }
+        // return new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityLinkage.getDatecreated());
+        return _entityLinkage.getDatecreated();
     }
 
-    public CallResult SetDateCreated(DateTime value)
+    @Override
+    public void SetDateCreated(DateTime value)
     {
-        try
-        {
-            // _entityLinkage.setDatecreated(new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
-            _entityLinkage.setDatecreated(value);
-
-            return CallResult.successCallResult;
-
-        }
-        catch (Exception ex)
-        {
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
-        }
+        // _entityLinkage.setDatecreated(new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
+        _entityLinkage.setDatecreated(value);
     }
 
+    @Override
     public DateTime GetLastModified()
     {
-        try
-        {
-
-            // return new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityLinkage.getLastmodified());
-            return _entityLinkage.getLastmodified();
-
-        }
-        catch (Exception ex)
-        {
-            CallResult.log(CallResults.FAILED_ERROR, ex, this);
-            return null;
-        }
+        // return new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityLinkage.getLastmodified());
+        return _entityLinkage.getLastmodified();
     }
 
-    protected CallResult SetObjectLastModified(DateTime value)
+    @Override
+    protected void SetObjectLastModified(DateTime value)
     {
-        try
-        {
-            // _entityLinkage.setLastmodified(new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
-            _entityLinkage.setLastmodified(value);
-
-            return CallResult.successCallResult;
-
-        }
-        catch (Exception ex)
-        {
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
-        }
+        // _entityLinkage.setLastmodified(new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
+        _entityLinkage.setLastmodified(value);
     }
 
-    protected CallResult GetObjectStatus(String status)
+    @Override
+    protected String GetObjectStatus()
     {
-        try
-        {
-            status = _entityLinkage.getStatus();
-
-            return CallResult.successCallResult;
-
-        }
-        catch (Exception ex)
-        {
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
-        }
+        return _entityLinkage.getStatus();
     }
 
-    protected CallResult SetObjectStatus(String status)
+    @Override
+    protected void SetObjectStatus(String status)
     {
-        try
-        {
-            _entityLinkage.setStatus(status);
-
-            return CallResult.successCallResult;
-
-        }
-        catch (Exception ex)
-        {
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
-        }
+        _entityLinkage.setStatus(status);
     }
 
     public boolean GetIsMarkedDeleted()
@@ -347,9 +297,9 @@ public class XsdLinkage extends XsdDataObject {
     // public Methods
     // -----------------------------------------------------------------------//
 
-    public CallResult EstablishLinkage(CoalesceEntity Entity1,
+    public CallResult EstablishLinkage(XsdEntity Entity1,
                                        ELinkTypes LinkType,
-                                       CoalesceEntity Entity2,
+                                       XsdEntity Entity2,
                                        String ClassificationMarking,
                                        String ModifiedBy,
                                        String InputLang)

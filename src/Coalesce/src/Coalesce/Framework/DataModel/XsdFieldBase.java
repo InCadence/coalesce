@@ -17,6 +17,7 @@ import Coalesce.Common.Helpers.GUIDHelper;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import Coalesce.Common.Helpers.StringHelper;
 
+
 public abstract class XsdFieldBase extends XsdDataObject {
 
     private boolean _suspendHistory = false;
@@ -288,11 +289,11 @@ public abstract class XsdFieldBase extends XsdDataObject {
 
     public abstract DateTime GetDateCreated();
 
-    public abstract CallResult SetDateCreated(DateTime value);
+    public abstract void SetDateCreated(DateTime value);
 
     public abstract DateTime GetLastModified();
 
-    protected abstract CallResult SetObjectLastModified(DateTime value);
+    protected abstract void SetObjectLastModified(DateTime value);
 
     public CallResult SetTypedValue(String value)
     {

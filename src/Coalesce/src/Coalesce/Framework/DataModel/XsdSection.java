@@ -32,242 +32,220 @@ import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset;
 
 public class XsdSection extends XsdDataObject {
 
-	private static String MODULE = "Coalesce.Framework.DataModel.CoalesceSection";
+    private static String MODULE = "Coalesce.Framework.DataModel.CoalesceSection";
 
-	private Section _entitySection;
+    private Section _entitySection;
 
-	// -----------------------------------------------------------------------//
-	// Factory and Initialization
-	// -----------------------------------------------------------------------//
+    // -----------------------------------------------------------------------//
+    // Factory and Initialization
+    // -----------------------------------------------------------------------//
 
-	// TODO: Nested sections are not currently part of the Entity object
-	/*
-	 * public CallResult Create(CoalesceSection Parent, CoalesceSection NewSection, String Name) { try{ return Create(Parent,
-	 * NewSection, Name, false); }catch(Exception ex){ // return Failed Error return new CallResult(CallResults.FAILED_ERROR,
-	 * ex, XsdSection.MODULE); } }
-	 * 
-	 * public CallResult Create(CoalesceSection Parent, CoalesceSection NewSection, String Name, boolean NoIndex) { try{
-	 * CallResult rst; Node NewNode = null;
-	 * 
-	 * // Create CoalesceSection Node NewSection = new CoalesceSection();
-	 * 
-	 * //TODO:Node creation (remove null assignment above) // Create the DataObjectNode //.DOCUMENT_NODE //NewNode =
-	 * Parent.GetDataObjectDocument().CreateNode(Node.ELEMENT_NODE, "section", ""); //NewNode =
-	 * Parent.GetDataObjectDocument().CreateNode(XmlNodeType.Element, "section", "");
-	 * Parent.GetDataObjectNode().appendChild(NewNode);
-	 * 
-	 * // Initialize the CoalesceField Object rst = NewSection.Initialize(Parent, NewNode); if ( !(rst.getIsSuccess()))
-	 * return rst;
-	 * 
-	 * Date UTCDate = new Date(); DateTimeHelper dth = new DateTimeHelper(); dth.ConvertDateToGMT(UTCDate);
-	 * 
-	 * // Set Default Values //TODO: GUIDHelper //rst = GUIDHelper.GetGuidString(Guid.NewGuid, NewSection.Key)
-	 * NewSection.SetKey(java.util.UUID.randomUUID().toString()); NewSection.SetName(Name);
-	 * NewSection.SetDateCreated(UTCDate); NewSection.SetLastModified(UTCDate); if (NoIndex) NewSection.NoIndex = true;
-	 * 
-	 * // Add to Parent's Child Collection if ( !(Parent.GetChildDataObjects().containsKey(NewSection.GetKey())) ) {
-	 * Parent.GetChildDataObjects().put(NewSection.GetKey(), NewSection); }
-	 * 
-	 * // return Success return CallResult.successCallResult;
-	 * 
-	 * }catch(Exception ex){ // return Failed Error return new CallResult(CallResults.FAILED_ERROR, ex, XsdSection.MODULE); }
-	 * }
-	 */
+    // TODO: Nested sections are not currently part of the Entity object
+    /*
+     * public CallResult Create(CoalesceSection Parent, CoalesceSection NewSection, String Name) { try{ return Create(Parent,
+     * NewSection, Name, false); }catch(Exception ex){ // return Failed Error return new CallResult(CallResults.FAILED_ERROR,
+     * ex, XsdSection.MODULE); } }
+     * 
+     * public CallResult Create(CoalesceSection Parent, CoalesceSection NewSection, String Name, boolean NoIndex) { try{
+     * CallResult rst; Node NewNode = null;
+     * 
+     * // Create CoalesceSection Node NewSection = new CoalesceSection();
+     * 
+     * //TODO:Node creation (remove null assignment above) // Create the DataObjectNode //.DOCUMENT_NODE //NewNode =
+     * Parent.GetDataObjectDocument().CreateNode(Node.ELEMENT_NODE, "section", ""); //NewNode =
+     * Parent.GetDataObjectDocument().CreateNode(XmlNodeType.Element, "section", "");
+     * Parent.GetDataObjectNode().appendChild(NewNode);
+     * 
+     * // Initialize the CoalesceField Object rst = NewSection.Initialize(Parent, NewNode); if ( !(rst.getIsSuccess()))
+     * return rst;
+     * 
+     * Date UTCDate = new Date(); DateTimeHelper dth = new DateTimeHelper(); dth.ConvertDateToGMT(UTCDate);
+     * 
+     * // Set Default Values //TODO: GUIDHelper //rst = GUIDHelper.GetGuidString(Guid.NewGuid, NewSection.Key)
+     * NewSection.SetKey(java.util.UUID.randomUUID().toString()); NewSection.SetName(Name);
+     * NewSection.SetDateCreated(UTCDate); NewSection.SetLastModified(UTCDate); if (NoIndex) NewSection.NoIndex = true;
+     * 
+     * // Add to Parent's Child Collection if ( !(Parent.GetChildDataObjects().containsKey(NewSection.GetKey())) ) {
+     * Parent.GetChildDataObjects().put(NewSection.GetKey(), NewSection); }
+     * 
+     * // return Success return CallResult.successCallResult;
+     * 
+     * }catch(Exception ex){ // return Failed Error return new CallResult(CallResults.FAILED_ERROR, ex, XsdSection.MODULE); }
+     * }
+     */
 
-	public static XsdSection Create(XsdEntity parent, String name) {
-		return XsdSection.Create(parent, name, false);
-	}
+    public static XsdSection Create(XsdEntity parent, String name)
+    {
+        return XsdSection.Create(parent, name, false);
+    }
 
-	public static XsdSection Create(XsdEntity parent, String name, boolean noIndex) {
+    public static XsdSection Create(XsdEntity parent, String name, boolean noIndex)
+    {
 
-		Section newEntitySection = new Section();
-		parent.GetEntitySections().add(newEntitySection);
+        Section newEntitySection = new Section();
+        parent.GetEntitySections().add(newEntitySection);
 
-		XsdSection newSection = new XsdSection();
-		if (!newSection.Initialize(parent, newEntitySection))
-			return null;
+        XsdSection newSection = new XsdSection();
+        if (!newSection.Initialize(parent, newEntitySection)) return null;
 
-		newSection.SetName(name);
+        newSection.SetName(name);
 
-		newSection.SetNoIndex(noIndex);
+        newSection.SetNoIndex(noIndex);
 
-		// Add to parent's child collection
-		if (!parent._childDataObjects.containsKey(newSection.GetKey())) {
-			parent._childDataObjects.put(newSection.GetKey(), newSection);
-		}
+        // Add to parent's child collection
+        if (!parent._childDataObjects.containsKey(newSection.GetKey()))
+        {
+            parent._childDataObjects.put(newSection.GetKey(), newSection);
+        }
 
-		return newSection;
-	}
+        return newSection;
+    }
 
-	// TODO: Need to get Entity with nested sections
-	/*
-	 * public CallResult Initialize(CoalesceSection Parent, Node DataObjectNode) { try{ // Since the Section can be
-	 * initialized with an Entity as a parent or // another Section as a parent, we have a private method that takes in // an
-	 * ICoalesceDataObject, and these public methods expose the strongly // typed interface to outside callers. return
-	 * this.Initialize((ICoalesceDataObject)Parent, DataObjectNode);
-	 * 
-	 * }catch(Exception ex){ // return Failed Error return new CallResult(CallResults.FAILED_ERROR, ex, this); } }
-	 */
-	public boolean Initialize(XsdEntity parent, Section section) {
+    // TODO: Need to get Entity with nested sections
+    /*
+     * public CallResult Initialize(CoalesceSection Parent, Node DataObjectNode) { try{ // Since the Section can be
+     * initialized with an Entity as a parent or // another Section as a parent, we have a private method that takes in // an
+     * ICoalesceDataObject, and these public methods expose the strongly // typed interface to outside callers. return
+     * this.Initialize((ICoalesceDataObject)Parent, DataObjectNode);
+     * 
+     * }catch(Exception ex){ // return Failed Error return new CallResult(CallResults.FAILED_ERROR, ex, this); } }
+     */
+    public boolean Initialize(XsdEntity parent, Section section)
+    {
 
-		// Set References
-		_parent = parent;
-		_entitySection = section;
+        // Set References
+        _parent = parent;
+        _entitySection = section;
 
-            for (Recordset childRecordSet : _entitySection.getRecordset()) {
+        for (Recordset childRecordSet : _entitySection.getRecordset())
+        {
 
-			XsdRecordset newRecordSet = new XsdRecordset();
-			if (!newRecordSet.Initialize(this, childRecordSet))
-				continue;
+            XsdRecordset newRecordSet = new XsdRecordset();
+            if (!newRecordSet.Initialize(this, childRecordSet)) continue;
 
-			if (!_childDataObjects.containsKey(newRecordSet.GetKey())) {
-				_childDataObjects.put(newRecordSet.GetKey(), newRecordSet);
-			}
-		}
+            if (!_childDataObjects.containsKey(newRecordSet.GetKey()))
+            {
+                _childDataObjects.put(newRecordSet.GetKey(), newRecordSet);
+            }
+        }
 
-		// TODO: Need to add another loop child Sections if they are added
+        // TODO: Need to add another loop child Sections if they are added
 
-		return super.Initialize();
-	}
+        return super.Initialize();
+    }
 
-	// -----------------------------------------------------------------------//
-	// public Methods
-	// -----------------------------------------------------------------------//
+    // -----------------------------------------------------------------------//
+    // public Methods
+    // -----------------------------------------------------------------------//
 
-	protected String GetObjectKey() {
-		return _entitySection.getKey();
-	}
+    @Override
+    protected String GetObjectKey()
+    {
+        return _entitySection.getKey();
+    }
 
-	public void SetKey(String value) {
-		_entitySection.setKey(value);
-	}
+    @Override
+    protected void SetObjectKey(String value)
+    {
+        _entitySection.setKey(value);
+    }
 
-	public String GetName() {
-		return _entitySection.getName();
-	}
+    @Override
+    public String GetName()
+    {
+        return _entitySection.getName();
+    }
 
-	public void SetName(String value) {
-		_entitySection.setName(value);
-	}
+    @Override
+    public void SetName(String value)
+    {
+        _entitySection.setName(value);
+    }
 
-	// TODO: Need nested sections
-	/*
-	 * public CallResult CreateSection(XsdSection newSection, String name) { try{ CallResult rst;
-	 * 
-	 * // Create new Section rst = XsdSection.Create(this, newSection, name); if (!rst.getIsSuccess()) return rst;
-	 * 
-	 * return CallResult.successCallResult;
-	 * 
-	 * }catch(Exception ex){ return new CallResult(CallResults.FAILED_ERROR, ex, this); } }
-	 */
+    // TODO: Need nested sections
+    /*
+     * public CallResult CreateSection(XsdSection newSection, String name) { try{ CallResult rst;
+     * 
+     * // Create new Section rst = XsdSection.Create(this, newSection, name); if (!rst.getIsSuccess()) return rst;
+     * 
+     * return CallResult.successCallResult;
+     * 
+     * }catch(Exception ex){ return new CallResult(CallResults.FAILED_ERROR, ex, this); } }
+     */
 
-	public XsdRecordset CreateRecordset(String name) {
-		return XsdRecordset.Create(this, name);
-	}
+    public XsdRecordset CreateRecordset(String name)
+    {
+        return XsdRecordset.Create(this, name);
+    }
 
-	public String ToXml() {
-		return XmlHelper.Serialize(_entitySection);
-	}
+    @Override
+    public String ToXml()
+    {
+        return XmlHelper.Serialize(_entitySection);
+    }
 
-	public DateTime GetDateCreated() {
-		try {
+    @Override
+    public DateTime GetDateCreated()
+    {
+        // return new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entitySection.getDatecreated());
+        return _entitySection.getDatecreated();
+    }
 
-			// return new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entitySection.getDatecreated());
-			return _entitySection.getDatecreated();
+    @Override
+    public void SetDateCreated(DateTime value)
+    {
+        // _entitySection.setDatecreated(new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
+        _entitySection.setDatecreated(value);
+    }
 
-		} catch (Exception ex) {
-			CallResult.log(CallResults.FAILED_ERROR, ex, this);
-			return null;
-		}
-	}
+    @Override
+    public DateTime GetLastModified()
+    {
+        // return new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entitySection.getLastmodified());
+        return _entitySection.getLastmodified();
+    }
 
-	public CallResult SetDateCreated(DateTime value) {
-		try {
-			// _entitySection.setDatecreated(new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
-			_entitySection.setDatecreated(value);
+    @Override
+    protected void SetObjectLastModified(DateTime value)
+    {
+        // _entitySection.setLastmodified(new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
+        _entitySection.setLastmodified(value);
+    }
 
-			return CallResult.successCallResult;
+    // -----------------------------------------------------------------------//
+    // Protected Methods
+    // -----------------------------------------------------------------------//
 
-		} catch (Exception ex) {
-			return new CallResult(CallResults.FAILED_ERROR, ex, this);
-		}
-	}
+    @Override
+    protected String GetObjectStatus()
+    {
+        return _entitySection.getStatus();
+    }
 
-	public DateTime GetLastModified() {
-		try {
+    @Override
+    protected void SetObjectStatus(String status)
+    {
+        _entitySection.setStatus(status);
+    }
 
-			// return new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entitySection.getLastmodified());
-			return _entitySection.getLastmodified();
+    /*
+    @Override
+    protected boolean GetNoIndex()
+    {
+        return Boolean.parseBoolean(_entitySection.getNoindex());
+    }
 
-		} catch (Exception ex) {
-			CallResult.log(CallResults.FAILED_ERROR, ex, this);
-			return null;
-		}
-	}
+    @Override
+    protected void SetObjectNoIndex(boolean value)
+    {
+        _entitySection.setNoindex(Boolean.toString(value));
+    }
+    */
 
-	protected CallResult SetObjectLastModified(DateTime value) {
-		try {
-			// _entitySection.setLastmodified(new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
-			_entitySection.setLastmodified(value);
-
-			return CallResult.successCallResult;
-
-		} catch (Exception ex) {
-			return new CallResult(CallResults.FAILED_ERROR, ex, this);
-		}
-	}
-
-	// -----------------------------------------------------------------------//
-	// Protected Methods
-	// -----------------------------------------------------------------------//
-
-	protected CallResult GetObjectStatus(String status) {
-		try {
-			status = _entitySection.getStatus();
-
-			return CallResult.successCallResult;
-
-		} catch (Exception ex) {
-			return new CallResult(CallResults.FAILED_ERROR, ex, this);
-		}
-	}
-
-	protected CallResult SetObjectStatus(String status) {
-		try {
-			_entitySection.setStatus(status);
-
-			return CallResult.successCallResult;
-
-		} catch (Exception ex) {
-			return new CallResult(CallResults.FAILED_ERROR, ex, this);
-		}
-	}
-
-	protected CallResult GetObjectNoIndex(String value) {
-		try {
-			value = _entitySection.getNoindex();
-
-			return CallResult.successCallResult;
-
-		} catch (Exception ex) {
-			return new CallResult(CallResults.FAILED_ERROR, ex, this);
-		}
-	}
-
-	protected CallResult SetObjectNoIndex(String value) {
-		try {
-			_entitySection.setNoindex(value);
-
-			return CallResult.successCallResult;
-
-		} catch (Exception ex) {
-			return new CallResult(CallResults.FAILED_ERROR, ex, this);
-		}
-	}
-
-	protected List<Recordset> GetEntityRecordSets() {
-    	return _entitySection.getRecordset();
-	}
+    protected List<Recordset> GetEntityRecordSets()
+    {
+        return _entitySection.getRecordset();
+    }
 
     @Override
     protected Map<QName, String> getAttributes()

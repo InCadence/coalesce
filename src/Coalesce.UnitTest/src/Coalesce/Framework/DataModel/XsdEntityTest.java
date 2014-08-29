@@ -193,5 +193,15 @@ public class XsdEntityTest {
             fail(ex.getMessage());
         }
     }
+    
+    @Test 
+    public void testFieldHistory() {
+        
+        // Create Entity
+        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+        
+        XsdSection section = entity.GetSection("TREXMission/Mission Information Section");
+        
+    }
 
 }

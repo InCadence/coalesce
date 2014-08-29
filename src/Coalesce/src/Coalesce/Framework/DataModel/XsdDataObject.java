@@ -28,123 +28,208 @@ import unity.core.runtime.CallResult.CallResults;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-public abstract class XsdDataObject {
+public abstract class XsdDataObject implements ICoalesceDataObject {
+
+    /*--------------------------------------------------------------------------
+    Protected Member Variables
+    --------------------------------------------------------------------------*/
 
     protected XsdDataObject _parent;
     protected HashMap<String, XsdDataObject> _childDataObjects = new HashMap<String, XsdDataObject>();
 
+    /*--------------------------------------------------------------------------
+    Public Abstract Functions
+    --------------------------------------------------------------------------*/
+
+    @Override
+    public abstract String GetName();
+
+    @Override
+    public abstract void SetName(String value);
+
+    @Override
+    public abstract DateTime GetDateCreated();
+
+    @Override
+    public abstract void SetDateCreated(DateTime value);
+
+    @Override
+    public abstract DateTime GetLastModified();
+
+    public abstract String ToXml();
+
+    /*--------------------------------------------------------------------------
+    Protected Abstract Functions
+    --------------------------------------------------------------------------*/
+
+    protected abstract String GetObjectKey();
+
+    protected abstract void SetObjectKey(String value);
+
+    protected abstract void SetObjectLastModified(DateTime value);
+
+    protected abstract String GetObjectStatus();
+
+    protected abstract void SetObjectStatus(String status);
+
+    protected abstract Map<QName, String> getAttributes();
+
+    /*--------------------------------------------------------------------------
+    Public Interface Functions
+    --------------------------------------------------------------------------*/
+
+    @Override
+    public ECoalesceDataObjectStatus GetStatus()
+    {
+
+        // Get Status
+        String statusString = this.GetObjectStatus();
+
+        // Valid String?
+        if (statusString == null || statusString.equals(""))
+        {
+            // No; Return Default
+            return ECoalesceDataObjectStatus.ACTIVE;
+        }
+        else
+        {
+            // Yes; Parse String
+            return (ECoalesceDataObjectStatus.fromLabel(statusString));
+        }
+
+    }
+
+    @Override
+    public void SetStatus(ECoalesceDataObjectStatus value)
+    {
+        // Set Status SUccessful?
+        this.SetObjectStatus(value.toLabel());
+
+        // Yes; Update Last Modified
+        this.SetLastModified(new DateTime());
+    }
+
+    @Override
+    public XsdDataObject GetParent()
+    {
+        return this._parent;
+    }
+
+    @Override
+    public void SetParent(XsdDataObject parent)
+    {
+        this._parent = parent;
+    }
+
+    @Override
     public String GetKey()
     {
         return GetObjectKey();
     }
 
-    public abstract void SetKey(String value);
-
-    public abstract String GetName();
-
-    public abstract void SetName(String value);
-
-    public abstract DateTime GetDateCreated();
-
-    public abstract CallResult SetDateCreated(DateTime value);
-
-    public abstract DateTime GetLastModified();
-
-    public boolean SetLastModified(DateTime value)
+    @Override
+    public void SetKey(String key)
     {
+        this.SetObjectKey(key);
+    }
 
-        CallResult rst = null;
+    @Override
+    public String GetTag()
+    {
+        return this.GetAttribute("tag");
+    }
 
-        rst = SetObjectLastModified(value);
-        if (!rst.getIsSuccess())
-        {
-            return false;
-        }
+    @Override
+    public void SetTag(String value)
+    {
+        this.SetAttribute("tag", value);
+    }
 
+    @Override
+    public boolean GetFlatten()
+    {
+        return Boolean.parseBoolean(this.GetAttribute("flatten"));
+    }
+
+    @Override
+    public void SetFlatten(boolean value)
+    {
+        this.SetAttribute("flatten", Boolean.toString(value));
+    }
+
+    @Override
+    public void SetLastModified(DateTime value)
+    {
+        // Set Last Modified
+        this.SetObjectLastModified(value);
+
+        // Bubble Up to Parent
         if (this._parent != null)
         {
             this._parent.SetLastModified(value);
         }
-
-        return true;
-
     }
 
+    @Override
     public boolean GetNoIndex()
     {
         return Boolean.parseBoolean(this.GetAttribute("noindex"));
     }
 
+    @Override
     public void SetNoIndex(boolean value)
     {
         this.SetAttribute("noindex", Boolean.toString(value));
     }
 
-    public String GetAttribute(String name) {
-        return this.getAttributes().get(new QName(name));
-    }
-    
-    public boolean SetAttribute(String name, String value){
-        this.getAttributes().put(new QName(name), value);
-        return true;
-    }
-    
-    public ECoalesceDataObjectStatus GetStatus()
+    @Override
+    public Map<String, XsdDataObject> GetChildDataObjects()
     {
-        CallResult rst;
+        return this._childDataObjects;
+    }
 
-        // Get
-        String statusString = "";
-        rst = GetObjectStatus(statusString);
-
-        // Evaluate
-        if (rst.getIsSuccess())
+    @Override
+    public String GetNamePath()
+    {
+        if (this._parent == null)
         {
-
-            if (statusString.equals(""))
-            {
-
-                // Return Active
-                return ECoalesceDataObjectStatus.ACTIVE;
-            }
-            else
-            {
-                // Return Status
-                return (ECoalesceDataObjectStatus.fromLabel(statusString));
-            }
+            return this.GetName();
         }
         else
         {
-            // Return Active (Default)
-            return ECoalesceDataObjectStatus.ACTIVE;
+            return this._parent.GetNamePath() + "/" + this.GetName();
         }
-
     }
 
-    public void SetStatus(ECoalesceDataObjectStatus value)
+    /*--------------------------------------------------------------------------
+    Public Functions
+    --------------------------------------------------------------------------*/
+
+    public String GetAttribute(String name)
     {
-        // Set
-        CallResult rst;
-        rst = SetObjectStatus(value.toLabel());
-        if (!rst.getIsSuccess())
-        {
-            return;
-        }
-
-        SetLastModified(new DateTime());
+        return this.getAttributes().get(new QName(name));
     }
 
-    public abstract String ToXml();
+    public DateTime GetAttributeAsDate(String name)
+    {
+        // TODO: Not Implemented
+        return null;
+    }
 
-    protected abstract String GetObjectKey();
+    public boolean SetAttribute(String name, String value)
+    {
+        this.getAttributes().put(new QName(name), value);
+        return true;
+    }
 
-    protected abstract CallResult SetObjectLastModified(DateTime value);
+    public void SetAttributeAsDate(String name, DateTime date)
+    {
+        // TODO: Not Implemented
+    }
 
-    protected abstract CallResult GetObjectStatus(String status);
-
-    protected abstract CallResult SetObjectStatus(String status);
-
-    protected abstract Map<QName, String> getAttributes();
+    /*--------------------------------------------------------------------------
+    Protected Functions
+    --------------------------------------------------------------------------*/
 
     protected boolean Initialize()
     {
@@ -196,7 +281,6 @@ public abstract class XsdDataObject {
             default:
 
                 // Find next child
-
                 XsdDataObject dataObject = null;
 
                 for (XsdDataObject child : _childDataObjects.values())

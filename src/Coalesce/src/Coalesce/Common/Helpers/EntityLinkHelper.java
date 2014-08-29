@@ -27,6 +27,7 @@ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
 
 public class EntityLinkHelper {
 	
+    /*
 	private static String MODULE = "Coalesce.Common.Helpers.EntityLinkHelper";
 
 	// Make static class
@@ -36,7 +37,7 @@ public class EntityLinkHelper {
 		
 	}
 	//TODO: Entire class
-	public CallResult LinkEntities(CoalesceEntity Entity1, ELinkTypes LinkType, CoalesceEntity Entity2, Boolean UpdateExisting){ 
+	public CallResult LinkEntities(XsdEntity Entity1, ELinkTypes LinkType, XsdEntity Entity2, Boolean UpdateExisting){ 
 		
 		CallResult rst = new CallResult();
 
@@ -51,7 +52,7 @@ public class EntityLinkHelper {
 	    }
 	}
 
-	public CallResult LinkEntities(CoalesceEntity Entity1, ELinkTypes LinkType, CoalesceEntity Entity2, String ClassificationMarking, String ModifiedBy, String InputLang, Boolean UpdateExisting) {
+	public CallResult LinkEntities(XsdEntity Entity1, ELinkTypes LinkType, XsdEntity Entity2, String ClassificationMarking, String ModifiedBy, String InputLang, Boolean UpdateExisting) {
 	    try{
 			CallResult rst = new CallResult();
 			CoalesceLinkageSection LinkageSection1 = new CoalesceLinkageSection();
@@ -164,7 +165,7 @@ public class EntityLinkHelper {
 	    }
 	}
 
-    public CallResult UnLinkEntities(CoalesceEntity Entity1, CoalesceEntity Entity2){
+    public CallResult UnLinkEntities(XsdEntity Entity1, XsdEntity Entity2){
 	    try{
 	        return UnLinkEntities(Entity1, Entity2, "U", "", "en-US");
 	
@@ -174,7 +175,7 @@ public class EntityLinkHelper {
 	    }
 	}
 
-	public CallResult UnLinkEntities(CoalesceEntity Entity1, CoalesceEntity Entity2, ELinkTypes LinkType) {
+	public CallResult UnLinkEntities(XsdEntity Entity1, XsdEntity Entity2, ELinkTypes LinkType) {
 	    try{
 	        return UnLinkEntities(Entity1, Entity2, "U", "", "en-US", LinkType);
 	
@@ -184,7 +185,7 @@ public class EntityLinkHelper {
 	    }
 	}
 
-	public CallResult UnLinkEntities(CoalesceEntity Entity1, CoalesceEntity Entity2, String ClassificationMarking, String ModifiedBy, String InputLang){
+	public CallResult UnLinkEntities(XsdEntity Entity1, XsdEntity Entity2, String ClassificationMarking, String ModifiedBy, String InputLang){
 	    try{
 	        CallResult rst;
 	        CoalesceLinkageSection LinkageSection1 = null;
@@ -236,7 +237,7 @@ public class EntityLinkHelper {
 	    }
 	}
 
-	public CallResult UnLinkEntities(CoalesceEntity Entity1, CoalesceEntity Entity2, String ClassificationMarking, String ModifiedBy, String InputLang, ELinkTypes LinkType){
+	public CallResult UnLinkEntities(XsdEntity Entity1, XsdEntity Entity2, String ClassificationMarking, String ModifiedBy, String InputLang, ELinkTypes LinkType){
 	    try{
 	        CallResult rst;
 	        CoalesceLinkageSection LinkageSection1 = null;
@@ -293,7 +294,7 @@ public class EntityLinkHelper {
 	    }
 	}
 
-    public CallResult GetLinkages(CoalesceEntity Entity, Map<String, CoalesceLinkage> Linkages){
+    public CallResult GetLinkages(XsdEntity Entity, Map<String, XsdEntity> Linkages){
 	    try{
 	        CallResult rst;
 	        CoalesceLinkageSection LinkageSection  = null;
@@ -518,5 +519,6 @@ public class EntityLinkHelper {
 	        return new CallResult(CallResults.FAILED_ERROR, ex, this);
 	    }
 	}
+	*/
 
 }

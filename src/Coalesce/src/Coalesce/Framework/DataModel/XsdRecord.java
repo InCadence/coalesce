@@ -66,7 +66,8 @@ public class XsdRecord extends XsdDataObject {
 
             for (XsdFieldDefinition fieldDefinition : parent.GetFieldDefinitions())
             {
-                @SuppressWarnings("unused") // Links field definition to Record
+                @SuppressWarnings("unused")
+                // Links field definition to Record
                 XsdField newField = XsdField.Create(newRecord, fieldDefinition);
             }
 
@@ -118,21 +119,25 @@ public class XsdRecord extends XsdDataObject {
     // Public Methods
     // -----------------------------------------------------------------------//
 
+    @Override
     protected String GetObjectKey()
     {
         return _entityRecord.getKey();
     }
 
-    public void SetKey(String value)
+    @Override
+    public void SetObjectKey(String value)
     {
         _entityRecord.setKey(value);
     }
 
+    @Override
     public String GetName()
     {
         return _entityRecord.getName();
     }
 
+    @Override
     public void SetName(String value)
     {
         _entityRecord.setName(value);
@@ -408,7 +413,7 @@ public class XsdRecord extends XsdDataObject {
         {
             int value = GetIntegerFieldValue(fieldName);
 
-                return value;
+            return value;
 
         }
         catch (InvalidFieldException ife)
@@ -423,7 +428,7 @@ public class XsdRecord extends XsdDataObject {
         {
             DateTime value = GetDateTimeFieldValue(fieldName);
 
-                return value;
+            return value;
 
         }
         catch (InvalidFieldException ife)
@@ -615,102 +620,48 @@ public class XsdRecord extends XsdDataObject {
         return XmlHelper.Serialize(_entityRecord);
     }
 
+    @Override
     public DateTime GetDateCreated()
     {
-        try
-        {
-
-            // return new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityRecord.getDatecreated());
-            return _entityRecord.getDatecreated();
-
-        }
-        catch (Exception ex)
-        {
-            CallResult.log(CallResults.FAILED_ERROR, ex, this);
-            return null;
-        }
+        // return new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityRecord.getDatecreated());
+        return _entityRecord.getDatecreated();
     }
 
-    public CallResult SetDateCreated(DateTime value)
+    @Override
+    public void SetDateCreated(DateTime value)
     {
-        try
-        {
-            // _entityRecord.setDatecreated(new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
-            _entityRecord.setDatecreated(value);
-
-            return CallResult.successCallResult;
-
-        }
-        catch (Exception ex)
-        {
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
-        }
+        // _entityRecord.setDatecreated(new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
+        _entityRecord.setDatecreated(value);
     }
 
+    @Override
     public DateTime GetLastModified()
     {
-        try
-        {
-
-            // return new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityRecord.getLastmodified());
-            return _entityRecord.getLastmodified();
-
-        }
-        catch (Exception ex)
-        {
-            CallResult.log(CallResults.FAILED_ERROR, ex, this);
-            return null;
-        }
+        // return new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityRecord.getLastmodified());
+        return _entityRecord.getLastmodified();
     }
 
-    protected CallResult SetObjectLastModified(DateTime value)
+    @Override
+    protected void SetObjectLastModified(DateTime value)
     {
-        try
-        {
-            // _entityRecord.setLastmodified(new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
-            _entityRecord.setLastmodified(value);
-
-            return CallResult.successCallResult;
-
-        }
-        catch (Exception ex)
-        {
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
-        }
+        // _entityRecord.setLastmodified(new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
+        _entityRecord.setLastmodified(value);
     }
 
     // -----------------------------------------------------------------------//
     // Protected Methods
     // -----------------------------------------------------------------------//
 
-    protected CallResult GetObjectStatus(String status)
+    @Override
+    protected String GetObjectStatus()
     {
-        try
-        {
-            status = _entityRecord.getStatus();
-
-            return CallResult.successCallResult;
-
-        }
-        catch (Exception ex)
-        {
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
-        }
+        return _entityRecord.getStatus();
     }
 
-    protected CallResult SetObjectStatus(String status)
+    @Override
+    protected void SetObjectStatus(String status)
     {
-        try
-        {
-            _entityRecord.setStatus(status);
-
-            return CallResult.successCallResult;
-
-        }
-        catch (Exception ex)
-        {
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
-        }
+        _entityRecord.setStatus(status);
     }
 
     protected List<Field> GetEntityFields()

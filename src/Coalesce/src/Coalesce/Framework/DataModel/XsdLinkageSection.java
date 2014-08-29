@@ -93,19 +93,23 @@ public class XsdLinkageSection extends XsdDataObject {
 	// Public Methods
 	// -----------------------------------------------------------------------//
 
-	protected String GetObjectKey() {
+	@Override
+    protected String GetObjectKey() {
 		return _entityLinkageSection.getKey();
 	}
 
-	public void SetKey(String value) {
+	@Override
+    public void SetObjectKey(String value) {
 		_entityLinkageSection.setKey(value);
 	}
 
-	public String GetName() {
+	@Override
+    public String GetName() {
 		return _entityLinkageSection.getName();
 	}
 
-	public void SetName(String value) {
+	@Override
+    public void SetName(String value) {
 		_entityLinkageSection.setName(value);
 	}
 
@@ -130,91 +134,36 @@ public class XsdLinkageSection extends XsdDataObject {
 		}
 	}
 
-	public CallResult SetDateCreated(DateTime value) {
-		try {
-			// _entityLinkageSection.setDatecreated(new
+	@Override
+    public void SetDateCreated(DateTime value) {
 			// SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
 			_entityLinkageSection.setDatecreated(value);
-
-			return CallResult.successCallResult;
-
-		} catch (Exception ex) {
-			return new CallResult(CallResults.FAILED_ERROR, ex, this);
-		}
 	}
 
-	public DateTime GetLastModified() {
-		try {
-
-			// return new
+	@Override
+    public DateTime GetLastModified() {
 			// SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityLinkageSection.getLastmodified());
 			return _entityLinkageSection.getLastmodified();
-
-		} catch (Exception ex) {
-			CallResult.log(CallResults.FAILED_ERROR, ex, this);
-			return null;
-		}
 	}
 
-	protected CallResult SetObjectLastModified(DateTime value) {
-		try {
-			// _entityLinkageSection.setLastmodified(new
+	@Override
+    protected void SetObjectLastModified(DateTime value) {
 			// SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
 			_entityLinkageSection.setLastmodified(value);
-
-			return CallResult.successCallResult;
-
-		} catch (Exception ex) {
-			return new CallResult(CallResults.FAILED_ERROR, ex, this);
-		}
 	}
 
 	// -----------------------------------------------------------------------//
 	// Protected Methods
 	// -----------------------------------------------------------------------//
 
-	protected CallResult GetObjectStatus(String status) {
-		try {
-			status = _entityLinkageSection.getStatus();
-
-			return CallResult.successCallResult;
-
-		} catch (Exception ex) {
-			return new CallResult(CallResults.FAILED_ERROR, ex, this);
-		}
+	@Override
+    protected String GetObjectStatus() {
+			return _entityLinkageSection.getStatus();
 	}
 
-	protected CallResult SetObjectStatus(String status) {
-		try {
+	@Override
+    protected void SetObjectStatus(String status) {
 			_entityLinkageSection.setStatus(status);
-
-			return CallResult.successCallResult;
-
-		} catch (Exception ex) {
-			return new CallResult(CallResults.FAILED_ERROR, ex, this);
-		}
-	}
-
-	protected CallResult GetObjectNoIndex(String value) {
-		try {
-			value = _entityLinkageSection.getNoindex();
-
-			return CallResult.successCallResult;
-
-		} catch (Exception ex) {
-			return new CallResult(CallResults.FAILED_ERROR, ex, this);
-		}
-	}
-
-	protected CallResult SetObjectNoIndex(String value) {
-		try {
-			_entityLinkageSection.setNoindex(value);
-
-			return CallResult.successCallResult;
-
-		} catch (Exception ex) {
-			return new CallResult(CallResults.FAILED_ERROR, ex, this);
-		}
 	}
 
 	protected Linkagesection GetEntityLinkageSection() {

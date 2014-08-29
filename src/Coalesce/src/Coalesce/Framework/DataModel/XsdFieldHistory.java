@@ -31,107 +31,128 @@ import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record.Field.Fi
 
 public class XsdFieldHistory extends XsdFieldBase {
 
-	// -----------------------------------------------------------------------//
-	// protected Member Variables
-	// -----------------------------------------------------------------------//
+    // -----------------------------------------------------------------------//
+    // protected Member Variables
+    // -----------------------------------------------------------------------//
 
-	private Fieldhistory _entityFieldHistory;
+    private Fieldhistory _entityFieldHistory;
 
-	// -----------------------------------------------------------------------//
-	// Factory and Initialization
-	// -----------------------------------------------------------------------//
+    // -----------------------------------------------------------------------//
+    // Factory and Initialization
+    // -----------------------------------------------------------------------//
 
-	public static XsdFieldHistory Create(XsdFieldBase parent) {
-	    
-	    if (!(parent instanceof XsdField)) throw new ClassCastException("Must be of type XsdField");
-	    
-	    return Create((XsdField)parent);
-	}
-	
-	public static XsdFieldHistory Create(XsdField parent) {
-		try {
+    public static XsdFieldHistory Create(XsdFieldBase parent)
+    {
 
-			// Set References
-		    Fieldhistory newFieldHistory = new Fieldhistory();
-		    parent.GetEntityFieldHistories().add(newFieldHistory);
-		    
-			// TODO: What is this part?
-			// Copy attributes from parent node
-			XsdFieldHistory fieldHistory = new XsdFieldHistory();
-			if (!fieldHistory.Initialize(parent, newFieldHistory)) return null;
-			
-			fieldHistory.SetAttributes(parent._entityField);
+        if (!(parent instanceof XsdField)) throw new ClassCastException("Must be of type XsdField");
 
-			fieldHistory.SetPreviousHistoryKey(parent.GetPreviousHistoryKey());
+        return Create((XsdField) parent);
+    }
 
-			// Append to parent's child node collection
-			parent.GetEntityFieldHistories().add(fieldHistory._entityFieldHistory);
+    public static XsdFieldHistory Create(XsdField parent)
+    {
+        try
+        {
 
-			// Add to Parent's Child Collection
-			if (!parent._childDataObjects.containsKey(fieldHistory.GetKey())) {
-				parent._childDataObjects.put(fieldHistory.GetKey(), fieldHistory);
-			}
+            // Set References
+            Fieldhistory newFieldHistory = new Fieldhistory();
+            parent.GetEntityFieldHistories().add(newFieldHistory);
 
-			return fieldHistory;
+            // TODO: What is this part?
+            // Copy attributes from parent node
+            XsdFieldHistory fieldHistory = new XsdFieldHistory();
+            if (!fieldHistory.Initialize(parent, newFieldHistory)) return null;
 
-		} catch (Exception ex) {
-			return null;
-		}
-	}
+            fieldHistory.SetAttributes(parent._entityField);
 
-	public boolean Initialize(XsdField parent, Fieldhistory fieldHistory) {
+            fieldHistory.SetPreviousHistoryKey(parent.GetPreviousHistoryKey());
 
-		// Set References
-		_parent = parent;
-		_entityFieldHistory = fieldHistory;
+            // Append to parent's child node collection
+            parent.GetEntityFieldHistories().add(fieldHistory._entityFieldHistory);
 
-		return super.Initialize();
+            // Add to Parent's Child Collection
+            if (!parent._childDataObjects.containsKey(fieldHistory.GetKey()))
+            {
+                parent._childDataObjects.put(fieldHistory.GetKey(), fieldHistory);
+            }
 
-	}
+            return fieldHistory;
 
-	// -----------------------------------------------------------------------//
-	// public Properties
-	// -----------------------------------------------------------------------//
+        }
+        catch (Exception ex)
+        {
+            return null;
+        }
+    }
 
-	protected String GetObjectKey() {
-		return _entityFieldHistory.getKey();
-	}
+    public boolean Initialize(XsdField parent, Fieldhistory fieldHistory)
+    {
 
-	public void SetKey(String value) {
-		_entityFieldHistory.setKey(value);
-	}
+        // Set References
+        _parent = parent;
+        _entityFieldHistory = fieldHistory;
 
-	public String GetName() {
-		return _entityFieldHistory.getName();
-	}
+        return super.Initialize();
 
-	public void SetName(String value) {
-		_entityFieldHistory.setName(value);
-	}
+    }
 
-	public String GetValue() {
-		return _entityFieldHistory.getValue();
-	}
+    // -----------------------------------------------------------------------//
+    // public Properties
+    // -----------------------------------------------------------------------//
 
-	public void SetValue(String value) {
-		_entityFieldHistory.setValue(value);
-	}
+    @Override
+    protected String GetObjectKey()
+    {
+        return _entityFieldHistory.getKey();
+    }
 
-	public String GetDataType() {
-		return _entityFieldHistory.getDatatype();
-	}
+    @Override
+    public void SetObjectKey(String value)
+    {
+        _entityFieldHistory.setKey(value);
+    }
 
-	public void SetDataType(String value) {
-		_entityFieldHistory.setDatatype(value);
-	}
+    @Override
+    public String GetName()
+    {
+        return _entityFieldHistory.getName();
+    }
 
-	public String GetLabel() {
-		return _entityFieldHistory.getLabel();
-	}
+    @Override
+    public void SetName(String value)
+    {
+        _entityFieldHistory.setName(value);
+    }
 
-	public void SetLabel(String value) {
-		_entityFieldHistory.setLabel(value);
-	}
+    public String GetValue()
+    {
+        return _entityFieldHistory.getValue();
+    }
+
+    public void SetValue(String value)
+    {
+        _entityFieldHistory.setValue(value);
+    }
+
+    public String GetDataType()
+    {
+        return _entityFieldHistory.getDatatype();
+    }
+
+    public void SetDataType(String value)
+    {
+        _entityFieldHistory.setDatatype(value);
+    }
+
+    public String GetLabel()
+    {
+        return _entityFieldHistory.getLabel();
+    }
+
+    public void SetLabel(String value)
+    {
+        _entityFieldHistory.setLabel(value);
+    }
 
     public int GetSize()
     {
@@ -150,42 +171,53 @@ public class XsdFieldHistory extends XsdFieldBase {
         _entityFieldHistory.setSize(value.toString());
     }
 
-	public String GetModifiedBy() {
-		return _entityFieldHistory.getModifiedby();
-	}
+    public String GetModifiedBy()
+    {
+        return _entityFieldHistory.getModifiedby();
+    }
 
-	public void SetModifiedBy(String value) {
-		_entityFieldHistory.setModifiedby(value);
-	}
+    public void SetModifiedBy(String value)
+    {
+        _entityFieldHistory.setModifiedby(value);
+    }
 
-	public String GetModifiedByIP() {
-		return _entityFieldHistory.getModifiedbyip();
-	}
+    public String GetModifiedByIP()
+    {
+        return _entityFieldHistory.getModifiedbyip();
+    }
 
-	public void SetModifiedByIP(String value) {
-		_entityFieldHistory.setModifiedbyip(value);
-	}
+    public void SetModifiedByIP(String value)
+    {
+        _entityFieldHistory.setModifiedbyip(value);
+    }
 
-	public String GetClassificationMarking() {
-		return _entityFieldHistory.getClassificationmarking();
-	}
+    public String GetClassificationMarking()
+    {
+        return _entityFieldHistory.getClassificationmarking();
+    }
 
-	public void SetClassificationMarking(String value) {
-		_entityFieldHistory.setClassificationmarking(value);
-	}
+    public void SetClassificationMarking(String value)
+    {
+        _entityFieldHistory.setClassificationmarking(value);
+    }
 
-	public String GetPreviousHistoryKey() {
-		String prevHistKey = _entityFieldHistory.getPrevioushistorykey();
-		if (prevHistKey.equals("")) {
-			return "00000000-0000-0000-0000-000000000000";
-		} else {
-			return prevHistKey;
-		}
-	}
+    public String GetPreviousHistoryKey()
+    {
+        String prevHistKey = _entityFieldHistory.getPrevioushistorykey();
+        if (prevHistKey.equals(""))
+        {
+            return "00000000-0000-0000-0000-000000000000";
+        }
+        else
+        {
+            return prevHistKey;
+        }
+    }
 
-	public void SetPreviousHistoryKey(String value) {
-		_entityFieldHistory.setPrevioushistorykey(value);
-	}
+    public void SetPreviousHistoryKey(String value)
+    {
+        _entityFieldHistory.setPrevioushistorykey(value);
+    }
 
     public String GetFilename()
     {
@@ -241,118 +273,90 @@ public class XsdFieldHistory extends XsdFieldBase {
      * _entityField.setInputlang(value); }
      */
 
-	public DateTime GetDateCreated() {
-		try {
+    @Override
+    public DateTime GetDateCreated()
+    {
+        // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityFieldHistory.getDatecreated());
+        return _entityFieldHistory.getDatecreated();
+    }
 
-			// return new
-			// SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityFieldHistory.getDatecreated());
-			return _entityFieldHistory.getDatecreated();
+    @Override
+    public void SetDateCreated(DateTime value)
+    {
+        // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
+        _entityFieldHistory.setDatecreated(value);
+    }
 
-		} catch (Exception ex) {
-			CallResult.log(CallResults.FAILED_ERROR, ex, this);
-			return null;
-		}
-	}
+    @Override
+    public DateTime GetLastModified()
+    {
+        // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityFieldHistory.getLastmodified());
+        return _entityFieldHistory.getLastmodified();
+    }
 
-	public CallResult SetDateCreated(DateTime value) {
-		try {
-			// _entityFieldHistory.setDatecreated(new
-			// SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
-			_entityFieldHistory.setDatecreated(value);
+    // -----------------------------------------------------------------------//
+    // public Methods
+    // -----------------------------------------------------------------------//
 
-			return CallResult.successCallResult;
+    public String ToXml()
+    {
+        return XmlHelper.Serialize(_entityFieldHistory);
+    }
 
-		} catch (Exception ex) {
-			return new CallResult(CallResults.FAILED_ERROR, ex, this);
-		}
-	}
+    // -----------------------------------------------------------------------//
+    // protected Methods
+    // -----------------------------------------------------------------------//
 
-	public DateTime GetLastModified() {
-		try {
+    @Override
+    protected void SetObjectLastModified(DateTime value)
+    {
+        _entityFieldHistory.setLastmodified(value);
+    }
 
-			// return new
-			// SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityFieldHistory.getLastmodified());
-			return _entityFieldHistory.getLastmodified();
+    private CallResult SetAttributes(Field field)
+    {
+        try
+        {
 
-		} catch (Exception ex) {
-			CallResult.log(CallResults.FAILED_ERROR, ex, this);
-			return null;
-		}
-	}
+            _entityFieldHistory.setKey(field.getKey());
+            _entityFieldHistory.setName(field.getName());
+            _entityFieldHistory.setValue(field.getValue());
+            _entityFieldHistory.setDatatype(field.getDatatype());
+            _entityFieldHistory.setLabel(field.getLabel());
+            _entityFieldHistory.setSize(field.getSize());
+            _entityFieldHistory.setModifiedby(field.getModifiedby());
+            _entityFieldHistory.setModifiedbyip(field.getModifiedbyip());
+            _entityFieldHistory.setClassificationmarking(field.getClassificationmarking());
+            _entityFieldHistory.setPrevioushistorykey(field.getPrevioushistorykey());
+            _entityFieldHistory.setFilename(field.getFilename());
+            _entityFieldHistory.setExtension(field.getExtension());
+            _entityFieldHistory.setMimetype(field.getMimetype());
+            _entityFieldHistory.setHash(field.getHash());
+            _entityFieldHistory.setValue(field.getValue());
+            _entityFieldHistory.setDatecreated(field.getDatecreated());
+            _entityFieldHistory.setLastmodified(field.getLastmodified());
+            _entityFieldHistory.setStatus(field.getStatus());
 
-	// -----------------------------------------------------------------------//
-	// public Methods
-	// -----------------------------------------------------------------------//
+            return CallResult.successCallResult;
 
-	public String ToXml() {
-		return XmlHelper.Serialize(_entityFieldHistory);
-	}
+        }
+        catch (Exception ex)
+        {
+            return new CallResult(CallResults.FAILED_ERROR, ex, this);
+        }
+    }
 
-	// -----------------------------------------------------------------------//
-	// protected Methods
-	// -----------------------------------------------------------------------//
+    @Override
+    protected String GetObjectStatus()
+    {
+        return _entityFieldHistory.getStatus();
+    }
 
-	protected CallResult SetObjectLastModified(DateTime value) {
-		try {
-			// _entityFieldHistory.setLastmodified(new
-			// SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
-			_entityFieldHistory.setLastmodified(value);
-
-			return CallResult.successCallResult;
-
-		} catch (Exception ex) {
-			return new CallResult(CallResults.FAILED_ERROR, ex, this);
-		}
-	}
-
-	private CallResult SetAttributes(Field field) {
-		try {
-
-			_entityFieldHistory.setKey(field.getKey());
-			_entityFieldHistory.setName(field.getName());
-			_entityFieldHistory.setValue(field.getValue());
-			_entityFieldHistory.setDatatype(field.getDatatype());
-			_entityFieldHistory.setLabel(field.getLabel());
-			_entityFieldHistory.setSize(field.getSize());
-			_entityFieldHistory.setModifiedby(field.getModifiedby());
-			_entityFieldHistory.setModifiedbyip(field.getModifiedbyip());
-			_entityFieldHistory.setClassificationmarking(field.getClassificationmarking());
-			_entityFieldHistory.setPrevioushistorykey(field.getPrevioushistorykey());
-			_entityFieldHistory.setFilename(field.getFilename()); _entityFieldHistory.setExtension(field.getExtension());
-			_entityFieldHistory.setMimetype(field.getMimetype()); _entityFieldHistory.setHash(field.getHash());
-			_entityFieldHistory.setValue(field.getValue());
-			_entityFieldHistory.setDatecreated(field.getDatecreated());
-			_entityFieldHistory.setLastmodified(field.getLastmodified());
-			_entityFieldHistory.setStatus(field.getStatus());
-
-			return CallResult.successCallResult;
-
-		} catch (Exception ex) {
-			return new CallResult(CallResults.FAILED_ERROR, ex, this);
-		}
-	}
-
-	protected CallResult GetObjectStatus(String status) {
-		try {
-			status = _entityFieldHistory.getStatus();
-
-			return CallResult.successCallResult;
-
-		} catch (Exception ex) {
-			return new CallResult(CallResults.FAILED_ERROR, ex, this);
-		}
-	}
-
-	protected CallResult SetObjectStatus(String status) {
-		try {
-			_entityFieldHistory.setStatus(status);
-
-			return CallResult.successCallResult;
-
-		} catch (Exception ex) {
-			return new CallResult(CallResults.FAILED_ERROR, ex, this);
-		}
-	}
+    @Override
+    protected void SetObjectStatus(String status)
+    {
+        _entityFieldHistory.setStatus(status);
+    }
 
     @Override
     protected Map<QName, String> getAttributes()

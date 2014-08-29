@@ -105,21 +105,25 @@ public class XsdField extends XsdFieldBase {
     // Public Properties
     // -----------------------------------------------------------------------//
 
+    @Override
     protected String GetObjectKey()
     {
         return _entityField.getKey();
     }
 
-    public void SetKey(String value)
+    @Override
+    public void SetObjectKey(String value)
     {
         _entityField.setKey(value);
     }
 
+    @Override
     public String GetName()
     {
         return GetStringElement(_entityField.getName());
     }
 
+    @Override
     public void SetName(String value)
     {
         _entityField.setName(value);
@@ -279,6 +283,7 @@ public class XsdField extends XsdFieldBase {
      * _entityField.setInputlang(value); }
      */
 
+    @Override
     public DateTime GetDateCreated()
     {
         try
@@ -296,55 +301,25 @@ public class XsdField extends XsdFieldBase {
         }
     }
 
-    public CallResult SetDateCreated(DateTime value)
+    @Override
+    public void SetDateCreated(DateTime value)
     {
-        try
-        {
-            // _entityField.setDatecreated(new
             // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
             _entityField.setDatecreated(value);
-
-            return CallResult.successCallResult;
-
-        }
-        catch (Exception ex)
-        {
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
-        }
     }
 
+    @Override
     public DateTime GetLastModified()
     {
-        try
-        {
-
-            // return new
             // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityField.getLastmodified());
             return _entityField.getLastmodified();
-
-        }
-        catch (Exception ex)
-        {
-            CallResult.log(CallResults.FAILED_ERROR, ex, this);
-            return null;
-        }
     }
 
-    protected CallResult SetObjectLastModified(DateTime value)
+    @Override
+    protected void SetObjectLastModified(DateTime value)
     {
-        try
-        {
-            // _entityField.setLastmodified(new
             // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
             _entityField.setLastmodified(value);
-
-            return CallResult.successCallResult;
-
-        }
-        catch (Exception ex)
-        {
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
-        }
     }
 
     // -----------------------------------------------------------------------//
@@ -360,34 +335,17 @@ public class XsdField extends XsdFieldBase {
     // protected Methods
     // -----------------------------------------------------------------------//
 
-    protected CallResult GetObjectStatus(String status)
+    @Override
+    protected String GetObjectStatus()
     {
-        try
-        {
-            status = _entityField.getStatus();
-
-            return CallResult.successCallResult;
-
-        }
-        catch (Exception ex)
-        {
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
-        }
+        return _entityField.getStatus();
     }
 
-    protected CallResult SetObjectStatus(String status)
+    @Override
+    protected void SetObjectStatus(String status)
     {
-        try
-        {
-            _entityField.setStatus(status);
+        _entityField.setStatus(status);
 
-            return CallResult.successCallResult;
-
-        }
-        catch (Exception ex)
-        {
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
-        }
     }
 
     protected List<Fieldhistory> GetEntityFieldHistories() throws Exception
@@ -400,5 +358,5 @@ public class XsdField extends XsdFieldBase {
     {
         return this._entityField.getOtherAttributes();
     }
-    
+
 }

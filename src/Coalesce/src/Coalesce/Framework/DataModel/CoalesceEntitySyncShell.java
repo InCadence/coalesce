@@ -25,7 +25,7 @@ public class CoalesceEntitySyncShell {
     // Factory and Initialization
     //-----------------------------------------------------------------------//
 
-    public CallResult Create(CoalesceEntity Entity, CoalesceEntitySyncShell EntitySyncShell){
+    public CallResult Create(XsdEntity Entity, CoalesceEntitySyncShell EntitySyncShell){
         try{
             CallResult rst;
 
@@ -80,18 +80,20 @@ public class CoalesceEntitySyncShell {
         }
     }
 
-    public CallResult InitializeFromEntity(CoalesceEntity Entity){
+    public CallResult InitializeFromEntity(XsdEntity Entity){
         try{
             CallResult rst;
 
+            // TODO: Not Implemented
+            
             // Create a Clone of the Entity's DataObjectDocument
-            Document TemplateDoc = Entity.GetDataObjectDocument();
+            //Document TemplateDoc = Entity.GetDataObjectDocument();
 
             // Prune Nodes
-            rst = PruneNodes(TemplateDoc);
+            //rst = PruneNodes(TemplateDoc);
 
             // Set Template Doc
-            this.SetDataObjectDocument(TemplateDoc);
+            //this.SetDataObjectDocument(TemplateDoc);
 
             // return Success
             return CallResult.successCallResult;
@@ -211,11 +213,14 @@ public class CoalesceEntitySyncShell {
             // Create new Instance
             SyncShellClone = new CoalesceEntitySyncShell();
 
+            // TODO: Not Implemented
+            
+
             // Initialize
             //TODO: make sure .Clone's are same between vb and java. Java required a boolean.
             //return SyncShellClone.Initialize(SyncShell.DataObjectDocument.Clone) //vb
             //return SyncShellClone.Initialize(SyncShell.GetDataObjectDocument()); //1st java thought
-            return SyncShellClone.InitializeFromEntity((CoalesceEntity) SyncShell.GetDataObjectDocument().cloneNode(true));
+            return CallResult.failedCallResult; //SyncShellClone.InitializeFromEntity((CoalesceEntity) SyncShell.GetDataObjectDocument().cloneNode(true));
 
         }catch(Exception ex){
             // return Failed Error
