@@ -1,8 +1,17 @@
 package Coalesce.Framework;
 
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.imageio.ImageIO;
+
+import org.imgscalr.Scalr;
+
+import Coalesce.Common.Runtime.CoalesceSettings;
 import Coalesce.Framework.DataModel.CoalesceEntityTemplate;
 import Coalesce.Framework.DataModel.XsdEntity;
 import Coalesce.Framework.DataModel.XsdField;
@@ -35,6 +44,7 @@ public class CoalesceFramework {
 
     protected ICoalescePersistor _Persister;
     protected boolean _IsInitialized = false;
+    protected String _imageFormat = CoalesceSettings.GetImageFormat();
 
     /*--------------------------------------------------------------------------
     	Public Functions
@@ -177,13 +187,30 @@ public class CoalesceFramework {
         return this._Persister.SetEntity(entity, AllowRemoval);
     }
 
-    public boolean CreateFieldThumbnail(String Filename)
+    public boolean CreateFieldThumbnail(String Filename) throws IOException
     {
-        // TODO: Not Implemented
-        return false;
+        File imageFile = new File(Filename);
+        String imageName = imageFile.getName();
+        String imageFileFormat = imageName.substring(imageName.length()-3);
+        File imageDir = imageFile.getParentFile();
+        
+        //create thumbnail name
+        String thumbnailName = imageName.substring(0, imageName.length()-4) + "_" + "thumbnail." + _imageFormat;
+        File thumbnail = new File(imageDir,thumbnailName);
+        
+        //create thumbnail
+        if (!thumbnail.exists() && imageFileFormat.equals(_imageFormat) ) {
+            BufferedImage img = ImageIO.read(imageFile);
+            BufferedImage imgThumbnail = Scalr.resize(img, 100, 100, Scalr.OP_ANTIALIAS);
+            ImageIO.write(imgThumbnail, _imageFormat, thumbnail);
+            return true;  
+        } else {
+            //thumbnail already exists or image format does not match settings
+            return false;
+        }
     }
 
-    public boolean CreateFieldThumbnail(XsdField Field)
+    public boolean CreateFieldThumbnail(XsdField Field) throws IOException
     {
         return this.CreateFieldThumbnail(Field.GetCoalesceFullFilename());
     }

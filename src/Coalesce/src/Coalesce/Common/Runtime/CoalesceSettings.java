@@ -141,4 +141,12 @@ public class CoalesceSettings extends SettingsBase {
 		return CoalesceSettings.SetSetting(GetConfigurationFileName(), "Coalesce.Security.AuditSelectStatements", value);
 	}
 	
+	public static String GetImageFormat() {
+        return CoalesceSettings.GetSetting(GetConfigurationFileName(), "Coalesce.FileStore.ImageFormat", "jpg", true);
+    }
+    
+    public static boolean SetImageFormat(String value) {
+        return CoalesceSettings.SetSetting(GetConfigurationFileName(), "Coalesce.Filestore.ImageFormat", value);
+    }
+	
 }
