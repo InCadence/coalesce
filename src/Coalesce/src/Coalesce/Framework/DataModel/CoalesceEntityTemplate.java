@@ -4,8 +4,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import Coalesce.Common.Helpers.XmlHelper;
-import unity.core.runtime.CallResult;
-import unity.core.runtime.CallResult.CallResults;
 
 public class CoalesceEntityTemplate {
 
@@ -25,8 +23,6 @@ public class CoalesceEntityTemplate {
     {
         try
         {
-            CallResult rst;
-
             // Create a new CoalesceEntityTemplate
             CoalesceEntityTemplate EntTemp = new CoalesceEntityTemplate();
 
@@ -44,7 +40,7 @@ public class CoalesceEntityTemplate {
         }
     }
 
-    public CallResult Initialize(String EntityTemplateXml)
+    public boolean Initialize(String EntityTemplateXml)
     {
         try
         {
@@ -60,11 +56,11 @@ public class CoalesceEntityTemplate {
         catch (Exception ex)
         {
             // return Failed Error
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
+            return false;
         }
     }
 
-    public CallResult Initialize(Document EntityTemplateDataObjectDocument)
+    public boolean Initialize(Document EntityTemplateDataObjectDocument)
     {
         try
         {
@@ -72,13 +68,13 @@ public class CoalesceEntityTemplate {
             this.SetDataObjectDocument(EntityTemplateDataObjectDocument);
 
             // return Success
-            return CallResult.successCallResult;
+            return true;
 
         }
         catch (Exception ex)
         {
             // return Failed Error
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
+            return false;
         }
     }
 
@@ -166,8 +162,6 @@ public class CoalesceEntityTemplate {
     // public Properties
     // -----------------------------------------------------------------------//
 
-    public Document DataObjectDocument;
-
     public Document GetDataObjectDocument()
     {
         return this._DataObjectDocument;
@@ -179,11 +173,9 @@ public class CoalesceEntityTemplate {
         // value.getDocumentElement();
         // value.getFirstChild();
         // TODO: need make sure getElementsByTagName is a good replacement for vb's SelectSingleNode function
-        this._EntityNode = value.getElementsByTagName("entity").item(0);
+        this.SetEntityNode(value.getElementsByTagName("entity").item(0));
         // this._EntityNode = value.SelectSingleNode("entity");
     }
-
-    public Node EntityNode;
 
     public Node GetEntityNode()
     {
@@ -199,12 +191,12 @@ public class CoalesceEntityTemplate {
 
     public String GetName()
     {
-        return _XmlHelper.GetAttribute(this.EntityNode, "name");
+        return _XmlHelper.GetAttribute(this.GetEntityNode(), "name");
     }
 
     public void Set(String value)
     {
-        _XmlHelper.SetAttribute(this.DataObjectDocument, this.EntityNode, "name", value);
+        _XmlHelper.SetAttribute(this.GetDataObjectDocument(), this.GetEntityNode(), "name", value);
     }
 
     // readonly
@@ -212,7 +204,7 @@ public class CoalesceEntityTemplate {
 
     public String GetSource()
     {
-        return _XmlHelper.GetAttribute(this.EntityNode, "source");
+        return _XmlHelper.GetAttribute(this.GetEntityNode(), "source");
     }
 
     // public void SetSource(String value){
@@ -223,12 +215,12 @@ public class CoalesceEntityTemplate {
 
     public String GetVersion()
     {
-        return _XmlHelper.GetAttribute(this.EntityNode, "version");
+        return _XmlHelper.GetAttribute(this.GetEntityNode(), "version");
     }
 
     public void SetVersion(String value)
     {
-        _XmlHelper.SetAttribute(this.DataObjectDocument, this.EntityNode, "version", value);
+        _XmlHelper.SetAttribute(this.GetDataObjectDocument(), this.GetEntityNode(), "version", value);
     }
 
     // -----------------------------------------------------------------------//

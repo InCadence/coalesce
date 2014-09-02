@@ -1,13 +1,12 @@
 package Coalesce.Framework.DataModel;
 
 import java.util.ArrayList;
+
 import org.joda.time.DateTime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import Coalesce.Common.Helpers.XmlHelper;
-import unity.core.runtime.CallResult;
-import unity.core.runtime.CallResult.CallResults;
 
 public class CoalesceEntitySyncShell {
 
@@ -23,66 +22,98 @@ public class CoalesceEntitySyncShell {
     // Factory and Initialization
     //-----------------------------------------------------------------------//
 
-    public CallResult Create(XsdEntity Entity, CoalesceEntitySyncShell EntitySyncShell){
+    public CoalesceEntitySyncShell Create(XsdEntity Entity){
+
+        CoalesceEntitySyncShell EntitySyncShell = null;
+        
         try{
-            CallResult rst;
+            boolean isSuccess = false;
 
             // Create a new CoalesceEntitySyncShell
             CoalesceEntitySyncShell SyncShell = new CoalesceEntitySyncShell();
 
             // Initialize
-            rst = SyncShell.InitializeFromEntity(Entity);
+            isSuccess = SyncShell.InitializeFromEntity(Entity);
 
             // Evaluate
-            if (rst.getIsSuccess()) 
+            if (isSuccess) 
                 EntitySyncShell = SyncShell;
-            else
-                EntitySyncShell = null;
-            
 
             // return
-            return rst;
+            return EntitySyncShell;
 
         }catch(Exception ex){
             // return Failed Error
-            return new CallResult(CallResults.FAILED_ERROR, ex, "Coalesce.Framework.DataModel.CoalesceEntitySyncShell");
+            return EntitySyncShell;
         }
     }
 
-    public CallResult Initialize(String EntitySyncShellXml){
+    public boolean Initialize(String EntitySyncShellXml){
         try{
-        	//TODO: Need a LoadXml function
+        	//TODO: verify this (loadXMLFrom) is a replacement for LoadXml function
 //            // Create DataObjectDocument
+            
         	Document XmlDoc = null;
-//            XmlDoc.LoadXml(EntitySyncShellXml);
+            XmlDoc = loadXMLFrom(EntitySyncShellXml);
 
             // Call Peer.
             return Initialize(XmlDoc);
 
         }catch(Exception ex){
             // return Failed Error
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
+            return false;
         }
     }
+    
+    public org.w3c.dom.Document loadXMLFrom(String xml)
+        throws org.xml.sax.SAXException, java.io.IOException {
+        return loadXMLFrom(new java.io.ByteArrayInputStream(xml.getBytes()));
+    }
 
-    public CallResult Initialize(Document EntitySyncShellDataObjectDocument){
+    public org.w3c.dom.Document loadXMLFrom(java.io.InputStream is) 
+        throws org.xml.sax.SAXException, java.io.IOException {
+        javax.xml.parsers.DocumentBuilderFactory factory =
+            javax.xml.parsers.DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        javax.xml.parsers.DocumentBuilder builder = null;
+        try {
+            builder = factory.newDocumentBuilder();
+        }
+        catch (javax.xml.parsers.ParserConfigurationException ex) {
+        }  
+        org.w3c.dom.Document doc = builder.parse(is);
+        is.close();
+        return doc;
+    }
+
+    public boolean Initialize(Document EntitySyncShellDataObjectDocument){
         try{
             // Set DataObjectDocument
-            this.DataObjectDocument = EntitySyncShellDataObjectDocument;
+            this.SetDataObjectDocument(EntitySyncShellDataObjectDocument);
             // return Success
-            return CallResult.successCallResult;
+            return true;
 
         }catch(Exception ex){
             // return Failed Error
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
+            return false;
         }
     }
 
-    public CallResult InitializeFromEntity(XsdEntity Entity){
+    public boolean InitializeFromEntity(XsdEntity Entity){
         try{
-            CallResult rst;
+            //CallResult rst;
 
-            // TODO: Not Implemented
+            // TODO: verify this works
+
+            //can these be used?
+//            boolean isSuccess = false;
+//            CoalesceEntitySyncShell shell = this.Create(Entity);
+//            isSuccess = PruneNodes(_DataObjectDocument);
+//            this.SetDataObjectDocument(shell._DataObjectDocument);
+            
+            //Maybe this will work
+            this.Create(Entity);
+            return PruneNodes(_DataObjectDocument);
             
             // Create a Clone of the Entity's DataObjectDocument
             //Document TemplateDoc = Entity.GetDataObjectDocument();
@@ -94,17 +125,17 @@ public class CoalesceEntitySyncShell {
             //this.SetDataObjectDocument(TemplateDoc);
 
             // return Success
-            return CallResult.successCallResult;
+            //return true;
 
         }catch(Exception ex){
             // return Failed Error
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
+            return false;
         }
     }
 
-    protected CallResult PruneNodes(Node NodeToPrune){
+    protected boolean PruneNodes(Node NodeToPrune){
         try{
-            CallResult rst;
+            boolean isSuccess = false;
 
             //TODO: Make sure the Node/Attribute "switch" is ok
             // Prune Unnecessary Attributes
@@ -167,15 +198,15 @@ public class CoalesceEntitySyncShell {
             // Recurse Child Nodes
 		    for(int i=0; i<NodeToPrune.getChildNodes().getLength(); i++){
 	        	Node ChildNode = NodeToPrune.getChildNodes().item(i);
-                rst = PruneNodes(ChildNode);
+	        	isSuccess = PruneNodes(ChildNode);
             }
 
             // return Success
-            return CallResult.successCallResult;
+            return isSuccess;
 
         }catch(Exception ex){
             // return Failed Error
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
+            return false;
         }
     }
 
@@ -183,7 +214,6 @@ public class CoalesceEntitySyncShell {
     // public Properties
     //-----------------------------------------------------------------------//
 
-    protected Document DataObjectDocument;
         public Document GetDataObjectDocument(){
             return this._DataObjectDocument;
         }
@@ -194,7 +224,6 @@ public class CoalesceEntitySyncShell {
             this._EntityNode = value.getElementsByTagName("entity").item(0);
         }
 
-    protected Node EntityNode;
         public Node GetEnttiyNode(){
             return this._EntityNode;
         }
@@ -206,55 +235,54 @@ public class CoalesceEntitySyncShell {
     // public Methods
     //-----------------------------------------------------------------------//
 
-    public CallResult Clone(CoalesceEntitySyncShell SyncShell, CoalesceEntitySyncShell SyncShellClone){
+    public CoalesceEntitySyncShell Clone(CoalesceEntitySyncShell SyncShell){
+        
         try{
             // Create new Instance
-            SyncShellClone = new CoalesceEntitySyncShell();
-
-            // TODO: Not Implemented
-            
+            CoalesceEntitySyncShell SyncShellClone = new CoalesceEntitySyncShell();
 
             // Initialize
             //TODO: make sure .Clone's are same between vb and java. Java required a boolean.
             //return SyncShellClone.Initialize(SyncShell.DataObjectDocument.Clone) //vb
             //return SyncShellClone.Initialize(SyncShell.GetDataObjectDocument()); //1st java thought
-            return CallResult.failedCallResult; //SyncShellClone.InitializeFromEntity((CoalesceEntity) SyncShell.GetDataObjectDocument().cloneNode(true));
+            SyncShellClone.Initialize(SyncShell.GetDataObjectDocument());
+            return SyncShellClone;
+            //return CallResult.failedCallResult; //SyncShellClone.InitializeFromEntity((CoalesceEntity) SyncShell.GetDataObjectDocument().cloneNode(true));
 
         }catch(Exception ex){
             // return Failed Error
-            return new CallResult(CallResults.FAILED_ERROR, ex, "Coalesce.Framework.DataModel.CoalesceEntitySyncShell");
+            return null;
         }
     }
 
-    public CallResult GetRequiredChangesSyncShell(CoalesceEntitySyncShell LocalFullSyncShell, CoalesceEntitySyncShell RemoteFullSyncShell, CoalesceEntitySyncShell RequiredChangesSyncShell){
+    public CoalesceEntitySyncShell GetRequiredChangesSyncShell(CoalesceEntitySyncShell LocalFullSyncShell, CoalesceEntitySyncShell RemoteFullSyncShell, CoalesceEntitySyncShell RequiredChangesSyncShell){
         try{
-            CallResult rst;
-
             // Create the RequiredChangesSyncShell as a Clone of the RemoteFullSyncShell. We will
             // then prune out nodes that aren't required recursively as we compare against
             // the nodes in LocalFullSyncShell.
-            rst = this.Clone(RemoteFullSyncShell, RequiredChangesSyncShell);
-            if (!(rst.getIsSuccess())) return rst;
+            RequiredChangesSyncShell = this.Clone(RemoteFullSyncShell);
+            
+            if (RequiredChangesSyncShell.equals(null)) return RequiredChangesSyncShell;
 
             // Prune Unchanged Nodes
-            return PruneUnchangedNodes(LocalFullSyncShell, RemoteFullSyncShell.DataObjectDocument, RequiredChangesSyncShell);
+            return PruneUnchangedNodes(LocalFullSyncShell, RemoteFullSyncShell.GetDataObjectDocument(), RequiredChangesSyncShell);
 
         }catch(Exception ex){
             // return Failed Error
-            return new CallResult(CallResults.FAILED_ERROR, ex, "Coalesce.Framework.DataModel.CoalesceEntitySyncShell");
+            return null;
         }
     }
 
-    protected CallResult PruneUnchangedNodes(CoalesceEntitySyncShell LocalFullSyncShell, Node RemoteSyncShellNode, CoalesceEntitySyncShell RequiredChangesSyncShell){
+    protected CoalesceEntitySyncShell PruneUnchangedNodes(CoalesceEntitySyncShell LocalFullSyncShell, Node RemoteSyncShellNode, CoalesceEntitySyncShell RequiredChangesSyncShell){
         try{
-            CallResult rst;
             String Key = "";
             // Recurse Child Nodes (Important: Because this us up front, we check leaf nodes first, which is necessary for
             // correct pruning.  We rely on whether or not a node has children remaining as one of the decision points on whether or not
             // the node itself needs to remain.)
 		    for(int i=0; i<RemoteSyncShellNode.getChildNodes().getLength(); i++){
-		    	Node Child = RemoteSyncShellNode.getChildNodes().item(i);
-                rst = PruneUnchangedNodes(LocalFullSyncShell, Child, RequiredChangesSyncShell);
+                @SuppressWarnings("unused")
+                Node Child = RemoteSyncShellNode.getChildNodes().item(i);
+		    	RequiredChangesSyncShell = PruneUnchangedNodes(LocalFullSyncShell, Child, RequiredChangesSyncShell);
             }
 
             // Evaluate Based on the Coalesce Object Type
@@ -269,7 +297,7 @@ public class CoalesceEntitySyncShell {
                         String XPath = "//*[@key='" + Key + "']";
                     	//TODO: need make sure getElementsByTagName is a good replacement for vb's SelectSingleNode function
                         //Node MyNode = LocalFullSyncShell.DataObjectDocument.SelectSingleNode(XPath);
-                        Node MyNode = LocalFullSyncShell.DataObjectDocument.getElementsByTagName(XPath).item(0);
+                        Node MyNode = LocalFullSyncShell.GetDataObjectDocument().getElementsByTagName(XPath).item(0);
 
                         if (MyNode != null) {
                             // Compare Timestamps
@@ -284,7 +312,7 @@ public class CoalesceEntitySyncShell {
                                     // then we keep the Field node even if it's older.
                                 	//TODO: need make sure getElementsByTagName is a good replacement for vb's SelectSingleNode function
                                 	//Node NodeToPrune= RequiredChangesSyncShell.DataObjectDocument.SelectSingleNode(XPath);
-                                    Node NodeToPrune = RequiredChangesSyncShell.DataObjectDocument.getElementsByTagName(XPath).item(0);
+                                    Node NodeToPrune = RequiredChangesSyncShell.GetDataObjectDocument().getElementsByTagName(XPath).item(0);
 
                                     if (NodeToPrune != null) {
                                         if (NodeToPrune.getParentNode() != null) {
@@ -313,7 +341,7 @@ public class CoalesceEntitySyncShell {
                     	String XPath = "//*[@key='" + Key + "']";
                     	//TODO: need make sure getElementsByTagName is a good replacement for vb's SelectSingleNode function
                         //Node MyNode = LocalFullSyncShell.DataObjectDocument.SelectSingleNode(XPath);
-                        Node MyNode = LocalFullSyncShell.DataObjectDocument.getElementsByTagName(XPath).item(0);
+                        Node MyNode = LocalFullSyncShell.GetDataObjectDocument().getElementsByTagName(XPath).item(0);
 
                         if (MyNode != null) {
                             // Compare Timestamps
@@ -326,7 +354,7 @@ public class CoalesceEntitySyncShell {
                                     // Local is newer or the same date; Prune from the RequiredChangesSyncShell
                                 	//TODO: need make sure getElementsByTagName is a good replacement for vb's SelectSingleNode function
                                     //Node NodeToPrune = RequiredChangesSyncShell.DataObjectDocument.SelectSingleNode(XPath);
-                                    Node NodeToPrune = RequiredChangesSyncShell.DataObjectDocument.getElementsByTagName(XPath).item(0);
+                                    Node NodeToPrune = RequiredChangesSyncShell.GetDataObjectDocument().getElementsByTagName(XPath).item(0);
 
                                     if (NodeToPrune != null) {
                                         if (NodeToPrune.getParentNode() != null) {
@@ -353,7 +381,7 @@ public class CoalesceEntitySyncShell {
                         String XPath = "//*[@key='" + Key + "']";
                     	//TODO: need make sure getElementsByTagName is a good replacement for vb's SelectSingleNode function
                         //Node MyNode = LocalFullSyncShell.DataObjectDocument.SelectSingleNode(XPath);
-                        Node MyNode = LocalFullSyncShell.DataObjectDocument.getElementsByTagName(XPath).item(0);
+                        Node MyNode = LocalFullSyncShell.GetDataObjectDocument().getElementsByTagName(XPath).item(0);
 
                         if (MyNode != null) {
                             // Compare Timestamps
@@ -366,7 +394,7 @@ public class CoalesceEntitySyncShell {
                                     // Local is newer or the same date; Prune from the RequiredChangesSyncShell
                                 	//TODO: need make sure getElementsByTagName is a good replacement for vb's SelectSingleNode function
                                     //Node NodeToPrune = RequiredChangesSyncShell.DataObjectDocument.SelectSingleNode(XPath);
-                                    Node NodeToPrune = RequiredChangesSyncShell.DataObjectDocument.getElementsByTagName(XPath).item(0);
+                                    Node NodeToPrune = RequiredChangesSyncShell.GetDataObjectDocument().getElementsByTagName(XPath).item(0);
 
                                     if (NodeToPrune != null) {
                                         if (NodeToPrune.getParentNode() != null) {
@@ -393,7 +421,7 @@ public class CoalesceEntitySyncShell {
                         String XPath = "//*[@key='" + Key + "']";
                     	//TODO: need make sure getElementsByTagName is a good replacement for vb's SelectSingleNode function
                         //Node MyNode = LocalFullSyncShell.DataObjectDocument.SelectSingleNode(XPath);
-                        Node MyNode = LocalFullSyncShell.DataObjectDocument.getElementsByTagName(XPath).item(0);
+                        Node MyNode = LocalFullSyncShell.GetDataObjectDocument().getElementsByTagName(XPath).item(0);
 
                         if (MyNode != null) {
                             // Compare Timestamps
@@ -406,7 +434,7 @@ public class CoalesceEntitySyncShell {
                                     // Local is newer or the same date; Prune from the RequiredChangesSyncShell
                                 	//TODO: need make sure getElementsByTagName is a good replacement for vb's SelectSingleNode function
                                     //Node NodeToPrune = RequiredChangesSyncShell.DataObjectDocument.SelectSingleNode(XPath);
-                                    Node NodeToPrune = RequiredChangesSyncShell.DataObjectDocument.getElementsByTagName(XPath).item(0);
+                                    Node NodeToPrune = RequiredChangesSyncShell.GetDataObjectDocument().getElementsByTagName(XPath).item(0);
 
                                     if (NodeToPrune != null) {
                                         if (NodeToPrune.getParentNode() != null) {
@@ -442,7 +470,7 @@ public class CoalesceEntitySyncShell {
                         String XPath = "//*[@key='" + Key + "']";
                     	//TODO: need make sure getElementsByTagName is a good replacement for vb's SelectSingleNode function
                         //Node NodeToPrune = RequiredChangesSyncShell.DataObjectDocument.SelectSingleNode(XPath);
-                        Node NodeToPrune = RequiredChangesSyncShell.DataObjectDocument.getElementsByTagName(XPath).item(0);
+                        Node NodeToPrune = RequiredChangesSyncShell.GetDataObjectDocument().getElementsByTagName(XPath).item(0);
 
                         if (NodeToPrune != null) {
                             if (NodeToPrune.getParentNode() != null) {
@@ -457,11 +485,11 @@ public class CoalesceEntitySyncShell {
             }
 
             // return Success
-            return CallResult.successCallResult;
+            return RequiredChangesSyncShell;
 
         }catch(Exception ex){
             // return Failed Error
-            return new CallResult(CallResults.FAILED_ERROR, ex, "Coalesce.Framework.DataModel.CoalesceEntitySyncShell");
+            return null;
         }
     }
 	
