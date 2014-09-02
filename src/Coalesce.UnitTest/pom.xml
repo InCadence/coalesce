@@ -40,7 +40,7 @@
 		</dependency>
 		<dependency>
 			<groupId>coalesce</groupId>
-			<artifactId>coalesce</artifactId>
+			<artifactId>coalesce-core</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
