@@ -1,16 +1,12 @@
 package Coalesce.Framework.DataModel;
 
-import org.w3c.dom.Document;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
 
 import Coalesce.Common.UnitTest.CoalesceTypeInstances;
 import Coalesce.Framework.DataModel.CoalesceEntitySyncShell;
-import Coalesce.Framework.DataModel.CoalesceEntityTemplate;
+import Coalesce.Framework.DataModel.XsdEntity;
 
 
 public class CoalesceEntitySyncShellTest {
@@ -27,9 +23,9 @@ public class CoalesceEntitySyncShellTest {
             CoalesceEntitySyncShell SyncShell = new CoalesceEntitySyncShell();
 
             // Initialize
-            SyncShell.InitializeFromEntity(Entity);
+            SyncShell.InitializeFromEntity(entity);
             // Evaluate
-            assertEquals(entity.GetTitle(), SyncShell._EntityNode.GetTitle());
+            assertEquals(entity.GetEntityId(), ((XsdEntity) SyncShell.GetEntityNode()).GetEntityId());
 
         }
         catch (Exception ex)
@@ -45,11 +41,11 @@ public class CoalesceEntitySyncShellTest {
         try
         {
             XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
-            CoalesceEntitySyncShell shell;
+            CoalesceEntitySyncShell shell = new CoalesceEntitySyncShell();
             shell.Initialize(CoalesceTypeInstances.TESTMISSION);
             
             assertNotNull("Failed to initialize mission entity", shell);
-            assertEquals(shell._DataObjectDocument, entity.GetDataObjectDocument());
+            assertEquals(((XsdEntity) shell.GetEntityNode()).GetEntityId(), entity.GetEntityId());
         }
         catch (Exception ex)
         {
@@ -61,35 +57,35 @@ public class CoalesceEntitySyncShellTest {
     public void InitializeByDocument()
     {
         XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
-        CoalesceEntitySyncShell shell;
+        CoalesceEntitySyncShell shell = new CoalesceEntitySyncShell();
         shell.Initialize(entity.GetDataObjectDocument());
         
         assertNotNull("Failed to initialize mission entity", shell);
-        assertEquals(shell._DataObjectDocument, entity.GetDataObjectDocument());
+        assertEquals(((XsdEntity) shell.GetEntityNode()).GetEntityId(), entity.GetEntityId());
     }
 
     @Test
     public void InitializeByEntity()
     {
         XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
-        CoalesceEntitySyncShell shell;
+        CoalesceEntitySyncShell shell = new CoalesceEntitySyncShell();
         shell.InitializeFromEntity(entity);
         
         assertNotNull("Failed to initialize mission entity", shell);
-        assertEquals(shell._DataObjectDocument, entity.GetDataObjectDocument());
+        assertEquals(((XsdEntity) shell.GetEntityNode()).GetEntityId(), entity.GetEntityId());
     }
     
     @Test
     public void Clone()
     {
         XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
-        CoalesceEntitySyncShell shell;
+        CoalesceEntitySyncShell shell = new CoalesceEntitySyncShell();
         shell.InitializeFromEntity(entity);
         
-        CoalesceEntitySyncShell clone;
+        CoalesceEntitySyncShell clone = new CoalesceEntitySyncShell();
         clone = shell.Clone(shell);
         assertNotNull("Failed to initialize mission entity", clone);
-        assertEquals(shell._DataObjectDocument, clone._DataObjectDocument);
+        assertEquals(shell.GetDataObjectDocument(), clone.GetDataObjectDocument());
     }
     
     @Test

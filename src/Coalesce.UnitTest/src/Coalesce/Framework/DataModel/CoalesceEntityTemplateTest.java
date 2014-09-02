@@ -1,16 +1,15 @@
 package Coalesce.Framework.DataModel;
 
-import org.w3c.dom.Document;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
+import org.w3c.dom.Document;
 
 import Coalesce.Common.UnitTest.CoalesceTypeInstances;
-
 import Coalesce.Framework.DataModel.CoalesceEntityTemplate;
+import Coalesce.Framework.DataModel.XsdEntity;
 
 
 public class CoalesceEntityTemplateTest {
@@ -27,7 +26,7 @@ public class CoalesceEntityTemplateTest {
             CoalesceEntityTemplate EntTemp = new CoalesceEntityTemplate();
 
             // Initialize
-            EntTemp.InitializeFromEntity(entity));
+            EntTemp.InitializeFromEntity(entity);
             
             String title = entity.GetTitle();
             assertEquals("NORTHCOM Volunteer Background Checks, NORTHCOM Volunteer Background Checks", title);
@@ -51,7 +50,8 @@ public class CoalesceEntityTemplateTest {
             //XmlDoc.LoadXml(CoalesceTypeInstances.TESTMISSION);
 
             // Call Peer.
-            Initialize(XmlDoc);
+            CoalesceEntityTemplate template = new CoalesceEntityTemplate();
+            template.Initialize(XmlDoc);
             
             fail("Not Implemented");
 
@@ -73,11 +73,8 @@ public class CoalesceEntityTemplateTest {
             CoalesceEntityTemplate template = new CoalesceEntityTemplate();
             template.SetDataObjectDocument(EntityTemplateDataObjectDocument);
 
-            String title = template.GetTitle();
+            String title = template.GetEntityNode().GetTitle();
             assertEquals("NORTHCOM Volunteer Background Checks, NORTHCOM Volunteer Background Checks", title);
-
-            // return Success
-            return true;
 
         }
         catch (Exception ex)

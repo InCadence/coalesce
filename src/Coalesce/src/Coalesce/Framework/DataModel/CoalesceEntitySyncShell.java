@@ -224,7 +224,7 @@ public class CoalesceEntitySyncShell {
             this._EntityNode = value.getElementsByTagName("entity").item(0);
         }
 
-        public Node GetEnttiyNode(){
+        public Node GetEntityNode(){
             return this._EntityNode;
         }
         public void SetEntityNode(Node value){
