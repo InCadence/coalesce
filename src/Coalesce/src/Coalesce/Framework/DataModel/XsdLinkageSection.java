@@ -31,8 +31,6 @@ import Coalesce.Framework.GeneratedJAXB.Entity.Linkagesection.Linkage;
 
 public class XsdLinkageSection extends XsdDataObject {
 
-	private static String MODULE = "Coalesce.Framework.DataModel.CoalesceLinkageSection";
-
 	private Linkagesection _entityLinkageSection;
 
 	// -----------------------------------------------------------------------//

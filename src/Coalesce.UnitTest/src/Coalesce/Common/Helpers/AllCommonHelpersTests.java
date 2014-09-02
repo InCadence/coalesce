@@ -23,7 +23,6 @@ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
 
 @RunWith(Suite.class)
 @SuiteClasses({
-	DateTimeHelperTest.class,
 	FileHelperTest.class,
 	GUIDHelperTest.class,
 	JodaDateTimeHelperTest.class,

@@ -202,6 +202,8 @@ public class XsdEntityTest {
         
         XsdSection section = entity.GetSection("TREXMission/Mission Information Section");
         
+        fail("Not Implemented");
+        
     }
 
 }

@@ -1,9 +1,7 @@
 package Coalesce.Framework.DataModel;
 
-import java.awt.List;
 import java.util.ArrayList;
-import java.util.Date;
-
+import org.joda.time.DateTime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -275,8 +273,8 @@ public class CoalesceEntitySyncShell {
 
                         if (MyNode != null) {
                             // Compare Timestamps
-                            Date LocalLastModified = _XmlHelper.GetAttributeAsDate(MyNode, "lastmodified");
-                            Date RemoteLastModified = _XmlHelper.GetAttributeAsDate(RemoteSyncShellNode, "lastmodified");
+                            DateTime LocalLastModified = _XmlHelper.GetAttributeAsDate(MyNode, "lastmodified");
+                            DateTime RemoteLastModified = _XmlHelper.GetAttributeAsDate(RemoteSyncShellNode, "lastmodified");
 
                             switch (LocalLastModified.compareTo(RemoteLastModified)){
                                 case 0:
@@ -319,8 +317,8 @@ public class CoalesceEntitySyncShell {
 
                         if (MyNode != null) {
                             // Compare Timestamps
-                            Date LocalLastModified = _XmlHelper.GetAttributeAsDate(MyNode, "lastmodified");
-                            Date RemoteLastModified = _XmlHelper.GetAttributeAsDate(RemoteSyncShellNode, "lastmodified");
+                            DateTime LocalLastModified = _XmlHelper.GetAttributeAsDate(MyNode, "lastmodified");
+                            DateTime RemoteLastModified = _XmlHelper.GetAttributeAsDate(RemoteSyncShellNode, "lastmodified");
 
                             switch (LocalLastModified.compareTo(RemoteLastModified)){
                                 case 0:
@@ -359,8 +357,8 @@ public class CoalesceEntitySyncShell {
 
                         if (MyNode != null) {
                             // Compare Timestamps
-                            Date LocalLastModified = _XmlHelper.GetAttributeAsDate(MyNode, "lastmodified");
-                            Date RemoteLastModified = _XmlHelper.GetAttributeAsDate(RemoteSyncShellNode, "lastmodified");
+                            DateTime LocalLastModified = _XmlHelper.GetAttributeAsDate(MyNode, "lastmodified");
+                            DateTime RemoteLastModified = _XmlHelper.GetAttributeAsDate(RemoteSyncShellNode, "lastmodified");
 
                             switch (LocalLastModified.compareTo(RemoteLastModified)){
                                 case 0:
@@ -399,8 +397,8 @@ public class CoalesceEntitySyncShell {
 
                         if (MyNode != null) {
                             // Compare Timestamps
-                            Date LocalLastModified = _XmlHelper.GetAttributeAsDate(MyNode, "lastmodified");
-                            Date RemoteLastModified = _XmlHelper.GetAttributeAsDate(RemoteSyncShellNode, "lastmodified");
+                            DateTime LocalLastModified = _XmlHelper.GetAttributeAsDate(MyNode, "lastmodified");
+                            DateTime RemoteLastModified = _XmlHelper.GetAttributeAsDate(RemoteSyncShellNode, "lastmodified");
 
                             switch (LocalLastModified.compareTo(RemoteLastModified)){
                                 case 0:

@@ -11,6 +11,7 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Test;
 
+import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.Helpers.XmlHelper;
 import Coalesce.Common.UnitTest.CoalesceTypeInstances;
 import Coalesce.Framework.GeneratedJAXB.Entity;
@@ -194,13 +195,13 @@ public class EntityTest {
         entity.setLastmodified(setLastModified);
 
         String xml = XmlHelper.Serialize(entity);
-        assertTrue(xml != null);
+        assertTrue(!StringHelper.IsNullOrEmpty(xml));
 
-        Object desSerializedObj = XmlHelper.Deserialize(CoalesceTypeInstances.TESTMISSION, Entity.class);
+        Object desSerializedObj = XmlHelper.Deserialize(xml, Entity.class);
 
         Entity desSerEntity = (Entity) desSerializedObj;
 
-        DateTime lastModified = entity.getLastmodified();
+        DateTime lastModified = desSerEntity.getLastmodified();
 
         assertEquals("2222-12-05T11:44:55.666Z", lastModified.toString());
 

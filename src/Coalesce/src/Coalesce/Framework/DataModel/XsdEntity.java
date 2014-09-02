@@ -42,8 +42,6 @@ public class XsdEntity extends XsdDataObject {
     // Private and protected Objects
     // ----------------------------------------------------------------------//
 
-    private static String MODULE = "Coalesce.Framework.DataModel.XsdEntity";
-
     private Entity _entity;
 
     // ----------------------------------------------------------------------//
@@ -426,7 +424,6 @@ public class XsdEntity extends XsdDataObject {
     {
         try
         {
-            CallResult rst;
 
             for (XsdDataObject child : _childDataObjects.values())
             {
@@ -483,7 +480,6 @@ public class XsdEntity extends XsdDataObject {
     {
         try
         {
-            CallResult rst;
 
             HashMap<String, XsdLinkage> results = new HashMap<String, XsdLinkage>();
 
@@ -544,7 +540,6 @@ public class XsdEntity extends XsdDataObject {
     {
         try
         {
-            CallResult rst;
 
             HashMap<String, XsdLinkage> results = new HashMap<String, XsdLinkage>();
 
@@ -591,7 +586,6 @@ public class XsdEntity extends XsdDataObject {
     {
         try
         {
-            CallResult rst;
 
             HashMap<String, XsdLinkage> results = new HashMap<String, XsdLinkage>();
 
@@ -636,7 +630,6 @@ public class XsdEntity extends XsdDataObject {
     {
         try
         {
-            CallResult rst;
 
             HashMap<String, XsdLinkage> results = new HashMap<String, XsdLinkage>();
 

@@ -13,6 +13,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.joda.time.DateTime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -242,19 +243,19 @@ public class XmlHelper {
     }
 
 	//shared
-	public java.util.Date GetAttributeAsDate(Node Node, String Name) {
+	public DateTime GetAttributeAsDate(Node Node, String Name) {
 		// try{-}catch ( omitted intentionally; Caller must handle
 		
 		// Get Date String from Attribute
 		String DateString = GetAttribute(Node, Name);
 		
 		if (DateString == null) {
-			return new java.util.Date();
+			return JodaDateTimeHelper.NowInUtc();
 		    //return new Date(0);
 		}else if (DateString.trim() == ""){
-			return new java.util.Date();
+			return JodaDateTimeHelper.NowInUtc();
 		}else{
-		    return DateTimeHelper.FromXmlDateTimeUTC(DateString);
+		    return JodaDateTimeHelper.FromXmlDateTimeUTC(DateString);
 		}
 		
 		// Parse Date

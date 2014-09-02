@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import unity.core.runtime.CallResult;
 import Coalesce.Common.UnitTest.CoalesceTypeInstances;
 import Coalesce.Framework.GeneratedJAXB.Entity;
 import Coalesce.Framework.GeneratedJAXB.Entity.Linkagesection;
@@ -54,8 +53,6 @@ public class XmlHelperTest {
 	@Test
 	public void DeserializeEntityTypeMission() {
 	
-		Entity entity = new Entity();
-		
 		Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TESTMISSION, Entity.class);
 		
 		assertNotNull("Failed to deserialize mission entity", desObj);
@@ -65,8 +62,6 @@ public class XmlHelperTest {
 	
 	@Test
 	public void DeserializeLinkageSectionTypeMission() {
-		
-		Linkagesection entityLinkageSection = new Linkagesection();
 		
 		Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TESTMISSIONLINKAGESECTION, Linkagesection.class);
 		
@@ -78,8 +73,6 @@ public class XmlHelperTest {
 	@Test
 	public void DeserializeRecordSetTypeMission() {
 		
-		Recordset entityRecordSet = new Recordset();
-		
 		Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TESTMISSIONRECORDSET, Recordset.class);
 		
 		assertNotNull("Failed to deserialize mission entity linkage section", desObj);
@@ -89,7 +82,6 @@ public class XmlHelperTest {
 	
 	@Test
 	public void SerializeEntityTypeMission() {
-		CallResult rst;
 		
 		Entity entity = new Entity();
 		
@@ -110,7 +102,6 @@ public class XmlHelperTest {
 
 	@Test
 	public void SerializeLinkageSectionTypeMission() {
-		CallResult rst;
 		
 		Linkagesection entityLinkageSection = new Linkagesection();
 		
@@ -130,7 +121,6 @@ public class XmlHelperTest {
 	
 	@Test
 	public void SerializeRecordSetTypeMission() {
-		CallResult rst;
 		
 		Recordset entityRecordSet = new Recordset();
 		

@@ -7,8 +7,6 @@ import javax.xml.namespace.QName;
 
 import org.joda.time.DateTime;
 
-import unity.core.runtime.CallResult;
-import unity.core.runtime.CallResult.CallResults;
 import Coalesce.Common.Helpers.XmlHelper;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset;
@@ -31,8 +29,6 @@ import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset;
  -----------------------------------------------------------------------------*/
 
 public class XsdSection extends XsdDataObject {
-
-    private static String MODULE = "Coalesce.Framework.DataModel.CoalesceSection";
 
     private Section _entitySection;
 
