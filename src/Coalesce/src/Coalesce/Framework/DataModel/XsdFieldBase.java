@@ -11,6 +11,7 @@ import unity.core.runtime.CallResult.CallResults;
 import Coalesce.Common.Classification.Marking;
 import Coalesce.Common.Helpers.GUIDHelper;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
+import Coalesce.Common.Helpers.StringHelper;
 
 public abstract class XsdFieldBase extends XsdDataObject {
 
@@ -105,7 +106,7 @@ public abstract class XsdFieldBase extends XsdDataObject {
             return GetDateTimeValue();
 
         case BinaryType:
-            return GetByteArrayValue();
+            return GetBinaryValue();
 
         case BooleanType:
             return GetBooleanValue();
@@ -154,122 +155,68 @@ public abstract class XsdFieldBase extends XsdDataObject {
 
     public CallResult SetTypedValue(String value)
     {
-        try
+        ECoalesceFieldDataTypes fieldType = XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType());
+        if (fieldType != ECoalesceFieldDataTypes.StringType && fieldType != ECoalesceFieldDataTypes.UriType)
         {
-            if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) == ECoalesceFieldDataTypes.StringType)
-            {
-
-                SetValue(value);
-
-                return CallResult.successCallResult;
-
-            }
-            else
-            {
-                return new CallResult(CallResults.FAILED, "Type mismatch", this);
-            }
-
+            throw new ClassCastException("Type mismatch");
         }
-        catch (Exception ex)
-        {
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
-        }
+
+        SetValue(value);
+
+        return CallResult.successCallResult;
+
     }
 
     public CallResult SetTypedValue(UUID value)
     {
-        try
+        if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) != ECoalesceFieldDataTypes.GuidType)
         {
-            if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) == ECoalesceFieldDataTypes.GuidType)
-            {
-
-                SetValue(GUIDHelper.GetGuidString(value));
-
-                return CallResult.successCallResult;
-
-            }
-            else
-            {
-                return new CallResult(CallResults.FAILED, "Type mismatch", this);
-            }
-
+            throw new ClassCastException("Type mismatch");
         }
-        catch (Exception ex)
-        {
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
-        }
+
+        SetValue(GUIDHelper.GetGuidString(value));
+
+        return CallResult.successCallResult;
+
     }
 
     public CallResult SetTypedValue(DateTime value)
     {
-        try
+        if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) != ECoalesceFieldDataTypes.DateTimeType)
         {
-            if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) == ECoalesceFieldDataTypes.DateTimeType)
-            {
-
-                SetValue(JodaDateTimeHelper.ToXmlDateTimeUTC(value));
-
-                return CallResult.successCallResult;
-
-            }
-            else
-            {
-                return new CallResult(CallResults.FAILED, "Type mismatch", this);
-            }
-
+            throw new ClassCastException("Type mismatch");
         }
-        catch (Exception ex)
-        {
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
-        }
+
+        SetValue(JodaDateTimeHelper.ToXmlDateTimeUTC(value));
+
+        return CallResult.successCallResult;
+
     }
 
     public CallResult SetTypedValue(boolean value)
     {
-        try
+        if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) != ECoalesceFieldDataTypes.BooleanType)
         {
-            if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) == ECoalesceFieldDataTypes.BooleanType)
-            {
-
-                SetValue(String.valueOf(value));
-
-                return CallResult.successCallResult;
-
-            }
-            else
-            {
-                return new CallResult(CallResults.FAILED, "Type mismatch", this);
-            }
-
+            throw new ClassCastException("Type mismatch");
         }
-        catch (Exception ex)
-        {
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
-        }
+
+        SetValue(String.valueOf(value));
+
+        return CallResult.successCallResult;
+
     }
 
     public CallResult SetTypedValue(int value)
     {
-        try
+        if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) != ECoalesceFieldDataTypes.IntegerType)
         {
-            if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) == ECoalesceFieldDataTypes.IntegerType)
-            {
-
-                SetValue(String.valueOf(value));
-
-                return CallResult.successCallResult;
-
-            }
-            else
-            {
-                return new CallResult(CallResults.FAILED, "Type mismatch", this);
-            }
-
+            throw new ClassCastException("Type mismatch");
         }
-        catch (Exception ex)
-        {
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
-        }
+
+        SetValue(String.valueOf(value));
+
+        return CallResult.successCallResult;
+
     }
 
     // TODO: Microsoft.SqlServer.Types.SqlGeography
@@ -372,37 +319,23 @@ public abstract class XsdFieldBase extends XsdDataObject {
 
     public CallResult SetTypedValue(byte[] dataBytes)
     {
-        try
+        if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) != ECoalesceFieldDataTypes.BinaryType)
         {
-            if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) == ECoalesceFieldDataTypes.BinaryType)
-            {
-
-                // TODO: make sure the string conversion is correct.
-                String value = Base64.encodeBase64String(dataBytes);
-                SetValue(value);
-                SetSize(dataBytes.length);
-
-                return CallResult.successCallResult;
-
-            }
-            else
-            {
-                return new CallResult(CallResults.FAILED, "Type mismatch", this);
-            }
-
+            throw new ClassCastException("Type mismatch");
         }
-        catch (Exception ex)
-        {
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
-        }
+
+        String value = Base64.encodeBase64String(dataBytes);
+        SetValue(value);
+        SetSize(dataBytes.length);
+
+        return CallResult.successCallResult;
+
     }
 
     public CallResult SetTypedValue(byte[] dataBytes, String filename, String extension, String mimeType)
     {
         try
         {
-            // TODO: make sure the string conversion is correct
-            // this.Value = Convert.ToBase64String(DataBytes);
             String value = Base64.encodeBase64String(dataBytes);
             SetValue(value);
             SetFilename(filename);
@@ -423,8 +356,6 @@ public abstract class XsdFieldBase extends XsdDataObject {
     {
         try
         {
-            // Set Bytes
-
             SetFilename(filename);
             SetExtension(extension);
             SetMimeType(mimeType);
@@ -507,7 +438,7 @@ public abstract class XsdFieldBase extends XsdDataObject {
     // }
     // }
 
-    private UUID GetGuidValue() throws ClassCastException
+    public UUID GetGuidValue() throws ClassCastException
     {
 
         if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) != ECoalesceFieldDataTypes.GuidType)
@@ -548,6 +479,8 @@ public abstract class XsdFieldBase extends XsdDataObject {
             throw new ClassCastException("Type mismatch");
         }
 
+        if (StringHelper.IsNullOrEmpty(this.GetValue())) throw new ClassCastException("Type mismatch");
+        
         boolean value = Boolean.parseBoolean(this.GetValue());
 
         return value;
@@ -561,9 +494,18 @@ public abstract class XsdFieldBase extends XsdDataObject {
             throw new ClassCastException("Type mismatch");
         }
 
-        int value = Integer.parseInt(this.GetValue());
+        try
+        {
 
-        return value;
+            int value = Integer.parseInt(this.GetValue());
+
+            return value;
+
+        }
+        catch (NumberFormatException nfe)
+        {
+            throw new ClassCastException("Type mismatch");
+        }
 
     }
 
@@ -645,7 +587,7 @@ public abstract class XsdFieldBase extends XsdDataObject {
     // }
     // }
 
-    public byte[] GetByteArrayValue() throws ClassCastException
+    public byte[] GetBinaryValue() throws ClassCastException
     {
         if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) != ECoalesceFieldDataTypes.BinaryType)
         {
@@ -670,12 +612,5 @@ public abstract class XsdFieldBase extends XsdDataObject {
         }
     }
 
-    public XsdFieldHistory GetHistoryRecord(String historyKey)
-    {
-        XsdFieldHistory historyRecord = (XsdFieldHistory) _childDataObjects.get(historyKey);
-
-        return historyRecord;
-
-    }
 
 }

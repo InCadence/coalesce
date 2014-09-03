@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.UUID;
 
@@ -913,6 +914,312 @@ public class XsdFieldTest {
         assertEquals(GUIDHelper.RemoveBrackets(result.Field.GetKey()) + "_thumb.jpg",
                      result.SavedField.GetCoalesceThumbnailFilename());
 
+    }
+
+    @Test
+    public void StringTypeTest()
+    {
+    
+        XsdField field = GetTestMissionNameField();
+        
+        Object data = field.GetData();
+        
+        assertTrue(data instanceof String);
+        assertEquals(CoalesceTypeInstances.TESTMISSIONNAMEVALUE, data);
+        
+        field.SetTypedValue("Changed");
+        
+        data = null;
+        data = field.GetData();
+        
+        assertTrue(data instanceof String);
+        assertEquals("Changed", data);
+        assertEquals("Changed", field.GetValue());
+        
+    }
+    
+    @Test(expected=ClassCastException.class)
+    public void SetTypedValueStringTypeTypeMismatchTest()
+    {
+    
+        XsdField field = GetTestMissionFieldByName(CoalesceTypeInstances.TESTMISSIONSTARTTIMEPATH);
+        
+        field.SetTypedValue(UUID.randomUUID());
+        
+    }
+
+    @Test
+    public void UriTypeTest()
+    {
+        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+
+        XsdRecordset parentRecordset = (XsdRecordset) entity.GetDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.Create(parentRecordset,
+                                                                    "Uri",
+                                                                    ECoalesceFieldDataTypes.UriType);
+
+        XsdRecord parentRecord = parentRecordset.GetItem(0);
+        XsdField field = XsdField.Create(parentRecord, fileFieldDef);
+        field.SetTypedValue("uri:document/pdf");
+        
+        Object data = field.GetData();
+
+        assertTrue(data instanceof String);
+        assertEquals("uri:document/pdf", data);
+        assertEquals("uri:document/pdf", field.GetValue());
+
+    }
+
+    @Test
+    public void GetDataDateTimeTypeNotSetTest()
+    {
+        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+
+        XsdRecordset parentRecordset = (XsdRecordset) entity.GetDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.Create(parentRecordset,
+                                                                    "DateTime",
+                                                                    ECoalesceFieldDataTypes.DateTimeType);
+
+        XsdRecord parentRecord = parentRecordset.GetItem(0);
+        XsdField field = XsdField.Create(parentRecord, fileFieldDef);
+
+        assertNull(field.GetDateTimeValue());
+                
+    }
+    
+    @Test
+    public void GetDataSetTypedValueDateTimeTypeTest()
+    {
+        XsdField field = GetTestMissionFieldByName(CoalesceTypeInstances.TESTMISSIONSTARTTIMEPATH);
+        
+        Object data = field.GetData();
+
+        assertTrue(data instanceof DateTime);
+        assertEquals(JodaDateTimeHelper.FromXmlDateTimeUTC(CoalesceTypeInstances.TESTMISSIONSTARTTIMEVALUE), data);
+
+        DateTime now = JodaDateTimeHelper.NowInUtc();
+        field.SetTypedValue(now);
+        
+        assertEquals(JodaDateTimeHelper.ToXmlDateTimeUTC(now), field.GetValue());
+        
+        data = null;
+        data = field.GetData();
+        
+        assertTrue(data instanceof DateTime);
+        assertEquals(now, data);
+        assertEquals(now, field.GetDateTimeValue());
+        
+    }
+
+    @Test(expected=ClassCastException.class)
+    public void SetTypedValueDateTimeTypeTypeMismatchTest()
+    {
+    
+        XsdField field = GetTestMissionNameField();
+        
+        field.SetTypedValue(JodaDateTimeHelper.NowInUtc());
+        
+    }
+
+    @Test
+    public void GetDataBinaryTypeNotSetTest()
+    {
+        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+
+        XsdRecordset parentRecordset = (XsdRecordset) entity.GetDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.Create(parentRecordset,
+                                                                    "Binary",
+                                                                    ECoalesceFieldDataTypes.BinaryType);
+
+        XsdRecord parentRecord = parentRecordset.GetItem(0);
+        XsdField field = XsdField.Create(parentRecord, fileFieldDef);
+
+        byte[] bytes = new byte[0];
+        
+        assertArrayEquals(bytes, field.GetBinaryValue());
+                
+    }
+    
+    @Test
+    public void GetDataSetTypedValueBinaryTypeTest() throws UnsupportedEncodingException
+    {
+        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+
+        XsdRecordset parentRecordset = (XsdRecordset) entity.GetDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.Create(parentRecordset,
+                                                                    "Binary",
+                                                                    ECoalesceFieldDataTypes.BinaryType);
+
+        XsdRecord parentRecord = parentRecordset.GetItem(0);
+        XsdField field = XsdField.Create(parentRecord, fileFieldDef);
+
+        String byteString = "Testing String";
+        byte[] dataBytes = byteString.getBytes("US-ASCII");
+        field.SetTypedValue(dataBytes);
+        
+        Object data = field.GetData();
+
+        assertTrue(data instanceof byte[]);
+        assertArrayEquals(dataBytes, (byte[])data);
+        assertArrayEquals(dataBytes, field.GetBinaryValue());
+        assertEquals("VGVzdGluZyBTdHJpbmc=", field.GetValue());
+
+    }
+    
+    @Test(expected=ClassCastException.class)
+    public void SetTypedValueBinaryTypeTypeMismatchTest() throws UnsupportedEncodingException
+    {
+    
+        XsdField field = GetTestMissionFieldByName(CoalesceTypeInstances.TESTMISSIONSTARTTIMEPATH);
+        
+        String byteString = "Testing String";
+        byte[] dataBytes = byteString.getBytes("US-ASCII");
+        field.SetTypedValue(dataBytes);
+        
+    }
+
+    @Test
+    public void GetDataSetTypedValueBooleanTypeTest()
+    {
+        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+
+        XsdRecordset parentRecordset = (XsdRecordset) entity.GetDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.Create(parentRecordset,
+                                                                    "Boolean",
+                                                                    ECoalesceFieldDataTypes.BooleanType);
+
+        XsdRecord parentRecord = parentRecordset.GetItem(0);
+        XsdField field = XsdField.Create(parentRecord, fileFieldDef);
+
+        assertFalse(field.GetBooleanValue());
+        assertEquals("false", field.GetValue().toLowerCase());
+        
+        field.SetTypedValue(true);
+        
+        Object data = field.GetData();
+
+        assertTrue(data instanceof Boolean);
+        assertEquals(true, data);
+        assertEquals("true", field.GetValue().toLowerCase());
+        assertEquals(true, field.GetBooleanValue());
+        
+    }
+    
+    @Test(expected=ClassCastException.class)
+    public void SetTypedValueBooleanTypeTypeMismatchTest() throws UnsupportedEncodingException
+    {
+    
+        XsdField field = GetTestMissionFieldByName(CoalesceTypeInstances.TESTMISSIONSTARTTIMEPATH);
+
+        field.SetTypedValue(true);
+        
+    }
+
+    @Test(expected=ClassCastException.class)
+    public void GetDataIntegerTypeNotSetTest()
+    {
+        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+
+        XsdRecordset parentRecordset = (XsdRecordset) entity.GetDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.Create(parentRecordset,
+                                                                    "Integer",
+                                                                    ECoalesceFieldDataTypes.IntegerType);
+
+        XsdRecord parentRecord = parentRecordset.GetItem(0);
+        XsdField field = XsdField.Create(parentRecord, fileFieldDef);
+
+        field.GetIntegerValue();
+                
+    }
+    
+    @Test
+    public void GetDataSetTypedValueIntegerTypeTest()
+    {
+        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+
+        XsdRecordset parentRecordset = (XsdRecordset) entity.GetDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.Create(parentRecordset,
+                                                                    "Integer",
+                                                                    ECoalesceFieldDataTypes.IntegerType);
+
+        XsdRecord parentRecord = parentRecordset.GetItem(0);
+        XsdField field = XsdField.Create(parentRecord, fileFieldDef);
+
+        assertEquals("", field.GetValue());
+        
+        field.SetTypedValue(1111);
+        
+        Object data = field.GetData();
+
+        assertTrue(data instanceof Integer);
+        assertEquals(1111, data);
+        assertEquals("1111", field.GetValue());
+        assertEquals(1111, field.GetIntegerValue());
+        
+    }
+    
+    @Test(expected=ClassCastException.class)
+    public void SetTypedValueIntgerTypeTypeMismatchTest() throws UnsupportedEncodingException
+    {
+    
+        XsdField field = GetTestMissionFieldByName(CoalesceTypeInstances.TESTMISSIONSTARTTIMEPATH);
+
+        field.SetTypedValue(1111);
+        
+    }
+
+    @Test
+    public void GetDataGuidTypeNotSetTest()
+    {
+        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+
+        XsdRecordset parentRecordset = (XsdRecordset) entity.GetDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.Create(parentRecordset,
+                                                                    "GUID",
+                                                                    ECoalesceFieldDataTypes.GuidType);
+
+        XsdRecord parentRecord = parentRecordset.GetItem(0);
+        XsdField field = XsdField.Create(parentRecord, fileFieldDef);
+
+        assertNull(field.GetGuidValue());
+                
+    }
+    
+    @Test
+    public void GetDataSetTypedValueGuidTypeTest()
+    {
+        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+
+        XsdRecordset parentRecordset = (XsdRecordset) entity.GetDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.Create(parentRecordset,
+                                                                    "GUID",
+                                                                    ECoalesceFieldDataTypes.GuidType);
+
+        XsdRecord parentRecord = parentRecordset.GetItem(0);
+        XsdField field = XsdField.Create(parentRecord, fileFieldDef);
+
+        assertEquals("", field.GetValue());
+        
+        UUID guid = UUID.randomUUID();
+        field.SetTypedValue(guid);
+        
+        Object data = field.GetData();
+
+        assertTrue(data instanceof UUID);
+        assertEquals(guid, data);
+        assertEquals(GUIDHelper.GetGuidString(guid), field.GetValue());
+        assertEquals(guid, field.GetGuidValue());
+        
+    }
+    
+    @Test(expected=ClassCastException.class)
+    public void SetTypedValueGUIDTypeTypeMismatchTest() throws UnsupportedEncodingException
+    {
+    
+        XsdField field = GetTestMissionFieldByName(CoalesceTypeInstances.TESTMISSIONSTARTTIMEPATH);
+
+        field.SetTypedValue(UUID.randomUUID());
+        
     }
 
     // -----------------------------------------------------------------------//

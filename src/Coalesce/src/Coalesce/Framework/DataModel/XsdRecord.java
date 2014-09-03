@@ -363,7 +363,7 @@ public class XsdRecord extends XsdDataObject {
         }
     }
 
-    public byte[] GetByteArrayFieldValue(String fieldName) throws InvalidFieldException
+    public byte[] GetBinaryFieldValue(String fieldName) throws InvalidFieldException
     {
         XsdField field = GetFieldByName(fieldName);
 
@@ -371,7 +371,7 @@ public class XsdRecord extends XsdDataObject {
         if (field != null)
         {
             // Yes; Set Value
-            byte[] value = field.GetByteArrayValue();
+            byte[] value = field.GetBinaryValue();
 
             return value;
 
@@ -446,7 +446,7 @@ public class XsdRecord extends XsdDataObject {
     {
         try
         {
-            byte[] value = GetByteArrayFieldValue(fieldName);
+            byte[] value = GetBinaryFieldValue(fieldName);
 
             return value;
 

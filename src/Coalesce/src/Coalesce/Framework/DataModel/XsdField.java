@@ -140,7 +140,7 @@ public class XsdField extends XsdFieldBase {
     {
         return "field";
     }
-    
+
     public String GetValue()
     {
         return _entityField.getValue();
@@ -219,7 +219,7 @@ public class XsdField extends XsdFieldBase {
     public void SetClassificationMarking(String value)
     {
         String oldValue = _entityField.getClassificationmarking();
-        
+
         SetChanged(oldValue, value);
         _entityField.setClassificationmarking(value);
     }
@@ -309,18 +309,23 @@ public class XsdField extends XsdFieldBase {
         // Return history items in the same order they are in the Entity
         for (Fieldhistory fh : _entityField.getFieldhistory())
         {
-            String fieldKey = fh.getKey();
-            if (_childDataObjects.containsKey(fieldKey)) {
-                
-                XsdDataObject fdo = _childDataObjects.get(fieldKey);
-                
-                if (fdo instanceof XsdFieldHistory) {
-                    historyList.add((XsdFieldHistory)_childDataObjects.get(fh.getKey()));
-                }
+            XsdDataObject fdo = _childDataObjects.get(fh.getKey());
+
+            if (fdo != null && fdo instanceof XsdFieldHistory)
+            {
+                historyList.add((XsdFieldHistory) _childDataObjects.get(fh.getKey()));
             }
         }
-        
+
         return historyList;
+    }
+
+    public XsdFieldHistory GetHistoryRecord(String historyKey)
+    {
+        XsdFieldHistory historyRecord = (XsdFieldHistory) _childDataObjects.get(historyKey);
+
+        return historyRecord;
+
     }
 
     /*
@@ -339,22 +344,22 @@ public class XsdField extends XsdFieldBase {
     @Override
     public void SetDateCreated(DateTime value)
     {
-            // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
-            _entityField.setDatecreated(value);
+        // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
+        _entityField.setDatecreated(value);
     }
 
     @Override
     public DateTime GetLastModified()
     {
-            // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityField.getLastmodified());
-            return _entityField.getLastmodified();
+        // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityField.getLastmodified());
+        return _entityField.getLastmodified();
     }
 
     @Override
     protected void SetObjectLastModified(DateTime value)
     {
-            // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
-            _entityField.setLastmodified(value);
+        // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
+        _entityField.setLastmodified(value);
     }
 
     public String ToXml()
@@ -396,7 +401,7 @@ public class XsdField extends XsdFieldBase {
         {
             String fullPath = GetCoalesceFullFilename();
             if (StringHelper.IsNullOrEmpty(fullPath)) return "";
-            
+
             File theFile = new File(fullPath);
             long lastModifiedTicks = theFile.lastModified();
 
@@ -415,7 +420,7 @@ public class XsdField extends XsdFieldBase {
         {
             String fullThumbPath = GetCoalesceFullThumbnailFilename();
             if (StringHelper.IsNullOrEmpty(fullThumbPath)) return "";
-            
+
             File theFile = new File(fullThumbPath);
             long lastModifiedTicks = theFile.lastModified();
 
