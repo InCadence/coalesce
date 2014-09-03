@@ -14,8 +14,6 @@ import Coalesce.Common.Helpers.JodaDateTimeHelper;
 
 public abstract class XsdFieldBase extends XsdDataObject {
 
-    private boolean _suspendHistory = false;
-
     public abstract String GetValue();
 
     public abstract void SetValue(String value);
@@ -91,16 +89,6 @@ public abstract class XsdFieldBase extends XsdDataObject {
      * public String GetInputLang(){ return _entityField.getInputlang(); } public void SetInputLang(String value){
      * _entityField.setInputlang(value); }
      */
-
-    public boolean GetSuspendHistory()
-    {
-        return this._suspendHistory;
-    }
-
-    public void SetSuspendHistory(boolean value)
-    {
-        this._suspendHistory = value;
-    }
 
     public Object GetData()
     {

@@ -42,6 +42,7 @@ public class XsdField extends XsdFieldBase {
     // protected Member Variables
     // -----------------------------------------------------------------------//
 
+    private boolean _suspendHistory = false;
     protected Field _entityField;
 
     // -----------------------------------------------------------------------//
@@ -288,6 +289,16 @@ public class XsdField extends XsdFieldBase {
 
         SetChanged(oldHash, value);
         _entityField.setHash(value);
+    }
+
+    public boolean GetSuspendHistory()
+    {
+        return this._suspendHistory;
+    }
+
+    public void SetSuspendHistory(boolean value)
+    {
+        this._suspendHistory = value;
     }
 
     public ArrayList<XsdFieldHistory> GetHistory()

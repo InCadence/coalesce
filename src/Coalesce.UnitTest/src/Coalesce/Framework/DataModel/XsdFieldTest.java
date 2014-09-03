@@ -509,7 +509,7 @@ public class XsdFieldTest {
         
         field.SetSuspendHistory(false);
         
-        assertTrue(field.GetSuspendHistory());
+        assertFalse(field.GetSuspendHistory());
     }
     
     @Test

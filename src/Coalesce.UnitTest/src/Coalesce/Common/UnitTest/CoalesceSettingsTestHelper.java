@@ -11,10 +11,6 @@ public class CoalesceSettingsTestHelper {
     
     public static void setUpdBeforeClass() {
         
-
-        //RestConfigConnector.initialize("localhost", 8080);
-
-        //CoalesceUnitTestSettings.Initialize(new RestConfigurationsConnector("localhost", 8080));
         CoalesceUnitTestSettings.Initialize(new LocalConfigurationsConnector());
 
     }
