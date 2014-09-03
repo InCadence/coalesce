@@ -1,9 +1,12 @@
 package Coalesce.Framework.DataModel;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.UUID;
 
@@ -14,6 +17,7 @@ import org.junit.Test;
 
 import Coalesce.Common.Classification.Marking;
 import Coalesce.Common.Classification.MarkingValueTest;
+import Coalesce.Common.Helpers.GUIDHelper;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import Coalesce.Common.UnitTest.CoalesceTypeInstances;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section;
@@ -28,11 +32,11 @@ public class XsdFieldHistoryTest {
 
     /*
      * @BeforeClass public static void setUpBeforeClass() throws Exception { }
-     *
+     * 
      * @AfterClass public static void tearDownAfterClass() throws Exception { }
      * 
      * @Before public void setUp() throws Exception { }
-     *
+     * 
      * @After public void tearDown() throws Exception { }
      */
 
@@ -140,21 +144,21 @@ public class XsdFieldHistoryTest {
     @Test
     public void ConstructorPreviousHistory()
     {
-        
+
         XsdField field = XsdFieldTest.GetTestMissionFieldByName(CoalesceTypeInstances.TESTMISSIONBASE64PATH);
-        
+
         field.SetSuspendHistory(true);
         XsdFieldHistory fh = XsdFieldHistory.Create(field);
         assertFieldHistory(field, fh);
-        
+
         field.SetTypedValue(2222);
         field.SetSuspendHistory(false);
-        
+
         assertEquals(2222, field.GetIntegerValue());
         assertEquals(1, field.GetHistory().size());
         assertEquals(CoalesceTypeInstances.TESTMISSIONBASE64VALUE, field.GetHistory().get(0).GetIntegerValue());
         assertEquals(fh, field.GetHistory().get(0));
-        
+
     }
 
     @Test
@@ -456,21 +460,23 @@ public class XsdFieldHistoryTest {
     }
 
     @Test
-    public void GetValueWithMarkingTest() {
-        
+    public void GetValueWithMarkingTest()
+    {
+
         XsdFieldHistory field = GetTestMissionNameFieldHistory();
-        
+
         assertEquals("UNCLASSIFIED NORTHCOM Volunteer Background Checks", field.GetValueWithMarking());
     }
-    
+
     @Test
-    public void GetPortionMarkingTest() {
-        
+    public void GetPortionMarkingTest()
+    {
+
         XsdFieldHistory field = GetTestMissionNameFieldHistory();
-        
+
         assertEquals("(U)", field.GetPortionMarking());
     }
-    
+
     @Test
     public void GetPreviousHistoryKeyNoPreviousTest()
     {
@@ -663,6 +669,260 @@ public class XsdFieldHistoryTest {
 
     }
 
+    @Test
+    public void StringTypeTest()
+    {
+
+        XsdField field = XsdFieldTest.GetTestMissionNameField();
+
+        XsdFieldHistory fh = field.GetHistory().get(0);
+        Object data = fh.GetData();
+
+        assertTrue(data instanceof String);
+        assertEquals(CoalesceTypeInstances.TESTMISSIONNAMEHISTORYVALUE, data);
+
+        fh.SetTypedValue("Changed");
+
+        data = null;
+        data = fh.GetData();
+
+        assertTrue(data instanceof String);
+        assertEquals("Changed", data);
+        assertEquals("Changed", fh.GetValue());
+
+    }
+
+    @Test(expected = ClassCastException.class)
+    public void SetTypedValueStringTypeTypeMismatchTest()
+    {
+
+        XsdField field = XsdFieldTest.GetTestMissionFieldByName(CoalesceTypeInstances.TESTMISSIONSTARTTIMEPATH);
+        field.SetTypedValue(JodaDateTimeHelper.NowInUtc());
+
+        XsdFieldHistory fh = field.GetHistory().get(0);
+
+        fh.SetTypedValue(UUID.randomUUID());
+
+    }
+
+    @Test
+    public void UriTypeTest()
+    {
+        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+
+        XsdRecordset parentRecordset = (XsdRecordset) entity.GetDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.Create(parentRecordset, "Uri", ECoalesceFieldDataTypes.UriType);
+
+        XsdRecord parentRecord = parentRecordset.GetItem(0);
+        XsdField field = XsdField.Create(parentRecord, fileFieldDef);
+
+        Sleep();
+        field.SetTypedValue("uri:document/pdf");
+        field.SetTypedValue("uri:document/xyz");
+
+        XsdFieldHistory fh = field.GetHistory().get(0);
+
+        assertEquals("uri:document/pdf", fh.GetValue());
+
+        fh.SetTypedValue("uri:document/zip");
+
+        Object data = fh.GetData();
+
+        assertTrue(data instanceof String);
+        assertEquals("uri:document/zip", data);
+        assertEquals("uri:document/zip", fh.GetValue());
+
+    }
+
+    @Test
+    public void GetDataSetTypedValueDateTimeTypeTest()
+    {
+        XsdField field = XsdFieldTest.GetTestMissionFieldByName(CoalesceTypeInstances.TESTMISSIONSTARTTIMEPATH);
+
+        DateTime now = JodaDateTimeHelper.NowInUtc();
+        field.SetTypedValue(now);
+
+        XsdFieldHistory fh = field.GetHistory().get(0);
+
+        fh.SetTypedValue(now.plusDays(1));
+
+        Object data = fh.GetData();
+
+        assertTrue(data instanceof DateTime);
+        assertEquals(now.plusDays(1), data);
+        assertEquals(now.plusDays(1), fh.GetDateTimeValue());
+
+    }
+
+    @Test(expected = ClassCastException.class)
+    public void SetTypedValueDateTimeTypeTypeMismatchTest()
+    {
+
+        XsdField field = XsdFieldTest.GetTestMissionNameField();
+        
+        DateTime now = JodaDateTimeHelper.NowInUtc();
+        field.SetTypedValue(now);
+
+        XsdFieldHistory fh = field.GetHistory().get(0);
+
+        fh.SetTypedValue(now);
+
+    }
+
+    @Test
+    public void GetDataSetTypedValueBooleanTypeTest()
+    {
+        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+
+        XsdRecordset parentRecordset = (XsdRecordset) entity.GetDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.Create(parentRecordset,
+                                                                    "Boolean",
+                                                                    ECoalesceFieldDataTypes.BooleanType);
+
+        XsdRecord parentRecord = parentRecordset.GetItem(0);
+        XsdField field = XsdField.Create(parentRecord, fileFieldDef);
+        
+        Sleep();
+        field.SetTypedValue(true);
+        field.SetTypedValue(false);
+
+        XsdFieldHistory fh = field.GetHistory().get(0);
+
+        Object data = fh.GetData();
+        
+        assertEquals(true, data);
+        assertEquals("true", fh.GetValue().toLowerCase());
+        assertEquals(true, fh.GetBooleanValue());
+        
+        fh.SetTypedValue(false);
+
+        data = null;
+        data = fh.GetData();
+
+        assertTrue(data instanceof Boolean);
+        assertEquals(false, data);
+        assertEquals("false", fh.GetValue().toLowerCase());
+        assertEquals(false, fh.GetBooleanValue());
+
+    }
+
+    @Test(expected = ClassCastException.class)
+    public void SetTypedValueBooleanTypeTypeMismatchTest() throws UnsupportedEncodingException
+    {
+
+        XsdField field = XsdFieldTest.GetTestMissionFieldByName(CoalesceTypeInstances.TESTMISSIONSTARTTIMEPATH);
+
+        field.SetTypedValue(JodaDateTimeHelper.NowInUtc());
+        
+        XsdFieldHistory fh = field.GetHistory().get(0);
+        fh.SetTypedValue(true);
+
+    }
+
+    @Test
+    public void GetDataSetTypedValueIntegerTypeTest()
+    {
+        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+
+        XsdRecordset parentRecordset = (XsdRecordset) entity.GetDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.Create(parentRecordset,
+                                                                    "Integer",
+                                                                    ECoalesceFieldDataTypes.IntegerType);
+
+        XsdRecord parentRecord = parentRecordset.GetItem(0);
+        XsdField field = XsdField.Create(parentRecord, fileFieldDef);
+
+        Sleep();
+        field.SetTypedValue(1111);
+        field.SetTypedValue(2222);
+        
+        XsdFieldHistory fh = field.GetHistory().get(0);
+
+        Object data = fh.GetData();
+
+        assertTrue(data instanceof Integer);
+        assertEquals("1111", fh.GetValue());
+        assertEquals(1111, fh.GetIntegerValue());
+        assertEquals(1111, data);
+        
+        fh.SetTypedValue(3333);
+
+        data = null;
+        data = fh.GetData();
+
+        assertTrue(data instanceof Integer);
+        assertEquals(3333, data);
+        assertEquals("3333", fh.GetValue());
+        assertEquals(3333, fh.GetIntegerValue());
+
+    }
+
+    @Test(expected = ClassCastException.class)
+    public void SetTypedValueIntgerTypeTypeMismatchTest() throws UnsupportedEncodingException
+    {
+
+        XsdField field = XsdFieldTest.GetTestMissionFieldByName(CoalesceTypeInstances.TESTMISSIONSTARTTIMEPATH);
+
+        field.SetTypedValue(JodaDateTimeHelper.NowInUtc());
+        
+        XsdFieldHistory fh = field.GetHistory().get(0);
+        fh.SetTypedValue(1111);
+
+    }
+
+    @Test
+    public void GetDataSetTypedValueGuidTypeTest()
+    {
+        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+
+        XsdRecordset parentRecordset = (XsdRecordset) entity.GetDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.Create(parentRecordset,
+                                                                    "GUID",
+                                                                    ECoalesceFieldDataTypes.GuidType);
+
+        XsdRecord parentRecord = parentRecordset.GetItem(0);
+        XsdField field = XsdField.Create(parentRecord, fileFieldDef);
+
+        Sleep();
+        UUID guid = UUID.randomUUID();
+        field.SetTypedValue(guid);
+        field.SetTypedValue(UUID.randomUUID());
+        
+        XsdFieldHistory fh = field.GetHistory().get(0);
+
+        Object data = fh.GetData();
+
+        assertTrue(data instanceof UUID);
+        assertEquals(guid, data);
+        assertEquals(GUIDHelper.GetGuidString(guid), fh.GetValue());
+        assertEquals(guid, fh.GetGuidValue());
+
+        UUID newGuid = UUID.randomUUID();
+        fh.SetTypedValue(newGuid);
+
+        data = null;
+        data = fh.GetData();
+
+        assertTrue(data instanceof UUID);
+        assertEquals(newGuid, data);
+        assertEquals(GUIDHelper.GetGuidString(newGuid), fh.GetValue());
+        assertEquals(newGuid, fh.GetGuidValue());
+
+    }
+
+    @Test(expected = ClassCastException.class)
+    public void SetTypedValueGUIDTypeTypeMismatchTest() throws UnsupportedEncodingException
+    {
+
+        XsdField field = XsdFieldTest.GetTestMissionFieldByName(CoalesceTypeInstances.TESTMISSIONSTARTTIMEPATH);
+
+        field.SetTypedValue(JodaDateTimeHelper.NowInUtc());
+        
+        XsdFieldHistory fh = field.GetHistory().get(0);
+        field.SetTypedValue(UUID.randomUUID());
+
+    }
+
     // -----------------------------------------------------------------------//
     // Private Static Methods
     // -----------------------------------------------------------------------//
@@ -727,5 +987,16 @@ public class XsdFieldHistoryTest {
         return GetTestMissionNameFieldHistory(serializedMission);
 
     }
-    
+
+    private void Sleep()
+    {
+
+        try
+        {
+            Thread.sleep(2);
+        }
+        catch (InterruptedException e)
+        {
+        }
+    }
 }

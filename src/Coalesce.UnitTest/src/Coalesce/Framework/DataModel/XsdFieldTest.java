@@ -498,65 +498,69 @@ public class XsdFieldTest {
     @Test
     public void PreviousHistoryOrderTest()
     {
-        
+
         XsdField field = XsdFieldTest.GetTestMissionFieldByName(CoalesceTypeInstances.TESTMISSIONBASE64PATH);
-        
+
         field.SetTypedValue(1111);
         field.SetTypedValue(2222);
-        
+
         assertEquals(2222, field.GetIntegerValue());
         assertEquals(1111, field.GetHistory().get(0).GetIntegerValue());
         assertEquals(CoalesceTypeInstances.TESTMISSIONBASE64VALUE, field.GetHistory().get(1).GetIntegerValue());
-        
+
     }
 
     @Test
-    public void GetSuspendHistoryTest() {
-        
+    public void GetSuspendHistoryTest()
+    {
+
         XsdEntity mission = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
 
         XsdField field = GetTestMissionNameField(mission);
 
         assertFalse(field.GetSuspendHistory());
-        
+
         field.SetSuspendHistory(true);
-        
+
         assertTrue(field.GetSuspendHistory());
-        
+
         field.SetSuspendHistory(false);
-        
+
         assertFalse(field.GetSuspendHistory());
     }
-    
+
     @Test
-    public void SetSuspendHistoryTrueTest() {
-    
+    public void SetSuspendHistoryTrueTest()
+    {
+
         XsdField field = XsdFieldTest.GetTestMissionFieldByName(CoalesceTypeInstances.TESTMISSIONBASE64PATH);
-        
+
         field.SetTypedValue(2222);
-        
+
         assertEquals(2222, field.GetIntegerValue());
         assertEquals(1, field.GetHistory().size());
         assertEquals(CoalesceTypeInstances.TESTMISSIONBASE64VALUE, field.GetHistory().get(0).GetIntegerValue());
-        
+
     }
-    
+
     @Test
-    public void SetSuspendHistoryFalseTest() {
-        
+    public void SetSuspendHistoryFalseTest()
+    {
+
         XsdField field = XsdFieldTest.GetTestMissionFieldByName(CoalesceTypeInstances.TESTMISSIONBASE64PATH);
 
         field.SetSuspendHistory(true);
         field.SetTypedValue(2222);
-        
+
         assertEquals(2222, field.GetIntegerValue());
         assertTrue(field.GetHistory().isEmpty());
-        
+
     }
-    
+
     @Test
-    public void SetSuspendHistoryFalseBinaryTest() {
-        
+    public void SetSuspendHistoryFalseBinaryTest()
+    {
+
         XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
 
         XsdRecordset parentRecordset = (XsdRecordset) entity.GetDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
@@ -568,28 +572,28 @@ public class XsdFieldTest {
         XsdField field = XsdField.Create(parentRecord, fileFieldDef);
 
         assertTrue(field.GetHistory().isEmpty());
-        
+
         field.SetValue("Something");
-        
-        assertTrue(field.GetHash().isEmpty());
-        
+
+        assertTrue(field.GetHistory().isEmpty());
 
     }
-    
+
     @Test
-    public void SetSuspendHistoryFalseFileTest() {
-        
+    public void SetSuspendHistoryFalseFileTest()
+    {
+
         FileTestResult result = GetJpgFile();
-        
+
         XsdField field = result.SavedField;
         assertTrue(field.GetHistory().isEmpty());
-        
+
         field.SetValue("Something");
-        
+
         assertTrue(field.GetHash().isEmpty());
-        
+
     }
-    
+
     @Test
     public void GetDateCreatedExistTest()
     {
@@ -663,10 +667,10 @@ public class XsdFieldTest {
     public void GetCoalesceFullFilenameNotFileTest()
     {
         XsdField field = GetTestMissionNameField();
-        
+
         assertTrue(StringHelper.IsNullOrEmpty(field.GetCoalesceFullFilename()));
     }
-    
+
     @Test
     public void GetCoalesceFullFilenameTwoSubDirTest() throws NoSuchMethodException, SecurityException,
             IllegalAccessException, IllegalArgumentException, InvocationTargetException
@@ -701,7 +705,7 @@ public class XsdFieldTest {
     {
 
         FileTestResult result = GetJpgFile();
-        
+
         assertEquals(XsdFieldCommon.CallGetBaseFilenameWithFullDirectoryPathForKey(result.Field.GetKey(), false) + ".jpg",
                      result.SavedField.GetCoalesceFullFilename());
 
@@ -711,11 +715,10 @@ public class XsdFieldTest {
     public void GetCoalesceFullThumbnailFilenameNotFileTest()
     {
         XsdField field = GetTestMissionNameField();
-        
+
         assertTrue(StringHelper.IsNullOrEmpty(field.GetCoalesceFullThumbnailFilename()));
     }
-    
-    
+
     @Test
     public void GetCoalesceFullThumbnailFilenameTwoSubDirTest() throws NoSuchMethodException, SecurityException,
             IllegalAccessException, IllegalArgumentException, InvocationTargetException
@@ -750,9 +753,9 @@ public class XsdFieldTest {
     {
 
         FileTestResult result = GetJpgFile();
-        
-        assertEquals(XsdFieldCommon.CallGetBaseFilenameWithFullDirectoryPathForKey(result.Field.GetKey(), false) + "_thumb.jpg",
-                     result.SavedField.GetCoalesceFullThumbnailFilename());
+
+        assertEquals(XsdFieldCommon.CallGetBaseFilenameWithFullDirectoryPathForKey(result.Field.GetKey(), false)
+                + "_thumb.jpg", result.SavedField.GetCoalesceFullThumbnailFilename());
 
     }
 
@@ -760,10 +763,10 @@ public class XsdFieldTest {
     public void GetCoalesceFilenameWithLastModifiedTagNotFileTest()
     {
         XsdField field = GetTestMissionNameField();
-        
+
         assertTrue(StringHelper.IsNullOrEmpty(field.GetCoalesceFilenameWithLastModifiedTag()));
     }
-        
+
     @Test
     public void GetCoalesceFilenameWithLastModifiedTagTwoSubDirTest() throws NoSuchMethodException, SecurityException,
             IllegalAccessException, IllegalArgumentException, InvocationTargetException
@@ -798,7 +801,7 @@ public class XsdFieldTest {
     {
 
         FileTestResult result = GetJpgFile();
-                
+
         // Create file
         File fieldFile = new File(result.Field.GetCoalesceFullFilename());
         try
@@ -822,10 +825,10 @@ public class XsdFieldTest {
     public void GetCoalesceThumbnailFilenameWithLastModifiedTagNotFileTest()
     {
         XsdField field = GetTestMissionNameField();
-        
+
         assertTrue(StringHelper.IsNullOrEmpty(field.GetCoalesceThumbnailFilenameWithLastModifiedTag()));
     }
-        
+
     @Test
     public void GetCoalesceThumbnailFilenameWithLastModifiedTagTwoSubDirTest() throws NoSuchMethodException,
             SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
@@ -859,7 +862,7 @@ public class XsdFieldTest {
             IllegalAccessException, IllegalArgumentException, InvocationTargetException
     {
         FileTestResult result = GetJpgFile();
-        
+
         // Create file
         File fieldFile = new File(result.Field.GetCoalesceFullThumbnailFilename());
         try
@@ -870,7 +873,7 @@ public class XsdFieldTest {
         {
             // Catch
         }
-        
+
         assertEquals(fieldFile.getName() + "?" + fieldFile.lastModified(),
                      result.SavedField.GetCoalesceThumbnailFilenameWithLastModifiedTag());
 
@@ -883,16 +886,16 @@ public class XsdFieldTest {
     public void GetCoalesceFilenameNotFileTest()
     {
         XsdField field = GetTestMissionNameField();
-        
+
         assertTrue(StringHelper.IsNullOrEmpty(field.GetCoalesceFilename()));
     }
-        
+
     @Test
     public void GetCoalesceFilenameTest()
     {
 
         FileTestResult result = GetJpgFile();
-        
+
         assertEquals(GUIDHelper.RemoveBrackets(result.Field.GetKey()) + ".jpg", result.SavedField.GetCoalesceFilename());
 
     }
@@ -901,16 +904,16 @@ public class XsdFieldTest {
     public void GetCoalesceThumbnailFilenameNotFileTest()
     {
         XsdField field = GetTestMissionNameField();
-        
+
         assertTrue(StringHelper.IsNullOrEmpty(field.GetCoalesceThumbnailFilename()));
     }
-        
+
     @Test
     public void GetCoalesceThumbnailFilename()
     {
 
         FileTestResult result = GetJpgFile();
-        
+
         assertEquals(GUIDHelper.RemoveBrackets(result.Field.GetKey()) + "_thumb.jpg",
                      result.SavedField.GetCoalesceThumbnailFilename());
 
@@ -919,33 +922,33 @@ public class XsdFieldTest {
     @Test
     public void StringTypeTest()
     {
-    
+
         XsdField field = GetTestMissionNameField();
-        
+
         Object data = field.GetData();
-        
+
         assertTrue(data instanceof String);
         assertEquals(CoalesceTypeInstances.TESTMISSIONNAMEVALUE, data);
-        
+
         field.SetTypedValue("Changed");
-        
+
         data = null;
         data = field.GetData();
-        
+
         assertTrue(data instanceof String);
         assertEquals("Changed", data);
         assertEquals("Changed", field.GetValue());
-        
+
     }
-    
-    @Test(expected=ClassCastException.class)
+
+    @Test(expected = ClassCastException.class)
     public void SetTypedValueStringTypeTypeMismatchTest()
     {
-    
+
         XsdField field = GetTestMissionFieldByName(CoalesceTypeInstances.TESTMISSIONSTARTTIMEPATH);
-        
+
         field.SetTypedValue(UUID.randomUUID());
-        
+
     }
 
     @Test
@@ -954,14 +957,12 @@ public class XsdFieldTest {
         XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
 
         XsdRecordset parentRecordset = (XsdRecordset) entity.GetDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
-        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.Create(parentRecordset,
-                                                                    "Uri",
-                                                                    ECoalesceFieldDataTypes.UriType);
+        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.Create(parentRecordset, "Uri", ECoalesceFieldDataTypes.UriType);
 
         XsdRecord parentRecord = parentRecordset.GetItem(0);
         XsdField field = XsdField.Create(parentRecord, fileFieldDef);
         field.SetTypedValue("uri:document/pdf");
-        
+
         Object data = field.GetData();
 
         assertTrue(data instanceof String);
@@ -984,14 +985,14 @@ public class XsdFieldTest {
         XsdField field = XsdField.Create(parentRecord, fileFieldDef);
 
         assertNull(field.GetDateTimeValue());
-                
+
     }
-    
+
     @Test
     public void GetDataSetTypedValueDateTimeTypeTest()
     {
         XsdField field = GetTestMissionFieldByName(CoalesceTypeInstances.TESTMISSIONSTARTTIMEPATH);
-        
+
         Object data = field.GetData();
 
         assertTrue(data instanceof DateTime);
@@ -999,26 +1000,26 @@ public class XsdFieldTest {
 
         DateTime now = JodaDateTimeHelper.NowInUtc();
         field.SetTypedValue(now);
-        
+
         assertEquals(JodaDateTimeHelper.ToXmlDateTimeUTC(now), field.GetValue());
-        
+
         data = null;
         data = field.GetData();
-        
+
         assertTrue(data instanceof DateTime);
         assertEquals(now, data);
         assertEquals(now, field.GetDateTimeValue());
-        
+
     }
 
-    @Test(expected=ClassCastException.class)
+    @Test(expected = ClassCastException.class)
     public void SetTypedValueDateTimeTypeTypeMismatchTest()
     {
-    
+
         XsdField field = GetTestMissionNameField();
-        
+
         field.SetTypedValue(JodaDateTimeHelper.NowInUtc());
-        
+
     }
 
     @Test
@@ -1035,11 +1036,11 @@ public class XsdFieldTest {
         XsdField field = XsdField.Create(parentRecord, fileFieldDef);
 
         byte[] bytes = new byte[0];
-        
+
         assertArrayEquals(bytes, field.GetBinaryValue());
-                
+
     }
-    
+
     @Test
     public void GetDataSetTypedValueBinaryTypeTest() throws UnsupportedEncodingException
     {
@@ -1056,26 +1057,26 @@ public class XsdFieldTest {
         String byteString = "Testing String";
         byte[] dataBytes = byteString.getBytes("US-ASCII");
         field.SetTypedValue(dataBytes);
-        
+
         Object data = field.GetData();
 
         assertTrue(data instanceof byte[]);
-        assertArrayEquals(dataBytes, (byte[])data);
+        assertArrayEquals(dataBytes, (byte[]) data);
         assertArrayEquals(dataBytes, field.GetBinaryValue());
         assertEquals("VGVzdGluZyBTdHJpbmc=", field.GetValue());
 
     }
-    
-    @Test(expected=ClassCastException.class)
+
+    @Test(expected = ClassCastException.class)
     public void SetTypedValueBinaryTypeTypeMismatchTest() throws UnsupportedEncodingException
     {
-    
+
         XsdField field = GetTestMissionFieldByName(CoalesceTypeInstances.TESTMISSIONSTARTTIMEPATH);
-        
+
         String byteString = "Testing String";
         byte[] dataBytes = byteString.getBytes("US-ASCII");
         field.SetTypedValue(dataBytes);
-        
+
     }
 
     @Test
@@ -1093,29 +1094,29 @@ public class XsdFieldTest {
 
         assertFalse(field.GetBooleanValue());
         assertEquals("false", field.GetValue().toLowerCase());
-        
+
         field.SetTypedValue(true);
-        
+
         Object data = field.GetData();
 
         assertTrue(data instanceof Boolean);
         assertEquals(true, data);
         assertEquals("true", field.GetValue().toLowerCase());
         assertEquals(true, field.GetBooleanValue());
-        
+
     }
-    
-    @Test(expected=ClassCastException.class)
+
+    @Test(expected = ClassCastException.class)
     public void SetTypedValueBooleanTypeTypeMismatchTest() throws UnsupportedEncodingException
     {
-    
+
         XsdField field = GetTestMissionFieldByName(CoalesceTypeInstances.TESTMISSIONSTARTTIMEPATH);
 
         field.SetTypedValue(true);
-        
+
     }
 
-    @Test(expected=ClassCastException.class)
+    @Test(expected = ClassCastException.class)
     public void GetDataIntegerTypeNotSetTest()
     {
         XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
@@ -1129,9 +1130,9 @@ public class XsdFieldTest {
         XsdField field = XsdField.Create(parentRecord, fileFieldDef);
 
         field.GetIntegerValue();
-                
+
     }
-    
+
     @Test
     public void GetDataSetTypedValueIntegerTypeTest()
     {
@@ -1146,26 +1147,26 @@ public class XsdFieldTest {
         XsdField field = XsdField.Create(parentRecord, fileFieldDef);
 
         assertEquals("", field.GetValue());
-        
+
         field.SetTypedValue(1111);
-        
+
         Object data = field.GetData();
 
         assertTrue(data instanceof Integer);
         assertEquals(1111, data);
         assertEquals("1111", field.GetValue());
         assertEquals(1111, field.GetIntegerValue());
-        
+
     }
-    
-    @Test(expected=ClassCastException.class)
+
+    @Test(expected = ClassCastException.class)
     public void SetTypedValueIntgerTypeTypeMismatchTest() throws UnsupportedEncodingException
     {
-    
+
         XsdField field = GetTestMissionFieldByName(CoalesceTypeInstances.TESTMISSIONSTARTTIMEPATH);
 
         field.SetTypedValue(1111);
-        
+
     }
 
     @Test
@@ -1182,9 +1183,9 @@ public class XsdFieldTest {
         XsdField field = XsdField.Create(parentRecord, fileFieldDef);
 
         assertNull(field.GetGuidValue());
-                
+
     }
-    
+
     @Test
     public void GetDataSetTypedValueGuidTypeTest()
     {
@@ -1199,27 +1200,27 @@ public class XsdFieldTest {
         XsdField field = XsdField.Create(parentRecord, fileFieldDef);
 
         assertEquals("", field.GetValue());
-        
+
         UUID guid = UUID.randomUUID();
         field.SetTypedValue(guid);
-        
+
         Object data = field.GetData();
 
         assertTrue(data instanceof UUID);
         assertEquals(guid, data);
         assertEquals(GUIDHelper.GetGuidString(guid), field.GetValue());
         assertEquals(guid, field.GetGuidValue());
-        
+
     }
-    
-    @Test(expected=ClassCastException.class)
+
+    @Test(expected = ClassCastException.class)
     public void SetTypedValueGUIDTypeTypeMismatchTest() throws UnsupportedEncodingException
     {
-    
+
         XsdField field = GetTestMissionFieldByName(CoalesceTypeInstances.TESTMISSIONSTARTTIMEPATH);
 
         field.SetTypedValue(UUID.randomUUID());
-        
+
     }
 
     // -----------------------------------------------------------------------//
@@ -1249,7 +1250,7 @@ public class XsdFieldTest {
 
     }
 
-    private static XsdField GetTestMissionNameField()
+    public static XsdField GetTestMissionNameField()
     {
 
         return GetTestMissionNameField(CoalesceTypeInstances.TESTMISSION);
@@ -1285,7 +1286,8 @@ public class XsdFieldTest {
 
     }
 
-    private FileTestResult GetJpgFile() {
+    private FileTestResult GetJpgFile()
+    {
 
         XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
 
@@ -1305,18 +1307,19 @@ public class XsdFieldTest {
         XsdField savedFileField = (XsdField) desEntity.GetDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/File");
 
         return new FileTestResult(fileField, savedFileField);
-        
+
     }
-    
-    private class FileTestResult{
-        
+
+    private class FileTestResult {
+
         public XsdField Field;
         public XsdField SavedField;
-        
-        public FileTestResult(XsdField field, XsdField savedField) {
+
+        public FileTestResult(XsdField field, XsdField savedField)
+        {
             Field = field;
             SavedField = savedField;
         }
     }
-    
+
 }
