@@ -306,14 +306,20 @@ public class XsdField extends XsdFieldBase {
 
         ArrayList<XsdFieldHistory> historyList = new ArrayList<XsdFieldHistory>();
 
-        for (Map.Entry<String, XsdDataObject> childObject : _childDataObjects.entrySet())
+        // Return history items in the same order they are in the Entity
+        for (Fieldhistory fh : _entityField.getFieldhistory())
         {
-            if (childObject.getValue() instanceof XsdFieldHistory)
-            {
-                historyList.add((XsdFieldHistory) childObject.getValue());
+            String fieldKey = fh.getKey();
+            if (_childDataObjects.containsKey(fieldKey)) {
+                
+                XsdDataObject fdo = _childDataObjects.get(fieldKey);
+                
+                if (fdo instanceof XsdFieldHistory) {
+                    historyList.add((XsdFieldHistory)_childDataObjects.get(fh.getKey()));
+                }
             }
         }
-
+        
         return historyList;
     }
 

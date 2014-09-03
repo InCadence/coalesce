@@ -140,9 +140,21 @@ public class XsdFieldHistoryTest {
     @Test
     public void ConstructorPreviousHistory()
     {
-        // TODO: Need to implement
-
-        // TODO: test order
+        
+        XsdField field = XsdFieldTest.GetTestMissionFieldByName(CoalesceTypeInstances.TESTMISSIONBASE64PATH);
+        
+        field.SetSuspendHistory(true);
+        XsdFieldHistory fh = XsdFieldHistory.Create(field);
+        assertFieldHistory(field, fh);
+        
+        field.SetTypedValue(2222);
+        field.SetSuspendHistory(false);
+        
+        assertEquals(2222, field.GetIntegerValue());
+        assertEquals(1, field.GetHistory().size());
+        assertEquals(CoalesceTypeInstances.TESTMISSIONBASE64VALUE, field.GetHistory().get(0).GetIntegerValue());
+        assertEquals(fh, field.GetHistory().get(0));
+        
     }
 
     @Test

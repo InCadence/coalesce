@@ -495,6 +495,21 @@ public class XsdFieldTest {
     }
 
     @Test
+    public void PreviousHistoryOrderTest()
+    {
+        
+        XsdField field = XsdFieldTest.GetTestMissionFieldByName(CoalesceTypeInstances.TESTMISSIONBASE64PATH);
+        
+        field.SetTypedValue(1111);
+        field.SetTypedValue(2222);
+        
+        assertEquals(2222, field.GetIntegerValue());
+        assertEquals(1111, field.GetHistory().get(0).GetIntegerValue());
+        assertEquals(CoalesceTypeInstances.TESTMISSIONBASE64VALUE, field.GetHistory().get(1).GetIntegerValue());
+        
+    }
+
+    @Test
     public void GetSuspendHistoryTest() {
         
         XsdEntity mission = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
@@ -515,25 +530,63 @@ public class XsdFieldTest {
     @Test
     public void SetSuspendHistoryTrueTest() {
     
-        // TODO: add test
+        XsdField field = XsdFieldTest.GetTestMissionFieldByName(CoalesceTypeInstances.TESTMISSIONBASE64PATH);
+        
+        field.SetTypedValue(2222);
+        
+        assertEquals(2222, field.GetIntegerValue());
+        assertEquals(1, field.GetHistory().size());
+        assertEquals(CoalesceTypeInstances.TESTMISSIONBASE64VALUE, field.GetHistory().get(0).GetIntegerValue());
+        
     }
     
     @Test
     public void SetSuspendHistoryFalseTest() {
         
-        // TODO: add test
+        XsdField field = XsdFieldTest.GetTestMissionFieldByName(CoalesceTypeInstances.TESTMISSIONBASE64PATH);
+
+        field.SetSuspendHistory(true);
+        field.SetTypedValue(2222);
+        
+        assertEquals(2222, field.GetIntegerValue());
+        assertTrue(field.GetHistory().isEmpty());
+        
     }
     
     @Test
     public void SetSuspendHistoryFalseBinaryTest() {
         
-        // TODO: add test
+        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+
+        XsdRecordset parentRecordset = (XsdRecordset) entity.GetDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.Create(parentRecordset,
+                                                                    "Binary",
+                                                                    ECoalesceFieldDataTypes.BinaryType);
+
+        XsdRecord parentRecord = parentRecordset.GetItem(0);
+        XsdField field = XsdField.Create(parentRecord, fileFieldDef);
+
+        assertTrue(field.GetHistory().isEmpty());
+        
+        field.SetValue("Something");
+        
+        assertTrue(field.GetHash().isEmpty());
+        
+
     }
     
     @Test
     public void SetSuspendHistoryFalseFileTest() {
         
-        // TODO: add test
+        FileTestResult result = GetJpgFile();
+        
+        XsdField field = result.SavedField;
+        assertTrue(field.GetHistory().isEmpty());
+        
+        field.SetValue("Something");
+        
+        assertTrue(field.GetHash().isEmpty());
+        
     }
     
     @Test
