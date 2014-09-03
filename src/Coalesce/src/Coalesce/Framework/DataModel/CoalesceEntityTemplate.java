@@ -44,10 +44,11 @@ public class CoalesceEntityTemplate {
     {
         try
         {
-            // TODO: need loadXml function
+            //TODO: verify this (loadXMLFrom) is a replacement for LoadXml function
             // // Create DataObjectDocument
             Document XmlDoc = null;
             // XmlDoc.LoadXml(EntityTemplateXml);
+            XmlDoc = XmlHelper.loadXMLFrom(EntityTemplateXml);
 
             // Call Peer.
             return Initialize(XmlDoc);

@@ -58,9 +58,7 @@ public class CoalesceEntitySyncShellTest {
     {
         XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
         CoalesceEntitySyncShell shell = new CoalesceEntitySyncShell();
-        
-        // TODO: TJ Fix Code
-        //shell.Initialize(entity.GetDataObjectDocument());
+        shell.Initialize(entity.ToXml()); //(entity.GetDataObjectDocument());
         
         assertNotNull("Failed to initialize mission entity", shell);
         assertEquals(((XsdEntity) shell.GetEntityNode()).GetEntityId(), entity.GetEntityId());
@@ -95,6 +93,12 @@ public class CoalesceEntitySyncShellTest {
     {
         try
         {
+//            XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+//            CoalesceEntitySyncShell shell = new CoalesceEntitySyncShell();
+//            shell.InitializeFromEntity(entity);
+//            
+//            GetRequiredChangesSyncShell
+            
             fail("Not Implemented");
         }
         catch (Exception ex)
