@@ -150,7 +150,7 @@ public class CoalesceEntityTemplate {
             // return Success
             return CallResult.successCallResult;
 */
-            return false;
+            return true;
         }
         catch (Exception ex)
         {

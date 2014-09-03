@@ -25,13 +25,15 @@ public class CoalesceEntityTemplateTest {
 
             XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
 
-            CoalesceEntityTemplate EntTemp = new CoalesceEntityTemplate();
+            CoalesceEntityTemplate template = new CoalesceEntityTemplate();
 
             // Initialize
-            EntTemp.InitializeFromEntity(entity);
+            fail("Not Implemented");
+            template.InitializeFromEntity(entity);
             
-            String title = entity.GetTitle();
-            assertEquals("NORTHCOM Volunteer Background Checks, NORTHCOM Volunteer Background Checks", title);
+            String templateName = template.GetName();
+            assertNotNull("Failed to initialize mission entity", template);
+            assertEquals("TREXMission", templateName);
 
         }
         catch (Exception ex)
