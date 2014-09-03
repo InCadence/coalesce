@@ -11,13 +11,14 @@ import javax.xml.namespace.QName;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 
-import Coalesce.Common.Helpers.JodaDateTimeHelper;
-import Coalesce.Common.Helpers.XmlHelper;
-import Coalesce.Framework.GeneratedJAXB.*;
-import Coalesce.Framework.GeneratedJAXB.Entity.Linkagesection.Linkage;
-import Coalesce.Framework.GeneratedJAXB.Entity.Section;
 import unity.core.runtime.CallResult;
 import unity.core.runtime.CallResult.CallResults;
+import Coalesce.Common.Helpers.JodaDateTimeHelper;
+import Coalesce.Common.Helpers.XmlHelper;
+import Coalesce.Framework.GeneratedJAXB.Entity;
+import Coalesce.Framework.GeneratedJAXB.Entity.Linkagesection;
+import Coalesce.Framework.GeneratedJAXB.Entity.Linkagesection.Linkage;
+import Coalesce.Framework.GeneratedJAXB.Entity.Section;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -122,8 +123,8 @@ public class XsdEntity extends XsdDataObject {
     {
 
         this._entity = new Entity();
-        this._entity.setLinkagesection(new Entity.Linkagesection());
-        this._entity.getSection();
+        // this.CreateLinkageSection();
+        // this._entity.getSection();
 
         if (!super.Initialize()) return false;
 
@@ -192,7 +193,7 @@ public class XsdEntity extends XsdDataObject {
     {
         return "entity";
     }
-    
+
     public String GetSource()
     {
         return _entity.getSource();
@@ -413,6 +414,11 @@ public class XsdEntity extends XsdDataObject {
 
     }
 
+    public XsdSection CreateSection(String name, boolean noIndex)
+    {
+        return XsdSection.Create(this, name, noIndex);
+    }
+
     public XsdSection CreateSection(String name)
     {
         // TODO: Check that this actually maps to the Entity.Section
@@ -432,7 +438,7 @@ public class XsdEntity extends XsdDataObject {
                     return (XsdLinkageSection) child;
                 }
             }
-
+            
             return null;
 
         }
@@ -746,12 +752,9 @@ public class XsdEntity extends XsdDataObject {
         }
     }
 
-    public CallResult MarkDeleted()
+    public void MarkAsDeleted()
     {
-
         this.SetStatus(ECoalesceDataObjectStatus.DELETED);
-
-        return CallResult.successCallResult;
     }
 
     // TODO: Implement Syncshell
@@ -875,7 +878,15 @@ public class XsdEntity extends XsdDataObject {
 
     protected Entity.Linkagesection GetEntityLinkageSection()
     {
-        return _entity.getLinkagesection();
+        Linkagesection linkageSection = _entity.getLinkagesection();
+
+        if (linkageSection == null)
+        {
+            linkageSection = new Entity.Linkagesection();
+            this._entity.setLinkagesection(linkageSection);
+        }
+
+        return linkageSection;
     }
 
     protected List<Section> GetEntitySections()

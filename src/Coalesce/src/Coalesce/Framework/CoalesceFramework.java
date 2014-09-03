@@ -44,7 +44,7 @@ public class CoalesceFramework {
 
     protected ICoalescePersistor _Persister;
     protected boolean _IsInitialized = false;
-    protected String _imageFormat = CoalesceSettings.GetImageFormat();
+    protected String _imageFormat;
 
     /*--------------------------------------------------------------------------
     	Public Functions
@@ -55,6 +55,7 @@ public class CoalesceFramework {
 
         this._Persister = persister;
         this._IsInitialized = true;
+        this._imageFormat = CoalesceSettings.GetImageFormat();
 
         return true;
     }

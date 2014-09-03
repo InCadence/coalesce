@@ -31,149 +31,173 @@ import Coalesce.Framework.GeneratedJAXB.Entity.Linkagesection.Linkage;
 
 public class XsdLinkageSection extends XsdDataObject {
 
-	private Linkagesection _entityLinkageSection;
+    private Linkagesection _entityLinkageSection;
 
-	// -----------------------------------------------------------------------//
-	// Factory and Initialization
-	// -----------------------------------------------------------------------//
+    // -----------------------------------------------------------------------//
+    // Factory and Initialization
+    // -----------------------------------------------------------------------//
 
-	public static XsdLinkageSection Create(XsdEntity parent) {
+    public static XsdLinkageSection Create(XsdEntity parent)
+    {
 
-		return XsdLinkageSection.Create(parent, false);
+        return XsdLinkageSection.Create(parent, true);
 
-	}
+    }
 
-	public static XsdLinkageSection Create(XsdEntity parent, Boolean noIndex) {
+    public static XsdLinkageSection Create(XsdEntity parent, boolean noIndex)
+    {
 
-		XsdLinkageSection linkageSection = new XsdLinkageSection();
-		if (!linkageSection.Initialize(parent))
-			return null;
+        XsdLinkageSection linkageSection = new XsdLinkageSection();
+        if (!linkageSection.Initialize(parent)) return null;
 
-		linkageSection.SetName("Linkages");
-		linkageSection.SetNoIndex(noIndex);
+        linkageSection.SetName("Linkages");
+        linkageSection.SetNoIndex(noIndex);
 
-		// Add to parent's child collection
-		if (!parent._childDataObjects.containsKey(linkageSection.GetKey())) {
-			parent._childDataObjects.put(linkageSection.GetKey(), linkageSection);
-		}
+        // Add to parent's child collection
+        if (!parent._childDataObjects.containsKey(linkageSection.GetKey()))
+        {
+            parent._childDataObjects.put(linkageSection.GetKey(), linkageSection);
+        }
 
-		return linkageSection;
+        return linkageSection;
 
-	}
+    }
 
-	public boolean Initialize(XsdEntity parent) {
+    public boolean Initialize(XsdEntity parent)
+    {
 
-		// Set References
-		_parent = parent;
-		_entityLinkageSection = parent.GetEntityLinkageSection();
+        // Set References
+        _parent = parent;
+        _entityLinkageSection = parent.GetEntityLinkageSection();
 
-		if (_entityLinkageSection != null) {
+        if (_entityLinkageSection != null)
+        {
 
-			for (Linkage childLinkage : _entityLinkageSection.getLinkage()) {
+            // Add Linkages to Child List
+            for (Linkage childLinkage : _entityLinkageSection.getLinkage())
+            {
 
-				XsdLinkage newLinkage = new XsdLinkage();
-				if (!newLinkage.Initialize(this, childLinkage))
-					continue;
+                XsdLinkage newLinkage = new XsdLinkage();
+                if (!newLinkage.Initialize(this, childLinkage)) continue;
 
-				if (!_childDataObjects.containsKey(newLinkage.GetKey())) {
-					_childDataObjects.put(newLinkage.GetKey(), newLinkage);
-				}
-			}
+                if (!_childDataObjects.containsKey(newLinkage.GetKey()))
+                {
+                    _childDataObjects.put(newLinkage.GetKey(), newLinkage);
+                }
+            }
 
-			return super.Initialize();
-		} else {
-			return false;
-		}
+            return super.Initialize();
+        }
+        else
+        {
+            return false;
+        }
 
-	}
+    }
 
-	// -----------------------------------------------------------------------//
-	// Public Methods
-	// -----------------------------------------------------------------------//
+    // -----------------------------------------------------------------------//
+    // Public Methods
+    // -----------------------------------------------------------------------//
 
-	@Override
-    protected String GetObjectKey() {
-		return _entityLinkageSection.getKey();
-	}
+    @Override
+    protected String GetObjectKey()
+    {
+        return _entityLinkageSection.getKey();
+    }
 
-	@Override
-    public void SetObjectKey(String value) {
-		_entityLinkageSection.setKey(value);
-	}
+    @Override
+    public void SetObjectKey(String value)
+    {
+        _entityLinkageSection.setKey(value);
+    }
 
-	@Override
-    public String GetName() {
-		return _entityLinkageSection.getName();
-	}
+    @Override
+    public String GetName()
+    {
+        return _entityLinkageSection.getName();
+    }
 
-	@Override
-    public void SetName(String value) {
-		_entityLinkageSection.setName(value);
-	}
+    @Override
+    public void SetName(String value)
+    {
+        _entityLinkageSection.setName(value);
+    }
 
     @Override
     public String getType()
     {
         return "linkagesection";
     }
-    
-	public XsdLinkage CreateLinkage() {
-		return XsdLinkage.Create(this);
-	}
 
-	public String ToXml() {
-		return XmlHelper.Serialize(_entityLinkageSection);
-	}
+    public XsdLinkage CreateLinkage()
+    {
+        return XsdLinkage.Create(this);
+    }
 
-	public DateTime GetDateCreated() {
-		try {
+    public String ToXml()
+    {
+        return XmlHelper.Serialize(_entityLinkageSection);
+    }
 
-			// return new
-			// SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityLinkageSection.getDatecreated());
-			return _entityLinkageSection.getDatecreated();
+    public DateTime GetDateCreated()
+    {
+        try
+        {
 
-		} catch (Exception ex) {
-			CallResult.log(CallResults.FAILED_ERROR, ex, this);
-			return null;
-		}
-	}
+            // return new
+            // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityLinkageSection.getDatecreated());
+            return _entityLinkageSection.getDatecreated();
 
-	@Override
-    public void SetDateCreated(DateTime value) {
-			// SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
-			_entityLinkageSection.setDatecreated(value);
-	}
+        }
+        catch (Exception ex)
+        {
+            CallResult.log(CallResults.FAILED_ERROR, ex, this);
+            return null;
+        }
+    }
 
-	@Override
-    public DateTime GetLastModified() {
-			// SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityLinkageSection.getLastmodified());
-			return _entityLinkageSection.getLastmodified();
-	}
+    @Override
+    public void SetDateCreated(DateTime value)
+    {
+        // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
+        _entityLinkageSection.setDatecreated(value);
+    }
 
-	@Override
-    protected void SetObjectLastModified(DateTime value) {
-			// SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
-			_entityLinkageSection.setLastmodified(value);
-	}
+    @Override
+    public DateTime GetLastModified()
+    {
+        // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityLinkageSection.getLastmodified());
+        return _entityLinkageSection.getLastmodified();
+    }
 
-	// -----------------------------------------------------------------------//
-	// Protected Methods
-	// -----------------------------------------------------------------------//
+    @Override
+    protected void SetObjectLastModified(DateTime value)
+    {
+        // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
+        _entityLinkageSection.setLastmodified(value);
+    }
 
-	@Override
-    protected String GetObjectStatus() {
-			return _entityLinkageSection.getStatus();
-	}
+    // -----------------------------------------------------------------------//
+    // Protected Methods
+    // -----------------------------------------------------------------------//
 
-	@Override
-    protected void SetObjectStatus(String status) {
-			_entityLinkageSection.setStatus(status);
-	}
+    @Override
+    protected String GetObjectStatus()
+    {
+        return _entityLinkageSection.getStatus();
+    }
 
-	protected Linkagesection GetEntityLinkageSection() {
-		return _entityLinkageSection;
-	}
-	
+    @Override
+    protected void SetObjectStatus(String status)
+    {
+        _entityLinkageSection.setStatus(status);
+    }
+
+    protected Linkagesection GetEntityLinkageSection()
+    {
+        return _entityLinkageSection;
+    }
+
     @Override
     protected Map<QName, String> getAttributes()
     {

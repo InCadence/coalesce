@@ -55,9 +55,9 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
 
     @Override
     public abstract DateTime GetLastModified();
-    
-    @Override 
-    public abstract String getType(); 
+
+    @Override
+    public abstract String getType();
 
     public abstract String ToXml();
 
@@ -288,7 +288,9 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
 
                 for (XsdDataObject child : _childDataObjects.values())
                 {
-                    if (child.GetName().equals(names[1]))
+                    String childName = child.GetName();
+
+                    if (childName != null && childName.equals(names[1]))
                     {
                         dataObject = child;
                         break;

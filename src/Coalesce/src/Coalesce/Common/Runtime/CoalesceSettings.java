@@ -39,7 +39,7 @@ public class CoalesceSettings extends SettingsBase {
 	public static String GetConfigurationFileName() {
 		
 		if (_defaultApplicationName == null) {
-			return ".Coalesce.config";
+			return "Coalesce.config";
 		} else {
 			return _defaultApplicationName + ".Coalesce.config";
 		}
