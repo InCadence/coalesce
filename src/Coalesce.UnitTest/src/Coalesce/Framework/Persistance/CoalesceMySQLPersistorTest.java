@@ -7,6 +7,8 @@ import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import unity.connector.local.LocalConfigurationsConnector;
+import Coalesce.Common.Runtime.CoalesceSettings;
 import Coalesce.Framework.CoalesceFramework;
 import Coalesce.Framework.DataModel.ECoalesceFieldDataTypes;
 import Coalesce.Framework.DataModel.XsdEntity;
@@ -49,6 +51,8 @@ public class CoalesceMySQLPersistorTest {
     public static void Initialize()
     {
 
+        CoalesceSettings.Initialize(new LocalConfigurationsConnector());
+        
         serCon = new ServerConn();
         serCon.setURL("jdbc:mysql://localhost:3306/coalescedatabase");
         serCon.setUser("root");

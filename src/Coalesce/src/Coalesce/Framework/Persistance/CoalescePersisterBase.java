@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 
+import unity.core.runtime.CallResult;
+import unity.core.runtime.CallResult.CallResults;
 import Coalesce.Framework.DataModel.CoalesceEntityTemplate;
 import Coalesce.Framework.DataModel.XsdEntity;
 
@@ -24,7 +26,7 @@ import Coalesce.Framework.DataModel.XsdEntity;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-public class CoalescePersisterBase implements ICoalescePersistor {
+public abstract class CoalescePersisterBase implements ICoalescePersistor {
 
     /*--------------------------------------------------------------------------
     	Private Member Variables
@@ -49,8 +51,51 @@ public class CoalescePersisterBase implements ICoalescePersistor {
     @Override
     public boolean SetEntity(XsdEntity entity, boolean AllowRemoval)
     {
-        // TODO Auto-generated method stub
-        return false;
+
+        try
+        {
+            boolean isSuccessful = false;
+
+            // Cacher Disabled or not an Entity
+            if (this._Cacher == null || entity.getType().toLowerCase().equals("entity"))
+            {
+                // Yes; Persist and Flatten Now
+                isSuccessful = this.FlattenObject(entity, AllowRemoval);
+            }
+            else
+            {
+                // Delayed Persisting and Space Available?
+                if (this._Cacher.getSupportsDelayedSave() && this._Cacher.getState() == ECoalesceCacheStates.SPACE_AVAILABLE)
+                {
+                    // Yes; Only Flatten Core Elements
+                    isSuccessful = this.FlattenCore(entity, AllowRemoval);
+                }
+                else
+                {
+                    // No; Persist and Flatten Entity Now
+                    isSuccessful = this.FlattenObject(entity, AllowRemoval);
+                }
+
+                // If Successful Add to Cache
+                if (isSuccessful) isSuccessful = this._Cacher.StoreEntity(entity);
+
+            }
+
+            return isSuccessful;
+        }
+        catch (Exception ex)
+        {
+            CallResult.log(CallResults.FAILED_ERROR, ex, this);
+            return false;
+        }
+
+    }
+
+    protected abstract boolean FlattenObject(XsdEntity entity, boolean AllowRemoval) throws Exception;
+
+    protected boolean FlattenCore(XsdEntity entity, boolean AllowRemoval) throws Exception
+    {
+        return this.FlattenObject(entity, AllowRemoval);
     }
 
     @Override
