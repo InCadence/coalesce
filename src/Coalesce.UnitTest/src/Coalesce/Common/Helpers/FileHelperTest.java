@@ -114,8 +114,8 @@ public class FileHelperTest {
 
         String filename = CallGetBaseFilenameWithFullDirectoryPathForKey(_binaryFileStoreBasePath, 1, GUID, false);
 
-        assertEquals(FilenameUtils.concat(_binaryFileStoreBasePath, GUID.substring(0, 1).toUpperCase()
-                             + "\\" + GUID.toUpperCase()),
+        assertEquals(FilenameUtils.concat(_binaryFileStoreBasePath,
+                                          GUID.substring(0, 1).toUpperCase() + "\\" + GUID.toUpperCase()),
                      filename);
     }
 
@@ -126,8 +126,8 @@ public class FileHelperTest {
 
         String filename = CallGetBaseFilenameWithFullDirectoryPathForKey(_binaryFileStoreBasePath, 35, GUID, false);
 
-        assertEquals(FilenameUtils.concat(_binaryFileStoreBasePath, GUID.substring(0, 35).toUpperCase()
-                             + "\\" + GUID.toUpperCase()),
+        assertEquals(FilenameUtils.concat(_binaryFileStoreBasePath,
+                                          GUID.substring(0, 35).toUpperCase() + "\\" + GUID.toUpperCase()),
                      filename);
     }
 

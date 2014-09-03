@@ -8,6 +8,7 @@ import org.joda.time.DateTime;
 
 import unity.core.runtime.CallResult;
 import unity.core.runtime.CallResult.CallResults;
+import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.Helpers.XmlHelper;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record.Field;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record.Field.Fieldhistory;
@@ -55,28 +56,24 @@ public class XsdFieldHistory extends XsdFieldBase {
         {
 
             // Set References
-            Fieldhistory newFieldHistory = new Fieldhistory();
-            parent.GetEntityFieldHistories().add(newFieldHistory);
+            XsdFieldHistory newFieldHistory = new XsdFieldHistory();
+            if (!newFieldHistory.Initialize(parent)) return null;
 
-            // TODO: What is this part?
             // Copy attributes from parent node
-            XsdFieldHistory fieldHistory = new XsdFieldHistory();
-            if (!fieldHistory.Initialize(parent, newFieldHistory)) return null;
+            newFieldHistory.SetAttributes(parent);
 
-            fieldHistory.SetAttributes(parent._entityField);
-
-            fieldHistory.SetPreviousHistoryKey(parent.GetPreviousHistoryKey());
+            newFieldHistory.SetPreviousHistoryKey(parent.GetPreviousHistoryKey());
 
             // Append to parent's child node collection
-            parent.GetEntityFieldHistories().add(fieldHistory._entityFieldHistory);
+            parent.GetEntityFieldHistories().add(0, newFieldHistory._entityFieldHistory);
 
             // Add to Parent's Child Collection
-            if (!parent._childDataObjects.containsKey(fieldHistory.GetKey()))
+            if (!parent._childDataObjects.containsKey(newFieldHistory.GetKey()))
             {
-                parent._childDataObjects.put(fieldHistory.GetKey(), fieldHistory);
+                parent._childDataObjects.put(newFieldHistory.GetKey(), newFieldHistory);
             }
 
-            return fieldHistory;
+            return newFieldHistory;
 
         }
         catch (Exception ex)
@@ -85,6 +82,13 @@ public class XsdFieldHistory extends XsdFieldBase {
         }
     }
 
+    private boolean Initialize(XsdField parent) {
+        
+        Fieldhistory entityFieldHistory = new Fieldhistory();
+        
+        return Initialize(parent, entityFieldHistory);
+        
+    }
     public boolean Initialize(XsdField parent, Fieldhistory fieldHistory)
     {
 
@@ -115,7 +119,7 @@ public class XsdFieldHistory extends XsdFieldBase {
     @Override
     public String GetName()
     {
-        return _entityFieldHistory.getName();
+        return GetStringElement(_entityFieldHistory.getName());
     }
 
     @Override
@@ -142,7 +146,7 @@ public class XsdFieldHistory extends XsdFieldBase {
 
     public String GetDataType()
     {
-        return _entityFieldHistory.getDatatype();
+        return GetStringElement(_entityFieldHistory.getDatatype());
     }
 
     public void SetDataType(String value)
@@ -152,7 +156,7 @@ public class XsdFieldHistory extends XsdFieldBase {
 
     public String GetLabel()
     {
-        return _entityFieldHistory.getLabel();
+        return GetStringElement(_entityFieldHistory.getLabel());
     }
 
     public void SetLabel(String value)
@@ -179,7 +183,7 @@ public class XsdFieldHistory extends XsdFieldBase {
 
     public String GetModifiedBy()
     {
-        return _entityFieldHistory.getModifiedby();
+        return GetStringElement(_entityFieldHistory.getModifiedby());
     }
 
     public void SetModifiedBy(String value)
@@ -189,7 +193,7 @@ public class XsdFieldHistory extends XsdFieldBase {
 
     public String GetModifiedByIP()
     {
-        return _entityFieldHistory.getModifiedbyip();
+        return GetStringElement(_entityFieldHistory.getModifiedbyip());
     }
 
     public void SetModifiedByIP(String value)
@@ -210,7 +214,7 @@ public class XsdFieldHistory extends XsdFieldBase {
     public String GetPreviousHistoryKey()
     {
         String prevHistKey = _entityFieldHistory.getPrevioushistorykey();
-        if (prevHistKey.equals(""))
+        if (StringHelper.IsNullOrEmpty(prevHistKey))
         {
             return "00000000-0000-0000-0000-000000000000";
         }
@@ -227,33 +231,27 @@ public class XsdFieldHistory extends XsdFieldBase {
 
     public String GetFilename()
     {
-        return _entityFieldHistory.getFilename();
+        return GetStringElement(_entityFieldHistory.getFilename());
     }
 
     public void SetFilename(String value)
     {
-        String oldFilename = _entityFieldHistory.getFilename();
-
         _entityFieldHistory.setFilename(value);
-        SetChanged(oldFilename, value);
     }
 
     public String GetExtension()
     {
-        return _entityFieldHistory.getExtension();
+        return GetStringElement(_entityFieldHistory.getExtension());
     }
 
     public void SetExtension(String value)
     {
-        String oldExtension = _entityFieldHistory.getExtension();
-
         _entityFieldHistory.setExtension(value.replace(".", ""));
-        SetChanged(oldExtension, value);
     }
 
     public String GetMimeType()
     {
-        return _entityFieldHistory.getMimetype();
+        return GetStringElement(_entityFieldHistory.getMimetype());
     }
 
     public void SetMimeType(String value)
@@ -263,15 +261,12 @@ public class XsdFieldHistory extends XsdFieldBase {
 
     public String GetHash()
     {
-        return _entityFieldHistory.getHash();
+        return GetStringElement(_entityFieldHistory.getHash());
     }
 
     public void SetHash(String value)
     {
-        String oldHash = _entityFieldHistory.getHash();
-
         _entityFieldHistory.setHash(value);
-        SetChanged(oldHash, value);
     }
 
     /*
@@ -319,30 +314,39 @@ public class XsdFieldHistory extends XsdFieldBase {
         _entityFieldHistory.setLastmodified(value);
     }
 
-    private CallResult SetAttributes(Field field)
+    private CallResult SetAttributes(XsdField field)
     {
         try
         {
 
-            _entityFieldHistory.setKey(field.getKey());
-            _entityFieldHistory.setName(field.getName());
-            _entityFieldHistory.setValue(field.getValue());
-            _entityFieldHistory.setDatatype(field.getDatatype());
-            _entityFieldHistory.setLabel(field.getLabel());
-            _entityFieldHistory.setSize(field.getSize());
-            _entityFieldHistory.setModifiedby(field.getModifiedby());
-            _entityFieldHistory.setModifiedbyip(field.getModifiedbyip());
-            _entityFieldHistory.setClassificationmarking(field.getClassificationmarking());
-            _entityFieldHistory.setPrevioushistorykey(field.getPrevioushistorykey());
-            _entityFieldHistory.setFilename(field.getFilename());
-            _entityFieldHistory.setExtension(field.getExtension());
-            _entityFieldHistory.setMimetype(field.getMimetype());
-            _entityFieldHistory.setHash(field.getHash());
-            _entityFieldHistory.setValue(field.getValue());
-            _entityFieldHistory.setDatecreated(field.getDatecreated());
-            _entityFieldHistory.setLastmodified(field.getLastmodified());
-            _entityFieldHistory.setStatus(field.getStatus());
+            Field entityField = field._entityField;
+            
+            _entityFieldHistory.setName(entityField.getName());
+            _entityFieldHistory.setValue(entityField.getValue());
+            _entityFieldHistory.setDatatype(entityField.getDatatype());
+            _entityFieldHistory.setLabel(entityField.getLabel());
+            _entityFieldHistory.setSize(entityField.getSize());
+            _entityFieldHistory.setModifiedby(entityField.getModifiedby());
+            _entityFieldHistory.setModifiedbyip(entityField.getModifiedbyip());
+            _entityFieldHistory.setClassificationmarking(entityField.getClassificationmarking());
+            _entityFieldHistory.setPrevioushistorykey(entityField.getPrevioushistorykey());
+            _entityFieldHistory.setFilename(entityField.getFilename());
+            _entityFieldHistory.setExtension(entityField.getExtension());
+            _entityFieldHistory.setMimetype(entityField.getMimetype());
+            _entityFieldHistory.setHash(entityField.getHash());
+            _entityFieldHistory.setValue(entityField.getValue());
+            _entityFieldHistory.setDatecreated(entityField.getDatecreated());
+            _entityFieldHistory.setLastmodified(entityField.getLastmodified());
+            _entityFieldHistory.setStatus(entityField.getStatus());
 
+            Map<QName, String> otherAttributes = getAttributes();
+            
+            for (Map.Entry<QName, String> otherAttr : field.getAttributes().entrySet())
+            {
+                
+                otherAttributes.put(otherAttr.getKey(), otherAttr.getValue());
+            }
+            
             return CallResult.successCallResult;
 
         }

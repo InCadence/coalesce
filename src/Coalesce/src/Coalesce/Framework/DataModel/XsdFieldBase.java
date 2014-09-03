@@ -1,8 +1,5 @@
 package Coalesce.Framework.DataModel;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.lang.NotImplementedException;
@@ -12,10 +9,8 @@ import org.joda.time.DateTime;
 import unity.core.runtime.CallResult;
 import unity.core.runtime.CallResult.CallResults;
 import Coalesce.Common.Classification.Marking;
-import Coalesce.Common.Helpers.FileHelper;
 import Coalesce.Common.Helpers.GUIDHelper;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
-import Coalesce.Common.Helpers.StringHelper;
 
 public abstract class XsdFieldBase extends XsdDataObject {
 
@@ -27,10 +22,9 @@ public abstract class XsdFieldBase extends XsdDataObject {
 
     public String GetValueWithMarking()
     {
-        // TODO: Test
         String val = GetValue();
         Marking mrk = new Marking(GetClassificationMarking());
-        return mrk.ToPortionString() + " " + val;
+        return mrk.toString() + " " + val;
     }
 
     public String ToString()
@@ -69,7 +63,6 @@ public abstract class XsdFieldBase extends XsdDataObject {
 
     public String GetPortionMarking()
     {
-        // TODO: Test
         Marking mrk = new Marking(GetClassificationMarking());
         return mrk.ToPortionString();
     }
@@ -107,124 +100,6 @@ public abstract class XsdFieldBase extends XsdDataObject {
     public void SetSuspendHistory(boolean value)
     {
         this._suspendHistory = value;
-    }
-
-    public String GetCoalesceFullFilename()
-    {
-
-        if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) != ECoalesceFieldDataTypes.FileType)
-        {
-            return "";
-        }
-
-        String baseFilename = FileHelper.GetBaseFilenameWithFullDirectoryPathForKey(GetKey());
-
-        return baseFilename + "." + GetExtension();
-
-    }
-
-    public String GetCoalesceFullThumbnailFilename()
-    {
-
-        if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) != ECoalesceFieldDataTypes.FileType)
-        {
-            return "";
-        }
-
-        String baseFilename = FileHelper.GetBaseFilenameWithFullDirectoryPathForKey(GetKey());
-
-        return baseFilename + "_thumb.jpg";
-
-    }
-
-    public String GetCoalesceFilenameWithLastModifiedTag()
-    {
-        try
-        {
-
-            // TODO: Test
-            String fullPath = GetCoalesceFullFilename();
-            File theFile = new File(fullPath);
-            long lastModifiedTicks = theFile.lastModified();
-
-            return theFile.getName() + "?" + lastModifiedTicks;
-
-        }
-        catch (Exception ex)
-        {
-            return this.GetCoalesceFilename();
-        }
-    }
-
-    public String GetCoalesceThumbnailFilenameWithLastModifiedTag()
-    {
-        try
-        {
-
-            // TODO: Test
-            String fullThumbPath = GetCoalesceFullThumbnailFilename();
-            File theFile = new File(fullThumbPath);
-            long lastModifiedTicks = theFile.lastModified();
-
-            return theFile.getName() + "?" + lastModifiedTicks;
-
-        }
-        catch (Exception ex)
-        {
-            return this.GetCoalesceThumbnailFilename();
-        }
-    }
-
-    public String GetCoalesceFilename()
-    {
-
-        if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) == ECoalesceFieldDataTypes.FileType)
-        {
-
-            String baseFilename = GetKey();
-            baseFilename = GUIDHelper.RemoveBrackets(baseFilename);
-
-            return baseFilename + "." + GetExtension();
-
-        }
-        else
-        {
-            return "";
-        }
-    }
-
-    public String GetCoalesceThumbnailFilename()
-    {
-
-        if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) == ECoalesceFieldDataTypes.FileType)
-        {
-
-            String baseFilename = this.GetKey();
-            baseFilename = GUIDHelper.RemoveBrackets(baseFilename);
-
-            return baseFilename + "_thumb.jpg";
-
-        }
-        else
-        {
-            return "";
-        }
-    }
-
-    public ArrayList<XsdFieldHistory> GetHistory()
-    {
-
-        ArrayList<XsdFieldHistory> historyList = new ArrayList<XsdFieldHistory>();
-
-        for (Map.Entry<String, XsdDataObject> childObject : _childDataObjects.entrySet())
-        {
-            if (childObject.getValue() instanceof XsdFieldHistory)
-            {
-                historyList.add((XsdFieldHistory) childObject.getValue());
-            }
-        }
-
-        return historyList;
     }
 
     public Object GetData()
@@ -815,157 +690,4 @@ public abstract class XsdFieldBase extends XsdDataObject {
 
     }
 
-    // -----------------------------------------------------------------------//
-    // protected Methods
-    // -----------------------------------------------------------------------//
-
-    protected CallResult SetChanged(Object oldValue, Object newValue)
-    {
-        try
-        {
-
-            // Does the new value differ from the existing?
-            if ((oldValue == null && newValue != null) || !oldValue.equals(newValue))
-            {
-
-                // Yes; should we create a FieldHistory entry to reflect the
-                // change?
-                // We create FieldHistory entry if History is not Suspended; OR
-                // if DataType is binary; OR if DateCreated=LastModified and
-                // Value is unset
-                if (!this.GetSuspendHistory())
-                {
-
-                    switch (GetDataType().toUpperCase()) {
-
-                    case "BINARY":
-                    case "FILE":
-                        // Don't Create History Entry for these types
-                        break;
-                    default:
-
-                        // Does LastModified = DateCreated?
-                        if (GetLastModified().compareTo(GetDateCreated()) != 0)
-                        {
-
-                            // No; Create History Entry
-                            XsdFieldHistory fieldHistory = XsdFieldHistory.Create(this);
-                            if (fieldHistory == null) return CallResult.failedCallResult;
-
-                            SetPreviousHistoryKey(fieldHistory.GetKey());
-                        }
-
-                    }
-
-                }
-
-                // Set LastModified
-                DateTime utcNow = JodaDateTimeHelper.NowInUtc();
-                if (utcNow != null) SetLastModified(utcNow);
-
-            }
-
-            return CallResult.successCallResult;
-
-        }
-        catch (Exception ex)
-        {
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
-        }
-    }
-
-    public CallResult Change(String value, String marking, String user, String ip)
-    {
-        try
-        {
-
-            // Does the new value differ from the existing?
-            if (!(GetValue().equals(value) && GetClassificationMarking().equals(marking)))
-            {
-
-                // Yes; should we create a FieldHistory entry to reflect the
-                // change?
-                // We create FieldHistory entry if History is not Suspended; OR
-                // if DataType is binary; OR if DateCreated=LastModified and
-                // Value is unset
-                if (!GetSuspendHistory())
-                {
-
-                    // Does LastModified = DateCreated?
-                    if (GetLastModified().compareTo(GetDateCreated()) != 0)
-                    {
-                        // No; Create History Entry
-                        // TODO: Something just feels wrong about declaring one
-                        // CoalesceFieldHistory to create another.
-                        XsdFieldHistory fieldHistory = XsdFieldHistory.Create(this);
-                        if (fieldHistory == null) return CallResult.failedCallResult;
-
-                        SetPreviousHistoryKey(fieldHistory.GetKey());
-                    }
-                }
-
-                // Change Values
-                if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) == ECoalesceFieldDataTypes.DateTimeType
-                        && !StringHelper.IsNullOrEmpty(value))
-                {
-
-                    DateTime valueDate = JodaDateTimeHelper.FromXmlDateTimeUTC(value);
-
-                    SetTypedValue(valueDate);
-
-                }
-                else
-                {
-                    SetValue(value);
-                }
-
-                SetClassificationMarking(marking);
-                SetModifiedBy(user);
-                SetModifiedByIP(ip);
-
-                // Set LastModified
-                DateTime utcNow = JodaDateTimeHelper.NowInUtc();
-                if (utcNow != null) SetLastModified(utcNow);
-
-            }
-
-            return CallResult.successCallResult;
-
-        }
-        catch (Exception ex)
-        {
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
-        }
-    }
-
-    // TODO: Unused. Attribute set should be handled by each property.
-    /*
-     * protected CallResult ChangeDate(String AttributeName, Date Value) { try{ CallResult rst;
-     * 
-     * //TODO: XMLHelper // Does the new value differ from the existing? // if (_XmlHelper.GetAttribute(this._DataObjectNode,
-     * AttributeName) != Value) {
-     * 
-     * // Yes; should we create a FieldHistory entry to reflect the change? // We create FieldHistory entry if History is not
-     * Suspended; OR if DataType is binary; OR if DateCreated=LastModified and Value is unset if (!GetSuspendHistory()) {
-     * 
-     * switch (this.DataType.toUpperCase()){
-     * 
-     * case "BINARY": case "FILE": // Don't Create History Entry for these types break; default: // Does LastModified =
-     * DateCreated? if (this.LastModified.compareTo(this.DateCreated) != 0) { // No; Create History Entry
-     * CoalesceFieldHistory FieldHistory = null; CoalesceFieldHistory CFH = new CoalesceFieldHistory(); rst =
-     * CFH.Create(this, FieldHistory); if (!(rst.getIsSuccess())) return rst; } break; }
-     * 
-     * }
-     * 
-     * // Change Attribute Value using the Date Method rst = _XmlHelper.SetAttributeAsDate(this._DataObjectDocument,
-     * this._DataObjectNode, AttributeName, Value); if (!(rst.getIsSuccess())) return rst;
-     * 
-     * // Set LastModified Date UTCDate = new Date(); DateTimeHelper.ConvertDateToGMT(UTCDate); this.LastModified = UTCDate;
-     * 
-     * // }
-     * 
-     * // return Success return CallResult.successCallResult;
-     * 
-     * }catch(Exception ex){ // return Failed Error return new CallResult(CallResults.FAILED_ERROR, ex, this); } }
-     */
 }

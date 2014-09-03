@@ -1,5 +1,7 @@
 package Coalesce.Framework.DataModel;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -9,6 +11,9 @@ import org.joda.time.DateTime;
 
 import unity.core.runtime.CallResult;
 import unity.core.runtime.CallResult.CallResults;
+import Coalesce.Common.Helpers.FileHelper;
+import Coalesce.Common.Helpers.GUIDHelper;
+import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.Helpers.XmlHelper;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record.Field;
@@ -144,8 +149,8 @@ public class XsdField extends XsdFieldBase {
     {
         String oldValue = _entityField.getValue();
 
-        _entityField.setValue(value);
         SetChanged(oldValue, value);
+        _entityField.setValue(value);
     }
 
     public String GetDataType()
@@ -213,8 +218,9 @@ public class XsdField extends XsdFieldBase {
     public void SetClassificationMarking(String value)
     {
         String oldValue = _entityField.getClassificationmarking();
-        _entityField.setClassificationmarking(value);
+        
         SetChanged(oldValue, value);
+        _entityField.setClassificationmarking(value);
     }
 
     public String GetPreviousHistoryKey()
@@ -244,8 +250,8 @@ public class XsdField extends XsdFieldBase {
     {
         String oldFilename = _entityField.getFilename();
 
-        _entityField.setFilename(value);
         SetChanged(oldFilename, value);
+        _entityField.setFilename(value);
     }
 
     public String GetExtension()
@@ -257,8 +263,8 @@ public class XsdField extends XsdFieldBase {
     {
         String oldExtension = _entityField.getExtension();
 
-        _entityField.setExtension(value.replace(".", ""));
         SetChanged(oldExtension, value);
+        _entityField.setExtension(value.replace(".", ""));
     }
 
     public String GetMimeType()
@@ -280,8 +286,24 @@ public class XsdField extends XsdFieldBase {
     {
         String oldHash = _entityField.getHash();
 
-        _entityField.setHash(value);
         SetChanged(oldHash, value);
+        _entityField.setHash(value);
+    }
+
+    public ArrayList<XsdFieldHistory> GetHistory()
+    {
+
+        ArrayList<XsdFieldHistory> historyList = new ArrayList<XsdFieldHistory>();
+
+        for (Map.Entry<String, XsdDataObject> childObject : _childDataObjects.entrySet())
+        {
+            if (childObject.getValue() instanceof XsdFieldHistory)
+            {
+                historyList.add((XsdFieldHistory) childObject.getValue());
+            }
+        }
+
+        return historyList;
     }
 
     /*
@@ -292,19 +314,9 @@ public class XsdField extends XsdFieldBase {
     @Override
     public DateTime GetDateCreated()
     {
-        try
-        {
 
-            // return new
-            // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityField.getDatecreated());
-            return _entityField.getDatecreated();
-
-        }
-        catch (Exception ex)
-        {
-            CallResult.log(CallResults.FAILED_ERROR, ex, this);
-            return null;
-        }
+        // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityField.getDatecreated());
+        return _entityField.getDatecreated();
     }
 
     @Override
@@ -328,13 +340,111 @@ public class XsdField extends XsdFieldBase {
             _entityField.setLastmodified(value);
     }
 
-    // -----------------------------------------------------------------------//
-    // public Methods
-    // -----------------------------------------------------------------------//
-
     public String ToXml()
     {
         return XmlHelper.Serialize(_entityField);
+    }
+
+    public String GetCoalesceFullFilename()
+    {
+
+        if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) != ECoalesceFieldDataTypes.FileType)
+        {
+            return "";
+        }
+
+        String baseFilename = FileHelper.GetBaseFilenameWithFullDirectoryPathForKey(GetKey());
+
+        return baseFilename + "." + GetExtension();
+
+    }
+
+    public String GetCoalesceFullThumbnailFilename()
+    {
+
+        if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) != ECoalesceFieldDataTypes.FileType)
+        {
+            return "";
+        }
+
+        String baseFilename = FileHelper.GetBaseFilenameWithFullDirectoryPathForKey(GetKey());
+
+        return baseFilename + "_thumb.jpg";
+
+    }
+
+    public String GetCoalesceFilenameWithLastModifiedTag()
+    {
+        try
+        {
+            String fullPath = GetCoalesceFullFilename();
+            if (StringHelper.IsNullOrEmpty(fullPath)) return "";
+            
+            File theFile = new File(fullPath);
+            long lastModifiedTicks = theFile.lastModified();
+
+            return theFile.getName() + "?" + lastModifiedTicks;
+
+        }
+        catch (Exception ex)
+        {
+            return this.GetCoalesceFilename();
+        }
+    }
+
+    public String GetCoalesceThumbnailFilenameWithLastModifiedTag()
+    {
+        try
+        {
+            String fullThumbPath = GetCoalesceFullThumbnailFilename();
+            if (StringHelper.IsNullOrEmpty(fullThumbPath)) return "";
+            
+            File theFile = new File(fullThumbPath);
+            long lastModifiedTicks = theFile.lastModified();
+
+            return theFile.getName() + "?" + lastModifiedTicks;
+
+        }
+        catch (Exception ex)
+        {
+            return this.GetCoalesceThumbnailFilename();
+        }
+    }
+
+    public String GetCoalesceFilename()
+    {
+
+        if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) == ECoalesceFieldDataTypes.FileType)
+        {
+
+            String baseFilename = GetKey();
+            baseFilename = GUIDHelper.RemoveBrackets(baseFilename);
+
+            return baseFilename + "." + GetExtension();
+
+        }
+        else
+        {
+            return "";
+        }
+    }
+
+    public String GetCoalesceThumbnailFilename()
+    {
+
+        if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) == ECoalesceFieldDataTypes.FileType)
+        {
+
+            String baseFilename = this.GetKey();
+            baseFilename = GUIDHelper.RemoveBrackets(baseFilename);
+
+            return baseFilename + "_thumb.jpg";
+
+        }
+        else
+        {
+            return "";
+        }
     }
 
     // -----------------------------------------------------------------------//
@@ -352,6 +462,129 @@ public class XsdField extends XsdFieldBase {
     {
         _entityField.setStatus(status);
 
+    }
+
+    // -----------------------------------------------------------------------//
+    // protected Methods
+    // -----------------------------------------------------------------------//
+
+    protected CallResult SetChanged(Object oldValue, Object newValue)
+    {
+        try
+        {
+
+            // Does the new value differ from the existing?
+            if ((oldValue == null && newValue != null) || !oldValue.equals(newValue))
+            {
+
+                // Yes; should we create a FieldHistory entry to reflect the
+                // change?
+                // We create FieldHistory entry if History is not Suspended; OR
+                // if DataType is binary; OR if DateCreated=LastModified and
+                // Value is unset
+                if (!this.GetSuspendHistory())
+                {
+
+                    switch (GetDataType().toUpperCase()) {
+
+                    case "BINARY":
+                    case "FILE":
+                        // Don't Create History Entry for these types
+                        break;
+                    default:
+
+                        // Does LastModified = DateCreated?
+                        if (GetLastModified().compareTo(GetDateCreated()) != 0)
+                        {
+
+                            // No; Create History Entry
+                            XsdFieldHistory fieldHistory = XsdFieldHistory.Create(this);
+                            if (fieldHistory == null) return CallResult.failedCallResult;
+
+                            SetPreviousHistoryKey(fieldHistory.GetKey());
+                        }
+
+                    }
+
+                }
+
+                // Set LastModified
+                DateTime utcNow = JodaDateTimeHelper.NowInUtc();
+                if (utcNow != null) SetLastModified(utcNow);
+
+            }
+
+            return CallResult.successCallResult;
+
+        }
+        catch (Exception ex)
+        {
+            return new CallResult(CallResults.FAILED_ERROR, ex, this);
+        }
+    }
+
+    public CallResult Change(String value, String marking, String user, String ip)
+    {
+        try
+        {
+
+            // Does the new value differ from the existing?
+            if (!(GetValue().equals(value) && GetClassificationMarking().equals(marking)))
+            {
+
+                // Yes; should we create a FieldHistory entry to reflect the
+                // change?
+                // We create FieldHistory entry if History is not Suspended; OR
+                // if DataType is binary; OR if DateCreated=LastModified and
+                // Value is unset
+                if (!GetSuspendHistory())
+                {
+
+                    // Does LastModified = DateCreated?
+                    if (GetLastModified().compareTo(GetDateCreated()) != 0)
+                    {
+                        // No; Create History Entry
+                        // TODO: Something just feels wrong about declaring one
+                        // CoalesceFieldHistory to create another.
+                        XsdFieldHistory fieldHistory = XsdFieldHistory.Create(this);
+                        if (fieldHistory == null) return CallResult.failedCallResult;
+
+                        SetPreviousHistoryKey(fieldHistory.GetKey());
+                    }
+                }
+
+                // Change Values
+                if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) == ECoalesceFieldDataTypes.DateTimeType
+                        && !StringHelper.IsNullOrEmpty(value))
+                {
+
+                    DateTime valueDate = JodaDateTimeHelper.FromXmlDateTimeUTC(value);
+
+                    SetTypedValue(valueDate);
+
+                }
+                else
+                {
+                    SetValue(value);
+                }
+
+                SetClassificationMarking(marking);
+                SetModifiedBy(user);
+                SetModifiedByIP(ip);
+
+                // Set LastModified
+                DateTime utcNow = JodaDateTimeHelper.NowInUtc();
+                if (utcNow != null) SetLastModified(utcNow);
+
+            }
+
+            return CallResult.successCallResult;
+
+        }
+        catch (Exception ex)
+        {
+            return new CallResult(CallResults.FAILED_ERROR, ex, this);
+        }
     }
 
     protected List<Fieldhistory> GetEntityFieldHistories() throws Exception

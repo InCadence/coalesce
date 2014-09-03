@@ -33,10 +33,15 @@ public class FileHelper {
 
     public static String GetBaseFilenameWithFullDirectoryPathForKey(String key)
     {
+        return GetBaseFilenameWithFullDirectoryPathForKey(key, true);
+    }
+
+    private static String GetBaseFilenameWithFullDirectoryPathForKey(String key, boolean createIfDoesNotExist)
+    {
         return GetBaseFilenameWithFullDirectoryPathForKey(CoalesceSettings.GetBinaryFileStoreBasePath(),
                                                           CoalesceSettings.GetSubDirectoryLength(),
                                                           key,
-                                                          true);
+                                                          createIfDoesNotExist);
     }
 
     private static String GetBaseFilenameWithFullDirectoryPathForKey(String binaryFileStoreBasePath,
@@ -53,17 +58,21 @@ public class FileHelper {
 
         String fullDirectory;
 
-        if (subDirectoryLength > 0 && subDirectoryLength < baseFilename.length()) {
+        if (subDirectoryLength > 0 && subDirectoryLength < baseFilename.length())
+        {
 
             fullDirectory = FilenameUtils.concat(binaryFileStoreBasePath, baseFilename.substring(0, subDirectoryLength));
         }
-        else {
+        else
+        {
             fullDirectory = binaryFileStoreBasePath;
         }
 
-        if (createIfDoesNotExist) {
+        if (createIfDoesNotExist)
+        {
             File fileDir = new File(fullDirectory);
-            if (!fileDir.exists()) {
+            if (!fileDir.exists())
+            {
                 fileDir.mkdirs();
             }
         }
