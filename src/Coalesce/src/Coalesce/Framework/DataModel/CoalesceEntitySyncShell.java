@@ -80,31 +80,18 @@ public class CoalesceEntitySyncShell {
 
     public boolean InitializeFromEntity(XsdEntity Entity){
         try{
-            //CallResult rst;
-
             // TODO: verify this works
-
-            //can these be used?
-//            boolean isSuccess = false;
-//            CoalesceEntitySyncShell shell = this.Create(Entity);
-//            isSuccess = PruneNodes(_DataObjectDocument);
-//            this.SetDataObjectDocument(shell._DataObjectDocument);
-            
-            //Maybe this will work
-            this.Create(Entity);
-            return PruneNodes(_DataObjectDocument);
-            
             // Create a Clone of the Entity's DataObjectDocument
-            //Document TemplateDoc = Entity.GetDataObjectDocument();
+            Document TemplateDoc = XmlHelper.loadXMLFrom(Entity.ToXml());
 
             // Prune Nodes
-            //rst = PruneNodes(TemplateDoc);
+            PruneNodes(TemplateDoc);
 
             // Set Template Doc
-            //this.SetDataObjectDocument(TemplateDoc);
+            this.SetDataObjectDocument(TemplateDoc);
 
             // return Success
-            //return true;
+            return true;
 
         }catch(Exception ex){
             // return Failed Error

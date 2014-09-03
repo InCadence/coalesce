@@ -21,6 +21,7 @@ public class CoalesceEntitySyncShellTest {
             XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
 
             CoalesceEntitySyncShell SyncShell = new CoalesceEntitySyncShell();
+            //CoalesceEntitySyncShell.InitializeFromEntity(entity);
 
             // Initialize
             SyncShell.InitializeFromEntity(entity);
