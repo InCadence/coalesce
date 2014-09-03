@@ -1,12 +1,5 @@
 package Coalesce.Common.Helpers;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import Coalesce.Framework.DataModel.*;
-import unity.core.runtime.CallResult;
-import unity.core.runtime.CallResult.CallResults;
 
 /*-----------------------------------------------------------------------------'
 Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
