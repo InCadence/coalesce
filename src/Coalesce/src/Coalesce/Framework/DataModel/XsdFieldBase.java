@@ -17,7 +17,6 @@ import Coalesce.Common.Helpers.GUIDHelper;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import Coalesce.Common.Helpers.StringHelper;
 
-
 public abstract class XsdFieldBase extends XsdDataObject {
 
     private boolean _suspendHistory = false;
@@ -237,28 +236,25 @@ public abstract class XsdFieldBase extends XsdDataObject {
         switch (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType())) {
         case StringType:
         case UriType:
-
             return GetValue();
 
         case DateTimeType:
-
             return GetDateTimeValue();
 
         case BinaryType:
-
             return GetByteArrayValue();
 
         case BooleanType:
-
             return GetBooleanValue();
 
         case IntegerType:
-
             return GetIntegerValue();
 
         case GuidType:
-
             return GetGuidValue();
+
+        default:
+            throw new NotImplementedException(GetDataType() + " not implemented");
 
             // case GeocoordinateType:
             // Geolocation geocvar = new Geolocation();
@@ -277,8 +273,6 @@ public abstract class XsdFieldBase extends XsdDataObject {
             // break;
 
         }
-
-        throw new NotImplementedException(GetDataType() + " not implemented");
 
     }
 
