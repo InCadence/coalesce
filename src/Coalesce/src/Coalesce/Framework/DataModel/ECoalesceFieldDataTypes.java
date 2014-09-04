@@ -38,7 +38,7 @@ public enum ECoalesceFieldDataTypes
     /**
      * A mapping between the integer code and its corresponding Status to facilitate lookup by code.
      */
-    private static Map<Integer, ECoalesceFieldDataTypes> codeToStatusMapping;
+    private static Map<String, ECoalesceFieldDataTypes> codeToStatusMapping = null;
 
     private ECoalesceFieldDataTypes(int code, String label)
     {
@@ -48,19 +48,17 @@ public enum ECoalesceFieldDataTypes
 
     public static ECoalesceFieldDataTypes getStatus(int code)
     {
-        if (codeToStatusMapping == null)
-        {
-            initMapping();
-        }
+        if (codeToStatusMapping == null) initMapping();
+
         return codeToStatusMapping.get(code);
     }
 
     private static void initMapping()
     {
-        codeToStatusMapping = new HashMap<Integer, ECoalesceFieldDataTypes>();
+        codeToStatusMapping = new HashMap<String, ECoalesceFieldDataTypes>();
         for (ECoalesceFieldDataTypes s : values())
         {
-            codeToStatusMapping.put(s.value, s);
+            codeToStatusMapping.put(s.label, s);
         }
     }
 
@@ -74,57 +72,15 @@ public enum ECoalesceFieldDataTypes
         return label;
     }
 
-    @Override
-    public String toString()
-    {
-        final StringBuilder sb = new StringBuilder();
-        sb.append("LinkTypes");
-        sb.append("{code=").append(value);
-        sb.append(", label='").append(label);
-        sb.append('}');
-        return sb.toString();
-    }
-
-    public static void main(String[] args)
-    {
-        System.out.println(ECoalesceFieldDataTypes.StringType);
-        System.out.println(ECoalesceFieldDataTypes.getStatus(0));
-    }
-
     public ECoalesceFieldDataTypes GetCoalesceFieldDataTypeForCoalesceType(String coalesceType)
     {
-        switch (coalesceType.toUpperCase()) {
+        if (codeToStatusMapping == null) initMapping();
 
-        case "BINARY":
-            return ECoalesceFieldDataTypes.BinaryType;
-
-        case "BOOLEAN":
-            return ECoalesceFieldDataTypes.BooleanType;
-
-        case "DATETIME":
-            return ECoalesceFieldDataTypes.DateTimeType;
-
-        case "GEOCOORDINATE":
-            return ECoalesceFieldDataTypes.GeocoordinateType;
-
-        case "GEOCOORDINATELIST":
-            return ECoalesceFieldDataTypes.GeocoordinateListType;
-
-        case "GUID":
-            return ECoalesceFieldDataTypes.GuidType;
-
-        case "INTEGER":
-            return ECoalesceFieldDataTypes.IntegerType;
-
-        case "URI":
-            return ECoalesceFieldDataTypes.UriType;
-
-        case "FILE":
-            return ECoalesceFieldDataTypes.FileType;
-
-        default:
-            return ECoalesceFieldDataTypes.StringType;
-        }
+        ECoalesceFieldDataTypes value = codeToStatusMapping.get(coalesceType.trim().toLowerCase());
+        
+        if (value == null) value = ECoalesceFieldDataTypes.StringType;
+        
+        return value;
     }
 
     public ECoalesceFieldDataTypes GetCoalesceFieldDataTypeForSQLType(String sqlType)
