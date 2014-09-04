@@ -3,6 +3,8 @@ package Coalesce.Framework.Persistance;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.List;
+
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -17,6 +19,7 @@ import Coalesce.Framework.DataModel.XsdLinkageSection;
 import Coalesce.Framework.DataModel.XsdRecord;
 import Coalesce.Framework.DataModel.XsdRecordset;
 import Coalesce.Framework.DataModel.XsdSection;
+import Coalesce.Framework.Persistance.ICoalescePersistor.EntityMetaData;
 
 import com.database.persister.MySQLPersistor;
 import com.database.persister.ServerConn;
@@ -124,7 +127,7 @@ public class CoalesceMySQLPersistorTest {
     }
 
     @Test
-    public void TestGetEntityIdType()
+    public void TestGetEntityByIdAndType()
     {
         try
         {
@@ -140,7 +143,7 @@ public class CoalesceMySQLPersistorTest {
     }
 
     @Test
-    public void TestGetEntityNameIdType()
+    public void TestGetEntityByNameAndIdAndType()
     {
         try
         {
@@ -174,6 +177,131 @@ public class CoalesceMySQLPersistorTest {
 
     }
 
+    @Test
+    public void TestGetEntityKeyForEntityId()
+    {
+        try
+        {
+            String objectKey = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntityKeyForEntityId(_entity.GetEntityId(),
+                                                                                                             _entity.GetEntityIdType(),
+                                                                                                             _entity.GetName());
+            assertTrue(objectKey != null);
+        }
+        catch (Exception ex)
+        {
+            fail(ex.getMessage());
+        }
+    }
+
+    @Test
+    public void TestGetEntityKeyForEntityIdName()
+    {
+        try
+        {
+            List<String> objectKey = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntityKeysForEntityId(_entity.GetEntityId(),
+                                                                                                                    _entity.GetEntityIdType(),
+                                                                                                                    _entity.GetName(),
+                                                                                                                    _entity.GetName());
+            assertTrue(objectKey.size() >= 0 || objectKey != null);
+        }
+        catch (Exception ex)
+        {
+            fail(ex.getMessage());
+        }
+    }
+
+    @Test
+    public void TestGetEntityKeyForEntityIdSource()
+    {
+        try
+        {
+            List<String> objectKey = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntityKeysForEntityId(_entity.GetEntityId(),
+                                                                                                                    _entity.GetEntityIdType(),
+                                                                                                                    _entity.GetName(),
+                                                                                                                    _entity.GetSource());
+            assertTrue(objectKey.size() >= 0 || objectKey != null);
+        }
+        catch (Exception ex)
+        {
+            fail(ex.getMessage());
+        }
+    }
+
+    @Test
+    public void TestGetEntityKeysForEntityIdSource()
+    {
+        try
+        {
+            String objectKey = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntityKeyForEntityId(_entity.GetEntityId(),
+                                                                                                             _entity.GetEntityIdType(),
+                                                                                                             _entity.GetName(),
+                                                                                                             _entity.GetSource());
+            assertTrue(objectKey != null);
+        }
+        catch (Exception ex)
+        {
+            fail(ex.getMessage());
+        }
+    }
+
+    @Test
+    public void TestGetEntityMetaData()
+    {
+        try
+        {
+            EntityMetaData objectKey = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntityIdAndTypeForKey(_entity.GetKey());
+            assertTrue(objectKey.Id != null && objectKey.Key != null && objectKey.Type != null);
+        }
+        catch (Exception ex)
+        {
+            fail(ex.getMessage());
+        }
+    }
+
+    @Test
+    public void TestGetEntityTemplateXML()
+    {
+        try
+        {
+            String templateXML = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntityTemplateXml(_entity.GetKey());
+            assertTrue(templateXML != null);
+        }
+        catch (Exception ex)
+        {
+            fail(ex.getMessage());
+        }
+    }
+
+    @Test
+    public void TestGetEntityTemplateXMLName()
+    {
+        try
+        {
+            String templateXML = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntityTemplateXml(_entity.GetName(),
+                                                                                                            _entity.GetSource(),
+                                                                                                            _entity.GetVersion());
+            assertTrue(templateXML != null);
+        }
+        catch (Exception ex)
+        {
+            fail(ex.getMessage());
+        }
+    }
+    @Test
+    public void TestGetEntityTemplateKey()
+    {
+        try
+        {
+            String templateKey = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntityTemplateKey(_entity.GetName(),
+                                                                                                            _entity.GetSource(),
+                                                                                                            _entity.GetVersion());
+            assertTrue(templateKey != null);
+        }
+        catch (Exception ex)
+        {
+            fail(ex.getMessage());
+        }
+    }
     @Test
     public void TestGetXPath()
     {
