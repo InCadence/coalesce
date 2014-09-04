@@ -52,7 +52,7 @@ public class CoalesceMySQLPersistorTest {
     {
 
         CoalesceSettings.Initialize(new LocalConfigurationsConnector());
-        
+
         serCon = new ServerConn();
         serCon.setURL("jdbc:mysql://localhost:3306/coalescedatabase");
         serCon.setUser("root");
@@ -114,6 +114,40 @@ public class CoalesceMySQLPersistorTest {
         {
             XsdEntity ent = new XsdEntity();
             ent = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntity(_entity.GetKey());
+
+            assertTrue(ent != null);
+        }
+        catch (Exception ex)
+        {
+            fail(ex.getMessage());
+        }
+    }
+
+    @Test
+    public void TestGetEntityIdType()
+    {
+        try
+        {
+            XsdEntity ent = new XsdEntity();
+            ent = CoalesceMySQLPersistorTest._coalesceFramework.GetEntity(_entity.GetEntityId(), _entity.GetEntityIdType());
+
+            assertTrue(ent != null);
+        }
+        catch (Exception ex)
+        {
+            fail(ex.getMessage());
+        }
+    }
+
+    @Test
+    public void TestGetEntityNameIdType()
+    {
+        try
+        {
+            XsdEntity ent = new XsdEntity();
+            ent = CoalesceMySQLPersistorTest._coalesceFramework.GetEntity(_entity.GetName(),
+                                                                          _entity.GetEntityId(),
+                                                                          _entity.GetEntityIdType());
 
             assertTrue(ent != null);
         }
