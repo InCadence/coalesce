@@ -51,7 +51,7 @@ public class XsdEntityTest {
             XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
 
             String title = entity.GetTitle();
-            assertEquals("NORTHCOM Volunteer Background Checks, NORTHCOM Volunteer Background Checks", title);
+            assertEquals("NORTHCOM Volunteer Background Checks Changed, NORTHCOM Volunteer Background Checks", title);
 
         }
         catch (Exception ex)
@@ -212,7 +212,7 @@ public class XsdEntityTest {
 
             // Verify Entity Creation
             assertTrue(entity.GetSource().equals("TREX Portal"));
-            //assertTrue(entity.GetLinkageSection() == null);
+            // assertTrue(entity.GetLinkageSection() == null);
 
             entity.SetAttribute("testnewattribute", "test");
 
@@ -230,7 +230,7 @@ public class XsdEntityTest {
             assertTrue(entity.GetSection("TREXOperation/Live Status Section") != null);
 
             recordSet.CreateFieldDefinition("CurrentStatus", ECoalesceFieldDataTypes.StringType);
-            
+
             // Create Information Section
             section = entity.CreateSection("Operation Information Section", true);
             recordSet = section.CreateRecordset("Operation Information Recordset");
@@ -273,12 +273,33 @@ public class XsdEntityTest {
     public void testFieldHistory()
     {
 
-        // Create Entity
         XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
 
-        XsdSection section = entity.GetSection("TREXMission/Mission Information Section");
-
-        fail("Not Implemented");
+        XsdDataObject xdo = entity.GetDataObjectForNamePath(CoalesceTypeInstances.TESTMISSIONNAMEPATH);
+        
+        assertTrue(xdo instanceof XsdField);
+        
+        XsdField nameField = (XsdField)xdo;
+        
+        assertEquals(1, nameField.GetHistory().size());
+        assertEquals(CoalesceTypeInstances.TESTMISSIONNAMEHISTORYVALUE, nameField.GetHistory().get(0).GetValue());
+        
+        xdo = entity.GetDataObjectForNamePath(CoalesceTypeInstances.TESTMISSIONACTIONNUMBERPATH);
+        
+        assertTrue(xdo instanceof XsdField);
+        
+        XsdField actionNumberField = (XsdField)xdo;
+        
+        assertEquals(2, actionNumberField.GetHistory().size());
+        assertEquals(CoalesceTypeInstances.TESTMISSIONACTIONNUMBERLABELHISTORY, actionNumberField.GetHistory().get(0).GetLabel());
+        
+        xdo = entity.GetDataObjectForNamePath(CoalesceTypeInstances.TESTMISSIONBASE64PATH);
+        
+        assertTrue(xdo instanceof XsdField);
+        
+        XsdField base64Field = (XsdField)xdo;
+        
+        assertTrue(base64Field.GetHistory().isEmpty());
         
     }
 
