@@ -69,12 +69,5 @@ public enum ECoalesceDataObjectStatus {
         sb.append('}');
         return sb.toString();
     }
- 
-    /*
-    public static void main(String[] args) {
-        System.out.println(ECoalesceDataObjectStatus.ACTIVE);
-        System.out.println(ECoalesceDataObjectStatus.getStatus(1));
-    }
-    */
 
 }

@@ -438,7 +438,7 @@ public class XsdEntity extends XsdDataObject {
                     return (XsdLinkageSection) child;
                 }
             }
-            
+
             return null;
 
         }
@@ -561,7 +561,7 @@ public class XsdEntity extends XsdDataObject {
 
                         XsdLinkage linkage = (XsdLinkage) child;
                         if (linkage.GetEntity2Name().toLowerCase().equals(forEntityName.toLowerCase())
-                                && forLinkTypes.contains(ELinkTypes.getStatus(ELinkTypes.GetELinkTypeCodeForLabel(linkage.GetLinkType()))))
+                                && forLinkTypes.contains(linkage.GetLinkType()))
                         {
 
                             if (linkage.GetStatus() != ECoalesceDataObjectStatus.DELETED)
@@ -607,7 +607,7 @@ public class XsdEntity extends XsdDataObject {
 
                         XsdLinkage linkage = (XsdLinkage) child;
                         if (linkage.GetEntity2Name().toLowerCase().equals(forEntityName.toLowerCase())
-                                && forLinkType == ELinkTypes.getStatus(ELinkTypes.GetELinkTypeCodeForLabel(linkage.GetLinkType()))
+                                && forLinkType == linkage.GetLinkType()
                                 && linkage.GetEntity2Source().toLowerCase().equals(forEntitySource.toLowerCase()))
                         {
 
@@ -650,7 +650,7 @@ public class XsdEntity extends XsdDataObject {
                     {
 
                         XsdLinkage linkage = (XsdLinkage) child;
-                        if (forLinkType == ELinkTypes.getStatus(ELinkTypes.GetELinkTypeCodeForLabel(linkage.GetLinkType())))
+                        if (forLinkType == linkage.GetLinkType())
                         {
 
                             if (linkage.GetStatus() != ECoalesceDataObjectStatus.DELETED)

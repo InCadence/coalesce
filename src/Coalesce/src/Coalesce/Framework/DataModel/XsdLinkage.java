@@ -91,7 +91,7 @@ public class XsdLinkage extends XsdDataObject {
     {
         return "linkage";
     }
-    
+
     public String GetModifiedBy()
     {
         return _entityLinkage.getModifiedby();
@@ -213,45 +213,15 @@ public class XsdLinkage extends XsdDataObject {
         SetChanged();
     }
 
-    public String GetLinkType()
+    public ELinkTypes GetLinkType()
     {
-        String val = _entityLinkage.getLinktype();
-
-        int enumVal = 0;
-        try
-        {
-            enumVal = Integer.parseInt(val);
-        }
-        catch (NumberFormatException e)
-        {
-            if (val.length() > 0)
-            {
-                enumVal = ELinkTypes.GetELinkTypeCodeForLabel(val);
-            }
-            else
-            {
-                enumVal = ELinkTypes.GetELinkTypeCodeForLabel(ELinkTypes.GetELinkTypeLabelForType(ELinkTypes.Undefined));
-            }
-
-        }
-
-        return Integer.toString(enumVal);
+        return ELinkTypes.GetTypeForLabel(_entityLinkage.getLinktype());
     }
 
-    public void SetLinkType(String value)
+    public void SetLinkType(ELinkTypes value)
     {
-        // Switch to string english name if this is an integer. (Could be a bitwise combination of LinkType enumerations)
-        try
-        {
-            int type = Integer.parseInt(value);
-            _entityLinkage.setLinktype(ELinkTypes.GetELinkTypeLabelForCode(type));
-            SetChanged();
-        }
-        catch (NumberFormatException e)
-        {
-            _entityLinkage.setLinktype(ELinkTypes.GetELinkTypeLabelForCode(ELinkTypes.GetELinkTypeCodeForLabel(value)));
-            SetChanged();
-        }
+        _entityLinkage.setLinktype(value.getLabel());
+        SetChanged();
     }
 
     @Override
@@ -319,7 +289,7 @@ public class XsdLinkage extends XsdDataObject {
             SetEntity1Source(Entity1.GetSource());
             SetEntity1Version(Entity1.GetVersion());
 
-            SetLinkType(GetNameForLinkType(LinkType));
+            SetLinkType(LinkType);
 
             SetEntity2Key(Entity2.GetKey());
             SetEntity2Name(Entity2.GetName());
@@ -373,89 +343,6 @@ public class XsdLinkage extends XsdDataObject {
     // -----------------------------------------------------------------------//
     // public Shared Methods
     // -----------------------------------------------------------------------//
-
-    public ELinkTypes GetReciprocalLinkType(ELinkTypes LinkType)
-    {
-        try
-        {
-            switch (LinkType) {
-
-            case Undefined:
-                return ELinkTypes.Undefined;
-
-            case IsParentOf:
-                return ELinkTypes.IsChildOf;
-
-            case IsChildOf:
-                return ELinkTypes.IsParentOf;
-
-            case Created:
-                return ELinkTypes.WasCreatedBy;
-
-            case WasCreatedBy:
-                return ELinkTypes.Created;
-
-            case HasMember:
-                return ELinkTypes.IsAMemberOf;
-
-            case IsAMemberOf:
-                return ELinkTypes.HasMember;
-
-            case HasParticipant:
-                return ELinkTypes.IsAParticipantOf;
-
-            case IsAParticipantOf:
-                return ELinkTypes.HasParticipant;
-
-            case IsWatching:
-                return ELinkTypes.IsBeingWatchedBy;
-
-            case IsBeingWatchedBy:
-                return ELinkTypes.IsWatching;
-
-            case IsAPeerOf:
-                return ELinkTypes.IsAPeerOf;
-
-            case IsOwnedBy:
-                return ELinkTypes.HasOwnershipOf;
-
-            case HasOwnershipOf:
-                return ELinkTypes.IsOwnedBy;
-
-            case IsUsedBy:
-                return ELinkTypes.HasUseOf;
-
-            case HasUseOf:
-                return ELinkTypes.IsUsedBy;
-
-            }
-
-            return ELinkTypes.Undefined;
-
-        }
-        catch (Exception ex)
-        {
-            CallResult.log(CallResults.FAILED_ERROR, ex, "Coalesce.Common.Helpers.CoalesceLinakge");
-
-            return ELinkTypes.Undefined;
-        }
-    }
-
-    public String GetNameForLinkType(ELinkTypes LinkType)
-    {
-        try
-        {
-
-            return ELinkTypes.GetELinkTypeLabelForType(LinkType);
-
-        }
-        catch (Exception ex)
-        {
-            CallResult.log(CallResults.FAILED_ERROR, ex, "Coalesce.Common.Helpers.CoalesceLinkage");
-
-            return "Undefined";
-        }
-    }
 
     @Override
     protected Map<QName, String> getAttributes()
