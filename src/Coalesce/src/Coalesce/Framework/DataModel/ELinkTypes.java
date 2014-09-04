@@ -3,6 +3,8 @@ package Coalesce.Framework.DataModel;
 import java.util.HashMap;
 import java.util.Map;
 
+import Coalesce.Common.Helpers.StringHelper;
+
 public enum ELinkTypes
 {
     Undefined("Undefined"),
@@ -34,14 +36,6 @@ public enum ELinkTypes
         this._label = label;
     }
 
-    public static ELinkTypes getStatus(int code)
-    {
-
-        initMapping();
-
-        return codeToStatusMapping.get(code);
-    }
-
     private static void initMapping()
     {
 
@@ -65,6 +59,8 @@ public enum ELinkTypes
 
         initMapping();
 
+        if (StringHelper.IsNullOrEmpty(coalesceType)) return ELinkTypes.Undefined;
+        
         ELinkTypes value = codeToStatusMapping.get(coalesceType.trim().toLowerCase());
 
         if (value == null) value = ELinkTypes.Undefined;
