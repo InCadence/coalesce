@@ -102,50 +102,14 @@ public class EntityLinkHelper {
 
     }
 
-    public boolean UnLinkEntities(XsdEntity entity1, XsdEntity entity2)
+    public static boolean UnLinkEntities(XsdEntity entity1, XsdEntity entity2)
     {
-
-        return UnLinkEntities(entity1, entity2, "U", "", "en-US");
+        return UnLinkEntities(entity1, entity2, null);
     }
 
-    public boolean UnLinkEntities(XsdEntity entity1, XsdEntity entity2, ELinkTypes linkType)
+    public static boolean UnLinkEntities(XsdEntity entity1, XsdEntity entity2, ELinkTypes linkType)
     {
-
-        return UnLinkEntities(entity1, entity2, "U", "", "en-US", linkType);
-    }
-
-    public boolean UnLinkEntities(XsdEntity entity1,
-                                  XsdEntity entity2,
-                                  String classificationMarking,
-                                  String modifiedBy,
-                                  String inputLang)
-    {
-
-        // Get the LinkageSections for each Entity. Exit if not found.
-
-        // For Entity 1...
-        XsdLinkageSection linkageSection1 = entity1.GetLinkageSection();
-        if (linkageSection1 == null) return false;
-
-        // For Entity 2...
-        XsdLinkageSection linkageSection2 = entity2.GetLinkageSection();
-        if (linkageSection2 == null) return false;
-
-        MarkLinkageAsDeleted(linkageSection1, entity1, entity2);
-
-        MarkLinkageAsDeleted(linkageSection2, entity2, entity1);
-
-        return true;
-
-    }
-
-    public boolean UnLinkEntities(XsdEntity entity1,
-                                  XsdEntity entity2,
-                                  String classificationMarking,
-                                  String modifiedBy,
-                                  String inputLang,
-                                  ELinkTypes linkType)
-    {
+        if (entity1 == null || entity2 == null) return false;
 
         // Get the LinkageSections for each Entity. Exit if not found.
 
@@ -159,20 +123,27 @@ public class EntityLinkHelper {
 
         MarkLinkageAsDeleted(linkageSection1, entity1, entity2, linkType);
 
-        MarkLinkageAsDeleted(linkageSection2, entity2, entity1, linkType.GetReciprocalLinkType());
+        if (linkType == null)
+        {
+            MarkLinkageAsDeleted(linkageSection2, entity2, entity1, null);
+        }
+        else
+        {
+            MarkLinkageAsDeleted(linkageSection2, entity2, entity1, linkType.GetReciprocalLinkType());
+        }
 
         return true;
 
     }
 
-    public Map<String, XsdLinkage> GetLinkages(XsdEntity entity)
+    public static Map<String, XsdLinkage> GetLinkages(XsdEntity entity)
     {
 
         return GetLinkages(entity, (String) null);
 
     }
 
-    public Map<String, XsdLinkage> GetLinkages(XsdEntity entity, String forEntityName)
+    public static Map<String, XsdLinkage> GetLinkages(XsdEntity entity, String forEntityName)
     {
         Map<String, XsdLinkage> linkages = new HashMap<String, XsdLinkage>();
 
@@ -197,7 +168,7 @@ public class EntityLinkHelper {
 
     }
 
-    public Map<String, XsdLinkage> GetLinkages(XsdEntity entity, ELinkTypes forLinkType, String forEntityName)
+    public static Map<String, XsdLinkage> GetLinkages(XsdEntity entity, ELinkTypes forLinkType, String forEntityName)
     {
 
         List<ELinkTypes> forLinkTypes = new ArrayList<ELinkTypes>();
@@ -206,15 +177,15 @@ public class EntityLinkHelper {
         return GetLinkages(entity, forLinkTypes, forEntityName);
     }
 
-    public Map<String, XsdLinkage> GetLinkages(XsdEntity entity, List<ELinkTypes> forLinkTypes, String forEntityName)
+    public static Map<String, XsdLinkage> GetLinkages(XsdEntity entity, List<ELinkTypes> forLinkTypes, String forEntityName)
     {
         return GetLinkages(entity, forLinkTypes, forEntityName, null);
     }
 
-    public Map<String, XsdLinkage> GetLinkages(XsdEntity entity,
-                                               ELinkTypes forLinkType,
-                                               String forEntityName,
-                                               String forEntitySource)
+    public static Map<String, XsdLinkage> GetLinkages(XsdEntity entity,
+                                                      ELinkTypes forLinkType,
+                                                      String forEntityName,
+                                                      String forEntitySource)
     {
 
         List<ELinkTypes> forLinkTypes = new ArrayList<ELinkTypes>();
@@ -224,7 +195,7 @@ public class EntityLinkHelper {
 
     }
 
-    public Map<String, XsdLinkage> GetLinkages(XsdEntity entity, ELinkTypes forLinkType)
+    public static Map<String, XsdLinkage> GetLinkages(XsdEntity entity, ELinkTypes forLinkType)
     {
         return GetLinkages(entity, forLinkType, null);
     }
@@ -313,17 +284,10 @@ public class EntityLinkHelper {
 
     }
 
-    private void MarkLinkageAsDeleted(XsdLinkageSection linkageSection, XsdEntity entity, XsdEntity otherEntity)
-    {
-
-        MarkLinkageAsDeleted(linkageSection, entity, otherEntity, null);
-
-    }
-
-    private void MarkLinkageAsDeleted(XsdLinkageSection linkageSection,
-                                      XsdEntity entity,
-                                      XsdEntity otherEntity,
-                                      ELinkTypes linkType)
+    private static boolean MarkLinkageAsDeleted(XsdLinkageSection linkageSection,
+                                                XsdEntity entity,
+                                                XsdEntity otherEntity,
+                                                ELinkTypes linkType)
     {
 
         for (ICoalesceDataObject cdo : linkageSection.GetChildDataObjects().values())
@@ -341,17 +305,20 @@ public class EntityLinkHelper {
 
                         linkage.SetStatus(ECoalesceDataObjectStatus.DELETED);
 
-                        break;
+                        return true;
                     }
                 }
             }
         }
+
+        return false;
+
     }
 
-    private Map<String, XsdLinkage> GetLinkages(XsdEntity entity,
-                                                List<ELinkTypes> forLinkTypes,
-                                                String forEntityName,
-                                                String forEntitySource)
+    private static Map<String, XsdLinkage> GetLinkages(XsdEntity entity,
+                                                       List<ELinkTypes> forLinkTypes,
+                                                       String forEntityName,
+                                                       String forEntitySource)
     {
         Map<String, XsdLinkage> linkages = new HashMap<String, XsdLinkage>();
 

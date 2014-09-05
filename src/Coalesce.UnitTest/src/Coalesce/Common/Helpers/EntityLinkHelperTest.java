@@ -6,7 +6,9 @@ import org.junit.Test;
 
 import Coalesce.Common.Classification.Marking;
 import Coalesce.Common.UnitTest.CoalesceTypeInstances;
+import Coalesce.Framework.DataModel.ECoalesceDataObjectStatus;
 import Coalesce.Framework.DataModel.ELinkTypes;
+import Coalesce.Framework.DataModel.XsdDataObject;
 import Coalesce.Framework.DataModel.XsdEntity;
 import Coalesce.Framework.DataModel.XsdLinkage;
 
@@ -157,7 +159,7 @@ public class EntityLinkHelperTest {
             assertTrue(EntityLinkHelper.LinkEntities(mod2Entity2, linkType.GetReciprocalLinkType(), mod2Entity1, false));
 
             assertLinkages(linkType, entity1, entity2);
-        
+
         }
     }
 
@@ -351,6 +353,233 @@ public class EntityLinkHelperTest {
                                                  true));
 
         assertLinkages(ELinkTypes.IsOwnedBy, "(S USA)", "bob", "en-us", modifiedEntity1, modifiedEntity2);
+
+    }
+
+    @Test
+    public void UnLinkEntitiesNullFirstTest()
+    {
+        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSIONNOLINKSONE);
+        assertFalse(EntityLinkHelper.UnLinkEntities(null, entity));
+    }
+
+    @Test
+    public void UnLinkEntitiesNullSecondTest()
+    {
+        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSIONNOLINKSONE);
+        assertFalse(EntityLinkHelper.UnLinkEntities(entity, null));
+    }
+
+    @Test
+    public void UnLinkEntitiesNullBothTest()
+    {
+        assertFalse(EntityLinkHelper.UnLinkEntities(null, null));
+    }
+
+    @Test
+    public void UnLinkEntitiesLinkTypeNullFirstTest()
+    {
+        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSIONNOLINKSONE);
+        assertFalse(EntityLinkHelper.UnLinkEntities(null, entity, ELinkTypes.IsParentOf));
+    }
+
+    @Test
+    public void UnLinkEntitiesLinkTypeNullSecondTest()
+    {
+        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSIONNOLINKSONE);
+        assertFalse(EntityLinkHelper.UnLinkEntities(entity, null, ELinkTypes.IsUsedBy));
+    }
+
+    @Test
+    public void UnLinkEntitiesLinkTypeNullBothTest()
+    {
+        assertFalse(EntityLinkHelper.UnLinkEntities(null, null, ELinkTypes.IsWatching));
+    }
+
+    @Test
+    public void UnLinkEntitiesLinkTypeNullLinkTypeTest()
+    {
+        XsdEntity entity1 = XsdEntity.Create(CoalesceTypeInstances.TESTMISSIONNOLINKSONE);
+        XsdEntity entity2 = XsdEntity.Create(CoalesceTypeInstances.TESTMISSIONNOLINKSTWO);
+
+        EntityLinkHelper.LinkEntities(entity1, ELinkTypes.Created, entity2, true);
+
+        assertTrue(EntityLinkHelper.UnLinkEntities(entity1, entity2, null));
+        assertEquals(ECoalesceDataObjectStatus.DELETED,
+                     entity1.GetLinkageSection().GetChildDataObjects().values().iterator().next().GetStatus());
+        assertEquals(ECoalesceDataObjectStatus.DELETED,
+                     entity2.GetLinkageSection().GetChildDataObjects().values().iterator().next().GetStatus());
+
+    }
+
+    @Test
+    public void UnLinkEntitiesAllLinkTypesTest()
+    {
+
+        for (ELinkTypes linkType : ELinkTypes.values())
+        {
+
+            XsdEntity entity1 = XsdEntity.Create(CoalesceTypeInstances.TESTMISSIONNOLINKSONE);
+            XsdEntity entity2 = XsdEntity.Create(CoalesceTypeInstances.TESTMISSIONNOLINKSTWO);
+
+            EntityLinkHelper.LinkEntities(entity1, linkType, entity2, true);
+
+            assertTrue(EntityLinkHelper.UnLinkEntities(entity1, entity2));
+            assertEquals(ECoalesceDataObjectStatus.DELETED,
+                         entity1.GetLinkageSection().GetChildDataObjects().values().iterator().next().GetStatus());
+            assertEquals(ECoalesceDataObjectStatus.DELETED,
+                         entity2.GetLinkageSection().GetChildDataObjects().values().iterator().next().GetStatus());
+
+        }
+    }
+
+    @Test
+    public void UnLinkEntitiesNotLinkedTest()
+    {
+
+        XsdEntity entity1 = XsdEntity.Create(CoalesceTypeInstances.TESTMISSIONNOLINKSONE);
+        XsdEntity entity2 = XsdEntity.Create(CoalesceTypeInstances.TESTMISSIONNOLINKSTWO);
+
+        assertTrue(EntityLinkHelper.UnLinkEntities(entity1, entity2));
+        assertTrue(entity1.GetLinkageSection().GetChildDataObjects().isEmpty());
+        assertTrue(entity2.GetLinkageSection().GetChildDataObjects().isEmpty());
+
+    }
+
+    @Test
+    public void UnLinkEntitiesNotLinkedFirstTest()
+    {
+
+        XsdEntity entity1 = XsdEntity.Create(CoalesceTypeInstances.TESTMISSIONNOLINKSONE);
+        XsdEntity entity2 = XsdEntity.Create(CoalesceTypeInstances.TESTMISSIONNOLINKSTWO);
+        XsdEntity entity3 = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+
+        EntityLinkHelper.LinkEntities(entity1, ELinkTypes.Created, entity2, true);
+
+        assertTrue(EntityLinkHelper.UnLinkEntities(entity1, entity3));
+        assertEquals(ECoalesceDataObjectStatus.ACTIVE,
+                     entity1.GetLinkageSection().GetChildDataObjects().values().iterator().next().GetStatus());
+        assertEquals(ECoalesceDataObjectStatus.ACTIVE,
+                     entity2.GetLinkageSection().GetChildDataObjects().values().iterator().next().GetStatus());
+
+        for (XsdDataObject xdo : entity3.GetChildDataObjects().values())
+        {
+            assertEquals(ECoalesceDataObjectStatus.ACTIVE, xdo.GetStatus());
+        }
+
+    }
+
+    @Test
+    public void UnLinkEntitiesNotLinkedSecondTest()
+    {
+
+        XsdEntity entity1 = XsdEntity.Create(CoalesceTypeInstances.TESTMISSIONNOLINKSONE);
+        XsdEntity entity2 = XsdEntity.Create(CoalesceTypeInstances.TESTMISSIONNOLINKSTWO);
+        XsdEntity entity3 = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+
+        EntityLinkHelper.LinkEntities(entity1, ELinkTypes.Created, entity2, true);
+
+        assertTrue(EntityLinkHelper.UnLinkEntities(entity3, entity2));
+        assertEquals(ECoalesceDataObjectStatus.ACTIVE,
+                     entity1.GetLinkageSection().GetChildDataObjects().values().iterator().next().GetStatus());
+        assertEquals(ECoalesceDataObjectStatus.ACTIVE,
+                     entity2.GetLinkageSection().GetChildDataObjects().values().iterator().next().GetStatus());
+
+        for (XsdDataObject xdo : entity3.GetChildDataObjects().values())
+        {
+            assertEquals(ECoalesceDataObjectStatus.ACTIVE, xdo.GetStatus());
+        }
+
+    }
+
+    @Test
+    public void UnLinkEntitiesLinkTypesTest()
+    {
+        XsdEntity entity1 = XsdEntity.Create(CoalesceTypeInstances.TESTMISSIONNOLINKSONE);
+        XsdEntity entity2 = XsdEntity.Create(CoalesceTypeInstances.TESTMISSIONNOLINKSTWO);
+
+        EntityLinkHelper.LinkEntities(entity1, ELinkTypes.Created, entity2, true);
+
+        assertTrue(EntityLinkHelper.UnLinkEntities(entity1, entity2, ELinkTypes.Created));
+        assertEquals(ECoalesceDataObjectStatus.DELETED,
+                     entity1.GetLinkageSection().GetChildDataObjects().values().iterator().next().GetStatus());
+        assertEquals(ECoalesceDataObjectStatus.DELETED,
+                     entity2.GetLinkageSection().GetChildDataObjects().values().iterator().next().GetStatus());
+
+    }
+
+    @Test
+    public void UnLinkEntitiesLinkTypesMismatchTest()
+    {
+        XsdEntity entity1 = XsdEntity.Create(CoalesceTypeInstances.TESTMISSIONNOLINKSONE);
+        XsdEntity entity2 = XsdEntity.Create(CoalesceTypeInstances.TESTMISSIONNOLINKSTWO);
+
+        EntityLinkHelper.LinkEntities(entity1, ELinkTypes.HasParticipant, entity2, true);
+
+        assertTrue(EntityLinkHelper.UnLinkEntities(entity1, entity2, ELinkTypes.HasUseOf));
+        assertEquals(ECoalesceDataObjectStatus.ACTIVE,
+                     entity1.GetLinkageSection().GetChildDataObjects().values().iterator().next().GetStatus());
+        assertEquals(ECoalesceDataObjectStatus.ACTIVE,
+                     entity2.GetLinkageSection().GetChildDataObjects().values().iterator().next().GetStatus());
+
+    }
+
+    @Test
+    public void UnLinkEntitiesLinkageTypeNotLinkedTest()
+    {
+
+        XsdEntity entity1 = XsdEntity.Create(CoalesceTypeInstances.TESTMISSIONNOLINKSONE);
+        XsdEntity entity2 = XsdEntity.Create(CoalesceTypeInstances.TESTMISSIONNOLINKSTWO);
+
+        assertTrue(EntityLinkHelper.UnLinkEntities(entity1, entity2, ELinkTypes.Created));
+        assertTrue(entity1.GetLinkageSection().GetChildDataObjects().isEmpty());
+        assertTrue(entity2.GetLinkageSection().GetChildDataObjects().isEmpty());
+
+    }
+
+    @Test
+    public void UnLinkEntitiesLinkageTypeNotLinkedFirstTest()
+    {
+
+        XsdEntity entity1 = XsdEntity.Create(CoalesceTypeInstances.TESTMISSIONNOLINKSONE);
+        XsdEntity entity2 = XsdEntity.Create(CoalesceTypeInstances.TESTMISSIONNOLINKSTWO);
+        XsdEntity entity3 = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+
+        EntityLinkHelper.LinkEntities(entity1, ELinkTypes.HasMember, entity2, true);
+
+        assertTrue(EntityLinkHelper.UnLinkEntities(entity1, entity3, ELinkTypes.HasMember));
+        assertEquals(ECoalesceDataObjectStatus.ACTIVE,
+                     entity1.GetLinkageSection().GetChildDataObjects().values().iterator().next().GetStatus());
+        assertEquals(ECoalesceDataObjectStatus.ACTIVE,
+                     entity2.GetLinkageSection().GetChildDataObjects().values().iterator().next().GetStatus());
+
+        for (XsdDataObject xdo : entity3.GetChildDataObjects().values())
+        {
+            assertEquals(ECoalesceDataObjectStatus.ACTIVE, xdo.GetStatus());
+        }
+
+    }
+
+    @Test
+    public void UnLinkEntitiesLinkagetypeNotLinkedSecondTest()
+    {
+
+        XsdEntity entity1 = XsdEntity.Create(CoalesceTypeInstances.TESTMISSIONNOLINKSONE);
+        XsdEntity entity2 = XsdEntity.Create(CoalesceTypeInstances.TESTMISSIONNOLINKSTWO);
+        XsdEntity entity3 = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+
+        EntityLinkHelper.LinkEntities(entity1, ELinkTypes.HasOwnershipOf, entity2, true);
+
+        assertTrue(EntityLinkHelper.UnLinkEntities(entity3, entity2, ELinkTypes.HasOwnershipOf));
+        assertEquals(ECoalesceDataObjectStatus.ACTIVE,
+                     entity1.GetLinkageSection().GetChildDataObjects().values().iterator().next().GetStatus());
+        assertEquals(ECoalesceDataObjectStatus.ACTIVE,
+                     entity2.GetLinkageSection().GetChildDataObjects().values().iterator().next().GetStatus());
+
+        for (XsdDataObject xdo : entity3.GetChildDataObjects().values())
+        {
+            assertEquals(ECoalesceDataObjectStatus.ACTIVE, xdo.GetStatus());
+        }
 
     }
 
