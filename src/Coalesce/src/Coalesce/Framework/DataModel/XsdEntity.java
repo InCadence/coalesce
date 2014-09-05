@@ -14,6 +14,7 @@ import org.joda.time.DateTime;
 import unity.core.runtime.CallResult;
 import unity.core.runtime.CallResult.CallResults;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
+import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.Helpers.XmlHelper;
 import Coalesce.Framework.GeneratedJAXB.Entity;
 import Coalesce.Framework.GeneratedJAXB.Entity.Linkagesection;
@@ -53,7 +54,21 @@ public class XsdEntity extends XsdDataObject {
 
         // Create Entity
         XsdEntity entity = new XsdEntity();
-        if (!entity.Initialize(entityXml)) return null;
+
+        boolean passed = false;
+        if (entityXml == null || StringHelper.IsNullOrEmpty(entityXml.trim()))
+        {
+            passed = entity.Initialize();
+
+        }
+        else
+        {
+
+            passed = entity.Initialize(entityXml);
+
+        }
+
+        if (!passed) return null;
 
         return entity;
 
@@ -126,6 +141,8 @@ public class XsdEntity extends XsdDataObject {
         // this._entity.getSection();
 
         if (!super.Initialize()) return false;
+
+        if (!InitializeChildren()) return false;
 
         return InitializeReferences();
 
@@ -401,27 +418,36 @@ public class XsdEntity extends XsdDataObject {
         return XsdSection.Create(this, name);
     }
 
+    public Map<String, XsdSection> GetSections()
+    {
+
+        Map<String, XsdSection> sections = new HashMap<String, XsdSection>();
+
+        for (XsdDataObject child : _childDataObjects.values())
+        {
+            if (child instanceof XsdSection)
+            {
+                sections.put(child.GetKey(), (XsdSection) child);
+            }
+        }
+
+        return sections;
+
+    }
+
     public XsdLinkageSection GetLinkageSection()
     {
-        try
-        {
 
-            for (XsdDataObject child : _childDataObjects.values())
+        for (XsdDataObject child : _childDataObjects.values())
+        {
+            if (child instanceof XsdLinkageSection)
             {
-                if (child instanceof XsdLinkageSection)
-                {
-                    return (XsdLinkageSection) child;
-                }
+                return (XsdLinkageSection) child;
             }
-
-            return null;
-
         }
-        catch (Exception ex)
-        {
-            CallResult.log(CallResults.FAILED_ERROR, ex, this);
-            return null;
-        }
+
+        return null;
+
     }
 
     public Map<String, XsdLinkage> GetLinkages(String forEntityName)

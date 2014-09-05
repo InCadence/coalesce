@@ -23,6 +23,7 @@ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
 
 public class CoalesceTypeInstances {
 
+    public static final String TESTMISSIONINCIDENTTITLEPATH = "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/IncidentTitle";
     public static final String TESTMISSIONNAMEPATH = "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionName";
     public static final String TESTMISSIONNAMEKEY = "6CB12648-A061-4CC5-B593-3D0407EF4392";
     public static final String TESTMISSIONNAMENAME = "MissionName";
@@ -42,6 +43,8 @@ public class CoalesceTypeInstances {
     public static final String TESTMISSIONACTIONNUMBERLABEL = "Action Number";
     public static final String TESTMISSIONACTIONNUMBERLABELHISTORY = "Action #";
     public static final String TESTMISSIONINCIDENTDATETIMEPATH = "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/IncidentDateTime";
+    public static final String TESTMISSIONRECORDSETPATH = "TREXMission/Mission Information Section/Mission Information Recordset";
+    public static final String TESTMISSIONRECORDPATH = "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record";
     
     public static final String TESTMISSION =
     "<entity key=\"62857EF8-3930-4F0E-BAE3-093344EBF389\" datecreated=\"2014-05-02T14:33:51.851575Z\" lastmodified=\"2014-05-20T16:17:13.2293139Z\" name=\"TREXMission\" source=\"TREX Portal\" version=\"1.0.0.0\" entityid=\"\" entityidtype=\"\" title=\"TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionName,TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/IncidentTitle\" status=\"active\" anthony=\"Test\">" +
