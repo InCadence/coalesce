@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import unity.core.runtime.CallResult;
+import unity.core.runtime.CallResult.CallResults;
 import Coalesce.Framework.DataModel.ECoalesceDataObjectStatus;
 import Coalesce.Framework.DataModel.ELinkTypes;
 import Coalesce.Framework.DataModel.ICoalesceDataObject;
@@ -32,10 +33,24 @@ import Coalesce.Framework.DataModel.XsdLinkageSection;
 
 public class EntityLinkHelper {
 
+    // ----------------------------------------------------------------------//
+    // Private and protected Objects
+    // ----------------------------------------------------------------------//
+
+    private static final String MODULE = "Coalesce.Common.Helpers.EntityLinkHelper";
+
+    // ----------------------------------------------------------------------//
+    // Factory and Initialization
+    // ----------------------------------------------------------------------//
+
     // Make static class
     private EntityLinkHelper()
     {
     }
+
+    // -----------------------------------------------------------------------//
+    // Public Static Methods
+    // -----------------------------------------------------------------------//
 
     public static boolean LinkEntities(XsdEntity entity1, ELinkTypes linkType, XsdEntity entity2, Boolean updateExisting)
     {
@@ -121,13 +136,6 @@ public class EntityLinkHelper {
         MarkLinkageAsDeleted(linkageSection2, entity2, entity1);
 
         return true;
-
-    }
-
-    private void MarkLinkageAsDeleted(XsdLinkageSection linkageSection, XsdEntity entity, XsdEntity otherEntity)
-    {
-
-        MarkLinkageAsDeleted(linkageSection, entity, otherEntity, null);
 
     }
 
@@ -227,6 +235,7 @@ public class EntityLinkHelper {
 
     private static XsdLinkageSection GetLinkageSection(XsdEntity entity)
     {
+        if (entity == null) return null;
 
         XsdLinkageSection linkageSection = entity.GetLinkageSection();
 
@@ -251,6 +260,11 @@ public class EntityLinkHelper {
                                                boolean updateExisting)
     {
         CallResult rst;
+
+        if (linkageSection == null || entity == null || otherEntity == null)
+        {
+            return new CallResult(CallResults.FAILED, "Null objected reference", MODULE);
+        }
 
         boolean linkageAlreadyExists = false;
         XsdLinkage linkage = null;
@@ -296,6 +310,13 @@ public class EntityLinkHelper {
         }
 
         return CallResult.successCallResult;
+
+    }
+
+    private void MarkLinkageAsDeleted(XsdLinkageSection linkageSection, XsdEntity entity, XsdEntity otherEntity)
+    {
+
+        MarkLinkageAsDeleted(linkageSection, entity, otherEntity, null);
 
     }
 

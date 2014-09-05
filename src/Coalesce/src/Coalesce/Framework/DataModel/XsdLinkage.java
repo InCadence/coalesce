@@ -36,16 +36,22 @@ public class XsdLinkage extends XsdDataObject {
     public static XsdLinkage Create(XsdLinkageSection parent)
     {
 
-        XsdLinkage linkage = new XsdLinkage();
+        XsdLinkage newLinkage = new XsdLinkage();
 
         Linkage entityLinkage = new Linkage();
         parent.GetEntityLinkageSection().getLinkage().add(entityLinkage);
 
-        if (!linkage.Initialize(parent, entityLinkage)) return null;
+        if (!newLinkage.Initialize(parent, entityLinkage)) return null;
 
-        linkage.SetName("Linkage");
+        newLinkage.SetName("Linkage");
 
-        return linkage;
+        // Add to Parent's Child Collection
+        if (!(parent._childDataObjects.containsKey(newLinkage.GetKey())))
+        {
+            parent._childDataObjects.put(newLinkage.GetKey(), newLinkage);
+        }
+
+        return newLinkage;
 
     }
 
