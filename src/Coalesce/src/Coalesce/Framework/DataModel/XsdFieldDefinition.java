@@ -165,6 +165,8 @@ public class XsdFieldDefinition extends XsdDataObject {
         _parent = parent;
         _entityFieldDefinition = fieldDefinition;
 
+        super.Initialize();
+        
         // Add to Parent Collections
         if (GetStatus() == ECoalesceDataObjectStatus.ACTIVE)
         {
@@ -172,7 +174,7 @@ public class XsdFieldDefinition extends XsdDataObject {
             parent.GetFieldDefinitions().add(this);
         }
 
-        return super.Initialize();
+        return true;
     }
 
     // -----------------------------------------------------------------------//

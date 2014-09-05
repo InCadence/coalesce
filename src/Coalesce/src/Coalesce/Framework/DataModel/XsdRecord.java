@@ -94,6 +94,8 @@ public class XsdRecord extends XsdDataObject {
         _parent = parent;
         _entityRecord = record;
 
+        super.Initialize();
+
         for (Field entityField : record.getField())
         {
             XsdField newField = new XsdField();
@@ -110,7 +112,7 @@ public class XsdRecord extends XsdDataObject {
             parent.GetRecords().add(this);
         }
 
-        return super.Initialize();
+        return true;
 
     }
 

@@ -11,6 +11,7 @@ import unity.core.runtime.CallResult.CallResults;
 import Coalesce.Common.Helpers.XmlHelper;
 import Coalesce.Framework.GeneratedJAXB.Entity.Linkagesection;
 import Coalesce.Framework.GeneratedJAXB.Entity.Linkagesection.Linkage;
+import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record.Field.Fieldhistory;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -70,6 +71,8 @@ public class XsdLinkageSection extends XsdDataObject {
         _parent = parent;
         _entityLinkageSection = parent.GetEntityLinkageSection();
 
+        super.Initialize();
+        
         if (_entityLinkageSection != null)
         {
 
@@ -86,7 +89,7 @@ public class XsdLinkageSection extends XsdDataObject {
                 }
             }
 
-            return super.Initialize();
+            return true;
         }
         else
         {

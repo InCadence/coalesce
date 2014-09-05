@@ -113,6 +113,8 @@ public class XsdSection extends XsdDataObject {
         _parent = parent;
         _entitySection = section;
 
+        super.Initialize();
+        
         for (Recordset childRecordSet : _entitySection.getRecordset())
         {
 
@@ -127,7 +129,7 @@ public class XsdSection extends XsdDataObject {
 
         // TODO: Need to add another loop child Sections if they are added
 
-        return super.Initialize();
+        return true;
     }
 
     // -----------------------------------------------------------------------//

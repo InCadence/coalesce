@@ -92,6 +92,8 @@ public class XsdRecordset extends XsdDataObject {
         _parent = parent;
         _entityRecordset = recordset;
 
+        super.Initialize();
+
         // Create Collections
         _fieldDefinitions = new ArrayList<XsdFieldDefinition>();
         _records = new ArrayList<XsdRecord>();
@@ -109,7 +111,7 @@ public class XsdRecordset extends XsdDataObject {
             newRecord.Initialize(this, entityRecord);
         }
 
-        return super.Initialize();
+        return true;
 
     }
 

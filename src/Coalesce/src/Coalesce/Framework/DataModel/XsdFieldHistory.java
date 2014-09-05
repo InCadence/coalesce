@@ -84,11 +84,7 @@ public class XsdFieldHistory extends XsdFieldBase {
 
     private boolean Initialize(XsdField parent)
     {
-
-        Fieldhistory entityFieldHistory = new Fieldhistory();
-
-        return Initialize(parent, entityFieldHistory);
-
+        return Initialize(parent, new Fieldhistory());
     }
 
     public boolean Initialize(XsdField parent, Fieldhistory fieldHistory)

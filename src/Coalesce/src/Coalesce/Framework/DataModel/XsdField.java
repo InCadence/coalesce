@@ -93,6 +93,8 @@ public class XsdField extends XsdFieldBase {
         _parent = parent;
         _entityField = field;
 
+        super.Initialize();
+        
         for (Fieldhistory entityFieldHistory : _entityField.getFieldhistory())
         {
 
@@ -103,7 +105,7 @@ public class XsdField extends XsdFieldBase {
             _childDataObjects.put(fieldHistory.GetKey(), fieldHistory);
         }
 
-        return super.Initialize();
+        return true;
 
     }
 
