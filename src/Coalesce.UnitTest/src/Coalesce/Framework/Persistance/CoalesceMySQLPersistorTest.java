@@ -98,12 +98,11 @@ public class CoalesceMySQLPersistorTest {
         _fieldKey = record.GetFieldByName("CurrentStatus").GetKey();
         System.out.println("Original Sample Entity:");
         System.out.println("***********************\n" + _entity.ToXml());
-        // Test Entity
-        testTemplate(CoalesceEntityTemplate.Create(_entity));
+
 
     }
 
-    private static void testTemplate(CoalesceEntityTemplate template)
+    private static CoalesceEntityTemplate testTemplate(CoalesceEntityTemplate template)
     {
         String templateXml = template.toXml();
         System.out.println("Template: ");
@@ -158,6 +157,7 @@ public class CoalesceMySQLPersistorTest {
         assertTrue(entity2.GetName().equalsIgnoreCase("TestEntity"));
         assertTrue(entity2.GetSource().equalsIgnoreCase("Unit Test"));
         assertTrue(entity2.GetVersion().equalsIgnoreCase("1.0.0.0"));
+        return template;
     }
 
     @Test
@@ -372,7 +372,21 @@ public class CoalesceMySQLPersistorTest {
             fail(ex.getMessage());
         }
     }
-
+    @Test
+    public void TestSaveEntityTemplate()
+    {
+        try
+        {
+            CoalesceEntityTemplate template =testTemplate(CoalesceEntityTemplate.Create(_entity));
+            // Test Entity
+            boolean templateKey = CoalesceMySQLPersistorTest._coalesceFramework.SaveCoalesceEntityTemplate(template);
+            assertTrue(templateKey != false);
+        }
+        catch (Exception ex)
+        {
+            fail(ex.getMessage());
+        }
+    }
     @Test
     public void TestGetEntityTemplateKey()
     {
