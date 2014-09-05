@@ -261,8 +261,7 @@ public class EntityLinkHelper {
             {
 
                 XsdLinkage childLinkage = (XsdLinkage) cdo;
-                if (childLinkage.GetEntity1Key().equals(entity.GetKey())
-                        && childLinkage.GetLinkType() == linkType
+                if (childLinkage.GetEntity1Key().equals(entity.GetKey()) && childLinkage.GetLinkType() == linkType
                         && childLinkage.GetEntity2Key().equals(otherEntity.GetKey()))
                 {
 

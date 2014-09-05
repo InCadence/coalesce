@@ -48,9 +48,9 @@ public abstract class XsdFieldBase extends XsdDataObject {
         return GetValueWithMarking();
     }
 
-    public abstract String GetDataType();
+    public abstract ECoalesceFieldDataTypes GetDataType();
 
-    public abstract void SetDataType(String value);
+    public abstract void SetDataType(ECoalesceFieldDataTypes value);
 
     public abstract String GetLabel();
 
@@ -114,7 +114,7 @@ public abstract class XsdFieldBase extends XsdDataObject {
         // TODO: GeocoordinateType, GeocoordinateListType, DocumentProperties
         // types
 
-        switch (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType())) {
+        switch (GetDataType()) {
         case StringType:
         case UriType:
             return GetValue();
@@ -172,7 +172,7 @@ public abstract class XsdFieldBase extends XsdDataObject {
 
     public CallResult SetTypedValue(String value)
     {
-        ECoalesceFieldDataTypes fieldType = XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType());
+        ECoalesceFieldDataTypes fieldType = GetDataType();
         if (fieldType != ECoalesceFieldDataTypes.StringType && fieldType != ECoalesceFieldDataTypes.UriType)
         {
             throw new ClassCastException("Type mismatch");
@@ -186,7 +186,7 @@ public abstract class XsdFieldBase extends XsdDataObject {
 
     public CallResult SetTypedValue(UUID value)
     {
-        if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) != ECoalesceFieldDataTypes.GuidType)
+        if (GetDataType() != ECoalesceFieldDataTypes.GuidType)
         {
             throw new ClassCastException("Type mismatch");
         }
@@ -199,7 +199,7 @@ public abstract class XsdFieldBase extends XsdDataObject {
 
     public CallResult SetTypedValue(DateTime value)
     {
-        if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) != ECoalesceFieldDataTypes.DateTimeType)
+        if (GetDataType() != ECoalesceFieldDataTypes.DateTimeType)
         {
             throw new ClassCastException("Type mismatch");
         }
@@ -212,7 +212,7 @@ public abstract class XsdFieldBase extends XsdDataObject {
 
     public CallResult SetTypedValue(boolean value)
     {
-        if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) != ECoalesceFieldDataTypes.BooleanType)
+        if (GetDataType() != ECoalesceFieldDataTypes.BooleanType)
         {
             throw new ClassCastException("Type mismatch");
         }
@@ -225,7 +225,7 @@ public abstract class XsdFieldBase extends XsdDataObject {
 
     public CallResult SetTypedValue(int value)
     {
-        if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) != ECoalesceFieldDataTypes.IntegerType)
+        if (GetDataType() != ECoalesceFieldDataTypes.IntegerType)
         {
             throw new ClassCastException("Type mismatch");
         }
@@ -336,7 +336,7 @@ public abstract class XsdFieldBase extends XsdDataObject {
 
     public CallResult SetTypedValue(byte[] dataBytes)
     {
-        if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) != ECoalesceFieldDataTypes.BinaryType)
+        if (GetDataType() != ECoalesceFieldDataTypes.BinaryType)
         {
             throw new ClassCastException("Type mismatch");
         }
@@ -458,7 +458,7 @@ public abstract class XsdFieldBase extends XsdDataObject {
     public UUID GetGuidValue() throws ClassCastException
     {
 
-        if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) != ECoalesceFieldDataTypes.GuidType)
+        if (GetDataType() != ECoalesceFieldDataTypes.GuidType)
         {
             throw new ClassCastException("Type mismatch");
         }
@@ -476,7 +476,7 @@ public abstract class XsdFieldBase extends XsdDataObject {
     public DateTime GetDateTimeValue() throws ClassCastException
     {
 
-        if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) != ECoalesceFieldDataTypes.DateTimeType)
+        if (GetDataType() != ECoalesceFieldDataTypes.DateTimeType)
         {
             throw new ClassCastException("Type mismatch");
         }
@@ -491,7 +491,7 @@ public abstract class XsdFieldBase extends XsdDataObject {
 
     public boolean GetBooleanValue()
     {
-        if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) != ECoalesceFieldDataTypes.BooleanType)
+        if (GetDataType() != ECoalesceFieldDataTypes.BooleanType)
         {
             throw new ClassCastException("Type mismatch");
         }
@@ -506,7 +506,7 @@ public abstract class XsdFieldBase extends XsdDataObject {
 
     public int GetIntegerValue()
     {
-        if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) != ECoalesceFieldDataTypes.IntegerType)
+        if (GetDataType() != ECoalesceFieldDataTypes.IntegerType)
         {
             throw new ClassCastException("Type mismatch");
         }
@@ -606,7 +606,7 @@ public abstract class XsdFieldBase extends XsdDataObject {
 
     public byte[] GetBinaryValue() throws ClassCastException
     {
-        if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) != ECoalesceFieldDataTypes.BinaryType)
+        if (GetDataType() != ECoalesceFieldDataTypes.BinaryType)
         {
             throw new ClassCastException("Type mismatch");
         }

@@ -71,7 +71,7 @@ public class XsdField extends XsdFieldBase {
         newField.SetNoIndex(true);
 
         // Boolean Type? If so then default initial value to false.
-        if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(fieldDefinition.GetDataType()) == ECoalesceFieldDataTypes.BooleanType)
+        if (fieldDefinition.GetDataType() == ECoalesceFieldDataTypes.BooleanType)
         {
             newField.SetValue("false");
         }
@@ -154,14 +154,14 @@ public class XsdField extends XsdFieldBase {
         _entityField.setValue(value);
     }
 
-    public String GetDataType()
+    public ECoalesceFieldDataTypes GetDataType()
     {
-        return GetStringElement(_entityField.getDatatype());
+        return ECoalesceFieldDataTypes.GetTypeForCoalesceType(_entityField.getDatatype());
     }
 
-    public void SetDataType(String value)
+    public void SetDataType(ECoalesceFieldDataTypes value)
     {
-        _entityField.setDatatype(value);
+        _entityField.setDatatype(value.getLabel());
     }
 
     public String GetLabel()
@@ -370,7 +370,7 @@ public class XsdField extends XsdFieldBase {
     public String GetCoalesceFullFilename()
     {
 
-        if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) != ECoalesceFieldDataTypes.FileType)
+        if (GetDataType() != ECoalesceFieldDataTypes.FileType)
         {
             return "";
         }
@@ -384,7 +384,7 @@ public class XsdField extends XsdFieldBase {
     public String GetCoalesceFullThumbnailFilename()
     {
 
-        if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) != ECoalesceFieldDataTypes.FileType)
+        if (GetDataType() != ECoalesceFieldDataTypes.FileType)
         {
             return "";
         }
@@ -436,7 +436,7 @@ public class XsdField extends XsdFieldBase {
     public String GetCoalesceFilename()
     {
 
-        if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) == ECoalesceFieldDataTypes.FileType)
+        if (GetDataType() == ECoalesceFieldDataTypes.FileType)
         {
 
             String baseFilename = GetKey();
@@ -454,7 +454,7 @@ public class XsdField extends XsdFieldBase {
     public String GetCoalesceThumbnailFilename()
     {
 
-        if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) == ECoalesceFieldDataTypes.FileType)
+        if (GetDataType() == ECoalesceFieldDataTypes.FileType)
         {
 
             String baseFilename = this.GetKey();
@@ -507,10 +507,10 @@ public class XsdField extends XsdFieldBase {
                 if (!this.GetSuspendHistory())
                 {
 
-                    switch (GetDataType().toUpperCase()) {
+                    switch (GetDataType()) {
 
-                    case "BINARY":
-                    case "FILE":
+                    case BinaryType:
+                    case FileType:
                         // Don't Create History Entry for these types
                         break;
                     default:
@@ -576,8 +576,7 @@ public class XsdField extends XsdFieldBase {
                 }
 
                 // Change Values
-                if (XsdFieldDefinition.GetCoalesceFieldDataTypeForCoalesceType(GetDataType()) == ECoalesceFieldDataTypes.DateTimeType
-                        && !StringHelper.IsNullOrEmpty(value))
+                if (GetDataType() == ECoalesceFieldDataTypes.DateTimeType && !StringHelper.IsNullOrEmpty(value))
                 {
 
                     DateTime valueDate = JodaDateTimeHelper.FromXmlDateTimeUTC(value);

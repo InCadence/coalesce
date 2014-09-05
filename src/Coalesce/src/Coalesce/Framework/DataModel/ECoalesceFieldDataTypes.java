@@ -54,7 +54,7 @@ public enum ECoalesceFieldDataTypes
         return _label;
     }
 
-    public ECoalesceFieldDataTypes GetCoalesceFieldDataTypeForCoalesceType(String coalesceType)
+    public static ECoalesceFieldDataTypes GetTypeForCoalesceType(String coalesceType)
     {
         initMapping();
 
@@ -65,7 +65,7 @@ public enum ECoalesceFieldDataTypes
         return value;
     }
 
-    public ECoalesceFieldDataTypes GetCoalesceFieldDataTypeForSQLType(String sqlType)
+    public static ECoalesceFieldDataTypes GetTypeForSQLType(String sqlType)
     {
         switch (sqlType.toUpperCase()) {
 

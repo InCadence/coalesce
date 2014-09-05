@@ -6,8 +6,6 @@ import javax.xml.namespace.QName;
 
 import org.joda.time.DateTime;
 
-import unity.core.runtime.CallResult;
-import unity.core.runtime.CallResult.CallResults;
 import Coalesce.Common.Helpers.XmlHelper;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Fielddefinition;
 
@@ -34,8 +32,6 @@ public class XsdFieldDefinition extends XsdDataObject {
     // protected Member Variables
     // -----------------------------------------------------------------------//
 
-    private static String MODULE = "Coalesce.Framework.DataModel.XsdFieldDefinition";
-
     private Fielddefinition _entityFieldDefinition;
 
     // -----------------------------------------------------------------------//
@@ -47,10 +43,11 @@ public class XsdFieldDefinition extends XsdDataObject {
                                             ECoalesceFieldDataTypes dataType,
                                             String label,
                                             String defaultClassificationMarking,
-                                            boolean defaultValue) {
+                                            boolean defaultValue)
+    {
         return XsdFieldDefinition.Create(parent, name, dataType, label, defaultClassificationMarking, defaultValue, false);
     }
-    
+
     public static XsdFieldDefinition Create(XsdRecordset parent,
                                             String name,
                                             ECoalesceFieldDataTypes dataType,
@@ -59,18 +56,25 @@ public class XsdFieldDefinition extends XsdDataObject {
                                             boolean defaultValue,
                                             boolean noIndex)
     {
-        return XsdFieldDefinition.Create(parent, name, dataType, label, defaultClassificationMarking, Boolean.toString(defaultValue), noIndex);
+        return XsdFieldDefinition.Create(parent,
+                                         name,
+                                         dataType,
+                                         label,
+                                         defaultClassificationMarking,
+                                         Boolean.toString(defaultValue),
+                                         noIndex);
     }
-    
+
     public static XsdFieldDefinition Create(XsdRecordset parent,
                                             String name,
                                             ECoalesceFieldDataTypes dataType,
                                             String label,
                                             String defaultClassificationMarking,
-                                            int defaultValue) {
+                                            int defaultValue)
+    {
         return XsdFieldDefinition.Create(parent, name, dataType, label, defaultClassificationMarking, defaultValue, false);
     }
-    
+
     public static XsdFieldDefinition Create(XsdRecordset parent,
                                             String name,
                                             ECoalesceFieldDataTypes dataType,
@@ -79,9 +83,15 @@ public class XsdFieldDefinition extends XsdDataObject {
                                             int defaultValue,
                                             boolean noIndex)
     {
-        return XsdFieldDefinition.Create(parent, name, dataType, label, defaultClassificationMarking, Integer.toString(defaultValue), noIndex);
+        return XsdFieldDefinition.Create(parent,
+                                         name,
+                                         dataType,
+                                         label,
+                                         defaultClassificationMarking,
+                                         Integer.toString(defaultValue),
+                                         noIndex);
     }
-    
+
     public static XsdFieldDefinition Create(XsdRecordset parent,
                                             String name,
                                             ECoalesceFieldDataTypes dataType,
@@ -117,18 +127,15 @@ public class XsdFieldDefinition extends XsdDataObject {
     {
         return Create(parent, name, dataType, false);
     }
-/*
-    public static XsdFieldDefinition Create(XsdRecordset parent, String name, ECoalesceFieldDataTypes dataType, boolean noIndex)
-    {
-        return Create(parent, name, ECoalesceFieldDataTypes.GetELinkTypeForLabel(dataType), noIndex);
-    }
-*/
-/*
-    public static XsdFieldDefinition Create(XsdRecordset parent, String name, ECoalesceFieldDataTypes dataType)
-    {
-        return Create(parent, name, dataType, false);
-    }
-*/
+
+    /*
+     * public static XsdFieldDefinition Create(XsdRecordset parent, String name, ECoalesceFieldDataTypes dataType, boolean
+     * noIndex) { return Create(parent, name, ECoalesceFieldDataTypes.GetELinkTypeForLabel(dataType), noIndex); }
+     */
+    /*
+     * public static XsdFieldDefinition Create(XsdRecordset parent, String name, ECoalesceFieldDataTypes dataType) { return
+     * Create(parent, name, dataType, false); }
+     */
     public static XsdFieldDefinition Create(XsdRecordset parent,
                                             String name,
                                             ECoalesceFieldDataTypes dataType,
@@ -201,7 +208,7 @@ public class XsdFieldDefinition extends XsdDataObject {
     {
         return "fielddefinition";
     }
-    
+
     public String GetLabel()
     {
         return _entityFieldDefinition.getLabel();
@@ -212,9 +219,9 @@ public class XsdFieldDefinition extends XsdDataObject {
         _entityFieldDefinition.setLabel(value);
     }
 
-    public String GetDataType()
+    public ECoalesceFieldDataTypes GetDataType()
     {
-        return _entityFieldDefinition.getDatatype();
+        return ECoalesceFieldDataTypes.GetTypeForCoalesceType(_entityFieldDefinition.getDatatype());
     }
 
     public void SetDataType(ECoalesceFieldDataTypes value)
@@ -268,82 +275,6 @@ public class XsdFieldDefinition extends XsdDataObject {
     {
         // _entityFieldDefinition.setLastmodified(new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
         _entityFieldDefinition.setLastmodified(value);
-    }
-
-    public static ECoalesceFieldDataTypes GetCoalesceFieldDataTypeForCoalesceType(String CoalesceType)
-    {
-        try
-        {
-            switch (CoalesceType.toUpperCase()) {
-
-            case "BINARY":
-                return ECoalesceFieldDataTypes.BinaryType;
-
-            case "BOOLEAN":
-                return ECoalesceFieldDataTypes.BooleanType;
-
-            case "DATETIME":
-                return ECoalesceFieldDataTypes.DateTimeType;
-
-            case "GEOCOORDINATE":
-                return ECoalesceFieldDataTypes.GeocoordinateType;
-
-            case "GEOCOORDINATELIST":
-                return ECoalesceFieldDataTypes.GeocoordinateListType;
-
-            case "GUID":
-                return ECoalesceFieldDataTypes.GuidType;
-
-            case "INTEGER":
-                return ECoalesceFieldDataTypes.IntegerType;
-
-            case "URI":
-                return ECoalesceFieldDataTypes.UriType;
-
-            case "FILE":
-                return ECoalesceFieldDataTypes.FileType;
-
-            default:
-                return ECoalesceFieldDataTypes.StringType;
-
-            }
-        }
-        catch (Exception ex)
-        {
-            return ECoalesceFieldDataTypes.StringType;
-        }
-    }
-
-    public static ECoalesceFieldDataTypes GetCoalesceFieldDataTypeForSQLType(String SQLType)
-    {
-        try
-        {
-            switch (SQLType.toUpperCase()) {
-            case "ADVARWCHAR":
-            case "ADLONGVARWCHAR":
-                return ECoalesceFieldDataTypes.StringType;
-            case "ADDBTIMESTAMP":
-                return ECoalesceFieldDataTypes.DateTimeType;
-            case "ADBOOLEAN":
-                return ECoalesceFieldDataTypes.BooleanType;
-            case "ADGUID":
-                return ECoalesceFieldDataTypes.GuidType;
-            case "ADSMALLINT":
-            case "ADINTEGER":
-                return ECoalesceFieldDataTypes.IntegerType;
-            case "ADLONGVARBINARY":
-                return ECoalesceFieldDataTypes.BinaryType;
-            default:
-                return ECoalesceFieldDataTypes.StringType;
-            }
-
-        }
-        catch (Exception ex)
-        {
-            CallResult.log(CallResults.FAILED_ERROR, ex, XsdFieldDefinition.MODULE);
-
-            return ECoalesceFieldDataTypes.StringType;
-        }
     }
 
     // -----------------------------------------------------------------------//

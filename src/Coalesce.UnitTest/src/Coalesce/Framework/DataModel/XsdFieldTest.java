@@ -154,13 +154,13 @@ public class XsdFieldTest {
         XsdEntity mission = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
 
         XsdField stringField = GetTestMissionFieldByName(mission, CoalesceTypeInstances.TESTMISSIONNAMEPATH);
-        assertEquals("string", stringField.GetDataType());
+        assertEquals(ECoalesceFieldDataTypes.StringType, stringField.GetDataType());
 
         XsdField dateField = GetTestMissionFieldByName(mission, CoalesceTypeInstances.TESTMISSIONSTARTTIMEPATH);
-        assertEquals("datetime", dateField.GetDataType());
+        assertEquals(ECoalesceFieldDataTypes.DateTimeType, dateField.GetDataType());
 
         XsdField integerField = GetTestMissionFieldByName(mission, CoalesceTypeInstances.TESTMISSIONBASE64PATH);
-        assertEquals("integer", integerField.GetDataType());
+        assertEquals(ECoalesceFieldDataTypes.IntegerType, integerField.GetDataType());
 
     }
 
@@ -170,25 +170,25 @@ public class XsdFieldTest {
         XsdEntity mission = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
 
         XsdField stringField = GetTestMissionFieldByName(mission, CoalesceTypeInstances.TESTMISSIONNAMEPATH);
-        stringField.SetDataType("datetime");
+        stringField.SetDataType(ECoalesceFieldDataTypes.DateTimeType);
 
         XsdField dateField = GetTestMissionFieldByName(mission, CoalesceTypeInstances.TESTMISSIONSTARTTIMEPATH);
-        dateField.SetDataType("integer");
+        dateField.SetDataType(ECoalesceFieldDataTypes.IntegerType);
 
         XsdField integerField = GetTestMissionFieldByName(mission, CoalesceTypeInstances.TESTMISSIONBASE64PATH);
-        integerField.SetDataType("string");
+        integerField.SetDataType(ECoalesceFieldDataTypes.StringType);
 
         String serializedMission = mission.ToXml();
         XsdEntity savedMission = XsdEntity.Create(serializedMission);
 
         XsdField savedStringField = GetTestMissionFieldByName(savedMission, CoalesceTypeInstances.TESTMISSIONNAMEPATH);
-        assertEquals("datetime", savedStringField.GetDataType());
+        assertEquals(ECoalesceFieldDataTypes.DateTimeType, savedStringField.GetDataType());
 
         XsdField savedDateField = GetTestMissionFieldByName(savedMission, CoalesceTypeInstances.TESTMISSIONSTARTTIMEPATH);
-        assertEquals("integer", savedDateField.GetDataType());
+        assertEquals(ECoalesceFieldDataTypes.IntegerType, savedDateField.GetDataType());
 
         XsdField savedIntegerField = GetTestMissionFieldByName(savedMission, CoalesceTypeInstances.TESTMISSIONBASE64PATH);
-        assertEquals("string", savedIntegerField.GetDataType());
+        assertEquals(ECoalesceFieldDataTypes.StringType, savedIntegerField.GetDataType());
 
     }
 

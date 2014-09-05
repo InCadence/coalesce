@@ -25,21 +25,21 @@ import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record.Field;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record.Field.Fieldhistory;
 
 /*-----------------------------------------------------------------------------'
-Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
+ Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
 
-Notwithstanding any contractor copyright notice, the Government has Unlimited
-Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
-of this work other than as specifically authorized by these DFARS Clauses may
-violate Government rights in this work.
+ Notwithstanding any contractor copyright notice, the Government has Unlimited
+ Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+ of this work other than as specifically authorized by these DFARS Clauses may
+ violate Government rights in this work.
 
-DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
-Unlimited Rights. The Government has the right to use, modify, reproduce,
-perform, display, release or disclose this computer software and to have or
-authorize others to do so.
+ DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+ Unlimited Rights. The Government has the right to use, modify, reproduce,
+ perform, display, release or disclose this computer software and to have or
+ authorize others to do so.
 
-Distribution Statement D. Distribution authorized to the Department of
-Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
------------------------------------------------------------------------------*/
+ Distribution Statement D. Distribution authorized to the Department of
+ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+ -----------------------------------------------------------------------------*/
 
 public class XsdFieldHistoryTest {
 
@@ -264,11 +264,11 @@ public class XsdFieldHistoryTest {
         XsdEntity mission = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
 
         XsdFieldHistory stringField = GetTestMissionFieldHistoryByName(mission, CoalesceTypeInstances.TESTMISSIONNAMEPATH);
-        assertEquals("string", stringField.GetDataType());
+        assertEquals(ECoalesceFieldDataTypes.StringType, stringField.GetDataType());
 
         XsdFieldHistory dateField = GetTestMissionFieldHistoryByName(mission,
                                                                      CoalesceTypeInstances.TESTMISSIONINCIDENTDATETIMEPATH);
-        assertEquals("datetime", dateField.GetDataType());
+        assertEquals(ECoalesceFieldDataTypes.DateTimeType, dateField.GetDataType());
 
     }
 
@@ -278,22 +278,22 @@ public class XsdFieldHistoryTest {
         XsdEntity mission = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
 
         XsdFieldHistory stringField = GetTestMissionFieldHistoryByName(mission, CoalesceTypeInstances.TESTMISSIONNAMEPATH);
-        stringField.SetDataType("datetime");
+        stringField.SetDataType(ECoalesceFieldDataTypes.DateTimeType);
 
         XsdFieldHistory dateField = GetTestMissionFieldHistoryByName(mission,
                                                                      CoalesceTypeInstances.TESTMISSIONINCIDENTDATETIMEPATH);
-        dateField.SetDataType("integer");
+        dateField.SetDataType(ECoalesceFieldDataTypes.IntegerType);
 
         String serializedMission = mission.ToXml();
         XsdEntity savedMission = XsdEntity.Create(serializedMission);
 
         XsdFieldHistory savedStringField = GetTestMissionFieldHistoryByName(savedMission,
                                                                             CoalesceTypeInstances.TESTMISSIONNAMEPATH);
-        assertEquals("datetime", savedStringField.GetDataType());
+        assertEquals(ECoalesceFieldDataTypes.DateTimeType, savedStringField.GetDataType());
 
         XsdFieldHistory savedDateField = GetTestMissionFieldHistoryByName(savedMission,
                                                                           CoalesceTypeInstances.TESTMISSIONINCIDENTDATETIMEPATH);
-        assertEquals("integer", savedDateField.GetDataType());
+        assertEquals(ECoalesceFieldDataTypes.IntegerType, savedDateField.GetDataType());
 
     }
 
@@ -774,7 +774,7 @@ public class XsdFieldHistoryTest {
     {
 
         XsdField field = XsdFieldTest.GetTestMissionNameField();
-        
+
         DateTime now = JodaDateTimeHelper.NowInUtc();
         field.SetTypedValue(now);
 
@@ -796,7 +796,7 @@ public class XsdFieldHistoryTest {
 
         XsdRecord parentRecord = parentRecordset.GetItem(0);
         XsdField field = XsdField.Create(parentRecord, fileFieldDef);
-        
+
         Sleep();
         field.SetTypedValue(true);
         field.SetTypedValue(false);
@@ -804,11 +804,11 @@ public class XsdFieldHistoryTest {
         XsdFieldHistory fh = field.GetHistory().get(0);
 
         Object data = fh.GetData();
-        
+
         assertEquals(true, data);
         assertEquals("true", fh.GetValue().toLowerCase());
         assertEquals(true, fh.GetBooleanValue());
-        
+
         fh.SetTypedValue(false);
 
         data = null;
@@ -828,7 +828,7 @@ public class XsdFieldHistoryTest {
         XsdField field = XsdFieldTest.GetTestMissionFieldByName(CoalesceTypeInstances.TESTMISSIONSTARTTIMEPATH);
 
         field.SetTypedValue(JodaDateTimeHelper.NowInUtc());
-        
+
         XsdFieldHistory fh = field.GetHistory().get(0);
         fh.SetTypedValue(true);
 
@@ -850,7 +850,7 @@ public class XsdFieldHistoryTest {
         Sleep();
         field.SetTypedValue(1111);
         field.SetTypedValue(2222);
-        
+
         XsdFieldHistory fh = field.GetHistory().get(0);
 
         Object data = fh.GetData();
@@ -859,7 +859,7 @@ public class XsdFieldHistoryTest {
         assertEquals("1111", fh.GetValue());
         assertEquals(1111, fh.GetIntegerValue());
         assertEquals(1111, data);
-        
+
         fh.SetTypedValue(3333);
 
         data = null;
@@ -879,7 +879,7 @@ public class XsdFieldHistoryTest {
         XsdField field = XsdFieldTest.GetTestMissionFieldByName(CoalesceTypeInstances.TESTMISSIONSTARTTIMEPATH);
 
         field.SetTypedValue(JodaDateTimeHelper.NowInUtc());
-        
+
         XsdFieldHistory fh = field.GetHistory().get(0);
         fh.SetTypedValue(1111);
 
@@ -902,7 +902,7 @@ public class XsdFieldHistoryTest {
         UUID guid = UUID.randomUUID();
         field.SetTypedValue(guid);
         field.SetTypedValue(UUID.randomUUID());
-        
+
         XsdFieldHistory fh = field.GetHistory().get(0);
 
         Object data = fh.GetData();
@@ -932,7 +932,7 @@ public class XsdFieldHistoryTest {
         XsdField field = XsdFieldTest.GetTestMissionFieldByName(CoalesceTypeInstances.TESTMISSIONSTARTTIMEPATH);
 
         field.SetTypedValue(JodaDateTimeHelper.NowInUtc());
-        
+
         XsdFieldHistory fh = field.GetHistory().get(0);
         fh.SetTypedValue(UUID.randomUUID());
 

@@ -82,13 +82,15 @@ public class XsdFieldHistory extends XsdFieldBase {
         }
     }
 
-    private boolean Initialize(XsdField parent) {
-        
+    private boolean Initialize(XsdField parent)
+    {
+
         Fieldhistory entityFieldHistory = new Fieldhistory();
-        
+
         return Initialize(parent, entityFieldHistory);
-        
+
     }
+
     public boolean Initialize(XsdField parent, Fieldhistory fieldHistory)
     {
 
@@ -133,7 +135,7 @@ public class XsdFieldHistory extends XsdFieldBase {
     {
         return "fieldhistory";
     }
-    
+
     public String GetValue()
     {
         return _entityFieldHistory.getValue();
@@ -144,14 +146,14 @@ public class XsdFieldHistory extends XsdFieldBase {
         _entityFieldHistory.setValue(value);
     }
 
-    public String GetDataType()
+    public ECoalesceFieldDataTypes GetDataType()
     {
-        return GetStringElement(_entityFieldHistory.getDatatype());
+        return ECoalesceFieldDataTypes.GetTypeForCoalesceType(_entityFieldHistory.getDatatype());
     }
 
-    public void SetDataType(String value)
+    public void SetDataType(ECoalesceFieldDataTypes value)
     {
-        _entityFieldHistory.setDatatype(value);
+        _entityFieldHistory.setDatatype(value.getLabel());
     }
 
     public String GetLabel()
@@ -320,7 +322,7 @@ public class XsdFieldHistory extends XsdFieldBase {
         {
 
             Field entityField = field._entityField;
-            
+
             _entityFieldHistory.setName(entityField.getName());
             _entityFieldHistory.setValue(entityField.getValue());
             _entityFieldHistory.setDatatype(entityField.getDatatype());
@@ -340,13 +342,13 @@ public class XsdFieldHistory extends XsdFieldBase {
             _entityFieldHistory.setStatus(entityField.getStatus());
 
             Map<QName, String> otherAttributes = getAttributes();
-            
+
             for (Map.Entry<QName, String> otherAttr : field.getAttributes().entrySet())
             {
-                
+
                 otherAttributes.put(otherAttr.getKey(), otherAttr.getValue());
             }
-            
+
             return CallResult.successCallResult;
 
         }
