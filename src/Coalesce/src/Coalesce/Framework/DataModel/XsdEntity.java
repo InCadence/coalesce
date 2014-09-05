@@ -17,7 +17,6 @@ import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import Coalesce.Common.Helpers.XmlHelper;
 import Coalesce.Framework.GeneratedJAXB.Entity;
 import Coalesce.Framework.GeneratedJAXB.Entity.Linkagesection;
-import Coalesce.Framework.GeneratedJAXB.Entity.Linkagesection.Linkage;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section;
 
 /*-----------------------------------------------------------------------------'
@@ -359,33 +358,9 @@ public class XsdEntity extends XsdDataObject {
         _entity.setStatus(status);
     }
 
-    public HashMap<String, XsdLinkage> GetLinkages()
+    public Map<String, XsdLinkage> GetLinkages()
     {
-        try
-        {
-
-            HashMap<String, XsdLinkage> d = new HashMap<String, XsdLinkage>();
-
-            XsdLinkageSection linkageSection = new XsdLinkageSection();
-            linkageSection.Initialize(this);
-
-            for (Linkage entityLinkage : _entity.getLinkagesection().getLinkage())
-            {
-                XsdLinkage linkage = new XsdLinkage();
-                if (linkage.Initialize(linkageSection, entityLinkage))
-                {
-                    d.put(linkage.GetKey(), linkage);
-                }
-            }
-
-            return d;
-
-        }
-        catch (Exception ex)
-        {
-            CallResult.log(CallResults.FAILED_ERROR, ex, this);
-            return null;
-        }
+        return GetLinkages((String) null);
     }
 
     // -----------------------------------------------------------------------//
@@ -449,229 +424,58 @@ public class XsdEntity extends XsdDataObject {
         }
     }
 
-    public CallResult GetMyLinkages(Map<String, XsdLinkage> linkages)
+    public Map<String, XsdLinkage> GetLinkages(String forEntityName)
     {
-        try
+        Map<String, XsdLinkage> linkages = new HashMap<String, XsdLinkage>();
+
+        // Get Linkage Section
+        XsdLinkageSection linkageSection = GetLinkageSection();
+        if (linkageSection == null) return null;
+
+        for (ICoalesceDataObject cdo : linkageSection.GetChildDataObjects().values())
         {
-
-            HashMap<String, XsdLinkage> results = new HashMap<String, XsdLinkage>();
-
-            XsdLinkageSection linkageSection = GetLinkageSection();
-
-            if (linkageSection != null)
+            if (cdo instanceof XsdLinkage)
             {
-                for (XsdDataObject child : linkageSection._childDataObjects.values())
+
+                XsdLinkage linkage = (XsdLinkage) cdo;
+                if (forEntityName == null || linkage.GetEntity2Name().equalsIgnoreCase(forEntityName))
                 {
-
-                    if (child instanceof XsdLinkage)
-                    {
-                        results.put(child.GetKey(), (XsdLinkage) child);
-                    }
-
+                    linkages.put(cdo.GetKey(), linkage);
                 }
             }
-
-            linkages.putAll(results);
-
-            return CallResult.successCallResult;
-
         }
-        catch (Exception ex)
-        {
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
-        }
+
+        return linkages;
+
     }
 
-    public CallResult GetMyLinkages(String forEntityName, HashMap<String, XsdLinkage> linkages)
+    public Map<String, XsdLinkage> GetLinkages(ELinkTypes forLinkType, String forEntityName)
     {
-        try
-        {
 
-            HashMap<String, XsdLinkage> results = new HashMap<String, XsdLinkage>();
+        List<ELinkTypes> forLinkTypes = new ArrayList<ELinkTypes>();
+        forLinkTypes.add(forLinkType);
 
-            XsdLinkageSection linkageSection = GetLinkageSection();
-
-            if (linkageSection != null)
-            {
-                for (XsdDataObject child : linkageSection._childDataObjects.values())
-                {
-
-                    if (child instanceof XsdLinkage)
-                    {
-
-                        XsdLinkage linkage = (XsdLinkage) child;
-                        if (linkage.GetEntity2Name().toLowerCase().equals(forEntityName.toLowerCase()))
-                        {
-
-                            results.put(linkage.GetKey(), linkage);
-
-                        }
-                    }
-                }
-
-            }
-
-            linkages.putAll(results);
-
-            return CallResult.successCallResult;
-
-        }
-        catch (Exception ex)
-        {
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
-        }
+        return GetLinkages(forLinkTypes, forEntityName);
     }
 
-    public CallResult GetMyLinkages(ELinkTypes forLinkType, String forEntityName, HashMap<String, XsdLinkage> linkages)
+    public Map<String, XsdLinkage> GetLinkages(List<ELinkTypes> forLinkTypes, String forEntityName)
     {
-        try
-        {
-            CallResult rst;
-
-            List<ELinkTypes> forLinkTypes = new ArrayList<ELinkTypes>();
-            forLinkTypes.add(forLinkType);
-
-            rst = GetMyLinkages(forLinkTypes, forEntityName, linkages);
-
-            return rst;
-
-        }
-        catch (Exception ex)
-        {
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
-        }
+        return GetLinkages(forLinkTypes, forEntityName, null);
     }
 
-    public CallResult GetMyLinkages(List<ELinkTypes> forLinkTypes, String forEntityName, HashMap<String, XsdLinkage> linkages)
+    public Map<String, XsdLinkage> GetLinkages(ELinkTypes forLinkType, String forEntityName, String forEntitySource)
     {
-        try
-        {
 
-            HashMap<String, XsdLinkage> results = new HashMap<String, XsdLinkage>();
+        List<ELinkTypes> forLinkTypes = new ArrayList<ELinkTypes>();
+        forLinkTypes.add(forLinkType);
 
-            XsdLinkageSection linkageSection = GetLinkageSection();
+        return GetLinkages(forLinkTypes, forEntityName, forEntitySource);
 
-            if (linkageSection != null)
-            {
-                for (XsdDataObject child : linkageSection._childDataObjects.values())
-                {
-
-                    if (child instanceof XsdLinkage)
-                    {
-
-                        XsdLinkage linkage = (XsdLinkage) child;
-                        if (linkage.GetEntity2Name().toLowerCase().equals(forEntityName.toLowerCase())
-                                && forLinkTypes.contains(linkage.GetLinkType()))
-                        {
-
-                            if (linkage.GetStatus() != ECoalesceDataObjectStatus.DELETED)
-                            {
-
-                                results.put(linkage.GetKey(), linkage);
-                            }
-                        }
-                    }
-                }
-            }
-
-            linkages.putAll(results);
-
-            return CallResult.successCallResult;
-
-        }
-        catch (Exception ex)
-        {
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
-        }
     }
 
-    public CallResult GetMyLinkages(ELinkTypes forLinkType,
-                                    String forEntityName,
-                                    String forEntitySource,
-                                    HashMap<String, XsdLinkage> linkages)
+    public Map<String, XsdLinkage> GetLinkages(ELinkTypes forLinkType)
     {
-        try
-        {
-
-            HashMap<String, XsdLinkage> results = new HashMap<String, XsdLinkage>();
-
-            XsdLinkageSection linkageSection = GetLinkageSection();
-
-            if (linkageSection != null)
-            {
-                for (XsdDataObject child : linkageSection._childDataObjects.values())
-                {
-
-                    if (child instanceof XsdLinkage)
-                    {
-
-                        XsdLinkage linkage = (XsdLinkage) child;
-                        if (linkage.GetEntity2Name().toLowerCase().equals(forEntityName.toLowerCase())
-                                && forLinkType == linkage.GetLinkType()
-                                && linkage.GetEntity2Source().toLowerCase().equals(forEntitySource.toLowerCase()))
-                        {
-
-                            if (linkage.GetStatus() != ECoalesceDataObjectStatus.DELETED)
-                            {
-
-                                results.put(linkage.GetKey(), linkage);
-                            }
-                        }
-                    }
-                }
-            }
-
-            linkages.putAll(results);
-
-            return CallResult.successCallResult;
-
-        }
-        catch (Exception ex)
-        {
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
-        }
-    }
-
-    public CallResult GetMyLinkages(ELinkTypes forLinkType, HashMap<String, XsdLinkage> linkages)
-    {
-        try
-        {
-
-            HashMap<String, XsdLinkage> results = new HashMap<String, XsdLinkage>();
-
-            XsdLinkageSection linkageSection = GetLinkageSection();
-
-            if (linkageSection != null)
-            {
-                for (XsdDataObject child : linkageSection._childDataObjects.values())
-                {
-
-                    if (child instanceof XsdLinkage)
-                    {
-
-                        XsdLinkage linkage = (XsdLinkage) child;
-                        if (forLinkType == linkage.GetLinkType())
-                        {
-
-                            if (linkage.GetStatus() != ECoalesceDataObjectStatus.DELETED)
-                            {
-
-                                results.put(linkage.GetKey(), linkage);
-                            }
-                        }
-                    }
-                }
-            }
-
-            linkages.putAll(results);
-
-            return CallResult.successCallResult;
-
-        }
-        catch (Exception ex)
-        {
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
-        }
+        return GetLinkages(forLinkType, null);
     }
 
     // TODO: Need to test this
@@ -873,6 +677,34 @@ public class XsdEntity extends XsdDataObject {
         }
 
         return entityXml;
+
+    }
+
+    private Map<String, XsdLinkage> GetLinkages(List<ELinkTypes> forLinkTypes, String forEntityName, String forEntitySource)
+    {
+        Map<String, XsdLinkage> linkages = new HashMap<String, XsdLinkage>();
+
+        // Get Linkage Section
+        XsdLinkageSection linkageSection = GetLinkageSection();
+        if (linkageSection == null) return null;
+
+        for (ICoalesceDataObject cdo : linkageSection.GetChildDataObjects().values())
+        {
+            if (cdo instanceof XsdLinkage)
+            {
+
+                XsdLinkage linkage = (XsdLinkage) cdo;
+                if ((forEntityName == null || linkage.GetEntity2Name().equalsIgnoreCase(forEntityName))
+                        && forLinkTypes.contains(linkage.GetLinkType())
+                        && (forEntitySource == null || linkage.GetEntity2Source().equalsIgnoreCase(forEntitySource))
+                        && linkage.GetStatus() != ECoalesceDataObjectStatus.DELETED)
+                {
+                    linkages.put(linkage.GetKey(), linkage);
+                }
+            }
+        }
+
+        return linkages;
 
     }
 

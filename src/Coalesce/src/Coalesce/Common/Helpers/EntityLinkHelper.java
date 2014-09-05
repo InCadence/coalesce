@@ -1,10 +1,5 @@
 package Coalesce.Common.Helpers;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import unity.core.runtime.CallResult;
 import unity.core.runtime.CallResult.CallResults;
 import Coalesce.Framework.DataModel.ECoalesceDataObjectStatus;
@@ -136,70 +131,6 @@ public class EntityLinkHelper {
 
     }
 
-    public static Map<String, XsdLinkage> GetLinkages(XsdEntity entity)
-    {
-
-        return GetLinkages(entity, (String) null);
-
-    }
-
-    public static Map<String, XsdLinkage> GetLinkages(XsdEntity entity, String forEntityName)
-    {
-        Map<String, XsdLinkage> linkages = new HashMap<String, XsdLinkage>();
-
-        // Get Linkage Section
-        XsdLinkageSection linkageSection = entity.GetLinkageSection();
-        if (linkageSection == null) return null;
-
-        for (ICoalesceDataObject cdo : linkageSection.GetChildDataObjects().values())
-        {
-            if (cdo instanceof XsdLinkage)
-            {
-
-                XsdLinkage linkage = (XsdLinkage) cdo;
-                if (forEntityName == null || linkage.GetEntity2Name().equalsIgnoreCase(forEntityName))
-                {
-                    linkages.put(cdo.GetKey(), linkage);
-                }
-            }
-        }
-
-        return linkages;
-
-    }
-
-    public static Map<String, XsdLinkage> GetLinkages(XsdEntity entity, ELinkTypes forLinkType, String forEntityName)
-    {
-
-        List<ELinkTypes> forLinkTypes = new ArrayList<ELinkTypes>();
-        forLinkTypes.add(forLinkType);
-
-        return GetLinkages(entity, forLinkTypes, forEntityName);
-    }
-
-    public static Map<String, XsdLinkage> GetLinkages(XsdEntity entity, List<ELinkTypes> forLinkTypes, String forEntityName)
-    {
-        return GetLinkages(entity, forLinkTypes, forEntityName, null);
-    }
-
-    public static Map<String, XsdLinkage> GetLinkages(XsdEntity entity,
-                                                      ELinkTypes forLinkType,
-                                                      String forEntityName,
-                                                      String forEntitySource)
-    {
-
-        List<ELinkTypes> forLinkTypes = new ArrayList<ELinkTypes>();
-        forLinkTypes.add(forLinkType);
-
-        return GetLinkages(entity, forLinkTypes, forEntityName, forEntitySource);
-
-    }
-
-    public static Map<String, XsdLinkage> GetLinkages(XsdEntity entity, ELinkTypes forLinkType)
-    {
-        return GetLinkages(entity, forLinkType, null);
-    }
-
     // -----------------------------------------------------------------------//
     // Private Methods
     // -----------------------------------------------------------------------//
@@ -312,37 +243,6 @@ public class EntityLinkHelper {
         }
 
         return false;
-
-    }
-
-    private static Map<String, XsdLinkage> GetLinkages(XsdEntity entity,
-                                                       List<ELinkTypes> forLinkTypes,
-                                                       String forEntityName,
-                                                       String forEntitySource)
-    {
-        Map<String, XsdLinkage> linkages = new HashMap<String, XsdLinkage>();
-
-        // Get Linkage Section
-        XsdLinkageSection linkageSection = entity.GetLinkageSection();
-        if (linkageSection == null) return null;
-
-        for (ICoalesceDataObject cdo : linkageSection.GetChildDataObjects().values())
-        {
-            if (cdo instanceof XsdLinkage)
-            {
-
-                XsdLinkage linkage = (XsdLinkage) cdo;
-                if ((forEntityName == null || linkage.GetEntity2Name().equalsIgnoreCase(forEntityName))
-                        && forLinkTypes.contains(linkage.GetLinkType())
-                        && (forEntitySource == null || linkage.GetEntity2Source().equalsIgnoreCase(forEntitySource))
-                        && linkage.GetStatus() != ECoalesceDataObjectStatus.DELETED)
-                {
-                    linkages.put(linkage.GetKey(), linkage);
-                }
-            }
-        }
-
-        return linkages;
 
     }
 
