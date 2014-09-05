@@ -109,7 +109,7 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
         this.SetObjectStatus(value.toLabel());
 
         // Yes; Update Last Modified
-        this.SetLastModified(new DateTime());
+        this.SetLastModified(JodaDateTimeHelper.NowInUtc());
     }
 
     @Override
