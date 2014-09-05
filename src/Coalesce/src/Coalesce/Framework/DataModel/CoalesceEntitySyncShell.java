@@ -16,7 +16,6 @@ public class CoalesceEntitySyncShell {
 
     protected Document _DataObjectDocument;
     protected Node _EntityNode;
-	XmlHelper _XmlHelper = new XmlHelper();
 
     //-----------------------------------------------------------------------//
     // Factory and Initialization
@@ -246,7 +245,7 @@ public class CoalesceEntitySyncShell {
             // correct pruning.  We rely on whether or not a node has children remaining as one of the decision points on whether or not
             // the node itself needs to remain.)
 		    for(int i=0; i<RemoteSyncShellNode.getChildNodes().getLength(); i++){
-                @SuppressWarnings("unused")
+
                 Node Child = RemoteSyncShellNode.getChildNodes().item(i);
 		    	RequiredChangesSyncShell = PruneUnchangedNodes(LocalFullSyncShell, Child, RequiredChangesSyncShell);
             }
@@ -257,7 +256,7 @@ public class CoalesceEntitySyncShell {
                     // Yes; Check
 
                     // Check RemoteSyncShellNode
-                    Key = _XmlHelper.GetAttribute(RemoteSyncShellNode, "key");
+                    Key = XmlHelper.GetAttribute(RemoteSyncShellNode, "key");
 
                     if (Key != "") {
                         String XPath = "//*[@key='" + Key + "']";
@@ -267,8 +266,8 @@ public class CoalesceEntitySyncShell {
 
                         if (MyNode != null) {
                             // Compare Timestamps
-                            DateTime LocalLastModified = _XmlHelper.GetAttributeAsDate(MyNode, "lastmodified");
-                            DateTime RemoteLastModified = _XmlHelper.GetAttributeAsDate(RemoteSyncShellNode, "lastmodified");
+                            DateTime LocalLastModified = XmlHelper.GetAttributeAsDate(MyNode, "lastmodified");
+                            DateTime RemoteLastModified = XmlHelper.GetAttributeAsDate(RemoteSyncShellNode, "lastmodified");
 
                             switch (LocalLastModified.compareTo(RemoteLastModified)){
                                 case 0:
@@ -301,7 +300,7 @@ public class CoalesceEntitySyncShell {
                     // Yes; Check
 
                     // Check RemoteSyncShellNode
-                	Key = _XmlHelper.GetAttribute(RemoteSyncShellNode, "key");
+                	Key = XmlHelper.GetAttribute(RemoteSyncShellNode, "key");
 
                     if (Key != "") {
                     	String XPath = "//*[@key='" + Key + "']";
@@ -311,8 +310,8 @@ public class CoalesceEntitySyncShell {
 
                         if (MyNode != null) {
                             // Compare Timestamps
-                            DateTime LocalLastModified = _XmlHelper.GetAttributeAsDate(MyNode, "lastmodified");
-                            DateTime RemoteLastModified = _XmlHelper.GetAttributeAsDate(RemoteSyncShellNode, "lastmodified");
+                            DateTime LocalLastModified = XmlHelper.GetAttributeAsDate(MyNode, "lastmodified");
+                            DateTime RemoteLastModified = XmlHelper.GetAttributeAsDate(RemoteSyncShellNode, "lastmodified");
 
                             switch (LocalLastModified.compareTo(RemoteLastModified)){
                                 case 0:
@@ -341,7 +340,7 @@ public class CoalesceEntitySyncShell {
                     // Yes; Check
 
                     // Check RemoteSyncShellNode
-                    Key = _XmlHelper.GetAttribute(RemoteSyncShellNode, "key");
+                    Key = XmlHelper.GetAttribute(RemoteSyncShellNode, "key");
 
                     if (Key != "") {
                         String XPath = "//*[@key='" + Key + "']";
@@ -351,8 +350,8 @@ public class CoalesceEntitySyncShell {
 
                         if (MyNode != null) {
                             // Compare Timestamps
-                            DateTime LocalLastModified = _XmlHelper.GetAttributeAsDate(MyNode, "lastmodified");
-                            DateTime RemoteLastModified = _XmlHelper.GetAttributeAsDate(RemoteSyncShellNode, "lastmodified");
+                            DateTime LocalLastModified = XmlHelper.GetAttributeAsDate(MyNode, "lastmodified");
+                            DateTime RemoteLastModified = XmlHelper.GetAttributeAsDate(RemoteSyncShellNode, "lastmodified");
 
                             switch (LocalLastModified.compareTo(RemoteLastModified)){
                                 case 0:
@@ -381,7 +380,7 @@ public class CoalesceEntitySyncShell {
                     // Yes; Check
 
                     // Check RemoteSyncShellNode
-                    Key = _XmlHelper.GetAttribute(RemoteSyncShellNode, "key");
+                    Key = XmlHelper.GetAttribute(RemoteSyncShellNode, "key");
 
                     if (Key != "") {
                         String XPath = "//*[@key='" + Key + "']";
@@ -391,8 +390,8 @@ public class CoalesceEntitySyncShell {
 
                         if (MyNode != null) {
                             // Compare Timestamps
-                            DateTime LocalLastModified = _XmlHelper.GetAttributeAsDate(MyNode, "lastmodified");
-                            DateTime RemoteLastModified = _XmlHelper.GetAttributeAsDate(RemoteSyncShellNode, "lastmodified");
+                            DateTime LocalLastModified = XmlHelper.GetAttributeAsDate(MyNode, "lastmodified");
+                            DateTime RemoteLastModified = XmlHelper.GetAttributeAsDate(RemoteSyncShellNode, "lastmodified");
 
                             switch (LocalLastModified.compareTo(RemoteLastModified)){
                                 case 0:
@@ -430,7 +429,7 @@ public class CoalesceEntitySyncShell {
                     // that a child object to this object required updating, therefore we have to keep
                     // this object's node. If there are no child nodes, then we can prune this
                     // object's node.
-                    Key = _XmlHelper.GetAttribute(RemoteSyncShellNode, "key");
+                    Key = XmlHelper.GetAttribute(RemoteSyncShellNode, "key");
 
                     if (Key != "") {
                         String XPath = "//*[@key='" + Key + "']";

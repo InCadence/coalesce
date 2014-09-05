@@ -4,10 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.util.Date;
-
-import unity.core.runtime.CallResult;
-import unity.core.runtime.CallResult.CallResults;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -22,6 +18,9 @@ import javax.xml.transform.stream.StreamResult;
 import org.joda.time.DateTime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+
+import unity.core.runtime.CallResult;
+import unity.core.runtime.CallResult.CallResults;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
