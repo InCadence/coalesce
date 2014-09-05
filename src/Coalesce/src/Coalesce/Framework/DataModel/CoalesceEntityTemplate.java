@@ -10,14 +10,31 @@ import org.xml.sax.SAXException;
 
 import Coalesce.Common.Helpers.XmlHelper;
 
+/*-----------------------------------------------------------------------------'
+ Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
+
+ Notwithstanding any contractor copyright notice, the Government has Unlimited
+ Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+ of this work other than as specifically authorized by these DFARS Clauses may
+ violate Government rights in this work.
+
+ DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+ Unlimited Rights. The Government has the right to use, modify, reproduce,
+ perform, display, release or disclose this computer software and to have or
+ authorize others to do so.
+
+ Distribution Statement D. Distribution authorized to the Department of
+ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+ -----------------------------------------------------------------------------*/
+
 public class CoalesceEntityTemplate {
 
     // -----------------------------------------------------------------------//
     // Protected Member Variables
     // -----------------------------------------------------------------------//
 
-    protected Document _DataObjectDocument;
-    protected Node _EntityNode;
+    private Document _DataObjectDocument;
+    private Node _EntityNode;
 
     // -----------------------------------------------------------------------//
     // Static Create Functions
@@ -128,12 +145,12 @@ public class CoalesceEntityTemplate {
     private void RemoveNodes(Document doc, String nodeName)
     {
 
-        NodeList linkageList = doc.getElementsByTagName(nodeName);
+        NodeList nodeList = doc.getElementsByTagName(nodeName);
 
         // Remove all Linkages
-        for (int i = linkageList.getLength() - 1; i >= 0; i--)
+        for (int i = nodeList.getLength() - 1; i >= 0; i--)
         {
-            Node Child = linkageList.item(i);
+            Node Child = nodeList.item(i);
 
             while (Child.hasChildNodes())
             {

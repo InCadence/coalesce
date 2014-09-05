@@ -17,6 +17,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.joda.time.DateTime;
 import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 import unity.core.runtime.CallResult;
@@ -252,8 +253,18 @@ public class XmlHelper {
         // }
 
         // Node currentItem = nl.item(i);
-        String value = xmlNode.getAttributes().getNamedItem(Name).getNodeValue();
-        // System.out.println(value);
+
+        String value = null;
+
+        NamedNodeMap attributes = xmlNode.getAttributes();
+
+        if (attributes != null)
+        {
+            Node attribute = attributes.getNamedItem(Name);
+            if (attribute != null) value = attribute.getNodeValue();
+
+        }
+
         return value;
     }
 

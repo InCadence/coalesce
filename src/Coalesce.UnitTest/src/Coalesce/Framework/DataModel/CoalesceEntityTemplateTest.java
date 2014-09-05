@@ -77,7 +77,7 @@ public class CoalesceEntityTemplateTest {
         assertTrue(template.GetVersion().equalsIgnoreCase("1.0.0.0"));
 
         // Confirm Values
-        NodeList nodeList = template._DataObjectDocument.getElementsByTagName("*");
+        NodeList nodeList = template.GetDataObjectDocument().getElementsByTagName("*");
 
         for (int jj = 0; jj < nodeList.getLength(); jj++)
         {

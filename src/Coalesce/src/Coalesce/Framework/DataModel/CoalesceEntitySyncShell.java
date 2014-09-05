@@ -1,461 +1,396 @@
 package Coalesce.Framework.DataModel;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.joda.time.DateTime;
 import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
+import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.Helpers.XmlHelper;
+
+/*-----------------------------------------------------------------------------'
+ Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
+
+ Notwithstanding any contractor copyright notice, the Government has Unlimited
+ Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+ of this work other than as specifically authorized by these DFARS Clauses may
+ violate Government rights in this work.
+
+ DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+ Unlimited Rights. The Government has the right to use, modify, reproduce,
+ perform, display, release or disclose this computer software and to have or
+ authorize others to do so.
+
+ Distribution Statement D. Distribution authorized to the Department of
+ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+ -----------------------------------------------------------------------------*/
 
 public class CoalesceEntitySyncShell {
 
-    //-----------------------------------------------------------------------//
+    // -----------------------------------------------------------------------//
     // protected Member Variables
-    //-----------------------------------------------------------------------//
+    // -----------------------------------------------------------------------//
 
-    protected Document _DataObjectDocument;
-    protected Node _EntityNode;
+    private Document _DataObjectDocument;
+    private Node _EntityNode;
 
-    //-----------------------------------------------------------------------//
-    // Factory and Initialization
-    //-----------------------------------------------------------------------//
+    // -----------------------------------------------------------------------//
+    // Static Creates
+    // -----------------------------------------------------------------------//
 
-    public CoalesceEntitySyncShell Create(XsdEntity Entity){
+    public static CoalesceEntitySyncShell Create(XsdEntity Entity) throws SAXException, IOException
+    {
+        return CoalesceEntitySyncShell.Create(Entity.ToXml());
+    }
 
-        CoalesceEntitySyncShell EntitySyncShell = null;
-        
-        try{
-            boolean isSuccess = false;
+    public static CoalesceEntitySyncShell Create(String EntitySyncShellXml) throws SAXException, IOException
+    {
+        return CoalesceEntitySyncShell.Create(XmlHelper.loadXMLFrom(EntitySyncShellXml));
+    }
 
-            // Create a new CoalesceEntitySyncShell
-            CoalesceEntitySyncShell SyncShell = new CoalesceEntitySyncShell();
+    public static CoalesceEntitySyncShell Create(Document doc) throws SAXException, IOException
+    {
+        // Create a new CoalesceEntityTemplate
+        CoalesceEntitySyncShell EntitySyncShell = new CoalesceEntitySyncShell();
+
+        // Initialize
+        if (!EntitySyncShell.Initialize(doc)) return null;
+
+        // return
+        return EntitySyncShell;
+    }
+
+    // -----------------------------------------------------------------------//
+    // Initialization
+    // -----------------------------------------------------------------------//
+
+    public boolean Initialize(XsdEntity Entity) throws SAXException, IOException
+    {
+        return this.Initialize(Entity.ToXml());
+    }
+
+    public boolean Initialize(String entityXml) throws SAXException, IOException
+    {
+        return this.Initialize(XmlHelper.loadXMLFrom(entityXml));
+    }
+
+    public boolean Initialize(Document doc)
+    {
+        // Prune Nodes
+        CoalesceEntitySyncShell.PruneNodes(doc);
+
+        // Set DataObjectDocument
+        this.SetDataObjectDocument(doc);
+
+        // return Success
+        return true;
+    }
+
+    // -----------------------------------------------------------------------//
+    // public Properties
+    // -----------------------------------------------------------------------//
+
+    public Document GetDataObjectDocument()
+    {
+        return this._DataObjectDocument;
+    }
+
+    public void SetDataObjectDocument(Document value)
+    {
+        this._DataObjectDocument = value;
+        this._EntityNode = value.getElementsByTagName("entity").item(0);
+    }
+
+    public Node GetEntityNode()
+    {
+        return this._EntityNode;
+    }
+
+    public void SetEntityNode(Node value)
+    {
+        this._EntityNode = value;
+    }
+
+    public String toXml()
+    {
+        return XmlHelper.FormatXml(this._DataObjectDocument);
+    }
+
+    // -----------------------------------------------------------------------//
+    // public Static Functions
+    // -----------------------------------------------------------------------//
+
+    public static CoalesceEntitySyncShell Clone(CoalesceEntitySyncShell SyncShell)
+    {
+
+        try
+        {
+            // Create new Instance
+            CoalesceEntitySyncShell SyncShellClone = new CoalesceEntitySyncShell();
 
             // Initialize
-            isSuccess = SyncShell.InitializeFromEntity(Entity);
+            // TODO: make sure .Clone's are same between vb and java. Java required a boolean.
+            // return SyncShellClone.Initialize(SyncShell.DataObjectDocument.Clone) //vb
+            // return SyncShellClone.Initialize(SyncShell.GetDataObjectDocument()); //1st java thought
+            SyncShellClone.Initialize((Document) SyncShell.GetDataObjectDocument().cloneNode(true));
+            return SyncShellClone;
+            // return CallResult.failedCallResult; //SyncShellClone.InitializeFromEntity((CoalesceEntity)
+            // SyncShell.GetDataObjectDocument().cloneNode(true));
 
-            // Evaluate
-            if (isSuccess) 
-                EntitySyncShell = SyncShell;
-
-            // return
-            return EntitySyncShell;
-
-        }catch(Exception ex){
+        }
+        catch (Exception ex)
+        {
             // return Failed Error
-            return EntitySyncShell;
+            return null;
         }
     }
 
-    public boolean Initialize(String EntitySyncShellXml){
-        try{
-        	//TODO: verify this (loadXMLFrom) is a replacement for LoadXml function
-//            // Create DataObjectDocument
-            
-        	Document XmlDoc = null;
-            XmlDoc = XmlHelper.loadXMLFrom(EntitySyncShellXml);
+    public static CoalesceEntitySyncShell GetRequiredChangesSyncShell(CoalesceEntitySyncShell LocalFullSyncShell,
+                                                                      CoalesceEntitySyncShell RemoteFullSyncShell)
+    {
+        try
+        {
+            // Create the RequiredChangesSyncShell as a Clone of the RemoteFullSyncShell. We will
+            // then prune out nodes that aren't required recursively as we compare against
+            // the nodes in LocalFullSyncShell.
+            CoalesceEntitySyncShell requiredChangesSyncShell = CoalesceEntitySyncShell.Clone(RemoteFullSyncShell);
 
-            // Call Peer.
-            return Initialize(XmlDoc);
+            if (requiredChangesSyncShell.equals(null)) return requiredChangesSyncShell;
 
-        }catch(Exception ex){
-            // return Failed Error
-            return false;
+            // Prune Unchanged Nodes
+            CoalesceEntitySyncShell.PruneUnchangedNodes(CoalesceEntitySyncShell.GenerateMap(LocalFullSyncShell.GetDataObjectDocument()),
+                                                        RemoteFullSyncShell.GetDataObjectDocument(),
+                                                        CoalesceEntitySyncShell.GenerateMap(requiredChangesSyncShell.GetDataObjectDocument()));
+
+            return requiredChangesSyncShell;
+
         }
-    }
-    
-    public boolean Initialize(Document EntitySyncShellDataObjectDocument){
-        try{
-            // Set DataObjectDocument
-            this.SetDataObjectDocument(EntitySyncShellDataObjectDocument);
-            // return Success
-            return true;
-
-        }catch(Exception ex){
+        catch (Exception ex)
+        {
             // return Failed Error
-            return false;
+            return null;
         }
     }
 
-    public boolean InitializeFromEntity(XsdEntity Entity){
-        try{
-            // TODO: verify this works
-            // Create a Clone of the Entity's DataObjectDocument
-            Document TemplateDoc = XmlHelper.loadXMLFrom(Entity.ToXml());
+    // ----------------------------------------------------------------------//
+    // Private Static Functions
+    // ----------------------------------------------------------------------//
 
-            // Prune Nodes
-            PruneNodes(TemplateDoc);
-
-            // Set Template Doc
-            this.SetDataObjectDocument(TemplateDoc);
-
-            // return Success
-            return true;
-
-        }catch(Exception ex){
-            // return Failed Error
-            return false;
-        }
-    }
-
-    protected boolean PruneNodes(Node NodeToPrune){
-        try{
+    private static boolean PruneNodes(Node NodeToPrune)
+    {
+        try
+        {
             boolean isSuccess = false;
 
-            //TODO: Make sure the Node/Attribute "switch" is ok
+            // TODO: Make sure the Node/Attribute "switch" is ok
             // Prune Unnecessary Attributes
-            if (NodeToPrune.getAttributes() != null) {
-                if (NodeToPrune.getAttributes().getLength() > 0) {
-                	ArrayList<Node> RemoveList = new ArrayList<Node>();
+            if (NodeToPrune.getAttributes() != null)
+            {
+                if (NodeToPrune.getAttributes().getLength() > 0)
+                {
+                    ArrayList<String> RemoveList = new ArrayList<String>();
+                    NamedNodeMap attributeList = NodeToPrune.getAttributes();
 
                     // Find Attributes to Remove
-    		    	//for (javax.xml.bind.annotation.XmlAttribute ChildAttributeNode : NodeToPrune.getAttributes()){
-        		    for(int i=0; i<NodeToPrune.getAttributes().getLength(); i++){
-        		    	Node ChildAttributeNode = NodeToPrune.getAttributes().item(i);
-                        switch (ChildAttributeNode.getNodeName().toUpperCase()){
-                            case "KEY":
-                            case "LASTMODIFIED":
-                            case "MD5":
-                                // Keep
-                            	break;
-                            default:
-                                // Add to Remove List
-                                RemoveList.add(ChildAttributeNode);
+                    for (int i = 0; i < attributeList.getLength(); i++)
+                    {
+                        // Get Attribute Name
+                        String attributeName = attributeList.item(i).getNodeName();
+
+                        switch (attributeName.toUpperCase()) {
+                        case "KEY":
+                        case "LASTMODIFIED":
+                        case "HASH":
+                            // Keep
+                            break;
+                        default:
+                            // Mark for Deletion
+                            RemoveList.add(attributeName);
                         }
                     }
 
-                    // Remove
-        	        for (Node ChildAttributeNode : RemoveList){
-                        NodeToPrune.removeChild(ChildAttributeNode);
+                    // Remove Attributes
+                    for (String attributeName : RemoveList)
+                    {
+                        attributeList.removeNamedItem(attributeName);
                     }
                 }
             }
 
             // Prune Unnecessary Nodes
-            if (NodeToPrune.hasChildNodes()) {
-                if (NodeToPrune.getChildNodes().getLength() > 0) {
-                	ArrayList<Node> RemoveList = new ArrayList<Node>();
-                	
-                    // Find Nodes to Remove
-        	        //for (Node ChildNode : NodeToPrune.getChildNodes()){
-        		    for(int i=0; i<NodeToPrune.getChildNodes().getLength(); i++){
-        	        	Node ChildNode = NodeToPrune.getChildNodes().item(i);
+            if (NodeToPrune.hasChildNodes())
+            {
+                if (NodeToPrune.getChildNodes().getLength() > 0)
+                {
+                    ArrayList<Node> RemoveList = new ArrayList<Node>();
+                    NodeList children = NodeToPrune.getChildNodes();
 
-                        switch (ChildNode.getNodeType()){
-                            //case XmlNodeType.Element:
-                        	//case XmlNodeType.EndElement:
-                        	case Node.ELEMENT_NODE:
-                                // Keep
-                            	break;
-                            default:
-                                // Add to Remove List
-                                RemoveList.add(ChildNode);
+                    // Find Nodes to Remove
+                    // for (Node ChildNode : NodeToPrune.getChildNodes()){
+                    for (int i = 0; i < children.getLength(); i++)
+                    {
+                        Node ChildNode = children.item(i);
+
+                        switch (ChildNode.getNodeType()) {
+                        case Node.ELEMENT_NODE:
+                            // Keep
+                            break;
+                        default:
+                            // Add to Remove List
+                            RemoveList.add(ChildNode);
                         }
                     }
 
                     // Remove
-        	        for (Node ChildNode : RemoveList){
+                    for (Node ChildNode : RemoveList)
+                    {
                         NodeToPrune.removeChild(ChildNode);
                     }
                 }
             }
 
             // Recurse Child Nodes
-		    for(int i=0; i<NodeToPrune.getChildNodes().getLength(); i++){
-	        	Node ChildNode = NodeToPrune.getChildNodes().item(i);
-	        	isSuccess = PruneNodes(ChildNode);
+            for (int i = 0; i < NodeToPrune.getChildNodes().getLength(); i++)
+            {
+                Node ChildNode = NodeToPrune.getChildNodes().item(i);
+                isSuccess = PruneNodes(ChildNode);
             }
 
             // return Success
             return isSuccess;
 
-        }catch(Exception ex){
+        }
+        catch (Exception ex)
+        {
             // return Failed Error
             return false;
         }
     }
 
-    //-----------------------------------------------------------------------//
-    // public Properties
-    //-----------------------------------------------------------------------//
+    private static void PruneUnchangedNodes(HashMap<String, Node> localNodes,
+                                            Node RemoteSyncShellNode,
+                                            HashMap<String, Node> requiredNodes)
+    {
+        /*
+         * Recurse Child Nodes (Important: Because this us up front, we check leaf nodes first, which is necessary for
+         * correct pruning. We rely on whether or not a node has children remaining as one of the decision points on whether
+         * or not the node itself needs to remain.)
+         */
+        NodeList children = RemoteSyncShellNode.getChildNodes();
 
-        public Document GetDataObjectDocument(){
-            return this._DataObjectDocument;
-        }
-        public void SetDataObjectDocument(Document value){
-            this._DataObjectDocument = value;
-        	//TODO: need make sure getElementsByTagName is a good replacement for vb's SelectSingleNode function
-            //this._EntityNode = value.SelectSingleNode("entity");
-            this._EntityNode = value.getElementsByTagName("entity").item(0);
-        }
-
-        public Node GetEntityNode(){
-            return this._EntityNode;
-        }
-        public void SetEntityNode(Node value){
-            this._EntityNode = value;
+        for (int ii = 0; ii < children.getLength(); ii++)
+        {
+            // Recursive
+            CoalesceEntitySyncShell.PruneUnchangedNodes(localNodes, children.item(ii), requiredNodes);
         }
 
-    //-----------------------------------------------------------------------//
-    // public Methods
-    //-----------------------------------------------------------------------//
+        // Check RemoteSyncShellNode
+        String key = XmlHelper.GetAttribute(RemoteSyncShellNode, "key");
 
-    public CoalesceEntitySyncShell Clone(CoalesceEntitySyncShell SyncShell){
-        
-        try{
-            // Create new Instance
-            CoalesceEntitySyncShell SyncShellClone = new CoalesceEntitySyncShell();
-
-            // Initialize
-            //TODO: make sure .Clone's are same between vb and java. Java required a boolean.
-            //return SyncShellClone.Initialize(SyncShell.DataObjectDocument.Clone) //vb
-            //return SyncShellClone.Initialize(SyncShell.GetDataObjectDocument()); //1st java thought
-            SyncShellClone.Initialize(SyncShell.GetDataObjectDocument());
-            return SyncShellClone;
-            //return CallResult.failedCallResult; //SyncShellClone.InitializeFromEntity((CoalesceEntity) SyncShell.GetDataObjectDocument().cloneNode(true));
-
-        }catch(Exception ex){
-            // return Failed Error
-            return null;
-        }
-    }
-
-    public CoalesceEntitySyncShell GetRequiredChangesSyncShell(CoalesceEntitySyncShell LocalFullSyncShell, CoalesceEntitySyncShell RemoteFullSyncShell, CoalesceEntitySyncShell RequiredChangesSyncShell){
-        try{
-            // Create the RequiredChangesSyncShell as a Clone of the RemoteFullSyncShell. We will
-            // then prune out nodes that aren't required recursively as we compare against
-            // the nodes in LocalFullSyncShell.
-            RequiredChangesSyncShell = this.Clone(RemoteFullSyncShell);
-            
-            if (RequiredChangesSyncShell.equals(null)) return RequiredChangesSyncShell;
-
-            // Prune Unchanged Nodes
-            return PruneUnchangedNodes(LocalFullSyncShell, RemoteFullSyncShell.GetDataObjectDocument(), RequiredChangesSyncShell);
-
-        }catch(Exception ex){
-            // return Failed Error
-            return null;
-        }
-    }
-
-    protected CoalesceEntitySyncShell PruneUnchangedNodes(CoalesceEntitySyncShell LocalFullSyncShell, Node RemoteSyncShellNode, CoalesceEntitySyncShell RequiredChangesSyncShell){
-        try{
-            String Key = "";
-            // Recurse Child Nodes (Important: Because this us up front, we check leaf nodes first, which is necessary for
-            // correct pruning.  We rely on whether or not a node has children remaining as one of the decision points on whether or not
-            // the node itself needs to remain.)
-		    for(int i=0; i<RemoteSyncShellNode.getChildNodes().getLength(); i++){
-
-                Node Child = RemoteSyncShellNode.getChildNodes().item(i);
-		    	RequiredChangesSyncShell = PruneUnchangedNodes(LocalFullSyncShell, Child, RequiredChangesSyncShell);
-            }
-
+        if (key != "")
+        {
             // Evaluate Based on the Coalesce Object Type
-            switch (RemoteSyncShellNode.getNodeName().toUpperCase()){
-                case "FIELD":
-                    // Yes; Check
-
-                    // Check RemoteSyncShellNode
-                    Key = XmlHelper.GetAttribute(RemoteSyncShellNode, "key");
-
-                    if (Key != "") {
-                        String XPath = "//*[@key='" + Key + "']";
-                    	//TODO: need make sure getElementsByTagName is a good replacement for vb's SelectSingleNode function
-                        //Node MyNode = LocalFullSyncShell.DataObjectDocument.SelectSingleNode(XPath);
-                        Node MyNode = LocalFullSyncShell.GetDataObjectDocument().getElementsByTagName(XPath).item(0);
-
-                        if (MyNode != null) {
-                            // Compare Timestamps
-                            DateTime LocalLastModified = XmlHelper.GetAttributeAsDate(MyNode, "lastmodified");
-                            DateTime RemoteLastModified = XmlHelper.GetAttributeAsDate(RemoteSyncShellNode, "lastmodified");
-
-                            switch (LocalLastModified.compareTo(RemoteLastModified)){
-                                case 0:
-                                case 1:
-                                    // Local is newer or the same date; Prune from the RequiredChangesSyncShell IF there are
-                                    // no remaining FieldHistory entries below the node.  If there are FieldHistory entries,
-                                    // then we keep the Field node even if it's older.
-                                	//TODO: need make sure getElementsByTagName is a good replacement for vb's SelectSingleNode function
-                                	//Node NodeToPrune= RequiredChangesSyncShell.DataObjectDocument.SelectSingleNode(XPath);
-                                    Node NodeToPrune = RequiredChangesSyncShell.GetDataObjectDocument().getElementsByTagName(XPath).item(0);
-
-                                    if (NodeToPrune != null) {
-                                        if (NodeToPrune.getParentNode() != null) {
-                                            if (NodeToPrune.getChildNodes().getLength() == 0) {
-                                                NodeToPrune.getParentNode().removeChild(NodeToPrune);
-                                            }
-                                        }
-                                    }
-                                    break;
-                                case -1:
-                                    // Remote Node is newer; Keep in the RequiredChangesSyncShell
-                                	break;
-                            }
-                        }else{
-                            // Remote Node not found in LocalFullSyncShell; Keep in the RequiredChangesSyncShell
-                        }
-                    }
-                    break;
-                case "FIELDHISTORY":
-                    // Yes; Check
-
-                    // Check RemoteSyncShellNode
-                	Key = XmlHelper.GetAttribute(RemoteSyncShellNode, "key");
-
-                    if (Key != "") {
-                    	String XPath = "//*[@key='" + Key + "']";
-                    	//TODO: need make sure getElementsByTagName is a good replacement for vb's SelectSingleNode function
-                        //Node MyNode = LocalFullSyncShell.DataObjectDocument.SelectSingleNode(XPath);
-                        Node MyNode = LocalFullSyncShell.GetDataObjectDocument().getElementsByTagName(XPath).item(0);
-
-                        if (MyNode != null) {
-                            // Compare Timestamps
-                            DateTime LocalLastModified = XmlHelper.GetAttributeAsDate(MyNode, "lastmodified");
-                            DateTime RemoteLastModified = XmlHelper.GetAttributeAsDate(RemoteSyncShellNode, "lastmodified");
-
-                            switch (LocalLastModified.compareTo(RemoteLastModified)){
-                                case 0:
-                                case 1:
-                                    // Local is newer or the same date; Prune from the RequiredChangesSyncShell
-                                	//TODO: need make sure getElementsByTagName is a good replacement for vb's SelectSingleNode function
-                                    //Node NodeToPrune = RequiredChangesSyncShell.DataObjectDocument.SelectSingleNode(XPath);
-                                    Node NodeToPrune = RequiredChangesSyncShell.GetDataObjectDocument().getElementsByTagName(XPath).item(0);
-
-                                    if (NodeToPrune != null) {
-                                        if (NodeToPrune.getParentNode() != null) {
-                                            NodeToPrune.getParentNode().removeChild(NodeToPrune);
-                                        }
-                                    }
-                                    break;
-                                case -1:
-                                    // Remote is newer; Keep in the RequiredChangesSyncShell
-                                	break;
-                            }
-                        }else{
-                            // Remote Node not found in LocalFullSyncShell; Keep in the RequiredChangesSyncShell
-                        }
-                    }
-                    break;
-                case "LINKAGE":
-                    // Yes; Check
-
-                    // Check RemoteSyncShellNode
-                    Key = XmlHelper.GetAttribute(RemoteSyncShellNode, "key");
-
-                    if (Key != "") {
-                        String XPath = "//*[@key='" + Key + "']";
-                    	//TODO: need make sure getElementsByTagName is a good replacement for vb's SelectSingleNode function
-                        //Node MyNode = LocalFullSyncShell.DataObjectDocument.SelectSingleNode(XPath);
-                        Node MyNode = LocalFullSyncShell.GetDataObjectDocument().getElementsByTagName(XPath).item(0);
-
-                        if (MyNode != null) {
-                            // Compare Timestamps
-                            DateTime LocalLastModified = XmlHelper.GetAttributeAsDate(MyNode, "lastmodified");
-                            DateTime RemoteLastModified = XmlHelper.GetAttributeAsDate(RemoteSyncShellNode, "lastmodified");
-
-                            switch (LocalLastModified.compareTo(RemoteLastModified)){
-                                case 0:
-                                case 1:
-                                    // Local is newer or the same date; Prune from the RequiredChangesSyncShell
-                                	//TODO: need make sure getElementsByTagName is a good replacement for vb's SelectSingleNode function
-                                    //Node NodeToPrune = RequiredChangesSyncShell.DataObjectDocument.SelectSingleNode(XPath);
-                                    Node NodeToPrune = RequiredChangesSyncShell.GetDataObjectDocument().getElementsByTagName(XPath).item(0);
-
-                                    if (NodeToPrune != null) {
-                                        if (NodeToPrune.getParentNode() != null) {
-                                            NodeToPrune.getParentNode().removeChild(NodeToPrune);
-                                        }
-                                    }
-                                break;
-                                case -1:
-                                    // Remote is newer; Keep in the RequiredChangesSyncShell
-                                break;
-                            }
-                        }else{
-                            // Remote Node not found in LocalFullSyncShell; Keep in the RequiredChangesSyncShell
-                        }
-                    }
-                    break;
-                case "FIELDDEFINITION":
-                    // Yes; Check
-
-                    // Check RemoteSyncShellNode
-                    Key = XmlHelper.GetAttribute(RemoteSyncShellNode, "key");
-
-                    if (Key != "") {
-                        String XPath = "//*[@key='" + Key + "']";
-                    	//TODO: need make sure getElementsByTagName is a good replacement for vb's SelectSingleNode function
-                        //Node MyNode = LocalFullSyncShell.DataObjectDocument.SelectSingleNode(XPath);
-                        Node MyNode = LocalFullSyncShell.GetDataObjectDocument().getElementsByTagName(XPath).item(0);
-
-                        if (MyNode != null) {
-                            // Compare Timestamps
-                            DateTime LocalLastModified = XmlHelper.GetAttributeAsDate(MyNode, "lastmodified");
-                            DateTime RemoteLastModified = XmlHelper.GetAttributeAsDate(RemoteSyncShellNode, "lastmodified");
-
-                            switch (LocalLastModified.compareTo(RemoteLastModified)){
-                                case 0:
-                                case 1:
-                                    // Local is newer or the same date; Prune from the RequiredChangesSyncShell
-                                	//TODO: need make sure getElementsByTagName is a good replacement for vb's SelectSingleNode function
-                                    //Node NodeToPrune = RequiredChangesSyncShell.DataObjectDocument.SelectSingleNode(XPath);
-                                    Node NodeToPrune = RequiredChangesSyncShell.GetDataObjectDocument().getElementsByTagName(XPath).item(0);
-
-                                    if (NodeToPrune != null) {
-                                        if (NodeToPrune.getParentNode() != null) {
-                                            NodeToPrune.getParentNode().removeChild(NodeToPrune);
-                                        }
-                                    }
-                                    break;
-                                case -1:
-                                    // Remote is newer; keep in the RequiredChangesSyncShell
-                                	break;
-                            }
-                        }else{
-                            //Remote Node not found in LocalFullSyncShell; Keep in the RequiredChangesSyncShell
-                        }
-                    }
-                    break;
-                case "LINKAGESECTION":
-                case "RECORD":
-                case "RECORDSET":
-                case "SECTION":
-                case "ENTITY":
-                    // For these Coalesce Objects, we will check the RequiredChangesSyncShell
-                    // for the presence of this object's node.  If the node is present, and 
-                    // it still has children, then we will keep the node in the 
-                    // RequiredChangesSyncShell. Since we prune leaves first, and work our way
-                    // up the tree to the base Entity node, the presence of child nodes means 
-                    // that a child object to this object required updating, therefore we have to keep
-                    // this object's node. If there are no child nodes, then we can prune this
-                    // object's node.
-                    Key = XmlHelper.GetAttribute(RemoteSyncShellNode, "key");
-
-                    if (Key != "") {
-                        String XPath = "//*[@key='" + Key + "']";
-                    	//TODO: need make sure getElementsByTagName is a good replacement for vb's SelectSingleNode function
-                        //Node NodeToPrune = RequiredChangesSyncShell.DataObjectDocument.SelectSingleNode(XPath);
-                        Node NodeToPrune = RequiredChangesSyncShell.GetDataObjectDocument().getElementsByTagName(XPath).item(0);
-
-                        if (NodeToPrune != null) {
-                            if (NodeToPrune.getParentNode() != null) {
-                                if (NodeToPrune.getParentNode() == null) {
-                                    // Prune
-                                    NodeToPrune.getParentNode().removeChild(NodeToPrune);
-                                }
-                            }
-                        }
-                    }
-                    break;
+            switch (RemoteSyncShellNode.getNodeName().toUpperCase()) {
+            case "FIELD":
+            case "LINKAGE":
+            case "FIELDHISTORY":
+            case "FIELDDEFINITION":
+                if (!CoalesceEntitySyncShell.IsNewer(localNodes.get(key), RemoteSyncShellNode))
+                {
+                    /*
+                     * Local is newer or the same date; Prune from the RequiredChangesSyncShell IF there are no remaining
+                     * children below the node. If there are children, then we keep the node even if it's older.
+                     */
+                    CoalesceEntitySyncShell.PruneNode(requiredNodes.get(key));
+                }
+                break;
+            case "LINKAGESECTION":
+            case "RECORD":
+            case "RECORDSET":
+            case "SECTION":
+            case "ENTITY":
+            default:
+                /*
+                 * For these Coalesce Objects, we will check the RequiredChangesSyncShell for the presence of this object's
+                 * node. If the node is present, and it still has children, then we will keep the node in the
+                 * RequiredChangesSyncShell. Since we prune leaves first, and work our way up the tree to the base Entity
+                 * node, the presence of child nodes means that a child object to this object required updating, therefore we
+                 * have to keep this object's node. If there are no child nodes, then we can prune this object's node.
+                 */
+                CoalesceEntitySyncShell.PruneNode(requiredNodes.get(key));
+                break;
             }
+        }
 
-            // return Success
-            return RequiredChangesSyncShell;
+    }
 
-        }catch(Exception ex){
-            // return Failed Error
-            return null;
+    private static void PruneNode(Node node)
+    {
+        if (node != null && node.getParentNode() != null && !node.hasChildNodes())
+        {
+            node.getParentNode().removeChild(node);
         }
     }
-	
+
+    private static boolean IsNewer(Node oldNode, Node newNode)
+    {
+        boolean isNewer = true;
+
+        if (oldNode != null)
+        {
+
+            DateTime oldModified = XmlHelper.GetAttributeAsDate(oldNode, "lastmodified");
+            DateTime newLastModified = XmlHelper.GetAttributeAsDate(newNode, "lastmodified");
+
+            switch (oldModified.compareTo(newLastModified)) {
+            case 0:
+            case 1:
+                isNewer = false;
+                break;
+            default:
+                isNewer = true;
+                break;
+            }
+
+        }
+        else
+        {
+            // Remote Node not found in LocalFullSyncShell; Keep in the RequiredChangesSyncShell
+        }
+
+        return isNewer;
+    }
+
+    private static HashMap<String, Node> GenerateMap(Document doc)
+    {
+
+        HashMap<String, Node> nodeMap = new HashMap<String, Node>();
+
+        NodeList nodeList = doc.getElementsByTagName("*");
+
+        for (int jj = 0; jj < nodeList.getLength(); jj++)
+        {
+            Node node = nodeList.item(jj);
+
+            if (node.getNodeType() == Node.ELEMENT_NODE)
+            {
+                String nodeKey = XmlHelper.GetAttribute(node, "key");
+
+                if (!StringHelper.IsNullOrEmpty(nodeKey))
+                {
+                    nodeMap.put(nodeKey, node);
+                }
+            }
+        }
+
+        return nodeMap;
+
+    }
+
 }
