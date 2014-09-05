@@ -1,17 +1,25 @@
 package Coalesce.Framework.Persistance;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import unity.connector.local.LocalConfigurationsConnector;
+import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.Runtime.CoalesceSettings;
 import Coalesce.Framework.CoalesceFramework;
+import Coalesce.Framework.DataModel.CoalesceEntityTemplate;
 import Coalesce.Framework.DataModel.ECoalesceFieldDataTypes;
 import Coalesce.Framework.DataModel.XsdEntity;
 import Coalesce.Framework.DataModel.XsdFieldDefinition;
@@ -51,7 +59,7 @@ public class CoalesceMySQLPersistorTest {
     private static String _fieldKey;
 
     @BeforeClass
-    public static void Initialize()
+    public static void Initialize() throws SAXException, IOException
     {
 
         CoalesceSettings.Initialize(new LocalConfigurationsConnector());
@@ -88,7 +96,68 @@ public class CoalesceMySQLPersistorTest {
         record.SetFieldValue("CurrentStatus", "Test Status");
 
         _fieldKey = record.GetFieldByName("CurrentStatus").GetKey();
+        System.out.println("Original Sample Entity:");
+        System.out.println("***********************\n" + _entity.ToXml());
+        // Test Entity
+        testTemplate(CoalesceEntityTemplate.Create(_entity));
 
+    }
+
+    private static void testTemplate(CoalesceEntityTemplate template)
+    {
+        String templateXml = template.toXml();
+        System.out.println("Template: ");
+        System.out.println("*********\n" + templateXml);
+
+        // Confirm Template
+        assertNotNull(templateXml);
+        assertTrue(template.GetName().equalsIgnoreCase("TestEntity"));
+        assertTrue(template.GetSource().equalsIgnoreCase("Unit Test"));
+        assertTrue(template.GetVersion().equalsIgnoreCase("1.0.0.0"));
+
+        // Confirm Values
+        NodeList nodeList = template.GetDataObjectDocument().getElementsByTagName("*");
+
+        for (int jj = 0; jj < nodeList.getLength(); jj++)
+        {
+            Node node = nodeList.item(jj);
+
+            if (node.getNodeType() == Node.ELEMENT_NODE)
+            {
+                NamedNodeMap attributeList = node.getAttributes();
+
+                for (int ii = 0; ii < attributeList.getLength(); ii++)
+                {
+
+                    Node attribute = attributeList.item(ii);
+
+                    if (!attribute.getNodeName().equalsIgnoreCase("name")
+                            && !attribute.getNodeName().equalsIgnoreCase("source")
+                            && !attribute.getNodeName().equalsIgnoreCase("version"))
+                    {
+                        assertTrue(StringHelper.IsNullOrEmpty(attribute.getNodeValue()));
+                    }
+                    else
+                    {
+                        assertNotNull(attribute.getNodeValue());
+                    }
+                }
+            }
+        }
+
+        // Create Entity from Template
+        XsdEntity entity2 = template.CreateNewEntity();
+
+        String entityXml = entity2.ToXml();
+        System.out.println("Copy of Entity made from Template: " + entity2.GetKey());
+        System.out.println("**********************************\n" + entityXml);
+
+        // Confirm Entity
+        assertNotNull(entityXml);
+        assertNotNull(entity2.GetKey());
+        assertTrue(entity2.GetName().equalsIgnoreCase("TestEntity"));
+        assertTrue(entity2.GetSource().equalsIgnoreCase("Unit Test"));
+        assertTrue(entity2.GetVersion().equalsIgnoreCase("1.0.0.0"));
     }
 
     @Test
@@ -127,6 +196,20 @@ public class CoalesceMySQLPersistorTest {
     }
 
     @Test
+    public void TestCheckLastModified()
+    {
+        try
+        {
+            boolean bRetVal = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntityLastModified();
+            assertTrue(bRetVal != false);
+        }
+        catch (Exception ex)
+        {
+            fail(ex.getMessage());
+        }
+    }
+
+    @Test
     public void TestGetEntityByIdAndType()
     {
         try
@@ -148,6 +231,7 @@ public class CoalesceMySQLPersistorTest {
         try
         {
             XsdEntity ent = new XsdEntity();
+
             ent = CoalesceMySQLPersistorTest._coalesceFramework.GetEntity(_entity.GetName(),
                                                                           _entity.GetEntityId(),
                                                                           _entity.GetEntityIdType());
@@ -263,6 +347,7 @@ public class CoalesceMySQLPersistorTest {
     {
         try
         {
+            testTemplate(CoalesceEntityTemplate.Create(_entity));
             String templateXML = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntityTemplateXml(_entity.GetKey());
             assertTrue(templateXML != null);
         }
@@ -287,6 +372,7 @@ public class CoalesceMySQLPersistorTest {
             fail(ex.getMessage());
         }
     }
+
     @Test
     public void TestGetEntityTemplateKey()
     {
@@ -302,6 +388,7 @@ public class CoalesceMySQLPersistorTest {
             fail(ex.getMessage());
         }
     }
+
     @Test
     public void TestGetXPath()
     {

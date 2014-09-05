@@ -85,7 +85,15 @@ public class JodaDateTimeHelper {
 			return "";
 		}
 	}
-
+    public static String toMySQLDateTime(DateTime value)
+    {
+        try{
+            return value.toString(ISODateTimeFormat.dateTimeNoMillis()).replace("T", " ").replace("Z", "");
+        }catch(Exception ex){
+            CallResult.log(CallResults.FAILED_ERROR, ex, JodaDateTimeHelper.MODULE);
+            return null;
+        }
+    }
 	public static String GetElapsedGMTTimeString(DateTime ForDate,
 	                                             boolean IncludeParenthesis,
 	                                             boolean IncludeTime)

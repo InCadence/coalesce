@@ -21,7 +21,6 @@
 		<dependency>
 			<groupId>unity</groupId>
 			<artifactId>unity-core</artifactId>
-			<version>0.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>joda-time</groupId>
@@ -53,6 +52,13 @@
 			<dependency>
 				<groupId>coalesce</groupId>
 				<artifactId>coalesce-bom</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>unity</groupId>
+				<artifactId>unity-bom</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 				<type>pom</type>
 				<scope>import</scope>
