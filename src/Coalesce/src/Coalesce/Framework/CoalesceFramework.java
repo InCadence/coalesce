@@ -9,6 +9,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import org.imgscalr.Scalr;
+import org.xml.sax.SAXException;
 
 import Coalesce.Common.Runtime.CoalesceSettings;
 import Coalesce.Framework.DataModel.CoalesceEntityTemplate;
@@ -246,7 +247,7 @@ public class CoalesceFramework {
         return this._Persister.PersistEntityTemplate(template);
     }
 
-    public CoalesceEntityTemplate GetCoalesceEntityTemplate(String Name, String Source, String Version)
+    public CoalesceEntityTemplate GetCoalesceEntityTemplate(String Name, String Source, String Version) throws SAXException, IOException
     {
 
         CoalesceEntityTemplate template = new CoalesceEntityTemplate();

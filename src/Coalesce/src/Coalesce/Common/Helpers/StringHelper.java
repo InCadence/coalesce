@@ -25,7 +25,7 @@ public class StringHelper {
     public static boolean IsNullOrEmpty(String ... values){
 
     	for (String value : values) {
-    		if (value == null || value.equals("")) {
+    		if (value == null || value.trim().equals("")) {
     			return true;
     		}
     	}

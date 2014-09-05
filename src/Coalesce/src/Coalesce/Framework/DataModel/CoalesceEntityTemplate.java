@@ -1,8 +1,22 @@
 package Coalesce.Framework.DataModel;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
+import java.io.IOException;
+import java.io.StringWriter;
 
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import unity.core.runtime.CallResult;
+import unity.core.runtime.CallResult.CallResults;
 import Coalesce.Common.Helpers.XmlHelper;
 
 public class CoalesceEntityTemplate {
@@ -13,154 +27,65 @@ public class CoalesceEntityTemplate {
 
     protected Document _DataObjectDocument;
     protected Node _EntityNode;
-    XmlHelper _XmlHelper = new XmlHelper();
 
     // -----------------------------------------------------------------------//
-    // Factory and Initialization
+    // Static Create Functions
     // -----------------------------------------------------------------------//
 
-    public CoalesceEntityTemplate Create(XsdEntity Entity)
+    public static CoalesceEntityTemplate Create(XsdEntity entity) throws SAXException, IOException
     {
-        try
-        {
-            // Create a new CoalesceEntityTemplate
-            CoalesceEntityTemplate EntTemp = new CoalesceEntityTemplate();
-
-            // Initialize
-            if (! EntTemp.InitializeFromEntity(Entity)) return null;
-
-            // return
-            return EntTemp;
-
-        }
-        catch (Exception ex)
-        {
-            // return Failed Error
-            return null;
-        }
+        return CoalesceEntityTemplate.Create(entity.ToXml());
     }
 
-    public boolean Initialize(String EntityTemplateXml)
+    public static CoalesceEntityTemplate Create(String templateXml) throws SAXException, IOException
     {
-        try
-        {
-            //TODO: verify this (loadXMLFrom) is a replacement for LoadXml function
-            // // Create DataObjectDocument
-            Document XmlDoc = null;
-            // XmlDoc.LoadXml(EntityTemplateXml);
-            XmlDoc = XmlHelper.loadXMLFrom(EntityTemplateXml);
-
-            // Call Peer.
-            return Initialize(XmlDoc);
-
-        }
-        catch (Exception ex)
-        {
-            // return Failed Error
-            return false;
-        }
+        return CoalesceEntityTemplate.Create(XmlHelper.loadXMLFrom(templateXml));
     }
 
-    public boolean Initialize(Document EntityTemplateDataObjectDocument)
+    public static CoalesceEntityTemplate Create(Document doc) throws SAXException, IOException
     {
-        try
-        {
-            // Set DataObjectDocument
-            this.SetDataObjectDocument(EntityTemplateDataObjectDocument);
+        // Create a new CoalesceEntityTemplate
+        CoalesceEntityTemplate EntTemp = new CoalesceEntityTemplate();
 
-            // return Success
-            return true;
+        // Initialize
+        if (!EntTemp.Initialize(doc)) return null;
 
-        }
-        catch (Exception ex)
-        {
-            // return Failed Error
-            return false;
-        }
-    }
-
-    public boolean InitializeFromEntity(XsdEntity Entity)
-    {
-        try
-        {
-            // TODO: need make sure getElementsByTagName is a good replacement for vb's SelectNodes function
-            // Create a Clone of the Entity's DataObjectDocument
-            /*
-            Document TemplateDoc = Entity.GetDataObjectDocument();
-
-            // Clear all Key attributes
-            // for (Node Child : TemplateDoc.SelectNodes("//@key")){
-            for (int i = 0; i < TemplateDoc.getElementsByTagName("//@key").getLength(); i++)
-            {
-                Node Child = TemplateDoc.getElementsByTagName("//@key").item(i);
-                Child.setNodeValue("");
-            }
-
-            // Clear EntityId attribute
-            // for (Node Child : TemplateDoc.SelectNodes("//@entityid")){
-            for (int i = 0; i < TemplateDoc.getElementsByTagName("//@entityid").getLength(); i++)
-            {
-                Node Child = TemplateDoc.getElementsByTagName("//@entityid").item(i);
-                Child.setNodeValue("");
-            }
-
-            // Clear EntityIdType attribute
-            // for (Node Child : TemplateDoc.SelectNodes("//@entityidtype")){
-            for (int i = 0; i < TemplateDoc.getElementsByTagName("//@entityidtype").getLength(); i++)
-            {
-                Node Child = TemplateDoc.getElementsByTagName("//@entityidtype").item(i);
-                Child.setNodeValue("");
-            }
-
-            // Clear all Timestamps attributes
-            // for (Node Child : TemplateDoc.SelectNodes("//@datecreated")){
-            for (int i = 0; i < TemplateDoc.getElementsByTagName("//@datecreated").getLength(); i++)
-            {
-                Node Child = TemplateDoc.getElementsByTagName("//@datecreated").item(i);
-                Child.setNodeValue("");
-            }
-
-            // Clear all Timestamps attributes
-            // for (Node Child : TemplateDoc.SelectNodes("//@lastmodified")){
-            for (int i = 0; i < TemplateDoc.getElementsByTagName("//@lastmodified").getLength(); i++)
-            {
-                Node Child = TemplateDoc.getElementsByTagName("//@lastmodified").item(i);
-                Child.setNodeValue("");
-            }
-
-            // Remove all Records
-            // for (Node Child : TemplateDoc.SelectNodes("//record")){
-            for (int i = 0; i < TemplateDoc.getElementsByTagName("//record").getLength(); i++)
-            {
-                Node Child = TemplateDoc.getElementsByTagName("//record").item(i);
-                Child.getParentNode().removeChild(Child);
-            }
-
-            // Remove all Linkages
-            // for (Node Child : TemplateDoc.SelectNodes("//linkage")){
-            for (int i = 0; i < TemplateDoc.getElementsByTagName("//linkage").getLength(); i++)
-            {
-                Node Child = TemplateDoc.getElementsByTagName("//linkage").item(i);
-                Child.getParentNode().removeChild(Child);
-            }
-
-            // Set Template Doc
-            this.SetDataObjectDocument(TemplateDoc);
-
-            // return Success
-            return CallResult.successCallResult;
-*/
-            return true;
-        }
-        catch (Exception ex)
-        {
-            // return Failed Error
-            return false;
-        }
+        // return
+        return EntTemp;
     }
 
     // -----------------------------------------------------------------------//
-    // public Properties
+    // Initialization
+    // -----------------------------------------------------------------------//
+
+    public boolean Initialize(XsdEntity entity) throws SAXException, IOException
+    {
+        return this.Initialize(entity.ToXml());
+    }
+
+    public boolean Initialize(String EntityTemplateXml) throws SAXException, IOException
+    {
+        return this.Initialize(XmlHelper.loadXMLFrom(EntityTemplateXml));
+    }
+
+    public boolean Initialize(Document doc)
+    {
+
+        // Clean up XML
+        this.RemoveNodes(doc, "record");
+        this.RemoveNodes(doc, "linkage");
+        this.RemoveAttributes(doc);
+
+        // Set DataObjectDocument
+        this._DataObjectDocument = doc;
+        this._EntityNode = doc.getElementsByTagName("entity").item(0);
+
+        // return Success
+        return true;
+    }
+
+    // -----------------------------------------------------------------------//
+    // public Read-Only Properties
     // -----------------------------------------------------------------------//
 
     public Document GetDataObjectDocument()
@@ -168,83 +93,93 @@ public class CoalesceEntityTemplate {
         return this._DataObjectDocument;
     }
 
-    public void SetDataObjectDocument(Document value)
-    {
-        this._DataObjectDocument = value;
-        // value.getDocumentElement();
-        // value.getFirstChild();
-        // TODO: need make sure getElementsByTagName is a good replacement for vb's SelectSingleNode function
-        this.SetEntityNode(value.getElementsByTagName("entity").item(0));
-        // this._EntityNode = value.SelectSingleNode("entity");
-    }
-
     public Node GetEntityNode()
     {
         return this._EntityNode;
     }
 
-    public void SetEntityNode(Node value)
-    {
-        this._EntityNode = value;
-    }
-
-    public String Name;
-
     public String GetName()
     {
-        return _XmlHelper.GetAttribute(this.GetEntityNode(), "name");
+        return XmlHelper.GetAttribute(this.GetEntityNode(), "name");
     }
-
-    public void Set(String value)
-    {
-        _XmlHelper.SetAttribute(this.GetDataObjectDocument(), this.GetEntityNode(), "name", value);
-    }
-
-    // readonly
-    public String Source;
 
     public String GetSource()
     {
-        return _XmlHelper.GetAttribute(this.GetEntityNode(), "source");
+        return XmlHelper.GetAttribute(this.GetEntityNode(), "source");
     }
-
-    // public void SetSource(String value){
-    // _XmlHelper.SetAttribute(this.DataObjectDocument, this.EntityNode, "source", value);
-    // }
-
-    public String Version;
 
     public String GetVersion()
     {
-        return _XmlHelper.GetAttribute(this.GetEntityNode(), "version");
-    }
-
-    public void SetVersion(String value)
-    {
-        _XmlHelper.SetAttribute(this.GetDataObjectDocument(), this.GetEntityNode(), "version", value);
+        return XmlHelper.GetAttribute(this.GetEntityNode(), "version");
     }
 
     // -----------------------------------------------------------------------//
-    // public Methods
+    // public Functions
     // -----------------------------------------------------------------------//
 
     public XsdEntity CreateNewEntity()
     {
-
-        // TODO: Not Implemented
-
-        // Create a new DataObjectDocument from the EntityTemplate's DataObjectDocument using Clone
-        Document DataObjectDoc = this.GetDataObjectDocument(); // .DataObjectDocument.Clone;
-
-        // Create a new CoalesceEntity
         XsdEntity Entity = new XsdEntity();
+        Entity.Initialize(this.toXml());
 
-        // Initialize it off of the clone DataObjectDocument
-        // return Entity.Initialize(DataObjectDoc);
-
-        // // return Success
-        // return new CallResult(CallResults.SUCCESS);
-        return null;
+        return Entity;
     }
 
+    public String toXml()
+    {
+        return XmlHelper.FormatXml(this._DataObjectDocument);
+    }
+
+    /*--------------------------------------------------------------------------
+    Private Functions
+    --------------------------------------------------------------------------*/
+
+    private void RemoveNodes(Document doc, String nodeName)
+    {
+
+        NodeList linkageList = doc.getElementsByTagName(nodeName);
+
+        // Remove all Linkages
+        for (int i = linkageList.getLength() - 1; i >= 0; i--)
+        {
+            Node Child = linkageList.item(i);
+
+            while (Child.hasChildNodes())
+            {
+                Child.removeChild(Child.getFirstChild());
+            }
+
+            Child.getParentNode().removeChild(Child);
+        }
+
+    }
+
+    private void RemoveAttributes(Document doc)
+    {
+
+        NodeList nodeList = doc.getElementsByTagName("*");
+
+        for (int jj = 0; jj < nodeList.getLength(); jj++)
+        {
+            Node node = nodeList.item(jj);
+
+            if (node.getNodeType() == Node.ELEMENT_NODE)
+            {
+                NamedNodeMap attributeList = node.getAttributes();
+
+                for (int ii = 0; ii < attributeList.getLength(); ii++)
+                {
+
+                    Node attribute = attributeList.item(ii);
+                    if (!attribute.getNodeName().equalsIgnoreCase("name")
+                            && !attribute.getNodeName().equalsIgnoreCase("source")
+                            && !attribute.getNodeName().equalsIgnoreCase("version"))
+                    {
+                        attribute.setNodeValue("");
+                    }
+                }
+            }
+        }
+
+    }
 }
