@@ -91,13 +91,6 @@ public abstract class CoalescePersisterBase implements ICoalescePersistor {
 
     }
 
-    protected abstract boolean FlattenObject(XsdEntity entity, boolean AllowRemoval) throws Exception;
-
-    protected boolean FlattenCore(XsdEntity entity, boolean AllowRemoval) throws Exception
-    {
-        return this.FlattenObject(entity, AllowRemoval);
-    }
-
     @Override
     public XsdEntity GetEntity(String Key)
     {
@@ -185,112 +178,64 @@ public abstract class CoalescePersisterBase implements ICoalescePersistor {
 
     }
 
-    @Override
-    public String GetEntityXml(String Key)
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    /*--------------------------------------------------------------------------
+    Abstract Public Functions
+    --------------------------------------------------------------------------*/
 
     @Override
-    public String GetEntityXml(String EntityId, String EntityIdType)
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    public abstract String GetEntityXml(String Key);
 
     @Override
-    public String GetEntityXml(String Name, String EntityId, String EntityIdType)
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    public abstract String GetEntityXml(String EntityId, String EntityIdType);
 
     @Override
-    public Object GetFieldValue(String fieldKey)
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    public abstract String GetEntityXml(String Name, String EntityId, String EntityIdType);
 
     @Override
-    public ElementMetaData GetXPath(String Key, String ObjectType)
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    public abstract Object GetFieldValue(String fieldKey);
 
     @Override
-    public DateTime GetCoalesceDataObjectLastModified(String Key, String ObjectType)
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    public abstract ElementMetaData GetXPath(String Key, String ObjectType);
 
     @Override
-    public List<String> GetCoalesceEntityKeysForEntityId(String EntityId,
-                                                         String EntityIdType,
-                                                         String EntityName,
-                                                         String EntitySource)
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    public abstract DateTime GetCoalesceDataObjectLastModified(String Key, String ObjectType);
 
     @Override
-    public EntityMetaData GetCoalesceEntityIdAndTypeForKey(String Key)
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    public abstract List<String> GetCoalesceEntityKeysForEntityId(String EntityId,
+                                                                  String EntityIdType,
+                                                                  String EntityName,
+                                                                  String EntitySource);
 
     @Override
-    public byte[] GetBinaryArray(String BinaryFieldKey)
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    public abstract EntityMetaData GetCoalesceEntityIdAndTypeForKey(String Key);
 
     @Override
-    public boolean PersistEntityTemplate(CoalesceEntityTemplate EntityTemplate)
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
+    public abstract byte[] GetBinaryArray(String BinaryFieldKey);
 
     @Override
-    public String GetEntityTemplateXml(String Key)
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    public abstract boolean PersistEntityTemplate(CoalesceEntityTemplate EntityTemplate);
 
     @Override
-    public String GetEntityTemplateXml(String Name, String Source, String Version)
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    public abstract String GetEntityTemplateXml(String Key);
 
     @Override
-    public String GetEntityTemplateKey(String Name, String Source, String Version)
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    public abstract String GetEntityTemplateXml(String Name, String Source, String Version);
 
     @Override
-    public String GetEntityTemplateMetadata()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    public abstract String GetEntityTemplateKey(String Name, String Source, String Version);
+
+    @Override
+    public abstract String GetEntityTemplateMetadata();
+
+    protected abstract boolean FlattenObject(XsdEntity entity, boolean AllowRemoval) throws Exception;
+
+    protected abstract boolean FlattenCore(XsdEntity entity, boolean AllowRemoval) throws Exception;
 
     /*--------------------------------------------------------------------------
     	Private Functions
     --------------------------------------------------------------------------*/
 
-    protected XsdEntity GetEntityFromCache(String Key)
+    private XsdEntity GetEntityFromCache(String Key)
     {
 
         XsdEntity entity = null;
@@ -314,7 +259,7 @@ public abstract class CoalescePersisterBase implements ICoalescePersistor {
 
     }
 
-    protected boolean AddEntityToCache(XsdEntity entity)
+    private boolean AddEntityToCache(XsdEntity entity)
     {
 
         boolean IsModified = false;

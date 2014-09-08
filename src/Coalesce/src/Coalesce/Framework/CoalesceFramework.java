@@ -13,6 +13,7 @@ import org.joda.time.DateTime;
 import org.xml.sax.SAXException;
 
 import Coalesce.Common.Runtime.CoalesceSettings;
+import Coalesce.Framework.DataModel.CoalesceEntitySyncShell;
 import Coalesce.Framework.DataModel.CoalesceEntityTemplate;
 import Coalesce.Framework.DataModel.XsdEntity;
 import Coalesce.Framework.DataModel.XsdField;
@@ -242,11 +243,6 @@ public class CoalesceFramework {
         return record;
     }
 
-    public void GetCoalesceFieldAndEntityByFieldKey(String Key)
-    {
-        // TODO: Not Implemented
-    }
-
     public XsdField GetCoalesceFieldByFieldKey(String Key)
     {
         XsdField field = null;
@@ -324,14 +320,9 @@ public class CoalesceFramework {
     	Sync Shell Functions
     --------------------------------------------------------------------------*/
 
-    public void GetCoalesceEntitySyncShell(String Key)
+    public CoalesceEntitySyncShell GetCoalesceEntitySyncShell(String Key) throws SAXException, IOException
     {
-
-        // Get Entity
-        // XsdEntity entity = this.GetCoalesceEntity(Key);
-
-        // TODO: Create Sync Shell
-
+        return CoalesceEntitySyncShell.Create(this.GetCoalesceEntity(Key));
     }
 
 }

@@ -1,5 +1,6 @@
 package Coalesce.Framework.DataModel;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -10,6 +11,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
+import org.xml.sax.SAXException;
 
 import unity.core.runtime.CallResult;
 import unity.core.runtime.CallResult.CallResults;
@@ -579,74 +581,15 @@ public class XsdEntity extends XsdDataObject {
         this.SetStatus(ECoalesceDataObjectStatus.DELETED);
     }
 
-    // TODO: Implement Syncshell
-    /*
-     * public CallResult GetSyncEntity(CoalesceEntitySyncShell SyncShell, CoalesceEntity SyncEntity){ try{ CallResult rst;
-     * 
-     * // Make the SyncEntity a Clone of this SyncEntity = new CoalesceEntity(); //TODO: Verifiy this.GetDataObjectDocument()
-     * is good substitute for this._DataObjectDocument.Clone rst = SyncEntity.Initialize(this.GetDataObjectDocument()); if
-     * (!(rst.getIsSuccess())) return rst;
-     * 
-     * // Get Required Changes Keys String XPath = "//@key"; NodeList Nodes = null; ArrayList<String> SyncKeys = new
-     * ArrayList<String>();
-     * 
-     * //TODO: figure out how to select nodes by xpath // Nodes = SyncShell._DataObjectDocument.SelectNodes(XPath); // if
-     * (Nodes == null){ // // do nothing // }else{ // for(Node KeyNode : Nodes){ // // Add Key to the RequiredChangesKeys //
-     * SyncKeys.Add(KeyNode.Value); // } // }
-     * 
-     * // Prune Non-Required Nodes rst = PruneNonRequiredNodes(SyncKeys, SyncEntity.GetDataObjectDocument());
-     * 
-     * // return Success return CallResult.successCallResult;
-     * 
-     * }catch(Exception ex){ // return Failed Error return new CallResult(CallResults.FAILED_ERROR, ex, this); } }
-     */
+    public CoalesceEntitySyncShell GetSyncEntity() throws SAXException, IOException
+    {
+        return CoalesceEntitySyncShell.Create(this);
+    }
 
-    // How to prune an Entity
-    /*
-     * protected CallResult PruneNonRequiredNodes(ArrayList SyncKeys, Node TheNode){ try{ CallResult rst;
-     * 
-     * // Recurse Child Nodes (Important: Because this us up front, we check leaf nodes first, which is necessary for //
-     * correct pruning.) Since we're disturbing the Node.ChildNodes collection because we may remove children from // it,
-     * it's necessary to create a temporary collection of the initial children before we prune. If we // don't do this, we
-     * don't get the correct behavior. for(int i=0; i<TheNode.getChildNodes().getLength(); i++){ Node Child =
-     * TheNode.getChildNodes().item(i); rst = PruneNonRequiredNodes(SyncKeys, Child); }
-     * 
-     * // Check to see if Node needs to be Pruned String Key = _XmlHelper.GetAttribute(TheNode, "key"); if (Key != "") { if
-     * (!(SyncKeys.contains(Key))) { // Prune if (TheNode.getParentNode() != null)
-     * TheNode.getParentNode().removeChild(TheNode); } }
-     * 
-     * // return Success return CallResult.successCallResult;
-     * 
-     * }catch(Exception ex){ // return Failed Error return new CallResult(CallResults.FAILED_ERROR, ex, this); } }
-     */
-
-    /*
-     * public CallResult MergeSyncEntity(CoalesceEntity SyncEntity){ try{ // Merge Recursively, Starting With the Entity Node
-     * return MergeSyncEntityNode(this._DataObjectNode, SyncEntity._DataObjectNode);
-     * 
-     * }catch(Exception ex){ // return Failed Error return new CallResult(CallResults.FAILED_ERROR, ex, this); } }
-     * 
-     * protected CallResult MergeSyncEntityNode(Node MyNode, Node SyncEntityNode){ try{ CallResult rst;
-     * 
-     * // Get Timestamps Date MyLastModified = _XmlHelper.GetAttributeAsDate(MyNode, "lastmodified"); Date UpdateLastModified
-     * = _XmlHelper.GetAttributeAsDate(SyncEntityNode, "lastmodified");
-     * 
-     * //TODO Attribute, getAttributes & SelectSingleNode(xpath)? // // Compare Timestamps // switch
-     * (MyLastModified.compareTo(UpdateLastModified)){ // case -1: // // Mine is Older; Update Each Attribute. //
-     * for(Attribute UpdateAttribute : SyncEntityNode.getAttributes()){ // // Set Attribute //
-     * _XmlHelper.SetAttribute(this._DataObjectDocument, MyNode, UpdateAttribute.Name, UpdateAttribute.Value); // } // } //
-     * // // Merge Required Node's Children // for(int i=0; i<SyncEntityNode.getChildNodes().getLength(); i++){ // Node
-     * UpdateChildNode = SyncEntityNode.getChildNodes().item(i); // // Get Node To Update // String Key =
-     * _XmlHelper.GetAttribute(UpdateChildNode, "key"); // String XPath = UpdateChildNode.getNodeName() + "[@key='" + Key +
-     * "']"; // Node MyChildNode = MyNode.SelectSingleNode(XPath); // // // Evaluate // if (MyChildNode == null) { // // We
-     * don't have this child; add the entire ChildNode //
-     * MyNode.appendChild(this._DataObjectDocument.importNode(UpdateChildNode, true)); // }else{ // // We have this child;
-     * Call MergeRequiredNode // rst = MergeSyncEntityNode(MyChildNode, UpdateChildNode); // } // }
-     * 
-     * // return Success return CallResult.successCallResult;
-     * 
-     * }catch(Exception ex){ // return Failed Error return new CallResult(CallResults.FAILED_ERROR, ex, this); } }
-     */
+    public void MergeSyncEntity(XsdEntity syncEntity)
+    {
+        // TODO: Implement Merging
+    }
 
     public String ToXml()
     {
