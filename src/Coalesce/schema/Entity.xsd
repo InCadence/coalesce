@@ -1,8 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<xs:schema id="NewDataSet" xmlns="urn:us:gov:ic:doc" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:sec="urn:us:gov:ic:ism:v2" targetNamespace="urn:us:gov:ic:doc" >
-  <xs:import namespace="urn:us:gov:ic:ism:v2" schemaLocation="IC-ISM-v2_1.xsd"/>
-  <!-- http://stackoverflow.com/questions/8194112/basics-of-referencing-a-xsd-schema-from-another-schema 
-  xmlns:sec="urn:us:gov:ic:sec" -->
+<xs:schema id="NewDataSet" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
   <xs:element name="entity">
     <xs:complexType>
       <xs:sequence>
@@ -11,26 +8,24 @@
             <xs:sequence>
               <xs:element name="linkage" minOccurs="0" maxOccurs="unbounded">
                 <xs:complexType>
-					<xs:sequence>
-					  <xs:element name="classificationmarking" type="Classification"/>
-					</xs:sequence>
-					<xs:attribute name="key" type="xs:string" />
-					<xs:attribute name="datecreated" type="xs:date" />
-					<xs:attribute name="lastmodified" type="xs:date" />
-					<xs:attribute name="name" type="xs:string" />
-					<xs:attribute name="entity1key" type="xs:string" />
-					<xs:attribute name="entity1name" type="xs:string" />
-					<xs:attribute name="entity1source" type="xs:string" />
-					<xs:attribute name="entity1version" type="xs:string" />
-					<xs:attribute name="linktype" type="xs:string" />
-					<xs:attribute name="entity2key" type="xs:string" />
-					<xs:attribute name="entity2name" type="xs:string" />
-					<xs:attribute name="entity2source" type="xs:string" />
-					<xs:attribute name="entity2version" type="xs:string" />
-					<xs:attribute name="modifiedby" type="xs:string" />
-					<xs:attribute name="inputlang" type="xs:string" />
-					<xs:attribute name="status" type="xs:string" />
-					<xs:anyAttribute />
+					  <xs:attribute name="key" type="xs:string" />
+					  <xs:attribute name="datecreated" type="xs:date" />
+					  <xs:attribute name="lastmodified" type="xs:date" />
+					  <xs:attribute name="name" type="xs:string" />
+					  <xs:attribute name="entity1key" type="xs:string" />
+					  <xs:attribute name="entity1name" type="xs:string" />
+					  <xs:attribute name="entity1source" type="xs:string" />
+					  <xs:attribute name="entity1version" type="xs:string" />
+					  <xs:attribute name="linktype" type="xs:string" />
+					  <xs:attribute name="entity2key" type="xs:string" />
+					  <xs:attribute name="entity2name" type="xs:string" />
+					  <xs:attribute name="entity2source" type="xs:string" />
+					  <xs:attribute name="entity2version" type="xs:string" />
+					  <xs:attribute name="classificationmarking" type="xs:string" />
+					  <xs:attribute name="modifiedby" type="xs:string" />
+					  <xs:attribute name="inputlang" type="xs:string" />
+					  <xs:attribute name="status" type="xs:string" />
+					  <xs:anyAttribute />
                 </xs:complexType>
               </xs:element>
             </xs:sequence>
@@ -51,14 +46,12 @@
                   <xs:sequence>
                     <xs:element name="fielddefinition" minOccurs="0" maxOccurs="unbounded">
                       <xs:complexType>
-						<xs:sequence>
-						  <xs:element name="defaultclassificationmarking" type="Classification"/>
-						</xs:sequence>
                         <xs:attribute name="key" type="xs:string" />
                         <xs:attribute name="datecreated" type="xs:date" />
                         <xs:attribute name="lastmodified" type="xs:date" />
                         <xs:attribute name="status" type="xs:string" />
                         <xs:attribute name="name" type="xs:string" />
+                        <xs:attribute name="defaultclassificationmarking" type="xs:string" />
                         <xs:attribute name="defaultvalue" type="xs:string" />
                         <xs:attribute name="datatype" type="xs:string" />
                         <xs:attribute name="label" type="xs:string" />
@@ -71,29 +64,26 @@
                           <xs:element name="field" minOccurs="0" maxOccurs="unbounded">
                             <xs:complexType>
                               <xs:sequence>
-								<xs:element name="classificationmarking" type="Classification"/>
                                 <xs:element name="fieldhistory" minOccurs="0" maxOccurs="unbounded">
                                   <xs:complexType>
-									<xs:sequence>
-									  <xs:element name="classificationmarking" type="Classification"/>
-									</xs:sequence>
-									<xs:attribute name="key" type="xs:string" />
-									<xs:attribute name="datecreated" type="xs:date" />
-									<xs:attribute name="lastmodified" type="xs:date" />
-									<xs:attribute name="name" type="xs:string" />
-									<xs:attribute name="datatype" type="xs:string" />
-									<xs:attribute name="label" type="xs:string" />
-									<xs:attribute name="value" type="xs:string" />
-									<xs:attribute name="status" type="xs:string" />
-									<xs:attribute name="previoushistorykey" type="xs:string" />
-									<xs:attribute name="modifiedby" type="xs:string" />
-									<xs:attribute name="modifiedbyip" type="xs:string" />
-									<xs:attribute name="filename" type="xs:string" />
-									<xs:attribute name="extension" type="xs:string" />
-									<xs:attribute name="mimetype" type="xs:string" />
-									<xs:attribute name="size" type="xs:string" />
-									<xs:attribute name="hash" type="xs:string" />
-									<xs:anyAttribute />
+									  <xs:attribute name="key" type="xs:string" />
+									  <xs:attribute name="datecreated" type="xs:date" />
+									  <xs:attribute name="lastmodified" type="xs:date" />
+									  <xs:attribute name="name" type="xs:string" />
+									  <xs:attribute name="datatype" type="xs:string" />
+									  <xs:attribute name="classificationmarking" type="xs:string" />
+									  <xs:attribute name="label" type="xs:string" />
+									  <xs:attribute name="value" type="xs:string" />
+									  <xs:attribute name="status" type="xs:string" />
+									  <xs:attribute name="previoushistorykey" type="xs:string" />
+									  <xs:attribute name="modifiedby" type="xs:string" />
+									  <xs:attribute name="modifiedbyip" type="xs:string" />
+									  <xs:attribute name="filename" type="xs:string" />
+									  <xs:attribute name="extension" type="xs:string" />
+									  <xs:attribute name="mimetype" type="xs:string" />
+									  <xs:attribute name="size" type="xs:string" />
+									  <xs:attribute name="hash" type="xs:string" />
+									  <xs:anyAttribute />
                                   </xs:complexType>
                                 </xs:element>
                               </xs:sequence>
@@ -102,6 +92,7 @@
                               <xs:attribute name="lastmodified" type="xs:date" />
                               <xs:attribute name="name" type="xs:string" />
                               <xs:attribute name="datatype" type="xs:string" />
+                              <xs:attribute name="classificationmarking" type="xs:string" />
                               <xs:attribute name="label" type="xs:string" />
                               <xs:attribute name="value" type="xs:string" />
                               <xs:attribute name="status" type="xs:string" />
@@ -160,15 +151,6 @@
 	  <xs:anyAttribute />
     </xs:complexType>
   </xs:element>
-  
-  	<xs:complexType name="Classification">
-		<xs:simpleContent>
-			<xs:extension base="xs:string">
-				<xs:attributeGroup ref="sec:SecurityAttributesOptionGroup"/>
-			</xs:extension>
-		</xs:simpleContent>
-	</xs:complexType>
-  
   <xs:element name="NewDataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true">
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
