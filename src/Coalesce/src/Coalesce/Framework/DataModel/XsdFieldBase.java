@@ -72,7 +72,7 @@ public abstract class XsdFieldBase extends XsdDataObject {
 
     public void SetClassificationMarking(Marking value)
     {
-        SetClassificationMarking(value);
+        SetClassificationMarking(value.toString());
     }
 
     public abstract void SetClassificationMarking(String value);
