@@ -81,6 +81,17 @@ public class XsdSection extends XsdDataObject {
     public static XsdSection Create(XsdEntity parent, String name, boolean noIndex)
     {
 
+        // Check that a section with the same name doesn't already exist
+        for (XsdSection section : parent.GetSections().values())
+        {
+            if (section.GetName().equals(name))
+            {
+
+                section.SetNoIndex(noIndex);
+                return section;
+            }
+        }
+
         Section newEntitySection = new Section();
         parent.GetEntitySections().add(newEntitySection);
 
@@ -109,6 +120,7 @@ public class XsdSection extends XsdDataObject {
      * 
      * }catch(Exception ex){ // return Failed Error return new CallResult(CallResults.FAILED_ERROR, ex, this); } }
      */
+
     public boolean Initialize(XsdEntity parent, Section section)
     {
 
@@ -222,6 +234,18 @@ public class XsdSection extends XsdDataObject {
 
         return recordSets;
 
+    }
+
+    @Override
+    public boolean GetNoIndex()
+    {
+        return Boolean.parseBoolean(_entitySection.getNoindex());
+    }
+
+    @Override
+    public void SetNoIndex(boolean value)
+    {
+        _entitySection.setNoindex(Boolean.toString(value));
     }
 
     @Override

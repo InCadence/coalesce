@@ -2,6 +2,8 @@ package Coalesce.Framework.DataModel;
 
 import static org.junit.Assert.*;
 
+import java.util.Map;
+
 import org.junit.Test;
 
 import Coalesce.Common.UnitTest.CoalesceTypeInstances;
@@ -155,17 +157,14 @@ public class XsdEntityTest {
     @Test
     public void CreateTREXOperationWithStaticTest()
     {
-        XsdEntity entity = null;
-        XsdSection section = null;
-        XsdRecordset recordSet = null;
 
         // Create Entity
-        entity = XsdEntity.Create("TREXOperation",
-                                  "TREX Portal",
-                                  "1.0.0.0",
-                                  "",
-                                  "",
-                                  "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+        XsdEntity entity = XsdEntity.Create("TREXOperation",
+                                            "TREX Portal",
+                                            "1.0.0.0",
+                                            "",
+                                            "",
+                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         // Verify Entity Creation
         assertEquals("TREXOperation", entity.GetName());
@@ -182,19 +181,19 @@ public class XsdEntityTest {
         assertTrue(entity.GetLinkageSection() != null);
 
         // Create Live Status Section
-        section = XsdSection.Create(entity, "Live Status Section", true);
-        recordSet = XsdRecordset.Create(section, "Live Status Recordset");
+        XsdSection liveSection = XsdSection.Create(entity, "Live Status Section", true);
+        XsdRecordset liveRecordSet = XsdRecordset.Create(liveSection, "Live Status Recordset");
 
         // Verify Live Status Section Creation
         assertTrue(entity.GetSection("TREXOperation/Live Status Section") != null);
 
-        XsdFieldDefinition.Create(recordSet, "CurrentStatus", ECoalesceFieldDataTypes.StringType);
+        XsdFieldDefinition.Create(liveRecordSet, "CurrentStatus", ECoalesceFieldDataTypes.StringType);
 
         // Create Information Section
-        section = XsdSection.Create(entity, "Operation Information Section", true);
-        recordSet = XsdRecordset.Create(section, "Operation Information Recordset");
+        XsdSection informationSection = XsdSection.Create(entity, "Operation Information Section", true);
+        XsdRecordset informationRecordSet = XsdRecordset.Create(informationSection, "Operation Information Recordset");
 
-        XsdFieldDefinition.Create(recordSet, "OperationName", ECoalesceFieldDataTypes.StringType);
+        XsdFieldDefinition.Create(informationRecordSet, "OperationName", ECoalesceFieldDataTypes.StringType);
 
         // Verify Information Section Creation
         assertTrue(entity.GetSection("TREXOperation/Operation Information Section") != null);
@@ -227,17 +226,13 @@ public class XsdEntityTest {
     public void CreateTREXOperationWithInstanceCreateTest()
     {
 
-        XsdEntity entity = null;
-        XsdSection section = null;
-        XsdRecordset recordSet = null;
-
         // Create Entity
-        entity = XsdEntity.Create("TREXOperation",
-                                  "TREX Portal",
-                                  "1.0.0.0",
-                                  "",
-                                  "",
-                                  "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+        XsdEntity entity = XsdEntity.Create("TREXOperation",
+                                            "TREX Portal",
+                                            "1.0.0.0",
+                                            "",
+                                            "",
+                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         // Verify Entity Creation
         assertTrue(entity.GetSource().equals("TREX Portal"));
@@ -248,19 +243,19 @@ public class XsdEntityTest {
         assertTrue(entity.GetLinkageSection() != null);
 
         // Create Live Status Section
-        section = entity.CreateSection("Live Status Section", true);
-        recordSet = section.CreateRecordset("Live Status Recordset");
+        XsdSection liveSection = entity.CreateSection("Live Status Section", true);
+        XsdRecordset liveRecordSet = liveSection.CreateRecordset("Live Status Recordset");
 
         // Verify Live Status Section Creation
         assertTrue(entity.GetSection("TREXOperation/Live Status Section") != null);
 
-        recordSet.CreateFieldDefinition("CurrentStatus", ECoalesceFieldDataTypes.StringType);
+        liveRecordSet.CreateFieldDefinition("CurrentStatus", ECoalesceFieldDataTypes.StringType);
 
         // Create Information Section
-        section = entity.CreateSection("Operation Information Section", true);
-        recordSet = section.CreateRecordset("Operation Information Recordset");
+        XsdSection informationSection = entity.CreateSection("Operation Information Section", true);
+        XsdRecordset informationRecordSet = informationSection.CreateRecordset("Operation Information Recordset");
 
-        recordSet.CreateFieldDefinition("OperationName", ECoalesceFieldDataTypes.StringType);
+        informationRecordSet.CreateFieldDefinition("OperationName", ECoalesceFieldDataTypes.StringType);
 
         // Verify Information Section Creation
         assertTrue(entity.GetSection("TREXOperation/Operation Information Section") != null);
@@ -286,6 +281,229 @@ public class XsdEntityTest {
 
         // Verify Information Section
         assertTrue(entity2.GetSection("TREXOperation/Operation Information Section") != null);
+
+    }
+
+    @Test
+    public void CreateSectionTest()
+    {
+        // Create Entity
+        XsdEntity entity = XsdEntity.Create("TREXOperation",
+                                            "TREX Portal",
+                                            "1.0.0.0",
+                                            "",
+                                            "",
+                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+
+        // Create Live Status Section
+        assertNull(entity.GetSection("TREXOperation/Live Status Section"));
+
+        XsdSection liveSection = entity.CreateSection("Live Status Section");
+        assertEquals(liveSection, entity.GetSection("TREXOperation/Live Status Section"));
+        assertFalse(liveSection.GetNoIndex());
+    }
+
+    @Test
+    public void CreateSectionExistingNoIndexTrueTest()
+    {
+        // Create Entity
+        XsdEntity entity = XsdEntity.Create("TREXOperation",
+                                            "TREX Portal",
+                                            "1.0.0.0",
+                                            "",
+                                            "",
+                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+
+        // Create Live Status Section
+        assertNull(entity.GetSection("TREXOperation/Live Status Section"));
+
+        XsdSection liveSection = entity.CreateSection("Live Status Section", true);
+        assertEquals(liveSection, entity.GetSection("TREXOperation/Live Status Section"));
+        assertTrue(liveSection.GetNoIndex());
+
+        XsdSection liveSection2 = entity.CreateSection("Live Status Section");
+        assertEquals(liveSection2, entity.GetSection("TREXOperation/Live Status Section"));
+        assertEquals(liveSection, liveSection2);
+        assertFalse(liveSection.GetNoIndex());
+        assertFalse(liveSection2.GetNoIndex());
+
+    }
+
+    @Test
+    public void CreateSectionFromXmlTest()
+    {
+
+        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+
+        assertNull(entity.GetSection("TREXMission/A New Section"));
+
+        XsdSection newSection = entity.CreateSection("A New Section");
+
+        assertNotNull(newSection);
+        assertEquals(newSection, entity.GetSection("TREXMission/A New Section"));
+        assertFalse(newSection.GetNoIndex());
+
+    }
+
+    @Test
+    public void CreateSectionWithNoIndexFalseTest()
+    {
+        // Create Entity
+        XsdEntity entity = XsdEntity.Create("TREXOperation",
+                                            "TREX Portal",
+                                            "1.0.0.0",
+                                            "",
+                                            "",
+                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+
+        // Create Live Status Section
+        assertNull(entity.GetSection("TREXOperation/Live Status Section"));
+
+        XsdSection liveSection = entity.CreateSection("Live Status Section", false);
+        assertEquals(liveSection, entity.GetSection("TREXOperation/Live Status Section"));
+        assertFalse(liveSection.GetNoIndex());
+    }
+
+    @Test
+    public void CreateSectionWithNoIndexTrueTest()
+    {
+        // Create Entity
+        XsdEntity entity = XsdEntity.Create("TREXOperation",
+                                            "TREX Portal",
+                                            "1.0.0.0",
+                                            "",
+                                            "",
+                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+
+        // Create Live Status Section
+        assertNull(entity.GetSection("TREXOperation/Live Status Section"));
+
+        XsdSection liveSection = entity.CreateSection("Live Status Section", true);
+        assertEquals(liveSection, entity.GetSection("TREXOperation/Live Status Section"));
+        assertTrue(liveSection.GetNoIndex());
+
+    }
+
+    @Test
+    public void CreateSectionWithNoIndexTrueForExistingNoIndexFalseTest()
+    {
+        // Create Entity
+        XsdEntity entity = XsdEntity.Create("TREXOperation",
+                                            "TREX Portal",
+                                            "1.0.0.0",
+                                            "",
+                                            "",
+                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+
+        // Create Live Status Section
+        assertNull(entity.GetSection("TREXOperation/Live Status Section"));
+
+        XsdSection liveSection = entity.CreateSection("Live Status Section", false);
+        assertEquals(liveSection, entity.GetSection("TREXOperation/Live Status Section"));
+        assertFalse(liveSection.GetNoIndex());
+
+        XsdSection liveSection2 = entity.CreateSection("Live Status Section", true);
+        assertEquals(liveSection2, entity.GetSection("TREXOperation/Live Status Section"));
+        assertEquals(liveSection, liveSection2);
+        assertTrue(liveSection.GetNoIndex());
+        assertTrue(liveSection2.GetNoIndex());
+
+    }
+
+    @Test
+    public void CreateSectionWithNoIndexTrueFromXmlTest()
+    {
+
+        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+
+        assertNull(entity.GetSection("TREXMission/A New Section"));
+
+        XsdSection newSection = entity.CreateSection("A New Section", true);
+
+        assertNotNull(newSection);
+        assertEquals(newSection, entity.GetSection("TREXMission/A New Section"));
+        assertTrue(newSection.GetNoIndex());
+
+        String entityXml = entity.ToXml();
+
+        XsdEntity desEntity = XsdEntity.Create(entityXml);
+
+        XsdSection desSection = desEntity.GetSection("TREXMission/A New Section");
+        assertEquals(newSection.GetKey(), desSection.GetKey());
+        assertEquals(newSection.GetName(), desSection.GetName());
+        assertEquals(newSection.GetNoIndex(), desSection.GetNoIndex());
+    }
+
+    @Test
+    public void CreateSectionWithNoIndexFalseFromXmlExistingTest()
+    {
+
+        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+
+        XsdSection liveSection = entity.GetSection("TREXMission/Live Status Section");
+        XsdSection informationSection = entity.GetSection("TREXMission/Mission Information Section");
+
+        XsdSection createdLiveSection = entity.CreateSection("Live Status Section");
+        XsdSection createdInformationSection = entity.CreateSection("Mission Information Section");
+
+        assertEquals(liveSection, createdLiveSection);
+        assertEquals(informationSection, createdInformationSection);
+
+    }
+
+    @Test
+    public void GetSectionsFromXmlTest()
+    {
+
+        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+
+        Map<String, XsdSection> sections = entity.GetSections();
+
+        XsdSection liveSection = sections.get("85CB4256-4CC2-4F96-A03D-5EF880989822");
+
+        assertNotNull(liveSection);
+        assertEquals("85CB4256-4CC2-4F96-A03D-5EF880989822", liveSection.GetKey());
+
+        XsdSection informationSection = sections.get("383EA645-E695-4E75-ADA6-0C79BEC09A18");
+        assertNotNull(informationSection);
+        assertEquals("383EA645-E695-4E75-ADA6-0C79BEC09A18", informationSection.GetKey());
+
+    }
+
+    @Test
+    public void GetSectionsEmptyTest()
+    {
+
+        XsdEntity entity = XsdEntity.Create("");
+
+        Map<String, XsdSection> sections = entity.GetSections();
+
+        assertTrue(sections.isEmpty());
+
+    }
+
+    @Test
+    public void GetSectionsManuallyCreatedTest()
+    {
+
+        // Create Entity
+        XsdEntity entity = XsdEntity.Create("TREXOperation",
+                                            "TREX Portal",
+                                            "1.0.0.0",
+                                            "",
+                                            "",
+                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+
+        // Create Live Status Section
+        XsdSection liveSection = entity.CreateSection("Live Status Section", true);
+
+        // Create Information Section
+        XsdSection informationSection = entity.CreateSection("Operation Information Section", true);
+
+        Map<String, XsdSection> sections = entity.GetSections();
+
+        assertEquals(liveSection, sections.get(liveSection.GetKey()));
+        assertEquals(informationSection, sections.get(informationSection.GetKey()));
 
     }
 
