@@ -1,5 +1,6 @@
 package Coalesce.Framework.Persistance;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -7,6 +8,7 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.util.List;
 
+import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -29,6 +31,7 @@ import Coalesce.Framework.DataModel.XsdRecordset;
 import Coalesce.Framework.DataModel.XsdSection;
 import Coalesce.Framework.Persistance.ICoalescePersistor.EntityMetaData;
 
+import com.database.persister.MySQLDataConnector;
 import com.database.persister.MySQLPersistor;
 import com.database.persister.ServerConn;
 
@@ -104,7 +107,17 @@ public class CoalesceMySQLPersistorTest {
     @Test
     public void TestConnection()
     {
-        fail("Not yet implemented");
+
+        try (MySQLDataConnector conn = new MySQLDataConnector(serCon))
+        {
+
+            conn.OpenConnection();
+
+        }
+        catch (Exception ex)
+        {
+            fail(ex.getMessage());
+        }
     }
 
     @Test
@@ -119,21 +132,21 @@ public class CoalesceMySQLPersistorTest {
             fail(ex.getMessage());
         }
     }
+
     @Test
     public void TestSaveEntityTemplate()
     {
         try
         {
             CoalesceEntityTemplate template = testTemplate(CoalesceEntityTemplate.Create(_entity));
-            // Test Entity
-            boolean templateKey = CoalesceMySQLPersistorTest._coalesceFramework.SaveCoalesceEntityTemplate(template);
-            assertTrue(templateKey != false);
+            assertTrue(CoalesceMySQLPersistorTest._coalesceFramework.SaveCoalesceEntityTemplate(template));
         }
         catch (Exception ex)
         {
             fail(ex.getMessage());
         }
     }
+
     @Test
     public void TestGetEntityMetaData()
     {
@@ -148,6 +161,7 @@ public class CoalesceMySQLPersistorTest {
             fail(ex.getMessage());
         }
     }
+
     @Test
     public void TestGetEntity()
     {
@@ -169,9 +183,23 @@ public class CoalesceMySQLPersistorTest {
     {
         try
         {
-            //  TODO the method in the CoalesceFramework returns NULL.
-            boolean bRetVal = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntityLastModified();
-            assertTrue(bRetVal != false);
+            DateTime lastModified;
+            
+            // Test Entity
+            lastModified = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntityLastModified(_entity.GetKey(), "entity");
+            
+            assertTrue(lastModified == _entity.GetLastModified());
+            
+            // Test Section
+            XsdSection section = _entity.GetSection("TestEntity/Live Status Section");
+            
+            assertTrue(section != null);
+            
+            lastModified = null;
+            lastModified = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntityLastModified(section.GetKey(), "section");
+            
+            assertTrue(lastModified == section.GetLastModified());
+            
         }
         catch (Exception ex)
         {
@@ -298,20 +326,20 @@ public class CoalesceMySQLPersistorTest {
         }
     }
 
-
-
     @Test
     public void TestGetEntityTemplateXML()
     {
-        String templateXML = null;
         try
         {
-            CoalesceEntityTemplate template = testTemplate(CoalesceEntityTemplate.Create(_entity));
-            // Test Entity
-            //boolean templateKey = CoalesceMySQLPersistorTest._coalesceFramework.SaveCoalesceEntityTemplate(template);
-            //  TODO somthing isn't right about the Key.  Talk to old man Derek!!!
-            templateXML = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntityTemplateXml(_entity.GetKey());
-            assertTrue(templateXML != null);
+            // Get Template Key
+            String templateKey = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntityTemplateKey(_entity.GetName(),
+                                                                                                            _entity.GetSource(),
+                                                                                                            _entity.GetVersion());
+
+            // Load Template by Key
+            String templateXML = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntityTemplateXml(templateKey);
+
+            assertFalse(StringHelper.IsNullOrEmpty(templateXML));
         }
         catch (Exception ex)
         {
@@ -324,11 +352,10 @@ public class CoalesceMySQLPersistorTest {
     {
         try
         {
-            CoalesceEntityTemplate template = testTemplate(CoalesceEntityTemplate.Create(_entity));
-            String templateXML = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntityTemplateXml(template.GetName(),
-                                                                                                            template.GetSource(),
-                                                                                                            template.GetVersion());
-            assertTrue(templateXML != null);
+            String templateXML = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntityTemplateXml(_entity.GetName(),
+                                                                                                            _entity.GetSource(),
+                                                                                                            _entity.GetVersion());
+            assertFalse(StringHelper.IsNullOrEmpty(templateXML));
         }
         catch (Exception ex)
         {
@@ -336,18 +363,15 @@ public class CoalesceMySQLPersistorTest {
         }
     }
 
-
-
     @Test
     public void TestGetEntityTemplateKey()
     {
         try
         {
-            CoalesceEntityTemplate template = testTemplate(CoalesceEntityTemplate.Create(_entity));
-            String templateKey = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntityTemplateKey(template.GetName(),
-                                                                                                            template.GetSource(),
-                                                                                                            template.GetVersion());
-            assertTrue(templateKey != null);
+            String templateKey = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntityTemplateKey(_entity.GetName(),
+                                                                                                            _entity.GetSource(),
+                                                                                                            _entity.GetVersion());
+            assertFalse(StringHelper.IsNullOrEmpty(templateKey));
         }
         catch (Exception ex)
         {
@@ -360,12 +384,6 @@ public class CoalesceMySQLPersistorTest {
     {
         // TODO Update CoalesceFramework with call to this.
         fail("Not yet implemented");
-    }
-
-    @After
-    public void Finalize()
-    {
-
     }
 
     private static CoalesceEntityTemplate testTemplate(CoalesceEntityTemplate template)
@@ -424,5 +442,12 @@ public class CoalesceMySQLPersistorTest {
         assertTrue(entity2.GetSource().equalsIgnoreCase("Unit Test"));
         assertTrue(entity2.GetVersion().equalsIgnoreCase("1.0.0.0"));
         return template;
+    }
+    
+
+    @After
+    public void Finalize()
+    {
+
     }
 }

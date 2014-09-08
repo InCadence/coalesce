@@ -9,6 +9,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import org.imgscalr.Scalr;
+import org.joda.time.DateTime;
 import org.xml.sax.SAXException;
 
 import Coalesce.Common.Runtime.CoalesceSettings;
@@ -172,10 +173,9 @@ public class CoalesceFramework {
     	Other Entity Functions
     --------------------------------------------------------------------------*/
 
-    public boolean GetCoalesceEntityLastModified()
+    public DateTime GetCoalesceEntityLastModified(String key, String objectType)
     {
-        // TODO: Not Implemented
-        return false;
+        return this._Persister.GetCoalesceDataObjectLastModified(key, objectType);
     }
 
     public boolean SaveCoalesceEntity(XsdEntity entity)
