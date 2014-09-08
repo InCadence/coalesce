@@ -204,21 +204,7 @@ public class CoalesceMySQLPersistorTest {
             // Test Entity
             lastModified = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntityLastModified(_entity.GetKey(),
                                                                                                        "entity");
-
-            DateTime getLastModified = _entity.GetLastModified();
-
-            int evalDates = DateTimeComparator.getInstance().compare(lastModified, getLastModified);
-//            switch (evalDates) {
-//            case -1:
-//                System.out.println("No Match, Lastmodified is lower");
-//                break;
-//            case 0:
-//                System.out.println("Equal");
-//                break;
-//            case 1:
-//                System.out.println("No Match, getLastModified is lower");
-//            }
-            assertTrue(evalDates == 0);
+            assertTrue(DateTimeComparator.getInstance().compare(lastModified, _entity.GetLastModified()) == 0);
 
             // Test Section
             XsdSection section = _entity.GetSection("TestEntity/Live Status Section");
@@ -228,10 +214,7 @@ public class CoalesceMySQLPersistorTest {
             lastModified = null;
             lastModified = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntityLastModified(section.GetKey(),
                                                                                                        "section");
-
-            DateTime getSectionLastModified = section.GetLastModified();
-            int evalSectionDates = DateTimeComparator.getInstance().compare(lastModified, getSectionLastModified);
-            assertTrue(evalSectionDates == 0);
+            assertTrue(DateTimeComparator.getInstance().compare(lastModified, section.GetLastModified()) == 0);
 
         }
         catch (Exception ex)
