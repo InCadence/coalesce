@@ -398,14 +398,6 @@ public class XsdEntity extends XsdDataObject {
      * }catch(Exception ex){ // return Failed Error return new CallResult(CallResults.FAILED_ERROR, ex, this); } }
      */
 
-    public XsdLinkageSection CreateLinkageSection()
-    {
-
-        // TODO: Check that this actually maps to the Entity.LinkSection
-        return XsdLinkageSection.Create(this);
-
-    }
-
     public XsdSection CreateSection(String name, boolean noIndex)
     {
         return XsdSection.Create(this, name, noIndex);

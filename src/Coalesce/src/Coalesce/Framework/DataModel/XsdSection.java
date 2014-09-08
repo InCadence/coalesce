@@ -1,5 +1,6 @@
 package Coalesce.Framework.DataModel;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -7,6 +8,8 @@ import javax.xml.namespace.QName;
 
 import org.joda.time.DateTime;
 
+import unity.core.runtime.CallResult;
+import unity.core.runtime.CallResult.CallResults;
 import Coalesce.Common.Helpers.XmlHelper;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset;
@@ -180,6 +183,45 @@ public class XsdSection extends XsdDataObject {
     public XsdRecordset CreateRecordset(String name)
     {
         return XsdRecordset.Create(this, name);
+    }
+
+    public XsdRecordset GetRecordset(String NamePath)
+    {
+        try
+        {
+
+            XsdDataObject dataObject = GetDataObjectForNamePath(NamePath);
+
+            if (dataObject != null && dataObject instanceof XsdRecordset)
+            {
+                return (XsdRecordset) dataObject;
+            }
+
+            return null;
+
+        }
+        catch (Exception ex)
+        {
+            CallResult.log(CallResults.FAILED_ERROR, ex, this);
+            return null;
+        }
+    }
+
+    public Map<String, XsdRecordset> GetRecordsets()
+    {
+
+        Map<String, XsdRecordset> recordSets = new HashMap<String, XsdRecordset>();
+
+        for (XsdDataObject child : _childDataObjects.values())
+        {
+            if (child instanceof XsdRecordset)
+            {
+                recordSets.put(child.GetKey(), (XsdRecordset) child);
+            }
+        }
+
+        return recordSets;
+
     }
 
     @Override

@@ -7,6 +7,7 @@ import java.io.StringWriter;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.UnmarshalException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.OutputKeys;
@@ -78,6 +79,10 @@ public class XmlHelper {
 
             return unmarshaller.unmarshal(in);
 
+        }
+        catch (UnmarshalException uex)
+        {
+            return null;
         }
         catch (Exception ex)
         {

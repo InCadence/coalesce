@@ -65,14 +65,16 @@ public class EntityLinkHelper {
         @SuppressWarnings("unused")
         CallResult rst;
 
+        if (entity1 == null || entity2 == null) return false;
+                
         // Get the LinkageSections for each Entity. Create if not found.
 
         // For Entity 1...
-        XsdLinkageSection linkageSection1 = GetLinkageSection(entity1);
+        XsdLinkageSection linkageSection1 = entity1.GetLinkageSection();
         if (linkageSection1 == null) return false;
 
         // For Entity 2...
-        XsdLinkageSection linkageSection2 = GetLinkageSection(entity2);
+        XsdLinkageSection linkageSection2 = entity2.GetLinkageSection();
         if (linkageSection2 == null) return false;
 
         rst = EstablishLinkage(linkageSection1,
@@ -134,23 +136,6 @@ public class EntityLinkHelper {
     // -----------------------------------------------------------------------//
     // Private Methods
     // -----------------------------------------------------------------------//
-
-    private static XsdLinkageSection GetLinkageSection(XsdEntity entity)
-    {
-        if (entity == null) return null;
-
-        XsdLinkageSection linkageSection = entity.GetLinkageSection();
-
-        if (linkageSection == null)
-        {
-
-            linkageSection = entity.CreateLinkageSection();
-
-        }
-
-        return linkageSection;
-
-    }
 
     private static CallResult EstablishLinkage(XsdLinkageSection linkageSection,
                                                XsdEntity entity,

@@ -153,7 +153,7 @@ public class XsdEntityTest {
     }
 
     @Test
-    public void testCreateTREXOperationWithStatic()
+    public void CreateTREXOperationWithStaticTest()
     {
         XsdEntity entity = null;
         XsdSection section = null;
@@ -224,7 +224,7 @@ public class XsdEntityTest {
     }
 
     @Test
-    public void testCreateTREXOperationWithInstanceCreate()
+    public void CreateTREXOperationWithInstanceCreateTest()
     {
 
         XsdEntity entity = null;
@@ -241,12 +241,8 @@ public class XsdEntityTest {
 
         // Verify Entity Creation
         assertTrue(entity.GetSource().equals("TREX Portal"));
-        // assertTrue(entity.GetLinkageSection() == null);
 
         entity.SetAttribute("testnewattribute", "test");
-
-        // Create Linkage Section
-        entity.CreateLinkageSection();
 
         // Verify Link Section Creation
         assertTrue(entity.GetLinkageSection() != null);
@@ -294,7 +290,36 @@ public class XsdEntityTest {
     }
 
     @Test
-    public void testFieldHistory()
+    public void GetLinkageSectionFromXmlTest()
+    {
+        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+        
+        XsdLinkageSection linkageSection = entity.GetLinkageSection();
+        
+        assertEquals("F4F126AF-4658-4D7F-A67F-4833F7EADDC3", linkageSection.GetKey());
+        
+        
+    }
+    
+    @Test
+    public void GetLinkageSectionEmptyEntityTest()
+    {
+
+        // Create Entity
+        XsdEntity entity = XsdEntity.Create("TREXOperation",
+                                  "TREX Portal",
+                                  "1.0.0.0",
+                                  "",
+                                  "",
+                                  "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+
+        XsdLinkageSection entityLinkageSection = entity.GetLinkageSection();
+        assertNotNull(entityLinkageSection);
+        
+    }
+    
+    @Test
+    public void FieldHistoryTest()
     {
 
         XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
