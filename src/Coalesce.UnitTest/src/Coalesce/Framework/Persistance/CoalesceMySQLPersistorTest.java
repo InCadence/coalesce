@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeComparator;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -18,6 +19,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import unity.connector.local.LocalConfigurationsConnector;
+import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.Runtime.CoalesceSettings;
 import Coalesce.Framework.CoalesceFramework;
@@ -203,7 +205,20 @@ public class CoalesceMySQLPersistorTest {
             lastModified = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntityLastModified(_entity.GetKey(),
                                                                                                        "entity");
 
-            assertTrue(lastModified == _entity.GetLastModified());
+            DateTime getLastModified = _entity.GetLastModified();
+
+            int evalDates = DateTimeComparator.getInstance().compare(lastModified, getLastModified);
+//            switch (evalDates) {
+//            case -1:
+//                System.out.println("No Match, Lastmodified is lower");
+//                break;
+//            case 0:
+//                System.out.println("Equal");
+//                break;
+//            case 1:
+//                System.out.println("No Match, getLastModified is lower");
+//            }
+            assertTrue(evalDates == 0);
 
             // Test Section
             XsdSection section = _entity.GetSection("TestEntity/Live Status Section");
@@ -214,7 +229,9 @@ public class CoalesceMySQLPersistorTest {
             lastModified = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntityLastModified(section.GetKey(),
                                                                                                        "section");
 
-            assertTrue(lastModified == section.GetLastModified());
+            DateTime getSectionLastModified = section.GetLastModified();
+            int evalSectionDates = DateTimeComparator.getInstance().compare(lastModified, getSectionLastModified);
+            assertTrue(evalSectionDates == 0);
 
         }
         catch (Exception ex)
