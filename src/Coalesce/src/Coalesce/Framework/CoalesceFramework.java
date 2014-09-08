@@ -18,6 +18,7 @@ import Coalesce.Framework.DataModel.XsdEntity;
 import Coalesce.Framework.DataModel.XsdField;
 import Coalesce.Framework.DataModel.XsdRecord;
 import Coalesce.Framework.Persistance.ICoalescePersistor;
+import Coalesce.Framework.Persistance.ICoalescePersistor.ElementMetaData;
 import Coalesce.Framework.Persistance.ICoalescePersistor.EntityMetaData;
 
 /*-----------------------------------------------------------------------------'
@@ -43,9 +44,9 @@ public class CoalesceFramework {
     	Private Member Variables
     --------------------------------------------------------------------------*/
 
-    protected ICoalescePersistor _Persister;
-    protected boolean _IsInitialized = false;
-    protected String _imageFormat;
+    private ICoalescePersistor _Persister;
+    private boolean _IsInitialized = false;
+    private String _imageFormat;
 
     /*--------------------------------------------------------------------------
     	Public Functions
@@ -192,21 +193,24 @@ public class CoalesceFramework {
     {
         File imageFile = new File(Filename);
         String imageName = imageFile.getName();
-        String imageFileFormat = imageName.substring(imageName.length()-3);
+        String imageFileFormat = imageName.substring(imageName.length() - 3);
         File imageDir = imageFile.getParentFile();
-        
-        //create thumbnail name
-        String thumbnailName = imageName.substring(0, imageName.length()-4) + "_" + "thumbnail." + _imageFormat;
-        File thumbnail = new File(imageDir,thumbnailName);
-        
-        //create thumbnail
-        if (!thumbnail.exists() && imageFileFormat.equals(_imageFormat) ) {
+
+        // create thumbnail name
+        String thumbnailName = imageName.substring(0, imageName.length() - 4) + "_" + "thumbnail." + _imageFormat;
+        File thumbnail = new File(imageDir, thumbnailName);
+
+        // create thumbnail
+        if (!thumbnail.exists() && imageFileFormat.equals(_imageFormat))
+        {
             BufferedImage img = ImageIO.read(imageFile);
             BufferedImage imgThumbnail = Scalr.resize(img, 100, 100, Scalr.OP_ANTIALIAS);
             ImageIO.write(imgThumbnail, _imageFormat, thumbnail);
-            return true;  
-        } else {
-            //thumbnail already exists or image format does not match settings
+            return true;
+        }
+        else
+        {
+            // thumbnail already exists or image format does not match settings
             return false;
         }
     }
@@ -223,8 +227,19 @@ public class CoalesceFramework {
 
     public XsdRecord GetCoalesceRecord(String Key)
     {
-        // TODO: Not Implemented
-        return null;
+        XsdRecord record = null;
+
+        ElementMetaData metaData = this._Persister.GetXPath(Key, "record");
+        if (metaData != null)
+        {
+            XsdEntity entity = this._Persister.GetEntity(metaData.entityKey);
+            if (entity != null)
+            {
+                record = (XsdRecord) entity.GetDataObjectForNamePath(metaData.elementXPath);
+            }
+        }
+
+        return record;
     }
 
     public void GetCoalesceFieldAndEntityByFieldKey(String Key)
@@ -234,8 +249,21 @@ public class CoalesceFramework {
 
     public XsdField GetCoalesceFieldByFieldKey(String Key)
     {
-        // TODO: Not Implemented
-        return null;
+        XsdField field = null;
+
+        ElementMetaData metaData = this._Persister.GetXPath(Key, "field");
+
+        if (metaData != null)
+        {
+            XsdEntity entity = this._Persister.GetEntity(metaData.entityKey);
+
+            if (entity != null)
+            {
+                field = (XsdField) entity.GetCoalesceDataObjectForKey(Key);
+            }
+        }
+
+        return field;
     }
 
     /*--------------------------------------------------------------------------
@@ -247,7 +275,8 @@ public class CoalesceFramework {
         return this._Persister.PersistEntityTemplate(template);
     }
 
-    public CoalesceEntityTemplate GetCoalesceEntityTemplate(String Name, String Source, String Version) throws SAXException, IOException
+    public CoalesceEntityTemplate GetCoalesceEntityTemplate(String Name, String Source, String Version) throws SAXException,
+            IOException
     {
 
         CoalesceEntityTemplate template = new CoalesceEntityTemplate();

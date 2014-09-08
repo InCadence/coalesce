@@ -257,7 +257,7 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
 
     }
 
-    protected XsdDataObject GetDataObjectForNamePath(String namePath)
+    public XsdDataObject GetDataObjectForNamePath(String namePath)
     {
         try
         {
@@ -318,6 +318,27 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
             CallResult.log(CallResults.FAILED_ERROR, ex, this);
             return null;
         }
+    }
+
+    public XsdDataObject GetCoalesceDataObjectForKey(String key)
+    {
+        XsdDataObject result = null; 
+
+        if (this.GetKey().equalsIgnoreCase(key))
+        {
+            result = this;
+        }
+        else
+        {
+            
+            for (XsdDataObject child : _childDataObjects.values())
+            {
+                result = child.GetCoalesceDataObjectForKey(key);
+                if (result != null) break;
+            }
+        }
+        
+        return result;
     }
 
     protected String GetStringElement(String value)

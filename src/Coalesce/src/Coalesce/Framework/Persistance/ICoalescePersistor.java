@@ -28,9 +28,16 @@ public interface ICoalescePersistor {
 
     public class EntityMetaData {
 
-        public String Id;
-        public String Type;
-        public String Key;
+        public String entityId;
+        public String entityType;
+        public String entityKey;
+
+    }
+    
+    public class ElementMetaData {
+
+        public String entityKey;
+        public String elementXPath;
 
     }
 
@@ -54,7 +61,7 @@ public interface ICoalescePersistor {
 
     public Object GetFieldValue(String fieldKey);
 
-    public String GetXPath(String Key, String ObjectType, String EntityKey);
+    public ElementMetaData GetXPath(String Key, String ObjectType);
 
     public DateTime GetCoalesceDataObjectLastModified(String Key, String ObjectType);
 

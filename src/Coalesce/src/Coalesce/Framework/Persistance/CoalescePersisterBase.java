@@ -214,7 +214,7 @@ public abstract class CoalescePersisterBase implements ICoalescePersistor {
     }
 
     @Override
-    public String GetXPath(String Key, String ObjectType, String EntityKey)
+    public ElementMetaData GetXPath(String Key, String ObjectType)
     {
         // TODO Auto-generated method stub
         return null;

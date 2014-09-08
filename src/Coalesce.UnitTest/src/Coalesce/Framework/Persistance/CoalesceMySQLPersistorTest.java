@@ -24,6 +24,7 @@ import Coalesce.Framework.CoalesceFramework;
 import Coalesce.Framework.DataModel.CoalesceEntityTemplate;
 import Coalesce.Framework.DataModel.ECoalesceFieldDataTypes;
 import Coalesce.Framework.DataModel.XsdEntity;
+import Coalesce.Framework.DataModel.XsdField;
 import Coalesce.Framework.DataModel.XsdFieldDefinition;
 import Coalesce.Framework.DataModel.XsdLinkageSection;
 import Coalesce.Framework.DataModel.XsdRecord;
@@ -126,6 +127,19 @@ public class CoalesceMySQLPersistorTest {
         try
         {
             assertTrue(CoalesceMySQLPersistorTest._coalesceFramework.SaveCoalesceEntity(_entity));
+
+            // Get Field from DB
+            XsdField field = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceFieldByFieldKey(_fieldKey);
+            assertTrue(field != null);
+
+            // Get Record from Entity
+            XsdRecord record = (XsdRecord) field.GetParent();
+            assertTrue(record != null);
+
+            // Get Record from DB
+            XsdRecord recordDB = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceRecord(record.GetKey());
+            assertTrue(recordDB != null);
+            assertTrue(recordDB.GetName().equalsIgnoreCase(record.GetName()));
         }
         catch (Exception ex)
         {
@@ -154,7 +168,7 @@ public class CoalesceMySQLPersistorTest {
         {
             CoalesceMySQLPersistorTest._coalesceFramework.SaveCoalesceEntity(_entity);
             EntityMetaData objectKey = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntityIdAndTypeForKey(_entity.GetKey());
-            assertTrue(objectKey.Id != null && objectKey.Key != null && objectKey.Type != null);
+            assertTrue(objectKey.entityId != null && objectKey.entityKey != null && objectKey.entityType != null);
         }
         catch (Exception ex)
         {
@@ -184,22 +198,24 @@ public class CoalesceMySQLPersistorTest {
         try
         {
             DateTime lastModified;
-            
+
             // Test Entity
-            lastModified = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntityLastModified(_entity.GetKey(), "entity");
-            
+            lastModified = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntityLastModified(_entity.GetKey(),
+                                                                                                       "entity");
+
             assertTrue(lastModified == _entity.GetLastModified());
-            
+
             // Test Section
             XsdSection section = _entity.GetSection("TestEntity/Live Status Section");
-            
+
             assertTrue(section != null);
-            
+
             lastModified = null;
-            lastModified = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntityLastModified(section.GetKey(), "section");
-            
+            lastModified = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntityLastModified(section.GetKey(),
+                                                                                                       "section");
+
             assertTrue(lastModified == section.GetLastModified());
-            
+
         }
         catch (Exception ex)
         {
@@ -443,7 +459,6 @@ public class CoalesceMySQLPersistorTest {
         assertTrue(entity2.GetVersion().equalsIgnoreCase("1.0.0.0"));
         return template;
     }
-    
 
     @After
     public void Finalize()
