@@ -111,12 +111,12 @@ public class XsdLinkage extends XsdDataObject {
 
     public String GetClassificationMarking()
     {
-        return _entityLinkage.getClassificationmarking().getValue();
+        return _entityLinkage.getClassificationmarking();
     }
 
     public void SetClassificationMarking(String value)
     {
-        _entityLinkage.getClassificationmarking().setValue(value);
+        _entityLinkage.setClassificationmarking(value);
         SetChanged();
     }
 

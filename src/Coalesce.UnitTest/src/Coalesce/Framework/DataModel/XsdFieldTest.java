@@ -328,7 +328,7 @@ public class XsdFieldTest {
         XsdField field = GetTestMissionNameField();
 
         MarkingValueTest.assertMarkingValue(new Marking().GetClassification(),
-                                            new Marking(field.GetClassificationMarking().getValue()).GetClassification());
+                                            new Marking(field.GetClassificationMarking()).GetClassification());
 
     }
 
@@ -344,7 +344,7 @@ public class XsdFieldTest {
         XsdField savedField = GetSavedTestMissionField(mission);
 
         MarkingValueTest.assertMarkingValue(TOPSECRETCLASSIFICATIONMARKING.GetClassification(),
-                                            new Marking(savedField.GetClassificationMarking().getValue()).GetClassification());
+                                            new Marking(savedField.GetClassificationMarking()).GetClassification());
 
     }
 
@@ -359,7 +359,7 @@ public class XsdFieldTest {
         field.SetClassificationMarking(TOPSECRETCLASSIFICATIONMARKING);
 
         MarkingValueTest.assertMarkingValue(TOPSECRETCLASSIFICATIONMARKING.GetClassification(),
-                                            new Marking(field.GetClassificationMarking().getValue()).GetClassification());
+                                            new Marking(field.GetClassificationMarking()).GetClassification());
 
     }
 

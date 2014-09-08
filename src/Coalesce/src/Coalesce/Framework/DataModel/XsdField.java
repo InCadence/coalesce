@@ -214,32 +214,17 @@ public class XsdField extends XsdFieldBase {
         _entityField.setModifiedbyip(value);
     }
 
-    public Classification GetClassificationMarking()
+    public String GetClassificationMarking()
     {
         return _entityField.getClassificationmarking();
     }
 
-    public String GetClassificationString()
-    {
-        return _entityField.getClassificationmarking().getValue();
-    }
-
     public void SetClassificationMarking(String value)
     {
-        String oldValue = _entityField.getClassificationmarking().getValue();
+        String oldValue = _entityField.getClassificationmarking();
 
         SetChanged(oldValue, value);
-        _entityField.getClassificationmarking().setValue(value);
-    }
-
-    /* (non-Javadoc)
-     * @see Coalesce.Framework.DataModel.XsdFieldBase#SetClassificationMarking(Coalesce.Framework.GeneratedJAXB.Classification)
-     */
-    @Override
-    public void SetClassificationMarking(Classification value)
-    {
-        // TODO Auto-generated method stub
-        
+        _entityField.setClassificationmarking(value);
     }
 
     public String GetPreviousHistoryKey()

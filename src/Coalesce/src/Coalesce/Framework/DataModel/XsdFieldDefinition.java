@@ -233,12 +233,12 @@ public class XsdFieldDefinition extends XsdDataObject {
 
     public String GetDefaultClassificationMarking()
     {
-        return _entityFieldDefinition.getDefaultclassificationmarking().getValue();
+        return _entityFieldDefinition.getDefaultclassificationmarking();
     }
 
     public void SetDefaultClassificationMarking(String value)
     {
-        _entityFieldDefinition.getDefaultclassificationmarking().setValue(value);
+        _entityFieldDefinition.setDefaultclassificationmarking(value);
     }
 
     public String GetDefaultValue()
