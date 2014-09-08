@@ -288,5 +288,149 @@ public class ELinkTypesTest {
         assertEquals(ELinkTypes.IsUsedBy, value.GetReciprocalLinkType());
     }
     
+    @Test
+    public void GetLabelUndefinedTest() {
+        
+        String a = "Undefined";
+        ELinkTypes value = ELinkTypes.Undefined;
+               
+        assertEquals(a, value.getLabel());
+    }
     
+    @Test
+    public void GetLabelIsChildOfTest() {
+        
+        String a = "IsChildOf";
+        ELinkTypes value = ELinkTypes.IsChildOf;
+               
+        assertEquals(a, value.getLabel());
+    }
+
+    @Test
+    public void GetLabelIsParentOfTest() {
+        
+        String a = "IsParentOf";
+        ELinkTypes value = ELinkTypes.IsParentOf;
+               
+        assertEquals(a, value.getLabel());
+    }
+    
+    @Test
+    public void GetLabelCreatedTest() {
+        
+        String a = "Created";
+        ELinkTypes value = ELinkTypes.Created;
+               
+        assertEquals(a, value.getLabel());
+    }
+    
+    @Test
+    public void GetLabelWasCreatedByTest() {
+        
+        String a = "WasCreatedBy";
+        ELinkTypes value = ELinkTypes.WasCreatedBy;
+               
+        assertEquals(a, value.getLabel());
+    }
+    
+    @Test
+    public void GetLabelHasMemberTest() {
+        
+        String a = "HasMember";
+        ELinkTypes value = ELinkTypes.HasMember;
+               
+        assertEquals(a, value.getLabel());
+    }
+    
+    @Test
+    public void GetLabelIsAMemberOfTest() {
+        
+        String a = "IsAMemberOf";
+        ELinkTypes value = ELinkTypes.IsAMemberOf;
+               
+        assertEquals(a, value.getLabel());
+    }
+    
+    @Test
+    public void GetLabelHasParticipantTest() {
+        
+        String a = "HasParticipant";
+        ELinkTypes value = ELinkTypes.HasParticipant;
+               
+        assertEquals(a, value.getLabel());
+    }
+   
+    @Test
+    public void GetLabelIsAParticipantOfTest() {
+        
+        String a = "IsAParticipantOf";
+        ELinkTypes value = ELinkTypes.IsAParticipantOf;
+               
+        assertEquals(a, value.getLabel());
+    }
+    
+    @Test
+    public void GetLabelIsWatchingTest() {
+        
+        String a = "IsWatching";
+        ELinkTypes value = ELinkTypes.IsWatching;
+               
+        assertEquals(a, value.getLabel());
+    }
+    
+    @Test
+    public void GetLabelIsBeingWatchedByTest() {
+        
+        String a = "IsBeingWatchedBy";
+        ELinkTypes value = ELinkTypes.IsBeingWatchedBy;
+               
+        assertEquals(a, value.getLabel());
+    }
+    
+    @Test
+    public void GetLabelIsAPeerOfTest() {
+        
+        String a = "IsAPeerOf";
+        ELinkTypes value = ELinkTypes.IsAPeerOf;
+               
+        assertEquals(a, value.getLabel());
+    }
+    
+    @Test
+    public void GetLabelIsOwnedByTest() {
+        
+        String a = "IsOwnedBy";
+        ELinkTypes value = ELinkTypes.IsOwnedBy;
+               
+        assertEquals(a, value.getLabel());
+    }
+    
+    @Test
+    public void GetLabelHasOwnershipOfTest() {
+        
+        String a = "HasOwnershipOf";
+        ELinkTypes value = ELinkTypes.HasOwnershipOf;
+               
+        assertEquals(a, value.getLabel());
+    }
+    
+    @Test
+    public void GetLabelIsUsedByTest() {
+        
+        String a = "IsUsedBy";
+        ELinkTypes value = ELinkTypes.IsUsedBy;
+               
+        assertEquals(a, value.getLabel());
+    }
+    
+    @Test
+    public void GetLabelHasUseOfTest() {
+        
+        String a = "HasUseOf";
+        ELinkTypes value = ELinkTypes.HasUseOf;
+               
+        assertEquals(a, value.getLabel());
+    }
 }
+
+
