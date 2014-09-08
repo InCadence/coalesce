@@ -199,10 +199,6 @@ public class XsdFieldHistory extends XsdFieldBase {
         _entityFieldHistory.setModifiedbyip(value);
     }
 
-    /* (non-Javadoc)
-     * @see Coalesce.Framework.DataModel.XsdFieldBase#GetClassificationMarking()
-     */
-    @Override
     public String GetClassificationMarking()
     {
         return _entityFieldHistory.getClassificationmarking();
