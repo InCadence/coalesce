@@ -117,7 +117,7 @@ public class XsdSection extends XsdDataObject {
         _entitySection = section;
 
         super.Initialize();
-        
+
         for (Recordset childRecordSet : _entitySection.getRecordset())
         {
 
@@ -168,7 +168,7 @@ public class XsdSection extends XsdDataObject {
     {
         return "section";
     }
-    
+
     // TODO: Need nested sections
     /*
      * public CallResult CreateSection(XsdSection newSection, String name) { try{ CallResult rst;
@@ -275,18 +275,10 @@ public class XsdSection extends XsdDataObject {
     }
 
     /*
-    @Override
-    protected boolean GetNoIndex()
-    {
-        return Boolean.parseBoolean(_entitySection.getNoindex());
-    }
-
-    @Override
-    protected void SetObjectNoIndex(boolean value)
-    {
-        _entitySection.setNoindex(Boolean.toString(value));
-    }
-    */
+     * @Override protected boolean GetNoIndex() { return Boolean.parseBoolean(_entitySection.getNoindex()); }
+     * 
+     * @Override protected void SetObjectNoIndex(boolean value) { _entitySection.setNoindex(Boolean.toString(value)); }
+     */
 
     protected List<Recordset> GetEntityRecordSets()
     {

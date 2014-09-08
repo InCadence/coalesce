@@ -293,31 +293,30 @@ public class XsdEntityTest {
     public void GetLinkageSectionFromXmlTest()
     {
         XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
-        
+
         XsdLinkageSection linkageSection = entity.GetLinkageSection();
-        
+
         assertEquals("F4F126AF-4658-4D7F-A67F-4833F7EADDC3", linkageSection.GetKey());
-        
-        
+
     }
-    
+
     @Test
     public void GetLinkageSectionEmptyEntityTest()
     {
 
         // Create Entity
         XsdEntity entity = XsdEntity.Create("TREXOperation",
-                                  "TREX Portal",
-                                  "1.0.0.0",
-                                  "",
-                                  "",
-                                  "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+                                            "TREX Portal",
+                                            "1.0.0.0",
+                                            "",
+                                            "",
+                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         XsdLinkageSection entityLinkageSection = entity.GetLinkageSection();
         assertNotNull(entityLinkageSection);
-        
+
     }
-    
+
     @Test
     public void FieldHistoryTest()
     {
