@@ -10,6 +10,7 @@ import unity.core.runtime.CallResult;
 import unity.core.runtime.CallResult.CallResults;
 import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.Helpers.XmlHelper;
+import Coalesce.Framework.GeneratedJAXB.Classification;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record.Field;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record.Field.Fieldhistory;
 
@@ -199,16 +200,30 @@ public class XsdFieldHistory extends XsdFieldBase {
         _entityFieldHistory.setModifiedbyip(value);
     }
 
-    public String GetClassificationMarking()
+    public String GetClassificationString()
+    {
+        return _entityFieldHistory.getClassificationmarking().getValue();
+    }
+
+    public Classification GetClassificationMarking()
     {
         return _entityFieldHistory.getClassificationmarking();
     }
 
     public void SetClassificationMarking(String value)
     {
-        _entityFieldHistory.setClassificationmarking(value);
+        _entityFieldHistory.getClassificationmarking().setValue(value);
     }
 
+    /* (non-Javadoc)
+     * @see Coalesce.Framework.DataModel.XsdFieldBase#SetClassificationMarking(Coalesce.Framework.GeneratedJAXB.Classification)
+     */
+    @Override
+    public void SetClassificationMarking(Classification value)
+    {
+        // TODO Auto-generated method stub
+        
+    }
     public String GetPreviousHistoryKey()
     {
         String prevHistKey = _entityFieldHistory.getPrevioushistorykey();
@@ -371,4 +386,5 @@ public class XsdFieldHistory extends XsdFieldBase {
     {
         return this._entityFieldHistory.getOtherAttributes();
     }
+
 }

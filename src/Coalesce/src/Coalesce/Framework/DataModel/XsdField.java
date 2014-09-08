@@ -16,6 +16,7 @@ import Coalesce.Common.Helpers.GUIDHelper;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.Helpers.XmlHelper;
+import Coalesce.Framework.GeneratedJAXB.Classification;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record.Field;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record.Field.Fieldhistory;
 
@@ -213,17 +214,32 @@ public class XsdField extends XsdFieldBase {
         _entityField.setModifiedbyip(value);
     }
 
-    public String GetClassificationMarking()
+    public Classification GetClassificationMarking()
     {
         return _entityField.getClassificationmarking();
     }
 
+    public String GetClassificationString()
+    {
+        return _entityField.getClassificationmarking().getValue();
+    }
+
     public void SetClassificationMarking(String value)
     {
-        String oldValue = _entityField.getClassificationmarking();
+        String oldValue = _entityField.getClassificationmarking().getValue();
 
         SetChanged(oldValue, value);
-        _entityField.setClassificationmarking(value);
+        _entityField.getClassificationmarking().setValue(value);
+    }
+
+    /* (non-Javadoc)
+     * @see Coalesce.Framework.DataModel.XsdFieldBase#SetClassificationMarking(Coalesce.Framework.GeneratedJAXB.Classification)
+     */
+    @Override
+    public void SetClassificationMarking(Classification value)
+    {
+        // TODO Auto-generated method stub
+        
     }
 
     public String GetPreviousHistoryKey()

@@ -12,6 +12,7 @@ import Coalesce.Common.Classification.Marking;
 import Coalesce.Common.Helpers.GUIDHelper;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import Coalesce.Common.Helpers.StringHelper;
+import Coalesce.Framework.GeneratedJAXB.Classification;
 
 /*-----------------------------------------------------------------------------'
 Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -39,7 +40,7 @@ public abstract class XsdFieldBase extends XsdDataObject {
     public String GetValueWithMarking()
     {
         String val = GetValue();
-        Marking mrk = new Marking(GetClassificationMarking());
+        Marking mrk = new Marking(GetClassificationMarking().getValue());
         return mrk.toString() + " " + val;
     }
 
@@ -68,18 +69,18 @@ public abstract class XsdFieldBase extends XsdDataObject {
 
     public abstract void SetModifiedByIP(String value);
 
-    public abstract String GetClassificationMarking();
+    public abstract Classification GetClassificationMarking();
 
     public void SetClassificationMarking(Marking value)
     {
-        SetClassificationMarking(value.toString());
+        SetClassificationMarking(value);
     }
 
-    public abstract void SetClassificationMarking(String value);
+    public abstract void SetClassificationMarking(Classification value);
 
     public String GetPortionMarking()
     {
-        Marking mrk = new Marking(GetClassificationMarking());
+        Marking mrk = new Marking(GetClassificationMarking().getValue());
         return mrk.ToPortionString();
     }
 
