@@ -465,33 +465,24 @@ public class XsdEntity extends XsdDataObject {
 
     }
 
+    public Map<String, XsdLinkage> GetLinkages(ELinkTypes forLinkType)
+    {
+        return GetLinkages(forLinkType, null);
+    }
+
     public Map<String, XsdLinkage> GetLinkages(ELinkTypes forLinkType, String forEntityName)
     {
+        return GetLinkages(forLinkType, forEntityName, null);
+    }
 
-        List<ELinkTypes> forLinkTypes = new ArrayList<ELinkTypes>();
-        forLinkTypes.add(forLinkType);
-
-        return GetLinkages(forLinkTypes, forEntityName);
+    public Map<String, XsdLinkage> GetLinkages(ELinkTypes forLinkType, String forEntityName, String forEntitySource)
+    {
+        return GetLinkages(Arrays.asList(forLinkType), forEntityName, forEntitySource);
     }
 
     public Map<String, XsdLinkage> GetLinkages(List<ELinkTypes> forLinkTypes, String forEntityName)
     {
         return GetLinkages(forLinkTypes, forEntityName, null);
-    }
-
-    public Map<String, XsdLinkage> GetLinkages(ELinkTypes forLinkType, String forEntityName, String forEntitySource)
-    {
-
-        List<ELinkTypes> forLinkTypes = new ArrayList<ELinkTypes>();
-        forLinkTypes.add(forLinkType);
-
-        return GetLinkages(forLinkTypes, forEntityName, forEntitySource);
-
-    }
-
-    public Map<String, XsdLinkage> GetLinkages(ELinkTypes forLinkType)
-    {
-        return GetLinkages(forLinkType, null);
     }
 
     public XsdSection GetSection(String NamePath)
@@ -516,59 +507,50 @@ public class XsdEntity extends XsdDataObject {
         }
     }
 
-    public CallResult GetEntityId(String Param, String Value)
+    public List<String> GetEntityId(String typeParam)
     {
-        try
+        List<String> values = new ArrayList<String>();
+
+        // EntityID Type Contain Param?
+        String[] types = GetEntityIdType().split(",");
+        String[] ids = GetEntityId().split(",");
+        for (int i=0; i < types.length; i++)
         {
-
-            // EntityID Type Contain Param?
-            int Idx = Arrays.asList(this.GetEntityIdType().split(",")).indexOf(Param);
-            if (Idx == -1) return new CallResult(CallResults.FAILED, "Not Found", this);
-
-            // Get Value
-            String[] IdArray = this.GetEntityId().split(",");
-            Value = IdArray[Idx];
-
-            return CallResult.successCallResult;
-
+            String type = types[i];
+            if (type.equalsIgnoreCase(typeParam))
+            {
+                values.add(ids[i]);
+            }
         }
-        catch (Exception ex)
-        {
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
-        }
+        
+        return values;
+
     }
 
-    public CallResult SetEntityId(String Param, String Value)
+    public boolean SetEntityId(String typeParam, String Value)
     {
 
-        try
+        if (typeParam == null || typeParam.trim() == "" || Value == null || Value.trim() == "")
         {
-
-            if (Param == null || Param.trim() == "" || Value == null || Value.trim() == "") return new CallResult(CallResults.FAILED,
-                                                                                                                  "Invalid",
-                                                                                                                  this);
-
-            // Collection Already have Unique ID?
-            if (this.GetEntityId() == null || this.GetEntityId().trim() == "")
-            {
-                // No; Add
-                this.SetEntityIdType(Param);
-                this.SetEntityId(Value);
-            }
-            else
-            {
-                // Yes; Append (CSV)
-                this.SetEntityIdType(this.GetEntityIdType() + "," + Param);
-                this.SetEntityId(this.GetEntityId() + "," + Value);
-            }
-
-            return CallResult.successCallResult;
-
+            return false;
         }
-        catch (Exception ex)
+
+        // Collection Already have Unique ID?
+        if (GetEntityId() == null || GetEntityId().trim() == "")
         {
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
+            // No; Add
+            SetEntityIdType(typeParam);
+            SetEntityId(Value);
         }
+        else
+        {
+            // Yes; Append (CSV)
+            SetEntityIdType(GetEntityIdType() + "," + typeParam);
+            SetEntityId(GetEntityId() + "," + Value);
+        }
+
+        return true;
+
     }
 
     public void MarkAsDeleted()
