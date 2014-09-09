@@ -1,6 +1,4 @@
-package Coalesce.Framework.Persistance;
-
-import Coalesce.Framework.DataModel.XsdEntity;
+package Coalesce.Common.Exceptions;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -19,22 +17,18 @@ import Coalesce.Framework.DataModel.XsdEntity;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-public interface ICoalesceCacher {
+/**
+ * @author Tom.Johnson
+ *
+ */
+public class CoalescePersistorException extends Exception {
 
-    public boolean containsEntity(String Key);
-
-    public boolean storeEntity(XsdEntity entity);
-
-    public XsdEntity retrieveEntity(String Key);
-
-    public boolean removeEntity(String Key);
-
-    public long entityCount();
-
-    public boolean clearCache();
-
-    public ECoalesceCacheStates getState();
-
-    public boolean getSupportsDelayedSave();
-
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6544606397288281154L;
+    
+    public CoalescePersistorException(String message, Exception ex) {
+        super(message, ex);
+    }
 }

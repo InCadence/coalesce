@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 
+import Coalesce.Common.Exceptions.CoalescePersistorException;
 import Coalesce.Framework.DataModel.CoalesceEntityTemplate;
 import Coalesce.Framework.DataModel.XsdEntity;
 
@@ -41,49 +42,49 @@ public interface ICoalescePersistor {
 
     }
 
-    public boolean Initialize(ICoalesceCacher Cacher);
+    public boolean initialize(ICoalesceCacher Cacher) throws CoalescePersistorException;
 
-    public boolean SetEntity(XsdEntity entity, boolean AllowRemoval);
+    public boolean setEntity(XsdEntity entity, boolean AllowRemoval) throws CoalescePersistorException;
 
     // Get Entity
-    public XsdEntity GetEntity(String Key);
+    public XsdEntity getEntity(String Key) throws CoalescePersistorException;
 
-    public XsdEntity GetEntity(String EntityId, String EntityIdType);
+    public XsdEntity getEntity(String EntityId, String EntityIdType) throws CoalescePersistorException;
 
-    public XsdEntity GetEntity(String Name, String EntityId, String EntityIdType);
+    public XsdEntity getEntity(String Name, String EntityId, String EntityIdType) throws CoalescePersistorException;
 
     // Get Entity XML
-    public String GetEntityXml(String Key);
+    public String getEntityXml(String Key) throws CoalescePersistorException;
 
-    public String GetEntityXml(String EntityId, String EntityIdType);
+    public String getEntityXml(String EntityId, String EntityIdType) throws CoalescePersistorException;
 
-    public String GetEntityXml(String Name, String EntityId, String EntityIdType);
+    public String getEntityXml(String Name, String EntityId, String EntityIdType) throws CoalescePersistorException;
 
-    public Object GetFieldValue(String fieldKey);
+    public Object getFieldValue(String fieldKey) throws CoalescePersistorException;
 
-    public ElementMetaData GetXPath(String Key, String ObjectType);
+    public ElementMetaData getXPath(String Key, String ObjectType) throws CoalescePersistorException;
 
-    public DateTime GetCoalesceDataObjectLastModified(String Key, String ObjectType);
+    public DateTime getCoalesceDataObjectLastModified(String Key, String ObjectType) throws CoalescePersistorException;
 
-    public List<String> GetCoalesceEntityKeysForEntityId(String EntityId,
+    public List<String> getCoalesceEntityKeysForEntityId(String EntityId,
                                                          String EntityIdType,
                                                          String EntityName,
-                                                         String EntitySource);
+                                                         String EntitySource) throws CoalescePersistorException;
 
-    public EntityMetaData GetCoalesceEntityIdAndTypeForKey(String Key);
+    public EntityMetaData getCoalesceEntityIdAndTypeForKey(String Key) throws CoalescePersistorException;
 
-    public byte[] GetBinaryArray(String BinaryFieldKey);
+    public byte[] getBinaryArray(String BinaryFieldKey) throws CoalescePersistorException;
 
     // Deprecated Functions
-    public boolean PersistEntityTemplate(CoalesceEntityTemplate EntityTemplate);
+    public boolean persistEntityTemplate(CoalesceEntityTemplate EntityTemplate) throws CoalescePersistorException;
 
     // Entity Templates
-    public String GetEntityTemplateXml(String Key);
+    public String getEntityTemplateXml(String Key) throws CoalescePersistorException;
 
-    public String GetEntityTemplateXml(String Name, String Source, String Version);
+    public String getEntityTemplateXml(String Name, String Source, String Version) throws CoalescePersistorException;
 
-    public String GetEntityTemplateKey(String Name, String Source, String Version);
+    public String getEntityTemplateKey(String Name, String Source, String Version) throws CoalescePersistorException;
 
-    public String GetEntityTemplateMetadata();
+    public String getEntityTemplateMetadata() throws CoalescePersistorException;
 
 }
