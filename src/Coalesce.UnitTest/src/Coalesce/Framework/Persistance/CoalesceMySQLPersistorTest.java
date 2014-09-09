@@ -1,9 +1,6 @@
 package Coalesce.Framework.Persistance;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -81,6 +78,11 @@ public class CoalesceMySQLPersistorTest {
         CoalesceMySQLPersistorTest._coalesceFramework = new CoalesceFramework();
         CoalesceMySQLPersistorTest._coalesceFramework.Initialize(mySQLPersistor);
 
+        CoalesceMySQLPersistorTest.createEntity();
+    }
+
+    private static void createEntity()
+    {
         // Create Test Entity
         _entity = new XsdEntity();
 
@@ -103,11 +105,34 @@ public class CoalesceMySQLPersistorTest {
         _fieldKey = record.GetFieldByName("CurrentStatus").getKey();
         System.out.println("Original Sample Entity:");
         System.out.println("***********************\n" + _entity.toXml());
+        
+    }
+    private static void createEntity(String entName, String entSource, String entVersion, String entID, String entTypeID, String entTitle, String sectName, String recordsetName, String fieldDefName, String fieldName)
+    {
+        // Create Test Entity
+        _entity = new XsdEntity();
 
+        XsdSection section = null;
+        XsdRecordset recordSet = null;
+        XsdRecord record = null;
+
+        // Create Entity
+        _entity = XsdEntity.create(entName, entSource, entVersion, entID, entTypeID, entTitle);
+
+        XsdLinkageSection.Create(_entity, true);
+
+        section = XsdSection.Create(_entity, sectName, true);
+        recordSet = XsdRecordset.Create(section, recordsetName);
+        XsdFieldDefinition.Create(recordSet, fieldDefName, ECoalesceFieldDataTypes.StringType);
+
+        record = recordSet.AddNew();
+        record.SetFieldValue(fieldDefName, fieldName);
+
+        _fieldKey = record.GetFieldByName(fieldDefName).getKey();       
     }
 
     @Test
-    public void TestConnection()
+    public void testConnection()
     {
 
         try (MySQLDataConnector conn = new MySQLDataConnector(serCon))
@@ -123,7 +148,7 @@ public class CoalesceMySQLPersistorTest {
     }
 
     @Test
-    public void TestSaveEntityAndXPath()
+    public void testSaveEntityAndXPath()
     {
         try
         {
@@ -149,7 +174,7 @@ public class CoalesceMySQLPersistorTest {
     }
 
     @Test
-    public void TestSaveEntityTemplate()
+    public void testSaveEntityTemplate()
     {
         try
         {
@@ -163,7 +188,7 @@ public class CoalesceMySQLPersistorTest {
     }
 
     @Test
-    public void TestGetEntityMetaData()
+    public void testGetEntityMetaData()
     {
         try
         {
@@ -178,7 +203,7 @@ public class CoalesceMySQLPersistorTest {
     }
 
     @Test
-    public void TestGetEntity()
+    public void testGetEntity()
     {
         try
         {
@@ -194,7 +219,7 @@ public class CoalesceMySQLPersistorTest {
     }
 
     @Test
-    public void TestCheckLastModified()
+    public void testCheckLastModified()
     {
         try
         {
@@ -223,7 +248,7 @@ public class CoalesceMySQLPersistorTest {
     }
 
     @Test
-    public void TestGetEntityByIdAndType()
+    public void testGetEntityByIdAndType()
     {
         try
         {
@@ -239,7 +264,7 @@ public class CoalesceMySQLPersistorTest {
     }
 
     @Test
-    public void TestGetEntityByNameAndIdAndType()
+    public void testGetEntityByNameAndIdAndType()
     {
         try
         {
@@ -258,11 +283,12 @@ public class CoalesceMySQLPersistorTest {
     }
 
     @Test
-    public void TestGetFieldValue()
+    public void testGetFieldValue()
     {
 
         try
         {
+            assertTrue(CoalesceMySQLPersistorTest._coalesceFramework.SaveCoalesceEntity(_entity));
             String fieldValue = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceFieldValue(_fieldKey);
 
             assertTrue(fieldValue.equals("Test Status"));
@@ -273,9 +299,25 @@ public class CoalesceMySQLPersistorTest {
         }
 
     }
+    @Test
+    public void testFailureGetFieldValue()
+    {
+
+        try
+        {
+            CoalesceMySQLPersistorTest.createEntity();//    Create a new entity, but do not save the entity
+            String fieldValue = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceFieldValue(_fieldKey);
+            assertNull(fieldValue);
+        }
+        catch (Exception ex)
+        {
+            fail(ex.getMessage());
+        }
+
+    }
 
     @Test
-    public void TestGetEntityKeyForEntityId()
+    public void testGetEntityKeyForEntityId()
     {
         try
         {
@@ -291,7 +333,7 @@ public class CoalesceMySQLPersistorTest {
     }
 
     @Test
-    public void TestGetEntityKeyForEntityIdName()
+    public void testGetEntityKeyForEntityIdName()
     {
         try
         {
@@ -308,7 +350,7 @@ public class CoalesceMySQLPersistorTest {
     }
 
     @Test
-    public void TestGetEntityKeyForEntityIdSource()
+    public void testGetEntityKeyForEntityIdSource()
     {
         try
         {
@@ -325,7 +367,7 @@ public class CoalesceMySQLPersistorTest {
     }
 
     @Test
-    public void TestGetEntityKeysForEntityIdSource()
+    public void testGetEntityKeysForEntityIdSource()
     {
         try
         {
@@ -342,7 +384,7 @@ public class CoalesceMySQLPersistorTest {
     }
 
     @Test
-    public void TestGetEntityTemplateXML()
+    public void testGetEntityTemplateXML()
     {
         try
         {
@@ -363,7 +405,7 @@ public class CoalesceMySQLPersistorTest {
     }
 
     @Test
-    public void TestGetEntityTemplateXMLName()
+    public void testGetEntityTemplateXMLName()
     {
         try
         {
@@ -379,7 +421,7 @@ public class CoalesceMySQLPersistorTest {
     }
 
     @Test
-    public void TestGetEntityTemplateKey()
+    public void testGetEntityTemplateKey()
     {
         try
         {
