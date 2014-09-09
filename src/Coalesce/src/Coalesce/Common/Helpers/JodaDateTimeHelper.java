@@ -129,8 +129,13 @@ public class JodaDateTimeHelper {
         try
         {
             if (value == null) return null;
-
-            return DateTime.parse(value.replace(" ", "T")+"Z");
+            if (value.indexOf(" ") > 1)
+                value=value.replace(" ", "T")+"Z";
+            else if(value.indexOf("T")>1 && value.indexOf("Z")==0)
+                value=value+"Z";
+            else if(value.indexOf("T")>1 && value.indexOf("Z")>1)
+                value=value;
+            return DateTime.parse(value);
         }
         catch (Exception ex)
         {
