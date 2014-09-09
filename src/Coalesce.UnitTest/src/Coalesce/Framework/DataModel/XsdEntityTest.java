@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.junit.Test;
 
+import Coalesce.Common.Helpers.GUIDHelper;
 import Coalesce.Common.UnitTest.CoalesceTypeInstances;
 
 /*-----------------------------------------------------------------------------'
@@ -94,6 +95,404 @@ public class XsdEntityTest {
 
     }
 
+    @Test
+    public void CreateFromXmlWithTitleNullTest()
+    {
+        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION, null);
+        
+        assertEquals("TREX Portal", entity.GetTitle());
+    }
+    
+    @Test
+    public void CreateFromXmlWithTitleEmptyStringTest()
+    {
+        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION, "");
+        
+        assertEquals("TREX Portal", entity.GetTitle());
+    }
+    
+    @Test
+    public void CreateFromXmlWithTitleWhiteSpaceTest()
+    {
+        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION, "   ");
+        
+        assertEquals("TREX Portal", entity.GetTitle());
+    }
+    
+    @Test
+    public void CreateFromXmlWithTitleNewXpathTest()
+    {
+        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION, "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionName");
+        
+        assertEquals(((XsdField)entity.GetDataObjectForNamePath(CoalesceTypeInstances.TESTMISSIONNAMEPATH)).GetValue(), entity.GetTitle());
+    }
+    
+    @Test
+    public void CreateFromXmlWithTitleNewTitleTest()
+    {
+        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION, "New Mission Title");
+        
+        assertEquals("New Mission Title", entity.GetTitle());
+    }
+    
+    @Test
+    public void CreateDetailedWithoutTitleTest()
+    {
+        XsdEntity entity = XsdEntity.Create("Operation", "Portal", "1.1.1.1", "Entity Id", "Entity Type");
+        
+        assertEmptyEntity(entity);
+
+        assertEquals("Operation", entity.GetName());
+        assertEquals("Portal", entity.GetSource());
+        assertEquals("1.1.1.1", entity.GetVersion());
+        assertEquals("Entity Id", entity.GetEntityId());
+        assertEquals("Entity Type", entity.GetEntityIdType());
+        
+        assertEquals("Portal", entity.GetTitle());
+        
+    }
+    
+    @Test
+    public void CreateDetailedWithoutTitleNullNameTest()
+    {
+        XsdEntity entity = XsdEntity.Create(null, "Portal", "1.1.1.1", "Entity Id", "Entity Type");
+        
+        assertEmptyEntity(entity);
+
+        assertEquals("", entity.GetName());
+        assertEquals("Portal", entity.GetSource());
+        assertEquals("1.1.1.1", entity.GetVersion());
+        assertEquals("Entity Id", entity.GetEntityId());
+        assertEquals("Entity Type", entity.GetEntityIdType());
+        
+        assertEquals("Portal", entity.GetTitle());
+        
+    }
+    
+    @Test
+    public void CreateDetailedWithoutTitleNullSourceTest()
+    {
+        XsdEntity entity = XsdEntity.Create("Operation", null, "1.1.1.1", "Entity Id", "Entity Type");
+        
+        assertEmptyEntity(entity);
+
+        assertEquals("Operation", entity.GetName());
+        assertEquals("", entity.GetSource());
+        assertEquals("1.1.1.1", entity.GetVersion());
+        assertEquals("Entity Id", entity.GetEntityId());
+        assertEquals("Entity Type", entity.GetEntityIdType());
+        
+        assertEquals("", entity.GetTitle());
+        
+    }
+    
+    @Test
+    public void CreateDetailedWithoutTitleNullVersionTest()
+    {
+        XsdEntity entity = XsdEntity.Create("Operation", "Portal", null, "Entity Id", "Entity Type");
+        
+        assertEmptyEntity(entity);
+
+        assertEquals("Operation", entity.GetName());
+        assertEquals("Portal", entity.GetSource());
+        assertEquals("", entity.GetVersion());
+        assertEquals("Entity Id", entity.GetEntityId());
+        assertEquals("Entity Type", entity.GetEntityIdType());
+        
+        assertEquals("Portal", entity.GetTitle());
+        
+    }
+    
+    @Test
+    public void CreateDetailedWithoutTitleNullEntityIdTest()
+    {
+        XsdEntity entity = XsdEntity.Create("Operation", "Portal", "1.1.1.1", null, "Entity Type");
+        
+        assertEmptyEntity(entity);
+
+        assertEquals("Operation", entity.GetName());
+        assertEquals("Portal", entity.GetSource());
+        assertEquals("1.1.1.1", entity.GetVersion());
+        assertEquals("", entity.GetEntityId());
+        assertEquals("Entity Type", entity.GetEntityIdType());
+        
+        assertEquals("Portal", entity.GetTitle());
+        
+    }
+    
+    @Test
+    public void CreateDetailedWithoutTitleNullEntityTypeTest()
+    {
+        XsdEntity entity = XsdEntity.Create("Operation", "Portal", "1.1.1.1", "Entity Id", null);
+        
+        assertEmptyEntity(entity);
+
+        assertEquals("Operation", entity.GetName());
+        assertEquals("Portal", entity.GetSource());
+        assertEquals("1.1.1.1", entity.GetVersion());
+        assertEquals("Entity Id", entity.GetEntityId());
+        assertEquals("", entity.GetEntityIdType());
+        
+        assertEquals("Portal", entity.GetTitle());
+        
+    }
+    
+    @Test
+    public void CreateDetailedWithTitleTest()
+    {
+        XsdEntity entity = XsdEntity.Create("Operation", "Portal", "1.1.1.1", "Entity Id", "Entity Type", "A New Title");
+        
+        assertEmptyEntity(entity);
+
+        assertEquals("Operation", entity.GetName());
+        assertEquals("Portal", entity.GetSource());
+        assertEquals("1.1.1.1", entity.GetVersion());
+        assertEquals("Entity Id", entity.GetEntityId());
+        assertEquals("Entity Type", entity.GetEntityIdType());
+        
+        assertEquals("A New Title", entity.GetTitle());
+        
+    }
+    
+    @Test
+    public void CreateDetailedWithTitleNullNameTest()
+    {
+        XsdEntity entity = XsdEntity.Create(null, "Portal", "1.1.1.1", "Entity Id", "Entity Type", "A New Title");
+        
+        assertEmptyEntity(entity);
+
+        assertEquals("", entity.GetName());
+        assertEquals("Portal", entity.GetSource());
+        assertEquals("1.1.1.1", entity.GetVersion());
+        assertEquals("Entity Id", entity.GetEntityId());
+        assertEquals("Entity Type", entity.GetEntityIdType());
+        
+        assertEquals("A New Title", entity.GetTitle());
+        
+    }
+    
+    @Test
+    public void CreateDetailedWithTitleNullSourceTest()
+    {
+        XsdEntity entity = XsdEntity.Create("Operation", null, "1.1.1.1", "Entity Id", "Entity Type", "A New Title");
+        
+        assertEmptyEntity(entity);
+
+        assertEquals("Operation", entity.GetName());
+        assertEquals("", entity.GetSource());
+        assertEquals("1.1.1.1", entity.GetVersion());
+        assertEquals("Entity Id", entity.GetEntityId());
+        assertEquals("Entity Type", entity.GetEntityIdType());
+        
+        assertEquals("A New Title", entity.GetTitle());
+        
+    }
+    
+    @Test
+    public void CreateDetailedWithTitleNullVersionTest()
+    {
+        XsdEntity entity = XsdEntity.Create("Operation", "Portal", null, "Entity Id", "Entity Type", "A New Title");
+        
+        assertEmptyEntity(entity);
+
+        assertEquals("Operation", entity.GetName());
+        assertEquals("Portal", entity.GetSource());
+        assertEquals("", entity.GetVersion());
+        assertEquals("Entity Id", entity.GetEntityId());
+        assertEquals("Entity Type", entity.GetEntityIdType());
+        
+        assertEquals("A New Title", entity.GetTitle());
+        
+    }
+    
+    @Test
+    public void CreateDetailedWithTitleNullEntityIdTest()
+    {
+        XsdEntity entity = XsdEntity.Create("Operation", "Portal", "1.1.1.1", null, "Entity Type", "A New Title");
+        
+        assertEmptyEntity(entity);
+
+        assertEquals("Operation", entity.GetName());
+        assertEquals("Portal", entity.GetSource());
+        assertEquals("1.1.1.1", entity.GetVersion());
+        assertEquals("", entity.GetEntityId());
+        assertEquals("Entity Type", entity.GetEntityIdType());
+        
+        assertEquals("A New Title", entity.GetTitle());
+        
+    }
+    
+    @Test
+    public void CreateDetailedWithTitleNullEntityTypeTest()
+    {
+        XsdEntity entity = XsdEntity.Create("Operation", "Portal", "1.1.1.1", "Entity Id", null, "A New Title");
+        
+        assertEmptyEntity(entity);
+
+        assertEquals("Operation", entity.GetName());
+        assertEquals("Portal", entity.GetSource());
+        assertEquals("1.1.1.1", entity.GetVersion());
+        assertEquals("Entity Id", entity.GetEntityId());
+        assertEquals("", entity.GetEntityIdType());
+        
+        assertEquals("A New Title", entity.GetTitle());
+        
+    }
+    
+    @Test
+    public void CreateDetailedWithTitleNullTitleTest()
+    {
+        XsdEntity entity = XsdEntity.Create("Operation", "Portal", "1.1.1.1", "Entity Id", "Entity Id Type", null);
+        
+        assertEmptyEntity(entity);
+
+        assertEquals("Operation", entity.GetName());
+        assertEquals("Portal", entity.GetSource());
+        assertEquals("1.1.1.1", entity.GetVersion());
+        assertEquals("Entity Id", entity.GetEntityId());
+        assertEquals("Entity Id Type", entity.GetEntityIdType());
+        
+        assertEquals("Portal", entity.GetTitle());
+        
+    }
+    
+    @Test
+    public void CreateDetailedWithTitleEmptyTitleTest()
+    {
+        XsdEntity entity = XsdEntity.Create("Operation", "Portal", "1.1.1.1", "Entity Id", "Entity Id Type", "");
+        
+        assertEmptyEntity(entity);
+
+        assertEquals("Operation", entity.GetName());
+        assertEquals("Portal", entity.GetSource());
+        assertEquals("1.1.1.1", entity.GetVersion());
+        assertEquals("Entity Id", entity.GetEntityId());
+        assertEquals("Entity Id Type", entity.GetEntityIdType());
+        
+        assertEquals("Portal", entity.GetTitle());
+        
+    }
+
+    @Test
+    public void CreateDetailedWithTitleWhiteSpaceTitleTest()
+    {
+        XsdEntity entity = XsdEntity.Create("Operation", "Portal", "1.1.1.1", "Entity Id", "Entity Id Type", "   ");
+        
+        assertEmptyEntity(entity);
+
+        assertEquals("Operation", entity.GetName());
+        assertEquals("Portal", entity.GetSource());
+        assertEquals("1.1.1.1", entity.GetVersion());
+        assertEquals("Entity Id", entity.GetEntityId());
+        assertEquals("Entity Id Type", entity.GetEntityIdType());
+        
+        assertEquals("Portal", entity.GetTitle());
+        
+    }
+    
+    @Test
+    public void InitializeFromXmlTest()
+    {
+
+        XsdEntity entity = new XsdEntity();
+        
+        assertTrue(entity.Initialize(CoalesceTypeInstances.TESTMISSION));
+
+        String title = entity.GetTitle();
+        assertEquals("NORTHCOM Volunteer Background Checks Changed, NORTHCOM Volunteer Background Checks", title);
+        assertEquals(4, entity.GetLinkages().values().size());
+        assertEquals(2, entity.GetSections().size());
+        assertEquals(1,
+                     ((XsdRecordset) entity.GetDataObjectForNamePath(CoalesceTypeInstances.TESTMISSIONRECORDSETPATH)).GetCount());
+        assertEquals(16,
+                     ((XsdRecordset) entity.GetDataObjectForNamePath(CoalesceTypeInstances.TESTMISSIONRECORDSETPATH)).GetFieldDefinitions().size());
+        assertEquals(16,
+                     entity.GetDataObjectForNamePath(CoalesceTypeInstances.TESTMISSIONRECORDPATH).GetChildDataObjects().size());
+    }
+
+    @Test
+    public void InitializeFromXmlEmptyTest()
+    {
+        XsdEntity entity = new XsdEntity();
+        
+        assertTrue(entity.Initialize(""));
+
+        assertEmptyEntity(entity);
+
+    }
+
+    @Test
+    public void InitializeFromXmlWhitespaceTest()
+    {
+        XsdEntity entity = new XsdEntity();
+        
+        assertTrue(entity.Initialize("  "));
+
+        assertEmptyEntity(entity);
+
+    }
+
+    @Test
+    public void InitializeFromXmlNullTest()
+    {
+        XsdEntity entity = new XsdEntity();
+        
+        assertTrue(entity.Initialize(null));
+
+        assertEmptyEntity(entity);
+    }
+
+    @Test
+    public void InitializeFromXmlInvalidXmlTest()
+    {
+        XsdEntity entity = new XsdEntity();
+        
+        assertFalse(entity.Initialize("invalid format"));
+
+    }
+
+    @Test
+    public void InitializeTest()
+    {
+    
+        XsdEntity entity = new XsdEntity();
+        
+        assertTrue(entity.Initialize());
+        
+        assertEmptyEntity(entity);
+
+    }
+
+    @Test
+    public void GetKeyFromXmlTest()
+    {
+        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+        
+        assertEquals("62857EF8-3930-4F0E-BAE3-093344EBF389", entity.GetKey());
+        
+    }
+    
+    @Test
+    public void GetKeyNewTest()
+    {
+        XsdEntity entity = XsdEntity.Create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
+        
+        assertNotNull(GUIDHelper.IsValid(entity.GetKey()));
+        
+    }
+    
+    
+    @Test
+    public void GetTitleXPathInvalidTest()
+    {
+        XsdEntity entity = XsdEntity.Create("Operation", "Portal", "1.1.1.1", "Entity Id", "Entity Id Type", "Operation/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionName,TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/IncidentTitle");
+        
+        String title = entity.GetTitle();
+        
+        assertEquals("Portal", title);
+        
+    }
+    
     @Test
     public void GetTitleWithoutXpathTest()
     {

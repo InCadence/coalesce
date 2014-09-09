@@ -57,18 +57,7 @@ public class XsdEntity extends XsdDataObject {
         // Create Entity
         XsdEntity entity = new XsdEntity();
 
-        boolean passed = false;
-        if (entityXml == null || StringHelper.IsNullOrEmpty(entityXml.trim()))
-        {
-            passed = entity.Initialize();
-
-        }
-        else
-        {
-
-            passed = entity.Initialize(entityXml);
-
-        }
+        boolean passed = entity.Initialize(entityXml);
 
         if (!passed) return null;
 
@@ -119,20 +108,27 @@ public class XsdEntity extends XsdDataObject {
     public boolean Initialize(String entityXml)
     {
 
-        Object deserializedObject = XmlHelper.Deserialize(entityXml, Entity.class);
-
-        if (deserializedObject == null || !(deserializedObject instanceof Entity))
+        if (entityXml == null || StringHelper.IsNullOrEmpty(entityXml.trim()))
         {
-            return false;
+            return Initialize();
         }
-        this._entity = (Entity) deserializedObject;
+        else
+        {
+            Object deserializedObject = XmlHelper.Deserialize(entityXml, Entity.class);
 
-        if (!super.Initialize()) return false;
+            if (deserializedObject == null || !(deserializedObject instanceof Entity))
+            {
+                return false;
+            }
+            this._entity = (Entity) deserializedObject;
 
-        if (!InitializeChildren()) return false;
+            if (!super.Initialize()) return false;
 
-        return InitializeReferences();
+            if (!InitializeChildren()) return false;
 
+            return InitializeReferences();
+
+        }
     }
 
     public boolean Initialize()
@@ -189,7 +185,7 @@ public class XsdEntity extends XsdDataObject {
     }
 
     @Override
-    public void SetObjectKey(String value)
+    protected void SetObjectKey(String value)
     {
         _entity.setKey(value);
     }
@@ -197,7 +193,7 @@ public class XsdEntity extends XsdDataObject {
     @Override
     public String GetName()
     {
-        return _entity.getName();
+        return GetStringElement(_entity.getName());
     }
 
     @Override
@@ -214,7 +210,7 @@ public class XsdEntity extends XsdDataObject {
 
     public String GetSource()
     {
-        return _entity.getSource();
+        return GetStringElement(_entity.getSource());
     }
 
     public void SetSource(String value)
@@ -224,7 +220,7 @@ public class XsdEntity extends XsdDataObject {
 
     public String GetVersion()
     {
-        return _entity.getVersion();
+        return GetStringElement(_entity.getVersion());
     }
 
     public void SetVersion(String value)
@@ -234,7 +230,7 @@ public class XsdEntity extends XsdDataObject {
 
     public String GetEntityId()
     {
-        return _entity.getEntityid();
+        return GetStringElement(_entity.getEntityid());
     }
 
     public void SetEntityId(String value)
@@ -244,7 +240,7 @@ public class XsdEntity extends XsdDataObject {
 
     public String GetEntityIdType()
     {
-        return _entity.getEntityidtype();
+        return GetStringElement(_entity.getEntityidtype());
     }
 
     public void SetEntityIdType(String value)
@@ -304,7 +300,9 @@ public class XsdEntity extends XsdDataObject {
         try
         {
 
-            if (!value.equals(GetTitle()))
+            String currentTitle = _entity.getTitle();
+
+            if ((currentTitle == null ^ value == null) || (value != null && !value.equals(GetTitle())))
             {
 
                 _entity.setTitle(value);
@@ -407,8 +405,6 @@ public class XsdEntity extends XsdDataObject {
 
     public XsdSection CreateSection(String name)
     {
-        // TODO: Check that this actually maps to the Entity.Section
-
         return XsdSection.Create(this, name);
     }
 
@@ -498,7 +494,6 @@ public class XsdEntity extends XsdDataObject {
         return GetLinkages(forLinkType, null);
     }
 
-    // TODO: Need to test this
     public XsdSection GetSection(String NamePath)
     {
         try
@@ -593,7 +588,7 @@ public class XsdEntity extends XsdDataObject {
 
     public String ToXml()
     {
-        return this.ToXml(false);
+        return ToXml(false);
     }
 
     public String ToXml(Boolean removeBinary)

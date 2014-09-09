@@ -10,434 +10,452 @@ import unity.core.runtime.CallResult;
 import unity.core.runtime.CallResult.CallResults;
 
 /*-----------------------------------------------------------------------------'
-Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
+ Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
 
-Notwithstanding any contractor copyright notice, the Government has Unlimited
-Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
-of this work other than as specifically authorized by these DFARS Clauses may
-violate Government rights in this work.
+ Notwithstanding any contractor copyright notice, the Government has Unlimited
+ Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+ of this work other than as specifically authorized by these DFARS Clauses may
+ violate Government rights in this work.
 
-DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
-Unlimited Rights. The Government has the right to use, modify, reproduce,
-perform, display, release or disclose this computer software and to have or
-authorize others to do so.
+ DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+ Unlimited Rights. The Government has the right to use, modify, reproduce,
+ perform, display, release or disclose this computer software and to have or
+ authorize others to do so.
 
-Distribution Statement D. Distribution authorized to the Department of
-Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
------------------------------------------------------------------------------*/
+ Distribution Statement D. Distribution authorized to the Department of
+ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+ -----------------------------------------------------------------------------*/
 
 public class JodaDateTimeHelper {
 
-	private static String MODULE = "Coalesce.Common.Helpers.JodaDateTimeHelper";
+    private static String MODULE = "Coalesce.Common.Helpers.JodaDateTimeHelper";
 
-	// Make static class
-	private JodaDateTimeHelper() {
-	}
+    // Make static class
+    private JodaDateTimeHelper()
+    {
+    }
 
-	// -----------------------------------------------------------------------'
-	// public Shared Methods
-	// -----------------------------------------------------------------------'
+    // -----------------------------------------------------------------------'
+    // public Shared Methods
+    // -----------------------------------------------------------------------'
 
-	/**
-	 * Returns Datetime object based on the provided strDate
-	 * @param strDate The date string in the form of 'yyyyMMdd
-	 * @return A date object
-	 */
-	public static DateTime ConvertyyyyMMddDateStringToDateTime(String strDate)
-	{
-		try {
+    /**
+     * Returns Datetime object based on the provided strDate
+     * 
+     * @param strDate The date string in the form of 'yyyyMMdd
+     * @return A date object
+     */
+    public static DateTime ConvertyyyyMMddDateStringToDateTime(String strDate)
+    {
+        try
+        {
+            if (!TestDate(strDate)) return null;
 
-			DateTimeFormatter dateFormat = ISODateTimeFormat.basicDate().withZoneUTC();
-			
-			return dateFormat.parseDateTime(strDate);
-			
-		} catch (Exception ex) {
-			CallResult.log(CallResults.FAILED_ERROR, ex, JodaDateTimeHelper.MODULE);
-			return null;
-		}
+            if (strDate == null || StringHelper.IsNullOrEmpty(strDate.trim())) return null;
 
-	}
+            DateTimeFormatter dateFormat = ISODateTimeFormat.basicDate().withZoneUTC();
 
-	/**
-	 * Returns a string representation of the myDate parameter.
-	 * If dateOnly is true it will be formated as  
-	 * Else 'yyyy-MM-dd HH:mm:ssZZ'
-	 * @param myDate The date to be formatted as a string
-	 * @param dateOnly Should the time be included along with the date
-	 * @return The date converted to a string
-	 */
-	public static String MilitaryFormat(DateTime myDate, boolean dateOnly)
-	{
-		try {
+            return dateFormat.parseDateTime(strDate);
 
-			if (dateOnly) {
-				
-				return myDate.toString(ISODateTimeFormat.date());
-			} else {
+        }
+        catch (IllegalArgumentException iae)
+        {
+            return null;
+        }
+        catch (Exception ex)
+        {
+            CallResult.log(CallResults.FAILED_ERROR, ex, JodaDateTimeHelper.MODULE);
+            return null;
+        }
 
-				
-				return myDate.toString(ISODateTimeFormat.dateTimeNoMillis()).replace("T", " ");
-			}
-			
-		} catch (Exception ex) {
-			CallResult.log(CallResults.FAILED_ERROR, ex, JodaDateTimeHelper.MODULE);
+    }
 
-			return "";
-		}
-	}
+    private static boolean TestDate(String value)
+    {
+        return !(value == null || StringHelper.IsNullOrEmpty(value.trim()));
+    }
+
+    /**
+     * Returns a string representation of the myDate parameter. If dateOnly is true it will be formated as Else 'yyyy-MM-dd
+     * HH:mm:ssZZ'
+     * 
+     * @param myDate The date to be formatted as a string
+     * @param dateOnly Should the time be included along with the date
+     * @return The date converted to a string
+     */
+    public static String MilitaryFormat(DateTime myDate, boolean dateOnly)
+    {
+        try
+        {
+
+            if (myDate == null) return "";
+
+            if (dateOnly)
+            {
+
+                return myDate.toString(ISODateTimeFormat.date());
+            }
+            else
+            {
+
+                return myDate.toString(ISODateTimeFormat.dateTimeNoMillis()).replace("T", " ");
+            }
+
+        }
+        catch (Exception ex)
+        {
+            CallResult.log(CallResults.FAILED_ERROR, ex, JodaDateTimeHelper.MODULE);
+
+            return "";
+        }
+    }
+
     public static String toMySQLDateTime(DateTime value)
     {
-        try{
+        try
+        {
+            if (value == null) return null;
+
             return value.toString().replace("T", " ").replace("Z", "");
-        }catch(Exception ex){
+        }
+        catch (Exception ex)
+        {
             CallResult.log(CallResults.FAILED_ERROR, ex, JodaDateTimeHelper.MODULE);
             return null;
         }
     }
-	public static String GetElapsedGMTTimeString(DateTime ForDate,
-	                                             boolean IncludeParenthesis,
-	                                             boolean IncludeTime)
-	{
-			return GetElapsedGMTTimeString(ForDate, IncludeParenthesis, IncludeTime, IncludeTime);
-	}
 
-	public static String GetElapsedGMTTimeString(DateTime forDate,
-	                                             boolean includeParenthesis,
-	                                             boolean includeDateTime,
-	                                             boolean dateOnly)
-	{
-		return GetElapsedGMTTimeString(forDate, new DateTime(DateTimeZone.UTC), includeParenthesis, includeDateTime, dateOnly);
-			
-	}
-	
-	public static String GetElapsedGMTTimeString(DateTime firstDate,
-	                                             DateTime secondDate,
-	                                             boolean includeParenthesis,
-	                                             boolean includeDateTime,
-	                                             boolean dateOnly)
-	{
-		try {
-			
-			// Is ForDate Null?
-			if (firstDate == null || secondDate == null) return "";
+    public static String GetElapsedGMTTimeString(DateTime ForDate, boolean IncludeParenthesis, boolean IncludeTime)
+    {
+        return GetElapsedGMTTimeString(ForDate, IncludeParenthesis, IncludeTime, IncludeTime);
+    }
 
-			boolean IsFutureDate = false;
-			String elapsedString = "";
+    public static String GetElapsedGMTTimeString(DateTime forDate,
+                                                 boolean includeParenthesis,
+                                                 boolean includeDateTime,
+                                                 boolean dateOnly)
+    {
+        return GetElapsedGMTTimeString(forDate,
+                                       new DateTime(DateTimeZone.UTC),
+                                       includeParenthesis,
+                                       includeDateTime,
+                                       dateOnly);
 
-			Duration dateDiff = new Duration(firstDate, secondDate);
-			long totalSeconds = dateDiff.getStandardSeconds();
+    }
 
-			if (totalSeconds < 0) {
-				totalSeconds = totalSeconds * -1;
-				IsFutureDate = true;
-			}
+    public static String GetElapsedGMTTimeString(DateTime firstDate,
+                                                 DateTime secondDate,
+                                                 boolean includeParenthesis,
+                                                 boolean includeDateTime,
+                                                 boolean dateOnly)
+    {
+        try
+        {
 
-			if (totalSeconds < 60) {
+            // Is ForDate Null?
+            if (firstDate == null || secondDate == null) return "";
 
-				// 0 <= ForDate < 1 minute
-				if (totalSeconds == 1) {
-					elapsedString = "1 second";
-				} else {
-					elapsedString = totalSeconds + " seconds";
-				}
+            boolean IsFutureDate = false;
+            String elapsedString = "";
 
-				if (IsFutureDate) {
-					elapsedString += " till";
-				} else {
-					elapsedString += " ago";
-				}
+            Duration dateDiff = new Duration(firstDate, secondDate);
+            long totalSeconds = dateDiff.getStandardSeconds();
 
-			} else if (totalSeconds < 3600) {
+            if (totalSeconds < 0)
+            {
+                totalSeconds = totalSeconds * -1;
+                IsFutureDate = true;
+            }
 
-				// 1 minute <= ForDate < 1 Hour
-				long TotalMinutes = totalSeconds / 60;
+            if (totalSeconds < 60)
+            {
 
-				if (TotalMinutes == 1) {
-					elapsedString = "1 minute";
-				} else {
-					elapsedString = TotalMinutes + " minutes";
-				}
+                // 0 <= ForDate < 1 minute
+                if (totalSeconds == 1)
+                {
+                    elapsedString = "1 second";
+                }
+                else
+                {
+                    elapsedString = totalSeconds + " seconds";
+                }
 
-				if (IsFutureDate) {
-					elapsedString += " till";
-				} else {
-					elapsedString += " ago";
-				}
+                if (IsFutureDate)
+                {
+                    elapsedString += " till";
+                }
+                else
+                {
+                    elapsedString += " ago";
+                }
 
-			} else if (totalSeconds < 86400) {
+            }
+            else if (totalSeconds < 3600)
+            {
 
-				// 1 Hour <= For Date < 24 Hours
-				long TotalHours = (totalSeconds / 3600);
+                // 1 minute <= ForDate < 1 Hour
+                long TotalMinutes = totalSeconds / 60;
 
-				if (TotalHours == 1) {
-					elapsedString = "1 hour";
-				} else {
-					elapsedString = TotalHours + " hours";
-				}
+                if (TotalMinutes == 1)
+                {
+                    elapsedString = "1 minute";
+                }
+                else
+                {
+                    elapsedString = TotalMinutes + " minutes";
+                }
 
-				if (IsFutureDate) {
-					elapsedString = elapsedString + " till";
-				} else {
-					elapsedString = elapsedString + " ago";
-				}
+                if (IsFutureDate)
+                {
+                    elapsedString += " till";
+                }
+                else
+                {
+                    elapsedString += " ago";
+                }
 
-			} else if (totalSeconds < 172800) {
+            }
+            else if (totalSeconds < 86400)
+            {
 
-				// Yesterday
-				if (IsFutureDate) {
-					elapsedString = "Tomorrow";
-				} else {
-					elapsedString = "Yesterday";
-				}
+                // 1 Hour <= For Date < 24 Hours
+                long TotalHours = (totalSeconds / 3600);
 
-			} else if (totalSeconds < 31536000) {
+                if (TotalHours == 1)
+                {
+                    elapsedString = "1 hour";
+                }
+                else
+                {
+                    elapsedString = TotalHours + " hours";
+                }
 
-				long TotalDays = totalSeconds / 86400;
+                if (IsFutureDate)
+                {
+                    elapsedString = elapsedString + " till";
+                }
+                else
+                {
+                    elapsedString = elapsedString + " ago";
+                }
 
-				if (IsFutureDate) {
-					elapsedString = TotalDays + " days till";
-				} else {
-					elapsedString = TotalDays + " days ago";
-				}
+            }
+            else if (totalSeconds < 172800)
+            {
 
-			} else {
-				long TotalYears = totalSeconds / 31536000;
+                // Yesterday
+                if (IsFutureDate)
+                {
+                    elapsedString = "Tomorrow";
+                }
+                else
+                {
+                    elapsedString = "Yesterday";
+                }
 
-				if (TotalYears == 1) {
-					elapsedString = "1 year";
-				} else {
-					elapsedString = TotalYears + " years";
-				}
-				
-				if (IsFutureDate) {
-					elapsedString = elapsedString + " till";
-				} else {
-					elapsedString = elapsedString + " ago";
-				}
+            }
+            else if (totalSeconds < 31536000)
+            {
 
-			}
+                long TotalDays = totalSeconds / 86400;
 
-			// Trim
-			elapsedString = elapsedString.trim();
+                if (IsFutureDate)
+                {
+                    elapsedString = TotalDays + " days till";
+                }
+                else
+                {
+                    elapsedString = TotalDays + " days ago";
+                }
 
-			// Parenthesis?
-			if (includeParenthesis && !StringHelper.IsNullOrEmpty(elapsedString)) {
-				elapsedString = "(" + elapsedString + ")";
-			}
+            }
+            else
+            {
+                long TotalYears = totalSeconds / 31536000;
 
-			if (includeDateTime) {
-				elapsedString = MilitaryFormat(firstDate, dateOnly) + " " + elapsedString;
-			}
+                if (TotalYears == 1)
+                {
+                    elapsedString = "1 year";
+                }
+                else
+                {
+                    elapsedString = TotalYears + " years";
+                }
 
-			return elapsedString;
+                if (IsFutureDate)
+                {
+                    elapsedString = elapsedString + " till";
+                }
+                else
+                {
+                    elapsedString = elapsedString + " ago";
+                }
 
-		} catch (Exception ex) {
-			CallResult.log(CallResults.FAILED_ERROR, ex, JodaDateTimeHelper.MODULE);
-			return "";
-		}
-	}
+            }
 
-	public static String ToXmlDateTimeUTC(DateTime forDate)
-	{
-		if (forDate == null) return "";
-		
-		DateTimeFormatter formatter = ISODateTimeFormat.dateTime().withZoneUTC();
-                 
-		String toXmlDate = formatter.print(forDate);
+            // Trim
+            elapsedString = elapsedString.trim();
 
-		return toXmlDate;
-	
-	}
+            // Parenthesis?
+            if (includeParenthesis && !StringHelper.IsNullOrEmpty(elapsedString))
+            {
+                elapsedString = "(" + elapsedString + ")";
+            }
 
-/*	public static DateTime toDate(XMLGregorianCalendar calendar) {
-		
-		if (calendar == null) return null;
-		
-		return calendar.toGregorianCalendar().getTime();
-	}*/
-	
-	public static DateTime FromXmlDateTimeUTC(String xmlDate)
-	{
-		try {
-			if (StringHelper.IsNullOrEmpty(xmlDate)) return null;
-			
-			DateTimeFormatter formatter = ISODateTimeFormat.dateTime().withZoneUTC();
-	         
-			DateTime forDate = formatter.parseDateTime(xmlDate);
+            if (includeDateTime)
+            {
+                elapsedString = MilitaryFormat(firstDate, dateOnly) + " " + elapsedString;
+            }
 
-			return forDate;
+            return elapsedString;
 
-		} catch (Exception ex) {
-			CallResult.log(CallResults.FAILED, ex, JodaDateTimeHelper.MODULE);
+        }
+        catch (Exception ex)
+        {
+            CallResult.log(CallResults.FAILED_ERROR, ex, JodaDateTimeHelper.MODULE);
+            return "";
+        }
+    }
 
-			return null;
-		}
-	}
+    public static String ToXmlDateTimeUTC(DateTime forDate)
+    {
+        if (forDate == null) return "";
 
-/*	public static XMLGregorianCalendar toXmlGregorianCalendar(DateTime date) {
-		
-		GregorianCalendar calendar = new GregorianCalendar();
-		calendar.setTime(date);
-		XMLGregorianCalendar xmlCalendar = null;
-		
-		try {
-			xmlCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
-		} catch (DatatypeConfigurationException ex) {
-			CallResult.log(CallResults.FAILED_ERROR, ex, JodaDateTimeHelper.MODULE);
-		}
-		
-		return xmlCalendar;
-		
-	}*/
-	
-/*	public static DateTime ConvertDateToGMT(String DateStr)
-	{
-		try {
-			
-			DateTimeFormatter formatter = ISODateTimeFormat.dateTimeNoMillis().withZoneUTC();
+        DateTimeFormatter formatter = ISODateTimeFormat.dateTime().withZoneUTC();
 
-			DateTime date = formatter.parseDateTime(DateStr);
+        String toXmlDate = formatter.print(forDate);
 
-			return date;
+        return toXmlDate;
 
-		} catch (Exception ex) {
-			CallResult.log(CallResults.FAILED_ERROR, ex, JodaDateTimeHelper.MODULE);
-			
-			return null;
-		}
-	}
+    }
 
-	public static DateTime ConvertDateToGMT(DateTime originalDate)
-	{
-		try {
+    /*
+     * public static DateTime toDate(XMLGregorianCalendar calendar) {
+     * 
+     * if (calendar == null) return null;
+     * 
+     * return calendar.toGregorianCalendar().getTime(); }
+     */
 
-			DateTime gmtDate = new DateTime(originalDate, DateTimeZone.UTC);
+    public static DateTime FromXmlDateTimeUTC(String xmlDate)
+    {
+        try
+        {
+            if (!TestDate(xmlDate)) return null;
 
-			return gmtDate;
+            DateTimeFormatter formatter = ISODateTimeFormat.dateTime().withZoneUTC();
 
-		} catch (Exception ex) {
-			CallResult.log(CallResults.FAILED_ERROR, ex, JodaDateTimeHelper.MODULE);
-			
-			return null;
-		}
-	}*/
+            DateTime forDate = formatter.parseDateTime(xmlDate);
 
-	public static DateTime NowInUtc() {
-		return new DateTime(DateTimeZone.UTC);
-	}
-	
-/*	public static String ConvertDateToString(DateTime dateVal, String format)
-	{
-		DateTimeFormatter formatter = DateTimeFormat.forPattern(format);
-		String reportDate = formatter.print(dateVal);
-		
-		return reportDate;
-	}*/
+            return forDate;
 
-/*	public static long getDateTicks(DateTime date)
-	{
-		try {
-			// vb.net tick = 100 nanoseconds -
-			// http://visualbasic.about.com/od/usingvbnet/a/ticktimer01.htm
-			// for a datetime, the ticks count is how many ticks have passed
-			// since 12:00:00 midnight on January 1, 0001
-			// 1 second = 1,000,000,000 nanoseconds -
-			// https://www.google.com/search?q=how+many+nanoseconds+are+in+a+second&ie=utf-8&oe=utf-8&aq=t&rls=org.mozilla:en-US:official&client=firefox-a&channel=nts
+        }
+        catch (IllegalArgumentException iae)
+        {
+            return null;
+        }
+        catch (Exception ex)
+        {
+            CallResult.log(CallResults.FAILED, ex, JodaDateTimeHelper.MODULE);
 
-			// current year is incomplete, don't add an entire year for it
-			long year = date.getYear();
-			int month = date.getMonthOfYear();
-			int day = date.getDayOfMonth();
-			int hour = date.getHourOfDay();
-			int minute = date.getMinuteOfHour();
-			int second = date.getSecondOfMinute();
+            return null;
+        }
+    }
 
-			// how many leap years?
-			long leapyears = year / 4;
-			float leapfloat = year % 4;
-			long nonLeapYears = year - leapyears;
+    /*
+     * public static XMLGregorianCalendar toXmlGregorianCalendar(DateTime date) {
+     * 
+     * GregorianCalendar calendar = new GregorianCalendar(); calendar.setTime(date); XMLGregorianCalendar xmlCalendar = null;
+     * 
+     * try { xmlCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar); } catch
+     * (DatatypeConfigurationException ex) { CallResult.log(CallResults.FAILED_ERROR, ex, JodaDateTimeHelper.MODULE); }
+     * 
+     * return xmlCalendar;
+     * 
+     * }
+     */
 
-			// determine if this year is a leap year or not and reduce correct
-			// classification by 1
-			if (leapfloat == 0.0)
-				leapyears = leapyears - 1;
-			else
-				nonLeapYears = nonLeapYears - 1;
+    /*
+     * public static DateTime ConvertDateToGMT(String DateStr) { try {
+     * 
+     * DateTimeFormatter formatter = ISODateTimeFormat.dateTimeNoMillis().withZoneUTC();
+     * 
+     * DateTime date = formatter.parseDateTime(DateStr);
+     * 
+     * return date;
+     * 
+     * } catch (Exception ex) { CallResult.log(CallResults.FAILED_ERROR, ex, JodaDateTimeHelper.MODULE);
+     * 
+     * return null; } }
+     * 
+     * public static DateTime ConvertDateToGMT(DateTime originalDate) { try {
+     * 
+     * DateTime gmtDate = new DateTime(originalDate, DateTimeZone.UTC);
+     * 
+     * return gmtDate;
+     * 
+     * } catch (Exception ex) { CallResult.log(CallResults.FAILED_ERROR, ex, JodaDateTimeHelper.MODULE);
+     * 
+     * return null; } }
+     */
 
-			// read current year
-			year += 1;
+    public static DateTime NowInUtc()
+    {
+        return new DateTime(DateTimeZone.UTC);
+    }
 
-			long regYearSeconds = 31536000;
-			long leapYearSeconds = 31622400;
-			long daySeconds = 86400;
-			long hourSeconds = 3600;
-			long minSeconds = 60;
+    /*
+     * public static String ConvertDateToString(DateTime dateVal, String format) { DateTimeFormatter formatter =
+     * DateTimeFormat.forPattern(format); String reportDate = formatter.print(dateVal);
+     * 
+     * return reportDate; }
+     */
 
-			// start ticks at the number of seconds for complete years
-			long ticks = (regYearSeconds * nonLeapYears) + (leapYearSeconds * leapyears);
-
-			// calculate the number of seconds expired for completed months
-			long addMoTicks = 0;
-			for (int i = 1; i < month; i++) {
-				switch (month) {
-				case 1:
-					addMoTicks += (31 * daySeconds);
-					break;
-				case 2:
-					if (leapfloat == 0.0)
-						addMoTicks += (29 * daySeconds);
-					else
-						addMoTicks += (28 * daySeconds);
-					break;
-				case 3:
-					addMoTicks += (31 * daySeconds);
-					break;
-				case 4:
-					addMoTicks += (30 * daySeconds);
-					break;
-				case 5:
-					addMoTicks += (31 * daySeconds);
-					break;
-				case 6:
-					addMoTicks += (30 * daySeconds);
-					break;
-				case 7:
-					addMoTicks += (31 * daySeconds);
-					break;
-				case 8:
-					addMoTicks += (31 * daySeconds);
-					break;
-				case 9:
-					addMoTicks += (30 * daySeconds);
-					break;
-				case 10:
-					addMoTicks += (31 * daySeconds);
-					break;
-				case 11:
-					addMoTicks += (30 * daySeconds);
-					break;
-				case 12:
-					addMoTicks += (31 * daySeconds);
-					break;
-				}
-			}
-
-			// add seconds expired for completed months to ticks
-			ticks += addMoTicks;
-
-			// add seconds for days, hours, minutes and seconds.
-			ticks = ticks + ((day - 1) * daySeconds) + ((hour - 1) * hourSeconds) + ((minute - 1) * minSeconds)
-			+ second;
-
-			// multiply by 1 billion to get the nanosecond count
-			ticks = ticks * 1000000000;
-
-			return ticks;
-
-		} catch (Exception ex) {
-			return 0;
-		}
-
-	}*/
+    /*
+     * public static long getDateTicks(DateTime date) { try { // vb.net tick = 100 nanoseconds - //
+     * http://visualbasic.about.com/od/usingvbnet/a/ticktimer01.htm // for a datetime, the ticks count is how many ticks have
+     * passed // since 12:00:00 midnight on January 1, 0001 // 1 second = 1,000,000,000 nanoseconds - //
+     * https://www.google.com
+     * /search?q=how+many+nanoseconds+are+in+a+second&ie=utf-8&oe=utf-8&aq=t&rls=org.mozilla:en-US:official
+     * &client=firefox-a&channel=nts
+     * 
+     * // current year is incomplete, don't add an entire year for it long year = date.getYear(); int month =
+     * date.getMonthOfYear(); int day = date.getDayOfMonth(); int hour = date.getHourOfDay(); int minute =
+     * date.getMinuteOfHour(); int second = date.getSecondOfMinute();
+     * 
+     * // how many leap years? long leapyears = year / 4; float leapfloat = year % 4; long nonLeapYears = year - leapyears;
+     * 
+     * // determine if this year is a leap year or not and reduce correct // classification by 1 if (leapfloat == 0.0)
+     * leapyears = leapyears - 1; else nonLeapYears = nonLeapYears - 1;
+     * 
+     * // read current year year += 1;
+     * 
+     * long regYearSeconds = 31536000; long leapYearSeconds = 31622400; long daySeconds = 86400; long hourSeconds = 3600;
+     * long minSeconds = 60;
+     * 
+     * // start ticks at the number of seconds for complete years long ticks = (regYearSeconds * nonLeapYears) +
+     * (leapYearSeconds * leapyears);
+     * 
+     * // calculate the number of seconds expired for completed months long addMoTicks = 0; for (int i = 1; i < month; i++) {
+     * switch (month) { case 1: addMoTicks += (31 * daySeconds); break; case 2: if (leapfloat == 0.0) addMoTicks += (29 *
+     * daySeconds); else addMoTicks += (28 * daySeconds); break; case 3: addMoTicks += (31 * daySeconds); break; case 4:
+     * addMoTicks += (30 * daySeconds); break; case 5: addMoTicks += (31 * daySeconds); break; case 6: addMoTicks += (30 *
+     * daySeconds); break; case 7: addMoTicks += (31 * daySeconds); break; case 8: addMoTicks += (31 * daySeconds); break;
+     * case 9: addMoTicks += (30 * daySeconds); break; case 10: addMoTicks += (31 * daySeconds); break; case 11: addMoTicks
+     * += (30 * daySeconds); break; case 12: addMoTicks += (31 * daySeconds); break; } }
+     * 
+     * // add seconds expired for completed months to ticks ticks += addMoTicks;
+     * 
+     * // add seconds for days, hours, minutes and seconds. ticks = ticks + ((day - 1) * daySeconds) + ((hour - 1) *
+     * hourSeconds) + ((minute - 1) * minSeconds) + second;
+     * 
+     * // multiply by 1 billion to get the nanosecond count ticks = ticks * 1000000000;
+     * 
+     * return ticks;
+     * 
+     * } catch (Exception ex) { return 0; }
+     * 
+     * }
+     */
 
 }

@@ -27,7 +27,6 @@ import org.junit.runners.Suite.SuiteClasses;
     CoalesceEntityTemplateTest.class,
     EntityTest.class,
     XsdEntityTest.class,
-    XsdFieldCommon.class,
     XsdFieldHistoryTest.class,
     XsdFieldTest.class })
 public class AllFrameworkDataModelTests {

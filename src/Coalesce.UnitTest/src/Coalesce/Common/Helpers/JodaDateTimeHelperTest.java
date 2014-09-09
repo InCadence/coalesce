@@ -51,7 +51,7 @@ public class JodaDateTimeHelperTest {
     }
 
     @Test
-    public void ConvertYYYYMMDDDateSTringToDateTimeBadStringFormatTest()
+    public void ConvertYYYYMMDDDateStringToDateTimeBadStringFormatTest()
     {
 
         DateTime converted = JodaDateTimeHelper.ConvertyyyyMMddDateStringToDateTime("2014-11-22");
@@ -61,10 +61,30 @@ public class JodaDateTimeHelperTest {
     }
 
     @Test
-    public void ConvertYYYYMMDDDateSTringToDateTimeNullTest()
+    public void ConvertYYYYMMDDDateStringToDateTimeNullTest()
     {
 
         DateTime converted = JodaDateTimeHelper.ConvertyyyyMMddDateStringToDateTime(null);
+
+        assertNull(converted);
+
+    }
+
+    @Test
+    public void ConvertYYYYMMDDDateStringToDateTimeEmtpyTest()
+    {
+
+        DateTime converted = JodaDateTimeHelper.ConvertyyyyMMddDateStringToDateTime("");
+
+        assertNull(converted);
+
+    }
+
+    @Test
+    public void ConvertYYYYMMDDDateStringToDateTimeWhiteSpaceTest()
+    {
+
+        DateTime converted = JodaDateTimeHelper.ConvertyyyyMMddDateStringToDateTime("  ");
 
         assertNull(converted);
 
