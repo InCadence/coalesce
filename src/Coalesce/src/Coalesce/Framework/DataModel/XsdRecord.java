@@ -70,12 +70,12 @@ public class XsdRecord extends XsdDataObject {
                 XsdField.Create(newRecord, fieldDefinition);
             }
 
-            newRecord.SetName(name);
+            newRecord.setName(name);
 
             // Add to parent's child collection
-            if (!parent._childDataObjects.containsKey(newRecord.GetKey()))
+            if (!parent._childDataObjects.containsKey(newRecord.getKey()))
             {
-                parent._childDataObjects.put(newRecord.GetKey(), newRecord);
+                parent._childDataObjects.put(newRecord.getKey(), newRecord);
             }
 
             return newRecord;
@@ -94,7 +94,7 @@ public class XsdRecord extends XsdDataObject {
         _parent = parent;
         _entityRecord = record;
 
-        super.Initialize();
+        super.initialize();
 
         for (Field entityField : record.getField())
         {
@@ -102,13 +102,13 @@ public class XsdRecord extends XsdDataObject {
             if (!newField.Initialize(this, entityField)) return false;
 
             // Add to Child Collection
-            _childDataObjects.put(newField.GetKey(), newField);
+            _childDataObjects.put(newField.getKey(), newField);
         }
 
         // Add to Parent Collections (if we're Active)
-        if (GetStatus() == ECoalesceDataObjectStatus.ACTIVE)
+        if (getStatus() == ECoalesceDataObjectStatus.ACTIVE)
         {
-            parent._childDataObjects.put(GetKey(), this);
+            parent._childDataObjects.put(getKey(), this);
             parent.GetRecords().add(this);
         }
 
@@ -121,25 +121,25 @@ public class XsdRecord extends XsdDataObject {
     // -----------------------------------------------------------------------//
 
     @Override
-    protected String GetObjectKey()
+    protected String getObjectKey()
     {
         return _entityRecord.getKey();
     }
 
     @Override
-    public void SetObjectKey(String value)
+    public void setObjectKey(String value)
     {
         _entityRecord.setKey(value);
     }
 
     @Override
-    public String GetName()
+    public String getName()
     {
         return _entityRecord.getName();
     }
 
     @Override
-    public void SetName(String value)
+    public void setName(String value)
     {
         _entityRecord.setName(value);
     }
@@ -186,7 +186,7 @@ public class XsdRecord extends XsdDataObject {
             {
                 if (dataObject instanceof XsdField)
                 {
-                    fieldNames.add(dataObject.GetName());
+                    fieldNames.add(dataObject.getName());
                 }
             }
 
@@ -210,7 +210,7 @@ public class XsdRecord extends XsdDataObject {
             {
                 if (dataObject instanceof XsdField)
                 {
-                    fieldKeys.add(dataObject.GetKey());
+                    fieldKeys.add(dataObject.getKey());
                 }
             }
 
@@ -230,7 +230,7 @@ public class XsdRecord extends XsdDataObject {
 
             for (XsdField field : GetFields())
             {
-                if (field.GetKey().equals(key))
+                if (field.getKey().equals(key))
                 {
                     return field;
                 }
@@ -252,7 +252,7 @@ public class XsdRecord extends XsdDataObject {
 
             for (XsdField field : GetFields())
             {
-                if (field.GetName().equals(name))
+                if (field.getName().equals(name))
                 {
                     return field;
                 }
@@ -354,7 +354,7 @@ public class XsdRecord extends XsdDataObject {
         if (field != null)
         {
             // Yes; Set Value
-            DateTime value = field.GetDateCreated();
+            DateTime value = field.getDateCreated();
 
             return value;
 
@@ -608,7 +608,7 @@ public class XsdRecord extends XsdDataObject {
             // For Each f As XsdField In this.GetFields
             for (int i = 0; i < GetFields().size(); i++)
             {
-                if (GetFields().get(i).GetName().equals(name)) return true;
+                if (GetFields().get(i).getName().equals(name)) return true;
             }
 
             return false;
@@ -622,34 +622,34 @@ public class XsdRecord extends XsdDataObject {
         }
     }
 
-    public String ToXml()
+    public String toXml()
     {
         return XmlHelper.Serialize(_entityRecord);
     }
 
     @Override
-    public DateTime GetDateCreated()
+    public DateTime getDateCreated()
     {
         // return new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityRecord.getDatecreated());
         return _entityRecord.getDatecreated();
     }
 
     @Override
-    public void SetDateCreated(DateTime value)
+    public void setDateCreated(DateTime value)
     {
         // _entityRecord.setDatecreated(new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
         _entityRecord.setDatecreated(value);
     }
 
     @Override
-    public DateTime GetLastModified()
+    public DateTime getLastModified()
     {
         // return new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityRecord.getLastmodified());
         return _entityRecord.getLastmodified();
     }
 
     @Override
-    protected void SetObjectLastModified(DateTime value)
+    protected void setObjectLastModified(DateTime value)
     {
         // _entityRecord.setLastmodified(new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
         _entityRecord.setLastmodified(value);
@@ -660,13 +660,13 @@ public class XsdRecord extends XsdDataObject {
     // -----------------------------------------------------------------------//
 
     @Override
-    protected String GetObjectStatus()
+    protected String getObjectStatus()
     {
         return _entityRecord.getStatus();
     }
 
     @Override
-    protected void SetObjectStatus(String status)
+    protected void setObjectStatus(String status)
     {
         _entityRecord.setStatus(status);
     }

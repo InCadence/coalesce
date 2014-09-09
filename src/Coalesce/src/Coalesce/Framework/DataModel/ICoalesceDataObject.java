@@ -11,48 +11,48 @@ public interface ICoalesceDataObject {
     --------------------------------------------------------------------------*/
 
     // Status
-    public ECoalesceDataObjectStatus GetStatus();
-    public void SetStatus(ECoalesceDataObjectStatus value);
+    public ECoalesceDataObjectStatus getStatus();
+    public void setStatus(ECoalesceDataObjectStatus value);
 
     // Parent 
-    public XsdDataObject GetParent();
-    public void SetParent(XsdDataObject parent);
+    public XsdDataObject getParent();
+    public void setParent(XsdDataObject parent);
 
     // Key
-    public String GetKey();
-    public void SetKey(String value);
+    public String getKey();
+    public void setKey(String value);
     
     // Name
-    public String GetName();
-    public void SetName(String value);
+    public String getName();
+    public void setName(String value);
 
     // Tag
-    public String GetTag();
-    public void SetTag(String value);
+    public String getTag();
+    public void setTag(String value);
     
     // Flatten
-    public boolean GetFlatten();
-    public void SetFlatten(boolean value);
+    public boolean getFlatten();
+    public void setFlatten(boolean value);
     
     //Date Created
-    public DateTime GetDateCreated();
-    public void SetDateCreated(DateTime value);
+    public DateTime getDateCreated();
+    public void setDateCreated(DateTime value);
     
     // Last Modified
-    public DateTime GetLastModified();
-    public void SetLastModified(DateTime value);
+    public DateTime getLastModified();
+    public void setLastModified(DateTime value);
     
     // No Index
-    public boolean GetNoIndex();
-    public void SetNoIndex(boolean value);
+    public boolean getNoIndex();
+    public void setNoIndex(boolean value);
     
     /*--------------------------------------------------------------------------
     Public Read Only
     --------------------------------------------------------------------------*/
 
-    public Map<String, XsdDataObject> GetChildDataObjects();
+    public Map<String, XsdDataObject> getChildDataObjects();
     public String getType();
-    public String GetNamePath();
+    public String getNamePath();
     
 
 }

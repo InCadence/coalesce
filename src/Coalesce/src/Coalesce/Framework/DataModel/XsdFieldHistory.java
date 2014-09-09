@@ -68,9 +68,9 @@ public class XsdFieldHistory extends XsdFieldBase {
             parent.GetEntityFieldHistories().add(0, newFieldHistory._entityFieldHistory);
 
             // Add to Parent's Child Collection
-            if (!parent._childDataObjects.containsKey(newFieldHistory.GetKey()))
+            if (!parent._childDataObjects.containsKey(newFieldHistory.getKey()))
             {
-                parent._childDataObjects.put(newFieldHistory.GetKey(), newFieldHistory);
+                parent._childDataObjects.put(newFieldHistory.getKey(), newFieldHistory);
             }
 
             return newFieldHistory;
@@ -94,7 +94,7 @@ public class XsdFieldHistory extends XsdFieldBase {
         _parent = parent;
         _entityFieldHistory = fieldHistory;
 
-        return super.Initialize();
+        return super.initialize();
 
     }
 
@@ -103,25 +103,25 @@ public class XsdFieldHistory extends XsdFieldBase {
     // -----------------------------------------------------------------------//
 
     @Override
-    protected String GetObjectKey()
+    protected String getObjectKey()
     {
         return _entityFieldHistory.getKey();
     }
 
     @Override
-    public void SetObjectKey(String value)
+    public void setObjectKey(String value)
     {
         _entityFieldHistory.setKey(value);
     }
 
     @Override
-    public String GetName()
+    public String getName()
     {
-        return GetStringElement(_entityFieldHistory.getName());
+        return getStringElement(_entityFieldHistory.getName());
     }
 
     @Override
-    public void SetName(String value)
+    public void setName(String value)
     {
         _entityFieldHistory.setName(value);
     }
@@ -154,7 +154,7 @@ public class XsdFieldHistory extends XsdFieldBase {
 
     public String GetLabel()
     {
-        return GetStringElement(_entityFieldHistory.getLabel());
+        return getStringElement(_entityFieldHistory.getLabel());
     }
 
     public void SetLabel(String value)
@@ -181,7 +181,7 @@ public class XsdFieldHistory extends XsdFieldBase {
 
     public String GetModifiedBy()
     {
-        return GetStringElement(_entityFieldHistory.getModifiedby());
+        return getStringElement(_entityFieldHistory.getModifiedby());
     }
 
     public void SetModifiedBy(String value)
@@ -191,7 +191,7 @@ public class XsdFieldHistory extends XsdFieldBase {
 
     public String GetModifiedByIP()
     {
-        return GetStringElement(_entityFieldHistory.getModifiedbyip());
+        return getStringElement(_entityFieldHistory.getModifiedbyip());
     }
 
     public void SetModifiedByIP(String value)
@@ -229,7 +229,7 @@ public class XsdFieldHistory extends XsdFieldBase {
 
     public String GetFilename()
     {
-        return GetStringElement(_entityFieldHistory.getFilename());
+        return getStringElement(_entityFieldHistory.getFilename());
     }
 
     public void SetFilename(String value)
@@ -239,7 +239,7 @@ public class XsdFieldHistory extends XsdFieldBase {
 
     public String GetExtension()
     {
-        return GetStringElement(_entityFieldHistory.getExtension());
+        return getStringElement(_entityFieldHistory.getExtension());
     }
 
     public void SetExtension(String value)
@@ -249,7 +249,7 @@ public class XsdFieldHistory extends XsdFieldBase {
 
     public String GetMimeType()
     {
-        return GetStringElement(_entityFieldHistory.getMimetype());
+        return getStringElement(_entityFieldHistory.getMimetype());
     }
 
     public void SetMimeType(String value)
@@ -259,7 +259,7 @@ public class XsdFieldHistory extends XsdFieldBase {
 
     public String GetHash()
     {
-        return GetStringElement(_entityFieldHistory.getHash());
+        return getStringElement(_entityFieldHistory.getHash());
     }
 
     public void SetHash(String value)
@@ -273,21 +273,21 @@ public class XsdFieldHistory extends XsdFieldBase {
      */
 
     @Override
-    public DateTime GetDateCreated()
+    public DateTime getDateCreated()
     {
         // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityFieldHistory.getDatecreated());
         return _entityFieldHistory.getDatecreated();
     }
 
     @Override
-    public void SetDateCreated(DateTime value)
+    public void setDateCreated(DateTime value)
     {
         // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
         _entityFieldHistory.setDatecreated(value);
     }
 
     @Override
-    public DateTime GetLastModified()
+    public DateTime getLastModified()
     {
         // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityFieldHistory.getLastmodified());
         return _entityFieldHistory.getLastmodified();
@@ -297,7 +297,7 @@ public class XsdFieldHistory extends XsdFieldBase {
     // public Methods
     // -----------------------------------------------------------------------//
 
-    public String ToXml()
+    public String toXml()
     {
         return XmlHelper.Serialize(_entityFieldHistory);
     }
@@ -307,7 +307,7 @@ public class XsdFieldHistory extends XsdFieldBase {
     // -----------------------------------------------------------------------//
 
     @Override
-    protected void SetObjectLastModified(DateTime value)
+    protected void setObjectLastModified(DateTime value)
     {
         _entityFieldHistory.setLastmodified(value);
     }
@@ -355,13 +355,13 @@ public class XsdFieldHistory extends XsdFieldBase {
     }
 
     @Override
-    protected String GetObjectStatus()
+    protected String getObjectStatus()
     {
         return _entityFieldHistory.getStatus();
     }
 
     @Override
-    protected void SetObjectStatus(String status)
+    protected void setObjectStatus(String status)
     {
         _entityFieldHistory.setStatus(status);
     }

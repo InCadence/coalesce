@@ -102,7 +102,7 @@ public abstract class CoalescePersisterBase implements ICoalescePersistor {
 
                 // Yes; Initialize Entity
                 entity = new XsdEntity();
-                entity.Initialize(EntityXml);
+                entity.initialize(EntityXml);
 
                 // Add Entity to Cache
                 this.addEntityToCache(entity);
@@ -130,7 +130,7 @@ public abstract class CoalescePersisterBase implements ICoalescePersistor {
 
             // Yes; Initialize Entity
             entity = new XsdEntity();
-            entity.Initialize(EntityXml);
+            entity.initialize(EntityXml);
 
             // Add Entity to Cache
             this.addEntityToCache(entity);
@@ -156,7 +156,7 @@ public abstract class CoalescePersisterBase implements ICoalescePersistor {
 
             // Yes; Initialize Entity
             entity = new XsdEntity();
-            entity.Initialize(EntityXml);
+            entity.initialize(EntityXml);
 
             // Add Entity to Cache
             this.addEntityToCache(entity);

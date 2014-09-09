@@ -70,11 +70,11 @@ public class EntityLinkHelper {
         // Get the LinkageSections for each Entity. Create if not found.
 
         // For Entity 1...
-        XsdLinkageSection linkageSection1 = entity1.GetLinkageSection();
+        XsdLinkageSection linkageSection1 = entity1.getLinkageSection();
         if (linkageSection1 == null) return false;
 
         // For Entity 2...
-        XsdLinkageSection linkageSection2 = entity2.GetLinkageSection();
+        XsdLinkageSection linkageSection2 = entity2.getLinkageSection();
         if (linkageSection2 == null) return false;
 
         rst = EstablishLinkage(linkageSection1,
@@ -111,11 +111,11 @@ public class EntityLinkHelper {
         // Get the LinkageSections for each Entity. Exit if not found.
 
         // For Entity 1...
-        XsdLinkageSection linkageSection1 = entity1.GetLinkageSection();
+        XsdLinkageSection linkageSection1 = entity1.getLinkageSection();
         if (linkageSection1 == null) return false;
 
         // For Entity 2...
-        XsdLinkageSection linkageSection2 = entity2.GetLinkageSection();
+        XsdLinkageSection linkageSection2 = entity2.getLinkageSection();
         if (linkageSection2 == null) return false;
 
         MarkLinkageAsDeleted(linkageSection1, entity1, entity2, linkType);
@@ -156,14 +156,14 @@ public class EntityLinkHelper {
         boolean linkageAlreadyExists = false;
         XsdLinkage linkage = null;
         // Do we already have the Linkage made? (Same Entities and Same LinkType)?
-        for (ICoalesceDataObject cdo : linkageSection.GetChildDataObjects().values())
+        for (ICoalesceDataObject cdo : linkageSection.getChildDataObjects().values())
         {
             if (cdo instanceof XsdLinkage)
             {
 
                 XsdLinkage childLinkage = (XsdLinkage) cdo;
-                if (childLinkage.GetEntity1Key().equals(entity.GetKey()) && childLinkage.GetLinkType() == linkType
-                        && childLinkage.GetEntity2Key().equals(otherEntity.GetKey()))
+                if (childLinkage.GetEntity1Key().equals(entity.getKey()) && childLinkage.GetLinkType() == linkType
+                        && childLinkage.GetEntity2Key().equals(otherEntity.getKey()))
                 {
 
                     // Found; Use Existing Linkage
@@ -206,7 +206,7 @@ public class EntityLinkHelper {
                                                 ELinkTypes linkType)
     {
 
-        for (ICoalesceDataObject cdo : linkageSection.GetChildDataObjects().values())
+        for (ICoalesceDataObject cdo : linkageSection.getChildDataObjects().values())
         {
             if (cdo instanceof XsdLinkage)
             {
@@ -215,11 +215,11 @@ public class EntityLinkHelper {
 
                 if (linkType == null || linkage.GetLinkType() == linkType)
                 {
-                    if (linkage.GetEntity1Key().equals(entity.GetKey())
-                            && linkage.GetEntity2Key().equals(otherEntity.GetKey()))
+                    if (linkage.GetEntity1Key().equals(entity.getKey())
+                            && linkage.GetEntity2Key().equals(otherEntity.getKey()))
                     {
 
-                        linkage.SetStatus(ECoalesceDataObjectStatus.DELETED);
+                        linkage.setStatus(ECoalesceDataObjectStatus.DELETED);
 
                         return true;
                     }

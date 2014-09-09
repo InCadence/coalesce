@@ -23,7 +23,7 @@ public class CoalesceEntitySyncShellTest {
         try
         {
 
-            XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+            XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
             // Initialize
             CoalesceEntitySyncShell shell = CoalesceEntitySyncShell.Create(entity);
@@ -48,7 +48,7 @@ public class CoalesceEntitySyncShellTest {
         try
         {
             // Initialize
-            CoalesceEntitySyncShell shell = CoalesceEntitySyncShell.Create(CoalesceTypeInstances.TESTMISSION);
+            CoalesceEntitySyncShell shell = CoalesceEntitySyncShell.Create(CoalesceTypeInstances.TEST_MISSION);
 
             // Validate
             assertTrue(this.ValidateSyncShell(shell));
@@ -65,7 +65,7 @@ public class CoalesceEntitySyncShellTest {
         try
         {
             // Load Document
-            Document XmlDoc = XmlHelper.loadXMLFrom(CoalesceTypeInstances.TESTMISSION);
+            Document XmlDoc = XmlHelper.loadXMLFrom(CoalesceTypeInstances.TEST_MISSION);
 
             // Initialize
             CoalesceEntitySyncShell shell = CoalesceEntitySyncShell.Create(XmlDoc);
@@ -85,7 +85,7 @@ public class CoalesceEntitySyncShellTest {
         try
         {
             // Initialize
-            CoalesceEntitySyncShell shell = CoalesceEntitySyncShell.Create(CoalesceTypeInstances.TESTMISSION);
+            CoalesceEntitySyncShell shell = CoalesceEntitySyncShell.Create(CoalesceTypeInstances.TEST_MISSION);
 
             // Initialize Clone
             CoalesceEntitySyncShell clone = new CoalesceEntitySyncShell();
@@ -111,7 +111,7 @@ public class CoalesceEntitySyncShellTest {
         {
 
             // Load Document
-            XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+            XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
             // Create Local Shell
             CoalesceEntitySyncShell localShell = CoalesceEntitySyncShell.Create(entity);
@@ -120,11 +120,11 @@ public class CoalesceEntitySyncShellTest {
             assertTrue(this.ValidateSyncShell(localShell));
 
             // Modify Entity
-            XsdRecord record = (XsdRecord) entity.GetDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/");
+            XsdRecord record = (XsdRecord) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/");
             record.SetFieldValue("MissionName", "test");
 
-            String fieldKeyValid = record.GetFieldByName("MissionName").GetKey();
-            String fieldKeyInValid = record.GetFieldByName("MissionDescription").GetKey();
+            String fieldKeyValid = record.GetFieldByName("MissionName").getKey();
+            String fieldKeyInValid = record.GetFieldByName("MissionDescription").getKey();
 
             // Create Remote Shell
             CoalesceEntitySyncShell remoteShell = CoalesceEntitySyncShell.Create(entity);

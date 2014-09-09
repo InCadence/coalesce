@@ -43,12 +43,12 @@ public class XsdLinkage extends XsdDataObject {
 
         if (!newLinkage.Initialize(parent, entityLinkage)) return null;
 
-        newLinkage.SetName("Linkage");
+        newLinkage.setName("Linkage");
 
         // Add to Parent's Child Collection
-        if (!(parent._childDataObjects.containsKey(newLinkage.GetKey())))
+        if (!(parent._childDataObjects.containsKey(newLinkage.getKey())))
         {
-            parent._childDataObjects.put(newLinkage.GetKey(), newLinkage);
+            parent._childDataObjects.put(newLinkage.getKey(), newLinkage);
         }
 
         return newLinkage;
@@ -61,7 +61,7 @@ public class XsdLinkage extends XsdDataObject {
         _parent = parent;
         _entityLinkage = linkage;
 
-        return super.Initialize();
+        return super.initialize();
     }
 
     // -----------------------------------------------------------------------//
@@ -69,25 +69,25 @@ public class XsdLinkage extends XsdDataObject {
     // -----------------------------------------------------------------------//
 
     @Override
-    public String GetObjectKey()
+    public String getObjectKey()
     {
         return _entityLinkage.getKey();
     }
 
     @Override
-    public void SetObjectKey(String value)
+    public void setObjectKey(String value)
     {
         _entityLinkage.setKey(value);
     }
 
     @Override
-    public String GetName()
+    public String getName()
     {
         return _entityLinkage.getName();
     }
 
     @Override
-    public void SetName(String value)
+    public void setName(String value)
     {
         _entityLinkage.setName(value);
     }
@@ -231,48 +231,48 @@ public class XsdLinkage extends XsdDataObject {
     }
 
     @Override
-    public DateTime GetDateCreated()
+    public DateTime getDateCreated()
     {
         // return new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityLinkage.getDatecreated());
         return _entityLinkage.getDatecreated();
     }
 
     @Override
-    public void SetDateCreated(DateTime value)
+    public void setDateCreated(DateTime value)
     {
         // _entityLinkage.setDatecreated(new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
         _entityLinkage.setDatecreated(value);
     }
 
     @Override
-    public DateTime GetLastModified()
+    public DateTime getLastModified()
     {
         // return new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityLinkage.getLastmodified());
         return _entityLinkage.getLastmodified();
     }
 
     @Override
-    protected void SetObjectLastModified(DateTime value)
+    protected void setObjectLastModified(DateTime value)
     {
         // _entityLinkage.setLastmodified(new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
         _entityLinkage.setLastmodified(value);
     }
 
     @Override
-    protected String GetObjectStatus()
+    protected String getObjectStatus()
     {
         return _entityLinkage.getStatus();
     }
 
     @Override
-    protected void SetObjectStatus(String status)
+    protected void setObjectStatus(String status)
     {
         _entityLinkage.setStatus(status);
     }
 
     public boolean GetIsMarkedDeleted()
     {
-        return (GetStatus() == ECoalesceDataObjectStatus.DELETED);
+        return (getStatus() == ECoalesceDataObjectStatus.DELETED);
     }
 
     // -----------------------------------------------------------------------//
@@ -290,26 +290,26 @@ public class XsdLinkage extends XsdDataObject {
         {
 
             // Set Values
-            SetEntity1Key(Entity1.GetKey());
-            SetEntity1Name(Entity1.GetName());
-            SetEntity1Source(Entity1.GetSource());
-            SetEntity1Version(Entity1.GetVersion());
+            SetEntity1Key(Entity1.getKey());
+            SetEntity1Name(Entity1.getName());
+            SetEntity1Source(Entity1.getSource());
+            SetEntity1Version(Entity1.getVersion());
 
             SetLinkType(LinkType);
 
-            SetEntity2Key(Entity2.GetKey());
-            SetEntity2Name(Entity2.GetName());
-            SetEntity2Source(Entity2.GetSource());
-            SetEntity2Version(Entity2.GetVersion());
+            SetEntity2Key(Entity2.getKey());
+            SetEntity2Name(Entity2.getName());
+            SetEntity2Source(Entity2.getSource());
+            SetEntity2Version(Entity2.getVersion());
 
             SetClassificationMarking(ClassificationMarking);
             SetModifiedBy(ModifiedBy);
             SetInputLang(InputLang);
 
             DateTime utcNow = JodaDateTimeHelper.NowInUtc();
-            SetLastModified(utcNow);
+            setLastModified(utcNow);
 
-            SetStatus(ECoalesceDataObjectStatus.ACTIVE);
+            setStatus(ECoalesceDataObjectStatus.ACTIVE);
 
             return CallResult.successCallResult;
 
@@ -320,7 +320,7 @@ public class XsdLinkage extends XsdDataObject {
         }
     }
 
-    public String ToXml()
+    public String toXml()
     {
         return XmlHelper.Serialize(_entityLinkage);
     }
@@ -335,7 +335,7 @@ public class XsdLinkage extends XsdDataObject {
         {
 
             DateTime utcNow = JodaDateTimeHelper.NowInUtc();
-            SetLastModified(utcNow);
+            setLastModified(utcNow);
 
             return CallResult.successCallResult;
 

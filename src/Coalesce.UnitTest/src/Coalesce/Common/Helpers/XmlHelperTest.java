@@ -44,7 +44,7 @@ public class XmlHelperTest {
     public void DeserializeEntityTypeMission()
     {
 
-        Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TESTMISSION, Entity.class);
+        Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TEST_MISSION, Entity.class);
 
         assertNotNull("Failed to deserialize mission entity", desObj);
         assertTrue("Deserialized object no an Entity", desObj instanceof Entity);
@@ -55,7 +55,7 @@ public class XmlHelperTest {
     public void DeserializeLinkageSectionTypeMission()
     {
 
-        Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TESTMISSIONLINKAGESECTION, Linkagesection.class);
+        Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TEST_MISSION_LINKAGE_SECTION, Linkagesection.class);
 
         assertNotNull("Failed to deserialize mission entity linkage section", desObj);
         assertTrue("Deserialized object no an Entity", desObj instanceof Linkagesection);
@@ -66,7 +66,7 @@ public class XmlHelperTest {
     public void DeserializeRecordSetTypeMission()
     {
 
-        Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TESTMISSIONRECORDSET, Recordset.class);
+        Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TEST_MISSION_RECORDSET, Recordset.class);
 
         assertNotNull("Failed to deserialize mission entity linkage section", desObj);
         assertTrue("Deserialized object no an Entity", desObj instanceof Recordset);
@@ -79,7 +79,7 @@ public class XmlHelperTest {
 
         Entity entity = new Entity();
 
-        entity = (Entity) XmlHelper.Deserialize(CoalesceTypeInstances.TESTMISSION, Entity.class);
+        entity = (Entity) XmlHelper.Deserialize(CoalesceTypeInstances.TEST_MISSION, Entity.class);
 
         String xml = XmlHelper.Serialize(entity);
 
@@ -97,7 +97,7 @@ public class XmlHelperTest {
 
         Linkagesection entityLinkageSection = new Linkagesection();
 
-        entityLinkageSection = (Linkagesection) XmlHelper.Deserialize(CoalesceTypeInstances.TESTMISSIONLINKAGESECTION,
+        entityLinkageSection = (Linkagesection) XmlHelper.Deserialize(CoalesceTypeInstances.TEST_MISSION_LINKAGE_SECTION,
                                                                       Linkagesection.class);
 
         String xml = XmlHelper.Serialize(entityLinkageSection);
@@ -106,7 +106,7 @@ public class XmlHelperTest {
         assertTrue("xml empty", xml.length() > 0);
 
         String stripped = xml.toString().replace("<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"yes\"?>", "");
-        assertEquals(CoalesceTypeInstances.TESTMISSIONLINKAGESECTION.replaceAll("\\s+", ""),
+        assertEquals(CoalesceTypeInstances.TEST_MISSION_LINKAGE_SECTION.replaceAll("\\s+", ""),
                      stripped.replace(" ", "").replaceAll("\\s+", ""));
 
         assertEquals(4, entityLinkageSection.getLinkage().size());
@@ -119,7 +119,7 @@ public class XmlHelperTest {
 
         Recordset entityRecordSet = new Recordset();
 
-        entityRecordSet = (Recordset) XmlHelper.Deserialize(CoalesceTypeInstances.TESTMISSIONRECORDSET, Recordset.class);
+        entityRecordSet = (Recordset) XmlHelper.Deserialize(CoalesceTypeInstances.TEST_MISSION_RECORDSET, Recordset.class);
 
         String xml = XmlHelper.Serialize(entityRecordSet);
 

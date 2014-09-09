@@ -23,30 +23,30 @@ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
 
 public class CoalesceTypeInstances {
 
-    public static final String TESTMISSIONINCIDENTTITLEPATH = "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/IncidentTitle";
-    public static final String TESTMISSIONNAMEPATH = "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionName";
-    public static final String TESTMISSIONNAMEKEY = "6CB12648-A061-4CC5-B593-3D0407EF4392";
-    public static final String TESTMISSIONNAMENAME = "MissionName";
-    public static final String TESTMISSIONNAMEVALUE = "NORTHCOM Volunteer Background Checks Changed";
-    public static final String TESTMISSIONNAMEHISTORYVALUE = "NORTHCOM Volunteer Background Checks";
-    public static final String TESTMISSIONNAMEXML = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"yes\"?><field key=\"6CB12648-A061-4CC5-B593-3D0407EF4392\" datecreated=\"2014-05-02T14:33:51.857Z\" lastmodified=\"2014-09-02T14:33:59.177Z\" name=\"MissionName\" datatype=\"string\" classificationmarking=\"U\" label=\"\" value=\"NORTHCOM Volunteer Background Checks Changed\" status=\"active\" previoushistorykey=\"6CB12648-A061-4CC5-B593-3D0407EF4392\"><fieldhistory key=\"6CB12648-A061-4CC5-B593-3D0407EF4392\" datecreated=\"2014-05-02T14:33:51.857Z\" lastmodified=\"2014-09-02T08:57:36.183Z\" name=\"MissionName\" datatype=\"string\" classificationmarking=\"U\" label=\"\" value=\"NORTHCOM Volunteer Background Checks\" status=\"active\" previoushistorykey=\"00000000-0000-0000-0000-000000000000\"/></field>";
-    public static final String TESTMISSIONNAMEHISTORYXML = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"yes\"?><fieldhistory key=\"6CB12648-A061-4CC5-B593-3D0407EF4392\" datecreated=\"2014-05-02T14:33:51.857Z\" lastmodified=\"2014-09-02T08:57:36.183Z\" name=\"MissionName\" datatype=\"string\" classificationmarking=\"U\" label=\"\" value=\"NORTHCOM Volunteer Background Checks\" status=\"active\" previoushistorykey=\"00000000-0000-0000-0000-000000000000\"/>";
-    public static final DateTime TESTMISSIONNAMECREATED = JodaDateTimeHelper.FromXmlDateTimeUTC("2014-05-02T14:33:51.8575754Z");
-    public static final DateTime TESTMISSIONNAMEMODIFIED = JodaDateTimeHelper.FromXmlDateTimeUTC("2014-09-02T14:33:59.1779941Z");
-    public static final DateTime TESTMISSIONNAMEHISTORYMODIFIED = JodaDateTimeHelper.FromXmlDateTimeUTC("2014-09-02T08:57:36.183Z");
-    public static final String TESTMISSIONBASE64PATH = "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionIndicatorNumberBASE10";
-    public static final int TESTMISSIONBASE64VALUE = 38601;
-    public static final String TESTMISSIONSTARTTIMEPATH = "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionStartDateTime";
-    public static final String TESTMISSIONSTARTTIMEVALUE = "2014-05-02T14:33:51.8605756Z";
-    public static final String TESTMISSIONACTIONNUMBERPATH = "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/ActionNumber";
-    public static final String TESTMISSIONACTIONNUMBERXML = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"yes\"?><field key=\"D7067C3F-54B1-47FD-9C8A-A2D7946E0C2A\" datecreated=\"2014-05-02T14:33:51.8565753Z\" lastmodified=\"2014-05-02T14:33:59.1629932Z\" name=\"ActionNumber\" datatype=\"string\" value=\"0\" classificationmarking=\"U\" label=\"Action Number\" status=\"active\" previoushistorykey=\"00BB7A9F-4F37-46E9-85EB-9280ED3619CC\"><fieldhistory key=\"00BB7A9F-4F37-46E9-85EB-9280ED3619CC\" datecreated=\"2014-05-02T14:33:51.857Z\" lastmodified=\"2014-09-02T14:57:36.183Z\" name=\"ActionNumber\" datatype=\"string\" classificationmarking=\"U\" label=\"Action #\" value=\"0\" status=\"active\" previoushistorykey=\"3FA9F3E1-23D9-49C6-BCA3-CE84135223A5\"/><fieldhistory key=\"3FA9F3E1-23D9-49C6-BCA3-CE84135223A5\" datecreated=\"2014-05-02T14:33:51.857Z\" lastmodified=\"2014-09-02T14:57:36.183Z\" name=\"ActionNumber\" datatype=\"string\" classificationmarking=\"U\" label=\"Action #\" value=\"0\" status=\"active\" previoushistorykey=\"00000000-0000-0000-0000-000000000000\"/></field>";
-    public static final String TESTMISSIONACTIONNUMBERLABEL = "Action Number";
-    public static final String TESTMISSIONACTIONNUMBERLABELHISTORY = "Action #";
-    public static final String TESTMISSIONINCIDENTDATETIMEPATH = "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/IncidentDateTime";
-    public static final String TESTMISSIONRECORDSETPATH = "TREXMission/Mission Information Section/Mission Information Recordset";
-    public static final String TESTMISSIONRECORDPATH = "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record";
+    public static final String TEST_MISSION_INCIDENT_TITLE_PATH = "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/IncidentTitle";
+    public static final String TEST_MISSION_NAME_PATH = "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionName";
+    public static final String TEST_MISSION_NAME_KEY = "6CB12648-A061-4CC5-B593-3D0407EF4392";
+    public static final String TEST_MISSION_NAME_NAME = "MissionName";
+    public static final String TEST_MISSION_NAME_VALUE = "NORTHCOM Volunteer Background Checks Changed";
+    public static final String TEST_MISSION_NAME_HISTORY_VALUE = "NORTHCOM Volunteer Background Checks";
+    public static final String TEST_MISSION_NAME_XML = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"yes\"?><field key=\"6CB12648-A061-4CC5-B593-3D0407EF4392\" datecreated=\"2014-05-02T14:33:51.857Z\" lastmodified=\"2014-09-02T14:33:59.177Z\" name=\"MissionName\" datatype=\"string\" classificationmarking=\"U\" label=\"\" value=\"NORTHCOM Volunteer Background Checks Changed\" status=\"active\" previoushistorykey=\"6CB12648-A061-4CC5-B593-3D0407EF4392\"><fieldhistory key=\"6CB12648-A061-4CC5-B593-3D0407EF4392\" datecreated=\"2014-05-02T14:33:51.857Z\" lastmodified=\"2014-09-02T08:57:36.183Z\" name=\"MissionName\" datatype=\"string\" classificationmarking=\"U\" label=\"\" value=\"NORTHCOM Volunteer Background Checks\" status=\"active\" previoushistorykey=\"00000000-0000-0000-0000-000000000000\"/></field>";
+    public static final String TEST_MISSION_NAME_HISTORY_XML = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"yes\"?><fieldhistory key=\"6CB12648-A061-4CC5-B593-3D0407EF4392\" datecreated=\"2014-05-02T14:33:51.857Z\" lastmodified=\"2014-09-02T08:57:36.183Z\" name=\"MissionName\" datatype=\"string\" classificationmarking=\"U\" label=\"\" value=\"NORTHCOM Volunteer Background Checks\" status=\"active\" previoushistorykey=\"00000000-0000-0000-0000-000000000000\"/>";
+    public static final DateTime TEST_MISSION_NAME_CREATED = JodaDateTimeHelper.FromXmlDateTimeUTC("2014-05-02T14:33:51.8575754Z");
+    public static final DateTime TEST_MISSION_NAME_MODIFIED = JodaDateTimeHelper.FromXmlDateTimeUTC("2014-09-02T14:33:59.1779941Z");
+    public static final DateTime TEST_MISSION_NAME_HISTORY_MODIFIED = JodaDateTimeHelper.FromXmlDateTimeUTC("2014-09-02T08:57:36.183Z");
+    public static final String TEST_MISSION_BASE64_PATH = "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionIndicatorNumberBASE10";
+    public static final int TEST_MISSION_BASE64_VALUE = 38601;
+    public static final String TEST_MISSION_START_TIME_PATH = "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionStartDateTime";
+    public static final String TEST_MISSION_START_TIME_VALUE = "2014-05-02T14:33:51.8605756Z";
+    public static final String TEST_MISSION_ACTION_NUMBER_PATH = "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/ActionNumber";
+    public static final String TEST_MISSION_ACTION_NUMBER_XML = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"yes\"?><field key=\"D7067C3F-54B1-47FD-9C8A-A2D7946E0C2A\" datecreated=\"2014-05-02T14:33:51.8565753Z\" lastmodified=\"2014-05-02T14:33:59.1629932Z\" name=\"ActionNumber\" datatype=\"string\" value=\"0\" classificationmarking=\"U\" label=\"Action Number\" status=\"active\" previoushistorykey=\"00BB7A9F-4F37-46E9-85EB-9280ED3619CC\"><fieldhistory key=\"00BB7A9F-4F37-46E9-85EB-9280ED3619CC\" datecreated=\"2014-05-02T14:33:51.857Z\" lastmodified=\"2014-09-02T14:57:36.183Z\" name=\"ActionNumber\" datatype=\"string\" classificationmarking=\"U\" label=\"Action #\" value=\"0\" status=\"active\" previoushistorykey=\"3FA9F3E1-23D9-49C6-BCA3-CE84135223A5\"/><fieldhistory key=\"3FA9F3E1-23D9-49C6-BCA3-CE84135223A5\" datecreated=\"2014-05-02T14:33:51.857Z\" lastmodified=\"2014-09-02T14:57:36.183Z\" name=\"ActionNumber\" datatype=\"string\" classificationmarking=\"U\" label=\"Action #\" value=\"0\" status=\"active\" previoushistorykey=\"00000000-0000-0000-0000-000000000000\"/></field>";
+    public static final String TEST_MISSION_ACTION_NUMBER_LABEL = "Action Number";
+    public static final String TEST_MISSION_ACTION_NUMBER_LABEL_HISTORY = "Action #";
+    public static final String TEST_MISSION_INCIDENT_DATE_TIME_PATH = "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/IncidentDateTime";
+    public static final String TEST_MISSION_RECORDSET_PATH = "TREXMission/Mission Information Section/Mission Information Recordset";
+    public static final String TEST_MISSION_RECORD_PATH = "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record";
     
-    public static final String TESTMISSION =
+    public static final String TEST_MISSION =
     "<entity key=\"62857EF8-3930-4F0E-BAE3-093344EBF389\" datecreated=\"2014-05-02T14:33:51.851575Z\" lastmodified=\"2014-05-20T16:17:13.2293139Z\" name=\"TREXMission\" source=\"TREX Portal\" version=\"1.0.0.0\" entityid=\"\" entityidtype=\"\" title=\"TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionName,TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/IncidentTitle\" status=\"active\" anthony=\"Test\">" +
       "<linkagesection key=\"F4F126AF-4658-4D7F-A67F-4833F7EADDC3\" datecreated=\"2014-05-02T14:33:51.851575Z\" lastmodified=\"2014-05-20T16:17:13.2293139Z\" name=\"Linkages\" noindex=\"True\" status=\"active\">" +
         "<linkage key=\"DB7E0EAF-F4EF-4473-94A9-B93A7F46281E\" datecreated=\"2014-05-02T14:33:51.8615756Z\" lastmodified=\"2014-05-02T14:33:51.8615756Z\" name=\"Linkage\" entity1key=\"62857EF8-3930-4F0E-BAE3-093344EBF389\" entity1name=\"TREXMission\" entity1source=\"TREX Portal\" entity1version=\"1.0.0.0\" linktype=\"IsChildOf\" entity2key=\"AEACD69E-5365-4401-87A1-D95E657E0785\" entity2name=\"TREXOperation\" entity2source=\"TREX Portal\" entity2version=\"1.0.0.0\" classificationmarking=\"U\" modifiedby=\"\" inputlang=\"en-US\" status=\"active\" />" +
@@ -109,7 +109,7 @@ public class CoalesceTypeInstances {
       "</section>" +
     "</entity>";
 
-    public static final String TESTMISSIONNOXPATHTITLE =
+    public static final String TEST_MISSION_NO_XPATH_TITLE =
     "<entity key=\"62857EF8-3930-4F0E-BAE3-093344EBF389\" datecreated=\"2014-05-02T14:33:51.851575Z\" lastmodified=\"2014-05-20T16:17:13.2293139Z\" name=\"TREXMission\" source=\"TREX Portal\" version=\"1.0.0.0\" entityid=\"\" entityidtype=\"\" status=\"active\">" +
       "<linkagesection key=\"F4F126AF-4658-4D7F-A67F-4833F7EADDC3\" datecreated=\"2014-05-02T14:33:51.851575Z\" lastmodified=\"2014-05-20T16:17:13.2293139Z\" name=\"Linkages\" noindex=\"True\" status=\"active\">" +
         "<linkage key=\"DB7E0EAF-F4EF-4473-94A9-B93A7F46281E\" datecreated=\"2014-05-02T14:33:51.8615756Z\" lastmodified=\"2014-05-02T14:33:51.8615756Z\" name=\"Linkage\" entity1key=\"62857EF8-3930-4F0E-BAE3-093344EBF389\" entity1name=\"TREXMission\" entity1source=\"TREX Portal\" entity1version=\"1.0.0.0\" linktype=\"IsChildOf\" entity2key=\"AEACD69E-5365-4401-87A1-D95E657E0785\" entity2name=\"TREXOperation\" entity2source=\"TREX Portal\" entity2version=\"1.0.0.0\" classificationmarking=\"U\" modifiedby=\"\" inputlang=\"en-US\" status=\"active\" />" +
@@ -165,7 +165,7 @@ public class CoalesceTypeInstances {
       "</section>" +
     "</entity>";
     
-    public static final String TESTMISSIONLINKAGESECTION =
+    public static final String TEST_MISSION_LINKAGE_SECTION =
     "<linkagesection key=\"F4F126AF-4658-4D7F-A67F-4833F7EADDC3\" datecreated=\"2014-05-02T14:33:51.851Z\" lastmodified=\"2014-05-20T16:17:13.229Z\" name=\"Linkages\" noindex=\"True\" status=\"active\">" +
 	    "<linkage key=\"DB7E0EAF-F4EF-4473-94A9-B93A7F46281E\" datecreated=\"2014-05-02T14:33:51.861Z\" lastmodified=\"2014-05-02T14:33:51.861Z\" name=\"Linkage\" entity1key=\"62857EF8-3930-4F0E-BAE3-093344EBF389\" entity1name=\"TREXMission\" entity1source=\"TREX Portal\" entity1version=\"1.0.0.0\" linktype=\"IsChildOf\" entity2key=\"AEACD69E-5365-4401-87A1-D95E657E0785\" entity2name=\"TREXOperation\" entity2source=\"TREX Portal\" entity2version=\"1.0.0.0\" classificationmarking=\"U\" modifiedby=\"\" inputlang=\"en-US\" status=\"active\" />" +
 	    "<linkage key=\"9A04CBCD-297F-43E2-A590-F59D8438E386\" datecreated=\"2014-05-02T14:33:51.864Z\" lastmodified=\"2014-05-02T14:33:51.864Z\" name=\"Linkage\" entity1key=\"62857EF8-3930-4F0E-BAE3-093344EBF389\" entity1name=\"TREXMission\" entity1source=\"TREX Portal\" entity1version=\"1.0.0.0\" linktype=\"IsParentOf\" entity2key=\"C42DFD35-EA71-4F56-BC3B-D4287279123D\" entity2name=\"TREXComments\" entity2source=\"TREX Portal\" entity2version=\"1.0.0.0\" classificationmarking=\"U\" modifiedby=\"\" inputlang=\"en-US\" status=\"active\" />" +
@@ -173,7 +173,7 @@ public class CoalesceTypeInstances {
 	    "<linkage key=\"6AD08B0F-C492-4105-8033-A5E43056B864\" datecreated=\"2014-05-20T16:17:13.229Z\" lastmodified=\"2014-05-20T16:17:13.229Z\" name=\"Linkage\" entity1key=\"62857EF8-3930-4F0E-BAE3-093344EBF389\" entity1name=\"TREXMission\" entity1source=\"TREX Portal\" entity1version=\"1.0.0.0\" linktype=\"IsParentOf\" entity2key=\"55DFA165-0AB8-48B7-BF35-5DA6CADB5E1E\" entity2name=\"TREXCollection\" entity2source=\"TREXAction\" entity2version=\"1.0.0.0\" classificationmarking=\"U\" modifiedby=\"\" inputlang=\"en-US\" status=\"active\" />" +
     "</linkagesection>";
 
-    public static final String TESTMISSIONRECORDSET =
+    public static final String TEST_MISSION_RECORDSET =
     "<recordset key=\"7A158E39-B6C4-4912-A712-DF296375A368\" datecreated=\"2014-05-02T14:33:51.8525751Z\" lastmodified=\"2014-05-02T14:33:59.193995Z\" name=\"Mission Information Recordset\" minrecords=\"0\" maxrecords=\"0\" status=\"active\">" +
 	    "<fielddefinition key=\"93C6A209-AD86-4474-9FFB-D6801B2548AA\" datecreated=\"2014-05-02T14:33:51.8525751Z\" lastmodified=\"2014-05-02T14:33:51.8525751Z\" status=\"active\" name=\"ActionNumber\" defaultclassificationmarking=\"U\" defaultvalue=\"0\" datatype=\"string\" label=\"Action Number\" />" +
 	    "<fielddefinition key=\"DBBB6CEC-DD98-4B31-9995-8AF0A5E184EC\" datecreated=\"2014-05-02T14:33:51.8525751Z\" lastmodified=\"2014-05-02T14:33:51.8525751Z\" status=\"active\" name=\"IncidentNumber\" defaultclassificationmarking=\"U\" defaultvalue=\"\" datatype=\"string\" />" +
@@ -211,7 +211,7 @@ public class CoalesceTypeInstances {
 	    "</record>" +
 	  "</recordset>";
 
-    public static final String TESTMISSIONNOLINKSONE =
+    public static final String TEST_MISSION_NO_LINKS_ONE =
       "<entity key=\"D56C304E-6B8E-46E8-8DF8-BDF8EA20D72A\" datecreated=\"2014-05-02T14:33:51.8655758Z\" lastmodified=\"2014-05-20T16:17:13.3463206Z\" name=\"TREXMission\" source=\"TREX Portal\" version=\"1.0.0.0\" entityid=\"\" entityidtype=\"\" title=\"TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionName,TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/IncidentTitle\" status=\"active\">" +
         "<linkagesection key=\"B5359A38-BA2A-4950-9C50-58D478F89BDB\" datecreated=\"2014-05-02T14:33:51.8655758Z\" lastmodified=\"2014-05-20T16:17:13.3463206Z\" name=\"Linkages\" noindex=\"True\" status=\"active\" />" +
         "<section key=\"5C00A140-3381-4444-BEE0-1842E937F65E\" datecreated=\"2014-05-02T14:33:51.8655758Z\" lastmodified=\"2014-05-02T14:33:55.3567755Z\" name=\"Live Status Section\" noindex=\"True\" status=\"active\">" +
@@ -262,7 +262,7 @@ public class CoalesceTypeInstances {
         "</section>" +
       "</entity>";
   
-    public static final String TESTMISSIONNOLINKSTWO =
+    public static final String TEST_MISSION_NO_LINKS_TWO =
       "<entity key=\"D2C39FA9-266C-4EFF-A2DB-C67CB6CB7938\" datecreated=\"2014-05-02T14:33:51.9235792Z\" lastmodified=\"2014-05-20T16:17:13.7483436Z\" name=\"TREXMission\" source=\"TREX Portal\" version=\"1.0.0.0\" entityid=\"\" entityidtype=\"\" title=\"TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionName,TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/IncidentTitle\" status=\"active\">" +
         "<linkagesection key=\"4F4C34F4-B528-414E-B5FA-AE17E2DF2D57\" datecreated=\"2014-05-02T14:33:51.9235792Z\" lastmodified=\"2014-05-20T16:17:13.7483436Z\" name=\"Linkages\" noindex=\"True\" status=\"active\">" +
         "</linkagesection>" +

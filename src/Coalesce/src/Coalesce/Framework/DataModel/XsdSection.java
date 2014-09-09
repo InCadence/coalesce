@@ -82,30 +82,30 @@ public class XsdSection extends XsdDataObject {
     {
 
         // Check that a section with the same name doesn't already exist
-        for (XsdSection section : parent.GetSections().values())
+        for (XsdSection section : parent.getSections().values())
         {
-            if (section.GetName().equals(name))
+            if (section.getName().equals(name))
             {
 
-                section.SetNoIndex(noIndex);
+                section.setNoIndex(noIndex);
                 return section;
             }
         }
 
         Section newEntitySection = new Section();
-        parent.GetEntitySections().add(newEntitySection);
+        parent.getEntitySections().add(newEntitySection);
 
         XsdSection newSection = new XsdSection();
         if (!newSection.Initialize(parent, newEntitySection)) return null;
 
-        newSection.SetName(name);
+        newSection.setName(name);
 
-        newSection.SetNoIndex(noIndex);
+        newSection.setNoIndex(noIndex);
 
         // Add to parent's child collection
-        if (!parent._childDataObjects.containsKey(newSection.GetKey()))
+        if (!parent._childDataObjects.containsKey(newSection.getKey()))
         {
-            parent._childDataObjects.put(newSection.GetKey(), newSection);
+            parent._childDataObjects.put(newSection.getKey(), newSection);
         }
 
         return newSection;
@@ -128,7 +128,7 @@ public class XsdSection extends XsdDataObject {
         _parent = parent;
         _entitySection = section;
 
-        super.Initialize();
+        super.initialize();
 
         for (Recordset childRecordSet : _entitySection.getRecordset())
         {
@@ -136,9 +136,9 @@ public class XsdSection extends XsdDataObject {
             XsdRecordset newRecordSet = new XsdRecordset();
             if (!newRecordSet.Initialize(this, childRecordSet)) continue;
 
-            if (!_childDataObjects.containsKey(newRecordSet.GetKey()))
+            if (!_childDataObjects.containsKey(newRecordSet.getKey()))
             {
-                _childDataObjects.put(newRecordSet.GetKey(), newRecordSet);
+                _childDataObjects.put(newRecordSet.getKey(), newRecordSet);
             }
         }
 
@@ -152,25 +152,25 @@ public class XsdSection extends XsdDataObject {
     // -----------------------------------------------------------------------//
 
     @Override
-    protected String GetObjectKey()
+    protected String getObjectKey()
     {
         return _entitySection.getKey();
     }
 
     @Override
-    protected void SetObjectKey(String value)
+    protected void setObjectKey(String value)
     {
         _entitySection.setKey(value);
     }
 
     @Override
-    public String GetName()
+    public String getName()
     {
         return _entitySection.getName();
     }
 
     @Override
-    public void SetName(String value)
+    public void setName(String value)
     {
         _entitySection.setName(value);
     }
@@ -202,7 +202,7 @@ public class XsdSection extends XsdDataObject {
         try
         {
 
-            XsdDataObject dataObject = GetDataObjectForNamePath(NamePath);
+            XsdDataObject dataObject = getDataObjectForNamePath(NamePath);
 
             if (dataObject != null && dataObject instanceof XsdRecordset)
             {
@@ -228,7 +228,7 @@ public class XsdSection extends XsdDataObject {
         {
             if (child instanceof XsdRecordset)
             {
-                recordSets.put(child.GetKey(), (XsdRecordset) child);
+                recordSets.put(child.getKey(), (XsdRecordset) child);
             }
         }
 
@@ -237,46 +237,46 @@ public class XsdSection extends XsdDataObject {
     }
 
     @Override
-    public boolean GetNoIndex()
+    public boolean getNoIndex()
     {
         return Boolean.parseBoolean(_entitySection.getNoindex());
     }
 
     @Override
-    public void SetNoIndex(boolean value)
+    public void setNoIndex(boolean value)
     {
         _entitySection.setNoindex(Boolean.toString(value));
     }
 
     @Override
-    public String ToXml()
+    public String toXml()
     {
         return XmlHelper.Serialize(_entitySection);
     }
 
     @Override
-    public DateTime GetDateCreated()
+    public DateTime getDateCreated()
     {
         // return new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entitySection.getDatecreated());
         return _entitySection.getDatecreated();
     }
 
     @Override
-    public void SetDateCreated(DateTime value)
+    public void setDateCreated(DateTime value)
     {
         // _entitySection.setDatecreated(new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
         _entitySection.setDatecreated(value);
     }
 
     @Override
-    public DateTime GetLastModified()
+    public DateTime getLastModified()
     {
         // return new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entitySection.getLastmodified());
         return _entitySection.getLastmodified();
     }
 
     @Override
-    protected void SetObjectLastModified(DateTime value)
+    protected void setObjectLastModified(DateTime value)
     {
         // _entitySection.setLastmodified(new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
         _entitySection.setLastmodified(value);
@@ -287,13 +287,13 @@ public class XsdSection extends XsdDataObject {
     // -----------------------------------------------------------------------//
 
     @Override
-    protected String GetObjectStatus()
+    protected String getObjectStatus()
     {
         return _entitySection.getStatus();
     }
 
     @Override
-    protected void SetObjectStatus(String status)
+    protected void setObjectStatus(String status)
     {
         _entitySection.setStatus(status);
     }

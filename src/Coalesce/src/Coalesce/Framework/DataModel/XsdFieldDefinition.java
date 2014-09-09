@@ -117,7 +117,7 @@ public class XsdFieldDefinition extends XsdDataObject {
         fieldDefinition.SetLabel(label);
         fieldDefinition.SetDefaultClassificationMarking(defaultClassificationMarking);
         fieldDefinition.SetDefaultValue(defaultValue);
-        fieldDefinition.SetNoIndex(noIndex);
+        fieldDefinition.setNoIndex(noIndex);
 
         return fieldDefinition;
 
@@ -149,10 +149,10 @@ public class XsdFieldDefinition extends XsdDataObject {
 
         if (!fieldDefinition.Initialize(parent, newEntityFieldDefinition)) return null;
 
-        fieldDefinition.SetName(name);
+        fieldDefinition.setName(name);
         fieldDefinition.SetDefaultClassificationMarking("U");
         fieldDefinition.SetDefaultValue("");
-        fieldDefinition.SetNoIndex(noIndex);
+        fieldDefinition.setNoIndex(noIndex);
         fieldDefinition.SetDataType(dataType);
 
         return fieldDefinition;
@@ -165,12 +165,12 @@ public class XsdFieldDefinition extends XsdDataObject {
         _parent = parent;
         _entityFieldDefinition = fieldDefinition;
 
-        super.Initialize();
+        super.initialize();
         
         // Add to Parent Collections
-        if (GetStatus() == ECoalesceDataObjectStatus.ACTIVE)
+        if (getStatus() == ECoalesceDataObjectStatus.ACTIVE)
         {
-            parent._childDataObjects.put(this.GetKey(), this);
+            parent._childDataObjects.put(this.getKey(), this);
             parent.GetFieldDefinitions().add(this);
         }
 
@@ -182,25 +182,25 @@ public class XsdFieldDefinition extends XsdDataObject {
     // -----------------------------------------------------------------------//
 
     @Override
-    protected String GetObjectKey()
+    protected String getObjectKey()
     {
         return _entityFieldDefinition.getKey();
     }
 
     @Override
-    public void SetObjectKey(String value)
+    public void setObjectKey(String value)
     {
         _entityFieldDefinition.setKey(value);
     }
 
     @Override
-    public String GetName()
+    public String getName()
     {
         return _entityFieldDefinition.getName();
     }
 
     @Override
-    public void SetName(String value)
+    public void setName(String value)
     {
         _entityFieldDefinition.setName(value);
     }
@@ -252,28 +252,28 @@ public class XsdFieldDefinition extends XsdDataObject {
     }
 
     @Override
-    public DateTime GetDateCreated()
+    public DateTime getDateCreated()
     {
         // return new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityFieldDefinition.getDatecreated());
         return _entityFieldDefinition.getDatecreated();
     }
 
     @Override
-    public void SetDateCreated(DateTime value)
+    public void setDateCreated(DateTime value)
     {
         // _entityFieldDefinition.setDatecreated(new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
         _entityFieldDefinition.setDatecreated(value);
     }
 
     @Override
-    public DateTime GetLastModified()
+    public DateTime getLastModified()
     {
         // return new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityFieldDefinition.getLastmodified());
         return _entityFieldDefinition.getLastmodified();
     }
 
     @Override
-    protected void SetObjectLastModified(DateTime value)
+    protected void setObjectLastModified(DateTime value)
     {
         // _entityFieldDefinition.setLastmodified(new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
         _entityFieldDefinition.setLastmodified(value);
@@ -283,7 +283,7 @@ public class XsdFieldDefinition extends XsdDataObject {
     // Public Methods
     // -----------------------------------------------------------------------//
 
-    public String ToXml()
+    public String toXml()
     {
         return XmlHelper.Serialize(_entityFieldDefinition);
     }
@@ -293,13 +293,13 @@ public class XsdFieldDefinition extends XsdDataObject {
     // -----------------------------------------------------------------------//
 
     @Override
-    protected String GetObjectStatus()
+    protected String getObjectStatus()
     {
         return _entityFieldDefinition.getStatus();
     }
 
     @Override
-    protected void SetObjectStatus(String status)
+    protected void setObjectStatus(String status)
     {
         _entityFieldDefinition.setStatus(status);
     }

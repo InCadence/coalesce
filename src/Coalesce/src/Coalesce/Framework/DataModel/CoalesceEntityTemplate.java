@@ -42,7 +42,7 @@ public class CoalesceEntityTemplate {
 
     public static CoalesceEntityTemplate Create(XsdEntity entity) throws SAXException, IOException
     {
-        return CoalesceEntityTemplate.Create(entity.ToXml());
+        return CoalesceEntityTemplate.Create(entity.toXml());
     }
 
     public static CoalesceEntityTemplate Create(String templateXml) throws SAXException, IOException
@@ -68,7 +68,7 @@ public class CoalesceEntityTemplate {
 
     public boolean Initialize(XsdEntity entity) throws SAXException, IOException
     {
-        return this.Initialize(entity.ToXml());
+        return this.Initialize(entity.toXml());
     }
 
     public boolean Initialize(String EntityTemplateXml) throws SAXException, IOException
@@ -128,7 +128,7 @@ public class CoalesceEntityTemplate {
     public XsdEntity CreateNewEntity()
     {
         XsdEntity Entity = new XsdEntity();
-        Entity.Initialize(this.toXml());
+        Entity.initialize(this.toXml());
 
         return Entity;
     }

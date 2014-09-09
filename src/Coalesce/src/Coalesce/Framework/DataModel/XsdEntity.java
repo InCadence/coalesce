@@ -51,13 +51,13 @@ public class XsdEntity extends XsdDataObject {
     // Factory and Initialization
     // ----------------------------------------------------------------------//
 
-    public static XsdEntity Create(String entityXml)
+    public static XsdEntity create(String entityXml)
     {
 
         // Create Entity
         XsdEntity entity = new XsdEntity();
 
-        boolean passed = entity.Initialize(entityXml);
+        boolean passed = entity.initialize(entityXml);
 
         if (!passed) return null;
 
@@ -65,25 +65,25 @@ public class XsdEntity extends XsdDataObject {
 
     }
 
-    public static XsdEntity Create(String entityXml, String title)
+    public static XsdEntity create(String entityXml, String title)
     {
 
         // Create Entity
-        XsdEntity entity = XsdEntity.Create(entityXml);
+        XsdEntity entity = XsdEntity.create(entityXml);
 
         // Set Title
-        entity.SetTitle(title);
+        entity.setTitle(title);
 
         return entity;
 
     }
 
-    public static XsdEntity Create(String name, String source, String version, String entityId, String entityIdType)
+    public static XsdEntity create(String name, String source, String version, String entityId, String entityIdType)
     {
-        return XsdEntity.Create(name, source, version, entityId, entityIdType, null);
+        return XsdEntity.create(name, source, version, entityId, entityIdType, null);
     }
 
-    public static XsdEntity Create(String name,
+    public static XsdEntity create(String name,
                                    String source,
                                    String version,
                                    String entityId,
@@ -92,25 +92,25 @@ public class XsdEntity extends XsdDataObject {
     {
 
         XsdEntity entity = new XsdEntity();
-        if (!entity.Initialize()) return null;
+        if (!entity.initialize()) return null;
 
         // Set Default Values
-        entity.SetName(name);
-        entity.SetSource(source);
-        entity.SetVersion(version);
-        entity.SetEntityId(entityId);
-        entity.SetEntityIdType(entityIdType);
-        if (title != null) entity.SetTitle(title);
+        entity.setName(name);
+        entity.setSource(source);
+        entity.setVersion(version);
+        entity.setEntityId(entityId);
+        entity.setEntityIdType(entityIdType);
+        if (title != null) entity.setTitle(title);
 
         return entity;
     }
 
-    public boolean Initialize(String entityXml)
+    public boolean initialize(String entityXml)
     {
 
         if (entityXml == null || StringHelper.IsNullOrEmpty(entityXml.trim()))
         {
-            return Initialize();
+            return initialize();
         }
         else
         {
@@ -122,38 +122,38 @@ public class XsdEntity extends XsdDataObject {
             }
             this._entity = (Entity) deserializedObject;
 
-            if (!super.Initialize()) return false;
+            if (!super.initialize()) return false;
 
-            if (!InitializeChildren()) return false;
+            if (!initializeChildren()) return false;
 
-            return InitializeReferences();
+            return initializeReferences();
 
         }
     }
 
-    public boolean Initialize()
+    public boolean initialize()
     {
 
         this._entity = new Entity();
         // this.CreateLinkageSection();
         // this._entity.getSection();
 
-        if (!super.Initialize()) return false;
+        if (!super.initialize()) return false;
 
-        if (!InitializeChildren()) return false;
+        if (!initializeChildren()) return false;
 
-        return InitializeReferences();
+        return initializeReferences();
 
     }
 
-    protected boolean InitializeChildren()
+    protected boolean initializeChildren()
     {
 
         XsdLinkageSection linkageSection = new XsdLinkageSection();
 
         if (!linkageSection.Initialize(this)) return false;
 
-        _childDataObjects.put(linkageSection.GetKey(), linkageSection);
+        _childDataObjects.put(linkageSection.getKey(), linkageSection);
 
         for (Section entitySection : _entity.getSection())
         {
@@ -161,7 +161,7 @@ public class XsdEntity extends XsdDataObject {
 
             if (!section.Initialize(this, entitySection)) return false;
 
-            _childDataObjects.put(section.GetKey(), section);
+            _childDataObjects.put(section.getKey(), section);
 
         }
 
@@ -169,7 +169,7 @@ public class XsdEntity extends XsdDataObject {
 
     }
 
-    protected boolean InitializeReferences()
+    protected boolean initializeReferences()
     {
         return true;
     }
@@ -179,25 +179,25 @@ public class XsdEntity extends XsdDataObject {
     // -----------------------------------------------------------------------//
 
     @Override
-    protected String GetObjectKey()
+    protected String getObjectKey()
     {
         return _entity.getKey();
     }
 
     @Override
-    protected void SetObjectKey(String value)
+    protected void setObjectKey(String value)
     {
         _entity.setKey(value);
     }
 
     @Override
-    public String GetName()
+    public String getName()
     {
-        return GetStringElement(_entity.getName());
+        return getStringElement(_entity.getName());
     }
 
     @Override
-    public void SetName(String value)
+    public void setName(String value)
     {
         _entity.setName(value);
     }
@@ -208,47 +208,47 @@ public class XsdEntity extends XsdDataObject {
         return "entity";
     }
 
-    public String GetSource()
+    public String getSource()
     {
-        return GetStringElement(_entity.getSource());
+        return getStringElement(_entity.getSource());
     }
 
-    public void SetSource(String value)
+    public void setSource(String value)
     {
         _entity.setSource(value);
     }
 
-    public String GetVersion()
+    public String getVersion()
     {
-        return GetStringElement(_entity.getVersion());
+        return getStringElement(_entity.getVersion());
     }
 
-    public void SetVersion(String value)
+    public void setVersion(String value)
     {
         _entity.setVersion(value);
     }
 
-    public String GetEntityId()
+    public String getEntityId()
     {
-        return GetStringElement(_entity.getEntityid());
+        return getStringElement(_entity.getEntityid());
     }
 
-    public void SetEntityId(String value)
+    public void setEntityId(String value)
     {
         _entity.setEntityid(value);
     }
 
-    public String GetEntityIdType()
+    public String getEntityIdType()
     {
-        return GetStringElement(_entity.getEntityidtype());
+        return getStringElement(_entity.getEntityidtype());
     }
 
-    public void SetEntityIdType(String value)
+    public void setEntityIdType(String value)
     {
         _entity.setEntityidtype(value);
     }
 
-    public String GetTitle()
+    public String getTitle()
     {
         try
         {
@@ -265,7 +265,7 @@ public class XsdEntity extends XsdDataObject {
                 for (String path : paths)
                 {
 
-                    XsdDataObject dataObject = GetDataObjectForNamePath(path);
+                    XsdDataObject dataObject = getDataObjectForNamePath(path);
 
                     if (dataObject != null && dataObject instanceof XsdField)
                     {
@@ -280,7 +280,7 @@ public class XsdEntity extends XsdDataObject {
 
             if (title == null || title.trim().equals(""))
             {
-                return this.GetSource();
+                return this.getSource();
             }
             else
             {
@@ -291,25 +291,25 @@ public class XsdEntity extends XsdDataObject {
         catch (Exception ex)
         {
             CallResult.log(CallResults.FAILED_ERROR, ex, this);
-            return this.GetSource();
+            return this.getSource();
         }
     }
 
-    public void SetTitle(String value)
+    public void setTitle(String value)
     {
         try
         {
 
             String currentTitle = _entity.getTitle();
 
-            if ((currentTitle == null ^ value == null) || (value != null && !value.equals(GetTitle())))
+            if ((currentTitle == null ^ value == null) || (value != null && !value.equals(getTitle())))
             {
 
                 _entity.setTitle(value);
 
                 // Set LastModified
                 DateTime utcNow = JodaDateTimeHelper.NowInUtc();
-                if (utcNow != null) SetLastModified(utcNow);
+                if (utcNow != null) setLastModified(utcNow);
             }
 
         }
@@ -319,7 +319,7 @@ public class XsdEntity extends XsdDataObject {
         }
     }
 
-    public DateTime GetDateCreated()
+    public DateTime getDateCreated()
     {
         try
         {
@@ -336,13 +336,13 @@ public class XsdEntity extends XsdDataObject {
         }
     }
 
-    public void SetDateCreated(DateTime value)
+    public void setDateCreated(DateTime value)
     {
         // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
         _entity.setDatecreated(value);
     }
 
-    public DateTime GetLastModified()
+    public DateTime getLastModified()
     {
         try
         {
@@ -359,25 +359,25 @@ public class XsdEntity extends XsdDataObject {
         }
     }
 
-    protected void SetObjectLastModified(DateTime value)
+    protected void setObjectLastModified(DateTime value)
     {
         // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
         _entity.setLastmodified(value);
     }
 
-    protected String GetObjectStatus()
+    protected String getObjectStatus()
     {
         return _entity.getStatus();
     }
 
-    protected void SetObjectStatus(String status)
+    protected void setObjectStatus(String status)
     {
         _entity.setStatus(status);
     }
 
-    public Map<String, XsdLinkage> GetLinkages()
+    public Map<String, XsdLinkage> getLinkages()
     {
-        return GetLinkages((String) null);
+        return getLinkages((String) null);
     }
 
     // -----------------------------------------------------------------------//
@@ -398,17 +398,17 @@ public class XsdEntity extends XsdDataObject {
      * }catch(Exception ex){ // return Failed Error return new CallResult(CallResults.FAILED_ERROR, ex, this); } }
      */
 
-    public XsdSection CreateSection(String name, boolean noIndex)
+    public XsdSection createSection(String name, boolean noIndex)
     {
         return XsdSection.Create(this, name, noIndex);
     }
 
-    public XsdSection CreateSection(String name)
+    public XsdSection createSection(String name)
     {
         return XsdSection.Create(this, name);
     }
 
-    public Map<String, XsdSection> GetSections()
+    public Map<String, XsdSection> getSections()
     {
 
         Map<String, XsdSection> sections = new HashMap<String, XsdSection>();
@@ -417,7 +417,7 @@ public class XsdEntity extends XsdDataObject {
         {
             if (child instanceof XsdSection)
             {
-                sections.put(child.GetKey(), (XsdSection) child);
+                sections.put(child.getKey(), (XsdSection) child);
             }
         }
 
@@ -425,7 +425,7 @@ public class XsdEntity extends XsdDataObject {
 
     }
 
-    public XsdLinkageSection GetLinkageSection()
+    public XsdLinkageSection getLinkageSection()
     {
 
         for (XsdDataObject child : _childDataObjects.values())
@@ -440,15 +440,15 @@ public class XsdEntity extends XsdDataObject {
 
     }
 
-    public Map<String, XsdLinkage> GetLinkages(String forEntityName)
+    public Map<String, XsdLinkage> getLinkages(String forEntityName)
     {
         Map<String, XsdLinkage> linkages = new HashMap<String, XsdLinkage>();
 
         // Get Linkage Section
-        XsdLinkageSection linkageSection = GetLinkageSection();
+        XsdLinkageSection linkageSection = getLinkageSection();
         if (linkageSection == null) return null;
 
-        for (ICoalesceDataObject cdo : linkageSection.GetChildDataObjects().values())
+        for (ICoalesceDataObject cdo : linkageSection.getChildDataObjects().values())
         {
             if (cdo instanceof XsdLinkage)
             {
@@ -456,7 +456,7 @@ public class XsdEntity extends XsdDataObject {
                 XsdLinkage linkage = (XsdLinkage) cdo;
                 if (forEntityName == null || linkage.GetEntity2Name().equalsIgnoreCase(forEntityName))
                 {
-                    linkages.put(cdo.GetKey(), linkage);
+                    linkages.put(cdo.getKey(), linkage);
                 }
             }
         }
@@ -465,32 +465,32 @@ public class XsdEntity extends XsdDataObject {
 
     }
 
-    public Map<String, XsdLinkage> GetLinkages(ELinkTypes forLinkType)
+    public Map<String, XsdLinkage> getLinkages(ELinkTypes forLinkType)
     {
-        return GetLinkages(forLinkType, null);
+        return getLinkages(forLinkType, null);
     }
 
-    public Map<String, XsdLinkage> GetLinkages(ELinkTypes forLinkType, String forEntityName)
+    public Map<String, XsdLinkage> getLinkages(ELinkTypes forLinkType, String forEntityName)
     {
-        return GetLinkages(forLinkType, forEntityName, null);
+        return getLinkages(forLinkType, forEntityName, null);
     }
 
-    public Map<String, XsdLinkage> GetLinkages(ELinkTypes forLinkType, String forEntityName, String forEntitySource)
+    public Map<String, XsdLinkage> getLinkages(ELinkTypes forLinkType, String forEntityName, String forEntitySource)
     {
-        return GetLinkages(Arrays.asList(forLinkType), forEntityName, forEntitySource);
+        return getLinkages(Arrays.asList(forLinkType), forEntityName, forEntitySource);
     }
 
-    public Map<String, XsdLinkage> GetLinkages(List<ELinkTypes> forLinkTypes, String forEntityName)
+    public Map<String, XsdLinkage> getLinkages(List<ELinkTypes> forLinkTypes, String forEntityName)
     {
-        return GetLinkages(forLinkTypes, forEntityName, null);
+        return getLinkages(forLinkTypes, forEntityName, null);
     }
 
-    public XsdSection GetSection(String NamePath)
+    public XsdSection getSection(String NamePath)
     {
         try
         {
 
-            XsdDataObject dataObject = GetDataObjectForNamePath(NamePath);
+            XsdDataObject dataObject = getDataObjectForNamePath(NamePath);
 
             if (dataObject != null && dataObject instanceof XsdSection)
             {
@@ -507,13 +507,13 @@ public class XsdEntity extends XsdDataObject {
         }
     }
 
-    public List<String> GetEntityId(String typeParam)
+    public List<String> getEntityId(String typeParam)
     {
         List<String> values = new ArrayList<String>();
 
         // EntityID Type Contain Param?
-        String[] types = GetEntityIdType().split(",");
-        String[] ids = GetEntityId().split(",");
+        String[] types = getEntityIdType().split(",");
+        String[] ids = getEntityId().split(",");
         for (int i=0; i < types.length; i++)
         {
             String type = types[i];
@@ -527,7 +527,7 @@ public class XsdEntity extends XsdDataObject {
 
     }
 
-    public boolean SetEntityId(String typeParam, String Value)
+    public boolean setEntityId(String typeParam, String Value)
     {
 
         if (typeParam == null || typeParam.trim() == "" || Value == null || Value.trim() == "")
@@ -536,44 +536,44 @@ public class XsdEntity extends XsdDataObject {
         }
 
         // Collection Already have Unique ID?
-        if (GetEntityId() == null || GetEntityId().trim() == "")
+        if (getEntityId() == null || getEntityId().trim() == "")
         {
             // No; Add
-            SetEntityIdType(typeParam);
-            SetEntityId(Value);
+            setEntityIdType(typeParam);
+            setEntityId(Value);
         }
         else
         {
             // Yes; Append (CSV)
-            SetEntityIdType(GetEntityIdType() + "," + typeParam);
-            SetEntityId(GetEntityId() + "," + Value);
+            setEntityIdType(getEntityIdType() + "," + typeParam);
+            setEntityId(getEntityId() + "," + Value);
         }
 
         return true;
 
     }
 
-    public void MarkAsDeleted()
+    public void markAsDeleted()
     {
-        this.SetStatus(ECoalesceDataObjectStatus.DELETED);
+        this.setStatus(ECoalesceDataObjectStatus.DELETED);
     }
 
-    public CoalesceEntitySyncShell GetSyncEntity() throws SAXException, IOException
+    public CoalesceEntitySyncShell getSyncEntity() throws SAXException, IOException
     {
         return CoalesceEntitySyncShell.Create(this);
     }
 
-    public void MergeSyncEntity(XsdEntity syncEntity)
+    public void mergeSyncEntity(XsdEntity syncEntity)
     {
         // TODO: Implement Merging
     }
 
-    public String ToXml()
+    public String toXml()
     {
-        return ToXml(false);
+        return toXml(false);
     }
 
-    public String ToXml(Boolean removeBinary)
+    public String toXml(Boolean removeBinary)
     {
 
         String entityXml = XmlHelper.Serialize(_entity);
@@ -618,15 +618,15 @@ public class XsdEntity extends XsdDataObject {
 
     }
 
-    private Map<String, XsdLinkage> GetLinkages(List<ELinkTypes> forLinkTypes, String forEntityName, String forEntitySource)
+    private Map<String, XsdLinkage> getLinkages(List<ELinkTypes> forLinkTypes, String forEntityName, String forEntitySource)
     {
         Map<String, XsdLinkage> linkages = new HashMap<String, XsdLinkage>();
 
         // Get Linkage Section
-        XsdLinkageSection linkageSection = GetLinkageSection();
+        XsdLinkageSection linkageSection = getLinkageSection();
         if (linkageSection == null) return null;
 
-        for (ICoalesceDataObject cdo : linkageSection.GetChildDataObjects().values())
+        for (ICoalesceDataObject cdo : linkageSection.getChildDataObjects().values())
         {
             if (cdo instanceof XsdLinkage)
             {
@@ -635,9 +635,9 @@ public class XsdEntity extends XsdDataObject {
                 if ((forEntityName == null || linkage.GetEntity2Name().equalsIgnoreCase(forEntityName))
                         && forLinkTypes.contains(linkage.GetLinkType())
                         && (forEntitySource == null || linkage.GetEntity2Source().equalsIgnoreCase(forEntitySource))
-                        && linkage.GetStatus() != ECoalesceDataObjectStatus.DELETED)
+                        && linkage.getStatus() != ECoalesceDataObjectStatus.DELETED)
                 {
-                    linkages.put(linkage.GetKey(), linkage);
+                    linkages.put(linkage.getKey(), linkage);
                 }
             }
         }
@@ -646,7 +646,7 @@ public class XsdEntity extends XsdDataObject {
 
     }
 
-    protected Entity.Linkagesection GetEntityLinkageSection()
+    protected Entity.Linkagesection getEntityLinkageSection()
     {
         Linkagesection linkageSection = _entity.getLinkagesection();
 
@@ -659,7 +659,7 @@ public class XsdEntity extends XsdDataObject {
         return linkageSection;
     }
 
-    protected List<Section> GetEntitySections()
+    protected List<Section> getEntitySections()
     {
         return _entity.getSection();
     }

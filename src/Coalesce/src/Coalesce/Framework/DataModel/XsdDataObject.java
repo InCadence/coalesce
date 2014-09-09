@@ -42,38 +42,38 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
     --------------------------------------------------------------------------*/
 
     @Override
-    public abstract String GetName();
+    public abstract String getName();
 
     @Override
-    public abstract void SetName(String value);
+    public abstract void setName(String value);
 
     @Override
-    public abstract DateTime GetDateCreated();
+    public abstract DateTime getDateCreated();
 
     @Override
-    public abstract void SetDateCreated(DateTime value);
+    public abstract void setDateCreated(DateTime value);
 
     @Override
-    public abstract DateTime GetLastModified();
+    public abstract DateTime getLastModified();
 
     @Override
     public abstract String getType();
 
-    public abstract String ToXml();
+    public abstract String toXml();
 
     /*--------------------------------------------------------------------------
     Protected Abstract Functions
     --------------------------------------------------------------------------*/
 
-    protected abstract String GetObjectKey();
+    protected abstract String getObjectKey();
 
-    protected abstract void SetObjectKey(String value);
+    protected abstract void setObjectKey(String value);
 
-    protected abstract void SetObjectLastModified(DateTime value);
+    protected abstract void setObjectLastModified(DateTime value);
 
-    protected abstract String GetObjectStatus();
+    protected abstract String getObjectStatus();
 
-    protected abstract void SetObjectStatus(String status);
+    protected abstract void setObjectStatus(String status);
 
     protected abstract Map<QName, String> getAttributes();
 
@@ -82,11 +82,11 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
     --------------------------------------------------------------------------*/
 
     @Override
-    public ECoalesceDataObjectStatus GetStatus()
+    public ECoalesceDataObjectStatus getStatus()
     {
 
         // Get Status
-        String statusString = this.GetObjectStatus();
+        String statusString = this.getObjectStatus();
 
         // Valid String?
         if (statusString == null || statusString.equals(""))
@@ -103,104 +103,104 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
     }
 
     @Override
-    public void SetStatus(ECoalesceDataObjectStatus value)
+    public void setStatus(ECoalesceDataObjectStatus value)
     {
         // Set Status SUccessful?
-        this.SetObjectStatus(value.toLabel());
+        this.setObjectStatus(value.toLabel());
 
         // Yes; Update Last Modified
-        this.SetLastModified(JodaDateTimeHelper.NowInUtc());
+        this.setLastModified(JodaDateTimeHelper.NowInUtc());
     }
 
     @Override
-    public XsdDataObject GetParent()
+    public XsdDataObject getParent()
     {
         return this._parent;
     }
 
     @Override
-    public void SetParent(XsdDataObject parent)
+    public void setParent(XsdDataObject parent)
     {
         this._parent = parent;
     }
 
     @Override
-    public String GetKey()
+    public String getKey()
     {
-        return GetObjectKey();
+        return getObjectKey();
     }
 
     @Override
-    public void SetKey(String key)
+    public void setKey(String key)
     {
-        this.SetObjectKey(key);
+        this.setObjectKey(key);
     }
 
     @Override
-    public String GetTag()
+    public String getTag()
     {
-        return this.GetAttribute("tag");
+        return this.getAttribute("tag");
     }
 
     @Override
-    public void SetTag(String value)
+    public void setTag(String value)
     {
-        this.SetAttribute("tag", value);
+        this.setAttribute("tag", value);
     }
 
     @Override
-    public boolean GetFlatten()
+    public boolean getFlatten()
     {
-        return Boolean.parseBoolean(this.GetAttribute("flatten"));
+        return Boolean.parseBoolean(this.getAttribute("flatten"));
     }
 
     @Override
-    public void SetFlatten(boolean value)
+    public void setFlatten(boolean value)
     {
-        this.SetAttribute("flatten", Boolean.toString(value));
+        this.setAttribute("flatten", Boolean.toString(value));
     }
 
     @Override
-    public void SetLastModified(DateTime value)
+    public void setLastModified(DateTime value)
     {
         // Set Last Modified
-        this.SetObjectLastModified(value);
+        this.setObjectLastModified(value);
 
         // Bubble Up to Parent
         if (this._parent != null)
         {
-            this._parent.SetLastModified(value);
+            this._parent.setLastModified(value);
         }
     }
 
     @Override
-    public boolean GetNoIndex()
+    public boolean getNoIndex()
     {
-        return Boolean.parseBoolean(this.GetAttribute("noindex"));
+        return Boolean.parseBoolean(this.getAttribute("noindex"));
     }
 
     @Override
-    public void SetNoIndex(boolean value)
+    public void setNoIndex(boolean value)
     {
-        this.SetAttribute("noindex", Boolean.toString(value));
+        this.setAttribute("noindex", Boolean.toString(value));
     }
 
     @Override
-    public Map<String, XsdDataObject> GetChildDataObjects()
+    public Map<String, XsdDataObject> getChildDataObjects()
     {
         return this._childDataObjects;
     }
 
     @Override
-    public String GetNamePath()
+    public String getNamePath()
     {
         if (this._parent == null)
         {
-            return this.GetName();
+            return this.getName();
         }
         else
         {
-            return this._parent.GetNamePath() + "/" + this.GetName();
+            return this._parent.getNamePath() + "/" + this.getName();
         }
     }
 
@@ -208,24 +208,24 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
     Public Functions
     --------------------------------------------------------------------------*/
 
-    public String GetAttribute(String name)
+    public String getAttribute(String name)
     {
         return this.getAttributes().get(new QName(name));
     }
 
-    public DateTime GetAttributeAsDate(String name)
+    public DateTime getAttributeAsDate(String name)
     {
         // TODO: Not Implemented
         return null;
     }
 
-    public boolean SetAttribute(String name, String value)
+    public boolean setAttribute(String name, String value)
     {
         this.getAttributes().put(new QName(name), value);
         return true;
     }
 
-    public void SetAttributeAsDate(String name, DateTime date)
+    public void setAttributeAsDate(String name, DateTime date)
     {
         // TODO: Not Implemented
     }
@@ -234,30 +234,30 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
     Protected Functions
     --------------------------------------------------------------------------*/
 
-    protected boolean Initialize()
+    protected boolean initialize()
     {
 
-        if (GetKey() == null || GetKey().equals(""))
+        if (getKey() == null || getKey().equals(""))
         {
-            SetKey(java.util.UUID.randomUUID().toString());
+            setKey(java.util.UUID.randomUUID().toString());
         }
 
         DateTime utcDate = JodaDateTimeHelper.NowInUtc();
 
-        if (GetDateCreated() == null)
+        if (getDateCreated() == null)
         {
-            SetDateCreated(utcDate);
+            setDateCreated(utcDate);
         }
-        if (GetLastModified() == null)
+        if (getLastModified() == null)
         {
-            SetLastModified(utcDate);
+            setLastModified(utcDate);
         }
 
         return true;
 
     }
 
-    public XsdDataObject GetDataObjectForNamePath(String namePath)
+    public XsdDataObject getDataObjectForNamePath(String namePath)
     {
         try
         {
@@ -273,7 +273,7 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
             case 1:
 
                 // End of the path, is our Base Object named the Name Path?
-                if (GetName().equals(names[0]))
+                if (getName().equals(names[0]))
                 {
                     return this;
                 }
@@ -288,7 +288,7 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
 
                 for (XsdDataObject child : _childDataObjects.values())
                 {
-                    String childName = child.GetName();
+                    String childName = child.getName();
 
                     if (childName != null && childName.equals(names[1]))
                     {
@@ -302,7 +302,7 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
 
                     String newPath = namePath.substring(namePath.indexOf("/") + 1);
 
-                    return dataObject.GetDataObjectForNamePath(newPath);
+                    return dataObject.getDataObjectForNamePath(newPath);
 
                 }
 
@@ -320,11 +320,11 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
         }
     }
 
-    public XsdDataObject GetCoalesceDataObjectForKey(String key)
+    public XsdDataObject getCoalesceDataObjectForKey(String key)
     {
         XsdDataObject result = null; 
 
-        if (this.GetKey().equalsIgnoreCase(key))
+        if (this.getKey().equalsIgnoreCase(key))
         {
             result = this;
         }
@@ -333,7 +333,7 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
             
             for (XsdDataObject child : _childDataObjects.values())
             {
-                result = child.GetCoalesceDataObjectForKey(key);
+                result = child.getCoalesceDataObjectForKey(key);
                 if (result != null) break;
             }
         }
@@ -341,7 +341,7 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
         return result;
     }
 
-    protected String GetStringElement(String value)
+    protected String getStringElement(String value)
     {
         if (value == null) return "";
 

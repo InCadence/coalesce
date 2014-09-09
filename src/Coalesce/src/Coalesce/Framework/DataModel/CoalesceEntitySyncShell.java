@@ -46,7 +46,7 @@ public class CoalesceEntitySyncShell {
 
     public static CoalesceEntitySyncShell Create(XsdEntity Entity) throws SAXException, IOException
     {
-        return CoalesceEntitySyncShell.Create(Entity.ToXml());
+        return CoalesceEntitySyncShell.Create(Entity.toXml());
     }
 
     public static CoalesceEntitySyncShell Create(String EntitySyncShellXml) throws SAXException, IOException
@@ -72,7 +72,7 @@ public class CoalesceEntitySyncShell {
 
     public boolean Initialize(XsdEntity Entity) throws SAXException, IOException
     {
-        return this.Initialize(Entity.ToXml());
+        return this.Initialize(Entity.toXml());
     }
 
     public boolean Initialize(String entityXml) throws SAXException, IOException

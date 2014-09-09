@@ -50,13 +50,13 @@ public class XsdLinkageSection extends XsdDataObject {
         XsdLinkageSection linkageSection = new XsdLinkageSection();
         if (!linkageSection.Initialize(parent)) return null;
 
-        linkageSection.SetName("Linkages");
-        linkageSection.SetNoIndex(noIndex);
+        linkageSection.setName("Linkages");
+        linkageSection.setNoIndex(noIndex);
 
         // Add to parent's child collection
-        if (!parent._childDataObjects.containsKey(linkageSection.GetKey()))
+        if (!parent._childDataObjects.containsKey(linkageSection.getKey()))
         {
-            parent._childDataObjects.put(linkageSection.GetKey(), linkageSection);
+            parent._childDataObjects.put(linkageSection.getKey(), linkageSection);
         }
 
         return linkageSection;
@@ -68,9 +68,9 @@ public class XsdLinkageSection extends XsdDataObject {
 
         // Set References
         _parent = parent;
-        _entityLinkageSection = parent.GetEntityLinkageSection();
+        _entityLinkageSection = parent.getEntityLinkageSection();
 
-        super.Initialize();
+        super.initialize();
         
         if (_entityLinkageSection != null)
         {
@@ -82,9 +82,9 @@ public class XsdLinkageSection extends XsdDataObject {
                 XsdLinkage newLinkage = new XsdLinkage();
                 if (!newLinkage.Initialize(this, childLinkage)) continue;
 
-                if (!_childDataObjects.containsKey(newLinkage.GetKey()))
+                if (!_childDataObjects.containsKey(newLinkage.getKey()))
                 {
-                    _childDataObjects.put(newLinkage.GetKey(), newLinkage);
+                    _childDataObjects.put(newLinkage.getKey(), newLinkage);
                 }
             }
 
@@ -102,25 +102,25 @@ public class XsdLinkageSection extends XsdDataObject {
     // -----------------------------------------------------------------------//
 
     @Override
-    protected String GetObjectKey()
+    protected String getObjectKey()
     {
         return _entityLinkageSection.getKey();
     }
 
     @Override
-    public void SetObjectKey(String value)
+    public void setObjectKey(String value)
     {
         _entityLinkageSection.setKey(value);
     }
 
     @Override
-    public String GetName()
+    public String getName()
     {
         return _entityLinkageSection.getName();
     }
 
     @Override
-    public void SetName(String value)
+    public void setName(String value)
     {
         _entityLinkageSection.setName(value);
     }
@@ -136,12 +136,12 @@ public class XsdLinkageSection extends XsdDataObject {
         return XsdLinkage.Create(this);
     }
 
-    public String ToXml()
+    public String toXml()
     {
         return XmlHelper.Serialize(_entityLinkageSection);
     }
 
-    public DateTime GetDateCreated()
+    public DateTime getDateCreated()
     {
         try
         {
@@ -159,21 +159,21 @@ public class XsdLinkageSection extends XsdDataObject {
     }
 
     @Override
-    public void SetDateCreated(DateTime value)
+    public void setDateCreated(DateTime value)
     {
         // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
         _entityLinkageSection.setDatecreated(value);
     }
 
     @Override
-    public DateTime GetLastModified()
+    public DateTime getLastModified()
     {
         // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityLinkageSection.getLastmodified());
         return _entityLinkageSection.getLastmodified();
     }
 
     @Override
-    protected void SetObjectLastModified(DateTime value)
+    protected void setObjectLastModified(DateTime value)
     {
         // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
         _entityLinkageSection.setLastmodified(value);
@@ -184,13 +184,13 @@ public class XsdLinkageSection extends XsdDataObject {
     // -----------------------------------------------------------------------//
 
     @Override
-    protected String GetObjectStatus()
+    protected String getObjectStatus()
     {
         return _entityLinkageSection.getStatus();
     }
 
     @Override
-    protected void SetObjectStatus(String status)
+    protected void setObjectStatus(String status)
     {
         _entityLinkageSection.setStatus(status);
     }

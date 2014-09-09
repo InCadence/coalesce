@@ -60,7 +60,7 @@ public class XsdField extends XsdFieldBase {
 
         newField.SetSuspendHistory(true);
 
-        newField.SetName(fieldDefinition.GetName());
+        newField.setName(fieldDefinition.getName());
         newField.SetDataType(fieldDefinition.GetDataType());
         newField.SetValue(fieldDefinition.GetDefaultValue());
         newField.SetClassificationMarking(fieldDefinition.GetDefaultClassificationMarking());
@@ -68,7 +68,7 @@ public class XsdField extends XsdFieldBase {
 
         newField.SetSuspendHistory(false);
 
-        newField.SetNoIndex(true);
+        newField.setNoIndex(true);
 
         // Boolean Type? If so then default initial value to false.
         if (fieldDefinition.GetDataType() == ECoalesceFieldDataTypes.BooleanType)
@@ -77,9 +77,9 @@ public class XsdField extends XsdFieldBase {
         }
 
         // Add to Parent's Child Collection
-        if (!(parent._childDataObjects.containsKey(newField.GetKey())))
+        if (!(parent._childDataObjects.containsKey(newField.getKey())))
         {
-            parent._childDataObjects.put(newField.GetKey(), newField);
+            parent._childDataObjects.put(newField.getKey(), newField);
         }
 
         return newField;
@@ -93,7 +93,7 @@ public class XsdField extends XsdFieldBase {
         _parent = parent;
         _entityField = field;
 
-        super.Initialize();
+        super.initialize();
         
         for (Fieldhistory entityFieldHistory : _entityField.getFieldhistory())
         {
@@ -102,7 +102,7 @@ public class XsdField extends XsdFieldBase {
             fieldHistory.Initialize(this, entityFieldHistory);
 
             // Add to Child Collection
-            _childDataObjects.put(fieldHistory.GetKey(), fieldHistory);
+            _childDataObjects.put(fieldHistory.getKey(), fieldHistory);
         }
 
         return true;
@@ -114,25 +114,25 @@ public class XsdField extends XsdFieldBase {
     // -----------------------------------------------------------------------//
 
     @Override
-    protected String GetObjectKey()
+    protected String getObjectKey()
     {
         return _entityField.getKey();
     }
 
     @Override
-    public void SetObjectKey(String value)
+    public void setObjectKey(String value)
     {
         _entityField.setKey(value);
     }
 
     @Override
-    public String GetName()
+    public String getName()
     {
-        return GetStringElement(_entityField.getName());
+        return getStringElement(_entityField.getName());
     }
 
     @Override
-    public void SetName(String value)
+    public void setName(String value)
     {
         _entityField.setName(value);
     }
@@ -168,7 +168,7 @@ public class XsdField extends XsdFieldBase {
 
     public String GetLabel()
     {
-        return GetStringElement(_entityField.getLabel());
+        return getStringElement(_entityField.getLabel());
     }
 
     public void SetLabel(String value)
@@ -195,7 +195,7 @@ public class XsdField extends XsdFieldBase {
 
     public String GetModifiedBy()
     {
-        return GetStringElement(_entityField.getModifiedby());
+        return getStringElement(_entityField.getModifiedby());
     }
 
     public void SetModifiedBy(String value)
@@ -205,7 +205,7 @@ public class XsdField extends XsdFieldBase {
 
     public String GetModifiedByIP()
     {
-        return GetStringElement(_entityField.getModifiedbyip());
+        return getStringElement(_entityField.getModifiedbyip());
     }
 
     public void SetModifiedByIP(String value)
@@ -246,7 +246,7 @@ public class XsdField extends XsdFieldBase {
 
     public String GetFilename()
     {
-        return GetStringElement(_entityField.getFilename());
+        return getStringElement(_entityField.getFilename());
     }
 
     public void SetFilename(String value)
@@ -259,7 +259,7 @@ public class XsdField extends XsdFieldBase {
 
     public String GetExtension()
     {
-        return GetStringElement(_entityField.getExtension());
+        return getStringElement(_entityField.getExtension());
     }
 
     public void SetExtension(String value)
@@ -272,7 +272,7 @@ public class XsdField extends XsdFieldBase {
 
     public String GetMimeType()
     {
-        return GetStringElement(_entityField.getMimetype());
+        return getStringElement(_entityField.getMimetype());
     }
 
     public void SetMimeType(String value)
@@ -282,7 +282,7 @@ public class XsdField extends XsdFieldBase {
 
     public String GetHash()
     {
-        return GetStringElement(_entityField.getHash());
+        return getStringElement(_entityField.getHash());
     }
 
     public void SetHash(String value)
@@ -336,7 +336,7 @@ public class XsdField extends XsdFieldBase {
      */
 
     @Override
-    public DateTime GetDateCreated()
+    public DateTime getDateCreated()
     {
 
         // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityField.getDatecreated());
@@ -344,27 +344,27 @@ public class XsdField extends XsdFieldBase {
     }
 
     @Override
-    public void SetDateCreated(DateTime value)
+    public void setDateCreated(DateTime value)
     {
         // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
         _entityField.setDatecreated(value);
     }
 
     @Override
-    public DateTime GetLastModified()
+    public DateTime getLastModified()
     {
         // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityField.getLastmodified());
         return _entityField.getLastmodified();
     }
 
     @Override
-    protected void SetObjectLastModified(DateTime value)
+    protected void setObjectLastModified(DateTime value)
     {
         // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
         _entityField.setLastmodified(value);
     }
 
-    public String ToXml()
+    public String toXml()
     {
         return XmlHelper.Serialize(_entityField);
     }
@@ -377,7 +377,7 @@ public class XsdField extends XsdFieldBase {
             return "";
         }
 
-        String baseFilename = FileHelper.GetBaseFilenameWithFullDirectoryPathForKey(GetKey());
+        String baseFilename = FileHelper.GetBaseFilenameWithFullDirectoryPathForKey(getKey());
 
         return baseFilename + "." + GetExtension();
 
@@ -391,7 +391,7 @@ public class XsdField extends XsdFieldBase {
             return "";
         }
 
-        String baseFilename = FileHelper.GetBaseFilenameWithFullDirectoryPathForKey(GetKey());
+        String baseFilename = FileHelper.GetBaseFilenameWithFullDirectoryPathForKey(getKey());
 
         return baseFilename + "_thumb.jpg";
 
@@ -441,7 +441,7 @@ public class XsdField extends XsdFieldBase {
         if (GetDataType() == ECoalesceFieldDataTypes.FileType)
         {
 
-            String baseFilename = GetKey();
+            String baseFilename = getKey();
             baseFilename = GUIDHelper.RemoveBrackets(baseFilename);
 
             return baseFilename + "." + GetExtension();
@@ -459,7 +459,7 @@ public class XsdField extends XsdFieldBase {
         if (GetDataType() == ECoalesceFieldDataTypes.FileType)
         {
 
-            String baseFilename = this.GetKey();
+            String baseFilename = this.getKey();
             baseFilename = GUIDHelper.RemoveBrackets(baseFilename);
 
             return baseFilename + "_thumb.jpg";
@@ -476,13 +476,13 @@ public class XsdField extends XsdFieldBase {
     // -----------------------------------------------------------------------//
 
     @Override
-    protected String GetObjectStatus()
+    protected String getObjectStatus()
     {
         return _entityField.getStatus();
     }
 
     @Override
-    protected void SetObjectStatus(String status)
+    protected void setObjectStatus(String status)
     {
         _entityField.setStatus(status);
 
@@ -518,14 +518,14 @@ public class XsdField extends XsdFieldBase {
                     default:
 
                         // Does LastModified = DateCreated?
-                        if (GetLastModified().compareTo(GetDateCreated()) != 0)
+                        if (getLastModified().compareTo(getDateCreated()) != 0)
                         {
 
                             // No; Create History Entry
                             XsdFieldHistory fieldHistory = XsdFieldHistory.Create(this);
                             if (fieldHistory == null) return CallResult.failedCallResult;
 
-                            SetPreviousHistoryKey(fieldHistory.GetKey());
+                            SetPreviousHistoryKey(fieldHistory.getKey());
                         }
 
                     }
@@ -534,7 +534,7 @@ public class XsdField extends XsdFieldBase {
 
                 // Set LastModified
                 DateTime utcNow = JodaDateTimeHelper.NowInUtc();
-                if (utcNow != null) SetLastModified(utcNow);
+                if (utcNow != null) setLastModified(utcNow);
 
             }
 
@@ -565,7 +565,7 @@ public class XsdField extends XsdFieldBase {
                 {
 
                     // Does LastModified = DateCreated?
-                    if (GetLastModified().compareTo(GetDateCreated()) != 0)
+                    if (getLastModified().compareTo(getDateCreated()) != 0)
                     {
                         // No; Create History Entry
                         // TODO: Something just feels wrong about declaring one
@@ -573,7 +573,7 @@ public class XsdField extends XsdFieldBase {
                         XsdFieldHistory fieldHistory = XsdFieldHistory.Create(this);
                         if (fieldHistory == null) return CallResult.failedCallResult;
 
-                        SetPreviousHistoryKey(fieldHistory.GetKey());
+                        SetPreviousHistoryKey(fieldHistory.getKey());
                     }
                 }
 
@@ -597,7 +597,7 @@ public class XsdField extends XsdFieldBase {
 
                 // Set LastModified
                 DateTime utcNow = JodaDateTimeHelper.NowInUtc();
-                if (utcNow != null) SetLastModified(utcNow);
+                if (utcNow != null) setLastModified(utcNow);
 
             }
 

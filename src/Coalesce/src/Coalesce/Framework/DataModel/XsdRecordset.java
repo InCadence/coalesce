@@ -71,14 +71,14 @@ public class XsdRecordset extends XsdDataObject {
         XsdRecordset newRecordset = new XsdRecordset();
         if (!newRecordset.Initialize(parent, newEntityRecordset)) return null;
 
-        newRecordset.SetName(name);
+        newRecordset.setName(name);
         newRecordset.SetMinRecords(MinRecords);
         newRecordset.SetMaxRecords(MaxRecords);
 
         // Add to parent's child collection
-        if (!parent._childDataObjects.containsKey(newRecordset.GetKey()))
+        if (!parent._childDataObjects.containsKey(newRecordset.getKey()))
         {
-            parent._childDataObjects.put(newRecordset.GetKey(), newRecordset);
+            parent._childDataObjects.put(newRecordset.getKey(), newRecordset);
         }
 
         return newRecordset;
@@ -92,7 +92,7 @@ public class XsdRecordset extends XsdDataObject {
         _parent = parent;
         _entityRecordset = recordset;
 
-        super.Initialize();
+        super.initialize();
 
         // Create Collections
         _fieldDefinitions = new ArrayList<XsdFieldDefinition>();
@@ -120,25 +120,25 @@ public class XsdRecordset extends XsdDataObject {
     // -----------------------------------------------------------------------//
 
     @Override
-    protected String GetObjectKey()
+    protected String getObjectKey()
     {
         return _entityRecordset.getKey();
     }
 
     @Override
-    protected void SetObjectKey(String value)
+    protected void setObjectKey(String value)
     {
         _entityRecordset.setKey(value);
     }
 
     @Override
-    public String GetName()
+    public String getName()
     {
         return _entityRecordset.getName();
     }
 
     @Override
-    public void SetName(String value)
+    public void setName(String value)
     {
         _entityRecordset.setName(value);
     }
@@ -186,7 +186,7 @@ public class XsdRecordset extends XsdDataObject {
         // For Each Record As CoalesceRecord In this._Records
         for (XsdRecord record : GetRecords())
         {
-            if (record.GetStatus() == ECoalesceDataObjectStatus.ACTIVE)
+            if (record.getStatus() == ECoalesceDataObjectStatus.ACTIVE)
             {
                 return true;
             }
@@ -201,7 +201,7 @@ public class XsdRecordset extends XsdDataObject {
         return (this.GetRecords().size() > 0);
     }
 
-    public DateTime GetDateCreated()
+    public DateTime getDateCreated()
     {
         try
         {
@@ -218,21 +218,21 @@ public class XsdRecordset extends XsdDataObject {
     }
 
     @Override
-    public void SetDateCreated(DateTime value)
+    public void setDateCreated(DateTime value)
     {
         // _entityRecordset.setDatecreated(new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
         _entityRecordset.setDatecreated(value);
     }
 
     @Override
-    public DateTime GetLastModified()
+    public DateTime getLastModified()
     {
         // return new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityRecordset.getLastmodified());
         return _entityRecordset.getLastmodified();
     }
 
     @Override
-    protected void SetObjectLastModified(DateTime value)
+    protected void setObjectLastModified(DateTime value)
     {
         // _entityRecordset.setLastmodified(new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
         _entityRecordset.setLastmodified(value);
@@ -256,7 +256,7 @@ public class XsdRecordset extends XsdDataObject {
         return XsdFieldDefinition.Create(this, name, dataType);
     }
 
-    public String ToXml()
+    public String toXml()
     {
         return XmlHelper.Serialize(_entityRecordset);
     }
@@ -269,7 +269,7 @@ public class XsdRecordset extends XsdDataObject {
             // Find
             for (XsdFieldDefinition fieldDefinition : GetFieldDefinitions())
             {
-                if (fieldDefinition.GetName().toUpperCase().equals(fieldName.toUpperCase()))
+                if (fieldDefinition.getName().toUpperCase().equals(fieldName.toUpperCase()))
                 {
 
                     return fieldDefinition;
@@ -345,7 +345,7 @@ public class XsdRecordset extends XsdDataObject {
         {
 
             // Create new Record
-            XsdRecord newRecord = XsdRecord.Create(this, GetName() + " Record");
+            XsdRecord newRecord = XsdRecord.Create(this, getName() + " Record");
 
             // TODO: Raise the Changed Event
             // RaiseEvent ListChanged(this, new
@@ -398,7 +398,7 @@ public class XsdRecordset extends XsdDataObject {
             {
 
                 // Set as Status as Deleted
-                record.SetStatus(ECoalesceDataObjectStatus.DELETED);
+                record.setStatus(ECoalesceDataObjectStatus.DELETED);
 
                 // Remove from the Records Collection
                 GetRecords().remove(record);
@@ -437,7 +437,7 @@ public class XsdRecordset extends XsdDataObject {
             // For Each Record As XsdRecord In this.Records
             for (XsdRecord record : GetRecords())
             {
-                if (record.GetKey().equals(key))
+                if (record.getKey().equals(key))
                 {
                     recordToRemove = record;
                     break;
@@ -448,7 +448,7 @@ public class XsdRecordset extends XsdDataObject {
             if (recordToRemove != null)
             {
                 // Set as Status as Deleted
-                recordToRemove.SetStatus(ECoalesceDataObjectStatus.DELETED);
+                recordToRemove.setStatus(ECoalesceDataObjectStatus.DELETED);
 
                 // Remove from the Records Collection
                 this.GetRecords().remove(recordToRemove);
@@ -466,13 +466,13 @@ public class XsdRecordset extends XsdDataObject {
     // -----------------------------------------------------------------------//
 
     @Override
-    protected String GetObjectStatus()
+    protected String getObjectStatus()
     {
         return _entityRecordset.getStatus();
     }
 
     @Override
-    protected void SetObjectStatus(String status)
+    protected void setObjectStatus(String status)
     {
         _entityRecordset.setStatus(status);
     }

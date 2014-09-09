@@ -162,13 +162,13 @@ public abstract class XsdFieldBase extends XsdDataObject {
         SetTypedValue(value.toString());
     }
 
-    public abstract DateTime GetDateCreated();
+    public abstract DateTime getDateCreated();
 
-    public abstract void SetDateCreated(DateTime value);
+    public abstract void setDateCreated(DateTime value);
 
-    public abstract DateTime GetLastModified();
+    public abstract DateTime getLastModified();
 
-    protected abstract void SetObjectLastModified(DateTime value);
+    protected abstract void setObjectLastModified(DateTime value);
 
     public CallResult SetTypedValue(String value)
     {

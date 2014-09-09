@@ -23,7 +23,7 @@ public class CoalesceEntityTemplateTest {
         try
         {
             // Test Entity
-            XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+            XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
             // Run Test
             this.testTemplate(CoalesceEntityTemplate.Create(entity));
@@ -40,7 +40,7 @@ public class CoalesceEntityTemplateTest {
         try
         {
             // Run Test
-            this.testTemplate(CoalesceEntityTemplate.Create(CoalesceTypeInstances.TESTMISSION));
+            this.testTemplate(CoalesceEntityTemplate.Create(CoalesceTypeInstances.TEST_MISSION));
         }
         catch (Exception ex)
         {
@@ -54,7 +54,7 @@ public class CoalesceEntityTemplateTest {
         try
         {
             // Load Document
-            Document XmlDoc = XmlHelper.loadXMLFrom(CoalesceTypeInstances.TESTMISSION);
+            Document XmlDoc = XmlHelper.loadXMLFrom(CoalesceTypeInstances.TEST_MISSION);
             
             // Run Test
             this.testTemplate(CoalesceEntityTemplate.Create(XmlDoc));
@@ -109,15 +109,15 @@ public class CoalesceEntityTemplateTest {
         // Create Entity from Template
         XsdEntity entity2 = template.CreateNewEntity();
 
-        String entityXml = entity2.ToXml();
+        String entityXml = entity2.toXml();
         System.out.print(entityXml);
 
         // Confirm Entity
         assertNotNull(entityXml);
-        assertNotNull(entity2.GetKey());
-        assertTrue(entity2.GetName().equalsIgnoreCase("trexmission"));
-        assertTrue(entity2.GetSource().equalsIgnoreCase("trex portal"));
-        assertTrue(entity2.GetVersion().equalsIgnoreCase("1.0.0.0"));
+        assertNotNull(entity2.getKey());
+        assertTrue(entity2.getName().equalsIgnoreCase("trexmission"));
+        assertTrue(entity2.getSource().equalsIgnoreCase("trex portal"));
+        assertTrue(entity2.getVersion().equalsIgnoreCase("1.0.0.0"));
     }
 
 }

@@ -239,7 +239,7 @@ public class CoalesceFramework {
             XsdEntity entity = this._Persister.getEntity(metaData.entityKey);
             if (entity != null)
             {
-                record = (XsdRecord) entity.GetDataObjectForNamePath(metaData.elementXPath);
+                record = (XsdRecord) entity.getDataObjectForNamePath(metaData.elementXPath);
             }
         }
 
@@ -258,7 +258,7 @@ public class CoalesceFramework {
 
             if (entity != null)
             {
-                field = (XsdField) entity.GetCoalesceDataObjectForKey(Key);
+                field = (XsdField) entity.getCoalesceDataObjectForKey(Key);
             }
         }
 
@@ -313,7 +313,7 @@ public class CoalesceFramework {
         String Xml = this.GetCoalesceEntityTemplateXml(Name, Source, Version);
 
         XsdEntity entity = new XsdEntity();
-        entity.Initialize(Xml);
+        entity.initialize(Xml);
 
         return entity;
 

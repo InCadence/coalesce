@@ -53,361 +53,361 @@ public class XsdEntityTest {
      */
 
     @Test
-    public void CreateFromXmlTest()
+    public void createFromXmlTest()
     {
 
-        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        String title = entity.GetTitle();
+        String title = entity.getTitle();
         assertEquals("NORTHCOM Volunteer Background Checks Changed, NORTHCOM Volunteer Background Checks", title);
-        assertEquals(4, entity.GetLinkages().values().size());
-        assertEquals(2, entity.GetSections().size());
+        assertEquals(4, entity.getLinkages().values().size());
+        assertEquals(2, entity.getSections().size());
         assertEquals(1,
-                     ((XsdRecordset) entity.GetDataObjectForNamePath(CoalesceTypeInstances.TESTMISSIONRECORDSETPATH)).GetCount());
+                     ((XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH)).GetCount());
         assertEquals(16,
-                     ((XsdRecordset) entity.GetDataObjectForNamePath(CoalesceTypeInstances.TESTMISSIONRECORDSETPATH)).GetFieldDefinitions().size());
+                     ((XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH)).GetFieldDefinitions().size());
         assertEquals(16,
-                     entity.GetDataObjectForNamePath(CoalesceTypeInstances.TESTMISSIONRECORDPATH).GetChildDataObjects().size());
+                     entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORD_PATH).getChildDataObjects().size());
     }
 
     @Test
-    public void CreateFromXmlEmptyTest()
+    public void createFromXmlEmptyTest()
     {
-        XsdEntity entity = XsdEntity.Create("");
+        XsdEntity entity = XsdEntity.create("");
 
         assertEmptyEntity(entity);
 
     }
 
     @Test
-    public void CreateFromXmlWhitespaceTest()
+    public void createFromXmlWhitespaceTest()
     {
-        XsdEntity entity = XsdEntity.Create("  ");
+        XsdEntity entity = XsdEntity.create("  ");
 
         assertEmptyEntity(entity);
 
     }
 
     @Test
-    public void CreateFromXmlNullTest()
+    public void createFromXmlNullTest()
     {
-        XsdEntity entity = XsdEntity.Create(null);
+        XsdEntity entity = XsdEntity.create(null);
 
         assertEmptyEntity(entity);
     }
 
     @Test
-    public void CreateFromXmlInvalidXmlTest()
+    public void createFromXmlInvalidXmlTest()
     {
-        XsdEntity entity = XsdEntity.Create("invalid format");
+        XsdEntity entity = XsdEntity.create("invalid format");
 
         assertNull(entity);
 
     }
 
     @Test
-    public void CreateFromXmlWithTitleNullTest()
+    public void createFromXmlWithTitleNullTest()
     {
-        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION, null);
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION, null);
 
-        assertEquals("TREX Portal", entity.GetTitle());
+        assertEquals("TREX Portal", entity.getTitle());
     }
 
     @Test
-    public void CreateFromXmlWithTitleEmptyStringTest()
+    public void createFromXmlWithTitleEmptyStringTest()
     {
-        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION, "");
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION, "");
 
-        assertEquals("TREX Portal", entity.GetTitle());
+        assertEquals("TREX Portal", entity.getTitle());
     }
 
     @Test
-    public void CreateFromXmlWithTitleWhiteSpaceTest()
+    public void createFromXmlWithTitleWhiteSpaceTest()
     {
-        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION, "   ");
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION, "   ");
 
-        assertEquals("TREX Portal", entity.GetTitle());
+        assertEquals("TREX Portal", entity.getTitle());
     }
 
     @Test
-    public void CreateFromXmlWithTitleNewXpathTest()
+    public void createFromXmlWithTitleNewXpathTest()
     {
-        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION,
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION,
                                             "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionName");
 
-        assertEquals(((XsdField) entity.GetDataObjectForNamePath(CoalesceTypeInstances.TESTMISSIONNAMEPATH)).GetValue(),
-                     entity.GetTitle());
+        assertEquals(((XsdField) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH)).GetValue(),
+                     entity.getTitle());
     }
 
     @Test
-    public void CreateFromXmlWithTitleNewTitleTest()
+    public void createFromXmlWithTitleNewTitleTest()
     {
-        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION, "New Mission Title");
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION, "New Mission Title");
 
-        assertEquals("New Mission Title", entity.GetTitle());
+        assertEquals("New Mission Title", entity.getTitle());
     }
 
     @Test
-    public void CreateDetailedWithoutTitleTest()
+    public void createDetailedWithoutTitleTest()
     {
-        XsdEntity entity = XsdEntity.Create("Operation", "Portal", "1.1.1.1", "Entity Id", "Entity Type");
+        XsdEntity entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", "Entity Id", "Entity Type");
 
         assertEmptyEntity(entity);
 
-        assertEquals("Operation", entity.GetName());
-        assertEquals("Portal", entity.GetSource());
-        assertEquals("1.1.1.1", entity.GetVersion());
-        assertEquals("Entity Id", entity.GetEntityId());
-        assertEquals("Entity Type", entity.GetEntityIdType());
+        assertEquals("Operation", entity.getName());
+        assertEquals("Portal", entity.getSource());
+        assertEquals("1.1.1.1", entity.getVersion());
+        assertEquals("Entity Id", entity.getEntityId());
+        assertEquals("Entity Type", entity.getEntityIdType());
 
-        assertEquals("Portal", entity.GetTitle());
+        assertEquals("Portal", entity.getTitle());
 
     }
 
     @Test
-    public void CreateDetailedWithoutTitleNullNameTest()
+    public void createDetailedWithoutTitleNullNameTest()
     {
-        XsdEntity entity = XsdEntity.Create(null, "Portal", "1.1.1.1", "Entity Id", "Entity Type");
+        XsdEntity entity = XsdEntity.create(null, "Portal", "1.1.1.1", "Entity Id", "Entity Type");
 
         assertEmptyEntity(entity);
 
-        assertEquals("", entity.GetName());
-        assertEquals("Portal", entity.GetSource());
-        assertEquals("1.1.1.1", entity.GetVersion());
-        assertEquals("Entity Id", entity.GetEntityId());
-        assertEquals("Entity Type", entity.GetEntityIdType());
+        assertEquals("", entity.getName());
+        assertEquals("Portal", entity.getSource());
+        assertEquals("1.1.1.1", entity.getVersion());
+        assertEquals("Entity Id", entity.getEntityId());
+        assertEquals("Entity Type", entity.getEntityIdType());
 
-        assertEquals("Portal", entity.GetTitle());
+        assertEquals("Portal", entity.getTitle());
 
     }
 
     @Test
-    public void CreateDetailedWithoutTitleNullSourceTest()
+    public void createDetailedWithoutTitleNullSourceTest()
     {
-        XsdEntity entity = XsdEntity.Create("Operation", null, "1.1.1.1", "Entity Id", "Entity Type");
+        XsdEntity entity = XsdEntity.create("Operation", null, "1.1.1.1", "Entity Id", "Entity Type");
 
         assertEmptyEntity(entity);
 
-        assertEquals("Operation", entity.GetName());
-        assertEquals("", entity.GetSource());
-        assertEquals("1.1.1.1", entity.GetVersion());
-        assertEquals("Entity Id", entity.GetEntityId());
-        assertEquals("Entity Type", entity.GetEntityIdType());
+        assertEquals("Operation", entity.getName());
+        assertEquals("", entity.getSource());
+        assertEquals("1.1.1.1", entity.getVersion());
+        assertEquals("Entity Id", entity.getEntityId());
+        assertEquals("Entity Type", entity.getEntityIdType());
 
-        assertEquals("", entity.GetTitle());
+        assertEquals("", entity.getTitle());
 
     }
 
     @Test
-    public void CreateDetailedWithoutTitleNullVersionTest()
+    public void createDetailedWithoutTitleNullVersionTest()
     {
-        XsdEntity entity = XsdEntity.Create("Operation", "Portal", null, "Entity Id", "Entity Type");
+        XsdEntity entity = XsdEntity.create("Operation", "Portal", null, "Entity Id", "Entity Type");
 
         assertEmptyEntity(entity);
 
-        assertEquals("Operation", entity.GetName());
-        assertEquals("Portal", entity.GetSource());
-        assertEquals("", entity.GetVersion());
-        assertEquals("Entity Id", entity.GetEntityId());
-        assertEquals("Entity Type", entity.GetEntityIdType());
+        assertEquals("Operation", entity.getName());
+        assertEquals("Portal", entity.getSource());
+        assertEquals("", entity.getVersion());
+        assertEquals("Entity Id", entity.getEntityId());
+        assertEquals("Entity Type", entity.getEntityIdType());
 
-        assertEquals("Portal", entity.GetTitle());
+        assertEquals("Portal", entity.getTitle());
 
     }
 
     @Test
-    public void CreateDetailedWithoutTitleNullEntityIdTest()
+    public void createDetailedWithoutTitleNullEntityIdTest()
     {
-        XsdEntity entity = XsdEntity.Create("Operation", "Portal", "1.1.1.1", null, "Entity Type");
+        XsdEntity entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", null, "Entity Type");
 
         assertEmptyEntity(entity);
 
-        assertEquals("Operation", entity.GetName());
-        assertEquals("Portal", entity.GetSource());
-        assertEquals("1.1.1.1", entity.GetVersion());
-        assertEquals("", entity.GetEntityId());
-        assertEquals("Entity Type", entity.GetEntityIdType());
+        assertEquals("Operation", entity.getName());
+        assertEquals("Portal", entity.getSource());
+        assertEquals("1.1.1.1", entity.getVersion());
+        assertEquals("", entity.getEntityId());
+        assertEquals("Entity Type", entity.getEntityIdType());
 
-        assertEquals("Portal", entity.GetTitle());
+        assertEquals("Portal", entity.getTitle());
 
     }
 
     @Test
-    public void CreateDetailedWithoutTitleNullEntityTypeTest()
+    public void createDetailedWithoutTitleNullEntityTypeTest()
     {
-        XsdEntity entity = XsdEntity.Create("Operation", "Portal", "1.1.1.1", "Entity Id", null);
+        XsdEntity entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", "Entity Id", null);
 
         assertEmptyEntity(entity);
 
-        assertEquals("Operation", entity.GetName());
-        assertEquals("Portal", entity.GetSource());
-        assertEquals("1.1.1.1", entity.GetVersion());
-        assertEquals("Entity Id", entity.GetEntityId());
-        assertEquals("", entity.GetEntityIdType());
+        assertEquals("Operation", entity.getName());
+        assertEquals("Portal", entity.getSource());
+        assertEquals("1.1.1.1", entity.getVersion());
+        assertEquals("Entity Id", entity.getEntityId());
+        assertEquals("", entity.getEntityIdType());
 
-        assertEquals("Portal", entity.GetTitle());
+        assertEquals("Portal", entity.getTitle());
 
     }
 
     @Test
-    public void CreateDetailedWithTitleTest()
+    public void createDetailedWithTitleTest()
     {
-        XsdEntity entity = XsdEntity.Create("Operation", "Portal", "1.1.1.1", "Entity Id", "Entity Type", "A New Title");
+        XsdEntity entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", "Entity Id", "Entity Type", "A New Title");
 
         assertEmptyEntity(entity);
 
-        assertEquals("Operation", entity.GetName());
-        assertEquals("Portal", entity.GetSource());
-        assertEquals("1.1.1.1", entity.GetVersion());
-        assertEquals("Entity Id", entity.GetEntityId());
-        assertEquals("Entity Type", entity.GetEntityIdType());
+        assertEquals("Operation", entity.getName());
+        assertEquals("Portal", entity.getSource());
+        assertEquals("1.1.1.1", entity.getVersion());
+        assertEquals("Entity Id", entity.getEntityId());
+        assertEquals("Entity Type", entity.getEntityIdType());
 
-        assertEquals("A New Title", entity.GetTitle());
+        assertEquals("A New Title", entity.getTitle());
 
     }
 
     @Test
-    public void CreateDetailedWithTitleNullNameTest()
+    public void createDetailedWithTitleNullNameTest()
     {
-        XsdEntity entity = XsdEntity.Create(null, "Portal", "1.1.1.1", "Entity Id", "Entity Type", "A New Title");
+        XsdEntity entity = XsdEntity.create(null, "Portal", "1.1.1.1", "Entity Id", "Entity Type", "A New Title");
 
         assertEmptyEntity(entity);
 
-        assertEquals("", entity.GetName());
-        assertEquals("Portal", entity.GetSource());
-        assertEquals("1.1.1.1", entity.GetVersion());
-        assertEquals("Entity Id", entity.GetEntityId());
-        assertEquals("Entity Type", entity.GetEntityIdType());
+        assertEquals("", entity.getName());
+        assertEquals("Portal", entity.getSource());
+        assertEquals("1.1.1.1", entity.getVersion());
+        assertEquals("Entity Id", entity.getEntityId());
+        assertEquals("Entity Type", entity.getEntityIdType());
 
-        assertEquals("A New Title", entity.GetTitle());
+        assertEquals("A New Title", entity.getTitle());
 
     }
 
     @Test
-    public void CreateDetailedWithTitleNullSourceTest()
+    public void createDetailedWithTitleNullSourceTest()
     {
-        XsdEntity entity = XsdEntity.Create("Operation", null, "1.1.1.1", "Entity Id", "Entity Type", "A New Title");
+        XsdEntity entity = XsdEntity.create("Operation", null, "1.1.1.1", "Entity Id", "Entity Type", "A New Title");
 
         assertEmptyEntity(entity);
 
-        assertEquals("Operation", entity.GetName());
-        assertEquals("", entity.GetSource());
-        assertEquals("1.1.1.1", entity.GetVersion());
-        assertEquals("Entity Id", entity.GetEntityId());
-        assertEquals("Entity Type", entity.GetEntityIdType());
+        assertEquals("Operation", entity.getName());
+        assertEquals("", entity.getSource());
+        assertEquals("1.1.1.1", entity.getVersion());
+        assertEquals("Entity Id", entity.getEntityId());
+        assertEquals("Entity Type", entity.getEntityIdType());
 
-        assertEquals("A New Title", entity.GetTitle());
+        assertEquals("A New Title", entity.getTitle());
 
     }
 
     @Test
-    public void CreateDetailedWithTitleNullVersionTest()
+    public void createDetailedWithTitleNullVersionTest()
     {
-        XsdEntity entity = XsdEntity.Create("Operation", "Portal", null, "Entity Id", "Entity Type", "A New Title");
+        XsdEntity entity = XsdEntity.create("Operation", "Portal", null, "Entity Id", "Entity Type", "A New Title");
 
         assertEmptyEntity(entity);
 
-        assertEquals("Operation", entity.GetName());
-        assertEquals("Portal", entity.GetSource());
-        assertEquals("", entity.GetVersion());
-        assertEquals("Entity Id", entity.GetEntityId());
-        assertEquals("Entity Type", entity.GetEntityIdType());
+        assertEquals("Operation", entity.getName());
+        assertEquals("Portal", entity.getSource());
+        assertEquals("", entity.getVersion());
+        assertEquals("Entity Id", entity.getEntityId());
+        assertEquals("Entity Type", entity.getEntityIdType());
 
-        assertEquals("A New Title", entity.GetTitle());
+        assertEquals("A New Title", entity.getTitle());
 
     }
 
     @Test
-    public void CreateDetailedWithTitleNullEntityIdTest()
+    public void createDetailedWithTitleNullEntityIdTest()
     {
-        XsdEntity entity = XsdEntity.Create("Operation", "Portal", "1.1.1.1", null, "Entity Type", "A New Title");
+        XsdEntity entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", null, "Entity Type", "A New Title");
 
         assertEmptyEntity(entity);
 
-        assertEquals("Operation", entity.GetName());
-        assertEquals("Portal", entity.GetSource());
-        assertEquals("1.1.1.1", entity.GetVersion());
-        assertEquals("", entity.GetEntityId());
-        assertEquals("Entity Type", entity.GetEntityIdType());
+        assertEquals("Operation", entity.getName());
+        assertEquals("Portal", entity.getSource());
+        assertEquals("1.1.1.1", entity.getVersion());
+        assertEquals("", entity.getEntityId());
+        assertEquals("Entity Type", entity.getEntityIdType());
 
-        assertEquals("A New Title", entity.GetTitle());
+        assertEquals("A New Title", entity.getTitle());
 
     }
 
     @Test
-    public void CreateDetailedWithTitleNullEntityTypeTest()
+    public void createDetailedWithTitleNullEntityTypeTest()
     {
-        XsdEntity entity = XsdEntity.Create("Operation", "Portal", "1.1.1.1", "Entity Id", null, "A New Title");
+        XsdEntity entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", "Entity Id", null, "A New Title");
 
         assertEmptyEntity(entity);
 
-        assertEquals("Operation", entity.GetName());
-        assertEquals("Portal", entity.GetSource());
-        assertEquals("1.1.1.1", entity.GetVersion());
-        assertEquals("Entity Id", entity.GetEntityId());
-        assertEquals("", entity.GetEntityIdType());
+        assertEquals("Operation", entity.getName());
+        assertEquals("Portal", entity.getSource());
+        assertEquals("1.1.1.1", entity.getVersion());
+        assertEquals("Entity Id", entity.getEntityId());
+        assertEquals("", entity.getEntityIdType());
 
-        assertEquals("A New Title", entity.GetTitle());
+        assertEquals("A New Title", entity.getTitle());
 
     }
 
     @Test
-    public void CreateDetailedWithTitleNullTitleTest()
+    public void createDetailedWithTitleNullTitleTest()
     {
-        XsdEntity entity = XsdEntity.Create("Operation", "Portal", "1.1.1.1", "Entity Id", "Entity Id Type", null);
+        XsdEntity entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", "Entity Id", "Entity Id Type", null);
 
         assertEmptyEntity(entity);
 
-        assertEquals("Operation", entity.GetName());
-        assertEquals("Portal", entity.GetSource());
-        assertEquals("1.1.1.1", entity.GetVersion());
-        assertEquals("Entity Id", entity.GetEntityId());
-        assertEquals("Entity Id Type", entity.GetEntityIdType());
+        assertEquals("Operation", entity.getName());
+        assertEquals("Portal", entity.getSource());
+        assertEquals("1.1.1.1", entity.getVersion());
+        assertEquals("Entity Id", entity.getEntityId());
+        assertEquals("Entity Id Type", entity.getEntityIdType());
 
-        assertEquals("Portal", entity.GetTitle());
+        assertEquals("Portal", entity.getTitle());
 
     }
 
     @Test
-    public void CreateDetailedWithTitleEmptyTitleTest()
+    public void createDetailedWithTitleEmptyTitleTest()
     {
-        XsdEntity entity = XsdEntity.Create("Operation", "Portal", "1.1.1.1", "Entity Id", "Entity Id Type", "");
+        XsdEntity entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", "Entity Id", "Entity Id Type", "");
 
         assertEmptyEntity(entity);
 
-        assertEquals("Operation", entity.GetName());
-        assertEquals("Portal", entity.GetSource());
-        assertEquals("1.1.1.1", entity.GetVersion());
-        assertEquals("Entity Id", entity.GetEntityId());
-        assertEquals("Entity Id Type", entity.GetEntityIdType());
+        assertEquals("Operation", entity.getName());
+        assertEquals("Portal", entity.getSource());
+        assertEquals("1.1.1.1", entity.getVersion());
+        assertEquals("Entity Id", entity.getEntityId());
+        assertEquals("Entity Id Type", entity.getEntityIdType());
 
-        assertEquals("Portal", entity.GetTitle());
+        assertEquals("Portal", entity.getTitle());
 
     }
 
     @Test
-    public void CreateDetailedWithTitleWhiteSpaceTitleTest()
+    public void createDetailedWithTitleWhiteSpaceTitleTest()
     {
-        XsdEntity entity = XsdEntity.Create("Operation", "Portal", "1.1.1.1", "Entity Id", "Entity Id Type", "   ");
+        XsdEntity entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", "Entity Id", "Entity Id Type", "   ");
 
         assertEmptyEntity(entity);
 
-        assertEquals("Operation", entity.GetName());
-        assertEquals("Portal", entity.GetSource());
-        assertEquals("1.1.1.1", entity.GetVersion());
-        assertEquals("Entity Id", entity.GetEntityId());
-        assertEquals("Entity Id Type", entity.GetEntityIdType());
+        assertEquals("Operation", entity.getName());
+        assertEquals("Portal", entity.getSource());
+        assertEquals("1.1.1.1", entity.getVersion());
+        assertEquals("Entity Id", entity.getEntityId());
+        assertEquals("Entity Id Type", entity.getEntityIdType());
 
-        assertEquals("Portal", entity.GetTitle());
+        assertEquals("Portal", entity.getTitle());
 
     }
 
     @Test
-    public void CreateTREXOperationWithStaticTest()
+    public void createTREXOperationWithStaticTest()
     {
 
         // Create Entity
-        XsdEntity entity = XsdEntity.Create("TREXOperation",
+        XsdEntity entity = XsdEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "",
@@ -415,25 +415,25 @@ public class XsdEntityTest {
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         // Verify Entity Creation
-        assertEquals("TREXOperation", entity.GetName());
-        assertEquals("TREX Portal", entity.GetSource());
-        assertNotNull(entity.GetLinkageSection());
-        assertTrue(entity.GetSections().isEmpty());
+        assertEquals("TREXOperation", entity.getName());
+        assertEquals("TREX Portal", entity.getSource());
+        assertNotNull(entity.getLinkageSection());
+        assertTrue(entity.getSections().isEmpty());
 
-        entity.SetAttribute("testnewattribute", "test");
+        entity.setAttribute("testnewattribute", "test");
 
         // Create Linkage Section
         XsdLinkageSection.Create(entity, true);
 
         // Verify Link Section Creation
-        assertNotNull(entity.GetLinkageSection());
+        assertNotNull(entity.getLinkageSection());
 
         // Create Live Status Section
         XsdSection liveSection = XsdSection.Create(entity, "Live Status Section", true);
         XsdRecordset liveRecordSet = XsdRecordset.Create(liveSection, "Live Status Recordset");
 
         // Verify Live Status Section Creation
-        assertNotNull(entity.GetSection("TREXOperation/Live Status Section"));
+        assertNotNull(entity.getSection("TREXOperation/Live Status Section"));
 
         XsdFieldDefinition.Create(liveRecordSet, "CurrentStatus", ECoalesceFieldDataTypes.StringType);
 
@@ -444,38 +444,38 @@ public class XsdEntityTest {
         XsdFieldDefinition.Create(informationRecordSet, "OperationName", ECoalesceFieldDataTypes.StringType);
 
         // Verify Information Section Creation
-        assertNotNull(entity.GetSection("TREXOperation/Operation Information Section"));
+        assertNotNull(entity.getSection("TREXOperation/Operation Information Section"));
 
         // Serialize
-        String entityXml = entity.ToXml();
+        String entityXml = entity.toXml();
 
         // Deserialize
         XsdEntity entity2 = new XsdEntity();
-        assertTrue(entity2.Initialize(entityXml));
+        assertTrue(entity2.initialize(entityXml));
 
         // Verify Custom Attribute
-        assertTrue(entity2.GetAttribute("testnewattribute").equals("test"));
+        assertTrue(entity2.getAttribute("testnewattribute").equals("test"));
 
         // Verify Entity
-        assertTrue(entity2.GetSource().equals("TREX Portal"));
+        assertTrue(entity2.getSource().equals("TREX Portal"));
 
         // Verify Link Section
-        assertNotNull(entity2.GetLinkageSection());
+        assertNotNull(entity2.getLinkageSection());
 
         // Verify Live Status Section
-        assertNotNull(entity2.GetSection("TREXOperation/Live Status Section"));
+        assertNotNull(entity2.getSection("TREXOperation/Live Status Section"));
 
         // Verify Information Section
-        assertNotNull(entity2.GetSection("TREXOperation/Operation Information Section"));
+        assertNotNull(entity2.getSection("TREXOperation/Operation Information Section"));
 
     }
 
     @Test
-    public void CreateTREXOperationWithInstanceCreateTest()
+    public void createTREXOperationWithInstanceCreateTest()
     {
 
         // Create Entity
-        XsdEntity entity = XsdEntity.Create("TREXOperation",
+        XsdEntity entity = XsdEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "",
@@ -483,190 +483,190 @@ public class XsdEntityTest {
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         // Verify Entity Creation
-        assertTrue(entity.GetSource().equals("TREX Portal"));
+        assertTrue(entity.getSource().equals("TREX Portal"));
 
-        entity.SetAttribute("testnewattribute", "test");
+        entity.setAttribute("testnewattribute", "test");
 
         // Verify Link Section Creation
-        assertNotNull(entity.GetLinkageSection());
+        assertNotNull(entity.getLinkageSection());
 
         // Create Live Status Section
-        XsdSection liveSection = entity.CreateSection("Live Status Section", true);
+        XsdSection liveSection = entity.createSection("Live Status Section", true);
         XsdRecordset liveRecordSet = liveSection.CreateRecordset("Live Status Recordset");
 
         // Verify Live Status Section Creation
-        assertNotNull(entity.GetSection("TREXOperation/Live Status Section"));
+        assertNotNull(entity.getSection("TREXOperation/Live Status Section"));
 
         liveRecordSet.CreateFieldDefinition("CurrentStatus", ECoalesceFieldDataTypes.StringType);
 
         // Create Information Section
-        XsdSection informationSection = entity.CreateSection("Operation Information Section", true);
+        XsdSection informationSection = entity.createSection("Operation Information Section", true);
         XsdRecordset informationRecordSet = informationSection.CreateRecordset("Operation Information Recordset");
 
         informationRecordSet.CreateFieldDefinition("OperationName", ECoalesceFieldDataTypes.StringType);
 
         // Verify Information Section Creation
-        assertNotNull(entity.GetSection("TREXOperation/Operation Information Section"));
+        assertNotNull(entity.getSection("TREXOperation/Operation Information Section"));
 
         // Serialize
-        String entityXml = entity.ToXml();
+        String entityXml = entity.toXml();
 
         // Deserialize
         XsdEntity entity2 = new XsdEntity();
-        assertTrue(entity2.Initialize(entityXml));
+        assertTrue(entity2.initialize(entityXml));
 
         // Verify Custom Attribute
-        assertTrue(entity2.GetAttribute("testnewattribute").equals("test"));
+        assertTrue(entity2.getAttribute("testnewattribute").equals("test"));
 
         // Verify Entity
-        assertTrue(entity2.GetSource().equals("TREX Portal"));
+        assertTrue(entity2.getSource().equals("TREX Portal"));
 
         // Verify Link Section
-        assertNotNull(entity2.GetLinkageSection());
+        assertNotNull(entity2.getLinkageSection());
 
         // Verify Live Status Section
-        assertNotNull(entity2.GetSection("TREXOperation/Live Status Section"));
+        assertNotNull(entity2.getSection("TREXOperation/Live Status Section"));
 
         // Verify Information Section
-        assertNotNull(entity2.GetSection("TREXOperation/Operation Information Section"));
+        assertNotNull(entity2.getSection("TREXOperation/Operation Information Section"));
 
     }
 
     @Test
-    public void InitializeFromXmlTest()
+    public void initializeFromXmlTest()
     {
 
         XsdEntity entity = new XsdEntity();
 
-        assertTrue(entity.Initialize(CoalesceTypeInstances.TESTMISSION));
+        assertTrue(entity.initialize(CoalesceTypeInstances.TEST_MISSION));
 
-        String title = entity.GetTitle();
+        String title = entity.getTitle();
         assertEquals("NORTHCOM Volunteer Background Checks Changed, NORTHCOM Volunteer Background Checks", title);
-        assertEquals(4, entity.GetLinkages().values().size());
-        assertEquals(2, entity.GetSections().size());
+        assertEquals(4, entity.getLinkages().values().size());
+        assertEquals(2, entity.getSections().size());
         assertEquals(1,
-                     ((XsdRecordset) entity.GetDataObjectForNamePath(CoalesceTypeInstances.TESTMISSIONRECORDSETPATH)).GetCount());
+                     ((XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH)).GetCount());
         assertEquals(16,
-                     ((XsdRecordset) entity.GetDataObjectForNamePath(CoalesceTypeInstances.TESTMISSIONRECORDSETPATH)).GetFieldDefinitions().size());
+                     ((XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH)).GetFieldDefinitions().size());
         assertEquals(16,
-                     entity.GetDataObjectForNamePath(CoalesceTypeInstances.TESTMISSIONRECORDPATH).GetChildDataObjects().size());
+                     entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORD_PATH).getChildDataObjects().size());
     }
 
     @Test
-    public void InitializeFromXmlEmptyTest()
+    public void initializeFromXmlEmptyTest()
     {
         XsdEntity entity = new XsdEntity();
 
-        assertTrue(entity.Initialize(""));
+        assertTrue(entity.initialize(""));
 
         assertEmptyEntity(entity);
 
     }
 
     @Test
-    public void InitializeFromXmlWhitespaceTest()
+    public void initializeFromXmlWhitespaceTest()
     {
         XsdEntity entity = new XsdEntity();
 
-        assertTrue(entity.Initialize("  "));
+        assertTrue(entity.initialize("  "));
 
         assertEmptyEntity(entity);
 
     }
 
     @Test
-    public void InitializeFromXmlNullTest()
+    public void initializeFromXmlNullTest()
     {
         XsdEntity entity = new XsdEntity();
 
-        assertTrue(entity.Initialize(null));
+        assertTrue(entity.initialize(null));
 
         assertEmptyEntity(entity);
     }
 
     @Test
-    public void InitializeFromXmlInvalidXmlTest()
+    public void initializeFromXmlInvalidXmlTest()
     {
         XsdEntity entity = new XsdEntity();
 
-        assertFalse(entity.Initialize("invalid format"));
+        assertFalse(entity.initialize("invalid format"));
 
     }
 
     @Test
-    public void InitializeTest()
+    public void initializeTest()
     {
 
         XsdEntity entity = new XsdEntity();
 
-        assertTrue(entity.Initialize());
+        assertTrue(entity.initialize());
 
         assertEmptyEntity(entity);
 
     }
 
     @Test
-    public void GetKeyFromXmlTest()
+    public void getKeyFromXmlTest()
     {
-        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        assertEquals("62857EF8-3930-4F0E-BAE3-093344EBF389", entity.GetKey());
+        assertEquals("62857EF8-3930-4F0E-BAE3-093344EBF389", entity.getKey());
 
     }
 
     @Test
-    public void GetKeyNewTest()
+    public void getKeyNewTest()
     {
-        XsdEntity entity = XsdEntity.Create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
+        XsdEntity entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
 
-        assertNotNull(GUIDHelper.IsValid(entity.GetKey()));
+        assertNotNull(GUIDHelper.IsValid(entity.getKey()));
 
     }
 
     @Test
-    public void GetNameFromXmlTest()
+    public void getNameFromXmlTest()
     {
-        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        assertEquals("TREXMission", entity.GetName());
+        assertEquals("TREXMission", entity.getName());
 
     }
 
     @Test
-    public void GetNameNewTest()
+    public void getNameNewTest()
     {
-        XsdEntity entity = XsdEntity.Create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
+        XsdEntity entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
 
-        assertEquals("Operation", entity.GetName());
+        assertEquals("Operation", entity.getName());
 
     }
 
     @Test
-    public void SetNameFromXmlTest()
+    public void setNameFromXmlTest()
     {
-        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        entity.SetName("Other Name");
+        entity.setName("Other Name");
 
-        assertEquals("Other Name", entity.GetName());
+        assertEquals("Other Name", entity.getName());
 
     }
 
     @Test
-    public void SetNameNewTest()
+    public void setNameNewTest()
     {
-        XsdEntity entity = XsdEntity.Create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
+        XsdEntity entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
 
-        entity.SetName("Other Name");
+        entity.setName("Other Name");
 
-        assertEquals("Other Name", entity.GetName());
+        assertEquals("Other Name", entity.getName());
 
     }
 
     @Test
     public void getTypeFromXmlTest()
     {
-        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         assertEquals("entity", entity.getType());
 
@@ -675,344 +675,344 @@ public class XsdEntityTest {
     @Test
     public void getTypeNewTest()
     {
-        XsdEntity entity = XsdEntity.Create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
+        XsdEntity entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
 
         assertEquals("entity", entity.getType());
 
     }
 
     @Test
-    public void GetSourceFromXmlTest()
+    public void getSourceFromXmlTest()
     {
-        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        assertEquals("TREX Portal", entity.GetSource());
+        assertEquals("TREX Portal", entity.getSource());
 
     }
 
     @Test
-    public void GetSourceNewTest()
+    public void getSourceNewTest()
     {
-        XsdEntity entity = XsdEntity.Create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
+        XsdEntity entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
 
-        assertEquals("Portal", entity.GetSource());
+        assertEquals("Portal", entity.getSource());
 
     }
 
     @Test
-    public void SetSourceFromXmlTest()
+    public void setSourceFromXmlTest()
     {
-        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        entity.SetSource("New Source");
+        entity.setSource("New Source");
 
-        assertEquals("New Source", entity.GetSource());
+        assertEquals("New Source", entity.getSource());
 
     }
 
     @Test
-    public void SetSourceNewTest()
+    public void setSourceNewTest()
     {
-        XsdEntity entity = XsdEntity.Create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
+        XsdEntity entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
 
-        entity.SetSource("New Source");
+        entity.setSource("New Source");
 
-        assertEquals("New Source", entity.GetSource());
+        assertEquals("New Source", entity.getSource());
 
     }
 
     @Test
-    public void GetVersionFromXmlTest()
+    public void getVersionFromXmlTest()
     {
-        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        assertEquals("1.0.0.0", entity.GetVersion());
+        assertEquals("1.0.0.0", entity.getVersion());
 
     }
 
     @Test
-    public void GetVersionNewTest()
+    public void getVersionNewTest()
     {
-        XsdEntity entity = XsdEntity.Create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
+        XsdEntity entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
 
-        assertEquals("1.1.1.1", entity.GetVersion());
+        assertEquals("1.1.1.1", entity.getVersion());
 
     }
 
     @Test
-    public void SetVersionFromXmlTest()
+    public void setVersionFromXmlTest()
     {
-        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        entity.SetVersion("2.3.4.5");
+        entity.setVersion("2.3.4.5");
 
-        assertEquals("2.3.4.5", entity.GetVersion());
+        assertEquals("2.3.4.5", entity.getVersion());
 
     }
 
     @Test
-    public void SetVersionNewTest()
+    public void setVersionNewTest()
     {
-        XsdEntity entity = XsdEntity.Create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
+        XsdEntity entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
 
-        entity.SetVersion("2.3.4.5");
+        entity.setVersion("2.3.4.5");
 
-        assertEquals("2.3.4.5", entity.GetVersion());
+        assertEquals("2.3.4.5", entity.getVersion());
 
     }
 
     @Test
-    public void GetEntityIdFromXmlTest()
+    public void getEntityIdFromXmlTest()
     {
-        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        assertEquals("", entity.GetEntityId());
+        assertEquals("", entity.getEntityId());
 
     }
 
     @Test
-    public void GetEntityIdNewTest()
+    public void getEntityIdNewTest()
     {
-        XsdEntity entity = XsdEntity.Create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
+        XsdEntity entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
 
-        assertEquals("Entity ID", entity.GetEntityId());
+        assertEquals("Entity ID", entity.getEntityId());
 
     }
 
     @Test
-    public void SetEntityIdFromXmlTest()
+    public void setEntityIdFromXmlTest()
     {
-        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        entity.SetEntityId("New Entity ID");
+        entity.setEntityId("New Entity ID");
 
-        assertEquals("New Entity ID", entity.GetEntityId());
+        assertEquals("New Entity ID", entity.getEntityId());
 
     }
 
     @Test
-    public void SetEntityIdNewTest()
+    public void setEntityIdNewTest()
     {
-        XsdEntity entity = XsdEntity.Create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
+        XsdEntity entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
 
-        entity.SetEntityId("New Entity ID");
+        entity.setEntityId("New Entity ID");
 
-        assertEquals("New Entity ID", entity.GetEntityId());
+        assertEquals("New Entity ID", entity.getEntityId());
 
     }
 
     @Test
-    public void GetEntityIdTypeFromXmlTest()
+    public void getEntityIdTypeFromXmlTest()
     {
-        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        assertEquals("", entity.GetEntityIdType());
+        assertEquals("", entity.getEntityIdType());
 
     }
 
     @Test
-    public void GetEntityIdTypeNewTest()
+    public void getEntityIdTypeNewTest()
     {
-        XsdEntity entity = XsdEntity.Create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
+        XsdEntity entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
 
-        assertEquals("Entity Id Type", entity.GetEntityIdType());
+        assertEquals("Entity Id Type", entity.getEntityIdType());
 
     }
 
     @Test
-    public void SetEntityIdTypeFromXmlTest()
+    public void setEntityIdTypeFromXmlTest()
     {
-        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        entity.SetEntityIdType("New Entity Id Type");
+        entity.setEntityIdType("New Entity Id Type");
 
-        assertEquals("New Entity Id Type", entity.GetEntityIdType());
+        assertEquals("New Entity Id Type", entity.getEntityIdType());
 
     }
 
     @Test
-    public void SetEntityIdTypeNewTest()
+    public void setEntityIdTypeNewTest()
     {
-        XsdEntity entity = XsdEntity.Create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
+        XsdEntity entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
 
-        assertEquals("Entity Id Type", entity.GetEntityIdType());
+        assertEquals("Entity Id Type", entity.getEntityIdType());
 
     }
 
     @Test
-    public void GetTitleXPathInvalidTest()
+    public void getTitleXPathInvalidTest()
     {
-        XsdEntity entity = XsdEntity.Create("Operation",
+        XsdEntity entity = XsdEntity.create("Operation",
                                             "Portal",
                                             "1.1.1.1",
                                             "Entity Id",
                                             "Entity Id Type",
                                             "Operation/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionName,TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/IncidentTitle");
 
-        String title = entity.GetTitle();
+        String title = entity.getTitle();
 
         assertEquals("Portal", title);
 
     }
 
     @Test
-    public void GetTitleWithoutXpathTest()
+    public void getTitleWithoutXpathTest()
     {
 
-        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSIONNOXPATHTITLE);
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_XPATH_TITLE);
 
-        String title = entity.GetTitle();
+        String title = entity.getTitle();
 
         assertEquals("TREX Portal", title);
 
     }
 
     @Test
-    public void GetTitleUpdateThatUsesXpathTest()
+    public void getTitleUpdateThatUsesXpathTest()
     {
-        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField missionName = (XsdField) entity.GetDataObjectForNamePath(CoalesceTypeInstances.TESTMISSIONNAMEPATH);
-        XsdField incidentTitle = (XsdField) entity.GetDataObjectForNamePath(CoalesceTypeInstances.TESTMISSIONINCIDENTTITLEPATH);
+        XsdField missionName = (XsdField) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+        XsdField incidentTitle = (XsdField) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_INCIDENT_TITLE_PATH);
 
         missionName.SetValue("Mission Name");
         incidentTitle.SetValue("Incident Title");
 
-        String title = entity.GetTitle();
+        String title = entity.getTitle();
         assertEquals("Mission Name, Incident Title", title);
 
     }
 
     @Test
-    public void SetTitleThatDoesNotUseXpathTest()
+    public void setTitleThatDoesNotUseXpathTest()
     {
-        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSIONNOXPATHTITLE);
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_XPATH_TITLE);
 
-        entity.SetTitle("Mission Entity Title");
+        entity.setTitle("Mission Entity Title");
 
-        assertEquals("Mission Entity Title", entity.GetTitle());
+        assertEquals("Mission Entity Title", entity.getTitle());
     }
 
     @Test
-    public void SetTitleThatUsesXpathTest()
+    public void setTitleThatUsesXpathTest()
     {
-        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        entity.SetTitle("Mission Entity Title");
+        entity.setTitle("Mission Entity Title");
 
-        assertEquals("Mission Entity Title", entity.GetTitle());
+        assertEquals("Mission Entity Title", entity.getTitle());
     }
 
     @Test
-    public void GetDateCreatedFromXmlTest()
+    public void getDateCreatedFromXmlTest()
     {
-        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        assertEquals(JodaDateTimeHelper.FromXmlDateTimeUTC("2014-05-02T14:33:51.851575Z"), entity.GetDateCreated());
+        assertEquals(JodaDateTimeHelper.FromXmlDateTimeUTC("2014-05-02T14:33:51.851575Z"), entity.getDateCreated());
 
     }
 
     @Test
-    public void GetDateCreatedNewTest()
+    public void getDateCreatedNewTest()
     {
         XsdEntity entity = new XsdEntity();
-        entity.Initialize();
+        entity.initialize();
 
         DateTime now = JodaDateTimeHelper.NowInUtc();
 
-        assertTrue(Math.abs(now.getMillis() - entity.GetDateCreated().getMillis()) < 5);
+        assertTrue(Math.abs(now.getMillis() - entity.getDateCreated().getMillis()) < 5);
     }
 
     @Test
-    public void SetDateCreatedFromXmlTest()
+    public void setDateCreatedFromXmlTest()
     {
-        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         DateTime now = JodaDateTimeHelper.NowInUtc();
 
-        entity.SetDateCreated(now);
+        entity.setDateCreated(now);
 
-        assertEquals(now, entity.GetDateCreated());
+        assertEquals(now, entity.getDateCreated());
 
     }
 
     @Test
-    public void SetDateCreatedNewTest()
+    public void setDateCreatedNewTest()
     {
         XsdEntity entity = new XsdEntity();
-        entity.Initialize();
+        entity.initialize();
 
         DateTime sixDaysAgo = JodaDateTimeHelper.NowInUtc().minusDays(6);
 
-        entity.SetDateCreated(sixDaysAgo);
+        entity.setDateCreated(sixDaysAgo);
 
-        assertEquals(sixDaysAgo, entity.GetDateCreated());
+        assertEquals(sixDaysAgo, entity.getDateCreated());
     }
 
     @Test
-    public void GetLastModifiedFromXmlTest()
+    public void getLastModifiedFromXmlTest()
     {
-        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        assertEquals(JodaDateTimeHelper.FromXmlDateTimeUTC("2014-05-20T16:17:13.2293139Z"), entity.GetLastModified());
+        assertEquals(JodaDateTimeHelper.FromXmlDateTimeUTC("2014-05-20T16:17:13.2293139Z"), entity.getLastModified());
 
     }
 
     @Test
-    public void GetLastModifiedNewTest()
+    public void getLastModifiedNewTest()
     {
         XsdEntity entity = new XsdEntity();
-        entity.Initialize();
+        entity.initialize();
 
         DateTime now = JodaDateTimeHelper.NowInUtc();
 
-        assertTrue(Math.abs(now.getMillis() - entity.GetLastModified().getMillis()) < 5);
+        assertTrue(Math.abs(now.getMillis() - entity.getLastModified().getMillis()) < 5);
     }
 
     @Test
-    public void SetLastModifiedFromXmlTest()
+    public void setLastModifiedFromXmlTest()
     {
-        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         DateTime now = JodaDateTimeHelper.NowInUtc();
 
-        entity.SetLastModified(now);
+        entity.setLastModified(now);
 
-        assertEquals(now, entity.GetLastModified());
+        assertEquals(now, entity.getLastModified());
 
     }
 
     @Test
-    public void SetLastModifiedNewTest()
+    public void setLastModifiedNewTest()
     {
         XsdEntity entity = new XsdEntity();
-        entity.Initialize();
+        entity.initialize();
 
         DateTime sixDaysAgo = JodaDateTimeHelper.NowInUtc().minusDays(6);
 
-        entity.SetLastModified(sixDaysAgo);
+        entity.setLastModified(sixDaysAgo);
 
-        assertEquals(sixDaysAgo, entity.GetLastModified());
+        assertEquals(sixDaysAgo, entity.getLastModified());
     }
 
     @Test
-    public void ArbitraryAttributesTest()
+    public void arbitraryAttributesTest()
     {
-        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        String entityXml = entity.ToXml();
+        String entityXml = entity.toXml();
 
         assertTrue(entityXml.contains("anthony=\"Test\""));
-        assertTrue(entity.GetAttribute("anthony").equals("Test"));
+        assertTrue(entity.getAttribute("anthony").equals("Test"));
 
     }
 
     @Test
-    public void GetLinkagesFromXmlTest()
+    public void getLinkagesFromXmlTest()
     {
-        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        Map<String, XsdLinkage> linkages = entity.GetLinkages();
+        Map<String, XsdLinkage> linkages = entity.getLinkages();
 
         assertEquals(4, linkages.size());
 
@@ -1035,22 +1035,22 @@ public class XsdEntityTest {
     }
 
     @Test
-    public void GetLinkagesNewTest()
+    public void getLinkagesNewTest()
     {
         XsdEntity entity = new XsdEntity();
-        entity.Initialize();
+        entity.initialize();
 
         XsdEntity entity2 = new XsdEntity();
-        entity2.Initialize();
+        entity2.initialize();
 
         XsdEntity entity3 = new XsdEntity();
-        entity3.Initialize();
+        entity3.initialize();
 
         assertTrue(EntityLinkHelper.LinkEntities(entity, ELinkTypes.HasUseOf, entity2, false));
         assertTrue(EntityLinkHelper.LinkEntities(entity, ELinkTypes.IsParentOf, entity3, false));
         assertTrue(EntityLinkHelper.LinkEntities(entity2, ELinkTypes.WasCreatedBy, entity, false));
 
-        Map<String, XsdLinkage> linkages = entity.GetLinkages();
+        Map<String, XsdLinkage> linkages = entity.getLinkages();
 
         assertEquals(3, linkages.size());
 
@@ -1059,19 +1059,19 @@ public class XsdEntityTest {
             switch (linkage.GetLinkType()) {
             case HasUseOf:
 
-                assertLinkage(entity.GetKey(), linkage.GetLinkType(), entity2.GetKey(), linkage);
+                assertLinkage(entity.getKey(), linkage.GetLinkType(), entity2.getKey(), linkage);
 
                 break;
 
             case IsParentOf:
 
-                assertLinkage(entity.GetKey(), linkage.GetLinkType(), entity3.GetKey(), linkage);
+                assertLinkage(entity.getKey(), linkage.GetLinkType(), entity3.getKey(), linkage);
 
                 break;
 
             case Created:
 
-                assertLinkage(entity.GetKey(), linkage.GetLinkType(), entity2.GetKey(), linkage);
+                assertLinkage(entity.getKey(), linkage.GetLinkType(), entity2.getKey(), linkage);
 
                 break;
 
@@ -1085,10 +1085,10 @@ public class XsdEntityTest {
     }
 
     @Test
-    public void CreateSectionTest()
+    public void createSectionTest()
     {
         // Create Entity
-        XsdEntity entity = XsdEntity.Create("TREXOperation",
+        XsdEntity entity = XsdEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "",
@@ -1096,18 +1096,18 @@ public class XsdEntityTest {
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         // Create Live Status Section
-        assertNull(entity.GetSection("TREXOperation/Live Status Section"));
+        assertNull(entity.getSection("TREXOperation/Live Status Section"));
 
-        XsdSection liveSection = entity.CreateSection("Live Status Section");
-        assertEquals(liveSection, entity.GetSection("TREXOperation/Live Status Section"));
-        assertFalse(liveSection.GetNoIndex());
+        XsdSection liveSection = entity.createSection("Live Status Section");
+        assertEquals(liveSection, entity.getSection("TREXOperation/Live Status Section"));
+        assertFalse(liveSection.getNoIndex());
     }
 
     @Test
-    public void CreateSectionExistingNoIndexTrueTest()
+    public void createSectionExistingNoIndexTrueTest()
     {
         // Create Entity
-        XsdEntity entity = XsdEntity.Create("TREXOperation",
+        XsdEntity entity = XsdEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "",
@@ -1115,41 +1115,41 @@ public class XsdEntityTest {
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         // Create Live Status Section
-        assertNull(entity.GetSection("TREXOperation/Live Status Section"));
+        assertNull(entity.getSection("TREXOperation/Live Status Section"));
 
-        XsdSection liveSection = entity.CreateSection("Live Status Section", true);
-        assertEquals(liveSection, entity.GetSection("TREXOperation/Live Status Section"));
-        assertTrue(liveSection.GetNoIndex());
+        XsdSection liveSection = entity.createSection("Live Status Section", true);
+        assertEquals(liveSection, entity.getSection("TREXOperation/Live Status Section"));
+        assertTrue(liveSection.getNoIndex());
 
-        XsdSection liveSection2 = entity.CreateSection("Live Status Section");
-        assertEquals(liveSection2, entity.GetSection("TREXOperation/Live Status Section"));
+        XsdSection liveSection2 = entity.createSection("Live Status Section");
+        assertEquals(liveSection2, entity.getSection("TREXOperation/Live Status Section"));
         assertEquals(liveSection, liveSection2);
-        assertFalse(liveSection.GetNoIndex());
-        assertFalse(liveSection2.GetNoIndex());
+        assertFalse(liveSection.getNoIndex());
+        assertFalse(liveSection2.getNoIndex());
 
     }
 
     @Test
-    public void CreateSectionFromXmlTest()
+    public void createSectionFromXmlTest()
     {
 
-        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        assertNull(entity.GetSection("TREXMission/A New Section"));
+        assertNull(entity.getSection("TREXMission/A New Section"));
 
-        XsdSection newSection = entity.CreateSection("A New Section");
+        XsdSection newSection = entity.createSection("A New Section");
 
         assertNotNull(newSection);
-        assertEquals(newSection, entity.GetSection("TREXMission/A New Section"));
-        assertFalse(newSection.GetNoIndex());
+        assertEquals(newSection, entity.getSection("TREXMission/A New Section"));
+        assertFalse(newSection.getNoIndex());
 
     }
 
     @Test
-    public void CreateSectionWithNoIndexFalseTest()
+    public void createSectionWithNoIndexFalseTest()
     {
         // Create Entity
-        XsdEntity entity = XsdEntity.Create("TREXOperation",
+        XsdEntity entity = XsdEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "",
@@ -1157,18 +1157,18 @@ public class XsdEntityTest {
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         // Create Live Status Section
-        assertNull(entity.GetSection("TREXOperation/Live Status Section"));
+        assertNull(entity.getSection("TREXOperation/Live Status Section"));
 
-        XsdSection liveSection = entity.CreateSection("Live Status Section", false);
-        assertEquals(liveSection, entity.GetSection("TREXOperation/Live Status Section"));
-        assertFalse(liveSection.GetNoIndex());
+        XsdSection liveSection = entity.createSection("Live Status Section", false);
+        assertEquals(liveSection, entity.getSection("TREXOperation/Live Status Section"));
+        assertFalse(liveSection.getNoIndex());
     }
 
     @Test
-    public void CreateSectionWithNoIndexTrueTest()
+    public void createSectionWithNoIndexTrueTest()
     {
         // Create Entity
-        XsdEntity entity = XsdEntity.Create("TREXOperation",
+        XsdEntity entity = XsdEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "",
@@ -1176,19 +1176,19 @@ public class XsdEntityTest {
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         // Create Live Status Section
-        assertNull(entity.GetSection("TREXOperation/Live Status Section"));
+        assertNull(entity.getSection("TREXOperation/Live Status Section"));
 
-        XsdSection liveSection = entity.CreateSection("Live Status Section", true);
-        assertEquals(liveSection, entity.GetSection("TREXOperation/Live Status Section"));
-        assertTrue(liveSection.GetNoIndex());
+        XsdSection liveSection = entity.createSection("Live Status Section", true);
+        assertEquals(liveSection, entity.getSection("TREXOperation/Live Status Section"));
+        assertTrue(liveSection.getNoIndex());
 
     }
 
     @Test
-    public void CreateSectionWithNoIndexTrueForExistingNoIndexFalseTest()
+    public void createSectionWithNoIndexTrueForExistingNoIndexFalseTest()
     {
         // Create Entity
-        XsdEntity entity = XsdEntity.Create("TREXOperation",
+        XsdEntity entity = XsdEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "",
@@ -1196,55 +1196,55 @@ public class XsdEntityTest {
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         // Create Live Status Section
-        assertNull(entity.GetSection("TREXOperation/Live Status Section"));
+        assertNull(entity.getSection("TREXOperation/Live Status Section"));
 
-        XsdSection liveSection = entity.CreateSection("Live Status Section", false);
-        assertEquals(liveSection, entity.GetSection("TREXOperation/Live Status Section"));
-        assertFalse(liveSection.GetNoIndex());
+        XsdSection liveSection = entity.createSection("Live Status Section", false);
+        assertEquals(liveSection, entity.getSection("TREXOperation/Live Status Section"));
+        assertFalse(liveSection.getNoIndex());
 
-        XsdSection liveSection2 = entity.CreateSection("Live Status Section", true);
-        assertEquals(liveSection2, entity.GetSection("TREXOperation/Live Status Section"));
+        XsdSection liveSection2 = entity.createSection("Live Status Section", true);
+        assertEquals(liveSection2, entity.getSection("TREXOperation/Live Status Section"));
         assertEquals(liveSection, liveSection2);
-        assertTrue(liveSection.GetNoIndex());
-        assertTrue(liveSection2.GetNoIndex());
+        assertTrue(liveSection.getNoIndex());
+        assertTrue(liveSection2.getNoIndex());
 
     }
 
     @Test
-    public void CreateSectionWithNoIndexTrueFromXmlTest()
+    public void createSectionWithNoIndexTrueFromXmlTest()
     {
 
-        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        assertNull(entity.GetSection("TREXMission/A New Section"));
+        assertNull(entity.getSection("TREXMission/A New Section"));
 
-        XsdSection newSection = entity.CreateSection("A New Section", true);
+        XsdSection newSection = entity.createSection("A New Section", true);
 
         assertNotNull(newSection);
-        assertEquals(newSection, entity.GetSection("TREXMission/A New Section"));
-        assertTrue(newSection.GetNoIndex());
+        assertEquals(newSection, entity.getSection("TREXMission/A New Section"));
+        assertTrue(newSection.getNoIndex());
 
-        String entityXml = entity.ToXml();
+        String entityXml = entity.toXml();
 
-        XsdEntity desEntity = XsdEntity.Create(entityXml);
+        XsdEntity desEntity = XsdEntity.create(entityXml);
 
-        XsdSection desSection = desEntity.GetSection("TREXMission/A New Section");
-        assertEquals(newSection.GetKey(), desSection.GetKey());
-        assertEquals(newSection.GetName(), desSection.GetName());
-        assertEquals(newSection.GetNoIndex(), desSection.GetNoIndex());
+        XsdSection desSection = desEntity.getSection("TREXMission/A New Section");
+        assertEquals(newSection.getKey(), desSection.getKey());
+        assertEquals(newSection.getName(), desSection.getName());
+        assertEquals(newSection.getNoIndex(), desSection.getNoIndex());
     }
 
     @Test
-    public void CreateSectionWithNoIndexFalseFromXmlExistingTest()
+    public void createSectionWithNoIndexFalseFromXmlExistingTest()
     {
 
-        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdSection liveSection = entity.GetSection("TREXMission/Live Status Section");
-        XsdSection informationSection = entity.GetSection("TREXMission/Mission Information Section");
+        XsdSection liveSection = entity.getSection("TREXMission/Live Status Section");
+        XsdSection informationSection = entity.getSection("TREXMission/Mission Information Section");
 
-        XsdSection createdLiveSection = entity.CreateSection("Live Status Section");
-        XsdSection createdInformationSection = entity.CreateSection("Mission Information Section");
+        XsdSection createdLiveSection = entity.createSection("Live Status Section");
+        XsdSection createdInformationSection = entity.createSection("Mission Information Section");
 
         assertEquals(liveSection, createdLiveSection);
         assertEquals(informationSection, createdInformationSection);
@@ -1252,42 +1252,42 @@ public class XsdEntityTest {
     }
 
     @Test
-    public void GetSectionsFromXmlTest()
+    public void getSectionsFromXmlTest()
     {
 
-        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        Map<String, XsdSection> sections = entity.GetSections();
+        Map<String, XsdSection> sections = entity.getSections();
 
         XsdSection liveSection = sections.get("85CB4256-4CC2-4F96-A03D-5EF880989822");
 
         assertNotNull(liveSection);
-        assertEquals("85CB4256-4CC2-4F96-A03D-5EF880989822", liveSection.GetKey());
+        assertEquals("85CB4256-4CC2-4F96-A03D-5EF880989822", liveSection.getKey());
 
         XsdSection informationSection = sections.get("383EA645-E695-4E75-ADA6-0C79BEC09A18");
         assertNotNull(informationSection);
-        assertEquals("383EA645-E695-4E75-ADA6-0C79BEC09A18", informationSection.GetKey());
+        assertEquals("383EA645-E695-4E75-ADA6-0C79BEC09A18", informationSection.getKey());
 
     }
 
     @Test
-    public void GetSectionsEmptyTest()
+    public void getSectionsEmptyTest()
     {
 
-        XsdEntity entity = XsdEntity.Create("");
+        XsdEntity entity = XsdEntity.create("");
 
-        Map<String, XsdSection> sections = entity.GetSections();
+        Map<String, XsdSection> sections = entity.getSections();
 
         assertTrue(sections.isEmpty());
 
     }
 
     @Test
-    public void GetSectionsManuallyCreatedTest()
+    public void getSectionsManuallyCreatedTest()
     {
 
         // Create Entity
-        XsdEntity entity = XsdEntity.Create("TREXOperation",
+        XsdEntity entity = XsdEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "",
@@ -1295,52 +1295,52 @@ public class XsdEntityTest {
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         // Create Live Status Section
-        XsdSection liveSection = entity.CreateSection("Live Status Section", true);
+        XsdSection liveSection = entity.createSection("Live Status Section", true);
 
         // Create Information Section
-        XsdSection informationSection = entity.CreateSection("Operation Information Section", true);
+        XsdSection informationSection = entity.createSection("Operation Information Section", true);
 
-        Map<String, XsdSection> sections = entity.GetSections();
+        Map<String, XsdSection> sections = entity.getSections();
 
-        assertEquals(liveSection, sections.get(liveSection.GetKey()));
-        assertEquals(informationSection, sections.get(informationSection.GetKey()));
+        assertEquals(liveSection, sections.get(liveSection.getKey()));
+        assertEquals(informationSection, sections.get(informationSection.getKey()));
 
     }
 
     @Test
-    public void GetLinkageSectionFromXmlTest()
+    public void getLinkageSectionFromXmlTest()
     {
-        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdLinkageSection linkageSection = entity.GetLinkageSection();
+        XsdLinkageSection linkageSection = entity.getLinkageSection();
 
-        assertEquals("F4F126AF-4658-4D7F-A67F-4833F7EADDC3", linkageSection.GetKey());
+        assertEquals("F4F126AF-4658-4D7F-A67F-4833F7EADDC3", linkageSection.getKey());
 
     }
 
     @Test
-    public void GetLinkageSectionEmptyEntityTest()
+    public void getLinkageSectionEmptyEntityTest()
     {
 
         // Create Entity
-        XsdEntity entity = XsdEntity.Create("TREXOperation",
+        XsdEntity entity = XsdEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "",
                                             "",
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
-        XsdLinkageSection entityLinkageSection = entity.GetLinkageSection();
+        XsdLinkageSection entityLinkageSection = entity.getLinkageSection();
         assertNotNull(entityLinkageSection);
 
     }
 
     @Test
-    public void GetLinkagesForEntityNameFoundTest()
+    public void getLinkagesForEntityNameFoundTest()
     {
-        Entities entities = CreateEntityLinkages();
+        Entities entities = createEntityLinkages();
 
-        Map<String, XsdLinkage> linkages = entities.Entity.GetLinkages("Operation");
+        Map<String, XsdLinkage> linkages = entities.Entity.getLinkages("Operation");
 
         assertEquals(3, linkages.size());
 
@@ -1372,7 +1372,7 @@ public class XsdEntityTest {
             }
         }
 
-        linkages = entities.Entity.GetLinkages("Mission");
+        linkages = entities.Entity.getLinkages("Mission");
 
         assertEquals(1, linkages.size());
 
@@ -1393,23 +1393,23 @@ public class XsdEntityTest {
     }
 
     @Test
-    public void GetLinkagesForEntityNameNotFoundTest()
+    public void getLinkagesForEntityNameNotFoundTest()
     {
 
-        Entities entities = CreateEntityLinkages();
+        Entities entities = createEntityLinkages();
 
-        Map<String, XsdLinkage> linkages = entities.Entity.GetLinkages("User");
+        Map<String, XsdLinkage> linkages = entities.Entity.getLinkages("User");
 
         assertTrue(linkages.isEmpty());
 
     }
 
     @Test
-    public void GetLinkagesForLinkTypeEntityNameFoundTest()
+    public void getLinkagesForLinkTypeEntityNameFoundTest()
     {
-        Entities entities = CreateEntityLinkages();
+        Entities entities = createEntityLinkages();
 
-        Map<String, XsdLinkage> linkages = entities.Entity.GetLinkages(ELinkTypes.HasUseOf, "Operation");
+        Map<String, XsdLinkage> linkages = entities.Entity.getLinkages(ELinkTypes.HasUseOf, "Operation");
 
         assertEquals(1, linkages.size());
 
@@ -1432,23 +1432,23 @@ public class XsdEntityTest {
     }
 
     @Test
-    public void GetLinkagesForLinkTypeEntityNameNotFoundTest()
+    public void getLinkagesForLinkTypeEntityNameNotFoundTest()
     {
 
-        Entities entities = CreateEntityLinkages();
+        Entities entities = createEntityLinkages();
 
-        Map<String, XsdLinkage> linkages = entities.Entity.GetLinkages("User");
+        Map<String, XsdLinkage> linkages = entities.Entity.getLinkages("User");
 
         assertTrue(linkages.isEmpty());
 
     }
 
     @Test
-    public void GetLinkagesForLinkTypeFoundTest()
+    public void getLinkagesForLinkTypeFoundTest()
     {
-        Entities entities = CreateEntityLinkages();
+        Entities entities = createEntityLinkages();
 
-        Map<String, XsdLinkage> linkages = entities.Entity.GetLinkages(ELinkTypes.HasUseOf);
+        Map<String, XsdLinkage> linkages = entities.Entity.getLinkages(ELinkTypes.HasUseOf);
 
         assertEquals(1, linkages.size());
 
@@ -1471,34 +1471,34 @@ public class XsdEntityTest {
     }
 
     @Test
-    public void GetLinkagesForLinkTypeNotFoundTest()
+    public void getLinkagesForLinkTypeNotFoundTest()
     {
 
-        Entities entities = CreateEntityLinkages();
+        Entities entities = createEntityLinkages();
 
-        Map<String, XsdLinkage> linkages = entities.Entity.GetLinkages(ELinkTypes.IsAMemberOf);
+        Map<String, XsdLinkage> linkages = entities.Entity.getLinkages(ELinkTypes.IsAMemberOf);
 
         assertTrue(linkages.isEmpty());
 
     }
 
     @Test
-    public void GetLinkagesForLinkTypeNullTest()
+    public void getLinkagesForLinkTypeNullTest()
     {
-        Entities entities = CreateEntityLinkages();
+        Entities entities = createEntityLinkages();
 
-        Map<String, XsdLinkage> linkages = entities.Entity.GetLinkages((ELinkTypes) null);
+        Map<String, XsdLinkage> linkages = entities.Entity.getLinkages((ELinkTypes) null);
 
         assertTrue(linkages.isEmpty());
 
     }
 
     @Test
-    public void GetLinkagesForLinkTypeEntityNameEntitySourceFoundTest()
+    public void getLinkagesForLinkTypeEntityNameEntitySourceFoundTest()
     {
-        Entities entities = CreateEntityLinkages();
+        Entities entities = createEntityLinkages();
 
-        Map<String, XsdLinkage> linkages = entities.Entity.GetLinkages(ELinkTypes.HasUseOf, "Operation", "Portal");
+        Map<String, XsdLinkage> linkages = entities.Entity.getLinkages(ELinkTypes.HasUseOf, "Operation", "Portal");
 
         assertEquals(1, linkages.size());
 
@@ -1521,23 +1521,23 @@ public class XsdEntityTest {
     }
 
     @Test
-    public void GetLinkagesForLinkTypeEntityNameEntitySourceNotFoundTest()
+    public void getLinkagesForLinkTypeEntityNameEntitySourceNotFoundTest()
     {
 
-        Entities entities = CreateEntityLinkages();
+        Entities entities = createEntityLinkages();
 
-        Map<String, XsdLinkage> linkages = entities.Entity.GetLinkages(ELinkTypes.HasOwnershipOf, "Operation", "Portal0");
+        Map<String, XsdLinkage> linkages = entities.Entity.getLinkages(ELinkTypes.HasOwnershipOf, "Operation", "Portal0");
 
         assertTrue(linkages.isEmpty());
 
     }
 
     @Test
-    public void GetLinkagesForLinkTypesEntityNameFoundTest()
+    public void getLinkagesForLinkTypesEntityNameFoundTest()
     {
-        Entities entities = CreateEntityLinkages();
+        Entities entities = createEntityLinkages();
 
-        Map<String, XsdLinkage> linkages = entities.Entity.GetLinkages(Arrays.asList(ELinkTypes.HasUseOf, ELinkTypes.Created),
+        Map<String, XsdLinkage> linkages = entities.Entity.getLinkages(Arrays.asList(ELinkTypes.HasUseOf, ELinkTypes.Created),
                                                                        "Operation");
 
         assertEquals(2, linkages.size());
@@ -1567,11 +1567,11 @@ public class XsdEntityTest {
     }
 
     @Test
-    public void GetLinkagesForLinkTypesEntityNamePartialFoundTest()
+    public void getLinkagesForLinkTypesEntityNamePartialFoundTest()
     {
-        Entities entities = CreateEntityLinkages();
+        Entities entities = createEntityLinkages();
 
-        Map<String, XsdLinkage> linkages = entities.Entity.GetLinkages(Arrays.asList(ELinkTypes.HasUseOf,
+        Map<String, XsdLinkage> linkages = entities.Entity.getLinkages(Arrays.asList(ELinkTypes.HasUseOf,
                                                                                      ELinkTypes.IsAPeerOf), "Operation");
 
         assertEquals(1, linkages.size());
@@ -1595,12 +1595,12 @@ public class XsdEntityTest {
     }
 
     @Test
-    public void GetLinkagesForLinkTypesEntityNameNotFoundTest()
+    public void getLinkagesForLinkTypesEntityNameNotFoundTest()
     {
 
-        Entities entities = CreateEntityLinkages();
+        Entities entities = createEntityLinkages();
 
-        Map<String, XsdLinkage> linkages = entities.Entity.GetLinkages(Arrays.asList(ELinkTypes.HasOwnershipOf,
+        Map<String, XsdLinkage> linkages = entities.Entity.getLinkages(Arrays.asList(ELinkTypes.HasOwnershipOf,
                                                                                      ELinkTypes.IsAPeerOf), "Operation");
 
         assertTrue(linkages.isEmpty());
@@ -1608,10 +1608,10 @@ public class XsdEntityTest {
     }
 
     @Test
-    public void GetSectionFromXmlTest()
+    public void getSectionFromXmlTest()
     {
         // Create Entity
-        XsdEntity entity = XsdEntity.Create("TREXOperation",
+        XsdEntity entity = XsdEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "",
@@ -1622,79 +1622,79 @@ public class XsdEntityTest {
         XsdSection.Create(entity, "Live Status Section", true);
 
         // Verify Live Status Section Creation
-        assertNotNull(entity.GetSection("TREXOperation/Live Status Section"));
+        assertNotNull(entity.getSection("TREXOperation/Live Status Section"));
 
         // Create Information Section
         XsdSection.Create(entity, "Operation Information Section", true);
 
         // Verify Information Section Creation
-        assertNotNull(entity.GetSection("TREXOperation/Operation Information Section"));
+        assertNotNull(entity.getSection("TREXOperation/Operation Information Section"));
 
     }
 
     @Test
-    public void GetEntityIdParamExistsTest()
+    public void getEntityIdParamExistsTest()
     {
 
-        XsdEntity entity = XsdEntity.Create("TREXOperation",
+        XsdEntity entity = XsdEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "First,Second",
                                             "Type1,Type2",
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
-        List<String> type1List = entity.GetEntityId("Type1");
+        List<String> type1List = entity.getEntityId("Type1");
         assertEquals(1, type1List.size());
         assertEquals("First", type1List.get(0));
         
-        List<String> type2List = entity.GetEntityId("Type2");
+        List<String> type2List = entity.getEntityId("Type2");
         assertEquals(1, type2List.size());
         assertEquals("Second", type2List.get(0));
 
     }
 
     @Test
-    public void GetEntityIdParamDoesNotExistTest()
+    public void getEntityIdParamDoesNotExistTest()
     {
 
-        XsdEntity entity = XsdEntity.Create("TREXOperation",
+        XsdEntity entity = XsdEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "First,Second",
                                             "Type1,Type2",
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
-        assertTrue(entity.GetEntityId("Type3").isEmpty());
+        assertTrue(entity.getEntityId("Type3").isEmpty());
 
     }
 
     @Test
-    public void GetEntityIdParamNullTest()
+    public void getEntityIdParamNullTest()
     {
 
-        XsdEntity entity = XsdEntity.Create("TREXOperation",
+        XsdEntity entity = XsdEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "First,Second",
                                             "Type1,Type2",
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
-        assertTrue(entity.GetEntityId(null).isEmpty());
+        assertTrue(entity.getEntityId(null).isEmpty());
 
     }
 
     @Test
-    public void GetEntityIdParamMultipleTypesTest()
+    public void getEntityIdParamMultipleTypesTest()
     {
 
-        XsdEntity entity = XsdEntity.Create("TREXOperation",
+        XsdEntity entity = XsdEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "First,Second,Third",
                                             "Type1,Type2,Type1",
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
-        List<String> ids = entity.GetEntityId("Type1");
+        List<String> ids = entity.getEntityId("Type1");
         
         assertEquals("First", ids.get(0));
         assertEquals("Third", ids.get(1));
@@ -1702,184 +1702,184 @@ public class XsdEntityTest {
     }
 
     @Test
-    public void SetEntityIdDoesNotExistTest()
+    public void setEntityIdDoesNotExistTest()
     {
-        XsdEntity entity = XsdEntity.Create("TREXOperation",
+        XsdEntity entity = XsdEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "",
                                             "",
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
-        entity.SetEntityId("Type1", "First");
+        entity.setEntityId("Type1", "First");
         
-        assertEquals("First", entity.GetEntityId());
-        assertEquals("Type1", entity.GetEntityIdType());
+        assertEquals("First", entity.getEntityId());
+        assertEquals("Type1", entity.getEntityIdType());
         
     }
     
     @Test
-    public void SetEntityIdDuplicateTypeTest()
+    public void setEntityIdDuplicateTypeTest()
     {
         
-        XsdEntity entity = XsdEntity.Create("TREXOperation",
+        XsdEntity entity = XsdEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "First",
                                             "Type1",
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
-        entity.SetEntityId("Type1", "Second");
+        entity.setEntityId("Type1", "Second");
         
-        assertEquals("First,Second", entity.GetEntityId());
-        assertEquals("Type1,Type1", entity.GetEntityIdType());
+        assertEquals("First,Second", entity.getEntityId());
+        assertEquals("Type1,Type1", entity.getEntityIdType());
         
     }
     
     @Test
-    public void SetEntityIdSingleAddTest()
+    public void setEntityIdSingleAddTest()
     {
-        XsdEntity entity = XsdEntity.Create("TREXOperation",
+        XsdEntity entity = XsdEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "First",
                                             "Type1",
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
-        entity.SetEntityId("Type2", "Second");
+        entity.setEntityId("Type2", "Second");
         
-        assertEquals("First,Second", entity.GetEntityId());
-        assertEquals("Type1,Type2", entity.GetEntityIdType());
+        assertEquals("First,Second", entity.getEntityId());
+        assertEquals("Type1,Type2", entity.getEntityIdType());
 
     }
     
     @Test
-    public void SetEntityIdMultipleAddTest()
+    public void setEntityIdMultipleAddTest()
     {
-        XsdEntity entity = XsdEntity.Create("TREXOperation",
+        XsdEntity entity = XsdEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "First,Second",
                                             "Type1,Type2",
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
-        entity.SetEntityId("Type3", "Third");
+        entity.setEntityId("Type3", "Third");
         
-        assertEquals("First,Second,Third", entity.GetEntityId());
-        assertEquals("Type1,Type2,Type3", entity.GetEntityIdType());
+        assertEquals("First,Second,Third", entity.getEntityId());
+        assertEquals("Type1,Type2,Type3", entity.getEntityIdType());
         
     }
 
     @Test
-    public void SetEntityIDNullTypeTest()
+    public void setEntityIDNullTypeTest()
     {
-        XsdEntity entity = XsdEntity.Create("TREXOperation",
+        XsdEntity entity = XsdEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "First,Second",
                                             "Type1,Type2",
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
-        assertFalse(entity.SetEntityId(null, "Third"));
-        assertEquals("First,Second", entity.GetEntityId());
-        assertEquals("Type1,Type2", entity.GetEntityIdType());
+        assertFalse(entity.setEntityId(null, "Third"));
+        assertEquals("First,Second", entity.getEntityId());
+        assertEquals("Type1,Type2", entity.getEntityIdType());
         
     }
  
     @Test
-    public void SetEntityIDNullNameTest()
+    public void setEntityIDNullNameTest()
     {
-        XsdEntity entity = XsdEntity.Create("TREXOperation",
+        XsdEntity entity = XsdEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "First,Second",
                                             "Type1,Type2",
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
-        assertFalse(entity.SetEntityId("Type3", null));
-        assertEquals("First,Second", entity.GetEntityId());
-        assertEquals("Type1,Type2", entity.GetEntityIdType());
+        assertFalse(entity.setEntityId("Type3", null));
+        assertEquals("First,Second", entity.getEntityId());
+        assertEquals("Type1,Type2", entity.getEntityIdType());
         
     }
 
     @Test
-    public void SetEntityIDNullBothTest()
+    public void setEntityIDNullBothTest()
     {
-        XsdEntity entity = XsdEntity.Create("TREXOperation",
+        XsdEntity entity = XsdEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "First,Second",
                                             "Type1,Type2",
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
-        assertFalse(entity.SetEntityId(null, null));
-        assertEquals("First,Second", entity.GetEntityId());
-        assertEquals("Type1,Type2", entity.GetEntityIdType());
-        
-    }
-    
-    @Test
-    public void MarkAsDeletedNotDeletedYetTest()
-    {
-        XsdEntity entity = XsdEntity.Create("TREXOperation",
-                                            "TREX Portal",
-                                            "1.0.0.0",
-                                            "First,Second",
-                                            "Type1,Type2",
-                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
-
-        assertEquals(ECoalesceDataObjectStatus.ACTIVE, entity.GetStatus());
-        
-        entity.MarkAsDeleted();
-        
-        assertEquals(ECoalesceDataObjectStatus.DELETED, entity.GetStatus());
+        assertFalse(entity.setEntityId(null, null));
+        assertEquals("First,Second", entity.getEntityId());
+        assertEquals("Type1,Type2", entity.getEntityIdType());
         
     }
     
     @Test
-    public void MarkAsDeletedAlreadyDeletedTest()
+    public void markAsDeletedNotDeletedYetTest()
     {
-        XsdEntity entity = XsdEntity.Create("TREXOperation",
+        XsdEntity entity = XsdEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "First,Second",
                                             "Type1,Type2",
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
-        entity.SetStatus(ECoalesceDataObjectStatus.DELETED);
+        assertEquals(ECoalesceDataObjectStatus.ACTIVE, entity.getStatus());
         
-        entity.MarkAsDeleted();
+        entity.markAsDeleted();
         
-        assertEquals(ECoalesceDataObjectStatus.DELETED, entity.GetStatus());
+        assertEquals(ECoalesceDataObjectStatus.DELETED, entity.getStatus());
         
     }
     
     @Test
-    public void FieldHistoryTest()
+    public void markAsDeletedAlreadyDeletedTest()
+    {
+        XsdEntity entity = XsdEntity.create("TREXOperation",
+                                            "TREX Portal",
+                                            "1.0.0.0",
+                                            "First,Second",
+                                            "Type1,Type2",
+                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+
+        entity.setStatus(ECoalesceDataObjectStatus.DELETED);
+        
+        entity.markAsDeleted();
+        
+        assertEquals(ECoalesceDataObjectStatus.DELETED, entity.getStatus());
+        
+    }
+    
+    @Test
+    public void fieldHistoryTest()
     {
 
-        XsdEntity entity = XsdEntity.Create(CoalesceTypeInstances.TESTMISSION);
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdDataObject xdo = entity.GetDataObjectForNamePath(CoalesceTypeInstances.TESTMISSIONNAMEPATH);
+        XsdDataObject xdo = entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
 
         assertTrue(xdo instanceof XsdField);
 
         XsdField nameField = (XsdField) xdo;
 
         assertEquals(1, nameField.GetHistory().size());
-        assertEquals(CoalesceTypeInstances.TESTMISSIONNAMEHISTORYVALUE, nameField.GetHistory().get(0).GetValue());
+        assertEquals(CoalesceTypeInstances.TEST_MISSION_NAME_HISTORY_VALUE, nameField.GetHistory().get(0).GetValue());
 
-        xdo = entity.GetDataObjectForNamePath(CoalesceTypeInstances.TESTMISSIONACTIONNUMBERPATH);
+        xdo = entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_ACTION_NUMBER_PATH);
 
         assertTrue(xdo instanceof XsdField);
 
         XsdField actionNumberField = (XsdField) xdo;
 
         assertEquals(2, actionNumberField.GetHistory().size());
-        assertEquals(CoalesceTypeInstances.TESTMISSIONACTIONNUMBERLABELHISTORY,
+        assertEquals(CoalesceTypeInstances.TEST_MISSION_ACTION_NUMBER_LABEL_HISTORY,
                      actionNumberField.GetHistory().get(0).GetLabel());
 
-        xdo = entity.GetDataObjectForNamePath(CoalesceTypeInstances.TESTMISSIONBASE64PATH);
+        xdo = entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_BASE64_PATH);
 
         assertTrue(xdo instanceof XsdField);
 
@@ -1896,8 +1896,8 @@ public class XsdEntityTest {
     private void assertEmptyEntity(XsdEntity entity)
     {
 
-        assertTrue(entity.GetLinkages().values().isEmpty());
-        assertEquals(0, entity.GetSections().size());
+        assertTrue(entity.getLinkages().values().isEmpty());
+        assertEquals(0, entity.getSections().size());
     }
 
     private void assertLinkage(String entity1Key, ELinkTypes type, String entity2Key, XsdLinkage linkage)
@@ -1910,8 +1910,8 @@ public class XsdEntityTest {
 
     private void assertLinkage(XsdEntity entity1, XsdEntity entity2, ELinkTypes type, XsdLinkage linkage)
     {
-        assertEquals(entity1.GetKey(), linkage.GetEntity1Key());
-        assertEquals(entity2.GetKey(), linkage.GetEntity2Key());
+        assertEquals(entity1.getKey(), linkage.GetEntity1Key());
+        assertEquals(entity2.getKey(), linkage.GetEntity2Key());
 
         assertEquals(type, linkage.GetLinkType());
 
@@ -1926,17 +1926,17 @@ public class XsdEntityTest {
 
     }
 
-    private Entities CreateEntityLinkages()
+    private Entities createEntityLinkages()
     {
         Entities entities = new Entities();
 
-        entities.Entity = XsdEntity.Create("Operation", "Portal", "1.1.1.1", "ID", "Type");
+        entities.Entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", "ID", "Type");
 
-        entities.Entity2 = XsdEntity.Create("Operation", "Portal", "1.2.3.4", "Id2", "Type2");
+        entities.Entity2 = XsdEntity.create("Operation", "Portal", "1.2.3.4", "Id2", "Type2");
 
-        entities.Entity3 = XsdEntity.Create("Mission", "Portal2", "2.3.4.5", "Id3", "Type3");
+        entities.Entity3 = XsdEntity.create("Mission", "Portal2", "2.3.4.5", "Id3", "Type3");
 
-        entities.Entity4 = XsdEntity.Create("Operation", "Portal2", "3.4.5.6", "Id4", "Type4");
+        entities.Entity4 = XsdEntity.create("Operation", "Portal2", "3.4.5.6", "Id4", "Type4");
 
         assertTrue(EntityLinkHelper.LinkEntities(entities.Entity, ELinkTypes.HasUseOf, entities.Entity2, false));
         assertTrue(EntityLinkHelper.LinkEntities(entities.Entity, ELinkTypes.IsParentOf, entities.Entity3, false));
