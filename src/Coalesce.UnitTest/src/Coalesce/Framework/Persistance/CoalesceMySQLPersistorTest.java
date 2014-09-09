@@ -123,13 +123,13 @@ public class CoalesceMySQLPersistorTest {
     }
 
     @Test
-    public void TestSaveEntity()
+    public void TestSaveEntityAndXPath()
     {
         try
         {
             assertTrue(CoalesceMySQLPersistorTest._coalesceFramework.SaveCoalesceEntity(_entity));
 
-            // Get Field from DB
+            // Get Field from DB Using XPath
             XsdField field = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceFieldByFieldKey(_fieldKey);
             assertTrue(field != null);
 
@@ -137,7 +137,7 @@ public class CoalesceMySQLPersistorTest {
             XsdRecord record = (XsdRecord) field.GetParent();
             assertTrue(record != null);
 
-            // Get Record from DB
+            // Get Record from DB Using XPath
             XsdRecord recordDB = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceRecord(record.GetKey());
             assertTrue(recordDB != null);
             assertTrue(recordDB.GetName().equalsIgnoreCase(record.GetName()));
@@ -392,13 +392,6 @@ public class CoalesceMySQLPersistorTest {
         {
             fail(ex.getMessage());
         }
-    }
-
-    @Test
-    public void TestGetXPath()
-    {
-        // TODO Update CoalesceFramework with call to this.
-        fail("Not yet implemented");
     }
 
     private static CoalesceEntityTemplate testTemplate(CoalesceEntityTemplate template)
