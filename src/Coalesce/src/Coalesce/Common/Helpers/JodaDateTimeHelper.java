@@ -124,6 +124,20 @@ public class JodaDateTimeHelper {
             return null;
         }
     }
+    public static DateTime getMySQLDateTime(String value)
+    {
+        try
+        {
+            if (value == null) return null;
+
+            return DateTime.parse(value.replace(" ", "T")+"Z");
+        }
+        catch (Exception ex)
+        {
+            CallResult.log(CallResults.FAILED_ERROR, ex, JodaDateTimeHelper.MODULE);
+            return null;
+        }
+    }
 
     public static String GetElapsedGMTTimeString(DateTime ForDate, boolean IncludeParenthesis, boolean IncludeTime)
     {
