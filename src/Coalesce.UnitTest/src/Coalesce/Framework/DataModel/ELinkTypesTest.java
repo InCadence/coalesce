@@ -1,4 +1,4 @@
-package Coalesce.Fra mework.DataModel;
+package Coalesce.Framework.DataModel;
 
 import static org.junit.Assert.assertEquals;
 
