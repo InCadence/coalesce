@@ -40,9 +40,11 @@ public class CoalesceSQLServerPersistorTest {
         CoalesceSettings.Initialize(new LocalConfigurationsConnector());
 
         serCon = new ServerConn();
-        serCon.setURL("jdbc:sqlserver://localhost");
-        serCon.setDatabase("database=CoalesceDatabase");
-        serCon.setIntegratedSecurity(true);
+        serCon.setUser("root");
+        serCon.setPassword("Passw0rd");
+        serCon.setServerName("localhost");
+        serCon.setPortNumber(1433); 
+        serCon.setDatabase("coalescedatabase");
 
         mySQLServerPersistor = new SQLServerPersistor();
         mySQLServerPersistor.Initialize(serCon);
@@ -68,7 +70,7 @@ public class CoalesceSQLServerPersistorTest {
 
         XsdLinkageSection.Create(_entity, true);
 
-        section = XsdSection.Create(_entity, "Live Status Section", true);
+        section = XsdSection.create(_entity, "Live Status Section", true);
         recordSet = XsdRecordset.Create(section, "Live Status Recordset");
         XsdFieldDefinition.create(recordSet, "CurrentStatus", ECoalesceFieldDataTypes.StringType);
 
@@ -79,9 +81,10 @@ public class CoalesceSQLServerPersistorTest {
         return true;
     }
     @Test
-    public void test()
+    public void test() throws CoalescePersistorException
     {
-        fail("Not yet implemented");
+        CoalesceSQLServerPersistorTest.createEntity();
+        CoalesceSQLServerPersistorTest._coalesceFramework.SaveCoalesceEntity(_entity);
     }
 
 }
