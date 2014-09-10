@@ -10,6 +10,7 @@ import org.joda.time.DateTime;
 
 import unity.core.runtime.CallResult;
 import unity.core.runtime.CallResult.CallResults;
+import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.Helpers.XmlHelper;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Fielddefinition;
@@ -65,8 +66,20 @@ public class XsdRecordset extends XsdDataObject {
     public static XsdRecordset Create(XsdSection parent, String name, int MinRecords, int MaxRecords)
     {
 
+        if (parent == null || name == null || StringHelper.IsNullOrEmpty(name.trim())) return null;
+
+        // Check that a recordset with the same name doesn't already exist
+        for (XsdRecordset recordset : parent.getRecordsets().values())
+        {
+            if (recordset.getName().equals(name))
+            {
+
+                return recordset;
+            }
+        }
+
         Recordset newEntityRecordset = new Recordset();
-        parent.GetEntityRecordSets().add(newEntityRecordset);
+        parent.getEntityRecordSets().add(newEntityRecordset);
 
         XsdRecordset newRecordset = new XsdRecordset();
         if (!newRecordset.Initialize(parent, newEntityRecordset)) return null;
@@ -148,7 +161,7 @@ public class XsdRecordset extends XsdDataObject {
     {
         return "recordset";
     }
-    
+
     public ArrayList<XsdFieldDefinition> GetFieldDefinitions()
     {
         return this._fieldDefinitions;

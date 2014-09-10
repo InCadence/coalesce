@@ -8,8 +8,7 @@ import javax.xml.namespace.QName;
 
 import org.joda.time.DateTime;
 
-import unity.core.runtime.CallResult;
-import unity.core.runtime.CallResult.CallResults;
+import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.Helpers.XmlHelper;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset;
@@ -73,13 +72,15 @@ public class XsdSection extends XsdDataObject {
      * }
      */
 
-    public static XsdSection Create(XsdEntity parent, String name)
+    public static XsdSection create(XsdEntity parent, String name)
     {
-        return XsdSection.Create(parent, name, false);
+        return XsdSection.create(parent, name, false);
     }
 
-    public static XsdSection Create(XsdEntity parent, String name, boolean noIndex)
+    public static XsdSection create(XsdEntity parent, String name, boolean noIndex)
     {
+
+        if (parent == null || name == null || StringHelper.IsNullOrEmpty(name.trim())) return null;
 
         // Check that a section with the same name doesn't already exist
         for (XsdSection section : parent.getSections().values())
@@ -96,7 +97,7 @@ public class XsdSection extends XsdDataObject {
         parent.getEntitySections().add(newEntitySection);
 
         XsdSection newSection = new XsdSection();
-        if (!newSection.Initialize(parent, newEntitySection)) return null;
+        if (!newSection.initialize(parent, newEntitySection)) return null;
 
         newSection.setName(name);
 
@@ -121,8 +122,10 @@ public class XsdSection extends XsdDataObject {
      * }catch(Exception ex){ // return Failed Error return new CallResult(CallResults.FAILED_ERROR, ex, this); } }
      */
 
-    public boolean Initialize(XsdEntity parent, Section section)
+    public boolean initialize(XsdEntity parent, Section section)
     {
+
+        if (parent == null || section == null) return false;
 
         // Set References
         _parent = parent;
@@ -192,34 +195,25 @@ public class XsdSection extends XsdDataObject {
      * }catch(Exception ex){ return new CallResult(CallResults.FAILED_ERROR, ex, this); } }
      */
 
-    public XsdRecordset CreateRecordset(String name)
+    public XsdRecordset createRecordset(String name)
     {
         return XsdRecordset.Create(this, name);
     }
 
-    public XsdRecordset GetRecordset(String NamePath)
+    public XsdRecordset getRecordset(String NamePath)
     {
-        try
+        XsdDataObject dataObject = getDataObjectForNamePath(NamePath);
+
+        if (dataObject != null && dataObject instanceof XsdRecordset)
         {
-
-            XsdDataObject dataObject = getDataObjectForNamePath(NamePath);
-
-            if (dataObject != null && dataObject instanceof XsdRecordset)
-            {
-                return (XsdRecordset) dataObject;
-            }
-
-            return null;
-
+            return (XsdRecordset) dataObject;
         }
-        catch (Exception ex)
-        {
-            CallResult.log(CallResults.FAILED_ERROR, ex, this);
-            return null;
-        }
+
+        return null;
+
     }
 
-    public Map<String, XsdRecordset> GetRecordsets()
+    public Map<String, XsdRecordset> getRecordsets()
     {
 
         Map<String, XsdRecordset> recordSets = new HashMap<String, XsdRecordset>();
@@ -304,7 +298,7 @@ public class XsdSection extends XsdDataObject {
      * @Override protected void SetObjectNoIndex(boolean value) { _entitySection.setNoindex(Boolean.toString(value)); }
      */
 
-    protected List<Recordset> GetEntityRecordSets()
+    protected List<Recordset> getEntityRecordSets()
     {
         return _entitySection.getRecordset();
     }

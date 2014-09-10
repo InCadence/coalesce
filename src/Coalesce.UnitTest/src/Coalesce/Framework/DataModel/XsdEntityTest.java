@@ -426,7 +426,7 @@ public class XsdEntityTest {
         assertTrue(entity.getLinkageSection().getName().equalsIgnoreCase("linkages"));
 
         // Create Live Status Section
-        XsdSection liveSection = XsdSection.Create(entity, "Live Status Section", true);
+        XsdSection liveSection = XsdSection.create(entity, "Live Status Section", true);
         XsdRecordset liveRecordSet = XsdRecordset.Create(liveSection, "Live Status Recordset");
 
         // Verify Live Status Section Creation
@@ -435,7 +435,7 @@ public class XsdEntityTest {
         XsdFieldDefinition.create(liveRecordSet, "CurrentStatus", ECoalesceFieldDataTypes.StringType);
 
         // Create Information Section
-        XsdSection informationSection = XsdSection.Create(entity, "Operation Information Section", true);
+        XsdSection informationSection = XsdSection.create(entity, "Operation Information Section", true);
         XsdRecordset informationRecordSet = XsdRecordset.Create(informationSection, "Operation Information Recordset");
 
         XsdFieldDefinition.create(informationRecordSet, "OperationName", ECoalesceFieldDataTypes.StringType);
@@ -489,7 +489,7 @@ public class XsdEntityTest {
 
         // Create Live Status Section
         XsdSection liveSection = entity.createSection("Live Status Section", true);
-        XsdRecordset liveRecordSet = liveSection.CreateRecordset("Live Status Recordset");
+        XsdRecordset liveRecordSet = liveSection.createRecordset("Live Status Recordset");
 
         // Verify Live Status Section Creation
         assertTrue(entity.getSection("TREXOperation/Live Status Section").getName().equalsIgnoreCase("Live Status Section"));
@@ -498,7 +498,7 @@ public class XsdEntityTest {
 
         // Create Information Section
         XsdSection informationSection = entity.createSection("Operation Information Section", true);
-        XsdRecordset informationRecordSet = informationSection.CreateRecordset("Operation Information Recordset");
+        XsdRecordset informationRecordSet = informationSection.createRecordset("Operation Information Recordset");
 
         informationRecordSet.CreateFieldDefinition("OperationName", ECoalesceFieldDataTypes.StringType);
 
@@ -1616,13 +1616,13 @@ public class XsdEntityTest {
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         // Create Live Status Section
-        XsdSection.Create(entity, "Live Status Section", true);
+        XsdSection.create(entity, "Live Status Section", true);
 
         // Verify Live Status Section Creation
         assertNotNull(entity.getSection("TREXOperation/Live Status Section"));
 
         // Create Information Section
-        XsdSection.Create(entity, "Operation Information Section", true);
+        XsdSection.create(entity, "Operation Information Section", true);
 
         // Verify Information Section Creation
         assertNotNull(entity.getSection("TREXOperation/Operation Information Section"));

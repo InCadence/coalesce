@@ -159,7 +159,7 @@ public class XsdEntity extends XsdDataObject {
         {
             XsdSection section = new XsdSection();
 
-            if (!section.Initialize(this, entitySection)) return false;
+            if (!section.initialize(this, entitySection)) return false;
 
             _childDataObjects.put(section.getKey(), section);
 
@@ -400,12 +400,12 @@ public class XsdEntity extends XsdDataObject {
 
     public XsdSection createSection(String name, boolean noIndex)
     {
-        return XsdSection.Create(this, name, noIndex);
+        return XsdSection.create(this, name, noIndex);
     }
 
     public XsdSection createSection(String name)
     {
-        return XsdSection.Create(this, name);
+        return XsdSection.create(this, name);
     }
 
     public Map<String, XsdSection> getSections()

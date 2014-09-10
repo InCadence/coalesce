@@ -269,6 +269,8 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
         try
         {
 
+            if (namePath == null) return null;
+            
             String[] names = namePath.split("/");
 
             switch (names.length) {

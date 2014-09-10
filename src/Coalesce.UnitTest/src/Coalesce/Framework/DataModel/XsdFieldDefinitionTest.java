@@ -490,7 +490,7 @@ public class XsdFieldDefinitionTest {
     {
         XsdFieldDefinition fieldDefinition = getFieldDefinitionFromXml(CoalesceTypeInstances.TEST_MISSION);
 
-        assertEquals(JodaDateTimeHelper.FromXmlDateTimeUTC("2014-05-02T14:33:51.8525751Z"), fieldDefinition.getDateCreated());
+        assertEquals(JodaDateTimeHelper.FromXmlDateTimeUTC("2014-05-02T14:33:51.8525751Z"), fieldDefinition.getLastModified());
 
         DateTime now = JodaDateTimeHelper.NowInUtc();
         fieldDefinition.setLastModified(now);
@@ -517,7 +517,7 @@ public class XsdFieldDefinitionTest {
         XsdEntity entity = new XsdEntity();
         entity.initialize();
 
-        XsdSection informationSection = XsdSection.Create(entity, "Entity Information Section", true);
+        XsdSection informationSection = XsdSection.create(entity, "Entity Information Section", true);
         XsdRecordset informationRecordSet = XsdRecordset.Create(informationSection, "Information Recordset");
 
         return informationRecordSet;
