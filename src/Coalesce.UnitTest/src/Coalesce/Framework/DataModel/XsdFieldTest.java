@@ -1,6 +1,10 @@
 package Coalesce.Framework.DataModel;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,7 +17,6 @@ import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import Coalesce.Framework.DataModel.XsdFieldCommon;
 import Coalesce.Common.Classification.Marking;
 import Coalesce.Common.Classification.MarkingValueTest;
 import Coalesce.Common.Helpers.GUIDHelper;
@@ -24,21 +27,21 @@ import Coalesce.Common.UnitTest.CoalesceTypeInstances;
 import Coalesce.Common.UnitTest.CoalesceUnitTestSettings;
 
 /*-----------------------------------------------------------------------------'
-Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
+ Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
 
-Notwithstanding any contractor copyright notice, the Government has Unlimited
-Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
-of this work other than as specifically authorized by these DFARS Clauses may
-violate Government rights in this work.
+ Notwithstanding any contractor copyright notice, the Government has Unlimited
+ Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+ of this work other than as specifically authorized by these DFARS Clauses may
+ violate Government rights in this work.
 
-DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
-Unlimited Rights. The Government has the right to use, modify, reproduce,
-perform, display, release or disclose this computer software and to have or
-authorize others to do so.
+ DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+ Unlimited Rights. The Government has the right to use, modify, reproduce,
+ perform, display, release or disclose this computer software and to have or
+ authorize others to do so.
 
-Distribution Statement D. Distribution authorized to the Department of
-Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
------------------------------------------------------------------------------*/
+ Distribution Statement D. Distribution authorized to the Department of
+ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+ -----------------------------------------------------------------------------*/
 
 public class XsdFieldTest {
 
@@ -116,7 +119,7 @@ public class XsdFieldTest {
         XsdEntity savedMission = XsdEntity.create(serializedMission);
 
         XsdField savedField = (XsdField) savedMission.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH.replace(CoalesceTypeInstances.TEST_MISSION_NAME_NAME,
-                                                                                                                                 "Testingname"));
+                                                                                                                                    "Testingname"));
 
         assertEquals("Testingname", savedField.getName());
 
@@ -581,7 +584,7 @@ public class XsdFieldTest {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         XsdRecordset parentRecordset = (XsdRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
-        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.Create(parentRecordset,
+        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.create(parentRecordset,
                                                                     "Binary",
                                                                     ECoalesceFieldDataTypes.BinaryType);
 
@@ -974,7 +977,7 @@ public class XsdFieldTest {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         XsdRecordset parentRecordset = (XsdRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
-        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.Create(parentRecordset, "Uri", ECoalesceFieldDataTypes.UriType);
+        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.create(parentRecordset, "Uri", ECoalesceFieldDataTypes.UriType);
 
         XsdRecord parentRecord = parentRecordset.GetItem(0);
         XsdField field = XsdField.Create(parentRecord, fileFieldDef);
@@ -994,7 +997,7 @@ public class XsdFieldTest {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         XsdRecordset parentRecordset = (XsdRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
-        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.Create(parentRecordset,
+        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.create(parentRecordset,
                                                                     "DateTime",
                                                                     ECoalesceFieldDataTypes.DateTimeType);
 
@@ -1045,7 +1048,7 @@ public class XsdFieldTest {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         XsdRecordset parentRecordset = (XsdRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
-        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.Create(parentRecordset,
+        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.create(parentRecordset,
                                                                     "Binary",
                                                                     ECoalesceFieldDataTypes.BinaryType);
 
@@ -1064,7 +1067,7 @@ public class XsdFieldTest {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         XsdRecordset parentRecordset = (XsdRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
-        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.Create(parentRecordset,
+        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.create(parentRecordset,
                                                                     "Binary",
                                                                     ECoalesceFieldDataTypes.BinaryType);
 
@@ -1102,7 +1105,7 @@ public class XsdFieldTest {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         XsdRecordset parentRecordset = (XsdRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
-        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.Create(parentRecordset,
+        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.create(parentRecordset,
                                                                     "Boolean",
                                                                     ECoalesceFieldDataTypes.BooleanType);
 
@@ -1139,7 +1142,7 @@ public class XsdFieldTest {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         XsdRecordset parentRecordset = (XsdRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
-        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.Create(parentRecordset,
+        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.create(parentRecordset,
                                                                     "Integer",
                                                                     ECoalesceFieldDataTypes.IntegerType);
 
@@ -1156,7 +1159,7 @@ public class XsdFieldTest {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         XsdRecordset parentRecordset = (XsdRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
-        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.Create(parentRecordset,
+        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.create(parentRecordset,
                                                                     "Integer",
                                                                     ECoalesceFieldDataTypes.IntegerType);
 
@@ -1192,7 +1195,7 @@ public class XsdFieldTest {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         XsdRecordset parentRecordset = (XsdRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
-        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.Create(parentRecordset,
+        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.create(parentRecordset,
                                                                     "GUID",
                                                                     ECoalesceFieldDataTypes.GuidType);
 
@@ -1209,7 +1212,7 @@ public class XsdFieldTest {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         XsdRecordset parentRecordset = (XsdRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
-        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.Create(parentRecordset,
+        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.create(parentRecordset,
                                                                     "GUID",
                                                                     ECoalesceFieldDataTypes.GuidType);
 
@@ -1309,7 +1312,7 @@ public class XsdFieldTest {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         XsdRecordset parentRecordset = (XsdRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
-        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.Create(parentRecordset,
+        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.create(parentRecordset,
                                                                     "File",
                                                                     ECoalesceFieldDataTypes.FileType);
 

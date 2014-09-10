@@ -2,14 +2,15 @@ package Coalesce.Framework.DataModel;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.xml.namespace.QName;
 
 import org.joda.time.DateTime;
 
-import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import unity.core.runtime.CallResult;
 import unity.core.runtime.CallResult.CallResults;
+import Coalesce.Common.Helpers.JodaDateTimeHelper;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -134,6 +135,12 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
     public void setKey(String key)
     {
         this.setObjectKey(key);
+    }
+
+    @Override
+    public void setKey(UUID guid)
+    {
+        setObjectKey(guid.toString());
     }
 
     @Override
@@ -322,7 +329,7 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
 
     public XsdDataObject getCoalesceDataObjectForKey(String key)
     {
-        XsdDataObject result = null; 
+        XsdDataObject result = null;
 
         if (this.getKey().equalsIgnoreCase(key))
         {
@@ -330,14 +337,14 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
         }
         else
         {
-            
+
             for (XsdDataObject child : _childDataObjects.values())
             {
                 result = child.getCoalesceDataObjectForKey(key);
                 if (result != null) break;
             }
         }
-        
+
         return result;
     }
 

@@ -726,7 +726,7 @@ public class XsdFieldHistoryTest {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         XsdRecordset parentRecordset = (XsdRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
-        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.Create(parentRecordset, "Uri", ECoalesceFieldDataTypes.UriType);
+        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.create(parentRecordset, "Uri", ECoalesceFieldDataTypes.UriType);
 
         XsdRecord parentRecord = parentRecordset.GetItem(0);
         XsdField field = XsdField.Create(parentRecord, fileFieldDef);
@@ -790,7 +790,7 @@ public class XsdFieldHistoryTest {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         XsdRecordset parentRecordset = (XsdRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
-        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.Create(parentRecordset,
+        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.create(parentRecordset,
                                                                     "Boolean",
                                                                     ECoalesceFieldDataTypes.BooleanType);
 
@@ -840,7 +840,7 @@ public class XsdFieldHistoryTest {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         XsdRecordset parentRecordset = (XsdRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
-        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.Create(parentRecordset,
+        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.create(parentRecordset,
                                                                     "Integer",
                                                                     ECoalesceFieldDataTypes.IntegerType);
 
@@ -891,7 +891,7 @@ public class XsdFieldHistoryTest {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         XsdRecordset parentRecordset = (XsdRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
-        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.Create(parentRecordset,
+        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.create(parentRecordset,
                                                                     "GUID",
                                                                     ECoalesceFieldDataTypes.GuidType);
 

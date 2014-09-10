@@ -97,7 +97,7 @@ public class CoalesceMySQLPersistorTest {
 
         section = XsdSection.Create(_entity, "Live Status Section", true);
         recordSet = XsdRecordset.Create(section, "Live Status Recordset");
-        XsdFieldDefinition.Create(recordSet, "CurrentStatus", ECoalesceFieldDataTypes.StringType);
+        XsdFieldDefinition.create(recordSet, "CurrentStatus", ECoalesceFieldDataTypes.StringType);
 
         record = recordSet.AddNew();
         record.SetFieldValue("CurrentStatus", "Test Status");

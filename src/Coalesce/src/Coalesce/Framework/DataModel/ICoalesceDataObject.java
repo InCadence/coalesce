@@ -1,6 +1,7 @@
 package Coalesce.Framework.DataModel;
 
 import java.util.Map;
+import java.util.UUID;
 
 import org.joda.time.DateTime;
 
@@ -21,6 +22,7 @@ public interface ICoalesceDataObject {
     // Key
     public String getKey();
     public void setKey(String value);
+    public void setKey(UUID guid);
     
     // Name
     public String getName();

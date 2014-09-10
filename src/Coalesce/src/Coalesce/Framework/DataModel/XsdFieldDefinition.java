@@ -6,6 +6,7 @@ import javax.xml.namespace.QName;
 
 import org.joda.time.DateTime;
 
+import Coalesce.Common.Classification.Marking;
 import Coalesce.Common.Helpers.XmlHelper;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Fielddefinition;
 
@@ -29,7 +30,7 @@ import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Fielddefinition
 public class XsdFieldDefinition extends XsdDataObject {
 
     // -----------------------------------------------------------------------//
-    // protected Member Variables
+    // Protected Member Variables
     // -----------------------------------------------------------------------//
 
     private Fielddefinition _entityFieldDefinition;
@@ -38,71 +39,80 @@ public class XsdFieldDefinition extends XsdDataObject {
     // Factory and Initialization
     // -----------------------------------------------------------------------//
 
-    public static XsdFieldDefinition Create(XsdRecordset parent,
+    public static XsdFieldDefinition create(XsdRecordset parent, String name, ECoalesceFieldDataTypes dataType)
+    {
+        return XsdFieldDefinition.create(parent, name, dataType, false);
+    }
+
+    public static XsdFieldDefinition create(XsdRecordset parent,
                                             String name,
                                             ECoalesceFieldDataTypes dataType,
+                                            boolean noIndex)
+    {
+        return XsdFieldDefinition.create(parent, name, dataType, "", "U", "", noIndex);
+    }
+
+    public static XsdFieldDefinition create(XsdRecordset parent,
+                                            String name,
                                             String label,
                                             String defaultClassificationMarking,
                                             boolean defaultValue)
     {
-        return XsdFieldDefinition.Create(parent, name, dataType, label, defaultClassificationMarking, defaultValue, false);
+        return XsdFieldDefinition.create(parent, name, label, defaultClassificationMarking, defaultValue, false);
     }
 
-    public static XsdFieldDefinition Create(XsdRecordset parent,
+    public static XsdFieldDefinition create(XsdRecordset parent,
                                             String name,
-                                            ECoalesceFieldDataTypes dataType,
                                             String label,
                                             String defaultClassificationMarking,
                                             boolean defaultValue,
                                             boolean noIndex)
     {
-        return XsdFieldDefinition.Create(parent,
+        return XsdFieldDefinition.create(parent,
                                          name,
-                                         dataType,
+                                         ECoalesceFieldDataTypes.BooleanType,
                                          label,
                                          defaultClassificationMarking,
                                          Boolean.toString(defaultValue),
                                          noIndex);
     }
 
-    public static XsdFieldDefinition Create(XsdRecordset parent,
+    public static XsdFieldDefinition create(XsdRecordset parent,
                                             String name,
-                                            ECoalesceFieldDataTypes dataType,
                                             String label,
                                             String defaultClassificationMarking,
                                             int defaultValue)
     {
-        return XsdFieldDefinition.Create(parent, name, dataType, label, defaultClassificationMarking, defaultValue, false);
+        return XsdFieldDefinition.create(parent, name, label, defaultClassificationMarking, defaultValue, false);
     }
 
-    public static XsdFieldDefinition Create(XsdRecordset parent,
+    public static XsdFieldDefinition create(XsdRecordset parent,
                                             String name,
-                                            ECoalesceFieldDataTypes dataType,
                                             String label,
                                             String defaultClassificationMarking,
                                             int defaultValue,
                                             boolean noIndex)
     {
-        return XsdFieldDefinition.Create(parent,
+        return XsdFieldDefinition.create(parent,
                                          name,
-                                         dataType,
+                                         ECoalesceFieldDataTypes.IntegerType,
                                          label,
                                          defaultClassificationMarking,
                                          Integer.toString(defaultValue),
                                          noIndex);
     }
 
-    public static XsdFieldDefinition Create(XsdRecordset parent,
+    public static XsdFieldDefinition create(XsdRecordset parent,
                                             String name,
                                             ECoalesceFieldDataTypes dataType,
                                             String label,
                                             String defaultClassificationMarking,
                                             String defaultValue)
     {
-        return XsdFieldDefinition.Create(parent, name, dataType, label, defaultClassificationMarking, defaultValue, false);
+        return XsdFieldDefinition.create(parent, name, dataType, label, defaultClassificationMarking, defaultValue, false);
     }
 
-    public static XsdFieldDefinition Create(XsdRecordset parent,
+    public static XsdFieldDefinition create(XsdRecordset parent,
                                             String name,
                                             ECoalesceFieldDataTypes dataType,
                                             String label,
@@ -111,54 +121,26 @@ public class XsdFieldDefinition extends XsdDataObject {
                                             boolean noIndex)
     {
 
-        XsdFieldDefinition fieldDefinition = Create(parent, name, dataType);
-
-        // Set Additional Properties
-        fieldDefinition.SetLabel(label);
-        fieldDefinition.SetDefaultClassificationMarking(defaultClassificationMarking);
-        fieldDefinition.SetDefaultValue(defaultValue);
-        fieldDefinition.setNoIndex(noIndex);
-
-        return fieldDefinition;
-
-    }
-
-    public static XsdFieldDefinition Create(XsdRecordset parent, String name, ECoalesceFieldDataTypes dataType)
-    {
-        return Create(parent, name, dataType, false);
-    }
-
-    /*
-     * public static XsdFieldDefinition Create(XsdRecordset parent, String name, ECoalesceFieldDataTypes dataType, boolean
-     * noIndex) { return Create(parent, name, ECoalesceFieldDataTypes.GetELinkTypeForLabel(dataType), noIndex); }
-     */
-    /*
-     * public static XsdFieldDefinition Create(XsdRecordset parent, String name, ECoalesceFieldDataTypes dataType) { return
-     * Create(parent, name, dataType, false); }
-     */
-    public static XsdFieldDefinition Create(XsdRecordset parent,
-                                            String name,
-                                            ECoalesceFieldDataTypes dataType,
-                                            boolean noIndex)
-    {
-
         Fielddefinition newEntityFieldDefinition = new Fielddefinition();
         parent.GetEntityFieldDefinitions().add(newEntityFieldDefinition);
 
         XsdFieldDefinition fieldDefinition = new XsdFieldDefinition();
 
-        if (!fieldDefinition.Initialize(parent, newEntityFieldDefinition)) return null;
+        if (!fieldDefinition.initialize(parent, newEntityFieldDefinition)) return null;
 
         fieldDefinition.setName(name);
-        fieldDefinition.SetDefaultClassificationMarking("U");
-        fieldDefinition.SetDefaultValue("");
         fieldDefinition.setNoIndex(noIndex);
-        fieldDefinition.SetDataType(dataType);
+        fieldDefinition.setDataType(dataType);
+
+        fieldDefinition.setLabel(label);
+        fieldDefinition.setDefaultClassificationMarking(defaultClassificationMarking);
+        fieldDefinition.setDefaultValue(defaultValue);
 
         return fieldDefinition;
+
     }
 
-    public boolean Initialize(XsdRecordset parent, Fielddefinition fieldDefinition)
+    public boolean initialize(XsdRecordset parent, Fielddefinition fieldDefinition)
     {
 
         // Set References
@@ -166,11 +148,11 @@ public class XsdFieldDefinition extends XsdDataObject {
         _entityFieldDefinition = fieldDefinition;
 
         super.initialize();
-        
+
         // Add to Parent Collections
         if (getStatus() == ECoalesceDataObjectStatus.ACTIVE)
         {
-            parent._childDataObjects.put(this.getKey(), this);
+            parent._childDataObjects.put(getKey(), this);
             parent.GetFieldDefinitions().add(this);
         }
 
@@ -211,42 +193,47 @@ public class XsdFieldDefinition extends XsdDataObject {
         return "fielddefinition";
     }
 
-    public String GetLabel()
+    public String getLabel()
     {
         return _entityFieldDefinition.getLabel();
     }
 
-    public void SetLabel(String value)
+    public void setLabel(String value)
     {
         _entityFieldDefinition.setLabel(value);
     }
 
-    public ECoalesceFieldDataTypes GetDataType()
+    public ECoalesceFieldDataTypes getDataType()
     {
         return ECoalesceFieldDataTypes.GetTypeForCoalesceType(_entityFieldDefinition.getDatatype());
     }
 
-    public void SetDataType(ECoalesceFieldDataTypes value)
+    public void setDataType(ECoalesceFieldDataTypes value)
     {
         _entityFieldDefinition.setDatatype(value.getLabel());
     }
 
-    public String GetDefaultClassificationMarking()
+    public String getDefaultClassificationMarking()
     {
         return _entityFieldDefinition.getDefaultclassificationmarking();
     }
 
-    public void SetDefaultClassificationMarking(String value)
+    public void setDefaultClassificationMarking(String value)
     {
         _entityFieldDefinition.setDefaultclassificationmarking(value);
     }
 
-    public String GetDefaultValue()
+    public void setDefaultClassificationMarking(Marking value)
+    {
+        _entityFieldDefinition.setDefaultclassificationmarking(value.ToPortionString());
+    }
+
+    public String getDefaultValue()
     {
         return _entityFieldDefinition.getDefaultvalue();
     }
 
-    public void SetDefaultValue(String value)
+    public void setDefaultValue(String value)
     {
         _entityFieldDefinition.setDefaultvalue(value);
     }

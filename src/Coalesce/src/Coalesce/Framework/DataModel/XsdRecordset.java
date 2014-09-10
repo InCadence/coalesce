@@ -101,7 +101,7 @@ public class XsdRecordset extends XsdDataObject {
         for (Fielddefinition entityFieldDefinition : _entityRecordset.getFielddefinition())
         {
             XsdFieldDefinition newFieldDefinition = new XsdFieldDefinition();
-            newFieldDefinition.Initialize(this, entityFieldDefinition);
+            newFieldDefinition.initialize(this, entityFieldDefinition);
 
         }
 
@@ -248,12 +248,12 @@ public class XsdRecordset extends XsdDataObject {
                                                     String defaultClassificationMarking,
                                                     String defaultValue)
     {
-        return XsdFieldDefinition.Create(this, name, dataType, label, defaultClassificationMarking, defaultValue);
+        return XsdFieldDefinition.create(this, name, dataType, label, defaultClassificationMarking, defaultValue);
     }
 
     public XsdFieldDefinition CreateFieldDefinition(String name, ECoalesceFieldDataTypes dataType)
     {
-        return XsdFieldDefinition.Create(this, name, dataType);
+        return XsdFieldDefinition.create(this, name, dataType);
     }
 
     public String toXml()

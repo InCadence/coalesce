@@ -61,17 +61,18 @@ public class XsdField extends XsdFieldBase {
         newField.SetSuspendHistory(true);
 
         newField.setName(fieldDefinition.getName());
-        newField.SetDataType(fieldDefinition.GetDataType());
-        newField.SetValue(fieldDefinition.GetDefaultValue());
-        newField.SetClassificationMarking(fieldDefinition.GetDefaultClassificationMarking());
-        newField.SetLabel(fieldDefinition.GetLabel());
+        newField.SetDataType(fieldDefinition.getDataType());
+        newField.SetValue(fieldDefinition.getDefaultValue());
+        newField.SetClassificationMarking(fieldDefinition.getDefaultClassificationMarking());
+        newField.SetLabel(fieldDefinition.getLabel());
+        newField.setNoIndex(fieldDefinition.getNoIndex());
 
         newField.SetSuspendHistory(false);
 
-        newField.setNoIndex(true);
 
-        // Boolean Type? If so then default initial value to false.
-        if (fieldDefinition.GetDataType() == ECoalesceFieldDataTypes.BooleanType)
+        // Boolean Type? If so then default initial value to false if not a boolean default value.
+        if (fieldDefinition.getDataType() == ECoalesceFieldDataTypes.BooleanType &&
+                !(newField.GetValue().equalsIgnoreCase("true") || newField.GetValue().equalsIgnoreCase("false")))
         {
             newField.SetValue("false");
         }

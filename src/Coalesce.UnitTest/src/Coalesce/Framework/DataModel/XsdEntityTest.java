@@ -435,13 +435,13 @@ public class XsdEntityTest {
         // Verify Live Status Section Creation
         assertNotNull(entity.getSection("TREXOperation/Live Status Section"));
 
-        XsdFieldDefinition.Create(liveRecordSet, "CurrentStatus", ECoalesceFieldDataTypes.StringType);
+        XsdFieldDefinition.create(liveRecordSet, "CurrentStatus", ECoalesceFieldDataTypes.StringType);
 
         // Create Information Section
         XsdSection informationSection = XsdSection.Create(entity, "Operation Information Section", true);
         XsdRecordset informationRecordSet = XsdRecordset.Create(informationSection, "Operation Information Recordset");
 
-        XsdFieldDefinition.Create(informationRecordSet, "OperationName", ECoalesceFieldDataTypes.StringType);
+        XsdFieldDefinition.create(informationRecordSet, "OperationName", ECoalesceFieldDataTypes.StringType);
 
         // Verify Information Section Creation
         assertNotNull(entity.getSection("TREXOperation/Operation Information Section"));
@@ -1646,7 +1646,7 @@ public class XsdEntityTest {
         List<String> type1List = entity.getEntityId("Type1");
         assertEquals(1, type1List.size());
         assertEquals("First", type1List.get(0));
-        
+
         List<String> type2List = entity.getEntityId("Type2");
         assertEquals(1, type2List.size());
         assertEquals("Second", type2List.get(0));
@@ -1695,7 +1695,7 @@ public class XsdEntityTest {
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         List<String> ids = entity.getEntityId("Type1");
-        
+
         assertEquals("First", ids.get(0));
         assertEquals("Third", ids.get(1));
 
@@ -1712,16 +1712,16 @@ public class XsdEntityTest {
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         entity.setEntityId("Type1", "First");
-        
+
         assertEquals("First", entity.getEntityId());
         assertEquals("Type1", entity.getEntityIdType());
-        
+
     }
-    
+
     @Test
     public void setEntityIdDuplicateTypeTest()
     {
-        
+
         XsdEntity entity = XsdEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
@@ -1730,12 +1730,12 @@ public class XsdEntityTest {
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         entity.setEntityId("Type1", "Second");
-        
+
         assertEquals("First,Second", entity.getEntityId());
         assertEquals("Type1,Type1", entity.getEntityIdType());
-        
+
     }
-    
+
     @Test
     public void setEntityIdSingleAddTest()
     {
@@ -1747,12 +1747,12 @@ public class XsdEntityTest {
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         entity.setEntityId("Type2", "Second");
-        
+
         assertEquals("First,Second", entity.getEntityId());
         assertEquals("Type1,Type2", entity.getEntityIdType());
 
     }
-    
+
     @Test
     public void setEntityIdMultipleAddTest()
     {
@@ -1764,10 +1764,10 @@ public class XsdEntityTest {
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         entity.setEntityId("Type3", "Third");
-        
+
         assertEquals("First,Second,Third", entity.getEntityId());
         assertEquals("Type1,Type2,Type3", entity.getEntityIdType());
-        
+
     }
 
     @Test
@@ -1783,9 +1783,9 @@ public class XsdEntityTest {
         assertFalse(entity.setEntityId(null, "Third"));
         assertEquals("First,Second", entity.getEntityId());
         assertEquals("Type1,Type2", entity.getEntityIdType());
-        
+
     }
- 
+
     @Test
     public void setEntityIDNullNameTest()
     {
@@ -1799,7 +1799,7 @@ public class XsdEntityTest {
         assertFalse(entity.setEntityId("Type3", null));
         assertEquals("First,Second", entity.getEntityId());
         assertEquals("Type1,Type2", entity.getEntityIdType());
-        
+
     }
 
     @Test
@@ -1815,9 +1815,9 @@ public class XsdEntityTest {
         assertFalse(entity.setEntityId(null, null));
         assertEquals("First,Second", entity.getEntityId());
         assertEquals("Type1,Type2", entity.getEntityIdType());
-        
+
     }
-    
+
     @Test
     public void markAsDeletedNotDeletedYetTest()
     {
@@ -1829,13 +1829,13 @@ public class XsdEntityTest {
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         assertEquals(ECoalesceDataObjectStatus.ACTIVE, entity.getStatus());
-        
+
         entity.markAsDeleted();
-        
+
         assertEquals(ECoalesceDataObjectStatus.DELETED, entity.getStatus());
-        
+
     }
-    
+
     @Test
     public void markAsDeletedAlreadyDeletedTest()
     {
@@ -1847,13 +1847,13 @@ public class XsdEntityTest {
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         entity.setStatus(ECoalesceDataObjectStatus.DELETED);
-        
+
         entity.markAsDeleted();
-        
+
         assertEquals(ECoalesceDataObjectStatus.DELETED, entity.getStatus());
-        
+
     }
-    
+
     @Test
     public void fieldHistoryTest()
     {
