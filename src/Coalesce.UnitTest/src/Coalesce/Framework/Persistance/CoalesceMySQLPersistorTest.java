@@ -275,20 +275,7 @@ public class CoalesceMySQLPersistorTest {
             // Test Entity
             lastModified = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntityLastModified(_entity.getKey(),
                                                                                                        "linkage");
-            int compareDate = DateTimeComparator.getInstance().compare(lastModified, _entity.getLastModified());
-            assertTrue(compareDate == 1);
-
-            // Test Section
-            XsdSection section = _entity.getSection("TestEntity/Live Status Section");
-
-            assertTrue(section != null);
-
-            lastModified = null;
-            lastModified = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntityLastModified("",
-                                                                                                       "section");
-            int compare = DateTimeComparator.getInstance().compare(lastModified, section.getLastModified());
-            assertTrue(compare == 0);
-
+            assertTrue(DateTimeComparator.getInstance().compare(lastModified, _entity.getLastModified()) == 1);
         }
         catch (Exception ex)
         {
