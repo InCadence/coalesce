@@ -50,7 +50,6 @@ public class XsdLinkageSection extends XsdDataObject {
         XsdLinkageSection linkageSection = new XsdLinkageSection();
         if (!linkageSection.Initialize(parent)) return null;
 
-        linkageSection.setName("Linkages");
         linkageSection.setNoIndex(noIndex);
 
         // Add to parent's child collection
@@ -72,6 +71,8 @@ public class XsdLinkageSection extends XsdDataObject {
 
         super.initialize();
         
+        this.setName("Linkages");
+
         if (_entityLinkageSection != null)
         {
 

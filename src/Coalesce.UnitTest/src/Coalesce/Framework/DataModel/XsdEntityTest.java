@@ -17,7 +17,6 @@ import org.junit.Test;
 import Coalesce.Common.Helpers.EntityLinkHelper;
 import Coalesce.Common.Helpers.GUIDHelper;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
-import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.UnitTest.CoalesceTypeInstances;
 
 /*-----------------------------------------------------------------------------'
@@ -422,9 +421,6 @@ public class XsdEntityTest {
         assertTrue(entity.getSections().isEmpty());
 
         entity.setAttribute("testnewattribute", "test");
-
-        // Create Linkage Section
-        XsdLinkageSection.Create(entity, true);
 
         // Verify Link Section Creation
         assertTrue(entity.getLinkageSection().getName().equalsIgnoreCase("linkages"));
