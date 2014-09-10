@@ -17,6 +17,7 @@ import org.junit.Test;
 import Coalesce.Common.Helpers.EntityLinkHelper;
 import Coalesce.Common.Helpers.GUIDHelper;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
+import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.UnitTest.CoalesceTypeInstances;
 
 /*-----------------------------------------------------------------------------'
@@ -426,14 +427,14 @@ public class XsdEntityTest {
         XsdLinkageSection.Create(entity, true);
 
         // Verify Link Section Creation
-        assertNotNull(entity.getLinkageSection());
+        assertTrue(entity.getLinkageSection().getName().equalsIgnoreCase("linkages"));
 
         // Create Live Status Section
         XsdSection liveSection = XsdSection.Create(entity, "Live Status Section", true);
         XsdRecordset liveRecordSet = XsdRecordset.Create(liveSection, "Live Status Recordset");
 
         // Verify Live Status Section Creation
-        assertNotNull(entity.getSection("TREXOperation/Live Status Section"));
+        assertTrue(entity.getSection("TREXOperation/Live Status Section").getName().equalsIgnoreCase("Live Status Section"));
 
         XsdFieldDefinition.create(liveRecordSet, "CurrentStatus", ECoalesceFieldDataTypes.StringType);
 
@@ -488,14 +489,14 @@ public class XsdEntityTest {
         entity.setAttribute("testnewattribute", "test");
 
         // Verify Link Section Creation
-        assertNotNull(entity.getLinkageSection());
+        assertTrue(entity.getLinkageSection().getName().equalsIgnoreCase("linkages"));
 
         // Create Live Status Section
         XsdSection liveSection = entity.createSection("Live Status Section", true);
         XsdRecordset liveRecordSet = liveSection.CreateRecordset("Live Status Recordset");
 
         // Verify Live Status Section Creation
-        assertNotNull(entity.getSection("TREXOperation/Live Status Section"));
+        assertTrue(entity.getSection("TREXOperation/Live Status Section").getName().equalsIgnoreCase("Live Status Section"));
 
         liveRecordSet.CreateFieldDefinition("CurrentStatus", ECoalesceFieldDataTypes.StringType);
 
