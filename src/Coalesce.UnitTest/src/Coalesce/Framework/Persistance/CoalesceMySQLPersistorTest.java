@@ -123,7 +123,7 @@ public class CoalesceMySQLPersistorTest {
 
         section = XsdSection.Create(_entity, sectName, true);
         recordSet = XsdRecordset.Create(section, recordsetName);
-        XsdFieldDefinition.Create(recordSet, fieldDefName, ECoalesceFieldDataTypes.StringType);
+        XsdFieldDefinition.create(recordSet, fieldDefName, ECoalesceFieldDataTypes.StringType);
 
         record = recordSet.AddNew();
         record.SetFieldValue(fieldDefName, fieldName);
