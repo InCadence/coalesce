@@ -51,6 +51,7 @@ import com.database.persister.ServerConn;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
+
 public class CoalesceMySQLPersistorTest {
 
     static ServerConn serCon;
@@ -81,7 +82,7 @@ public class CoalesceMySQLPersistorTest {
         CoalesceMySQLPersistorTest.createEntity();
     }
 
-    private static void createEntity()
+    private static boolean createEntity()
     {
         // Create Test Entity
         _entity = new XsdEntity();
@@ -103,11 +104,9 @@ public class CoalesceMySQLPersistorTest {
         record.SetFieldValue("CurrentStatus", "Test Status");
 
         _fieldKey = record.GetFieldByName("CurrentStatus").getKey();
-        System.out.println("Original Sample Entity:");
-        System.out.println("***********************\n" + _entity.toXml());
-        
+        return true;
     }
-    private static void createEntity(String entName, String entSource, String entVersion, String entID, String entTypeID, String entTitle, String sectName, String recordsetName, String fieldDefName, String fieldName)
+    private static boolean createEntity(String entName, String entSource, String entVersion, String entID, String entTypeID, String entTitle, String sectName, String recordsetName, String fieldDefName, String fieldName)
     {
         // Create Test Entity
         _entity = new XsdEntity();
@@ -128,7 +127,8 @@ public class CoalesceMySQLPersistorTest {
         record = recordSet.AddNew();
         record.SetFieldValue(fieldDefName, fieldName);
 
-        _fieldKey = record.GetFieldByName(fieldDefName).getKey();       
+        _fieldKey = record.GetFieldByName(fieldDefName).getKey();    
+        return true;
     }
 
     @Test
@@ -136,6 +136,25 @@ public class CoalesceMySQLPersistorTest {
     {
 
         try (MySQLDataConnector conn = new MySQLDataConnector(serCon))
+        {
+
+            conn.OpenConnection();
+
+        }
+        catch (Exception ex)
+        {
+            fail(ex.getMessage());
+        }
+    }
+    @Test
+    public void testFAILConnection()
+    {
+        //  Is this even needed?
+        ServerConn serConFail=new ServerConn();
+        serConFail.setURL("jdbc:mysql//localhost:3306/coalescedatabase");
+        serConFail.setPassword("Passw0rd");
+        serConFail.setUser("rot");
+        try (MySQLDataConnector conn = new MySQLDataConnector(serConFail))
         {
 
             conn.OpenConnection();
@@ -246,7 +265,36 @@ public class CoalesceMySQLPersistorTest {
             fail(ex.getMessage());
         }
     }
+    @Test
+    public void testFAILCheckLastModified()
+    {
+        try
+        {
+            DateTime lastModified;
 
+            // Test Entity
+            lastModified = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntityLastModified(_entity.getKey(),
+                                                                                                       "linkage");
+            int compareDate = DateTimeComparator.getInstance().compare(lastModified, _entity.getLastModified());
+            assertTrue(compareDate == 1);
+
+            // Test Section
+            XsdSection section = _entity.getSection("TestEntity/Live Status Section");
+
+            assertTrue(section != null);
+
+            lastModified = null;
+            lastModified = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntityLastModified("",
+                                                                                                       "section");
+            int compare = DateTimeComparator.getInstance().compare(lastModified, section.getLastModified());
+            assertTrue(compare == 0);
+
+        }
+        catch (Exception ex)
+        {
+            fail(ex.getMessage());
+        }
+    }
     @Test
     public void testGetEntityByIdAndType()
     {
@@ -300,12 +348,13 @@ public class CoalesceMySQLPersistorTest {
 
     }
     @Test
-    public void testFailureGetFieldValue()
+    public void testFAILGetFieldValue()
     {
 
         try
         {
-            CoalesceMySQLPersistorTest.createEntity();//    Create a new entity, but do not save the entity
+            //          Create a new entity, but do not save the entity
+            assertTrue(CoalesceMySQLPersistorTest.createEntity());
             String fieldValue = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceFieldValue(_fieldKey);
             assertNull(fieldValue);
         }
@@ -331,7 +380,21 @@ public class CoalesceMySQLPersistorTest {
             fail(ex.getMessage());
         }
     }
-
+    @Test
+    public void testFAILGetEntityKeyForEntityId()
+    {
+        try
+        {
+            String objectKey = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntityKeyForEntityId("",
+                                                                                                             "",
+                                                                                                             "");
+            assertTrue(objectKey == null);
+        }
+        catch (Exception ex)
+        {
+            fail(ex.getMessage());
+        }
+    }
     @Test
     public void testGetEntityKeyForEntityIdName()
     {
@@ -340,6 +403,37 @@ public class CoalesceMySQLPersistorTest {
             List<String> objectKey = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntityKeysForEntityId(_entity.getEntityId(),
                                                                                                                     _entity.getEntityIdType(),
                                                                                                                     _entity.getName(),
+                                                                                                                    _entity.getSource());
+            assertTrue(objectKey.size()>=1);
+        }
+        catch (Exception ex)
+        {
+            fail(ex.getMessage());
+        }
+    }
+    @Test
+    public void testFAILGetEntityKeyForEntityIdName()
+    {
+        try
+        {
+            List<String> objectKey = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntityKeysForEntityId("",
+                                                                                                                    "",
+                                                                                                                    "",
+                                                                                                                    "");
+            assertTrue(objectKey.size()==0);
+        }
+        catch (Exception ex)
+        {
+            fail(ex.getMessage());
+        }
+    }
+    @Test
+    public void testGetEntityKeyForEntityIdSource()
+    {
+        try
+        {
+            List<String> objectKey = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntityKeysForEntityId(_entity.getEntityId(),
+                                                                                                                    _entity.getEntityIdType(),
                                                                                                                     _entity.getName());
             assertTrue(objectKey.size() >= 0 || objectKey != null);
         }
@@ -348,24 +442,21 @@ public class CoalesceMySQLPersistorTest {
             fail(ex.getMessage());
         }
     }
-
     @Test
-    public void testGetEntityKeyForEntityIdSource()
+    public void testFAILGetEntityKeyForEntityIdSource()
     {
         try
         {
-            List<String> objectKey = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntityKeysForEntityId(_entity.getEntityId(),
-                                                                                                                    _entity.getEntityIdType(),
-                                                                                                                    _entity.getName(),
-                                                                                                                    _entity.getSource());
-            assertTrue(objectKey.size() >= 0 || objectKey != null);
+            List<String> objectKey = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntityKeysForEntityId("",
+                                                                                                                    "",
+                                                                                                                    "");
+            assertTrue(objectKey.size() == 0);
         }
         catch (Exception ex)
         {
             fail(ex.getMessage());
         }
     }
-
     @Test
     public void testGetEntityKeysForEntityIdSource()
     {
