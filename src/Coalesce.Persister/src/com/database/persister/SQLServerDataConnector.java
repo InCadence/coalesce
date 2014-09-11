@@ -2,12 +2,12 @@ package com.database.persister;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import com.microsoft.sqlserver.jdbc.SQLServerDataSource;    // Not in Maven Central Repository, MUST USE JRE 1.7
 
 import Coalesce.Common.Exceptions.CoalescePersistorException;
+
+import com.microsoft.sqlserver.jdbc.SQLServerDataSource;    // Not in Maven Central Repository, MUST USE JRE 1.7
 
 
 public class SQLServerDataConnector implements AutoCloseable {

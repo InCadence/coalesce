@@ -1,4 +1,8 @@
+/**
+ * 
+ */
 package Coalesce.Common.Exceptions;
+
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -21,15 +25,18 @@ package Coalesce.Common.Exceptions;
  * @author Tom.Johnson
  *
  */
-public class CoalescePersistorException extends CoalesceException {
+public class CoalesceException extends Exception {
 
     /**
      * 
      */
-    private static final long serialVersionUID = 6544606397288281154L;
-    
-    public CoalescePersistorException(String message, Exception ex) {
+    private static final long serialVersionUID = -675879916269321942L;
+
+    public CoalesceException(String message, Exception ex) {
         super(message, ex);
     }
-
+    
+    public CoalesceException(String message) {
+        super(message);
+    }
 }

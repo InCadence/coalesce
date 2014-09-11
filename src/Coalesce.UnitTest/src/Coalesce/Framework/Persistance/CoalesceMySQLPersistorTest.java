@@ -22,6 +22,7 @@ import org.xml.sax.SAXException;
 import unity.connector.local.LocalConfigurationsConnector;
 import unity.core.runtime.CallResult;
 import unity.core.runtime.CallResult.CallResults;
+import Coalesce.Common.Exceptions.CoalesceException;
 import Coalesce.Common.Exceptions.InvalidFieldException;
 import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.Runtime.CoalesceSettings;
@@ -60,8 +61,8 @@ import com.database.persister.ServerConn;
 
 public class CoalesceMySQLPersistorTest {
 
-    private static String MODULE_NAME = "CoalesceMySQLPersistorTest"; 
-    
+    private static String MODULE_NAME = "CoalesceMySQLPersistorTest";
+
     static ServerConn serCon;
     static MySQLPersistor mySQLPersistor;
     private static CoalesceFramework _coalesceFramework;
@@ -70,7 +71,7 @@ public class CoalesceMySQLPersistorTest {
     private static String _fieldKey;
 
     @BeforeClass
-    public static void Initialize() throws SAXException, IOException
+    public static void Initialize() throws SAXException, IOException, CoalesceException
     {
 
         CoalesceSettings.Initialize(new LocalConfigurationsConnector());
@@ -90,7 +91,7 @@ public class CoalesceMySQLPersistorTest {
         CoalesceMySQLPersistorTest.createEntity();
     }
 
-    private static boolean createEntity()
+    private static boolean createEntity() throws CoalesceException
     {
         try
         {
@@ -106,7 +107,7 @@ public class CoalesceMySQLPersistorTest {
 
             XsdLinkageSection.Create(_entity, true);
 
-        section = XsdSection.create(_entity, "Live Status Section", true);
+            section = XsdSection.create(_entity, "Live Status Section", true);
             recordSet = XsdRecordset.Create(section, "Live Status Recordset");
             XsdFieldDefinition.create(recordSet, "CurrentStatus", ECoalesceFieldDataTypes.StringType);
 
@@ -133,7 +134,7 @@ public class CoalesceMySQLPersistorTest {
                                         String sectName,
                                         String recordsetName,
                                         String fieldDefName,
-                                        String fieldName)
+                                        String fieldName) throws CoalesceException
     {
         try
         {
@@ -149,7 +150,7 @@ public class CoalesceMySQLPersistorTest {
 
             XsdLinkageSection.Create(_entity, true);
 
-        section = XsdSection.create(_entity, sectName, true);
+            section = XsdSection.create(_entity, sectName, true);
             recordSet = XsdRecordset.Create(section, recordsetName);
             XsdFieldDefinition.create(recordSet, fieldDefName, ECoalesceFieldDataTypes.StringType);
 

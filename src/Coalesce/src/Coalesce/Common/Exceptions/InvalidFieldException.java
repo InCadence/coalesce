@@ -25,13 +25,12 @@ package Coalesce.Common.Exceptions;
  * @author Tom.Johnson
  *
  */
-public class InvalidFieldException extends Exception {
+public class InvalidFieldException extends CoalesceException {
 
     private static final long serialVersionUID = 1096699796765997918L;
-
-    public InvalidFieldException(String message)
-    {
+    
+    public InvalidFieldException(String message) {
         super(message);
     }
-    
+
 }

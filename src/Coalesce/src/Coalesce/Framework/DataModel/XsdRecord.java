@@ -8,6 +8,7 @@ import javax.xml.namespace.QName;
 
 import org.joda.time.DateTime;
 
+import Coalesce.Common.Exceptions.CoalesceException;
 import Coalesce.Common.Exceptions.InvalidFieldException;
 import Coalesce.Common.Helpers.XmlHelper;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record;
@@ -207,7 +208,7 @@ public class XsdRecord extends XsdDataObject {
         return GetFields().get(Index);
     }
 
-    public String GetFieldValue(String fieldName) throws InvalidFieldException 
+    public String GetFieldValue(String fieldName) throws CoalesceException 
     {
         XsdField field = GetFieldByName(fieldName);
 
@@ -223,7 +224,7 @@ public class XsdRecord extends XsdDataObject {
         }
     }
 
-    public boolean GetBooleanFieldValue(String fieldName) throws InvalidFieldException
+    public boolean GetBooleanFieldValue(String fieldName) throws CoalesceException
     {
         XsdField field = GetFieldByName(fieldName);
 
@@ -243,7 +244,7 @@ public class XsdRecord extends XsdDataObject {
         }
     }
 
-    public int GetIntegerFieldValue(String fieldName) throws InvalidFieldException
+    public int GetIntegerFieldValue(String fieldName) throws CoalesceException
     {
         XsdField field = GetFieldByName(fieldName);
 
@@ -262,7 +263,7 @@ public class XsdRecord extends XsdDataObject {
         }
     }
 
-    public DateTime GetDateTimeFieldValue(String fieldName) throws InvalidFieldException
+    public DateTime GetDateTimeFieldValue(String fieldName) throws CoalesceException
     {
         XsdField field = GetFieldByName(fieldName);
 
@@ -281,7 +282,7 @@ public class XsdRecord extends XsdDataObject {
         }
     }
 
-    public byte[] GetBinaryFieldValue(String fieldName) throws InvalidFieldException
+    public byte[] GetBinaryFieldValue(String fieldName) throws CoalesceException
     {
         XsdField field = GetFieldByName(fieldName);
 
@@ -309,7 +310,7 @@ public class XsdRecord extends XsdDataObject {
             return value;
 
         }
-        catch (InvalidFieldException ife)
+        catch (CoalesceException ife)
         {
             return defaultValue;
         }
@@ -324,7 +325,7 @@ public class XsdRecord extends XsdDataObject {
             return value;
 
         }
-        catch (InvalidFieldException ife)
+        catch (CoalesceException ife)
         {
             return defaultValue;
         }
@@ -339,7 +340,7 @@ public class XsdRecord extends XsdDataObject {
             return value;
 
         }
-        catch (InvalidFieldException ife)
+        catch (CoalesceException ife)
         {
             return defaultValue;
         }
@@ -354,7 +355,7 @@ public class XsdRecord extends XsdDataObject {
             return value;
 
         }
-        catch (InvalidFieldException ife)
+        catch (CoalesceException ife)
         {
             return defaultValue;
         }
@@ -369,13 +370,13 @@ public class XsdRecord extends XsdDataObject {
             return value;
 
         }
-        catch (InvalidFieldException ife)
+        catch (CoalesceException ife)
         {
             return defaultValue;
         }
     }
 
-    public void SetFieldValue(String fieldName, String value) throws InvalidFieldException
+    public void SetFieldValue(String fieldName, String value) throws CoalesceException
     {
         XsdField field = GetFieldByName(fieldName);
 
@@ -390,7 +391,7 @@ public class XsdRecord extends XsdDataObject {
         }
     }
 
-    public void SetFieldValue(String fieldName, boolean value) throws InvalidFieldException
+    public void SetFieldValue(String fieldName, boolean value) throws CoalesceException
     {
         XsdField field = GetFieldByName(fieldName);
 
@@ -405,7 +406,7 @@ public class XsdRecord extends XsdDataObject {
         }
     }
 
-    public void SetFieldValue(String fieldName, int value) throws InvalidFieldException
+    public void SetFieldValue(String fieldName, int value) throws CoalesceException
     {
         XsdField field = GetFieldByName(fieldName);
 
@@ -420,7 +421,7 @@ public class XsdRecord extends XsdDataObject {
         }
     }
 
-    public void SetFieldValue(String fieldName, DateTime value) throws InvalidFieldException
+    public void SetFieldValue(String fieldName, DateTime value) throws CoalesceException
     {
         XsdField field = GetFieldByName(fieldName);
 
@@ -435,12 +436,12 @@ public class XsdRecord extends XsdDataObject {
         }
     }
 
-    public void SetFieldValue(String fieldName, byte[] value) throws InvalidFieldException
+    public void SetFieldValue(String fieldName, byte[] value) throws CoalesceException
     {
         SetFieldValue(fieldName, value, "");
     }
 
-    public void SetFieldValue(String fieldName, byte[] value, String fileName) throws InvalidFieldException
+    public void SetFieldValue(String fieldName, byte[] value, String fileName) throws CoalesceException
     {
         XsdField field = GetFieldByName(fieldName);
 

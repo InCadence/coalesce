@@ -20,8 +20,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import unity.connector.local.LocalConfigurationsConnector;
-import Coalesce.Common.Exceptions.CoalescePersistorException;
-import Coalesce.Common.Exceptions.InvalidFieldException;
+import Coalesce.Common.Exceptions.CoalesceException;
 import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.Runtime.CoalesceSettings;
 import Coalesce.Framework.CoalesceFramework;
@@ -50,7 +49,7 @@ public class CoalesceSQLServerPersistorTest {
     private static String _fieldKey;
 
     @BeforeClass
-    public static void Initialize() throws SAXException, IOException, CoalescePersistorException
+    public static void Initialize() throws SAXException, IOException, CoalesceException
     {
 
         CoalesceSettings.Initialize(new LocalConfigurationsConnector());
@@ -73,7 +72,7 @@ public class CoalesceSQLServerPersistorTest {
         CoalesceSQLServerPersistorTest._coalesceFramework.SaveCoalesceEntity(_entity);
     }
 
-    private static boolean createEntity()
+    private static boolean createEntity() throws CoalesceException
     {
         // Create Test Entity
         _entity = new XsdEntity();
@@ -92,15 +91,7 @@ public class CoalesceSQLServerPersistorTest {
         XsdFieldDefinition.create(recordSet, "CurrentStatus", ECoalesceFieldDataTypes.StringType);
 
         record = recordSet.AddNew();
-        try
-        {
-            record.SetFieldValue("CurrentStatus", "Test Status");
-        }
-        catch (InvalidFieldException e)
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        record.SetFieldValue("CurrentStatus", "Test Status");
 
         _fieldKey = record.GetFieldByName("CurrentStatus").getKey();
         return true;

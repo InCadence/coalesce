@@ -32,8 +32,6 @@ import Coalesce.Framework.DataModel.XsdRecordset;
 import Coalesce.Framework.DataModel.XsdSection;
 import Coalesce.Framework.Persistance.CoalescePersisterBase;
 import Coalesce.Framework.Persistance.ICoalesceCacher;
-import Coalesce.Framework.Persistance.ICoalescePersistor.ElementMetaData;
-import Coalesce.Framework.Persistance.ICoalescePersistor.EntityMetaData;
 
 import com.mysql.jdbc.Blob;
 
