@@ -1,5 +1,7 @@
 package Coalesce.Framework.Persistance;
 
+import Coalesce.Common.Exceptions.CoalesceCryptoException;
+
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
 
@@ -19,24 +21,24 @@ package Coalesce.Framework.Persistance;
 
 public interface ICoalesceEncrypter {
 
-    public String decryptEntity(byte[] EntityEncryptedBytes);
+    public String decryptEntity(byte[] EntityEncryptedBytes) throws CoalesceCryptoException;
 
-    public String decryptEntity(String EntityEncryptedBase64);
+    public String decryptEntity(String EntityEncryptedBase64) throws CoalesceCryptoException;
 
-    public byte[] encryptEntity(String EntityXml);
+    public byte[] encryptEntity(String EntityXml) throws CoalesceCryptoException;
 
-    public String encryptEntityToBase64(String EntityXml);
+    public String encryptEntityToBase64(String EntityXml) throws CoalesceCryptoException;
 
-    public String decryptValue(byte[] ValueEncryptedBytes);
+    public String decryptValue(byte[] ValueEncryptedBytes) throws CoalesceCryptoException;
 
-    public String decryptValue(String ValueEncryptedBase64);
+    public String decryptValue(String ValueEncryptedBase64) throws CoalesceCryptoException;
 
-    public byte[] decryptValueToBytes(byte[] ValueEncryptedBytes);
+    public byte[] decryptValueToBytes(byte[] ValueEncryptedBytes) throws CoalesceCryptoException;
 
-    public byte[] encryptValue(String Value);
+    public byte[] encryptValue(String Value) throws CoalesceCryptoException;
 
-    public String encryptValueToBase64(String Value);
+    public String encryptValueToBase64(String Value) throws CoalesceCryptoException;
 
-    public byte[] encryptValue(byte[] ValueBytes);
+    public byte[] encryptValue(byte[] ValueBytes) throws CoalesceCryptoException;
 
 }

@@ -16,8 +16,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.tomcat.util.codec.binary.Base64;
 
-import unity.core.runtime.CallResult;
-import unity.core.runtime.CallResult.CallResults;
+import Coalesce.Common.Exceptions.CoalesceCryptoException;
 
 public abstract class CoalesceEncrypter implements ICoalesceEncrypter {
 
@@ -44,7 +43,7 @@ public abstract class CoalesceEncrypter implements ICoalesceEncrypter {
 
     }
 
-    public Cipher getEncryptionCipher()
+    public Cipher getEncryptionCipher() throws CoalesceCryptoException
     {
 
         Cipher cipher = null;
@@ -61,15 +60,14 @@ public abstract class CoalesceEncrypter implements ICoalesceEncrypter {
         }
         catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | InvalidAlgorithmParameterException e)
         {
-            CallResult.log(CallResults.FAILED_ERROR, e, this);
-            cipher = null;
+            throw new CoalesceCryptoException("getEncryptionCipher", e);
         }
 
         return cipher;
 
     }
 
-    public Cipher getDecryptionCipher()
+    public Cipher getDecryptionCipher() throws CoalesceCryptoException
     {
 
         Cipher cipher = null;
@@ -86,8 +84,7 @@ public abstract class CoalesceEncrypter implements ICoalesceEncrypter {
         }
         catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | InvalidAlgorithmParameterException e)
         {
-            CallResult.log(CallResults.FAILED_ERROR, e, this);
-            cipher = null;
+            throw new CoalesceCryptoException("getDecryptionCipher", e);
         }
 
         return cipher;
@@ -95,31 +92,31 @@ public abstract class CoalesceEncrypter implements ICoalesceEncrypter {
     }
 
     @Override
-    public String decryptEntity(byte[] EntityEncryptedBytes)
+    public String decryptEntity(byte[] EntityEncryptedBytes) throws CoalesceCryptoException
     {
         return this.decryptValue(EntityEncryptedBytes);
     }
 
     @Override
-    public String decryptEntity(String EntityEncryptedBase64)
+    public String decryptEntity(String EntityEncryptedBase64) throws CoalesceCryptoException
     {
         return this.decryptValue(EntityEncryptedBase64);
     }
 
     @Override
-    public byte[] encryptEntity(String EntityXml)
+    public byte[] encryptEntity(String EntityXml) throws CoalesceCryptoException
     {
         return this.encryptValue(EntityXml);
     }
 
     @Override
-    public String encryptEntityToBase64(String EntityXml)
+    public String encryptEntityToBase64(String EntityXml) throws CoalesceCryptoException
     {
         return this.encryptValueToBase64(EntityXml);
     }
 
     @Override
-    public String decryptValue(byte[] ValueEncryptedBytes)
+    public String decryptValue(byte[] ValueEncryptedBytes) throws CoalesceCryptoException
     {
 
         String DecryptString = null;
@@ -134,7 +131,7 @@ public abstract class CoalesceEncrypter implements ICoalesceEncrypter {
         }
         catch (UnsupportedEncodingException e)
         {
-            CallResult.log(CallResults.FAILED_ERROR, e, this);
+            throw new CoalesceCryptoException("decryptValue", e);
         }
 
         return DecryptString;
@@ -142,7 +139,7 @@ public abstract class CoalesceEncrypter implements ICoalesceEncrypter {
     }
 
     @Override
-    public String decryptValue(String ValueEncryptedBase64)
+    public String decryptValue(String ValueEncryptedBase64) throws CoalesceCryptoException
     {
 
         Base64 Encoder = new Base64();
@@ -154,7 +151,7 @@ public abstract class CoalesceEncrypter implements ICoalesceEncrypter {
     }
 
     @Override
-    public byte[] decryptValueToBytes(byte[] ValueEncryptedBytes)
+    public byte[] decryptValueToBytes(byte[] ValueEncryptedBytes) throws CoalesceCryptoException
     {
 
         byte[] utf8 = null;
@@ -166,7 +163,7 @@ public abstract class CoalesceEncrypter implements ICoalesceEncrypter {
         }
         catch (IllegalBlockSizeException | BadPaddingException e)
         {
-            CallResult.log(CallResults.FAILED_ERROR, e, this);
+            throw new CoalesceCryptoException("decryptValue", e);
         }
 
         return utf8;
@@ -174,13 +171,13 @@ public abstract class CoalesceEncrypter implements ICoalesceEncrypter {
     }
 
     @Override
-    public byte[] encryptValue(String Value)
+    public byte[] encryptValue(String Value) throws CoalesceCryptoException
     {
         return this.encryptValue(Value.getBytes());
     }
 
     @Override
-    public String encryptValueToBase64(String Value)
+    public String encryptValueToBase64(String Value) throws CoalesceCryptoException
     {
 
         byte[] utf8 = this.encryptValue(Value);
@@ -200,7 +197,7 @@ public abstract class CoalesceEncrypter implements ICoalesceEncrypter {
     }
 
     @Override
-    public byte[] encryptValue(byte[] ValueBytes)
+    public byte[] encryptValue(byte[] ValueBytes) throws CoalesceCryptoException
     {
 
         byte[] utf8 = null;
@@ -211,7 +208,7 @@ public abstract class CoalesceEncrypter implements ICoalesceEncrypter {
         }
         catch (IllegalBlockSizeException | BadPaddingException e)
         {
-            CallResult.log(CallResults.FAILED_ERROR, e, this);
+            throw new CoalesceCryptoException("encryptValue", e);
         }
 
         return utf8;
