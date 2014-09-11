@@ -73,6 +73,19 @@ public class SQLServerDataConnector implements AutoCloseable {
         return stmt.executeQuery();
 
     }
+    public ResultSet ExecuteQuery(String SQL) throws SQLException
+    {
+
+        // Open Connection if not already created
+        if (this._conn == null) this.OpenConnection();
+
+        CallableStatement stmt = this._conn.prepareCall(SQL);
+
+
+        return stmt.executeQuery();
+
+    }
+    
 
     public boolean ExecuteCmd(String SQL, String... parameters) throws SQLException
     {
@@ -87,6 +100,19 @@ public class SQLServerDataConnector implements AutoCloseable {
         {
             stmt.setString(ii + 1, parameters[ii].trim());
         }
+
+        stmt.executeUpdate();
+
+        return true;
+
+    }
+    public boolean ExecuteCmd(String SQL) throws SQLException
+    {
+
+        // Open Connection if not already created
+        if (this._conn == null) this.OpenConnection();
+
+        CallableStatement stmt = this._conn.prepareCall(SQL);
 
         stmt.executeUpdate();
 

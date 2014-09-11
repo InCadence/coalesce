@@ -689,7 +689,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         ResultSet results = conn.ExecuteQuery("SELECT EntityId,EntityIdType,ObjectKey FROM CoalesceEntity WHERE ObjectKey=?",
                                               Key);
         // Get Results
-        if (results != null && results.first())
+        while (results.next()) 
         {
             metaData.entityId = results.getString("EntityId");
             metaData.entityType = results.getString("EntityIdType");
