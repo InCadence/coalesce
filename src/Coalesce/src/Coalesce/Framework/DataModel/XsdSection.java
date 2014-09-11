@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import org.apache.commons.lang.NullArgumentException;
 import org.joda.time.DateTime;
 
 import Coalesce.Common.Helpers.StringHelper;
@@ -80,7 +81,9 @@ public class XsdSection extends XsdDataObject {
     public static XsdSection create(XsdEntity parent, String name, boolean noIndex)
     {
 
-        if (parent == null || name == null || StringHelper.IsNullOrEmpty(name.trim())) return null;
+        if (parent == null) throw new NullArgumentException("parent");
+        if (name == null) throw new NullArgumentException("name");
+        if (StringHelper.IsNullOrEmpty(name.trim())) throw new IllegalArgumentException("name cannot be empty");
 
         // Check that a section with the same name doesn't already exist
         for (XsdSection section : parent.getSections().values())
@@ -125,7 +128,8 @@ public class XsdSection extends XsdDataObject {
     public boolean initialize(XsdEntity parent, Section section)
     {
 
-        if (parent == null || section == null) return false;
+        if (parent == null) throw new NullArgumentException("parent");
+        if (section == null) throw new NullArgumentException("section");
 
         // Set References
         _parent = parent;

@@ -1767,7 +1767,7 @@ public class XsdEntityTest {
 
     }
 
-    @Test
+    @Test(expected = NullPointerException.class)
     public void setEntityIDNullTypeTest()
     {
         XsdEntity entity = XsdEntity.create("TREXOperation",
@@ -1778,12 +1778,10 @@ public class XsdEntityTest {
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         assertFalse(entity.setEntityId(null, "Third"));
-        assertEquals("First,Second", entity.getEntityId());
-        assertEquals("Type1,Type2", entity.getEntityIdType());
 
     }
 
-    @Test
+    @Test(expected = NullPointerException.class)
     public void setEntityIDNullNameTest()
     {
         XsdEntity entity = XsdEntity.create("TREXOperation",
@@ -1794,12 +1792,10 @@ public class XsdEntityTest {
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         assertFalse(entity.setEntityId("Type3", null));
-        assertEquals("First,Second", entity.getEntityId());
-        assertEquals("Type1,Type2", entity.getEntityIdType());
 
     }
 
-    @Test
+    @Test(expected = NullPointerException.class)
     public void setEntityIDNullBothTest()
     {
         XsdEntity entity = XsdEntity.create("TREXOperation",
@@ -1810,8 +1806,6 @@ public class XsdEntityTest {
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         assertFalse(entity.setEntityId(null, null));
-        assertEquals("First,Second", entity.getEntityId());
-        assertEquals("Type1,Type2", entity.getEntityIdType());
 
     }
 

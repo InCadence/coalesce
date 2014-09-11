@@ -476,26 +476,23 @@ public class XsdEntity extends XsdDataObject {
 
     }
 
-    public boolean setEntityId(String typeParam, String Value)
+    public boolean setEntityId(String typeParam, String value)
     {
-
-        if (typeParam == null || typeParam.trim() == "" || Value == null || Value.trim() == "")
-        {
-            return false;
-        }
+        if (typeParam.trim() == "") throw new IllegalArgumentException("typeParam cannot be empty");
+        if (value.trim() == "") throw new IllegalAccessError("value cannot be empty");
 
         // Collection Already have Unique ID?
         if (getEntityId() == null || getEntityId().trim() == "")
         {
             // No; Add
             setEntityIdType(typeParam);
-            setEntityId(Value);
+            setEntityId(value);
         }
         else
         {
             // Yes; Append (CSV)
             setEntityIdType(getEntityIdType() + "," + typeParam);
-            setEntityId(getEntityId() + "," + Value);
+            setEntityId(getEntityId() + "," + value);
         }
 
         return true;

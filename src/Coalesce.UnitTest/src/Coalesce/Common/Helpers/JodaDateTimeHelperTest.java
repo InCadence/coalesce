@@ -2,6 +2,7 @@ package Coalesce.Common.Helpers;
 
 import static org.junit.Assert.*;
 
+import org.apache.commons.lang.NullArgumentException;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Test;
@@ -60,14 +61,11 @@ public class JodaDateTimeHelperTest {
 
     }
 
-    @Test
+    @Test(expected = NullArgumentException.class)
     public void ConvertYYYYMMDDDateStringToDateTimeNullTest()
     {
-
+        @SuppressWarnings("unused")
         DateTime converted = JodaDateTimeHelper.ConvertyyyyMMddDateStringToDateTime(null);
-
-        assertNull(converted);
-
     }
 
     @Test
@@ -102,24 +100,18 @@ public class JodaDateTimeHelperTest {
 
     }
 
-    @Test
+    @Test(expected = NullArgumentException.class)
     public void MilitaryFormatNullDateTest()
     {
-
+        @SuppressWarnings("unused")
         String milDate = JodaDateTimeHelper.MilitaryFormat(null, true);
-
-        assertEquals("", milDate);
-
     }
 
-    @Test
+    @Test(expected = NullArgumentException.class)
     public void MilitaryFormatNullDateNoDateTest()
     {
-
+        @SuppressWarnings("unused")
         String milDate = JodaDateTimeHelper.MilitaryFormat(null, false);
-
-        assertEquals("", milDate);
-
     }
 
     @Test
@@ -604,14 +596,11 @@ public class JodaDateTimeHelperTest {
 
     }
 
-    @Test
+    @Test(expected = NullArgumentException.class)
     public void ToXmlDateTimeUTCNullDateTest()
     {
-
+        @SuppressWarnings("unused")
         String utcTime = JodaDateTimeHelper.ToXmlDateTimeUTC(null);
-
-        assertEquals("", utcTime);
-
     }
 
     @Test
@@ -633,13 +622,11 @@ public class JodaDateTimeHelperTest {
 
     }
 
-    @Test
+    @Test(expected = NullArgumentException.class)
     public void FromXmlDateTimeUTCNullStringTest()
     {
-
+        @SuppressWarnings("unused")
         DateTime fromDate = JodaDateTimeHelper.FromXmlDateTimeUTC(null);
-
-        assertNull(fromDate);
     }
 
     @Test

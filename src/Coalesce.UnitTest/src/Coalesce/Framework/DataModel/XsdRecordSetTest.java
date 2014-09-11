@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.apache.commons.lang.NullArgumentException;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
@@ -107,52 +108,55 @@ public class XsdRecordSetTest {
         
     }
 
-    @Test
+    @Test(expected = NullArgumentException.class)
     public void createNullParentTest()
     {
-
-        assertNull(XsdRecordset.create(null, "New Section"));
-
+        @SuppressWarnings("unused")
+        XsdRecordset recordset = XsdRecordset.create(null, "New Section");
     }
 
-    @Test
+    @Test(expected = NullArgumentException.class)
     public void createNullNameTest()
     {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         XsdSection section = entity.getSection(CoalesceTypeInstances.TEST_MISSION_INFO_SECTION_PATH);
 
-        assertNull(XsdRecordset.create(section, null));
+        @SuppressWarnings("unused")
+        XsdRecordset recordset = XsdRecordset.create(section, null);
 
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void createEmptyNameTest()
     {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         XsdSection section = entity.getSection(CoalesceTypeInstances.TEST_MISSION_INFO_SECTION_PATH);
 
-        assertNull(XsdRecordset.create(section, ""));
+        @SuppressWarnings("unused")
+        XsdRecordset recordset = XsdRecordset.create(section, "");
 
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void createWhiteSpaceTest()
     {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         XsdSection section = entity.getSection(CoalesceTypeInstances.TEST_MISSION_INFO_SECTION_PATH);
 
-        assertNull(XsdRecordset.create(section, "   "));
+        @SuppressWarnings("unused")
+        XsdRecordset recordset = XsdRecordset.create(section, "   ");
 
     }
 
-    @Test
+    @Test(expected = NullArgumentException.class)
     public void createNullBothTest()
     {
 
-        assertNull(XsdRecordset.create(null, null));
+        @SuppressWarnings("unused")
+        XsdRecordset recordset = XsdRecordset.create(null, null);
 
     }
 

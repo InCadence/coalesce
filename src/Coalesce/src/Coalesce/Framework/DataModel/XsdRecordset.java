@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import org.apache.commons.lang.NullArgumentException;
 import org.joda.time.DateTime;
 
 import Coalesce.Common.Helpers.StringHelper;
@@ -62,7 +63,9 @@ public class XsdRecordset extends XsdDataObject {
     public static XsdRecordset create(XsdSection parent, String name, int minRecords, int maxRecords)
     {
 
-        if (parent == null || name == null || StringHelper.IsNullOrEmpty(name.trim())) return null;
+        if (parent == null) throw new NullArgumentException("parent");
+        if (name == null) throw new NullArgumentException("name");
+        if (StringHelper.IsNullOrEmpty(name.trim())) throw new IllegalArgumentException("name cannot be empty");
 
         if (minRecords < 0 || maxRecords < minRecords) return null;
 

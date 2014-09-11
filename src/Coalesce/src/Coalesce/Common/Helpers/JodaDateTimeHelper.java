@@ -1,5 +1,6 @@
 package Coalesce.Common.Helpers;
 
+import org.apache.commons.lang.NullArgumentException;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Duration;
@@ -25,8 +26,6 @@ import org.joda.time.format.ISODateTimeFormat;
 
 public class JodaDateTimeHelper {
 
-    private static String MODULE_NAME = "Coalesce.Common.Helpers.JodaDateTimeHelper";
-
     // Make static class
     private JodaDateTimeHelper()
     {
@@ -44,18 +43,19 @@ public class JodaDateTimeHelper {
      */
     public static DateTime ConvertyyyyMMddDateStringToDateTime(String strDate)
     {
-        if (!TestDate(strDate)) return null;
+        if (strDate == null) throw new NullArgumentException("strDate");
 
-        if (strDate == null || StringHelper.IsNullOrEmpty(strDate.trim())) return null;
+        try
+        {
+            DateTimeFormatter dateFormat = ISODateTimeFormat.basicDate().withZoneUTC();
 
-        DateTimeFormatter dateFormat = ISODateTimeFormat.basicDate().withZoneUTC();
+            return dateFormat.parseDateTime(strDate);
 
-        return dateFormat.parseDateTime(strDate);
-    }
-
-    private static boolean TestDate(String value)
-    {
-        return !(value == null || StringHelper.IsNullOrEmpty(value.trim()));
+        }
+        catch (IllegalArgumentException iae)
+        {
+            return null;
+        }
     }
 
     /**
@@ -68,7 +68,7 @@ public class JodaDateTimeHelper {
      */
     public static String MilitaryFormat(DateTime myDate, boolean dateOnly)
     {
-        if (myDate == null) return "";
+        if (myDate == null) throw new NullArgumentException("myDate");
 
         if (dateOnly)
         {
@@ -82,15 +82,11 @@ public class JodaDateTimeHelper {
 
     public static String toMySQLDateTime(DateTime value)
     {
-        if (value == null) throw new IllegalArgumentException(MODULE_NAME + " : toMySQLDateTime");
-
         return value.toString().replace("T", " ").replace("Z", "");
     }
 
     public static DateTime getMySQLDateTime(String value)
     {
-        if (value == null) throw new IllegalArgumentException(MODULE_NAME + " : getMySQLDateTime");
-
         if (value.indexOf(" ") > 1)
         {
             value = value.replace(" ", "T") + "Z";
@@ -128,7 +124,8 @@ public class JodaDateTimeHelper {
                                                  boolean dateOnly)
     {
         // Is ForDate Null?
-        if (firstDate == null || secondDate == null) return "";
+        if (firstDate == null) throw new NullArgumentException("firstDate");
+        if (secondDate == null) throw new NullArgumentException("secondDate");
 
         boolean IsFutureDate = false;
         String elapsedString = "";
@@ -287,7 +284,7 @@ public class JodaDateTimeHelper {
 
     public static String ToXmlDateTimeUTC(DateTime forDate)
     {
-        if (forDate == null) return "";
+        if (forDate == null) throw new NullArgumentException("forDate");
 
         DateTimeFormatter formatter = ISODateTimeFormat.dateTime().withZoneUTC();
 
@@ -297,23 +294,23 @@ public class JodaDateTimeHelper {
 
     }
 
-    /*
-     * public static DateTime toDate(XMLGregorianCalendar calendar) {
-     * 
-     * if (calendar == null) return null;
-     * 
-     * return calendar.toGregorianCalendar().getTime(); }
-     */
-
     public static DateTime FromXmlDateTimeUTC(String xmlDate)
     {
-        if (!TestDate(xmlDate)) return null;
+        if (xmlDate == null) throw new NullArgumentException("xmlDate");
 
-        DateTimeFormatter formatter = ISODateTimeFormat.dateTime().withZoneUTC();
+        try
+        {
+            DateTimeFormatter formatter = ISODateTimeFormat.dateTime().withZoneUTC();
 
-        DateTime forDate = formatter.parseDateTime(xmlDate);
+            DateTime forDate = formatter.parseDateTime(xmlDate);
 
-        return forDate;
+            return forDate;
+
+        }
+        catch (IllegalArgumentException iae)
+        {
+            return null;
+        }
     }
 
     /*

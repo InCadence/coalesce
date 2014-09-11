@@ -1,5 +1,7 @@
 package Coalesce.Common.Helpers;
 
+import org.apache.commons.lang.NullArgumentException;
+
 import Coalesce.Framework.DataModel.ECoalesceDataObjectStatus;
 import Coalesce.Framework.DataModel.ELinkTypes;
 import Coalesce.Framework.DataModel.ICoalesceDataObject;
@@ -103,7 +105,8 @@ public class EntityLinkHelper {
 
     public static boolean UnLinkEntities(XsdEntity entity1, XsdEntity entity2, ELinkTypes linkType)
     {
-        if (entity1 == null || entity2 == null) throw new IllegalArgumentException(MODULE_NAME + " : UnLinkEntities");
+        if (entity1 == null) throw new NullArgumentException("entity1");
+        if (entity2 == null) throw new NullArgumentException("entity2");
 
         // Get the LinkageSections for each Entity. Exit if not found.
 
@@ -142,12 +145,10 @@ public class EntityLinkHelper {
                                          String inputLang,
                                          boolean updateExisting)
     {
-        if (linkageSection == null || entity == null || otherEntity == null)
-        {
-            throw new IllegalArgumentException(MODULE_NAME + " : EstablishLinkage");
-        }
+        if (linkageSection == null) throw new NullArgumentException("linkageSection");
+        if (entity == null) throw new NullArgumentException("entity");
+        if (otherEntity == null) throw new NullArgumentException("otherEntity");
 
-        boolean linkageAlreadyExists = false;
         XsdLinkage linkage = null;
         // Do we already have the Linkage made? (Same Entities and Same LinkType)?
         for (ICoalesceDataObject cdo : linkageSection.getChildDataObjects().values())
@@ -161,7 +162,6 @@ public class EntityLinkHelper {
                 {
 
                     // Found; Use Existing Linkage
-                    linkageAlreadyExists = true;
                     linkage = childLinkage;
 
                     break;
@@ -170,7 +170,7 @@ public class EntityLinkHelper {
         }
 
         // Update/Populate Linkage
-        if (linkageAlreadyExists)
+        if (linkage != null)
         {
             if (updateExisting)
             {
