@@ -42,4 +42,7 @@ public class StringHelper {
         return value;
             
     }
+    public static String toXmlUnicode(String value){
+        return "CONVERT(XML, N'"+value+"')";
+    }
 }

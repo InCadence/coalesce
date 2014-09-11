@@ -64,6 +64,26 @@ public class XmlHelper {
             return null;
         }
     }
+    public static String Serialize(Object obj, String encodingFormat)
+    {
+        try
+        {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            JAXBContext context;
+            context = JAXBContext.newInstance(obj.getClass());
+
+            Marshaller marshaller = context.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true); // pretty
+            marshaller.setProperty(Marshaller.JAXB_ENCODING, encodingFormat); // specify
+            marshaller.marshal(obj, out);
+
+            return new String(out.toByteArray());
+        }
+        catch (JAXBException e)
+        {
+            return null;
+        }
+    }
 
     public static Object Deserialize(String xml, Class<?> classType)
     {

@@ -522,7 +522,7 @@ public class XsdEntity extends XsdDataObject {
     public String toXml(Boolean removeBinary)
     {
 
-        String entityXml = XmlHelper.Serialize(_entity);
+        String entityXml = XmlHelper.Serialize(_entity, "UTF-8");
 
         if (removeBinary)
         {

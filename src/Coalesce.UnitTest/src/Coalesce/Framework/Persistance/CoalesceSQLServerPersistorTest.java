@@ -61,7 +61,8 @@ public class CoalesceSQLServerPersistorTest {
         CoalesceSQLServerPersistorTest._coalesceFramework.Initialize(mySQLServerPersistor);
 
         CoalesceSQLServerPersistorTest.createEntity();
-        CoalesceSQLServerPersistorTest._coalesceFramework.SaveCoalesceEntity(_entity);
+        System.out.println(_entity.toXml());
+        
     }
 
     private static boolean createEntity() throws CoalesceException
@@ -189,20 +190,6 @@ public class CoalesceSQLServerPersistorTest {
     // }
     // }
 
-    @Test
-    public void testSaveEntityTemplate()
-    {
-        try
-        {
-            CoalesceEntityTemplate template = testTemplate(CoalesceEntityTemplate.Create(_entity));
-            assertTrue(CoalesceSQLServerPersistorTest._coalesceFramework.SaveCoalesceEntityTemplate(template));
-        }
-        catch (Exception ex)
-        {
-            fail(ex.getMessage());
-        }
-    }
-
     // @Test
     // public void testGetEntityMetaData()
     // {
@@ -211,7 +198,7 @@ public class CoalesceSQLServerPersistorTest {
     // CoalesceSQLServerPersistorTest._coalesceFramework.SaveCoalesceEntity(_entity);
     // EntityMetaData objectKey =
     // CoalesceSQLServerPersistorTest._coalesceFramework.GetCoalesceEntityIdAndTypeForKey(_entity.getKey());
-    // assertTrue(objectKey.entityId != null && objectKey.entityKey != null && objectKey.entityType != null);
+//            assertTrue(objectKey.entityId != null && objectKey.entityKey != null && objectKey.entityType != null);
     // }
     // catch (Exception ex)
     // {
@@ -224,16 +211,34 @@ public class CoalesceSQLServerPersistorTest {
     // {
     // try
     // {
-    // XsdEntity ent = new XsdEntity();
-    // ent = CoalesceSQLServerPersistorTest._coalesceFramework.GetCoalesceEntity(_entity.getKey());
-    //
-    // assertTrue(ent != null);
+//            CoalesceSQLServerPersistorTest._coalesceFramework.SaveCoalesceEntity(_entity);
+//            EntityMetaData objectKey = CoalesceSQLServerPersistorTest._coalesceFramework.GetCoalesceEntityIdAndTypeForKey(_entity.getKey());
+//            assertTrue(objectKey.entityId != null && objectKey.entityKey != null && objectKey.entityType != null);
     // }
     // catch (Exception ex)
     // {
     // fail(ex.getMessage());
     // }
     // }
+    
+
+    @Test
+    public void testGetEntity()
+    {
+        try
+        {
+            XsdEntity ent = new XsdEntity();
+            CoalesceSQLServerPersistorTest._coalesceFramework.SaveCoalesceEntity(_entity);
+            ent=_entity;
+            ent = CoalesceSQLServerPersistorTest._coalesceFramework.GetCoalesceEntity(ent.getKey());
+
+            assertTrue(ent != null);
+        }
+        catch (Exception ex)
+        {
+            fail(ex.getMessage());
+        }
+    }
 
     // @Test
     // public void testCheckLastModified()

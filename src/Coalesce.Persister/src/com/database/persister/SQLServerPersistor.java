@@ -16,6 +16,7 @@ import unity.core.runtime.CallResult;
 import unity.core.runtime.CallResult.CallResults;
 import Coalesce.Common.Exceptions.CoalescePersistorException;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
+import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.Runtime.CoalesceSettings;
 import Coalesce.Framework.DataModel.CoalesceEntityTemplate;
 import Coalesce.Framework.DataModel.ECoalesceDataObjectStatus;
@@ -208,7 +209,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
 
             ResultSet results = conn.ExecuteQuery("SELECT EntityXml from CoalesceEntity WHERE ObjectKey=?", Key);
 
-            if (results != null && results.first())
+            while(results.next())
             {
                 value = results.getString("EntityXml");
             }
@@ -518,7 +519,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
     {
         // Return true if no update is required.
         if (!this.checkLastModified(entity, conn)) return true;
-
+        System.out.println(entity.toXml(true).toString());
         // Yes; Call Store Procedure
         return conn.ExecuteProcedure("CoalesceEntity_InsertOrUpdate",
                                      entity.getKey(),
@@ -527,7 +528,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
                                      entity.getVersion(),
                                      entity.getEntityId(),
                                      entity.getEntityIdType(),
-                                     entity.toXml(),
+                                     entity.toXml(true).replace("UTF-8", "UTF-16"),
                                      JodaDateTimeHelper.toMySQLDateTime(entity.getDateCreated()),
                                      JodaDateTimeHelper.toMySQLDateTime(entity.getLastModified()));
     }
