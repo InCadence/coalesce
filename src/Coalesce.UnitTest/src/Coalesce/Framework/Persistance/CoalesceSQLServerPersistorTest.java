@@ -21,6 +21,7 @@ import org.xml.sax.SAXException;
 
 import unity.connector.local.LocalConfigurationsConnector;
 import Coalesce.Common.Exceptions.CoalescePersistorException;
+import Coalesce.Common.Exceptions.InvalidFieldException;
 import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.Runtime.CoalesceSettings;
 import Coalesce.Framework.CoalesceFramework;
@@ -91,7 +92,15 @@ public class CoalesceSQLServerPersistorTest {
         XsdFieldDefinition.create(recordSet, "CurrentStatus", ECoalesceFieldDataTypes.StringType);
 
         record = recordSet.AddNew();
-        record.SetFieldValue("CurrentStatus", "Test Status");
+        try
+        {
+            record.SetFieldValue("CurrentStatus", "Test Status");
+        }
+        catch (InvalidFieldException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
         _fieldKey = record.GetFieldByName("CurrentStatus").getKey();
         return true;
