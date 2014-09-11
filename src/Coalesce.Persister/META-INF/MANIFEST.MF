@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Persister
+Bundle-SymbolicName: Coalesce.Persister
+Bundle-Version: 1.0.0.qualifier
+Export-Package: com.database.persister
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
