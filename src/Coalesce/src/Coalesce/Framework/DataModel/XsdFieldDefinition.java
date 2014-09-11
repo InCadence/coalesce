@@ -7,6 +7,7 @@ import javax.xml.namespace.QName;
 import org.joda.time.DateTime;
 
 import Coalesce.Common.Classification.Marking;
+import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.Helpers.XmlHelper;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Fielddefinition;
 
@@ -121,6 +122,9 @@ public class XsdFieldDefinition extends XsdDataObject {
                                             boolean noIndex)
     {
 
+        if (parent == null || name == null || StringHelper.IsNullOrEmpty(name.trim()) || dataType == null || label == null
+                || defaultClassificationMarking == null || defaultValue == null) return null;
+
         Fielddefinition newEntityFieldDefinition = new Fielddefinition();
         parent.GetEntityFieldDefinitions().add(newEntityFieldDefinition);
 
@@ -128,11 +132,11 @@ public class XsdFieldDefinition extends XsdDataObject {
 
         if (!fieldDefinition.initialize(parent, newEntityFieldDefinition)) return null;
 
-        fieldDefinition.setName(name);
+        fieldDefinition.setName(name.trim());
         fieldDefinition.setNoIndex(noIndex);
         fieldDefinition.setDataType(dataType);
 
-        fieldDefinition.setLabel(label);
+        fieldDefinition.setLabel(label.trim());
         fieldDefinition.setDefaultClassificationMarking(defaultClassificationMarking);
         fieldDefinition.setDefaultValue(defaultValue);
 
@@ -153,7 +157,7 @@ public class XsdFieldDefinition extends XsdDataObject {
         if (getStatus() == ECoalesceDataObjectStatus.ACTIVE)
         {
             parent._childDataObjects.put(getKey(), this);
-            parent.GetFieldDefinitions().add(this);
+            parent.getFieldDefinitions().add(this);
         }
 
         return true;

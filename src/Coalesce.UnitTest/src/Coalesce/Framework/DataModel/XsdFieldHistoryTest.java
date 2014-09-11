@@ -101,7 +101,7 @@ public class XsdFieldHistoryTest {
         section.initialize(entity, new Section());
 
         XsdRecordset rs = new XsdRecordset();
-        rs.Initialize(section, new Recordset());
+        rs.initialize(section, new Recordset());
 
         XsdRecord record = new XsdRecord();
         record.Initialize(rs, new Record());

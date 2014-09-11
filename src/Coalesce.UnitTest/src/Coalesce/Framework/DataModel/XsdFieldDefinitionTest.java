@@ -518,7 +518,7 @@ public class XsdFieldDefinitionTest {
         entity.initialize();
 
         XsdSection informationSection = XsdSection.create(entity, "Entity Information Section", true);
-        XsdRecordset informationRecordSet = XsdRecordset.Create(informationSection, "Information Recordset");
+        XsdRecordset informationRecordSet = XsdRecordset.create(informationSection, "Information Recordset");
 
         return informationRecordSet;
     }

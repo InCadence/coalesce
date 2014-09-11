@@ -51,7 +51,7 @@ public class XsdRecord extends XsdDataObject {
         XsdRecord newRecord = new XsdRecord();
         if (!newRecord.Initialize(parent, newEntityRecord)) return null;
 
-        for (XsdFieldDefinition fieldDefinition : parent.GetFieldDefinitions())
+        for (XsdFieldDefinition fieldDefinition : parent.getFieldDefinitions())
         {
             // Creates New Field
             XsdField.Create(newRecord, fieldDefinition);
@@ -90,7 +90,7 @@ public class XsdRecord extends XsdDataObject {
         if (getStatus() == ECoalesceDataObjectStatus.ACTIVE)
         {
             parent._childDataObjects.put(getKey(), this);
-            parent.GetRecords().add(this);
+            parent.getRecords().add(this);
         }
 
         return true;

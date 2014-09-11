@@ -45,8 +45,6 @@ public class XsdRecordset extends XsdDataObject {
     // protected Member Variables
     // -----------------------------------------------------------------------//
 
-    //private static String MODULE = "Coalesce.Framework.DataModel.XsdRecordSet";
-
     private Recordset _entityRecordset;
 
     protected ArrayList<XsdFieldDefinition> _fieldDefinitions;
@@ -56,22 +54,23 @@ public class XsdRecordset extends XsdDataObject {
     // Factory and Initialization
     // -----------------------------------------------------------------------//
 
-    public static XsdRecordset Create(XsdSection parent, String name)
+    public static XsdRecordset create(XsdSection parent, String name)
     {
-        return Create(parent, name, 0, 0);
+        return create(parent, name, 0, 0);
     }
 
-    public static XsdRecordset Create(XsdSection parent, String name, int MinRecords, int MaxRecords)
+    public static XsdRecordset create(XsdSection parent, String name, int minRecords, int maxRecords)
     {
 
         if (parent == null || name == null || StringHelper.IsNullOrEmpty(name.trim())) return null;
 
+        if (minRecords < 0 || maxRecords < minRecords) return null;
+
         // Check that a recordset with the same name doesn't already exist
         for (XsdRecordset recordset : parent.getRecordsets().values())
         {
-            if (recordset.getName().equals(name))
+            if (recordset.getName().equalsIgnoreCase(name))
             {
-
                 return recordset;
             }
         }
@@ -80,11 +79,11 @@ public class XsdRecordset extends XsdDataObject {
         parent.getEntityRecordSets().add(newEntityRecordset);
 
         XsdRecordset newRecordset = new XsdRecordset();
-        if (!newRecordset.Initialize(parent, newEntityRecordset)) return null;
+        if (!newRecordset.initialize(parent, newEntityRecordset)) return null;
 
         newRecordset.setName(name);
-        newRecordset.SetMinRecords(MinRecords);
-        newRecordset.SetMaxRecords(MaxRecords);
+        newRecordset.setMinRecords(minRecords);
+        newRecordset.setMaxRecords(maxRecords);
 
         // Add to parent's child collection
         if (!parent._childDataObjects.containsKey(newRecordset.getKey()))
@@ -96,9 +95,11 @@ public class XsdRecordset extends XsdDataObject {
 
     }
 
-    public boolean Initialize(XsdSection parent, Recordset recordset)
+    public boolean initialize(XsdSection parent, Recordset recordset)
     {
 
+        if (parent == null || recordset == null) return false;
+        
         // Set References
         _parent = parent;
         _entityRecordset = recordset;
@@ -160,42 +161,42 @@ public class XsdRecordset extends XsdDataObject {
         return "recordset";
     }
 
-    public ArrayList<XsdFieldDefinition> GetFieldDefinitions()
+    public ArrayList<XsdFieldDefinition> getFieldDefinitions()
     {
-        return this._fieldDefinitions;
+        return _fieldDefinitions;
     }
 
-    public ArrayList<XsdRecord> GetRecords()
+    public ArrayList<XsdRecord> getRecords()
     {
-        return this._records;
+        return _records;
     }
 
-    public int GetMaxRecords()
+    public int getMaxRecords()
     {
         return Integer.parseInt(_entityRecordset.getMaxrecords());
     }
 
-    public void SetMaxRecords(int value)
+    public void setMaxRecords(int value)
     {
         _entityRecordset.setMaxrecords(String.valueOf(value));
     }
 
-    public int GetMinRecords()
+    public int getMinRecords()
     {
         return Integer.parseInt(_entityRecordset.getMinrecords());
     }
 
-    public void SetMinRecords(int value)
+    public void setMinRecords(int value)
     {
         _entityRecordset.setMinrecords(String.valueOf(value));
     }
 
-    public boolean GetHasActiveRecords()
+    public boolean getHasActiveRecords()
     {
 
         // Iterate Records
         // For Each Record As CoalesceRecord In this._Records
-        for (XsdRecord record : GetRecords())
+        for (XsdRecord record : getRecords())
         {
             if (record.getStatus() == ECoalesceDataObjectStatus.ACTIVE)
             {
@@ -207,9 +208,9 @@ public class XsdRecordset extends XsdDataObject {
         return false;
     }
 
-    public boolean GetHasRecords()
+    public boolean getHasRecords()
     {
-        return (this.GetRecords().size() > 0);
+        return (getRecords().size() > 0);
     }
 
     public DateTime getDateCreated()
@@ -243,7 +244,7 @@ public class XsdRecordset extends XsdDataObject {
     // Public Methods
     // -----------------------------------------------------------------------//
 
-    public XsdFieldDefinition CreateFieldDefinition(String name,
+    public XsdFieldDefinition createFieldDefinition(String name,
                                                     ECoalesceFieldDataTypes dataType,
                                                     String label,
                                                     String defaultClassificationMarking,
@@ -252,7 +253,7 @@ public class XsdRecordset extends XsdDataObject {
         return XsdFieldDefinition.create(this, name, dataType, label, defaultClassificationMarking, defaultValue);
     }
 
-    public XsdFieldDefinition CreateFieldDefinition(String name, ECoalesceFieldDataTypes dataType)
+    public XsdFieldDefinition createFieldDefinition(String name, ECoalesceFieldDataTypes dataType)
     {
         return XsdFieldDefinition.create(this, name, dataType);
     }
@@ -262,10 +263,9 @@ public class XsdRecordset extends XsdDataObject {
         return XmlHelper.Serialize(_entityRecordset);
     }
 
-    public XsdFieldDefinition GetFieldDefinition(String fieldName)
+    public XsdFieldDefinition getFieldDefinition(String fieldName)
     {
-        // Find
-        for (XsdFieldDefinition fieldDefinition : GetFieldDefinitions())
+        for (XsdFieldDefinition fieldDefinition : getFieldDefinitions())
         {
             if (fieldDefinition.getName().toUpperCase().equals(fieldName.toUpperCase()))
             {
@@ -274,44 +274,41 @@ public class XsdRecordset extends XsdDataObject {
             }
         }
 
-        // Not found
         return null;
     }
 
-    public boolean GetAllowEdit()
+    public boolean getAllowEdit()
     {
         return true;
     }
 
-    public boolean GetAllowNew()
+    public boolean getAllowNew()
     {
         return true;
     }
 
-    public boolean GetAllowRemove()
+    public boolean getAllowRemove()
     {
         return true;
     }
 
-    public int GetCount()
+    public int getCount()
     {
-        return GetRecords().size();
+        return getRecords().size();
     }
 
-    public boolean Contains(Object value)
-    { // As Boolean Implements System.Collections.IList.Contains
-        return this.GetRecords().contains(value);
+    public boolean contains(Object value)
+    {
+        return getRecords().contains(value);
     }
 
     public int IndexOf(Object value)
-    { // As Integer Implements System.Collections.IList.IndexOf
-      // Call on the from the Records Collection
-        return this.GetRecords().indexOf(value);
+    {
+        return getRecords().indexOf(value);
     }
 
     public XsdRecord AddNew()
-    { // As Object Implements System.ComponentModel.IBindingList.AddNew
-      // Create new Record
+    {
         XsdRecord newRecord = XsdRecord.Create(this, getName() + " Record");
 
         // TODO: Raise the Changed Event
@@ -326,9 +323,9 @@ public class XsdRecordset extends XsdDataObject {
     {
         
         // Iterate List
-        if (index >= 0 && index < this.GetRecords().size())
+        if (index >= 0 && index < this.getRecords().size())
         {
-            return GetRecords().get(index);
+            return getRecords().get(index);
         }
         else
         {
@@ -349,7 +346,7 @@ public class XsdRecordset extends XsdDataObject {
             record.setStatus(ECoalesceDataObjectStatus.DELETED);
 
             // Remove from the Records Collection
-            GetRecords().remove(record);
+            getRecords().remove(record);
 
             // // Determine new Index
             // int NewIndex;
@@ -375,7 +372,7 @@ public class XsdRecordset extends XsdDataObject {
 
         // Find
         // For Each Record As XsdRecord In this.Records
-        for (XsdRecord record : GetRecords())
+        for (XsdRecord record : getRecords())
         {
             if (record.getKey().equals(key))
             {
@@ -391,7 +388,7 @@ public class XsdRecordset extends XsdDataObject {
             recordToRemove.setStatus(ECoalesceDataObjectStatus.DELETED);
 
             // Remove from the Records Collection
-            this.GetRecords().remove(recordToRemove);
+            this.getRecords().remove(recordToRemove);
         }
     }
 

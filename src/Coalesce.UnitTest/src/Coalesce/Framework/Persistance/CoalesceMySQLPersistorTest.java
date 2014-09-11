@@ -108,7 +108,7 @@ public class CoalesceMySQLPersistorTest {
             XsdLinkageSection.Create(_entity, true);
 
             section = XsdSection.create(_entity, "Live Status Section", true);
-            recordSet = XsdRecordset.Create(section, "Live Status Recordset");
+        recordSet = XsdRecordset.create(section, "Live Status Recordset");
             XsdFieldDefinition.create(recordSet, "CurrentStatus", ECoalesceFieldDataTypes.StringType);
 
             record = recordSet.AddNew();
@@ -151,7 +151,7 @@ public class CoalesceMySQLPersistorTest {
             XsdLinkageSection.Create(_entity, true);
 
             section = XsdSection.create(_entity, sectName, true);
-            recordSet = XsdRecordset.Create(section, recordsetName);
+        recordSet = XsdRecordset.create(section, recordsetName);
             XsdFieldDefinition.create(recordSet, fieldDefName, ECoalesceFieldDataTypes.StringType);
 
             record = recordSet.AddNew();

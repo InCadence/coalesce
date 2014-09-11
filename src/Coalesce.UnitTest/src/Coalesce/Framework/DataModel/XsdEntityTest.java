@@ -63,9 +63,9 @@ public class XsdEntityTest {
         assertEquals(4, entity.getLinkages().values().size());
         assertEquals(2, entity.getSections().size());
         assertEquals(1,
-                     ((XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH)).GetCount());
+                     ((XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH)).getCount());
         assertEquals(16,
-                     ((XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH)).GetFieldDefinitions().size());
+                     ((XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH)).getFieldDefinitions().size());
         assertEquals(16,
                      entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORD_PATH).getChildDataObjects().size());
     }
@@ -427,7 +427,7 @@ public class XsdEntityTest {
 
         // Create Live Status Section
         XsdSection liveSection = XsdSection.create(entity, "Live Status Section", true);
-        XsdRecordset liveRecordSet = XsdRecordset.Create(liveSection, "Live Status Recordset");
+        XsdRecordset liveRecordSet = XsdRecordset.create(liveSection, "Live Status Recordset");
 
         // Verify Live Status Section Creation
         assertTrue(entity.getSection("TREXOperation/Live Status Section").getName().equalsIgnoreCase("Live Status Section"));
@@ -436,7 +436,7 @@ public class XsdEntityTest {
 
         // Create Information Section
         XsdSection informationSection = XsdSection.create(entity, "Operation Information Section", true);
-        XsdRecordset informationRecordSet = XsdRecordset.Create(informationSection, "Operation Information Recordset");
+        XsdRecordset informationRecordSet = XsdRecordset.create(informationSection, "Operation Information Recordset");
 
         XsdFieldDefinition.create(informationRecordSet, "OperationName", ECoalesceFieldDataTypes.StringType);
 
@@ -494,13 +494,13 @@ public class XsdEntityTest {
         // Verify Live Status Section Creation
         assertTrue(entity.getSection("TREXOperation/Live Status Section").getName().equalsIgnoreCase("Live Status Section"));
 
-        liveRecordSet.CreateFieldDefinition("CurrentStatus", ECoalesceFieldDataTypes.StringType);
+        liveRecordSet.createFieldDefinition("CurrentStatus", ECoalesceFieldDataTypes.StringType);
 
         // Create Information Section
         XsdSection informationSection = entity.createSection("Operation Information Section", true);
         XsdRecordset informationRecordSet = informationSection.createRecordset("Operation Information Recordset");
 
-        informationRecordSet.CreateFieldDefinition("OperationName", ECoalesceFieldDataTypes.StringType);
+        informationRecordSet.createFieldDefinition("OperationName", ECoalesceFieldDataTypes.StringType);
 
         // Verify Information Section Creation
         assertNotNull(entity.getSection("TREXOperation/Operation Information Section"));
@@ -542,9 +542,9 @@ public class XsdEntityTest {
         assertEquals(4, entity.getLinkages().values().size());
         assertEquals(2, entity.getSections().size());
         assertEquals(1,
-                     ((XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH)).GetCount());
+                     ((XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH)).getCount());
         assertEquals(16,
-                     ((XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH)).GetFieldDefinitions().size());
+                     ((XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH)).getFieldDefinitions().size());
         assertEquals(16,
                      entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORD_PATH).getChildDataObjects().size());
     }

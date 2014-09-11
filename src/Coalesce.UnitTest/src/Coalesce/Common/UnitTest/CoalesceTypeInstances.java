@@ -43,6 +43,8 @@ public class CoalesceTypeInstances {
     public static final String TEST_MISSION_ACTION_NUMBER_LABEL = "Action Number";
     public static final String TEST_MISSION_ACTION_NUMBER_LABEL_HISTORY = "Action #";
     public static final String TEST_MISSION_INCIDENT_DATE_TIME_PATH = "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/IncidentDateTime";
+    public static final String TEST_MISSION_LIVE_SECTION_PATH = "TREXMission/Live Status Section";
+    public static final String TEST_MISSION_INFO_SECTION_PATH = "TREXMission/Mission Information Section";
     public static final String TEST_MISSION_RECORDSET_PATH = "TREXMission/Mission Information Section/Mission Information Recordset";
     public static final String TEST_MISSION_RECORD_PATH = "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record";
     

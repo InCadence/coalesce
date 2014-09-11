@@ -85,7 +85,7 @@ public class XsdSection extends XsdDataObject {
         // Check that a section with the same name doesn't already exist
         for (XsdSection section : parent.getSections().values())
         {
-            if (section.getName().equals(name))
+            if (section.getName().equalsIgnoreCase(name))
             {
 
                 section.setNoIndex(noIndex);
@@ -137,7 +137,7 @@ public class XsdSection extends XsdDataObject {
         {
 
             XsdRecordset newRecordSet = new XsdRecordset();
-            if (!newRecordSet.Initialize(this, childRecordSet)) continue;
+            if (!newRecordSet.initialize(this, childRecordSet)) continue;
 
             if (!_childDataObjects.containsKey(newRecordSet.getKey()))
             {
@@ -197,7 +197,7 @@ public class XsdSection extends XsdDataObject {
 
     public XsdRecordset createRecordset(String name)
     {
-        return XsdRecordset.Create(this, name);
+        return XsdRecordset.create(this, name);
     }
 
     public XsdRecordset getRecordset(String NamePath)
