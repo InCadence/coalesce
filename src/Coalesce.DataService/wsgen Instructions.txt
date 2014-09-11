@@ -1,0 +1,8 @@
+If you get a REFLECTION error, that means the wrapper classes for CoalesceImpl.java need to be generated.
+
+Execute: wsgen -keep -verbose -cp . com.proto.irems.services.CoalesceImpl
+
+Make sure you use the wsgen in the jdk version 7.
+
+The wrapper classes should be generated in target.classes.com.proto.irems.services.jaxws
+Copy the .java files to src.com.proto.irems.services.jaxws

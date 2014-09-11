@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+
+
+
+	<context:annotation-config></context:annotation-config>
+	<context:component-scan base-package="com.proto.irems.web.controllers, com.proto"></context:component-scan>
+	<mvc:annotation-driven>
+
+
+
+	</mvc:annotation-driven>
+	<bean id="jspviewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/VIEWS/"></property>
+		<property name="suffix" value=".jsp"></property>
+
+	</bean>
+
+
+	<bean name="generalServices" class="com.proto.irems.services.monitor.GeneralServices">
+
+		<constructor-arg value='java:/comp/env/jdbc/irems'
+			index="0"></constructor-arg>
+	</bean>
+
+	<bean name="mysqlPersistor" class="com.proto.irems.data.persistor.MySQLPersistor">
+		<property name="wsStatus" ref="generalServices"></property>
+		<property name="DATASOURCE_CONTEXT" value="java:/comp/env/jdbc/irems">
+		</property>
+	</bean>
+
+	<bean name="coalesceDataService" class="com.proto.irems.services.CoalesceImpl">
+		<property name="mSQLP" ref="mysqlPersistor"></property>
+	</bean>
+</beans>

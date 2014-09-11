@@ -1,0 +1,17 @@
+<xs:schema xmlns:tns="http://services.irems.proto.com/" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://services.irems.proto.com/" version="1.0">
+
+  <xs:element name="getConnection" type="tns:getConnection"/>
+
+  <xs:element name="getConnectionResponse" type="tns:getConnectionResponse"/>
+
+  <xs:complexType name="getConnection">
+    <xs:sequence/>
+  </xs:complexType>
+
+  <xs:complexType name="getConnectionResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>

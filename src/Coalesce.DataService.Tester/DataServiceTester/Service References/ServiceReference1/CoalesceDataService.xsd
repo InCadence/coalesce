@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://services.irems.proto.com/" targetNamespace="http://services.irems.proto.com/" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="getEntity" type="tns:getEntity" />
+  <xs:element name="getEntityByName" type="tns:getEntityByName" />
+  <xs:element name="getEntityByNameResponse" type="tns:getEntityByNameResponse" />
+  <xs:element name="getEntityKeys" type="tns:getEntityKeys" />
+  <xs:element name="getEntityKeysResponse" type="tns:getEntityKeysResponse" />
+  <xs:element name="getEntityResponse" type="tns:getEntityResponse" />
+  <xs:element name="getEntityXML" type="tns:getEntityXML" />
+  <xs:element name="getEntityXMLByName" type="tns:getEntityXMLByName" />
+  <xs:element name="getEntityXMLByNameResponse" type="tns:getEntityXMLByNameResponse" />
+  <xs:element name="getEntityXMLKeys" type="tns:getEntityXMLKeys" />
+  <xs:element name="getEntityXMLKeysResponse" type="tns:getEntityXMLKeysResponse" />
+  <xs:element name="getEntityXMLResponse" type="tns:getEntityXMLResponse" />
+  <xs:element name="getFieldValue" type="tns:getFieldValue" />
+  <xs:element name="getFieldValueResponse" type="tns:getFieldValueResponse" />
+  <xs:element name="getXPath" type="tns:getXPath" />
+  <xs:element name="getXPathResponse" type="tns:getXPathResponse" />
+  <xs:element name="setEntity" type="tns:setEntity" />
+  <xs:element name="setEntityResponse" type="tns:setEntityResponse" />
+  <xs:complexType name="getEntityXMLKeys">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="xs:string" />
+      <xs:element minOccurs="0" name="arg1" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getEntityXMLKeysResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="return" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getEntityXMLByName">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="xs:string" />
+      <xs:element minOccurs="0" name="arg1" type="xs:string" />
+      <xs:element minOccurs="0" name="arg2" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getEntityXMLByNameResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getEntityKeys">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="xs:string" />
+      <xs:element minOccurs="0" name="arg1" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getEntityKeysResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="return" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="setEntity">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="tns:jEntity" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="jEntity">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="dateCreated" type="xs:string" />
+      <xs:element minOccurs="0" name="entityId" type="xs:string" />
+      <xs:element minOccurs="0" name="entityIdType" type="xs:string" />
+      <xs:element minOccurs="0" name="entityXml" type="tns:stringBuilder" />
+      <xs:element minOccurs="0" name="lastModified" type="xs:string" />
+      <xs:element minOccurs="0" name="name" type="xs:string" />
+      <xs:element minOccurs="0" name="objectKey" type="xs:string" />
+      <xs:element minOccurs="0" name="source" type="xs:string" />
+      <xs:element minOccurs="0" name="version" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="stringBuilder" final="extension restriction">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:abstractStringBuilder">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="abstractStringBuilder" abstract="true">
+    <xs:sequence />
+  </xs:complexType>
+  <xs:complexType name="setEntityResponse">
+    <xs:sequence>
+      <xs:element name="return" type="xs:boolean" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getEntityByName">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="xs:string" />
+      <xs:element minOccurs="0" name="arg1" type="xs:string" />
+      <xs:element minOccurs="0" name="arg2" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getEntityByNameResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getXPath">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="xs:string" />
+      <xs:element minOccurs="0" name="arg1" type="xs:string" />
+      <xs:element minOccurs="0" name="arg2" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getXPathResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getEntityXML">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getEntityXMLResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getFieldValue">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getFieldValueResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getEntity">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getEntityResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="CoalesceDataService" targetNamespace="http://services.irems.proto.com/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://services.irems.proto.com/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types>
+    <schema xmlns="http://www.w3.org/2001/XMLSchema">
+  <import namespace="http://services.irems.proto.com/" schemaLocation="coalesce_schema1.xsd"/>
+</schema>
+  </wsdl:types>
+  <wsdl:message name="getConnection">
+    <wsdl:part name="parameters" element="tns:getConnection">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getConnectionResponse">
+    <wsdl:part name="parameters" element="tns:getConnectionResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="Coalesce">
+    <wsdl:operation name="getConnection">
+      <wsdl:input name="getConnection" message="tns:getConnection">
+    </wsdl:input>
+      <wsdl:output name="getConnectionResponse" message="tns:getConnectionResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="CoalesceDataServiceSoapBinding" type="tns:Coalesce">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="getConnection">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="getConnection">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getConnectionResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="CoalesceDataService">
+    <wsdl:port name="CoalescePort" binding="tns:CoalesceDataServiceSoapBinding">
+      <soap:address location="http://localhost:8083/DataService/services"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

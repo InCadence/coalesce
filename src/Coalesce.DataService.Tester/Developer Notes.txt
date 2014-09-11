@@ -1,0 +1,21 @@
+You will need to use the SVCUTIL with this project.
+Be sure to set the endpoints.
+
+Primarily I used the Windows project (wDataServiceTester) over the console version, but either is fine.
+
+Once you execute the svcutil from http://localhost:[YOURPORT]/DataService/CoalesceDataService?wsdl
+
+BE SURE to do so from within the directory:  ...\IREMS\DataServiceTester\wDataServiceTester so the code can generate
+
+1.) CoalescePersitor.cs
+2.) output.config
+
+The class needs to be added to the project and the information in output.config should be used to update app.config in the project.
+
+Then open the output.config and update the endpoint address in either form1.cs or program.cs
+
+		EndpointAddress add = new EndpointAddress("http://localhost:8080/DataService/CoalesceDataService");
+
+Now I am returning CallResult instead of String data.  The CallResult class has been added to the DataService project and is public.
+Happy Coding
+jeff

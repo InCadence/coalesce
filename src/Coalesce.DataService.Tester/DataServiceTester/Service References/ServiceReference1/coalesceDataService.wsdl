@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:tns="http://services.irems.proto.com/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsp1_2="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" name="coalesceDataService" targetNamespace="http://services.irems.proto.com/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <xsd:schema>
+      <xsd:import schemaLocation="http://localhost:8085/Coalesce.DataService/CoalesceDataService?xsd=1" namespace="http://services.irems.proto.com/" />
+    </xsd:schema>
+  </types>
+  <message name="getFieldValue">
+    <part name="parameters" element="tns:getFieldValue" />
+  </message>
+  <message name="getFieldValueResponse">
+    <part name="parameters" element="tns:getFieldValueResponse" />
+  </message>
+  <message name="getEntity">
+    <part name="parameters" element="tns:getEntity" />
+  </message>
+  <message name="getEntityResponse">
+    <part name="parameters" element="tns:getEntityResponse" />
+  </message>
+  <message name="getEntityKeys">
+    <part name="parameters" element="tns:getEntityKeys" />
+  </message>
+  <message name="getEntityKeysResponse">
+    <part name="parameters" element="tns:getEntityKeysResponse" />
+  </message>
+  <message name="setEntity">
+    <part name="parameters" element="tns:setEntity" />
+  </message>
+  <message name="setEntityResponse">
+    <part name="parameters" element="tns:setEntityResponse" />
+  </message>
+  <message name="getEntityXML">
+    <part name="parameters" element="tns:getEntityXML" />
+  </message>
+  <message name="getEntityXMLResponse">
+    <part name="parameters" element="tns:getEntityXMLResponse" />
+  </message>
+  <message name="getXPath">
+    <part name="parameters" element="tns:getXPath" />
+  </message>
+  <message name="getXPathResponse">
+    <part name="parameters" element="tns:getXPathResponse" />
+  </message>
+  <message name="getEntityByName">
+    <part name="parameters" element="tns:getEntityByName" />
+  </message>
+  <message name="getEntityByNameResponse">
+    <part name="parameters" element="tns:getEntityByNameResponse" />
+  </message>
+  <message name="getEntityXMLKeys">
+    <part name="parameters" element="tns:getEntityXMLKeys" />
+  </message>
+  <message name="getEntityXMLKeysResponse">
+    <part name="parameters" element="tns:getEntityXMLKeysResponse" />
+  </message>
+  <message name="getEntityXMLByName">
+    <part name="parameters" element="tns:getEntityXMLByName" />
+  </message>
+  <message name="getEntityXMLByNameResponse">
+    <part name="parameters" element="tns:getEntityXMLByNameResponse" />
+  </message>
+  <portType name="ICoalesceDataService">
+    <operation name="getFieldValue">
+      <input wsam:Action="http://services.irems.proto.com/ICoalesceDataService/getFieldValueRequest" message="tns:getFieldValue" />
+      <output wsam:Action="http://services.irems.proto.com/ICoalesceDataService/getFieldValueResponse" message="tns:getFieldValueResponse" />
+    </operation>
+    <operation name="getEntity">
+      <input wsam:Action="http://services.irems.proto.com/ICoalesceDataService/getEntityRequest" message="tns:getEntity" />
+      <output wsam:Action="http://services.irems.proto.com/ICoalesceDataService/getEntityResponse" message="tns:getEntityResponse" />
+    </operation>
+    <operation name="getEntityKeys">
+      <input wsam:Action="http://services.irems.proto.com/ICoalesceDataService/getEntityKeysRequest" message="tns:getEntityKeys" />
+      <output wsam:Action="http://services.irems.proto.com/ICoalesceDataService/getEntityKeysResponse" message="tns:getEntityKeysResponse" />
+    </operation>
+    <operation name="setEntity">
+      <input wsam:Action="http://services.irems.proto.com/ICoalesceDataService/setEntityRequest" message="tns:setEntity" />
+      <output wsam:Action="http://services.irems.proto.com/ICoalesceDataService/setEntityResponse" message="tns:setEntityResponse" />
+    </operation>
+    <operation name="getEntityXML">
+      <input wsam:Action="http://services.irems.proto.com/ICoalesceDataService/getEntityXMLRequest" message="tns:getEntityXML" />
+      <output wsam:Action="http://services.irems.proto.com/ICoalesceDataService/getEntityXMLResponse" message="tns:getEntityXMLResponse" />
+    </operation>
+    <operation name="getXPath">
+      <input wsam:Action="http://services.irems.proto.com/ICoalesceDataService/getXPathRequest" message="tns:getXPath" />
+      <output wsam:Action="http://services.irems.proto.com/ICoalesceDataService/getXPathResponse" message="tns:getXPathResponse" />
+    </operation>
+    <operation name="getEntityByName">
+      <input wsam:Action="http://services.irems.proto.com/ICoalesceDataService/getEntityByNameRequest" message="tns:getEntityByName" />
+      <output wsam:Action="http://services.irems.proto.com/ICoalesceDataService/getEntityByNameResponse" message="tns:getEntityByNameResponse" />
+    </operation>
+    <operation name="getEntityXMLKeys">
+      <input wsam:Action="http://services.irems.proto.com/ICoalesceDataService/getEntityXMLKeysRequest" message="tns:getEntityXMLKeys" />
+      <output wsam:Action="http://services.irems.proto.com/ICoalesceDataService/getEntityXMLKeysResponse" message="tns:getEntityXMLKeysResponse" />
+    </operation>
+    <operation name="getEntityXMLByName">
+      <input wsam:Action="http://services.irems.proto.com/ICoalesceDataService/getEntityXMLByNameRequest" message="tns:getEntityXMLByName" />
+      <output wsam:Action="http://services.irems.proto.com/ICoalesceDataService/getEntityXMLByNameResponse" message="tns:getEntityXMLByNameResponse" />
+    </operation>
+  </portType>
+  <binding name="coalesceDataServicePortBinding" type="tns:ICoalesceDataService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <operation name="getFieldValue">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="getEntity">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="getEntityKeys">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="setEntity">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="getEntityXML">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="getXPath">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="getEntityByName">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="getEntityXMLKeys">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="getEntityXMLByName">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+  <service name="coalesceDataService">
+    <port name="coalesceDataServicePort" binding="tns:coalesceDataServicePortBinding">
+      <soap:address location="http://localhost:8085/Coalesce.DataService/CoalesceDataService" />
+    </port>
+  </service>
+</definitions>
