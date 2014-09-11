@@ -6,8 +6,6 @@ import javax.xml.namespace.QName;
 
 import org.joda.time.DateTime;
 
-import unity.core.runtime.CallResult;
-import unity.core.runtime.CallResult.CallResults;
 import Coalesce.Common.Helpers.XmlHelper;
 import Coalesce.Framework.GeneratedJAXB.Entity.Linkagesection;
 import Coalesce.Framework.GeneratedJAXB.Entity.Linkagesection.Linkage;
@@ -70,7 +68,7 @@ public class XsdLinkageSection extends XsdDataObject {
         _entityLinkageSection = parent.getEntityLinkageSection();
 
         super.initialize();
-        
+
         this.setName("Linkages");
 
         if (_entityLinkageSection != null)
@@ -144,19 +142,8 @@ public class XsdLinkageSection extends XsdDataObject {
 
     public DateTime getDateCreated()
     {
-        try
-        {
-
-            // return new
-            // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityLinkageSection.getDatecreated());
-            return _entityLinkageSection.getDatecreated();
-
-        }
-        catch (Exception ex)
-        {
-            CallResult.log(CallResults.FAILED_ERROR, ex, this);
-            return null;
-        }
+        // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityLinkageSection.getDatecreated());
+        return _entityLinkageSection.getDatecreated();
     }
 
     @Override

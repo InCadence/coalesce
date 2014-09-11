@@ -13,8 +13,6 @@ import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.xml.sax.SAXException;
 
-import unity.core.runtime.CallResult;
-import unity.core.runtime.CallResult.CallResults;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.Helpers.XmlHelper;
@@ -250,90 +248,62 @@ public class XsdEntity extends XsdDataObject {
 
     public String getTitle()
     {
-        try
+        String title = _entity.getTitle();
+
+        // Check if value contains an XPath
+        if (title != null && title.contains("/") && title.length() > 50)
         {
 
-            String title = _entity.getTitle();
+            String pathTitle = "";
 
-            // Check if value contains an XPath
-            if (title != null && title.contains("/") && title.length() > 50)
+            String[] paths = title.split(",");
+            for (String path : paths)
             {
 
-                String pathTitle = "";
+                XsdDataObject dataObject = getDataObjectForNamePath(path);
 
-                String[] paths = title.split(",");
-                for (String path : paths)
+                if (dataObject != null && dataObject instanceof XsdField)
                 {
-
-                    XsdDataObject dataObject = getDataObjectForNamePath(path);
-
-                    if (dataObject != null && dataObject instanceof XsdField)
-                    {
-                        XsdField field = (XsdField) dataObject;
-                        pathTitle += field.GetValue() + ", ";
-                    }
+                    XsdField field = (XsdField) dataObject;
+                    pathTitle += field.GetValue() + ", ";
                 }
-
-                title = StringUtils.strip(pathTitle, ", ");
-
             }
 
-            if (title == null || title.trim().equals(""))
-            {
-                return this.getSource();
-            }
-            else
-            {
-                return title;
-            }
+            title = StringUtils.strip(pathTitle, ", ");
 
         }
-        catch (Exception ex)
+
+        if (title == null || title.trim().equals(""))
         {
-            CallResult.log(CallResults.FAILED_ERROR, ex, this);
             return this.getSource();
         }
+        else
+        {
+            return title;
+        }
+
     }
 
     public void setTitle(String value)
     {
-        try
+        String currentTitle = _entity.getTitle();
+
+        if ((currentTitle == null ^ value == null) || (value != null && !value.equals(getTitle())))
         {
 
-            String currentTitle = _entity.getTitle();
+            _entity.setTitle(value);
 
-            if ((currentTitle == null ^ value == null) || (value != null && !value.equals(getTitle())))
-            {
-
-                _entity.setTitle(value);
-
-                // Set LastModified
-                DateTime utcNow = JodaDateTimeHelper.NowInUtc();
-                if (utcNow != null) setLastModified(utcNow);
-            }
-
+            // Set LastModified
+            DateTime utcNow = JodaDateTimeHelper.NowInUtc();
+            if (utcNow != null) setLastModified(utcNow);
         }
-        catch (Exception ex)
-        {
-            CallResult.log(CallResults.FAILED_ERROR, ex, this);
-        }
+
     }
 
     public DateTime getDateCreated()
     {
-        try
-        {
-
-            // return new
-            // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entity.getDatecreated());
-            return _entity.getDatecreated();
-
-        }
-        catch (Exception ex)
-        {
-            CallResult.log(CallResults.FAILED_ERROR, ex, this);
-            return null;
-        }
+        // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entity.getDatecreated());
+        return _entity.getDatecreated();
     }
 
     public void setDateCreated(DateTime value)
@@ -344,19 +314,8 @@ public class XsdEntity extends XsdDataObject {
 
     public DateTime getLastModified()
     {
-        try
-        {
-
-            // return new
-            // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entity.getLastmodified());
-            return _entity.getLastmodified();
-
-        }
-        catch (Exception ex)
-        {
-            CallResult.log(CallResults.FAILED_ERROR, ex, this);
-            return null;
-        }
+        // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entity.getLastmodified());
+        return _entity.getLastmodified();
     }
 
     protected void setObjectLastModified(DateTime value)
@@ -487,24 +446,14 @@ public class XsdEntity extends XsdDataObject {
 
     public XsdSection getSection(String NamePath)
     {
-        try
+        XsdDataObject dataObject = getDataObjectForNamePath(NamePath);
+
+        if (dataObject != null && dataObject instanceof XsdSection)
         {
-
-            XsdDataObject dataObject = getDataObjectForNamePath(NamePath);
-
-            if (dataObject != null && dataObject instanceof XsdSection)
-            {
-                return (XsdSection) dataObject;
-            }
-
-            return null;
-
+            return (XsdSection) dataObject;
         }
-        catch (Exception ex)
-        {
-            CallResult.log(CallResults.FAILED_ERROR, ex, this);
-            return null;
-        }
+
+        return null;
     }
 
     public List<String> getEntityId(String typeParam)
@@ -514,7 +463,7 @@ public class XsdEntity extends XsdDataObject {
         // EntityID Type Contain Param?
         String[] types = getEntityIdType().split(",");
         String[] ids = getEntityId().split(",");
-        for (int i=0; i < types.length; i++)
+        for (int i = 0; i < types.length; i++)
         {
             String type = types[i];
             if (type.equalsIgnoreCase(typeParam))
@@ -522,7 +471,7 @@ public class XsdEntity extends XsdDataObject {
                 values.add(ids[i]);
             }
         }
-        
+
         return values;
 
     }

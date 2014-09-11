@@ -1,7 +1,5 @@
 package Coalesce.Common.Helpers;
 
-import unity.core.runtime.CallResult;
-import unity.core.runtime.CallResult.CallResults;
 import Coalesce.Framework.DataModel.ECoalesceDataObjectStatus;
 import Coalesce.Framework.DataModel.ELinkTypes;
 import Coalesce.Framework.DataModel.ICoalesceDataObject;
@@ -32,7 +30,7 @@ public class EntityLinkHelper {
     // Private and protected Objects
     // ----------------------------------------------------------------------//
 
-    private static final String MODULE = "Coalesce.Common.Helpers.EntityLinkHelper";
+    private static final String MODULE_NAME = "Coalesce.Common.Helpers.EntityLinkHelper";
 
     // ----------------------------------------------------------------------//
     // Factory and Initialization
@@ -62,11 +60,10 @@ public class EntityLinkHelper {
                                        String inputLang,
                                        boolean updateExisting)
     {
-        @SuppressWarnings("unused")
-        CallResult rst;
 
-        if (entity1 == null || entity2 == null) return false;
-                
+        if (entity1 == null || entity2 == null) throw new IllegalArgumentException(MODULE_NAME + " : LinkEntities");
+        ;
+
         // Get the LinkageSections for each Entity. Create if not found.
 
         // For Entity 1...
@@ -77,23 +74,23 @@ public class EntityLinkHelper {
         XsdLinkageSection linkageSection2 = entity2.getLinkageSection();
         if (linkageSection2 == null) return false;
 
-        rst = EstablishLinkage(linkageSection1,
-                               entity1,
-                               linkType,
-                               entity2,
-                               classificationMarking,
-                               modifiedBy,
-                               inputLang,
-                               true);
+        EstablishLinkage(linkageSection1,
+                         entity1,
+                         linkType,
+                         entity2,
+                         classificationMarking,
+                         modifiedBy,
+                         inputLang,
+                         updateExisting);
 
-        rst = EstablishLinkage(linkageSection2,
-                               entity2,
-                               linkType.GetReciprocalLinkType(),
-                               entity1,
-                               classificationMarking,
-                               modifiedBy,
-                               inputLang,
-                               updateExisting);
+        EstablishLinkage(linkageSection2,
+                         entity2,
+                         linkType.GetReciprocalLinkType(),
+                         entity1,
+                         classificationMarking,
+                         modifiedBy,
+                         inputLang,
+                         updateExisting);
 
         return true;
 
@@ -106,7 +103,7 @@ public class EntityLinkHelper {
 
     public static boolean UnLinkEntities(XsdEntity entity1, XsdEntity entity2, ELinkTypes linkType)
     {
-        if (entity1 == null || entity2 == null) return false;
+        if (entity1 == null || entity2 == null) throw new IllegalArgumentException(MODULE_NAME + " : UnLinkEntities");
 
         // Get the LinkageSections for each Entity. Exit if not found.
 
@@ -130,27 +127,24 @@ public class EntityLinkHelper {
         }
 
         return true;
-
     }
 
     // -----------------------------------------------------------------------//
     // Private Methods
     // -----------------------------------------------------------------------//
 
-    private static CallResult EstablishLinkage(XsdLinkageSection linkageSection,
-                                               XsdEntity entity,
-                                               ELinkTypes linkType,
-                                               XsdEntity otherEntity,
-                                               String classificationMarking,
-                                               String modifiedBy,
-                                               String inputLang,
-                                               boolean updateExisting)
+    private static void EstablishLinkage(XsdLinkageSection linkageSection,
+                                         XsdEntity entity,
+                                         ELinkTypes linkType,
+                                         XsdEntity otherEntity,
+                                         String classificationMarking,
+                                         String modifiedBy,
+                                         String inputLang,
+                                         boolean updateExisting)
     {
-        CallResult rst;
-
         if (linkageSection == null || entity == null || otherEntity == null)
         {
-            return new CallResult(CallResults.FAILED, "Null objected reference", MODULE);
+            throw new IllegalArgumentException(MODULE_NAME + " : EstablishLinkage");
         }
 
         boolean linkageAlreadyExists = false;
@@ -181,9 +175,7 @@ public class EntityLinkHelper {
             if (updateExisting)
             {
                 // Update/Populate Existing
-                rst = linkage.EstablishLinkage(entity, linkType, otherEntity, classificationMarking, modifiedBy, inputLang);
-                if (!rst.getIsSuccess()) return rst;
-
+                linkage.EstablishLinkage(entity, linkType, otherEntity, classificationMarking, modifiedBy, inputLang);
             }
         }
         else
@@ -192,12 +184,8 @@ public class EntityLinkHelper {
             XsdLinkage newLinkage = linkageSection.CreateLinkage();
 
             // Update/Populate
-            rst = newLinkage.EstablishLinkage(entity, linkType, otherEntity, classificationMarking, modifiedBy, inputLang);
-            if (!rst.getIsSuccess()) return rst;
+            newLinkage.EstablishLinkage(entity, linkType, otherEntity, classificationMarking, modifiedBy, inputLang);
         }
-
-        return CallResult.successCallResult;
-
     }
 
     private static boolean MarkLinkageAsDeleted(XsdLinkageSection linkageSection,
@@ -205,7 +193,6 @@ public class EntityLinkHelper {
                                                 XsdEntity otherEntity,
                                                 ELinkTypes linkType)
     {
-
         for (ICoalesceDataObject cdo : linkageSection.getChildDataObjects().values())
         {
             if (cdo instanceof XsdLinkage)
@@ -228,7 +215,5 @@ public class EntityLinkHelper {
         }
 
         return false;
-
     }
-
 }

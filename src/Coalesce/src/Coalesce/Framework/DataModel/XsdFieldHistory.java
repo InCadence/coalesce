@@ -6,8 +6,6 @@ import javax.xml.namespace.QName;
 
 import org.joda.time.DateTime;
 
-import unity.core.runtime.CallResult;
-import unity.core.runtime.CallResult.CallResults;
 import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.Helpers.XmlHelper;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record.Field;
@@ -312,45 +310,34 @@ public class XsdFieldHistory extends XsdFieldBase {
         _entityFieldHistory.setLastmodified(value);
     }
 
-    private CallResult SetAttributes(XsdField field)
+    private void SetAttributes(XsdField field)
     {
-        try
+        Field entityField = field._entityField;
+
+        _entityFieldHistory.setName(entityField.getName());
+        _entityFieldHistory.setValue(entityField.getValue());
+        _entityFieldHistory.setDatatype(entityField.getDatatype());
+        _entityFieldHistory.setLabel(entityField.getLabel());
+        _entityFieldHistory.setSize(entityField.getSize());
+        _entityFieldHistory.setModifiedby(entityField.getModifiedby());
+        _entityFieldHistory.setModifiedbyip(entityField.getModifiedbyip());
+        _entityFieldHistory.setClassificationmarking(entityField.getClassificationmarking());
+        _entityFieldHistory.setPrevioushistorykey(entityField.getPrevioushistorykey());
+        _entityFieldHistory.setFilename(entityField.getFilename());
+        _entityFieldHistory.setExtension(entityField.getExtension());
+        _entityFieldHistory.setMimetype(entityField.getMimetype());
+        _entityFieldHistory.setHash(entityField.getHash());
+        _entityFieldHistory.setValue(entityField.getValue());
+        _entityFieldHistory.setDatecreated(entityField.getDatecreated());
+        _entityFieldHistory.setLastmodified(entityField.getLastmodified());
+        _entityFieldHistory.setStatus(entityField.getStatus());
+
+        Map<QName, String> otherAttributes = getAttributes();
+
+        for (Map.Entry<QName, String> otherAttr : field.getAttributes().entrySet())
         {
 
-            Field entityField = field._entityField;
-
-            _entityFieldHistory.setName(entityField.getName());
-            _entityFieldHistory.setValue(entityField.getValue());
-            _entityFieldHistory.setDatatype(entityField.getDatatype());
-            _entityFieldHistory.setLabel(entityField.getLabel());
-            _entityFieldHistory.setSize(entityField.getSize());
-            _entityFieldHistory.setModifiedby(entityField.getModifiedby());
-            _entityFieldHistory.setModifiedbyip(entityField.getModifiedbyip());
-            _entityFieldHistory.setClassificationmarking(entityField.getClassificationmarking());
-            _entityFieldHistory.setPrevioushistorykey(entityField.getPrevioushistorykey());
-            _entityFieldHistory.setFilename(entityField.getFilename());
-            _entityFieldHistory.setExtension(entityField.getExtension());
-            _entityFieldHistory.setMimetype(entityField.getMimetype());
-            _entityFieldHistory.setHash(entityField.getHash());
-            _entityFieldHistory.setValue(entityField.getValue());
-            _entityFieldHistory.setDatecreated(entityField.getDatecreated());
-            _entityFieldHistory.setLastmodified(entityField.getLastmodified());
-            _entityFieldHistory.setStatus(entityField.getStatus());
-
-            Map<QName, String> otherAttributes = getAttributes();
-
-            for (Map.Entry<QName, String> otherAttr : field.getAttributes().entrySet())
-            {
-
-                otherAttributes.put(otherAttr.getKey(), otherAttr.getValue());
-            }
-
-            return CallResult.successCallResult;
-
-        }
-        catch (Exception ex)
-        {
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
+            otherAttributes.put(otherAttr.getKey(), otherAttr.getValue());
         }
     }
 

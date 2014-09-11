@@ -9,8 +9,6 @@ import javax.xml.namespace.QName;
 
 import org.joda.time.DateTime;
 
-import unity.core.runtime.CallResult;
-import unity.core.runtime.CallResult.CallResults;
 import Coalesce.Common.Helpers.FileHelper;
 import Coalesce.Common.Helpers.GUIDHelper;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
@@ -38,6 +36,8 @@ import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record.Field.Fi
 
 public class XsdField extends XsdFieldBase {
 
+    private static String MODULE_NAME = "XsdField";
+    
     // -----------------------------------------------------------------------//
     // protected Member Variables
     // -----------------------------------------------------------------------//
@@ -69,10 +69,9 @@ public class XsdField extends XsdFieldBase {
 
         newField.SetSuspendHistory(false);
 
-
         // Boolean Type? If so then default initial value to false if not a boolean default value.
-        if (fieldDefinition.getDataType() == ECoalesceFieldDataTypes.BooleanType &&
-                !(newField.GetValue().equalsIgnoreCase("true") || newField.GetValue().equalsIgnoreCase("false")))
+        if (fieldDefinition.getDataType() == ECoalesceFieldDataTypes.BooleanType
+                && !(newField.GetValue().equalsIgnoreCase("true") || newField.GetValue().equalsIgnoreCase("false")))
         {
             newField.SetValue("false");
         }
@@ -95,7 +94,7 @@ public class XsdField extends XsdFieldBase {
         _entityField = field;
 
         super.initialize();
-        
+
         for (Fieldhistory entityFieldHistory : _entityField.getFieldhistory())
         {
 
@@ -240,6 +239,13 @@ public class XsdField extends XsdFieldBase {
         }
     }
 
+    public void SetPreviousHistoryKey(XsdFieldHistory fieldHistory)
+    {
+        if (fieldHistory == null) throw new IllegalArgumentException(MODULE_NAME + " : SetPreviousHistoryKey"); 
+        
+        _entityField.setPrevioushistorykey(fieldHistory.getKey());
+    }
+    
     public void SetPreviousHistoryKey(String value)
     {
         _entityField.setPrevioushistorykey(value);
@@ -493,125 +499,95 @@ public class XsdField extends XsdFieldBase {
     // protected Methods
     // -----------------------------------------------------------------------//
 
-    protected CallResult SetChanged(Object oldValue, Object newValue)
+    protected void SetChanged(Object oldValue, Object newValue)
     {
-        try
+        // Does the new value differ from the existing?
+        if ((oldValue == null && newValue != null) || !oldValue.equals(newValue))
         {
 
-            // Does the new value differ from the existing?
-            if ((oldValue == null && newValue != null) || !oldValue.equals(newValue))
+            // Yes; should we create a FieldHistory entry to reflect the
+            // change?
+            // We create FieldHistory entry if History is not Suspended; OR
+            // if DataType is binary; OR if DateCreated=LastModified and
+            // Value is unset
+            if (!this.GetSuspendHistory())
             {
 
-                // Yes; should we create a FieldHistory entry to reflect the
-                // change?
-                // We create FieldHistory entry if History is not Suspended; OR
-                // if DataType is binary; OR if DateCreated=LastModified and
-                // Value is unset
-                if (!this.GetSuspendHistory())
-                {
+                switch (GetDataType()) {
 
-                    switch (GetDataType()) {
-
-                    case BinaryType:
-                    case FileType:
-                        // Don't Create History Entry for these types
-                        break;
-                    default:
-
-                        // Does LastModified = DateCreated?
-                        if (getLastModified().compareTo(getDateCreated()) != 0)
-                        {
-
-                            // No; Create History Entry
-                            XsdFieldHistory fieldHistory = XsdFieldHistory.Create(this);
-                            if (fieldHistory == null) return CallResult.failedCallResult;
-
-                            SetPreviousHistoryKey(fieldHistory.getKey());
-                        }
-
-                    }
-
-                }
-
-                // Set LastModified
-                DateTime utcNow = JodaDateTimeHelper.NowInUtc();
-                if (utcNow != null) setLastModified(utcNow);
-
-            }
-
-            return CallResult.successCallResult;
-
-        }
-        catch (Exception ex)
-        {
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
-        }
-    }
-
-    public CallResult Change(String value, String marking, String user, String ip)
-    {
-        try
-        {
-
-            // Does the new value differ from the existing?
-            if (!(GetValue().equals(value) && GetClassificationMarking().equals(marking)))
-            {
-
-                // Yes; should we create a FieldHistory entry to reflect the
-                // change?
-                // We create FieldHistory entry if History is not Suspended; OR
-                // if DataType is binary; OR if DateCreated=LastModified and
-                // Value is unset
-                if (!GetSuspendHistory())
-                {
+                case BinaryType:
+                case FileType:
+                    // Don't Create History Entry for these types
+                    break;
+                default:
 
                     // Does LastModified = DateCreated?
                     if (getLastModified().compareTo(getDateCreated()) != 0)
                     {
+
                         // No; Create History Entry
-                        // TODO: Something just feels wrong about declaring one
-                        // CoalesceFieldHistory to create another.
-                        XsdFieldHistory fieldHistory = XsdFieldHistory.Create(this);
-                        if (fieldHistory == null) return CallResult.failedCallResult;
-
-                        SetPreviousHistoryKey(fieldHistory.getKey());
+                        SetPreviousHistoryKey(XsdFieldHistory.Create(this));
                     }
-                }
-
-                // Change Values
-                if (GetDataType() == ECoalesceFieldDataTypes.DateTimeType && !StringHelper.IsNullOrEmpty(value))
-                {
-
-                    DateTime valueDate = JodaDateTimeHelper.FromXmlDateTimeUTC(value);
-
-                    SetTypedValue(valueDate);
 
                 }
-                else
-                {
-                    SetValue(value);
-                }
-
-                SetClassificationMarking(marking);
-                SetModifiedBy(user);
-                SetModifiedByIP(ip);
-
-                // Set LastModified
-                DateTime utcNow = JodaDateTimeHelper.NowInUtc();
-                if (utcNow != null) setLastModified(utcNow);
 
             }
 
-            return CallResult.successCallResult;
+            // Set LastModified
+            DateTime utcNow = JodaDateTimeHelper.NowInUtc();
+            if (utcNow != null) setLastModified(utcNow);
 
-        }
-        catch (Exception ex)
-        {
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
         }
     }
 
-    protected List<Fieldhistory> GetEntityFieldHistories() throws Exception
+    public void Change(String value, String marking, String user, String ip)
+    {
+        // Does the new value differ from the existing?
+        if (!(GetValue().equals(value) && GetClassificationMarking().equals(marking)))
+        {
+
+            // Yes; should we create a FieldHistory entry to reflect the
+            // change?
+            // We create FieldHistory entry if History is not Suspended; OR
+            // if DataType is binary; OR if DateCreated=LastModified and
+            // Value is unset
+            if (!GetSuspendHistory())
+            {
+
+                // Does LastModified = DateCreated?
+                if (getLastModified().compareTo(getDateCreated()) != 0)
+                {
+                    // CoalesceFieldHistory to create another.
+                    SetPreviousHistoryKey(XsdFieldHistory.Create(this));
+                }
+            }
+
+            // Change Values
+            if (GetDataType() == ECoalesceFieldDataTypes.DateTimeType && !StringHelper.IsNullOrEmpty(value))
+            {
+
+                DateTime valueDate = JodaDateTimeHelper.FromXmlDateTimeUTC(value);
+
+                SetTypedValue(valueDate);
+
+            }
+            else
+            {
+                SetValue(value);
+            }
+
+            SetClassificationMarking(marking);
+            SetModifiedBy(user);
+            SetModifiedByIP(ip);
+
+            // Set LastModified
+            DateTime utcNow = JodaDateTimeHelper.NowInUtc();
+            if (utcNow != null) setLastModified(utcNow);
+
+        }
+    }
+
+    protected List<Fieldhistory> GetEntityFieldHistories()
     {
         return _entityField.getFieldhistory();
     }

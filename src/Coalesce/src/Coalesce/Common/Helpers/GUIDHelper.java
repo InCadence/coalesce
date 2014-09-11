@@ -2,132 +2,87 @@ package Coalesce.Common.Helpers;
 
 import java.util.UUID;
 
-import unity.core.runtime.CallResult;
-import unity.core.runtime.CallResult.CallResults;
-import unity.core.runtime.CallResult.ValueResult;
-
 /*-----------------------------------------------------------------------------'
-Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
+ Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
 
-Notwithstanding any contractor copyright notice, the Government has Unlimited
-Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
-of this work other than as specifically authorized by these DFARS Clauses may
-violate Government rights in this work.
+ Notwithstanding any contractor copyright notice, the Government has Unlimited
+ Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+ of this work other than as specifically authorized by these DFARS Clauses may
+ violate Government rights in this work.
 
-DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
-Unlimited Rights. The Government has the right to use, modify, reproduce,
-perform, display, release or disclose this computer software and to have or
-authorize others to do so.
+ DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+ Unlimited Rights. The Government has the right to use, modify, reproduce,
+ perform, display, release or disclose this computer software and to have or
+ authorize others to do so.
 
-Distribution Statement D. Distribution authorized to the Department of
-Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
------------------------------------------------------------------------------*/
+ Distribution Statement D. Distribution authorized to the Department of
+ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+ -----------------------------------------------------------------------------*/
 
 public class GUIDHelper {
 
-    private static String MODULE = "Coalesce.Common.Helpers.GUIDHelper";
-
-    // Make static class
-    private GUIDHelper() {
-    }
+    // private static String MODULE_NAME = "Coalesce.Common.Helpers.GUIDHelper";
 
     // -----------------------------------------------------------------------//
     // Public Shared Methods
     // -----------------------------------------------------------------------//
 
-    public static String IsValid(String value)
+    public static boolean IsValid(String value)
     {
-        try {
+        try
+        {
+            if (value == null) return false;
+            
+            if (GUIDHelper.HasSurroundingBrackets(value)) value = value.replaceAll("[{}]", "");
+                    
+            UUID.fromString(value);
 
-        	String stripped = GUIDHelper.GetValidStrippedString(value);           
-        	if (stripped == null) return null;
-        	
-            @SuppressWarnings("unused")
-            UUID g = UUID.fromString(stripped);
-
-            String formattedString = value.toUpperCase();
-
-            return formattedString;
-
-        } catch (Exception ex) {
-            CallResult.log(CallResults.FAILED, ex, GUIDHelper.MODULE);
-            return null;
+            return value.replaceAll("[-]", "").length() == 32;
+        }
+        catch (IllegalArgumentException ex)
+        {
+            // Invalid UUID
+            return false;
         }
     }
 
-    public static ValueResult<String> HasBrackets(String value)
+    public static boolean HasBrackets(String value)
     {
-        try {
-            // return true if it's a Valid GUID and it has brackets.
+        // Is Valid?
+        if (!GUIDHelper.IsValid(value)) return false;
 
-            // Is Valid?
-            String validGUID = GUIDHelper.IsValid(value);
-            if (validGUID == null) return GUIDHelper.NotGuid();
-
-            // Doesn't have brackets?
-            if (GUIDHelper.HasSurroundingBrackets(validGUID)) {
-                return new ValueResult<String>(validGUID, CallResult.successCallResult);
-            } else {
-                return new ValueResult<String>(validGUID, new CallResult(CallResults.FAILED, "No brackets", GUIDHelper.MODULE));
-            }
-
-        } catch (Exception ex) {
-            return new ValueResult<String>(null, new CallResult(CallResults.FAILED_ERROR, ex, GUIDHelper.MODULE));
-        }
+        // Doesn't have brackets?
+        return GUIDHelper.HasSurroundingBrackets(value);
     }
-
 
     public static String AddBrackets(String value)
     {
-        try {
+        if (!GUIDHelper.IsValid(value)) return null;
 
-        	String validGuid = GUIDHelper.IsValid(value);
-            if (validGuid == null) return null;
-                
-            if (!GUIDHelper.HasSurroundingBrackets(validGuid)) {
-                
-            	// No; Add Brackets
-            	validGuid = "{" + validGuid + "}";
-
-            }
-
-            return validGuid;
-
-        } catch (Exception ex) {
-            CallResult.log(CallResults.FAILED_ERROR, ex, GUIDHelper.MODULE);
-            return null;
+        if (!GUIDHelper.HasSurroundingBrackets(value))
+        {
+            // No; Add Brackets
+            value = "{" + value + "}";
         }
+
+        return value.toUpperCase();
     }
 
     public static String RemoveBrackets(String value)
     {
-        try {
-            // Is Valid?
-            String validGuid = GUIDHelper.IsValid(value);
-            if (validGuid == null) return null;
-             
-            validGuid = validGuid.replaceAll("[{}]", "");
+        if (!GUIDHelper.IsValid(value)) return null;
 
-            return validGuid;
-
-        } catch (Exception ex) {
-            CallResult.log(CallResults.FAILED_ERROR, ex, GUIDHelper.MODULE);
-            return null;
-        }
+        return value.replaceAll("[{}]", "").toUpperCase();
     }
 
     public static UUID GetGuid(String value)
     {
-        try {
-        	String stripped = GetValidStrippedString(value);
-        	if (stripped == null) return null;
-        	
-            UUID guid = UUID.fromString(value.replaceAll("[{}]", ""));
-
-            return guid;
-            
-        } catch (Exception ex) {
-            CallResult.log(CallResults.FAILED, "Failed to construct a guid", GUIDHelper.MODULE);
+        if (GUIDHelper.IsValid(value))
+        {
+            return UUID.fromString(value.replaceAll("[{}]", ""));
+        }
+        else
+        {
             return null;
         }
     }
@@ -139,20 +94,15 @@ public class GUIDHelper {
 
     public static String GetGuidString(UUID value, boolean withBrackets)
     {
-        try {
-        	String guidString = value.toString();
-            if (withBrackets) {
-            	
-            	return AddBrackets(guidString);
-
-            } else {
-            	return GUIDHelper.IsValid(guidString);
-            }
-
-        } catch (Exception ex) {
-            CallResult.log(CallResults.FAILED_ERROR, ex, GUIDHelper.MODULE);
-
-            return null;
+        if (value == null) return null;
+        
+        if (withBrackets)
+        {
+            return AddBrackets(value.toString());
+        }
+        else
+        {
+            return value.toString().toUpperCase();
         }
     }
 
@@ -160,28 +110,11 @@ public class GUIDHelper {
     // Protected and Private Shared Methods
     // -----------------------------------------------------------------------//
 
-    private static boolean HasSurroundingBrackets(String value) {
-    	return (value.startsWith("{") && value.endsWith("}"));
-    }
-    
-    private static ValueResult<String> NotGuid() {
-    	return new ValueResult<String>(null, new CallResult(CallResults.FAILED, "Not a guid", GUIDHelper.MODULE));
-    }
-    
-    private static String GetValidStrippedString(String value) {
-    	
-        // Check matching brackets
-        boolean openingBracket = value.startsWith("{");
-        boolean closingBracket = value.endsWith("}");
-        if (openingBracket ^ closingBracket) return null;
-        
-        String stripped = value.replaceAll("[{}]",  "");
-        
-        // Check length
-        if (stripped.replace("-", "").length() != 32) return null;
+    private static boolean HasSurroundingBrackets(String value)
+    {
+        if (value == null) return false;
 
-        return stripped;
-        
+        return (value.startsWith("{") && value.endsWith("}"));
     }
 
 }

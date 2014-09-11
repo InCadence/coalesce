@@ -210,7 +210,6 @@ public class XsdSection extends XsdDataObject {
         }
 
         return null;
-
     }
 
     public Map<String, XsdRecordset> getRecordsets()

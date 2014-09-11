@@ -6,8 +6,6 @@ import javax.xml.namespace.QName;
 
 import org.joda.time.DateTime;
 
-import unity.core.runtime.CallResult;
-import unity.core.runtime.CallResult.CallResults;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import Coalesce.Common.Helpers.XmlHelper;
 import Coalesce.Framework.GeneratedJAXB.Entity.Linkagesection.Linkage;
@@ -279,45 +277,34 @@ public class XsdLinkage extends XsdDataObject {
     // public Methods
     // -----------------------------------------------------------------------//
 
-    public CallResult EstablishLinkage(XsdEntity Entity1,
-                                       ELinkTypes LinkType,
-                                       XsdEntity Entity2,
-                                       String ClassificationMarking,
-                                       String ModifiedBy,
-                                       String InputLang)
+    public void EstablishLinkage(XsdEntity Entity1,
+                                 ELinkTypes LinkType,
+                                 XsdEntity Entity2,
+                                 String ClassificationMarking,
+                                 String ModifiedBy,
+                                 String InputLang)
     {
-        try
-        {
+        // Set Values
+        SetEntity1Key(Entity1.getKey());
+        SetEntity1Name(Entity1.getName());
+        SetEntity1Source(Entity1.getSource());
+        SetEntity1Version(Entity1.getVersion());
 
-            // Set Values
-            SetEntity1Key(Entity1.getKey());
-            SetEntity1Name(Entity1.getName());
-            SetEntity1Source(Entity1.getSource());
-            SetEntity1Version(Entity1.getVersion());
+        SetLinkType(LinkType);
 
-            SetLinkType(LinkType);
+        SetEntity2Key(Entity2.getKey());
+        SetEntity2Name(Entity2.getName());
+        SetEntity2Source(Entity2.getSource());
+        SetEntity2Version(Entity2.getVersion());
 
-            SetEntity2Key(Entity2.getKey());
-            SetEntity2Name(Entity2.getName());
-            SetEntity2Source(Entity2.getSource());
-            SetEntity2Version(Entity2.getVersion());
+        SetClassificationMarking(ClassificationMarking);
+        SetModifiedBy(ModifiedBy);
+        SetInputLang(InputLang);
 
-            SetClassificationMarking(ClassificationMarking);
-            SetModifiedBy(ModifiedBy);
-            SetInputLang(InputLang);
+        DateTime utcNow = JodaDateTimeHelper.NowInUtc();
+        setLastModified(utcNow);
 
-            DateTime utcNow = JodaDateTimeHelper.NowInUtc();
-            setLastModified(utcNow);
-
-            setStatus(ECoalesceDataObjectStatus.ACTIVE);
-
-            return CallResult.successCallResult;
-
-        }
-        catch (Exception ex)
-        {
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
-        }
+        setStatus(ECoalesceDataObjectStatus.ACTIVE);
     }
 
     public String toXml()
@@ -329,21 +316,10 @@ public class XsdLinkage extends XsdDataObject {
     // Private and protected Methods
     // -----------------------------------------------------------------------//
 
-    protected CallResult SetChanged()
+    protected void SetChanged()
     {
-        try
-        {
-
-            DateTime utcNow = JodaDateTimeHelper.NowInUtc();
-            setLastModified(utcNow);
-
-            return CallResult.successCallResult;
-
-        }
-        catch (Exception ex)
-        {
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
-        }
+        DateTime utcNow = JodaDateTimeHelper.NowInUtc();
+        setLastModified(utcNow);
     }
 
     // -----------------------------------------------------------------------//

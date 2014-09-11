@@ -8,8 +8,6 @@ import javax.xml.namespace.QName;
 
 import org.joda.time.DateTime;
 
-import unity.core.runtime.CallResult;
-import unity.core.runtime.CallResult.CallResults;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
 
 /*-----------------------------------------------------------------------------'
@@ -266,67 +264,57 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
 
     public XsdDataObject getDataObjectForNamePath(String namePath)
     {
-        try
-        {
-
             if (namePath == null) return null;
             
-            String[] names = namePath.split("/");
+        String[] names = namePath.split("/");
 
-            switch (names.length) {
-            case 0:
+        switch (names.length) {
+        case 0:
 
-                // No path. Object not found.
-                break;
+            // No path. Object not found.
+            break;
 
-            case 1:
+        case 1:
 
-                // End of the path, is our Base Object named the Name Path?
-                if (getName().equals(names[0]))
-                {
-                    return this;
-                }
-
-                // No object found
-                break;
-
-            default:
-
-                // Find next child
-                XsdDataObject dataObject = null;
-
-                for (XsdDataObject child : _childDataObjects.values())
-                {
-                    String childName = child.getName();
-
-                    if (childName != null && childName.equals(names[1]))
-                    {
-                        dataObject = child;
-                        break;
-                    }
-                }
-
-                if (dataObject != null)
-                {
-
-                    String newPath = namePath.substring(namePath.indexOf("/") + 1);
-
-                    return dataObject.getDataObjectForNamePath(newPath);
-
-                }
-
-                // No object found
-                break;
+            // End of the path, is our Base Object named the Name Path?
+            if (getName().equals(names[0]))
+            {
+                return this;
             }
 
-            return null;
+            // No object found
+            break;
 
+        default:
+
+            // Find next child
+            XsdDataObject dataObject = null;
+
+            for (XsdDataObject child : _childDataObjects.values())
+            {
+                String childName = child.getName();
+
+                if (childName != null && childName.equals(names[1]))
+                {
+                    dataObject = child;
+                    break;
+                }
+            }
+
+            if (dataObject != null)
+            {
+
+                String newPath = namePath.substring(namePath.indexOf("/") + 1);
+
+                return dataObject.getDataObjectForNamePath(newPath);
+
+            }
+
+            // No object found
+            break;
         }
-        catch (Exception ex)
-        {
-            CallResult.log(CallResults.FAILED_ERROR, ex, this);
-            return null;
-        }
+
+        return null;
     }
 
     public XsdDataObject getCoalesceDataObjectForKey(String key)

@@ -6,29 +6,27 @@ import org.apache.commons.lang.NotImplementedException;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.joda.time.DateTime;
 
-import unity.core.runtime.CallResult;
-import unity.core.runtime.CallResult.CallResults;
 import Coalesce.Common.Classification.Marking;
 import Coalesce.Common.Helpers.GUIDHelper;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import Coalesce.Common.Helpers.StringHelper;
 
 /*-----------------------------------------------------------------------------'
-Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
+ Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
 
-Notwithstanding any contractor copyright notice, the Government has Unlimited
-Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
-of this work other than as specifically authorized by these DFARS Clauses may
-violate Government rights in this work.
+ Notwithstanding any contractor copyright notice, the Government has Unlimited
+ Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+ of this work other than as specifically authorized by these DFARS Clauses may
+ violate Government rights in this work.
 
-DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
-Unlimited Rights. The Government has the right to use, modify, reproduce,
-perform, display, release or disclose this computer software and to have or
-authorize others to do so.
+ DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+ Unlimited Rights. The Government has the right to use, modify, reproduce,
+ perform, display, release or disclose this computer software and to have or
+ authorize others to do so.
 
-Distribution Statement D. Distribution authorized to the Department of
-Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
------------------------------------------------------------------------------*/
+ Distribution Statement D. Distribution authorized to the Department of
+ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+ -----------------------------------------------------------------------------*/
 
 public abstract class XsdFieldBase extends XsdDataObject {
 
@@ -170,7 +168,7 @@ public abstract class XsdFieldBase extends XsdDataObject {
 
     protected abstract void setObjectLastModified(DateTime value);
 
-    public CallResult SetTypedValue(String value)
+    public void SetTypedValue(String value)
     {
         ECoalesceFieldDataTypes fieldType = GetDataType();
         if (fieldType != ECoalesceFieldDataTypes.StringType && fieldType != ECoalesceFieldDataTypes.UriType)
@@ -179,12 +177,9 @@ public abstract class XsdFieldBase extends XsdDataObject {
         }
 
         SetValue(value);
-
-        return CallResult.successCallResult;
-
     }
 
-    public CallResult SetTypedValue(UUID value)
+    public void SetTypedValue(UUID value)
     {
         if (GetDataType() != ECoalesceFieldDataTypes.GuidType)
         {
@@ -192,12 +187,9 @@ public abstract class XsdFieldBase extends XsdDataObject {
         }
 
         SetValue(GUIDHelper.GetGuidString(value));
-
-        return CallResult.successCallResult;
-
     }
 
-    public CallResult SetTypedValue(DateTime value)
+    public void SetTypedValue(DateTime value)
     {
         if (GetDataType() != ECoalesceFieldDataTypes.DateTimeType)
         {
@@ -205,12 +197,9 @@ public abstract class XsdFieldBase extends XsdDataObject {
         }
 
         SetValue(JodaDateTimeHelper.ToXmlDateTimeUTC(value));
-
-        return CallResult.successCallResult;
-
     }
 
-    public CallResult SetTypedValue(boolean value)
+    public void SetTypedValue(boolean value)
     {
         if (GetDataType() != ECoalesceFieldDataTypes.BooleanType)
         {
@@ -218,12 +207,9 @@ public abstract class XsdFieldBase extends XsdDataObject {
         }
 
         SetValue(String.valueOf(value));
-
-        return CallResult.successCallResult;
-
     }
 
-    public CallResult SetTypedValue(int value)
+    public void SetTypedValue(int value)
     {
         if (GetDataType() != ECoalesceFieldDataTypes.IntegerType)
         {
@@ -231,9 +217,6 @@ public abstract class XsdFieldBase extends XsdDataObject {
         }
 
         SetValue(String.valueOf(value));
-
-        return CallResult.successCallResult;
-
     }
 
     // TODO: Microsoft.SqlServer.Types.SqlGeography
@@ -334,7 +317,7 @@ public abstract class XsdFieldBase extends XsdDataObject {
     // }
     // }
 
-    public CallResult SetTypedValue(byte[] dataBytes)
+    public void SetTypedValue(byte[] dataBytes)
     {
         if (GetDataType() != ECoalesceFieldDataTypes.BinaryType)
         {
@@ -344,47 +327,24 @@ public abstract class XsdFieldBase extends XsdDataObject {
         String value = Base64.encodeBase64String(dataBytes);
         SetValue(value);
         SetSize(dataBytes.length);
-
-        return CallResult.successCallResult;
-
     }
 
-    public CallResult SetTypedValue(byte[] dataBytes, String filename, String extension, String mimeType)
+    public void SetTypedValue(byte[] dataBytes, String filename, String extension, String mimeType)
     {
-        try
-        {
-            String value = Base64.encodeBase64String(dataBytes);
-            SetValue(value);
-            SetFilename(filename);
-            SetExtension(extension);
-            SetMimeType(mimeType);
-            SetSize(dataBytes.length);
-
-            return CallResult.successCallResult;
-
-        }
-        catch (Exception ex)
-        {
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
-        }
+        String value = Base64.encodeBase64String(dataBytes);
+        SetValue(value);
+        SetFilename(filename);
+        SetExtension(extension);
+        SetMimeType(mimeType);
+        SetSize(dataBytes.length);
     }
 
-    public CallResult SetTypedValue(String filename, String extension, String mimeType, String hash)
+    public void SetTypedValue(String filename, String extension, String mimeType, String hash)
     {
-        try
-        {
-            SetFilename(filename);
-            SetExtension(extension);
-            SetMimeType(mimeType);
-            SetHash(hash);
-
-            return CallResult.successCallResult;
-
-        }
-        catch (Exception ex)
-        {
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
-        }
+        SetFilename(filename);
+        SetExtension(extension);
+        SetMimeType(mimeType);
+        SetHash(hash);
     }
 
     // TODO: DocumentProperties
@@ -463,14 +423,16 @@ public abstract class XsdFieldBase extends XsdDataObject {
             throw new ClassCastException("Type mismatch");
         }
 
-        String validUuid = GUIDHelper.IsValid(GetValue());
+        String value = GetValue();
 
-        if (validUuid == null) return null;
-
-        UUID value = GUIDHelper.GetGuid(GetValue());
-
-        return value;
-
+        if (GUIDHelper.IsValid(value))
+        {
+            return GUIDHelper.GetGuid(value);
+        }
+        else
+        {
+            return null;
+        }
     }
 
     public DateTime GetDateTimeValue() throws ClassCastException
@@ -497,7 +459,7 @@ public abstract class XsdFieldBase extends XsdDataObject {
         }
 
         if (StringHelper.IsNullOrEmpty(this.GetValue())) throw new ClassCastException("Type mismatch");
-        
+
         boolean value = Boolean.parseBoolean(this.GetValue());
 
         return value;
@@ -628,6 +590,5 @@ public abstract class XsdFieldBase extends XsdDataObject {
 
         }
     }
-
 
 }

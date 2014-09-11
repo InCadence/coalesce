@@ -1,6 +1,10 @@
 package Coalesce.Framework.Persistance;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.util.List;
@@ -16,6 +20,9 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import unity.connector.local.LocalConfigurationsConnector;
+import unity.core.runtime.CallResult;
+import unity.core.runtime.CallResult.CallResults;
+import Coalesce.Common.Exceptions.InvalidFieldException;
 import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.Runtime.CoalesceSettings;
 import Coalesce.Framework.CoalesceFramework;
@@ -51,9 +58,10 @@ import com.database.persister.ServerConn;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-
 public class CoalesceMySQLPersistorTest {
 
+    private static String MODULE_NAME = "CoalesceMySQLPersistorTest"; 
+    
     static ServerConn serCon;
     static MySQLPersistor mySQLPersistor;
     private static CoalesceFramework _coalesceFramework;
@@ -84,51 +92,80 @@ public class CoalesceMySQLPersistorTest {
 
     private static boolean createEntity()
     {
-        // Create Test Entity
-        _entity = new XsdEntity();
+        try
+        {
+            // Create Test Entity
+            _entity = new XsdEntity();
 
-        XsdSection section = null;
-        XsdRecordset recordSet = null;
-        XsdRecord record = null;
+            XsdSection section = null;
+            XsdRecordset recordSet = null;
+            XsdRecord record = null;
 
-        // Create Entity
-        _entity = XsdEntity.create("TestEntity", "Unit Test", "1.0.0.0", "", "", "");
+            // Create Entity
+            _entity = XsdEntity.create("TestEntity", "Unit Test", "1.0.0.0", "", "", "");
 
-        XsdLinkageSection.Create(_entity, true);
+            XsdLinkageSection.Create(_entity, true);
 
         section = XsdSection.create(_entity, "Live Status Section", true);
-        recordSet = XsdRecordset.Create(section, "Live Status Recordset");
-        XsdFieldDefinition.create(recordSet, "CurrentStatus", ECoalesceFieldDataTypes.StringType);
+            recordSet = XsdRecordset.Create(section, "Live Status Recordset");
+            XsdFieldDefinition.create(recordSet, "CurrentStatus", ECoalesceFieldDataTypes.StringType);
 
-        record = recordSet.AddNew();
-        record.SetFieldValue("CurrentStatus", "Test Status");
+            record = recordSet.AddNew();
+            record.SetFieldValue("CurrentStatus", "Test Status");
 
-        _fieldKey = record.GetFieldByName("CurrentStatus").getKey();
-        return true;
+            _fieldKey = record.GetFieldByName("CurrentStatus").getKey();
+            return true;
+        }
+        catch (InvalidFieldException e)
+        {
+            // TODO Auto-generated catch block
+            CallResult.log(CallResults.FAILED_ERROR, e, MODULE_NAME);
+            return false;
+        }
     }
-    private static boolean createEntity(String entName, String entSource, String entVersion, String entID, String entTypeID, String entTitle, String sectName, String recordsetName, String fieldDefName, String fieldName)
+
+    private static boolean createEntity(String entName,
+                                        String entSource,
+                                        String entVersion,
+                                        String entID,
+                                        String entTypeID,
+                                        String entTitle,
+                                        String sectName,
+                                        String recordsetName,
+                                        String fieldDefName,
+                                        String fieldName)
     {
-        // Create Test Entity
-        _entity = new XsdEntity();
+        try
+        {
+            // Create Test Entity
+            _entity = new XsdEntity();
 
-        XsdSection section = null;
-        XsdRecordset recordSet = null;
-        XsdRecord record = null;
+            XsdSection section = null;
+            XsdRecordset recordSet = null;
+            XsdRecord record = null;
 
-        // Create Entity
-        _entity = XsdEntity.create(entName, entSource, entVersion, entID, entTypeID, entTitle);
+            // Create Entity
+            _entity = XsdEntity.create(entName, entSource, entVersion, entID, entTypeID, entTitle);
 
-        XsdLinkageSection.Create(_entity, true);
+            XsdLinkageSection.Create(_entity, true);
 
         section = XsdSection.create(_entity, sectName, true);
-        recordSet = XsdRecordset.Create(section, recordsetName);
-        XsdFieldDefinition.create(recordSet, fieldDefName, ECoalesceFieldDataTypes.StringType);
+            recordSet = XsdRecordset.Create(section, recordsetName);
+            XsdFieldDefinition.create(recordSet, fieldDefName, ECoalesceFieldDataTypes.StringType);
 
-        record = recordSet.AddNew();
-        record.SetFieldValue(fieldDefName, fieldName);
+            record = recordSet.AddNew();
+            record.SetFieldValue(fieldDefName, fieldName);
 
-        _fieldKey = record.GetFieldByName(fieldDefName).getKey();    
-        return true;
+            _fieldKey = record.GetFieldByName(fieldDefName).getKey();
+            return true;
+        }
+        catch (InvalidFieldException e)
+        {
+            // TODO Auto-generated catch block
+            CallResult.log(CallResults.FAILED_ERROR, e, MODULE_NAME);
+            return false;
+        }
+
     }
 
     @Test
@@ -146,11 +183,12 @@ public class CoalesceMySQLPersistorTest {
             fail(ex.getMessage());
         }
     }
+
     @Test
     public void testFAILConnection()
     {
-        //  Is this even needed?
-        ServerConn serConFail=new ServerConn();
+        // Is this even needed?
+        ServerConn serConFail = new ServerConn();
         serConFail.setURL("jdbc:mysql//localhost:3306/coalescedatabase");
         serConFail.setPassword("Passw0rd");
         serConFail.setUser("rot");
@@ -265,6 +303,7 @@ public class CoalesceMySQLPersistorTest {
             fail(ex.getMessage());
         }
     }
+
     @Test
     public void testFAILCheckLastModified()
     {
@@ -282,6 +321,7 @@ public class CoalesceMySQLPersistorTest {
             fail(ex.getMessage());
         }
     }
+
     @Test
     public void testGetEntityByIdAndType()
     {
@@ -334,13 +374,14 @@ public class CoalesceMySQLPersistorTest {
         }
 
     }
+
     @Test
     public void testFAILGetFieldValue()
     {
 
         try
         {
-            //          Create a new entity, but do not save the entity
+            // Create a new entity, but do not save the entity
             assertTrue(CoalesceMySQLPersistorTest.createEntity());
             String fieldValue = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceFieldValue(_fieldKey);
             assertNull(fieldValue);
@@ -367,14 +408,13 @@ public class CoalesceMySQLPersistorTest {
             fail(ex.getMessage());
         }
     }
+
     @Test
     public void testFAILGetEntityKeyForEntityId()
     {
         try
         {
-            String objectKey = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntityKeyForEntityId("",
-                                                                                                             "",
-                                                                                                             "");
+            String objectKey = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntityKeyForEntityId("", "", "");
             assertTrue(objectKey == null);
         }
         catch (Exception ex)
@@ -382,6 +422,7 @@ public class CoalesceMySQLPersistorTest {
             fail(ex.getMessage());
         }
     }
+
     @Test
     public void testGetEntityKeyForEntityIdName()
     {
@@ -391,13 +432,14 @@ public class CoalesceMySQLPersistorTest {
                                                                                                                     _entity.getEntityIdType(),
                                                                                                                     _entity.getName(),
                                                                                                                     _entity.getSource());
-            assertTrue(objectKey.size()>=1);
+            assertTrue(objectKey.size() >= 1);
         }
         catch (Exception ex)
         {
             fail(ex.getMessage());
         }
     }
+
     @Test
     public void testFAILGetEntityKeyForEntityIdName()
     {
@@ -407,13 +449,14 @@ public class CoalesceMySQLPersistorTest {
                                                                                                                     "",
                                                                                                                     "",
                                                                                                                     "");
-            assertTrue(objectKey.size()==0);
+            assertTrue(objectKey.size() == 0);
         }
         catch (Exception ex)
         {
             fail(ex.getMessage());
         }
     }
+
     @Test
     public void testGetEntityKeyForEntityIdSource()
     {
@@ -429,6 +472,7 @@ public class CoalesceMySQLPersistorTest {
             fail(ex.getMessage());
         }
     }
+
     @Test
     public void testFAILGetEntityKeyForEntityIdSource()
     {
@@ -444,6 +488,7 @@ public class CoalesceMySQLPersistorTest {
             fail(ex.getMessage());
         }
     }
+
     @Test
     public void testGetEntityKeysForEntityIdSource()
     {

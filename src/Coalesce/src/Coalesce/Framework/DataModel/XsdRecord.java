@@ -8,8 +8,7 @@ import javax.xml.namespace.QName;
 
 import org.joda.time.DateTime;
 
-import unity.core.runtime.CallResult;
-import unity.core.runtime.CallResult.CallResults;
+import Coalesce.Common.Exceptions.InvalidFieldException;
 import Coalesce.Common.Helpers.XmlHelper;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record.Field;
@@ -33,16 +32,6 @@ import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record.Field;
 
 public class XsdRecord extends XsdDataObject {
 
-    public class InvalidFieldException extends Exception {
-
-        private static final long serialVersionUID = 1096699796765997918L;
-
-        public InvalidFieldException(String message)
-        {
-            super(message);
-        }
-    }
-
     // -----------------------------------------------------------------------//
     // protected Member Variables
     // -----------------------------------------------------------------------//
@@ -55,36 +44,27 @@ public class XsdRecord extends XsdDataObject {
 
     public static XsdRecord Create(XsdRecordset parent, String name)
     {
-        try
+        Record newEntityRecord = new Record();
+        parent.GetEntityRecords().add(newEntityRecord);
+
+        XsdRecord newRecord = new XsdRecord();
+        if (!newRecord.Initialize(parent, newEntityRecord)) return null;
+
+        for (XsdFieldDefinition fieldDefinition : parent.GetFieldDefinitions())
         {
-
-            Record newEntityRecord = new Record();
-            parent.GetEntityRecords().add(newEntityRecord);
-
-            XsdRecord newRecord = new XsdRecord();
-            if (!newRecord.Initialize(parent, newEntityRecord)) return null;
-
-            for (XsdFieldDefinition fieldDefinition : parent.GetFieldDefinitions())
-            {
-                // Creates New Field
-                XsdField.Create(newRecord, fieldDefinition);
-            }
-
-            newRecord.setName(name);
-
-            // Add to parent's child collection
-            if (!parent._childDataObjects.containsKey(newRecord.getKey()))
-            {
-                parent._childDataObjects.put(newRecord.getKey(), newRecord);
-            }
-
-            return newRecord;
-
+            // Creates New Field
+            XsdField.Create(newRecord, fieldDefinition);
         }
-        catch (Exception ex)
+
+        newRecord.setName(name);
+
+        // Add to parent's child collection
+        if (!parent._childDataObjects.containsKey(newRecord.getKey()))
         {
-            return null;
+            parent._childDataObjects.put(newRecord.getKey(), newRecord);
         }
+
+        return newRecord;
     }
 
     public boolean Initialize(XsdRecordset parent, Record record)
@@ -149,161 +129,97 @@ public class XsdRecord extends XsdDataObject {
     {
         return "record";
     }
-    
+
     public ArrayList<XsdField> GetFields()
     {
-        try
+        ArrayList<XsdField> fields = new ArrayList<XsdField>();
+
+        for (XsdDataObject dataObject : _childDataObjects.values())
         {
 
-            ArrayList<XsdField> fields = new ArrayList<XsdField>();
-
-            for (XsdDataObject dataObject : _childDataObjects.values())
+            if (dataObject instanceof XsdField)
             {
-
-                if (dataObject instanceof XsdField)
-                {
-                    fields.add((XsdField) dataObject);
-                }
+                fields.add((XsdField) dataObject);
             }
-
-            return fields;
-
         }
-        catch (Exception ex)
-        {
-            return null;
-        }
+
+        return fields;
     }
 
     public ArrayList<String> GetFieldNames()
     {
-        try
+        ArrayList<String> fieldNames = new ArrayList<String>();
+
+        for (XsdDataObject dataObject : _childDataObjects.values())
         {
-
-            ArrayList<String> fieldNames = new ArrayList<String>();
-
-            for (XsdDataObject dataObject : _childDataObjects.values())
+            if (dataObject instanceof XsdField)
             {
-                if (dataObject instanceof XsdField)
-                {
-                    fieldNames.add(dataObject.getName());
-                }
+                fieldNames.add(dataObject.getName());
             }
-
-            return fieldNames;
-
         }
-        catch (Exception ex)
-        {
-            return null;
-        }
+
+        return fieldNames;
     }
 
     public ArrayList<String> GetFieldKeys()
     {
-        try
+        ArrayList<String> fieldKeys = new ArrayList<String>();
+
+        for (XsdDataObject dataObject : _childDataObjects.values())
         {
-
-            ArrayList<String> fieldKeys = new ArrayList<String>();
-
-            for (XsdDataObject dataObject : _childDataObjects.values())
+            if (dataObject instanceof XsdField)
             {
-                if (dataObject instanceof XsdField)
-                {
-                    fieldKeys.add(dataObject.getKey());
-                }
+                fieldKeys.add(dataObject.getKey());
             }
-
-            return fieldKeys;
-
         }
-        catch (Exception ex)
-        {
-            return null;
-        }
+
+        return fieldKeys;
     }
 
     public XsdField GetFieldByKey(String key)
     {
-        try
+        for (XsdField field : GetFields())
         {
-
-            for (XsdField field : GetFields())
+            if (field.getKey().equals(key))
             {
-                if (field.getKey().equals(key))
-                {
-                    return field;
-                }
+                return field;
             }
-
-            return null;
-
         }
-        catch (Exception ex)
-        {
-            return null;
-        }
+
+        return null;
     }
 
     public XsdField GetFieldByName(String name)
     {
-        try
+        for (XsdField field : GetFields())
         {
-
-            for (XsdField field : GetFields())
+            if (field.getName().equals(name))
             {
-                if (field.getName().equals(name))
-                {
-                    return field;
-                }
+                return field;
             }
-
-            return null;
-
         }
-        catch (Exception ex)
-        {
-            return null;
-        }
+
+        return null;
     }
 
     public XsdField GetFieldByIndex(int Index)
     {
-        try
-        {
-
-            return GetFields().get(Index);
-
-        }
-        catch (Exception ex)
-        {
-            return null;
-        }
+        return GetFields().get(Index);
     }
 
-    public String GetFieldValue(String fieldName) throws InvalidFieldException
+    public String GetFieldValue(String fieldName) throws InvalidFieldException 
     {
-        try
+        XsdField field = GetFieldByName(fieldName);
+
+        // Do we have this Field?
+        if (field != null)
         {
-            XsdField field = GetFieldByName(fieldName);
-
-            // Do we have this Field?
-            if (field != null)
-            {
-                // Yes; return Value;
-                return field.GetValue();
-            }
-            else
-            {
-                throw new InvalidFieldException(fieldName);
-            }
-
+            // Yes; return Value;
+            return field.GetValue();
         }
-        catch (Exception ex)
+        else
         {
-            CallResult.log(CallResults.FAILED_ERROR, ex, this);
-
-            return "";
+            throw new InvalidFieldException(fieldName);
         }
     }
 
@@ -459,167 +375,106 @@ public class XsdRecord extends XsdDataObject {
         }
     }
 
-    public CallResult SetFieldValue(String fieldName, String value)
+    public void SetFieldValue(String fieldName, String value) throws InvalidFieldException
     {
-        try
+        XsdField field = GetFieldByName(fieldName);
+
+        // Do we have this Field?
+        if (field != null)
         {
-            XsdField field = GetFieldByName(fieldName);
-
-            // Do we have this Field?
-            if (field != null)
-            {
-
-                field.SetValue(value);
-
-                return CallResult.successCallResult;
-
-            }
-            else
-            {
-                return new CallResult(CallResults.FAILED, "Field not found.", this);
-            }
-
+            field.SetValue(value);
         }
-        catch (Exception ex)
+        else
         {
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
+            throw new InvalidFieldException(fieldName);
         }
     }
 
-    public CallResult SetFieldValue(String fieldName, boolean value)
+    public void SetFieldValue(String fieldName, boolean value) throws InvalidFieldException
     {
-        try
+        XsdField field = GetFieldByName(fieldName);
+
+        // Do we have this Field?
+        if (field != null)
         {
-            XsdField field = GetFieldByName(fieldName);
-
-            // Do we have this Field?
-            if (field != null)
-            {
-                return field.SetTypedValue(value);
-            }
-            else
-            {
-                return new CallResult(CallResults.FAILED, "Field not found.", this);
-            }
-
+            field.SetTypedValue(value);
         }
-        catch (Exception ex)
+        else
         {
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
+            throw new InvalidFieldException(fieldName);
         }
     }
 
-    public CallResult SetFieldValue(String fieldName, int value)
+    public void SetFieldValue(String fieldName, int value) throws InvalidFieldException
     {
-        try
+        XsdField field = GetFieldByName(fieldName);
+
+        // Do we have this Field?
+        if (field != null)
         {
-            XsdField field = GetFieldByName(fieldName);
-
-            // Do we have this Field?
-            if (field != null)
-            {
-                return field.SetTypedValue(value);
-            }
-            else
-            {
-                return new CallResult(CallResults.FAILED, "Field not found.", this);
-            }
-
+            field.SetTypedValue(value);
         }
-        catch (Exception ex)
+        else
         {
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
+            throw new InvalidFieldException(fieldName);
         }
     }
 
-    public CallResult SetFieldValue(String fieldName, DateTime value)
+    public void SetFieldValue(String fieldName, DateTime value) throws InvalidFieldException
     {
-        try
+        XsdField field = GetFieldByName(fieldName);
+
+        // Do we have this Field?
+        if (field != null)
         {
-            XsdField field = GetFieldByName(fieldName);
-
-            // Do we have this Field?
-            if (field != null)
-            {
-                return field.SetTypedValue(value);
-            }
-            else
-            {
-                // return Failed Error
-                return new CallResult(CallResults.FAILED, "Field not found.", this);
-            }
-
+            field.SetTypedValue(value);
         }
-        catch (Exception ex)
+        else
         {
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
+            throw new InvalidFieldException(fieldName);
         }
     }
 
-    public CallResult SetFieldValue(String fieldName, byte[] value)
+    public void SetFieldValue(String fieldName, byte[] value) throws InvalidFieldException
     {
-        try
-        {
-            return SetFieldValue(fieldName, value, "");
-        }
-        catch (Exception ex)
-        {
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
-        }
+        SetFieldValue(fieldName, value, "");
     }
 
-    public CallResult SetFieldValue(String fieldName, byte[] value, String fileName)
+    public void SetFieldValue(String fieldName, byte[] value, String fileName) throws InvalidFieldException
     {
-        try
+        XsdField field = GetFieldByName(fieldName);
+
+        // Do we have this Field?
+        if (field != null)
         {
-            XsdField field = GetFieldByName(fieldName);
 
-            // Do we have this Field?
-            if (field != null)
+            if (fileName.equals(""))
             {
-
-                if (fileName.equals(""))
-                {
-                    return field.SetTypedValue(value);
-                }
-                else
-                {
-                    return field.SetTypedValue(value, "{" + fileName + "}", ".jpg", "");
-                }
-
+                field.SetTypedValue(value);
             }
             else
             {
-                return new CallResult(CallResults.FAILED, "Field not found.", this);
+                field.SetTypedValue(value, "{" + fileName + "}", ".jpg", "");
             }
 
         }
-        catch (Exception ex)
+        else
         {
-            return new CallResult(CallResults.FAILED_ERROR, ex, this);
+            throw new InvalidFieldException(fieldName);
         }
+
     }
 
     public Boolean HasField(String name)
     {
-        try
+        // Find Field
+        // For Each f As XsdField In this.GetFields
+        for (int i = 0; i < GetFields().size(); i++)
         {
-            // Find Field
-            // For Each f As XsdField In this.GetFields
-            for (int i = 0; i < GetFields().size(); i++)
-            {
-                if (GetFields().get(i).getName().equals(name)) return true;
-            }
-
-            return false;
-
+            if (GetFields().get(i).getName().equals(name)) return true;
         }
-        catch (Exception ex)
-        {
-            CallResult.log(CallResults.FAILED_ERROR, ex, this);
 
-            return false;
-        }
+        return false;
     }
 
     public String toXml()

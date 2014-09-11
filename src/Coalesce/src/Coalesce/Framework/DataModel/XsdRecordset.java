@@ -8,8 +8,6 @@ import javax.xml.namespace.QName;
 
 import org.joda.time.DateTime;
 
-import unity.core.runtime.CallResult;
-import unity.core.runtime.CallResult.CallResults;
 import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.Helpers.XmlHelper;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset;
@@ -47,7 +45,7 @@ public class XsdRecordset extends XsdDataObject {
     // protected Member Variables
     // -----------------------------------------------------------------------//
 
-    private static String MODULE = "Coalesce.Framework.DataModel.XsdRecordSet";
+    //private static String MODULE = "Coalesce.Framework.DataModel.XsdRecordSet";
 
     private Recordset _entityRecordset;
 
@@ -216,18 +214,8 @@ public class XsdRecordset extends XsdDataObject {
 
     public DateTime getDateCreated()
     {
-        try
-        {
-
-            // return new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityRecordset.getDatecreated());
-            return _entityRecordset.getDatecreated();
-
-        }
-        catch (Exception ex)
-        {
-            CallResult.log(CallResults.FAILED_ERROR, ex, this);
-            return null;
-        }
+        // return new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityRecordset.getDatecreated());
+        return _entityRecordset.getDatecreated();
     }
 
     @Override
@@ -276,28 +264,18 @@ public class XsdRecordset extends XsdDataObject {
 
     public XsdFieldDefinition GetFieldDefinition(String fieldName)
     {
-        try
+        // Find
+        for (XsdFieldDefinition fieldDefinition : GetFieldDefinitions())
         {
-
-            // Find
-            for (XsdFieldDefinition fieldDefinition : GetFieldDefinitions())
+            if (fieldDefinition.getName().toUpperCase().equals(fieldName.toUpperCase()))
             {
-                if (fieldDefinition.getName().toUpperCase().equals(fieldName.toUpperCase()))
-                {
 
-                    return fieldDefinition;
-                }
+                return fieldDefinition;
             }
-
-            // Not found
-            return null;
-
         }
-        catch (Exception ex)
-        {
-            CallResult.log(CallResults.FAILED_ERROR, ex, XsdRecordset.MODULE);
-            return null;
-        }
+
+        // Not found
+        return null;
     }
 
     public boolean GetAllowEdit()
@@ -322,155 +300,98 @@ public class XsdRecordset extends XsdDataObject {
 
     public boolean Contains(Object value)
     { // As Boolean Implements System.Collections.IList.Contains
-        try
-        {
-
-            return this.GetRecords().contains(value);
-
-        }
-        catch (Exception ex)
-        {
-            CallResult.log(CallResults.FAILED_ERROR, ex, this);
-
-            return false;
-        }
+        return this.GetRecords().contains(value);
     }
 
     public int IndexOf(Object value)
     { // As Integer Implements System.Collections.IList.IndexOf
-        try
-        {
-            // Call on the from the Records Collection
-            return this.GetRecords().indexOf(value);
-
-        }
-        catch (Exception ex)
-        {
-            CallResult.log(CallResults.FAILED_ERROR, ex, this);
-
-            return -1;
-        }
+      // Call on the from the Records Collection
+        return this.GetRecords().indexOf(value);
     }
 
     public XsdRecord AddNew()
     { // As Object Implements System.ComponentModel.IBindingList.AddNew
-        try
-        {
+      // Create new Record
+        XsdRecord newRecord = XsdRecord.Create(this, getName() + " Record");
 
-            // Create new Record
-            XsdRecord newRecord = XsdRecord.Create(this, getName() + " Record");
+        // TODO: Raise the Changed Event
+        // RaiseEvent ListChanged(this, new
+        // ListChangedEventArgs(ListChangedType.ItemAdded,
+        // this.GetRecords().Count - 1));
 
-            // TODO: Raise the Changed Event
-            // RaiseEvent ListChanged(this, new
-            // ListChangedEventArgs(ListChangedType.ItemAdded,
-            // this.GetRecords().Count - 1));
-
-            return newRecord;
-
-        }
-        catch (Exception ex)
-        {
-            CallResult.log(CallResults.FAILED_ERROR, ex, this);
-
-            return null;
-        }
+        return newRecord;
     }
 
     public XsdRecord GetItem(int index)
     {
-        try
+        
+        // Iterate List
+        if (index >= 0 && index < this.GetRecords().size())
         {
-            // Iterate List
-            if (index >= 0 && index < this.GetRecords().size())
-            {
-                return GetRecords().get(index);
-            }
-            else
-            {
-                return null;
-            }
-
+            return GetRecords().get(index);
         }
-        catch (Exception ex)
+        else
         {
-            CallResult.log(CallResults.FAILED_ERROR, ex, this);
-
-            return null;
+            throw new IndexOutOfBoundsException();
         }
     }
 
     public void RemoveAt(Integer index)
     { // Implements System.Collections.IList.RemoveAt
-        try
+      // Get Record
+        XsdRecord record = (XsdRecord) this.GetItem(index);
+
+        // Evaluate
+        if (record != null)
         {
-            // Get Record
-            XsdRecord record = (XsdRecord) this.GetItem(index);
 
-            // Evaluate
-            if (record != null)
-            {
+            // Set as Status as Deleted
+            record.setStatus(ECoalesceDataObjectStatus.DELETED);
 
-                // Set as Status as Deleted
-                record.setStatus(ECoalesceDataObjectStatus.DELETED);
+            // Remove from the Records Collection
+            GetRecords().remove(record);
 
-                // Remove from the Records Collection
-                GetRecords().remove(record);
+            // // Determine new Index
+            // int NewIndex;
+            // if (index == 0) {
+            // if (this.Count > 0) {
+            // NewIndex = 0;
+            // }else{
+            // NewIndex = -1;
+            // }
+            // }else{
+            // NewIndex = index - 1;
+            // }
 
-                // // Determine new Index
-                // int NewIndex;
-                // if (index == 0) {
-                // if (this.Count > 0) {
-                // NewIndex = 0;
-                // }else{
-                // NewIndex = -1;
-                // }
-                // }else{
-                // NewIndex = index - 1;
-                // }
-
-                // TODO: Raise ListChanged Event
-                // RaiseEvent ListChanged(this, new
-                // ListChangedEventArgs(ListChangedType.ItemDeleted, NewIndex));
-            }
-
-        }
-        catch (Exception ex)
-        {
-            CallResult.log(CallResults.FAILED_ERROR, ex, this);
+            // TODO: Raise ListChanged Event
+            // RaiseEvent ListChanged(this, new
+            // ListChangedEventArgs(ListChangedType.ItemDeleted, NewIndex));
         }
     }
 
     public void Remove(String key)
     {
-        try
+        XsdRecord recordToRemove = null;
+
+        // Find
+        // For Each Record As XsdRecord In this.Records
+        for (XsdRecord record : GetRecords())
         {
-            XsdRecord recordToRemove = null;
-
-            // Find
-            // For Each Record As XsdRecord In this.Records
-            for (XsdRecord record : GetRecords())
+            if (record.getKey().equals(key))
             {
-                if (record.getKey().equals(key))
-                {
-                    recordToRemove = record;
-                    break;
-                }
+                recordToRemove = record;
+                break;
             }
-
-            // Evaluate
-            if (recordToRemove != null)
-            {
-                // Set as Status as Deleted
-                recordToRemove.setStatus(ECoalesceDataObjectStatus.DELETED);
-
-                // Remove from the Records Collection
-                this.GetRecords().remove(recordToRemove);
-            }
-
         }
-        catch (Exception ex)
+
+        // Evaluate
+        if (recordToRemove != null)
         {
-            CallResult.log(CallResults.FAILED_ERROR, ex, this);
+            // Set as Status as Deleted
+            recordToRemove.setStatus(ECoalesceDataObjectStatus.DELETED);
+
+            // Remove from the Records Collection
+            this.GetRecords().remove(recordToRemove);
         }
     }
 

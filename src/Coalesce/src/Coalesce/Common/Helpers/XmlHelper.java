@@ -6,12 +6,12 @@ import java.io.InputStream;
 import java.io.StringWriter;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import javax.xml.bind.UnmarshalException;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -20,9 +20,6 @@ import org.joda.time.DateTime;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-
-import unity.core.runtime.CallResult;
-import unity.core.runtime.CallResult.CallResults;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -43,15 +40,17 @@ import unity.core.runtime.CallResult.CallResults;
 
 public class XmlHelper {
 
-    private static String MODULE_NAME = "Coalesce.Common.Helpers.XmlHelper";
+    //private static String MODULE_NAME = "Coalesce.Common.Helpers.XmlHelper";
+
+    // throw new IllegalArgumentException(MODULE_NAME + " : EstablishLinkage");
 
     public static String Serialize(Object obj)
     {
         try
         {
-
             ByteArrayOutputStream out = new ByteArrayOutputStream();
-            JAXBContext context = JAXBContext.newInstance(obj.getClass());
+            JAXBContext context;
+            context = JAXBContext.newInstance(obj.getClass());
 
             Marshaller marshaller = context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true); // pretty
@@ -59,11 +58,9 @@ public class XmlHelper {
             marshaller.marshal(obj, out);
 
             return new String(out.toByteArray());
-
         }
-        catch (Exception ex)
+        catch (JAXBException e)
         {
-            CallResult.log(CallResults.FAILED_ERROR, ex, XmlHelper.MODULE_NAME);
             return null;
         }
     }
@@ -72,170 +69,70 @@ public class XmlHelper {
     {
         try
         {
-
             InputStream in = new ByteArrayInputStream(xml.getBytes());
             JAXBContext context = JAXBContext.newInstance(classType);
             Unmarshaller unmarshaller = context.createUnmarshaller();
 
             return unmarshaller.unmarshal(in);
-
         }
-        catch (UnmarshalException uex)
+        catch (JAXBException ex)
         {
-            return null;
-        }
-        catch (Exception ex)
-        {
-            CallResult.log(CallResults.FAILED_ERROR, ex, XmlHelper.MODULE_NAME);
             return null;
         }
     }
 
     // todo: make shared
-    public CallResult InitializeXmlWriter(XMLStreamWriter Writer)
-    {
-        try
-        {
-            // TODO
-            // StringWriter sw = new StringWriter();
-            // Writer = factory.createXMLStreamWriter(sw);
-            //
-            // // Create a new Writer
-            // // Create Inner Stream
-            // MemoryStream ms;
-            // ms = new MemoryStream;
-            //
-            // // Create Writer and set properties
-            // Writer = new XMLStreamWriter(ms, System.Text.Encoding.UTF8)
-            // Writer.Indentation = 1;
-            // Writer.IndentChar = Chr(9) // Tab
-            // Writer.Formatting = Xml.Formatting.Indented
-
-            // return Success
-            return CallResult.successCallResult;
-
-        }
-        catch (Exception ex)
-        {
-            // return Failed Error
-            return new CallResult(CallResults.FAILED_ERROR, ex, "Coalesce.Common.Helpers.XmlHelper");
-        }
-    }
-
-    public CallResult InitializeBase64OutputStream(XMLStreamWriter Writer)
-    {
-        try
-        {
-            // TODO
-            // OutputStream stream = new OutputStream();
-            return CallResult.successCallResult;
-
-        }
-        catch (Exception ex)
-        {
-            // return Failed Error
-            return new CallResult(CallResults.FAILED_ERROR, ex, "Coalesce.Common.Helpers.XmlHelper");
-        }
-    }
-
-    public CallResult XmlWriterToXml(XMLStreamWriter Writer, String Xml)
-    {
-        try
-        {
-            // TODO
-            // if (Writer == Nothing){
-            // //do nothing
-            // }else{
-            // // Flush
-            // Writer.flush();
-            //
-            // // Get Xml
-            // Dim tr As IO.TextReader = New IO.StreamReader(Writer.BaseStream)
-            // Writer.BaseStream.Seek(0, IO.SeekOrigin.Begin)
-            //
-            // // Done, set the out parameter
-            // Xml = tr.ReadToEnd
-            // }
-
-            // return Success
-            return CallResult.successCallResult;
-
-        }
-        catch (Exception ex)
-        {
-            // return Failed Error
-            return new CallResult(CallResults.FAILED_ERROR, ex, "Coalesce.Common.Helpers.XmlHelper");
-        }
-    }
-
-    // -----------------------------------------------------------------------'
-    // public Shared Methods - Encoding/Decoding Helpers
-    // -----------------------------------------------------------------------'
-    // shared
-    public CallResult WriteBase64(XMLStreamWriter Writer, byte[] Buffer)
-    {
-        try
-        {
-            // Writes Base64 with Breaks. 57 bytes is standard for MIME (e.g. .MHT Base64), so is used here as well.
-            // modulus operator, in java is %
-
-            // TODO:
-            // String dirName="C:\\Users\\tmagulick\\Pictures";
-            // ByteArrayOutputStream baos=new ByteArrayOutputStream(1000);
-            // BufferedImage img=ImageIO.read(new File(dirName,"Like.jpg"));
-            // ImageIO.write(img, "jpg", baos);
-            // baos.flush();
-            //
-            // String base64String=Base64.encode(baos.toByteArray());
-            // baos.close();
-            //
-            // Buffer = Base64.decode(base64String);
-            //
-            // // BufferedImage bufferedImage = ImageIO.read(imgPath);
-            // //
-            // // // get DataBufferBytes from Raster
-            // // WritableRaster raster = bufferedImage .getRaster();
-            // // DataBufferByte data = (DataBufferByte) raster.getDataBuffer();
-            // //
-            // // byte[] bData = data.getData();
-            // //
-            // // //Start ??????
-            // // image img = newii
-            // // try (OutputStream stream = new FileOutputStream("c:/decode/abc.bmp")) {
-            // // stream.write(b);
-            // // stream.write(Buffer);
-            // // }
-            // // catch(IOException io){
-            // // return new CallResult(CallResults.FAILED_ERROR, io, "Coalesce.Common.Helpers.XmlHelper");
-            // // }
-            // // //End ??????
-            //
-            // int Offset = 0;
-            // int Remainder = Buffer.length % 57;
-            //
-            // for (int i = 0; i < (Buffer.length / 57); i++){
-            // Writer.WriteString("\r");
-            // Writer.WriteBase64(Buffer, Offset, 57);
-            // Offset += 57;
-            // }
-            //
-            // // Write remainder
-            // if (Remainder > 0) {
-            // Writer.WriteString(vbCr);
-            // Writer.WriteBase64(Buffer, Offset, Remainder);
-            // }
-
-            // return Success
-            return new CallResult(CallResults.SUCCESS);
-
-        }
-        catch (Exception ex)
-        {
-            // return Failed Error
-            return new CallResult(CallResults.FAILED_ERROR, ex, "Coalesce.Common.Helpers.XmlHelper");
-        }
-    }
-
+    /*
+     * public CallResult InitializeXmlWriter(XMLStreamWriter Writer) { try { // TODO // StringWriter sw = new StringWriter();
+     * // Writer = factory.createXMLStreamWriter(sw); // // // Create a new Writer // // Create Inner Stream // MemoryStream
+     * ms; // ms = new MemoryStream; // // // Create Writer and set properties // Writer = new XMLStreamWriter(ms,
+     * System.Text.Encoding.UTF8) // Writer.Indentation = 1; // Writer.IndentChar = Chr(9) // Tab // Writer.Formatting =
+     * Xml.Formatting.Indented
+     * 
+     * // return Success return CallResult.successCallResult;
+     * 
+     * } catch (Exception ex) { // return Failed Error return new CallResult(CallResults.FAILED_ERROR, ex,
+     * "Coalesce.Common.Helpers.XmlHelper"); } }
+     * 
+     * public CallResult InitializeBase64OutputStream(XMLStreamWriter Writer) { try { // TODO // OutputStream stream = new
+     * OutputStream(); return CallResult.successCallResult;
+     * 
+     * } catch (Exception ex) { // return Failed Error return new CallResult(CallResults.FAILED_ERROR, ex,
+     * "Coalesce.Common.Helpers.XmlHelper"); } }
+     * 
+     * public CallResult XmlWriterToXml(XMLStreamWriter Writer, String Xml) { try { // TODO // if (Writer == Nothing){ //
+     * //do nothing // }else{ // // Flush // Writer.flush(); // // // Get Xml // Dim tr As IO.TextReader = New
+     * IO.StreamReader(Writer.BaseStream) // Writer.BaseStream.Seek(0, IO.SeekOrigin.Begin) // // // Done, set the out
+     * parameter // Xml = tr.ReadToEnd // }
+     * 
+     * // return Success return CallResult.successCallResult;
+     * 
+     * } catch (Exception ex) { // return Failed Error return new CallResult(CallResults.FAILED_ERROR, ex,
+     * "Coalesce.Common.Helpers.XmlHelper"); } }
+     * 
+     * // -----------------------------------------------------------------------' // public Shared Methods -
+     * Encoding/Decoding Helpers // -----------------------------------------------------------------------' // shared public
+     * CallResult WriteBase64(XMLStreamWriter Writer, byte[] Buffer) { try { // Writes Base64 with Breaks. 57 bytes is
+     * standard for MIME (e.g. .MHT Base64), so is used here as well. // modulus operator, in java is %
+     * 
+     * // TODO: // String dirName="C:\\Users\\tmagulick\\Pictures"; // ByteArrayOutputStream baos=new
+     * ByteArrayOutputStream(1000); // BufferedImage img=ImageIO.read(new File(dirName,"Like.jpg")); // ImageIO.write(img,
+     * "jpg", baos); // baos.flush(); // // String base64String=Base64.encode(baos.toByteArray()); // baos.close(); // //
+     * Buffer = Base64.decode(base64String); // // // BufferedImage bufferedImage = ImageIO.read(imgPath); // // // // // get
+     * DataBufferBytes from Raster // // WritableRaster raster = bufferedImage .getRaster(); // // DataBufferByte data =
+     * (DataBufferByte) raster.getDataBuffer(); // // // // byte[] bData = data.getData(); // // // // //Start ?????? // //
+     * image img = newii // // try (OutputStream stream = new FileOutputStream("c:/decode/abc.bmp")) { // // stream.write(b);
+     * // // stream.write(Buffer); // // } // // catch(IOException io){ // // return new CallResult(CallResults.FAILED_ERROR,
+     * io, "Coalesce.Common.Helpers.XmlHelper"); // // } // // //End ?????? // // int Offset = 0; // int Remainder =
+     * Buffer.length % 57; // // for (int i = 0; i < (Buffer.length / 57); i++){ // Writer.WriteString("\r"); //
+     * Writer.WriteBase64(Buffer, Offset, 57); // Offset += 57; // } // // // Write remainder // if (Remainder > 0) { //
+     * Writer.WriteString(vbCr); // Writer.WriteBase64(Buffer, Offset, Remainder); // }
+     * 
+     * // return Success return new CallResult(CallResults.SUCCESS);
+     * 
+     * } catch (Exception ex) { // return Failed Error return new CallResult(CallResults.FAILED_ERROR, ex,
+     * "Coalesce.Common.Helpers.XmlHelper"); } }
+     */
     // -----------------------------------------------------------------------'
     // public Shared Methods - Attribute Helpers
     // -----------------------------------------------------------------------'
@@ -390,9 +287,9 @@ public class XmlHelper {
 
             return result.getWriter().toString().replaceAll("(?m)^[ \t]*\r?\n", "");
         }
-        catch (Exception ex)
+        catch (TransformerException e)
         {
-            CallResult.log(CallResults.FAILED_ERROR, ex, MODULE_NAME);
+            // TODO Auto-generated catch block
             return null;
         }
     }

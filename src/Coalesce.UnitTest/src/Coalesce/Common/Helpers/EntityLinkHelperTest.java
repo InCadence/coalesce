@@ -46,8 +46,19 @@ public class EntityLinkHelperTest {
     {
         for (ELinkTypes linkType : ELinkTypes.values())
         {
-            XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-            assertFalse(EntityLinkHelper.LinkEntities(null, linkType, entity, false));
+            try
+            {
+                XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+                assertFalse(EntityLinkHelper.LinkEntities(null, linkType, entity, false));
+            }
+            catch (IllegalArgumentException ex)
+            {
+                // Passed
+            }
+            catch (Exception ex)
+            {
+                fail(ex.getMessage());
+            }
         }
     }
 
@@ -56,8 +67,19 @@ public class EntityLinkHelperTest {
     {
         for (ELinkTypes linkType : ELinkTypes.values())
         {
-            XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-            assertFalse(EntityLinkHelper.LinkEntities(entity, linkType, null, false));
+            try
+            {
+                XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+                assertFalse(EntityLinkHelper.LinkEntities(entity, linkType, null, false));
+            }
+            catch (IllegalArgumentException ex)
+            {
+                // Passed
+            }
+            catch (Exception ex)
+            {
+                fail(ex.getMessage());
+            }
         }
     }
 
@@ -66,7 +88,18 @@ public class EntityLinkHelperTest {
     {
         for (ELinkTypes linkType : ELinkTypes.values())
         {
-            assertFalse(EntityLinkHelper.LinkEntities(null, linkType, null, false));
+            try
+            {
+                assertFalse(EntityLinkHelper.LinkEntities(null, linkType, null, false));
+            }
+            catch (IllegalArgumentException ex)
+            {
+                // Passed
+            }
+            catch (Exception ex)
+            {
+                fail(ex.getMessage());
+            }
         }
     }
 
@@ -75,8 +108,19 @@ public class EntityLinkHelperTest {
     {
         for (ELinkTypes linkType : ELinkTypes.values())
         {
-            XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-            assertFalse(EntityLinkHelper.LinkEntities(null, linkType, entity, true));
+            try
+            {
+                XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+                assertFalse(EntityLinkHelper.LinkEntities(null, linkType, entity, true));
+            }
+            catch (IllegalArgumentException ex)
+            {
+                // Passed
+            }
+            catch (Exception ex)
+            {
+                fail(ex.getMessage());
+            }
         }
     }
 
@@ -85,8 +129,19 @@ public class EntityLinkHelperTest {
     {
         for (ELinkTypes linkType : ELinkTypes.values())
         {
-            XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-            assertFalse(EntityLinkHelper.LinkEntities(entity, linkType, null, true));
+            try
+            {
+                XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+                assertFalse(EntityLinkHelper.LinkEntities(entity, linkType, null, true));
+            }
+            catch (IllegalArgumentException ex)
+            {
+                // Passed
+            }
+            catch (Exception ex)
+            {
+                fail(ex.getMessage());
+            }
         }
     }
 
@@ -95,7 +150,18 @@ public class EntityLinkHelperTest {
     {
         for (ELinkTypes linkType : ELinkTypes.values())
         {
-            assertFalse(EntityLinkHelper.LinkEntities(null, linkType, null, true));
+            try
+            {
+                assertFalse(EntityLinkHelper.LinkEntities(null, linkType, null, true));
+            }
+            catch (IllegalArgumentException ex)
+            {
+                // Passed
+            }
+            catch (Exception ex)
+            {
+                fail(ex.getMessage());
+            }
         }
     }
 
@@ -227,42 +293,108 @@ public class EntityLinkHelperTest {
     @Test
     public void LinkEntitiesDetailedNullFirstDontUpdateExistingTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-        assertFalse(EntityLinkHelper.LinkEntities(null, ELinkTypes.HasMember, entity, "(TS)", "jford", "en-gb", false));
+        try
+        {
+            XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+            assertFalse(EntityLinkHelper.LinkEntities(null, ELinkTypes.HasMember, entity, "(TS)", "jford", "en-gb", false));
+        }
+        catch (IllegalArgumentException ex)
+        {
+            // Passed
+        }
+        catch (Exception ex)
+        {
+            fail(ex.getMessage());
+        }
     }
 
     @Test
     public void LinkEntitiesDetailedNullSecondDontUpdateExistingTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-        assertFalse(EntityLinkHelper.LinkEntities(entity, ELinkTypes.HasOwnershipOf, null, "(TS)", "jford", "en-gb", false));
+        try
+        {
+            XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+            assertFalse(EntityLinkHelper.LinkEntities(entity, ELinkTypes.HasOwnershipOf, null, "(TS)", "jford", "en-gb", false));
+        }
+        catch (IllegalArgumentException ex)
+        {
+            // Passed
+        }
+        catch (Exception ex)
+        {
+            fail(ex.getMessage());
+        }
     }
 
     @Test
     public void LinkEntitiesDetailedNullBothDontUpdateExistingTest()
     {
-        assertFalse(EntityLinkHelper.LinkEntities(null, ELinkTypes.HasParticipant, null, "(TS)", "jford", "en-gb", false));
+        try
+        {
+            assertFalse(EntityLinkHelper.LinkEntities(null, ELinkTypes.HasParticipant, null, "(TS)", "jford", "en-gb", false));
+        }
+        catch (IllegalArgumentException ex)
+        {
+            // Passed
+        }
+        catch (Exception ex)
+        {
+            fail(ex.getMessage());
+        }
     }
 
     @Test
     public void LinkEntitiesDetailedNullFirstUpdateExistingTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-        assertFalse(EntityLinkHelper.LinkEntities(null, ELinkTypes.HasUseOf, entity, "(TS)", "jford", "en-gb", true));
+        try
+        {
+            XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+            assertFalse(EntityLinkHelper.LinkEntities(null, ELinkTypes.HasUseOf, entity, "(TS)", "jford", "en-gb", true));
+        }
+        catch (IllegalArgumentException ex)
+        {
+            // Passed
+        }
+        catch (Exception ex)
+        {
+            fail(ex.getMessage());
+        }
     }
 
     @Test
     public void LinkEntitiesDetailedNullSecondUpdateExistingTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-        assertFalse(EntityLinkHelper.LinkEntities(entity, ELinkTypes.IsAMemberOf, null, "(TS)", "jford", "en-gb", true));
-    }
+        try
+        {
+            XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+            assertFalse(EntityLinkHelper.LinkEntities(entity, ELinkTypes.IsAMemberOf, null, "(TS)", "jford", "en-gb", true));
+        }
+        catch (IllegalArgumentException ex)
+        {
+            // Passed
+        }
+        catch (Exception ex)
+        {
+            fail(ex.getMessage());
+        }
+        }
 
     @Test
     public void LinkEntitiesDetailedNullBothUpdateExistingTest()
     {
-        assertFalse(EntityLinkHelper.LinkEntities(null, ELinkTypes.IsAParticipantOf, null, "(TS)", "jford", "en-gb", true));
-    }
+        try
+        {
+            assertFalse(EntityLinkHelper.LinkEntities(null, ELinkTypes.IsAParticipantOf, null, "(TS)", "jford", "en-gb", true));
+        }
+        catch (IllegalArgumentException ex)
+        {
+            // Passed
+        }
+        catch (Exception ex)
+        {
+            fail(ex.getMessage());
+        }
+        }
 
     @Test
     public void LinkEntitiesDetailedDontUpdateExistingANoExistingTest()
@@ -359,41 +491,107 @@ public class EntityLinkHelperTest {
     @Test
     public void UnLinkEntitiesNullFirstTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-        assertFalse(EntityLinkHelper.UnLinkEntities(null, entity));
+        try
+        {
+            XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+            assertFalse(EntityLinkHelper.UnLinkEntities(null, entity));
+        }
+        catch (IllegalArgumentException ex)
+        {
+            // Passed
+        }
+        catch (Exception ex)
+        {
+            fail(ex.getMessage());
+        }
     }
 
     @Test
     public void UnLinkEntitiesNullSecondTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-        assertFalse(EntityLinkHelper.UnLinkEntities(entity, null));
+        try
+        {
+            XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+            assertFalse(EntityLinkHelper.UnLinkEntities(entity, null));
+        }
+        catch (IllegalArgumentException ex)
+        {
+            // Passed
+        }
+        catch (Exception ex)
+        {
+            fail(ex.getMessage());
+        }
     }
 
     @Test
     public void UnLinkEntitiesNullBothTest()
     {
-        assertFalse(EntityLinkHelper.UnLinkEntities(null, null));
+        try
+        {
+            assertFalse(EntityLinkHelper.UnLinkEntities(null, null));
+        }
+        catch (IllegalArgumentException ex)
+        {
+            // Passed
+        }
+        catch (Exception ex)
+        {
+            fail(ex.getMessage());
+        }
     }
 
     @Test
     public void UnLinkEntitiesLinkTypeNullFirstTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-        assertFalse(EntityLinkHelper.UnLinkEntities(null, entity, ELinkTypes.IsParentOf));
+        try
+        {
+            XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+            assertFalse(EntityLinkHelper.UnLinkEntities(null, entity, ELinkTypes.IsParentOf));
+        }
+        catch (IllegalArgumentException ex)
+        {
+            // Passed
+        }
+        catch (Exception ex)
+        {
+            fail(ex.getMessage());
+        }
     }
 
     @Test
     public void UnLinkEntitiesLinkTypeNullSecondTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-        assertFalse(EntityLinkHelper.UnLinkEntities(entity, null, ELinkTypes.IsUsedBy));
+        try
+        {
+            XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+            assertFalse(EntityLinkHelper.UnLinkEntities(entity, null, ELinkTypes.IsUsedBy));
+        }
+        catch (IllegalArgumentException ex)
+        {
+            // Passed
+        }
+        catch (Exception ex)
+        {
+            fail(ex.getMessage());
+        }
     }
 
     @Test
     public void UnLinkEntitiesLinkTypeNullBothTest()
     {
-        assertFalse(EntityLinkHelper.UnLinkEntities(null, null, ELinkTypes.IsWatching));
+        try
+        {
+            assertFalse(EntityLinkHelper.UnLinkEntities(null, null, ELinkTypes.IsWatching));
+        }
+        catch (IllegalArgumentException ex)
+        {
+            // Passed
+        }
+        catch (Exception ex)
+        {
+            fail(ex.getMessage());
+        }
     }
 
     @Test
