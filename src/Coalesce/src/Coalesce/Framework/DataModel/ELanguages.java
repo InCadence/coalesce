@@ -1,4 +1,4 @@
-package Coalesce.Common.Runtime;
+package Coalesce.Framework.DataModel;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -17,7 +17,7 @@ package Coalesce.Common.Runtime;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
 -----------------------------------------------------------------------------*/
 
-public enum Languages {
+public enum ELanguages {
 	
     English(0),
     French(1),
@@ -53,7 +53,7 @@ public enum Languages {
     
     private int value;    
 
-    private Languages(int value) {
+    private ELanguages(int value) {
       this.value = value;
     }
 
