@@ -155,7 +155,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
                                          template.GetName(),
                                          template.GetSource(),
                                          template.GetVersion(),
-                                         template.toXml(),
+                                         template.toXml().replace("UTF-8", "UTF-16"),
                                          JodaDateTimeHelper.toMySQLDateTime(JodaDateTimeHelper.NowInUtc()),
                                          JodaDateTimeHelper.toMySQLDateTime(JodaDateTimeHelper.NowInUtc()));
         }
@@ -360,7 +360,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
                                                   Source,
                                                   Version);
 
-            if (results != null && results.first())
+            while(results.next() && value==null)
             {
                 value = results.getString("TemplateKey");
             }
@@ -397,7 +397,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
 
             ResultSet results = conn.ExecuteQuery("SELECT TemplateXml FROM CoalesceEntityTemplate WHERE TemplateKey=?", Key);
 
-            if (results != null && results.first())
+            while(results.next())
             {
                 value = results.getString("TemplateXml");
             }
@@ -788,7 +788,6 @@ public class SQLServerPersistor extends CoalescePersisterBase {
             {
                 keyList.add(results.getString("ObjectKey"));
             }
-            
 
             return keyList;
         }
@@ -806,19 +805,15 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         {
             List<String> keyList = new ArrayList<String>();
 
-            ResultSet results = conn.ExecuteQuery("SELECT ObjectKey FROM CoalesceEntity WHERE (EntityId like '%' ? '%') AND (EntityIdType like '%' ? '%') AND (Name=?) AND (Source=?)",
+            ResultSet results = conn.ExecuteQuery("SELECT ObjectKey FROM CoalesceEntity WHERE (ISNULL(EntityId,' ')  like  ? ) AND (ISNULL(EntityIdType,' ')  like  ? ) AND (Name=?) AND (Source=?)",
                                                   EntityId,
                                                   EntityIdType,
                                                   EntityName,
                                                   EntitySource);
 
-            if (results.first())
+            while (results.next())
             {
-                do
-                {
-                    keyList.add(results.getString("ObjectKey"));
-                }
-                while (results.next());
+                keyList.add(results.getString("ObjectKey"));
             }
 
             return keyList;
