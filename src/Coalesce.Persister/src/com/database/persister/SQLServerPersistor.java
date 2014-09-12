@@ -130,7 +130,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
             ResultSet results = conn.ExecuteQuery("SELECT BinaryObject FROM CoalesceFieldBinaryData WHERE ObjectKey=?", key);
 
             // Get Results
-            if (results != null && results.first())
+            while (results.next() && binaryArray == null)
             {
                 Blob dataVal = (Blob) results.getBlob("BinaryObject");
                 binaryArray = dataVal.getBytes(1, (int) dataVal.length());
@@ -187,7 +187,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
 
             ResultSet results = conn.ExecuteQuery("SELECT value FROM CoalesceField WHERE ObjectKey =?", FieldKey);
 
-            if (results != null && results.first())
+            while (results.next() && value == null)
             {
                 value = results.getString("value");
             }
@@ -209,7 +209,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
 
             ResultSet results = conn.ExecuteQuery("SELECT EntityXml from CoalesceEntity WHERE ObjectKey=?", Key);
 
-            while(results.next())
+            while (results.next())
             {
                 value = results.getString("EntityXml");
             }
@@ -233,7 +233,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
                                                   EntityId,
                                                   EntityIdType);
 
-            if (results != null && results.first())
+            while (results.next() && value == null)
             {
                 value = results.getString("EntityXml");
             }
@@ -258,7 +258,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
                                                   EntityId,
                                                   EntityIdType);
 
-            if (results != null && results.first())
+            while (results.next() && value == null)
             {
                 value = results.getString("EntityXml");
             }
@@ -690,7 +690,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         ResultSet results = conn.ExecuteQuery("SELECT EntityId,EntityIdType,ObjectKey FROM CoalesceEntity WHERE ObjectKey=?",
                                               Key);
         // Get Results
-        while (results.next()) 
+        while (results.next())
         {
             metaData.entityId = results.getString("EntityId");
             metaData.entityType = results.getString("EntityIdType");
@@ -748,7 +748,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
             long SQLRecordTicks = LastModified.getMillis();
 
             // TODO: Round Ticks for SQL (Not sure if this is required for .NET)
-            // ObjectTicks = this.RoundTicksForSQL(ObjectTicks);
+            ObjectTicks = this.roundTicksForSQL(ObjectTicks);
 
             if (ObjectTicks == SQLRecordTicks)
             {
@@ -779,20 +779,16 @@ public class SQLServerPersistor extends CoalescePersisterBase {
 
         try (SQLServerDataConnector conn = new SQLServerDataConnector(this.serCon))
         {
-            ResultSet results = conn.ExecuteQuery("SELECT ObjectKey FROM CoalesceEntity WHERE (EntityId like '%' ? '%') AND (EntityIdType like '%' ? '%') AND (Name=?)",
+            ResultSet results = conn.ExecuteQuery("SELECT ObjectKey FROM CoalesceEntity WHERE (ISNULL(EntityId,' ') like ? ) AND (ISNULL(EntityIdType,' ') like  ? ) AND Name=?",
                                                   EntityId,
                                                   EntityIdType,
                                                   EntityName);
 
-            if (results.first())
+            while (results.next())
             {
-
-                do
-                {
-                    keyList.add(results.getString("ObjectKey"));
-                }
-                while (results.next());
+                keyList.add(results.getString("ObjectKey"));
             }
+            
 
             return keyList;
         }
@@ -911,19 +907,15 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         String dateValue = null;
 
         ResultSet results = conn.ExecuteQuery("SELECT LastModified FROM " + tableName + " WHERE ObjectKey=?", Key.trim());
-        ResultSetMetaData resultsmd = results.getMetaData();
-
         // JODA Function DateTimeFormat will adjust for the Server timezone when converting the time.
-        if(!results.next())
-            return lastModified;
-        else{
-            while(results.next()){
-                dateValue = results.getString("LastModified");
-                if (dateValue != null)
-                {
-                    lastModified = JodaDateTimeHelper.getMySQLDateTime(dateValue);
-                }
+        while (results.next())
+        {
+            dateValue = results.getString("LastModified");
+            if (dateValue != null)
+            {
+                lastModified = JodaDateTimeHelper.getMySQLDateTime(dateValue);
             }
+
         }
         return lastModified;
 
