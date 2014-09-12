@@ -263,9 +263,9 @@ public class XsdLinkage extends XsdDataObject {
     }
 
     @Override
-    protected void setObjectStatus(String status)
+    protected void setObjectStatus(ECoalesceDataObjectStatus status)
     {
-        _entityLinkage.setStatus(status);
+        _entityLinkage.setStatus(status.toLabel());
     }
 
     public boolean GetIsMarkedDeleted()

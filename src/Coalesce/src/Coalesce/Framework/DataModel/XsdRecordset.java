@@ -101,7 +101,8 @@ public class XsdRecordset extends XsdDataObject {
     public boolean initialize(XsdSection parent, Recordset recordset)
     {
 
-        if (parent == null || recordset == null) return false;
+        if (parent == null) throw new NullArgumentException("parent");
+        if (recordset == null) throw new NullArgumentException("recordset");
         
         // Set References
         _parent = parent;
@@ -213,7 +214,7 @@ public class XsdRecordset extends XsdDataObject {
 
     public boolean getHasRecords()
     {
-        return (getRecords().size() > 0);
+        return !_entityRecordset.getRecord().isEmpty();
     }
 
     public DateTime getDateCreated()
@@ -345,11 +346,10 @@ public class XsdRecordset extends XsdDataObject {
         if (record != null)
         {
 
+            getRecords().remove(record);
+
             // Set as Status as Deleted
             record.setStatus(ECoalesceDataObjectStatus.DELETED);
-
-            // Remove from the Records Collection
-            getRecords().remove(record);
 
             // // Determine new Index
             // int NewIndex;
@@ -387,11 +387,12 @@ public class XsdRecordset extends XsdDataObject {
         // Evaluate
         if (recordToRemove != null)
         {
+            // Remove from the Records Collection
+            this.getRecords().remove(recordToRemove);
+            
             // Set as Status as Deleted
             recordToRemove.setStatus(ECoalesceDataObjectStatus.DELETED);
 
-            // Remove from the Records Collection
-            this.getRecords().remove(recordToRemove);
         }
     }
 
@@ -406,9 +407,9 @@ public class XsdRecordset extends XsdDataObject {
     }
 
     @Override
-    protected void setObjectStatus(String status)
+    protected void setObjectStatus(ECoalesceDataObjectStatus status)
     {
-        _entityRecordset.setStatus(status);
+        _entityRecordset.setStatus(status.toLabel());
     }
 
     protected List<Record> GetEntityRecords()

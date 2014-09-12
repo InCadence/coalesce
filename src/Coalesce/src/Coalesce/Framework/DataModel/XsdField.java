@@ -489,9 +489,9 @@ public class XsdField extends XsdFieldBase {
     }
 
     @Override
-    protected void setObjectStatus(String status)
+    protected void setObjectStatus(ECoalesceDataObjectStatus status)
     {
-        _entityField.setStatus(status);
+        _entityField.setStatus(status.toLabel());
 
     }
 

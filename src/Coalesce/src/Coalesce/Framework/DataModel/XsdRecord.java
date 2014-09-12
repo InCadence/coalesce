@@ -522,9 +522,26 @@ public class XsdRecord extends XsdDataObject {
     }
 
     @Override
-    protected void setObjectStatus(String status)
+    protected void setObjectStatus(ECoalesceDataObjectStatus status)
     {
-        _entityRecord.setStatus(status);
+        if (status == getStatus()) return;
+
+        _entityRecord.setStatus(status.toLabel());
+
+        if (status == ECoalesceDataObjectStatus.ACTIVE)
+        {
+            if (!getCastParent().contains(this))
+            {
+                getCastParent().getRecords().add(this);
+            }
+        } else {
+            
+            if (getCastParent().contains(this))
+            {
+                getCastParent().Remove(getKey());
+            }
+        }
+        
     }
 
     protected List<Field> GetEntityFields()
@@ -537,4 +554,10 @@ public class XsdRecord extends XsdDataObject {
     {
         return this._entityRecord.getOtherAttributes();
     }
+    
+    private XsdRecordset getCastParent()
+    {
+        return (XsdRecordset)_parent;
+    }
+    
 }

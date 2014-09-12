@@ -72,7 +72,7 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
 
     protected abstract String getObjectStatus();
 
-    protected abstract void setObjectStatus(String status);
+    protected abstract void setObjectStatus(ECoalesceDataObjectStatus status);
 
     protected abstract Map<QName, String> getAttributes();
 
@@ -105,7 +105,7 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
     public void setStatus(ECoalesceDataObjectStatus value)
     {
         // Set Status SUccessful?
-        this.setObjectStatus(value.toLabel());
+        this.setObjectStatus(value);
 
         // Yes; Update Last Modified
         this.setLastModified(JodaDateTimeHelper.NowInUtc());

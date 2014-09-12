@@ -348,9 +348,9 @@ public class XsdFieldHistory extends XsdFieldBase {
     }
 
     @Override
-    protected void setObjectStatus(String status)
+    protected void setObjectStatus(ECoalesceDataObjectStatus status)
     {
-        _entityFieldHistory.setStatus(status);
+        _entityFieldHistory.setStatus(status.toLabel());
     }
 
     @Override

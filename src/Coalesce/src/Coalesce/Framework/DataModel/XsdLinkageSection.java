@@ -140,6 +140,18 @@ public class XsdLinkageSection extends XsdDataObject {
         return XmlHelper.Serialize(_entityLinkageSection);
     }
 
+    @Override
+    public boolean getNoIndex()
+    {
+        return Boolean.parseBoolean(_entityLinkageSection.getNoindex());
+    }
+    
+    @Override
+    public void setNoIndex(boolean value)
+    {
+        _entityLinkageSection.setNoindex(Boolean.toString(value));
+    }
+    
     public DateTime getDateCreated()
     {
         // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityLinkageSection.getDatecreated());
@@ -178,9 +190,9 @@ public class XsdLinkageSection extends XsdDataObject {
     }
 
     @Override
-    protected void setObjectStatus(String status)
+    protected void setObjectStatus(ECoalesceDataObjectStatus status)
     {
-        _entityLinkageSection.setStatus(status);
+        _entityLinkageSection.setStatus(status.toLabel());
     }
 
     protected Linkagesection GetEntityLinkageSection()

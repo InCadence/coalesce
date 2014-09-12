@@ -300,38 +300,44 @@ public class XsdEntity extends XsdDataObject {
 
     }
 
+    @Override
     public DateTime getDateCreated()
     {
         // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entity.getDatecreated());
         return _entity.getDatecreated();
     }
 
+    @Override
     public void setDateCreated(DateTime value)
     {
         // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
         _entity.setDatecreated(value);
     }
 
+    @Override
     public DateTime getLastModified()
     {
         // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entity.getLastmodified());
         return _entity.getLastmodified();
     }
 
+    @Override
     protected void setObjectLastModified(DateTime value)
     {
         // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
         _entity.setLastmodified(value);
     }
 
+    @Override
     protected String getObjectStatus()
     {
         return _entity.getStatus();
     }
 
-    protected void setObjectStatus(String status)
+    @Override
+    protected void setObjectStatus(ECoalesceDataObjectStatus status)
     {
-        _entity.setStatus(status);
+        _entity.setStatus(status.toLabel());
     }
 
     public Map<String, XsdLinkage> getLinkages()
