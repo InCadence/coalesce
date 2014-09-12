@@ -422,7 +422,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
                                                   Source,
                                                   Version);
 
-            if (results != null && results.first())
+            while(results.next())
             {
                 value = results.getString("TemplateXml");
             }

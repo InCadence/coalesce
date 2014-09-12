@@ -23,6 +23,7 @@ import Coalesce.Framework.CoalesceFramework;
 import Coalesce.Framework.DataModel.CoalesceEntityTemplate;
 import Coalesce.Framework.DataModel.ECoalesceFieldDataTypes;
 import Coalesce.Framework.DataModel.XsdEntity;
+import Coalesce.Framework.DataModel.XsdField;
 import Coalesce.Framework.DataModel.XsdFieldDefinition;
 import Coalesce.Framework.DataModel.XsdLinkageSection;
 import Coalesce.Framework.DataModel.XsdRecord;
@@ -168,32 +169,44 @@ public class CoalesceSQLServerPersistorTest {
         }
     }
 
-    // @Test
-    // public void testSaveEntityAndXPath()
-    // {
-    // try
-    // {
-    // assertTrue(CoalesceSQLServerPersistorTest._coalesceFramework.SaveCoalesceEntity(_entity));
-    //
-    // // Get Field from DB Using XPath
-    // XsdField field = CoalesceSQLServerPersistorTest._coalesceFramework.GetCoalesceFieldByFieldKey(_fieldKey);
-    // assertTrue(field != null);
-    //
-    // // Get Record from Entity
-    // XsdRecord record = (XsdRecord) field.getParent();
-    // assertTrue(record != null);
-    //
-    // // Get Record from DB Using XPath
-    // XsdRecord recordDB = CoalesceSQLServerPersistorTest._coalesceFramework.GetCoalesceRecord(record.getKey());
-    // assertTrue(recordDB != null);
-    // assertTrue(recordDB.getName().equalsIgnoreCase(record.getName()));
-    // }
-    // catch (Exception ex)
-    // {
-    // fail(ex.getMessage());
-    // }
-    // }
+    @Test
+    public void testSaveEntityAndXPath()
+    {
+        try
+        {
+//            assertTrue(CoalesceSQLServerPersistorTest._coalesceFramework.SaveCoalesceEntity(_entity));
 
+            // Get Field from DB Using XPath
+            XsdField field = CoalesceSQLServerPersistorTest._coalesceFramework.GetCoalesceFieldByFieldKey(_fieldKey);
+            assertTrue(field != null);
+
+            // Get Record from Entity
+            XsdRecord record = (XsdRecord) field.getParent();
+            assertTrue(record != null);
+
+            // Get Record from DB Using XPath
+            XsdRecord recordDB = CoalesceSQLServerPersistorTest._coalesceFramework.GetCoalesceRecord(record.getKey());
+            assertTrue(recordDB != null);
+            assertTrue(recordDB.getName().equalsIgnoreCase(record.getName()));
+        }
+        catch (Exception ex)
+        {
+            fail(ex.getMessage());
+        }
+    }
+    @Test
+    public void testSaveEntityTemplate()
+    {
+        try
+        {
+            CoalesceEntityTemplate template = testTemplate(CoalesceEntityTemplate.Create(_entity));
+            assertTrue(CoalesceSQLServerPersistorTest._coalesceFramework.SaveCoalesceEntityTemplate(template));
+        }
+        catch (Exception ex)
+        {
+            fail(ex.getMessage());
+        }
+    }
     @Test
     public void testGetEntityMetaData()
     {
@@ -483,8 +496,6 @@ public class CoalesceSQLServerPersistorTest {
     {
         try
         {
-            CoalesceEntityTemplate template = testTemplate(CoalesceEntityTemplate.Create(_entity));
-            CoalesceSQLServerPersistorTest._coalesceFramework.SaveCoalesceEntityTemplate(template);
             // Get Template Key
             String templateKey = CoalesceSQLServerPersistorTest._coalesceFramework.GetCoalesceEntityTemplateKey(_entity.getName(),
                                                                                                                 _entity.getSource(),
@@ -501,37 +512,37 @@ public class CoalesceSQLServerPersistorTest {
         }
     }
 
-    // @Test
-    // public void testGetEntityTemplateXMLName()
-    // {
-    // try
-    // {
-    // String templateXML = CoalesceSQLServerPersistorTest._coalesceFramework.GetCoalesceEntityTemplateXml(_entity.getName(),
-    // _entity.getSource(),
-    // _entity.getVersion());
-    // assertFalse(StringHelper.IsNullOrEmpty(templateXML));
-    // }
-    // catch (Exception ex)
-    // {
-    // fail(ex.getMessage());
-    // }
-    // }
-    //
-    // @Test
-    // public void testGetEntityTemplateKey()
-    // {
-    // try
-    // {
-    // String templateKey = CoalesceSQLServerPersistorTest._coalesceFramework.GetCoalesceEntityTemplateKey(_entity.getName(),
-    // _entity.getSource(),
-    // _entity.getVersion());
-    // assertFalse(StringHelper.IsNullOrEmpty(templateKey));
-    // }
-    // catch (Exception ex)
-    // {
-    // fail(ex.getMessage());
-    // }
-    // }
+    @Test
+    public void testGetEntityTemplateXMLName()
+    {
+        try
+        {
+            String templateXML = CoalesceSQLServerPersistorTest._coalesceFramework.GetCoalesceEntityTemplateXml(_entity.getName(),
+                                                                                                                _entity.getSource(),
+                                                                                                                _entity.getVersion());
+            assertFalse(StringHelper.IsNullOrEmpty(templateXML));
+        }
+        catch (Exception ex)
+        {
+            fail(ex.getMessage());
+        }
+    }
+
+    @Test
+    public void testGetEntityTemplateKey()
+    {
+        try
+        {
+            String templateKey = CoalesceSQLServerPersistorTest._coalesceFramework.GetCoalesceEntityTemplateKey(_entity.getName(),
+                                                                                                                _entity.getSource(),
+                                                                                                                _entity.getVersion());
+            assertFalse(StringHelper.IsNullOrEmpty(templateKey));
+        }
+        catch (Exception ex)
+        {
+            fail(ex.getMessage());
+        }
+    }
 
     @After
     public void Finalize()
