@@ -194,6 +194,10 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
     {
         return this._childDataObjects;
     }
+    
+    public void setChildDataObjects(String key, XsdDataObject value) {
+        this._childDataObjects.put(key,value);
+    }
 
     @Override
     public String getNamePath()

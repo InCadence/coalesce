@@ -525,7 +525,48 @@ public class XsdEntity extends XsdDataObject {
 
     public void mergeSyncEntity(XsdEntity syncEntity)
     {
-        // TODO: Implement Merging
+        mergeSyncEntityDataObject(this,syncEntity);
+    }
+
+    protected void mergeSyncEntityDataObject(XsdDataObject myEntity, XsdDataObject syncEntity)
+    {
+        // Get Time Stamps
+        DateTime myLastModified = myEntity.getLastModified();
+        DateTime updateLastModified = syncEntity.getLastModified();
+
+        // Compare Timestamps
+        switch (myLastModified.compareTo(updateLastModified)) {
+
+        case -1:
+            // Mine is Older; Update Each Attribute.
+            for (Map.Entry<QName, String> updateAttribute : syncEntity.getAttributes().entrySet())
+            {
+                // Set Attribute
+                myEntity.setAttribute(updateAttribute.getKey().getLocalPart(), updateAttribute.getValue());
+
+            }
+
+        }
+
+        // Merge Required Node's Children
+        for (Map.Entry<String, XsdDataObject> updateChild : syncEntity.getChildDataObjects().entrySet())
+        {
+            // get child data object to update
+            String key = updateChild.getKey();
+            XsdDataObject myChildDataObject = myEntity.getChildDataObjects().get(key);
+
+            // Evaluate
+            if (myChildDataObject == null)
+            {
+                // We don't have this child; add the entire Child data object from updatechild
+                myEntity.setChildDataObjects(key, updateChild.getValue());
+            }
+            else
+            {
+                // We have this child; Call MergeRequiredNode
+                mergeSyncEntityDataObject(myChildDataObject, updateChild.getValue());
+            }
+        }
     }
 
     @Override
@@ -657,4 +698,5 @@ public class XsdEntity extends XsdDataObject {
     {
         return this._entity.getOtherAttributes();
     }
+
 }
