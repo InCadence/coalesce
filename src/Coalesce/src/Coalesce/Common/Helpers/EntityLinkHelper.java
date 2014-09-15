@@ -2,6 +2,7 @@ package Coalesce.Common.Helpers;
 
 import org.apache.commons.lang.NullArgumentException;
 
+import Coalesce.Common.Classification.Marking;
 import Coalesce.Framework.DataModel.ECoalesceDataObjectStatus;
 import Coalesce.Framework.DataModel.ELinkTypes;
 import Coalesce.Framework.DataModel.ICoalesceDataObject;
@@ -50,14 +51,14 @@ public class EntityLinkHelper {
     public static boolean LinkEntities(XsdEntity entity1, ELinkTypes linkType, XsdEntity entity2, Boolean updateExisting)
     {
 
-        return LinkEntities(entity1, linkType, entity2, "U", "", "en-US", updateExisting);
+        return LinkEntities(entity1, linkType, entity2, new Marking("(U)"), "", "en-US", updateExisting);
 
     }
 
     public static boolean LinkEntities(XsdEntity entity1,
                                        ELinkTypes linkType,
                                        XsdEntity entity2,
-                                       String classificationMarking,
+                                       Marking classificationMarking,
                                        String modifiedBy,
                                        String inputLang,
                                        boolean updateExisting)
@@ -140,7 +141,7 @@ public class EntityLinkHelper {
                                          XsdEntity entity,
                                          ELinkTypes linkType,
                                          XsdEntity otherEntity,
-                                         String classificationMarking,
+                                         Marking classificationMarking,
                                          String modifiedBy,
                                          String inputLang,
                                          boolean updateExisting)
@@ -157,8 +158,8 @@ public class EntityLinkHelper {
             {
 
                 XsdLinkage childLinkage = (XsdLinkage) cdo;
-                if (childLinkage.GetEntity1Key().equals(entity.getKey()) && childLinkage.GetLinkType() == linkType
-                        && childLinkage.GetEntity2Key().equals(otherEntity.getKey()))
+                if (childLinkage.getEntity1Key().equals(entity.getKey()) && childLinkage.getLinkType() == linkType
+                        && childLinkage.getEntity2Key().equals(otherEntity.getKey()))
                 {
 
                     // Found; Use Existing Linkage
@@ -175,7 +176,7 @@ public class EntityLinkHelper {
             if (updateExisting)
             {
                 // Update/Populate Existing
-                linkage.EstablishLinkage(entity, linkType, otherEntity, classificationMarking, modifiedBy, inputLang);
+                linkage.establishLinkage(entity, linkType, otherEntity, classificationMarking, modifiedBy, inputLang);
             }
         }
         else
@@ -184,7 +185,7 @@ public class EntityLinkHelper {
             XsdLinkage newLinkage = linkageSection.createLinkage();
 
             // Update/Populate
-            newLinkage.EstablishLinkage(entity, linkType, otherEntity, classificationMarking, modifiedBy, inputLang);
+            newLinkage.establishLinkage(entity, linkType, otherEntity, classificationMarking, modifiedBy, inputLang);
         }
     }
 
@@ -200,10 +201,10 @@ public class EntityLinkHelper {
 
                 XsdLinkage linkage = (XsdLinkage) cdo;
 
-                if (linkType == null || linkage.GetLinkType() == linkType)
+                if (linkType == null || linkage.getLinkType() == linkType)
                 {
-                    if (linkage.GetEntity1Key().equals(entity.getKey())
-                            && linkage.GetEntity2Key().equals(otherEntity.getKey()))
+                    if (linkage.getEntity1Key().equals(entity.getKey())
+                            && linkage.getEntity2Key().equals(otherEntity.getKey()))
                     {
 
                         linkage.setStatus(ECoalesceDataObjectStatus.DELETED);

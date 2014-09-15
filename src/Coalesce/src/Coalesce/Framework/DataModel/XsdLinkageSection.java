@@ -83,7 +83,7 @@ public class XsdLinkageSection extends XsdDataObject {
             {
 
                 XsdLinkage newLinkage = new XsdLinkage();
-                if (!newLinkage.Initialize(this, childLinkage)) continue;
+                if (!newLinkage.initialize(this, childLinkage)) continue;
 
                 if (!_childDataObjects.containsKey(newLinkage.getKey()))
                 {
@@ -152,7 +152,7 @@ public class XsdLinkageSection extends XsdDataObject {
 
     public XsdLinkage createLinkage()
     {
-        return XsdLinkage.Create(this);
+        return XsdLinkage.create(this);
     }
 
     public String toXml()

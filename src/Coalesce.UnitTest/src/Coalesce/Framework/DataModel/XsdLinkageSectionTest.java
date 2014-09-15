@@ -151,6 +151,7 @@ public class XsdLinkageSectionTest {
 
         linkages = linkageSection.getLinkages();
 
+        assertEquals(1, linkages.size());
         assertTrue(linkages.containsKey(newLinkage.getKey()));
         assertEquals(linkageSection, newLinkage.getParent());
 

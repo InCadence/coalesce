@@ -417,7 +417,7 @@ public class XsdEntity extends XsdDataObject {
             {
 
                 XsdLinkage linkage = (XsdLinkage) cdo;
-                if (forEntityName == null || linkage.GetEntity2Name().equalsIgnoreCase(forEntityName))
+                if (forEntityName == null || linkage.getEntity2Name().equalsIgnoreCase(forEntityName))
                 {
                     linkages.put(cdo.getKey(), linkage);
                 }
@@ -582,9 +582,9 @@ public class XsdEntity extends XsdDataObject {
             {
 
                 XsdLinkage linkage = (XsdLinkage) cdo;
-                if ((forEntityName == null || linkage.GetEntity2Name().equalsIgnoreCase(forEntityName))
-                        && forLinkTypes.contains(linkage.GetLinkType())
-                        && (forEntitySource == null || linkage.GetEntity2Source().equalsIgnoreCase(forEntitySource))
+                if ((forEntityName == null || linkage.getEntity2Name().equalsIgnoreCase(forEntityName))
+                        && forLinkTypes.contains(linkage.getLinkType())
+                        && (forEntitySource == null || linkage.getEntity2Source().equalsIgnoreCase(forEntitySource))
                         && linkage.getStatus() != ECoalesceDataObjectStatus.DELETED)
                 {
                     linkages.put(linkage.getKey(), linkage);

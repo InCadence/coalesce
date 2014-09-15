@@ -1,7 +1,6 @@
 package com.database.persister;
 
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +15,6 @@ import unity.core.runtime.CallResult;
 import unity.core.runtime.CallResult.CallResults;
 import Coalesce.Common.Exceptions.CoalescePersistorException;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
-import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.Runtime.CoalesceSettings;
 import Coalesce.Framework.DataModel.CoalesceEntityTemplate;
 import Coalesce.Framework.DataModel.ECoalesceDataObjectStatus;
@@ -360,7 +358,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
                                                   Source,
                                                   Version);
 
-            while(results.next() && value==null)
+            while (results.next() && value == null)
             {
                 value = results.getString("TemplateKey");
             }
@@ -397,7 +395,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
 
             ResultSet results = conn.ExecuteQuery("SELECT TemplateXml FROM CoalesceEntityTemplate WHERE TemplateKey=?", Key);
 
-            while(results.next())
+            while (results.next())
             {
                 value = results.getString("TemplateXml");
             }
@@ -422,7 +420,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
                                                   Source,
                                                   Version);
 
-            while(results.next())
+            while (results.next())
             {
                 value = results.getString("TemplateXml");
             }
@@ -663,18 +661,18 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         return conn.ExecuteProcedure("CoalesceLinkage_InsertOrUpdate",
                                      linkage.getKey(),
                                      linkage.getName(),
-                                     linkage.GetEntity1Key(),
-                                     linkage.GetEntity1Name(),
-                                     linkage.GetEntity1Source(),
-                                     linkage.GetEntity1Version(),
-                                     linkage.GetLinkType().getLabel(),
+                                     linkage.getEntity1Key(),
+                                     linkage.getEntity1Name(),
+                                     linkage.getEntity1Source(),
+                                     linkage.getEntity1Version(),
+                                     linkage.getLinkType().getLabel(),
                                      linkage.getStatus().toLabel(),
-                                     linkage.GetEntity2Key(),
-                                     linkage.GetEntity2Name(),
-                                     linkage.GetEntity2Source(),
-                                     linkage.GetEntity2Version(),
-                                     linkage.GetClassificationMarking(),
-                                     linkage.GetModifiedBy(),
+                                     linkage.getEntity2Key(),
+                                     linkage.getEntity2Name(),
+                                     linkage.getEntity2Source(),
+                                     linkage.getEntity2Version(),
+                                     linkage.getClassificationMarking().ToPortionString(),
+                                     linkage.getModifiedBy(),
                                      "",
                                      linkage.getParent().getKey(),
                                      linkage.getParent().getType(),

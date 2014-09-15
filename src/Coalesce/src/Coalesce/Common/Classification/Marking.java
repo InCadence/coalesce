@@ -66,6 +66,14 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
     
     @Override
+    public boolean equals(Object other)
+    {
+        if (!(other instanceof Marking)) return false;
+        
+        return ToPortionString().equals(((Marking) other).ToPortionString());
+    }
+    
+    @Override
     public int compareTo(Marking other)
     {
 

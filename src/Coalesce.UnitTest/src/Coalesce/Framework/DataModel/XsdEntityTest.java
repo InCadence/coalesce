@@ -1050,28 +1050,28 @@ public class XsdEntityTest {
 
         for (XsdLinkage linkage : linkages.values())
         {
-            switch (linkage.GetLinkType()) {
+            switch (linkage.getLinkType()) {
             case HasUseOf:
 
-                assertLinkage(entity.getKey(), linkage.GetLinkType(), entity2.getKey(), linkage);
+                assertLinkage(entity.getKey(), linkage.getLinkType(), entity2.getKey(), linkage);
 
                 break;
 
             case IsParentOf:
 
-                assertLinkage(entity.getKey(), linkage.GetLinkType(), entity3.getKey(), linkage);
+                assertLinkage(entity.getKey(), linkage.getLinkType(), entity3.getKey(), linkage);
 
                 break;
 
             case Created:
 
-                assertLinkage(entity.getKey(), linkage.GetLinkType(), entity2.getKey(), linkage);
+                assertLinkage(entity.getKey(), linkage.getLinkType(), entity2.getKey(), linkage);
 
                 break;
 
             default:
 
-                fail("Unexpected Type: " + linkage.GetLinkType().getLabel());
+                fail("Unexpected Type: " + linkage.getLinkType().getLabel());
 
             }
         }
@@ -1340,28 +1340,28 @@ public class XsdEntityTest {
 
         for (XsdLinkage linkage : linkages.values())
         {
-            switch (linkage.GetLinkType()) {
+            switch (linkage.getLinkType()) {
             case HasUseOf:
 
-                assertLinkage(entities.Entity, entities.Entity2, linkage.GetLinkType(), linkage);
+                assertLinkage(entities.Entity, entities.Entity2, linkage.getLinkType(), linkage);
 
                 break;
 
             case Created:
 
-                assertLinkage(entities.Entity, entities.Entity2, linkage.GetLinkType(), linkage);
+                assertLinkage(entities.Entity, entities.Entity2, linkage.getLinkType(), linkage);
 
                 break;
 
             case HasMember:
 
-                assertLinkage(entities.Entity, entities.Entity4, linkage.GetLinkType(), linkage);
+                assertLinkage(entities.Entity, entities.Entity4, linkage.getLinkType(), linkage);
 
                 break;
 
             default:
 
-                fail("Unexpected Type: " + linkage.GetLinkType().getLabel());
+                fail("Unexpected Type: " + linkage.getLinkType().getLabel());
 
             }
         }
@@ -1372,16 +1372,16 @@ public class XsdEntityTest {
 
         for (XsdLinkage linkage : linkages.values())
         {
-            switch (linkage.GetLinkType()) {
+            switch (linkage.getLinkType()) {
             case IsParentOf:
 
-                assertLinkage(entities.Entity, entities.Entity3, linkage.GetLinkType(), linkage);
+                assertLinkage(entities.Entity, entities.Entity3, linkage.getLinkType(), linkage);
 
                 break;
 
             default:
 
-                fail("Unexpected Type: " + linkage.GetLinkType().getLabel());
+                fail("Unexpected Type: " + linkage.getLinkType().getLabel());
             }
         }
     }
@@ -1409,16 +1409,16 @@ public class XsdEntityTest {
 
         for (XsdLinkage linkage : linkages.values())
         {
-            switch (linkage.GetLinkType()) {
+            switch (linkage.getLinkType()) {
             case HasUseOf:
 
-                assertLinkage(entities.Entity, entities.Entity2, linkage.GetLinkType(), linkage);
+                assertLinkage(entities.Entity, entities.Entity2, linkage.getLinkType(), linkage);
 
                 break;
 
             default:
 
-                fail("Unexpected Type: " + linkage.GetLinkType().getLabel());
+                fail("Unexpected Type: " + linkage.getLinkType().getLabel());
 
             }
         }
@@ -1448,16 +1448,16 @@ public class XsdEntityTest {
 
         for (XsdLinkage linkage : linkages.values())
         {
-            switch (linkage.GetLinkType()) {
+            switch (linkage.getLinkType()) {
             case HasUseOf:
 
-                assertLinkage(entities.Entity, entities.Entity2, linkage.GetLinkType(), linkage);
+                assertLinkage(entities.Entity, entities.Entity2, linkage.getLinkType(), linkage);
 
                 break;
 
             default:
 
-                fail("Unexpected Type: " + linkage.GetLinkType().getLabel());
+                fail("Unexpected Type: " + linkage.getLinkType().getLabel());
 
             }
         }
@@ -1498,16 +1498,16 @@ public class XsdEntityTest {
 
         for (XsdLinkage linkage : linkages.values())
         {
-            switch (linkage.GetLinkType()) {
+            switch (linkage.getLinkType()) {
             case HasUseOf:
 
-                assertLinkage(entities.Entity, entities.Entity2, linkage.GetLinkType(), linkage);
+                assertLinkage(entities.Entity, entities.Entity2, linkage.getLinkType(), linkage);
 
                 break;
 
             default:
 
-                fail("Unexpected Type: " + linkage.GetLinkType().getLabel());
+                fail("Unexpected Type: " + linkage.getLinkType().getLabel());
 
             }
         }
@@ -1538,22 +1538,22 @@ public class XsdEntityTest {
 
         for (XsdLinkage linkage : linkages.values())
         {
-            switch (linkage.GetLinkType()) {
+            switch (linkage.getLinkType()) {
             case HasUseOf:
 
-                assertLinkage(entities.Entity, entities.Entity2, linkage.GetLinkType(), linkage);
+                assertLinkage(entities.Entity, entities.Entity2, linkage.getLinkType(), linkage);
 
                 break;
 
             case Created:
 
-                assertLinkage(entities.Entity, entities.Entity2, linkage.GetLinkType(), linkage);
+                assertLinkage(entities.Entity, entities.Entity2, linkage.getLinkType(), linkage);
 
                 break;
 
             default:
 
-                fail("Unexpected Type: " + linkage.GetLinkType().getLabel());
+                fail("Unexpected Type: " + linkage.getLinkType().getLabel());
 
             }
         }
@@ -1572,16 +1572,16 @@ public class XsdEntityTest {
 
         for (XsdLinkage linkage : linkages.values())
         {
-            switch (linkage.GetLinkType()) {
+            switch (linkage.getLinkType()) {
             case HasUseOf:
 
-                assertLinkage(entities.Entity, entities.Entity2, linkage.GetLinkType(), linkage);
+                assertLinkage(entities.Entity, entities.Entity2, linkage.getLinkType(), linkage);
 
                 break;
 
             default:
 
-                fail("Unexpected Type: " + linkage.GetLinkType().getLabel());
+                fail("Unexpected Type: " + linkage.getLinkType().getLabel());
 
             }
         }
@@ -1890,18 +1890,18 @@ public class XsdEntityTest {
 
     private void assertLinkage(String entity1Key, ELinkTypes type, String entity2Key, XsdLinkage linkage)
     {
-        assertEquals(entity1Key, linkage.GetEntity1Key());
-        assertEquals(type, linkage.GetLinkType());
-        assertEquals(entity2Key, linkage.GetEntity2Key());
+        assertEquals(entity1Key, linkage.getEntity1Key());
+        assertEquals(type, linkage.getLinkType());
+        assertEquals(entity2Key, linkage.getEntity2Key());
 
     }
 
     private void assertLinkage(XsdEntity entity1, XsdEntity entity2, ELinkTypes type, XsdLinkage linkage)
     {
-        assertEquals(entity1.getKey(), linkage.GetEntity1Key());
-        assertEquals(entity2.getKey(), linkage.GetEntity2Key());
+        assertEquals(entity1.getKey(), linkage.getEntity1Key());
+        assertEquals(entity2.getKey(), linkage.getEntity2Key());
 
-        assertEquals(type, linkage.GetLinkType());
+        assertEquals(type, linkage.getLinkType());
 
     }
 

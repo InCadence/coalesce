@@ -31,6 +31,10 @@ import Coalesce.Framework.DataModel.XsdLinkage;
 
 public class EntityLinkHelperTest {
 
+    private static final Marking UNCLASSIFIED_MARKING = new Marking("(U)");
+    private static final Marking SECRET_USA_MARKING = new Marking("(//S USA)");
+    private static final Marking TOP_SECRET_MARKING = new Marking("(//TS)");
+
     /*
      * @BeforeClass public static void setUpBeforeClass() throws Exception { }
      * 
@@ -296,7 +300,13 @@ public class EntityLinkHelperTest {
         try
         {
             XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-            assertFalse(EntityLinkHelper.LinkEntities(null, ELinkTypes.HasMember, entity, "(TS)", "jford", "en-gb", false));
+            assertFalse(EntityLinkHelper.LinkEntities(null,
+                                                      ELinkTypes.HasMember,
+                                                      entity,
+                                                      EntityLinkHelperTest.TOP_SECRET_MARKING,
+                                                      "jford",
+                                                      "en-gb",
+                                                      false));
         }
         catch (IllegalArgumentException ex)
         {
@@ -314,7 +324,13 @@ public class EntityLinkHelperTest {
         try
         {
             XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-            assertFalse(EntityLinkHelper.LinkEntities(entity, ELinkTypes.HasOwnershipOf, null, "(TS)", "jford", "en-gb", false));
+            assertFalse(EntityLinkHelper.LinkEntities(entity,
+                                                      ELinkTypes.HasOwnershipOf,
+                                                      null,
+                                                      EntityLinkHelperTest.TOP_SECRET_MARKING,
+                                                      "jford",
+                                                      "en-gb",
+                                                      false));
         }
         catch (IllegalArgumentException ex)
         {
@@ -331,7 +347,13 @@ public class EntityLinkHelperTest {
     {
         try
         {
-            assertFalse(EntityLinkHelper.LinkEntities(null, ELinkTypes.HasParticipant, null, "(TS)", "jford", "en-gb", false));
+            assertFalse(EntityLinkHelper.LinkEntities(null,
+                                                      ELinkTypes.HasParticipant,
+                                                      null,
+                                                      EntityLinkHelperTest.TOP_SECRET_MARKING,
+                                                      "jford",
+                                                      "en-gb",
+                                                      false));
         }
         catch (IllegalArgumentException ex)
         {
@@ -349,7 +371,13 @@ public class EntityLinkHelperTest {
         try
         {
             XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-            assertFalse(EntityLinkHelper.LinkEntities(null, ELinkTypes.HasUseOf, entity, "(TS)", "jford", "en-gb", true));
+            assertFalse(EntityLinkHelper.LinkEntities(null,
+                                                      ELinkTypes.HasUseOf,
+                                                      entity,
+                                                      EntityLinkHelperTest.TOP_SECRET_MARKING,
+                                                      "jford",
+                                                      "en-gb",
+                                                      true));
         }
         catch (IllegalArgumentException ex)
         {
@@ -367,7 +395,13 @@ public class EntityLinkHelperTest {
         try
         {
             XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-            assertFalse(EntityLinkHelper.LinkEntities(entity, ELinkTypes.IsAMemberOf, null, "(TS)", "jford", "en-gb", true));
+            assertFalse(EntityLinkHelper.LinkEntities(entity,
+                                                      ELinkTypes.IsAMemberOf,
+                                                      null,
+                                                      EntityLinkHelperTest.TOP_SECRET_MARKING,
+                                                      "jford",
+                                                      "en-gb",
+                                                      true));
         }
         catch (IllegalArgumentException ex)
         {
@@ -377,14 +411,20 @@ public class EntityLinkHelperTest {
         {
             fail(ex.getMessage());
         }
-        }
+    }
 
     @Test
     public void LinkEntitiesDetailedNullBothUpdateExistingTest()
     {
         try
         {
-            assertFalse(EntityLinkHelper.LinkEntities(null, ELinkTypes.IsAParticipantOf, null, "(TS)", "jford", "en-gb", true));
+            assertFalse(EntityLinkHelper.LinkEntities(null,
+                                                      ELinkTypes.IsAParticipantOf,
+                                                      null,
+                                                      EntityLinkHelperTest.TOP_SECRET_MARKING,
+                                                      "jford",
+                                                      "en-gb",
+                                                      true));
         }
         catch (IllegalArgumentException ex)
         {
@@ -394,7 +434,7 @@ public class EntityLinkHelperTest {
         {
             fail(ex.getMessage());
         }
-        }
+    }
 
     @Test
     public void LinkEntitiesDetailedDontUpdateExistingANoExistingTest()
@@ -402,12 +442,18 @@ public class EntityLinkHelperTest {
         XsdEntity entity1 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
         XsdEntity entity2 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
 
-        assertTrue(EntityLinkHelper.LinkEntities(entity1, ELinkTypes.IsAPeerOf, entity2, "(TS)", "jford", "en-gb", false));
+        assertTrue(EntityLinkHelper.LinkEntities(entity1,
+                                                 ELinkTypes.IsAPeerOf,
+                                                 entity2,
+                                                 EntityLinkHelperTest.TOP_SECRET_MARKING,
+                                                 "jford",
+                                                 "en-gb",
+                                                 false));
 
         assertEquals(1, entity1.getLinkageSection().getChildDataObjects().size());
         assertEquals(1, entity2.getLinkageSection().getChildDataObjects().size());
 
-        assertLinkages(ELinkTypes.IsAPeerOf, "(TS)", "jford", "en-gb", entity1, entity2);
+        assertLinkages(ELinkTypes.IsAPeerOf, EntityLinkHelperTest.TOP_SECRET_MARKING, "jford", "en-gb", entity1, entity2);
 
     }
 
@@ -417,7 +463,13 @@ public class EntityLinkHelperTest {
         XsdEntity entity1 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
         XsdEntity entity2 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
 
-        EntityLinkHelper.LinkEntities(entity1, ELinkTypes.IsBeingWatchedBy, entity2, "(TS)", "jford", "en-gb", false);
+        EntityLinkHelper.LinkEntities(entity1,
+                                      ELinkTypes.IsBeingWatchedBy,
+                                      entity2,
+                                      EntityLinkHelperTest.TOP_SECRET_MARKING,
+                                      "jford",
+                                      "en-gb",
+                                      false);
 
         XsdEntity modifiedEntity1 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
         XsdEntity modifiedEntity2 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
@@ -433,12 +485,17 @@ public class EntityLinkHelperTest {
         assertTrue(EntityLinkHelper.LinkEntities(modifiedEntity1,
                                                  ELinkTypes.IsBeingWatchedBy,
                                                  modifiedEntity2,
-                                                 "(S USA)",
+                                                 EntityLinkHelperTest.SECRET_USA_MARKING,
                                                  "bob",
                                                  "en-us",
                                                  false));
 
-        assertLinkages(ELinkTypes.IsBeingWatchedBy, "(TS)", "jford", "en-gb", entity1, entity2);
+        assertLinkages(ELinkTypes.IsBeingWatchedBy,
+                       EntityLinkHelperTest.TOP_SECRET_MARKING,
+                       "jford",
+                       "en-gb",
+                       entity1,
+                       entity2);
 
     }
 
@@ -448,12 +505,18 @@ public class EntityLinkHelperTest {
         XsdEntity entity1 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
         XsdEntity entity2 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
 
-        assertTrue(EntityLinkHelper.LinkEntities(entity1, ELinkTypes.IsChildOf, entity2, "(TS)", "jford", "en-gb", true));
+        assertTrue(EntityLinkHelper.LinkEntities(entity1,
+                                                 ELinkTypes.IsChildOf,
+                                                 entity2,
+                                                 EntityLinkHelperTest.TOP_SECRET_MARKING,
+                                                 "jford",
+                                                 "en-gb",
+                                                 true));
 
         assertEquals(1, entity1.getLinkageSection().getChildDataObjects().size());
         assertEquals(1, entity2.getLinkageSection().getChildDataObjects().size());
 
-        assertLinkages(ELinkTypes.IsChildOf, "(TS)", "jford", "en-gb", entity1, entity2);
+        assertLinkages(ELinkTypes.IsChildOf, EntityLinkHelperTest.TOP_SECRET_MARKING, "jford", "en-gb", entity1, entity2);
 
     }
 
@@ -463,7 +526,13 @@ public class EntityLinkHelperTest {
         XsdEntity entity1 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
         XsdEntity entity2 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
 
-        EntityLinkHelper.LinkEntities(entity1, ELinkTypes.IsOwnedBy, entity2, "(TS)", "jford", "en-gb", true);
+        EntityLinkHelper.LinkEntities(entity1,
+                                      ELinkTypes.IsOwnedBy,
+                                      entity2,
+                                      EntityLinkHelperTest.TOP_SECRET_MARKING,
+                                      "jford",
+                                      "en-gb",
+                                      true);
 
         XsdEntity modifiedEntity1 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
         XsdEntity modifiedEntity2 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
@@ -479,12 +548,17 @@ public class EntityLinkHelperTest {
         assertTrue(EntityLinkHelper.LinkEntities(modifiedEntity1,
                                                  ELinkTypes.IsOwnedBy,
                                                  modifiedEntity2,
-                                                 "(S USA)",
+                                                 EntityLinkHelperTest.SECRET_USA_MARKING,
                                                  "bob",
                                                  "en-us",
                                                  true));
 
-        assertLinkages(ELinkTypes.IsOwnedBy, "(S USA)", "bob", "en-us", modifiedEntity1, modifiedEntity2);
+        assertLinkages(ELinkTypes.IsOwnedBy,
+                       EntityLinkHelperTest.SECRET_USA_MARKING,
+                       "bob",
+                       "en-us",
+                       modifiedEntity1,
+                       modifiedEntity2);
 
     }
 
@@ -786,7 +860,7 @@ public class EntityLinkHelperTest {
     // -----------------------------------------------------------------------//
 
     private void assertLinkages(ELinkTypes linkType,
-                                String classificationMarking,
+                                Marking classificationMarking,
                                 String modifiedBy,
                                 String inputLang,
                                 XsdEntity entity1,
@@ -829,11 +903,11 @@ public class EntityLinkHelperTest {
     private void assertLinkage(ELinkTypes linkType, XsdEntity entity1, XsdEntity entity2, XsdLinkage linkage)
     {
 
-        assertLinkage(linkType, "(U)", "", "en-US", entity1, entity2, linkage);
+        assertLinkage(linkType, EntityLinkHelperTest.UNCLASSIFIED_MARKING, "", "en-US", entity1, entity2, linkage);
     }
 
     private void assertLinkage(ELinkTypes linkType,
-                               String classificationMarking,
+                               Marking classificationMarking,
                                String modifiedBy,
                                String inputLang,
                                XsdEntity entity1,
@@ -841,21 +915,20 @@ public class EntityLinkHelperTest {
                                XsdLinkage linkage)
     {
 
-        assertEquals(linkType, linkage.GetLinkType());
-        assertEquals(new Marking(classificationMarking).toString(),
-                     new Marking(linkage.GetClassificationMarking()).toString());
-        assertEquals(modifiedBy, linkage.GetModifiedBy());
-        assertEquals(inputLang, linkage.GetInputLang());
+        assertEquals(linkType, linkage.getLinkType());
+        assertEquals(classificationMarking, linkage.getClassificationMarking());
+        assertEquals(modifiedBy, linkage.getModifiedBy());
+        assertEquals(inputLang, linkage.getInputLang());
 
-        assertEquals(entity1.getKey(), linkage.GetEntity1Key());
-        assertEquals(entity1.getName(), linkage.GetEntity1Name());
-        assertEquals(entity1.getSource(), linkage.GetEntity1Source());
-        assertEquals(entity1.getVersion(), linkage.GetEntity1Version());
+        assertEquals(entity1.getKey(), linkage.getEntity1Key());
+        assertEquals(entity1.getName(), linkage.getEntity1Name());
+        assertEquals(entity1.getSource(), linkage.getEntity1Source());
+        assertEquals(entity1.getVersion(), linkage.getEntity1Version());
 
-        assertEquals(entity2.getKey(), linkage.GetEntity2Key());
-        assertEquals(entity2.getName(), linkage.GetEntity2Name());
-        assertEquals(entity2.getSource(), linkage.GetEntity2Source());
-        assertEquals(entity2.getVersion(), linkage.GetEntity2Version());
+        assertEquals(entity2.getKey(), linkage.getEntity2Key());
+        assertEquals(entity2.getName(), linkage.getEntity2Name());
+        assertEquals(entity2.getSource(), linkage.getEntity2Source());
+        assertEquals(entity2.getVersion(), linkage.getEntity2Version());
     }
 
 }

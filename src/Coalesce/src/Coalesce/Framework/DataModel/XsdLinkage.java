@@ -4,8 +4,10 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import org.apache.commons.lang.NullArgumentException;
 import org.joda.time.DateTime;
 
+import Coalesce.Common.Classification.Marking;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import Coalesce.Common.Helpers.XmlHelper;
 import Coalesce.Framework.GeneratedJAXB.Entity.Linkagesection.Linkage;
@@ -31,15 +33,16 @@ public class XsdLinkage extends XsdDataObject {
 
     private Linkage _entityLinkage;
 
-    public static XsdLinkage Create(XsdLinkageSection parent)
+    public static XsdLinkage create(XsdLinkageSection parent)
     {
+        if (parent == null) throw new NullArgumentException("parent");
 
         XsdLinkage newLinkage = new XsdLinkage();
 
         Linkage entityLinkage = new Linkage();
         parent.getEntityLinkageSection().getLinkage().add(entityLinkage);
 
-        if (!newLinkage.Initialize(parent, entityLinkage)) return null;
+        if (!newLinkage.initialize(parent, entityLinkage)) return null;
 
         newLinkage.setName("Linkage");
 
@@ -53,9 +56,11 @@ public class XsdLinkage extends XsdDataObject {
 
     }
 
-    public boolean Initialize(XsdLinkageSection parent, Linkage linkage)
+    public boolean initialize(XsdLinkageSection parent, Linkage linkage)
     {
-
+        if (parent == null) throw new NullArgumentException("parent");
+        if (linkage == null) throw new NullArgumentException("linkage");
+        
         _parent = parent;
         _entityLinkage = linkage;
 
@@ -96,136 +101,136 @@ public class XsdLinkage extends XsdDataObject {
         return "linkage";
     }
 
-    public String GetModifiedBy()
+    public String getModifiedBy()
     {
         return _entityLinkage.getModifiedby();
     }
 
-    public void SetModifiedBy(String value)
+    public void setModifiedBy(String value)
     {
         _entityLinkage.setModifiedby(value);
-        SetChanged();
+        setChanged();
     }
 
-    public String GetClassificationMarking()
+    public Marking getClassificationMarking()
     {
-        return _entityLinkage.getClassificationmarking();
+        return new Marking(_entityLinkage.getClassificationmarking());
     }
 
-    public void SetClassificationMarking(String value)
+    public void setClassificationMarking(Marking value)
     {
-        _entityLinkage.setClassificationmarking(value);
-        SetChanged();
+        _entityLinkage.setClassificationmarking(value.ToPortionString());
+        setChanged();
     }
 
-    public String GetEntity1Key()
+    public String getEntity1Key()
     {
         return _entityLinkage.getEntity1Key();
     }
 
-    public void SetEntity1Key(String value)
+    public void setEntity1Key(String value)
     {
         _entityLinkage.setEntity1Key(value);
-        SetChanged();
+        setChanged();
     }
 
-    public String GetEntity1Name()
+    public String getEntity1Name()
     {
         return _entityLinkage.getEntity1Name();
     }
 
-    public void SetEntity1Name(String value)
+    public void setEntity1Name(String value)
     {
         _entityLinkage.setEntity1Name(value);
-        SetChanged();
+        setChanged();
     }
 
-    public String GetEntity1Source()
+    public String getEntity1Source()
     {
         return _entityLinkage.getEntity1Source();
     }
 
-    public void SetEntity1Source(String value)
+    public void setEntity1Source(String value)
     {
         _entityLinkage.setEntity1Source(value);
-        SetChanged();
+        setChanged();
     }
 
-    public String GetEntity1Version()
+    public String getEntity1Version()
     {
         return _entityLinkage.getEntity1Version();
     }
 
-    public void SetEntity1Version(String value)
+    public void setEntity1Version(String value)
     {
         _entityLinkage.setEntity1Version(value);
-        SetChanged();
+        setChanged();
     }
 
-    public String GetEntity2Key()
+    public String getEntity2Key()
     {
         return _entityLinkage.getEntity2Key();
     }
 
-    public void SetEntity2Key(String value)
+    public void setEntity2Key(String value)
     {
         _entityLinkage.setEntity2Key(value);
-        SetChanged();
+        setChanged();
     }
 
-    public String GetEntity2Name()
+    public String getEntity2Name()
     {
         return _entityLinkage.getEntity2Name();
     }
 
-    public void SetEntity2Name(String value)
+    public void setEntity2Name(String value)
     {
         _entityLinkage.setEntity2Name(value);
-        SetChanged();
+        setChanged();
     }
 
-    public String GetEntity2Source()
+    public String getEntity2Source()
     {
         return _entityLinkage.getEntity2Source();
     }
 
-    public void SetEntity2Source(String value)
+    public void setEntity2Source(String value)
     {
         _entityLinkage.setEntity2Source(value);
-        SetChanged();
+        setChanged();
     }
 
-    public String GetEntity2Version()
+    public String getEntity2Version()
     {
         return _entityLinkage.getEntity2Version();
     }
 
-    public void SetEntity2Version(String value)
+    public void setEntity2Version(String value)
     {
         _entityLinkage.setEntity2Version(value);
-        SetChanged();
+        setChanged();
     }
 
-    public String GetInputLang()
+    public String getInputLang()
     {
         return _entityLinkage.getInputlang();
     }
 
-    public void SetInputLang(String value)
+    public void setInputLang(String value)
     {
         _entityLinkage.setInputlang(value);
-        SetChanged();
+        setChanged();
     }
 
-    public ELinkTypes GetLinkType()
+    public ELinkTypes getLinkType()
     {
         return ELinkTypes.GetTypeForLabel(_entityLinkage.getLinktype());
     }
 
-    public void SetLinkType(ELinkTypes value)
+    public void setLinkType(ELinkTypes value)
     {
         _entityLinkage.setLinktype(value.getLabel());
-        SetChanged();
+        setChanged();
     }
 
     @Override
@@ -268,7 +273,7 @@ public class XsdLinkage extends XsdDataObject {
         _entityLinkage.setStatus(status.toLabel());
     }
 
-    public boolean GetIsMarkedDeleted()
+    public boolean getIsMarkedDeleted()
     {
         return (getStatus() == ECoalesceDataObjectStatus.DELETED);
     }
@@ -277,29 +282,29 @@ public class XsdLinkage extends XsdDataObject {
     // public Methods
     // -----------------------------------------------------------------------//
 
-    public void EstablishLinkage(XsdEntity Entity1,
+    public void establishLinkage(XsdEntity Entity1,
                                  ELinkTypes LinkType,
                                  XsdEntity Entity2,
-                                 String ClassificationMarking,
+                                 Marking ClassificationMarking,
                                  String ModifiedBy,
                                  String InputLang)
     {
         // Set Values
-        SetEntity1Key(Entity1.getKey());
-        SetEntity1Name(Entity1.getName());
-        SetEntity1Source(Entity1.getSource());
-        SetEntity1Version(Entity1.getVersion());
+        setEntity1Key(Entity1.getKey());
+        setEntity1Name(Entity1.getName());
+        setEntity1Source(Entity1.getSource());
+        setEntity1Version(Entity1.getVersion());
 
-        SetLinkType(LinkType);
+        setLinkType(LinkType);
 
-        SetEntity2Key(Entity2.getKey());
-        SetEntity2Name(Entity2.getName());
-        SetEntity2Source(Entity2.getSource());
-        SetEntity2Version(Entity2.getVersion());
+        setEntity2Key(Entity2.getKey());
+        setEntity2Name(Entity2.getName());
+        setEntity2Source(Entity2.getSource());
+        setEntity2Version(Entity2.getVersion());
 
-        SetClassificationMarking(ClassificationMarking);
-        SetModifiedBy(ModifiedBy);
-        SetInputLang(InputLang);
+        setClassificationMarking(ClassificationMarking);
+        setModifiedBy(ModifiedBy);
+        setInputLang(InputLang);
 
         DateTime utcNow = JodaDateTimeHelper.NowInUtc();
         setLastModified(utcNow);
@@ -316,7 +321,7 @@ public class XsdLinkage extends XsdDataObject {
     // Private and protected Methods
     // -----------------------------------------------------------------------//
 
-    protected void SetChanged()
+    private void setChanged()
     {
         DateTime utcNow = JodaDateTimeHelper.NowInUtc();
         setLastModified(utcNow);
