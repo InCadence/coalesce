@@ -135,7 +135,7 @@ public class XsdEntityTest {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION,
                                             "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionName");
 
-        assertEquals(((XsdField) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH)).GetValue(),
+        assertEquals(((XsdField) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH)).getValue(),
                      entity.getTitle());
     }
 
@@ -872,8 +872,8 @@ public class XsdEntityTest {
         XsdField missionName = (XsdField) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
         XsdField incidentTitle = (XsdField) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_INCIDENT_TITLE_PATH);
 
-        missionName.SetValue("Mission Name");
-        incidentTitle.SetValue("Incident Title");
+        missionName.setValue("Mission Name");
+        incidentTitle.setValue("Incident Title");
 
         String title = entity.getTitle();
         assertEquals("Mission Name, Incident Title", title);
@@ -1858,7 +1858,7 @@ public class XsdEntityTest {
         XsdField nameField = (XsdField) xdo;
 
         assertEquals(1, nameField.GetHistory().size());
-        assertEquals(CoalesceTypeInstances.TEST_MISSION_NAME_HISTORY_VALUE, nameField.GetHistory().get(0).GetValue());
+        assertEquals(CoalesceTypeInstances.TEST_MISSION_NAME_HISTORY_VALUE, nameField.GetHistory().get(0).getValue());
 
         xdo = entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_ACTION_NUMBER_PATH);
 
@@ -1868,7 +1868,7 @@ public class XsdEntityTest {
 
         assertEquals(2, actionNumberField.GetHistory().size());
         assertEquals(CoalesceTypeInstances.TEST_MISSION_ACTION_NUMBER_LABEL_HISTORY,
-                     actionNumberField.GetHistory().get(0).GetLabel());
+                     actionNumberField.GetHistory().get(0).getLabel());
 
         xdo = entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_BASE64_PATH);
 

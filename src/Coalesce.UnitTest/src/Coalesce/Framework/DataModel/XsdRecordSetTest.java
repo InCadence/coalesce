@@ -347,10 +347,10 @@ public class XsdRecordSetTest {
         XsdSection section = XsdSection.create(entity, "Section");
         XsdRecordset recordset = XsdRecordset.create(section, "Recordset");
 
-        XsdRecord record = recordset.AddNew();
+        XsdRecord record = recordset.addNew();
         record.setStatus(ECoalesceDataObjectStatus.DELETED);
 
-        record = recordset.AddNew();
+        record = recordset.addNew();
         record.setStatus(ECoalesceDataObjectStatus.UNKNOWN);
 
         assertFalse(recordset.getHasActiveRecords());
@@ -368,21 +368,21 @@ public class XsdRecordSetTest {
         XsdSection section = XsdSection.create(entity, "Section");
         XsdRecordset recordset = XsdRecordset.create(section, "Recordset");
 
-        XsdRecord record = recordset.AddNew();
+        XsdRecord record = recordset.addNew();
         record.setStatus(ECoalesceDataObjectStatus.DELETED);
 
-        record = recordset.AddNew();
+        record = recordset.addNew();
         record.setStatus(ECoalesceDataObjectStatus.UNKNOWN);
 
-        record = recordset.AddNew();
+        record = recordset.addNew();
         record.setStatus(ECoalesceDataObjectStatus.ACTIVE);
 
         assertTrue(recordset.getHasActiveRecords());
 
         record.setStatus(ECoalesceDataObjectStatus.DELETED);
-        
+
         assertFalse(recordset.getHasActiveRecords());
-        
+
     }
 
     @Test
@@ -393,8 +393,8 @@ public class XsdRecordSetTest {
         XsdRecordset recordset = XsdRecordset.create(section, "Recordset");
 
         assertFalse(recordset.getHasRecords());
-        
-        XsdRecord record = recordset.AddNew();
+
+        XsdRecord record = recordset.addNew();
         record.setStatus(ECoalesceDataObjectStatus.DELETED);
         record.setStatus(ECoalesceDataObjectStatus.UNKNOWN);
         assertTrue(recordset.getHasRecords());
@@ -622,7 +622,7 @@ public class XsdRecordSetTest {
 
         assertEquals(1, recordset.getCount());
 
-        recordset.AddNew();
+        recordset.addNew();
 
         assertEquals(2, recordset.getCount());
 
@@ -636,14 +636,14 @@ public class XsdRecordSetTest {
 
         XsdRecord existingRecord = (XsdRecord) recordset.getDataObjectForNamePath("Mission Information Recordset/Mission Information Recordset Record");
 
-        XsdRecord newRecord = recordset.AddNew();
+        XsdRecord newRecord = recordset.addNew();
 
         assertTrue(recordset.contains(existingRecord));
         assertTrue(recordset.contains(newRecord));
         assertFalse(recordset.contains(new XsdRecord()));
-        
+
     }
-    
+
     @Test
     public void addNewTest()
     {
@@ -651,17 +651,17 @@ public class XsdRecordSetTest {
         XsdRecordset recordset = (XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         List<XsdRecord> records = recordset.getRecords();
-        
+
         assertEquals(1, records.size());
-        
-        XsdRecord newRecord = recordset.AddNew();
-        
+
+        XsdRecord newRecord = recordset.addNew();
+
         assertEquals(2, records.size());
         assertEquals(recordset, newRecord.getParent());
         assertEquals(recordset.getName() + " Record", newRecord.getName());
-        
+
     }
-    
+
     @Test
     public void getItemTest()
     {
@@ -670,13 +670,13 @@ public class XsdRecordSetTest {
 
         XsdRecord existingRecord = (XsdRecord) recordset.getDataObjectForNamePath("Mission Information Recordset/Mission Information Recordset Record");
 
-        XsdRecord newRecord = recordset.AddNew();
+        XsdRecord newRecord = recordset.addNew();
 
         assertEquals(existingRecord, recordset.GetItem(0));
         assertEquals(newRecord, recordset.GetItem(1));
-        
+
     }
-    
+
     @Test(expected = IndexOutOfBoundsException.class)
     public void getItemNegativeTest()
     {
@@ -684,9 +684,9 @@ public class XsdRecordSetTest {
         XsdRecordset recordset = (XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         recordset.GetItem(-1);
-        
+
     }
-    
+
     @Test(expected = IndexOutOfBoundsException.class)
     public void getItemGreaterTest()
     {
@@ -694,12 +694,12 @@ public class XsdRecordSetTest {
         XsdRecordset recordset = (XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         @SuppressWarnings("unused")
-        XsdRecord newRecord = recordset.AddNew();
+        XsdRecord newRecord = recordset.addNew();
 
         recordset.GetItem(2);
-        
+
     }
-    
+
     @Test
     public void removeAtTest()
     {
@@ -708,31 +708,30 @@ public class XsdRecordSetTest {
 
         XsdRecord existingRecord = (XsdRecord) recordset.getDataObjectForNamePath("Mission Information Recordset/Mission Information Recordset Record");
 
-        XsdRecord newRecord = recordset.AddNew();
+        XsdRecord newRecord = recordset.addNew();
 
         assertTrue(recordset.contains(existingRecord));
         assertTrue(recordset.contains(newRecord));
         assertEquals(2, recordset.getCount());
         assertTrue(recordset.getHasActiveRecords());
         assertTrue(recordset.getHasRecords());
-        
+
         recordset.RemoveAt(1);
-        
+
         assertFalse(recordset.contains(newRecord));
         assertEquals(1, recordset.getCount());
         assertTrue(recordset.getHasActiveRecords());
         assertTrue(recordset.getHasRecords());
-        
-        
+
         recordset.RemoveAt(0);
-        
+
         assertFalse(recordset.contains(existingRecord));
         assertEquals(0, recordset.getCount());
         assertFalse(recordset.getHasActiveRecords());
         assertTrue(recordset.getHasRecords());
-        
+
     }
-    
+
     @Test
     public void removeTest()
     {
@@ -741,30 +740,30 @@ public class XsdRecordSetTest {
 
         XsdRecord existingRecord = (XsdRecord) recordset.getDataObjectForNamePath("Mission Information Recordset/Mission Information Recordset Record");
 
-        XsdRecord newRecord = recordset.AddNew();
+        XsdRecord newRecord = recordset.addNew();
 
         assertTrue(recordset.contains(existingRecord));
         assertTrue(recordset.contains(newRecord));
         assertEquals(2, recordset.getCount());
         assertTrue(recordset.getHasActiveRecords());
         assertTrue(recordset.getHasRecords());
-        
+
         recordset.Remove(newRecord.getKey());
-        
+
         assertFalse(recordset.contains(newRecord));
         assertEquals(1, recordset.getCount());
         assertTrue(recordset.getHasActiveRecords());
         assertTrue(recordset.getHasRecords());
-        
+
         recordset.Remove(existingRecord.getKey());
-        
+
         assertFalse(recordset.contains(existingRecord));
         assertEquals(0, recordset.getCount());
         assertFalse(recordset.getHasActiveRecords());
         assertTrue(recordset.getHasRecords());
-        
+
     }
-    
+
     @Test
     public void changeRecordStatusTest()
     {
@@ -773,30 +772,29 @@ public class XsdRecordSetTest {
 
         XsdRecord existingRecord = (XsdRecord) recordset.getDataObjectForNamePath("Mission Information Recordset/Mission Information Recordset Record");
 
-        XsdRecord newRecord = recordset.AddNew();
+        XsdRecord newRecord = recordset.addNew();
 
         assertTrue(recordset.getHasActiveRecords());
         assertTrue(recordset.getHasRecords());
         assertEquals(2, recordset.getRecords().size());
-        
+
         existingRecord.setStatus(ECoalesceDataObjectStatus.DELETED);
-        
+
         assertTrue(recordset.getHasActiveRecords());
         assertTrue(recordset.getHasRecords());
         assertEquals(1, recordset.getRecords().size());
-        
+
         newRecord.setStatus(ECoalesceDataObjectStatus.UNKNOWN);
-        
+
         assertFalse(recordset.getHasActiveRecords());
         assertTrue(recordset.getHasRecords());
         assertEquals(0, recordset.getRecords().size());
-        
+
         existingRecord.setStatus(ECoalesceDataObjectStatus.ACTIVE);
-        
+
         assertTrue(recordset.getHasActiveRecords());
         assertTrue(recordset.getHasRecords());
         assertEquals(1, recordset.getRecords().size());
-        
-        
+
     }
 }

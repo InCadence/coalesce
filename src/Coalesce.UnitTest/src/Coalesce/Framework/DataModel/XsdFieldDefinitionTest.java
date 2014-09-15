@@ -92,9 +92,9 @@ public class XsdFieldDefinitionTest {
                               true,
                               (XsdFieldDefinition) xdo);
 
-        XsdRecord record = recordSet.AddNew();
+        XsdRecord record = recordSet.addNew();
 
-        assertNewRecord(newFieldDef, record.GetFieldByName("Field Def Name"));
+        XsdFieldDefinitionTest.assertNewField(newFieldDef, record.getFieldByName("Field Def Name"));
 
     }
 
@@ -123,9 +123,9 @@ public class XsdFieldDefinitionTest {
                               true,
                               (XsdFieldDefinition) xdo);
 
-        XsdRecord record = recordSet.AddNew();
+        XsdRecord record = recordSet.addNew();
 
-        assertNewRecord(newFieldDef, record.GetFieldByName("Field Def Name"));
+        XsdFieldDefinitionTest.assertNewField(newFieldDef, record.getFieldByName("Field Def Name"));
 
     }
 
@@ -154,9 +154,9 @@ public class XsdFieldDefinitionTest {
                               false,
                               (XsdFieldDefinition) xdo);
 
-        XsdRecord record = recordSet.AddNew();
+        XsdRecord record = recordSet.addNew();
 
-        assertNewRecord(newFieldDef, record.GetFieldByName("Field Def Name"));
+        XsdFieldDefinitionTest.assertNewField(newFieldDef, record.getFieldByName("Field Def Name"));
 
     }
 
@@ -185,9 +185,9 @@ public class XsdFieldDefinitionTest {
                               false,
                               (XsdFieldDefinition) xdo);
 
-        XsdRecord record = recordSet.AddNew();
+        XsdRecord record = recordSet.addNew();
 
-        assertNewRecord(newFieldDef, record.GetFieldByName("Field Def Name"));
+        XsdFieldDefinitionTest.assertNewField(newFieldDef, record.getFieldByName("Field Def Name"));
 
     }
 
@@ -216,9 +216,9 @@ public class XsdFieldDefinitionTest {
                               true,
                               (XsdFieldDefinition) xdo);
 
-        XsdRecord record = recordSet.AddNew();
+        XsdRecord record = recordSet.addNew();
 
-        assertNewRecord(newFieldDef, record.GetFieldByName("Field Def Name"));
+        XsdFieldDefinitionTest.assertNewField(newFieldDef, record.getFieldByName("Field Def Name"));
 
     }
 
@@ -247,9 +247,9 @@ public class XsdFieldDefinitionTest {
                               false,
                               (XsdFieldDefinition) xdo);
 
-        XsdRecord record = recordSet.AddNew();
+        XsdRecord record = recordSet.addNew();
 
-        assertNewRecord(newFieldDef, record.GetFieldByName("Field Def Name"));
+        XsdFieldDefinitionTest.assertNewField(newFieldDef, record.getFieldByName("Field Def Name"));
 
     }
 
@@ -279,9 +279,9 @@ public class XsdFieldDefinitionTest {
                               true,
                               (XsdFieldDefinition) xdo);
 
-        XsdRecord record = recordSet.AddNew();
+        XsdRecord record = recordSet.addNew();
 
-        assertNewRecord(newFieldDef, record.GetFieldByName("Field Def Name"));
+        XsdFieldDefinitionTest.assertNewField(newFieldDef, record.getFieldByName("Field Def Name"));
 
     }
 
@@ -311,9 +311,9 @@ public class XsdFieldDefinitionTest {
                               false,
                               (XsdFieldDefinition) xdo);
 
-        XsdRecord record = recordSet.AddNew();
+        XsdRecord record = recordSet.addNew();
 
-        assertNewRecord(newFieldDef, record.GetFieldByName("Field Def Name"));
+        XsdFieldDefinitionTest.assertNewField(newFieldDef, record.getFieldByName("Field Def Name"));
 
     }
 
@@ -344,9 +344,9 @@ public class XsdFieldDefinitionTest {
                               true,
                               (XsdFieldDefinition) xdo);
 
-        XsdRecord record = recordSet.AddNew();
+        XsdRecord record = recordSet.addNew();
 
-        assertNewRecord(newFieldDef, record.GetFieldByName("Field Def Name"));
+        XsdFieldDefinitionTest.assertNewField(newFieldDef, record.getFieldByName("Field Def Name"));
 
     }
 
@@ -490,12 +490,25 @@ public class XsdFieldDefinitionTest {
     {
         XsdFieldDefinition fieldDefinition = getFieldDefinitionFromXml(CoalesceTypeInstances.TEST_MISSION);
 
-        assertEquals(JodaDateTimeHelper.FromXmlDateTimeUTC("2014-05-02T14:33:51.8525751Z"), fieldDefinition.getLastModified());
+        assertEquals(JodaDateTimeHelper.FromXmlDateTimeUTC("2014-05-02T14:33:51.8525751Z"),
+                     fieldDefinition.getLastModified());
 
         DateTime now = JodaDateTimeHelper.NowInUtc();
         fieldDefinition.setLastModified(now);
 
         assertEquals(now, fieldDefinition.getLastModified());
+
+    }
+
+    public static void assertNewField(XsdFieldDefinition fieldDefinition, XsdField field)
+    {
+        assertEquals(fieldDefinition.getName(), field.getName());
+        assertEquals(fieldDefinition.getDataType(), field.getDataType());
+        assertEquals(fieldDefinition.getLabel(), field.getLabel());
+        assertEquals(new Marking(fieldDefinition.getDefaultClassificationMarking()).toString(),
+                     new Marking(field.getClassificationMarking()).toString());
+        assertEquals(fieldDefinition.getDefaultValue(), field.getValue());
+        assertEquals(fieldDefinition.getNoIndex(), field.getNoIndex());
 
     }
 
@@ -521,18 +534,6 @@ public class XsdFieldDefinitionTest {
         XsdRecordset informationRecordSet = XsdRecordset.create(informationSection, "Information Recordset");
 
         return informationRecordSet;
-    }
-
-    private void assertNewRecord(XsdFieldDefinition fieldDefinition, XsdField field)
-    {
-        assertEquals(fieldDefinition.getName(), field.getName());
-        assertEquals(fieldDefinition.getDataType(), field.GetDataType());
-        assertEquals(fieldDefinition.getLabel(), field.GetLabel());
-        assertEquals(new Marking(fieldDefinition.getDefaultClassificationMarking()).toString(),
-                     new Marking(field.GetClassificationMarking()).toString());
-        assertEquals(fieldDefinition.getDefaultValue(), field.GetValue());
-        assertEquals(fieldDefinition.getNoIndex(), field.getNoIndex());
-
     }
 
     private void assertFieldDefinition(XsdRecordset parent,

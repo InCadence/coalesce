@@ -182,7 +182,7 @@ public class XsdFieldDefinition extends XsdDataObject {
     @Override
     public String getName()
     {
-        return _entityFieldDefinition.getName();
+        return getStringElement(_entityFieldDefinition.getName());
     }
 
     @Override
@@ -199,7 +199,7 @@ public class XsdFieldDefinition extends XsdDataObject {
 
     public String getLabel()
     {
-        return _entityFieldDefinition.getLabel();
+        return getStringElement(_entityFieldDefinition.getLabel());
     }
 
     public void setLabel(String value)

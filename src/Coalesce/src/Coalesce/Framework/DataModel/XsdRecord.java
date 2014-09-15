@@ -6,10 +6,13 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import org.apache.commons.lang.NullArgumentException;
 import org.joda.time.DateTime;
 
 import Coalesce.Common.Exceptions.CoalesceException;
+import Coalesce.Common.Exceptions.DataFormatException;
 import Coalesce.Common.Exceptions.InvalidFieldException;
+import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.Helpers.XmlHelper;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record.Field;
@@ -43,13 +46,17 @@ public class XsdRecord extends XsdDataObject {
     // Factory and Initialization
     // -----------------------------------------------------------------------//
 
-    public static XsdRecord Create(XsdRecordset parent, String name)
+    public static XsdRecord create(XsdRecordset parent, String name)
     {
+        if (parent == null) throw new NullArgumentException("parent");
+        if (name == null) throw new NullArgumentException("name");
+        if (StringHelper.IsNullOrEmpty(name.trim())) throw new IllegalArgumentException("name cannot be an empty string");
+
         Record newEntityRecord = new Record();
         parent.GetEntityRecords().add(newEntityRecord);
 
         XsdRecord newRecord = new XsdRecord();
-        if (!newRecord.Initialize(parent, newEntityRecord)) return null;
+        if (!newRecord.initialize(parent, newEntityRecord)) return null;
 
         for (XsdFieldDefinition fieldDefinition : parent.getFieldDefinitions())
         {
@@ -68,8 +75,10 @@ public class XsdRecord extends XsdDataObject {
         return newRecord;
     }
 
-    public boolean Initialize(XsdRecordset parent, Record record)
+    public boolean initialize(XsdRecordset parent, Record record)
     {
+        if (parent == null) throw new NullArgumentException("parent");
+        if (record == null) throw new NullArgumentException("record");
 
         // Set References
         _parent = parent;
@@ -116,7 +125,7 @@ public class XsdRecord extends XsdDataObject {
     @Override
     public String getName()
     {
-        return _entityRecord.getName();
+        return getStringElement(_entityRecord.getName());
     }
 
     @Override
@@ -131,9 +140,9 @@ public class XsdRecord extends XsdDataObject {
         return "record";
     }
 
-    public ArrayList<XsdField> GetFields()
+    public List<XsdField> getFields()
     {
-        ArrayList<XsdField> fields = new ArrayList<XsdField>();
+        List<XsdField> fields = new ArrayList<XsdField>();
 
         for (XsdDataObject dataObject : _childDataObjects.values())
         {
@@ -147,9 +156,9 @@ public class XsdRecord extends XsdDataObject {
         return fields;
     }
 
-    public ArrayList<String> GetFieldNames()
+    public List<String> getFieldNames()
     {
-        ArrayList<String> fieldNames = new ArrayList<String>();
+        List<String> fieldNames = new ArrayList<String>();
 
         for (XsdDataObject dataObject : _childDataObjects.values())
         {
@@ -162,9 +171,9 @@ public class XsdRecord extends XsdDataObject {
         return fieldNames;
     }
 
-    public ArrayList<String> GetFieldKeys()
+    public List<String> getFieldKeys()
     {
-        ArrayList<String> fieldKeys = new ArrayList<String>();
+        List<String> fieldKeys = new ArrayList<String>();
 
         for (XsdDataObject dataObject : _childDataObjects.values())
         {
@@ -177,9 +186,9 @@ public class XsdRecord extends XsdDataObject {
         return fieldKeys;
     }
 
-    public XsdField GetFieldByKey(String key)
+    public XsdField getFieldByKey(String key)
     {
-        for (XsdField field : GetFields())
+        for (XsdField field : getFields())
         {
             if (field.getKey().equals(key))
             {
@@ -190,9 +199,9 @@ public class XsdRecord extends XsdDataObject {
         return null;
     }
 
-    public XsdField GetFieldByName(String name)
+    public XsdField getFieldByName(String name)
     {
-        for (XsdField field : GetFields())
+        for (XsdField field : getFields())
         {
             if (field.getName().equals(name))
             {
@@ -203,20 +212,15 @@ public class XsdRecord extends XsdDataObject {
         return null;
     }
 
-    public XsdField GetFieldByIndex(int Index)
+    public String getFieldValue(String fieldName) throws CoalesceException
     {
-        return GetFields().get(Index);
-    }
-
-    public String GetFieldValue(String fieldName) throws CoalesceException 
-    {
-        XsdField field = GetFieldByName(fieldName);
+        XsdField field = getFieldByName(fieldName);
 
         // Do we have this Field?
         if (field != null)
         {
             // Yes; return Value;
-            return field.GetValue();
+            return field.getValue();
         }
         else
         {
@@ -224,16 +228,16 @@ public class XsdRecord extends XsdDataObject {
         }
     }
 
-    public boolean GetBooleanFieldValue(String fieldName) throws CoalesceException
+    public boolean getBooleanFieldValue(String fieldName) throws CoalesceException
     {
-        XsdField field = GetFieldByName(fieldName);
+        XsdField field = getFieldByName(fieldName);
 
         // Do we have this Field?
         if (field != null)
         {
             // Yes; Set Value
 
-            boolean value = field.GetBooleanValue();
+            boolean value = field.getBooleanValue();
 
             return value;
 
@@ -244,15 +248,15 @@ public class XsdRecord extends XsdDataObject {
         }
     }
 
-    public int GetIntegerFieldValue(String fieldName) throws CoalesceException
+    public int getIntegerFieldValue(String fieldName) throws CoalesceException
     {
-        XsdField field = GetFieldByName(fieldName);
+        XsdField field = getFieldByName(fieldName);
 
         // Do we have this Field?
         if (field != null)
         {
             // Yes; Set Value
-            int value = field.GetIntegerValue();
+            int value = field.getIntegerValue();
 
             return value;
 
@@ -263,15 +267,17 @@ public class XsdRecord extends XsdDataObject {
         }
     }
 
-    public DateTime GetDateTimeFieldValue(String fieldName) throws CoalesceException
+    public DateTime getDateTimeFieldValue(String fieldName) throws CoalesceException, DataFormatException
     {
-        XsdField field = GetFieldByName(fieldName);
+        XsdField field = getFieldByName(fieldName);
 
         // Do we have this Field?
         if (field != null)
         {
             // Yes; Set Value
-            DateTime value = field.getDateCreated();
+            DateTime value = field.getDateTimeValue();
+
+            if (value == null) throw new DataFormatException("Failed to parse Datetime value for: " + fieldName);
 
             return value;
 
@@ -282,15 +288,15 @@ public class XsdRecord extends XsdDataObject {
         }
     }
 
-    public byte[] GetBinaryFieldValue(String fieldName) throws CoalesceException
+    public byte[] getBinaryFieldValue(String fieldName) throws CoalesceException
     {
-        XsdField field = GetFieldByName(fieldName);
+        XsdField field = getFieldByName(fieldName);
 
         // Do we have this Field?
         if (field != null)
         {
             // Yes; Set Value
-            byte[] value = field.GetBinaryValue();
+            byte[] value = field.getBinaryValue();
 
             return value;
 
@@ -301,11 +307,11 @@ public class XsdRecord extends XsdDataObject {
         }
     }
 
-    public String GetFieldValueAsString(String fieldName, String defaultValue)
+    public String getFieldValueAsString(String fieldName, String defaultValue)
     {
         try
         {
-            String value = GetFieldValue(fieldName);
+            String value = getFieldValue(fieldName);
 
             return value;
 
@@ -316,11 +322,11 @@ public class XsdRecord extends XsdDataObject {
         }
     }
 
-    public boolean GetFieldValueAsBoolean(String fieldName, boolean defaultValue)
+    public boolean getFieldValueAsBoolean(String fieldName, boolean defaultValue)
     {
         try
         {
-            Boolean value = GetBooleanFieldValue(fieldName);
+            Boolean value = getBooleanFieldValue(fieldName);
 
             return value;
 
@@ -331,11 +337,11 @@ public class XsdRecord extends XsdDataObject {
         }
     }
 
-    public int GetFieldValueAsInteger(String fieldName, int defaultValue)
+    public int getFieldValueAsInteger(String fieldName, int defaultValue)
     {
         try
         {
-            int value = GetIntegerFieldValue(fieldName);
+            int value = getIntegerFieldValue(fieldName);
 
             return value;
 
@@ -346,11 +352,11 @@ public class XsdRecord extends XsdDataObject {
         }
     }
 
-    public DateTime GetFieldValueAsDate(String fieldName, DateTime defaultValue)
+    public DateTime getFieldValueAsDate(String fieldName, DateTime defaultValue)
     {
         try
         {
-            DateTime value = GetDateTimeFieldValue(fieldName);
+            DateTime value = getDateTimeFieldValue(fieldName);
 
             return value;
 
@@ -361,11 +367,11 @@ public class XsdRecord extends XsdDataObject {
         }
     }
 
-    public byte[] GetFieldValueAsByteArray(String fieldName, byte[] defaultValue)
+    public byte[] getFieldValueAsByteArray(String fieldName, byte[] defaultValue)
     {
         try
         {
-            byte[] value = GetBinaryFieldValue(fieldName);
+            byte[] value = getBinaryFieldValue(fieldName);
 
             return value;
 
@@ -376,14 +382,14 @@ public class XsdRecord extends XsdDataObject {
         }
     }
 
-    public void SetFieldValue(String fieldName, String value) throws CoalesceException
+    public void setFieldValue(String fieldName, String value) throws CoalesceException
     {
-        XsdField field = GetFieldByName(fieldName);
+        XsdField field = getFieldByName(fieldName);
 
         // Do we have this Field?
         if (field != null)
         {
-            field.SetValue(value);
+            field.setValue(value);
         }
         else
         {
@@ -391,14 +397,14 @@ public class XsdRecord extends XsdDataObject {
         }
     }
 
-    public void SetFieldValue(String fieldName, boolean value) throws CoalesceException
+    public void setFieldValue(String fieldName, boolean value) throws CoalesceException
     {
-        XsdField field = GetFieldByName(fieldName);
+        XsdField field = getFieldByName(fieldName);
 
         // Do we have this Field?
         if (field != null)
         {
-            field.SetTypedValue(value);
+            field.setTypedValue(value);
         }
         else
         {
@@ -406,14 +412,14 @@ public class XsdRecord extends XsdDataObject {
         }
     }
 
-    public void SetFieldValue(String fieldName, int value) throws CoalesceException
+    public void setFieldValue(String fieldName, int value) throws CoalesceException
     {
-        XsdField field = GetFieldByName(fieldName);
+        XsdField field = getFieldByName(fieldName);
 
         // Do we have this Field?
         if (field != null)
         {
-            field.SetTypedValue(value);
+            field.setTypedValue(value);
         }
         else
         {
@@ -421,14 +427,14 @@ public class XsdRecord extends XsdDataObject {
         }
     }
 
-    public void SetFieldValue(String fieldName, DateTime value) throws CoalesceException
+    public void setFieldValue(String fieldName, DateTime value) throws CoalesceException
     {
-        XsdField field = GetFieldByName(fieldName);
+        XsdField field = getFieldByName(fieldName);
 
         // Do we have this Field?
         if (field != null)
         {
-            field.SetTypedValue(value);
+            field.setTypedValue(value);
         }
         else
         {
@@ -436,26 +442,26 @@ public class XsdRecord extends XsdDataObject {
         }
     }
 
-    public void SetFieldValue(String fieldName, byte[] value) throws CoalesceException
+    public void setFieldValue(String fieldName, byte[] value) throws CoalesceException
     {
-        SetFieldValue(fieldName, value, "");
+        setFieldValue(fieldName, value, "");
     }
 
-    public void SetFieldValue(String fieldName, byte[] value, String fileName) throws CoalesceException
+    public void setFieldValue(String fieldName, byte[] value, String fileName) throws CoalesceException
     {
-        XsdField field = GetFieldByName(fieldName);
+        XsdField field = getFieldByName(fieldName);
 
         // Do we have this Field?
         if (field != null)
         {
 
-            if (fileName.equals(""))
+            if (fileName == null || StringHelper.IsNullOrEmpty(fileName.trim()))
             {
-                field.SetTypedValue(value);
+                field.setTypedValue(value);
             }
             else
             {
-                field.SetTypedValue(value, "{" + fileName + "}", ".jpg", "");
+                field.setTypedValue(value, "{" + fileName + "}", ".jpg", "");
             }
 
         }
@@ -466,16 +472,13 @@ public class XsdRecord extends XsdDataObject {
 
     }
 
-    public Boolean HasField(String name)
+    public Boolean hasField(String name)
     {
-        // Find Field
-        // For Each f As XsdField In this.GetFields
-        for (int i = 0; i < GetFields().size(); i++)
-        {
-            if (GetFields().get(i).getName().equals(name)) return true;
-        }
 
-        return false;
+        XsdField field = getFieldByName(name);
+
+        return (field != null);
+
     }
 
     public String toXml()
@@ -534,17 +537,19 @@ public class XsdRecord extends XsdDataObject {
             {
                 getCastParent().getRecords().add(this);
             }
-        } else {
-            
+        }
+        else
+        {
+
             if (getCastParent().contains(this))
             {
                 getCastParent().Remove(getKey());
             }
         }
-        
+
     }
 
-    protected List<Field> GetEntityFields()
+    protected List<Field> getEntityFields()
     {
         return _entityRecord.getField();
     }
@@ -554,10 +559,10 @@ public class XsdRecord extends XsdDataObject {
     {
         return this._entityRecord.getOtherAttributes();
     }
-    
+
     private XsdRecordset getCastParent()
     {
-        return (XsdRecordset)_parent;
+        return (XsdRecordset) _parent;
     }
-    
+
 }

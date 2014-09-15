@@ -604,16 +604,16 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         return conn.ExecuteProcedure("CoalesceField_InsertOrUpdate",
                                      field.getKey(),
                                      field.getName(),
-                                     field.GetValue(),
-                                     field.GetDataType().getLabel(),
+                                     field.getValue(),
+                                     field.getDataType().getLabel(),
                                      "",
-                                     field.GetClassificationMarking(),
-                                     field.GetModifiedBy(),
+                                     field.getClassificationMarking(),
+                                     field.getModifiedBy(),
                                      field.getParent().getKey(),
                                      field.getParent().getType(),
                                      JodaDateTimeHelper.toMySQLDateTime(field.getDateCreated()),
                                      JodaDateTimeHelper.toMySQLDateTime(field.getLastModified()),
-                                     field.GetPreviousHistoryKey());
+                                     field.getPreviousHistoryKey());
     }
 
     protected boolean persistFieldHistoryObject(XsdFieldHistory fieldHistory, SQLServerDataConnector conn)
@@ -626,16 +626,16 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         return conn.ExecuteProcedure("CoalesceFieldHistory_InsertOrUpdate",
                                      fieldHistory.getKey(),
                                      fieldHistory.getName(),
-                                     fieldHistory.GetValue(),
-                                     fieldHistory.GetDataType().getLabel(),
+                                     fieldHistory.getValue(),
+                                     fieldHistory.getDataType().getLabel(),
                                      "",
-                                     fieldHistory.GetClassificationMarking(),
-                                     fieldHistory.GetModifiedBy(),
+                                     fieldHistory.getClassificationMarking(),
+                                     fieldHistory.getModifiedBy(),
                                      fieldHistory.getParent().getKey(),
                                      fieldHistory.getParent().getType(),
                                      JodaDateTimeHelper.toMySQLDateTime(fieldHistory.getDateCreated()),
                                      JodaDateTimeHelper.toMySQLDateTime(fieldHistory.getLastModified()),
-                                     fieldHistory.GetPreviousHistoryKey());
+                                     fieldHistory.getPreviousHistoryKey());
     }
 
     protected boolean persistLinkageSectionObject(XsdLinkageSection linkageSection, SQLServerDataConnector conn)
@@ -828,7 +828,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         {
             if (dataObject.getType().toLowerCase() == "field")
             {
-                if (((XsdField) dataObject).GetDataType() == ECoalesceFieldDataTypes.FileType)
+                if (((XsdField) dataObject).getDataType() == ECoalesceFieldDataTypes.FileType)
                 {
                     isSuccessful = persistFieldObject((XsdField) dataObject, conn);
                 }

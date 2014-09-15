@@ -1,14 +1,4 @@
-package Coalesce.Common.UnitTest;
-
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-import Coalesce.Common.Classification.AllCommonClassificationTests;
-import Coalesce.Common.Helpers.AllCommonHelpersTests;
-import Coalesce.Common.RunTime.AllCommonRunTimeTests;
-import Coalesce.Framework.DataModel.AllFrameworkDataModelTests;
-import Coalesce.Framework.Persistance.AllFrameworkPersisterTests;
+package Coalesce.Common.Exceptions;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -27,9 +17,13 @@ import Coalesce.Framework.Persistance.AllFrameworkPersisterTests;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-@RunWith(Suite.class)
-@SuiteClasses({ AllCommonClassificationTests.class, AllCommonHelpersTests.class, AllCommonRunTimeTests.class,
-               AllFrameworkDataModelTests.class, AllFrameworkPersisterTests.class })
-public class AllCoalesceTests {
+public class DataFormatException extends CoalesceException {
+
+    private static final long serialVersionUID = -4679217177054112286L;
+    
+    public DataFormatException(String message)
+    {
+        super(message);
+    }
 
 }

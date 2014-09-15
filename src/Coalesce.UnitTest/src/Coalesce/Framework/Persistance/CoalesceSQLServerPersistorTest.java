@@ -88,10 +88,10 @@ public class CoalesceSQLServerPersistorTest {
         recordSet = XsdRecordset.create(section, "Live Status Recordset");
         XsdFieldDefinition.create(recordSet, "CurrentStatus", ECoalesceFieldDataTypes.StringType);
 
-        record = recordSet.AddNew();
-        record.SetFieldValue("CurrentStatus", "Test Status");
+        record = recordSet.addNew();
+        record.setFieldValue("CurrentStatus", "Test Status");
 
-        _fieldKey = record.GetFieldByName("CurrentStatus").getKey();
+        _fieldKey = record.getFieldByName("CurrentStatus").getKey();
         return true;
     }
 

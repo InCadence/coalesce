@@ -111,10 +111,10 @@ public class CoalesceMySQLPersistorTest {
         recordSet = XsdRecordset.create(section, "Live Status Recordset");
             XsdFieldDefinition.create(recordSet, "CurrentStatus", ECoalesceFieldDataTypes.StringType);
 
-            record = recordSet.AddNew();
-            record.SetFieldValue("CurrentStatus", "Test Status");
+            record = recordSet.addNew();
+            record.setFieldValue("CurrentStatus", "Test Status");
 
-            _fieldKey = record.GetFieldByName("CurrentStatus").getKey();
+            _fieldKey = record.getFieldByName("CurrentStatus").getKey();
             return true;
         }
         catch (InvalidFieldException e)
@@ -154,10 +154,10 @@ public class CoalesceMySQLPersistorTest {
         recordSet = XsdRecordset.create(section, recordsetName);
             XsdFieldDefinition.create(recordSet, fieldDefName, ECoalesceFieldDataTypes.StringType);
 
-            record = recordSet.AddNew();
-            record.SetFieldValue(fieldDefName, fieldName);
+            record = recordSet.addNew();
+            record.setFieldValue(fieldDefName, fieldName);
 
-            _fieldKey = record.GetFieldByName(fieldDefName).getKey();
+            _fieldKey = record.getFieldByName(fieldDefName).getKey();
             return true;
         }
         catch (InvalidFieldException e)

@@ -121,10 +121,10 @@ public class CoalesceEntitySyncShellTest {
 
             // Modify Entity
             XsdRecord record = (XsdRecord) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/");
-            record.SetFieldValue("MissionName", "test");
+            record.setFieldValue("MissionName", "test");
 
-            String fieldKeyValid = record.GetFieldByName("MissionName").getKey();
-            String fieldKeyInValid = record.GetFieldByName("MissionDescription").getKey();
+            String fieldKeyValid = record.getFieldByName("MissionName").getKey();
+            String fieldKeyInValid = record.getFieldByName("MissionDescription").getKey();
 
             // Create Remote Shell
             CoalesceEntitySyncShell remoteShell = CoalesceEntitySyncShell.Create(entity);

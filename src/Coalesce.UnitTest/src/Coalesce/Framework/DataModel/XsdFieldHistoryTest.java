@@ -15,6 +15,7 @@ import org.junit.Test;
 
 import Coalesce.Common.Classification.Marking;
 import Coalesce.Common.Classification.MarkingValueTest;
+import Coalesce.Common.Exceptions.DataFormatException;
 import Coalesce.Common.Helpers.GUIDHelper;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import Coalesce.Common.UnitTest.CoalesceTypeInstances;
@@ -104,7 +105,7 @@ public class XsdFieldHistoryTest {
         rs.initialize(section, new Recordset());
 
         XsdRecord record = new XsdRecord();
-        record.Initialize(rs, new Record());
+        record.initialize(rs, new Record());
 
         XsdField field = new XsdField();
         field.Initialize(record, new Field());
@@ -133,17 +134,17 @@ public class XsdFieldHistoryTest {
 
         assertEquals(field.getName(), fieldHistory.getName());
         assertEquals("fieldhistory", fieldHistory.getType());
-        assertEquals(field.GetValue(), fieldHistory.GetValue());
-        assertEquals(field.GetDataType(), fieldHistory.GetDataType());
-        assertEquals(field.GetLabel(), fieldHistory.GetLabel());
-        assertEquals(field.GetSize(), fieldHistory.GetSize());
-        assertEquals(field.GetModifiedBy(), fieldHistory.GetModifiedBy());
-        assertEquals(field.GetModifiedByIP(), fieldHistory.GetModifiedByIP());
-        assertEquals(field.GetClassificationMarking(), fieldHistory.GetClassificationMarking());
-        assertEquals(field.GetFilename(), fieldHistory.GetFilename());
-        assertEquals(field.GetExtension(), fieldHistory.GetExtension());
-        assertEquals(field.GetMimeType(), fieldHistory.GetMimeType());
-        assertEquals(field.GetHash(), fieldHistory.GetHash());
+        assertEquals(field.getValue(), fieldHistory.getValue());
+        assertEquals(field.getDataType(), fieldHistory.getDataType());
+        assertEquals(field.getLabel(), fieldHistory.getLabel());
+        assertEquals(field.getSize(), fieldHistory.getSize());
+        assertEquals(field.getModifiedBy(), fieldHistory.getModifiedBy());
+        assertEquals(field.getModifiedByIP(), fieldHistory.getModifiedByIP());
+        assertEquals(field.getClassificationMarking(), fieldHistory.getClassificationMarking());
+        assertEquals(field.getFilename(), fieldHistory.getFilename());
+        assertEquals(field.getExtension(), fieldHistory.getExtension());
+        assertEquals(field.getMimeType(), fieldHistory.getMimeType());
+        assertEquals(field.getHash(), fieldHistory.getHash());
         assertEquals(field.getDateCreated(), fieldHistory.getDateCreated());
         assertEquals(field.getLastModified(), fieldHistory.getLastModified());
         assertEquals(field.getStatus(), fieldHistory.getStatus());
@@ -157,7 +158,7 @@ public class XsdFieldHistoryTest {
     }
 
     @Test
-    public void ConstructorPreviousHistory()
+    public void ConstructorPreviousHistory() throws ClassCastException, DataFormatException
     {
 
         XsdField field = XsdFieldTest.GetTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_BASE64_PATH);
@@ -166,12 +167,12 @@ public class XsdFieldHistoryTest {
         XsdFieldHistory fh = XsdFieldHistory.Create(field);
         assertFieldHistory(field, fh);
 
-        field.SetTypedValue(2222);
+        field.setTypedValue(2222);
         field.SetSuspendHistory(false);
 
-        assertEquals(2222, field.GetIntegerValue());
+        assertEquals(2222, field.getIntegerValue());
         assertEquals(1, field.GetHistory().size());
-        assertEquals(CoalesceTypeInstances.TEST_MISSION_BASE64_VALUE, field.GetHistory().get(0).GetIntegerValue());
+        assertEquals(CoalesceTypeInstances.TEST_MISSION_BASE64_VALUE, field.GetHistory().get(0).getIntegerValue());
         assertEquals(fh, field.GetHistory().get(0));
 
     }
@@ -238,7 +239,7 @@ public class XsdFieldHistoryTest {
 
         XsdFieldHistory field = GetTestMissionNameFieldHistory();
 
-        assertEquals(CoalesceTypeInstances.TEST_MISSION_NAME_HISTORY_VALUE, field.GetValue());
+        assertEquals(CoalesceTypeInstances.TEST_MISSION_NAME_HISTORY_VALUE, field.getValue());
 
     }
 
@@ -250,11 +251,11 @@ public class XsdFieldHistoryTest {
 
         XsdFieldHistory field = GetTestMissionNameFieldHistory(mission);
 
-        field.SetValue("Testingvalue");
+        field.setValue("Testingvalue");
 
         XsdFieldHistory savedField = GetSavedTestMissionFieldHistory(mission);
 
-        assertEquals("Testingvalue", savedField.GetValue());
+        assertEquals("Testingvalue", savedField.getValue());
 
     }
 
@@ -264,11 +265,11 @@ public class XsdFieldHistoryTest {
         XsdEntity mission = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         XsdFieldHistory stringField = GetTestMissionFieldHistoryByName(mission, CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
-        assertEquals(ECoalesceFieldDataTypes.StringType, stringField.GetDataType());
+        assertEquals(ECoalesceFieldDataTypes.StringType, stringField.getDataType());
 
         XsdFieldHistory dateField = GetTestMissionFieldHistoryByName(mission,
                                                                      CoalesceTypeInstances.TEST_MISSION_INCIDENT_DATE_TIME_PATH);
-        assertEquals(ECoalesceFieldDataTypes.DateTimeType, dateField.GetDataType());
+        assertEquals(ECoalesceFieldDataTypes.DateTimeType, dateField.getDataType());
 
     }
 
@@ -278,22 +279,22 @@ public class XsdFieldHistoryTest {
         XsdEntity mission = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         XsdFieldHistory stringField = GetTestMissionFieldHistoryByName(mission, CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
-        stringField.SetDataType(ECoalesceFieldDataTypes.DateTimeType);
+        stringField.setDataType(ECoalesceFieldDataTypes.DateTimeType);
 
         XsdFieldHistory dateField = GetTestMissionFieldHistoryByName(mission,
                                                                      CoalesceTypeInstances.TEST_MISSION_INCIDENT_DATE_TIME_PATH);
-        dateField.SetDataType(ECoalesceFieldDataTypes.IntegerType);
+        dateField.setDataType(ECoalesceFieldDataTypes.IntegerType);
 
         String serializedMission = mission.toXml();
         XsdEntity savedMission = XsdEntity.create(serializedMission);
 
         XsdFieldHistory savedStringField = GetTestMissionFieldHistoryByName(savedMission,
                                                                             CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
-        assertEquals(ECoalesceFieldDataTypes.DateTimeType, savedStringField.GetDataType());
+        assertEquals(ECoalesceFieldDataTypes.DateTimeType, savedStringField.getDataType());
 
         XsdFieldHistory savedDateField = GetTestMissionFieldHistoryByName(savedMission,
                                                                           CoalesceTypeInstances.TEST_MISSION_INCIDENT_DATE_TIME_PATH);
-        assertEquals(ECoalesceFieldDataTypes.IntegerType, savedDateField.GetDataType());
+        assertEquals(ECoalesceFieldDataTypes.IntegerType, savedDateField.getDataType());
 
     }
 
@@ -303,7 +304,7 @@ public class XsdFieldHistoryTest {
 
         XsdFieldHistory field = GetTestMissionFieldHistoryByName(CoalesceTypeInstances.TEST_MISSION_ACTION_NUMBER_PATH);
 
-        assertEquals(CoalesceTypeInstances.TEST_MISSION_ACTION_NUMBER_LABEL_HISTORY, field.GetLabel());
+        assertEquals(CoalesceTypeInstances.TEST_MISSION_ACTION_NUMBER_LABEL_HISTORY, field.getLabel());
 
     }
 
@@ -313,7 +314,7 @@ public class XsdFieldHistoryTest {
 
         XsdFieldHistory field = GetTestMissionFieldHistoryByName(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
 
-        assertEquals("", field.GetLabel());
+        assertEquals("", field.getLabel());
 
     }
 
@@ -325,11 +326,11 @@ public class XsdFieldHistoryTest {
 
         XsdFieldHistory field = GetTestMissionNameFieldHistory(mission);
 
-        field.SetLabel("Testinglabel");
+        field.setLabel("Testinglabel");
 
         XsdFieldHistory savedField = GetSavedTestMissionFieldHistory(mission);
 
-        assertEquals("Testinglabel", savedField.GetLabel());
+        assertEquals("Testinglabel", savedField.getLabel());
 
     }
 
@@ -341,11 +342,11 @@ public class XsdFieldHistoryTest {
 
         XsdFieldHistory field = GetTestMissionNameFieldHistory(mission);
 
-        field.SetLabel(null);
+        field.setLabel(null);
 
         XsdFieldHistory savedField = GetSavedTestMissionFieldHistory(mission);
 
-        assertEquals("", savedField.GetLabel());
+        assertEquals("", savedField.getLabel());
 
     }
 
@@ -354,7 +355,7 @@ public class XsdFieldHistoryTest {
     {
         XsdFieldHistory field = GetTestMissionNameFieldHistory();
 
-        assertEquals(0, field.GetSize());
+        assertEquals(0, field.getSize());
 
     }
 
@@ -364,13 +365,13 @@ public class XsdFieldHistoryTest {
         XsdEntity mission = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         XsdFieldHistory field = GetTestMissionNameFieldHistory(mission);
-        field.SetSize(128);
+        field.setSize(128);
 
         String serializedMission = mission.toXml();
         XsdEntity savedMission = XsdEntity.create(serializedMission);
 
         XsdFieldHistory savedField = GetTestMissionNameFieldHistory(savedMission);
-        assertEquals(128, savedField.GetSize());
+        assertEquals(128, savedField.getSize());
 
     }
 
@@ -380,7 +381,7 @@ public class XsdFieldHistoryTest {
 
         XsdFieldHistory field = GetTestMissionNameFieldHistory();
 
-        assertEquals("", field.GetModifiedBy());
+        assertEquals("", field.getModifiedBy());
 
     }
 
@@ -392,11 +393,11 @@ public class XsdFieldHistoryTest {
 
         XsdFieldHistory field = GetTestMissionNameFieldHistory(mission);
 
-        field.SetModifiedBy("TestingModifiedBy");
+        field.setModifiedBy("TestingModifiedBy");
 
         XsdFieldHistory savedField = GetSavedTestMissionFieldHistory(mission);
 
-        assertEquals("TestingModifiedBy", savedField.GetModifiedBy());
+        assertEquals("TestingModifiedBy", savedField.getModifiedBy());
 
     }
 
@@ -406,7 +407,7 @@ public class XsdFieldHistoryTest {
 
         XsdFieldHistory field = GetTestMissionNameFieldHistory();
 
-        assertEquals("", field.GetModifiedByIP());
+        assertEquals("", field.getModifiedByIP());
 
     }
 
@@ -418,11 +419,11 @@ public class XsdFieldHistoryTest {
 
         XsdFieldHistory field = GetTestMissionNameFieldHistory(mission);
 
-        field.SetModifiedByIP("192.168.2.2");
+        field.setModifiedByIP("192.168.2.2");
 
         XsdFieldHistory savedField = GetSavedTestMissionFieldHistory(mission);
 
-        assertEquals("192.168.2.2", savedField.GetModifiedByIP());
+        assertEquals("192.168.2.2", savedField.getModifiedByIP());
 
     }
 
@@ -433,7 +434,7 @@ public class XsdFieldHistoryTest {
         XsdFieldHistory field = GetTestMissionNameFieldHistory();
 
         MarkingValueTest.assertMarkingValue(new Marking().GetClassification(),
-                                            new Marking(field.GetClassificationMarking()).GetClassification());
+                                            new Marking(field.getClassificationMarking()).GetClassification());
 
     }
 
@@ -444,12 +445,12 @@ public class XsdFieldHistoryTest {
 
         XsdFieldHistory field = GetTestMissionNameFieldHistory(mission);
 
-        field.SetClassificationMarking(TOPSECRETCLASSIFICATIONMARKING);
+        field.setClassificationMarking(TOPSECRETCLASSIFICATIONMARKING);
 
         XsdFieldHistory savedField = GetSavedTestMissionFieldHistory(mission);
 
         MarkingValueTest.assertMarkingValue(TOPSECRETCLASSIFICATIONMARKING.GetClassification(),
-                                            new Marking(savedField.GetClassificationMarking()).GetClassification());
+                                            new Marking(savedField.getClassificationMarking()).GetClassification());
 
     }
 
@@ -467,10 +468,10 @@ public class XsdFieldHistoryTest {
 
         XsdFieldHistory fh = field.GetHistory().get(0);
 
-        fh.SetClassificationMarking(TOPSECRETCLASSIFICATIONMARKING);
+        fh.setClassificationMarking(TOPSECRETCLASSIFICATIONMARKING);
 
         MarkingValueTest.assertMarkingValue(TOPSECRETCLASSIFICATIONMARKING.GetClassification(),
-                                            new Marking(fh.GetClassificationMarking()).GetClassification());
+                                            new Marking(fh.getClassificationMarking()).GetClassification());
 
     }
 
@@ -480,7 +481,7 @@ public class XsdFieldHistoryTest {
 
         XsdFieldHistory field = GetTestMissionNameFieldHistory();
 
-        assertEquals("UNCLASSIFIED NORTHCOM Volunteer Background Checks", field.GetValueWithMarking());
+        assertEquals("UNCLASSIFIED NORTHCOM Volunteer Background Checks", field.getValueWithMarking());
     }
 
     @Test
@@ -489,7 +490,7 @@ public class XsdFieldHistoryTest {
 
         XsdFieldHistory field = GetTestMissionNameFieldHistory();
 
-        assertEquals("(U)", field.GetPortionMarking());
+        assertEquals("(U)", field.getPortionMarking());
     }
 
     @Test
@@ -498,7 +499,7 @@ public class XsdFieldHistoryTest {
 
         XsdFieldHistory field = GetTestMissionNameFieldHistory();
 
-        assertEquals("00000000-0000-0000-0000-000000000000", field.GetPreviousHistoryKey());
+        assertEquals("00000000-0000-0000-0000-000000000000", field.getPreviousHistoryKey());
 
     }
 
@@ -508,7 +509,7 @@ public class XsdFieldHistoryTest {
 
         XsdFieldHistory field = GetTestMissionNameFieldHistory();
 
-        assertEquals("00000000-0000-0000-0000-000000000000", field.GetPreviousHistoryKey());
+        assertEquals("00000000-0000-0000-0000-000000000000", field.getPreviousHistoryKey());
 
     }
 
@@ -518,7 +519,7 @@ public class XsdFieldHistoryTest {
 
         XsdFieldHistory field = GetTestMissionNameFieldHistory();
 
-        assertEquals("", field.GetFilename());
+        assertEquals("", field.getFilename());
 
     }
 
@@ -530,11 +531,11 @@ public class XsdFieldHistoryTest {
 
         XsdFieldHistory field = GetTestMissionNameFieldHistory(mission);
 
-        field.SetFilename("c:/Program Files/java/jre7/bin");
+        field.setFilename("c:/Program Files/java/jre7/bin");
 
         XsdFieldHistory savedField = GetSavedTestMissionFieldHistory(mission);
 
-        assertEquals("c:/Program Files/java/jre7/bin", savedField.GetFilename());
+        assertEquals("c:/Program Files/java/jre7/bin", savedField.getFilename());
 
     }
 
@@ -544,7 +545,7 @@ public class XsdFieldHistoryTest {
 
         XsdFieldHistory field = GetTestMissionNameFieldHistory();
 
-        assertEquals("", field.GetExtension());
+        assertEquals("", field.getExtension());
 
     }
 
@@ -556,11 +557,11 @@ public class XsdFieldHistoryTest {
 
         XsdFieldHistory field = GetTestMissionNameFieldHistory(mission);
 
-        field.SetExtension(".jpeg");
+        field.setExtension(".jpeg");
 
         XsdFieldHistory savedField = GetSavedTestMissionFieldHistory(mission);
 
-        assertEquals("jpeg", savedField.GetExtension());
+        assertEquals("jpeg", savedField.getExtension());
 
     }
 
@@ -570,7 +571,7 @@ public class XsdFieldHistoryTest {
 
         XsdFieldHistory field = GetTestMissionNameFieldHistory();
 
-        assertEquals("", field.GetMimeType());
+        assertEquals("", field.getMimeType());
 
     }
 
@@ -582,11 +583,11 @@ public class XsdFieldHistoryTest {
 
         XsdFieldHistory field = GetTestMissionNameFieldHistory(mission);
 
-        field.SetMimeType("application/pdf");
+        field.setMimeType("application/pdf");
 
         XsdFieldHistory savedField = GetSavedTestMissionFieldHistory(mission);
 
-        assertEquals("application/pdf", savedField.GetMimeType());
+        assertEquals("application/pdf", savedField.getMimeType());
 
     }
 
@@ -596,7 +597,7 @@ public class XsdFieldHistoryTest {
 
         XsdFieldHistory field = GetTestMissionNameFieldHistory();
 
-        assertEquals("", field.GetHash());
+        assertEquals("", field.getHash());
 
     }
 
@@ -608,11 +609,11 @@ public class XsdFieldHistoryTest {
 
         XsdFieldHistory field = GetTestMissionNameFieldHistory(mission);
 
-        field.SetHash("8743b52063cd84097a65d1633f5c74f5");
+        field.setHash("8743b52063cd84097a65d1633f5c74f5");
 
         XsdFieldHistory savedField = GetSavedTestMissionFieldHistory(mission);
 
-        assertEquals("8743b52063cd84097a65d1633f5c74f5", savedField.GetHash());
+        assertEquals("8743b52063cd84097a65d1633f5c74f5", savedField.getHash());
 
     }
 
@@ -685,25 +686,25 @@ public class XsdFieldHistoryTest {
     }
 
     @Test
-    public void StringTypeTest()
+    public void StringTypeTest() throws DataFormatException
     {
 
         XsdField field = XsdFieldTest.GetTestMissionNameField();
 
         XsdFieldHistory fh = field.GetHistory().get(0);
-        Object data = fh.GetData();
+        Object data = fh.getData();
 
         assertTrue(data instanceof String);
         assertEquals(CoalesceTypeInstances.TEST_MISSION_NAME_HISTORY_VALUE, data);
 
-        fh.SetTypedValue("Changed");
+        fh.setTypedValue("Changed");
 
         data = null;
-        data = fh.GetData();
+        data = fh.getData();
 
         assertTrue(data instanceof String);
         assertEquals("Changed", data);
-        assertEquals("Changed", fh.GetValue());
+        assertEquals("Changed", fh.getValue());
 
     }
 
@@ -712,16 +713,16 @@ public class XsdFieldHistoryTest {
     {
 
         XsdField field = XsdFieldTest.GetTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
-        field.SetTypedValue(JodaDateTimeHelper.NowInUtc());
+        field.setTypedValue(JodaDateTimeHelper.NowInUtc());
 
         XsdFieldHistory fh = field.GetHistory().get(0);
 
-        fh.SetTypedValue(UUID.randomUUID());
+        fh.setTypedValue(UUID.randomUUID());
 
     }
 
     @Test
-    public void UriTypeTest()
+    public void UriTypeTest() throws DataFormatException
     {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -732,40 +733,40 @@ public class XsdFieldHistoryTest {
         XsdField field = XsdField.Create(parentRecord, fileFieldDef);
 
         Sleep();
-        field.SetTypedValue("uri:document/pdf");
-        field.SetTypedValue("uri:document/xyz");
+        field.setTypedValue("uri:document/pdf");
+        field.setTypedValue("uri:document/xyz");
 
         XsdFieldHistory fh = field.GetHistory().get(0);
 
-        assertEquals("uri:document/pdf", fh.GetValue());
+        assertEquals("uri:document/pdf", fh.getValue());
 
-        fh.SetTypedValue("uri:document/zip");
+        fh.setTypedValue("uri:document/zip");
 
-        Object data = fh.GetData();
+        Object data = fh.getData();
 
         assertTrue(data instanceof String);
         assertEquals("uri:document/zip", data);
-        assertEquals("uri:document/zip", fh.GetValue());
+        assertEquals("uri:document/zip", fh.getValue());
 
     }
 
     @Test
-    public void GetDataSetTypedValueDateTimeTypeTest()
+    public void GetDataSetTypedValueDateTimeTypeTest() throws DataFormatException
     {
         XsdField field = XsdFieldTest.GetTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
 
         DateTime now = JodaDateTimeHelper.NowInUtc();
-        field.SetTypedValue(now);
+        field.setTypedValue(now);
 
         XsdFieldHistory fh = field.GetHistory().get(0);
 
-        fh.SetTypedValue(now.plusDays(1));
+        fh.setTypedValue(now.plusDays(1));
 
-        Object data = fh.GetData();
+        Object data = fh.getData();
 
         assertTrue(data instanceof DateTime);
         assertEquals(now.plusDays(1), data);
-        assertEquals(now.plusDays(1), fh.GetDateTimeValue());
+        assertEquals(now.plusDays(1), fh.getDateTimeValue());
 
     }
 
@@ -776,16 +777,16 @@ public class XsdFieldHistoryTest {
         XsdField field = XsdFieldTest.GetTestMissionNameField();
 
         DateTime now = JodaDateTimeHelper.NowInUtc();
-        field.SetTypedValue(now);
+        field.setTypedValue(now);
 
         XsdFieldHistory fh = field.GetHistory().get(0);
 
-        fh.SetTypedValue(now);
+        fh.setTypedValue(now);
 
     }
 
     @Test
-    public void GetDataSetTypedValueBooleanTypeTest()
+    public void GetDataSetTypedValueBooleanTypeTest() throws DataFormatException
     {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -798,26 +799,26 @@ public class XsdFieldHistoryTest {
         XsdField field = XsdField.Create(parentRecord, fileFieldDef);
 
         Sleep();
-        field.SetTypedValue(true);
-        field.SetTypedValue(false);
+        field.setTypedValue(true);
+        field.setTypedValue(false);
 
         XsdFieldHistory fh = field.GetHistory().get(0);
 
-        Object data = fh.GetData();
+        Object data = fh.getData();
 
         assertEquals(true, data);
-        assertEquals("true", fh.GetValue().toLowerCase());
-        assertEquals(true, fh.GetBooleanValue());
+        assertEquals("true", fh.getValue().toLowerCase());
+        assertEquals(true, fh.getBooleanValue());
 
-        fh.SetTypedValue(false);
+        fh.setTypedValue(false);
 
         data = null;
-        data = fh.GetData();
+        data = fh.getData();
 
         assertTrue(data instanceof Boolean);
         assertEquals(false, data);
-        assertEquals("false", fh.GetValue().toLowerCase());
-        assertEquals(false, fh.GetBooleanValue());
+        assertEquals("false", fh.getValue().toLowerCase());
+        assertEquals(false, fh.getBooleanValue());
 
     }
 
@@ -827,15 +828,15 @@ public class XsdFieldHistoryTest {
 
         XsdField field = XsdFieldTest.GetTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
 
-        field.SetTypedValue(JodaDateTimeHelper.NowInUtc());
+        field.setTypedValue(JodaDateTimeHelper.NowInUtc());
 
         XsdFieldHistory fh = field.GetHistory().get(0);
-        fh.SetTypedValue(true);
+        fh.setTypedValue(true);
 
     }
 
     @Test
-    public void GetDataSetTypedValueIntegerTypeTest()
+    public void GetDataSetTypedValueIntegerTypeTest() throws DataFormatException
     {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -848,27 +849,27 @@ public class XsdFieldHistoryTest {
         XsdField field = XsdField.Create(parentRecord, fileFieldDef);
 
         Sleep();
-        field.SetTypedValue(1111);
-        field.SetTypedValue(2222);
+        field.setTypedValue(1111);
+        field.setTypedValue(2222);
 
         XsdFieldHistory fh = field.GetHistory().get(0);
 
-        Object data = fh.GetData();
+        Object data = fh.getData();
 
         assertTrue(data instanceof Integer);
-        assertEquals("1111", fh.GetValue());
-        assertEquals(1111, fh.GetIntegerValue());
+        assertEquals("1111", fh.getValue());
+        assertEquals(1111, fh.getIntegerValue());
         assertEquals(1111, data);
 
-        fh.SetTypedValue(3333);
+        fh.setTypedValue(3333);
 
         data = null;
-        data = fh.GetData();
+        data = fh.getData();
 
         assertTrue(data instanceof Integer);
         assertEquals(3333, data);
-        assertEquals("3333", fh.GetValue());
-        assertEquals(3333, fh.GetIntegerValue());
+        assertEquals("3333", fh.getValue());
+        assertEquals(3333, fh.getIntegerValue());
 
     }
 
@@ -878,15 +879,15 @@ public class XsdFieldHistoryTest {
 
         XsdField field = XsdFieldTest.GetTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
 
-        field.SetTypedValue(JodaDateTimeHelper.NowInUtc());
+        field.setTypedValue(JodaDateTimeHelper.NowInUtc());
 
         XsdFieldHistory fh = field.GetHistory().get(0);
-        fh.SetTypedValue(1111);
+        fh.setTypedValue(1111);
 
     }
 
     @Test
-    public void GetDataSetTypedValueGuidTypeTest()
+    public void GetDataSetTypedValueGuidTypeTest() throws DataFormatException
     {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -900,28 +901,28 @@ public class XsdFieldHistoryTest {
 
         Sleep();
         UUID guid = UUID.randomUUID();
-        field.SetTypedValue(guid);
-        field.SetTypedValue(UUID.randomUUID());
+        field.setTypedValue(guid);
+        field.setTypedValue(UUID.randomUUID());
 
         XsdFieldHistory fh = field.GetHistory().get(0);
 
-        Object data = fh.GetData();
+        Object data = fh.getData();
 
         assertTrue(data instanceof UUID);
         assertEquals(guid, data);
-        assertEquals(GUIDHelper.GetGuidString(guid), fh.GetValue());
-        assertEquals(guid, fh.GetGuidValue());
+        assertEquals(GUIDHelper.GetGuidString(guid), fh.getValue());
+        assertEquals(guid, fh.getGuidValue());
 
         UUID newGuid = UUID.randomUUID();
-        fh.SetTypedValue(newGuid);
+        fh.setTypedValue(newGuid);
 
         data = null;
-        data = fh.GetData();
+        data = fh.getData();
 
         assertTrue(data instanceof UUID);
         assertEquals(newGuid, data);
-        assertEquals(GUIDHelper.GetGuidString(newGuid), fh.GetValue());
-        assertEquals(newGuid, fh.GetGuidValue());
+        assertEquals(GUIDHelper.GetGuidString(newGuid), fh.getValue());
+        assertEquals(newGuid, fh.getGuidValue());
 
     }
 
@@ -931,10 +932,10 @@ public class XsdFieldHistoryTest {
 
         XsdField field = XsdFieldTest.GetTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
 
-        field.SetTypedValue(JodaDateTimeHelper.NowInUtc());
+        field.setTypedValue(JodaDateTimeHelper.NowInUtc());
 
         XsdFieldHistory fh = field.GetHistory().get(0);
-        fh.SetTypedValue(UUID.randomUUID());
+        fh.setTypedValue(UUID.randomUUID());
 
     }
 

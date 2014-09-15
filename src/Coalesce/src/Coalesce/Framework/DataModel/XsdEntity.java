@@ -265,7 +265,7 @@ public class XsdEntity extends XsdDataObject {
                 if (dataObject != null && dataObject instanceof XsdField)
                 {
                     XsdField field = (XsdField) dataObject;
-                    pathTitle += field.GetValue() + ", ";
+                    pathTitle += field.getValue() + ", ";
                 }
             }
 

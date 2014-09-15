@@ -3,10 +3,12 @@ package Coalesce.Framework.DataModel;
 import java.util.UUID;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang.NullArgumentException;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.joda.time.DateTime;
 
 import Coalesce.Common.Classification.Marking;
+import Coalesce.Common.Exceptions.DataFormatException;
 import Coalesce.Common.Helpers.GUIDHelper;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import Coalesce.Common.Helpers.StringHelper;
@@ -30,110 +32,126 @@ import Coalesce.Common.Helpers.StringHelper;
 
 public abstract class XsdFieldBase extends XsdDataObject {
 
-    public abstract String GetValue();
+    /*--------------------------------------------------------------------------
+    Public Abstract Functions
+    --------------------------------------------------------------------------*/
 
-    public abstract void SetValue(String value);
+    public abstract String getValue();
 
-    public String GetValueWithMarking()
+    public abstract void setValue(String value);
+
+    public abstract ECoalesceFieldDataTypes getDataType();
+
+    public abstract void setDataType(ECoalesceFieldDataTypes value);
+
+    public abstract String getLabel();
+
+    public abstract void setLabel(String value);
+
+    public abstract int getSize();
+
+    public abstract void setSize(Integer value);
+
+    public abstract String getModifiedBy();
+
+    public abstract void setModifiedBy(String value);
+
+    public abstract String getModifiedByIP();
+
+    public abstract void setModifiedByIP(String value);
+
+    public abstract String getClassificationMarking();
+
+    public abstract void setClassificationMarking(String value);
+
+    public abstract String getPreviousHistoryKey();
+
+    public abstract void setPreviousHistoryKey(String value);
+
+    public abstract String getFilename();
+
+    public abstract void setFilename(String value);
+
+    public abstract String getExtension();
+
+    public abstract void setExtension(String value);
+
+    public abstract String getMimeType();
+
+    public abstract void setMimeType(String value);
+
+    public abstract String getHash();
+
+    public abstract void setHash(String value);
+
+    /*
+     * TODO: InputLang needs to be added to entity public String GetInputLang(){ return _entityField.getInputlang(); } public
+     * void SetInputLang(String value){ _entityField.setInputlang(value); }
+     */
+
+    /*--------------------------------------------------------------------------
+    Public Functions
+    --------------------------------------------------------------------------*/
+
+    public String getValueWithMarking()
     {
-        String val = GetValue();
-        Marking mrk = new Marking(GetClassificationMarking());
+        String val = getValue();
+        Marking mrk = new Marking(getClassificationMarking());
         return mrk.toString() + " " + val;
     }
 
-    public String ToString()
+    @Override
+    public String toString()
     {
-        return GetValueWithMarking();
+        return getValueWithMarking();
     }
 
-    public abstract ECoalesceFieldDataTypes GetDataType();
-
-    public abstract void SetDataType(ECoalesceFieldDataTypes value);
-
-    public abstract String GetLabel();
-
-    public abstract void SetLabel(String value);
-
-    public abstract int GetSize();
-
-    public abstract void SetSize(Integer value);
-
-    public abstract String GetModifiedBy();
-
-    public abstract void SetModifiedBy(String value);
-
-    public abstract String GetModifiedByIP();
-
-    public abstract void SetModifiedByIP(String value);
-
-    public abstract String GetClassificationMarking();
-
-    public void SetClassificationMarking(Marking value)
+    public void setClassificationMarking(Marking value)
     {
-        SetClassificationMarking(value.toString());
+        setClassificationMarking(value.toString());
     }
 
-    public abstract void SetClassificationMarking(String value);
-
-    public String GetPortionMarking()
+    public String getPortionMarking()
     {
-        Marking mrk = new Marking(GetClassificationMarking());
+        Marking mrk = new Marking(getClassificationMarking());
         return mrk.ToPortionString();
     }
 
-    public abstract String GetPreviousHistoryKey();
+    public void setPreviousHistoryKey(XsdFieldHistory fieldHistory)
+    {
+        if (fieldHistory == null) throw new NullArgumentException("fieldHistory");
 
-    public abstract void SetPreviousHistoryKey(String value);
+        setPreviousHistoryKey(fieldHistory.getKey());
+    }
 
-    public abstract String GetFilename();
-
-    public abstract void SetFilename(String value);
-
-    public abstract String GetExtension();
-
-    public abstract void SetExtension(String value);
-
-    public abstract String GetMimeType();
-
-    public abstract void SetMimeType(String value);
-
-    public abstract String GetHash();
-
-    public abstract void SetHash(String value);
-
-    /*
-     * public String GetInputLang(){ return _entityField.getInputlang(); } public void SetInputLang(String value){
-     * _entityField.setInputlang(value); }
-     */
-
-    public Object GetData()
+    public Object getData() throws DataFormatException
     {
 
         // TODO: GeocoordinateType, GeocoordinateListType, DocumentProperties
         // types
 
-        switch (GetDataType()) {
+        switch (getDataType()) {
         case StringType:
         case UriType:
-            return GetValue();
+            return getValue();
 
         case DateTimeType:
-            return GetDateTimeValue();
+            return getDateTimeValue();
 
         case BinaryType:
-            return GetBinaryValue();
+            return getBinaryValue();
 
         case BooleanType:
-            return GetBooleanValue();
+            return getBooleanValue();
 
         case IntegerType:
-            return GetIntegerValue();
+            return getIntegerValue();
 
         case GuidType:
-            return GetGuidValue();
+            return getGuidValue();
 
         default:
-            throw new NotImplementedException(GetDataType() + " not implemented");
+            throw new NotImplementedException(getDataType() + " not implemented");
 
             // case GeocoordinateType:
             // Geolocation geocvar = new Geolocation();
@@ -155,68 +173,60 @@ public abstract class XsdFieldBase extends XsdDataObject {
 
     }
 
-    public void SetData(Object value)
+    public void setData(Object value)
     {
-        SetTypedValue(value.toString());
+        setTypedValue(value.toString());
     }
 
-    public abstract DateTime getDateCreated();
-
-    public abstract void setDateCreated(DateTime value);
-
-    public abstract DateTime getLastModified();
-
-    protected abstract void setObjectLastModified(DateTime value);
-
-    public void SetTypedValue(String value)
+    public void setTypedValue(String value)
     {
-        ECoalesceFieldDataTypes fieldType = GetDataType();
+        ECoalesceFieldDataTypes fieldType = getDataType();
         if (fieldType != ECoalesceFieldDataTypes.StringType && fieldType != ECoalesceFieldDataTypes.UriType)
         {
             throw new ClassCastException("Type mismatch");
         }
 
-        SetValue(value);
+        setValue(value);
     }
 
-    public void SetTypedValue(UUID value)
+    public void setTypedValue(UUID value)
     {
-        if (GetDataType() != ECoalesceFieldDataTypes.GuidType)
+        if (getDataType() != ECoalesceFieldDataTypes.GuidType)
         {
             throw new ClassCastException("Type mismatch");
         }
 
-        SetValue(GUIDHelper.GetGuidString(value));
+        setValue(GUIDHelper.GetGuidString(value));
     }
 
-    public void SetTypedValue(DateTime value)
+    public void setTypedValue(DateTime value)
     {
-        if (GetDataType() != ECoalesceFieldDataTypes.DateTimeType)
+        if (getDataType() != ECoalesceFieldDataTypes.DateTimeType)
         {
             throw new ClassCastException("Type mismatch");
         }
 
-        SetValue(JodaDateTimeHelper.ToXmlDateTimeUTC(value));
+        setValue(JodaDateTimeHelper.ToXmlDateTimeUTC(value));
     }
 
-    public void SetTypedValue(boolean value)
+    public void setTypedValue(boolean value)
     {
-        if (GetDataType() != ECoalesceFieldDataTypes.BooleanType)
+        if (getDataType() != ECoalesceFieldDataTypes.BooleanType)
         {
             throw new ClassCastException("Type mismatch");
         }
 
-        SetValue(String.valueOf(value));
+        setValue(String.valueOf(value));
     }
 
-    public void SetTypedValue(int value)
+    public void setTypedValue(int value)
     {
-        if (GetDataType() != ECoalesceFieldDataTypes.IntegerType)
+        if (getDataType() != ECoalesceFieldDataTypes.IntegerType)
         {
             throw new ClassCastException("Type mismatch");
         }
 
-        SetValue(String.valueOf(value));
+        setValue(String.valueOf(value));
     }
 
     // TODO: Microsoft.SqlServer.Types.SqlGeography
@@ -317,34 +327,34 @@ public abstract class XsdFieldBase extends XsdDataObject {
     // }
     // }
 
-    public void SetTypedValue(byte[] dataBytes)
+    public void setTypedValue(byte[] dataBytes)
     {
-        if (GetDataType() != ECoalesceFieldDataTypes.BinaryType)
+        if (getDataType() != ECoalesceFieldDataTypes.BinaryType)
         {
             throw new ClassCastException("Type mismatch");
         }
 
         String value = Base64.encodeBase64String(dataBytes);
-        SetValue(value);
-        SetSize(dataBytes.length);
+        setValue(value);
+        setSize(dataBytes.length);
     }
 
-    public void SetTypedValue(byte[] dataBytes, String filename, String extension, String mimeType)
+    public void setTypedValue(byte[] dataBytes, String filename, String extension, String mimeType)
     {
         String value = Base64.encodeBase64String(dataBytes);
-        SetValue(value);
-        SetFilename(filename);
-        SetExtension(extension);
-        SetMimeType(mimeType);
-        SetSize(dataBytes.length);
+        setValue(value);
+        setFilename(filename);
+        setExtension(extension);
+        setMimeType(mimeType);
+        setSize(dataBytes.length);
     }
 
-    public void SetTypedValue(String filename, String extension, String mimeType, String hash)
+    public void setTypedValue(String filename, String extension, String mimeType, String hash)
     {
-        SetFilename(filename);
-        SetExtension(extension);
-        SetMimeType(mimeType);
-        SetHash(hash);
+        setFilename(filename);
+        setExtension(extension);
+        setMimeType(mimeType);
+        setHash(hash);
     }
 
     // TODO: DocumentProperties
@@ -415,15 +425,15 @@ public abstract class XsdFieldBase extends XsdDataObject {
     // }
     // }
 
-    public UUID GetGuidValue() throws ClassCastException
+    public UUID getGuidValue() throws ClassCastException
     {
 
-        if (GetDataType() != ECoalesceFieldDataTypes.GuidType)
+        if (getDataType() != ECoalesceFieldDataTypes.GuidType)
         {
             throw new ClassCastException("Type mismatch");
         }
 
-        String value = GetValue();
+        String value = getValue();
 
         if (GUIDHelper.IsValid(value))
         {
@@ -435,15 +445,15 @@ public abstract class XsdFieldBase extends XsdDataObject {
         }
     }
 
-    public DateTime GetDateTimeValue() throws ClassCastException
+    public DateTime getDateTimeValue() throws ClassCastException
     {
 
-        if (GetDataType() != ECoalesceFieldDataTypes.DateTimeType)
+        if (getDataType() != ECoalesceFieldDataTypes.DateTimeType)
         {
             throw new ClassCastException("Type mismatch");
         }
 
-        DateTime value = JodaDateTimeHelper.FromXmlDateTimeUTC(this.GetValue());
+        DateTime value = JodaDateTimeHelper.FromXmlDateTimeUTC(this.getValue());
 
         if (value == null) return null;
 
@@ -451,24 +461,24 @@ public abstract class XsdFieldBase extends XsdDataObject {
 
     }
 
-    public boolean GetBooleanValue()
+    public boolean getBooleanValue() throws ClassCastException
     {
-        if (GetDataType() != ECoalesceFieldDataTypes.BooleanType)
+        if (getDataType() != ECoalesceFieldDataTypes.BooleanType)
         {
             throw new ClassCastException("Type mismatch");
         }
 
-        if (StringHelper.IsNullOrEmpty(this.GetValue())) throw new ClassCastException("Type mismatch");
+        if (StringHelper.IsNullOrEmpty(this.getValue())) throw new ClassCastException("Type mismatch");
 
-        boolean value = Boolean.parseBoolean(this.GetValue());
+        boolean value = Boolean.parseBoolean(this.getValue());
 
         return value;
 
     }
 
-    public int GetIntegerValue()
+    public int getIntegerValue() throws ClassCastException, DataFormatException
     {
-        if (GetDataType() != ECoalesceFieldDataTypes.IntegerType)
+        if (getDataType() != ECoalesceFieldDataTypes.IntegerType)
         {
             throw new ClassCastException("Type mismatch");
         }
@@ -476,14 +486,14 @@ public abstract class XsdFieldBase extends XsdDataObject {
         try
         {
 
-            int value = Integer.parseInt(this.GetValue());
+            int value = Integer.parseInt(this.getValue());
 
             return value;
 
         }
         catch (NumberFormatException nfe)
         {
-            throw new ClassCastException("Type mismatch");
+            throw new DataFormatException("Failed to parse integer value for: " + getName());
         }
 
     }
@@ -566,15 +576,15 @@ public abstract class XsdFieldBase extends XsdDataObject {
     // }
     // }
 
-    public byte[] GetBinaryValue() throws ClassCastException
+    public byte[] getBinaryValue() throws ClassCastException
     {
-        if (GetDataType() != ECoalesceFieldDataTypes.BinaryType)
+        if (getDataType() != ECoalesceFieldDataTypes.BinaryType)
         {
             throw new ClassCastException("Type mismatch");
         }
 
         // Basic Check
-        String rawValue = GetValue();
+        String rawValue = getValue();
         if (rawValue.length() > 0)
         {
             // Needs to be tested for compatibility with .Net. Should be.

@@ -60,7 +60,7 @@ public class XsdFieldHistory extends XsdFieldBase {
             // Copy attributes from parent node
             newFieldHistory.SetAttributes(parent);
 
-            newFieldHistory.SetPreviousHistoryKey(parent.GetPreviousHistoryKey());
+            newFieldHistory.setPreviousHistoryKey(parent.getPreviousHistoryKey());
 
             // Append to parent's child node collection
             parent.GetEntityFieldHistories().add(0, newFieldHistory._entityFieldHistory);
@@ -130,37 +130,44 @@ public class XsdFieldHistory extends XsdFieldBase {
         return "fieldhistory";
     }
 
-    public String GetValue()
+    @Override
+    public String getValue()
     {
         return _entityFieldHistory.getValue();
     }
 
-    public void SetValue(String value)
+    @Override
+    public void setValue(String value)
     {
         _entityFieldHistory.setValue(value);
     }
 
-    public ECoalesceFieldDataTypes GetDataType()
+    @Override
+    public ECoalesceFieldDataTypes getDataType()
     {
         return ECoalesceFieldDataTypes.GetTypeForCoalesceType(_entityFieldHistory.getDatatype());
     }
 
-    public void SetDataType(ECoalesceFieldDataTypes value)
+    @Override
+    public void setDataType(ECoalesceFieldDataTypes value)
     {
         _entityFieldHistory.setDatatype(value.getLabel());
     }
 
-    public String GetLabel()
+    @Override
+    public String getLabel()
     {
         return getStringElement(_entityFieldHistory.getLabel());
     }
 
-    public void SetLabel(String value)
+    @Override
+    public void setLabel(String value)
     {
         _entityFieldHistory.setLabel(value);
     }
 
-    public int GetSize()
+    @Override
+    public int getSize()
     {
         try
         {
@@ -172,42 +179,50 @@ public class XsdFieldHistory extends XsdFieldBase {
         }
     }
 
-    public void SetSize(Integer value)
+    @Override
+    public void setSize(Integer value)
     {
         _entityFieldHistory.setSize(value.toString());
     }
 
-    public String GetModifiedBy()
+    @Override
+    public String getModifiedBy()
     {
         return getStringElement(_entityFieldHistory.getModifiedby());
     }
 
-    public void SetModifiedBy(String value)
+    @Override
+    public void setModifiedBy(String value)
     {
         _entityFieldHistory.setModifiedby(value);
     }
 
-    public String GetModifiedByIP()
+    @Override
+    public String getModifiedByIP()
     {
         return getStringElement(_entityFieldHistory.getModifiedbyip());
     }
 
-    public void SetModifiedByIP(String value)
+    @Override
+    public void setModifiedByIP(String value)
     {
         _entityFieldHistory.setModifiedbyip(value);
     }
 
-    public String GetClassificationMarking()
+    @Override
+    public String getClassificationMarking()
     {
         return _entityFieldHistory.getClassificationmarking();
     }
 
-    public void SetClassificationMarking(String value)
+    @Override
+    public void setClassificationMarking(String value)
     {
         _entityFieldHistory.setClassificationmarking(value);
     }
 
-    public String GetPreviousHistoryKey()
+    @Override
+    public String getPreviousHistoryKey()
     {
         String prevHistKey = _entityFieldHistory.getPrevioushistorykey();
         if (StringHelper.IsNullOrEmpty(prevHistKey))
@@ -220,55 +235,59 @@ public class XsdFieldHistory extends XsdFieldBase {
         }
     }
 
-    public void SetPreviousHistoryKey(String value)
+    @Override
+    public void setPreviousHistoryKey(String value)
     {
         _entityFieldHistory.setPrevioushistorykey(value);
     }
 
-    public String GetFilename()
+    @Override
+    public String getFilename()
     {
         return getStringElement(_entityFieldHistory.getFilename());
     }
 
-    public void SetFilename(String value)
+    @Override
+    public void setFilename(String value)
     {
         _entityFieldHistory.setFilename(value);
     }
 
-    public String GetExtension()
+    @Override
+    public String getExtension()
     {
         return getStringElement(_entityFieldHistory.getExtension());
     }
 
-    public void SetExtension(String value)
+    @Override
+    public void setExtension(String value)
     {
         _entityFieldHistory.setExtension(value.replace(".", ""));
     }
 
-    public String GetMimeType()
+    @Override
+    public String getMimeType()
     {
         return getStringElement(_entityFieldHistory.getMimetype());
     }
 
-    public void SetMimeType(String value)
+    @Override
+    public void setMimeType(String value)
     {
         _entityFieldHistory.setMimetype(value);
     }
 
-    public String GetHash()
+    @Override
+    public String getHash()
     {
         return getStringElement(_entityFieldHistory.getHash());
     }
 
-    public void SetHash(String value)
+    @Override
+    public void setHash(String value)
     {
         _entityFieldHistory.setHash(value);
     }
-
-    /*
-     * public String GetInputLang(){ return _entityField.getInputlang(); } public void SetInputLang(String value){
-     * _entityField.setInputlang(value); }
-     */
 
     @Override
     public DateTime getDateCreated()

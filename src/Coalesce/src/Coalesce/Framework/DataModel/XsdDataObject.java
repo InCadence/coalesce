@@ -235,37 +235,10 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
         // TODO: Not Implemented
     }
 
-    /*--------------------------------------------------------------------------
-    Protected Functions
-    --------------------------------------------------------------------------*/
-
-    protected boolean initialize()
-    {
-
-        if (getKey() == null || getKey().equals(""))
-        {
-            setKey(java.util.UUID.randomUUID().toString());
-        }
-
-        DateTime utcDate = JodaDateTimeHelper.NowInUtc();
-
-        if (getDateCreated() == null)
-        {
-            setDateCreated(utcDate);
-        }
-        if (getLastModified() == null)
-        {
-            setLastModified(utcDate);
-        }
-
-        return true;
-
-    }
-
     public XsdDataObject getDataObjectForNamePath(String namePath)
     {
-            if (namePath == null) return null;
-            
+        if (namePath == null) return null;
+
         String[] names = namePath.split("/");
 
         switch (names.length) {
@@ -336,6 +309,33 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
         }
 
         return result;
+    }
+
+    /*--------------------------------------------------------------------------
+    Protected Functions
+    --------------------------------------------------------------------------*/
+
+    protected boolean initialize()
+    {
+
+        if (getKey() == null || getKey().equals(""))
+        {
+            setKey(java.util.UUID.randomUUID().toString());
+        }
+
+        DateTime utcDate = JodaDateTimeHelper.NowInUtc();
+
+        if (getDateCreated() == null)
+        {
+            setDateCreated(utcDate);
+        }
+        if (getLastModified() == null)
+        {
+            setLastModified(utcDate);
+        }
+
+        return true;
+
     }
 
     protected String getStringElement(String value)

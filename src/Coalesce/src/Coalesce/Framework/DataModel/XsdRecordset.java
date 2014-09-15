@@ -103,7 +103,7 @@ public class XsdRecordset extends XsdDataObject {
 
         if (parent == null) throw new NullArgumentException("parent");
         if (recordset == null) throw new NullArgumentException("recordset");
-        
+
         // Set References
         _parent = parent;
         _entityRecordset = recordset;
@@ -124,7 +124,7 @@ public class XsdRecordset extends XsdDataObject {
         for (Record entityRecord : _entityRecordset.getRecord())
         {
             XsdRecord newRecord = new XsdRecord();
-            newRecord.Initialize(this, entityRecord);
+            newRecord.initialize(this, entityRecord);
         }
 
         return true;
@@ -311,9 +311,9 @@ public class XsdRecordset extends XsdDataObject {
         return getRecords().indexOf(value);
     }
 
-    public XsdRecord AddNew()
+    public XsdRecord addNew()
     {
-        XsdRecord newRecord = XsdRecord.Create(this, getName() + " Record");
+        XsdRecord newRecord = XsdRecord.create(this, getName() + " Record");
 
         // TODO: Raise the Changed Event
         // RaiseEvent ListChanged(this, new
@@ -325,7 +325,7 @@ public class XsdRecordset extends XsdDataObject {
 
     public XsdRecord GetItem(int index)
     {
-        
+
         // Iterate List
         if (index >= 0 && index < this.getRecords().size())
         {
@@ -389,7 +389,7 @@ public class XsdRecordset extends XsdDataObject {
         {
             // Remove from the Records Collection
             this.getRecords().remove(recordToRemove);
-            
+
             // Set as Status as Deleted
             recordToRemove.setStatus(ECoalesceDataObjectStatus.DELETED);
 
