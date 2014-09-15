@@ -37,7 +37,7 @@ import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record.Field;
 public class XsdRecord extends XsdDataObject {
 
     // -----------------------------------------------------------------------//
-    // protected Member Variables
+    // Private Member Variables
     // -----------------------------------------------------------------------//
 
     private Record _entityRecord;

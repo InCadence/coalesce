@@ -1,170 +1,137 @@
 package Coalesce.Framework.DataModel;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.io.IOException;
 
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
+import Coalesce.Common.Exceptions.CoalesceException;
 import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.Helpers.XmlHelper;
 import Coalesce.Common.UnitTest.CoalesceTypeInstances;
-import Coalesce.Framework.DataModel.CoalesceEntitySyncShell;
-import Coalesce.Framework.DataModel.XsdEntity;
 
 public class CoalesceEntitySyncShellTest {
 
     @Test
-    public void testCreateFromEntity()
+    public void testCreateFromEntity() throws SAXException, IOException
     {
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        try
-        {
+        // Initialize
+        CoalesceEntitySyncShell shell = CoalesceEntitySyncShell.Create(entity);
 
-            XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        String xml = shell.toXml();
 
-            // Initialize
-            CoalesceEntitySyncShell shell = CoalesceEntitySyncShell.Create(entity);
-
-            String xml = shell.toXml();
-
-            // Validate
-            assertNotNull(xml);
-            assertTrue(this.ValidateSyncShell(shell));
-
-        }
-        catch (Exception ex)
-        {
-            fail(ex.getMessage());
-        }
+        // Validate
+        assertNotNull(xml);
+        assertTrue(this.ValidateSyncShell(shell));
 
     }
 
     @Test
-    public void testCreateFromString()
+    public void testCreateFromString() throws SAXException, IOException
     {
-        try
-        {
-            // Initialize
-            CoalesceEntitySyncShell shell = CoalesceEntitySyncShell.Create(CoalesceTypeInstances.TEST_MISSION);
+        // Initialize
+        CoalesceEntitySyncShell shell = CoalesceEntitySyncShell.Create(CoalesceTypeInstances.TEST_MISSION);
 
-            // Validate
-            assertTrue(this.ValidateSyncShell(shell));
-        }
-        catch (Exception ex)
-        {
-            fail(ex.getMessage());
-        }
+        // Validate
+        assertTrue(this.ValidateSyncShell(shell));
     }
 
     @Test
-    public void testCreateFromDocument()
+    public void testCreateFromDocument() throws SAXException, IOException
     {
-        try
-        {
-            // Load Document
-            Document XmlDoc = XmlHelper.loadXMLFrom(CoalesceTypeInstances.TEST_MISSION);
+        // Load Document
+        Document XmlDoc = XmlHelper.loadXMLFrom(CoalesceTypeInstances.TEST_MISSION);
 
-            // Initialize
-            CoalesceEntitySyncShell shell = CoalesceEntitySyncShell.Create(XmlDoc);
+        // Initialize
+        CoalesceEntitySyncShell shell = CoalesceEntitySyncShell.Create(XmlDoc);
 
-            // Validate
-            assertTrue(this.ValidateSyncShell(shell));
-        }
-        catch (Exception ex)
-        {
-            fail(ex.getMessage());
-        }
+        // Validate
+        assertTrue(this.ValidateSyncShell(shell));
+
     }
 
     @Test
-    public void testClone()
+    public void testClone() throws SAXException, IOException
     {
-        try
-        {
-            // Initialize
-            CoalesceEntitySyncShell shell = CoalesceEntitySyncShell.Create(CoalesceTypeInstances.TEST_MISSION);
+        // Initialize
+        CoalesceEntitySyncShell shell = CoalesceEntitySyncShell.Create(CoalesceTypeInstances.TEST_MISSION);
 
-            // Initialize Clone
-            CoalesceEntitySyncShell clone = new CoalesceEntitySyncShell();
-            clone = CoalesceEntitySyncShell.Clone(shell);
+        // Initialize Clone
+        CoalesceEntitySyncShell clone = new CoalesceEntitySyncShell();
+        clone = CoalesceEntitySyncShell.Clone(shell);
 
-            String xml1 = shell.toXml();
-            String xml2 = clone.toXml();
+        String xml1 = shell.toXml();
+        String xml2 = clone.toXml();
 
-            // Validate
-            assertTrue(xml1.equals(xml2));
-            assertNotEquals(shell.GetDataObjectDocument(), clone.GetDataObjectDocument());
-        }
-        catch (Exception ex)
-        {
-            fail(ex.getMessage());
-        }
+        // Validate
+        assertTrue(xml1.equals(xml2));
+        assertNotEquals(shell.GetDataObjectDocument(), clone.GetDataObjectDocument());
+
     }
 
     @Test
-    public void GetRequiredChangesSyncShell()
+    public void GetRequiredChangesSyncShell() throws CoalesceException, SAXException, IOException
     {
-        try
+        // Load Document
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        // Create Local Shell
+        CoalesceEntitySyncShell localShell = CoalesceEntitySyncShell.Create(entity);
+
+        // Validate Local
+        assertTrue(this.ValidateSyncShell(localShell));
+
+        // Modify Entity
+        XsdRecord record = (XsdRecord) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/");
+        record.setFieldValue("MissionName", "test");
+
+        String fieldKeyValid = record.getFieldByName("MissionName").getKey();
+        String fieldKeyInValid = record.getFieldByName("MissionDescription").getKey();
+
+        // Create Remote Shell
+        CoalesceEntitySyncShell remoteShell = CoalesceEntitySyncShell.Create(entity);
+
+        // Validate Remote
+        assertTrue(this.ValidateSyncShell(remoteShell));
+
+        // Create Change Shell
+        CoalesceEntitySyncShell changesShell = CoalesceEntitySyncShell.GetRequiredChangesSyncShell(localShell, remoteShell);
+        // Print XML
+        String changesXml = changesShell.toXml();
+        System.out.println(changesXml);
+
+        // Validate Change
+        boolean foundChange = false;
+
+        NodeList nodeList = changesShell.GetDataObjectDocument().getElementsByTagName("*");
+
+        for (int ii = 0; ii < nodeList.getLength(); ii++)
         {
+            String nodeKey = XmlHelper.GetAttribute(nodeList.item(ii), "key");
 
-            // Load Document
-            XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
-
-            // Create Local Shell
-            CoalesceEntitySyncShell localShell = CoalesceEntitySyncShell.Create(entity);
-
-            // Validate Local
-            assertTrue(this.ValidateSyncShell(localShell));
-
-            // Modify Entity
-            XsdRecord record = (XsdRecord) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/");
-            record.setFieldValue("MissionName", "test");
-
-            String fieldKeyValid = record.getFieldByName("MissionName").getKey();
-            String fieldKeyInValid = record.getFieldByName("MissionDescription").getKey();
-
-            // Create Remote Shell
-            CoalesceEntitySyncShell remoteShell = CoalesceEntitySyncShell.Create(entity);
-
-            // Validate Remote
-            assertTrue(this.ValidateSyncShell(remoteShell));
-
-            // Create Change Shell
-            CoalesceEntitySyncShell changesShell = CoalesceEntitySyncShell.GetRequiredChangesSyncShell(localShell,
-                                                                                                       remoteShell);
-            // Print XML
-            String changesXml = changesShell.toXml();
-            System.out.println(changesXml);
-
-            // Validate Change
-            boolean foundChange = false;
-
-            NodeList nodeList = changesShell.GetDataObjectDocument().getElementsByTagName("*");
-
-            for (int ii = 0; ii < nodeList.getLength(); ii++)
+            if (nodeKey.equalsIgnoreCase(fieldKeyValid))
             {
-                String nodeKey = XmlHelper.GetAttribute(nodeList.item(ii), "key");
-
-                if (nodeKey.equalsIgnoreCase(fieldKeyValid))
-                {
-                    foundChange = true;
-                }
-                else if (nodeKey.equalsIgnoreCase(fieldKeyInValid))
-                {
-                    fail("Invalid Field");
-                }
+                foundChange = true;
             }
-
-            assertTrue(foundChange);
-
+            else if (nodeKey.equalsIgnoreCase(fieldKeyInValid))
+            {
+                fail("Invalid Field");
+            }
         }
-        catch (Exception ex)
-        {
-            fail(ex.getMessage());
-        }
+
+        assertTrue(foundChange);
+
     }
 
     private boolean ValidateSyncShell(CoalesceEntitySyncShell shell)

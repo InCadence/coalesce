@@ -2,67 +2,64 @@ package Coalesce.Framework.DataModel;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+
+import java.io.IOException;
 
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.Helpers.XmlHelper;
 import Coalesce.Common.UnitTest.CoalesceTypeInstances;
 
+/*-----------------------------------------------------------------------------'
+ Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
+
+ Notwithstanding any contractor copyright notice, the Government has Unlimited
+ Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+ of this work other than as specifically authorized by these DFARS Clauses may
+ violate Government rights in this work.
+
+ DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+ Unlimited Rights. The Government has the right to use, modify, reproduce,
+ perform, display, release or disclose this computer software and to have or
+ authorize others to do so.
+
+ Distribution Statement D. Distribution authorized to the Department of
+ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+ -----------------------------------------------------------------------------*/
+
 public class CoalesceEntityTemplateTest {
 
     @Test
-    public void testTemplateFromEntity()
+    public void testTemplateFromEntity() throws SAXException, IOException
     {
+        // Test Entity
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        try
-        {
-            // Test Entity
-            XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
-
-            // Run Test
-            this.testTemplate(CoalesceEntityTemplate.Create(entity));
-        }
-        catch (Exception ex)
-        {
-            fail(ex.getMessage());
-        }
+        // Run Test
+        this.testTemplate(CoalesceEntityTemplate.Create(entity));
     }
 
     @Test
-    public void testTemplateFromString()
+    public void testTemplateFromString() throws SAXException, IOException
     {
-        try
-        {
-            // Run Test
-            this.testTemplate(CoalesceEntityTemplate.Create(CoalesceTypeInstances.TEST_MISSION));
-        }
-        catch (Exception ex)
-        {
-            fail(ex.getMessage());
-        }
+        // Run Test
+        this.testTemplate(CoalesceEntityTemplate.Create(CoalesceTypeInstances.TEST_MISSION));
     }
 
     @Test
-    public void testTemplateFromDocument()
+    public void testTemplateFromDocument() throws SAXException, IOException
     {
-        try
-        {
-            // Load Document
-            Document XmlDoc = XmlHelper.loadXMLFrom(CoalesceTypeInstances.TEST_MISSION);
-            
-            // Run Test
-            this.testTemplate(CoalesceEntityTemplate.Create(XmlDoc));
-        }
-        catch (Exception ex)
-        {
-            fail(ex.getMessage());
-        }
+        // Load Document
+        Document XmlDoc = XmlHelper.loadXMLFrom(CoalesceTypeInstances.TEST_MISSION);
+
+        // Run Test
+        this.testTemplate(CoalesceEntityTemplate.Create(XmlDoc));
     }
 
     private void testTemplate(CoalesceEntityTemplate template)

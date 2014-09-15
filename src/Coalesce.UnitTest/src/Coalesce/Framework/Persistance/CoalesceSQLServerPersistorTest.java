@@ -82,7 +82,7 @@ public class CoalesceSQLServerPersistorTest {
         // Create Entity
         _entity = XsdEntity.create("TestEntity", "Unit Test", "1.0.0.0", "EntityId", "EntityIdType", "");
 
-        XsdLinkageSection.Create(_entity, true);
+        XsdLinkageSection.create(_entity, true);
 
         section = XsdSection.create(_entity, "Live Status Section", true);
         recordSet = XsdRecordset.create(section, "Live Status Recordset");

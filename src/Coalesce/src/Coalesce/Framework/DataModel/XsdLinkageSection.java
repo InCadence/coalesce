@@ -4,6 +4,7 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import org.apache.commons.lang.NullArgumentException;
 import org.joda.time.DateTime;
 
 import Coalesce.Common.Helpers.XmlHelper;
@@ -35,18 +36,19 @@ public class XsdLinkageSection extends XsdDataObject {
     // Factory and Initialization
     // -----------------------------------------------------------------------//
 
-    public static XsdLinkageSection Create(XsdEntity parent)
+    public static XsdLinkageSection create(XsdEntity parent)
     {
-
-        return XsdLinkageSection.Create(parent, true);
-
+        return XsdLinkageSection.create(parent, true);
     }
 
-    public static XsdLinkageSection Create(XsdEntity parent, boolean noIndex)
+    public static XsdLinkageSection create(XsdEntity parent, boolean noIndex)
     {
+        if (parent == null) throw new NullArgumentException("parent");
 
+        if (parent.getLinkageSection() != null) return parent.getLinkageSection();
+        
         XsdLinkageSection linkageSection = new XsdLinkageSection();
-        if (!linkageSection.Initialize(parent)) return null;
+        if (!linkageSection.initialize(parent)) return null;
 
         linkageSection.setNoIndex(noIndex);
 
@@ -60,9 +62,10 @@ public class XsdLinkageSection extends XsdDataObject {
 
     }
 
-    public boolean Initialize(XsdEntity parent)
+    public boolean initialize(XsdEntity parent)
     {
-
+        if (parent == null) throw new NullArgumentException("parent");
+        
         // Set References
         _parent = parent;
         _entityLinkageSection = parent.getEntityLinkageSection();
@@ -130,7 +133,7 @@ public class XsdLinkageSection extends XsdDataObject {
         return "linkagesection";
     }
 
-    public XsdLinkage CreateLinkage()
+    public XsdLinkage createLinkage()
     {
         return XsdLinkage.Create(this);
     }
@@ -145,13 +148,13 @@ public class XsdLinkageSection extends XsdDataObject {
     {
         return Boolean.parseBoolean(_entityLinkageSection.getNoindex());
     }
-    
+
     @Override
     public void setNoIndex(boolean value)
     {
         _entityLinkageSection.setNoindex(Boolean.toString(value));
     }
-    
+
     public DateTime getDateCreated()
     {
         // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityLinkageSection.getDatecreated());
@@ -195,7 +198,7 @@ public class XsdLinkageSection extends XsdDataObject {
         _entityLinkageSection.setStatus(status.toLabel());
     }
 
-    protected Linkagesection GetEntityLinkageSection()
+    protected Linkagesection getEntityLinkageSection()
     {
         return _entityLinkageSection;
     }

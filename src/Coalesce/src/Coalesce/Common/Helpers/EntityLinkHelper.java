@@ -181,7 +181,7 @@ public class EntityLinkHelper {
         else
         {
             // Create
-            XsdLinkage newLinkage = linkageSection.CreateLinkage();
+            XsdLinkage newLinkage = linkageSection.createLinkage();
 
             // Update/Populate
             newLinkage.EstablishLinkage(entity, linkType, otherEntity, classificationMarking, modifiedBy, inputLang);

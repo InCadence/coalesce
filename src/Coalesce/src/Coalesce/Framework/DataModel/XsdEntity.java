@@ -133,8 +133,6 @@ public class XsdEntity extends XsdDataObject {
     {
 
         this._entity = new Entity();
-        // this.CreateLinkageSection();
-        // this._entity.getSection();
 
         if (!super.initialize()) return false;
 
@@ -149,7 +147,7 @@ public class XsdEntity extends XsdDataObject {
 
         XsdLinkageSection linkageSection = new XsdLinkageSection();
 
-        if (!linkageSection.Initialize(this)) return false;
+        if (!linkageSection.initialize(this)) return false;
 
         _childDataObjects.put(linkageSection.getKey(), linkageSection);
 
