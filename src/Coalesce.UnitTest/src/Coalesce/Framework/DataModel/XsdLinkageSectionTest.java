@@ -1,7 +1,11 @@
 package Coalesce.Framework.DataModel;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
+import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.lang.NullArgumentException;
@@ -46,43 +50,43 @@ public class XsdLinkageSectionTest {
         @SuppressWarnings("unused")
         XsdLinkageSection linkageSection = XsdLinkageSection.create(null);
     }
-    
+
     @Test
     public void createExistsTest()
     {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        
+
         XsdLinkageSection linkageSection = entity.getLinkageSection();
-        
+
         XsdLinkageSection createdLinkageSection = XsdLinkageSection.create(entity);
-        
+
         assertEquals(linkageSection, createdLinkageSection);
         assertTrue(createdLinkageSection.getNoIndex());
-                
+
     }
-    
+
     @Test
     public void createTest()
     {
         XsdEntity entity = new XsdEntity();
         entity.initialize();
-        
+
         XsdLinkageSection linkageSection = entity.getLinkageSection();
-        
+
         assertNotNull(linkageSection);
         assertEquals(entity, linkageSection.getParent());
         assertFalse(linkageSection.getNoIndex());
-        
+
     }
-    
+
     @Test(expected = NullArgumentException.class)
     public void initializeNullTest()
     {
         XsdLinkageSection linkageSection = new XsdLinkageSection();
         linkageSection.initialize(null);
-        
+
     }
-    
+
     @Test
     public void keyTest()
     {
@@ -131,18 +135,66 @@ public class XsdLinkageSectionTest {
     }
 
     @Test
+    public void createLinkageEmptyTest()
+    {
+        XsdEntity entity = XsdEntity.create("");
+
+        XsdLinkageSection linkageSection = entity.getLinkageSection();
+
+        Map<String, XsdLinkage> linkages = linkageSection.getLinkages();
+
+        assertTrue(linkages.isEmpty());
+
+        XsdLinkage newLinkage = linkageSection.createLinkage();
+
+        assertNotNull(newLinkage);
+
+        linkages = linkageSection.getLinkages();
+
+        assertTrue(linkages.containsKey(newLinkage.getKey()));
+        assertEquals(linkageSection, newLinkage.getParent());
+
+    }
+
+    @Test
+    public void createLinkageMissionTest()
+    {
+        XsdLinkageSection missionLinkageSection = getMissionLinkageSection();
+
+        Map<String, XsdLinkage> missionLinkages = missionLinkageSection.getLinkages();
+
+        assertEquals(4, missionLinkages.size());
+
+        XsdLinkage missionLinkage = missionLinkageSection.createLinkage();
+
+        assertNotNull(missionLinkage);
+
+        Map<String, XsdLinkage> linkages = missionLinkageSection.getLinkages();
+
+        assertTrue(linkages.containsKey(missionLinkage.getKey()));
+        assertTrue(linkages.containsValue(missionLinkage));
+
+        for (XsdLinkage linkage : missionLinkages.values())
+        {
+            assertTrue(linkages.containsKey(linkage.getKey()));
+            assertTrue(linkages.containsValue(linkage));
+        }
+
+    }
+
+    @Test
     public void noIndexTest()
     {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        
-        XsdLinkageSection linkageSection = entity.getLinkageSection(); 
+
+        XsdLinkageSection linkageSection = entity.getLinkageSection();
 
         assertTrue(linkageSection.getNoIndex());
 
         linkageSection.setNoIndex(false);
 
         assertFalse(linkageSection.getNoIndex());
-        
+
         String entityXml = entity.toXml();
 
         XsdEntity desEntity = XsdEntity.create(entityXml);
@@ -187,8 +239,8 @@ public class XsdLinkageSectionTest {
     private XsdLinkageSection getMissionLinkageSection()
     {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        
-        return entity.getLinkageSection(); 
+
+        return entity.getLinkageSection();
     }
-    
+
 }

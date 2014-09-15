@@ -1,5 +1,6 @@
 package Coalesce.Framework.DataModel;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
@@ -46,7 +47,7 @@ public class XsdLinkageSection extends XsdDataObject {
         if (parent == null) throw new NullArgumentException("parent");
 
         if (parent.getLinkageSection() != null) return parent.getLinkageSection();
-        
+
         XsdLinkageSection linkageSection = new XsdLinkageSection();
         if (!linkageSection.initialize(parent)) return null;
 
@@ -65,7 +66,7 @@ public class XsdLinkageSection extends XsdDataObject {
     public boolean initialize(XsdEntity parent)
     {
         if (parent == null) throw new NullArgumentException("parent");
-        
+
         // Set References
         _parent = parent;
         _entityLinkageSection = parent.getEntityLinkageSection();
@@ -131,6 +132,22 @@ public class XsdLinkageSection extends XsdDataObject {
     public String getType()
     {
         return "linkagesection";
+    }
+
+    public Map<String, XsdLinkage> getLinkages()
+    {
+        Map<String, XsdLinkage> linkages = new HashMap<String, XsdLinkage>();
+
+        for (XsdDataObject xdo : _childDataObjects.values())
+        {
+            if (xdo instanceof XsdLinkage)
+            {
+                linkages.put(xdo.getKey(), (XsdLinkage) xdo);
+            }
+        }
+
+        return linkages;
+        
     }
 
     public XsdLinkage createLinkage()
