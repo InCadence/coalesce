@@ -3,6 +3,7 @@ package Coalesce.Framework.Persistance;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -17,6 +18,7 @@ import org.xml.sax.SAXException;
 
 import unity.connector.local.LocalConfigurationsConnector;
 import Coalesce.Common.Exceptions.CoalesceException;
+import Coalesce.Common.Exceptions.CoalescePersistorException;
 import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.Runtime.CoalesceSettings;
 import Coalesce.Framework.CoalesceFramework;
@@ -31,6 +33,7 @@ import Coalesce.Framework.DataModel.XsdRecordset;
 import Coalesce.Framework.DataModel.XsdSection;
 import Coalesce.Framework.Persistance.ICoalescePersistor.EntityMetaData;
 
+import com.database.persister.MySQLDataConnector;
 import com.database.persister.SQLServerDataConnector;
 import com.database.persister.SQLServerPersistor;
 import com.database.persister.ServerConn;
@@ -169,12 +172,30 @@ public class CoalesceSQLServerPersistorTest {
         }
     }
 
+    @Test(expected = SQLException.class)
+    public void testFAILConnection() throws SQLException, CoalescePersistorException
+    {
+        // Is this even needed?
+        ServerConn serConFail = new ServerConn();
+        serConFail.setUser("roooott");
+        serConFail.setPassword("Passw0rd");
+        serConFail.setServerName("localhost");
+        serConFail.setPortNumber(1433);
+        serConFail.setDatabase("coalescedatabase");
+        try (SQLServerDataConnector conn = new SQLServerDataConnector(serConFail))
+        {
+
+            conn.OpenConnection();
+
+        }
+    }
+
     @Test
     public void testSaveEntityAndXPath()
     {
         try
         {
-//            assertTrue(CoalesceSQLServerPersistorTest._coalesceFramework.SaveCoalesceEntity(_entity));
+            // assertTrue(CoalesceSQLServerPersistorTest._coalesceFramework.SaveCoalesceEntity(_entity));
 
             // Get Field from DB Using XPath
             XsdField field = CoalesceSQLServerPersistorTest._coalesceFramework.GetCoalesceFieldByFieldKey(_fieldKey);
@@ -194,6 +215,7 @@ public class CoalesceSQLServerPersistorTest {
             fail(ex.getMessage());
         }
     }
+
     @Test
     public void testSaveEntityTemplate()
     {
@@ -207,6 +229,7 @@ public class CoalesceSQLServerPersistorTest {
             fail(ex.getMessage());
         }
     }
+
     @Test
     public void testGetEntityMetaData()
     {
@@ -257,7 +280,7 @@ public class CoalesceSQLServerPersistorTest {
         }
     }
 
-    // @Test
+    @Test
     public void testCheckLastModified()
     {
         try
@@ -394,18 +417,13 @@ public class CoalesceSQLServerPersistorTest {
         }
     }
 
-    @Test
-    public void testFAILGetEntityKeyForEntityId()
+   
+    public void testFAILGetEntityKeyForEntityId() throws CoalescePersistorException
     {
-        try
-        {
-            String objectKey = CoalesceSQLServerPersistorTest._coalesceFramework.GetCoalesceEntityKeyForEntityId("", "", "");
-            assertTrue(objectKey == null);
-        }
-        catch (Exception ex)
-        {
-            fail(ex.getMessage());
-        }
+
+        String objectKey = CoalesceSQLServerPersistorTest._coalesceFramework.GetCoalesceEntityKeyForEntityId("", "", "");
+        assertNull(objectKey);
+
     }
 
     @Test
