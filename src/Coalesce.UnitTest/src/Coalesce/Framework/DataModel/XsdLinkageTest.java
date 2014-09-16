@@ -13,6 +13,7 @@ import org.joda.time.DateTime;
 import org.junit.Test;
 
 import Coalesce.Common.Classification.Marking;
+import Coalesce.Common.Helpers.GUIDHelper;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.UnitTest.CoalesceTypeInstances;
@@ -248,6 +249,54 @@ public class XsdLinkageTest {
     @Test
     public void entityTest()
     {
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        XsdLinkage linkage = getMissionLinkage(entity);
+
+        assertEquals("62857EF8-3930-4F0E-BAE3-093344EBF389", linkage.getEntity1Key());
+        assertEquals("TREXMission", linkage.getEntity1Name());
+        assertEquals("TREX Portal", linkage.getEntity1Source());
+        assertEquals("1.0.0.0", linkage.getEntity1Version());
+
+        assertEquals("AEACD69E-5365-4401-87A1-D95E657E0785", linkage.getEntity2Key());
+        assertEquals("TREXOperation", linkage.getEntity2Name());
+        assertEquals("TREX Portal", linkage.getEntity2Source());
+        assertEquals("1.0.0.0", linkage.getEntity2Version());
+
+        String newGuid = GUIDHelper.GetGuidString(UUID.randomUUID());
+        linkage.setEntity1Key(newGuid);
+        linkage.setEntity1Name("New 1 Name");
+        linkage.setEntity1Source("New 1 Source");
+        linkage.setEntity1Version("New 1 Version");
+
+        String new2Guid = GUIDHelper.GetGuidString(UUID.randomUUID());
+        linkage.setEntity2Key(new2Guid);
+        linkage.setEntity2Name("New 2 Name");
+        linkage.setEntity2Source("New 2 Source");
+        linkage.setEntity2Version("New 2 Version");
+
+        assertEquals(newGuid, linkage.getEntity1Key());
+        assertEquals("New 1 Name", linkage.getEntity1Name());
+        assertEquals("New 1 Source", linkage.getEntity1Source());
+        assertEquals("New 1 Version", linkage.getEntity1Version());
+
+        assertEquals(new2Guid, linkage.getEntity2Key());
+        assertEquals("New 2 Name", linkage.getEntity2Name());
+        assertEquals("New 2 Source", linkage.getEntity2Source());
+        assertEquals("New 2 Version", linkage.getEntity2Version());
+
+        String entityXml = entity.toXml();
+        XsdEntity desEntity = XsdEntity.create(entityXml);
+        XsdLinkage desLinkage = getMissionLinkage(desEntity);
+
+        assertEquals(newGuid, desLinkage.getEntity1Key());
+        assertEquals("New 1 Name", desLinkage.getEntity1Name());
+        assertEquals("New 1 Source", desLinkage.getEntity1Source());
+        assertEquals("New 1 Version", desLinkage.getEntity1Version());
+
+        assertEquals(new2Guid, desLinkage.getEntity2Key());
+        assertEquals("New 2 Name", desLinkage.getEntity2Name());
+        assertEquals("New 2 Source", desLinkage.getEntity2Source());
+        assertEquals("New 2 Version", desLinkage.getEntity2Version());
 
     }
 
