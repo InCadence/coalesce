@@ -941,7 +941,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         ResultSet results = conn.ExecuteQuery(sql, Key.trim());
 
         // Valid Results?
-        if (results.first())
+        while(results.next())
         {
 
             String name = results.getString("name");
