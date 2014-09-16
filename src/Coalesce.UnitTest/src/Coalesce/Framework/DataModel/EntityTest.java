@@ -1,22 +1,35 @@
 package Coalesce.Framework.DataModel;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.UUID;
 
+import javax.xml.namespace.QName;
+
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Test;
 
+import Coalesce.Common.Helpers.GUIDHelper;
+import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.Helpers.XmlHelper;
 import Coalesce.Common.UnitTest.CoalesceTypeInstances;
 import Coalesce.Framework.GeneratedJAXB.Entity;
 import Coalesce.Framework.GeneratedJAXB.Entity.Linkagesection;
 import Coalesce.Framework.GeneratedJAXB.Entity.Linkagesection.Linkage;
+import Coalesce.Framework.GeneratedJAXB.Entity.Section;
+import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset;
+import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record;
+import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record.Field;
+import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record.Field.Fieldhistory;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -38,17 +51,17 @@ import Coalesce.Framework.GeneratedJAXB.Entity.Linkagesection.Linkage;
 public class EntityTest {
 
     /*
-     * @Before public void Initialize() {
+     * @BeforeClass public static void setUpBeforeClass() throws Exception { }
      * 
-     * }
+     * @AfterClass public static void tearDownAfterClass() throws Exception { }
      * 
-     * @After public void Finalize() {
+     * @Before public void setUp() throws Exception { }
      * 
-     * }
+     * @After public void tearDown() throws Exception { }
      */
 
     @Test
-    public void EntityDeserializationMissionTest()
+    public void entityDeserializationMissionTest()
     {
 
         Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TEST_MISSION, Entity.class);
@@ -58,13 +71,19 @@ public class EntityTest {
     }
 
     @Test
-    public void EntityManualCreationTest()
+    public void entityManualCreationTest()
     {
 
         Entity entity = new Entity();
 
+        assertNull(entity.getLinkagesection());
+
         Linkagesection linkageSection = new Linkagesection();
         entity.setLinkagesection(linkageSection);
+
+        assertEquals(linkageSection, entity.getLinkagesection());
+        assertNotNull(linkageSection.getLinkage());
+        assertTrue(linkageSection.getLinkage().isEmpty());
 
         List<Linkage> linkageList = linkageSection.getLinkage();
 
@@ -76,48 +95,15 @@ public class EntityTest {
 
         linkageList.add(linkage);
 
+        assertEquals(1, linkageList.size());
+        assertEquals(linkage, linkageSection.getLinkage().get(0));
+
         // String xml2 = Serialize(entity, "");
 
     }
 
     @Test
-    public void TestEntityMerge()
-    {
-
-        Entity entity1 = null;
-        Entity entity2 = null;
-
-        // Define XML
-
-        // Deserialize from the same XML
-
-        TestModifingDifferentFields(entity1, entity2);
-
-        TestModifingSameField(entity1, entity2);
-
-        fail("Not yet implemented");
-    }
-
-    private void TestModifingDifferentFields(Entity entity1, Entity entity2)
-    {
-
-        // Modify first and second entities
-
-        // Merge Entities: Expected results combine changes from both entities.
-
-    }
-
-    private void TestModifingSameField(Entity entity1, Entity entity2)
-    {
-
-        // Modify the same field in both entities
-
-        // Merge Entities: Expected results last one in wins. First one should appear as field history.
-
-    }
-
-    @Test
-    public void GetLastModifiedTest()
+    public void getLastModifiedTest()
     {
 
         Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TEST_MISSION, Entity.class);
@@ -137,7 +123,7 @@ public class EntityTest {
     }
 
     @Test
-    public void GetDateCreatedTest()
+    public void getDateCreatedTest()
     {
 
         Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TEST_MISSION, Entity.class);
@@ -157,7 +143,7 @@ public class EntityTest {
     }
 
     @Test
-    public void SetLastModifiedDefinedTest()
+    public void setLastModifiedDefinedTest()
     {
 
         Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TEST_MISSION, Entity.class);
@@ -185,7 +171,7 @@ public class EntityTest {
     }
 
     @Test
-    public void SetLastModifiedSerializedTest()
+    public void setLastModifiedSerializedTest()
     {
 
         Entity entity = (Entity) XmlHelper.Deserialize(CoalesceTypeInstances.TEST_MISSION, Entity.class);
@@ -208,7 +194,7 @@ public class EntityTest {
     }
 
     @Test
-    public void SetDateCreatedTest()
+    public void setDateCreatedTest()
     {
 
         Entity entity = new Entity();
@@ -238,33 +224,130 @@ public class EntityTest {
     }
 
     @Test
-    public void TestFieldHistory()
+    public void testFieldHistory()
     {
-        fail("Not yet implemented");
+        Entity missionEntity = (Entity) XmlHelper.Deserialize(CoalesceTypeInstances.TEST_MISSION, Entity.class);
+
+        Field field = missionEntity.getSection().get(1).getRecordset().get(0).getRecord().get(0).getField().get(0);
+
+        List<Fieldhistory> fieldHistory = field.getFieldhistory();
+
+        assertEquals("00BB7A9F-4F37-46E9-85EB-9280ED3619CC", fieldHistory.get(0).getKey());
+        assertEquals("3FA9F3E1-23D9-49C6-BCA3-CE84135223A5", fieldHistory.get(1).getKey());
+
+        Fieldhistory newFieldHistory = new Fieldhistory();
+        newFieldHistory.setKey("11111111-AAAA-BBBB-CCCC-222222222222");
+        newFieldHistory.setPrevioushistorykey("3FA9F3E1-23D9-49C6-BCA3-CE84135223A5");
+        fieldHistory.add(newFieldHistory);
+
+        assertEquals(newFieldHistory, field.getFieldhistory().get(2));
+
+        String serializedEntity = XmlHelper.Serialize(missionEntity);
+
+        Entity desMissionEntity = (Entity) XmlHelper.Deserialize(serializedEntity, Entity.class);
+
+        Fieldhistory desFieldHistory = desMissionEntity.getSection().get(1).getRecordset().get(0).getRecord().get(0).getField().get(0).getFieldhistory().get(2);
+
+        assertEquals("11111111-AAAA-BBBB-CCCC-222222222222", desFieldHistory.getKey());
+        assertEquals("3FA9F3E1-23D9-49C6-BCA3-CE84135223A5", desFieldHistory.getPrevioushistorykey());
+
     }
 
     @Test
-    public void TestClassificationMarkings()
+    public void testClassificationMarkings()
     {
-        fail("Not yet implemented");
+        // TODO: Add specific testing when attribute type changes to a complex type from a string
     }
 
     @Test
-    public void TestBinaryTypes()
+    public void testBinaryTypes() throws UnsupportedEncodingException
     {
-        fail("Not yet implemented");
+        Entity newEntity = new Entity();
+
+        Section newSection = new Section();
+        newEntity.getSection().add(newSection);
+
+        Recordset newRecordset = new Recordset();
+        newSection.getRecordset().add(newRecordset);
+
+        Record newRecord = new Record();
+        Field newField = new Field();
+        newField.setDatatype(ECoalesceFieldDataTypes.BinaryType.getLabel());
+
+        String byteString = "Testing String";
+        byte[] dataBytes = byteString.getBytes("US-ASCII");
+        String value = Base64.encodeBase64String(dataBytes);
+        newField.setValue(value);
+
+        newRecord.getField().add(newField);
+        newRecordset.getRecord().add(newRecord);
+
+        String serializedEntity = XmlHelper.Serialize(newEntity);
+        Entity desEntity = (Entity) XmlHelper.Deserialize(serializedEntity, Entity.class);
+
+        Field desField = desEntity.getSection().get(0).getRecordset().get(0).getRecord().get(0).getField().get(0);
+
+        String rawData = desField.getValue();
+
+        assertEquals("VGVzdGluZyBTdHJpbmc=", rawData);
+
+        byte[] bytes = Base64.decodeBase64(rawData);
+
+        assertArrayEquals(dataBytes, bytes);
+        assertEquals(ECoalesceFieldDataTypes.BinaryType.getLabel(), desField.getDatatype());
+
     }
 
     @Test
-    public void TestRecordCreation()
+    public void testRecordCreation()
     {
-        fail("Not yet implemented");
-    }
+        Entity newEntity = new Entity();
 
-    @Test
-    public void TestLinkingEntities()
-    {
-        fail("Not yet implemented");
+        Section newSection = new Section();
+        newEntity.getSection().add(newSection);
+
+        Recordset newRecordset = new Recordset();
+        newSection.getRecordset().add(newRecordset);
+
+        Record newRecord = new Record();
+
+        assertNull(newRecord.getDatecreated());
+        assertNull(newRecord.getLastmodified());
+        assertTrue(newRecord.getField().isEmpty());
+        assertNull(newRecord.getName());
+        assertNull(newRecord.getKey());
+        assertTrue(newRecord.getOtherAttributes().isEmpty());
+
+        DateTime now = JodaDateTimeHelper.NowInUtc();
+        DateTime yesterday = now.minusDays(1);
+        String guid = GUIDHelper.GetGuidString(UUID.randomUUID());
+        QName qName = new QName("uri:thing", "lc", "prf");
+
+        newRecord.setDatecreated(yesterday);
+        newRecord.setLastmodified(now);
+        newRecord.getField().add(new Field());
+        newRecord.setName("New Record");
+        newRecord.setKey(guid);
+        newRecord.getOtherAttributes().put(qName, "Other Attribute");
+
+        newRecordset.getRecord().add(newRecord);
+
+        assertEquals(1, newRecordset.getRecord().size());
+        assertEquals(newRecord, newRecordset.getRecord().get(0));
+
+        String serializedEntity = XmlHelper.Serialize(newEntity);
+        Entity desEntity = (Entity) XmlHelper.Deserialize(serializedEntity, Entity.class);
+
+        Record desRecord = desEntity.getSection().get(0).getRecordset().get(0).getRecord().get(0);
+
+        assertEquals(yesterday, desRecord.getDatecreated());
+        assertEquals(now, desRecord.getLastmodified());
+        assertEquals(1, desRecord.getField().size());
+        assertEquals("New Record", desRecord.getName());
+        assertEquals(guid, desRecord.getKey());
+        assertEquals(1, desRecord.getOtherAttributes().size());
+        assertEquals("Other Attribute", desRecord.getOtherAttributes().get(qName));
+
     }
 
 }
