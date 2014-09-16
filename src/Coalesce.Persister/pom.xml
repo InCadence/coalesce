@@ -18,23 +18,23 @@
 		</plugins>
 	</build>
 	<dependencyManagement>
-  	<dependencies>
-  		<dependency>
-  			<groupId>coalesce</groupId>
-  			<artifactId>coalesce-bom</artifactId>
-  			<version>0.0.1-SNAPSHOT</version>
-  			<type>pom</type>
-  			<scope>import</scope>
-  		</dependency>
-  		<dependency>
-  			<groupId>unity</groupId>
-  			<artifactId>unity-bom</artifactId>
-  			<version>0.0.1-SNAPSHOT</version>
-  			<type>pom</type>
-  			<scope>import</scope>
-  		</dependency>
-  	</dependencies>
-  </dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>coalesce</groupId>
+				<artifactId>coalesce-bom</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>unity</groupId>
+				<artifactId>unity-bom</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -73,6 +73,11 @@
 			<groupId>sqljdbc4</groupId>
 			<artifactId>sqljdbc4</artifactId>
 			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>9.3-1102-jdbc41</version>
 		</dependency>
 	</dependencies>
 </project>
