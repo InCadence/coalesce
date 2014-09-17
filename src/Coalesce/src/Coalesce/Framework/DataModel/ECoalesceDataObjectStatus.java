@@ -41,7 +41,7 @@ public enum ECoalesceDataObjectStatus
         initMapping();
 
         if (label == null) return ECoalesceDataObjectStatus.UNKNOWN;
-        
+
         ECoalesceDataObjectStatus value = _labelToStatusMapping.get(label.trim().toLowerCase());
 
         if (value == null) value = ECoalesceDataObjectStatus.UNKNOWN;

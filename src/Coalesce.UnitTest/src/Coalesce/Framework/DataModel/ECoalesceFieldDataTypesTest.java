@@ -20,7 +20,7 @@ import org.junit.Test;
 public class ECoalesceFieldDataTypesTest {
 
     @Test
-    public void GetLabelStringTypeTest()
+    public void getLabelStringTypeTest()
     {
         String a = "string";
         ECoalesceFieldDataTypes value = ECoalesceFieldDataTypes.StringType;
@@ -29,7 +29,7 @@ public class ECoalesceFieldDataTypesTest {
     }
 
     @Test
-    public void GetLabelDateTimeTypeTest()
+    public void getLabelDateTimeTypeTest()
     {
         String a = "datetime";
         ECoalesceFieldDataTypes value = ECoalesceFieldDataTypes.DateTimeType;
@@ -38,7 +38,7 @@ public class ECoalesceFieldDataTypesTest {
     }
 
     @Test
-    public void GetLabelUriTypeTest()
+    public void getLabelUriTypeTest()
     {
         String a = "uri";
         ECoalesceFieldDataTypes value = ECoalesceFieldDataTypes.UriType;
@@ -47,7 +47,7 @@ public class ECoalesceFieldDataTypesTest {
     }
 
     @Test
-    public void GetLabelBinaryTypeTest()
+    public void getLabelBinaryTypeTest()
     {
         String a = "binary";
         ECoalesceFieldDataTypes value = ECoalesceFieldDataTypes.BinaryType;
@@ -56,7 +56,7 @@ public class ECoalesceFieldDataTypesTest {
     }
 
     @Test
-    public void GetLabelBooleanTypeTest()
+    public void getLabelBooleanTypeTest()
     {
         String a = "boolean";
         ECoalesceFieldDataTypes value = ECoalesceFieldDataTypes.BooleanType;
@@ -65,7 +65,7 @@ public class ECoalesceFieldDataTypesTest {
     }
 
     @Test
-    public void GetLabelIntegerTypeTest()
+    public void getLabelIntegerTypeTest()
     {
         String a = "integer";
         ECoalesceFieldDataTypes value = ECoalesceFieldDataTypes.IntegerType;
@@ -74,7 +74,7 @@ public class ECoalesceFieldDataTypesTest {
     }
 
     @Test
-    public void GetLabelGuidTypeTest()
+    public void getLabelGuidTypeTest()
     {
         String a = "guid";
         ECoalesceFieldDataTypes value = ECoalesceFieldDataTypes.GuidType;
@@ -83,7 +83,7 @@ public class ECoalesceFieldDataTypesTest {
     }
 
     @Test
-    public void GetLabelGeocoordinateTypeTest()
+    public void getLabelGeocoordinateTypeTest()
     {
         String a = "geocoordinate";
         ECoalesceFieldDataTypes value = ECoalesceFieldDataTypes.GeocoordinateType;
@@ -92,7 +92,7 @@ public class ECoalesceFieldDataTypesTest {
     }
 
     @Test
-    public void GetLabelFileTypeTest()
+    public void getLabelFileTypeTest()
     {
         String a = "file";
         ECoalesceFieldDataTypes value = ECoalesceFieldDataTypes.FileType;
@@ -101,7 +101,7 @@ public class ECoalesceFieldDataTypesTest {
     }
 
     @Test
-    public void GetLabelGeocoordinateListTypeTest()
+    public void getLabelGeocoordinateListTypeTest()
     {
         String a = "geocoordinatelist";
         ECoalesceFieldDataTypes value = ECoalesceFieldDataTypes.GeocoordinateListType;
@@ -110,136 +110,136 @@ public class ECoalesceFieldDataTypesTest {
     }
     
     @Test
-    public void GetTypeForCoalesceStringTypeTest()
+    public void getTypeForCoalesceStringTypeTest()
     {
-        assertEquals(ECoalesceFieldDataTypes.StringType, ECoalesceFieldDataTypes.GetTypeForCoalesceType("string"));
+        assertEquals(ECoalesceFieldDataTypes.StringType, ECoalesceFieldDataTypes.getTypeForCoalesceType("string"));
         
     }
 
     @Test
-    public void GetTypeForCoalesceDateTimeTypeTest()
+    public void getTypeForCoalesceDateTimeTypeTest()
     {
-        assertEquals(ECoalesceFieldDataTypes.DateTimeType, ECoalesceFieldDataTypes.GetTypeForCoalesceType("datetime"));
+        assertEquals(ECoalesceFieldDataTypes.DateTimeType, ECoalesceFieldDataTypes.getTypeForCoalesceType("datetime"));
         
     }
     
     @Test
-    public void GetTypeForCoalesceUriTypeTest()
+    public void getTypeForCoalesceUriTypeTest()
     {
-        assertEquals(ECoalesceFieldDataTypes.UriType, ECoalesceFieldDataTypes.GetTypeForCoalesceType("uri"));
+        assertEquals(ECoalesceFieldDataTypes.UriType, ECoalesceFieldDataTypes.getTypeForCoalesceType("uri"));
         
     }
     
     @Test
-    public void GetTypeForCoalesceBinaryTypeTest()
+    public void getTypeForCoalesceBinaryTypeTest()
     {
-        assertEquals(ECoalesceFieldDataTypes.BinaryType, ECoalesceFieldDataTypes.GetTypeForCoalesceType("binary"));
+        assertEquals(ECoalesceFieldDataTypes.BinaryType, ECoalesceFieldDataTypes.getTypeForCoalesceType("binary"));
         
     }
     
     @Test
-    public void GetTypeForCoalesceBooleanTypeTest()
+    public void getTypeForCoalesceBooleanTypeTest()
     {
-        assertEquals(ECoalesceFieldDataTypes.BooleanType, ECoalesceFieldDataTypes.GetTypeForCoalesceType("boolean"));
+        assertEquals(ECoalesceFieldDataTypes.BooleanType, ECoalesceFieldDataTypes.getTypeForCoalesceType("boolean"));
         
     }
     
     @Test
-    public void GetTypeForCoalesceIntegerTypeTest()
+    public void getTypeForCoalesceIntegerTypeTest()
     {
-        assertEquals(ECoalesceFieldDataTypes.IntegerType, ECoalesceFieldDataTypes.GetTypeForCoalesceType("integer"));
+        assertEquals(ECoalesceFieldDataTypes.IntegerType, ECoalesceFieldDataTypes.getTypeForCoalesceType("integer"));
         
     }
     
     @Test
-    public void GetTypeForCoalesceGuidTypeTest()
+    public void getTypeForCoalesceGuidTypeTest()
     {
-        assertEquals(ECoalesceFieldDataTypes.GuidType, ECoalesceFieldDataTypes.GetTypeForCoalesceType("guid"));
+        assertEquals(ECoalesceFieldDataTypes.GuidType, ECoalesceFieldDataTypes.getTypeForCoalesceType("guid"));
         
     }
     
     @Test
-    public void GetTypeForCoalesceGeocoordinateTypeTest()
+    public void getTypeForCoalesceGeocoordinateTypeTest()
     {
-        assertEquals(ECoalesceFieldDataTypes.GeocoordinateType, ECoalesceFieldDataTypes.GetTypeForCoalesceType("geocoordinate"));
+        assertEquals(ECoalesceFieldDataTypes.GeocoordinateType, ECoalesceFieldDataTypes.getTypeForCoalesceType("geocoordinate"));
         
     }
     
     @Test
-    public void GetTypeForCoalesceFileTypeTest()
+    public void getTypeForCoalesceFileTypeTest()
     {
-        assertEquals(ECoalesceFieldDataTypes.FileType, ECoalesceFieldDataTypes.GetTypeForCoalesceType("file"));
+        assertEquals(ECoalesceFieldDataTypes.FileType, ECoalesceFieldDataTypes.getTypeForCoalesceType("file"));
         
     }
     
     @Test
-    public void GetTypeForCoalesceGeocoordinateListTypeTest()
+    public void getTypeForCoalesceGeocoordinateListTypeTest()
     {
-        assertEquals(ECoalesceFieldDataTypes.GeocoordinateListType, ECoalesceFieldDataTypes.GetTypeForCoalesceType("geocoordinatelist"));
+        assertEquals(ECoalesceFieldDataTypes.GeocoordinateListType, ECoalesceFieldDataTypes.getTypeForCoalesceType("geocoordinatelist"));
         
     }
     
     @Test
-    public void GetTypeForSQLTypeStringType1Test()
-    {
-                
-        assertEquals(ECoalesceFieldDataTypes.StringType, ECoalesceFieldDataTypes.GetTypeForSQLType("ADVARWCHAR"));
-        
-    }
-    
-    @Test
-    public void GetTypeForSQLTypeStringType2Test()
+    public void getTypeForSQLTypeStringType1Test()
     {
                 
-        assertEquals(ECoalesceFieldDataTypes.StringType, ECoalesceFieldDataTypes.GetTypeForSQLType("ADLONGVARWCHAR"));
+        assertEquals(ECoalesceFieldDataTypes.StringType, ECoalesceFieldDataTypes.getTypeForSQLType("ADVARWCHAR"));
         
     }
     
     @Test
-    public void GetTypeForSQLTypeDateTimeTypeTest()
+    public void getTypeForSQLTypeStringType2Test()
+    {
+                
+        assertEquals(ECoalesceFieldDataTypes.StringType, ECoalesceFieldDataTypes.getTypeForSQLType("ADLONGVARWCHAR"));
+        
+    }
+    
+    @Test
+    public void getTypeForSQLTypeDateTimeTypeTest()
     {
                
-        assertEquals(ECoalesceFieldDataTypes.DateTimeType, ECoalesceFieldDataTypes.GetTypeForSQLType("ADDBTIMESTAMP"));
+        assertEquals(ECoalesceFieldDataTypes.DateTimeType, ECoalesceFieldDataTypes.getTypeForSQLType("ADDBTIMESTAMP"));
         
     }
     
     @Test
-    public void GetTypeForSQLTypeBooleanTypeTest()
+    public void getTypeForSQLTypeBooleanTypeTest()
     {
                 
-        assertEquals(ECoalesceFieldDataTypes.BooleanType, ECoalesceFieldDataTypes.GetTypeForSQLType("ADBOOLEAN"));
+        assertEquals(ECoalesceFieldDataTypes.BooleanType, ECoalesceFieldDataTypes.getTypeForSQLType("ADBOOLEAN"));
         
     }
     
     @Test
-    public void GetTypeForSQLTypeGuidTypeTest()
+    public void getTypeForSQLTypeGuidTypeTest()
     {
                 
-        assertEquals(ECoalesceFieldDataTypes.GuidType, ECoalesceFieldDataTypes.GetTypeForSQLType("ADGUID"));
+        assertEquals(ECoalesceFieldDataTypes.GuidType, ECoalesceFieldDataTypes.getTypeForSQLType("ADGUID"));
      
     }
     
     @Test
-    public void GetTypeForSQLTypeIntegerType1Test()
+    public void getTypeForSQLTypeIntegerType1Test()
     {
                 
-        assertEquals(ECoalesceFieldDataTypes.IntegerType, ECoalesceFieldDataTypes.GetTypeForSQLType("ADSMALLINT"));
+        assertEquals(ECoalesceFieldDataTypes.IntegerType, ECoalesceFieldDataTypes.getTypeForSQLType("ADSMALLINT"));
         
     }
     
     @Test
-    public void GetTypeForSQLTypeIntegerType2Test()
+    public void getTypeForSQLTypeIntegerType2Test()
     {
                 
-        assertEquals(ECoalesceFieldDataTypes.IntegerType, ECoalesceFieldDataTypes.GetTypeForSQLType("ADINTEGER"));
+        assertEquals(ECoalesceFieldDataTypes.IntegerType, ECoalesceFieldDataTypes.getTypeForSQLType("ADINTEGER"));
         
     }
     
     @Test
-    public void GetTypeForSQLTypeBinaryTypeTest()
+    public void getTypeForSQLTypeBinaryTypeTest()
     {
                 
-        assertEquals(ECoalesceFieldDataTypes.BinaryType, ECoalesceFieldDataTypes.GetTypeForSQLType("ADLONGVARBINARY"));
+        assertEquals(ECoalesceFieldDataTypes.BinaryType, ECoalesceFieldDataTypes.getTypeForSQLType("ADLONGVARBINARY"));
      
     }
     
