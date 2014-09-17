@@ -4,31 +4,60 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-/*-----------------------------------------------------------------------------'
- Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
-
- Notwithstanding any contractor copyright notice, the Government has Unlimited
- Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
- of this work other than as specifically authorized by these DFARS Clauses may
- violate Government rights in this work.
-
- DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
- Unlimited Rights. The Government has the right to use, modify, reproduce,
- perform, display, release or disclose this computer software and to have or
- authorize others to do so.
-
- Distribution Statement D. Distribution authorized to the Department of
- Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
- -----------------------------------------------------------------------------*/
+/*
+ * @BeforeClass public static void setUpBeforeClass() throws Exception { }
+ * 
+ * @AfterClass public static void tearDownAfterClass() throws Exception { }
+ * 
+ * @Before public void setUp() throws Exception { }
+ * 
+ * @After public void tearDown() throws Exception { }
+ */
 
 public class ECoalesceDataObjectStatusTest {
 
     @Test
-    public void ToValueActiveTest()
+    public void FromLabelActiveStatusTest()
     {
-        ECoalesceDataObjectStatus value = ECoalesceDataObjectStatus.ACTIVE;
-
-        assertEquals(1, value.toValue());
+        assertEquals(ECoalesceDataObjectStatus.ACTIVE, ECoalesceDataObjectStatus.fromLabel("ACTIVE"));
+        
     }
 
+    @Test
+    public void FromLabelDeletedStatusTest()
+    {
+        assertEquals(ECoalesceDataObjectStatus.DELETED, ECoalesceDataObjectStatus.fromLabel("DELETED"));
+        
+    }
+    
+    @Test
+    public void FromLabelUnknownStatusTest()
+    {
+        assertEquals(ECoalesceDataObjectStatus.UNKNOWN, ECoalesceDataObjectStatus.fromLabel("UNKNOWN"));
+        
+    }
+    
+    @test
+    public void GetStatusActiveStatusTest()
+    {        
+       //int a = 1;
+       //String value = "Active";
+       //assertEquals(a, ECoalesceDataObjectStatus.ACTIVE);
+       
+       assertEquals(ECoalesceDataObjectStatus.ACTIVE, ECoalesceDataObjectStatus.getStatus(1));
+    }
+    
+    @test
+    //getStatus
+    
+    @test
+    //toValue
+    
+    @test
+    //toLabel
+    
+    @test
+    //toString
+    
+    
 }
