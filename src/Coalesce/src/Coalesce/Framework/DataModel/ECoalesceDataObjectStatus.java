@@ -3,71 +3,50 @@ package Coalesce.Framework.DataModel;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum ECoalesceDataObjectStatus {
-	ACTIVE (1, "Active"),
-    DELETED(2, "Deleted"),
-    UNKNOWN(1073741824, "Unknown");
-	
-	private int value;
-	private String label;
+public enum ECoalesceDataObjectStatus
+{
+    ACTIVE("Active"), DELETED("Deleted"), UNKNOWN("Unknown");
+
+    private String _label;
 
     /**
-     * A mapping between the integer code and its corresponding Status to facilitate lookup by code.
+     * A mapping between the string representation and its corresponding Status to facilitate lookup by code.
      */
-    private static Map<Integer, ECoalesceDataObjectStatus> codeToStatusMapping;
+    private static Map<String, ECoalesceDataObjectStatus> _labelToStatusMapping;
 
-    private ECoalesceDataObjectStatus(int code, String label){
-        this.value = code;
-        this.label = label;
+    private ECoalesceDataObjectStatus(String label)
+    {
+        _label = label;
     }
- 
-    public static ECoalesceDataObjectStatus getStatus(int code) {
-        if (codeToStatusMapping == null) {
-            initMapping();
-        }
-        return codeToStatusMapping.get(code);
-    }
- 
-    private static void initMapping() {
-        codeToStatusMapping = new HashMap<Integer, ECoalesceDataObjectStatus>();
-        for (ECoalesceDataObjectStatus s : values()) {
-            codeToStatusMapping.put(s.value, s);
+
+    private static void initMapping()
+    {
+        if (_labelToStatusMapping == null)
+        {
+            _labelToStatusMapping = new HashMap<String, ECoalesceDataObjectStatus>();
+            for (ECoalesceDataObjectStatus s : values())
+            {
+                _labelToStatusMapping.put(s._label.trim().toLowerCase(), s);
+            }
         }
     }
- 
-	public static ECoalesceDataObjectStatus fromLabel(String value)
-	{
-		try {
-			switch (value.toUpperCase()) {
-			case "ACTIVE":
-				return ECoalesceDataObjectStatus.ACTIVE;
-			case "DELETED":
-				return ECoalesceDataObjectStatus.DELETED;
-			default:
-				return ECoalesceDataObjectStatus.UNKNOWN;
-			}
 
-		} catch (Exception ex) {
-			return ECoalesceDataObjectStatus.UNKNOWN;
-		}
-	}
+    public String getLabel()
+    {
+        return _label;
+    }
 
-    public int toValue() {
-        return this.value;
-    }
- 
-    public String toLabel() {
-        return this.label;
-    }
- 
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append("CoalesceDataObjectStatus");
-        sb.append("{code=").append(value);
-        sb.append(", label='").append(label);
-        sb.append('}');
-        return sb.toString();
+    public static ECoalesceDataObjectStatus getTypeForLabel(String label)
+    {
+        initMapping();
+
+        if (label == null) return ECoalesceDataObjectStatus.UNKNOWN;
+        
+        ECoalesceDataObjectStatus value = _labelToStatusMapping.get(label.trim().toLowerCase());
+
+        if (value == null) value = ECoalesceDataObjectStatus.UNKNOWN;
+
+        return value;
     }
 
 }

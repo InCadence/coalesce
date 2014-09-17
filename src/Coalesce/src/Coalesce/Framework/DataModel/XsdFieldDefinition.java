@@ -209,7 +209,7 @@ public class XsdFieldDefinition extends XsdDataObject {
 
     public ECoalesceFieldDataTypes getDataType()
     {
-        return ECoalesceFieldDataTypes.GetTypeForCoalesceType(_entityFieldDefinition.getDatatype());
+        return ECoalesceFieldDataTypes.getTypeForCoalesceType(_entityFieldDefinition.getDatatype());
     }
 
     public void setDataType(ECoalesceFieldDataTypes value)
@@ -292,7 +292,7 @@ public class XsdFieldDefinition extends XsdDataObject {
     @Override
     protected void setObjectStatus(ECoalesceDataObjectStatus status)
     {
-        _entityFieldDefinition.setStatus(status.toLabel());
+        _entityFieldDefinition.setStatus(status.getLabel());
     }
 
     @Override

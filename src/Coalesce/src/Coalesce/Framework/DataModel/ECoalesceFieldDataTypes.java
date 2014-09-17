@@ -20,30 +20,23 @@ public enum ECoalesceFieldDataTypes
     private String _label;
 
     /**
-     * A mapping between the integer code and its corresponding Status to facilitate lookup by code.
+     * A mapping between the string representation and its corresponding Status to facilitate lookup by code.
      */
-    private static Map<String, ECoalesceFieldDataTypes> codeToStatusMapping;
+    private static Map<String, ECoalesceFieldDataTypes> _labelToStatusMapping;
 
     private ECoalesceFieldDataTypes(String label)
     {
         this._label = label;
     }
 
-    public static ECoalesceFieldDataTypes getStatus(int code)
-    {
-        initMapping();
-
-        return codeToStatusMapping.get(code);
-    }
-
     private static void initMapping()
     {
-        if (codeToStatusMapping == null)
+        if (_labelToStatusMapping == null)
         {
-            codeToStatusMapping = new HashMap<String, ECoalesceFieldDataTypes>();
+            _labelToStatusMapping = new HashMap<String, ECoalesceFieldDataTypes>();
             for (ECoalesceFieldDataTypes s : values())
             {
-                codeToStatusMapping.put(s._label.toLowerCase(), s);
+                _labelToStatusMapping.put(s._label.trim().toLowerCase(), s);
             }
 
         }
@@ -54,18 +47,18 @@ public enum ECoalesceFieldDataTypes
         return _label;
     }
 
-    public static ECoalesceFieldDataTypes GetTypeForCoalesceType(String coalesceType)
+    public static ECoalesceFieldDataTypes getTypeForCoalesceType(String coalesceType)
     {
         initMapping();
 
-        ECoalesceFieldDataTypes value = codeToStatusMapping.get(coalesceType.trim().toLowerCase());
+        ECoalesceFieldDataTypes value = _labelToStatusMapping.get(coalesceType.trim().toLowerCase());
 
         if (value == null) value = ECoalesceFieldDataTypes.StringType;
 
         return value;
     }
 
-    public static ECoalesceFieldDataTypes GetTypeForSQLType(String sqlType)
+    public static ECoalesceFieldDataTypes getTypeForSQLType(String sqlType)
     {
         switch (sqlType.toUpperCase()) {
 

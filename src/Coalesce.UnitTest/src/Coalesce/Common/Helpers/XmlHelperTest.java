@@ -1,6 +1,7 @@
 package Coalesce.Common.Helpers;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -102,8 +103,8 @@ public class XmlHelperTest {
 
         String xml = XmlHelper.Serialize(entityLinkageSection);
 
-        assertTrue("Searialize failed", xml != null);
-        assertTrue("xml empty", xml.length() > 0);
+        assertNotNull("Searialize failed", xml);
+        assertFalse("xml empty", xml.isEmpty());
 
         String stripped = xml.toString().replace("<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"yes\"?>", "");
         assertEquals(CoalesceTypeInstances.TEST_MISSION_LINKAGE_SECTION.replaceAll("\\s+", ""),
@@ -127,6 +128,6 @@ public class XmlHelperTest {
         assertTrue("xml empty", xml.length() > 0);
         assertEquals(16, entityRecordSet.getFielddefinition().size());
         assertEquals(16, entityRecordSet.getRecord().get(0).getField().size());
-        
+
     }
 }

@@ -689,7 +689,7 @@ public class MySQLPersistor extends CoalescePersisterBase {
                                      linkage.getEntity1Source(),
                                      linkage.getEntity1Version(),
                                      linkage.getLinkType().getLabel(),
-                                     linkage.getStatus().toLabel(),
+                                     linkage.getStatus().getLabel(),
                                      linkage.getEntity2Key(),
                                      linkage.getEntity2Name(),
                                      linkage.getEntity2Source(),
@@ -880,7 +880,7 @@ public class MySQLPersistor extends CoalescePersisterBase {
     {
         boolean isSuccessful = false;
 
-        System.out.println(xsdDataObject.getStatus().toLabel() + " OBJECT [" + xsdDataObject.getName() + " : "
+        System.out.println(xsdDataObject.getStatus().getLabel() + " OBJECT [" + xsdDataObject.getName() + " : "
                 + xsdDataObject.getType() + "] Processing Key:  " + xsdDataObject.getKey());
 
         switch (xsdDataObject.getStatus()) {

@@ -40,7 +40,7 @@ import org.w3c.dom.Node;
 
 public class XmlHelper {
 
-    //private static String MODULE_NAME = "Coalesce.Common.Helpers.XmlHelper";
+    // private static String MODULE_NAME = "Coalesce.Common.Helpers.XmlHelper";
 
     // throw new IllegalArgumentException(MODULE_NAME + " : EstablishLinkage");
 
@@ -64,6 +64,7 @@ public class XmlHelper {
             return null;
         }
     }
+
     public static String Serialize(Object obj, String encodingFormat)
     {
         try

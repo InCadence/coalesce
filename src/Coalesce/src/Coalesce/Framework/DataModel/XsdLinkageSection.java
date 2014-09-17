@@ -212,7 +212,7 @@ public class XsdLinkageSection extends XsdDataObject {
     @Override
     protected void setObjectStatus(ECoalesceDataObjectStatus status)
     {
-        _entityLinkageSection.setStatus(status.toLabel());
+        _entityLinkageSection.setStatus(status.getLabel());
     }
 
     protected Linkagesection getEntityLinkageSection()

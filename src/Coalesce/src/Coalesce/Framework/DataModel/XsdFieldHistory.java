@@ -40,25 +40,25 @@ public class XsdFieldHistory extends XsdFieldBase {
     // Factory and Initialization
     // -----------------------------------------------------------------------//
 
-    public static XsdFieldHistory Create(XsdFieldBase parent)
+    public static XsdFieldHistory create(XsdFieldBase parent)
     {
 
         if (!(parent instanceof XsdField)) throw new ClassCastException("Must be of type XsdField");
 
-        return Create((XsdField) parent);
+        return create((XsdField) parent);
     }
 
-    public static XsdFieldHistory Create(XsdField parent)
+    public static XsdFieldHistory create(XsdField parent)
     {
         try
         {
 
             // Set References
             XsdFieldHistory newFieldHistory = new XsdFieldHistory();
-            if (!newFieldHistory.Initialize(parent)) return null;
+            if (!newFieldHistory.initialize(parent)) return null;
 
             // Copy attributes from parent node
-            newFieldHistory.SetAttributes(parent);
+            newFieldHistory.setAttributes(parent);
 
             newFieldHistory.setPreviousHistoryKey(parent.getPreviousHistoryKey());
 
@@ -80,12 +80,12 @@ public class XsdFieldHistory extends XsdFieldBase {
         }
     }
 
-    private boolean Initialize(XsdField parent)
+    private boolean initialize(XsdField parent)
     {
-        return Initialize(parent, new Fieldhistory());
+        return initialize(parent, new Fieldhistory());
     }
 
-    public boolean Initialize(XsdField parent, Fieldhistory fieldHistory)
+    public boolean initialize(XsdField parent, Fieldhistory fieldHistory)
     {
 
         // Set References
@@ -145,7 +145,7 @@ public class XsdFieldHistory extends XsdFieldBase {
     @Override
     public ECoalesceFieldDataTypes getDataType()
     {
-        return ECoalesceFieldDataTypes.GetTypeForCoalesceType(_entityFieldHistory.getDatatype());
+        return ECoalesceFieldDataTypes.getTypeForCoalesceType(_entityFieldHistory.getDatatype());
     }
 
     @Override
@@ -329,7 +329,7 @@ public class XsdFieldHistory extends XsdFieldBase {
         _entityFieldHistory.setLastmodified(value);
     }
 
-    private void SetAttributes(XsdField field)
+    private void setAttributes(XsdField field)
     {
         Field entityField = field._entityField;
 
@@ -369,7 +369,7 @@ public class XsdFieldHistory extends XsdFieldBase {
     @Override
     protected void setObjectStatus(ECoalesceDataObjectStatus status)
     {
-        _entityFieldHistory.setStatus(status.toLabel());
+        _entityFieldHistory.setStatus(status.getLabel());
     }
 
     @Override

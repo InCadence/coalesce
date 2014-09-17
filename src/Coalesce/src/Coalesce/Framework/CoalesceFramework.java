@@ -221,7 +221,7 @@ public class CoalesceFramework {
 
     public boolean CreateFieldThumbnail(XsdField Field) throws IOException
     {
-        return this.CreateFieldThumbnail(Field.GetCoalesceFullFilename());
+        return this.CreateFieldThumbnail(Field.getCoalesceFullFilename());
     }
 
     public String GetCoalesceFieldValue(String FieldKey) throws CoalescePersistorException

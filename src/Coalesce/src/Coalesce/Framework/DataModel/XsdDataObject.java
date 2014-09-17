@@ -9,6 +9,7 @@ import javax.xml.namespace.QName;
 import org.joda.time.DateTime;
 
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
+import Coalesce.Common.Helpers.StringHelper;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -83,12 +84,11 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
     @Override
     public ECoalesceDataObjectStatus getStatus()
     {
-
         // Get Status
         String statusString = this.getObjectStatus();
 
         // Valid String?
-        if (statusString == null || statusString.equals(""))
+        if (StringHelper.IsNullOrEmpty(statusString))
         {
             // No; Return Default
             return ECoalesceDataObjectStatus.ACTIVE;
@@ -96,9 +96,8 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
         else
         {
             // Yes; Parse String
-            return (ECoalesceDataObjectStatus.fromLabel(statusString));
+            return ECoalesceDataObjectStatus.getTypeForLabel(getObjectStatus());
         }
-
     }
 
     @Override

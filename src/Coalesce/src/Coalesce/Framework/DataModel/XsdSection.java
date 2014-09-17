@@ -292,7 +292,7 @@ public class XsdSection extends XsdDataObject {
     @Override
     protected void setObjectStatus(ECoalesceDataObjectStatus status)
     {
-        _entitySection.setStatus(status.toLabel());
+        _entitySection.setStatus(status.getLabel());
     }
 
     /*

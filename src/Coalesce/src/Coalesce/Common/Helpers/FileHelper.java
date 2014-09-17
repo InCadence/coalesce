@@ -1,10 +1,20 @@
 package Coalesce.Common.Helpers;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 
 import org.apache.commons.io.FilenameUtils;
 
+import Coalesce.Common.Exceptions.CoalesceCryptoException;
 import Coalesce.Common.Runtime.CoalesceSettings;
+import Coalesce.Framework.Persistance.CoalesceEncrypter;
+import Coalesce.Framework.Persistance.ICoalesceEncrypter;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -29,6 +39,135 @@ public class FileHelper {
     private FileHelper()
     {
 
+    }
+
+    // --------------------------------------------------------------------------'
+    // Public Shared Methods
+    // --------------------------------------------------------------------------'
+
+    public static String getExtension(String filename)
+    {
+        if (StringHelper.IsNullOrEmpty(filename)) return "";
+
+        String extension = FilenameUtils.getExtension(filename).toLowerCase();
+
+        return extension;
+
+    }
+
+    public static String getShortFilename(String filename)
+    {
+        String name = FilenameUtils.getName(filename);
+
+        return name;
+
+    }
+
+    public static byte[] getFileAsByteArray(String filename) throws IOException
+    {
+        return getFileAsByteArray(filename, false);
+    }
+
+    public static byte[] getFileAsByteArray(String filename, boolean encrypted) throws IOException
+    {
+        Path path = Paths.get(filename);
+        if (Files.exists(path) && !Files.isDirectory(path))
+        {
+
+            if (encrypted)
+            {
+                ICoalesceEncrypter cipher;
+                try
+                {
+                    cipher = new CoalesceEncrypter(CoalesceSettings.GetPassPhrase());
+                }
+                catch (InvalidKeyException | NoSuchAlgorithmException | UnsupportedEncodingException e)
+                {
+                    return null;
+                }
+                
+                try
+                {
+                    return cipher.decryptValueToBytes(Files.readAllBytes(path));
+                }
+                catch (CoalesceCryptoException cce)
+                {
+                    return null;
+                }
+            }
+        }
+        
+        return null;
+        
+    }
+
+    public static boolean deleteFile(String filename)
+    {
+        Path path = Paths.get(filename);
+        if (Files.exists(path))
+        {
+            try
+            {
+                Files.delete(path);
+            }
+            catch (IOException e)
+            {
+                return false;
+            }
+
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public static boolean deleteFolder(String folderPath)
+    {
+        Path path = Paths.get(folderPath);
+        if (Files.isDirectory(path) && Files.exists(path))
+        {
+            try
+            {
+                Files.delete(path);
+            }
+            catch (IOException e)
+            {
+                return false;
+            }
+
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public static boolean checkFolder(String folderPath)
+    {
+        Path path = Paths.get(folderPath);
+        if (Files.exists(path))
+        {
+
+            return Files.isDirectory(path);
+
+        }
+        else
+        {
+
+            try
+            {
+                Files.createDirectory(path);
+            }
+            catch (IOException e)
+            {
+                return false;
+            }
+
+            return true;
+        }
     }
 
     public static String GetBaseFilenameWithFullDirectoryPathForKey(String key)

@@ -8,9 +8,17 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.lang.NullArgumentException;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
@@ -335,7 +343,7 @@ public class XsdEntity extends XsdDataObject {
     @Override
     protected void setObjectStatus(ECoalesceDataObjectStatus status)
     {
-        _entity.setStatus(status.toLabel());
+        _entity.setStatus(status.getLabel());
     }
 
     public Map<String, XsdLinkage> getLinkages()
@@ -482,6 +490,8 @@ public class XsdEntity extends XsdDataObject {
 
     public boolean setEntityId(String typeParam, String value)
     {
+        if (typeParam == null) throw new NullArgumentException("typeParam");
+        if (value == null) throw new NullArgumentException("value");
         if (typeParam.trim() == "") throw new IllegalArgumentException("typeParam cannot be empty");
         if (value.trim() == "") throw new IllegalAccessError("value cannot be empty");
 
@@ -518,6 +528,7 @@ public class XsdEntity extends XsdDataObject {
         // TODO: Implement Merging
     }
 
+    @Override
     public String toXml()
     {
         return toXml(false);
@@ -531,41 +542,63 @@ public class XsdEntity extends XsdDataObject {
         if (removeBinary)
         {
 
-            // TODO: How to get the OuterXml? And SelectNodes(Xpath)?
-            // // Set a copy of the Xml without the Binary data in it.
-            // Document NoBinaryXmlDoc = new Document();
-            // NoBinaryXmlDoc.LoadXml(this._DataObjectDocument.OuterXml);
-            //
-            // // Get all Binary Field Nodes. Ensures that the 'binary'
-            // attribute value is handled in a case
-            // // insensitive way.
-            // String Xpath =
-            // "//field[translate(@datatype,'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='binary']";
-            // for(Node ChildNode : NoBinaryXmlDoc.SelectNodes(Xpath)){
-            // _XmlHelper.SetAttribute(NoBinaryXmlDoc, ChildNode,
-            // "value", "");
-            // }
-            //
-            // // Get all File Field Nodes. Ensures that the 'file'
-            // attribute value is handled in a case
-            // // insensitive way.
-            // Xpath =
-            // "//field[translate(@datatype,'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='file']";
-            // for(Node ChildNode : NoBinaryXmlDoc.SelectNodes(Xpath)){
-            // _XmlHelper.SetAttribute(NoBinaryXmlDoc, ChildNode,
-            // "value", "");
-            // }
-            //
-            // // Get Xml
-            // Xml = NoBinaryXmlDoc.OuterXml;
-            // }else{
-            // // Get Xml
-            // Xml = this._DataObjectDocument.OuterXml;
+            // Set a copy of the Xml without the Binary data in it.
+            Document NoBinaryXmlDoc;
+            try
+            {
+                NoBinaryXmlDoc = XmlHelper.loadXMLFrom(entityXml);
 
+                // Get all Binary Field Nodes. Ensures that the 'binary' attribute value is handled in a case insensitive
+                // way.
+                clearFieldTypeValue("binary", NoBinaryXmlDoc);
+
+                // Get all File Field Nodes. Ensures that the 'file' attribute value is handled in a case insensitive way.
+                clearFieldTypeValue("file", NoBinaryXmlDoc);
+
+                // Get Xml
+                entityXml = XmlHelper.FormatXml(NoBinaryXmlDoc);
+
+            }
+            catch (SAXException e)
+            {
+                // loadXmlFrom failed
+            }
+            catch (IOException e)
+            {
+                // loadXmlFrom failed
+            }
         }
 
         return entityXml;
 
+    }
+
+    /*--------------------------------------------------------------------------
+    Private and Protected Functions
+    --------------------------------------------------------------------------*/
+
+    private void clearFieldTypeValue(String fieldType, Document xmlDoc)
+    {
+        try
+        {
+            String expression = "//field[translate(@datatype,'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='"
+                    + fieldType + "']";
+
+            XPath xPath = XPathFactory.newInstance().newXPath();
+            NodeList nodes = (NodeList) xPath.evaluate(expression, xmlDoc.getDocumentElement(), XPathConstants.NODESET);
+
+            for (int i = 0; i < nodes.getLength(); i++)
+            {
+                Node childNode = (Node) nodes.item(i);
+
+                XmlHelper.SetAttribute(xmlDoc, childNode, "value", "");
+            }
+
+        }
+        catch (XPathExpressionException xee)
+        {
+            // Xpath failed. Do nothing
+        }
     }
 
     private Map<String, XsdLinkage> getLinkages(List<ELinkTypes> forLinkTypes, String forEntityName, String forEntitySource)

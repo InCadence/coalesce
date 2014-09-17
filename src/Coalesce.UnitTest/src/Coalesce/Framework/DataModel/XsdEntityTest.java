@@ -1,6 +1,6 @@
-
 package Coalesce.Framework.DataModel;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -8,13 +8,18 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.NullArgumentException;
 import org.joda.time.DateTime;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
+import Coalesce.Common.Exceptions.CoalesceException;
 import Coalesce.Common.Helpers.EntityLinkHelper;
 import Coalesce.Common.Helpers.GUIDHelper;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
@@ -38,6 +43,9 @@ import Coalesce.Common.UnitTest.CoalesceTypeInstances;
  -----------------------------------------------------------------------------*/
 
 public class XsdEntityTest {
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     /*
      * @BeforeClass public static void setUpBeforeClass() throws Exception { }
@@ -1764,9 +1772,12 @@ public class XsdEntityTest {
 
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void setEntityIDNullTypeTest()
     {
+        thrown.expect(NullArgumentException.class);
+        thrown.expectMessage("typeParam");
+
         XsdEntity entity = XsdEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
@@ -1778,9 +1789,12 @@ public class XsdEntityTest {
 
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void setEntityIDNullNameTest()
     {
+        thrown.expect(NullArgumentException.class);
+        thrown.expectMessage("value");
+
         XsdEntity entity = XsdEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
@@ -1792,9 +1806,12 @@ public class XsdEntityTest {
 
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void setEntityIDNullBothTest()
     {
+        thrown.expect(NullArgumentException.class);
+        thrown.expectMessage("typeParam");
+
         XsdEntity entity = XsdEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
@@ -1843,6 +1860,101 @@ public class XsdEntityTest {
     }
 
     @Test
+    public void toXmlTest()
+    {
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        String xml = entity.toXml();
+        String stripped = xml.replace("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>", "");
+        String converted = stripped.replace(" ", "").replaceAll("\\s+", "").replaceAll("[^.]...Z\\\"", "Z\\\"");
+        String expected = CoalesceTypeInstances.TEST_MISSION.replaceAll("\\s+", "").replaceAll("[^.]...Z\\\"", "Z\\\"");
+        assertEquals(expected, converted);
+
+    }
+
+    @Test
+    public void toXmlRemoveBinaryFalseTest() throws UnsupportedEncodingException, CoalesceException
+    {
+        XsdEntity entity = XsdEntity.create("");
+        entity.setName("Testing Entity");
+        XsdSection section = entity.createSection("Testing Section");
+        XsdRecordset recordset = section.createRecordset("Testing Recordset");
+
+        recordset.createFieldDefinition("Binary1", ECoalesceFieldDataTypes.BinaryType, "", "(U)", "");
+        recordset.createFieldDefinition("Binary2", ECoalesceFieldDataTypes.BinaryType, "", "(U)", "");
+        recordset.createFieldDefinition("Binary3", ECoalesceFieldDataTypes.BinaryType, "", "(U)", "");
+
+        recordset.createFieldDefinition("File1", ECoalesceFieldDataTypes.FileType, "", "(U)", "");
+        recordset.createFieldDefinition("File2", ECoalesceFieldDataTypes.FileType, "", "(U)", "");
+        recordset.createFieldDefinition("File3", ECoalesceFieldDataTypes.FileType, "", "(U)", "");
+
+        XsdRecord record = recordset.addNew();
+        record.setFieldValue("Binary1", "Binary1".getBytes("US-ASCII"));
+        record.setFieldValue("Binary2", "Binary2".getBytes("US-ASCII"));
+        record.setFieldValue("Binary3", "Binary3".getBytes("US-ASCII"));
+
+        record.setFieldValue("File1", "File1".getBytes("US-ASCII"), "file1");
+        record.setFieldValue("File2", "File2".getBytes("US-ASCII"), "file2");
+        record.setFieldValue("File3", "File3".getBytes("US-ASCII"), "file3");
+
+        String xml = entity.toXml(false);
+
+        XsdEntity desEntity = XsdEntity.create(xml);
+
+        XsdRecord desRecord = (XsdRecord) desEntity.getDataObjectForNamePath("Testing Entity/Testing Section/Testing Recordset/Testing Recordset Record");
+
+        assertArrayEquals("Binary1".getBytes("US-ASCII"), desRecord.getFieldValueAsByteArray("Binary1", null));
+        assertArrayEquals("Binary2".getBytes("US-ASCII"), desRecord.getFieldValueAsByteArray("Binary2", null));
+        assertArrayEquals("Binary3".getBytes("US-ASCII"), desRecord.getFieldValueAsByteArray("Binary3", null));
+
+        assertArrayEquals("File1".getBytes("US-ASCII"), desRecord.getFieldValueAsByteArray("File1", null));
+        assertArrayEquals("File2".getBytes("US-ASCII"), desRecord.getFieldValueAsByteArray("File2", null));
+        assertArrayEquals("File3".getBytes("US-ASCII"), desRecord.getFieldValueAsByteArray("File3", null));
+
+    }
+
+    @Test
+    public void toXmlRemoveBinaryTrueOnlyBinaryTest() throws UnsupportedEncodingException, CoalesceException
+    {
+        XsdEntity entity = XsdEntity.create("");
+        entity.setName("Testing Entity");
+        XsdSection section = entity.createSection("Testing Section");
+        XsdRecordset recordset = section.createRecordset("Testing Recordset");
+
+        recordset.createFieldDefinition("Binary1", ECoalesceFieldDataTypes.BinaryType, "", "(U)", "");
+        recordset.createFieldDefinition("Binary2", ECoalesceFieldDataTypes.BinaryType, "", "(U)", "");
+        recordset.createFieldDefinition("Binary3", ECoalesceFieldDataTypes.BinaryType, "", "(U)", "");
+
+        recordset.createFieldDefinition("File1", ECoalesceFieldDataTypes.FileType, "", "(U)", "");
+        recordset.createFieldDefinition("File2", ECoalesceFieldDataTypes.FileType, "", "(U)", "");
+        recordset.createFieldDefinition("File3", ECoalesceFieldDataTypes.FileType, "", "(U)", "");
+
+        XsdRecord record = recordset.addNew();
+        record.setFieldValue("Binary1", "Binary1".getBytes("US-ASCII"));
+        record.setFieldValue("Binary2", "Binary2".getBytes("US-ASCII"));
+        record.setFieldValue("Binary3", "Binary3".getBytes("US-ASCII"));
+        
+        record.setFieldValue("File1", "File1".getBytes("US-ASCII"), "file1");
+        record.setFieldValue("File2", "File2".getBytes("US-ASCII"), "file2");
+        record.setFieldValue("File3", "File3".getBytes("US-ASCII"), "file3");
+        
+        String xml = entity.toXml(true);
+
+        XsdEntity desEntity = XsdEntity.create(xml);
+
+        XsdRecord desRecord = (XsdRecord) desEntity.getDataObjectForNamePath("Testing Entity/Testing Section/Testing Recordset/Testing Recordset Record");
+
+        assertArrayEquals(new byte[0], desRecord.getFieldValueAsByteArray("Binary1", null));
+        assertArrayEquals(new byte[0], desRecord.getFieldValueAsByteArray("Binary2", null));
+        assertArrayEquals(new byte[0], desRecord.getFieldValueAsByteArray("Binary3", null));
+
+        assertArrayEquals(new byte[0], desRecord.getFieldValueAsByteArray("File1", null));
+        assertArrayEquals(new byte[0], desRecord.getFieldValueAsByteArray("File2", null));
+        assertArrayEquals(new byte[0], desRecord.getFieldValueAsByteArray("File3", null));
+
+    }
+
+    @Test
     public void fieldHistoryTest()
     {
 
@@ -1854,8 +1966,8 @@ public class XsdEntityTest {
 
         XsdField nameField = (XsdField) xdo;
 
-        assertEquals(1, nameField.GetHistory().size());
-        assertEquals(CoalesceTypeInstances.TEST_MISSION_NAME_HISTORY_VALUE, nameField.GetHistory().get(0).getValue());
+        assertEquals(1, nameField.getHistory().size());
+        assertEquals(CoalesceTypeInstances.TEST_MISSION_NAME_HISTORY_VALUE, nameField.getHistory().get(0).getValue());
 
         xdo = entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_ACTION_NUMBER_PATH);
 
@@ -1863,9 +1975,9 @@ public class XsdEntityTest {
 
         XsdField actionNumberField = (XsdField) xdo;
 
-        assertEquals(2, actionNumberField.GetHistory().size());
+        assertEquals(2, actionNumberField.getHistory().size());
         assertEquals(CoalesceTypeInstances.TEST_MISSION_ACTION_NUMBER_LABEL_HISTORY,
-                     actionNumberField.GetHistory().get(0).getLabel());
+                     actionNumberField.getHistory().get(0).getLabel());
 
         xdo = entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_BASE64_PATH);
 
@@ -1873,7 +1985,7 @@ public class XsdEntityTest {
 
         XsdField base64Field = (XsdField) xdo;
 
-        assertTrue(base64Field.GetHistory().isEmpty());
+        assertTrue(base64Field.getHistory().isEmpty());
 
     }
 

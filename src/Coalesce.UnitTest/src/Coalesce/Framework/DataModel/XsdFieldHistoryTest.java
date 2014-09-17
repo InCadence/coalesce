@@ -61,10 +61,10 @@ public class XsdFieldHistoryTest {
     {
 
         XsdFieldHistory fh1 = new XsdFieldHistory();
-        fh1.Initialize(null, new Fieldhistory());
+        fh1.initialize(null, new Fieldhistory());
 
         @SuppressWarnings("unused")
-        XsdFieldHistory fh2 = XsdFieldHistory.Create((XsdFieldBase) fh1);
+        XsdFieldHistory fh2 = XsdFieldHistory.create((XsdFieldBase) fh1);
 
     }
 
@@ -73,10 +73,10 @@ public class XsdFieldHistoryTest {
     {
 
         XsdField field = new XsdField();
-        field.Initialize(null, new Field());
+        field.initialize(null, new Field());
 
         @SuppressWarnings("unused")
-        XsdFieldHistory fh = XsdFieldHistory.Create((XsdFieldBase) field);
+        XsdFieldHistory fh = XsdFieldHistory.create((XsdFieldBase) field);
 
     }
 
@@ -85,10 +85,10 @@ public class XsdFieldHistoryTest {
     {
 
         XsdFieldHistory fh1 = new XsdFieldHistory();
-        fh1.Initialize(null, new Fieldhistory());
+        fh1.initialize(null, new Fieldhistory());
 
         @SuppressWarnings("unused")
-        XsdFieldHistory fh2 = XsdFieldHistory.Create(fh1);
+        XsdFieldHistory fh2 = XsdFieldHistory.create(fh1);
 
     }
 
@@ -108,21 +108,21 @@ public class XsdFieldHistoryTest {
         record.initialize(rs, new Record());
 
         XsdField field = new XsdField();
-        field.Initialize(record, new Field());
+        field.initialize(record, new Field());
 
         @SuppressWarnings("unused")
-        XsdFieldHistory fh = XsdFieldHistory.Create(field);
+        XsdFieldHistory fh = XsdFieldHistory.create(field);
 
     }
 
     @Test
     public void ConstructorNoPreviousHistory()
     {
-        XsdField field = XsdFieldTest.GetTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_BASE64_PATH);
+        XsdField field = XsdFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_BASE64_PATH);
 
         String fieldKey = field.getKey();
 
-        XsdFieldHistory fh = XsdFieldHistory.Create(field);
+        XsdFieldHistory fh = XsdFieldHistory.create(field);
 
         assertEquals(fieldKey, field.getKey());
         assertFieldHistory(field, fh);
@@ -161,19 +161,19 @@ public class XsdFieldHistoryTest {
     public void ConstructorPreviousHistory() throws ClassCastException, DataFormatException
     {
 
-        XsdField field = XsdFieldTest.GetTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_BASE64_PATH);
+        XsdField field = XsdFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_BASE64_PATH);
 
-        field.SetSuspendHistory(true);
-        XsdFieldHistory fh = XsdFieldHistory.Create(field);
+        field.setSuspendHistory(true);
+        XsdFieldHistory fh = XsdFieldHistory.create(field);
         assertFieldHistory(field, fh);
 
         field.setTypedValue(2222);
-        field.SetSuspendHistory(false);
+        field.setSuspendHistory(false);
 
         assertEquals(2222, field.getIntegerValue());
-        assertEquals(1, field.GetHistory().size());
-        assertEquals(CoalesceTypeInstances.TEST_MISSION_BASE64_VALUE, field.GetHistory().get(0).getIntegerValue());
-        assertEquals(fh, field.GetHistory().get(0));
+        assertEquals(1, field.getHistory().size());
+        assertEquals(CoalesceTypeInstances.TEST_MISSION_BASE64_VALUE, field.getHistory().get(0).getIntegerValue());
+        assertEquals(fh, field.getHistory().get(0));
 
     }
 
@@ -464,9 +464,9 @@ public class XsdFieldHistoryTest {
 
         assertTrue(field != null);
 
-        assertFalse(field.GetHistory().isEmpty());
+        assertFalse(field.getHistory().isEmpty());
 
-        XsdFieldHistory fh = field.GetHistory().get(0);
+        XsdFieldHistory fh = field.getHistory().get(0);
 
         fh.setClassificationMarking(TOPSECRETCLASSIFICATIONMARKING);
 
@@ -689,9 +689,9 @@ public class XsdFieldHistoryTest {
     public void StringTypeTest() throws DataFormatException
     {
 
-        XsdField field = XsdFieldTest.GetTestMissionNameField();
+        XsdField field = XsdFieldTest.getTestMissionNameField();
 
-        XsdFieldHistory fh = field.GetHistory().get(0);
+        XsdFieldHistory fh = field.getHistory().get(0);
         Object data = fh.getData();
 
         assertTrue(data instanceof String);
@@ -712,10 +712,10 @@ public class XsdFieldHistoryTest {
     public void SetTypedValueStringTypeTypeMismatchTest()
     {
 
-        XsdField field = XsdFieldTest.GetTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
+        XsdField field = XsdFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
         field.setTypedValue(JodaDateTimeHelper.NowInUtc());
 
-        XsdFieldHistory fh = field.GetHistory().get(0);
+        XsdFieldHistory fh = field.getHistory().get(0);
 
         fh.setTypedValue(UUID.randomUUID());
 
@@ -730,13 +730,13 @@ public class XsdFieldHistoryTest {
         XsdFieldDefinition fileFieldDef = XsdFieldDefinition.create(parentRecordset, "Uri", ECoalesceFieldDataTypes.UriType);
 
         XsdRecord parentRecord = parentRecordset.GetItem(0);
-        XsdField field = XsdField.Create(parentRecord, fileFieldDef);
+        XsdField field = XsdField.create(parentRecord, fileFieldDef);
 
         Sleep();
         field.setTypedValue("uri:document/pdf");
         field.setTypedValue("uri:document/xyz");
 
-        XsdFieldHistory fh = field.GetHistory().get(0);
+        XsdFieldHistory fh = field.getHistory().get(0);
 
         assertEquals("uri:document/pdf", fh.getValue());
 
@@ -753,12 +753,12 @@ public class XsdFieldHistoryTest {
     @Test
     public void GetDataSetTypedValueDateTimeTypeTest() throws DataFormatException
     {
-        XsdField field = XsdFieldTest.GetTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
+        XsdField field = XsdFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
 
         DateTime now = JodaDateTimeHelper.NowInUtc();
         field.setTypedValue(now);
 
-        XsdFieldHistory fh = field.GetHistory().get(0);
+        XsdFieldHistory fh = field.getHistory().get(0);
 
         fh.setTypedValue(now.plusDays(1));
 
@@ -774,12 +774,12 @@ public class XsdFieldHistoryTest {
     public void SetTypedValueDateTimeTypeTypeMismatchTest()
     {
 
-        XsdField field = XsdFieldTest.GetTestMissionNameField();
+        XsdField field = XsdFieldTest.getTestMissionNameField();
 
         DateTime now = JodaDateTimeHelper.NowInUtc();
         field.setTypedValue(now);
 
-        XsdFieldHistory fh = field.GetHistory().get(0);
+        XsdFieldHistory fh = field.getHistory().get(0);
 
         fh.setTypedValue(now);
 
@@ -796,13 +796,13 @@ public class XsdFieldHistoryTest {
                                                                     ECoalesceFieldDataTypes.BooleanType);
 
         XsdRecord parentRecord = parentRecordset.GetItem(0);
-        XsdField field = XsdField.Create(parentRecord, fileFieldDef);
+        XsdField field = XsdField.create(parentRecord, fileFieldDef);
 
         Sleep();
         field.setTypedValue(true);
         field.setTypedValue(false);
 
-        XsdFieldHistory fh = field.GetHistory().get(0);
+        XsdFieldHistory fh = field.getHistory().get(0);
 
         Object data = fh.getData();
 
@@ -826,11 +826,11 @@ public class XsdFieldHistoryTest {
     public void SetTypedValueBooleanTypeTypeMismatchTest() throws UnsupportedEncodingException
     {
 
-        XsdField field = XsdFieldTest.GetTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
+        XsdField field = XsdFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
 
         field.setTypedValue(JodaDateTimeHelper.NowInUtc());
 
-        XsdFieldHistory fh = field.GetHistory().get(0);
+        XsdFieldHistory fh = field.getHistory().get(0);
         fh.setTypedValue(true);
 
     }
@@ -846,13 +846,13 @@ public class XsdFieldHistoryTest {
                                                                     ECoalesceFieldDataTypes.IntegerType);
 
         XsdRecord parentRecord = parentRecordset.GetItem(0);
-        XsdField field = XsdField.Create(parentRecord, fileFieldDef);
+        XsdField field = XsdField.create(parentRecord, fileFieldDef);
 
         Sleep();
         field.setTypedValue(1111);
         field.setTypedValue(2222);
 
-        XsdFieldHistory fh = field.GetHistory().get(0);
+        XsdFieldHistory fh = field.getHistory().get(0);
 
         Object data = fh.getData();
 
@@ -877,11 +877,11 @@ public class XsdFieldHistoryTest {
     public void SetTypedValueIntgerTypeTypeMismatchTest() throws UnsupportedEncodingException
     {
 
-        XsdField field = XsdFieldTest.GetTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
+        XsdField field = XsdFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
 
         field.setTypedValue(JodaDateTimeHelper.NowInUtc());
 
-        XsdFieldHistory fh = field.GetHistory().get(0);
+        XsdFieldHistory fh = field.getHistory().get(0);
         fh.setTypedValue(1111);
 
     }
@@ -897,14 +897,14 @@ public class XsdFieldHistoryTest {
                                                                     ECoalesceFieldDataTypes.GuidType);
 
         XsdRecord parentRecord = parentRecordset.GetItem(0);
-        XsdField field = XsdField.Create(parentRecord, fileFieldDef);
+        XsdField field = XsdField.create(parentRecord, fileFieldDef);
 
         Sleep();
         UUID guid = UUID.randomUUID();
         field.setTypedValue(guid);
         field.setTypedValue(UUID.randomUUID());
 
-        XsdFieldHistory fh = field.GetHistory().get(0);
+        XsdFieldHistory fh = field.getHistory().get(0);
 
         Object data = fh.getData();
 
@@ -930,11 +930,11 @@ public class XsdFieldHistoryTest {
     public void SetTypedValueGUIDTypeTypeMismatchTest() throws UnsupportedEncodingException
     {
 
-        XsdField field = XsdFieldTest.GetTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
+        XsdField field = XsdFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
 
         field.setTypedValue(JodaDateTimeHelper.NowInUtc());
 
-        XsdFieldHistory fh = field.GetHistory().get(0);
+        XsdFieldHistory fh = field.getHistory().get(0);
         fh.setTypedValue(UUID.randomUUID());
 
     }
@@ -984,13 +984,13 @@ public class XsdFieldHistoryTest {
 
         XsdField field = (XsdField) fdo;
 
-        if (field.GetHistory().isEmpty())
+        if (field.getHistory().isEmpty())
         {
             return null;
         }
         else
         {
-            return field.GetHistory().get(0);
+            return field.getHistory().get(0);
         }
 
     }

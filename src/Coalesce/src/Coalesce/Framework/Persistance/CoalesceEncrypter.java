@@ -18,7 +18,7 @@ import org.apache.tomcat.util.codec.binary.Base64;
 
 import Coalesce.Common.Exceptions.CoalesceCryptoException;
 
-public abstract class CoalesceEncrypter implements ICoalesceEncrypter {
+public class CoalesceEncrypter implements ICoalesceEncrypter {
 
     private static HashMap<String, EncoderParameters> _parameters = new HashMap<String, EncoderParameters>();
 

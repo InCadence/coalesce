@@ -1,5 +1,9 @@
 package Coalesce.Framework.DataModel;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.UUID;
 
 import org.apache.commons.lang.NotImplementedException;
@@ -9,6 +13,7 @@ import org.joda.time.DateTime;
 
 import Coalesce.Common.Classification.Marking;
 import Coalesce.Common.Exceptions.DataFormatException;
+import Coalesce.Common.Helpers.DocumentProperties;
 import Coalesce.Common.Helpers.GUIDHelper;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import Coalesce.Common.Helpers.StringHelper;
@@ -234,15 +239,15 @@ public abstract class XsdFieldBase extends XsdDataObject {
     // Value){
     // try{
     // CoalesceFieldDefinition CFD = new CoalesceFieldDefinition();
-    // if ((CFD.GetCoalesceFieldDataTypeForCoalesceType(this.DataType) ==
+    // if ((CFD.GetCoalesceFieldDataTypeForCoalesceType(getDataType()) ==
     // ECoalesceFieldDataTypes.GeocoordinateType) ||
-    // (CFD.GetCoalesceFieldDataTypeForCoalesceType(this.DataType) ==
+    // (CFD.GetCoalesceFieldDataTypeForCoalesceType(getDataType()) ==
     // ECoalesceFieldDataTypes.GeocoordinateListType)) {
     //
     // // Check Spatial Reference Identifier
     // if (Value.STSrid = 4326) {
     // // Set
-    // this.Value = String.valueOf(Value); //Value.ToString; // ToString returns
+    // getValue() = String.valueOf(Value); //Value.ToString; // ToString returns
     // the OGC WKT representation.
     // http://msdn.microsoft.com/en-us/library/microsoft.sqlserver.types.sqlgeography.tostring.aspx
     //
@@ -269,7 +274,7 @@ public abstract class XsdFieldBase extends XsdDataObject {
     // public CallResult SetTypedValue(Geolocation GeoLocation){
     // try{
     // CoalesceFieldDefinition CFD = new CoalesceFieldDefinition();
-    // if (CFD.GetCoalesceFieldDataTypeForCoalesceType(this.DataType) ==
+    // if (CFD.GetCoalesceFieldDataTypeForCoalesceType(getDataType()) ==
     // ECoalesceFieldDataTypes.GeocoordinateType) {
     // // Set
     // Microsoft.SqlServer.Types.SqlGeographyBuilder Builder = new
@@ -281,7 +286,7 @@ public abstract class XsdFieldBase extends XsdDataObject {
     // Builder.EndGeography();
     //
     // // Call on Overload
-    // return this.SetTypedValue(Builder.ConstructedGeography);
+    // return setTypedValue(Builder.ConstructedGeography);
     //
     // }else{
     // // return Failed; Type Mismatch
@@ -298,7 +303,7 @@ public abstract class XsdFieldBase extends XsdDataObject {
     // public CallResult SetTypedValue(List(Of Geolocation) GeoLocations){
     // try{
     // CoalesceFieldDefinition CFD = new CoalesceFieldDefinition();
-    // if (CFD.GetCoalesceFieldDataTypeForCoalesceType(this.DataType) ==
+    // if (CFD.GetCoalesceFieldDataTypeForCoalesceType(getDataType()) ==
     // ECoalesceFieldDataTypes.GeocoordinateListType) {
     // // Set
     // Microsoft.SqlServer.Types.SqlGeographyBuilder Builder = new
@@ -314,7 +319,7 @@ public abstract class XsdFieldBase extends XsdDataObject {
     // Builder.EndGeography();
     //
     // // Call on Overload
-    // return this.SetTypedValue(Builder.ConstructedGeography);
+    // return setTypedValue(Builder.ConstructedGeography);
     //
     // }else{
     // // return Failed; Type Mismatch
@@ -357,73 +362,44 @@ public abstract class XsdFieldBase extends XsdDataObject {
         setHash(hash);
     }
 
-    // TODO: DocumentProperties
-    // public CallResult SetTypedValue(Byte[] DataBytes, DocumentProperties
-    // DocProps){
-    // try{
-    // CoalesceFieldDefinition CFD = new CoalesceFieldDefinition();
-    // if (CFD.GetCoalesceFieldDataTypeForCoalesceType(this.DataType) ==
-    // ECoalesceFieldDataTypes.FileType) {
-    //
-    // // Set Bytes
-    // //TODO: make sure the string conversion is correct
-    // //this.Value = Convert.ToBase64String(DataBytes);
-    // this.Value = DataBytes.toString();
-    // this.Filename = DocProps.Filename;
-    // this.Extension = DocProps.Extension;
-    // this.MimeType = DocProps.MimeType;
-    // this.Size = DataBytes.length;
-    //
-    // // return Success
-    // return CallResult.successCallResult;
-    //
-    // }else{
-    // // return Failed; Type Mismatch
-    // return new CallResult(CallResults.FAILED, "Type mismatch", this);
-    // }
-    //
-    // }catch(Exception ex){
-    // // return Failed Error
-    // return new CallResult(CallResults.FAILED_ERROR, ex, this);
-    // }
-    // }
+    public void setTypedValue(byte[] dataBytes, DocumentProperties docProps)
+    {
+        if (getDataType() != ECoalesceFieldDataTypes.FileType)
+        {
+            throw new ClassCastException("Type mismatch");
+        }
 
-    // TODO: DocumentProperties
-    // public CallResult SetTypedValue(DocumentProperties DocProps) {
-    // try{
-    // CoalesceFieldDefinition CFD = new CoalesceFieldDefinition();
-    // if (CFD.GetCoalesceFieldDataTypeForCoalesceType(this.DataType) ==
-    // ECoalesceFieldDataTypes.FileType) {
-    // // Does File Exist?
-    // if (File.Exists(DocProps.FullFilename)) {
-    // // Read Bytes
-    // Byte[] FileBytes = File.ReadAllBytes(DocProps.FullFilename);
-    //
-    // // Set Bytes
-    // //TODO: make sure the string conversion is correct
-    // //this.Value = Convert.ToBase64String(FileBytes);
-    // this.Value = FileBytes.toString();
-    // this.Filename = DocProps.Filename;
-    // this.Extension = DocProps.Extension;
-    // this.MimeType = DocProps.MimeType;
-    // this.Size = FileBytes.length;
-    //
-    // // return Success
-    // return CallResult.successCallResult;
-    // }else{
-    // // return Failed; Type Mismatch
-    // return new CallResult(CallResults.FAILED, "File not found", this);
-    // }
-    // }else{
-    // // return Failed; Type Mismatch
-    // return new CallResult(CallResults.FAILED, "Type mismatch", this);
-    // }
-    //
-    // }catch(Exception ex){
-    // // return Failed Error
-    // return new CallResult(CallResults.FAILED_ERROR, ex, this);
-    // }
-    // }
+        // Set Bytes
+        setValue(Base64.encodeBase64String(dataBytes));
+        setFilename(docProps.getFilename());
+        setExtension(docProps.getExtension());
+        setMimeType(docProps.getMimeType());
+        setSize(dataBytes.length);
+
+    }
+
+    public void setTypedValue(DocumentProperties docProps) throws IOException
+    {
+        if (getDataType() != ECoalesceFieldDataTypes.FileType)
+        {
+            throw new ClassCastException("Type mismatch");
+        }
+
+        // Does File Exist?
+        Path path = Paths.get(docProps.getFullFilename());
+        if (Files.exists(path))
+        {
+            // Read Bytes
+            byte[] fileBytes = Files.readAllBytes(path);
+
+            // Set Bytes
+            setValue(Base64.encodeBase64String(fileBytes));
+            setFilename(docProps.getFilename());
+            setExtension(docProps.getExtension());
+            setMimeType(docProps.getMimeType());
+            setSize(fileBytes.length);
+        }
+    }
 
     public UUID getGuidValue() throws ClassCastException
     {
@@ -453,7 +429,7 @@ public abstract class XsdFieldBase extends XsdDataObject {
             throw new ClassCastException("Type mismatch");
         }
 
-        DateTime value = JodaDateTimeHelper.FromXmlDateTimeUTC(this.getValue());
+        DateTime value = JodaDateTimeHelper.FromXmlDateTimeUTC(getValue());
 
         if (value == null) return null;
 
@@ -468,9 +444,9 @@ public abstract class XsdFieldBase extends XsdDataObject {
             throw new ClassCastException("Type mismatch");
         }
 
-        if (StringHelper.IsNullOrEmpty(this.getValue())) throw new ClassCastException("Type mismatch");
+        if (StringHelper.IsNullOrEmpty(getValue())) throw new ClassCastException("Type mismatch");
 
-        boolean value = Boolean.parseBoolean(this.getValue());
+        boolean value = Boolean.parseBoolean(getValue());
 
         return value;
 
@@ -486,7 +462,7 @@ public abstract class XsdFieldBase extends XsdDataObject {
         try
         {
 
-            int value = Integer.parseInt(this.getValue());
+            int value = Integer.parseInt(getValue());
 
             return value;
 
@@ -502,17 +478,17 @@ public abstract class XsdFieldBase extends XsdDataObject {
     // public CallResult GetTypedValue(Geolocation GeoLocation) {
     // try{
     // CoalesceFieldDefinition CFD = new CoalesceFieldDefinition();
-    // if (CFD.GetCoalesceFieldDataTypeForCoalesceType(this.DataType) ==
+    // if (CFD.GetCoalesceFieldDataTypeForCoalesceType(DataType) ==
     // ECoalesceFieldDataTypes.GeocoordinateType) {
     // // Basic Check
-    // if (!(this.Value.StartsWith("POINT"))) {
+    // if (!(getValue().startsWith("POINT"))) {
     // // return Failed; Type Mismatch
     // return new CallResult(CallResults.FAILED, "Type mismatch", this);
     // }else{
     // // Get
     // Microsoft.SqlServer.Types.SqlGeography Geography = null;
     // Geography = Microsoft.SqlServer.Types.SqlGeography.STPointFromText(new
-    // System.Data.SqlTypes.SqlString(this.Value), 4326);
+    // System.Data.SqlTypes.SqlString(getValue()), 4326);
     // if (GeoLocation == null) {
     // GeoLocation = new Geolocation();
     // }
@@ -537,10 +513,10 @@ public abstract class XsdFieldBase extends XsdDataObject {
     // public CallResult GetTypedValue(ArrayList<Geolocation> GeoLocations){
     // try{
     // CoalesceFieldDefinition CFD = new CoalesceFieldDefinition();
-    // if (CFD.GetCoalesceFieldDataTypeForCoalesceType(this.DataType) ==
+    // if (CFD.GetCoalesceFieldDataTypeForCoalesceType(getDataType()) ==
     // ECoalesceFieldDataTypes.GeocoordinateListType) {
     // // Basic Check
-    // if (!(this.Value.StartsWith("MULTIPOINT"))) {
+    // if (!(getValue().startsWith("MULTIPOINT"))) {
     // // return Failed; Type Mismatch
     // return new CallResult(CallResults.FAILED, "Type mismatch", this);
     // }else{
@@ -549,7 +525,7 @@ public abstract class XsdFieldBase extends XsdDataObject {
     // Microsoft.SqlServer.Types.SqlGeography Geography = null;
     //
     // Geography = Microsoft.SqlServer.Types.SqlGeography.STMPointFromText(new
-    // System.Data.SqlTypes.SqlString(this.Value), 4326);
+    // System.Data.SqlTypes.SqlString(getValue()), 4326);
     // Dim geoPointCount = Geography.STNumGeometries();
     // for(int geoPointIndex = 1; geoPointIndex <= geoPointCount;
     // geoPointCount++){
@@ -578,7 +554,7 @@ public abstract class XsdFieldBase extends XsdDataObject {
 
     public byte[] getBinaryValue() throws ClassCastException
     {
-        if (getDataType() != ECoalesceFieldDataTypes.BinaryType)
+        if (getDataType() != ECoalesceFieldDataTypes.BinaryType && getDataType() != ECoalesceFieldDataTypes.FileType)
         {
             throw new ClassCastException("Type mismatch");
         }

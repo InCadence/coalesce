@@ -409,7 +409,7 @@ public class XsdRecordset extends XsdDataObject {
     @Override
     protected void setObjectStatus(ECoalesceDataObjectStatus status)
     {
-        _entityRecordset.setStatus(status.toLabel());
+        _entityRecordset.setStatus(status.getLabel());
     }
 
     protected List<Record> GetEntityRecords()
