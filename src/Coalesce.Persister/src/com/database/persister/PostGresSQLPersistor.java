@@ -234,7 +234,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
 
             ResultSet results = conn.ExecuteQuery("SELECT EntityXml from CoalesceEntity WHERE ObjectKey=?", Key);
 
-            if (results != null && results.first())
+            while (results.next())
             {
                 value = results.getString("EntityXml");
             }
@@ -258,7 +258,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
                                                   EntityId,
                                                   EntityIdType);
 
-            if (results != null && results.first())
+            while (results.next())
             {
                 value = results.getString("EntityXml");
             }
@@ -283,7 +283,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
                                                   EntityId,
                                                   EntityIdType);
 
-            if (results != null && results.first())
+            while (results.next())
             {
                 value = results.getString("EntityXml");
             }
@@ -385,7 +385,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
                                                   Source,
                                                   Version);
 
-            if (results != null && results.first())
+            while (results.next())
             {
                 value = results.getString("TemplateKey");
             }
@@ -422,7 +422,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
 
             ResultSet results = conn.ExecuteQuery("SELECT TemplateXml FROM CoalesceEntityTemplate WHERE TemplateKey=?", Key);
 
-            if (results != null && results.first())
+            while (results.next())
             {
                 value = results.getString("TemplateXml");
             }
@@ -447,7 +447,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
                                                   Source,
                                                   Version);
 
-            if (results != null && results.first())
+            while (results.next())
             {
                 value = results.getString("TemplateXml");
             }
@@ -712,7 +712,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
         ResultSet results = conn.ExecuteQuery("SELECT EntityId,EntityIdType,ObjectKey FROM CoalesceEntity WHERE ObjectKey=?",
                                               Key);
         // Get Results
-        if (results != null && results.first())
+        while(results.next())
         {
             metaData.entityId = results.getString("EntityId");
             metaData.entityType = results.getString("EntityIdType");
@@ -806,14 +806,9 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
                                                   EntityIdType,
                                                   EntityName);
 
-            if (results.first())
+            while (results.next())
             {
-
-                do
-                {
-                    keyList.add(results.getString("ObjectKey"));
-                }
-                while (results.next());
+                keyList.add(results.getString("ObjectKey"));
             }
 
             return keyList;
@@ -838,13 +833,9 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
                                                   EntityName,
                                                   EntitySource);
 
-            if (results.first())
+            while (results.next())
             {
-                do
-                {
-                    keyList.add(results.getString("ObjectKey"));
-                }
-                while (results.next());
+                keyList.add(results.getString("ObjectKey"));
             }
 
             return keyList;
@@ -978,7 +969,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
         ResultSet results = conn.ExecuteQuery(sql, Key.trim());
 
         // Valid Results?
-        if (results.first())
+        while(results.next())
         {
 
             String name = results.getString("name");
