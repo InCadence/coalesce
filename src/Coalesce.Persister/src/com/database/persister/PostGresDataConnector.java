@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 
 import Coalesce.Common.Exceptions.CoalescePersistorException;
 
@@ -60,7 +61,7 @@ public class PostGresDataConnector implements AutoCloseable {
         // Add Parameters
         for (int ii = 0; ii < parameters.length; ii++)
         {
-            stmt.setString(ii + 1, parameters[ii].trim());
+            stmt.setObject(ii + 1, parameters[ii].trim(),Types.OTHER);
         }
 
         return stmt.executeQuery();
@@ -90,7 +91,7 @@ public class PostGresDataConnector implements AutoCloseable {
         // Add Parameters
         for (int ii = 0; ii < parameters.length; ii++)
         {
-            stmt.setString(ii + 1, parameters[ii].trim());
+            stmt.setObject(ii + 1, parameters[ii].trim(),Types.OTHER);
         }
 
         stmt.executeUpdate();
@@ -137,7 +138,7 @@ public class PostGresDataConnector implements AutoCloseable {
         // Add Parameters
         for (int ii = 0; ii < parameters.length; ii++)
         {
-            stmt.setString(ii + 1, parameters[ii].trim());
+            stmt.setObject(ii + 1, parameters[ii].trim(),Types.OTHER);
         }
 
         stmt.executeUpdate();

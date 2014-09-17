@@ -936,12 +936,15 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
         ResultSetMetaData resultsmd = results.getMetaData();
 
         // JODA Function DateTimeFormat will adjust for the Server timezone when converting the time.
-        if (resultsmd.getColumnCount() <= 1 && results.first())
+        if (resultsmd.getColumnCount() <= 1)
         {
-            dateValue = results.getString("LastModified");
-            if (dateValue != null)
+            while (results.next())
             {
-                lastModified = JodaDateTimeHelper.getMySQLDateTime(dateValue);
+                dateValue = results.getString("LastModified");
+                if (dateValue != null)
+                {
+                    lastModified = JodaDateTimeHelper.getMySQLDateTime(dateValue);
+                }
             }
         }
         return lastModified;

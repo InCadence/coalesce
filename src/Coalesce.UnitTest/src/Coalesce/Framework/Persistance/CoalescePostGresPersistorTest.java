@@ -179,8 +179,9 @@ public class CoalescePostGresPersistorTest {
     }
 
     @Test
-    public void saveEntity() throws CoalescePersistorException
+    public void saveEntity() throws CoalesceException
     {
+        CoalescePostGresPersistorTest.createEntity();
         CoalescePostGresPersistorTest._coalesceFramework.SaveCoalesceEntity(_entity);
     }
     // @Test
