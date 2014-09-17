@@ -36,7 +36,6 @@ import com.database.persister.PostGresDataConnector;
 import com.database.persister.PostGresSQLPersistor;
 import com.database.persister.ServerConn;
 
-
 public class CoalescePostGresPersistorTest {
 
     private static String MODULE_NAME = "CoalescePostGresPersistorTest";
@@ -67,7 +66,9 @@ public class CoalescePostGresPersistorTest {
         CoalescePostGresPersistorTest._coalesceFramework.Initialize(postGresSQLPersister);
 
         CoalescePostGresPersistorTest.createEntity();
+
     }
+
     private static boolean createEntity() throws CoalesceException
     {
         try
@@ -100,6 +101,7 @@ public class CoalescePostGresPersistorTest {
             return false;
         }
     }
+
     private static CoalesceEntityTemplate testTemplate(CoalesceEntityTemplate template)
     {
         String templateXml = template.toXml();
@@ -159,6 +161,7 @@ public class CoalescePostGresPersistorTest {
         return template;
 
     }
+
     @Test
     public void testConnection() throws SQLException, CoalescePersistorException
     {
@@ -169,11 +172,25 @@ public class CoalescePostGresPersistorTest {
             conn.OpenConnection();
 
         }
+        catch (Exception e)
+        {
+            fail(e.getMessage());
+        }
     }
+
     @Test
-    public void test()
+    public void saveEntity() throws CoalescePersistorException
     {
-        fail("Not yet implemented");
+        CoalescePostGresPersistorTest._coalesceFramework.SaveCoalesceEntity(_entity);
     }
+    // @Test
+    // public void testGetEntity() throws CoalescePersistorException
+    // {
+    // XsdEntity ent = new XsdEntity();
+    // ent = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceEntity(_entity.getKey());
+    //
+    // assertTrue(ent != null);
+    //
+    // }
 
 }

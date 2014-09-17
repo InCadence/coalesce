@@ -1,17 +1,19 @@
 package com.database.persister;
 
+import java.util.Properties;
+
 
 public class ServerConn {
 
     private String _url;
     private String _db;
     private String _user;
-    private String _userPassword;
+    private String _password;
     private boolean _integratedSecurity;
     private String _serverName;
     private int _portNumber;
     private boolean _postGres=false;
-
+    Properties props = new Properties();
 
     
     public boolean isPostGres()
@@ -33,9 +35,11 @@ public class ServerConn {
     public String getPassword()
     {
         if(_postGres==false)
-            return this._userPassword.trim();
+            return this._password.trim();
         else
-            return "password="+this._userPassword.trim();
+        {
+            return this.props.getProperty(_password);
+        }
     }
 
     public int getPortNumber()
@@ -58,7 +62,9 @@ public class ServerConn {
         if(_postGres==false)
             return this._user.trim();
         else
-            return "user="+this._user.trim();
+        {
+            return this.props.getProperty(_user);
+        }
     }
 
     public boolean isIntegratedSecurity()
@@ -78,7 +84,8 @@ public class ServerConn {
 
     public void setPassword(String pass)
     {
-        this._userPassword = pass.trim();
+        this._password = pass.trim();
+        this.props.setProperty("password", this._password);
     }
 
     public void setPortNumber(int _portNumber)
@@ -99,5 +106,6 @@ public class ServerConn {
     public void setUser(String user)
     {
         this._user = user.trim();
+        this.props.setProperty("user", this._user);
     }
 }

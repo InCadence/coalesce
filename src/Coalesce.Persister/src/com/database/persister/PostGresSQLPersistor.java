@@ -121,7 +121,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
     @Override
     public EntityMetaData getCoalesceEntityIdAndTypeForKey(String Key) throws CoalescePersistorException
     {
-        try (MySQLDataConnector conn = new MySQLDataConnector(this.serCon))
+        try (PostGresDataConnector conn = new PostGresDataConnector(this.serCon))
         {
             return this.getCoalesceEntityIdAndTypeForKey(Key, conn);
         }
@@ -134,7 +134,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
     @Override
     public DateTime getCoalesceDataObjectLastModified(String Key, String ObjectType) throws CoalescePersistorException
     {
-        try (MySQLDataConnector conn = new MySQLDataConnector(this.serCon))
+        try (PostGresDataConnector conn = new PostGresDataConnector(this.serCon))
         {
             return this.getCoalesceDataObjectLastModified(Key, ObjectType, conn);
         }
@@ -147,7 +147,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
     @Override
     public byte[] getBinaryArray(String key) throws CoalescePersistorException
     {
-        try (MySQLDataConnector conn = new MySQLDataConnector(this.serCon))
+        try (PostGresDataConnector conn = new PostGresDataConnector(this.serCon))
         {
 
             byte[] binaryArray = null;
@@ -172,7 +172,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
     @Override
     public boolean persistEntityTemplate(CoalesceEntityTemplate template) throws CoalescePersistorException
     {
-        try (MySQLDataConnector conn = new MySQLDataConnector(this.serCon))
+        try (PostGresDataConnector conn = new PostGresDataConnector(this.serCon))
         {
             // Always persist template
             return conn.ExecuteProcedure("CoalesceEntityTemplate_InsertOrUpdate",
@@ -193,7 +193,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
     @Override
     public ElementMetaData getXPath(String Key, String ObjectType) throws CoalescePersistorException
     {
-        try (MySQLDataConnector conn = new MySQLDataConnector(this.serCon))
+        try (PostGresDataConnector conn = new PostGresDataConnector(this.serCon))
         {
             return this.getXPathRecursive(Key, ObjectType, "", conn);
         }
@@ -206,7 +206,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
     @Override
     public String getFieldValue(String FieldKey) throws CoalescePersistorException
     {
-        try (MySQLDataConnector conn = new MySQLDataConnector(this.serCon))
+        try (PostGresDataConnector conn = new PostGresDataConnector(this.serCon))
         {
             String value = null;
 
@@ -228,7 +228,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
     @Override
     public String getEntityXml(String Key) throws CoalescePersistorException
     {
-        try (MySQLDataConnector conn = new MySQLDataConnector(this.serCon))
+        try (PostGresDataConnector conn = new PostGresDataConnector(this.serCon))
         {
             String value = null;
 
@@ -250,7 +250,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
     @Override
     public String getEntityXml(String EntityId, String EntityIdType) throws CoalescePersistorException
     {
-        try (MySQLDataConnector conn = new MySQLDataConnector(this.serCon))
+        try (PostGresDataConnector conn = new PostGresDataConnector(this.serCon))
         {
             String value = null;
 
@@ -274,7 +274,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
     @Override
     public String getEntityXml(String Name, String EntityId, String EntityIdType) throws CoalescePersistorException
     {
-        try (MySQLDataConnector conn = new MySQLDataConnector(this.serCon))
+        try (PostGresDataConnector conn = new PostGresDataConnector(this.serCon))
         {
             String value = null;
 
@@ -323,7 +323,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
         boolean isSuccessful = false;
 
         // Create a Database Connection
-        try (MySQLDataConnector conn = new MySQLDataConnector(this.serCon))
+        try (PostGresDataConnector conn = new PostGresDataConnector(this.serCon))
         {
 
             conn.OpenConnection();
@@ -352,7 +352,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
         boolean isSuccessful = false;
 
         // Create a Database Connection
-        try (MySQLDataConnector conn = new MySQLDataConnector(this.serCon))
+        try (PostGresDataConnector conn = new PostGresDataConnector(this.serCon))
         {
 
             conn.OpenConnection();
@@ -376,7 +376,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
     @Override
     public String getEntityTemplateKey(String Name, String Source, String Version) throws CoalescePersistorException
     {
-        try (MySQLDataConnector conn = new MySQLDataConnector(this.serCon))
+        try (PostGresDataConnector conn = new PostGresDataConnector(this.serCon))
         {
             String value = null;
 
@@ -416,7 +416,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
     @Override
     public String getEntityTemplateXml(String Key) throws CoalescePersistorException
     {
-        try (MySQLDataConnector conn = new MySQLDataConnector(this.serCon))
+        try (PostGresDataConnector conn = new PostGresDataConnector(this.serCon))
         {
             String value = null;
 
@@ -438,7 +438,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
     @Override
     public String getEntityTemplateXml(String Name, String Source, String Version) throws CoalescePersistorException
     {
-        try (MySQLDataConnector conn = new MySQLDataConnector(this.serCon))
+        try (PostGresDataConnector conn = new PostGresDataConnector(this.serCon))
         {
             String value = null;
 
@@ -464,7 +464,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
     Protected Functions
     --------------------------------------------------------------------------*/
 
-    protected boolean persistObject(XsdDataObject dataObject, MySQLDataConnector conn) throws SQLException
+    protected boolean persistObject(XsdDataObject dataObject, PostGresDataConnector conn) throws SQLException
     {
         boolean isSuccessful = true;
 
@@ -537,7 +537,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
         return isSuccessful;
     }
 
-    protected boolean persistEntityObject(XsdEntity entity, MySQLDataConnector conn) throws SQLException
+    protected boolean persistEntityObject(XsdEntity entity, PostGresDataConnector conn) throws SQLException
     {
         // Return true if no update is required.
         if (!this.checkLastModified(entity, conn)) return true;
@@ -555,7 +555,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
                                      JodaDateTimeHelper.toMySQLDateTime(entity.getLastModified()));
     }
 
-    protected boolean persistSectionObject(XsdSection section, MySQLDataConnector conn) throws SQLException
+    protected boolean persistSectionObject(XsdSection section, PostGresDataConnector conn) throws SQLException
     {
         // Return true if no update is required.
         if (!this.checkLastModified(section, conn)) return true;
@@ -570,7 +570,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
                                      JodaDateTimeHelper.toMySQLDateTime(section.getLastModified()));
     }
 
-    protected boolean persistRecordsetObject(XsdRecordset recordset, MySQLDataConnector conn) throws SQLException
+    protected boolean persistRecordsetObject(XsdRecordset recordset, PostGresDataConnector conn) throws SQLException
     {
         // Return true if no update is required.
         if (!this.checkLastModified(recordset, conn)) return true;
@@ -585,7 +585,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
                                      JodaDateTimeHelper.toMySQLDateTime(recordset.getLastModified()));
     }
 
-    protected boolean persistFieldDefinitionObject(XsdFieldDefinition fieldDefinition, MySQLDataConnector conn)
+    protected boolean persistFieldDefinitionObject(XsdFieldDefinition fieldDefinition, PostGresDataConnector conn)
             throws SQLException
     {
 
@@ -602,7 +602,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
                                      JodaDateTimeHelper.toMySQLDateTime(fieldDefinition.getLastModified()));
     }
 
-    protected boolean persistRecordObject(XsdRecord record, MySQLDataConnector conn) throws SQLException
+    protected boolean persistRecordObject(XsdRecord record, PostGresDataConnector conn) throws SQLException
     {
         // Return true if no update is required.
         if (!this.checkLastModified(record, conn)) return true;
@@ -617,7 +617,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
                                      JodaDateTimeHelper.toMySQLDateTime(record.getLastModified()));
     }
 
-    protected boolean persistFieldObject(XsdField field, MySQLDataConnector conn) throws SQLException
+    protected boolean persistFieldObject(XsdField field, PostGresDataConnector conn) throws SQLException
     {
         // Return true if no update is required.
         if (!this.checkLastModified(field, conn)) return true;
@@ -638,7 +638,8 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
                                      field.getPreviousHistoryKey());
     }
 
-    protected boolean persistFieldHistoryObject(XsdFieldHistory fieldHistory, MySQLDataConnector conn) throws SQLException
+    protected boolean persistFieldHistoryObject(XsdFieldHistory fieldHistory, PostGresDataConnector conn)
+            throws SQLException
     {
         // Return true if no update is required.
         if (!this.checkLastModified(fieldHistory, conn)) return true;
@@ -659,7 +660,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
                                      fieldHistory.getPreviousHistoryKey());
     }
 
-    protected boolean persistLinkageSectionObject(XsdLinkageSection linkageSection, MySQLDataConnector conn)
+    protected boolean persistLinkageSectionObject(XsdLinkageSection linkageSection, PostGresDataConnector conn)
             throws SQLException
     {
         // Return true if no update is required.
@@ -675,7 +676,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
                                      JodaDateTimeHelper.toMySQLDateTime(linkageSection.getLastModified()));
     }
 
-    protected boolean persistLinkageObject(XsdLinkage linkage, MySQLDataConnector conn) throws SQLException
+    protected boolean persistLinkageObject(XsdLinkage linkage, PostGresDataConnector conn) throws SQLException
     {
         // Return true if no update is required.
         if (!this.checkLastModified(linkage, conn)) return true;
@@ -703,7 +704,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
                                      JodaDateTimeHelper.toMySQLDateTime(linkage.getLastModified()));
     }
 
-    protected EntityMetaData getCoalesceEntityIdAndTypeForKey(String Key, MySQLDataConnector conn) throws SQLException
+    protected EntityMetaData getCoalesceEntityIdAndTypeForKey(String Key, PostGresDataConnector conn) throws SQLException
     {
         EntityMetaData metaData = new EntityMetaData();
 
@@ -754,7 +755,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
      * @throws SQLException
      * @throws SQLException
      */
-    protected boolean checkLastModified(XsdDataObject dataObject, MySQLDataConnector conn) throws SQLException
+    protected boolean checkLastModified(XsdDataObject dataObject, PostGresDataConnector conn) throws SQLException
     {
         boolean isOutOfDate = true;
 
@@ -781,7 +782,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
         return isOutOfDate;
     }
 
-    protected boolean deleteObject(XsdDataObject dataObject, MySQLDataConnector conn) throws SQLException
+    protected boolean deleteObject(XsdDataObject dataObject, PostGresDataConnector conn) throws SQLException
     {
         String objectType = dataObject.getType();
         String objectKey = dataObject.getKey();
@@ -798,7 +799,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
     {
         List<String> keyList = new ArrayList<String>();
 
-        try (MySQLDataConnector conn = new MySQLDataConnector(this.serCon))
+        try (PostGresDataConnector conn = new PostGresDataConnector(this.serCon))
         {
             ResultSet results = conn.ExecuteQuery("SELECT ObjectKey FROM CoalesceEntity WHERE (EntityId like '%' ? '%') AND (EntityIdType like '%' ? '%') AND (Name=?)",
                                                   EntityId,
@@ -827,7 +828,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
             CoalescePersistorException
     {
 
-        try (MySQLDataConnector conn = new MySQLDataConnector(this.serCon))
+        try (PostGresDataConnector conn = new PostGresDataConnector(this.serCon))
         {
             List<String> keyList = new ArrayList<String>();
 
@@ -850,7 +851,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
         }
     }
 
-    protected boolean updateFileContent(XsdDataObject dataObject, MySQLDataConnector conn) throws SQLException
+    protected boolean updateFileContent(XsdDataObject dataObject, PostGresDataConnector conn) throws SQLException
     {
         boolean isSuccessful = false;
 
@@ -874,7 +875,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
         return isSuccessful;
     }
 
-    private boolean updateDataObject(XsdDataObject xsdDataObject, MySQLDataConnector conn, boolean AllowRemoval)
+    private boolean updateDataObject(XsdDataObject xsdDataObject, PostGresDataConnector conn, boolean AllowRemoval)
             throws SQLException
 
     {
@@ -922,7 +923,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
         return isSuccessful;
     }
 
-    private DateTime getCoalesceDataObjectLastModified(String Key, String ObjectType, MySQLDataConnector conn)
+    private DateTime getCoalesceDataObjectLastModified(String Key, String ObjectType, PostGresDataConnector conn)
             throws SQLException
     {
         DateTime lastModified = DateTime.now(DateTimeZone.UTC);
@@ -947,7 +948,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
 
     }
 
-    private ElementMetaData getXPathRecursive(String Key, String ObjectType, String XPath, MySQLDataConnector conn)
+    private ElementMetaData getXPathRecursive(String Key, String ObjectType, String XPath, PostGresDataConnector conn)
             throws SQLException
     {
 

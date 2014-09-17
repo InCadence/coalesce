@@ -41,7 +41,7 @@ public class PostGresDataConnector implements AutoCloseable {
     public void OpenConnection() throws SQLException
     {
         this._serCon.setPostGres(true);
-        this._conn = DriverManager.getConnection(this._serCon.getURL(), this._serCon.getUser(), this._serCon.getPassword());
+        this._conn = DriverManager.getConnection(this._serCon.getURL(), this._serCon.props);
     }
 
     public void CloseConnection() throws Exception
