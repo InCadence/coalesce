@@ -1,6 +1,5 @@
 package com.database.persister;
 
-import java.util.Properties;
 
 public class ServerConn {
 

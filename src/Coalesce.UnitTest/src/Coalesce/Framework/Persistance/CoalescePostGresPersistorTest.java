@@ -1,6 +1,8 @@
 package Coalesce.Framework.Persistance;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -30,8 +32,6 @@ import Coalesce.Framework.DataModel.XsdRecord;
 import Coalesce.Framework.DataModel.XsdRecordset;
 import Coalesce.Framework.DataModel.XsdSection;
 
-import com.database.persister.MySQLDataConnector;
-import com.database.persister.MySQLPersistor;
 import com.database.persister.PostGresDataConnector;
 import com.database.persister.PostGresSQLPersistor;
 import com.database.persister.ServerConn;
