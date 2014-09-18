@@ -243,8 +243,4 @@ public class ECoalesceFieldDataTypesTest {
      
     }
     
-    
-    //@test
-    //getStatus 
-    
-}
+ }
