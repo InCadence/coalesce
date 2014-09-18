@@ -99,10 +99,21 @@ public class JodaDateTimeHelper {
 
         return DateTime.parse(value);
     }
-    public static DateTime getPostGresDateTim(String value){
-        DateTimeFormatter dateFormatter=DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ssZ");
-        DateTime dtParse=DateTime.parse(value, dateFormatter);
-        return dtParse;
+
+    public static DateTime getPostGresDateTim(String value)
+    {
+        try
+        {
+            DateTimeFormatter outputFormatter 
+            = DateTimeFormat.forPattern("yyyy-MM-dd H:mm:ss.SSSZ").withZone(DateTimeZone.UTC);
+            DateTime dtOut=DateTime.parse(value,outputFormatter);
+            return dtOut;
+        }
+        catch (Exception ex)
+        {
+            System.out.println(ex.getMessage());
+            return null;
+        }
     }
 
     public static String GetElapsedGMTTimeString(DateTime ForDate, boolean IncludeParenthesis, boolean IncludeTime)

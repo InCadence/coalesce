@@ -232,7 +232,8 @@ public class CoalescePostGresPersistorTest {
          // Test Entity
          lastModified = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceEntityLastModified(_entity.getKey(),
                                                                                                     "entity");
-         assertTrue(DateTimeComparator.getInstance().compare(lastModified, _entity.getLastModified()) == 0);
+         int compare = DateTimeComparator.getInstance().compare(lastModified, _entity.getLastModified());
+        assertTrue(compare == 0);
 
          // Test Section
          XsdSection section = _entity.getSection("TestEntity/Live Status Section");
