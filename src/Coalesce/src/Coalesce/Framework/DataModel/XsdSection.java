@@ -9,6 +9,7 @@ import javax.xml.namespace.QName;
 import org.apache.commons.lang.NullArgumentException;
 import org.joda.time.DateTime;
 
+import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.Helpers.XmlHelper;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section;
@@ -307,8 +308,49 @@ public class XsdSection extends XsdDataObject {
     }
 
     @Override
-    protected Map<QName, String> getAttributes()
+    protected Map<QName, String> getOtherAttributes()
     {
         return this._entitySection.getOtherAttributes();
+    }
+
+    @Override
+    public boolean setAttribute(String name, String value)
+    {
+        switch (name) {
+        case "key":
+            _entitySection.setKey(value);
+            return true;
+        case "datecreated":
+            _entitySection.setDatecreated(JodaDateTimeHelper.FromXmlDateTimeUTC(value));
+            return true;
+        case "lastmodified":
+            _entitySection.setLastmodified(JodaDateTimeHelper.FromXmlDateTimeUTC(value));
+            return true;
+        case "name":
+            _entitySection.setName(value);
+            return true;
+        case "noindex":
+            _entitySection.setNoindex(value);
+            return true;
+        case "status":
+            _entitySection.setStatus(value);
+            return true;
+        default:
+            this.setOtherAttribute(name, value);
+            return true;
+        }
+    }
+
+    @Override
+    protected Map<QName, String> getAttributes()
+    {
+        Map<QName, String> map = new HashMap<QName, String>();
+        map.put(new QName("key"), _entitySection.getKey());
+        map.put(new QName("datecreated"), JodaDateTimeHelper.ToXmlDateTimeUTC(_entitySection.getDatecreated()));
+        map.put(new QName("lastmodified"), JodaDateTimeHelper.ToXmlDateTimeUTC(_entitySection.getLastmodified()));
+        map.put(new QName("name"), _entitySection.getName());
+        map.put(new QName("noindex"), _entitySection.getNoindex());
+        map.put(new QName("status"), _entitySection.getStatus());
+        return map;
     }
 }

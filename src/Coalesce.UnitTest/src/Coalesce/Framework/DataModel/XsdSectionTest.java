@@ -258,7 +258,7 @@ public class XsdSectionTest {
         @SuppressWarnings("unused")
         XsdSection liveSection = XsdSection.create(null, "Live Status Section", false);
     }
-    
+
     @Test(expected = NullArgumentException.class)
     public void createSectionNoIndexTrueNullParentTest()
     {

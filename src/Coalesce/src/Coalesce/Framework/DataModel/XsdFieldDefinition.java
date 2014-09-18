@@ -1,5 +1,6 @@
 package Coalesce.Framework.DataModel;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
@@ -7,6 +8,7 @@ import javax.xml.namespace.QName;
 import org.joda.time.DateTime;
 
 import Coalesce.Common.Classification.Marking;
+import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.Helpers.XmlHelper;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Fielddefinition;
@@ -297,6 +299,56 @@ public class XsdFieldDefinition extends XsdDataObject {
 
     @Override
     protected Map<QName, String> getAttributes()
+    {
+        Map<QName, String> map = new HashMap<QName, String>();
+        map.put(new QName("key"), _entityFieldDefinition.getKey());
+        map.put(new QName("datecreated"), JodaDateTimeHelper.ToXmlDateTimeUTC(_entityFieldDefinition.getDatecreated()));
+        map.put(new QName("lastmodified"), JodaDateTimeHelper.ToXmlDateTimeUTC(_entityFieldDefinition.getLastmodified()));
+        map.put(new QName("status"), _entityFieldDefinition.getStatus());
+        map.put(new QName("name"), getStringElement(_entityFieldDefinition.getName()));
+        map.put(new QName("defaultclassificationmarking"),
+                _entityFieldDefinition.getDefaultclassificationmarking().toString());
+        map.put(new QName("defaultvalue"), _entityFieldDefinition.getDefaultvalue().toString());
+        map.put(new QName("datatype"), _entityFieldDefinition.getDatatype().toString());
+        return map;
+    }
+
+    @Override
+    public boolean setAttribute(String name, String value)
+    {
+
+        switch (name) {
+        case "key":
+            _entityFieldDefinition.setKey(value);
+            return true;
+        case "datecreated":
+            _entityFieldDefinition.setDatecreated(JodaDateTimeHelper.FromXmlDateTimeUTC(value));
+            return true;
+        case "lastmodified":
+            _entityFieldDefinition.setLastmodified(JodaDateTimeHelper.FromXmlDateTimeUTC(value));
+            return true;
+        case "status":
+            _entityFieldDefinition.setStatus(value);
+            return true;
+        case "name":
+            _entityFieldDefinition.setName(value);
+            return true;
+        case "defaultclassificationmarking":
+            _entityFieldDefinition.setDefaultclassificationmarking(value);
+            return true;
+        case "defaultvalue":
+            _entityFieldDefinition.setDefaultvalue(value);
+            return true;
+        case "datatype":
+            _entityFieldDefinition.setDatatype(value);
+        default:
+            this.setOtherAttribute(name, value);
+            return true;
+        }
+    }
+
+    @Override
+    protected Map<QName, String> getOtherAttributes()
     {
         return this._entityFieldDefinition.getOtherAttributes();
     }

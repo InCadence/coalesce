@@ -8,6 +8,7 @@ import javax.xml.namespace.QName;
 import org.apache.commons.lang.NullArgumentException;
 import org.joda.time.DateTime;
 
+import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import Coalesce.Common.Helpers.XmlHelper;
 import Coalesce.Framework.GeneratedJAXB.Entity.Linkagesection;
 import Coalesce.Framework.GeneratedJAXB.Entity.Linkagesection.Linkage;
@@ -147,7 +148,7 @@ public class XsdLinkageSection extends XsdDataObject {
         }
 
         return linkages;
-        
+
     }
 
     public XsdLinkage createLinkage()
@@ -221,8 +222,50 @@ public class XsdLinkageSection extends XsdDataObject {
     }
 
     @Override
-    protected Map<QName, String> getAttributes()
+    protected Map<QName, String> getOtherAttributes()
     {
         return this._entityLinkageSection.getOtherAttributes();
     }
+
+    @Override
+    public boolean setAttribute(String name, String value)
+    {
+        switch (name) {
+        case "key":
+            _entityLinkageSection.setKey(value);
+            return true;
+        case "datecreated":
+            _entityLinkageSection.setDatecreated(JodaDateTimeHelper.FromXmlDateTimeUTC(value));
+            return true;
+        case "lastmodified":
+            _entityLinkageSection.setLastmodified(JodaDateTimeHelper.FromXmlDateTimeUTC(value));
+            return true;
+        case "name":
+            _entityLinkageSection.setName(value);
+            return true;
+        case "noindex":
+            _entityLinkageSection.setNoindex(value);
+            return true;
+        case "status":
+            _entityLinkageSection.setStatus(value);
+            return true;
+        default:
+            this.setOtherAttribute(name, value);
+            return true;
+        }
+    }
+
+    @Override
+    protected Map<QName, String> getAttributes()
+    {
+        Map<QName, String> map = new HashMap<QName, String>();
+        map.put(new QName("key"), _entityLinkageSection.getKey());
+        map.put(new QName("datecreated"), JodaDateTimeHelper.ToXmlDateTimeUTC(_entityLinkageSection.getDatecreated()));
+        map.put(new QName("lastmodified"), JodaDateTimeHelper.ToXmlDateTimeUTC(_entityLinkageSection.getLastmodified()));
+        map.put(new QName("name"), _entityLinkageSection.getName());
+        map.put(new QName("noindex"), _entityLinkageSection.getNoindex());
+        map.put(new QName("status"), _entityLinkageSection.getStatus());
+        return map;
+    }
+
 }

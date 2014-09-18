@@ -1,6 +1,7 @@
 package Coalesce.Framework.DataModel;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -9,6 +10,7 @@ import javax.xml.namespace.QName;
 import org.apache.commons.lang.NullArgumentException;
 import org.joda.time.DateTime;
 
+import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.Helpers.XmlHelper;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset;
@@ -423,9 +425,55 @@ public class XsdRecordset extends XsdDataObject {
     }
 
     @Override
-    protected Map<QName, String> getAttributes()
+    protected Map<QName, String> getOtherAttributes()
     {
         return this._entityRecordset.getOtherAttributes();
+    }
+
+    @Override
+    public boolean setAttribute(String name, String value)
+    {
+        switch (name) {
+        case "key":
+            _entityRecordset.setKey(value);
+            return true;
+        case "datecreated":
+            _entityRecordset.setDatecreated(JodaDateTimeHelper.FromXmlDateTimeUTC(value));
+            return true;
+        case "lastmodified":
+            _entityRecordset.setLastmodified(JodaDateTimeHelper.FromXmlDateTimeUTC(value));
+            return true;
+        case "name":
+            _entityRecordset.setName(value);
+            return true;
+        case "minrecords":
+            _entityRecordset.setMinrecords(value);
+            return true;
+        case "maxrecords":
+            _entityRecordset.setMaxrecords(value);
+            return true;
+        case "status":
+            _entityRecordset.setStatus(value);
+            return true;
+        default:
+            this.setOtherAttribute(name, value);
+            return true;
+        }
+    }
+
+    @Override
+    protected Map<QName, String> getAttributes()
+    {
+        Map<QName, String> map = new HashMap<QName, String>();
+        map.put(new QName("key"), _entityRecordset.getKey());
+        map.put(new QName("datecreated"), JodaDateTimeHelper.ToXmlDateTimeUTC(_entityRecordset.getDatecreated()));
+        map.put(new QName("lastmodified"), JodaDateTimeHelper.ToXmlDateTimeUTC(_entityRecordset.getLastmodified()));
+        map.put(new QName("name"), _entityRecordset.getName());
+        map.put(new QName("minrecords"), _entityRecordset.getMinrecords());
+        map.put(new QName("maxrecords"), _entityRecordset.getMaxrecords());
+        map.put(new QName("status"), _entityRecordset.getStatus());
+        return map;
+
     }
 }
 

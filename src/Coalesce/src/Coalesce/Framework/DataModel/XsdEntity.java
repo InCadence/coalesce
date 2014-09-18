@@ -525,7 +525,7 @@ public class XsdEntity extends XsdDataObject {
 
     public void mergeSyncEntity(XsdEntity syncEntity)
     {
-        mergeSyncEntityDataObject(this,syncEntity);
+        mergeSyncEntityDataObject(this, syncEntity);
     }
 
     protected void mergeSyncEntityDataObject(XsdDataObject myEntity, XsdDataObject syncEntity)
@@ -538,7 +538,6 @@ public class XsdEntity extends XsdDataObject {
         switch (myLastModified.compareTo(updateLastModified)) {
 
         case -1:
-            // Mine is Older; Update Each Attribute.
             for (Map.Entry<QName, String> updateAttribute : syncEntity.getAttributes().entrySet())
             {
                 // Set Attribute
@@ -564,7 +563,7 @@ public class XsdEntity extends XsdDataObject {
             else
             {
                 // We have this child; Call MergeRequiredNode
-                mergeSyncEntityDataObject(myChildDataObject, updateChild.getValue());
+                this.mergeSyncEntityDataObject(myChildDataObject, updateChild.getValue());
             }
         }
     }
@@ -695,6 +694,59 @@ public class XsdEntity extends XsdDataObject {
 
     @Override
     protected Map<QName, String> getAttributes()
+    {
+        Map<QName, String> map = new HashMap<QName, String>();
+        map.put(new QName("key"), _entity.getKey());
+        map.put(new QName("datecreated"), JodaDateTimeHelper.ToXmlDateTimeUTC(_entity.getDatecreated()));
+        map.put(new QName("lastmodified"), JodaDateTimeHelper.ToXmlDateTimeUTC(_entity.getLastmodified()));
+        map.put(new QName("name"), _entity.getName());
+        map.put(new QName("source"), _entity.getSource());
+        map.put(new QName("version"), _entity.getVersion());
+        map.put(new QName("entityid"), _entity.getEntityid());
+        map.put(new QName("entityidtype"), _entity.getEntityidtype());
+        map.put(new QName("title"), _entity.getTitle());
+        map.put(new QName("status"), _entity.getStatus());
+        return map;
+    }
+
+    @Override
+    public boolean setAttribute(String name, String value)
+    {
+        switch (name) {
+        case "key":
+            _entity.setKey(value);
+            return true;
+        case "datecreated":
+            _entity.setDatecreated(JodaDateTimeHelper.FromXmlDateTimeUTC(value));
+            return true;
+        case "lastmodified":
+            _entity.setLastmodified(JodaDateTimeHelper.FromXmlDateTimeUTC(value));
+            return true;
+        case "name":
+            _entity.setName(value);
+            return true;
+        case "source":
+            _entity.setSource(value);
+            return true;
+        case "version":
+            _entity.setVersion(value);
+            return true;
+        case "entityid":
+            _entity.setEntityid(value);
+            return true;
+        case "title":
+            _entity.setTitle(value);
+            return true;
+        case "status":
+            _entity.setStatus(value);
+            return true;
+        default:
+            this.setOtherAttribute(name, value);
+            return true;
+        }
+    }
+
+    protected Map<QName, String> getOtherAttributes()
     {
         return this._entity.getOtherAttributes();
     }

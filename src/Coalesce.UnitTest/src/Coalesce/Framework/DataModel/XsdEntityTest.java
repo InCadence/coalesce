@@ -425,7 +425,7 @@ public class XsdEntityTest {
         assertNotNull(entity.getLinkageSection());
         assertTrue(entity.getSections().isEmpty());
 
-        entity.setAttribute("testnewattribute", "test");
+        entity.setOtherAttribute("testnewattribute", "test");
 
         // Verify Link Section Creation
         assertTrue(entity.getLinkageSection().getName().equalsIgnoreCase("linkages"));
@@ -456,7 +456,7 @@ public class XsdEntityTest {
         assertTrue(entity2.initialize(entityXml));
 
         // Verify Custom Attribute
-        assertTrue(entity2.getAttribute("testnewattribute").equals("test"));
+        assertTrue(entity2.getOtherAttribute("testnewattribute").equals("test"));
 
         // Verify Entity
         assertTrue(entity2.getSource().equals("TREX Portal"));
@@ -487,7 +487,7 @@ public class XsdEntityTest {
         // Verify Entity Creation
         assertTrue(entity.getSource().equals("TREX Portal"));
 
-        entity.setAttribute("testnewattribute", "test");
+        entity.setOtherAttribute("testnewattribute", "test");
 
         // Verify Link Section Creation
         assertTrue(entity.getLinkageSection().getName().equalsIgnoreCase("linkages"));
@@ -518,7 +518,7 @@ public class XsdEntityTest {
         assertTrue(entity2.initialize(entityXml));
 
         // Verify Custom Attribute
-        assertTrue(entity2.getAttribute("testnewattribute").equals("test"));
+        assertTrue(entity2.getOtherAttribute("testnewattribute").equals("test"));
 
         // Verify Entity
         assertTrue(entity2.getSource().equals("TREX Portal"));
@@ -1005,7 +1005,7 @@ public class XsdEntityTest {
         String entityXml = entity.toXml();
 
         assertTrue(entityXml.contains("anthony=\"Test\""));
-        assertTrue(entity.getAttribute("anthony").equals("Test"));
+        assertTrue(entity.getOtherAttribute("anthony").equals("Test"));
 
     }
 
@@ -1933,11 +1933,11 @@ public class XsdEntityTest {
         record.setFieldValue("Binary1", "Binary1".getBytes("US-ASCII"));
         record.setFieldValue("Binary2", "Binary2".getBytes("US-ASCII"));
         record.setFieldValue("Binary3", "Binary3".getBytes("US-ASCII"));
-        
+
         record.setFieldValue("File1", "File1".getBytes("US-ASCII"), "file1");
         record.setFieldValue("File2", "File2".getBytes("US-ASCII"), "file2");
         record.setFieldValue("File3", "File3".getBytes("US-ASCII"), "file3");
-        
+
         String xml = entity.toXml(true);
 
         XsdEntity desEntity = XsdEntity.create(xml);
@@ -1987,6 +1987,22 @@ public class XsdEntityTest {
 
         assertTrue(base64Field.getHistory().isEmpty());
 
+    }
+
+    @Test
+    public void mergeSyncEntityUpdateFieldDefinitionTest()
+    {
+        XsdEntity myEntity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdEntity updatedEntity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        XsdFieldDefinition fieldDefinition = (XsdFieldDefinition) updatedEntity.getCoalesceDataObjectForKey("1A7DA2CD-8A83-4E86-ADE8-15FDECE0564E");
+        fieldDefinition.setDefaultValue("UpdatedIncidentDescription");
+        fieldDefinition.setLastModified(new DateTime());
+        updatedEntity.setLastModified(new DateTime());
+
+        myEntity.mergeSyncEntity(updatedEntity);
+        XsdFieldDefinition myfieldDefinition = (XsdFieldDefinition) myEntity.getCoalesceDataObjectForKey("1A7DA2CD-8A83-4E86-ADE8-15FDECE0564E");
+        assertEquals("UpdatedIncidentDescription", myfieldDefinition.getDefaultValue());
     }
 
     // -----------------------------------------------------------------------//

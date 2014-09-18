@@ -1,5 +1,6 @@
 package Coalesce.Framework.DataModel;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
@@ -60,7 +61,7 @@ public class XsdLinkage extends XsdDataObject {
     {
         if (parent == null) throw new NullArgumentException("parent");
         if (linkage == null) throw new NullArgumentException("linkage");
-        
+
         _parent = parent;
         _entityLinkage = linkage;
 
@@ -332,8 +333,93 @@ public class XsdLinkage extends XsdDataObject {
     // -----------------------------------------------------------------------//
 
     @Override
-    protected Map<QName, String> getAttributes()
+    protected Map<QName, String> getOtherAttributes()
     {
         return this._entityLinkage.getOtherAttributes();
+    }
+
+    @Override
+    public boolean setAttribute(String name, String value)
+    {
+        switch (name) {
+        case "key":
+            _entityLinkage.setKey(value);
+            return true;
+        case "datecreated":
+            _entityLinkage.setDatecreated(JodaDateTimeHelper.FromXmlDateTimeUTC(value));
+            return true;
+        case "lastmodified":
+            _entityLinkage.setLastmodified(JodaDateTimeHelper.FromXmlDateTimeUTC(value));
+            return true;
+        case "name":
+            _entityLinkage.setName(value);
+            return true;
+        case "entity1key":
+            _entityLinkage.setEntity1Key(value);
+            return true;
+        case "entity1name":
+            _entityLinkage.setEntity1Name(value);
+            return true;
+        case "entity1source":
+            _entityLinkage.setEntity1Source(value);
+            return true;
+        case "entity1version":
+            _entityLinkage.setEntity1Version(value);
+            return true;
+        case "linktype":
+            _entityLinkage.setLinktype(value);
+            return true;
+        case "entity2key":
+            _entityLinkage.setEntity2Key(value);
+            return true;
+        case "entity2name":
+            _entityLinkage.setEntity2Name(value);
+            return true;
+        case "entity2source":
+            _entityLinkage.setEntity2Source(value);
+            return true;
+        case "entity2version":
+            _entityLinkage.setEntity2Version(value);
+            return true;
+        case "classificationmarking":
+            _entityLinkage.setClassificationmarking(value);
+            return true;
+        case "modifiedby":
+            _entityLinkage.setModifiedby(value);
+            return true;
+        case "inputlang":
+            _entityLinkage.setInputlang(value);
+            return true;
+        case "status":
+            _entityLinkage.setStatus(value);
+            return true;
+        default:
+            this.setOtherAttribute(name, value);
+            return true;
+        }
+    }
+
+    @Override
+    protected Map<QName, String> getAttributes()
+    {
+        Map<QName, String> map = new HashMap<QName, String>();
+        map.put(new QName("key"), _entityLinkage.getKey());
+        map.put(new QName("datecreated"), JodaDateTimeHelper.ToXmlDateTimeUTC(_entityLinkage.getDatecreated()));
+        map.put(new QName("lastmodified"), JodaDateTimeHelper.ToXmlDateTimeUTC(_entityLinkage.getLastmodified()));
+        map.put(new QName("name"), _entityLinkage.getName());
+        map.put(new QName("entity1key"), _entityLinkage.getEntity1Key());
+        map.put(new QName("entity1name"), _entityLinkage.getEntity1Name());
+        map.put(new QName("entity1source"), _entityLinkage.getEntity1Source());
+        map.put(new QName("entity1version"), _entityLinkage.getEntity1Version());
+        map.put(new QName("linktype"), _entityLinkage.getLinktype());
+        map.put(new QName("entity2key"), _entityLinkage.getEntity2Key());
+        map.put(new QName("entity2name"), _entityLinkage.getEntity2Name());
+        map.put(new QName("entity2source"), _entityLinkage.getEntity2Source());
+        map.put(new QName("entity2version"), _entityLinkage.getEntity2Version());
+        map.put(new QName("classificationmarking"), _entityLinkage.getClassificationmarking());
+        map.put(new QName("modifiedby"), _entityLinkage.getModifiedby());
+        map.put(new QName("inputlang"), _entityLinkage.getInputlang());
+        map.put(new QName("status"), _entityLinkage.getStatus());
+        return map;
     }
 }

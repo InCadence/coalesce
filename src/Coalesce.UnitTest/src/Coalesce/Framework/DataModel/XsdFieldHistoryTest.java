@@ -149,8 +149,8 @@ public class XsdFieldHistoryTest {
         assertEquals(field.getLastModified(), fieldHistory.getLastModified());
         assertEquals(field.getStatus(), fieldHistory.getStatus());
 
-        Map<QName, String> otherAttributes = fieldHistory.getAttributes();
-        for (Map.Entry<QName, String> otherAttr : field.getAttributes().entrySet())
+        Map<QName, String> otherAttributes = fieldHistory.getOtherAttributes();
+        for (Map.Entry<QName, String> otherAttr : field.getOtherAttributes().entrySet())
         {
             assertTrue(otherAttributes.containsKey(otherAttr.getKey()));
             assertEquals(otherAttributes.get(otherAttr.getKey()), otherAttr.getValue());

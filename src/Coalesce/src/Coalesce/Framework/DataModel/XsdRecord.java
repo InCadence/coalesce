@@ -1,6 +1,7 @@
 package Coalesce.Framework.DataModel;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +13,7 @@ import org.joda.time.DateTime;
 import Coalesce.Common.Exceptions.CoalesceException;
 import Coalesce.Common.Exceptions.DataFormatException;
 import Coalesce.Common.Exceptions.InvalidFieldException;
+import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.Helpers.XmlHelper;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record;
@@ -555,9 +557,46 @@ public class XsdRecord extends XsdDataObject {
     }
 
     @Override
-    protected Map<QName, String> getAttributes()
+    protected Map<QName, String> getOtherAttributes()
     {
         return this._entityRecord.getOtherAttributes();
+    }
+
+    @Override
+    public boolean setAttribute(String name, String value)
+    {
+        switch (name) {
+        case "key":
+            _entityRecord.setKey(value);
+            return true;
+        case "datecreated":
+            _entityRecord.setDatecreated(JodaDateTimeHelper.FromXmlDateTimeUTC(value));
+            return true;
+        case "lastmodified":
+            _entityRecord.setLastmodified(JodaDateTimeHelper.FromXmlDateTimeUTC(value));
+            return true;
+        case "status":
+            _entityRecord.setStatus(value);
+            return true;
+        case "name":
+            _entityRecord.setName(value);
+            return true;
+        default:
+            this.setOtherAttribute(name, value);
+            return true;
+        }
+    }
+
+    @Override
+    protected Map<QName, String> getAttributes()
+    {
+        Map<QName, String> map = new HashMap<QName, String>();
+        map.put(new QName("key"), _entityRecord.getKey());
+        map.put(new QName("datecreated"), JodaDateTimeHelper.ToXmlDateTimeUTC(_entityRecord.getDatecreated()));
+        map.put(new QName("lastmodified"), JodaDateTimeHelper.ToXmlDateTimeUTC(_entityRecord.getLastmodified()));
+        map.put(new QName("status"), _entityRecord.getStatus());
+        map.put(new QName("name"), _entityRecord.getName());
+        return map;
     }
 
     private XsdRecordset getCastParent()

@@ -61,6 +61,8 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
 
     public abstract String toXml();
 
+    public abstract boolean setAttribute(String name, String value);
+
     /*--------------------------------------------------------------------------
     Protected Abstract Functions
     --------------------------------------------------------------------------*/
@@ -76,6 +78,8 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
     protected abstract void setObjectStatus(ECoalesceDataObjectStatus status);
 
     protected abstract Map<QName, String> getAttributes();
+
+    protected abstract Map<QName, String> getOtherAttributes();
 
     /*--------------------------------------------------------------------------
     Public Interface Functions
@@ -194,9 +198,10 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
     {
         return this._childDataObjects;
     }
-    
-    public void setChildDataObjects(String key, XsdDataObject value) {
-        this._childDataObjects.put(key,value);
+
+    public void setChildDataObjects(String key, XsdDataObject value)
+    {
+        this._childDataObjects.put(key, value);
     }
 
     @Override
@@ -218,7 +223,19 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
 
     public String getAttribute(String name)
     {
-        return this.getAttributes().get(new QName(name));
+        if (this.getAttributes().get(new QName(name)) != null)
+        {
+            return this.getAttributes().get(new QName(name));
+        }
+        else
+        {
+            return this.getOtherAttributes().get(new QName(name));
+        }
+    }
+
+    public String getOtherAttribute(String name)
+    {
+        return this.getOtherAttributes().get(new QName(name));
     }
 
     public DateTime getAttributeAsDate(String name)
@@ -227,9 +244,9 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
         return null;
     }
 
-    public boolean setAttribute(String name, String value)
+    public boolean setOtherAttribute(String name, String value)
     {
-        this.getAttributes().put(new QName(name), value);
+        this.getOtherAttributes().put(new QName(name), value);
         return true;
     }
 

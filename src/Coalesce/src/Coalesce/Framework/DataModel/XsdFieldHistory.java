@@ -1,11 +1,13 @@
 package Coalesce.Framework.DataModel;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
 
 import org.joda.time.DateTime;
 
+import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.Helpers.XmlHelper;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record.Field;
@@ -373,9 +375,66 @@ public class XsdFieldHistory extends XsdFieldBase {
     }
 
     @Override
-    protected Map<QName, String> getAttributes()
+    protected Map<QName, String> getOtherAttributes()
     {
         return this._entityFieldHistory.getOtherAttributes();
+    }
+
+    @Override
+    public boolean setAttribute(String name, String value)
+    {
+        switch (name) {
+        case "key":
+            _entityFieldHistory.setKey(value);
+            return true;
+        case "datecreated":
+            _entityFieldHistory.setDatecreated(JodaDateTimeHelper.FromXmlDateTimeUTC(value));
+            return true;
+        case "lastmodified":
+            _entityFieldHistory.setLastmodified(JodaDateTimeHelper.FromXmlDateTimeUTC(value));
+            return true;
+        case "name":
+            _entityFieldHistory.setName(value);
+            return true;
+        case "datatype":
+            _entityFieldHistory.setDatatype(value);
+            return true;
+        case "classificationmarking":
+            _entityFieldHistory.setClassificationmarking(value);
+            return true;
+        case "label":
+            _entityFieldHistory.setLabel(value);
+            return true;
+        case "value":
+            _entityFieldHistory.setValue(value);
+            return true;
+        case "status":
+            _entityFieldHistory.setStatus(value);
+            return true;
+        case "previoushistorykey":
+            _entityFieldHistory.setPrevioushistorykey(value);
+            return true;
+        default:
+            this.setOtherAttribute(name, value);
+            return true;
+        }
+    }
+
+    @Override
+    protected Map<QName, String> getAttributes()
+    {
+        Map<QName, String> map = new HashMap<QName, String>();
+        map.put(new QName("key"), _entityFieldHistory.getKey());
+        map.put(new QName("datecreated"), JodaDateTimeHelper.ToXmlDateTimeUTC(_entityFieldHistory.getDatecreated()));
+        map.put(new QName("lastmodified"), JodaDateTimeHelper.ToXmlDateTimeUTC(_entityFieldHistory.getLastmodified()));
+        map.put(new QName("name"), _entityFieldHistory.getName());
+        map.put(new QName("datatype"), _entityFieldHistory.getDatatype());
+        map.put(new QName("classificationmarking"), _entityFieldHistory.getClassificationmarking());
+        map.put(new QName("label"), _entityFieldHistory.getLabel());
+        map.put(new QName("value"), _entityFieldHistory.getValue());
+        map.put(new QName("status"), _entityFieldHistory.getStatus());
+        map.put(new QName("previoushistorykey"), _entityFieldHistory.getPrevioushistorykey());
+        return map;
     }
 
 }
