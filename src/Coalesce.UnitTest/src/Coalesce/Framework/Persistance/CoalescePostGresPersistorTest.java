@@ -1,11 +1,14 @@
 package Coalesce.Framework.Persistance;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeComparator;
@@ -248,6 +251,148 @@ public class CoalescePostGresPersistorTest {
         lastModified = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceEntityLastModified(section.getKey(),
                                                                                                       "section");
         assertTrue(DateTimeComparator.getInstance().compare(lastModified, section.getLastModified()) == 0);
+
+    }
+    @Test
+    public void testFAILCheckLastModified() throws CoalescePersistorException
+    {
+        DateTime lastModified;
+
+        // Test Entity
+        lastModified = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceEntityLastModified(_entity.getKey(),
+                                                                                                   "linkage");
+        assertTrue(DateTimeComparator.getInstance().compare(lastModified, _entity.getLastModified()) == 1);
+
+    }
+    @Test
+    public void testGetEntityByIdAndType() throws CoalescePersistorException
+    {
+        XsdEntity ent = new XsdEntity();
+        ent = CoalescePostGresPersistorTest._coalesceFramework.GetEntity(_entity.getEntityId(), _entity.getEntityIdType());
+        assertTrue(ent != null);
+    }
+    @Test
+    public void testGetEntityByNameAndIdAndType() throws CoalescePersistorException
+    {
+        XsdEntity ent = new XsdEntity();
+
+        ent = CoalescePostGresPersistorTest._coalesceFramework.GetEntity(_entity.getName(),
+                                                                      _entity.getEntityId(),
+                                                                      _entity.getEntityIdType());
+
+        assertTrue(ent != null);
+
+    }
+    @Test
+    public void testGetFieldValue() throws CoalescePersistorException
+    {
+        assertTrue(CoalescePostGresPersistorTest._coalesceFramework.SaveCoalesceEntity(_entity));
+        String fieldValue = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceFieldValue(_fieldKey);
+
+        assertTrue(fieldValue.equals("Test Status"));
+
+    }
+    @Test
+    public void testFAILGetFieldValue() throws CoalesceException
+    {
+        // Create a new entity, but do not save the entity
+        assertTrue(CoalescePostGresPersistorTest.createEntity());
+        String fieldValue = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceFieldValue(_fieldKey);
+        assertNull(fieldValue);
+
+    }
+    @Test
+    public void testGetEntityKeyForEntityId() throws CoalescePersistorException
+    {
+        String objectKey = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceEntityKeyForEntityId(_entity.getEntityId(),
+                                                                                                         _entity.getEntityIdType(),
+                                                                                                         _entity.getName());
+        assertTrue(objectKey != null);
+
+    }
+    @Test
+    public void testFAILGetEntityKeyForEntityId() throws CoalescePersistorException
+    {
+        String objectKey = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceEntityKeyForEntityId("", "", "");
+        assertTrue(objectKey == null);
+
+    }
+    @Test
+    public void testGetEntityKeyForEntityIdName() throws CoalescePersistorException
+    {
+        List<String> objectKey = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceEntityKeysForEntityId(_entity.getEntityId(),
+                                                                                                                _entity.getEntityIdType(),
+                                                                                                                _entity.getName(),
+                                                                                                                _entity.getSource());
+        assertTrue(objectKey.size() >= 1);
+
+    }
+    @Test
+    public void testFAILGetEntityKeyForEntityIdName() throws CoalescePersistorException
+    {
+        List<String> objectKey = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceEntityKeysForEntityId("",
+                                                                                                                "",
+                                                                                                                "",
+                                                                                                                "");
+        assertTrue(objectKey.size() == 0);
+
+    }
+    @Test
+    public void testGetEntityKeyForEntityIdSource() throws CoalescePersistorException
+    {
+        List<String> objectKey = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceEntityKeysForEntityId(_entity.getEntityId(),
+                                                                                                                _entity.getEntityIdType(),
+                                                                                                                _entity.getName());
+        assertTrue(objectKey.size() >= 0 || objectKey != null);
+
+    }
+    @Test
+    public void testFAILGetEntityKeyForEntityIdSource() throws CoalescePersistorException
+    {
+        List<String> objectKey = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceEntityKeysForEntityId("", "", "");
+        assertTrue(objectKey.size() == 0);
+
+    }
+    @Test
+    public void testGetEntityKeysForEntityIdSource() throws CoalescePersistorException
+    {
+        String objectKey = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceEntityKeyForEntityId(_entity.getEntityId(),
+                                                                                                         _entity.getEntityIdType(),
+                                                                                                         _entity.getName(),
+                                                                                                         _entity.getSource());
+        assertTrue(objectKey != null);
+
+    }
+    @Test
+    public void testGetEntityTemplateXML() throws CoalescePersistorException
+    {
+        // Get Template Key
+        String templateKey = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceEntityTemplateKey(_entity.getName(),
+                                                                                                        _entity.getSource(),
+                                                                                                        _entity.getVersion());
+
+        // Load Template by Key
+        String templateXML = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceEntityTemplateXml(templateKey);
+
+        assertFalse(StringHelper.IsNullOrEmpty(templateXML));
+
+    }
+    @Test
+    public void testGetEntityTemplateXMLName() throws CoalescePersistorException
+    {
+        String templateXML = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceEntityTemplateXml(_entity.getName(),
+                                                                                                        _entity.getSource(),
+                                                                                                        _entity.getVersion());
+        assertFalse(StringHelper.IsNullOrEmpty(templateXML));
+
+    }
+    @Test
+    public void testGetEntityTemplateKey() throws CoalescePersistorException
+    {
+        String templateKey = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceEntityTemplateKey(_entity.getName(),
+                                                                                                        _entity.getSource(),
+                                                                                                        _entity.getVersion());
+        assertFalse(StringHelper.IsNullOrEmpty(templateKey));
 
     }
 

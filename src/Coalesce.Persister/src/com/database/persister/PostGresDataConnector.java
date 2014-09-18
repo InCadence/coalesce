@@ -67,6 +67,26 @@ public class PostGresDataConnector implements AutoCloseable {
         return stmt.executeQuery();
 
     }
+    public ResultSet ExecuteLikeQuery(String SQL,int likeParams, String... parameters) throws SQLException
+    {
+
+        // Open Connection if not already created
+        if (this._conn == null) this.OpenConnection();
+
+        CallableStatement stmt = this._conn.prepareCall(SQL);
+
+        // Add Parameters
+        for (int ii = 0; ii < parameters.length; ii++)
+        {
+            if(ii+1<=likeParams)
+                stmt.setString(ii + 1, "%" +parameters[ii].trim() + "%");  //  Like Clause Search String
+            else
+                stmt.setString(ii + 1, parameters[ii].trim());  //  Normal parameter
+        }
+
+        return stmt.executeQuery();
+
+    }
 
     public ResultSet ExecuteQuery(String SQL) throws SQLException
     {

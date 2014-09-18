@@ -212,7 +212,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
 
             ResultSet results = conn.ExecuteQuery("SELECT value FROM CoalesceField WHERE ObjectKey =?", FieldKey);
 
-            if (results != null && results.first())
+            while(results.next())
             {
                 value = results.getString("value");
             }
@@ -801,7 +801,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
 
         try (PostGresDataConnector conn = new PostGresDataConnector(this.serCon))
         {
-            ResultSet results = conn.ExecuteQuery("SELECT ObjectKey FROM CoalesceEntity WHERE (EntityId like '%' ? '%') AND (EntityIdType like '%' ? '%') AND (Name=?)",
+            ResultSet results = conn.ExecuteLikeQuery("SELECT ObjectKey FROM CoalesceEntity WHERE (EntityId like ?) AND (EntityIdType like ?) AND (Name=?)",2,
                                                   EntityId,
                                                   EntityIdType,
                                                   EntityName);
@@ -827,7 +827,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
         {
             List<String> keyList = new ArrayList<String>();
 
-            ResultSet results = conn.ExecuteQuery("SELECT ObjectKey FROM CoalesceEntity WHERE (EntityId like '%' ? '%') AND (EntityIdType like '%' ? '%') AND (Name=?) AND (Source=?)",
+            ResultSet results = conn.ExecuteLikeQuery("SELECT ObjectKey FROM CoalesceEntity WHERE (EntityId like ? ) AND (EntityIdType like  ? ) AND (Name=?) AND (Source=?)",2,
                                                   EntityId,
                                                   EntityIdType,
                                                   EntityName,
