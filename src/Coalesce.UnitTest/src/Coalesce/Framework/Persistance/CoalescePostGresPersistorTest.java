@@ -172,9 +172,7 @@ public class CoalescePostGresPersistorTest {
 
         try (PostGresDataConnector conn = new PostGresDataConnector(serCon))
         {
-
             conn.OpenConnection();
-
         }
         catch (Exception e)
         {

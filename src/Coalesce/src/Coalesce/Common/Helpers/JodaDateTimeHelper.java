@@ -4,6 +4,7 @@ import org.apache.commons.lang.NullArgumentException;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Duration;
+import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
@@ -97,6 +98,11 @@ public class JodaDateTimeHelper {
         }
 
         return DateTime.parse(value);
+    }
+    public static DateTime getPostGresDateTim(String value){
+        DateTimeFormatter dateFormatter=DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ssZ");
+        DateTime dtParse=DateTime.parse(value, dateFormatter);
+        return dtParse;
     }
 
     public static String GetElapsedGMTTimeString(DateTime ForDate, boolean IncludeParenthesis, boolean IncludeTime)

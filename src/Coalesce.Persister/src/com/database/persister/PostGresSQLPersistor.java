@@ -934,7 +934,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
                 dateValue = results.getString("LastModified");
                 if (dateValue != null)
                 {
-                    lastModified = JodaDateTimeHelper.getMySQLDateTime(dateValue);
+                    lastModified = JodaDateTimeHelper.getPostGresDateTim(dateValue);
                 }
             }
         }
