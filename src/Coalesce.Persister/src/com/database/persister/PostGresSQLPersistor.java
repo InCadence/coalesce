@@ -551,8 +551,8 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
                                      entity.getEntityId(),
                                      entity.getEntityIdType(),
                                      entity.toXml(),
-                                     JodaDateTimeHelper.toMySQLDateTime(entity.getDateCreated()),
-                                     JodaDateTimeHelper.toMySQLDateTime(entity.getLastModified()));
+                                     JodaDateTimeHelper.toPostGestSQLDateTime(entity.getDateCreated()),
+                                     JodaDateTimeHelper.toPostGestSQLDateTime(entity.getLastModified()));
     }
 
     protected boolean persistSectionObject(XsdSection section, PostGresDataConnector conn) throws SQLException
@@ -566,8 +566,8 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
                                      section.getName(),
                                      section.getParent().getKey(),
                                      section.getParent().getType(),
-                                     JodaDateTimeHelper.toMySQLDateTime(section.getDateCreated()),
-                                     JodaDateTimeHelper.toMySQLDateTime(section.getLastModified()));
+                                     JodaDateTimeHelper.toPostGestSQLDateTime(section.getDateCreated()),
+                                     JodaDateTimeHelper.toPostGestSQLDateTime(section.getLastModified()));
     }
 
     protected boolean persistRecordsetObject(XsdRecordset recordset, PostGresDataConnector conn) throws SQLException
@@ -581,8 +581,8 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
                                      recordset.getName(),
                                      recordset.getParent().getKey(),
                                      recordset.getParent().getType(),
-                                     JodaDateTimeHelper.toMySQLDateTime(recordset.getDateCreated()),
-                                     JodaDateTimeHelper.toMySQLDateTime(recordset.getLastModified()));
+                                     JodaDateTimeHelper.toPostGestSQLDateTime(recordset.getDateCreated()),
+                                     JodaDateTimeHelper.toPostGestSQLDateTime(recordset.getLastModified()));
     }
 
     protected boolean persistFieldDefinitionObject(XsdFieldDefinition fieldDefinition, PostGresDataConnector conn)
@@ -598,8 +598,8 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
                                      fieldDefinition.getName(),
                                      fieldDefinition.getParent().getKey(),
                                      fieldDefinition.getParent().getType(),
-                                     JodaDateTimeHelper.toMySQLDateTime(fieldDefinition.getDateCreated()),
-                                     JodaDateTimeHelper.toMySQLDateTime(fieldDefinition.getLastModified()));
+                                     JodaDateTimeHelper.toPostGestSQLDateTime(fieldDefinition.getDateCreated()),
+                                     JodaDateTimeHelper.toPostGestSQLDateTime(fieldDefinition.getLastModified()));
     }
 
     protected boolean persistRecordObject(XsdRecord record, PostGresDataConnector conn) throws SQLException
@@ -613,8 +613,8 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
                                      record.getName(),
                                      record.getParent().getKey(),
                                      record.getParent().getType(),
-                                     JodaDateTimeHelper.toMySQLDateTime(record.getDateCreated()),
-                                     JodaDateTimeHelper.toMySQLDateTime(record.getLastModified()));
+                                     JodaDateTimeHelper.toPostGestSQLDateTime(record.getDateCreated()),
+                                     JodaDateTimeHelper.toPostGestSQLDateTime(record.getLastModified()));
     }
 
     protected boolean persistFieldObject(XsdField field, PostGresDataConnector conn) throws SQLException
@@ -633,8 +633,8 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
                                      field.getModifiedBy(),
                                      field.getParent().getKey(),
                                      field.getParent().getType(),
-                                     JodaDateTimeHelper.toMySQLDateTime(field.getDateCreated()),
-                                     JodaDateTimeHelper.toMySQLDateTime(field.getLastModified()),
+                                     JodaDateTimeHelper.toPostGestSQLDateTime(field.getDateCreated()),
+                                     JodaDateTimeHelper.toPostGestSQLDateTime(field.getLastModified()),
                                      field.getPreviousHistoryKey());
     }
 
@@ -655,8 +655,8 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
                                      fieldHistory.getModifiedBy(),
                                      fieldHistory.getParent().getKey(),
                                      fieldHistory.getParent().getType(),
-                                     JodaDateTimeHelper.toMySQLDateTime(fieldHistory.getDateCreated()),
-                                     JodaDateTimeHelper.toMySQLDateTime(fieldHistory.getLastModified()),
+                                     JodaDateTimeHelper.toPostGestSQLDateTime(fieldHistory.getDateCreated()),
+                                     JodaDateTimeHelper.toPostGestSQLDateTime(fieldHistory.getLastModified()),
                                      fieldHistory.getPreviousHistoryKey());
     }
 
@@ -672,8 +672,8 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
                                      linkageSection.getName(),
                                      linkageSection.getParent().getKey(),
                                      linkageSection.getParent().getType(),
-                                     JodaDateTimeHelper.toMySQLDateTime(linkageSection.getDateCreated()),
-                                     JodaDateTimeHelper.toMySQLDateTime(linkageSection.getLastModified()));
+                                     JodaDateTimeHelper.toPostGestSQLDateTime(linkageSection.getDateCreated()),
+                                     JodaDateTimeHelper.toPostGestSQLDateTime(linkageSection.getLastModified()));
     }
 
     protected boolean persistLinkageObject(XsdLinkage linkage, PostGresDataConnector conn) throws SQLException
@@ -700,8 +700,8 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
                                      "",
                                      linkage.getParent().getKey(),
                                      linkage.getParent().getType(),
-                                     JodaDateTimeHelper.toMySQLDateTime(linkage.getDateCreated()),
-                                     JodaDateTimeHelper.toMySQLDateTime(linkage.getLastModified()));
+                                     JodaDateTimeHelper.toPostGestSQLDateTime(linkage.getDateCreated()),
+                                     JodaDateTimeHelper.toPostGestSQLDateTime(linkage.getLastModified()));
     }
 
     protected EntityMetaData getCoalesceEntityIdAndTypeForKey(String Key, PostGresDataConnector conn) throws SQLException
