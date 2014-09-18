@@ -85,7 +85,7 @@ public class FileHelper {
                 {
                     return null;
                 }
-                
+
                 try
                 {
                     return cipher.decryptValueToBytes(Files.readAllBytes(path));
@@ -95,10 +95,14 @@ public class FileHelper {
                     return null;
                 }
             }
+            else
+            {
+                return Files.readAllBytes(path);
+            }
         }
-        
+
         return null;
-        
+
     }
 
     public static boolean deleteFile(String filename)

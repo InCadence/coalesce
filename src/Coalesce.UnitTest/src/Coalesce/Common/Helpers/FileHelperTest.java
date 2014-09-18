@@ -1,16 +1,16 @@
 package Coalesce.Common.Helpers;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+
 import org.apache.commons.io.FilenameUtils;
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import unity.connector.rest.RestConfigurationsConnector;
-import Coalesce.Common.Runtime.CoalesceSettings;
+import Coalesce.Common.UnitTest.CoalesceSettingsTestHelper;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -38,18 +38,13 @@ public class FileHelperTest {
     @BeforeClass
     public static void setUpBeforeClass()
     {
-
-        CoalesceSettings.Initialize(new RestConfigurationsConnector("localhost", 2222));
-    }
-
-    @AfterClass
-    public static void tearDownAfterClass()
-    {
+        CoalesceSettingsTestHelper.setUpdBeforeClass();
     }
 
     /*
-     * @Before public void setUp() throws Exception { }
+     * @AfterClass public static void tearDownAfterClass() { }
      * 
+     * @Before public void setUp() throws Exception { }
      * 
      * @After public void tearDown() throws Exception { }
      */

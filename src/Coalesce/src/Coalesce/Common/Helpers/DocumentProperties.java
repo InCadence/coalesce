@@ -1,11 +1,13 @@
 package Coalesce.Common.Helpers;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
 
 import org.apache.commons.io.FilenameUtils;
 import org.joda.time.DateTime;
@@ -69,19 +71,19 @@ public class DocumentProperties {
     private String _mimeType = "";
     private String _documentType = "";
     private long _size = 0;
-    private byte[] _thumbnail = null;
+    private BufferedImage _thumbnail = null;
     private String _thumbnailFilename = "";
 
     // ----------------------------------------------------------------------//
     // Factory and Initialization
     // ----------------------------------------------------------------------//
 
-    public boolean initialize(String fullFilename)
+    public boolean initialize(String fullFilename) throws ImageProcessingException, IOException
     {
         return initialize(fullFilename, false);
     }
 
-    public boolean initialize(String fullFilename, boolean encrypted)
+    public boolean initialize(String fullFilename, boolean encrypted) throws ImageProcessingException, IOException
     {
 
         if (!initializeFileInfo(fullFilename)) return false;
@@ -99,10 +101,16 @@ public class DocumentProperties {
         case "jpg":
 
             // Use EXIFLib to extract data about the JPEG image (Latitude, Longitude, etc...)
-            /*
-             * DocumentThumbnailHelper.getDocumentThumbnailForFile(fullFilename, getThumbnail(), encrypted, getImageHeight(),
-             * getImageWidth());
-             */
+            initializeJpegProperties(fullFilename, encrypted);
+
+        }
+
+        if (getThumbnail() == null)
+        {
+            _thumbnail = DocumentThumbnailHelper.getDocumentThumbnailForFile(fullFilename,
+                                                                             encrypted,
+                                                                             getImageHeight(),
+                                                                             getImageWidth());
         }
 
         return true;
@@ -130,9 +138,27 @@ public class DocumentProperties {
             {
                 attr = Files.readAttributes(path, BasicFileAttributes.class);
 
-                if (_created == null) _created = new DateTime(attr.creationTime());
-                if (_modified == null) _modified = new DateTime(attr.lastModifiedTime());
+                try
+                {
+                    FileTime creation = attr.creationTime();
+                    String creationStr = creation.toString();
+                    if (_created == null) _created = new DateTime(creationStr);
+                }
+                catch (IllegalArgumentException iae)
+                {
+                    // Something wrong with date format
+                }
 
+                try
+                {
+                    FileTime lastMod = attr.lastModifiedTime();
+                    String lastModStr = lastMod.toString();
+                    if (_modified == null) _modified = new DateTime(lastModStr);
+                }
+                catch (IllegalArgumentException iae)
+                {
+                    // Something wrong with date format
+                }
             }
             catch (IOException e)
             {
@@ -146,7 +172,7 @@ public class DocumentProperties {
 
     }
 
-    public boolean initializeJpegProperties(String fullFilename, boolean encrypted) throws ImageProcessingException,
+    private boolean initializeJpegProperties(String fullFilename, boolean encrypted) throws ImageProcessingException,
             IOException
     {
         // Set the latitude and longitude to out of range values as a flag to the outside code
@@ -160,6 +186,7 @@ public class DocumentProperties {
 
             File fi = new File(fullFilename);
             Metadata info = ImageMetadataReader.readMetadata(fi);
+
             setGeoLocationInformation(fullFilename, info);
 
             return setDateTakenAndThumbnail(fullFilename, info, encrypted);
@@ -203,7 +230,7 @@ public class DocumentProperties {
 
         }
 
-        // _thumbnail = DocumentThumbnailHelper.GetDocumentThumbnailForFile(img);
+        _thumbnail = DocumentThumbnailHelper.getDocumentThumbnailForFile(fullFilename);
 
         return true;
     }
@@ -214,6 +241,8 @@ public class DocumentProperties {
         if (Files.exists(path))
         {
 
+            // TODO: Need to Implement
+            
             return true;
 
         }
@@ -497,12 +526,12 @@ public class DocumentProperties {
         _longitude = value;
     }
 
-    public byte[] getThumbnail()
+    public BufferedImage getThumbnail()
     {
         return _thumbnail;
     }
 
-    public void setThumbnail(byte[] value)
+    public void setThumbnail(BufferedImage value)
     {
         _thumbnail = value;
     }

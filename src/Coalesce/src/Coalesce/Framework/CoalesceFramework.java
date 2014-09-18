@@ -1,19 +1,13 @@
 package Coalesce.Framework;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.imageio.ImageIO;
-
-import org.imgscalr.Scalr;
 import org.joda.time.DateTime;
 import org.xml.sax.SAXException;
 
 import Coalesce.Common.Exceptions.CoalescePersistorException;
-import Coalesce.Common.Runtime.CoalesceSettings;
 import Coalesce.Framework.DataModel.CoalesceEntitySyncShell;
 import Coalesce.Framework.DataModel.CoalesceEntityTemplate;
 import Coalesce.Framework.DataModel.XsdEntity;
@@ -48,7 +42,6 @@ public class CoalesceFramework {
 
     private ICoalescePersistor _Persister;
     private boolean _IsInitialized = false;
-    private String _imageFormat;
 
     /*--------------------------------------------------------------------------
     	Public Functions
@@ -59,7 +52,6 @@ public class CoalesceFramework {
 
         this._Persister = persister;
         this._IsInitialized = true;
-        this._imageFormat = CoalesceSettings.GetImageFormat();
 
         return true;
     }
@@ -191,37 +183,6 @@ public class CoalesceFramework {
     public boolean SaveCoalesceEntity(XsdEntity entity, boolean AllowRemoval) throws CoalescePersistorException
     {
         return this._Persister.setEntity(entity, AllowRemoval);
-    }
-
-    public boolean CreateFieldThumbnail(String Filename) throws IOException
-    {
-        File imageFile = new File(Filename);
-        String imageName = imageFile.getName();
-        String imageFileFormat = imageName.substring(imageName.length() - 3);
-        File imageDir = imageFile.getParentFile();
-
-        // create thumbnail name
-        String thumbnailName = imageName.substring(0, imageName.length() - 4) + "_" + "thumbnail." + _imageFormat;
-        File thumbnail = new File(imageDir, thumbnailName);
-
-        // create thumbnail
-        if (!thumbnail.exists() && imageFileFormat.equals(_imageFormat))
-        {
-            BufferedImage img = ImageIO.read(imageFile);
-            BufferedImage imgThumbnail = Scalr.resize(img, 100, 100, Scalr.OP_ANTIALIAS);
-            ImageIO.write(imgThumbnail, _imageFormat, thumbnail);
-            return true;
-        }
-        else
-        {
-            // thumbnail already exists or image format does not match settings
-            return false;
-        }
-    }
-
-    public boolean CreateFieldThumbnail(XsdField Field) throws IOException
-    {
-        return this.CreateFieldThumbnail(Field.getCoalesceFullFilename());
     }
 
     public String GetCoalesceFieldValue(String FieldKey) throws CoalescePersistorException
