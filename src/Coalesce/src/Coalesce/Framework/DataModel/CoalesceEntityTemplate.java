@@ -137,6 +137,11 @@ public class CoalesceEntityTemplate {
     {
         return XmlHelper.FormatXml(this._DataObjectDocument);
     }
+    public String toXml(Boolean setSQLServer){
+        if(setSQLServer==true)
+            return XmlHelper.FormatXml(this._DataObjectDocument).replace("UTF-8", "UTF-16");
+        else return XmlHelper.FormatXml(this._DataObjectDocument);
+    }
 
     /*--------------------------------------------------------------------------
     Private Functions

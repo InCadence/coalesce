@@ -153,7 +153,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
                                          template.GetName(),
                                          template.GetSource(),
                                          template.GetVersion(),
-                                         template.toXml().replace("UTF-8", "UTF-16"),
+                                         template.toXml(true),
                                          JodaDateTimeHelper.toMySQLDateTime(JodaDateTimeHelper.NowInUtc()),
                                          JodaDateTimeHelper.toMySQLDateTime(JodaDateTimeHelper.NowInUtc()));
         }
@@ -526,7 +526,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
                                      entity.getVersion(),
                                      entity.getEntityId(),
                                      entity.getEntityIdType(),
-                                     entity.toXml(true).replace("UTF-8", "UTF-16"),
+                                     entity.toXml("true"),
                                      JodaDateTimeHelper.toMySQLDateTime(entity.getDateCreated()),
                                      JodaDateTimeHelper.toMySQLDateTime(entity.getLastModified()));
     }

@@ -534,6 +534,11 @@ public class XsdEntity extends XsdDataObject {
         return toXml(false);
     }
 
+    public String toXml(String setSQLServer){
+        if(setSQLServer.trim().toLowerCase()=="true")
+            return toXml(true).replace("UTF-8", "UTF-16");
+        else return toXml();
+    }
     public String toXml(Boolean removeBinary)
     {
 
