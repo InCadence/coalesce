@@ -712,7 +712,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
         ResultSet results = conn.ExecuteQuery("SELECT EntityId,EntityIdType,ObjectKey FROM CoalesceEntity WHERE ObjectKey=?",
                                               Key);
         // Get Results
-        while(results.next())
+        while (results.next())
         {
             metaData.entityId = results.getString("EntityId");
             metaData.entityType = results.getString("EntityIdType");
@@ -969,7 +969,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
         ResultSet results = conn.ExecuteQuery(sql, Key.trim());
 
         // Valid Results?
-        while(results.next())
+        while (results.next())
         {
 
             String name = results.getString("name");

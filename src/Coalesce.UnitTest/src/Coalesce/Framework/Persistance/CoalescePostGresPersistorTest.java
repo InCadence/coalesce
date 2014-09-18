@@ -35,7 +35,6 @@ import Coalesce.Framework.DataModel.XsdRecordset;
 import Coalesce.Framework.DataModel.XsdSection;
 import Coalesce.Framework.Persistance.ICoalescePersistor.EntityMetaData;
 
-import com.database.persister.MySQLDataConnector;
 import com.database.persister.PostGresDataConnector;
 import com.database.persister.PostGresSQLPersistor;
 import com.database.persister.ServerConn;
@@ -179,6 +178,7 @@ public class CoalescePostGresPersistorTest {
             fail(e.getMessage());
         }
     }
+
     @Test(expected = SQLException.class)
     public void testFAILConnection() throws SQLException, CoalescePersistorException
     {
@@ -202,49 +202,53 @@ public class CoalescePostGresPersistorTest {
         CoalescePostGresPersistorTest.createEntity();
         CoalescePostGresPersistorTest._coalesceFramework.SaveCoalesceEntity(_entity);
     }
-     @Test
-     public void testGetEntity() throws CoalescePersistorException
-     {
-     XsdEntity ent = new XsdEntity();
-     ent = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceEntity(_entity.getKey());
-    
-     assertTrue(ent != null);
-    
-     }
-     @Test
-     public void testSaveEntityTemplate() throws CoalescePersistorException, SAXException, IOException
-     {
-         CoalesceEntityTemplate template = testTemplate(CoalesceEntityTemplate.Create(_entity));
-         assertTrue(CoalescePostGresPersistorTest._coalesceFramework.SaveCoalesceEntityTemplate(template));
 
-     }
-     @Test
-     public void testGetEntityMetaData() throws CoalescePersistorException
-     {
-         EntityMetaData objectKey = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceEntityIdAndTypeForKey(_entity.getKey());
-         assertTrue(objectKey.entityId != null && objectKey.entityKey != null && objectKey.entityType != null);
-     }
-     @Test
-     public void testCheckLastModified() throws CoalescePersistorException
-     {
-         DateTime lastModified;
+    @Test
+    public void testGetEntity() throws CoalescePersistorException
+    {
+        XsdEntity ent = new XsdEntity();
+        ent = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceEntity(_entity.getKey());
 
-         // Test Entity
-         lastModified = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceEntityLastModified(_entity.getKey(),
-                                                                                                    "entity");
-         int compare = DateTimeComparator.getInstance().compare(lastModified, _entity.getLastModified());
+        assertTrue(ent != null);
+
+    }
+
+    @Test
+    public void testSaveEntityTemplate() throws CoalescePersistorException, SAXException, IOException
+    {
+        CoalesceEntityTemplate template = testTemplate(CoalesceEntityTemplate.Create(_entity));
+        assertTrue(CoalescePostGresPersistorTest._coalesceFramework.SaveCoalesceEntityTemplate(template));
+
+    }
+
+    @Test
+    public void testGetEntityMetaData() throws CoalescePersistorException
+    {
+        EntityMetaData objectKey = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceEntityIdAndTypeForKey(_entity.getKey());
+        assertTrue(objectKey.entityId != null && objectKey.entityKey != null && objectKey.entityType != null);
+    }
+
+    @Test
+    public void testCheckLastModified() throws CoalescePersistorException
+    {
+        DateTime lastModified;
+
+        // Test Entity
+        lastModified = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceEntityLastModified(_entity.getKey(),
+                                                                                                      "entity");
+        int compare = DateTimeComparator.getInstance().compare(lastModified, _entity.getLastModified());
         assertTrue(compare == 0);
 
-         // Test Section
-         XsdSection section = _entity.getSection("TestEntity/Live Status Section");
+        // Test Section
+        XsdSection section = _entity.getSection("TestEntity/Live Status Section");
 
-         assertTrue(section != null);
+        assertTrue(section != null);
 
-         lastModified = null;
-         lastModified = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceEntityLastModified(section.getKey(),
-                                                                                                    "section");
-         assertTrue(DateTimeComparator.getInstance().compare(lastModified, section.getLastModified()) == 0);
+        lastModified = null;
+        lastModified = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceEntityLastModified(section.getKey(),
+                                                                                                      "section");
+        assertTrue(DateTimeComparator.getInstance().compare(lastModified, section.getLastModified()) == 0);
 
-     }
+    }
 
 }

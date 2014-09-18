@@ -100,17 +100,17 @@ public class JodaDateTimeHelper {
         return DateTime.parse(value);
     }
 
-    public static String toPostGestSQLDateTime(DateTime value){
+    public static String toPostGestSQLDateTime(DateTime value)
+    {
         return value.toString();
     }
+
     public static DateTime getPostGresDateTim(String value)
     {
         try
         {
-            //Locale bLocale = new Locale.Builder().setLanguage("en").setRegion("US").build();
-            DateTimeFormatter outputFormatter 
-            = DateTimeFormat.forPattern("yyyy-MM-dd H:mm:ss.SSSZ").withZone(DateTimeZone.UTC);
-            DateTime dtOut=DateTime.parse(value,outputFormatter);
+            DateTimeFormatter outputFormatter = DateTimeFormat.forPattern("yyyy-MM-dd H:mm:ss.SSSZ").withZone(DateTimeZone.UTC);
+            DateTime dtOut = DateTime.parse(value, outputFormatter);
             return dtOut;
         }
         catch (Exception ex)
