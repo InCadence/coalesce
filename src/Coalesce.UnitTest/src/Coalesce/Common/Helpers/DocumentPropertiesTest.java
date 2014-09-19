@@ -53,7 +53,7 @@ public class DocumentPropertiesTest {
         assertEquals("Desert", docProps.getFilenameWithoutExtension());
         assertEquals("jpg", docProps.getExtension());
         assertEquals(851530, docProps.getSize());
-        assertEquals(MimeHelpers.getMimeTypeForExtension("jpg"), docProps.getMimeType());
+        assertEquals(MimeHelper.getMimeTypeForExtension("jpg"), docProps.getMimeType());
         assertEquals(new DateTime("2008-03-14T17:59:26.000Z"), docProps.getCreated());
         assertEquals(new DateTime("2014-09-17T18:22:56.000Z"), docProps.getModified());
         
