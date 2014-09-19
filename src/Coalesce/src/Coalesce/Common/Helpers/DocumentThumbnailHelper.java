@@ -53,7 +53,7 @@ public class DocumentThumbnailHelper {
                                                             int originalHeight,
                                                             int originalWidth) throws IOException
     {
-        String mimeType = MimeHelpers.getMimeTypeForExtension(FileHelper.getExtension(fullFilename));
+        String mimeType = MimeHelper.getMimeTypeForExtension(FileHelper.getExtension(fullFilename));
 
         BufferedImage thumbnail;
 
@@ -103,7 +103,7 @@ public class DocumentThumbnailHelper {
 
     public static BufferedImage getDocumentThumbnailForFileExtensions(String extension) throws IOException
     {
-        String mimeType = MimeHelpers.getMimeTypeForExtension(extension);
+        String mimeType = MimeHelper.getMimeTypeForExtension(extension);
 
         return DocumentThumbnailHelper.getDocumentThumbnailForMimeType(mimeType);
 

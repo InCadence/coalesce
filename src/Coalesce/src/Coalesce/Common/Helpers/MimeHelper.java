@@ -17,7 +17,7 @@ package Coalesce.Common.Helpers;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-public class MimeHelpers {
+public class MimeHelper {
 
     // -----------------------------------------------------------------------//
     // Public Shared Methods

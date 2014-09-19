@@ -119,7 +119,7 @@ public class DocumentThumbnailHelperTest {
 
     private void getDocumentThumbnailForMimeCategoryTest(String extension, String resourceName) throws IOException
     {
-        String mimeType = MimeHelpers.getMimeTypeForExtension(extension);
+        String mimeType = MimeHelper.getMimeTypeForExtension(extension);
         BufferedImage image = DocumentThumbnailHelper.getDocumentThumbnailForMimeCategory(mimeType);
 
         assertNotNull(image);
@@ -132,7 +132,7 @@ public class DocumentThumbnailHelperTest {
 
     private void getDocumentThumbnailForMimeTypeTest(String extension, String resourceName) throws IOException
     {
-        String mimeType = MimeHelpers.getMimeTypeForExtension(extension);
+        String mimeType = MimeHelper.getMimeTypeForExtension(extension);
         BufferedImage image = DocumentThumbnailHelper.getDocumentThumbnailForMimeType(mimeType);
 
         assertNotNull(image);

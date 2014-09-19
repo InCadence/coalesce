@@ -130,7 +130,7 @@ public class DocumentProperties {
             _extension = FilenameUtils.getExtension(fullFilename);
             _size = fi.length();
 
-            String docMimeType = MimeHelpers.getMimeTypeForExtension(getExtension());
+            String docMimeType = MimeHelper.getMimeTypeForExtension(getExtension());
             if (docMimeType != null) _mimeType = docMimeType;
 
             BasicFileAttributes attr;
