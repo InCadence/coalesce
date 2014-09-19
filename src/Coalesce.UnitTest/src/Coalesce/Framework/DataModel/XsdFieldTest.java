@@ -10,8 +10,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.UUID;
 
+import org.jdom2.JDOMException;
 import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.BeforeClass;
@@ -20,12 +23,16 @@ import org.junit.Test;
 import Coalesce.Common.Classification.Marking;
 import Coalesce.Common.Classification.MarkingValueTest;
 import Coalesce.Common.Exceptions.CoalesceDataFormatException;
+import Coalesce.Common.Helpers.DocumentProperties;
 import Coalesce.Common.Helpers.GUIDHelper;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
+import Coalesce.Common.Helpers.MimeHelper;
 import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.UnitTest.CoalesceSettingsTestHelper;
 import Coalesce.Common.UnitTest.CoalesceTypeInstances;
 import Coalesce.Common.UnitTest.CoalesceUnitTestSettings;
+
+import com.drew.imaging.ImageProcessingException;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -1101,15 +1108,71 @@ public class XsdFieldTest {
     }
 
     @Test
-    public void setTypedValueFileBytesTest()
+    public void setTypedValueFileBytesTest() throws CoalesceDataFormatException, ImageProcessingException, IOException,
+            JDOMException
     {
-        // TODO: Implement
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdRecordset parentRecordset = (XsdRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.create(parentRecordset,
+                                                                    "File",
+                                                                    ECoalesceFieldDataTypes.FileType);
+
+        XsdRecord parentRecord = parentRecordset.GetItem(0);
+        XsdField field = XsdField.create(parentRecord, fileFieldDef);
+
+        byte[] dataBytes = Files.readAllBytes(Paths.get("src\\resources\\TestDocument.docx"));
+
+        DocumentProperties docProps = new DocumentProperties();
+        docProps.initialize("src\\resources\\TestDocument.docx");
+
+        field.setTypedValue(dataBytes, docProps);
+
+        Object data = field.getData();
+
+        assertTrue(data instanceof byte[]);
+        assertArrayEquals(dataBytes, (byte[]) data);
+        assertArrayEquals(dataBytes, field.getBinaryValue());
+
+        assertEquals("TestDocument.docx", field.getFilename());
+        assertEquals("docx", field.getExtension());
+        assertEquals(MimeHelper.getMimeTypeForExtension("docx"), field.getMimeType());
+        assertEquals(dataBytes.length, docProps.getSize());
+
     }
 
     @Test
-    public void setTypedValueDocPropsTest()
+    public void setTypedValueDocPropsTest() throws IOException, ImageProcessingException, JDOMException,
+            CoalesceDataFormatException
     {
-        // TODO: Implement
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdRecordset parentRecordset = (XsdRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.create(parentRecordset,
+                                                                    "File",
+                                                                    ECoalesceFieldDataTypes.FileType);
+
+        XsdRecord parentRecord = parentRecordset.GetItem(0);
+        XsdField field = XsdField.create(parentRecord, fileFieldDef);
+
+        byte[] dataBytes = Files.readAllBytes(Paths.get("src\\resources\\TestDocument.docx"));
+
+        DocumentProperties docProps = new DocumentProperties();
+        docProps.initialize("src\\resources\\TestDocument.docx");
+
+        field.setTypedValue(dataBytes, docProps);
+
+        Object data = field.getData();
+
+        assertTrue(data instanceof byte[]);
+        assertArrayEquals(dataBytes, (byte[]) data);
+        assertArrayEquals(dataBytes, field.getBinaryValue());
+
+        assertEquals("TestDocument.docx", field.getFilename());
+        assertEquals("docx", field.getExtension());
+        assertEquals(MimeHelper.getMimeTypeForExtension("docx"), field.getMimeType());
+        assertEquals(dataBytes.length, docProps.getSize());
+
     }
 
     @Test

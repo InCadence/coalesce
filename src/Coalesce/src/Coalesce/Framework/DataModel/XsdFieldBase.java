@@ -116,7 +116,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
 
     @Override
     public abstract void setInputLang(String value);
-    
+
     /*--------------------------------------------------------------------------
     Public Functions
     --------------------------------------------------------------------------*/
@@ -139,9 +139,10 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
     {
         setClassificationMarking(value.toString());
     }
-    
+
     @Override
-    public Marking getClassificationMarking() {
+    public Marking getClassificationMarking()
+    {
         return new Marking(getClassificationMarkingAsString());
     };
 
@@ -161,7 +162,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
     public Object getData() throws CoalesceDataFormatException
     {
 
-        // TODO: GeocoordinateType, GeocoordinateListType, DocumentProperties
+        // TODO: GeocoordinateType, GeocoordinateListType
         // types
 
         switch (getDataType()) {
@@ -184,6 +185,9 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
         case GuidType:
             return getGuidValue();
 
+        case FileType:
+            return getBinaryValue();
+
         default:
             throw new NotImplementedException(getDataType() + " not implemented");
 
@@ -196,11 +200,6 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
             // ArrayList<Geolocation> geolvar = new ArrayList<Geolocation>();
             // var = geolvar;
             // Data = var;
-            // break;
-            // case FileType:
-            // DocumentProperties dpvar = new DocumentProperties;
-            // var = dpvar;
-            // value = var;
             // break;
 
         }
