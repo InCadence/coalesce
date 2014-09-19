@@ -30,7 +30,7 @@ import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Fielddefinition
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-public class XsdFieldDefinition extends XsdDataObject {
+public class XsdFieldDefinition extends XsdDataObject implements ICoalesceFieldDefinition {
 
     // -----------------------------------------------------------------------//
     // Protected Member Variables
@@ -199,29 +199,34 @@ public class XsdFieldDefinition extends XsdDataObject {
         return "fielddefinition";
     }
 
+    @Override
     public String getLabel()
     {
         return getStringElement(_entityFieldDefinition.getLabel());
     }
 
+    @Override
     public void setLabel(String value)
     {
         _entityFieldDefinition.setLabel(value);
     }
 
+    @Override
     public ECoalesceFieldDataTypes getDataType()
     {
         return ECoalesceFieldDataTypes.getTypeForCoalesceType(_entityFieldDefinition.getDatatype());
     }
 
+    @Override
     public void setDataType(ECoalesceFieldDataTypes value)
     {
         _entityFieldDefinition.setDatatype(value.getLabel());
     }
 
-    public String getDefaultClassificationMarking()
+    @Override
+    public Marking getDefaultClassificationMarking()
     {
-        return _entityFieldDefinition.getDefaultclassificationmarking();
+        return new Marking(_entityFieldDefinition.getDefaultclassificationmarking());
     }
 
     public void setDefaultClassificationMarking(String value)
@@ -229,16 +234,19 @@ public class XsdFieldDefinition extends XsdDataObject {
         _entityFieldDefinition.setDefaultclassificationmarking(value);
     }
 
+    @Override
     public void setDefaultClassificationMarking(Marking value)
     {
         _entityFieldDefinition.setDefaultclassificationmarking(value.ToPortionString());
     }
 
+    @Override
     public String getDefaultValue()
     {
         return _entityFieldDefinition.getDefaultvalue();
     }
 
+    @Override
     public void setDefaultValue(String value)
     {
         _entityFieldDefinition.setDefaultvalue(value);

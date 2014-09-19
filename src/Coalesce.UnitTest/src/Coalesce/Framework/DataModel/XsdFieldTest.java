@@ -332,7 +332,7 @@ public class XsdFieldTest {
         XsdField field = getTestMissionNameField();
 
         MarkingValueTest.assertMarkingValue(new Marking().GetClassification(),
-                                            new Marking(field.getClassificationMarking()).GetClassification());
+                                            field.getClassificationMarking().GetClassification());
 
     }
 
@@ -348,7 +348,7 @@ public class XsdFieldTest {
         XsdField savedField = getSavedTestMissionField(mission);
 
         MarkingValueTest.assertMarkingValue(TOPSECRETCLASSIFICATIONMARKING.GetClassification(),
-                                            new Marking(savedField.getClassificationMarking()).GetClassification());
+                                            savedField.getClassificationMarking().GetClassification());
 
     }
 
@@ -363,7 +363,7 @@ public class XsdFieldTest {
         field.setClassificationMarking(TOPSECRETCLASSIFICATIONMARKING);
 
         MarkingValueTest.assertMarkingValue(TOPSECRETCLASSIFICATIONMARKING.GetClassification(),
-                                            new Marking(field.getClassificationMarking()).GetClassification());
+                                            field.getClassificationMarking().GetClassification());
 
     }
 

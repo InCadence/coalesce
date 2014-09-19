@@ -419,12 +419,12 @@ public class XsdFieldDefinitionTest {
         XsdFieldDefinition fieldDefinition = getFieldDefinitionFromXml(CoalesceTypeInstances.TEST_MISSION);
 
         assertEquals(XsdFieldDefinitionTest.UNCLASS_MARKING.ToPortionString(),
-                     new Marking(fieldDefinition.getDefaultClassificationMarking()).ToPortionString());
+                     fieldDefinition.getDefaultClassificationMarking().ToPortionString());
 
         fieldDefinition.setDefaultClassificationMarking(XsdFieldDefinitionTest.TS_MARKING.toString());
 
         assertEquals(XsdFieldDefinitionTest.TS_MARKING.ToPortionString(),
-                     new Marking(fieldDefinition.getDefaultClassificationMarking()).ToPortionString());
+                     fieldDefinition.getDefaultClassificationMarking().ToPortionString());
 
     }
 
@@ -434,12 +434,12 @@ public class XsdFieldDefinitionTest {
         XsdFieldDefinition fieldDefinition = getFieldDefinitionFromXml(CoalesceTypeInstances.TEST_MISSION);
 
         assertEquals(XsdFieldDefinitionTest.UNCLASS_MARKING.ToPortionString(),
-                     new Marking(fieldDefinition.getDefaultClassificationMarking()).ToPortionString());
+                     fieldDefinition.getDefaultClassificationMarking().ToPortionString());
 
         fieldDefinition.setDefaultClassificationMarking(XsdFieldDefinitionTest.TS_MARKING.ToPortionString());
 
         assertEquals(XsdFieldDefinitionTest.TS_MARKING.toString(),
-                     new Marking(fieldDefinition.getDefaultClassificationMarking()).toString());
+                     fieldDefinition.getDefaultClassificationMarking().toString());
 
     }
 
@@ -449,12 +449,12 @@ public class XsdFieldDefinitionTest {
         XsdFieldDefinition fieldDefinition = getFieldDefinitionFromXml(CoalesceTypeInstances.TEST_MISSION);
 
         assertEquals(XsdFieldDefinitionTest.UNCLASS_MARKING.ToPortionString(),
-                     new Marking(fieldDefinition.getDefaultClassificationMarking()).ToPortionString());
+                     fieldDefinition.getDefaultClassificationMarking().ToPortionString());
 
         fieldDefinition.setDefaultClassificationMarking(XsdFieldDefinitionTest.TS_MARKING);
 
         assertEquals(XsdFieldDefinitionTest.TS_MARKING.toString(),
-                     new Marking(fieldDefinition.getDefaultClassificationMarking()).toString());
+                     fieldDefinition.getDefaultClassificationMarking().toString());
 
     }
 
@@ -505,8 +505,8 @@ public class XsdFieldDefinitionTest {
         assertEquals(fieldDefinition.getName(), field.getName());
         assertEquals(fieldDefinition.getDataType(), field.getDataType());
         assertEquals(fieldDefinition.getLabel(), field.getLabel());
-        assertEquals(new Marking(fieldDefinition.getDefaultClassificationMarking()).toString(),
-                     new Marking(field.getClassificationMarking()).toString());
+        assertEquals(fieldDefinition.getDefaultClassificationMarking().toString(),
+                     field.getClassificationMarking().toString());
         assertEquals(fieldDefinition.getDefaultValue(), field.getValue());
         assertEquals(fieldDefinition.getNoIndex(), field.getNoIndex());
 
@@ -549,7 +549,7 @@ public class XsdFieldDefinitionTest {
         assertEquals(name, fieldDefinition.getName());
         assertEquals(dataType, fieldDefinition.getDataType());
         assertEquals(label, fieldDefinition.getLabel());
-        assertEquals(marking.toString(), new Marking(fieldDefinition.getDefaultClassificationMarking()).toString());
+        assertEquals(marking.toString(), fieldDefinition.getDefaultClassificationMarking().toString());
         assertEquals(defaultValue, fieldDefinition.getDefaultValue());
         assertEquals(noIndex, fieldDefinition.getNoIndex());
     }

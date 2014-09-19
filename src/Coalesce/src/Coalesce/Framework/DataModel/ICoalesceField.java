@@ -1,55 +1,63 @@
 package Coalesce.Framework.DataModel;
 
+import Coalesce.Common.Classification.Marking;
+
 public interface ICoalesceField {
-	// Methods
 
-	/*************************************************************************
-	 * All instance variable/property declarations are static final 
-	 * which means that they can not be changed.
-	 * ******************************************************************** */
-//    // Properties
-//    String Name  = "";
-//    String Value  = "";
-//    String Label  = "";
-//    String DataType  = "";
-//    String ClassificationMarking  = "";
-//    String ModifiedBy  = "";
-//    String ModifiedByIP  = "";
-//    String InputLang  = "";
-//    String MimeType  = "";
-//    String Filename  = "";
-//    String Extension  = "";
-//    String Hash  = "";
-//    Integer Size  = 0;
-//    String PreviousHistoryKey  = "";
+    // Methods
+    public String getName();
 
-    public String GetName();
-    public String GetValue();
-    public String GetLabel();
-    public String GetDataType();
-    public String GetClassificationMarking();
-    public String GetModifiedBy();
-    public String GetModifiedByIP();
-    public String GetInputLang();
-    public String GetMimeType();
-    public String GetFilename();
-    public String GetExtension();
-    public String GetHash();
-    public Integer GetSize();
-    public String GetPreviousHistoryKey();
+    public String getValue();
 
-    public void SetName(String value);
-    public void SetValue(String value);
-    public void SetLabel(String value);
-    public void SetDataType(String value);
-    public void SetClassificationMarking(String value);
-    public void SetModifiedBy(String value);
-    public void SetModifiedByIP(String value);
-    public void SetInputLang(String value);
-    public void SetMimeType(String value);
-    public void SetFilename(String value);
-    public void SetExtension(String value);
-    public void SetHash(String value);
-    public void SetSize(Integer value);
-    public void SetPreviousHistoryKey(String value);
+    public String getLabel();
+
+    public ECoalesceFieldDataTypes getDataType();
+
+    public Marking getClassificationMarking();
+
+    public String getModifiedBy();
+
+    public String getModifiedByIP();
+
+    public String getInputLang();
+
+    public String getMimeType();
+
+    public String getFilename();
+
+    public String getExtension();
+
+    public String getHash();
+
+    public int getSize();
+
+    public String getPreviousHistoryKey();
+
+    public void setName(String value);
+
+    public void setValue(String value);
+
+    public void setLabel(String value);
+
+    public void setDataType(ECoalesceFieldDataTypes value);
+
+    public void setClassificationMarking(Marking value);
+
+    public void setModifiedBy(String value);
+
+    public void setModifiedByIP(String value);
+
+    public void setInputLang(String value);
+
+    public void setMimeType(String value);
+
+    public void setFilename(String value);
+
+    public void setExtension(String value);
+
+    public void setHash(String value);
+
+    public void setSize(int value);
+
+    public void setPreviousHistoryKey(String value);
 }

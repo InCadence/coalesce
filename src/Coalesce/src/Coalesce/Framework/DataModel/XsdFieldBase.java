@@ -35,65 +35,88 @@ import Coalesce.Common.Helpers.StringHelper;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-public abstract class XsdFieldBase extends XsdDataObject {
+public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceField {
 
     /*--------------------------------------------------------------------------
     Public Abstract Functions
     --------------------------------------------------------------------------*/
 
+    @Override
     public abstract String getValue();
 
+    @Override
     public abstract void setValue(String value);
 
+    @Override
     public abstract ECoalesceFieldDataTypes getDataType();
 
+    @Override
     public abstract void setDataType(ECoalesceFieldDataTypes value);
 
+    @Override
     public abstract String getLabel();
 
+    @Override
     public abstract void setLabel(String value);
 
+    @Override
     public abstract int getSize();
 
-    public abstract void setSize(Integer value);
+    @Override
+    public abstract void setSize(int value);
 
+    @Override
     public abstract String getModifiedBy();
 
+    @Override
     public abstract void setModifiedBy(String value);
 
+    @Override
     public abstract String getModifiedByIP();
 
+    @Override
     public abstract void setModifiedByIP(String value);
 
-    public abstract String getClassificationMarking();
+    public abstract String getClassificationMarkingAsString();
 
     public abstract void setClassificationMarking(String value);
 
+    @Override
     public abstract String getPreviousHistoryKey();
 
+    @Override
     public abstract void setPreviousHistoryKey(String value);
 
+    @Override
     public abstract String getFilename();
 
+    @Override
     public abstract void setFilename(String value);
 
+    @Override
     public abstract String getExtension();
 
+    @Override
     public abstract void setExtension(String value);
 
+    @Override
     public abstract String getMimeType();
 
+    @Override
     public abstract void setMimeType(String value);
 
+    @Override
     public abstract String getHash();
 
+    @Override
     public abstract void setHash(String value);
 
-    /*
-     * TODO: InputLang needs to be added to entity public String GetInputLang(){ return _entityField.getInputlang(); } public
-     * void SetInputLang(String value){ _entityField.setInputlang(value); }
-     */
+    @Override
+    public abstract String getInputLang();
 
+    @Override
+    public abstract void setInputLang(String value);
+    
     /*--------------------------------------------------------------------------
     Public Functions
     --------------------------------------------------------------------------*/
@@ -101,7 +124,7 @@ public abstract class XsdFieldBase extends XsdDataObject {
     public String getValueWithMarking()
     {
         String val = getValue();
-        Marking mrk = new Marking(getClassificationMarking());
+        Marking mrk = new Marking(getClassificationMarkingAsString());
         return mrk.toString() + " " + val;
     }
 
@@ -111,14 +134,20 @@ public abstract class XsdFieldBase extends XsdDataObject {
         return getValueWithMarking();
     }
 
+    @Override
     public void setClassificationMarking(Marking value)
     {
         setClassificationMarking(value.toString());
     }
+    
+    @Override
+    public Marking getClassificationMarking() {
+        return new Marking(getClassificationMarkingAsString());
+    };
 
     public String getPortionMarking()
     {
-        Marking mrk = new Marking(getClassificationMarking());
+        Marking mrk = new Marking(getClassificationMarkingAsString());
         return mrk.ToPortionString();
     }
 

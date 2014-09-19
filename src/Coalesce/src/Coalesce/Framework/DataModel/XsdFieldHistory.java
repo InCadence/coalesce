@@ -182,9 +182,9 @@ public class XsdFieldHistory extends XsdFieldBase {
     }
 
     @Override
-    public void setSize(Integer value)
+    public void setSize(int value)
     {
-        _entityFieldHistory.setSize(value.toString());
+        _entityFieldHistory.setSize(Integer.toString(value));
     }
 
     @Override
@@ -212,7 +212,7 @@ public class XsdFieldHistory extends XsdFieldBase {
     }
 
     @Override
-    public String getClassificationMarking()
+    public String getClassificationMarkingAsString()
     {
         return _entityFieldHistory.getClassificationmarking();
     }
@@ -310,6 +310,19 @@ public class XsdFieldHistory extends XsdFieldBase {
     {
         // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityFieldHistory.getLastmodified());
         return _entityFieldHistory.getLastmodified();
+    }
+
+    @Override
+    public String getInputLang()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void setInputLang(String value)
+    {
+        // TODO Auto-generated method stub
     }
 
     // -----------------------------------------------------------------------//

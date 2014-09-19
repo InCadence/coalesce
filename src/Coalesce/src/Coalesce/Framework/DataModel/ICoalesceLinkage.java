@@ -1,52 +1,59 @@
 package Coalesce.Framework.DataModel;
 
+import Coalesce.Common.Classification.Marking;
+
 public interface ICoalesceLinkage {
+
     // Methods
+    public String getName();
 
-	/*************************************************************************
-	 * All instance variable/property declarations are static final 
-	 * which means that they can not be changed.
-	 * ******************************************************************** */
-//    // Properties
-//    String Name = "";
-//    String Entity1Key = "";
-//    String Entity1Name = "";
-//    String Entity1Source = "";
-//    String Entity1Version = "";
-//    String Entity2Key = "";
-//    String Entity2Name = "";
-//    String Entity2Source = "";
-//    String Entity2Version = "";
-//    String LinkType = "";
-//    String ClassificationMarking = "";
-//    String ModifiedBy = "";
-//    String InputLang = "";
+    public String getEntity1Key();
 
-    public String GetName();
-    public String GetEntity1Key();
-    public String GetEntity1Name();
-    public String GetEntity1Source();
-    public String GetEntity1Version();
-    public String GetEntity2Key();
-    public String GetEntity2Name();
-    public String GetEntity2Source();
-    public String GetEntity2Version();
-    public String GetLinkType();
-    public String GetClassificationMarking();
-    public String GetModifiedBy();
-    public String GetInputLang();
+    public String getEntity1Name();
 
-    public void SetName(String value);
-    public void SetEntity1Key(String value);
-    public void SetEntity1Name(String value);
-    public void SetEntity1Source(String value);
-    public void SetEntity1Version(String value);
-    public void SetEntity2Key(String value);
-    public void SetEntity2Name(String value);
-    public void SetEntity2Source(String value);
-    public void SetEntity2Version(String value);
-    public void SetLinkType(String value);
-    public void SetClassificationMarking(String value);
-    public void SetModifiedBy(String value);
-    public void SetInputLang(String value);
+    public String getEntity1Source();
+
+    public String getEntity1Version();
+
+    public String getEntity2Key();
+
+    public String getEntity2Name();
+
+    public String getEntity2Source();
+
+    public String getEntity2Version();
+
+    public ELinkTypes getLinkType();
+
+    public Marking getClassificationMarking();
+
+    public String getModifiedBy();
+
+    public String getInputLang();
+
+    public void setName(String value);
+
+    public void setEntity1Key(String value);
+
+    public void setEntity1Name(String value);
+
+    public void setEntity1Source(String value);
+
+    public void setEntity1Version(String value);
+
+    public void setEntity2Key(String value);
+
+    public void setEntity2Name(String value);
+
+    public void setEntity2Source(String value);
+
+    public void setEntity2Version(String value);
+
+    public void setLinkType(ELinkTypes value);
+
+    public void setClassificationMarking(Marking value);
+
+    public void setModifiedBy(String value);
+
+    public void setInputLang(String value);
 }

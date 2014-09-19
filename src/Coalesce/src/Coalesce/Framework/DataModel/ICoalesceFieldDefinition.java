@@ -1,28 +1,27 @@
 package Coalesce.Framework.DataModel;
 
+import Coalesce.Common.Classification.Marking;
+
 public interface ICoalesceFieldDefinition {
+
     // Methods
+    public String getName();
 
-	/*************************************************************************
-	 * All instance variable/property declarations are static final 
-	 * which means that they can not be changed.
-	 * ******************************************************************** */
-//    // Properties
-//    String Name  = "";
-//    String Label  = "";
-//    String DataType  = "";
-//    String DefaultValue  = "";
-//    String DefaultClassificationMarking  = "";
+    public String getLabel();
 
-    public String GetName();
-    public String GetLabel();
-    public String GetDataType();
-    public String GetDefaultValue();
-    public String GetDefaultClassificationMarking();
+    public ECoalesceFieldDataTypes getDataType();
 
-    public void SetName(String value);
-    public void SetLabel(String value);
-    public void SetDataType(String value);
-    public void SetDefaultValue(String value);
-    public void SetDefaultClassificationMarking(String value);
+    public String getDefaultValue();
+
+    public Marking getDefaultClassificationMarking();
+
+    public void setName(String value);
+
+    public void setLabel(String value);
+
+    public void setDataType(ECoalesceFieldDataTypes value);
+
+    public void setDefaultValue(String value);
+
+    public void setDefaultClassificationMarking(Marking value);
 }

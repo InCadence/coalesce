@@ -30,7 +30,7 @@ import Coalesce.Framework.GeneratedJAXB.Entity.Linkagesection.Linkage;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-public class XsdLinkage extends XsdDataObject {
+public class XsdLinkage extends XsdDataObject implements ICoalesceLinkage {
 
     private Linkage _entityLinkage;
 
@@ -102,132 +102,156 @@ public class XsdLinkage extends XsdDataObject {
         return "linkage";
     }
 
+    @Override
     public String getModifiedBy()
     {
         return _entityLinkage.getModifiedby();
     }
 
+    @Override
     public void setModifiedBy(String value)
     {
         _entityLinkage.setModifiedby(value);
         setChanged();
     }
 
+    @Override
     public Marking getClassificationMarking()
     {
         return new Marking(_entityLinkage.getClassificationmarking());
     }
 
+    @Override
     public void setClassificationMarking(Marking value)
     {
         _entityLinkage.setClassificationmarking(value.ToPortionString());
         setChanged();
     }
 
+    @Override
     public String getEntity1Key()
     {
         return _entityLinkage.getEntity1Key();
     }
 
+    @Override
     public void setEntity1Key(String value)
     {
         _entityLinkage.setEntity1Key(value);
         setChanged();
     }
 
+    @Override
     public String getEntity1Name()
     {
         return _entityLinkage.getEntity1Name();
     }
 
+    @Override
     public void setEntity1Name(String value)
     {
         _entityLinkage.setEntity1Name(value);
         setChanged();
     }
 
+    @Override
     public String getEntity1Source()
     {
         return _entityLinkage.getEntity1Source();
     }
 
+    @Override
     public void setEntity1Source(String value)
     {
         _entityLinkage.setEntity1Source(value);
         setChanged();
     }
 
+    @Override
     public String getEntity1Version()
     {
         return _entityLinkage.getEntity1Version();
     }
 
+    @Override
     public void setEntity1Version(String value)
     {
         _entityLinkage.setEntity1Version(value);
         setChanged();
     }
 
+    @Override
     public String getEntity2Key()
     {
         return _entityLinkage.getEntity2Key();
     }
 
+    @Override
     public void setEntity2Key(String value)
     {
         _entityLinkage.setEntity2Key(value);
         setChanged();
     }
 
+    @Override
     public String getEntity2Name()
     {
         return _entityLinkage.getEntity2Name();
     }
 
+    @Override
     public void setEntity2Name(String value)
     {
         _entityLinkage.setEntity2Name(value);
         setChanged();
     }
 
+    @Override
     public String getEntity2Source()
     {
         return _entityLinkage.getEntity2Source();
     }
 
+    @Override
     public void setEntity2Source(String value)
     {
         _entityLinkage.setEntity2Source(value);
         setChanged();
     }
 
+    @Override
     public String getEntity2Version()
     {
         return _entityLinkage.getEntity2Version();
     }
 
+    @Override
     public void setEntity2Version(String value)
     {
         _entityLinkage.setEntity2Version(value);
         setChanged();
     }
 
+    @Override
     public String getInputLang()
     {
         return _entityLinkage.getInputlang();
     }
 
+    @Override
     public void setInputLang(String value)
     {
         _entityLinkage.setInputlang(value);
         setChanged();
     }
 
+    @Override
     public ELinkTypes getLinkType()
     {
         return ELinkTypes.GetTypeForLabel(_entityLinkage.getLinktype());
     }
 
+    @Override
     public void setLinkType(ELinkTypes value)
     {
         _entityLinkage.setLinktype(value.getLabel());

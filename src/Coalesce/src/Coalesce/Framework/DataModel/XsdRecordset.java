@@ -34,7 +34,7 @@ import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-public class XsdRecordset extends XsdDataObject {
+public class XsdRecordset extends XsdDataObject implements ICoalesceRecordset {
 
     // -----------------------------------------------------------------------//
     // Public Events
@@ -177,21 +177,25 @@ public class XsdRecordset extends XsdDataObject {
         return _records;
     }
 
+    @Override
     public int getMaxRecords()
     {
         return Integer.parseInt(_entityRecordset.getMaxrecords());
     }
 
+    @Override
     public void setMaxRecords(int value)
     {
         _entityRecordset.setMaxrecords(String.valueOf(value));
     }
 
+    @Override
     public int getMinRecords()
     {
         return Integer.parseInt(_entityRecordset.getMinrecords());
     }
 
+    @Override
     public void setMinRecords(int value)
     {
         _entityRecordset.setMinrecords(String.valueOf(value));
@@ -219,6 +223,7 @@ public class XsdRecordset extends XsdDataObject {
         return !_entityRecordset.getRecord().isEmpty();
     }
 
+    @Override
     public DateTime getDateCreated()
     {
         // return new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityRecordset.getDatecreated());
