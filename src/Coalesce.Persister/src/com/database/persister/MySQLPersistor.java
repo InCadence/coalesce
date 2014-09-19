@@ -177,9 +177,9 @@ public class MySQLPersistor extends CoalescePersisterBase {
             // Always persist template
             return conn.ExecuteProcedure("CoalesceEntityTemplate_InsertOrUpdate",
                                          UUID.randomUUID().toString(),
-                                         template.GetName(),
-                                         template.GetSource(),
-                                         template.GetVersion(),
+                                         template.getName(),
+                                         template.getSource(),
+                                         template.getVersion(),
                                          template.toXml(),
                                          JodaDateTimeHelper.toMySQLDateTime(JodaDateTimeHelper.NowInUtc()),
                                          JodaDateTimeHelper.toMySQLDateTime(JodaDateTimeHelper.NowInUtc()));

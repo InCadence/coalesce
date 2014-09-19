@@ -8,6 +8,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.List;
@@ -18,6 +19,7 @@ import org.joda.time.DateTime;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.xml.sax.SAXException;
 
 import Coalesce.Common.Exceptions.CoalesceException;
 import Coalesce.Common.Helpers.EntityLinkHelper;
@@ -1083,6 +1085,17 @@ public class XsdEntityTest {
 
             }
         }
+
+    }
+
+    @Test
+    public void createNewEntityTemplateTest() throws SAXException, IOException
+    {
+        // Test Entity
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        // Run Test
+        CoalesceEntityTemplateTest.testTemplate(entity.createNewEntityTemplate());
 
     }
 

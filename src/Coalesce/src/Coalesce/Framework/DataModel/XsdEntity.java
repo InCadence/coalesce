@@ -355,19 +355,21 @@ public class XsdEntity extends XsdDataObject {
     // Public Methods
     // -----------------------------------------------------------------------//
 
-    // TODO: Is this needed anymore
-    /*
-     * public CallResult CreateNewEntityTemplate(CoalesceEntityTemplate EntityTemplate){ try{ CallResult rst;
-     * CoalesceEntityTemplate EntTemp = new CoalesceEntityTemplate();
-     * 
-     * // Initialize the EntityTemplate from this rst = EntTemp.InitializeFromEntity(this);
-     * 
-     * // Evaluate if (rst.getIsSuccess()) EntityTemplate = EntTemp; else EntityTemplate = null;
-     * 
-     * // return return rst;
-     * 
-     * }catch(Exception ex){ // return Failed Error return new CallResult(CallResults.FAILED_ERROR, ex, this); } }
-     */
+    public CoalesceEntityTemplate createNewEntityTemplate() throws SAXException, IOException
+    {
+
+        CoalesceEntityTemplate entTemp = new CoalesceEntityTemplate();
+
+        // Initialize the EntityTemplate from this
+        if (entTemp.initialize(this))
+        {
+            return entTemp;
+        }
+        else
+        {
+            return null;
+        }
+    }
 
     public XsdSection createSection(String name, boolean noIndex)
     {
@@ -574,11 +576,14 @@ public class XsdEntity extends XsdDataObject {
         return toXml(false);
     }
 
-    public String toXml(String setSQLServer){
-        if(setSQLServer.trim().toLowerCase()=="true")
+    public String toXml(String setSQLServer)
+    {
+        if (setSQLServer.trim().toLowerCase() == "true")
             return toXml(true).replace("UTF-8", "UTF-16");
-        else return toXml();
+        else
+            return toXml();
     }
+
     public String toXml(Boolean removeBinary)
     {
 

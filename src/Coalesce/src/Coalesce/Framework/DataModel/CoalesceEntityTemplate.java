@@ -33,60 +33,60 @@ public class CoalesceEntityTemplate {
     // Protected Member Variables
     // -----------------------------------------------------------------------//
 
-    private Document _DataObjectDocument;
-    private Node _EntityNode;
+    private Document _dataObjectDocument;
+    private Node _entityNode;
 
     // -----------------------------------------------------------------------//
     // Static Create Functions
     // -----------------------------------------------------------------------//
 
-    public static CoalesceEntityTemplate Create(XsdEntity entity) throws SAXException, IOException
+    public static CoalesceEntityTemplate create(XsdEntity entity) throws SAXException, IOException
     {
-        return CoalesceEntityTemplate.Create(entity.toXml());
+        return CoalesceEntityTemplate.create(entity.toXml());
     }
 
-    public static CoalesceEntityTemplate Create(String templateXml) throws SAXException, IOException
+    public static CoalesceEntityTemplate create(String templateXml) throws SAXException, IOException
     {
-        return CoalesceEntityTemplate.Create(XmlHelper.loadXMLFrom(templateXml));
+        return CoalesceEntityTemplate.create(XmlHelper.loadXMLFrom(templateXml));
     }
 
-    public static CoalesceEntityTemplate Create(Document doc) throws SAXException, IOException
+    public static CoalesceEntityTemplate create(Document doc) throws SAXException, IOException
     {
         // Create a new CoalesceEntityTemplate
-        CoalesceEntityTemplate EntTemp = new CoalesceEntityTemplate();
+        CoalesceEntityTemplate entTemp = new CoalesceEntityTemplate();
 
         // Initialize
-        if (!EntTemp.Initialize(doc)) return null;
+        if (!entTemp.initialize(doc)) return null;
 
         // return
-        return EntTemp;
+        return entTemp;
     }
 
     // -----------------------------------------------------------------------//
     // Initialization
     // -----------------------------------------------------------------------//
 
-    public boolean Initialize(XsdEntity entity) throws SAXException, IOException
+    public boolean initialize(XsdEntity entity) throws SAXException, IOException
     {
-        return this.Initialize(entity.toXml());
+        return initialize(entity.toXml());
     }
 
-    public boolean Initialize(String EntityTemplateXml) throws SAXException, IOException
+    public boolean initialize(String EntityTemplateXml) throws SAXException, IOException
     {
-        return this.Initialize(XmlHelper.loadXMLFrom(EntityTemplateXml));
+        return initialize(XmlHelper.loadXMLFrom(EntityTemplateXml));
     }
 
-    public boolean Initialize(Document doc)
+    public boolean initialize(Document doc)
     {
 
         // Clean up XML
-        this.RemoveNodes(doc, "record");
-        this.RemoveNodes(doc, "linkage");
-        this.RemoveAttributes(doc);
+        removeNodes(doc, "record");
+        removeNodes(doc, "linkage");
+        removeAttributes(doc);
 
         // Set DataObjectDocument
-        this._DataObjectDocument = doc;
-        this._EntityNode = doc.getElementsByTagName("entity").item(0);
+        _dataObjectDocument = doc;
+        _entityNode = doc.getElementsByTagName("entity").item(0);
 
         // return Success
         return true;
@@ -96,58 +96,65 @@ public class CoalesceEntityTemplate {
     // public Read-Only Properties
     // -----------------------------------------------------------------------//
 
-    public Document GetDataObjectDocument()
+    public Document getDataObjectDocument()
     {
-        return this._DataObjectDocument;
+        return _dataObjectDocument;
     }
 
-    public Node GetEntityNode()
+    public Node getEntityNode()
     {
-        return this._EntityNode;
+        return _entityNode;
     }
 
-    public String GetName()
+    public String getName()
     {
-        return XmlHelper.GetAttribute(this.GetEntityNode(), "name");
+        return XmlHelper.GetAttribute(getEntityNode(), "name");
     }
 
-    public String GetSource()
+    public String getSource()
     {
-        return XmlHelper.GetAttribute(this.GetEntityNode(), "source");
+        return XmlHelper.GetAttribute(getEntityNode(), "source");
     }
 
-    public String GetVersion()
+    public String getVersion()
     {
-        return XmlHelper.GetAttribute(this.GetEntityNode(), "version");
+        return XmlHelper.GetAttribute(getEntityNode(), "version");
     }
 
     // -----------------------------------------------------------------------//
     // public Functions
     // -----------------------------------------------------------------------//
 
-    public XsdEntity CreateNewEntity()
+    public XsdEntity createNewEntity()
     {
-        XsdEntity Entity = new XsdEntity();
-        Entity.initialize(this.toXml());
+        XsdEntity entity = new XsdEntity();
+        entity.initialize(toXml());
 
-        return Entity;
+        return entity;
     }
 
     public String toXml()
     {
-        return XmlHelper.FormatXml(this._DataObjectDocument);
+        return XmlHelper.FormatXml(_dataObjectDocument);
     }
-    public String toXml(Boolean setSQLServer){
-        if(setSQLServer==true)
-            return XmlHelper.FormatXml(this._DataObjectDocument).replace("UTF-8", "UTF-16");
-        else return XmlHelper.FormatXml(this._DataObjectDocument);
+
+    public String toXml(Boolean setSQLServer)
+    {
+        if (setSQLServer)
+        {
+            return XmlHelper.FormatXml(_dataObjectDocument).replace("UTF-8", "UTF-16");
+        }
+        else
+        {
+            return XmlHelper.FormatXml(_dataObjectDocument);
+        }
     }
 
     /*--------------------------------------------------------------------------
     Private Functions
     --------------------------------------------------------------------------*/
 
-    private void RemoveNodes(Document doc, String nodeName)
+    private void removeNodes(Document doc, String nodeName)
     {
 
         NodeList nodeList = doc.getElementsByTagName(nodeName);
@@ -155,19 +162,19 @@ public class CoalesceEntityTemplate {
         // Remove all Linkages
         for (int i = nodeList.getLength() - 1; i >= 0; i--)
         {
-            Node Child = nodeList.item(i);
+            Node child = nodeList.item(i);
 
-            while (Child.hasChildNodes())
+            while (child.hasChildNodes())
             {
-                Child.removeChild(Child.getFirstChild());
+                child.removeChild(child.getFirstChild());
             }
 
-            Child.getParentNode().removeChild(Child);
+            child.getParentNode().removeChild(child);
         }
 
     }
 
-    private void RemoveAttributes(Document doc)
+    private void removeAttributes(Document doc)
     {
 
         NodeList nodeList = doc.getElementsByTagName("*");

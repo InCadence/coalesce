@@ -305,7 +305,7 @@ public class DocumentProperties {
 
                     setCoreXpsProperties(coreXml, namespaces);
 
-                    // TODO: Current logic now converting colors correctly
+                    // TODO: Current logic not converting colors correctly
                     // getEmbeddedThumbnail(zipFile);
 
                 }

@@ -116,12 +116,12 @@ public class CoalescePostGresPersistorTest {
 
         // Confirm Template
         assertNotNull(templateXml);
-        assertTrue(template.GetName().equalsIgnoreCase("TestEntity"));
-        assertTrue(template.GetSource().equalsIgnoreCase("Unit Test"));
-        assertTrue(template.GetVersion().equalsIgnoreCase("1.0.0.0"));
+        assertTrue(template.getName().equalsIgnoreCase("TestEntity"));
+        assertTrue(template.getSource().equalsIgnoreCase("Unit Test"));
+        assertTrue(template.getVersion().equalsIgnoreCase("1.0.0.0"));
 
         // Confirm Values
-        NodeList nodeList = template.GetDataObjectDocument().getElementsByTagName("*");
+        NodeList nodeList = template.getDataObjectDocument().getElementsByTagName("*");
 
         for (int jj = 0; jj < nodeList.getLength(); jj++)
         {
@@ -151,7 +151,7 @@ public class CoalescePostGresPersistorTest {
         }
 
         // Create Entity from Template
-        XsdEntity entity2 = template.CreateNewEntity();
+        XsdEntity entity2 = template.createNewEntity();
 
         String entityXml = entity2.toXml();
         System.out.println("Copy of Entity made from Template: " + entity2.getKey());
@@ -219,7 +219,7 @@ public class CoalescePostGresPersistorTest {
     @Test
     public void testSaveEntityTemplate() throws CoalescePersistorException, SAXException, IOException
     {
-        CoalesceEntityTemplate template = testTemplate(CoalesceEntityTemplate.Create(_entity));
+        CoalesceEntityTemplate template = testTemplate(CoalesceEntityTemplate.create(_entity));
         assertTrue(CoalescePostGresPersistorTest._coalesceFramework.SaveCoalesceEntityTemplate(template));
 
     }

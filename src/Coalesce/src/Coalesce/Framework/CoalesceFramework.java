@@ -242,7 +242,7 @@ public class CoalesceFramework {
         CoalesceEntityTemplate template = new CoalesceEntityTemplate();
 
         // Initialize Template
-        template.Initialize(this.GetCoalesceEntityTemplateXml(Name, Source, Version));
+        template.initialize(this.GetCoalesceEntityTemplateXml(Name, Source, Version));
 
         return template;
 

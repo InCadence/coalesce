@@ -42,14 +42,14 @@ public class CoalesceEntityTemplateTest {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         // Run Test
-        this.testTemplate(CoalesceEntityTemplate.Create(entity));
+        CoalesceEntityTemplateTest.testTemplate(CoalesceEntityTemplate.create(entity));
     }
 
     @Test
     public void testTemplateFromString() throws SAXException, IOException
     {
         // Run Test
-        this.testTemplate(CoalesceEntityTemplate.Create(CoalesceTypeInstances.TEST_MISSION));
+        CoalesceEntityTemplateTest.testTemplate(CoalesceEntityTemplate.create(CoalesceTypeInstances.TEST_MISSION));
     }
 
     @Test
@@ -59,22 +59,22 @@ public class CoalesceEntityTemplateTest {
         Document XmlDoc = XmlHelper.loadXMLFrom(CoalesceTypeInstances.TEST_MISSION);
 
         // Run Test
-        this.testTemplate(CoalesceEntityTemplate.Create(XmlDoc));
+        CoalesceEntityTemplateTest.testTemplate(CoalesceEntityTemplate.create(XmlDoc));
     }
 
-    private void testTemplate(CoalesceEntityTemplate template)
+    public static void testTemplate(CoalesceEntityTemplate template)
     {
         String templateXml = template.toXml();
         System.out.print(templateXml);
 
         // Confirm Template
         assertNotNull(templateXml);
-        assertTrue(template.GetName().equalsIgnoreCase("trexmission"));
-        assertTrue(template.GetSource().equalsIgnoreCase("trex portal"));
-        assertTrue(template.GetVersion().equalsIgnoreCase("1.0.0.0"));
+        assertTrue(template.getName().equalsIgnoreCase("trexmission"));
+        assertTrue(template.getSource().equalsIgnoreCase("trex portal"));
+        assertTrue(template.getVersion().equalsIgnoreCase("1.0.0.0"));
 
         // Confirm Values
-        NodeList nodeList = template.GetDataObjectDocument().getElementsByTagName("*");
+        NodeList nodeList = template.getDataObjectDocument().getElementsByTagName("*");
 
         for (int jj = 0; jj < nodeList.getLength(); jj++)
         {
@@ -104,7 +104,7 @@ public class CoalesceEntityTemplateTest {
         }
 
         // Create Entity from Template
-        XsdEntity entity2 = template.CreateNewEntity();
+        XsdEntity entity2 = template.createNewEntity();
 
         String entityXml = entity2.toXml();
         System.out.print(entityXml);
