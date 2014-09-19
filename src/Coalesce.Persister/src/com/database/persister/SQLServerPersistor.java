@@ -63,7 +63,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
     Private Member Variables
     --------------------------------------------------------------------------*/
 
-    ServerConn serCon;
+    private ServerConn serCon;
 
     /*--------------------------------------------------------------------------
     Constructor / Initializers

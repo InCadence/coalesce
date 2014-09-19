@@ -23,8 +23,8 @@ import unity.connector.local.LocalConfigurationsConnector;
 import unity.core.runtime.CallResult;
 import unity.core.runtime.CallResult.CallResults;
 import Coalesce.Common.Exceptions.CoalesceException;
-import Coalesce.Common.Exceptions.CoalescePersistorException;
 import Coalesce.Common.Exceptions.CoalesceInvalidFieldException;
+import Coalesce.Common.Exceptions.CoalescePersistorException;
 import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.Runtime.CoalesceSettings;
 import Coalesce.Framework.CoalesceFramework;
@@ -38,7 +38,8 @@ import Coalesce.Framework.DataModel.XsdRecordset;
 import Coalesce.Framework.DataModel.XsdSection;
 import Coalesce.Framework.Persistance.ICoalescePersistor.EntityMetaData;
 
-import com.database.persister.PostGresDataConnector;
+import com.database.persister.CoalesceDataConnector;
+import com.database.persister.ConnectionType;
 import com.database.persister.PostGresSQLPersistor;
 import com.database.persister.ServerConn;
 
@@ -172,9 +173,9 @@ public class CoalescePostGresPersistorTest {
     public void testConnection() throws SQLException, CoalescePersistorException
     {
 
-        try (PostGresDataConnector conn = new PostGresDataConnector(serCon))
+        try (CoalesceDataConnector conn = new CoalesceDataConnector(serCon,ConnectionType.PostGresSQL))
         {
-            conn.OpenConnection();
+            conn.OpenPSConnection();
         }
         catch (Exception e)
         {
@@ -183,7 +184,7 @@ public class CoalescePostGresPersistorTest {
     }
 
     @Test(expected = SQLException.class)
-    public void testFAILConnection() throws SQLException, CoalescePersistorException
+    public void testFAILConnection() throws SQLException,Exception, CoalescePersistorException
     {
         // Is this even needed?
         ServerConn serConFail = new ServerConn();
@@ -191,10 +192,10 @@ public class CoalescePostGresPersistorTest {
         serConFail.setPassword("Passw0rd");
         serConFail.setUser("rotorooter");
         serConFail.setPostGres(true);
-        try (PostGresDataConnector conn = new PostGresDataConnector(serConFail))
+        try (CoalesceDataConnector conn = new CoalesceDataConnector(serConFail,ConnectionType.PostGresSQL))
         {
 
-            conn.OpenConnection();
+            conn.OpenPSConnection();
 
         }
     }
