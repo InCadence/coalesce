@@ -145,11 +145,20 @@ public class CoalesceDataConnector implements AutoCloseable {
         CallableStatement stmt = this._conn.prepareCall(SQL);
 
         // Add Parameters
-        for (int ii = 0; ii < parameters.length; ii++)
+        if (serverConnection.toLowerCase().contains("postgresql"))
         {
-            stmt.setObject(ii + 1, parameters[ii].trim(), Types.OTHER);
+            for (int ii = 0; ii < parameters.length; ii++)
+            {
+                stmt.setObject(ii + 1, parameters[ii].trim(), Types.OTHER);
+            }
         }
-
+        else if (serverConnection.toLowerCase().contains("mysql"))
+        {
+            for (int ii = 0; ii < parameters.length; ii++)
+            {
+                stmt.setString(ii + 1, parameters[ii].trim());
+            }
+        }
         return stmt.executeQuery();
 
     }
@@ -188,9 +197,19 @@ public class CoalesceDataConnector implements AutoCloseable {
         CallableStatement stmt = this._conn.prepareCall(SQL);
 
         // Add Parameters
-        for (int ii = 0; ii < parameters.length; ii++)
+        if (serverConnection.toLowerCase().contains("postgresql"))
         {
-            stmt.setObject(ii + 1, parameters[ii].trim(), Types.OTHER);
+            for (int ii = 0; ii < parameters.length; ii++)
+            {
+                stmt.setObject(ii + 1, parameters[ii].trim(), Types.OTHER);
+            }
+        }
+        else if (serverConnection.toLowerCase().contains("mysql"))
+        {
+            for (int ii = 0; ii < parameters.length; ii++)
+            {
+                stmt.setString(ii + 1, parameters[ii].trim());
+            }
         }
 
         stmt.executeUpdate();
@@ -240,12 +259,14 @@ public class CoalesceDataConnector implements AutoCloseable {
             {
                 stmt.setObject(ii + 1, parameters[ii].trim(), Types.OTHER);
             }
-        }else if (serverConnection.toLowerCase().contains("mysql")){
+        }
+        else if (serverConnection.toLowerCase().contains("mysql"))
+        {
             // Add Parameters
             for (int ii = 0; ii < parameters.length; ii++)
             {
                 stmt.setString(ii + 1, parameters[ii].trim());
-            }           
+            }
         }
 
         stmt.executeUpdate();
