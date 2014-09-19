@@ -1,24 +1,49 @@
 package Coalesce.Common.Helpers;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
+import org.apache.batik.dom.svg.SVGDOMImplementation;
+import org.apache.batik.transcoder.TranscoderException;
+import org.apache.batik.transcoder.TranscoderInput;
+import org.apache.batik.transcoder.TranscoderOutput;
+import org.apache.batik.transcoder.TranscodingHints;
+import org.apache.batik.transcoder.image.ImageTranscoder;
+import org.apache.batik.transcoder.wmf.tosvg.WMFTranscoder;
+import org.apache.batik.util.SVGConstants;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.Namespace;
+import org.jdom2.filter.Filters;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.xpath.XPathExpression;
+import org.jdom2.xpath.XPathFactory;
 import org.joda.time.DateTime;
 
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.lang.GeoLocation;
-import com.drew.metadata.exif.ExifIFD0Directory;
-import com.drew.metadata.exif.GpsDirectory;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.exif.ExifIFD0Directory;
+import com.drew.metadata.exif.GpsDirectory;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -44,6 +69,7 @@ public class DocumentProperties {
     private String _contentStatus = "";
     private String _contentType = "";
     private DateTime _created;
+    private String _creator;
     private String _description = "";
     private String _identifier = "";
     private String _keywords = "";
@@ -78,12 +104,13 @@ public class DocumentProperties {
     // Factory and Initialization
     // ----------------------------------------------------------------------//
 
-    public boolean initialize(String fullFilename) throws ImageProcessingException, IOException
+    public boolean initialize(String fullFilename) throws ImageProcessingException, IOException, JDOMException
     {
         return initialize(fullFilename, false);
     }
 
-    public boolean initialize(String fullFilename, boolean encrypted) throws ImageProcessingException, IOException
+    public boolean initialize(String fullFilename, boolean encrypted) throws ImageProcessingException, IOException,
+            JDOMException
     {
 
         if (!initializeFileInfo(fullFilename)) return false;
@@ -184,8 +211,7 @@ public class DocumentProperties {
         if (Files.exists(path))
         {
 
-            File fi = new File(fullFilename);
-            Metadata info = ImageMetadataReader.readMetadata(fi);
+            Metadata info = getMetadataInfo(fullFilename);
 
             setGeoLocationInformation(fullFilename, info);
 
@@ -196,6 +222,29 @@ public class DocumentProperties {
         {
             return false;
         }
+
+    }
+
+    private Metadata getMetadataInfo(String fullFilename) throws ImageProcessingException, IOException
+    {
+        // Must override the default behavior to ensure the Xerces factory is used instead of the Jaxen
+        String oldFactory = System.getProperty("javax.xml.parsers.DocumentBuilderFactory");
+        System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
+
+        File fi = new File(fullFilename);
+        Metadata info = ImageMetadataReader.readMetadata(fi);
+
+        // Clear it to revert back to default behavior
+        if (oldFactory == null)
+        {
+            System.clearProperty("javax.xml.parsers.DocumentBuilderFactory");
+        }
+        else
+        {
+            System.setProperty("javax.xml.parsers.DocumentBuilderFactory", oldFactory);
+        }
+
+        return info;
 
     }
 
@@ -235,14 +284,34 @@ public class DocumentProperties {
         return true;
     }
 
-    private boolean initializeOpenXmlProperties(String fullFilename, boolean encrypted)
+    private boolean initializeOpenXmlProperties(String fullFilename, boolean encrypted) throws IOException, JDOMException
     {
         Path path = Paths.get(fullFilename);
         if (Files.exists(path))
         {
 
-            // TODO: Need to Implement
-            
+            if (encrypted)
+            {
+
+            }
+            else
+            {
+
+                try (ZipFile zipFile = new ZipFile(fullFilename))
+                {
+
+                    Collection<Namespace> namespaces = new ArrayList<Namespace>();
+                    Document coreXml = getXspCorePropertiesDocument(zipFile, namespaces);
+
+                    setCoreXpsProperties(coreXml, namespaces);
+
+                    // TODO: Current logic now converting colors correctly
+                    // getEmbeddedThumbnail(zipFile);
+
+                }
+
+            }
+
             return true;
 
         }
@@ -250,6 +319,262 @@ public class DocumentProperties {
         {
             return false;
         }
+    }
+
+    private Document getXspCorePropertiesDocument(ZipFile zipFile, Collection<Namespace> namespaces) throws JDOMException,
+            IOException
+    {
+        ZipEntry startPartEntry = zipFile.getEntry("_rels/.rels");
+
+        SAXBuilder builder = new SAXBuilder();
+        Document startPartXml = builder.build(zipFile.getInputStream(startPartEntry));
+
+        namespaces.add(Namespace.getNamespace("rel", "http://schemas.openxmlformats.org/package/2006/relationships"));
+        namespaces.add(Namespace.getNamespace("cp",
+                                              "http://schemas.openxmlformats.org/package/2006/metadata/core-properties"));
+        namespaces.add(Namespace.getNamespace("dc", "http://purl.org/dc/elements/1.1/"));
+        namespaces.add(Namespace.getNamespace("dcterms", "http://purl.org/dc/terms/"));
+
+        XPathExpression<Element> xPath = XPathFactory.instance().compile("/rel:Relationships/rel:Relationship[@Type='http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties']",
+                                                                         Filters.element(),
+                                                                         null,
+                                                                         namespaces);
+
+        Element coreElm = xPath.evaluateFirst(startPartXml);
+        String partnamePath = coreElm.getAttributeValue("Target");
+        ZipEntry partNameEntry = zipFile.getEntry(partnamePath.replace("$/", ""));
+
+        Document coreXml = builder.build(zipFile.getInputStream(partNameEntry));
+
+        return coreXml;
+
+    }
+
+    private void setCoreXpsProperties(Document coreXml, Collection<Namespace> namespaces)
+    {
+        _category = getPropertyValueCP("category", coreXml, namespaces);
+        _contentStatus = getPropertyValueCP("contentStatus", coreXml, namespaces);
+        _contentType = getPropertyValueCP("contentType", coreXml, namespaces);
+        _created = convertStringToDate(getPropertyValueDCterms("created", coreXml, namespaces));
+        _creator = getPropertyValueDC("creator", coreXml, namespaces);
+        _description = getPropertyValueDC("description", coreXml, namespaces);
+        _identifier = getPropertyValueDC("identifier", coreXml, namespaces);
+        _keywords = getPropertyValueCP("keywords", coreXml, namespaces);
+        _language = getPropertyValueDC("language", coreXml, namespaces);
+        _lastModifiedBy = getPropertyValueCP("lastModifiedBy", coreXml, namespaces);
+        _lastPrinted = convertStringToDate(getPropertyValueCP("lastPrinted", coreXml, namespaces));
+        _modified = convertStringToDate(getPropertyValueDCterms("modified", coreXml, namespaces));
+        _revision = getPropertyValueCP("revision", coreXml, namespaces);
+        _subject = getPropertyValueDC("subject", coreXml, namespaces);
+        _title = getPropertyValueDC("title", coreXml, namespaces);
+        _version = getPropertyValueCP("version", coreXml, namespaces);
+
+    }
+
+    private String getPropertyValueDC(String propertyString, Document coreXml, Collection<Namespace> namespaces)
+    {
+        String value = "";
+
+        XPathExpression<Element> titlePath = XPathFactory.instance().compile("/cp:coreProperties/dc:" + propertyString,
+                                                                             Filters.element(),
+                                                                             null,
+                                                                             namespaces);
+        Element property = titlePath.evaluateFirst(coreXml);
+        if (property != null)
+        {
+            value = property.getText();
+
+        }
+
+        return value;
+    }
+
+    private String getPropertyValueCP(String propertyString, Document coreXml, Collection<Namespace> namespaces)
+    {
+        String value = "";
+
+        XPathExpression<Element> titlePath = XPathFactory.instance().compile("/cp:coreProperties/cp:" + propertyString,
+                                                                             Filters.element(),
+                                                                             null,
+                                                                             namespaces);
+        Element property = titlePath.evaluateFirst(coreXml);
+        if (property != null)
+        {
+            value = property.getText();
+
+        }
+
+        return value;
+    }
+
+    private String getPropertyValueDCterms(String propertyString, Document coreXml, Collection<Namespace> namespaces)
+    {
+        String value = "";
+
+        XPathExpression<Element> titlePath = XPathFactory.instance().compile("/cp:coreProperties/dcterms:" + propertyString,
+                                                                             Filters.element(),
+                                                                             null,
+                                                                             namespaces);
+        Element property = titlePath.evaluateFirst(coreXml);
+        if (property != null)
+        {
+            value = property.getText();
+
+        }
+
+        return value;
+    }
+
+    private DateTime convertStringToDate(String date)
+    {
+        try
+        {
+            return new DateTime(date);
+        }
+        catch (IllegalArgumentException iae)
+        {
+            return null;
+        }
+    }
+
+    // TODO: This code does convert the wmf image embedded in the Open XML
+    // document but the colors are being inverted at the moment for some reason.
+    @SuppressWarnings("unused")
+    private void getEmbeddedThumbnail(ZipFile zipFile)
+    {
+        try
+        {
+            ZipEntry startPartEntry = zipFile.getEntry("_rels/.rels");
+
+            SAXBuilder builder = new SAXBuilder();
+            Document startPartXml;
+            startPartXml = builder.build(zipFile.getInputStream(startPartEntry));
+            Collection<Namespace> namespaces = new ArrayList<Namespace>();
+            namespaces.add(Namespace.getNamespace("rel", "http://schemas.openxmlformats.org/package/2006/relationships"));
+
+            XPathExpression<Element> xPath = XPathFactory.instance().compile("/rel:Relationships/rel:Relationship[@Type='http://schemas.openxmlformats.org/package/2006/relationships/metadata/thumbnail']",
+                                                                             Filters.element(),
+                                                                             null,
+                                                                             namespaces);
+
+            Element coreElm = xPath.evaluateFirst(startPartXml);
+            String partnamePath = coreElm.getAttributeValue("Target");
+            ZipEntry partNameEntry = zipFile.getEntry(partnamePath.replace("$/", ""));
+
+            /*
+             * String fileName = "<storage location>" + partNameEntry.getName().split("/")[1]; try(FileOutputStream fos = new
+             * FileOutputStream(fileName)) { IOUtils.copy(zipFile.getInputStream(partNameEntry), fos); fos.flush(); }
+             */
+
+            InputStream inputStream = zipFile.getInputStream(partNameEntry);
+            BufferedImage xpsThumbnail = convertToJpg(inputStream, partNameEntry.getName().split("/")[1]);
+            if (xpsThumbnail == null) return;
+
+            _thumbnail = GraphicsHelper.resample(xpsThumbnail, 80, 80);
+
+            _thumbnailFilename = getFilenameWithoutExtension() + "_thumb.jpg";
+
+        }
+        catch (JDOMException | IOException e)
+        {
+            // Failed to load thumbnail
+        }
+    }
+
+    private BufferedImage convertToJpg(InputStream wmfStream, String filename)
+    {
+        try
+        {
+
+            ByteArrayOutputStream imageOut = new ByteArrayOutputStream();
+
+            IOUtils.copy(wmfStream, imageOut);
+
+            WMFTranscoder transcoder = new WMFTranscoder();
+            TranscodingHints hints = new TranscodingHints();
+            // hints.put(WMFTranscoder.KEY_HEIGHT, 2000f);
+            // hints.put(WMFTranscoder.KEY_WIDTH, 2000f);
+            transcoder.setTranscodingHints(hints);
+            TranscoderInput input = new TranscoderInput(new ByteArrayInputStream(imageOut.toByteArray()));
+            ByteArrayOutputStream svg = new ByteArrayOutputStream();
+            TranscoderOutput output = new TranscoderOutput(svg);
+
+            transcoder.transcode(input, output);
+            /*
+             * String svgFile = "<storage location>" + StringUtils.replace(filename, "wmf", "svg");
+             * 
+             * try (FileOutputStream fileOut = new FileOutputStream(svgFile)) { fileOut.write(svg.toByteArray());
+             * fileOut.flush(); }
+             */
+
+            // svg -> jpg
+            BufferedImage image = rasterize(svg);
+            // ImageIO.write(image, "jpg", new File(StringUtils.replace(svgFile, "svg", "jpg")));
+
+            return image;
+
+        }
+        catch (IOException | TranscoderException ex)
+        {
+            // Failed to convert
+            return null;
+        }
+    }
+
+    private BufferedImage rasterize(ByteArrayOutputStream svgStream) throws IOException
+    {
+        final BufferedImage[] imagePointer = new BufferedImage[1];
+
+        // Rendering hints can't be set programatically, so
+        // we override defaults with a temporary stylesheet.
+        // These defaults emphasize quality and precision, and
+        // are more similar to the defaults of other SVG viewers.
+        // SVG documents can still override these defaults.
+        String css = "svg {" + "shape-rendering: geometricPrecision;" + "text-rendering:  geometricPrecision;"
+                + "color-rendering: optimizeQuality;" + "image-rendering: optimizeQuality;" + "}";
+        File cssFile = File.createTempFile("batik-default-override-", ".css");
+        FileUtils.writeStringToFile(cssFile, css);
+
+        TranscodingHints transcoderHints = new TranscodingHints();
+        transcoderHints.put(ImageTranscoder.KEY_XML_PARSER_VALIDATING, Boolean.FALSE);
+        transcoderHints.put(ImageTranscoder.KEY_DOM_IMPLEMENTATION, SVGDOMImplementation.getDOMImplementation());
+        transcoderHints.put(ImageTranscoder.KEY_DOCUMENT_ELEMENT_NAMESPACE_URI, SVGConstants.SVG_NAMESPACE_URI);
+        transcoderHints.put(ImageTranscoder.KEY_DOCUMENT_ELEMENT, "svg");
+        transcoderHints.put(ImageTranscoder.KEY_USER_STYLESHEET_URI, cssFile.toURI().toString());
+
+        try
+        {
+
+            TranscoderInput input = new TranscoderInput(new ByteArrayInputStream(svgStream.toByteArray()));
+
+            ImageTranscoder t = new ImageTranscoder() {
+
+                @Override
+                public BufferedImage createImage(int w, int h)
+                {
+                    return new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+                }
+
+                @Override
+                public void writeImage(BufferedImage image, TranscoderOutput out) throws TranscoderException
+                {
+                    imagePointer[0] = image;
+                }
+            };
+            t.setTranscodingHints(transcoderHints);
+            t.transcode(input, null);
+        }
+        catch (TranscoderException ex)
+        {
+            throw new IOException("Couldn't convert image");
+        }
+        finally
+        {
+            cssFile.delete();
+        }
+
+        return imagePointer[0];
+
     }
 
     // ----------------------------------------------------------------------//
@@ -294,6 +619,16 @@ public class DocumentProperties {
     public void setCreated(DateTime value)
     {
         _created = value;
+    }
+
+    public String getCreator()
+    {
+        return _creator;
+    }
+
+    public void setCreator(String value)
+    {
+        _creator = value;
     }
 
     public String getDescription()
