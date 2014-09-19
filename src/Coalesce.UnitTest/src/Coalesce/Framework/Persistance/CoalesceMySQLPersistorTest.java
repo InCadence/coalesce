@@ -38,7 +38,8 @@ import Coalesce.Framework.DataModel.XsdRecordset;
 import Coalesce.Framework.DataModel.XsdSection;
 import Coalesce.Framework.Persistance.ICoalescePersistor.EntityMetaData;
 
-import com.database.persister.MySQLDataConnector;
+import com.database.persister.CoalesceDataConnector;
+import com.database.persister.ConnectionType;
 import com.database.persister.MySQLPersistor;
 import com.database.persister.ServerConn;
 
@@ -134,13 +135,13 @@ public class CoalesceMySQLPersistorTest {
     }
 
     @Test
-    public void testConnection() throws SQLException, CoalescePersistorException
+    public void testConnection() throws SQLException, Exception,CoalescePersistorException
     {
 
-        try (MySQLDataConnector conn = new MySQLDataConnector(serCon))
+        try (CoalesceDataConnector conn = new CoalesceDataConnector(serCon,ConnectionType.MySQL))
         {
 
-            conn.OpenConnection();
+            conn.OpenMSConnection();
 
         }
     }
@@ -152,17 +153,17 @@ public class CoalesceMySQLPersistorTest {
     }
 
     @Test(expected = SQLException.class)
-    public void testFAILConnection() throws SQLException, CoalescePersistorException
+    public void testFAILConnection() throws SQLException, Exception,CoalescePersistorException
     {
         // Is this even needed?
         ServerConn serConFail = new ServerConn();
         serConFail.setURL("jdbc:mysql//localhost:3306/coalescedatabase");
         serConFail.setPassword("Passw0rd");
         serConFail.setUser("rot");
-        try (MySQLDataConnector conn = new MySQLDataConnector(serConFail))
+        try (CoalesceDataConnector conn = new CoalesceDataConnector(serConFail,ConnectionType.MySQL))
         {
 
-            conn.OpenConnection();
+            conn.OpenMSConnection();
 
         }
     }
