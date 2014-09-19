@@ -12,7 +12,7 @@ import org.apache.tomcat.util.codec.binary.Base64;
 import org.joda.time.DateTime;
 
 import Coalesce.Common.Classification.Marking;
-import Coalesce.Common.Exceptions.DataFormatException;
+import Coalesce.Common.Exceptions.CoalesceDataFormatException;
 import Coalesce.Common.Helpers.DocumentProperties;
 import Coalesce.Common.Helpers.GUIDHelper;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
@@ -129,7 +129,7 @@ public abstract class XsdFieldBase extends XsdDataObject {
         setPreviousHistoryKey(fieldHistory.getKey());
     }
 
-    public Object getData() throws DataFormatException
+    public Object getData() throws CoalesceDataFormatException
     {
 
         // TODO: GeocoordinateType, GeocoordinateListType, DocumentProperties
@@ -452,7 +452,7 @@ public abstract class XsdFieldBase extends XsdDataObject {
 
     }
 
-    public int getIntegerValue() throws ClassCastException, DataFormatException
+    public int getIntegerValue() throws CoalesceDataFormatException
     {
         if (getDataType() != ECoalesceFieldDataTypes.IntegerType)
         {
@@ -469,7 +469,7 @@ public abstract class XsdFieldBase extends XsdDataObject {
         }
         catch (NumberFormatException nfe)
         {
-            throw new DataFormatException("Failed to parse integer value for: " + getName());
+            throw new CoalesceDataFormatException("Failed to parse integer value for: " + getName());
         }
 
     }

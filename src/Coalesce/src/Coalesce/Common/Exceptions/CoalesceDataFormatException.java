@@ -1,8 +1,4 @@
-/**
- * 
- */
 package Coalesce.Common.Exceptions;
-
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -21,15 +17,12 @@ package Coalesce.Common.Exceptions;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-/**
- * @author Tom.Johnson
- *
- */
-public class InvalidFieldException extends CoalesceException {
+public class CoalesceDataFormatException extends CoalesceException {
 
-    private static final long serialVersionUID = 1096699796765997918L;
+    private static final long serialVersionUID = -4679217177054112286L;
     
-    public InvalidFieldException(String message) {
+    public CoalesceDataFormatException(String message)
+    {
         super(message);
     }
 

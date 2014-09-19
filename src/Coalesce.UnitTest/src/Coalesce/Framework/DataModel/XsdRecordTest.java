@@ -16,7 +16,7 @@ import org.joda.time.DateTime;
 import org.junit.Test;
 
 import Coalesce.Common.Exceptions.CoalesceException;
-import Coalesce.Common.Exceptions.InvalidFieldException;
+import Coalesce.Common.Exceptions.CoalesceInvalidFieldException;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import Coalesce.Common.UnitTest.CoalesceTypeInstances;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record;
@@ -403,7 +403,7 @@ public class XsdRecordTest {
 
     }
 
-    @Test(expected = InvalidFieldException.class)
+    @Test(expected = CoalesceInvalidFieldException.class)
     public void getFieldValueInvalidFieldNameTest() throws CoalesceException
     {
         XsdRecord record = getMissionRecord();
@@ -439,7 +439,7 @@ public class XsdRecordTest {
 
     }
 
-    @Test(expected = InvalidFieldException.class)
+    @Test(expected = CoalesceInvalidFieldException.class)
     public void getTypedFieldValueIntegerInvalidFieldNameTest() throws CoalesceException
     {
         XsdRecord record = getMissionRecord();
@@ -449,7 +449,7 @@ public class XsdRecordTest {
 
     }
 
-    @Test(expected = InvalidFieldException.class)
+    @Test(expected = CoalesceInvalidFieldException.class)
     public void getTypedFieldValueBooleanInvalidFieldNameTest() throws CoalesceException
     {
         XsdRecord record = getMissionRecord();
@@ -459,7 +459,7 @@ public class XsdRecordTest {
 
     }
 
-    @Test(expected = InvalidFieldException.class)
+    @Test(expected = CoalesceInvalidFieldException.class)
     public void getTypedFieldValueDateTimeInvalidFieldNameTest() throws CoalesceException
     {
         XsdRecord record = getMissionRecord();
@@ -469,7 +469,7 @@ public class XsdRecordTest {
 
     }
 
-    @Test(expected = InvalidFieldException.class)
+    @Test(expected = CoalesceInvalidFieldException.class)
     public void getTypedFieldValueBinaryInvalidFieldNameTest() throws CoalesceException
     {
         XsdRecord record = getMissionRecord();

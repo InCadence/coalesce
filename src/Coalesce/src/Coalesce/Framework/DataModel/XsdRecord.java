@@ -11,8 +11,8 @@ import org.apache.commons.lang.NullArgumentException;
 import org.joda.time.DateTime;
 
 import Coalesce.Common.Exceptions.CoalesceException;
-import Coalesce.Common.Exceptions.DataFormatException;
-import Coalesce.Common.Exceptions.InvalidFieldException;
+import Coalesce.Common.Exceptions.CoalesceDataFormatException;
+import Coalesce.Common.Exceptions.CoalesceInvalidFieldException;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.Helpers.XmlHelper;
@@ -226,7 +226,7 @@ public class XsdRecord extends XsdDataObject {
         }
         else
         {
-            throw new InvalidFieldException(fieldName);
+            throw new CoalesceInvalidFieldException(fieldName);
         }
     }
 
@@ -246,7 +246,7 @@ public class XsdRecord extends XsdDataObject {
         }
         else
         {
-            throw new InvalidFieldException(fieldName);
+            throw new CoalesceInvalidFieldException(fieldName);
         }
     }
 
@@ -265,11 +265,11 @@ public class XsdRecord extends XsdDataObject {
         }
         else
         {
-            throw new InvalidFieldException(fieldName);
+            throw new CoalesceInvalidFieldException(fieldName);
         }
     }
 
-    public DateTime getDateTimeFieldValue(String fieldName) throws CoalesceException, DataFormatException
+    public DateTime getDateTimeFieldValue(String fieldName) throws CoalesceException
     {
         XsdField field = getFieldByName(fieldName);
 
@@ -279,14 +279,14 @@ public class XsdRecord extends XsdDataObject {
             // Yes; Set Value
             DateTime value = field.getDateTimeValue();
 
-            if (value == null) throw new DataFormatException("Failed to parse Datetime value for: " + fieldName);
+            if (value == null) throw new CoalesceDataFormatException("Failed to parse Datetime value for: " + fieldName);
 
             return value;
 
         }
         else
         {
-            throw new InvalidFieldException(fieldName);
+            throw new CoalesceInvalidFieldException(fieldName);
         }
     }
 
@@ -305,7 +305,7 @@ public class XsdRecord extends XsdDataObject {
         }
         else
         {
-            throw new InvalidFieldException(fieldName);
+            throw new CoalesceInvalidFieldException(fieldName);
         }
     }
 
@@ -395,7 +395,7 @@ public class XsdRecord extends XsdDataObject {
         }
         else
         {
-            throw new InvalidFieldException(fieldName);
+            throw new CoalesceInvalidFieldException(fieldName);
         }
     }
 
@@ -410,7 +410,7 @@ public class XsdRecord extends XsdDataObject {
         }
         else
         {
-            throw new InvalidFieldException(fieldName);
+            throw new CoalesceInvalidFieldException(fieldName);
         }
     }
 
@@ -425,7 +425,7 @@ public class XsdRecord extends XsdDataObject {
         }
         else
         {
-            throw new InvalidFieldException(fieldName);
+            throw new CoalesceInvalidFieldException(fieldName);
         }
     }
 
@@ -440,7 +440,7 @@ public class XsdRecord extends XsdDataObject {
         }
         else
         {
-            throw new InvalidFieldException(fieldName);
+            throw new CoalesceInvalidFieldException(fieldName);
         }
     }
 
@@ -469,7 +469,7 @@ public class XsdRecord extends XsdDataObject {
         }
         else
         {
-            throw new InvalidFieldException(fieldName);
+            throw new CoalesceInvalidFieldException(fieldName);
         }
 
     }

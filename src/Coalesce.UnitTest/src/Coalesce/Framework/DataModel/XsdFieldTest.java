@@ -19,7 +19,7 @@ import org.junit.Test;
 
 import Coalesce.Common.Classification.Marking;
 import Coalesce.Common.Classification.MarkingValueTest;
-import Coalesce.Common.Exceptions.DataFormatException;
+import Coalesce.Common.Exceptions.CoalesceDataFormatException;
 import Coalesce.Common.Helpers.GUIDHelper;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import Coalesce.Common.Helpers.StringHelper;
@@ -517,7 +517,7 @@ public class XsdFieldTest {
     }
 
     @Test
-    public void PreviousHistoryOrderTest() throws DataFormatException
+    public void PreviousHistoryOrderTest() throws CoalesceDataFormatException
     {
 
         XsdField field = XsdFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_BASE64_PATH);
@@ -551,7 +551,7 @@ public class XsdFieldTest {
     }
 
     @Test
-    public void setSuspendHistoryTrueTest() throws DataFormatException
+    public void setSuspendHistoryTrueTest() throws CoalesceDataFormatException
     {
 
         XsdField field = XsdFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_BASE64_PATH);
@@ -565,7 +565,7 @@ public class XsdFieldTest {
     }
 
     @Test
-    public void setSuspendHistoryFalseTest() throws DataFormatException
+    public void setSuspendHistoryFalseTest() throws CoalesceDataFormatException
     {
 
         XsdField field = XsdFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_BASE64_PATH);
@@ -941,7 +941,7 @@ public class XsdFieldTest {
     }
 
     @Test
-    public void StringTypeTest() throws DataFormatException
+    public void StringTypeTest() throws CoalesceDataFormatException
     {
 
         XsdField field = getTestMissionNameField();
@@ -973,7 +973,7 @@ public class XsdFieldTest {
     }
 
     @Test
-    public void UriTypeTest() throws DataFormatException
+    public void UriTypeTest() throws CoalesceDataFormatException
     {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -1010,7 +1010,7 @@ public class XsdFieldTest {
     }
 
     @Test
-    public void getDataSetTypedValueDateTimeTypeTest() throws DataFormatException
+    public void getDataSetTypedValueDateTimeTypeTest() throws CoalesceDataFormatException
     {
         XsdField field = getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
 
@@ -1063,7 +1063,7 @@ public class XsdFieldTest {
     }
 
     @Test
-    public void getDataSetTypedValueBinaryTypeTest() throws UnsupportedEncodingException, DataFormatException
+    public void getDataSetTypedValueBinaryTypeTest() throws UnsupportedEncodingException, CoalesceDataFormatException
     {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -1113,7 +1113,7 @@ public class XsdFieldTest {
     }
 
     @Test
-    public void getDataSetTypedValueBooleanTypeTest() throws DataFormatException
+    public void getDataSetTypedValueBooleanTypeTest() throws CoalesceDataFormatException
     {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -1149,8 +1149,8 @@ public class XsdFieldTest {
 
     }
 
-    @Test(expected = DataFormatException.class)
-    public void getDataIntegerTypeNotSetTest() throws DataFormatException
+    @Test(expected = CoalesceDataFormatException.class)
+    public void getDataIntegerTypeNotSetTest() throws CoalesceDataFormatException
     {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -1167,7 +1167,7 @@ public class XsdFieldTest {
     }
 
     @Test
-    public void getDataSetTypedValueIntegerTypeTest() throws DataFormatException
+    public void getDataSetTypedValueIntegerTypeTest() throws CoalesceDataFormatException
     {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -1220,7 +1220,7 @@ public class XsdFieldTest {
     }
 
     @Test
-    public void getDataSetTypedValueGuidTypeTest() throws DataFormatException
+    public void getDataSetTypedValueGuidTypeTest() throws CoalesceDataFormatException
     {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 

@@ -23,7 +23,7 @@ import unity.core.runtime.CallResult;
 import unity.core.runtime.CallResult.CallResults;
 import Coalesce.Common.Exceptions.CoalesceException;
 import Coalesce.Common.Exceptions.CoalescePersistorException;
-import Coalesce.Common.Exceptions.InvalidFieldException;
+import Coalesce.Common.Exceptions.CoalesceInvalidFieldException;
 import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.Runtime.CoalesceSettings;
 import Coalesce.Framework.CoalesceFramework;
@@ -125,7 +125,7 @@ public class CoalesceMySQLPersistorTest {
             _fieldKey = record.getFieldByName("CurrentStatus").getKey();
             return true;
         }
-        catch (InvalidFieldException e)
+        catch (CoalesceInvalidFieldException e)
         {
             CallResult.log(CallResults.FAILED_ERROR, e, MODULE_NAME);
             return false;

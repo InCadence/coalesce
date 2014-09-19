@@ -15,7 +15,7 @@ import org.junit.Test;
 
 import Coalesce.Common.Classification.Marking;
 import Coalesce.Common.Classification.MarkingValueTest;
-import Coalesce.Common.Exceptions.DataFormatException;
+import Coalesce.Common.Exceptions.CoalesceDataFormatException;
 import Coalesce.Common.Helpers.GUIDHelper;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import Coalesce.Common.UnitTest.CoalesceTypeInstances;
@@ -158,7 +158,7 @@ public class XsdFieldHistoryTest {
     }
 
     @Test
-    public void ConstructorPreviousHistory() throws ClassCastException, DataFormatException
+    public void ConstructorPreviousHistory() throws ClassCastException, CoalesceDataFormatException
     {
 
         XsdField field = XsdFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_BASE64_PATH);
@@ -686,7 +686,7 @@ public class XsdFieldHistoryTest {
     }
 
     @Test
-    public void StringTypeTest() throws DataFormatException
+    public void StringTypeTest() throws CoalesceDataFormatException
     {
 
         XsdField field = XsdFieldTest.getTestMissionNameField();
@@ -722,7 +722,7 @@ public class XsdFieldHistoryTest {
     }
 
     @Test
-    public void UriTypeTest() throws DataFormatException
+    public void UriTypeTest() throws CoalesceDataFormatException
     {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -751,7 +751,7 @@ public class XsdFieldHistoryTest {
     }
 
     @Test
-    public void GetDataSetTypedValueDateTimeTypeTest() throws DataFormatException
+    public void GetDataSetTypedValueDateTimeTypeTest() throws CoalesceDataFormatException
     {
         XsdField field = XsdFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
 
@@ -786,7 +786,7 @@ public class XsdFieldHistoryTest {
     }
 
     @Test
-    public void GetDataSetTypedValueBooleanTypeTest() throws DataFormatException
+    public void GetDataSetTypedValueBooleanTypeTest() throws CoalesceDataFormatException
     {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -836,7 +836,7 @@ public class XsdFieldHistoryTest {
     }
 
     @Test
-    public void GetDataSetTypedValueIntegerTypeTest() throws DataFormatException
+    public void GetDataSetTypedValueIntegerTypeTest() throws CoalesceDataFormatException
     {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -887,7 +887,7 @@ public class XsdFieldHistoryTest {
     }
 
     @Test
-    public void GetDataSetTypedValueGuidTypeTest() throws DataFormatException
+    public void GetDataSetTypedValueGuidTypeTest() throws CoalesceDataFormatException
     {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
