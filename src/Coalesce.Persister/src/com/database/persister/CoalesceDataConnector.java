@@ -152,7 +152,7 @@ public class CoalesceDataConnector implements AutoCloseable {
                 stmt.setObject(ii + 1, parameters[ii].trim(), Types.OTHER);
             }
         }
-        else if (serverConnection.toLowerCase().contains("mysql"))
+        else if (serverConnection.toLowerCase().contains("mysql") || serverConnection.toLowerCase().contains("sqlserver"))
         {
             for (int ii = 0; ii < parameters.length; ii++)
             {
@@ -204,7 +204,7 @@ public class CoalesceDataConnector implements AutoCloseable {
                 stmt.setObject(ii + 1, parameters[ii].trim(), Types.OTHER);
             }
         }
-        else if (serverConnection.toLowerCase().contains("mysql"))
+        else if (serverConnection.toLowerCase().contains("mysql") || serverConnection.toLowerCase().contains("sqlserver"))
         {
             for (int ii = 0; ii < parameters.length; ii++)
             {
@@ -260,7 +260,7 @@ public class CoalesceDataConnector implements AutoCloseable {
                 stmt.setObject(ii + 1, parameters[ii].trim(), Types.OTHER);
             }
         }
-        else if (serverConnection.toLowerCase().contains("mysql"))
+        else if (serverConnection.toLowerCase().contains("mysql") || serverConnection.toLowerCase().contains("sqlserver"))
         {
             // Add Parameters
             for (int ii = 0; ii < parameters.length; ii++)
