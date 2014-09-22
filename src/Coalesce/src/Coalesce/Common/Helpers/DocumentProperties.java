@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -27,6 +28,7 @@ import org.apache.batik.util.SVGConstants;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.NullArgumentException;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -145,7 +147,18 @@ public class DocumentProperties {
 
     private boolean initializeFileInfo(String fullFilename)
     {
-        Path path = Paths.get(fullFilename);
+        if (fullFilename == null) throw new NullArgumentException("fullFilename");
+        if (StringHelper.IsNullOrEmpty(fullFilename)) return false;
+        
+        Path path;
+        try
+        {
+        path = Paths.get(fullFilename);
+        } catch (InvalidPathException ipe)
+        {
+            return false;
+        }
+        
         if (Files.exists(path))
         {
 

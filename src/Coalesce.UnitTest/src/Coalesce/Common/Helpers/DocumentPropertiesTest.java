@@ -1,6 +1,7 @@
 package Coalesce.Common.Helpers;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -8,16 +9,22 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.lang.NullArgumentException;
 import org.jdom2.JDOMException;
 import org.joda.time.DateTime;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import com.drew.imaging.ImageProcessingException;
 
 import Coalesce.Common.Runtime.CoalesceSettings;
 
 public class DocumentPropertiesTest {
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     /*
      * @AfterClass public static void tearDownAfterClass() throws Exception { }
@@ -55,7 +62,7 @@ public class DocumentPropertiesTest {
         assertEquals(851530, docProps.getSize());
         assertEquals(MimeHelper.getMimeTypeForExtension("jpg"), docProps.getMimeType());
         assertEquals(new DateTime("2008-03-14T17:59:26.000Z"), docProps.getCreated());
-        assertEquals(new DateTime("2014-09-17T18:22:56.000Z"), docProps.getModified());
+        assertEquals(new DateTime("2014-09-19T15:51:18.637Z"), docProps.getModified());
         
         ImageIO.write(docProps.getThumbnail(),
                       CoalesceSettings.GetImageFormat(),
@@ -86,6 +93,47 @@ public class DocumentPropertiesTest {
         assertEquals("Testing document title", docProps.getTitle());
         assertEquals("", docProps.getVersion());
         
+        
+    }
+    
+    @Test
+    public void initializeNullFilename() throws ImageProcessingException, IOException, JDOMException
+    {
+        thrown.expect(NullArgumentException.class);
+        thrown.expectMessage("fullFilename");
+        
+        DocumentProperties docProps = new DocumentProperties();
+        
+        docProps.initialize(null);
+    }
+    
+    @Test
+    public void initializeEmptyFilename() throws ImageProcessingException, IOException, JDOMException
+    {
+        
+        DocumentProperties docProps = new DocumentProperties();
+        
+        assertFalse(docProps.initialize(""));
+        
+    }
+    
+    @Test
+    public void initializeWhitespaceFilename() throws ImageProcessingException, IOException, JDOMException
+    {
+        
+        DocumentProperties docProps = new DocumentProperties();
+        
+        assertFalse(docProps.initialize("   "));
+        
+    }
+    
+    @Test
+    public void initializeInvalidFilename() throws ImageProcessingException, IOException, JDOMException
+    {
+        
+        DocumentProperties docProps = new DocumentProperties();
+        
+        assertFalse(docProps.initialize("abc.xyz", true));
         
     }
 }
