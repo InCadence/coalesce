@@ -47,32 +47,32 @@ public class CoalesceSettings extends SettingsBase {
 	}
 	
 	public static boolean GetUseBinaryFileStore() {
-		return CoalesceSettings.GetSetting(GetConfigurationFileName(), "Coalesce.FileStore.UseFileStore", true, true);
+		return CoalesceSettings.getSetting(GetConfigurationFileName(), "Coalesce.FileStore.UseFileStore", true, true);
 	}
 	
 	public static boolean SetUseBinaryFileStore(boolean value) {
-		return CoalesceSettings.SetSetting(GetConfigurationFileName(), "Coalesce.FileStore.UseFileStore", value);
+		return CoalesceSettings.setSetting(GetConfigurationFileName(), "Coalesce.FileStore.UseFileStore", value);
 	}
 	
 	public static boolean GetUseIndexing() {
-		return CoalesceSettings.GetSetting(GetConfigurationFileName(), "Coalesce.FileStore.UseIndexing", true, true);
+		return CoalesceSettings.getSetting(GetConfigurationFileName(), "Coalesce.FileStore.UseIndexing", true, true);
 	}
 	
 	public static boolean SetUseIndexing(boolean value) {
-		return CoalesceSettings.SetSetting(GetConfigurationFileName(), "Coalesce.FileStore.UseIndexing", value);
+		return CoalesceSettings.setSetting(GetConfigurationFileName(), "Coalesce.FileStore.UseIndexing", value);
 	}
 	
 	public static int GetSubDirectoryLength() {
-		return CoalesceSettings.GetSettingWithMax(GetConfigurationFileName(), "Coalesce.FileStore.SubDirectoryLength", 2, 5, true);
+		return CoalesceSettings.getSettingWithMax(GetConfigurationFileName(), "Coalesce.FileStore.SubDirectoryLength", 2, 5, true);
 	}
 	
 	public static String GetBinaryFileStoreBasePath() {
-		return CoalesceSettings.GetSetting(GetConfigurationFileName(), "Coalesce.FileStore.BasePath", FilenameUtils.concat(GetDefaultApplicationRoot(), "..\\images\\uploads\\"), true);
+		return CoalesceSettings.getSetting(GetConfigurationFileName(), "Coalesce.FileStore.BasePath", FilenameUtils.concat(GetDefaultApplicationRoot(), "..\\images\\uploads\\"), true);
 	}
 	
 	public static boolean SetBinaryFileStoreBasePath(String value)
 	{
-		return CoalesceSettings.SetSetting(GetConfigurationFileName(), "Coalesce.FileStore.BasePath", value);
+		return CoalesceSettings.setSetting(GetConfigurationFileName(), "Coalesce.FileStore.BasePath", value);
 	}
 	
 	public static void SetDefaultApplicationName(String value)
@@ -119,35 +119,35 @@ public class CoalesceSettings extends SettingsBase {
 	}
 	
 	public static boolean GetUseEncryption() {
-		return CoalesceSettings.GetSetting(GetConfigurationFileName(), "Coalesce.Security.UseEncryption", false, true);
+		return CoalesceSettings.getSetting(GetConfigurationFileName(), "Coalesce.Security.UseEncryption", false, true);
 	}
 	
 	public static boolean SetUseEncryption(boolean value) {
-		return CoalesceSettings.SetSetting(GetConfigurationFileName(), "Coalesce.Security.UseEncryption", value);
+		return CoalesceSettings.setSetting(GetConfigurationFileName(), "Coalesce.Security.UseEncryption", value);
 	}
 	
 	public static String GetPassPhrase() {
-		return CoalesceSettings.GetSetting(GetConfigurationFileName(), "Coalesce.Security.PassPhrase", "9UFAF8FI98BDLQEZ", true);
+		return CoalesceSettings.getSetting(GetConfigurationFileName(), "Coalesce.Security.PassPhrase", "9UFAF8FI98BDLQEZ", true);
 	}
 	
 	public static boolean SetPassPhrase(String value) {
-		return CoalesceSettings.SetSetting(GetConfigurationFileName(), "Coalesce.Security.PassPhrase", value);
+		return CoalesceSettings.setSetting(GetConfigurationFileName(), "Coalesce.Security.PassPhrase", value);
 	}
 	
 	public static boolean GetAuditSelectStatements() {
-		return CoalesceSettings.GetSetting(GetConfigurationFileName(), "Coalesce.Security.AuditSelectStatements", true, true);
+		return CoalesceSettings.getSetting(GetConfigurationFileName(), "Coalesce.Security.AuditSelectStatements", true, true);
 	}
 	
 	public static boolean SetAuditSelectStatements(boolean value) {
-		return CoalesceSettings.SetSetting(GetConfigurationFileName(), "Coalesce.Security.AuditSelectStatements", value);
+		return CoalesceSettings.setSetting(GetConfigurationFileName(), "Coalesce.Security.AuditSelectStatements", value);
 	}
 	
 	public static String GetImageFormat() {
-        return CoalesceSettings.GetSetting(GetConfigurationFileName(), "Coalesce.FileStore.ImageFormat", "jpg", true);
+        return CoalesceSettings.getSetting(GetConfigurationFileName(), "Coalesce.FileStore.ImageFormat", "jpg", true);
     }
     
     public static boolean SetImageFormat(String value) {
-        return CoalesceSettings.SetSetting(GetConfigurationFileName(), "Coalesce.Filestore.ImageFormat", value);
+        return CoalesceSettings.setSetting(GetConfigurationFileName(), "Coalesce.Filestore.ImageFormat", value);
     }
 	
 }

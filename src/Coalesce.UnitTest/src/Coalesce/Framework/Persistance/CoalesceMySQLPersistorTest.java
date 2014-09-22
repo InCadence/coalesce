@@ -75,7 +75,7 @@ public class CoalesceMySQLPersistorTest {
     public static void setupBeforeClass() throws SAXException, IOException, CoalesceException
     {
 
-        CoalesceSettings.Initialize(new LocalConfigurationsConnector());
+        CoalesceSettings.initialize(new LocalConfigurationsConnector());
 
         serCon = new ServerConn();
         serCon.setURL("jdbc:mysql://localhost:3306/coalescedatabase");

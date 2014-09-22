@@ -55,7 +55,7 @@ public class CoalesceSQLServerPersistorTest {
     public static void Initialize() throws SAXException, IOException, CoalesceException
     {
 
-        CoalesceSettings.Initialize(new LocalConfigurationsConnector());
+        CoalesceSettings.initialize(new LocalConfigurationsConnector());
 
         serCon = new ServerConn();
         serCon.setUser("root");

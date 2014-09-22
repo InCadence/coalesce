@@ -23,7 +23,7 @@ public class CoalesceUnitTestSettings extends CoalesceSettings {
 
     public static boolean SetSubDirectoryLength(int value)
     {
-        return CoalesceSettings.SetSetting(GetConfigurationFileName(), "Coalesce.FileStore.SubDirectoryLength", value);
+        return CoalesceSettings.setSetting(GetConfigurationFileName(), "Coalesce.FileStore.SubDirectoryLength", value);
     }
 
 }

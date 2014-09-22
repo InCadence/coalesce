@@ -27,7 +27,7 @@ public class CoalesceSettingsTestHelper {
     
     public static void setUpdBeforeClass() {
         
-        CoalesceUnitTestSettings.Initialize(new LocalConfigurationsConnector());
+        CoalesceUnitTestSettings.initialize(new LocalConfigurationsConnector());
 
     }
 }

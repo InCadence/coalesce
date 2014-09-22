@@ -58,7 +58,7 @@ public class CoalescePostGresPersistorTest {
     public static void setupBeforeClass() throws SAXException, IOException, CoalesceException
     {
 
-        CoalesceSettings.Initialize(new LocalConfigurationsConnector());
+        CoalesceSettings.initialize(new LocalConfigurationsConnector());
 
         serCon = new ServerConn();
         serCon.setURL("jdbc:postgresql://localhost/CoalesceDatabase");
