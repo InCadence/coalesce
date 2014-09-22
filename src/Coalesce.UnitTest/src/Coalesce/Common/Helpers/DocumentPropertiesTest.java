@@ -13,6 +13,8 @@ import org.joda.time.DateTime;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.drew.imaging.ImageProcessingException;
+
 import Coalesce.Common.Runtime.CoalesceSettings;
 
 public class DocumentPropertiesTest {
@@ -40,7 +42,7 @@ public class DocumentPropertiesTest {
     }
 
     @Test
-    public void initializeJpgTest() throws ImageProcessingException, IOException, JDOMException
+    public void initializeJpgTest() throws IOException, JDOMException, ImageProcessingException
     {
         DocumentProperties docProps = new DocumentProperties();
 
