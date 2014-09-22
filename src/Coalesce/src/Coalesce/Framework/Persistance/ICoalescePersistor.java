@@ -29,19 +29,43 @@ public interface ICoalescePersistor {
 
     public class EntityMetaData {
 
+        /**
+         * Contains comma separated value (CSV) list of unique identifiers that represents a Coalesce entity.
+         */
         public String entityId;
+
+        /**
+         * Contains comma separated value (CSV) list of type identifiers that map 1 to 1 with entityId.
+         */
         public String entityType;
+
+        /**
+         * Contains a GUID that uniquely identifies a Coalesce entity.
+         */
         public String entityKey;
 
     }
-    
+
     public class ElementMetaData {
 
+        /**
+         * Contains a GUID that uniquely identifies a Coalesce entity that contains the element of interest.
+         */
         public String entityKey;
+
+        /**
+         * Contains a XML path within the Coalesce entity specified by entityKey that contains the element of interest.
+         */
         public String elementXPath;
 
     }
 
+    /**
+     * 
+     * @param Cacher Pass null if caching is not wanted
+     * @return true if successful
+     * @throws CoalescePersistorException
+     */
     public boolean initialize(ICoalesceCacher Cacher) throws CoalescePersistorException;
 
     public boolean setEntity(XsdEntity entity, boolean AllowRemoval) throws CoalescePersistorException;

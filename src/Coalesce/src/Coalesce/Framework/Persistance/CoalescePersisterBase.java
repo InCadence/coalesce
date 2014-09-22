@@ -219,6 +219,10 @@ public abstract class CoalescePersisterBase implements ICoalescePersistor {
     @Override
     public abstract String getEntityTemplateMetadata() throws CoalescePersistorException;
 
+    /*--------------------------------------------------------------------------
+    Abstract Protected Functions
+    --------------------------------------------------------------------------*/
+
     protected abstract boolean FlattenObject(XsdEntity entity, boolean AllowRemoval) throws CoalescePersistorException;
 
     protected abstract boolean FlattenCore(XsdEntity entity, boolean AllowRemoval) throws CoalescePersistorException;
