@@ -11,8 +11,6 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.springframework.stereotype.Repository;
 
-import unity.core.runtime.CallResult;
-import unity.core.runtime.CallResult.CallResults;
 import Coalesce.Common.Exceptions.CoalescePersistorException;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import Coalesce.Common.Runtime.CoalesceSettings;
@@ -581,9 +579,6 @@ public class SQLServerPersistor extends CoalescePersisterBase {
             break;
 
         default:
-            CallResult.log(CallResults.FAILED,
-                           "Unknown DataModel Object Type.",
-                           "Coalesce.Framework.Persistence.SQLServer.SQLServerCoalescePersister");
             isSuccessful = false;
         }
         return isSuccessful;

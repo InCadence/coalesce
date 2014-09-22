@@ -38,27 +38,8 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework</groupId>
-			<artifactId>spring-core</artifactId>
-			<version>4.0.6.RELEASE</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-beans</artifactId>
-			<version>4.0.6.RELEASE</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
 			<version>4.0.6.RELEASE</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-jdbc</artifactId>
-			<version>4.0.6.RELEASE</version>
-		</dependency>
-		<dependency>
-			<groupId>unity</groupId>
-			<artifactId>unity-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>coalesce</groupId>
