@@ -7,9 +7,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
+import unity.common.CallResult;
+import unity.common.CallResult.CallResults;
 import unity.connector.local.LocalConfigurationsConnector;
-import unity.core.runtime.CallResult;
-import unity.core.runtime.CallResult.CallResults;
 import Coalesce.Common.Exceptions.CoalesceException;
 import Coalesce.Common.Exceptions.CoalesceInvalidFieldException;
 import Coalesce.Common.Exceptions.CoalescePersistorException;
@@ -45,7 +45,7 @@ public class CoalesceNEO4JPersistorTest {
     public static void setupBeforeClass() throws SAXException, IOException, CoalesceException
     {
 
-        CoalesceSettings.Initialize(new LocalConfigurationsConnector());
+        CoalesceSettings.initialize(new LocalConfigurationsConnector());
 
         serCon = new ServerConn();
         serCon.setURL("jdbc:neo4j://localhost:7474/");
