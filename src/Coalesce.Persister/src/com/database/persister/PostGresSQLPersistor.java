@@ -539,20 +539,20 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
             break;
 
         case "section":
-            if (CoalesceSettings.GetUseIndexing())
+            if (CoalesceSettings.getUseIndexing())
             {
                 isSuccessful = persistSectionObject((XsdSection) dataObject, conn);
             }
             break;
 
         case "recordset":
-            if (CoalesceSettings.GetUseIndexing())
+            if (CoalesceSettings.getUseIndexing())
             {
                 isSuccessful = persistRecordsetObject((XsdRecordset) dataObject, conn);
             }
             break;
         case "fielddefinition":
-            if (CoalesceSettings.GetUseIndexing())
+            if (CoalesceSettings.getUseIndexing())
             {
                 // Removed Field Definition Persisting
                 // isSuccessful = PersistFieldDefinitionObject((XsdFieldDefinition) dataObject, conn);
@@ -560,35 +560,35 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
             break;
 
         case "record":
-            if (CoalesceSettings.GetUseIndexing())
+            if (CoalesceSettings.getUseIndexing())
             {
                 isSuccessful = persistRecordObject((XsdRecord) dataObject, conn);
             }
             break;
 
         case "field":// Not testing the type to ascertain if it is BINARY now.
-            if (CoalesceSettings.GetUseIndexing())
+            if (CoalesceSettings.getUseIndexing())
             {
                 isSuccessful = persistFieldObject((XsdField) dataObject, conn);
             }
             break;
 
         case "fieldhistory":
-            if (CoalesceSettings.GetUseIndexing())
+            if (CoalesceSettings.getUseIndexing())
             {
                 isSuccessful = persistFieldHistoryObject((XsdFieldHistory) dataObject, conn);
             }
             break;
 
         case "linkagesection":
-            if (CoalesceSettings.GetUseIndexing())
+            if (CoalesceSettings.getUseIndexing())
             {
                 isSuccessful = persistLinkageSectionObject((XsdLinkageSection) dataObject, conn);
             }
             break;
 
         case "linkage":
-            if (CoalesceSettings.GetUseIndexing())
+            if (CoalesceSettings.getUseIndexing())
             {
                 isSuccessful = persistLinkageObject((XsdLinkage) dataObject, conn);
             }

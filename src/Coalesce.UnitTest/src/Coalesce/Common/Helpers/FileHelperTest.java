@@ -10,8 +10,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import Coalesce.Common.UnitTest.CoalesceSettingsTestHelper;
-
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
 
@@ -38,7 +36,6 @@ public class FileHelperTest {
     @BeforeClass
     public static void setUpBeforeClass()
     {
-        CoalesceSettingsTestHelper.setUpdBeforeClass();
     }
 
     /*

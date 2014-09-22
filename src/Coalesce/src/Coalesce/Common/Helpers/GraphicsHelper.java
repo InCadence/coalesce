@@ -103,7 +103,7 @@ public class GraphicsHelper {
 
     public static boolean createFieldThumbnail(String Filename) throws IOException
     {
-        String imageFormat = CoalesceSettings.GetImageFormat();
+        String imageFormat = CoalesceSettings.getImageFormat();
 
         File imageFile = new File(Filename);
         String imageName = imageFile.getName();

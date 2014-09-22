@@ -49,7 +49,7 @@ public class CoalesceSettingTest {
     @Test
     public void GetDefaultApplicationRootNotSetTest()
     {
-        String root = CoalesceSettings.GetDefaultApplicationRoot();
+        String root = CoalesceSettings.getDefaultApplicationRoot();
      
         // TODO: Uses Unit test runner as the main path which is based on the individual IDE installation location
         //       Should somehow be changed to a testable assert. Verified manually that it does return bin path
@@ -60,9 +60,9 @@ public class CoalesceSettingTest {
     @Test
     public void GetDefaultApplicationRootSetTest()
     {
-        CoalesceSettings.SetDefaultApplicationRoot("C:\\Program Files\\Java\\jre7\\bin");
+        CoalesceSettings.setDefaultApplicationRoot("C:\\Program Files\\Java\\jre7\\bin");
         
-        assertEquals("C:\\Program Files\\Java\\jre7\\bin", CoalesceSettings.GetDefaultApplicationRoot());
+        assertEquals("C:\\Program Files\\Java\\jre7\\bin", CoalesceSettings.getDefaultApplicationRoot());
         
     }
     

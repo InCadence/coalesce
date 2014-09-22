@@ -65,7 +65,7 @@ public class DocumentPropertiesTest {
         assertEquals(new DateTime("2014-09-19T15:51:18.637Z"), docProps.getModified());
         
         ImageIO.write(docProps.getThumbnail(),
-                      CoalesceSettings.GetImageFormat(),
+                      CoalesceSettings.getImageFormat(),
                       new File("bin\\desert_thumbnail_test.jpg"));
     }
 

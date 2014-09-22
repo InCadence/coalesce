@@ -28,7 +28,6 @@ import Coalesce.Common.Helpers.GUIDHelper;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import Coalesce.Common.Helpers.MimeHelper;
 import Coalesce.Common.Helpers.StringHelper;
-import Coalesce.Common.UnitTest.CoalesceSettingsTestHelper;
 import Coalesce.Common.UnitTest.CoalesceTypeInstances;
 import Coalesce.Common.UnitTest.CoalesceUnitTestSettings;
 
@@ -58,10 +57,7 @@ public class XsdFieldTest {
     @BeforeClass
     public static void setUpBeforeClass()
     {
-        CoalesceSettingsTestHelper.setUpdBeforeClass();
-
         initializeSettings();
-
     }
 
     /*
@@ -712,7 +708,7 @@ public class XsdFieldTest {
             IllegalAccessException, IllegalArgumentException, InvocationTargetException
     {
 
-        CoalesceUnitTestSettings.SetSubDirectoryLength(0);
+        CoalesceUnitTestSettings.setSubDirectoryLength(0);
 
         getCoalesceFullFilename();
     }
@@ -722,7 +718,7 @@ public class XsdFieldTest {
             IllegalAccessException, IllegalArgumentException, InvocationTargetException
     {
 
-        CoalesceUnitTestSettings.SetSubDirectoryLength(5);
+        CoalesceUnitTestSettings.setSubDirectoryLength(5);
 
         getCoalesceFullFilename();
 
@@ -760,7 +756,7 @@ public class XsdFieldTest {
             IllegalAccessException, IllegalArgumentException, InvocationTargetException
     {
 
-        CoalesceUnitTestSettings.SetSubDirectoryLength(0);
+        CoalesceUnitTestSettings.setSubDirectoryLength(0);
 
         getCoalesceFullThumbnailFilename();
     }
@@ -770,7 +766,7 @@ public class XsdFieldTest {
             IllegalAccessException, IllegalArgumentException, InvocationTargetException
     {
 
-        CoalesceUnitTestSettings.SetSubDirectoryLength(5);
+        CoalesceUnitTestSettings.setSubDirectoryLength(5);
 
         getCoalesceFullThumbnailFilename();
 
@@ -808,7 +804,7 @@ public class XsdFieldTest {
             IllegalAccessException, IllegalArgumentException, InvocationTargetException
     {
 
-        CoalesceUnitTestSettings.SetSubDirectoryLength(0);
+        CoalesceUnitTestSettings.setSubDirectoryLength(0);
 
         getCoalesceFilenameWithLastModifiedTag();
     }
@@ -818,7 +814,7 @@ public class XsdFieldTest {
             IllegalAccessException, IllegalArgumentException, InvocationTargetException
     {
 
-        CoalesceUnitTestSettings.SetSubDirectoryLength(5);
+        CoalesceUnitTestSettings.setSubDirectoryLength(5);
 
         getCoalesceFilenameWithLastModifiedTag();
 
@@ -870,7 +866,7 @@ public class XsdFieldTest {
             SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
     {
 
-        CoalesceUnitTestSettings.SetSubDirectoryLength(0);
+        CoalesceUnitTestSettings.setSubDirectoryLength(0);
 
         getCoalesceThumbnailFilenameWithLastModifiedTag();
     }
@@ -880,7 +876,7 @@ public class XsdFieldTest {
             SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
     {
 
-        CoalesceUnitTestSettings.SetSubDirectoryLength(5);
+        CoalesceUnitTestSettings.setSubDirectoryLength(5);
 
         getCoalesceThumbnailFilenameWithLastModifiedTag();
 
@@ -1326,7 +1322,7 @@ public class XsdFieldTest {
     private static void initializeSettings()
     {
 
-        CoalesceUnitTestSettings.SetSubDirectoryLength(2);
+        CoalesceUnitTestSettings.setSubDirectoryLength(2);
 
     }
 

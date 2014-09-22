@@ -21,9 +21,9 @@ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
 
 public class CoalesceUnitTestSettings extends CoalesceSettings {
 
-    public static boolean SetSubDirectoryLength(int value)
+    public static boolean setSubDirectoryLength(int value)
     {
-        return CoalesceSettings.setSetting(GetConfigurationFileName(), "Coalesce.FileStore.SubDirectoryLength", value);
+        return CoalesceSettings.setSetting(getConfigurationFileName(), "Coalesce.FileStore.SubDirectoryLength", value);
     }
 
 }

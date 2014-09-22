@@ -79,7 +79,7 @@ public class FileHelper {
                 ICoalesceEncrypter cipher;
                 try
                 {
-                    cipher = new CoalesceEncrypter(CoalesceSettings.GetPassPhrase());
+                    cipher = new CoalesceEncrypter(CoalesceSettings.getPassPhrase());
                 }
                 catch (InvalidKeyException | NoSuchAlgorithmException | UnsupportedEncodingException e)
                 {
@@ -181,8 +181,8 @@ public class FileHelper {
 
     private static String GetBaseFilenameWithFullDirectoryPathForKey(String key, boolean createIfDoesNotExist)
     {
-        return GetBaseFilenameWithFullDirectoryPathForKey(CoalesceSettings.GetBinaryFileStoreBasePath(),
-                                                          CoalesceSettings.GetSubDirectoryLength(),
+        return GetBaseFilenameWithFullDirectoryPathForKey(CoalesceSettings.getBinaryFileStoreBasePath(),
+                                                          CoalesceSettings.getSubDirectoryLength(),
                                                           key,
                                                           createIfDoesNotExist);
     }
