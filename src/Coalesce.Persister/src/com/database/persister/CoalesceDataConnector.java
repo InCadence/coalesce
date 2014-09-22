@@ -62,6 +62,7 @@ public class CoalesceDataConnector implements AutoCloseable {
                 break;
             case NEO4J:
                 serverConnection = "org.neo4j.jdbc.Driver";
+                this._procedurePrefix = "";
                 break;
             case Hybrid:
                 serverConnection = "";
@@ -86,9 +87,15 @@ public class CoalesceDataConnector implements AutoCloseable {
         this._serCon.setPostGres(true);
         this._conn = DriverManager.getConnection(this._serCon.getURL(), this._serCon.props);
     }
+    public void OpenNEOJConnection() throws SQLException
+    {
+        this._serCon.setPostGres(false);
+        this._conn=DriverManager.getConnection(this._serCon.getURL());
+    }
 
     public void OpenSSConnection() throws SQLException
     {
+        this._serCon.setPostGres(false);
         sqlDataSource = new SQLServerDataSource();
         sqlDataSource.setUser(this._serCon.getUser());
         sqlDataSource.setPassword(this._serCon.getPassword());
@@ -122,7 +129,7 @@ public class CoalesceDataConnector implements AutoCloseable {
         }
         else if (serverConnection.toLowerCase().contains("neo4j"))
         {
-            this.OpenNJConnection();
+            this.OpenNEOJConnection();
         }
         else if (serverConnection.toLowerCase().contains("hybrid"))
         {
@@ -130,11 +137,7 @@ public class CoalesceDataConnector implements AutoCloseable {
         }
     }
 
-    private void OpenNJConnection()
-    {
-        // TODO Auto-generated method stub
 
-    }
 
     public ResultSet ExecuteQuery(String SQL, String... parameters) throws SQLException
     {
