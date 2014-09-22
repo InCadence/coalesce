@@ -13,8 +13,8 @@ import javax.sql.DataSource;
 
 import org.springframework.stereotype.Repository;
 
-import unity.core.runtime.CallResult;
-import unity.core.runtime.CallResult.CallResults;
+import unity.common.CallResult;
+import unity.common.CallResult.CallResults;
 
 import com.proto.irems.services.XMLRecord;
 import com.proto.irems.services.monitor.GeneralServices;

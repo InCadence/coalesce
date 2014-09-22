@@ -25,8 +25,8 @@ import org.springframework.stereotype.Repository;
 import org.w3c.dom.NamedNodeMap;
 import org.xml.sax.SAXException;
 
-import unity.core.runtime.CallResult;
-import unity.core.runtime.CallResult.CallResults;
+import unity.common.CallResult;
+import unity.common.CallResult.CallResults;
 
 import com.proto.irems.services.XMLRecord;
 

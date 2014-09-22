@@ -19,9 +19,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import unity.common.CallResult;
+import unity.common.CallResult.CallResults;
 import unity.connector.local.LocalConfigurationsConnector;
-import unity.core.runtime.CallResult;
-import unity.core.runtime.CallResult.CallResults;
 import Coalesce.Common.Exceptions.CoalesceException;
 import Coalesce.Common.Exceptions.CoalesceInvalidFieldException;
 import Coalesce.Common.Exceptions.CoalescePersistorException;
