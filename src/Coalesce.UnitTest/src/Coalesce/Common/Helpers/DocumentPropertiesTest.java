@@ -15,8 +15,6 @@ import org.junit.Test;
 
 import Coalesce.Common.Runtime.CoalesceSettings;
 
-import com.drew.imaging.ImageProcessingException;
-
 public class DocumentPropertiesTest {
 
     /*

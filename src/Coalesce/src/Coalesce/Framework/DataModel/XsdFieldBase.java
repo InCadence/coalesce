@@ -8,7 +8,7 @@ import java.util.UUID;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.NullArgumentException;
-import org.apache.tomcat.util.codec.binary.Base64;
+import org.apache.xerces.impl.dv.util.Base64;
 import org.joda.time.DateTime;
 
 import Coalesce.Common.Classification.Marking;
@@ -366,15 +366,14 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
         {
             throw new ClassCastException("Type mismatch");
         }
-
-        String value = Base64.encodeBase64String(dataBytes);
+        String value = Base64.encode(dataBytes);
         setValue(value);
         setSize(dataBytes.length);
     }
 
     public void setTypedValue(byte[] dataBytes, String filename, String extension, String mimeType)
     {
-        String value = Base64.encodeBase64String(dataBytes);
+        String value = Base64.encode(dataBytes);
         setValue(value);
         setFilename(filename);
         setExtension(extension);
@@ -398,7 +397,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
         }
 
         // Set Bytes
-        setValue(Base64.encodeBase64String(dataBytes));
+        setValue(Base64.encode(dataBytes));
         setFilename(docProps.getFilename());
         setExtension(docProps.getExtension());
         setMimeType(docProps.getMimeType());
@@ -421,7 +420,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
             byte[] fileBytes = Files.readAllBytes(path);
 
             // Set Bytes
-            setValue(Base64.encodeBase64String(fileBytes));
+            setValue(Base64.encode(fileBytes));
             setFilename(docProps.getFilename());
             setExtension(docProps.getExtension());
             setMimeType(docProps.getMimeType());
@@ -592,7 +591,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
         if (rawValue.length() > 0)
         {
             // Needs to be tested for compatibility with .Net. Should be.
-            byte[] bytes = Base64.decodeBase64(rawValue);
+            byte[] bytes = Base64.decode(rawValue);
 
             return bytes;
 

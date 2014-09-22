@@ -42,7 +42,7 @@
 		</dependency>
 		<dependency>
 			<groupId>unity</groupId>
-			<artifactId>unity-core</artifactId>
+			<artifactId>unity-common</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>joda-time</groupId>
@@ -53,11 +53,6 @@
 			<groupId>org.imgscalr</groupId>
 			<artifactId>imgscalr-lib</artifactId>
 			<version>4.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.tomcat</groupId>
-			<artifactId>tomcat-catalina</artifactId>
-			<version>8.0.9</version>
 		</dependency>
 		<dependency>
 			<groupId>com.drewnoakes</groupId>

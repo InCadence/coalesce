@@ -14,7 +14,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.apache.tomcat.util.codec.binary.Base64;
+import org.apache.xerces.impl.dv.util.Base64;
 
 import Coalesce.Common.Exceptions.CoalesceCryptoException;
 
@@ -142,9 +142,7 @@ public class CoalesceEncrypter implements ICoalesceEncrypter {
     public String decryptValue(String ValueEncryptedBase64) throws CoalesceCryptoException
     {
 
-        Base64 Encoder = new Base64();
-
-        byte[] DecodedBytes = Encoder.decode(ValueEncryptedBase64);
+        byte[] DecodedBytes = Base64.decode(ValueEncryptedBase64);
 
         return this.decryptValue(DecodedBytes);
 
@@ -185,8 +183,7 @@ public class CoalesceEncrypter implements ICoalesceEncrypter {
         if (utf8 != null)
         {
 
-            Base64 Encoder = new Base64();
-            return Encoder.encodeToString(utf8);
+            return Base64.encode(utf8);
 
         }
         else

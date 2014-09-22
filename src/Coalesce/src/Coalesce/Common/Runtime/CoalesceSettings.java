@@ -3,7 +3,8 @@ package Coalesce.Common.Runtime;
 import java.util.Map;
 
 import org.apache.commons.io.FilenameUtils;
-import unity.core.runtime.SettingsBase;
+
+import unity.common.SettingsBase;
 import Coalesce.Common.Helpers.StringHelper;
 
 /*-----------------------------------------------------------------------------'

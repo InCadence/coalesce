@@ -12,7 +12,7 @@ import java.util.UUID;
 
 import javax.xml.namespace.QName;
 
-import org.apache.tomcat.util.codec.binary.Base64;
+import org.apache.xerces.impl.dv.util.Base64;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Test;
@@ -30,6 +30,7 @@ import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record.Field;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record.Field.Fieldhistory;
+
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -276,7 +277,7 @@ public class EntityTest {
 
         String byteString = "Testing String";
         byte[] dataBytes = byteString.getBytes("US-ASCII");
-        String value = Base64.encodeBase64String(dataBytes);
+        String value = Base64.encode(dataBytes);
         newField.setValue(value);
 
         newRecord.getField().add(newField);
@@ -291,7 +292,7 @@ public class EntityTest {
 
         assertEquals("VGVzdGluZyBTdHJpbmc=", rawData);
 
-        byte[] bytes = Base64.decodeBase64(rawData);
+        byte[] bytes = Base64.decode(rawData);
 
         assertArrayEquals(dataBytes, bytes);
         assertEquals(ECoalesceFieldDataTypes.BinaryType.getLabel(), desField.getDatatype());
