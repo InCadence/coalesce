@@ -69,12 +69,14 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
          * Define the PostGresSQL Database Connection in the URL, change to whatever the schema name is on your system
          ***********/
         serCon = new ServerConn();
+        serCon.setPostGres(true);
         /* Set URL, User, Pass */
     }
 
     public void Initialize(ServerConn svConn)
     {
         serCon = svConn;
+        serCon.setPostGres(true);
     }
 
     public void Initialize(String url, String userName, String pwd)
@@ -82,12 +84,13 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
         serCon.setURL(url);
         serCon.setPassword(pwd);
         serCon.setUser(userName);
+        serCon.setPostGres(true);
     }
 
     public boolean Initialize(ICoalesceCacher cacher, ServerConn svConn) throws CoalescePersistorException
     {
         serCon = svConn;
-
+        serCon.setPostGres(true);
         return super.initialize(cacher);
     }
 
