@@ -22,8 +22,9 @@ import org.junit.runners.Suite.SuiteClasses;
  -----------------------------------------------------------------------------*/
 
 @RunWith(Suite.class)
-@SuiteClasses({ FileHelperTest.class, GUIDHelperTest.class, JodaDateTimeHelperTest.class, StringHelperTest.class,
-               XmlHelperTest.class, DocumentPropertiesTest.class, DocumentThumbnailHelperTest.class, EntityLinkHelperTest.class })
+@SuiteClasses({ DocumentPropertiesTest.class, DocumentThumbnailHelperTest.class, EntityLinkHelperTest.class,
+               FileHelperTest.class, GUIDHelperTest.class, JodaDateTimeHelperTest.class, StringHelperTest.class,
+               XmlHelperTest.class })
 public class AllCommonHelpersTests {
 
 }

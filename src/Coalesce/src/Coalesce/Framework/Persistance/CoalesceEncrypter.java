@@ -18,18 +18,34 @@ import org.apache.xerces.impl.dv.util.Base64;
 
 import Coalesce.Common.Exceptions.CoalesceCryptoException;
 
+/*-----------------------------------------------------------------------------'
+ Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
+
+ Notwithstanding any contractor copyright notice, the Government has Unlimited
+ Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+ of this work other than as specifically authorized by these DFARS Clauses may
+ violate Government rights in this work.
+
+ DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+ Unlimited Rights. The Government has the right to use, modify, reproduce,
+ perform, display, release or disclose this computer software and to have or
+ authorize others to do so.
+
+ Distribution Statement D. Distribution authorized to the Department of
+ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+ -----------------------------------------------------------------------------*/
 public class CoalesceEncrypter implements ICoalesceEncrypter {
 
     private static HashMap<String, EncoderParameters> _parameters = new HashMap<String, EncoderParameters>();
 
     private EncoderParameters _parameter;
-    private String _Transformation;
+    private String _transformation;
 
     public CoalesceEncrypter(String passPhrase) throws InvalidKeyException, NoSuchAlgorithmException,
             UnsupportedEncodingException
     {
 
-        this._Transformation = "AES/CBC/PKCS5Padding";
+        _transformation = "AES/CBC/PKCS5Padding";
 
         synchronized (_parameters)
         {
@@ -45,140 +61,130 @@ public class CoalesceEncrypter implements ICoalesceEncrypter {
 
     public Cipher getEncryptionCipher() throws CoalesceCryptoException
     {
-
-        Cipher cipher = null;
-
         try
         {
 
             // Load Cipher
-            cipher = Cipher.getInstance(this._Transformation);
+            Cipher cipher = Cipher.getInstance(_transformation);
 
             // Initialize Cipher
             cipher.init(Cipher.ENCRYPT_MODE, _parameter.key, new IvParameterSpec(_parameter.iv));
+
+            return cipher;
 
         }
         catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | InvalidAlgorithmParameterException e)
         {
             throw new CoalesceCryptoException("getEncryptionCipher", e);
         }
-
-        return cipher;
-
     }
 
     public Cipher getDecryptionCipher() throws CoalesceCryptoException
     {
-
-        Cipher cipher = null;
-
         try
         {
 
             // Load Cipher
-            cipher = Cipher.getInstance(this._Transformation);
+            Cipher cipher = Cipher.getInstance(_transformation);
 
             // Initialize Cipher
             cipher.init(Cipher.DECRYPT_MODE, _parameter.key, new IvParameterSpec(_parameter.iv));
+
+            return cipher;
 
         }
         catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | InvalidAlgorithmParameterException e)
         {
             throw new CoalesceCryptoException("getDecryptionCipher", e);
         }
-
-        return cipher;
-
     }
 
     @Override
-    public String decryptEntity(byte[] EntityEncryptedBytes) throws CoalesceCryptoException
+    public String decryptEntity(byte[] entityEncryptedBytes) throws CoalesceCryptoException
     {
-        return this.decryptValue(EntityEncryptedBytes);
+        return decryptValue(entityEncryptedBytes);
     }
 
     @Override
-    public String decryptEntity(String EntityEncryptedBase64) throws CoalesceCryptoException
+    public String decryptEntity(String entityEncryptedBase64) throws CoalesceCryptoException
     {
-        return this.decryptValue(EntityEncryptedBase64);
+        return decryptValue(entityEncryptedBase64);
     }
 
     @Override
-    public byte[] encryptEntity(String EntityXml) throws CoalesceCryptoException
+    public byte[] encryptEntity(String entityXml) throws CoalesceCryptoException
     {
-        return this.encryptValue(EntityXml);
+        return encryptValue(entityXml);
     }
 
     @Override
-    public String encryptEntityToBase64(String EntityXml) throws CoalesceCryptoException
+    public String encryptEntityToBase64(String entityXml) throws CoalesceCryptoException
     {
-        return this.encryptValueToBase64(EntityXml);
+        return encryptValueToBase64(entityXml);
     }
 
     @Override
-    public String decryptValue(byte[] ValueEncryptedBytes) throws CoalesceCryptoException
+    public String decryptValue(byte[] valueEncryptedBytes) throws CoalesceCryptoException
     {
-
-        String DecryptString = null;
-
-        byte[] utf8 = this.decryptValueToBytes(ValueEncryptedBytes);
+        byte[] utf8 = decryptValueToBytes(valueEncryptedBytes);
 
         try
         {
+            String decryptString = new String(utf8, "UTF8");
 
-            DecryptString = new String(utf8, "UTF8");
-
+            return decryptString;
         }
         catch (UnsupportedEncodingException e)
         {
             throw new CoalesceCryptoException("decryptValue", e);
         }
+    }
 
-        return DecryptString;
+    @Override
+    public String decryptValue(String valueEncryptedBase64) throws CoalesceCryptoException
+    {
+
+        byte[] DecodedBytes = Base64.decode(valueEncryptedBase64);
+
+        return decryptValue(DecodedBytes);
 
     }
 
     @Override
-    public String decryptValue(String ValueEncryptedBase64) throws CoalesceCryptoException
+    public byte[] decryptValueToBytes(byte[] valueEncryptedBytes) throws CoalesceCryptoException
     {
-
-        byte[] DecodedBytes = Base64.decode(ValueEncryptedBase64);
-
-        return this.decryptValue(DecodedBytes);
-
-    }
-
-    @Override
-    public byte[] decryptValueToBytes(byte[] ValueEncryptedBytes) throws CoalesceCryptoException
-    {
-
-        byte[] utf8 = null;
-
-        // Decrypt Data
         try
         {
-            utf8 = this.getDecryptionCipher().doFinal(ValueEncryptedBytes);
+            byte[] utf8 = getDecryptionCipher().doFinal(valueEncryptedBytes);
+
+            return utf8;
+
         }
         catch (IllegalBlockSizeException | BadPaddingException e)
         {
             throw new CoalesceCryptoException("decryptValue", e);
         }
-
-        return utf8;
-
     }
 
     @Override
     public byte[] encryptValue(String Value) throws CoalesceCryptoException
     {
-        return this.encryptValue(Value.getBytes());
+        try
+        {
+            return encryptValue(Value.getBytes("UTF8"));
+        }
+        catch (UnsupportedEncodingException uee)
+        {
+            // Should never happen at run time
+            return null;
+        }
     }
 
     @Override
     public String encryptValueToBase64(String Value) throws CoalesceCryptoException
     {
 
-        byte[] utf8 = this.encryptValue(Value);
+        byte[] utf8 = encryptValue(Value);
 
         if (utf8 != null)
         {
@@ -194,21 +200,19 @@ public class CoalesceEncrypter implements ICoalesceEncrypter {
     }
 
     @Override
-    public byte[] encryptValue(byte[] ValueBytes) throws CoalesceCryptoException
+    public byte[] encryptValue(byte[] valueBytes) throws CoalesceCryptoException
     {
-
-        byte[] utf8 = null;
-
         try
         {
-            utf8 = this.getEncryptionCipher().doFinal(ValueBytes);
+            byte[] utf8 = getEncryptionCipher().doFinal(valueBytes);
+
+            return utf8;
+
         }
         catch (IllegalBlockSizeException | BadPaddingException e)
         {
             throw new CoalesceCryptoException("encryptValue", e);
         }
-
-        return utf8;
     }
 
     private class EncoderParameters {

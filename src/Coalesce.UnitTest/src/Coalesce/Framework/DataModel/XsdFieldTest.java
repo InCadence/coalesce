@@ -22,6 +22,7 @@ import org.junit.Test;
 
 import Coalesce.Common.Classification.Marking;
 import Coalesce.Common.Classification.MarkingValueTest;
+import Coalesce.Common.Exceptions.CoalesceCryptoException;
 import Coalesce.Common.Exceptions.CoalesceDataFormatException;
 import Coalesce.Common.Helpers.DocumentProperties;
 import Coalesce.Common.Helpers.GUIDHelper;
@@ -1105,7 +1106,7 @@ public class XsdFieldTest {
 
     @Test
     public void setTypedValueFileBytesTest() throws CoalesceDataFormatException, ImageProcessingException, IOException,
-            JDOMException
+            JDOMException, CoalesceCryptoException
     {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -1139,7 +1140,7 @@ public class XsdFieldTest {
 
     @Test
     public void setTypedValueDocPropsTest() throws IOException, ImageProcessingException, JDOMException,
-            CoalesceDataFormatException
+            CoalesceDataFormatException, CoalesceCryptoException
     {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 

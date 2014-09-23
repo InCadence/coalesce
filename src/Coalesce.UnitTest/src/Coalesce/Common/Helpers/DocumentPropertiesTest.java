@@ -6,6 +6,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 
 import javax.imageio.ImageIO;
 
@@ -17,9 +19,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import com.drew.imaging.ImageProcessingException;
-
+import Coalesce.Common.Exceptions.CoalesceCryptoException;
 import Coalesce.Common.Runtime.CoalesceSettings;
+
+import com.drew.imaging.ImageProcessingException;
 
 public class DocumentPropertiesTest {
 
@@ -49,7 +52,7 @@ public class DocumentPropertiesTest {
     }
 
     @Test
-    public void initializeJpgTest() throws IOException, JDOMException, ImageProcessingException
+    public void initializeJpgTest() throws IOException, JDOMException, ImageProcessingException, CoalesceCryptoException
     {
         DocumentProperties docProps = new DocumentProperties();
 
@@ -70,7 +73,7 @@ public class DocumentPropertiesTest {
     }
 
     @Test
-    public void initializeDocXTest() throws ImageProcessingException, IOException, JDOMException
+    public void initializeDocXTest() throws ImageProcessingException, IOException, JDOMException, CoalesceCryptoException
     {
         DocumentProperties docProps = new DocumentProperties();
 
@@ -92,48 +95,80 @@ public class DocumentPropertiesTest {
         assertEquals("Testing subject", docProps.getSubject());
         assertEquals("Testing document title", docProps.getTitle());
         assertEquals("", docProps.getVersion());
-        
-        
+
     }
-    
+
     @Test
-    public void initializeNullFilename() throws ImageProcessingException, IOException, JDOMException
+    public void initializeNullFilenameTest() throws ImageProcessingException, IOException, JDOMException,
+            CoalesceCryptoException
     {
         thrown.expect(NullArgumentException.class);
         thrown.expectMessage("fullFilename");
-        
+
         DocumentProperties docProps = new DocumentProperties();
-        
+
         docProps.initialize(null);
     }
-    
+
     @Test
-    public void initializeEmptyFilename() throws ImageProcessingException, IOException, JDOMException
+    public void initializeEmptyFilenameTest() throws ImageProcessingException, IOException, JDOMException,
+            CoalesceCryptoException
     {
-        
+
         DocumentProperties docProps = new DocumentProperties();
-        
+
         assertFalse(docProps.initialize(""));
-        
+
     }
-    
+
     @Test
-    public void initializeWhitespaceFilename() throws ImageProcessingException, IOException, JDOMException
+    public void initializeWhitespaceFilenameTest() throws ImageProcessingException, IOException, JDOMException,
+            CoalesceCryptoException
     {
-        
+
         DocumentProperties docProps = new DocumentProperties();
-        
+
         assertFalse(docProps.initialize("   "));
-        
+
     }
-    
+
     @Test
-    public void initializeInvalidFilename() throws ImageProcessingException, IOException, JDOMException
+    public void initializeInvalidFilenameTest() throws ImageProcessingException, IOException, JDOMException,
+            InvalidKeyException, NoSuchAlgorithmException, CoalesceCryptoException
     {
-        
+
         DocumentProperties docProps = new DocumentProperties();
-        
+
         assertFalse(docProps.initialize("abc.xyz", true));
-        
+
     }
+
+    @Test
+    public void initializeEncryptedFileTest() throws ImageProcessingException, IOException, JDOMException,
+            CoalesceCryptoException
+    {
+        DocumentProperties plainTextDocProps = new DocumentProperties();
+        plainTextDocProps.initialize("src\\resources\\TestDocument.docx", false);
+
+        DocumentProperties encryptedDocProps = new DocumentProperties();
+        encryptedDocProps.initialize("src\\resources\\encryptedTestDocument.docx", true);
+
+        assertEquals(plainTextDocProps.getCategory(), encryptedDocProps.getCategory());
+        assertEquals(plainTextDocProps.getContentStatus(), encryptedDocProps.getContentStatus());
+        assertEquals(plainTextDocProps.getContentType(), encryptedDocProps.getContentType());
+        assertEquals(plainTextDocProps.getCreated(), encryptedDocProps.getCreated());
+        assertEquals(plainTextDocProps.getCreator(), encryptedDocProps.getCreator());
+        assertEquals(plainTextDocProps.getDescription(), encryptedDocProps.getDescription());
+        assertEquals(plainTextDocProps.getIdentifier(), encryptedDocProps.getIdentifier());
+        assertEquals(plainTextDocProps.getKeywords(), encryptedDocProps.getKeywords());
+        assertEquals(plainTextDocProps.getLanguage(), encryptedDocProps.getLanguage());
+        assertEquals(plainTextDocProps.getLastModifiedBy(), encryptedDocProps.getLastModifiedBy());
+        assertEquals(plainTextDocProps.getLastPrinted(), encryptedDocProps.getLastPrinted());
+        assertEquals(plainTextDocProps.getModified(), encryptedDocProps.getModified());
+        assertEquals(plainTextDocProps.getRevision(), encryptedDocProps.getRevision());
+        assertEquals(plainTextDocProps.getSubject(), encryptedDocProps.getSubject());
+        assertEquals(plainTextDocProps.getTitle(), encryptedDocProps.getTitle());
+        assertEquals(plainTextDocProps.getVersion(), encryptedDocProps.getVersion());
+    }
+
 }

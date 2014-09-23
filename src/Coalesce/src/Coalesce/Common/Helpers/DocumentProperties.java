@@ -12,10 +12,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.transcoder.TranscoderException;
@@ -38,6 +41,10 @@ import org.jdom2.input.SAXBuilder;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 import org.joda.time.DateTime;
+
+import Coalesce.Common.Exceptions.CoalesceCryptoException;
+import Coalesce.Common.Runtime.CoalesceSettings;
+import Coalesce.Framework.Persistance.CoalesceEncrypter;
 
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
@@ -106,13 +113,13 @@ public class DocumentProperties {
     // Factory and Initialization
     // ----------------------------------------------------------------------//
 
-    public boolean initialize(String fullFilename) throws ImageProcessingException, IOException, JDOMException
+    public boolean initialize(String fullFilename) throws ImageProcessingException, IOException, JDOMException, CoalesceCryptoException
     {
         return initialize(fullFilename, false);
     }
 
     public boolean initialize(String fullFilename, boolean encrypted) throws ImageProcessingException, IOException,
-            JDOMException
+            JDOMException, CoalesceCryptoException
     {
 
         if (!initializeFileInfo(fullFilename)) return false;
@@ -149,16 +156,17 @@ public class DocumentProperties {
     {
         if (fullFilename == null) throw new NullArgumentException("fullFilename");
         if (StringHelper.IsNullOrEmpty(fullFilename)) return false;
-        
+
         Path path;
         try
         {
-        path = Paths.get(fullFilename);
-        } catch (InvalidPathException ipe)
+            path = Paths.get(fullFilename);
+        }
+        catch (InvalidPathException ipe)
         {
             return false;
         }
-        
+
         if (Files.exists(path))
         {
 
@@ -297,7 +305,8 @@ public class DocumentProperties {
         return true;
     }
 
-    private boolean initializeOpenXmlProperties(String fullFilename, boolean encrypted) throws IOException, JDOMException
+    private boolean initializeOpenXmlProperties(String fullFilename, boolean encrypted) throws IOException, JDOMException,
+            CoalesceCryptoException
     {
         Path path = Paths.get(fullFilename);
         if (Files.exists(path))
@@ -305,6 +314,22 @@ public class DocumentProperties {
 
             if (encrypted)
             {
+                try
+                {
+                    CoalesceEncrypter crypto = new CoalesceEncrypter(CoalesceSettings.getPassPhrase());
+
+                    byte[] decryptBytes = crypto.decryptValueToBytes(Files.readAllBytes(Paths.get(fullFilename)));
+
+                    Collection<Namespace> namespaces = new ArrayList<Namespace>();
+                    Document coreXml = getXspCorePropertiesDocument(decryptBytes, namespaces);
+
+                    setCoreXpsProperties(coreXml, namespaces);
+
+                }
+                catch (InvalidKeyException | NoSuchAlgorithmException e)
+                {
+                    return false;
+                }
 
             }
             else
@@ -334,6 +359,88 @@ public class DocumentProperties {
         }
     }
 
+    private Document getXspCorePropertiesDocument(byte[] zipBytes, Collection<Namespace> namespaces)
+    {
+
+        String partNamePath = getCoreXmlPartName(zipBytes, namespaces);
+
+        if (partNamePath == null) return null;
+
+        Document coreXml = getCoreXml(zipBytes, partNamePath);
+        
+        return coreXml;
+    }
+
+    private String getCoreXmlPartName(byte[] zipBytes, Collection<Namespace> namespaces)
+    {
+        try (@SuppressWarnings("resource") // This is a known IDE bug in Eclipse (371614).  ZipInputStream is Closable and will be automatically closed in the finally
+        ZipInputStream zipStream = new ZipInputStream(new ByteArrayInputStream(zipBytes)))
+        {
+
+            ZipEntry entry = null;
+            while ((entry = zipStream.getNextEntry()) != null)
+            {
+
+                String entryName = entry.getName();
+
+                if (entryName.equals("_rels/.rels"))
+                {
+                    SAXBuilder builder = new SAXBuilder();
+                    Document startPartXml = builder.build(zipStream);
+
+                    String partNamePath = getCoreXmlPartName(startPartXml, builder, namespaces);
+
+                    // This close should not be required per use of try-resource above but is necessary to avoid IDE warning
+                    zipStream.close();
+                    return partNamePath;
+
+                }
+
+            }
+
+            return null;
+
+        }
+        catch (IOException | JDOMException e)
+        {
+            return null;
+        }
+    }
+
+    private Document getCoreXml(byte[] zipBytes, String partNamePath)
+    {
+        try (@SuppressWarnings("resource") // This is a known IDE bug in Eclipse (371614).  ZipInputStream is Closable and will be automatically closed in the finally
+        ZipInputStream zipStream = new ZipInputStream(new ByteArrayInputStream(zipBytes)))
+        {
+
+            ZipEntry entry = null;
+            while ((entry = zipStream.getNextEntry()) != null)
+            {
+
+                String entryName = entry.getName();
+
+                if (entryName.equals(partNamePath))
+                {
+                    SAXBuilder builder = new SAXBuilder();
+                    Document corePartXml = builder.build(zipStream);
+
+                    // This close should not be required per use of try-resource above but is necessary to avoid IDE warning
+                    zipStream.close();
+                    return corePartXml;
+
+                }
+
+            }
+
+            return null;
+
+        }
+        catch (IOException | JDOMException e)
+        {
+            return null;
+        }
+    }
+
     private Document getXspCorePropertiesDocument(ZipFile zipFile, Collection<Namespace> namespaces) throws JDOMException,
             IOException
     {
@@ -341,6 +448,19 @@ public class DocumentProperties {
 
         SAXBuilder builder = new SAXBuilder();
         Document startPartXml = builder.build(zipFile.getInputStream(startPartEntry));
+
+        String partnamePath = getCoreXmlPartName(startPartXml, builder, namespaces);
+
+        ZipEntry partNameEntry = zipFile.getEntry(partnamePath);
+
+        Document coreXml = builder.build(zipFile.getInputStream(partNameEntry));
+
+        return coreXml;
+
+    }
+
+    private String getCoreXmlPartName(Document startPartXml, SAXBuilder builder, Collection<Namespace> namespaces)
+    {
 
         namespaces.add(Namespace.getNamespace("rel", "http://schemas.openxmlformats.org/package/2006/relationships"));
         namespaces.add(Namespace.getNamespace("cp",
@@ -354,12 +474,9 @@ public class DocumentProperties {
                                                                          namespaces);
 
         Element coreElm = xPath.evaluateFirst(startPartXml);
-        String partnamePath = coreElm.getAttributeValue("Target");
-        ZipEntry partNameEntry = zipFile.getEntry(partnamePath.replace("$/", ""));
+        String partNamePath = coreElm.getAttributeValue("Target");
 
-        Document coreXml = builder.build(zipFile.getInputStream(partNameEntry));
-
-        return coreXml;
+        return partNamePath.replace("$/", "");
 
     }
 
