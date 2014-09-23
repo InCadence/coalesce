@@ -31,6 +31,7 @@ import Coalesce.Common.Helpers.MimeHelper;
 import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.UnitTest.CoalesceTypeInstances;
 import Coalesce.Common.UnitTest.CoalesceUnitTestSettings;
+import Coalesce.Framework.Geography.Geolocation;
 
 import com.drew.imaging.ImageProcessingException;
 
@@ -977,7 +978,7 @@ public class XsdFieldTest {
     }
 
     @Test
-    public void UriTypeTest() throws CoalesceDataFormatException
+    public void uriTypeTest() throws CoalesceDataFormatException
     {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -1316,6 +1317,68 @@ public class XsdFieldTest {
 
     }
 
+    @Test
+    public void getDataGeocoordinateTypeNotSetTest() throws CoalesceDataFormatException
+    {
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdRecordset parentRecordset = (XsdRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.create(parentRecordset,
+                                                                    "Location",
+                                                                    ECoalesceFieldDataTypes.GeocoordinateType);
+
+        XsdRecord parentRecord = parentRecordset.GetItem(0);
+        XsdField field = XsdField.create(parentRecord, fileFieldDef);
+
+        assertNull(field.getGeolocationValue());
+
+    }
+
+    @Test
+    public void getDataSetTypedValueGeolocationTypeTest() throws CoalesceDataFormatException
+    {
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+
+        assertEquals("POINT (-80.9363995 43.6616578)", field.getValue());
+
+        Object data = field.getData();
+
+        assertTrue(data instanceof Geolocation);
+        assertEquals("POINT (-80.9363995 43.6616578)", data.toString());
+        
+        Geolocation location = (Geolocation)data;
+        
+        assertEquals(43.6616578, location.getLatitude(), 0.00001);
+        assertEquals(-80.9363995, location.getLongitude(), 0.00001);
+
+        Geolocation pentagon = new Geolocation(38.87116000, -77.05613800);
+        field.setTypedValue(pentagon);
+        
+        String entityXml = entity.toXml();
+        XsdEntity desEntity = XsdEntity.create(entityXml);
+        
+        XsdField desField = (XsdField) desEntity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        
+        Geolocation desLocation = desField.getGeolocationValue();
+        
+        assertEquals(pentagon, desLocation);
+        
+    }
+
+    @Test(expected = ClassCastException.class)
+    public void setTypedValueGeolocationTypeTypeMismatchTest() throws UnsupportedEncodingException
+    {
+
+        XsdField field = getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
+
+        field.setTypedValue(new Geolocation());
+
+    }
+    
+    // TODO: still need to test geolocation list set/get
+    
     // -----------------------------------------------------------------------//
     // Private Static Methods
     // -----------------------------------------------------------------------//

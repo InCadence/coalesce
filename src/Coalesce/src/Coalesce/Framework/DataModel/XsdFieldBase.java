@@ -17,6 +17,7 @@ import Coalesce.Common.Helpers.DocumentProperties;
 import Coalesce.Common.Helpers.GUIDHelper;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import Coalesce.Common.Helpers.StringHelper;
+import Coalesce.Framework.Geography.Geolocation;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -162,9 +163,6 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
     public Object getData() throws CoalesceDataFormatException
     {
 
-        // TODO: GeocoordinateType, GeocoordinateListType
-        // types
-
         switch (getDataType()) {
         case StringType:
         case UriType:
@@ -185,22 +183,18 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
         case GuidType:
             return getGuidValue();
 
+        case GeocoordinateType:
+            return getGeolocationValue();
+            
+        case GeocoordinateListType:
+            //TODO: Implement list
+            //return getGeolocationListValue();
+            
         case FileType:
             return getBinaryValue();
 
         default:
             throw new NotImplementedException(getDataType() + " not implemented");
-
-            // case GeocoordinateType:
-            // Geolocation geocvar = new Geolocation();
-            // var = geocvar;
-            // value = var;
-            // break;
-            // case GeocoordinateListType:
-            // ArrayList<Geolocation> geolvar = new ArrayList<Geolocation>();
-            // var = geolvar;
-            // Data = var;
-            // break;
 
         }
 
@@ -262,70 +256,14 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
         setValue(String.valueOf(value));
     }
 
-    // TODO: Microsoft.SqlServer.Types.SqlGeography
-    // public CallResult SetTypedValue(Microsoft.SqlServer.Types.SqlGeography
-    // Value){
-    // try{
-    // CoalesceFieldDefinition CFD = new CoalesceFieldDefinition();
-    // if ((CFD.GetCoalesceFieldDataTypeForCoalesceType(getDataType()) ==
-    // ECoalesceFieldDataTypes.GeocoordinateType) ||
-    // (CFD.GetCoalesceFieldDataTypeForCoalesceType(getDataType()) ==
-    // ECoalesceFieldDataTypes.GeocoordinateListType)) {
-    //
-    // // Check Spatial Reference Identifier
-    // if (Value.STSrid = 4326) {
-    // // Set
-    // getValue() = String.valueOf(Value); //Value.ToString; // ToString returns
-    // the OGC WKT representation.
-    // http://msdn.microsoft.com/en-us/library/microsoft.sqlserver.types.sqlgeography.tostring.aspx
-    //
-    // // return Success
-    // return CallResult.successCallResult;
-    // }else{
-    // // return Failed
-    // return new CallResult(CallResults.FAILED,
-    // "Invalid Spatial Reference Identifier (SRID). Coalesce requires SRID 4326 which is WGS 84.",
-    // this);
-    // }
-    // }else{
-    // // return Failed; Type Mismatch
-    // return new CallResult(CallResults.FAILED, "Type mismatch", this);
-    // }
-    //
-    // }catch(Exception ex){
-    // // return Failed Error
-    // return new CallResult(CallResults.FAILED_ERROR, ex, this);
-    // }
-    // }
+    public void setTypedValue(Geolocation value)
+    {
+        if (getDataType() != ECoalesceFieldDataTypes.GeocoordinateType) {
+            throw new ClassCastException("Type mismatch");
+        }
 
-    // TODO: Geolocation
-    // public CallResult SetTypedValue(Geolocation GeoLocation){
-    // try{
-    // CoalesceFieldDefinition CFD = new CoalesceFieldDefinition();
-    // if (CFD.GetCoalesceFieldDataTypeForCoalesceType(getDataType()) ==
-    // ECoalesceFieldDataTypes.GeocoordinateType) {
-    // // Set
-    // Microsoft.SqlServer.Types.SqlGeographyBuilder Builder = new
-    // Microsoft.SqlServer.Types.SqlGeographyBuilder;
-    // Builder.SetSrid(4326); // WGS 84
-    // Builder.BeginGeography(Microsoft.SqlServer.Types.OpenGisGeographyType.Point);
-    // Builder.BeginFigure(GeoLocation.Latitude, GeoLocation.Longitude);
-    // Builder.EndFigure();
-    // Builder.EndGeography();
-    //
-    // // Call on Overload
-    // return setTypedValue(Builder.ConstructedGeography);
-    //
-    // }else{
-    // // return Failed; Type Mismatch
-    // return new CallResult(CallResults.FAILED, "Type mismatch", this);
-    // }
-    //
-    // }catch(Exception ex){
-    // // return Failed Error
-    // return new CallResult(CallResults.FAILED_ERROR, ex, this);
-    // }
-    // }
+        setValue(value.toString());
+    }
 
     // TODO: GeocoordinateList
     // public CallResult SetTypedValue(List(Of Geolocation) GeoLocations){
@@ -501,40 +439,17 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
 
     }
 
-    // TODO: Geolocation type
-    // public CallResult GetTypedValue(Geolocation GeoLocation) {
-    // try{
-    // CoalesceFieldDefinition CFD = new CoalesceFieldDefinition();
-    // if (CFD.GetCoalesceFieldDataTypeForCoalesceType(DataType) ==
-    // ECoalesceFieldDataTypes.GeocoordinateType) {
-    // // Basic Check
-    // if (!(getValue().startsWith("POINT"))) {
-    // // return Failed; Type Mismatch
-    // return new CallResult(CallResults.FAILED, "Type mismatch", this);
-    // }else{
-    // // Get
-    // Microsoft.SqlServer.Types.SqlGeography Geography = null;
-    // Geography = Microsoft.SqlServer.Types.SqlGeography.STPointFromText(new
-    // System.Data.SqlTypes.SqlString(getValue()), 4326);
-    // if (GeoLocation == null) {
-    // GeoLocation = new Geolocation();
-    // }
-    // GeoLocation.Latitude = Geography.Lat;
-    // GeoLocation.Longitude = Geography.Long;
-    //
-    // // return Success
-    // return CallResult.successCallResult;
-    // }
-    // }else{
-    // // return Failed; Type Mismatch
-    // return new CallResult(CallResults.FAILED, "Type mismatch", this);
-    // }
-    //
-    // }catch(Exception ex){
-    // // return Failed Error
-    // return new CallResult(CallResults.FAILED_ERROR, ex, this);
-    // }
-    // }
+    public Geolocation getGeolocationValue() throws CoalesceDataFormatException {
+
+        if (getDataType() != ECoalesceFieldDataTypes.GeocoordinateType) {
+            throw new ClassCastException("Type mismatch");
+        }
+
+        Geolocation location = (Geolocation) Geolocation.parseGeolocation(getValue());
+        
+        return location;
+        
+    }
 
     // TODO: GeocoordinateList type
     // public CallResult GetTypedValue(ArrayList<Geolocation> GeoLocations){
