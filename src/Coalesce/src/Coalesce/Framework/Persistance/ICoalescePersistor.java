@@ -25,6 +25,11 @@ import Coalesce.Framework.DataModel.XsdEntity;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
+/**
+ * Stores and retrieves Coalesce entities from different databases depending on the implementation.
+ * @author InCadence
+ *
+ */
 public interface ICoalescePersistor {
 
     public class EntityMetaData {
@@ -61,54 +66,173 @@ public interface ICoalescePersistor {
     }
 
     /**
-     * 
-     * @param Cacher Pass null if caching is not wanted
+     * Instantiates the persistor which must be done before using. 
+     * @param cacher Pass null if caching is not wanted
      * @return true if successful
      * @throws CoalescePersistorException
      */
-    public boolean initialize(ICoalesceCacher Cacher) throws CoalescePersistorException;
+    public boolean initialize(ICoalesceCacher cacher) throws CoalescePersistorException;
 
-    public boolean setEntity(XsdEntity entity, boolean AllowRemoval) throws CoalescePersistorException;
+    /**
+     * Saves the Coalesce entity to the database.
+     * @param entity the Coalesce entity to be saved.
+     * @param allowRemoval specifies whether an entity marked as deleted should be removed from the database.
+     * @return true if successfully saved. 
+     * @throws CoalescePersistorException 
+     */
+    public boolean saveEntity(XsdEntity entity, boolean allowRemoval) throws CoalescePersistorException;
 
-    // Get Entity
-    public XsdEntity getEntity(String Key) throws CoalescePersistorException;
+    /**
+     * Returns the Coalesce entity that matches the given parameters. 
+     * @param the primary key of the entity.
+     * @return the matching Coalesce entity. 
+     * @throws CoalescePersistorException
+     */
+    public XsdEntity getEntity(String key) throws CoalescePersistorException;
 
-    public XsdEntity getEntity(String EntityId, String EntityIdType) throws CoalescePersistorException;
+    /**
+     * Returns the Coalesce entity that matches the given parameters. 
+     * @param entityId the unique identifier, such as a TCN number for an EFT. 
+     * @param entityIdType the type of entityId, such as TCN. 
+     * @return the matching Coalesce entity. 
+     * @throws CoalescePersistorException
+     */
+    public XsdEntity getEntity(String entityId, String entityIdType) throws CoalescePersistorException;
 
-    public XsdEntity getEntity(String Name, String EntityId, String EntityIdType) throws CoalescePersistorException;
+    /**
+     * Returns the Coalesce entity that matches the given parameters. 
+     * @param name the name of the entity. 
+     * @param entityId the unique identifier, such as a TCN number for an EFT. 
+     * @param entityIdType the type of entityId, such as TCN. 
+     * @return the matching Coalesce entity. 
+     * @throws CoalescePersistorException
+     */
+    public XsdEntity getEntity(String name, String entityId, String entityIdType) throws CoalescePersistorException;
 
-    // Get Entity XML
-    public String getEntityXml(String Key) throws CoalescePersistorException;
+    /**
+     * Returns the Coalesce entity's XML that matches the given parameters. 
+     * @param the primary key of the entity.
+     * @return the matching Coalesce entity's XML. 
+     * @throws CoalescePersistorException
+     */
+    public String getEntityXml(String key) throws CoalescePersistorException;
 
-    public String getEntityXml(String EntityId, String EntityIdType) throws CoalescePersistorException;
+    /**
+     * Returns the Coalesce entity's XML that matches the given parameters. 
+     * @param entityId the unique identifier, such as a TCN number for an EFT. 
+     * @param entityIdType the type of entityId, such as TCN. 
+     * @return the matching Coalesce entity. 
+     * @throws CoalescePersistorException
+     */
+    public String getEntityXml(String entityId, String entityIdType) throws CoalescePersistorException;
 
-    public String getEntityXml(String Name, String EntityId, String EntityIdType) throws CoalescePersistorException;
+    /**
+     * Returns the Coalesce entity's XML that matches the given parameters. 
+     * @param name the name of the entity. 
+     * @param entityId the unique identifier, such as a TCN number for an EFT. 
+     * @param entityIdType the type of entityId, such as TCN. 
+     * @return the matching Coalesce entity. 
+     * @throws CoalescePersistorException
+     */
+    public String getEntityXml(String name, String entityId, String entityIdType) throws CoalescePersistorException;
 
+    /**
+     * Returns the value of the specified Coalesce field. 
+     * @param fieldKey the primary key of the field.
+     * @return returns the value of the matching field. 
+     * @throws CoalescePersistorException
+     */
     public Object getFieldValue(String fieldKey) throws CoalescePersistorException;
 
-    public ElementMetaData getXPath(String Key, String ObjectType) throws CoalescePersistorException;
+    /**
+     * 
+     * @param key
+     * @param objectType
+     * @return
+     * @throws CoalescePersistorException
+     */
+    public ElementMetaData getXPath(String key, String objectType) throws CoalescePersistorException;
 
-    public DateTime getCoalesceDataObjectLastModified(String Key, String ObjectType) throws CoalescePersistorException;
+    /**
+     * 
+     * @param key
+     * @param objectType
+     * @return
+     * @throws CoalescePersistorException
+     */
+    public DateTime getCoalesceDataObjectLastModified(String key, String objectType) throws CoalescePersistorException;
 
-    public List<String> getCoalesceEntityKeysForEntityId(String EntityId,
-                                                         String EntityIdType,
-                                                         String EntityName,
-                                                         String EntitySource) throws CoalescePersistorException;
+    /**
+     * 
+     * @param entityId
+     * @param entityIdType
+     * @param entityName
+     * @param entitySource
+     * @return
+     * @throws CoalescePersistorException
+     */
+    public List<String> getCoalesceEntityKeysForEntityId(String entityId,
+                                                         String entityIdType,
+                                                         String entityName,
+                                                         String entitySource) throws CoalescePersistorException;
 
-    public EntityMetaData getCoalesceEntityIdAndTypeForKey(String Key) throws CoalescePersistorException;
+    /**
+     * 
+     * @param key
+     * @return
+     * @throws CoalescePersistorException
+     */
+    public EntityMetaData getCoalesceEntityIdAndTypeForKey(String key) throws CoalescePersistorException;
 
-    public byte[] getBinaryArray(String BinaryFieldKey) throws CoalescePersistorException;
+    /**
+     * 
+     * @param binaryFieldKey
+     * @return
+     * @throws CoalescePersistorException
+     */
+    public byte[] getBinaryArray(String binaryFieldKey) throws CoalescePersistorException;
 
-    // Deprecated Functions
-    public boolean persistEntityTemplate(CoalesceEntityTemplate EntityTemplate) throws CoalescePersistorException;
+    /**
+     * 
+     * @param entityTemplate
+     * @return
+     * @throws CoalescePersistorException
+     */
+    public boolean persistEntityTemplate(CoalesceEntityTemplate entityTemplate) throws CoalescePersistorException;
 
-    // Entity Templates
-    public String getEntityTemplateXml(String Key) throws CoalescePersistorException;
+    /**
+     * 
+     * @param key
+     * @return
+     * @throws CoalescePersistorException
+     */
+    public String getEntityTemplateXml(String key) throws CoalescePersistorException;
 
-    public String getEntityTemplateXml(String Name, String Source, String Version) throws CoalescePersistorException;
+    /**
+     * 
+     * @param name
+     * @param source
+     * @param version
+     * @return
+     * @throws CoalescePersistorException
+     */
+    public String getEntityTemplateXml(String name, String source, String version) throws CoalescePersistorException;
 
-    public String getEntityTemplateKey(String Name, String Source, String Version) throws CoalescePersistorException;
+    /**
+     * 
+     * @param name
+     * @param source
+     * @param version
+     * @return
+     * @throws CoalescePersistorException
+     */
+    public String getEntityTemplateKey(String name, String source, String version) throws CoalescePersistorException;
 
+    /**
+     * 
+     * @return
+     * @throws CoalescePersistorException
+     */
     public String getEntityTemplateMetadata() throws CoalescePersistorException;
 
 }

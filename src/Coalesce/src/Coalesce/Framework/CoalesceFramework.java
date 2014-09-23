@@ -182,7 +182,7 @@ public class CoalesceFramework {
 
     public boolean SaveCoalesceEntity(XsdEntity entity, boolean AllowRemoval) throws CoalescePersistorException
     {
-        return this._Persister.setEntity(entity, AllowRemoval);
+        return this._Persister.saveEntity(entity, AllowRemoval);
     }
 
     public String GetCoalesceFieldValue(String FieldKey) throws CoalescePersistorException
