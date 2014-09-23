@@ -1,6 +1,13 @@
 package com.database.persister;
 
+import java.sql.SQLException;
+
 public class CoalesceTable {
+    /**
+     * Returns the Coalesce object database name matching the given parameters.
+     * @param objectType the Coalesce object
+     * @return tableName Coalesce object database name
+     */
     public static String gettableNameForObjectType(String objectType){
     	String tableName="";
     	

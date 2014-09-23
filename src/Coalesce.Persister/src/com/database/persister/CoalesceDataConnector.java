@@ -40,10 +40,15 @@ public class CoalesceDataConnector implements AutoCloseable {
     private String _procedurePrefix = null;
     private String serverConnection = "";
 
+    /**
+     * Constructs a new CoalesceDataConnector with settings and server.
+     * @param settings the ServerConn object  
+     * @param server the ConnectionType enumeration defining the database server connection.
+     * @throws CoalescePersistorException
+     */
     public CoalesceDataConnector(ServerConn settings, ConnectionType server) throws CoalescePersistorException
     {
         this._serCon = settings;
-
         try
         {
 
@@ -75,24 +80,37 @@ public class CoalesceDataConnector implements AutoCloseable {
             throw new CoalescePersistorException("CoalesceDataConnector", e);
         }
     }
-
+    /**
+     * Sets the JDBC driver to connect to the MySQL Database
+     * @throws SQLException
+     */
     public void OpenMSConnection() throws SQLException
     {
         this._serCon.setPostGres(false);
         this._conn = DriverManager.getConnection(this._serCon.getURL(), this._serCon.getUser(), this._serCon.getPassword());
     }
-
+    /**
+     * Sets the JDBC driver to connect to the PostGresSQL Database
+     * @throws SQLException
+     */
     public void OpenPSConnection() throws SQLException
     {
         this._serCon.setPostGres(true);
         this._conn = DriverManager.getConnection(this._serCon.getURL(), this._serCon.props);
     }
+    /**
+     * Sets the JDBC driver to connect to the NEO4J Database
+     * @throws SQLException
+     */
     public void OpenNEOJConnection() throws SQLException
     {
         this._serCon.setPostGres(false);
         this._conn=DriverManager.getConnection(this._serCon.getURL());
     }
-
+    /**
+     * Sets the JDBC driver to connect to the SQL Server Database
+     * @throws SQLException
+     */
     public void OpenSSConnection() throws SQLException
     {
         this._serCon.setPostGres(false);
@@ -104,15 +122,16 @@ public class CoalesceDataConnector implements AutoCloseable {
         sqlDataSource.setDatabaseName(this._serCon.getDatabase());
         this._conn = sqlDataSource.getConnection();
     }
-
+    /**
+     * Closes the open JDBC connection.
+     * @throws Exception
+     */
     public void CloseConnection() throws Exception
     {
         this.close();
     }
-
-    /**
-     * Manages calling the correct db connection methods based on the db driver.for.name setup.
-     */
+    
+    ///Manages calling the correct db connection methods based on the db driver.for.name setup. // 
     private void setConnection() throws SQLException
     {
         if (this._conn == null) if (serverConnection.toLowerCase().contains("mysql"))
@@ -138,7 +157,13 @@ public class CoalesceDataConnector implements AutoCloseable {
     }
 
 
-
+    /**
+     * Returns the results from the executed SQL Command.
+     * @param  SQL the statement to be executed against the database.
+     * @param parameters the multiple parameters to be applied to the SQL statement
+     * @return ResultSet - A table of data representing a database result set.
+     * @throws SQLException
+     */
     public ResultSet ExecuteQuery(String SQL, String... parameters) throws SQLException
     {
 
@@ -165,7 +190,14 @@ public class CoalesceDataConnector implements AutoCloseable {
         return stmt.executeQuery();
 
     }
-
+    /**
+     * Returns the results from the executed SQL Command, that contains LIKE wildcards.
+     * @param  SQL the statement to be executed against the database.
+     * @param likeParams the number of like parameters in the SQL statement
+     * @param parameters the multiple parameters to be applied to the SQL statement
+     * @return ResultSet - A table of data representing a database result set.
+     * @throws SQLException
+     */
     public ResultSet ExecuteLikeQuery(String SQL, int likeParams, String... parameters) throws SQLException
     {
 
@@ -190,7 +222,13 @@ public class CoalesceDataConnector implements AutoCloseable {
         return stmt.executeQuery();
 
     }
-
+    /**
+     * Executes a SQL statement on a database.
+     * @param  SQL the statement to be executed against the database.
+     * @param parameters the multiple parameters to be applied to the SQL statement
+     * @return true = success
+     * @throws SQLException
+     */
     public boolean ExecuteCmd(String SQL, String... parameters) throws SQLException
     {
 
@@ -220,7 +258,12 @@ public class CoalesceDataConnector implements AutoCloseable {
         return true;
 
     }
-
+    /**
+     * Executes a SQL statement on a database.
+     * @param  SQL the statement to be executed against the database.
+     * @return true = success
+     * @throws SQLException
+     */
     public boolean ExecuteCmd(String SQL) throws SQLException
     {
 
@@ -234,7 +277,13 @@ public class CoalesceDataConnector implements AutoCloseable {
         return true;
 
     }
-
+    /**
+     * Executes a stored procedure(or function) on a database.
+     * @param  procedureName the name of the stored procedure to be executed against the database.
+     * @param parameters the multiple parameters to be applied to the SQL statement
+     * @return true = success
+     * @throws SQLException
+     */
     public boolean ExecuteProcedure(String procedureName, String... parameters) throws SQLException
     {
 
