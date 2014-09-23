@@ -210,6 +210,7 @@ public class Neo4JPersistor extends CoalescePersisterBase {
                     break;
             }
         }
+        }
         return null;
     }
 

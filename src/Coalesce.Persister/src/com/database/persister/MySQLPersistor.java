@@ -66,25 +66,34 @@ public class MySQLPersistor extends CoalescePersisterBase {
 
     public MySQLPersistor()
     {
-        /***********
-         * Define the MySQL Database Connection in the URL, change to whatever the schema name is on your system
-         ***********/
         serCon = new ServerConn();
-        /* Set URL, User, Pass */
     }
 
+    /**
+     * Sets the server connection. 
+     * @param server connection object. 
+     */
     public void Initialize(ServerConn svConn)
     {
         serCon = svConn;
     }
-
+    /**
+     * Sets the server connection. 
+     * @param connection url.
+     * @param connection user.
+     * @param connection user password. 
+     */
     public void Initialize(String url, String userName, String pwd)
     {
         serCon.setURL(url);
         serCon.setPassword(pwd);
         serCon.setUser(userName);
     }
-
+    /**
+     * Sets the cacher and server connection. 
+     * @param base class cacher.
+     * @param server connection object. 
+     */
     public boolean Initialize(ICoalesceCacher cacher, ServerConn svConn) throws CoalescePersistorException
     {
         serCon = svConn;
@@ -95,7 +104,14 @@ public class MySQLPersistor extends CoalescePersisterBase {
     /*--------------------------------------------------------------------------
     Overrided Functions
     --------------------------------------------------------------------------*/
-
+    /**
+     * Returns the Coalesce entity keys that matches the given parameters. 
+     * @param the entityid of the entity. 
+     * @param the entitytypeid of the entity. 
+     * @param the name of the entity. 
+     * @return list of keys for the matching Coalesce entity. 
+     * @throws CoalescePersistorException
+     */
     @Override
     public List<String> getCoalesceEntityKeysForEntityId(String EntityId,
                                                          String EntityIdType,
@@ -122,7 +138,12 @@ public class MySQLPersistor extends CoalescePersisterBase {
             throw new CoalescePersistorException("GetCoalesceEntityKeysForEntityId", e);
         }
     }
-
+    /**
+     * Returns the Coalesce entity meta data that matches the given parameters. 
+     * @param the primary key of the entity.
+     * @return meta data for the matching Coalesce entity. 
+     * @throws CoalescePersistorException
+     */
     @Override
     public EntityMetaData getCoalesceEntityIdAndTypeForKey(String Key) throws CoalescePersistorException
     {
@@ -139,7 +160,12 @@ public class MySQLPersistor extends CoalescePersisterBase {
             throw new CoalescePersistorException("GetCoalesceEntityIdAndTypeForKey", e);
         }
     }
-
+    /**
+     * Returns the last modified date for the Coalesce object that matches the given parameters. 
+     * @param the primary key of the Coalesce object.
+     * @return Coalesce object type to retrieve the information for. 
+     * @throws CoalescePersistorException
+     */
     @Override
     public DateTime getCoalesceDataObjectLastModified(String Key, String ObjectType) throws CoalescePersistorException
     {
