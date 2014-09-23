@@ -25,10 +25,20 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({
     CoalesceEntitySyncShellTest.class,
     CoalesceEntityTemplateTest.class,
+    ECoalesceDataObjectStatusTest.class,
+    ECoalesceFieldDataTypesTest.class,
+    ELanguagesTest.class,
+    ELinkTypesTest.class,
     EntityTest.class,
     XsdEntityTest.class,
+    XsdFieldDefinitionTest.class,
     XsdFieldHistoryTest.class,
-    XsdFieldTest.class })
+    XsdFieldTest.class,
+    XsdLinkageSectionTest.class,
+    XsdLinkageTest.class,
+    XsdRecordSetTest.class,
+    XsdRecordTest.class,
+    XsdSectionTest.class})
 public class AllFrameworkDataModelTests {
 
 }
