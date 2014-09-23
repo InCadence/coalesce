@@ -145,30 +145,30 @@ public interface ICoalescePersistor {
     public Object getFieldValue(String fieldKey) throws CoalescePersistorException;
 
     /**
-     * 
-     * @param key
-     * @param objectType
-     * @return
+     * Returns the ElementMetaData for the Coalesce object that matches the given parameters.
+     * @param key the Coalesce object primary key
+     * @param objectType the Coalesce object type specification.
+     * @return ElementMetaData
      * @throws CoalescePersistorException
      */
     public ElementMetaData getXPath(String key, String objectType) throws CoalescePersistorException;
 
     /**
-     * 
-     * @param key
-     * @param objectType
-     * @return
+     * Returns the last modified date for the Coalesce object (entity, field, record, linkage, etc.) that matches the given parameters. 
+     * @param key the primary key of the Coalesce object.  
+     * @param objectType is the Coalesce object to retrieve the information for.
+     * @return DateTime containing the last modified date for the Coalesce object matching the values.
      * @throws CoalescePersistorException
      */
     public DateTime getCoalesceDataObjectLastModified(String key, String objectType) throws CoalescePersistorException;
 
     /**
-     * 
-     * @param entityId
-     * @param entityIdType
-     * @param entityName
-     * @param entitySource
-     * @return
+     * Returns the Coalesce entity keys that matches the given parameters. 
+     * @param entityid of the entity. 
+     * @param entitytypeid of the entity. 
+     * @param name of the entity. 
+     * @param entitySource of the entity.
+     * @return List<String> of primary keys for the matching Coalesce entity. 
      * @throws CoalescePersistorException
      */
     public List<String> getCoalesceEntityKeysForEntityId(String entityId,
@@ -177,17 +177,17 @@ public interface ICoalescePersistor {
                                                          String entitySource) throws CoalescePersistorException;
 
     /**
-     * 
-     * @param key
-     * @return
+     * Returns the Coalesce entity meta data that matches the given parameters. 
+     * @param key the primary key of the entity.
+     * @return EntityMetaData for the matching Coalesce entity. 
      * @throws CoalescePersistorException
      */
     public EntityMetaData getCoalesceEntityIdAndTypeForKey(String key) throws CoalescePersistorException;
 
     /**
-     * 
-     * @param binaryFieldKey
-     * @return
+     * Returns the Coalesce field binary data that matches the given parameters.
+     * @param binaryFieldKey the primary key of the Coalesce field.
+     * @return byte[] the binary data of the Coalesce field matching the value.
      * @throws CoalescePersistorException
      */
     public byte[] getBinaryArray(String binaryFieldKey) throws CoalescePersistorException;
@@ -201,29 +201,29 @@ public interface ICoalescePersistor {
     public boolean persistEntityTemplate(CoalesceEntityTemplate entityTemplate) throws CoalescePersistorException;
 
     /**
-     * 
-     * @param key
-     * @return
+     * Returns the Coalesce entity template XML that matches the given parameters. 
+     * @param key the primary key of the entity.
+     * @return the matching Coalesce entity's XML. 
      * @throws CoalescePersistorException
      */
     public String getEntityTemplateXml(String key) throws CoalescePersistorException;
 
     /**
-     * 
-     * @param name
-     * @param source
-     * @param version
-     * @return
+     * Returns the Coalesce entity template XML that matches the given parameters. 
+     * @param name of the entity.
+     * @param source of the entity.
+     * @param version of the entity.
+     * @return the matching Coalesce entity's XML. 
      * @throws CoalescePersistorException
      */
     public String getEntityTemplateXml(String name, String source, String version) throws CoalescePersistorException;
 
     /**
-     * 
-     * @param name
-     * @param source
-     * @param version
-     * @return
+     * Returns the Coalesce entity template key that matches the given parameters. 
+     * @param name of the entity.
+     * @param source of the entity.
+     * @param version of the entity.
+     * @return the matching Coalesce entity's primary key. 
      * @throws CoalescePersistorException
      */
     public String getEntityTemplateKey(String name, String source, String version) throws CoalescePersistorException;

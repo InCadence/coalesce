@@ -104,14 +104,7 @@ public class MySQLPersistor extends CoalescePersisterBase {
     /*--------------------------------------------------------------------------
     Overrided Functions
     --------------------------------------------------------------------------*/
-    /**
-     * Returns the Coalesce entity keys that matches the given parameters. 
-     * @param the entityid of the entity. 
-     * @param the entitytypeid of the entity. 
-     * @param the name of the entity. 
-     * @return list of keys for the matching Coalesce entity. 
-     * @throws CoalescePersistorException
-     */
+
     @Override
     public List<String> getCoalesceEntityKeysForEntityId(String EntityId,
                                                          String EntityIdType,
@@ -138,12 +131,7 @@ public class MySQLPersistor extends CoalescePersisterBase {
             throw new CoalescePersistorException("GetCoalesceEntityKeysForEntityId", e);
         }
     }
-    /**
-     * Returns the Coalesce entity meta data that matches the given parameters. 
-     * @param the primary key of the entity.
-     * @return meta data for the matching Coalesce entity. 
-     * @throws CoalescePersistorException
-     */
+
     @Override
     public EntityMetaData getCoalesceEntityIdAndTypeForKey(String Key) throws CoalescePersistorException
     {
@@ -160,12 +148,7 @@ public class MySQLPersistor extends CoalescePersisterBase {
             throw new CoalescePersistorException("GetCoalesceEntityIdAndTypeForKey", e);
         }
     }
-    /**
-     * Returns the last modified date for the Coalesce object that matches the given parameters. 
-     * @param the primary key of the Coalesce object.
-     * @return Coalesce object type to retrieve the information for. 
-     * @throws CoalescePersistorException
-     */
+
     @Override
     public DateTime getCoalesceDataObjectLastModified(String Key, String ObjectType) throws CoalescePersistorException
     {
