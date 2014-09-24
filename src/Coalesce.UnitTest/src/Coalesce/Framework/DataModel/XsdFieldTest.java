@@ -19,7 +19,9 @@ import org.jdom2.JDOMException;
 import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import Coalesce.Common.Classification.Marking;
 import Coalesce.Common.Classification.MarkingValueTest;
@@ -57,7 +59,13 @@ import com.vividsolutions.jts.geom.Point;
 
 public class XsdFieldTest {
 
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
     private static final Marking TOPSECRETCLASSIFICATIONMARKING = new Marking("//JOINT TOP SECRET AND USA//FOUO-LES//SBU/ACCM-BOB");
+    private static final String COORDINATE_ERROR_MESSAGE = "Failed to parse coordinate value for: MissionGeoLocation";
+    private static final String COORDINATES_ERROR_MESSAGE = "Failed to parse coordinates value for: MissionGeoLocation";
+    private static final String POINT_ERROR_MESSAGE = "Failed to parse point value for: MissionGeoLocation";
 
     @BeforeClass
     public static void setUpBeforeClass()
@@ -714,7 +722,7 @@ public class XsdFieldTest {
 
             // Validate Number of Coordinates
             assertTrue(multipoint.getNumGeometries() == coordinates.length);
-            
+
             // Validate Coordinates
             assertTrue(((Point) multipoint.getGeometryN(0)).getCoordinate().equals2D(coordinates[0]));
             assertTrue(((Point) multipoint.getGeometryN(1)).getCoordinate().equals2D(coordinates[1]));
@@ -1424,38 +1432,834 @@ public class XsdFieldTest {
         Object data = (Coordinate) field.getData();
 
         assertTrue(data instanceof Coordinate);
-        
-        Coordinate location = (Coordinate)data;
-        
+
+        Coordinate location = (Coordinate) data;
+
         assertEquals(-80.9363995, location.x, 0.00001);
         assertEquals(43.6616578, location.y, 0.00001);
 
         Coordinate pentagon = new Coordinate(38.87116000, -77.05613800);
         field.setTypedValue(pentagon);
-        
+
         String entityXml = entity.toXml();
         XsdEntity desEntity = XsdEntity.create(entityXml);
-        
+
         XsdField desField = (XsdField) desEntity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
-        
+
         Coordinate desLocation = desField.getCoordinateValue();
-        
+
         assertEquals(pentagon, desLocation);
-        
+        assertEquals("POINT ( 38.87116 -77.056138 )", field.getValue());
     }
 
-    @Test(expected = ClassCastException.class)
-    public void setTypedValueGeolocationTypeTypeMismatchTest() throws UnsupportedEncodingException
+    @Test
+    public void geolocationPointTests() throws ImageProcessingException, CoalesceCryptoException, IOException,
+            JDOMException, CoalesceDataFormatException
     {
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+
+        DocumentProperties docProps = new DocumentProperties();
+        docProps.initialize("src\\resources\\desert.jpg");
+
+        field.setTypedValue(new Coordinate(docProps.getLongitude(), docProps.getLatitude()));
+        assertEquals("POINT ( 8.67243350003624 49.39875240003339 )", field.getValue());
+
+        field.setTypedValue(new Coordinate(0, 0));
+        assertEquals("POINT ( 0.0 0.0 )", field.getValue());
+
+        field.setTypedValue(new Coordinate(-90, -90));
+        assertEquals("POINT ( -90.0 -90.0 )", field.getValue());
+
+        field.setTypedValue(new Coordinate(90, 90));
+        assertEquals("POINT ( 90.0 90.0 )", field.getValue());
+
+        field.setTypedValue(new Coordinate(90, 0));
+        assertEquals("POINT ( 90.0 0.0 )", field.getValue());
+
+        field.setTypedValue(new Coordinate(-90, 0));
+        assertEquals("POINT ( -90.0 0.0 )", field.getValue());
+
+        field.setTypedValue(new Coordinate(0, 90));
+        assertEquals("POINT ( 0.0 90.0 )", field.getValue());
+
+        field.setTypedValue(new Coordinate(0, -90));
+        assertEquals("POINT ( 0.0 -90.0 )", field.getValue());
+
+        field.setTypedValue(new Coordinate(-77.05613800, 38.87116000));
+        assertEquals("POINT ( -77.056138 38.87116 )", field.getValue());
+
+    }
+
+    @Test
+    public void coordinateLatitudeToLargeTest() throws CoalesceDataFormatException
+    {
+        thrown.expect(CoalesceDataFormatException.class);
+        thrown.expectMessage(XsdFieldTest.COORDINATE_ERROR_MESSAGE);
+
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+
+        field.setTypedValue(new Coordinate(91.00000000000001, 0));
+
+    }
+
+    @Test
+    public void coordinateLatitudeToSmallTest() throws CoalesceDataFormatException
+    {
+        thrown.expect(CoalesceDataFormatException.class);
+        thrown.expectMessage(XsdFieldTest.COORDINATE_ERROR_MESSAGE);
+
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+
+        field.setTypedValue(new Coordinate(-90.00000000000001, 0));
+
+    }
+
+    @Test
+    public void coordinateLongitudeToLargeTest() throws CoalesceDataFormatException
+    {
+        thrown.expect(CoalesceDataFormatException.class);
+        thrown.expectMessage(XsdFieldTest.COORDINATE_ERROR_MESSAGE);
+
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+
+        field.setTypedValue(new Coordinate(0, 90.00000000000001));
+
+    }
+
+    @Test
+    public void coordinateLongitudeToSmallTest() throws CoalesceDataFormatException
+    {
+        thrown.expect(CoalesceDataFormatException.class);
+        thrown.expectMessage(XsdFieldTest.COORDINATE_ERROR_MESSAGE);
+
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+
+        field.setTypedValue(new Coordinate(0, -90.00000000000001));
+
+    }
+
+    @Test
+    public void coordinateBothTooLargeTest() throws CoalesceDataFormatException
+    {
+        thrown.expect(CoalesceDataFormatException.class);
+        thrown.expectMessage(XsdFieldTest.COORDINATE_ERROR_MESSAGE);
+
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+
+        field.setTypedValue(new Coordinate(90.00000000000001, 90.00000000000001));
+
+    }
+
+    @Test
+    public void coordinateBothTooSmallTest() throws CoalesceDataFormatException
+    {
+        thrown.expect(CoalesceDataFormatException.class);
+        thrown.expectMessage(XsdFieldTest.COORDINATE_ERROR_MESSAGE);
+
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+
+        field.setTypedValue(new Coordinate(-90.00000000000001, -90.00000000000001));
+
+    }
+
+    @Test
+    public void parseCoordinateTest() throws CoalesceDataFormatException
+    {
+
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+
+        field.setValue("POINT (8.67243350003624 49.39875240003339)");
+        assertEquals(new Coordinate(8.67243350003624, 49.39875240003339), field.getData());
+
+        field.setValue("POINT (0 0)");
+        assertEquals(new Coordinate(0, 0), field.getData());
+
+        field.setValue("POINT (-90 -90)");
+        assertEquals(new Coordinate(-90, -90), field.getData());
+
+        field.setValue("POINT (90 90)");
+        assertEquals(new Coordinate(90, 90), field.getData());
+
+        field.setValue("POINT (90 0)");
+        assertEquals(new Coordinate(90, 0), field.getData());
+
+        field.setValue("POINT (-90 0)");
+        assertEquals(new Coordinate(-90, 0), field.getData());
+
+        field.setValue("POINT (0 90)");
+        assertEquals(new Coordinate(0, 90), field.getData());
+
+        field.setValue("POINT (0 -90)");
+        assertEquals(new Coordinate(0, -90), field.getData());
+
+        field.setValue("POINT (-77.056138 38.87116)");
+        assertEquals(new Coordinate(-77.05613800, 38.87116000), field.getData());
+
+    }
+
+    @Test
+    public void parseCoordinateLatitudeToLargeTest() throws CoalesceDataFormatException
+    {
+        thrown.expect(CoalesceDataFormatException.class);
+        thrown.expectMessage(XsdFieldTest.COORDINATE_ERROR_MESSAGE);
+
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+
+        field.setValue("POINT (0 90.00000000000001)");
+
+        field.getData();
+    }
+
+    @Test
+    public void parseCoordinateLatitudeToSmallTest() throws CoalesceDataFormatException
+    {
+        thrown.expect(CoalesceDataFormatException.class);
+        thrown.expectMessage(XsdFieldTest.COORDINATE_ERROR_MESSAGE);
+
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+
+        field.setValue("POINT (0 -90.00000000000001)");
+
+        field.getData();
+    }
+
+    @Test
+    public void parseCoordinateLongitudeToLargeTest() throws CoalesceDataFormatException
+    {
+        thrown.expect(CoalesceDataFormatException.class);
+        thrown.expectMessage(XsdFieldTest.COORDINATE_ERROR_MESSAGE);
+
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+
+        field.setValue("POINT (90.00000000000001 0)");
+
+        field.getData();
+    }
+
+    @Test
+    public void parseCoordinateLongitudeToSmallTest() throws CoalesceDataFormatException
+    {
+        thrown.expect(CoalesceDataFormatException.class);
+        thrown.expectMessage(XsdFieldTest.COORDINATE_ERROR_MESSAGE);
+
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+
+        field.setValue("POINT (-90.00000000000001 0)");
+
+        field.getData();
+    }
+
+    @Test
+    public void parseCoordinateBothTooLargeTest() throws CoalesceDataFormatException
+    {
+        thrown.expect(CoalesceDataFormatException.class);
+        thrown.expectMessage(XsdFieldTest.COORDINATE_ERROR_MESSAGE);
+
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+
+        field.setValue("POINT (90.00000000000001 90.00000000000001)");
+
+        field.getData();
+    }
+
+    @Test
+    public void parseCoordinateBothTooSmallTest() throws CoalesceDataFormatException
+    {
+        thrown.expect(CoalesceDataFormatException.class);
+        thrown.expectMessage(XsdFieldTest.COORDINATE_ERROR_MESSAGE);
+
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+
+        field.setValue("POINT (-90.00000000000001 -90.00000000000001)");
+
+        field.getData();
+    }
+
+    @Test
+    public void parseCoordinateMissingLeftParenTest() throws CoalesceDataFormatException
+    {
+        thrown.expect(CoalesceDataFormatException.class);
+        thrown.expectMessage(XsdFieldTest.POINT_ERROR_MESSAGE);
+
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+
+        field.setValue("POINT 0 0)");
+
+        field.getData();
+    }
+
+    @Test
+    public void parseCoordinateMissingRightParenTest() throws CoalesceDataFormatException
+    {
+        thrown.expect(CoalesceDataFormatException.class);
+        thrown.expectMessage(XsdFieldTest.POINT_ERROR_MESSAGE);
+
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+
+        field.setValue("POINT (0 0");
+
+        field.getData();
+    }
+
+    @Test
+    public void parseCoordinateMissingBothParenTest() throws CoalesceDataFormatException
+    {
+        thrown.expect(CoalesceDataFormatException.class);
+        thrown.expectMessage(XsdFieldTest.POINT_ERROR_MESSAGE);
+
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+
+        field.setValue("POINT 0 0");
+
+        field.getData();
+    }
+
+    @Test
+    public void parseCoordinateMissingSpaceTest() throws CoalesceDataFormatException
+    {
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+
+        field.setValue("POINT(0 0)");
+
+        Coordinate location = field.getCoordinateValue();
+
+        assertEquals(new Coordinate(0, 0), location);
+
+    }
+
+    @Test
+    public void parseCoordinateMissingPOINTTest() throws CoalesceDataFormatException
+    {
+        thrown.expect(CoalesceDataFormatException.class);
+        thrown.expectMessage(XsdFieldTest.POINT_ERROR_MESSAGE);
+
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+
+        field.setValue("(0 0)");
+
+        field.getData();
+    }
+
+    @Test
+    public void parseCoordinateLatitudeNotNumberTest() throws CoalesceDataFormatException
+    {
+        thrown.expect(CoalesceDataFormatException.class);
+        thrown.expectMessage(XsdFieldTest.POINT_ERROR_MESSAGE);
+
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+
+        field.setValue("POINT (X 0)");
+
+        field.getData();
+    }
+
+    @Test
+    public void parseGeolocatioLongitudeNotNumberTest() throws CoalesceDataFormatException
+    {
+        thrown.expect(CoalesceDataFormatException.class);
+        thrown.expectMessage(XsdFieldTest.POINT_ERROR_MESSAGE);
+
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+
+        field.setValue("POINT (0 Y)");
+
+        field.getData();
+    }
+
+    @Test
+    public void parseCoordinateBothNotNumberTest() throws CoalesceDataFormatException
+    {
+        thrown.expect(CoalesceDataFormatException.class);
+        thrown.expectMessage(XsdFieldTest.POINT_ERROR_MESSAGE);
+
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+
+        field.setValue("POINT (X Y)");
+
+        field.getData();
+    }
+
+    @Test
+    public void parseCoordinateMissingValueTest() throws CoalesceDataFormatException
+    {
+        thrown.expect(CoalesceDataFormatException.class);
+        thrown.expectMessage(XsdFieldTest.POINT_ERROR_MESSAGE);
+
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+
+        field.setValue("POINT (0)");
+
+        field.getData();
+    }
+
+    @Test
+    public void parseCoordinateNullTest() throws CoalesceDataFormatException
+    {
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+
+        field.setValue(null);
+
+        assertNull(field.getData());
+    }
+
+    @Test
+    public void parseCoordinateEmptyTest() throws CoalesceDataFormatException
+    {
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+
+        field.setValue("");
+
+        assertNull(field.getData());
+    }
+
+    @Test
+    public void parseCoordinateWhiteSpaceTest() throws CoalesceDataFormatException
+    {
+        thrown.expect(CoalesceDataFormatException.class);
+        thrown.expectMessage(XsdFieldTest.POINT_ERROR_MESSAGE);
+
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+
+        field.setValue("  ");
+
+        field.getData();
+    }
+
+    @Test
+    public void setTypedValueGeolocationTypeTypeMismatchTest() throws UnsupportedEncodingException,
+            CoalesceDataFormatException
+    {
+        thrown.expect(ClassCastException.class);
+        thrown.expectMessage("Type mismatch");
 
         XsdField field = getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
 
         field.setTypedValue(new Coordinate());
 
     }
-    
-    // TODO: still need to test geolocation list set/get
-    
+
+    @Test
+    public void setTypedValueGeolocationTypeTypeMismatchGeolocationsListTest() throws UnsupportedEncodingException,
+            CoalesceDataFormatException
+    {
+        thrown.expect(ClassCastException.class);
+        thrown.expectMessage("Type mismatch");
+
+        XsdField field = getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_LOCATION_PATH);
+        field.setDataType(ECoalesceFieldDataTypes.GeocoordinateListType);
+
+        field.setTypedValue(new Coordinate());
+
+    }
+
+    @Test
+    public void parseCoordinateMultipointTest() throws CoalesceDataFormatException
+    {
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        field.setDataType(ECoalesceFieldDataTypes.GeocoordinateListType);
+
+        field.setValue("MULTIPOINT ((-70.6280916 34.6873833), (-77.056138 38.87116))");
+
+        Coordinate[] locations = field.getCoordinateListValue();
+
+        Coordinate[] expected = new Coordinate[2];
+        expected[0] = new Coordinate(-70.6280916, 34.6873833);
+        expected[1] = new Coordinate(-77.056138, 38.87116);
+
+        assertArrayEquals(expected, locations);
+
+    }
+
+    @Test
+    public void parseCoordinateMultipointSingleTest() throws CoalesceDataFormatException
+    {
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        field.setDataType(ECoalesceFieldDataTypes.GeocoordinateListType);
+
+        field.setValue("MULTIPOINT ((-70.6280916 34.6873833))");
+
+        Coordinate[] locations = field.getCoordinateListValue();
+
+        Coordinate[] expected = new Coordinate[1];
+        expected[0] = new Coordinate(-70.6280916, 34.6873833);
+
+        assertArrayEquals(expected, locations);
+
+    }
+
+    @Test
+    public void pareseCoordinateMultipointNoneTest() throws CoalesceDataFormatException
+    {
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        field.setDataType(ECoalesceFieldDataTypes.GeocoordinateListType);
+
+        field.setValue("MULTIPOINT EMPTY");
+
+        Coordinate[] locations = field.getCoordinateListValue();
+
+        Coordinate[] expected = new Coordinate[0];
+
+        assertArrayEquals(expected, locations);
+
+    }
+
+    @Test
+    public void parseCoordinateMultipointLatitudeToLargeTest() throws CoalesceDataFormatException
+    {
+        thrown.expect(CoalesceDataFormatException.class);
+        thrown.expectMessage(XsdFieldTest.COORDINATE_ERROR_MESSAGE);
+
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        field.setDataType(ECoalesceFieldDataTypes.GeocoordinateListType);
+
+        field.setValue("MULTIPOINT ((0 90.00000000000001), (0 0))");
+
+        field.getData();
+
+    }
+
+    @Test
+    public void parseCoordinateMultipointLatitudeToSmallTest() throws CoalesceDataFormatException
+    {
+        thrown.expect(CoalesceDataFormatException.class);
+        thrown.expectMessage(XsdFieldTest.COORDINATE_ERROR_MESSAGE);
+
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        field.setDataType(ECoalesceFieldDataTypes.GeocoordinateListType);
+
+        field.setValue("MULTIPOINT ((0 0), (0 -90.00000000000001))");
+
+        field.getData();
+
+    }
+
+    @Test
+    public void parseCoordinateMultipointLongitudeToLargeTest() throws CoalesceDataFormatException
+    {
+        thrown.expect(CoalesceDataFormatException.class);
+        thrown.expectMessage(XsdFieldTest.COORDINATE_ERROR_MESSAGE);
+
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        field.setDataType(ECoalesceFieldDataTypes.GeocoordinateListType);
+
+        field.setValue("MULTIPOINT ((90.00000000000001 0), (0 0))");
+
+        field.getData();
+
+    }
+
+    @Test
+    public void parseCoordinateMultipointLongitudeToSmallTest() throws CoalesceDataFormatException
+    {
+        thrown.expect(CoalesceDataFormatException.class);
+        thrown.expectMessage(XsdFieldTest.COORDINATE_ERROR_MESSAGE);
+
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        field.setDataType(ECoalesceFieldDataTypes.GeocoordinateListType);
+
+        field.setValue("MULTIPOINT ((0 0), (-90.00000000000001 0))");
+
+        field.getData();
+
+    }
+
+    @Test
+    public void parseCoordinateMultipointBothTooLargeTest() throws CoalesceDataFormatException
+    {
+        thrown.expect(CoalesceDataFormatException.class);
+        thrown.expectMessage(XsdFieldTest.COORDINATE_ERROR_MESSAGE);
+
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        field.setDataType(ECoalesceFieldDataTypes.GeocoordinateListType);
+
+        field.setValue("MULTIPOINT ((90.00000000000001 90.00000000000001), (0 0))");
+
+        field.getData();
+
+    }
+
+    @Test
+    public void parseCoordinateMultipointBothTooSmallTest() throws CoalesceDataFormatException
+    {
+        thrown.expect(CoalesceDataFormatException.class);
+        thrown.expectMessage(XsdFieldTest.COORDINATE_ERROR_MESSAGE);
+
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        field.setDataType(ECoalesceFieldDataTypes.GeocoordinateListType);
+
+        field.setValue("MULTIPOINT ((0 0), (-90.00000000000001 -90.00000000000001))");
+
+        field.getData();
+
+    }
+
+    @Test
+    public void parseCoordinateMultipointMissingLeftParenTest() throws CoalesceDataFormatException
+    {
+        thrown.expect(CoalesceDataFormatException.class);
+        thrown.expectMessage(XsdFieldTest.COORDINATES_ERROR_MESSAGE);
+
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        field.setDataType(ECoalesceFieldDataTypes.GeocoordinateListType);
+
+        field.setValue("MULTIPOINT (0 0), (90 90))");
+
+        field.getData();
+
+    }
+
+    @Test
+    public void parseCoordinateMultipointMissingRightParenTest() throws CoalesceDataFormatException
+    {
+        thrown.expect(CoalesceDataFormatException.class);
+        thrown.expectMessage(XsdFieldTest.COORDINATES_ERROR_MESSAGE);
+
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        field.setDataType(ECoalesceFieldDataTypes.GeocoordinateListType);
+
+        field.setValue("MULTIPOINT ((0 0), (90 90)");
+
+        field.getData();
+
+    }
+
+    @Test
+    public void parseCoordinateMultipointMissingBothParenTest() throws CoalesceDataFormatException
+    {
+        thrown.expect(CoalesceDataFormatException.class);
+        thrown.expectMessage(XsdFieldTest.COORDINATES_ERROR_MESSAGE);
+
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        field.setDataType(ECoalesceFieldDataTypes.GeocoordinateListType);
+
+        field.setValue("MULTIPOINT (0 0)");
+
+        field.getData();
+
+    }
+
+    @Test
+    public void parseCoordinateMultipointMissingPointParenTest() throws CoalesceDataFormatException
+    {
+        thrown.expect(CoalesceDataFormatException.class);
+        thrown.expectMessage(XsdFieldTest.COORDINATES_ERROR_MESSAGE);
+
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        field.setDataType(ECoalesceFieldDataTypes.GeocoordinateListType);
+
+        field.setValue("MULTIPOINT (0 0, (89 9))");
+
+        field.getData();
+
+    }
+
+    @Test
+    public void parseCoordinateMultipointMissingSpaceTest() throws CoalesceDataFormatException
+    {
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        field.setDataType(ECoalesceFieldDataTypes.GeocoordinateListType);
+
+        field.setValue("MULTIPOINT((0 0))");
+
+        Coordinate[] locations = field.getCoordinateListValue();
+
+        Coordinate[] expected = new Coordinate[1];
+        expected[0] = new Coordinate(0, 0);
+
+        assertArrayEquals(expected, locations);
+
+    }
+
+    @Test
+    public void parseCoordinateMultipointMissingMULTIPOINTTest() throws CoalesceDataFormatException
+    {
+        thrown.expect(CoalesceDataFormatException.class);
+        thrown.expectMessage(XsdFieldTest.COORDINATES_ERROR_MESSAGE);
+
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        field.setDataType(ECoalesceFieldDataTypes.GeocoordinateListType);
+
+        field.setValue("((0 0), (90 90))");
+
+        field.getData();
+
+    }
+
+    @Test
+    public void parseCoordinateMultipointLatitudeNotNumberTest() throws CoalesceDataFormatException
+    {
+        thrown.expect(CoalesceDataFormatException.class);
+        thrown.expectMessage(XsdFieldTest.COORDINATES_ERROR_MESSAGE);
+
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        field.setDataType(ECoalesceFieldDataTypes.GeocoordinateListType);
+
+        field.setValue("MULTIPOINT ((X 0), (90 90))");
+
+        field.getData();
+
+    }
+
+    @Test
+    public void parseGeolocatioMultipointLongitudeNotNumberTest() throws CoalesceDataFormatException
+    {
+        thrown.expect(CoalesceDataFormatException.class);
+        thrown.expectMessage(XsdFieldTest.COORDINATES_ERROR_MESSAGE);
+
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        field.setDataType(ECoalesceFieldDataTypes.GeocoordinateListType);
+
+        field.setValue("MULTIPOINT ((90 90), (0 Y)");
+
+        field.getData();
+    }
+
+    @Test
+    public void parseCoordinateMultipointBothNotNumberTest() throws CoalesceDataFormatException
+    {
+        thrown.expect(CoalesceDataFormatException.class);
+        thrown.expectMessage(XsdFieldTest.COORDINATES_ERROR_MESSAGE);
+
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        field.setDataType(ECoalesceFieldDataTypes.GeocoordinateListType);
+
+        field.setValue("MULTIPOINT ((X Y), (0 0))");
+
+        field.getData();
+
+    }
+
+    @Test
+    public void parseCoordinateMultipointMissingValueTest() throws CoalesceDataFormatException
+    {
+        thrown.expect(CoalesceDataFormatException.class);
+        thrown.expectMessage(XsdFieldTest.COORDINATES_ERROR_MESSAGE);
+
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        XsdField field = (XsdField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        field.setDataType(ECoalesceFieldDataTypes.GeocoordinateListType);
+
+        field.setValue("MULTIPOINT ((0), (0 0))");
+
+        field.getData();
+
+    }
+
+    @Test
+    public void setTypedValueGeolocationListTypeTypeMismatchTest() throws UnsupportedEncodingException,
+            CoalesceDataFormatException
+    {
+        thrown.expect(ClassCastException.class);
+        thrown.expectMessage("Type mismatch");
+
+        XsdField field = getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
+
+        field.setTypedValue(new Coordinate[] { new Coordinate(0, 0) });
+
+    }
+
+    @Test
+    public void setTypedValueGeolocationListTypeTypeMismatchGeolocationsTest() throws UnsupportedEncodingException,
+            CoalesceDataFormatException
+    {
+        thrown.expect(ClassCastException.class);
+        thrown.expectMessage("Type mismatch");
+
+        XsdField field = getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_LOCATION_PATH);
+
+        field.setTypedValue(new Coordinate[] { new Coordinate(0, 0) });
+
+    }
+
     // -----------------------------------------------------------------------//
     // Private Static Methods
     // -----------------------------------------------------------------------//

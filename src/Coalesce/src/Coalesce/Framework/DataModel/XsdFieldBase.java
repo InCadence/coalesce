@@ -274,27 +274,31 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
         setValue(String.valueOf(value));
     }
 
-    public void setTypedValue(Point value)
+    public void setTypedValue(Point value) throws CoalesceDataFormatException
     {
         if (getDataType() != ECoalesceFieldDataTypes.GeocoordinateType)
         {
             throw new ClassCastException("Type mismatch");
         }
+
+        assertValid(value);
 
         setValue(value.toText());
     }
 
-    public void setTypedValue(Coordinate value)
+    public void setTypedValue(Coordinate value) throws CoalesceDataFormatException
     {
         if (getDataType() != ECoalesceFieldDataTypes.GeocoordinateType)
         {
             throw new ClassCastException("Type mismatch");
         }
 
+        assertValid(value);
+
         setValue(WKTWriter.toPoint(value));
     }
 
-    public void setTypedValue(MultiPoint multiPoint)
+    public void setTypedValue(MultiPoint multiPoint) throws CoalesceDataFormatException
     {
 
         if (getDataType() != ECoalesceFieldDataTypes.GeocoordinateListType)
@@ -302,10 +306,12 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
             throw new ClassCastException("Type mismatch");
         }
 
+        assertValid(multiPoint);
+
         setValue(multiPoint.toText());
     }
 
-    public void setTypedValue(Coordinate value[])
+    public void setTypedValue(Coordinate value[]) throws CoalesceDataFormatException
     {
 
         if (getDataType() != ECoalesceFieldDataTypes.GeocoordinateListType)
@@ -469,8 +475,6 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
 
     public Point getPointValue() throws CoalesceDataFormatException
     {
-        Point point = null;
-
         if (getDataType() != ECoalesceFieldDataTypes.GeocoordinateType)
         {
             throw new ClassCastException("Type mismatch");
@@ -478,15 +482,20 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
 
         try
         {
+            if (StringHelper.IsNullOrEmpty(getValue())) return null;
+
             WKTReader reader = new WKTReader();
-            point = (Point) reader.read(getValue());
+            Point point = (Point) reader.read(getValue());
+
+            assertValid(point);
+
+            return point;
+
         }
         catch (ParseException e)
         {
             throw new CoalesceDataFormatException("Failed to parse point value for: " + getName());
         }
-
-        return point;
     }
 
     public Coordinate getCoordinateValue() throws CoalesceDataFormatException
@@ -495,13 +504,13 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
 
         if (point == null) return null;
 
+        assertValid(point);
+
         return point.getCoordinate();
     }
 
     public MultiPoint getMultiPointValue() throws CoalesceDataFormatException
     {
-        MultiPoint multiPoint = null;
-
         if (getDataType() != ECoalesceFieldDataTypes.GeocoordinateListType)
         {
             throw new ClassCastException("Type mismatch");
@@ -509,15 +518,72 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
 
         try
         {
+            validateMultiPointFormat(getValue());
+
             WKTReader reader = new WKTReader();
-            multiPoint = (MultiPoint) reader.read(getValue());
+            MultiPoint multiPoint = (MultiPoint) reader.read(getValue());
+
+            assertValid(multiPoint);
+
+            return multiPoint;
+
         }
         catch (ParseException e)
         {
             throw new CoalesceDataFormatException("Failed to parse coordinates value for: " + getName());
         }
+    }
 
-        return multiPoint;
+    private void validateMultiPointFormat(String value) throws CoalesceDataFormatException
+    {
+        if (value.endsWith("MULTIPOINT EMPTY")) return;
+
+        if (value.startsWith("MULTIPOINT (") || value.startsWith("MULTIPOINT("))
+        {
+            String trimmed = value.replace("MULTIPOINT (", "").replace("MULTIPOINT(", "");
+
+            if (trimmed.endsWith(")"))
+            {
+                trimmed = trimmed.replaceAll("\\)$", "");
+
+                String[] points = trimmed.split(", ");
+                for (String point : points)
+                {
+                    if (point.startsWith("(") && point.endsWith(")"))
+                    {
+                        String trimmedPoint = point.replace("(", "").replace(")", "");
+
+                        String[] values = trimmedPoint.split(" ");
+
+                        if (values.length == 2)
+                        {
+                            try
+                            {
+                                @SuppressWarnings("unused")
+                                double longitude = Double.parseDouble(values[0]);
+                                @SuppressWarnings("unused")
+                                double latitude = Double.parseDouble(values[1]);
+
+                                continue;
+
+                            }
+                            catch (NumberFormatException nfe)
+                            {
+                            }
+                        }
+                    }
+
+                    throw new CoalesceDataFormatException("Failed to parse coordinates value for: " + getName());
+
+                }
+
+                return;
+
+            }
+        }
+
+        throw new CoalesceDataFormatException("Failed to parse coordinates value for: " + getName());
+
     }
 
     public Coordinate[] getCoordinateListValue() throws CoalesceDataFormatException
@@ -544,10 +610,37 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
         }
         else
         {
-
             return new byte[0];
-
         }
     }
 
+    /*--------------------------------------------------------------------------
+    Private Functions
+    --------------------------------------------------------------------------*/
+
+    private void assertValid(Coordinate location) throws CoalesceDataFormatException
+    {
+        if (location == null || Math.abs(location.x) > 90 || Math.abs(location.y) > 90)
+        {
+            throw new CoalesceDataFormatException("Failed to parse coordinate value for: " + getName());
+        }
+    }
+
+    private void assertValid(Point location) throws CoalesceDataFormatException
+    {
+        if (location == null)
+        {
+            throw new CoalesceDataFormatException("Failed to parse point value for: " + getName());
+        }
+
+        assertValid(location.getCoordinate());
+    }
+
+    private void assertValid(MultiPoint multiPoint) throws CoalesceDataFormatException
+    {
+        for (Coordinate location : multiPoint.getCoordinates())
+        {
+            assertValid(location);
+        }
+    }
 }
