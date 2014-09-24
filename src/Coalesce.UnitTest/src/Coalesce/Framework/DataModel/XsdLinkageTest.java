@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
@@ -309,13 +310,13 @@ public class XsdLinkageTest {
 
         DateTime lastMod = linkage.getLastModified();
 
-        assertEquals("en-US", linkage.getInputLang());
+        assertEquals(Locale.US, linkage.getInputLang());
 
-        linkage.setInputLang("en-GB");
+        linkage.setInputLang(Locale.UK);
 
         assertTrue(lastMod.isBefore(linkage.getLastModified()));
 
-        assertEquals("en-GB", linkage.getInputLang());
+        assertEquals(Locale.UK, linkage.getInputLang());
 
         String entityXml = entity.toXml();
 
@@ -323,7 +324,7 @@ public class XsdLinkageTest {
         XsdLinkage desLinkage = getMissionLinkage(desEntity);
 
         assertTrue(lastMod.isBefore(linkage.getLastModified()));
-        assertEquals("en-GB", desLinkage.getInputLang());
+        assertEquals(Locale.UK, desLinkage.getInputLang());
 
         XsdEntity newEntity = XsdEntity.create("Operation", "Portal", "1.2.3.4", "ID", "Type");
         XsdLinkage newLinkage = newEntity.getLinkageSection().createLinkage();

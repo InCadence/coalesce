@@ -1,5 +1,7 @@
 package Coalesce.Framework.DataModel;
 
+import java.util.Locale;
+
 import Coalesce.Common.Classification.Marking;
 
 public interface ICoalesceField {
@@ -19,7 +21,7 @@ public interface ICoalesceField {
 
     public String getModifiedByIP();
 
-    public String getInputLang();
+    public Locale getInputLang();
 
     public String getMimeType();
 
@@ -47,7 +49,7 @@ public interface ICoalesceField {
 
     public void setModifiedByIP(String value);
 
-    public void setInputLang(String value);
+    public void setInputLang(Locale value);
 
     public void setMimeType(String value);
 

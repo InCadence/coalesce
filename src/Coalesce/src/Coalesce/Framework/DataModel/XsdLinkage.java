@@ -1,10 +1,12 @@
 package Coalesce.Framework.DataModel;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import org.apache.commons.lang.LocaleUtils;
 import org.apache.commons.lang.NullArgumentException;
 import org.joda.time.DateTime;
 
@@ -233,15 +235,19 @@ public class XsdLinkage extends XsdDataObject implements ICoalesceLinkage {
     }
 
     @Override
-    public String getInputLang()
+    public Locale getInputLang()
     {
-        return _entityLinkage.getInputlang();
+        String inputLang = _entityLinkage.getInputlang(); 
+        
+        if (inputLang == null) return null;
+        
+        return LocaleUtils.toLocale(inputLang.replace("-", "_"));
     }
 
     @Override
-    public void setInputLang(String value)
+    public void setInputLang(Locale value)
     {
-        _entityLinkage.setInputlang(value);
+        _entityLinkage.setInputlang(value.toString());
         setChanged();
     }
 
@@ -312,7 +318,7 @@ public class XsdLinkage extends XsdDataObject implements ICoalesceLinkage {
                                  XsdEntity Entity2,
                                  Marking ClassificationMarking,
                                  String ModifiedBy,
-                                 String InputLang)
+                                 Locale InputLang)
     {
         // Set Values
         setEntity1Key(Entity1.getKey());

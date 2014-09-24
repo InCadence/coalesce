@@ -1,5 +1,7 @@
 package Coalesce.Common.Helpers;
 
+import java.util.Locale;
+
 import org.apache.commons.lang.NullArgumentException;
 
 import Coalesce.Common.Classification.Marking;
@@ -51,7 +53,7 @@ public class EntityLinkHelper {
     public static boolean LinkEntities(XsdEntity entity1, ELinkTypes linkType, XsdEntity entity2, Boolean updateExisting)
     {
 
-        return LinkEntities(entity1, linkType, entity2, new Marking("(U)"), "", "en-US", updateExisting);
+        return LinkEntities(entity1, linkType, entity2, new Marking("(U)"), "", Locale.US, updateExisting);
 
     }
 
@@ -60,7 +62,7 @@ public class EntityLinkHelper {
                                        XsdEntity entity2,
                                        Marking classificationMarking,
                                        String modifiedBy,
-                                       String inputLang,
+                                       Locale inputLang,
                                        boolean updateExisting)
     {
 
@@ -143,7 +145,7 @@ public class EntityLinkHelper {
                                          XsdEntity otherEntity,
                                          Marking classificationMarking,
                                          String modifiedBy,
-                                         String inputLang,
+                                         Locale inputLang,
                                          boolean updateExisting)
     {
         if (linkageSection == null) throw new NullArgumentException("linkageSection");

@@ -1,5 +1,7 @@
 package Coalesce.Framework.DataModel;
 
+import java.util.Locale;
+
 import Coalesce.Common.Classification.Marking;
 
 public interface ICoalesceLinkage {
@@ -29,7 +31,7 @@ public interface ICoalesceLinkage {
 
     public String getModifiedBy();
 
-    public String getInputLang();
+    public Locale getInputLang();
 
     public void setName(String value);
 
@@ -55,5 +57,5 @@ public interface ICoalesceLinkage {
 
     public void setModifiedBy(String value);
 
-    public void setInputLang(String value);
+    public void setInputLang(Locale value);
 }

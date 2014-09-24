@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Locale;
 import java.util.UUID;
 
+import org.apache.commons.lang.LocaleUtils;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.NullArgumentException;
 import org.apache.xerces.impl.dv.util.Base64;
@@ -121,10 +123,20 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
     public abstract void setHash(String value);
 
     @Override
-    public abstract String getInputLang();
+    public Locale getInputLang()
+    {
+        String inputLang = getAttribute("inputlang");
+
+        if (inputLang == null) return null;
+
+        return LocaleUtils.toLocale(inputLang.replace("-", "_"));
+    }
 
     @Override
-    public abstract void setInputLang(String value);
+    public void setInputLang(Locale value)
+    {
+        setAttribute("inputlang", value.toString());
+    }
 
     /*--------------------------------------------------------------------------
     Public Functions
@@ -479,10 +491,10 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
 
     public Coordinate getCoordinateValue() throws CoalesceDataFormatException
     {
-        Point point = getPointValue(); 
-        
-        if (point == null ) return null;
-        
+        Point point = getPointValue();
+
+        if (point == null) return null;
+
         return point.getCoordinate();
     }
 

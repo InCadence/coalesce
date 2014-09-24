@@ -1,6 +1,11 @@
 package Coalesce.Common.Helpers;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.util.Locale;
 
 import org.junit.Test;
 
@@ -305,7 +310,7 @@ public class EntityLinkHelperTest {
                                                       entity,
                                                       EntityLinkHelperTest.TOP_SECRET_MARKING,
                                                       "jford",
-                                                      "en-gb",
+                                                      Locale.UK,
                                                       false));
         }
         catch (IllegalArgumentException ex)
@@ -329,7 +334,7 @@ public class EntityLinkHelperTest {
                                                       null,
                                                       EntityLinkHelperTest.TOP_SECRET_MARKING,
                                                       "jford",
-                                                      "en-gb",
+                                                      Locale.UK,
                                                       false));
         }
         catch (IllegalArgumentException ex)
@@ -352,7 +357,7 @@ public class EntityLinkHelperTest {
                                                       null,
                                                       EntityLinkHelperTest.TOP_SECRET_MARKING,
                                                       "jford",
-                                                      "en-gb",
+                                                      Locale.UK,
                                                       false));
         }
         catch (IllegalArgumentException ex)
@@ -376,7 +381,7 @@ public class EntityLinkHelperTest {
                                                       entity,
                                                       EntityLinkHelperTest.TOP_SECRET_MARKING,
                                                       "jford",
-                                                      "en-gb",
+                                                      Locale.UK,
                                                       true));
         }
         catch (IllegalArgumentException ex)
@@ -400,7 +405,7 @@ public class EntityLinkHelperTest {
                                                       null,
                                                       EntityLinkHelperTest.TOP_SECRET_MARKING,
                                                       "jford",
-                                                      "en-gb",
+                                                      Locale.UK,
                                                       true));
         }
         catch (IllegalArgumentException ex)
@@ -423,7 +428,7 @@ public class EntityLinkHelperTest {
                                                       null,
                                                       EntityLinkHelperTest.TOP_SECRET_MARKING,
                                                       "jford",
-                                                      "en-gb",
+                                                      Locale.UK,
                                                       true));
         }
         catch (IllegalArgumentException ex)
@@ -447,13 +452,13 @@ public class EntityLinkHelperTest {
                                                  entity2,
                                                  EntityLinkHelperTest.TOP_SECRET_MARKING,
                                                  "jford",
-                                                 "en-gb",
+                                                 Locale.UK,
                                                  false));
 
         assertEquals(1, entity1.getLinkageSection().getChildDataObjects().size());
         assertEquals(1, entity2.getLinkageSection().getChildDataObjects().size());
 
-        assertLinkages(ELinkTypes.IsAPeerOf, EntityLinkHelperTest.TOP_SECRET_MARKING, "jford", "en-gb", entity1, entity2);
+        assertLinkages(ELinkTypes.IsAPeerOf, EntityLinkHelperTest.TOP_SECRET_MARKING, "jford", Locale.UK, entity1, entity2);
 
     }
 
@@ -468,7 +473,7 @@ public class EntityLinkHelperTest {
                                       entity2,
                                       EntityLinkHelperTest.TOP_SECRET_MARKING,
                                       "jford",
-                                      "en-gb",
+                                      Locale.UK,
                                       false);
 
         XsdEntity modifiedEntity1 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
@@ -487,13 +492,13 @@ public class EntityLinkHelperTest {
                                                  modifiedEntity2,
                                                  EntityLinkHelperTest.SECRET_USA_MARKING,
                                                  "bob",
-                                                 "en-us",
+                                                 Locale.US,
                                                  false));
 
         assertLinkages(ELinkTypes.IsBeingWatchedBy,
                        EntityLinkHelperTest.TOP_SECRET_MARKING,
                        "jford",
-                       "en-gb",
+                       Locale.UK,
                        entity1,
                        entity2);
 
@@ -510,13 +515,13 @@ public class EntityLinkHelperTest {
                                                  entity2,
                                                  EntityLinkHelperTest.TOP_SECRET_MARKING,
                                                  "jford",
-                                                 "en-gb",
+                                                 Locale.UK,
                                                  true));
 
         assertEquals(1, entity1.getLinkageSection().getChildDataObjects().size());
         assertEquals(1, entity2.getLinkageSection().getChildDataObjects().size());
 
-        assertLinkages(ELinkTypes.IsChildOf, EntityLinkHelperTest.TOP_SECRET_MARKING, "jford", "en-gb", entity1, entity2);
+        assertLinkages(ELinkTypes.IsChildOf, EntityLinkHelperTest.TOP_SECRET_MARKING, "jford", Locale.UK, entity1, entity2);
 
     }
 
@@ -531,7 +536,7 @@ public class EntityLinkHelperTest {
                                       entity2,
                                       EntityLinkHelperTest.TOP_SECRET_MARKING,
                                       "jford",
-                                      "en-gb",
+                                      Locale.UK,
                                       true);
 
         XsdEntity modifiedEntity1 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
@@ -550,13 +555,13 @@ public class EntityLinkHelperTest {
                                                  modifiedEntity2,
                                                  EntityLinkHelperTest.SECRET_USA_MARKING,
                                                  "bob",
-                                                 "en-us",
+                                                 Locale.US,
                                                  true));
 
         assertLinkages(ELinkTypes.IsOwnedBy,
                        EntityLinkHelperTest.SECRET_USA_MARKING,
                        "bob",
-                       "en-us",
+                       Locale.US,
                        modifiedEntity1,
                        modifiedEntity2);
 
@@ -862,7 +867,7 @@ public class EntityLinkHelperTest {
     private void assertLinkages(ELinkTypes linkType,
                                 Marking classificationMarking,
                                 String modifiedBy,
-                                String inputLang,
+                                Locale inputLang,
                                 XsdEntity entity1,
                                 XsdEntity entity2)
     {
@@ -903,13 +908,13 @@ public class EntityLinkHelperTest {
     private void assertLinkage(ELinkTypes linkType, XsdEntity entity1, XsdEntity entity2, XsdLinkage linkage)
     {
 
-        assertLinkage(linkType, EntityLinkHelperTest.UNCLASSIFIED_MARKING, "", "en-US", entity1, entity2, linkage);
+        assertLinkage(linkType, EntityLinkHelperTest.UNCLASSIFIED_MARKING, "", Locale.US, entity1, entity2, linkage);
     }
 
     private void assertLinkage(ELinkTypes linkType,
                                Marking classificationMarking,
                                String modifiedBy,
-                               String inputLang,
+                               Locale inputLang,
                                XsdEntity entity1,
                                XsdEntity entity2,
                                XsdLinkage linkage)
@@ -929,6 +934,7 @@ public class EntityLinkHelperTest {
         assertEquals(entity2.getName(), linkage.getEntity2Name());
         assertEquals(entity2.getSource(), linkage.getEntity2Source());
         assertEquals(entity2.getVersion(), linkage.getEntity2Version());
+        assertEquals(linkage.getInputLang(), inputLang);
     }
 
 }

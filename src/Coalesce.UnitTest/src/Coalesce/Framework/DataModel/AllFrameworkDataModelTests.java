@@ -27,7 +27,6 @@ import org.junit.runners.Suite.SuiteClasses;
     CoalesceEntityTemplateTest.class,
     ECoalesceDataObjectStatusTest.class,
     ECoalesceFieldDataTypesTest.class,
-    ELanguagesTest.class,
     ELinkTypesTest.class,
     EntityTest.class,
     XsdEntityTest.class,

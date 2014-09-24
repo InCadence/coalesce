@@ -312,19 +312,6 @@ public class XsdFieldHistory extends XsdFieldBase {
         return _entityFieldHistory.getLastmodified();
     }
 
-    @Override
-    public String getInputLang()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public void setInputLang(String value)
-    {
-        // TODO Auto-generated method stub
-    }
-
     // -----------------------------------------------------------------------//
     // public Methods
     // -----------------------------------------------------------------------//
