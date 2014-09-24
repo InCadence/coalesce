@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,9 +32,12 @@ import Coalesce.Common.Helpers.MimeHelper;
 import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.UnitTest.CoalesceTypeInstances;
 import Coalesce.Common.UnitTest.CoalesceUnitTestSettings;
-import Coalesce.Framework.Geography.Geolocation;
 
 import com.drew.imaging.ImageProcessingException;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.io.WKTWriter;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -646,6 +650,81 @@ public class XsdFieldTest {
 
         assertEquals(now, savedField.getDateCreated());
 
+    }
+
+    @Test
+    public void getCoordinateTest()
+    {
+
+        try
+        {
+            // Create Mission Entity
+            XsdEntity mission = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+            // Get Mission Location Field
+            XsdField field = getTestMissionFieldByName(mission, CoalesceTypeInstances.TEST_MISSION_LOCATION_PATH);
+
+            // Get Field Value
+            Coordinate coordinateTest = field.getCoordinateValue();
+
+            // Validate Value
+            assertTrue(-80.9363995 == coordinateTest.x);
+            assertTrue(43.6616578 == coordinateTest.y);
+
+            // Change Value
+            field.setTypedValue(new Coordinate(5, 6));
+            field.getPointValue();
+
+            Point pointTest = field.getPointValue();
+
+            assertTrue(pointTest.isValid());
+            assertTrue(5 == pointTest.getX());
+            assertTrue(6 == pointTest.getY());
+        }
+        catch (CoalesceDataFormatException e)
+        {
+            fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void getCoordinateListTest()
+    {
+
+        try
+        {
+            // Create Mission Entity
+            XsdEntity mission = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+            // Get Mission Location Field
+            XsdField field = getTestMissionFieldByName(mission, CoalesceTypeInstances.TEST_MISSION_LOCATION_PATH);
+
+            // Change Field Type
+            field.setDataType(ECoalesceFieldDataTypes.GeocoordinateListType);
+
+            // Create Coordinate List
+            Coordinate coordinates[] = new Coordinate[2];
+            coordinates[0] = new Coordinate(1, 2);
+            coordinates[1] = new Coordinate(3, 4);
+
+            // Set Coordinate Values
+            field.setTypedValue(coordinates);
+
+            // Get MultiPoint
+            MultiPoint multipoint = field.getMultiPointValue();
+
+            // Validate Number of Coordinates
+            assertTrue(multipoint.getNumGeometries() == coordinates.length);
+            
+            // Validate Coordinates
+            assertTrue(((Point) multipoint.getGeometryN(0)).getCoordinate().equals2D(coordinates[0]));
+            assertTrue(((Point) multipoint.getGeometryN(1)).getCoordinate().equals2D(coordinates[1]));
+
+        }
+        catch (CoalesceDataFormatException e)
+        {
+            fail(e.getMessage());
+        }
     }
 
     @Test
@@ -1330,7 +1409,7 @@ public class XsdFieldTest {
         XsdRecord parentRecord = parentRecordset.GetItem(0);
         XsdField field = XsdField.create(parentRecord, fileFieldDef);
 
-        assertNull(field.getGeolocationValue());
+        assertNull(field.getCoordinateValue());
 
     }
 
@@ -1343,17 +1422,16 @@ public class XsdFieldTest {
 
         assertEquals("POINT (-80.9363995 43.6616578)", field.getValue());
 
-        Object data = field.getData();
+        Object data = (Coordinate) field.getData();
 
-        assertTrue(data instanceof Geolocation);
-        assertEquals("POINT (-80.9363995 43.6616578)", data.toString());
+        assertTrue(data instanceof Coordinate);
         
-        Geolocation location = (Geolocation)data;
+        Coordinate location = (Coordinate)data;
         
-        assertEquals(43.6616578, location.getLatitude(), 0.00001);
-        assertEquals(-80.9363995, location.getLongitude(), 0.00001);
+        assertEquals(-80.9363995, location.x, 0.00001);
+        assertEquals(43.6616578, location.y, 0.00001);
 
-        Geolocation pentagon = new Geolocation(38.87116000, -77.05613800);
+        Coordinate pentagon = new Coordinate(38.87116000, -77.05613800);
         field.setTypedValue(pentagon);
         
         String entityXml = entity.toXml();
@@ -1361,7 +1439,7 @@ public class XsdFieldTest {
         
         XsdField desField = (XsdField) desEntity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
         
-        Geolocation desLocation = desField.getGeolocationValue();
+        Coordinate desLocation = desField.getCoordinateValue();
         
         assertEquals(pentagon, desLocation);
         
@@ -1373,7 +1451,7 @@ public class XsdFieldTest {
 
         XsdField field = getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
 
-        field.setTypedValue(new Geolocation());
+        field.setTypedValue(new Coordinate());
 
     }
     

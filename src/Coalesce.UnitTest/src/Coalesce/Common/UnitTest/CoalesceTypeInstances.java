@@ -36,6 +36,7 @@ public class CoalesceTypeInstances {
     public static final DateTime TEST_MISSION_NAME_HISTORY_MODIFIED = JodaDateTimeHelper.FromXmlDateTimeUTC("2014-09-02T08:57:36.183Z");
     public static final String TEST_MISSION_BASE64_PATH = "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionIndicatorNumberBASE10";
     public static final int TEST_MISSION_BASE64_VALUE = 38601;
+    public static final String TEST_MISSION_LOCATION_PATH = "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation";
     public static final String TEST_MISSION_START_TIME_PATH = "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionStartDateTime";
     public static final String TEST_MISSION_START_TIME_VALUE = "2014-05-02T14:33:51.8605756Z";
     public static final String TEST_MISSION_ACTION_NUMBER_PATH = "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/ActionNumber";

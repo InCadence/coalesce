@@ -8,7 +8,6 @@ import Coalesce.Common.Classification.AllCommonClassificationTests;
 import Coalesce.Common.Helpers.AllCommonHelpersTests;
 import Coalesce.Common.RunTime.AllCommonRunTimeTests;
 import Coalesce.Framework.DataModel.AllFrameworkDataModelTests;
-import Coalesce.Framework.Geography.AllFrameworkGeographyTests;
 import Coalesce.Framework.Persistance.AllFrameworkPersisterTests;
 
 /*-----------------------------------------------------------------------------'
@@ -30,7 +29,7 @@ import Coalesce.Framework.Persistance.AllFrameworkPersisterTests;
 
 @RunWith(Suite.class)
 @SuiteClasses({ AllCommonClassificationTests.class, AllCommonHelpersTests.class, AllCommonRunTimeTests.class,
-               AllFrameworkDataModelTests.class, AllFrameworkGeographyTests.class, AllFrameworkPersisterTests.class })
+               AllFrameworkDataModelTests.class, AllFrameworkPersisterTests.class })
 public class AllCoalesceTests {
 
 }

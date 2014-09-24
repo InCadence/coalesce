@@ -17,7 +17,15 @@ import Coalesce.Common.Helpers.DocumentProperties;
 import Coalesce.Common.Helpers.GUIDHelper;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import Coalesce.Common.Helpers.StringHelper;
-import Coalesce.Framework.Geography.Geolocation;
+
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
+import com.vividsolutions.jts.io.ParseException;
+import com.vividsolutions.jts.io.WKTReader;
+import com.vividsolutions.jts.io.WKTWriter;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -183,19 +191,17 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
         case GuidType:
             return getGuidValue();
 
-        case GeocoordinateType:
-            return getGeolocationValue();
-            
-        case GeocoordinateListType:
-            //TODO: Implement list
-            //return getGeolocationListValue();
-            
         case FileType:
             return getBinaryValue();
 
+        case GeocoordinateType:
+            return getCoordinateValue();
+
+        case GeocoordinateListType:
+            return getCoordinateListValue();
+
         default:
             throw new NotImplementedException(getDataType() + " not implemented");
-
         }
 
     }
@@ -256,47 +262,57 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
         setValue(String.valueOf(value));
     }
 
-    public void setTypedValue(Geolocation value)
+    public void setTypedValue(Point value)
     {
-        if (getDataType() != ECoalesceFieldDataTypes.GeocoordinateType) {
+        if (getDataType() != ECoalesceFieldDataTypes.GeocoordinateType)
+        {
             throw new ClassCastException("Type mismatch");
         }
 
-        setValue(value.toString());
+        setValue(value.toText());
     }
 
-    // TODO: GeocoordinateList
-    // public CallResult SetTypedValue(List(Of Geolocation) GeoLocations){
-    // try{
-    // CoalesceFieldDefinition CFD = new CoalesceFieldDefinition();
-    // if (CFD.GetCoalesceFieldDataTypeForCoalesceType(getDataType()) ==
-    // ECoalesceFieldDataTypes.GeocoordinateListType) {
-    // // Set
-    // Microsoft.SqlServer.Types.SqlGeographyBuilder Builder = new
-    // Microsoft.SqlServer.Types.SqlGeographyBuilder;
-    // Builder.SetSrid(4326); // WGS 84
-    // Builder.BeginGeography(Microsoft.SqlServer.Types.OpenGisGeographyType.MultiPoint);
-    // for(Geolocation Geolocation : GeoLocations){
-    // Builder.BeginGeography(Microsoft.SqlServer.Types.OpenGisGeographyType.Point);
-    // Builder.BeginFigure(Geolocation.Latitude, Geolocation.Longitude);
-    // Builder.EndFigure();
-    // Builder.EndGeography();
-    // }
-    // Builder.EndGeography();
-    //
-    // // Call on Overload
-    // return setTypedValue(Builder.ConstructedGeography);
-    //
-    // }else{
-    // // return Failed; Type Mismatch
-    // return new CallResult(CallResults.FAILED, "Type mismatch", this);
-    // }
-    //
-    // }catch(Exception ex){
-    // // return Failed Error
-    // return new CallResult(CallResults.FAILED_ERROR, ex, this);
-    // }
-    // }
+    public void setTypedValue(Coordinate value)
+    {
+        if (getDataType() != ECoalesceFieldDataTypes.GeocoordinateType)
+        {
+            throw new ClassCastException("Type mismatch");
+        }
+
+        setValue(WKTWriter.toPoint(value));
+    }
+
+    public void setTypedValue(MultiPoint multiPoint)
+    {
+
+        if (getDataType() != ECoalesceFieldDataTypes.GeocoordinateListType)
+        {
+            throw new ClassCastException("Type mismatch");
+        }
+
+        setValue(multiPoint.toText());
+    }
+
+    public void setTypedValue(Coordinate value[])
+    {
+
+        if (getDataType() != ECoalesceFieldDataTypes.GeocoordinateListType)
+        {
+            throw new ClassCastException("Type mismatch");
+        }
+
+        // Initialize Array
+        Point points[] = new Point[value.length];
+
+        // Couple Values
+        for (int ii = 0; ii < value.length; ii++)
+        {
+            points[ii] = new Point(new CoordinateArraySequence(new Coordinate[] { new Coordinate(value[ii].x, value[ii].y) }),
+                                   new GeometryFactory());
+        }
+
+        setTypedValue(new MultiPoint(points, new GeometryFactory()));
+    }
 
     public void setTypedValue(byte[] dataBytes)
     {
@@ -439,60 +455,63 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
 
     }
 
-    public Geolocation getGeolocationValue() throws CoalesceDataFormatException {
+    public Point getPointValue() throws CoalesceDataFormatException
+    {
+        Point point = null;
 
-        if (getDataType() != ECoalesceFieldDataTypes.GeocoordinateType) {
+        if (getDataType() != ECoalesceFieldDataTypes.GeocoordinateType)
+        {
             throw new ClassCastException("Type mismatch");
         }
 
-        Geolocation location = (Geolocation) Geolocation.parseGeolocation(getValue());
-        
-        return location;
-        
+        try
+        {
+            WKTReader reader = new WKTReader();
+            point = (Point) reader.read(getValue());
+        }
+        catch (ParseException e)
+        {
+            throw new CoalesceDataFormatException("Failed to parse point value for: " + getName());
+        }
+
+        return point;
     }
 
-    // TODO: GeocoordinateList type
-    // public CallResult GetTypedValue(ArrayList<Geolocation> GeoLocations){
-    // try{
-    // CoalesceFieldDefinition CFD = new CoalesceFieldDefinition();
-    // if (CFD.GetCoalesceFieldDataTypeForCoalesceType(getDataType()) ==
-    // ECoalesceFieldDataTypes.GeocoordinateListType) {
-    // // Basic Check
-    // if (!(getValue().startsWith("MULTIPOINT"))) {
-    // // return Failed; Type Mismatch
-    // return new CallResult(CallResults.FAILED, "Type mismatch", this);
-    // }else{
-    // // Get
-    // ArrayList<Geolocation> TempGeoLocations = new ArrayList<Geolocation>();
-    // Microsoft.SqlServer.Types.SqlGeography Geography = null;
-    //
-    // Geography = Microsoft.SqlServer.Types.SqlGeography.STMPointFromText(new
-    // System.Data.SqlTypes.SqlString(getValue()), 4326);
-    // Dim geoPointCount = Geography.STNumGeometries();
-    // for(int geoPointIndex = 1; geoPointIndex <= geoPointCount;
-    // geoPointCount++){
-    // Microsoft.SqlServer.Types.SqlGeography geoPoint =
-    // Geography.STGeometryN(geoPointIndex);
-    // TempGeoLocations.Add(new Geolocation(geoPoint.Lat, geoPoint.Long));
-    // }
-    //
-    // // All points were valid so return the locations array
-    // GeoLocations = TempGeoLocations;
-    //
-    // // return Success
-    // return CallResult.successCallResult;
-    // }
-    // // Get
-    // }else{
-    // // return Failed; Type Mismatch
-    // return new CallResult(CallResults.FAILED, "Type mismatch", this);
-    // }
-    //
-    // }catch(Exception ex){
-    // // return Failed Error
-    // return new CallResult(CallResults.FAILED_ERROR, ex, this);
-    // }
-    // }
+    public Coordinate getCoordinateValue() throws CoalesceDataFormatException
+    {
+        Point point = getPointValue(); 
+        
+        if (point == null ) return null;
+        
+        return point.getCoordinate();
+    }
+
+    public MultiPoint getMultiPointValue() throws CoalesceDataFormatException
+    {
+        MultiPoint multiPoint = null;
+
+        if (getDataType() != ECoalesceFieldDataTypes.GeocoordinateListType)
+        {
+            throw new ClassCastException("Type mismatch");
+        }
+
+        try
+        {
+            WKTReader reader = new WKTReader();
+            multiPoint = (MultiPoint) reader.read(getValue());
+        }
+        catch (ParseException e)
+        {
+            throw new CoalesceDataFormatException("Failed to parse coordinates value for: " + getName());
+        }
+
+        return multiPoint;
+    }
+
+    public Coordinate[] getCoordinateListValue() throws CoalesceDataFormatException
+    {
+        return getMultiPointValue().getCoordinates();
+    }
 
     public byte[] getBinaryValue() throws ClassCastException
     {
