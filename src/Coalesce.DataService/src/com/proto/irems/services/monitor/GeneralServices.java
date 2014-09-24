@@ -182,6 +182,7 @@ public class GeneralServices implements IGeneralServicesDAO{
 	
 	public static XMLRecord getXMLDoc(String entityXML){
 		org.w3c.dom.Document doc;
+		/*
 		org.w3c.dom.Node entityName=null;
 		org.w3c.dom.Node entitySource=null;
 		org.w3c.dom.Node entityVersion=null;
@@ -191,6 +192,7 @@ public class GeneralServices implements IGeneralServicesDAO{
 		org.w3c.dom.Node entityLastModified=null;
 		org.w3c.dom.Node entityXMLSource=null;
 		org.w3c.dom.Node entityObjectKey=null;
+		*/
 		try (ByteArrayInputStream bais = new ByteArrayInputStream(entityXML.getBytes())) {
 			XMLRecord x=new XMLRecord();
 		    doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(bais);

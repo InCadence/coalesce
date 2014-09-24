@@ -1,6 +1,5 @@
 package com.database.persister;
 
-import java.sql.SQLException;
 
 public class CoalesceTable {
     /**

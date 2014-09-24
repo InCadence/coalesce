@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 import unity.common.CallResult;
 import unity.common.CallResult.CallResults;
 
+import com.database.persister.CoalesceTable;
 import com.proto.irems.services.XMLRecord;
 import com.proto.irems.services.monitor.GeneralServices;
 

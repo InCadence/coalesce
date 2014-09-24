@@ -12,7 +12,6 @@ import org.joda.time.DateTimeZone;
 import Coalesce.Common.Exceptions.CoalescePersistorException;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import Coalesce.Framework.DataModel.CoalesceEntityTemplate;
-import Coalesce.Framework.DataModel.ECoalesceDataObjectStatus;
 import Coalesce.Framework.DataModel.XsdDataObject;
 import Coalesce.Framework.DataModel.XsdEntity;
 import Coalesce.Framework.DataModel.XsdField;

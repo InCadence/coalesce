@@ -20,7 +20,7 @@ import com.proto.irems.data.persistor.MySQLPersistor;
 @WebService(endpointInterface="com.proto.irems.services.ICoalesceDataService",
 		portName="coalesceDataServicePort",serviceName="coalesceDataService")
 //@BindingType(value="http://www.w3.org/2003/05/soap/bindings/HTTP/")
-public class CoalesceImpl extends CoalescePersisterBase
+public class CoalesceImpl 
 {
 	MySQLPersistor mSQLP;
 	
