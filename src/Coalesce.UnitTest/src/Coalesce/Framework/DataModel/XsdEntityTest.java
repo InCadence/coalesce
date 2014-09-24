@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.NullArgumentException;
+import org.jdom2.JDOMException;
 import org.joda.time.DateTime;
 import org.junit.Rule;
 import org.junit.Test;
@@ -2003,19 +2004,28 @@ public class XsdEntityTest {
     }
 
     @Test
-    public void mergeSyncEntityUpdateFieldDefinitionTest()
+    public void mergeSyncEntityTest()
     {
-        XsdEntity myEntity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdEntity updatedEntity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        XsdFieldDefinition fieldDefinition = (XsdFieldDefinition) updatedEntity.getCoalesceDataObjectForKey("1A7DA2CD-8A83-4E86-ADE8-15FDECE0564E");
-        fieldDefinition.setDefaultValue("UpdatedIncidentDescription");
-        fieldDefinition.setLastModified(new DateTime());
-        updatedEntity.setLastModified(new DateTime());
+        try
+        {
+            XsdEntity myEntity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_HISTORY);
+            XsdEntity updatedEntity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        myEntity.mergeSyncEntity(updatedEntity);
-        XsdFieldDefinition myfieldDefinition = (XsdFieldDefinition) myEntity.getCoalesceDataObjectForKey("1A7DA2CD-8A83-4E86-ADE8-15FDECE0564E");
-        assertEquals("UpdatedIncidentDescription", myfieldDefinition.getDefaultValue());
+            XsdFieldDefinition fieldDefinition = (XsdFieldDefinition) updatedEntity.getCoalesceDataObjectForKey("1A7DA2CD-8A83-4E86-ADE8-15FDECE0564E");
+            fieldDefinition.setDefaultValue("UpdatedIncidentDescription");
+            fieldDefinition.setLastModified(new DateTime());
+            updatedEntity.setLastModified(new DateTime());
+
+            myEntity = XsdEntity.mergeSyncEntity(myEntity, updatedEntity);
+            XsdFieldDefinition myfieldDefinition = (XsdFieldDefinition) myEntity.getCoalesceDataObjectForKey("1A7DA2CD-8A83-4E86-ADE8-15FDECE0564E");
+            assertEquals("UpdatedIncidentDescription", myfieldDefinition.getAttribute("defaultvalue"));
+
+        }
+        catch (IOException | JDOMException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     // -----------------------------------------------------------------------//

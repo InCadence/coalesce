@@ -1,6 +1,7 @@
 package Coalesce.Framework.DataModel;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -15,10 +16,16 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.lang.NullArgumentException;
 import org.apache.commons.lang.StringUtils;
+import org.jdom2.Attribute;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.output.XMLOutputter;
 import org.joda.time.DateTime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
@@ -525,47 +532,89 @@ public class XsdEntity extends XsdDataObject {
         return CoalesceEntitySyncShell.Create(this);
     }
 
-    public void mergeSyncEntity(XsdEntity syncEntity)
+    public static XsdEntity mergeSyncEntity(XsdEntity myEntity, XsdEntity syncEntity) throws JDOMException, IOException
     {
-        mergeSyncEntityDataObject(this, syncEntity);
+        SAXBuilder saxBuilder = new SAXBuilder();
+        org.jdom2.Document syncEntityDoc = saxBuilder.build(new InputSource(new StringReader(syncEntity.toXml())));
+        org.jdom2.Document myEntityDoc = saxBuilder.build(new InputSource(new StringReader(myEntity.toXml())));
+
+        mergeSyncEntityDataObject(myEntityDoc.getRootElement(), syncEntityDoc.getRootElement());
+
+        // Convert back to entity object
+        XMLOutputter xmlOutPutter = new XMLOutputter();
+        String output = xmlOutPutter.outputString(myEntityDoc);
+
+        return XsdEntity.create(output);
     }
 
-    protected void mergeSyncEntityDataObject(XsdDataObject myEntity, XsdDataObject syncEntity)
+    protected static void mergeSyncEntityDataObject(Element myEntity, Element syncEntity)
     {
+        // Get Attributes
+        List<Attribute> myEntityDocAttributes = myEntity.getAttributes();
+        List<Attribute> syncEntityDocAttributes = syncEntity.getAttributes();
+
         // Get Time Stamps
-        DateTime myLastModified = myEntity.getLastModified();
-        DateTime updateLastModified = syncEntity.getLastModified();
+        DateTime myLastModified = JodaDateTimeHelper.FromXmlDateTimeUTC(myEntityDocAttributes.get(2).getValue());
+        DateTime updateLastModified = JodaDateTimeHelper.FromXmlDateTimeUTC(syncEntityDocAttributes.get(2).getValue());
 
         // Compare Timestamps
         switch (myLastModified.compareTo(updateLastModified)) {
 
         case -1:
-            for (Map.Entry<QName, String> updateAttribute : syncEntity.getAttributes().entrySet())
+            for (Attribute syncAttribute : syncEntityDocAttributes)
             {
-                // Set Attribute
-                myEntity.setAttribute(updateAttribute.getKey().getLocalPart(), updateAttribute.getValue());
-
+                // Overwrite myAttribute with syncAttribute
+                boolean attributeReplaced = false;
+                for (Attribute myAttribute : myEntityDocAttributes)
+                {
+                    if (myAttribute.getName().equals(syncAttribute.getName()))
+                    {
+                        myAttribute.setValue(syncAttribute.getValue());
+                        attributeReplaced = true;
+                    }
+                }
+                // Add syncAttribute if it is not there
+                if (!attributeReplaced)
+                {
+                    myEntityDocAttributes.add(syncAttribute.detach());
+                }
             }
-
         }
 
+        // Get Children
+        List<Element> myEntityDocChildren = myEntity.getChildren();
+        List<Element> syncEntityDocChildren = syncEntity.getChildren();
+
         // Merge Required Node's Children
-        for (Map.Entry<String, XsdDataObject> updateChild : syncEntity.getChildDataObjects().entrySet())
+        for (Element syncElement : syncEntityDocChildren)
         {
-            // get child data object to update
-            String key = updateChild.getKey();
-            XsdDataObject myChildDataObject = myEntity.getChildDataObjects().get(key);
+
+            // get child element to update
+            String syncKey = syncElement.getAttributes().get(0).getValue();
+            Element myEntityElement = null;
+
+            // Compare keys
+            for (Element myElement : myEntityDocChildren)
+            {
+
+                String myKey = myElement.getAttributes().get(0).getValue();
+                if (myKey.equals(syncKey))
+                {
+                    myEntityElement = myElement;
+                }
+            }
 
             // Evaluate
-            if (myChildDataObject == null)
+            if (myEntityElement == null)
             {
                 // We don't have this child; add the entire Child data object from updatechild
-                myEntity.setChildDataObjects(key, updateChild.getValue());
+                myEntityDocChildren.add(syncElement.detach());
+
             }
             else
             {
                 // We have this child; Call MergeRequiredNode
-                this.mergeSyncEntityDataObject(myChildDataObject, updateChild.getValue());
+                mergeSyncEntityDataObject(myEntityElement, syncElement);
             }
         }
     }
