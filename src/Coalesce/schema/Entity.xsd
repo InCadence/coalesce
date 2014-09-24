@@ -78,6 +78,7 @@
 									  <xs:attribute name="previoushistorykey" type="xs:string" />
 									  <xs:attribute name="modifiedby" type="xs:string" />
 									  <xs:attribute name="modifiedbyip" type="xs:string" />
+									  <xs:attribute name="inputlang" type="xs:string" />
 									  <xs:attribute name="filename" type="xs:string" />
 									  <xs:attribute name="extension" type="xs:string" />
 									  <xs:attribute name="mimetype" type="xs:string" />
@@ -99,6 +100,7 @@
                               <xs:attribute name="previoushistorykey" type="xs:string" />
                               <xs:attribute name="modifiedby" type="xs:string" />
                               <xs:attribute name="modifiedbyip" type="xs:string" />
+							  <xs:attribute name="inputlang" type="xs:string" />
                               <xs:attribute name="filename" type="xs:string" />
                               <xs:attribute name="extension" type="xs:string" />
                               <xs:attribute name="mimetype" type="xs:string" />
