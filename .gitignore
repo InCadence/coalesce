@@ -1,6 +1,7 @@
 
 # Directories #
 build/
+doc/
 bin/
 target/
 logs/
