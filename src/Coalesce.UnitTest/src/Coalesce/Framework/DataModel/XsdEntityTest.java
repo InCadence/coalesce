@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.NullArgumentException;
-import org.jdom2.JDOMException;
 import org.joda.time.DateTime;
 import org.junit.Rule;
 import org.junit.Test;
@@ -2022,9 +2021,9 @@ public class XsdEntityTest {
             assertEquals("UpdatedIncidentDescription", myfieldDefinition.getAttribute("defaultvalue"));
 
         }
-        catch (IOException | JDOMException e)
+        catch (CoalesceException e)
         {
-            e.printStackTrace();
+            fail(e.getMessage());
         }
     }
 

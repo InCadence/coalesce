@@ -28,6 +28,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import Coalesce.Common.Exceptions.CoalesceException;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.Helpers.XmlHelper;
@@ -532,19 +533,27 @@ public class XsdEntity extends XsdDataObject {
         return CoalesceEntitySyncShell.Create(this);
     }
 
-    public static XsdEntity mergeSyncEntity(XsdEntity myEntity, XsdEntity syncEntity) throws JDOMException, IOException
+    public static XsdEntity mergeSyncEntity(XsdEntity myEntity, XsdEntity syncEntity) throws CoalesceException
     {
-        SAXBuilder saxBuilder = new SAXBuilder();
-        org.jdom2.Document syncEntityDoc = saxBuilder.build(new InputSource(new StringReader(syncEntity.toXml())));
-        org.jdom2.Document myEntityDoc = saxBuilder.build(new InputSource(new StringReader(myEntity.toXml())));
+        try
+        {
+            SAXBuilder saxBuilder = new SAXBuilder();
+            org.jdom2.Document syncEntityDoc;
+            syncEntityDoc = saxBuilder.build(new InputSource(new StringReader(syncEntity.toXml())));
+            org.jdom2.Document myEntityDoc = saxBuilder.build(new InputSource(new StringReader(myEntity.toXml())));
 
-        mergeSyncEntityDataObject(myEntityDoc.getRootElement(), syncEntityDoc.getRootElement());
+            mergeSyncEntityDataObject(myEntityDoc.getRootElement(), syncEntityDoc.getRootElement());
 
-        // Convert back to entity object
-        XMLOutputter xmlOutPutter = new XMLOutputter();
-        String output = xmlOutPutter.outputString(myEntityDoc);
+            // Convert back to entity object
+            XMLOutputter xmlOutPutter = new XMLOutputter();
+            String output = xmlOutPutter.outputString(myEntityDoc);
 
-        return XsdEntity.create(output);
+            return XsdEntity.create(output);
+        }
+        catch (JDOMException | IOException e)
+        {
+            throw new CoalesceException("mergeSyncEntity", e);
+        }
     }
 
     protected static void mergeSyncEntityDataObject(Element myEntity, Element syncEntity)
