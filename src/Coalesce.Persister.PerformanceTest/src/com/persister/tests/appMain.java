@@ -1,11 +1,9 @@
 package com.persister.tests;
 
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.logging.Level;
+import java.util.List;
 import java.util.logging.Logger;
 
 import unity.common.CallResult;
@@ -31,9 +29,13 @@ public class appMain {
 	static ServerConn serCon;
 	static PostGresSQLPersistor psPersister;
 	private static CoalesceFramework _coalesceFramework;
-    private static String MODULE_NAME = "Coalesce.Persister.PerformanceTester";
-    static int minorVal=0;
-    static int majorVal=0;
+	private static String MODULE_NAME = "Coalesce.Persister.PerformanceTester";
+	static int minorVal = 0;
+	static int majorVal = 0;
+	static int masterCounter = 0;
+	static String startSaveTimeStamp = "";
+	static String completeSaveTimeStamp = "";
+
 	public static void main(String[] args) {
 		appMain._coalesceFramework = new CoalesceFramework();
 		try {
@@ -58,81 +60,94 @@ public class appMain {
 
 	private static void runVolume() {
 		try {
-			String val=".0.0";
-			
-			String startTime=appMain.getCurrentTime();
+			String val = ".0.0";
+			TimeTrack _timeTrack = new TimeTrack();
+			String startTime = appMain.getCurrentTime();
 			int _iteration_counter = 0;
-			System.out.println(startTime);
+			List<TimeTrack> timeLogger = new ArrayList<TimeTrack>();
+
 			for (_iteration_counter = 0; _iteration_counter <= ITERATION_LIMIT; _iteration_counter++) {
-				XsdEntity _xsdEntity=new XsdEntity();
-				String generateEntityVersionNumber = appMain.generateEntityVersionNumber(_iteration_counter);
-				_xsdEntity=appMain.createEntity("1.0.".concat(generateEntityVersionNumber));
-				String startSaveTimeStamp=getCurrentTime();
-				if(_xsdEntity!=null)
+				XsdEntity _xsdEntity = new XsdEntity();
+				String generateEntityVersionNumber = appMain
+						.generateEntityVersionNumber(_iteration_counter);
+				_xsdEntity = appMain.createEntity("1.0."
+						.concat(generateEntityVersionNumber));
+
+				if (_xsdEntity != null) {
+					_timeTrack.setStartTime(getCurrentTime());
 					appMain._coalesceFramework.SaveCoalesceEntity(_xsdEntity);
-				String completeSaveTimeStamp=getCurrentTime();
+					_timeTrack.setStopTime(getCurrentTime());
+					_timeTrack.setEntityID(_xsdEntity.getKey());
+					timeLogger.add(_timeTrack);
+				} else
+					break;
 			}
-			String stopTime=appMain.getCurrentTime();
-			System.out.println(val);
-			System.out.println(stopTime);
+			String stopTime = appMain.getCurrentTime();
+			System.out.println("STARTTIME: " + startTime);
+			System.out.println("STOPTIME: " + stopTime);
 		} catch (Exception ex) {
 			log.log(java.util.logging.Level.SEVERE, ex.toString());
 		}
 	}
-	
-	private static String getCurrentTime(){
+
+	private static String getCurrentTime() {
 		Calendar calStamp = Calendar.getInstance();
 		java.util.Date nowCurrentDate = calStamp.getTime();
-		java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(nowCurrentDate.getTime());
+		java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(
+				nowCurrentDate.getTime());
 		return currentTimestamp.toString();
 	}
-	
-    private static XsdEntity createEntity(String entityVersion) throws CoalesceException
-    {
-        try
-        {
-            // Create Test Entity
-        	XsdEntity _entity = new XsdEntity();
 
-            XsdSection section = null;
-            XsdRecordset recordSet = null;
-            XsdRecord record = null;
+	private static XsdEntity createEntity(String entityVersion)
+			throws CoalesceException {
+		try {
+			// Create Test Entity
+			XsdEntity _entity = new XsdEntity();
 
-            // Create Entity
-            _entity = XsdEntity.create("Volume Push Test Entity", "Unit Test", entityVersion, "", "", "");
+			XsdSection section = null;
+			XsdRecordset recordSet = null;
+			XsdRecord record = null;
 
-            XsdLinkageSection.create(_entity, true);
+			// Create Entity
+			_entity = XsdEntity.create("Volume Push Test Entity", "Unit Test",
+					entityVersion, "", "", "");
 
-            section = XsdSection.create(_entity, "Live Status Section", true);
-            recordSet = XsdRecordset.create(section, "Live Status Recordset");
-            XsdFieldDefinition.create(recordSet, "CurrentStatus", ECoalesceFieldDataTypes.StringType);
+			XsdLinkageSection.create(_entity, true);
 
-            record = recordSet.addNew();
-            record.setFieldValue("CurrentStatus", "Test Status");
+			section = XsdSection.create(_entity, "Live Status Section", true);
+			recordSet = XsdRecordset.create(section, "Live Status Recordset");
+			XsdFieldDefinition.create(recordSet, "CurrentStatus",
+					ECoalesceFieldDataTypes.StringType);
 
-            String _fieldKey = record.getFieldByName("CurrentStatus").getKey();
-            return _entity;
-        }
-        catch (CoalesceInvalidFieldException e)
-        {
-            CallResult.log(CallResults.FAILED_ERROR, e, MODULE_NAME);
-            return null;
-        }
-    }
-    
-    private static String generateEntityVersionNumber(int currentIterationNumber){
-    	String entityVersion="";
-    	if(currentIterationNumber%10000 == 0){
-    		majorVal+=1;
-    		minorVal=0;
-    		entityVersion=String.valueOf(majorVal) + "." +String.valueOf(minorVal);
-    	}else
-    	{ 		
-    		minorVal+=1;
-    		entityVersion=String.valueOf(majorVal) + "." +String.valueOf(minorVal);
-    	}
-    	System.out.println();
-    	return entityVersion;
-    }
+			record = recordSet.addNew();
+			record.setFieldValue("CurrentStatus", "Test Status");
 
+			String _fieldKey = record.getFieldByName("CurrentStatus").getKey();
+			return _entity;
+		} catch (CoalesceInvalidFieldException e) {
+			CallResult.log(CallResults.FAILED_ERROR, e, MODULE_NAME);
+			return null;
+		}
+	}
+
+	private static String generateEntityVersionNumber(int currentIterationNumber) {
+		String entityVersion = "";
+		masterCounter += 1;
+		if (currentIterationNumber % 10000 == 0) {
+			majorVal += 1;
+			minorVal = 0;
+			outConsoleData(masterCounter, "INCREMENT: ");
+			entityVersion = String.valueOf(majorVal) + "."
+					+ String.valueOf(minorVal);
+		} else {
+			minorVal += 1;
+			entityVersion = String.valueOf(majorVal) + "."
+					+ String.valueOf(minorVal);
+		}
+		return entityVersion;
+	}
+
+	private static void outConsoleData(int cntValue, String msg) {
+		System.out.println(msg + getCurrentTime() + "\t" + cntValue);
+	}
 }

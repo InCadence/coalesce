@@ -1041,8 +1041,6 @@ public class MySQLPersistor extends CoalescePersisterBase {
 
             for (Map.Entry<String, XsdDataObject> s : dataObject.getChildDataObjects().entrySet())
             {
-                System.out.println("ACTIVE OBJECT-Processing Child Key(FILE): " + s.getKey());
-
                 isSuccessful = updateFileContent(s.getValue(), conn);
             }
         }
@@ -1055,8 +1053,8 @@ public class MySQLPersistor extends CoalescePersisterBase {
     {
         boolean isSuccessful = false;
 
-        System.out.println(xsdDataObject.getStatus().getLabel() + " OBJECT [" + xsdDataObject.getName() + " : "
-                + xsdDataObject.getType() + "] Processing Key:  " + xsdDataObject.getKey());
+//        System.out.println(xsdDataObject.getStatus().getLabel() + " OBJECT [" + xsdDataObject.getName() + " : "
+//                + xsdDataObject.getType() + "] Processing Key:  " + xsdDataObject.getKey());
 
         switch (xsdDataObject.getStatus()) {
         case ACTIVE:
