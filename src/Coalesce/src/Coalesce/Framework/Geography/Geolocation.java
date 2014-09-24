@@ -1,6 +1,7 @@
 package Coalesce.Framework.Geography;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import Coalesce.Common.Exceptions.CoalesceDataFormatException;
@@ -84,7 +85,7 @@ public class Geolocation {
         return (_latitude == otherLocation.getLatitude() && _longitude == otherLocation.getLongitude());
     }
 
-    public static Object parseGeolocation(String fromXml) throws CoalesceDataFormatException
+    public static List<Geolocation> parseGeolocation(String fromXml) throws CoalesceDataFormatException
     {
         // MULTIPOINT ((-70.6280916 34.6873833), (-77.056138 38.87116))
         // POINT (-70.6280916 34.6873833)
@@ -96,7 +97,11 @@ public class Geolocation {
 
             if (fromXml.startsWith("POINT ("))
             {
-                return parsePointGeolocation(fromXml.replace("POINT ", ""));
+                Geolocation location = parsePointGeolocation(fromXml.replace("POINT ", ""));
+                
+                if (location == null) return null;
+                
+                return Arrays.asList(location);
 
             }
             else if (fromXml.startsWith("MULTIPOINT ("))

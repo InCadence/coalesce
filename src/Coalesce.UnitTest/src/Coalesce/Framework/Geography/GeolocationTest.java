@@ -159,31 +159,31 @@ public class GeolocationTest {
     public void parseGeolocationTest() throws CoalesceDataFormatException
     {
 
-        Geolocation fromFile = (Geolocation) Geolocation.parseGeolocation("POINT (8.67243350003624 49.39875240003339)");
+        Geolocation fromFile = Geolocation.parseGeolocation("POINT (8.67243350003624 49.39875240003339)").get(0);
         assertEquals(new Geolocation(49.39875240003339, 8.67243350003624), fromFile);
 
-        Geolocation allZero = (Geolocation) Geolocation.parseGeolocation("POINT (0 0)");
+        Geolocation allZero = Geolocation.parseGeolocation("POINT (0 0)").get(0);
         assertEquals(new Geolocation(0, 0), allZero);
 
-        Geolocation maxNegative = (Geolocation) Geolocation.parseGeolocation("POINT (-90 -90)");
+        Geolocation maxNegative = Geolocation.parseGeolocation("POINT (-90 -90)").get(0);
         assertEquals(new Geolocation(-90, -90), maxNegative);
 
-        Geolocation maxPositive = (Geolocation) Geolocation.parseGeolocation("POINT (90 90)");
+        Geolocation maxPositive = Geolocation.parseGeolocation("POINT (90 90)").get(0);
         assertEquals(new Geolocation(90, 90), maxPositive);
 
-        Geolocation equatorMaxPositive = (Geolocation) Geolocation.parseGeolocation("POINT (90 0)");
+        Geolocation equatorMaxPositive = Geolocation.parseGeolocation("POINT (90 0)").get(0);
         assertEquals(new Geolocation(0, 90), equatorMaxPositive);
 
-        Geolocation equatorMaxNegative = (Geolocation) Geolocation.parseGeolocation("POINT (-90 0)");
+        Geolocation equatorMaxNegative = Geolocation.parseGeolocation("POINT (-90 0)").get(0);
         assertEquals(new Geolocation(0, -90), equatorMaxNegative);
 
-        Geolocation zeroNorthPole = (Geolocation) Geolocation.parseGeolocation("POINT (0 90)");
+        Geolocation zeroNorthPole = Geolocation.parseGeolocation("POINT (0 90)").get(0);
         assertEquals(new Geolocation(90, 0), zeroNorthPole);
 
-        Geolocation zeroSouthPole = (Geolocation) Geolocation.parseGeolocation("POINT (0 -90)");
+        Geolocation zeroSouthPole = Geolocation.parseGeolocation("POINT (0 -90)").get(0);
         assertEquals(new Geolocation(-90, 0), zeroSouthPole);
 
-        Geolocation pentagon = (Geolocation) Geolocation.parseGeolocation("POINT (-77.056138 38.87116)");
+        Geolocation pentagon = Geolocation.parseGeolocation("POINT (-77.056138 38.87116)").get(0);
         assertEquals(new Geolocation(38.87116000, -77.05613800), pentagon);
 
     }
@@ -195,7 +195,7 @@ public class GeolocationTest {
         thrown.expectMessage("Latitude values must be between -90 and 90 degrees.");
 
         @SuppressWarnings("unused")
-        Geolocation location = (Geolocation) Geolocation.parseGeolocation("POINT (0 90.00000000000001)");
+        List<Geolocation> locations = Geolocation.parseGeolocation("POINT (0 90.00000000000001)");
 
     }
 
@@ -206,7 +206,7 @@ public class GeolocationTest {
         thrown.expectMessage("Latitude values must be between -90 and 90 degrees.");
 
         @SuppressWarnings("unused")
-        Geolocation location = (Geolocation) Geolocation.parseGeolocation("POINT (0 -90.00000000000001)");
+        List<Geolocation> locations = Geolocation.parseGeolocation("POINT (0 -90.00000000000001)");
 
     }
 
@@ -217,7 +217,7 @@ public class GeolocationTest {
         thrown.expectMessage("Longitude values must be between -90 and 90 degrees.");
 
         @SuppressWarnings("unused")
-        Geolocation location = (Geolocation) Geolocation.parseGeolocation("POINT (90.00000000000001 0)");
+        List<Geolocation> locations = Geolocation.parseGeolocation("POINT (90.00000000000001 0)");
 
     }
 
@@ -228,7 +228,7 @@ public class GeolocationTest {
         thrown.expectMessage("Longitude values must be between -90 and 90 degrees.");
 
         @SuppressWarnings("unused")
-        Geolocation location = (Geolocation) Geolocation.parseGeolocation("POINT (-90.00000000000001 0)");
+        List<Geolocation> locations = Geolocation.parseGeolocation("POINT (-90.00000000000001 0)");
 
     }
 
@@ -239,7 +239,7 @@ public class GeolocationTest {
         thrown.expectMessage("Latitude values must be between -90 and 90 degrees.");
 
         @SuppressWarnings("unused")
-        Geolocation location = (Geolocation) Geolocation.parseGeolocation("POINT (90.00000000000001 90.00000000000001)");
+        List<Geolocation> locations = Geolocation.parseGeolocation("POINT (90.00000000000001 90.00000000000001)");
 
     }
 
@@ -250,7 +250,7 @@ public class GeolocationTest {
         thrown.expectMessage("Latitude values must be between -90 and 90 degrees.");
 
         @SuppressWarnings("unused")
-        Geolocation location = (Geolocation) Geolocation.parseGeolocation("POINT (-90.00000000000001 -90.00000000000001)");
+        List<Geolocation> locations = Geolocation.parseGeolocation("POINT (-90.00000000000001 -90.00000000000001)");
 
     }
 
@@ -261,7 +261,7 @@ public class GeolocationTest {
         thrown.expectMessage(PARSE_ERROR_MESSAGE);
 
         @SuppressWarnings("unused")
-        Geolocation location = (Geolocation) Geolocation.parseGeolocation("POINT 0 0)");
+        List<Geolocation> locations = Geolocation.parseGeolocation("POINT 0 0)");
 
     }
 
@@ -272,7 +272,7 @@ public class GeolocationTest {
         thrown.expectMessage(PARSE_ERROR_MESSAGE);
 
         @SuppressWarnings("unused")
-        Geolocation location = (Geolocation) Geolocation.parseGeolocation("POINT (0 0");
+        List<Geolocation> locations = Geolocation.parseGeolocation("POINT (0 0");
 
     }
 
@@ -283,7 +283,7 @@ public class GeolocationTest {
         thrown.expectMessage(PARSE_ERROR_MESSAGE);
 
         @SuppressWarnings("unused")
-        Geolocation location = (Geolocation) Geolocation.parseGeolocation("POINT 0 0");
+        List<Geolocation> locations = Geolocation.parseGeolocation("POINT 0 0");
 
     }
 
@@ -294,7 +294,7 @@ public class GeolocationTest {
         thrown.expectMessage(PARSE_ERROR_MESSAGE);
 
         @SuppressWarnings("unused")
-        Geolocation location = (Geolocation) Geolocation.parseGeolocation("POINT(0 0)");
+        List<Geolocation> locations= Geolocation.parseGeolocation("POINT(0 0)");
 
     }
 
@@ -305,7 +305,7 @@ public class GeolocationTest {
         thrown.expectMessage(PARSE_ERROR_MESSAGE);
 
         @SuppressWarnings("unused")
-        Geolocation location = (Geolocation) Geolocation.parseGeolocation("(0 0)");
+        List<Geolocation> locations = Geolocation.parseGeolocation("(0 0)");
 
     }
 
@@ -316,7 +316,7 @@ public class GeolocationTest {
         thrown.expectMessage(PARSE_ERROR_MESSAGE);
 
         @SuppressWarnings("unused")
-        Geolocation location = (Geolocation) Geolocation.parseGeolocation("POINT (X 0)");
+        List<Geolocation> locations = Geolocation.parseGeolocation("POINT (X 0)");
 
     }
 
@@ -327,7 +327,7 @@ public class GeolocationTest {
         thrown.expectMessage(PARSE_ERROR_MESSAGE);
 
         @SuppressWarnings("unused")
-        Geolocation location = (Geolocation) Geolocation.parseGeolocation("POINT (0 Y)");
+        List<Geolocation> locations = Geolocation.parseGeolocation("POINT (0 Y)");
 
     }
 
@@ -338,7 +338,7 @@ public class GeolocationTest {
         thrown.expectMessage(PARSE_ERROR_MESSAGE);
 
         @SuppressWarnings("unused")
-        Geolocation location = (Geolocation) Geolocation.parseGeolocation("POINT (X Y)");
+        List<Geolocation> locations = Geolocation.parseGeolocation("POINT (X Y)");
 
     }
 
@@ -349,7 +349,7 @@ public class GeolocationTest {
         thrown.expectMessage(PARSE_ERROR_MESSAGE);
 
         @SuppressWarnings("unused")
-        Geolocation location = (Geolocation) Geolocation.parseGeolocation("POINT (0)");
+        List<Geolocation> locations = Geolocation.parseGeolocation("POINT (0)");
 
     }
 
@@ -372,19 +372,18 @@ public class GeolocationTest {
         thrown.expectMessage(PARSE_ERROR_MESSAGE);
 
         @SuppressWarnings("unused")
-        Geolocation location = (Geolocation) Geolocation.parseGeolocation("  ");
+        List<Geolocation> locations = Geolocation.parseGeolocation("  ");
 
     }
 
     @Test
     public void parseGeolocationMultipointTest() throws CoalesceDataFormatException
     {
-        @SuppressWarnings("unchecked")
         List<Geolocation> locations = (List<Geolocation>) Geolocation.parseGeolocation("MULTIPOINT ((-70.6280916 34.6873833), (-77.056138 38.87116))");
 
         List<Geolocation> expected = new ArrayList<Geolocation>();
-        expected.add((Geolocation) Geolocation.parseGeolocation("POINT (-70.6280916 34.6873833)"));
-        expected.add((Geolocation) Geolocation.parseGeolocation("POINT (-77.056138 38.87116)"));
+        expected.add(Geolocation.parseGeolocation("POINT (-70.6280916 34.6873833)").get(0));
+        expected.add(Geolocation.parseGeolocation("POINT (-77.056138 38.87116)").get(0));
 
         assertEquals(expected, locations);
 
@@ -393,11 +392,10 @@ public class GeolocationTest {
     @Test
     public void parseGeolocationMultipointSingleTest() throws CoalesceDataFormatException
     {
-        @SuppressWarnings("unchecked")
         List<Geolocation> locations = (List<Geolocation>) Geolocation.parseGeolocation("MULTIPOINT ((-70.6280916 34.6873833))");
 
         List<Geolocation> expected = new ArrayList<Geolocation>();
-        expected.add((Geolocation) Geolocation.parseGeolocation("POINT (-70.6280916 34.6873833)"));
+        expected.add(Geolocation.parseGeolocation("POINT (-70.6280916 34.6873833)").get(0));
 
         assertEquals(expected, locations);
 
