@@ -223,14 +223,14 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
 
     public String getAttribute(String name)
     {
-        if (this.getAttributes().get(new QName(name)) != null)
+        String attribute = getAttributes().get(new QName(name));
+
+        if (attribute == null)
         {
-            return this.getAttributes().get(new QName(name));
+            attribute = getOtherAttributes().get(new QName(name));
         }
-        else
-        {
-            return this.getOtherAttributes().get(new QName(name));
-        }
+
+        return attribute;
     }
 
     public String getOtherAttribute(String name)
@@ -238,10 +238,9 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
         return this.getOtherAttributes().get(new QName(name));
     }
 
-    public DateTime getAttributeAsDate(String name)
+    public DateTime getOtherAttributeAsDate(String name)
     {
-        // TODO: Not Implemented
-        return null;
+        return JodaDateTimeHelper.FromXmlDateTimeUTC(getOtherAttribute(name));
     }
 
     public boolean setOtherAttribute(String name, String value)
@@ -250,9 +249,9 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
         return true;
     }
 
-    public void setAttributeAsDate(String name, DateTime date)
+    public void setOtherAttributeAsDate(String name, DateTime value)
     {
-        // TODO: Not Implemented
+        setOtherAttribute(name, JodaDateTimeHelper.ToXmlDateTimeUTC(value));
     }
 
     public XsdDataObject getDataObjectForNamePath(String namePath)
