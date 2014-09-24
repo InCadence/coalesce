@@ -541,7 +541,7 @@ public class XsdField extends XsdFieldBase {
             setModifiedByIP(ip);
 
             // Set LastModified
-            DateTime utcNow = JodaDateTimeHelper.NowInUtc();
+            DateTime utcNow = JodaDateTimeHelper.NowInUtc().plusSeconds(1);
             if (utcNow != null) setLastModified(utcNow);
 
         }
