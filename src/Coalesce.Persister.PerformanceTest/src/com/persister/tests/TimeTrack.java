@@ -1,6 +1,8 @@
 package com.persister.tests;
 
-public class TimeTrack {
+import java.io.Serializable;
+
+public class TimeTrack implements Serializable {
 	private String _entityID;
 	private String _startTime;
 	private String _stopTime;

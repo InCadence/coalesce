@@ -79,3 +79,4 @@ src/Coalesce.Spatial/.settings/org.eclipse.wst.common.project.facet.core.xml
 src/Coalesce.DataService.Tester/wDataServiceTester/obj/
 src/Coalesce.DataService.Tester/DataServiceTester/obj/
 src/Coalesce/doc/
+src/Coalesce.Persister.PerformanceTest.rar
