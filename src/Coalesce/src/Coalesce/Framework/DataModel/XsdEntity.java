@@ -556,7 +556,7 @@ public class XsdEntity extends XsdDataObject {
         }
     }
 
-    protected static void mergeSyncEntityDataObject(Element myEntity, Element syncEntity)
+    private static void mergeSyncEntityDataObject(Element myEntity, Element syncEntity)
     {
         // Get Attributes
         List<Attribute> myEntityDocAttributes = myEntity.getAttributes();

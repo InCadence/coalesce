@@ -2003,6 +2003,47 @@ public class XsdEntityTest {
     }
 
     @Test
+    public void mergeEntityTest()
+    {
+
+        try
+        {
+            // Get Entities
+            XsdEntity entity1 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+            XsdEntity entity2 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+            // Get Mission Name Fields
+            XsdField entity1MissionName = (XsdField) entity1.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+            XsdField entity2MissionName = (XsdField) entity2.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+
+            // Modify Entity 1
+            entity1MissionName.setTypedValue("Should be added as history");
+
+            // Sleep for 2 Seconds
+            Thread.sleep(2000);
+
+            // Modify Entity 2
+            entity2MissionName.setTypedValue("Should be the new value");
+
+            // Merge Entities
+            XsdEntity mergedEntity = XsdEntity.mergeSyncEntity(entity1, entity2);
+
+            // Get Mission Name Field of Merged Entity
+            XsdField mergedEntityMissionName = (XsdField) mergedEntity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+
+            // Validate Merge
+            assertEquals(entity2MissionName.getValue(), mergedEntityMissionName.getValue());
+            assertEquals(entity1MissionName.getValue(),
+                         (mergedEntityMissionName.getHistory().get(mergedEntityMissionName.getHistory().size() - 1)).getValue());
+
+        }
+        catch (CoalesceException | InterruptedException e)
+        {
+            fail(e.getMessage());
+        }
+    }
+
+    @Test
     public void mergeSyncEntityTest()
     {
 
