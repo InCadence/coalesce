@@ -181,7 +181,7 @@ public class CoalesceEntitySyncShell {
     /**
      * Sets the CoalesceEntitySyncShell's (org.w3c.dom Node) EntityNode.
      * 
-     * @param value     org.w3c.dom Node
+     * @param value org.w3c.dom Node
      */
     public void SetEntityNode(Node value)
     {

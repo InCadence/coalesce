@@ -59,26 +59,75 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
     @Override
     public abstract String getType();
 
+    /**
+     * Returns the (XML) String of the XsdDataObject.
+     * 
+     * @return
+     */
     public abstract String toXml();
 
+    /**
+     * Sets the value of the XsdDataObject's attribute corresponding to the name argument.
+     * 
+     * @param name String, name of attribute to be set
+     * @param value String, value to be assigned to the attribute
+     * @return
+     */
     public abstract boolean setAttribute(String name, String value);
 
     /*--------------------------------------------------------------------------
     Protected Abstract Functions
     --------------------------------------------------------------------------*/
 
+    /**
+     * Returns the value of the XsdDataObject's key attribute which should be the same as the entity's ObjectKey database
+     * value.
+     * 
+     * @return String
+     */
     protected abstract String getObjectKey();
 
+    /**
+     * Sets the value of the XsdDataObject's key attribute.
+     * 
+     * @param value String
+     */
     protected abstract void setObjectKey(String value);
 
+    /**
+     * Sets the value of the XsdDataObject's LastModified attribute.
+     * 
+     * @param value DateTime
+     */
     protected abstract void setObjectLastModified(DateTime value);
 
+    /**
+     * Returns the value of the XsdDataObject's status attribute.
+     * 
+     * @return String
+     */
     protected abstract String getObjectStatus();
 
+    /**
+     * Sets the value of the XsdDataObject's status attribute.
+     * 
+     * @param value ECoalesceDataObjectStatus
+     */
     protected abstract void setObjectStatus(ECoalesceDataObjectStatus status);
 
+    /**
+     * Returns a hashmap key-value pair of the XsdDataObject's attributes.
+     * 
+     * @return Map<QName, String>
+     */
     protected abstract Map<QName, String> getAttributes();
 
+    /**
+     * Returns a hashmap key-value pair of the XsdDataObject's other attributes - attributes that fall into the
+     * XsdDataObject's @XmlAnyAttribute HashMap.
+     * 
+     * @return Map<QName, String>
+     */
     protected abstract Map<QName, String> getOtherAttributes();
 
     /*--------------------------------------------------------------------------
@@ -199,6 +248,13 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
         return this._childDataObjects;
     }
 
+    /**
+     * Sets the value of the XsdDataObject's DataObject Children, childDataObjects. New values with new keys are added,
+     * values with existing keys are replaced.
+     * 
+     * @param key key identifying the childDataObject
+     * @param value childDataObject value
+     */
     public void setChildDataObjects(String key, XsdDataObject value)
     {
         this._childDataObjects.put(key, value);
@@ -221,6 +277,12 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
     Public Functions
     --------------------------------------------------------------------------*/
 
+    /**
+     * Returns the value of the XsdDataObject's attribute that corresponds to the name.
+     * 
+     * @param name Attribute's name
+     * @return String, Attribute's value
+     */
     public String getAttribute(String name)
     {
         String attribute = getAttributes().get(new QName(name));
@@ -233,27 +295,62 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
         return attribute;
     }
 
+    /**
+     * Returns the String value of the XsdDataObject's other attribute that corresponds to the name; other attributes are
+     * those that fall into the XsdDataObject's @XmlAnyAttribute HashMap.
+     * 
+     * @param name Attribute's name
+     * @return String, Attribute's value
+     */
     public String getOtherAttribute(String name)
     {
         return this.getOtherAttributes().get(new QName(name));
     }
 
+    /**
+     * Returns the DateTime value of the XsdDataObject's other attribute that corresponds to the name; other attributes are
+     * those that fall into the XsdDataObject's @XmlAnyAttribute HashMap.
+     * 
+     * @param name Attribute's name
+     * @return DateTime, Attribute's value
+     */
     public DateTime getOtherAttributeAsDate(String name)
     {
         return JodaDateTimeHelper.FromXmlDateTimeUTC(getOtherAttribute(name));
     }
 
+    /**
+     * Sets the String value of the XsdDataObject's XsdDataObject's other attribute that corresponds to the name; other
+     * attributes are those that fall into the XsdDataObject's @XmlAnyAttribute HashMap.
+     * 
+     * @param name String, @XmlAnyAttribute attribute name
+     * @param value, @XmlAnyAttribute attribute value
+     * @return boolean
+     */
     public boolean setOtherAttribute(String name, String value)
     {
         this.getOtherAttributes().put(new QName(name), value);
         return true;
     }
 
+    /**
+     * Sets the DateTime value of the XsdDataObject's XsdDataObject's other attribute that corresponds to the name; other
+     * attributes are those that fall into the XsdDataObject's @XmlAnyAttribute HashMap.
+     * 
+     * @param name String, @XmlAnyAttribute attribute name
+     * @param value, @XmlAnyAttribute attribute DateTime value
+     */
     public void setOtherAttributeAsDate(String name, DateTime value)
     {
         setOtherAttribute(name, JodaDateTimeHelper.ToXmlDateTimeUTC(value));
     }
 
+    /**
+     * Returns the XsdDataObject's childDataObject that corresponds to the provided namepath.
+     * 
+     * @param namePath String corresponding to the desired childDataObject.
+     * @return XsdDataObject childDataObject
+     */
     public XsdDataObject getDataObjectForNamePath(String namePath)
     {
         if (namePath == null) return null;
@@ -309,6 +406,12 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
         return null;
     }
 
+    /**
+     * Returns the XsdDataObject's childDataObject that corresponds to the provided objectkey.
+     * 
+     * @param key String corresponding to the desired childDataObject objectkey.
+     * @return XsdDataObject childDataObject
+     */
     public XsdDataObject getCoalesceDataObjectForKey(String key)
     {
         XsdDataObject result = null;
