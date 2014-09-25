@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import Coalesce.Common.Exceptions.CoalescePersistorException;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
+import Coalesce.Common.Helpers.XmlHelper;
 import Coalesce.Common.Runtime.CoalesceSettings;
 import Coalesce.Framework.DataModel.CoalesceEntityTemplate;
 import Coalesce.Framework.DataModel.ECoalesceDataObjectStatus;
@@ -191,7 +192,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
                                          template.getName(),
                                          template.getSource(),
                                          template.getVersion(),
-                                         template.toXml(true),
+                                         template.toXml().replace("UTF-8", "UTF-16"),
                                          JodaDateTimeHelper.toMySQLDateTime(JodaDateTimeHelper.NowInUtc()),
                                          JodaDateTimeHelper.toMySQLDateTime(JodaDateTimeHelper.NowInUtc()));
         }

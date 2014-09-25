@@ -231,18 +231,6 @@ public class CoalesceEntityTemplate {
      * @param setSQLServer
      * @return  String
      */
-    public String toXml(Boolean setSQLServer)
-    {
-        if (setSQLServer)
-        {
-            return XmlHelper.FormatXml(_dataObjectDocument).replace("UTF-8", "UTF-16");
-        }
-        else
-        {
-            return XmlHelper.FormatXml(_dataObjectDocument);
-        }
-    }
-
     /*--------------------------------------------------------------------------
     Private Functions
     --------------------------------------------------------------------------*/
