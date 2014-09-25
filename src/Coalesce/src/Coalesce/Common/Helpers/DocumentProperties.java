@@ -71,6 +71,13 @@ import com.drew.metadata.exif.GpsDirectory;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
+/**
+ * Provides access to the properties of a file. If the file is an OpenXML document it will provide access to the internal
+ * properties of the document.
+ * 
+ * @author InCadence
+ *
+ */
 public class DocumentProperties {
 
     // Common Core properties
@@ -113,11 +120,37 @@ public class DocumentProperties {
     // Factory and Initialization
     // ----------------------------------------------------------------------//
 
-    public boolean initialize(String fullFilename) throws ImageProcessingException, IOException, JDOMException, CoalesceCryptoException
+    /**
+     * Initializes a {@link DocumentProperties} from a file without encryption. If the file is an OpenXml file type then the
+     * internal Core properties are extracted. If the file is an image then the properties of the image are extracted and a
+     * thumbnail version of the file is generated.
+     * 
+     * @param fullFilename the full path and filename of the file.
+     * @return True if successful.
+     * @throws ImageProcessingException
+     * @throws IOException
+     * @throws JDOMException
+     * @throws CoalesceCryptoException
+     */
+    public boolean initialize(String fullFilename) throws ImageProcessingException, IOException, JDOMException,
+            CoalesceCryptoException
     {
         return initialize(fullFilename, false);
     }
 
+    /**
+     * Initializes a {@link DocumentProperties} from a file without encryption. If the file is an OpenXml file type then the
+     * internal Core properties are extracted. If the file is an image then the properties of the image are extracted and a
+     * thumbnail version of the file is generated.
+     * 
+     * @param fullFilename the full path and filename of the file.
+     * @param encrypted Whether the file needs to be decrypted or not.
+     * @return True if successful.
+     * @throws ImageProcessingException
+     * @throws IOException
+     * @throws JDOMException
+     * @throws CoalesceCryptoException
+     */
     public boolean initialize(String fullFilename, boolean encrypted) throws ImageProcessingException, IOException,
             JDOMException, CoalesceCryptoException
     {
@@ -143,10 +176,7 @@ public class DocumentProperties {
 
         if (getThumbnail() == null)
         {
-            _thumbnail = DocumentThumbnailHelper.getDocumentThumbnailForFile(fullFilename,
-                                                                             encrypted,
-                                                                             getImageHeight(),
-                                                                             getImageWidth());
+            _thumbnail = DocumentThumbnailHelper.getThumbnailForFile(fullFilename, encrypted);
         }
 
         return true;
@@ -300,7 +330,7 @@ public class DocumentProperties {
 
         }
 
-        _thumbnail = DocumentThumbnailHelper.getDocumentThumbnailForFile(fullFilename);
+        _thumbnail = DocumentThumbnailHelper.getThumbnailForFile(fullFilename);
 
         return true;
     }
@@ -367,13 +397,15 @@ public class DocumentProperties {
         if (partNamePath == null) return null;
 
         Document coreXml = getCoreXml(zipBytes, partNamePath);
-        
+
         return coreXml;
     }
 
     private String getCoreXmlPartName(byte[] zipBytes, Collection<Namespace> namespaces)
     {
-        try (@SuppressWarnings("resource") // This is a known IDE bug in Eclipse (371614).  ZipInputStream is Closable and will be automatically closed in the finally
+        try (@SuppressWarnings("resource")
+        // This is a known IDE bug in Eclipse (371614). ZipInputStream is Closable and will be automatically closed in the
+        // finally
         ZipInputStream zipStream = new ZipInputStream(new ByteArrayInputStream(zipBytes)))
         {
 
@@ -409,7 +441,9 @@ public class DocumentProperties {
 
     private Document getCoreXml(byte[] zipBytes, String partNamePath)
     {
-        try (@SuppressWarnings("resource") // This is a known IDE bug in Eclipse (371614).  ZipInputStream is Closable and will be automatically closed in the finally
+        try (@SuppressWarnings("resource")
+        // This is a known IDE bug in Eclipse (371614). ZipInputStream is Closable and will be automatically closed in the
+        // finally
         ZipInputStream zipStream = new ZipInputStream(new ByteArrayInputStream(zipBytes)))
         {
 
@@ -711,301 +745,601 @@ public class DocumentProperties {
     // Public Properties
     // ----------------------------------------------------------------------//
 
+    /**
+     * Returns the category of the file.
+     * 
+     * @return the category of the file.
+     */
     public String getCategory()
     {
         return _category;
     }
 
+    /**
+     * Sets the category of the file.
+     * 
+     * @param value the category of the file.
+     */
     public void setCategory(String value)
     {
         _category = value;
     }
 
+    /**
+     * Returns the content status of the file.
+     * 
+     * @return the content status of the file.
+     */
     public String getContentStatus()
     {
         return _contentStatus;
     }
 
+    /**
+     * Sets the content status of the file.
+     * 
+     * @param value the content status of the file.
+     */
     public void setContentStatus(String value)
     {
         _contentStatus = value;
     }
 
+    /**
+     * Returns the content type of the file.
+     * 
+     * @return the content type of the file.
+     */
     public String getContentType()
     {
         return _contentType;
     }
 
+    /**
+     * Sets the content type of the file.
+     * 
+     * @param value the content type of the file.
+     */
     public void setContentType(String value)
     {
         _contentType = value;
     }
 
+    /**
+     * Returns when the file was created.
+     * 
+     * @return When the file was created.
+     */
     public DateTime getCreated()
     {
         return _created;
     }
 
+    /**
+     * Sets when the file was created.
+     * 
+     * @param value When the file was created.
+     */
     public void setCreated(DateTime value)
     {
         _created = value;
     }
 
+    /**
+     * Returns the creator of the file.
+     * 
+     * @return the creator of the file.
+     */
     public String getCreator()
     {
         return _creator;
     }
 
+    /**
+     * Sets the creator of the file.
+     * 
+     * @param value the creator of the file.
+     */
     public void setCreator(String value)
     {
         _creator = value;
     }
 
+    /**
+     * Returns the description of the file.
+     * 
+     * @return the description of the file.
+     */
     public String getDescription()
     {
         return _description;
     }
 
+    /**
+     * Sets the description of the file.
+     * 
+     * @param value the description of the file.
+     */
     public void setDescription(String value)
     {
         _description = value;
     }
 
+    /**
+     * Returns the identifier for the file.
+     * 
+     * @return the identifier for the file.
+     */
     public String getIdentifier()
     {
         return _identifier;
     }
 
+    /**
+     * Sets the identifier for the file.
+     * 
+     * @param value the identifier for the file.
+     */
     public void setIdentifier(String value)
     {
         _identifier = value;
     }
 
+    /**
+     * Returns the keywords associated with the file.
+     * 
+     * @return the keywords associated with the file.
+     */
     public String getKeywords()
     {
         return _keywords;
     }
 
+    /**
+     * Sets the keywords associated with the file.
+     * 
+     * @param value the keywords associated with the file.
+     */
     public void setKeywords(String value)
     {
         _keywords = value;
     }
 
+    /**
+     * Returns the language of the file.
+     * 
+     * @return the language of the file.
+     */
     public String getLanguage()
     {
         return _language;
     }
 
+    /**
+     * Sets the language of the file.
+     * 
+     * @param value the language of the file.
+     */
     public void setLanguage(String value)
     {
         _language = value;
     }
 
+    /**
+     * Returns who the file was last modified by.
+     * 
+     * @return Who the file was last modified by.
+     */
     public String getLastModifiedBy()
     {
         return _lastModifiedBy;
     }
 
+    /**
+     * Sets who the file was last modified by.
+     * 
+     * @param value Who the file was last modified by.
+     */
     public void setLastModifiedBy(String value)
     {
         _lastModifiedBy = value;
     }
 
+    /**
+     * Returns when the file was last printed.
+     * 
+     * @return When the file was last printed.
+     */
     public DateTime getLastPrinted()
     {
         return _lastPrinted;
     }
 
+    /**
+     * Sets when the file was last printed.
+     * 
+     * @param value When the file was last printed.
+     */
     public void setLastPrinted(DateTime value)
     {
         _lastPrinted = value;
     }
 
+    /**
+     * Returns when the file was last modified.
+     * 
+     * @return When the file was last modified.
+     */
     public DateTime getModified()
     {
         return _modified;
     }
 
+    /**
+     * Sets when the file was last modified.
+     * 
+     * @param value When the file was last modified.
+     */
     public void setModified(DateTime value)
     {
         _modified = value;
     }
 
+    /**
+     * Returns the revision of the file.
+     * 
+     * @return the revision of the file.
+     */
     public String getRevision()
     {
         return _revision;
     }
 
+    /**
+     * Sets the revision of the file.
+     * 
+     * @param value the revision of the file.
+     */
     public void setRevision(String value)
     {
         _revision = value;
     }
 
+    /**
+     * Returns the subject of the file.
+     * 
+     * @return the subject of the file.
+     */
     public String getSubject()
     {
         return _subject;
     }
 
+    /**
+     * Sets the subject of the file.
+     * 
+     * @param value the subject of the file.
+     */
     public void setSubject(String value)
     {
         _subject = value;
     }
 
+    /**
+     * Returns the title of the file.
+     * 
+     * @return the title of the file.
+     */
     public String getTitle()
     {
         return _title;
     }
 
+    /**
+     * Sets the title of the file.
+     * 
+     * @param value the title of the file.
+     */
     public void setTitle(String value)
     {
         _title = value;
     }
 
+    /**
+     * Returns the version of the file.
+     * 
+     * @return the version of the file.
+     */
     public String getVersion()
     {
         return _version;
     }
 
+    /**
+     * Sets the version of the file.
+     * 
+     * @param value the version of the file.
+     */
     public void setVersion(String value)
     {
         _version = value;
     }
 
+    /**
+     * Returns the full filename of the file including path.
+     * 
+     * @return the full filename of the file including path.
+     */
     public String getFullFilename()
     {
         return _fullFilename;
     }
 
+    /**
+     * Sets the full filename of the file.
+     * 
+     * @param value the full filename of the file including path.
+     */
     public void setFullFilename(String value)
     {
         _fullFilename = value;
     }
 
+    /**
+     * Returns the filename of the file without path.
+     * 
+     * @return the filename of the file without path.
+     */
     public String getFilename()
     {
         return _filename;
     }
 
+    /**
+     * Sets the filename of the file.
+     * 
+     * @param value the filename of the file without path.
+     */
     public void setFilename(String value)
     {
         _filename = value;
     }
 
+    /**
+     * Returns the extension of the file.
+     * 
+     * @return the extension of the file.
+     */
     public String getExtension()
     {
         return _extension;
     }
 
+    /**
+     * Sets the extension of the file.
+     * 
+     * @param value the extension of the file.
+     */
     public void setExtension(String value)
     {
         _extension = value;
     }
 
+    /**
+     * Returns the filename of the file without extension or path.
+     * 
+     * @return the filename of the file without extension or path.
+     */
     public String getFilenameWithoutExtension()
     {
         return _filenameWithoutExtension;
     }
 
+    /**
+     * Sets the filename of the file without extension or path.
+     * 
+     * @param value the filename of the file without extension or path.
+     */
     public void setFilenameWithoutExtension(String value)
     {
         _filenameWithoutExtension = value;
     }
 
+    /**
+     * Returns the mime type of the file.
+     * 
+     * @return the mime type of the file.
+     */
     public String getMimeType()
     {
         return _mimeType;
     }
 
+    /**
+     * Sets the mime type of the file.
+     * 
+     * @param value the mime type of the file.
+     */
     public void setMimeType(String value)
     {
         _mimeType = value;
     }
 
+    /**
+     * Returns the document type of the file.
+     * 
+     * @return the document type of the file.
+     */
     public String getDocumentType()
     {
         return _documentType;
     }
 
+    /**
+     * Sets the document type of the file.
+     * 
+     * @param value the document type of the file.
+     */
     public void setDocumentType(String value)
     {
         _documentType = value;
     }
 
+    /**
+     * Returns the size of the file in bytes.
+     * 
+     * @return the size of the file in bytes.
+     */
     public long getSize()
     {
         return _size;
     }
 
+    /**
+     * Sets the size of the file in bytes.
+     * 
+     * @param value the size of the file in bytes.
+     */
     public void setSize(long value)
     {
         _size = value;
     }
 
+    /**
+     * Returns the number of pages contained in the file.
+     * 
+     * @return the number of pages contained in the file.
+     */
     public int getPageCount()
     {
         return _pageCount;
     }
 
+    /**
+     * Sets the number of pages contained in the file.
+     * 
+     * @param value the number of pages contained in the file.
+     */
     public void setPageCount(int value)
     {
         _pageCount = value;
     }
 
+    /**
+     * Returns the height of the image file.
+     * 
+     * @return the height of the image file.
+     */
     public int getImageHeight()
     {
         return _imageHeight;
     }
 
+    /**
+     * Sets the height of the image file.
+     * 
+     * @param value the height of the image file.
+     */
     public void setImageHeight(int value)
     {
         _imageHeight = value;
     }
 
+    /**
+     * Returns the width of the image file.
+     * 
+     * @return the width of the image file.
+     */
     public int getImageWidth()
     {
         return _imageWidth;
     }
 
+    /**
+     * Sets the width of the image file.
+     * 
+     * @param value the width of the image file.
+     */
     public void setImageWidth(int value)
     {
         _imageWidth = value;
     }
 
+    /**
+     * Returns the latitude associated with the file.
+     * 
+     * @return the latitude associated with the file.
+     */
     public double getLatitude()
     {
         return _latitude;
     }
 
+    /**
+     * Sets the latitude associated with the file.
+     * 
+     * @param value the latitude associated with the file.
+     */
     public void setLatitude(double value)
     {
         _latitude = value;
     }
 
+    /**
+     * Returns the longitude associated with the file.
+     * 
+     * @return the longitude associated with the file.
+     */
     public double getLongitude()
     {
         return _longitude;
     }
 
+    /**
+     * Sets the longitude associated with the file.
+     * 
+     * @param value the longitude associated with the file.
+     */
     public void setLongitude(double value)
     {
         _longitude = value;
     }
 
+    /**
+     * Returns the thumbnail for the file.
+     * 
+     * @return the thumbnail for the file.
+     */
     public BufferedImage getThumbnail()
     {
         return _thumbnail;
     }
 
+    /**
+     * Sets the thumbnail for the file.
+     * 
+     * @param value the thumbnail for the file.
+     */
     public void setThumbnail(BufferedImage value)
     {
         _thumbnail = value;
     }
 
+    /**
+     * Returns the filename of the thumbnail for the file.
+     * 
+     * @return the filename of the thumbnail for the file.
+     */
     public String getThumbnailFilename()
     {
         return _thumbnailFilename;
     }
 
+    /**
+     * Sets the filename of the thumbnail for the file.
+     * 
+     * @param thumbnailFilename the filename of the thumbnail for the file.
+     */
     public void setThumbnailFilename(String thumbnailFilename)
     {
         _thumbnailFilename = thumbnailFilename;

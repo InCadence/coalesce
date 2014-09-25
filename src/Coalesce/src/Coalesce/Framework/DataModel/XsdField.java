@@ -393,7 +393,7 @@ public class XsdField extends XsdFieldBase {
             return "";
         }
 
-        String baseFilename = FileHelper.GetBaseFilenameWithFullDirectoryPathForKey(getKey());
+        String baseFilename = FileHelper.getBaseFilenameWithFullDirectoryPathForKey(getKey());
 
         return baseFilename + "." + getExtension();
 
@@ -407,7 +407,7 @@ public class XsdField extends XsdFieldBase {
             return "";
         }
 
-        String baseFilename = FileHelper.GetBaseFilenameWithFullDirectoryPathForKey(getKey());
+        String baseFilename = FileHelper.getBaseFilenameWithFullDirectoryPathForKey(getKey());
 
         return baseFilename + "_thumb.jpg";
 

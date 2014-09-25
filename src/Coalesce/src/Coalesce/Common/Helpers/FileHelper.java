@@ -33,6 +33,12 @@ import Coalesce.Framework.Persistance.ICoalesceEncrypter;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
+/**
+ * Provides helper methods for accessing and interacting with files.
+ * 
+ * @author InCadence
+ *
+ */
 public class FileHelper {
 
     // Make static
@@ -41,10 +47,17 @@ public class FileHelper {
 
     }
 
-    // --------------------------------------------------------------------------'
-    // Public Shared Methods
-    // --------------------------------------------------------------------------'
+    /*--------------------------------------------------------------------------
+        Public Shared Methods
+     --------------------------------------------------------------------------*/
 
+    /**
+     * Returns the extension for the filename.
+     * 
+     * @param filename the filename
+     * @return the extension for the filename
+     * @see org.apache.commons.io.FilenameUtils#getExtension(String filename)
+     */
     public static String getExtension(String filename)
     {
         if (StringHelper.IsNullOrEmpty(filename)) return "";
@@ -55,6 +68,13 @@ public class FileHelper {
 
     }
 
+    /**
+     * Gets the name minus the path from a full filename.
+     *
+     * @param filename the filename
+     * @return the name of the file without the path, or an empty string if none exists
+     * @see org.apache.commons.io.FilenameUtils#getName(String filename)
+     */
     public static String getShortFilename(String filename)
     {
         String name = FilenameUtils.getName(filename);
@@ -68,6 +88,15 @@ public class FileHelper {
         return getFileAsByteArray(filename, false);
     }
 
+    /**
+     * Returns all the bytes for the file. If the file is encrypted then it is first decrypted using the pass phrase returned
+     * by {@link CoalesceSettings#getPassPhrase()}
+     * 
+     * @param filename the filename
+     * @param encrypted whether the file needs to be decrypted first
+     * @return the bytes from the file.
+     * @throws IOException
+     */
     public static byte[] getFileAsByteArray(String filename, boolean encrypted) throws IOException
     {
         Path path = Paths.get(filename);
@@ -105,6 +134,12 @@ public class FileHelper {
 
     }
 
+    /**
+     * Deletes the file if it exists.
+     * 
+     * @param filename the full path and name of the file to be deleted.
+     * @return <code>true</code> if the file is successfully deleted.
+     */
     public static boolean deleteFile(String filename)
     {
         Path path = Paths.get(filename);
@@ -127,6 +162,12 @@ public class FileHelper {
         }
     }
 
+    /**
+     * Deletes the folder if it exists. If the folder path does not point to a folder then it will not be deleted.
+     * 
+     * @param folderPath the full folder path
+     * @return <code>true</code> if the folder is successfully deleted.
+     */
     public static boolean deleteFolder(String folderPath)
     {
         Path path = Paths.get(folderPath);
@@ -149,6 +190,13 @@ public class FileHelper {
         }
     }
 
+    /**
+     * Checks if the folder already exists in the filesystem and if it does not then attempts to create it.
+     * 
+     * @param folderPath the full folder path
+     * @return <code>true</code> if the folder already exists or was successfully created. <code>false</code> if the
+     *         <code>folderPath</code> points to a non-folder or creation of the folder fails.
+     */
     public static boolean checkFolder(String folderPath)
     {
         Path path = Paths.get(folderPath);
@@ -174,20 +222,32 @@ public class FileHelper {
         }
     }
 
-    public static String GetBaseFilenameWithFullDirectoryPathForKey(String key)
+    /**
+     * Returns the base filename including the full path generated for the provided <code>key</code>. This method using the
+     * values from both {@link CoalesceSettings#getBinaryFileStoreBasePath()} and
+     * {@link CoalesceSettings#getSubDirectoryLength()} to build the path.
+     * 
+     * @param key the key to use for generating the path.
+     * @return the base filename including the full path.
+     */
+    public static String getBaseFilenameWithFullDirectoryPathForKey(String key)
     {
-        return GetBaseFilenameWithFullDirectoryPathForKey(key, true);
+        return getBaseFilenameWithFullDirectoryPathForKey(key, true);
     }
 
-    private static String GetBaseFilenameWithFullDirectoryPathForKey(String key, boolean createIfDoesNotExist)
+    /*--------------------------------------------------------------------------
+        Private Shared Methods
+    --------------------------------------------------------------------------*/
+
+    private static String getBaseFilenameWithFullDirectoryPathForKey(String key, boolean createIfDoesNotExist)
     {
-        return GetBaseFilenameWithFullDirectoryPathForKey(CoalesceSettings.getBinaryFileStoreBasePath(),
+        return getBaseFilenameWithFullDirectoryPathForKey(CoalesceSettings.getBinaryFileStoreBasePath(),
                                                           CoalesceSettings.getSubDirectoryLength(),
                                                           key,
                                                           createIfDoesNotExist);
     }
 
-    private static String GetBaseFilenameWithFullDirectoryPathForKey(String binaryFileStoreBasePath,
+    private static String getBaseFilenameWithFullDirectoryPathForKey(String binaryFileStoreBasePath,
                                                                      int subDirectoryLength,
                                                                      String key,
                                                                      boolean createIfDoesNotExist)

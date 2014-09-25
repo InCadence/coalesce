@@ -84,7 +84,7 @@ public interface ICoalescePersistor {
 
     /**
      * Returns the Coalesce entity that matches the given parameters. 
-     * @param the primary key of the entity.
+     * @param key the primary key of the entity.
      * @return the matching Coalesce entity. 
      * @throws CoalescePersistorException
      */
@@ -111,7 +111,7 @@ public interface ICoalescePersistor {
 
     /**
      * Returns the Coalesce entity's XML that matches the given parameters. 
-     * @param the primary key of the entity.
+     * @param key the primary key of the entity.
      * @return the matching Coalesce entity's XML. 
      * @throws CoalescePersistorException
      */
@@ -164,9 +164,9 @@ public interface ICoalescePersistor {
 
     /**
      * Returns the Coalesce entity keys that matches the given parameters. 
-     * @param entityid of the entity. 
-     * @param entitytypeid of the entity. 
-     * @param name of the entity. 
+     * @param entityId of the entity. 
+     * @param entityIdType of the entity. 
+     * @param entityName of the entity. 
      * @param entitySource of the entity.
      * @return List<String> of primary keys for the matching Coalesce entity. 
      * @throws CoalescePersistorException

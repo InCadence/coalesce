@@ -21,8 +21,22 @@ import org.joda.time.format.ISODateTimeFormat;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
+/**
+ * Performs the translation between date times as strings stored in the format yyyy-MM-dd'T'HH:mm:ss.SSSZZ and
+ * {@link org.joda.time.DateTime}.
+ * 
+ * @author InCadence
+ *
+ */
 public class DateTimeConverter {
 
+    /**
+     * Converts a {@link org.joda.time.DateTime} to a string format to be stored in
+     * {@link Coalesce.Framework.DataModel.XsdEntity} xml.
+     * 
+     * @param value the date/time to be converted
+     * @return A string version of <code>value</code> converted to the format yyyy-MM-dd'T'HH:mm:ss.SSSZZ
+     */
     public static String printDate(DateTime value)
     {
 
@@ -32,6 +46,13 @@ public class DateTimeConverter {
 
     }
 
+    /**
+     * Converts a {@link java.lang.String} to a {@link org.joda.time.DateTime}. The string format is assumed to be formatted
+     * as yyyy-MM-dd'T'HH:mm:ss.SSSZZ
+     * 
+     * @param value the date/time string to be converted
+     * @return A {@link org.joda.time.DateTime} representation of <code>value</code>
+     */
     public static DateTime parseDate(String value)
     {
 

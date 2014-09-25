@@ -45,7 +45,7 @@ public class XsdSectionTest {
         assertNull(entity.getSection("TREXOperation/Live Status Section"));
 
         XsdSection liveSection = XsdSection.create(entity, "Live Status Section");
-        assertNotNull(GUIDHelper.IsValid(liveSection.getKey()));
+        assertNotNull(GUIDHelper.isValid(liveSection.getKey()));
         assertEquals(liveSection, entity.getSection("TREXOperation/Live Status Section"));
         assertFalse(liveSection.getNoIndex());
     }
@@ -61,7 +61,7 @@ public class XsdSectionTest {
         XsdSection newSection = XsdSection.create(entity, "A New Section");
 
         assertNotNull(newSection);
-        assertNotNull(GUIDHelper.IsValid(newSection.getKey()));
+        assertNotNull(GUIDHelper.isValid(newSection.getKey()));
         assertEquals(newSection, entity.getSection("TREXMission/A New Section"));
         assertFalse(newSection.getNoIndex());
 

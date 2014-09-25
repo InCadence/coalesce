@@ -25,6 +25,12 @@ import javax.imageio.ImageIO;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
+/**
+ * Provides helper methods for creating thumbnail images for files.
+ * 
+ * @author InCadence
+ *
+ */
 public class DocumentThumbnailHelper {
 
     // Make class static
@@ -37,21 +43,29 @@ public class DocumentThumbnailHelper {
     // Public Shared Methods
     // -----------------------------------------------------------------------//
 
-    public static BufferedImage getDocumentThumbnailForFile(String fullFilename) throws IOException
+    /**
+     * Returns a thumbnail for a file with no encryption. If the file is an image file then an attempt is made to resample
+     * the file. If for any reason a resampled image cannot be generated then a default thumbnail is returns based on the
+     * files MIME type.
+     * 
+     * @param fullFilename the full path and filename of the file to generate a thumbnail for.
+     * @return the thumbnail image for the file.
+     * @throws IOException
+     */
+    public static BufferedImage getThumbnailForFile(String fullFilename) throws IOException
     {
-        return getDocumentThumbnailForFile(fullFilename, 0, 0);
+        return getThumbnailForFile(fullFilename, false);
     }
 
-    public static BufferedImage getDocumentThumbnailForFile(String fullFilename, int originalHeight, int originalWidth)
-            throws IOException
-    {
-        return getDocumentThumbnailForFile(fullFilename, false, originalHeight, originalWidth);
-    }
-
-    public static BufferedImage getDocumentThumbnailForFile(String fullFilename,
-                                                            boolean encrypted,
-                                                            int originalHeight,
-                                                            int originalWidth) throws IOException
+    /**
+     * Returns a thumbnail for a file. If the file is an image file then an attempt is made to resample the file. If for any
+     * reason a resampled image cannot be generated then a default thumbnail is returns based on the files MIME type
+     * 
+     * @param fullFilename the full path and filename of the file to generate a thumbnail for.
+     * @return the thumbnail image for the file.
+     * @throws IOException
+     */
+    public static BufferedImage getThumbnailForFile(String fullFilename, boolean encrypted) throws IOException
     {
         String mimeType = MimeHelper.getMimeTypeForExtension(FileHelper.getExtension(fullFilename));
 
@@ -74,8 +88,7 @@ public class DocumentThumbnailHelper {
 
         default:
 
-            // Get Thumbnail for Mime Type
-            thumbnail = getDocumentThumbnailForMimeType(mimeType);
+            thumbnail = getThumbnailForMimeType(mimeType);
 
         }
 
@@ -83,33 +96,52 @@ public class DocumentThumbnailHelper {
 
     }
 
-    public static BufferedImage getDocumentThumbnailForFile(byte[] bytes) throws IOException
-    {
-        return DocumentThumbnailHelper.getDocumentThumbnailForFile(bytes, 0, 0);
-    }
-
-    public static BufferedImage getDocumentThumbnailForFile(byte[] bytes, int originalHeight, int originalWidth)
-            throws IOException
+    /**
+     * Returns a thumbnail for an array of bytes. The array of bytes are assumed to be an image file and are resampled to
+     * generate the thumbnail.
+     * 
+     * @param bytes the array of bytes representing an image file.
+     * @return the thumbnail image for the file. If the thumbnail resampling fails then a default image thumbnail is
+     *         returned.
+     * @throws IOException
+     */
+    public static BufferedImage getThumbnailForFile(byte[] bytes) throws IOException
     {
         ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
 
         BufferedImage image = ImageIO.read(bais);
 
         BufferedImage thumbnail = GraphicsHelper.resampleToMaximum(image, 80, 80);
+
         if (thumbnail == null) thumbnail = DocumentThumbnailHelper.getImageForResource("LargeIcon_Image.png");
 
         return thumbnail;
     }
 
-    public static BufferedImage getDocumentThumbnailForFileExtensions(String extension) throws IOException
+    /**
+     * Returns a thumbnail based on an extension.
+     * 
+     * @param extension the extension.
+     * @return the thumbnail image for the extension.
+     * @throws IOException
+     */
+    public static BufferedImage getThumbnailForFileExtensions(String extension) throws IOException
     {
         String mimeType = MimeHelper.getMimeTypeForExtension(extension);
 
-        return DocumentThumbnailHelper.getDocumentThumbnailForMimeType(mimeType);
+        return DocumentThumbnailHelper.getThumbnailForMimeType(mimeType);
 
     }
 
-    public static BufferedImage getDocumentThumbnailForMimeCategory(String mimeType) throws IOException
+    /**
+     * Returns a thumbnail based on the category of the MIME type provided (e.g., audio/x-aiff, image/gif, text/css, and
+     * video/mpeg).
+     * 
+     * @param mimeType the MIME type.
+     * @return the thumbnail image for the MIME type.
+     * @throws IOException
+     */
+    public static BufferedImage getThumbnailForMimeCategory(String mimeType) throws IOException
     {
         BufferedImage thumbnail;
 
@@ -148,9 +180,17 @@ public class DocumentThumbnailHelper {
 
     }
 
-    public static BufferedImage getDocumentThumbnailForMimeType(String mimeType) throws IOException
+    /**
+     * Returns a thumbnail based on the MIME type provided. If a specific thumbnail is not defined for the provided MIME type
+     * then the returned thumbnail behavior falls back to {@link DocumentThumbnailHelper#getThumbnailForMimeCategory(String)}.
+     * 
+     * @param mimeType the MIME type.
+     * @return the thumbnail image for the MIME type.
+     * @throws IOException
+     */
+    public static BufferedImage getThumbnailForMimeType(String mimeType) throws IOException
     {
-        BufferedImage thumbnail = DocumentThumbnailHelper.getDocumentThumbnailForMimeCategory(mimeType);
+        BufferedImage thumbnail = null;
 
         switch (mimeType) {
         case "application/msword":
@@ -192,6 +232,10 @@ public class DocumentThumbnailHelper {
 
         }
 
+        if (thumbnail == null) {
+            thumbnail = DocumentThumbnailHelper.getThumbnailForMimeCategory(mimeType);
+        }
+        
         return thumbnail;
 
     }

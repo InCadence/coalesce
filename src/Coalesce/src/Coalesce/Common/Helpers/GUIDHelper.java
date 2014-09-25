@@ -19,22 +19,34 @@ import java.util.UUID;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
+/**
+ * Provides helper methods for working with GUIDs. The expected behavior of the functions contained in this class match the
+ * behavior of the System.GUID class in .NET
+ * 
+ * @author InCadence
+ *
+ */
 public class GUIDHelper {
-
-    // private static String MODULE_NAME = "Coalesce.Common.Helpers.GUIDHelper";
 
     // -----------------------------------------------------------------------//
     // Public Shared Methods
     // -----------------------------------------------------------------------//
 
-    public static boolean IsValid(String value)
+    /**
+     * Returns <code>true</code> if this value is a valid GUID. There must be matching {} or none at all, the characters used
+     * must be valid hex characters and the length of the must equal 32 characters after removing all '-'.
+     * 
+     * @param value the value to be tested
+     * @return <code>true</code> if the value is a valid GUID.
+     */
+    public static boolean isValid(String value)
     {
         try
         {
             if (value == null) return false;
-            
+
             if (GUIDHelper.HasSurroundingBrackets(value)) value = value.replaceAll("[{}]", "");
-                    
+
             UUID.fromString(value);
 
             return value.replaceAll("[-]", "").length() == 32;
@@ -49,7 +61,7 @@ public class GUIDHelper {
     public static boolean HasBrackets(String value)
     {
         // Is Valid?
-        if (!GUIDHelper.IsValid(value)) return false;
+        if (!GUIDHelper.isValid(value)) return false;
 
         // Doesn't have brackets?
         return GUIDHelper.HasSurroundingBrackets(value);
@@ -57,7 +69,7 @@ public class GUIDHelper {
 
     public static String AddBrackets(String value)
     {
-        if (!GUIDHelper.IsValid(value)) return null;
+        if (!GUIDHelper.isValid(value)) return null;
 
         if (!GUIDHelper.HasSurroundingBrackets(value))
         {
@@ -70,14 +82,14 @@ public class GUIDHelper {
 
     public static String RemoveBrackets(String value)
     {
-        if (!GUIDHelper.IsValid(value)) return null;
+        if (!GUIDHelper.isValid(value)) return null;
 
         return value.replaceAll("[{}]", "").toUpperCase();
     }
 
     public static UUID GetGuid(String value)
     {
-        if (GUIDHelper.IsValid(value))
+        if (GUIDHelper.isValid(value))
         {
             return UUID.fromString(value.replaceAll("[{}]", ""));
         }
@@ -95,7 +107,7 @@ public class GUIDHelper {
     public static String GetGuidString(UUID value, boolean withBrackets)
     {
         if (value == null) return null;
-        
+
         if (withBrackets)
         {
             return AddBrackets(value.toString());

@@ -410,7 +410,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
 
         String value = getValue();
 
-        if (GUIDHelper.IsValid(value))
+        if (GUIDHelper.isValid(value))
         {
             return GUIDHelper.GetGuid(value);
         }

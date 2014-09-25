@@ -29,6 +29,12 @@ import Coalesce.Framework.DataModel.XsdLinkageSection;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
+/**
+ * Provides helper methods for linking two {@link XsdEntity} objects together.
+ * 
+ * @author InCadence
+ *
+ */
 public class EntityLinkHelper {
 
     // ----------------------------------------------------------------------//
@@ -50,14 +56,39 @@ public class EntityLinkHelper {
     // Public Static Methods
     // -----------------------------------------------------------------------//
 
-    public static boolean LinkEntities(XsdEntity entity1, ELinkTypes linkType, XsdEntity entity2, Boolean updateExisting)
+    /**
+     * Links two entities together with a default Unclassified classification and {@link Locale#US}. If
+     * <code>updateExisting</code> is <code>true</code> then the first linkage found between the two entities with the same
+     * {@link Coalesce.Framework.DataModel.ELinkTypes} will be updated instead of creating a new linkage.
+     * 
+     * @param entity1 the first entity to link
+     * @param linkType the type of linkage to create between the two entities.
+     * @param entity2 the second entity to link
+     * @param updateExisting whether to update an existing linkage.
+     * @return <code>true</code> if the linkage is create or updated successfully.
+     */
+    public static boolean linkEntities(XsdEntity entity1, ELinkTypes linkType, XsdEntity entity2, Boolean updateExisting)
     {
 
-        return LinkEntities(entity1, linkType, entity2, new Marking("(U)"), "", Locale.US, updateExisting);
+        return linkEntities(entity1, linkType, entity2, new Marking("(U)"), "", Locale.US, updateExisting);
 
     }
 
-    public static boolean LinkEntities(XsdEntity entity1,
+    /**
+     * Links two entities together. If <code>updateExisting</code> is <code>true</code> then the first linkage found between
+     * the two entities with the same {@link Coalesce.Framework.DataModel.ELinkTypes} will be updated instead of creating a
+     * new linkage.
+     * 
+     * @param entity1 the first entity to link
+     * @param linkType the type of linkage to create between the two entities.
+     * @param entity2 the second entity to link
+     * @param classificationMarking the classification to mark the linkage with.
+     * @param modifiedBy the identifier representing who modified the linkage.
+     * @param inputLang the language to associate with the linkage.
+     * @param updateExisting whether to update an existing linkage.
+     * @return <code>true</code> if the linkage is create or updated successfully.
+     */
+    public static boolean linkEntities(XsdEntity entity1,
                                        ELinkTypes linkType,
                                        XsdEntity entity2,
                                        Marking classificationMarking,
@@ -67,7 +98,6 @@ public class EntityLinkHelper {
     {
 
         if (entity1 == null || entity2 == null) throw new IllegalArgumentException(MODULE_NAME + " : LinkEntities");
-        ;
 
         // Get the LinkageSections for each Entity. Create if not found.
 
@@ -101,11 +131,28 @@ public class EntityLinkHelper {
 
     }
 
+    /**
+     * Marks the first linkage found between the two entities as deleted.
+     * 
+     * @param entity1 the first entity in the linkage.
+     * @param entity2 the second entity in the linkage.
+     * @return <code>true</code> if there are no errors. Not finding an existing linkage to delete is not considered an
+     *         error.
+     */
     public static boolean UnLinkEntities(XsdEntity entity1, XsdEntity entity2)
     {
         return UnLinkEntities(entity1, entity2, null);
     }
 
+    /**
+     * Marks the first linkage found with the specified {@link Coalesce.Framework.DataModel.ELinkTypes} between the two
+     * entities as deleted.
+     * 
+     * @param entity1 the first entity in the linkage.
+     * @param entity2 the second entity in the linkage.
+     * @return <code>true</code> if there are no errors. Not finding an existing linkage to delete is not considered an
+     *         error.
+     */
     public static boolean UnLinkEntities(XsdEntity entity1, XsdEntity entity2, ELinkTypes linkType)
     {
         if (entity1 == null) throw new NullArgumentException("entity1");

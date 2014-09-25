@@ -55,91 +55,91 @@ public class GUIDHelperTest {
     @Test
     public void IsValidTest()
     {
-        assertTrue(GUIDHelper.IsValid(UUID.randomUUID().toString().toLowerCase()));
+        assertTrue(GUIDHelper.isValid(UUID.randomUUID().toString().toLowerCase()));
     }
 
     @Test
     public void IsValidLowerCaseWithBracketsTest()
     {
-        assertTrue(GUIDHelper.IsValid(LOWERCASE_WITH_BRACKETS));
+        assertTrue(GUIDHelper.isValid(LOWERCASE_WITH_BRACKETS));
     }
 
     @Test
     public void IsValidLowerCaseWithoutBracketsTest()
     {
-        assertTrue(GUIDHelper.IsValid(LOWERCASE_NO_BRACKETS));
+        assertTrue(GUIDHelper.isValid(LOWERCASE_NO_BRACKETS));
     }
 
     @Test
     public void IsValidUpperCaseWithBracketsTest()
     {
-        assertTrue(GUIDHelper.IsValid(UPPERCASE_WITH_BRACKETS));
+        assertTrue(GUIDHelper.isValid(UPPERCASE_WITH_BRACKETS));
     }
 
     @Test
     public void IsValidUpperCaseWithoutBracketsTest()
     {
-        assertTrue(GUIDHelper.IsValid(UPPERCASE_NO_BRACKETS));
+        assertTrue(GUIDHelper.isValid(UPPERCASE_NO_BRACKETS));
     }
 
     @Test
     public void IsValidUpperCaseNullTest()
     {
-        assertFalse(GUIDHelper.IsValid(null));
+        assertFalse(GUIDHelper.isValid(null));
     }
 
     @Test
     public void IsValidUpperCaseEmptyTest()
     {
-        assertFalse(GUIDHelper.IsValid(""));
+        assertFalse(GUIDHelper.isValid(""));
     }
 
     @Test
     public void IsValidUpperCaseWhitespaceTest()
     {
-        assertFalse(GUIDHelper.IsValid(" "));
+        assertFalse(GUIDHelper.isValid(" "));
     }
 
     @Test
     public void IsValidUpperCaseStringTest()
     {
-        assertFalse(GUIDHelper.IsValid("String"));
+        assertFalse(GUIDHelper.isValid("String"));
     }
 
     @Test
     public void IsValidInvalidShortTest()
     {
-        assertFalse(GUIDHelper.IsValid(UPPERCASE_NO_BRACKETS_SHORT));
+        assertFalse(GUIDHelper.isValid(UPPERCASE_NO_BRACKETS_SHORT));
     }
 
     @Test
     public void IsValidInvalidLongTest()
     {
-        assertFalse(GUIDHelper.IsValid(UPPERCASE_NO_BRACKETS_LONG));
+        assertFalse(GUIDHelper.isValid(UPPERCASE_NO_BRACKETS_LONG));
     }
 
     @Test
     public void IsValidInvalidWrongLeterTest()
     {
-        assertFalse(GUIDHelper.IsValid(UPPERCASE_NO_BRACKETS_WRONG_LETTER));
+        assertFalse(GUIDHelper.isValid(UPPERCASE_NO_BRACKETS_WRONG_LETTER));
     }
 
     @Test
     public void IsValidInvalidSpecialCharacterTest()
     {
-        assertFalse(GUIDHelper.IsValid(UPPERCASE_NO_BRACKETS_SPECIAL_CHAR));
+        assertFalse(GUIDHelper.isValid(UPPERCASE_NO_BRACKETS_SPECIAL_CHAR));
     }
 
     @Test
     public void IsValidInvalidMissingOpenningBracketTest()
     {
-        assertFalse(GUIDHelper.IsValid(UPPERCASE_MISSING_OPENING_BRACKET));
+        assertFalse(GUIDHelper.isValid(UPPERCASE_MISSING_OPENING_BRACKET));
     }
 
     @Test
     public void IsValidInvalidMissingClosingBracketTest()
     {
-        assertFalse(GUIDHelper.IsValid(UPPERCASE_MISSING_CLOSING_BRACKET));
+        assertFalse(GUIDHelper.isValid(UPPERCASE_MISSING_CLOSING_BRACKET));
     }
 
     @Test

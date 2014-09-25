@@ -28,6 +28,12 @@ import Coalesce.Framework.DataModel.XsdField;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
+/**
+ * Provides helper methods for resampling images and generating thumbnails.
+ * 
+ * @author InCadence
+ *
+ */
 public class GraphicsHelper {
 
     // Make class static
@@ -40,60 +46,43 @@ public class GraphicsHelper {
     // Public Shared Methods
     // -----------------------------------------------------------------------//
 
+    /**
+     * Returns a new image resampled from the provided image with a specified height. The aspect ratio of the original image
+     * is maintained.
+     * 
+     * @param imageToResample the image to use for resampling.
+     * @param height the height of the resampled image.
+     * @return the resampled image.
+     */
     public static BufferedImage resampleWithHeight(BufferedImage imageToResample, int height)
     {
         // Calculate the Width, maintaining the same aspect ratio as the original image.
         return resample(imageToResample, height, height * imageToResample.getWidth() / imageToResample.getHeight());
     }
 
+    /**
+     * Returns a new image resampled from the provided image with a specified width. The aspect ratio of the original image
+     * is maintained.
+     * 
+     * @param imageToResample the image to use for resampling.
+     * @param width the width of the resampled image.
+     * @return the resampled image.
+     */
     public static BufferedImage resampleWithWidth(BufferedImage imageToResample, int width)
     {
         // Calculate the Height, maintaining the same aspect ratio as the original image.
         return resample(imageToResample, width * imageToResample.getHeight() / imageToResample.getWidth(), width);
     }
 
-    public static BufferedImage resampleToMaximum(BufferedImage imageToResample, int minHeight, int minWidth)
-    {
-        int x = imageToResample.getWidth();
-        int y = imageToResample.getHeight();
-
-        // Test: If we meet the minHeight, if new width > MinWidth
-        int newX = (minHeight / y) * x;
-
-        if (newX <= minWidth)
-        {
-            // resample to MinHeight
-            return GraphicsHelper.resampleWithHeight(imageToResample, minHeight);
-        }
-        else
-        {
-            // resample to MinWidth
-            return GraphicsHelper.resampleWithWidth(imageToResample, minWidth);
-        }
-
-    }
-
-    public static BufferedImage resampleToMinimum(BufferedImage imageToResample, int minHeight, int minWidth)
-    {
-        int x = imageToResample.getWidth();
-        int y = imageToResample.getHeight();
-
-        // Test: If we meet the minHeight, if new width > MinWidth
-        int newX = (minHeight / y) * x;
-
-        if (newX >= minWidth)
-        {
-            // resample to MinHeight
-            return GraphicsHelper.resampleWithHeight(imageToResample, minHeight);
-        }
-        else
-        {
-            // resample to MinWidth
-            return GraphicsHelper.resampleWithWidth(imageToResample, minWidth);
-        }
-
-    }
-
+    /**
+     * Returns a new image resampled from the provided image with a specified width and height. The aspect ratio of the
+     * original image is not maintained.
+     * 
+     * @param imageToResample the image to use for resampling.
+     * @param height the height of the resampled image.
+     * @param width the width of the resampled image.
+     * @return the resampled image.
+     */
     public static BufferedImage resample(BufferedImage imageToResample, int height, int width)
     {
         BufferedImage imgThumbnail = Scalr.resize(imageToResample, width, height, Scalr.OP_ANTIALIAS);
@@ -101,17 +90,84 @@ public class GraphicsHelper {
         return imgThumbnail;
     }
 
-    public static boolean createFieldThumbnail(String Filename) throws IOException
+    /**
+     * Returns a new image resampled from the provided image with a maximum height and width while maintaining the aspect
+     * ratio of the original image.
+     * 
+     * @param imageToResample the image to use for resampling.
+     * @param maxHeight the maximum height of the resampled image.
+     * @param maxWidth the maximum width of the resampled image.
+     * @return the resampled image.
+     */
+    public static BufferedImage resampleToMaximum(BufferedImage imageToResample, int maxHeight, int maxWidth)
+    {
+        double scaledWidth = GraphicsHelper.scaleWidthByHeightResampleRatio(imageToResample, maxHeight, maxWidth);
+        if (scaledWidth <= maxWidth)
+        {
+            return GraphicsHelper.resampleWithHeight(imageToResample, maxHeight);
+        }
+        else
+        {
+            return GraphicsHelper.resampleWithWidth(imageToResample, maxWidth);
+        }
+
+    }
+
+    /**
+     * Returns a new image resampled from the provided image with a minimum height and width while maintaining the aspect
+     * ratio of the original image.
+     * 
+     * @param imageToResample the image to use for resampling.
+     * @param minHeight the minimum height of the resampled image.
+     * @param minWidth the minimum width of the resampled image.
+     * @return the resampled image.
+     */
+    public static BufferedImage resampleToMinimum(BufferedImage imageToResample, int minHeight, int minWidth)
+    {
+        double scaledWidth = GraphicsHelper.scaleWidthByHeightResampleRatio(imageToResample, minHeight, minWidth);
+        if (scaledWidth >= minWidth)
+        {
+            return GraphicsHelper.resampleWithHeight(imageToResample, minHeight);
+        }
+        else
+        {
+            return GraphicsHelper.resampleWithWidth(imageToResample, minWidth);
+        }
+
+    }
+
+    /**
+     * Creates a new thumbnail image of the file provided. The new images filename will have the format of the original file
+     * name minus extension plus '_thumbnail' and the extension of the image format provided by
+     * {@link CoalesceSettings#getImageFormat()}. The new thumbnail image will be saved in the same location as the original
+     * image file. If the image format provided by {@link CoalesceSettings#getImageFormat()} does not match the format of the
+     * original file then the thumbnail will not be created.
+     * 
+     * <pre>
+     * Ex.
+     * 
+     *    Original filename                 = testImage.jpg
+     *    CoalesceSettings.getImageFormat() = "jpg"
+     *    New thumbnail filename            = testImage_thumbnail.jpg
+     * 
+     * </pre>
+     * 
+     * @param filename the name of the file including full path.
+     * @return <code>true</code> if the file is successfully created. <code>false</code> if the thumbnail file already exists
+     *         or the system image format does not match the format of the provided file.
+     * @throws IOException
+     */
+    public static boolean createFieldThumbnail(String filename) throws IOException
     {
         String imageFormat = CoalesceSettings.getImageFormat();
 
-        File imageFile = new File(Filename);
+        File imageFile = new File(filename);
         String imageName = imageFile.getName();
         String imageFileFormat = imageName.substring(imageName.length() - 3);
         File imageDir = imageFile.getParentFile();
 
         // create thumbnail name
-        String thumbnailName = imageName.substring(0, imageName.length() - 4) + "_" + "thumbnail." + imageFormat;
+        String thumbnailName = imageName.substring(0, imageName.length() - 4) + "_thumbnail." + imageFormat;
         File thumbnail = new File(imageDir, thumbnailName);
 
         // create thumbnail
@@ -129,9 +185,33 @@ public class GraphicsHelper {
         }
     }
 
-    public static boolean createFieldThumbnail(XsdField Field) throws IOException
+    /**
+     * Created a new thumbnail image for an {@link XsdField}.
+     * 
+     * @param field the field to generate the thumbnail for.
+     * @return <code>true</code> if the file is successfully created.
+     * @throws IOException
+     * @see GraphicsHelper#createFieldThumbnail(String)
+     */
+    public static boolean createFieldThumbnail(XsdField field) throws IOException
     {
-        return GraphicsHelper.createFieldThumbnail(Field.getCoalesceFullFilename());
+        return GraphicsHelper.createFieldThumbnail(field.getCoalesceFullFilename());
+    }
+
+    // -----------------------------------------------------------------------//
+    // Public Shared Methods
+    // -----------------------------------------------------------------------//
+
+    private static double scaleWidthByHeightResampleRatio(BufferedImage imageToResample, int height, int width)
+    {
+        double originalWidth = imageToResample.getWidth();
+        double originalHeight = imageToResample.getHeight();
+
+        double newHeightRatio = height / originalHeight;
+        double widthScaledForHeight = newHeightRatio * originalWidth;
+
+        return widthScaledForHeight;
+
     }
 
 }

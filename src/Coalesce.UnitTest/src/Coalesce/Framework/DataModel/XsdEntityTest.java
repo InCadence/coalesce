@@ -623,7 +623,7 @@ public class XsdEntityTest {
     {
         XsdEntity entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
 
-        assertNotNull(GUIDHelper.IsValid(entity.getKey()));
+        assertNotNull(GUIDHelper.isValid(entity.getKey()));
 
     }
 
@@ -1050,9 +1050,9 @@ public class XsdEntityTest {
         XsdEntity entity3 = new XsdEntity();
         entity3.initialize();
 
-        assertTrue(EntityLinkHelper.LinkEntities(entity, ELinkTypes.HasUseOf, entity2, false));
-        assertTrue(EntityLinkHelper.LinkEntities(entity, ELinkTypes.IsParentOf, entity3, false));
-        assertTrue(EntityLinkHelper.LinkEntities(entity2, ELinkTypes.WasCreatedBy, entity, false));
+        assertTrue(EntityLinkHelper.linkEntities(entity, ELinkTypes.HasUseOf, entity2, false));
+        assertTrue(EntityLinkHelper.linkEntities(entity, ELinkTypes.IsParentOf, entity3, false));
+        assertTrue(EntityLinkHelper.linkEntities(entity2, ELinkTypes.WasCreatedBy, entity, false));
 
         Map<String, XsdLinkage> linkages = entity.getLinkages();
 
@@ -2157,10 +2157,10 @@ public class XsdEntityTest {
 
         entities.Entity4 = XsdEntity.create("Operation", "Portal2", "3.4.5.6", "Id4", "Type4");
 
-        assertTrue(EntityLinkHelper.LinkEntities(entities.Entity, ELinkTypes.HasUseOf, entities.Entity2, false));
-        assertTrue(EntityLinkHelper.LinkEntities(entities.Entity, ELinkTypes.IsParentOf, entities.Entity3, false));
-        assertTrue(EntityLinkHelper.LinkEntities(entities.Entity2, ELinkTypes.WasCreatedBy, entities.Entity, false));
-        assertTrue(EntityLinkHelper.LinkEntities(entities.Entity4, ELinkTypes.IsAMemberOf, entities.Entity, false));
+        assertTrue(EntityLinkHelper.linkEntities(entities.Entity, ELinkTypes.HasUseOf, entities.Entity2, false));
+        assertTrue(EntityLinkHelper.linkEntities(entities.Entity, ELinkTypes.IsParentOf, entities.Entity3, false));
+        assertTrue(EntityLinkHelper.linkEntities(entities.Entity2, ELinkTypes.WasCreatedBy, entities.Entity, false));
+        assertTrue(EntityLinkHelper.linkEntities(entities.Entity4, ELinkTypes.IsAMemberOf, entities.Entity, false));
 
         return entities;
 
