@@ -63,7 +63,7 @@ public class JodaDateTimeHelper {
     }
 
     /**
-     * Returns a string representation of the myDate parameter. If dateOnly is true it will be formated as Else 'yyyy-MM-dd
+     * Returns a string representation of the myDate parameter. If dateOnly is true it will be formatted as Else 'yyyy-MM-dd
      * HH:mm:ssZZ'
      * 
      * @param myDate The date to be formatted as a string
