@@ -8,6 +8,9 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
+import unity.common.CallResult;
+import unity.common.CallResult.CallResults;
+
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
 
@@ -115,7 +118,7 @@ public class JodaDateTimeHelper {
         }
         catch (Exception ex)
         {
-            System.out.println(ex.getMessage());
+            CallResult.log(CallResults.FAILED, ex, "JodaDateTimeHelper");
             return null;
         }
     }
