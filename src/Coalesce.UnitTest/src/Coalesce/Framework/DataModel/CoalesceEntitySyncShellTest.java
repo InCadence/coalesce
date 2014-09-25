@@ -7,6 +7,8 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -29,12 +31,45 @@ public class CoalesceEntitySyncShellTest {
         // Initialize
         CoalesceEntitySyncShell shell = CoalesceEntitySyncShell.Create(entity);
 
-        String xml = shell.toXml();
-
         // Validate
-        assertNotNull(xml);
+        assertNotNull(shell.toXml());
         assertTrue(this.ValidateSyncShell(shell));
 
+    }
+
+    @Test
+    public void testInitializeFromEntity() throws SAXException, IOException
+    {
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        // Initialize
+        CoalesceEntitySyncShell shell = new CoalesceEntitySyncShell();
+        shell.Initialize(entity);
+
+        // Validate
+        assertNotNull(shell.toXml());
+        assertNotNull(shell.GetEntityNode());
+        assertTrue(this.ValidateSyncShell(shell));
+
+    }
+
+    @Test
+    public void testEntityNode() throws SAXException, IOException, ParserConfigurationException
+    {
+        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        // Initialize
+        CoalesceEntitySyncShell shell = CoalesceEntitySyncShell.Create(entity);
+
+        // Copy Shell Using Entity
+        CoalesceEntitySyncShell shell2 = new CoalesceEntitySyncShell();
+        shell2.SetEntityNode(shell.GetEntityNode());
+
+        String shellXml = shell2.toXml();
+
+        // Validate
+        assertTrue(this.ValidateSyncShell(shell2));
+        assertNotNull(shellXml);
     }
 
     @Test

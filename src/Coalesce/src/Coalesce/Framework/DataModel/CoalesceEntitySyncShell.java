@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.joda.time.DateTime;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -47,8 +51,8 @@ public class CoalesceEntitySyncShell {
     /**
      * Creates a CoalesceEntitySyncShell based of an XsdEntity.
      * 
-     * @param Entity        XsdEntity
-     * @return              CoalesceEntitySyncShell
+     * @param Entity XsdEntity
+     * @return CoalesceEntitySyncShell
      * 
      * @throws SAXException
      * @throws IOException
@@ -61,8 +65,8 @@ public class CoalesceEntitySyncShell {
     /**
      * Creates a CoalesceEntitySyncShell based of an (XML) String.
      * 
-     * @param EntitySyncShellXml    (XML) String
-     * @return                      CoalesceEntitySyncShell
+     * @param EntitySyncShellXml (XML) String
+     * @return CoalesceEntitySyncShell
      * 
      * @throws SAXException
      * @throws IOException
@@ -75,8 +79,8 @@ public class CoalesceEntitySyncShell {
     /**
      * Creates a CoalesceEntitySyncShell based of an org.w3c.dom Document.
      * 
-     * @param doc        org.w3c.dom Document
-     * @return           CoalesceEntitySyncShell
+     * @param doc org.w3c.dom Document
+     * @return CoalesceEntitySyncShell
      * 
      * @throws SAXException
      * @throws IOException
@@ -100,8 +104,8 @@ public class CoalesceEntitySyncShell {
     /**
      * Initializes a previously new CoalesceEntitySyncShell based of an XsdEntity.
      * 
-     * @param Entity        XsdEntity
-     * @return              boolean
+     * @param Entity XsdEntity
+     * @return boolean
      * 
      * @throws SAXException
      * @throws IOException
@@ -114,8 +118,8 @@ public class CoalesceEntitySyncShell {
     /**
      * Initializes a previously new CoalesceEntitySyncShell based of an (XML) String.
      * 
-     * @param entityXml     String
-     * @return              boolean
+     * @param entityXml String
+     * @return boolean
      * 
      * @throws SAXException
      * @throws IOException
@@ -128,8 +132,8 @@ public class CoalesceEntitySyncShell {
     /**
      * Initializes a previously new CoalesceEntitySyncShell based of an org.w3c.dom Document.
      * 
-     * @param doc   org.w3c.dom Document
-     * @return      boolean
+     * @param doc org.w3c.dom Document
+     * @return boolean
      */
     public boolean Initialize(Document doc)
     {
@@ -150,7 +154,7 @@ public class CoalesceEntitySyncShell {
     /**
      * Returns the CoalesceEntitySyncShell's (org.w3c.dom Document) DataObjectDocument.
      * 
-     * @return  org.w3c.dom Document
+     * @return org.w3c.dom Document
      */
     public Document GetDataObjectDocument()
     {
@@ -160,7 +164,7 @@ public class CoalesceEntitySyncShell {
     /**
      * Sets the CoalesceEntitySyncShell's (org.w3c.dom Document) DataObjectDocument and EntityNode.
      * 
-     * @param value     org.w3c.dom Document
+     * @param value org.w3c.dom Document
      */
     public void SetDataObjectDocument(Document value)
     {
@@ -171,7 +175,7 @@ public class CoalesceEntitySyncShell {
     /**
      * Returns the CoalesceEntitySyncShell's (org.w3c.dom Node) EntityNode.
      * 
-     * @return      org.w3c.dom Node
+     * @return org.w3c.dom Node
      */
     public Node GetEntityNode()
     {
@@ -182,16 +186,26 @@ public class CoalesceEntitySyncShell {
      * Sets the CoalesceEntitySyncShell's (org.w3c.dom Node) EntityNode.
      * 
      * @param value org.w3c.dom Node
+     * @throws ParserConfigurationException 
      */
-    public void SetEntityNode(Node value)
+    public void SetEntityNode(Node value) throws ParserConfigurationException
     {
+        
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        
+        this._DataObjectDocument = builder.newDocument();
+        Node importedNode = this._DataObjectDocument.importNode(value, true);
+        this._DataObjectDocument.appendChild(importedNode);
+        
         this._EntityNode = value;
     }
 
     /**
      * Returns the CoalesceEntitySyncShell's (XML) String of the DataObjectDocument.
      * 
-     * @return      (XML) String
+     * @return (XML) String
      */
     public String toXml()
     {
@@ -205,66 +219,48 @@ public class CoalesceEntitySyncShell {
     /**
      * Creates and returns a clone/copy of the CoalesceEntitySyncShell passed in as a param
      * 
-     * @param SyncShell     CoalesceEntitySyncShell (original)
-     * @return              CoalesceEntitySyncShell (clone/copy)
+     * @param SyncShell CoalesceEntitySyncShell (original)
+     * @return CoalesceEntitySyncShell (clone/copy)
      */
     public static CoalesceEntitySyncShell Clone(CoalesceEntitySyncShell SyncShell)
     {
 
-        try
-        {
-            // Create new Instance
-            CoalesceEntitySyncShell SyncShellClone = new CoalesceEntitySyncShell();
+        // Create new Instance
+        CoalesceEntitySyncShell SyncShellClone = new CoalesceEntitySyncShell();
 
-            // Initialize
-            // TODO: make sure .Clone's are same between vb and java. Java required a boolean.
-            // return SyncShellClone.Initialize(SyncShell.DataObjectDocument.Clone) //vb
-            // return SyncShellClone.Initialize(SyncShell.GetDataObjectDocument()); //1st java thought
-            SyncShellClone.Initialize((Document) SyncShell.GetDataObjectDocument().cloneNode(true));
-            return SyncShellClone;
-            // return CallResult.failedCallResult; //SyncShellClone.InitializeFromEntity((CoalesceEntity)
-            // SyncShell.GetDataObjectDocument().cloneNode(true));
-
-        }
-        catch (Exception ex)
-        {
-            // return Failed Error
-            return null;
-        }
+        // Initialize
+        // TODO: make sure .Clone's are same between vb and java. Java required a boolean.
+        // return SyncShellClone.Initialize(SyncShell.DataObjectDocument.Clone) //vb
+        // return SyncShellClone.Initialize(SyncShell.GetDataObjectDocument()); //1st java thought
+        SyncShellClone.Initialize((Document) SyncShell.GetDataObjectDocument().cloneNode(true));
+        return SyncShellClone;
+        // return CallResult.failedCallResult; //SyncShellClone.InitializeFromEntity((CoalesceEntity)
+        // SyncShell.GetDataObjectDocument().cloneNode(true));
     }
 
     /**
      * Returns a CoalesceEntitySyncShell containing the LocalFullSyncShell changed nodes from the RemoteFullSyncShell
      * 
-     * @param LocalFullSyncShell    CoalesceEntitySyncShell local copy
-     * @param RemoteFullSyncShell   CoalesceEntitySyncShell original
-     * @return                      CoalesceEntitySyncShell local copy's changes from the original
+     * @param LocalFullSyncShell CoalesceEntitySyncShell local copy
+     * @param RemoteFullSyncShell CoalesceEntitySyncShell original
+     * @return CoalesceEntitySyncShell local copy's changes from the original
      */
     public static CoalesceEntitySyncShell GetRequiredChangesSyncShell(CoalesceEntitySyncShell LocalFullSyncShell,
                                                                       CoalesceEntitySyncShell RemoteFullSyncShell)
     {
-        try
-        {
-            // Create the RequiredChangesSyncShell as a Clone of the RemoteFullSyncShell. We will
-            // then prune out nodes that aren't required recursively as we compare against
-            // the nodes in LocalFullSyncShell.
-            CoalesceEntitySyncShell requiredChangesSyncShell = CoalesceEntitySyncShell.Clone(RemoteFullSyncShell);
+        // Create the RequiredChangesSyncShell as a Clone of the RemoteFullSyncShell. We will
+        // then prune out nodes that aren't required recursively as we compare against
+        // the nodes in LocalFullSyncShell.
+        CoalesceEntitySyncShell requiredChangesSyncShell = CoalesceEntitySyncShell.Clone(RemoteFullSyncShell);
 
-            if (requiredChangesSyncShell.equals(null)) return requiredChangesSyncShell;
+        if (requiredChangesSyncShell.equals(null)) return requiredChangesSyncShell;
 
-            // Prune Unchanged Nodes
-            CoalesceEntitySyncShell.PruneUnchangedNodes(CoalesceEntitySyncShell.GenerateMap(LocalFullSyncShell.GetDataObjectDocument()),
-                                                        RemoteFullSyncShell.GetDataObjectDocument(),
-                                                        CoalesceEntitySyncShell.GenerateMap(requiredChangesSyncShell.GetDataObjectDocument()));
+        // Prune Unchanged Nodes
+        CoalesceEntitySyncShell.PruneUnchangedNodes(CoalesceEntitySyncShell.GenerateMap(LocalFullSyncShell.GetDataObjectDocument()),
+                                                    RemoteFullSyncShell.GetDataObjectDocument(),
+                                                    CoalesceEntitySyncShell.GenerateMap(requiredChangesSyncShell.GetDataObjectDocument()));
 
-            return requiredChangesSyncShell;
-
-        }
-        catch (Exception ex)
-        {
-            // return Failed Error
-            return null;
-        }
+        return requiredChangesSyncShell;
     }
 
     // ----------------------------------------------------------------------//
@@ -274,8 +270,8 @@ public class CoalesceEntitySyncShell {
     /**
      * Remove nodes that do not require an update; called by GetRequiredChangesSyncShell
      * 
-     * @param NodeToPrune   Node to check for updates
-     * @return              boolean
+     * @param NodeToPrune Node to check for updates
+     * @return boolean
      */
     private static boolean PruneNodes(Node NodeToPrune)
     {
