@@ -44,16 +44,43 @@ public class CoalesceEntitySyncShell {
     // Static Creates
     // -----------------------------------------------------------------------//
 
+    /**
+     * Creates a CoalesceEntitySyncShell based of an XsdEntity.
+     * 
+     * @param Entity        XsdEntity
+     * @return              CoalesceEntitySyncShell
+     * 
+     * @throws SAXException
+     * @throws IOException
+     */
     public static CoalesceEntitySyncShell Create(XsdEntity Entity) throws SAXException, IOException
     {
         return CoalesceEntitySyncShell.Create(Entity.toXml());
     }
 
+    /**
+     * Creates a CoalesceEntitySyncShell based of an (XML) String.
+     * 
+     * @param EntitySyncShellXml    (XML) String
+     * @return                      CoalesceEntitySyncShell
+     * 
+     * @throws SAXException
+     * @throws IOException
+     */
     public static CoalesceEntitySyncShell Create(String EntitySyncShellXml) throws SAXException, IOException
     {
         return CoalesceEntitySyncShell.Create(XmlHelper.loadXMLFrom(EntitySyncShellXml));
     }
 
+    /**
+     * Creates a CoalesceEntitySyncShell based of an org.w3c.dom Document.
+     * 
+     * @param doc        org.w3c.dom Document
+     * @return           CoalesceEntitySyncShell
+     * 
+     * @throws SAXException
+     * @throws IOException
+     */
     public static CoalesceEntitySyncShell Create(Document doc) throws SAXException, IOException
     {
         // Create a new CoalesceEntityTemplate
@@ -70,16 +97,40 @@ public class CoalesceEntitySyncShell {
     // Initialization
     // -----------------------------------------------------------------------//
 
+    /**
+     * Initializes a previously new CoalesceEntitySyncShell based of an XsdEntity.
+     * 
+     * @param Entity        XsdEntity
+     * @return              boolean
+     * 
+     * @throws SAXException
+     * @throws IOException
+     */
     public boolean Initialize(XsdEntity Entity) throws SAXException, IOException
     {
         return this.Initialize(Entity.toXml());
     }
 
+    /**
+     * Initializes a previously new CoalesceEntitySyncShell based of an (XML) String.
+     * 
+     * @param entityXml     String
+     * @return              boolean
+     * 
+     * @throws SAXException
+     * @throws IOException
+     */
     public boolean Initialize(String entityXml) throws SAXException, IOException
     {
         return this.Initialize(XmlHelper.loadXMLFrom(entityXml));
     }
 
+    /**
+     * Initializes a previously new CoalesceEntitySyncShell based of an org.w3c.dom Document.
+     * 
+     * @param doc   org.w3c.dom Document
+     * @return      boolean
+     */
     public boolean Initialize(Document doc)
     {
         // Prune Nodes
@@ -96,27 +147,52 @@ public class CoalesceEntitySyncShell {
     // public Properties
     // -----------------------------------------------------------------------//
 
+    /**
+     * Returns the CoalesceEntitySyncShell's (org.w3c.dom Document) DataObjectDocument.
+     * 
+     * @return  org.w3c.dom Document
+     */
     public Document GetDataObjectDocument()
     {
         return this._DataObjectDocument;
     }
 
+    /**
+     * Sets the CoalesceEntitySyncShell's (org.w3c.dom Document) DataObjectDocument and EntityNode.
+     * 
+     * @param value     org.w3c.dom Document
+     */
     public void SetDataObjectDocument(Document value)
     {
         this._DataObjectDocument = value;
         this._EntityNode = value.getElementsByTagName("entity").item(0);
     }
 
+    /**
+     * Returns the CoalesceEntitySyncShell's (org.w3c.dom Node) EntityNode.
+     * 
+     * @return      org.w3c.dom Node
+     */
     public Node GetEntityNode()
     {
         return this._EntityNode;
     }
 
+    /**
+     * Sets the CoalesceEntitySyncShell's (org.w3c.dom Node) EntityNode.
+     * 
+     * @param value     org.w3c.dom Node
+     */
     public void SetEntityNode(Node value)
     {
         this._EntityNode = value;
     }
 
+    /**
+     * Returns the CoalesceEntitySyncShell's (XML) String of the DataObjectDocument.
+     * 
+     * @return      (XML) String
+     */
     public String toXml()
     {
         return XmlHelper.FormatXml(this._DataObjectDocument);
@@ -126,6 +202,12 @@ public class CoalesceEntitySyncShell {
     // public Static Functions
     // -----------------------------------------------------------------------//
 
+    /**
+     * Creates and returns a clone/copy of the CoalesceEntitySyncShell passed in as a param
+     * 
+     * @param SyncShell     CoalesceEntitySyncShell (original)
+     * @return              CoalesceEntitySyncShell (clone/copy)
+     */
     public static CoalesceEntitySyncShell Clone(CoalesceEntitySyncShell SyncShell)
     {
 
@@ -151,6 +233,13 @@ public class CoalesceEntitySyncShell {
         }
     }
 
+    /**
+     * Returns a CoalesceEntitySyncShell containing the LocalFullSyncShell changed nodes from the RemoteFullSyncShell
+     * 
+     * @param LocalFullSyncShell    CoalesceEntitySyncShell local copy
+     * @param RemoteFullSyncShell   CoalesceEntitySyncShell original
+     * @return                      CoalesceEntitySyncShell local copy's changes from the original
+     */
     public static CoalesceEntitySyncShell GetRequiredChangesSyncShell(CoalesceEntitySyncShell LocalFullSyncShell,
                                                                       CoalesceEntitySyncShell RemoteFullSyncShell)
     {
@@ -182,6 +271,12 @@ public class CoalesceEntitySyncShell {
     // Private Static Functions
     // ----------------------------------------------------------------------//
 
+    /**
+     * Remove nodes that do not require an update; called by GetRequiredChangesSyncShell
+     * 
+     * @param NodeToPrune   Node to check for updates
+     * @return              boolean
+     */
     private static boolean PruneNodes(Node NodeToPrune)
     {
         try
