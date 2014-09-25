@@ -3,16 +3,26 @@ package com.persister.tests;
 import java.io.Serializable;
 
 public class TimeTrack implements Serializable {
+	private String _appStartTime;
+	private String _appStopTime;
 	private String _entityID;
 	private String _iterationInterval;
 	private String _iterationVal;
 	private String _startTime;
+
 	private String _stopTime;
+
+	public String getAppStartTime() {
+		return _appStartTime;
+	}
+
+	public String getAppStopTime() {
+		return _appStopTime;
+	}
 
 	public String getEntityID() {
 		return _entityID;
 	}
-
 	public String getIterationInterval() {
 		return _iterationInterval;
 	}
@@ -27,6 +37,14 @@ public class TimeTrack implements Serializable {
 
 	public String getStopTime() {
 		return _stopTime;
+	}
+
+	public void setAppStartTime(String _appStartTime) {
+		this._appStartTime = _appStartTime;
+	}
+
+	public void setAppStopTime(String _appStopTime) {
+		this._appStopTime = _appStopTime;
 	}
 
 	public void setEntityID(String _entityID) {

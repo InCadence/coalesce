@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -34,11 +35,6 @@ import Coalesce.Framework.DataModel.XsdSection;
 import com.database.persister.PostGresSQLPersistor;
 import com.database.persister.ServerConn;
 
-import scala.Int;
-//import javax.lang.model.element.Element;
-import unity.common.CallResult;
-import unity.common.CallResult.CallResults;
-
 public class appMain {
 
 	private final static Logger log = Logger.getLogger("TesterLog");
@@ -47,7 +43,7 @@ public class appMain {
 	static ServerConn serCon;
 	static PostGresSQLPersistor psPersister;
 	private static CoalesceFramework _coalesceFramework;
-	private static String MODULE_NAME = "Coalesce.Persister.PerformanceTester";
+	//private static String MODULE_NAME = "Coalesce.Persister.PerformanceTester";
 	static int minorVal = 0;
 	static int majorVal = 0;
 	static int masterCounter = 0;
@@ -83,13 +79,13 @@ public class appMain {
 
 	private static void runVolume() {
 		try {
-			String val = ".0.0";
 			TimeTrack _timeTrack;
 			String startTime = appMain.getCurrentTime();
 			int _iteration_counter = 0;
 			appMain.createDOMDocument();
 			for (_iteration_counter = 0; _iteration_counter <= ITERATION_LIMIT; _iteration_counter++) {
 				_timeTrack = new TimeTrack();
+				
 				XsdEntity _xsdEntity = new XsdEntity();
 				String generateEntityVersionNumber = appMain
 						.generateEntityVersionNumber(_iteration_counter);
@@ -117,6 +113,10 @@ public class appMain {
 		}
 	}
 
+	private static void saveAppTimeStamps(TimeTrack _timeTrack, String startTime,String stopTime){
+		_timeTrack.setAppStartTime(startTime);
+		_timeTrack.setStopTime(stopTime);
+	}
 	private static void saveEntity(TimeTrack _timeTrack, XsdEntity _xsdEntity)
 			throws CoalescePersistorException {
 		_timeTrack.setStartTime(getCurrentTime());	
@@ -158,10 +158,10 @@ public class appMain {
 			record = recordSet.addNew();
 			record.setFieldValue("CurrentStatus", "Test Status");
 
-			String _fieldKey = record.getFieldByName("CurrentStatus").getKey();
+			//String _fieldKey = record.getFieldByName("CurrentStatus").getKey();
 			return _entity;
-		} catch (CoalesceInvalidFieldException e) {
-			CallResult.log(CallResults.FAILED_ERROR, e, MODULE_NAME);
+		} catch (CoalesceInvalidFieldException ex) {
+			log.log(java.util.logging.Level.SEVERE, ex.toString());
 			return null;
 		}
 	}
@@ -198,7 +198,7 @@ public class appMain {
 			System.out
 					.println("Error while trying to instantiate DocumentBuilder "
 							+ ex.toString());
-			CallResult.log(CallResults.FAILED_ERROR, ex, MODULE_NAME);
+			log.log(java.util.logging.Level.SEVERE, ex.toString());
 		}
 
 	}
@@ -206,8 +206,10 @@ public class appMain {
 	private static void createDOMTree() {
 		Element rootEle = dom.createElement("TimeTrack");
 		dom.appendChild(rootEle);
-		for (TimeTrack b : timeLogger) {
-			Element timeTrackElement = createTimeTrackElement(b);
+		Iterator<TimeTrack> iterCNT  = timeLogger.iterator();
+		while(iterCNT.hasNext()) {
+			TimeTrack bVal = (TimeTrack)iterCNT.next();
+			Element timeTrackElement = createTimeTrackElement(bVal);
 			rootEle.appendChild(timeTrackElement);
 		}
 	}
@@ -216,7 +218,7 @@ public class appMain {
 
 		Element timeElement = dom.createElement("TimeTrack");	
 		timeElement.setAttribute("ENTITYID", b.getEntityID());
-		timeElement.setAttribute("ITERATIONS", b.getIterationVal());
+		timeElement.setAttribute("COMPLETE_ITERATIONS", b.getIterationVal());
 		timeElement.setAttribute("CAPTURE_INTERVAL", b.getIterationInterval());
 		// create start time element and start time text node and attach it to
 		// timeElement -Start
@@ -236,6 +238,7 @@ public class appMain {
 
 	}
 
+	@SuppressWarnings("deprecation")
 	private static void printToFile(String fileName) {
 		try {
 			// print
@@ -248,7 +251,7 @@ public class appMain {
 			serializer.serialize(dom);
 
 		} catch (IOException ex) {
-			CallResult.log(CallResults.FAILED_ERROR, ex, MODULE_NAME);
+			log.log(java.util.logging.Level.SEVERE, ex.toString());
 		}
 	}
 }
