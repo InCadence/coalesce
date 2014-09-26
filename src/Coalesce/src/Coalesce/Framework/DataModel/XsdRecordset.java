@@ -443,10 +443,10 @@ public class XsdRecordset extends XsdDataObject implements ICoalesceRecordset {
             _entityRecordset.setKey(value);
             return true;
         case "datecreated":
-            _entityRecordset.setDatecreated(JodaDateTimeHelper.FromXmlDateTimeUTC(value));
+            _entityRecordset.setDatecreated(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
             return true;
         case "lastmodified":
-            _entityRecordset.setLastmodified(JodaDateTimeHelper.FromXmlDateTimeUTC(value));
+            _entityRecordset.setLastmodified(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
             return true;
         case "name":
             _entityRecordset.setName(value);
@@ -471,8 +471,8 @@ public class XsdRecordset extends XsdDataObject implements ICoalesceRecordset {
     {
         Map<QName, String> map = new HashMap<QName, String>();
         map.put(new QName("key"), _entityRecordset.getKey());
-        map.put(new QName("datecreated"), JodaDateTimeHelper.ToXmlDateTimeUTC(_entityRecordset.getDatecreated()));
-        map.put(new QName("lastmodified"), JodaDateTimeHelper.ToXmlDateTimeUTC(_entityRecordset.getLastmodified()));
+        map.put(new QName("datecreated"), JodaDateTimeHelper.toXmlDateTimeUTC(_entityRecordset.getDatecreated()));
+        map.put(new QName("lastmodified"), JodaDateTimeHelper.toXmlDateTimeUTC(_entityRecordset.getLastmodified()));
         map.put(new QName("name"), _entityRecordset.getName());
         map.put(new QName("minrecords"), _entityRecordset.getMinrecords());
         map.put(new QName("maxrecords"), _entityRecordset.getMaxrecords());

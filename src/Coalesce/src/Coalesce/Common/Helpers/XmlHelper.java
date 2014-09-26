@@ -201,11 +201,11 @@ public class XmlHelper {
 
         if (StringHelper.IsNullOrEmpty(DateString))
         {
-            return JodaDateTimeHelper.NowInUtc();
+            return JodaDateTimeHelper.nowInUtc();
         }
         else
         {
-            return JodaDateTimeHelper.FromXmlDateTimeUTC(DateString);
+            return JodaDateTimeHelper.fromXmlDateTimeUTC(DateString);
         }
 
         // Parse Date
@@ -267,7 +267,7 @@ public class XmlHelper {
     // shared
     public void SetAttributeAsDate(Document Doc, Node Node, String Name, DateTime Value)
     {
-        Node.getAttributes().getNamedItem(Name).setNodeValue(JodaDateTimeHelper.ToXmlDateTimeUTC(Value));
+        Node.getAttributes().getNamedItem(Name).setNodeValue(JodaDateTimeHelper.toXmlDateTimeUTC(Value));
 
         // Check for the Attribute Node
         // TODO:

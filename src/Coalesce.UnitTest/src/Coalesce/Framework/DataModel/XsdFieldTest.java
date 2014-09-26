@@ -649,7 +649,7 @@ public class XsdFieldTest {
 
         XsdField field = getTestMissionNameField(mission);
 
-        DateTime now = JodaDateTimeHelper.NowInUtc();
+        DateTime now = JodaDateTimeHelper.nowInUtc();
 
         field.setDateCreated(now);
 
@@ -752,7 +752,7 @@ public class XsdFieldTest {
 
         XsdField field = getTestMissionNameField(mission);
 
-        DateTime now = JodaDateTimeHelper.NowInUtc();
+        DateTime now = JodaDateTimeHelper.nowInUtc();
 
         field.setLastModified(now);
 
@@ -1108,12 +1108,12 @@ public class XsdFieldTest {
         Object data = field.getData();
 
         assertTrue(data instanceof DateTime);
-        assertEquals(JodaDateTimeHelper.FromXmlDateTimeUTC(CoalesceTypeInstances.TEST_MISSION_START_TIME_VALUE), data);
+        assertEquals(JodaDateTimeHelper.fromXmlDateTimeUTC(CoalesceTypeInstances.TEST_MISSION_START_TIME_VALUE), data);
 
-        DateTime now = JodaDateTimeHelper.NowInUtc();
+        DateTime now = JodaDateTimeHelper.nowInUtc();
         field.setTypedValue(now);
 
-        assertEquals(JodaDateTimeHelper.ToXmlDateTimeUTC(now), field.getValue());
+        assertEquals(JodaDateTimeHelper.toXmlDateTimeUTC(now), field.getValue());
 
         data = null;
         data = field.getData();
@@ -1130,7 +1130,7 @@ public class XsdFieldTest {
 
         XsdField field = getTestMissionNameField();
 
-        field.setTypedValue(JodaDateTimeHelper.NowInUtc());
+        field.setTypedValue(JodaDateTimeHelper.nowInUtc());
 
     }
 

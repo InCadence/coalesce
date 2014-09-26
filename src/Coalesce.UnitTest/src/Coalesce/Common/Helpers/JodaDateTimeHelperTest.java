@@ -5,7 +5,9 @@ import static org.junit.Assert.*;
 import org.apache.commons.lang.NullArgumentException;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -26,6 +28,9 @@ import org.junit.Test;
 
 public class JodaDateTimeHelperTest {
 
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
     /*
      * @BeforeClass public static void setUpBeforeClass() throws Exception { }
      * 
@@ -37,10 +42,10 @@ public class JodaDateTimeHelperTest {
      */
 
     @Test
-    public void ConvertYYYYMMDDDateStringToDateTimeTest()
+    public void convertYYYYMMDDDateStringToDateTimeTest()
     {
 
-        DateTime converted = JodaDateTimeHelper.ConvertyyyyMMddDateStringToDateTime("20141122");
+        DateTime converted = JodaDateTimeHelper.convertyyyyMMddDateStringToDateTime("20141122");
 
         assertEquals(2014, converted.getYear());
         assertEquals(11, converted.getMonthOfYear());
@@ -52,87 +57,96 @@ public class JodaDateTimeHelperTest {
     }
 
     @Test
-    public void ConvertYYYYMMDDDateStringToDateTimeBadStringFormatTest()
+    public void convertYYYYMMDDDateStringToDateTimeBadStringFormatTest()
     {
 
-        DateTime converted = JodaDateTimeHelper.ConvertyyyyMMddDateStringToDateTime("2014-11-22");
+        DateTime converted = JodaDateTimeHelper.convertyyyyMMddDateStringToDateTime("2014-11-22");
 
         assertNull(converted);
 
     }
 
-    @Test(expected = NullArgumentException.class)
-    public void ConvertYYYYMMDDDateStringToDateTimeNullTest()
+    @Test
+    public void convertYYYYMMDDDateStringToDateTimeNullTest()
     {
+        thrown.expect(NullArgumentException.class);
+        thrown.expectMessage("value");
+        
         @SuppressWarnings("unused")
-        DateTime converted = JodaDateTimeHelper.ConvertyyyyMMddDateStringToDateTime(null);
+        DateTime converted = JodaDateTimeHelper.convertyyyyMMddDateStringToDateTime(null);
     }
 
     @Test
-    public void ConvertYYYYMMDDDateStringToDateTimeEmtpyTest()
+    public void convertYYYYMMDDDateStringToDateTimeEmtpyTest()
     {
 
-        DateTime converted = JodaDateTimeHelper.ConvertyyyyMMddDateStringToDateTime("");
+        DateTime converted = JodaDateTimeHelper.convertyyyyMMddDateStringToDateTime("");
 
         assertNull(converted);
 
     }
 
     @Test
-    public void ConvertYYYYMMDDDateStringToDateTimeWhiteSpaceTest()
+    public void convertYYYYMMDDDateStringToDateTimeWhiteSpaceTest()
     {
 
-        DateTime converted = JodaDateTimeHelper.ConvertyyyyMMddDateStringToDateTime("  ");
+        DateTime converted = JodaDateTimeHelper.convertyyyyMMddDateStringToDateTime("  ");
 
         assertNull(converted);
 
     }
 
     @Test
-    public void MilitaryFormatNoDateTest()
+    public void militaryFormatNoDateTest()
     {
 
         DateTime date = new DateTime(2014, 5, 6, 7, 8, 9, DateTimeZone.UTC);
 
-        String milDate = JodaDateTimeHelper.MilitaryFormat(date, true);
+        String milDate = JodaDateTimeHelper.militaryFormat(date, true);
 
         assertEquals("2014-05-06", milDate);
 
     }
 
-    @Test(expected = NullArgumentException.class)
-    public void MilitaryFormatNullDateTest()
+    @Test
+    public void militaryFormatNullDateTest()
     {
+        thrown.expect(NullArgumentException.class);
+        thrown.expectMessage("value");
+        
         @SuppressWarnings("unused")
-        String milDate = JodaDateTimeHelper.MilitaryFormat(null, true);
-    }
-
-    @Test(expected = NullArgumentException.class)
-    public void MilitaryFormatNullDateNoDateTest()
-    {
-        @SuppressWarnings("unused")
-        String milDate = JodaDateTimeHelper.MilitaryFormat(null, false);
+        String milDate = JodaDateTimeHelper.militaryFormat(null, true);
     }
 
     @Test
-    public void MilitaryFormatDateTest()
+    public void militaryFormatNullDateNoDateTest()
+    {
+        thrown.expect(NullArgumentException.class);
+        thrown.expectMessage("value");
+        
+        @SuppressWarnings("unused")
+        String milDate = JodaDateTimeHelper.militaryFormat(null, false);
+    }
+
+    @Test
+    public void militaryFormatDateTest()
     {
 
         DateTime date = new DateTime(2014, 5, 6, 7, 8, 9, DateTimeZone.UTC);
 
-        String milDate = JodaDateTimeHelper.MilitaryFormat(date, false);
+        String milDate = JodaDateTimeHelper.militaryFormat(date, false);
 
         assertEquals("2014-05-06 07:08:09Z", milDate);
 
     }
 
     @Test
-    public void MilitaryFormatNoUTCTest()
+    public void militaryFormatNoUTCTest()
     {
 
         DateTime date = new DateTime(2014, 5, 6, 7, 8, 9);
 
-        String milDate = JodaDateTimeHelper.MilitaryFormat(date, false);
+        String milDate = JodaDateTimeHelper.militaryFormat(date, false);
 
         String offset = date.toString("ZZ");
         assertEquals("2014-05-06 07:08:09" + offset, milDate);
@@ -140,478 +154,481 @@ public class JodaDateTimeHelperTest {
     }
 
     @Test
-    public void GetElapsedGMTTimeStringSameTimeTest()
+    public void getElapsedGMTTimeStringSameTimeTest()
     {
 
         DateTime date = new DateTime(2014, 5, 6, 7, 8, 9);
         DateTime now = new DateTime(date);
 
-        String elapsed = JodaDateTimeHelper.GetElapsedGMTTimeString(now, date, true, false, true);
+        String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(now, date, true, false, true);
 
         assertEquals("(0 seconds ago)", elapsed);
     }
 
     @Test
-    public void GetElapsedGMTTimeStringOneSecondTest()
+    public void getElapsedGMTTimeStringOneSecondTest()
     {
 
         DateTime date = new DateTime(2014, 5, 6, 7, 8, 9);
         DateTime now = new DateTime(2014, 5, 6, 7, 8, 10);
 
-        String elapsed = JodaDateTimeHelper.GetElapsedGMTTimeString(date, now, true, false, true);
+        String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
         assertEquals("(1 second ago)", elapsed);
     }
 
     @Test
-    public void GetElapsedGMTTimeStringTwoSecondsTest()
+    public void getElapsedGMTTimeStringTwoSecondsTest()
     {
 
         DateTime date = new DateTime(2014, 5, 6, 7, 8, 9);
         DateTime now = new DateTime(2014, 5, 6, 7, 8, 11);
 
-        String elapsed = JodaDateTimeHelper.GetElapsedGMTTimeString(date, now, true, false, true);
+        String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
         assertEquals("(2 seconds ago)", elapsed);
     }
 
     @Test
-    public void GetElapsedGMTTimeStringFiftyNineTest()
+    public void getElapsedGMTTimeStringFiftyNineTest()
     {
 
         DateTime date = new DateTime(2014, 5, 6, 7, 8, 9);
         DateTime now = new DateTime(2014, 5, 6, 7, 9, 8);
 
-        String elapsed = JodaDateTimeHelper.GetElapsedGMTTimeString(date, now, true, false, true);
+        String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
         assertEquals("(59 seconds ago)", elapsed);
     }
 
     @Test
-    public void GetElapsedGMTTimeStringLessThanMinuteInFutureTest()
+    public void getElapsedGMTTimeStringLessThanMinuteInFutureTest()
     {
 
         DateTime now = new DateTime(2014, 5, 6, 7, 8, 9);
         DateTime date = new DateTime(2014, 5, 6, 7, 9, 8);
 
-        String elapsed = JodaDateTimeHelper.GetElapsedGMTTimeString(date, now, true, false, true);
+        String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
         assertEquals("(59 seconds till)", elapsed);
     }
 
     @Test
-    public void GetElapsedGMTTimeStringOneMinuteTest()
+    public void getElapsedGMTTimeStringOneMinuteTest()
     {
 
         DateTime date = new DateTime(2014, 5, 6, 7, 8, 9);
         DateTime now = new DateTime(2014, 5, 6, 7, 9, 9);
 
-        String elapsed = JodaDateTimeHelper.GetElapsedGMTTimeString(date, now, true, false, true);
+        String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
         assertEquals("(1 minute ago)", elapsed);
     }
 
     @Test
-    public void GetElapsedGMTTimeStringOneMinuteOneSecondTest()
+    public void getElapsedGMTTimeStringOneMinuteOneSecondTest()
     {
 
         DateTime date = new DateTime(2014, 5, 6, 7, 8, 9);
         DateTime now = new DateTime(2014, 5, 6, 7, 9, 10);
 
-        String elapsed = JodaDateTimeHelper.GetElapsedGMTTimeString(date, now, true, false, true);
+        String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
         assertEquals("(1 minute ago)", elapsed);
     }
 
     @Test
-    public void GetElapsedGMTTimeStringOneMinuteFiftyNineSecondsTest()
+    public void getElapsedGMTTimeStringOneMinuteFiftyNineSecondsTest()
     {
 
         DateTime date = new DateTime(2014, 5, 6, 7, 8, 9);
         DateTime now = new DateTime(2014, 5, 6, 7, 10, 8);
 
-        String elapsed = JodaDateTimeHelper.GetElapsedGMTTimeString(date, now, true, false, true);
+        String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
         assertEquals("(1 minute ago)", elapsed);
     }
 
     @Test
-    public void GetElapsedGMTTimeStringTwoMinutesTest()
+    public void getElapsedGMTTimeStringTwoMinutesTest()
     {
 
         DateTime date = new DateTime(2014, 5, 6, 7, 8, 9);
         DateTime now = new DateTime(2014, 5, 6, 7, 10, 9);
 
-        String elapsed = JodaDateTimeHelper.GetElapsedGMTTimeString(date, now, true, false, true);
+        String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
         assertEquals("(2 minutes ago)", elapsed);
     }
 
     @Test
-    public void GetElapsedGMTTimeStringTwoMinutesOneSecondTest()
+    public void getElapsedGMTTimeStringTwoMinutesOneSecondTest()
     {
 
         DateTime date = new DateTime(2014, 5, 6, 7, 8, 9);
         DateTime now = new DateTime(2014, 5, 6, 7, 10, 10);
 
-        String elapsed = JodaDateTimeHelper.GetElapsedGMTTimeString(date, now, true, false, true);
+        String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
         assertEquals("(2 minutes ago)", elapsed);
     }
 
     @Test
-    public void GetElapsedGMTTimeStringFiftyNineMinutesFiftyNineSecondsTest()
+    public void getElapsedGMTTimeStringFiftyNineMinutesFiftyNineSecondsTest()
     {
 
         DateTime date = new DateTime(2014, 5, 6, 7, 8, 9);
         DateTime now = new DateTime(2014, 5, 6, 8, 8, 8);
 
-        String elapsed = JodaDateTimeHelper.GetElapsedGMTTimeString(date, now, true, false, true);
+        String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
         assertEquals("(59 minutes ago)", elapsed);
     }
 
     @Test
-    public void GetElapsedGMTTimeStringMinutesInFutureTest()
+    public void getElapsedGMTTimeStringMinutesInFutureTest()
     {
 
         DateTime now = new DateTime(2014, 5, 6, 8, 8, 8);
         DateTime date = new DateTime(2014, 5, 6, 8, 38, 8);
 
-        String elapsed = JodaDateTimeHelper.GetElapsedGMTTimeString(date, now, true, false, true);
+        String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
         assertEquals("(30 minutes till)", elapsed);
     }
 
     @Test
-    public void GetElapsedGMTTimeStringOneHourTest()
+    public void getElapsedGMTTimeStringOneHourTest()
     {
 
         DateTime date = new DateTime(2014, 5, 6, 7, 8, 9);
         DateTime now = new DateTime(2014, 5, 6, 8, 8, 9);
 
-        String elapsed = JodaDateTimeHelper.GetElapsedGMTTimeString(date, now, true, false, true);
+        String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
         assertEquals("(1 hour ago)", elapsed);
     }
 
     @Test
-    public void GetElapsedGMTTimeStringOneHourOneSecondTest()
+    public void getElapsedGMTTimeStringOneHourOneSecondTest()
     {
 
         DateTime date = new DateTime(2014, 5, 6, 7, 8, 9);
         DateTime now = new DateTime(2014, 5, 6, 8, 8, 10);
 
-        String elapsed = JodaDateTimeHelper.GetElapsedGMTTimeString(date, now, true, false, true);
+        String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
         assertEquals("(1 hour ago)", elapsed);
     }
 
     @Test
-    public void GetElapsedGMTTimeStringOneHourThirtyMinutesTest()
+    public void getElapsedGMTTimeStringOneHourThirtyMinutesTest()
     {
 
         DateTime date = new DateTime(2014, 5, 6, 7, 8, 9);
         DateTime now = new DateTime(2014, 5, 6, 8, 38, 8);
 
-        String elapsed = JodaDateTimeHelper.GetElapsedGMTTimeString(date, now, true, false, true);
+        String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
         assertEquals("(1 hour ago)", elapsed);
     }
 
     @Test
-    public void GetElapsedGMTTimeStringOneHourFiftyNineMinutesFiftyNineSecondsTest()
+    public void getElapsedGMTTimeStringOneHourFiftyNineMinutesFiftyNineSecondsTest()
     {
 
         DateTime date = new DateTime(2014, 5, 6, 6, 8, 9);
         DateTime now = new DateTime(2014, 5, 6, 8, 8, 8);
 
-        String elapsed = JodaDateTimeHelper.GetElapsedGMTTimeString(date, now, true, false, true);
+        String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
         assertEquals("(1 hour ago)", elapsed);
     }
 
     @Test
-    public void GetElapsedGMTTimeStringOneHourThirtyMinutesInFutureTest()
+    public void getElapsedGMTTimeStringOneHourThirtyMinutesInFutureTest()
     {
 
         DateTime now = new DateTime(2014, 5, 6, 7, 8, 9);
         DateTime date = new DateTime(2014, 5, 6, 8, 38, 9);
 
-        String elapsed = JodaDateTimeHelper.GetElapsedGMTTimeString(date, now, true, false, true);
+        String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
         assertEquals("(1 hour till)", elapsed);
     }
 
     @Test
-    public void GetElapsedGMTTimeStringTwoHoursTest()
+    public void getElapsedGMTTimeStringTwoHoursTest()
     {
 
         DateTime date = new DateTime(2014, 5, 6, 6, 8, 9);
         DateTime now = new DateTime(2014, 5, 6, 8, 8, 9);
 
-        String elapsed = JodaDateTimeHelper.GetElapsedGMTTimeString(date, now, true, false, true);
+        String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
         assertEquals("(2 hours ago)", elapsed);
     }
 
     @Test
-    public void GetElapsedGMTTimeStringTwentyThreeHoursFiftyNineMinutesFiftyNineSecondsTest()
+    public void getElapsedGMTTimeStringTwentyThreeHoursFiftyNineMinutesFiftyNineSecondsTest()
     {
 
         DateTime date = new DateTime(2014, 5, 6, 6, 8, 9);
         DateTime now = new DateTime(2014, 5, 7, 6, 8, 8);
 
-        String elapsed = JodaDateTimeHelper.GetElapsedGMTTimeString(date, now, true, false, true);
+        String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
         assertEquals("(23 hours ago)", elapsed);
     }
 
     @Test
-    public void GetElapsedGMTTimeStringTwentyFourHoursAgoTest()
+    public void getElapsedGMTTimeStringTwentyFourHoursAgoTest()
     {
 
         DateTime date = new DateTime(2014, 5, 6, 6, 8, 9);
         DateTime now = new DateTime(2014, 5, 7, 6, 8, 9);
 
-        String elapsed = JodaDateTimeHelper.GetElapsedGMTTimeString(date, now, true, false, true);
+        String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
         assertEquals("(Yesterday)", elapsed);
     }
 
     @Test
-    public void GetElapsedGMTTimeStringFourtySevenFiftyNineMinutesFiftyNineSecondsAgoTest()
+    public void getElapsedGMTTimeStringFourtySevenFiftyNineMinutesFiftyNineSecondsAgoTest()
     {
 
         DateTime date = new DateTime(2014, 5, 6, 6, 8, 9);
         DateTime now = new DateTime(2014, 5, 8, 6, 8, 8);
 
-        String elapsed = JodaDateTimeHelper.GetElapsedGMTTimeString(date, now, true, false, true);
+        String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
         assertEquals("(Yesterday)", elapsed);
     }
 
     @Test
-    public void GetElapsedGMTTimeStringTomorrowTest()
+    public void getElapsedGMTTimeStringTomorrowTest()
     {
 
         DateTime now = new DateTime(2014, 5, 6, 6, 8, 9);
         DateTime date = new DateTime(2014, 5, 8, 6, 8, 8);
 
-        String elapsed = JodaDateTimeHelper.GetElapsedGMTTimeString(date, now, true, false, true);
+        String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
         assertEquals("(Tomorrow)", elapsed);
     }
 
     @Test
-    public void GetElapsedGMTTimeStringFourtyEightHoursAgoTest()
+    public void getElapsedGMTTimeStringFourtyEightHoursAgoTest()
     {
 
         DateTime date = new DateTime(2014, 5, 6, 6, 8, 9);
         DateTime now = new DateTime(2014, 5, 8, 6, 8, 9);
 
-        String elapsed = JodaDateTimeHelper.GetElapsedGMTTimeString(date, now, true, false, true);
+        String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
         assertEquals("(2 days ago)", elapsed);
     }
 
     @Test
-    public void GetElapsedGMTTimeStringFourtyEightHoursTillTest()
+    public void getElapsedGMTTimeStringFourtyEightHoursTillTest()
     {
 
         DateTime now = new DateTime(2014, 5, 6, 6, 8, 9);
         DateTime date = new DateTime(2014, 5, 8, 6, 8, 9);
 
-        String elapsed = JodaDateTimeHelper.GetElapsedGMTTimeString(date, now, true, false, true);
+        String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
         assertEquals("(2 days till)", elapsed);
     }
 
     @Test
-    public void GetElapsedGMTTimeStringThreeHundredFiftyFourDaysFiftyNineMinutesFiftyNineSecondsAgoTest()
+    public void getElapsedGMTTimeStringThreeHundredFiftyFourDaysFiftyNineMinutesFiftyNineSecondsAgoTest()
     {
 
         DateTime date = new DateTime(2014, 5, 6, 6, 8, 9);
         DateTime now = new DateTime(2015, 5, 6, 6, 8, 8);
 
-        String elapsed = JodaDateTimeHelper.GetElapsedGMTTimeString(date, now, true, false, true);
+        String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
         assertEquals("(364 days ago)", elapsed);
     }
 
     @Test
-    public void GetElapsedGMTTimeStringOneYearAgoTest()
+    public void getElapsedGMTTimeStringOneYearAgoTest()
     {
 
         DateTime date = new DateTime(2014, 5, 6, 6, 8, 9);
         DateTime now = new DateTime(2015, 5, 6, 6, 8, 9);
 
-        String elapsed = JodaDateTimeHelper.GetElapsedGMTTimeString(date, now, true, false, true);
+        String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
         assertEquals("(1 year ago)", elapsed);
     }
 
     @Test
-    public void GetElapsedGMTTimeStringOneYearThreeHundredFiftyFourDaysFiftyNineMinuesFiftyNineSecondsAgoTest()
+    public void getElapsedGMTTimeStringOneYearThreeHundredFiftyFourDaysFiftyNineMinuesFiftyNineSecondsAgoTest()
     {
 
         DateTime date = new DateTime(2014, 5, 6, 6, 8, 9);
         DateTime now = new DateTime(2016, 5, 5, 6, 8, 8);
 
-        String elapsed = JodaDateTimeHelper.GetElapsedGMTTimeString(date, now, true, false, true);
+        String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
         assertEquals("(1 year ago)", elapsed);
     }
 
     @Test
-    public void GetElapsedGMTTimeStringTwoYearsAgoTest()
+    public void getElapsedGMTTimeStringTwoYearsAgoTest()
     {
 
         DateTime date = new DateTime(2014, 5, 6, 6, 8, 9);
         DateTime now = new DateTime(2016, 5, 5, 6, 8, 9);
 
-        String elapsed = JodaDateTimeHelper.GetElapsedGMTTimeString(date, now, true, false, true);
+        String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
         assertEquals("(2 years ago)", elapsed);
     }
 
     @Test
-    public void GetElapsedGMTTimeStringOneYearTillTest()
+    public void getElapsedGMTTimeStringOneYearTillTest()
     {
 
         DateTime now = new DateTime(2014, 5, 6, 6, 8, 9);
         DateTime date = new DateTime(2015, 5, 6, 6, 8, 9);
 
-        String elapsed = JodaDateTimeHelper.GetElapsedGMTTimeString(date, now, true, false, true);
+        String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
         assertEquals("(1 year till)", elapsed);
     }
 
     @Test
-    public void GetElapsedGMTTimeStringWithoutParenthesisTest()
+    public void getElapsedGMTTimeStringWithoutParenthesisTest()
     {
 
         DateTime now = new DateTime(2014, 5, 6, 6, 8, 9);
         DateTime date = new DateTime(2015, 5, 6, 6, 8, 9);
 
-        String elapsed = JodaDateTimeHelper.GetElapsedGMTTimeString(date, now, false, false, true);
+        String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, false, false, true);
 
         assertEquals("1 year till", elapsed);
     }
 
     @Test
-    public void GetElapsedGMTTimeStringWithDateTimeTest()
+    public void getElapsedGMTTimeStringWithDateTimeTest()
     {
 
         DateTime date = new DateTime(2014, 5, 6, 6, 8, 9, DateTimeZone.UTC);
         DateTime now = new DateTime(2016, 5, 6, 6, 7, 9, DateTimeZone.UTC);
 
-        String elapsed = JodaDateTimeHelper.GetElapsedGMTTimeString(date, now, true, true, false);
+        String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, true, false);
 
         assertEquals("2014-05-06 06:08:09Z (2 years ago)", elapsed);
     }
 
     @Test
-    public void GetElapsedGMTTimeStringWithDateTimeNotUTCTest()
+    public void getElapsedGMTTimeStringWithDateTimeNotUTCTest()
     {
 
         DateTime date = new DateTime(2014, 5, 6, 6, 8, 9);
         DateTime now = new DateTime(2016, 5, 6, 6, 7, 9);
 
-        String elapsed = JodaDateTimeHelper.GetElapsedGMTTimeString(date, now, true, true, false);
+        String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, true, false);
 
         String offset = date.toString("ZZ");
         assertEquals("2014-05-06 06:08:09" + offset + " (2 years ago)", elapsed);
     }
 
     @Test
-    public void GetElapsedGMTTimeStringWithDateOnlyTest()
+    public void getElapsedGMTTimeStringWithDateOnlyTest()
     {
 
         DateTime date = new DateTime(2014, 5, 6, 6, 8, 9, DateTimeZone.UTC);
         DateTime now = new DateTime(2016, 5, 6, 6, 7, 9, DateTimeZone.UTC);
 
-        String elapsed = JodaDateTimeHelper.GetElapsedGMTTimeString(date, now, true, true, true);
+        String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, true, true);
 
         assertEquals("2014-05-06 (2 years ago)", elapsed);
     }
 
     @Test
-    public void GetElapsedGMTTimeStringAllOffTest()
+    public void getElapsedGMTTimeStringAllOffTest()
     {
 
         DateTime date = new DateTime(2014, 5, 6, 6, 8, 9, DateTimeZone.UTC);
         DateTime now = new DateTime(2016, 5, 6, 6, 7, 9, DateTimeZone.UTC);
 
-        String elapsed = JodaDateTimeHelper.GetElapsedGMTTimeString(date, now, false, false, false);
+        String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, false, false, false);
 
         assertEquals("2 years ago", elapsed);
     }
 
     @Test
-    public void GetElapsedGMTTimeStringTimeZoneTest()
+    public void getElapsedGMTTimeStringTimeZoneTest()
     {
 
         DateTime date = new DateTime(2014, 5, 6, 6, 8, 9, DateTimeZone.forOffsetHours(-4));
         DateTime now = new DateTime(2016, 5, 6, 6, 7, 9, DateTimeZone.UTC);
 
-        String elapsed = JodaDateTimeHelper.GetElapsedGMTTimeString(date, now, true, true, false);
+        String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, true, false);
 
         assertEquals("2014-05-06 06:08:09-04:00 (2 years ago)", elapsed);
     }
 
     @Test
-    public void GetElapsedGMTTimeStringFourHoursTillTimeZoneTest()
+    public void getElapsedGMTTimeStringFourHoursTillTimeZoneTest()
     {
 
         DateTime date = new DateTime(2014, 5, 6, 6, 8, 9, DateTimeZone.forOffsetHours(-4));
         DateTime now = new DateTime(2014, 5, 6, 6, 8, 9, DateTimeZone.UTC);
 
-        String elapsed = JodaDateTimeHelper.GetElapsedGMTTimeString(date, now, true, true, false);
+        String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, true, false);
 
         assertEquals("2014-05-06 06:08:09-04:00 (4 hours till)", elapsed);
     }
 
     @Test
-    public void GetElapsedGMTTimeStringThreeHoursFiftyNineSecondsTillTimeZoneTest()
+    public void getElapsedGMTTimeStringThreeHoursFiftyNineSecondsTillTimeZoneTest()
     {
 
         DateTime date = new DateTime(2014, 5, 6, 6, 8, 9, DateTimeZone.forOffsetHours(-4));
         DateTime now = new DateTime(2014, 5, 6, 6, 8, 10, DateTimeZone.UTC);
 
-        String elapsed = JodaDateTimeHelper.GetElapsedGMTTimeString(date, now, true, true, false);
+        String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, true, false);
 
         assertEquals("2014-05-06 06:08:09-04:00 (3 hours till)", elapsed);
     }
 
     @Test
-    public void ToXmlDateTimeUTCTest()
+    public void toXmlDateTimeUTCTest()
     {
 
         DateTime date = new DateTime(2014, 5, 6, 6, 8, 9, DateTimeZone.forOffsetHours(-4));
 
-        String utcTime = JodaDateTimeHelper.ToXmlDateTimeUTC(date);
+        String utcTime = JodaDateTimeHelper.toXmlDateTimeUTC(date);
 
         assertEquals("2014-05-06T10:08:09.000Z", utcTime);
 
     }
 
-    @Test(expected = NullArgumentException.class)
-    public void ToXmlDateTimeUTCNullDateTest()
+    @Test
+    public void toXmlDateTimeUTCNullDateTest()
     {
+        thrown.expect(NullArgumentException.class);
+        thrown.expectMessage("forDate");
+        
         @SuppressWarnings("unused")
-        String utcTime = JodaDateTimeHelper.ToXmlDateTimeUTC(null);
+        String utcTime = JodaDateTimeHelper.toXmlDateTimeUTC(null);
     }
 
     @Test
-    public void FromXmlDateTimeUTCTest()
+    public void fromXmlDateTimeUTCTest()
     {
 
         DateTime date = new DateTime(2014, 5, 6, 6, 8, 9, DateTimeZone.forOffsetHours(-4));
 
-        String utcTime = JodaDateTimeHelper.ToXmlDateTimeUTC(date);
+        String utcTime = JodaDateTimeHelper.toXmlDateTimeUTC(date);
 
-        DateTime fromDate = JodaDateTimeHelper.FromXmlDateTimeUTC(utcTime);
+        DateTime fromDate = JodaDateTimeHelper.fromXmlDateTimeUTC(utcTime);
 
         assertEquals(2014, fromDate.getYear());
         assertEquals(5, fromDate.getMonthOfYear());
@@ -622,47 +639,50 @@ public class JodaDateTimeHelperTest {
 
     }
 
-    @Test(expected = NullArgumentException.class)
-    public void FromXmlDateTimeUTCNullStringTest()
+    @Test
+    public void fromXmlDateTimeUTCNullStringTest()
     {
+        thrown.expect(NullArgumentException.class);
+        thrown.expectMessage("xmlDate");
+  
         @SuppressWarnings("unused")
-        DateTime fromDate = JodaDateTimeHelper.FromXmlDateTimeUTC(null);
+        DateTime fromDate = JodaDateTimeHelper.fromXmlDateTimeUTC(null);
     }
 
     @Test
-    public void FromXmlDateTimeUTCEmptyStringTest()
+    public void fromXmlDateTimeUTCEmptyStringTest()
     {
 
-        DateTime fromDate = JodaDateTimeHelper.FromXmlDateTimeUTC("");
+        DateTime fromDate = JodaDateTimeHelper.fromXmlDateTimeUTC("");
 
         assertNull(fromDate);
     }
 
     @Test
-    public void FromXmlDateTimeUTCWhiteSpaceStringTest()
+    public void fromXmlDateTimeUTCWhiteSpaceStringTest()
     {
 
-        DateTime fromDate = JodaDateTimeHelper.FromXmlDateTimeUTC(" ");
+        DateTime fromDate = JodaDateTimeHelper.fromXmlDateTimeUTC(" ");
 
         assertNull(fromDate);
     }
 
     @Test
-    public void FromXmlDateTimeUTCBadFormatTest()
+    public void fromXmlDateTimeUTCBadFormatTest()
     {
 
-        DateTime fromDate = JodaDateTimeHelper.FromXmlDateTimeUTC("2014-05-06 10:08:09");
+        DateTime fromDate = JodaDateTimeHelper.fromXmlDateTimeUTC("2014-05-06 10:08:09");
 
         assertNull(fromDate);
     }
 
     @Test
-    public void FromXmlJodaDateTimeUtcNanoTest()
+    public void fromXmlJodaDateTimeUtcNanoTest()
     {
 
         String dateXml = "2014-05-02T14:33:51.8595755Z";
 
-        DateTime utcDate = JodaDateTimeHelper.FromXmlDateTimeUTC(dateXml);
+        DateTime utcDate = JodaDateTimeHelper.fromXmlDateTimeUTC(dateXml);
 
         assertEquals(2014, utcDate.getYear());
         assertEquals(5, utcDate.getMonthOfYear());
@@ -675,12 +695,12 @@ public class JodaDateTimeHelperTest {
     }
 
     @Test
-    public void FromXmlJodaDateTimeUtcMillisecondTest()
+    public void fromXmlJodaDateTimeUtcMillisecondTest()
     {
 
         String dateXml = "2014-05-02T14:33:51.859Z";
 
-        DateTime utcDate = JodaDateTimeHelper.FromXmlDateTimeUTC(dateXml);
+        DateTime utcDate = JodaDateTimeHelper.fromXmlDateTimeUTC(dateXml);
 
         assertEquals(2014, utcDate.getYear());
         assertEquals(5, utcDate.getMonthOfYear());
@@ -693,27 +713,27 @@ public class JodaDateTimeHelperTest {
     }
 
     @Test
-    public void ToXmlJodaDateTimeUtcNanoTest()
+    public void toXmlJodaDateTimeUtcNanoTest()
     {
 
         String dateXml = "2014-05-02T14:33:51.8595755Z";
 
-        DateTime utcDate = JodaDateTimeHelper.FromXmlDateTimeUTC(dateXml);
+        DateTime utcDate = JodaDateTimeHelper.fromXmlDateTimeUTC(dateXml);
 
-        String toXmlDate = JodaDateTimeHelper.ToXmlDateTimeUTC(utcDate);
+        String toXmlDate = JodaDateTimeHelper.toXmlDateTimeUTC(utcDate);
 
         assertEquals("2014-05-02T14:33:51.859Z", toXmlDate);
     }
 
     @Test
-    public void ToXmlJodaDateTimeUtcMillisecondTest()
+    public void toXmlJodaDateTimeUtcMillisecondTest()
     {
 
         String dateXml = "2014-05-02T14:33:51.859Z";
 
-        DateTime utcDate = JodaDateTimeHelper.FromXmlDateTimeUTC(dateXml);
+        DateTime utcDate = JodaDateTimeHelper.fromXmlDateTimeUTC(dateXml);
 
-        String toXmlDate = JodaDateTimeHelper.ToXmlDateTimeUTC(utcDate);
+        String toXmlDate = JodaDateTimeHelper.toXmlDateTimeUTC(utcDate);
 
         assertEquals("2014-05-02T14:33:51.859Z", toXmlDate);
     }

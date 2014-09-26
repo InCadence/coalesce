@@ -7,7 +7,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.apache.commons.io.FilenameUtils;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /*-----------------------------------------------------------------------------'
@@ -33,12 +32,9 @@ public class FileHelperTest {
 
     private static final String _binaryFileStoreBasePath = "C:\\Program Files\\Java\\jre7\\bin\\uploads\\";
 
-    @BeforeClass
-    public static void setUpBeforeClass()
-    {
-    }
-
     /*
+     * @BeforeClass public static void setUpBeforeClass() { }
+     * 
      * @AfterClass public static void tearDownAfterClass() { }
      * 
      * @Before public void setUp() throws Exception { }

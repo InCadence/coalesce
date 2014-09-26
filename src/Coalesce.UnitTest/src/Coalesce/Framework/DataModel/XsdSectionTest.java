@@ -583,9 +583,9 @@ public class XsdSectionTest {
 
         XsdSection liveSection = entity.getSection(CoalesceTypeInstances.TEST_MISSION_LIVE_SECTION_PATH);
 
-        assertEquals(JodaDateTimeHelper.FromXmlDateTimeUTC("2014-05-02T14:33:51.851575Z"), liveSection.getDateCreated());
+        assertEquals(JodaDateTimeHelper.fromXmlDateTimeUTC("2014-05-02T14:33:51.851575Z"), liveSection.getDateCreated());
 
-        DateTime now = JodaDateTimeHelper.NowInUtc();
+        DateTime now = JodaDateTimeHelper.nowInUtc();
         liveSection.setDateCreated(now);
 
         assertEquals(now, liveSection.getDateCreated());
@@ -599,9 +599,9 @@ public class XsdSectionTest {
 
         XsdSection liveSection = entity.getSection(CoalesceTypeInstances.TEST_MISSION_LIVE_SECTION_PATH);
 
-        assertEquals(JodaDateTimeHelper.FromXmlDateTimeUTC("2014-05-02T14:33:59.1309914Z"), liveSection.getLastModified());
+        assertEquals(JodaDateTimeHelper.fromXmlDateTimeUTC("2014-05-02T14:33:59.1309914Z"), liveSection.getLastModified());
 
-        DateTime now = JodaDateTimeHelper.NowInUtc();
+        DateTime now = JodaDateTimeHelper.nowInUtc();
         liveSection.setLastModified(now);
 
         assertEquals(now, liveSection.getLastModified());

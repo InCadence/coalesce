@@ -513,7 +513,7 @@ public class XsdField extends XsdFieldBase {
             if (getDataType() == ECoalesceFieldDataTypes.DateTimeType && !StringHelper.IsNullOrEmpty(value))
             {
 
-                DateTime valueDate = JodaDateTimeHelper.FromXmlDateTimeUTC(value);
+                DateTime valueDate = JodaDateTimeHelper.fromXmlDateTimeUTC(value);
 
                 setTypedValue(valueDate);
 
@@ -528,7 +528,7 @@ public class XsdField extends XsdFieldBase {
             setModifiedByIP(ip);
 
             // Set LastModified
-            DateTime utcNow = JodaDateTimeHelper.NowInUtc().plusSeconds(1);
+            DateTime utcNow = JodaDateTimeHelper.nowInUtc().plusSeconds(1);
             if (utcNow != null) setLastModified(utcNow);
 
         }
@@ -590,7 +590,7 @@ public class XsdField extends XsdFieldBase {
             }
 
             // Set LastModified
-            DateTime utcNow = JodaDateTimeHelper.NowInUtc();
+            DateTime utcNow = JodaDateTimeHelper.nowInUtc();
             if (utcNow != null) setLastModified(utcNow);
 
         }
@@ -606,8 +606,8 @@ public class XsdField extends XsdFieldBase {
     {
         Map<QName, String> map = new HashMap<QName, String>();
         map.put(new QName("key"), _entityField.getKey());
-        map.put(new QName("datecreated"), JodaDateTimeHelper.ToXmlDateTimeUTC(_entityField.getDatecreated()));
-        map.put(new QName("lastmodified"), JodaDateTimeHelper.ToXmlDateTimeUTC(_entityField.getLastmodified()));
+        map.put(new QName("datecreated"), JodaDateTimeHelper.toXmlDateTimeUTC(_entityField.getDatecreated()));
+        map.put(new QName("lastmodified"), JodaDateTimeHelper.toXmlDateTimeUTC(_entityField.getLastmodified()));
         map.put(new QName("name"), _entityField.getName());
         map.put(new QName("datatype"), _entityField.getDatatype());
         map.put(new QName("classificationmarking"), _entityField.getClassificationmarking());
@@ -625,10 +625,10 @@ public class XsdField extends XsdFieldBase {
             _entityField.setKey(value);
             return true;
         case "datecreated":
-            _entityField.setDatecreated(JodaDateTimeHelper.FromXmlDateTimeUTC(value));
+            _entityField.setDatecreated(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
             return true;
         case "lastmodified":
-            _entityField.setLastmodified(JodaDateTimeHelper.FromXmlDateTimeUTC(value));
+            _entityField.setLastmodified(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
             return true;
         case "name":
             _entityField.setName(value);

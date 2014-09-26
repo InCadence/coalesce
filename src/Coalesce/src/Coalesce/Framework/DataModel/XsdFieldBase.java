@@ -251,7 +251,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
             throw new ClassCastException("Type mismatch");
         }
 
-        setValue(JodaDateTimeHelper.ToXmlDateTimeUTC(value));
+        setValue(JodaDateTimeHelper.toXmlDateTimeUTC(value));
     }
 
     public void setTypedValue(boolean value)
@@ -428,7 +428,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
             throw new ClassCastException("Type mismatch");
         }
 
-        DateTime value = JodaDateTimeHelper.FromXmlDateTimeUTC(getValue());
+        DateTime value = JodaDateTimeHelper.fromXmlDateTimeUTC(getValue());
 
         if (value == null) return null;
 

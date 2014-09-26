@@ -310,8 +310,8 @@ public class XsdFieldDefinition extends XsdDataObject implements ICoalesceFieldD
     {
         Map<QName, String> map = new HashMap<QName, String>();
         map.put(new QName("key"), _entityFieldDefinition.getKey());
-        map.put(new QName("datecreated"), JodaDateTimeHelper.ToXmlDateTimeUTC(_entityFieldDefinition.getDatecreated()));
-        map.put(new QName("lastmodified"), JodaDateTimeHelper.ToXmlDateTimeUTC(_entityFieldDefinition.getLastmodified()));
+        map.put(new QName("datecreated"), JodaDateTimeHelper.toXmlDateTimeUTC(_entityFieldDefinition.getDatecreated()));
+        map.put(new QName("lastmodified"), JodaDateTimeHelper.toXmlDateTimeUTC(_entityFieldDefinition.getLastmodified()));
         map.put(new QName("status"), _entityFieldDefinition.getStatus());
         map.put(new QName("name"), getStringElement(_entityFieldDefinition.getName()));
         map.put(new QName("defaultclassificationmarking"),
@@ -330,10 +330,10 @@ public class XsdFieldDefinition extends XsdDataObject implements ICoalesceFieldD
             _entityFieldDefinition.setKey(value);
             return true;
         case "datecreated":
-            _entityFieldDefinition.setDatecreated(JodaDateTimeHelper.FromXmlDateTimeUTC(value));
+            _entityFieldDefinition.setDatecreated(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
             return true;
         case "lastmodified":
-            _entityFieldDefinition.setLastmodified(JodaDateTimeHelper.FromXmlDateTimeUTC(value));
+            _entityFieldDefinition.setLastmodified(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
             return true;
         case "status":
             _entityFieldDefinition.setStatus(value);

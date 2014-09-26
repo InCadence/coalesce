@@ -424,7 +424,7 @@ public class XsdRecordTest {
         XsdRecord newRecord = recordset.addNew();
         newRecord.getFieldByName("MissionIndicatorNumberBASE10").setTypedValue(CoalesceTypeInstances.TEST_MISSION_BASE64_VALUE);
         newRecord.getFieldByName("Boolean").setTypedValue(true);
-        newRecord.getFieldByName("MissionStartDateTime").setTypedValue(JodaDateTimeHelper.FromXmlDateTimeUTC(CoalesceTypeInstances.TEST_MISSION_START_TIME_VALUE));
+        newRecord.getFieldByName("MissionStartDateTime").setTypedValue(JodaDateTimeHelper.fromXmlDateTimeUTC(CoalesceTypeInstances.TEST_MISSION_START_TIME_VALUE));
 
         String byteString = "Testing String";
         byte[] dataBytes = byteString.getBytes("US-ASCII");
@@ -433,7 +433,7 @@ public class XsdRecordTest {
         assertEquals(CoalesceTypeInstances.TEST_MISSION_BASE64_VALUE,
                      newRecord.getIntegerFieldValue("MissionIndicatorNumberBASE10"));
         assertEquals(true, newRecord.getBooleanFieldValue("Boolean"));
-        assertEquals(JodaDateTimeHelper.FromXmlDateTimeUTC(CoalesceTypeInstances.TEST_MISSION_START_TIME_VALUE),
+        assertEquals(JodaDateTimeHelper.fromXmlDateTimeUTC(CoalesceTypeInstances.TEST_MISSION_START_TIME_VALUE),
                      newRecord.getDateTimeFieldValue("MissionStartDateTime"));
         assertArrayEquals(dataBytes, newRecord.getBinaryFieldValue("Binary"));
 
@@ -496,7 +496,7 @@ public class XsdRecordTest {
         assertEquals(3333, newRecord.getFieldValueAsInteger("Invalid", 3333));
         assertEquals(true, newRecord.getFieldValueAsBoolean("Invalid", true));
 
-        DateTime testDate = JodaDateTimeHelper.ConvertyyyyMMddDateStringToDateTime("19800122");
+        DateTime testDate = JodaDateTimeHelper.convertyyyyMMddDateStringToDateTime("19800122");
         assertEquals(testDate, newRecord.getFieldValueAsDate("MissionEndDateTime", testDate));
         assertEquals(testDate, newRecord.getFieldValueAsDate("Invalid", testDate));
 
@@ -507,7 +507,7 @@ public class XsdRecordTest {
         newRecord.setFieldValue("MissionIndicatorNumberBASE10", CoalesceTypeInstances.TEST_MISSION_BASE64_VALUE);
         newRecord.setFieldValue("Boolean", true);
         newRecord.setFieldValue("MissionStartDateTime",
-                                JodaDateTimeHelper.FromXmlDateTimeUTC(CoalesceTypeInstances.TEST_MISSION_START_TIME_VALUE));
+                                JodaDateTimeHelper.fromXmlDateTimeUTC(CoalesceTypeInstances.TEST_MISSION_START_TIME_VALUE));
 
         String byteString = "Testing String";
         byte[] dataBytes = byteString.getBytes("US-ASCII");
@@ -516,7 +516,7 @@ public class XsdRecordTest {
         assertEquals(CoalesceTypeInstances.TEST_MISSION_BASE64_VALUE,
                      newRecord.getFieldValueAsInteger("MissionIndicatorNumberBASE10", 5555));
         assertEquals(true, newRecord.getFieldValueAsBoolean("Boolean", false));
-        assertEquals(JodaDateTimeHelper.FromXmlDateTimeUTC(CoalesceTypeInstances.TEST_MISSION_START_TIME_VALUE),
+        assertEquals(JodaDateTimeHelper.fromXmlDateTimeUTC(CoalesceTypeInstances.TEST_MISSION_START_TIME_VALUE),
                      newRecord.getFieldValueAsDate("MissionStartDateTime", testDate));
 
         assertArrayEquals(dataBytes, newRecord.getFieldValueAsByteArray("Binary", defaultDataBytes));
@@ -618,9 +618,9 @@ public class XsdRecordTest {
     {
         XsdRecord record = getMissionRecord();
 
-        assertEquals(JodaDateTimeHelper.FromXmlDateTimeUTC("2014-05-02T14:33:51.8595755Z"), record.getDateCreated());
+        assertEquals(JodaDateTimeHelper.fromXmlDateTimeUTC("2014-05-02T14:33:51.8595755Z"), record.getDateCreated());
 
-        DateTime now = JodaDateTimeHelper.NowInUtc();
+        DateTime now = JodaDateTimeHelper.nowInUtc();
         record.setDateCreated(now);
 
         assertEquals(now, record.getDateCreated());
@@ -632,9 +632,9 @@ public class XsdRecordTest {
     {
         XsdRecord record = getMissionRecord();
 
-        assertEquals(JodaDateTimeHelper.FromXmlDateTimeUTC("2014-05-02T14:33:59.193995Z"), record.getLastModified());
+        assertEquals(JodaDateTimeHelper.fromXmlDateTimeUTC("2014-05-02T14:33:59.193995Z"), record.getLastModified());
 
-        DateTime now = JodaDateTimeHelper.NowInUtc();
+        DateTime now = JodaDateTimeHelper.nowInUtc();
         record.setLastModified(now);
 
         assertEquals(now, record.getLastModified());

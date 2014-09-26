@@ -319,7 +319,7 @@ public class EntityTest {
         assertNull(newRecord.getKey());
         assertTrue(newRecord.getOtherAttributes().isEmpty());
 
-        DateTime now = JodaDateTimeHelper.NowInUtc();
+        DateTime now = JodaDateTimeHelper.nowInUtc();
         DateTime yesterday = now.minusDays(1);
         String guid = GUIDHelper.getGuidString(UUID.randomUUID());
         QName qName = new QName("uri:thing", "lc", "prf");

@@ -434,9 +434,9 @@ public class XsdRecordSetTest {
 
         XsdRecordset recordset = (XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
-        assertEquals(JodaDateTimeHelper.FromXmlDateTimeUTC("2014-05-02T14:33:51.8525751Z"), recordset.getDateCreated());
+        assertEquals(JodaDateTimeHelper.fromXmlDateTimeUTC("2014-05-02T14:33:51.8525751Z"), recordset.getDateCreated());
 
-        DateTime now = JodaDateTimeHelper.NowInUtc();
+        DateTime now = JodaDateTimeHelper.nowInUtc();
         recordset.setDateCreated(now);
 
         assertEquals(now, recordset.getDateCreated());
@@ -450,9 +450,9 @@ public class XsdRecordSetTest {
 
         XsdRecordset recordset = (XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
-        assertEquals(JodaDateTimeHelper.FromXmlDateTimeUTC("2014-05-02T14:33:59.193995Z"), recordset.getLastModified());
+        assertEquals(JodaDateTimeHelper.fromXmlDateTimeUTC("2014-05-02T14:33:59.193995Z"), recordset.getLastModified());
 
-        DateTime now = JodaDateTimeHelper.NowInUtc();
+        DateTime now = JodaDateTimeHelper.nowInUtc();
         recordset.setLastModified(now);
 
         assertEquals(now, recordset.getLastModified());

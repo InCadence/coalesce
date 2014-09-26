@@ -193,8 +193,8 @@ public class SQLServerPersistor extends CoalescePersisterBase {
                                          template.getSource(),
                                          template.getVersion(),
                                          template.toXml().replace("UTF-8", "UTF-16"),
-                                         JodaDateTimeHelper.toMySQLDateTime(JodaDateTimeHelper.NowInUtc()),
-                                         JodaDateTimeHelper.toMySQLDateTime(JodaDateTimeHelper.NowInUtc()));
+                                         JodaDateTimeHelper.toMySQLDateTime(JodaDateTimeHelper.nowInUtc()),
+                                         JodaDateTimeHelper.toMySQLDateTime(JodaDateTimeHelper.nowInUtc()));
         }
         catch (SQLException e)
         {

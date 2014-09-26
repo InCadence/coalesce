@@ -570,10 +570,10 @@ public class XsdRecord extends XsdDataObject {
             _entityRecord.setKey(value);
             return true;
         case "datecreated":
-            _entityRecord.setDatecreated(JodaDateTimeHelper.FromXmlDateTimeUTC(value));
+            _entityRecord.setDatecreated(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
             return true;
         case "lastmodified":
-            _entityRecord.setLastmodified(JodaDateTimeHelper.FromXmlDateTimeUTC(value));
+            _entityRecord.setLastmodified(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
             return true;
         case "status":
             _entityRecord.setStatus(value);
@@ -592,8 +592,8 @@ public class XsdRecord extends XsdDataObject {
     {
         Map<QName, String> map = new HashMap<QName, String>();
         map.put(new QName("key"), _entityRecord.getKey());
-        map.put(new QName("datecreated"), JodaDateTimeHelper.ToXmlDateTimeUTC(_entityRecord.getDatecreated()));
-        map.put(new QName("lastmodified"), JodaDateTimeHelper.ToXmlDateTimeUTC(_entityRecord.getLastmodified()));
+        map.put(new QName("datecreated"), JodaDateTimeHelper.toXmlDateTimeUTC(_entityRecord.getDatecreated()));
+        map.put(new QName("lastmodified"), JodaDateTimeHelper.toXmlDateTimeUTC(_entityRecord.getLastmodified()));
         map.put(new QName("status"), _entityRecord.getStatus());
         map.put(new QName("name"), _entityRecord.getName());
         return map;

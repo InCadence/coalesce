@@ -322,13 +322,13 @@ public class XsdFieldDefinitionTest {
     {
         XsdRecordset recordSet = createTestRecordset();
 
-        DateTime now = JodaDateTimeHelper.NowInUtc();
+        DateTime now = JodaDateTimeHelper.nowInUtc();
         XsdFieldDefinition newFieldDef = XsdFieldDefinition.create(recordSet,
                                                                    "Field Def Name",
                                                                    ECoalesceFieldDataTypes.DateTimeType,
                                                                    "DateTime Def",
                                                                    "(TS)",
-                                                                   JodaDateTimeHelper.ToXmlDateTimeUTC(now),
+                                                                   JodaDateTimeHelper.toXmlDateTimeUTC(now),
                                                                    true);
 
         XsdDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
@@ -340,7 +340,7 @@ public class XsdFieldDefinitionTest {
                               ECoalesceFieldDataTypes.DateTimeType,
                               "DateTime Def",
                               XsdFieldDefinitionTest.TS_MARKING,
-                              JodaDateTimeHelper.ToXmlDateTimeUTC(now),
+                              JodaDateTimeHelper.toXmlDateTimeUTC(now),
                               true,
                               (XsdFieldDefinition) xdo);
 
@@ -476,9 +476,9 @@ public class XsdFieldDefinitionTest {
     {
         XsdFieldDefinition fieldDefinition = getFieldDefinitionFromXml(CoalesceTypeInstances.TEST_MISSION);
 
-        assertEquals(JodaDateTimeHelper.FromXmlDateTimeUTC("2014-05-02T14:33:51.8525751Z"), fieldDefinition.getDateCreated());
+        assertEquals(JodaDateTimeHelper.fromXmlDateTimeUTC("2014-05-02T14:33:51.8525751Z"), fieldDefinition.getDateCreated());
 
-        DateTime now = JodaDateTimeHelper.NowInUtc();
+        DateTime now = JodaDateTimeHelper.nowInUtc();
         fieldDefinition.setDateCreated(now);
 
         assertEquals(now, fieldDefinition.getDateCreated());
@@ -490,10 +490,10 @@ public class XsdFieldDefinitionTest {
     {
         XsdFieldDefinition fieldDefinition = getFieldDefinitionFromXml(CoalesceTypeInstances.TEST_MISSION);
 
-        assertEquals(JodaDateTimeHelper.FromXmlDateTimeUTC("2014-05-02T14:33:51.8525751Z"),
+        assertEquals(JodaDateTimeHelper.fromXmlDateTimeUTC("2014-05-02T14:33:51.8525751Z"),
                      fieldDefinition.getLastModified());
 
-        DateTime now = JodaDateTimeHelper.NowInUtc();
+        DateTime now = JodaDateTimeHelper.nowInUtc();
         fieldDefinition.setLastModified(now);
 
         assertEquals(now, fieldDefinition.getLastModified());

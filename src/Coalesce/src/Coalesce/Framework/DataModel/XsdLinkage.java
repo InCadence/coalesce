@@ -337,7 +337,7 @@ public class XsdLinkage extends XsdDataObject implements ICoalesceLinkage {
         setModifiedBy(ModifiedBy);
         setInputLang(InputLang);
 
-        DateTime utcNow = JodaDateTimeHelper.NowInUtc();
+        DateTime utcNow = JodaDateTimeHelper.nowInUtc();
         setLastModified(utcNow);
 
         setStatus(ECoalesceDataObjectStatus.ACTIVE);
@@ -354,7 +354,7 @@ public class XsdLinkage extends XsdDataObject implements ICoalesceLinkage {
 
     private void setChanged()
     {
-        DateTime utcNow = JodaDateTimeHelper.NowInUtc();
+        DateTime utcNow = JodaDateTimeHelper.nowInUtc();
         setLastModified(utcNow);
     }
 
@@ -376,10 +376,10 @@ public class XsdLinkage extends XsdDataObject implements ICoalesceLinkage {
             _entityLinkage.setKey(value);
             return true;
         case "datecreated":
-            _entityLinkage.setDatecreated(JodaDateTimeHelper.FromXmlDateTimeUTC(value));
+            _entityLinkage.setDatecreated(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
             return true;
         case "lastmodified":
-            _entityLinkage.setLastmodified(JodaDateTimeHelper.FromXmlDateTimeUTC(value));
+            _entityLinkage.setLastmodified(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
             return true;
         case "name":
             _entityLinkage.setName(value);
@@ -434,8 +434,8 @@ public class XsdLinkage extends XsdDataObject implements ICoalesceLinkage {
     {
         Map<QName, String> map = new HashMap<QName, String>();
         map.put(new QName("key"), _entityLinkage.getKey());
-        map.put(new QName("datecreated"), JodaDateTimeHelper.ToXmlDateTimeUTC(_entityLinkage.getDatecreated()));
-        map.put(new QName("lastmodified"), JodaDateTimeHelper.ToXmlDateTimeUTC(_entityLinkage.getLastmodified()));
+        map.put(new QName("datecreated"), JodaDateTimeHelper.toXmlDateTimeUTC(_entityLinkage.getDatecreated()));
+        map.put(new QName("lastmodified"), JodaDateTimeHelper.toXmlDateTimeUTC(_entityLinkage.getLastmodified()));
         map.put(new QName("name"), _entityLinkage.getName());
         map.put(new QName("entity1key"), _entityLinkage.getEntity1Key());
         map.put(new QName("entity1name"), _entityLinkage.getEntity1Name());

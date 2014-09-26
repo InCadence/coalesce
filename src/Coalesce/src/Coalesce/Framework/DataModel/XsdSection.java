@@ -321,10 +321,10 @@ public class XsdSection extends XsdDataObject {
             _entitySection.setKey(value);
             return true;
         case "datecreated":
-            _entitySection.setDatecreated(JodaDateTimeHelper.FromXmlDateTimeUTC(value));
+            _entitySection.setDatecreated(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
             return true;
         case "lastmodified":
-            _entitySection.setLastmodified(JodaDateTimeHelper.FromXmlDateTimeUTC(value));
+            _entitySection.setLastmodified(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
             return true;
         case "name":
             _entitySection.setName(value);
@@ -346,8 +346,8 @@ public class XsdSection extends XsdDataObject {
     {
         Map<QName, String> map = new HashMap<QName, String>();
         map.put(new QName("key"), _entitySection.getKey());
-        map.put(new QName("datecreated"), JodaDateTimeHelper.ToXmlDateTimeUTC(_entitySection.getDatecreated()));
-        map.put(new QName("lastmodified"), JodaDateTimeHelper.ToXmlDateTimeUTC(_entitySection.getLastmodified()));
+        map.put(new QName("datecreated"), JodaDateTimeHelper.toXmlDateTimeUTC(_entitySection.getDatecreated()));
+        map.put(new QName("lastmodified"), JodaDateTimeHelper.toXmlDateTimeUTC(_entitySection.getLastmodified()));
         map.put(new QName("name"), _entitySection.getName());
         map.put(new QName("noindex"), _entitySection.getNoindex());
         map.put(new QName("status"), _entitySection.getStatus());

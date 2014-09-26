@@ -214,9 +214,9 @@ public class XsdLinkageSectionTest {
     {
         XsdLinkageSection linkageSection = getMissionLinkageSection();
 
-        assertEquals(JodaDateTimeHelper.FromXmlDateTimeUTC("2014-05-02T14:33:51.851575Z"), linkageSection.getDateCreated());
+        assertEquals(JodaDateTimeHelper.fromXmlDateTimeUTC("2014-05-02T14:33:51.851575Z"), linkageSection.getDateCreated());
 
-        DateTime now = JodaDateTimeHelper.NowInUtc();
+        DateTime now = JodaDateTimeHelper.nowInUtc();
         linkageSection.setDateCreated(now);
 
         assertEquals(now, linkageSection.getDateCreated());
@@ -228,9 +228,9 @@ public class XsdLinkageSectionTest {
     {
         XsdLinkageSection linkageSection = getMissionLinkageSection();
 
-        assertEquals(JodaDateTimeHelper.FromXmlDateTimeUTC("2014-05-20T16:17:13.2293139Z"), linkageSection.getLastModified());
+        assertEquals(JodaDateTimeHelper.fromXmlDateTimeUTC("2014-05-20T16:17:13.2293139Z"), linkageSection.getLastModified());
 
-        DateTime now = JodaDateTimeHelper.NowInUtc();
+        DateTime now = JodaDateTimeHelper.nowInUtc();
         linkageSection.setLastModified(now);
 
         assertEquals(now, linkageSection.getLastModified());

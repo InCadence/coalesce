@@ -408,7 +408,7 @@ public class XsdEntity extends XsdDataObject {
             _entity.setTitle(value);
 
             // Set LastModified
-            DateTime utcNow = JodaDateTimeHelper.NowInUtc();
+            DateTime utcNow = JodaDateTimeHelper.nowInUtc();
             if (utcNow != null) setLastModified(utcNow);
         }
 
@@ -779,8 +779,8 @@ public class XsdEntity extends XsdDataObject {
         List<Attribute> syncEntityDocAttributes = syncEntity.getAttributes();
 
         // Get Time Stamps
-        DateTime myLastModified = JodaDateTimeHelper.FromXmlDateTimeUTC(myEntityDocAttributes.get(2).getValue());
-        DateTime updateLastModified = JodaDateTimeHelper.FromXmlDateTimeUTC(syncEntityDocAttributes.get(2).getValue());
+        DateTime myLastModified = JodaDateTimeHelper.fromXmlDateTimeUTC(myEntityDocAttributes.get(2).getValue());
+        DateTime updateLastModified = JodaDateTimeHelper.fromXmlDateTimeUTC(syncEntityDocAttributes.get(2).getValue());
 
         // Compare Timestamps
         switch (myLastModified.compareTo(updateLastModified)) {
@@ -989,8 +989,8 @@ public class XsdEntity extends XsdDataObject {
     {
         Map<QName, String> map = new HashMap<QName, String>();
         map.put(new QName("key"), _entity.getKey());
-        map.put(new QName("datecreated"), JodaDateTimeHelper.ToXmlDateTimeUTC(_entity.getDatecreated()));
-        map.put(new QName("lastmodified"), JodaDateTimeHelper.ToXmlDateTimeUTC(_entity.getLastmodified()));
+        map.put(new QName("datecreated"), JodaDateTimeHelper.toXmlDateTimeUTC(_entity.getDatecreated()));
+        map.put(new QName("lastmodified"), JodaDateTimeHelper.toXmlDateTimeUTC(_entity.getLastmodified()));
         map.put(new QName("name"), _entity.getName());
         map.put(new QName("source"), _entity.getSource());
         map.put(new QName("version"), _entity.getVersion());
@@ -1009,10 +1009,10 @@ public class XsdEntity extends XsdDataObject {
             _entity.setKey(value);
             return true;
         case "datecreated":
-            _entity.setDatecreated(JodaDateTimeHelper.FromXmlDateTimeUTC(value));
+            _entity.setDatecreated(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
             return true;
         case "lastmodified":
-            _entity.setLastmodified(JodaDateTimeHelper.FromXmlDateTimeUTC(value));
+            _entity.setLastmodified(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
             return true;
         case "name":
             _entity.setName(value);

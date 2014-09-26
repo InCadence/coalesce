@@ -388,10 +388,10 @@ public class XsdFieldHistory extends XsdFieldBase {
             _entityFieldHistory.setKey(value);
             return true;
         case "datecreated":
-            _entityFieldHistory.setDatecreated(JodaDateTimeHelper.FromXmlDateTimeUTC(value));
+            _entityFieldHistory.setDatecreated(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
             return true;
         case "lastmodified":
-            _entityFieldHistory.setLastmodified(JodaDateTimeHelper.FromXmlDateTimeUTC(value));
+            _entityFieldHistory.setLastmodified(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
             return true;
         case "name":
             _entityFieldHistory.setName(value);
@@ -425,8 +425,8 @@ public class XsdFieldHistory extends XsdFieldBase {
     {
         Map<QName, String> map = new HashMap<QName, String>();
         map.put(new QName("key"), _entityFieldHistory.getKey());
-        map.put(new QName("datecreated"), JodaDateTimeHelper.ToXmlDateTimeUTC(_entityFieldHistory.getDatecreated()));
-        map.put(new QName("lastmodified"), JodaDateTimeHelper.ToXmlDateTimeUTC(_entityFieldHistory.getLastmodified()));
+        map.put(new QName("datecreated"), JodaDateTimeHelper.toXmlDateTimeUTC(_entityFieldHistory.getDatecreated()));
+        map.put(new QName("lastmodified"), JodaDateTimeHelper.toXmlDateTimeUTC(_entityFieldHistory.getLastmodified()));
         map.put(new QName("name"), _entityFieldHistory.getName());
         map.put(new QName("datatype"), _entityFieldHistory.getDatatype());
         map.put(new QName("classificationmarking"), _entityFieldHistory.getClassificationmarking());

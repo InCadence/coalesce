@@ -160,7 +160,7 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
         this.setObjectStatus(value);
 
         // Yes; Update Last Modified
-        this.setLastModified(JodaDateTimeHelper.NowInUtc());
+        this.setLastModified(JodaDateTimeHelper.nowInUtc());
     }
 
     @Override
@@ -316,7 +316,7 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
      */
     public DateTime getOtherAttributeAsDate(String name)
     {
-        return JodaDateTimeHelper.FromXmlDateTimeUTC(getOtherAttribute(name));
+        return JodaDateTimeHelper.fromXmlDateTimeUTC(getOtherAttribute(name));
     }
 
     /**
@@ -342,7 +342,7 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
      */
     public void setOtherAttributeAsDate(String name, DateTime value)
     {
-        setOtherAttribute(name, JodaDateTimeHelper.ToXmlDateTimeUTC(value));
+        setOtherAttribute(name, JodaDateTimeHelper.toXmlDateTimeUTC(value));
     }
 
     /**
@@ -445,7 +445,7 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
             setKey(java.util.UUID.randomUUID().toString());
         }
 
-        DateTime utcDate = JodaDateTimeHelper.NowInUtc();
+        DateTime utcDate = JodaDateTimeHelper.nowInUtc();
 
         if (getDateCreated() == null)
         {

@@ -235,10 +235,10 @@ public class XsdLinkageSection extends XsdDataObject {
             _entityLinkageSection.setKey(value);
             return true;
         case "datecreated":
-            _entityLinkageSection.setDatecreated(JodaDateTimeHelper.FromXmlDateTimeUTC(value));
+            _entityLinkageSection.setDatecreated(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
             return true;
         case "lastmodified":
-            _entityLinkageSection.setLastmodified(JodaDateTimeHelper.FromXmlDateTimeUTC(value));
+            _entityLinkageSection.setLastmodified(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
             return true;
         case "name":
             _entityLinkageSection.setName(value);
@@ -260,8 +260,8 @@ public class XsdLinkageSection extends XsdDataObject {
     {
         Map<QName, String> map = new HashMap<QName, String>();
         map.put(new QName("key"), _entityLinkageSection.getKey());
-        map.put(new QName("datecreated"), JodaDateTimeHelper.ToXmlDateTimeUTC(_entityLinkageSection.getDatecreated()));
-        map.put(new QName("lastmodified"), JodaDateTimeHelper.ToXmlDateTimeUTC(_entityLinkageSection.getLastmodified()));
+        map.put(new QName("datecreated"), JodaDateTimeHelper.toXmlDateTimeUTC(_entityLinkageSection.getDatecreated()));
+        map.put(new QName("lastmodified"), JodaDateTimeHelper.toXmlDateTimeUTC(_entityLinkageSection.getLastmodified()));
         map.put(new QName("name"), _entityLinkageSection.getName());
         map.put(new QName("noindex"), _entityLinkageSection.getNoindex());
         map.put(new QName("status"), _entityLinkageSection.getStatus());

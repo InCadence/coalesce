@@ -635,7 +635,7 @@ public class XsdFieldHistoryTest {
 
         XsdFieldHistory field = GetTestMissionNameFieldHistory(mission);
 
-        DateTime now = JodaDateTimeHelper.NowInUtc();
+        DateTime now = JodaDateTimeHelper.nowInUtc();
 
         field.setDateCreated(now);
 
@@ -663,7 +663,7 @@ public class XsdFieldHistoryTest {
 
         XsdFieldHistory field = GetTestMissionNameFieldHistory(mission);
 
-        DateTime now = JodaDateTimeHelper.NowInUtc();
+        DateTime now = JodaDateTimeHelper.nowInUtc();
 
         field.setLastModified(now);
 
@@ -713,7 +713,7 @@ public class XsdFieldHistoryTest {
     {
 
         XsdField field = XsdFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
-        field.setTypedValue(JodaDateTimeHelper.NowInUtc());
+        field.setTypedValue(JodaDateTimeHelper.nowInUtc());
 
         XsdFieldHistory fh = field.getHistory().get(0);
 
@@ -755,7 +755,7 @@ public class XsdFieldHistoryTest {
     {
         XsdField field = XsdFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
 
-        DateTime now = JodaDateTimeHelper.NowInUtc();
+        DateTime now = JodaDateTimeHelper.nowInUtc();
         field.setTypedValue(now);
 
         XsdFieldHistory fh = field.getHistory().get(0);
@@ -776,7 +776,7 @@ public class XsdFieldHistoryTest {
 
         XsdField field = XsdFieldTest.getTestMissionNameField();
 
-        DateTime now = JodaDateTimeHelper.NowInUtc();
+        DateTime now = JodaDateTimeHelper.nowInUtc();
         field.setTypedValue(now);
 
         XsdFieldHistory fh = field.getHistory().get(0);
@@ -828,7 +828,7 @@ public class XsdFieldHistoryTest {
 
         XsdField field = XsdFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
 
-        field.setTypedValue(JodaDateTimeHelper.NowInUtc());
+        field.setTypedValue(JodaDateTimeHelper.nowInUtc());
 
         XsdFieldHistory fh = field.getHistory().get(0);
         fh.setTypedValue(true);
@@ -879,7 +879,7 @@ public class XsdFieldHistoryTest {
 
         XsdField field = XsdFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
 
-        field.setTypedValue(JodaDateTimeHelper.NowInUtc());
+        field.setTypedValue(JodaDateTimeHelper.nowInUtc());
 
         XsdFieldHistory fh = field.getHistory().get(0);
         fh.setTypedValue(1111);
@@ -932,7 +932,7 @@ public class XsdFieldHistoryTest {
 
         XsdField field = XsdFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
 
-        field.setTypedValue(JodaDateTimeHelper.NowInUtc());
+        field.setTypedValue(JodaDateTimeHelper.nowInUtc());
 
         XsdFieldHistory fh = field.getHistory().get(0);
         fh.setTypedValue(UUID.randomUUID());

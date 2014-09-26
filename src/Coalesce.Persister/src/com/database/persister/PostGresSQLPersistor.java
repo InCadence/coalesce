@@ -208,8 +208,8 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
                                          template.getSource(),
                                          template.getVersion(),
                                          template.toXml(),
-                                         JodaDateTimeHelper.toMySQLDateTime(JodaDateTimeHelper.NowInUtc()),
-                                         JodaDateTimeHelper.toMySQLDateTime(JodaDateTimeHelper.NowInUtc()));
+                                         JodaDateTimeHelper.toMySQLDateTime(JodaDateTimeHelper.nowInUtc()),
+                                         JodaDateTimeHelper.toMySQLDateTime(JodaDateTimeHelper.nowInUtc()));
         }
         catch (SQLException e)
         {

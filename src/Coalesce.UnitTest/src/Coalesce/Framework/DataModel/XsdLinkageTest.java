@@ -190,7 +190,7 @@ public class XsdLinkageTest {
 
         XsdLinkage linkage = getMissionLinkage(entity);
 
-        DateTime now = JodaDateTimeHelper.NowInUtc();
+        DateTime now = JodaDateTimeHelper.nowInUtc();
 
         assertTrue(StringHelper.IsNullOrEmpty(linkage.getModifiedBy()));
 
@@ -222,7 +222,7 @@ public class XsdLinkageTest {
 
         XsdLinkage linkage = getMissionLinkage(entity);
 
-        DateTime now = JodaDateTimeHelper.NowInUtc();
+        DateTime now = JodaDateTimeHelper.nowInUtc();
 
         assertEquals(XsdLinkageTest.UNCLASSIFIED_MARKING, linkage.getClassificationMarking());
 
@@ -340,7 +340,7 @@ public class XsdLinkageTest {
 
         XsdLinkage linkage = getMissionLinkage(entity);
 
-        DateTime now = JodaDateTimeHelper.NowInUtc();
+        DateTime now = JodaDateTimeHelper.nowInUtc();
 
         assertEquals(ELinkTypes.IsChildOf, linkage.getLinkType());
 
@@ -397,9 +397,9 @@ public class XsdLinkageTest {
     {
         XsdLinkage linkage = getMissionLinkage();
 
-        assertEquals(JodaDateTimeHelper.FromXmlDateTimeUTC("2014-05-02T14:33:51.8615756Z"), linkage.getDateCreated());
+        assertEquals(JodaDateTimeHelper.fromXmlDateTimeUTC("2014-05-02T14:33:51.8615756Z"), linkage.getDateCreated());
 
-        DateTime now = JodaDateTimeHelper.NowInUtc();
+        DateTime now = JodaDateTimeHelper.nowInUtc();
         linkage.setDateCreated(now);
 
         assertEquals(now, linkage.getDateCreated());
@@ -411,9 +411,9 @@ public class XsdLinkageTest {
     {
         XsdLinkage linkage = getMissionLinkage();
 
-        assertEquals(JodaDateTimeHelper.FromXmlDateTimeUTC("2014-05-02T14:33:51.8615756Z"), linkage.getLastModified());
+        assertEquals(JodaDateTimeHelper.fromXmlDateTimeUTC("2014-05-02T14:33:51.8615756Z"), linkage.getLastModified());
 
-        DateTime now = JodaDateTimeHelper.NowInUtc();
+        DateTime now = JodaDateTimeHelper.nowInUtc();
         linkage.setLastModified(now);
 
         assertEquals(now, linkage.getLastModified());

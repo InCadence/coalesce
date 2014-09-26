@@ -912,7 +912,7 @@ public class XsdEntityTest {
     {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        assertEquals(JodaDateTimeHelper.FromXmlDateTimeUTC("2014-05-02T14:33:51.851575Z"), entity.getDateCreated());
+        assertEquals(JodaDateTimeHelper.fromXmlDateTimeUTC("2014-05-02T14:33:51.851575Z"), entity.getDateCreated());
 
     }
 
@@ -922,7 +922,7 @@ public class XsdEntityTest {
         XsdEntity entity = new XsdEntity();
         entity.initialize();
 
-        DateTime now = JodaDateTimeHelper.NowInUtc();
+        DateTime now = JodaDateTimeHelper.nowInUtc();
 
         assertTrue(Math.abs(now.getMillis() - entity.getDateCreated().getMillis()) < 5);
     }
@@ -932,7 +932,7 @@ public class XsdEntityTest {
     {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        DateTime now = JodaDateTimeHelper.NowInUtc();
+        DateTime now = JodaDateTimeHelper.nowInUtc();
 
         entity.setDateCreated(now);
 
@@ -946,7 +946,7 @@ public class XsdEntityTest {
         XsdEntity entity = new XsdEntity();
         entity.initialize();
 
-        DateTime sixDaysAgo = JodaDateTimeHelper.NowInUtc().minusDays(6);
+        DateTime sixDaysAgo = JodaDateTimeHelper.nowInUtc().minusDays(6);
 
         entity.setDateCreated(sixDaysAgo);
 
@@ -958,7 +958,7 @@ public class XsdEntityTest {
     {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        assertEquals(JodaDateTimeHelper.FromXmlDateTimeUTC("2014-05-20T16:17:13.2293139Z"), entity.getLastModified());
+        assertEquals(JodaDateTimeHelper.fromXmlDateTimeUTC("2014-05-20T16:17:13.2293139Z"), entity.getLastModified());
 
     }
 
@@ -968,7 +968,7 @@ public class XsdEntityTest {
         XsdEntity entity = new XsdEntity();
         entity.initialize();
 
-        DateTime now = JodaDateTimeHelper.NowInUtc();
+        DateTime now = JodaDateTimeHelper.nowInUtc();
 
         assertTrue(Math.abs(now.getMillis() - entity.getLastModified().getMillis()) < 5);
     }
@@ -978,7 +978,7 @@ public class XsdEntityTest {
     {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        DateTime now = JodaDateTimeHelper.NowInUtc();
+        DateTime now = JodaDateTimeHelper.nowInUtc();
 
         entity.setLastModified(now);
 
@@ -992,7 +992,7 @@ public class XsdEntityTest {
         XsdEntity entity = new XsdEntity();
         entity.initialize();
 
-        DateTime sixDaysAgo = JodaDateTimeHelper.NowInUtc().minusDays(6);
+        DateTime sixDaysAgo = JodaDateTimeHelper.nowInUtc().minusDays(6);
 
         entity.setLastModified(sixDaysAgo);
 
