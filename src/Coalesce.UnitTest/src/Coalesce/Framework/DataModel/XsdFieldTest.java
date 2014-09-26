@@ -1008,7 +1008,7 @@ public class XsdFieldTest {
 
         FileTestResult result = getJpgFile();
 
-        assertEquals(GUIDHelper.RemoveBrackets(result.Field.getKey()) + ".jpg", result.SavedField.getCoalesceFilename());
+        assertEquals(GUIDHelper.removeBrackets(result.Field.getKey()) + ".jpg", result.SavedField.getCoalesceFilename());
 
     }
 
@@ -1026,7 +1026,7 @@ public class XsdFieldTest {
 
         FileTestResult result = getJpgFile();
 
-        assertEquals(GUIDHelper.RemoveBrackets(result.Field.getKey()) + "_thumb.jpg",
+        assertEquals(GUIDHelper.removeBrackets(result.Field.getKey()) + "_thumb.jpg",
                      result.SavedField.getCoalesceThumbnailFilename());
 
     }
@@ -1388,7 +1388,7 @@ public class XsdFieldTest {
 
         assertTrue(data instanceof UUID);
         assertEquals(guid, data);
-        assertEquals(GUIDHelper.GetGuidString(guid), field.getValue());
+        assertEquals(GUIDHelper.getGuidString(guid), field.getValue());
         assertEquals(guid, field.getGuidValue());
 
     }

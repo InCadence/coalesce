@@ -45,7 +45,7 @@ public class GUIDHelper {
         {
             if (value == null) return false;
 
-            if (GUIDHelper.HasSurroundingBrackets(value)) value = value.replaceAll("[{}]", "");
+            if (GUIDHelper.hasSurroundingBrackets(value)) value = value.replaceAll("[{}]", "");
 
             UUID.fromString(value);
 
@@ -58,59 +58,95 @@ public class GUIDHelper {
         }
     }
 
-    public static boolean HasBrackets(String value)
+    /**
+     * Returns <code>true</code> if the value is a valid GUID and also has matching surrounding brackets.
+     * 
+     * @param value the value to check.
+     * @return <code>true</code> if the value is a valid GUID and surrounded by matching brackets.
+     */
+    public static boolean hasBrackets(String value)
     {
-        // Is Valid?
         if (!GUIDHelper.isValid(value)) return false;
 
-        // Doesn't have brackets?
-        return GUIDHelper.HasSurroundingBrackets(value);
+        return GUIDHelper.hasSurroundingBrackets(value);
     }
 
-    public static String AddBrackets(String value)
+    /**
+     * Returns the original value with surrounding brackets added. If the original value was not a valid GUID then
+     * <code>null</code> is returned.
+     * 
+     * @param value the value to add brackets to.
+     * @return the original value with surrounding brackets added. If the original value was not a valid GUID then
+     *         <code>null</code> is returned.
+     */
+    public static String addBrackets(String value)
     {
         if (!GUIDHelper.isValid(value)) return null;
 
-        if (!GUIDHelper.HasSurroundingBrackets(value))
+        if (!GUIDHelper.hasSurroundingBrackets(value))
         {
-            // No; Add Brackets
             value = "{" + value + "}";
         }
 
         return value.toUpperCase();
     }
 
-    public static String RemoveBrackets(String value)
+    /**
+     * Returns the original value with surrounding brackets removed. If the original value was not a valid GUID then
+     * <code>null</code> returned.
+     * 
+     * @param value the value to remove brackets from.
+     * @return the original value with surrounding brackets removed. If the original value was not a valid GUID then
+     *         <code>null</code> returned.
+     */
+    public static String removeBrackets(String value)
     {
         if (!GUIDHelper.isValid(value)) return null;
 
         return value.replaceAll("[{}]", "").toUpperCase();
     }
 
-    public static UUID GetGuid(String value)
+    /**
+     * Returns the {@link java.util.UUID} representing the value provided. If the value is not a valid GUID then
+     * <code>null</code> is returned;
+     * 
+     * @param value the value to be converted.
+     * @return the {@link java.util.UUID} representing the value provided. If the value is not a valid GUID then
+     *         <code>null</code> is returned
+     */
+    public static UUID getGuid(String value)
     {
-        if (GUIDHelper.isValid(value))
-        {
-            return UUID.fromString(value.replaceAll("[{}]", ""));
-        }
-        else
-        {
-            return null;
-        }
+        if (!GUIDHelper.isValid(value)) return null;
+
+        return UUID.fromString(value.replaceAll("[{}]", ""));
+
     }
 
-    public static String GetGuidString(UUID value)
+    /**
+     * Returns the string representation of the provided GUID without surrounding brackets.
+     * 
+     * @param value the GUID
+     * @return the string representation of the provided GUID without surrounding brackets.
+     */
+    public static String getGuidString(UUID value)
     {
-        return GetGuidString(value, false);
+        return getGuidString(value, false);
     }
 
-    public static String GetGuidString(UUID value, boolean withBrackets)
+    /**
+     * Returns the string representation of the provided GUID while conditionally adding surrounding brackets.
+     * 
+     * @param value the GUID value.
+     * @param withBrackets whether to include surrounding brackets.
+     * @return the string representation of the provided GUID with conditionally added brackets.
+     */
+    public static String getGuidString(UUID value, boolean withBrackets)
     {
         if (value == null) return null;
 
         if (withBrackets)
         {
-            return AddBrackets(value.toString());
+            return addBrackets(value.toString());
         }
         else
         {
@@ -122,7 +158,7 @@ public class GUIDHelper {
     // Protected and Private Shared Methods
     // -----------------------------------------------------------------------//
 
-    private static boolean HasSurroundingBrackets(String value)
+    private static boolean hasSurroundingBrackets(String value)
     {
         if (value == null) return false;
 

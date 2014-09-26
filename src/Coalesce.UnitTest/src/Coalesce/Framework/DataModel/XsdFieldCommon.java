@@ -37,7 +37,7 @@ public class XsdFieldCommon {
         args[0] = String.class;
         args[1] = boolean.class;
 
-        Method method = FileHelper.class.getDeclaredMethod("GetBaseFilenameWithFullDirectoryPathForKey", args);
+        Method method = FileHelper.class.getDeclaredMethod("getBaseFilenameWithFullDirectoryPathForKey", args);
         method.setAccessible(true);
 
         Object results = method.invoke(null, key, createIfDoesNotExist);

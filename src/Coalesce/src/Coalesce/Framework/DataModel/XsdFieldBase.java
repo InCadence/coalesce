@@ -241,7 +241,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
             throw new ClassCastException("Type mismatch");
         }
 
-        setValue(GUIDHelper.GetGuidString(value));
+        setValue(GUIDHelper.getGuidString(value));
     }
 
     public void setTypedValue(DateTime value)
@@ -412,7 +412,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
 
         if (GUIDHelper.isValid(value))
         {
-            return GUIDHelper.GetGuid(value);
+            return GUIDHelper.getGuid(value);
         }
         else
         {

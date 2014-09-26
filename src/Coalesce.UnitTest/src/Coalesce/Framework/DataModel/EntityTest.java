@@ -321,7 +321,7 @@ public class EntityTest {
 
         DateTime now = JodaDateTimeHelper.NowInUtc();
         DateTime yesterday = now.minusDays(1);
-        String guid = GUIDHelper.GetGuidString(UUID.randomUUID());
+        String guid = GUIDHelper.getGuidString(UUID.randomUUID());
         QName qName = new QName("uri:thing", "lc", "prf");
 
         newRecord.setDatecreated(yesterday);

@@ -910,7 +910,7 @@ public class XsdFieldHistoryTest {
 
         assertTrue(data instanceof UUID);
         assertEquals(guid, data);
-        assertEquals(GUIDHelper.GetGuidString(guid), fh.getValue());
+        assertEquals(GUIDHelper.getGuidString(guid), fh.getValue());
         assertEquals(guid, fh.getGuidValue());
 
         UUID newGuid = UUID.randomUUID();
@@ -921,7 +921,7 @@ public class XsdFieldHistoryTest {
 
         assertTrue(data instanceof UUID);
         assertEquals(newGuid, data);
-        assertEquals(GUIDHelper.GetGuidString(newGuid), fh.getValue());
+        assertEquals(GUIDHelper.getGuidString(newGuid), fh.getValue());
         assertEquals(newGuid, fh.getGuidValue());
 
     }

@@ -156,7 +156,7 @@ public class FileHelperTest {
         args[2] = String.class;
         args[3] = boolean.class;
 
-        Method method = FileHelper.class.getDeclaredMethod("GetBaseFilenameWithFullDirectoryPathForKey", args);
+        Method method = FileHelper.class.getDeclaredMethod("getBaseFilenameWithFullDirectoryPathForKey", args);
         method.setAccessible(true);
 
         Object results = method.invoke(null, binaryFileStoreBasePath, subDirectoryLength, key, createIfDoesNotExist);

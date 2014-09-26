@@ -28,6 +28,12 @@ import unity.common.CallResult.CallResults;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
+/**
+ * Provides helper methods for converting between {@link java.lang.String} values and {@link org.joda.time.DateTime} objects.
+ * 
+ * @author InCadence
+ *
+ */
 public class JodaDateTimeHelper {
 
     // Make static class
@@ -40,20 +46,22 @@ public class JodaDateTimeHelper {
     // -----------------------------------------------------------------------'
 
     /**
-     * Returns Datetime object based on the provided strDate
+     * Returns the {@link org.joda.time.Datetime} object based on the provided value in the form of 'yyyyMMdd'. If the value
+     * cannot be correctly parsed then <code>null</code> is returned.
      * 
-     * @param strDate The date string in the form of 'yyyyMMdd
+     * @param value The date string in the form of 'yyyyMMdd'
      * @return A date object
+     * @throws NullArgumentException
      */
-    public static DateTime ConvertyyyyMMddDateStringToDateTime(String strDate)
+    public static DateTime ConvertyyyyMMddDateStringToDateTime(String value)
     {
-        if (strDate == null) throw new NullArgumentException("strDate");
+        if (value == null) throw new NullArgumentException("value");
 
         try
         {
             DateTimeFormatter dateFormat = ISODateTimeFormat.basicDate().withZoneUTC();
 
-            return dateFormat.parseDateTime(strDate);
+            return dateFormat.parseDateTime(value);
 
         }
         catch (IllegalArgumentException iae)

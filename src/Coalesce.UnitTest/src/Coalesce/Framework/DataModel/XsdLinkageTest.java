@@ -263,13 +263,13 @@ public class XsdLinkageTest {
         assertEquals("TREX Portal", linkage.getEntity2Source());
         assertEquals("1.0.0.0", linkage.getEntity2Version());
 
-        String newGuid = GUIDHelper.GetGuidString(UUID.randomUUID());
+        String newGuid = GUIDHelper.getGuidString(UUID.randomUUID());
         linkage.setEntity1Key(newGuid);
         linkage.setEntity1Name("New 1 Name");
         linkage.setEntity1Source("New 1 Source");
         linkage.setEntity1Version("New 1 Version");
 
-        String new2Guid = GUIDHelper.GetGuidString(UUID.randomUUID());
+        String new2Guid = GUIDHelper.getGuidString(UUID.randomUUID());
         linkage.setEntity2Key(new2Guid);
         linkage.setEntity2Name("New 2 Name");
         linkage.setEntity2Source("New 2 Source");

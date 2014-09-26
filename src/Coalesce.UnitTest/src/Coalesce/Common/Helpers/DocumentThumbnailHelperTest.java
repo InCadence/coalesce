@@ -7,7 +7,6 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class DocumentThumbnailHelperTest {
@@ -21,11 +20,6 @@ public class DocumentThumbnailHelperTest {
      * 
      * @After public void tearDown() throws Exception { }
      */
-
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception
-    {
-    }
 
     @Test
     public void getDocumentThumbnailForMimeCategoryAudioTest() throws IOException

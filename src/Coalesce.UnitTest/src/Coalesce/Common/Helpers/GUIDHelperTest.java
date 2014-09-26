@@ -145,67 +145,67 @@ public class GUIDHelperTest {
     @Test
     public void HasBracketsTest()
     {
-        assertFalse(GUIDHelper.HasBrackets(UUID.randomUUID().toString().toLowerCase()));
+        assertFalse(GUIDHelper.hasBrackets(UUID.randomUUID().toString().toLowerCase()));
     }
 
     @Test
     public void HasBracketsLowerCaseWithBracketsTest()
     {
-        assertTrue(GUIDHelper.HasBrackets(LOWERCASE_WITH_BRACKETS));
+        assertTrue(GUIDHelper.hasBrackets(LOWERCASE_WITH_BRACKETS));
     }
 
     @Test
     public void HasBracketsLowerCaseWithoutBracketsTest()
     {
-        assertFalse(GUIDHelper.HasBrackets(LOWERCASE_NO_BRACKETS));
+        assertFalse(GUIDHelper.hasBrackets(LOWERCASE_NO_BRACKETS));
     }
 
     @Test
     public void HasBracketsUpperCaseWithBracketsTest()
     {
-        assertTrue(GUIDHelper.HasBrackets(UPPERCASE_WITH_BRACKETS));
+        assertTrue(GUIDHelper.hasBrackets(UPPERCASE_WITH_BRACKETS));
     }
 
     @Test
     public void HasBracketsUpperCaseWithoutBracketsTest()
     {
-        assertFalse(GUIDHelper.HasBrackets(UPPERCASE_NO_BRACKETS));
+        assertFalse(GUIDHelper.hasBrackets(UPPERCASE_NO_BRACKETS));
     }
 
     @Test
     public void HasBracketsInvalidShortTest()
     {
-        assertFalse(GUIDHelper.HasBrackets(UPPERCASE_NO_BRACKETS_SHORT));
+        assertFalse(GUIDHelper.hasBrackets(UPPERCASE_NO_BRACKETS_SHORT));
     }
 
     @Test
     public void HasBracketsInvalidLongTest()
     {
-        assertFalse(GUIDHelper.HasBrackets(UPPERCASE_NO_BRACKETS_LONG));
+        assertFalse(GUIDHelper.hasBrackets(UPPERCASE_NO_BRACKETS_LONG));
     }
 
     @Test
     public void HasBracketsInvalidWithBracketsTest()
     {
-        assertFalse(GUIDHelper.HasBrackets(UPPERCASE_WITH_BRACKETS_WRONG_LETTER));
+        assertFalse(GUIDHelper.hasBrackets(UPPERCASE_WITH_BRACKETS_WRONG_LETTER));
     }
 
     @Test
     public void HasBracketsInvalidWithoutBracketsTest()
     {
-        assertFalse(GUIDHelper.HasBrackets(UPPERCASE_NO_BRACKETS_WRONG_LETTER));
+        assertFalse(GUIDHelper.hasBrackets(UPPERCASE_NO_BRACKETS_WRONG_LETTER));
     }
 
     @Test
     public void HasBracketsInvalidMissingOpeningBracketTest()
     {
-        assertFalse(GUIDHelper.HasBrackets(UPPERCASE_MISSING_OPENING_BRACKET));
+        assertFalse(GUIDHelper.hasBrackets(UPPERCASE_MISSING_OPENING_BRACKET));
     }
 
     @Test
     public void HasBracketsInvalidMissingClosingBracketTest()
     {
-        assertFalse(GUIDHelper.HasBrackets(UPPERCASE_MISSING_CLOSING_BRACKET));
+        assertFalse(GUIDHelper.hasBrackets(UPPERCASE_MISSING_CLOSING_BRACKET));
     }
 
     @Test
@@ -214,7 +214,7 @@ public class GUIDHelperTest {
 
         String uuid = UUID.randomUUID().toString().toLowerCase();
 
-        String value = GUIDHelper.AddBrackets(uuid);
+        String value = GUIDHelper.addBrackets(uuid);
 
         assertEquals("{" + uuid.toUpperCase() + "}", value);
     }
@@ -223,7 +223,7 @@ public class GUIDHelperTest {
     public void AddBracketsLowerCaseWithBracketsTest()
     {
 
-        String value = GUIDHelper.AddBrackets(LOWERCASE_WITH_BRACKETS);
+        String value = GUIDHelper.addBrackets(LOWERCASE_WITH_BRACKETS);
 
         assertEquals(UPPERCASE_WITH_BRACKETS, value);
     }
@@ -232,7 +232,7 @@ public class GUIDHelperTest {
     public void AddBracketsLowerCaseWithoutBracketsTest()
     {
 
-        String value = GUIDHelper.AddBrackets(LOWERCASE_NO_BRACKETS);
+        String value = GUIDHelper.addBrackets(LOWERCASE_NO_BRACKETS);
 
         assertEquals(UPPERCASE_WITH_BRACKETS, value);
     }
@@ -241,7 +241,7 @@ public class GUIDHelperTest {
     public void AddBracketsUpperCaseWithBracketsTest()
     {
 
-        String value = GUIDHelper.AddBrackets(UPPERCASE_WITH_BRACKETS);
+        String value = GUIDHelper.addBrackets(UPPERCASE_WITH_BRACKETS);
 
         assertEquals(UPPERCASE_WITH_BRACKETS, value);
     }
@@ -250,7 +250,7 @@ public class GUIDHelperTest {
     public void AddBracketsUpperCaseWithoutBracketsTest()
     {
 
-        String value = GUIDHelper.AddBrackets(UPPERCASE_NO_BRACKETS);
+        String value = GUIDHelper.addBrackets(UPPERCASE_NO_BRACKETS);
 
         assertEquals(UPPERCASE_WITH_BRACKETS, value);
     }
@@ -259,7 +259,7 @@ public class GUIDHelperTest {
     public void AddBracketsInvalidShortTest()
     {
 
-        String validUuid = GUIDHelper.AddBrackets(UPPERCASE_NO_BRACKETS_SHORT);
+        String validUuid = GUIDHelper.addBrackets(UPPERCASE_NO_BRACKETS_SHORT);
 
         assertNull(validUuid);
     }
@@ -268,7 +268,7 @@ public class GUIDHelperTest {
     public void AddBracketsInvalidLongTest()
     {
 
-        String validUuid = GUIDHelper.AddBrackets(UPPERCASE_NO_BRACKETS_LONG);
+        String validUuid = GUIDHelper.addBrackets(UPPERCASE_NO_BRACKETS_LONG);
 
         assertNull(validUuid);
     }
@@ -277,7 +277,7 @@ public class GUIDHelperTest {
     public void AddBracketsInvalidWithBracketsTest()
     {
 
-        String value = GUIDHelper.AddBrackets(UPPERCASE_WITH_BRACKETS_WRONG_LETTER);
+        String value = GUIDHelper.addBrackets(UPPERCASE_WITH_BRACKETS_WRONG_LETTER);
 
         assertNull(value);
     }
@@ -286,7 +286,7 @@ public class GUIDHelperTest {
     public void AddBracketsInvalidWithoutBracketsTest()
     {
 
-        String value = GUIDHelper.AddBrackets(UPPERCASE_NO_BRACKETS_WRONG_LETTER);
+        String value = GUIDHelper.addBrackets(UPPERCASE_NO_BRACKETS_WRONG_LETTER);
 
         assertNull(value);
     }
@@ -297,7 +297,7 @@ public class GUIDHelperTest {
 
         String uuid = UUID.randomUUID().toString().toLowerCase();
 
-        String value = GUIDHelper.RemoveBrackets("{" + uuid + "}");
+        String value = GUIDHelper.removeBrackets("{" + uuid + "}");
 
         assertEquals(uuid.toUpperCase(), value);
     }
@@ -306,7 +306,7 @@ public class GUIDHelperTest {
     public void RemoveBracketsLowerCaseWithBracketsTest()
     {
 
-        String value = GUIDHelper.RemoveBrackets(LOWERCASE_WITH_BRACKETS);
+        String value = GUIDHelper.removeBrackets(LOWERCASE_WITH_BRACKETS);
 
         assertTrue(UPPERCASE_NO_BRACKETS.equals(value));
     }
@@ -315,7 +315,7 @@ public class GUIDHelperTest {
     public void RemoveBracketsLowerCaseWithoutBracketsTest()
     {
 
-        String value = GUIDHelper.RemoveBrackets(LOWERCASE_NO_BRACKETS);
+        String value = GUIDHelper.removeBrackets(LOWERCASE_NO_BRACKETS);
 
         assertTrue(UPPERCASE_NO_BRACKETS.equals(value));
     }
@@ -324,7 +324,7 @@ public class GUIDHelperTest {
     public void RemoveBracketsUpperCaseWithBracketsTest()
     {
 
-        String value = GUIDHelper.RemoveBrackets(UPPERCASE_WITH_BRACKETS);
+        String value = GUIDHelper.removeBrackets(UPPERCASE_WITH_BRACKETS);
 
         assertTrue(UPPERCASE_NO_BRACKETS.equals(value));
     }
@@ -333,7 +333,7 @@ public class GUIDHelperTest {
     public void RemoveBracketsUpperCaseWithoutBracketsTest()
     {
 
-        String value = GUIDHelper.RemoveBrackets(UPPERCASE_NO_BRACKETS);
+        String value = GUIDHelper.removeBrackets(UPPERCASE_NO_BRACKETS);
 
         assertTrue(UPPERCASE_NO_BRACKETS.equals(value));
     }
@@ -342,7 +342,7 @@ public class GUIDHelperTest {
     public void RemoveBracketsInvalidShortTest()
     {
 
-        String validUuid = GUIDHelper.RemoveBrackets(UPPERCASE_NO_BRACKETS_SHORT);
+        String validUuid = GUIDHelper.removeBrackets(UPPERCASE_NO_BRACKETS_SHORT);
 
         assertNull(validUuid);
     }
@@ -351,7 +351,7 @@ public class GUIDHelperTest {
     public void RemoveBracketsInvalidLongTest()
     {
 
-        String validUuid = GUIDHelper.RemoveBrackets(UPPERCASE_NO_BRACKETS_LONG);
+        String validUuid = GUIDHelper.removeBrackets(UPPERCASE_NO_BRACKETS_LONG);
 
         assertNull(validUuid);
     }
@@ -360,7 +360,7 @@ public class GUIDHelperTest {
     public void RemoveBracketsInvalidWithBracketsTest()
     {
 
-        String value = GUIDHelper.RemoveBrackets(UPPERCASE_WITH_BRACKETS_WRONG_LETTER);
+        String value = GUIDHelper.removeBrackets(UPPERCASE_WITH_BRACKETS_WRONG_LETTER);
 
         assertNull(value);
     }
@@ -369,7 +369,7 @@ public class GUIDHelperTest {
     public void RemoveBracketsInvalidWithoutBracketsTest()
     {
 
-        String value = GUIDHelper.RemoveBrackets(UPPERCASE_NO_BRACKETS_WRONG_LETTER);
+        String value = GUIDHelper.removeBrackets(UPPERCASE_NO_BRACKETS_WRONG_LETTER);
 
         assertNull(value);
     }
@@ -378,7 +378,7 @@ public class GUIDHelperTest {
     public void GetGuidLowerCaseWithBracketsTest()
     {
 
-        UUID guid = GUIDHelper.GetGuid(LOWERCASE_WITH_BRACKETS);
+        UUID guid = GUIDHelper.getGuid(LOWERCASE_WITH_BRACKETS);
 
         assertEquals(guid.toString(), LOWERCASE_NO_BRACKETS);
     }
@@ -387,7 +387,7 @@ public class GUIDHelperTest {
     public void GetGuidLowerCaseWithoutBracketsTest()
     {
 
-        UUID guid = GUIDHelper.GetGuid(LOWERCASE_NO_BRACKETS);
+        UUID guid = GUIDHelper.getGuid(LOWERCASE_NO_BRACKETS);
 
         assertEquals(guid.toString(), LOWERCASE_NO_BRACKETS);
     }
@@ -396,7 +396,7 @@ public class GUIDHelperTest {
     public void GetGuidUpperCaseWithBracketsTest()
     {
 
-        UUID guid = GUIDHelper.GetGuid(UPPERCASE_WITH_BRACKETS);
+        UUID guid = GUIDHelper.getGuid(UPPERCASE_WITH_BRACKETS);
 
         assertEquals(guid.toString(), LOWERCASE_NO_BRACKETS);
     }
@@ -405,7 +405,7 @@ public class GUIDHelperTest {
     public void GetGuidUpperCaseWithoutBracketsTest()
     {
 
-        UUID guid = GUIDHelper.GetGuid(UPPERCASE_NO_BRACKETS);
+        UUID guid = GUIDHelper.getGuid(UPPERCASE_NO_BRACKETS);
 
         assertEquals(guid.toString(), LOWERCASE_NO_BRACKETS);
     }
@@ -414,7 +414,7 @@ public class GUIDHelperTest {
     public void GetGuidInvalidShortTest()
     {
 
-        UUID guid = GUIDHelper.GetGuid(UPPERCASE_NO_BRACKETS_SHORT);
+        UUID guid = GUIDHelper.getGuid(UPPERCASE_NO_BRACKETS_SHORT);
 
         assertNull(guid);
     }
@@ -423,7 +423,7 @@ public class GUIDHelperTest {
     public void GetGuidInvalidLongTest()
     {
 
-        UUID guid = GUIDHelper.GetGuid(UPPERCASE_NO_BRACKETS_LONG);
+        UUID guid = GUIDHelper.getGuid(UPPERCASE_NO_BRACKETS_LONG);
 
         assertNull(guid);
     }
@@ -432,7 +432,7 @@ public class GUIDHelperTest {
     public void GetGuidInvalidWithBracketsTest()
     {
 
-        UUID guid = GUIDHelper.GetGuid(UPPERCASE_WITH_BRACKETS_WRONG_LETTER);
+        UUID guid = GUIDHelper.getGuid(UPPERCASE_WITH_BRACKETS_WRONG_LETTER);
 
         assertNull(guid);
     }
@@ -441,7 +441,7 @@ public class GUIDHelperTest {
     public void GetGuidInvalidWithoutBracketsTest()
     {
 
-        UUID guid = GUIDHelper.GetGuid(UPPERCASE_NO_BRACKETS_WRONG_LETTER);
+        UUID guid = GUIDHelper.getGuid(UPPERCASE_NO_BRACKETS_WRONG_LETTER);
 
         assertNull(guid);
     }
@@ -450,9 +450,9 @@ public class GUIDHelperTest {
     public void GetGuidStringTest()
     {
 
-        UUID guid = GUIDHelper.GetGuid(UPPERCASE_NO_BRACKETS);
+        UUID guid = GUIDHelper.getGuid(UPPERCASE_NO_BRACKETS);
 
-        String guidString = GUIDHelper.GetGuidString(guid);
+        String guidString = GUIDHelper.getGuidString(guid);
 
         assertEquals(UPPERCASE_NO_BRACKETS, guidString);
     }
@@ -461,7 +461,7 @@ public class GUIDHelperTest {
     public void GetGuidStringNullTest()
     {
 
-        String guidString = GUIDHelper.GetGuidString(null);
+        String guidString = GUIDHelper.getGuidString(null);
 
         assertNull(guidString);
     }
@@ -470,9 +470,9 @@ public class GUIDHelperTest {
     public void GetGuidStringWithBracketsFalseTest()
     {
 
-        UUID guid = GUIDHelper.GetGuid(UPPERCASE_NO_BRACKETS);
+        UUID guid = GUIDHelper.getGuid(UPPERCASE_NO_BRACKETS);
 
-        String guidString = GUIDHelper.GetGuidString(guid, false);
+        String guidString = GUIDHelper.getGuidString(guid, false);
 
         assertEquals(UPPERCASE_NO_BRACKETS, guidString);
     }
@@ -486,7 +486,7 @@ public class GUIDHelperTest {
         try
         {
 
-            guidString = GUIDHelper.GetGuidString(null, false);
+            guidString = GUIDHelper.getGuidString(null, false);
             assertNull(guidString);
         }
         catch (Exception ex)
@@ -500,9 +500,9 @@ public class GUIDHelperTest {
     public void GetGuidStringWithBracketsTrueTest()
     {
 
-        UUID guid = GUIDHelper.GetGuid(UPPERCASE_NO_BRACKETS);
+        UUID guid = GUIDHelper.getGuid(UPPERCASE_NO_BRACKETS);
 
-        String guidString = GUIDHelper.GetGuidString(guid, true);
+        String guidString = GUIDHelper.getGuidString(guid, true);
 
         assertEquals(UPPERCASE_WITH_BRACKETS, guidString);
     }
@@ -511,7 +511,7 @@ public class GUIDHelperTest {
     public void GetGuidStringWithBracketsTrueNullTest()
     {
 
-        String guidString = GUIDHelper.GetGuidString(null, true);
+        String guidString = GUIDHelper.getGuidString(null, true);
 
         assertNull(guidString);
     }

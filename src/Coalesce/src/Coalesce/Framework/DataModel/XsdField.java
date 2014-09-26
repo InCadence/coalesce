@@ -458,7 +458,7 @@ public class XsdField extends XsdFieldBase {
         {
 
             String baseFilename = getKey();
-            baseFilename = GUIDHelper.RemoveBrackets(baseFilename);
+            baseFilename = GUIDHelper.removeBrackets(baseFilename);
 
             return baseFilename + "." + getExtension();
 
@@ -476,7 +476,7 @@ public class XsdField extends XsdFieldBase {
         {
 
             String baseFilename = getKey();
-            baseFilename = GUIDHelper.RemoveBrackets(baseFilename);
+            baseFilename = GUIDHelper.removeBrackets(baseFilename);
 
             return baseFilename + "_thumb.jpg";
 

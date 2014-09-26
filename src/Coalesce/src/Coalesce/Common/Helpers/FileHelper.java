@@ -255,7 +255,7 @@ public class FileHelper {
 
         if (key == null || StringHelper.IsNullOrEmpty(key.trim())) return null;
 
-        String baseFilename = GUIDHelper.RemoveBrackets(key);
+        String baseFilename = GUIDHelper.removeBrackets(key);
 
         if (baseFilename == null) return null;
 
