@@ -62,10 +62,16 @@ public class DocumentPropertiesTest {
         assertEquals("Desert.jpg", docProps.getFilename());
         assertEquals("Desert", docProps.getFilenameWithoutExtension());
         assertEquals("jpg", docProps.getExtension());
+        assertEquals(1024, docProps.getImageWidth());
+        assertEquals(768, docProps.getImageHeight());
+        assertEquals(49.39875240003339, docProps.getLatitude(), 0.00000000000001);
+        assertEquals(8.67243350003624, docProps.getLongitude(), 0.00000000000001);
         assertEquals(851530, docProps.getSize());
         assertEquals(MimeHelper.getMimeTypeForExtension("jpg"), docProps.getMimeType());
+        assertEquals(MimeHelper.getFileTypeForMimeType(docProps.getMimeType()), docProps.getDocumentType());
         assertEquals(new DateTime("2008-03-14T17:59:26.000Z"), docProps.getCreated());
         assertEquals(new DateTime("2014-09-19T15:51:18.637Z"), docProps.getModified());
+        assertEquals("", docProps.getThumbnailFilename());
         
         ImageIO.write(docProps.getThumbnail(),
                       CoalesceSettings.getImageFormat(),
@@ -86,15 +92,33 @@ public class DocumentPropertiesTest {
         assertEquals("Test user", docProps.getCreator());
         assertEquals("This is for testing", docProps.getDescription());
         assertEquals("", docProps.getIdentifier());
+        assertEquals(0, docProps.getImageWidth());
+        assertEquals(0, docProps.getImageHeight());
         assertEquals("Test, Document", docProps.getKeywords());
         assertEquals("", docProps.getLanguage());
+        assertEquals(0, docProps.getLatitude(), 0.00000000000001);
+        assertEquals(0, docProps.getLongitude(), 0.00000000000001);
         assertEquals("The Test User", docProps.getLastModifiedBy());
         assertEquals(new DateTime("2009-07-30T23:00:00.000Z"), docProps.getLastPrinted());
         assertEquals(new DateTime("2014-09-19T15:24:00.000Z"), docProps.getModified());
+        assertEquals(MimeHelper.getMimeTypeForExtension("docx"), docProps.getMimeType());
+        assertEquals(MimeHelper.getFileTypeForMimeType(docProps.getMimeType()), docProps.getDocumentType());
+        assertEquals(1, docProps.getPageCount());
         assertEquals("4", docProps.getRevision());
         assertEquals("Testing subject", docProps.getSubject());
         assertEquals("Testing document title", docProps.getTitle());
         assertEquals("", docProps.getVersion());
+
+    }
+
+    @Test
+    public void initializeDocXMultiPageTest() throws ImageProcessingException, CoalesceCryptoException, IOException, JDOMException
+    {
+        DocumentProperties docProps = new DocumentProperties();
+
+        assertTrue(docProps.initialize("src\\resources\\TestDocumentMultiPage.docx"));
+
+        assertEquals(4, docProps.getPageCount());
 
     }
 
@@ -165,10 +189,24 @@ public class DocumentPropertiesTest {
         assertEquals(plainTextDocProps.getLastModifiedBy(), encryptedDocProps.getLastModifiedBy());
         assertEquals(plainTextDocProps.getLastPrinted(), encryptedDocProps.getLastPrinted());
         assertEquals(plainTextDocProps.getModified(), encryptedDocProps.getModified());
+        assertEquals(plainTextDocProps.getPageCount(), encryptedDocProps.getPageCount());
         assertEquals(plainTextDocProps.getRevision(), encryptedDocProps.getRevision());
         assertEquals(plainTextDocProps.getSubject(), encryptedDocProps.getSubject());
         assertEquals(plainTextDocProps.getTitle(), encryptedDocProps.getTitle());
         assertEquals(plainTextDocProps.getVersion(), encryptedDocProps.getVersion());
     }
+
+    @Test
+    public void thumbnailFilenameTest()
+    {
+
+        DocumentProperties docProps = new DocumentProperties();
+
+        assertEquals("", docProps.getThumbnailFilename());
+        docProps.setThumbnailFilename("testingFilename.txt");
+        
+        assertEquals("testingFilename.txt", docProps.getThumbnailFilename());
+    }
+
 
 }

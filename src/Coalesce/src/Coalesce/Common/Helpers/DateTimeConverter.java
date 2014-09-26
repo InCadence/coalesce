@@ -30,6 +30,17 @@ import org.joda.time.format.ISODateTimeFormat;
  */
 public class DateTimeConverter {
 
+    // Make static class
+    private DateTimeConverter()
+    {
+        
+    }
+    
+    
+    // -----------------------------------------------------------------------'
+    // Public Shared Methods
+    // -----------------------------------------------------------------------'
+
     /**
      * Converts a {@link org.joda.time.DateTime} to a string format to be stored in
      * {@link Coalesce.Framework.DataModel.XsdEntity} xml.

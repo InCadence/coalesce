@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import org.apache.commons.lang.NullArgumentException;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.joda.time.Duration;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -153,6 +154,46 @@ public class JodaDateTimeHelperTest {
 
     }
 
+    @Test
+    public void getElapsedGMTTimeStringForDateTest()
+    {
+        DateTime now = JodaDateTimeHelper.nowInUtc();
+        
+        assertEquals("(2 days till)", JodaDateTimeHelper.getElapsedGMTTimeString(now.plusDays(2), true, false));
+        
+    }
+    
+    @Test
+    public void getElapsedGMTTimeStringNullFirstDateTest()
+    {
+        thrown.expect(NullArgumentException.class);
+        thrown.expectMessage("firstDate");
+        
+        JodaDateTimeHelper.getElapsedGMTTimeString(null, JodaDateTimeHelper.nowInUtc(), true, true, true);
+                
+    }
+    
+    @Test
+    public void getElapsedGMTTimeStringNullSecondDateTest()
+    {
+        thrown.expect(NullArgumentException.class);
+        thrown.expectMessage("secondDate");
+        
+        JodaDateTimeHelper.getElapsedGMTTimeString(JodaDateTimeHelper.nowInUtc(), null, true, true, true);
+                
+    }
+    
+    @Test
+    public void getElapsedGMTTimeStringNullBothDatesTest()
+    {
+        thrown.expect(NullArgumentException.class);
+        thrown.expectMessage("firstDate");
+        
+        JodaDateTimeHelper.getElapsedGMTTimeString(null, null, true, true, true);
+                
+    }
+    
+    
     @Test
     public void getElapsedGMTTimeStringSameTimeTest()
     {
@@ -738,4 +779,15 @@ public class JodaDateTimeHelperTest {
         assertEquals("2014-05-02T14:33:51.859Z", toXmlDate);
     }
 
+    @Test
+    public void nowInUtcTest()
+    {
+        DateTime now = new DateTime();
+        
+        DateTime nowInUtc = JodaDateTimeHelper.nowInUtc();
+        
+        Duration dateDiff = new Duration(now, nowInUtc);
+        assertTrue(Math.abs(dateDiff.getStandardSeconds()) < 2);
+        
+    }
 }

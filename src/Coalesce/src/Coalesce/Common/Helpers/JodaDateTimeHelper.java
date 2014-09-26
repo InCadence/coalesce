@@ -298,7 +298,7 @@ public class JodaDateTimeHelper {
         elapsedString = elapsedString.trim();
 
         // Parenthesis?
-        if (includeParenthesis && !StringHelper.IsNullOrEmpty(elapsedString))
+        if (includeParenthesis)
         {
             elapsedString = "(" + elapsedString + ")";
         }

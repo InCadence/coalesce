@@ -16,6 +16,8 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
@@ -43,6 +45,7 @@ import org.jdom2.xpath.XPathFactory;
 import org.joda.time.DateTime;
 
 import Coalesce.Common.Exceptions.CoalesceCryptoException;
+import Coalesce.Common.Helpers.DocumentThumbnailHelper.DocumentThumbnailResults;
 import Coalesce.Common.Runtime.CoalesceSettings;
 import Coalesce.Framework.Persistance.CoalesceEncrypter;
 
@@ -176,7 +179,7 @@ public class DocumentProperties {
 
         if (getThumbnail() == null)
         {
-            _thumbnail = DocumentThumbnailHelper.getThumbnailForFile(fullFilename, encrypted);
+            generateThumbnail(fullFilename);
         }
 
         return true;
@@ -202,14 +205,17 @@ public class DocumentProperties {
 
             File fi = new File(fullFilename);
 
-            _fullFilename = fullFilename;
-            _filename = FilenameUtils.getName(fullFilename);
-            _filenameWithoutExtension = FilenameUtils.getBaseName(fullFilename);
-            _extension = FilenameUtils.getExtension(fullFilename);
-            _size = fi.length();
+            setFullFilename(fullFilename);
+            setFilename(FilenameUtils.getName(fullFilename));
+            setFilenameWithoutExtension(FilenameUtils.getBaseName(fullFilename));
+            setExtension(FilenameUtils.getExtension(fullFilename));
+            setSize(fi.length());
 
             String docMimeType = MimeHelper.getMimeTypeForExtension(getExtension());
-            if (docMimeType != null) _mimeType = docMimeType;
+            if (docMimeType != null) setMimeType(docMimeType);
+
+            String docType = MimeHelper.getFileTypeForMimeType(getMimeType());
+            if (docType != null) setDocumentType(docType);
 
             BasicFileAttributes attr;
             try
@@ -220,7 +226,7 @@ public class DocumentProperties {
                 {
                     FileTime creation = attr.creationTime();
                     String creationStr = creation.toString();
-                    if (_created == null) _created = new DateTime(creationStr);
+                    if (_created == null) setCreated(new DateTime(creationStr));
                 }
                 catch (IllegalArgumentException iae)
                 {
@@ -231,7 +237,7 @@ public class DocumentProperties {
                 {
                     FileTime lastMod = attr.lastModifiedTime();
                     String lastModStr = lastMod.toString();
-                    if (_modified == null) _modified = new DateTime(lastModStr);
+                    if (_modified == null) setModified(new DateTime(lastModStr));
                 }
                 catch (IllegalArgumentException iae)
                 {
@@ -255,8 +261,8 @@ public class DocumentProperties {
     {
         // Set the latitude and longitude to out of range values as a flag to the outside code
         // that we either could not find valid coordinates
-        _latitude = 200.0;
-        _longitude = 200.0;
+        setLatitude(200.0);
+        setLongitude(200.0);
 
         Path path = Paths.get(fullFilename);
         if (Files.exists(path))
@@ -306,8 +312,8 @@ public class DocumentProperties {
 
         if (!location.isZero())
         {
-            _latitude = location.getLatitude();
-            _longitude = location.getLongitude();
+            setLatitude(location.getLatitude());
+            setLongitude(location.getLongitude());
         }
 
     }
@@ -326,13 +332,23 @@ public class DocumentProperties {
         {
             DateTime dateTaken = new DateTime(directory.getDate(ExifIFD0Directory.TAG_DATETIME));
 
-            _created = dateTaken;
+            setCreated(dateTaken);
 
         }
 
-        _thumbnail = DocumentThumbnailHelper.getThumbnailForFile(fullFilename);
+        generateThumbnail(fullFilename);
 
         return true;
+    }
+
+    private void generateThumbnail(String fullFilename) throws IOException
+    {
+        DocumentThumbnailResults results = DocumentThumbnailHelper.getThumbnailForFile(fullFilename);
+
+        setThumbnail(results.getThumbnail());
+        setImageHeight(results.getOriginalHeight());
+        setImageWidth(results.getOriginalWidth());
+
     }
 
     private boolean initializeOpenXmlProperties(String fullFilename, boolean encrypted) throws IOException, JDOMException,
@@ -351,9 +367,11 @@ public class DocumentProperties {
                     byte[] decryptBytes = crypto.decryptValueToBytes(Files.readAllBytes(Paths.get(fullFilename)));
 
                     Collection<Namespace> namespaces = new ArrayList<Namespace>();
-                    Document coreXml = getXspCorePropertiesDocument(decryptBytes, namespaces);
+                    Map<String, Document> coreXml = getXspDocuments(decryptBytes, namespaces);
 
-                    setCoreXpsProperties(coreXml, namespaces);
+                    setCoreXpsProperties(coreXml.get("core"), namespaces);
+
+                    setAppXpsProperties(coreXml.get("app"), namespaces);
 
                 }
                 catch (InvalidKeyException | NoSuchAlgorithmException e)
@@ -369,9 +387,11 @@ public class DocumentProperties {
                 {
 
                     Collection<Namespace> namespaces = new ArrayList<Namespace>();
-                    Document coreXml = getXspCorePropertiesDocument(zipFile, namespaces);
+                    Map<String, Document> coreXml = getXspDocuments(zipFile, namespaces);
 
-                    setCoreXpsProperties(coreXml, namespaces);
+                    setCoreXpsProperties(coreXml.get("core"), namespaces);
+
+                    setAppXpsProperties(coreXml.get("app"), namespaces);
 
                     // TODO: Current logic not converting colors correctly
                     // getEmbeddedThumbnail(zipFile);
@@ -389,19 +409,19 @@ public class DocumentProperties {
         }
     }
 
-    private Document getXspCorePropertiesDocument(byte[] zipBytes, Collection<Namespace> namespaces)
+    private Map<String, Document> getXspDocuments(byte[] zipBytes, Collection<Namespace> namespaces)
     {
 
-        String partNamePath = getCoreXmlPartName(zipBytes, namespaces);
+        Map<String, String> partNamePaths = getXmlPartNames(zipBytes, namespaces);
 
-        if (partNamePath == null) return null;
+        if (partNamePaths == null) return null;
 
-        Document coreXml = getCoreXml(zipBytes, partNamePath);
+        Map<String, Document> xmlParts = getXmlDocuments(zipBytes, partNamePaths);
 
-        return coreXml;
+        return xmlParts;
     }
 
-    private String getCoreXmlPartName(byte[] zipBytes, Collection<Namespace> namespaces)
+    private Map<String, String> getXmlPartNames(byte[] zipBytes, Collection<Namespace> namespaces)
     {
         try (@SuppressWarnings("resource")
         // This is a known IDE bug in Eclipse (371614). ZipInputStream is Closable and will be automatically closed in the
@@ -420,11 +440,11 @@ public class DocumentProperties {
                     SAXBuilder builder = new SAXBuilder();
                     Document startPartXml = builder.build(zipStream);
 
-                    String partNamePath = getCoreXmlPartName(startPartXml, builder, namespaces);
+                    Map<String, String> partNamePaths = getXmlPartNames(startPartXml, builder, namespaces);
 
                     // This close should not be required per use of try-resource above but is necessary to avoid IDE warning
                     zipStream.close();
-                    return partNamePath;
+                    return partNamePaths;
 
                 }
 
@@ -439,43 +459,54 @@ public class DocumentProperties {
         }
     }
 
-    private Document getCoreXml(byte[] zipBytes, String partNamePath)
+    private Map<String, Document> getXmlDocuments(byte[] zipBytes, Map<String, String> partNamePaths)
     {
-        try (@SuppressWarnings("resource")
-        // This is a known IDE bug in Eclipse (371614). ZipInputStream is Closable and will be automatically closed in the
-        // finally
-        ZipInputStream zipStream = new ZipInputStream(new ByteArrayInputStream(zipBytes)))
-        {
+        Map<String, Document> parts = new HashMap<String, Document>();
 
-            ZipEntry entry = null;
-            while ((entry = zipStream.getNextEntry()) != null)
+        for (Map.Entry<String, String> pathEntry : partNamePaths.entrySet())
+        {
+            try (ZipInputStream zipStream = new ZipInputStream(new ByteArrayInputStream(zipBytes)))
             {
 
-                String entryName = entry.getName();
-
-                if (entryName.equals(partNamePath))
+                ZipEntry entry = null;
+                while ((entry = zipStream.getNextEntry()) != null)
                 {
-                    SAXBuilder builder = new SAXBuilder();
-                    Document corePartXml = builder.build(zipStream);
 
-                    // This close should not be required per use of try-resource above but is necessary to avoid IDE warning
-                    zipStream.close();
-                    return corePartXml;
+                    String entryName = entry.getName();
+
+                    if (entryName.equals(pathEntry.getKey()))
+                    {
+                        SAXBuilder builder = new SAXBuilder();
+                        Document partXml = builder.build(zipStream);
+
+                        parts.put(pathEntry.getValue(), partXml);
+
+                        break;
+                    }
 
                 }
 
+                // This close should not be required per use of try-resource above but is necessary to avoid IDE warning
+                zipStream.close();
+
             }
-
-            return null;
-
+            catch (IOException | JDOMException e)
+            {
+                return null;
+            }
         }
-        catch (IOException | JDOMException e)
+
+        if (parts.size() == partNamePaths.size())
+        {
+            return parts;
+        }
+        else
         {
             return null;
         }
     }
 
-    private Document getXspCorePropertiesDocument(ZipFile zipFile, Collection<Namespace> namespaces) throws JDOMException,
+    private Map<String, Document> getXspDocuments(ZipFile zipFile, Collection<Namespace> namespaces) throws JDOMException,
             IOException
     {
         ZipEntry startPartEntry = zipFile.getEntry("_rels/.rels");
@@ -483,22 +514,34 @@ public class DocumentProperties {
         SAXBuilder builder = new SAXBuilder();
         Document startPartXml = builder.build(zipFile.getInputStream(startPartEntry));
 
-        String partnamePath = getCoreXmlPartName(startPartXml, builder, namespaces);
+        Map<String, String> partnamePaths = getXmlPartNames(startPartXml, builder, namespaces);
 
-        ZipEntry partNameEntry = zipFile.getEntry(partnamePath);
+        Map<String, Document> documents = new HashMap<String, Document>();
 
-        Document coreXml = builder.build(zipFile.getInputStream(partNameEntry));
+        for (Map.Entry<String, String> pathEntry : partnamePaths.entrySet())
+        {
+            ZipEntry partNameEntry = zipFile.getEntry(pathEntry.getKey());
 
-        return coreXml;
+            Document docXml = builder.build(zipFile.getInputStream(partNameEntry));
+
+            documents.put(pathEntry.getValue(), docXml);
+
+        }
+
+        return documents;
 
     }
 
-    private String getCoreXmlPartName(Document startPartXml, SAXBuilder builder, Collection<Namespace> namespaces)
+    private Map<String, String> getXmlPartNames(Document startPartXml, SAXBuilder builder, Collection<Namespace> namespaces)
     {
+
+        Map<String, String> partNames = new HashMap<String, String>();
 
         namespaces.add(Namespace.getNamespace("rel", "http://schemas.openxmlformats.org/package/2006/relationships"));
         namespaces.add(Namespace.getNamespace("cp",
                                               "http://schemas.openxmlformats.org/package/2006/metadata/core-properties"));
+        namespaces.add(Namespace.getNamespace("d",
+                                              "http://schemas.openxmlformats.org/officeDocument/2006/extended-properties"));
         namespaces.add(Namespace.getNamespace("dc", "http://purl.org/dc/elements/1.1/"));
         namespaces.add(Namespace.getNamespace("dcterms", "http://purl.org/dc/terms/"));
 
@@ -509,30 +552,47 @@ public class DocumentProperties {
 
         Element coreElm = xPath.evaluateFirst(startPartXml);
         String partNamePath = coreElm.getAttributeValue("Target");
+        partNamePath.replace("$/", "");
+        partNames.put(partNamePath, "core");
 
-        return partNamePath.replace("$/", "");
+        xPath = XPathFactory.instance().compile("/rel:Relationships/rel:Relationship[@Type='http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties']",
+                                                Filters.element(),
+                                                null,
+                                                namespaces);
+
+        Element appElm = xPath.evaluateFirst(startPartXml);
+        partNamePath = appElm.getAttributeValue("Target");
+        partNamePath.replace("$/", "");
+        partNames.put(partNamePath, "app");
+
+        return partNames;
 
     }
 
     private void setCoreXpsProperties(Document coreXml, Collection<Namespace> namespaces)
     {
-        _category = getPropertyValueCP("category", coreXml, namespaces);
-        _contentStatus = getPropertyValueCP("contentStatus", coreXml, namespaces);
-        _contentType = getPropertyValueCP("contentType", coreXml, namespaces);
-        _created = convertStringToDate(getPropertyValueDCterms("created", coreXml, namespaces));
-        _creator = getPropertyValueDC("creator", coreXml, namespaces);
-        _description = getPropertyValueDC("description", coreXml, namespaces);
-        _identifier = getPropertyValueDC("identifier", coreXml, namespaces);
-        _keywords = getPropertyValueCP("keywords", coreXml, namespaces);
-        _language = getPropertyValueDC("language", coreXml, namespaces);
-        _lastModifiedBy = getPropertyValueCP("lastModifiedBy", coreXml, namespaces);
-        _lastPrinted = convertStringToDate(getPropertyValueCP("lastPrinted", coreXml, namespaces));
-        _modified = convertStringToDate(getPropertyValueDCterms("modified", coreXml, namespaces));
-        _revision = getPropertyValueCP("revision", coreXml, namespaces);
-        _subject = getPropertyValueDC("subject", coreXml, namespaces);
-        _title = getPropertyValueDC("title", coreXml, namespaces);
-        _version = getPropertyValueCP("version", coreXml, namespaces);
+        setCategory(getPropertyValueCP("category", coreXml, namespaces));
+        setContentStatus(getPropertyValueCP("contentStatus", coreXml, namespaces));
+        setContentType(getPropertyValueCP("contentType", coreXml, namespaces));
+        setCreated(convertStringToDate(getPropertyValueDCterms("created", coreXml, namespaces)));
+        setCreator(getPropertyValueDC("creator", coreXml, namespaces));
+        setDescription(getPropertyValueDC("description", coreXml, namespaces));
+        setIdentifier(getPropertyValueDC("identifier", coreXml, namespaces));
+        setKeywords(getPropertyValueCP("keywords", coreXml, namespaces));
+        setLanguage(getPropertyValueDC("language", coreXml, namespaces));
+        setLastModifiedBy(getPropertyValueCP("lastModifiedBy", coreXml, namespaces));
+        setLastPrinted(convertStringToDate(getPropertyValueCP("lastPrinted", coreXml, namespaces)));
+        setModified(convertStringToDate(getPropertyValueDCterms("modified", coreXml, namespaces)));
+        setRevision(getPropertyValueCP("revision", coreXml, namespaces));
+        setSubject(getPropertyValueDC("subject", coreXml, namespaces));
+        setTitle(getPropertyValueDC("title", coreXml, namespaces));
+        setVersion(getPropertyValueCP("version", coreXml, namespaces));
 
+    }
+
+    private void setAppXpsProperties(Document appXml, Collection<Namespace> namespaces)
+    {
+        setPageCount(getIntegerProperty("Pages", appXml, namespaces));
     }
 
     private String getPropertyValueDC(String propertyString, Document coreXml, Collection<Namespace> namespaces)
@@ -589,6 +649,30 @@ public class DocumentProperties {
         return value;
     }
 
+    private int getIntegerProperty(String propertyString, Document appXml, Collection<Namespace> namespaces)
+    {
+        int value = 0;
+
+        XPathExpression<Element> titlePath = XPathFactory.instance().compile("/d:Properties/d:" + propertyString,
+                                                                             Filters.element(),
+                                                                             null,
+                                                                             namespaces);
+        Element property = titlePath.evaluateFirst(appXml);
+        if (property != null)
+        {
+            try
+            {
+                value = Integer.parseInt(property.getText());
+            }
+            catch (NumberFormatException nfe)
+            {
+                value = 0;
+            }
+        }
+
+        return value;
+    }
+
     private DateTime convertStringToDate(String date)
     {
         try
@@ -634,9 +718,9 @@ public class DocumentProperties {
             BufferedImage xpsThumbnail = convertToJpg(inputStream, partNameEntry.getName().split("/")[1]);
             if (xpsThumbnail == null) return;
 
-            _thumbnail = GraphicsHelper.resample(xpsThumbnail, 80, 80);
+            setThumbnail(GraphicsHelper.resample(xpsThumbnail, 80, 80));
 
-            _thumbnailFilename = getFilenameWithoutExtension() + "_thumb.jpg";
+            setThumbnailFilename(getFilenameWithoutExtension() + "_thumb.jpg");
 
         }
         catch (JDOMException | IOException e)

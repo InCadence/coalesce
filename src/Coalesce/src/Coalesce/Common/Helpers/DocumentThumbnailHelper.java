@@ -39,6 +39,36 @@ public class DocumentThumbnailHelper {
 
     }
 
+    public static class DocumentThumbnailResults {
+
+        private int _originalWidth = 0;
+        private int _originalHeight = 0;
+        private BufferedImage _thumbnail;
+
+        public DocumentThumbnailResults(int originalWidth, int originalHeight, BufferedImage thumbnail)
+        {
+            _originalWidth = originalWidth;
+            _originalHeight = originalHeight;
+            _thumbnail = thumbnail;
+        }
+
+        public int getOriginalWidth()
+        {
+            return _originalWidth;
+        }
+
+        public int getOriginalHeight()
+        {
+            return _originalHeight;
+        }
+
+        public BufferedImage getThumbnail()
+        {
+            return _thumbnail;
+        }
+
+    }
+
     // -----------------------------------------------------------------------//
     // Public Shared Methods
     // -----------------------------------------------------------------------//
@@ -52,7 +82,7 @@ public class DocumentThumbnailHelper {
      * @return the thumbnail image for the file.
      * @throws IOException
      */
-    public static BufferedImage getThumbnailForFile(String fullFilename) throws IOException
+    public static DocumentThumbnailResults getThumbnailForFile(String fullFilename) throws IOException
     {
         return getThumbnailForFile(fullFilename, false);
     }
@@ -65,7 +95,7 @@ public class DocumentThumbnailHelper {
      * @return the thumbnail image for the file.
      * @throws IOException
      */
-    public static BufferedImage getThumbnailForFile(String fullFilename, boolean encrypted) throws IOException
+    public static DocumentThumbnailResults getThumbnailForFile(String fullFilename, boolean encrypted) throws IOException
     {
         String mimeType = MimeHelper.getMimeTypeForExtension(FileHelper.getExtension(fullFilename));
 
@@ -84,15 +114,14 @@ public class DocumentThumbnailHelper {
             BufferedImage originalImage = ImageIO.read(new File(fullFilename));
             thumbnail = GraphicsHelper.resampleToMaximum(originalImage, 80, 80);
 
-            break;
+            return new DocumentThumbnailResults(originalImage.getWidth(), originalImage.getHeight(), thumbnail);
 
         default:
 
             thumbnail = getThumbnailForMimeType(mimeType);
 
+            return new DocumentThumbnailResults(0, 0, thumbnail);
         }
-
-        return thumbnail;
 
     }
 
@@ -182,7 +211,8 @@ public class DocumentThumbnailHelper {
 
     /**
      * Returns a thumbnail based on the MIME type provided. If a specific thumbnail is not defined for the provided MIME type
-     * then the returned thumbnail behavior falls back to {@link DocumentThumbnailHelper#getThumbnailForMimeCategory(String)}.
+     * then the returned thumbnail behavior falls back to {@link DocumentThumbnailHelper#getThumbnailForMimeCategory(String)}
+     * .
      * 
      * @param mimeType the MIME type.
      * @return the thumbnail image for the MIME type.
@@ -232,10 +262,11 @@ public class DocumentThumbnailHelper {
 
         }
 
-        if (thumbnail == null) {
+        if (thumbnail == null)
+        {
             thumbnail = DocumentThumbnailHelper.getThumbnailForMimeCategory(mimeType);
         }
-        
+
         return thumbnail;
 
     }
