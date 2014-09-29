@@ -43,64 +43,118 @@ public class FileHelperTest {
      */
 
     @Test
-    public void GetBaseFilenameWithFullDirectoryPathForKeyNullTest() throws NoSuchMethodException, SecurityException,
+    public void getExtensionNullTest()
+    {
+       assertEquals("", FileHelper.getExtension(null)); 
+    }
+    
+    @Test
+    public void getExtensionEmptyStringTest()
+    {
+        assertEquals("", FileHelper.getExtension(""));
+    }
+    
+    @Test
+    public void getExtensionWhiteSpaceTest()
+    {
+        assertEquals("", FileHelper.getExtension("  "));
+    }
+    
+    @Test
+    public void getExtensionNoneTest()
+    {
+        assertEquals("", FileHelper.getExtension("file"));
+    }
+    
+    @Test
+    public void getShortFilenameTest()
+    {
+        assertEquals("testFile.txt", FileHelper.getShortFilename("C:\\location\\testFile.txt"));
+    }
+    
+    @Test
+    public void getShortFilenameJustFilenameTest()
+    {
+        assertEquals("testFile.txt", FileHelper.getShortFilename("testFile.txt"));
+    }
+    
+    @Test
+    public void getShortFilenameNullTest()
+    {
+        assertEquals(null, FileHelper.getShortFilename(null));
+    }
+    
+    @Test
+    public void getShortFilenameEmptyTest()
+    {
+        assertEquals("", FileHelper.getShortFilename(""));
+    }
+
+    @Test
+    public void getShortFilenameWhiteSpaceTest()
+    {
+        assertEquals("   ", FileHelper.getShortFilename("   "));
+    }
+
+    @Test
+    public void getBaseFilenameWithFullDirectoryPathForKeyNullTest() throws NoSuchMethodException, SecurityException,
             IllegalAccessException, IllegalArgumentException, InvocationTargetException
     {
 
-        String filename = CallGetBaseFilenameWithFullDirectoryPathForKey(_binaryFileStoreBasePath, 0, null, false);
+        String filename = callGetBaseFilenameWithFullDirectoryPathForKey(_binaryFileStoreBasePath, 0, null, false);
 
         assertNull(filename);
     }
 
     @Test
-    public void GetBaseFilenameWithFullDirectoryPathForKeyEmptyTest() throws NoSuchMethodException, SecurityException,
+    public void getBaseFilenameWithFullDirectoryPathForKeyEmptyTest() throws NoSuchMethodException, SecurityException,
             IllegalAccessException, IllegalArgumentException, InvocationTargetException
     {
 
-        String filename = CallGetBaseFilenameWithFullDirectoryPathForKey(_binaryFileStoreBasePath, 0, "", false);
+        String filename = callGetBaseFilenameWithFullDirectoryPathForKey(_binaryFileStoreBasePath, 0, "", false);
 
         assertNull(filename);
 
     }
 
     @Test
-    public void GetBaseFilenameWithFullDirectoryPathForKeyWhitespaceTest() throws NoSuchMethodException, SecurityException,
+    public void getBaseFilenameWithFullDirectoryPathForKeyWhitespaceTest() throws NoSuchMethodException, SecurityException,
             IllegalAccessException, IllegalArgumentException, InvocationTargetException
     {
 
-        String filename = CallGetBaseFilenameWithFullDirectoryPathForKey(_binaryFileStoreBasePath, 0, " ", false);
+        String filename = callGetBaseFilenameWithFullDirectoryPathForKey(_binaryFileStoreBasePath, 0, " ", false);
 
         assertNull(filename);
 
     }
 
     @Test
-    public void GetBaseFilenameWithFullDirectoryPathForKeyInvalidGuidTest() throws NoSuchMethodException, SecurityException,
+    public void getBaseFilenameWithFullDirectoryPathForKeyInvalidGuidTest() throws NoSuchMethodException, SecurityException,
             IllegalAccessException, IllegalArgumentException, InvocationTargetException
     {
 
-        String filename = CallGetBaseFilenameWithFullDirectoryPathForKey(_binaryFileStoreBasePath, 0, "ABCD", false);
+        String filename = callGetBaseFilenameWithFullDirectoryPathForKey(_binaryFileStoreBasePath, 0, "ABCD", false);
 
         assertNull(filename);
 
     }
 
     @Test
-    public void GetBaseFilenameWithFullDirectoryPathForKeySubDirZeroTest() throws NoSuchMethodException, SecurityException,
+    public void getBaseFilenameWithFullDirectoryPathForKeySubDirZeroTest() throws NoSuchMethodException, SecurityException,
             IllegalAccessException, IllegalArgumentException, InvocationTargetException
     {
 
-        String filename = CallGetBaseFilenameWithFullDirectoryPathForKey(_binaryFileStoreBasePath, 0, GUID, false);
+        String filename = callGetBaseFilenameWithFullDirectoryPathForKey(_binaryFileStoreBasePath, 0, GUID, false);
 
         assertEquals(_binaryFileStoreBasePath + GUID.toUpperCase(), filename);
     }
 
     @Test
-    public void GetBaseFilenameWithFullDirectoryPathForKeySubDirOneTest() throws NoSuchMethodException, SecurityException,
+    public void getBaseFilenameWithFullDirectoryPathForKeySubDirOneTest() throws NoSuchMethodException, SecurityException,
             IllegalAccessException, IllegalArgumentException, InvocationTargetException
     {
 
-        String filename = CallGetBaseFilenameWithFullDirectoryPathForKey(_binaryFileStoreBasePath, 1, GUID, false);
+        String filename = callGetBaseFilenameWithFullDirectoryPathForKey(_binaryFileStoreBasePath, 1, GUID, false);
 
         assertEquals(FilenameUtils.concat(_binaryFileStoreBasePath,
                                           GUID.substring(0, 1).toUpperCase() + "\\" + GUID.toUpperCase()),
@@ -108,11 +162,11 @@ public class FileHelperTest {
     }
 
     @Test
-    public void GetBaseFilenameWithFullDirectoryPathForKeySubDirThirtyFiveTest() throws NoSuchMethodException,
+    public void getBaseFilenameWithFullDirectoryPathForKeySubDirThirtyFiveTest() throws NoSuchMethodException,
             SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
     {
 
-        String filename = CallGetBaseFilenameWithFullDirectoryPathForKey(_binaryFileStoreBasePath, 35, GUID, false);
+        String filename = callGetBaseFilenameWithFullDirectoryPathForKey(_binaryFileStoreBasePath, 35, GUID, false);
 
         assertEquals(FilenameUtils.concat(_binaryFileStoreBasePath,
                                           GUID.substring(0, 35).toUpperCase() + "\\" + GUID.toUpperCase()),
@@ -124,22 +178,22 @@ public class FileHelperTest {
             SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
     {
 
-        String filename = CallGetBaseFilenameWithFullDirectoryPathForKey(_binaryFileStoreBasePath, 36, GUID, false);
+        String filename = callGetBaseFilenameWithFullDirectoryPathForKey(_binaryFileStoreBasePath, 36, GUID, false);
 
         assertEquals(_binaryFileStoreBasePath + GUID.toUpperCase(), filename);
     }
 
     @Test
-    public void GetBaseFilenameWithFullDirectoryPathForKeySubDirThirtySevenTest() throws NoSuchMethodException,
+    public void getBaseFilenameWithFullDirectoryPathForKeySubDirThirtySevenTest() throws NoSuchMethodException,
             SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
     {
 
-        String filename = CallGetBaseFilenameWithFullDirectoryPathForKey(_binaryFileStoreBasePath, 37, GUID, false);
+        String filename = callGetBaseFilenameWithFullDirectoryPathForKey(_binaryFileStoreBasePath, 37, GUID, false);
 
         assertEquals(_binaryFileStoreBasePath + GUID.toUpperCase(), filename);
     }
 
-    private String CallGetBaseFilenameWithFullDirectoryPathForKey(String binaryFileStoreBasePath,
+    private String callGetBaseFilenameWithFullDirectoryPathForKey(String binaryFileStoreBasePath,
                                                                   int subDirectoryLength,
                                                                   String key,
                                                                   boolean createIfDoesNotExist)

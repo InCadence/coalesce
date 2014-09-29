@@ -100,6 +100,12 @@ public class DocumentThumbnailHelperTest {
     }
 
     @Test
+    public void getDocumentThumbnailForMimeTypePlainTextTest() throws IOException
+    {
+        getDocumentThumbnailForMimeTypeTest("TXT", "LargeIcon_Text.png");
+    }
+
+    @Test
     public void getDocumentThumbnailForMimeTypeZipTest() throws IOException
     {
         getDocumentThumbnailForMimeTypeTest("ZIP", "LargeIcon_Zip.png");

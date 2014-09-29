@@ -1,5 +1,7 @@
 package Coalesce.Common.Helpers;
 
+import org.apache.commons.lang.NullArgumentException;
+
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
 
@@ -17,17 +19,39 @@ package Coalesce.Common.Helpers;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
+/**
+ * Provides helper methods for obtaining MIME type information
+ * 
+ * @author InCadence
+ *
+ */
 public class MimeHelper {
+
+    // Make class static
+    private MimeHelper()
+    {
+
+    }
 
     // -----------------------------------------------------------------------//
     // Public Shared Methods
     // -----------------------------------------------------------------------//
 
-    public static String GetExtensionForMimeType(String mimeType)
+    /**
+     * Returns the MIME type for an extension. Some MIME types are associated with multiple extensions. In this case only one
+     * of the possible extensions will be returned.
+     * 
+     * @param mimeType the MIME type
+     * @return the extension the corresponds to the MIME type
+     */
+    public static String getExtensionForMimeType(String mimeType)
     {
+        if (mimeType == null) throw new NullArgumentException("mimeType");
+
         String extension;
 
         switch (mimeType.toLowerCase()) {
+
         case "application/octet-stream":
             extension = ""; // No extension, this is a blob field of no specific mime type.
             break;
@@ -372,52 +396,52 @@ public class MimeHelper {
         case "x-world/x-vrml":
             extension = "vrml";
             break;
-        case "application/vnd.ms-word.document.macroEnabled.12":
+        case "application/vnd.ms-word.document.macroenabled.12":
             extension = "docm";
             break;
         case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
             extension = "docx";
             break;
-        case "application/vnd.ms-word.template.macroEnabled.12":
+        case "application/vnd.ms-word.template.macroenabled.12":
             extension = "dotm";
             break;
         case "application/vnd.openxmlformats-officedocument.wordprocessingml.template":
             extension = "dotx";
             break;
-        case "application/vnd.ms-powerpoint.template.macroEnabled.12":
+        case "application/vnd.ms-powerpoint.template.macroenabled.12":
             extension = "potm";
             break;
         case "application/vnd.openxmlformats-officedocument.presentationml.template":
             extension = "potx";
             break;
-        case "application/vnd.ms-powerpoint.addin.macroEnabled.12":
+        case "application/vnd.ms-powerpoint.addin.macroenabled.12":
             extension = "ppam";
             break;
-        case "application/vnd.ms-powerpoint.slideshow.macroEnabled.12":
+        case "application/vnd.ms-powerpoint.slideshow.macroenabled.12":
             extension = "ppsm";
             break;
         case "application/vnd.openxmlformats-officedocument.presentationml.slideshow":
             extension = "ppsx";
             break;
-        case "application/vnd.ms-powerpoint.presentation.macroEnabled.12":
+        case "application/vnd.ms-powerpoint.presentation.macroenabled.12":
             extension = "pptm";
             break;
         case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
             extension = "pptx";
             break;
-        case "application/vnd.ms-excel.addin.macroEnabled.12":
+        case "application/vnd.ms-excel.addin.macroenabled.12":
             extension = "xlam";
             break;
-        case "application/vnd.ms-excel.sheet.binary.macroEnabled.12":
+        case "application/vnd.ms-excel.sheet.binary.macroenabled.12":
             extension = "xlsb";
             break;
-        case "application/vnd.ms-excel.sheet.macroEnabled.12":
+        case "application/vnd.ms-excel.sheet.macroenabled.12":
             extension = "xlsm";
             break;
         case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
             extension = "xlsx";
             break;
-        case "application/vnd.ms-excel.template.macroEnabled.12":
+        case "application/vnd.ms-excel.template.macroenabled.12":
             extension = "xltm";
             break;
         case "application/vnd.openxmlformats-officedocument.spreadsheetml.template":
@@ -431,11 +455,18 @@ public class MimeHelper {
 
     }
 
+    /**
+     * Returns the MIME type for the extension.
+     * 
+     * @param extension the extension.
+     * @return the MIME type for the extension.
+     */
     public static String getMimeTypeForExtension(String extension)
     {
+        if (extension == null) throw new NullArgumentException("extension");
+
         String mimeType;
 
-        // Remove leading "." if there is one.
         extension = extension.replace(".", "");
 
         switch (extension.toUpperCase()) {
@@ -446,20 +477,12 @@ public class MimeHelper {
             mimeType = "application/postscript";
             break;
         case "AIF":
-            mimeType = "audio/x-aiff";
-            break;
         case "AIFC":
-            mimeType = "audio/x-aiff";
-            break;
         case "AIFF":
             mimeType = "audio/x-aiff";
             break;
         case "ASF":
-            mimeType = "video/x-ms-asf";
-            break;
         case "ASR":
-            mimeType = "video/x-ms-asf";
-            break;
         case "ASX":
             mimeType = "video/x-ms-asf";
             break;
@@ -599,8 +622,6 @@ public class MimeHelper {
             mimeType = "text/x-component";
             break;
         case "HTM":
-            mimeType = "text/html";
-            break;
         case "HTML":
             mimeType = "text/html";
             break;
@@ -626,11 +647,7 @@ public class MimeHelper {
             mimeType = "image/pipeg";
             break;
         case "JPE":
-            mimeType = "image/jpeg";
-            break;
         case "JPEG":
-            mimeType = "image/jpeg";
-            break;
         case "JPG":
             mimeType = "image/jpeg";
             break;
@@ -647,8 +664,6 @@ public class MimeHelper {
             mimeType = "application/octet-stream";
             break;
         case "LSF":
-            mimeType = "video/x-la-asf";
-            break;
         case "LSX":
             mimeType = "video/x-la-asf";
             break;
@@ -656,8 +671,6 @@ public class MimeHelper {
             mimeType = "application/octet-stream";
             break;
         case "M13":
-            mimeType = "application/x-msmediaview";
-            break;
         case "M14":
             mimeType = "application/x-msmediaview";
             break;
@@ -674,8 +687,6 @@ public class MimeHelper {
             mimeType = "application/x-troff-me";
             break;
         case "MHT":
-            mimeType = "message/rfc822";
-            break;
         case "MHTML":
             mimeType = "message/rfc822";
             break;
@@ -691,32 +702,20 @@ public class MimeHelper {
         case "MOVIE":
             mimeType = "video/x-sgi-movie";
             break;
-        case "MP2":
-            mimeType = "video/mpeg";
-            break;
         case "MP3":
             mimeType = "audio/mpeg";
             break;
+        case "MP2":
         case "MP4":
-            mimeType = "video/mpeg";
-            break;
         case "MPA":
-            mimeType = "video/mpeg";
-            break;
         case "MPE":
-            mimeType = "video/mpeg";
-            break;
         case "MPEG":
-            mimeType = "video/mpeg";
-            break;
         case "MPG":
+        case "MPV2":
             mimeType = "video/mpeg";
             break;
         case "MPP":
             mimeType = "application/vnd.ms-project";
-            break;
-        case "MPV2":
-            mimeType = "video/mpeg";
             break;
         case "MS":
             mimeType = "application/x-troff-ms";
@@ -767,17 +766,9 @@ public class MimeHelper {
             mimeType = "application/ynd.ms-pkipko";
             break;
         case "PMA":
-            mimeType = "application/x-perfmon";
-            break;
         case "PMC":
-            mimeType = "application/x-perfmon";
-            break;
         case "PML":
-            mimeType = "application/x-perfmon";
-            break;
         case "PMR":
-            mimeType = "application/x-perfmon";
-            break;
         case "PMW":
             mimeType = "application/x-perfmon";
             break;
@@ -787,7 +778,7 @@ public class MimeHelper {
         case "PNM":
             mimeType = "image/x-portable-anymap";
             break;
-        case "POT,":
+        case "POT":
             mimeType = "application/vnd.ms-powerpoint";
             break;
         case "PPM":
@@ -911,8 +902,6 @@ public class MimeHelper {
             mimeType = "application/x-compressed";
             break;
         case "TIF":
-            mimeType = "image/tiff";
-            break;
         case "TIFF":
             mimeType = "image/tiff";
             break;
@@ -947,11 +936,7 @@ public class MimeHelper {
             mimeType = "audio/x-wav";
             break;
         case "WCM":
-            mimeType = "application/vnd.ms-works";
-            break;
         case "WDB":
-            mimeType = "application/vnd.ms-works";
-            break;
         case "WKS":
             mimeType = "application/vnd.ms-works";
             break;
@@ -965,11 +950,7 @@ public class MimeHelper {
             mimeType = "application/x-mswrite";
             break;
         case "WRL":
-            mimeType = "x-world/x-vrml";
-            break;
         case "WRZ":
-            mimeType = "x-world/x-vrml";
-            break;
         case "XAF":
             mimeType = "x-world/x-vrml";
             break;
@@ -977,20 +958,10 @@ public class MimeHelper {
             mimeType = "image/x-xbitmap";
             break;
         case "XLA":
-            mimeType = "application/vnd.ms-excel";
-            break;
         case "XLC":
-            mimeType = "application/vnd.ms-excel";
-            break;
         case "XLM":
-            mimeType = "application/vnd.ms-excel";
-            break;
         case "XLS":
-            mimeType = "application/vnd.ms-excel";
-            break;
         case "XLT":
-            mimeType = "application/vnd.ms-excel";
-            break;
         case "XLW":
             mimeType = "application/vnd.ms-excel";
             break;
@@ -1010,11 +981,7 @@ public class MimeHelper {
             mimeType = "application/zip";
             break;
         case "ACCDB":
-            mimeType = "application/msaccess";
-            break;
         case "ACCDE":
-            mimeType = "application/msaccess";
-            break;
         case "ACCDT":
             mimeType = "application/msaccess";
             break;
@@ -1077,223 +1044,47 @@ public class MimeHelper {
         return mimeType;
     }
 
+    /**
+     * Return the description of the file based on the MIME type of the file.
+     * 
+     * @param mimeType the MIME type of the file
+     * @return the description of the file type.
+     */
     public static String getFileTypeForMimeType(String mimeType)
     {
+        if (mimeType == null) throw new NullArgumentException("mimeType");
+
         String fileType = "";
 
         if (mimeType.toLowerCase().startsWith("image/"))
         {
 
-            switch (mimeType.toLowerCase()) {
-
-            case "image/bmp":
-
-                fileType = "Bitmap (BMP) Image";
-                break;
-
-            case "image/gif":
-
-                fileType = "Graphics Interchange Format (GIF) Image";
-                break;
-
-            case "image/jpeg":
-
-                fileType = "Joint Photographic Experts Group (JPEG) Image";
-                break;
-
-            case "image/x-png":
-
-                fileType = "Portable Network Graphic (PNG) Image";
-                break;
-
-            case "image/tiff":
-
-                fileType = "Tagged Image File Format (TIFF) Image";
-                break;
-
-            default:
-
-                fileType = mimeType.replace("image/", "").toUpperCase() + " Image";
-
-            }
-        }
-
-        if (mimeType.toLowerCase().startsWith("text/"))
-        {
-
-            switch (mimeType.toLowerCase()) {
-
-            case "text/plain":
-
-                fileType = "Text Document";
-                break;
-
-            case "text/html":
-
-                fileType = "HTML Document";
-                break;
-
-            default:
-
-                fileType = mimeType.replace("text/", "").toUpperCase() + " Document";
-
-            }
+            fileType = getFileTypeForImageMimeType(mimeType);
 
         }
-
-        if (mimeType.toLowerCase().startsWith("audio/"))
+        else if (mimeType.toLowerCase().startsWith("text/"))
         {
 
-            switch (mimeType.toLowerCase()) {
+            fileType = getFileTypeForTextMimeType(mimeType);
 
-            case "audio/mpeg":
-
-                fileType = "Moving Picture Experts Group (MPEG) Audio";
-                break;
-
-            case "audio/mid":
-
-                fileType = "Musical Instrument Digital Interface (MIDI) Audio";
-                break;
-
-            case "audio/x-wav":
-
-                fileType = "Waveform Audio File (WAV)";
-                break;
-
-            case "audio/basic":
-
-                fileType = "Audio File";
-                break;
-
-            default:
-
-                fileType = mimeType.replace("audio/", "").toUpperCase() + " File";
-
-            }
         }
-
-        if (mimeType.toLowerCase().startsWith("video/"))
+        else if (mimeType.toLowerCase().startsWith("audio/"))
         {
 
-            switch (mimeType.toLowerCase()) {
-            case "video/quicktime":
+            fileType = getFileTypeForAudioMimeType(mimeType);
 
-                fileType = "Quicktime Video";
-                break;
-
-            case "video/mpeg":
-
-                fileType = "Moving Picture Experts Group (MPEG) Video";
-                break;
-
-            case "video/x-msvideo":
-
-                fileType = "Audio Video Interleave (AVI) Video";
-                break;
-
-            default:
-
-                fileType = mimeType.replace("video/", "").toUpperCase() + " Video";
-
-            }
         }
-
-        if (mimeType.toLowerCase().startsWith("application/"))
+        else if (mimeType.toLowerCase().startsWith("video/"))
         {
 
-            switch (mimeType.toLowerCase()) {
+            fileType = getFileTypeForVideoMimeType(mimeType);
 
-            case "application/msword":
+        }
+        else if (mimeType.toLowerCase().startsWith("application/"))
+        {
 
-                fileType = "Microsoft Word 97-2003 Document";
-                break;
+            fileType = getFileTypeForAppMimeType(mimeType);
 
-            case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-
-                fileType = "Microsoft Word Document";
-                break;
-
-            case "application/x-msaccess":
-
-                fileType = "Microsoft Access Database";
-                break;
-
-            case "application/x-msmoney":
-
-                fileType = "Microsoft Money";
-                break;
-
-            case "application/pdf":
-
-                fileType = "Adobe Portable Document Format";
-                break;
-
-            case "application/vnd.ms-project":
-
-                fileType = "Microsoft Project";
-                break;
-
-            case "application/vnd.ms-powerpoint":
-
-                fileType = "Microsoft PowerPoint 97-2003 Presentation";
-                break;
-
-            case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
-
-                fileType = "Microsoft PowerPoint Presentation";
-                break;
-
-            case "application/x-mspublisher":
-
-                fileType = "Microsoft Publisher";
-                break;
-
-            case "application/vnd.ms-works":
-
-                fileType = "Microsoft Works Document";
-                break;
-
-            case "application/x-mswrite":
-
-                fileType = "Microsoft Write";
-                break;
-
-            case "application/rtf":
-
-                fileType = "Rich Text Format Document";
-                break;
-
-            case "application/vnd.ms-excel":
-
-                fileType = "Microsoft Excel 97-2003 Spreadsheet";
-                break;
-
-            case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
-
-                fileType = "Microsoft Excel Spreadsheet";
-                break;
-
-            case "application/x-gtar":
-
-                fileType = "GTAR Archive";
-                break;
-
-            case "application/x-gzip":
-
-                fileType = "GZIP Archive";
-                break;
-
-            case "application/zip":
-
-                fileType = "ZIP Archive";
-                break;
-
-            default:
-
-                fileType = mimeType.replace("application/", "").toUpperCase() + " Document";
-
-            }
         }
 
         // Catch-all
@@ -1310,18 +1101,258 @@ public class MimeHelper {
             }
         }
 
+        return fileType.trim();
+
+    }
+
+    /**
+     * Return the description of the file based on the extension of the file.
+     * 
+     * @param extension the extension of the file
+     * @return the description of the file type.
+     */
+    public static String getFileTypeForExtension(String extension)
+    {
+        String mimeType = getMimeTypeForExtension(extension);
+
+        return getFileTypeForMimeType(mimeType);
+    }
+
+    // -----------------------------------------------------------------------//
+    // Public Shared Methods
+    // -----------------------------------------------------------------------//
+
+    private static String getFileTypeForImageMimeType(String mimeType)
+    {
+        String fileType = "";
+
+        switch (mimeType.toLowerCase()) {
+
+        case "image/bmp":
+
+            fileType = "Bitmap (BMP) Image";
+            break;
+
+        case "image/gif":
+
+            fileType = "Graphics Interchange Format (GIF) Image";
+            break;
+
+        case "image/jpeg":
+
+            fileType = "Joint Photographic Experts Group (JPEG) Image";
+            break;
+
+        case "image/x-png":
+
+            fileType = "Portable Network Graphic (PNG) Image";
+            break;
+
+        case "image/tiff":
+
+            fileType = "Tagged Image File Format (TIFF) Image";
+            break;
+
+        default:
+
+            fileType = mimeType.replace("image/", "").toUpperCase() + " Image";
+
+        }
+
         return fileType;
 
     }
 
-    public static String getFileTypeForExtension(String Extension)
+    private static String getFileTypeForTextMimeType(String mimeType)
     {
+        String fileType = "";
 
-        // Get Mime Type
-        String MimeType = getMimeTypeForExtension(Extension);
+        switch (mimeType.toLowerCase()) {
 
-        // Get Descriptive Name for Mime Type
-        return getFileTypeForMimeType(MimeType);
+        case "text/plain":
+
+            fileType = "Text Document";
+            break;
+
+        case "text/html":
+
+            fileType = "HTML Document";
+            break;
+
+        default:
+
+            fileType = mimeType.replace("text/", "").toUpperCase() + " Document";
+
+        }
+
+        return fileType;
+
+    }
+
+    private static String getFileTypeForAudioMimeType(String mimeType)
+    {
+        String fileType = "";
+
+        switch (mimeType.toLowerCase()) {
+
+        case "audio/mpeg":
+
+            fileType = "Moving Picture Experts Group (MPEG) Audio";
+            break;
+
+        case "audio/mid":
+
+            fileType = "Musical Instrument Digital Interface (MIDI) Audio";
+            break;
+
+        case "audio/x-wav":
+
+            fileType = "Waveform Audio File (WAV)";
+            break;
+
+        case "audio/basic":
+
+            fileType = "Audio File";
+            break;
+
+        default:
+
+            fileType = mimeType.replace("audio/", "").toUpperCase() + " File";
+
+        }
+
+        return fileType;
+
+    }
+
+    private static String getFileTypeForVideoMimeType(String mimeType)
+    {
+        String fileType = "";
+
+        switch (mimeType.toLowerCase()) {
+        case "video/quicktime":
+
+            fileType = "Quicktime Video";
+            break;
+
+        case "video/mpeg":
+
+            fileType = "Moving Picture Experts Group (MPEG) Video";
+            break;
+
+        case "video/x-msvideo":
+
+            fileType = "Audio Video Interleave (AVI) Video";
+            break;
+
+        default:
+
+            fileType = mimeType.replace("video/", "").toUpperCase() + " Video";
+
+        }
+
+        return fileType.trim();
+
+    }
+
+    private static String getFileTypeForAppMimeType(String mimeType)
+    {
+        String fileType = "";
+
+        switch (mimeType.toLowerCase()) {
+
+        case "application/msword":
+
+            fileType = "Microsoft Word 97-2003 Document";
+            break;
+
+        case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+
+            fileType = "Microsoft Word Document";
+            break;
+
+        case "application/x-msaccess":
+
+            fileType = "Microsoft Access Database";
+            break;
+
+        case "application/x-msmoney":
+
+            fileType = "Microsoft Money";
+            break;
+
+        case "application/pdf":
+
+            fileType = "Adobe Portable Document Format";
+            break;
+
+        case "application/vnd.ms-project":
+
+            fileType = "Microsoft Project";
+            break;
+
+        case "application/vnd.ms-powerpoint":
+
+            fileType = "Microsoft PowerPoint 97-2003 Presentation";
+            break;
+
+        case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+
+            fileType = "Microsoft PowerPoint Presentation";
+            break;
+
+        case "application/x-mspublisher":
+
+            fileType = "Microsoft Publisher";
+            break;
+
+        case "application/vnd.ms-works":
+
+            fileType = "Microsoft Works Document";
+            break;
+
+        case "application/x-mswrite":
+
+            fileType = "Microsoft Write";
+            break;
+
+        case "application/rtf":
+
+            fileType = "Rich Text Format Document";
+            break;
+
+        case "application/vnd.ms-excel":
+
+            fileType = "Microsoft Excel 97-2003 Spreadsheet";
+            break;
+
+        case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+
+            fileType = "Microsoft Excel Spreadsheet";
+            break;
+
+        case "application/x-gtar":
+
+            fileType = "GTAR Archive";
+            break;
+
+        case "application/x-gzip":
+
+            fileType = "GZIP Archive";
+            break;
+
+        case "application/zip":
+
+            fileType = "ZIP Archive";
+            break;
+
+        default:
+
+            fileType = mimeType.replace("application/", "").toUpperCase() + " Document";
+
+        }
+
+        return fileType;
 
     }
 
