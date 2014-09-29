@@ -23,12 +23,9 @@ import Coalesce.Framework.DataModel.XsdRecord;
 import Coalesce.Framework.DataModel.XsdRecordset;
 import Coalesce.Framework.DataModel.XsdSection;
 
-import com.database.persister.CoalesceDataConnector;
-import com.database.persister.ConnectionType;
+import com.database.persister.Neo4JDataConnector;
 import com.database.persister.Neo4JPersistor;
 import com.database.persister.ServerConn;
-
-
 
 public class CoalesceNEO4JPersistorTest {
 
@@ -50,7 +47,6 @@ public class CoalesceNEO4JPersistorTest {
         serCon = new ServerConn();
         serCon.setURL("jdbc:neo4j://localhost:7474/");
 
-
         neo4jPersister = new Neo4JPersistor();
         neo4jPersister.Initialize(serCon);
 
@@ -61,6 +57,7 @@ public class CoalesceNEO4JPersistorTest {
         CoalesceNEO4JPersistorTest.createEntity();
 
     }
+
     private static boolean createEntity() throws CoalesceException
     {
         try
@@ -93,13 +90,14 @@ public class CoalesceNEO4JPersistorTest {
             return false;
         }
     }
+
     @Test
     public void testConnection() throws SQLException, CoalescePersistorException
     {
 
-        try (CoalesceDataConnector conn = new CoalesceDataConnector(serCon,ConnectionType.NEO4J))
+        try (Neo4JDataConnector conn = new Neo4JDataConnector(serCon))
         {
-            conn.OpenNEOJConnection();
+            conn.openConnection();
         }
         catch (Exception e)
         {

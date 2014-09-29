@@ -37,8 +37,7 @@ import Coalesce.Framework.DataModel.XsdRecordset;
 import Coalesce.Framework.DataModel.XsdSection;
 import Coalesce.Framework.Persistance.ICoalescePersistor.EntityMetaData;
 
-import com.database.persister.CoalesceDataConnector;
-import com.database.persister.ConnectionType;
+import com.database.persister.SQLServerDataConnector;
 import com.database.persister.SQLServerPersistor;
 import com.database.persister.ServerConn;
 
@@ -163,12 +162,9 @@ public class CoalesceSQLServerPersistorTest {
     @Test
     public void testConnection()
     {
-
-        try (CoalesceDataConnector conn = new CoalesceDataConnector(serCon,ConnectionType.SQLServer))
+        try (SQLServerDataConnector conn = new SQLServerDataConnector(serCon))
         {
-
-            conn.OpenSSConnection();
-
+            conn.openConnection();
         }
         catch (Exception ex)
         {
@@ -177,7 +173,7 @@ public class CoalesceSQLServerPersistorTest {
     }
 
     @Test(expected = SQLException.class)
-    public void testFAILConnection() throws SQLException,Exception, CoalescePersistorException
+    public void testFAILConnection() throws SQLException, Exception, CoalescePersistorException
     {
         // Is this even needed?
         ServerConn serConFail = new ServerConn();
@@ -186,11 +182,10 @@ public class CoalesceSQLServerPersistorTest {
         serConFail.setServerName("localhost");
         serConFail.setPortNumber(1433);
         serConFail.setDatabase("coalescedatabase");
-        try (CoalesceDataConnector conn = new CoalesceDataConnector(serConFail,ConnectionType.SQLServer))
+
+        try (SQLServerDataConnector conn = new SQLServerDataConnector(serConFail))
         {
-
-            conn.OpenSSConnection();
-
+            conn.openConnection();
         }
     }
 
@@ -421,7 +416,6 @@ public class CoalesceSQLServerPersistorTest {
         }
     }
 
-   
     public void testFAILGetEntityKeyForEntityId() throws CoalescePersistorException
     {
 

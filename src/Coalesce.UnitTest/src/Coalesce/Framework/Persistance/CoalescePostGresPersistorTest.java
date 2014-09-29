@@ -38,8 +38,7 @@ import Coalesce.Framework.DataModel.XsdRecordset;
 import Coalesce.Framework.DataModel.XsdSection;
 import Coalesce.Framework.Persistance.ICoalescePersistor.EntityMetaData;
 
-import com.database.persister.CoalesceDataConnector;
-import com.database.persister.ConnectionType;
+import com.database.persister.PostGresDataConnector;
 import com.database.persister.PostGresSQLPersistor;
 import com.database.persister.ServerConn;
 
@@ -173,9 +172,9 @@ public class CoalescePostGresPersistorTest {
     public void testConnection() throws SQLException, CoalescePersistorException
     {
 
-        try (CoalesceDataConnector conn = new CoalesceDataConnector(serCon,ConnectionType.PostGresSQL))
+        try (PostGresDataConnector conn = new PostGresDataConnector(serCon))
         {
-            conn.OpenPSConnection();
+            conn.openConnection();
         }
         catch (Exception e)
         {
@@ -192,10 +191,10 @@ public class CoalescePostGresPersistorTest {
         serConFail.setPassword("Passw0rd");
         serConFail.setUser("rotorooter");
         serConFail.setPostGres(true);
-        try (CoalesceDataConnector conn = new CoalesceDataConnector(serConFail,ConnectionType.PostGresSQL))
+        try (PostGresDataConnector conn = new PostGresDataConnector(serConFail))
         {
 
-            conn.OpenPSConnection();
+            conn.openConnection();
 
         }
     }

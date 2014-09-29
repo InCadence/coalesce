@@ -18,7 +18,7 @@ public class ServerConn {
     
     public boolean isPostGres()
     {
-        return _postGres;
+        return _postGres; 
     }
 
     

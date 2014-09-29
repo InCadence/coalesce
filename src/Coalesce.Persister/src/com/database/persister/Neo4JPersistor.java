@@ -154,10 +154,10 @@ public class Neo4JPersistor extends CoalescePersisterBase {
         boolean isSuccessful = false;
 
         // Create a Database Connection
-        try (CoalesceDataConnector conn = new CoalesceDataConnector(this.serCon, ConnectionType.NEO4J))
+        try (Neo4JDataConnector conn = new Neo4JDataConnector(this.serCon))
         {
 
-            conn.OpenPSConnection();
+            conn.openConnection();
             conn.ExecuteCmd("CONSTRAINT ON (item:" + entity.getName() + ") ASSERT item.EntityKey IS UNIQUE");
 
             // Persist Entity Last to Include Changes
@@ -179,7 +179,7 @@ public class Neo4JPersistor extends CoalescePersisterBase {
         return isSuccessful;
     }
 
-    protected boolean persistEntityObject(XsdEntity entity, CoalesceDataConnector conn) throws SQLException
+    protected boolean persistEntityObject(XsdEntity entity, Neo4JDataConnector conn) throws SQLException
     {
         // Return true if no update is required.
         // if (!this.checkLastModified(entity, conn)) return true;
@@ -194,26 +194,25 @@ public class Neo4JPersistor extends CoalescePersisterBase {
         switch (dataObject.getStatus()) {
         case ACTIVE:
             switch (dataObject.getType().toLowerCase()) {
-                case "field":
-                    XsdField fieldObject= (XsdField) dataObject;
-                    switch(fieldObject.getType().toUpperCase())
+            case "field":
+                XsdField fieldObject = (XsdField) dataObject;
+                switch (fieldObject.getType().toUpperCase()) {
+                case "BINARY":
+                case "FILE":
+                default: {
+                    if (values == null)
                     {
-                        case "BINARY":
-                        case "FILE":
-                        default:
-                        {
-                            if(values==null){
-                                
-                            }
-                        }
+
+                    }
+                }
                     break;
+                }
             }
-        }
         }
         return null;
     }
 
-    protected boolean checkLastModified(XsdDataObject dataObject, CoalesceDataConnector conn) throws SQLException
+    protected boolean checkLastModified(XsdDataObject dataObject, Neo4JDataConnector conn) throws SQLException
     {
         boolean isOutOfDate = true;
 
@@ -240,7 +239,7 @@ public class Neo4JPersistor extends CoalescePersisterBase {
         return isOutOfDate;
     }
 
-    private DateTime getCoalesceDataObjectLastModified(String Key, String ObjectType, CoalesceDataConnector conn)
+    private DateTime getCoalesceDataObjectLastModified(String Key, String ObjectType, Neo4JDataConnector conn)
             throws SQLException
     {
         DateTime lastModified = DateTime.now(DateTimeZone.UTC);
@@ -278,7 +277,7 @@ public class Neo4JPersistor extends CoalescePersisterBase {
     @Override
     public DateTime getCoalesceDataObjectLastModified(String Key, String ObjectType) throws CoalescePersistorException
     {
-        try (CoalesceDataConnector conn = new CoalesceDataConnector(this.serCon, ConnectionType.NEO4J))
+        try (Neo4JDataConnector conn = new Neo4JDataConnector(this.serCon))
         {
             return this.getCoalesceDataObjectLastModified(Key, ObjectType, conn);
         }

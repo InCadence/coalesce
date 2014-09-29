@@ -22,8 +22,8 @@ import unity.common.CallResult;
 import unity.common.CallResult.CallResults;
 import unity.connector.local.LocalConfigurationsConnector;
 import Coalesce.Common.Exceptions.CoalesceException;
-import Coalesce.Common.Exceptions.CoalescePersistorException;
 import Coalesce.Common.Exceptions.CoalesceInvalidFieldException;
+import Coalesce.Common.Exceptions.CoalescePersistorException;
 import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.Runtime.CoalesceSettings;
 import Coalesce.Framework.CoalesceFramework;
@@ -38,8 +38,7 @@ import Coalesce.Framework.DataModel.XsdRecordset;
 import Coalesce.Framework.DataModel.XsdSection;
 import Coalesce.Framework.Persistance.ICoalescePersistor.EntityMetaData;
 
-import com.database.persister.CoalesceDataConnector;
-import com.database.persister.ConnectionType;
+import com.database.persister.MySQLDataConnector;
 import com.database.persister.MySQLPersistor;
 import com.database.persister.ServerConn;
 
@@ -135,16 +134,17 @@ public class CoalesceMySQLPersistorTest {
     }
 
     @Test
-    public void testConnection() throws SQLException, Exception,CoalescePersistorException
+    public void testConnection() throws SQLException, Exception, CoalescePersistorException
     {
 
-        try (CoalesceDataConnector conn = new CoalesceDataConnector(serCon,ConnectionType.MySQL))
+        try (MySQLDataConnector conn = new MySQLDataConnector(serCon))
         {
 
-            conn.OpenMSConnection();
+            conn.openConnection();
 
         }
     }
+
     @Test
     public void saveEntity() throws CoalesceException
     {
@@ -153,18 +153,17 @@ public class CoalesceMySQLPersistorTest {
     }
 
     @Test(expected = SQLException.class)
-    public void testFAILConnection() throws SQLException, Exception,CoalescePersistorException
+    public void testFAILConnection() throws SQLException, Exception, CoalescePersistorException
     {
         // Is this even needed?
         ServerConn serConFail = new ServerConn();
         serConFail.setURL("jdbc:mysql//localhost:3306/coalescedatabase");
         serConFail.setPassword("Passw0rd");
         serConFail.setUser("rot");
-        try (CoalesceDataConnector conn = new CoalesceDataConnector(serConFail,ConnectionType.MySQL))
+
+        try (MySQLDataConnector conn = new MySQLDataConnector(serConFail))
         {
-
-            conn.OpenMSConnection();
-
+            conn.openConnection();
         }
     }
 
@@ -196,7 +195,7 @@ public class CoalesceMySQLPersistorTest {
 
     }
 
-    //@Test
+    // @Test
     public void testGetEntityMetaData() throws CoalescePersistorException
     {
         CoalesceMySQLPersistorTest._coalesceFramework.SaveCoalesceEntity(_entity);
@@ -282,7 +281,7 @@ public class CoalesceMySQLPersistorTest {
 
     }
 
-    //@Test
+    // @Test
     public void testFAILGetFieldValue() throws CoalesceException
     {
         // Create a new entity, but do not save the entity
