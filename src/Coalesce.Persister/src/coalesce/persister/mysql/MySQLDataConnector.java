@@ -35,7 +35,7 @@ public class MySQLDataConnector extends CoalesceDataConnectorBase {
     @Override
     protected String getProcedurePrefix()
     {
-        return "call coalescedatabase.";
+        return "call " + _settings.getDatabase() + ".";
     }
 
 }

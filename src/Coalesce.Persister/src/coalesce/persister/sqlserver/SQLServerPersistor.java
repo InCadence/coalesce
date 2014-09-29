@@ -363,8 +363,6 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         try (SQLServerDataConnector conn = new SQLServerDataConnector(this.serCon))
         {
 
-            conn.openConnection();
-
             // Persist (Recursively)
             isSuccessful = this.updateDataObject(entity, conn, AllowRemoval);
 
@@ -1031,8 +1029,8 @@ public class SQLServerPersistor extends CoalescePersisterBase {
     {
         boolean isSuccessful = false;
 
-//        System.out.println(xsdDataObject.getStatus().getLabel() + " OBJECT [" + xsdDataObject.getName() + " : "
-//                + xsdDataObject.getType() + "] Processing Key:  " + xsdDataObject.getKey());
+        System.out.println(xsdDataObject.getStatus().getLabel() + " OBJECT [" + xsdDataObject.getName() + " : "
+                + xsdDataObject.getType() + "] Processing Key:  " + xsdDataObject.getKey());
 
         switch (xsdDataObject.getStatus()) {
         case ACTIVE:
