@@ -1,3 +1,4 @@
+package Coalesce.Framework.Persistance;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
@@ -44,7 +45,8 @@ public class CoalesceNEO4JPersistorTest {
         CoalesceSettings.initialize(new LocalConfigurationsConnector());
 
         serCon = new ServerConn();
-        serCon.setURL("jdbc:neo4j://localhost:7474/");
+        serCon.setServerName("localhost");
+        serCon.setPortNumber(7474);
 
         neo4jPersister = new Neo4JPersistor();
         neo4jPersister.Initialize(serCon);

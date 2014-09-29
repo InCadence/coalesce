@@ -26,10 +26,11 @@ public class MySQLDataConnector extends CoalesceDataConnectorBase {
     @Override
     public void openConnection() throws SQLException
     {
+
+        String url = "jdbc:mysql://" + _settings.getServerNameWithPort() + "/" + _settings.getDatabase();
+
         this._settings.setPostGres(false);
-        this._conn = DriverManager.getConnection(this._settings.getURL(),
-                                                 this._settings.getUser(),
-                                                 this._settings.getPassword());
+        this._conn = DriverManager.getConnection(url, this._settings.getUser(), this._settings.getPassword());
     }
 
     @Override

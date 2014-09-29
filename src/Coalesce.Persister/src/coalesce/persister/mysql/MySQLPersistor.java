@@ -3,6 +3,7 @@ package coalesce.persister.mysql;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,7 @@ import Coalesce.Framework.DataModel.XsdLinkageSection;
 import Coalesce.Framework.DataModel.XsdRecord;
 import Coalesce.Framework.DataModel.XsdRecordset;
 import Coalesce.Framework.DataModel.XsdSection;
+import Coalesce.Framework.Persistance.CoalesceParameter;
 import Coalesce.Framework.Persistance.CoalescePersisterBase;
 import Coalesce.Framework.Persistance.CoalesceTable;
 import Coalesce.Framework.Persistance.ICoalesceCacher;
@@ -60,7 +62,6 @@ public class MySQLPersistor extends CoalescePersisterBase {
     --------------------------------------------------------------------------*/
 
     private ServerConn serCon;
-    
 
     /*--------------------------------------------------------------------------
     Constructor / Initializers
@@ -72,29 +73,20 @@ public class MySQLPersistor extends CoalescePersisterBase {
     }
 
     /**
-     * Sets the server connection. 
-     * @param server connection object. 
+     * Sets the server connection.
+     * 
+     * @param server connection object.
      */
     public void Initialize(ServerConn svConn)
     {
         serCon = svConn;
     }
+
     /**
-     * Sets the server connection. 
-     * @param connection url.
-     * @param connection user.
-     * @param connection user password. 
-     */
-    public void Initialize(String url, String userName, String pwd)
-    {
-        serCon.setURL(url);
-        serCon.setPassword(pwd);
-        serCon.setUser(userName);
-    }
-    /**
-     * Sets the cacher and server connection. 
+     * Sets the cacher and server connection.
+     * 
      * @param base class cacher.
-     * @param server connection object. 
+     * @param server connection object.
      */
     public boolean Initialize(ICoalesceCacher cacher, ServerConn svConn) throws CoalescePersistorException
     {
@@ -176,7 +168,8 @@ public class MySQLPersistor extends CoalescePersisterBase {
 
             byte[] binaryArray = null;
 
-            ResultSet results = conn.ExecuteQuery("SELECT BinaryObject FROM CoalesceFieldBinaryData WHERE ObjectKey=?", key);
+            ResultSet results = conn.ExecuteQuery("SELECT BinaryObject FROM CoalesceFieldBinaryData WHERE ObjectKey=?",
+                                                  new CoalesceParameter(key, Types.OTHER));
 
             // Get Results
             if (results != null && results.first())
@@ -204,13 +197,13 @@ public class MySQLPersistor extends CoalescePersisterBase {
         {
             // Always persist template
             return conn.ExecuteProcedure("CoalesceEntityTemplate_InsertOrUpdate",
-                                         UUID.randomUUID().toString(),
-                                         template.getName(),
-                                         template.getSource(),
-                                         template.getVersion(),
-                                         template.toXml(),
-                                         JodaDateTimeHelper.toMySQLDateTime(JodaDateTimeHelper.nowInUtc()),
-                                         JodaDateTimeHelper.toMySQLDateTime(JodaDateTimeHelper.nowInUtc()));
+                                         new CoalesceParameter(UUID.randomUUID().toString()),
+                                         new CoalesceParameter(template.getName()),
+                                         new CoalesceParameter(template.getSource()),
+                                         new CoalesceParameter(template.getVersion()),
+                                         new CoalesceParameter(template.toXml()),
+                                         new CoalesceParameter(JodaDateTimeHelper.nowInUtc()),
+                                         new CoalesceParameter(JodaDateTimeHelper.nowInUtc()));
         }
         catch (SQLException e)
         {
@@ -246,7 +239,8 @@ public class MySQLPersistor extends CoalescePersisterBase {
         {
             String value = null;
 
-            ResultSet results = conn.ExecuteQuery("SELECT value FROM CoalesceField WHERE ObjectKey =?", FieldKey);
+            ResultSet results = conn.ExecuteQuery("SELECT value FROM CoalesceField WHERE ObjectKey =?",
+                                                  new CoalesceParameter(FieldKey));
 
             if (results != null && results.first())
             {
@@ -272,7 +266,8 @@ public class MySQLPersistor extends CoalescePersisterBase {
         {
             String value = null;
 
-            ResultSet results = conn.ExecuteQuery("SELECT EntityXml from CoalesceEntity WHERE ObjectKey=?", Key);
+            ResultSet results = conn.ExecuteQuery("SELECT EntityXml from CoalesceEntity WHERE ObjectKey=?",
+                                                  new CoalesceParameter(Key));
 
             if (results != null && results.first())
             {
@@ -299,8 +294,8 @@ public class MySQLPersistor extends CoalescePersisterBase {
             String value = null;
 
             ResultSet results = conn.ExecuteQuery("SELECT EntityXml from CoalesceEntity WHERE EntityId=? AND EntityIdType=?",
-                                                  EntityId,
-                                                  EntityIdType);
+                                                  new CoalesceParameter(EntityId),
+                                                  new CoalesceParameter(EntityIdType));
 
             if (results != null && results.first())
             {
@@ -327,9 +322,9 @@ public class MySQLPersistor extends CoalescePersisterBase {
             String value = null;
 
             ResultSet results = conn.ExecuteQuery("SELECT EntityXml from CoalesceEntity WHERE Name=? AND EntityId=? AND EntityIdType=?",
-                                                  Name,
-                                                  EntityId,
-                                                  EntityIdType);
+                                                  new CoalesceParameter(Name),
+                                                  new CoalesceParameter(EntityId),
+                                                  new CoalesceParameter(EntityIdType));
 
             if (results != null && results.first())
             {
@@ -441,9 +436,9 @@ public class MySQLPersistor extends CoalescePersisterBase {
             String value = null;
 
             ResultSet results = conn.ExecuteQuery("SELECT TemplateKey FROM CoalesceEntityTemplate WHERE Name=? and Source=? and Version=?",
-                                                  Name,
-                                                  Source,
-                                                  Version);
+                                                  new CoalesceParameter(Name),
+                                                  new CoalesceParameter(Source),
+                                                  new CoalesceParameter(Version));
 
             if (results != null && results.first())
             {
@@ -484,7 +479,8 @@ public class MySQLPersistor extends CoalescePersisterBase {
         {
             String value = null;
 
-            ResultSet results = conn.ExecuteQuery("SELECT TemplateXml FROM CoalesceEntityTemplate WHERE TemplateKey=?", Key);
+            ResultSet results = conn.ExecuteQuery("SELECT TemplateXml FROM CoalesceEntityTemplate WHERE TemplateKey=?",
+                                                  new CoalesceParameter(Key));
 
             if (results != null && results.first())
             {
@@ -511,9 +507,9 @@ public class MySQLPersistor extends CoalescePersisterBase {
             String value = null;
 
             ResultSet results = conn.ExecuteQuery("SELECT TemplateXml FROM CoalesceEntityTemplate WHERE Name=? and Source=? and Version=?",
-                                                  Name,
-                                                  Source,
-                                                  Version);
+                                                  new CoalesceParameter(Name),
+                                                  new CoalesceParameter(Source),
+                                                  new CoalesceParameter(Version));
 
             if (results != null && results.first())
             {
@@ -537,6 +533,7 @@ public class MySQLPersistor extends CoalescePersisterBase {
     --------------------------------------------------------------------------*/
     /**
      * Adds or Updates a Coalesce object that matches the given parameters.
+     * 
      * @param dataObject the XsdDataObject to be added or updated
      * @param conn is the MySQLDataConnector database connection
      * @return isSuccessful = True = Successful add/update operation.
@@ -614,8 +611,10 @@ public class MySQLPersistor extends CoalescePersisterBase {
         }
         return isSuccessful;
     }
+
     /**
      * Adds or Updates a Coalesce entity that matches the given parameters.
+     * 
      * @param entity the XsdEntity to be added or updated
      * @param conn is the MySQLDataConnector database connection
      * @return True = No Update required.
@@ -629,18 +628,20 @@ public class MySQLPersistor extends CoalescePersisterBase {
 
         // Yes; Call Store Procedure
         return conn.ExecuteProcedure("CoalesceEntity_InsertOrUpdate",
-                                     entity.getKey(),
-                                     entity.getName(),
-                                     entity.getSource(),
-                                     entity.getVersion(),
-                                     entity.getEntityId(),
-                                     entity.getEntityIdType(),
-                                     entity.toXml(),
-                                     JodaDateTimeHelper.toMySQLDateTime(entity.getDateCreated()),
-                                     JodaDateTimeHelper.toMySQLDateTime(entity.getLastModified()));
+                                     new CoalesceParameter(entity.getKey()),
+                                     new CoalesceParameter(entity.getName()),
+                                     new CoalesceParameter(entity.getSource()),
+                                     new CoalesceParameter(entity.getVersion()),
+                                     new CoalesceParameter(entity.getEntityId()),
+                                     new CoalesceParameter(entity.getEntityIdType()),
+                                     new CoalesceParameter(entity.toXml()),
+                                     new CoalesceParameter(entity.getDateCreated()),
+                                     new CoalesceParameter(entity.getLastModified()));
     }
+
     /**
      * Adds or Updates a Coalesce section that matches the given parameters.
+     * 
      * @param section the XsdSection to be added or updated
      * @param conn is the MySQLDataConnector database connection
      * @return True = No Update required.
@@ -654,15 +655,17 @@ public class MySQLPersistor extends CoalescePersisterBase {
 
         // Yes; Call Store Procedure
         return conn.ExecuteProcedure("CoalesceSection_InsertOrUpdate",
-                                     section.getKey(),
-                                     section.getName(),
-                                     section.getParent().getKey(),
-                                     section.getParent().getType(),
-                                     JodaDateTimeHelper.toMySQLDateTime(section.getDateCreated()),
-                                     JodaDateTimeHelper.toMySQLDateTime(section.getLastModified()));
+                                     new CoalesceParameter(section.getKey()),
+                                     new CoalesceParameter(section.getName()),
+                                     new CoalesceParameter(section.getParent().getKey()),
+                                     new CoalesceParameter(section.getParent().getType()),
+                                     new CoalesceParameter(section.getDateCreated()),
+                                     new CoalesceParameter(section.getLastModified()));
     }
+
     /**
      * Adds or Updates a Coalesce recordset that matches the given parameters.
+     * 
      * @param recordset the XsdRecordset to be added or updated
      * @param conn is the MySQLDataConnector database connection
      * @return True = No Update required.
@@ -676,15 +679,17 @@ public class MySQLPersistor extends CoalescePersisterBase {
 
         // Yes; Call Store Procedure
         return conn.ExecuteProcedure("CoalesceRecordset_InsertOrUpdate",
-                                     recordset.getKey(),
-                                     recordset.getName(),
-                                     recordset.getParent().getKey(),
-                                     recordset.getParent().getType(),
-                                     JodaDateTimeHelper.toMySQLDateTime(recordset.getDateCreated()),
-                                     JodaDateTimeHelper.toMySQLDateTime(recordset.getLastModified()));
+                                     new CoalesceParameter(recordset.getKey()),
+                                     new CoalesceParameter(recordset.getName()),
+                                     new CoalesceParameter(recordset.getParent().getKey()),
+                                     new CoalesceParameter(recordset.getParent().getType()),
+                                     new CoalesceParameter(recordset.getDateCreated()),
+                                     new CoalesceParameter(recordset.getLastModified()));
     }
+
     /**
      * Adds or Updates a Coalesce field definition that matches the given parameters.
+     * 
      * @param fieldDefinition the XsdFieldDefinition to be added or updated
      * @param conn is the MySQLDataConnector database connection
      * @return True = No Update required.
@@ -700,15 +705,17 @@ public class MySQLPersistor extends CoalescePersisterBase {
 
         // Yes; Call Store Procedure
         return conn.ExecuteProcedure("CoalesceFieldDefinition_InsertOrUpdate",
-                                     fieldDefinition.getKey(),
-                                     fieldDefinition.getName(),
-                                     fieldDefinition.getParent().getKey(),
-                                     fieldDefinition.getParent().getType(),
-                                     JodaDateTimeHelper.toMySQLDateTime(fieldDefinition.getDateCreated()),
-                                     JodaDateTimeHelper.toMySQLDateTime(fieldDefinition.getLastModified()));
+                                     new CoalesceParameter(fieldDefinition.getKey()),
+                                     new CoalesceParameter(fieldDefinition.getName()),
+                                     new CoalesceParameter(fieldDefinition.getParent().getKey()),
+                                     new CoalesceParameter(fieldDefinition.getParent().getType()),
+                                     new CoalesceParameter(fieldDefinition.getDateCreated()),
+                                     new CoalesceParameter(fieldDefinition.getLastModified()));
     }
+
     /**
      * Adds or Updates a Coalesce record that matches the given parameters.
+     * 
      * @param record the XsdRecord to be added or updated
      * @param conn is the MySQLDataConnector database connection
      * @return True = No Update required.
@@ -722,15 +729,17 @@ public class MySQLPersistor extends CoalescePersisterBase {
 
         // Yes; Call Store Procedure
         return conn.ExecuteProcedure("CoalesceRecord_InsertOrUpdate",
-                                     record.getKey(),
-                                     record.getName(),
-                                     record.getParent().getKey(),
-                                     record.getParent().getType(),
-                                     JodaDateTimeHelper.toMySQLDateTime(record.getDateCreated()),
-                                     JodaDateTimeHelper.toMySQLDateTime(record.getLastModified()));
+                                     new CoalesceParameter(record.getKey()),
+                                     new CoalesceParameter(record.getName()),
+                                     new CoalesceParameter(record.getParent().getKey()),
+                                     new CoalesceParameter(record.getParent().getType()),
+                                     new CoalesceParameter(record.getDateCreated()),
+                                     new CoalesceParameter(record.getLastModified()));
     }
+
     /**
      * Adds or Updates a Coalesce field that matches the given parameters.
+     * 
      * @param field the XsdField to be added or updated
      * @param conn is the MySQLDataConnector database connection
      * @return True = No Update required.
@@ -744,21 +753,23 @@ public class MySQLPersistor extends CoalescePersisterBase {
 
         // Yes; Call Store Procedure
         return conn.ExecuteProcedure("CoalesceField_InsertOrUpdate",
-                                     field.getKey(),
-                                     field.getName(),
-                                     field.getValue(),
-                                     field.getDataType().getLabel(),
-                                     "",
-                                     field.getClassificationMarkingAsString(),
-                                     field.getModifiedBy(),
-                                     field.getParent().getKey(),
-                                     field.getParent().getType(),
-                                     JodaDateTimeHelper.toMySQLDateTime(field.getDateCreated()),
-                                     JodaDateTimeHelper.toMySQLDateTime(field.getLastModified()),
-                                     field.getPreviousHistoryKey());
+                                     new CoalesceParameter(field.getKey()),
+                                     new CoalesceParameter(field.getName()),
+                                     new CoalesceParameter(field.getValue()),
+                                     new CoalesceParameter(field.getDataType().getLabel()),
+                                     new CoalesceParameter(""),
+                                     new CoalesceParameter(field.getClassificationMarkingAsString()),
+                                     new CoalesceParameter(field.getModifiedBy()),
+                                     new CoalesceParameter(field.getParent().getKey()),
+                                     new CoalesceParameter(field.getParent().getType()),
+                                     new CoalesceParameter(field.getDateCreated()),
+                                     new CoalesceParameter(field.getLastModified()),
+                                     new CoalesceParameter(field.getPreviousHistoryKey()));
     }
+
     /**
      * Adds or Updates a Coalesce field history that matches the given parameters.
+     * 
      * @param fieldHistory the XsdFieldHistory to be added or updated
      * @param conn is the MySQLDataConnector database connection
      * @return True = No Update required.
@@ -772,21 +783,23 @@ public class MySQLPersistor extends CoalescePersisterBase {
 
         // Yes; Call Store Procedure
         return conn.ExecuteProcedure("CoalesceFieldHistory_InsertOrUpdate",
-                                     fieldHistory.getKey(),
-                                     fieldHistory.getName(),
-                                     fieldHistory.getValue(),
-                                     fieldHistory.getDataType().getLabel(),
-                                     "",
-                                     fieldHistory.getClassificationMarkingAsString(),
-                                     fieldHistory.getModifiedBy(),
-                                     fieldHistory.getParent().getKey(),
-                                     fieldHistory.getParent().getType(),
-                                     JodaDateTimeHelper.toMySQLDateTime(fieldHistory.getDateCreated()),
-                                     JodaDateTimeHelper.toMySQLDateTime(fieldHistory.getLastModified()),
-                                     fieldHistory.getPreviousHistoryKey());
+                                     new CoalesceParameter(fieldHistory.getKey()),
+                                     new CoalesceParameter(fieldHistory.getName()),
+                                     new CoalesceParameter(fieldHistory.getValue()),
+                                     new CoalesceParameter(fieldHistory.getDataType().getLabel()),
+                                     new CoalesceParameter(""),
+                                     new CoalesceParameter(fieldHistory.getClassificationMarkingAsString()),
+                                     new CoalesceParameter(fieldHistory.getModifiedBy()),
+                                     new CoalesceParameter(fieldHistory.getParent().getKey()),
+                                     new CoalesceParameter(fieldHistory.getParent().getType()),
+                                     new CoalesceParameter(fieldHistory.getDateCreated()),
+                                     new CoalesceParameter(fieldHistory.getLastModified()),
+                                     new CoalesceParameter(fieldHistory.getPreviousHistoryKey()));
     }
+
     /**
      * Adds or Updates a Coalesce linkage section that matches the given parameters.
+     * 
      * @param linkageSection the XsdLinkageSection to be added or updated
      * @param conn is the MySQLDataConnector database connection
      * @return True = No Update required.
@@ -801,15 +814,17 @@ public class MySQLPersistor extends CoalescePersisterBase {
 
         // Yes; Call Store Procedure
         return conn.ExecuteProcedure("CoalesceLinkageSection_InsertOrUpdate",
-                                     linkageSection.getKey(),
-                                     linkageSection.getName(),
-                                     linkageSection.getParent().getKey(),
-                                     linkageSection.getParent().getType(),
-                                     JodaDateTimeHelper.toMySQLDateTime(linkageSection.getDateCreated()),
-                                     JodaDateTimeHelper.toMySQLDateTime(linkageSection.getLastModified()));
+                                     new CoalesceParameter(linkageSection.getKey()),
+                                     new CoalesceParameter(linkageSection.getName()),
+                                     new CoalesceParameter(linkageSection.getParent().getKey()),
+                                     new CoalesceParameter(linkageSection.getParent().getType()),
+                                     new CoalesceParameter(linkageSection.getDateCreated()),
+                                     new CoalesceParameter(linkageSection.getLastModified()));
     }
+
     /**
      * Adds or Updates a Coalesce linkage that matches the given parameters.
+     * 
      * @param linkage the XsdLinkage to be added or updated
      * @param conn is the MySQLDataConnector database connection
      * @return True = No Update required.
@@ -823,28 +838,30 @@ public class MySQLPersistor extends CoalescePersisterBase {
 
         // Yes; Call Store Procedure
         return conn.ExecuteProcedure("CoalesceLinkage_InsertOrUpdate",
-                                     linkage.getKey(),
-                                     linkage.getName(),
-                                     linkage.getEntity1Key(),
-                                     linkage.getEntity1Name(),
-                                     linkage.getEntity1Source(),
-                                     linkage.getEntity1Version(),
-                                     linkage.getLinkType().getLabel(),
-                                     linkage.getStatus().getLabel(),
-                                     linkage.getEntity2Key(),
-                                     linkage.getEntity2Name(),
-                                     linkage.getEntity2Source(),
-                                     linkage.getEntity2Version(),
-                                     linkage.getClassificationMarking().ToPortionString(),
-                                     linkage.getModifiedBy(),
-                                     "",
-                                     linkage.getParent().getKey(),
-                                     linkage.getParent().getType(),
-                                     JodaDateTimeHelper.toMySQLDateTime(linkage.getDateCreated()),
-                                     JodaDateTimeHelper.toMySQLDateTime(linkage.getLastModified()));
+                                     new CoalesceParameter(linkage.getKey()),
+                                     new CoalesceParameter(linkage.getName()),
+                                     new CoalesceParameter(linkage.getEntity1Key()),
+                                     new CoalesceParameter(linkage.getEntity1Name()),
+                                     new CoalesceParameter(linkage.getEntity1Source()),
+                                     new CoalesceParameter(linkage.getEntity1Version()),
+                                     new CoalesceParameter(linkage.getLinkType().getLabel()),
+                                     new CoalesceParameter(linkage.getStatus().getLabel()),
+                                     new CoalesceParameter(linkage.getEntity2Key()),
+                                     new CoalesceParameter(linkage.getEntity2Name()),
+                                     new CoalesceParameter(linkage.getEntity2Source()),
+                                     new CoalesceParameter(linkage.getEntity2Version()),
+                                     new CoalesceParameter(linkage.getClassificationMarking().ToPortionString()),
+                                     new CoalesceParameter(linkage.getModifiedBy()),
+                                     new CoalesceParameter(""),
+                                     new CoalesceParameter(linkage.getParent().getKey()),
+                                     new CoalesceParameter(linkage.getParent().getType()),
+                                     new CoalesceParameter(linkage.getDateCreated()),
+                                     new CoalesceParameter(linkage.getLastModified()));
     }
+
     /**
      * Returns the EntityMetaData for the Coalesce entity that matches the given parameters
+     * 
      * @param Key primary key of the Coalesce entity
      * @param conn is the MySQLDataConnector database connection
      * @return metaData the EntityMetaData for the Coalesce entity.
@@ -856,7 +873,7 @@ public class MySQLPersistor extends CoalescePersisterBase {
 
         // Execute Query
         ResultSet results = conn.ExecuteQuery("SELECT EntityId,EntityIdType,ObjectKey FROM CoalesceEntity WHERE ObjectKey=?",
-                                              Key);
+                                              new CoalesceParameter(Key));
         // Get Results
         if (results != null && results.first())
         {
@@ -867,8 +884,10 @@ public class MySQLPersistor extends CoalescePersisterBase {
 
         return metaData;
     }
+
     /**
      * Returns the rounded milliseconds
+     * 
      * @param Ticks time in milliseconds to be rounded up
      * @return Ticks rounded up time in milliseconds.
      */
@@ -900,6 +919,7 @@ public class MySQLPersistor extends CoalescePersisterBase {
 
     /**
      * Returns the comparison for the XsdDataObject last modified date versus the same objects value in the database.
+     * 
      * @param dataObject the XsdDataObject to have it's last modified date checked.
      * @param conn is the MySQLDataConnector database connection
      * @return False = Out of Date
@@ -931,8 +951,10 @@ public class MySQLPersistor extends CoalescePersisterBase {
 
         return isOutOfDate;
     }
+
     /**
      * Deletes the Coalesce object & CoalesceObjectMap that matches the given parameters
+     * 
      * @param dataObject the XsdDataObject to be deleted
      * @param conn is the MySQLDataConnector database connection
      * @return True = Successful delete
@@ -944,30 +966,32 @@ public class MySQLPersistor extends CoalescePersisterBase {
         String objectKey = dataObject.getKey();
         String tableName = CoalesceTable.gettableNameForObjectType(objectType);
 
-        conn.ExecuteCmd("DELETE FROM CoalesceObjectMap WHERE ObjectKey=?", objectKey);
-        conn.ExecuteCmd("DELETE FROM " + tableName + " WHERE ObjectKey=?", objectKey);
+        conn.ExecuteCmd("DELETE FROM CoalesceObjectMap WHERE ObjectKey=?", new CoalesceParameter(objectKey));
+        conn.ExecuteCmd("DELETE FROM " + tableName + " WHERE ObjectKey=?", new CoalesceParameter(objectKey));
 
         return true;
     }
+
     /**
-     * Returns the Coalesce entity keys that matches the given parameters. 
-     * @param EntityId of the entity. 
-     * @param EntityIdType of the entity. 
-     * @param EntityName of the entity. 
-     * @return List<String> of primary keys for the matching Coalesce entity. 
+     * Returns the Coalesce entity keys that matches the given parameters.
+     * 
+     * @param EntityId of the entity.
+     * @param EntityIdType of the entity.
+     * @param EntityName of the entity.
+     * @return List<String> of primary keys for the matching Coalesce entity.
      * @throws SQLException,Exception,CoalescePersistorException
      */
     protected List<String> getCoalesceEntityKeysForEntityId(String EntityId, String EntityIdType, String EntityName)
-            throws SQLException,Exception, CoalescePersistorException
+            throws SQLException, Exception, CoalescePersistorException
     {
         List<String> keyList = new ArrayList<String>();
 
         try (MySQLDataConnector conn = new MySQLDataConnector(this.serCon))
         {
             ResultSet results = conn.ExecuteQuery("SELECT ObjectKey FROM CoalesceEntity WHERE (EntityId like '%' ? '%') AND (EntityIdType like '%' ? '%') AND (Name=?)",
-                                                  EntityId,
-                                                  EntityIdType,
-                                                  EntityName);
+                                                  new CoalesceParameter(EntityId),
+                                                  new CoalesceParameter(EntityIdType),
+                                                  new CoalesceParameter(EntityName));
 
             if (results.first())
             {
@@ -983,19 +1007,21 @@ public class MySQLPersistor extends CoalescePersisterBase {
         }
 
     }
+
     /**
-     * Returns the Coalesce entity keys that matches the given parameters. 
-     * @param EntityId of the entity. 
-     * @param EntityIdType of the entity. 
-     * @param EntityName of the entity. 
+     * Returns the Coalesce entity keys that matches the given parameters.
+     * 
+     * @param EntityId of the entity.
+     * @param EntityIdType of the entity.
+     * @param EntityName of the entity.
      * @param EntitySource of the entity.
-     * @return List<String> of primary keys for the matching Coalesce entity. 
+     * @return List<String> of primary keys for the matching Coalesce entity.
      * @throws SQLException,Exception,CoalescePersistorException
      */
     protected List<String> getCoalesceEntityKeysForEntityIdAndSource(String EntityId,
                                                                      String EntityIdType,
                                                                      String EntityName,
-                                                                     String EntitySource) throws SQLException,Exception,
+                                                                     String EntitySource) throws SQLException, Exception,
             CoalescePersistorException
     {
 
@@ -1004,10 +1030,10 @@ public class MySQLPersistor extends CoalescePersisterBase {
             List<String> keyList = new ArrayList<String>();
 
             ResultSet results = conn.ExecuteQuery("SELECT ObjectKey FROM CoalesceEntity WHERE (EntityId like '%' ? '%') AND (EntityIdType like '%' ? '%') AND (Name=?) AND (Source=?)",
-                                                  EntityId,
-                                                  EntityIdType,
-                                                  EntityName,
-                                                  EntitySource);
+                                                  new CoalesceParameter(EntityId),
+                                                  new CoalesceParameter(EntityIdType),
+                                                  new CoalesceParameter(EntityName),
+                                                  new CoalesceParameter(EntitySource));
 
             if (results.first())
             {
@@ -1021,9 +1047,11 @@ public class MySQLPersistor extends CoalescePersisterBase {
             return keyList;
         }
     }
+
     /**
      * Sets the active Coalesce field objects matching the parameters given.
-     * @param dataObject the Coalesce field object. 
+     * 
+     * @param dataObject the Coalesce field object.
      * @param conn is the MySQLDataConnector database connection
      * @throws SQLException,Exception,CoalescePersistorException
      */
@@ -1055,8 +1083,8 @@ public class MySQLPersistor extends CoalescePersisterBase {
     {
         boolean isSuccessful = false;
 
-//        System.out.println(xsdDataObject.getStatus().getLabel() + " OBJECT [" + xsdDataObject.getName() + " : "
-//                + xsdDataObject.getType() + "] Processing Key:  " + xsdDataObject.getKey());
+        // System.out.println(xsdDataObject.getStatus().getLabel() + " OBJECT [" + xsdDataObject.getName() + " : "
+        // + xsdDataObject.getType() + "] Processing Key:  " + xsdDataObject.getKey());
 
         switch (xsdDataObject.getStatus()) {
         case ACTIVE:
@@ -1106,7 +1134,7 @@ public class MySQLPersistor extends CoalescePersisterBase {
         String tableName = CoalesceTable.gettableNameForObjectType(ObjectType);
         String dateValue = null;
 
-        ResultSet results = conn.ExecuteQuery("SELECT LastModified FROM " + tableName + " WHERE ObjectKey=?", Key.trim());
+        ResultSet results = conn.ExecuteQuery("SELECT LastModified FROM " + tableName + " WHERE ObjectKey=?", new CoalesceParameter(Key.trim()));
         ResultSetMetaData resultsmd = results.getMetaData();
 
         // JODA Function DateTimeFormat will adjust for the Server timezone when converting the time.
@@ -1146,7 +1174,7 @@ public class MySQLPersistor extends CoalescePersisterBase {
             sql = "SELECT name, ParentKey, ParentType FROM ".concat(tableName).concat(" WHERE ObjectKey=?");
         }
 
-        ResultSet results = conn.ExecuteQuery(sql, Key.trim());
+        ResultSet results = conn.ExecuteQuery(sql, new CoalesceParameter(Key.trim()));
 
         // Valid Results?
         if (results.first())

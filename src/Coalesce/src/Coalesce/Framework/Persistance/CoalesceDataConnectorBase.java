@@ -4,7 +4,6 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
 
 import Coalesce.Common.Exceptions.CoalescePersistorException;
 
@@ -55,7 +54,7 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
      * @throws SQLException
      * @throws CoalescePersistorException
      */
-    public ResultSet ExecuteQuery(String SQL, String... parameters) throws SQLException
+    public ResultSet ExecuteQuery(String SQL, CoalesceParameter... parameters) throws SQLException
     {
 
         // Open Connection if not already created
@@ -66,7 +65,7 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
         // Add Parameters
         for (int ii = 0; ii < parameters.length; ii++)
         {
-                stmt.setObject(ii + 1, parameters[ii].trim(), Types.CHAR);
+            stmt.setObject(ii + 1, parameters[ii].getValue().trim(), parameters[ii].getType());
         }
 
         return stmt.executeQuery();
@@ -83,7 +82,7 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
      * @throws SQLException
      * @throws CoalescePersistorException
      */
-    public ResultSet ExecuteLikeQuery(String SQL, int likeParams, String... parameters) throws SQLException
+    public ResultSet ExecuteLikeQuery(String SQL, int likeParams, CoalesceParameter... parameters) throws SQLException
     {
 
         // Open Connection if not already created
@@ -95,13 +94,13 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
         for (int ii = 0; ii < parameters.length; ii++)
         {
             if (ii + 1 <= likeParams)
-                stmt.setString(ii + 1, "%" + parameters[ii].trim() + "%"); // Like
-                                                                           // Clause
-                                                                           // Search
-                                                                           // String
+                stmt.setObject(ii + 1, "%" + parameters[ii].getValue().trim() + "%", parameters[ii].getType()); // Like
+            // Clause
+            // Search
+            // String
             else
-                stmt.setString(ii + 1, parameters[ii].trim()); // Normal
-                                                               // parameter
+                stmt.setObject(ii + 1, parameters[ii].getValue().trim(), parameters[ii].getType()); // Normal
+            // parameter
         }
 
         return stmt.executeQuery();
@@ -116,7 +115,7 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
      * @return true = success
      * @throws SQLException
      */
-    public boolean ExecuteCmd(String SQL, String... parameters) throws SQLException
+    public boolean ExecuteCmd(String SQL, CoalesceParameter... parameters) throws SQLException
     {
         // Open Connection if not already created
         if (this._conn == null) this.openConnection();
@@ -126,7 +125,7 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
         // Add Parameters
         for (int ii = 0; ii < parameters.length; ii++)
         {
-            stmt.setObject(ii + 1, parameters[ii].trim(), Types.CHAR);
+            stmt.setObject(ii + 1, parameters[ii].getValue().trim(), parameters[ii].getType());
         }
 
         stmt.executeUpdate();
@@ -161,7 +160,7 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
      * @return true = success
      * @throws SQLException
      */
-    public boolean ExecuteProcedure(String procedureName, String... parameters) throws SQLException
+    public boolean ExecuteProcedure(String procedureName, CoalesceParameter... parameters) throws SQLException
     {
 
         // Compile SQL Command
@@ -185,7 +184,7 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
         // Add Parameters
         for (int ii = 0; ii < parameters.length; ii++)
         {
-            stmt.setObject(ii + 1, parameters[ii].trim(), Types.CHAR);
+            stmt.setObject(ii + 1, parameters[ii].getValue().trim(), parameters[ii].getType());
         }
 
         stmt.executeUpdate();

@@ -4,6 +4,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -71,23 +72,31 @@ public class CoalesceMySQLPersistorTest {
     @BeforeClass
     public static void setupBeforeClass() throws SAXException, IOException, CoalesceException
     {
+        try
+        {
+            CoalesceSettings.initialize(new LocalConfigurationsConnector());
 
-        CoalesceSettings.initialize(new LocalConfigurationsConnector());
+            serCon = new ServerConn();
+            serCon.setUser("root");
+            serCon.setPassword("Passw0rd");
+            serCon.setServerName("127.0.0.1");
+            serCon.setPortNumber(3306);
+            serCon.setDatabase("coalescedatabase");
 
-        serCon = new ServerConn();
-        serCon.setURL("jdbc:mysql://localhost:3306/coalescedatabase");
-        serCon.setUser("root");
-        serCon.setPassword("Passw0rd");
+            mySQLPersistor = new MySQLPersistor();
+            mySQLPersistor.Initialize(serCon);
 
-        mySQLPersistor = new MySQLPersistor();
-        mySQLPersistor.Initialize(serCon);
+            mySQLPersistor.Initialize(serCon);
+            CoalesceMySQLPersistorTest._coalesceFramework = new CoalesceFramework();
+            CoalesceMySQLPersistorTest._coalesceFramework.Initialize(mySQLPersistor);
 
-        mySQLPersistor.Initialize(serCon);
-        CoalesceMySQLPersistorTest._coalesceFramework = new CoalesceFramework();
-        CoalesceMySQLPersistorTest._coalesceFramework.Initialize(mySQLPersistor);
-
-        CoalesceMySQLPersistorTest.createEntity();
-        CoalesceMySQLPersistorTest._coalesceFramework.SaveCoalesceEntity(_entity);
+            CoalesceMySQLPersistorTest.createEntity();
+            CoalesceMySQLPersistorTest._coalesceFramework.SaveCoalesceEntity(_entity);
+        }
+        catch (Exception ex)
+        {
+            fail(ex.getMessage());
+        }
     }
 
     /*
@@ -155,10 +164,13 @@ public class CoalesceMySQLPersistorTest {
     {
         // Is this even needed?
         ServerConn serConFail = new ServerConn();
-        serConFail.setURL("jdbc:mysql//localhost:3306/coalescedatabase");
-        serConFail.setPassword("Passw0rd");
-        serConFail.setUser("rot");
+        serConFail.setServerName("127.0.0.2");
+        serConFail.setPortNumber(3306);
+        serConFail.setDatabase("coalescedatabase");
 
+        serConFail.setUser("root");
+        serConFail.setPassword("Passw0rd");
+        
         try (MySQLDataConnector conn = new MySQLDataConnector(serConFail))
         {
             conn.openConnection();

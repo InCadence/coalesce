@@ -2,26 +2,22 @@ package Coalesce.Framework.Persistance;
 
 import java.util.Properties;
 
-
 public class ServerConn {
 
-    private String _url;
-    private String _db;
-    private String _user;
-    private String _password;
-    private boolean _integratedSecurity;
-    private String _serverName;
-    private int _portNumber;
-    private boolean _postGres=false;
+    private String _db = "";
+    private String _user = "";
+    private String _password = "";
+    private boolean _integratedSecurity = false;
+    private String _serverName = "";
+    private int _portNumber = 0;
+    private boolean _postGres = false;
     Properties _props = new Properties();
 
-    
     public boolean isPostGres()
     {
-        return _postGres; 
+        return _postGres;
     }
 
-    
     public void setPostGres(boolean _postGres)
     {
         this._postGres = _postGres;
@@ -34,7 +30,7 @@ public class ServerConn {
 
     public String getPassword()
     {
-        if(_postGres==false)
+        if (_postGres == false)
             return this._password.trim();
         else
         {
@@ -47,19 +43,26 @@ public class ServerConn {
         return _portNumber;
     }
 
+    public String getServerNameWithPort()
+    {
+        if (_portNumber == 0)
+        {
+            return _serverName;
+        }
+        else
+        {
+            return _serverName + ":" + _portNumber;
+        }
+    }
+
     public String getServerName()
     {
         return _serverName;
     }
 
-    public String getURL()
-    {
-        return this._url.trim();
-    }
-
     public String getUser()
     {
-        if(_postGres==false)
+        if (_postGres == false)
             return this._user.trim();
         else
         {
@@ -98,18 +101,14 @@ public class ServerConn {
         this._serverName = _serverName;
     }
 
-    public void setURL(String url)
-    {
-        this._url = url.trim();
-    }
-
     public void setUser(String user)
     {
         this._user = user.trim();
         this._props.setProperty("user", this._user);
     }
-    
-    public Properties getProperties() {
+
+    public Properties getProperties()
+    {
         return _props;
     }
 }

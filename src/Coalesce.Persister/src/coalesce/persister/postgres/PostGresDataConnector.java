@@ -7,7 +7,6 @@ import Coalesce.Common.Exceptions.CoalescePersistorException;
 import Coalesce.Framework.Persistance.CoalesceDataConnectorBase;
 import Coalesce.Framework.Persistance.ServerConn;
 
-
 public class PostGresDataConnector extends CoalesceDataConnectorBase {
 
     public PostGresDataConnector(ServerConn settings) throws CoalescePersistorException
@@ -27,8 +26,10 @@ public class PostGresDataConnector extends CoalesceDataConnectorBase {
     @Override
     public void openConnection() throws SQLException
     {
+        String url = "jdbc:postgresql://" + _settings.getServerNameWithPort() + "/" + _settings.getDatabase();
+
         this._settings.setPostGres(true);
-        this._conn = DriverManager.getConnection(this._settings.getURL(), this._settings.getProperties());
+        this._conn = DriverManager.getConnection(url, this._settings.getProperties());
     }
 
     @Override

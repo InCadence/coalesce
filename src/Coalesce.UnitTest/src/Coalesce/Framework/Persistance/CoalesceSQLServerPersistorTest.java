@@ -59,7 +59,7 @@ public class CoalesceSQLServerPersistorTest {
             serCon = new ServerConn();
             serCon.setServerName("127.0.0.1");
             serCon.setPortNumber(1433);
-        serCon.setDatabase("coalescedatabase");
+            serCon.setDatabase("coalescedatabase");
 
             mySQLServerPersistor = new SQLServerPersistor();
             mySQLServerPersistor.Initialize(serCon);

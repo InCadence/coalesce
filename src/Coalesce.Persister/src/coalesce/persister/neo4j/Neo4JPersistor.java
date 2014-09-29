@@ -15,6 +15,7 @@ import Coalesce.Framework.DataModel.CoalesceEntityTemplate;
 import Coalesce.Framework.DataModel.XsdDataObject;
 import Coalesce.Framework.DataModel.XsdEntity;
 import Coalesce.Framework.DataModel.XsdField;
+import Coalesce.Framework.Persistance.CoalesceParameter;
 import Coalesce.Framework.Persistance.CoalescePersisterBase;
 import Coalesce.Framework.Persistance.CoalesceTable;
 import Coalesce.Framework.Persistance.ICoalesceCacher;
@@ -40,13 +41,6 @@ public class Neo4JPersistor extends CoalescePersisterBase {
     public void Initialize(ServerConn svConn)
     {
         serCon = svConn;
-    }
-
-    public void Initialize(String url, String userName, String pwd)
-    {
-        serCon.setURL(url);
-        serCon.setPassword(pwd);
-        serCon.setUser(userName);
     }
 
     public boolean Initialize(ICoalesceCacher cacher, ServerConn svConn) throws CoalescePersistorException
@@ -250,7 +244,7 @@ public class Neo4JPersistor extends CoalescePersisterBase {
         String tableName = CoalesceTable.gettableNameForObjectType(ObjectType);
         String dateValue = null;
 
-        ResultSet results = conn.ExecuteQuery("?", Key.trim());
+        ResultSet results = conn.ExecuteQuery("?", new CoalesceParameter(Key.trim()));
         ResultSetMetaData resultsmd = results.getMetaData();
 
         // JODA Function DateTimeFormat will adjust for the Server timezone when converting the time.
