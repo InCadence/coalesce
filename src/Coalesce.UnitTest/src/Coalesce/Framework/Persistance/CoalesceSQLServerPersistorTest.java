@@ -51,26 +51,31 @@ public class CoalesceSQLServerPersistorTest {
     @BeforeClass
     public static void Initialize() throws SAXException, IOException, CoalesceException
     {
+        try
+        {
 
-        CoalesceSettings.initialize(new LocalConfigurationsConnector());
+            CoalesceSettings.initialize(new LocalConfigurationsConnector());
 
-        serCon = new ServerConn();
-        serCon.setUser("root");
-        serCon.setPassword("Passw0rd");
-        serCon.setServerName("localhost");
-        serCon.setPortNumber(1433);
+            serCon = new ServerConn();
+            serCon.setServerName("127.0.0.1");
+            serCon.setPortNumber(1433);
         serCon.setDatabase("coalescedatabase");
 
-        mySQLServerPersistor = new SQLServerPersistor();
-        mySQLServerPersistor.Initialize(serCon);
+            mySQLServerPersistor = new SQLServerPersistor();
+            mySQLServerPersistor.Initialize(serCon);
 
-        mySQLServerPersistor.Initialize(serCon);
-        CoalesceSQLServerPersistorTest._coalesceFramework = new CoalesceFramework();
-        CoalesceSQLServerPersistorTest._coalesceFramework.Initialize(mySQLServerPersistor);
+            mySQLServerPersistor.Initialize(serCon);
+            CoalesceSQLServerPersistorTest._coalesceFramework = new CoalesceFramework();
+            CoalesceSQLServerPersistorTest._coalesceFramework.Initialize(mySQLServerPersistor);
 
-        CoalesceSQLServerPersistorTest.createEntity();
-        CoalesceSQLServerPersistorTest._coalesceFramework.SaveCoalesceEntity(_entity);
-        // System.out.println(_entity.toXml());
+            CoalesceSQLServerPersistorTest.createEntity();
+            CoalesceSQLServerPersistorTest._coalesceFramework.SaveCoalesceEntity(_entity);
+            // System.out.println(_entity.toXml());
+        }
+        catch (Exception ex)
+        {
+            fail(ex.getMessage());
+        }
 
     }
 
@@ -175,9 +180,7 @@ public class CoalesceSQLServerPersistorTest {
     {
         // Is this even needed?
         ServerConn serConFail = new ServerConn();
-        serConFail.setUser("roooott");
-        serConFail.setPassword("Passw0rd");
-        serConFail.setServerName("localhost");
+        serConFail.setServerName("192.168.1.1");
         serConFail.setPortNumber(1433);
         serConFail.setDatabase("coalescedatabase");
 
