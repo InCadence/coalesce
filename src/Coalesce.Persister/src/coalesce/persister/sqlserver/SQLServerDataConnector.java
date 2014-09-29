@@ -1,6 +1,5 @@
 package coalesce.persister.sqlserver;
 
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import Coalesce.Common.Exceptions.CoalescePersistorException;
@@ -28,12 +27,11 @@ public class SQLServerDataConnector extends CoalesceDataConnectorBase {
     @Override
     public void openConnection() throws SQLException
     {
-        
-        
+
         this._settings.setPostGres(false);
 
         SQLServerDataSource sqlDataSource = new SQLServerDataSource();
-        
+
         sqlDataSource.setIntegratedSecurity(true);
         sqlDataSource.setServerName(this._settings.getServerName());
         sqlDataSource.setPortNumber(this._settings.getPortNumber());
