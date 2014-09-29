@@ -37,10 +37,8 @@ import Coalesce.Framework.DataModel.XsdRecord;
 import Coalesce.Framework.DataModel.XsdRecordset;
 import Coalesce.Framework.DataModel.XsdSection;
 import Coalesce.Framework.Persistance.ICoalescePersistor.EntityMetaData;
-
-import com.database.persister.PostGresDataConnector;
-import com.database.persister.PostGresSQLPersistor;
-import com.database.persister.ServerConn;
+import coalesce.persister.postgres.PostGresDataConnector;
+import coalesce.persister.postgres.PostGresSQLPersistor;
 
 public class CoalescePostGresPersistorTest {
 

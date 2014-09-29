@@ -22,10 +22,9 @@ import Coalesce.Framework.DataModel.XsdLinkageSection;
 import Coalesce.Framework.DataModel.XsdRecord;
 import Coalesce.Framework.DataModel.XsdRecordset;
 import Coalesce.Framework.DataModel.XsdSection;
-
-import com.database.persister.Neo4JDataConnector;
-import com.database.persister.Neo4JPersistor;
-import com.database.persister.ServerConn;
+import Coalesce.Framework.Persistance.ServerConn;
+import coalesce.persister.neo4j.Neo4JDataConnector;
+import coalesce.persister.neo4j.Neo4JPersistor;
 
 public class CoalesceNEO4JPersistorTest {
 

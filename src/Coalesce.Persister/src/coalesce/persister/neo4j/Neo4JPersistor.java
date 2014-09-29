@@ -1,4 +1,4 @@
-package com.database.persister;
+package coalesce.persister.neo4j;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -16,7 +16,9 @@ import Coalesce.Framework.DataModel.XsdDataObject;
 import Coalesce.Framework.DataModel.XsdEntity;
 import Coalesce.Framework.DataModel.XsdField;
 import Coalesce.Framework.Persistance.CoalescePersisterBase;
+import Coalesce.Framework.Persistance.CoalesceTable;
 import Coalesce.Framework.Persistance.ICoalesceCacher;
+import Coalesce.Framework.Persistance.ServerConn;
 
 public class Neo4JPersistor extends CoalescePersisterBase {
 

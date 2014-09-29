@@ -1,4 +1,4 @@
-package com.database.persister;
+package Coalesce.Framework.Persistance;
 
 import java.util.Properties;
 
@@ -13,7 +13,7 @@ public class ServerConn {
     private String _serverName;
     private int _portNumber;
     private boolean _postGres=false;
-    Properties props = new Properties();
+    Properties _props = new Properties();
 
     
     public boolean isPostGres()
@@ -38,7 +38,7 @@ public class ServerConn {
             return this._password.trim();
         else
         {
-            return this.props.getProperty(_password);
+            return this._props.getProperty(_password);
         }
     }
 
@@ -63,7 +63,7 @@ public class ServerConn {
             return this._user.trim();
         else
         {
-            return this.props.getProperty(_user);
+            return this._props.getProperty(_user);
         }
     }
 
@@ -85,7 +85,7 @@ public class ServerConn {
     public void setPassword(String pass)
     {
         this._password = pass.trim();
-        this.props.setProperty("password", this._password);
+        this._props.setProperty("password", this._password);
     }
 
     public void setPortNumber(int _portNumber)
@@ -106,6 +106,10 @@ public class ServerConn {
     public void setUser(String user)
     {
         this._user = user.trim();
-        this.props.setProperty("user", this._user);
+        this._props.setProperty("user", this._user);
+    }
+    
+    public Properties getProperties() {
+        return _props;
     }
 }

@@ -1,9 +1,11 @@
-package com.database.persister;
+package coalesce.persister.mysql;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import Coalesce.Common.Exceptions.CoalescePersistorException;
+import Coalesce.Framework.Persistance.CoalesceDataConnectorBase;
+import Coalesce.Framework.Persistance.ServerConn;
 
 public class MySQLDataConnector extends CoalesceDataConnectorBase {
 

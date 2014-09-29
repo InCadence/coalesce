@@ -36,10 +36,8 @@ import Coalesce.Framework.DataModel.XsdRecord;
 import Coalesce.Framework.DataModel.XsdRecordset;
 import Coalesce.Framework.DataModel.XsdSection;
 import Coalesce.Framework.Persistance.ICoalescePersistor.EntityMetaData;
-
-import com.database.persister.SQLServerDataConnector;
-import com.database.persister.SQLServerPersistor;
-import com.database.persister.ServerConn;
+import coalesce.persister.sqlserver.SQLServerDataConnector;
+import coalesce.persister.sqlserver.SQLServerPersistor;
 
 public class CoalesceSQLServerPersistorTest {
 

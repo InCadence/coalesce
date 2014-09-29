@@ -37,10 +37,8 @@ import Coalesce.Framework.DataModel.XsdRecord;
 import Coalesce.Framework.DataModel.XsdRecordset;
 import Coalesce.Framework.DataModel.XsdSection;
 import Coalesce.Framework.Persistance.ICoalescePersistor.EntityMetaData;
-
-import com.database.persister.MySQLDataConnector;
-import com.database.persister.MySQLPersistor;
-import com.database.persister.ServerConn;
+import coalesce.persister.mysql.MySQLDataConnector;
+import coalesce.persister.mysql.MySQLPersistor;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved

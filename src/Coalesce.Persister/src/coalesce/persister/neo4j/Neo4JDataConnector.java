@@ -1,20 +1,22 @@
-package com.database.persister;
+package coalesce.persister.neo4j;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import Coalesce.Common.Exceptions.CoalescePersistorException;
+import Coalesce.Framework.Persistance.CoalesceDataConnectorBase;
+import Coalesce.Framework.Persistance.ServerConn;
 
 
-public class PostGresDataConnector extends CoalesceDataConnectorBase {
+public class Neo4JDataConnector extends CoalesceDataConnectorBase {
 
-    public PostGresDataConnector(ServerConn settings) throws CoalescePersistorException
+    public Neo4JDataConnector(ServerConn settings) throws CoalescePersistorException
     {
         try
         {
             _settings = settings;
 
-            Class.forName("org.postgresql.Driver");
+            Class.forName("org.neo4j.jdbc.Driver");
         }
         catch (ClassNotFoundException e)
         {
@@ -25,14 +27,13 @@ public class PostGresDataConnector extends CoalesceDataConnectorBase {
     @Override
     public void openConnection() throws SQLException
     {
-        this._settings.setPostGres(true);
-        this._conn = DriverManager.getConnection(this._settings.getURL(), this._settings.props);
+        this._settings.setPostGres(false);
+        this._conn=DriverManager.getConnection(this._settings.getURL());
     }
 
     @Override
     protected String getProcedurePrefix()
     {
-        return "call public.";
+        return "";
     }
-
 }

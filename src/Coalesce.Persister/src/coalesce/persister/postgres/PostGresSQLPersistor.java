@@ -1,6 +1,7 @@
-package com.database.persister;
+package coalesce.persister.postgres;
 
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,34 +29,31 @@ import Coalesce.Framework.DataModel.XsdRecord;
 import Coalesce.Framework.DataModel.XsdRecordset;
 import Coalesce.Framework.DataModel.XsdSection;
 import Coalesce.Framework.Persistance.CoalescePersisterBase;
+import Coalesce.Framework.Persistance.CoalesceTable;
 import Coalesce.Framework.Persistance.ICoalesceCacher;
+import Coalesce.Framework.Persistance.ServerConn;
 
 import com.mysql.jdbc.Blob;
 
 /*-----------------------------------------------------------------------------'
-Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
+ Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
 
-Notwithstanding any contractor copyright notice, the Government has Unlimited
-Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
-of this work other than as specifically authorized by these DFARS Clauses may
-violate Government rights in this work.
+ Notwithstanding any contractor copyright notice, the Government has Unlimited
+ Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+ of this work other than as specifically authorized by these DFARS Clauses may
+ violate Government rights in this work.
 
-DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
-Unlimited Rights. The Government has the right to use, modify, reproduce,
-perform, display, release or disclose this computer software and to have or
-authorize others to do so.
+ DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+ Unlimited Rights. The Government has the right to use, modify, reproduce,
+ perform, display, release or disclose this computer software and to have or
+ authorize others to do so.
 
-Distribution Statement D. Distribution authorized to the Department of
-Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
------------------------------------------------------------------------------*/
+ Distribution Statement D. Distribution authorized to the Department of
+ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+ -----------------------------------------------------------------------------*/
 
-@Repository("SQLServerPersistor")
-public class SQLServerPersistor extends CoalescePersisterBase {
-
-    public SQLServerPersistor()
-    {
-        serCon = new ServerConn();
-    }
+@Repository("PostGresSQLPersistor")
+public class PostGresSQLPersistor extends CoalescePersisterBase {
 
     /*--------------------------------------------------------------------------
     Private Member Variables
@@ -66,23 +64,43 @@ public class SQLServerPersistor extends CoalescePersisterBase {
     /*--------------------------------------------------------------------------
     Constructor / Initializers
     --------------------------------------------------------------------------*/
+
+    public PostGresSQLPersistor()
+    {
+        serCon = new ServerConn();
+        serCon.setPostGres(true);
+    }
     /**
-     * Sets the server connection. 
+     * Sets the server connection.  Sets connection type as PostGresSQL
      * @param server connection object. 
      */
     public void Initialize(ServerConn svConn)
     {
         serCon = svConn;
+        serCon.setPostGres(true);
     }
     /**
-     * Sets the cacher and server connection. 
+     * Sets the server connection.  Sets connection type as PostGresSQL
+     * @param connection url.
+     * @param connection user.
+     * @param connection user password. 
+     */
+    public void Initialize(String url, String userName, String pwd)
+    {
+        serCon.setURL(url);
+        serCon.setPassword(pwd);
+        serCon.setUser(userName);
+        serCon.setPostGres(true);
+    }
+    /**
+     * Sets the cacher and server connection.  Sets connection type as PostGresSQL
      * @param base class cacher.
      * @param server connection object. 
      */
     public boolean Initialize(ICoalesceCacher cacher, ServerConn svConn) throws CoalescePersistorException
     {
         serCon = svConn;
-
+        serCon.setPostGres(true);
         return super.initialize(cacher);
     }
 
@@ -120,7 +138,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
     @Override
     public EntityMetaData getCoalesceEntityIdAndTypeForKey(String Key) throws CoalescePersistorException
     {
-        try (SQLServerDataConnector conn = new SQLServerDataConnector(this.serCon))
+        try (PostGresDataConnector conn = new PostGresDataConnector(this.serCon))
         {
             return this.getCoalesceEntityIdAndTypeForKey(Key, conn);
         }
@@ -137,7 +155,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
     @Override
     public DateTime getCoalesceDataObjectLastModified(String Key, String ObjectType) throws CoalescePersistorException
     {
-        try (SQLServerDataConnector conn = new SQLServerDataConnector(this.serCon))
+        try (PostGresDataConnector conn = new PostGresDataConnector(this.serCon))
         {
             return this.getCoalesceDataObjectLastModified(Key, ObjectType, conn);
         }
@@ -154,7 +172,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
     @Override
     public byte[] getBinaryArray(String key) throws CoalescePersistorException
     {
-        try (SQLServerDataConnector conn = new SQLServerDataConnector(this.serCon))
+        try (PostGresDataConnector conn = new PostGresDataConnector(this.serCon))
         {
 
             byte[] binaryArray = null;
@@ -162,7 +180,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
             ResultSet results = conn.ExecuteQuery("SELECT BinaryObject FROM CoalesceFieldBinaryData WHERE ObjectKey=?", key);
 
             // Get Results
-            while (results.next() && binaryArray == null)
+            if (results != null && results.first())
             {
                 Blob dataVal = (Blob) results.getBlob("BinaryObject");
                 binaryArray = dataVal.getBytes(1, (int) dataVal.length());
@@ -183,7 +201,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
     @Override
     public boolean persistEntityTemplate(CoalesceEntityTemplate template) throws CoalescePersistorException
     {
-        try (SQLServerDataConnector conn = new SQLServerDataConnector(this.serCon))
+        try (PostGresDataConnector conn = new PostGresDataConnector(this.serCon))
         {
             // Always persist template
             return conn.ExecuteProcedure("CoalesceEntityTemplate_InsertOrUpdate",
@@ -191,7 +209,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
                                          template.getName(),
                                          template.getSource(),
                                          template.getVersion(),
-                                         template.toXml().replace("UTF-8", "UTF-16"),
+                                         template.toXml(),
                                          JodaDateTimeHelper.toMySQLDateTime(JodaDateTimeHelper.nowInUtc()),
                                          JodaDateTimeHelper.toMySQLDateTime(JodaDateTimeHelper.nowInUtc()));
         }
@@ -208,7 +226,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
     @Override
     public ElementMetaData getXPath(String Key, String ObjectType) throws CoalescePersistorException
     {
-        try (SQLServerDataConnector conn = new SQLServerDataConnector(this.serCon))
+        try (PostGresDataConnector conn = new PostGresDataConnector(this.serCon))
         {
             return this.getXPathRecursive(Key, ObjectType, "", conn);
         }
@@ -225,13 +243,13 @@ public class SQLServerPersistor extends CoalescePersisterBase {
     @Override
     public String getFieldValue(String FieldKey) throws CoalescePersistorException
     {
-        try (SQLServerDataConnector conn = new SQLServerDataConnector(this.serCon))
+        try (PostGresDataConnector conn = new PostGresDataConnector(this.serCon))
         {
             String value = null;
 
             ResultSet results = conn.ExecuteQuery("SELECT value FROM CoalesceField WHERE ObjectKey =?", FieldKey);
 
-            while (results.next() && value == null)
+            while (results.next())
             {
                 value = results.getString("value");
             }
@@ -251,7 +269,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
     @Override
     public String getEntityXml(String Key) throws CoalescePersistorException
     {
-        try (SQLServerDataConnector conn = new SQLServerDataConnector(this.serCon))
+        try (PostGresDataConnector conn = new PostGresDataConnector(this.serCon))
         {
             String value = null;
 
@@ -277,7 +295,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
     @Override
     public String getEntityXml(String EntityId, String EntityIdType) throws CoalescePersistorException
     {
-        try (SQLServerDataConnector conn = new SQLServerDataConnector(this.serCon))
+        try (PostGresDataConnector conn = new PostGresDataConnector(this.serCon))
         {
             String value = null;
 
@@ -285,7 +303,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
                                                   EntityId,
                                                   EntityIdType);
 
-            while (results.next() && value == null)
+            while (results.next())
             {
                 value = results.getString("EntityXml");
             }
@@ -305,7 +323,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
     @Override
     public String getEntityXml(String Name, String EntityId, String EntityIdType) throws CoalescePersistorException
     {
-        try (SQLServerDataConnector conn = new SQLServerDataConnector(this.serCon))
+        try (PostGresDataConnector conn = new PostGresDataConnector(this.serCon))
         {
             String value = null;
 
@@ -314,7 +332,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
                                                   EntityId,
                                                   EntityIdType);
 
-            while (results.next() && value == null)
+            while (results.next())
             {
                 value = results.getString("EntityXml");
             }
@@ -358,7 +376,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         boolean isSuccessful = false;
 
         // Create a Database Connection
-        try (SQLServerDataConnector conn = new SQLServerDataConnector(this.serCon))
+        try (PostGresDataConnector conn = new PostGresDataConnector(this.serCon))
         {
 
             conn.openConnection();
@@ -381,6 +399,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         {
             throw new CoalescePersistorException("FlattenObject", e);
         }
+
         return isSuccessful;
     }
 
@@ -390,7 +409,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         boolean isSuccessful = false;
 
         // Create a Database Connection
-        try (SQLServerDataConnector conn = new SQLServerDataConnector(this.serCon))
+        try (PostGresDataConnector conn = new PostGresDataConnector(this.serCon))
         {
 
             conn.openConnection();
@@ -418,7 +437,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
     @Override
     public String getEntityTemplateKey(String Name, String Source, String Version) throws CoalescePersistorException
     {
-        try (SQLServerDataConnector conn = new SQLServerDataConnector(this.serCon))
+        try (PostGresDataConnector conn = new PostGresDataConnector(this.serCon))
         {
             String value = null;
 
@@ -427,7 +446,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
                                                   Source,
                                                   Version);
 
-            while (results.next() && value == null)
+            while (results.next())
             {
                 value = results.getString("TemplateKey");
             }
@@ -440,7 +459,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         }
         catch (Exception e)
         {
-            throw new CoalescePersistorException("GetEntityTemplateXml", e);
+            throw new CoalescePersistorException("GetEntityTemplateKey", e);
         }
     }
 
@@ -462,7 +481,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
     @Override
     public String getEntityTemplateXml(String Key) throws CoalescePersistorException
     {
-        try (SQLServerDataConnector conn = new SQLServerDataConnector(this.serCon))
+        try (PostGresDataConnector conn = new PostGresDataConnector(this.serCon))
         {
             String value = null;
 
@@ -488,7 +507,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
     @Override
     public String getEntityTemplateXml(String Name, String Source, String Version) throws CoalescePersistorException
     {
-        try (SQLServerDataConnector conn = new SQLServerDataConnector(this.serCon))
+        try (PostGresDataConnector conn = new PostGresDataConnector(this.serCon))
         {
             String value = null;
 
@@ -520,11 +539,11 @@ public class SQLServerPersistor extends CoalescePersisterBase {
     /**
      * Adds or Updates a Coalesce object that matches the given parameters.
      * @param dataObject the XsdDataObject to be added or updated
-     * @param conn is the SQLServerDataConnector database connection
+     * @param conn is the PostGresDataConnector database connection
      * @return isSuccessful = True = Successful add/update operation.
      * @throws SQLException
      */
-    protected boolean persistObject(XsdDataObject dataObject, SQLServerDataConnector conn) throws SQLException
+    protected boolean persistObject(XsdDataObject dataObject, PostGresDataConnector conn) throws SQLException
     {
         boolean isSuccessful = true;
 
@@ -599,16 +618,16 @@ public class SQLServerPersistor extends CoalescePersisterBase {
     /**
      * Adds or Updates a Coalesce entity that matches the given parameters.
      * @param entity the XsdEntity to be added or updated
-     * @param conn is the SQLServerDataConnector database connection
+     * @param conn is the PostGresDataConnector database connection
      * @return True = No Update required.
      * @return True = Successful add/update operation.
      * @throws SQLException
      */
-    protected boolean persistEntityObject(XsdEntity entity, SQLServerDataConnector conn) throws SQLException
+    protected boolean persistEntityObject(XsdEntity entity, PostGresDataConnector conn) throws SQLException
     {
         // Return true if no update is required.
         if (!this.checkLastModified(entity, conn)) return true;
-        System.out.println(entity.toXml(true).toString());
+
         // Yes; Call Store Procedure
         return conn.ExecuteProcedure("CoalesceEntity_InsertOrUpdate",
                                      entity.getKey(),
@@ -617,19 +636,19 @@ public class SQLServerPersistor extends CoalescePersisterBase {
                                      entity.getVersion(),
                                      entity.getEntityId(),
                                      entity.getEntityIdType(),
-                                     entity.toXml("true"),
-                                     JodaDateTimeHelper.toMySQLDateTime(entity.getDateCreated()),
-                                     JodaDateTimeHelper.toMySQLDateTime(entity.getLastModified()));
+                                     entity.toXml(),
+                                     JodaDateTimeHelper.toPostGestSQLDateTime(entity.getDateCreated()),
+                                     JodaDateTimeHelper.toPostGestSQLDateTime(entity.getLastModified()));
     }
     /**
      * Adds or Updates a Coalesce section that matches the given parameters.
      * @param section the XsdSection to be added or updated
-     * @param conn is the SQLServerDataConnector database connection
+     * @param conn is the PostGresDataConnector database connection
      * @return True = No Update required.
      * @return True = Successful add/update operation.
      * @throws SQLException
      */
-    protected boolean persistSectionObject(XsdSection section, SQLServerDataConnector conn) throws SQLException
+    protected boolean persistSectionObject(XsdSection section, PostGresDataConnector conn) throws SQLException
     {
         // Return true if no update is required.
         if (!this.checkLastModified(section, conn)) return true;
@@ -640,18 +659,18 @@ public class SQLServerPersistor extends CoalescePersisterBase {
                                      section.getName(),
                                      section.getParent().getKey(),
                                      section.getParent().getType(),
-                                     JodaDateTimeHelper.toMySQLDateTime(section.getDateCreated()),
-                                     JodaDateTimeHelper.toMySQLDateTime(section.getLastModified()));
+                                     JodaDateTimeHelper.toPostGestSQLDateTime(section.getDateCreated()),
+                                     JodaDateTimeHelper.toPostGestSQLDateTime(section.getLastModified()));
     }
     /**
      * Adds or Updates a Coalesce recordset that matches the given parameters.
      * @param recordset the XsdRecordset to be added or updated
-     * @param conn is the SQLServerDataConnector database connection
+     * @param conn is the PostGresDataConnector database connection
      * @return True = No Update required.
      * @return True = Successful add/update operation.
      * @throws SQLException
      */
-    protected boolean persistRecordsetObject(XsdRecordset recordset, SQLServerDataConnector conn) throws SQLException
+    protected boolean persistRecordsetObject(XsdRecordset recordset, PostGresDataConnector conn) throws SQLException
     {
         // Return true if no update is required.
         if (!this.checkLastModified(recordset, conn)) return true;
@@ -662,18 +681,18 @@ public class SQLServerPersistor extends CoalescePersisterBase {
                                      recordset.getName(),
                                      recordset.getParent().getKey(),
                                      recordset.getParent().getType(),
-                                     JodaDateTimeHelper.toMySQLDateTime(recordset.getDateCreated()),
-                                     JodaDateTimeHelper.toMySQLDateTime(recordset.getLastModified()));
+                                     JodaDateTimeHelper.toPostGestSQLDateTime(recordset.getDateCreated()),
+                                     JodaDateTimeHelper.toPostGestSQLDateTime(recordset.getLastModified()));
     }
     /**
      * Adds or Updates a Coalesce field definition that matches the given parameters.
      * @param fieldDefinition the XsdFieldDefinition to be added or updated
-     * @param conn is the SQLServerDataConnector database connection
+     * @param conn is the PostGresDataConnector database connection
      * @return True = No Update required.
      * @return True = Successful add/update operation.
      * @throws SQLException
      */
-    protected boolean persistFieldDefinitionObject(XsdFieldDefinition fieldDefinition, SQLServerDataConnector conn)
+    protected boolean persistFieldDefinitionObject(XsdFieldDefinition fieldDefinition, PostGresDataConnector conn)
             throws SQLException
     {
 
@@ -686,18 +705,18 @@ public class SQLServerPersistor extends CoalescePersisterBase {
                                      fieldDefinition.getName(),
                                      fieldDefinition.getParent().getKey(),
                                      fieldDefinition.getParent().getType(),
-                                     JodaDateTimeHelper.toMySQLDateTime(fieldDefinition.getDateCreated()),
-                                     JodaDateTimeHelper.toMySQLDateTime(fieldDefinition.getLastModified()));
+                                     JodaDateTimeHelper.toPostGestSQLDateTime(fieldDefinition.getDateCreated()),
+                                     JodaDateTimeHelper.toPostGestSQLDateTime(fieldDefinition.getLastModified()));
     }
     /**
      * Adds or Updates a Coalesce record that matches the given parameters.
      * @param record the XsdRecord to be added or updated
-     * @param conn is the SQLServerDataConnector database connection
+     * @param conn is the PostGresDataConnector database connection
      * @return True = No Update required.
      * @return True = Successful add/update operation.
      * @throws SQLException
      */
-    protected boolean persistRecordObject(XsdRecord record, SQLServerDataConnector conn) throws SQLException
+    protected boolean persistRecordObject(XsdRecord record, PostGresDataConnector conn) throws SQLException
     {
         // Return true if no update is required.
         if (!this.checkLastModified(record, conn)) return true;
@@ -708,18 +727,18 @@ public class SQLServerPersistor extends CoalescePersisterBase {
                                      record.getName(),
                                      record.getParent().getKey(),
                                      record.getParent().getType(),
-                                     JodaDateTimeHelper.toMySQLDateTime(record.getDateCreated()),
-                                     JodaDateTimeHelper.toMySQLDateTime(record.getLastModified()));
+                                     JodaDateTimeHelper.toPostGestSQLDateTime(record.getDateCreated()),
+                                     JodaDateTimeHelper.toPostGestSQLDateTime(record.getLastModified()));
     }
     /**
      * Adds or Updates a Coalesce field that matches the given parameters.
      * @param field the XsdField to be added or updated
-     * @param conn is the SQLServerDataConnector database connection
+     * @param conn is the PostGresDataConnector database connection
      * @return True = No Update required.
      * @return True = Successful add/update operation.
      * @throws SQLException
      */
-    protected boolean persistFieldObject(XsdField field, SQLServerDataConnector conn) throws SQLException
+    protected boolean persistFieldObject(XsdField field, PostGresDataConnector conn) throws SQLException
     {
         // Return true if no update is required.
         if (!this.checkLastModified(field, conn)) return true;
@@ -735,19 +754,19 @@ public class SQLServerPersistor extends CoalescePersisterBase {
                                      field.getModifiedBy(),
                                      field.getParent().getKey(),
                                      field.getParent().getType(),
-                                     JodaDateTimeHelper.toMySQLDateTime(field.getDateCreated()),
-                                     JodaDateTimeHelper.toMySQLDateTime(field.getLastModified()),
+                                     JodaDateTimeHelper.toPostGestSQLDateTime(field.getDateCreated()),
+                                     JodaDateTimeHelper.toPostGestSQLDateTime(field.getLastModified()),
                                      field.getPreviousHistoryKey());
     }
     /**
      * Adds or Updates a Coalesce field history that matches the given parameters.
      * @param fieldHistory the XsdFieldHistory to be added or updated
-     * @param conn is the SQLServerDataConnector database connection
+     * @param conn is the PostGresDataConnector database connection
      * @return True = No Update required.
      * @return True = Successful add/update operation.
      * @throws SQLException
      */
-    protected boolean persistFieldHistoryObject(XsdFieldHistory fieldHistory, SQLServerDataConnector conn)
+    protected boolean persistFieldHistoryObject(XsdFieldHistory fieldHistory, PostGresDataConnector conn)
             throws SQLException
     {
         // Return true if no update is required.
@@ -764,19 +783,19 @@ public class SQLServerPersistor extends CoalescePersisterBase {
                                      fieldHistory.getModifiedBy(),
                                      fieldHistory.getParent().getKey(),
                                      fieldHistory.getParent().getType(),
-                                     JodaDateTimeHelper.toMySQLDateTime(fieldHistory.getDateCreated()),
-                                     JodaDateTimeHelper.toMySQLDateTime(fieldHistory.getLastModified()),
+                                     JodaDateTimeHelper.toPostGestSQLDateTime(fieldHistory.getDateCreated()),
+                                     JodaDateTimeHelper.toPostGestSQLDateTime(fieldHistory.getLastModified()),
                                      fieldHistory.getPreviousHistoryKey());
     }
     /**
      * Adds or Updates a Coalesce linkage section that matches the given parameters.
      * @param linkageSection the XsdLinkageSection to be added or updated
-     * @param conn is the SQLServerDataConnector database connection
+     * @param conn is the PostGresDataConnector database connection
      * @return True = No Update required.
      * @return True = Successful add/update operation.
      * @throws SQLException
      */
-    protected boolean persistLinkageSectionObject(XsdLinkageSection linkageSection, SQLServerDataConnector conn)
+    protected boolean persistLinkageSectionObject(XsdLinkageSection linkageSection, PostGresDataConnector conn)
             throws SQLException
     {
         // Return true if no update is required.
@@ -788,18 +807,18 @@ public class SQLServerPersistor extends CoalescePersisterBase {
                                      linkageSection.getName(),
                                      linkageSection.getParent().getKey(),
                                      linkageSection.getParent().getType(),
-                                     JodaDateTimeHelper.toMySQLDateTime(linkageSection.getDateCreated()),
-                                     JodaDateTimeHelper.toMySQLDateTime(linkageSection.getLastModified()));
+                                     JodaDateTimeHelper.toPostGestSQLDateTime(linkageSection.getDateCreated()),
+                                     JodaDateTimeHelper.toPostGestSQLDateTime(linkageSection.getLastModified()));
     }
     /**
      * Adds or Updates a Coalesce linkage that matches the given parameters.
      * @param linkage the XsdLinkage to be added or updated
-     * @param conn is the SQLServerDataConnector database connection
+     * @param conn is the PostGresDataConnector database connection
      * @return True = No Update required.
      * @return True = Successful add/update operation.
      * @throws SQLException
      */
-    protected boolean persistLinkageObject(XsdLinkage linkage, SQLServerDataConnector conn) throws SQLException
+    protected boolean persistLinkageObject(XsdLinkage linkage, PostGresDataConnector conn) throws SQLException
     {
         // Return true if no update is required.
         if (!this.checkLastModified(linkage, conn)) return true;
@@ -823,17 +842,17 @@ public class SQLServerPersistor extends CoalescePersisterBase {
                                      "",
                                      linkage.getParent().getKey(),
                                      linkage.getParent().getType(),
-                                     JodaDateTimeHelper.toMySQLDateTime(linkage.getDateCreated()),
-                                     JodaDateTimeHelper.toMySQLDateTime(linkage.getLastModified()));
+                                     JodaDateTimeHelper.toPostGestSQLDateTime(linkage.getDateCreated()),
+                                     JodaDateTimeHelper.toPostGestSQLDateTime(linkage.getLastModified()));
     }
     /**
      * Returns the EntityMetaData for the Coalesce entity that matches the given parameters
      * @param Key primary key of the Coalesce entity
-     * @param conn is the SQLServerDataConnector database connection
+     * @param conn is the PostGresDataConnector database connection
      * @return metaData the EntityMetaData for the Coalesce entity.
      * @throws SQLException
      */
-    protected EntityMetaData getCoalesceEntityIdAndTypeForKey(String Key, SQLServerDataConnector conn) throws SQLException
+    protected EntityMetaData getCoalesceEntityIdAndTypeForKey(String Key, PostGresDataConnector conn) throws SQLException
     {
         EntityMetaData metaData = new EntityMetaData();
 
@@ -884,11 +903,11 @@ public class SQLServerPersistor extends CoalescePersisterBase {
     /**
      * Returns the comparison for the XsdDataObject last modified date versus the same objects value in the database.
      * @param dataObject the XsdDataObject to have it's last modified date checked.
-     * @param conn is the SQLServerDataConnector database connection
+     * @param conn is the PostGresDataConnector database connection
      * @return False = Out of Date
      * @throws SQLException
      */
-    protected boolean checkLastModified(XsdDataObject dataObject, SQLServerDataConnector conn) throws SQLException
+    protected boolean checkLastModified(XsdDataObject dataObject, PostGresDataConnector conn) throws SQLException
     {
         boolean isOutOfDate = true;
 
@@ -903,7 +922,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
             long SQLRecordTicks = LastModified.getMillis();
 
             // TODO: Round Ticks for SQL (Not sure if this is required for .NET)
-            ObjectTicks = this.roundTicksForSQL(ObjectTicks);
+            // ObjectTicks = this.RoundTicksForSQL(ObjectTicks);
 
             if (ObjectTicks == SQLRecordTicks)
             {
@@ -917,11 +936,11 @@ public class SQLServerPersistor extends CoalescePersisterBase {
     /**
      * Deletes the Coalesce object & CoalesceObjectMap that matches the given parameters
      * @param dataObject the XsdDataObject to be deleted
-     * @param conn is the SQLServerDataConnector database connection
+     * @param conn is the PostGresDataConnector database connection
      * @return True = Successful delete
      * @throws SQLException
      */
-    protected boolean deleteObject(XsdDataObject dataObject, SQLServerDataConnector conn) throws SQLException
+    protected boolean deleteObject(XsdDataObject dataObject, PostGresDataConnector conn) throws SQLException
     {
         String objectType = dataObject.getType();
         String objectKey = dataObject.getKey();
@@ -941,16 +960,17 @@ public class SQLServerPersistor extends CoalescePersisterBase {
      * @throws SQLException,Exception,CoalescePersistorException
      */
     protected List<String> getCoalesceEntityKeysForEntityId(String EntityId, String EntityIdType, String EntityName)
-            throws SQLException,Exception, CoalescePersistorException
+            throws SQLException, Exception,CoalescePersistorException
     {
         List<String> keyList = new ArrayList<String>();
 
-        try (SQLServerDataConnector conn = new SQLServerDataConnector(this.serCon))
+        try (PostGresDataConnector conn = new PostGresDataConnector(this.serCon))
         {
-            ResultSet results = conn.ExecuteQuery("SELECT ObjectKey FROM CoalesceEntity WHERE (ISNULL(EntityId,' ') like ? ) AND (ISNULL(EntityIdType,' ') like  ? ) AND Name=?",
-                                                  EntityId,
-                                                  EntityIdType,
-                                                  EntityName);
+            ResultSet results = conn.ExecuteLikeQuery("SELECT ObjectKey FROM CoalesceEntity WHERE (EntityId like ?) AND (EntityIdType like ?) AND (Name=?)",
+                                                      2,
+                                                      EntityId,
+                                                      EntityIdType,
+                                                      EntityName);
 
             while (results.next())
             {
@@ -973,19 +993,20 @@ public class SQLServerPersistor extends CoalescePersisterBase {
     protected List<String> getCoalesceEntityKeysForEntityIdAndSource(String EntityId,
                                                                      String EntityIdType,
                                                                      String EntityName,
-                                                                     String EntitySource) throws SQLException,Exception,
+                                                                     String EntitySource) throws SQLException, Exception,
             CoalescePersistorException
     {
 
-        try (SQLServerDataConnector conn = new SQLServerDataConnector(this.serCon))
+        try (PostGresDataConnector conn = new PostGresDataConnector(this.serCon))
         {
             List<String> keyList = new ArrayList<String>();
 
-            ResultSet results = conn.ExecuteQuery("SELECT ObjectKey FROM CoalesceEntity WHERE (ISNULL(EntityId,' ')  like  ? ) AND (ISNULL(EntityIdType,' ')  like  ? ) AND (Name=?) AND (Source=?)",
-                                                  EntityId,
-                                                  EntityIdType,
-                                                  EntityName,
-                                                  EntitySource);
+            ResultSet results = conn.ExecuteLikeQuery("SELECT ObjectKey FROM CoalesceEntity WHERE (EntityId like ? ) AND (EntityIdType like  ? ) AND (Name=?) AND (Source=?)",
+                                                      2,
+                                                      EntityId,
+                                                      EntityIdType,
+                                                      EntityName,
+                                                      EntitySource);
 
             while (results.next())
             {
@@ -998,10 +1019,10 @@ public class SQLServerPersistor extends CoalescePersisterBase {
     /**
      * Sets the active Coalesce field objects matching the parameters given.
      * @param dataObject the Coalesce field object. 
-     * @param conn is the SQLServerDataConnector database connection
+     * @param conn is the PostGresDataConnector database connection
      * @throws SQLException,Exception,CoalescePersistorException
      */
-    protected boolean updateFileContent(XsdDataObject dataObject, SQLServerDataConnector conn) throws SQLException
+    protected boolean updateFileContent(XsdDataObject dataObject, PostGresDataConnector conn) throws SQLException
     {
         boolean isSuccessful = false;
 
@@ -1023,7 +1044,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         return isSuccessful;
     }
 
-    private boolean updateDataObject(XsdDataObject xsdDataObject, SQLServerDataConnector conn, boolean AllowRemoval)
+    private boolean updateDataObject(XsdDataObject xsdDataObject, PostGresDataConnector conn, boolean AllowRemoval)
             throws SQLException
 
     {
@@ -1071,7 +1092,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         return isSuccessful;
     }
 
-    private DateTime getCoalesceDataObjectLastModified(String Key, String ObjectType, SQLServerDataConnector conn)
+    private DateTime getCoalesceDataObjectLastModified(String Key, String ObjectType, PostGresDataConnector conn)
             throws SQLException
     {
         DateTime lastModified = DateTime.now(DateTimeZone.UTC);
@@ -1081,21 +1102,25 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         String dateValue = null;
 
         ResultSet results = conn.ExecuteQuery("SELECT LastModified FROM " + tableName + " WHERE ObjectKey=?", Key.trim());
-        // JODA Function DateTimeFormat will adjust for the Server timezone when converting the time.
-        while (results.next())
-        {
-            dateValue = results.getString("LastModified");
-            if (dateValue != null)
-            {
-                lastModified = JodaDateTimeHelper.getMySQLDateTime(dateValue);
-            }
+        ResultSetMetaData resultsmd = results.getMetaData();
 
+        // JODA Function DateTimeFormat will adjust for the Server timezone when converting the time.
+        if (resultsmd.getColumnCount() <= 1)
+        {
+            while (results.next())
+            {
+                dateValue = results.getString("LastModified");
+                if (dateValue != null)
+                {
+                    lastModified = JodaDateTimeHelper.getPostGresDateTim(dateValue);
+                }
+            }
         }
         return lastModified;
 
     }
 
-    private ElementMetaData getXPathRecursive(String Key, String ObjectType, String XPath, SQLServerDataConnector conn)
+    private ElementMetaData getXPathRecursive(String Key, String ObjectType, String XPath, PostGresDataConnector conn)
             throws SQLException
     {
 
@@ -1122,7 +1147,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         ResultSet results = conn.ExecuteQuery(sql, Key.trim());
 
         // Valid Results?
-        while(results.next())
+        while (results.next())
         {
 
             String name = results.getString("name");
@@ -1157,5 +1182,4 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         return meteData;
 
     }
-
 }

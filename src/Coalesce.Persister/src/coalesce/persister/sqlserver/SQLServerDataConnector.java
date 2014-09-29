@@ -1,8 +1,10 @@
-package com.database.persister;
+package coalesce.persister.sqlserver;
 
 import java.sql.SQLException;
 
 import Coalesce.Common.Exceptions.CoalescePersistorException;
+import Coalesce.Framework.Persistance.CoalesceDataConnectorBase;
+import Coalesce.Framework.Persistance.ServerConn;
 
 import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
 

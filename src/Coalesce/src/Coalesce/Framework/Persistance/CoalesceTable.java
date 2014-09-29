@@ -1,4 +1,4 @@
-package com.database.persister;
+package Coalesce.Framework.Persistance;
 
 
 public class CoalesceTable {
@@ -8,7 +8,7 @@ public class CoalesceTable {
      * @return tableName Coalesce object database name
      */
     public static String gettableNameForObjectType(String objectType){
-    	String tableName="";
+    	String tableName=""; 
     	
     	switch(objectType.trim().toLowerCase()){
 	    	case "entity":
