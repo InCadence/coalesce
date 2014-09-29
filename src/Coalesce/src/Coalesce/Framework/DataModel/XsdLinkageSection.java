@@ -38,11 +38,24 @@ public class XsdLinkageSection extends XsdDataObject {
     // Factory and Initialization
     // -----------------------------------------------------------------------//
 
+    /**
+     * Creates an XsdLinkageSection and ties it to its parent XsdEntity.
+     * 
+     * @param parent XsdEntity
+     * @return XsdLinkageSection
+     */
     public static XsdLinkageSection create(XsdEntity parent)
     {
         return XsdLinkageSection.create(parent, true);
     }
 
+    /**
+     * Creates an XsdLinkageSection and ties it to its parent XsdEntity. Also sets the noIndex attribute.
+     * 
+     * @param parent XsdEntity
+     * @param noIndex boolean
+     * @return XsdLinkageSection
+     */
     public static XsdLinkageSection create(XsdEntity parent, boolean noIndex)
     {
         if (parent == null) throw new NullArgumentException("parent");
@@ -64,6 +77,12 @@ public class XsdLinkageSection extends XsdDataObject {
 
     }
 
+    /**
+     * Initializes a previously new XsdLinkageSection and ties it to its parent XsdEntity.
+     * 
+     * @param parent XsdEntity
+     * @return boolean
+     */
     public boolean initialize(XsdEntity parent)
     {
         if (parent == null) throw new NullArgumentException("parent");
@@ -135,6 +154,10 @@ public class XsdLinkageSection extends XsdDataObject {
         return "linkagesection";
     }
 
+    /**
+     * Returns a hashmap of the XsdLinkages contained in the XsdLinkageSection
+     * @return Map
+     */
     public Map<String, XsdLinkage> getLinkages()
     {
         Map<String, XsdLinkage> linkages = new HashMap<String, XsdLinkage>();
@@ -151,11 +174,17 @@ public class XsdLinkageSection extends XsdDataObject {
 
     }
 
+    /**
+     * Creates an XsdLinkage child for this XsdLinkageSection.
+     * 
+     * @return XsdLinkage
+     */
     public XsdLinkage createLinkage()
     {
         return XsdLinkage.create(this);
     }
 
+    @Override
     public String toXml()
     {
         return XmlHelper.Serialize(_entityLinkageSection);
@@ -173,6 +202,7 @@ public class XsdLinkageSection extends XsdDataObject {
         _entityLinkageSection.setNoindex(Boolean.toString(value));
     }
 
+    @Override
     public DateTime getDateCreated()
     {
         // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityLinkageSection.getDatecreated());

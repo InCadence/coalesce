@@ -48,6 +48,14 @@ public class XsdField extends XsdFieldBase {
     // Factory and Initialization
     // -----------------------------------------------------------------------//
 
+    /**
+     * Creates an XsdField based off of an XsdFieldDefinition and ties it to its parent XsdRecord.
+     * 
+     * @param parent            XsdRecord
+     * @param fieldDefinition   XsdFieldDefinition
+     * 
+     * @return                  XsdField
+     */
     public static XsdField create(XsdRecord parent, XsdFieldDefinition fieldDefinition)
     {
 
@@ -85,6 +93,14 @@ public class XsdField extends XsdFieldBase {
 
     }
 
+    /**
+     * Initializes a previously new Field and ties it to its parent XsdRecord.
+     * 
+     * @param parent    XsdRecord
+     * @param field     Field
+     * 
+     * @return          boolean
+     */
     public boolean initialize(XsdRecord parent, Field field)
     {
 
@@ -142,11 +158,13 @@ public class XsdField extends XsdFieldBase {
         return "field";
     }
 
+    @Override
     public String getValue()
     {
         return _entityField.getValue();
     }
 
+    @Override
     public void setValue(String value)
     {
         String oldValue = _entityField.getValue();
@@ -314,16 +332,31 @@ public class XsdField extends XsdFieldBase {
         _entityField.setHash(value);
     }
 
+    /**
+     * Returns the XsdField's suspendHistory value suspendHistory value.
+     * 
+     * @return boolean, XsdField's suspendHistory value
+     */
     public boolean getSuspendHistory()
     {
         return _suspendHistory;
     }
 
+    /**
+     * Sets the XsdField's suspendHistory value.
+     * 
+     * @param value boolean, new value for the XsdField's suspendHistory value
+     */
     public void setSuspendHistory(boolean value)
     {
         _suspendHistory = value;
     }
 
+    /**
+     * Returns the XsdField's change history collection
+     * 
+     * @return  ArrayList<XsdFieldHistory>
+     */
     public ArrayList<XsdFieldHistory> getHistory()
     {
 
@@ -343,6 +376,11 @@ public class XsdField extends XsdFieldBase {
         return historyList;
     }
 
+    /**
+     * Returns an XsdField's change history entry 
+     * 
+     * @return  XsdFieldHistory
+     */
     public XsdFieldHistory getHistoryRecord(String historyKey)
     {
         XsdFieldHistory historyRecord = (XsdFieldHistory) _childDataObjects.get(historyKey);
@@ -380,11 +418,17 @@ public class XsdField extends XsdFieldBase {
         _entityField.setLastmodified(value);
     }
     
+    @Override
     public String toXml()
     {
         return XmlHelper.Serialize(_entityField);
     }
 
+    /**
+     * Returns the filename with directory path and file extension.
+     * 
+     * @return  String, full filename
+     */
     public String getCoalesceFullFilename()
     {
 
@@ -399,6 +443,11 @@ public class XsdField extends XsdFieldBase {
 
     }
 
+    /**
+     * Returns the filename with directory path and file extension for a thumbnail image.
+     * 
+     * @return
+     */
     public String getCoalesceFullThumbnailFilename()
     {
 
@@ -413,6 +462,12 @@ public class XsdField extends XsdFieldBase {
 
     }
 
+    /**
+     * Returns the filename with a long representation of last modified datetime (Name?lastmodifiedlong).
+     * Returns empty string when filename does not exist. If an error is encountered, only the filename is returned.
+     * 
+     * @return String
+     */
     public String getCoalesceFilenameWithLastModifiedTag()
     {
         try
@@ -432,6 +487,12 @@ public class XsdField extends XsdFieldBase {
         }
     }
 
+    /**
+     * Returns the tumbnail filename with a long representation of last modified datetime (Name?lastmodifiedlong).
+     * Returns empty string when filename does not exist. If an error is encountered, only the thumbnail filename is returned.
+     * 
+     * @return String
+     */
     public String getCoalesceThumbnailFilenameWithLastModifiedTag()
     {
         try
@@ -451,6 +512,11 @@ public class XsdField extends XsdFieldBase {
         }
     }
 
+    /**
+     * Returns the base filename and extension.
+     * 
+     * @return String
+     */
     public String getCoalesceFilename()
     {
 
@@ -469,6 +535,11 @@ public class XsdField extends XsdFieldBase {
         }
     }
 
+    /**
+     * Returns the thumbnail base filename and extension.
+     * 
+     * @return String
+     */
     public String getCoalesceThumbnailFilename()
     {
 
@@ -487,6 +558,14 @@ public class XsdField extends XsdFieldBase {
         }
     }
 
+    /**
+     * Update the value and/or classification marking of the XsdField.
+     * 
+     * @param value     String, value contained by the field
+     * @param marking   classification marking of the field
+     * @param user      user making the change
+     * @param ip        user ip responsible for the change
+     */
     public void change(String value, String marking, String user, String ip)
     {
         // Does the new value differ from the existing?

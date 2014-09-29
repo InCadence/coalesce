@@ -36,6 +36,12 @@ public class XsdLinkage extends XsdDataObject implements ICoalesceLinkage {
 
     private Linkage _entityLinkage;
 
+    /**
+     * Creates an XsdLinkage and ties it to its parent XsdLinkageSection.
+     * 
+     * @param parent XsdLinkageSection
+     * @return XsdLinkage
+     */
     public static XsdLinkage create(XsdLinkageSection parent)
     {
         if (parent == null) throw new NullArgumentException("parent");
@@ -59,6 +65,13 @@ public class XsdLinkage extends XsdDataObject implements ICoalesceLinkage {
 
     }
 
+    /**
+     * Initializes a previously new XsdLinkage and ties it to its parent XsdLinkageSection.
+     * 
+     * @param parent XsdLinkageSection
+     * @param linkage XsdLinkage
+     * @return boolean
+     */
     public boolean initialize(XsdLinkageSection parent, Linkage linkage)
     {
         if (parent == null) throw new NullArgumentException("parent");
@@ -237,10 +250,10 @@ public class XsdLinkage extends XsdDataObject implements ICoalesceLinkage {
     @Override
     public Locale getInputLang()
     {
-        String inputLang = _entityLinkage.getInputlang(); 
-        
+        String inputLang = _entityLinkage.getInputlang();
+
         if (inputLang == null) return null;
-        
+
         return LocaleUtils.toLocale(inputLang.replace("-", "_"));
     }
 
@@ -304,6 +317,11 @@ public class XsdLinkage extends XsdDataObject implements ICoalesceLinkage {
         _entityLinkage.setStatus(status.getLabel());
     }
 
+    /**
+     * Returns the XsdLinkage's status identifying if it is current or deleted
+     * 
+     * @return boolean
+     */
     public boolean getIsMarkedDeleted()
     {
         return (getStatus() == ECoalesceDataObjectStatus.DELETED);
@@ -313,6 +331,17 @@ public class XsdLinkage extends XsdDataObject implements ICoalesceLinkage {
     // public Methods
     // -----------------------------------------------------------------------//
 
+    /**
+     * Sets the two entities key, name, source and version as well as the link type, classification, modified by, input
+     * language, dates created and modified and active status.
+     * 
+     * @param Entity1 XsdEntity belonging to the first entity. Provides the entity's key, name, source and version
+     * @param LinkType ELinkTypes value for the relationship type identification between the entities
+     * @param Entity2 XsdEntity belonging to the second entity. Provides the entity's key, name, source and version
+     * @param ClassificationMarking Marking of the classification of the relationship
+     * @param ModifiedBy identification of who entered the relationship
+     * @param InputLang language that the relationship was created in
+     */
     public void establishLinkage(XsdEntity Entity1,
                                  ELinkTypes LinkType,
                                  XsdEntity Entity2,
@@ -343,6 +372,7 @@ public class XsdLinkage extends XsdDataObject implements ICoalesceLinkage {
         setStatus(ECoalesceDataObjectStatus.ACTIVE);
     }
 
+    @Override
     public String toXml()
     {
         return XmlHelper.Serialize(_entityLinkage);

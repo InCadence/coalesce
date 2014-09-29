@@ -88,8 +88,18 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
     @Override
     public abstract void setModifiedByIP(String value);
 
+    /**
+     * Returns the string representation of the classification marking
+     * 
+     * @return String
+     */
     public abstract String getClassificationMarkingAsString();
 
+    /**
+     * Sets the classification marking to the value of the string parameter
+     * 
+     * @param value
+     */
     public abstract void setClassificationMarking(String value);
 
     @Override
@@ -142,6 +152,11 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
     Public Functions
     --------------------------------------------------------------------------*/
 
+    /**
+     * Returns the field value with the classification marking.
+     * 
+     * @return String
+     */
     public String getValueWithMarking()
     {
         String val = getValue();
@@ -167,12 +182,22 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
         return new Marking(getClassificationMarkingAsString());
     };
 
+    /**
+     * Returns the portion marking representation of the full classification marking
+     * 
+     * @return String
+     */
     public String getPortionMarking()
     {
         Marking mrk = new Marking(getClassificationMarkingAsString());
         return mrk.ToPortionString();
     }
 
+    /**
+     * Sets the key value for the XsdFieldHistory
+     * 
+     * @param fieldHistory
+     */
     public void setPreviousHistoryKey(XsdFieldHistory fieldHistory)
     {
         if (fieldHistory == null) throw new NullArgumentException("fieldHistory");
@@ -180,6 +205,12 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
         setPreviousHistoryKey(fieldHistory.getKey());
     }
 
+    /**
+     * Returns an Field's Data as an Object.
+     * 
+     * @return Object
+     * @throws CoalesceDataFormatException
+     */
     public Object getData() throws CoalesceDataFormatException
     {
 
@@ -218,11 +249,21 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
 
     }
 
+    /**
+     * Sets the Field's value by the Object parameter
+     * 
+     * @param value as an Object
+     */
     public void setData(Object value)
     {
         setTypedValue(value.toString());
     }
 
+    /**
+     * Sets the Field's value by the String parameter
+     * 
+     * @param value
+     */
     public void setTypedValue(String value)
     {
         ECoalesceFieldDataTypes fieldType = getDataType();
@@ -234,6 +275,11 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
         setValue(value);
     }
 
+    /**
+     * Sets the Field's value by the UUID parameter
+     * 
+     * @param value
+     */
     public void setTypedValue(UUID value)
     {
         if (getDataType() != ECoalesceFieldDataTypes.GuidType)
@@ -244,6 +290,11 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
         setValue(GUIDHelper.getGuidString(value));
     }
 
+    /**
+     * Sets the Field's value by the DateTime parameter
+     * 
+     * @param value
+     */
     public void setTypedValue(DateTime value)
     {
         if (getDataType() != ECoalesceFieldDataTypes.DateTimeType)
@@ -254,6 +305,11 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
         setValue(JodaDateTimeHelper.toXmlDateTimeUTC(value));
     }
 
+    /**
+     * Sets the Field's value by the boolean parameter
+     * 
+     * @param value
+     */
     public void setTypedValue(boolean value)
     {
         if (getDataType() != ECoalesceFieldDataTypes.BooleanType)
@@ -264,6 +320,11 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
         setValue(String.valueOf(value));
     }
 
+    /**
+     * Sets the Field's value by the int parameter
+     * 
+     * @param value
+     */
     public void setTypedValue(int value)
     {
         if (getDataType() != ECoalesceFieldDataTypes.IntegerType)
@@ -274,6 +335,12 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
         setValue(String.valueOf(value));
     }
 
+    /**
+     * Sets the Field's value by the geometry Point parameter
+     * 
+     * @param value
+     * @throws CoalesceDataFormatException
+     */
     public void setTypedValue(Point value) throws CoalesceDataFormatException
     {
         if (getDataType() != ECoalesceFieldDataTypes.GeocoordinateType)
@@ -286,6 +353,12 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
         setValue(value.toText());
     }
 
+    /**
+     * Sets the Field's value by the geometry Coordinate parameter
+     * 
+     * @param value
+     * @throws CoalesceDataFormatException
+     */
     public void setTypedValue(Coordinate value) throws CoalesceDataFormatException
     {
         if (getDataType() != ECoalesceFieldDataTypes.GeocoordinateType)
@@ -298,6 +371,12 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
         setValue(WKTWriter.toPoint(value));
     }
 
+    /**
+     * Sets the Field's value by the geometry MultiPoint parameter
+     * 
+     * @param multiPoint
+     * @throws CoalesceDataFormatException
+     */
     public void setTypedValue(MultiPoint multiPoint) throws CoalesceDataFormatException
     {
 
@@ -311,6 +390,12 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
         setValue(multiPoint.toText());
     }
 
+    /**
+     * Sets the Field's value by the geometry coordinate array parameter
+     * 
+     * @param value
+     * @throws CoalesceDataFormatException
+     */
     public void setTypedValue(Coordinate value[]) throws CoalesceDataFormatException
     {
 
@@ -332,6 +417,11 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
         setTypedValue(new MultiPoint(points, new GeometryFactory()));
     }
 
+    /**
+     * Sets the Field's value by the byte array parameter
+     * 
+     * @param dataBytes
+     */
     public void setTypedValue(byte[] dataBytes)
     {
         if (getDataType() != ECoalesceFieldDataTypes.BinaryType)
@@ -343,6 +433,14 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
         setSize(dataBytes.length);
     }
 
+    /**
+     * Sets the Field's value by the byte array parameter. Also sets the filename, extension and mimetype.
+     * 
+     * @param dataBytes
+     * @param filename
+     * @param extension
+     * @param mimeType
+     */
     public void setTypedValue(byte[] dataBytes, String filename, String extension, String mimeType)
     {
         String value = Base64.encode(dataBytes);
@@ -353,6 +451,14 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
         setSize(dataBytes.length);
     }
 
+    /**
+     * Sets the Field's hash value. Also sets the filename, extension and mimetype.
+     * 
+     * @param filename
+     * @param extension
+     * @param mimeType
+     * @param hash
+     */
     public void setTypedValue(String filename, String extension, String mimeType, String hash)
     {
         setFilename(filename);
@@ -361,6 +467,13 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
         setHash(hash);
     }
 
+    /**
+     * Sets the Field's value by the byte array parameter. Also sets the filename, extension and mimetype by the Document
+     * Properties.
+     * 
+     * @param dataBytes
+     * @param docProps
+     */
     public void setTypedValue(byte[] dataBytes, DocumentProperties docProps)
     {
         if (getDataType() != ECoalesceFieldDataTypes.FileType)
@@ -377,6 +490,12 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
 
     }
 
+    /**
+     * Sets value, filename, extension, mimetype if the datatype equals the file type and the file exists.
+     * 
+     * @param docProps
+     * @throws IOException
+     */
     public void setTypedValue(DocumentProperties docProps) throws IOException
     {
         if (getDataType() != ECoalesceFieldDataTypes.FileType)
@@ -400,6 +519,12 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
         }
     }
 
+    /**
+     * Returns the UUID value of the field
+     * 
+     * @return
+     * @throws ClassCastException
+     */
     public UUID getGuidValue() throws ClassCastException
     {
 
@@ -420,6 +545,12 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
         }
     }
 
+    /**
+     * Returns the Field's DateTime value.
+     * 
+     * @return
+     * @throws ClassCastException
+     */
     public DateTime getDateTimeValue() throws ClassCastException
     {
 
@@ -436,6 +567,12 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
 
     }
 
+    /**
+     * Returns the Field's boolean value.
+     * 
+     * @return
+     * @throws ClassCastException
+     */
     public boolean getBooleanValue() throws ClassCastException
     {
         if (getDataType() != ECoalesceFieldDataTypes.BooleanType)
@@ -451,6 +588,12 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
 
     }
 
+    /**
+     * Returns the Field's Integer value.
+     * 
+     * @return
+     * @throws CoalesceDataFormatException
+     */
     public int getIntegerValue() throws CoalesceDataFormatException
     {
         if (getDataType() != ECoalesceFieldDataTypes.IntegerType)
@@ -473,6 +616,12 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
 
     }
 
+    /**
+     * Returns the Field's geometry Point value.
+     * 
+     * @return
+     * @throws CoalesceDataFormatException
+     */
     public Point getPointValue() throws CoalesceDataFormatException
     {
         if (getDataType() != ECoalesceFieldDataTypes.GeocoordinateType)
@@ -498,6 +647,12 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
         }
     }
 
+    /**
+     * Returns the Field's geometry Coordinate value.
+     * 
+     * @return
+     * @throws CoalesceDataFormatException
+     */
     public Coordinate getCoordinateValue() throws CoalesceDataFormatException
     {
         Point point = getPointValue();
@@ -509,6 +664,12 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
         return point.getCoordinate();
     }
 
+    /**
+     * Returns the Field's geometry MultiPoint value.
+     * 
+     * @return
+     * @throws CoalesceDataFormatException
+     */
     public MultiPoint getMultiPointValue() throws CoalesceDataFormatException
     {
         if (getDataType() != ECoalesceFieldDataTypes.GeocoordinateListType)
@@ -586,11 +747,25 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
 
     }
 
+    /**
+     * Returns the Field's Coordinate array values.
+     * 
+     * @return Coordinate[]
+     * 
+     * @throws CoalesceDataFormatException
+     */
     public Coordinate[] getCoordinateListValue() throws CoalesceDataFormatException
     {
         return getMultiPointValue().getCoordinates();
     }
 
+    /**
+     * Returns the binary value of Field's associated file.
+     * 
+     * @return byte[]
+     * 
+     * @throws ClassCastException
+     */
     public byte[] getBinaryValue() throws ClassCastException
     {
         if (getDataType() != ECoalesceFieldDataTypes.BinaryType && getDataType() != ECoalesceFieldDataTypes.FileType)

@@ -42,11 +42,30 @@ public class XsdFieldDefinition extends XsdDataObject implements ICoalesceFieldD
     // Factory and Initialization
     // -----------------------------------------------------------------------//
 
+    /**
+     * Creates an XsdFieldDefinition based for an XsdRecordset with the parameters of name and datatype provided.
+     * 
+     * @param parent XsdRecordset that the XsdFieldDefinition belongs to
+     * @param name String name of the XsdFieldDefinition
+     * @param dataType datatype that the XsdFieldDefinition will contain
+     * 
+     * @return XsdFieldDefinition
+     */
     public static XsdFieldDefinition create(XsdRecordset parent, String name, ECoalesceFieldDataTypes dataType)
     {
         return XsdFieldDefinition.create(parent, name, dataType, false);
     }
 
+    /**
+     * Creates an XsdFieldDefinition based for an XsdRecordset with the parameters of name, datatype and noindex provided.
+     * 
+     * @param parent XsdRecordset that the XsdFieldDefinition belongs to
+     * @param name String name of the XsdFieldDefinition
+     * @param dataType datatype that the XsdFieldDefinition will contain
+     * @param noIndex boolean
+     * 
+     * @return XsdFieldDefinition
+     */
     public static XsdFieldDefinition create(XsdRecordset parent,
                                             String name,
                                             ECoalesceFieldDataTypes dataType,
@@ -55,6 +74,17 @@ public class XsdFieldDefinition extends XsdDataObject implements ICoalesceFieldD
         return XsdFieldDefinition.create(parent, name, dataType, "", "U", "", noIndex);
     }
 
+    /**
+     * Creates an XsdFieldDefinition with a boolean default value based for an XsdRecordset with the parameters provided
+     * 
+     * @param parent XsdRecordset that the XsdFieldDefinition belongs to
+     * @param name String name of the XsdFieldDefinition
+     * @param label The label to be displayed with the field
+     * @param defaultClassificationMarking the default classification
+     * @param defaultValue the default value
+     * 
+     * @return XsdFieldDefinition
+     */
     public static XsdFieldDefinition create(XsdRecordset parent,
                                             String name,
                                             String label,
@@ -64,6 +94,18 @@ public class XsdFieldDefinition extends XsdDataObject implements ICoalesceFieldD
         return XsdFieldDefinition.create(parent, name, label, defaultClassificationMarking, defaultValue, false);
     }
 
+    /**
+     * Creates an XsdFieldDefinition with a boolean default value based for an XsdRecordset with the parameters provided
+     * 
+     * @param parent XsdRecordset that the XsdFieldDefinition belongs to
+     * @param name String name of the XsdFieldDefinition
+     * @param label The label to be displayed with the field
+     * @param defaultClassificationMarking the default classification
+     * @param defaultValue the default value
+     * @param noIndex boolean
+     * 
+     * @return XsdFieldDefinition
+     */
     public static XsdFieldDefinition create(XsdRecordset parent,
                                             String name,
                                             String label,
@@ -80,6 +122,17 @@ public class XsdFieldDefinition extends XsdDataObject implements ICoalesceFieldD
                                          noIndex);
     }
 
+    /**
+     * Creates an XsdFieldDefinition with a int default value based for an XsdRecordset with the parameters provided
+     *  
+     * @param parent XsdRecordset that the XsdFieldDefinition belongs to
+     * @param name String name of the XsdFieldDefinition
+     * @param label The label to be displayed with the field
+     * @param defaultClassificationMarking the default classification
+     * @param defaultValue the default value
+     * 
+     * @return XsdFieldDefinition
+     */
     public static XsdFieldDefinition create(XsdRecordset parent,
                                             String name,
                                             String label,
@@ -89,6 +142,18 @@ public class XsdFieldDefinition extends XsdDataObject implements ICoalesceFieldD
         return XsdFieldDefinition.create(parent, name, label, defaultClassificationMarking, defaultValue, false);
     }
 
+    /**
+     * Creates an XsdFieldDefinition with a int default value based for an XsdRecordset with the parameters provided
+     *  
+     * @param parent XsdRecordset that the XsdFieldDefinition belongs to
+     * @param name String name of the XsdFieldDefinition
+     * @param label The label to be displayed with the field
+     * @param defaultClassificationMarking the default classification
+     * @param defaultValue the default value
+     * @param noIndex boolean
+     * 
+     * @return XsdFieldDefinition
+     */
     public static XsdFieldDefinition create(XsdRecordset parent,
                                             String name,
                                             String label,
@@ -105,6 +170,18 @@ public class XsdFieldDefinition extends XsdDataObject implements ICoalesceFieldD
                                          noIndex);
     }
 
+    /**
+     * Creates an XsdFieldDefinition with a string default value based for an XsdRecordset with the parameters provided
+     * 
+     * @param parent XsdRecordset that the XsdFieldDefinition belongs to
+     * @param name String name of the XsdFieldDefinition
+     * @param dataType datatype that the XsdFieldDefinition will contain
+     * @param label The label to be displayed with the field
+     * @param defaultClassificationMarking the default classification
+     * @param defaultValue the default value
+     * 
+     * @return XsdFieldDefinition
+     */
     public static XsdFieldDefinition create(XsdRecordset parent,
                                             String name,
                                             ECoalesceFieldDataTypes dataType,
@@ -115,6 +192,19 @@ public class XsdFieldDefinition extends XsdDataObject implements ICoalesceFieldD
         return XsdFieldDefinition.create(parent, name, dataType, label, defaultClassificationMarking, defaultValue, false);
     }
 
+    /**
+     * Creates an XsdFieldDefinition with a string default value based for an XsdRecordset with the parameters provided
+     * 
+     * @param parent XsdRecordset that the XsdFieldDefinition belongs to
+     * @param name String name of the XsdFieldDefinition
+     * @param dataType datatype that the XsdFieldDefinition will contain
+     * @param label The label to be displayed with the field
+     * @param defaultClassificationMarking the default classification
+     * @param defaultValue the default value
+     * @param noIndex boolean
+     * 
+     * @return XsdFieldDefinition
+     */
     public static XsdFieldDefinition create(XsdRecordset parent,
                                             String name,
                                             ECoalesceFieldDataTypes dataType,
@@ -146,6 +236,14 @@ public class XsdFieldDefinition extends XsdDataObject implements ICoalesceFieldD
 
     }
 
+    /**
+     * Initializes a previously new Fielddefinition and ties it to its parent XsdRecordset.
+     * 
+     * @param parent XsdRecordset that the XsdFieldDefinition belongs to
+     * @param fieldDefinition the Fielddefinition being initialized
+     * 
+     * @return boolean
+     */
     public boolean initialize(XsdRecordset parent, Fielddefinition fieldDefinition)
     {
 
@@ -229,6 +327,11 @@ public class XsdFieldDefinition extends XsdDataObject implements ICoalesceFieldD
         return new Marking(_entityFieldDefinition.getDefaultclassificationmarking());
     }
 
+    /**
+     * Sets the Fielddefinition's DefaultClassificationMarking
+     * 
+     * @param value
+     */
     public void setDefaultClassificationMarking(String value)
     {
         _entityFieldDefinition.setDefaultclassificationmarking(value);
@@ -284,6 +387,7 @@ public class XsdFieldDefinition extends XsdDataObject implements ICoalesceFieldD
     // Public Methods
     // -----------------------------------------------------------------------//
 
+    @Override
     public String toXml()
     {
         return XmlHelper.Serialize(_entityFieldDefinition);

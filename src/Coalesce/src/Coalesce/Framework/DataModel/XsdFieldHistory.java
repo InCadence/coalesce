@@ -42,6 +42,13 @@ public class XsdFieldHistory extends XsdFieldBase {
     // Factory and Initialization
     // -----------------------------------------------------------------------//
 
+    /**
+     * Creates an XsdFieldHistory and ties it to its parent XsdFieldBase.
+     * 
+     * @param parent XsdFieldBase
+     * 
+     * @return XsdFieldHistory
+     */
     public static XsdFieldHistory create(XsdFieldBase parent)
     {
 
@@ -50,6 +57,13 @@ public class XsdFieldHistory extends XsdFieldBase {
         return create((XsdField) parent);
     }
 
+    /**
+     * Creates an XsdFieldHistory and ties it to its parent XsdField.
+     * 
+     * @param parent XsdField
+     * 
+     * @return XsdFieldHistory
+     */
     public static XsdFieldHistory create(XsdField parent)
     {
         try
@@ -82,11 +96,26 @@ public class XsdFieldHistory extends XsdFieldBase {
         }
     }
 
+    /**
+     * Initializes a brand new XsdFieldHistory and ties it to its parent XsdField.
+     * 
+     * @param parent XsdField
+     * 
+     * @return boolean
+     */
     private boolean initialize(XsdField parent)
     {
         return initialize(parent, new Fieldhistory());
     }
 
+    /**
+     * Initializes a previously new XsdFieldHistory and ties it to its parent XsdField.
+     * 
+     * @param parent
+     * @param fieldHistory
+     * 
+     * @return boolean
+     */
     public boolean initialize(XsdField parent, Fieldhistory fieldHistory)
     {
 
@@ -316,6 +345,7 @@ public class XsdFieldHistory extends XsdFieldBase {
     // public Methods
     // -----------------------------------------------------------------------//
 
+    @Override
     public String toXml()
     {
         return XmlHelper.Serialize(_entityFieldHistory);
