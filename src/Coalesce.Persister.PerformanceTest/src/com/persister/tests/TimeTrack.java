@@ -9,7 +9,7 @@ public class TimeTrack implements Serializable {
 	private String _iterationInterval;
 	private String _iterationVal;
 	private String _startTime;
-
+	private String _threadID;
 	private String _stopTime;
 
 	public String getAppStartTime() {
@@ -23,6 +23,7 @@ public class TimeTrack implements Serializable {
 	public String getEntityID() {
 		return _entityID;
 	}
+
 	public String getIterationInterval() {
 		return _iterationInterval;
 	}
@@ -37,6 +38,10 @@ public class TimeTrack implements Serializable {
 
 	public String getStopTime() {
 		return _stopTime;
+	}
+
+	public String getThread() {
+		return _threadID;
 	}
 
 	public void setAppStartTime(String _appStartTime) {
@@ -65,5 +70,9 @@ public class TimeTrack implements Serializable {
 
 	public void setStopTime(String _stopTime) {
 		this._stopTime = _stopTime;
+	}
+
+	public void setThread(String _threadID) {
+		this._threadID = _threadID;
 	}
 }

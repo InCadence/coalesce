@@ -40,8 +40,8 @@ import coalesce.persister.postgres.PostGresDataConnector;
 public class appMain {
 
 	private final static Logger log = Logger.getLogger("TesterLog");
-	private static int ITERATION_LIMIT = 1000;
-	private static int CAPTURE_METRICS_INTERVAL = 100;
+	private static int ITERATION_LIMIT = 1000000;
+	private static int CAPTURE_METRICS_INTERVAL = 1000;
 	static ServerConn serCon;
 	static PostGresSQLPersistor psPersister;
 	private static CoalesceFramework _coalesceFramework;
@@ -107,8 +107,8 @@ public class appMain {
 			}
 			appMain.createDOMTree();
 			String stopTime = appMain.getCurrentTime();
-			System.out.println("STARTTIME: " + startTime);
-			System.out.println("STOPTIME: " + stopTime);
+			outConsoleData(1,"STARTTIME: " + startTime);
+			outConsoleData(2,"STOPTIME: " + stopTime);
 			appMain.printToFile("d:/persistance.xml");
 		} catch (Exception ex) {
 			log.log(java.util.logging.Level.SEVERE, ex.toString());
@@ -174,7 +174,7 @@ public class appMain {
 		if (currentIterationNumber % 10000 == 0) {
 			majorVal += 1;
 			minorVal = 0;
-			outConsoleData(masterCounter, "INCREMENT: ");
+			//outConsoleData(masterCounter, "INCREMENT: ");
 			entityVersion = String.valueOf(majorVal) + "."
 					+ String.valueOf(minorVal);
 		} else {
