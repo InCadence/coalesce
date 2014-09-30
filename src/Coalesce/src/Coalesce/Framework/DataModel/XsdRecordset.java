@@ -57,11 +57,27 @@ public class XsdRecordset extends XsdDataObject implements ICoalesceRecordset {
     // Factory and Initialization
     // -----------------------------------------------------------------------//
 
+    /**
+     * Creates an XsdRecordset, by name, and ties it to its parent XsdSection with default max and min records of 0.
+     * 
+     * @param parent XsdSection
+     * @param name String
+     * @return XsdRecordset
+     */
     public static XsdRecordset create(XsdSection parent, String name)
     {
         return create(parent, name, 0, 0);
     }
 
+    /**
+     * Creates an XsdRecordset, by name, and ties it to its parent XsdSection with max and min records assignments.
+     * 
+     * @param parent XsdSection
+     * @param name
+     * @param minRecords
+     * @param maxRecords
+     * @return XsdRecordset
+     */
     public static XsdRecordset create(XsdSection parent, String name, int minRecords, int maxRecords)
     {
 
@@ -100,6 +116,13 @@ public class XsdRecordset extends XsdDataObject implements ICoalesceRecordset {
 
     }
 
+    /**
+     * Initializes a this XsdRecordset based on a Recordset and ties it to its parent XsdSection.
+     * 
+     * @param parent XsdSection
+     * @param recordset Recordset
+     * @return boolean
+     */
     public boolean initialize(XsdSection parent, Recordset recordset)
     {
 
@@ -167,11 +190,21 @@ public class XsdRecordset extends XsdDataObject implements ICoalesceRecordset {
         return "recordset";
     }
 
+    /**
+     * Returns this XsdRecordset's ArrayList of XsdFieldDefinitions
+     * 
+     * @return ArrayList<XsdFieldDefinition>
+     */
     public ArrayList<XsdFieldDefinition> getFieldDefinitions()
     {
         return _fieldDefinitions;
     }
 
+    /**
+     * Returns this XsdRecordset's ArrayList of XsdRecords
+     * 
+     * @return ArrayList<XsdRecord>
+     */
     public ArrayList<XsdRecord> getRecords()
     {
         return _records;
@@ -201,6 +234,11 @@ public class XsdRecordset extends XsdDataObject implements ICoalesceRecordset {
         _entityRecordset.setMinrecords(String.valueOf(value));
     }
 
+    /**
+     * Returns boolean indicator of the existence of this XsdRecordset's active XsdRecords
+     * 
+     * @return boolean
+     */
     public boolean getHasActiveRecords()
     {
 
@@ -218,6 +256,11 @@ public class XsdRecordset extends XsdDataObject implements ICoalesceRecordset {
         return false;
     }
 
+    /**
+     * Returns boolean indicator of the existence of this XsdRecordset's XsdRecords
+     * 
+     * @return boolean
+     */
     public boolean getHasRecords()
     {
         return !_entityRecordset.getRecord().isEmpty();
@@ -255,6 +298,17 @@ public class XsdRecordset extends XsdDataObject implements ICoalesceRecordset {
     // Public Methods
     // -----------------------------------------------------------------------//
 
+    /**
+     * Creates an XsdFieldDefinition for this XsdRecordset, with the name, datatype, label, default classification and
+     * default value specified.
+     * 
+     * @param name
+     * @param dataType
+     * @param label
+     * @param defaultClassificationMarking
+     * @param defaultValue
+     * @return
+     */
     public XsdFieldDefinition createFieldDefinition(String name,
                                                     ECoalesceFieldDataTypes dataType,
                                                     String label,
@@ -264,16 +318,30 @@ public class XsdRecordset extends XsdDataObject implements ICoalesceRecordset {
         return XsdFieldDefinition.create(this, name, dataType, label, defaultClassificationMarking, defaultValue);
     }
 
+    /**
+     * Creates an XsdFieldDefinition for this XsdRecordset, with the name and datatype specified.
+     * 
+     * @param name
+     * @param dataType
+     * @return
+     */
     public XsdFieldDefinition createFieldDefinition(String name, ECoalesceFieldDataTypes dataType)
     {
         return XsdFieldDefinition.create(this, name, dataType);
     }
 
+    @Override
     public String toXml()
     {
         return XmlHelper.Serialize(_entityRecordset);
     }
 
+    /**
+     * Returns the XsdRecordset's XsdFieldDefinition that matches the String fieldName parameter
+     * 
+     * @param fieldName
+     * @return
+     */
     public XsdFieldDefinition getFieldDefinition(String fieldName)
     {
         for (XsdFieldDefinition fieldDefinition : getFieldDefinitions())
@@ -288,36 +356,73 @@ public class XsdRecordset extends XsdDataObject implements ICoalesceRecordset {
         return null;
     }
 
+    /**
+     * Returns boolean indicator of XsdRecordset's ability to be edited
+     * 
+     * @return
+     */
     public boolean getAllowEdit()
     {
         return true;
     }
 
+    /**
+     * Returns boolean indicator of XsdRecordset's ability to add new records
+     * 
+     * @return
+     */
     public boolean getAllowNew()
     {
         return true;
     }
 
+    /**
+     * Returns boolean indicator of XsdRecordset's ability to add delete records
+     * 
+     * @return
+     */
     public boolean getAllowRemove()
     {
         return true;
     }
 
+    /**
+     * Returns the number of XsdRecords contained within this XsdRecordset
+     * 
+     * @return
+     */
     public int getCount()
     {
         return getRecords().size();
     }
 
+    /**
+     * Returns a boolean indicator of the existence of the XsdRecord parameter within this XsdRecordset
+     * 
+     * @param value
+     * @return
+     */
     public boolean contains(Object value)
     {
         return getRecords().contains(value);
     }
 
+    /**
+     * Returns Index of the XsdRecord parameter within this XsdRecordset
+     * 
+     * @param value
+     * @return
+     */
     public int IndexOf(Object value)
     {
         return getRecords().indexOf(value);
     }
 
+    /**
+     * Adds a new XsdRecord to this XsdRecordset and returns the XsdRecord
+     * 
+     * @return
+     */
     public XsdRecord addNew()
     {
         XsdRecord newRecord = XsdRecord.create(this, getName() + " Record");
@@ -330,6 +435,12 @@ public class XsdRecordset extends XsdDataObject implements ICoalesceRecordset {
         return newRecord;
     }
 
+    /**
+     * Returns the XsdRecord at the specified index within this XsdRecordset
+     * 
+     * @param index
+     * @return
+     */
     public XsdRecord GetItem(int index)
     {
 
@@ -344,6 +455,11 @@ public class XsdRecordset extends XsdDataObject implements ICoalesceRecordset {
         }
     }
 
+    /**
+     * Removes the XsdRecord at the specified index within this XsdRecordset
+     * 
+     * @param index
+     */
     public void RemoveAt(Integer index)
     { // Implements System.Collections.IList.RemoveAt
       // Get Record
@@ -376,6 +492,11 @@ public class XsdRecordset extends XsdDataObject implements ICoalesceRecordset {
         }
     }
 
+    /**
+     * Removes the XsdRecord, from within this XsdRecordset, that has the matching key passed by parameter
+     * 
+     * @param key
+     */
     public void Remove(String key)
     {
         XsdRecord recordToRemove = null;
@@ -419,11 +540,21 @@ public class XsdRecordset extends XsdDataObject implements ICoalesceRecordset {
         _entityRecordset.setStatus(status.getLabel());
     }
 
+    /**
+     * Returns the Record list contained by the Recordset
+     * 
+     * @return
+     */
     protected List<Record> GetEntityRecords()
     {
         return _entityRecordset.getRecord();
     }
 
+    /**
+     * Returns the Fielddefinition list contained by the Recordset
+     * 
+     * @return
+     */
     protected List<Fielddefinition> GetEntityFieldDefinitions()
     {
         return _entityRecordset.getFielddefinition();

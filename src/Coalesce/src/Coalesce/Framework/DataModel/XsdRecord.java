@@ -10,8 +10,8 @@ import javax.xml.namespace.QName;
 import org.apache.commons.lang.NullArgumentException;
 import org.joda.time.DateTime;
 
-import Coalesce.Common.Exceptions.CoalesceException;
 import Coalesce.Common.Exceptions.CoalesceDataFormatException;
+import Coalesce.Common.Exceptions.CoalesceException;
 import Coalesce.Common.Exceptions.CoalesceInvalidFieldException;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import Coalesce.Common.Helpers.StringHelper;
@@ -48,6 +48,13 @@ public class XsdRecord extends XsdDataObject {
     // Factory and Initialization
     // -----------------------------------------------------------------------//
 
+    /**
+     * Creates an XsdRecord and ties it to its parent XsdRecordset.
+     * 
+     * @param parent XsdRecordset
+     * @param name XsdRecord name
+     * @return XsdRecord
+     */
     public static XsdRecord create(XsdRecordset parent, String name)
     {
         if (parent == null) throw new NullArgumentException("parent");
@@ -77,6 +84,13 @@ public class XsdRecord extends XsdDataObject {
         return newRecord;
     }
 
+    /**
+     * Initializes a this XsdRecord based on a Record and ties it to its parent XsdRecordset.
+     * 
+     * @param parent XsdRecordset
+     * @param record Record
+     * @return boolean
+     */
     public boolean initialize(XsdRecordset parent, Record record)
     {
         if (parent == null) throw new NullArgumentException("parent");
@@ -142,6 +156,11 @@ public class XsdRecord extends XsdDataObject {
         return "record";
     }
 
+    /**
+     * Returns a list of the XsdFields that belong to this XsdRecord
+     * 
+     * @return List<XsdField>
+     */
     public List<XsdField> getFields()
     {
         List<XsdField> fields = new ArrayList<XsdField>();
@@ -158,6 +177,11 @@ public class XsdRecord extends XsdDataObject {
         return fields;
     }
 
+    /**
+     * Returns a String list of the XsdRecord's Field's names
+     * 
+     * @return List<String>
+     */
     public List<String> getFieldNames()
     {
         List<String> fieldNames = new ArrayList<String>();
@@ -173,6 +197,11 @@ public class XsdRecord extends XsdDataObject {
         return fieldNames;
     }
 
+    /**
+     * Returns a String list of the XsdRecord's Field's keys
+     * 
+     * @return List<String>
+     */
     public List<String> getFieldKeys()
     {
         List<String> fieldKeys = new ArrayList<String>();
@@ -188,6 +217,12 @@ public class XsdRecord extends XsdDataObject {
         return fieldKeys;
     }
 
+    /**
+     * Returns an XsdField with the specified XsdRecord's Field's key
+     * 
+     * @param key String of the desired Field key
+     * @return XsdField
+     */
     public XsdField getFieldByKey(String key)
     {
         for (XsdField field : getFields())
@@ -201,6 +236,12 @@ public class XsdRecord extends XsdDataObject {
         return null;
     }
 
+    /**
+     * Returns an XsdField with the specified XsdRecord's Field's name
+     * 
+     * @param name String of the desired Field name
+     * @return XsdField
+     */
     public XsdField getFieldByName(String name)
     {
         for (XsdField field : getFields())
@@ -214,6 +255,13 @@ public class XsdRecord extends XsdDataObject {
         return null;
     }
 
+    /**
+     * Returns a String value with the specified XsdRecord's Field's name
+     * 
+     * @param fieldName
+     * @return String
+     * @throws CoalesceException
+     */
     public String getFieldValue(String fieldName) throws CoalesceException
     {
         XsdField field = getFieldByName(fieldName);
@@ -230,6 +278,13 @@ public class XsdRecord extends XsdDataObject {
         }
     }
 
+    /**
+     * Returns a boolean value with the specified XsdRecord's Field's name
+     * 
+     * @param fieldName
+     * @return boolean
+     * @throws CoalesceException
+     */
     public boolean getBooleanFieldValue(String fieldName) throws CoalesceException
     {
         XsdField field = getFieldByName(fieldName);
@@ -250,6 +305,13 @@ public class XsdRecord extends XsdDataObject {
         }
     }
 
+    /**
+     * Returns a int value with the specified XsdRecord's Field's name
+     * 
+     * @param fieldName
+     * @return int
+     * @throws CoalesceException
+     */
     public int getIntegerFieldValue(String fieldName) throws CoalesceException
     {
         XsdField field = getFieldByName(fieldName);
@@ -269,6 +331,13 @@ public class XsdRecord extends XsdDataObject {
         }
     }
 
+    /**
+     * Returns a DateTime value with the specified XsdRecord's Field's name
+     * 
+     * @param fieldName
+     * @return DateTime
+     * @throws CoalesceException
+     */
     public DateTime getDateTimeFieldValue(String fieldName) throws CoalesceException
     {
         XsdField field = getFieldByName(fieldName);
@@ -290,6 +359,13 @@ public class XsdRecord extends XsdDataObject {
         }
     }
 
+    /**
+     * Returns a (binary) byte[] value with the specified XsdRecord's Field's name
+     * 
+     * @param fieldName
+     * @return byte[]
+     * @throws CoalesceException
+     */
     public byte[] getBinaryFieldValue(String fieldName) throws CoalesceException
     {
         XsdField field = getFieldByName(fieldName);
@@ -309,6 +385,13 @@ public class XsdRecord extends XsdDataObject {
         }
     }
 
+    /**
+     * Returns a String default value for the specified XsdRecord's Field's name
+     * 
+     * @param fieldName
+     * @param defaultValue
+     * @return
+     */
     public String getFieldValueAsString(String fieldName, String defaultValue)
     {
         try
@@ -324,6 +407,13 @@ public class XsdRecord extends XsdDataObject {
         }
     }
 
+    /**
+     * Returns a boolean default value for the specified XsdRecord's Field's name
+     * 
+     * @param fieldName
+     * @param defaultValue
+     * @return
+     */
     public boolean getFieldValueAsBoolean(String fieldName, boolean defaultValue)
     {
         try
@@ -339,6 +429,13 @@ public class XsdRecord extends XsdDataObject {
         }
     }
 
+    /**
+     * Returns a int default value for the specified XsdRecord's Field's name
+     * 
+     * @param fieldName
+     * @param defaultValue
+     * @return
+     */
     public int getFieldValueAsInteger(String fieldName, int defaultValue)
     {
         try
@@ -354,6 +451,13 @@ public class XsdRecord extends XsdDataObject {
         }
     }
 
+    /**
+     * Returns a DateTime default value for the specified XsdRecord's Field's name
+     * 
+     * @param fieldName
+     * @param defaultValue
+     * @return
+     */
     public DateTime getFieldValueAsDate(String fieldName, DateTime defaultValue)
     {
         try
@@ -369,6 +473,13 @@ public class XsdRecord extends XsdDataObject {
         }
     }
 
+    /**
+     * Returns a (binary) byte[] default value for the specified XsdRecord's Field's name
+     * 
+     * @param fieldName
+     * @param defaultValue
+     * @return
+     */
     public byte[] getFieldValueAsByteArray(String fieldName, byte[] defaultValue)
     {
         try
@@ -384,6 +495,13 @@ public class XsdRecord extends XsdDataObject {
         }
     }
 
+    /**
+     * Set a String Field's value with the specified XsdRecord's Field's name
+     * 
+     * @param fieldName
+     * @param value
+     * @throws CoalesceException
+     */
     public void setFieldValue(String fieldName, String value) throws CoalesceException
     {
         XsdField field = getFieldByName(fieldName);
@@ -399,6 +517,13 @@ public class XsdRecord extends XsdDataObject {
         }
     }
 
+    /**
+     * Set a boolean Field's value with the specified XsdRecord's Field's name
+     * 
+     * @param fieldName
+     * @param value
+     * @throws CoalesceException
+     */
     public void setFieldValue(String fieldName, boolean value) throws CoalesceException
     {
         XsdField field = getFieldByName(fieldName);
@@ -414,6 +539,13 @@ public class XsdRecord extends XsdDataObject {
         }
     }
 
+    /**
+     * Set a int Field's value with the specified XsdRecord's Field's name
+     * 
+     * @param fieldName
+     * @param value
+     * @throws CoalesceException
+     */
     public void setFieldValue(String fieldName, int value) throws CoalesceException
     {
         XsdField field = getFieldByName(fieldName);
@@ -429,6 +561,13 @@ public class XsdRecord extends XsdDataObject {
         }
     }
 
+    /**
+     * Set a DateTime Field's value with the specified XsdRecord's Field's name
+     * 
+     * @param fieldName
+     * @param value
+     * @throws CoalesceException
+     */
     public void setFieldValue(String fieldName, DateTime value) throws CoalesceException
     {
         XsdField field = getFieldByName(fieldName);
@@ -444,11 +583,26 @@ public class XsdRecord extends XsdDataObject {
         }
     }
 
+    /**
+     * Set a (binary) byte[] Field's value with the specified XsdRecord's Field's name
+     * 
+     * @param fieldName
+     * @param value
+     * @throws CoalesceException
+     */
     public void setFieldValue(String fieldName, byte[] value) throws CoalesceException
     {
         setFieldValue(fieldName, value, "");
     }
 
+    /**
+     * Set a (binary) byte[] Field's value with the specified XsdRecord's Field's name and file name
+     * 
+     * @param fieldName
+     * @param value
+     * @param fileName
+     * @throws CoalesceException
+     */
     public void setFieldValue(String fieldName, byte[] value, String fileName) throws CoalesceException
     {
         XsdField field = getFieldByName(fieldName);
@@ -474,6 +628,12 @@ public class XsdRecord extends XsdDataObject {
 
     }
 
+    /**
+     * Returns boolean indicator of the existence of the specified Field's name within the XsdRecord
+     * 
+     * @param name
+     * @return
+     */
     public Boolean hasField(String name)
     {
 
@@ -483,6 +643,7 @@ public class XsdRecord extends XsdDataObject {
 
     }
 
+    @Override
     public String toXml()
     {
         return XmlHelper.Serialize(_entityRecord);
