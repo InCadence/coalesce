@@ -27,9 +27,9 @@ import Coalesce.Framework.DataModel.XsdLinkageSection;
 import Coalesce.Framework.DataModel.XsdRecord;
 import Coalesce.Framework.DataModel.XsdRecordset;
 import Coalesce.Framework.DataModel.XsdSection;
-
-import com.database.persister.PostGresSQLPersistor;
-import com.database.persister.ServerConn;
+import Coalesce.Framework.Persistance.ServerConn;
+import coalesce.persister.postgres.PostGresSQLPersistor;
+import coalesce.persister.postgres.PostGresDataConnector;
 
 public class appThreadMain {
 	private final static Logger log = Logger.getLogger("TesterLog");
