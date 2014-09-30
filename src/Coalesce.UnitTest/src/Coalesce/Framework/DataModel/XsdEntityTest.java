@@ -2023,17 +2023,18 @@ public class XsdEntityTest {
 
             // Modify Entity 2
             entity2MissionName.setTypedValue("Should be the new value");
-            
+
             // Merge Entities
+            //XsdEntity mergedEntity = XsdEntity.mergeSyncEntity(entity1, entity2);
             XsdEntity mergedEntity = XsdEntity.mergeSyncEntity(entity1, entity2);
+            System.out.println(mergedEntity.toXml());
 
             // Get Mission Name Field of Merged Entity
             XsdField mergedEntityMissionName = (XsdField) mergedEntity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
-
+         
             // Validate Merge
             assertEquals(entity2MissionName.getValue(), mergedEntityMissionName.getValue());
-            assertEquals(entity1MissionName.getValue(),
-                         (mergedEntityMissionName.getHistory().get(mergedEntityMissionName.getHistory().size() - 1)).getValue());
+            assertEquals(entity1MissionName.getValue(),(mergedEntityMissionName.getHistory().get(0).getValue()));        
 
         }
         catch (CoalesceException | InterruptedException e)
@@ -2041,10 +2042,11 @@ public class XsdEntityTest {
             fail(e.getMessage());
         }
     }
-    
+
     @Test
-    public void mergeAttributeTest() {
-        
+    public void mergeAttributeTest()
+    {
+
         try
         {
             // Get Entities
@@ -2063,7 +2065,7 @@ public class XsdEntityTest {
 
             // Modify Entity 2
             entity2MissionName.setOtherAttribute("newattr2", "2");
-            
+
             // Merge Entities
             XsdEntity mergedEntity = XsdEntity.mergeSyncEntity(entity1, entity2);
 
@@ -2079,7 +2081,7 @@ public class XsdEntityTest {
         {
             fail(e.getMessage());
         }
-        
+
     }
 
     @Test

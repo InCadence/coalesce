@@ -65,7 +65,7 @@ public class CoalesceEntityTemplateTest {
     public static void testTemplate(CoalesceEntityTemplate template)
     {
         String templateXml = template.toXml();
-        System.out.print(templateXml);
+        //System.out.print(templateXml);
 
         // Confirm Template
         assertNotNull(templateXml);
@@ -107,7 +107,7 @@ public class CoalesceEntityTemplateTest {
         XsdEntity entity2 = template.createNewEntity();
 
         String entityXml = entity2.toXml();
-        System.out.print(entityXml);
+        //System.out.print(entityXml);
 
         // Confirm Entity
         assertNotNull(entityXml);

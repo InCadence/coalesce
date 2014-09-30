@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.xml.namespace.QName;
 import javax.xml.xpath.XPath;
@@ -29,6 +31,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import Coalesce.Common.Exceptions.CoalesceException;
+import Coalesce.Common.Helpers.GUIDHelper;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.Helpers.XmlHelper;
@@ -753,18 +756,39 @@ public class XsdEntity extends XsdDataObject {
     {
         try
         {
-            SAXBuilder saxBuilder = new SAXBuilder();
-            org.jdom2.Document syncEntityDoc;
-            syncEntityDoc = saxBuilder.build(new InputSource(new StringReader(syncEntity.toXml())));
-            org.jdom2.Document myEntityDoc = saxBuilder.build(new InputSource(new StringReader(myEntity.toXml())));
+            DateTime myLastModified = myEntity.getLastModified();
+            DateTime syncLastModified = syncEntity.getLastModified();
+            
+            XsdEntity entity1=null;
+            XsdEntity entity2=null;
 
-            mergeSyncEntityDataObject(myEntityDoc.getRootElement(), syncEntityDoc.getRootElement());
+            //Figure out which order
+            switch (myLastModified.compareTo(syncLastModified)) {
+            case -1:
+                entity1 = myEntity;
+                entity2 = syncEntity;
+                break;             
+            default:
+                entity2 = myEntity;
+                entity1 = syncEntity;
+            }
 
-            // Convert back to entity object
-            XMLOutputter xmlOutPutter = new XMLOutputter();
-            String output = xmlOutPutter.outputString(myEntityDoc);
+            // Check if
+            
+          resolveConflicts(entity1, entity2);
 
-            return XsdEntity.create(output);
+          // Convert xsdEntity objects to Xml Elements
+          SAXBuilder saxBuilder = new SAXBuilder();
+          org.jdom2.Document entity2Doc = saxBuilder.build(new InputSource(new StringReader(entity2.toXml())));
+          org.jdom2.Document entity1Doc = saxBuilder.build(new InputSource(new StringReader(entity1.toXml())));
+
+          mergeSyncEntityXml(entity1Doc.getRootElement(), entity2Doc.getRootElement());
+
+          // Convert back to entity object
+          XMLOutputter xmlOutPutter = new XMLOutputter();
+          String output = xmlOutPutter.outputString(entity1Doc);
+          return XsdEntity.create(output);
+
         }
         catch (JDOMException | IOException e)
         {
@@ -772,7 +796,113 @@ public class XsdEntity extends XsdDataObject {
         }
     }
 
-    private static void mergeSyncEntityDataObject(Element myEntity, Element syncEntity)
+    private static void resolveConflicts(XsdDataObject Entity1, XsdDataObject Entity2)
+    {
+
+        if (Entity1 instanceof XsdField)
+        {
+            // do we have matching keys?
+            if (Entity1.getKey().equals(Entity2.getKey()))
+            {
+                // check for conflicts
+                resolveFieldConflicts((XsdField) Entity1, (XsdField) Entity2);
+            }
+        }
+        else
+        {
+            // no matching keys, get children and recall function
+            Map<String, XsdDataObject> Entity1Children = Entity1.getChildDataObjects();
+            Map<String, XsdDataObject> Entity2Children = Entity2.getChildDataObjects();
+            for (Map.Entry<String, XsdDataObject> Entity1Child : Entity1Children.entrySet())
+            {
+                for (Map.Entry<String, XsdDataObject> Entity2Child : Entity2Children.entrySet())
+                {
+                    if (Entity1Child != null && Entity2Child != null)
+                    {
+                        resolveConflicts(Entity1Child.getValue(), Entity2Child.getValue());
+                    }
+                }
+            }
+        }
+
+    }
+
+    private static void resolveFieldConflicts(XsdField field1, XsdField field2)
+    {
+
+        // Call SetChanged to determine if field history needs to be created
+        String field1Value = "";
+        String field2Value = "";
+
+        // save LastModified times
+        DateTime field1LastModified = field1.getLastModified();
+        DateTime field2LastModified = field2.getLastModified();
+
+        // switch (field1LastModified.compareTo(field2LastModified)) {
+        // case -1:
+        // if (field1.getValue() != null)
+        // {
+        // field1Value = field1.getValue();
+        // }
+        //
+        // if (field2.getValue() != null)
+        // {
+        // field2Value = field2.getValue();
+        // }
+        //
+        // if (!field1Value.equals(field2Value) && !field1.getHistory().isEmpty())
+        // {
+        // // TODO: delete duplicate history?
+        // }
+        // // TODO: can't pass in null as arg?
+        // // call setChanged to create field history if values are different
+        // field1.setChanged(field1Value, field2Value);
+        // break;
+        // default:
+        // if (field1.getValue() != null)
+        // {
+        // field1Value = field1.getValue();
+        // }
+        //
+        // if (field2.getValue() != null)
+        // {
+        // field2Value = field2.getValue();
+        // }
+        //
+        // if (!field2Value.equals(field1Value) && !field2.getHistory().isEmpty())
+        // {
+        // // TODO: delete duplicate history?
+        // }
+        // // TODO: can't pass in null as arg?
+        // // call setChanged to create field history if values are different
+        // field2.setChanged(field2Value, field1Value);
+        //
+        // }
+
+        if (field1.getValue() != null)
+        {
+            field1Value = field1.getValue();
+        }
+
+        if (field2.getValue() != null)
+        {
+            field2Value = field2.getValue();
+        }
+
+        if (!field1Value.equals(field2Value) && !field1.getHistory().isEmpty())
+        {
+            // TODO: delete duplicate history?
+        }
+        // TODO: can't pass in null as arg?
+        // call setChanged to create field history if values are different
+        field1.setChanged(field1Value, field2Value);
+
+        // revert back to previous LastModified times
+        field1.setLastModified(field1LastModified);
+        field2.setLastModified(field2LastModified);
+    }
+
+    private static void mergeSyncEntityXml(Element myEntity, Element syncEntity)
     {
         // Get Attributes
         List<Attribute> myEntityDocAttributes = myEntity.getAttributes();
@@ -786,6 +916,7 @@ public class XsdEntity extends XsdDataObject {
         switch (myLastModified.compareTo(updateLastModified)) {
 
         case -1:
+
             for (Attribute syncAttribute : syncEntityDocAttributes)
             {
                 // Overwrite myAttribute with syncAttribute
@@ -798,11 +929,32 @@ public class XsdEntity extends XsdDataObject {
                         attributeReplaced = true;
                     }
                 }
+
                 // Add syncAttribute if it is not there
-                if (!attributeReplaced)
+                if (attributeReplaced == false)
                 {
                     myEntityDocAttributes.add(syncAttribute.detach());
                 }
+            }
+        }
+
+        // Merge Attributes
+        for (Attribute syncAttribute : syncEntityDocAttributes)
+        {
+            // Overwrite myAttribute with syncAttribute
+            boolean attributeFound = false;
+            for (Attribute myAttribute : myEntityDocAttributes)
+            {
+                if (myAttribute.getName().equals(syncAttribute.getName()))
+                {
+                    attributeFound = true;
+                }
+            }
+
+            // Add syncAttribute if it is not there
+            if (attributeFound == false)
+            {
+                myEntityDocAttributes.add(syncAttribute.detach());
             }
         }
 
@@ -839,7 +991,7 @@ public class XsdEntity extends XsdDataObject {
             else
             {
                 // We have this child; Call MergeRequiredNode
-                mergeSyncEntityDataObject(myEntityElement, syncElement);
+                mergeSyncEntityXml(myEntityElement, syncElement);
             }
         }
     }

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
@@ -27,4 +28,55 @@
 	<modules>
 		<module>../Coalesce.Pom</module>
 	</modules>
+=======
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>coalesce</groupId>
+  <artifactId>coalesce-bom</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <properties>
+  	<coalesceVersion>0.0.1-SNAPSHOT</coalesceVersion>
+  </properties>
+  <dependencyManagement>
+  	<dependencies>
+  		<dependency>
+  			<groupId>coalesce</groupId>
+  			<artifactId>coalesce-core</artifactId>
+  			<version>${coalesceVersion}</version>
+  		</dependency>
+  	</dependencies>
+  </dependencyManagement>
+  <distributionManagement>
+  <repository>
+     <id>releases</id>
+     <name>Internal Releases</name>
+     <url>http://10.15.0.70:8081/nexus/content/repositories/releases</url>
+  </repository>
+  <snapshotRepository>
+     <id>snapshots</id>
+     <name>Internal Snapshots</name>
+     <url>http://10.15.0.70:8081/nexus/content/repositories/snapshots</url>
+  </snapshotRepository>
+</distributionManagement>
+	<repositories>
+		<repository>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>warn</checksumPolicy>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>fail</checksumPolicy>
+			</snapshots>
+			<id>public</id>
+			<url>http://10.15.0.70:8081/nexus/content/groups/public</url>
+		</repository>
+	</repositories>
+  <modules>
+  	<module>../Coalesce.Pom</module>
+  </modules>
+>>>>>>> Fixed mergeXsdEntity function where history was not being generated
 </project>
