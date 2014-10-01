@@ -42,10 +42,11 @@ public class appThreadMain {
 	public static void main(String[] args) {
 		int ITERATION_LIMIT = 10;
 		appRunner._coalesceFramework = new CoalesceFramework();
-		
+
 		try {
 			if (appThreadMain.OpenConnection() == true) {
-				appRunner._coalesceFramework.Initialize(appThreadMain.psPersister);
+				appRunner._coalesceFramework
+						.Initialize(appThreadMain.psPersister);
 				// timeLogger = new ArrayList<TimeTrack>();
 				Thread vol1 = new Thread(new appRunner(ITERATION_LIMIT, 1));
 				vol1.setName("Thread #1");
@@ -53,22 +54,22 @@ public class appThreadMain {
 				Thread vol2 = new Thread(new appRunner(ITERATION_LIMIT, 1));
 				vol2.setName("Thread #2");
 				vol2.start();
-				Thread vol3=new Thread(new appRunner(ITERATION_LIMIT,1));
+				Thread vol3 = new Thread(new appRunner(ITERATION_LIMIT, 1));
 				vol3.setName("Thread #3");
 				vol3.start();
-				Thread vol4=new Thread(new appRunner(ITERATION_LIMIT,1));
+				Thread vol4 = new Thread(new appRunner(ITERATION_LIMIT, 1));
 				vol4.setName("Thread #4");
 				vol4.start();
-				Thread vol5=new Thread(new appRunner(ITERATION_LIMIT,1));
+				Thread vol5 = new Thread(new appRunner(ITERATION_LIMIT, 1));
 				vol5.setName("Thread #5");
 				vol5.start();
-				Thread vol6=new Thread(new appRunner(ITERATION_LIMIT,1));
+				Thread vol6 = new Thread(new appRunner(ITERATION_LIMIT, 1));
 				vol6.setName("Thread #6");
 				vol6.start();
-				Thread vol7=new Thread(new appRunner(ITERATION_LIMIT,1));
+				Thread vol7 = new Thread(new appRunner(ITERATION_LIMIT, 1));
 				vol7.setName("Thread #7");
 				vol7.start();
-				Thread vol8=new Thread(new appRunner(ITERATION_LIMIT,1));
+				Thread vol8 = new Thread(new appRunner(ITERATION_LIMIT, 1));
 				vol8.setName("Thread #8");
 				vol8.start();
 				Thread vol9 = new Thread(new appRunner(ITERATION_LIMIT, 1));
@@ -77,22 +78,22 @@ public class appThreadMain {
 				Thread vol10 = new Thread(new appRunner(ITERATION_LIMIT, 1));
 				vol10.setName("Thread #10");
 				vol10.start();
-				Thread vol11=new Thread(new appRunner(ITERATION_LIMIT,1));
+				Thread vol11 = new Thread(new appRunner(ITERATION_LIMIT, 1));
 				vol11.setName("Thread #11");
 				vol11.start();
-				Thread vol12=new Thread(new appRunner(ITERATION_LIMIT,1));
+				Thread vol12 = new Thread(new appRunner(ITERATION_LIMIT, 1));
 				vol12.setName("Thread #12");
 				vol12.start();
-				Thread vol13=new Thread(new appRunner(ITERATION_LIMIT,1));
+				Thread vol13 = new Thread(new appRunner(ITERATION_LIMIT, 1));
 				vol13.setName("Thread #13");
 				vol13.start();
-				Thread vol14=new Thread(new appRunner(ITERATION_LIMIT,1));
+				Thread vol14 = new Thread(new appRunner(ITERATION_LIMIT, 1));
 				vol14.setName("Thread #14");
 				vol14.start();
-				Thread vol15=new Thread(new appRunner(ITERATION_LIMIT,1));
+				Thread vol15 = new Thread(new appRunner(ITERATION_LIMIT, 1));
 				vol15.setName("Thread #15");
 				vol15.start();
-				Thread vol16=new Thread(new appRunner(ITERATION_LIMIT,1));
+				Thread vol16 = new Thread(new appRunner(ITERATION_LIMIT, 1));
 				vol16.setName("Thread #16");
 				vol16.start();
 			}
@@ -121,7 +122,6 @@ class appRunner implements Runnable {
 	static CoalesceFramework _coalesceFramework;
 	private static String MODULE_NAME = "Coalesce.Persister.PerformanceTester";
 	private static String _threadID;
-
 
 	public static String getThreadID() {
 		return _threadID;
@@ -153,11 +153,15 @@ class appRunner implements Runnable {
 		try {
 			timeLogger = new ArrayList<TimeTrack>();
 			this.setThreadID(String.valueOf(Thread.currentThread().toString()));
-			outConsoleData(Thread.currentThread().getId(),"************* STARTING THREAD # " + Thread.currentThread().getName() + " of " + Thread.currentThread().activeCount() + " *************",false);
+			outConsoleData(Thread.currentThread().getId(),
+					"************* STARTING THREAD # "
+							+ Thread.currentThread().getName() + " of "
+							+ Thread.currentThread().activeCount()
+							+ " *************", false);
 			TimeTrack _timeTrack;
 			String startTime = appRunner.getCurrentTime();
 			int _iteration_counter = 0;
-			//appRunner.createDOMDocument();
+			// appRunner.createDOMDocument();
 			for (_iteration_counter = 0; _iteration_counter <= ITERATION_LIMIT; _iteration_counter++) {
 				_timeTrack = new TimeTrack();
 
@@ -179,35 +183,41 @@ class appRunner implements Runnable {
 					break;
 			}
 			synchronized (mutexXMLLogger) {
-				//appRunner.createDOMTree();
+				// appRunner.createDOMTree();
 				String stopTime = appRunner.getCurrentTime();
-				outConsoleData(Thread.currentThread().getId(),"STARTTIME: "
+				outConsoleData(Thread.currentThread().getId(), "STARTTIME: "
 						+ startTime);
-				outConsoleData(Thread.currentThread().getId(), "STOPTIME: " + stopTime);
+				outConsoleData(Thread.currentThread().getId(), "STOPTIME: "
+						+ stopTime);
 
-				//appRunner.printToFile("datafile_" + Thread.currentThread().toString()						+ "_persistance.xml");
+				// appRunner.printToFile("datafile_" +
+				// Thread.currentThread().toString() + "_persistance.xml");
 			}
 		} catch (Exception ex) {
 			appThreadMain.log
 					.log(java.util.logging.Level.SEVERE, ex.toString());
 		}
 	}
+
 	private static void outConsoleData(int cntValue, String msg) {
 		System.out.println(msg + getCurrentTime() + "\t" + cntValue);
 	}
+
 	private static void outConsoleData(Thread cntValue, String msg) {
 		System.out.println(msg + getCurrentTime() + "\t" + cntValue);
 	}
+
 	private void outConsoleData(long id, String msg) {
 		System.out.println(msg + getCurrentTime() + "\t" + id);
-		
+
 	}
-	private void outConsoleData(long id, String msg,boolean flagShowTime) {
-		if(flagShowTime)
+
+	private void outConsoleData(long id, String msg, boolean flagShowTime) {
+		if (flagShowTime)
 			System.out.println(msg + getCurrentTime() + "\t" + id);
 		else
 			System.out.println(msg + "\t" + id);
-		
+
 	}
 
 	private static void saveAppTimeStamps(TimeTrack _timeTrack,
@@ -245,7 +255,6 @@ class appRunner implements Runnable {
 		}
 		return entityVersion;
 	}
-
 
 	private static void createDOMDocument() {
 		// get an instance of factory

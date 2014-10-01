@@ -20,6 +20,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
+import coalesce.persister.postgres.PostGresSQLPersistor;
+
 import Coalesce.Common.Exceptions.CoalesceException;
 import Coalesce.Common.Exceptions.CoalesceInvalidFieldException;
 import Coalesce.Common.Exceptions.CoalescePersistorException;
@@ -34,8 +36,6 @@ import Coalesce.Framework.DataModel.XsdSection;
 
 
 import Coalesce.Framework.Persistance.ServerConn;
-import coalesce.persister.postgres.PostGresSQLPersistor;
-import coalesce.persister.postgres.PostGresDataConnector;
 
 public class appMain {
 
@@ -256,4 +256,5 @@ public class appMain {
 			log.log(java.util.logging.Level.SEVERE, ex.toString());
 		}
 	}
+	
 }
