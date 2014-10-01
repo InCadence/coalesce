@@ -1,6 +1,7 @@
 package com.persister.tests;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -14,38 +15,36 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
-import coalesce.persister.postgres.PostGresSQLPersistor;
-
 import Coalesce.Common.Exceptions.CoalesceException;
-import Coalesce.Common.Exceptions.CoalesceInvalidFieldException;
 import Coalesce.Common.Exceptions.CoalescePersistorException;
 import Coalesce.Framework.CoalesceFramework;
-import Coalesce.Framework.DataModel.ECoalesceFieldDataTypes;
+import Coalesce.Framework.DataModel.CoalesceEntityTemplate;
 import Coalesce.Framework.DataModel.XsdEntity;
-import Coalesce.Framework.DataModel.XsdFieldDefinition;
-import Coalesce.Framework.DataModel.XsdLinkageSection;
 import Coalesce.Framework.DataModel.XsdRecord;
 import Coalesce.Framework.DataModel.XsdRecordset;
 import Coalesce.Framework.DataModel.XsdSection;
-
-
 import Coalesce.Framework.Persistance.ServerConn;
+import coalesce.persister.postgres.PostGresSQLPersistor;
 
 public class appMain {
 
 	private final static Logger log = Logger.getLogger("TesterLog");
 	private static int ITERATION_LIMIT = 1000000;
 	private static int CAPTURE_METRICS_INTERVAL = 1000;
+	static String userDir;
 	static ServerConn serCon;
+	static FileInputStream inputStream;
 	static PostGresSQLPersistor psPersister;
 	private static CoalesceFramework _coalesceFramework;
-	//private static String MODULE_NAME = "Coalesce.Persister.PerformanceTester";
+	// private static String MODULE_NAME =
+	// "Coalesce.Persister.PerformanceTester";
 	static int minorVal = 0;
 	static int majorVal = 0;
 	static int masterCounter = 0;
@@ -57,12 +56,15 @@ public class appMain {
 	public static void main(String[] args) {
 		System.out.println("Performance Test Inserting " + ITERATION_LIMIT
 				+ " XsdEntities Started **..** ");
+		String userDir = System.getProperty("user.dir");
 		appMain._coalesceFramework = new CoalesceFramework();
 		try {
 			if (OpenConnection() == true) {
 				appMain._coalesceFramework.Initialize(psPersister);
 				timeLogger = new ArrayList<TimeTrack>();
 				runVolume();
+				if(inputStream!=null)
+					inputStream.close();
 			}
 		} catch (Exception ex) {
 			log.log(java.util.logging.Level.SEVERE, ex.toString());
@@ -82,12 +84,12 @@ public class appMain {
 	private static void runVolume() {
 		try {
 			TimeTrack _timeTrack;
-			String startTime = appMain.getCurrentTime();
+			String startTime = appMain.getCurrentTime(false);
 			int _iteration_counter = 0;
 			appMain.createDOMDocument();
 			for (_iteration_counter = 0; _iteration_counter <= ITERATION_LIMIT; _iteration_counter++) {
 				_timeTrack = new TimeTrack();
-				
+
 				XsdEntity _xsdEntity = new XsdEntity();
 				String generateEntityVersionNumber = appMain
 						.generateEntityVersionNumber(_iteration_counter);
@@ -106,28 +108,45 @@ public class appMain {
 					break;
 			}
 			appMain.createDOMTree();
-			String stopTime = appMain.getCurrentTime();
-			outConsoleData(1,"STARTTIME: " + startTime);
-			outConsoleData(2,"STOPTIME: " + stopTime);
-			appMain.printToFile("d:/persistance.xml");
+			String stopTime = appMain.getCurrentTime(false);
+			outConsoleData(1, "STARTTIME: " + startTime);
+			outConsoleData(2, "STOPTIME: " + stopTime);
+			userDir="";
+			appMain.printToFile(userDir + "\\persistance.xml");
 		} catch (Exception ex) {
 			log.log(java.util.logging.Level.SEVERE, ex.toString());
 		}
 	}
 
-	private static void saveAppTimeStamps(TimeTrack _timeTrack, String startTime,String stopTime){
+	private static void saveAppTimeStamps(TimeTrack _timeTrack,
+			String startTime, String stopTime) {
 		_timeTrack.setAppStartTime(startTime);
 		_timeTrack.setStopTime(stopTime);
 	}
+
 	private static void saveEntity(TimeTrack _timeTrack, XsdEntity _xsdEntity)
 			throws CoalescePersistorException {
-		_timeTrack.setStartTime(getCurrentTime());	
+		_timeTrack.setStartTime(getCurrentTime(false));
 		_timeTrack.setIterationVal(String.valueOf(masterCounter));
-		_timeTrack.setIterationInterval(String.valueOf(CAPTURE_METRICS_INTERVAL));
+		_timeTrack.setIterationInterval(String
+				.valueOf(CAPTURE_METRICS_INTERVAL));
 		appMain._coalesceFramework.SaveCoalesceEntity(_xsdEntity);
-		_timeTrack.setStopTime(getCurrentTime());
+		_timeTrack.setStopTime(getCurrentTime(false));
 	}
 
+	private static String getCurrentTime(boolean isNano) {
+//		Calendar calStamp = Calendar.getInstance();
+//		java.util.Date nowCurrentDate = calStamp.getTime();
+//		java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(
+//				nowCurrentDate.getTime());
+//		return currentTimestamp.toString();
+		String currentTime;
+		if(isNano)
+			currentTime=String.valueOf(System.currentTimeMillis());
+		else
+			currentTime=String.valueOf(System.currentTimeMillis());
+		return currentTime;
+	}
 	private static String getCurrentTime() {
 		Calendar calStamp = Calendar.getInstance();
 		java.util.Date nowCurrentDate = calStamp.getTime();
@@ -141,28 +160,26 @@ public class appMain {
 		try {
 			// Create Test Entity
 			XsdEntity _entity = new XsdEntity();
-
-			XsdSection section = null;
-			XsdRecordset recordSet = null;
-			XsdRecord record = null;
-
 			// Create Entity
-			_entity = XsdEntity.create("Volume Push Test Entity", "Unit Test",
-					entityVersion, "", "", "");
+			_entity = new XsdEntity();
+			String suserDir = System.getProperty("user.dir");
+			suserDir	+= "\\EntityPerfFile.xml";
+			if(inputStream==null)
+				inputStream = new FileInputStream(suserDir);
+			try {
+				String entityXml = IOUtils.toString(inputStream);
+				XsdEntity entity = new XsdEntity();
+				entity.initialize(entityXml);
+				CoalesceEntityTemplate template = CoalesceEntityTemplate
+						.create(entity);
+				_entity = template.createNewEntity();
 
-			XsdLinkageSection.create(_entity, true);
+			} finally {
+				//inputStream.close();
+			}
 
-			section = XsdSection.create(_entity, "Live Status Section", true);
-			recordSet = XsdRecordset.create(section, "Live Status Recordset");
-			XsdFieldDefinition.create(recordSet, "CurrentStatus",
-					ECoalesceFieldDataTypes.StringType);
-
-			record = recordSet.addNew();
-			record.setFieldValue("CurrentStatus", "Test Status");
-
-			//String _fieldKey = record.getFieldByName("CurrentStatus").getKey();
 			return _entity;
-		} catch (CoalesceInvalidFieldException ex) {
+		} catch (Exception ex) {
 			log.log(java.util.logging.Level.SEVERE, ex.toString());
 			return null;
 		}
@@ -174,7 +191,7 @@ public class appMain {
 		if (currentIterationNumber % 10000 == 0) {
 			majorVal += 1;
 			minorVal = 0;
-			//outConsoleData(masterCounter, "INCREMENT: ");
+			// outConsoleData(masterCounter, "INCREMENT: ");
 			entityVersion = String.valueOf(majorVal) + "."
 					+ String.valueOf(minorVal);
 		} else {
@@ -186,9 +203,9 @@ public class appMain {
 	}
 
 	private static void outConsoleData(int cntValue, String msg) {
-		System.out.println(msg + getCurrentTime() + "\t" + cntValue);
+		System.out.println(msg  + "\t" + cntValue);
 	}
-
+	
 	private static void createDOMDocument() {
 		// get an instance of factory
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -208,9 +225,9 @@ public class appMain {
 	private static void createDOMTree() {
 		Element rootEle = dom.createElement("TimeTrack");
 		dom.appendChild(rootEle);
-		Iterator<TimeTrack> iterCNT  = timeLogger.iterator();
-		while(iterCNT.hasNext()) {
-			TimeTrack bVal = (TimeTrack)iterCNT.next();
+		Iterator<TimeTrack> iterCNT = timeLogger.iterator();
+		while (iterCNT.hasNext()) {
+			TimeTrack bVal = (TimeTrack) iterCNT.next();
 			Element timeTrackElement = createTimeTrackElement(bVal);
 			rootEle.appendChild(timeTrackElement);
 		}
@@ -218,7 +235,7 @@ public class appMain {
 
 	private static Element createTimeTrackElement(TimeTrack b) {
 
-		Element timeElement = dom.createElement("TimeTrack");	
+		Element timeElement = dom.createElement("TimeTrack");
 		timeElement.setAttribute("ENTITYID", b.getEntityID());
 		timeElement.setAttribute("COMPLETE_ITERATIONS", b.getIterationVal());
 		timeElement.setAttribute("CAPTURE_INTERVAL", b.getIterationInterval());
@@ -256,5 +273,5 @@ public class appMain {
 			log.log(java.util.logging.Level.SEVERE, ex.toString());
 		}
 	}
-	
+
 }
