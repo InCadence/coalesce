@@ -259,7 +259,7 @@ public class XsdField extends XsdFieldBase {
     public String getPreviousHistoryKey()
     {
         String prevHistKey = _entityField.getPrevioushistorykey();
-        if (StringHelper.IsNullOrEmpty(prevHistKey))
+        if (StringHelper.isNullOrEmpty(prevHistKey))
         {
             return "00000000-0000-0000-0000-000000000000";
         }
@@ -421,7 +421,7 @@ public class XsdField extends XsdFieldBase {
     @Override
     public String toXml()
     {
-        return XmlHelper.Serialize(_entityField);
+        return XmlHelper.serialize(_entityField);
     }
 
     /**
@@ -473,7 +473,7 @@ public class XsdField extends XsdFieldBase {
         try
         {
             String fullPath = getCoalesceFullFilename();
-            if (StringHelper.IsNullOrEmpty(fullPath)) return "";
+            if (StringHelper.isNullOrEmpty(fullPath)) return "";
 
             File theFile = new File(fullPath);
             long lastModifiedTicks = theFile.lastModified();
@@ -498,7 +498,7 @@ public class XsdField extends XsdFieldBase {
         try
         {
             String fullThumbPath = getCoalesceFullThumbnailFilename();
-            if (StringHelper.IsNullOrEmpty(fullThumbPath)) return "";
+            if (StringHelper.isNullOrEmpty(fullThumbPath)) return "";
 
             File theFile = new File(fullThumbPath);
             long lastModifiedTicks = theFile.lastModified();
@@ -589,7 +589,7 @@ public class XsdField extends XsdFieldBase {
             }
 
             // Change Values
-            if (getDataType() == ECoalesceFieldDataTypes.DateTimeType && !StringHelper.IsNullOrEmpty(value))
+            if (getDataType() == ECoalesceFieldDataTypes.DateTimeType && !StringHelper.isNullOrEmpty(value))
             {
 
                 DateTime valueDate = JodaDateTimeHelper.fromXmlDateTimeUTC(value);

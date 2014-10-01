@@ -209,7 +209,7 @@ public class CoalesceEntitySyncShell {
      */
     public String toXml()
     {
-        return XmlHelper.FormatXml(this._DataObjectDocument);
+        return XmlHelper.formatXml(this._DataObjectDocument);
     }
 
     // -----------------------------------------------------------------------//
@@ -382,9 +382,9 @@ public class CoalesceEntitySyncShell {
         }
 
         // Check RemoteSyncShellNode
-        String key = XmlHelper.GetAttribute(RemoteSyncShellNode, "key");
+        String key = XmlHelper.getAttribute(RemoteSyncShellNode, "key");
 
-        if (key != "")
+        if (!StringHelper.isNullOrEmpty(key))
         {
             // Evaluate Based on the Coalesce Object Type
             switch (RemoteSyncShellNode.getNodeName().toUpperCase()) {
@@ -436,8 +436,8 @@ public class CoalesceEntitySyncShell {
         if (oldNode != null)
         {
 
-            DateTime oldModified = XmlHelper.GetAttributeAsDate(oldNode, "lastmodified");
-            DateTime newLastModified = XmlHelper.GetAttributeAsDate(newNode, "lastmodified");
+            DateTime oldModified = XmlHelper.getAttributeAsDate(oldNode, "lastmodified");
+            DateTime newLastModified = XmlHelper.getAttributeAsDate(newNode, "lastmodified");
 
             switch (oldModified.compareTo(newLastModified)) {
             case 0:
@@ -471,9 +471,9 @@ public class CoalesceEntitySyncShell {
 
             if (node.getNodeType() == Node.ELEMENT_NODE)
             {
-                String nodeKey = XmlHelper.GetAttribute(node, "key");
+                String nodeKey = XmlHelper.getAttribute(node, "key");
 
-                if (!StringHelper.IsNullOrEmpty(nodeKey))
+                if (!StringHelper.isNullOrEmpty(nodeKey))
                 {
                     nodeMap.put(nodeKey, node);
                 }

@@ -1,6 +1,6 @@
 package Coalesce.Common.Helpers;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.commons.lang.NullArgumentException;
 import org.junit.Rule;
@@ -187,7 +187,7 @@ public class MimeHelperTest {
         assertEquals("", MimeHelper.getExtensionForMimeType("Unknown"));
         assertEquals("", MimeHelper.getExtensionForMimeType(""));
         assertEquals("", MimeHelper.getExtensionForMimeType("  "));
-        
+
     }
 
     @Test
@@ -195,11 +195,11 @@ public class MimeHelperTest {
     {
         thrown.expect(NullArgumentException.class);
         thrown.expectMessage("mimeType");
-        
+
         MimeHelper.getExtensionForMimeType(null);
-        
+
     }
-    
+
     @Test
     public void getMimetypeforExtensionTests()
     {
@@ -426,7 +426,7 @@ public class MimeHelperTest {
 
         assertEquals("application/octet-stream", MimeHelper.getMimeTypeForExtension(""));
         assertEquals("application/octet-stream", MimeHelper.getMimeTypeForExtension("  "));
-        
+
     }
 
     @Test
@@ -434,11 +434,11 @@ public class MimeHelperTest {
     {
         thrown.expect(NullArgumentException.class);
         thrown.expectMessage("extension");
-        
+
         MimeHelper.getMimeTypeForExtension(null);
-        
+
     }
-    
+
     @Test
     public void getFileTypeForMimeTypeTest()
     {
@@ -501,19 +501,19 @@ public class MimeHelperTest {
         assertEquals("File (Unidentified Format)", MimeHelper.getFileTypeForMimeType("/"));
         assertEquals("AMIME File", MimeHelper.getFileTypeForMimeType("/aMime"));
         assertEquals("File (Unidentified Format)", MimeHelper.getFileTypeForMimeType("aMime/"));
-        
+
     }
-    
+
     @Test
     public void getFileTypeForMimeTypeNullTest()
     {
         thrown.expect(NullArgumentException.class);
         thrown.expectMessage("mimeType");
-        
+
         MimeHelper.getFileTypeForMimeType(null);
 
     }
-    
+
     @Test
     public void getFileTypeForExtensionTest()
     {
@@ -536,24 +536,20 @@ public class MimeHelperTest {
         assertEquals("Audio Video Interleave (AVI) Video", MimeHelper.getFileTypeForExtension("avi"));
 
         assertEquals("Microsoft Word 97-2003 Document", MimeHelper.getFileTypeForExtension("doc"));
-        assertEquals("Microsoft Word Document",
-                     MimeHelper.getFileTypeForExtension("docx"));
+        assertEquals("Microsoft Word Document", MimeHelper.getFileTypeForExtension("docx"));
         assertEquals("Microsoft Access Database", MimeHelper.getFileTypeForExtension("mdb"));
         assertEquals("MSACCESS Document", MimeHelper.getFileTypeForExtension("accdb"));
         assertEquals("Microsoft Money", MimeHelper.getFileTypeForExtension("mny"));
         assertEquals("Adobe Portable Document Format", MimeHelper.getFileTypeForExtension("pdf"));
         assertEquals("Microsoft Project", MimeHelper.getFileTypeForExtension("mpp"));
-        assertEquals("Microsoft PowerPoint 97-2003 Presentation",
-                     MimeHelper.getFileTypeForExtension("ppt"));
-        assertEquals("Microsoft PowerPoint Presentation",
-                     MimeHelper.getFileTypeForExtension("pptx"));
+        assertEquals("Microsoft PowerPoint 97-2003 Presentation", MimeHelper.getFileTypeForExtension("ppt"));
+        assertEquals("Microsoft PowerPoint Presentation", MimeHelper.getFileTypeForExtension("pptx"));
         assertEquals("Microsoft Publisher", MimeHelper.getFileTypeForExtension("pub"));
         assertEquals("Microsoft Works Document", MimeHelper.getFileTypeForExtension("wcm"));
         assertEquals("Microsoft Write", MimeHelper.getFileTypeForExtension("wri"));
         assertEquals("Rich Text Format Document", MimeHelper.getFileTypeForExtension("rtf"));
         assertEquals("Microsoft Excel 97-2003 Spreadsheet", MimeHelper.getFileTypeForExtension("xls"));
-        assertEquals("Microsoft Excel Spreadsheet",
-                     MimeHelper.getFileTypeForExtension("xlsx"));
+        assertEquals("Microsoft Excel Spreadsheet", MimeHelper.getFileTypeForExtension("xlsx"));
         assertEquals("GTAR Archive", MimeHelper.getFileTypeForExtension("gtar"));
         assertEquals("GZIP Archive", MimeHelper.getFileTypeForExtension("gz"));
         assertEquals("ZIP Archive", MimeHelper.getFileTypeForExtension("zip"));
@@ -562,16 +558,15 @@ public class MimeHelperTest {
         assertEquals("OCTET-STREAM Document", MimeHelper.getFileTypeForExtension("xyz"));
         assertEquals("OCTET-STREAM Document", MimeHelper.getFileTypeForExtension("else/somethingElse Something"));
 
-
     }
-    
+
     @Test
     public void getFileTypeForExtensionNullTest()
     {
         thrown.expect(NullArgumentException.class);
         thrown.expectMessage("extension");
-        
+
         MimeHelper.getFileTypeForExtension(null);
-        
+
     }
 }

@@ -375,7 +375,7 @@ public class XsdLinkage extends XsdDataObject implements ICoalesceLinkage {
     @Override
     public String toXml()
     {
-        return XmlHelper.Serialize(_entityLinkage);
+        return XmlHelper.serialize(_entityLinkage);
     }
 
     // -----------------------------------------------------------------------//

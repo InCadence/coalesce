@@ -54,7 +54,7 @@ public class CoalesceSettingTest {
         // TODO: Uses Unit test runner as the main path which is based on the individual IDE installation location
         //       Should somehow be changed to a testable assert. Verified manually that it does return bin path
         //       of a standalone application.
-        assertFalse(StringHelper.IsNullOrEmpty(root));
+        assertFalse(StringHelper.isNullOrEmpty(root));
     }
     
     @Test

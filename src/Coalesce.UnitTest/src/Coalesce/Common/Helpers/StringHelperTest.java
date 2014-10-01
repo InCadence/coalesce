@@ -1,11 +1,9 @@
 package Coalesce.Common.Helpers;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /*-----------------------------------------------------------------------------'
@@ -27,103 +25,92 @@ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
 
 public class StringHelperTest {
 
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception
-    {
-    }
-
-    @AfterClass
-    public static void tearDownAfterClass() throws Exception
-    {
-    }
-
-    @Before
-    public void setUp() throws Exception
-    {
-    }
-
-    @After
-    public void tearDown() throws Exception
-    {
-    }
-
+    /*
+     * @BeforeClass public static void setUpBeforeClass() throws Exception { }
+     * 
+     * @AfterClass public static void tearDownAfterClass() throws Exception { }
+     * 
+     * @Before public void setUp() throws Exception { }
+     * 
+     * @After public void tearDown() throws Exception { }
+     */
     @Test
-    public void TrimParenthesesTest()
+    public void trimParenthesesTest()
     {
 
         String onlyOpen = "(Testing ()Testing";
-        assertEquals("Testing ()Testing", StringHelper.TrimParentheses(onlyOpen));
+        assertEquals("Testing ()Testing", StringHelper.trimParentheses(onlyOpen));
 
         String onlyEnd = "Testing ()Testing)";
-        assertEquals("Testing ()Testing", StringHelper.TrimParentheses(onlyEnd));
+        assertEquals("Testing ()Testing", StringHelper.trimParentheses(onlyEnd));
 
         String both = "(Testing ()Testing)";
-        assertEquals("Testing ()Testing", StringHelper.TrimParentheses(both));
+        assertEquals("Testing ()Testing", StringHelper.trimParentheses(both));
 
         String multiple = "((Testing ()Testing))";
-        assertEquals("Testing ()Testing", StringHelper.TrimParentheses(multiple));
+        assertEquals("Testing ()Testing", StringHelper.trimParentheses(multiple));
 
     }
 
     @Test
-    public void IsNullOrEmptyNullTest()
+    public void isNullOrEmptyNullTest()
     {
         String nullString = null;
-        assertTrue(StringHelper.IsNullOrEmpty(nullString));
+        assertTrue(StringHelper.isNullOrEmpty(nullString));
     }
 
     @Test
-    public void IsNullOrEmptyEmptyTest()
+    public void isNullOrEmptyEmptyTest()
     {
-        assertTrue(StringHelper.IsNullOrEmpty(""));
+        assertTrue(StringHelper.isNullOrEmpty(""));
     }
 
     @Test
-    public void IsNullOrEmptyWhiteSpaceTest()
+    public void isNullOrEmptyWhiteSpaceTest()
     {
-        assertFalse(StringHelper.IsNullOrEmpty(" "));
+        assertFalse(StringHelper.isNullOrEmpty(" "));
     }
 
     @Test
-    public void IsNullOrEmptyStuffTest()
+    public void isNullOrEmptyStuffTest()
     {
-        assertFalse(StringHelper.IsNullOrEmpty("a"));
+        assertFalse(StringHelper.isNullOrEmpty("a"));
     }
 
     @Test
-    public void IsNullOrEmptyAllNullTest()
+    public void isNullOrEmptyAllNullTest()
     {
         String nullString1 = null;
         String nullString2 = null;
-        assertTrue(StringHelper.IsNullOrEmpty(nullString1, nullString2));
+        assertTrue(StringHelper.isNullOrEmpty(nullString1, nullString2));
     }
 
     @Test
-    public void IsNullOrEmtpyAllEmptyTest()
+    public void isNullOrEmtpyAllEmptyTest()
     {
-        assertTrue(StringHelper.IsNullOrEmpty("", "", ""));
+        assertTrue(StringHelper.isNullOrEmpty("", "", ""));
     }
 
     @Test
-    public void IsNullOrEmptySomeNullTest()
+    public void isNullOrEmptySomeNullTest()
     {
-        assertTrue(StringHelper.IsNullOrEmpty(null, "a", "b"));
+        assertTrue(StringHelper.isNullOrEmpty(null, "a", "b"));
     }
 
     @Test
-    public void IsNullOrEmptySomeEmptyTest()
+    public void isNullOrEmptySomeEmptyTest()
     {
-        assertTrue(StringHelper.IsNullOrEmpty("", "a", "b"));
+        assertTrue(StringHelper.isNullOrEmpty("", "a", "b"));
     }
 
     @Test
-    public void IsNullOrEmptySomeNullSomeEmptyTest()
+    public void isNullOrEmptySomeNullSomeEmptyTest()
     {
-        assertTrue(StringHelper.IsNullOrEmpty(null, "", "a"));
+        assertTrue(StringHelper.isNullOrEmpty(null, "", "a"));
     }
 
     @Test
-    public void IsNullOrEmptyNoNullNoEmptyTest() {
-        assertFalse(StringHelper.IsNullOrEmpty("a", "b", "c"));
+    public void isNullOrEmptyNoNullNoEmptyTest() {
+        assertFalse(StringHelper.isNullOrEmpty("a", "b", "c"));
     }
 }

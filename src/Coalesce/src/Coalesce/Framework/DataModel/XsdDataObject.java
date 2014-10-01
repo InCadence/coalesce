@@ -141,7 +141,7 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
         String statusString = this.getObjectStatus();
 
         // Valid String?
-        if (StringHelper.IsNullOrEmpty(statusString))
+        if (StringHelper.isNullOrEmpty(statusString))
         {
             // No; Return Default
             return ECoalesceDataObjectStatus.ACTIVE;

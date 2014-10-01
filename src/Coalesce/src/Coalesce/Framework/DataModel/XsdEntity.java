@@ -167,13 +167,13 @@ public class XsdEntity extends XsdDataObject {
     public boolean initialize(String entityXml)
     {
 
-        if (entityXml == null || StringHelper.IsNullOrEmpty(entityXml.trim()))
+        if (entityXml == null || StringHelper.isNullOrEmpty(entityXml.trim()))
         {
             return initialize();
         }
         else
         {
-            Object deserializedObject = XmlHelper.Deserialize(entityXml, Entity.class);
+            Object deserializedObject = XmlHelper.deserialize(entityXml, Entity.class);
 
             if (deserializedObject == null || !(deserializedObject instanceof Entity))
             {
@@ -874,7 +874,7 @@ public class XsdEntity extends XsdDataObject {
     public String toXml(Boolean removeBinary)
     {
 
-        String entityXml = XmlHelper.Serialize(_entity, "UTF-8");
+        String entityXml = XmlHelper.serialize(_entity, "UTF-8");
 
         if (removeBinary)
         {
@@ -893,7 +893,7 @@ public class XsdEntity extends XsdDataObject {
                 clearFieldTypeValue("file", NoBinaryXmlDoc);
 
                 // Get Xml
-                entityXml = XmlHelper.FormatXml(NoBinaryXmlDoc);
+                entityXml = XmlHelper.formatXml(NoBinaryXmlDoc);
 
             }
             catch (SAXException e)
@@ -928,7 +928,7 @@ public class XsdEntity extends XsdDataObject {
             {
                 Node childNode = (Node) nodes.item(i);
 
-                XmlHelper.SetAttribute(xmlDoc, childNode, "value", "");
+                XmlHelper.setAttribute(xmlDoc, childNode, "value", "");
             }
 
         }

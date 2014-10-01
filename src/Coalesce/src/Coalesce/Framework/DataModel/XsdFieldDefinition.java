@@ -214,7 +214,7 @@ public class XsdFieldDefinition extends XsdDataObject implements ICoalesceFieldD
                                             boolean noIndex)
     {
 
-        if (parent == null || name == null || StringHelper.IsNullOrEmpty(name.trim()) || dataType == null || label == null
+        if (parent == null || name == null || StringHelper.isNullOrEmpty(name.trim()) || dataType == null || label == null
                 || defaultClassificationMarking == null || defaultValue == null) return null;
 
         Fielddefinition newEntityFieldDefinition = new Fielddefinition();
@@ -390,7 +390,7 @@ public class XsdFieldDefinition extends XsdDataObject implements ICoalesceFieldD
     @Override
     public String toXml()
     {
-        return XmlHelper.Serialize(_entityFieldDefinition);
+        return XmlHelper.serialize(_entityFieldDefinition);
     }
 
     // -----------------------------------------------------------------------//

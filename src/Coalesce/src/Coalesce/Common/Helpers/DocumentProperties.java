@@ -188,7 +188,7 @@ public class DocumentProperties {
     private boolean initializeFileInfo(String fullFilename)
     {
         if (fullFilename == null) throw new NullArgumentException("fullFilename");
-        if (StringHelper.IsNullOrEmpty(fullFilename)) return false;
+        if (StringHelper.isNullOrEmpty(fullFilename)) return false;
 
         Path path;
         try

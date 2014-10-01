@@ -174,7 +174,7 @@ public class CoalesceEntityTemplate {
      */
     public String getName()
     {
-        return XmlHelper.GetAttribute(getEntityNode(), "name");
+        return XmlHelper.getAttribute(getEntityNode(), "name");
     }
 
     /**
@@ -184,7 +184,7 @@ public class CoalesceEntityTemplate {
      */
     public String getSource()
     {
-        return XmlHelper.GetAttribute(getEntityNode(), "source");
+        return XmlHelper.getAttribute(getEntityNode(), "source");
     }
 
     /**
@@ -194,7 +194,7 @@ public class CoalesceEntityTemplate {
      */
     public String getVersion()
     {
-        return XmlHelper.GetAttribute(getEntityNode(), "version");
+        return XmlHelper.getAttribute(getEntityNode(), "version");
     }
 
     // -----------------------------------------------------------------------//
@@ -221,7 +221,7 @@ public class CoalesceEntityTemplate {
      */
     public String toXml()
     {
-        return XmlHelper.FormatXml(_dataObjectDocument);
+        return XmlHelper.formatXml(_dataObjectDocument);
     }
 
     /**

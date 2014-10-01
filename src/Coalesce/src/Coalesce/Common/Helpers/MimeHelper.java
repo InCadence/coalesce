@@ -1088,7 +1088,7 @@ public class MimeHelper {
         }
 
         // Catch-all
-        if (StringHelper.IsNullOrEmpty(fileType))
+        if (StringHelper.isNullOrEmpty(fileType))
         {
             String[] split = mimeType.split("/");
             if (split.length == 2)

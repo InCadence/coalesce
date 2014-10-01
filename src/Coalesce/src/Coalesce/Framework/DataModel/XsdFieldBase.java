@@ -580,7 +580,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
             throw new ClassCastException("Type mismatch");
         }
 
-        if (StringHelper.IsNullOrEmpty(getValue())) throw new ClassCastException("Type mismatch");
+        if (StringHelper.isNullOrEmpty(getValue())) throw new ClassCastException("Type mismatch");
 
         boolean value = Boolean.parseBoolean(getValue());
 
@@ -631,7 +631,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
 
         try
         {
-            if (StringHelper.IsNullOrEmpty(getValue())) return null;
+            if (StringHelper.isNullOrEmpty(getValue())) return null;
 
             WKTReader reader = new WKTReader();
             Point point = (Point) reader.read(getValue());

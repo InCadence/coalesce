@@ -153,7 +153,7 @@ public class CoalesceEntitySyncShellTest {
 
         for (int ii = 0; ii < nodeList.getLength(); ii++)
         {
-            String nodeKey = XmlHelper.GetAttribute(nodeList.item(ii), "key");
+            String nodeKey = XmlHelper.getAttribute(nodeList.item(ii), "key");
 
             if (nodeKey.equalsIgnoreCase(fieldKeyValid))
             {
@@ -194,7 +194,7 @@ public class CoalesceEntitySyncShellTest {
                     }
                     else
                     {
-                        if (StringHelper.IsNullOrEmpty(attribute.getNodeValue())) return false;
+                        if (StringHelper.isNullOrEmpty(attribute.getNodeValue())) return false;
                     }
                 }
             }

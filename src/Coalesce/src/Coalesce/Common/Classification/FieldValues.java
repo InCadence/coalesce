@@ -466,7 +466,7 @@ public class FieldValues {
     public static ISO3166Country GetCountryByName(String countryName)
     {
 
-        if (StringHelper.IsNullOrEmpty(countryName)) return null;
+        if (StringHelper.isNullOrEmpty(countryName)) return null;
 
         List<ISO3166Country> countryList = FieldValues.GetListOfCountries();
         @SuppressWarnings("unchecked")
@@ -489,7 +489,7 @@ public class FieldValues {
      */
     public static ISO3166Country GetCountryByAlpha3(String countryAlpha3)
     {
-        if (StringHelper.IsNullOrEmpty(countryAlpha3)) return null;
+        if (StringHelper.isNullOrEmpty(countryAlpha3)) return null;
 
         List<ISO3166Country> countryList = FieldValues.GetListOfCountries();
 

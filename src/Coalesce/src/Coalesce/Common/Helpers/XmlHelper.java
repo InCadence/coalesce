@@ -2,6 +2,7 @@ package Coalesce.Common.Helpers;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 
@@ -9,6 +10,9 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -16,10 +20,12 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.lang.NullArgumentException;
 import org.joda.time.DateTime;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -38,13 +44,22 @@ import org.w3c.dom.Node;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
+/**
+ * Provides helper methods for serializing and deserializing objects to XML.
+ * 
+ * @author InCadence
+ *
+ */
 public class XmlHelper {
 
-    // private static String MODULE_NAME = "Coalesce.Common.Helpers.XmlHelper";
-
-    // throw new IllegalArgumentException(MODULE_NAME + " : EstablishLinkage");
-
-    public static String Serialize(Object obj)
+    /**
+     * Return the <@link String> that contains the serialized representation of the provided object using the 'ISO-8859-1'
+     * encoding format.
+     * 
+     * @param obj the object to be serialized.
+     * @return the <@link String> that contains the serialized representation of the object.
+     */
+    public static String serialize(Object obj)
     {
         try
         {
@@ -65,7 +80,15 @@ public class XmlHelper {
         }
     }
 
-    public static String Serialize(Object obj, String encodingFormat)
+    /**
+     * Return the <@link String> that contains the serialized representation of the provided object using the specified
+     * encoding format.
+     * 
+     * @param obj the object to be serialized.
+     * @param encodingFormat the encoding format to use.
+     * @return the <@link String> that contains the serialized representation of the object.
+     */
+    public static String serialize(Object obj, String encodingFormat)
     {
         try
         {
@@ -86,7 +109,15 @@ public class XmlHelper {
         }
     }
 
-    public static Object Deserialize(String xml, Class<?> classType)
+    /**
+     * Create the object instance of the <code>classType</code> that represents the serialized XML string provided using the
+     * <code>xml</code>. If there is any problem deserializing the object then <code>null</code> will be returned.
+     * 
+     * @param xml the XML string to be deserialized.
+     * @param classType the type of the object to be deserialized.
+     * @return the object instance of the provided XML.
+     */
+    public static Object deserialize(String xml, Class<?> classType)
     {
         try
         {
@@ -102,199 +133,118 @@ public class XmlHelper {
         }
     }
 
-    // todo: make shared
-    /*
-     * public CallResult InitializeXmlWriter(XMLStreamWriter Writer) { try { // TODO // StringWriter sw = new StringWriter();
-     * // Writer = factory.createXMLStreamWriter(sw); // // // Create a new Writer // // Create Inner Stream // MemoryStream
-     * ms; // ms = new MemoryStream; // // // Create Writer and set properties // Writer = new XMLStreamWriter(ms,
-     * System.Text.Encoding.UTF8) // Writer.Indentation = 1; // Writer.IndentChar = Chr(9) // Tab // Writer.Formatting =
-     * Xml.Formatting.Indented
+    // -----------------------------------------------------------------------'
+    // Public Shared Methods - Attribute Helpers
+    // -----------------------------------------------------------------------'
+
+    /**
+     * Returns the attribute with the specified name in the provided node. If the attribute name cannot be found then an
+     * empty string is returned.
      * 
-     * // return Success return CallResult.successCallResult;
-     * 
-     * } catch (Exception ex) { // return Failed Error return new CallResult(CallResults.FAILED_ERROR, ex,
-     * "Coalesce.Common.Helpers.XmlHelper"); } }
-     * 
-     * public CallResult InitializeBase64OutputStream(XMLStreamWriter Writer) { try { // TODO // OutputStream stream = new
-     * OutputStream(); return CallResult.successCallResult;
-     * 
-     * } catch (Exception ex) { // return Failed Error return new CallResult(CallResults.FAILED_ERROR, ex,
-     * "Coalesce.Common.Helpers.XmlHelper"); } }
-     * 
-     * public CallResult XmlWriterToXml(XMLStreamWriter Writer, String Xml) { try { // TODO // if (Writer == Nothing){ //
-     * //do nothing // }else{ // // Flush // Writer.flush(); // // // Get Xml // Dim tr As IO.TextReader = New
-     * IO.StreamReader(Writer.BaseStream) // Writer.BaseStream.Seek(0, IO.SeekOrigin.Begin) // // // Done, set the out
-     * parameter // Xml = tr.ReadToEnd // }
-     * 
-     * // return Success return CallResult.successCallResult;
-     * 
-     * } catch (Exception ex) { // return Failed Error return new CallResult(CallResults.FAILED_ERROR, ex,
-     * "Coalesce.Common.Helpers.XmlHelper"); } }
-     * 
-     * // -----------------------------------------------------------------------' // public Shared Methods -
-     * Encoding/Decoding Helpers // -----------------------------------------------------------------------' // shared public
-     * CallResult WriteBase64(XMLStreamWriter Writer, byte[] Buffer) { try { // Writes Base64 with Breaks. 57 bytes is
-     * standard for MIME (e.g. .MHT Base64), so is used here as well. // modulus operator, in java is %
-     * 
-     * // TODO: // String dirName="C:\\Users\\tmagulick\\Pictures"; // ByteArrayOutputStream baos=new
-     * ByteArrayOutputStream(1000); // BufferedImage img=ImageIO.read(new File(dirName,"Like.jpg")); // ImageIO.write(img,
-     * "jpg", baos); // baos.flush(); // // String base64String=Base64.encode(baos.toByteArray()); // baos.close(); // //
-     * Buffer = Base64.decode(base64String); // // // BufferedImage bufferedImage = ImageIO.read(imgPath); // // // // // get
-     * DataBufferBytes from Raster // // WritableRaster raster = bufferedImage .getRaster(); // // DataBufferByte data =
-     * (DataBufferByte) raster.getDataBuffer(); // // // // byte[] bData = data.getData(); // // // // //Start ?????? // //
-     * image img = newii // // try (OutputStream stream = new FileOutputStream("c:/decode/abc.bmp")) { // // stream.write(b);
-     * // // stream.write(Buffer); // // } // // catch(IOException io){ // // return new CallResult(CallResults.FAILED_ERROR,
-     * io, "Coalesce.Common.Helpers.XmlHelper"); // // } // // //End ?????? // // int Offset = 0; // int Remainder =
-     * Buffer.length % 57; // // for (int i = 0; i < (Buffer.length / 57); i++){ // Writer.WriteString("\r"); //
-     * Writer.WriteBase64(Buffer, Offset, 57); // Offset += 57; // } // // // Write remainder // if (Remainder > 0) { //
-     * Writer.WriteString(vbCr); // Writer.WriteBase64(Buffer, Offset, Remainder); // }
-     * 
-     * // return Success return new CallResult(CallResults.SUCCESS);
-     * 
-     * } catch (Exception ex) { // return Failed Error return new CallResult(CallResults.FAILED_ERROR, ex,
-     * "Coalesce.Common.Helpers.XmlHelper"); } }
+     * @param xmlNode the node containing the attribute.
+     * @param name the name of the attribute.
+     * @return the value of the attribute requested.
      */
-    // -----------------------------------------------------------------------'
-    // public Shared Methods - Attribute Helpers
-    // -----------------------------------------------------------------------'
-
-    public static String GetAttribute(Node xmlNode, String Name)
+    public static String getAttribute(Node xmlNode, String name)
     {
-        // try{-}catch ( omitted intentionally; Caller must handle.
+        if (xmlNode == null) throw new NullArgumentException("xmlNode");
 
-        // Check for the Attribute Node
-        // Node AttributeNode;
-        // xmlNode.
-        // AttributeNode = xmlNode.SelectSingleNode("@" + Name);
-        //
-        // if (AttributeNode == Nothing) {
-        // // No Node; return Empty String Value
-        // return "";
-        // }else{
-        // // Found Node; return Value
-        // return AttributeNode.Value;
-        // }
+        if (StringHelper.isNullOrEmpty(name)) return "";
 
-        // Node currentItem = nl.item(i);
-
-        String value = null;
+        String value = "";
 
         NamedNodeMap attributes = xmlNode.getAttributes();
 
         if (attributes != null)
         {
-            Node attribute = attributes.getNamedItem(Name);
+            Node attribute = attributes.getNamedItem(name);
             if (attribute != null) value = attribute.getNodeValue();
-
         }
 
         return value;
     }
 
-    // shared
-    public static DateTime GetAttributeAsDate(Node Node, String Name)
+    /**
+     * Returns the attribute with the specified name in the provided node as a <@link org.joda.time.DateTime>. If the
+     * attribute name cannot be found then <code>null</code> is returned.
+     * 
+     * @param xmlNode the node containing the attribute.
+     * @param name the name of the attribute.
+     * @return the date representation of the attribute requested.
+     */
+    public static DateTime getAttributeAsDate(Node xmlNode, String name)
     {
-        // try{-}catch ( omitted intentionally; Caller must handle
+        if (xmlNode == null) throw new NullArgumentException("xmlNode");
 
-        // Get Date String from Attribute
-        String DateString = GetAttribute(Node, Name);
+        String dateString = getAttribute(xmlNode, name);
 
-        if (StringHelper.IsNullOrEmpty(DateString))
+        if (StringHelper.isNullOrEmpty(dateString))
         {
-            return JodaDateTimeHelper.nowInUtc();
+            return null;
         }
         else
         {
-            return JodaDateTimeHelper.fromXmlDateTimeUTC(DateString);
+            return JodaDateTimeHelper.fromXmlDateTimeUTC(dateString);
+        }
+    }
+
+    /**
+     * Sets the value of the specified attribute using the provided value.
+     * 
+     * @param doc
+     * @param xmlNode
+     * @param name
+     * @param value
+     */
+    public static void setAttribute(Document doc, Node xmlNode, String name, String value)
+    {
+        if (doc == null) throw new NullArgumentException("doc");
+        if (xmlNode == null) throw new NullArgumentException("xmlNode");
+        if (name == null || StringHelper.isNullOrEmpty(name.trim())) throw new IllegalArgumentException("name cannot be null or empty");
+
+        NamedNodeMap attributes = xmlNode.getAttributes();
+        Node nameNode = attributes.getNamedItem(name);
+
+        if (nameNode == null)
+        {
+            nameNode = doc.createAttribute(name);
+            attributes.setNamedItem(nameNode);
+
         }
 
-        // Parse Date
-        // Dim DateVal As Date
-        // If (Date.try{Parse(DateString, DateVal) = True) Then
-        // // return Date (Note: try{Parse returns the date as local, even if
-        // // the string is a UTC (Z) datetime string. This ensures the
-        // // date returned is UTC.)
-        // return DateVal.ToUniversalTime
-        // Else
-        // // return 0 Ticks Date
-        // return New Date(0)
-        // End If
+        nameNode.setNodeValue(value);
+
     }
 
-    // TODO: function
-    // public Node SelectSingleNode(Document doc, String xpath){
-    //
-    // XPathFactory factory=XPathFactory.newInstance();
-    // XPath xPath=factory.newXPath();
-    //
-    //
-    // /*DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
-    // domFactory.setNamespaceAware(true);
-    // DocumentBuilder builder = domFactory.newDocumentBuilder();
-    // Document doc = builder.parse("test.xml");
-    // XPath xpath = XPathFactory.newInstance().newXPath();
-    // XPathExpression expr = xpath.compile("//entry/link/@href");
-    // Object result = expr.evaluate(doc, XPathConstants.NODESET);
-    // NodeList nodes = (NodeList) result;
-    // for (int i = 0; i < nodes.getLength(); i++) {
-    // System.out.println(nodes.item(i));
-    // }*/
-    //
-    // }
-
-    // shared
-    public static void SetAttribute(Document Doc, Node Node, String Name, String Value)
+    /**
+     * 
+     * @param doc
+     * @param xmlNode
+     * @param name
+     * @param value
+     */
+    public static void setAttribute(Document doc, Node xmlNode, String name, DateTime value)
     {
-        Node.getAttributes().getNamedItem(Name).setNodeValue(Value);
-
-        // TODO:
-        // // Check for the Attribute Node
-        // Node AttributeNode;
-        // AttributeNode = Node.SelectSingleNode("@" & Name & "");
-        //
-        // if (AttributeNode == null) {
-        // // Doesn't Exist; Create and Add
-        // AttributeNode = Doc.CreateAttribute(Name);
-        // AttributeNode.Value = Value;
-        // Node.Attributes.SetNamedItem(AttributeNode);
-        // }else{
-        // // Already Exists; Update
-        // //AttributeNode.Value = Value;
-        // AttributeNode.setNodeValue(Value);
-        // }
-    }
-
-    // shared
-    public void SetAttributeAsDate(Document Doc, Node Node, String Name, DateTime Value)
-    {
-        Node.getAttributes().getNamedItem(Name).setNodeValue(JodaDateTimeHelper.toXmlDateTimeUTC(Value));
-
-        // Check for the Attribute Node
-        // TODO:
-        // Node AttributeNode;
-        // AttributeNode = Node.SelectSingleNode("@" & Name & "");
-        //
-        // if (AttributeNode == null) {
-        // // Doesn't Exist; Create and Add
-        // AttributeNode = Doc.CreateAttribute(Name);
-        // AttributeNode.Value = DateTimeHelper.ToXmlDateTimeUTC(Value);
-        // Node.Attributes.SetNamedItem(AttributeNode);
-        // }else{
-        // // Already Exists; Update
-        // AttributeNode.Value = DateTimeHelper.ToXmlDateTimeUTC(Value);
-        // }
+        if (value == null)
+        {
+            XmlHelper.setAttribute(doc, xmlNode, name, (String) null);
+        }
+        else
+        {
+            XmlHelper.setAttribute(doc, xmlNode, name, JodaDateTimeHelper.toXmlDateTimeUTC(value));
+        }
     }
 
     // -----------------------------------------------------------------------'
     // public Shared Methods - XML Formatting
     // -----------------------------------------------------------------------'
 
-    public static String FormatXml(Document Doc)
+    public static String formatXml(Document doc)
     {
-        return FormatXml(Doc.getFirstChild());
+        return formatXml(doc.getFirstChild());
     }
 
-    public static String FormatXml(Node Node)
+    public static String formatXml(Node node)
     {
         try
         {
@@ -302,7 +252,7 @@ public class XmlHelper {
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 
             StreamResult result = new StreamResult(new StringWriter());
-            DOMSource source = new DOMSource(Node);
+            DOMSource source = new DOMSource(node);
 
             transformer.transform(source, result);
 
@@ -310,32 +260,39 @@ public class XmlHelper {
         }
         catch (TransformerException e)
         {
-            // TODO Auto-generated catch block
             return null;
         }
     }
 
-    public static org.w3c.dom.Document loadXMLFrom(String xml) throws org.xml.sax.SAXException, java.io.IOException
+    public static Document loadXMLFrom(String xml) throws SAXException, IOException
     {
-        return loadXMLFrom(new java.io.ByteArrayInputStream(xml.getBytes()));
+        return loadXMLFrom(new ByteArrayInputStream(xml.getBytes()));
     }
 
-    public static org.w3c.dom.Document loadXMLFrom(java.io.InputStream is) throws org.xml.sax.SAXException,
-            java.io.IOException
+    public static Document loadXMLFrom(InputStream is) throws SAXException, IOException
     {
-        javax.xml.parsers.DocumentBuilderFactory factory = javax.xml.parsers.DocumentBuilderFactory.newInstance();
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
-        javax.xml.parsers.DocumentBuilder builder = null;
+
+        DocumentBuilder builder = null;
         try
         {
             builder = factory.newDocumentBuilder();
+            Document doc = builder.parse(is);
+
+            return doc;
+
         }
-        catch (javax.xml.parsers.ParserConfigurationException ex)
+        catch (ParserConfigurationException ex)
         {
         }
-        org.w3c.dom.Document doc = builder.parse(is);
-        is.close();
-        return doc;
+        finally
+        {
+            is.close();
+        }
+
+        return null;
+
     }
 
 }

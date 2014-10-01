@@ -192,7 +192,7 @@ public class XsdLinkageTest {
 
         DateTime now = JodaDateTimeHelper.nowInUtc();
 
-        assertTrue(StringHelper.IsNullOrEmpty(linkage.getModifiedBy()));
+        assertTrue(StringHelper.isNullOrEmpty(linkage.getModifiedBy()));
 
         linkage.setModifiedBy("jDoe");
 
@@ -211,7 +211,7 @@ public class XsdLinkageTest {
         XsdEntity newEntity = XsdEntity.create("Operation", "Portal", "1.2.3.4", "ID", "Type");
         XsdLinkage newLinkage = newEntity.getLinkageSection().createLinkage();
 
-        assertTrue(StringHelper.IsNullOrEmpty(newLinkage.getModifiedBy()));
+        assertTrue(StringHelper.isNullOrEmpty(newLinkage.getModifiedBy()));
 
     }
 

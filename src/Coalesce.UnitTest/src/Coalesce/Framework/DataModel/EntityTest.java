@@ -65,7 +65,7 @@ public class EntityTest {
     public void entityDeserializationMissionTest()
     {
 
-        Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TEST_MISSION, Entity.class);
+        Object desObj = XmlHelper.deserialize(CoalesceTypeInstances.TEST_MISSION, Entity.class);
         assertNotNull("Failed to deserialize mission entity", desObj);
         assertTrue("Deserialized object no an Entity", desObj instanceof Entity);
 
@@ -107,7 +107,7 @@ public class EntityTest {
     public void getLastModifiedTest()
     {
 
-        Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TEST_MISSION, Entity.class);
+        Object desObj = XmlHelper.deserialize(CoalesceTypeInstances.TEST_MISSION, Entity.class);
 
         Entity entity = (Entity) desObj;
 
@@ -127,7 +127,7 @@ public class EntityTest {
     public void getDateCreatedTest()
     {
 
-        Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TEST_MISSION, Entity.class);
+        Object desObj = XmlHelper.deserialize(CoalesceTypeInstances.TEST_MISSION, Entity.class);
 
         Entity entity = (Entity) desObj;
 
@@ -147,7 +147,7 @@ public class EntityTest {
     public void setLastModifiedDefinedTest()
     {
 
-        Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TEST_MISSION, Entity.class);
+        Object desObj = XmlHelper.deserialize(CoalesceTypeInstances.TEST_MISSION, Entity.class);
 
         Entity entity = (Entity) desObj;
 
@@ -175,16 +175,16 @@ public class EntityTest {
     public void setLastModifiedSerializedTest()
     {
 
-        Entity entity = (Entity) XmlHelper.Deserialize(CoalesceTypeInstances.TEST_MISSION, Entity.class);
+        Entity entity = (Entity) XmlHelper.deserialize(CoalesceTypeInstances.TEST_MISSION, Entity.class);
 
         DateTime setLastModified = new DateTime(2222, 12, 5, 11, 44, 55, 666, DateTimeZone.UTC);
 
         entity.setLastmodified(setLastModified);
 
-        String xml = XmlHelper.Serialize(entity);
-        assertTrue(!StringHelper.IsNullOrEmpty(xml));
+        String xml = XmlHelper.serialize(entity);
+        assertTrue(!StringHelper.isNullOrEmpty(xml));
 
-        Object desSerializedObj = XmlHelper.Deserialize(xml, Entity.class);
+        Object desSerializedObj = XmlHelper.deserialize(xml, Entity.class);
 
         Entity desSerEntity = (Entity) desSerializedObj;
 
@@ -200,7 +200,7 @@ public class EntityTest {
 
         Entity entity = new Entity();
 
-        Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TEST_MISSION, Entity.class);
+        Object desObj = XmlHelper.deserialize(CoalesceTypeInstances.TEST_MISSION, Entity.class);
 
         entity = (Entity) desObj;
 
@@ -227,7 +227,7 @@ public class EntityTest {
     @Test
     public void testFieldHistory()
     {
-        Entity missionEntity = (Entity) XmlHelper.Deserialize(CoalesceTypeInstances.TEST_MISSION, Entity.class);
+        Entity missionEntity = (Entity) XmlHelper.deserialize(CoalesceTypeInstances.TEST_MISSION, Entity.class);
 
         Field field = missionEntity.getSection().get(1).getRecordset().get(0).getRecord().get(0).getField().get(0);
 
@@ -243,9 +243,9 @@ public class EntityTest {
 
         assertEquals(newFieldHistory, field.getFieldhistory().get(2));
 
-        String serializedEntity = XmlHelper.Serialize(missionEntity);
+        String serializedEntity = XmlHelper.serialize(missionEntity);
 
-        Entity desMissionEntity = (Entity) XmlHelper.Deserialize(serializedEntity, Entity.class);
+        Entity desMissionEntity = (Entity) XmlHelper.deserialize(serializedEntity, Entity.class);
 
         Fieldhistory desFieldHistory = desMissionEntity.getSection().get(1).getRecordset().get(0).getRecord().get(0).getField().get(0).getFieldhistory().get(2);
 
@@ -283,8 +283,8 @@ public class EntityTest {
         newRecord.getField().add(newField);
         newRecordset.getRecord().add(newRecord);
 
-        String serializedEntity = XmlHelper.Serialize(newEntity);
-        Entity desEntity = (Entity) XmlHelper.Deserialize(serializedEntity, Entity.class);
+        String serializedEntity = XmlHelper.serialize(newEntity);
+        Entity desEntity = (Entity) XmlHelper.deserialize(serializedEntity, Entity.class);
 
         Field desField = desEntity.getSection().get(0).getRecordset().get(0).getRecord().get(0).getField().get(0);
 
@@ -336,8 +336,8 @@ public class EntityTest {
         assertEquals(1, newRecordset.getRecord().size());
         assertEquals(newRecord, newRecordset.getRecord().get(0));
 
-        String serializedEntity = XmlHelper.Serialize(newEntity);
-        Entity desEntity = (Entity) XmlHelper.Deserialize(serializedEntity, Entity.class);
+        String serializedEntity = XmlHelper.serialize(newEntity);
+        Entity desEntity = (Entity) XmlHelper.deserialize(serializedEntity, Entity.class);
 
         Record desRecord = desEntity.getSection().get(0).getRecordset().get(0).getRecord().get(0);
 

@@ -83,7 +83,7 @@ public class XsdRecordset extends XsdDataObject implements ICoalesceRecordset {
 
         if (parent == null) throw new NullArgumentException("parent");
         if (name == null) throw new NullArgumentException("name");
-        if (StringHelper.IsNullOrEmpty(name.trim())) throw new IllegalArgumentException("name cannot be empty");
+        if (StringHelper.isNullOrEmpty(name.trim())) throw new IllegalArgumentException("name cannot be empty");
 
         if (minRecords < 0 || maxRecords < minRecords) return null;
 
@@ -333,7 +333,7 @@ public class XsdRecordset extends XsdDataObject implements ICoalesceRecordset {
     @Override
     public String toXml()
     {
-        return XmlHelper.Serialize(_entityRecordset);
+        return XmlHelper.serialize(_entityRecordset);
     }
 
     /**

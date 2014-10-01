@@ -39,13 +39,13 @@ import com.mysql.jdbc.Blob;
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
 
  Notwithstanding any contractor copyright notice, the Government has Unlimited
- Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
- of this work other than as specifically authorized by these DFARS Clauses may
- violate Government rights in this work.
+ Rights in work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+ of work other than as specifically authorized by these DFARS Clauses may
+ violate Government rights in work.
 
  DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
  Unlimited Rights. The Government has the right to use, modify, reproduce,
- perform, display, release or disclose this computer software and to have or
+ perform, display, release or disclose computer software and to have or
  authorize others to do so.
 
  Distribution Statement D. Distribution authorized to the Department of
@@ -57,14 +57,14 @@ public class SQLServerPersistor extends CoalescePersisterBase {
 
     public SQLServerPersistor()
     {
-        serCon = new ServerConn();
+        _serCon = new ServerConn();
     }
 
     /*--------------------------------------------------------------------------
     Private Member Variables
     --------------------------------------------------------------------------*/
 
-    private ServerConn serCon;
+    private ServerConn _serCon;
 
     /*--------------------------------------------------------------------------
     Constructor / Initializers
@@ -76,7 +76,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
      */
     public void Initialize(ServerConn svConn)
     {
-        serCon = svConn;
+        _serCon = svConn;
     }
 
     /**
@@ -87,7 +87,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
      */
     public boolean Initialize(ICoalesceCacher cacher, ServerConn svConn) throws CoalescePersistorException
     {
-        serCon = svConn;
+        _serCon = svConn;
 
         return super.initialize(cacher);
     }
@@ -106,11 +106,11 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         {
             if (EntitySource != null && EntitySource != "")
             {
-                return this.getCoalesceEntityKeysForEntityIdAndSource(EntityId, EntityIdType, EntityName, EntitySource);
+                return getCoalesceEntityKeysForEntityIdAndSource(EntityId, EntityIdType, EntityName, EntitySource);
             }
             else
             {
-                return this.getCoalesceEntityKeysForEntityId(EntityId, EntityIdType, EntityName);
+                return getCoalesceEntityKeysForEntityId(EntityId, EntityIdType, EntityName);
             }
         }
         catch (SQLException e)
@@ -126,9 +126,9 @@ public class SQLServerPersistor extends CoalescePersisterBase {
     @Override
     public EntityMetaData getCoalesceEntityIdAndTypeForKey(String Key) throws CoalescePersistorException
     {
-        try (SQLServerDataConnector conn = new SQLServerDataConnector(this.serCon))
+        try (SQLServerDataConnector conn = new SQLServerDataConnector(_serCon))
         {
-            return this.getCoalesceEntityIdAndTypeForKey(Key, conn);
+            return getCoalesceEntityIdAndTypeForKey(Key, conn);
         }
         catch (SQLException e)
         {
@@ -143,9 +143,9 @@ public class SQLServerPersistor extends CoalescePersisterBase {
     @Override
     public DateTime getCoalesceDataObjectLastModified(String Key, String ObjectType) throws CoalescePersistorException
     {
-        try (SQLServerDataConnector conn = new SQLServerDataConnector(this.serCon))
+        try (SQLServerDataConnector conn = new SQLServerDataConnector(_serCon))
         {
-            return this.getCoalesceDataObjectLastModified(Key, ObjectType, conn);
+            return getCoalesceDataObjectLastModified(Key, ObjectType, conn);
         }
         catch (SQLException e)
         {
@@ -160,7 +160,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
     @Override
     public byte[] getBinaryArray(String key) throws CoalescePersistorException
     {
-        try (SQLServerDataConnector conn = new SQLServerDataConnector(this.serCon))
+        try (SQLServerDataConnector conn = new SQLServerDataConnector(_serCon))
         {
 
             byte[] binaryArray = null;
@@ -190,7 +190,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
     @Override
     public boolean persistEntityTemplate(CoalesceEntityTemplate template) throws CoalescePersistorException
     {
-        try (SQLServerDataConnector conn = new SQLServerDataConnector(this.serCon))
+        try (SQLServerDataConnector conn = new SQLServerDataConnector(_serCon))
         {
             // Always persist template
             return conn.ExecuteProcedure("CoalesceEntityTemplate_InsertOrUpdate",
@@ -215,9 +215,9 @@ public class SQLServerPersistor extends CoalescePersisterBase {
     @Override
     public ElementMetaData getXPath(String Key, String ObjectType) throws CoalescePersistorException
     {
-        try (SQLServerDataConnector conn = new SQLServerDataConnector(this.serCon))
+        try (SQLServerDataConnector conn = new SQLServerDataConnector(_serCon))
         {
-            return this.getXPathRecursive(Key, ObjectType, "", conn);
+            return getXPathRecursive(Key, ObjectType, "", conn);
         }
         catch (SQLException e)
         {
@@ -232,7 +232,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
     @Override
     public String getFieldValue(String FieldKey) throws CoalescePersistorException
     {
-        try (SQLServerDataConnector conn = new SQLServerDataConnector(this.serCon))
+        try (SQLServerDataConnector conn = new SQLServerDataConnector(_serCon))
         {
             String value = null;
 
@@ -259,7 +259,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
     @Override
     public String getEntityXml(String Key) throws CoalescePersistorException
     {
-        try (SQLServerDataConnector conn = new SQLServerDataConnector(this.serCon))
+        try (SQLServerDataConnector conn = new SQLServerDataConnector(_serCon))
         {
             String value = null;
 
@@ -286,7 +286,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
     @Override
     public String getEntityXml(String EntityId, String EntityIdType) throws CoalescePersistorException
     {
-        try (SQLServerDataConnector conn = new SQLServerDataConnector(this.serCon))
+        try (SQLServerDataConnector conn = new SQLServerDataConnector(_serCon))
         {
             String value = null;
 
@@ -314,7 +314,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
     @Override
     public String getEntityXml(String Name, String EntityId, String EntityIdType) throws CoalescePersistorException
     {
-        try (SQLServerDataConnector conn = new SQLServerDataConnector(this.serCon))
+        try (SQLServerDataConnector conn = new SQLServerDataConnector(_serCon))
         {
             String value = null;
 
@@ -367,11 +367,11 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         boolean isSuccessful = false;
 
         // Create a Database Connection
-        try (SQLServerDataConnector conn = new SQLServerDataConnector(this.serCon))
+        try (SQLServerDataConnector conn = new SQLServerDataConnector(_serCon))
         {
 
             // Persist (Recursively)
-            isSuccessful = this.updateDataObject(entity, conn, AllowRemoval);
+            isSuccessful = updateDataObject(entity, conn, AllowRemoval);
 
             // Persist Entity Last to Include Changes
             switch (entity.getType().toLowerCase()) {
@@ -397,7 +397,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         boolean isSuccessful = false;
 
         // Create a Database Connection
-        try (SQLServerDataConnector conn = new SQLServerDataConnector(this.serCon))
+        try (SQLServerDataConnector conn = new SQLServerDataConnector(_serCon))
         {
 
             conn.openConnection();
@@ -425,7 +425,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
     @Override
     public String getEntityTemplateKey(String Name, String Source, String Version) throws CoalescePersistorException
     {
-        try (SQLServerDataConnector conn = new SQLServerDataConnector(this.serCon))
+        try (SQLServerDataConnector conn = new SQLServerDataConnector(_serCon))
         {
             String value = null;
 
@@ -459,8 +459,8 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         // SQL in the .NET version does not seem to be supported in MySQL - it uses
         // "FOR XML RAW, ROOT('coalesceentitytemplates')"
         //
-        // This means: By specifying the ROOT option in the FOR XML query, you can request a single, top-level element for
-        // the resulting XML, as shown in this query. The argument specified for the ROOT directive provides the root element
+        // means: By specifying the ROOT option in the FOR XML query, you can request a single, top-level element for
+        // the resulting XML, as shown in query. The argument specified for the ROOT directive provides the root element
         // name. http://msdn.microsoft.com/en-us/library/bb522623.aspx
         // *************************************************************************************************************************************
         return null;
@@ -469,7 +469,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
     @Override
     public String getEntityTemplateXml(String Key) throws CoalescePersistorException
     {
-        try (SQLServerDataConnector conn = new SQLServerDataConnector(this.serCon))
+        try (SQLServerDataConnector conn = new SQLServerDataConnector(_serCon))
         {
             String value = null;
 
@@ -496,7 +496,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
     @Override
     public String getEntityTemplateXml(String Name, String Source, String Version) throws CoalescePersistorException
     {
-        try (SQLServerDataConnector conn = new SQLServerDataConnector(this.serCon))
+        try (SQLServerDataConnector conn = new SQLServerDataConnector(_serCon))
         {
             String value = null;
 
@@ -540,7 +540,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         switch (dataObject.getType()) {
         case "entity":
 
-            isSuccessful = this.checkLastModified(dataObject, conn);
+            isSuccessful = checkLastModified(dataObject, conn);
             // isSuccessful = PersistEntityObject(dataObject);
             break;
 
@@ -618,8 +618,8 @@ public class SQLServerPersistor extends CoalescePersisterBase {
     protected boolean persistEntityObject(XsdEntity entity, SQLServerDataConnector conn) throws SQLException
     {
         // Return true if no update is required.
-        if (!this.checkLastModified(entity, conn)) return true;
-        System.out.println(entity.toXml(true).toString());
+        if (!checkLastModified(entity, conn)) return true;
+
 
         // Yes; Call Store Procedure
         return conn.ExecuteProcedure("CoalesceEntity_InsertOrUpdate",
@@ -646,7 +646,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
     protected boolean persistSectionObject(XsdSection section, SQLServerDataConnector conn) throws SQLException
     {
         // Return true if no update is required.
-        if (!this.checkLastModified(section, conn)) return true;
+        if (!checkLastModified(section, conn)) return true;
 
         // Yes; Call Store Procedure
         return conn.ExecuteProcedure("CoalesceSection_InsertOrUpdate",
@@ -654,8 +654,9 @@ public class SQLServerPersistor extends CoalescePersisterBase {
                                      new CoalesceParameter(section.getName()),
                                      new CoalesceParameter(section.getParent().getKey()),
                                      new CoalesceParameter(section.getParent().getType()),
-                                     new CoalesceParameter(section.getDateCreated()),
-                                     new CoalesceParameter(section.getLastModified()));
+                                     new CoalesceParameter(section.getLastModified()),
+                                     new CoalesceParameter(section.getDateCreated()));
+                                     
     }
 
     /**
@@ -670,7 +671,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
     protected boolean persistRecordsetObject(XsdRecordset recordset, SQLServerDataConnector conn) throws SQLException
     {
         // Return true if no update is required.
-        if (!this.checkLastModified(recordset, conn)) return true;
+        if (!checkLastModified(recordset, conn)) return true;
 
         // Yes; Call Store Procedure
         return conn.ExecuteProcedure("CoalesceRecordset_InsertOrUpdate",
@@ -696,7 +697,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
     {
 
         // Return true if no update is required.
-        if (!this.checkLastModified(fieldDefinition, conn)) return true;
+        if (!checkLastModified(fieldDefinition, conn)) return true;
 
         // Yes; Call Store Procedure
         return conn.ExecuteProcedure("CoalesceFieldDefinition_InsertOrUpdate",
@@ -720,7 +721,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
     protected boolean persistRecordObject(XsdRecord record, SQLServerDataConnector conn) throws SQLException
     {
         // Return true if no update is required.
-        if (!this.checkLastModified(record, conn)) return true;
+        if (!checkLastModified(record, conn)) return true;
 
         // Yes; Call Store Procedure
         return conn.ExecuteProcedure("CoalesceRecord_InsertOrUpdate",
@@ -744,7 +745,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
     protected boolean persistFieldObject(XsdField field, SQLServerDataConnector conn) throws SQLException
     {
         // Return true if no update is required.
-        if (!this.checkLastModified(field, conn)) return true;
+        if (!checkLastModified(field, conn)) return true;
 
         // Yes; Call Store Procedure
         return conn.ExecuteProcedure("CoalesceField_InsertOrUpdate",
@@ -775,7 +776,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
             throws SQLException
     {
         // Return true if no update is required.
-        if (!this.checkLastModified(fieldHistory, conn)) return true;
+        if (!checkLastModified(fieldHistory, conn)) return true;
 
         // Yes; Call Store Procedure
         return conn.ExecuteProcedure("CoalesceFieldHistory_InsertOrUpdate",
@@ -806,7 +807,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
             throws SQLException
     {
         // Return true if no update is required.
-        if (!this.checkLastModified(linkageSection, conn)) return true;
+        if (!checkLastModified(linkageSection, conn)) return true;
 
         // Yes; Call Store Procedure
         return conn.ExecuteProcedure("CoalesceLinkageSection_InsertOrUpdate",
@@ -830,7 +831,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
     protected boolean persistLinkageObject(XsdLinkage linkage, SQLServerDataConnector conn) throws SQLException
     {
         // Return true if no update is required.
-        if (!this.checkLastModified(linkage, conn)) return true;
+        if (!checkLastModified(linkage, conn)) return true;
 
         // Yes; Call Store Procedure
         return conn.ExecuteProcedure("CoalesceLinkage_InsertOrUpdate",
@@ -926,7 +927,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         boolean isOutOfDate = true;
 
         // Get LastModified from the Database
-        DateTime LastModified = this.getCoalesceDataObjectLastModified(dataObject.getKey(), dataObject.getType(), conn);
+        DateTime LastModified = getCoalesceDataObjectLastModified(dataObject.getKey(), dataObject.getType(), conn);
 
         // DB Has Valid Time?
         if (LastModified != null)
@@ -935,8 +936,8 @@ public class SQLServerPersistor extends CoalescePersisterBase {
             long ObjectTicks = dataObject.getLastModified().getMillis();
             long SQLRecordTicks = LastModified.getMillis();
 
-            // TODO: Round Ticks for SQL (Not sure if this is required for .NET)
-            ObjectTicks = this.roundTicksForSQL(ObjectTicks);
+            // TODO: Round Ticks for SQL (Not sure if is required for .NET)
+            ObjectTicks = roundTicksForSQL(ObjectTicks);
 
             if (ObjectTicks == SQLRecordTicks)
             {
@@ -982,7 +983,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
     {
         List<String> keyList = new ArrayList<String>();
 
-        try (SQLServerDataConnector conn = new SQLServerDataConnector(this.serCon))
+        try (SQLServerDataConnector conn = new SQLServerDataConnector(_serCon))
         {
             ResultSet results = conn.ExecuteQuery("SELECT ObjectKey FROM CoalesceEntity WHERE (ISNULL(EntityId,' ') like ? ) AND (ISNULL(EntityIdType,' ') like  ? ) AND Name=?",
                                                   new CoalesceParameter(EntityId),
@@ -1016,7 +1017,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
             CoalescePersistorException
     {
 
-        try (SQLServerDataConnector conn = new SQLServerDataConnector(this.serCon))
+        try (SQLServerDataConnector conn = new SQLServerDataConnector(_serCon))
         {
             List<String> keyList = new ArrayList<String>();
 

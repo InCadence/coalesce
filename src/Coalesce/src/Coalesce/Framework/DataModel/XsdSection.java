@@ -99,7 +99,7 @@ public class XsdSection extends XsdDataObject {
 
         if (parent == null) throw new NullArgumentException("parent");
         if (name == null) throw new NullArgumentException("name");
-        if (StringHelper.IsNullOrEmpty(name.trim())) throw new IllegalArgumentException("name cannot be empty");
+        if (StringHelper.isNullOrEmpty(name.trim())) throw new IllegalArgumentException("name cannot be empty");
 
         // Check that a section with the same name doesn't already exist
         for (XsdSection section : parent.getSections().values())
@@ -288,7 +288,7 @@ public class XsdSection extends XsdDataObject {
     @Override
     public String toXml()
     {
-        return XmlHelper.Serialize(_entitySection);
+        return XmlHelper.serialize(_entitySection);
     }
 
     @Override

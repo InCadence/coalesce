@@ -59,7 +59,7 @@ public class XsdRecord extends XsdDataObject {
     {
         if (parent == null) throw new NullArgumentException("parent");
         if (name == null) throw new NullArgumentException("name");
-        if (StringHelper.IsNullOrEmpty(name.trim())) throw new IllegalArgumentException("name cannot be an empty string");
+        if (StringHelper.isNullOrEmpty(name.trim())) throw new IllegalArgumentException("name cannot be an empty string");
 
         Record newEntityRecord = new Record();
         parent.GetEntityRecords().add(newEntityRecord);
@@ -611,7 +611,7 @@ public class XsdRecord extends XsdDataObject {
         if (field != null)
         {
 
-            if (fileName == null || StringHelper.IsNullOrEmpty(fileName.trim()))
+            if (fileName == null || StringHelper.isNullOrEmpty(fileName.trim()))
             {
                 field.setTypedValue(value);
             }
@@ -646,7 +646,7 @@ public class XsdRecord extends XsdDataObject {
     @Override
     public String toXml()
     {
-        return XmlHelper.Serialize(_entityRecord);
+        return XmlHelper.serialize(_entityRecord);
     }
 
     @Override

@@ -60,7 +60,7 @@ public class FileHelper {
      */
     public static String getExtension(String filename)
     {
-        if (StringHelper.IsNullOrEmpty(filename)) return "";
+        if (StringHelper.isNullOrEmpty(filename)) return "";
 
         String extension = FilenameUtils.getExtension(filename).toLowerCase();
 
@@ -253,7 +253,7 @@ public class FileHelper {
                                                                      boolean createIfDoesNotExist)
     {
 
-        if (key == null || StringHelper.IsNullOrEmpty(key.trim())) return null;
+        if (key == null || StringHelper.isNullOrEmpty(key.trim())) return null;
 
         String baseFilename = GUIDHelper.removeBrackets(key);
 

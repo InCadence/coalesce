@@ -146,7 +146,7 @@ public class Marking implements Serializable, Comparable<Marking> {
         
         if (markingString.startsWith("(") && markingString.endsWith(")")) {
             isPortionMarking = true;
-            markingString = StringHelper.TrimParentheses(markingString);
+            markingString = StringHelper.trimParentheses(markingString);
         }
         
         // If it is blank or invalid make it Unclass

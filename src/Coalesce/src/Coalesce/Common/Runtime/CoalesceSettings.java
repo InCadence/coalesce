@@ -82,7 +82,7 @@ public class CoalesceSettings extends SettingsBase {
 	
 	public static String getDefaultApplicationRoot() {
 	    
-		if (StringHelper.IsNullOrEmpty(_defaultApplicationRoot)) {
+		if (StringHelper.isNullOrEmpty(_defaultApplicationRoot)) {
 
 		    Map<Thread, StackTraceElement[]> stackMap = Thread.getAllStackTraces();
 		    

@@ -780,7 +780,7 @@ public class XsdFieldTest {
     {
         XsdField field = getTestMissionNameField();
 
-        assertTrue(StringHelper.IsNullOrEmpty(field.getCoalesceFullFilename()));
+        assertTrue(StringHelper.isNullOrEmpty(field.getCoalesceFullFilename()));
     }
 
     @Test
@@ -828,7 +828,7 @@ public class XsdFieldTest {
     {
         XsdField field = getTestMissionNameField();
 
-        assertTrue(StringHelper.IsNullOrEmpty(field.getCoalesceFullThumbnailFilename()));
+        assertTrue(StringHelper.isNullOrEmpty(field.getCoalesceFullThumbnailFilename()));
     }
 
     @Test
@@ -876,7 +876,7 @@ public class XsdFieldTest {
     {
         XsdField field = getTestMissionNameField();
 
-        assertTrue(StringHelper.IsNullOrEmpty(field.getCoalesceFilenameWithLastModifiedTag()));
+        assertTrue(StringHelper.isNullOrEmpty(field.getCoalesceFilenameWithLastModifiedTag()));
     }
 
     @Test
@@ -938,7 +938,7 @@ public class XsdFieldTest {
     {
         XsdField field = getTestMissionNameField();
 
-        assertTrue(StringHelper.IsNullOrEmpty(field.getCoalesceThumbnailFilenameWithLastModifiedTag()));
+        assertTrue(StringHelper.isNullOrEmpty(field.getCoalesceThumbnailFilenameWithLastModifiedTag()));
     }
 
     @Test
@@ -999,7 +999,7 @@ public class XsdFieldTest {
     {
         XsdField field = getTestMissionNameField();
 
-        assertTrue(StringHelper.IsNullOrEmpty(field.getCoalesceFilename()));
+        assertTrue(StringHelper.isNullOrEmpty(field.getCoalesceFilename()));
     }
 
     @Test
@@ -1017,7 +1017,7 @@ public class XsdFieldTest {
     {
         XsdField field = getTestMissionNameField();
 
-        assertTrue(StringHelper.IsNullOrEmpty(field.getCoalesceThumbnailFilename()));
+        assertTrue(StringHelper.isNullOrEmpty(field.getCoalesceThumbnailFilename()));
     }
 
     @Test

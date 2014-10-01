@@ -3,10 +3,21 @@ package Coalesce.Common.Helpers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.Test;
+import java.io.IOException;
 
+import org.apache.commons.lang.NullArgumentException;
+import org.joda.time.DateTime;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
+
+import Coalesce.Common.UnitTest.CoalesceAssert;
 import Coalesce.Common.UnitTest.CoalesceTypeInstances;
 import Coalesce.Framework.GeneratedJAXB.Entity;
 import Coalesce.Framework.GeneratedJAXB.Entity.Linkagesection;
@@ -31,6 +42,9 @@ import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset;
 
 public class XmlHelperTest {
 
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
     /*
      * @BeforeClass public static void setUpBeforeClass() throws Exception { }
      * 
@@ -42,49 +56,16 @@ public class XmlHelperTest {
      */
 
     @Test
-    public void DeserializeEntityTypeMission()
-    {
-
-        Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TEST_MISSION, Entity.class);
-
-        assertNotNull("Failed to deserialize mission entity", desObj);
-        assertTrue("Deserialized object no an Entity", desObj instanceof Entity);
-
-    }
-
-    @Test
-    public void DeserializeLinkageSectionTypeMission()
-    {
-
-        Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TEST_MISSION_LINKAGE_SECTION, Linkagesection.class);
-
-        assertNotNull("Failed to deserialize mission entity linkage section", desObj);
-        assertTrue("Deserialized object no an Entity", desObj instanceof Linkagesection);
-
-    }
-
-    @Test
-    public void DeserializeRecordSetTypeMission()
-    {
-
-        Object desObj = XmlHelper.Deserialize(CoalesceTypeInstances.TEST_MISSION_RECORDSET, Recordset.class);
-
-        assertNotNull("Failed to deserialize mission entity linkage section", desObj);
-        assertTrue("Deserialized object no an Entity", desObj instanceof Recordset);
-
-    }
-
-    @Test
-    public void SerializeEntityTypeMission()
+    public void serializeEntityTypeMission()
     {
 
         Entity entity = new Entity();
 
-        entity = (Entity) XmlHelper.Deserialize(CoalesceTypeInstances.TEST_MISSION, Entity.class);
+        entity = (Entity) XmlHelper.deserialize(CoalesceTypeInstances.TEST_MISSION, Entity.class);
 
-        String xml = XmlHelper.Serialize(entity);
+        String xml = XmlHelper.serialize(entity);
 
-        assertTrue("Searialize failed", xml != null);
+        assertNotNull("Searialize failed", xml);
         assertTrue("xml empty", xml.length() > 0);
 
         assertEquals(4, entity.getLinkagesection().getLinkage().size());
@@ -93,15 +74,52 @@ public class XmlHelperTest {
     }
 
     @Test
-    public void SerializeLinkageSectionTypeMission()
+    public void serializeEntityTypeEncodingFormatMission()
+    {
+        Entity entity = new Entity();
+
+        entity = (Entity) XmlHelper.deserialize(CoalesceTypeInstances.TEST_MISSION, Entity.class);
+
+        String entityXml = XmlHelper.serialize(entity, "UTF8");
+
+        CoalesceAssert.assertXmlEquals(CoalesceTypeInstances.TEST_MISSION, entityXml, "UTF8");
+        
+    }
+
+    @Test
+    public void serializeEntityTypeInvalidFormatTest()
+    {
+        Entity entity = new Entity();
+
+        entity = (Entity) XmlHelper.deserialize(CoalesceTypeInstances.TEST_MISSION, Entity.class);
+
+        String entityXml = XmlHelper.serialize(entity, "Xyz");
+
+        assertNull("Invalid encoding format generated output", entityXml);
+
+    }
+
+    @Test
+    public void serializeEntityNotSerializableObjectTest()
+    {
+        Integer serInt = 5;
+
+        String serialized = XmlHelper.serialize(serInt);
+
+        assertNull("Serialized non serializable object", serialized);
+
+    }
+
+    @Test
+    public void serializeLinkageSectionTypeMission()
     {
 
         Linkagesection entityLinkageSection = new Linkagesection();
 
-        entityLinkageSection = (Linkagesection) XmlHelper.Deserialize(CoalesceTypeInstances.TEST_MISSION_LINKAGE_SECTION,
+        entityLinkageSection = (Linkagesection) XmlHelper.deserialize(CoalesceTypeInstances.TEST_MISSION_LINKAGE_SECTION,
                                                                       Linkagesection.class);
 
-        String xml = XmlHelper.Serialize(entityLinkageSection);
+        String xml = XmlHelper.serialize(entityLinkageSection);
 
         assertNotNull("Searialize failed", xml);
         assertFalse("xml empty", xml.isEmpty());
@@ -115,19 +133,429 @@ public class XmlHelperTest {
     }
 
     @Test
-    public void SerializeRecordSetTypeMission()
+    public void serializeRecordSetTypeMission()
     {
 
         Recordset entityRecordSet = new Recordset();
 
-        entityRecordSet = (Recordset) XmlHelper.Deserialize(CoalesceTypeInstances.TEST_MISSION_RECORDSET, Recordset.class);
+        entityRecordSet = (Recordset) XmlHelper.deserialize(CoalesceTypeInstances.TEST_MISSION_RECORDSET, Recordset.class);
 
-        String xml = XmlHelper.Serialize(entityRecordSet);
+        String xml = XmlHelper.serialize(entityRecordSet);
 
-        assertTrue("Searialize failed", xml != null);
+        assertNotNull("Searialize failed", xml);
         assertTrue("xml empty", xml.length() > 0);
         assertEquals(16, entityRecordSet.getFielddefinition().size());
         assertEquals(16, entityRecordSet.getRecord().get(0).getField().size());
 
     }
+
+    @Test
+    public void deserializeEntityTypeMission()
+    {
+
+        Object desObj = XmlHelper.deserialize(CoalesceTypeInstances.TEST_MISSION, Entity.class);
+
+        assertNotNull("Failed to deserialize mission entity", desObj);
+        assertTrue("Deserialized object no an Entity", desObj instanceof Entity);
+
+    }
+
+    @Test
+    public void deserializeLinkageSectionTypeMission()
+    {
+
+        Object desObj = XmlHelper.deserialize(CoalesceTypeInstances.TEST_MISSION_LINKAGE_SECTION, Linkagesection.class);
+
+        assertNotNull("Failed to deserialize mission entity linkage section", desObj);
+        assertTrue("Deserialized object no an Entity", desObj instanceof Linkagesection);
+
+    }
+
+    @Test
+    public void deserializeRecordSetTypeMission()
+    {
+
+        Object desObj = XmlHelper.deserialize(CoalesceTypeInstances.TEST_MISSION_RECORDSET, Recordset.class);
+
+        assertNotNull("Failed to deserialize mission entity linkage section", desObj);
+        assertTrue("Deserialized object no an Entity", desObj instanceof Recordset);
+
+    }
+
+    @Test
+    public void deserializeEntityTypeInvalidStructureTest()
+    {
+        String entityXmlInvalid = "<entity key=\"62857EF8-3930-4F0E-BAE3-093344EBF389\" datecreated=\"2014-05-02T14:33:51.8515756Z\" lastmodified=\"2014-05-20T16:17:13.2293139Z\" status=\"active\" >";
+
+        Entity entity = new Entity();
+
+        entity = (Entity) XmlHelper.deserialize(entityXmlInvalid, Entity.class);
+
+        assertNull("Invalid XML generated output", entity);
+
+    }
+
+    @Test
+    public void getAttributeTest() throws SAXException, IOException
+    {
+        Document entityDoc = XmlHelper.loadXMLFrom(CoalesceTypeInstances.TEST_MISSION);
+
+        Node entityNode = entityDoc.getElementsByTagName("entity").item(0);
+
+        assertEquals("TREXMission", XmlHelper.getAttribute(entityNode, "name"));
+        assertEquals("TREX Portal", XmlHelper.getAttribute(entityNode, "source"));
+        assertEquals("1.0.0.0", XmlHelper.getAttribute(entityNode, "version"));
+        assertEquals("Test", XmlHelper.getAttribute(entityNode, "anthony"));
+
+    }
+
+    @Test
+    public void getAttributeNoneTest() throws SAXException, IOException
+    {
+        Document entityDoc = XmlHelper.loadXMLFrom("<entity />");
+
+        Node entityNode = entityDoc.getElementsByTagName("entity").item(0);
+
+        assertEquals("", XmlHelper.getAttribute(entityNode, "xyz"));
+
+    }
+
+    @Test
+    public void getAttributeNullNodeTest()
+    {
+        thrown.expect(NullArgumentException.class);
+        thrown.expectMessage("xmlNode");
+
+        XmlHelper.getAttribute(null, "Test");
+
+    }
+
+    @Test
+    public void getAttributeNullNameTest() throws SAXException, IOException
+    {
+        Document entityDoc = XmlHelper.loadXMLFrom(CoalesceTypeInstances.TEST_MISSION);
+
+        Node entityNode = entityDoc.getElementsByTagName("entity").item(0);
+
+        assertEquals("", XmlHelper.getAttribute(entityNode, null));
+
+    }
+
+    @Test
+    public void getAttributeAsDateTest() throws SAXException, IOException
+    {
+        Document entityDoc = XmlHelper.loadXMLFrom(CoalesceTypeInstances.TEST_MISSION);
+
+        Node entityNode = entityDoc.getElementsByTagName("entity").item(0);
+
+        assertEquals(JodaDateTimeHelper.fromXmlDateTimeUTC("2014-05-20T16:17:13.2293139Z"),
+                     XmlHelper.getAttributeAsDate(entityNode, "lastmodified"));
+
+    }
+
+    @Test
+    public void getAttributeAsDateNotFoundTest() throws SAXException, IOException
+    {
+        Document entityDoc = XmlHelper.loadXMLFrom(CoalesceTypeInstances.TEST_MISSION);
+
+        Node entityNode = entityDoc.getElementsByTagName("entity").item(0);
+
+        assertNull(XmlHelper.getAttributeAsDate(entityNode, "modified"));
+
+    }
+
+    @Test
+    public void getAttributeAsDateNullNodeTest()
+    {
+        thrown.expect(NullArgumentException.class);
+        thrown.expectMessage("xmlNode");
+
+        XmlHelper.getAttributeAsDate(null, "lastmodified");
+    }
+
+    @Test
+    public void getAttributeAsDateNullNameTest() throws SAXException, IOException
+    {
+        Document entityDoc = XmlHelper.loadXMLFrom(CoalesceTypeInstances.TEST_MISSION);
+
+        Node entityNode = entityDoc.getElementsByTagName("entity").item(0);
+
+        assertNull(XmlHelper.getAttributeAsDate(entityNode, null));
+
+    }
+
+    @Test
+    public void getAttributeAsDateEmptyNameTest() throws SAXException, IOException
+    {
+        Document entityDoc = XmlHelper.loadXMLFrom(CoalesceTypeInstances.TEST_MISSION);
+
+        Node entityNode = entityDoc.getElementsByTagName("entity").item(0);
+
+        assertNull(XmlHelper.getAttributeAsDate(entityNode, ""));
+
+    }
+
+    @Test
+    public void getAttributeAsDateNotDateTest() throws SAXException, IOException
+    {
+        Document entityDoc = XmlHelper.loadXMLFrom(CoalesceTypeInstances.TEST_MISSION);
+
+        Node entityNode = entityDoc.getElementsByTagName("entity").item(0);
+
+        assertNull(XmlHelper.getAttributeAsDate(entityNode, "name"));
+
+    }
+
+    @Test
+    public void setAttributeTest() throws SAXException, IOException
+    {
+        Document entityDoc = XmlHelper.loadXMLFrom(CoalesceTypeInstances.TEST_MISSION);
+
+        Node entityNode = entityDoc.getElementsByTagName("entity").item(0);
+
+        assertEquals("TREXMission", XmlHelper.getAttribute(entityNode, "name"));
+
+        XmlHelper.setAttribute(entityDoc, entityNode, "name", "TestingChanged");
+
+        assertEquals("TestingChanged", XmlHelper.getAttribute(entityNode, "name"));
+
+    }
+
+    @Test
+    public void setAttributeDoesNotExistTest() throws SAXException, IOException
+    {
+        Document entityDoc = XmlHelper.loadXMLFrom(CoalesceTypeInstances.TEST_MISSION);
+
+        Node entityNode = entityDoc.getElementsByTagName("entity").item(0);
+
+        assertEquals("", XmlHelper.getAttribute(entityNode, "xyz"));
+
+        XmlHelper.setAttribute(entityDoc, entityNode, "xyz", "TestingValue");
+
+        assertEquals("TestingValue", XmlHelper.getAttribute(entityNode, "xyz"));
+
+    }
+
+    @Test
+    public void setAttributeNullDocTest() throws SAXException, IOException
+    {
+        thrown.expect(NullArgumentException.class);
+        thrown.expectMessage("doc");
+
+        Document entityDoc = XmlHelper.loadXMLFrom(CoalesceTypeInstances.TEST_MISSION);
+
+        Node entityNode = entityDoc.getElementsByTagName("entity").item(0);
+
+        assertEquals("", XmlHelper.getAttribute(entityNode, "xyz"));
+
+        XmlHelper.setAttribute(null, entityNode, "xyz", "TestingValue");
+
+    }
+
+    @Test
+    public void setAttributeNullNodeTest() throws SAXException, IOException
+    {
+        thrown.expect(NullArgumentException.class);
+        thrown.expectMessage("xmlNode");
+
+        Document entityDoc = XmlHelper.loadXMLFrom(CoalesceTypeInstances.TEST_MISSION);
+
+        XmlHelper.setAttribute(entityDoc, null, "xyz", "TestingValue");
+
+    }
+
+    @Test
+    public void setAttributeNullNameTest() throws SAXException, IOException
+    {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("name cannot be null or empty");
+
+        Document entityDoc = XmlHelper.loadXMLFrom(CoalesceTypeInstances.TEST_MISSION);
+
+        Node entityNode = entityDoc.getElementsByTagName("entity").item(0);
+
+        XmlHelper.setAttribute(entityDoc, entityNode, null, "TestingValue");
+
+    }
+
+    @Test
+    public void setAttributeEmptyNameTest() throws SAXException, IOException
+    {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("name cannot be null or empty");
+
+        Document entityDoc = XmlHelper.loadXMLFrom(CoalesceTypeInstances.TEST_MISSION);
+
+        Node entityNode = entityDoc.getElementsByTagName("entity").item(0);
+
+        XmlHelper.setAttribute(entityDoc, entityNode, "", "TestingValue");
+
+    }
+
+    @Test
+    public void setAttributeWhitespaceNameTest() throws SAXException, IOException
+    {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("name cannot be null or empty");
+
+        Document entityDoc = XmlHelper.loadXMLFrom(CoalesceTypeInstances.TEST_MISSION);
+
+        Node entityNode = entityDoc.getElementsByTagName("entity").item(0);
+
+        XmlHelper.setAttribute(entityDoc, entityNode, "   ", "TestingValue");
+
+    }
+
+    @Test
+    public void setAttributeNullValueTest() throws SAXException, IOException
+    {
+        Document entityDoc = XmlHelper.loadXMLFrom(CoalesceTypeInstances.TEST_MISSION);
+
+        Node entityNode = entityDoc.getElementsByTagName("entity").item(0);
+
+        XmlHelper.setAttribute(entityDoc, entityNode, "name", (String) null);
+
+        assertEquals("", XmlHelper.getAttribute(entityNode, "name"));
+
+    }
+
+    @Test
+    public void setAttributeEmptyValueTest() throws SAXException, IOException
+    {
+        Document entityDoc = XmlHelper.loadXMLFrom(CoalesceTypeInstances.TEST_MISSION);
+
+        Node entityNode = entityDoc.getElementsByTagName("entity").item(0);
+
+        XmlHelper.setAttribute(entityDoc, entityNode, "name", "");
+
+        assertEquals("", XmlHelper.getAttribute(entityNode, "name"));
+
+    }
+
+    @Test
+    public void setAttributeAsDateTest() throws SAXException, IOException
+    {
+        Document entityDoc = XmlHelper.loadXMLFrom(CoalesceTypeInstances.TEST_MISSION);
+
+        Node entityNode = entityDoc.getElementsByTagName("entity").item(0);
+
+        assertEquals(JodaDateTimeHelper.fromXmlDateTimeUTC("2014-05-20T16:17:13.2293139Z"),
+                     XmlHelper.getAttributeAsDate(entityNode, "lastmodified"));
+
+        DateTime now = JodaDateTimeHelper.nowInUtc();
+
+        XmlHelper.setAttribute(entityDoc, entityNode, "lastmodified", now);
+
+        assertEquals(now, XmlHelper.getAttributeAsDate(entityNode, "lastmodified"));
+
+    }
+
+    @Test
+    public void setAttributeAsDateDoesNotExistTest() throws SAXException, IOException
+    {
+        Document entityDoc = XmlHelper.loadXMLFrom(CoalesceTypeInstances.TEST_MISSION);
+
+        Node entityNode = entityDoc.getElementsByTagName("entity").item(0);
+
+        assertNull("Undefined attribute shouldn't have a value", XmlHelper.getAttributeAsDate(entityNode, "xyz"));
+
+        DateTime now = JodaDateTimeHelper.nowInUtc();
+
+        XmlHelper.setAttribute(entityDoc, entityNode, "xyz", now);
+
+        assertEquals(now, XmlHelper.getAttributeAsDate(entityNode, "xyz"));
+
+    }
+
+    @Test
+    public void setAttributeAsDateNullDocTest() throws SAXException, IOException
+    {
+        thrown.expect(NullArgumentException.class);
+        thrown.expectMessage("doc");
+
+        Document entityDoc = XmlHelper.loadXMLFrom(CoalesceTypeInstances.TEST_MISSION);
+
+        Node entityNode = entityDoc.getElementsByTagName("entity").item(0);
+
+        DateTime now = JodaDateTimeHelper.nowInUtc();
+
+        XmlHelper.setAttribute(null, entityNode, "xyz", now);
+
+    }
+
+    @Test
+    public void setAttributeAsDateNullNodeTest() throws SAXException, IOException
+    {
+        thrown.expect(NullArgumentException.class);
+        thrown.expectMessage("xmlNode");
+
+        Document entityDoc = XmlHelper.loadXMLFrom(CoalesceTypeInstances.TEST_MISSION);
+
+        DateTime now = JodaDateTimeHelper.nowInUtc();
+
+        XmlHelper.setAttribute(entityDoc, null, "xyz", now);
+
+    }
+
+    @Test
+    public void setAttributeAsDateNullNameTest() throws SAXException, IOException
+    {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("name cannot be null or empty");
+
+        Document entityDoc = XmlHelper.loadXMLFrom(CoalesceTypeInstances.TEST_MISSION);
+
+        Node entityNode = entityDoc.getElementsByTagName("entity").item(0);
+
+        DateTime now = JodaDateTimeHelper.nowInUtc();
+
+        XmlHelper.setAttribute(entityDoc, entityNode, null, now);
+
+    }
+
+    @Test
+    public void setAttributeAsDateEmptyNameTest() throws SAXException, IOException
+    {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("name cannot be null or empty");
+
+        Document entityDoc = XmlHelper.loadXMLFrom(CoalesceTypeInstances.TEST_MISSION);
+
+        Node entityNode = entityDoc.getElementsByTagName("entity").item(0);
+
+        DateTime now = JodaDateTimeHelper.nowInUtc();
+
+        XmlHelper.setAttribute(entityDoc, entityNode, "", now);
+
+    }
+
+    @Test
+    public void setAttributeAsDateWhitespaceNameTest() throws SAXException, IOException
+    {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("name cannot be null or empty");
+
+        Document entityDoc = XmlHelper.loadXMLFrom(CoalesceTypeInstances.TEST_MISSION);
+
+        Node entityNode = entityDoc.getElementsByTagName("entity").item(0);
+
+        DateTime now = JodaDateTimeHelper.nowInUtc();
+
+        XmlHelper.setAttribute(entityDoc, entityNode, "   ", now);
+
+    }
+
+    @Test
+    public void setAttributeAsDateNullValueTest() throws SAXException, IOException
+    {
+        Document entityDoc = XmlHelper.loadXMLFrom(CoalesceTypeInstances.TEST_MISSION);
+
+        Node entityNode = entityDoc.getElementsByTagName("entity").item(0);
+
+        XmlHelper.setAttribute(entityDoc, entityNode, "lastmodified", (DateTime) null);
+
+        assertNull("name attribute should be null", XmlHelper.getAttributeAsDate(entityNode, "lastmodified"));
+
+    }
+
 }

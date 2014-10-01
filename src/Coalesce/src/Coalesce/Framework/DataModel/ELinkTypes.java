@@ -59,7 +59,7 @@ public enum ELinkTypes
 
         initMapping();
 
-        if (StringHelper.IsNullOrEmpty(coalesceType)) return ELinkTypes.Undefined;
+        if (StringHelper.isNullOrEmpty(coalesceType)) return ELinkTypes.Undefined;
         
         ELinkTypes value = codeToStatusMapping.get(coalesceType.trim().toLowerCase());
 

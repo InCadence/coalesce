@@ -381,7 +381,7 @@ public class CoalesceMySQLPersistorTest {
         // Load Template by Key
         String templateXML = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntityTemplateXml(templateKey);
 
-        assertFalse(StringHelper.IsNullOrEmpty(templateXML));
+        assertFalse(StringHelper.isNullOrEmpty(templateXML));
 
     }
 
@@ -391,7 +391,7 @@ public class CoalesceMySQLPersistorTest {
         String templateXML = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntityTemplateXml(_entity.getName(),
                                                                                                         _entity.getSource(),
                                                                                                         _entity.getVersion());
-        assertFalse(StringHelper.IsNullOrEmpty(templateXML));
+        assertFalse(StringHelper.isNullOrEmpty(templateXML));
 
     }
 
@@ -401,7 +401,7 @@ public class CoalesceMySQLPersistorTest {
         String templateKey = CoalesceMySQLPersistorTest._coalesceFramework.GetCoalesceEntityTemplateKey(_entity.getName(),
                                                                                                         _entity.getSource(),
                                                                                                         _entity.getVersion());
-        assertFalse(StringHelper.IsNullOrEmpty(templateKey));
+        assertFalse(StringHelper.isNullOrEmpty(templateKey));
 
     }
 
@@ -437,7 +437,7 @@ public class CoalesceMySQLPersistorTest {
                             && !attribute.getNodeName().equalsIgnoreCase("source")
                             && !attribute.getNodeName().equalsIgnoreCase("version"))
                     {
-                        assertTrue(StringHelper.IsNullOrEmpty(attribute.getNodeValue()));
+                        assertTrue(StringHelper.isNullOrEmpty(attribute.getNodeValue()));
                     }
                     else
                     {

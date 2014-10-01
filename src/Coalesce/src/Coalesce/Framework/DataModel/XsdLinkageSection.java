@@ -187,7 +187,7 @@ public class XsdLinkageSection extends XsdDataObject {
     @Override
     public String toXml()
     {
-        return XmlHelper.Serialize(_entityLinkageSection);
+        return XmlHelper.serialize(_entityLinkageSection);
     }
 
     @Override

@@ -93,7 +93,7 @@ public class CoalesceEntityTemplateTest {
                             && !attribute.getNodeName().equalsIgnoreCase("source")
                             && !attribute.getNodeName().equalsIgnoreCase("version"))
                     {
-                        assertTrue(StringHelper.IsNullOrEmpty(attribute.getNodeValue()));
+                        assertTrue(StringHelper.isNullOrEmpty(attribute.getNodeValue()));
                     }
                     else
                     {

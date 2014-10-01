@@ -145,7 +145,7 @@ public class CoalescePostGresPersistorTest {
                             && !attribute.getNodeName().equalsIgnoreCase("source")
                             && !attribute.getNodeName().equalsIgnoreCase("version"))
                     {
-                        assertTrue(StringHelper.IsNullOrEmpty(attribute.getNodeValue()));
+                        assertTrue(StringHelper.isNullOrEmpty(attribute.getNodeValue()));
                     }
                     else
                     {
@@ -396,7 +396,7 @@ public class CoalescePostGresPersistorTest {
         // Load Template by Key
         String templateXML = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceEntityTemplateXml(templateKey);
 
-        assertFalse(StringHelper.IsNullOrEmpty(templateXML));
+        assertFalse(StringHelper.isNullOrEmpty(templateXML));
 
     }
 
@@ -406,7 +406,7 @@ public class CoalescePostGresPersistorTest {
         String templateXML = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceEntityTemplateXml(_entity.getName(),
                                                                                                            _entity.getSource(),
                                                                                                            _entity.getVersion());
-        assertFalse(StringHelper.IsNullOrEmpty(templateXML));
+        assertFalse(StringHelper.isNullOrEmpty(templateXML));
 
     }
 
@@ -416,7 +416,7 @@ public class CoalescePostGresPersistorTest {
         String templateKey = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceEntityTemplateKey(_entity.getName(),
                                                                                                            _entity.getSource(),
                                                                                                            _entity.getVersion());
-        assertFalse(StringHelper.IsNullOrEmpty(templateKey));
+        assertFalse(StringHelper.isNullOrEmpty(templateKey));
 
     }
 

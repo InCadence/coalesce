@@ -256,7 +256,7 @@ public class XsdFieldHistory extends XsdFieldBase {
     public String getPreviousHistoryKey()
     {
         String prevHistKey = _entityFieldHistory.getPrevioushistorykey();
-        if (StringHelper.IsNullOrEmpty(prevHistKey))
+        if (StringHelper.isNullOrEmpty(prevHistKey))
         {
             return "00000000-0000-0000-0000-000000000000";
         }
@@ -348,7 +348,7 @@ public class XsdFieldHistory extends XsdFieldBase {
     @Override
     public String toXml()
     {
-        return XmlHelper.Serialize(_entityFieldHistory);
+        return XmlHelper.serialize(_entityFieldHistory);
     }
 
     // -----------------------------------------------------------------------//

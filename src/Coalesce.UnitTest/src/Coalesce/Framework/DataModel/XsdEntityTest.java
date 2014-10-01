@@ -25,6 +25,7 @@ import Coalesce.Common.Exceptions.CoalesceException;
 import Coalesce.Common.Helpers.EntityLinkHelper;
 import Coalesce.Common.Helpers.GUIDHelper;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
+import Coalesce.Common.UnitTest.CoalesceAssert;
 import Coalesce.Common.UnitTest.CoalesceTypeInstances;
 
 /*-----------------------------------------------------------------------------'
@@ -1878,10 +1879,8 @@ public class XsdEntityTest {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         String xml = entity.toXml();
-        String stripped = xml.replace("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>", "");
-        String converted = stripped.replace(" ", "").replaceAll("\\s+", "").replaceAll("[^.]...Z\\\"", "Z\\\"");
-        String expected = CoalesceTypeInstances.TEST_MISSION.replaceAll("\\s+", "").replaceAll("[^.]...Z\\\"", "Z\\\"");
-        assertEquals(expected, converted);
+        
+        CoalesceAssert.assertXmlEquals(CoalesceTypeInstances.TEST_MISSION, xml, "UTF-8");
 
     }
 
