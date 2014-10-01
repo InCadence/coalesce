@@ -25,20 +25,6 @@ public class MissionEntity extends XsdEntity {
     private XsdRecord _liveStatusRecord;
 
     // ----------------------------------------------------------------------//
-    // Constructors
-    // ----------------------------------------------------------------------//
-
-    public MissionEntity()
-    {
-        
-    }
-
-    public MissionEntity(String entityXml)
-    {
-        initialize(entityXml);
-    }
-
-    // ----------------------------------------------------------------------//
     // Initialization
     // ----------------------------------------------------------------------//
 
@@ -47,6 +33,9 @@ public class MissionEntity extends XsdEntity {
     {
         XsdSection section;
         XsdRecordset recordSet;
+
+        // Already Initialized?
+        if (_liveStatusRecord != null || _informationRecord != null) return false;
 
         // Initialize Entity
         if (!super.initialize()) return false;
@@ -102,16 +91,16 @@ public class MissionEntity extends XsdEntity {
             XsdRecordset recordSet = (XsdRecordset) this.getDataObjectForNamePath(MissionEntity.Name
                     + "/Live Status Section/Live Status Recordset");
 
-            if (recordSet != null)
+            // Valid Xml?
+            if (recordSet == null) return false;
+
+            if (recordSet.getCount() == 0)
             {
-                if (recordSet.getCount() == 0)
-                {
-                    this._liveStatusRecord = recordSet.addNew();
-                }
-                else
-                {
-                    this._liveStatusRecord = recordSet.GetItem(0);
-                }
+                this._liveStatusRecord = recordSet.addNew();
+            }
+            else
+            {
+                this._liveStatusRecord = recordSet.GetItem(0);
             }
 
         }
@@ -122,16 +111,16 @@ public class MissionEntity extends XsdEntity {
             XsdRecordset recordSet = (XsdRecordset) this.getDataObjectForNamePath(MissionEntity.Name + "/"
                     + MissionEntity.Name + " Information Section/" + MissionEntity.Name + " Information Recordset");
 
-            if (recordSet != null)
+            // Valid Xml?
+            if (recordSet == null) return false;
+
+            if (recordSet.getCount() == 0)
             {
-                if (recordSet.getCount() == 0)
-                {
-                    this._informationRecord = recordSet.addNew();
-                }
-                else
-                {
-                    this._informationRecord = recordSet.GetItem(0);
-                }
+                this._informationRecord = recordSet.addNew();
+            }
+            else
+            {
+                this._informationRecord = recordSet.GetItem(0);
             }
 
         }

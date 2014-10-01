@@ -63,7 +63,7 @@ public class XsdEntity extends XsdDataObject {
     // ----------------------------------------------------------------------//
 
     private Entity _entity;
-
+    
     // ----------------------------------------------------------------------//
     // Factory and Initialization
     // ----------------------------------------------------------------------//
@@ -182,15 +182,25 @@ public class XsdEntity extends XsdDataObject {
             {
                 return false;
             }
-            this._entity = (Entity) deserializedObject;
+            _entity = (Entity) deserializedObject;
 
             if (!super.initialize()) return false;
 
             if (!initializeChildren()) return false;
 
             return initializeReferences();
-
         }
+    }
+
+    public boolean initialize(XsdEntity entity)
+    {
+        // Copy Member Variables
+        _entity = entity._entity;
+        _parent = entity._parent;
+        _childDataObjects = entity._childDataObjects;
+
+        // Initialize References
+        return initializeReferences();
     }
 
     /**
@@ -198,22 +208,20 @@ public class XsdEntity extends XsdDataObject {
      * 
      * @return boolean
      */
+    @Override
     public boolean initialize()
     {
-
         this._entity = new Entity();
 
         if (!super.initialize()) return false;
 
         if (!initializeChildren()) return false;
 
-        return initializeReferences();
-
+        return true;
     }
 
     protected boolean initializeChildren()
     {
-
         XsdLinkageSection linkageSection = new XsdLinkageSection();
 
         if (!linkageSection.initialize(this)) return false;
@@ -231,7 +239,6 @@ public class XsdEntity extends XsdDataObject {
         }
 
         return true;
-
     }
 
     protected boolean initializeReferences()
@@ -758,36 +765,36 @@ public class XsdEntity extends XsdDataObject {
         {
             DateTime myLastModified = myEntity.getLastModified();
             DateTime syncLastModified = syncEntity.getLastModified();
-            
-            XsdEntity entity1=null;
-            XsdEntity entity2=null;
 
-            //Figure out which order
+            XsdEntity entity1 = null;
+            XsdEntity entity2 = null;
+
+            // Figure out which order
             switch (myLastModified.compareTo(syncLastModified)) {
             case -1:
                 entity1 = myEntity;
                 entity2 = syncEntity;
-                break;             
+                break;
             default:
                 entity2 = myEntity;
                 entity1 = syncEntity;
             }
 
             // Check if
-            
-          resolveConflicts(entity1, entity2);
 
-          // Convert xsdEntity objects to Xml Elements
-          SAXBuilder saxBuilder = new SAXBuilder();
-          org.jdom2.Document entity2Doc = saxBuilder.build(new InputSource(new StringReader(entity2.toXml())));
-          org.jdom2.Document entity1Doc = saxBuilder.build(new InputSource(new StringReader(entity1.toXml())));
+            resolveConflicts(entity1, entity2);
 
-          mergeSyncEntityXml(entity1Doc.getRootElement(), entity2Doc.getRootElement());
+            // Convert xsdEntity objects to Xml Elements
+            SAXBuilder saxBuilder = new SAXBuilder();
+            org.jdom2.Document entity2Doc = saxBuilder.build(new InputSource(new StringReader(entity2.toXml())));
+            org.jdom2.Document entity1Doc = saxBuilder.build(new InputSource(new StringReader(entity1.toXml())));
 
-          // Convert back to entity object
-          XMLOutputter xmlOutPutter = new XMLOutputter();
-          String output = xmlOutPutter.outputString(entity1Doc);
-          return XsdEntity.create(output);
+            mergeSyncEntityXml(entity1Doc.getRootElement(), entity2Doc.getRootElement());
+
+            // Convert back to entity object
+            XMLOutputter xmlOutPutter = new XMLOutputter();
+            String output = xmlOutPutter.outputString(entity1Doc);
+            return XsdEntity.create(output);
 
         }
         catch (JDOMException | IOException e)
