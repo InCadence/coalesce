@@ -122,17 +122,16 @@
 			<artifactId>coalesce-core</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>coalesce</groupId>
+			<artifactId>coalesce-persister</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>unity</groupId>
 			<artifactId>unity-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
-			<version>2.4</version>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.xml.ws</groupId>
-			<artifactId>policy</artifactId>
 			<version>2.4</version>
 		</dependency>
 	</dependencies>

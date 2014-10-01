@@ -77,7 +77,7 @@ public class MySQLPersistor extends CoalescePersisterBase {
      * 
      * @param server connection object.
      */
-    public void Initialize(ServerConn svConn)
+    public void initialize(ServerConn svConn)
     {
         serCon = svConn;
     }
@@ -88,7 +88,7 @@ public class MySQLPersistor extends CoalescePersisterBase {
      * @param base class cacher.
      * @param server connection object.
      */
-    public boolean Initialize(ICoalesceCacher cacher, ServerConn svConn) throws CoalescePersistorException
+    public boolean initialize(ICoalesceCacher cacher, ServerConn svConn) throws CoalescePersistorException
     {
         serCon = svConn;
 

@@ -42,9 +42,8 @@
 			<artifactId>coalesce-core</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>coalesce.persister</groupId>
-			<artifactId>coalesce.persister</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<groupId>coalesce</groupId>
+			<artifactId>coalesce-persister</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>sqljdbc4</groupId>

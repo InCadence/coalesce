@@ -84,9 +84,9 @@ public class CoalesceMySQLPersistorTest {
             serCon.setDatabase("coalescedatabase");
 
             mySQLPersistor = new MySQLPersistor();
-            mySQLPersistor.Initialize(serCon);
+            mySQLPersistor.initialize(serCon);
 
-            mySQLPersistor.Initialize(serCon);
+            mySQLPersistor.initialize(serCon);
             CoalesceMySQLPersistorTest._coalesceFramework = new CoalesceFramework();
             CoalesceMySQLPersistorTest._coalesceFramework.Initialize(mySQLPersistor);
 

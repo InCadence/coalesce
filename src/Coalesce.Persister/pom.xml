@@ -1,9 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>coalesce.persister</groupId>
-	<artifactId>coalesce.persister</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<artifactId>coalesce-persister</artifactId>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<plugins>
@@ -71,4 +69,11 @@
 			<version>2.0.1</version>
 		</dependency>
 	</dependencies>
+	<parent>
+		<groupId>coalesce</groupId>
+		<artifactId>coalesce-pom</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>../Coalesce.Pom</relativePath>
+	</parent>
+	<version>${coalescePersisterVersion}</version>
 </project>
