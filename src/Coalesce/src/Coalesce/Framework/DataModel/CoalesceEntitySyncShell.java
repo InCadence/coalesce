@@ -73,7 +73,7 @@ public class CoalesceEntitySyncShell {
      */
     public static CoalesceEntitySyncShell Create(String EntitySyncShellXml) throws SAXException, IOException
     {
-        return CoalesceEntitySyncShell.Create(XmlHelper.loadXMLFrom(EntitySyncShellXml));
+        return CoalesceEntitySyncShell.Create(XmlHelper.loadXmlFrom(EntitySyncShellXml));
     }
 
     /**
@@ -126,7 +126,7 @@ public class CoalesceEntitySyncShell {
      */
     public boolean Initialize(String entityXml) throws SAXException, IOException
     {
-        return this.Initialize(XmlHelper.loadXMLFrom(entityXml));
+        return this.Initialize(XmlHelper.loadXmlFrom(entityXml));
     }
 
     /**

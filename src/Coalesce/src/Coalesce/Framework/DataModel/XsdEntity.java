@@ -1035,7 +1035,7 @@ public class XsdEntity extends XsdDataObject {
             Document NoBinaryXmlDoc;
             try
             {
-                NoBinaryXmlDoc = XmlHelper.loadXMLFrom(entityXml);
+                NoBinaryXmlDoc = XmlHelper.loadXmlFrom(entityXml);
 
                 // Get all Binary Field Nodes. Ensures that the 'binary' attribute value is handled in a case insensitive
                 // way.

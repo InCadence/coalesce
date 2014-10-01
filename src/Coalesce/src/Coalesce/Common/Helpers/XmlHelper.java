@@ -189,12 +189,13 @@ public class XmlHelper {
     }
 
     /**
-     * Sets the value of the specified attribute using the provided value.
+     * Sets the value of the specified attribute using the provided value. If the attribute does not exist yet then a new
+     * attribute is created for the node and the value is set.
      * 
-     * @param doc
-     * @param xmlNode
-     * @param name
-     * @param value
+     * @param doc the parent XML document for the XML node.
+     * @param xmlNode the XML node that contains the attribute to change.
+     * @param name the attribute name.
+     * @param value the value to set the attribute with.
      */
     public static void setAttribute(Document doc, Node xmlNode, String name, String value)
     {
@@ -217,11 +218,13 @@ public class XmlHelper {
     }
 
     /**
+     * Sets the value of the specified attribute using the provided {@link DateTime}. If the attribute does not exist yet
+     * then a new attribute is created for the node and the value is set.
      * 
-     * @param doc
-     * @param xmlNode
-     * @param name
-     * @param value
+     * @param doc the parent XML document for the XML node.
+     * @param xmlNode the XML node that contains the attribute to change.
+     * @param name the attribute name.
+     * @param value the value to set the attribute with.
      */
     public static void setAttribute(Document doc, Node xmlNode, String name, DateTime value)
     {
@@ -239,13 +242,29 @@ public class XmlHelper {
     // public Shared Methods - XML Formatting
     // -----------------------------------------------------------------------'
 
+    /**
+     * Returns the XML representation of the {@link org.w3c.dom.Document} provided.
+     * 
+     * @param doc the document to be converted.
+     * @return the XML representation of the {@link org.w3c.dom.Document}.
+     */
     public static String formatXml(Document doc)
     {
+        if (doc == null) return null;
+
         return formatXml(doc.getFirstChild());
     }
 
+    /**
+     * Returns the XML representation of the {@link org.w3c.dom.Node} provided.
+     * 
+     * @param node the node to be converted.
+     * @return the XML representation of the {@link org.w3c.dom.Node}.
+     */
     public static String formatXml(Node node)
     {
+        if (node == null) return null;
+
         try
         {
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
@@ -264,13 +283,35 @@ public class XmlHelper {
         }
     }
 
-    public static Document loadXMLFrom(String xml) throws SAXException, IOException
+    /**
+     * Returns the {@link org.w3c.dom.Document} representing the XML provided.
+     * 
+     * @param xml the XML value to convert.
+     * @return the {@link org.w3c.dom.Document} representing the XML provided.
+     * 
+     * @throws SAXException
+     * @throws IOException
+     */
+    public static Document loadXmlFrom(String xml) throws SAXException, IOException
     {
-        return loadXMLFrom(new ByteArrayInputStream(xml.getBytes()));
+        if (xml == null) throw new NullArgumentException("xml");
+
+        return loadXmlFrom(new ByteArrayInputStream(xml.getBytes()));
     }
 
-    public static Document loadXMLFrom(InputStream is) throws SAXException, IOException
+    /**
+     * Returns the {@link org.w3c.dom.Document} representing the {@link InputStream} provided.
+     * 
+     * @param is the InputStream containing the XML to convert.
+     * @return the {@link org.w3c.dom.Document} representing the {@link InputStream} provided.
+     * 
+     * @throws SAXException
+     * @throws IOException
+     */
+    public static Document loadXmlFrom(InputStream is) throws SAXException, IOException
     {
+        if (is == null) throw new NullArgumentException("is");
+
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
 

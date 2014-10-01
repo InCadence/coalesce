@@ -312,7 +312,7 @@ public class JodaDateTimeHelper {
     }
 
     /**
-     * Converts a {@link org.joda.time.DateTime} to the string format used in the serialization of {@link Entity} to XML.
+     * Converts a {@link org.joda.time.DateTime} to the string format used in the serialization of {@link Coalesce.Framework.GeneratedJAXB.Entity} to XML.
      * 
      * @param forDate the date.
      * @return the string representation of the {@link org.joda.time.DateTime}.
@@ -330,7 +330,7 @@ public class JodaDateTimeHelper {
     }
 
     /**
-     * Converts a date/time stored in the XML format used to serialize {@link Entity} to a {@link org.joda.time.DateTime}. If
+     * Converts a date/time stored in the XML format used to serialize {@link Coalesce.Framework.GeneratedJAXB.Entity} to a {@link org.joda.time.DateTime}. If
      * the string cannot be parsed then <code>null</code> is returned.
      * 
      * @param xmlDate the XML date string.

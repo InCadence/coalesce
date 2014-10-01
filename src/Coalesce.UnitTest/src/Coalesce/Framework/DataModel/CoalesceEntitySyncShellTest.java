@@ -86,7 +86,7 @@ public class CoalesceEntitySyncShellTest {
     public void testCreateFromDocument() throws SAXException, IOException
     {
         // Load Document
-        Document XmlDoc = XmlHelper.loadXMLFrom(CoalesceTypeInstances.TEST_MISSION);
+        Document XmlDoc = XmlHelper.loadXmlFrom(CoalesceTypeInstances.TEST_MISSION);
 
         // Initialize
         CoalesceEntitySyncShell shell = CoalesceEntitySyncShell.Create(XmlDoc);

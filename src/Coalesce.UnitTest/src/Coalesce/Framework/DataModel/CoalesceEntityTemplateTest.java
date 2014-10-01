@@ -56,7 +56,7 @@ public class CoalesceEntityTemplateTest {
     public void testTemplateFromDocument() throws SAXException, IOException
     {
         // Load Document
-        Document XmlDoc = XmlHelper.loadXMLFrom(CoalesceTypeInstances.TEST_MISSION);
+        Document XmlDoc = XmlHelper.loadXmlFrom(CoalesceTypeInstances.TEST_MISSION);
 
         // Run Test
         CoalesceEntityTemplateTest.testTemplate(CoalesceEntityTemplate.create(XmlDoc));

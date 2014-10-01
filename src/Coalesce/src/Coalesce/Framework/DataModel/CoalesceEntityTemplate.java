@@ -65,7 +65,7 @@ public class CoalesceEntityTemplate {
      */
     public static CoalesceEntityTemplate create(String templateXml) throws SAXException, IOException
     {
-        return CoalesceEntityTemplate.create(XmlHelper.loadXMLFrom(templateXml));
+        return CoalesceEntityTemplate.create(XmlHelper.loadXmlFrom(templateXml));
     }
 
     /**
@@ -118,7 +118,7 @@ public class CoalesceEntityTemplate {
      */
     public boolean initialize(String EntityTemplateXml) throws SAXException, IOException
     {
-        return initialize(XmlHelper.loadXMLFrom(EntityTemplateXml));
+        return initialize(XmlHelper.loadXmlFrom(EntityTemplateXml));
     }
 
     /**
