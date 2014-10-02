@@ -62,7 +62,7 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
     /**
      * Returns the (XML) String of the XsdDataObject.
      * 
-     * @return
+     * @return (XML) String of the DataObject
      */
     public abstract String toXml();
 
@@ -71,7 +71,7 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
      * 
      * @param name String, name of attribute to be set
      * @param value String, value to be assigned to the attribute
-     * @return
+     * @return boolean indicating success/failure
      */
     public abstract boolean setAttribute(String name, String value);
 
@@ -83,42 +83,42 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
      * Returns the value of the XsdDataObject's key attribute which should be the same as the entity's ObjectKey database
      * value.
      * 
-     * @return String
+     * @return String of the XsdDataObject's object key
      */
     protected abstract String getObjectKey();
 
     /**
      * Sets the value of the XsdDataObject's key attribute.
      * 
-     * @param value String
+     * @param value String to be the XsdDataObject's object key
      */
     protected abstract void setObjectKey(String value);
 
     /**
      * Sets the value of the XsdDataObject's LastModified attribute.
      * 
-     * @param value DateTime
+     * @param value DateTime to be the XsdDataObject's last modified date
      */
     protected abstract void setObjectLastModified(DateTime value);
 
     /**
      * Returns the value of the XsdDataObject's status attribute.
      * 
-     * @return String
+     * @return String of the XsdDataObject's status
      */
     protected abstract String getObjectStatus();
 
     /**
      * Sets the value of the XsdDataObject's status attribute.
      * 
-     * @param value ECoalesceDataObjectStatus
+     * @param value ECoalesceDataObjectStatus to be the XsdDataObject's status
      */
     protected abstract void setObjectStatus(ECoalesceDataObjectStatus status);
 
     /**
      * Returns a hashmap key-value pair of the XsdDataObject's attributes.
      * 
-     * @return Map<QName, String>
+     * @return Map<QName, String> of the XsdDataObject's attributes
      */
     protected abstract Map<QName, String> getAttributes();
 
@@ -126,7 +126,7 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
      * Returns a hashmap key-value pair of the XsdDataObject's other attributes - attributes that fall into the
      * XsdDataObject's @XmlAnyAttribute HashMap.
      * 
-     * @return Map<QName, String>
+     * @return Map<QName, String> of the XsdDataObject's other attributes falling into the @XmlAnyAttribute because they weren't specified in the schema
      */
     protected abstract Map<QName, String> getOtherAttributes();
 
@@ -253,7 +253,7 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
      * values with existing keys are replaced.
      * 
      * @param key key identifying the childDataObject
-     * @param value childDataObject value
+     * @param value childDataObject to add to the DataObject's children
      */
     public void setChildDataObjects(String key, XsdDataObject value)
     {
@@ -325,7 +325,7 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
      * 
      * @param name String, @XmlAnyAttribute attribute name
      * @param value, @XmlAnyAttribute attribute value
-     * @return boolean
+     * @return boolean indicating success/failure
      */
     public boolean setOtherAttribute(String name, String value)
     {
@@ -349,7 +349,7 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
      * Returns the XsdDataObject's childDataObject that corresponds to the provided namepath.
      * 
      * @param namePath String corresponding to the desired childDataObject.
-     * @return XsdDataObject childDataObject
+     * @return XsdDataObject of the childDataObject or null if one is not found
      */
     public XsdDataObject getDataObjectForNamePath(String namePath)
     {
@@ -410,7 +410,7 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
      * Returns the XsdDataObject's childDataObject that corresponds to the provided objectkey.
      * 
      * @param key String corresponding to the desired childDataObject objectkey.
-     * @return XsdDataObject childDataObject
+     * @return XsdDataObject for childDataObject or null if one is not found
      */
     public XsdDataObject getCoalesceDataObjectForKey(String key)
     {

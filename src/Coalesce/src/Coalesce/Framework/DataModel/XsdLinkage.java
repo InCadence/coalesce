@@ -39,8 +39,8 @@ public class XsdLinkage extends XsdDataObject implements ICoalesceLinkage {
     /**
      * Creates an XsdLinkage and ties it to its parent XsdLinkageSection.
      * 
-     * @param parent XsdLinkageSection
-     * @return XsdLinkage
+     * @param parent XsdLinkageSection, the linkage section that this new linkage will belong to
+     * @return XsdLinkage, the new linkage to describe a relationship between two classes
      */
     public static XsdLinkage create(XsdLinkageSection parent)
     {
@@ -68,9 +68,9 @@ public class XsdLinkage extends XsdDataObject implements ICoalesceLinkage {
     /**
      * Initializes a previously new XsdLinkage and ties it to its parent XsdLinkageSection.
      * 
-     * @param parent XsdLinkageSection
-     * @param linkage XsdLinkage
-     * @return boolean
+     * @param parent XsdLinkageSection, the linkage section that this new linkage will belong to
+     * @param linkage Linkage, the linkage describing a relationship between two classes
+     * @return boolean indicator of success/failure
      */
     public boolean initialize(XsdLinkageSection parent, Linkage linkage)
     {
@@ -320,7 +320,7 @@ public class XsdLinkage extends XsdDataObject implements ICoalesceLinkage {
     /**
      * Returns the XsdLinkage's status identifying if it is current or deleted
      * 
-     * @return boolean
+     * @return boolean indicates if the linkage has been marked as deleted
      */
     public boolean getIsMarkedDeleted()
     {

@@ -43,8 +43,8 @@ public class CoalesceEntityTemplate {
     /**
      * Creates a CoalesceEntityTemplate based off of an XsdEntity.
      * 
-     * @param entity        XsdEntity
-     * @return              CoalesceEntityTemplate
+     * @param entity XsdEntity that will be used to create the CoalesceEntityTemplate
+     * @return CoalesceEntityTemplate created from the XsdEntity
      * 
      * @throws SAXException
      * @throws IOException
@@ -57,8 +57,8 @@ public class CoalesceEntityTemplate {
     /**
      * Creates a CoalesceEntityTemplate based off of an (XML) String.
      * 
-     * @param templateXml       String
-     * @return                  CoalesceEntityTemplate
+     * @param templateXml String - xml string from/of an XsdEntity
+     * @return CoalesceEntityTemplate created from the xml string
      * 
      * @throws SAXException
      * @throws IOException
@@ -69,10 +69,10 @@ public class CoalesceEntityTemplate {
     }
 
     /**
-     * Creates a CoalesceEntityTemplate based off of an org.w3c.dom Document.
+     * Creates a CoalesceEntityTemplate based off of an entity's org.w3c.dom Document.
      * 
-     * @param doc               org.w3c.dom Document
-     * @return                  CoalesceEntityTemplate
+     * @param doc org.w3c.dom Document that will be used to create the CoalesceEntityTemplate
+     * @return CoalesceEntityTemplate created from the XsdEntity entity's Document
      * 
      * @throws SAXException
      * @throws IOException
@@ -96,8 +96,8 @@ public class CoalesceEntityTemplate {
     /**
      * Initializes a previously new CoalesceEntityTemplate based off of an XsdEntity.
      * 
-     * @param entity            XsdEntity
-     * @return                  boolean
+     * @param entity XsdEntity that will be used to initialize the CoalesceEntityTemplate
+     * @return boolean indicator of success/failure
      * 
      * @throws SAXException
      * @throws IOException
@@ -110,8 +110,8 @@ public class CoalesceEntityTemplate {
     /**
      * Initializes a previously new CoalesceEntityTemplate based off of a (XML) String.
      * 
-     * @param EntityTemplateXml     (XML) String
-     * @return                      boolean
+     * @param EntityTemplateXml (XML) String from/of an XsdEntity
+     * @return boolean indicator of success/failure
      * 
      * @throws SAXException
      * @throws IOException
@@ -124,8 +124,8 @@ public class CoalesceEntityTemplate {
     /**
      * Initializes a previously new CoalesceEntityTemplate based off of an org.w3c.dom Document.
      * 
-     * @param doc   org.w3c.dom Document
-     * @return      boolean
+     * @param doc org.w3c.dom Document from/of an XsdEntity
+     * @return boolean indicator of success/failure
      */
     public boolean initialize(Document doc)
     {
@@ -150,7 +150,7 @@ public class CoalesceEntityTemplate {
     /**
      * Returns the CoalesceEntityTemplate's (org.w3c.dom Document) DataObjectDocument.
      * 
-     * @return      Document
+     * @return Document representing the CoalesceEntityTemplate's entity
      */
     public Document getDataObjectDocument()
     {
@@ -160,7 +160,7 @@ public class CoalesceEntityTemplate {
     /**
      * Returns the CoalesceEntityTemplate's (org.w3c.dom Node) EntityNode.
      * 
-     * @return      Node
+     * @return Node representing the CoalesceEntityTemplate's entity
      */
     public Node getEntityNode()
     {
@@ -170,7 +170,7 @@ public class CoalesceEntityTemplate {
     /**
      * Returns the value of the (EntityNode) Node's name attribute.
      * 
-     * @return  String
+     * @return String the Node's name attribute
      */
     public String getName()
     {
@@ -180,7 +180,7 @@ public class CoalesceEntityTemplate {
     /**
      * Returns the value of the (EntityNode) Node's source attribute.
      * 
-     * @return String
+     * @return String the Node's source attribute
      */
     public String getSource()
     {
@@ -190,7 +190,7 @@ public class CoalesceEntityTemplate {
     /**
      * Returns the value of the (EntityNode) Node's version attribute.
      * 
-     * @return  String
+     * @return String the Node's version attribute
      */
     public String getVersion()
     {
@@ -204,7 +204,7 @@ public class CoalesceEntityTemplate {
     /**
      * Creates and initializes a new XsdEntity based off of this CoalesceEntityTemplate's XML String.
      * 
-     * @return  XsdEntity
+     * @return XsdEntity of the new entity created from this CoalesceEntityTemplate
      */
     public XsdEntity createNewEntity()
     {
@@ -217,20 +217,13 @@ public class CoalesceEntityTemplate {
     /**
      * Returns the UTF-8 (XML) String of the CoalesceEntityTemplate.
      * 
-     * @return  String
+     * @return String (XML) of this CoalesceEntityTemplate
      */
     public String toXml()
     {
         return XmlHelper.formatXml(_dataObjectDocument);
     }
 
-    /**
-     * Returns the UTF-16 (XML) String of the CoalesceEntityTemplate if the setSQLServer boolean parameter is true. 
-     * If setSQLServer parameter is false, returns the UTF-8 (XML) String of the CoalesceEntityTemplate.
-     * 
-     * @param setSQLServer
-     * @return  String
-     */
     /*--------------------------------------------------------------------------
     Private Functions
     --------------------------------------------------------------------------*/

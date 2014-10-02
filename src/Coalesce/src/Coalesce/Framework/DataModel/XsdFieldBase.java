@@ -91,14 +91,14 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
     /**
      * Returns the string representation of the classification marking
      * 
-     * @return String
+     * @return String, the classification marking
      */
     public abstract String getClassificationMarkingAsString();
 
     /**
      * Sets the classification marking to the value of the string parameter
      * 
-     * @param value
+     * @param value, String, the new classification marking
      */
     public abstract void setClassificationMarking(String value);
 
@@ -155,7 +155,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
     /**
      * Returns the field value with the classification marking.
      * 
-     * @return String
+     * @return String, Marking + " " + value
      */
     public String getValueWithMarking()
     {
@@ -185,7 +185,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
     /**
      * Returns the portion marking representation of the full classification marking
      * 
-     * @return String
+     * @return String, the portion marking
      */
     public String getPortionMarking()
     {
@@ -196,7 +196,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
     /**
      * Sets the key value for the XsdFieldHistory
      * 
-     * @param fieldHistory
+     * @param fieldHistory, provides the value of the newer field's Previous History Key
      */
     public void setPreviousHistoryKey(XsdFieldHistory fieldHistory)
     {
@@ -206,9 +206,9 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
     }
 
     /**
-     * Returns an Field's Data as an Object.
+     * Returns an Field's value as an Object.
      * 
-     * @return Object
+     * @return Object base type to contain the field's data, which could be any data type
      * @throws CoalesceDataFormatException
      */
     public Object getData() throws CoalesceDataFormatException
@@ -252,7 +252,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
     /**
      * Sets the Field's value by the Object parameter
      * 
-     * @param value as an Object
+     * @param value, field's value as an Object
      */
     public void setData(Object value)
     {
@@ -262,7 +262,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
     /**
      * Sets the Field's value by the String parameter
      * 
-     * @param value
+     * @param value, field's value as a String
      */
     public void setTypedValue(String value)
     {
@@ -278,7 +278,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
     /**
      * Sets the Field's value by the UUID parameter
      * 
-     * @param value
+     * @param value, field's value as a UUID
      */
     public void setTypedValue(UUID value)
     {
@@ -293,7 +293,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
     /**
      * Sets the Field's value by the DateTime parameter
      * 
-     * @param value
+     * @param value, field's value as a DateTime
      */
     public void setTypedValue(DateTime value)
     {
@@ -308,7 +308,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
     /**
      * Sets the Field's value by the boolean parameter
      * 
-     * @param value
+     * @param value, field's value as a boolean
      */
     public void setTypedValue(boolean value)
     {
@@ -323,7 +323,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
     /**
      * Sets the Field's value by the int parameter
      * 
-     * @param value
+     * @param value, field's value as an integer
      */
     public void setTypedValue(int value)
     {
@@ -338,7 +338,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
     /**
      * Sets the Field's value by the geometry Point parameter
      * 
-     * @param value
+     * @param value, field's value as a geometry point
      * @throws CoalesceDataFormatException
      */
     public void setTypedValue(Point value) throws CoalesceDataFormatException
@@ -356,7 +356,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
     /**
      * Sets the Field's value by the geometry Coordinate parameter
      * 
-     * @param value
+     * @param value, field's value as a geometry coordinate
      * @throws CoalesceDataFormatException
      */
     public void setTypedValue(Coordinate value) throws CoalesceDataFormatException
@@ -374,7 +374,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
     /**
      * Sets the Field's value by the geometry MultiPoint parameter
      * 
-     * @param multiPoint
+     * @param multiPoint, field's value as a geometry multipoint
      * @throws CoalesceDataFormatException
      */
     public void setTypedValue(MultiPoint multiPoint) throws CoalesceDataFormatException
@@ -393,7 +393,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
     /**
      * Sets the Field's value by the geometry coordinate array parameter
      * 
-     * @param value
+     * @param value, field's value as a geometry coordinate array
      * @throws CoalesceDataFormatException
      */
     public void setTypedValue(Coordinate value[]) throws CoalesceDataFormatException
@@ -420,7 +420,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
     /**
      * Sets the Field's value by the byte array parameter
      * 
-     * @param dataBytes
+     * @param dataBytes, field's value as a byte array
      */
     public void setTypedValue(byte[] dataBytes)
     {
@@ -436,10 +436,10 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
     /**
      * Sets the Field's value by the byte array parameter. Also sets the filename, extension and mimetype.
      * 
-     * @param dataBytes
-     * @param filename
-     * @param extension
-     * @param mimeType
+     * @param dataBytes, field's value as a byte array
+     * @param filename, field's filename
+     * @param extension, field's extension
+     * @param mimeType, field's mimetype
      */
     public void setTypedValue(byte[] dataBytes, String filename, String extension, String mimeType)
     {
@@ -454,10 +454,10 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
     /**
      * Sets the Field's hash value. Also sets the filename, extension and mimetype.
      * 
-     * @param filename
-     * @param extension
-     * @param mimeType
-     * @param hash
+     * @param filename, field's filename
+     * @param extension, field's extension
+     * @param mimeType, field's mimetype
+     * @param hash, field's hash value
      */
     public void setTypedValue(String filename, String extension, String mimeType, String hash)
     {
@@ -471,8 +471,8 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
      * Sets the Field's value by the byte array parameter. Also sets the filename, extension and mimetype by the Document
      * Properties.
      * 
-     * @param dataBytes
-     * @param docProps
+     * @param dataBytes, file's value as a byte array
+     * @param docProps, file's DocumentProperties
      */
     public void setTypedValue(byte[] dataBytes, DocumentProperties docProps)
     {
@@ -493,7 +493,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
     /**
      * Sets value, filename, extension, mimetype if the datatype equals the file type and the file exists.
      * 
-     * @param docProps
+     * @param docProps, file's DocumentProperties
      * @throws IOException
      */
     public void setTypedValue(DocumentProperties docProps) throws IOException
@@ -522,7 +522,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
     /**
      * Returns the UUID value of the field
      * 
-     * @return
+     * @return UUID, field's value as a UUID. Null if not a UUID.
      * @throws ClassCastException
      */
     public UUID getGuidValue() throws ClassCastException
@@ -548,7 +548,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
     /**
      * Returns the Field's DateTime value.
      * 
-     * @return
+     * @return DateTime, field's value as a DateTime. Null if not populated or invalid.
      * @throws ClassCastException
      */
     public DateTime getDateTimeValue() throws ClassCastException
@@ -570,7 +570,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
     /**
      * Returns the Field's boolean value.
      * 
-     * @return
+     * @return boolean, field's value as a boolean
      * @throws ClassCastException
      */
     public boolean getBooleanValue() throws ClassCastException
@@ -591,7 +591,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
     /**
      * Returns the Field's Integer value.
      * 
-     * @return
+     * @return integer, field's value as an int
      * @throws CoalesceDataFormatException
      */
     public int getIntegerValue() throws CoalesceDataFormatException
@@ -619,7 +619,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
     /**
      * Returns the Field's geometry Point value.
      * 
-     * @return
+     * @return Point, field's value as a geometry point
      * @throws CoalesceDataFormatException
      */
     public Point getPointValue() throws CoalesceDataFormatException
@@ -650,7 +650,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
     /**
      * Returns the Field's geometry Coordinate value.
      * 
-     * @return
+     * @return Coordinate, field's value as a geometry Coordinate. Null if not populated
      * @throws CoalesceDataFormatException
      */
     public Coordinate getCoordinateValue() throws CoalesceDataFormatException
@@ -667,7 +667,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
     /**
      * Returns the Field's geometry MultiPoint value.
      * 
-     * @return
+     * @return MultiPoint, field's value as a geometry MultiPoint
      * @throws CoalesceDataFormatException
      */
     public MultiPoint getMultiPointValue() throws CoalesceDataFormatException
@@ -750,7 +750,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
     /**
      * Returns the Field's Coordinate array values.
      * 
-     * @return Coordinate[]
+     * @return Coordinate[], field's value as a geometry Coordinate array
      * 
      * @throws CoalesceDataFormatException
      */
@@ -762,7 +762,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
     /**
      * Returns the binary value of Field's associated file.
      * 
-     * @return byte[]
+     * @return byte[], field's value as a byte array
      * 
      * @throws ClassCastException
      */

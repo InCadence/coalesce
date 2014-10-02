@@ -45,9 +45,9 @@ public class XsdFieldHistory extends XsdFieldBase {
     /**
      * Creates an XsdFieldHistory and ties it to its parent XsdFieldBase.
      * 
-     * @param parent XsdFieldBase
+     * @param parent XsdFieldBase base of extended field that is the XsdFieldHistory's parent
      * 
-     * @return XsdFieldHistory
+     * @return XsdFieldHistory, resulting history created from the extended XsdFieldBase
      */
     public static XsdFieldHistory create(XsdFieldBase parent)
     {
@@ -60,9 +60,9 @@ public class XsdFieldHistory extends XsdFieldBase {
     /**
      * Creates an XsdFieldHistory and ties it to its parent XsdField.
      * 
-     * @param parent XsdField
+     * @param parent XsdField, the XsdFieldHistory's parent
      * 
-     * @return XsdFieldHistory
+     * @return XsdFieldHistory, resulting history created from the XsdField
      */
     public static XsdFieldHistory create(XsdField parent)
     {
@@ -99,9 +99,9 @@ public class XsdFieldHistory extends XsdFieldBase {
     /**
      * Initializes a brand new XsdFieldHistory and ties it to its parent XsdField.
      * 
-     * @param parent XsdField
+     * @param parent XsdField, the XsdFieldHistory's parent
      * 
-     * @return boolean
+     * @return boolean indicator of success/failure
      */
     private boolean initialize(XsdField parent)
     {
@@ -111,10 +111,10 @@ public class XsdFieldHistory extends XsdFieldBase {
     /**
      * Initializes a previously new XsdFieldHistory and ties it to its parent XsdField.
      * 
-     * @param parent
-     * @param fieldHistory
+     * @param parent XsdField, the XsdFieldHistory's parent
+     * @param fieldHistory for which this XsdFieldHistory will be based on
      * 
-     * @return boolean
+     * @return boolean indicator of success/failure
      */
     public boolean initialize(XsdField parent, Fieldhistory fieldHistory)
     {

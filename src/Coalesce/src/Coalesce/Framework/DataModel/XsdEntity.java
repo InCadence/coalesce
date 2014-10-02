@@ -73,7 +73,7 @@ public class XsdEntity extends XsdDataObject {
      * 
      * @param entityXml (XML) String that the XsdEntity is to be created from
      * 
-     * @return XsdEntity
+     * @return XsdEntity resulting from entityXml String parameter, null if failed
      */
     public static XsdEntity create(String entityXml)
     {
@@ -95,7 +95,7 @@ public class XsdEntity extends XsdDataObject {
      * @param entityXml (XML) String that the XsdEntity is to be created from.
      * @param title String that could be a a field namepath.
      * 
-     * @return XsdEntity
+     * @return XsdEntity resulting from entityXml String parameter, null if failed
      */
     public static XsdEntity create(String entityXml, String title)
     {
@@ -119,7 +119,7 @@ public class XsdEntity extends XsdDataObject {
      * @param entityId String of the entity id, could be a guid, tcn, bag-tag id or other value
      * @param entityIdType String identifying the entity id's type (guid, tcn, bag-tag id or other value)
      * 
-     * @return XsdEntity
+     * @return XsdEntity resulting from entityXml String parameter, null if failed
      */
     public static XsdEntity create(String name, String source, String version, String entityId, String entityIdType)
     {
@@ -137,7 +137,7 @@ public class XsdEntity extends XsdDataObject {
      * @param entityIdType String identifying the entity id's type (guid, tcn, bag-tag id or other value)
      * @param title String that could be a a field namepath.
      * 
-     * @return XsdEntity
+     * @return XsdEntity resulting from entityXml String parameter, null if failed
      */
     public static XsdEntity create(String name,
                                    String source,
@@ -165,7 +165,7 @@ public class XsdEntity extends XsdDataObject {
      * Initializes a previously new XsdEntity based off of an (XML) String.
      * 
      * @param entityXml (XML) String that the XsdEntity is to be initialized from.
-     * @return boolean
+     * @return boolean indicator of success/failure
      */
     public boolean initialize(String entityXml)
     {
@@ -206,7 +206,7 @@ public class XsdEntity extends XsdDataObject {
     /**
      * Initializes a previously new XsdEntity by initializing skeletal dataObjectChildren.
      * 
-     * @return boolean
+     * @return boolean indicator of success/failure
      */
     @Override
     public boolean initialize()
@@ -467,7 +467,7 @@ public class XsdEntity extends XsdDataObject {
     /**
      * Returns the XsdEntity's linkages from the XsdEntity's linkagesection.
      * 
-     * @return Map<String, XsdLinkage>, linkages
+     * @return Map<String, XsdLinkage>, XsdLinkages of relationships to this XsdEntity
      */
     public Map<String, XsdLinkage> getLinkages()
     {
@@ -481,7 +481,7 @@ public class XsdEntity extends XsdDataObject {
     /**
      * Creates a CoalesceEntityTemplate based off of this XsdEntity.
      * 
-     * @return CoalesceEntityTemplate
+     * @return CoalesceEntityTemplate generated from this XsdEntity
      * 
      * @throws SAXException
      * @throws IOException
@@ -508,7 +508,7 @@ public class XsdEntity extends XsdDataObject {
      * @param name String, the namepath of the section.
      * @param noIndex boolean
      * 
-     * @return XsdSection
+     * @return XsdSection, newly created and now belonging to this XsdEntity
      */
     public XsdSection createSection(String name, boolean noIndex)
     {
@@ -520,7 +520,7 @@ public class XsdEntity extends XsdDataObject {
      * 
      * @param name String, the namepath of the section.
      * 
-     * @return XsdSection
+     * @return XsdSection, newly created and now belonging to this XsdEntity
      */
     public XsdSection createSection(String name)
     {
@@ -530,7 +530,7 @@ public class XsdEntity extends XsdDataObject {
     /**
      * Returns this XsdEntity's sections.
      * 
-     * @return Map<String, XsdSection>, sections
+     * @return Map<String, XsdSection>, sections belonging to this XsdEntity
      */
     public Map<String, XsdSection> getSections()
     {
@@ -552,7 +552,7 @@ public class XsdEntity extends XsdDataObject {
     /**
      * Returns this XsdEntity's XsdLinkageSection.
      * 
-     * @return XsdLinkageSection
+     * @return XsdLinkageSection belonging to this XsdEntity
      */
     public XsdLinkageSection getLinkageSection()
     {
@@ -573,8 +573,8 @@ public class XsdEntity extends XsdDataObject {
      * Returns the XsdEntity's linkages, from the XsdEntity's linkagesection, for the EntityName specified. Returns all
      * linkages when the forEntityName parameter is null.
      * 
-     * @param forEntityName
-     * @return Map<String, XsdLinkage>, linkages
+     * @param forEntityName String of the Entity Name to return linkages for
+     * @return Map<String, XsdLinkage>, linkages with matches for the Entity Name parameter
      */
     public Map<String, XsdLinkage> getLinkages(String forEntityName)
     {
@@ -604,7 +604,7 @@ public class XsdEntity extends XsdDataObject {
     /**
      * Returns the XsdEntity's linkages, from the XsdEntity's linkagesection, based on LinkType.
      * 
-     * @return Map<String, XsdLinkage>, linkages
+     * @return Map<String, XsdLinkage>, linkages with matches for the ELinkTypes parameter
      */
     public Map<String, XsdLinkage> getLinkages(ELinkTypes forLinkType)
     {
@@ -614,9 +614,9 @@ public class XsdEntity extends XsdDataObject {
     /**
      * Returns the XsdEntity's linkages, from the XsdEntity's linkagesection, based on LinkType and EntityName specified.
      * 
-     * @param forLinkType ELinkTypes, the type of relationship link
-     * @param forEntityName String, the Entity name attribute
-     * @return Map<String, XsdLinkage>, linkages
+     * @param forLinkType ELinkTypes (one link type), the type of relationship link to find matching linkages for
+     * @param forEntityName String, the Entity name attribute to find matching linkages for
+     * @return Map<String, XsdLinkage>, linkages with matches for the Entity Name and ELinkType parameters
      */
     public Map<String, XsdLinkage> getLinkages(ELinkTypes forLinkType, String forEntityName)
     {
@@ -627,10 +627,10 @@ public class XsdEntity extends XsdDataObject {
      * Returns the XsdEntity's linkages, from the XsdEntity's linkagesection, based on LinkType EntityName and Entity Source
      * specified.
      * 
-     * @param forLinkType
-     * @param forEntityName
-     * @param forEntitySource
-     * @return Map<String, XsdLinkage>, linkages
+     * @param forLinkType ELinkTypes, the type of relationship link to find matching linkages for
+     * @param forEntityName String, the Entity name attribute to find matching linkages for
+     * @param forEntitySource String, the Entity source attribute to find matching linkages for
+     * @return Map<String, XsdLinkage>, linkages with matches for the parameter criteria
      */
     public Map<String, XsdLinkage> getLinkages(ELinkTypes forLinkType, String forEntityName, String forEntitySource)
     {
@@ -641,8 +641,8 @@ public class XsdEntity extends XsdDataObject {
      * Returns the XsdEntity's linkages, from the XsdEntity's linkagesection, based on a list of LinkTypes and the EntityName
      * specified.
      * 
-     * @param forLinkTypes
-     * @param forEntityName
+     * @param forLinkType ELinkTypes (list of link types), the type of relationship link to find matching linkages for
+     * @param forEntityName String, the Entity name attribute to find matching linkages for
      * @return
      */
     public Map<String, XsdLinkage> getLinkages(List<ELinkTypes> forLinkTypes, String forEntityName)
@@ -653,8 +653,8 @@ public class XsdEntity extends XsdDataObject {
     /**
      * Returns the XsdEntity's XsdSection specified by namepath string.
      * 
-     * @param NamePath String
-     * @return XsdSection
+     * @param NamePath String, namepath of the desired XsdSection
+     * @return XsdSection having the matching namepath parameter. Null if not found.
      */
     public XsdSection getSection(String NamePath)
     {
@@ -671,8 +671,8 @@ public class XsdEntity extends XsdDataObject {
     /**
      * Returns the XsdEntity's list of EntityIds specified by EntityIdType String.
      * 
-     * @param typeParam, EntityIdType String
-     * @return List<String>
+     * @param typeParam, EntityIdType String to retrieve entityids for
+     * @return List<String> list of entityids that match the EntityIdType typeParam
      */
     public List<String> getEntityId(String typeParam)
     {
@@ -698,10 +698,10 @@ public class XsdEntity extends XsdDataObject {
      * Sets the XsdEntity's EntityId and EntityIdType attribute values when values do not exist. Appends values when the
      * attributes have values.
      * 
-     * @param typeParam String EntityIdType value
-     * @param value String EntityId value
+     * @param typeParam String EntityIdType value to append to the EntityIdType attribute
+     * @param value String EntityId value to append to the EntityId attribute
      * 
-     * @return boolean
+     * @return boolean indicator of success/failure
      */
     public boolean setEntityId(String typeParam, String value)
     {
@@ -739,7 +739,7 @@ public class XsdEntity extends XsdDataObject {
     /**
      * Creates a CoalesceEntitySyncShell based off of this XsdEntity.
      * 
-     * @return CoalesceEntitySyncShell
+     * @return CoalesceEntitySyncShell, newly created based on this XsdEntity
      * 
      * @throws SAXException
      * @throws IOException
@@ -753,8 +753,8 @@ public class XsdEntity extends XsdDataObject {
      * Sets the Elements and attribute values of XsdEntity myEntity to the Elements and attribute values of XsdEntity
      * syncEntity when the syncEntity's LastModified values are more recent.
      * 
-     * @param myEntity
-     * @param syncEntity
+     * @param myEntity first of two XsdEntities to be merged into a new XsdEntity
+     * @param syncEntity second of two XsdEntities to be merged into a new XsdEntity
      * @return XsdEntity result of the merged XsdEntities
      * 
      * @throws CoalesceException
@@ -1013,8 +1013,9 @@ public class XsdEntity extends XsdDataObject {
      * Returns the UTF-16 (XML) String of the CoalesceEntityTemplate if the setSQLServer string parameter = "true". If
      * setSQLServer parameter = "false", returns the UTF-8 (XML) String of the CoalesceEntityTemplate.
      * 
-     * @param setSQLServer String
-     * @return (XML) String
+     * @param setSQLServer String, if "true" indicates desired return is UTF-16 (XML) String; otherwise, UTF-8 (XML) String
+     *            will result
+     * @return (XML) String UTF-16 (XML) String or UTF-8 (XML) String depending on parameter
      */
     public String toXml(String setSQLServer)
     {
@@ -1027,8 +1028,8 @@ public class XsdEntity extends XsdDataObject {
     /**
      * Returns the UTF-8 (XML) String of the Entity and, when removeBinary is true, removes the binary values.
      * 
-     * @param removeBinary boolean
-     * @return (XML) String
+     * @param removeBinary boolean. If true, field values of binary and file will be removed from the entityXml string output
+     * @return (XML) String of the entity in UTF-8, with or without the fields of binary/file based on the parameter
      */
     public String toXml(Boolean removeBinary)
     {
