@@ -13,6 +13,7 @@ public class CoalesceAssert {
     public static void assertXmlEquals(String expected, String actual, String encoding)
     {
         String stripped = actual.replace("<?xml version=\"1.0\" encoding=\"" + encoding + "\" standalone=\"yes\"?>", "");
+        stripped = stripped.replace("<?xml version=\"1.0\" encoding=\"" + encoding + "\"?>", "");
         String converted = stripped.replace(" ", "").replaceAll("\\s+", "").replaceAll("[^.]...Z\\\"", "Z\\\"");
 
         String expectedStripped = expected.replace("<?xml version=\"1.0\" encoding=\"" + encoding + "\" standalone=\"yes\"?>","");

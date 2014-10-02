@@ -22,7 +22,8 @@ import org.junit.runners.Suite.SuiteClasses;
  -----------------------------------------------------------------------------*/
 
 @RunWith(Suite.class)
-@SuiteClasses({ CoalesceMySQLPersistorTest.class, CoalesceSQLServerPersistorTest.class, CoalescePostGresPersistorTest.class })
+@SuiteClasses({ CoalesceEncrypterTest.class, CoalesceMySQLPersistorTest.class, CoalesceNEO4JPersistorTest.class,
+               CoalescePostGresPersistorTest.class, CoalesceSQLServerPersistorTest.class })
 public class AllFrameworkPersisterTests {
 
 }
