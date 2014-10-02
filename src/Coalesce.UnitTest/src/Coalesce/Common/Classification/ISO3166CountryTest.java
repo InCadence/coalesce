@@ -94,7 +94,7 @@ public class ISO3166CountryTest {
     @Test
     public void CountryConstructorWithAlpha3EqualToTest() {
         
-        ISO3166Country country = ISO3166Country.WithAlpha3EqualTo("Test2");
+        ISO3166Country country = ISO3166Country.withAlpha3EqualTo("Test2");
         
         assertCountry(null, "Test2", null, country);
     }
@@ -103,7 +103,7 @@ public class ISO3166CountryTest {
     public void CountryConstructorWithAlpha3EqualToNullTest() {
         
         @SuppressWarnings("unused")
-        ISO3166Country country = ISO3166Country.WithAlpha3EqualTo(null);
+        ISO3166Country country = ISO3166Country.withAlpha3EqualTo(null);
         
     }
     
@@ -172,7 +172,7 @@ public class ISO3166CountryTest {
         
         ISO3166Country country = ISO3166Country.USA();
 
-        country.SetAlpha2("Testing2");
+        country.setAlpha2("Testing2");
 
         assertCountry("Testing2", "USA", "UNITED STATES", country);
     }
@@ -182,7 +182,7 @@ public class ISO3166CountryTest {
         
         ISO3166Country country = ISO3166Country.USA();
 
-        country.SetAlpha2(null);
+        country.setAlpha2(null);
         
     }
  
@@ -191,7 +191,7 @@ public class ISO3166CountryTest {
         
         ISO3166Country country = ISO3166Country.USA();
 
-        country.SetAlpha3("Testing3");
+        country.setAlpha3("Testing3");
 
         assertCountry("US", "Testing3", "UNITED STATES", country);
     }
@@ -201,7 +201,7 @@ public class ISO3166CountryTest {
         
         ISO3166Country country = ISO3166Country.USA();
 
-        country.SetAlpha3(null);
+        country.setAlpha3(null);
         
     }
     
@@ -210,7 +210,7 @@ public class ISO3166CountryTest {
         
         ISO3166Country country = ISO3166Country.USA();
 
-        country.SetName("Testing3");
+        country.setName("Testing3");
 
         assertCountry("US", "USA", "Testing3", country);
     }
@@ -220,7 +220,7 @@ public class ISO3166CountryTest {
         
         ISO3166Country country = ISO3166Country.USA();
 
-        country.SetName(null);
+        country.setName(null);
         
     }
     
@@ -272,17 +272,17 @@ public class ISO3166CountryTest {
                                      String expectedName,
                                      ISO3166Country actual) {
     
-        assertEquals(expectedAlpha2, actual.GetAlpha2());
-        assertEquals(expectedAlpha3, actual.GetAlpha3());
-        assertEquals(expectedName, actual.GetName());
+        assertEquals(expectedAlpha2, actual.getAlpha2());
+        assertEquals(expectedAlpha3, actual.getAlpha3());
+        assertEquals(expectedName, actual.getName());
 
     }
     
     public static void assertCountry(ISO3166Country expected, ISO3166Country actual) {
     
-        assertEquals(expected.GetAlpha2(), actual.GetAlpha2());
-        assertEquals(expected.GetAlpha3(), actual.GetAlpha3());
-        assertEquals(expected.GetName(), actual.GetName());
+        assertEquals(expected.getAlpha2(), actual.getAlpha2());
+        assertEquals(expected.getAlpha3(), actual.getAlpha3());
+        assertEquals(expected.getName(), actual.getName());
 
     }
 }

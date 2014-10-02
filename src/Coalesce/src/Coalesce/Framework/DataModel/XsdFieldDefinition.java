@@ -340,7 +340,7 @@ public class XsdFieldDefinition extends XsdDataObject implements ICoalesceFieldD
     @Override
     public void setDefaultClassificationMarking(Marking value)
     {
-        _entityFieldDefinition.setDefaultclassificationmarking(value.ToPortionString());
+        _entityFieldDefinition.setDefaultclassificationmarking(value.toPortionString());
     }
 
     @Override

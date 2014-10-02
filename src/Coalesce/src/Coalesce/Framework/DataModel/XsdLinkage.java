@@ -139,7 +139,7 @@ public class XsdLinkage extends XsdDataObject implements ICoalesceLinkage {
     @Override
     public void setClassificationMarking(Marking value)
     {
-        _entityLinkage.setClassificationmarking(value.ToPortionString());
+        _entityLinkage.setClassificationmarking(value.toPortionString());
         setChanged();
     }
 

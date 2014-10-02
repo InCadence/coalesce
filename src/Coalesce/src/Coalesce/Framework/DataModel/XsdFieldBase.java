@@ -190,7 +190,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
     public String getPortionMarking()
     {
         Marking mrk = new Marking(getClassificationMarkingAsString());
-        return mrk.ToPortionString();
+        return mrk.toPortionString();
     }
 
     /**

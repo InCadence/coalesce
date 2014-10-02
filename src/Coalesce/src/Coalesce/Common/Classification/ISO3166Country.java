@@ -46,9 +46,9 @@ public class ISO3166Country implements Serializable, Comparable<ISO3166Country> 
     	_name = name;
     }
     
-    public static ISO3166Country WithAlpha3EqualTo(String alpha3) {
+    public static ISO3166Country withAlpha3EqualTo(String alpha3) {
     	ISO3166Country country = new ISO3166Country();
-    	country.SetAlpha3(alpha3);
+    	country.setAlpha3(alpha3);
     	return country;
     }
     
@@ -62,38 +62,38 @@ public class ISO3166Country implements Serializable, Comparable<ISO3166Country> 
     	
     	ISO3166Country otherCountry = (ISO3166Country)other;
     	
-    	return GetAlpha3().equals(otherCountry.GetAlpha3());
+    	return getAlpha3().equals(otherCountry.getAlpha3());
     	
     }
 	@Override
     public int compareTo(ISO3166Country other)
     {
-		return GetName().compareTo(other.GetName());
+		return getName().compareTo(other.getName());
     }
     
-	public String GetAlpha2() {
+	public String getAlpha2() {
 		return _alpha2;
 	}
 	
-	public void SetAlpha2(String alpha2) {
+	public void setAlpha2(String alpha2) {
     	if (alpha2 == null) throw new NullArgumentException("alpha2");
 		_alpha2 = alpha2;
 	}
 	
-	public String GetAlpha3() {
+	public String getAlpha3() {
 		return _alpha3;
 	}
 	
-	public void SetAlpha3(String alhpa3) {
+	public void setAlpha3(String alhpa3) {
     	if (alhpa3 == null) throw new NullArgumentException("alhpa3");
 		_alpha3 = alhpa3;
 	}
 	
-    public String GetName() {
+    public String getName() {
     	return _name;
     }
     
-    public void SetName(String name) {
+    public void setName(String name) {
     	if (name == null) throw new NullArgumentException("name");
     	_name = name;
     }

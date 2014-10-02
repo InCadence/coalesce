@@ -59,7 +59,7 @@ public class Marking implements Serializable, Comparable<Marking> {
 
     private static List<MarkingValue> GetClassifications() {
         if (_classificationList == null) {
-            _classificationList = FieldValues.GetListOfClassifications(null, true);
+            _classificationList = FieldValues.getListOfClassifications(null, true);
         }
         
         return _classificationList;
@@ -70,15 +70,15 @@ public class Marking implements Serializable, Comparable<Marking> {
     {
         if (!(other instanceof Marking)) return false;
         
-        return ToPortionString().equals(((Marking) other).ToPortionString());
+        return toPortionString().equals(((Marking) other).toPortionString());
     }
     
     @Override
     public int compareTo(Marking other)
     {
 
-        String title = GetClassification().GetTitle();
-        String otherTitle = other.GetClassification().GetTitle();
+        String title = getClassification().getTitle();
+        String otherTitle = other.getClassification().getTitle();
 
         if (title.contains("TOP SECRET")) {
             
@@ -164,12 +164,12 @@ public class Marking implements Serializable, Comparable<Marking> {
         if (!markingString.contains("//")) {
             
             if (isPortionMarking) {
-                _classification = FieldValues.GetMarkingValueByPortion(markingString, GetClassifications());
+                _classification = FieldValues.getMarkingValueByPortion(markingString, GetClassifications());
             } else {
-                _classification = FieldValues.GetMarkingValueByTitle(markingString, GetClassifications());
+                _classification = FieldValues.getMarkingValueByTitle(markingString, GetClassifications());
             }
             
-            GetSelectedCountries().add(ISO3166Country.USA());
+            getSelectedCountries().add(ISO3166Country.USA());
             return;
         }
         
@@ -181,19 +181,19 @@ public class Marking implements Serializable, Comparable<Marking> {
         
         // Reset values first
         _isNATO = false;
-        GetSelectedCountries().clear();
+        getSelectedCountries().clear();
         _classification = null;
         
         // CLASSIFICATION//
         if (!parts[index].equals("")) {
             
             if (isPortionMarking) {
-                _classification = FieldValues.GetMarkingValueByPortion(parts[0], GetClassifications());
+                _classification = FieldValues.getMarkingValueByPortion(parts[0], GetClassifications());
             } else {
-                _classification = FieldValues.GetMarkingValueByTitle(parts[0], GetClassifications());
+                _classification = FieldValues.getMarkingValueByTitle(parts[0], GetClassifications());
             }
             
-            GetSelectedCountries().add(ISO3166Country.USA());
+            getSelectedCountries().add(ISO3166Country.USA());
             
             index += 1;
             
@@ -214,13 +214,13 @@ public class Marking implements Serializable, Comparable<Marking> {
                 marking = joint.contains("TOP") ? "JOINT TOP SECRET" : "JOINT " + joint.get(1);
                 
                 if (isPortionMarking) {
-                    _classification = FieldValues.GetMarkingValueByPortion(marking, GetClassifications());
+                    _classification = FieldValues.getMarkingValueByPortion(marking, GetClassifications());
                 } else {
-                    _classification = FieldValues.GetMarkingValueByTitle(marking, GetClassifications());
+                    _classification = FieldValues.getMarkingValueByTitle(marking, GetClassifications());
                 }
                 
                 for (int pos = (joint.contains("TOP") ? 3 : 2); pos < joint.size(); pos++) {
-                    GetSelectedCountries().add(FieldValues.GetCountryByAlpha3(joint.get(pos)));
+                    getSelectedCountries().add(FieldValues.getCountryByAlpha3(joint.get(pos)));
                 }
                 
             } else if (parts[index].startsWith("COSMIC") ||
@@ -228,12 +228,12 @@ public class Marking implements Serializable, Comparable<Marking> {
                        parts[index].contains("ATOMAL") ) {
                 
                 _isNATO = true;
-                _classification = FieldValues.GetMarkingValueByTitle(parts[index], GetClassifications());
+                _classification = FieldValues.getMarkingValueByTitle(parts[index], GetClassifications());
                 
             } else if ((isPortionMarking && parts[index].startsWith("CTS")) || parts[index].startsWith("N")) {
                 
                 _isNATO = true;
-                _classification = FieldValues.GetMarkingValueByPortion(parts[index], GetClassifications());
+                _classification = FieldValues.getMarkingValueByPortion(parts[index], GetClassifications());
                 
             } else {
                 
@@ -241,15 +241,15 @@ public class Marking implements Serializable, Comparable<Marking> {
                 
                 if (fgc.size() < (fgc.contains("TOP") ? 3 : 2)) return; // Invalid FGC Classification marking
                 
-                ISO3166Country country = FieldValues.GetCountryByAlpha3(fgc.get(0));
+                ISO3166Country country = FieldValues.getCountryByAlpha3(fgc.get(0));
                 if (country != null) {
-                    GetSelectedCountries().add(country);
+                    getSelectedCountries().add(country);
                 }
                 
                 if (isPortionMarking) {
-                    _classification = FieldValues.GetMarkingValueByPortion(fgc.get(1), GetClassifications());
+                    _classification = FieldValues.getMarkingValueByPortion(fgc.get(1), GetClassifications());
                 } else {
-                    _classification = FieldValues.GetMarkingValueByTitle((fgc.contains("TOP") ? "TOP SECRET" : fgc.get(1)), GetClassifications());
+                    _classification = FieldValues.getMarkingValueByTitle((fgc.contains("TOP") ? "TOP SECRET" : fgc.get(1)), GetClassifications());
                 }
                 
             }
@@ -318,7 +318,7 @@ public class Marking implements Serializable, Comparable<Marking> {
                     if (disp.length < 3) return; // Invalid DISPLAY ONLY Desemination marking
 
                     for (int pos=2; pos < disp.length; pos++) {
-                        GetDisplayOnlyCountries().add(FieldValues.GetCountryByAlpha3(disp[pos]));
+                        getDisplayOnlyCountries().add(FieldValues.getCountryByAlpha3(disp[pos]));
                     }
 
                 } else if (subpart.startsWith("REL TO")) {
@@ -330,7 +330,7 @@ public class Marking implements Serializable, Comparable<Marking> {
                     if (relto.length < 3) return; // Invalid REL TO Desemination marking
 
                     for (int pos=2; pos < relto.length; pos++) {
-                        GetReleaseToCountries().add(FieldValues.GetCountryByAlpha3(relto[pos]));
+                        getReleaseToCountries().add(FieldValues.getCountryByAlpha3(relto[pos]));
                     }
 
                     // Other Disem
@@ -358,13 +358,13 @@ public class Marking implements Serializable, Comparable<Marking> {
 
                     if (accm.length != 2) return;   // Invalid ACCM Other Desemination marking
 
-                    GetNicknames().add(accm[1]);
+                    getNicknames().add(accm[1]);
                     
                 } else {
                 
                     if (isACCM) {   // Assume this is a ACCM Nickname
                     
-                        GetNicknames().add(subpart);
+                        getNicknames().add(subpart);
                     } else {
                         
                         return; // Unrecognized marking
@@ -378,99 +378,99 @@ public class Marking implements Serializable, Comparable<Marking> {
         
     }
     
-    public boolean GetIsNATO() {
+    public boolean getIsNATO() {
         return _isNATO;
     }
     
-    public void SetIsNATO(boolean value) {
+    public void setIsNATO(boolean value) {
         _isNATO = value;
     }
     
-    public boolean GetIsJOINT() {
-        return GetSelectedCountries().size() > 1;
+    public boolean getIsJOINT() {
+        return getSelectedCountries().size() > 1;
     }
     
-    public boolean GetIsFOUO() {
+    public boolean getIsFOUO() {
         return _isFOUO;
     }
     
-    public void SetIsFOUO(boolean value) {
+    public void setIsFOUO(boolean value) {
         _isFOUO = value;
     }
     
-    public boolean GetIsLES() {
+    public boolean getIsLES() {
         return _isLES;
     }
     
-    public void SetIsLES(boolean value) {
+    public void setIsLES(boolean value) {
         _isLES = value;
     }
     
-    public boolean GetIsORCON() {
+    public boolean getIsORCON() {
         return _isORCON;
     }
     
-    public void SetIsORCON(boolean value) {
+    public void setIsORCON(boolean value) {
         _isORCON = value;
     }
     
-    public boolean GetIsIMCON() {
+    public boolean getIsIMCON() {
         return _isIMCON;
     }
     
-    public void SetIsIMCON(boolean value) {
+    public void setIsIMCON(boolean value) {
         _isIMCON = value;
     }
     
-    public boolean GetIsDISPLAY_ONLY() {
-        return GetDisplayOnlyCountries().size() > 0;
+    public boolean getIsDISPLAY_ONLY() {
+        return getDisplayOnlyCountries().size() > 0;
     }
     
-    public boolean GetIsDSEN() {
+    public boolean getIsDSEN() {
         return _isDSEN;
     }
     
-    public void SetIsDSEN(boolean value) {
+    public void setIsDSEN(boolean value) {
         _isDSEN = value;
     }
     
-    public boolean GetIsFISA() {
+    public boolean getIsFISA() {
         return _isFISA;
     }
     
-    public void SetIsFISA(boolean value) {
+    public void setIsFISA(boolean value) {
         _isFISA = value;
     }
     
-    public boolean GetIsPROPIN() {
+    public boolean getIsPROPIN() {
         return _isPROPIN;
     }
     
-    public void SetIsPROPIN(boolean value) {
+    public void setIsPROPIN(boolean value) {
         _isPROPIN = value;
     }
     
-    public boolean GetIsRELIDO() {
+    public boolean getIsRELIDO() {
         return _isRELIDO;
     }
     
-    public void SetIsRELIDO(boolean value) {
+    public void setIsRELIDO(boolean value) {
         _isRELIDO = value;
     }
     
-    public boolean GetIsReleaseTo() {
-        return GetReleaseToCountries().size() > 0;
+    public boolean getIsReleaseTo() {
+        return getReleaseToCountries().size() > 0;
     }
     
-    public boolean GetIsNOFORN() {
+    public boolean getIsNOFORN() {
         return _isNOFORN;
     }
     
-    public void SetIsNOFORN(boolean value) {
+    public void setIsNOFORN(boolean value) {
         _isNOFORN = value;
     }
     
-    public List<ISO3166Country> GetSelectedCountries() {
+    public List<ISO3166Country> getSelectedCountries() {
         if (_selectedCountries == null) {
             _selectedCountries = new ArrayList<ISO3166Country>();
         }
@@ -478,7 +478,7 @@ public class Marking implements Serializable, Comparable<Marking> {
         return _selectedCountries;
     }
     
-    public List<ISO3166Country> GetReleaseToCountries() {
+    public List<ISO3166Country> getReleaseToCountries() {
         if (_releaseToCountries == null) {
             _releaseToCountries = new ArrayList<ISO3166Country>();
         }
@@ -486,7 +486,7 @@ public class Marking implements Serializable, Comparable<Marking> {
         return _releaseToCountries;
     }
     
-    public List<ISO3166Country> GetDisplayOnlyCountries() {
+    public List<ISO3166Country> getDisplayOnlyCountries() {
         if (_displayOnlyCountries == null) {
             _displayOnlyCountries = new ArrayList<ISO3166Country>();
         }
@@ -494,7 +494,7 @@ public class Marking implements Serializable, Comparable<Marking> {
         return _displayOnlyCountries;
     }
     
-    public MarkingValue GetClassification() {
+    public MarkingValue getClassification() {
         if (_classification == null) {
             _classification = new MarkingValue();
         }
@@ -502,47 +502,47 @@ public class Marking implements Serializable, Comparable<Marking> {
         return _classification;
     }
     
-    public void SetClassification(MarkingValue value) {
+    public void setClassification(MarkingValue value) {
         _classification = value;
     }
     
-    public boolean GetIsLIMDIS() {
+    public boolean getIsLIMDIS() {
         return _isLIMDIS;
     }
     
-    public void SetIsLIMDIS(boolean value) {
+    public void setIsLIMDIS(boolean value) {
         _isLIMDIS = value;
     }
     
-    public boolean GetIsEXDIS() {
+    public boolean getIsEXDIS() {
         return _isEXDIS;
     }
     
-    public void SetIsEXDIS(boolean value) {
+    public void setIsEXDIS(boolean value) {
         _isEXDIS = value;
     }
     
-    public boolean GetIsSBU() {
+    public boolean getIsSBU() {
         return _isSBU;
     }
     
-    public void SetIsSBU(boolean value) {
+    public void setIsSBU(boolean value) {
         _isSBU = value;
     }
     
-    public boolean GetIsSBUNF() {
+    public boolean getIsSBUNF() {
         return _isSBUNF;
     }
     
-    public void SetIsSBUNF(boolean value) {
+    public void setIsSBUNF(boolean value) {
         _isSBUNF = value;
     }
     
-    public boolean GetIsACCM() {
-        return GetNicknames().size() > 0;
+    public boolean getIsACCM() {
+        return getNicknames().size() > 0;
     }
     
-    public List<String> GetNicknames() {
+    public List<String> getNicknames() {
         if (_nicknames == null) {
             _nicknames = new ArrayList<String>();
         };
@@ -550,16 +550,16 @@ public class Marking implements Serializable, Comparable<Marking> {
         return _nicknames;
     }
     
-    public boolean HasDeseminationControls() {
-        return GetIsFOUO() || GetIsLES() || GetIsORCON() || GetIsIMCON() || GetIsDSEN() || GetIsDISPLAY_ONLY() ||
-               GetIsFISA() || GetIsNOFORN() || GetIsPROPIN() || GetIsPROPIN() || GetIsReleaseTo() || GetIsRELIDO();
+    public boolean hasDeseminationControls() {
+        return getIsFOUO() || getIsLES() || getIsORCON() || getIsIMCON() || getIsDSEN() || getIsDISPLAY_ONLY() ||
+               getIsFISA() || getIsNOFORN() || getIsPROPIN() || getIsPROPIN() || getIsReleaseTo() || getIsRELIDO();
     }
    
-    public boolean HasOtherDeseminationControls() {
-        return GetIsLIMDIS() || GetIsEXDIS() || GetIsSBU() || GetIsSBUNF() || GetIsACCM();
+    public boolean hasOtherDeseminationControls() {
+        return getIsLIMDIS() || getIsEXDIS() || getIsSBU() || getIsSBUNF() || getIsACCM();
     }
     
-    public String ToPortionString() {
+    public String toPortionString() {
         return "(" + toString(true) + ")";
     }
     
@@ -573,74 +573,74 @@ public class Marking implements Serializable, Comparable<Marking> {
         String marking = "";
         
         // JOINT and NATO and FGI start with //
-        if (GetIsJOINT() || GetIsNATO() || !GetSelectedCountries().contains(ISO3166Country.USA())) {
+        if (getIsJOINT() || getIsNATO() || !getSelectedCountries().contains(ISO3166Country.USA())) {
             
             marking += "//";
             
             // If there is only one country and we know it is not USA then this if FGI eg. '//DEU SECRET'
-            if (GetSelectedCountries().size() == 1) {
-                marking += GetSelectedCountries().get(0).GetAlpha3() + " ";
+            if (getSelectedCountries().size() == 1) {
+                marking += getSelectedCountries().get(0).getAlpha3() + " ";
             }
         }
         
         // Now add the classification level
-        marking += toPortion ? GetClassification().GetPortion() : GetClassification().GetTitle();
+        marking += toPortion ? getClassification().getPortion() : getClassification().getTitle();
         
         // JOINT then adds the list of countries
-        if (GetIsJOINT()) {
+        if (getIsJOINT()) {
             
-            for (ISO3166Country country : GetSelectedCountries()) {
-                marking += " " + country.GetAlpha3();
+            for (ISO3166Country country : getSelectedCountries()) {
+                marking += " " + country.getAlpha3();
             }
         }
         
-        if (HasDeseminationControls()) {
+        if (hasDeseminationControls()) {
             
             marking += "//";
             
-            if (GetIsFOUO()) {
+            if (getIsFOUO()) {
                 
-                if (GetIsLES()) {
+                if (getIsLES()) {
                     marking += "FOUO-LES/";
                 } else {
                     marking += "FOUO/";
                 }
             } else {
-                if (GetIsLES()) {
+                if (getIsLES()) {
                     marking += "LES/";
                 }
             }
             
-            marking = AddDeseminations(marking, "REL TO ", GetIsReleaseTo(), GetReleaseToCountries());
+            marking = AddDeseminations(marking, "REL TO ", getIsReleaseTo(), getReleaseToCountries());
             
-            marking = AddDeseminations(marking, "DISPLAY ONLY ", GetIsDISPLAY_ONLY(), GetDisplayOnlyCountries());
+            marking = AddDeseminations(marking, "DISPLAY ONLY ", getIsDISPLAY_ONLY(), getDisplayOnlyCountries());
             
-            if (GetIsRELIDO()) marking += "RELIDO/";
-            if (GetIsPROPIN()) marking += toPortion ? "PR/" : "PROPIN/";
-            if (GetIsFISA()) marking += "FISA/";
-            if (GetIsIMCON()) marking += toPortion ? "IMC/" : "IMCON/";
-            if (GetIsORCON()) marking += toPortion ? "OC/" : "ORCON/";
-            if (GetIsDSEN()) marking += "DSEN/";
-            if (GetIsNOFORN()) marking += toPortion ? "NF/" : "NOFORN/";
+            if (getIsRELIDO()) marking += "RELIDO/";
+            if (getIsPROPIN()) marking += toPortion ? "PR/" : "PROPIN/";
+            if (getIsFISA()) marking += "FISA/";
+            if (getIsIMCON()) marking += toPortion ? "IMC/" : "IMCON/";
+            if (getIsORCON()) marking += toPortion ? "OC/" : "ORCON/";
+            if (getIsDSEN()) marking += "DSEN/";
+            if (getIsNOFORN()) marking += toPortion ? "NF/" : "NOFORN/";
             
             marking = marking.substring(0, marking.length() - 1);
         }
         
-        if (HasOtherDeseminationControls()) {
+        if (hasOtherDeseminationControls()) {
             
             marking += "//";
             
-            if (GetIsLIMDIS()) marking += toPortion ? "DS/" : "LIMITED DISTRIBUTION/";
-            if (GetIsEXDIS()) marking += toPortion ? "XD/" : "EXDIS/";
-            if (GetIsSBU()) marking += "SBU/";
-            if (GetIsSBUNF()) marking += toPortion ? "SBU-NF/" : "SBU NOFORN/";
+            if (getIsLIMDIS()) marking += toPortion ? "DS/" : "LIMITED DISTRIBUTION/";
+            if (getIsEXDIS()) marking += toPortion ? "XD/" : "EXDIS/";
+            if (getIsSBU()) marking += "SBU/";
+            if (getIsSBUNF()) marking += toPortion ? "SBU-NF/" : "SBU NOFORN/";
             
-            if (GetIsACCM()) {
+            if (getIsACCM()) {
                 
                 marking += "ACCM-";
                 
                 Collections.sort(_nicknames);
-                for (String nickname : GetNicknames()) {
+                for (String nickname : getNicknames()) {
                     
                     marking += nickname + "/";
                 }
@@ -675,7 +675,7 @@ public class Marking implements Serializable, Comparable<Marking> {
                 
                 if (!(country.compareTo(ISO3166Country.USA()) == 0)) {
                     
-                    marking += country.GetAlpha3() + ", ";
+                    marking += country.getAlpha3() + ", ";
                 }
             }
             
