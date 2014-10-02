@@ -27,9 +27,6 @@ import Coalesce.Common.Exceptions.CoalescePersistorException;
 import Coalesce.Framework.CoalesceFramework;
 import Coalesce.Framework.DataModel.CoalesceEntityTemplate;
 import Coalesce.Framework.DataModel.XsdEntity;
-import Coalesce.Framework.DataModel.XsdRecord;
-import Coalesce.Framework.DataModel.XsdRecordset;
-import Coalesce.Framework.DataModel.XsdSection;
 import Coalesce.Framework.Persistance.ServerConn;
 import coalesce.persister.postgres.PostGresSQLPersistor;
 
@@ -38,19 +35,17 @@ public class appMain {
 	private final static Logger log = Logger.getLogger("TesterLog");
 	private static int ITERATION_LIMIT = 1000000;
 	private static int CAPTURE_METRICS_INTERVAL = 1000;
-	static String userDir;
 	static ServerConn serCon;
-	static FileInputStream inputStream;
+	static FileInputStream inputStream = null;
 	static PostGresSQLPersistor psPersister;
 	private static CoalesceFramework _coalesceFramework;
-	// private static String MODULE_NAME =
-	// "Coalesce.Persister.PerformanceTester";
 	static int minorVal = 0;
 	static int majorVal = 0;
 	static int masterCounter = 0;
 	static String startSaveTimeStamp = "";
 	static String completeSaveTimeStamp = "";
 	private static List<TimeTrack> timeLogger;
+	static String entityXml="";
 	static Document dom;
 
 	public static void main(String[] args) {
@@ -84,7 +79,7 @@ public class appMain {
 	private static void runVolume() {
 		try {
 			TimeTrack _timeTrack;
-			String startTime = appMain.getCurrentTime(false);
+			String startTime = appMain.getCurrentTime();
 			int _iteration_counter = 0;
 			appMain.createDOMDocument();
 			for (_iteration_counter = 0; _iteration_counter <= ITERATION_LIMIT; _iteration_counter++) {
@@ -108,11 +103,11 @@ public class appMain {
 					break;
 			}
 			appMain.createDOMTree();
-			String stopTime = appMain.getCurrentTime(false);
+			String stopTime = appMain.getCurrentTime();
 			outConsoleData(1, "STARTTIME: " + startTime);
 			outConsoleData(2, "STOPTIME: " + stopTime);
-			userDir="";
-			appMain.printToFile(userDir + "\\persistance.xml");
+			String userDir = System.getProperty("user.dir");
+			appMain.printToFile(userDir + "/persistance.xml");
 		} catch (Exception ex) {
 			log.log(java.util.logging.Level.SEVERE, ex.toString());
 		}
@@ -135,18 +130,14 @@ public class appMain {
 	}
 
 	private static String getCurrentTime(boolean isNano) {
-//		Calendar calStamp = Calendar.getInstance();
-//		java.util.Date nowCurrentDate = calStamp.getTime();
-//		java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(
-//				nowCurrentDate.getTime());
-//		return currentTimestamp.toString();
 		String currentTime;
-		if(isNano)
-			currentTime=String.valueOf(System.currentTimeMillis());
+		if (isNano)
+			currentTime = String.valueOf(System.nanoTime());
 		else
-			currentTime=String.valueOf(System.currentTimeMillis());
+			currentTime = String.valueOf(System.currentTimeMillis());
 		return currentTime;
 	}
+
 	private static String getCurrentTime() {
 		Calendar calStamp = Calendar.getInstance();
 		java.util.Date nowCurrentDate = calStamp.getTime();
@@ -157,17 +148,20 @@ public class appMain {
 
 	private static XsdEntity createEntity(String entityVersion)
 			throws CoalesceException {
+		
 		try {
 			// Create Test Entity
 			XsdEntity _entity = new XsdEntity();
 			// Create Entity
 			_entity = new XsdEntity();
 			String suserDir = System.getProperty("user.dir");
-			suserDir	+= "\\EntityPerfFile.xml";
+			suserDir += "/EntityPerfFile.xml";
 			if(inputStream==null)
 				inputStream = new FileInputStream(suserDir);
+			if (entityXml == ""){
+				entityXml = IOUtils.toString(inputStream);
+			}
 			try {
-				String entityXml = IOUtils.toString(inputStream);
 				XsdEntity entity = new XsdEntity();
 				entity.initialize(entityXml);
 				CoalesceEntityTemplate template = CoalesceEntityTemplate
@@ -203,9 +197,9 @@ public class appMain {
 	}
 
 	private static void outConsoleData(int cntValue, String msg) {
-		System.out.println(msg  + "\t" + cntValue);
+		System.out.println(msg + "\t" + cntValue);
 	}
-	
+
 	private static void createDOMDocument() {
 		// get an instance of factory
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
