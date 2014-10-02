@@ -8,11 +8,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.xml.namespace.QName;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.joda.time.DateTime;
+
+import com.vividsolutions.jts.geom.Coordinate;
 
 import Coalesce.Common.Exceptions.CoalesceDataFormatException;
 import Coalesce.Common.Helpers.FileHelper;
@@ -43,7 +46,7 @@ import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record.Field.Fi
 /**
  *
  */
-public abstract class XsdField<T> extends XsdFieldBase<T> {
+public class XsdField<T> extends XsdFieldBase<T> {
 
     // -----------------------------------------------------------------------//
     // protected Member Variables
@@ -71,7 +74,7 @@ public abstract class XsdField<T> extends XsdFieldBase<T> {
         Field newEntityField = new Field();
         parent.getEntityFields().add(newEntityField);
 
-        XsdField<?> newField = createNewField(fieldDefinition.getDataType());
+        XsdField<?> newField = createTypeField(fieldDefinition.getDataType());
         if (!newField.initialize(parent, newEntityField)) return null;
 
         newField.setSuspendHistory(true);
@@ -102,7 +105,7 @@ public abstract class XsdField<T> extends XsdFieldBase<T> {
 
     }
 
-    protected static XsdField<?> createNewField(ECoalesceFieldDataTypes dataType)
+    protected static XsdField<?> createTypeField(ECoalesceFieldDataTypes dataType)
     {
         switch (dataType) {
 
@@ -137,6 +140,100 @@ public abstract class XsdField<T> extends XsdFieldBase<T> {
         }
     }
 
+    /**
+     * Returns an Field's value as type T.
+     * 
+     * @return Object base type to contain the field's data, which could be any data type
+     * @throws CoalesceDataFormatException
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public T getValue() throws CoalesceDataFormatException
+    {
+
+        switch (getDataType()) {
+        case StringType:
+        case UriType:
+            return (T) getBaseValue();
+
+        case DateTimeType:
+            return (T) getDateTimeValue();
+
+        case FileType:
+        case BinaryType:
+            return (T) getBinaryValue();
+
+        case BooleanType:
+            return (T) getBooleanValue();
+
+        case IntegerType:
+            return (T) getIntegerValue();
+
+        case GuidType:
+            return (T) getGuidValue();
+
+        case GeocoordinateType:
+            return (T) getCoordinateValue();
+
+        case GeocoordinateListType:
+            return (T) getCoordinateListValue();
+
+        default:
+            throw new NotImplementedException(getDataType() + " not implemented");
+        }
+    }
+
+    /**
+     * Sets the Field's value as type T.
+     * 
+     * @throws CoalesceDataFormatException
+     */
+    @Override
+    public void setValue(T value) throws CoalesceDataFormatException
+    {
+        ;
+
+        switch (getDataType()) {
+        case StringType:
+        case UriType:
+            setTypedValue((String) value);
+            break;
+
+        case DateTimeType:
+            setTypedValue((DateTime) value); 
+            break;
+
+        case FileType:
+        case BinaryType:
+            setTypedValue((byte[]) value); 
+            break;
+
+        case BooleanType:
+            setTypedValue((Boolean) value); 
+            break;
+
+        case IntegerType:
+            setTypedValue((Integer) value); 
+            break;
+
+        case GuidType:
+            setTypedValue((UUID) value); 
+            break;
+
+        case GeocoordinateType:
+            setTypedValue((Coordinate) value); 
+            break;
+
+        case GeocoordinateListType:
+            setTypedValue((Coordinate[]) value); 
+            break;
+
+        default:
+            throw new NotImplementedException(getDataType() + " not implemented");
+        }
+
+    }
+    
     /**
      * Initializes an existing Field and ties it to its parent XsdRecord. The field may be new, but field history is tied in,
      * in the event that the field is not new.
@@ -204,19 +301,13 @@ public abstract class XsdField<T> extends XsdFieldBase<T> {
     }
 
     @Override
-    public abstract T getValue() throws CoalesceDataFormatException;
-
-    @Override
     public String getBaseValue()
     {
         return _entityField.getValue();
     }
 
     @Override
-    public abstract void setValue(T value);
-
-    @Override
-    public void setBaseValue(String value)
+    protected void setBaseValue(String value)
     {
         String oldValue = _entityField.getValue();
 
@@ -230,8 +321,12 @@ public abstract class XsdField<T> extends XsdFieldBase<T> {
         return ECoalesceFieldDataTypes.getTypeForCoalesceType(_entityField.getDatatype());
     }
 
-    @Override
-    public void setDataType(ECoalesceFieldDataTypes value)
+    /**
+     * Sets the value of the Field's DataType attribute
+     * 
+     * @param value ECoalesceFieldDataTypes to be the Field's DataType attribute
+     */
+    private void setDataType(ECoalesceFieldDataTypes value)
     {
         _entityField.setDatatype(value.getLabel());
     }

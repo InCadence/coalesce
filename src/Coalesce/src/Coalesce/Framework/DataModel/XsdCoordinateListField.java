@@ -6,7 +6,7 @@ package Coalesce.Framework.DataModel;
 import Coalesce.Common.Exceptions.CoalesceDataFormatException;
 
 import com.vividsolutions.jts.geom.Coordinate;
-
+import com.vividsolutions.jts.geom.MultiPoint;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -42,22 +42,25 @@ public class XsdCoordinateListField extends XsdField<Coordinate[]> {
         return getCoordinateListValue();
     }
 
+    public MultiPoint getValueAsMultiPoint() throws CoalesceDataFormatException
+    {
+        return getMultiPointValue();
+    }
+
     /*
      * (non-Javadoc)
      * 
      * @see Coalesce.Framework.DataModel.XsdField#setValue(java.lang.Object)
      */
     @Override
-    public void setValue(Coordinate[] value)
+    public void setValue(Coordinate[] value) throws CoalesceDataFormatException
     {
-        try
-        {
-            setTypedValue(value);
-        }
-        catch (CoalesceDataFormatException e)
-        {
-            // TODO Auto-generated catch block
-        }
+        setTypedValue(value);
     }
     
+    public void setValue(MultiPoint value) throws CoalesceDataFormatException
+    {
+        setTypedValue(value);
+    }
+
 }

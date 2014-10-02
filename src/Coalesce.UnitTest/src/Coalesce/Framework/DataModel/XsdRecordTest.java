@@ -103,7 +103,7 @@ public class XsdRecordTest {
 
         XsdRecord record = recordset.getRecords().get(0);
 
-        assertEquals(16, record.getFields().size());
+        assertEquals(17, record.getFields().size());
         assertEquals("D7067C3F-54B1-47FD-9C8A-A2D7946E0C2A", record.getFieldByName("ActionNumber").getKey());
         assertEquals("6CB12648-A061-4CC5-B593-3D0407EF4392", record.getFieldByName("MissionName").getKey());
         assertEquals("37496274-2077-454F-9CB3-5A57C1753640", record.getFieldByName("MissionAddress").getKey());
@@ -121,7 +121,7 @@ public class XsdRecordTest {
         assertTrue(recordset.getChildDataObjects().containsValue(newRecord));
         assertEquals(recordset, newRecord.getParent());
         assertEquals("New Record", newRecord.getName());
-        assertEquals(16, newRecord.getFields().size());
+        assertEquals(17, newRecord.getFields().size());
 
         for (XsdField<?> field : newRecord.getFields())
         {
@@ -246,7 +246,7 @@ public class XsdRecordTest {
 
         List<XsdField<?>> fields = record.getFields();
 
-        assertEquals(16, fields.size());
+        assertEquals(17, fields.size());
 
         boolean firstFound = false;
         boolean middleFound = false;
@@ -289,7 +289,7 @@ public class XsdRecordTest {
 
         List<String> fieldNames = record.getFieldNames();
 
-        assertEquals(16, fieldNames.size());
+        assertEquals(17, fieldNames.size());
 
         boolean firstFound = false;
         boolean middleFound = false;
@@ -332,7 +332,7 @@ public class XsdRecordTest {
 
         List<String> fieldKeys = record.getFieldKeys();
 
-        assertEquals(16, fieldKeys.size());
+        assertEquals(17, fieldKeys.size());
 
         boolean firstFound = false;
         boolean middleFound = false;

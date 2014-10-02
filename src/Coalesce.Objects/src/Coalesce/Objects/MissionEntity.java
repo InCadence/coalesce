@@ -1,6 +1,10 @@
 package Coalesce.Objects;
 
+import org.joda.time.DateTime;
+
 import Coalesce.Framework.DataModel.ECoalesceFieldDataTypes;
+import Coalesce.Framework.DataModel.XsdCoordinateField;
+import Coalesce.Framework.DataModel.XsdDateTimeField;
 import Coalesce.Framework.DataModel.XsdEntity;
 import Coalesce.Framework.DataModel.XsdField;
 import Coalesce.Framework.DataModel.XsdFieldDefinition;
@@ -139,78 +143,78 @@ public class MissionEntity extends XsdEntity {
         return (XsdStringField) _informationRecord.getFieldByName("ActionNumber");
     }
 
-    public XsdIntegerField getIncidentNumber()
+    public XsdStringField getIncidentNumber()
     {
-        return  (XsdIntegerField) _informationRecord.getFieldByName("IncidentNumber");
+        return (XsdStringField) _informationRecord.getFieldByName("IncidentNumber");
     }
 
-    public XsdField getIncidentTitle()
+    public XsdStringField getIncidentTitle()
     {
-        return _informationRecord.getFieldByName("IncidentTitle");
+        return (XsdStringField) _informationRecord.getFieldByName("IncidentTitle");
     }
 
-    public XsdField getIncidentDescription()
+    public XsdStringField getIncidentDescription()
     {
-        return _informationRecord.getFieldByName("IncidentDescription");
+        return (XsdStringField) _informationRecord.getFieldByName("IncidentDescription");
     }
 
-    public XsdField getIncidentDateTime()
+    public XsdField<DateTime> getIncidentDateTime()
     {
-        return _informationRecord.getFieldByName("IncidentDateTime");
+        return (XsdDateTimeField) _informationRecord.getFieldByName("IncidentDateTime");
     }
 
-    public XsdField getMissionName()
+    public XsdStringField getMissionName()
     {
-        return _informationRecord.getFieldByName("MissionName");
+        return (XsdStringField)_informationRecord.getFieldByName("MissionName");
     }
 
-    public XsdField getMissionType()
+    public XsdStringField getMissionType()
     {
-        return _informationRecord.getFieldByName("MissionType");
+        return (XsdStringField) _informationRecord.getFieldByName("MissionType");
     }
 
-    public XsdField getMissionDescription()
+    public XsdStringField getMissionDescription()
     {
-        return _informationRecord.getFieldByName("MissionDescription");
+        return (XsdStringField) _informationRecord.getFieldByName("MissionDescription");
     }
 
-    public XsdField getMissionIndicatorColor()
+    public XsdStringField getMissionIndicatorColor()
     {
-        return _informationRecord.getFieldByName("MissionIndicatorColor");
+        return (XsdStringField) _informationRecord.getFieldByName("MissionIndicatorColor");
     }
 
-    public XsdField getMissionIndicatorShape()
+    public XsdStringField getMissionIndicatorShape()
     {
-        return _informationRecord.getFieldByName("MissionIndicatorShape");
+        return (XsdStringField) _informationRecord.getFieldByName("MissionIndicatorShape");
     }
 
-    public XsdField getMissionIndicatorNumber()
+    public XsdStringField getMissionIndicatorNumber()
     {
-        return _informationRecord.getFieldByName("MissionIndicatorNumber");
+        return (XsdStringField) _informationRecord.getFieldByName("MissionIndicatorNumber");
     }
 
-    public XsdField getMissionIndicatorNumberBASE10()
+    public XsdIntegerField getMissionIndicatorNumberBASE10()
     {
-        return _informationRecord.getFieldByName("MissionIndicatorNumberBASE10");
+        return (XsdIntegerField) _informationRecord.getFieldByName("MissionIndicatorNumberBASE10");
     }
 
-    public XsdField getMissionStartDateTime()
+    public XsdDateTimeField getMissionStartDateTime()
     {
-        return _informationRecord.getFieldByName("MissionStartDateTime");
+        return (XsdDateTimeField) _informationRecord.getFieldByName("MissionStartDateTime");
     }
 
-    public XsdField getMissionEndDateTime()
+    public XsdDateTimeField getMissionEndDateTime()
     {
-        return _informationRecord.getFieldByName("MissionEndDateTime");
+        return (XsdDateTimeField) _informationRecord.getFieldByName("MissionEndDateTime");
     }
 
-    public XsdField getMissionGeoLocation()
+    public XsdCoordinateField getMissionGeoLocation()
     {
-        return _informationRecord.getFieldByName("MissionGeoLocation");
+        return (XsdCoordinateField) _informationRecord.getFieldByName("MissionGeoLocation");
     }
 
-    public XsdField getMissionAddress()
+    public XsdStringField getMissionAddress()
     {
-        return _informationRecord.getFieldByName("MissionAddress");
+        return (XsdStringField) _informationRecord.getFieldByName("MissionAddress");
     }
 }

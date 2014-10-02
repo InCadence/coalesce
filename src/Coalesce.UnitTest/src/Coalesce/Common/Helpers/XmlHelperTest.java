@@ -71,8 +71,8 @@ public class XmlHelperTest {
         assertTrue("xml empty", xml.length() > 0);
 
         assertEquals(4, entity.getLinkagesection().getLinkage().size());
-        assertEquals(16, entity.getSection().get(1).getRecordset().get(0).getFielddefinition().size());
-        assertEquals(16, entity.getSection().get(1).getRecordset().get(0).getRecord().get(0).getField().size());
+        assertEquals(17, entity.getSection().get(1).getRecordset().get(0).getFielddefinition().size());
+        assertEquals(17, entity.getSection().get(1).getRecordset().get(0).getRecord().get(0).getField().size());
     }
 
     @Test

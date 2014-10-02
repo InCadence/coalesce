@@ -170,9 +170,9 @@ public class XsdFieldHistoryTest {
         field.setTypedValue(2222);
         field.setSuspendHistory(false);
 
-        assertEquals(2222, field.getIntegerValue());
+        assertEquals(2222, field.getIntegerValue().intValue());
         assertEquals(1, field.getHistory().size());
-        assertEquals(CoalesceTypeInstances.TEST_MISSION_BASE64_VALUE, field.getHistory().get(0).getIntegerValue());
+        assertEquals(CoalesceTypeInstances.TEST_MISSION_BASE64_VALUE, field.getHistory().get(0).getIntegerValue().intValue());
         assertEquals(fh, field.getHistory().get(0));
 
     }
@@ -692,15 +692,14 @@ public class XsdFieldHistoryTest {
         XsdField<?> field = XsdFieldTest.getTestMissionNameField();
 
         XsdFieldHistory fh = field.getHistory().get(0);
-        Object data = fh.getData();
+        String data = fh.getValue();
 
-        assertTrue(data instanceof String);
         assertEquals(CoalesceTypeInstances.TEST_MISSION_NAME_HISTORY_VALUE, data);
 
         fh.setTypedValue("Changed");
 
         data = null;
-        data = fh.getData();
+        data = fh.getValue();
 
         assertTrue(data instanceof String);
         assertEquals("Changed", data);
@@ -742,9 +741,8 @@ public class XsdFieldHistoryTest {
 
         fh.setTypedValue("uri:document/zip");
 
-        Object data = fh.getData();
+        String data = fh.getValue();
 
-        assertTrue(data instanceof String);
         assertEquals("uri:document/zip", data);
         assertEquals("uri:document/zip", fh.getBaseValue());
 
@@ -760,13 +758,11 @@ public class XsdFieldHistoryTest {
 
         XsdFieldHistory fh = field.getHistory().get(0);
 
-        fh.setTypedValue(now.plusDays(1));
+        DateTime newDate = now.plusDays(1);
+        
+        fh.setTypedValue(newDate);
 
-        Object data = fh.getData();
-
-        assertTrue(data instanceof DateTime);
-        assertEquals(now.plusDays(1), data);
-        assertEquals(now.plusDays(1), fh.getDateTimeValue());
+        assertEquals(newDate, fh.getDateTimeValue());
 
     }
 
@@ -804,7 +800,7 @@ public class XsdFieldHistoryTest {
 
         XsdFieldHistory fh = field.getHistory().get(0);
 
-        Object data = fh.getData();
+        boolean data = Boolean.parseBoolean(fh.getValue());
 
         assertEquals(true, data);
         assertEquals("true", fh.getBaseValue().toLowerCase());
@@ -812,10 +808,10 @@ public class XsdFieldHistoryTest {
 
         fh.setTypedValue(false);
 
-        data = null;
-        data = fh.getData();
+        //data = null;
+        data = Boolean.parseBoolean(fh.getValue());
 
-        assertTrue(data instanceof Boolean);
+        //assertTrue(data instanceof Boolean);
         assertEquals(false, data);
         assertEquals("false", fh.getBaseValue().toLowerCase());
         assertEquals(false, fh.getBooleanValue());
@@ -854,22 +850,21 @@ public class XsdFieldHistoryTest {
 
         XsdFieldHistory fh = field.getHistory().get(0);
 
-        Object data = fh.getData();
+        int data = Integer.parseInt(fh.getValue());
 
-        assertTrue(data instanceof Integer);
+        //assertTrue(data instanceof Integer);
         assertEquals("1111", fh.getBaseValue());
-        assertEquals(1111, fh.getIntegerValue());
+        assertEquals(1111, fh.getIntegerValue().intValue());
         assertEquals(1111, data);
 
         fh.setTypedValue(3333);
 
-        data = null;
-        data = fh.getData();
+        data = Integer.parseInt(fh.getValue());
 
-        assertTrue(data instanceof Integer);
+        //assertTrue(data instanceof Integer);
         assertEquals(3333, data);
         assertEquals("3333", fh.getBaseValue());
-        assertEquals(3333, fh.getIntegerValue());
+        assertEquals(3333, fh.getIntegerValue().intValue());
 
     }
 
@@ -906,7 +901,7 @@ public class XsdFieldHistoryTest {
 
         XsdFieldHistory fh = field.getHistory().get(0);
 
-        Object data = fh.getData();
+        UUID data = fh.getGuidValue();
 
         assertTrue(data instanceof UUID);
         assertEquals(guid, data);
@@ -917,7 +912,7 @@ public class XsdFieldHistoryTest {
         fh.setTypedValue(newGuid);
 
         data = null;
-        data = fh.getData();
+        data = fh.getGuidValue();
 
         assertTrue(data instanceof UUID);
         assertEquals(newGuid, data);

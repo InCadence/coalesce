@@ -72,9 +72,9 @@ public class XsdEntityTest {
         assertEquals(2, entity.getSections().size());
         assertEquals(1,
                      ((XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH)).getCount());
-        assertEquals(16,
+        assertEquals(17,
                      ((XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH)).getFieldDefinitions().size());
-        assertEquals(16,
+        assertEquals(17,
                      entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORD_PATH).getChildDataObjects().size());
     }
 
@@ -551,9 +551,9 @@ public class XsdEntityTest {
         assertEquals(2, entity.getSections().size());
         assertEquals(1,
                      ((XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH)).getCount());
-        assertEquals(16,
+        assertEquals(17,
                      ((XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH)).getFieldDefinitions().size());
-        assertEquals(16,
+        assertEquals(17,
                      entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORD_PATH).getChildDataObjects().size());
     }
 
@@ -2091,7 +2091,7 @@ public class XsdEntityTest {
         try
         {
             XsdEntity myEntity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_HISTORY);
-            XsdEntity updatedEntity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+            XsdEntity updatedEntity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_HISTORY);
 
             XsdFieldDefinition fieldDefinition = (XsdFieldDefinition) updatedEntity.getCoalesceDataObjectForKey("1A7DA2CD-8A83-4E86-ADE8-15FDECE0564E");
             fieldDefinition.setDefaultValue("UpdatedIncidentDescription");

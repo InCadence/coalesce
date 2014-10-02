@@ -118,7 +118,7 @@ public interface ICoalesceField<T> {
      * 
      * @param value String to be the Field's value attribute
      */
-    public void setValue(T value);
+    public void setValue(T value) throws CoalesceDataFormatException;
 
     /**
      * Sets the value of the Field's Label attribute
@@ -126,13 +126,6 @@ public interface ICoalesceField<T> {
      * @param value String to be the Field's label attribute
      */
     public void setLabel(String value);
-
-    /**
-     * Sets the value of the Field's DataType attribute
-     * 
-     * @param value ECoalesceFieldDataTypes to be the Field's DataType attribute
-     */
-    public void setDataType(ECoalesceFieldDataTypes value);
 
     /**
      * Sets the Field's ClassificationMarking attribute based on the Marking class value parameter

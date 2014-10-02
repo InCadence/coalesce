@@ -102,7 +102,7 @@ public class XsdRecordSetTest {
         assertEquals("EEA36E54-601E-4254-84D3-2B387CF4192A", fieldDefinitions.get(12).getKey());
         assertEquals("CD00930C-1659-415A-BE64-67A57FD8A1E9", fieldDefinitions.get(13).getKey());
         assertEquals("1019A528-481A-4E20-BF32-868C36B19ED0", fieldDefinitions.get(14).getKey());
-        assertEquals("1EF2E901-DDD8-4C38-A5BF-858CB13F9562", fieldDefinitions.get(15).getKey());
+        assertEquals("1EF2E901-DDD8-4C38-A5BF-858CB13F9562", fieldDefinitions.get(16).getKey());
 
         assertEquals("9A03833C-AC15-47C8-A037-1FFFD13A26E9", existingRecordset.getRecords().get(0).getKey());
 

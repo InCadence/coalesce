@@ -191,7 +191,11 @@ public class XsdFieldHistory extends XsdFieldBase<String> {
         return ECoalesceFieldDataTypes.getTypeForCoalesceType(_entityFieldHistory.getDatatype());
     }
 
-    @Override
+    /**
+     * Sets the value of the Field's DataType attribute
+     * 
+     * @param value ECoalesceFieldDataTypes to be the Field's DataType attribute
+     */
     public void setDataType(ECoalesceFieldDataTypes value)
     {
         _entityFieldHistory.setDatatype(value.getLabel());

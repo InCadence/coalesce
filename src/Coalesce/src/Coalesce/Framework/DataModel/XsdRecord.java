@@ -104,7 +104,7 @@ public class XsdRecord extends XsdDataObject {
 
         for (Field entityField : record.getField())
         {
-            XsdField<?> newField = XsdField.createNewField(ECoalesceFieldDataTypes.getTypeForCoalesceType(entityField.getDatatype()));
+            XsdField<?> newField = XsdField.createTypeField(ECoalesceFieldDataTypes.getTypeForCoalesceType(entityField.getDatatype()));
             if (!newField.initialize(this, entityField)) return false;
 
             // Add to Child Collection

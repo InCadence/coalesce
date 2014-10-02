@@ -6,7 +6,7 @@ package Coalesce.Framework.DataModel;
 import Coalesce.Common.Exceptions.CoalesceDataFormatException;
 
 import com.vividsolutions.jts.geom.Coordinate;
-
+import com.vividsolutions.jts.geom.Point;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -37,17 +37,20 @@ public class XsdCoordinateField extends XsdField<Coordinate> {
         return getCoordinateValue();
     }
 
-    @Override
-    public void setValue(Coordinate value)
+    public Point getValueAsPoint() throws CoalesceDataFormatException
     {
-        try
-        {
-            setTypedValue(value);
-        }
-        catch (CoalesceDataFormatException e)
-        {
-            // TODO: Implement Error Case
-        }
+        return getPointValue();
     }
     
+    @Override
+    public void setValue(Coordinate value) throws CoalesceDataFormatException
+    {
+        setTypedValue(value);
+    }
+
+    public void setValue(Point value) throws CoalesceDataFormatException
+    {
+        setTypedValue(value);
+    }
+
 }
