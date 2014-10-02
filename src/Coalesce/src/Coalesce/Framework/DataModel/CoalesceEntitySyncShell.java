@@ -51,8 +51,8 @@ public class CoalesceEntitySyncShell {
     /**
      * Creates a CoalesceEntitySyncShell based of an XsdEntity.
      * 
-     * @param Entity XsdEntity
-     * @return CoalesceEntitySyncShell
+     * @param Entity The XsdEntity to create the shell from
+     * @return The new CoalesceEntitySyncShell
      * 
      * @throws SAXException
      * @throws IOException
@@ -65,8 +65,8 @@ public class CoalesceEntitySyncShell {
     /**
      * Creates a CoalesceEntitySyncShell based of an (XML) String.
      * 
-     * @param EntitySyncShellXml (XML) String
-     * @return CoalesceEntitySyncShell
+     * @param EntitySyncShellXml (XML) String of the XsdEntity to create the shell from
+     * @return The new CoalesceEntitySyncShell
      * 
      * @throws SAXException
      * @throws IOException
@@ -79,8 +79,8 @@ public class CoalesceEntitySyncShell {
     /**
      * Creates a CoalesceEntitySyncShell based of an org.w3c.dom Document.
      * 
-     * @param doc org.w3c.dom Document
-     * @return CoalesceEntitySyncShell
+     * @param doc org.w3c.dom Document Document of the XsdEntity to create the shell from
+     * @return The new CoalesceEntitySyncShell
      * 
      * @throws SAXException
      * @throws IOException
@@ -104,8 +104,8 @@ public class CoalesceEntitySyncShell {
     /**
      * Initializes a previously new CoalesceEntitySyncShell based of an XsdEntity.
      * 
-     * @param Entity XsdEntity
-     * @return boolean
+     * @param Entity XsdEntity to initialize the shell from
+     * @return boolean indicating success/failure
      * 
      * @throws SAXException
      * @throws IOException
@@ -118,8 +118,8 @@ public class CoalesceEntitySyncShell {
     /**
      * Initializes a previously new CoalesceEntitySyncShell based of an (XML) String.
      * 
-     * @param entityXml String
-     * @return boolean
+     * @param entityXml String (XML) String of the XsdEntity to initialize the shell from
+     * @return boolean indicating success/failure
      * 
      * @throws SAXException
      * @throws IOException
@@ -132,8 +132,8 @@ public class CoalesceEntitySyncShell {
     /**
      * Initializes a previously new CoalesceEntitySyncShell based of an org.w3c.dom Document.
      * 
-     * @param doc org.w3c.dom Document
-     * @return boolean
+     * @param doc org.w3c.dom Document Document of the XsdEntity to create the shell from
+     * @return boolean indicating success/failure
      */
     public boolean Initialize(Document doc)
     {
@@ -154,7 +154,7 @@ public class CoalesceEntitySyncShell {
     /**
      * Returns the CoalesceEntitySyncShell's (org.w3c.dom Document) DataObjectDocument.
      * 
-     * @return org.w3c.dom Document
+     * @return org.w3c.dom Document of the CoalesceEntitySyncShell
      */
     public Document GetDataObjectDocument()
     {
@@ -164,7 +164,7 @@ public class CoalesceEntitySyncShell {
     /**
      * Sets the CoalesceEntitySyncShell's (org.w3c.dom Document) DataObjectDocument and EntityNode.
      * 
-     * @param value org.w3c.dom Document
+     * @param value org.w3c.dom Document Document to assign to the CoalesceEntitySyncShell
      */
     public void SetDataObjectDocument(Document value)
     {
@@ -175,7 +175,7 @@ public class CoalesceEntitySyncShell {
     /**
      * Returns the CoalesceEntitySyncShell's (org.w3c.dom Node) EntityNode.
      * 
-     * @return org.w3c.dom Node
+     * @return org.w3c.dom Node of the CoalesceEntitySyncShell
      */
     public Node GetEntityNode()
     {
@@ -185,27 +185,27 @@ public class CoalesceEntitySyncShell {
     /**
      * Sets the CoalesceEntitySyncShell's (org.w3c.dom Node) EntityNode.
      * 
-     * @param value org.w3c.dom Node
-     * @throws ParserConfigurationException 
+     * @param value org.w3c.dom Node to assign to the CoalesceEntitySyncShell
+     * @throws ParserConfigurationException
      */
     public void SetEntityNode(Node value) throws ParserConfigurationException
     {
-        
+
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
         DocumentBuilder builder = factory.newDocumentBuilder();
-        
+
         this._DataObjectDocument = builder.newDocument();
         Node importedNode = this._DataObjectDocument.importNode(value, true);
         this._DataObjectDocument.appendChild(importedNode);
-        
+
         this._EntityNode = value;
     }
 
     /**
      * Returns the CoalesceEntitySyncShell's (XML) String of the DataObjectDocument.
      * 
-     * @return (XML) String
+     * @return (XML) String of the DataObjectDocument.
      */
     public String toXml()
     {
@@ -271,7 +271,7 @@ public class CoalesceEntitySyncShell {
      * Remove nodes that do not require an update; called by GetRequiredChangesSyncShell
      * 
      * @param NodeToPrune Node to check for updates
-     * @return boolean
+     * @return boolean indicator of success/failure
      */
     private static boolean PruneNodes(Node NodeToPrune)
     {

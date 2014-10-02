@@ -584,7 +584,7 @@ public class XsdEntityTest {
     {
         XsdEntity entity = new XsdEntity();
 
-        assertTrue(entity.initialize(null));
+        assertTrue(entity.initialize(""));
 
         assertEmptyEntity(entity);
     }

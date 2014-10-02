@@ -41,8 +41,8 @@ public class XsdLinkageSection extends XsdDataObject {
     /**
      * Creates an XsdLinkageSection and ties it to its parent XsdEntity.
      * 
-     * @param parent XsdEntity
-     * @return XsdLinkageSection
+     * @param parent XsdEntity that the new XsdLinkageSection will belong to
+     * @return XsdLinkageSection the new XsdLinkageSection
      */
     public static XsdLinkageSection create(XsdEntity parent)
     {
@@ -52,9 +52,9 @@ public class XsdLinkageSection extends XsdDataObject {
     /**
      * Creates an XsdLinkageSection and ties it to its parent XsdEntity. Also sets the noIndex attribute.
      * 
-     * @param parent XsdEntity
-     * @param noIndex boolean
-     * @return XsdLinkageSection
+     * @param parent XsdEntity that the new XsdLinkageSection will belong to
+     * @param noIndex boolean value
+     * @return XsdLinkageSection the new XsdLinkageSection
      */
     public static XsdLinkageSection create(XsdEntity parent, boolean noIndex)
     {
@@ -80,8 +80,8 @@ public class XsdLinkageSection extends XsdDataObject {
     /**
      * Initializes a previously new XsdLinkageSection and ties it to its parent XsdEntity.
      * 
-     * @param parent XsdEntity
-     * @return boolean
+     * @param parent XsdEntity containing an LinkageSection to base this XsdLinkageSection on
+     * @return boolean indicator of success/failure
      */
     public boolean initialize(XsdEntity parent)
     {
@@ -156,7 +156,7 @@ public class XsdLinkageSection extends XsdDataObject {
 
     /**
      * Returns a hashmap of the XsdLinkages contained in the XsdLinkageSection
-     * @return Map
+     * @return HashMap of this XsdLinkageSection's XsdLinkages
      */
     public Map<String, XsdLinkage> getLinkages()
     {
@@ -177,7 +177,7 @@ public class XsdLinkageSection extends XsdDataObject {
     /**
      * Creates an XsdLinkage child for this XsdLinkageSection.
      * 
-     * @return XsdLinkage
+     * @return XsdLinkage newly created and added to this XsdLinkageSection
      */
     public XsdLinkage createLinkage()
     {

@@ -100,7 +100,7 @@ public class MarkingValueTest {
 
         MarkingValue mv = new MarkingValue();
 
-        mv.SetParent("parent1");
+        mv.setParent("parent1");
 
         assertMarkingValue("parent1", "", "", "", mv);
     }
@@ -111,7 +111,7 @@ public class MarkingValueTest {
 
         MarkingValue mv = new MarkingValue();
 
-        mv.SetParent(null);
+        mv.setParent(null);
 
     }
 
@@ -121,7 +121,7 @@ public class MarkingValueTest {
 
         MarkingValue mv = new MarkingValue();
 
-        mv.SetTitle("title1");
+        mv.setTitle("title1");
 
         assertMarkingValue("", "title1", "", "", mv);
     }
@@ -132,7 +132,7 @@ public class MarkingValueTest {
 
         MarkingValue mv = new MarkingValue();
 
-        mv.SetTitle(null);
+        mv.setTitle(null);
 
     }
 
@@ -142,7 +142,7 @@ public class MarkingValueTest {
 
         MarkingValue mv = new MarkingValue();
 
-        mv.SetAbbreviation("Abbreviation1");
+        mv.setAbbreviation("Abbreviation1");
 
         assertMarkingValue("", "", "Abbreviation1", "", mv);
     }
@@ -153,7 +153,7 @@ public class MarkingValueTest {
 
         MarkingValue mv = new MarkingValue();
 
-        mv.SetAbbreviation(null);
+        mv.setAbbreviation(null);
 
     }
 
@@ -163,7 +163,7 @@ public class MarkingValueTest {
 
         MarkingValue mv = new MarkingValue();
 
-        mv.SetPortion("Portion1");
+        mv.setPortion("Portion1");
 
         assertMarkingValue("", "", "", "Portion1", mv);
     }
@@ -174,7 +174,7 @@ public class MarkingValueTest {
 
         MarkingValue mv = new MarkingValue();
 
-        mv.SetPortion(null);
+        mv.setPortion(null);
 
     }
 
@@ -230,19 +230,19 @@ public class MarkingValueTest {
                                           MarkingValue testValue)
     {
 
-        assertEquals(expectedParent, testValue.GetParent());
-        assertEquals(expectedTitle, testValue.GetTitle());
-        assertEquals(expectedAbbreviation, testValue.GetAbbreviation());
-        assertEquals(expectedPortion, testValue.GetPortion());
+        assertEquals(expectedParent, testValue.getParent());
+        assertEquals(expectedTitle, testValue.getTitle());
+        assertEquals(expectedAbbreviation, testValue.getAbbreviation());
+        assertEquals(expectedPortion, testValue.getPortion());
     }
 
     public static void assertMarkingValue(MarkingValue exptectedValue, MarkingValue testValue)
     {
 
-        assertEquals(exptectedValue.GetParent(), testValue.GetParent());
-        assertEquals(exptectedValue.GetTitle(), testValue.GetTitle());
-        assertEquals(exptectedValue.GetAbbreviation(), testValue.GetAbbreviation());
-        assertEquals(exptectedValue.GetPortion(), testValue.GetPortion());
+        assertEquals(exptectedValue.getParent(), testValue.getParent());
+        assertEquals(exptectedValue.getTitle(), testValue.getTitle());
+        assertEquals(exptectedValue.getAbbreviation(), testValue.getAbbreviation());
+        assertEquals(exptectedValue.getPortion(), testValue.getPortion());
     }
 
 }

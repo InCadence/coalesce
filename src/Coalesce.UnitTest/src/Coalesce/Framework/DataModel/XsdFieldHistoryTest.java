@@ -433,8 +433,8 @@ public class XsdFieldHistoryTest {
 
         XsdFieldHistory field = GetTestMissionNameFieldHistory();
 
-        MarkingValueTest.assertMarkingValue(new Marking().GetClassification(),
-                                            field.getClassificationMarking().GetClassification());
+        MarkingValueTest.assertMarkingValue(new Marking().getClassification(),
+                                            field.getClassificationMarking().getClassification());
 
     }
 
@@ -449,8 +449,8 @@ public class XsdFieldHistoryTest {
 
         XsdFieldHistory savedField = GetSavedTestMissionFieldHistory(mission);
 
-        MarkingValueTest.assertMarkingValue(TOPSECRETCLASSIFICATIONMARKING.GetClassification(),
-                                            savedField.getClassificationMarking().GetClassification());
+        MarkingValueTest.assertMarkingValue(TOPSECRETCLASSIFICATIONMARKING.getClassification(),
+                                            savedField.getClassificationMarking().getClassification());
 
     }
 
@@ -470,8 +470,8 @@ public class XsdFieldHistoryTest {
 
         fh.setClassificationMarking(TOPSECRETCLASSIFICATIONMARKING);
 
-        MarkingValueTest.assertMarkingValue(TOPSECRETCLASSIFICATIONMARKING.GetClassification(),
-                                            fh.getClassificationMarking().GetClassification());
+        MarkingValueTest.assertMarkingValue(TOPSECRETCLASSIFICATIONMARKING.getClassification(),
+                                            fh.getClassificationMarking().getClassification());
 
     }
 

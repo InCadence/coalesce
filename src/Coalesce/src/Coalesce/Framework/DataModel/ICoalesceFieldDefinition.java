@@ -8,70 +8,70 @@ public interface ICoalesceFieldDefinition {
     /**
      * Return the value of the FieldDefinitions's Name attribute
      * 
-     * @return
+     * @return String of the FieldDefinition's name attribute
      */
     public String getName();
 
     /**
      * Return the value of the FieldDefinitions's Label attribute
      * 
-     * @return
+     * @return String of the FieldDefinition's label attribute
      */
     public String getLabel();
 
     /**
      * Return the value of the FieldDefinitions's DataType attribute
      * 
-     * @return
+     * @return ECoalesceFieldDataTypes of the FieldDefinition's value attribute
      */
     public ECoalesceFieldDataTypes getDataType();
 
     /**
      * Return the value of the FieldDefinitions's DefaultValue attribute
      * 
-     * @return
+     * @return String of the FieldDefinition's value attribute
      */
     public String getDefaultValue();
 
     /**
      * Return a Marking class value of the FieldDefinitions's ClassificationMarking attribute
      * 
-     * @return
+     * @return Marking class of the FieldDefinition's default classification marking attribute
      */
     public Marking getDefaultClassificationMarking();
 
     /**
      * Sets the value of the FieldDefinitions's Name attribute
      * 
-     * @param value
+     * @param value String to be the FieldDefinition's name attribute
      */
     public void setName(String value);
 
     /**
      * Sets the value of the FieldDefinitions's Label attribute
      * 
-     * @param value
+     * @param value String to be the FieldDefinition's label attribute
      */
     public void setLabel(String value);
 
     /**
      * Sets the value of the FieldDefinitions's DataType attribute
      * 
-     * @param value
+     * @param value ECoalesceFieldDataTypes to be the FieldDefinition's datatype attribute
      */
     public void setDataType(ECoalesceFieldDataTypes value);
 
     /**
      * Sets the value of the FieldDefinitions's DefaultValue attribute
      * 
-     * @param value
+     * @param value String to be the FieldDefinition's value attribute
      */
     public void setDefaultValue(String value);
 
     /**
      * Sets the FieldDefinitions's DefaultClassificationMarking attribute based on the Marking class value parameter
      * 
-     * @param value
+     * @param value Marking class to be the FieldDefinition's default classification marking attribute
      */
     public void setDefaultClassificationMarking(Marking value);
 }

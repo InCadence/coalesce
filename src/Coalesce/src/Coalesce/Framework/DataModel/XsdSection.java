@@ -77,9 +77,9 @@ public class XsdSection extends XsdDataObject {
     /**
      * Creates an XsdSection, by name, and ties it to its parent XsdEntity.
      * 
-     * @param parent
-     * @param name
-     * @return
+     * @param parent XsdEntity that the new XsdSection will belong to
+     * @param name String, the name/namepath to be assigned to the XsdSection
+     * @return XsdSection, the new XsdSection
      */
     public static XsdSection create(XsdEntity parent, String name)
     {
@@ -89,10 +89,10 @@ public class XsdSection extends XsdDataObject {
     /**
      * Creates an XsdSection, by name, and ties it to its parent XsdEntity. Also sets the noIndex attribute.
      * 
-     * @param parent
-     * @param name
-     * @param noIndex
-     * @return
+     * @param parent XsdEntity that the new XsdSection will belong to
+     * @param name String, the name/namepath to be assigned to the XsdSection
+     * @param noIndex boolean value
+     * @return XsdSection, the new XsdSection
      */
     public static XsdSection create(XsdEntity parent, String name, boolean noIndex)
     {
@@ -144,9 +144,9 @@ public class XsdSection extends XsdDataObject {
     /**
      * Initializes this XsdSection based on a Section and ties it to its parent XsdEntity.
      * 
-     * @param parent
-     * @param section
-     * @return
+     * @param parent XsdEntity that the new XsdSection will belong to
+     * @param section that the new XsdSection will be based off of
+     * @return boolean indicator of success/failure
      */
     public boolean initialize(XsdEntity parent, Section section)
     {
@@ -225,8 +225,8 @@ public class XsdSection extends XsdDataObject {
     /**
      * Creates an XsdRecordset for this XsdSection, with the name specified.
      * 
-     * @param name
-     * @return
+     * @param name of the new XsdRecordset
+     * @return XsdRecordset, the new XsdRecordset
      */
     public XsdRecordset createRecordset(String name)
     {
@@ -236,8 +236,9 @@ public class XsdSection extends XsdDataObject {
     /**
      * Returns XsdSection's XsdRecordset with the matching String NamePath
      * 
-     * @param NamePath
-     * @return
+     * @param NamePath of the new XsdRecordset
+     * @return XsdRecordset, the XsdRecordset with the name path. Null if the name path is not a XsdRecordset or doesn't
+     *         exist
      */
     public XsdRecordset getRecordset(String NamePath)
     {
@@ -254,7 +255,7 @@ public class XsdSection extends XsdDataObject {
     /**
      * Returns a hashmap of this XsdSection's XsdRecordsets
      * 
-     * @return
+     * @return hashmap of XsdRecordsets contained by this XsdSection
      */
     public Map<String, XsdRecordset> getRecordsets()
     {
@@ -344,7 +345,7 @@ public class XsdSection extends XsdDataObject {
     /**
      * Returns a Recordset List for the Entity Section
      * 
-     * @return
+     * @return List<Recordset>, Section's Recordset list.
      */
     protected List<Recordset> getEntityRecordSets()
     {

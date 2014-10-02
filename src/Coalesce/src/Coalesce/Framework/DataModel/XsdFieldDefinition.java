@@ -124,7 +124,7 @@ public class XsdFieldDefinition extends XsdDataObject implements ICoalesceFieldD
 
     /**
      * Creates an XsdFieldDefinition with a int default value based for an XsdRecordset with the parameters provided
-     *  
+     * 
      * @param parent XsdRecordset that the XsdFieldDefinition belongs to
      * @param name String name of the XsdFieldDefinition
      * @param label The label to be displayed with the field
@@ -144,7 +144,7 @@ public class XsdFieldDefinition extends XsdDataObject implements ICoalesceFieldD
 
     /**
      * Creates an XsdFieldDefinition with a int default value based for an XsdRecordset with the parameters provided
-     *  
+     * 
      * @param parent XsdRecordset that the XsdFieldDefinition belongs to
      * @param name String name of the XsdFieldDefinition
      * @param label The label to be displayed with the field
@@ -242,7 +242,7 @@ public class XsdFieldDefinition extends XsdDataObject implements ICoalesceFieldD
      * @param parent XsdRecordset that the XsdFieldDefinition belongs to
      * @param fieldDefinition the Fielddefinition being initialized
      * 
-     * @return boolean
+     * @return boolean indicator of success/failure
      */
     public boolean initialize(XsdRecordset parent, Fielddefinition fieldDefinition)
     {
@@ -330,7 +330,7 @@ public class XsdFieldDefinition extends XsdDataObject implements ICoalesceFieldD
     /**
      * Sets the Fielddefinition's DefaultClassificationMarking
      * 
-     * @param value
+     * @param value String, the default classification marking for the field type
      */
     public void setDefaultClassificationMarking(String value)
     {
@@ -340,7 +340,7 @@ public class XsdFieldDefinition extends XsdDataObject implements ICoalesceFieldD
     @Override
     public void setDefaultClassificationMarking(Marking value)
     {
-        _entityFieldDefinition.setDefaultclassificationmarking(value.ToPortionString());
+        _entityFieldDefinition.setDefaultclassificationmarking(value.toPortionString());
     }
 
     @Override

@@ -45,12 +45,12 @@ public class FieldValues {
         classList.add(value);
     }
 
-    public static List<MarkingValue> GetListOfClassifications(Marking marking)
+    public static List<MarkingValue> getListOfClassifications(Marking marking)
     {
-        return GetListOfClassifications(marking, false);
+        return getListOfClassifications(marking, false);
     }
 
-    public static List<MarkingValue> GetListOfClassifications(Marking marking, boolean all)
+    public static List<MarkingValue> getListOfClassifications(Marking marking, boolean all)
     {
 
         ArrayList<MarkingValue> classList = new ArrayList<MarkingValue>();
@@ -82,7 +82,7 @@ public class FieldValues {
                 
                 return new ArrayList<MarkingValue>();
                 
-            } else if (marking.GetIsNATO()) {
+            } else if (marking.getIsNATO()) {
 
                 ClassListAdd(classList, "", "COSMIC TOP SECRET", "", "CTS");
                 ClassListAdd(classList, "", "COSMIC TOP SECRET ATOMAL", "", "CTS-A");
@@ -94,20 +94,20 @@ public class FieldValues {
                 ClassListAdd(classList, "", "NATO RESTRICTED", "", "NR");
                 ClassListAdd(classList, "", "NATO UNCLASSIFIED", "", "NU");
 
-            } else if (marking.GetSelectedCountries().size() == 0) {
+            } else if (marking.getSelectedCountries().size() == 0) {
 
                 return new ArrayList<MarkingValue>();
 
-            } else if (marking.GetSelectedCountries().size() < 2 && marking.GetIsJOINT()) {
+            } else if (marking.getSelectedCountries().size() < 2 && marking.getIsJOINT()) {
 
                 return new ArrayList<MarkingValue>();
 
-            } else if (marking.GetIsJOINT()) {
+            } else if (marking.getIsJOINT()) {
 
                 ClassListAdd(classList, "", "JOINT TOP SECRET", "", "JOINT TS");
                 ClassListAdd(classList, "", "JOINT SECRET", "", "JOINT S");
                 ClassListAdd(classList, "", "JOINT CONFIDENTIAL", "", "JOINT C");
-                if (!marking.GetSelectedCountries().contains(ISO3166Country.WithAlpha3EqualTo("USA"))) {
+                if (!marking.getSelectedCountries().contains(ISO3166Country.withAlpha3EqualTo("USA"))) {
                     ClassListAdd(classList, "", "JOINT RESTRICTED", "", "JOINT R");
                 }
                 ClassListAdd(classList, "", "JOINT UNCLASSIFIED", "", "JOINT U");
@@ -117,7 +117,7 @@ public class FieldValues {
                 ClassListAdd(classList, "", "TOP SECRET", "", "TS");
                 ClassListAdd(classList, "", "SECRET", "", "S");
                 ClassListAdd(classList, "", "CONFIDENTIAL", "", "C");
-                if (!marking.GetSelectedCountries().contains(ISO3166Country.WithAlpha3EqualTo("USA"))) {
+                if (!marking.getSelectedCountries().contains(ISO3166Country.withAlpha3EqualTo("USA"))) {
                     ClassListAdd(classList, "", "RESTRICTED", "", "R");
                 }
                 ClassListAdd(classList, "", "UNCLASSIFIED", "", "U");
@@ -130,7 +130,7 @@ public class FieldValues {
 
     // SCI must be processed only on an information system accredited for SCI
     // processing, per page 71 of DoDM 5200.01-V2, February 24, 2012
-    public static List<MarkingValue> GetListOfSciControlSystems()
+    public static List<MarkingValue> getListOfSciControlSystems()
     {
 
         List<MarkingValue> controlSystemList = new ArrayList<MarkingValue>();
@@ -152,7 +152,7 @@ public class FieldValues {
 
     }
 
-    public static List<MarkingValue> GetListOfCompartments()
+    public static List<MarkingValue> getListOfCompartments()
     {
 
         List<MarkingValue> compartmentList = new ArrayList<MarkingValue>();
@@ -173,7 +173,7 @@ public class FieldValues {
         return compartmentList;
     }
 
-    public static List<MarkingValue> GetListOfSubCompartments()
+    public static List<MarkingValue> getListOfSubCompartments()
     {
 
         List<MarkingValue> subCompartmentList = new ArrayList<MarkingValue>();
@@ -195,7 +195,7 @@ public class FieldValues {
     }
 
     // ISO 3166 country codes
-    public static List<ISO3166Country> GetListOfCountries()
+    public static List<ISO3166Country> getListOfCountries()
     {
 
         List<ISO3166Country> countryList = new ArrayList<ISO3166Country>();
@@ -463,12 +463,12 @@ public class FieldValues {
      *            Country name to use for selecting
      * @return The country that matches the country name
      */
-    public static ISO3166Country GetCountryByName(String countryName)
+    public static ISO3166Country getCountryByName(String countryName)
     {
 
         if (StringHelper.isNullOrEmpty(countryName)) return null;
 
-        List<ISO3166Country> countryList = FieldValues.GetListOfCountries();
+        List<ISO3166Country> countryList = FieldValues.getListOfCountries();
         @SuppressWarnings("unchecked")
         Collection<ISO3166Country> filtered = CollectionUtils.select(countryList, new CountryNamePredicate(countryName));
         if (filtered.isEmpty()) return null;
@@ -487,11 +487,11 @@ public class FieldValues {
      *            Country Alpha3 to use for selecting
      * @return The country that matches the country Alpha3
      */
-    public static ISO3166Country GetCountryByAlpha3(String countryAlpha3)
+    public static ISO3166Country getCountryByAlpha3(String countryAlpha3)
     {
         if (StringHelper.isNullOrEmpty(countryAlpha3)) return null;
 
-        List<ISO3166Country> countryList = FieldValues.GetListOfCountries();
+        List<ISO3166Country> countryList = FieldValues.getListOfCountries();
 
         @SuppressWarnings("unchecked")
         Collection<ISO3166Country> filtered = CollectionUtils.select(countryList,
@@ -511,7 +511,7 @@ public class FieldValues {
      *            Title to use for selecting
      * @return The MarkingValue for the title
      */
-    public static MarkingValue GetMarkingValueByTitle(String markingValueTitle, List<MarkingValue> markings)
+    public static MarkingValue getMarkingValueByTitle(String markingValueTitle, List<MarkingValue> markings)
     {
 
         @SuppressWarnings("unchecked")
@@ -532,7 +532,7 @@ public class FieldValues {
      *            Portion to use for selecting
      * @return The MarkingValue for the portion
      */
-    public static MarkingValue GetMarkingValueByPortion(String markingValuePortion, List<MarkingValue> markings)
+    public static MarkingValue getMarkingValueByPortion(String markingValuePortion, List<MarkingValue> markings)
     {
 
         @SuppressWarnings("unchecked")
@@ -573,7 +573,7 @@ public class FieldValues {
         protected String GetValue(Object object)
         {
             if (!(object instanceof ISO3166Country)) return null;
-            return ((ISO3166Country) object).GetName();
+            return ((ISO3166Country) object).getName();
         }
     }
 
@@ -586,7 +586,7 @@ public class FieldValues {
         protected String GetValue(Object object)
         {
             if (!(object instanceof ISO3166Country)) return null;
-            return ((ISO3166Country) object).GetAlpha3();
+            return ((ISO3166Country) object).getAlpha3();
         }
     }
 
@@ -599,7 +599,7 @@ public class FieldValues {
         protected String GetValue(Object object)
         {
             if (!(object instanceof MarkingValue)) return null;
-            return ((MarkingValue) object).GetTitle();
+            return ((MarkingValue) object).getTitle();
         }
     }
 
@@ -612,7 +612,7 @@ public class FieldValues {
         protected String GetValue(Object object)
         {
             if (!(object instanceof MarkingValue)) return null;
-            return ((MarkingValue) object).GetPortion();
+            return ((MarkingValue) object).getPortion();
         }
     }
 

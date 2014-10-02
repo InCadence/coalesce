@@ -48,45 +48,45 @@ public class MarkingValue implements Serializable {
         _portion = portion;
     }
 
-    public String GetParent()
+    public String getParent()
     {
         return _parent;
     }
 
-    public void SetParent(String parent)
+    public void setParent(String parent)
     {
         if (parent == null) throw new NullArgumentException("parent");
         _parent = parent;
     }
 
-    public String GetTitle()
+    public String getTitle()
     {
         return _title;
     }
 
-    public void SetTitle(String title)
+    public void setTitle(String title)
     {
         if (title == null) throw new NullArgumentException("title");
         _title = title;
     }
 
-    public String GetAbbreviation()
+    public String getAbbreviation()
     {
         return _abbreviation;
     }
 
-    public void SetAbbreviation(String abbreviation)
+    public void setAbbreviation(String abbreviation)
     {
         if (abbreviation == null) throw new NullArgumentException("abbreviation");
         _abbreviation = abbreviation;
     }
 
-    public String GetPortion()
+    public String getPortion()
     {
         return _portion;
     }
 
-    public void SetPortion(String portion)
+    public void setPortion(String portion)
     {
         if (portion == null) throw new NullArgumentException("portion");
         _portion = portion;

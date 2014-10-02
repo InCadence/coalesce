@@ -184,12 +184,19 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
         // Add Parameters
         for (int ii = 0; ii < parameters.length; ii++)
         {
-            stmt.setObject(ii + 1, parameters[ii].getValue().trim(), parameters[ii].getType());
+            String value = parameters[ii].getValue();
+            if (value != null)
+            {
+                value = value.trim();
+            }
+
+            stmt.setObject(ii + 1, value, parameters[ii].getType());
         }
 
         stmt.executeUpdate();
 
         return true;
+        
     }
 
     @Override

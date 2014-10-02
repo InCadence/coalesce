@@ -452,7 +452,7 @@ public class FieldValuesTest {
     IllegalAccessException, IllegalArgumentException, InvocationTargetException
     {
 
-        List<MarkingValue> markingValues = FieldValues.GetListOfSciControlSystems();
+        List<MarkingValue> markingValues = FieldValues.getListOfSciControlSystems();
 
         CallClassListAdd(markingValues, "Parent", "Title", "Abbreviation", "Portion");
 
@@ -473,12 +473,12 @@ public class FieldValuesTest {
     {
 
         Marking mv = new Marking();
-        mv.GetSelectedCountries().clear();
-        mv.SetIsNATO(true);
+        mv.getSelectedCountries().clear();
+        mv.setIsNATO(true);
 
-        List<MarkingValue> classifications = FieldValues.GetListOfClassifications(mv, true);
+        List<MarkingValue> classifications = FieldValues.getListOfClassifications(mv, true);
 
-        assertEquals(0, mv.GetSelectedCountries().size());
+        assertEquals(0, mv.getSelectedCountries().size());
         assertClassifications(AllClassifications, classifications);
 
     }
@@ -489,11 +489,11 @@ public class FieldValuesTest {
     {
 
         Marking mv = new Marking();
-        mv.SetIsNATO(true);
+        mv.setIsNATO(true);
 
-        List<MarkingValue> classifications = FieldValues.GetListOfClassifications(mv, true);
+        List<MarkingValue> classifications = FieldValues.getListOfClassifications(mv, true);
 
-        assertEquals(1, mv.GetSelectedCountries().size());
+        assertEquals(1, mv.getSelectedCountries().size());
         assertClassifications(AllClassifications, classifications);
 
     }
@@ -504,11 +504,11 @@ public class FieldValuesTest {
     {
 
         Marking mv = new Marking("//ATA UNCLASSIFIED");
-        mv.SetIsNATO(true);
+        mv.setIsNATO(true);
 
-        List<MarkingValue> classifications = FieldValues.GetListOfClassifications(mv, true);
+        List<MarkingValue> classifications = FieldValues.getListOfClassifications(mv, true);
 
-        assertEquals(1, mv.GetSelectedCountries().size());
+        assertEquals(1, mv.getSelectedCountries().size());
         assertClassifications(AllClassifications, classifications);
 
     }
@@ -519,11 +519,11 @@ public class FieldValuesTest {
     {
 
         Marking mv = new Marking("//JOINT UNCLASSIFIED ALA USA");
-        mv.SetIsNATO(true);
+        mv.setIsNATO(true);
 
-        List<MarkingValue> classifications = FieldValues.GetListOfClassifications(mv, true);
+        List<MarkingValue> classifications = FieldValues.getListOfClassifications(mv, true);
 
-        assertEquals(2, mv.GetSelectedCountries().size());
+        assertEquals(2, mv.getSelectedCountries().size());
         assertClassifications(AllClassifications, classifications);
 
     }
@@ -534,11 +534,11 @@ public class FieldValuesTest {
     {
 
         Marking mv = new Marking("//JOINT UNCLASSIFIED ALA ATA");
-        mv.SetIsNATO(true);
+        mv.setIsNATO(true);
 
-        List<MarkingValue> classifications = FieldValues.GetListOfClassifications(mv, true);
+        List<MarkingValue> classifications = FieldValues.getListOfClassifications(mv, true);
 
-        assertEquals(2, mv.GetSelectedCountries().size());
+        assertEquals(2, mv.getSelectedCountries().size());
         assertClassifications(AllClassifications, classifications);
 
     }
@@ -549,12 +549,12 @@ public class FieldValuesTest {
     {
 
         Marking mv = new Marking();
-        mv.GetSelectedCountries().clear();
-        mv.SetIsNATO(false);
+        mv.getSelectedCountries().clear();
+        mv.setIsNATO(false);
 
-        List<MarkingValue> classifications = FieldValues.GetListOfClassifications(mv, true);
+        List<MarkingValue> classifications = FieldValues.getListOfClassifications(mv, true);
 
-        assertEquals(0, mv.GetSelectedCountries().size());
+        assertEquals(0, mv.getSelectedCountries().size());
         assertClassifications(AllClassifications, classifications);
 
     }
@@ -565,11 +565,11 @@ public class FieldValuesTest {
     {
 
         Marking mv = new Marking();
-        mv.SetIsNATO(false);
+        mv.setIsNATO(false);
 
-        List<MarkingValue> classifications = FieldValues.GetListOfClassifications(mv, true);
+        List<MarkingValue> classifications = FieldValues.getListOfClassifications(mv, true);
 
-        assertEquals(1, mv.GetSelectedCountries().size());
+        assertEquals(1, mv.getSelectedCountries().size());
         assertClassifications(AllClassifications, classifications);
 
     }
@@ -580,11 +580,11 @@ public class FieldValuesTest {
     {
 
         Marking mv = new Marking("//ATA UNCLASSIFIED");
-        mv.SetIsNATO(false);
+        mv.setIsNATO(false);
 
-        List<MarkingValue> classifications = FieldValues.GetListOfClassifications(mv, true);
+        List<MarkingValue> classifications = FieldValues.getListOfClassifications(mv, true);
 
-        assertEquals(1, mv.GetSelectedCountries().size());
+        assertEquals(1, mv.getSelectedCountries().size());
         assertClassifications(AllClassifications, classifications);
 
     }
@@ -595,11 +595,11 @@ public class FieldValuesTest {
     {
 
         Marking mv = new Marking("//JOINT UNCLASSIFIED ALA USA");
-        mv.SetIsNATO(false);
+        mv.setIsNATO(false);
 
-        List<MarkingValue> classifications = FieldValues.GetListOfClassifications(mv, true);
+        List<MarkingValue> classifications = FieldValues.getListOfClassifications(mv, true);
 
-        assertEquals(2, mv.GetSelectedCountries().size());
+        assertEquals(2, mv.getSelectedCountries().size());
         assertClassifications(AllClassifications, classifications);
 
     }
@@ -610,11 +610,11 @@ public class FieldValuesTest {
     {
 
         Marking mv = new Marking("//JOINT UNCLASSIFIED ALA ATA");
-        mv.SetIsNATO(false);
+        mv.setIsNATO(false);
 
-        List<MarkingValue> classifications = FieldValues.GetListOfClassifications(mv, true);
+        List<MarkingValue> classifications = FieldValues.getListOfClassifications(mv, true);
 
-        assertEquals(2, mv.GetSelectedCountries().size());
+        assertEquals(2, mv.getSelectedCountries().size());
         assertClassifications(AllClassifications, classifications);
 
     }
@@ -625,12 +625,12 @@ public class FieldValuesTest {
     {
 
         Marking mv = new Marking();
-        mv.GetSelectedCountries().clear();
-        mv.SetIsNATO(true);
+        mv.getSelectedCountries().clear();
+        mv.setIsNATO(true);
 
-        List<MarkingValue> classifications = FieldValues.GetListOfClassifications(mv, false);
+        List<MarkingValue> classifications = FieldValues.getListOfClassifications(mv, false);
 
-        assertEquals(0, mv.GetSelectedCountries().size());
+        assertEquals(0, mv.getSelectedCountries().size());
         assertClassifications(_natoClassifications, classifications);
 
     }
@@ -641,11 +641,11 @@ public class FieldValuesTest {
     {
 
         Marking mv = new Marking();
-        mv.SetIsNATO(true);
+        mv.setIsNATO(true);
 
-        List<MarkingValue> classifications = FieldValues.GetListOfClassifications(mv, false);
+        List<MarkingValue> classifications = FieldValues.getListOfClassifications(mv, false);
 
-        assertEquals(1, mv.GetSelectedCountries().size());
+        assertEquals(1, mv.getSelectedCountries().size());
         assertClassifications(_natoClassifications, classifications);
 
     }
@@ -656,11 +656,11 @@ public class FieldValuesTest {
     {
 
         Marking mv = new Marking("//ATA UNCLASSIFIED");
-        mv.SetIsNATO(true);
+        mv.setIsNATO(true);
 
-        List<MarkingValue> classifications = FieldValues.GetListOfClassifications(mv, false);
+        List<MarkingValue> classifications = FieldValues.getListOfClassifications(mv, false);
 
-        assertEquals(1, mv.GetSelectedCountries().size());
+        assertEquals(1, mv.getSelectedCountries().size());
         assertClassifications(_natoClassifications, classifications);
 
     }
@@ -671,11 +671,11 @@ public class FieldValuesTest {
     {
 
         Marking mv = new Marking("//JOINT UNCLASSIFIED ALA USA");
-        mv.SetIsNATO(true);
+        mv.setIsNATO(true);
 
-        List<MarkingValue> classifications = FieldValues.GetListOfClassifications(mv, false);
+        List<MarkingValue> classifications = FieldValues.getListOfClassifications(mv, false);
 
-        assertEquals(2, mv.GetSelectedCountries().size());
+        assertEquals(2, mv.getSelectedCountries().size());
         assertClassifications(_natoClassifications, classifications);
 
     }
@@ -686,11 +686,11 @@ public class FieldValuesTest {
     {
 
         Marking mv = new Marking("//JOINT UNCLASSIFIED ALA ATA");
-        mv.SetIsNATO(true);
+        mv.setIsNATO(true);
 
-        List<MarkingValue> classifications = FieldValues.GetListOfClassifications(mv, false);
+        List<MarkingValue> classifications = FieldValues.getListOfClassifications(mv, false);
 
-        assertEquals(2, mv.GetSelectedCountries().size());
+        assertEquals(2, mv.getSelectedCountries().size());
         assertClassifications(_natoClassifications, classifications);
 
     }
@@ -701,12 +701,12 @@ public class FieldValuesTest {
     {
 
         Marking mv = new Marking();
-        mv.GetSelectedCountries().clear();
-        mv.SetIsNATO(false);
+        mv.getSelectedCountries().clear();
+        mv.setIsNATO(false);
 
-        List<MarkingValue> classifications = FieldValues.GetListOfClassifications(mv, false);
+        List<MarkingValue> classifications = FieldValues.getListOfClassifications(mv, false);
 
-        assertEquals(0, mv.GetSelectedCountries().size());
+        assertEquals(0, mv.getSelectedCountries().size());
         assertTrue(classifications.isEmpty());
 
     }
@@ -717,11 +717,11 @@ public class FieldValuesTest {
     {
 
         Marking mv = new Marking();
-        mv.SetIsNATO(false);
+        mv.setIsNATO(false);
 
-        List<MarkingValue> classifications = FieldValues.GetListOfClassifications(mv, false);
+        List<MarkingValue> classifications = FieldValues.getListOfClassifications(mv, false);
 
-        assertEquals(1, mv.GetSelectedCountries().size());
+        assertEquals(1, mv.getSelectedCountries().size());
         assertClassifications(_notJointUSAClassifications, classifications);
 
     }
@@ -732,11 +732,11 @@ public class FieldValuesTest {
     {
 
         Marking mv = new Marking("//ATA UNCLASSIFIED");
-        mv.SetIsNATO(false);
+        mv.setIsNATO(false);
 
-        List<MarkingValue> classifications = FieldValues.GetListOfClassifications(mv, false);
+        List<MarkingValue> classifications = FieldValues.getListOfClassifications(mv, false);
 
-        assertEquals(1, mv.GetSelectedCountries().size());
+        assertEquals(1, mv.getSelectedCountries().size());
         assertClassifications(_notJointNotUSAClassifications, classifications);
 
     }
@@ -747,11 +747,11 @@ public class FieldValuesTest {
     {
 
         Marking mv = new Marking("//JOINT UNCLASSIFIED ALA USA");
-        mv.SetIsNATO(false);
+        mv.setIsNATO(false);
 
-        List<MarkingValue> classifications = FieldValues.GetListOfClassifications(mv, false);
+        List<MarkingValue> classifications = FieldValues.getListOfClassifications(mv, false);
 
-        assertEquals(2, mv.GetSelectedCountries().size());
+        assertEquals(2, mv.getSelectedCountries().size());
         assertClassifications(_jointUSAClassifications, classifications);
 
     }
@@ -762,11 +762,11 @@ public class FieldValuesTest {
     {
 
         Marking mv = new Marking("//JOINT UNCLASSIFIED ALA ATA");
-        mv.SetIsNATO(false);
+        mv.setIsNATO(false);
 
-        List<MarkingValue> classifications = FieldValues.GetListOfClassifications(mv, false);
+        List<MarkingValue> classifications = FieldValues.getListOfClassifications(mv, false);
 
-        assertEquals(2, mv.GetSelectedCountries().size());
+        assertEquals(2, mv.getSelectedCountries().size());
         assertClassifications(_jointNotUSAClassifications, classifications);
 
     }
@@ -775,7 +775,7 @@ public class FieldValuesTest {
     public void GetListOfClassificationsNullMarkingAllTest()
     {
 
-        List<MarkingValue> classifications = FieldValues.GetListOfClassifications(null, true);
+        List<MarkingValue> classifications = FieldValues.getListOfClassifications(null, true);
 
         assertClassifications(AllClassifications, classifications);
 
@@ -785,7 +785,7 @@ public class FieldValuesTest {
     public void GetListOfClassificationsNullMarkingNotAllTest()
     {
 
-        List<MarkingValue> classifications = FieldValues.GetListOfClassifications(null, false);
+        List<MarkingValue> classifications = FieldValues.getListOfClassifications(null, false);
 
         assertTrue(classifications.isEmpty());
 
@@ -795,7 +795,7 @@ public class FieldValuesTest {
     public void GetListOfSCIcontrolSystemsTest()
     {
 
-        List<MarkingValue> systems = FieldValues.GetListOfSciControlSystems();
+        List<MarkingValue> systems = FieldValues.getListOfSciControlSystems();
 
         assertClassifications(_compartments, systems);
     }
@@ -804,7 +804,7 @@ public class FieldValuesTest {
     public void GetListOfCompartmentsTest()
     {
 
-        List<MarkingValue> compartments = FieldValues.GetListOfCompartments();
+        List<MarkingValue> compartments = FieldValues.getListOfCompartments();
 
         assertClassifications(_compartments, compartments);
     }
@@ -813,7 +813,7 @@ public class FieldValuesTest {
     public void GetListOfSubCompartmentsTest()
     {
 
-        List<MarkingValue> subCompartments = FieldValues.GetListOfSubCompartments();
+        List<MarkingValue> subCompartments = FieldValues.getListOfSubCompartments();
 
         assertClassifications(_compartments, subCompartments);
     }
@@ -822,7 +822,7 @@ public class FieldValuesTest {
     public void GetListOfCountriesTest()
     {
 
-        List<ISO3166Country> countries = FieldValues.GetListOfCountries();
+        List<ISO3166Country> countries = FieldValues.getListOfCountries();
 
         assertCountries(_countries, countries);
     }
@@ -831,7 +831,7 @@ public class FieldValuesTest {
     public void GetCountryByNameTest()
     {
 
-        ISO3166Country country = FieldValues.GetCountryByName("SAN MARINO");
+        ISO3166Country country = FieldValues.getCountryByName("SAN MARINO");
 
         ISO3166CountryTest.assertCountry("SM", "SMR", "SAN MARINO", country);
     }
@@ -840,7 +840,7 @@ public class FieldValuesTest {
     public void GetCountryByNameNullTest()
     {
 
-        ISO3166Country country = FieldValues.GetCountryByName(null);
+        ISO3166Country country = FieldValues.getCountryByName(null);
 
         assertNull(country);
 
@@ -850,7 +850,7 @@ public class FieldValuesTest {
     public void GetCountryByNameEmptyTest()
     {
 
-        ISO3166Country country = FieldValues.GetCountryByName("");
+        ISO3166Country country = FieldValues.getCountryByName("");
 
         assertNull(country);
 
@@ -860,7 +860,7 @@ public class FieldValuesTest {
     public void GetCountryByNameUnknownTest()
     {
 
-        ISO3166Country country = FieldValues.GetCountryByName("Unknown");
+        ISO3166Country country = FieldValues.getCountryByName("Unknown");
 
         assertNull(country);
 
@@ -870,7 +870,7 @@ public class FieldValuesTest {
     public void GetCountryByAlhpa3Test()
     {
 
-        ISO3166Country country = FieldValues.GetCountryByAlpha3("SMR");
+        ISO3166Country country = FieldValues.getCountryByAlpha3("SMR");
 
         ISO3166CountryTest.assertCountry("SM", "SMR", "SAN MARINO", country);
     }
@@ -879,7 +879,7 @@ public class FieldValuesTest {
     public void GetCountryByAlpha3NullTest()
     {
 
-        ISO3166Country country = FieldValues.GetCountryByAlpha3(null);
+        ISO3166Country country = FieldValues.getCountryByAlpha3(null);
 
         assertNull(country);
 
@@ -889,7 +889,7 @@ public class FieldValuesTest {
     public void GetCountryByAlpha3EmptyTest()
     {
 
-        ISO3166Country country = FieldValues.GetCountryByAlpha3("");
+        ISO3166Country country = FieldValues.getCountryByAlpha3("");
 
         assertNull(country);
 
@@ -899,7 +899,7 @@ public class FieldValuesTest {
     public void GetCountryByAlpha3UnknownTest()
     {
 
-        ISO3166Country country = FieldValues.GetCountryByAlpha3("Unknown");
+        ISO3166Country country = FieldValues.getCountryByAlpha3("Unknown");
 
         assertNull(country);
 
@@ -909,7 +909,7 @@ public class FieldValuesTest {
     public void GetMarkingValueByTitleTest()
     {
 
-        MarkingValue mv = FieldValues.GetMarkingValueByTitle("COSMIC TOP SECRET", AllClassifications);
+        MarkingValue mv = FieldValues.getMarkingValueByTitle("COSMIC TOP SECRET", AllClassifications);
 
         MarkingValueTest.assertMarkingValue("", "COSMIC TOP SECRET", "", "CTS", mv);
     }
@@ -918,7 +918,7 @@ public class FieldValuesTest {
     public void GetMarkingValueByTitleNullTest()
     {
 
-        MarkingValue mv = FieldValues.GetMarkingValueByTitle(null, AllClassifications);
+        MarkingValue mv = FieldValues.getMarkingValueByTitle(null, AllClassifications);
 
         assertNull(mv);
 
@@ -928,7 +928,7 @@ public class FieldValuesTest {
     public void GetMarkingValueByTitleEmptyTest()
     {
 
-        MarkingValue mv = FieldValues.GetMarkingValueByTitle("", AllClassifications);
+        MarkingValue mv = FieldValues.getMarkingValueByTitle("", AllClassifications);
 
         assertNull(mv);
 
@@ -938,7 +938,7 @@ public class FieldValuesTest {
     public void GetMarkingValueByTitleUnknownTest()
     {
 
-        MarkingValue mv = FieldValues.GetMarkingValueByTitle("Unknown", AllClassifications);
+        MarkingValue mv = FieldValues.getMarkingValueByTitle("Unknown", AllClassifications);
 
         assertNull(mv);
     }
@@ -947,7 +947,7 @@ public class FieldValuesTest {
     public void GetMarkingValueByPortionTest()
     {
 
-        MarkingValue mv = FieldValues.GetMarkingValueByPortion("CTS", AllClassifications);
+        MarkingValue mv = FieldValues.getMarkingValueByPortion("CTS", AllClassifications);
 
         MarkingValueTest.assertMarkingValue("", "COSMIC TOP SECRET", "", "CTS", mv);
     }
@@ -956,7 +956,7 @@ public class FieldValuesTest {
     public void GetMarkingValueByPortionNullTest()
     {
 
-        MarkingValue mv = FieldValues.GetMarkingValueByPortion(null, AllClassifications);
+        MarkingValue mv = FieldValues.getMarkingValueByPortion(null, AllClassifications);
 
         assertNull(mv);
 
@@ -966,7 +966,7 @@ public class FieldValuesTest {
     public void GetMarkingValueByPortionEmptyTest()
     {
 
-        MarkingValue mv = FieldValues.GetMarkingValueByPortion("", AllClassifications);
+        MarkingValue mv = FieldValues.getMarkingValueByPortion("", AllClassifications);
 
         assertNull(mv);
 
@@ -976,7 +976,7 @@ public class FieldValuesTest {
     public void GetMarkingValueByPortionUnknownTest()
     {
 
-        MarkingValue mv = FieldValues.GetMarkingValueByPortion("Unknown", AllClassifications);
+        MarkingValue mv = FieldValues.getMarkingValueByPortion("Unknown", AllClassifications);
 
         assertNull(mv);
     }
@@ -985,7 +985,7 @@ public class FieldValuesTest {
     public void GetListOfClassifications()
     {
 
-        List<ISO3166Country> testCountries = FieldValues.GetListOfCountries();
+        List<ISO3166Country> testCountries = FieldValues.getListOfCountries();
 
         assertEquals(_countries.size(), testCountries.size());
 
@@ -994,9 +994,9 @@ public class FieldValuesTest {
             ISO3166Country expCountry = _countries.get(i);
             ISO3166Country testCountry = testCountries.get(i);
 
-            assertEquals(expCountry.GetAlpha2(), testCountry.GetAlpha2());
-            assertEquals(expCountry.GetAlpha3(), testCountry.GetAlpha3());
-            assertEquals(expCountry.GetName(), testCountry.GetName());
+            assertEquals(expCountry.getAlpha2(), testCountry.getAlpha2());
+            assertEquals(expCountry.getAlpha3(), testCountry.getAlpha3());
+            assertEquals(expCountry.getName(), testCountry.getName());
 
         }
 
@@ -1033,17 +1033,17 @@ public class FieldValuesTest {
             boolean found = false;
             for (MarkingValue actualValue : actual) {
 
-                if (expectedValue.GetParent().equals(actualValue.GetParent())
-                && expectedValue.GetTitle().equals(actualValue.GetTitle())
-                && expectedValue.GetAbbreviation().equals(actualValue.GetAbbreviation())
-                && expectedValue.GetPortion().equals(actualValue.GetPortion())) {
+                if (expectedValue.getParent().equals(actualValue.getParent())
+                && expectedValue.getTitle().equals(actualValue.getTitle())
+                && expectedValue.getAbbreviation().equals(actualValue.getAbbreviation())
+                && expectedValue.getPortion().equals(actualValue.getPortion())) {
                     found = true;
                     break;
                 }
             }
 
-            assertTrue("MarkingValue: " + expectedValue.GetParent() + " " + expectedValue.GetTitle() + " "
-            + expectedValue.GetAbbreviation() + " " + expectedValue.GetPortion(), found);
+            assertTrue("MarkingValue: " + expectedValue.getParent() + " " + expectedValue.getTitle() + " "
+            + expectedValue.getAbbreviation() + " " + expectedValue.getPortion(), found);
 
         }
     }
@@ -1058,16 +1058,16 @@ public class FieldValuesTest {
             boolean found = false;
             for (ISO3166Country actualValue : actual) {
 
-                if (expectedValue.GetAlpha2().equals(actualValue.GetAlpha2())
-                && expectedValue.GetAlpha3().equals(actualValue.GetAlpha3())
-                && expectedValue.GetName().equals(actualValue.GetName())) {
+                if (expectedValue.getAlpha2().equals(actualValue.getAlpha2())
+                && expectedValue.getAlpha3().equals(actualValue.getAlpha3())
+                && expectedValue.getName().equals(actualValue.getName())) {
                     found = true;
                     break;
                 }
             }
 
-            assertTrue("MarkingValue: " + expectedValue.GetAlpha2() + " " + expectedValue.GetAlpha3() + " "
-            + expectedValue.GetName(), found);
+            assertTrue("MarkingValue: " + expectedValue.getAlpha2() + " " + expectedValue.getAlpha3() + " "
+            + expectedValue.getName(), found);
 
         }
     }

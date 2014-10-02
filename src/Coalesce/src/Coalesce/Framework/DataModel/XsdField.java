@@ -51,10 +51,11 @@ public class XsdField extends XsdFieldBase {
     /**
      * Creates an XsdField based off of an XsdFieldDefinition and ties it to its parent XsdRecord.
      * 
-     * @param parent            XsdRecord
-     * @param fieldDefinition   XsdFieldDefinition
+     * @param parent XsdRecord that the XsdField will belong to
+     * @param fieldDefinition XsdFieldDefinition "template" that the XsdField will be based off of, for default
+     *            values/settings
      * 
-     * @return                  XsdField
+     * @return XsdField, belonging to the parent XsdRecord, resulting from the fieldDefinition
      */
     public static XsdField create(XsdRecord parent, XsdFieldDefinition fieldDefinition)
     {
@@ -94,12 +95,13 @@ public class XsdField extends XsdFieldBase {
     }
 
     /**
-     * Initializes a previously new Field and ties it to its parent XsdRecord.
+     * Initializes an existing Field and ties it to its parent XsdRecord. The field may be new, but field history is tied in,
+     * in the event that the field is not new.
      * 
-     * @param parent    XsdRecord
-     * @param field     Field
+     * @param parent XsdRecord that the XsdField will belong to
+     * @param field Field being initialized
      * 
-     * @return          boolean
+     * @return boolean indicator of success/failure
      */
     public boolean initialize(XsdRecord parent, Field field)
     {
@@ -355,7 +357,7 @@ public class XsdField extends XsdFieldBase {
     /**
      * Returns the XsdField's change history collection
      * 
-     * @return  ArrayList<XsdFieldHistory>
+     * @return ArrayList<XsdFieldHistory> all modification history of this field
      */
     public ArrayList<XsdFieldHistory> getHistory()
     {
@@ -377,9 +379,9 @@ public class XsdField extends XsdFieldBase {
     }
 
     /**
-     * Returns an XsdField's change history entry 
+     * Returns an XsdField's change history entry
      * 
-     * @return  XsdFieldHistory
+     * @return XsdFieldHistory the modification history of this field with matching key
      */
     public XsdFieldHistory getHistoryRecord(String historyKey)
     {
@@ -417,7 +419,7 @@ public class XsdField extends XsdFieldBase {
         // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
         _entityField.setLastmodified(value);
     }
-    
+
     @Override
     public String toXml()
     {
@@ -427,7 +429,7 @@ public class XsdField extends XsdFieldBase {
     /**
      * Returns the filename with directory path and file extension.
      * 
-     * @return  String, full filename
+     * @return String, full filename
      */
     public String getCoalesceFullFilename()
     {
@@ -446,7 +448,7 @@ public class XsdField extends XsdFieldBase {
     /**
      * Returns the filename with directory path and file extension for a thumbnail image.
      * 
-     * @return
+     * @return String, full thumbnail filename
      */
     public String getCoalesceFullThumbnailFilename()
     {
@@ -463,10 +465,10 @@ public class XsdField extends XsdFieldBase {
     }
 
     /**
-     * Returns the filename with a long representation of last modified datetime (Name?lastmodifiedlong).
-     * Returns empty string when filename does not exist. If an error is encountered, only the filename is returned.
+     * Returns the filename with a long representation of last modified datetime (Name?lastmodifiedlong). Returns empty
+     * string when filename does not exist. If an error is encountered, only the filename is returned.
      * 
-     * @return String
+     * @return String, full filename with LastModifiedTag appended
      */
     public String getCoalesceFilenameWithLastModifiedTag()
     {
@@ -488,10 +490,10 @@ public class XsdField extends XsdFieldBase {
     }
 
     /**
-     * Returns the tumbnail filename with a long representation of last modified datetime (Name?lastmodifiedlong).
-     * Returns empty string when filename does not exist. If an error is encountered, only the thumbnail filename is returned.
+     * Returns the thumbnail filename with a long representation of last modified datetime (Name?lastmodifiedlong). Returns
+     * empty string when filename does not exist. If an error is encountered, only the thumbnail filename is returned.
      * 
-     * @return String
+     * @return String, full thumbnail filename with LastModifiedTag appended
      */
     public String getCoalesceThumbnailFilenameWithLastModifiedTag()
     {
@@ -515,7 +517,7 @@ public class XsdField extends XsdFieldBase {
     /**
      * Returns the base filename and extension.
      * 
-     * @return String
+     * @return String, the filename and extension, without the path
      */
     public String getCoalesceFilename()
     {
@@ -538,7 +540,7 @@ public class XsdField extends XsdFieldBase {
     /**
      * Returns the thumbnail base filename and extension.
      * 
-     * @return String
+     * @return String, the thumbnail's filename and extension, without the path
      */
     public String getCoalesceThumbnailFilename()
     {
@@ -561,10 +563,10 @@ public class XsdField extends XsdFieldBase {
     /**
      * Update the value and/or classification marking of the XsdField.
      * 
-     * @param value     String, value contained by the field
-     * @param marking   classification marking of the field
-     * @param user      user making the change
-     * @param ip        user ip responsible for the change
+     * @param value String, value contained by the field
+     * @param marking classification marking of the field
+     * @param user user making the change
+     * @param ip user ip responsible for the change
      */
     public void change(String value, String marking, String user, String ip)
     {
