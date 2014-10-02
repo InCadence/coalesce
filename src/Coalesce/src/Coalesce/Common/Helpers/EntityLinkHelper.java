@@ -139,9 +139,9 @@ public class EntityLinkHelper {
      * @return <code>true</code> if there are no errors. Not finding an existing linkage to delete is not considered an
      *         error.
      */
-    public static boolean UnLinkEntities(XsdEntity entity1, XsdEntity entity2)
+    public static boolean unLinkEntities(XsdEntity entity1, XsdEntity entity2)
     {
-        return UnLinkEntities(entity1, entity2, null);
+        return unLinkEntities(entity1, entity2, null);
     }
 
     /**
@@ -153,7 +153,7 @@ public class EntityLinkHelper {
      * @return <code>true</code> if there are no errors. Not finding an existing linkage to delete is not considered an
      *         error.
      */
-    public static boolean UnLinkEntities(XsdEntity entity1, XsdEntity entity2, ELinkTypes linkType)
+    public static boolean unLinkEntities(XsdEntity entity1, XsdEntity entity2, ELinkTypes linkType)
     {
         if (entity1 == null) throw new NullArgumentException("entity1");
         if (entity2 == null) throw new NullArgumentException("entity2");

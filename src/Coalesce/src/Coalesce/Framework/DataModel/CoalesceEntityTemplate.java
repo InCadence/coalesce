@@ -110,15 +110,15 @@ public class CoalesceEntityTemplate {
     /**
      * Initializes a previously new CoalesceEntityTemplate based off of a (XML) String.
      * 
-     * @param EntityTemplateXml (XML) String from/of an XsdEntity
+     * @param entityTemplateXml (XML) String from/of an XsdEntity
      * @return boolean indicator of success/failure
      * 
      * @throws SAXException
      * @throws IOException
      */
-    public boolean initialize(String EntityTemplateXml) throws SAXException, IOException
+    public boolean initialize(String entityTemplateXml) throws SAXException, IOException
     {
-        return initialize(XmlHelper.loadXmlFrom(EntityTemplateXml));
+        return initialize(XmlHelper.loadXmlFrom(entityTemplateXml));
     }
 
     /**

@@ -72,7 +72,7 @@ public class CoalescePostGresPersistorTest {
             CoalescePostGresPersistorTest._coalesceFramework.Initialize(postGresSQLPersister);
 
             CoalescePostGresPersistorTest.createEntity();
-            CoalescePostGresPersistorTest._coalesceFramework.SaveCoalesceEntity(_entity);
+            CoalescePostGresPersistorTest._coalesceFramework.saveCoalesceEntity(_entity);
         }
         catch (Exception ex)
         {
@@ -210,14 +210,14 @@ public class CoalescePostGresPersistorTest {
     public void saveEntity() throws CoalesceException
     {
         CoalescePostGresPersistorTest.createEntity();
-        CoalescePostGresPersistorTest._coalesceFramework.SaveCoalesceEntity(_entity);
+        CoalescePostGresPersistorTest._coalesceFramework.saveCoalesceEntity(_entity);
     }
 
     @Test
     public void testGetEntity() throws CoalescePersistorException
     {
         XsdEntity ent = new XsdEntity();
-        ent = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceEntity(_entity.getKey());
+        ent = CoalescePostGresPersistorTest._coalesceFramework.getCoalesceEntity(_entity.getKey());
 
         assertTrue(ent != null);
 
@@ -227,14 +227,14 @@ public class CoalescePostGresPersistorTest {
     public void testSaveEntityTemplate() throws CoalescePersistorException, SAXException, IOException
     {
         CoalesceEntityTemplate template = testTemplate(CoalesceEntityTemplate.create(_entity));
-        assertTrue(CoalescePostGresPersistorTest._coalesceFramework.SaveCoalesceEntityTemplate(template));
+        assertTrue(CoalescePostGresPersistorTest._coalesceFramework.saveCoalesceEntityTemplate(template));
 
     }
 
     @Test
     public void testGetEntityMetaData() throws CoalescePersistorException
     {
-        EntityMetaData objectKey = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceEntityIdAndTypeForKey(_entity.getKey());
+        EntityMetaData objectKey = CoalescePostGresPersistorTest._coalesceFramework.getCoalesceEntityIdAndTypeForKey(_entity.getKey());
         assertTrue(objectKey.entityId != null && objectKey.entityKey != null && objectKey.entityType != null);
     }
 
@@ -244,7 +244,7 @@ public class CoalescePostGresPersistorTest {
         DateTime lastModified;
 
         // Test Entity
-        lastModified = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceEntityLastModified(_entity.getKey(),
+        lastModified = CoalescePostGresPersistorTest._coalesceFramework.getCoalesceEntityLastModified(_entity.getKey(),
                                                                                                       "entity");
         int compare = DateTimeComparator.getInstance().compare(lastModified, _entity.getLastModified());
         assertTrue(compare == 0);
@@ -255,7 +255,7 @@ public class CoalescePostGresPersistorTest {
         assertTrue(section != null);
 
         lastModified = null;
-        lastModified = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceEntityLastModified(section.getKey(),
+        lastModified = CoalescePostGresPersistorTest._coalesceFramework.getCoalesceEntityLastModified(section.getKey(),
                                                                                                       "section");
         assertTrue(DateTimeComparator.getInstance().compare(lastModified, section.getLastModified()) == 0);
 
@@ -267,7 +267,7 @@ public class CoalescePostGresPersistorTest {
         DateTime lastModified;
 
         // Test Entity
-        lastModified = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceEntityLastModified(_entity.getKey(),
+        lastModified = CoalescePostGresPersistorTest._coalesceFramework.getCoalesceEntityLastModified(_entity.getKey(),
                                                                                                       "linkage");
         assertTrue(DateTimeComparator.getInstance().compare(lastModified, _entity.getLastModified()) == 1);
 
@@ -277,7 +277,7 @@ public class CoalescePostGresPersistorTest {
     public void testGetEntityByIdAndType() throws CoalescePersistorException
     {
         XsdEntity ent = new XsdEntity();
-        ent = CoalescePostGresPersistorTest._coalesceFramework.GetEntity(_entity.getEntityId(), _entity.getEntityIdType());
+        ent = CoalescePostGresPersistorTest._coalesceFramework.getEntity(_entity.getEntityId(), _entity.getEntityIdType());
         assertTrue(ent != null);
     }
 
@@ -286,7 +286,7 @@ public class CoalescePostGresPersistorTest {
     {
         XsdEntity ent = new XsdEntity();
 
-        ent = CoalescePostGresPersistorTest._coalesceFramework.GetEntity(_entity.getName(),
+        ent = CoalescePostGresPersistorTest._coalesceFramework.getEntity(_entity.getName(),
                                                                          _entity.getEntityId(),
                                                                          _entity.getEntityIdType());
 
@@ -297,8 +297,8 @@ public class CoalescePostGresPersistorTest {
     @Test
     public void testGetFieldValue() throws CoalescePersistorException
     {
-        assertTrue(CoalescePostGresPersistorTest._coalesceFramework.SaveCoalesceEntity(_entity));
-        String fieldValue = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceFieldValue(_fieldKey);
+        assertTrue(CoalescePostGresPersistorTest._coalesceFramework.saveCoalesceEntity(_entity));
+        String fieldValue = CoalescePostGresPersistorTest._coalesceFramework.getCoalesceFieldValue(_fieldKey);
 
         assertTrue(fieldValue.equals("Test Status"));
 
@@ -309,7 +309,7 @@ public class CoalescePostGresPersistorTest {
     {
         // Create a new entity, but do not save the entity
         assertTrue(CoalescePostGresPersistorTest.createEntity());
-        String fieldValue = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceFieldValue(_fieldKey);
+        String fieldValue = CoalescePostGresPersistorTest._coalesceFramework.getCoalesceFieldValue(_fieldKey);
         assertNull(fieldValue);
 
     }
@@ -317,7 +317,7 @@ public class CoalescePostGresPersistorTest {
     @Test
     public void testGetEntityKeyForEntityId() throws CoalescePersistorException
     {
-        String objectKey = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceEntityKeyForEntityId(_entity.getEntityId(),
+        String objectKey = CoalescePostGresPersistorTest._coalesceFramework.getCoalesceEntityKeyForEntityId(_entity.getEntityId(),
                                                                                                             _entity.getEntityIdType(),
                                                                                                             _entity.getName());
         assertTrue(objectKey != null);
@@ -327,7 +327,7 @@ public class CoalescePostGresPersistorTest {
     @Test
     public void testFAILGetEntityKeyForEntityId() throws CoalescePersistorException
     {
-        String objectKey = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceEntityKeyForEntityId("", "", "");
+        String objectKey = CoalescePostGresPersistorTest._coalesceFramework.getCoalesceEntityKeyForEntityId("", "", "");
         assertTrue(objectKey == null);
 
     }
@@ -335,7 +335,7 @@ public class CoalescePostGresPersistorTest {
     @Test
     public void testGetEntityKeyForEntityIdName() throws CoalescePersistorException
     {
-        List<String> objectKey = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceEntityKeysForEntityId(_entity.getEntityId(),
+        List<String> objectKey = CoalescePostGresPersistorTest._coalesceFramework.getCoalesceEntityKeysForEntityId(_entity.getEntityId(),
                                                                                                                    _entity.getEntityIdType(),
                                                                                                                    _entity.getName(),
                                                                                                                    _entity.getSource());
@@ -346,7 +346,7 @@ public class CoalescePostGresPersistorTest {
     @Test
     public void testFAILGetEntityKeyForEntityIdName() throws CoalescePersistorException
     {
-        List<String> objectKey = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceEntityKeysForEntityId("",
+        List<String> objectKey = CoalescePostGresPersistorTest._coalesceFramework.getCoalesceEntityKeysForEntityId("",
                                                                                                                    "",
                                                                                                                    "",
                                                                                                                    "");
@@ -357,7 +357,7 @@ public class CoalescePostGresPersistorTest {
     @Test
     public void testGetEntityKeyForEntityIdSource() throws CoalescePersistorException
     {
-        List<String> objectKey = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceEntityKeysForEntityId(_entity.getEntityId(),
+        List<String> objectKey = CoalescePostGresPersistorTest._coalesceFramework.getCoalesceEntityKeysForEntityId(_entity.getEntityId(),
                                                                                                                    _entity.getEntityIdType(),
                                                                                                                    _entity.getName());
         assertTrue(objectKey.size() >= 0 || objectKey != null);
@@ -367,7 +367,7 @@ public class CoalescePostGresPersistorTest {
     @Test
     public void testFAILGetEntityKeyForEntityIdSource() throws CoalescePersistorException
     {
-        List<String> objectKey = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceEntityKeysForEntityId("",
+        List<String> objectKey = CoalescePostGresPersistorTest._coalesceFramework.getCoalesceEntityKeysForEntityId("",
                                                                                                                    "",
                                                                                                                    "");
         assertTrue(objectKey.size() == 0);
@@ -377,7 +377,7 @@ public class CoalescePostGresPersistorTest {
     @Test
     public void testGetEntityKeysForEntityIdSource() throws CoalescePersistorException
     {
-        String objectKey = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceEntityKeyForEntityId(_entity.getEntityId(),
+        String objectKey = CoalescePostGresPersistorTest._coalesceFramework.getCoalesceEntityKeyForEntityId(_entity.getEntityId(),
                                                                                                             _entity.getEntityIdType(),
                                                                                                             _entity.getName(),
                                                                                                             _entity.getSource());
@@ -389,12 +389,12 @@ public class CoalescePostGresPersistorTest {
     public void testGetEntityTemplateXML() throws CoalescePersistorException
     {
         // Get Template Key
-        String templateKey = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceEntityTemplateKey(_entity.getName(),
+        String templateKey = CoalescePostGresPersistorTest._coalesceFramework.getCoalesceEntityTemplateKey(_entity.getName(),
                                                                                                            _entity.getSource(),
                                                                                                            _entity.getVersion());
 
         // Load Template by Key
-        String templateXML = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceEntityTemplateXml(templateKey);
+        String templateXML = CoalescePostGresPersistorTest._coalesceFramework.getCoalesceEntityTemplateXml(templateKey);
 
         assertFalse(StringHelper.isNullOrEmpty(templateXML));
 
@@ -403,7 +403,7 @@ public class CoalescePostGresPersistorTest {
     @Test
     public void testGetEntityTemplateXMLName() throws CoalescePersistorException
     {
-        String templateXML = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceEntityTemplateXml(_entity.getName(),
+        String templateXML = CoalescePostGresPersistorTest._coalesceFramework.getCoalesceEntityTemplateXml(_entity.getName(),
                                                                                                            _entity.getSource(),
                                                                                                            _entity.getVersion());
         assertFalse(StringHelper.isNullOrEmpty(templateXML));
@@ -413,7 +413,7 @@ public class CoalescePostGresPersistorTest {
     @Test
     public void testGetEntityTemplateKey() throws CoalescePersistorException
     {
-        String templateKey = CoalescePostGresPersistorTest._coalesceFramework.GetCoalesceEntityTemplateKey(_entity.getName(),
+        String templateKey = CoalescePostGresPersistorTest._coalesceFramework.getCoalesceEntityTemplateKey(_entity.getName(),
                                                                                                            _entity.getSource(),
                                                                                                            _entity.getVersion());
         assertFalse(StringHelper.isNullOrEmpty(templateKey));

@@ -48,7 +48,7 @@ public class CoalesceEntitySyncShellTest {
 
         // Validate
         assertNotNull(shell.toXml());
-        assertNotNull(shell.GetEntityNode());
+        assertNotNull(shell.getEntityNode());
         assertTrue(this.ValidateSyncShell(shell));
 
     }
@@ -63,7 +63,7 @@ public class CoalesceEntitySyncShellTest {
 
         // Copy Shell Using Entity
         CoalesceEntitySyncShell shell2 = new CoalesceEntitySyncShell();
-        shell2.SetEntityNode(shell.GetEntityNode());
+        shell2.setEntityNode(shell.getEntityNode());
 
         String shellXml = shell2.toXml();
 
@@ -111,7 +111,7 @@ public class CoalesceEntitySyncShellTest {
 
         // Validate
         assertTrue(xml1.equals(xml2));
-        assertNotEquals(shell.GetDataObjectDocument(), clone.GetDataObjectDocument());
+        assertNotEquals(shell.getDataObjectDocument(), clone.getDataObjectDocument());
 
     }
 
@@ -141,7 +141,7 @@ public class CoalesceEntitySyncShellTest {
         assertTrue(this.ValidateSyncShell(remoteShell));
 
         // Create Change Shell
-        CoalesceEntitySyncShell changesShell = CoalesceEntitySyncShell.GetRequiredChangesSyncShell(localShell, remoteShell);
+        CoalesceEntitySyncShell changesShell = CoalesceEntitySyncShell.getRequiredChangesSyncShell(localShell, remoteShell);
         // Print XML
         //String changesXml = changesShell.toXml();
         //System.out.println(changesXml);
@@ -149,7 +149,7 @@ public class CoalesceEntitySyncShellTest {
         // Validate Change
         boolean foundChange = false;
 
-        NodeList nodeList = changesShell.GetDataObjectDocument().getElementsByTagName("*");
+        NodeList nodeList = changesShell.getDataObjectDocument().getElementsByTagName("*");
 
         for (int ii = 0; ii < nodeList.getLength(); ii++)
         {
@@ -172,7 +172,7 @@ public class CoalesceEntitySyncShellTest {
     private boolean ValidateSyncShell(CoalesceEntitySyncShell shell)
     {
         // Validate
-        NodeList nodeList = shell.GetDataObjectDocument().getElementsByTagName("*");
+        NodeList nodeList = shell.getDataObjectDocument().getElementsByTagName("*");
 
         for (int jj = 0; jj < nodeList.getLength(); jj++)
         {

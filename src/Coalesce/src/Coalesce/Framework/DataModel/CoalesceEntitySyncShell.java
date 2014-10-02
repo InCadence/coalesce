@@ -141,7 +141,7 @@ public class CoalesceEntitySyncShell {
         CoalesceEntitySyncShell.PruneNodes(doc);
 
         // Set DataObjectDocument
-        this.SetDataObjectDocument(doc);
+        this.setDataObjectDocument(doc);
 
         // return Success
         return true;
@@ -156,7 +156,7 @@ public class CoalesceEntitySyncShell {
      * 
      * @return org.w3c.dom Document of the CoalesceEntitySyncShell
      */
-    public Document GetDataObjectDocument()
+    public Document getDataObjectDocument()
     {
         return this._DataObjectDocument;
     }
@@ -166,7 +166,7 @@ public class CoalesceEntitySyncShell {
      * 
      * @param value org.w3c.dom Document Document to assign to the CoalesceEntitySyncShell
      */
-    public void SetDataObjectDocument(Document value)
+    public void setDataObjectDocument(Document value)
     {
         this._DataObjectDocument = value;
         this._EntityNode = value.getElementsByTagName("entity").item(0);
@@ -177,7 +177,7 @@ public class CoalesceEntitySyncShell {
      * 
      * @return org.w3c.dom Node of the CoalesceEntitySyncShell
      */
-    public Node GetEntityNode()
+    public Node getEntityNode()
     {
         return this._EntityNode;
     }
@@ -188,7 +188,7 @@ public class CoalesceEntitySyncShell {
      * @param value org.w3c.dom Node to assign to the CoalesceEntitySyncShell
      * @throws ParserConfigurationException
      */
-    public void SetEntityNode(Node value) throws ParserConfigurationException
+    public void setEntityNode(Node value) throws ParserConfigurationException
     {
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -232,7 +232,7 @@ public class CoalesceEntitySyncShell {
         // TODO: make sure .Clone's are same between vb and java. Java required a boolean.
         // return SyncShellClone.Initialize(SyncShell.DataObjectDocument.Clone) //vb
         // return SyncShellClone.Initialize(SyncShell.GetDataObjectDocument()); //1st java thought
-        SyncShellClone.Initialize((Document) SyncShell.GetDataObjectDocument().cloneNode(true));
+        SyncShellClone.Initialize((Document) SyncShell.getDataObjectDocument().cloneNode(true));
         return SyncShellClone;
         // return CallResult.failedCallResult; //SyncShellClone.InitializeFromEntity((CoalesceEntity)
         // SyncShell.GetDataObjectDocument().cloneNode(true));
@@ -245,7 +245,7 @@ public class CoalesceEntitySyncShell {
      * @param RemoteFullSyncShell CoalesceEntitySyncShell original
      * @return CoalesceEntitySyncShell local copy's changes from the original
      */
-    public static CoalesceEntitySyncShell GetRequiredChangesSyncShell(CoalesceEntitySyncShell LocalFullSyncShell,
+    public static CoalesceEntitySyncShell getRequiredChangesSyncShell(CoalesceEntitySyncShell LocalFullSyncShell,
                                                                       CoalesceEntitySyncShell RemoteFullSyncShell)
     {
         // Create the RequiredChangesSyncShell as a Clone of the RemoteFullSyncShell. We will
@@ -256,9 +256,9 @@ public class CoalesceEntitySyncShell {
         if (requiredChangesSyncShell.equals(null)) return requiredChangesSyncShell;
 
         // Prune Unchanged Nodes
-        CoalesceEntitySyncShell.PruneUnchangedNodes(CoalesceEntitySyncShell.GenerateMap(LocalFullSyncShell.GetDataObjectDocument()),
-                                                    RemoteFullSyncShell.GetDataObjectDocument(),
-                                                    CoalesceEntitySyncShell.GenerateMap(requiredChangesSyncShell.GetDataObjectDocument()));
+        CoalesceEntitySyncShell.PruneUnchangedNodes(CoalesceEntitySyncShell.GenerateMap(LocalFullSyncShell.getDataObjectDocument()),
+                                                    RemoteFullSyncShell.getDataObjectDocument(),
+                                                    CoalesceEntitySyncShell.GenerateMap(requiredChangesSyncShell.getDataObjectDocument()));
 
         return requiredChangesSyncShell;
     }

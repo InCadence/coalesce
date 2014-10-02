@@ -115,7 +115,7 @@ public abstract class CoalescePersistorBaseTest {
 
         _fieldKey = CoalescePersistorBaseTest.getCurrentStatusField(_entity).getKey();
 
-        assertTrue(_coalesceFramework.SaveCoalesceEntity(_entity));
+        assertTrue(_coalesceFramework.saveCoalesceEntity(_entity));
 
     }
 
@@ -133,7 +133,7 @@ public abstract class CoalescePersistorBaseTest {
     {
         try (CoalesceDataConnectorBase conn = tester.getDataConnector(_serCon))
         {
-            List<String> objectKeys = _coalesceFramework.GetCoalesceEntityKeysForEntityId("EntityId",
+            List<String> objectKeys = _coalesceFramework.getCoalesceEntityKeysForEntityId("EntityId",
                                                                                           "EntityIdType",
                                                                                           "TestEntity",
                                                                                           "Unit Test");
@@ -204,7 +204,7 @@ public abstract class CoalescePersistorBaseTest {
     {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        assertTrue(_coalesceFramework.SaveCoalesceEntity(entity));
+        assertTrue(_coalesceFramework.saveCoalesceEntity(entity));
 
     }
 
@@ -214,7 +214,7 @@ public abstract class CoalescePersistorBaseTest {
         // assertTrue(_coalesceFramework.SaveCoalesceEntity(_entity));
 
         // Get Field from DB Using XPath
-        XsdField<?> field = _coalesceFramework.GetCoalesceFieldByFieldKey(_fieldKey);
+        XsdField<?> field = _coalesceFramework.getCoalesceFieldByFieldKey(_fieldKey);
         assertNotNull(field);
 
         // Get Record from Entity
@@ -222,7 +222,7 @@ public abstract class CoalescePersistorBaseTest {
         assertNotNull(record);
 
         // Get Record from DB Using XPath
-        XsdRecord recordDB = _coalesceFramework.GetCoalesceRecord(record.getKey());
+        XsdRecord recordDB = _coalesceFramework.getCoalesceRecord(record.getKey());
         assertNotNull(recordDB);
         assertEquals(record.getName(), recordDB.getName());
 
@@ -232,23 +232,23 @@ public abstract class CoalescePersistorBaseTest {
     public void testEntityTemplate() throws SAXException, IOException, CoalescePersistorException
     {
         CoalesceEntityTemplate template = testTemplate(CoalesceEntityTemplate.create(_entity));
-        assertTrue(_coalesceFramework.SaveCoalesceEntityTemplate(template));
+        assertTrue(_coalesceFramework.saveCoalesceEntityTemplate(template));
 
         // String templateXml = template.toXml().replace("UTF-8", "UTF-16");
         String templateXml = template.toXml();
 
-        String templateKey = _coalesceFramework.GetCoalesceEntityTemplateKey(_entity.getName(),
+        String templateKey = _coalesceFramework.getCoalesceEntityTemplateKey(_entity.getName(),
                                                                              _entity.getSource(),
                                                                              _entity.getVersion());
         assertFalse(StringHelper.isNullOrEmpty(templateKey));
 
         _testTemplateKey = templateKey;
 
-        String templateXmlFromKey = _coalesceFramework.GetCoalesceEntityTemplateXml(templateKey);
+        String templateXmlFromKey = _coalesceFramework.getCoalesceEntityTemplateXml(templateKey);
 
         CoalesceAssert.assertXmlEquals(templateXml, templateXmlFromKey.replace("UTF-16", "UTF-8"), "UTF-8");
 
-        String templateXmlFromAttr = _coalesceFramework.GetCoalesceEntityTemplateXml(_entity.getName(),
+        String templateXmlFromAttr = _coalesceFramework.getCoalesceEntityTemplateXml(_entity.getName(),
                                                                                      _entity.getSource(),
                                                                                      _entity.getVersion());
         CoalesceAssert.assertXmlEquals(templateXml, templateXmlFromAttr.replace("UTF-16", "UTF-8"), "UTF-8");
@@ -258,7 +258,7 @@ public abstract class CoalescePersistorBaseTest {
     @Test
     public void testGetEntityMetaData() throws CoalescePersistorException
     {
-        EntityMetaData objectKey = _coalesceFramework.GetCoalesceEntityIdAndTypeForKey(_entity.getKey());
+        EntityMetaData objectKey = _coalesceFramework.getCoalesceEntityIdAndTypeForKey(_entity.getKey());
 
         assertEquals(_entity.getEntityId(), objectKey.entityId);
         assertEquals(_entity.getKey().toUpperCase(), objectKey.entityKey.toUpperCase());
@@ -268,7 +268,7 @@ public abstract class CoalescePersistorBaseTest {
     @Test
     public void testGetEntity() throws CoalescePersistorException
     {
-        XsdEntity ent = _coalesceFramework.GetCoalesceEntity(_entity.getKey());
+        XsdEntity ent = _coalesceFramework.getCoalesceEntity(_entity.getKey());
 
         CoalesceAssert.assertXmlEquals(_entityXml, ent.toXml(), "UTF-8");
     }
@@ -277,14 +277,14 @@ public abstract class CoalescePersistorBaseTest {
     public void testCheckLastModified() throws CoalescePersistorException
     {
         // Test Entity
-        DateTime lastModified = _coalesceFramework.GetCoalesceEntityLastModified(_entity.getKey(), "entity");
+        DateTime lastModified = _coalesceFramework.getCoalesceEntityLastModified(_entity.getKey(), "entity");
         assertEquals(lastModified, _entity.getLastModified());
 
         // Test Section
         XsdSection section = _entity.getSection("TestEntity/Live Status Section");
 
         lastModified = null;
-        lastModified = _coalesceFramework.GetCoalesceEntityLastModified(section.getKey(), "section");
+        lastModified = _coalesceFramework.getCoalesceEntityLastModified(section.getKey(), "section");
         assertEquals(lastModified, section.getLastModified());
 
     }
@@ -312,7 +312,7 @@ public abstract class CoalescePersistorBaseTest {
         DateTime lastModified;
 
         // Test Entity
-        lastModified = CoalescePersistorBaseTest._coalesceFramework.GetCoalesceEntityLastModified(_entity.getKey(),
+        lastModified = CoalescePersistorBaseTest._coalesceFramework.getCoalesceEntityLastModified(_entity.getKey(),
                                                                                                   "linkage");
         assertTrue(DateTimeComparator.getInstance().compare(lastModified, _entity.getLastModified()) == 1);
 
@@ -321,7 +321,7 @@ public abstract class CoalescePersistorBaseTest {
     @Test
     public void testGetEntityByIdAndType() throws CoalescePersistorException
     {
-        XsdEntity ent = _coalesceFramework.GetEntity(_entity.getEntityId(), _entity.getEntityIdType());
+        XsdEntity ent = _coalesceFramework.getEntity(_entity.getEntityId(), _entity.getEntityIdType());
 
         CoalesceAssert.assertXmlEquals(_entityXml, ent.toXml(), "UTF-8");
     }
@@ -329,7 +329,7 @@ public abstract class CoalescePersistorBaseTest {
     @Test
     public void testGetEntityByNameAndIdAndType() throws CoalescePersistorException
     {
-        XsdEntity ent = _coalesceFramework.GetEntity(_entity.getName(), _entity.getEntityId(), _entity.getEntityIdType());
+        XsdEntity ent = _coalesceFramework.getEntity(_entity.getName(), _entity.getEntityId(), _entity.getEntityIdType());
 
         CoalesceAssert.assertXmlEquals(_entityXml, ent.toXml(), "UTF-8");
     }
@@ -337,7 +337,7 @@ public abstract class CoalescePersistorBaseTest {
     @Test
     public void testGetFieldValue() throws CoalescePersistorException
     {
-        String fieldValue = _coalesceFramework.GetCoalesceFieldValue(_fieldKey);
+        String fieldValue = _coalesceFramework.getCoalesceFieldValue(_fieldKey);
 
         assertEquals("Test Status", fieldValue);
     }
@@ -348,7 +348,7 @@ public abstract class CoalescePersistorBaseTest {
         // Create a new entity, but do not save the entity
         XsdEntity entity = CoalescePersistorBaseTest.createEntity();
 
-        String fieldValue = _coalesceFramework.GetCoalesceFieldValue(CoalescePersistorBaseTest.getCurrentStatusField(entity).getKey());
+        String fieldValue = _coalesceFramework.getCoalesceFieldValue(CoalescePersistorBaseTest.getCurrentStatusField(entity).getKey());
 
         assertNull(fieldValue);
 
@@ -357,7 +357,7 @@ public abstract class CoalescePersistorBaseTest {
     @Test
     public void testGetEntityKeyForEntityId() throws CoalescePersistorException
     {
-        String objectKey = _coalesceFramework.GetCoalesceEntityKeyForEntityId(_entity.getEntityId(),
+        String objectKey = _coalesceFramework.getCoalesceEntityKeyForEntityId(_entity.getEntityId(),
                                                                               _entity.getEntityIdType(),
                                                                               _entity.getName());
 
@@ -368,7 +368,7 @@ public abstract class CoalescePersistorBaseTest {
     public void testFAILGetEntityKeyForEntityId() throws CoalescePersistorException
     {
 
-        String objectKey = _coalesceFramework.GetCoalesceEntityKeyForEntityId("", "", "");
+        String objectKey = _coalesceFramework.getCoalesceEntityKeyForEntityId("", "", "");
 
         assertNull(objectKey);
 
@@ -377,7 +377,7 @@ public abstract class CoalescePersistorBaseTest {
     @Test
     public void testGetEntityKeyForEntityIdName() throws CoalescePersistorException
     {
-        List<String> objectKey = _coalesceFramework.GetCoalesceEntityKeysForEntityId(_entity.getEntityId(),
+        List<String> objectKey = _coalesceFramework.getCoalesceEntityKeysForEntityId(_entity.getEntityId(),
                                                                                      _entity.getEntityIdType(),
                                                                                      _entity.getName(),
                                                                                      _entity.getSource());
@@ -387,14 +387,14 @@ public abstract class CoalescePersistorBaseTest {
     @Test
     public void testFAILGetEntityKeyForEntityIdName() throws CoalescePersistorException
     {
-        List<String> objectKey = _coalesceFramework.GetCoalesceEntityKeysForEntityId("", "", "", "");
+        List<String> objectKey = _coalesceFramework.getCoalesceEntityKeysForEntityId("", "", "", "");
         assertTrue(objectKey.isEmpty());
     }
 
     @Test
     public void testGetEntityKeysForEntityIdSource() throws CoalescePersistorException
     {
-        List<String> objectKeys = _coalesceFramework.GetCoalesceEntityKeysForEntityId(_entity.getEntityId(),
+        List<String> objectKeys = _coalesceFramework.getCoalesceEntityKeysForEntityId(_entity.getEntityId(),
                                                                                       _entity.getEntityIdType(),
                                                                                       _entity.getName());
         assertFalse(objectKeys.isEmpty());
@@ -415,14 +415,14 @@ public abstract class CoalescePersistorBaseTest {
     @Test
     public void testFAILGetEntityKeyForEntityIdSource() throws CoalescePersistorException
     {
-        List<String> objectKeys = _coalesceFramework.GetCoalesceEntityKeysForEntityId("", "", "");
+        List<String> objectKeys = _coalesceFramework.getCoalesceEntityKeysForEntityId("", "", "");
         assertTrue(objectKeys.isEmpty());
     }
 
     @Test
     public void testGetEntityKeyForEntityIdSource() throws CoalescePersistorException
     {
-        String objectKey = _coalesceFramework.GetCoalesceEntityKeyForEntityId(_entity.getEntityId(),
+        String objectKey = _coalesceFramework.getCoalesceEntityKeyForEntityId(_entity.getEntityId(),
                                                                               _entity.getEntityIdType(),
                                                                               _entity.getName(),
                                                                               _entity.getSource());
@@ -461,7 +461,7 @@ public abstract class CoalescePersistorBaseTest {
 
     private static void deleteEntity(CoalesceDataConnectorBase conn, String objectKey) throws CoalescePersistorException
     {
-        String entityXml = _coalesceFramework.GetEntityXml(objectKey);
+        String entityXml = _coalesceFramework.getEntityXml(objectKey);
 
         XsdEntity entity = XsdEntity.create(entityXml);
 
