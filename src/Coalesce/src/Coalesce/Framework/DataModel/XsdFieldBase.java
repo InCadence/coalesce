@@ -8,7 +8,6 @@ import java.util.Locale;
 import java.util.UUID;
 
 import org.apache.commons.lang.LocaleUtils;
-import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.NullArgumentException;
 import org.apache.xerces.impl.dv.util.Base64;
 import org.joda.time.DateTime;
