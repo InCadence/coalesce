@@ -3,8 +3,9 @@ package Coalesce.Framework.DataModel;
 import java.util.Locale;
 
 import Coalesce.Common.Classification.Marking;
+import Coalesce.Common.Exceptions.CoalesceDataFormatException;
 
-public interface ICoalesceField {
+public interface ICoalesceField<T> {
 
     // Methods
     /**
@@ -19,7 +20,7 @@ public interface ICoalesceField {
      * 
      * @return String of the Field's value attribute
      */
-    public String getValue();
+    public T getValue() throws CoalesceDataFormatException;
 
     /**
      * Return the value of the Field's Label attribute
@@ -117,7 +118,7 @@ public interface ICoalesceField {
      * 
      * @param value String to be the Field's value attribute
      */
-    public void setValue(String value);
+    public void setValue(T value);
 
     /**
      * Sets the value of the Field's Label attribute

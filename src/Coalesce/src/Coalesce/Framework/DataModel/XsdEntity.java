@@ -4,11 +4,9 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.xml.namespace.QName;
 import javax.xml.xpath.XPath;
@@ -31,7 +29,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import Coalesce.Common.Exceptions.CoalesceException;
-import Coalesce.Common.Helpers.GUIDHelper;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import Coalesce.Common.Helpers.StringHelper;
 import Coalesce.Common.Helpers.XmlHelper;
@@ -381,10 +378,10 @@ public class XsdEntity extends XsdDataObject {
 
                 XsdDataObject dataObject = getDataObjectForNamePath(path);
 
-                if (dataObject != null && dataObject instanceof XsdField)
+                if (dataObject != null && dataObject instanceof XsdField<?>)
                 {
-                    XsdField field = (XsdField) dataObject;
-                    pathTitle += field.getValue() + ", ";
+                    XsdField<?> field = (XsdField<?>) dataObject;
+                    pathTitle += field.getBaseValue() + ", ";
                 }
             }
 
@@ -806,13 +803,13 @@ public class XsdEntity extends XsdDataObject {
     private static void resolveConflicts(XsdDataObject Entity1, XsdDataObject Entity2)
     {
 
-        if (Entity1 instanceof XsdField)
+        if (Entity1 instanceof XsdField<?>)
         {
             // do we have matching keys?
             if (Entity1.getKey().equals(Entity2.getKey()))
             {
                 // check for conflicts
-                resolveFieldConflicts((XsdField) Entity1, (XsdField) Entity2);
+                resolveFieldConflicts((XsdField<?>) Entity1, (XsdField<?>) Entity2);
             }
         }
         else
@@ -834,7 +831,7 @@ public class XsdEntity extends XsdDataObject {
 
     }
 
-    private static void resolveFieldConflicts(XsdField field1, XsdField field2)
+    private static void resolveFieldConflicts(XsdField<?> field1, XsdField<?> field2)
     {
 
         // Call SetChanged to determine if field history needs to be created
@@ -886,14 +883,14 @@ public class XsdEntity extends XsdDataObject {
         //
         // }
 
-        if (field1.getValue() != null)
+        if (field1.getBaseValue() != null)
         {
-            field1Value = field1.getValue();
+            field1Value = field1.getBaseValue();
         }
 
-        if (field2.getValue() != null)
+        if (field2.getBaseValue() != null)
         {
-            field2Value = field2.getValue();
+            field2Value = field2.getBaseValue();
         }
 
         if (!field1Value.equals(field2Value) && !field1.getHistory().isEmpty())

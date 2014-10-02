@@ -581,7 +581,7 @@ public class MySQLPersistor extends CoalescePersisterBase {
         case "field":// Not testing the type to ascertain if it is BINARY now.
             if (CoalesceSettings.getUseIndexing())
             {
-                isSuccessful = persistFieldObject((XsdField) dataObject, conn);
+                isSuccessful = persistFieldObject((XsdField<?>) dataObject, conn);
             }
             break;
 
@@ -746,7 +746,7 @@ public class MySQLPersistor extends CoalescePersisterBase {
      * @return True = Successful add/update operation.
      * @throws SQLException
      */
-    protected boolean persistFieldObject(XsdField field, MySQLDataConnector conn) throws SQLException
+    protected boolean persistFieldObject(XsdField<?> field, MySQLDataConnector conn) throws SQLException
     {
         // Return true if no update is required.
         if (!this.checkLastModified(field, conn)) return true;
@@ -755,7 +755,7 @@ public class MySQLPersistor extends CoalescePersisterBase {
         return conn.ExecuteProcedure("CoalesceField_InsertOrUpdate",
                                      new CoalesceParameter(field.getKey()),
                                      new CoalesceParameter(field.getName()),
-                                     new CoalesceParameter(field.getValue()),
+                                     new CoalesceParameter(field.getBaseValue()),
                                      new CoalesceParameter(field.getDataType().getLabel()),
                                      new CoalesceParameter(""),
                                      new CoalesceParameter(field.getClassificationMarkingAsString()),
@@ -1063,9 +1063,9 @@ public class MySQLPersistor extends CoalescePersisterBase {
         {
             if (dataObject.getType().toLowerCase() == "field")
             {
-                if (((XsdField) dataObject).getDataType() == ECoalesceFieldDataTypes.FileType)
+                if (((XsdField<?>) dataObject).getDataType() == ECoalesceFieldDataTypes.FileType)
                 {
-                    isSuccessful = persistFieldObject((XsdField) dataObject, conn);
+                    isSuccessful = persistFieldObject((XsdField<?>) dataObject, conn);
                 }
             }
 

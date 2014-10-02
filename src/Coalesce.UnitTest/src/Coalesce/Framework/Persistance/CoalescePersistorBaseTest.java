@@ -214,7 +214,7 @@ public abstract class CoalescePersistorBaseTest {
         // assertTrue(_coalesceFramework.SaveCoalesceEntity(_entity));
 
         // Get Field from DB Using XPath
-        XsdField field = _coalesceFramework.GetCoalesceFieldByFieldKey(_fieldKey);
+        XsdField<?> field = _coalesceFramework.GetCoalesceFieldByFieldKey(_fieldKey);
         assertNotNull(field);
 
         // Get Record from Entity
@@ -451,9 +451,9 @@ public abstract class CoalescePersistorBaseTest {
 
     }
 
-    private static XsdField getCurrentStatusField(XsdEntity entity)
+    private static XsdField<?> getCurrentStatusField(XsdEntity entity)
     {
-        XsdField field = (XsdField) entity.getDataObjectForNamePath("TestEntity/Live Status Section/Live Status Recordset/Live Status Recordset Record/CurrentStatus");
+        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TestEntity/Live Status Section/Live Status Recordset/Live Status Recordset Record/CurrentStatus");
 
         return field;
 

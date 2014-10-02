@@ -4,9 +4,11 @@ import Coalesce.Framework.DataModel.ECoalesceFieldDataTypes;
 import Coalesce.Framework.DataModel.XsdEntity;
 import Coalesce.Framework.DataModel.XsdField;
 import Coalesce.Framework.DataModel.XsdFieldDefinition;
+import Coalesce.Framework.DataModel.XsdIntegerField;
 import Coalesce.Framework.DataModel.XsdRecord;
 import Coalesce.Framework.DataModel.XsdRecordset;
 import Coalesce.Framework.DataModel.XsdSection;
+import Coalesce.Framework.DataModel.XsdStringField;
 
 public class MissionEntity extends XsdEntity {
 
@@ -132,14 +134,14 @@ public class MissionEntity extends XsdEntity {
     // Entity Fields
     // ----------------------------------------------------------------------//
 
-    public XsdField getActionNumber()
+    public XsdStringField getActionNumber()
     {
-        return _informationRecord.getFieldByName("ActionNumber");
+        return (XsdStringField) _informationRecord.getFieldByName("ActionNumber");
     }
 
-    public XsdField getIncidentNumber()
+    public XsdIntegerField getIncidentNumber()
     {
-        return _informationRecord.getFieldByName("IncidentNumber");
+        return  (XsdIntegerField) _informationRecord.getFieldByName("IncidentNumber");
     }
 
     public XsdField getIncidentTitle()

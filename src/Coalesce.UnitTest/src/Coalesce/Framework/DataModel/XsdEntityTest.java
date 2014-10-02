@@ -143,7 +143,7 @@ public class XsdEntityTest {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION,
                                             "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionName");
 
-        assertEquals(((XsdField) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH)).getValue(),
+        assertEquals(((XsdField<?>) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH)).getBaseValue(),
                      entity.getTitle());
     }
 
@@ -877,11 +877,11 @@ public class XsdEntityTest {
     {
         XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField missionName = (XsdField) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
-        XsdField incidentTitle = (XsdField) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_INCIDENT_TITLE_PATH);
+        XsdField<?> missionName = (XsdField<?>) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+        XsdField<?> incidentTitle = (XsdField<?>) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_INCIDENT_TITLE_PATH);
 
-        missionName.setValue("Mission Name");
-        incidentTitle.setValue("Incident Title");
+        missionName.setBaseValue("Mission Name");
+        incidentTitle.setBaseValue("Incident Title");
 
         String title = entity.getTitle();
         assertEquals("Mission Name, Incident Title", title);
@@ -1974,18 +1974,18 @@ public class XsdEntityTest {
 
         XsdDataObject xdo = entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
 
-        assertTrue(xdo instanceof XsdField);
+        assertTrue(xdo instanceof XsdField<?>);
 
-        XsdField nameField = (XsdField) xdo;
+        XsdField<?> nameField = (XsdField<?>) xdo;
 
         assertEquals(1, nameField.getHistory().size());
-        assertEquals(CoalesceTypeInstances.TEST_MISSION_NAME_HISTORY_VALUE, nameField.getHistory().get(0).getValue());
+        assertEquals(CoalesceTypeInstances.TEST_MISSION_NAME_HISTORY_VALUE, nameField.getHistory().get(0).getBaseValue());
 
         xdo = entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_ACTION_NUMBER_PATH);
 
-        assertTrue(xdo instanceof XsdField);
+        assertTrue(xdo instanceof XsdField<?>);
 
-        XsdField actionNumberField = (XsdField) xdo;
+        XsdField<?> actionNumberField = (XsdField<?>) xdo;
 
         assertEquals(2, actionNumberField.getHistory().size());
         assertEquals(CoalesceTypeInstances.TEST_MISSION_ACTION_NUMBER_LABEL_HISTORY,
@@ -1993,9 +1993,9 @@ public class XsdEntityTest {
 
         xdo = entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_BASE64_PATH);
 
-        assertTrue(xdo instanceof XsdField);
+        assertTrue(xdo instanceof XsdField<?>);
 
-        XsdField base64Field = (XsdField) xdo;
+        XsdField<?> base64Field = (XsdField<?>) xdo;
 
         assertTrue(base64Field.getHistory().isEmpty());
 
@@ -2012,8 +2012,8 @@ public class XsdEntityTest {
             XsdEntity entity2 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
             // Get Mission Name Fields
-            XsdField entity1MissionName = (XsdField) entity1.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
-            XsdField entity2MissionName = (XsdField) entity2.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+            XsdField<?> entity1MissionName = (XsdField<?>) entity1.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+            XsdField<?> entity2MissionName = (XsdField<?>) entity2.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
 
             // Modify Entity 1
             entity1MissionName.setTypedValue("Should be added as history");
@@ -2030,11 +2030,11 @@ public class XsdEntityTest {
             System.out.println(mergedEntity.toXml());
 
             // Get Mission Name Field of Merged Entity
-            XsdField mergedEntityMissionName = (XsdField) mergedEntity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+            XsdField<?> mergedEntityMissionName = (XsdField<?>) mergedEntity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
          
             // Validate Merge
-            assertEquals(entity2MissionName.getValue(), mergedEntityMissionName.getValue());
-            assertEquals(entity1MissionName.getValue(),(mergedEntityMissionName.getHistory().get(0).getValue()));        
+            assertEquals(entity2MissionName.getBaseValue(), mergedEntityMissionName.getBaseValue());
+            assertEquals(entity1MissionName.getBaseValue(),(mergedEntityMissionName.getHistory().get(0).getBaseValue()));        
 
         }
         catch (CoalesceException | InterruptedException e)
@@ -2054,8 +2054,8 @@ public class XsdEntityTest {
             XsdEntity entity2 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
             // Get Mission Name Fields
-            XsdField entity1MissionName = (XsdField) entity1.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
-            XsdField entity2MissionName = (XsdField) entity2.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+            XsdField<?> entity1MissionName = (XsdField<?>) entity1.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+            XsdField<?> entity2MissionName = (XsdField<?>) entity2.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
 
             // Modify Entity 1
             entity1MissionName.setOtherAttribute("newattr1", "1");
@@ -2070,7 +2070,7 @@ public class XsdEntityTest {
             XsdEntity mergedEntity = XsdEntity.mergeSyncEntity(entity1, entity2);
 
             // Get Mission Name Field of Merged Entity
-            XsdField mergedEntityMissionName = (XsdField) mergedEntity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+            XsdField<?> mergedEntityMissionName = (XsdField<?>) mergedEntity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
 
             // Validate Merge
             assertEquals(mergedEntityMissionName.getAttribute("newattr1"), "1");

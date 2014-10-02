@@ -500,14 +500,14 @@ public class XsdFieldDefinitionTest {
 
     }
 
-    public static void assertNewField(XsdFieldDefinition fieldDefinition, XsdField field)
+    public static void assertNewField(XsdFieldDefinition fieldDefinition, XsdField<?> field)
     {
         assertEquals(fieldDefinition.getName(), field.getName());
         assertEquals(fieldDefinition.getDataType(), field.getDataType());
         assertEquals(fieldDefinition.getLabel(), field.getLabel());
         assertEquals(fieldDefinition.getDefaultClassificationMarking().toString(),
                      field.getClassificationMarking().toString());
-        assertEquals(fieldDefinition.getDefaultValue(), field.getValue());
+        assertEquals(fieldDefinition.getDefaultValue(), field.getBaseValue());
         assertEquals(fieldDefinition.getNoIndex(), field.getNoIndex());
 
     }

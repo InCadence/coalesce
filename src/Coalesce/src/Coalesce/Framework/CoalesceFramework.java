@@ -11,7 +11,7 @@ import Coalesce.Common.Exceptions.CoalescePersistorException;
 import Coalesce.Framework.DataModel.CoalesceEntitySyncShell;
 import Coalesce.Framework.DataModel.CoalesceEntityTemplate;
 import Coalesce.Framework.DataModel.XsdEntity;
-import Coalesce.Framework.DataModel.XsdField;
+import Coalesce.Framework.DataModel.XsdStringField;
 import Coalesce.Framework.DataModel.XsdRecord;
 import Coalesce.Framework.Persistance.ICoalescePersistor;
 import Coalesce.Framework.Persistance.ICoalescePersistor.ElementMetaData;
@@ -207,9 +207,9 @@ public class CoalesceFramework {
         return record;
     }
 
-    public XsdField GetCoalesceFieldByFieldKey(String Key) throws CoalescePersistorException
+    public XsdStringField GetCoalesceFieldByFieldKey(String Key) throws CoalescePersistorException
     {
-        XsdField field = null;
+        XsdStringField field = null;
 
         ElementMetaData metaData = this._Persister.getXPath(Key, "field");
 
@@ -219,7 +219,7 @@ public class CoalesceFramework {
 
             if (entity != null)
             {
-                field = (XsdField) entity.getCoalesceDataObjectForKey(Key);
+                field = (XsdStringField) entity.getCoalesceDataObjectForKey(Key);
             }
         }
 

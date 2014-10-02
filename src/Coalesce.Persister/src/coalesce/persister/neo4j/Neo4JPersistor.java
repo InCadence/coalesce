@@ -191,7 +191,7 @@ public class Neo4JPersistor extends CoalescePersisterBase {
         case ACTIVE:
             switch (dataObject.getType().toLowerCase()) {
             case "field":
-                XsdField fieldObject = (XsdField) dataObject;
+                XsdField<?> fieldObject = (XsdField<?>) dataObject;
                 switch (fieldObject.getType().toUpperCase()) {
                 case "BINARY":
                 case "FILE":

@@ -64,7 +64,7 @@ public class XsdFieldHistoryTest {
         fh1.initialize(null, new Fieldhistory());
 
         @SuppressWarnings("unused")
-        XsdFieldHistory fh2 = XsdFieldHistory.create((XsdFieldBase) fh1);
+        XsdFieldHistory fh2 = XsdFieldHistory.create(fh1);
 
     }
 
@@ -72,11 +72,11 @@ public class XsdFieldHistoryTest {
     public void ConstructorXsdFieldBaseXsdFieldTest()
     {
 
-        XsdField field = new XsdField();
+        XsdStringField field = new XsdStringField();
         field.initialize(null, new Field());
 
         @SuppressWarnings("unused")
-        XsdFieldHistory fh = XsdFieldHistory.create((XsdFieldBase) field);
+        XsdFieldHistory fh = XsdFieldHistory.create(field);
 
     }
 
@@ -107,7 +107,7 @@ public class XsdFieldHistoryTest {
         XsdRecord record = new XsdRecord();
         record.initialize(rs, new Record());
 
-        XsdField field = new XsdField();
+        XsdField<?> field = new XsdStringField();
         field.initialize(record, new Field());
 
         @SuppressWarnings("unused")
@@ -118,7 +118,7 @@ public class XsdFieldHistoryTest {
     @Test
     public void ConstructorNoPreviousHistory()
     {
-        XsdField field = XsdFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_BASE64_PATH);
+        XsdField<?> field = XsdFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_BASE64_PATH);
 
         String fieldKey = field.getKey();
 
@@ -129,12 +129,12 @@ public class XsdFieldHistoryTest {
 
     }
 
-    private void assertFieldHistory(XsdField field, XsdFieldHistory fieldHistory)
+    private void assertFieldHistory(XsdField<?> field, XsdFieldHistory fieldHistory)
     {
 
         assertEquals(field.getName(), fieldHistory.getName());
         assertEquals("fieldhistory", fieldHistory.getType());
-        assertEquals(field.getValue(), fieldHistory.getValue());
+        assertEquals(field.getBaseValue(), fieldHistory.getBaseValue());
         assertEquals(field.getDataType(), fieldHistory.getDataType());
         assertEquals(field.getLabel(), fieldHistory.getLabel());
         assertEquals(field.getSize(), fieldHistory.getSize());
@@ -161,7 +161,7 @@ public class XsdFieldHistoryTest {
     public void ConstructorPreviousHistory() throws ClassCastException, CoalesceDataFormatException
     {
 
-        XsdField field = XsdFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_BASE64_PATH);
+        XsdField<?> field = XsdFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_BASE64_PATH);
 
         field.setSuspendHistory(true);
         XsdFieldHistory fh = XsdFieldHistory.create(field);
@@ -239,7 +239,7 @@ public class XsdFieldHistoryTest {
 
         XsdFieldHistory field = GetTestMissionNameFieldHistory();
 
-        assertEquals(CoalesceTypeInstances.TEST_MISSION_NAME_HISTORY_VALUE, field.getValue());
+        assertEquals(CoalesceTypeInstances.TEST_MISSION_NAME_HISTORY_VALUE, field.getBaseValue());
 
     }
 
@@ -251,11 +251,11 @@ public class XsdFieldHistoryTest {
 
         XsdFieldHistory field = GetTestMissionNameFieldHistory(mission);
 
-        field.setValue("Testingvalue");
+        field.setBaseValue("Testingvalue");
 
         XsdFieldHistory savedField = GetSavedTestMissionFieldHistory(mission);
 
-        assertEquals("Testingvalue", savedField.getValue());
+        assertEquals("Testingvalue", savedField.getBaseValue());
 
     }
 
@@ -460,7 +460,7 @@ public class XsdFieldHistoryTest {
 
         XsdEntity mission = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField field = (XsdField) mission.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+        XsdField<?> field = (XsdField<?>) mission.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
 
         assertTrue(field != null);
 
@@ -689,7 +689,7 @@ public class XsdFieldHistoryTest {
     public void StringTypeTest() throws CoalesceDataFormatException
     {
 
-        XsdField field = XsdFieldTest.getTestMissionNameField();
+        XsdField<?> field = XsdFieldTest.getTestMissionNameField();
 
         XsdFieldHistory fh = field.getHistory().get(0);
         Object data = fh.getData();
@@ -704,7 +704,7 @@ public class XsdFieldHistoryTest {
 
         assertTrue(data instanceof String);
         assertEquals("Changed", data);
-        assertEquals("Changed", fh.getValue());
+        assertEquals("Changed", fh.getBaseValue());
 
     }
 
@@ -712,7 +712,7 @@ public class XsdFieldHistoryTest {
     public void SetTypedValueStringTypeTypeMismatchTest()
     {
 
-        XsdField field = XsdFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
+        XsdField<?> field = XsdFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
         field.setTypedValue(JodaDateTimeHelper.nowInUtc());
 
         XsdFieldHistory fh = field.getHistory().get(0);
@@ -730,7 +730,7 @@ public class XsdFieldHistoryTest {
         XsdFieldDefinition fileFieldDef = XsdFieldDefinition.create(parentRecordset, "Uri", ECoalesceFieldDataTypes.UriType);
 
         XsdRecord parentRecord = parentRecordset.GetItem(0);
-        XsdField field = XsdField.create(parentRecord, fileFieldDef);
+        XsdField<?> field = XsdField.create(parentRecord, fileFieldDef);
 
         Sleep();
         field.setTypedValue("uri:document/pdf");
@@ -738,7 +738,7 @@ public class XsdFieldHistoryTest {
 
         XsdFieldHistory fh = field.getHistory().get(0);
 
-        assertEquals("uri:document/pdf", fh.getValue());
+        assertEquals("uri:document/pdf", fh.getBaseValue());
 
         fh.setTypedValue("uri:document/zip");
 
@@ -746,14 +746,14 @@ public class XsdFieldHistoryTest {
 
         assertTrue(data instanceof String);
         assertEquals("uri:document/zip", data);
-        assertEquals("uri:document/zip", fh.getValue());
+        assertEquals("uri:document/zip", fh.getBaseValue());
 
     }
 
     @Test
     public void GetDataSetTypedValueDateTimeTypeTest() throws CoalesceDataFormatException
     {
-        XsdField field = XsdFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
+        XsdField<?> field = XsdFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
 
         DateTime now = JodaDateTimeHelper.nowInUtc();
         field.setTypedValue(now);
@@ -774,7 +774,7 @@ public class XsdFieldHistoryTest {
     public void SetTypedValueDateTimeTypeTypeMismatchTest()
     {
 
-        XsdField field = XsdFieldTest.getTestMissionNameField();
+        XsdField<?> field = XsdFieldTest.getTestMissionNameField();
 
         DateTime now = JodaDateTimeHelper.nowInUtc();
         field.setTypedValue(now);
@@ -796,7 +796,7 @@ public class XsdFieldHistoryTest {
                                                                     ECoalesceFieldDataTypes.BooleanType);
 
         XsdRecord parentRecord = parentRecordset.GetItem(0);
-        XsdField field = XsdField.create(parentRecord, fileFieldDef);
+        XsdField<?> field = XsdField.create(parentRecord, fileFieldDef);
 
         Sleep();
         field.setTypedValue(true);
@@ -807,7 +807,7 @@ public class XsdFieldHistoryTest {
         Object data = fh.getData();
 
         assertEquals(true, data);
-        assertEquals("true", fh.getValue().toLowerCase());
+        assertEquals("true", fh.getBaseValue().toLowerCase());
         assertEquals(true, fh.getBooleanValue());
 
         fh.setTypedValue(false);
@@ -817,7 +817,7 @@ public class XsdFieldHistoryTest {
 
         assertTrue(data instanceof Boolean);
         assertEquals(false, data);
-        assertEquals("false", fh.getValue().toLowerCase());
+        assertEquals("false", fh.getBaseValue().toLowerCase());
         assertEquals(false, fh.getBooleanValue());
 
     }
@@ -826,7 +826,7 @@ public class XsdFieldHistoryTest {
     public void SetTypedValueBooleanTypeTypeMismatchTest() throws UnsupportedEncodingException
     {
 
-        XsdField field = XsdFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
+        XsdField<?> field = XsdFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
 
         field.setTypedValue(JodaDateTimeHelper.nowInUtc());
 
@@ -846,7 +846,7 @@ public class XsdFieldHistoryTest {
                                                                     ECoalesceFieldDataTypes.IntegerType);
 
         XsdRecord parentRecord = parentRecordset.GetItem(0);
-        XsdField field = XsdField.create(parentRecord, fileFieldDef);
+        XsdField<?> field = XsdField.create(parentRecord, fileFieldDef);
 
         Sleep();
         field.setTypedValue(1111);
@@ -857,7 +857,7 @@ public class XsdFieldHistoryTest {
         Object data = fh.getData();
 
         assertTrue(data instanceof Integer);
-        assertEquals("1111", fh.getValue());
+        assertEquals("1111", fh.getBaseValue());
         assertEquals(1111, fh.getIntegerValue());
         assertEquals(1111, data);
 
@@ -868,7 +868,7 @@ public class XsdFieldHistoryTest {
 
         assertTrue(data instanceof Integer);
         assertEquals(3333, data);
-        assertEquals("3333", fh.getValue());
+        assertEquals("3333", fh.getBaseValue());
         assertEquals(3333, fh.getIntegerValue());
 
     }
@@ -877,7 +877,7 @@ public class XsdFieldHistoryTest {
     public void SetTypedValueIntgerTypeTypeMismatchTest() throws UnsupportedEncodingException
     {
 
-        XsdField field = XsdFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
+        XsdField<?> field = XsdFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
 
         field.setTypedValue(JodaDateTimeHelper.nowInUtc());
 
@@ -897,7 +897,7 @@ public class XsdFieldHistoryTest {
                                                                     ECoalesceFieldDataTypes.GuidType);
 
         XsdRecord parentRecord = parentRecordset.GetItem(0);
-        XsdField field = XsdField.create(parentRecord, fileFieldDef);
+        XsdField<?> field = XsdField.create(parentRecord, fileFieldDef);
 
         Sleep();
         UUID guid = UUID.randomUUID();
@@ -910,7 +910,7 @@ public class XsdFieldHistoryTest {
 
         assertTrue(data instanceof UUID);
         assertEquals(guid, data);
-        assertEquals(GUIDHelper.getGuidString(guid), fh.getValue());
+        assertEquals(GUIDHelper.getGuidString(guid), fh.getBaseValue());
         assertEquals(guid, fh.getGuidValue());
 
         UUID newGuid = UUID.randomUUID();
@@ -921,7 +921,7 @@ public class XsdFieldHistoryTest {
 
         assertTrue(data instanceof UUID);
         assertEquals(newGuid, data);
-        assertEquals(GUIDHelper.getGuidString(newGuid), fh.getValue());
+        assertEquals(GUIDHelper.getGuidString(newGuid), fh.getBaseValue());
         assertEquals(newGuid, fh.getGuidValue());
 
     }
@@ -930,7 +930,7 @@ public class XsdFieldHistoryTest {
     public void SetTypedValueGUIDTypeTypeMismatchTest() throws UnsupportedEncodingException
     {
 
-        XsdField field = XsdFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
+        XsdField<?> field = XsdFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
 
         field.setTypedValue(JodaDateTimeHelper.nowInUtc());
 
@@ -980,9 +980,9 @@ public class XsdFieldHistoryTest {
 
         XsdDataObject fdo = entity.getDataObjectForNamePath(fieldPath);
 
-        assertTrue(fdo instanceof XsdField);
+        assertTrue(fdo instanceof XsdField<?>);
 
-        XsdField field = (XsdField) fdo;
+        XsdField<?> field = (XsdField<?>) fdo;
 
         if (field.getHistory().isEmpty())
         {

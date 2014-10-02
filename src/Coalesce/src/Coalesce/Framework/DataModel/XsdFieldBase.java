@@ -46,17 +46,21 @@ import com.vividsolutions.jts.io.WKTWriter;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceField {
+public abstract class XsdFieldBase<T> extends XsdDataObject implements ICoalesceField<T> {
 
     /*--------------------------------------------------------------------------
     Public Abstract Functions
     --------------------------------------------------------------------------*/
 
     @Override
-    public abstract String getValue();
-
+    public abstract T getValue() throws CoalesceDataFormatException;
+    
     @Override
-    public abstract void setValue(String value);
+    public abstract void setValue(T value);
+    
+    protected abstract String getBaseValue();
+
+    protected abstract void setBaseValue(String value);
 
     @Override
     public abstract ECoalesceFieldDataTypes getDataType();
@@ -159,7 +163,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
      */
     public String getValueWithMarking()
     {
-        String val = getValue();
+        String val = getBaseValue();
         Marking mrk = new Marking(getClassificationMarkingAsString());
         return mrk.toString() + " " + val;
     }
@@ -217,7 +221,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
         switch (getDataType()) {
         case StringType:
         case UriType:
-            return getValue();
+            return getBaseValue();
 
         case DateTimeType:
             return getDateTimeValue();
@@ -272,7 +276,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
             throw new ClassCastException("Type mismatch");
         }
 
-        setValue(value);
+        setBaseValue(value);
     }
 
     /**
@@ -287,7 +291,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
             throw new ClassCastException("Type mismatch");
         }
 
-        setValue(GUIDHelper.getGuidString(value));
+        setBaseValue(GUIDHelper.getGuidString(value));
     }
 
     /**
@@ -302,7 +306,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
             throw new ClassCastException("Type mismatch");
         }
 
-        setValue(JodaDateTimeHelper.toXmlDateTimeUTC(value));
+        setBaseValue(JodaDateTimeHelper.toXmlDateTimeUTC(value));
     }
 
     /**
@@ -317,7 +321,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
             throw new ClassCastException("Type mismatch");
         }
 
-        setValue(String.valueOf(value));
+        setBaseValue(String.valueOf(value));
     }
 
     /**
@@ -332,7 +336,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
             throw new ClassCastException("Type mismatch");
         }
 
-        setValue(String.valueOf(value));
+        setBaseValue(String.valueOf(value));
     }
 
     /**
@@ -350,7 +354,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
 
         assertValid(value);
 
-        setValue(value.toText());
+        setBaseValue(value.toText());
     }
 
     /**
@@ -368,7 +372,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
 
         assertValid(value);
 
-        setValue(WKTWriter.toPoint(value));
+        setBaseValue(WKTWriter.toPoint(value));
     }
 
     /**
@@ -387,7 +391,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
 
         assertValid(multiPoint);
 
-        setValue(multiPoint.toText());
+        setBaseValue(multiPoint.toText());
     }
 
     /**
@@ -429,7 +433,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
             throw new ClassCastException("Type mismatch");
         }
         String value = Base64.encode(dataBytes);
-        setValue(value);
+        setBaseValue(value);
         setSize(dataBytes.length);
     }
 
@@ -444,7 +448,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
     public void setTypedValue(byte[] dataBytes, String filename, String extension, String mimeType)
     {
         String value = Base64.encode(dataBytes);
-        setValue(value);
+        setBaseValue(value);
         setFilename(filename);
         setExtension(extension);
         setMimeType(mimeType);
@@ -482,7 +486,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
         }
 
         // Set Bytes
-        setValue(Base64.encode(dataBytes));
+        setBaseValue(Base64.encode(dataBytes));
         setFilename(docProps.getFilename());
         setExtension(docProps.getExtension());
         setMimeType(docProps.getMimeType());
@@ -511,7 +515,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
             byte[] fileBytes = Files.readAllBytes(path);
 
             // Set Bytes
-            setValue(Base64.encode(fileBytes));
+            setBaseValue(Base64.encode(fileBytes));
             setFilename(docProps.getFilename());
             setExtension(docProps.getExtension());
             setMimeType(docProps.getMimeType());
@@ -533,7 +537,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
             throw new ClassCastException("Type mismatch");
         }
 
-        String value = getValue();
+        String value = getBaseValue();
 
         if (GUIDHelper.isValid(value))
         {
@@ -559,7 +563,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
             throw new ClassCastException("Type mismatch");
         }
 
-        DateTime value = JodaDateTimeHelper.fromXmlDateTimeUTC(getValue());
+        DateTime value = JodaDateTimeHelper.fromXmlDateTimeUTC(getBaseValue());
 
         if (value == null) return null;
 
@@ -580,9 +584,9 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
             throw new ClassCastException("Type mismatch");
         }
 
-        if (StringHelper.isNullOrEmpty(getValue())) throw new ClassCastException("Type mismatch");
+        if (StringHelper.isNullOrEmpty(getBaseValue())) throw new ClassCastException("Type mismatch");
 
-        boolean value = Boolean.parseBoolean(getValue());
+        boolean value = Boolean.parseBoolean(getBaseValue());
 
         return value;
 
@@ -604,7 +608,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
         try
         {
 
-            int value = Integer.parseInt(getValue());
+            int value = Integer.parseInt(getBaseValue());
 
             return value;
 
@@ -631,10 +635,10 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
 
         try
         {
-            if (StringHelper.isNullOrEmpty(getValue())) return null;
+            if (StringHelper.isNullOrEmpty(getBaseValue())) return null;
 
             WKTReader reader = new WKTReader();
-            Point point = (Point) reader.read(getValue());
+            Point point = (Point) reader.read(getBaseValue());
 
             assertValid(point);
 
@@ -679,10 +683,10 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
 
         try
         {
-            validateMultiPointFormat(getValue());
+            validateMultiPointFormat(getBaseValue());
 
             WKTReader reader = new WKTReader();
-            MultiPoint multiPoint = (MultiPoint) reader.read(getValue());
+            MultiPoint multiPoint = (MultiPoint) reader.read(getBaseValue());
 
             assertValid(multiPoint);
 
@@ -774,7 +778,7 @@ public abstract class XsdFieldBase extends XsdDataObject implements ICoalesceFie
         }
 
         // Basic Check
-        String rawValue = getValue();
+        String rawValue = getBaseValue();
         if (rawValue.length() > 0)
         {
             // Needs to be tested for compatibility with .Net. Should be.

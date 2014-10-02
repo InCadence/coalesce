@@ -123,7 +123,7 @@ public class XsdRecordTest {
         assertEquals("New Record", newRecord.getName());
         assertEquals(16, newRecord.getFields().size());
 
-        for (XsdField field : newRecord.getFields())
+        for (XsdField<?> field : newRecord.getFields())
         {
             XsdFieldDefinition fd = recordset.getFieldDefinition(field.getName());
 
@@ -244,7 +244,7 @@ public class XsdRecordTest {
     {
         XsdRecord record = getMissionRecord();
 
-        List<XsdField> fields = record.getFields();
+        List<XsdField<?>> fields = record.getFields();
 
         assertEquals(16, fields.size());
 
@@ -252,7 +252,7 @@ public class XsdRecordTest {
         boolean middleFound = false;
         boolean lastFound = false;
 
-        for (XsdField field : fields)
+        for (XsdField<?> field : fields)
         {
             switch (field.getKey()) {
             case "D7067C3F-54B1-47FD-9C8A-A2D7946E0C2A":
@@ -373,7 +373,7 @@ public class XsdRecordTest {
     {
         XsdRecord record = getMissionRecord();
 
-        XsdField field = record.getFieldByKey("D7067C3F-54B1-47FD-9C8A-A2D7946E0C2A");
+        XsdField<?> field = record.getFieldByKey("D7067C3F-54B1-47FD-9C8A-A2D7946E0C2A");
         assertEquals("D7067C3F-54B1-47FD-9C8A-A2D7946E0C2A", field.getKey());
 
         field = null;
@@ -489,7 +489,7 @@ public class XsdRecordTest {
 
         XsdRecord newRecord = recordset.addNew();
 
-        XsdField binaryField = newRecord.getFieldByName("Binary");
+        XsdField<?> binaryField = (XsdField<?>) newRecord.getFieldByName("Binary");
 
         assertEquals("default address", newRecord.getFieldValueAsString("Invalid", "default address"));
         assertEquals(5555, newRecord.getFieldValueAsInteger("MissionIndicatorNumberBASE10", 5555));
@@ -535,7 +535,7 @@ public class XsdRecordTest {
 
         XsdRecord newRecord = recordset.addNew();
 
-        XsdField binaryField = newRecord.getFieldByName("Binary");
+        XsdField<?> binaryField = (XsdField<?>) newRecord.getFieldByName("Binary");
 
         String defaultByteString = "DefaultTesting String";
         byte[] defaultDataBytes = defaultByteString.getBytes("US-ASCII");

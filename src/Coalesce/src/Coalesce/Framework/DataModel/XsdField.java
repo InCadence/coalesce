@@ -1,3 +1,6 @@
+/**
+ * 
+ */
 package Coalesce.Framework.DataModel;
 
 import java.io.File;
@@ -8,8 +11,10 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.joda.time.DateTime;
 
+import Coalesce.Common.Exceptions.CoalesceDataFormatException;
 import Coalesce.Common.Helpers.FileHelper;
 import Coalesce.Common.Helpers.GUIDHelper;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
@@ -35,7 +40,10 @@ import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record.Field.Fi
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-public class XsdField extends XsdFieldBase {
+/**
+ *
+ */
+public abstract class XsdField<T> extends XsdFieldBase<T> {
 
     // -----------------------------------------------------------------------//
     // protected Member Variables
@@ -57,20 +65,20 @@ public class XsdField extends XsdFieldBase {
      * 
      * @return XsdField, belonging to the parent XsdRecord, resulting from the fieldDefinition
      */
-    public static XsdField create(XsdRecord parent, XsdFieldDefinition fieldDefinition)
+    public static XsdField<?> create(XsdRecord parent, XsdFieldDefinition fieldDefinition)
     {
 
         Field newEntityField = new Field();
         parent.getEntityFields().add(newEntityField);
 
-        XsdField newField = new XsdField();
+        XsdField<?> newField = createNewField(fieldDefinition.getDataType());
         if (!newField.initialize(parent, newEntityField)) return null;
 
         newField.setSuspendHistory(true);
 
         newField.setName(fieldDefinition.getName());
         newField.setDataType(fieldDefinition.getDataType());
-        newField.setValue(fieldDefinition.getDefaultValue());
+        newField.setBaseValue(fieldDefinition.getDefaultValue());
         newField.setClassificationMarking(fieldDefinition.getDefaultClassificationMarking());
         newField.setLabel(fieldDefinition.getLabel());
         newField.setNoIndex(fieldDefinition.getNoIndex());
@@ -79,9 +87,9 @@ public class XsdField extends XsdFieldBase {
 
         // Boolean Type? If so then default initial value to false if not a boolean default value.
         if (fieldDefinition.getDataType() == ECoalesceFieldDataTypes.BooleanType
-                && !(newField.getValue().equalsIgnoreCase("true") || newField.getValue().equalsIgnoreCase("false")))
+                && !(newField.getBaseValue().equalsIgnoreCase("true") || newField.getBaseValue().equalsIgnoreCase("false")))
         {
-            newField.setValue("false");
+            newField.setBaseValue("false");
         }
 
         // Add to Parent's Child Collection
@@ -92,6 +100,41 @@ public class XsdField extends XsdFieldBase {
 
         return newField;
 
+    }
+
+    protected static XsdField<?> createNewField(ECoalesceFieldDataTypes dataType)
+    {
+        switch (dataType) {
+
+        case StringType:
+        case UriType:
+            return new XsdStringField();
+
+        case DateTimeType:
+            return new XsdDateTimeField();
+
+        case FileType:
+        case BinaryType:
+            return new XsdBinaryField();
+
+        case BooleanType:
+            return new XsdBooleanField();
+
+        case IntegerType:
+            return new XsdIntegerField();
+
+        case GuidType:
+            return new XsdGUIDField();
+
+        case GeocoordinateType:
+            return new XsdCoordinateField();
+
+        case GeocoordinateListType:
+            return new XsdCoordinateListField();
+
+        default:
+            throw new NotImplementedException(dataType + " not implemented");
+        }
     }
 
     /**
@@ -161,13 +204,19 @@ public class XsdField extends XsdFieldBase {
     }
 
     @Override
-    public String getValue()
+    public abstract T getValue() throws CoalesceDataFormatException;
+
+    @Override
+    public String getBaseValue()
     {
         return _entityField.getValue();
     }
 
     @Override
-    public void setValue(String value)
+    public abstract void setValue(T value);
+
+    @Override
+    public void setBaseValue(String value)
     {
         String oldValue = _entityField.getValue();
 
@@ -571,7 +620,7 @@ public class XsdField extends XsdFieldBase {
     public void change(String value, String marking, String user, String ip)
     {
         // Does the new value differ from the existing?
-        if (!(getValue().equals(value) && getClassificationMarking().equals(marking)))
+        if (!(getBaseValue().equals(value) && getClassificationMarking().equals(marking)))
         {
 
             // Yes; should we create a FieldHistory entry to reflect the
@@ -601,7 +650,7 @@ public class XsdField extends XsdFieldBase {
             }
             else
             {
-                setValue(value);
+                setBaseValue(value);
             }
 
             setClassificationMarking(marking);
