@@ -169,7 +169,7 @@ public class Marking implements Serializable, Comparable<Marking> {
                 _classification = FieldValues.getMarkingValueByTitle(markingString, GetClassifications());
             }
             
-            getSelectedCountries().add(ISO3166Country.USA());
+            getSelectedCountries().add(ISO3166Country.getUSA());
             return;
         }
         
@@ -193,7 +193,7 @@ public class Marking implements Serializable, Comparable<Marking> {
                 _classification = FieldValues.getMarkingValueByTitle(parts[0], GetClassifications());
             }
             
-            getSelectedCountries().add(ISO3166Country.USA());
+            getSelectedCountries().add(ISO3166Country.getUSA());
             
             index += 1;
             
@@ -573,7 +573,7 @@ public class Marking implements Serializable, Comparable<Marking> {
         String marking = "";
         
         // JOINT and NATO and FGI start with //
-        if (getIsJOINT() || getIsNATO() || !getSelectedCountries().contains(ISO3166Country.USA())) {
+        if (getIsJOINT() || getIsNATO() || !getSelectedCountries().contains(ISO3166Country.getUSA())) {
             
             marking += "//";
             
@@ -662,7 +662,7 @@ public class Marking implements Serializable, Comparable<Marking> {
             marking += label;
             
             // USA comes first in deseminations
-            if (countries.contains(ISO3166Country.USA())) {
+            if (countries.contains(ISO3166Country.getUSA())) {
                 
                 marking += "USA";
                 if (countries.size() > 1) {
@@ -673,7 +673,7 @@ public class Marking implements Serializable, Comparable<Marking> {
             Collections.sort(countries);
             for (ISO3166Country country : countries) {
                 
-                if (!(country.compareTo(ISO3166Country.USA()) == 0)) {
+                if (!(country.compareTo(ISO3166Country.getUSA()) == 0)) {
                     
                     marking += country.getAlpha3() + ", ";
                 }

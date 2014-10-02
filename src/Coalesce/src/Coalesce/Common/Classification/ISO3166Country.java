@@ -52,7 +52,7 @@ public class ISO3166Country implements Serializable, Comparable<ISO3166Country> 
     	return country;
     }
     
-    public static ISO3166Country USA() {
+    public static ISO3166Country getUSA() {
     	return new ISO3166Country("US", "USA", "UNITED STATES");
     }
 

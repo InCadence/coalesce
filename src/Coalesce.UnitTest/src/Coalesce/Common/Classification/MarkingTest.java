@@ -59,7 +59,7 @@ public class MarkingTest {
 
         List<ISO3166Country> countries = FieldValues.getListOfCountries();
 
-        assertTrue(countries.contains(ISO3166Country.USA()));
+        assertTrue(countries.contains(ISO3166Country.getUSA()));
     }
 
     @Test
@@ -69,7 +69,7 @@ public class MarkingTest {
         List<ISO3166Country> countries = new ArrayList<ISO3166Country>();
         countries.add(FieldValues.getCountryByName("ZAMBIA"));
 
-        assertFalse(countries.contains(ISO3166Country.USA()));
+        assertFalse(countries.contains(ISO3166Country.getUSA()));
 
     }
 
@@ -520,7 +520,7 @@ public class MarkingTest {
         assertFalse(mk.getIsNATO());
         assertFalse(mk.getIsJOINT());
         assertEquals(1, mk.getSelectedCountries().size());
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(0));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(0));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -555,7 +555,7 @@ public class MarkingTest {
         assertFalse(mk.getIsNATO());
         assertFalse(mk.getIsJOINT());
         assertEquals(1, mk.getSelectedCountries().size());
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(0));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(0));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -589,7 +589,7 @@ public class MarkingTest {
         assertFalse(mk.getIsNATO());
         assertFalse(mk.getIsJOINT());
         assertEquals(1, mk.getSelectedCountries().size());
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(0));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(0));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -624,7 +624,7 @@ public class MarkingTest {
         assertFalse(mk.getIsNATO());
         assertFalse(mk.getIsJOINT());
         assertEquals(1, mk.getSelectedCountries().size());
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(0));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(0));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -658,7 +658,7 @@ public class MarkingTest {
         assertFalse(mk.getIsNATO());
         assertFalse(mk.getIsJOINT());
         assertEquals(1, mk.getSelectedCountries().size());
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(0));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(0));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -693,7 +693,7 @@ public class MarkingTest {
         assertFalse(mk.getIsNATO());
         assertFalse(mk.getIsJOINT());
         assertEquals(1, mk.getSelectedCountries().size());
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(0));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(0));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -1037,7 +1037,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -1073,7 +1073,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -1109,7 +1109,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -1144,7 +1144,7 @@ public class MarkingTest {
         assertFalse(mk.getIsNATO());
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(0));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
@@ -1383,7 +1383,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertTrue(mk.getIsFOUO());
         assertTrue(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -1419,7 +1419,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertTrue(mk.getIsFOUO());
         assertTrue(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -1455,7 +1455,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertTrue(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -1491,7 +1491,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertTrue(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -1527,7 +1527,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertTrue(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -1563,7 +1563,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertTrue(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -1599,7 +1599,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -1635,7 +1635,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -1671,7 +1671,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -1707,7 +1707,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -1743,7 +1743,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -1779,7 +1779,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -1815,7 +1815,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -1851,7 +1851,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -1887,7 +1887,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertTrue(mk.getIsORCON());
@@ -1923,7 +1923,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertTrue(mk.getIsORCON());
@@ -1959,7 +1959,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -1995,7 +1995,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -2031,7 +2031,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -2067,7 +2067,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -2103,7 +2103,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -2139,7 +2139,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -2175,7 +2175,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -2212,7 +2212,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -2249,7 +2249,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -2287,7 +2287,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -2325,7 +2325,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -2363,7 +2363,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -2401,7 +2401,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -2437,7 +2437,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -2473,7 +2473,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -2510,7 +2510,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -2547,7 +2547,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -2585,7 +2585,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -2623,7 +2623,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -2661,7 +2661,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -2699,7 +2699,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -2735,7 +2735,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -2770,7 +2770,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -2805,7 +2805,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -2840,7 +2840,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -2875,7 +2875,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -2910,7 +2910,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -2945,7 +2945,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -2979,7 +2979,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -3015,7 +3015,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -3051,7 +3051,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -3088,7 +3088,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -3125,7 +3125,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -3160,7 +3160,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertFalse(mk.getIsFOUO());
         assertFalse(mk.getIsLES());
         assertFalse(mk.getIsORCON());
@@ -3197,7 +3197,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertTrue(mk.getIsFOUO());
         assertTrue(mk.getIsLES());
         assertTrue(mk.getIsORCON());
@@ -3240,7 +3240,7 @@ public class MarkingTest {
         assertTrue(mk.getIsJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        ISO3166CountryTest.assertCountry(ISO3166Country.USA(), mk.getSelectedCountries().get(1));
+        ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
         assertTrue(mk.getIsFOUO());
         assertTrue(mk.getIsLES());
         assertTrue(mk.getIsORCON());
