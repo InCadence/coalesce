@@ -85,6 +85,8 @@ public class GraphicsHelper {
      */
     public static BufferedImage resample(BufferedImage imageToResample, int height, int width)
     {
+        if (imageToResample == null) return null;
+        
         BufferedImage imgThumbnail = Scalr.resize(imageToResample, width, height, Scalr.OP_ANTIALIAS);
 
         return imgThumbnail;
@@ -101,6 +103,8 @@ public class GraphicsHelper {
      */
     public static BufferedImage resampleToMaximum(BufferedImage imageToResample, int maxHeight, int maxWidth)
     {
+        if (imageToResample == null) return null;
+        
         double scaledWidth = GraphicsHelper.scaleWidthByHeightResampleRatio(imageToResample, maxHeight, maxWidth);
         if (scaledWidth <= maxWidth)
         {
@@ -124,6 +128,8 @@ public class GraphicsHelper {
      */
     public static BufferedImage resampleToMinimum(BufferedImage imageToResample, int minHeight, int minWidth)
     {
+        if (imageToResample == null) return null;
+        
         double scaledWidth = GraphicsHelper.scaleWidthByHeightResampleRatio(imageToResample, minHeight, minWidth);
         if (scaledWidth >= minWidth)
         {

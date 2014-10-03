@@ -8,13 +8,30 @@ import Coalesce.Common.Exceptions.CoalescePersistorException;
 import coalesce.persister.sqlserver.SQLServerDataConnector;
 import coalesce.persister.sqlserver.SQLServerPersistor;
 
-public class CoalesceSQLServerPersistorTest extends CoalescePersistorBaseTest {
+/*-----------------------------------------------------------------------------'
+Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
+
+Notwithstanding any contractor copyright notice, the Government has Unlimited
+Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+of this work other than as specifically authorized by these DFARS Clauses may
+violate Government rights in this work.
+
+DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+Unlimited Rights. The Government has the right to use, modify, reproduce,
+perform, display, release or disclose this computer software and to have or
+authorize others to do so.
+
+Distribution Statement D. Distribution authorized to the Department of
+Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+-----------------------------------------------------------------------------*/
+
+public class SQLServerPersistorTest extends CoalescePersistorBaseTest {
 
     @BeforeClass
     public static void setUpBeforeClass() throws CoalesceException
     {
 
-        CoalesceSQLServerPersistorTest tester = new CoalesceSQLServerPersistorTest();
+        SQLServerPersistorTest tester = new SQLServerPersistorTest();
 
         CoalescePersistorBaseTest.setupBeforeClassBase(tester);
 
@@ -23,7 +40,7 @@ public class CoalesceSQLServerPersistorTest extends CoalescePersistorBaseTest {
     @AfterClass
     public static void tearDownAfterClass()
     {
-        CoalesceSQLServerPersistorTest tester = new CoalesceSQLServerPersistorTest();
+        SQLServerPersistorTest tester = new SQLServerPersistorTest();
 
         CoalescePersistorBaseTest.tearDownAfterClassBase(tester);
 

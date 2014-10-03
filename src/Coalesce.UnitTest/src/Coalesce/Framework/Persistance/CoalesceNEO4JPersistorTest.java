@@ -1,109 +1,89 @@
 package Coalesce.Framework.Persistance;
-import static org.junit.Assert.fail;
 
 import java.io.IOException;
-import java.sql.SQLException;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Test;
 import org.xml.sax.SAXException;
 
-import unity.common.CallResult;
-import unity.common.CallResult.CallResults;
-import unity.connector.local.LocalConfigurationsConnector;
 import Coalesce.Common.Exceptions.CoalesceException;
-import Coalesce.Common.Exceptions.CoalesceInvalidFieldException;
 import Coalesce.Common.Exceptions.CoalescePersistorException;
-import Coalesce.Common.Runtime.CoalesceSettings;
-import Coalesce.Framework.CoalesceFramework;
-import Coalesce.Framework.DataModel.ECoalesceFieldDataTypes;
-import Coalesce.Framework.DataModel.CoalesceEntity;
-import Coalesce.Framework.DataModel.CoalesceFieldDefinition;
-import Coalesce.Framework.DataModel.CoalesceLinkageSection;
-import Coalesce.Framework.DataModel.CoalesceRecord;
-import Coalesce.Framework.DataModel.CoalesceRecordset;
-import Coalesce.Framework.DataModel.CoalesceSection;
-import Coalesce.Framework.Persistance.ServerConn;
 import coalesce.persister.neo4j.Neo4JDataConnector;
 import coalesce.persister.neo4j.Neo4JPersistor;
 
-public class CoalesceNEO4JPersistorTest {
+/*-----------------------------------------------------------------------------'
+ Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
 
-    private static String MODULE_NAME = "CoalesceNEO4JPersistorTest";
+ Notwithstanding any contractor copyright notice, the Government has Unlimited
+ Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+ of this work other than as specifically authorized by these DFARS Clauses may
+ violate Government rights in this work.
 
-    static ServerConn serCon;
-    static Neo4JPersistor neo4jPersister;
-    private static CoalesceFramework _coalesceFramework;
+ DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+ Unlimited Rights. The Government has the right to use, modify, reproduce,
+ perform, display, release or disclose this computer software and to have or
+ authorize others to do so.
 
-    private static CoalesceEntity _entity;
-    private static String _fieldKey;
+ private static CoalesceEntity _entity;
+ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+ -----------------------------------------------------------------------------*/
+
+public class CoalesceNEO4JPersistorTest extends CoalescePersistorBaseTest {
 
     @BeforeClass
     public static void setupBeforeClass() throws SAXException, IOException, CoalesceException
     {
 
-        CoalesceSettings.initialize(new LocalConfigurationsConnector());
+        CoalesceNEO4JPersistorTest tester = new CoalesceNEO4JPersistorTest();
 
-        serCon = new ServerConn();
-        serCon.setServerName("localhost");
+        CoalescePersistorBaseTest.setupBeforeClassBase(tester);
+
+    }
+
+    @AfterClass
+    public static void tearDownAfterClass()
+    {
+        CoalesceNEO4JPersistorTest tester = new CoalesceNEO4JPersistorTest();
+
+        CoalescePersistorBaseTest.tearDownAfterClassBase(tester);
+
+    }
+
+    @Override
+    protected ServerConn getConnection()
+    {
+        ServerConn serCon = new ServerConn();
         serCon.setPortNumber(7474);
 
-        neo4jPersister = new Neo4JPersistor();
-        neo4jPersister.Initialize(serCon);
-
-        neo4jPersister.Initialize(serCon);
-        CoalesceNEO4JPersistorTest._coalesceFramework = new CoalesceFramework();
-        CoalesceNEO4JPersistorTest._coalesceFramework.Initialize(neo4jPersister);
-
-        CoalesceNEO4JPersistorTest.createEntity();
+        return serCon;
 
     }
 
-    private static boolean createEntity() throws CoalesceException
+    @Override
+    protected ICoalescePersistor getPersistor(ServerConn conn)
     {
-        try
-        {
-            // Create Test Entity
-            _entity = new CoalesceEntity();
+        Neo4JPersistor neo4jPersister = new Neo4JPersistor();
+        neo4jPersister.Initialize(conn);
 
-            CoalesceSection section = null;
-            CoalesceRecordset recordSet = null;
-            CoalesceRecord record = null;
+        return neo4jPersister;
 
-            // Create Entity
-            _entity = CoalesceEntity.create("TestEntity", "Unit Test", "1.0.0.0", "", "", "");
-
-            CoalesceLinkageSection.create(_entity, true);
-
-            section = CoalesceSection.create(_entity, "Live Status Section", true);
-            recordSet = CoalesceRecordset.create(section, "Live Status Recordset");
-            CoalesceFieldDefinition.create(recordSet, "CurrentStatus", ECoalesceFieldDataTypes.StringType);
-
-            record = recordSet.addNew();
-            record.setFieldValue("CurrentStatus", "Test Status");
-
-            _fieldKey = record.getFieldByName("CurrentStatus").getKey();
-            return true;
-        }
-        catch (CoalesceInvalidFieldException e)
-        {
-            CallResult.log(CallResults.FAILED_ERROR, e, MODULE_NAME);
-            return false;
-        }
     }
 
-    @Test
-    public void testConnection() throws SQLException, CoalescePersistorException
+    @Override
+    protected ServerConn getInvalidConnection()
     {
+        ServerConn serConFail = new ServerConn();
+        serConFail.setServerName("192.168.1.1");
+        serConFail.setPortNumber(7474);
 
-        try (Neo4JDataConnector conn = new Neo4JDataConnector(serCon))
-        {
-            conn.openConnection();
-        }
-        catch (Exception e)
-        {
-            fail(e.getMessage());
-        }
+        return serConFail;
+
+    }
+
+    @Override
+    protected CoalesceDataConnectorBase getDataConnector(ServerConn conn) throws CoalescePersistorException
+    {
+        return new Neo4JDataConnector(conn);
     }
 
 }

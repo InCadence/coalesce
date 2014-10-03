@@ -2,7 +2,6 @@ package Coalesce.Common.Helpers;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
@@ -52,6 +51,18 @@ public class DocumentThumbnailHelper {
             _thumbnail = thumbnail;
         }
 
+        public DocumentThumbnailResults(BufferedImage original, BufferedImage thumbnail)
+        {
+            if (original != null)
+            {
+                _originalWidth = original.getWidth();
+                _originalHeight = original.getHeight();
+            }
+            
+            _thumbnail = thumbnail;
+
+        }
+        
         public int getOriginalWidth()
         {
             return _originalWidth;
@@ -92,7 +103,7 @@ public class DocumentThumbnailHelper {
      * reason a resampled image cannot be generated then a default thumbnail is returns based on the files MIME type
      * 
      * @param fullFilename the full path and filename of the file to generate a thumbnail for.
-     * @return the thumbnail image for the file.
+     * @return the {@link DocumentThumbnailResults} from generating the thumbnail.
      * @throws IOException
      */
     public static DocumentThumbnailResults getThumbnailForFile(String fullFilename, boolean encrypted) throws IOException
@@ -111,10 +122,9 @@ public class DocumentThumbnailHelper {
         case "image/gif":
         case "image/tiff":
 
-            BufferedImage originalImage = ImageIO.read(new File(fullFilename));
-            thumbnail = GraphicsHelper.resampleToMaximum(originalImage, 80, 80);
+            byte[] bytes = FileHelper.getFileAsByteArray(fullFilename, encrypted);
 
-            return new DocumentThumbnailResults(originalImage.getWidth(), originalImage.getHeight(), thumbnail);
+            return DocumentThumbnailHelper.getThumbnailForFile(bytes);
 
         default:
 
@@ -130,21 +140,22 @@ public class DocumentThumbnailHelper {
      * generate the thumbnail.
      * 
      * @param bytes the array of bytes representing an image file.
-     * @return the thumbnail image for the file. If the thumbnail resampling fails then a default image thumbnail is
-     *         returned.
+     * @return the {@link DocumentThumbnailResults} from generating the thumbnail.
      * @throws IOException
      */
-    public static BufferedImage getThumbnailForFile(byte[] bytes) throws IOException
+    public static DocumentThumbnailResults getThumbnailForFile(byte[] bytes) throws IOException
     {
-        ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+        try (ByteArrayInputStream bais = new ByteArrayInputStream(bytes))
+        {
+            BufferedImage image = ImageIO.read(bais);
 
-        BufferedImage image = ImageIO.read(bais);
+            BufferedImage thumbnail = GraphicsHelper.resampleToMaximum(image, 80, 80);
 
-        BufferedImage thumbnail = GraphicsHelper.resampleToMaximum(image, 80, 80);
+            if (thumbnail == null) thumbnail = DocumentThumbnailHelper.getImageForResource("LargeIcon_Image.png");
 
-        if (thumbnail == null) thumbnail = DocumentThumbnailHelper.getImageForResource("LargeIcon_Image.png");
+            return new DocumentThumbnailResults(image, thumbnail);
 
-        return thumbnail;
+        }
     }
 
     /**

@@ -28,12 +28,12 @@ import coalesce.persister.mysql.MySQLPersistor;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-public class CoalesceMySQLPersistorTest extends CoalescePersistorBaseTest {
+public class MySQLPersistorTest extends CoalescePersistorBaseTest {
 
     @BeforeClass
     public static void setupBeforeClass() throws SAXException, IOException, CoalesceException
     {
-        CoalesceMySQLPersistorTest tester = new CoalesceMySQLPersistorTest();
+        MySQLPersistorTest tester = new MySQLPersistorTest();
 
         CoalescePersistorBaseTest.setupBeforeClassBase(tester);
 
@@ -42,7 +42,7 @@ public class CoalesceMySQLPersistorTest extends CoalescePersistorBaseTest {
     @AfterClass
     public static void tearDownAfterClass()
     {
-        CoalesceMySQLPersistorTest tester = new CoalesceMySQLPersistorTest();
+        MySQLPersistorTest tester = new MySQLPersistorTest();
 
         CoalescePersistorBaseTest.tearDownAfterClassBase(tester);
 

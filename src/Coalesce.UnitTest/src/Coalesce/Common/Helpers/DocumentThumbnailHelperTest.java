@@ -1,18 +1,33 @@
 package Coalesce.Common.Helpers;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import javax.imageio.ImageIO;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import Coalesce.Common.Helpers.DocumentThumbnailHelper.DocumentThumbnailResults;
 
 public class DocumentThumbnailHelperTest {
 
+    private static BufferedImage EXPECTED_DESERT_THUMBNAIL;
+
+    @BeforeClass
+    public static void setUpBeforeClass() throws Exception
+    {
+        DocumentThumbnailHelperTest.EXPECTED_DESERT_THUMBNAIL = ImageIO.read(new File("src/resources/desert_thumb.png"));
+    }
+
     /*
-     * @BeforeClass public static void setUpBeforeClass() throws Exception { }
      * 
      * @AfterClass public static void tearDownAfterClass() throws Exception { }
      * 
@@ -20,6 +35,101 @@ public class DocumentThumbnailHelperTest {
      * 
      * @After public void tearDown() throws Exception { }
      */
+
+    @Test
+    public void getThumbnailForFileFullFilenameTest() throws IOException
+    {
+        DocumentThumbnailResults results = DocumentThumbnailHelper.getThumbnailForFile("src/resources/desert.jpg");
+        
+        assertThumbnail(results);
+        
+    }
+
+    @Test
+    public void getThumbnailForFileFullFilenameWithoutEncryptionTest() throws IOException
+    {
+        DocumentThumbnailResults results = DocumentThumbnailHelper.getThumbnailForFile("src/resources/desert.jpg", false);
+
+        assertThumbnail(results);
+        
+    }
+    
+    @Test
+    public void getThumbnailForFileFullFilenameWithEncryptionTest() throws IOException
+    {
+        DocumentThumbnailResults results = DocumentThumbnailHelper.getThumbnailForFile("src/resources/desert_encrypted.jpg", true);
+
+        assertThumbnail(results);
+        
+    }
+    
+    @Test
+    public void getThumbnailForFileFullFilenameWithoutEncryptionNotImageTest() throws IOException
+    {
+        DocumentThumbnailResults results = DocumentThumbnailHelper.getThumbnailForFile("src/resources/TestDocument.docx", false);
+        
+        BufferedImage testImage = ImageIO.read(getClass().getResource("/resources/LargeIcon_Word.png"));
+
+        assertTrue("Thumbnail is not correct", testImagesEqual(testImage, results.getThumbnail()));
+
+    }
+    
+    @Test
+    public void getThumbnailForFileFullFilenameWithEncryptionNotImageTest() throws IOException
+    {
+        DocumentThumbnailResults results = DocumentThumbnailHelper.getThumbnailForFile("src/resources/encryptedTestDocument.docx", true);
+        
+        BufferedImage testImage = ImageIO.read(getClass().getResource("/resources/LargeIcon_Word.png"));
+
+        assertTrue("Thumbnail is not correct", testImagesEqual(testImage, results.getThumbnail()));
+
+    }
+    
+    @Test
+    public void getThumbnailForFileBytesTest() throws IOException
+    {
+        byte[] bytes = Files.readAllBytes(Paths.get("src/resources/desert.jpg"));
+
+        DocumentThumbnailResults results = DocumentThumbnailHelper.getThumbnailForFile(bytes);
+
+        assertThumbnail(results);
+
+    }
+
+    @Test
+    public void getThumbnailForFileBytesEmptyTest() throws IOException
+    {
+        byte[] bytes = new byte[0];
+
+        DocumentThumbnailResults results = DocumentThumbnailHelper.getThumbnailForFile(bytes);
+
+        BufferedImage expectedThumbnail = ImageIO.read(new File("src/resources/LargeIcon_Image.png"));
+
+        assertEquals(0, results.getOriginalWidth());
+        assertEquals(0, results.getOriginalHeight());
+        assertTrue("Thumbnail does not match", testImagesEqual(expectedThumbnail, results.getThumbnail()));
+
+    }
+
+    @Test
+    public void getThumbnailForFileExtensionsTest() throws IOException
+    {
+        getThumbnailForFileExtensionsTest("AIF", "LargeIcon_Audio.png");
+        getThumbnailForFileExtensionsTest("ASR", "LargeIcon_Video.png");
+        getThumbnailForFileExtensionsTest("CMX", "LargeIcon_Image.png");
+        getThumbnailForFileExtensionsTest("BAS", "LargeIcon_Text.png");
+        getThumbnailForFileExtensionsTest("DOC", "LargeIcon_Word.png");
+        getThumbnailForFileExtensionsTest("DocX", "LargeIcon_Word.png");
+        getThumbnailForFileExtensionsTest("XLS", "LargeIcon_Excel.png");
+        getThumbnailForFileExtensionsTest("XlsX", "LargeIcon_Excel.png");
+        getThumbnailForFileExtensionsTest("PPT", "LargeIcon_Powerpoint.png");
+        getThumbnailForFileExtensionsTest("PPTX", "LargeIcon_Powerpoint.png");
+        getThumbnailForFileExtensionsTest("ACCDB", "LargeIcon_Access.png");
+        getThumbnailForFileExtensionsTest("PDF", "LargeIcon_Pdf.png");
+        getThumbnailForFileExtensionsTest("TXT", "LargeIcon_Text.png");
+        getThumbnailForFileExtensionsTest("ZIP", "LargeIcon_Zip.png");
+        getThumbnailForFileExtensionsTest("XYZ", "LargeIcon_Blank.png");
+    }
 
     @Test
     public void getDocumentThumbnailForMimeCategoryAudioTest() throws IOException
@@ -48,7 +158,7 @@ public class DocumentThumbnailHelperTest {
     @Test
     public void getDocumentThumbnailForMimeCategoryUnknownTest() throws IOException
     {
-        getDocumentThumbnailForMimeCategoryTest("XYZ", "LargeIcon_Unknown.png");
+        getDocumentThumbnailForMimeCategoryTest("XYZ", "LargeIcon_Blank.png");
     }
 
     @Test
@@ -114,7 +224,26 @@ public class DocumentThumbnailHelperTest {
     @Test
     public void getDocumentThumbnailForMimeTypeUnknownTest() throws IOException
     {
-        getDocumentThumbnailForMimeTypeTest("XYZ", "LargeIcon_Unknown.png");
+        getDocumentThumbnailForMimeTypeTest("XYZ", "LargeIcon_Blank.png");
+    }
+
+    private void assertThumbnail(DocumentThumbnailResults actual)
+    {
+        assertEquals(1024, actual.getOriginalWidth());
+        assertEquals(768, actual.getOriginalHeight());
+        assertTrue("Thumbnail is not correct", testImagesEqual(DocumentThumbnailHelperTest.EXPECTED_DESERT_THUMBNAIL, actual.getThumbnail()));
+    }
+    
+    private void getThumbnailForFileExtensionsTest(String extension, String resourceName) throws IOException
+    {
+        BufferedImage image = DocumentThumbnailHelper.getThumbnailForFileExtensions(extension);
+
+        assertNotNull(image);
+
+        BufferedImage testImage = ImageIO.read(getClass().getResource("/resources/" + resourceName));
+
+        assertTrue("Thumbnail for File extension failed: " + extension, testImagesEqual(testImage, image));
+
     }
 
     private void getDocumentThumbnailForMimeCategoryTest(String extension, String resourceName) throws IOException
@@ -124,9 +253,7 @@ public class DocumentThumbnailHelperTest {
 
         assertNotNull(image);
 
-        BufferedImage testImage = ImageIO.read(getClass().getResource("/resources/" + resourceName));
-
-        assertImagesEqual(testImage, image);
+        assertTrue("Extension Mime Category test failed: " + extension, testImagesEqual(resourceName, image));
 
     }
 
@@ -137,13 +264,19 @@ public class DocumentThumbnailHelperTest {
 
         assertNotNull(image);
 
-        BufferedImage testImage = ImageIO.read(getClass().getResource("/resources/" + resourceName));
-
-        assertImagesEqual(testImage, image);
+        assertTrue("Extensiong MimeType test failed: " + extension, testImagesEqual(resourceName, image));
 
     }
 
-    private boolean assertImagesEqual(BufferedImage img1, BufferedImage img2)
+    private boolean testImagesEqual(String resourceName, BufferedImage img2) throws IOException
+    {
+        BufferedImage img1 = ImageIO.read(getClass().getResource("/resources/" + resourceName));
+
+        return testImagesEqual(img1, img2);
+        
+    }
+    
+    private boolean testImagesEqual(BufferedImage img1, BufferedImage img2)
     {
         if (img1.getWidth() == img2.getWidth() && img1.getHeight() == img2.getHeight())
         {
