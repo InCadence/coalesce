@@ -22,9 +22,9 @@ import Coalesce.Common.Helpers.FileHelper;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-public class XsdFieldCommon {
+public class CoalesceFieldCommon {
 
-    private XsdFieldCommon()
+    private CoalesceFieldCommon()
     {
 
     }

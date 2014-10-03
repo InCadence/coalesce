@@ -45,7 +45,7 @@ import Coalesce.Common.UnitTest.CoalesceTypeInstances;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-public class XsdEntityTest {
+public class CoalesceEntityTest {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();

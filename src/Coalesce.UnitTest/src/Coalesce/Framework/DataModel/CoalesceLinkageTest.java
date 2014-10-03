@@ -37,7 +37,7 @@ import Coalesce.Framework.GeneratedJAXB.Entity.Linkagesection.Linkage;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-public class XsdLinkageTest {
+public class CoalesceLinkageTest {
 
     private static final Marking UNCLASSIFIED_MARKING = new Marking("(U)");
     private static final Marking TOP_SECRET_MARKING = new Marking("(//TS)");
@@ -224,13 +224,13 @@ public class XsdLinkageTest {
 
         DateTime now = JodaDateTimeHelper.nowInUtc();
 
-        assertEquals(XsdLinkageTest.UNCLASSIFIED_MARKING, linkage.getClassificationMarking());
+        assertEquals(CoalesceLinkageTest.UNCLASSIFIED_MARKING, linkage.getClassificationMarking());
 
-        linkage.setClassificationMarking(XsdLinkageTest.TOP_SECRET_MARKING);
+        linkage.setClassificationMarking(CoalesceLinkageTest.TOP_SECRET_MARKING);
 
         assertTrue(Math.abs(now.getMillis() - linkage.getLastModified().getMillis()) < 5);
 
-        assertEquals(XsdLinkageTest.TOP_SECRET_MARKING, linkage.getClassificationMarking());
+        assertEquals(CoalesceLinkageTest.TOP_SECRET_MARKING, linkage.getClassificationMarking());
 
         String entityXml = entity.toXml();
 
@@ -238,12 +238,12 @@ public class XsdLinkageTest {
         CoalesceLinkage desLinkage = getMissionLinkage(desEntity);
 
         assertTrue(Math.abs(now.getMillis() - linkage.getLastModified().getMillis()) < 5);
-        assertEquals(XsdLinkageTest.TOP_SECRET_MARKING, desLinkage.getClassificationMarking());
+        assertEquals(CoalesceLinkageTest.TOP_SECRET_MARKING, desLinkage.getClassificationMarking());
 
         CoalesceEntity newEntity = CoalesceEntity.create("Operation", "Portal", "1.2.3.4", "ID", "Type");
         CoalesceLinkage newLinkage = newEntity.getLinkageSection().createLinkage();
 
-        assertEquals(XsdLinkageTest.UNCLASSIFIED_MARKING, newLinkage.getClassificationMarking());
+        assertEquals(CoalesceLinkageTest.UNCLASSIFIED_MARKING, newLinkage.getClassificationMarking());
 
     }
 

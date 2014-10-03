@@ -18,7 +18,7 @@ import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import Coalesce.Common.UnitTest.CoalesceTypeInstances;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section;
 
-public class XsdSectionTest {
+public class CoalesceSectionTest {
 
     /*
      * @BeforeClass public static void setUpBeforeClass() throws Exception { }

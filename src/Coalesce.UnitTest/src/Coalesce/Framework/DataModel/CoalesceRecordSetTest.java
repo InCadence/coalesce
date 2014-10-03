@@ -35,7 +35,7 @@ import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-public class XsdRecordSetTest {
+public class CoalesceRecordSetTest {
 
     /*
      * @BeforeClass public static void setUpBeforeClass() throws Exception { }

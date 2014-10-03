@@ -42,7 +42,7 @@ import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record.Field.Fi
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-public class XsdFieldHistoryTest {
+public class CoalesceFieldHistoryTest {
 
     private static final Marking TOPSECRETCLASSIFICATIONMARKING = new Marking("//JOINT TOP SECRET AND USA//FOUO-LES//SBU/ACCM-BOB");
 
@@ -118,7 +118,7 @@ public class XsdFieldHistoryTest {
     @Test
     public void ConstructorNoPreviousHistory()
     {
-        CoalesceField<?> field = XsdFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_BASE64_PATH);
+        CoalesceField<?> field = CoalesceFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_BASE64_PATH);
 
         String fieldKey = field.getKey();
 
@@ -161,7 +161,7 @@ public class XsdFieldHistoryTest {
     public void ConstructorPreviousHistory() throws ClassCastException, CoalesceDataFormatException
     {
 
-        CoalesceField<?> field = XsdFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_BASE64_PATH);
+        CoalesceField<?> field = CoalesceFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_BASE64_PATH);
 
         field.setSuspendHistory(true);
         CoalesceFieldHistory fh = CoalesceFieldHistory.create(field);
@@ -689,7 +689,7 @@ public class XsdFieldHistoryTest {
     public void StringTypeTest() throws CoalesceDataFormatException
     {
 
-        CoalesceField<?> field = XsdFieldTest.getTestMissionNameField();
+        CoalesceField<?> field = CoalesceFieldTest.getTestMissionNameField();
 
         CoalesceFieldHistory fh = field.getHistory().get(0);
         String data = fh.getValue();
@@ -711,7 +711,7 @@ public class XsdFieldHistoryTest {
     public void SetTypedValueStringTypeTypeMismatchTest()
     {
 
-        CoalesceField<?> field = XsdFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
+        CoalesceField<?> field = CoalesceFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
         field.setTypedValue(JodaDateTimeHelper.nowInUtc());
 
         CoalesceFieldHistory fh = field.getHistory().get(0);
@@ -751,7 +751,7 @@ public class XsdFieldHistoryTest {
     @Test
     public void GetDataSetTypedValueDateTimeTypeTest() throws CoalesceDataFormatException
     {
-        CoalesceField<?> field = XsdFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
+        CoalesceField<?> field = CoalesceFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
 
         DateTime now = JodaDateTimeHelper.nowInUtc();
         field.setTypedValue(now);
@@ -770,7 +770,7 @@ public class XsdFieldHistoryTest {
     public void SetTypedValueDateTimeTypeTypeMismatchTest()
     {
 
-        CoalesceField<?> field = XsdFieldTest.getTestMissionNameField();
+        CoalesceField<?> field = CoalesceFieldTest.getTestMissionNameField();
 
         DateTime now = JodaDateTimeHelper.nowInUtc();
         field.setTypedValue(now);
@@ -822,7 +822,7 @@ public class XsdFieldHistoryTest {
     public void SetTypedValueBooleanTypeTypeMismatchTest() throws UnsupportedEncodingException
     {
 
-        CoalesceField<?> field = XsdFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
+        CoalesceField<?> field = CoalesceFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
 
         field.setTypedValue(JodaDateTimeHelper.nowInUtc());
 
@@ -872,7 +872,7 @@ public class XsdFieldHistoryTest {
     public void SetTypedValueIntgerTypeTypeMismatchTest() throws UnsupportedEncodingException
     {
 
-        CoalesceField<?> field = XsdFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
+        CoalesceField<?> field = CoalesceFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
 
         field.setTypedValue(JodaDateTimeHelper.nowInUtc());
 
@@ -925,7 +925,7 @@ public class XsdFieldHistoryTest {
     public void SetTypedValueGUIDTypeTypeMismatchTest() throws UnsupportedEncodingException
     {
 
-        CoalesceField<?> field = XsdFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
+        CoalesceField<?> field = CoalesceFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
 
         field.setTypedValue(JodaDateTimeHelper.nowInUtc());
 

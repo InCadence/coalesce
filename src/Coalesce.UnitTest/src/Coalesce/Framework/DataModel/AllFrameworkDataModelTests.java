@@ -29,15 +29,15 @@ import org.junit.runners.Suite.SuiteClasses;
     ECoalesceFieldDataTypesTest.class,
     ELinkTypesTest.class,
     EntityTest.class,
-    XsdEntityTest.class,
-    XsdFieldDefinitionTest.class,
-    XsdFieldHistoryTest.class,
-    XsdFieldTest.class,
-    XsdLinkageSectionTest.class,
-    XsdLinkageTest.class,
-    XsdRecordSetTest.class,
-    XsdRecordTest.class,
-    XsdSectionTest.class})
+    CoalesceEntityTest.class,
+    CoalesceFieldDefinitionTest.class,
+    CoalesceFieldHistoryTest.class,
+    CoalesceFieldTest.class,
+    CoalesceLinkageSectionTest.class,
+    CoalesceLinkageTest.class,
+    CoalesceRecordSetTest.class,
+    CoalesceRecordTest.class,
+    CoalesceSectionTest.class})
 public class AllFrameworkDataModelTests {
 
 }
