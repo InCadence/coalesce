@@ -5,8 +5,6 @@ package Coalesce.Framework.DataModel;
 
 import Coalesce.Common.Exceptions.CoalesceDataFormatException;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Point;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -28,28 +26,28 @@ import com.vividsolutions.jts.geom.Point;
 /**
  *
  */
-public class XsdCoordinateField extends XsdField<Coordinate> {
+public class CoalesceBinaryField extends CoalesceField<byte[]> {
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see Coalesce.Framework.DataModel.XsdField#getValue()
+     */
     @Override
-    public Coordinate getValue() throws CoalesceDataFormatException
+    public byte[] getValue() throws CoalesceDataFormatException
     {
-        return getCoordinateValue();
+        return getBinaryValue();
     }
 
-    public Point getValueAsPoint() throws CoalesceDataFormatException
+    /*
+     * (non-Javadoc)
+     * 
+     * @see Coalesce.Framework.DataModel.XsdField#setValue(java.lang.Object)
+     */
+    @Override
+    public void setValue(byte[] value)
     {
-        return getPointValue();
+        setTypedValue(value);
     }
     
-    @Override
-    public void setValue(Coordinate value) throws CoalesceDataFormatException
-    {
-        setTypedValue(value);
-    }
-
-    public void setValue(Point value) throws CoalesceDataFormatException
-    {
-        setTypedValue(value);
-    }
-
 }

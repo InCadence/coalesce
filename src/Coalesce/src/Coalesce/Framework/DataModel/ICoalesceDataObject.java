@@ -32,14 +32,14 @@ public interface ICoalesceDataObject {
      * 
      * @return XsdDataObject the DataObject's parent
      */
-    public XsdDataObject getParent();
+    public CoalesceDataObject getParent();
 
     /**
      * Sets the parent XsdDataObject of the current XsdDataObject
      * 
      * @param parent XsdDataObject of the DataObject
      */
-    public void setParent(XsdDataObject parent);
+    public void setParent(CoalesceDataObject parent);
 
     // Key
     /**
@@ -163,7 +163,7 @@ public interface ICoalesceDataObject {
      * 
      * @return hashmap of this XsdDataObject's child XsdDataObjects
      */
-    public Map<String, XsdDataObject> getChildDataObjects();
+    public Map<String, CoalesceDataObject> getChildDataObjects();
 
     /**
      * Returns the String XsdDataObject type. E.g. field, linkage, section, etc.

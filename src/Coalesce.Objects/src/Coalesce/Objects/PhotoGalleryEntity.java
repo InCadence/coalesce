@@ -1,9 +1,9 @@
 package Coalesce.Objects;
 
 import Coalesce.Framework.DataModel.ECoalesceFieldDataTypes;
-import Coalesce.Framework.DataModel.XsdFieldDefinition;
-import Coalesce.Framework.DataModel.XsdRecordset;
-import Coalesce.Framework.DataModel.XsdSection;
+import Coalesce.Framework.DataModel.CoalesceFieldDefinition;
+import Coalesce.Framework.DataModel.CoalesceRecordset;
+import Coalesce.Framework.DataModel.CoalesceSection;
 
 public class PhotoGalleryEntity extends ActionBaseEntity {
 
@@ -18,7 +18,7 @@ public class PhotoGalleryEntity extends ActionBaseEntity {
     // Protected Member Variables
     // ----------------------------------------------------------------------//
 
-    private XsdRecordset _photographRecordset;
+    private CoalesceRecordset _photographRecordset;
 
     // ----------------------------------------------------------------------//
     // Initialization
@@ -27,7 +27,7 @@ public class PhotoGalleryEntity extends ActionBaseEntity {
     @Override
     public boolean initialize()
     {
-        XsdSection section;
+        CoalesceSection section;
 
         // Already Initialized?
         if (_photographRecordset != null) return false;
@@ -36,18 +36,18 @@ public class PhotoGalleryEntity extends ActionBaseEntity {
         if (!super.initialize(PhotoGalleryEntity.Source, "1.0", "")) return false;
 
         // Create Live Section
-        section = XsdSection.create(this, "Photographs Section");
-        _photographRecordset = XsdRecordset.create(section, "Photographs Recordset");
+        section = CoalesceSection.create(this, "Photographs Section");
+        _photographRecordset = CoalesceRecordset.create(section, "Photographs Recordset");
 
-        XsdFieldDefinition.create(_photographRecordset, "Photo", ECoalesceFieldDataTypes.FileType);
-        XsdFieldDefinition.create(_photographRecordset, "OriginalFilename", ECoalesceFieldDataTypes.StringType);
-        XsdFieldDefinition.create(_photographRecordset, "Height", ECoalesceFieldDataTypes.StringType);
-        XsdFieldDefinition.create(_photographRecordset, "Width", ECoalesceFieldDataTypes.StringType);
-        XsdFieldDefinition.create(_photographRecordset, "Description", ECoalesceFieldDataTypes.StringType);
-        XsdFieldDefinition.create(_photographRecordset, "BagTagID", ECoalesceFieldDataTypes.StringType);
-        XsdFieldDefinition.create(_photographRecordset, "DegreesFromTrueNorth", ECoalesceFieldDataTypes.StringType);
-        XsdFieldDefinition.create(_photographRecordset, "PhotoDateTimeUTC", ECoalesceFieldDataTypes.DateTimeType);
-        XsdFieldDefinition.create(_photographRecordset, "PhotoLocation", ECoalesceFieldDataTypes.GeocoordinateType);
+        CoalesceFieldDefinition.create(_photographRecordset, "Photo", ECoalesceFieldDataTypes.FileType);
+        CoalesceFieldDefinition.create(_photographRecordset, "OriginalFilename", ECoalesceFieldDataTypes.StringType);
+        CoalesceFieldDefinition.create(_photographRecordset, "Height", ECoalesceFieldDataTypes.StringType);
+        CoalesceFieldDefinition.create(_photographRecordset, "Width", ECoalesceFieldDataTypes.StringType);
+        CoalesceFieldDefinition.create(_photographRecordset, "Description", ECoalesceFieldDataTypes.StringType);
+        CoalesceFieldDefinition.create(_photographRecordset, "BagTagID", ECoalesceFieldDataTypes.StringType);
+        CoalesceFieldDefinition.create(_photographRecordset, "DegreesFromTrueNorth", ECoalesceFieldDataTypes.StringType);
+        CoalesceFieldDefinition.create(_photographRecordset, "PhotoDateTimeUTC", ECoalesceFieldDataTypes.DateTimeType);
+        CoalesceFieldDefinition.create(_photographRecordset, "PhotoLocation", ECoalesceFieldDataTypes.GeocoordinateType);
 
         // Initialize References
         return this.initializeReferences();
@@ -58,7 +58,7 @@ public class PhotoGalleryEntity extends ActionBaseEntity {
     {
         if (_photographRecordset == null)
         {
-            _photographRecordset = (XsdRecordset) getDataObjectForNamePath(getName()
+            _photographRecordset = (CoalesceRecordset) getDataObjectForNamePath(getName()
                     + "/Photographs Section/Photographs Recordset");
 
         }

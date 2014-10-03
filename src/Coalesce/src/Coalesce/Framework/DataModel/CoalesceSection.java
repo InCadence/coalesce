@@ -32,7 +32,7 @@ import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-public class XsdSection extends XsdDataObject {
+public class CoalesceSection extends CoalesceDataObject {
 
     private Section _entitySection;
 
@@ -81,9 +81,9 @@ public class XsdSection extends XsdDataObject {
      * @param name String, the name/namepath to be assigned to the XsdSection
      * @return XsdSection, the new XsdSection
      */
-    public static XsdSection create(XsdEntity parent, String name)
+    public static CoalesceSection create(CoalesceEntity parent, String name)
     {
-        return XsdSection.create(parent, name, false);
+        return CoalesceSection.create(parent, name, false);
     }
 
     /**
@@ -94,7 +94,7 @@ public class XsdSection extends XsdDataObject {
      * @param noIndex boolean value
      * @return XsdSection, the new XsdSection
      */
-    public static XsdSection create(XsdEntity parent, String name, boolean noIndex)
+    public static CoalesceSection create(CoalesceEntity parent, String name, boolean noIndex)
     {
 
         if (parent == null) throw new NullArgumentException("parent");
@@ -102,7 +102,7 @@ public class XsdSection extends XsdDataObject {
         if (StringHelper.isNullOrEmpty(name.trim())) throw new IllegalArgumentException("name cannot be empty");
 
         // Check that a section with the same name doesn't already exist
-        for (XsdSection section : parent.getSections().values())
+        for (CoalesceSection section : parent.getSections().values())
         {
             if (section.getName().equalsIgnoreCase(name))
             {
@@ -115,7 +115,7 @@ public class XsdSection extends XsdDataObject {
         Section newEntitySection = new Section();
         parent.getEntitySections().add(newEntitySection);
 
-        XsdSection newSection = new XsdSection();
+        CoalesceSection newSection = new CoalesceSection();
         if (!newSection.initialize(parent, newEntitySection)) return null;
 
         newSection.setName(name);
@@ -148,7 +148,7 @@ public class XsdSection extends XsdDataObject {
      * @param section that the new XsdSection will be based off of
      * @return boolean indicator of success/failure
      */
-    public boolean initialize(XsdEntity parent, Section section)
+    public boolean initialize(CoalesceEntity parent, Section section)
     {
 
         if (parent == null) throw new NullArgumentException("parent");
@@ -163,7 +163,7 @@ public class XsdSection extends XsdDataObject {
         for (Recordset childRecordSet : _entitySection.getRecordset())
         {
 
-            XsdRecordset newRecordSet = new XsdRecordset();
+            CoalesceRecordset newRecordSet = new CoalesceRecordset();
             if (!newRecordSet.initialize(this, childRecordSet)) continue;
 
             if (!_childDataObjects.containsKey(newRecordSet.getKey()))
@@ -228,9 +228,9 @@ public class XsdSection extends XsdDataObject {
      * @param name of the new XsdRecordset
      * @return XsdRecordset, the new XsdRecordset
      */
-    public XsdRecordset createRecordset(String name)
+    public CoalesceRecordset createRecordset(String name)
     {
-        return XsdRecordset.create(this, name);
+        return CoalesceRecordset.create(this, name);
     }
 
     /**
@@ -240,13 +240,13 @@ public class XsdSection extends XsdDataObject {
      * @return XsdRecordset, the XsdRecordset with the name path. Null if the name path is not a XsdRecordset or doesn't
      *         exist
      */
-    public XsdRecordset getRecordset(String NamePath)
+    public CoalesceRecordset getRecordset(String NamePath)
     {
-        XsdDataObject dataObject = getDataObjectForNamePath(NamePath);
+        CoalesceDataObject dataObject = getDataObjectForNamePath(NamePath);
 
-        if (dataObject != null && dataObject instanceof XsdRecordset)
+        if (dataObject != null && dataObject instanceof CoalesceRecordset)
         {
-            return (XsdRecordset) dataObject;
+            return (CoalesceRecordset) dataObject;
         }
 
         return null;
@@ -257,16 +257,16 @@ public class XsdSection extends XsdDataObject {
      * 
      * @return hashmap of XsdRecordsets contained by this XsdSection
      */
-    public Map<String, XsdRecordset> getRecordsets()
+    public Map<String, CoalesceRecordset> getRecordsets()
     {
 
-        Map<String, XsdRecordset> recordSets = new HashMap<String, XsdRecordset>();
+        Map<String, CoalesceRecordset> recordSets = new HashMap<String, CoalesceRecordset>();
 
-        for (XsdDataObject child : _childDataObjects.values())
+        for (CoalesceDataObject child : _childDataObjects.values())
         {
-            if (child instanceof XsdRecordset)
+            if (child instanceof CoalesceRecordset)
             {
-                recordSets.put(child.getKey(), (XsdRecordset) child);
+                recordSets.put(child.getKey(), (CoalesceRecordset) child);
             }
         }
 

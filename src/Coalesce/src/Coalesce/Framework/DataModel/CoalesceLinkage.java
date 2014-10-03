@@ -32,7 +32,7 @@ import Coalesce.Framework.GeneratedJAXB.Entity.Linkagesection.Linkage;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-public class XsdLinkage extends XsdDataObject implements ICoalesceLinkage {
+public class CoalesceLinkage extends CoalesceDataObject implements ICoalesceLinkage {
 
     private Linkage _entityLinkage;
 
@@ -42,11 +42,11 @@ public class XsdLinkage extends XsdDataObject implements ICoalesceLinkage {
      * @param parent XsdLinkageSection, the linkage section that this new linkage will belong to
      * @return XsdLinkage, the new linkage to describe a relationship between two classes
      */
-    public static XsdLinkage create(XsdLinkageSection parent)
+    public static CoalesceLinkage create(CoalesceLinkageSection parent)
     {
         if (parent == null) throw new NullArgumentException("parent");
 
-        XsdLinkage newLinkage = new XsdLinkage();
+        CoalesceLinkage newLinkage = new CoalesceLinkage();
 
         Linkage entityLinkage = new Linkage();
         parent.getEntityLinkageSection().getLinkage().add(entityLinkage);
@@ -72,7 +72,7 @@ public class XsdLinkage extends XsdDataObject implements ICoalesceLinkage {
      * @param linkage Linkage, the linkage describing a relationship between two classes
      * @return boolean indicator of success/failure
      */
-    public boolean initialize(XsdLinkageSection parent, Linkage linkage)
+    public boolean initialize(CoalesceLinkageSection parent, Linkage linkage)
     {
         if (parent == null) throw new NullArgumentException("parent");
         if (linkage == null) throw new NullArgumentException("linkage");
@@ -342,9 +342,9 @@ public class XsdLinkage extends XsdDataObject implements ICoalesceLinkage {
      * @param ModifiedBy identification of who entered the relationship
      * @param InputLang language that the relationship was created in
      */
-    public void establishLinkage(XsdEntity Entity1,
+    public void establishLinkage(CoalesceEntity Entity1,
                                  ELinkTypes LinkType,
-                                 XsdEntity Entity2,
+                                 CoalesceEntity Entity2,
                                  Marking ClassificationMarking,
                                  String ModifiedBy,
                                  Locale InputLang)

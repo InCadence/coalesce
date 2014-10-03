@@ -13,9 +13,9 @@ import Coalesce.Common.Classification.Marking;
 import Coalesce.Common.UnitTest.CoalesceTypeInstances;
 import Coalesce.Framework.DataModel.ECoalesceDataObjectStatus;
 import Coalesce.Framework.DataModel.ELinkTypes;
-import Coalesce.Framework.DataModel.XsdDataObject;
-import Coalesce.Framework.DataModel.XsdEntity;
-import Coalesce.Framework.DataModel.XsdLinkage;
+import Coalesce.Framework.DataModel.CoalesceDataObject;
+import Coalesce.Framework.DataModel.CoalesceEntity;
+import Coalesce.Framework.DataModel.CoalesceLinkage;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -57,7 +57,7 @@ public class EntityLinkHelperTest {
         {
             try
             {
-                XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+                CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
                 assertFalse(EntityLinkHelper.linkEntities(null, linkType, entity, false));
             }
             catch (IllegalArgumentException ex)
@@ -78,7 +78,7 @@ public class EntityLinkHelperTest {
         {
             try
             {
-                XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+                CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
                 assertFalse(EntityLinkHelper.linkEntities(entity, linkType, null, false));
             }
             catch (IllegalArgumentException ex)
@@ -119,7 +119,7 @@ public class EntityLinkHelperTest {
         {
             try
             {
-                XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+                CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
                 assertFalse(EntityLinkHelper.linkEntities(null, linkType, entity, true));
             }
             catch (IllegalArgumentException ex)
@@ -140,7 +140,7 @@ public class EntityLinkHelperTest {
         {
             try
             {
-                XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+                CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
                 assertFalse(EntityLinkHelper.linkEntities(entity, linkType, null, true));
             }
             catch (IllegalArgumentException ex)
@@ -179,8 +179,8 @@ public class EntityLinkHelperTest {
     {
         for (ELinkTypes linkType : ELinkTypes.values())
         {
-            XsdEntity entity1 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-            XsdEntity entity2 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
+            CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+            CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
 
             assertTrue(EntityLinkHelper.linkEntities(entity1, linkType, entity2, false));
 
@@ -199,13 +199,13 @@ public class EntityLinkHelperTest {
         for (ELinkTypes linkType : ELinkTypes.values())
         {
 
-            XsdEntity entity1 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-            XsdEntity entity2 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
+            CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+            CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
 
             EntityLinkHelper.linkEntities(entity1, linkType, entity2, false);
 
-            XsdEntity modifiedEntity1 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-            XsdEntity modifiedEntity2 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
+            CoalesceEntity modifiedEntity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+            CoalesceEntity modifiedEntity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
 
             modifiedEntity1.setName("Entity1name");
             modifiedEntity1.setSource("Entity1source");
@@ -219,8 +219,8 @@ public class EntityLinkHelperTest {
 
             assertLinkages(linkType, entity1, entity2);
 
-            XsdEntity mod2Entity1 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-            XsdEntity mod2Entity2 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
+            CoalesceEntity mod2Entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+            CoalesceEntity mod2Entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
 
             mod2Entity1.setName("Entity1name");
             mod2Entity1.setSource("Entity1source");
@@ -243,8 +243,8 @@ public class EntityLinkHelperTest {
     {
         for (ELinkTypes linkType : ELinkTypes.values())
         {
-            XsdEntity entity1 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-            XsdEntity entity2 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
+            CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+            CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
 
             assertTrue(EntityLinkHelper.linkEntities(entity1, linkType, entity2, true));
 
@@ -261,13 +261,13 @@ public class EntityLinkHelperTest {
     {
         for (ELinkTypes linkType : ELinkTypes.values())
         {
-            XsdEntity entity1 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-            XsdEntity entity2 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
+            CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+            CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
 
             EntityLinkHelper.linkEntities(entity1, linkType, entity2, true);
 
-            XsdEntity modifiedEntity1 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-            XsdEntity modifiedEntity2 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
+            CoalesceEntity modifiedEntity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+            CoalesceEntity modifiedEntity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
 
             modifiedEntity1.setName("Entity1name");
             modifiedEntity1.setSource("Entity1source");
@@ -281,8 +281,8 @@ public class EntityLinkHelperTest {
 
             assertLinkages(linkType, modifiedEntity1, modifiedEntity2);
 
-            XsdEntity mod2Entity1 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-            XsdEntity mod2Entity2 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
+            CoalesceEntity mod2Entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+            CoalesceEntity mod2Entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
 
             mod2Entity1.setName("Entity1name");
             mod2Entity1.setSource("Entity1source");
@@ -304,7 +304,7 @@ public class EntityLinkHelperTest {
     {
         try
         {
-            XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+            CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
             assertFalse(EntityLinkHelper.linkEntities(null,
                                                       ELinkTypes.HasMember,
                                                       entity,
@@ -328,7 +328,7 @@ public class EntityLinkHelperTest {
     {
         try
         {
-            XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+            CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
             assertFalse(EntityLinkHelper.linkEntities(entity,
                                                       ELinkTypes.HasOwnershipOf,
                                                       null,
@@ -375,7 +375,7 @@ public class EntityLinkHelperTest {
     {
         try
         {
-            XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+            CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
             assertFalse(EntityLinkHelper.linkEntities(null,
                                                       ELinkTypes.HasUseOf,
                                                       entity,
@@ -399,7 +399,7 @@ public class EntityLinkHelperTest {
     {
         try
         {
-            XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+            CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
             assertFalse(EntityLinkHelper.linkEntities(entity,
                                                       ELinkTypes.IsAMemberOf,
                                                       null,
@@ -444,8 +444,8 @@ public class EntityLinkHelperTest {
     @Test
     public void LinkEntitiesDetailedDontUpdateExistingANoExistingTest()
     {
-        XsdEntity entity1 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-        XsdEntity entity2 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
+        CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+        CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
 
         assertTrue(EntityLinkHelper.linkEntities(entity1,
                                                  ELinkTypes.IsAPeerOf,
@@ -465,8 +465,8 @@ public class EntityLinkHelperTest {
     @Test
     public void LinkEntitiesDetailedDontUpdateExistingExistingTest()
     {
-        XsdEntity entity1 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-        XsdEntity entity2 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
+        CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+        CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
 
         EntityLinkHelper.linkEntities(entity1,
                                       ELinkTypes.IsBeingWatchedBy,
@@ -476,8 +476,8 @@ public class EntityLinkHelperTest {
                                       Locale.UK,
                                       false);
 
-        XsdEntity modifiedEntity1 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-        XsdEntity modifiedEntity2 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
+        CoalesceEntity modifiedEntity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+        CoalesceEntity modifiedEntity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
 
         modifiedEntity1.setName("Entity1name");
         modifiedEntity1.setSource("Entity1source");
@@ -507,8 +507,8 @@ public class EntityLinkHelperTest {
     @Test
     public void LinkEntitiesDetailedUpdateExistingNoExistingTest()
     {
-        XsdEntity entity1 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-        XsdEntity entity2 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
+        CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+        CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
 
         assertTrue(EntityLinkHelper.linkEntities(entity1,
                                                  ELinkTypes.IsChildOf,
@@ -528,8 +528,8 @@ public class EntityLinkHelperTest {
     @Test
     public void LinkEntitiesDetailedUpdateExistingExistingTest()
     {
-        XsdEntity entity1 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-        XsdEntity entity2 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
+        CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+        CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
 
         EntityLinkHelper.linkEntities(entity1,
                                       ELinkTypes.IsOwnedBy,
@@ -539,8 +539,8 @@ public class EntityLinkHelperTest {
                                       Locale.UK,
                                       true);
 
-        XsdEntity modifiedEntity1 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-        XsdEntity modifiedEntity2 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
+        CoalesceEntity modifiedEntity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+        CoalesceEntity modifiedEntity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
 
         modifiedEntity1.setName("Entity1name");
         modifiedEntity1.setSource("Entity1source");
@@ -572,7 +572,7 @@ public class EntityLinkHelperTest {
     {
         try
         {
-            XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+            CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
             assertFalse(EntityLinkHelper.unLinkEntities(null, entity));
         }
         catch (IllegalArgumentException ex)
@@ -590,7 +590,7 @@ public class EntityLinkHelperTest {
     {
         try
         {
-            XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+            CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
             assertFalse(EntityLinkHelper.unLinkEntities(entity, null));
         }
         catch (IllegalArgumentException ex)
@@ -625,7 +625,7 @@ public class EntityLinkHelperTest {
     {
         try
         {
-            XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+            CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
             assertFalse(EntityLinkHelper.unLinkEntities(null, entity, ELinkTypes.IsParentOf));
         }
         catch (IllegalArgumentException ex)
@@ -643,7 +643,7 @@ public class EntityLinkHelperTest {
     {
         try
         {
-            XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+            CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
             assertFalse(EntityLinkHelper.unLinkEntities(entity, null, ELinkTypes.IsUsedBy));
         }
         catch (IllegalArgumentException ex)
@@ -676,8 +676,8 @@ public class EntityLinkHelperTest {
     @Test
     public void UnLinkEntitiesLinkTypeNullLinkTypeTest()
     {
-        XsdEntity entity1 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-        XsdEntity entity2 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
+        CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+        CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
 
         EntityLinkHelper.linkEntities(entity1, ELinkTypes.Created, entity2, true);
 
@@ -696,8 +696,8 @@ public class EntityLinkHelperTest {
         for (ELinkTypes linkType : ELinkTypes.values())
         {
 
-            XsdEntity entity1 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-            XsdEntity entity2 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
+            CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+            CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
 
             EntityLinkHelper.linkEntities(entity1, linkType, entity2, true);
 
@@ -714,8 +714,8 @@ public class EntityLinkHelperTest {
     public void UnLinkEntitiesNotLinkedTest()
     {
 
-        XsdEntity entity1 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-        XsdEntity entity2 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
+        CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+        CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
 
         assertTrue(EntityLinkHelper.unLinkEntities(entity1, entity2));
         assertTrue(entity1.getLinkageSection().getChildDataObjects().isEmpty());
@@ -727,9 +727,9 @@ public class EntityLinkHelperTest {
     public void UnLinkEntitiesNotLinkedFirstTest()
     {
 
-        XsdEntity entity1 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-        XsdEntity entity2 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
-        XsdEntity entity3 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+        CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
+        CoalesceEntity entity3 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         EntityLinkHelper.linkEntities(entity1, ELinkTypes.Created, entity2, true);
 
@@ -739,7 +739,7 @@ public class EntityLinkHelperTest {
         assertEquals(ECoalesceDataObjectStatus.ACTIVE,
                      entity2.getLinkageSection().getChildDataObjects().values().iterator().next().getStatus());
 
-        for (XsdDataObject xdo : entity3.getChildDataObjects().values())
+        for (CoalesceDataObject xdo : entity3.getChildDataObjects().values())
         {
             assertEquals(ECoalesceDataObjectStatus.ACTIVE, xdo.getStatus());
         }
@@ -750,9 +750,9 @@ public class EntityLinkHelperTest {
     public void UnLinkEntitiesNotLinkedSecondTest()
     {
 
-        XsdEntity entity1 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-        XsdEntity entity2 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
-        XsdEntity entity3 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+        CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
+        CoalesceEntity entity3 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         EntityLinkHelper.linkEntities(entity1, ELinkTypes.Created, entity2, true);
 
@@ -762,7 +762,7 @@ public class EntityLinkHelperTest {
         assertEquals(ECoalesceDataObjectStatus.ACTIVE,
                      entity2.getLinkageSection().getChildDataObjects().values().iterator().next().getStatus());
 
-        for (XsdDataObject xdo : entity3.getChildDataObjects().values())
+        for (CoalesceDataObject xdo : entity3.getChildDataObjects().values())
         {
             assertEquals(ECoalesceDataObjectStatus.ACTIVE, xdo.getStatus());
         }
@@ -772,8 +772,8 @@ public class EntityLinkHelperTest {
     @Test
     public void UnLinkEntitiesLinkTypesTest()
     {
-        XsdEntity entity1 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-        XsdEntity entity2 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
+        CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+        CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
 
         EntityLinkHelper.linkEntities(entity1, ELinkTypes.Created, entity2, true);
 
@@ -788,8 +788,8 @@ public class EntityLinkHelperTest {
     @Test
     public void UnLinkEntitiesLinkTypesMismatchTest()
     {
-        XsdEntity entity1 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-        XsdEntity entity2 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
+        CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+        CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
 
         EntityLinkHelper.linkEntities(entity1, ELinkTypes.HasParticipant, entity2, true);
 
@@ -805,8 +805,8 @@ public class EntityLinkHelperTest {
     public void UnLinkEntitiesLinkageTypeNotLinkedTest()
     {
 
-        XsdEntity entity1 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-        XsdEntity entity2 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
+        CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+        CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
 
         assertTrue(EntityLinkHelper.unLinkEntities(entity1, entity2, ELinkTypes.Created));
         assertTrue(entity1.getLinkageSection().getChildDataObjects().isEmpty());
@@ -818,9 +818,9 @@ public class EntityLinkHelperTest {
     public void UnLinkEntitiesLinkageTypeNotLinkedFirstTest()
     {
 
-        XsdEntity entity1 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-        XsdEntity entity2 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
-        XsdEntity entity3 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+        CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
+        CoalesceEntity entity3 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         EntityLinkHelper.linkEntities(entity1, ELinkTypes.HasMember, entity2, true);
 
@@ -830,7 +830,7 @@ public class EntityLinkHelperTest {
         assertEquals(ECoalesceDataObjectStatus.ACTIVE,
                      entity2.getLinkageSection().getChildDataObjects().values().iterator().next().getStatus());
 
-        for (XsdDataObject xdo : entity3.getChildDataObjects().values())
+        for (CoalesceDataObject xdo : entity3.getChildDataObjects().values())
         {
             assertEquals(ECoalesceDataObjectStatus.ACTIVE, xdo.getStatus());
         }
@@ -841,9 +841,9 @@ public class EntityLinkHelperTest {
     public void UnLinkEntitiesLinkagetypeNotLinkedSecondTest()
     {
 
-        XsdEntity entity1 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-        XsdEntity entity2 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
-        XsdEntity entity3 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+        CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
+        CoalesceEntity entity3 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         EntityLinkHelper.linkEntities(entity1, ELinkTypes.HasOwnershipOf, entity2, true);
 
@@ -853,7 +853,7 @@ public class EntityLinkHelperTest {
         assertEquals(ECoalesceDataObjectStatus.ACTIVE,
                      entity2.getLinkageSection().getChildDataObjects().values().iterator().next().getStatus());
 
-        for (XsdDataObject xdo : entity3.getChildDataObjects().values())
+        for (CoalesceDataObject xdo : entity3.getChildDataObjects().values())
         {
             assertEquals(ECoalesceDataObjectStatus.ACTIVE, xdo.getStatus());
         }
@@ -868,8 +868,8 @@ public class EntityLinkHelperTest {
                                 Marking classificationMarking,
                                 String modifiedBy,
                                 Locale inputLang,
-                                XsdEntity entity1,
-                                XsdEntity entity2)
+                                CoalesceEntity entity1,
+                                CoalesceEntity entity2)
     {
 
         assertLinkage(linkType,
@@ -878,7 +878,7 @@ public class EntityLinkHelperTest {
                       inputLang,
                       entity1,
                       entity2,
-                      (XsdLinkage) entity1.getLinkageSection().getChildDataObjects().values().iterator().next());
+                      (CoalesceLinkage) entity1.getLinkageSection().getChildDataObjects().values().iterator().next());
 
         assertLinkage(linkType.GetReciprocalLinkType(),
                       classificationMarking,
@@ -886,26 +886,26 @@ public class EntityLinkHelperTest {
                       inputLang,
                       entity2,
                       entity1,
-                      (XsdLinkage) entity2.getLinkageSection().getChildDataObjects().values().iterator().next());
+                      (CoalesceLinkage) entity2.getLinkageSection().getChildDataObjects().values().iterator().next());
 
     }
 
-    private void assertLinkages(ELinkTypes linkType, XsdEntity entity1, XsdEntity entity2)
+    private void assertLinkages(ELinkTypes linkType, CoalesceEntity entity1, CoalesceEntity entity2)
     {
 
         assertLinkage(linkType,
                       entity1,
                       entity2,
-                      (XsdLinkage) entity1.getLinkageSection().getChildDataObjects().values().iterator().next());
+                      (CoalesceLinkage) entity1.getLinkageSection().getChildDataObjects().values().iterator().next());
 
         assertLinkage(linkType.GetReciprocalLinkType(),
                       entity2,
                       entity1,
-                      (XsdLinkage) entity2.getLinkageSection().getChildDataObjects().values().iterator().next());
+                      (CoalesceLinkage) entity2.getLinkageSection().getChildDataObjects().values().iterator().next());
 
     }
 
-    private void assertLinkage(ELinkTypes linkType, XsdEntity entity1, XsdEntity entity2, XsdLinkage linkage)
+    private void assertLinkage(ELinkTypes linkType, CoalesceEntity entity1, CoalesceEntity entity2, CoalesceLinkage linkage)
     {
 
         assertLinkage(linkType, EntityLinkHelperTest.UNCLASSIFIED_MARKING, "", Locale.US, entity1, entity2, linkage);
@@ -915,9 +915,9 @@ public class EntityLinkHelperTest {
                                Marking classificationMarking,
                                String modifiedBy,
                                Locale inputLang,
-                               XsdEntity entity1,
-                               XsdEntity entity2,
-                               XsdLinkage linkage)
+                               CoalesceEntity entity1,
+                               CoalesceEntity entity2,
+                               CoalesceLinkage linkage)
     {
 
         assertEquals(linkType, linkage.getLinkType());

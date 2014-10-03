@@ -34,7 +34,7 @@ import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-public class XsdRecordset extends XsdDataObject implements ICoalesceRecordset {
+public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRecordset {
 
     // -----------------------------------------------------------------------//
     // Public Events
@@ -50,8 +50,8 @@ public class XsdRecordset extends XsdDataObject implements ICoalesceRecordset {
 
     private Recordset _entityRecordset;
 
-    protected ArrayList<XsdFieldDefinition> _fieldDefinitions;
-    protected ArrayList<XsdRecord> _records;
+    protected ArrayList<CoalesceFieldDefinition> _fieldDefinitions;
+    protected ArrayList<CoalesceRecord> _records;
 
     // -----------------------------------------------------------------------//
     // Factory and Initialization
@@ -64,7 +64,7 @@ public class XsdRecordset extends XsdDataObject implements ICoalesceRecordset {
      * @param name String the name of this XsdRecordset
      * @return XsdRecordset, the new XsdRecordset
      */
-    public static XsdRecordset create(XsdSection parent, String name)
+    public static CoalesceRecordset create(CoalesceSection parent, String name)
     {
         return create(parent, name, 0, 0);
     }
@@ -78,7 +78,7 @@ public class XsdRecordset extends XsdDataObject implements ICoalesceRecordset {
      * @param maxRecords integer, the maximum number of records this XsdRecordset can contain
      * @return XsdRecordset, the new XsdRecordset
      */
-    public static XsdRecordset create(XsdSection parent, String name, int minRecords, int maxRecords)
+    public static CoalesceRecordset create(CoalesceSection parent, String name, int minRecords, int maxRecords)
     {
 
         if (parent == null) throw new NullArgumentException("parent");
@@ -88,7 +88,7 @@ public class XsdRecordset extends XsdDataObject implements ICoalesceRecordset {
         if (minRecords < 0 || maxRecords < minRecords) return null;
 
         // Check that a recordset with the same name doesn't already exist
-        for (XsdRecordset recordset : parent.getRecordsets().values())
+        for (CoalesceRecordset recordset : parent.getRecordsets().values())
         {
             if (recordset.getName().equalsIgnoreCase(name))
             {
@@ -99,7 +99,7 @@ public class XsdRecordset extends XsdDataObject implements ICoalesceRecordset {
         Recordset newEntityRecordset = new Recordset();
         parent.getEntityRecordSets().add(newEntityRecordset);
 
-        XsdRecordset newRecordset = new XsdRecordset();
+        CoalesceRecordset newRecordset = new CoalesceRecordset();
         if (!newRecordset.initialize(parent, newEntityRecordset)) return null;
 
         newRecordset.setName(name);
@@ -123,7 +123,7 @@ public class XsdRecordset extends XsdDataObject implements ICoalesceRecordset {
      * @param recordset Recordset that this XsdRecordset will be based on
      * @return boolean indicator of success/failure
      */
-    public boolean initialize(XsdSection parent, Recordset recordset)
+    public boolean initialize(CoalesceSection parent, Recordset recordset)
     {
 
         if (parent == null) throw new NullArgumentException("parent");
@@ -136,19 +136,19 @@ public class XsdRecordset extends XsdDataObject implements ICoalesceRecordset {
         super.initialize();
 
         // Create Collections
-        _fieldDefinitions = new ArrayList<XsdFieldDefinition>();
-        _records = new ArrayList<XsdRecord>();
+        _fieldDefinitions = new ArrayList<CoalesceFieldDefinition>();
+        _records = new ArrayList<CoalesceRecord>();
 
         for (Fielddefinition entityFieldDefinition : _entityRecordset.getFielddefinition())
         {
-            XsdFieldDefinition newFieldDefinition = new XsdFieldDefinition();
+            CoalesceFieldDefinition newFieldDefinition = new CoalesceFieldDefinition();
             newFieldDefinition.initialize(this, entityFieldDefinition);
 
         }
 
         for (Record entityRecord : _entityRecordset.getRecord())
         {
-            XsdRecord newRecord = new XsdRecord();
+            CoalesceRecord newRecord = new CoalesceRecord();
             newRecord.initialize(this, entityRecord);
         }
 
@@ -195,7 +195,7 @@ public class XsdRecordset extends XsdDataObject implements ICoalesceRecordset {
      * 
      * @return ArrayList<XsdFieldDefinition> the XsdFieldDefinition collection contained by this XsdRecordset
      */
-    public ArrayList<XsdFieldDefinition> getFieldDefinitions()
+    public ArrayList<CoalesceFieldDefinition> getFieldDefinitions()
     {
         return _fieldDefinitions;
     }
@@ -205,7 +205,7 @@ public class XsdRecordset extends XsdDataObject implements ICoalesceRecordset {
      * 
      * @return ArrayList<XsdRecord> the XsdRecord collection contained by this XsdRecordset
      */
-    public ArrayList<XsdRecord> getRecords()
+    public ArrayList<CoalesceRecord> getRecords()
     {
         return _records;
     }
@@ -244,7 +244,7 @@ public class XsdRecordset extends XsdDataObject implements ICoalesceRecordset {
 
         // Iterate Records
         // For Each Record As CoalesceRecord In this._Records
-        for (XsdRecord record : getRecords())
+        for (CoalesceRecord record : getRecords())
         {
             if (record.getStatus() == ECoalesceDataObjectStatus.ACTIVE)
             {
@@ -309,13 +309,13 @@ public class XsdRecordset extends XsdDataObject implements ICoalesceRecordset {
      * @param defaultValue the default value for this field/fielddefinition
      * @return XsdFieldDefinition the new XsdFieldDefinition
      */
-    public XsdFieldDefinition createFieldDefinition(String name,
+    public CoalesceFieldDefinition createFieldDefinition(String name,
                                                     ECoalesceFieldDataTypes dataType,
                                                     String label,
                                                     String defaultClassificationMarking,
                                                     String defaultValue)
     {
-        return XsdFieldDefinition.create(this, name, dataType, label, defaultClassificationMarking, defaultValue);
+        return CoalesceFieldDefinition.create(this, name, dataType, label, defaultClassificationMarking, defaultValue);
     }
 
     /**
@@ -325,9 +325,9 @@ public class XsdRecordset extends XsdDataObject implements ICoalesceRecordset {
      * @param dataType ECoalesceFieldDataTypes that a Field based on the new XsdFieldDefinition is to contain
      * @return XsdFieldDefinition the new XsdFieldDefinition
      */
-    public XsdFieldDefinition createFieldDefinition(String name, ECoalesceFieldDataTypes dataType)
+    public CoalesceFieldDefinition createFieldDefinition(String name, ECoalesceFieldDataTypes dataType)
     {
-        return XsdFieldDefinition.create(this, name, dataType);
+        return CoalesceFieldDefinition.create(this, name, dataType);
     }
 
     @Override
@@ -342,9 +342,9 @@ public class XsdRecordset extends XsdDataObject implements ICoalesceRecordset {
      * @param fieldName String name of the new XsdFieldDefinition
      * @return XsdFieldDefinition with the matching field name
      */
-    public XsdFieldDefinition getFieldDefinition(String fieldName)
+    public CoalesceFieldDefinition getFieldDefinition(String fieldName)
     {
-        for (XsdFieldDefinition fieldDefinition : getFieldDefinitions())
+        for (CoalesceFieldDefinition fieldDefinition : getFieldDefinitions())
         {
             if (fieldDefinition.getName().toUpperCase().equals(fieldName.toUpperCase()))
             {
@@ -423,9 +423,9 @@ public class XsdRecordset extends XsdDataObject implements ICoalesceRecordset {
      * 
      * @return XsdRecord, the new XsdRecord
      */
-    public XsdRecord addNew()
+    public CoalesceRecord addNew()
     {
-        XsdRecord newRecord = XsdRecord.create(this, getName() + " Record");
+        CoalesceRecord newRecord = CoalesceRecord.create(this, getName() + " Record");
 
         // TODO: Raise the Changed Event
         // RaiseEvent ListChanged(this, new
@@ -441,7 +441,7 @@ public class XsdRecordset extends XsdDataObject implements ICoalesceRecordset {
      * @param index integer position of the XsdRecordset's desired XsdRecord
      * @return XsdRecord at the XsdRecordset's index position
      */
-    public XsdRecord GetItem(int index)
+    public CoalesceRecord GetItem(int index)
     {
 
         // Iterate List
@@ -463,7 +463,7 @@ public class XsdRecordset extends XsdDataObject implements ICoalesceRecordset {
     public void RemoveAt(Integer index)
     { // Implements System.Collections.IList.RemoveAt
       // Get Record
-        XsdRecord record = (XsdRecord) this.GetItem(index);
+        CoalesceRecord record = (CoalesceRecord) this.GetItem(index);
 
         // Evaluate
         if (record != null)
@@ -499,11 +499,11 @@ public class XsdRecordset extends XsdDataObject implements ICoalesceRecordset {
      */
     public void Remove(String key)
     {
-        XsdRecord recordToRemove = null;
+        CoalesceRecord recordToRemove = null;
 
         // Find
         // For Each Record As XsdRecord In this.Records
-        for (XsdRecord record : getRecords())
+        for (CoalesceRecord record : getRecords())
         {
             if (record.getKey().equals(key))
             {

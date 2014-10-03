@@ -36,7 +36,7 @@ import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record.Field;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-public class XsdRecord extends XsdDataObject {
+public class CoalesceRecord extends CoalesceDataObject {
 
     // -----------------------------------------------------------------------//
     // Private Member Variables
@@ -55,7 +55,7 @@ public class XsdRecord extends XsdDataObject {
      * @param name XsdRecord name attribute
      * @return XsdRecord the new XsdRecord
      */
-    public static XsdRecord create(XsdRecordset parent, String name)
+    public static CoalesceRecord create(CoalesceRecordset parent, String name)
     {
         if (parent == null) throw new NullArgumentException("parent");
         if (name == null) throw new NullArgumentException("name");
@@ -64,13 +64,13 @@ public class XsdRecord extends XsdDataObject {
         Record newEntityRecord = new Record();
         parent.GetEntityRecords().add(newEntityRecord);
 
-        XsdRecord newRecord = new XsdRecord();
+        CoalesceRecord newRecord = new CoalesceRecord();
         if (!newRecord.initialize(parent, newEntityRecord)) return null;
 
-        for (XsdFieldDefinition fieldDefinition : parent.getFieldDefinitions())
+        for (CoalesceFieldDefinition fieldDefinition : parent.getFieldDefinitions())
         {
             // Creates New Field
-            XsdField.create(newRecord, fieldDefinition);
+            CoalesceField.create(newRecord, fieldDefinition);
         }
 
         newRecord.setName(name);
@@ -91,7 +91,7 @@ public class XsdRecord extends XsdDataObject {
      * @param record Record that this XsdRecord will be based on
      * @return boolean indicator of success/failure
      */
-    public boolean initialize(XsdRecordset parent, Record record)
+    public boolean initialize(CoalesceRecordset parent, Record record)
     {
         if (parent == null) throw new NullArgumentException("parent");
         if (record == null) throw new NullArgumentException("record");
@@ -104,7 +104,7 @@ public class XsdRecord extends XsdDataObject {
 
         for (Field entityField : record.getField())
         {
-            XsdField<?> newField = XsdField.createTypeField(ECoalesceFieldDataTypes.getTypeForCoalesceType(entityField.getDatatype()));
+            CoalesceField<?> newField = CoalesceField.createTypeField(ECoalesceFieldDataTypes.getTypeForCoalesceType(entityField.getDatatype()));
             if (!newField.initialize(this, entityField)) return false;
 
             // Add to Child Collection
@@ -161,16 +161,16 @@ public class XsdRecord extends XsdDataObject {
      * 
      * @return List<XsdField> list of XsdFields contained by this XsdRecord
      */
-    public List<XsdField<?>> getFields()
+    public List<CoalesceField<?>> getFields()
     {
-        List<XsdField<?>> fields = new ArrayList<XsdField<?>>();
+        List<CoalesceField<?>> fields = new ArrayList<CoalesceField<?>>();
 
-        for (XsdDataObject dataObject : _childDataObjects.values())
+        for (CoalesceDataObject dataObject : _childDataObjects.values())
         {
 
-            if (dataObject instanceof XsdField<?>)
+            if (dataObject instanceof CoalesceField<?>)
             {
-                fields.add((XsdField<?>) dataObject);
+                fields.add((CoalesceField<?>) dataObject);
             }
         }
 
@@ -186,9 +186,9 @@ public class XsdRecord extends XsdDataObject {
     {
         List<String> fieldNames = new ArrayList<String>();
 
-        for (XsdDataObject dataObject : _childDataObjects.values())
+        for (CoalesceDataObject dataObject : _childDataObjects.values())
         {
-            if (dataObject instanceof XsdField<?>)
+            if (dataObject instanceof CoalesceField<?>)
             {
                 fieldNames.add(dataObject.getName());
             }
@@ -206,9 +206,9 @@ public class XsdRecord extends XsdDataObject {
     {
         List<String> fieldKeys = new ArrayList<String>();
 
-        for (XsdDataObject dataObject : _childDataObjects.values())
+        for (CoalesceDataObject dataObject : _childDataObjects.values())
         {
-            if (dataObject instanceof XsdField<?>)
+            if (dataObject instanceof CoalesceField<?>)
             {
                 fieldKeys.add(dataObject.getKey());
             }
@@ -223,9 +223,9 @@ public class XsdRecord extends XsdDataObject {
      * @param key String of the desired Field's key
      * @return XsdField that has the key parameter. Null if not present.
      */
-    public XsdField<?> getFieldByKey(String key)
+    public CoalesceField<?> getFieldByKey(String key)
     {
-        for (XsdField<?> field : getFields())
+        for (CoalesceField<?> field : getFields())
         {
             if (field.getKey().equals(key))
             {
@@ -242,9 +242,9 @@ public class XsdRecord extends XsdDataObject {
      * @param name String of the desired Field name
      * @return XsdField that has the name parameter. Null if not present.
      */
-    public XsdField<?> getFieldByName(String name)
+    public CoalesceField<?> getFieldByName(String name)
     {
-        for (XsdField<?> field : getFields())
+        for (CoalesceField<?> field : getFields())
         {
             if (field.getName().equals(name))
             {
@@ -264,7 +264,7 @@ public class XsdRecord extends XsdDataObject {
      */
     public String getFieldValue(String fieldName) throws CoalesceException
     {
-        XsdField<?> field = getFieldByName(fieldName);
+        CoalesceField<?> field = getFieldByName(fieldName);
 
         // Do we have this Field?
         if (field != null)
@@ -287,7 +287,7 @@ public class XsdRecord extends XsdDataObject {
      */
     public boolean getBooleanFieldValue(String fieldName) throws CoalesceException
     {
-        XsdField<?> field = getFieldByName(fieldName);
+        CoalesceField<?> field = getFieldByName(fieldName);
 
         // Do we have this Field?
         if (field != null)
@@ -314,7 +314,7 @@ public class XsdRecord extends XsdDataObject {
      */
     public int getIntegerFieldValue(String fieldName) throws CoalesceException
     {
-        XsdField<?> field = getFieldByName(fieldName);
+        CoalesceField<?> field = getFieldByName(fieldName);
 
         // Do we have this Field?
         if (field != null)
@@ -340,7 +340,7 @@ public class XsdRecord extends XsdDataObject {
      */
     public DateTime getDateTimeFieldValue(String fieldName) throws CoalesceException
     {
-        XsdField<?> field = (XsdField<?>) getFieldByName(fieldName);
+        CoalesceField<?> field = (CoalesceField<?>) getFieldByName(fieldName);
 
         // Do we have this Field?
         if (field != null)
@@ -368,7 +368,7 @@ public class XsdRecord extends XsdDataObject {
      */
     public byte[] getBinaryFieldValue(String fieldName) throws CoalesceException
     {
-        XsdField<?> field = (XsdField<?>) getFieldByName(fieldName);
+        CoalesceField<?> field = (CoalesceField<?>) getFieldByName(fieldName);
 
         // Do we have this Field?
         if (field != null)
@@ -504,7 +504,7 @@ public class XsdRecord extends XsdDataObject {
      */
     public void setFieldValue(String fieldName, String value) throws CoalesceException
     {
-        XsdField<?> field = (XsdField<?>) getFieldByName(fieldName);
+        CoalesceField<?> field = (CoalesceField<?>) getFieldByName(fieldName);
 
         // Do we have this Field?
         if (field != null)
@@ -526,7 +526,7 @@ public class XsdRecord extends XsdDataObject {
      */
     public void setFieldValue(String fieldName, boolean value) throws CoalesceException
     {
-        XsdField<?> field = (XsdField<?>) getFieldByName(fieldName);
+        CoalesceField<?> field = (CoalesceField<?>) getFieldByName(fieldName);
 
         // Do we have this Field?
         if (field != null)
@@ -548,7 +548,7 @@ public class XsdRecord extends XsdDataObject {
      */
     public void setFieldValue(String fieldName, int value) throws CoalesceException
     {
-        XsdField<?> field = (XsdField<?>) getFieldByName(fieldName);
+        CoalesceField<?> field = (CoalesceField<?>) getFieldByName(fieldName);
 
         // Do we have this Field?
         if (field != null)
@@ -570,7 +570,7 @@ public class XsdRecord extends XsdDataObject {
      */
     public void setFieldValue(String fieldName, DateTime value) throws CoalesceException
     {
-        XsdField<?> field = (XsdField<?>) getFieldByName(fieldName);
+        CoalesceField<?> field = (CoalesceField<?>) getFieldByName(fieldName);
 
         // Do we have this Field?
         if (field != null)
@@ -605,7 +605,7 @@ public class XsdRecord extends XsdDataObject {
      */
     public void setFieldValue(String fieldName, byte[] value, String fileName) throws CoalesceException
     {
-        XsdField<?> field = (XsdField<?>) getFieldByName(fieldName);
+        CoalesceField<?> field = (CoalesceField<?>) getFieldByName(fieldName);
 
         // Do we have this Field?
         if (field != null)
@@ -637,7 +637,7 @@ public class XsdRecord extends XsdDataObject {
     public Boolean hasField(String name)
     {
 
-        XsdField<?> field = (XsdField<?>) getFieldByName(name);
+        CoalesceField<?> field = (CoalesceField<?>) getFieldByName(name);
 
         return (field != null);
 
@@ -760,9 +760,9 @@ public class XsdRecord extends XsdDataObject {
         return map;
     }
 
-    private XsdRecordset getCastParent()
+    private CoalesceRecordset getCastParent()
     {
-        return (XsdRecordset) _parent;
+        return (CoalesceRecordset) _parent;
     }
 
 }

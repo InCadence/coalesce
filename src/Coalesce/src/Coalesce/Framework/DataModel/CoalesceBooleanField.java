@@ -25,7 +25,7 @@ import Coalesce.Common.Exceptions.CoalesceDataFormatException;
 /**
  *
  */
-public class XsdBooleanField extends XsdField<Boolean> {
+public class CoalesceBooleanField extends CoalesceField<Boolean> {
 
     /*
      * (non-Javadoc)

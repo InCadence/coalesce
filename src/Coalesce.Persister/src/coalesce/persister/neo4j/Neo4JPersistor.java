@@ -12,9 +12,9 @@ import org.joda.time.DateTimeZone;
 import Coalesce.Common.Exceptions.CoalescePersistorException;
 import Coalesce.Common.Helpers.JodaDateTimeHelper;
 import Coalesce.Framework.DataModel.CoalesceEntityTemplate;
-import Coalesce.Framework.DataModel.XsdDataObject;
-import Coalesce.Framework.DataModel.XsdEntity;
-import Coalesce.Framework.DataModel.XsdField;
+import Coalesce.Framework.DataModel.CoalesceDataObject;
+import Coalesce.Framework.DataModel.CoalesceEntity;
+import Coalesce.Framework.DataModel.CoalesceField;
 import Coalesce.Framework.Persistance.CoalesceParameter;
 import Coalesce.Framework.Persistance.CoalescePersisterBase;
 import Coalesce.Framework.Persistance.CoalesceTable;
@@ -145,7 +145,7 @@ public class Neo4JPersistor extends CoalescePersisterBase {
     }
 
     @Override
-    protected boolean FlattenObject(XsdEntity entity, boolean AllowRemoval) throws CoalescePersistorException
+    protected boolean FlattenObject(CoalesceEntity entity, boolean AllowRemoval) throws CoalescePersistorException
     {
         boolean isSuccessful = false;
 
@@ -175,7 +175,7 @@ public class Neo4JPersistor extends CoalescePersisterBase {
         return isSuccessful;
     }
 
-    protected boolean persistEntityObject(XsdEntity entity, Neo4JDataConnector conn) throws SQLException
+    protected boolean persistEntityObject(CoalesceEntity entity, Neo4JDataConnector conn) throws SQLException
     {
         // Return true if no update is required.
         // if (!this.checkLastModified(entity, conn)) return true;
@@ -185,13 +185,13 @@ public class Neo4JPersistor extends CoalescePersisterBase {
         return false;
     }
 
-    protected String getValues(XsdDataObject dataObject, Map values)
+    protected String getValues(CoalesceDataObject dataObject, Map values)
     {
         switch (dataObject.getStatus()) {
         case ACTIVE:
             switch (dataObject.getType().toLowerCase()) {
             case "field":
-                XsdField<?> fieldObject = (XsdField<?>) dataObject;
+                CoalesceField<?> fieldObject = (CoalesceField<?>) dataObject;
                 switch (fieldObject.getType().toUpperCase()) {
                 case "BINARY":
                 case "FILE":
@@ -208,7 +208,7 @@ public class Neo4JPersistor extends CoalescePersisterBase {
         return null;
     }
 
-    protected boolean checkLastModified(XsdDataObject dataObject, Neo4JDataConnector conn) throws SQLException
+    protected boolean checkLastModified(CoalesceDataObject dataObject, Neo4JDataConnector conn) throws SQLException
     {
         boolean isOutOfDate = true;
 
@@ -264,7 +264,7 @@ public class Neo4JPersistor extends CoalescePersisterBase {
     }
 
     @Override
-    protected boolean FlattenCore(XsdEntity entity, boolean AllowRemoval) throws CoalescePersistorException
+    protected boolean FlattenCore(CoalesceEntity entity, boolean AllowRemoval) throws CoalescePersistorException
     {
         // TODO Auto-generated method stub
         return false;

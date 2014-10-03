@@ -34,7 +34,7 @@ public class XsdSectionTest {
     public void createSectionTest()
     {
         // Create Entity
-        XsdEntity entity = XsdEntity.create("TREXOperation",
+        CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "",
@@ -44,7 +44,7 @@ public class XsdSectionTest {
         // Create Live Status Section
         assertNull(entity.getSection("TREXOperation/Live Status Section"));
 
-        XsdSection liveSection = XsdSection.create(entity, "Live Status Section");
+        CoalesceSection liveSection = CoalesceSection.create(entity, "Live Status Section");
         assertNotNull(GUIDHelper.isValid(liveSection.getKey()));
         assertEquals(liveSection, entity.getSection("TREXOperation/Live Status Section"));
         assertFalse(liveSection.getNoIndex());
@@ -54,11 +54,11 @@ public class XsdSectionTest {
     public void createSectionFromXmlTest()
     {
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         assertNull(entity.getSection("TREXMission/A New Section"));
 
-        XsdSection newSection = XsdSection.create(entity, "A New Section");
+        CoalesceSection newSection = CoalesceSection.create(entity, "A New Section");
 
         assertNotNull(newSection);
         assertNotNull(GUIDHelper.isValid(newSection.getKey()));
@@ -71,16 +71,16 @@ public class XsdSectionTest {
     public void createSectionFromXmlExistingTest()
     {
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdSection liveSection = entity.getSection(CoalesceTypeInstances.TEST_MISSION_LIVE_SECTION_PATH);
-        XsdSection informationSection = entity.getSection(CoalesceTypeInstances.TEST_MISSION_INFO_SECTION_PATH);
+        CoalesceSection liveSection = entity.getSection(CoalesceTypeInstances.TEST_MISSION_LIVE_SECTION_PATH);
+        CoalesceSection informationSection = entity.getSection(CoalesceTypeInstances.TEST_MISSION_INFO_SECTION_PATH);
 
         assertNotNull(liveSection);
         assertNotNull(informationSection);
 
-        XsdSection createdLiveSection = XsdSection.create(entity, "Live Status Section");
-        XsdSection createdInformationSection = XsdSection.create(entity, "Mission Information Section");
+        CoalesceSection createdLiveSection = CoalesceSection.create(entity, "Live Status Section");
+        CoalesceSection createdInformationSection = CoalesceSection.create(entity, "Mission Information Section");
 
         assertEquals(liveSection, createdLiveSection);
         assertEquals(informationSection, createdInformationSection);
@@ -91,14 +91,14 @@ public class XsdSectionTest {
     public void createSectionNullParentTest()
     {
         @SuppressWarnings("unused")
-        XsdSection liveSection = XsdSection.create(null, "Live Status Section");
+        CoalesceSection liveSection = CoalesceSection.create(null, "Live Status Section");
     }
 
     @Test(expected = NullArgumentException.class)
     public void createSectionNullNameTest()
     {
         // Create Entity
-        XsdEntity entity = XsdEntity.create("TREXOperation",
+        CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "",
@@ -106,7 +106,7 @@ public class XsdSectionTest {
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         @SuppressWarnings("unused")
-        XsdSection section = XsdSection.create(entity, null);
+        CoalesceSection section = CoalesceSection.create(entity, null);
 
     }
 
@@ -114,7 +114,7 @@ public class XsdSectionTest {
     public void createSectionEmptyNameTest()
     {
         // Create Entity
-        XsdEntity entity = XsdEntity.create("TREXOperation",
+        CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "",
@@ -122,7 +122,7 @@ public class XsdSectionTest {
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         @SuppressWarnings("unused")
-        XsdSection section = XsdSection.create(entity, "");
+        CoalesceSection section = CoalesceSection.create(entity, "");
 
     }
 
@@ -130,7 +130,7 @@ public class XsdSectionTest {
     public void createSectionWhiteSpaceNameTest()
     {
         // Create Entity
-        XsdEntity entity = XsdEntity.create("TREXOperation",
+        CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "",
@@ -138,7 +138,7 @@ public class XsdSectionTest {
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         @SuppressWarnings("unused")
-        XsdSection section = XsdSection.create(entity, "  ");
+        CoalesceSection section = CoalesceSection.create(entity, "  ");
 
     }
 
@@ -146,25 +146,25 @@ public class XsdSectionTest {
     public void createSectionNullBothTest()
     {
         @SuppressWarnings("unused")
-        XsdSection section = XsdSection.create(null, null);
+        CoalesceSection section = CoalesceSection.create(null, null);
     }
 
     @Test
     public void createSectionExistingNoIndexTrueTest()
     {
         // Create Entity
-        XsdEntity entity = XsdEntity.create("TREXOperation",
+        CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "",
                                             "",
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
-        XsdSection liveSection = XsdSection.create(entity, "Live Status Section", true);
+        CoalesceSection liveSection = CoalesceSection.create(entity, "Live Status Section", true);
         assertEquals(liveSection, entity.getSection("TREXOperation/Live Status Section"));
         assertTrue(liveSection.getNoIndex());
 
-        XsdSection liveSection2 = XsdSection.create(entity, "Live Status Section");
+        CoalesceSection liveSection2 = CoalesceSection.create(entity, "Live Status Section");
         assertEquals(liveSection2, entity.getSection("TREXOperation/Live Status Section"));
         assertEquals(liveSection, liveSection2);
         assertFalse(liveSection.getNoIndex());
@@ -176,14 +176,14 @@ public class XsdSectionTest {
     public void createSectionWithNoIndexFalseTest()
     {
         // Create Entity
-        XsdEntity entity = XsdEntity.create("TREXOperation",
+        CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "",
                                             "",
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
-        XsdSection liveSection = XsdSection.create(entity, "Live Status Section", false);
+        CoalesceSection liveSection = CoalesceSection.create(entity, "Live Status Section", false);
         assertEquals(liveSection, entity.getSection("TREXOperation/Live Status Section"));
         assertFalse(liveSection.getNoIndex());
     }
@@ -192,14 +192,14 @@ public class XsdSectionTest {
     public void createSectionWithNoIndexTrueTest()
     {
         // Create Entity
-        XsdEntity entity = XsdEntity.create("TREXOperation",
+        CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "",
                                             "",
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
-        XsdSection liveSection = XsdSection.create(entity, "Live Status Section", true);
+        CoalesceSection liveSection = CoalesceSection.create(entity, "Live Status Section", true);
         assertEquals(liveSection, entity.getSection("TREXOperation/Live Status Section"));
         assertTrue(liveSection.getNoIndex());
 
@@ -209,18 +209,18 @@ public class XsdSectionTest {
     public void createSectionWithNoIndexTrueForExistingNoIndexFalseTest()
     {
         // Create Entity
-        XsdEntity entity = XsdEntity.create("TREXOperation",
+        CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "",
                                             "",
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
-        XsdSection liveSection = XsdSection.create(entity, "Live Status Section", false);
+        CoalesceSection liveSection = CoalesceSection.create(entity, "Live Status Section", false);
         assertEquals(liveSection, entity.getSection("TREXOperation/Live Status Section"));
         assertFalse(liveSection.getNoIndex());
 
-        XsdSection liveSection2 = XsdSection.create(entity, "Live Status Section", true);
+        CoalesceSection liveSection2 = CoalesceSection.create(entity, "Live Status Section", true);
         assertEquals(liveSection2, entity.getSection("TREXOperation/Live Status Section"));
         assertEquals(liveSection, liveSection2);
         assertTrue(liveSection.getNoIndex());
@@ -232,11 +232,11 @@ public class XsdSectionTest {
     public void createSectionWithNoIndexTrueFromXmlTest()
     {
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         assertNull(entity.getSection("TREXMission/A New Section"));
 
-        XsdSection newSection = XsdSection.create(entity, "A New Section", true);
+        CoalesceSection newSection = CoalesceSection.create(entity, "A New Section", true);
 
         assertNotNull(newSection);
         assertEquals(newSection, entity.getSection("TREXMission/A New Section"));
@@ -244,9 +244,9 @@ public class XsdSectionTest {
 
         String entityXml = entity.toXml();
 
-        XsdEntity desEntity = XsdEntity.create(entityXml);
+        CoalesceEntity desEntity = CoalesceEntity.create(entityXml);
 
-        XsdSection desSection = desEntity.getSection("TREXMission/A New Section");
+        CoalesceSection desSection = desEntity.getSection("TREXMission/A New Section");
         assertEquals(newSection.getKey(), desSection.getKey());
         assertEquals(newSection.getName(), desSection.getName());
         assertEquals(newSection.getNoIndex(), desSection.getNoIndex());
@@ -256,21 +256,21 @@ public class XsdSectionTest {
     public void createSectionNoIndexFalseNullParentTest()
     {
         @SuppressWarnings("unused")
-        XsdSection liveSection = XsdSection.create(null, "Live Status Section", false);
+        CoalesceSection liveSection = CoalesceSection.create(null, "Live Status Section", false);
     }
 
     @Test(expected = NullArgumentException.class)
     public void createSectionNoIndexTrueNullParentTest()
     {
         @SuppressWarnings("unused")
-        XsdSection liveSection = XsdSection.create(null, "Live Status Section", true);
+        CoalesceSection liveSection = CoalesceSection.create(null, "Live Status Section", true);
     }
 
     @Test(expected = NullArgumentException.class)
     public void createSectionNoIndexFalseNullNameTest()
     {
         // Create Entity
-        XsdEntity entity = XsdEntity.create("TREXOperation",
+        CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "",
@@ -278,7 +278,7 @@ public class XsdSectionTest {
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         @SuppressWarnings("unused")
-        XsdSection section = XsdSection.create(entity, null, false);
+        CoalesceSection section = CoalesceSection.create(entity, null, false);
 
     }
 
@@ -286,7 +286,7 @@ public class XsdSectionTest {
     public void createSectionNoIndexTrueNullNameTest()
     {
         // Create Entity
-        XsdEntity entity = XsdEntity.create("TREXOperation",
+        CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "",
@@ -294,7 +294,7 @@ public class XsdSectionTest {
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         @SuppressWarnings("unused")
-        XsdSection section = XsdSection.create(entity, null, true);
+        CoalesceSection section = CoalesceSection.create(entity, null, true);
 
     }
 
@@ -302,20 +302,20 @@ public class XsdSectionTest {
     public void createSectionIndexFalseNullTest()
     {
         @SuppressWarnings("unused")
-        XsdSection section = XsdSection.create(null, null, false);
+        CoalesceSection section = CoalesceSection.create(null, null, false);
     }
 
     @Test(expected = NullArgumentException.class)
     public void createSectionIndexTrueNullTest()
     {
         @SuppressWarnings("unused")
-        XsdSection section = XsdSection.create(null, null, true);
+        CoalesceSection section = CoalesceSection.create(null, null, true);
     }
 
     @Test(expected = NullArgumentException.class)
     public void initializeNullParent()
     {
-        XsdSection section = new XsdSection();
+        CoalesceSection section = new CoalesceSection();
 
         section.initialize(null, new Section());
 
@@ -325,14 +325,14 @@ public class XsdSectionTest {
     public void initializeNullSection()
     {
         // Create Entity
-        XsdEntity entity = XsdEntity.create("TREXOperation",
+        CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "",
                                             "",
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
-        XsdSection section = new XsdSection();
+        CoalesceSection section = new CoalesceSection();
 
         section.initialize(entity, null);
 
@@ -341,7 +341,7 @@ public class XsdSectionTest {
     @Test(expected = NullArgumentException.class)
     public void initializeNullBoth()
     {
-        XsdSection section = new XsdSection();
+        CoalesceSection section = new CoalesceSection();
 
         section.initialize(null, null);
 
@@ -350,9 +350,9 @@ public class XsdSectionTest {
     @Test
     public void keyTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdSection liveSection = entity.getSection(CoalesceTypeInstances.TEST_MISSION_LIVE_SECTION_PATH);
+        CoalesceSection liveSection = entity.getSection(CoalesceTypeInstances.TEST_MISSION_LIVE_SECTION_PATH);
 
         assertEquals("85CB4256-4CC2-4F96-A03D-5EF880989822", liveSection.getKey());
 
@@ -373,9 +373,9 @@ public class XsdSectionTest {
     @Test
     public void nameTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdSection liveSection = entity.getSection(CoalesceTypeInstances.TEST_MISSION_LIVE_SECTION_PATH);
+        CoalesceSection liveSection = entity.getSection(CoalesceTypeInstances.TEST_MISSION_LIVE_SECTION_PATH);
 
         assertEquals("Live Status Section", liveSection.getName());
 
@@ -388,14 +388,14 @@ public class XsdSectionTest {
     @Test
     public void typeTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdSection liveSection = entity.getSection(CoalesceTypeInstances.TEST_MISSION_LIVE_SECTION_PATH);
+        CoalesceSection liveSection = entity.getSection(CoalesceTypeInstances.TEST_MISSION_LIVE_SECTION_PATH);
 
         assertEquals("section", liveSection.getType());
 
-        XsdEntity newEntity = XsdEntity.create("Operation", "Portal", "1.2.3.4", "ID", "Type");
-        XsdSection newSection = XsdSection.create(newEntity, "Operation/New Section");
+        CoalesceEntity newEntity = CoalesceEntity.create("Operation", "Portal", "1.2.3.4", "ID", "Type");
+        CoalesceSection newSection = CoalesceSection.create(newEntity, "Operation/New Section");
 
         assertEquals("section", newSection.getType());
 
@@ -404,15 +404,15 @@ public class XsdSectionTest {
     @Test
     public void createRecordSetTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdSection informationSection = entity.getSection(CoalesceTypeInstances.TEST_MISSION_INFO_SECTION_PATH);
+        CoalesceSection informationSection = entity.getSection(CoalesceTypeInstances.TEST_MISSION_INFO_SECTION_PATH);
 
-        XsdRecordset recordset = informationSection.getRecordset("Mission New Recordset");
+        CoalesceRecordset recordset = informationSection.getRecordset("Mission New Recordset");
 
         assertNull(recordset);
 
-        XsdRecordset newRecordset = informationSection.createRecordset("Mission New Recordset");
+        CoalesceRecordset newRecordset = informationSection.createRecordset("Mission New Recordset");
 
         assertNotNull(newRecordset);
         assertEquals(informationSection, newRecordset.getParent());
@@ -423,15 +423,15 @@ public class XsdSectionTest {
     @Test
     public void createRecordSetAlreadyExists()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdSection informationSection = entity.getSection(CoalesceTypeInstances.TEST_MISSION_INFO_SECTION_PATH);
+        CoalesceSection informationSection = entity.getSection(CoalesceTypeInstances.TEST_MISSION_INFO_SECTION_PATH);
 
-        XsdRecordset recordSet = informationSection.getRecordset("Mission Information Section/Mission Information Recordset");
+        CoalesceRecordset recordSet = informationSection.getRecordset("Mission Information Section/Mission Information Recordset");
 
         assertNotNull(recordSet);
 
-        XsdRecordset dublicateRecordset = informationSection.createRecordset("Mission Information Recordset");
+        CoalesceRecordset dublicateRecordset = informationSection.createRecordset("Mission Information Recordset");
 
         assertEquals(recordSet, dublicateRecordset);
 
@@ -440,23 +440,23 @@ public class XsdSectionTest {
     @Test(expected = NullArgumentException.class)
     public void createRecordsetNullNameTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdSection informationSection = entity.getSection(CoalesceTypeInstances.TEST_MISSION_INFO_SECTION_PATH);
+        CoalesceSection informationSection = entity.getSection(CoalesceTypeInstances.TEST_MISSION_INFO_SECTION_PATH);
 
         @SuppressWarnings("unused")
-        XsdRecordset recordset = informationSection.createRecordset(null);
+        CoalesceRecordset recordset = informationSection.createRecordset(null);
 
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void createRecordsetEmptyNameTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdSection informationSection = entity.getSection(CoalesceTypeInstances.TEST_MISSION_INFO_SECTION_PATH);
+        CoalesceSection informationSection = entity.getSection(CoalesceTypeInstances.TEST_MISSION_INFO_SECTION_PATH);
 
-        XsdRecordset recordset = informationSection.createRecordset("");
+        CoalesceRecordset recordset = informationSection.createRecordset("");
 
         assertNull(recordset);
 
@@ -465,11 +465,11 @@ public class XsdSectionTest {
     @Test(expected = IllegalArgumentException.class)
     public void createRecordsetWhiteSpaceNameTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdSection informationSection = entity.getSection(CoalesceTypeInstances.TEST_MISSION_INFO_SECTION_PATH);
+        CoalesceSection informationSection = entity.getSection(CoalesceTypeInstances.TEST_MISSION_INFO_SECTION_PATH);
 
-        XsdRecordset recordset = informationSection.createRecordset("   ");
+        CoalesceRecordset recordset = informationSection.createRecordset("   ");
 
         assertNull(recordset);
 
@@ -478,12 +478,12 @@ public class XsdSectionTest {
     @Test
     public void getRecordsetNullTest()
     {
-        XsdEntity entity = XsdEntity.create("Operation", "Test Portal", "1.2.3.5", "ID", "Type");
-        XsdSection section = XsdSection.create(entity, "New Section");
+        CoalesceEntity entity = CoalesceEntity.create("Operation", "Test Portal", "1.2.3.5", "ID", "Type");
+        CoalesceSection section = CoalesceSection.create(entity, "New Section");
         section.createRecordset("Recordset 1");
         section.createRecordset("Recordset 2");
 
-        XsdRecordset recordsection = section.getRecordset(null);
+        CoalesceRecordset recordsection = section.getRecordset(null);
 
         assertNull(recordsection);
 
@@ -492,12 +492,12 @@ public class XsdSectionTest {
     @Test
     public void getRecordsetEmptyTest()
     {
-        XsdEntity entity = XsdEntity.create("Operation", "Test Portal", "1.2.3.5", "ID", "Type");
-        XsdSection section = XsdSection.create(entity, "New Section");
+        CoalesceEntity entity = CoalesceEntity.create("Operation", "Test Portal", "1.2.3.5", "ID", "Type");
+        CoalesceSection section = CoalesceSection.create(entity, "New Section");
         section.createRecordset("Recordset 1");
         section.createRecordset("Recordset 2");
 
-        XsdRecordset recordsection = section.getRecordset("");
+        CoalesceRecordset recordsection = section.getRecordset("");
 
         assertNull(recordsection);
 
@@ -506,10 +506,10 @@ public class XsdSectionTest {
     @Test
     public void getRecordsetTest()
     {
-        XsdEntity entity = XsdEntity.create("Operation", "Test Portal", "1.2.3.5", "ID", "Type");
-        XsdSection section = XsdSection.create(entity, "New Section");
-        XsdRecordset recordset1 = section.createRecordset("Recordset 1");
-        XsdRecordset recordset2 = section.createRecordset("Recordset 2");
+        CoalesceEntity entity = CoalesceEntity.create("Operation", "Test Portal", "1.2.3.5", "ID", "Type");
+        CoalesceSection section = CoalesceSection.create(entity, "New Section");
+        CoalesceRecordset recordset1 = section.createRecordset("Recordset 1");
+        CoalesceRecordset recordset2 = section.createRecordset("Recordset 2");
 
         assertEquals(recordset1, section.getRecordset("New Section/Recordset 1"));
         assertEquals(recordset2, section.getRecordset("New Section/Recordset 2"));
@@ -519,11 +519,11 @@ public class XsdSectionTest {
     @Test
     public void getRecordsetsOneFromXmlTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdSection informationSection = entity.getSection(CoalesceTypeInstances.TEST_MISSION_INFO_SECTION_PATH);
+        CoalesceSection informationSection = entity.getSection(CoalesceTypeInstances.TEST_MISSION_INFO_SECTION_PATH);
 
-        Map<String, XsdRecordset> recordsets = informationSection.getRecordsets();
+        Map<String, CoalesceRecordset> recordsets = informationSection.getRecordsets();
 
         assertEquals(1, recordsets.size());
         assertNotNull(recordsets.get("7A158E39-B6C4-4912-A712-DF296375A368"));
@@ -534,12 +534,12 @@ public class XsdSectionTest {
     @Test
     public void getRecordsetsMultipleTest()
     {
-        XsdEntity entity = XsdEntity.create("Operation", "Test Portal", "1.2.3.5", "ID", "Type");
-        XsdSection section = XsdSection.create(entity, "New Section");
-        XsdRecordset recordset1 = section.createRecordset("Recordset 1");
-        XsdRecordset recordset2 = section.createRecordset("Recordset 2");
+        CoalesceEntity entity = CoalesceEntity.create("Operation", "Test Portal", "1.2.3.5", "ID", "Type");
+        CoalesceSection section = CoalesceSection.create(entity, "New Section");
+        CoalesceRecordset recordset1 = section.createRecordset("Recordset 1");
+        CoalesceRecordset recordset2 = section.createRecordset("Recordset 2");
 
-        Map<String, XsdRecordset> recordsets = section.getRecordsets();
+        Map<String, CoalesceRecordset> recordsets = section.getRecordsets();
 
         assertEquals(2, recordsets.size());
         assertEquals(recordset1, recordsets.get(recordset1.getKey()));
@@ -550,9 +550,9 @@ public class XsdSectionTest {
     @Test
     public void noIndexTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdSection liveSection = entity.getSection(CoalesceTypeInstances.TEST_MISSION_LIVE_SECTION_PATH);
+        CoalesceSection liveSection = entity.getSection(CoalesceTypeInstances.TEST_MISSION_LIVE_SECTION_PATH);
 
         assertTrue(liveSection.getNoIndex());
 
@@ -560,17 +560,17 @@ public class XsdSectionTest {
 
         String entityXml = entity.toXml();
 
-        XsdEntity desEntity = XsdEntity.create(entityXml);
-        XsdSection desLiveSection = desEntity.getSection(CoalesceTypeInstances.TEST_MISSION_LIVE_SECTION_PATH);
+        CoalesceEntity desEntity = CoalesceEntity.create(entityXml);
+        CoalesceSection desLiveSection = desEntity.getSection(CoalesceTypeInstances.TEST_MISSION_LIVE_SECTION_PATH);
 
         assertFalse(desLiveSection.getNoIndex());
 
-        XsdSection informationSection = entity.getSection(CoalesceTypeInstances.TEST_MISSION_INFO_SECTION_PATH);
+        CoalesceSection informationSection = entity.getSection(CoalesceTypeInstances.TEST_MISSION_INFO_SECTION_PATH);
 
         assertFalse(informationSection.getNoIndex());
 
-        XsdEntity newEntity = XsdEntity.create("Operation", "Portal", "1.2.3.4", "ID", "Type");
-        XsdSection newSection = XsdSection.create(newEntity, "Operation/New Section");
+        CoalesceEntity newEntity = CoalesceEntity.create("Operation", "Portal", "1.2.3.4", "ID", "Type");
+        CoalesceSection newSection = CoalesceSection.create(newEntity, "Operation/New Section");
 
         assertFalse(newSection.getNoIndex());
 
@@ -579,9 +579,9 @@ public class XsdSectionTest {
     @Test
     public void DateCreatedTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdSection liveSection = entity.getSection(CoalesceTypeInstances.TEST_MISSION_LIVE_SECTION_PATH);
+        CoalesceSection liveSection = entity.getSection(CoalesceTypeInstances.TEST_MISSION_LIVE_SECTION_PATH);
 
         assertEquals(JodaDateTimeHelper.fromXmlDateTimeUTC("2014-05-02T14:33:51.851575Z"), liveSection.getDateCreated());
 
@@ -595,9 +595,9 @@ public class XsdSectionTest {
     @Test
     public void LastModifiedTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdSection liveSection = entity.getSection(CoalesceTypeInstances.TEST_MISSION_LIVE_SECTION_PATH);
+        CoalesceSection liveSection = entity.getSection(CoalesceTypeInstances.TEST_MISSION_LIVE_SECTION_PATH);
 
         assertEquals(JodaDateTimeHelper.fromXmlDateTimeUTC("2014-05-02T14:33:59.1309914Z"), liveSection.getLastModified());
 

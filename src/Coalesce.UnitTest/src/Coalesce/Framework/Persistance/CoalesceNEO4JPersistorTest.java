@@ -17,12 +17,12 @@ import Coalesce.Common.Exceptions.CoalescePersistorException;
 import Coalesce.Common.Runtime.CoalesceSettings;
 import Coalesce.Framework.CoalesceFramework;
 import Coalesce.Framework.DataModel.ECoalesceFieldDataTypes;
-import Coalesce.Framework.DataModel.XsdEntity;
-import Coalesce.Framework.DataModel.XsdFieldDefinition;
-import Coalesce.Framework.DataModel.XsdLinkageSection;
-import Coalesce.Framework.DataModel.XsdRecord;
-import Coalesce.Framework.DataModel.XsdRecordset;
-import Coalesce.Framework.DataModel.XsdSection;
+import Coalesce.Framework.DataModel.CoalesceEntity;
+import Coalesce.Framework.DataModel.CoalesceFieldDefinition;
+import Coalesce.Framework.DataModel.CoalesceLinkageSection;
+import Coalesce.Framework.DataModel.CoalesceRecord;
+import Coalesce.Framework.DataModel.CoalesceRecordset;
+import Coalesce.Framework.DataModel.CoalesceSection;
 import Coalesce.Framework.Persistance.ServerConn;
 import coalesce.persister.neo4j.Neo4JDataConnector;
 import coalesce.persister.neo4j.Neo4JPersistor;
@@ -35,7 +35,7 @@ public class CoalesceNEO4JPersistorTest {
     static Neo4JPersistor neo4jPersister;
     private static CoalesceFramework _coalesceFramework;
 
-    private static XsdEntity _entity;
+    private static CoalesceEntity _entity;
     private static String _fieldKey;
 
     @BeforeClass
@@ -64,20 +64,20 @@ public class CoalesceNEO4JPersistorTest {
         try
         {
             // Create Test Entity
-            _entity = new XsdEntity();
+            _entity = new CoalesceEntity();
 
-            XsdSection section = null;
-            XsdRecordset recordSet = null;
-            XsdRecord record = null;
+            CoalesceSection section = null;
+            CoalesceRecordset recordSet = null;
+            CoalesceRecord record = null;
 
             // Create Entity
-            _entity = XsdEntity.create("TestEntity", "Unit Test", "1.0.0.0", "", "", "");
+            _entity = CoalesceEntity.create("TestEntity", "Unit Test", "1.0.0.0", "", "", "");
 
-            XsdLinkageSection.create(_entity, true);
+            CoalesceLinkageSection.create(_entity, true);
 
-            section = XsdSection.create(_entity, "Live Status Section", true);
-            recordSet = XsdRecordset.create(section, "Live Status Recordset");
-            XsdFieldDefinition.create(recordSet, "CurrentStatus", ECoalesceFieldDataTypes.StringType);
+            section = CoalesceSection.create(_entity, "Live Status Section", true);
+            recordSet = CoalesceRecordset.create(section, "Live Status Recordset");
+            CoalesceFieldDefinition.create(recordSet, "CurrentStatus", ECoalesceFieldDataTypes.StringType);
 
             record = recordSet.addNew();
             record.setFieldValue("CurrentStatus", "Test Status");

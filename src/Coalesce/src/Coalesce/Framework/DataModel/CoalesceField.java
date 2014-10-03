@@ -46,7 +46,7 @@ import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record.Field.Fi
 /**
  *
  */
-public class XsdField<T> extends XsdFieldBase<T> {
+public class CoalesceField<T> extends CoalesceFieldBase<T> {
 
     // -----------------------------------------------------------------------//
     // protected Member Variables
@@ -68,13 +68,13 @@ public class XsdField<T> extends XsdFieldBase<T> {
      * 
      * @return XsdField, belonging to the parent XsdRecord, resulting from the fieldDefinition
      */
-    public static XsdField<?> create(XsdRecord parent, XsdFieldDefinition fieldDefinition)
+    public static CoalesceField<?> create(CoalesceRecord parent, CoalesceFieldDefinition fieldDefinition)
     {
 
         Field newEntityField = new Field();
         parent.getEntityFields().add(newEntityField);
 
-        XsdField<?> newField = createTypeField(fieldDefinition.getDataType());
+        CoalesceField<?> newField = createTypeField(fieldDefinition.getDataType());
         if (!newField.initialize(parent, newEntityField)) return null;
 
         newField.setSuspendHistory(true);
@@ -105,35 +105,35 @@ public class XsdField<T> extends XsdFieldBase<T> {
 
     }
 
-    protected static XsdField<?> createTypeField(ECoalesceFieldDataTypes dataType)
+    protected static CoalesceField<?> createTypeField(ECoalesceFieldDataTypes dataType)
     {
         switch (dataType) {
 
         case StringType:
         case UriType:
-            return new XsdStringField();
+            return new CoalesceStringField();
 
         case DateTimeType:
-            return new XsdDateTimeField();
+            return new CoalesceDateTimeField();
 
         case FileType:
         case BinaryType:
-            return new XsdBinaryField();
+            return new CoalesceBinaryField();
 
         case BooleanType:
-            return new XsdBooleanField();
+            return new CoalesceBooleanField();
 
         case IntegerType:
-            return new XsdIntegerField();
+            return new CoalesceIntegerField();
 
         case GuidType:
-            return new XsdGUIDField();
+            return new CoalesceGUIDField();
 
         case GeocoordinateType:
-            return new XsdCoordinateField();
+            return new CoalesceCoordinateField();
 
         case GeocoordinateListType:
-            return new XsdCoordinateListField();
+            return new CoalesceCoordinateListField();
 
         default:
             throw new NotImplementedException(dataType + " not implemented");
@@ -243,7 +243,7 @@ public class XsdField<T> extends XsdFieldBase<T> {
      * 
      * @return boolean indicator of success/failure
      */
-    public boolean initialize(XsdRecord parent, Field field)
+    public boolean initialize(CoalesceRecord parent, Field field)
     {
 
         // Set References
@@ -255,7 +255,7 @@ public class XsdField<T> extends XsdFieldBase<T> {
         for (Fieldhistory entityFieldHistory : _entityField.getFieldhistory())
         {
 
-            XsdFieldHistory fieldHistory = new XsdFieldHistory();
+            CoalesceFieldHistory fieldHistory = new CoalesceFieldHistory();
             fieldHistory.initialize(this, entityFieldHistory);
 
             // Add to Child Collection
@@ -503,19 +503,19 @@ public class XsdField<T> extends XsdFieldBase<T> {
      * 
      * @return ArrayList<XsdFieldHistory> all modification history of this field
      */
-    public ArrayList<XsdFieldHistory> getHistory()
+    public ArrayList<CoalesceFieldHistory> getHistory()
     {
 
-        ArrayList<XsdFieldHistory> historyList = new ArrayList<XsdFieldHistory>();
+        ArrayList<CoalesceFieldHistory> historyList = new ArrayList<CoalesceFieldHistory>();
 
         // Return history items in the same order they are in the Entity
         for (Fieldhistory fh : _entityField.getFieldhistory())
         {
-            XsdDataObject fdo = _childDataObjects.get(fh.getKey());
+            CoalesceDataObject fdo = _childDataObjects.get(fh.getKey());
 
-            if (fdo != null && fdo instanceof XsdFieldHistory)
+            if (fdo != null && fdo instanceof CoalesceFieldHistory)
             {
-                historyList.add((XsdFieldHistory) _childDataObjects.get(fh.getKey()));
+                historyList.add((CoalesceFieldHistory) _childDataObjects.get(fh.getKey()));
             }
         }
 
@@ -527,9 +527,9 @@ public class XsdField<T> extends XsdFieldBase<T> {
      * 
      * @return XsdFieldHistory the modification history of this field with matching key
      */
-    public XsdFieldHistory getHistoryRecord(String historyKey)
+    public CoalesceFieldHistory getHistoryRecord(String historyKey)
     {
-        XsdFieldHistory historyRecord = (XsdFieldHistory) _childDataObjects.get(historyKey);
+        CoalesceFieldHistory historyRecord = (CoalesceFieldHistory) _childDataObjects.get(historyKey);
 
         return historyRecord;
 
@@ -730,7 +730,7 @@ public class XsdField<T> extends XsdFieldBase<T> {
                 if (getLastModified().compareTo(getDateCreated()) != 0)
                 {
                     // CoalesceFieldHistory to create another.
-                    setPreviousHistoryKey(XsdFieldHistory.create(this));
+                    setPreviousHistoryKey(CoalesceFieldHistory.create(this));
                 }
             }
 
@@ -807,7 +807,7 @@ public class XsdField<T> extends XsdFieldBase<T> {
                     {
 
                         // No; Create History Entry
-                        setPreviousHistoryKey(XsdFieldHistory.create(this));
+                        setPreviousHistoryKey(CoalesceFieldHistory.create(this));
                     }
 
                 }

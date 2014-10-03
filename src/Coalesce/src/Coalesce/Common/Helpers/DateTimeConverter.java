@@ -43,7 +43,7 @@ public class DateTimeConverter {
 
     /**
      * Converts a {@link org.joda.time.DateTime} to a string format to be stored in
-     * {@link Coalesce.Framework.DataModel.XsdEntity} xml.
+     * {@link Coalesce.Framework.DataModel.CoalesceEntity} xml.
      * 
      * @param value the date/time to be converted
      * @return A string version of <code>value</code> converted to the format yyyy-MM-dd'T'HH:mm:ss.SSSZZ

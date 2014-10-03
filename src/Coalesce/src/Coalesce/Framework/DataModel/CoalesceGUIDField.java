@@ -3,7 +3,7 @@
  */
 package Coalesce.Framework.DataModel;
 
-import org.joda.time.DateTime;
+import java.util.UUID;
 
 import Coalesce.Common.Exceptions.CoalesceDataFormatException;
 
@@ -28,17 +28,17 @@ import Coalesce.Common.Exceptions.CoalesceDataFormatException;
 /**
  *
  */
-public class XsdDateTimeField extends XsdField<DateTime> {
-
+public class CoalesceGUIDField extends CoalesceField<UUID> {
+    
     /*
      * (non-Javadoc)
      * 
      * @see Coalesce.Framework.DataModel.XsdField#getValue()
      */
     @Override
-    public DateTime getValue() throws CoalesceDataFormatException
+    public UUID getValue() throws CoalesceDataFormatException
     {
-        return getDateTimeValue();
+        return getGuidValue();
     }
 
     /*
@@ -47,7 +47,7 @@ public class XsdDateTimeField extends XsdField<DateTime> {
      * @see Coalesce.Framework.DataModel.XsdField#setValue(java.lang.Object)
      */
     @Override
-    public void setValue(DateTime value)
+    public void setValue(UUID value)
     {
         setTypedValue(value);
     }

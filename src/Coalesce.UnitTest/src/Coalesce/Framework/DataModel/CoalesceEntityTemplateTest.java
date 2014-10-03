@@ -39,7 +39,7 @@ public class CoalesceEntityTemplateTest {
     public void testTemplateFromEntity() throws SAXException, IOException
     {
         // Test Entity
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         // Run Test
         CoalesceEntityTemplateTest.testTemplate(CoalesceEntityTemplate.create(entity));
@@ -104,7 +104,7 @@ public class CoalesceEntityTemplateTest {
         }
 
         // Create Entity from Template
-        XsdEntity entity2 = template.createNewEntity();
+        CoalesceEntity entity2 = template.createNewEntity();
 
         String entityXml = entity2.toXml();
         //System.out.print(entityXml);

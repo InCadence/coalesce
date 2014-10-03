@@ -30,7 +30,7 @@ import Coalesce.Framework.GeneratedJAXB.Entity.Linkagesection.Linkage;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-public class XsdLinkageSection extends XsdDataObject {
+public class CoalesceLinkageSection extends CoalesceDataObject {
 
     private Linkagesection _entityLinkageSection;
 
@@ -44,9 +44,9 @@ public class XsdLinkageSection extends XsdDataObject {
      * @param parent XsdEntity that the new XsdLinkageSection will belong to
      * @return XsdLinkageSection the new XsdLinkageSection
      */
-    public static XsdLinkageSection create(XsdEntity parent)
+    public static CoalesceLinkageSection create(CoalesceEntity parent)
     {
-        return XsdLinkageSection.create(parent, true);
+        return CoalesceLinkageSection.create(parent, true);
     }
 
     /**
@@ -56,13 +56,13 @@ public class XsdLinkageSection extends XsdDataObject {
      * @param noIndex boolean value
      * @return XsdLinkageSection the new XsdLinkageSection
      */
-    public static XsdLinkageSection create(XsdEntity parent, boolean noIndex)
+    public static CoalesceLinkageSection create(CoalesceEntity parent, boolean noIndex)
     {
         if (parent == null) throw new NullArgumentException("parent");
 
         if (parent.getLinkageSection() != null) return parent.getLinkageSection();
 
-        XsdLinkageSection linkageSection = new XsdLinkageSection();
+        CoalesceLinkageSection linkageSection = new CoalesceLinkageSection();
         if (!linkageSection.initialize(parent)) return null;
 
         linkageSection.setNoIndex(noIndex);
@@ -83,7 +83,7 @@ public class XsdLinkageSection extends XsdDataObject {
      * @param parent XsdEntity containing an LinkageSection to base this XsdLinkageSection on
      * @return boolean indicator of success/failure
      */
-    public boolean initialize(XsdEntity parent)
+    public boolean initialize(CoalesceEntity parent)
     {
         if (parent == null) throw new NullArgumentException("parent");
 
@@ -102,7 +102,7 @@ public class XsdLinkageSection extends XsdDataObject {
             for (Linkage childLinkage : _entityLinkageSection.getLinkage())
             {
 
-                XsdLinkage newLinkage = new XsdLinkage();
+                CoalesceLinkage newLinkage = new CoalesceLinkage();
                 if (!newLinkage.initialize(this, childLinkage)) continue;
 
                 if (!_childDataObjects.containsKey(newLinkage.getKey()))
@@ -158,15 +158,15 @@ public class XsdLinkageSection extends XsdDataObject {
      * Returns a hashmap of the XsdLinkages contained in the XsdLinkageSection
      * @return HashMap of this XsdLinkageSection's XsdLinkages
      */
-    public Map<String, XsdLinkage> getLinkages()
+    public Map<String, CoalesceLinkage> getLinkages()
     {
-        Map<String, XsdLinkage> linkages = new HashMap<String, XsdLinkage>();
+        Map<String, CoalesceLinkage> linkages = new HashMap<String, CoalesceLinkage>();
 
-        for (XsdDataObject xdo : _childDataObjects.values())
+        for (CoalesceDataObject xdo : _childDataObjects.values())
         {
-            if (xdo instanceof XsdLinkage)
+            if (xdo instanceof CoalesceLinkage)
             {
-                linkages.put(xdo.getKey(), (XsdLinkage) xdo);
+                linkages.put(xdo.getKey(), (CoalesceLinkage) xdo);
             }
         }
 
@@ -179,9 +179,9 @@ public class XsdLinkageSection extends XsdDataObject {
      * 
      * @return XsdLinkage newly created and added to this XsdLinkageSection
      */
-    public XsdLinkage createLinkage()
+    public CoalesceLinkage createLinkage()
     {
-        return XsdLinkage.create(this);
+        return CoalesceLinkage.create(this);
     }
 
     @Override

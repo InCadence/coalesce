@@ -16,7 +16,7 @@ import org.junit.Test;
 import Coalesce.Common.Exceptions.CoalesceCryptoException;
 import Coalesce.Common.Runtime.CoalesceSettings;
 import Coalesce.Common.UnitTest.CoalesceTypeInstances;
-import Coalesce.Framework.DataModel.XsdEntity;
+import Coalesce.Framework.DataModel.CoalesceEntity;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -61,7 +61,7 @@ public class CoalesceEncrypterTest {
     @Test
     public void entityBytesTest() throws CoalesceCryptoException
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         String entityXml = entity.toXml();
         byte[] encryptedEntityBytes = _aesCrypto.encryptEntity(entityXml);
@@ -75,7 +75,7 @@ public class CoalesceEncrypterTest {
     @Test
     public void entityStringTest() throws CoalesceCryptoException
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         String entityXml = entity.toXml();
         String encryptedEntity = _aesCrypto.encryptEntityToBase64(entityXml);

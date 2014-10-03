@@ -28,14 +28,14 @@ import Coalesce.Common.Helpers.StringHelper;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-public abstract class XsdDataObject implements ICoalesceDataObject {
+public abstract class CoalesceDataObject implements ICoalesceDataObject {
 
     /*--------------------------------------------------------------------------
     Protected Member Variables
     --------------------------------------------------------------------------*/
 
-    protected XsdDataObject _parent;
-    protected HashMap<String, XsdDataObject> _childDataObjects = new HashMap<String, XsdDataObject>();
+    protected CoalesceDataObject _parent;
+    protected HashMap<String, CoalesceDataObject> _childDataObjects = new HashMap<String, CoalesceDataObject>();
 
     /*--------------------------------------------------------------------------
     Public Abstract Functions
@@ -164,13 +164,13 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
     }
 
     @Override
-    public XsdDataObject getParent()
+    public CoalesceDataObject getParent()
     {
         return this._parent;
     }
 
     @Override
-    public void setParent(XsdDataObject parent)
+    public void setParent(CoalesceDataObject parent)
     {
         this._parent = parent;
     }
@@ -243,7 +243,7 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
     }
 
     @Override
-    public Map<String, XsdDataObject> getChildDataObjects()
+    public Map<String, CoalesceDataObject> getChildDataObjects()
     {
         return this._childDataObjects;
     }
@@ -255,7 +255,7 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
      * @param key key identifying the childDataObject
      * @param value childDataObject to add to the DataObject's children
      */
-    public void setChildDataObjects(String key, XsdDataObject value)
+    public void setChildDataObjects(String key, CoalesceDataObject value)
     {
         this._childDataObjects.put(key, value);
     }
@@ -351,7 +351,7 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
      * @param namePath String corresponding to the desired childDataObject.
      * @return XsdDataObject of the childDataObject or null if one is not found
      */
-    public XsdDataObject getDataObjectForNamePath(String namePath)
+    public CoalesceDataObject getDataObjectForNamePath(String namePath)
     {
         if (namePath == null) return null;
 
@@ -377,9 +377,9 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
         default:
 
             // Find next child
-            XsdDataObject dataObject = null;
+            CoalesceDataObject dataObject = null;
 
-            for (XsdDataObject child : _childDataObjects.values())
+            for (CoalesceDataObject child : _childDataObjects.values())
             {
                 String childName = child.getName();
 
@@ -412,9 +412,9 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
      * @param key String corresponding to the desired childDataObject objectkey.
      * @return XsdDataObject for childDataObject or null if one is not found
      */
-    public XsdDataObject getCoalesceDataObjectForKey(String key)
+    public CoalesceDataObject getCoalesceDataObjectForKey(String key)
     {
-        XsdDataObject result = null;
+        CoalesceDataObject result = null;
 
         if (this.getKey().equalsIgnoreCase(key))
         {
@@ -423,7 +423,7 @@ public abstract class XsdDataObject implements ICoalesceDataObject {
         else
         {
 
-            for (XsdDataObject child : _childDataObjects.values())
+            for (CoalesceDataObject child : _childDataObjects.values())
             {
                 result = child.getCoalesceDataObjectForKey(key);
                 if (result != null) break;

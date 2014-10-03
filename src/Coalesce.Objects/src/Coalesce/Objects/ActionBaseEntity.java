@@ -1,16 +1,16 @@
 package Coalesce.Objects;
 
 import Coalesce.Framework.DataModel.ECoalesceFieldDataTypes;
-import Coalesce.Framework.DataModel.XsdCoordinateField;
-import Coalesce.Framework.DataModel.XsdEntity;
-import Coalesce.Framework.DataModel.XsdFieldDefinition;
-import Coalesce.Framework.DataModel.XsdGUIDField;
-import Coalesce.Framework.DataModel.XsdRecord;
-import Coalesce.Framework.DataModel.XsdRecordset;
-import Coalesce.Framework.DataModel.XsdSection;
-import Coalesce.Framework.DataModel.XsdStringField;
+import Coalesce.Framework.DataModel.CoalesceCoordinateField;
+import Coalesce.Framework.DataModel.CoalesceEntity;
+import Coalesce.Framework.DataModel.CoalesceFieldDefinition;
+import Coalesce.Framework.DataModel.CoalesceGUIDField;
+import Coalesce.Framework.DataModel.CoalesceRecord;
+import Coalesce.Framework.DataModel.CoalesceRecordset;
+import Coalesce.Framework.DataModel.CoalesceSection;
+import Coalesce.Framework.DataModel.CoalesceStringField;
 
-public class ActionBaseEntity extends XsdEntity {
+public class ActionBaseEntity extends CoalesceEntity {
 
     // ----------------------------------------------------------------------//
     // Static Properties
@@ -23,7 +23,7 @@ public class ActionBaseEntity extends XsdEntity {
     // Protected Member Variables
     // ----------------------------------------------------------------------//
 
-    private XsdRecord _liveStatusRecord;
+    private CoalesceRecord _liveStatusRecord;
 
     // ----------------------------------------------------------------------//
     // Initialization
@@ -31,8 +31,8 @@ public class ActionBaseEntity extends XsdEntity {
 
     public boolean initialize(String source, String version, String title)
     {
-        XsdSection section;
-        XsdRecordset recordSet;
+        CoalesceSection section;
+        CoalesceRecordset recordSet;
 
         // Already Initialized?
         if (_liveStatusRecord != null) return false;
@@ -41,17 +41,17 @@ public class ActionBaseEntity extends XsdEntity {
         if (!super.initialize(ActionBaseEntity.Name, source, version, "", "", title)) return false;
 
         // Create Live Section
-        section = XsdSection.create(this, "Live Status Section");
-        recordSet = XsdRecordset.create(section, "Live Status Recordset");
-        XsdFieldDefinition.create(recordSet,
+        section = CoalesceSection.create(this, "Live Status Section");
+        recordSet = CoalesceRecordset.create(section, "Live Status Recordset");
+        CoalesceFieldDefinition.create(recordSet,
                                   "CurrentStatus",
                                   ECoalesceFieldDataTypes.StringType,
                                   "Status",
                                   "",
                                   EActionStatuses.CollectionComplete.getLabel());
-        XsdFieldDefinition.create(recordSet, "ResponseStatus", ECoalesceFieldDataTypes.StringType);
-        XsdFieldDefinition.create(recordSet, "ResponseKey", ECoalesceFieldDataTypes.GuidType);
-        XsdFieldDefinition.create(recordSet, "Location", ECoalesceFieldDataTypes.GeocoordinateType);
+        CoalesceFieldDefinition.create(recordSet, "ResponseStatus", ECoalesceFieldDataTypes.StringType);
+        CoalesceFieldDefinition.create(recordSet, "ResponseKey", ECoalesceFieldDataTypes.GuidType);
+        CoalesceFieldDefinition.create(recordSet, "Location", ECoalesceFieldDataTypes.GeocoordinateType);
 
         // Create New Record
         _liveStatusRecord = recordSet.addNew();
@@ -67,7 +67,7 @@ public class ActionBaseEntity extends XsdEntity {
         // Live Status Record
         if (this._liveStatusRecord == null)
         {
-            XsdRecordset recordSet = (XsdRecordset) this.getDataObjectForNamePath(this.getName()
+            CoalesceRecordset recordSet = (CoalesceRecordset) this.getDataObjectForNamePath(this.getName()
                     + "/Live Status Section/Live Status Recordset");
 
             // Valid Xml?
@@ -99,7 +99,7 @@ public class ActionBaseEntity extends XsdEntity {
 
     public void setCurrentStatus(EActionStatuses value)
     {
-        ((XsdStringField) this._liveStatusRecord.getFieldByName("CurrentStatus")).setValue(value.getLabel());
+        ((CoalesceStringField) this._liveStatusRecord.getFieldByName("CurrentStatus")).setValue(value.getLabel());
     }
 
     // Response Status
@@ -110,19 +110,19 @@ public class ActionBaseEntity extends XsdEntity {
 
     public void setResponseStatus(EResponseStatuses value)
     {
-        ((XsdStringField) this._liveStatusRecord.getFieldByName("ResponseStatus")).setValue(value.getLabel());
+        ((CoalesceStringField) this._liveStatusRecord.getFieldByName("ResponseStatus")).setValue(value.getLabel());
     }
 
     // Response Key
-    public XsdGUIDField getResponseKey()
+    public CoalesceGUIDField getResponseKey()
     {
-        return (XsdGUIDField) this._liveStatusRecord.getFieldByName("ResponseKey");
+        return (CoalesceGUIDField) this._liveStatusRecord.getFieldByName("ResponseKey");
     }
 
     // Location
-    public XsdCoordinateField getLocation()
+    public CoalesceCoordinateField getLocation()
     {
-        return (XsdCoordinateField) this._liveStatusRecord.getFieldByName("ResponseKey");
+        return (CoalesceCoordinateField) this._liveStatusRecord.getFieldByName("ResponseKey");
     }
 
 }

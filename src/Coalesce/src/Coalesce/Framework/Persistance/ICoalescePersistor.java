@@ -6,7 +6,7 @@ import org.joda.time.DateTime;
 
 import Coalesce.Common.Exceptions.CoalescePersistorException;
 import Coalesce.Framework.DataModel.CoalesceEntityTemplate;
-import Coalesce.Framework.DataModel.XsdEntity;
+import Coalesce.Framework.DataModel.CoalesceEntity;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -80,7 +80,7 @@ public interface ICoalescePersistor {
      * @return true if successfully saved. 
      * @throws CoalescePersistorException 
      */
-    public boolean saveEntity(XsdEntity entity, boolean allowRemoval) throws CoalescePersistorException;
+    public boolean saveEntity(CoalesceEntity entity, boolean allowRemoval) throws CoalescePersistorException;
 
     /**
      * Returns the Coalesce entity that matches the given parameters. 
@@ -88,7 +88,7 @@ public interface ICoalescePersistor {
      * @return the matching Coalesce entity. 
      * @throws CoalescePersistorException
      */
-    public XsdEntity getEntity(String key) throws CoalescePersistorException;
+    public CoalesceEntity getEntity(String key) throws CoalescePersistorException;
 
     /**
      * Returns the Coalesce entity that matches the given parameters. 
@@ -97,7 +97,7 @@ public interface ICoalescePersistor {
      * @return the matching Coalesce entity. 
      * @throws CoalescePersistorException
      */
-    public XsdEntity getEntity(String entityId, String entityIdType) throws CoalescePersistorException;
+    public CoalesceEntity getEntity(String entityId, String entityIdType) throws CoalescePersistorException;
 
     /**
      * Returns the Coalesce entity that matches the given parameters. 
@@ -107,7 +107,7 @@ public interface ICoalescePersistor {
      * @return the matching Coalesce entity. 
      * @throws CoalescePersistorException
      */
-    public XsdEntity getEntity(String name, String entityId, String entityIdType) throws CoalescePersistorException;
+    public CoalesceEntity getEntity(String name, String entityId, String entityIdType) throws CoalescePersistorException;
 
     /**
      * Returns the Coalesce entity's XML that matches the given parameters. 

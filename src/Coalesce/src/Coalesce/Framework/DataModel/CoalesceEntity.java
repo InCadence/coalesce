@@ -53,7 +53,7 @@ import Coalesce.Framework.GeneratedJAXB.Entity.Section;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-public class XsdEntity extends XsdDataObject {
+public class CoalesceEntity extends CoalesceDataObject {
 
     // ----------------------------------------------------------------------//
     // Private and protected Objects
@@ -72,11 +72,11 @@ public class XsdEntity extends XsdDataObject {
      * 
      * @return XsdEntity resulting from entityXml String parameter, null if failed
      */
-    public static XsdEntity create(String entityXml)
+    public static CoalesceEntity create(String entityXml)
     {
 
         // Create Entity
-        XsdEntity entity = new XsdEntity();
+        CoalesceEntity entity = new CoalesceEntity();
 
         boolean passed = entity.initialize(entityXml);
 
@@ -94,11 +94,11 @@ public class XsdEntity extends XsdDataObject {
      * 
      * @return XsdEntity resulting from entityXml String parameter, null if failed
      */
-    public static XsdEntity create(String entityXml, String title)
+    public static CoalesceEntity create(String entityXml, String title)
     {
 
         // Create Entity
-        XsdEntity entity = XsdEntity.create(entityXml);
+        CoalesceEntity entity = CoalesceEntity.create(entityXml);
 
         // Set Title
         entity.setTitle(title);
@@ -118,9 +118,9 @@ public class XsdEntity extends XsdDataObject {
      * 
      * @return XsdEntity resulting from entityXml String parameter, null if failed
      */
-    public static XsdEntity create(String name, String source, String version, String entityId, String entityIdType)
+    public static CoalesceEntity create(String name, String source, String version, String entityId, String entityIdType)
     {
-        return XsdEntity.create(name, source, version, entityId, entityIdType, null);
+        return CoalesceEntity.create(name, source, version, entityId, entityIdType, null);
     }
 
     /**
@@ -136,7 +136,7 @@ public class XsdEntity extends XsdDataObject {
      * 
      * @return XsdEntity resulting from entityXml String parameter, null if failed
      */
-    public static XsdEntity create(String name,
+    public static CoalesceEntity create(String name,
                                    String source,
                                    String version,
                                    String entityId,
@@ -144,7 +144,7 @@ public class XsdEntity extends XsdDataObject {
                                    String title)
     {
 
-        XsdEntity entity = new XsdEntity();
+        CoalesceEntity entity = new CoalesceEntity();
         if (!entity.initialize()) return null;
 
         // Set Default Values
@@ -219,7 +219,7 @@ public class XsdEntity extends XsdDataObject {
      * @param entity XsdEntity to duplicate.
      * @return
      */
-    public boolean initialize(XsdEntity entity)
+    public boolean initialize(CoalesceEntity entity)
     {
         // Copy Member Variables
         _entity = entity._entity;
@@ -249,7 +249,7 @@ public class XsdEntity extends XsdDataObject {
 
     protected boolean initializeChildren()
     {
-        XsdLinkageSection linkageSection = new XsdLinkageSection();
+        CoalesceLinkageSection linkageSection = new CoalesceLinkageSection();
 
         if (!linkageSection.initialize(this)) return false;
 
@@ -257,7 +257,7 @@ public class XsdEntity extends XsdDataObject {
 
         for (Section entitySection : _entity.getSection())
         {
-            XsdSection section = new XsdSection();
+            CoalesceSection section = new CoalesceSection();
 
             if (!section.initialize(this, entitySection)) return false;
 
@@ -406,11 +406,11 @@ public class XsdEntity extends XsdDataObject {
             for (String path : paths)
             {
 
-                XsdDataObject dataObject = getDataObjectForNamePath(path);
+                CoalesceDataObject dataObject = getDataObjectForNamePath(path);
 
-                if (dataObject != null && dataObject instanceof XsdField<?>)
+                if (dataObject != null && dataObject instanceof CoalesceField<?>)
                 {
-                    XsdField<?> field = (XsdField<?>) dataObject;
+                    CoalesceField<?> field = (CoalesceField<?>) dataObject;
                     pathTitle += field.getBaseValue() + ", ";
                 }
             }
@@ -496,7 +496,7 @@ public class XsdEntity extends XsdDataObject {
      * 
      * @return Map<String, XsdLinkage>, XsdLinkages of relationships to this XsdEntity
      */
-    public Map<String, XsdLinkage> getLinkages()
+    public Map<String, CoalesceLinkage> getLinkages()
     {
         return getLinkages((String) null);
     }
@@ -537,9 +537,9 @@ public class XsdEntity extends XsdDataObject {
      * 
      * @return XsdSection, newly created and now belonging to this XsdEntity
      */
-    public XsdSection createSection(String name, boolean noIndex)
+    public CoalesceSection createSection(String name, boolean noIndex)
     {
-        return XsdSection.create(this, name, noIndex);
+        return CoalesceSection.create(this, name, noIndex);
     }
 
     /**
@@ -549,9 +549,9 @@ public class XsdEntity extends XsdDataObject {
      * 
      * @return XsdSection, newly created and now belonging to this XsdEntity
      */
-    public XsdSection createSection(String name)
+    public CoalesceSection createSection(String name)
     {
-        return XsdSection.create(this, name);
+        return CoalesceSection.create(this, name);
     }
 
     /**
@@ -559,16 +559,16 @@ public class XsdEntity extends XsdDataObject {
      * 
      * @return Map<String, XsdSection>, sections belonging to this XsdEntity
      */
-    public Map<String, XsdSection> getSections()
+    public Map<String, CoalesceSection> getSections()
     {
 
-        Map<String, XsdSection> sections = new HashMap<String, XsdSection>();
+        Map<String, CoalesceSection> sections = new HashMap<String, CoalesceSection>();
 
-        for (XsdDataObject child : _childDataObjects.values())
+        for (CoalesceDataObject child : _childDataObjects.values())
         {
-            if (child instanceof XsdSection)
+            if (child instanceof CoalesceSection)
             {
-                sections.put(child.getKey(), (XsdSection) child);
+                sections.put(child.getKey(), (CoalesceSection) child);
             }
         }
 
@@ -581,14 +581,14 @@ public class XsdEntity extends XsdDataObject {
      * 
      * @return XsdLinkageSection belonging to this XsdEntity
      */
-    public XsdLinkageSection getLinkageSection()
+    public CoalesceLinkageSection getLinkageSection()
     {
 
-        for (XsdDataObject child : _childDataObjects.values())
+        for (CoalesceDataObject child : _childDataObjects.values())
         {
-            if (child instanceof XsdLinkageSection)
+            if (child instanceof CoalesceLinkageSection)
             {
-                return (XsdLinkageSection) child;
+                return (CoalesceLinkageSection) child;
             }
         }
 
@@ -603,20 +603,20 @@ public class XsdEntity extends XsdDataObject {
      * @param forEntityName String of the Entity Name to return linkages for
      * @return Map<String, XsdLinkage>, linkages with matches for the Entity Name parameter
      */
-    public Map<String, XsdLinkage> getLinkages(String forEntityName)
+    public Map<String, CoalesceLinkage> getLinkages(String forEntityName)
     {
-        Map<String, XsdLinkage> linkages = new HashMap<String, XsdLinkage>();
+        Map<String, CoalesceLinkage> linkages = new HashMap<String, CoalesceLinkage>();
 
         // Get Linkage Section
-        XsdLinkageSection linkageSection = getLinkageSection();
+        CoalesceLinkageSection linkageSection = getLinkageSection();
         if (linkageSection == null) return null;
 
         for (ICoalesceDataObject cdo : linkageSection.getChildDataObjects().values())
         {
-            if (cdo instanceof XsdLinkage)
+            if (cdo instanceof CoalesceLinkage)
             {
 
-                XsdLinkage linkage = (XsdLinkage) cdo;
+                CoalesceLinkage linkage = (CoalesceLinkage) cdo;
                 if (forEntityName == null || linkage.getEntity2Name().equalsIgnoreCase(forEntityName))
                 {
                     linkages.put(cdo.getKey(), linkage);
@@ -633,7 +633,7 @@ public class XsdEntity extends XsdDataObject {
      * 
      * @return Map<String, XsdLinkage>, linkages with matches for the ELinkTypes parameter
      */
-    public Map<String, XsdLinkage> getLinkages(ELinkTypes forLinkType)
+    public Map<String, CoalesceLinkage> getLinkages(ELinkTypes forLinkType)
     {
         return getLinkages(forLinkType, null);
     }
@@ -645,7 +645,7 @@ public class XsdEntity extends XsdDataObject {
      * @param forEntityName String, the Entity name attribute to find matching linkages for
      * @return Map<String, XsdLinkage>, linkages with matches for the Entity Name and ELinkType parameters
      */
-    public Map<String, XsdLinkage> getLinkages(ELinkTypes forLinkType, String forEntityName)
+    public Map<String, CoalesceLinkage> getLinkages(ELinkTypes forLinkType, String forEntityName)
     {
         return getLinkages(forLinkType, forEntityName, null);
     }
@@ -659,7 +659,7 @@ public class XsdEntity extends XsdDataObject {
      * @param forEntitySource String, the Entity source attribute to find matching linkages for
      * @return Map<String, XsdLinkage>, linkages with matches for the parameter criteria
      */
-    public Map<String, XsdLinkage> getLinkages(ELinkTypes forLinkType, String forEntityName, String forEntitySource)
+    public Map<String, CoalesceLinkage> getLinkages(ELinkTypes forLinkType, String forEntityName, String forEntitySource)
     {
         return getLinkages(Arrays.asList(forLinkType), forEntityName, forEntitySource);
     }
@@ -672,7 +672,7 @@ public class XsdEntity extends XsdDataObject {
      * @param forEntityName String, the Entity name attribute to find matching linkages for
      * @return
      */
-    public Map<String, XsdLinkage> getLinkages(List<ELinkTypes> forLinkTypes, String forEntityName)
+    public Map<String, CoalesceLinkage> getLinkages(List<ELinkTypes> forLinkTypes, String forEntityName)
     {
         return getLinkages(forLinkTypes, forEntityName, null);
     }
@@ -683,13 +683,13 @@ public class XsdEntity extends XsdDataObject {
      * @param NamePath String, namepath of the desired XsdSection
      * @return XsdSection having the matching namepath parameter. Null if not found.
      */
-    public XsdSection getSection(String NamePath)
+    public CoalesceSection getSection(String NamePath)
     {
-        XsdDataObject dataObject = getDataObjectForNamePath(NamePath);
+        CoalesceDataObject dataObject = getDataObjectForNamePath(NamePath);
 
-        if (dataObject != null && dataObject instanceof XsdSection)
+        if (dataObject != null && dataObject instanceof CoalesceSection)
         {
-            return (XsdSection) dataObject;
+            return (CoalesceSection) dataObject;
         }
 
         return null;
@@ -786,15 +786,15 @@ public class XsdEntity extends XsdDataObject {
      * 
      * @throws CoalesceException
      */
-    public static XsdEntity mergeSyncEntity(XsdEntity myEntity, XsdEntity syncEntity) throws CoalesceException
+    public static CoalesceEntity mergeSyncEntity(CoalesceEntity myEntity, CoalesceEntity syncEntity) throws CoalesceException
     {
         try
         {
             DateTime myLastModified = myEntity.getLastModified();
             DateTime syncLastModified = syncEntity.getLastModified();
 
-            XsdEntity entity1 = null;
-            XsdEntity entity2 = null;
+            CoalesceEntity entity1 = null;
+            CoalesceEntity entity2 = null;
 
             // Figure out which order
             switch (myLastModified.compareTo(syncLastModified)) {
@@ -821,7 +821,7 @@ public class XsdEntity extends XsdDataObject {
             // Convert back to entity object
             XMLOutputter xmlOutPutter = new XMLOutputter();
             String output = xmlOutPutter.outputString(entity1Doc);
-            return XsdEntity.create(output);
+            return CoalesceEntity.create(output);
 
         }
         catch (JDOMException | IOException e)
@@ -830,26 +830,26 @@ public class XsdEntity extends XsdDataObject {
         }
     }
 
-    private static void resolveConflicts(XsdDataObject Entity1, XsdDataObject Entity2)
+    private static void resolveConflicts(CoalesceDataObject Entity1, CoalesceDataObject Entity2)
     {
 
-        if (Entity1 instanceof XsdField<?>)
+        if (Entity1 instanceof CoalesceField<?>)
         {
             // do we have matching keys?
             if (Entity1.getKey().equals(Entity2.getKey()))
             {
                 // check for conflicts
-                resolveFieldConflicts((XsdField<?>) Entity1, (XsdField<?>) Entity2);
+                resolveFieldConflicts((CoalesceField<?>) Entity1, (CoalesceField<?>) Entity2);
             }
         }
         else
         {
             // no matching keys, get children and recall function
-            Map<String, XsdDataObject> Entity1Children = Entity1.getChildDataObjects();
-            Map<String, XsdDataObject> Entity2Children = Entity2.getChildDataObjects();
-            for (Map.Entry<String, XsdDataObject> Entity1Child : Entity1Children.entrySet())
+            Map<String, CoalesceDataObject> Entity1Children = Entity1.getChildDataObjects();
+            Map<String, CoalesceDataObject> Entity2Children = Entity2.getChildDataObjects();
+            for (Map.Entry<String, CoalesceDataObject> Entity1Child : Entity1Children.entrySet())
             {
-                for (Map.Entry<String, XsdDataObject> Entity2Child : Entity2Children.entrySet())
+                for (Map.Entry<String, CoalesceDataObject> Entity2Child : Entity2Children.entrySet())
                 {
                     if (Entity1Child != null && Entity2Child != null)
                     {
@@ -861,7 +861,7 @@ public class XsdEntity extends XsdDataObject {
 
     }
 
-    private static void resolveFieldConflicts(XsdField<?> field1, XsdField<?> field2)
+    private static void resolveFieldConflicts(CoalesceField<?> field1, CoalesceField<?> field2)
     {
 
         // Call SetChanged to determine if field history needs to be created
@@ -1125,20 +1125,20 @@ public class XsdEntity extends XsdDataObject {
         }
     }
 
-    private Map<String, XsdLinkage> getLinkages(List<ELinkTypes> forLinkTypes, String forEntityName, String forEntitySource)
+    private Map<String, CoalesceLinkage> getLinkages(List<ELinkTypes> forLinkTypes, String forEntityName, String forEntitySource)
     {
-        Map<String, XsdLinkage> linkages = new HashMap<String, XsdLinkage>();
+        Map<String, CoalesceLinkage> linkages = new HashMap<String, CoalesceLinkage>();
 
         // Get Linkage Section
-        XsdLinkageSection linkageSection = getLinkageSection();
+        CoalesceLinkageSection linkageSection = getLinkageSection();
         if (linkageSection == null) return null;
 
         for (ICoalesceDataObject cdo : linkageSection.getChildDataObjects().values())
         {
-            if (cdo instanceof XsdLinkage)
+            if (cdo instanceof CoalesceLinkage)
             {
 
-                XsdLinkage linkage = (XsdLinkage) cdo;
+                CoalesceLinkage linkage = (CoalesceLinkage) cdo;
                 if ((forEntityName == null || linkage.getEntity2Name().equalsIgnoreCase(forEntityName))
                         && forLinkTypes.contains(linkage.getLinkType())
                         && (forEntitySource == null || linkage.getEntity2Source().equalsIgnoreCase(forEntitySource))

@@ -46,13 +46,13 @@ public class XsdFieldDefinitionTest {
     @Test
     public void createNameTypeTest()
     {
-        XsdRecordset recordSet = createTestRecordset();
+        CoalesceRecordset recordSet = createTestRecordset();
 
-        XsdFieldDefinition newFieldDef = XsdFieldDefinition.create(recordSet,
+        CoalesceFieldDefinition newFieldDef = CoalesceFieldDefinition.create(recordSet,
                                                                    "Field Def Name",
                                                                    ECoalesceFieldDataTypes.StringType);
 
-        XsdDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
+        CoalesceDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
 
         assertEquals(newFieldDef, xdo);
 
@@ -63,23 +63,23 @@ public class XsdFieldDefinitionTest {
                               XsdFieldDefinitionTest.UNCLASS_MARKING,
                               "",
                               false,
-                              (XsdFieldDefinition) xdo);
+                              (CoalesceFieldDefinition) xdo);
 
     }
 
     @Test
     public void createBooleanDefaultValueFalseNoIndexTest()
     {
-        XsdRecordset recordSet = createTestRecordset();
+        CoalesceRecordset recordSet = createTestRecordset();
 
-        XsdFieldDefinition newFieldDef = XsdFieldDefinition.create(recordSet,
+        CoalesceFieldDefinition newFieldDef = CoalesceFieldDefinition.create(recordSet,
                                                                    "Field Def Name",
                                                                    "Boolean Def",
                                                                    "(TS)",
                                                                    false,
                                                                    true);
 
-        XsdDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
+        CoalesceDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
 
         assertEquals(newFieldDef, xdo);
 
@@ -90,9 +90,9 @@ public class XsdFieldDefinitionTest {
                               XsdFieldDefinitionTest.TS_MARKING,
                               Boolean.FALSE.toString(),
                               true,
-                              (XsdFieldDefinition) xdo);
+                              (CoalesceFieldDefinition) xdo);
 
-        XsdRecord record = recordSet.addNew();
+        CoalesceRecord record = recordSet.addNew();
 
         XsdFieldDefinitionTest.assertNewField(newFieldDef, record.getFieldByName("Field Def Name"));
 
@@ -101,16 +101,16 @@ public class XsdFieldDefinitionTest {
     @Test
     public void createBooleanDefaultValueTrueNoIndexTest()
     {
-        XsdRecordset recordSet = createTestRecordset();
+        CoalesceRecordset recordSet = createTestRecordset();
 
-        XsdFieldDefinition newFieldDef = XsdFieldDefinition.create(recordSet,
+        CoalesceFieldDefinition newFieldDef = CoalesceFieldDefinition.create(recordSet,
                                                                    "Field Def Name",
                                                                    "Boolean Def",
                                                                    "(U)",
                                                                    true,
                                                                    true);
 
-        XsdDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
+        CoalesceDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
 
         assertEquals(newFieldDef, xdo);
 
@@ -121,9 +121,9 @@ public class XsdFieldDefinitionTest {
                               XsdFieldDefinitionTest.UNCLASS_MARKING,
                               Boolean.TRUE.toString(),
                               true,
-                              (XsdFieldDefinition) xdo);
+                              (CoalesceFieldDefinition) xdo);
 
-        XsdRecord record = recordSet.addNew();
+        CoalesceRecord record = recordSet.addNew();
 
         XsdFieldDefinitionTest.assertNewField(newFieldDef, record.getFieldByName("Field Def Name"));
 
@@ -132,16 +132,16 @@ public class XsdFieldDefinitionTest {
     @Test
     public void createBooleanDefaultValueFalseIndexTest()
     {
-        XsdRecordset recordSet = createTestRecordset();
+        CoalesceRecordset recordSet = createTestRecordset();
 
-        XsdFieldDefinition newFieldDef = XsdFieldDefinition.create(recordSet,
+        CoalesceFieldDefinition newFieldDef = CoalesceFieldDefinition.create(recordSet,
                                                                    "Field Def Name",
                                                                    "Boolean Def",
                                                                    "(TS)",
                                                                    false,
                                                                    false);
 
-        XsdDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
+        CoalesceDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
 
         assertEquals(newFieldDef, xdo);
 
@@ -152,9 +152,9 @@ public class XsdFieldDefinitionTest {
                               XsdFieldDefinitionTest.TS_MARKING,
                               Boolean.FALSE.toString(),
                               false,
-                              (XsdFieldDefinition) xdo);
+                              (CoalesceFieldDefinition) xdo);
 
-        XsdRecord record = recordSet.addNew();
+        CoalesceRecord record = recordSet.addNew();
 
         XsdFieldDefinitionTest.assertNewField(newFieldDef, record.getFieldByName("Field Def Name"));
 
@@ -163,16 +163,16 @@ public class XsdFieldDefinitionTest {
     @Test
     public void createBooleanDefaultValueTrueIndexTest()
     {
-        XsdRecordset recordSet = createTestRecordset();
+        CoalesceRecordset recordSet = createTestRecordset();
 
-        XsdFieldDefinition newFieldDef = XsdFieldDefinition.create(recordSet,
+        CoalesceFieldDefinition newFieldDef = CoalesceFieldDefinition.create(recordSet,
                                                                    "Field Def Name",
                                                                    "Boolean Def",
                                                                    "(U)",
                                                                    true,
                                                                    false);
 
-        XsdDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
+        CoalesceDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
 
         assertEquals(newFieldDef, xdo);
 
@@ -183,9 +183,9 @@ public class XsdFieldDefinitionTest {
                               XsdFieldDefinitionTest.UNCLASS_MARKING,
                               Boolean.TRUE.toString(),
                               false,
-                              (XsdFieldDefinition) xdo);
+                              (CoalesceFieldDefinition) xdo);
 
-        XsdRecord record = recordSet.addNew();
+        CoalesceRecord record = recordSet.addNew();
 
         XsdFieldDefinitionTest.assertNewField(newFieldDef, record.getFieldByName("Field Def Name"));
 
@@ -194,16 +194,16 @@ public class XsdFieldDefinitionTest {
     @Test
     public void createIntegerNoIndexTest()
     {
-        XsdRecordset recordSet = createTestRecordset();
+        CoalesceRecordset recordSet = createTestRecordset();
 
-        XsdFieldDefinition newFieldDef = XsdFieldDefinition.create(recordSet,
+        CoalesceFieldDefinition newFieldDef = CoalesceFieldDefinition.create(recordSet,
                                                                    "Field Def Name",
                                                                    "Integer Def",
                                                                    "(TS)",
                                                                    5,
                                                                    true);
 
-        XsdDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
+        CoalesceDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
 
         assertEquals(newFieldDef, xdo);
 
@@ -214,9 +214,9 @@ public class XsdFieldDefinitionTest {
                               XsdFieldDefinitionTest.TS_MARKING,
                               Integer.toString(5),
                               true,
-                              (XsdFieldDefinition) xdo);
+                              (CoalesceFieldDefinition) xdo);
 
-        XsdRecord record = recordSet.addNew();
+        CoalesceRecord record = recordSet.addNew();
 
         XsdFieldDefinitionTest.assertNewField(newFieldDef, record.getFieldByName("Field Def Name"));
 
@@ -225,16 +225,16 @@ public class XsdFieldDefinitionTest {
     @Test
     public void createIntegerIndexTest()
     {
-        XsdRecordset recordSet = createTestRecordset();
+        CoalesceRecordset recordSet = createTestRecordset();
 
-        XsdFieldDefinition newFieldDef = XsdFieldDefinition.create(recordSet,
+        CoalesceFieldDefinition newFieldDef = CoalesceFieldDefinition.create(recordSet,
                                                                    "Field Def Name",
                                                                    "Integer Def",
                                                                    "(U)",
                                                                    5,
                                                                    false);
 
-        XsdDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
+        CoalesceDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
 
         assertEquals(newFieldDef, xdo);
 
@@ -245,9 +245,9 @@ public class XsdFieldDefinitionTest {
                               XsdFieldDefinitionTest.UNCLASS_MARKING,
                               Integer.toString(5),
                               false,
-                              (XsdFieldDefinition) xdo);
+                              (CoalesceFieldDefinition) xdo);
 
-        XsdRecord record = recordSet.addNew();
+        CoalesceRecord record = recordSet.addNew();
 
         XsdFieldDefinitionTest.assertNewField(newFieldDef, record.getFieldByName("Field Def Name"));
 
@@ -256,9 +256,9 @@ public class XsdFieldDefinitionTest {
     @Test
     public void createStringNoIndexTest()
     {
-        XsdRecordset recordSet = createTestRecordset();
+        CoalesceRecordset recordSet = createTestRecordset();
 
-        XsdFieldDefinition newFieldDef = XsdFieldDefinition.create(recordSet,
+        CoalesceFieldDefinition newFieldDef = CoalesceFieldDefinition.create(recordSet,
                                                                    "Field Def Name",
                                                                    ECoalesceFieldDataTypes.StringType,
                                                                    "String Def",
@@ -266,7 +266,7 @@ public class XsdFieldDefinitionTest {
                                                                    "Unknown",
                                                                    true);
 
-        XsdDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
+        CoalesceDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
 
         assertEquals(newFieldDef, xdo);
 
@@ -277,9 +277,9 @@ public class XsdFieldDefinitionTest {
                               XsdFieldDefinitionTest.TS_MARKING,
                               "Unknown",
                               true,
-                              (XsdFieldDefinition) xdo);
+                              (CoalesceFieldDefinition) xdo);
 
-        XsdRecord record = recordSet.addNew();
+        CoalesceRecord record = recordSet.addNew();
 
         XsdFieldDefinitionTest.assertNewField(newFieldDef, record.getFieldByName("Field Def Name"));
 
@@ -288,9 +288,9 @@ public class XsdFieldDefinitionTest {
     @Test
     public void createStringIndexTest()
     {
-        XsdRecordset recordSet = createTestRecordset();
+        CoalesceRecordset recordSet = createTestRecordset();
 
-        XsdFieldDefinition newFieldDef = XsdFieldDefinition.create(recordSet,
+        CoalesceFieldDefinition newFieldDef = CoalesceFieldDefinition.create(recordSet,
                                                                    "Field Def Name",
                                                                    ECoalesceFieldDataTypes.StringType,
                                                                    "String Def",
@@ -298,7 +298,7 @@ public class XsdFieldDefinitionTest {
                                                                    "XXX",
                                                                    false);
 
-        XsdDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
+        CoalesceDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
 
         assertEquals(newFieldDef, xdo);
 
@@ -309,9 +309,9 @@ public class XsdFieldDefinitionTest {
                               XsdFieldDefinitionTest.TS_MARKING,
                               "XXX",
                               false,
-                              (XsdFieldDefinition) xdo);
+                              (CoalesceFieldDefinition) xdo);
 
-        XsdRecord record = recordSet.addNew();
+        CoalesceRecord record = recordSet.addNew();
 
         XsdFieldDefinitionTest.assertNewField(newFieldDef, record.getFieldByName("Field Def Name"));
 
@@ -320,10 +320,10 @@ public class XsdFieldDefinitionTest {
     @Test
     public void createDateNoIndexTest()
     {
-        XsdRecordset recordSet = createTestRecordset();
+        CoalesceRecordset recordSet = createTestRecordset();
 
         DateTime now = JodaDateTimeHelper.nowInUtc();
-        XsdFieldDefinition newFieldDef = XsdFieldDefinition.create(recordSet,
+        CoalesceFieldDefinition newFieldDef = CoalesceFieldDefinition.create(recordSet,
                                                                    "Field Def Name",
                                                                    ECoalesceFieldDataTypes.DateTimeType,
                                                                    "DateTime Def",
@@ -331,7 +331,7 @@ public class XsdFieldDefinitionTest {
                                                                    JodaDateTimeHelper.toXmlDateTimeUTC(now),
                                                                    true);
 
-        XsdDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
+        CoalesceDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
 
         assertEquals(newFieldDef, xdo);
 
@@ -342,9 +342,9 @@ public class XsdFieldDefinitionTest {
                               XsdFieldDefinitionTest.TS_MARKING,
                               JodaDateTimeHelper.toXmlDateTimeUTC(now),
                               true,
-                              (XsdFieldDefinition) xdo);
+                              (CoalesceFieldDefinition) xdo);
 
-        XsdRecord record = recordSet.addNew();
+        CoalesceRecord record = recordSet.addNew();
 
         XsdFieldDefinitionTest.assertNewField(newFieldDef, record.getFieldByName("Field Def Name"));
 
@@ -353,7 +353,7 @@ public class XsdFieldDefinitionTest {
     @Test
     public void KeyTest()
     {
-        XsdFieldDefinition fieldDefinition = getFieldDefinitionFromXml(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceFieldDefinition fieldDefinition = getFieldDefinitionFromXml(CoalesceTypeInstances.TEST_MISSION);
 
         assertEquals("93C6A209-AD86-4474-9FFB-D6801B2548AA", fieldDefinition.getKey());
 
@@ -368,7 +368,7 @@ public class XsdFieldDefinitionTest {
     @Test
     public void NameTest()
     {
-        XsdFieldDefinition fieldDefinition = getFieldDefinitionFromXml(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceFieldDefinition fieldDefinition = getFieldDefinitionFromXml(CoalesceTypeInstances.TEST_MISSION);
 
         assertEquals("ActionNumber", fieldDefinition.getName());
 
@@ -381,7 +381,7 @@ public class XsdFieldDefinitionTest {
     @Test
     public void TypeTest()
     {
-        XsdFieldDefinition fieldDefinition = getFieldDefinitionFromXml(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceFieldDefinition fieldDefinition = getFieldDefinitionFromXml(CoalesceTypeInstances.TEST_MISSION);
 
         assertEquals("fielddefinition", fieldDefinition.getType());
 
@@ -390,7 +390,7 @@ public class XsdFieldDefinitionTest {
     @Test
     public void LabelTest()
     {
-        XsdFieldDefinition fieldDefinition = getFieldDefinitionFromXml(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceFieldDefinition fieldDefinition = getFieldDefinitionFromXml(CoalesceTypeInstances.TEST_MISSION);
 
         assertEquals("Action Number", fieldDefinition.getLabel());
 
@@ -403,7 +403,7 @@ public class XsdFieldDefinitionTest {
     @Test
     public void DataTypeTest()
     {
-        XsdFieldDefinition fieldDefinition = getFieldDefinitionFromXml(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceFieldDefinition fieldDefinition = getFieldDefinitionFromXml(CoalesceTypeInstances.TEST_MISSION);
 
         assertEquals(ECoalesceFieldDataTypes.StringType, fieldDefinition.getDataType());
 
@@ -416,7 +416,7 @@ public class XsdFieldDefinitionTest {
     @Test
     public void DefaultClassificationMarkingStringTest()
     {
-        XsdFieldDefinition fieldDefinition = getFieldDefinitionFromXml(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceFieldDefinition fieldDefinition = getFieldDefinitionFromXml(CoalesceTypeInstances.TEST_MISSION);
 
         assertEquals(XsdFieldDefinitionTest.UNCLASS_MARKING.toPortionString(),
                      fieldDefinition.getDefaultClassificationMarking().toPortionString());
@@ -431,7 +431,7 @@ public class XsdFieldDefinitionTest {
     @Test
     public void DefaultClassificationMarkingStringPortionTest()
     {
-        XsdFieldDefinition fieldDefinition = getFieldDefinitionFromXml(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceFieldDefinition fieldDefinition = getFieldDefinitionFromXml(CoalesceTypeInstances.TEST_MISSION);
 
         assertEquals(XsdFieldDefinitionTest.UNCLASS_MARKING.toPortionString(),
                      fieldDefinition.getDefaultClassificationMarking().toPortionString());
@@ -446,7 +446,7 @@ public class XsdFieldDefinitionTest {
     @Test
     public void DefaultClassificationMarkingMarkingTest()
     {
-        XsdFieldDefinition fieldDefinition = getFieldDefinitionFromXml(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceFieldDefinition fieldDefinition = getFieldDefinitionFromXml(CoalesceTypeInstances.TEST_MISSION);
 
         assertEquals(XsdFieldDefinitionTest.UNCLASS_MARKING.toPortionString(),
                      fieldDefinition.getDefaultClassificationMarking().toPortionString());
@@ -461,7 +461,7 @@ public class XsdFieldDefinitionTest {
     @Test
     public void DefaultValue()
     {
-        XsdFieldDefinition fieldDefinition = getFieldDefinitionFromXml(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceFieldDefinition fieldDefinition = getFieldDefinitionFromXml(CoalesceTypeInstances.TEST_MISSION);
 
         assertEquals("0", fieldDefinition.getDefaultValue());
 
@@ -474,7 +474,7 @@ public class XsdFieldDefinitionTest {
     @Test
     public void DateCreatedTest()
     {
-        XsdFieldDefinition fieldDefinition = getFieldDefinitionFromXml(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceFieldDefinition fieldDefinition = getFieldDefinitionFromXml(CoalesceTypeInstances.TEST_MISSION);
 
         assertEquals(JodaDateTimeHelper.fromXmlDateTimeUTC("2014-05-02T14:33:51.8525751Z"), fieldDefinition.getDateCreated());
 
@@ -488,7 +488,7 @@ public class XsdFieldDefinitionTest {
     @Test
     public void LastModifiedTest()
     {
-        XsdFieldDefinition fieldDefinition = getFieldDefinitionFromXml(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceFieldDefinition fieldDefinition = getFieldDefinitionFromXml(CoalesceTypeInstances.TEST_MISSION);
 
         assertEquals(JodaDateTimeHelper.fromXmlDateTimeUTC("2014-05-02T14:33:51.8525751Z"),
                      fieldDefinition.getLastModified());
@@ -500,7 +500,7 @@ public class XsdFieldDefinitionTest {
 
     }
 
-    public static void assertNewField(XsdFieldDefinition fieldDefinition, XsdField<?> field)
+    public static void assertNewField(CoalesceFieldDefinition fieldDefinition, CoalesceField<?> field)
     {
         assertEquals(fieldDefinition.getName(), field.getName());
         assertEquals(fieldDefinition.getDataType(), field.getDataType());
@@ -516,34 +516,34 @@ public class XsdFieldDefinitionTest {
     // Private Methods
     // -----------------------------------------------------------------------//
 
-    private XsdFieldDefinition getFieldDefinitionFromXml(String entityXml)
+    private CoalesceFieldDefinition getFieldDefinitionFromXml(String entityXml)
     {
-        XsdEntity entity = XsdEntity.create(entityXml);
+        CoalesceEntity entity = CoalesceEntity.create(entityXml);
 
-        XsdFieldDefinition fieldDefinition = (XsdFieldDefinition) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/ActionNumber");
+        CoalesceFieldDefinition fieldDefinition = (CoalesceFieldDefinition) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/ActionNumber");
 
         return fieldDefinition;
     }
 
-    private XsdRecordset createTestRecordset()
+    private CoalesceRecordset createTestRecordset()
     {
-        XsdEntity entity = new XsdEntity();
+        CoalesceEntity entity = new CoalesceEntity();
         entity.initialize();
 
-        XsdSection informationSection = XsdSection.create(entity, "Entity Information Section", true);
-        XsdRecordset informationRecordSet = XsdRecordset.create(informationSection, "Information Recordset");
+        CoalesceSection informationSection = CoalesceSection.create(entity, "Entity Information Section", true);
+        CoalesceRecordset informationRecordSet = CoalesceRecordset.create(informationSection, "Information Recordset");
 
         return informationRecordSet;
     }
 
-    private void assertFieldDefinition(XsdRecordset parent,
+    private void assertFieldDefinition(CoalesceRecordset parent,
                                        String name,
                                        ECoalesceFieldDataTypes dataType,
                                        String label,
                                        Marking marking,
                                        String defaultValue,
                                        boolean noIndex,
-                                       XsdFieldDefinition fieldDefinition)
+                                       CoalesceFieldDefinition fieldDefinition)
     {
         assertEquals(parent, fieldDefinition.getParent());
         assertEquals(name, fieldDefinition.getName());

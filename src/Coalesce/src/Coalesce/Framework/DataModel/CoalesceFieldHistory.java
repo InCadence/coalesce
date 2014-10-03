@@ -30,7 +30,7 @@ import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Record.Field.Fi
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-public class XsdFieldHistory extends XsdFieldBase<String> {
+public class CoalesceFieldHistory extends CoalesceFieldBase<String> {
 
     // -----------------------------------------------------------------------//
     // protected Member Variables
@@ -49,12 +49,12 @@ public class XsdFieldHistory extends XsdFieldBase<String> {
      * 
      * @return XsdFieldHistory, resulting history created from the extended XsdFieldBase
      */
-    public static XsdFieldHistory create(XsdFieldBase<?> parent)
+    public static CoalesceFieldHistory create(CoalesceFieldBase<?> parent)
     {
 
-        if (!(parent instanceof XsdField<?>)) throw new ClassCastException("Must be of type XsdField");
+        if (!(parent instanceof CoalesceField<?>)) throw new ClassCastException("Must be of type XsdField");
 
-        return create((XsdField<?>) parent);
+        return create((CoalesceField<?>) parent);
     }
 
     /**
@@ -64,13 +64,13 @@ public class XsdFieldHistory extends XsdFieldBase<String> {
      * 
      * @return XsdFieldHistory, resulting history created from the XsdField
      */
-    public static XsdFieldHistory create(XsdField<?> parent)
+    public static CoalesceFieldHistory create(CoalesceField<?> parent)
     {
         try
         {
 
             // Set References
-            XsdFieldHistory newFieldHistory = new XsdFieldHistory();
+            CoalesceFieldHistory newFieldHistory = new CoalesceFieldHistory();
             if (!newFieldHistory.initialize(parent)) return null;
 
             // Copy attributes from parent node
@@ -103,7 +103,7 @@ public class XsdFieldHistory extends XsdFieldBase<String> {
      * 
      * @return boolean indicator of success/failure
      */
-    private boolean initialize(XsdField<?> parent)
+    private boolean initialize(CoalesceField<?> parent)
     {
         return initialize(parent, new Fieldhistory());
     }
@@ -116,7 +116,7 @@ public class XsdFieldHistory extends XsdFieldBase<String> {
      * 
      * @return boolean indicator of success/failure
      */
-    public boolean initialize(XsdField<?> parent, Fieldhistory fieldHistory)
+    public boolean initialize(CoalesceField<?> parent, Fieldhistory fieldHistory)
     {
 
         // Set References
@@ -377,7 +377,7 @@ public class XsdFieldHistory extends XsdFieldBase<String> {
         _entityFieldHistory.setLastmodified(value);
     }
 
-    private void setAttributes(XsdField<?> field)
+    private void setAttributes(CoalesceField<?> field)
     {
         Field entityField = field._entityField;
 

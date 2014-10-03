@@ -3,10 +3,10 @@
  */
 package Coalesce.Framework.DataModel;
 
-import java.util.UUID;
-
 import Coalesce.Common.Exceptions.CoalesceDataFormatException;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.MultiPoint;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -28,17 +28,22 @@ import Coalesce.Common.Exceptions.CoalesceDataFormatException;
 /**
  *
  */
-public class XsdGUIDField extends XsdField<UUID> {
-    
+public class CoalesceCoordinateListField extends CoalesceField<Coordinate[]> {
+
     /*
      * (non-Javadoc)
      * 
      * @see Coalesce.Framework.DataModel.XsdField#getValue()
      */
     @Override
-    public UUID getValue() throws CoalesceDataFormatException
+    public Coordinate[] getValue() throws CoalesceDataFormatException
     {
-        return getGuidValue();
+        return getCoordinateListValue();
+    }
+
+    public MultiPoint getValueAsMultiPoint() throws CoalesceDataFormatException
+    {
+        return getMultiPointValue();
     }
 
     /*
@@ -47,9 +52,14 @@ public class XsdGUIDField extends XsdField<UUID> {
      * @see Coalesce.Framework.DataModel.XsdField#setValue(java.lang.Object)
      */
     @Override
-    public void setValue(UUID value)
+    public void setValue(Coordinate[] value) throws CoalesceDataFormatException
     {
         setTypedValue(value);
     }
     
+    public void setValue(MultiPoint value) throws CoalesceDataFormatException
+    {
+        setTypedValue(value);
+    }
+
 }

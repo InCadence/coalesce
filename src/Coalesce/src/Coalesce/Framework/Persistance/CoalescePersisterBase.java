@@ -6,7 +6,7 @@ import org.joda.time.DateTime;
 
 import Coalesce.Common.Exceptions.CoalescePersistorException;
 import Coalesce.Framework.DataModel.CoalesceEntityTemplate;
-import Coalesce.Framework.DataModel.XsdEntity;
+import Coalesce.Framework.DataModel.CoalesceEntity;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -48,7 +48,7 @@ public abstract class CoalescePersisterBase implements ICoalescePersistor {
     }
 
     @Override
-    public boolean saveEntity(XsdEntity entity, boolean allowRemoval) throws CoalescePersistorException
+    public boolean saveEntity(CoalesceEntity entity, boolean allowRemoval) throws CoalescePersistorException
     {
         boolean isSuccessful = false;
 
@@ -81,10 +81,10 @@ public abstract class CoalescePersisterBase implements ICoalescePersistor {
     }
 
     @Override
-    public XsdEntity getEntity(String key) throws CoalescePersistorException
+    public CoalesceEntity getEntity(String key) throws CoalescePersistorException
     {
 
-        XsdEntity entity = null;
+        CoalesceEntity entity = null;
 
         // Get Entity From Cache
         entity = this.getEntityFromCache(key);
@@ -101,7 +101,7 @@ public abstract class CoalescePersisterBase implements ICoalescePersistor {
             {
 
                 // Yes; Initialize Entity
-                entity = new XsdEntity();
+                entity = new CoalesceEntity();
                 entity.initialize(EntityXml);
 
                 // Add Entity to Cache
@@ -116,10 +116,10 @@ public abstract class CoalescePersisterBase implements ICoalescePersistor {
     }
 
     @Override
-    public XsdEntity getEntity(String entityId, String entityIdType) throws CoalescePersistorException
+    public CoalesceEntity getEntity(String entityId, String entityIdType) throws CoalescePersistorException
     {
 
-        XsdEntity entity = null;
+        CoalesceEntity entity = null;
 
         // Load Entity's XML
         String entityXml = this.getEntityXml(entityId, entityIdType);
@@ -129,7 +129,7 @@ public abstract class CoalescePersisterBase implements ICoalescePersistor {
         {
 
             // Yes; Initialize Entity
-            entity = new XsdEntity();
+            entity = new CoalesceEntity();
             entity.initialize(entityXml);
 
             // Add Entity to Cache
@@ -142,10 +142,10 @@ public abstract class CoalescePersisterBase implements ICoalescePersistor {
     }
 
     @Override
-    public XsdEntity getEntity(String name, String entityId, String entityIdType) throws CoalescePersistorException
+    public CoalesceEntity getEntity(String name, String entityId, String entityIdType) throws CoalescePersistorException
     {
 
-        XsdEntity entity = null;
+        CoalesceEntity entity = null;
 
         // Load Entity's XML
         String entityXml = this.getEntityXml(name, entityId, entityIdType);
@@ -155,7 +155,7 @@ public abstract class CoalescePersisterBase implements ICoalescePersistor {
         {
 
             // Yes; Initialize Entity
-            entity = new XsdEntity();
+            entity = new CoalesceEntity();
             entity.initialize(entityXml);
 
             // Add Entity to Cache
@@ -223,18 +223,18 @@ public abstract class CoalescePersisterBase implements ICoalescePersistor {
     Abstract Protected Functions
     --------------------------------------------------------------------------*/
 
-    protected abstract boolean FlattenObject(XsdEntity entity, boolean allowRemoval) throws CoalescePersistorException;
+    protected abstract boolean FlattenObject(CoalesceEntity entity, boolean allowRemoval) throws CoalescePersistorException;
 
-    protected abstract boolean FlattenCore(XsdEntity entity, boolean allowRemoval) throws CoalescePersistorException;
+    protected abstract boolean FlattenCore(CoalesceEntity entity, boolean allowRemoval) throws CoalescePersistorException;
 
     /*--------------------------------------------------------------------------
     	Private Functions
     --------------------------------------------------------------------------*/
 
-    private XsdEntity getEntityFromCache(String key)
+    private CoalesceEntity getEntityFromCache(String key)
     {
 
-        XsdEntity entity = null;
+        CoalesceEntity entity = null;
 
         // Cacher Initialized?
         if (this._cacher != null)
@@ -255,7 +255,7 @@ public abstract class CoalescePersisterBase implements ICoalescePersistor {
 
     }
 
-    private boolean addEntityToCache(XsdEntity entity)
+    private boolean addEntityToCache(CoalesceEntity entity)
     {
 
         boolean IsModified = false;

@@ -10,9 +10,9 @@ import org.xml.sax.SAXException;
 import Coalesce.Common.Exceptions.CoalescePersistorException;
 import Coalesce.Framework.DataModel.CoalesceEntitySyncShell;
 import Coalesce.Framework.DataModel.CoalesceEntityTemplate;
-import Coalesce.Framework.DataModel.XsdEntity;
-import Coalesce.Framework.DataModel.XsdStringField;
-import Coalesce.Framework.DataModel.XsdRecord;
+import Coalesce.Framework.DataModel.CoalesceEntity;
+import Coalesce.Framework.DataModel.CoalesceStringField;
+import Coalesce.Framework.DataModel.CoalesceRecord;
 import Coalesce.Framework.Persistance.ICoalescePersistor;
 import Coalesce.Framework.Persistance.ICoalescePersistor.ElementMetaData;
 import Coalesce.Framework.Persistance.ICoalescePersistor.EntityMetaData;
@@ -65,17 +65,17 @@ public class CoalesceFramework {
     	Get Entity
     --------------------------------------------------------------------------*/
 
-    public XsdEntity getCoalesceEntity(String Key) throws CoalescePersistorException
+    public CoalesceEntity getCoalesceEntity(String Key) throws CoalescePersistorException
     {
         return this._Persister.getEntity(Key);
     }
 
-    public XsdEntity getEntity(String EntityId, String EntityIdType) throws CoalescePersistorException
+    public CoalesceEntity getEntity(String EntityId, String EntityIdType) throws CoalescePersistorException
     {
         return this._Persister.getEntity(EntityId, EntityIdType);
     }
 
-    public XsdEntity getEntity(String Name, String EntityId, String EntityIdType) throws CoalescePersistorException
+    public CoalesceEntity getEntity(String Name, String EntityId, String EntityIdType) throws CoalescePersistorException
     {
         return this._Persister.getEntity(Name, EntityId, EntityIdType);
     }
@@ -175,12 +175,12 @@ public class CoalesceFramework {
         return this._Persister.getCoalesceDataObjectLastModified(key, objectType);
     }
 
-    public boolean saveCoalesceEntity(XsdEntity entity) throws CoalescePersistorException
+    public boolean saveCoalesceEntity(CoalesceEntity entity) throws CoalescePersistorException
     {
         return this.saveCoalesceEntity(entity, false);
     }
 
-    public boolean saveCoalesceEntity(XsdEntity entity, boolean AllowRemoval) throws CoalescePersistorException
+    public boolean saveCoalesceEntity(CoalesceEntity entity, boolean AllowRemoval) throws CoalescePersistorException
     {
         return this._Persister.saveEntity(entity, AllowRemoval);
     }
@@ -190,36 +190,36 @@ public class CoalesceFramework {
         return (String) this._Persister.getFieldValue(FieldKey);
     }
 
-    public XsdRecord getCoalesceRecord(String Key) throws CoalescePersistorException
+    public CoalesceRecord getCoalesceRecord(String Key) throws CoalescePersistorException
     {
-        XsdRecord record = null;
+        CoalesceRecord record = null;
 
         ElementMetaData metaData = this._Persister.getXPath(Key, "record");
         if (metaData != null)
         {
-            XsdEntity entity = this._Persister.getEntity(metaData.entityKey);
+            CoalesceEntity entity = this._Persister.getEntity(metaData.entityKey);
             if (entity != null)
             {
-                record = (XsdRecord) entity.getDataObjectForNamePath(metaData.elementXPath);
+                record = (CoalesceRecord) entity.getDataObjectForNamePath(metaData.elementXPath);
             }
         }
 
         return record;
     }
 
-    public XsdStringField getCoalesceFieldByFieldKey(String Key) throws CoalescePersistorException
+    public CoalesceStringField getCoalesceFieldByFieldKey(String Key) throws CoalescePersistorException
     {
-        XsdStringField field = null;
+        CoalesceStringField field = null;
 
         ElementMetaData metaData = this._Persister.getXPath(Key, "field");
 
         if (metaData != null)
         {
-            XsdEntity entity = this._Persister.getEntity(metaData.entityKey);
+            CoalesceEntity entity = this._Persister.getEntity(metaData.entityKey);
 
             if (entity != null)
             {
-                field = (XsdStringField) entity.getCoalesceDataObjectForKey(Key);
+                field = (CoalesceStringField) entity.getCoalesceDataObjectForKey(Key);
             }
         }
 
@@ -268,12 +268,12 @@ public class CoalesceFramework {
         return this._Persister.getEntityTemplateMetadata();
     }
 
-    public XsdEntity createEntityFromTemplate(String Name, String Source, String Version) throws CoalescePersistorException
+    public CoalesceEntity createEntityFromTemplate(String Name, String Source, String Version) throws CoalescePersistorException
     {
 
         String Xml = this.getCoalesceEntityTemplateXml(Name, Source, Version);
 
-        XsdEntity entity = new XsdEntity();
+        CoalesceEntity entity = new CoalesceEntity();
         entity.initialize(Xml);
 
         return entity;

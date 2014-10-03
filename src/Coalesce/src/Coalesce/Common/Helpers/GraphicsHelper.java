@@ -9,7 +9,7 @@ import javax.imageio.ImageIO;
 import org.imgscalr.Scalr;
 
 import Coalesce.Common.Runtime.CoalesceSettings;
-import Coalesce.Framework.DataModel.XsdStringField;
+import Coalesce.Framework.DataModel.CoalesceStringField;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -186,14 +186,14 @@ public class GraphicsHelper {
     }
 
     /**
-     * Created a new thumbnail image for an {@link XsdStringField}.
+     * Created a new thumbnail image for an {@link CoalesceStringField}.
      * 
      * @param field the field to generate the thumbnail for.
      * @return <code>true</code> if the file is successfully created.
      * @throws IOException
      * @see GraphicsHelper#createFieldThumbnail(String)
      */
-    public static boolean createFieldThumbnail(XsdStringField field) throws IOException
+    public static boolean createFieldThumbnail(CoalesceStringField field) throws IOException
     {
         return GraphicsHelper.createFieldThumbnail(field.getCoalesceFullFilename());
     }

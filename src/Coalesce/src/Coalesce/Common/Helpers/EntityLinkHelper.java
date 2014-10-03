@@ -8,9 +8,9 @@ import Coalesce.Common.Classification.Marking;
 import Coalesce.Framework.DataModel.ECoalesceDataObjectStatus;
 import Coalesce.Framework.DataModel.ELinkTypes;
 import Coalesce.Framework.DataModel.ICoalesceDataObject;
-import Coalesce.Framework.DataModel.XsdEntity;
-import Coalesce.Framework.DataModel.XsdLinkage;
-import Coalesce.Framework.DataModel.XsdLinkageSection;
+import Coalesce.Framework.DataModel.CoalesceEntity;
+import Coalesce.Framework.DataModel.CoalesceLinkage;
+import Coalesce.Framework.DataModel.CoalesceLinkageSection;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -30,7 +30,7 @@ import Coalesce.Framework.DataModel.XsdLinkageSection;
  -----------------------------------------------------------------------------*/
 
 /**
- * Provides helper methods for linking two {@link XsdEntity} objects together.
+ * Provides helper methods for linking two {@link CoalesceEntity} objects together.
  * 
  * @author InCadence
  *
@@ -67,7 +67,7 @@ public class EntityLinkHelper {
      * @param updateExisting whether to update an existing linkage.
      * @return <code>true</code> if the linkage is create or updated successfully.
      */
-    public static boolean linkEntities(XsdEntity entity1, ELinkTypes linkType, XsdEntity entity2, Boolean updateExisting)
+    public static boolean linkEntities(CoalesceEntity entity1, ELinkTypes linkType, CoalesceEntity entity2, Boolean updateExisting)
     {
 
         return linkEntities(entity1, linkType, entity2, new Marking("(U)"), "", Locale.US, updateExisting);
@@ -88,9 +88,9 @@ public class EntityLinkHelper {
      * @param updateExisting whether to update an existing linkage.
      * @return <code>true</code> if the linkage is create or updated successfully.
      */
-    public static boolean linkEntities(XsdEntity entity1,
+    public static boolean linkEntities(CoalesceEntity entity1,
                                        ELinkTypes linkType,
-                                       XsdEntity entity2,
+                                       CoalesceEntity entity2,
                                        Marking classificationMarking,
                                        String modifiedBy,
                                        Locale inputLang,
@@ -102,11 +102,11 @@ public class EntityLinkHelper {
         // Get the LinkageSections for each Entity. Create if not found.
 
         // For Entity 1...
-        XsdLinkageSection linkageSection1 = entity1.getLinkageSection();
+        CoalesceLinkageSection linkageSection1 = entity1.getLinkageSection();
         if (linkageSection1 == null) return false;
 
         // For Entity 2...
-        XsdLinkageSection linkageSection2 = entity2.getLinkageSection();
+        CoalesceLinkageSection linkageSection2 = entity2.getLinkageSection();
         if (linkageSection2 == null) return false;
 
         EstablishLinkage(linkageSection1,
@@ -139,7 +139,7 @@ public class EntityLinkHelper {
      * @return <code>true</code> if there are no errors. Not finding an existing linkage to delete is not considered an
      *         error.
      */
-    public static boolean unLinkEntities(XsdEntity entity1, XsdEntity entity2)
+    public static boolean unLinkEntities(CoalesceEntity entity1, CoalesceEntity entity2)
     {
         return unLinkEntities(entity1, entity2, null);
     }
@@ -153,7 +153,7 @@ public class EntityLinkHelper {
      * @return <code>true</code> if there are no errors. Not finding an existing linkage to delete is not considered an
      *         error.
      */
-    public static boolean unLinkEntities(XsdEntity entity1, XsdEntity entity2, ELinkTypes linkType)
+    public static boolean unLinkEntities(CoalesceEntity entity1, CoalesceEntity entity2, ELinkTypes linkType)
     {
         if (entity1 == null) throw new NullArgumentException("entity1");
         if (entity2 == null) throw new NullArgumentException("entity2");
@@ -161,11 +161,11 @@ public class EntityLinkHelper {
         // Get the LinkageSections for each Entity. Exit if not found.
 
         // For Entity 1...
-        XsdLinkageSection linkageSection1 = entity1.getLinkageSection();
+        CoalesceLinkageSection linkageSection1 = entity1.getLinkageSection();
         if (linkageSection1 == null) return false;
 
         // For Entity 2...
-        XsdLinkageSection linkageSection2 = entity2.getLinkageSection();
+        CoalesceLinkageSection linkageSection2 = entity2.getLinkageSection();
         if (linkageSection2 == null) return false;
 
         MarkLinkageAsDeleted(linkageSection1, entity1, entity2, linkType);
@@ -186,10 +186,10 @@ public class EntityLinkHelper {
     // Private Methods
     // -----------------------------------------------------------------------//
 
-    private static void EstablishLinkage(XsdLinkageSection linkageSection,
-                                         XsdEntity entity,
+    private static void EstablishLinkage(CoalesceLinkageSection linkageSection,
+                                         CoalesceEntity entity,
                                          ELinkTypes linkType,
-                                         XsdEntity otherEntity,
+                                         CoalesceEntity otherEntity,
                                          Marking classificationMarking,
                                          String modifiedBy,
                                          Locale inputLang,
@@ -199,14 +199,14 @@ public class EntityLinkHelper {
         if (entity == null) throw new NullArgumentException("entity");
         if (otherEntity == null) throw new NullArgumentException("otherEntity");
 
-        XsdLinkage linkage = null;
+        CoalesceLinkage linkage = null;
         // Do we already have the Linkage made? (Same Entities and Same LinkType)?
         for (ICoalesceDataObject cdo : linkageSection.getChildDataObjects().values())
         {
-            if (cdo instanceof XsdLinkage)
+            if (cdo instanceof CoalesceLinkage)
             {
 
-                XsdLinkage childLinkage = (XsdLinkage) cdo;
+                CoalesceLinkage childLinkage = (CoalesceLinkage) cdo;
                 if (childLinkage.getEntity1Key().equals(entity.getKey()) && childLinkage.getLinkType() == linkType
                         && childLinkage.getEntity2Key().equals(otherEntity.getKey()))
                 {
@@ -231,24 +231,24 @@ public class EntityLinkHelper {
         else
         {
             // Create
-            XsdLinkage newLinkage = linkageSection.createLinkage();
+            CoalesceLinkage newLinkage = linkageSection.createLinkage();
 
             // Update/Populate
             newLinkage.establishLinkage(entity, linkType, otherEntity, classificationMarking, modifiedBy, inputLang);
         }
     }
 
-    private static boolean MarkLinkageAsDeleted(XsdLinkageSection linkageSection,
-                                                XsdEntity entity,
-                                                XsdEntity otherEntity,
+    private static boolean MarkLinkageAsDeleted(CoalesceLinkageSection linkageSection,
+                                                CoalesceEntity entity,
+                                                CoalesceEntity otherEntity,
                                                 ELinkTypes linkType)
     {
         for (ICoalesceDataObject cdo : linkageSection.getChildDataObjects().values())
         {
-            if (cdo instanceof XsdLinkage)
+            if (cdo instanceof CoalesceLinkage)
             {
 
-                XsdLinkage linkage = (XsdLinkage) cdo;
+                CoalesceLinkage linkage = (CoalesceLinkage) cdo;
 
                 if (linkType == null || linkage.getLinkType() == linkType)
                 {

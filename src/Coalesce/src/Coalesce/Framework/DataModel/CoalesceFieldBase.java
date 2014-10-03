@@ -45,7 +45,7 @@ import com.vividsolutions.jts.io.WKTWriter;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-public abstract class XsdFieldBase<T> extends XsdDataObject implements ICoalesceField<T> {
+public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements ICoalesceField<T> {
 
     /*--------------------------------------------------------------------------
     Public Abstract Functions
@@ -192,7 +192,7 @@ public abstract class XsdFieldBase<T> extends XsdDataObject implements ICoalesce
      * 
      * @param fieldHistory, provides the value of the newer field's Previous History Key
      */
-    public void setPreviousHistoryKey(XsdFieldHistory fieldHistory)
+    public void setPreviousHistoryKey(CoalesceFieldHistory fieldHistory)
     {
         if (fieldHistory == null) throw new NullArgumentException("fieldHistory");
 

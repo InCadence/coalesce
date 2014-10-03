@@ -1,6 +1,6 @@
 package Coalesce.Framework.Persistance;
 
-import Coalesce.Framework.DataModel.XsdEntity;
+import Coalesce.Framework.DataModel.CoalesceEntity;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -23,9 +23,9 @@ public interface ICoalesceCacher {
 
     public boolean containsEntity(String Key);
 
-    public boolean storeEntity(XsdEntity entity);
+    public boolean storeEntity(CoalesceEntity entity);
 
-    public XsdEntity retrieveEntity(String Key);
+    public CoalesceEntity retrieveEntity(String Key);
 
     public boolean removeEntity(String Key);
 

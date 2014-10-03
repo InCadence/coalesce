@@ -50,15 +50,15 @@ public class XsdRecordSetTest {
     @Test
     public void createRecordsetEmptyTest()
     {
-        XsdEntity entity = new XsdEntity();
+        CoalesceEntity entity = new CoalesceEntity();
         entity.initialize();
-        XsdSection section = entity.createSection("New Section");
+        CoalesceSection section = entity.createSection("New Section");
 
-        XsdRecordset recordset = XsdRecordset.create(section, "New Recordset");
+        CoalesceRecordset recordset = CoalesceRecordset.create(section, "New Recordset");
 
         assertNotNull(recordset);
 
-        Map<String, XsdRecordset> recordsets = section.getRecordsets();
+        Map<String, CoalesceRecordset> recordsets = section.getRecordsets();
 
         assertEquals(1, recordsets.size());
         assertNotNull(recordsets.get(recordset.getKey()));
@@ -68,24 +68,24 @@ public class XsdRecordSetTest {
     @Test
     public void createRecordsetExistsTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdSection section = entity.getSection(CoalesceTypeInstances.TEST_MISSION_INFO_SECTION_PATH);
+        CoalesceSection section = entity.getSection(CoalesceTypeInstances.TEST_MISSION_INFO_SECTION_PATH);
 
-        XsdRecordset recordset = XsdRecordset.create(section, "New Section");
+        CoalesceRecordset recordset = CoalesceRecordset.create(section, "New Section");
 
         assertNotNull(recordset);
 
-        Map<String, XsdRecordset> recordsets = section.getRecordsets();
+        Map<String, CoalesceRecordset> recordsets = section.getRecordsets();
 
         assertEquals(2, recordsets.size());
 
-        XsdRecordset existingRecordset = recordsets.get("7A158E39-B6C4-4912-A712-DF296375A368");
+        CoalesceRecordset existingRecordset = recordsets.get("7A158E39-B6C4-4912-A712-DF296375A368");
         assertNotNull(existingRecordset);
 
         assertNotNull(recordsets.get(recordset.getKey()));
 
-        List<XsdFieldDefinition> fieldDefinitions = existingRecordset.getFieldDefinitions();
+        List<CoalesceFieldDefinition> fieldDefinitions = existingRecordset.getFieldDefinitions();
 
         assertEquals("93C6A209-AD86-4474-9FFB-D6801B2548AA", fieldDefinitions.get(0).getKey());
         assertEquals("DBBB6CEC-DD98-4B31-9995-8AF0A5E184EC", fieldDefinitions.get(1).getKey());
@@ -112,42 +112,42 @@ public class XsdRecordSetTest {
     public void createNullParentTest()
     {
         @SuppressWarnings("unused")
-        XsdRecordset recordset = XsdRecordset.create(null, "New Section");
+        CoalesceRecordset recordset = CoalesceRecordset.create(null, "New Section");
     }
 
     @Test(expected = NullArgumentException.class)
     public void createNullNameTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdSection section = entity.getSection(CoalesceTypeInstances.TEST_MISSION_INFO_SECTION_PATH);
+        CoalesceSection section = entity.getSection(CoalesceTypeInstances.TEST_MISSION_INFO_SECTION_PATH);
 
         @SuppressWarnings("unused")
-        XsdRecordset recordset = XsdRecordset.create(section, null);
+        CoalesceRecordset recordset = CoalesceRecordset.create(section, null);
 
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void createEmptyNameTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdSection section = entity.getSection(CoalesceTypeInstances.TEST_MISSION_INFO_SECTION_PATH);
+        CoalesceSection section = entity.getSection(CoalesceTypeInstances.TEST_MISSION_INFO_SECTION_PATH);
 
         @SuppressWarnings("unused")
-        XsdRecordset recordset = XsdRecordset.create(section, "");
+        CoalesceRecordset recordset = CoalesceRecordset.create(section, "");
 
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void createWhiteSpaceTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdSection section = entity.getSection(CoalesceTypeInstances.TEST_MISSION_INFO_SECTION_PATH);
+        CoalesceSection section = entity.getSection(CoalesceTypeInstances.TEST_MISSION_INFO_SECTION_PATH);
 
         @SuppressWarnings("unused")
-        XsdRecordset recordset = XsdRecordset.create(section, "   ");
+        CoalesceRecordset recordset = CoalesceRecordset.create(section, "   ");
 
     }
 
@@ -156,18 +156,18 @@ public class XsdRecordSetTest {
     {
 
         @SuppressWarnings("unused")
-        XsdRecordset recordset = XsdRecordset.create(null, null);
+        CoalesceRecordset recordset = CoalesceRecordset.create(null, null);
 
     }
 
     @Test
     public void createMinMaxRecordsTest()
     {
-        XsdEntity entity = new XsdEntity();
+        CoalesceEntity entity = new CoalesceEntity();
         entity.initialize();
-        XsdSection section = entity.createSection("New Section");
+        CoalesceSection section = entity.createSection("New Section");
 
-        XsdRecordset recordset = XsdRecordset.create(section, "New Recordset", 0, 5);
+        CoalesceRecordset recordset = CoalesceRecordset.create(section, "New Recordset", 0, 5);
 
         assertNotNull(recordset);
         assertEquals(0, recordset.getMinRecords());
@@ -178,11 +178,11 @@ public class XsdRecordSetTest {
     @Test
     public void createMinMaxRecordsRequiredRecordsTest()
     {
-        XsdEntity entity = new XsdEntity();
+        CoalesceEntity entity = new CoalesceEntity();
         entity.initialize();
-        XsdSection section = entity.createSection("New Section");
+        CoalesceSection section = entity.createSection("New Section");
 
-        XsdRecordset recordset = XsdRecordset.create(section, "New Recordset", 3, 5);
+        CoalesceRecordset recordset = CoalesceRecordset.create(section, "New Recordset", 3, 5);
 
         assertNotNull(recordset);
         assertEquals(3, recordset.getMinRecords());
@@ -193,11 +193,11 @@ public class XsdRecordSetTest {
     @Test
     public void createMinMaxRecordsZeroTest()
     {
-        XsdEntity entity = new XsdEntity();
+        CoalesceEntity entity = new CoalesceEntity();
         entity.initialize();
-        XsdSection section = entity.createSection("New Section");
+        CoalesceSection section = entity.createSection("New Section");
 
-        XsdRecordset recordset = XsdRecordset.create(section, "New Recordset", 0, 0);
+        CoalesceRecordset recordset = CoalesceRecordset.create(section, "New Recordset", 0, 0);
 
         assertNotNull(recordset);
         assertEquals(0, recordset.getMinRecords());
@@ -208,11 +208,11 @@ public class XsdRecordSetTest {
     @Test
     public void createMinMaxRecordsMinNegativeTest()
     {
-        XsdEntity entity = new XsdEntity();
+        CoalesceEntity entity = new CoalesceEntity();
         entity.initialize();
-        XsdSection section = entity.createSection("New Section");
+        CoalesceSection section = entity.createSection("New Section");
 
-        XsdRecordset recordset = XsdRecordset.create(section, "New Recordset", -1, 5);
+        CoalesceRecordset recordset = CoalesceRecordset.create(section, "New Recordset", -1, 5);
 
         assertNull(recordset);
 
@@ -221,11 +221,11 @@ public class XsdRecordSetTest {
     @Test
     public void createMinMaxRecordsMaxNegativeTest()
     {
-        XsdEntity entity = new XsdEntity();
+        CoalesceEntity entity = new CoalesceEntity();
         entity.initialize();
-        XsdSection section = entity.createSection("New Section");
+        CoalesceSection section = entity.createSection("New Section");
 
-        XsdRecordset recordset = XsdRecordset.create(section, "New Recordset", 0, -1);
+        CoalesceRecordset recordset = CoalesceRecordset.create(section, "New Recordset", 0, -1);
 
         assertNull(recordset);
 
@@ -234,11 +234,11 @@ public class XsdRecordSetTest {
     @Test
     public void createMinMaxRecordsMinGtMaxTest()
     {
-        XsdEntity entity = new XsdEntity();
+        CoalesceEntity entity = new CoalesceEntity();
         entity.initialize();
-        XsdSection section = entity.createSection("New Section");
+        CoalesceSection section = entity.createSection("New Section");
 
-        XsdRecordset recordset = XsdRecordset.create(section, "New Recordset", 10, 9);
+        CoalesceRecordset recordset = CoalesceRecordset.create(section, "New Recordset", 10, 9);
 
         assertNull(recordset);
 
@@ -248,7 +248,7 @@ public class XsdRecordSetTest {
     public void initializeNullParentTest()
     {
 
-        XsdRecordset recordset = new XsdRecordset();
+        CoalesceRecordset recordset = new CoalesceRecordset();
         recordset.initialize(null, new Recordset());
 
     }
@@ -256,11 +256,11 @@ public class XsdRecordSetTest {
     @Test(expected = NullArgumentException.class)
     public void initialzeNullRecordsetTest()
     {
-        XsdEntity entity = new XsdEntity();
+        CoalesceEntity entity = new CoalesceEntity();
         entity.initialize();
-        XsdSection section = entity.createSection("New Section");
+        CoalesceSection section = entity.createSection("New Section");
 
-        XsdRecordset recordset = new XsdRecordset();
+        CoalesceRecordset recordset = new CoalesceRecordset();
         recordset.initialize(section, null);
 
     }
@@ -269,7 +269,7 @@ public class XsdRecordSetTest {
     public void initializeNullBothTest()
     {
 
-        XsdRecordset recordset = new XsdRecordset();
+        CoalesceRecordset recordset = new CoalesceRecordset();
         recordset.initialize(null, null);
 
     }
@@ -277,9 +277,9 @@ public class XsdRecordSetTest {
     @Test
     public void keyTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdRecordset recordset = (XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertEquals("7A158E39-B6C4-4912-A712-DF296375A368", recordset.getKey());
 
@@ -300,9 +300,9 @@ public class XsdRecordSetTest {
     @Test
     public void nameTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdRecordset recordset = (XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertEquals("Mission Information Recordset", recordset.getName());
 
@@ -315,15 +315,15 @@ public class XsdRecordSetTest {
     @Test
     public void typeTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdRecordset recordset = (XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertEquals("recordset", recordset.getType());
 
-        XsdEntity newEntity = XsdEntity.create("Operation", "Portal", "1.2.3.4", "ID", "Type");
-        XsdSection newSection = XsdSection.create(newEntity, "Operation/New Section");
-        XsdRecordset newRecordset = XsdRecordset.create(newSection, "New Recordset");
+        CoalesceEntity newEntity = CoalesceEntity.create("Operation", "Portal", "1.2.3.4", "ID", "Type");
+        CoalesceSection newSection = CoalesceSection.create(newEntity, "Operation/New Section");
+        CoalesceRecordset newRecordset = CoalesceRecordset.create(newSection, "New Recordset");
 
         assertEquals("recordset", newRecordset.getType());
 
@@ -332,9 +332,9 @@ public class XsdRecordSetTest {
     @Test
     public void hasActiveRecordsNoRecoresTest()
     {
-        XsdEntity entity = XsdEntity.create("");
-        XsdSection section = XsdSection.create(entity, "Section");
-        XsdRecordset recordset = XsdRecordset.create(section, "Recordset");
+        CoalesceEntity entity = CoalesceEntity.create("");
+        CoalesceSection section = CoalesceSection.create(entity, "Section");
+        CoalesceRecordset recordset = CoalesceRecordset.create(section, "Recordset");
 
         assertFalse(recordset.getHasActiveRecords());
 
@@ -343,11 +343,11 @@ public class XsdRecordSetTest {
     @Test
     public void hasActiveRecordsNoActiveTest()
     {
-        XsdEntity entity = XsdEntity.create("");
-        XsdSection section = XsdSection.create(entity, "Section");
-        XsdRecordset recordset = XsdRecordset.create(section, "Recordset");
+        CoalesceEntity entity = CoalesceEntity.create("");
+        CoalesceSection section = CoalesceSection.create(entity, "Section");
+        CoalesceRecordset recordset = CoalesceRecordset.create(section, "Recordset");
 
-        XsdRecord record = recordset.addNew();
+        CoalesceRecord record = recordset.addNew();
         record.setStatus(ECoalesceDataObjectStatus.DELETED);
 
         record = recordset.addNew();
@@ -364,11 +364,11 @@ public class XsdRecordSetTest {
     @Test
     public void hasActiveRecordsSomeActiveTest()
     {
-        XsdEntity entity = XsdEntity.create("");
-        XsdSection section = XsdSection.create(entity, "Section");
-        XsdRecordset recordset = XsdRecordset.create(section, "Recordset");
+        CoalesceEntity entity = CoalesceEntity.create("");
+        CoalesceSection section = CoalesceSection.create(entity, "Section");
+        CoalesceRecordset recordset = CoalesceRecordset.create(section, "Recordset");
 
-        XsdRecord record = recordset.addNew();
+        CoalesceRecord record = recordset.addNew();
         record.setStatus(ECoalesceDataObjectStatus.DELETED);
 
         record = recordset.addNew();
@@ -388,13 +388,13 @@ public class XsdRecordSetTest {
     @Test
     public void hasRecordsTest()
     {
-        XsdEntity entity = XsdEntity.create("");
-        XsdSection section = XsdSection.create(entity, "Section");
-        XsdRecordset recordset = XsdRecordset.create(section, "Recordset");
+        CoalesceEntity entity = CoalesceEntity.create("");
+        CoalesceSection section = CoalesceSection.create(entity, "Section");
+        CoalesceRecordset recordset = CoalesceRecordset.create(section, "Recordset");
 
         assertFalse(recordset.getHasRecords());
 
-        XsdRecord record = recordset.addNew();
+        CoalesceRecord record = recordset.addNew();
         record.setStatus(ECoalesceDataObjectStatus.DELETED);
         record.setStatus(ECoalesceDataObjectStatus.UNKNOWN);
         assertTrue(recordset.getHasRecords());
@@ -404,9 +404,9 @@ public class XsdRecordSetTest {
     @Test
     public void noIndexTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdRecordset recordset = (XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertFalse(recordset.getNoIndex());
 
@@ -414,14 +414,14 @@ public class XsdRecordSetTest {
 
         String entityXml = entity.toXml();
 
-        XsdEntity desEntity = XsdEntity.create(entityXml);
-        XsdRecordset desRecordset = (XsdRecordset) desEntity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceEntity desEntity = CoalesceEntity.create(entityXml);
+        CoalesceRecordset desRecordset = (CoalesceRecordset) desEntity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertTrue(desRecordset.getNoIndex());
 
-        XsdEntity newEntity = XsdEntity.create("Operation", "Portal", "1.2.3.4", "ID", "Type");
-        XsdSection newSection = XsdSection.create(newEntity, "Operation/New Section");
-        XsdRecordset newRecordset = XsdRecordset.create(newSection, "New Recordset");
+        CoalesceEntity newEntity = CoalesceEntity.create("Operation", "Portal", "1.2.3.4", "ID", "Type");
+        CoalesceSection newSection = CoalesceSection.create(newEntity, "Operation/New Section");
+        CoalesceRecordset newRecordset = CoalesceRecordset.create(newSection, "New Recordset");
 
         assertFalse(newRecordset.getNoIndex());
 
@@ -430,9 +430,9 @@ public class XsdRecordSetTest {
     @Test
     public void DateCreatedTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdRecordset recordset = (XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertEquals(JodaDateTimeHelper.fromXmlDateTimeUTC("2014-05-02T14:33:51.8525751Z"), recordset.getDateCreated());
 
@@ -446,9 +446,9 @@ public class XsdRecordSetTest {
     @Test
     public void LastModifiedTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdRecordset recordset = (XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertEquals(JodaDateTimeHelper.fromXmlDateTimeUTC("2014-05-02T14:33:59.193995Z"), recordset.getLastModified());
 
@@ -462,8 +462,8 @@ public class XsdRecordSetTest {
     @Test
     public void createFieldDefinitionFullNullNameTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        XsdRecordset recordset = (XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertNull(recordset.createFieldDefinition(null, ECoalesceFieldDataTypes.StringType, "Label", "(U)", "Default"));
 
@@ -472,8 +472,8 @@ public class XsdRecordSetTest {
     @Test
     public void createFieldDefinitionFullEmptyNameTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        XsdRecordset recordset = (XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertNull(recordset.createFieldDefinition("", ECoalesceFieldDataTypes.StringType, "Label", "(U)", "Default"));
 
@@ -482,8 +482,8 @@ public class XsdRecordSetTest {
     @Test
     public void createFieldDefinitionFullWhiteSpaceNameTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        XsdRecordset recordset = (XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertNull(recordset.createFieldDefinition("   ", ECoalesceFieldDataTypes.StringType, "Label", "(U)", "Default"));
 
@@ -492,8 +492,8 @@ public class XsdRecordSetTest {
     @Test
     public void createFieldDefinitionFullNullDataTypeTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        XsdRecordset recordset = (XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertNull(recordset.createFieldDefinition("Field def", null, "Label", "(U)", "Default"));
 
@@ -502,8 +502,8 @@ public class XsdRecordSetTest {
     @Test
     public void createFieldDefinitionFullNullLabelTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        XsdRecordset recordset = (XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertNull(recordset.createFieldDefinition("Field def", ECoalesceFieldDataTypes.StringType, null, "(U)", "Default"));
 
@@ -512,8 +512,8 @@ public class XsdRecordSetTest {
     @Test
     public void createFieldDefinitionFullEmptyLabelTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        XsdRecordset recordset = (XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertNotNull(recordset.createFieldDefinition("Field def", ECoalesceFieldDataTypes.StringType, "", "(U)", "Default"));
 
@@ -522,8 +522,8 @@ public class XsdRecordSetTest {
     @Test
     public void createFieldDefinitionFullWhiteSpaceLabelTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        XsdRecordset recordset = (XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertNotNull(recordset.createFieldDefinition("Field def",
                                                       ECoalesceFieldDataTypes.StringType,
@@ -536,8 +536,8 @@ public class XsdRecordSetTest {
     @Test
     public void createFieldDefinitionFullNullDefaultClassTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        XsdRecordset recordset = (XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertNull(recordset.createFieldDefinition("Field def", ECoalesceFieldDataTypes.StringType, "Label", null, "Default"));
 
@@ -546,8 +546,8 @@ public class XsdRecordSetTest {
     @Test
     public void createFieldDefinitionFullEmptyDefaultClassTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        XsdRecordset recordset = (XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertNotNull(recordset.createFieldDefinition("Field def",
                                                       ECoalesceFieldDataTypes.StringType,
@@ -560,8 +560,8 @@ public class XsdRecordSetTest {
     @Test
     public void createFieldDefinitionFullWhiteSpaceDefaultClassTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        XsdRecordset recordset = (XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertNotNull(recordset.createFieldDefinition("Field def",
                                                       ECoalesceFieldDataTypes.StringType,
@@ -574,8 +574,8 @@ public class XsdRecordSetTest {
     @Test
     public void createFieldDefinitionFullNullDefaultValueTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        XsdRecordset recordset = (XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertNull(recordset.createFieldDefinition("Field def", ECoalesceFieldDataTypes.StringType, "Label", "(U)", null));
 
@@ -584,8 +584,8 @@ public class XsdRecordSetTest {
     @Test
     public void createFieldDefinitionFullEmptyDefaultValueTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        XsdRecordset recordset = (XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertNotNull(recordset.createFieldDefinition("Field def", ECoalesceFieldDataTypes.StringType, "Label", "(U)", ""));
 
@@ -594,8 +594,8 @@ public class XsdRecordSetTest {
     @Test
     public void createFieldDefinitionFullWhiteSpaceDefaultValueTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        XsdRecordset recordset = (XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertNotNull(recordset.createFieldDefinition("Field def", ECoalesceFieldDataTypes.StringType, "Label", "(U)", "   "));
 
@@ -604,8 +604,8 @@ public class XsdRecordSetTest {
     @Test
     public void getFieldDefinitionTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        XsdRecordset recordset = (XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertEquals("93C6A209-AD86-4474-9FFB-D6801B2548AA", recordset.getFieldDefinition("ActionNumber").getKey());
         assertEquals("1EF2E901-DDD8-4C38-A5BF-858CB13F9562", recordset.getFieldDefinition("MissionAddress").getKey());
@@ -617,8 +617,8 @@ public class XsdRecordSetTest {
     @Test
     public void getCountTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        XsdRecordset recordset = (XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertEquals(1, recordset.getCount());
 
@@ -631,30 +631,30 @@ public class XsdRecordSetTest {
     @Test
     public void containsTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        XsdRecordset recordset = (XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
-        XsdRecord existingRecord = (XsdRecord) recordset.getDataObjectForNamePath("Mission Information Recordset/Mission Information Recordset Record");
+        CoalesceRecord existingRecord = (CoalesceRecord) recordset.getDataObjectForNamePath("Mission Information Recordset/Mission Information Recordset Record");
 
-        XsdRecord newRecord = recordset.addNew();
+        CoalesceRecord newRecord = recordset.addNew();
 
         assertTrue(recordset.contains(existingRecord));
         assertTrue(recordset.contains(newRecord));
-        assertFalse(recordset.contains(new XsdRecord()));
+        assertFalse(recordset.contains(new CoalesceRecord()));
 
     }
 
     @Test
     public void addNewTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        XsdRecordset recordset = (XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
-        List<XsdRecord> records = recordset.getRecords();
+        List<CoalesceRecord> records = recordset.getRecords();
 
         assertEquals(1, records.size());
 
-        XsdRecord newRecord = recordset.addNew();
+        CoalesceRecord newRecord = recordset.addNew();
 
         assertEquals(2, records.size());
         assertEquals(recordset, newRecord.getParent());
@@ -665,12 +665,12 @@ public class XsdRecordSetTest {
     @Test
     public void getItemTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        XsdRecordset recordset = (XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
-        XsdRecord existingRecord = (XsdRecord) recordset.getDataObjectForNamePath("Mission Information Recordset/Mission Information Recordset Record");
+        CoalesceRecord existingRecord = (CoalesceRecord) recordset.getDataObjectForNamePath("Mission Information Recordset/Mission Information Recordset Record");
 
-        XsdRecord newRecord = recordset.addNew();
+        CoalesceRecord newRecord = recordset.addNew();
 
         assertEquals(existingRecord, recordset.GetItem(0));
         assertEquals(newRecord, recordset.GetItem(1));
@@ -680,8 +680,8 @@ public class XsdRecordSetTest {
     @Test(expected = IndexOutOfBoundsException.class)
     public void getItemNegativeTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        XsdRecordset recordset = (XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         recordset.GetItem(-1);
 
@@ -690,11 +690,11 @@ public class XsdRecordSetTest {
     @Test(expected = IndexOutOfBoundsException.class)
     public void getItemGreaterTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        XsdRecordset recordset = (XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         @SuppressWarnings("unused")
-        XsdRecord newRecord = recordset.addNew();
+        CoalesceRecord newRecord = recordset.addNew();
 
         recordset.GetItem(2);
 
@@ -703,12 +703,12 @@ public class XsdRecordSetTest {
     @Test
     public void removeAtTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        XsdRecordset recordset = (XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
-        XsdRecord existingRecord = (XsdRecord) recordset.getDataObjectForNamePath("Mission Information Recordset/Mission Information Recordset Record");
+        CoalesceRecord existingRecord = (CoalesceRecord) recordset.getDataObjectForNamePath("Mission Information Recordset/Mission Information Recordset Record");
 
-        XsdRecord newRecord = recordset.addNew();
+        CoalesceRecord newRecord = recordset.addNew();
 
         assertTrue(recordset.contains(existingRecord));
         assertTrue(recordset.contains(newRecord));
@@ -735,12 +735,12 @@ public class XsdRecordSetTest {
     @Test
     public void removeTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        XsdRecordset recordset = (XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
-        XsdRecord existingRecord = (XsdRecord) recordset.getDataObjectForNamePath("Mission Information Recordset/Mission Information Recordset Record");
+        CoalesceRecord existingRecord = (CoalesceRecord) recordset.getDataObjectForNamePath("Mission Information Recordset/Mission Information Recordset Record");
 
-        XsdRecord newRecord = recordset.addNew();
+        CoalesceRecord newRecord = recordset.addNew();
 
         assertTrue(recordset.contains(existingRecord));
         assertTrue(recordset.contains(newRecord));
@@ -767,12 +767,12 @@ public class XsdRecordSetTest {
     @Test
     public void changeRecordStatusTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        XsdRecordset recordset = (XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
-        XsdRecord existingRecord = (XsdRecord) recordset.getDataObjectForNamePath("Mission Information Recordset/Mission Information Recordset Record");
+        CoalesceRecord existingRecord = (CoalesceRecord) recordset.getDataObjectForNamePath("Mission Information Recordset/Mission Information Recordset Record");
 
-        XsdRecord newRecord = recordset.addNew();
+        CoalesceRecord newRecord = recordset.addNew();
 
         assertTrue(recordset.getHasActiveRecords());
         assertTrue(recordset.getHasRecords());

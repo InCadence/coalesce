@@ -64,16 +64,16 @@ public class XsdEntityTest {
     public void createFromXmlTest()
     {
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         String title = entity.getTitle();
         assertEquals("NORTHCOM Volunteer Background Checks Changed, NORTHCOM Volunteer Background Checks", title);
         assertEquals(4, entity.getLinkages().values().size());
         assertEquals(2, entity.getSections().size());
         assertEquals(1,
-                     ((XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH)).getCount());
+                     ((CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH)).getCount());
         assertEquals(17,
-                     ((XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH)).getFieldDefinitions().size());
+                     ((CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH)).getFieldDefinitions().size());
         assertEquals(17,
                      entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORD_PATH).getChildDataObjects().size());
     }
@@ -81,7 +81,7 @@ public class XsdEntityTest {
     @Test
     public void createFromXmlEmptyTest()
     {
-        XsdEntity entity = XsdEntity.create("");
+        CoalesceEntity entity = CoalesceEntity.create("");
 
         assertEmptyEntity(entity);
 
@@ -90,7 +90,7 @@ public class XsdEntityTest {
     @Test
     public void createFromXmlWhitespaceTest()
     {
-        XsdEntity entity = XsdEntity.create("  ");
+        CoalesceEntity entity = CoalesceEntity.create("  ");
 
         assertEmptyEntity(entity);
 
@@ -99,7 +99,7 @@ public class XsdEntityTest {
     @Test
     public void createFromXmlNullTest()
     {
-        XsdEntity entity = XsdEntity.create(null);
+        CoalesceEntity entity = CoalesceEntity.create(null);
 
         assertEmptyEntity(entity);
     }
@@ -107,7 +107,7 @@ public class XsdEntityTest {
     @Test
     public void createFromXmlInvalidXmlTest()
     {
-        XsdEntity entity = XsdEntity.create("invalid format");
+        CoalesceEntity entity = CoalesceEntity.create("invalid format");
 
         assertNull(entity);
 
@@ -116,7 +116,7 @@ public class XsdEntityTest {
     @Test
     public void createFromXmlWithTitleNullTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION, null);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION, null);
 
         assertEquals("TREX Portal", entity.getTitle());
     }
@@ -124,7 +124,7 @@ public class XsdEntityTest {
     @Test
     public void createFromXmlWithTitleEmptyStringTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION, "");
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION, "");
 
         assertEquals("TREX Portal", entity.getTitle());
     }
@@ -132,7 +132,7 @@ public class XsdEntityTest {
     @Test
     public void createFromXmlWithTitleWhiteSpaceTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION, "   ");
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION, "   ");
 
         assertEquals("TREX Portal", entity.getTitle());
     }
@@ -140,17 +140,17 @@ public class XsdEntityTest {
     @Test
     public void createFromXmlWithTitleNewXpathTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION,
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION,
                                             "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionName");
 
-        assertEquals(((XsdField<?>) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH)).getBaseValue(),
+        assertEquals(((CoalesceField<?>) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH)).getBaseValue(),
                      entity.getTitle());
     }
 
     @Test
     public void createFromXmlWithTitleNewTitleTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION, "New Mission Title");
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION, "New Mission Title");
 
         assertEquals("New Mission Title", entity.getTitle());
     }
@@ -158,7 +158,7 @@ public class XsdEntityTest {
     @Test
     public void createDetailedWithoutTitleTest()
     {
-        XsdEntity entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", "Entity Id", "Entity Type");
+        CoalesceEntity entity = CoalesceEntity.create("Operation", "Portal", "1.1.1.1", "Entity Id", "Entity Type");
 
         assertEmptyEntity(entity);
 
@@ -175,7 +175,7 @@ public class XsdEntityTest {
     @Test
     public void createDetailedWithoutTitleNullNameTest()
     {
-        XsdEntity entity = XsdEntity.create(null, "Portal", "1.1.1.1", "Entity Id", "Entity Type");
+        CoalesceEntity entity = CoalesceEntity.create(null, "Portal", "1.1.1.1", "Entity Id", "Entity Type");
 
         assertEmptyEntity(entity);
 
@@ -192,7 +192,7 @@ public class XsdEntityTest {
     @Test
     public void createDetailedWithoutTitleNullSourceTest()
     {
-        XsdEntity entity = XsdEntity.create("Operation", null, "1.1.1.1", "Entity Id", "Entity Type");
+        CoalesceEntity entity = CoalesceEntity.create("Operation", null, "1.1.1.1", "Entity Id", "Entity Type");
 
         assertEmptyEntity(entity);
 
@@ -209,7 +209,7 @@ public class XsdEntityTest {
     @Test
     public void createDetailedWithoutTitleNullVersionTest()
     {
-        XsdEntity entity = XsdEntity.create("Operation", "Portal", null, "Entity Id", "Entity Type");
+        CoalesceEntity entity = CoalesceEntity.create("Operation", "Portal", null, "Entity Id", "Entity Type");
 
         assertEmptyEntity(entity);
 
@@ -226,7 +226,7 @@ public class XsdEntityTest {
     @Test
     public void createDetailedWithoutTitleNullEntityIdTest()
     {
-        XsdEntity entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", null, "Entity Type");
+        CoalesceEntity entity = CoalesceEntity.create("Operation", "Portal", "1.1.1.1", null, "Entity Type");
 
         assertEmptyEntity(entity);
 
@@ -243,7 +243,7 @@ public class XsdEntityTest {
     @Test
     public void createDetailedWithoutTitleNullEntityTypeTest()
     {
-        XsdEntity entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", "Entity Id", null);
+        CoalesceEntity entity = CoalesceEntity.create("Operation", "Portal", "1.1.1.1", "Entity Id", null);
 
         assertEmptyEntity(entity);
 
@@ -260,7 +260,7 @@ public class XsdEntityTest {
     @Test
     public void createDetailedWithTitleTest()
     {
-        XsdEntity entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", "Entity Id", "Entity Type", "A New Title");
+        CoalesceEntity entity = CoalesceEntity.create("Operation", "Portal", "1.1.1.1", "Entity Id", "Entity Type", "A New Title");
 
         assertEmptyEntity(entity);
 
@@ -277,7 +277,7 @@ public class XsdEntityTest {
     @Test
     public void createDetailedWithTitleNullNameTest()
     {
-        XsdEntity entity = XsdEntity.create(null, "Portal", "1.1.1.1", "Entity Id", "Entity Type", "A New Title");
+        CoalesceEntity entity = CoalesceEntity.create(null, "Portal", "1.1.1.1", "Entity Id", "Entity Type", "A New Title");
 
         assertEmptyEntity(entity);
 
@@ -294,7 +294,7 @@ public class XsdEntityTest {
     @Test
     public void createDetailedWithTitleNullSourceTest()
     {
-        XsdEntity entity = XsdEntity.create("Operation", null, "1.1.1.1", "Entity Id", "Entity Type", "A New Title");
+        CoalesceEntity entity = CoalesceEntity.create("Operation", null, "1.1.1.1", "Entity Id", "Entity Type", "A New Title");
 
         assertEmptyEntity(entity);
 
@@ -311,7 +311,7 @@ public class XsdEntityTest {
     @Test
     public void createDetailedWithTitleNullVersionTest()
     {
-        XsdEntity entity = XsdEntity.create("Operation", "Portal", null, "Entity Id", "Entity Type", "A New Title");
+        CoalesceEntity entity = CoalesceEntity.create("Operation", "Portal", null, "Entity Id", "Entity Type", "A New Title");
 
         assertEmptyEntity(entity);
 
@@ -328,7 +328,7 @@ public class XsdEntityTest {
     @Test
     public void createDetailedWithTitleNullEntityIdTest()
     {
-        XsdEntity entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", null, "Entity Type", "A New Title");
+        CoalesceEntity entity = CoalesceEntity.create("Operation", "Portal", "1.1.1.1", null, "Entity Type", "A New Title");
 
         assertEmptyEntity(entity);
 
@@ -345,7 +345,7 @@ public class XsdEntityTest {
     @Test
     public void createDetailedWithTitleNullEntityTypeTest()
     {
-        XsdEntity entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", "Entity Id", null, "A New Title");
+        CoalesceEntity entity = CoalesceEntity.create("Operation", "Portal", "1.1.1.1", "Entity Id", null, "A New Title");
 
         assertEmptyEntity(entity);
 
@@ -362,7 +362,7 @@ public class XsdEntityTest {
     @Test
     public void createDetailedWithTitleNullTitleTest()
     {
-        XsdEntity entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", "Entity Id", "Entity Id Type", null);
+        CoalesceEntity entity = CoalesceEntity.create("Operation", "Portal", "1.1.1.1", "Entity Id", "Entity Id Type", null);
 
         assertEmptyEntity(entity);
 
@@ -379,7 +379,7 @@ public class XsdEntityTest {
     @Test
     public void createDetailedWithTitleEmptyTitleTest()
     {
-        XsdEntity entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", "Entity Id", "Entity Id Type", "");
+        CoalesceEntity entity = CoalesceEntity.create("Operation", "Portal", "1.1.1.1", "Entity Id", "Entity Id Type", "");
 
         assertEmptyEntity(entity);
 
@@ -396,7 +396,7 @@ public class XsdEntityTest {
     @Test
     public void createDetailedWithTitleWhiteSpaceTitleTest()
     {
-        XsdEntity entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", "Entity Id", "Entity Id Type", "   ");
+        CoalesceEntity entity = CoalesceEntity.create("Operation", "Portal", "1.1.1.1", "Entity Id", "Entity Id Type", "   ");
 
         assertEmptyEntity(entity);
 
@@ -415,7 +415,7 @@ public class XsdEntityTest {
     {
 
         // Create Entity
-        XsdEntity entity = XsdEntity.create("TREXOperation",
+        CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "",
@@ -434,19 +434,19 @@ public class XsdEntityTest {
         assertTrue(entity.getLinkageSection().getName().equalsIgnoreCase("linkages"));
 
         // Create Live Status Section
-        XsdSection liveSection = XsdSection.create(entity, "Live Status Section", true);
-        XsdRecordset liveRecordSet = XsdRecordset.create(liveSection, "Live Status Recordset");
+        CoalesceSection liveSection = CoalesceSection.create(entity, "Live Status Section", true);
+        CoalesceRecordset liveRecordSet = CoalesceRecordset.create(liveSection, "Live Status Recordset");
 
         // Verify Live Status Section Creation
         assertTrue(entity.getSection("TREXOperation/Live Status Section").getName().equalsIgnoreCase("Live Status Section"));
 
-        XsdFieldDefinition.create(liveRecordSet, "CurrentStatus", ECoalesceFieldDataTypes.StringType);
+        CoalesceFieldDefinition.create(liveRecordSet, "CurrentStatus", ECoalesceFieldDataTypes.StringType);
 
         // Create Information Section
-        XsdSection informationSection = XsdSection.create(entity, "Operation Information Section", true);
-        XsdRecordset informationRecordSet = XsdRecordset.create(informationSection, "Operation Information Recordset");
+        CoalesceSection informationSection = CoalesceSection.create(entity, "Operation Information Section", true);
+        CoalesceRecordset informationRecordSet = CoalesceRecordset.create(informationSection, "Operation Information Recordset");
 
-        XsdFieldDefinition.create(informationRecordSet, "OperationName", ECoalesceFieldDataTypes.StringType);
+        CoalesceFieldDefinition.create(informationRecordSet, "OperationName", ECoalesceFieldDataTypes.StringType);
 
         // Verify Information Section Creation
         assertNotNull(entity.getSection("TREXOperation/Operation Information Section"));
@@ -455,7 +455,7 @@ public class XsdEntityTest {
         String entityXml = entity.toXml();
 
         // Deserialize
-        XsdEntity entity2 = new XsdEntity();
+        CoalesceEntity entity2 = new CoalesceEntity();
         assertTrue(entity2.initialize(entityXml));
 
         // Verify Custom Attribute
@@ -480,7 +480,7 @@ public class XsdEntityTest {
     {
 
         // Create Entity
-        XsdEntity entity = XsdEntity.create("TREXOperation",
+        CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "",
@@ -496,8 +496,8 @@ public class XsdEntityTest {
         assertTrue(entity.getLinkageSection().getName().equalsIgnoreCase("linkages"));
 
         // Create Live Status Section
-        XsdSection liveSection = entity.createSection("Live Status Section", true);
-        XsdRecordset liveRecordSet = liveSection.createRecordset("Live Status Recordset");
+        CoalesceSection liveSection = entity.createSection("Live Status Section", true);
+        CoalesceRecordset liveRecordSet = liveSection.createRecordset("Live Status Recordset");
 
         // Verify Live Status Section Creation
         assertTrue(entity.getSection("TREXOperation/Live Status Section").getName().equalsIgnoreCase("Live Status Section"));
@@ -505,8 +505,8 @@ public class XsdEntityTest {
         liveRecordSet.createFieldDefinition("CurrentStatus", ECoalesceFieldDataTypes.StringType);
 
         // Create Information Section
-        XsdSection informationSection = entity.createSection("Operation Information Section", true);
-        XsdRecordset informationRecordSet = informationSection.createRecordset("Operation Information Recordset");
+        CoalesceSection informationSection = entity.createSection("Operation Information Section", true);
+        CoalesceRecordset informationRecordSet = informationSection.createRecordset("Operation Information Recordset");
 
         informationRecordSet.createFieldDefinition("OperationName", ECoalesceFieldDataTypes.StringType);
 
@@ -517,7 +517,7 @@ public class XsdEntityTest {
         String entityXml = entity.toXml();
 
         // Deserialize
-        XsdEntity entity2 = new XsdEntity();
+        CoalesceEntity entity2 = new CoalesceEntity();
         assertTrue(entity2.initialize(entityXml));
 
         // Verify Custom Attribute
@@ -541,7 +541,7 @@ public class XsdEntityTest {
     public void initializeFromXmlTest()
     {
 
-        XsdEntity entity = new XsdEntity();
+        CoalesceEntity entity = new CoalesceEntity();
 
         assertTrue(entity.initialize(CoalesceTypeInstances.TEST_MISSION));
 
@@ -550,9 +550,9 @@ public class XsdEntityTest {
         assertEquals(4, entity.getLinkages().values().size());
         assertEquals(2, entity.getSections().size());
         assertEquals(1,
-                     ((XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH)).getCount());
+                     ((CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH)).getCount());
         assertEquals(17,
-                     ((XsdRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH)).getFieldDefinitions().size());
+                     ((CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH)).getFieldDefinitions().size());
         assertEquals(17,
                      entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORD_PATH).getChildDataObjects().size());
     }
@@ -560,7 +560,7 @@ public class XsdEntityTest {
     @Test
     public void initializeFromXmlEmptyTest()
     {
-        XsdEntity entity = new XsdEntity();
+        CoalesceEntity entity = new CoalesceEntity();
 
         assertTrue(entity.initialize(""));
 
@@ -571,7 +571,7 @@ public class XsdEntityTest {
     @Test
     public void initializeFromXmlWhitespaceTest()
     {
-        XsdEntity entity = new XsdEntity();
+        CoalesceEntity entity = new CoalesceEntity();
 
         assertTrue(entity.initialize("  "));
 
@@ -582,7 +582,7 @@ public class XsdEntityTest {
     @Test
     public void initializeFromXmlNullTest()
     {
-        XsdEntity entity = new XsdEntity();
+        CoalesceEntity entity = new CoalesceEntity();
 
         assertTrue(entity.initialize(""));
 
@@ -592,7 +592,7 @@ public class XsdEntityTest {
     @Test
     public void initializeFromXmlInvalidXmlTest()
     {
-        XsdEntity entity = new XsdEntity();
+        CoalesceEntity entity = new CoalesceEntity();
 
         assertFalse(entity.initialize("invalid format"));
 
@@ -602,7 +602,7 @@ public class XsdEntityTest {
     public void initializeTest()
     {
 
-        XsdEntity entity = new XsdEntity();
+        CoalesceEntity entity = new CoalesceEntity();
 
         assertTrue(entity.initialize());
 
@@ -613,7 +613,7 @@ public class XsdEntityTest {
     @Test
     public void getKeyFromXmlTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         assertEquals("62857EF8-3930-4F0E-BAE3-093344EBF389", entity.getKey());
 
@@ -622,7 +622,7 @@ public class XsdEntityTest {
     @Test
     public void getKeyNewTest()
     {
-        XsdEntity entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
+        CoalesceEntity entity = CoalesceEntity.create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
 
         assertNotNull(GUIDHelper.isValid(entity.getKey()));
 
@@ -631,7 +631,7 @@ public class XsdEntityTest {
     @Test
     public void getNameFromXmlTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         assertEquals("TREXMission", entity.getName());
 
@@ -640,7 +640,7 @@ public class XsdEntityTest {
     @Test
     public void getNameNewTest()
     {
-        XsdEntity entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
+        CoalesceEntity entity = CoalesceEntity.create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
 
         assertEquals("Operation", entity.getName());
 
@@ -649,7 +649,7 @@ public class XsdEntityTest {
     @Test
     public void setNameFromXmlTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         entity.setName("Other Name");
 
@@ -660,7 +660,7 @@ public class XsdEntityTest {
     @Test
     public void setNameNewTest()
     {
-        XsdEntity entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
+        CoalesceEntity entity = CoalesceEntity.create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
 
         entity.setName("Other Name");
 
@@ -671,7 +671,7 @@ public class XsdEntityTest {
     @Test
     public void getTypeFromXmlTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         assertEquals("entity", entity.getType());
 
@@ -680,7 +680,7 @@ public class XsdEntityTest {
     @Test
     public void getTypeNewTest()
     {
-        XsdEntity entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
+        CoalesceEntity entity = CoalesceEntity.create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
 
         assertEquals("entity", entity.getType());
 
@@ -689,7 +689,7 @@ public class XsdEntityTest {
     @Test
     public void getSourceFromXmlTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         assertEquals("TREX Portal", entity.getSource());
 
@@ -698,7 +698,7 @@ public class XsdEntityTest {
     @Test
     public void getSourceNewTest()
     {
-        XsdEntity entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
+        CoalesceEntity entity = CoalesceEntity.create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
 
         assertEquals("Portal", entity.getSource());
 
@@ -707,7 +707,7 @@ public class XsdEntityTest {
     @Test
     public void setSourceFromXmlTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         entity.setSource("New Source");
 
@@ -718,7 +718,7 @@ public class XsdEntityTest {
     @Test
     public void setSourceNewTest()
     {
-        XsdEntity entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
+        CoalesceEntity entity = CoalesceEntity.create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
 
         entity.setSource("New Source");
 
@@ -729,7 +729,7 @@ public class XsdEntityTest {
     @Test
     public void getVersionFromXmlTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         assertEquals("1.0.0.0", entity.getVersion());
 
@@ -738,7 +738,7 @@ public class XsdEntityTest {
     @Test
     public void getVersionNewTest()
     {
-        XsdEntity entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
+        CoalesceEntity entity = CoalesceEntity.create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
 
         assertEquals("1.1.1.1", entity.getVersion());
 
@@ -747,7 +747,7 @@ public class XsdEntityTest {
     @Test
     public void setVersionFromXmlTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         entity.setVersion("2.3.4.5");
 
@@ -758,7 +758,7 @@ public class XsdEntityTest {
     @Test
     public void setVersionNewTest()
     {
-        XsdEntity entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
+        CoalesceEntity entity = CoalesceEntity.create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
 
         entity.setVersion("2.3.4.5");
 
@@ -769,7 +769,7 @@ public class XsdEntityTest {
     @Test
     public void getEntityIdFromXmlTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         assertEquals("", entity.getEntityId());
 
@@ -778,7 +778,7 @@ public class XsdEntityTest {
     @Test
     public void getEntityIdNewTest()
     {
-        XsdEntity entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
+        CoalesceEntity entity = CoalesceEntity.create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
 
         assertEquals("Entity ID", entity.getEntityId());
 
@@ -787,7 +787,7 @@ public class XsdEntityTest {
     @Test
     public void setEntityIdFromXmlTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         entity.setEntityId("New Entity ID");
 
@@ -798,7 +798,7 @@ public class XsdEntityTest {
     @Test
     public void setEntityIdNewTest()
     {
-        XsdEntity entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
+        CoalesceEntity entity = CoalesceEntity.create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
 
         entity.setEntityId("New Entity ID");
 
@@ -809,7 +809,7 @@ public class XsdEntityTest {
     @Test
     public void getEntityIdTypeFromXmlTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         assertEquals("", entity.getEntityIdType());
 
@@ -818,7 +818,7 @@ public class XsdEntityTest {
     @Test
     public void getEntityIdTypeNewTest()
     {
-        XsdEntity entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
+        CoalesceEntity entity = CoalesceEntity.create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
 
         assertEquals("Entity Id Type", entity.getEntityIdType());
 
@@ -827,7 +827,7 @@ public class XsdEntityTest {
     @Test
     public void setEntityIdTypeFromXmlTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         entity.setEntityIdType("New Entity Id Type");
 
@@ -838,7 +838,7 @@ public class XsdEntityTest {
     @Test
     public void setEntityIdTypeNewTest()
     {
-        XsdEntity entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
+        CoalesceEntity entity = CoalesceEntity.create("Operation", "Portal", "1.1.1.1", "Entity ID", "Entity Id Type");
 
         assertEquals("Entity Id Type", entity.getEntityIdType());
 
@@ -847,7 +847,7 @@ public class XsdEntityTest {
     @Test
     public void getTitleXPathInvalidTest()
     {
-        XsdEntity entity = XsdEntity.create("Operation",
+        CoalesceEntity entity = CoalesceEntity.create("Operation",
                                             "Portal",
                                             "1.1.1.1",
                                             "Entity Id",
@@ -864,7 +864,7 @@ public class XsdEntityTest {
     public void getTitleWithoutXpathTest()
     {
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_XPATH_TITLE);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_XPATH_TITLE);
 
         String title = entity.getTitle();
 
@@ -875,10 +875,10 @@ public class XsdEntityTest {
     @Test
     public void getTitleUpdateThatUsesXpathTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> missionName = (XsdField<?>) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
-        XsdField<?> incidentTitle = (XsdField<?>) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_INCIDENT_TITLE_PATH);
+        CoalesceField<?> missionName = (CoalesceField<?>) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+        CoalesceField<?> incidentTitle = (CoalesceField<?>) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_INCIDENT_TITLE_PATH);
 
         missionName.setBaseValue("Mission Name");
         incidentTitle.setBaseValue("Incident Title");
@@ -891,7 +891,7 @@ public class XsdEntityTest {
     @Test
     public void setTitleThatDoesNotUseXpathTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_XPATH_TITLE);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_XPATH_TITLE);
 
         entity.setTitle("Mission Entity Title");
 
@@ -901,7 +901,7 @@ public class XsdEntityTest {
     @Test
     public void setTitleThatUsesXpathTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         entity.setTitle("Mission Entity Title");
 
@@ -911,7 +911,7 @@ public class XsdEntityTest {
     @Test
     public void getDateCreatedFromXmlTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         assertEquals(JodaDateTimeHelper.fromXmlDateTimeUTC("2014-05-02T14:33:51.851575Z"), entity.getDateCreated());
 
@@ -920,7 +920,7 @@ public class XsdEntityTest {
     @Test
     public void getDateCreatedNewTest()
     {
-        XsdEntity entity = new XsdEntity();
+        CoalesceEntity entity = new CoalesceEntity();
         entity.initialize();
 
         DateTime now = JodaDateTimeHelper.nowInUtc();
@@ -931,7 +931,7 @@ public class XsdEntityTest {
     @Test
     public void setDateCreatedFromXmlTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         DateTime now = JodaDateTimeHelper.nowInUtc();
 
@@ -944,7 +944,7 @@ public class XsdEntityTest {
     @Test
     public void setDateCreatedNewTest()
     {
-        XsdEntity entity = new XsdEntity();
+        CoalesceEntity entity = new CoalesceEntity();
         entity.initialize();
 
         DateTime sixDaysAgo = JodaDateTimeHelper.nowInUtc().minusDays(6);
@@ -957,7 +957,7 @@ public class XsdEntityTest {
     @Test
     public void getLastModifiedFromXmlTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         assertEquals(JodaDateTimeHelper.fromXmlDateTimeUTC("2014-05-20T16:17:13.2293139Z"), entity.getLastModified());
 
@@ -966,7 +966,7 @@ public class XsdEntityTest {
     @Test
     public void getLastModifiedNewTest()
     {
-        XsdEntity entity = new XsdEntity();
+        CoalesceEntity entity = new CoalesceEntity();
         entity.initialize();
 
         DateTime now = JodaDateTimeHelper.nowInUtc();
@@ -977,7 +977,7 @@ public class XsdEntityTest {
     @Test
     public void setLastModifiedFromXmlTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         DateTime now = JodaDateTimeHelper.nowInUtc();
 
@@ -990,7 +990,7 @@ public class XsdEntityTest {
     @Test
     public void setLastModifiedNewTest()
     {
-        XsdEntity entity = new XsdEntity();
+        CoalesceEntity entity = new CoalesceEntity();
         entity.initialize();
 
         DateTime sixDaysAgo = JodaDateTimeHelper.nowInUtc().minusDays(6);
@@ -1003,7 +1003,7 @@ public class XsdEntityTest {
     @Test
     public void arbitraryAttributesTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         String entityXml = entity.toXml();
 
@@ -1015,9 +1015,9 @@ public class XsdEntityTest {
     @Test
     public void getLinkagesFromXmlTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        Map<String, XsdLinkage> linkages = entity.getLinkages();
+        Map<String, CoalesceLinkage> linkages = entity.getLinkages();
 
         assertEquals(4, linkages.size());
 
@@ -1042,24 +1042,24 @@ public class XsdEntityTest {
     @Test
     public void getLinkagesNewTest()
     {
-        XsdEntity entity = new XsdEntity();
+        CoalesceEntity entity = new CoalesceEntity();
         entity.initialize();
 
-        XsdEntity entity2 = new XsdEntity();
+        CoalesceEntity entity2 = new CoalesceEntity();
         entity2.initialize();
 
-        XsdEntity entity3 = new XsdEntity();
+        CoalesceEntity entity3 = new CoalesceEntity();
         entity3.initialize();
 
         assertTrue(EntityLinkHelper.linkEntities(entity, ELinkTypes.HasUseOf, entity2, false));
         assertTrue(EntityLinkHelper.linkEntities(entity, ELinkTypes.IsParentOf, entity3, false));
         assertTrue(EntityLinkHelper.linkEntities(entity2, ELinkTypes.WasCreatedBy, entity, false));
 
-        Map<String, XsdLinkage> linkages = entity.getLinkages();
+        Map<String, CoalesceLinkage> linkages = entity.getLinkages();
 
         assertEquals(3, linkages.size());
 
-        for (XsdLinkage linkage : linkages.values())
+        for (CoalesceLinkage linkage : linkages.values())
         {
             switch (linkage.getLinkType()) {
             case HasUseOf:
@@ -1093,7 +1093,7 @@ public class XsdEntityTest {
     public void createNewEntityTemplateTest() throws SAXException, IOException
     {
         // Test Entity
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         // Run Test
         CoalesceEntityTemplateTest.testTemplate(entity.createNewEntityTemplate());
@@ -1104,7 +1104,7 @@ public class XsdEntityTest {
     public void createSectionTest()
     {
         // Create Entity
-        XsdEntity entity = XsdEntity.create("TREXOperation",
+        CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "",
@@ -1114,7 +1114,7 @@ public class XsdEntityTest {
         // Create Live Status Section
         assertNull(entity.getSection("TREXOperation/Live Status Section"));
 
-        XsdSection liveSection = entity.createSection("Live Status Section");
+        CoalesceSection liveSection = entity.createSection("Live Status Section");
         assertEquals(liveSection, entity.getSection("TREXOperation/Live Status Section"));
         assertFalse(liveSection.getNoIndex());
     }
@@ -1123,7 +1123,7 @@ public class XsdEntityTest {
     public void createSectionExistingNoIndexTrueTest()
     {
         // Create Entity
-        XsdEntity entity = XsdEntity.create("TREXOperation",
+        CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "",
@@ -1133,11 +1133,11 @@ public class XsdEntityTest {
         // Create Live Status Section
         assertNull(entity.getSection("TREXOperation/Live Status Section"));
 
-        XsdSection liveSection = entity.createSection("Live Status Section", true);
+        CoalesceSection liveSection = entity.createSection("Live Status Section", true);
         assertEquals(liveSection, entity.getSection("TREXOperation/Live Status Section"));
         assertTrue(liveSection.getNoIndex());
 
-        XsdSection liveSection2 = entity.createSection("Live Status Section");
+        CoalesceSection liveSection2 = entity.createSection("Live Status Section");
         assertEquals(liveSection2, entity.getSection("TREXOperation/Live Status Section"));
         assertEquals(liveSection, liveSection2);
         assertFalse(liveSection.getNoIndex());
@@ -1149,11 +1149,11 @@ public class XsdEntityTest {
     public void createSectionFromXmlTest()
     {
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         assertNull(entity.getSection("TREXMission/A New Section"));
 
-        XsdSection newSection = entity.createSection("A New Section");
+        CoalesceSection newSection = entity.createSection("A New Section");
 
         assertNotNull(newSection);
         assertEquals(newSection, entity.getSection("TREXMission/A New Section"));
@@ -1165,7 +1165,7 @@ public class XsdEntityTest {
     public void createSectionWithNoIndexFalseTest()
     {
         // Create Entity
-        XsdEntity entity = XsdEntity.create("TREXOperation",
+        CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "",
@@ -1175,7 +1175,7 @@ public class XsdEntityTest {
         // Create Live Status Section
         assertNull(entity.getSection("TREXOperation/Live Status Section"));
 
-        XsdSection liveSection = entity.createSection("Live Status Section", false);
+        CoalesceSection liveSection = entity.createSection("Live Status Section", false);
         assertEquals(liveSection, entity.getSection("TREXOperation/Live Status Section"));
         assertFalse(liveSection.getNoIndex());
     }
@@ -1184,7 +1184,7 @@ public class XsdEntityTest {
     public void createSectionWithNoIndexTrueTest()
     {
         // Create Entity
-        XsdEntity entity = XsdEntity.create("TREXOperation",
+        CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "",
@@ -1194,7 +1194,7 @@ public class XsdEntityTest {
         // Create Live Status Section
         assertNull(entity.getSection("TREXOperation/Live Status Section"));
 
-        XsdSection liveSection = entity.createSection("Live Status Section", true);
+        CoalesceSection liveSection = entity.createSection("Live Status Section", true);
         assertEquals(liveSection, entity.getSection("TREXOperation/Live Status Section"));
         assertTrue(liveSection.getNoIndex());
 
@@ -1204,7 +1204,7 @@ public class XsdEntityTest {
     public void createSectionWithNoIndexTrueForExistingNoIndexFalseTest()
     {
         // Create Entity
-        XsdEntity entity = XsdEntity.create("TREXOperation",
+        CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "",
@@ -1214,11 +1214,11 @@ public class XsdEntityTest {
         // Create Live Status Section
         assertNull(entity.getSection("TREXOperation/Live Status Section"));
 
-        XsdSection liveSection = entity.createSection("Live Status Section", false);
+        CoalesceSection liveSection = entity.createSection("Live Status Section", false);
         assertEquals(liveSection, entity.getSection("TREXOperation/Live Status Section"));
         assertFalse(liveSection.getNoIndex());
 
-        XsdSection liveSection2 = entity.createSection("Live Status Section", true);
+        CoalesceSection liveSection2 = entity.createSection("Live Status Section", true);
         assertEquals(liveSection2, entity.getSection("TREXOperation/Live Status Section"));
         assertEquals(liveSection, liveSection2);
         assertTrue(liveSection.getNoIndex());
@@ -1230,11 +1230,11 @@ public class XsdEntityTest {
     public void createSectionWithNoIndexTrueFromXmlTest()
     {
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         assertNull(entity.getSection("TREXMission/A New Section"));
 
-        XsdSection newSection = entity.createSection("A New Section", true);
+        CoalesceSection newSection = entity.createSection("A New Section", true);
 
         assertNotNull(newSection);
         assertEquals(newSection, entity.getSection("TREXMission/A New Section"));
@@ -1242,9 +1242,9 @@ public class XsdEntityTest {
 
         String entityXml = entity.toXml();
 
-        XsdEntity desEntity = XsdEntity.create(entityXml);
+        CoalesceEntity desEntity = CoalesceEntity.create(entityXml);
 
-        XsdSection desSection = desEntity.getSection("TREXMission/A New Section");
+        CoalesceSection desSection = desEntity.getSection("TREXMission/A New Section");
         assertEquals(newSection.getKey(), desSection.getKey());
         assertEquals(newSection.getName(), desSection.getName());
         assertEquals(newSection.getNoIndex(), desSection.getNoIndex());
@@ -1254,13 +1254,13 @@ public class XsdEntityTest {
     public void createSectionWithNoIndexFalseFromXmlExistingTest()
     {
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdSection liveSection = entity.getSection("TREXMission/Live Status Section");
-        XsdSection informationSection = entity.getSection("TREXMission/Mission Information Section");
+        CoalesceSection liveSection = entity.getSection("TREXMission/Live Status Section");
+        CoalesceSection informationSection = entity.getSection("TREXMission/Mission Information Section");
 
-        XsdSection createdLiveSection = entity.createSection("Live Status Section");
-        XsdSection createdInformationSection = entity.createSection("Mission Information Section");
+        CoalesceSection createdLiveSection = entity.createSection("Live Status Section");
+        CoalesceSection createdInformationSection = entity.createSection("Mission Information Section");
 
         assertEquals(liveSection, createdLiveSection);
         assertEquals(informationSection, createdInformationSection);
@@ -1271,16 +1271,16 @@ public class XsdEntityTest {
     public void getSectionsFromXmlTest()
     {
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        Map<String, XsdSection> sections = entity.getSections();
+        Map<String, CoalesceSection> sections = entity.getSections();
 
-        XsdSection liveSection = sections.get("85CB4256-4CC2-4F96-A03D-5EF880989822");
+        CoalesceSection liveSection = sections.get("85CB4256-4CC2-4F96-A03D-5EF880989822");
 
         assertNotNull(liveSection);
         assertEquals("85CB4256-4CC2-4F96-A03D-5EF880989822", liveSection.getKey());
 
-        XsdSection informationSection = sections.get("383EA645-E695-4E75-ADA6-0C79BEC09A18");
+        CoalesceSection informationSection = sections.get("383EA645-E695-4E75-ADA6-0C79BEC09A18");
         assertNotNull(informationSection);
         assertEquals("383EA645-E695-4E75-ADA6-0C79BEC09A18", informationSection.getKey());
 
@@ -1290,9 +1290,9 @@ public class XsdEntityTest {
     public void getSectionsEmptyTest()
     {
 
-        XsdEntity entity = XsdEntity.create("");
+        CoalesceEntity entity = CoalesceEntity.create("");
 
-        Map<String, XsdSection> sections = entity.getSections();
+        Map<String, CoalesceSection> sections = entity.getSections();
 
         assertTrue(sections.isEmpty());
 
@@ -1303,7 +1303,7 @@ public class XsdEntityTest {
     {
 
         // Create Entity
-        XsdEntity entity = XsdEntity.create("TREXOperation",
+        CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "",
@@ -1311,12 +1311,12 @@ public class XsdEntityTest {
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         // Create Live Status Section
-        XsdSection liveSection = entity.createSection("Live Status Section", true);
+        CoalesceSection liveSection = entity.createSection("Live Status Section", true);
 
         // Create Information Section
-        XsdSection informationSection = entity.createSection("Operation Information Section", true);
+        CoalesceSection informationSection = entity.createSection("Operation Information Section", true);
 
-        Map<String, XsdSection> sections = entity.getSections();
+        Map<String, CoalesceSection> sections = entity.getSections();
 
         assertEquals(liveSection, sections.get(liveSection.getKey()));
         assertEquals(informationSection, sections.get(informationSection.getKey()));
@@ -1326,9 +1326,9 @@ public class XsdEntityTest {
     @Test
     public void getLinkageSectionFromXmlTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdLinkageSection linkageSection = entity.getLinkageSection();
+        CoalesceLinkageSection linkageSection = entity.getLinkageSection();
 
         assertEquals("F4F126AF-4658-4D7F-A67F-4833F7EADDC3", linkageSection.getKey());
 
@@ -1339,14 +1339,14 @@ public class XsdEntityTest {
     {
 
         // Create Entity
-        XsdEntity entity = XsdEntity.create("TREXOperation",
+        CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "",
                                             "",
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
-        XsdLinkageSection entityLinkageSection = entity.getLinkageSection();
+        CoalesceLinkageSection entityLinkageSection = entity.getLinkageSection();
         assertNotNull(entityLinkageSection);
 
     }
@@ -1356,11 +1356,11 @@ public class XsdEntityTest {
     {
         Entities entities = createEntityLinkages();
 
-        Map<String, XsdLinkage> linkages = entities.Entity.getLinkages("Operation");
+        Map<String, CoalesceLinkage> linkages = entities.Entity.getLinkages("Operation");
 
         assertEquals(3, linkages.size());
 
-        for (XsdLinkage linkage : linkages.values())
+        for (CoalesceLinkage linkage : linkages.values())
         {
             switch (linkage.getLinkType()) {
             case HasUseOf:
@@ -1392,7 +1392,7 @@ public class XsdEntityTest {
 
         assertEquals(1, linkages.size());
 
-        for (XsdLinkage linkage : linkages.values())
+        for (CoalesceLinkage linkage : linkages.values())
         {
             switch (linkage.getLinkType()) {
             case IsParentOf:
@@ -1414,7 +1414,7 @@ public class XsdEntityTest {
 
         Entities entities = createEntityLinkages();
 
-        Map<String, XsdLinkage> linkages = entities.Entity.getLinkages("User");
+        Map<String, CoalesceLinkage> linkages = entities.Entity.getLinkages("User");
 
         assertTrue(linkages.isEmpty());
 
@@ -1425,11 +1425,11 @@ public class XsdEntityTest {
     {
         Entities entities = createEntityLinkages();
 
-        Map<String, XsdLinkage> linkages = entities.Entity.getLinkages(ELinkTypes.HasUseOf, "Operation");
+        Map<String, CoalesceLinkage> linkages = entities.Entity.getLinkages(ELinkTypes.HasUseOf, "Operation");
 
         assertEquals(1, linkages.size());
 
-        for (XsdLinkage linkage : linkages.values())
+        for (CoalesceLinkage linkage : linkages.values())
         {
             switch (linkage.getLinkType()) {
             case HasUseOf:
@@ -1453,7 +1453,7 @@ public class XsdEntityTest {
 
         Entities entities = createEntityLinkages();
 
-        Map<String, XsdLinkage> linkages = entities.Entity.getLinkages("User");
+        Map<String, CoalesceLinkage> linkages = entities.Entity.getLinkages("User");
 
         assertTrue(linkages.isEmpty());
 
@@ -1464,11 +1464,11 @@ public class XsdEntityTest {
     {
         Entities entities = createEntityLinkages();
 
-        Map<String, XsdLinkage> linkages = entities.Entity.getLinkages(ELinkTypes.HasUseOf);
+        Map<String, CoalesceLinkage> linkages = entities.Entity.getLinkages(ELinkTypes.HasUseOf);
 
         assertEquals(1, linkages.size());
 
-        for (XsdLinkage linkage : linkages.values())
+        for (CoalesceLinkage linkage : linkages.values())
         {
             switch (linkage.getLinkType()) {
             case HasUseOf:
@@ -1492,7 +1492,7 @@ public class XsdEntityTest {
 
         Entities entities = createEntityLinkages();
 
-        Map<String, XsdLinkage> linkages = entities.Entity.getLinkages(ELinkTypes.IsAMemberOf);
+        Map<String, CoalesceLinkage> linkages = entities.Entity.getLinkages(ELinkTypes.IsAMemberOf);
 
         assertTrue(linkages.isEmpty());
 
@@ -1503,7 +1503,7 @@ public class XsdEntityTest {
     {
         Entities entities = createEntityLinkages();
 
-        Map<String, XsdLinkage> linkages = entities.Entity.getLinkages((ELinkTypes) null);
+        Map<String, CoalesceLinkage> linkages = entities.Entity.getLinkages((ELinkTypes) null);
 
         assertTrue(linkages.isEmpty());
 
@@ -1514,11 +1514,11 @@ public class XsdEntityTest {
     {
         Entities entities = createEntityLinkages();
 
-        Map<String, XsdLinkage> linkages = entities.Entity.getLinkages(ELinkTypes.HasUseOf, "Operation", "Portal");
+        Map<String, CoalesceLinkage> linkages = entities.Entity.getLinkages(ELinkTypes.HasUseOf, "Operation", "Portal");
 
         assertEquals(1, linkages.size());
 
-        for (XsdLinkage linkage : linkages.values())
+        for (CoalesceLinkage linkage : linkages.values())
         {
             switch (linkage.getLinkType()) {
             case HasUseOf:
@@ -1542,7 +1542,7 @@ public class XsdEntityTest {
 
         Entities entities = createEntityLinkages();
 
-        Map<String, XsdLinkage> linkages = entities.Entity.getLinkages(ELinkTypes.HasOwnershipOf, "Operation", "Portal0");
+        Map<String, CoalesceLinkage> linkages = entities.Entity.getLinkages(ELinkTypes.HasOwnershipOf, "Operation", "Portal0");
 
         assertTrue(linkages.isEmpty());
 
@@ -1553,12 +1553,12 @@ public class XsdEntityTest {
     {
         Entities entities = createEntityLinkages();
 
-        Map<String, XsdLinkage> linkages = entities.Entity.getLinkages(Arrays.asList(ELinkTypes.HasUseOf, ELinkTypes.Created),
+        Map<String, CoalesceLinkage> linkages = entities.Entity.getLinkages(Arrays.asList(ELinkTypes.HasUseOf, ELinkTypes.Created),
                                                                        "Operation");
 
         assertEquals(2, linkages.size());
 
-        for (XsdLinkage linkage : linkages.values())
+        for (CoalesceLinkage linkage : linkages.values())
         {
             switch (linkage.getLinkType()) {
             case HasUseOf:
@@ -1587,12 +1587,12 @@ public class XsdEntityTest {
     {
         Entities entities = createEntityLinkages();
 
-        Map<String, XsdLinkage> linkages = entities.Entity.getLinkages(Arrays.asList(ELinkTypes.HasUseOf,
+        Map<String, CoalesceLinkage> linkages = entities.Entity.getLinkages(Arrays.asList(ELinkTypes.HasUseOf,
                                                                                      ELinkTypes.IsAPeerOf), "Operation");
 
         assertEquals(1, linkages.size());
 
-        for (XsdLinkage linkage : linkages.values())
+        for (CoalesceLinkage linkage : linkages.values())
         {
             switch (linkage.getLinkType()) {
             case HasUseOf:
@@ -1616,7 +1616,7 @@ public class XsdEntityTest {
 
         Entities entities = createEntityLinkages();
 
-        Map<String, XsdLinkage> linkages = entities.Entity.getLinkages(Arrays.asList(ELinkTypes.HasOwnershipOf,
+        Map<String, CoalesceLinkage> linkages = entities.Entity.getLinkages(Arrays.asList(ELinkTypes.HasOwnershipOf,
                                                                                      ELinkTypes.IsAPeerOf), "Operation");
 
         assertTrue(linkages.isEmpty());
@@ -1627,7 +1627,7 @@ public class XsdEntityTest {
     public void getSectionFromXmlTest()
     {
         // Create Entity
-        XsdEntity entity = XsdEntity.create("TREXOperation",
+        CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "",
@@ -1635,13 +1635,13 @@ public class XsdEntityTest {
                                             "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         // Create Live Status Section
-        XsdSection.create(entity, "Live Status Section", true);
+        CoalesceSection.create(entity, "Live Status Section", true);
 
         // Verify Live Status Section Creation
         assertNotNull(entity.getSection("TREXOperation/Live Status Section"));
 
         // Create Information Section
-        XsdSection.create(entity, "Operation Information Section", true);
+        CoalesceSection.create(entity, "Operation Information Section", true);
 
         // Verify Information Section Creation
         assertNotNull(entity.getSection("TREXOperation/Operation Information Section"));
@@ -1652,7 +1652,7 @@ public class XsdEntityTest {
     public void getEntityIdParamExistsTest()
     {
 
-        XsdEntity entity = XsdEntity.create("TREXOperation",
+        CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "First,Second",
@@ -1673,7 +1673,7 @@ public class XsdEntityTest {
     public void getEntityIdParamDoesNotExistTest()
     {
 
-        XsdEntity entity = XsdEntity.create("TREXOperation",
+        CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "First,Second",
@@ -1688,7 +1688,7 @@ public class XsdEntityTest {
     public void getEntityIdParamNullTest()
     {
 
-        XsdEntity entity = XsdEntity.create("TREXOperation",
+        CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "First,Second",
@@ -1703,7 +1703,7 @@ public class XsdEntityTest {
     public void getEntityIdParamMultipleTypesTest()
     {
 
-        XsdEntity entity = XsdEntity.create("TREXOperation",
+        CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "First,Second,Third",
@@ -1720,7 +1720,7 @@ public class XsdEntityTest {
     @Test
     public void setEntityIdDoesNotExistTest()
     {
-        XsdEntity entity = XsdEntity.create("TREXOperation",
+        CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "",
@@ -1738,7 +1738,7 @@ public class XsdEntityTest {
     public void setEntityIdDuplicateTypeTest()
     {
 
-        XsdEntity entity = XsdEntity.create("TREXOperation",
+        CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "First",
@@ -1755,7 +1755,7 @@ public class XsdEntityTest {
     @Test
     public void setEntityIdSingleAddTest()
     {
-        XsdEntity entity = XsdEntity.create("TREXOperation",
+        CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "First",
@@ -1772,7 +1772,7 @@ public class XsdEntityTest {
     @Test
     public void setEntityIdMultipleAddTest()
     {
-        XsdEntity entity = XsdEntity.create("TREXOperation",
+        CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "First,Second",
@@ -1792,7 +1792,7 @@ public class XsdEntityTest {
         thrown.expect(NullArgumentException.class);
         thrown.expectMessage("typeParam");
 
-        XsdEntity entity = XsdEntity.create("TREXOperation",
+        CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "First,Second",
@@ -1809,7 +1809,7 @@ public class XsdEntityTest {
         thrown.expect(NullArgumentException.class);
         thrown.expectMessage("value");
 
-        XsdEntity entity = XsdEntity.create("TREXOperation",
+        CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "First,Second",
@@ -1826,7 +1826,7 @@ public class XsdEntityTest {
         thrown.expect(NullArgumentException.class);
         thrown.expectMessage("typeParam");
 
-        XsdEntity entity = XsdEntity.create("TREXOperation",
+        CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "First,Second",
@@ -1840,7 +1840,7 @@ public class XsdEntityTest {
     @Test
     public void markAsDeletedNotDeletedYetTest()
     {
-        XsdEntity entity = XsdEntity.create("TREXOperation",
+        CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "First,Second",
@@ -1858,7 +1858,7 @@ public class XsdEntityTest {
     @Test
     public void markAsDeletedAlreadyDeletedTest()
     {
-        XsdEntity entity = XsdEntity.create("TREXOperation",
+        CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
                                             "TREX Portal",
                                             "1.0.0.0",
                                             "First,Second",
@@ -1876,7 +1876,7 @@ public class XsdEntityTest {
     @Test
     public void toXmlTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         String xml = entity.toXml();
         
@@ -1887,10 +1887,10 @@ public class XsdEntityTest {
     @Test
     public void toXmlRemoveBinaryFalseTest() throws UnsupportedEncodingException, CoalesceException
     {
-        XsdEntity entity = XsdEntity.create("");
+        CoalesceEntity entity = CoalesceEntity.create("");
         entity.setName("Testing Entity");
-        XsdSection section = entity.createSection("Testing Section");
-        XsdRecordset recordset = section.createRecordset("Testing Recordset");
+        CoalesceSection section = entity.createSection("Testing Section");
+        CoalesceRecordset recordset = section.createRecordset("Testing Recordset");
 
         recordset.createFieldDefinition("Binary1", ECoalesceFieldDataTypes.BinaryType, "", "(U)", "");
         recordset.createFieldDefinition("Binary2", ECoalesceFieldDataTypes.BinaryType, "", "(U)", "");
@@ -1900,7 +1900,7 @@ public class XsdEntityTest {
         recordset.createFieldDefinition("File2", ECoalesceFieldDataTypes.FileType, "", "(U)", "");
         recordset.createFieldDefinition("File3", ECoalesceFieldDataTypes.FileType, "", "(U)", "");
 
-        XsdRecord record = recordset.addNew();
+        CoalesceRecord record = recordset.addNew();
         record.setFieldValue("Binary1", "Binary1".getBytes("US-ASCII"));
         record.setFieldValue("Binary2", "Binary2".getBytes("US-ASCII"));
         record.setFieldValue("Binary3", "Binary3".getBytes("US-ASCII"));
@@ -1911,9 +1911,9 @@ public class XsdEntityTest {
 
         String xml = entity.toXml(false);
 
-        XsdEntity desEntity = XsdEntity.create(xml);
+        CoalesceEntity desEntity = CoalesceEntity.create(xml);
 
-        XsdRecord desRecord = (XsdRecord) desEntity.getDataObjectForNamePath("Testing Entity/Testing Section/Testing Recordset/Testing Recordset Record");
+        CoalesceRecord desRecord = (CoalesceRecord) desEntity.getDataObjectForNamePath("Testing Entity/Testing Section/Testing Recordset/Testing Recordset Record");
 
         assertArrayEquals("Binary1".getBytes("US-ASCII"), desRecord.getFieldValueAsByteArray("Binary1", null));
         assertArrayEquals("Binary2".getBytes("US-ASCII"), desRecord.getFieldValueAsByteArray("Binary2", null));
@@ -1928,10 +1928,10 @@ public class XsdEntityTest {
     @Test
     public void toXmlRemoveBinaryTrueOnlyBinaryTest() throws UnsupportedEncodingException, CoalesceException
     {
-        XsdEntity entity = XsdEntity.create("");
+        CoalesceEntity entity = CoalesceEntity.create("");
         entity.setName("Testing Entity");
-        XsdSection section = entity.createSection("Testing Section");
-        XsdRecordset recordset = section.createRecordset("Testing Recordset");
+        CoalesceSection section = entity.createSection("Testing Section");
+        CoalesceRecordset recordset = section.createRecordset("Testing Recordset");
 
         recordset.createFieldDefinition("Binary1", ECoalesceFieldDataTypes.BinaryType, "", "(U)", "");
         recordset.createFieldDefinition("Binary2", ECoalesceFieldDataTypes.BinaryType, "", "(U)", "");
@@ -1941,7 +1941,7 @@ public class XsdEntityTest {
         recordset.createFieldDefinition("File2", ECoalesceFieldDataTypes.FileType, "", "(U)", "");
         recordset.createFieldDefinition("File3", ECoalesceFieldDataTypes.FileType, "", "(U)", "");
 
-        XsdRecord record = recordset.addNew();
+        CoalesceRecord record = recordset.addNew();
         record.setFieldValue("Binary1", "Binary1".getBytes("US-ASCII"));
         record.setFieldValue("Binary2", "Binary2".getBytes("US-ASCII"));
         record.setFieldValue("Binary3", "Binary3".getBytes("US-ASCII"));
@@ -1952,9 +1952,9 @@ public class XsdEntityTest {
 
         String xml = entity.toXml(true);
 
-        XsdEntity desEntity = XsdEntity.create(xml);
+        CoalesceEntity desEntity = CoalesceEntity.create(xml);
 
-        XsdRecord desRecord = (XsdRecord) desEntity.getDataObjectForNamePath("Testing Entity/Testing Section/Testing Recordset/Testing Recordset Record");
+        CoalesceRecord desRecord = (CoalesceRecord) desEntity.getDataObjectForNamePath("Testing Entity/Testing Section/Testing Recordset/Testing Recordset Record");
 
         assertArrayEquals(new byte[0], desRecord.getFieldValueAsByteArray("Binary1", null));
         assertArrayEquals(new byte[0], desRecord.getFieldValueAsByteArray("Binary2", null));
@@ -1970,22 +1970,22 @@ public class XsdEntityTest {
     public void fieldHistoryTest()
     {
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdDataObject xdo = entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+        CoalesceDataObject xdo = entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
 
-        assertTrue(xdo instanceof XsdField<?>);
+        assertTrue(xdo instanceof CoalesceField<?>);
 
-        XsdField<?> nameField = (XsdField<?>) xdo;
+        CoalesceField<?> nameField = (CoalesceField<?>) xdo;
 
         assertEquals(1, nameField.getHistory().size());
         assertEquals(CoalesceTypeInstances.TEST_MISSION_NAME_HISTORY_VALUE, nameField.getHistory().get(0).getBaseValue());
 
         xdo = entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_ACTION_NUMBER_PATH);
 
-        assertTrue(xdo instanceof XsdField<?>);
+        assertTrue(xdo instanceof CoalesceField<?>);
 
-        XsdField<?> actionNumberField = (XsdField<?>) xdo;
+        CoalesceField<?> actionNumberField = (CoalesceField<?>) xdo;
 
         assertEquals(2, actionNumberField.getHistory().size());
         assertEquals(CoalesceTypeInstances.TEST_MISSION_ACTION_NUMBER_LABEL_HISTORY,
@@ -1993,9 +1993,9 @@ public class XsdEntityTest {
 
         xdo = entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_BASE64_PATH);
 
-        assertTrue(xdo instanceof XsdField<?>);
+        assertTrue(xdo instanceof CoalesceField<?>);
 
-        XsdField<?> base64Field = (XsdField<?>) xdo;
+        CoalesceField<?> base64Field = (CoalesceField<?>) xdo;
 
         assertTrue(base64Field.getHistory().isEmpty());
 
@@ -2008,12 +2008,12 @@ public class XsdEntityTest {
         try
         {
             // Get Entities
-            XsdEntity entity1 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
-            XsdEntity entity2 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+            CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+            CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
             // Get Mission Name Fields
-            XsdField<?> entity1MissionName = (XsdField<?>) entity1.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
-            XsdField<?> entity2MissionName = (XsdField<?>) entity2.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+            CoalesceField<?> entity1MissionName = (CoalesceField<?>) entity1.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+            CoalesceField<?> entity2MissionName = (CoalesceField<?>) entity2.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
 
             // Modify Entity 1
             entity1MissionName.setTypedValue("Should be added as history");
@@ -2026,11 +2026,11 @@ public class XsdEntityTest {
 
             // Merge Entities
             //XsdEntity mergedEntity = XsdEntity.mergeSyncEntity(entity1, entity2);
-            XsdEntity mergedEntity = XsdEntity.mergeSyncEntity(entity1, entity2);
+            CoalesceEntity mergedEntity = CoalesceEntity.mergeSyncEntity(entity1, entity2);
             System.out.println(mergedEntity.toXml());
 
             // Get Mission Name Field of Merged Entity
-            XsdField<?> mergedEntityMissionName = (XsdField<?>) mergedEntity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+            CoalesceField<?> mergedEntityMissionName = (CoalesceField<?>) mergedEntity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
          
             // Validate Merge
             assertEquals(entity2MissionName.getBaseValue(), mergedEntityMissionName.getBaseValue());
@@ -2050,12 +2050,12 @@ public class XsdEntityTest {
         try
         {
             // Get Entities
-            XsdEntity entity1 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
-            XsdEntity entity2 = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+            CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+            CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
             // Get Mission Name Fields
-            XsdField<?> entity1MissionName = (XsdField<?>) entity1.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
-            XsdField<?> entity2MissionName = (XsdField<?>) entity2.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+            CoalesceField<?> entity1MissionName = (CoalesceField<?>) entity1.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+            CoalesceField<?> entity2MissionName = (CoalesceField<?>) entity2.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
 
             // Modify Entity 1
             entity1MissionName.setOtherAttribute("newattr1", "1");
@@ -2067,10 +2067,10 @@ public class XsdEntityTest {
             entity2MissionName.setOtherAttribute("newattr2", "2");
 
             // Merge Entities
-            XsdEntity mergedEntity = XsdEntity.mergeSyncEntity(entity1, entity2);
+            CoalesceEntity mergedEntity = CoalesceEntity.mergeSyncEntity(entity1, entity2);
 
             // Get Mission Name Field of Merged Entity
-            XsdField<?> mergedEntityMissionName = (XsdField<?>) mergedEntity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+            CoalesceField<?> mergedEntityMissionName = (CoalesceField<?>) mergedEntity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
 
             // Validate Merge
             assertEquals(mergedEntityMissionName.getAttribute("newattr1"), "1");
@@ -2090,16 +2090,16 @@ public class XsdEntityTest {
 
         try
         {
-            XsdEntity myEntity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_HISTORY);
-            XsdEntity updatedEntity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_HISTORY);
+            CoalesceEntity myEntity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_HISTORY);
+            CoalesceEntity updatedEntity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_HISTORY);
 
-            XsdFieldDefinition fieldDefinition = (XsdFieldDefinition) updatedEntity.getCoalesceDataObjectForKey("1A7DA2CD-8A83-4E86-ADE8-15FDECE0564E");
+            CoalesceFieldDefinition fieldDefinition = (CoalesceFieldDefinition) updatedEntity.getCoalesceDataObjectForKey("1A7DA2CD-8A83-4E86-ADE8-15FDECE0564E");
             fieldDefinition.setDefaultValue("UpdatedIncidentDescription");
             fieldDefinition.setLastModified(new DateTime());
             updatedEntity.setLastModified(new DateTime());
 
-            myEntity = XsdEntity.mergeSyncEntity(myEntity, updatedEntity);
-            XsdFieldDefinition myfieldDefinition = (XsdFieldDefinition) myEntity.getCoalesceDataObjectForKey("1A7DA2CD-8A83-4E86-ADE8-15FDECE0564E");
+            myEntity = CoalesceEntity.mergeSyncEntity(myEntity, updatedEntity);
+            CoalesceFieldDefinition myfieldDefinition = (CoalesceFieldDefinition) myEntity.getCoalesceDataObjectForKey("1A7DA2CD-8A83-4E86-ADE8-15FDECE0564E");
             assertEquals("UpdatedIncidentDescription", myfieldDefinition.getAttribute("defaultvalue"));
 
         }
@@ -2113,14 +2113,14 @@ public class XsdEntityTest {
     // Private Methods
     // -----------------------------------------------------------------------//
 
-    private void assertEmptyEntity(XsdEntity entity)
+    private void assertEmptyEntity(CoalesceEntity entity)
     {
 
         assertTrue(entity.getLinkages().values().isEmpty());
         assertEquals(0, entity.getSections().size());
     }
 
-    private void assertLinkage(String entity1Key, ELinkTypes type, String entity2Key, XsdLinkage linkage)
+    private void assertLinkage(String entity1Key, ELinkTypes type, String entity2Key, CoalesceLinkage linkage)
     {
         assertEquals(entity1Key, linkage.getEntity1Key());
         assertEquals(type, linkage.getLinkType());
@@ -2128,7 +2128,7 @@ public class XsdEntityTest {
 
     }
 
-    private void assertLinkage(XsdEntity entity1, XsdEntity entity2, ELinkTypes type, XsdLinkage linkage)
+    private void assertLinkage(CoalesceEntity entity1, CoalesceEntity entity2, ELinkTypes type, CoalesceLinkage linkage)
     {
         assertEquals(entity1.getKey(), linkage.getEntity1Key());
         assertEquals(entity2.getKey(), linkage.getEntity2Key());
@@ -2139,10 +2139,10 @@ public class XsdEntityTest {
 
     private class Entities {
 
-        public XsdEntity Entity;
-        public XsdEntity Entity2;
-        public XsdEntity Entity3;
-        public XsdEntity Entity4;
+        public CoalesceEntity Entity;
+        public CoalesceEntity Entity2;
+        public CoalesceEntity Entity3;
+        public CoalesceEntity Entity4;
 
     }
 
@@ -2150,13 +2150,13 @@ public class XsdEntityTest {
     {
         Entities entities = new Entities();
 
-        entities.Entity = XsdEntity.create("Operation", "Portal", "1.1.1.1", "ID", "Type");
+        entities.Entity = CoalesceEntity.create("Operation", "Portal", "1.1.1.1", "ID", "Type");
 
-        entities.Entity2 = XsdEntity.create("Operation", "Portal", "1.2.3.4", "Id2", "Type2");
+        entities.Entity2 = CoalesceEntity.create("Operation", "Portal", "1.2.3.4", "Id2", "Type2");
 
-        entities.Entity3 = XsdEntity.create("Mission", "Portal2", "2.3.4.5", "Id3", "Type3");
+        entities.Entity3 = CoalesceEntity.create("Mission", "Portal2", "2.3.4.5", "Id3", "Type3");
 
-        entities.Entity4 = XsdEntity.create("Operation", "Portal2", "3.4.5.6", "Id4", "Type4");
+        entities.Entity4 = CoalesceEntity.create("Operation", "Portal2", "3.4.5.6", "Id4", "Type4");
 
         assertTrue(EntityLinkHelper.linkEntities(entities.Entity, ELinkTypes.HasUseOf, entities.Entity2, false));
         assertTrue(EntityLinkHelper.linkEntities(entities.Entity, ELinkTypes.IsParentOf, entities.Entity3, false));

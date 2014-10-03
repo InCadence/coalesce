@@ -30,12 +30,12 @@ import Coalesce.Common.Runtime.CoalesceSettings;
 import Coalesce.Framework.CoalesceFramework;
 import Coalesce.Framework.DataModel.CoalesceEntityTemplate;
 import Coalesce.Framework.DataModel.ECoalesceFieldDataTypes;
-import Coalesce.Framework.DataModel.XsdEntity;
-import Coalesce.Framework.DataModel.XsdFieldDefinition;
-import Coalesce.Framework.DataModel.XsdLinkageSection;
-import Coalesce.Framework.DataModel.XsdRecord;
-import Coalesce.Framework.DataModel.XsdRecordset;
-import Coalesce.Framework.DataModel.XsdSection;
+import Coalesce.Framework.DataModel.CoalesceEntity;
+import Coalesce.Framework.DataModel.CoalesceFieldDefinition;
+import Coalesce.Framework.DataModel.CoalesceLinkageSection;
+import Coalesce.Framework.DataModel.CoalesceRecord;
+import Coalesce.Framework.DataModel.CoalesceRecordset;
+import Coalesce.Framework.DataModel.CoalesceSection;
 import Coalesce.Framework.Persistance.ICoalescePersistor.EntityMetaData;
 import coalesce.persister.postgres.PostGresDataConnector;
 import coalesce.persister.postgres.PostGresSQLPersistor;
@@ -48,7 +48,7 @@ public class CoalescePostGresPersistorTest {
     static PostGresSQLPersistor postGresSQLPersister;
     private static CoalesceFramework _coalesceFramework;
 
-    private static XsdEntity _entity;
+    private static CoalesceEntity _entity;
     private static String _fieldKey;
 
     @BeforeClass
@@ -85,20 +85,20 @@ public class CoalescePostGresPersistorTest {
         try
         {
             // Create Test Entity
-            _entity = new XsdEntity();
+            _entity = new CoalesceEntity();
 
-            XsdSection section = null;
-            XsdRecordset recordSet = null;
-            XsdRecord record = null;
+            CoalesceSection section = null;
+            CoalesceRecordset recordSet = null;
+            CoalesceRecord record = null;
 
             // Create Entity
-            _entity = XsdEntity.create("TestEntity", "Unit Test", "1.0.0.0", "", "", "");
+            _entity = CoalesceEntity.create("TestEntity", "Unit Test", "1.0.0.0", "", "", "");
 
-            XsdLinkageSection.create(_entity, true);
+            CoalesceLinkageSection.create(_entity, true);
 
-            section = XsdSection.create(_entity, "Live Status Section", true);
-            recordSet = XsdRecordset.create(section, "Live Status Recordset");
-            XsdFieldDefinition.create(recordSet, "CurrentStatus", ECoalesceFieldDataTypes.StringType);
+            section = CoalesceSection.create(_entity, "Live Status Section", true);
+            recordSet = CoalesceRecordset.create(section, "Live Status Recordset");
+            CoalesceFieldDefinition.create(recordSet, "CurrentStatus", ECoalesceFieldDataTypes.StringType);
 
             record = recordSet.addNew();
             record.setFieldValue("CurrentStatus", "Test Status");
@@ -156,7 +156,7 @@ public class CoalescePostGresPersistorTest {
         }
 
         // Create Entity from Template
-        XsdEntity entity2 = template.createNewEntity();
+        CoalesceEntity entity2 = template.createNewEntity();
 
         String entityXml = entity2.toXml();
         System.out.println("Copy of Entity made from Template: " + entity2.getKey());
@@ -216,7 +216,7 @@ public class CoalescePostGresPersistorTest {
     @Test
     public void testGetEntity() throws CoalescePersistorException
     {
-        XsdEntity ent = new XsdEntity();
+        CoalesceEntity ent = new CoalesceEntity();
         ent = CoalescePostGresPersistorTest._coalesceFramework.getCoalesceEntity(_entity.getKey());
 
         assertTrue(ent != null);
@@ -250,7 +250,7 @@ public class CoalescePostGresPersistorTest {
         assertTrue(compare == 0);
 
         // Test Section
-        XsdSection section = _entity.getSection("TestEntity/Live Status Section");
+        CoalesceSection section = _entity.getSection("TestEntity/Live Status Section");
 
         assertTrue(section != null);
 
@@ -276,7 +276,7 @@ public class CoalescePostGresPersistorTest {
     @Test
     public void testGetEntityByIdAndType() throws CoalescePersistorException
     {
-        XsdEntity ent = new XsdEntity();
+        CoalesceEntity ent = new CoalesceEntity();
         ent = CoalescePostGresPersistorTest._coalesceFramework.getEntity(_entity.getEntityId(), _entity.getEntityIdType());
         assertTrue(ent != null);
     }
@@ -284,7 +284,7 @@ public class CoalescePostGresPersistorTest {
     @Test
     public void testGetEntityByNameAndIdAndType() throws CoalescePersistorException
     {
-        XsdEntity ent = new XsdEntity();
+        CoalesceEntity ent = new CoalesceEntity();
 
         ent = CoalescePostGresPersistorTest._coalesceFramework.getEntity(_entity.getName(),
                                                                          _entity.getEntityId(),

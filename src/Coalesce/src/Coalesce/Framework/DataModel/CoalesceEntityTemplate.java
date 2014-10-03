@@ -49,7 +49,7 @@ public class CoalesceEntityTemplate {
      * @throws SAXException
      * @throws IOException
      */
-    public static CoalesceEntityTemplate create(XsdEntity entity) throws SAXException, IOException
+    public static CoalesceEntityTemplate create(CoalesceEntity entity) throws SAXException, IOException
     {
         return CoalesceEntityTemplate.create(entity.toXml());
     }
@@ -102,7 +102,7 @@ public class CoalesceEntityTemplate {
      * @throws SAXException
      * @throws IOException
      */
-    public boolean initialize(XsdEntity entity) throws SAXException, IOException
+    public boolean initialize(CoalesceEntity entity) throws SAXException, IOException
     {
         return initialize(entity.toXml());
     }
@@ -206,9 +206,9 @@ public class CoalesceEntityTemplate {
      * 
      * @return XsdEntity of the new entity created from this CoalesceEntityTemplate
      */
-    public XsdEntity createNewEntity()
+    public CoalesceEntity createNewEntity()
     {
-        XsdEntity entity = new XsdEntity();
+        CoalesceEntity entity = new CoalesceEntity();
         entity.initialize(toXml());
 
         return entity;

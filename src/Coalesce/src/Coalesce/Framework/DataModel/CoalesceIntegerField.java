@@ -1,5 +1,9 @@
+/**
+ * 
+ */
 package Coalesce.Framework.DataModel;
 
+import Coalesce.Common.Exceptions.CoalesceDataFormatException;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -18,32 +22,20 @@ package Coalesce.Framework.DataModel;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-public class XsdStringField extends XsdField<String> {
+/**
+ *
+ */
+public class CoalesceIntegerField extends CoalesceField<Integer> {
 
-    // -----------------------------------------------------------------------//
-    // Factory and Initialization
-    // -----------------------------------------------------------------------//
-
-    /**
-     * 
-     * @param parent
-     * @param fieldDefinition
-     * @return
-     */
-    public static XsdStringField create(XsdRecord parent, XsdFieldDefinition fieldDefinition)
-    {
-        return (XsdStringField) XsdField.create(parent,  fieldDefinition);
-    }
-    
     /*
      * (non-Javadoc)
      * 
      * @see Coalesce.Framework.DataModel.XsdField#getValue()
      */
     @Override
-    public String getValue()
+    public Integer getValue() throws CoalesceDataFormatException
     {
-        return getBaseValue();
+        return getIntegerValue();
     }
 
     /*
@@ -52,7 +44,7 @@ public class XsdStringField extends XsdField<String> {
      * @see Coalesce.Framework.DataModel.XsdField#setValue(java.lang.Object)
      */
     @Override
-    public void setValue(String value)
+    public void setValue(Integer value)
     {
         setTypedValue(value);
     }

@@ -48,17 +48,17 @@ public class XsdLinkageSectionTest {
     public void createNullParentTest()
     {
         @SuppressWarnings("unused")
-        XsdLinkageSection linkageSection = XsdLinkageSection.create(null);
+        CoalesceLinkageSection linkageSection = CoalesceLinkageSection.create(null);
     }
 
     @Test
     public void createExistsTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdLinkageSection linkageSection = entity.getLinkageSection();
+        CoalesceLinkageSection linkageSection = entity.getLinkageSection();
 
-        XsdLinkageSection createdLinkageSection = XsdLinkageSection.create(entity);
+        CoalesceLinkageSection createdLinkageSection = CoalesceLinkageSection.create(entity);
 
         assertEquals(linkageSection, createdLinkageSection);
         assertTrue(createdLinkageSection.getNoIndex());
@@ -68,10 +68,10 @@ public class XsdLinkageSectionTest {
     @Test
     public void createTest()
     {
-        XsdEntity entity = new XsdEntity();
+        CoalesceEntity entity = new CoalesceEntity();
         entity.initialize();
 
-        XsdLinkageSection linkageSection = entity.getLinkageSection();
+        CoalesceLinkageSection linkageSection = entity.getLinkageSection();
 
         assertNotNull(linkageSection);
         assertEquals(entity, linkageSection.getParent());
@@ -82,7 +82,7 @@ public class XsdLinkageSectionTest {
     @Test(expected = NullArgumentException.class)
     public void initializeNullTest()
     {
-        XsdLinkageSection linkageSection = new XsdLinkageSection();
+        CoalesceLinkageSection linkageSection = new CoalesceLinkageSection();
         linkageSection.initialize(null);
 
     }
@@ -90,7 +90,7 @@ public class XsdLinkageSectionTest {
     @Test
     public void keyTest()
     {
-        XsdLinkageSection linkageSection = getMissionLinkageSection();
+        CoalesceLinkageSection linkageSection = getMissionLinkageSection();
 
         assertEquals("F4F126AF-4658-4D7F-A67F-4833F7EADDC3", linkageSection.getKey());
 
@@ -111,7 +111,7 @@ public class XsdLinkageSectionTest {
     @Test
     public void nameTest()
     {
-        XsdLinkageSection linkageSection = getMissionLinkageSection();
+        CoalesceLinkageSection linkageSection = getMissionLinkageSection();
 
         assertEquals("Linkages", linkageSection.getName());
 
@@ -124,11 +124,11 @@ public class XsdLinkageSectionTest {
     @Test
     public void typeTest()
     {
-        XsdLinkageSection linkageSection = getMissionLinkageSection();
+        CoalesceLinkageSection linkageSection = getMissionLinkageSection();
 
         assertEquals("linkagesection", linkageSection.getType());
 
-        XsdEntity newEntity = XsdEntity.create("Operation", "Portal", "1.2.3.4", "ID", "Type");
+        CoalesceEntity newEntity = CoalesceEntity.create("Operation", "Portal", "1.2.3.4", "ID", "Type");
 
         assertEquals("linkagesection", newEntity.getLinkageSection().getType());
 
@@ -137,15 +137,15 @@ public class XsdLinkageSectionTest {
     @Test
     public void createLinkageEmptyTest()
     {
-        XsdEntity entity = XsdEntity.create("");
+        CoalesceEntity entity = CoalesceEntity.create("");
 
-        XsdLinkageSection linkageSection = entity.getLinkageSection();
+        CoalesceLinkageSection linkageSection = entity.getLinkageSection();
 
-        Map<String, XsdLinkage> linkages = linkageSection.getLinkages();
+        Map<String, CoalesceLinkage> linkages = linkageSection.getLinkages();
 
         assertTrue(linkages.isEmpty());
 
-        XsdLinkage newLinkage = linkageSection.createLinkage();
+        CoalesceLinkage newLinkage = linkageSection.createLinkage();
 
         assertNotNull(newLinkage);
 
@@ -160,22 +160,22 @@ public class XsdLinkageSectionTest {
     @Test
     public void createLinkageMissionTest()
     {
-        XsdLinkageSection missionLinkageSection = getMissionLinkageSection();
+        CoalesceLinkageSection missionLinkageSection = getMissionLinkageSection();
 
-        Map<String, XsdLinkage> missionLinkages = missionLinkageSection.getLinkages();
+        Map<String, CoalesceLinkage> missionLinkages = missionLinkageSection.getLinkages();
 
         assertEquals(4, missionLinkages.size());
 
-        XsdLinkage missionLinkage = missionLinkageSection.createLinkage();
+        CoalesceLinkage missionLinkage = missionLinkageSection.createLinkage();
 
         assertNotNull(missionLinkage);
 
-        Map<String, XsdLinkage> linkages = missionLinkageSection.getLinkages();
+        Map<String, CoalesceLinkage> linkages = missionLinkageSection.getLinkages();
 
         assertTrue(linkages.containsKey(missionLinkage.getKey()));
         assertTrue(linkages.containsValue(missionLinkage));
 
-        for (XsdLinkage linkage : missionLinkages.values())
+        for (CoalesceLinkage linkage : missionLinkages.values())
         {
             assertTrue(linkages.containsKey(linkage.getKey()));
             assertTrue(linkages.containsValue(linkage));
@@ -186,9 +186,9 @@ public class XsdLinkageSectionTest {
     @Test
     public void noIndexTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdLinkageSection linkageSection = entity.getLinkageSection();
+        CoalesceLinkageSection linkageSection = entity.getLinkageSection();
 
         assertTrue(linkageSection.getNoIndex());
 
@@ -198,12 +198,12 @@ public class XsdLinkageSectionTest {
 
         String entityXml = entity.toXml();
 
-        XsdEntity desEntity = XsdEntity.create(entityXml);
-        XsdLinkageSection desLinkageSection = desEntity.getLinkageSection();
+        CoalesceEntity desEntity = CoalesceEntity.create(entityXml);
+        CoalesceLinkageSection desLinkageSection = desEntity.getLinkageSection();
 
         assertFalse(desLinkageSection.getNoIndex());
 
-        XsdEntity newEntity = XsdEntity.create("Operation", "Portal", "1.2.3.4", "ID", "Type");
+        CoalesceEntity newEntity = CoalesceEntity.create("Operation", "Portal", "1.2.3.4", "ID", "Type");
 
         assertFalse(newEntity.getLinkageSection().getNoIndex());
 
@@ -212,7 +212,7 @@ public class XsdLinkageSectionTest {
     @Test
     public void DateCreatedTest()
     {
-        XsdLinkageSection linkageSection = getMissionLinkageSection();
+        CoalesceLinkageSection linkageSection = getMissionLinkageSection();
 
         assertEquals(JodaDateTimeHelper.fromXmlDateTimeUTC("2014-05-02T14:33:51.851575Z"), linkageSection.getDateCreated());
 
@@ -226,7 +226,7 @@ public class XsdLinkageSectionTest {
     @Test
     public void LastModifiedTest()
     {
-        XsdLinkageSection linkageSection = getMissionLinkageSection();
+        CoalesceLinkageSection linkageSection = getMissionLinkageSection();
 
         assertEquals(JodaDateTimeHelper.fromXmlDateTimeUTC("2014-05-20T16:17:13.2293139Z"), linkageSection.getLastModified());
 
@@ -237,9 +237,9 @@ public class XsdLinkageSectionTest {
 
     }
 
-    private XsdLinkageSection getMissionLinkageSection()
+    private CoalesceLinkageSection getMissionLinkageSection()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         return entity.getLinkageSection();
     }

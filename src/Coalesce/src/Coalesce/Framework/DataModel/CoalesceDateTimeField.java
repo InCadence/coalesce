@@ -3,10 +3,10 @@
  */
 package Coalesce.Framework.DataModel;
 
+import org.joda.time.DateTime;
+
 import Coalesce.Common.Exceptions.CoalesceDataFormatException;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.MultiPoint;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -28,7 +28,7 @@ import com.vividsolutions.jts.geom.MultiPoint;
 /**
  *
  */
-public class XsdCoordinateListField extends XsdField<Coordinate[]> {
+public class CoalesceDateTimeField extends CoalesceField<DateTime> {
 
     /*
      * (non-Javadoc)
@@ -36,14 +36,9 @@ public class XsdCoordinateListField extends XsdField<Coordinate[]> {
      * @see Coalesce.Framework.DataModel.XsdField#getValue()
      */
     @Override
-    public Coordinate[] getValue() throws CoalesceDataFormatException
+    public DateTime getValue() throws CoalesceDataFormatException
     {
-        return getCoordinateListValue();
-    }
-
-    public MultiPoint getValueAsMultiPoint() throws CoalesceDataFormatException
-    {
-        return getMultiPointValue();
+        return getDateTimeValue();
     }
 
     /*
@@ -52,14 +47,9 @@ public class XsdCoordinateListField extends XsdField<Coordinate[]> {
      * @see Coalesce.Framework.DataModel.XsdField#setValue(java.lang.Object)
      */
     @Override
-    public void setValue(Coordinate[] value) throws CoalesceDataFormatException
+    public void setValue(DateTime value)
     {
         setTypedValue(value);
     }
     
-    public void setValue(MultiPoint value) throws CoalesceDataFormatException
-    {
-        setTypedValue(value);
-    }
-
 }

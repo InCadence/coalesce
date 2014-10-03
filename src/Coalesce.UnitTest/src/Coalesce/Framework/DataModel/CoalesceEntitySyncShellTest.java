@@ -26,7 +26,7 @@ public class CoalesceEntitySyncShellTest {
     @Test
     public void testCreateFromEntity() throws SAXException, IOException
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         // Initialize
         CoalesceEntitySyncShell shell = CoalesceEntitySyncShell.Create(entity);
@@ -40,7 +40,7 @@ public class CoalesceEntitySyncShellTest {
     @Test
     public void testInitializeFromEntity() throws SAXException, IOException
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         // Initialize
         CoalesceEntitySyncShell shell = new CoalesceEntitySyncShell();
@@ -56,7 +56,7 @@ public class CoalesceEntitySyncShellTest {
     @Test
     public void testEntityNode() throws SAXException, IOException, ParserConfigurationException
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         // Initialize
         CoalesceEntitySyncShell shell = CoalesceEntitySyncShell.Create(entity);
@@ -119,7 +119,7 @@ public class CoalesceEntitySyncShellTest {
     public void GetRequiredChangesSyncShell() throws CoalesceException, SAXException, IOException
     {
         // Load Document
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         // Create Local Shell
         CoalesceEntitySyncShell localShell = CoalesceEntitySyncShell.Create(entity);
@@ -128,7 +128,7 @@ public class CoalesceEntitySyncShellTest {
         assertTrue(this.ValidateSyncShell(localShell));
 
         // Modify Entity
-        XsdRecord record = (XsdRecord) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/");
+        CoalesceRecord record = (CoalesceRecord) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/");
         record.setFieldValue("MissionName", "test");
 
         String fieldKeyValid = record.getFieldByName("MissionName").getKey();

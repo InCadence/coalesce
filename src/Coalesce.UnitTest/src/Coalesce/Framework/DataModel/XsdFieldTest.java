@@ -89,7 +89,7 @@ public class XsdFieldTest {
     public void getKeyTest()
     {
 
-        XsdField<?> field = getTestMissionNameField();
+        CoalesceField<?> field = getTestMissionNameField();
 
         assertEquals(CoalesceTypeInstances.TEST_MISSION_NAME_KEY, field.getKey());
 
@@ -99,14 +99,14 @@ public class XsdFieldTest {
     public void setKeyTest()
     {
 
-        XsdEntity mission = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = getTestMissionNameField(mission);
+        CoalesceField<?> field = getTestMissionNameField(mission);
 
         UUID newGuid = UUID.randomUUID();
         field.setKey(newGuid.toString());
 
-        XsdField<?> savedField = getSavedTestMissionField(mission);
+        CoalesceField<?> savedField = getSavedTestMissionField(mission);
 
         assertEquals(savedField.getKey().toUpperCase(), newGuid.toString().toUpperCase());
 
@@ -116,7 +116,7 @@ public class XsdFieldTest {
     public void getNameTest()
     {
 
-        XsdField<?> field = getTestMissionNameField();
+        CoalesceField<?> field = getTestMissionNameField();
 
         assertEquals(CoalesceTypeInstances.TEST_MISSION_NAME_NAME, field.getName());
 
@@ -126,16 +126,16 @@ public class XsdFieldTest {
     public void setNameTest()
     {
 
-        XsdEntity mission = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = getTestMissionNameField(mission);
+        CoalesceField<?> field = getTestMissionNameField(mission);
 
         field.setName("Testingname");
 
         String serializedMission = mission.toXml();
-        XsdEntity savedMission = XsdEntity.create(serializedMission);
+        CoalesceEntity savedMission = CoalesceEntity.create(serializedMission);
 
-        XsdField<?> savedField = (XsdField<?>) savedMission.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH.replace(CoalesceTypeInstances.TEST_MISSION_NAME_NAME,
+        CoalesceField<?> savedField = (CoalesceField<?>) savedMission.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH.replace(CoalesceTypeInstances.TEST_MISSION_NAME_NAME,
                                                                                                                                     "Testingname"));
 
         assertEquals("Testingname", savedField.getName());
@@ -146,7 +146,7 @@ public class XsdFieldTest {
     public void getValueTest()
     {
 
-        XsdField<?> field = getTestMissionNameField();
+        CoalesceField<?> field = getTestMissionNameField();
 
         assertEquals(CoalesceTypeInstances.TEST_MISSION_NAME_VALUE, field.getBaseValue());
 
@@ -156,13 +156,13 @@ public class XsdFieldTest {
     public void setValueTest()
     {
 
-        XsdEntity mission = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = getTestMissionNameField(mission);
+        CoalesceField<?> field = getTestMissionNameField(mission);
 
         field.setBaseValue("Testingvalue");
 
-        XsdField<?> savedField = getSavedTestMissionField(mission);
+        CoalesceField<?> savedField = getSavedTestMissionField(mission);
 
         assertEquals("Testingvalue", savedField.getBaseValue());
 
@@ -171,15 +171,15 @@ public class XsdFieldTest {
     @Test
     public void getDataType()
     {
-        XsdEntity mission = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> stringField = getTestMissionFieldByName(mission, CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+        CoalesceField<?> stringField = getTestMissionFieldByName(mission, CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
         assertEquals(ECoalesceFieldDataTypes.StringType, stringField.getDataType());
 
-        XsdField<?> dateField = getTestMissionFieldByName(mission, CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
+        CoalesceField<?> dateField = getTestMissionFieldByName(mission, CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
         assertEquals(ECoalesceFieldDataTypes.DateTimeType, dateField.getDataType());
 
-        XsdField<?> integerField = getTestMissionFieldByName(mission, CoalesceTypeInstances.TEST_MISSION_BASE64_PATH);
+        CoalesceField<?> integerField = getTestMissionFieldByName(mission, CoalesceTypeInstances.TEST_MISSION_BASE64_PATH);
         assertEquals(ECoalesceFieldDataTypes.IntegerType, integerField.getDataType());
 
     }
@@ -213,7 +213,7 @@ public class XsdFieldTest {
     public void getLabelTest()
     {
 
-        XsdField<?> field = getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_ACTION_NUMBER_PATH);
+        CoalesceField<?> field = getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_ACTION_NUMBER_PATH);
 
         assertEquals(CoalesceTypeInstances.TEST_MISSION_ACTION_NUMBER_LABEL, field.getLabel());
 
@@ -223,7 +223,7 @@ public class XsdFieldTest {
     public void getLabelDoesNotExistTest()
     {
 
-        XsdField<?> field = getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+        CoalesceField<?> field = getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
 
         assertEquals("", field.getLabel());
 
@@ -233,13 +233,13 @@ public class XsdFieldTest {
     public void setLabelTest()
     {
 
-        XsdEntity mission = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = getTestMissionNameField(mission);
+        CoalesceField<?> field = getTestMissionNameField(mission);
 
         field.setLabel("Testinglabel");
 
-        XsdField<?> savedField = getSavedTestMissionField(mission);
+        CoalesceField<?> savedField = getSavedTestMissionField(mission);
 
         assertEquals("Testinglabel", savedField.getLabel());
 
@@ -249,13 +249,13 @@ public class XsdFieldTest {
     public void setLabelNullTest()
     {
 
-        XsdEntity mission = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = getTestMissionNameField(mission);
+        CoalesceField<?> field = getTestMissionNameField(mission);
 
         field.setLabel(null);
 
-        XsdField<?> savedField = getSavedTestMissionField(mission);
+        CoalesceField<?> savedField = getSavedTestMissionField(mission);
 
         assertEquals("", savedField.getLabel());
 
@@ -264,7 +264,7 @@ public class XsdFieldTest {
     @Test
     public void getSizeDoesNotExistTest()
     {
-        XsdField<?> field = getTestMissionNameField();
+        CoalesceField<?> field = getTestMissionNameField();
 
         assertEquals(0, field.getSize());
 
@@ -273,15 +273,15 @@ public class XsdFieldTest {
     @Test
     public void setSizeTest()
     {
-        XsdEntity mission = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = getTestMissionNameField(mission);
+        CoalesceField<?> field = getTestMissionNameField(mission);
         field.setSize(128);
 
         String serializedMission = mission.toXml();
-        XsdEntity savedMission = XsdEntity.create(serializedMission);
+        CoalesceEntity savedMission = CoalesceEntity.create(serializedMission);
 
-        XsdField<?> savedField = getTestMissionNameField(savedMission);
+        CoalesceField<?> savedField = getTestMissionNameField(savedMission);
         assertEquals(128, savedField.getSize());
 
     }
@@ -290,7 +290,7 @@ public class XsdFieldTest {
     public void getModifiedByDoesNotExistTest()
     {
 
-        XsdField<?> field = getTestMissionNameField();
+        CoalesceField<?> field = getTestMissionNameField();
 
         assertEquals("", field.getModifiedBy());
 
@@ -300,13 +300,13 @@ public class XsdFieldTest {
     public void setModifiedByTest()
     {
 
-        XsdEntity mission = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = getTestMissionNameField(mission);
+        CoalesceField<?> field = getTestMissionNameField(mission);
 
         field.setModifiedBy("TestingModifiedBy");
 
-        XsdField<?> savedField = getSavedTestMissionField(mission);
+        CoalesceField<?> savedField = getSavedTestMissionField(mission);
 
         assertEquals("TestingModifiedBy", savedField.getModifiedBy());
 
@@ -316,7 +316,7 @@ public class XsdFieldTest {
     public void getModifiedByIpDoesNotExistTest()
     {
 
-        XsdField<?> field = getTestMissionNameField();
+        CoalesceField<?> field = getTestMissionNameField();
 
         assertEquals("", field.getModifiedByIP());
 
@@ -326,13 +326,13 @@ public class XsdFieldTest {
     public void setModifiedByIpTest()
     {
 
-        XsdEntity mission = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = getTestMissionNameField(mission);
+        CoalesceField<?> field = getTestMissionNameField(mission);
 
         field.setModifiedByIP("192.168.2.2");
 
-        XsdField<?> savedField = getSavedTestMissionField(mission);
+        CoalesceField<?> savedField = getSavedTestMissionField(mission);
 
         assertEquals("192.168.2.2", savedField.getModifiedByIP());
 
@@ -342,7 +342,7 @@ public class XsdFieldTest {
     public void getClassificationMarkingDefaultTest()
     {
 
-        XsdField<?> field = getTestMissionNameField();
+        CoalesceField<?> field = getTestMissionNameField();
 
         MarkingValueTest.assertMarkingValue(new Marking().getClassification(),
                                             field.getClassificationMarking().getClassification());
@@ -352,13 +352,13 @@ public class XsdFieldTest {
     @Test
     public void getClassificationMarkingAfterSetAndSerializedTest()
     {
-        XsdEntity mission = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = getTestMissionNameField(mission);
+        CoalesceField<?> field = getTestMissionNameField(mission);
 
         field.setClassificationMarking(TOPSECRETCLASSIFICATIONMARKING);
 
-        XsdField<?> savedField = getSavedTestMissionField(mission);
+        CoalesceField<?> savedField = getSavedTestMissionField(mission);
 
         MarkingValueTest.assertMarkingValue(TOPSECRETCLASSIFICATIONMARKING.getClassification(),
                                             savedField.getClassificationMarking().getClassification());
@@ -369,9 +369,9 @@ public class XsdFieldTest {
     public void setClassificationMarkingTopSecretTest()
     {
 
-        XsdEntity mission = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) mission.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+        CoalesceField<?> field = (CoalesceField<?>) mission.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
 
         field.setClassificationMarking(TOPSECRETCLASSIFICATIONMARKING);
 
@@ -384,7 +384,7 @@ public class XsdFieldTest {
     public void getValueWithMarkingTest()
     {
 
-        XsdField<?> field = getTestMissionNameField();
+        CoalesceField<?> field = getTestMissionNameField();
 
         assertEquals("UNCLASSIFIED NORTHCOM Volunteer Background Checks Changed", field.getValueWithMarking());
     }
@@ -393,7 +393,7 @@ public class XsdFieldTest {
     public void getPortionMarkingTest()
     {
 
-        XsdField<?> field = getTestMissionNameField();
+        CoalesceField<?> field = getTestMissionNameField();
 
         assertEquals("(U)", field.getPortionMarking());
     }
@@ -402,7 +402,7 @@ public class XsdFieldTest {
     public void getPreviousHistoryKeyNoneTest()
     {
 
-        XsdField<?> field = getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_BASE64_PATH);
+        CoalesceField<?> field = getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_BASE64_PATH);
 
         assertEquals("00000000-0000-0000-0000-000000000000", field.getPreviousHistoryKey());
 
@@ -412,7 +412,7 @@ public class XsdFieldTest {
     public void getPreviousHistoryKeyClassificationMarkingChangeTest()
     {
 
-        XsdField<?> field = getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_BASE64_PATH);
+        CoalesceField<?> field = getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_BASE64_PATH);
 
         assertEquals("00000000-0000-0000-0000-000000000000", field.getPreviousHistoryKey());
 
@@ -429,7 +429,7 @@ public class XsdFieldTest {
     public void getFilenameDoesNotExistTest()
     {
 
-        XsdField<?> field = getTestMissionNameField();
+        CoalesceField<?> field = getTestMissionNameField();
 
         assertEquals("", field.getFilename());
 
@@ -439,13 +439,13 @@ public class XsdFieldTest {
     public void setFilenameTest()
     {
 
-        XsdEntity mission = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = getTestMissionNameField(mission);
+        CoalesceField<?> field = getTestMissionNameField(mission);
 
         field.setFilename("c:/Program Files/java/jre7/bin");
 
-        XsdField<?> savedField = getSavedTestMissionField(mission);
+        CoalesceField<?> savedField = getSavedTestMissionField(mission);
 
         assertEquals("c:/Program Files/java/jre7/bin", savedField.getFilename());
 
@@ -455,7 +455,7 @@ public class XsdFieldTest {
     public void getExtensionDoesNotExistTest()
     {
 
-        XsdField<?> field = getTestMissionNameField();
+        CoalesceField<?> field = getTestMissionNameField();
 
         assertEquals("", field.getExtension());
 
@@ -465,13 +465,13 @@ public class XsdFieldTest {
     public void setExtensionTest()
     {
 
-        XsdEntity mission = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = getTestMissionNameField(mission);
+        CoalesceField<?> field = getTestMissionNameField(mission);
 
         field.setExtension(".jpeg");
 
-        XsdField<?> savedField = getSavedTestMissionField(mission);
+        CoalesceField<?> savedField = getSavedTestMissionField(mission);
 
         assertEquals("jpeg", savedField.getExtension());
 
@@ -481,7 +481,7 @@ public class XsdFieldTest {
     public void getMimeTypeDoesNotExistTest()
     {
 
-        XsdField<?> field = getTestMissionNameField();
+        CoalesceField<?> field = getTestMissionNameField();
 
         assertEquals("", field.getMimeType());
 
@@ -491,13 +491,13 @@ public class XsdFieldTest {
     public void setMimeTypeTest()
     {
 
-        XsdEntity mission = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = getTestMissionNameField(mission);
+        CoalesceField<?> field = getTestMissionNameField(mission);
 
         field.setMimeType("application/pdf");
 
-        XsdField<?> savedField = getSavedTestMissionField(mission);
+        CoalesceField<?> savedField = getSavedTestMissionField(mission);
 
         assertEquals("application/pdf", savedField.getMimeType());
 
@@ -507,7 +507,7 @@ public class XsdFieldTest {
     public void getHashDoesNotExistTest()
     {
 
-        XsdField<?> field = getTestMissionNameField();
+        CoalesceField<?> field = getTestMissionNameField();
 
         assertEquals("", field.getHash());
 
@@ -517,13 +517,13 @@ public class XsdFieldTest {
     public void setHashTest()
     {
 
-        XsdEntity mission = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = getTestMissionNameField(mission);
+        CoalesceField<?> field = getTestMissionNameField(mission);
 
         field.setHash("8743b52063cd84097a65d1633f5c74f5");
 
-        XsdField<?> savedField = getSavedTestMissionField(mission);
+        CoalesceField<?> savedField = getSavedTestMissionField(mission);
 
         assertEquals("8743b52063cd84097a65d1633f5c74f5", savedField.getHash());
 
@@ -533,7 +533,7 @@ public class XsdFieldTest {
     public void PreviousHistoryOrderTest() throws CoalesceDataFormatException
     {
 
-        XsdField<?> field = XsdFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_BASE64_PATH);
+        CoalesceField<?> field = XsdFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_BASE64_PATH);
 
         field.setTypedValue(1111);
         field.setTypedValue(2222);
@@ -548,9 +548,9 @@ public class XsdFieldTest {
     public void getSuspendHistoryTest()
     {
 
-        XsdEntity mission = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = getTestMissionNameField(mission);
+        CoalesceField<?> field = getTestMissionNameField(mission);
 
         assertFalse(field.getSuspendHistory());
 
@@ -567,7 +567,7 @@ public class XsdFieldTest {
     public void setSuspendHistoryTrueTest() throws CoalesceDataFormatException
     {
 
-        XsdField<?> field = XsdFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_BASE64_PATH);
+        CoalesceField<?> field = XsdFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_BASE64_PATH);
 
         field.setTypedValue(2222);
 
@@ -581,7 +581,7 @@ public class XsdFieldTest {
     public void setSuspendHistoryFalseTest() throws CoalesceDataFormatException
     {
 
-        XsdField<?> field = XsdFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_BASE64_PATH);
+        CoalesceField<?> field = XsdFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_BASE64_PATH);
 
         field.setSuspendHistory(true);
         field.setTypedValue(2222);
@@ -595,15 +595,15 @@ public class XsdFieldTest {
     public void setSuspendHistoryFalseBinaryTest()
     {
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdRecordset parentRecordset = (XsdRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
-        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.create(parentRecordset,
+        CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset,
                                                                     "Binary",
                                                                     ECoalesceFieldDataTypes.BinaryType);
 
-        XsdRecord parentRecord = parentRecordset.GetItem(0);
-        XsdField<?> field = XsdField.create(parentRecord, fileFieldDef);
+        CoalesceRecord parentRecord = parentRecordset.GetItem(0);
+        CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
 
         assertTrue(field.getHistory().isEmpty());
 
@@ -619,7 +619,7 @@ public class XsdFieldTest {
 
         FileTestResult result = getJpgFile();
 
-        XsdField<?> field = result.SavedField;
+        CoalesceField<?> field = result.SavedField;
         assertTrue(field.getHistory().isEmpty());
 
         field.setBaseValue("Something");
@@ -632,7 +632,7 @@ public class XsdFieldTest {
     public void getDateCreatedExistTest()
     {
 
-        XsdField<?> field = getTestMissionNameField();
+        CoalesceField<?> field = getTestMissionNameField();
 
         assertEquals(CoalesceTypeInstances.TEST_MISSION_NAME_CREATED, field.getDateCreated());
 
@@ -642,15 +642,15 @@ public class XsdFieldTest {
     public void setDateCreatedTest()
     {
 
-        XsdEntity mission = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = getTestMissionNameField(mission);
+        CoalesceField<?> field = getTestMissionNameField(mission);
 
         DateTime now = JodaDateTimeHelper.nowInUtc();
 
         field.setDateCreated(now);
 
-        XsdField<?> savedField = getSavedTestMissionField(mission);
+        CoalesceField<?> savedField = getSavedTestMissionField(mission);
 
         assertEquals(now, savedField.getDateCreated());
 
@@ -663,10 +663,10 @@ public class XsdFieldTest {
         try
         {
             // Create Mission Entity
-            XsdEntity mission = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+            CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
             // Get Mission Location Field
-            XsdField<?> field = getTestMissionFieldByName(mission, CoalesceTypeInstances.TEST_MISSION_LOCATION_PATH);
+            CoalesceField<?> field = getTestMissionFieldByName(mission, CoalesceTypeInstances.TEST_MISSION_LOCATION_PATH);
 
             // Get Field Value
             Coordinate coordinateTest = field.getCoordinateValue();
@@ -698,10 +698,10 @@ public class XsdFieldTest {
         try
         {
             // Create Mission Entity
-            XsdEntity mission = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+            CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
             // Get Mission Location Field
-            XsdField<?> field = getTestMissionFieldByName(mission, CoalesceTypeInstances.TEST_MISSION_LOCATION_LIST_PATH);
+            CoalesceField<?> field = getTestMissionFieldByName(mission, CoalesceTypeInstances.TEST_MISSION_LOCATION_LIST_PATH);
 
             // Create Coordinate List
             Coordinate coordinates[] = new Coordinate[2];
@@ -732,7 +732,7 @@ public class XsdFieldTest {
     public void getLastModifiedExistTest()
     {
 
-        XsdField<?> field = getTestMissionNameField();
+        CoalesceField<?> field = getTestMissionNameField();
 
         assertEquals(CoalesceTypeInstances.TEST_MISSION_NAME_MODIFIED, field.getLastModified());
 
@@ -742,15 +742,15 @@ public class XsdFieldTest {
     public void setLastModifiedTest()
     {
 
-        XsdEntity mission = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = getTestMissionNameField(mission);
+        CoalesceField<?> field = getTestMissionNameField(mission);
 
         DateTime now = JodaDateTimeHelper.nowInUtc();
 
         field.setLastModified(now);
 
-        XsdField<?> savedField = getSavedTestMissionField(mission);
+        CoalesceField<?> savedField = getSavedTestMissionField(mission);
 
         assertEquals(now, savedField.getLastModified());
 
@@ -760,7 +760,7 @@ public class XsdFieldTest {
     public void ToXmlTest()
     {
 
-        XsdField<?> field = getTestMissionNameField();
+        CoalesceField<?> field = getTestMissionNameField();
 
         String fieldXml = field.toXml();
 
@@ -772,7 +772,7 @@ public class XsdFieldTest {
     @Test
     public void getCoalesceFullFilenameNotFileTest()
     {
-        XsdField<?> field = getTestMissionNameField();
+        CoalesceField<?> field = getTestMissionNameField();
 
         assertTrue(StringHelper.isNullOrEmpty(field.getCoalesceFullFilename()));
     }
@@ -820,7 +820,7 @@ public class XsdFieldTest {
     @Test
     public void getCoalesceFullThumbnailFilenameNotFileTest()
     {
-        XsdField<?> field = getTestMissionNameField();
+        CoalesceField<?> field = getTestMissionNameField();
 
         assertTrue(StringHelper.isNullOrEmpty(field.getCoalesceFullThumbnailFilename()));
     }
@@ -868,7 +868,7 @@ public class XsdFieldTest {
     @Test
     public void getCoalesceFilenameWithLastModifiedTagNotFileTest()
     {
-        XsdField<?> field = getTestMissionNameField();
+        CoalesceField<?> field = getTestMissionNameField();
 
         assertTrue(StringHelper.isNullOrEmpty(field.getCoalesceFilenameWithLastModifiedTag()));
     }
@@ -930,7 +930,7 @@ public class XsdFieldTest {
     @Test
     public void getCoalesceThumbnailFilenameWithLastModifiedTagNotFileTest()
     {
-        XsdField<?> field = getTestMissionNameField();
+        CoalesceField<?> field = getTestMissionNameField();
 
         assertTrue(StringHelper.isNullOrEmpty(field.getCoalesceThumbnailFilenameWithLastModifiedTag()));
     }
@@ -991,7 +991,7 @@ public class XsdFieldTest {
     @Test
     public void getCoalesceFilenameNotFileTest()
     {
-        XsdField<?> field = getTestMissionNameField();
+        CoalesceField<?> field = getTestMissionNameField();
 
         assertTrue(StringHelper.isNullOrEmpty(field.getCoalesceFilename()));
     }
@@ -1009,7 +1009,7 @@ public class XsdFieldTest {
     @Test
     public void getCoalesceThumbnailFilenameNotFileTest()
     {
-        XsdField<?> field = getTestMissionNameField();
+        CoalesceField<?> field = getTestMissionNameField();
 
         assertTrue(StringHelper.isNullOrEmpty(field.getCoalesceThumbnailFilename()));
     }
@@ -1029,7 +1029,7 @@ public class XsdFieldTest {
     public void StringTypeTest() throws CoalesceDataFormatException
     {
 
-        XsdField<?> field = getTestMissionNameField();
+        CoalesceField<?> field = getTestMissionNameField();
 
         Object data = field.getValue();
 
@@ -1051,7 +1051,7 @@ public class XsdFieldTest {
     public void setTypedValueStringTypeTypeMismatchTest()
     {
 
-        XsdField<?> field = getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
+        CoalesceField<?> field = getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
 
         field.setTypedValue(UUID.randomUUID());
 
@@ -1060,13 +1060,13 @@ public class XsdFieldTest {
     @Test
     public void uriTypeTest() throws CoalesceDataFormatException
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdRecordset parentRecordset = (XsdRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
-        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.create(parentRecordset, "Uri", ECoalesceFieldDataTypes.UriType);
+        CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset, "Uri", ECoalesceFieldDataTypes.UriType);
 
-        XsdRecord parentRecord = parentRecordset.GetItem(0);
-        XsdField<?> field = XsdField.create(parentRecord, fileFieldDef);
+        CoalesceRecord parentRecord = parentRecordset.GetItem(0);
+        CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
         field.setTypedValue("uri:document/pdf");
 
         Object data = field.getValue();
@@ -1080,15 +1080,15 @@ public class XsdFieldTest {
     @Test
     public void getDataDateTimeTypeNotSetTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdRecordset parentRecordset = (XsdRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
-        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.create(parentRecordset,
+        CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset,
                                                                     "DateTime",
                                                                     ECoalesceFieldDataTypes.DateTimeType);
 
-        XsdRecord parentRecord = parentRecordset.GetItem(0);
-        XsdField<?> field = XsdField.create(parentRecord, fileFieldDef);
+        CoalesceRecord parentRecord = parentRecordset.GetItem(0);
+        CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
 
         assertNull(field.getDateTimeValue());
 
@@ -1097,7 +1097,7 @@ public class XsdFieldTest {
     @Test
     public void getDataSetTypedValueDateTimeTypeTest() throws CoalesceDataFormatException
     {
-        XsdField<?> field = getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
+        CoalesceField<?> field = getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
 
         Object data = field.getValue();
 
@@ -1122,7 +1122,7 @@ public class XsdFieldTest {
     public void setTypedValueDateTimeTypeTypeMismatchTest()
     {
 
-        XsdField<?> field = getTestMissionNameField();
+        CoalesceField<?> field = getTestMissionNameField();
 
         field.setTypedValue(JodaDateTimeHelper.nowInUtc());
 
@@ -1131,15 +1131,15 @@ public class XsdFieldTest {
     @Test
     public void getDataBinaryTypeNotSetTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdRecordset parentRecordset = (XsdRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
-        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.create(parentRecordset,
+        CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset,
                                                                     "Binary",
                                                                     ECoalesceFieldDataTypes.BinaryType);
 
-        XsdRecord parentRecord = parentRecordset.GetItem(0);
-        XsdField<?> field = XsdField.create(parentRecord, fileFieldDef);
+        CoalesceRecord parentRecord = parentRecordset.GetItem(0);
+        CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
 
         byte[] bytes = new byte[0];
 
@@ -1150,15 +1150,15 @@ public class XsdFieldTest {
     @Test
     public void getDataSetTypedValueBinaryTypeTest() throws UnsupportedEncodingException, CoalesceDataFormatException
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdRecordset parentRecordset = (XsdRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
-        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.create(parentRecordset,
+        CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset,
                                                                     "Binary",
                                                                     ECoalesceFieldDataTypes.BinaryType);
 
-        XsdRecord parentRecord = parentRecordset.GetItem(0);
-        XsdField<?> field = XsdField.create(parentRecord, fileFieldDef);
+        CoalesceRecord parentRecord = parentRecordset.GetItem(0);
+        CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
 
         String byteString = "Testing String";
         byte[] dataBytes = byteString.getBytes("US-ASCII");
@@ -1177,7 +1177,7 @@ public class XsdFieldTest {
     public void setTypedValueBinaryTypeTypeMismatchTest() throws UnsupportedEncodingException
     {
 
-        XsdField<?> field = getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
+        CoalesceField<?> field = getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
 
         String byteString = "Testing String";
         byte[] dataBytes = byteString.getBytes("US-ASCII");
@@ -1189,15 +1189,15 @@ public class XsdFieldTest {
     public void setTypedValueFileBytesTest() throws CoalesceDataFormatException, ImageProcessingException, IOException,
             JDOMException, CoalesceCryptoException
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdRecordset parentRecordset = (XsdRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
-        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.create(parentRecordset,
+        CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset,
                                                                     "File",
                                                                     ECoalesceFieldDataTypes.FileType);
 
-        XsdRecord parentRecord = parentRecordset.GetItem(0);
-        XsdField<?> field = XsdField.create(parentRecord, fileFieldDef);
+        CoalesceRecord parentRecord = parentRecordset.GetItem(0);
+        CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
 
         byte[] dataBytes = Files.readAllBytes(Paths.get("src\\resources\\TestDocument.docx"));
 
@@ -1223,15 +1223,15 @@ public class XsdFieldTest {
     public void setTypedValueDocPropsTest() throws IOException, ImageProcessingException, JDOMException,
             CoalesceDataFormatException, CoalesceCryptoException
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdRecordset parentRecordset = (XsdRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
-        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.create(parentRecordset,
+        CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset,
                                                                     "File",
                                                                     ECoalesceFieldDataTypes.FileType);
 
-        XsdRecord parentRecord = parentRecordset.GetItem(0);
-        XsdField<?> field = XsdField.create(parentRecord, fileFieldDef);
+        CoalesceRecord parentRecord = parentRecordset.GetItem(0);
+        CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
 
         byte[] dataBytes = Files.readAllBytes(Paths.get("src\\resources\\TestDocument.docx"));
 
@@ -1256,15 +1256,15 @@ public class XsdFieldTest {
     @Test
     public void getDataSetTypedValueBooleanTypeTest() throws CoalesceDataFormatException
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdRecordset parentRecordset = (XsdRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
-        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.create(parentRecordset,
+        CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset,
                                                                     "Boolean",
                                                                     ECoalesceFieldDataTypes.BooleanType);
 
-        XsdRecord parentRecord = parentRecordset.GetItem(0);
-        XsdField<?> field = XsdField.create(parentRecord, fileFieldDef);
+        CoalesceRecord parentRecord = parentRecordset.GetItem(0);
+        CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
 
         assertFalse(field.getBooleanValue());
         assertEquals("false", field.getBaseValue().toLowerCase());
@@ -1284,7 +1284,7 @@ public class XsdFieldTest {
     public void setTypedValueBooleanTypeTypeMismatchTest() throws UnsupportedEncodingException
     {
 
-        XsdField<?> field = getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
+        CoalesceField<?> field = getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
 
         field.setTypedValue(true);
 
@@ -1293,15 +1293,15 @@ public class XsdFieldTest {
     @Test(expected = CoalesceDataFormatException.class)
     public void getDataIntegerTypeNotSetTest() throws CoalesceDataFormatException
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdRecordset parentRecordset = (XsdRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
-        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.create(parentRecordset,
+        CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset,
                                                                     "Integer",
                                                                     ECoalesceFieldDataTypes.IntegerType);
 
-        XsdRecord parentRecord = parentRecordset.GetItem(0);
-        XsdField<?> field = XsdField.create(parentRecord, fileFieldDef);
+        CoalesceRecord parentRecord = parentRecordset.GetItem(0);
+        CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
 
         field.getIntegerValue();
 
@@ -1310,15 +1310,15 @@ public class XsdFieldTest {
     @Test
     public void getDataSetTypedValueIntegerTypeTest() throws CoalesceDataFormatException
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdRecordset parentRecordset = (XsdRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
-        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.create(parentRecordset,
+        CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset,
                                                                     "Integer",
                                                                     ECoalesceFieldDataTypes.IntegerType);
 
-        XsdRecord parentRecord = parentRecordset.GetItem(0);
-        XsdField<?> field = XsdField.create(parentRecord, fileFieldDef);
+        CoalesceRecord parentRecord = parentRecordset.GetItem(0);
+        CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
 
         assertEquals("", field.getBaseValue());
 
@@ -1337,7 +1337,7 @@ public class XsdFieldTest {
     public void setTypedValueIntgerTypeTypeMismatchTest() throws UnsupportedEncodingException
     {
 
-        XsdField<?> field = getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
+        CoalesceField<?> field = getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
 
         field.setTypedValue(1111);
 
@@ -1346,15 +1346,15 @@ public class XsdFieldTest {
     @Test
     public void getDataGuidTypeNotSetTest()
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdRecordset parentRecordset = (XsdRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
-        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.create(parentRecordset,
+        CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset,
                                                                     "GUID",
                                                                     ECoalesceFieldDataTypes.GuidType);
 
-        XsdRecord parentRecord = parentRecordset.GetItem(0);
-        XsdField<?> field = XsdField.create(parentRecord, fileFieldDef);
+        CoalesceRecord parentRecord = parentRecordset.GetItem(0);
+        CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
 
         assertNull(field.getGuidValue());
 
@@ -1363,15 +1363,15 @@ public class XsdFieldTest {
     @Test
     public void getDataSetTypedValueGuidTypeTest() throws CoalesceDataFormatException
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdRecordset parentRecordset = (XsdRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
-        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.create(parentRecordset,
+        CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset,
                                                                     "GUID",
                                                                     ECoalesceFieldDataTypes.GuidType);
 
-        XsdRecord parentRecord = parentRecordset.GetItem(0);
-        XsdField<?> field = XsdField.create(parentRecord, fileFieldDef);
+        CoalesceRecord parentRecord = parentRecordset.GetItem(0);
+        CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
 
         assertEquals("", field.getBaseValue());
 
@@ -1391,7 +1391,7 @@ public class XsdFieldTest {
     public void setTypedValueGUIDTypeTypeMismatchTest() throws UnsupportedEncodingException
     {
 
-        XsdField<?> field = getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
+        CoalesceField<?> field = getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
 
         field.setTypedValue(UUID.randomUUID());
 
@@ -1400,15 +1400,15 @@ public class XsdFieldTest {
     @Test
     public void getDataGeocoordinateTypeNotSetTest() throws CoalesceDataFormatException
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdRecordset parentRecordset = (XsdRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
-        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.create(parentRecordset,
+        CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset,
                                                                     "Location",
                                                                     ECoalesceFieldDataTypes.GeocoordinateType);
 
-        XsdRecord parentRecord = parentRecordset.GetItem(0);
-        XsdField<?> field = XsdField.create(parentRecord, fileFieldDef);
+        CoalesceRecord parentRecord = parentRecordset.GetItem(0);
+        CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
 
         assertNull(field.getCoordinateValue());
 
@@ -1417,9 +1417,9 @@ public class XsdFieldTest {
     @Test
     public void getDataSetTypedValueGeolocationTypeTest() throws CoalesceDataFormatException
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
 
         assertEquals("POINT (-80.9363995 43.6616578)", field.getBaseValue());
 
@@ -1436,9 +1436,9 @@ public class XsdFieldTest {
         field.setTypedValue(pentagon);
 
         String entityXml = entity.toXml();
-        XsdEntity desEntity = XsdEntity.create(entityXml);
+        CoalesceEntity desEntity = CoalesceEntity.create(entityXml);
 
-        XsdField<?> desField = (XsdField<?>) desEntity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        CoalesceField<?> desField = (CoalesceField<?>) desEntity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
 
         Coordinate desLocation = desField.getCoordinateValue();
 
@@ -1450,9 +1450,9 @@ public class XsdFieldTest {
     public void geolocationPointTests() throws ImageProcessingException, CoalesceCryptoException, IOException,
             JDOMException, CoalesceDataFormatException
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
 
         DocumentProperties docProps = new DocumentProperties();
         docProps.initialize("src\\resources\\desert.jpg");
@@ -1492,9 +1492,9 @@ public class XsdFieldTest {
         thrown.expect(CoalesceDataFormatException.class);
         thrown.expectMessage(XsdFieldTest.COORDINATE_ERROR_MESSAGE);
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
 
         field.setTypedValue(new Coordinate(91.00000000000001, 0));
 
@@ -1506,9 +1506,9 @@ public class XsdFieldTest {
         thrown.expect(CoalesceDataFormatException.class);
         thrown.expectMessage(XsdFieldTest.COORDINATE_ERROR_MESSAGE);
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
 
         field.setTypedValue(new Coordinate(-90.00000000000001, 0));
 
@@ -1520,9 +1520,9 @@ public class XsdFieldTest {
         thrown.expect(CoalesceDataFormatException.class);
         thrown.expectMessage(XsdFieldTest.COORDINATE_ERROR_MESSAGE);
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
 
         field.setTypedValue(new Coordinate(0, 90.00000000000001));
 
@@ -1534,9 +1534,9 @@ public class XsdFieldTest {
         thrown.expect(CoalesceDataFormatException.class);
         thrown.expectMessage(XsdFieldTest.COORDINATE_ERROR_MESSAGE);
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
 
         field.setTypedValue(new Coordinate(0, -90.00000000000001));
 
@@ -1548,9 +1548,9 @@ public class XsdFieldTest {
         thrown.expect(CoalesceDataFormatException.class);
         thrown.expectMessage(XsdFieldTest.COORDINATE_ERROR_MESSAGE);
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
 
         field.setTypedValue(new Coordinate(90.00000000000001, 90.00000000000001));
 
@@ -1562,9 +1562,9 @@ public class XsdFieldTest {
         thrown.expect(CoalesceDataFormatException.class);
         thrown.expectMessage(XsdFieldTest.COORDINATE_ERROR_MESSAGE);
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
 
         field.setTypedValue(new Coordinate(-90.00000000000001, -90.00000000000001));
 
@@ -1574,9 +1574,9 @@ public class XsdFieldTest {
     public void parseCoordinateTest() throws CoalesceDataFormatException
     {
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
 
         field.setBaseValue("POINT (8.67243350003624 49.39875240003339)");
         assertEquals(new Coordinate(8.67243350003624, 49.39875240003339), field.getValue());
@@ -1613,9 +1613,9 @@ public class XsdFieldTest {
         thrown.expect(CoalesceDataFormatException.class);
         thrown.expectMessage(XsdFieldTest.COORDINATE_ERROR_MESSAGE);
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
 
         field.setBaseValue("POINT (0 90.00000000000001)");
 
@@ -1628,9 +1628,9 @@ public class XsdFieldTest {
         thrown.expect(CoalesceDataFormatException.class);
         thrown.expectMessage(XsdFieldTest.COORDINATE_ERROR_MESSAGE);
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
 
         field.setBaseValue("POINT (0 -90.00000000000001)");
 
@@ -1643,9 +1643,9 @@ public class XsdFieldTest {
         thrown.expect(CoalesceDataFormatException.class);
         thrown.expectMessage(XsdFieldTest.COORDINATE_ERROR_MESSAGE);
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
 
         field.setBaseValue("POINT (90.00000000000001 0)");
 
@@ -1658,9 +1658,9 @@ public class XsdFieldTest {
         thrown.expect(CoalesceDataFormatException.class);
         thrown.expectMessage(XsdFieldTest.COORDINATE_ERROR_MESSAGE);
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
 
         field.setBaseValue("POINT (-90.00000000000001 0)");
 
@@ -1673,9 +1673,9 @@ public class XsdFieldTest {
         thrown.expect(CoalesceDataFormatException.class);
         thrown.expectMessage(XsdFieldTest.COORDINATE_ERROR_MESSAGE);
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
 
         field.setBaseValue("POINT (90.00000000000001 90.00000000000001)");
 
@@ -1688,9 +1688,9 @@ public class XsdFieldTest {
         thrown.expect(CoalesceDataFormatException.class);
         thrown.expectMessage(XsdFieldTest.COORDINATE_ERROR_MESSAGE);
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
 
         field.setBaseValue("POINT (-90.00000000000001 -90.00000000000001)");
 
@@ -1703,9 +1703,9 @@ public class XsdFieldTest {
         thrown.expect(CoalesceDataFormatException.class);
         thrown.expectMessage(XsdFieldTest.POINT_ERROR_MESSAGE);
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
 
         field.setBaseValue("POINT 0 0)");
 
@@ -1718,9 +1718,9 @@ public class XsdFieldTest {
         thrown.expect(CoalesceDataFormatException.class);
         thrown.expectMessage(XsdFieldTest.POINT_ERROR_MESSAGE);
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
 
         field.setBaseValue("POINT (0 0");
 
@@ -1733,9 +1733,9 @@ public class XsdFieldTest {
         thrown.expect(CoalesceDataFormatException.class);
         thrown.expectMessage(XsdFieldTest.POINT_ERROR_MESSAGE);
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
 
         field.setBaseValue("POINT 0 0");
 
@@ -1745,9 +1745,9 @@ public class XsdFieldTest {
     @Test
     public void parseCoordinateMissingSpaceTest() throws CoalesceDataFormatException
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
 
         field.setBaseValue("POINT(0 0)");
 
@@ -1763,9 +1763,9 @@ public class XsdFieldTest {
         thrown.expect(CoalesceDataFormatException.class);
         thrown.expectMessage(XsdFieldTest.POINT_ERROR_MESSAGE);
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
 
         field.setBaseValue("(0 0)");
 
@@ -1778,9 +1778,9 @@ public class XsdFieldTest {
         thrown.expect(CoalesceDataFormatException.class);
         thrown.expectMessage(XsdFieldTest.POINT_ERROR_MESSAGE);
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
 
         field.setBaseValue("POINT (X 0)");
 
@@ -1793,9 +1793,9 @@ public class XsdFieldTest {
         thrown.expect(CoalesceDataFormatException.class);
         thrown.expectMessage(XsdFieldTest.POINT_ERROR_MESSAGE);
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
 
         field.setBaseValue("POINT (0 Y)");
 
@@ -1808,9 +1808,9 @@ public class XsdFieldTest {
         thrown.expect(CoalesceDataFormatException.class);
         thrown.expectMessage(XsdFieldTest.POINT_ERROR_MESSAGE);
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
 
         field.setBaseValue("POINT (X Y)");
 
@@ -1823,9 +1823,9 @@ public class XsdFieldTest {
         thrown.expect(CoalesceDataFormatException.class);
         thrown.expectMessage(XsdFieldTest.POINT_ERROR_MESSAGE);
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
 
         field.setBaseValue("POINT (0)");
 
@@ -1835,9 +1835,9 @@ public class XsdFieldTest {
     @Test
     public void parseCoordinateNullTest() throws CoalesceDataFormatException
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
 
         field.setBaseValue(null);
 
@@ -1847,9 +1847,9 @@ public class XsdFieldTest {
     @Test
     public void parseCoordinateEmptyTest() throws CoalesceDataFormatException
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
 
         field.setBaseValue("");
 
@@ -1862,9 +1862,9 @@ public class XsdFieldTest {
         thrown.expect(CoalesceDataFormatException.class);
         thrown.expectMessage(XsdFieldTest.POINT_ERROR_MESSAGE);
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
 
         field.setBaseValue("  ");
 
@@ -1878,7 +1878,7 @@ public class XsdFieldTest {
         thrown.expect(ClassCastException.class);
         thrown.expectMessage("Type mismatch");
 
-        XsdField<?> field = getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
+        CoalesceField<?> field = getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
 
         field.setTypedValue(new Coordinate());
 
@@ -1891,7 +1891,7 @@ public class XsdFieldTest {
         thrown.expect(ClassCastException.class);
         thrown.expectMessage("Type mismatch");
 
-        XsdField<?> field = getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_LOCATION_LIST_PATH);
+        CoalesceField<?> field = getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_LOCATION_LIST_PATH);
 
         field.setTypedValue(new Coordinate());
 
@@ -1900,9 +1900,9 @@ public class XsdFieldTest {
     @Test
     public void parseCoordinateMultipointTest() throws CoalesceDataFormatException
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
 
         field.setBaseValue("MULTIPOINT ((-70.6280916 34.6873833), (-77.056138 38.87116))");
 
@@ -1919,9 +1919,9 @@ public class XsdFieldTest {
     @Test
     public void parseCoordinateMultipointSingleTest() throws CoalesceDataFormatException
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
 
         field.setBaseValue("MULTIPOINT ((-70.6280916 34.6873833))");
 
@@ -1937,9 +1937,9 @@ public class XsdFieldTest {
     @Test
     public void pareseCoordinateMultipointNoneTest() throws CoalesceDataFormatException
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
 
         field.setBaseValue("MULTIPOINT EMPTY");
 
@@ -1957,9 +1957,9 @@ public class XsdFieldTest {
         thrown.expect(CoalesceDataFormatException.class);
         thrown.expectMessage(XsdFieldTest.COORDINATE_ERROR_MESSAGE);
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
 
         field.setBaseValue("MULTIPOINT ((0 90.00000000000001), (0 0))");
 
@@ -1973,9 +1973,9 @@ public class XsdFieldTest {
         thrown.expect(CoalesceDataFormatException.class);
         thrown.expectMessage(XsdFieldTest.COORDINATE_ERROR_MESSAGE);
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
 
         field.setBaseValue("MULTIPOINT ((0 0), (0 -90.00000000000001))");
 
@@ -1989,9 +1989,9 @@ public class XsdFieldTest {
         thrown.expect(CoalesceDataFormatException.class);
         thrown.expectMessage(XsdFieldTest.COORDINATE_ERROR_MESSAGE);
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
 
         field.setBaseValue("MULTIPOINT ((90.00000000000001 0), (0 0))");
 
@@ -2005,9 +2005,9 @@ public class XsdFieldTest {
         thrown.expect(CoalesceDataFormatException.class);
         thrown.expectMessage(XsdFieldTest.COORDINATE_ERROR_MESSAGE);
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
 
         field.setBaseValue("MULTIPOINT ((0 0), (-90.00000000000001 0))");
 
@@ -2021,9 +2021,9 @@ public class XsdFieldTest {
         thrown.expect(CoalesceDataFormatException.class);
         thrown.expectMessage(XsdFieldTest.COORDINATE_ERROR_MESSAGE);
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
 
         field.setBaseValue("MULTIPOINT ((90.00000000000001 90.00000000000001), (0 0))");
 
@@ -2037,9 +2037,9 @@ public class XsdFieldTest {
         thrown.expect(CoalesceDataFormatException.class);
         thrown.expectMessage(XsdFieldTest.COORDINATE_ERROR_MESSAGE);
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
 
         field.setBaseValue("MULTIPOINT ((0 0), (-90.00000000000001 -90.00000000000001))");
 
@@ -2053,9 +2053,9 @@ public class XsdFieldTest {
         thrown.expect(CoalesceDataFormatException.class);
         thrown.expectMessage(XsdFieldTest.COORDINATES_ERROR_MESSAGE);
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
 
         field.setBaseValue("MULTIPOINT (0 0), (90 90))");
 
@@ -2069,9 +2069,9 @@ public class XsdFieldTest {
         thrown.expect(CoalesceDataFormatException.class);
         thrown.expectMessage(XsdFieldTest.COORDINATES_ERROR_MESSAGE);
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
 
         field.setBaseValue("MULTIPOINT ((0 0), (90 90)");
 
@@ -2085,9 +2085,9 @@ public class XsdFieldTest {
         thrown.expect(CoalesceDataFormatException.class);
         thrown.expectMessage(XsdFieldTest.COORDINATES_ERROR_MESSAGE);
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
 
         field.setBaseValue("MULTIPOINT (0 0)");
 
@@ -2101,9 +2101,9 @@ public class XsdFieldTest {
         thrown.expect(CoalesceDataFormatException.class);
         thrown.expectMessage(XsdFieldTest.COORDINATES_ERROR_MESSAGE);
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
 
         field.setBaseValue("MULTIPOINT (0 0, (89 9))");
 
@@ -2114,9 +2114,9 @@ public class XsdFieldTest {
     @Test
     public void parseCoordinateMultipointMissingSpaceTest() throws CoalesceDataFormatException
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
 
         field.setBaseValue("MULTIPOINT((0 0))");
 
@@ -2135,9 +2135,9 @@ public class XsdFieldTest {
         thrown.expect(CoalesceDataFormatException.class);
         thrown.expectMessage(XsdFieldTest.COORDINATES_ERROR_MESSAGE);
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
 
         field.setBaseValue("((0 0), (90 90))");
         field.getValue();
@@ -2150,9 +2150,9 @@ public class XsdFieldTest {
         thrown.expect(CoalesceDataFormatException.class);
         thrown.expectMessage(XsdFieldTest.COORDINATES_ERROR_MESSAGE);
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
 
         field.setBaseValue("MULTIPOINT ((X 0), (90 90))");
         field.getValue();
@@ -2164,9 +2164,9 @@ public class XsdFieldTest {
         thrown.expect(CoalesceDataFormatException.class);
         thrown.expectMessage(XsdFieldTest.COORDINATES_ERROR_MESSAGE);
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
 
         field.setBaseValue("MULTIPOINT ((90 90), (0 Y)");
         field.getValue();
@@ -2178,9 +2178,9 @@ public class XsdFieldTest {
         thrown.expect(CoalesceDataFormatException.class);
         thrown.expectMessage(XsdFieldTest.COORDINATES_ERROR_MESSAGE);
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
 
         field.setBaseValue("MULTIPOINT ((X Y), (0 0))");
         field.getValue();
@@ -2192,9 +2192,9 @@ public class XsdFieldTest {
         thrown.expect(CoalesceDataFormatException.class);
         thrown.expectMessage(XsdFieldTest.COORDINATES_ERROR_MESSAGE);
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdField<?> field = (XsdField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
 
         field.setBaseValue("MULTIPOINT ((0), (0 0))");
         field.getValue();
@@ -2208,7 +2208,7 @@ public class XsdFieldTest {
         thrown.expect(ClassCastException.class);
         thrown.expectMessage("Type mismatch");
 
-        XsdField<?> field = getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
+        CoalesceField<?> field = getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
 
         field.setTypedValue(new Coordinate[] { new Coordinate(0, 0) });
 
@@ -2221,7 +2221,7 @@ public class XsdFieldTest {
         thrown.expect(ClassCastException.class);
         thrown.expectMessage("Type mismatch");
 
-        XsdField<?> field = getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_LOCATION_PATH);
+        CoalesceField<?> field = getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_LOCATION_PATH);
 
         field.setTypedValue(new Coordinate[] { new Coordinate(0, 0) });
 
@@ -2238,50 +2238,50 @@ public class XsdFieldTest {
 
     }
 
-    private static XsdField<?> getTestMissionNameField(String entityXml)
+    private static CoalesceField<?> getTestMissionNameField(String entityXml)
     {
 
-        XsdEntity entity = XsdEntity.create(entityXml);
+        CoalesceEntity entity = CoalesceEntity.create(entityXml);
 
         return getTestMissionNameField(entity);
 
     }
 
-    private static XsdField<?> getTestMissionNameField(XsdEntity entity)
+    private static CoalesceField<?> getTestMissionNameField(CoalesceEntity entity)
     {
 
         return getTestMissionFieldByName(entity, CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
 
     }
 
-    public static XsdField<?> getTestMissionNameField()
+    public static CoalesceField<?> getTestMissionNameField()
     {
 
         return getTestMissionNameField(CoalesceTypeInstances.TEST_MISSION);
 
     }
 
-    public static XsdField<?> getTestMissionFieldByName(String fieldPath)
+    public static CoalesceField<?> getTestMissionFieldByName(String fieldPath)
     {
 
-        XsdEntity mission = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         return getTestMissionFieldByName(mission, fieldPath);
 
     }
 
-    private static XsdField<?> getTestMissionFieldByName(XsdEntity entity, String fieldPath)
+    private static CoalesceField<?> getTestMissionFieldByName(CoalesceEntity entity, String fieldPath)
     {
 
-        XsdDataObject fdo = entity.getDataObjectForNamePath(fieldPath);
+        CoalesceDataObject fdo = entity.getDataObjectForNamePath(fieldPath);
 
-        assertTrue(fdo instanceof XsdField<?>);
+        assertTrue(fdo instanceof CoalesceField<?>);
 
-        return (XsdField<?>) fdo;
+        return (CoalesceField<?>) fdo;
 
     }
 
-    private static XsdField<?> getSavedTestMissionField(XsdEntity entity)
+    private static CoalesceField<?> getSavedTestMissionField(CoalesceEntity entity)
     {
 
         String serializedMission = entity.toXml();
@@ -2293,22 +2293,22 @@ public class XsdFieldTest {
     private FileTestResult getJpgFile()
     {
 
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        XsdRecordset parentRecordset = (XsdRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
-        XsdFieldDefinition fileFieldDef = XsdFieldDefinition.create(parentRecordset,
+        CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset,
                                                                     "File",
                                                                     ECoalesceFieldDataTypes.FileType);
 
-        XsdRecord parentRecord = parentRecordset.GetItem(0);
-        XsdField<?> fileField = XsdField.create(parentRecord, fileFieldDef);
+        CoalesceRecord parentRecord = parentRecordset.GetItem(0);
+        CoalesceField<?> fileField = CoalesceField.create(parentRecord, fileFieldDef);
         fileField.setExtension("jpg");
 
         String savedEntity = entity.toXml();
 
-        XsdEntity desEntity = XsdEntity.create(savedEntity);
+        CoalesceEntity desEntity = CoalesceEntity.create(savedEntity);
 
-        XsdField<?> savedFileField = (XsdField<?>) desEntity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/File");
+        CoalesceField<?> savedFileField = (CoalesceField<?>) desEntity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/File");
 
         return new FileTestResult(fileField, savedFileField);
 
@@ -2316,10 +2316,10 @@ public class XsdFieldTest {
 
     private class FileTestResult {
 
-        public XsdField<?> Field;
-        public XsdField<?> SavedField;
+        public CoalesceField<?> Field;
+        public CoalesceField<?> SavedField;
 
-        public FileTestResult(XsdField<?> field, XsdField<?> savedField)
+        public FileTestResult(CoalesceField<?> field, CoalesceField<?> savedField)
         {
             Field = field;
             SavedField = savedField;

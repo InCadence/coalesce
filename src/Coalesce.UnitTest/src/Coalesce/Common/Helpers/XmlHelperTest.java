@@ -20,7 +20,7 @@ import org.xml.sax.SAXException;
 
 import Coalesce.Common.UnitTest.CoalesceAssert;
 import Coalesce.Common.UnitTest.CoalesceTypeInstances;
-import Coalesce.Framework.DataModel.XsdEntity;
+import Coalesce.Framework.DataModel.CoalesceEntity;
 import Coalesce.Framework.GeneratedJAXB.Entity;
 import Coalesce.Framework.GeneratedJAXB.Entity.Linkagesection;
 import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset;
@@ -563,14 +563,14 @@ public class XmlHelperTest {
     @Test
     public void formatXmlDocumentTest() throws SAXException, IOException
     {
-        XsdEntity entity = XsdEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
         String entityXml = entity.toXml();
 
         Document doc = XmlHelper.loadXmlFrom(entityXml);
 
         String docXml = XmlHelper.formatXml(doc);
 
-        XsdEntity docEntity = XsdEntity.create(docXml);
+        CoalesceEntity docEntity = CoalesceEntity.create(docXml);
 
         String docEntityXml = docEntity.toXml();
 

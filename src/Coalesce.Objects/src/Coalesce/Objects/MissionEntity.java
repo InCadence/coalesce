@@ -3,18 +3,18 @@ package Coalesce.Objects;
 import org.joda.time.DateTime;
 
 import Coalesce.Framework.DataModel.ECoalesceFieldDataTypes;
-import Coalesce.Framework.DataModel.XsdCoordinateField;
-import Coalesce.Framework.DataModel.XsdDateTimeField;
-import Coalesce.Framework.DataModel.XsdEntity;
-import Coalesce.Framework.DataModel.XsdField;
-import Coalesce.Framework.DataModel.XsdFieldDefinition;
-import Coalesce.Framework.DataModel.XsdIntegerField;
-import Coalesce.Framework.DataModel.XsdRecord;
-import Coalesce.Framework.DataModel.XsdRecordset;
-import Coalesce.Framework.DataModel.XsdSection;
-import Coalesce.Framework.DataModel.XsdStringField;
+import Coalesce.Framework.DataModel.CoalesceCoordinateField;
+import Coalesce.Framework.DataModel.CoalesceDateTimeField;
+import Coalesce.Framework.DataModel.CoalesceEntity;
+import Coalesce.Framework.DataModel.CoalesceField;
+import Coalesce.Framework.DataModel.CoalesceFieldDefinition;
+import Coalesce.Framework.DataModel.CoalesceIntegerField;
+import Coalesce.Framework.DataModel.CoalesceRecord;
+import Coalesce.Framework.DataModel.CoalesceRecordset;
+import Coalesce.Framework.DataModel.CoalesceSection;
+import Coalesce.Framework.DataModel.CoalesceStringField;
 
-public class MissionEntity extends XsdEntity {
+public class MissionEntity extends CoalesceEntity {
 
     // ----------------------------------------------------------------------//
     // Static Properties
@@ -27,8 +27,8 @@ public class MissionEntity extends XsdEntity {
     // Protected Member Variables
     // ----------------------------------------------------------------------//
 
-    private XsdRecord _informationRecord;
-    private XsdRecord _liveStatusRecord;
+    private CoalesceRecord _informationRecord;
+    private CoalesceRecord _liveStatusRecord;
 
     // ----------------------------------------------------------------------//
     // Initialization
@@ -37,8 +37,8 @@ public class MissionEntity extends XsdEntity {
     @Override
     public boolean initialize()
     {
-        XsdSection section;
-        XsdRecordset recordSet;
+        CoalesceSection section;
+        CoalesceRecordset recordSet;
 
         // Already Initialized?
         if (_liveStatusRecord != null || _informationRecord != null) return false;
@@ -52,32 +52,32 @@ public class MissionEntity extends XsdEntity {
                               "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionName,TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/IncidentTitle")) return false;
 
         // Create Live Section
-        section = XsdSection.create(this, "Live Status Section");
-        recordSet = XsdRecordset.create(section, "Live Status Recordset");
-        XsdFieldDefinition.create(recordSet, "CurrentStatus", ECoalesceFieldDataTypes.StringType);
+        section = CoalesceSection.create(this, "Live Status Section");
+        recordSet = CoalesceRecordset.create(section, "Live Status Recordset");
+        CoalesceFieldDefinition.create(recordSet, "CurrentStatus", ECoalesceFieldDataTypes.StringType);
 
         // Create New Record
         _liveStatusRecord = recordSet.addNew();
 
         // Create Mission Information Section
-        section = XsdSection.create(this, MissionEntity.Name + " Information Section");
-        recordSet = XsdRecordset.create(section, MissionEntity.Name + " Information Recordset");
-        XsdFieldDefinition.create(recordSet, "ActionNumber", ECoalesceFieldDataTypes.StringType, "Action Number", "U", "0");
-        XsdFieldDefinition.create(recordSet, "IncidentNumber", ECoalesceFieldDataTypes.StringType);
-        XsdFieldDefinition.create(recordSet, "IncidentTitle", ECoalesceFieldDataTypes.StringType);
-        XsdFieldDefinition.create(recordSet, "IncidentDescription", ECoalesceFieldDataTypes.StringType);
-        XsdFieldDefinition.create(recordSet, "IncidentDateTime", ECoalesceFieldDataTypes.DateTimeType);
-        XsdFieldDefinition.create(recordSet, "MissionName", ECoalesceFieldDataTypes.StringType);
-        XsdFieldDefinition.create(recordSet, "MissionType", ECoalesceFieldDataTypes.StringType);
-        XsdFieldDefinition.create(recordSet, "MissionDescription", ECoalesceFieldDataTypes.StringType);
-        XsdFieldDefinition.create(recordSet, "MissionIndicatorColor", ECoalesceFieldDataTypes.StringType);
-        XsdFieldDefinition.create(recordSet, "MissionIndicatorShape", ECoalesceFieldDataTypes.StringType);
-        XsdFieldDefinition.create(recordSet, "MissionIndicatorNumber", ECoalesceFieldDataTypes.StringType);
-        XsdFieldDefinition.create(recordSet, "MissionIndicatorNumberBASE10", ECoalesceFieldDataTypes.IntegerType);
-        XsdFieldDefinition.create(recordSet, "MissionStartDateTime", ECoalesceFieldDataTypes.DateTimeType);
-        XsdFieldDefinition.create(recordSet, "MissionEndDateTime", ECoalesceFieldDataTypes.DateTimeType);
-        XsdFieldDefinition.create(recordSet, "MissionGeoLocation", ECoalesceFieldDataTypes.GeocoordinateType);
-        XsdFieldDefinition.create(recordSet, "MissionAddress", ECoalesceFieldDataTypes.StringType);
+        section = CoalesceSection.create(this, MissionEntity.Name + " Information Section");
+        recordSet = CoalesceRecordset.create(section, MissionEntity.Name + " Information Recordset");
+        CoalesceFieldDefinition.create(recordSet, "ActionNumber", ECoalesceFieldDataTypes.StringType, "Action Number", "U", "0");
+        CoalesceFieldDefinition.create(recordSet, "IncidentNumber", ECoalesceFieldDataTypes.StringType);
+        CoalesceFieldDefinition.create(recordSet, "IncidentTitle", ECoalesceFieldDataTypes.StringType);
+        CoalesceFieldDefinition.create(recordSet, "IncidentDescription", ECoalesceFieldDataTypes.StringType);
+        CoalesceFieldDefinition.create(recordSet, "IncidentDateTime", ECoalesceFieldDataTypes.DateTimeType);
+        CoalesceFieldDefinition.create(recordSet, "MissionName", ECoalesceFieldDataTypes.StringType);
+        CoalesceFieldDefinition.create(recordSet, "MissionType", ECoalesceFieldDataTypes.StringType);
+        CoalesceFieldDefinition.create(recordSet, "MissionDescription", ECoalesceFieldDataTypes.StringType);
+        CoalesceFieldDefinition.create(recordSet, "MissionIndicatorColor", ECoalesceFieldDataTypes.StringType);
+        CoalesceFieldDefinition.create(recordSet, "MissionIndicatorShape", ECoalesceFieldDataTypes.StringType);
+        CoalesceFieldDefinition.create(recordSet, "MissionIndicatorNumber", ECoalesceFieldDataTypes.StringType);
+        CoalesceFieldDefinition.create(recordSet, "MissionIndicatorNumberBASE10", ECoalesceFieldDataTypes.IntegerType);
+        CoalesceFieldDefinition.create(recordSet, "MissionStartDateTime", ECoalesceFieldDataTypes.DateTimeType);
+        CoalesceFieldDefinition.create(recordSet, "MissionEndDateTime", ECoalesceFieldDataTypes.DateTimeType);
+        CoalesceFieldDefinition.create(recordSet, "MissionGeoLocation", ECoalesceFieldDataTypes.GeocoordinateType);
+        CoalesceFieldDefinition.create(recordSet, "MissionAddress", ECoalesceFieldDataTypes.StringType);
 
         _informationRecord = recordSet.addNew();
 
@@ -92,7 +92,7 @@ public class MissionEntity extends XsdEntity {
         // Live Status Record
         if (this._liveStatusRecord == null)
         {
-            XsdRecordset recordSet = (XsdRecordset) this.getDataObjectForNamePath(MissionEntity.Name
+            CoalesceRecordset recordSet = (CoalesceRecordset) this.getDataObjectForNamePath(MissionEntity.Name
                     + "/Live Status Section/Live Status Recordset");
 
             // Valid Xml?
@@ -112,7 +112,7 @@ public class MissionEntity extends XsdEntity {
         // Mission Information Record
         if (this._informationRecord == null)
         {
-            XsdRecordset recordSet = (XsdRecordset) this.getDataObjectForNamePath(MissionEntity.Name + "/"
+            CoalesceRecordset recordSet = (CoalesceRecordset) this.getDataObjectForNamePath(MissionEntity.Name + "/"
                     + MissionEntity.Name + " Information Section/" + MissionEntity.Name + " Information Recordset");
 
             // Valid Xml?
@@ -144,86 +144,86 @@ public class MissionEntity extends XsdEntity {
 
     public void setCurrentStatus(EMissionStatuses value)
     {
-        ((XsdStringField) this._liveStatusRecord.getFieldByName("CurrentStatus")).setValue(value.getLabel());
+        ((CoalesceStringField) this._liveStatusRecord.getFieldByName("CurrentStatus")).setValue(value.getLabel());
     }
     
-    public XsdStringField getActionNumber()
+    public CoalesceStringField getActionNumber()
     {
-        return (XsdStringField) _informationRecord.getFieldByName("ActionNumber");
+        return (CoalesceStringField) _informationRecord.getFieldByName("ActionNumber");
     }
 
-    public XsdStringField getIncidentNumber()
+    public CoalesceStringField getIncidentNumber()
     {
-        return (XsdStringField) _informationRecord.getFieldByName("IncidentNumber");
+        return (CoalesceStringField) _informationRecord.getFieldByName("IncidentNumber");
     }
 
-    public XsdStringField getIncidentTitle()
+    public CoalesceStringField getIncidentTitle()
     {
-        return (XsdStringField) _informationRecord.getFieldByName("IncidentTitle");
+        return (CoalesceStringField) _informationRecord.getFieldByName("IncidentTitle");
     }
 
-    public XsdStringField getIncidentDescription()
+    public CoalesceStringField getIncidentDescription()
     {
-        return (XsdStringField) _informationRecord.getFieldByName("IncidentDescription");
+        return (CoalesceStringField) _informationRecord.getFieldByName("IncidentDescription");
     }
 
-    public XsdField<DateTime> getIncidentDateTime()
+    public CoalesceField<DateTime> getIncidentDateTime()
     {
-        return (XsdDateTimeField) _informationRecord.getFieldByName("IncidentDateTime");
+        return (CoalesceDateTimeField) _informationRecord.getFieldByName("IncidentDateTime");
     }
 
-    public XsdStringField getMissionName()
+    public CoalesceStringField getMissionName()
     {
-        return (XsdStringField) _informationRecord.getFieldByName("MissionName");
+        return (CoalesceStringField) _informationRecord.getFieldByName("MissionName");
     }
 
-    public XsdStringField getMissionType()
+    public CoalesceStringField getMissionType()
     {
-        return (XsdStringField) _informationRecord.getFieldByName("MissionType");
+        return (CoalesceStringField) _informationRecord.getFieldByName("MissionType");
     }
 
-    public XsdStringField getMissionDescription()
+    public CoalesceStringField getMissionDescription()
     {
-        return (XsdStringField) _informationRecord.getFieldByName("MissionDescription");
+        return (CoalesceStringField) _informationRecord.getFieldByName("MissionDescription");
     }
 
-    public XsdStringField getMissionIndicatorColor()
+    public CoalesceStringField getMissionIndicatorColor()
     {
-        return (XsdStringField) _informationRecord.getFieldByName("MissionIndicatorColor");
+        return (CoalesceStringField) _informationRecord.getFieldByName("MissionIndicatorColor");
     }
 
-    public XsdStringField getMissionIndicatorShape()
+    public CoalesceStringField getMissionIndicatorShape()
     {
-        return (XsdStringField) _informationRecord.getFieldByName("MissionIndicatorShape");
+        return (CoalesceStringField) _informationRecord.getFieldByName("MissionIndicatorShape");
     }
 
-    public XsdStringField getMissionIndicatorNumber()
+    public CoalesceStringField getMissionIndicatorNumber()
     {
-        return (XsdStringField) _informationRecord.getFieldByName("MissionIndicatorNumber");
+        return (CoalesceStringField) _informationRecord.getFieldByName("MissionIndicatorNumber");
     }
 
-    public XsdIntegerField getMissionIndicatorNumberBASE10()
+    public CoalesceIntegerField getMissionIndicatorNumberBASE10()
     {
-        return (XsdIntegerField) _informationRecord.getFieldByName("MissionIndicatorNumberBASE10");
+        return (CoalesceIntegerField) _informationRecord.getFieldByName("MissionIndicatorNumberBASE10");
     }
 
-    public XsdDateTimeField getMissionStartDateTime()
+    public CoalesceDateTimeField getMissionStartDateTime()
     {
-        return (XsdDateTimeField) _informationRecord.getFieldByName("MissionStartDateTime");
+        return (CoalesceDateTimeField) _informationRecord.getFieldByName("MissionStartDateTime");
     }
 
-    public XsdDateTimeField getMissionEndDateTime()
+    public CoalesceDateTimeField getMissionEndDateTime()
     {
-        return (XsdDateTimeField) _informationRecord.getFieldByName("MissionEndDateTime");
+        return (CoalesceDateTimeField) _informationRecord.getFieldByName("MissionEndDateTime");
     }
 
-    public XsdCoordinateField getMissionGeoLocation()
+    public CoalesceCoordinateField getMissionGeoLocation()
     {
-        return (XsdCoordinateField) _informationRecord.getFieldByName("MissionGeoLocation");
+        return (CoalesceCoordinateField) _informationRecord.getFieldByName("MissionGeoLocation");
     }
 
-    public XsdStringField getMissionAddress()
+    public CoalesceStringField getMissionAddress()
     {
-        return (XsdStringField) _informationRecord.getFieldByName("MissionAddress");
+        return (CoalesceStringField) _informationRecord.getFieldByName("MissionAddress");
     }
 }

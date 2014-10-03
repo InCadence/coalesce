@@ -30,7 +30,7 @@ import Coalesce.Framework.GeneratedJAXB.Entity.Section.Recordset.Fielddefinition
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-public class XsdFieldDefinition extends XsdDataObject implements ICoalesceFieldDefinition {
+public class CoalesceFieldDefinition extends CoalesceDataObject implements ICoalesceFieldDefinition {
 
     // -----------------------------------------------------------------------//
     // Protected Member Variables
@@ -51,9 +51,9 @@ public class XsdFieldDefinition extends XsdDataObject implements ICoalesceFieldD
      * 
      * @return XsdFieldDefinition
      */
-    public static XsdFieldDefinition create(XsdRecordset parent, String name, ECoalesceFieldDataTypes dataType)
+    public static CoalesceFieldDefinition create(CoalesceRecordset parent, String name, ECoalesceFieldDataTypes dataType)
     {
-        return XsdFieldDefinition.create(parent, name, dataType, false);
+        return CoalesceFieldDefinition.create(parent, name, dataType, false);
     }
 
     /**
@@ -66,12 +66,12 @@ public class XsdFieldDefinition extends XsdDataObject implements ICoalesceFieldD
      * 
      * @return XsdFieldDefinition
      */
-    public static XsdFieldDefinition create(XsdRecordset parent,
+    public static CoalesceFieldDefinition create(CoalesceRecordset parent,
                                             String name,
                                             ECoalesceFieldDataTypes dataType,
                                             boolean noIndex)
     {
-        return XsdFieldDefinition.create(parent, name, dataType, "", "U", "", noIndex);
+        return CoalesceFieldDefinition.create(parent, name, dataType, "", "U", "", noIndex);
     }
 
     /**
@@ -85,13 +85,13 @@ public class XsdFieldDefinition extends XsdDataObject implements ICoalesceFieldD
      * 
      * @return XsdFieldDefinition
      */
-    public static XsdFieldDefinition create(XsdRecordset parent,
+    public static CoalesceFieldDefinition create(CoalesceRecordset parent,
                                             String name,
                                             String label,
                                             String defaultClassificationMarking,
                                             boolean defaultValue)
     {
-        return XsdFieldDefinition.create(parent, name, label, defaultClassificationMarking, defaultValue, false);
+        return CoalesceFieldDefinition.create(parent, name, label, defaultClassificationMarking, defaultValue, false);
     }
 
     /**
@@ -106,14 +106,14 @@ public class XsdFieldDefinition extends XsdDataObject implements ICoalesceFieldD
      * 
      * @return XsdFieldDefinition
      */
-    public static XsdFieldDefinition create(XsdRecordset parent,
+    public static CoalesceFieldDefinition create(CoalesceRecordset parent,
                                             String name,
                                             String label,
                                             String defaultClassificationMarking,
                                             boolean defaultValue,
                                             boolean noIndex)
     {
-        return XsdFieldDefinition.create(parent,
+        return CoalesceFieldDefinition.create(parent,
                                          name,
                                          ECoalesceFieldDataTypes.BooleanType,
                                          label,
@@ -133,13 +133,13 @@ public class XsdFieldDefinition extends XsdDataObject implements ICoalesceFieldD
      * 
      * @return XsdFieldDefinition
      */
-    public static XsdFieldDefinition create(XsdRecordset parent,
+    public static CoalesceFieldDefinition create(CoalesceRecordset parent,
                                             String name,
                                             String label,
                                             String defaultClassificationMarking,
                                             int defaultValue)
     {
-        return XsdFieldDefinition.create(parent, name, label, defaultClassificationMarking, defaultValue, false);
+        return CoalesceFieldDefinition.create(parent, name, label, defaultClassificationMarking, defaultValue, false);
     }
 
     /**
@@ -154,14 +154,14 @@ public class XsdFieldDefinition extends XsdDataObject implements ICoalesceFieldD
      * 
      * @return XsdFieldDefinition
      */
-    public static XsdFieldDefinition create(XsdRecordset parent,
+    public static CoalesceFieldDefinition create(CoalesceRecordset parent,
                                             String name,
                                             String label,
                                             String defaultClassificationMarking,
                                             int defaultValue,
                                             boolean noIndex)
     {
-        return XsdFieldDefinition.create(parent,
+        return CoalesceFieldDefinition.create(parent,
                                          name,
                                          ECoalesceFieldDataTypes.IntegerType,
                                          label,
@@ -182,14 +182,14 @@ public class XsdFieldDefinition extends XsdDataObject implements ICoalesceFieldD
      * 
      * @return XsdFieldDefinition
      */
-    public static XsdFieldDefinition create(XsdRecordset parent,
+    public static CoalesceFieldDefinition create(CoalesceRecordset parent,
                                             String name,
                                             ECoalesceFieldDataTypes dataType,
                                             String label,
                                             String defaultClassificationMarking,
                                             String defaultValue)
     {
-        return XsdFieldDefinition.create(parent, name, dataType, label, defaultClassificationMarking, defaultValue, false);
+        return CoalesceFieldDefinition.create(parent, name, dataType, label, defaultClassificationMarking, defaultValue, false);
     }
 
     /**
@@ -205,7 +205,7 @@ public class XsdFieldDefinition extends XsdDataObject implements ICoalesceFieldD
      * 
      * @return XsdFieldDefinition
      */
-    public static XsdFieldDefinition create(XsdRecordset parent,
+    public static CoalesceFieldDefinition create(CoalesceRecordset parent,
                                             String name,
                                             ECoalesceFieldDataTypes dataType,
                                             String label,
@@ -220,7 +220,7 @@ public class XsdFieldDefinition extends XsdDataObject implements ICoalesceFieldD
         Fielddefinition newEntityFieldDefinition = new Fielddefinition();
         parent.GetEntityFieldDefinitions().add(newEntityFieldDefinition);
 
-        XsdFieldDefinition fieldDefinition = new XsdFieldDefinition();
+        CoalesceFieldDefinition fieldDefinition = new CoalesceFieldDefinition();
 
         if (!fieldDefinition.initialize(parent, newEntityFieldDefinition)) return null;
 
@@ -244,7 +244,7 @@ public class XsdFieldDefinition extends XsdDataObject implements ICoalesceFieldD
      * 
      * @return boolean indicator of success/failure
      */
-    public boolean initialize(XsdRecordset parent, Fielddefinition fieldDefinition)
+    public boolean initialize(CoalesceRecordset parent, Fielddefinition fieldDefinition)
     {
 
         // Set References
