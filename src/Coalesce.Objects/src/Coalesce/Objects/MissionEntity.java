@@ -20,8 +20,8 @@ public class MissionEntity extends XsdEntity {
     // Static Properties
     // ----------------------------------------------------------------------//
 
-    public static String Name = "Mission";
-    public static String Source = "Coalesce";
+    public static final String Name = "Mission";
+    public static final String Source = "Coalesce";
 
     // ----------------------------------------------------------------------//
     // Protected Member Variables
@@ -44,14 +44,12 @@ public class MissionEntity extends XsdEntity {
         if (_liveStatusRecord != null || _informationRecord != null) return false;
 
         // Initialize Entity
-        if (!super.initialize()) return false;
-
-        this.setName(MissionEntity.Name);
-        this.setSource(MissionEntity.Source);
-        this.setVersion("1.0");
-        this.setEntityId("");
-        this.setEntityIdType("");
-        this.setTitle("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionName,TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/IncidentTitle");
+        if (!super.initialize(MissionEntity.Name,
+                              MissionEntity.Source,
+                              "1.0",
+                              "",
+                              "",
+                              "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionName,TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/IncidentTitle")) return false;
 
         // Create Live Section
         section = XsdSection.create(this, "Live Status Section");
@@ -138,6 +136,17 @@ public class MissionEntity extends XsdEntity {
     // Entity Fields
     // ----------------------------------------------------------------------//
 
+    // Current Status
+    public EMissionStatuses getCurrentStatus()
+    {
+        return EMissionStatuses.fromLabel(this._liveStatusRecord.getFieldByName("CurrentStatus").getBaseValue());
+    }
+
+    public void setCurrentStatus(EMissionStatuses value)
+    {
+        ((XsdStringField) this._liveStatusRecord.getFieldByName("CurrentStatus")).setValue(value.getLabel());
+    }
+    
     public XsdStringField getActionNumber()
     {
         return (XsdStringField) _informationRecord.getFieldByName("ActionNumber");
@@ -165,7 +174,7 @@ public class MissionEntity extends XsdEntity {
 
     public XsdStringField getMissionName()
     {
-        return (XsdStringField)_informationRecord.getFieldByName("MissionName");
+        return (XsdStringField) _informationRecord.getFieldByName("MissionName");
     }
 
     public XsdStringField getMissionType()

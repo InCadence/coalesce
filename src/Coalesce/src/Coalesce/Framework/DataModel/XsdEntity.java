@@ -60,7 +60,7 @@ public class XsdEntity extends XsdDataObject {
     // ----------------------------------------------------------------------//
 
     private Entity _entity;
-    
+
     // ----------------------------------------------------------------------//
     // Factory and Initialization
     // ----------------------------------------------------------------------//
@@ -159,6 +159,30 @@ public class XsdEntity extends XsdDataObject {
     }
 
     /**
+     * Initializes core settings.
+     *  
+     * @param name String identifying the XsdEntity type to create
+     * @param source String identifying the XsdEntity source
+     * @param version String identifying the XsdEntity version
+     * @param entityId String of the entity id, could be a guid, tcn, bag-tag id or other value
+     * @param entityIdType String identifying the entity id's type (guid, tcn, bag-tag id or other value)
+     * @param title String that could be a a field namepath.
+     */
+    public boolean initialize(String name, String source, String version, String entityId, String entityIdType, String title)
+    {
+        if (!initialize()) return false;
+        
+        this.setName(name);
+        this.setSource(source);
+        this.setVersion(version);
+        this.setEntityId(entityId);
+        this.setEntityIdType(entityIdType);
+        this.setTitle(title);
+        
+        return true;
+    }
+
+    /**
      * Initializes a previously new XsdEntity based off of an (XML) String.
      * 
      * @param entityXml (XML) String that the XsdEntity is to be initialized from.
@@ -189,6 +213,12 @@ public class XsdEntity extends XsdDataObject {
         }
     }
 
+    /**
+     * Initializes from an existing XsdEntity.
+     * 
+     * @param entity XsdEntity to duplicate.
+     * @return
+     */
     public boolean initialize(XsdEntity entity)
     {
         // Copy Member Variables
