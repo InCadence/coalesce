@@ -165,7 +165,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
 
             byte[] binaryArray = null;
 
-            ResultSet results = conn.ExecuteQuery("SELECT BinaryObject FROM CoalesceFieldBinaryData WHERE ObjectKey=?",
+            ResultSet results = conn.executeQuery("SELECT BinaryObject FROM CoalesceFieldBinaryData WHERE ObjectKey=?",
                                                   new CoalesceParameter(key));
 
             // Get Results
@@ -193,7 +193,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         try (SQLServerDataConnector conn = new SQLServerDataConnector(_serCon))
         {
             // Always persist template
-            return conn.ExecuteProcedure("CoalesceEntityTemplate_InsertOrUpdate",
+            return conn.executeProcedure("CoalesceEntityTemplate_InsertOrUpdate",
                                          new CoalesceParameter(UUID.randomUUID().toString()),
                                          new CoalesceParameter(template.getName()),
                                          new CoalesceParameter(template.getSource()),
@@ -236,7 +236,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         {
             String value = null;
 
-            ResultSet results = conn.ExecuteQuery("SELECT value FROM CoalesceField WHERE ObjectKey =?",
+            ResultSet results = conn.executeQuery("SELECT value FROM CoalesceField WHERE ObjectKey =?",
                                                   new CoalesceParameter(FieldKey));
 
             while (results.next() && value == null)
@@ -263,7 +263,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         {
             String value = null;
 
-            ResultSet results = conn.ExecuteQuery("SELECT EntityXml from CoalesceEntity WHERE ObjectKey=?",
+            ResultSet results = conn.executeQuery("SELECT EntityXml from CoalesceEntity WHERE ObjectKey=?",
                                                   new CoalesceParameter(Key));
 
             while (results.next())
@@ -290,7 +290,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         {
             String value = null;
 
-            ResultSet results = conn.ExecuteQuery("SELECT EntityXml from CoalesceEntity WHERE EntityId=? AND EntityIdType=?",
+            ResultSet results = conn.executeQuery("SELECT EntityXml from CoalesceEntity WHERE EntityId=? AND EntityIdType=?",
                                                   new CoalesceParameter(EntityId),
                                                   new CoalesceParameter(EntityIdType));
 
@@ -318,7 +318,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         {
             String value = null;
 
-            ResultSet results = conn.ExecuteQuery("SELECT EntityXml from CoalesceEntity WHERE Name=? AND EntityId=? AND EntityIdType=?",
+            ResultSet results = conn.executeQuery("SELECT EntityXml from CoalesceEntity WHERE Name=? AND EntityId=? AND EntityIdType=?",
                                                   new CoalesceParameter(Name),
                                                   new CoalesceParameter(EntityId),
                                                   new CoalesceParameter(EntityIdType));
@@ -429,7 +429,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         {
             String value = null;
 
-            ResultSet results = conn.ExecuteQuery("SELECT TemplateKey FROM CoalesceEntityTemplate WHERE Name=? and Source=? and Version=?",
+            ResultSet results = conn.executeQuery("SELECT TemplateKey FROM CoalesceEntityTemplate WHERE Name=? and Source=? and Version=?",
                                                   new CoalesceParameter(Name),
                                                   new CoalesceParameter(Source),
                                                   new CoalesceParameter(Version));
@@ -473,7 +473,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         {
             String value = null;
 
-            ResultSet results = conn.ExecuteQuery("SELECT TemplateXml FROM CoalesceEntityTemplate WHERE TemplateKey=?",
+            ResultSet results = conn.executeQuery("SELECT TemplateXml FROM CoalesceEntityTemplate WHERE TemplateKey=?",
                                                   new CoalesceParameter(Key));
 
             while (results.next())
@@ -500,7 +500,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         {
             String value = null;
 
-            ResultSet results = conn.ExecuteQuery("SELECT TemplateXml FROM CoalesceEntityTemplate WHERE Name=? and Source=? and Version=?",
+            ResultSet results = conn.executeQuery("SELECT TemplateXml FROM CoalesceEntityTemplate WHERE Name=? and Source=? and Version=?",
                                                   new CoalesceParameter(Name),
                                                   new CoalesceParameter(Source),
                                                   new CoalesceParameter(Version));
@@ -622,7 +622,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
 
 
         // Yes; Call Store Procedure
-        return conn.ExecuteProcedure("CoalesceEntity_InsertOrUpdate",
+        return conn.executeProcedure("CoalesceEntity_InsertOrUpdate",
                                      new CoalesceParameter(entity.getKey()),
                                      new CoalesceParameter(entity.getName()),
                                      new CoalesceParameter(entity.getSource()),
@@ -649,7 +649,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         if (!checkLastModified(section, conn)) return true;
 
         // Yes; Call Store Procedure
-        return conn.ExecuteProcedure("CoalesceSection_InsertOrUpdate",
+        return conn.executeProcedure("CoalesceSection_InsertOrUpdate",
                                      new CoalesceParameter(section.getKey()),
                                      new CoalesceParameter(section.getName()),
                                      new CoalesceParameter(section.getParent().getKey()),
@@ -674,7 +674,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         if (!checkLastModified(recordset, conn)) return true;
 
         // Yes; Call Store Procedure
-        return conn.ExecuteProcedure("CoalesceRecordset_InsertOrUpdate",
+        return conn.executeProcedure("CoalesceRecordset_InsertOrUpdate",
                                      new CoalesceParameter(recordset.getKey()),
                                      new CoalesceParameter(recordset.getName()),
                                      new CoalesceParameter(recordset.getParent().getKey()),
@@ -700,7 +700,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         if (!checkLastModified(fieldDefinition, conn)) return true;
 
         // Yes; Call Store Procedure
-        return conn.ExecuteProcedure("CoalesceFieldDefinition_InsertOrUpdate",
+        return conn.executeProcedure("CoalesceFieldDefinition_InsertOrUpdate",
                                      new CoalesceParameter(fieldDefinition.getKey()),
                                      new CoalesceParameter(fieldDefinition.getName()),
                                      new CoalesceParameter(fieldDefinition.getParent().getKey()),
@@ -724,7 +724,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         if (!checkLastModified(record, conn)) return true;
 
         // Yes; Call Store Procedure
-        return conn.ExecuteProcedure("CoalesceRecord_InsertOrUpdate",
+        return conn.executeProcedure("CoalesceRecord_InsertOrUpdate",
                                      new CoalesceParameter(record.getKey()),
                                      new CoalesceParameter(record.getName()),
                                      new CoalesceParameter(record.getParent().getKey()),
@@ -748,7 +748,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         if (!checkLastModified(field, conn)) return true;
 
         // Yes; Call Store Procedure
-        return conn.ExecuteProcedure("CoalesceField_InsertOrUpdate",
+        return conn.executeProcedure("CoalesceField_InsertOrUpdate",
                                      new CoalesceParameter(field.getKey()),
                                      new CoalesceParameter(field.getName()),
                                      new CoalesceParameter(field.getBaseValue()),
@@ -779,7 +779,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         if (!checkLastModified(fieldHistory, conn)) return true;
 
         // Yes; Call Store Procedure
-        return conn.ExecuteProcedure("CoalesceFieldHistory_InsertOrUpdate",
+        return conn.executeProcedure("CoalesceFieldHistory_InsertOrUpdate",
                                      new CoalesceParameter(fieldHistory.getKey()),
                                      new CoalesceParameter(fieldHistory.getName()),
                                      new CoalesceParameter(fieldHistory.getValue()),
@@ -810,7 +810,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         if (!checkLastModified(linkageSection, conn)) return true;
 
         // Yes; Call Store Procedure
-        return conn.ExecuteProcedure("CoalesceLinkageSection_InsertOrUpdate",
+        return conn.executeProcedure("CoalesceLinkageSection_InsertOrUpdate",
                                      new CoalesceParameter(linkageSection.getKey()),
                                      new CoalesceParameter(linkageSection.getName()),
                                      new CoalesceParameter(linkageSection.getParent().getKey()),
@@ -834,7 +834,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         if (!checkLastModified(linkage, conn)) return true;
 
         // Yes; Call Store Procedure
-        return conn.ExecuteProcedure("CoalesceLinkage_InsertOrUpdate",
+        return conn.executeProcedure("CoalesceLinkage_InsertOrUpdate",
                                      new CoalesceParameter(linkage.getKey()),
                                      new CoalesceParameter(linkage.getName()),
                                      new CoalesceParameter(linkage.getEntity1Key()),
@@ -869,7 +869,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         EntityMetaData metaData = new EntityMetaData();
 
         // Execute Query
-        ResultSet results = conn.ExecuteQuery("SELECT EntityId,EntityIdType,ObjectKey FROM CoalesceEntity WHERE ObjectKey=?",
+        ResultSet results = conn.executeQuery("SELECT EntityId,EntityIdType,ObjectKey FROM CoalesceEntity WHERE ObjectKey=?",
                                               new CoalesceParameter(Key));
         // Get Results
         while (results.next())
@@ -963,8 +963,8 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         String objectKey = dataObject.getKey();
         String tableName = CoalesceTable.gettableNameForObjectType(objectType);
 
-        conn.ExecuteCmd("DELETE FROM CoalesceObjectMap WHERE ObjectKey=?", new CoalesceParameter(objectKey));
-        conn.ExecuteCmd("DELETE FROM " + tableName + " WHERE ObjectKey=?", new CoalesceParameter(objectKey));
+        conn.executeCmd("DELETE FROM CoalesceObjectMap WHERE ObjectKey=?", new CoalesceParameter(objectKey));
+        conn.executeCmd("DELETE FROM " + tableName + " WHERE ObjectKey=?", new CoalesceParameter(objectKey));
 
         return true;
     }
@@ -985,7 +985,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
 
         try (SQLServerDataConnector conn = new SQLServerDataConnector(_serCon))
         {
-            ResultSet results = conn.ExecuteQuery("SELECT ObjectKey FROM CoalesceEntity WHERE (ISNULL(EntityId,' ') like ? ) AND (ISNULL(EntityIdType,' ') like  ? ) AND Name=?",
+            ResultSet results = conn.executeQuery("SELECT ObjectKey FROM CoalesceEntity WHERE (ISNULL(EntityId,' ') like ? ) AND (ISNULL(EntityIdType,' ') like  ? ) AND Name=?",
                                                   new CoalesceParameter(EntityId),
                                                   new CoalesceParameter(EntityIdType),
                                                   new CoalesceParameter(EntityName));
@@ -1021,7 +1021,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         {
             List<String> keyList = new ArrayList<String>();
 
-            ResultSet results = conn.ExecuteQuery("SELECT ObjectKey FROM CoalesceEntity WHERE (ISNULL(EntityId,' ')  like  ? ) AND (ISNULL(EntityIdType,' ')  like  ? ) AND (Name=?) AND (Source=?)",
+            ResultSet results = conn.executeQuery("SELECT ObjectKey FROM CoalesceEntity WHERE (ISNULL(EntityId,' ')  like  ? ) AND (ISNULL(EntityIdType,' ')  like  ? ) AND (Name=?) AND (Source=?)",
                                                   new CoalesceParameter(EntityId),
                                                   new CoalesceParameter(EntityIdType),
                                                   new CoalesceParameter(EntityName),
@@ -1122,7 +1122,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         String tableName = CoalesceTable.gettableNameForObjectType(ObjectType);
         String dateValue = null;
 
-        ResultSet results = conn.ExecuteQuery("SELECT LastModified FROM " + tableName + " WHERE ObjectKey=?",
+        ResultSet results = conn.executeQuery("SELECT LastModified FROM " + tableName + " WHERE ObjectKey=?",
                                               new CoalesceParameter(Key.trim()));
         // JODA Function DateTimeFormat will adjust for the Server timezone when converting the time.
         while (results.next())
@@ -1162,7 +1162,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
             sql = "SELECT name, ParentKey, ParentType FROM ".concat(tableName).concat(" WHERE ObjectKey=?");
         }
 
-        ResultSet results = conn.ExecuteQuery(sql, new CoalesceParameter(Key.trim()));
+        ResultSet results = conn.executeQuery(sql, new CoalesceParameter(Key.trim()));
 
         // Valid Results?
         while (results.next())

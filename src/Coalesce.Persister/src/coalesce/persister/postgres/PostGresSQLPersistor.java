@@ -170,7 +170,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
 
             byte[] binaryArray = null;
 
-            ResultSet results = conn.ExecuteQuery("SELECT BinaryObject FROM CoalesceFieldBinaryData WHERE ObjectKey=?",
+            ResultSet results = conn.executeQuery("SELECT BinaryObject FROM CoalesceFieldBinaryData WHERE ObjectKey=?",
                                                   new CoalesceParameter(key, Types.OTHER));
 
             // Get Results
@@ -198,7 +198,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
         try (PostGresDataConnector conn = new PostGresDataConnector(this.serCon))
         {
             // Always persist template
-            return conn.ExecuteProcedure("CoalesceEntityTemplate_InsertOrUpdate",
+            return conn.executeProcedure("CoalesceEntityTemplate_InsertOrUpdate",
                                          new CoalesceParameter(UUID.randomUUID().toString(), Types.OTHER),
                                          new CoalesceParameter(template.getName()),
                                          new CoalesceParameter(template.getSource()),
@@ -241,7 +241,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
         {
             String value = null;
 
-            ResultSet results = conn.ExecuteQuery("SELECT value FROM CoalesceField WHERE ObjectKey =?",
+            ResultSet results = conn.executeQuery("SELECT value FROM CoalesceField WHERE ObjectKey =?",
                                                   new CoalesceParameter(FieldKey, Types.OTHER));
 
             while (results.next())
@@ -268,7 +268,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
         {
             String value = null;
 
-            ResultSet results = conn.ExecuteQuery("SELECT EntityXml from CoalesceEntity WHERE ObjectKey=?",
+            ResultSet results = conn.executeQuery("SELECT EntityXml from CoalesceEntity WHERE ObjectKey=?",
                                                   new CoalesceParameter(Key, Types.OTHER));
 
             while (results.next())
@@ -295,7 +295,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
         {
             String value = null;
 
-            ResultSet results = conn.ExecuteQuery("SELECT EntityXml from CoalesceEntity WHERE EntityId=? AND EntityIdType=?",
+            ResultSet results = conn.executeQuery("SELECT EntityXml from CoalesceEntity WHERE EntityId=? AND EntityIdType=?",
                                                   new CoalesceParameter(EntityId),
                                                   new CoalesceParameter(EntityIdType));
 
@@ -323,7 +323,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
         {
             String value = null;
 
-            ResultSet results = conn.ExecuteQuery("SELECT EntityXml from CoalesceEntity WHERE Name=? AND EntityId=? AND EntityIdType=?",
+            ResultSet results = conn.executeQuery("SELECT EntityXml from CoalesceEntity WHERE Name=? AND EntityId=? AND EntityIdType=?",
                                                   new CoalesceParameter(Name),
                                                   new CoalesceParameter(EntityId),
                                                   new CoalesceParameter(EntityIdType));
@@ -437,7 +437,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
         {
             String value = null;
 
-            ResultSet results = conn.ExecuteQuery("SELECT TemplateKey FROM CoalesceEntityTemplate WHERE Name=? and Source=? and Version=?",
+            ResultSet results = conn.executeQuery("SELECT TemplateKey FROM CoalesceEntityTemplate WHERE Name=? and Source=? and Version=?",
                                                   new CoalesceParameter(Name),
                                                   new CoalesceParameter(Source),
                                                   new CoalesceParameter(Version));
@@ -481,7 +481,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
         {
             String value = null;
 
-            ResultSet results = conn.ExecuteQuery("SELECT TemplateXml FROM CoalesceEntityTemplate WHERE TemplateKey=?",
+            ResultSet results = conn.executeQuery("SELECT TemplateXml FROM CoalesceEntityTemplate WHERE TemplateKey=?",
                                                   new CoalesceParameter(Key, Types.OTHER));
 
             while (results.next())
@@ -508,7 +508,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
         {
             String value = null;
 
-            ResultSet results = conn.ExecuteQuery("SELECT TemplateXml FROM CoalesceEntityTemplate WHERE Name=? and Source=? and Version=?",
+            ResultSet results = conn.executeQuery("SELECT TemplateXml FROM CoalesceEntityTemplate WHERE Name=? and Source=? and Version=?",
                                                   new CoalesceParameter(Name),
                                                   new CoalesceParameter(Source),
                                                   new CoalesceParameter(Version));
@@ -629,7 +629,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
         if (!this.checkLastModified(entity, conn)) return true;
 
         // Yes; Call Store Procedure
-        return conn.ExecuteProcedure("CoalesceEntity_InsertOrUpdate",
+        return conn.executeProcedure("CoalesceEntity_InsertOrUpdate",
                                      new CoalesceParameter(entity.getKey(), Types.OTHER),
                                      new CoalesceParameter(entity.getName()),
                                      new CoalesceParameter(entity.getSource()),
@@ -656,7 +656,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
         if (!this.checkLastModified(section, conn)) return true;
 
         // Yes; Call Store Procedure
-        return conn.ExecuteProcedure("CoalesceSection_InsertOrUpdate",
+        return conn.executeProcedure("CoalesceSection_InsertOrUpdate",
                                      new CoalesceParameter(section.getKey(), Types.OTHER),
                                      new CoalesceParameter(section.getName()),
                                      new CoalesceParameter(section.getParent().getKey(), Types.OTHER),
@@ -680,7 +680,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
         if (!this.checkLastModified(recordset, conn)) return true;
 
         // Yes; Call Store Procedure
-        return conn.ExecuteProcedure("CoalesceRecordset_InsertOrUpdate",
+        return conn.executeProcedure("CoalesceRecordset_InsertOrUpdate",
                                      new CoalesceParameter(recordset.getKey(), Types.OTHER),
                                      new CoalesceParameter(recordset.getName()),
                                      new CoalesceParameter(recordset.getParent().getKey(), Types.OTHER),
@@ -706,7 +706,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
         if (!this.checkLastModified(fieldDefinition, conn)) return true;
 
         // Yes; Call Store Procedure
-        return conn.ExecuteProcedure("CoalesceFieldDefinition_InsertOrUpdate",
+        return conn.executeProcedure("CoalesceFieldDefinition_InsertOrUpdate",
                                      new CoalesceParameter(fieldDefinition.getKey(), Types.OTHER),
                                      new CoalesceParameter(fieldDefinition.getName()),
                                      new CoalesceParameter(fieldDefinition.getParent().getKey(), Types.OTHER),
@@ -730,7 +730,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
         if (!this.checkLastModified(record, conn)) return true;
 
         // Yes; Call Store Procedure
-        return conn.ExecuteProcedure("CoalesceRecord_InsertOrUpdate",
+        return conn.executeProcedure("CoalesceRecord_InsertOrUpdate",
                                      new CoalesceParameter(record.getKey(), Types.OTHER),
                                      new CoalesceParameter(record.getName()),
                                      new CoalesceParameter(record.getParent().getKey(), Types.OTHER),
@@ -754,7 +754,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
         if (!this.checkLastModified(field, conn)) return true;
 
         // Yes; Call Store Procedure
-        return conn.ExecuteProcedure("CoalesceField_InsertOrUpdate",
+        return conn.executeProcedure("CoalesceField_InsertOrUpdate",
                                      new CoalesceParameter(field.getKey(), Types.OTHER),
                                      new CoalesceParameter(field.getName()),
                                      new CoalesceParameter(field.getBaseValue()),
@@ -785,7 +785,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
         if (!this.checkLastModified(fieldHistory, conn)) return true;
 
         // Yes; Call Store Procedure
-        return conn.ExecuteProcedure("CoalesceFieldHistory_InsertOrUpdate",
+        return conn.executeProcedure("CoalesceFieldHistory_InsertOrUpdate",
                                      new CoalesceParameter(fieldHistory.getKey(), Types.OTHER),
                                      new CoalesceParameter(fieldHistory.getName()),
                                      new CoalesceParameter(fieldHistory.getValue()),
@@ -816,7 +816,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
         if (!this.checkLastModified(linkageSection, conn)) return true;
 
         // Yes; Call Store Procedure
-        return conn.ExecuteProcedure("CoalesceLinkageSection_InsertOrUpdate",
+        return conn.executeProcedure("CoalesceLinkageSection_InsertOrUpdate",
                                      new CoalesceParameter(linkageSection.getKey(), Types.OTHER),
                                      new CoalesceParameter(linkageSection.getName()),
                                      new CoalesceParameter(linkageSection.getParent().getKey(), Types.OTHER),
@@ -840,7 +840,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
         if (!this.checkLastModified(linkage, conn)) return true;
 
         // Yes; Call Store Procedure
-        return conn.ExecuteProcedure("CoalesceLinkage_InsertOrUpdate",
+        return conn.executeProcedure("CoalesceLinkage_InsertOrUpdate",
                                      new CoalesceParameter(linkage.getKey(), Types.OTHER),
                                      new CoalesceParameter(linkage.getName()),
                                      new CoalesceParameter(linkage.getEntity1Key(), Types.OTHER),
@@ -875,7 +875,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
         EntityMetaData metaData = new EntityMetaData();
 
         // Execute Query
-        ResultSet results = conn.ExecuteQuery("SELECT EntityId,EntityIdType,ObjectKey FROM CoalesceEntity WHERE ObjectKey=?",
+        ResultSet results = conn.executeQuery("SELECT EntityId,EntityIdType,ObjectKey FROM CoalesceEntity WHERE ObjectKey=?",
                                               new CoalesceParameter(Key, Types.OTHER));
         // Get Results
         while (results.next())
@@ -969,8 +969,8 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
         String objectKey = dataObject.getKey();
         String tableName = CoalesceTable.gettableNameForObjectType(objectType);
 
-        conn.ExecuteCmd("DELETE FROM CoalesceObjectMap WHERE ObjectKey=?", new CoalesceParameter(objectKey, Types.OTHER));
-        conn.ExecuteCmd("DELETE FROM " + tableName + " WHERE ObjectKey=?", new CoalesceParameter(objectKey, Types.OTHER));
+        conn.executeCmd("DELETE FROM CoalesceObjectMap WHERE ObjectKey=?", new CoalesceParameter(objectKey, Types.OTHER));
+        conn.executeCmd("DELETE FROM " + tableName + " WHERE ObjectKey=?", new CoalesceParameter(objectKey, Types.OTHER));
 
         return true;
     }
@@ -991,7 +991,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
 
         try (PostGresDataConnector conn = new PostGresDataConnector(this.serCon))
         {
-            ResultSet results = conn.ExecuteLikeQuery("SELECT ObjectKey FROM CoalesceEntity WHERE (EntityId like ?) AND (EntityIdType like ?) AND (Name=?)",
+            ResultSet results = conn.executeLikeQuery("SELECT ObjectKey FROM CoalesceEntity WHERE (EntityId like ?) AND (EntityIdType like ?) AND (Name=?)",
                                                       2,
                                                       new CoalesceParameter(EntityId),
                                                       new CoalesceParameter(EntityIdType),
@@ -1028,7 +1028,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
         {
             List<String> keyList = new ArrayList<String>();
 
-            ResultSet results = conn.ExecuteLikeQuery("SELECT ObjectKey FROM CoalesceEntity WHERE (EntityId like ? ) AND (EntityIdType like  ? ) AND (Name=?) AND (Source=?)",
+            ResultSet results = conn.executeLikeQuery("SELECT ObjectKey FROM CoalesceEntity WHERE (EntityId like ? ) AND (EntityIdType like  ? ) AND (Name=?) AND (Source=?)",
                                                       2,
                                                       new CoalesceParameter(EntityId),
                                                       new CoalesceParameter(EntityIdType),
@@ -1130,7 +1130,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
         String tableName = CoalesceTable.gettableNameForObjectType(ObjectType);
         String dateValue = null;
 
-        ResultSet results = conn.ExecuteQuery("SELECT LastModified FROM " + tableName + " WHERE ObjectKey=?", new CoalesceParameter(Key.trim(), Types.OTHER));
+        ResultSet results = conn.executeQuery("SELECT LastModified FROM " + tableName + " WHERE ObjectKey=?", new CoalesceParameter(Key.trim(), Types.OTHER));
         ResultSetMetaData resultsmd = results.getMetaData();
 
         // JODA Function DateTimeFormat will adjust for the Server timezone when converting the time.
@@ -1173,7 +1173,7 @@ public class PostGresSQLPersistor extends CoalescePersisterBase {
             sql = "SELECT name, ParentKey, ParentType FROM ".concat(tableName).concat(" WHERE ObjectKey=?");
         }
 
-        ResultSet results = conn.ExecuteQuery(sql, new CoalesceParameter(Key.trim(), Types.OTHER));
+        ResultSet results = conn.executeQuery(sql, new CoalesceParameter(Key.trim(), Types.OTHER));
 
         // Valid Results?
         while (results.next())

@@ -672,8 +672,8 @@ public class CoalesceRecordSetTest {
 
         CoalesceRecord newRecord = recordset.addNew();
 
-        assertEquals(existingRecord, recordset.GetItem(0));
-        assertEquals(newRecord, recordset.GetItem(1));
+        assertEquals(existingRecord, recordset.getItem(0));
+        assertEquals(newRecord, recordset.getItem(1));
 
     }
 
@@ -683,7 +683,7 @@ public class CoalesceRecordSetTest {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
         CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
-        recordset.GetItem(-1);
+        recordset.getItem(-1);
 
     }
 
@@ -696,7 +696,7 @@ public class CoalesceRecordSetTest {
         @SuppressWarnings("unused")
         CoalesceRecord newRecord = recordset.addNew();
 
-        recordset.GetItem(2);
+        recordset.getItem(2);
 
     }
 
@@ -716,14 +716,14 @@ public class CoalesceRecordSetTest {
         assertTrue(recordset.getHasActiveRecords());
         assertTrue(recordset.getHasRecords());
 
-        recordset.RemoveAt(1);
+        recordset.removeAt(1);
 
         assertFalse(recordset.contains(newRecord));
         assertEquals(1, recordset.getCount());
         assertTrue(recordset.getHasActiveRecords());
         assertTrue(recordset.getHasRecords());
 
-        recordset.RemoveAt(0);
+        recordset.removeAt(0);
 
         assertFalse(recordset.contains(existingRecord));
         assertEquals(0, recordset.getCount());
@@ -748,14 +748,14 @@ public class CoalesceRecordSetTest {
         assertTrue(recordset.getHasActiveRecords());
         assertTrue(recordset.getHasRecords());
 
-        recordset.Remove(newRecord.getKey());
+        recordset.remove(newRecord.getKey());
 
         assertFalse(recordset.contains(newRecord));
         assertEquals(1, recordset.getCount());
         assertTrue(recordset.getHasActiveRecords());
         assertTrue(recordset.getHasRecords());
 
-        recordset.Remove(existingRecord.getKey());
+        recordset.remove(existingRecord.getKey());
 
         assertFalse(recordset.contains(existingRecord));
         assertEquals(0, recordset.getCount());

@@ -20,7 +20,7 @@ public class ELinkTypesTest {
     public void GetTypeForLabelUndefinedTest()
     {
 
-        assertEquals(ELinkTypes.Undefined, ELinkTypes.GetTypeForLabel("Undefined"));
+        assertEquals(ELinkTypes.Undefined, ELinkTypes.getTypeForLabel("Undefined"));
 
     }
 
@@ -28,7 +28,7 @@ public class ELinkTypesTest {
     public void GetTypeForLabelUndefinedLowerCaseTest()
     {
 
-        assertEquals(ELinkTypes.Undefined, ELinkTypes.GetTypeForLabel("undefined"));
+        assertEquals(ELinkTypes.Undefined, ELinkTypes.getTypeForLabel("undefined"));
 
     }
 
@@ -36,7 +36,7 @@ public class ELinkTypesTest {
     public void GetTypeForLabelUndefinedUpperCaseTest()
     {
 
-        assertEquals(ELinkTypes.Undefined, ELinkTypes.GetTypeForLabel("Undefined".toUpperCase()));
+        assertEquals(ELinkTypes.Undefined, ELinkTypes.getTypeForLabel("Undefined".toUpperCase()));
 
     }
 
@@ -44,7 +44,7 @@ public class ELinkTypesTest {
     public void GetTypeForLabelIsChildOfTest()
     {
 
-        assertEquals(ELinkTypes.IsChildOf, ELinkTypes.GetTypeForLabel("IsChildOf"));
+        assertEquals(ELinkTypes.IsChildOf, ELinkTypes.getTypeForLabel("IsChildOf"));
 
     }
 
@@ -52,7 +52,7 @@ public class ELinkTypesTest {
     public void GetTypeForLabelNullTest()
     {
 
-        assertEquals(ELinkTypes.Undefined, ELinkTypes.GetTypeForLabel(null));
+        assertEquals(ELinkTypes.Undefined, ELinkTypes.getTypeForLabel(null));
 
     }
 
@@ -60,7 +60,7 @@ public class ELinkTypesTest {
     public void GetTypeForLabelEmptyTest()
     {
 
-        assertEquals(ELinkTypes.Undefined, ELinkTypes.GetTypeForLabel(""));
+        assertEquals(ELinkTypes.Undefined, ELinkTypes.getTypeForLabel(""));
 
     }
 
@@ -68,7 +68,7 @@ public class ELinkTypesTest {
     public void GetTypeForLabelIsParentOfTest()
     {
 
-        assertEquals(ELinkTypes.IsParentOf, ELinkTypes.GetTypeForLabel("IsParentOf"));
+        assertEquals(ELinkTypes.IsParentOf, ELinkTypes.getTypeForLabel("IsParentOf"));
 
     }
 
@@ -76,7 +76,7 @@ public class ELinkTypesTest {
     public void GetTypeForLabelCreatedTest()
     {
 
-        assertEquals(ELinkTypes.Created, ELinkTypes.GetTypeForLabel("Created"));
+        assertEquals(ELinkTypes.Created, ELinkTypes.getTypeForLabel("Created"));
 
     }
 
@@ -84,7 +84,7 @@ public class ELinkTypesTest {
     public void GetTypeForLabelWasCreatedByTest()
     {
 
-        assertEquals(ELinkTypes.WasCreatedBy, ELinkTypes.GetTypeForLabel("WasCreatedBy"));
+        assertEquals(ELinkTypes.WasCreatedBy, ELinkTypes.getTypeForLabel("WasCreatedBy"));
 
     }
 
@@ -92,7 +92,7 @@ public class ELinkTypesTest {
     public void GetTypeForLabelHasMemberTest()
     {
 
-        assertEquals(ELinkTypes.HasMember, ELinkTypes.GetTypeForLabel("HasMember"));
+        assertEquals(ELinkTypes.HasMember, ELinkTypes.getTypeForLabel("HasMember"));
 
     }
 
@@ -100,7 +100,7 @@ public class ELinkTypesTest {
     public void GetTypeForLabelIsAMemberOfTest()
     {
 
-        assertEquals(ELinkTypes.IsAMemberOf, ELinkTypes.GetTypeForLabel("IsAMemberOf"));
+        assertEquals(ELinkTypes.IsAMemberOf, ELinkTypes.getTypeForLabel("IsAMemberOf"));
 
     }
 
@@ -108,7 +108,7 @@ public class ELinkTypesTest {
     public void GetTypeForLabelHasParticipantTest()
     {
 
-        assertEquals(ELinkTypes.HasParticipant, ELinkTypes.GetTypeForLabel("HasParticipant"));
+        assertEquals(ELinkTypes.HasParticipant, ELinkTypes.getTypeForLabel("HasParticipant"));
 
     }
 
@@ -116,7 +116,7 @@ public class ELinkTypesTest {
     public void GetTypeForLabelIsAParticipantTest()
     {
 
-        assertEquals(ELinkTypes.IsAParticipantOf, ELinkTypes.GetTypeForLabel("IsAParticipantOf"));
+        assertEquals(ELinkTypes.IsAParticipantOf, ELinkTypes.getTypeForLabel("IsAParticipantOf"));
 
     }
 
@@ -124,7 +124,7 @@ public class ELinkTypesTest {
     public void GetTypeForLabelIsWatchingTest()
     {
 
-        assertEquals(ELinkTypes.IsWatching, ELinkTypes.GetTypeForLabel("IsWatching"));
+        assertEquals(ELinkTypes.IsWatching, ELinkTypes.getTypeForLabel("IsWatching"));
 
     }
 
@@ -132,7 +132,7 @@ public class ELinkTypesTest {
     public void GetTypeForLabelIsBeingWatchedByTest()
     {
 
-        assertEquals(ELinkTypes.IsBeingWatchedBy, ELinkTypes.GetTypeForLabel("IsBeingWatchedBy"));
+        assertEquals(ELinkTypes.IsBeingWatchedBy, ELinkTypes.getTypeForLabel("IsBeingWatchedBy"));
 
     }
 
@@ -140,7 +140,7 @@ public class ELinkTypesTest {
     public void GetTypeForLabelIsAPeerOfTest()
     {
 
-        assertEquals(ELinkTypes.IsAPeerOf, ELinkTypes.GetTypeForLabel("IsAPeerOf"));
+        assertEquals(ELinkTypes.IsAPeerOf, ELinkTypes.getTypeForLabel("IsAPeerOf"));
 
     }
 
@@ -148,7 +148,7 @@ public class ELinkTypesTest {
     public void GetTypeForLabelIsOwnedByTest()
     {
 
-        assertEquals(ELinkTypes.IsOwnedBy, ELinkTypes.GetTypeForLabel("IsOwnedBy"));
+        assertEquals(ELinkTypes.IsOwnedBy, ELinkTypes.getTypeForLabel("IsOwnedBy"));
 
     }
 
@@ -156,7 +156,7 @@ public class ELinkTypesTest {
     public void GetTypeForLabelHasOwnershipOfTest()
     {
 
-        assertEquals(ELinkTypes.HasOwnershipOf, ELinkTypes.GetTypeForLabel("HasOwnershipOf"));
+        assertEquals(ELinkTypes.HasOwnershipOf, ELinkTypes.getTypeForLabel("HasOwnershipOf"));
 
     }
 
@@ -164,7 +164,7 @@ public class ELinkTypesTest {
     public void GetTypeForLabelIsUsedByTest()
     {
 
-        assertEquals(ELinkTypes.IsUsedBy, ELinkTypes.GetTypeForLabel("IsUsedBy"));
+        assertEquals(ELinkTypes.IsUsedBy, ELinkTypes.getTypeForLabel("IsUsedBy"));
 
     }
 
@@ -172,7 +172,7 @@ public class ELinkTypesTest {
     public void GetTypeForLabelHasUseOfTest()
     {
 
-        assertEquals(ELinkTypes.HasUseOf, ELinkTypes.GetTypeForLabel("HasUseOf"));
+        assertEquals(ELinkTypes.HasUseOf, ELinkTypes.getTypeForLabel("HasUseOf"));
 
     }
 
@@ -181,7 +181,7 @@ public class ELinkTypesTest {
     {
 
         ELinkTypes value = ELinkTypes.IsAMemberOf;
-        assertEquals(ELinkTypes.HasMember, value.GetReciprocalLinkType());
+        assertEquals(ELinkTypes.HasMember, value.getReciprocalLinkType());
     }
 
     @Test
@@ -189,7 +189,7 @@ public class ELinkTypesTest {
     {
 
         ELinkTypes value = ELinkTypes.HasMember;
-        assertEquals(ELinkTypes.IsAMemberOf, value.GetReciprocalLinkType());
+        assertEquals(ELinkTypes.IsAMemberOf, value.getReciprocalLinkType());
     }
 
     @Test
@@ -197,7 +197,7 @@ public class ELinkTypesTest {
     {
 
         ELinkTypes value = ELinkTypes.IsChildOf;
-        assertEquals(ELinkTypes.IsParentOf, value.GetReciprocalLinkType());
+        assertEquals(ELinkTypes.IsParentOf, value.getReciprocalLinkType());
     }
 
     @Test
@@ -205,7 +205,7 @@ public class ELinkTypesTest {
     {
 
         ELinkTypes value = ELinkTypes.IsParentOf;
-        assertEquals(ELinkTypes.IsChildOf, value.GetReciprocalLinkType());
+        assertEquals(ELinkTypes.IsChildOf, value.getReciprocalLinkType());
     }
 
     @Test
@@ -213,7 +213,7 @@ public class ELinkTypesTest {
     {
 
         ELinkTypes value = ELinkTypes.WasCreatedBy;
-        assertEquals(ELinkTypes.Created, value.GetReciprocalLinkType());
+        assertEquals(ELinkTypes.Created, value.getReciprocalLinkType());
     }
 
     @Test
@@ -221,7 +221,7 @@ public class ELinkTypesTest {
     {
 
         ELinkTypes value = ELinkTypes.Created;
-        assertEquals(ELinkTypes.WasCreatedBy, value.GetReciprocalLinkType());
+        assertEquals(ELinkTypes.WasCreatedBy, value.getReciprocalLinkType());
     }
 
     @Test
@@ -229,7 +229,7 @@ public class ELinkTypesTest {
     {
 
         ELinkTypes value = ELinkTypes.Undefined;
-        assertEquals(ELinkTypes.Undefined, value.GetReciprocalLinkType());
+        assertEquals(ELinkTypes.Undefined, value.getReciprocalLinkType());
     }
 
     @Test
@@ -237,7 +237,7 @@ public class ELinkTypesTest {
     {
 
         ELinkTypes value = ELinkTypes.HasParticipant;
-        assertEquals(ELinkTypes.IsAParticipantOf, value.GetReciprocalLinkType());
+        assertEquals(ELinkTypes.IsAParticipantOf, value.getReciprocalLinkType());
     }
 
     @Test
@@ -245,7 +245,7 @@ public class ELinkTypesTest {
     {
 
         ELinkTypes value = ELinkTypes.IsAParticipantOf;
-        assertEquals(ELinkTypes.HasParticipant, value.GetReciprocalLinkType());
+        assertEquals(ELinkTypes.HasParticipant, value.getReciprocalLinkType());
     }
 
     @Test
@@ -253,7 +253,7 @@ public class ELinkTypesTest {
     {
 
         ELinkTypes value = ELinkTypes.IsWatching;
-        assertEquals(ELinkTypes.IsBeingWatchedBy, value.GetReciprocalLinkType());
+        assertEquals(ELinkTypes.IsBeingWatchedBy, value.getReciprocalLinkType());
     }
 
     @Test
@@ -261,7 +261,7 @@ public class ELinkTypesTest {
     {
 
         ELinkTypes value = ELinkTypes.IsBeingWatchedBy;
-        assertEquals(ELinkTypes.IsWatching, value.GetReciprocalLinkType());
+        assertEquals(ELinkTypes.IsWatching, value.getReciprocalLinkType());
     }
 
     @Test
@@ -269,7 +269,7 @@ public class ELinkTypesTest {
     {
 
         ELinkTypes value = ELinkTypes.IsAPeerOf;
-        assertEquals(ELinkTypes.IsAPeerOf, value.GetReciprocalLinkType());
+        assertEquals(ELinkTypes.IsAPeerOf, value.getReciprocalLinkType());
     }
 
     @Test
@@ -277,7 +277,7 @@ public class ELinkTypesTest {
     {
 
         ELinkTypes value = ELinkTypes.IsOwnedBy;
-        assertEquals(ELinkTypes.HasOwnershipOf, value.GetReciprocalLinkType());
+        assertEquals(ELinkTypes.HasOwnershipOf, value.getReciprocalLinkType());
     }
 
     @Test
@@ -285,7 +285,7 @@ public class ELinkTypesTest {
     {
 
         ELinkTypes value = ELinkTypes.HasOwnershipOf;
-        assertEquals(ELinkTypes.IsOwnedBy, value.GetReciprocalLinkType());
+        assertEquals(ELinkTypes.IsOwnedBy, value.getReciprocalLinkType());
     }
 
     @Test
@@ -293,7 +293,7 @@ public class ELinkTypesTest {
     {
 
         ELinkTypes value = ELinkTypes.IsUsedBy;
-        assertEquals(ELinkTypes.HasUseOf, value.GetReciprocalLinkType());
+        assertEquals(ELinkTypes.HasUseOf, value.getReciprocalLinkType());
     }
 
     @Test
@@ -301,7 +301,7 @@ public class ELinkTypesTest {
     {
 
         ELinkTypes value = ELinkTypes.HasUseOf;
-        assertEquals(ELinkTypes.IsUsedBy, value.GetReciprocalLinkType());
+        assertEquals(ELinkTypes.IsUsedBy, value.getReciprocalLinkType());
     }
 
     @Test

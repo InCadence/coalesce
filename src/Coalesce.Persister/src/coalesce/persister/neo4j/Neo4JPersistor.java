@@ -154,7 +154,7 @@ public class Neo4JPersistor extends CoalescePersisterBase {
         {
 
             conn.openConnection();
-            conn.ExecuteCmd("CONSTRAINT ON (item:" + entity.getName() + ") ASSERT item.EntityKey IS UNIQUE");
+            conn.executeCmd("CONSTRAINT ON (item:" + entity.getName() + ") ASSERT item.EntityKey IS UNIQUE");
 
             // Persist Entity Last to Include Changes
             switch (entity.getType().toLowerCase()) {
@@ -244,7 +244,7 @@ public class Neo4JPersistor extends CoalescePersisterBase {
         String tableName = CoalesceTable.gettableNameForObjectType(ObjectType);
         String dateValue = null;
 
-        ResultSet results = conn.ExecuteQuery("?", new CoalesceParameter(Key.trim()));
+        ResultSet results = conn.executeQuery("?", new CoalesceParameter(Key.trim()));
         ResultSetMetaData resultsmd = results.getMetaData();
 
         // JODA Function DateTimeFormat will adjust for the Server timezone when converting the time.

@@ -120,7 +120,7 @@ public class EntityLinkHelper {
 
         EstablishLinkage(linkageSection2,
                          entity2,
-                         linkType.GetReciprocalLinkType(),
+                         linkType.getReciprocalLinkType(),
                          entity1,
                          classificationMarking,
                          modifiedBy,
@@ -176,7 +176,7 @@ public class EntityLinkHelper {
         }
         else
         {
-            MarkLinkageAsDeleted(linkageSection2, entity2, entity1, linkType.GetReciprocalLinkType());
+            MarkLinkageAsDeleted(linkageSection2, entity2, entity1, linkType.getReciprocalLinkType());
         }
 
         return true;

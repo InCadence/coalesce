@@ -706,7 +706,7 @@ public class CoalesceRecord extends CoalesceDataObject {
 
             if (getCastParent().contains(this))
             {
-                getCastParent().Remove(getKey());
+                getCastParent().remove(getKey());
             }
         }
 

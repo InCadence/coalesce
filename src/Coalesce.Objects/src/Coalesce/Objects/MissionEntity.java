@@ -104,7 +104,7 @@ public class MissionEntity extends CoalesceEntity {
             }
             else
             {
-                this._liveStatusRecord = recordSet.GetItem(0);
+                this._liveStatusRecord = recordSet.getItem(0);
             }
 
         }
@@ -124,7 +124,7 @@ public class MissionEntity extends CoalesceEntity {
             }
             else
             {
-                this._informationRecord = recordSet.GetItem(0);
+                this._informationRecord = recordSet.getItem(0);
             }
 
         }

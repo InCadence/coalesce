@@ -413,7 +413,7 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
      * @param value Object of XsdRecord
      * @return integer position index of the XsdRecord Object parameter within this XsdRecordset
      */
-    public int IndexOf(Object value)
+    public int indexOf(Object value)
     {
         return getRecords().indexOf(value);
     }
@@ -441,7 +441,7 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
      * @param index integer position of the XsdRecordset's desired XsdRecord
      * @return XsdRecord at the XsdRecordset's index position
      */
-    public CoalesceRecord GetItem(int index)
+    public CoalesceRecord getItem(int index)
     {
 
         // Iterate List
@@ -460,10 +460,10 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
      * 
      * @param integer index position of the XsdRecordset's XsdRecord to remove
      */
-    public void RemoveAt(Integer index)
+    public void removeAt(Integer index)
     { // Implements System.Collections.IList.RemoveAt
       // Get Record
-        CoalesceRecord record = (CoalesceRecord) this.GetItem(index);
+        CoalesceRecord record = (CoalesceRecord) this.getItem(index);
 
         // Evaluate
         if (record != null)
@@ -497,7 +497,7 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
      * 
      * @param key String of the XsdRecord key to remove from the XsdRecordset
      */
-    public void Remove(String key)
+    public void remove(String key)
     {
         CoalesceRecord recordToRemove = null;
 

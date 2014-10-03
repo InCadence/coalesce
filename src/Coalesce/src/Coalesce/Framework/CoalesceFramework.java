@@ -47,7 +47,7 @@ public class CoalesceFramework {
     	Public Functions
     --------------------------------------------------------------------------*/
 
-    public boolean Initialize(ICoalescePersistor persister)
+    public boolean initialize(ICoalescePersistor persister)
     {
 
         this._Persister = persister;
@@ -287,7 +287,7 @@ public class CoalesceFramework {
     public CoalesceEntitySyncShell getCoalesceEntitySyncShell(String Key) throws CoalescePersistorException, SAXException,
             IOException
     {
-        return CoalesceEntitySyncShell.Create(this.getCoalesceEntity(Key));
+        return CoalesceEntitySyncShell.create(this.getCoalesceEntity(Key));
     }
 
 }

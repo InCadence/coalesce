@@ -728,7 +728,7 @@ public class CoalesceFieldHistoryTest {
         CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
         CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset, "Uri", ECoalesceFieldDataTypes.UriType);
 
-        CoalesceRecord parentRecord = parentRecordset.GetItem(0);
+        CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
 
         Sleep();
@@ -791,7 +791,7 @@ public class CoalesceFieldHistoryTest {
                                                                     "Boolean",
                                                                     ECoalesceFieldDataTypes.BooleanType);
 
-        CoalesceRecord parentRecord = parentRecordset.GetItem(0);
+        CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
 
         Sleep();
@@ -841,7 +841,7 @@ public class CoalesceFieldHistoryTest {
                                                                     "Integer",
                                                                     ECoalesceFieldDataTypes.IntegerType);
 
-        CoalesceRecord parentRecord = parentRecordset.GetItem(0);
+        CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
 
         Sleep();
@@ -891,7 +891,7 @@ public class CoalesceFieldHistoryTest {
                                                                     "GUID",
                                                                     ECoalesceFieldDataTypes.GuidType);
 
-        CoalesceRecord parentRecord = parentRecordset.GetItem(0);
+        CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
 
         Sleep();

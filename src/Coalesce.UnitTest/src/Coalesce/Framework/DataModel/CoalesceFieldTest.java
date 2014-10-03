@@ -602,7 +602,7 @@ public class CoalesceFieldTest {
                                                                     "Binary",
                                                                     ECoalesceFieldDataTypes.BinaryType);
 
-        CoalesceRecord parentRecord = parentRecordset.GetItem(0);
+        CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
 
         assertTrue(field.getHistory().isEmpty());
@@ -1065,7 +1065,7 @@ public class CoalesceFieldTest {
         CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
         CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset, "Uri", ECoalesceFieldDataTypes.UriType);
 
-        CoalesceRecord parentRecord = parentRecordset.GetItem(0);
+        CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
         field.setTypedValue("uri:document/pdf");
 
@@ -1087,7 +1087,7 @@ public class CoalesceFieldTest {
                                                                     "DateTime",
                                                                     ECoalesceFieldDataTypes.DateTimeType);
 
-        CoalesceRecord parentRecord = parentRecordset.GetItem(0);
+        CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
 
         assertNull(field.getDateTimeValue());
@@ -1138,7 +1138,7 @@ public class CoalesceFieldTest {
                                                                     "Binary",
                                                                     ECoalesceFieldDataTypes.BinaryType);
 
-        CoalesceRecord parentRecord = parentRecordset.GetItem(0);
+        CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
 
         byte[] bytes = new byte[0];
@@ -1157,7 +1157,7 @@ public class CoalesceFieldTest {
                                                                     "Binary",
                                                                     ECoalesceFieldDataTypes.BinaryType);
 
-        CoalesceRecord parentRecord = parentRecordset.GetItem(0);
+        CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
 
         String byteString = "Testing String";
@@ -1196,7 +1196,7 @@ public class CoalesceFieldTest {
                                                                     "File",
                                                                     ECoalesceFieldDataTypes.FileType);
 
-        CoalesceRecord parentRecord = parentRecordset.GetItem(0);
+        CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
 
         byte[] dataBytes = Files.readAllBytes(Paths.get("src\\resources\\TestDocument.docx"));
@@ -1230,7 +1230,7 @@ public class CoalesceFieldTest {
                                                                     "File",
                                                                     ECoalesceFieldDataTypes.FileType);
 
-        CoalesceRecord parentRecord = parentRecordset.GetItem(0);
+        CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
 
         byte[] dataBytes = Files.readAllBytes(Paths.get("src\\resources\\TestDocument.docx"));
@@ -1263,7 +1263,7 @@ public class CoalesceFieldTest {
                                                                     "Boolean",
                                                                     ECoalesceFieldDataTypes.BooleanType);
 
-        CoalesceRecord parentRecord = parentRecordset.GetItem(0);
+        CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
 
         assertFalse(field.getBooleanValue());
@@ -1300,7 +1300,7 @@ public class CoalesceFieldTest {
                                                                     "Integer",
                                                                     ECoalesceFieldDataTypes.IntegerType);
 
-        CoalesceRecord parentRecord = parentRecordset.GetItem(0);
+        CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
 
         field.getIntegerValue();
@@ -1317,7 +1317,7 @@ public class CoalesceFieldTest {
                                                                     "Integer",
                                                                     ECoalesceFieldDataTypes.IntegerType);
 
-        CoalesceRecord parentRecord = parentRecordset.GetItem(0);
+        CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
 
         assertEquals("", field.getBaseValue());
@@ -1353,7 +1353,7 @@ public class CoalesceFieldTest {
                                                                     "GUID",
                                                                     ECoalesceFieldDataTypes.GuidType);
 
-        CoalesceRecord parentRecord = parentRecordset.GetItem(0);
+        CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
 
         assertNull(field.getGuidValue());
@@ -1370,7 +1370,7 @@ public class CoalesceFieldTest {
                                                                     "GUID",
                                                                     ECoalesceFieldDataTypes.GuidType);
 
-        CoalesceRecord parentRecord = parentRecordset.GetItem(0);
+        CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
 
         assertEquals("", field.getBaseValue());
@@ -1407,7 +1407,7 @@ public class CoalesceFieldTest {
                                                                     "Location",
                                                                     ECoalesceFieldDataTypes.GeocoordinateType);
 
-        CoalesceRecord parentRecord = parentRecordset.GetItem(0);
+        CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
 
         assertNull(field.getCoordinateValue());
@@ -2300,7 +2300,7 @@ public class CoalesceFieldTest {
                                                                     "File",
                                                                     ECoalesceFieldDataTypes.FileType);
 
-        CoalesceRecord parentRecord = parentRecordset.GetItem(0);
+        CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> fileField = CoalesceField.create(parentRecord, fileFieldDef);
         fileField.setExtension("jpg");
 

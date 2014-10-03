@@ -124,7 +124,7 @@ public abstract class CoalescePersistorBaseTest {
         ICoalescePersistor persistor = tester.getPersistor(_serCon);
 
         _coalesceFramework = new CoalesceFramework();
-        _coalesceFramework.Initialize(persistor);
+        _coalesceFramework.initialize(persistor);
 
         CoalescePersistorBaseTest.cleanUpDatabase(tester);
 
@@ -179,7 +179,7 @@ public abstract class CoalescePersistorBaseTest {
         {
             try (CoalesceDataConnectorBase conn = getDataConnector(_serCon))
             {
-                conn.ExecuteCmd("delete from CoalesceEntityTemplate where TemplateKey = '" + _testTemplateKey + "'");
+                conn.executeCmd("delete from CoalesceEntityTemplate where TemplateKey = '" + _testTemplateKey + "'");
             }
             catch (Exception e)
             {
@@ -553,7 +553,7 @@ public abstract class CoalescePersistorBaseTest {
     {
         try
         {
-            conn.ExecuteCmd("delete from " + tableName + " where ObjectKey = '" + key + "'");
+            conn.executeCmd("delete from " + tableName + " where ObjectKey = '" + key + "'");
         }
         catch (SQLException e)
         {

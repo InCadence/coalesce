@@ -231,7 +231,7 @@ public class EntityLinkHelperTest {
             mod2Entity2.setVersion("Entity2version");
 
             // Test updating link the other way
-            assertTrue(EntityLinkHelper.linkEntities(mod2Entity2, linkType.GetReciprocalLinkType(), mod2Entity1, false));
+            assertTrue(EntityLinkHelper.linkEntities(mod2Entity2, linkType.getReciprocalLinkType(), mod2Entity1, false));
 
             assertLinkages(linkType, entity1, entity2);
 
@@ -293,7 +293,7 @@ public class EntityLinkHelperTest {
             mod2Entity2.setVersion("Entity2version");
 
             // Test updating link the other way
-            assertTrue(EntityLinkHelper.linkEntities(mod2Entity2, linkType.GetReciprocalLinkType(), mod2Entity1, true));
+            assertTrue(EntityLinkHelper.linkEntities(mod2Entity2, linkType.getReciprocalLinkType(), mod2Entity1, true));
 
             assertLinkages(linkType, mod2Entity1, mod2Entity2);
         }
@@ -880,7 +880,7 @@ public class EntityLinkHelperTest {
                       entity2,
                       (CoalesceLinkage) entity1.getLinkageSection().getChildDataObjects().values().iterator().next());
 
-        assertLinkage(linkType.GetReciprocalLinkType(),
+        assertLinkage(linkType.getReciprocalLinkType(),
                       classificationMarking,
                       modifiedBy,
                       inputLang,
@@ -898,7 +898,7 @@ public class EntityLinkHelperTest {
                       entity2,
                       (CoalesceLinkage) entity1.getLinkageSection().getChildDataObjects().values().iterator().next());
 
-        assertLinkage(linkType.GetReciprocalLinkType(),
+        assertLinkage(linkType.getReciprocalLinkType(),
                       entity2,
                       entity1,
                       (CoalesceLinkage) entity2.getLinkageSection().getChildDataObjects().values().iterator().next());

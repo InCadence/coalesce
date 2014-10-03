@@ -236,13 +236,13 @@ public class CoalesceSection extends CoalesceDataObject {
     /**
      * Returns XsdSection's XsdRecordset with the matching String NamePath
      * 
-     * @param NamePath of the new XsdRecordset
+     * @param namePath of the new XsdRecordset
      * @return XsdRecordset, the XsdRecordset with the name path. Null if the name path is not a XsdRecordset or doesn't
      *         exist
      */
-    public CoalesceRecordset getRecordset(String NamePath)
+    public CoalesceRecordset getRecordset(String namePath)
     {
-        CoalesceDataObject dataObject = getDataObjectForNamePath(NamePath);
+        CoalesceDataObject dataObject = getDataObjectForNamePath(namePath);
 
         if (dataObject != null && dataObject instanceof CoalesceRecordset)
         {

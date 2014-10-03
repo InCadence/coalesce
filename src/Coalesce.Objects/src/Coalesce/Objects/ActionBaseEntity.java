@@ -79,7 +79,7 @@ public class ActionBaseEntity extends CoalesceEntity {
             }
             else
             {
-                this._liveStatusRecord = recordSet.GetItem(0);
+                this._liveStatusRecord = recordSet.getItem(0);
             }
 
         }

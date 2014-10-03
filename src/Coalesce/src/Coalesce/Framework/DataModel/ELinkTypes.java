@@ -54,7 +54,7 @@ public enum ELinkTypes
         return _label;
     }
 
-    public static ELinkTypes GetTypeForLabel(String coalesceType)
+    public static ELinkTypes getTypeForLabel(String coalesceType)
     {
 
         initMapping();
@@ -69,7 +69,7 @@ public enum ELinkTypes
 
     }
 
-    public ELinkTypes GetReciprocalLinkType()
+    public ELinkTypes getReciprocalLinkType()
     {
 
         switch (this) {

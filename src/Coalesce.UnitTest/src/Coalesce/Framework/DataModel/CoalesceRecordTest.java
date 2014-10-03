@@ -138,7 +138,7 @@ public class CoalesceRecordTest {
     {
         CoalesceRecordset recordset = getMissionRecordset();
 
-        CoalesceRecord existingRecord = recordset.GetItem(0);
+        CoalesceRecord existingRecord = recordset.getItem(0);
 
         CoalesceRecord newRecord = CoalesceRecord.create(recordset, "New Record");
 

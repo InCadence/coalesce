@@ -267,7 +267,7 @@ public class CoalesceLinkage extends CoalesceDataObject implements ICoalesceLink
     @Override
     public ELinkTypes getLinkType()
     {
-        return ELinkTypes.GetTypeForLabel(_entityLinkage.getLinktype());
+        return ELinkTypes.getTypeForLabel(_entityLinkage.getLinktype());
     }
 
     @Override
@@ -335,36 +335,36 @@ public class CoalesceLinkage extends CoalesceDataObject implements ICoalesceLink
      * Sets the two entities key, name, source and version as well as the link type, classification, modified by, input
      * language, dates created and modified and active status.
      * 
-     * @param Entity1 XsdEntity belonging to the first entity. Provides the entity's key, name, source and version
-     * @param LinkType ELinkTypes value for the relationship type identification between the entities
-     * @param Entity2 XsdEntity belonging to the second entity. Provides the entity's key, name, source and version
-     * @param ClassificationMarking Marking of the classification of the relationship
-     * @param ModifiedBy identification of who entered the relationship
-     * @param InputLang language that the relationship was created in
+     * @param entity1 XsdEntity belonging to the first entity. Provides the entity's key, name, source and version
+     * @param linkType ELinkTypes value for the relationship type identification between the entities
+     * @param entity2 XsdEntity belonging to the second entity. Provides the entity's key, name, source and version
+     * @param classificationMarking Marking of the classification of the relationship
+     * @param modifiedBy identification of who entered the relationship
+     * @param inputLang language that the relationship was created in
      */
-    public void establishLinkage(CoalesceEntity Entity1,
-                                 ELinkTypes LinkType,
-                                 CoalesceEntity Entity2,
-                                 Marking ClassificationMarking,
-                                 String ModifiedBy,
-                                 Locale InputLang)
+    public void establishLinkage(CoalesceEntity entity1,
+                                 ELinkTypes linkType,
+                                 CoalesceEntity entity2,
+                                 Marking classificationMarking,
+                                 String modifiedBy,
+                                 Locale inputLang)
     {
         // Set Values
-        setEntity1Key(Entity1.getKey());
-        setEntity1Name(Entity1.getName());
-        setEntity1Source(Entity1.getSource());
-        setEntity1Version(Entity1.getVersion());
+        setEntity1Key(entity1.getKey());
+        setEntity1Name(entity1.getName());
+        setEntity1Source(entity1.getSource());
+        setEntity1Version(entity1.getVersion());
 
-        setLinkType(LinkType);
+        setLinkType(linkType);
 
-        setEntity2Key(Entity2.getKey());
-        setEntity2Name(Entity2.getName());
-        setEntity2Source(Entity2.getSource());
-        setEntity2Version(Entity2.getVersion());
+        setEntity2Key(entity2.getKey());
+        setEntity2Name(entity2.getName());
+        setEntity2Source(entity2.getSource());
+        setEntity2Version(entity2.getVersion());
 
-        setClassificationMarking(ClassificationMarking);
-        setModifiedBy(ModifiedBy);
-        setInputLang(InputLang);
+        setClassificationMarking(classificationMarking);
+        setModifiedBy(modifiedBy);
+        setInputLang(inputLang);
 
         DateTime utcNow = JodaDateTimeHelper.nowInUtc();
         setLastModified(utcNow);

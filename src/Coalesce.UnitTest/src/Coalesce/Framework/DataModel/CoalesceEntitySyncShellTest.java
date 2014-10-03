@@ -29,7 +29,7 @@ public class CoalesceEntitySyncShellTest {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         // Initialize
-        CoalesceEntitySyncShell shell = CoalesceEntitySyncShell.Create(entity);
+        CoalesceEntitySyncShell shell = CoalesceEntitySyncShell.create(entity);
 
         // Validate
         assertNotNull(shell.toXml());
@@ -44,7 +44,7 @@ public class CoalesceEntitySyncShellTest {
 
         // Initialize
         CoalesceEntitySyncShell shell = new CoalesceEntitySyncShell();
-        shell.Initialize(entity);
+        shell.initialize(entity);
 
         // Validate
         assertNotNull(shell.toXml());
@@ -59,7 +59,7 @@ public class CoalesceEntitySyncShellTest {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         // Initialize
-        CoalesceEntitySyncShell shell = CoalesceEntitySyncShell.Create(entity);
+        CoalesceEntitySyncShell shell = CoalesceEntitySyncShell.create(entity);
 
         // Copy Shell Using Entity
         CoalesceEntitySyncShell shell2 = new CoalesceEntitySyncShell();
@@ -76,7 +76,7 @@ public class CoalesceEntitySyncShellTest {
     public void testCreateFromString() throws SAXException, IOException
     {
         // Initialize
-        CoalesceEntitySyncShell shell = CoalesceEntitySyncShell.Create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntitySyncShell shell = CoalesceEntitySyncShell.create(CoalesceTypeInstances.TEST_MISSION);
 
         // Validate
         assertTrue(this.ValidateSyncShell(shell));
@@ -89,7 +89,7 @@ public class CoalesceEntitySyncShellTest {
         Document XmlDoc = XmlHelper.loadXmlFrom(CoalesceTypeInstances.TEST_MISSION);
 
         // Initialize
-        CoalesceEntitySyncShell shell = CoalesceEntitySyncShell.Create(XmlDoc);
+        CoalesceEntitySyncShell shell = CoalesceEntitySyncShell.create(XmlDoc);
 
         // Validate
         assertTrue(this.ValidateSyncShell(shell));
@@ -100,11 +100,11 @@ public class CoalesceEntitySyncShellTest {
     public void testClone() throws SAXException, IOException
     {
         // Initialize
-        CoalesceEntitySyncShell shell = CoalesceEntitySyncShell.Create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntitySyncShell shell = CoalesceEntitySyncShell.create(CoalesceTypeInstances.TEST_MISSION);
 
         // Initialize Clone
         CoalesceEntitySyncShell clone = new CoalesceEntitySyncShell();
-        clone = CoalesceEntitySyncShell.Clone(shell);
+        clone = CoalesceEntitySyncShell.clone(shell);
 
         String xml1 = shell.toXml();
         String xml2 = clone.toXml();
@@ -122,7 +122,7 @@ public class CoalesceEntitySyncShellTest {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         // Create Local Shell
-        CoalesceEntitySyncShell localShell = CoalesceEntitySyncShell.Create(entity);
+        CoalesceEntitySyncShell localShell = CoalesceEntitySyncShell.create(entity);
 
         // Validate Local
         assertTrue(this.ValidateSyncShell(localShell));
@@ -135,7 +135,7 @@ public class CoalesceEntitySyncShellTest {
         String fieldKeyInValid = record.getFieldByName("MissionDescription").getKey();
 
         // Create Remote Shell
-        CoalesceEntitySyncShell remoteShell = CoalesceEntitySyncShell.Create(entity);
+        CoalesceEntitySyncShell remoteShell = CoalesceEntitySyncShell.create(entity);
 
         // Validate Remote
         assertTrue(this.ValidateSyncShell(remoteShell));

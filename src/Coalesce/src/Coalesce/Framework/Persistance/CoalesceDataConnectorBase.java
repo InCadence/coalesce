@@ -54,7 +54,7 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
      * @throws SQLException
      * @throws CoalescePersistorException
      */
-    public ResultSet ExecuteQuery(String SQL, CoalesceParameter... parameters) throws SQLException
+    public ResultSet executeQuery(String SQL, CoalesceParameter... parameters) throws SQLException
     {
 
         // Open Connection if not already created
@@ -82,7 +82,7 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
      * @throws SQLException
      * @throws CoalescePersistorException
      */
-    public ResultSet ExecuteLikeQuery(String SQL, int likeParams, CoalesceParameter... parameters) throws SQLException
+    public ResultSet executeLikeQuery(String SQL, int likeParams, CoalesceParameter... parameters) throws SQLException
     {
 
         // Open Connection if not already created
@@ -115,7 +115,7 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
      * @return true = success
      * @throws SQLException
      */
-    public boolean ExecuteCmd(String SQL, CoalesceParameter... parameters) throws SQLException
+    public boolean executeCmd(String SQL, CoalesceParameter... parameters) throws SQLException
     {
         // Open Connection if not already created
         if (this._conn == null) this.openConnection();
@@ -140,7 +140,7 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
      * @return true = success
      * @throws SQLException
      */
-    public boolean ExecuteCmd(String SQL) throws SQLException
+    public boolean executeCmd(String SQL) throws SQLException
     {
         // Open Connection if not already created
         if (this._conn == null) this.openConnection();
@@ -160,7 +160,7 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
      * @return true = success
      * @throws SQLException
      */
-    public boolean ExecuteProcedure(String procedureName, CoalesceParameter... parameters) throws SQLException
+    public boolean executeProcedure(String procedureName, CoalesceParameter... parameters) throws SQLException
     {
 
         // Compile SQL Command

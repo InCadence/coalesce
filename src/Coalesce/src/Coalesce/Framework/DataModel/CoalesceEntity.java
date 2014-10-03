@@ -680,12 +680,12 @@ public class CoalesceEntity extends CoalesceDataObject {
     /**
      * Returns the XsdEntity's XsdSection specified by namepath string.
      * 
-     * @param NamePath String, namepath of the desired XsdSection
+     * @param namePath String, namepath of the desired XsdSection
      * @return XsdSection having the matching namepath parameter. Null if not found.
      */
-    public CoalesceSection getSection(String NamePath)
+    public CoalesceSection getSection(String namePath)
     {
-        CoalesceDataObject dataObject = getDataObjectForNamePath(NamePath);
+        CoalesceDataObject dataObject = getDataObjectForNamePath(namePath);
 
         if (dataObject != null && dataObject instanceof CoalesceSection)
         {
@@ -773,7 +773,7 @@ public class CoalesceEntity extends CoalesceDataObject {
      */
     public CoalesceEntitySyncShell getSyncEntity() throws SAXException, IOException
     {
-        return CoalesceEntitySyncShell.Create(this);
+        return CoalesceEntitySyncShell.create(this);
     }
 
     /**
