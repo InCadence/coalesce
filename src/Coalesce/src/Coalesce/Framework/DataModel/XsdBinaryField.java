@@ -24,7 +24,6 @@ import Coalesce.Common.Exceptions.CoalesceDataFormatException;
  -----------------------------------------------------------------------------*/
 
 /**
- * @author Tom.Johnson
  *
  */
 public class XsdBinaryField extends XsdField<byte[]> {

@@ -26,7 +26,6 @@ import Coalesce.Common.Exceptions.CoalesceDataFormatException;
  -----------------------------------------------------------------------------*/
 
 /**
- * @author Tom.Johnson
  *
  */
 public class XsdGUIDField extends XsdField<UUID> {

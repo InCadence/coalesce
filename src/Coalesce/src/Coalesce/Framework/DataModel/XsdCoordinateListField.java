@@ -26,7 +26,6 @@ import com.vividsolutions.jts.geom.MultiPoint;
  -----------------------------------------------------------------------------*/
 
 /**
- * @author Tom.Johnson
  *
  */
 public class XsdCoordinateListField extends XsdField<Coordinate[]> {

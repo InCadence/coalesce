@@ -23,7 +23,6 @@ import Coalesce.Common.Exceptions.CoalesceDataFormatException;
  -----------------------------------------------------------------------------*/
 
 /**
- * @author Tom.Johnson
  *
  */
 public class XsdBooleanField extends XsdField<Boolean> {

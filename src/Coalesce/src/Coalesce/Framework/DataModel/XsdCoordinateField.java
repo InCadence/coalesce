@@ -26,7 +26,6 @@ import com.vividsolutions.jts.geom.Point;
  -----------------------------------------------------------------------------*/
 
 /**
- * @author Tom.Johnson
  *
  */
 public class XsdCoordinateField extends XsdField<Coordinate> {
