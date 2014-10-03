@@ -28,12 +28,12 @@ import coalesce.persister.postgres.PostGresSQLPersistor;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-public class CoalescePostGresPersistorTest extends CoalescePersistorBaseTest {
+public class PostGresPersistorTest extends CoalescePersistorBaseTest {
 
     @BeforeClass
     public static void setupBeforeClass() throws SAXException, IOException, CoalesceException
     {
-        CoalescePostGresPersistorTest tester = new CoalescePostGresPersistorTest();
+        PostGresPersistorTest tester = new PostGresPersistorTest();
 
         CoalescePersistorBaseTest.setupBeforeClassBase(tester);
 
@@ -42,7 +42,7 @@ public class CoalescePostGresPersistorTest extends CoalescePersistorBaseTest {
     @AfterClass
     public static void tearDownAfterClass()
     {
-        CoalescePostGresPersistorTest tester = new CoalescePostGresPersistorTest();
+        PostGresPersistorTest tester = new PostGresPersistorTest();
 
         CoalescePersistorBaseTest.tearDownAfterClassBase(tester);
 
