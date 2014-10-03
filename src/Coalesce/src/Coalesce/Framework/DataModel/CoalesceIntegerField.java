@@ -30,7 +30,7 @@ public class CoalesceIntegerField extends CoalesceField<Integer> {
     /*
      * (non-Javadoc)
      * 
-     * @see Coalesce.Framework.DataModel.XsdField#getValue()
+     * @see Coalesce.Framework.DataModel.CoalesceField#getValue()
      */
     @Override
     public Integer getValue() throws CoalesceDataFormatException
@@ -41,7 +41,7 @@ public class CoalesceIntegerField extends CoalesceField<Integer> {
     /*
      * (non-Javadoc)
      * 
-     * @see Coalesce.Framework.DataModel.XsdField#setValue(java.lang.Object)
+     * @see Coalesce.Framework.DataModel.CoalesceField#setValue(java.lang.Object)
      */
     @Override
     public void setValue(Integer value)

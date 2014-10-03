@@ -33,7 +33,7 @@ public class CoalesceDateTimeField extends CoalesceField<DateTime> {
     /*
      * (non-Javadoc)
      * 
-     * @see Coalesce.Framework.DataModel.XsdField#getValue()
+     * @see Coalesce.Framework.DataModel.CoalesceField#getValue()
      */
     @Override
     public DateTime getValue() throws CoalesceDataFormatException
@@ -44,7 +44,7 @@ public class CoalesceDateTimeField extends CoalesceField<DateTime> {
     /*
      * (non-Javadoc)
      * 
-     * @see Coalesce.Framework.DataModel.XsdField#setValue(java.lang.Object)
+     * @see Coalesce.Framework.DataModel.CoalesceField#setValue(java.lang.Object)
      */
     @Override
     public void setValue(DateTime value)

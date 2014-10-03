@@ -38,7 +38,7 @@ public class CoalesceStringField extends CoalesceField<String> {
     /*
      * (non-Javadoc)
      * 
-     * @see Coalesce.Framework.DataModel.XsdField#getValue()
+     * @see Coalesce.Framework.DataModel.CoalesceField#getValue()
      */
     @Override
     public String getValue()
@@ -49,7 +49,7 @@ public class CoalesceStringField extends CoalesceField<String> {
     /*
      * (non-Javadoc)
      * 
-     * @see Coalesce.Framework.DataModel.XsdField#setValue(java.lang.Object)
+     * @see Coalesce.Framework.DataModel.CoalesceField#setValue(java.lang.Object)
      */
     @Override
     public void setValue(String value)
