@@ -19,7 +19,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import unity.connector.local.LocalConfigurationsConnector;
+import com.incadencecorp.unity.connector.local.LocalConfigurationsConnector;
+
 import Coalesce.Common.Exceptions.CoalesceException;
 import Coalesce.Common.Exceptions.CoalescePersistorException;
 import Coalesce.Common.Helpers.GUIDHelper;

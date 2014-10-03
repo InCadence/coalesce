@@ -4,7 +4,8 @@ import java.util.Map;
 
 import org.apache.commons.io.FilenameUtils;
 
-import unity.common.SettingsBase;
+import com.incadencecorp.unity.common.SettingsBase;
+
 import Coalesce.Common.Helpers.StringHelper;
 
 /*-----------------------------------------------------------------------------'
