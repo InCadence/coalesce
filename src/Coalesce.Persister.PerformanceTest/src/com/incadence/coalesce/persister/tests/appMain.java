@@ -1,4 +1,4 @@
-package com.persister.tests;
+package com.incadence.coalesce.persister.tests;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,6 +24,7 @@ import org.w3c.dom.Text;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.common.helpers.EntityLinkHelper;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
@@ -33,8 +34,12 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
+import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
+import com.incadencecorp.coalesce.framework.objects.MissionEntity;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
+import com.incadencecorp.coalesce.framework.persistance.mysql.MySQLPersistor;
 import com.incadencecorp.coalesce.framework.persistance.postgres.PostGresSQLPersistor;
+import com.incadencecorp.coalesce.framework.objects.EActionStatuses;
 
 public class appMain {
 	
@@ -56,7 +61,7 @@ public class appMain {
 	static Document dom;
 	//	Set to True to use the File XML for Persistance
 	//	Set to False for the CoalesceTypeInstances.TEST_MISSION
-	static boolean _isModeFile=true;
+	static boolean _isModeFile=false;
 
 	public static void main(String[] args) {
 		System.out.println("Performance Test Inserting " + _ITERATION_LIMIT
@@ -160,14 +165,24 @@ public class appMain {
 	private static CoalesceEntity createEntity(String entityVersion) throws CoalesceException{
 		// Create Test Entity
 		CoalesceEntity _entity = new CoalesceEntity();
-		if(appMain._isModeFile==true)
-			_entity=createEntityFile(entityVersion);
-		else
-			_entity=CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION, "S1" +entityVersion);
-		_entity.setVersion(entityVersion);
+		if(appMain._isModeFile==true) {
+			_entity=appMain.createEntityFromXMLFile(entityVersion);
+			_entity.setVersion(entityVersion);
+		}
+		else {
+			//	Below uses ONLY the CoalesceTypeInstances.TEST_MISSION - but will not generate a new key.
+			// 		_entity=CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION, "S1" +entityVersion);
+			//	Code below uses the MissionEntity and will generate a new key.
+			MissionEntity _missionEntity=new MissionEntity();
+			_missionEntity.initialize(_entity);
+			_missionEntity.getMissionName().setValue("Test Mission");
+			_missionEntity.setVersion(entityVersion);
+			_entity=_missionEntity;
+		}
+		
 		return _entity;
 	}
-	private static CoalesceEntity createEntityFile(String entityVersion)
+	private static CoalesceEntity createEntityFromXMLFile(String entityVersion)
 			throws CoalesceException {
 		CoalesceSection section = null;
 		CoalesceRecordset recordSet = null;
@@ -192,6 +207,9 @@ public class appMain {
 				//************************************//
 				CoalesceLinkageSection.create(_entity, true);
 
+				
+				
+				
 	            section = CoalesceSection.create(_entity, CoalesceTypeInstances.TEST_MISSION_INFO_SECTION_PATH, true);
 	            recordSet = CoalesceRecordset.create(section, CoalesceTypeInstances.TEST_MISSION_RECORDSET);
 	            CoalesceFieldDefinition.create(recordSet, "Performance TestFieldDef", ECoalesceFieldDataTypes.StringType);

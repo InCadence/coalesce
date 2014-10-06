@@ -1,4 +1,4 @@
-package com.persister.tests;
+package com.incadence.coalesce.persister.tests;
 
 import org.joda.time.DateTime;
 
