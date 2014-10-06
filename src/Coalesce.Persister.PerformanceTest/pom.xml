@@ -19,7 +19,7 @@
 	</build>
 	<dependencies>
 		<dependency>
-			<groupId>unity</groupId>
+			<groupId>com.incadencecorp.unity</groupId>
 			<artifactId>unity-core</artifactId>
 		</dependency>
 		<dependency>
@@ -52,7 +52,7 @@
 		</dependency>
 		<dependency>
 			<groupId>coalesce</groupId>
-			<artifactId>coalesce.Objects</artifactId>
+			<artifactId>Coalesce.Objects</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
@@ -66,7 +66,7 @@
 				<scope>import</scope>
 			</dependency>
 			<dependency>
-				<groupId>unity</groupId>
+				<groupId>com.incadencecorp.unity</groupId>
 				<artifactId>unity-bom</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 				<type>pom</type>

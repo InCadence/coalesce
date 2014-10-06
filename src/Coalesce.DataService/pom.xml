@@ -142,7 +142,7 @@
 			<artifactId>coalesce-persister</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>unity</groupId>
+			<groupId>com.incadencecorp.unity</groupId>
 			<artifactId>unity-core</artifactId>
 		</dependency>
 		<dependency>
@@ -161,7 +161,7 @@
 				<scope>import</scope>
 			</dependency>
 			<dependency>
-				<groupId>unity</groupId>
+				<groupId>com.incadencecorp.unity</groupId>
 				<artifactId>unity-bom</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 				<type>pom</type>
