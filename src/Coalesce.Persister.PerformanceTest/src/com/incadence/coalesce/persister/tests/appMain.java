@@ -42,10 +42,10 @@ import com.incadencecorp.coalesce.framework.persistance.postgres.PostGresSQLPers
 import com.incadencecorp.coalesce.framework.objects.EActionStatuses;
 
 public class appMain {
-	
+
 	static int _ITERATION_LIMIT = 1000000;
 	static int _CAPTURE_METRICS_INTERVAL = 1000;
-	
+
 	static Logger _log = Logger.getLogger("TesterLog");
 	static ServerConn _serCon;
 	static FileInputStream _inputStream = null;
@@ -57,11 +57,11 @@ public class appMain {
 	static String _startSaveTimeStamp = "";
 	static String _completeSaveTimeStamp = "";
 	static List<TimeTrack> _timeLogger;
-	static String _entityXml="";
+	static String _entityXml = "";
 	static Document dom;
-	//	Set to True to use the File XML for Persistance
-	//	Set to False for the CoalesceTypeInstances.TEST_MISSION
-	static boolean _isModeFile=false;
+	// Set to True to use the File XML for Persistance
+	// Set to False for the CoalesceTypeInstances.TEST_MISSION
+	static boolean _isModeFile = false;
 
 	public static void main(String[] args) {
 		System.out.println("Performance Test Inserting " + _ITERATION_LIMIT
@@ -73,7 +73,7 @@ public class appMain {
 				appMain._coalesceFramework.initialize(_psPersister);
 				_timeLogger = new ArrayList<TimeTrack>();
 				runVolume();
-				if(_inputStream!=null)
+				if (_inputStream != null)
 					_inputStream.close();
 			}
 		} catch (Exception ex) {
@@ -128,14 +128,8 @@ public class appMain {
 		}
 	}
 
-	private static void saveAppTimeStamps(TimeTrack _timeTrack,
-			String startTime, String stopTime) {
-		_timeTrack.setAppStartTime(startTime);
-		_timeTrack.setStopTime(stopTime);
-	}
-
-	private static void saveEntity(TimeTrack _timeTrack, CoalesceEntity _xsdEntity)
-			throws CoalescePersistorException {
+	private static void saveEntity(TimeTrack _timeTrack,
+			CoalesceEntity _xsdEntity) throws CoalescePersistorException {
 		_timeTrack.setStartTime(getCurrentTime());
 		_timeTrack.setStartMSTime(getCurrentTime(false));
 		_timeTrack.setIterationVal(String.valueOf(_masterCounter));
@@ -162,26 +156,67 @@ public class appMain {
 				nowCurrentDate.getTime());
 		return currentTimestamp.toString();
 	}
-	private static CoalesceEntity createEntity(String entityVersion) throws CoalesceException{
+
+	private static CoalesceEntity createEntity(String entityVersion)
+			throws CoalesceException {
 		// Create Test Entity
 		CoalesceEntity _entity = new CoalesceEntity();
-		if(appMain._isModeFile==true) {
-			_entity=appMain.createEntityFromXMLFile(entityVersion);
+
+		if (appMain._isModeFile == true) {
+			_entity = appMain.createEntityFromXMLFile(entityVersion);
 			_entity.setVersion(entityVersion);
+		} else if (appMain._isModeFile == false) {
+			_entity=appMain.createMissionEntity(_entity, entityVersion);
 		}
-		else {
-			//	Below uses ONLY the CoalesceTypeInstances.TEST_MISSION - but will not generate a new key.
-			// 		_entity=CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION, "S1" +entityVersion);
-			//	Code below uses the MissionEntity and will generate a new key.
-			MissionEntity _missionEntity=new MissionEntity();
-			_missionEntity.initialize(_entity);
-			_missionEntity.getMissionName().setValue("Test Mission");
-			_missionEntity.setVersion(entityVersion);
-			_entity=_missionEntity;
-		}
-		
+
 		return _entity;
 	}
+
+	private static CoalesceEntity createMissionEntity(CoalesceEntity _entity,
+			String entityVersion) throws CoalesceException {
+		CoalesceSection section;
+		CoalesceRecordset recordSet;
+		@SuppressWarnings("unused")
+		CoalesceRecord _liveStatusRecord;
+		_entity.initialize(
+				"Mission Entity - Performance Testing",
+				"Coalesce_Mission",
+				entityVersion,
+				"",
+				"",
+				"TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionName,TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/IncidentTitle");
+		section = CoalesceSection.create(_entity, "Live Status Section");
+		recordSet = CoalesceRecordset.create(section, "Live Status Recordset");
+		CoalesceFieldDefinition.create(recordSet, "CurrentStatus",ECoalesceFieldDataTypes.StringType);
+		_liveStatusRecord = recordSet.addNew();
+		
+		section = CoalesceSection.create(_entity, MissionEntity.Name
+				+ " Information Section");
+		recordSet = CoalesceRecordset.create(section, MissionEntity.Name
+				+ " Information Recordset");
+
+		CoalesceFieldDefinition.create(recordSet, "ActionNumber",ECoalesceFieldDataTypes.StringType, "Action Number", "U", "0");
+		CoalesceFieldDefinition.create(recordSet, "IncidentNumber",	ECoalesceFieldDataTypes.StringType);
+		CoalesceFieldDefinition.create(recordSet, "IncidentTitle",ECoalesceFieldDataTypes.StringType);
+		CoalesceFieldDefinition.create(recordSet, "IncidentDescription",ECoalesceFieldDataTypes.StringType);
+		CoalesceFieldDefinition.create(recordSet, "IncidentDateTime",ECoalesceFieldDataTypes.DateTimeType);
+		CoalesceFieldDefinition.create(recordSet, "MissionName",ECoalesceFieldDataTypes.StringType);
+		CoalesceFieldDefinition.create(recordSet, "MissionType",ECoalesceFieldDataTypes.StringType);
+		CoalesceFieldDefinition.create(recordSet, "MissionDescription",	ECoalesceFieldDataTypes.StringType);
+		CoalesceFieldDefinition.create(recordSet, "MissionIndicatorColor",ECoalesceFieldDataTypes.StringType);
+		CoalesceFieldDefinition.create(recordSet, "MissionIndicatorShape",ECoalesceFieldDataTypes.StringType);
+		CoalesceFieldDefinition.create(recordSet, "MissionIndicatorNumber",	ECoalesceFieldDataTypes.StringType);
+		CoalesceFieldDefinition.create(recordSet,"MissionIndicatorNumberBASE10",ECoalesceFieldDataTypes.IntegerType);
+		CoalesceFieldDefinition.create(recordSet, "MissionStartDateTime",ECoalesceFieldDataTypes.DateTimeType);
+		CoalesceFieldDefinition.create(recordSet, "MissionEndDateTime",	ECoalesceFieldDataTypes.DateTimeType);
+		CoalesceFieldDefinition.create(recordSet, "MissionGeoLocation",	ECoalesceFieldDataTypes.GeocoordinateType);
+		CoalesceFieldDefinition.create(recordSet, "MissionAddress",	ECoalesceFieldDataTypes.StringType);
+
+		// _informationRecord = recordSet.addNew();
+		_liveStatusRecord = recordSet.addNew();
+		return _entity;
+	}
+
 	private static CoalesceEntity createEntityFromXMLFile(String entityVersion)
 			throws CoalesceException {
 		CoalesceSection section = null;
@@ -193,9 +228,9 @@ public class appMain {
 
 			String suserDir = System.getProperty("user.dir");
 			suserDir += "/EntityPerfFile.xml";
-			if(_inputStream==null)
+			if (_inputStream == null)
 				_inputStream = new FileInputStream(suserDir);
-			if (_entityXml == ""){
+			if (_entityXml == "") {
 				_entityXml = IOUtils.toString(_inputStream);
 			}
 			try {
@@ -204,23 +239,28 @@ public class appMain {
 				CoalesceEntityTemplate template = CoalesceEntityTemplate
 						.create(entity);
 				_entity = template.createNewEntity();
-				//************************************//
+				// ************************************//
 				CoalesceLinkageSection.create(_entity, true);
 
-				
-				
-				
-	            section = CoalesceSection.create(_entity, CoalesceTypeInstances.TEST_MISSION_INFO_SECTION_PATH, true);
-	            recordSet = CoalesceRecordset.create(section, CoalesceTypeInstances.TEST_MISSION_RECORDSET);
-	            CoalesceFieldDefinition.create(recordSet, "Performance TestFieldDef", ECoalesceFieldDataTypes.StringType);
+				section = CoalesceSection.create(_entity,
+						CoalesceTypeInstances.TEST_MISSION_INFO_SECTION_PATH,
+						true);
+				recordSet = CoalesceRecordset.create(section,
+						CoalesceTypeInstances.TEST_MISSION_RECORDSET);
+				CoalesceFieldDefinition.create(recordSet,
+						"Performance TestFieldDef",
+						ECoalesceFieldDataTypes.StringType);
 
-	            record = recordSet.addNew();
-	            record.setFieldValue("Performance TestFieldDef", "abcdefghijklmnopqrstuvwxyzABCDEFGHIZKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()_+-=;'[],./?><:{}");
+				record = recordSet.addNew();
+				record.setFieldValue(
+						"Performance TestFieldDef",
+						"abcdefghijklmnopqrstuvwxyzABCDEFGHIZKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()_+-=;'[],./?><:{}");
 
-	            //_fieldKey = record.getFieldByName("Performance TestFieldDef").getKey();
+				// _fieldKey =
+				// record.getFieldByName("Performance TestFieldDef").getKey();
 
 			} finally {
-				//inputStream.close();
+				// inputStream.close();
 			}
 
 			return _entity;
@@ -297,14 +337,14 @@ public class appMain {
 		Text stopText = dom.createTextNode(b.getStopTime());
 		stopEle.appendChild(stopText);
 		timeElement.appendChild(stopEle);
-		
-		Element startEleMS=dom.createElement("INSERT_START_MS");
-		Text startMSText=dom.createTextNode(b.getStartMSTime());
+
+		Element startEleMS = dom.createElement("INSERT_START_MS");
+		Text startMSText = dom.createTextNode(b.getStartMSTime());
 		startEleMS.appendChild(startMSText);
 		timeElement.appendChild(startEleMS);
-		
-		Element stopEleMS=dom.createElement("INSERT_COMPLETE_MS");
-		Text stopMSText=dom.createTextNode(b.getStopMSTime());
+
+		Element stopEleMS = dom.createElement("INSERT_COMPLETE_MS");
+		Text stopMSText = dom.createTextNode(b.getStopMSTime());
 		stopEleMS.appendChild(stopMSText);
 		timeElement.appendChild(stopEleMS);
 		return timeElement;
@@ -315,10 +355,8 @@ public class appMain {
 	private static void printToFile(String fileName) {
 		try {
 			// print
-			@SuppressWarnings("deprecation")
 			OutputFormat format = new OutputFormat(dom);
 			format.setIndenting(true);
-			@SuppressWarnings("deprecation")
 			XMLSerializer serializer = new XMLSerializer(new FileOutputStream(
 					new File(fileName)), format);
 			serializer.serialize(dom);
