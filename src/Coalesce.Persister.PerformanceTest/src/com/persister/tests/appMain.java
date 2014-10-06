@@ -26,7 +26,7 @@ import Coalesce.Common.Exceptions.CoalesceException;
 import Coalesce.Common.Exceptions.CoalescePersistorException;
 import Coalesce.Framework.CoalesceFramework;
 import Coalesce.Framework.DataModel.CoalesceEntityTemplate;
-import Coalesce.Framework.DataModel.XsdEntity;
+import Coalesce.Framework.DataModel.CoalesceEntity;
 import Coalesce.Framework.Persistance.ServerConn;
 import coalesce.persister.postgres.PostGresSQLPersistor;
 
@@ -55,7 +55,7 @@ public class appMain {
 		appMain._coalesceFramework = new CoalesceFramework();
 		try {
 			if (OpenConnection() == true) {
-				appMain._coalesceFramework.Initialize(psPersister);
+				appMain._coalesceFramework.initialize(psPersister);
 				timeLogger = new ArrayList<TimeTrack>();
 				runVolume();
 				if(inputStream!=null)
@@ -85,20 +85,20 @@ public class appMain {
 			for (_iteration_counter = 0; _iteration_counter <= ITERATION_LIMIT; _iteration_counter++) {
 				_timeTrack = new TimeTrack();
 
-				XsdEntity _xsdEntity = new XsdEntity();
+				CoalesceEntity _coalesceEntity = new CoalesceEntity();
 				String generateEntityVersionNumber = appMain
 						.generateEntityVersionNumber(_iteration_counter);
-				_xsdEntity = appMain.createEntity("1.0."
+				_coalesceEntity = appMain.createEntity("1.0."
 						.concat(generateEntityVersionNumber));
-				if (_xsdEntity != null) {
+				if (_coalesceEntity != null) {
 					if (appMain.masterCounter % CAPTURE_METRICS_INTERVAL == 0) {
-						saveEntity(_timeTrack, _xsdEntity);
-						_timeTrack.setEntityID(_xsdEntity.getKey());
+						saveEntity(_timeTrack, _coalesceEntity);
+						_timeTrack.setEntityID(_coalesceEntity.getKey());
 						timeLogger.add(_timeTrack);
 						_timeTrack = null;
 					} else
 						appMain._coalesceFramework
-								.SaveCoalesceEntity(_xsdEntity);
+								.saveCoalesceEntity(_coalesceEntity);
 				} else
 					break;
 			}
@@ -119,13 +119,13 @@ public class appMain {
 		_timeTrack.setStopTime(stopTime);
 	}
 
-	private static void saveEntity(TimeTrack _timeTrack, XsdEntity _xsdEntity)
+	private static void saveEntity(TimeTrack _timeTrack, CoalesceEntity _xsdEntity)
 			throws CoalescePersistorException {
 		_timeTrack.setStartTime(getCurrentTime(false));
 		_timeTrack.setIterationVal(String.valueOf(masterCounter));
 		_timeTrack.setIterationInterval(String
 				.valueOf(CAPTURE_METRICS_INTERVAL));
-		appMain._coalesceFramework.SaveCoalesceEntity(_xsdEntity);
+		appMain._coalesceFramework.saveCoalesceEntity(_xsdEntity);
 		_timeTrack.setStopTime(getCurrentTime(false));
 	}
 
@@ -146,14 +146,14 @@ public class appMain {
 		return currentTimestamp.toString();
 	}
 
-	private static XsdEntity createEntity(String entityVersion)
+	private static CoalesceEntity createEntity(String entityVersion)
 			throws CoalesceException {
 		
 		try {
 			// Create Test Entity
-			XsdEntity _entity = new XsdEntity();
+			CoalesceEntity _entity = new CoalesceEntity();
 			// Create Entity
-			_entity = new XsdEntity();
+			_entity = new CoalesceEntity();
 			String suserDir = System.getProperty("user.dir");
 			suserDir += "/EntityPerfFile.xml";
 			if(inputStream==null)
@@ -162,7 +162,7 @@ public class appMain {
 				entityXml = IOUtils.toString(inputStream);
 			}
 			try {
-				XsdEntity entity = new XsdEntity();
+				CoalesceEntity entity = new CoalesceEntity();
 				entity.initialize(entityXml);
 				CoalesceEntityTemplate template = CoalesceEntityTemplate
 						.create(entity);

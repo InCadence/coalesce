@@ -24,12 +24,12 @@ import Coalesce.Common.Exceptions.CoalesceInvalidFieldException;
 import Coalesce.Common.Exceptions.CoalescePersistorException;
 import Coalesce.Framework.CoalesceFramework;
 import Coalesce.Framework.DataModel.ECoalesceFieldDataTypes;
-import Coalesce.Framework.DataModel.XsdEntity;
-import Coalesce.Framework.DataModel.XsdFieldDefinition;
-import Coalesce.Framework.DataModel.XsdLinkageSection;
-import Coalesce.Framework.DataModel.XsdRecord;
-import Coalesce.Framework.DataModel.XsdRecordset;
-import Coalesce.Framework.DataModel.XsdSection;
+import Coalesce.Framework.DataModel.CoalesceEntity;
+import Coalesce.Framework.DataModel.CoalesceFieldDefinition;
+import Coalesce.Framework.DataModel.CoalesceLinkageSection;
+import Coalesce.Framework.DataModel.CoalesceRecord;
+import Coalesce.Framework.DataModel.CoalesceRecordset;
+import Coalesce.Framework.DataModel.CoalesceSection;
 import Coalesce.Framework.Persistance.ServerConn;
 import coalesce.persister.postgres.PostGresSQLPersistor;
 import coalesce.persister.postgres.PostGresDataConnector;
@@ -46,7 +46,7 @@ public class appThreadMain {
 		try {
 			if (appThreadMain.OpenConnection() == true) {
 				appRunner._coalesceFramework
-						.Initialize(appThreadMain.psPersister);
+						.initialize(appThreadMain.psPersister);
 				// timeLogger = new ArrayList<TimeTrack>();
 				Thread vol1 = new Thread(new appRunner(ITERATION_LIMIT, 1));
 				vol1.setName("Thread #1");
@@ -165,20 +165,20 @@ class appRunner implements Runnable {
 			for (_iteration_counter = 0; _iteration_counter <= ITERATION_LIMIT; _iteration_counter++) {
 				_timeTrack = new TimeTrack();
 
-				XsdEntity _xsdEntity = new XsdEntity();
+				CoalesceEntity _coalesceEntity = new CoalesceEntity();
 				String generateEntityVersionNumber = appRunner
 						.generateEntityVersionNumber(_iteration_counter);
-				_xsdEntity = appRunner.createEntity("1.0."
+				_coalesceEntity = appRunner.createEntity("1.0."
 						.concat(generateEntityVersionNumber));
-				if (_xsdEntity != null) {
+				if (_coalesceEntity != null) {
 					if (appRunner.masterCounter % CAPTURE_METRICS_INTERVAL == 0) {
-						saveEntity(_timeTrack, _xsdEntity);
-						_timeTrack.setEntityID(_xsdEntity.getKey());
+						saveEntity(_timeTrack, _coalesceEntity);
+						_timeTrack.setEntityID(_coalesceEntity.getKey());
 						timeLogger.add(_timeTrack);
 						_timeTrack = null;
 					} else
 						appRunner._coalesceFramework
-								.SaveCoalesceEntity(_xsdEntity);
+								.saveCoalesceEntity(_coalesceEntity);
 				} else
 					break;
 			}
@@ -226,7 +226,7 @@ class appRunner implements Runnable {
 		_timeTrack.setStopTime(stopTime);
 	}
 
-	private static void saveEntity(TimeTrack _timeTrack, XsdEntity _xsdEntity)
+	private static void saveEntity(TimeTrack _timeTrack, CoalesceEntity _xsdEntity)
 			throws CoalescePersistorException {
 		_timeTrack.setStartTime(getCurrentTime());
 		_timeTrack.setIterationVal(String.valueOf(masterCounter));
@@ -235,7 +235,7 @@ class appRunner implements Runnable {
 		if (_timeTrack.getThread() == "" | _timeTrack.getThread() == null)
 			_timeTrack.setThread(String.valueOf(Thread.currentThread()));
 
-		appRunner._coalesceFramework.SaveCoalesceEntity(_xsdEntity);
+		appRunner._coalesceFramework.saveCoalesceEntity(_xsdEntity);
 		_timeTrack.setStopTime(getCurrentTime());
 	}
 
@@ -332,25 +332,25 @@ class appRunner implements Runnable {
 		}
 	}
 
-	private static XsdEntity createEntity(String entityVersion)
+	private static CoalesceEntity createEntity(String entityVersion)
 			throws CoalesceException {
 		try {
 			// Create Test Entity
-			XsdEntity _entity = new XsdEntity();
+			CoalesceEntity _entity = new CoalesceEntity();
 
-			XsdSection section = null;
-			XsdRecordset recordSet = null;
-			XsdRecord record = null;
+			CoalesceSection section = null;
+			CoalesceRecordset recordSet = null;
+			CoalesceRecord record = null;
 
 			// Create Entity
-			_entity = XsdEntity.create("Volume Push Test Entity", "Unit Test",
+			_entity = CoalesceEntity.create("Volume Push Test Entity", "Unit Test",
 					entityVersion, "", "", "");
 
-			XsdLinkageSection.create(_entity, true);
+			CoalesceLinkageSection.create(_entity, true);
 
-			section = XsdSection.create(_entity, "Live Status Section", true);
-			recordSet = XsdRecordset.create(section, "Live Status Recordset");
-			XsdFieldDefinition.create(recordSet, "CurrentStatus",
+			section = CoalesceSection.create(_entity, "Live Status Section", true);
+			recordSet = CoalesceRecordset.create(section, "Live Status Recordset");
+			CoalesceFieldDefinition.create(recordSet, "CurrentStatus",
 					ECoalesceFieldDataTypes.StringType);
 
 			record = recordSet.addNew();
