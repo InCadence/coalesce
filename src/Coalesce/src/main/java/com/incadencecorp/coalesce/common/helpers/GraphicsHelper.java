@@ -10,6 +10,7 @@ import org.apache.commons.lang.NullArgumentException;
 import org.imgscalr.Scalr;
 
 import com.incadencecorp.coalesce.common.runtime.CoalesceSettings;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceStringField;
 
 /*-----------------------------------------------------------------------------'
@@ -172,12 +173,14 @@ public class GraphicsHelper {
         String imageFormat = CoalesceSettings.getImageFormat();
 
         File imageFile = new File(filename);
+        if (!(imageFile.exists() && imageFile.isFile())) return false;
+
         String imageName = imageFile.getName();
         String imageFileFormat = imageName.substring(imageName.length() - 3);
         File imageDir = imageFile.getParentFile();
 
         // create thumbnail name
-        String thumbnailName = imageName.substring(0, imageName.length() - 4) + "_thumbnail." + imageFormat;
+        String thumbnailName = imageName.substring(0, imageName.length() - 4) + "_thumb." + imageFormat;
         File thumbnail = new File(imageDir, thumbnailName);
 
         // create thumbnail
@@ -203,7 +206,7 @@ public class GraphicsHelper {
      * @throws IOException
      * @see GraphicsHelper#createFieldThumbnail(String)
      */
-    public static boolean createFieldThumbnail(CoalesceStringField field) throws IOException
+    public static boolean createFieldThumbnail(CoalesceField<?> field) throws IOException
     {
         return GraphicsHelper.createFieldThumbnail(field.getCoalesceFullFilename());
     }

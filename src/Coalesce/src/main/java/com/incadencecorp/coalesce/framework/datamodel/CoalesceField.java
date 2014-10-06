@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.incadencecorp.coalesce.framework.datamodel;
 
 import java.io.File;
@@ -21,6 +18,7 @@ import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
+import com.incadencecorp.coalesce.common.runtime.CoalesceSettings;
 import com.incadencecorp.coalesce.framework.generatedjaxb.Entity.Section.Recordset.Record.Field;
 import com.incadencecorp.coalesce.framework.generatedjaxb.Entity.Section.Recordset.Record.Field.Fieldhistory;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -42,9 +40,6 @@ import com.vividsolutions.jts.geom.Coordinate;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-/**
- *
- */
 public class CoalesceField<T> extends CoalesceFieldBase<T> {
 
     // -----------------------------------------------------------------------//
@@ -199,32 +194,32 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
             break;
 
         case DateTimeType:
-            setTypedValue((DateTime) value); 
+            setTypedValue((DateTime) value);
             break;
 
         case FileType:
         case BinaryType:
-            setTypedValue((byte[]) value); 
+            setTypedValue((byte[]) value);
             break;
 
         case BooleanType:
-            setTypedValue((Boolean) value); 
+            setTypedValue((Boolean) value);
             break;
 
         case IntegerType:
-            setTypedValue((Integer) value); 
+            setTypedValue((Integer) value);
             break;
 
         case GuidType:
-            setTypedValue((UUID) value); 
+            setTypedValue((UUID) value);
             break;
 
         case GeocoordinateType:
-            setTypedValue((Coordinate) value); 
+            setTypedValue((Coordinate) value);
             break;
 
         case GeocoordinateListType:
-            setTypedValue((Coordinate[]) value); 
+            setTypedValue((Coordinate[]) value);
             break;
 
         default:
@@ -232,7 +227,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
         }
 
     }
-    
+
     /**
      * Initializes an existing Field and ties it to its parent XsdRecord. The field may be new, but field history is tied in,
      * in the event that the field is not new.
@@ -572,6 +567,10 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     /**
      * Returns the filename with directory path and file extension.
      * 
+     * <code>NOTE:</code> This method relies on the configuration settings for both
+     * {@link CoalesceSettings#getBinaryFileStoreBasePath()} and {@link CoalesceSettings#getSubDirectoryLength()} to build
+     * the directory path.
+     * 
      * @return String, full filename
      */
     public String getCoalesceFullFilename()
@@ -591,6 +590,10 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     /**
      * Returns the filename with directory path and file extension for a thumbnail image.
      * 
+     * <code>NOTE:</code> This method relies on the configuration settings for both
+     * {@link CoalesceSettings#getBinaryFileStoreBasePath()} and {@link CoalesceSettings#getSubDirectoryLength()} to build
+     * the directory path.
+     *
      * @return String, full thumbnail filename
      */
     public String getCoalesceFullThumbnailFilename()

@@ -1,25 +1,65 @@
 package com.incadencecorp.coalesce.common.helpers;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.NullArgumentException;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import com.incadencecorp.coalesce.common.CoalesceAssert;
-import com.incadencecorp.coalesce.common.helpers.GraphicsHelper;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
+import com.incadencecorp.coalesce.common.runtime.CoalesceSettings;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceStringField;
+import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
+
+/*-----------------------------------------------------------------------------'
+ Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
+
+ Notwithstanding any contractor copyright notice, the Government has Unlimited
+ Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+ of this work other than as specifically authorized by these DFARS Clauses may
+ violate Government rights in this work.
+
+ DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+ Unlimited Rights. The Government has the right to use, modify, reproduce,
+ perform, display, release or disclose this computer software and to have or
+ authorize others to do so.
+
+ Distribution Statement D. Distribution authorized to the Department of
+ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+ -----------------------------------------------------------------------------*/
 
 public class GraphicsHelperTest {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
+
+    private static String FILE_FIELD_IMAGE_PATH;
+    private static final String FILE_FIELD_GUID = "228df990-4d5b-11e4-916c-0800200c9a66";
+    private static String FILE_FIELD_THUMBNAIL_PATH;
+    private static final String NOT_FILE_FIELD_GUID = "486af7d0-4d5b-11e4-916c-0800200c9a66";
+    private static String NOT_FILE_FIELD_THUMBNAIL_PATH;
 
     /*
      * @BeforeClass public static void setUpBeforeClass() throws Exception { }
@@ -30,6 +70,77 @@ public class GraphicsHelperTest {
      * 
      * @After public void tearDown() throws Exception { }
      */
+
+    @BeforeClass
+    public static void setUpBeforeClass() throws Exception
+    {
+        CoalesceSettings.setBinaryFileStoreBasePath("C:\\Coalesce.UnitTest");
+
+        GraphicsHelperTest.copyTestImagesToBin();
+
+    }
+
+    @AfterClass
+    public static void tearDownAfterClass() throws Exception
+    {
+        // Files.delete(Paths.get(GraphicsHelperTest.FILE_FIELD_IMAGE_PATH));
+
+        File testDirectory = new File(CoalesceSettings.getBinaryFileStoreBasePath());
+
+        if (testDirectory.exists())
+        {
+            FileUtils.deleteDirectory(testDirectory);
+        }
+
+        // GraphicsHelperTest.cleanUpTestThumbnails();
+
+    }
+
+    @Before
+    public void setUp() throws Exception
+    {
+        GraphicsHelperTest.cleanUpTestThumbnails();
+    }
+
+    private static void copyTestImagesToBin() throws IOException
+    {
+
+        GraphicsHelperTest.FILE_FIELD_IMAGE_PATH = FileHelper.getBaseFilenameWithFullDirectoryPathForKey(GraphicsHelperTest.FILE_FIELD_GUID)
+                + ".jpg";
+
+        GraphicsHelperTest.FILE_FIELD_THUMBNAIL_PATH = FileHelper.getBaseFilenameWithFullDirectoryPathForKey(GraphicsHelperTest.FILE_FIELD_GUID)
+                + "_thumb." + CoalesceSettings.getImageFormat();
+        GraphicsHelperTest.NOT_FILE_FIELD_THUMBNAIL_PATH = FileHelper.getBaseFilenameWithFullDirectoryPathForKey(GraphicsHelperTest.NOT_FILE_FIELD_GUID)
+                + "_thumb." + CoalesceSettings.getImageFormat();
+
+        File fieldFile = new File(GraphicsHelperTest.FILE_FIELD_IMAGE_PATH);
+        fieldFile.getParentFile().mkdirs();
+
+        Files.copy(Paths.get("src/resources/Desert.jpg"),
+                   Paths.get(GraphicsHelperTest.FILE_FIELD_IMAGE_PATH),
+                   StandardCopyOption.REPLACE_EXISTING);
+
+    }
+
+    private static void cleanUpTestThumbnails()
+    {
+        try
+        {
+            Files.delete(Paths.get(GraphicsHelperTest.FILE_FIELD_THUMBNAIL_PATH));
+        }
+        catch (IOException e1)
+        {
+        }
+
+        try
+        {
+            Files.delete(Paths.get(GraphicsHelperTest.NOT_FILE_FIELD_THUMBNAIL_PATH));
+        }
+        catch (IOException e)
+        {
+        }
+
+    }
 
     @Test
     public void resampleWithHeightSmallerTest() throws IOException
@@ -832,8 +943,82 @@ public class GraphicsHelperTest {
     }
 
     @Test
-    public void createFieldThumbnailTest()
+    public void createFieldThumbnailCoalesceFieldTest() throws IOException, CoalesceException
     {
+
+        CoalesceRecord record = GraphicsHelperTest.getFieldThumbnailRecord();
+
+        @SuppressWarnings("unchecked")
+        CoalesceField<byte[]> file = (CoalesceField<byte[]>) record.getFieldByName("File");
+        assertTrue("Thumbnail creation failed for file type", GraphicsHelper.createFieldThumbnail(record.getFieldByName("File")));
+
+        File thumbnail = new File(file.getCoalesceFullThumbnailFilename());
+        assertTrue("Thumbnail was not created correctly!", thumbnail.exists());
+
+        assertFalse("Thumbnail creation should have failed for a non-file type",
+                    GraphicsHelper.createFieldThumbnail(record.getFieldByName("NotFile")));
+
     }
 
+    @Test
+    public void createFieldThumbnailFilenameTest() throws IOException, CoalesceException
+    {
+
+        CoalesceRecord record = GraphicsHelperTest.getFieldThumbnailRecord();
+
+        @SuppressWarnings("unchecked")
+        CoalesceField<byte[]> file = (CoalesceField<byte[]>) record.getFieldByName("File");
+        assertTrue("Thumbnail creation failed for file type", GraphicsHelper.createFieldThumbnail(file.getCoalesceFullFilename()));
+
+        File thumbnail = new File(file.getCoalesceFullThumbnailFilename());
+        assertTrue("Thumbnail was not created correctly!", thumbnail.exists());
+
+        assertFalse("Thumbnail already exists", GraphicsHelper.createFieldThumbnail(file.getCoalesceFullFilename()));
+        
+        assertFalse("Thumbnail creation should have failed for a non-file type",
+                    GraphicsHelper.createFieldThumbnail(record.getFieldByName("NotFile").getCoalesceFullFilename()));
+
+    }
+
+    @Test
+    public void createFieldThumbnailFilenameFilenameIsDirectorTest() throws IOException, CoalesceException
+    {
+
+        CoalesceRecord record = GraphicsHelperTest.getFieldThumbnailRecord();
+
+        @SuppressWarnings("unchecked")
+        CoalesceField<byte[]> file = (CoalesceField<byte[]>) record.getFieldByName("File");
+
+        Files.createDirectory(Paths.get(file.getCoalesceFullThumbnailFilename()));
+
+        assertFalse("Thumbnail creation should have failed due to directory existing", GraphicsHelper.createFieldThumbnail(file.getCoalesceFullFilename()));
+
+
+    }
+    
+    private static CoalesceRecord getFieldThumbnailRecord() throws CoalesceException, IOException
+    {
+        CoalesceEntity entity = new CoalesceEntity();
+        entity.initialize("Test Entity", "Unit Test", "1.0.0.0", "TestEntity", "UnitTest", "Thumbnail Testing");
+        CoalesceSection section = entity.createSection("Testing Section");
+        CoalesceRecordset recordset = section.createRecordset("Testing Recordset");
+        recordset.createFieldDefinition("File", ECoalesceFieldDataTypes.FileType);
+        recordset.createFieldDefinition("NotFile", ECoalesceFieldDataTypes.StringType);
+
+        CoalesceRecord record = recordset.addNew();
+
+        record.setFieldValue("File", Files.readAllBytes(Paths.get("src/resources/desert.jpg")), "desert.jpg");
+
+        @SuppressWarnings("unchecked")
+        CoalesceField<byte[]> file = (CoalesceField<byte[]>) record.getFieldByName("File");
+        file.setKey(GraphicsHelperTest.FILE_FIELD_GUID);
+
+        CoalesceStringField notFile = (CoalesceStringField) record.getFieldByName("NotFile");
+        notFile.setValue("Some Test Data");
+        notFile.setKey(GraphicsHelperTest.NOT_FILE_FIELD_GUID);
+
+        return record;
+
+    }
+    
 }
