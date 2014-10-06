@@ -170,7 +170,11 @@ public class CoalesceEntity extends CoalesceDataObject {
      */
     public boolean initialize(String name, String source, String version, String entityId, String entityIdType, String title)
     {
-        if (!initialize()) return false;
+        this._entity = new Entity();
+
+        if (!super.initialize()) return false;
+
+        if (!initializeChildren()) return false;
         
         this.setName(name);
         this.setSource(source);
