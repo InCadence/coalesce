@@ -11,6 +11,24 @@ public class TimeTrack implements Serializable {
 	private String _startTime;
 	private String _threadID;
 	private String _stopTime;
+	private String _startMSTime;
+	private String _stopMSTime;
+
+	public String getStartMSTime() {
+		return _startMSTime;
+	}
+
+	public void setStartMSTime(String _startMSTime) {
+		this._startMSTime = _startMSTime;
+	}
+
+	public String getStopMSTime() {
+		return _stopMSTime;
+	}
+
+	public void setStopMSTime(String _stopMSTime) {
+		this._stopMSTime = _stopMSTime;
+	}
 
 	public String getAppStartTime() {
 		return _appStartTime;

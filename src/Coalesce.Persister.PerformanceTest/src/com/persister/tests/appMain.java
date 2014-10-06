@@ -25,54 +25,64 @@ import org.w3c.dom.Text;
 import Coalesce.Common.Exceptions.CoalesceException;
 import Coalesce.Common.Exceptions.CoalescePersistorException;
 import Coalesce.Framework.CoalesceFramework;
-import Coalesce.Framework.DataModel.CoalesceEntityTemplate;
 import Coalesce.Framework.DataModel.CoalesceEntity;
+import Coalesce.Framework.DataModel.CoalesceEntityTemplate;
+import Coalesce.Framework.DataModel.CoalesceFieldDefinition;
+import Coalesce.Framework.DataModel.CoalesceLinkageSection;
+import Coalesce.Framework.DataModel.CoalesceRecord;
+import Coalesce.Framework.DataModel.CoalesceRecordset;
+import Coalesce.Framework.DataModel.CoalesceSection;
+import Coalesce.Framework.DataModel.ECoalesceFieldDataTypes;
 import Coalesce.Framework.Persistance.ServerConn;
 import coalesce.persister.postgres.PostGresSQLPersistor;
 
 public class appMain {
-
-	private final static Logger log = Logger.getLogger("TesterLog");
-	private static int ITERATION_LIMIT = 1000000;
-	private static int CAPTURE_METRICS_INTERVAL = 1000;
-	static ServerConn serCon;
-	static FileInputStream inputStream = null;
-	static PostGresSQLPersistor psPersister;
-	private static CoalesceFramework _coalesceFramework;
-	static int minorVal = 0;
-	static int majorVal = 0;
-	static int masterCounter = 0;
-	static String startSaveTimeStamp = "";
-	static String completeSaveTimeStamp = "";
-	private static List<TimeTrack> timeLogger;
-	static String entityXml="";
+	
+	static int _ITERATION_LIMIT = 1000000;
+	static int _CAPTURE_METRICS_INTERVAL = 1000;
+	
+	static Logger _log = Logger.getLogger("TesterLog");
+	static ServerConn _serCon;
+	static FileInputStream _inputStream = null;
+	static PostGresSQLPersistor _psPersister;
+	static CoalesceFramework _coalesceFramework;
+	static int _minorVal = 0;
+	static int _majorVal = 0;
+	static int _masterCounter = 0;
+	static String _startSaveTimeStamp = "";
+	static String _completeSaveTimeStamp = "";
+	static List<TimeTrack> _timeLogger;
+	static String _entityXml="";
 	static Document dom;
+	//	Set to True to use the File XML for Persistance
+	//	Set to False for the CoalesceTypeInstances.TEST_MISSION
+	static boolean _isModeFile=true;
 
 	public static void main(String[] args) {
-		System.out.println("Performance Test Inserting " + ITERATION_LIMIT
+		System.out.println("Performance Test Inserting " + _ITERATION_LIMIT
 				+ " XsdEntities Started **..** ");
 		String userDir = System.getProperty("user.dir");
 		appMain._coalesceFramework = new CoalesceFramework();
 		try {
 			if (OpenConnection() == true) {
-				appMain._coalesceFramework.initialize(psPersister);
-				timeLogger = new ArrayList<TimeTrack>();
+				appMain._coalesceFramework.initialize(_psPersister);
+				_timeLogger = new ArrayList<TimeTrack>();
 				runVolume();
-				if(inputStream!=null)
-					inputStream.close();
+				if(_inputStream!=null)
+					_inputStream.close();
 			}
 		} catch (Exception ex) {
-			log.log(java.util.logging.Level.SEVERE, ex.toString());
+			_log.log(java.util.logging.Level.SEVERE, ex.toString());
 		}
 	}
 
 	public static boolean OpenConnection() throws SQLException {
-		serCon = new ServerConn();
-		serCon.setDatabase("CoalesceDatabase");
-		serCon.setUser("root");
-		serCon.setPassword("Passw0rd");
-		psPersister = new PostGresSQLPersistor();
-		psPersister.Initialize(serCon);
+		_serCon = new ServerConn();
+		_serCon.setDatabase("CoalesceDatabase");
+		_serCon.setUser("root");
+		_serCon.setPassword("Passw0rd");
+		_psPersister = new PostGresSQLPersistor();
+		_psPersister.Initialize(_serCon);
 		return true;
 	}
 
@@ -82,23 +92,23 @@ public class appMain {
 			String startTime = appMain.getCurrentTime();
 			int _iteration_counter = 0;
 			appMain.createDOMDocument();
-			for (_iteration_counter = 0; _iteration_counter <= ITERATION_LIMIT; _iteration_counter++) {
+			for (_iteration_counter = 0; _iteration_counter <= _ITERATION_LIMIT; _iteration_counter++) {
 				_timeTrack = new TimeTrack();
 
-				CoalesceEntity _coalesceEntity = new CoalesceEntity();
+				CoalesceEntity _xsdEntity = new CoalesceEntity();
 				String generateEntityVersionNumber = appMain
 						.generateEntityVersionNumber(_iteration_counter);
-				_coalesceEntity = appMain.createEntity("1.0."
+				_xsdEntity = appMain.createEntity("1.0."
 						.concat(generateEntityVersionNumber));
-				if (_coalesceEntity != null) {
-					if (appMain.masterCounter % CAPTURE_METRICS_INTERVAL == 0) {
-						saveEntity(_timeTrack, _coalesceEntity);
-						_timeTrack.setEntityID(_coalesceEntity.getKey());
-						timeLogger.add(_timeTrack);
+				if (_xsdEntity != null) {
+					if (appMain._masterCounter % _CAPTURE_METRICS_INTERVAL == 0) {
+						saveEntity(_timeTrack, _xsdEntity);
+						_timeTrack.setEntityID(_xsdEntity.getKey());
+						_timeLogger.add(_timeTrack);
 						_timeTrack = null;
 					} else
 						appMain._coalesceFramework
-								.saveCoalesceEntity(_coalesceEntity);
+								.saveCoalesceEntity(_xsdEntity);
 				} else
 					break;
 			}
@@ -109,7 +119,7 @@ public class appMain {
 			String userDir = System.getProperty("user.dir");
 			appMain.printToFile(userDir + "/persistance.xml");
 		} catch (Exception ex) {
-			log.log(java.util.logging.Level.SEVERE, ex.toString());
+			_log.log(java.util.logging.Level.SEVERE, ex.toString());
 		}
 	}
 
@@ -121,12 +131,14 @@ public class appMain {
 
 	private static void saveEntity(TimeTrack _timeTrack, CoalesceEntity _xsdEntity)
 			throws CoalescePersistorException {
-		_timeTrack.setStartTime(getCurrentTime(false));
-		_timeTrack.setIterationVal(String.valueOf(masterCounter));
+		_timeTrack.setStartTime(getCurrentTime());
+		_timeTrack.setStartMSTime(getCurrentTime(false));
+		_timeTrack.setIterationVal(String.valueOf(_masterCounter));
 		_timeTrack.setIterationInterval(String
-				.valueOf(CAPTURE_METRICS_INTERVAL));
+				.valueOf(_CAPTURE_METRICS_INTERVAL));
 		appMain._coalesceFramework.saveCoalesceEntity(_xsdEntity);
-		_timeTrack.setStopTime(getCurrentTime(false));
+		_timeTrack.setStopTime(getCurrentTime());
+		_timeTrack.setStopMSTime(getCurrentTime(false));
 	}
 
 	private static String getCurrentTime(boolean isNano) {
@@ -145,28 +157,49 @@ public class appMain {
 				nowCurrentDate.getTime());
 		return currentTimestamp.toString();
 	}
-
-	private static CoalesceEntity createEntity(String entityVersion)
+	private static CoalesceEntity createEntity(String entityVersion) throws CoalesceException{
+		// Create Test Entity
+		CoalesceEntity _entity = new CoalesceEntity();
+		if(appMain._isModeFile==true)
+			_entity=createEntityFile(entityVersion);
+		else
+			_entity=CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION, "S1" +entityVersion);
+		_entity.setVersion(entityVersion);
+		return _entity;
+	}
+	private static CoalesceEntity createEntityFile(String entityVersion)
 			throws CoalesceException {
-		
+		CoalesceSection section = null;
+		CoalesceRecordset recordSet = null;
+		CoalesceRecord record = null;
 		try {
 			// Create Test Entity
 			CoalesceEntity _entity = new CoalesceEntity();
-			// Create Entity
-			_entity = new CoalesceEntity();
+
 			String suserDir = System.getProperty("user.dir");
 			suserDir += "/EntityPerfFile.xml";
-			if(inputStream==null)
-				inputStream = new FileInputStream(suserDir);
-			if (entityXml == ""){
-				entityXml = IOUtils.toString(inputStream);
+			if(_inputStream==null)
+				_inputStream = new FileInputStream(suserDir);
+			if (_entityXml == ""){
+				_entityXml = IOUtils.toString(_inputStream);
 			}
 			try {
 				CoalesceEntity entity = new CoalesceEntity();
-				entity.initialize(entityXml);
+				entity.initialize(_entityXml);
 				CoalesceEntityTemplate template = CoalesceEntityTemplate
 						.create(entity);
 				_entity = template.createNewEntity();
+				//************************************//
+				CoalesceLinkageSection.create(_entity, true);
+
+	            section = CoalesceSection.create(_entity, CoalesceTypeInstances.TEST_MISSION_INFO_SECTION_PATH, true);
+	            recordSet = CoalesceRecordset.create(section, CoalesceTypeInstances.TEST_MISSION_RECORDSET);
+	            CoalesceFieldDefinition.create(recordSet, "Performance TestFieldDef", ECoalesceFieldDataTypes.StringType);
+
+	            record = recordSet.addNew();
+	            record.setFieldValue("Performance TestFieldDef", "abcdefghijklmnopqrstuvwxyzABCDEFGHIZKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()_+-=;'[],./?><:{}");
+
+	            //_fieldKey = record.getFieldByName("Performance TestFieldDef").getKey();
 
 			} finally {
 				//inputStream.close();
@@ -174,24 +207,24 @@ public class appMain {
 
 			return _entity;
 		} catch (Exception ex) {
-			log.log(java.util.logging.Level.SEVERE, ex.toString());
+			_log.log(java.util.logging.Level.SEVERE, ex.toString());
 			return null;
 		}
 	}
 
 	private static String generateEntityVersionNumber(int currentIterationNumber) {
 		String entityVersion = "";
-		masterCounter += 1;
+		_masterCounter += 1;
 		if (currentIterationNumber % 10000 == 0) {
-			majorVal += 1;
-			minorVal = 0;
+			_majorVal += 1;
+			_minorVal = 0;
 			// outConsoleData(masterCounter, "INCREMENT: ");
-			entityVersion = String.valueOf(majorVal) + "."
-					+ String.valueOf(minorVal);
+			entityVersion = String.valueOf(_majorVal) + "."
+					+ String.valueOf(_minorVal);
 		} else {
-			minorVal += 1;
-			entityVersion = String.valueOf(majorVal) + "."
-					+ String.valueOf(minorVal);
+			_minorVal += 1;
+			entityVersion = String.valueOf(_majorVal) + "."
+					+ String.valueOf(_minorVal);
 		}
 		return entityVersion;
 	}
@@ -211,7 +244,7 @@ public class appMain {
 			System.out
 					.println("Error while trying to instantiate DocumentBuilder "
 							+ ex.toString());
-			log.log(java.util.logging.Level.SEVERE, ex.toString());
+			_log.log(java.util.logging.Level.SEVERE, ex.toString());
 		}
 
 	}
@@ -219,7 +252,7 @@ public class appMain {
 	private static void createDOMTree() {
 		Element rootEle = dom.createElement("TimeTrack");
 		dom.appendChild(rootEle);
-		Iterator<TimeTrack> iterCNT = timeLogger.iterator();
+		Iterator<TimeTrack> iterCNT = _timeLogger.iterator();
 		while (iterCNT.hasNext()) {
 			TimeTrack bVal = (TimeTrack) iterCNT.next();
 			Element timeTrackElement = createTimeTrackElement(bVal);
@@ -246,7 +279,16 @@ public class appMain {
 		Text stopText = dom.createTextNode(b.getStopTime());
 		stopEle.appendChild(stopText);
 		timeElement.appendChild(stopEle);
-
+		
+		Element startEleMS=dom.createElement("INSERT_START_MS");
+		Text startMSText=dom.createTextNode(b.getStartMSTime());
+		startEleMS.appendChild(startMSText);
+		timeElement.appendChild(startEleMS);
+		
+		Element stopEleMS=dom.createElement("INSERT_COMPLETE_MS");
+		Text stopMSText=dom.createTextNode(b.getStopMSTime());
+		stopEleMS.appendChild(stopMSText);
+		timeElement.appendChild(stopEleMS);
 		return timeElement;
 
 	}
@@ -264,7 +306,7 @@ public class appMain {
 			serializer.serialize(dom);
 
 		} catch (IOException ex) {
-			log.log(java.util.logging.Level.SEVERE, ex.toString());
+			_log.log(java.util.logging.Level.SEVERE, ex.toString());
 		}
 	}
 
