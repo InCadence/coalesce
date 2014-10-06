@@ -68,7 +68,7 @@
 			<version>2.6</version>
 		</dependency>
 		<dependency>
-			<groupId>unity</groupId>
+			<groupId>com.incadencecorp.unity</groupId>
 			<artifactId>unity-common</artifactId>
 		</dependency>
 		<dependency>
@@ -111,7 +111,7 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>unity</groupId>
+				<groupId>com.incadencecorp.unity</groupId>
 				<artifactId>unity-bom</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 				<type>pom</type>

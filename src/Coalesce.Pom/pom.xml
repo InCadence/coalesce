@@ -5,7 +5,7 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>../Coalesce</module>
-		<module>../Coalesce.Persister</module>
+		<module>../Coalesce-Persister</module>
 	</modules>
 	<parent>
 		<groupId>coalesce</groupId>
