@@ -2,7 +2,7 @@ package com.persister.tests;
 
 import org.joda.time.DateTime;
 
-import Coalesce.Common.Helpers.JodaDateTimeHelper;
+import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved

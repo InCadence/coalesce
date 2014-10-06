@@ -22,19 +22,19 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
-import Coalesce.Common.Exceptions.CoalesceException;
-import Coalesce.Common.Exceptions.CoalescePersistorException;
-import Coalesce.Framework.CoalesceFramework;
-import Coalesce.Framework.DataModel.CoalesceEntity;
-import Coalesce.Framework.DataModel.CoalesceEntityTemplate;
-import Coalesce.Framework.DataModel.CoalesceFieldDefinition;
-import Coalesce.Framework.DataModel.CoalesceLinkageSection;
-import Coalesce.Framework.DataModel.CoalesceRecord;
-import Coalesce.Framework.DataModel.CoalesceRecordset;
-import Coalesce.Framework.DataModel.CoalesceSection;
-import Coalesce.Framework.DataModel.ECoalesceFieldDataTypes;
-import Coalesce.Framework.Persistance.ServerConn;
-import coalesce.persister.postgres.PostGresSQLPersistor;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
+import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.framework.CoalesceFramework;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
+import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
+import com.incadencecorp.coalesce.framework.persistance.ServerConn;
+import com.incadencecorp.coalesce.framework.persistance.postgres.PostGresSQLPersistor;
 
 public class appMain {
 	

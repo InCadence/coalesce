@@ -13,9 +13,9 @@ import javax.sql.DataSource;
 
 import org.springframework.stereotype.Repository;
 
-import unity.common.CallResult;
-import unity.common.CallResult.CallResults;
-import Coalesce.Framework.Persistance.CoalesceTable;
+import com.incadencecorp.unity.common.CallResult;
+import com.incadencecorp.unity.common.CallResult.CallResults;
+import com.incadencecorp.coalesce.framework.persistance.CoalesceTable;
 
 import com.proto.irems.services.XMLRecord;
 import com.proto.irems.services.monitor.GeneralServices;
