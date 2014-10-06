@@ -1,4 +1,4 @@
-package Coalesce.Objects;
+package com.incadencecorp.coalesce.objects;
 
 import org.joda.time.DateTime;
 

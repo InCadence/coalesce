@@ -1,4 +1,4 @@
-package Coalesce.Objects;
+package com.incadencecorp.coalesce.objects;
 
 import java.util.HashMap;
 import java.util.Map;

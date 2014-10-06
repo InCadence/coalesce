@@ -1,4 +1,4 @@
-package Coalesce.Objects;
+package com.incadencecorp.coalesce.objects;
 
 import Coalesce.Framework.DataModel.ECoalesceFieldDataTypes;
 import Coalesce.Framework.DataModel.CoalesceFieldDefinition;
