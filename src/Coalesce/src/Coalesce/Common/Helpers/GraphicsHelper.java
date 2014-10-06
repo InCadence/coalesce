@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.lang.NullArgumentException;
 import org.imgscalr.Scalr;
 
 import Coalesce.Common.Runtime.CoalesceSettings;
@@ -56,8 +57,10 @@ public class GraphicsHelper {
      */
     public static BufferedImage resampleWithHeight(BufferedImage imageToResample, int height)
     {
+        if (imageToResample == null) throw new NullArgumentException("imageToResample");
+
         // Calculate the Width, maintaining the same aspect ratio as the original image.
-        return resample(imageToResample, height, height * imageToResample.getWidth() / imageToResample.getHeight());
+        return resampleToExact(imageToResample, height, height * imageToResample.getWidth() / imageToResample.getHeight());
     }
 
     /**
@@ -70,8 +73,10 @@ public class GraphicsHelper {
      */
     public static BufferedImage resampleWithWidth(BufferedImage imageToResample, int width)
     {
+        if (imageToResample == null) throw new NullArgumentException("imageToResample");
+
         // Calculate the Height, maintaining the same aspect ratio as the original image.
-        return resample(imageToResample, width * imageToResample.getHeight() / imageToResample.getWidth(), width);
+        return resampleToExact(imageToResample, width * imageToResample.getHeight() / imageToResample.getWidth(), width);
     }
 
     /**
@@ -83,61 +88,60 @@ public class GraphicsHelper {
      * @param width the width of the resampled image.
      * @return the resampled image.
      */
-    public static BufferedImage resample(BufferedImage imageToResample, int height, int width)
+    public static BufferedImage resampleToExact(BufferedImage imageToResample, int height, int width)
     {
-        if (imageToResample == null) return null;
-        
-        BufferedImage imgThumbnail = Scalr.resize(imageToResample, width, height, Scalr.OP_ANTIALIAS);
+        if (imageToResample == null) throw new NullArgumentException("imageToResample");
+
+        BufferedImage imgThumbnail = Scalr.resize(imageToResample, Scalr.Mode.FIT_EXACT, width, height, Scalr.OP_ANTIALIAS);
 
         return imgThumbnail;
     }
 
     /**
-     * Returns a new image resampled from the provided image with a maximum height and width while maintaining the aspect
-     * ratio of the original image.
+     * Returns a new image resampled from the provided image while maintaining the original aspect ratio. The calculation for
+     * resizing selects from the provided target parameters the one that will produce the smallest final size of the
+     * resampled image.
      * 
      * @param imageToResample the image to use for resampling.
-     * @param maxHeight the maximum height of the resampled image.
-     * @param maxWidth the maximum width of the resampled image.
+     * @param targetHeight the target height of the resampled image.
+     * @param targetWidth the target width of the resampled image.
      * @return the resampled image.
      */
-    public static BufferedImage resampleToMaximum(BufferedImage imageToResample, int maxHeight, int maxWidth)
+    public static BufferedImage resampleToSmallest(BufferedImage imageToResample, int targetHeight, int targetWidth)
     {
-        if (imageToResample == null) return null;
-        
-        double scaledWidth = GraphicsHelper.scaleWidthByHeightResampleRatio(imageToResample, maxHeight, maxWidth);
-        if (scaledWidth <= maxWidth)
+
+        double scaledWidth = GraphicsHelper.scaleWidthByHeightResampleRatio(imageToResample, targetHeight, targetWidth);
+        if (scaledWidth <= targetWidth)
         {
-            return GraphicsHelper.resampleWithHeight(imageToResample, maxHeight);
+            return GraphicsHelper.resampleWithHeight(imageToResample, targetHeight);
         }
         else
         {
-            return GraphicsHelper.resampleWithWidth(imageToResample, maxWidth);
+            return GraphicsHelper.resampleWithWidth(imageToResample, targetWidth);
         }
 
     }
 
     /**
-     * Returns a new image resampled from the provided image with a minimum height and width while maintaining the aspect
-     * ratio of the original image.
+     * Returns a new image resampled from the provided image while maintaining the original aspect ratio. The calculation for
+     * resizing selects from the provided target parameters the one that will produce the largest final size of the resampled
+     * image.
      * 
      * @param imageToResample the image to use for resampling.
-     * @param minHeight the minimum height of the resampled image.
-     * @param minWidth the minimum width of the resampled image.
+     * @param targetHeight the target height of the resampled image.
+     * @param targetWidth the target width of the resampled image.
      * @return the resampled image.
      */
-    public static BufferedImage resampleToMinimum(BufferedImage imageToResample, int minHeight, int minWidth)
+    public static BufferedImage resampleToLargest(BufferedImage imageToResample, int targetHeight, int targetWidth)
     {
-        if (imageToResample == null) return null;
-        
-        double scaledWidth = GraphicsHelper.scaleWidthByHeightResampleRatio(imageToResample, minHeight, minWidth);
-        if (scaledWidth >= minWidth)
+        double scaledWidth = GraphicsHelper.scaleWidthByHeightResampleRatio(imageToResample, targetHeight, targetWidth);
+        if (scaledWidth >= targetWidth)
         {
-            return GraphicsHelper.resampleWithHeight(imageToResample, minHeight);
+            return GraphicsHelper.resampleWithHeight(imageToResample, targetHeight);
         }
         else
         {
-            return GraphicsHelper.resampleWithWidth(imageToResample, minWidth);
+            return GraphicsHelper.resampleWithWidth(imageToResample, targetWidth);
         }
 
     }
@@ -180,7 +184,7 @@ public class GraphicsHelper {
         if (!thumbnail.exists() && imageFileFormat.equals(imageFormat))
         {
             BufferedImage img = ImageIO.read(imageFile);
-            BufferedImage imgThumbnail = GraphicsHelper.resampleToMaximum(img, 80, 80);
+            BufferedImage imgThumbnail = GraphicsHelper.resampleToSmallest(img, 80, 80);
             ImageIO.write(imgThumbnail, imageFormat, thumbnail);
             return true;
         }
@@ -210,10 +214,12 @@ public class GraphicsHelper {
 
     private static double scaleWidthByHeightResampleRatio(BufferedImage imageToResample, int height, int width)
     {
+        if (imageToResample == null) throw new NullArgumentException("imageToResample");
+
         double originalWidth = imageToResample.getWidth();
         double originalHeight = imageToResample.getHeight();
 
-        double newHeightRatio = height / originalHeight;
+        double newHeightRatio = (double) height / (double) originalHeight;
         double widthScaledForHeight = newHeightRatio * originalWidth;
 
         return widthScaledForHeight;

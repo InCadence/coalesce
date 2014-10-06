@@ -124,7 +124,9 @@ public class DocumentThumbnailHelper {
 
             byte[] bytes = FileHelper.getFileAsByteArray(fullFilename, encrypted);
 
-            return DocumentThumbnailHelper.getThumbnailForFile(bytes);
+            if (bytes.length > 0) {
+                return DocumentThumbnailHelper.getThumbnailForFile(bytes);
+            }
 
         default:
 
@@ -149,7 +151,9 @@ public class DocumentThumbnailHelper {
         {
             BufferedImage image = ImageIO.read(bais);
 
-            BufferedImage thumbnail = GraphicsHelper.resampleToMaximum(image, 80, 80);
+            BufferedImage thumbnail = null;
+            
+            if (image != null) thumbnail = GraphicsHelper.resampleToSmallest(image, 80, 80);
 
             if (thumbnail == null) thumbnail = DocumentThumbnailHelper.getImageForResource("LargeIcon_Image.png");
 

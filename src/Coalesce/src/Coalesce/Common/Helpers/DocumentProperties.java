@@ -718,7 +718,7 @@ public class DocumentProperties {
             BufferedImage xpsThumbnail = convertToJpg(inputStream, partNameEntry.getName().split("/")[1]);
             if (xpsThumbnail == null) return;
 
-            setThumbnail(GraphicsHelper.resample(xpsThumbnail, 80, 80));
+            setThumbnail(GraphicsHelper.resampleToLargest(xpsThumbnail, 80, 80));
 
             setThumbnailFilename(getFilenameWithoutExtension() + "_thumb.jpg");
 

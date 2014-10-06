@@ -12,22 +12,15 @@ import java.nio.file.Paths;
 
 import javax.imageio.ImageIO;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import Coalesce.Common.Helpers.DocumentThumbnailHelper.DocumentThumbnailResults;
+import Coalesce.Common.UnitTest.CoalesceAssert;
 
 public class DocumentThumbnailHelperTest {
 
-    private static BufferedImage EXPECTED_DESERT_THUMBNAIL;
-
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception
-    {
-        DocumentThumbnailHelperTest.EXPECTED_DESERT_THUMBNAIL = ImageIO.read(new File("src/resources/desert_thumb.png"));
-    }
-
     /*
+     * @BeforeClass public static void setUpBeforeClass() throws Exception { }
      * 
      * @AfterClass public static void tearDownAfterClass() throws Exception { }
      * 
@@ -40,9 +33,9 @@ public class DocumentThumbnailHelperTest {
     public void getThumbnailForFileFullFilenameTest() throws IOException
     {
         DocumentThumbnailResults results = DocumentThumbnailHelper.getThumbnailForFile("src/resources/desert.jpg");
-        
-        assertThumbnail(results);
-        
+
+        CoalesceAssert.assertThumbnail(results);
+
     }
 
     @Test
@@ -50,41 +43,44 @@ public class DocumentThumbnailHelperTest {
     {
         DocumentThumbnailResults results = DocumentThumbnailHelper.getThumbnailForFile("src/resources/desert.jpg", false);
 
-        assertThumbnail(results);
-        
+        CoalesceAssert.assertThumbnail(results);
+
     }
-    
+
     @Test
     public void getThumbnailForFileFullFilenameWithEncryptionTest() throws IOException
     {
-        DocumentThumbnailResults results = DocumentThumbnailHelper.getThumbnailForFile("src/resources/desert_encrypted.jpg", true);
+        DocumentThumbnailResults results = DocumentThumbnailHelper.getThumbnailForFile("src/resources/desert_encrypted.jpg",
+                                                                                       true);
 
-        assertThumbnail(results);
-        
+        CoalesceAssert.assertThumbnail(results);
+
     }
-    
+
     @Test
     public void getThumbnailForFileFullFilenameWithoutEncryptionNotImageTest() throws IOException
     {
-        DocumentThumbnailResults results = DocumentThumbnailHelper.getThumbnailForFile("src/resources/TestDocument.docx", false);
-        
+        DocumentThumbnailResults results = DocumentThumbnailHelper.getThumbnailForFile("src/resources/TestDocument.docx",
+                                                                                       false);
+
         BufferedImage testImage = ImageIO.read(getClass().getResource("/resources/LargeIcon_Word.png"));
 
-        assertTrue("Thumbnail is not correct", testImagesEqual(testImage, results.getThumbnail()));
+        assertTrue("Thumbnail is not correct", CoalesceAssert.testImagesEqual(testImage, results.getThumbnail()));
 
     }
-    
+
     @Test
     public void getThumbnailForFileFullFilenameWithEncryptionNotImageTest() throws IOException
     {
-        DocumentThumbnailResults results = DocumentThumbnailHelper.getThumbnailForFile("src/resources/encryptedTestDocument.docx", true);
-        
+        DocumentThumbnailResults results = DocumentThumbnailHelper.getThumbnailForFile("src/resources/encryptedTestDocument.docx",
+                                                                                       true);
+
         BufferedImage testImage = ImageIO.read(getClass().getResource("/resources/LargeIcon_Word.png"));
 
-        assertTrue("Thumbnail is not correct", testImagesEqual(testImage, results.getThumbnail()));
+        assertTrue("Thumbnail is not correct", CoalesceAssert.testImagesEqual(testImage, results.getThumbnail()));
 
     }
-    
+
     @Test
     public void getThumbnailForFileBytesTest() throws IOException
     {
@@ -92,7 +88,7 @@ public class DocumentThumbnailHelperTest {
 
         DocumentThumbnailResults results = DocumentThumbnailHelper.getThumbnailForFile(bytes);
 
-        assertThumbnail(results);
+        CoalesceAssert.assertThumbnail(results);
 
     }
 
@@ -107,7 +103,7 @@ public class DocumentThumbnailHelperTest {
 
         assertEquals(0, results.getOriginalWidth());
         assertEquals(0, results.getOriginalHeight());
-        assertTrue("Thumbnail does not match", testImagesEqual(expectedThumbnail, results.getThumbnail()));
+        assertTrue("Thumbnail does not match", CoalesceAssert.testImagesEqual(expectedThumbnail, results.getThumbnail()));
 
     }
 
@@ -227,13 +223,6 @@ public class DocumentThumbnailHelperTest {
         getDocumentThumbnailForMimeTypeTest("XYZ", "LargeIcon_Blank.png");
     }
 
-    private void assertThumbnail(DocumentThumbnailResults actual)
-    {
-        assertEquals(1024, actual.getOriginalWidth());
-        assertEquals(768, actual.getOriginalHeight());
-        assertTrue("Thumbnail is not correct", testImagesEqual(DocumentThumbnailHelperTest.EXPECTED_DESERT_THUMBNAIL, actual.getThumbnail()));
-    }
-    
     private void getThumbnailForFileExtensionsTest(String extension, String resourceName) throws IOException
     {
         BufferedImage image = DocumentThumbnailHelper.getThumbnailForFileExtensions(extension);
@@ -242,7 +231,7 @@ public class DocumentThumbnailHelperTest {
 
         BufferedImage testImage = ImageIO.read(getClass().getResource("/resources/" + resourceName));
 
-        assertTrue("Thumbnail for File extension failed: " + extension, testImagesEqual(testImage, image));
+        assertTrue("Thumbnail for File extension failed: " + extension, CoalesceAssert.testImagesEqual(testImage, image));
 
     }
 
@@ -272,26 +261,8 @@ public class DocumentThumbnailHelperTest {
     {
         BufferedImage img1 = ImageIO.read(getClass().getResource("/resources/" + resourceName));
 
-        return testImagesEqual(img1, img2);
-        
+        return CoalesceAssert.testImagesEqual(img1, img2);
+
     }
-    
-    private boolean testImagesEqual(BufferedImage img1, BufferedImage img2)
-    {
-        if (img1.getWidth() == img2.getWidth() && img1.getHeight() == img2.getHeight())
-        {
-            for (int x = 0; x < img1.getWidth(); x++)
-            {
-                for (int y = 0; y < img1.getHeight(); y++)
-                {
-                    if (img1.getRGB(x, y) != img2.getRGB(x, y)) return false;
-                }
-            }
-        }
-        else
-        {
-            return false;
-        }
-        return true;
-    }
+
 }
