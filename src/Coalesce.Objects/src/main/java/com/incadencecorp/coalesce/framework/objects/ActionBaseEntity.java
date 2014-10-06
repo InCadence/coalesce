@@ -57,7 +57,7 @@ public class ActionBaseEntity extends CoalesceEntity {
         _liveStatusRecord = recordSet.addNew();
 
         // Initialize References
-        return this.initializeReferences();
+        return true;
     }
 
     @Override
@@ -84,7 +84,7 @@ public class ActionBaseEntity extends CoalesceEntity {
 
         }
 
-        return true;
+        return _liveStatusRecord != null;
     }
 
     // ----------------------------------------------------------------------//

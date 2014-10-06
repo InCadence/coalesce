@@ -56,6 +56,8 @@ public class PhotoGalleryEntity extends ActionBaseEntity {
     @Override
     protected boolean initializeReferences()
     {
+        if (!super.initializeReferences()) return false;
+
         if (_photographRecordset == null)
         {
             _photographRecordset = (CoalesceRecordset) getDataObjectForNamePath(getName()
@@ -65,10 +67,9 @@ public class PhotoGalleryEntity extends ActionBaseEntity {
 
         return _photographRecordset != null;
     }
-    
+
     // ----------------------------------------------------------------------//
     // Entity Fields
     // ----------------------------------------------------------------------//
-
 
 }
