@@ -1,4 +1,4 @@
-﻿delete from coalesceentity;
+delete from coalesceentity;
 delete from coalescefield;
 delete from coalescerecord;
 delete from coalescerecordset;

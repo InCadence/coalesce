@@ -1,4 +1,4 @@
-﻿select * from coalesceentity;
+select * from coalesceentity;
 select * from  coalescefield;
 select * from coalescerecord;
 select * from coalescerecordset;

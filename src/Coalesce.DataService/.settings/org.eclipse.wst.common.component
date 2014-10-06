@@ -14,9 +14,6 @@
         <dependent-module archiveName="coalesce-persister-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/Coalesce.Persister/Coalesce.Persister">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="unity-core-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/Unity/Unity">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
         <property name="java-output-path" value="/Coalesce.DataService/build/classes"/>
         <property name="context-root" value="DataService"/>
     </wb-module>

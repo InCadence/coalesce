@@ -68,10 +68,6 @@
 			<version>2.6</version>
 		</dependency>
 		<dependency>
-			<groupId>com.incadencecorp.unity</groupId>
-			<artifactId>unity-common</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
 			<version>2.4</version>
@@ -100,6 +96,10 @@
 			<groupId>xerces</groupId>
 			<artifactId>xercesImpl</artifactId>
 			<version>2.11.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.incadencecorp.unity</groupId>
+			<artifactId>unity-common</artifactId>
 		</dependency>
 	</dependencies>
 	<parent>
