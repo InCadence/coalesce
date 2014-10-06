@@ -60,14 +60,15 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
     public abstract String getType();
 
     /**
-     * Returns the (XML) String of the XsdDataObject.
+     * Returns the (XML) String of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}.
      * 
      * @return (XML) String of the DataObject
      */
     public abstract String toXml();
 
     /**
-     * Sets the value of the XsdDataObject's attribute corresponding to the name argument.
+     * Sets the value of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s attribute
+     * corresponding to the name argument.
      * 
      * @param name String, name of attribute to be set
      * @param value String, value to be assigned to the attribute
@@ -80,53 +81,60 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
     --------------------------------------------------------------------------*/
 
     /**
-     * Returns the value of the XsdDataObject's key attribute which should be the same as the entity's ObjectKey database
-     * value.
+     * Returns the value of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s key attribute
+     * which should be the same as the entity's ObjectKey database value.
      * 
-     * @return String of the XsdDataObject's object key
+     * @return String of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s object key
      */
     protected abstract String getObjectKey();
 
     /**
-     * Sets the value of the XsdDataObject's key attribute.
+     * Sets the value of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s key attribute.
      * 
-     * @param value String to be the XsdDataObject's object key
+     * @param value String to be the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s object key
      */
     protected abstract void setObjectKey(String value);
 
     /**
-     * Sets the value of the XsdDataObject's LastModified attribute.
+     * Sets the value of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s LastModified
+     * attribute.
      * 
-     * @param value DateTime to be the XsdDataObject's last modified date
+     * @param value DateTime to be the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s last
+     *            modified date
      */
     protected abstract void setObjectLastModified(DateTime value);
 
     /**
-     * Returns the value of the XsdDataObject's status attribute.
+     * Returns the value of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s status attribute.
      * 
-     * @return String of the XsdDataObject's status
+     * @return String of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s status
      */
     protected abstract String getObjectStatus();
 
     /**
-     * Sets the value of the XsdDataObject's status attribute.
+     * Sets the value of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s status attribute.
      * 
-     * @param value ECoalesceDataObjectStatus to be the XsdDataObject's status
+     * @param value ECoalesceDataObjectStatus to be the
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s status
      */
     protected abstract void setObjectStatus(ECoalesceDataObjectStatus status);
 
     /**
-     * Returns a hashmap key-value pair of the XsdDataObject's attributes.
+     * Returns a hashmap key-value pair of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s
+     * attributes.
      * 
-     * @return Map<QName, String> of the XsdDataObject's attributes
+     * @return Map<QName, String> of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s
+     *         attributes
      */
     protected abstract Map<QName, String> getAttributes();
 
     /**
-     * Returns a hashmap key-value pair of the XsdDataObject's other attributes - attributes that fall into the
-     * XsdDataObject's @XmlAnyAttribute HashMap.
+     * Returns a hashmap key-value pair of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s
+     * other attributes - attributes that fall into the
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s @XmlAnyAttribute HashMap.
      * 
-     * @return Map<QName, String> of the XsdDataObject's other attributes falling into the @XmlAnyAttribute because they weren't specified in the schema
+     * @return Map<QName, String> of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s other
+     *         attributes falling into the @XmlAnyAttribute because they weren't specified in the schema
      */
     protected abstract Map<QName, String> getOtherAttributes();
 
@@ -249,8 +257,8 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
     }
 
     /**
-     * Sets the value of the XsdDataObject's DataObject Children, childDataObjects. New values with new keys are added,
-     * values with existing keys are replaced.
+     * Sets the value of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s DataObject Children,
+     * childDataObjects. New values with new keys are added, values with existing keys are replaced.
      * 
      * @param key key identifying the childDataObject
      * @param value childDataObject to add to the DataObject's children
@@ -278,7 +286,8 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
     --------------------------------------------------------------------------*/
 
     /**
-     * Returns the value of the XsdDataObject's attribute that corresponds to the name.
+     * Returns the value of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s attribute that
+     * corresponds to the name.
      * 
      * @param name Attribute's name
      * @return String, Attribute's value
@@ -296,8 +305,9 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
     }
 
     /**
-     * Returns the String value of the XsdDataObject's other attribute that corresponds to the name; other attributes are
-     * those that fall into the XsdDataObject's @XmlAnyAttribute HashMap.
+     * Returns the String value of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s other
+     * attribute that corresponds to the name; other attributes are those that fall into the
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s @XmlAnyAttribute HashMap.
      * 
      * @param name Attribute's name
      * @return String, Attribute's value
@@ -308,8 +318,9 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
     }
 
     /**
-     * Returns the DateTime value of the XsdDataObject's other attribute that corresponds to the name; other attributes are
-     * those that fall into the XsdDataObject's @XmlAnyAttribute HashMap.
+     * Returns the DateTime value of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s other
+     * attribute that corresponds to the name; other attributes are those that fall into the
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s @XmlAnyAttribute HashMap.
      * 
      * @param name Attribute's name
      * @return DateTime, Attribute's value
@@ -320,8 +331,10 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
     }
 
     /**
-     * Sets the String value of the XsdDataObject's XsdDataObject's other attribute that corresponds to the name; other
-     * attributes are those that fall into the XsdDataObject's @XmlAnyAttribute HashMap.
+     * Sets the String value of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s other attribute that corresponds to the
+     * name; other attributes are those that fall into the
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s @XmlAnyAttribute HashMap.
      * 
      * @param name String, @XmlAnyAttribute attribute name
      * @param value, @XmlAnyAttribute attribute value
@@ -334,8 +347,10 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
     }
 
     /**
-     * Sets the DateTime value of the XsdDataObject's XsdDataObject's other attribute that corresponds to the name; other
-     * attributes are those that fall into the XsdDataObject's @XmlAnyAttribute HashMap.
+     * Sets the DateTime value of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s other attribute that corresponds to the
+     * name; other attributes are those that fall into the
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s @XmlAnyAttribute HashMap.
      * 
      * @param name String, @XmlAnyAttribute attribute name
      * @param value, @XmlAnyAttribute attribute DateTime value
@@ -346,10 +361,12 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
     }
 
     /**
-     * Returns the XsdDataObject's childDataObject that corresponds to the provided namepath.
+     * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s childDataObject that
+     * corresponds to the provided namepath.
      * 
      * @param namePath String corresponding to the desired childDataObject.
-     * @return XsdDataObject of the childDataObject or null if one is not found
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject} of the childDataObject or null if
+     *         one is not found
      */
     public CoalesceDataObject getDataObjectForNamePath(String namePath)
     {
@@ -407,10 +424,12 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
     }
 
     /**
-     * Returns the XsdDataObject's childDataObject that corresponds to the provided objectkey.
+     * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s childDataObject that
+     * corresponds to the provided objectkey.
      * 
      * @param key String corresponding to the desired childDataObject objectkey.
-     * @return XsdDataObject for childDataObject or null if one is not found
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject} for childDataObject or null if one
+     *         is not found
      */
     public CoalesceDataObject getCoalesceDataObjectForKey(String key)
     {

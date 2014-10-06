@@ -187,7 +187,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
     }
 
     /**
-     * Sets the key value for the XsdFieldHistory
+     * Sets the key value for the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory}
      * 
      * @param fieldHistory, provides the value of the newer field's Previous History Key
      */
@@ -206,7 +206,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
     protected void setTypedValue(String value)
     {
         ECoalesceFieldDataTypes fieldType = getDataType();
-        if (fieldType != ECoalesceFieldDataTypes.StringType && fieldType != ECoalesceFieldDataTypes.UriType)
+        if (fieldType != ECoalesceFieldDataTypes.STRING_TYPE && fieldType != ECoalesceFieldDataTypes.URI_TYPE)
         {
             throw new ClassCastException("Type mismatch");
         }
@@ -221,7 +221,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
      */
     protected void setTypedValue(UUID value)
     {
-        if (getDataType() != ECoalesceFieldDataTypes.GuidType)
+        if (getDataType() != ECoalesceFieldDataTypes.GUID_TYPE)
         {
             throw new ClassCastException("Type mismatch");
         }
@@ -236,7 +236,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
      */
     protected void setTypedValue(DateTime value)
     {
-        if (getDataType() != ECoalesceFieldDataTypes.DateTimeType)
+        if (getDataType() != ECoalesceFieldDataTypes.DATE_TIME_TYPE)
         {
             throw new ClassCastException("Type mismatch");
         }
@@ -251,7 +251,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
      */
     protected void setTypedValue(boolean value)
     {
-        if (getDataType() != ECoalesceFieldDataTypes.BooleanType)
+        if (getDataType() != ECoalesceFieldDataTypes.BOOLEAN_TYPE)
         {
             throw new ClassCastException("Type mismatch");
         }
@@ -266,7 +266,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
      */
     protected void setTypedValue(int value)
     {
-        if (getDataType() != ECoalesceFieldDataTypes.IntegerType)
+        if (getDataType() != ECoalesceFieldDataTypes.INTEGER_TYPE)
         {
             throw new ClassCastException("Type mismatch");
         }
@@ -282,7 +282,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
      */
     protected void setTypedValue(Point value) throws CoalesceDataFormatException
     {
-        if (getDataType() != ECoalesceFieldDataTypes.GeocoordinateType)
+        if (getDataType() != ECoalesceFieldDataTypes.GEOCOORDINATE_TYPE)
         {
             throw new ClassCastException("Type mismatch");
         }
@@ -300,7 +300,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
      */
     protected void setTypedValue(Coordinate value) throws CoalesceDataFormatException
     {
-        if (getDataType() != ECoalesceFieldDataTypes.GeocoordinateType)
+        if (getDataType() != ECoalesceFieldDataTypes.GEOCOORDINATE_TYPE)
         {
             throw new ClassCastException("Type mismatch");
         }
@@ -319,7 +319,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
     protected void setTypedValue(MultiPoint multiPoint) throws CoalesceDataFormatException
     {
 
-        if (getDataType() != ECoalesceFieldDataTypes.GeocoordinateListType)
+        if (getDataType() != ECoalesceFieldDataTypes.GEOCOORDINATE_LIST_TYPE)
         {
             throw new ClassCastException("Type mismatch");
         }
@@ -338,7 +338,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
     protected void setTypedValue(Coordinate value[]) throws CoalesceDataFormatException
     {
 
-        if (getDataType() != ECoalesceFieldDataTypes.GeocoordinateListType)
+        if (getDataType() != ECoalesceFieldDataTypes.GEOCOORDINATE_LIST_TYPE)
         {
             throw new ClassCastException("Type mismatch");
         }
@@ -363,7 +363,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
      */
     protected void setTypedValue(byte[] dataBytes)
     {
-        if (getDataType() != ECoalesceFieldDataTypes.BinaryType)
+        if (getDataType() != ECoalesceFieldDataTypes.BINARY_TYPE)
         {
             throw new ClassCastException("Type mismatch");
         }
@@ -415,7 +415,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
      */
     protected void setTypedValue(byte[] dataBytes, DocumentProperties docProps)
     {
-        if (getDataType() != ECoalesceFieldDataTypes.FileType)
+        if (getDataType() != ECoalesceFieldDataTypes.FILE_TYPE)
         {
             throw new ClassCastException("Type mismatch");
         }
@@ -437,7 +437,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
      */
     protected void setTypedValue(DocumentProperties docProps) throws IOException
     {
-        if (getDataType() != ECoalesceFieldDataTypes.FileType)
+        if (getDataType() != ECoalesceFieldDataTypes.FILE_TYPE)
         {
             throw new ClassCastException("Type mismatch");
         }
@@ -467,7 +467,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
     protected UUID getGuidValue() throws ClassCastException
     {
 
-        if (getDataType() != ECoalesceFieldDataTypes.GuidType)
+        if (getDataType() != ECoalesceFieldDataTypes.GUID_TYPE)
         {
             throw new ClassCastException("Type mismatch");
         }
@@ -493,7 +493,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
     protected DateTime getDateTimeValue() throws ClassCastException
     {
 
-        if (getDataType() != ECoalesceFieldDataTypes.DateTimeType)
+        if (getDataType() != ECoalesceFieldDataTypes.DATE_TIME_TYPE)
         {
             throw new ClassCastException("Type mismatch");
         }
@@ -514,7 +514,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
      */
     protected Boolean getBooleanValue() throws ClassCastException
     {
-        if (getDataType() != ECoalesceFieldDataTypes.BooleanType)
+        if (getDataType() != ECoalesceFieldDataTypes.BOOLEAN_TYPE)
         {
             throw new ClassCastException("Type mismatch");
         }
@@ -535,7 +535,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
      */
     protected Integer getIntegerValue() throws CoalesceDataFormatException
     {
-        if (getDataType() != ECoalesceFieldDataTypes.IntegerType)
+        if (getDataType() != ECoalesceFieldDataTypes.INTEGER_TYPE)
         {
             throw new ClassCastException("Type mismatch");
         }
@@ -563,7 +563,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
      */
     protected Point getPointValue() throws CoalesceDataFormatException
     {
-        if (getDataType() != ECoalesceFieldDataTypes.GeocoordinateType)
+        if (getDataType() != ECoalesceFieldDataTypes.GEOCOORDINATE_TYPE)
         {
             throw new ClassCastException("Type mismatch");
         }
@@ -611,7 +611,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
      */
     protected MultiPoint getMultiPointValue() throws CoalesceDataFormatException
     {
-        if (getDataType() != ECoalesceFieldDataTypes.GeocoordinateListType)
+        if (getDataType() != ECoalesceFieldDataTypes.GEOCOORDINATE_LIST_TYPE)
         {
             throw new ClassCastException("Type mismatch");
         }
@@ -707,7 +707,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
      */
     protected byte[] getBinaryValue() throws ClassCastException
     {
-        if (getDataType() != ECoalesceFieldDataTypes.BinaryType && getDataType() != ECoalesceFieldDataTypes.FileType)
+        if (getDataType() != ECoalesceFieldDataTypes.BINARY_TYPE && getDataType() != ECoalesceFieldDataTypes.FILE_TYPE)
         {
             throw new ClassCastException("Type mismatch");
         }

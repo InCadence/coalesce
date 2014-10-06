@@ -241,7 +241,7 @@ public class Neo4JPersistor extends CoalescePersisterBase {
         DateTime lastModified = DateTime.now(DateTimeZone.UTC);
 
         // Determine the Table Name
-        String tableName = CoalesceTable.gettableNameForObjectType(ObjectType);
+        String tableName = CoalesceTable.getTableNameForObjectType(ObjectType);
         String dateValue = null;
 
         ResultSet results = conn.executeQuery("?", new CoalesceParameter(Key.trim()));

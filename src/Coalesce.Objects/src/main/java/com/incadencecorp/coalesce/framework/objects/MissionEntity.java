@@ -58,7 +58,7 @@ public class MissionEntity extends CoalesceEntity {
         // Create Live Section
         section = CoalesceSection.create(this, "Live Status Section");
         recordSet = CoalesceRecordset.create(section, "Live Status Recordset");
-        CoalesceFieldDefinition.create(recordSet, "CurrentStatus", ECoalesceFieldDataTypes.StringType);
+        CoalesceFieldDefinition.create(recordSet, "CurrentStatus", ECoalesceFieldDataTypes.STRING_TYPE);
 
         // Create New Record
         _liveStatusRecord = recordSet.addNew();
@@ -66,27 +66,22 @@ public class MissionEntity extends CoalesceEntity {
         // Create Mission Information Section
         section = CoalesceSection.create(this, MissionEntity.Name + " Information Section");
         recordSet = CoalesceRecordset.create(section, MissionEntity.Name + " Information Recordset");
-        CoalesceFieldDefinition.create(recordSet,
-                                       "ActionNumber",
-                                       ECoalesceFieldDataTypes.StringType,
-                                       "Action Number",
-                                       "U",
-                                       "0");
-        CoalesceFieldDefinition.create(recordSet, "IncidentNumber", ECoalesceFieldDataTypes.StringType);
-        CoalesceFieldDefinition.create(recordSet, "IncidentTitle", ECoalesceFieldDataTypes.StringType);
-        CoalesceFieldDefinition.create(recordSet, "IncidentDescription", ECoalesceFieldDataTypes.StringType);
-        CoalesceFieldDefinition.create(recordSet, "IncidentDateTime", ECoalesceFieldDataTypes.DateTimeType);
-        CoalesceFieldDefinition.create(recordSet, "MissionName", ECoalesceFieldDataTypes.StringType);
-        CoalesceFieldDefinition.create(recordSet, "MissionType", ECoalesceFieldDataTypes.StringType);
-        CoalesceFieldDefinition.create(recordSet, "MissionDescription", ECoalesceFieldDataTypes.StringType);
-        CoalesceFieldDefinition.create(recordSet, "MissionIndicatorColor", ECoalesceFieldDataTypes.StringType);
-        CoalesceFieldDefinition.create(recordSet, "MissionIndicatorShape", ECoalesceFieldDataTypes.StringType);
-        CoalesceFieldDefinition.create(recordSet, "MissionIndicatorNumber", ECoalesceFieldDataTypes.StringType);
-        CoalesceFieldDefinition.create(recordSet, "MissionIndicatorNumberBASE10", ECoalesceFieldDataTypes.IntegerType);
-        CoalesceFieldDefinition.create(recordSet, "MissionStartDateTime", ECoalesceFieldDataTypes.DateTimeType);
-        CoalesceFieldDefinition.create(recordSet, "MissionEndDateTime", ECoalesceFieldDataTypes.DateTimeType);
-        CoalesceFieldDefinition.create(recordSet, "MissionGeoLocation", ECoalesceFieldDataTypes.GeocoordinateType);
-        CoalesceFieldDefinition.create(recordSet, "MissionAddress", ECoalesceFieldDataTypes.StringType);
+        CoalesceFieldDefinition.create(recordSet, "ActionNumber", ECoalesceFieldDataTypes.STRING_TYPE, "Action Number", "U", "0");
+        CoalesceFieldDefinition.create(recordSet, "IncidentNumber", ECoalesceFieldDataTypes.STRING_TYPE);
+        CoalesceFieldDefinition.create(recordSet, "IncidentTitle", ECoalesceFieldDataTypes.STRING_TYPE);
+        CoalesceFieldDefinition.create(recordSet, "IncidentDescription", ECoalesceFieldDataTypes.STRING_TYPE);
+        CoalesceFieldDefinition.create(recordSet, "IncidentDateTime", ECoalesceFieldDataTypes.DATE_TIME_TYPE);
+        CoalesceFieldDefinition.create(recordSet, "MissionName", ECoalesceFieldDataTypes.STRING_TYPE);
+        CoalesceFieldDefinition.create(recordSet, "MissionType", ECoalesceFieldDataTypes.STRING_TYPE);
+        CoalesceFieldDefinition.create(recordSet, "MissionDescription", ECoalesceFieldDataTypes.STRING_TYPE);
+        CoalesceFieldDefinition.create(recordSet, "MissionIndicatorColor", ECoalesceFieldDataTypes.STRING_TYPE);
+        CoalesceFieldDefinition.create(recordSet, "MissionIndicatorShape", ECoalesceFieldDataTypes.STRING_TYPE);
+        CoalesceFieldDefinition.create(recordSet, "MissionIndicatorNumber", ECoalesceFieldDataTypes.STRING_TYPE);
+        CoalesceFieldDefinition.create(recordSet, "MissionIndicatorNumberBASE10", ECoalesceFieldDataTypes.INTEGER_TYPE);
+        CoalesceFieldDefinition.create(recordSet, "MissionStartDateTime", ECoalesceFieldDataTypes.DATE_TIME_TYPE);
+        CoalesceFieldDefinition.create(recordSet, "MissionEndDateTime", ECoalesceFieldDataTypes.DATE_TIME_TYPE);
+        CoalesceFieldDefinition.create(recordSet, "MissionGeoLocation", ECoalesceFieldDataTypes.GEOCOORDINATE_TYPE);
+        CoalesceFieldDefinition.create(recordSet, "MissionAddress", ECoalesceFieldDataTypes.STRING_TYPE);
 
         _informationRecord = recordSet.addNew();
 

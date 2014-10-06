@@ -54,13 +54,18 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     // -----------------------------------------------------------------------//
 
     /**
-     * Creates an XsdField based off of an XsdFieldDefinition and ties it to its parent XsdRecord.
+     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField} based off of an
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} and ties it to its parent
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}.
      * 
-     * @param parent XsdRecord that the XsdField will belong to
-     * @param fieldDefinition XsdFieldDefinition "template" that the XsdField will be based off of, for default
+     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} that the
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField} will belong to
+     * @param fieldDefinition {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} "template" that
+     *            the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField} will be based off of, for default
      *            values/settings
      * 
-     * @return XsdField, belonging to the parent XsdRecord, resulting from the fieldDefinition
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}, belonging to the parent
+     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}, resulting from the fieldDefinition
      */
     public static CoalesceField<?> create(CoalesceRecord parent, CoalesceFieldDefinition fieldDefinition)
     {
@@ -83,7 +88,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
         newField.setSuspendHistory(false);
 
         // Boolean Type? If so then default initial value to false if not a boolean default value.
-        if (fieldDefinition.getDataType() == ECoalesceFieldDataTypes.BooleanType
+        if (fieldDefinition.getDataType() == ECoalesceFieldDataTypes.BOOLEAN_TYPE
                 && !(newField.getBaseValue().equalsIgnoreCase("true") || newField.getBaseValue().equalsIgnoreCase("false")))
         {
             newField.setBaseValue("false");
@@ -103,30 +108,30 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     {
         switch (dataType) {
 
-        case StringType:
-        case UriType:
+        case STRING_TYPE:
+        case URI_TYPE:
             return new CoalesceStringField();
 
-        case DateTimeType:
+        case DATE_TIME_TYPE:
             return new CoalesceDateTimeField();
 
-        case FileType:
-        case BinaryType:
+        case FILE_TYPE:
+        case BINARY_TYPE:
             return new CoalesceBinaryField();
 
-        case BooleanType:
+        case BOOLEAN_TYPE:
             return new CoalesceBooleanField();
 
-        case IntegerType:
+        case INTEGER_TYPE:
             return new CoalesceIntegerField();
 
-        case GuidType:
+        case GUID_TYPE:
             return new CoalesceGUIDField();
 
-        case GeocoordinateType:
+        case GEOCOORDINATE_TYPE:
             return new CoalesceCoordinateField();
 
-        case GeocoordinateListType:
+        case GEOCOORDINATE_LIST_TYPE:
             return new CoalesceCoordinateListField();
 
         default:
@@ -146,30 +151,30 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     {
 
         switch (getDataType()) {
-        case StringType:
-        case UriType:
+        case STRING_TYPE:
+        case URI_TYPE:
             return (T) getBaseValue();
 
-        case DateTimeType:
+        case DATE_TIME_TYPE:
             return (T) getDateTimeValue();
 
-        case FileType:
-        case BinaryType:
+        case FILE_TYPE:
+        case BINARY_TYPE:
             return (T) getBinaryValue();
 
-        case BooleanType:
+        case BOOLEAN_TYPE:
             return (T) getBooleanValue();
 
-        case IntegerType:
+        case INTEGER_TYPE:
             return (T) getIntegerValue();
 
-        case GuidType:
+        case GUID_TYPE:
             return (T) getGuidValue();
 
-        case GeocoordinateType:
+        case GEOCOORDINATE_TYPE:
             return (T) getCoordinateValue();
 
-        case GeocoordinateListType:
+        case GEOCOORDINATE_LIST_TYPE:
             return (T) getCoordinateListValue();
 
         default:
@@ -188,37 +193,37 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
         ;
 
         switch (getDataType()) {
-        case StringType:
-        case UriType:
+        case STRING_TYPE:
+        case URI_TYPE:
             setTypedValue((String) value);
             break;
 
-        case DateTimeType:
+        case DATE_TIME_TYPE:
             setTypedValue((DateTime) value);
             break;
 
-        case FileType:
-        case BinaryType:
+        case FILE_TYPE:
+        case BINARY_TYPE:
             setTypedValue((byte[]) value);
             break;
 
-        case BooleanType:
+        case BOOLEAN_TYPE:
             setTypedValue((Boolean) value);
             break;
 
-        case IntegerType:
+        case INTEGER_TYPE:
             setTypedValue((Integer) value);
             break;
 
-        case GuidType:
+        case GUID_TYPE:
             setTypedValue((UUID) value);
             break;
 
-        case GeocoordinateType:
+        case GEOCOORDINATE_TYPE:
             setTypedValue((Coordinate) value);
             break;
 
-        case GeocoordinateListType:
+        case GEOCOORDINATE_LIST_TYPE:
             setTypedValue((Coordinate[]) value);
             break;
 
@@ -229,10 +234,12 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     }
 
     /**
-     * Initializes an existing Field and ties it to its parent XsdRecord. The field may be new, but field history is tied in,
-     * in the event that the field is not new.
+     * Initializes an existing Field and ties it to its parent
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}. The field may be new, but field history is tied
+     * in, in the event that the field is not new.
      * 
-     * @param parent XsdRecord that the XsdField will belong to
+     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} that the
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField} will belong to
      * @param field Field being initialized
      * 
      * @return boolean indicator of success/failure
@@ -473,9 +480,10 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     }
 
     /**
-     * Returns the XsdField's suspendHistory value suspendHistory value.
+     * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}'s suspendHistory value suspendHistory
+     * value.
      * 
-     * @return boolean, XsdField's suspendHistory value
+     * @return boolean, {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}'s suspendHistory value
      */
     public boolean getSuspendHistory()
     {
@@ -483,9 +491,10 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     }
 
     /**
-     * Sets the XsdField's suspendHistory value.
+     * Sets the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}'s suspendHistory value.
      * 
-     * @param value boolean, new value for the XsdField's suspendHistory value
+     * @param value boolean, new value for the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}'s
+     *            suspendHistory value
      */
     public void setSuspendHistory(boolean value)
     {
@@ -493,9 +502,9 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     }
 
     /**
-     * Returns the XsdField's change history collection
+     * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}'s change history collection
      * 
-     * @return ArrayList<XsdFieldHistory> all modification history of this field
+     * @return ArrayList<CoalesceFieldHistory> all modification history of this field
      */
     public ArrayList<CoalesceFieldHistory> getHistory()
     {
@@ -517,9 +526,10 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     }
 
     /**
-     * Returns an XsdField's change history entry
+     * Returns an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}'s change history entry
      * 
-     * @return XsdFieldHistory the modification history of this field with matching key
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory} the modification history of this
+     *         field with matching key
      */
     public CoalesceFieldHistory getHistoryRecord(String historyKey)
     {
@@ -576,7 +586,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     public String getCoalesceFullFilename()
     {
 
-        if (getDataType() != ECoalesceFieldDataTypes.FileType)
+        if (getDataType() != ECoalesceFieldDataTypes.FILE_TYPE)
         {
             return "";
         }
@@ -599,7 +609,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     public String getCoalesceFullThumbnailFilename()
     {
 
-        if (getDataType() != ECoalesceFieldDataTypes.FileType)
+        if (getDataType() != ECoalesceFieldDataTypes.FILE_TYPE)
         {
             return "";
         }
@@ -668,7 +678,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     public String getCoalesceFilename()
     {
 
-        if (getDataType() == ECoalesceFieldDataTypes.FileType)
+        if (getDataType() == ECoalesceFieldDataTypes.FILE_TYPE)
         {
 
             String baseFilename = getKey();
@@ -691,7 +701,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     public String getCoalesceThumbnailFilename()
     {
 
-        if (getDataType() == ECoalesceFieldDataTypes.FileType)
+        if (getDataType() == ECoalesceFieldDataTypes.FILE_TYPE)
         {
 
             String baseFilename = getKey();
@@ -707,7 +717,8 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     }
 
     /**
-     * Update the value and/or classification marking of the XsdField.
+     * Update the value and/or classification marking of the
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}.
      * 
      * @param value String, value contained by the field
      * @param marking classification marking of the field
@@ -737,7 +748,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
             }
 
             // Change Values
-            if (getDataType() == ECoalesceFieldDataTypes.DateTimeType && !StringHelper.isNullOrEmpty(value))
+            if (getDataType() == ECoalesceFieldDataTypes.DATE_TIME_TYPE && !StringHelper.isNullOrEmpty(value))
             {
 
                 DateTime valueDate = JodaDateTimeHelper.fromXmlDateTimeUTC(value);
@@ -798,8 +809,8 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
 
                 switch (getDataType()) {
 
-                case BinaryType:
-                case FileType:
+                case BINARY_TYPE:
+                case FILE_TYPE:
                     // Don't Create History Entry for these types
                     break;
                 default:

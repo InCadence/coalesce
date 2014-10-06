@@ -180,13 +180,13 @@ public class CoalesceFieldTest {
         CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         CoalesceField<?> stringField = getTestMissionFieldByName(mission, CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
-        assertEquals(ECoalesceFieldDataTypes.StringType, stringField.getDataType());
+        assertEquals(ECoalesceFieldDataTypes.STRING_TYPE, stringField.getDataType());
 
         CoalesceField<?> dateField = getTestMissionFieldByName(mission, CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
-        assertEquals(ECoalesceFieldDataTypes.DateTimeType, dateField.getDataType());
+        assertEquals(ECoalesceFieldDataTypes.DATE_TIME_TYPE, dateField.getDataType());
 
         CoalesceField<?> integerField = getTestMissionFieldByName(mission, CoalesceTypeInstances.TEST_MISSION_BASE64_PATH);
-        assertEquals(ECoalesceFieldDataTypes.IntegerType, integerField.getDataType());
+        assertEquals(ECoalesceFieldDataTypes.INTEGER_TYPE, integerField.getDataType());
 
     }
 
@@ -606,7 +606,7 @@ public class CoalesceFieldTest {
         CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
         CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset,
                                                                     "Binary",
-                                                                    ECoalesceFieldDataTypes.BinaryType);
+                                                                    ECoalesceFieldDataTypes.BINARY_TYPE);
 
         CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
@@ -1069,7 +1069,7 @@ public class CoalesceFieldTest {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
-        CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset, "Uri", ECoalesceFieldDataTypes.UriType);
+        CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset, "Uri", ECoalesceFieldDataTypes.URI_TYPE);
 
         CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
@@ -1091,7 +1091,7 @@ public class CoalesceFieldTest {
         CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
         CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset,
                                                                     "DateTime",
-                                                                    ECoalesceFieldDataTypes.DateTimeType);
+                                                                    ECoalesceFieldDataTypes.DATE_TIME_TYPE);
 
         CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
@@ -1142,7 +1142,7 @@ public class CoalesceFieldTest {
         CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
         CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset,
                                                                     "Binary",
-                                                                    ECoalesceFieldDataTypes.BinaryType);
+                                                                    ECoalesceFieldDataTypes.BINARY_TYPE);
 
         CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
@@ -1161,7 +1161,7 @@ public class CoalesceFieldTest {
         CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
         CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset,
                                                                     "Binary",
-                                                                    ECoalesceFieldDataTypes.BinaryType);
+                                                                    ECoalesceFieldDataTypes.BINARY_TYPE);
 
         CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
@@ -1200,7 +1200,7 @@ public class CoalesceFieldTest {
         CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
         CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset,
                                                                     "File",
-                                                                    ECoalesceFieldDataTypes.FileType);
+                                                                    ECoalesceFieldDataTypes.FILE_TYPE);
 
         CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
@@ -1234,7 +1234,7 @@ public class CoalesceFieldTest {
         CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
         CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset,
                                                                     "File",
-                                                                    ECoalesceFieldDataTypes.FileType);
+                                                                    ECoalesceFieldDataTypes.FILE_TYPE);
 
         CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
@@ -1267,7 +1267,7 @@ public class CoalesceFieldTest {
         CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
         CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset,
                                                                     "Boolean",
-                                                                    ECoalesceFieldDataTypes.BooleanType);
+                                                                    ECoalesceFieldDataTypes.BOOLEAN_TYPE);
 
         CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
@@ -1304,7 +1304,7 @@ public class CoalesceFieldTest {
         CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
         CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset,
                                                                     "Integer",
-                                                                    ECoalesceFieldDataTypes.IntegerType);
+                                                                    ECoalesceFieldDataTypes.INTEGER_TYPE);
 
         CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
@@ -1321,7 +1321,7 @@ public class CoalesceFieldTest {
         CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
         CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset,
                                                                     "Integer",
-                                                                    ECoalesceFieldDataTypes.IntegerType);
+                                                                    ECoalesceFieldDataTypes.INTEGER_TYPE);
 
         CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
@@ -1357,7 +1357,7 @@ public class CoalesceFieldTest {
         CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
         CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset,
                                                                     "GUID",
-                                                                    ECoalesceFieldDataTypes.GuidType);
+                                                                    ECoalesceFieldDataTypes.GUID_TYPE);
 
         CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
@@ -1374,7 +1374,7 @@ public class CoalesceFieldTest {
         CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
         CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset,
                                                                     "GUID",
-                                                                    ECoalesceFieldDataTypes.GuidType);
+                                                                    ECoalesceFieldDataTypes.GUID_TYPE);
 
         CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
@@ -1411,7 +1411,7 @@ public class CoalesceFieldTest {
         CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
         CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset,
                                                                     "Location",
-                                                                    ECoalesceFieldDataTypes.GeocoordinateType);
+                                                                    ECoalesceFieldDataTypes.GEOCOORDINATE_TYPE);
 
         CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
@@ -2304,7 +2304,7 @@ public class CoalesceFieldTest {
         CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
         CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset,
                                                                     "File",
-                                                                    ECoalesceFieldDataTypes.FileType);
+                                                                    ECoalesceFieldDataTypes.FILE_TYPE);
 
         CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> fileField = CoalesceField.create(parentRecord, fileFieldDef);

@@ -472,7 +472,7 @@ public class CoalesceRecordSetTest {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
         CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
-        assertNull(recordset.createFieldDefinition(null, ECoalesceFieldDataTypes.StringType, "Label", "(U)", "Default"));
+        assertNull(recordset.createFieldDefinition(null, ECoalesceFieldDataTypes.STRING_TYPE, "Label", "(U)", "Default"));
 
     }
 
@@ -482,7 +482,7 @@ public class CoalesceRecordSetTest {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
         CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
-        assertNull(recordset.createFieldDefinition("", ECoalesceFieldDataTypes.StringType, "Label", "(U)", "Default"));
+        assertNull(recordset.createFieldDefinition("", ECoalesceFieldDataTypes.STRING_TYPE, "Label", "(U)", "Default"));
 
     }
 
@@ -492,7 +492,7 @@ public class CoalesceRecordSetTest {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
         CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
-        assertNull(recordset.createFieldDefinition("   ", ECoalesceFieldDataTypes.StringType, "Label", "(U)", "Default"));
+        assertNull(recordset.createFieldDefinition("   ", ECoalesceFieldDataTypes.STRING_TYPE, "Label", "(U)", "Default"));
 
     }
 
@@ -512,7 +512,7 @@ public class CoalesceRecordSetTest {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
         CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
-        assertNull(recordset.createFieldDefinition("Field def", ECoalesceFieldDataTypes.StringType, null, "(U)", "Default"));
+        assertNull(recordset.createFieldDefinition("Field def", ECoalesceFieldDataTypes.STRING_TYPE, null, "(U)", "Default"));
 
     }
 
@@ -522,7 +522,7 @@ public class CoalesceRecordSetTest {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
         CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
-        assertNotNull(recordset.createFieldDefinition("Field def", ECoalesceFieldDataTypes.StringType, "", "(U)", "Default"));
+        assertNotNull(recordset.createFieldDefinition("Field def", ECoalesceFieldDataTypes.STRING_TYPE, "", "(U)", "Default"));
 
     }
 
@@ -533,7 +533,7 @@ public class CoalesceRecordSetTest {
         CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertNotNull(recordset.createFieldDefinition("Field def",
-                                                      ECoalesceFieldDataTypes.StringType,
+                                                      ECoalesceFieldDataTypes.STRING_TYPE,
                                                       "   ",
                                                       "(U)",
                                                       "Default"));
@@ -546,7 +546,7 @@ public class CoalesceRecordSetTest {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
         CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
-        assertNull(recordset.createFieldDefinition("Field def", ECoalesceFieldDataTypes.StringType, "Label", null, "Default"));
+        assertNull(recordset.createFieldDefinition("Field def", ECoalesceFieldDataTypes.STRING_TYPE, "Label", null, "Default"));
 
     }
 
@@ -557,7 +557,7 @@ public class CoalesceRecordSetTest {
         CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertNotNull(recordset.createFieldDefinition("Field def",
-                                                      ECoalesceFieldDataTypes.StringType,
+                                                      ECoalesceFieldDataTypes.STRING_TYPE,
                                                       "Label",
                                                       "",
                                                       "Default"));
@@ -571,7 +571,7 @@ public class CoalesceRecordSetTest {
         CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertNotNull(recordset.createFieldDefinition("Field def",
-                                                      ECoalesceFieldDataTypes.StringType,
+                                                      ECoalesceFieldDataTypes.STRING_TYPE,
                                                       "Label",
                                                       "   ",
                                                       "Default"));
@@ -584,7 +584,7 @@ public class CoalesceRecordSetTest {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
         CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
-        assertNull(recordset.createFieldDefinition("Field def", ECoalesceFieldDataTypes.StringType, "Label", "(U)", null));
+        assertNull(recordset.createFieldDefinition("Field def", ECoalesceFieldDataTypes.STRING_TYPE, "Label", "(U)", null));
 
     }
 
@@ -594,7 +594,7 @@ public class CoalesceRecordSetTest {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
         CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
-        assertNotNull(recordset.createFieldDefinition("Field def", ECoalesceFieldDataTypes.StringType, "Label", "(U)", ""));
+        assertNotNull(recordset.createFieldDefinition("Field def", ECoalesceFieldDataTypes.STRING_TYPE, "Label", "(U)", ""));
 
     }
 
@@ -604,7 +604,7 @@ public class CoalesceRecordSetTest {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
         CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
-        assertNotNull(recordset.createFieldDefinition("Field def", ECoalesceFieldDataTypes.StringType, "Label", "(U)", "   "));
+        assertNotNull(recordset.createFieldDefinition("Field def", ECoalesceFieldDataTypes.STRING_TYPE, "Label", "(U)", "   "));
 
     }
 

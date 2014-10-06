@@ -39,10 +39,13 @@ public class CoalesceLinkageSection extends CoalesceDataObject {
     // -----------------------------------------------------------------------//
 
     /**
-     * Creates an XsdLinkageSection and ties it to its parent XsdEntity.
+     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection} and ties it to its parent
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}.
      * 
-     * @param parent XsdEntity that the new XsdLinkageSection will belong to
-     * @return XsdLinkageSection the new XsdLinkageSection
+     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} that the new
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection} will belong to
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection} the new
+     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}
      */
     public static CoalesceLinkageSection create(CoalesceEntity parent)
     {
@@ -50,11 +53,14 @@ public class CoalesceLinkageSection extends CoalesceDataObject {
     }
 
     /**
-     * Creates an XsdLinkageSection and ties it to its parent XsdEntity. Also sets the noIndex attribute.
+     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection} and ties it to its parent
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}. Also sets the noIndex attribute.
      * 
-     * @param parent XsdEntity that the new XsdLinkageSection will belong to
+     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} that the new
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection} will belong to
      * @param noIndex boolean value
-     * @return XsdLinkageSection the new XsdLinkageSection
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection} the new
+     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}
      */
     public static CoalesceLinkageSection create(CoalesceEntity parent, boolean noIndex)
     {
@@ -78,9 +84,11 @@ public class CoalesceLinkageSection extends CoalesceDataObject {
     }
 
     /**
-     * Initializes a previously new XsdLinkageSection and ties it to its parent XsdEntity.
+     * Initializes a previously new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection} and ties it
+     * to its parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}.
      * 
-     * @param parent XsdEntity containing an LinkageSection to base this XsdLinkageSection on
+     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} containing an LinkageSection to
+     *            base this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection} on
      * @return boolean indicator of success/failure
      */
     public boolean initialize(CoalesceEntity parent)
@@ -155,8 +163,11 @@ public class CoalesceLinkageSection extends CoalesceDataObject {
     }
 
     /**
-     * Returns a hashmap of the XsdLinkages contained in the XsdLinkageSection
-     * @return HashMap of this XsdLinkageSection's XsdLinkages
+     * Returns a hashmap of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage}s contained in the
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}
+     * 
+     * @return HashMap of this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}'s
+     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage}s
      */
     public Map<String, CoalesceLinkage> getLinkages()
     {
@@ -175,9 +186,11 @@ public class CoalesceLinkageSection extends CoalesceDataObject {
     }
 
     /**
-     * Creates an XsdLinkage child for this XsdLinkageSection.
+     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage} child for this
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}.
      * 
-     * @return XsdLinkage newly created and added to this XsdLinkageSection
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage} newly created and added to this
+     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}
      */
     public CoalesceLinkage createLinkage()
     {

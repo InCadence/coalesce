@@ -58,7 +58,7 @@ public class CoalesceFieldDefinitionTest {
 
         CoalesceFieldDefinition newFieldDef = CoalesceFieldDefinition.create(recordSet,
                                                                    "Field Def Name",
-                                                                   ECoalesceFieldDataTypes.StringType);
+                                                                   ECoalesceFieldDataTypes.STRING_TYPE);
 
         CoalesceDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
 
@@ -66,7 +66,7 @@ public class CoalesceFieldDefinitionTest {
 
         assertFieldDefinition(recordSet,
                               "Field Def Name",
-                              ECoalesceFieldDataTypes.StringType,
+                              ECoalesceFieldDataTypes.STRING_TYPE,
                               "",
                               CoalesceFieldDefinitionTest.UNCLASS_MARKING,
                               "",
@@ -93,7 +93,7 @@ public class CoalesceFieldDefinitionTest {
 
         assertFieldDefinition(recordSet,
                               "Field Def Name",
-                              ECoalesceFieldDataTypes.BooleanType,
+                              ECoalesceFieldDataTypes.BOOLEAN_TYPE,
                               "Boolean Def",
                               CoalesceFieldDefinitionTest.TS_MARKING,
                               Boolean.FALSE.toString(),
@@ -124,7 +124,7 @@ public class CoalesceFieldDefinitionTest {
 
         assertFieldDefinition(recordSet,
                               "Field Def Name",
-                              ECoalesceFieldDataTypes.BooleanType,
+                              ECoalesceFieldDataTypes.BOOLEAN_TYPE,
                               "Boolean Def",
                               CoalesceFieldDefinitionTest.UNCLASS_MARKING,
                               Boolean.TRUE.toString(),
@@ -155,7 +155,7 @@ public class CoalesceFieldDefinitionTest {
 
         assertFieldDefinition(recordSet,
                               "Field Def Name",
-                              ECoalesceFieldDataTypes.BooleanType,
+                              ECoalesceFieldDataTypes.BOOLEAN_TYPE,
                               "Boolean Def",
                               CoalesceFieldDefinitionTest.TS_MARKING,
                               Boolean.FALSE.toString(),
@@ -186,7 +186,7 @@ public class CoalesceFieldDefinitionTest {
 
         assertFieldDefinition(recordSet,
                               "Field Def Name",
-                              ECoalesceFieldDataTypes.BooleanType,
+                              ECoalesceFieldDataTypes.BOOLEAN_TYPE,
                               "Boolean Def",
                               CoalesceFieldDefinitionTest.UNCLASS_MARKING,
                               Boolean.TRUE.toString(),
@@ -217,7 +217,7 @@ public class CoalesceFieldDefinitionTest {
 
         assertFieldDefinition(recordSet,
                               "Field Def Name",
-                              ECoalesceFieldDataTypes.IntegerType,
+                              ECoalesceFieldDataTypes.INTEGER_TYPE,
                               "Integer Def",
                               CoalesceFieldDefinitionTest.TS_MARKING,
                               Integer.toString(5),
@@ -248,7 +248,7 @@ public class CoalesceFieldDefinitionTest {
 
         assertFieldDefinition(recordSet,
                               "Field Def Name",
-                              ECoalesceFieldDataTypes.IntegerType,
+                              ECoalesceFieldDataTypes.INTEGER_TYPE,
                               "Integer Def",
                               CoalesceFieldDefinitionTest.UNCLASS_MARKING,
                               Integer.toString(5),
@@ -268,7 +268,7 @@ public class CoalesceFieldDefinitionTest {
 
         CoalesceFieldDefinition newFieldDef = CoalesceFieldDefinition.create(recordSet,
                                                                    "Field Def Name",
-                                                                   ECoalesceFieldDataTypes.StringType,
+                                                                   ECoalesceFieldDataTypes.STRING_TYPE,
                                                                    "String Def",
                                                                    "(TS)",
                                                                    "Unknown",
@@ -280,7 +280,7 @@ public class CoalesceFieldDefinitionTest {
 
         assertFieldDefinition(recordSet,
                               "Field Def Name",
-                              ECoalesceFieldDataTypes.StringType,
+                              ECoalesceFieldDataTypes.STRING_TYPE,
                               "String Def",
                               CoalesceFieldDefinitionTest.TS_MARKING,
                               "Unknown",
@@ -300,7 +300,7 @@ public class CoalesceFieldDefinitionTest {
 
         CoalesceFieldDefinition newFieldDef = CoalesceFieldDefinition.create(recordSet,
                                                                    "Field Def Name",
-                                                                   ECoalesceFieldDataTypes.StringType,
+                                                                   ECoalesceFieldDataTypes.STRING_TYPE,
                                                                    "String Def",
                                                                    "(TS)",
                                                                    "XXX",
@@ -312,7 +312,7 @@ public class CoalesceFieldDefinitionTest {
 
         assertFieldDefinition(recordSet,
                               "Field Def Name",
-                              ECoalesceFieldDataTypes.StringType,
+                              ECoalesceFieldDataTypes.STRING_TYPE,
                               "String Def",
                               CoalesceFieldDefinitionTest.TS_MARKING,
                               "XXX",
@@ -333,7 +333,7 @@ public class CoalesceFieldDefinitionTest {
         DateTime now = JodaDateTimeHelper.nowInUtc();
         CoalesceFieldDefinition newFieldDef = CoalesceFieldDefinition.create(recordSet,
                                                                    "Field Def Name",
-                                                                   ECoalesceFieldDataTypes.DateTimeType,
+                                                                   ECoalesceFieldDataTypes.DATE_TIME_TYPE,
                                                                    "DateTime Def",
                                                                    "(TS)",
                                                                    JodaDateTimeHelper.toXmlDateTimeUTC(now),
@@ -345,7 +345,7 @@ public class CoalesceFieldDefinitionTest {
 
         assertFieldDefinition(recordSet,
                               "Field Def Name",
-                              ECoalesceFieldDataTypes.DateTimeType,
+                              ECoalesceFieldDataTypes.DATE_TIME_TYPE,
                               "DateTime Def",
                               CoalesceFieldDefinitionTest.TS_MARKING,
                               JodaDateTimeHelper.toXmlDateTimeUTC(now),
@@ -413,11 +413,11 @@ public class CoalesceFieldDefinitionTest {
     {
         CoalesceFieldDefinition fieldDefinition = getFieldDefinitionFromXml(CoalesceTypeInstances.TEST_MISSION);
 
-        assertEquals(ECoalesceFieldDataTypes.StringType, fieldDefinition.getDataType());
+        assertEquals(ECoalesceFieldDataTypes.STRING_TYPE, fieldDefinition.getDataType());
 
-        fieldDefinition.setDataType(ECoalesceFieldDataTypes.BinaryType);
+        fieldDefinition.setDataType(ECoalesceFieldDataTypes.BINARY_TYPE);
 
-        assertEquals(ECoalesceFieldDataTypes.BinaryType, fieldDefinition.getDataType());
+        assertEquals(ECoalesceFieldDataTypes.BINARY_TYPE, fieldDefinition.getDataType());
 
     }
 

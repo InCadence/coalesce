@@ -49,10 +49,11 @@ public class CoalesceEntitySyncShell {
     // -----------------------------------------------------------------------//
 
     /**
-     * Creates a CoalesceEntitySyncShell based of an XsdEntity.
+     * Creates a {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell} based of an
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}.
      * 
-     * @param entity The XsdEntity to create the shell from
-     * @return The new CoalesceEntitySyncShell
+     * @param entity The {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} to create the shell from
+     * @return The new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell}
      * 
      * @throws SAXException
      * @throws IOException
@@ -63,10 +64,11 @@ public class CoalesceEntitySyncShell {
     }
 
     /**
-     * Creates a CoalesceEntitySyncShell based of an (XML) String.
+     * Creates a {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell} based of an (XML) String.
      * 
-     * @param EntitySyncShellXml (XML) String of the XsdEntity to create the shell from
-     * @return The new CoalesceEntitySyncShell
+     * @param EntitySyncShellXml (XML) String of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} to
+     *            create the shell from
+     * @return The new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell}
      * 
      * @throws SAXException
      * @throws IOException
@@ -77,10 +79,12 @@ public class CoalesceEntitySyncShell {
     }
 
     /**
-     * Creates a CoalesceEntitySyncShell based of an org.w3c.dom Document.
+     * Creates a {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell} based of an org.w3c.dom
+     * Document.
      * 
-     * @param doc org.w3c.dom Document Document of the XsdEntity to create the shell from
-     * @return The new CoalesceEntitySyncShell
+     * @param doc org.w3c.dom Document Document of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}
+     *            to create the shell from
+     * @return The new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell}
      * 
      * @throws SAXException
      * @throws IOException
@@ -102,9 +106,10 @@ public class CoalesceEntitySyncShell {
     // -----------------------------------------------------------------------//
 
     /**
-     * Initializes a previously new CoalesceEntitySyncShell based of an XsdEntity.
+     * Initializes a previously new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell} based off
+     * an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}.
      * 
-     * @param Entity XsdEntity to initialize the shell from
+     * @param Entity {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} to initialize the shell from
      * @return boolean indicating success/failure
      * 
      * @throws SAXException
@@ -116,9 +121,11 @@ public class CoalesceEntitySyncShell {
     }
 
     /**
-     * Initializes a previously new CoalesceEntitySyncShell based of an (XML) String.
+     * Initializes a previously new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell} based off
+     * an (XML) String.
      * 
-     * @param entityXml String (XML) String of the XsdEntity to initialize the shell from
+     * @param entityXml String (XML) String of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} to
+     *            initialize the shell from
      * @return boolean indicating success/failure
      * 
      * @throws SAXException
@@ -130,9 +137,11 @@ public class CoalesceEntitySyncShell {
     }
 
     /**
-     * Initializes a previously new CoalesceEntitySyncShell based of an org.w3c.dom Document.
+     * Initializes a previously new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell} based off
+     * an org.w3c.dom Document.
      * 
-     * @param doc org.w3c.dom Document Document of the XsdEntity to create the shell from
+     * @param doc org.w3c.dom Document Document of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}
+     *            to create the shell from
      * @return boolean indicating success/failure
      */
     public boolean initialize(Document doc)
@@ -152,9 +161,10 @@ public class CoalesceEntitySyncShell {
     // -----------------------------------------------------------------------//
 
     /**
-     * Returns the CoalesceEntitySyncShell's (org.w3c.dom Document) DataObjectDocument.
+     * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell}'s (org.w3c.dom Document)
+     * DataObjectDocument.
      * 
-     * @return org.w3c.dom Document of the CoalesceEntitySyncShell
+     * @return org.w3c.dom Document of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell}
      */
     public Document getDataObjectDocument()
     {
@@ -162,9 +172,11 @@ public class CoalesceEntitySyncShell {
     }
 
     /**
-     * Sets the CoalesceEntitySyncShell's (org.w3c.dom Document) DataObjectDocument and EntityNode.
+     * Sets the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell}'s (org.w3c.dom Document)
+     * DataObjectDocument and EntityNode.
      * 
-     * @param value org.w3c.dom Document Document to assign to the CoalesceEntitySyncShell
+     * @param value org.w3c.dom Document Document to assign to the
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell}
      */
     public void setDataObjectDocument(Document value)
     {
@@ -173,9 +185,10 @@ public class CoalesceEntitySyncShell {
     }
 
     /**
-     * Returns the CoalesceEntitySyncShell's (org.w3c.dom Node) EntityNode.
+     * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell}'s (org.w3c.dom Node)
+     * EntityNode.
      * 
-     * @return org.w3c.dom Node of the CoalesceEntitySyncShell
+     * @return org.w3c.dom Node of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell}
      */
     public Node getEntityNode()
     {
@@ -183,9 +196,11 @@ public class CoalesceEntitySyncShell {
     }
 
     /**
-     * Sets the CoalesceEntitySyncShell's (org.w3c.dom Node) EntityNode.
+     * Sets the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell}'s (org.w3c.dom Node)
+     * EntityNode.
      * 
-     * @param value org.w3c.dom Node to assign to the CoalesceEntitySyncShell
+     * @param value org.w3c.dom Node to assign to the
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell}
      * @throws ParserConfigurationException
      */
     public void setEntityNode(Node value) throws ParserConfigurationException
@@ -203,7 +218,8 @@ public class CoalesceEntitySyncShell {
     }
 
     /**
-     * Returns the CoalesceEntitySyncShell's (XML) String of the DataObjectDocument.
+     * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell}'s (XML) String of the
+     * DataObjectDocument.
      * 
      * @return (XML) String of the DataObjectDocument.
      */
@@ -217,10 +233,11 @@ public class CoalesceEntitySyncShell {
     // -----------------------------------------------------------------------//
 
     /**
-     * Creates and returns a clone/copy of the CoalesceEntitySyncShell passed in as a param
+     * Creates and returns a clone/copy of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell}
+     * passed in as a param
      * 
-     * @param syncShell CoalesceEntitySyncShell (original)
-     * @return CoalesceEntitySyncShell (clone/copy)
+     * @param syncShell {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell} (original)
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell} (clone/copy)
      */
     public static CoalesceEntitySyncShell clone(CoalesceEntitySyncShell syncShell)
     {
@@ -239,11 +256,13 @@ public class CoalesceEntitySyncShell {
     }
 
     /**
-     * Returns a CoalesceEntitySyncShell containing the LocalFullSyncShell changed nodes from the RemoteFullSyncShell
+     * Returns a {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell} containing the
+     * LocalFullSyncShell changed nodes from the RemoteFullSyncShell
      * 
-     * @param localFullSyncShell CoalesceEntitySyncShell local copy
-     * @param RemoteFullSyncShell CoalesceEntitySyncShell original
-     * @return CoalesceEntitySyncShell local copy's changes from the original
+     * @param localFullSyncShell {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell} local copy
+     * @param RemoteFullSyncShell {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell} original
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell} local copy's changes from the
+     *         original
      */
     public static CoalesceEntitySyncShell getRequiredChangesSyncShell(CoalesceEntitySyncShell localFullSyncShell,
                                                                       CoalesceEntitySyncShell RemoteFullSyncShell)

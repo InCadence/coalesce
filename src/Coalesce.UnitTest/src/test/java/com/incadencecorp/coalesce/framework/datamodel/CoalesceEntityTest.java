@@ -452,13 +452,13 @@ public class CoalesceEntityTest {
         // Verify Live Status Section Creation
         assertTrue(entity.getSection("TREXOperation/Live Status Section").getName().equalsIgnoreCase("Live Status Section"));
 
-        CoalesceFieldDefinition.create(liveRecordSet, "CurrentStatus", ECoalesceFieldDataTypes.StringType);
+        CoalesceFieldDefinition.create(liveRecordSet, "CurrentStatus", ECoalesceFieldDataTypes.STRING_TYPE);
 
         // Create Information Section
         CoalesceSection informationSection = CoalesceSection.create(entity, "Operation Information Section", true);
         CoalesceRecordset informationRecordSet = CoalesceRecordset.create(informationSection, "Operation Information Recordset");
 
-        CoalesceFieldDefinition.create(informationRecordSet, "OperationName", ECoalesceFieldDataTypes.StringType);
+        CoalesceFieldDefinition.create(informationRecordSet, "OperationName", ECoalesceFieldDataTypes.STRING_TYPE);
 
         // Verify Information Section Creation
         assertNotNull(entity.getSection("TREXOperation/Operation Information Section"));
@@ -514,13 +514,13 @@ public class CoalesceEntityTest {
         // Verify Live Status Section Creation
         assertTrue(entity.getSection("TREXOperation/Live Status Section").getName().equalsIgnoreCase("Live Status Section"));
 
-        liveRecordSet.createFieldDefinition("CurrentStatus", ECoalesceFieldDataTypes.StringType);
+        liveRecordSet.createFieldDefinition("CurrentStatus", ECoalesceFieldDataTypes.STRING_TYPE);
 
         // Create Information Section
         CoalesceSection informationSection = entity.createSection("Operation Information Section", true);
         CoalesceRecordset informationRecordSet = informationSection.createRecordset("Operation Information Recordset");
 
-        informationRecordSet.createFieldDefinition("OperationName", ECoalesceFieldDataTypes.StringType);
+        informationRecordSet.createFieldDefinition("OperationName", ECoalesceFieldDataTypes.STRING_TYPE);
 
         // Verify Information Section Creation
         assertNotNull(entity.getSection("TREXOperation/Operation Information Section"));
@@ -1034,19 +1034,19 @@ public class CoalesceEntityTest {
         assertEquals(4, linkages.size());
 
         assertLinkage("62857EF8-3930-4F0E-BAE3-093344EBF389",
-                      ELinkTypes.IsChildOf,
+                      ELinkTypes.IS_CHILD_OF,
                       "AEACD69E-5365-4401-87A1-D95E657E0785",
                       linkages.get("DB7E0EAF-F4EF-4473-94A9-B93A7F46281E"));
         assertLinkage("62857EF8-3930-4F0E-BAE3-093344EBF389",
-                      ELinkTypes.IsParentOf,
+                      ELinkTypes.IS_PARENT_OF,
                       "C42DFD35-EA71-4F56-BC3B-D4287279123D",
                       linkages.get("9A04CBCD-297F-43E2-A590-F59D8438E386"));
         assertLinkage("62857EF8-3930-4F0E-BAE3-093344EBF389",
-                      ELinkTypes.HasParticipant,
+                      ELinkTypes.HAS_PARTICIPANT,
                       "BDCD779B-3C74-4391-BCCB-2DB8D06D5A6F",
                       linkages.get("309153E3-5F53-4EDB-B89C-35AE6EECEBF1"));
         assertLinkage("62857EF8-3930-4F0E-BAE3-093344EBF389",
-                      ELinkTypes.IsParentOf,
+                      ELinkTypes.IS_PARENT_OF,
                       "55DFA165-0AB8-48B7-BF35-5DA6CADB5E1E",
                       linkages.get("6AD08B0F-C492-4105-8033-A5E43056B864"));
     }
@@ -1063,9 +1063,9 @@ public class CoalesceEntityTest {
         CoalesceEntity entity3 = new CoalesceEntity();
         entity3.initialize();
 
-        assertTrue(EntityLinkHelper.linkEntities(entity, ELinkTypes.HasUseOf, entity2, false));
-        assertTrue(EntityLinkHelper.linkEntities(entity, ELinkTypes.IsParentOf, entity3, false));
-        assertTrue(EntityLinkHelper.linkEntities(entity2, ELinkTypes.WasCreatedBy, entity, false));
+        assertTrue(EntityLinkHelper.linkEntities(entity, ELinkTypes.HAS_USE_OF, entity2, false));
+        assertTrue(EntityLinkHelper.linkEntities(entity, ELinkTypes.IS_PARENT_OF, entity3, false));
+        assertTrue(EntityLinkHelper.linkEntities(entity2, ELinkTypes.WAS_CREATED_BY, entity, false));
 
         Map<String, CoalesceLinkage> linkages = entity.getLinkages();
 
@@ -1074,19 +1074,19 @@ public class CoalesceEntityTest {
         for (CoalesceLinkage linkage : linkages.values())
         {
             switch (linkage.getLinkType()) {
-            case HasUseOf:
+            case HAS_USE_OF:
 
                 assertLinkage(entity.getKey(), linkage.getLinkType(), entity2.getKey(), linkage);
 
                 break;
 
-            case IsParentOf:
+            case IS_PARENT_OF:
 
                 assertLinkage(entity.getKey(), linkage.getLinkType(), entity3.getKey(), linkage);
 
                 break;
 
-            case Created:
+            case CREATED:
 
                 assertLinkage(entity.getKey(), linkage.getLinkType(), entity2.getKey(), linkage);
 
@@ -1375,19 +1375,19 @@ public class CoalesceEntityTest {
         for (CoalesceLinkage linkage : linkages.values())
         {
             switch (linkage.getLinkType()) {
-            case HasUseOf:
+            case HAS_USE_OF:
 
                 assertLinkage(entities.Entity, entities.Entity2, linkage.getLinkType(), linkage);
 
                 break;
 
-            case Created:
+            case CREATED:
 
                 assertLinkage(entities.Entity, entities.Entity2, linkage.getLinkType(), linkage);
 
                 break;
 
-            case HasMember:
+            case HAS_MEMBER:
 
                 assertLinkage(entities.Entity, entities.Entity4, linkage.getLinkType(), linkage);
 
@@ -1407,7 +1407,7 @@ public class CoalesceEntityTest {
         for (CoalesceLinkage linkage : linkages.values())
         {
             switch (linkage.getLinkType()) {
-            case IsParentOf:
+            case IS_PARENT_OF:
 
                 assertLinkage(entities.Entity, entities.Entity3, linkage.getLinkType(), linkage);
 
@@ -1437,14 +1437,14 @@ public class CoalesceEntityTest {
     {
         Entities entities = createEntityLinkages();
 
-        Map<String, CoalesceLinkage> linkages = entities.Entity.getLinkages(ELinkTypes.HasUseOf, "Operation");
+        Map<String, CoalesceLinkage> linkages = entities.Entity.getLinkages(ELinkTypes.HAS_USE_OF, "Operation");
 
         assertEquals(1, linkages.size());
 
         for (CoalesceLinkage linkage : linkages.values())
         {
             switch (linkage.getLinkType()) {
-            case HasUseOf:
+            case HAS_USE_OF:
 
                 assertLinkage(entities.Entity, entities.Entity2, linkage.getLinkType(), linkage);
 
@@ -1476,14 +1476,14 @@ public class CoalesceEntityTest {
     {
         Entities entities = createEntityLinkages();
 
-        Map<String, CoalesceLinkage> linkages = entities.Entity.getLinkages(ELinkTypes.HasUseOf);
+        Map<String, CoalesceLinkage> linkages = entities.Entity.getLinkages(ELinkTypes.HAS_USE_OF);
 
         assertEquals(1, linkages.size());
 
         for (CoalesceLinkage linkage : linkages.values())
         {
             switch (linkage.getLinkType()) {
-            case HasUseOf:
+            case HAS_USE_OF:
 
                 assertLinkage(entities.Entity, entities.Entity2, linkage.getLinkType(), linkage);
 
@@ -1526,14 +1526,14 @@ public class CoalesceEntityTest {
     {
         Entities entities = createEntityLinkages();
 
-        Map<String, CoalesceLinkage> linkages = entities.Entity.getLinkages(ELinkTypes.HasUseOf, "Operation", "Portal");
+        Map<String, CoalesceLinkage> linkages = entities.Entity.getLinkages(ELinkTypes.HAS_USE_OF, "Operation", "Portal");
 
         assertEquals(1, linkages.size());
 
         for (CoalesceLinkage linkage : linkages.values())
         {
             switch (linkage.getLinkType()) {
-            case HasUseOf:
+            case HAS_USE_OF:
 
                 assertLinkage(entities.Entity, entities.Entity2, linkage.getLinkType(), linkage);
 
@@ -1554,7 +1554,7 @@ public class CoalesceEntityTest {
 
         Entities entities = createEntityLinkages();
 
-        Map<String, CoalesceLinkage> linkages = entities.Entity.getLinkages(ELinkTypes.HasOwnershipOf, "Operation", "Portal0");
+        Map<String, CoalesceLinkage> linkages = entities.Entity.getLinkages(ELinkTypes.HAS_OWNERSHIP_OF, "Operation", "Portal0");
 
         assertTrue(linkages.isEmpty());
 
@@ -1565,7 +1565,7 @@ public class CoalesceEntityTest {
     {
         Entities entities = createEntityLinkages();
 
-        Map<String, CoalesceLinkage> linkages = entities.Entity.getLinkages(Arrays.asList(ELinkTypes.HasUseOf, ELinkTypes.Created),
+        Map<String, CoalesceLinkage> linkages = entities.Entity.getLinkages(Arrays.asList(ELinkTypes.HAS_USE_OF, ELinkTypes.CREATED),
                                                                        "Operation");
 
         assertEquals(2, linkages.size());
@@ -1573,13 +1573,13 @@ public class CoalesceEntityTest {
         for (CoalesceLinkage linkage : linkages.values())
         {
             switch (linkage.getLinkType()) {
-            case HasUseOf:
+            case HAS_USE_OF:
 
                 assertLinkage(entities.Entity, entities.Entity2, linkage.getLinkType(), linkage);
 
                 break;
 
-            case Created:
+            case CREATED:
 
                 assertLinkage(entities.Entity, entities.Entity2, linkage.getLinkType(), linkage);
 
@@ -1599,15 +1599,15 @@ public class CoalesceEntityTest {
     {
         Entities entities = createEntityLinkages();
 
-        Map<String, CoalesceLinkage> linkages = entities.Entity.getLinkages(Arrays.asList(ELinkTypes.HasUseOf,
-                                                                                     ELinkTypes.IsAPeerOf), "Operation");
+        Map<String, CoalesceLinkage> linkages = entities.Entity.getLinkages(Arrays.asList(ELinkTypes.HAS_USE_OF,
+                                                                                     ELinkTypes.IS_A_PEER_OF), "Operation");
 
         assertEquals(1, linkages.size());
 
         for (CoalesceLinkage linkage : linkages.values())
         {
             switch (linkage.getLinkType()) {
-            case HasUseOf:
+            case HAS_USE_OF:
 
                 assertLinkage(entities.Entity, entities.Entity2, linkage.getLinkType(), linkage);
 
@@ -1628,8 +1628,8 @@ public class CoalesceEntityTest {
 
         Entities entities = createEntityLinkages();
 
-        Map<String, CoalesceLinkage> linkages = entities.Entity.getLinkages(Arrays.asList(ELinkTypes.HasOwnershipOf,
-                                                                                     ELinkTypes.IsAPeerOf), "Operation");
+        Map<String, CoalesceLinkage> linkages = entities.Entity.getLinkages(Arrays.asList(ELinkTypes.HAS_OWNERSHIP_OF,
+                                                                                     ELinkTypes.IS_A_PEER_OF), "Operation");
 
         assertTrue(linkages.isEmpty());
 
@@ -1904,13 +1904,13 @@ public class CoalesceEntityTest {
         CoalesceSection section = entity.createSection("Testing Section");
         CoalesceRecordset recordset = section.createRecordset("Testing Recordset");
 
-        recordset.createFieldDefinition("Binary1", ECoalesceFieldDataTypes.BinaryType, "", "(U)", "");
-        recordset.createFieldDefinition("Binary2", ECoalesceFieldDataTypes.BinaryType, "", "(U)", "");
-        recordset.createFieldDefinition("Binary3", ECoalesceFieldDataTypes.BinaryType, "", "(U)", "");
+        recordset.createFieldDefinition("Binary1", ECoalesceFieldDataTypes.BINARY_TYPE, "", "(U)", "");
+        recordset.createFieldDefinition("Binary2", ECoalesceFieldDataTypes.BINARY_TYPE, "", "(U)", "");
+        recordset.createFieldDefinition("Binary3", ECoalesceFieldDataTypes.BINARY_TYPE, "", "(U)", "");
 
-        recordset.createFieldDefinition("File1", ECoalesceFieldDataTypes.FileType, "", "(U)", "");
-        recordset.createFieldDefinition("File2", ECoalesceFieldDataTypes.FileType, "", "(U)", "");
-        recordset.createFieldDefinition("File3", ECoalesceFieldDataTypes.FileType, "", "(U)", "");
+        recordset.createFieldDefinition("File1", ECoalesceFieldDataTypes.FILE_TYPE, "", "(U)", "");
+        recordset.createFieldDefinition("File2", ECoalesceFieldDataTypes.FILE_TYPE, "", "(U)", "");
+        recordset.createFieldDefinition("File3", ECoalesceFieldDataTypes.FILE_TYPE, "", "(U)", "");
 
         CoalesceRecord record = recordset.addNew();
         record.setFieldValue("Binary1", "Binary1".getBytes("US-ASCII"));
@@ -1945,13 +1945,13 @@ public class CoalesceEntityTest {
         CoalesceSection section = entity.createSection("Testing Section");
         CoalesceRecordset recordset = section.createRecordset("Testing Recordset");
 
-        recordset.createFieldDefinition("Binary1", ECoalesceFieldDataTypes.BinaryType, "", "(U)", "");
-        recordset.createFieldDefinition("Binary2", ECoalesceFieldDataTypes.BinaryType, "", "(U)", "");
-        recordset.createFieldDefinition("Binary3", ECoalesceFieldDataTypes.BinaryType, "", "(U)", "");
+        recordset.createFieldDefinition("Binary1", ECoalesceFieldDataTypes.BINARY_TYPE, "", "(U)", "");
+        recordset.createFieldDefinition("Binary2", ECoalesceFieldDataTypes.BINARY_TYPE, "", "(U)", "");
+        recordset.createFieldDefinition("Binary3", ECoalesceFieldDataTypes.BINARY_TYPE, "", "(U)", "");
 
-        recordset.createFieldDefinition("File1", ECoalesceFieldDataTypes.FileType, "", "(U)", "");
-        recordset.createFieldDefinition("File2", ECoalesceFieldDataTypes.FileType, "", "(U)", "");
-        recordset.createFieldDefinition("File3", ECoalesceFieldDataTypes.FileType, "", "(U)", "");
+        recordset.createFieldDefinition("File1", ECoalesceFieldDataTypes.FILE_TYPE, "", "(U)", "");
+        recordset.createFieldDefinition("File2", ECoalesceFieldDataTypes.FILE_TYPE, "", "(U)", "");
+        recordset.createFieldDefinition("File3", ECoalesceFieldDataTypes.FILE_TYPE, "", "(U)", "");
 
         CoalesceRecord record = recordset.addNew();
         record.setFieldValue("Binary1", "Binary1".getBytes("US-ASCII"));
@@ -2170,9 +2170,9 @@ public class CoalesceEntityTest {
 
         entities.Entity4 = CoalesceEntity.create("Operation", "Portal2", "3.4.5.6", "Id4", "Type4");
 
-        assertTrue(EntityLinkHelper.linkEntities(entities.Entity, ELinkTypes.HasUseOf, entities.Entity2, false));
-        assertTrue(EntityLinkHelper.linkEntities(entities.Entity, ELinkTypes.IsParentOf, entities.Entity3, false));
-        assertTrue(EntityLinkHelper.linkEntities(entities.Entity2, ELinkTypes.WasCreatedBy, entities.Entity, false));
+        assertTrue(EntityLinkHelper.linkEntities(entities.Entity, ELinkTypes.HAS_USE_OF, entities.Entity2, false));
+        assertTrue(EntityLinkHelper.linkEntities(entities.Entity, ELinkTypes.IS_PARENT_OF, entities.Entity3, false));
+        assertTrue(EntityLinkHelper.linkEntities(entities.Entity2, ELinkTypes.WAS_CREATED_BY, entities.Entity, false));
         assertTrue(EntityLinkHelper.linkEntities(entities.Entity4, ELinkTypes.IsAMemberOf, entities.Entity, false));
 
         return entities;

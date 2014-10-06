@@ -274,7 +274,7 @@ public class EntityTest {
 
         Record newRecord = new Record();
         Field newField = new Field();
-        newField.setDatatype(ECoalesceFieldDataTypes.BinaryType.getLabel());
+        newField.setDatatype(ECoalesceFieldDataTypes.BINARY_TYPE.getLabel());
 
         String byteString = "Testing String";
         byte[] dataBytes = byteString.getBytes("US-ASCII");
@@ -296,7 +296,7 @@ public class EntityTest {
         byte[] bytes = Base64.decode(rawData);
 
         assertArrayEquals(dataBytes, bytes);
-        assertEquals(ECoalesceFieldDataTypes.BinaryType.getLabel(), desField.getDatatype());
+        assertEquals(ECoalesceFieldDataTypes.BINARY_TYPE.getLabel(), desField.getDatatype());
 
     }
 

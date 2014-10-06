@@ -7,22 +7,22 @@ import com.incadencecorp.coalesce.common.helpers.StringHelper;
 
 public enum ELinkTypes
 {
-    Undefined("Undefined"),
-    IsChildOf("IsChildOf"),
-    IsParentOf("IsParentOf"),
-    Created("Created"),
-    WasCreatedBy("WasCreatedBy"),
-    HasMember("HasMember"),
-    IsAMemberOf("IsAMemberOf"),
-    HasParticipant("HasParticipant"),
-    IsAParticipantOf("IsAParticipantOf"),
-    IsWatching("IsWatching"),
-    IsBeingWatchedBy("IsBeingWatchedBy"),
-    IsAPeerOf("IsAPeerOf"),
-    IsOwnedBy("IsOwnedBy"),
-    HasOwnershipOf("HasOwnershipOf"),
-    IsUsedBy("IsUsedBy"),
-    HasUseOf("HasUseOf");
+    UNDEFINED("Undefined"),
+    IS_CHILD_OF("IsChildOf"),
+    IS_PARENT_OF("IsParentOf"),
+    CREATED("Created"),
+    WAS_CREATED_BY("WasCreatedBy"),
+    HAS_MEMBER("HasMember"),
+    IS_A_MEMBER_OF("IsAMemberOf"),
+    HAS_PARTICIPANT("HasParticipant"),
+    IS_A_PARTICIPANT_OF("IsAParticipantOf"),
+    IS_WATCHING("IsWatching"),
+    IS_BEING_WATCHED_BY("IsBeingWatchedBy"),
+    IS_A_PEER_OF("IsAPeerOf"),
+    IS_OWNED_BY("IsOwnedBy"),
+    HAS_OWNERSHIP_OF("HasOwnershipOf"),
+    IS_USED_BY("IsUsedBy"),
+    HAS_USE_OF("HasUseOf");
 
     private String _label;
 
@@ -59,11 +59,11 @@ public enum ELinkTypes
 
         initMapping();
 
-        if (StringHelper.isNullOrEmpty(coalesceType)) return ELinkTypes.Undefined;
+        if (StringHelper.isNullOrEmpty(coalesceType)) return ELinkTypes.UNDEFINED;
         
         ELinkTypes value = codeToStatusMapping.get(coalesceType.trim().toLowerCase());
 
-        if (value == null) value = ELinkTypes.Undefined;
+        if (value == null) value = ELinkTypes.UNDEFINED;
 
         return value;
 
@@ -74,56 +74,56 @@ public enum ELinkTypes
 
         switch (this) {
 
-        case Undefined:
-            return ELinkTypes.Undefined;
+        case UNDEFINED:
+            return ELinkTypes.UNDEFINED;
 
-        case IsParentOf:
-            return ELinkTypes.IsChildOf;
+        case IS_PARENT_OF:
+            return ELinkTypes.IS_CHILD_OF;
 
-        case IsChildOf:
-            return ELinkTypes.IsParentOf;
+        case IS_CHILD_OF:
+            return ELinkTypes.IS_PARENT_OF;
 
-        case Created:
-            return ELinkTypes.WasCreatedBy;
+        case CREATED:
+            return ELinkTypes.WAS_CREATED_BY;
 
-        case WasCreatedBy:
-            return ELinkTypes.Created;
+        case WAS_CREATED_BY:
+            return ELinkTypes.CREATED;
 
-        case HasMember:
-            return ELinkTypes.IsAMemberOf;
+        case HAS_MEMBER:
+            return ELinkTypes.IS_A_MEMBER_OF;
 
-        case IsAMemberOf:
-            return ELinkTypes.HasMember;
+        case IS_A_MEMBER_OF:
+            return ELinkTypes.HAS_MEMBER;
 
-        case HasParticipant:
-            return ELinkTypes.IsAParticipantOf;
+        case HAS_PARTICIPANT:
+            return ELinkTypes.IS_A_PARTICIPANT_OF;
 
-        case IsAParticipantOf:
-            return ELinkTypes.HasParticipant;
+        case IS_A_PARTICIPANT_OF:
+            return ELinkTypes.HAS_PARTICIPANT;
 
-        case IsWatching:
-            return ELinkTypes.IsBeingWatchedBy;
+        case IS_WATCHING:
+            return ELinkTypes.IS_BEING_WATCHED_BY;
 
-        case IsBeingWatchedBy:
-            return ELinkTypes.IsWatching;
+        case IS_BEING_WATCHED_BY:
+            return ELinkTypes.IS_WATCHING;
 
-        case IsAPeerOf:
-            return ELinkTypes.IsAPeerOf;
+        case IS_A_PEER_OF:
+            return ELinkTypes.IS_A_PEER_OF;
 
-        case IsOwnedBy:
-            return ELinkTypes.HasOwnershipOf;
+        case IS_OWNED_BY:
+            return ELinkTypes.HAS_OWNERSHIP_OF;
 
-        case HasOwnershipOf:
-            return ELinkTypes.IsOwnedBy;
+        case HAS_OWNERSHIP_OF:
+            return ELinkTypes.IS_OWNED_BY;
 
-        case IsUsedBy:
-            return ELinkTypes.HasUseOf;
+        case IS_USED_BY:
+            return ELinkTypes.HAS_USE_OF;
 
-        case HasUseOf:
-            return ELinkTypes.IsUsedBy;
+        case HAS_USE_OF:
+            return ELinkTypes.IS_USED_BY;
 
         default:
-            return ELinkTypes.Undefined;
+            return ELinkTypes.UNDEFINED;
         }
 
     }

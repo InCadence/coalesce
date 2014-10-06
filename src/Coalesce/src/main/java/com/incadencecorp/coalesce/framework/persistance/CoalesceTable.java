@@ -7,7 +7,7 @@ public class CoalesceTable {
      * @param objectType the Coalesce object
      * @return tableName Coalesce object database name
      */
-    public static String gettableNameForObjectType(String objectType){
+    public static String getTableNameForObjectType(String objectType){
     	String tableName=""; 
     	
     	switch(objectType.trim().toLowerCase()){

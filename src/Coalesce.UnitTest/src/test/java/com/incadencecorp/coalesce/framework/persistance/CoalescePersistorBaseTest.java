@@ -462,7 +462,7 @@ public abstract class CoalescePersistorBaseTest {
 
         CoalesceSection section = CoalesceSection.create(entity, "Live Status Section", true);
         CoalesceRecordset recordSet = CoalesceRecordset.create(section, "Live Status Recordset");
-        CoalesceFieldDefinition.create(recordSet, "CurrentStatus", ECoalesceFieldDataTypes.StringType);
+        CoalesceFieldDefinition.create(recordSet, "CurrentStatus", ECoalesceFieldDataTypes.STRING_TYPE);
 
         CoalesceRecord record = recordSet.addNew();
         record.setFieldValue("CurrentStatus", "Test Status");

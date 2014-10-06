@@ -100,7 +100,8 @@ public interface ICoalesceField<T> {
     public int getSize();
 
     /**
-     * Return the Key value of the Field's most recent previous history XsdDataObject
+     * Return the Key value of the Field's most recent previous history
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}
      * 
      * @return String to be the Field's PreviousHistoryKey attribute
      */
@@ -191,7 +192,8 @@ public interface ICoalesceField<T> {
     public void setSize(int value);
 
     /**
-     * Sets the Key value corresponding to the Field's most recent previous history XsdDataObject
+     * Sets the Key value corresponding to the Field's most recent previous history
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}
      * 
      * @param value String to be the Field's PreviousHistoryKey attribute
      */

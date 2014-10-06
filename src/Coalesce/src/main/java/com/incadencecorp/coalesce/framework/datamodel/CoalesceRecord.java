@@ -49,11 +49,11 @@ public class CoalesceRecord extends CoalesceDataObject {
     // -----------------------------------------------------------------------//
 
     /**
-     * Creates an XsdRecord and ties it to its parent XsdRecordset.
+     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} and ties it to its parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}.
      * 
-     * @param parent XsdRecordset the Recordset that this new XsdRecord will belong to
-     * @param name XsdRecord name attribute
-     * @return XsdRecord the new XsdRecord
+     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} the Recordset that this new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} will belong to
+     * @param name {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} name attribute
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} the new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
      */
     public static CoalesceRecord create(CoalesceRecordset parent, String name)
     {
@@ -85,10 +85,10 @@ public class CoalesceRecord extends CoalesceDataObject {
     }
 
     /**
-     * Initializes a this XsdRecord based on a Record and ties it to its parent XsdRecordset.
+     * Initializes a this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} based on a Record and ties it to its parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}.
      * 
-     * @param parent XsdRecordset the Recordset that this new XsdRecord will belong to
-     * @param record Record that this XsdRecord will be based on
+     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} the Recordset that this new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} will belong to
+     * @param record Record that this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} will be based on
      * @return boolean indicator of success/failure
      */
     public boolean initialize(CoalesceRecordset parent, Record record)
@@ -157,9 +157,9 @@ public class CoalesceRecord extends CoalesceDataObject {
     }
 
     /**
-     * Returns a list of the XsdFields that belong to this XsdRecord
+     * Returns a list of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}s that belong to this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
      * 
-     * @return List<XsdField> list of XsdFields contained by this XsdRecord
+     * @return List<CoalesceField> list of {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}s contained by this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
      */
     public List<CoalesceField<?>> getFields()
     {
@@ -178,9 +178,9 @@ public class CoalesceRecord extends CoalesceDataObject {
     }
 
     /**
-     * Returns a String list of the XsdRecord's Field's names
+     * Returns a String list of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's names
      * 
-     * @return List<String> list of the field names from the XsdFields contained by this XsdRecord
+     * @return List<String> list of the field names from the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}s contained by this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
      */
     public List<String> getFieldNames()
     {
@@ -198,9 +198,9 @@ public class CoalesceRecord extends CoalesceDataObject {
     }
 
     /**
-     * Returns a String list of the XsdRecord's Field's keys
+     * Returns a String list of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's keys
      * 
-     * @return List<String> list of the field keys from the XsdFields contained by this XsdRecord
+     * @return List<String> list of the field keys from the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}s contained by this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
      */
     public List<String> getFieldKeys()
     {
@@ -218,10 +218,10 @@ public class CoalesceRecord extends CoalesceDataObject {
     }
 
     /**
-     * Returns an XsdField with the specified XsdRecord's Field's key
+     * Returns an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField} with the specified {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's key
      * 
      * @param key String of the desired Field's key
-     * @return XsdField that has the key parameter. Null if not present.
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField} that has the key parameter. Null if not present.
      */
     public CoalesceField<?> getFieldByKey(String key)
     {
@@ -237,10 +237,10 @@ public class CoalesceRecord extends CoalesceDataObject {
     }
 
     /**
-     * Returns an XsdField with the specified XsdRecord's Field's name
+     * Returns an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField} with the specified {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's name
      * 
      * @param name String of the desired Field name
-     * @return XsdField that has the name parameter. Null if not present.
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField} that has the name parameter. Null if not present.
      */
     public CoalesceField<?> getFieldByName(String name)
     {
@@ -256,7 +256,7 @@ public class CoalesceRecord extends CoalesceDataObject {
     }
 
     /**
-     * Returns a String value with the specified XsdRecord's Field's name
+     * Returns a String value with the specified {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's name
      * 
      * @param fieldName String of the desired Field name
      * @return String value of the desired Field
@@ -279,7 +279,7 @@ public class CoalesceRecord extends CoalesceDataObject {
     }
 
     /**
-     * Returns a boolean value with the specified XsdRecord's Field's name
+     * Returns a boolean value with the specified {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's name
      * 
      * @param fieldName String of the desired Field name
      * @return boolean value of the desired Field
@@ -306,7 +306,7 @@ public class CoalesceRecord extends CoalesceDataObject {
     }
 
     /**
-     * Returns a int value with the specified XsdRecord's Field's name
+     * Returns a int value with the specified {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's name
      * 
      * @param fieldName String of the desired Field name
      * @return integer value of the desired Field
@@ -332,7 +332,7 @@ public class CoalesceRecord extends CoalesceDataObject {
     }
 
     /**
-     * Returns a DateTime value with the specified XsdRecord's Field's name
+     * Returns a DateTime value with the specified {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's name
      * 
      * @param fieldName String of the desired Field name
      * @return DateTime value of the desired Field
@@ -360,7 +360,7 @@ public class CoalesceRecord extends CoalesceDataObject {
     }
 
     /**
-     * Returns a (binary) byte[] value with the specified XsdRecord's Field's name
+     * Returns a (binary) byte[] value with the specified {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's name
      * 
      * @param fieldName String of the desired Field name
      * @return byte[] value of the desired Field
@@ -386,7 +386,7 @@ public class CoalesceRecord extends CoalesceDataObject {
     }
 
     /**
-     * Returns a String default value for the specified XsdRecord's Field's name
+     * Returns a String default value for the specified {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's name
      * 
      * @param fieldName String of the desired Field name
      * @param defaultValue, value returned if fieldName parameter does not have a field
@@ -408,7 +408,7 @@ public class CoalesceRecord extends CoalesceDataObject {
     }
 
     /**
-     * Returns a boolean default value for the specified XsdRecord's Field's name
+     * Returns a boolean default value for the specified {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's name
      * 
      * @param fieldName String of the desired Field name
      * @param defaultValue, value returned if fieldName parameter does not have a field
@@ -430,7 +430,7 @@ public class CoalesceRecord extends CoalesceDataObject {
     }
 
     /**
-     * Returns a int default value for the specified XsdRecord's Field's name
+     * Returns a int default value for the specified {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's name
      * 
      * @param fieldName String of the desired Field name
      * @param defaultValue, value returned if fieldName parameter does not have a field
@@ -452,7 +452,7 @@ public class CoalesceRecord extends CoalesceDataObject {
     }
 
     /**
-     * Returns a DateTime default value for the specified XsdRecord's Field's name
+     * Returns a DateTime default value for the specified {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's name
      * 
      * @param fieldName String of the desired Field name
      * @param defaultValue, value returned if fieldName parameter does not have a field
@@ -474,7 +474,7 @@ public class CoalesceRecord extends CoalesceDataObject {
     }
 
     /**
-     * Returns a (binary) byte[] default value for the specified XsdRecord's Field's name
+     * Returns a (binary) byte[] default value for the specified {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's name
      * 
      * @param fieldName String of the desired Field name
      * @param defaultValue, value returned if fieldName parameter does not have a field
@@ -496,7 +496,7 @@ public class CoalesceRecord extends CoalesceDataObject {
     }
 
     /**
-     * Set a String Field's value with the specified XsdRecord's Field's name
+     * Set a String Field's value with the specified {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's name
      * 
      * @param fieldName String of the desired Field name
      * @param value String, new value for the field
@@ -518,7 +518,7 @@ public class CoalesceRecord extends CoalesceDataObject {
     }
 
     /**
-     * Set a boolean Field's value with the specified XsdRecord's Field's name
+     * Set a boolean Field's value with the specified {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's name
      * 
      * @param fieldName String of the desired Field name
      * @param value boolean, new value for the field
@@ -540,7 +540,7 @@ public class CoalesceRecord extends CoalesceDataObject {
     }
 
     /**
-     * Set a int Field's value with the specified XsdRecord's Field's name
+     * Set a int Field's value with the specified {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's name
      * 
      * @param fieldName String of the desired Field name
      * @param value integer, new value for the field
@@ -562,7 +562,7 @@ public class CoalesceRecord extends CoalesceDataObject {
     }
 
     /**
-     * Set a DateTime Field's value with the specified XsdRecord's Field's name
+     * Set a DateTime Field's value with the specified {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's name
      * 
      * @param fieldName String of the desired Field name
      * @param value DateTime, new value for the field
@@ -584,7 +584,7 @@ public class CoalesceRecord extends CoalesceDataObject {
     }
 
     /**
-     * Set a (binary) byte[] Field's value with the specified XsdRecord's Field's name
+     * Set a (binary) byte[] Field's value with the specified {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's name
      * 
      * @param fieldName String of the desired Field name
      * @param value byte[], new value for the field
@@ -596,7 +596,7 @@ public class CoalesceRecord extends CoalesceDataObject {
     }
 
     /**
-     * Set a (binary) byte[] Field's value with the specified XsdRecord's Field's name and file name
+     * Set a (binary) byte[] Field's value with the specified {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's name and file name
      * 
      * @param fieldName String of the desired Field name
      * @param value byte[], new value for the field
@@ -629,7 +629,7 @@ public class CoalesceRecord extends CoalesceDataObject {
     }
 
     /**
-     * Returns boolean indicator of the existence of the specified Field's name within the XsdRecord
+     * Returns boolean indicator of the existence of the specified Field's name within the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
      * 
      * @param name String of the desired Field name
      * @return boolean indication that the Record does/does not have the named Field in its collection

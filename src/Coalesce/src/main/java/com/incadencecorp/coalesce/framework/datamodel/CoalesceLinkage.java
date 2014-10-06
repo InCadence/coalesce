@@ -37,10 +37,13 @@ public class CoalesceLinkage extends CoalesceDataObject implements ICoalesceLink
     private Linkage _entityLinkage;
 
     /**
-     * Creates an XsdLinkage and ties it to its parent XsdLinkageSection.
+     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage} and ties it to its parent
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}.
      * 
-     * @param parent XsdLinkageSection, the linkage section that this new linkage will belong to
-     * @return XsdLinkage, the new linkage to describe a relationship between two classes
+     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}, the linkage section that
+     *            this new linkage will belong to
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage}, the new linkage to describe a
+     *         relationship between two classes
      */
     public static CoalesceLinkage create(CoalesceLinkageSection parent)
     {
@@ -66,9 +69,11 @@ public class CoalesceLinkage extends CoalesceDataObject implements ICoalesceLink
     }
 
     /**
-     * Initializes a previously new XsdLinkage and ties it to its parent XsdLinkageSection.
+     * Initializes a previously new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage} and ties it to its
+     * parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}.
      * 
-     * @param parent XsdLinkageSection, the linkage section that this new linkage will belong to
+     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}, the linkage section that
+     *            this new linkage will belong to
      * @param linkage Linkage, the linkage describing a relationship between two classes
      * @return boolean indicator of success/failure
      */
@@ -318,7 +323,8 @@ public class CoalesceLinkage extends CoalesceDataObject implements ICoalesceLink
     }
 
     /**
-     * Returns the XsdLinkage's status identifying if it is current or deleted
+     * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage}'s status identifying if it is
+     * current or deleted
      * 
      * @return boolean indicates if the linkage has been marked as deleted
      */
@@ -335,9 +341,11 @@ public class CoalesceLinkage extends CoalesceDataObject implements ICoalesceLink
      * Sets the two entities key, name, source and version as well as the link type, classification, modified by, input
      * language, dates created and modified and active status.
      * 
-     * @param entity1 XsdEntity belonging to the first entity. Provides the entity's key, name, source and version
+     * @param entity1 {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} belonging to the first entity.
+     *            Provides the entity's key, name, source and version
      * @param linkType ELinkTypes value for the relationship type identification between the entities
-     * @param entity2 XsdEntity belonging to the second entity. Provides the entity's key, name, source and version
+     * @param entity2 {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} belonging to the second entity.
+     *            Provides the entity's key, name, source and version
      * @param classificationMarking Marking of the classification of the relationship
      * @param modifiedBy identification of who entered the relationship
      * @param inputLang language that the relationship was created in

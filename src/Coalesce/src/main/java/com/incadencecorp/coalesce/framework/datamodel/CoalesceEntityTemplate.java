@@ -41,10 +41,10 @@ public class CoalesceEntityTemplate {
     // -----------------------------------------------------------------------//
 
     /**
-     * Creates a CoalesceEntityTemplate based off of an XsdEntity.
+     * Creates a CoalesceEntityTemplate based off of an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}.
      * 
-     * @param entity XsdEntity that will be used to create the CoalesceEntityTemplate
-     * @return CoalesceEntityTemplate created from the XsdEntity
+     * @param entity {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} that will be used to create the CoalesceEntityTemplate
+     * @return CoalesceEntityTemplate created from the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}
      * 
      * @throws SAXException
      * @throws IOException
@@ -57,7 +57,7 @@ public class CoalesceEntityTemplate {
     /**
      * Creates a CoalesceEntityTemplate based off of an (XML) String.
      * 
-     * @param templateXml String - xml string from/of an XsdEntity
+     * @param templateXml String - xml string from/of an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}
      * @return CoalesceEntityTemplate created from the xml string
      * 
      * @throws SAXException
@@ -72,7 +72,7 @@ public class CoalesceEntityTemplate {
      * Creates a CoalesceEntityTemplate based off of an entity's org.w3c.dom Document.
      * 
      * @param doc org.w3c.dom Document that will be used to create the CoalesceEntityTemplate
-     * @return CoalesceEntityTemplate created from the XsdEntity entity's Document
+     * @return CoalesceEntityTemplate created from the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} entity's Document
      * 
      * @throws SAXException
      * @throws IOException
@@ -94,9 +94,9 @@ public class CoalesceEntityTemplate {
     // -----------------------------------------------------------------------//
 
     /**
-     * Initializes a previously new CoalesceEntityTemplate based off of an XsdEntity.
+     * Initializes a previously new CoalesceEntityTemplate based off of an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}.
      * 
-     * @param entity XsdEntity that will be used to initialize the CoalesceEntityTemplate
+     * @param entity {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} that will be used to initialize the CoalesceEntityTemplate
      * @return boolean indicator of success/failure
      * 
      * @throws SAXException
@@ -110,7 +110,7 @@ public class CoalesceEntityTemplate {
     /**
      * Initializes a previously new CoalesceEntityTemplate based off of a (XML) String.
      * 
-     * @param entityTemplateXml (XML) String from/of an XsdEntity
+     * @param entityTemplateXml (XML) String from/of an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}
      * @return boolean indicator of success/failure
      * 
      * @throws SAXException
@@ -124,7 +124,7 @@ public class CoalesceEntityTemplate {
     /**
      * Initializes a previously new CoalesceEntityTemplate based off of an org.w3c.dom Document.
      * 
-     * @param doc org.w3c.dom Document from/of an XsdEntity
+     * @param doc org.w3c.dom Document from/of an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}
      * @return boolean indicator of success/failure
      */
     public boolean initialize(Document doc)
@@ -202,9 +202,9 @@ public class CoalesceEntityTemplate {
     // -----------------------------------------------------------------------//
 
     /**
-     * Creates and initializes a new XsdEntity based off of this CoalesceEntityTemplate's XML String.
+     * Creates and initializes a new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} based off of this CoalesceEntityTemplate's XML String.
      * 
-     * @return XsdEntity of the new entity created from this CoalesceEntityTemplate
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} of the new entity created from this CoalesceEntityTemplate
      */
     public CoalesceEntity createNewEntity()
     {

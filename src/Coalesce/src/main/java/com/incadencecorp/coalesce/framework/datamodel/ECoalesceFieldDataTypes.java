@@ -6,16 +6,16 @@ import java.util.Map;
 public enum ECoalesceFieldDataTypes
 {
 
-    StringType("string"),
-    DateTimeType("datetime"),
-    UriType("uri"),
-    BinaryType("binary"),
-    BooleanType("boolean"),
-    IntegerType("integer"),
-    GuidType("guid"),
-    GeocoordinateType("geocoordinate"),
-    FileType("file"),
-    GeocoordinateListType("geocoordinatelist");
+    STRING_TYPE("string"),
+    DATE_TIME_TYPE("datetime"),
+    URI_TYPE("uri"),
+    BINARY_TYPE("binary"),
+    BOOLEAN_TYPE("boolean"),
+    INTEGER_TYPE("integer"),
+    GUID_TYPE("guid"),
+    GEOCOORDINATE_TYPE("geocoordinate"),
+    FILE_TYPE("file"),
+    GEOCOORDINATE_LIST_TYPE("geocoordinatelist");
 
     private String _label;
 
@@ -53,7 +53,7 @@ public enum ECoalesceFieldDataTypes
 
         ECoalesceFieldDataTypes value = _labelToStatusMapping.get(coalesceType.trim().toLowerCase());
 
-        if (value == null) value = ECoalesceFieldDataTypes.StringType;
+        if (value == null) value = ECoalesceFieldDataTypes.STRING_TYPE;
 
         return value;
     }
@@ -64,26 +64,26 @@ public enum ECoalesceFieldDataTypes
 
         case "ADVARWCHAR":
         case "ADLONGVARWCHAR":
-            return ECoalesceFieldDataTypes.StringType;
+            return ECoalesceFieldDataTypes.STRING_TYPE;
 
         case "ADDBTIMESTAMP":
-            return ECoalesceFieldDataTypes.DateTimeType;
+            return ECoalesceFieldDataTypes.DATE_TIME_TYPE;
 
         case "ADBOOLEAN":
-            return ECoalesceFieldDataTypes.BooleanType;
+            return ECoalesceFieldDataTypes.BOOLEAN_TYPE;
 
         case "ADGUID":
-            return ECoalesceFieldDataTypes.GuidType;
+            return ECoalesceFieldDataTypes.GUID_TYPE;
 
         case "ADSMALLINT":
         case "ADINTEGER":
-            return ECoalesceFieldDataTypes.IntegerType;
+            return ECoalesceFieldDataTypes.INTEGER_TYPE;
 
         case "ADLONGVARBINARY":
-            return ECoalesceFieldDataTypes.BinaryType;
+            return ECoalesceFieldDataTypes.BINARY_TYPE;
 
         default:
-            return ECoalesceFieldDataTypes.StringType;
+            return ECoalesceFieldDataTypes.STRING_TYPE;
         }
 
     }

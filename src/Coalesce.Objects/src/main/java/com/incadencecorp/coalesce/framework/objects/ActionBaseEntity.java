@@ -53,13 +53,13 @@ public class ActionBaseEntity extends CoalesceEntity {
         recordSet = CoalesceRecordset.create(section, "Live Status Recordset");
         CoalesceFieldDefinition.create(recordSet,
                                        "CurrentStatus",
-                                       ECoalesceFieldDataTypes.StringType,
+                                  ECoalesceFieldDataTypes.STRING_TYPE,
                                        "Status",
                                        "",
                                        EActionStatuses.CollectionComplete.getLabel());
-        CoalesceFieldDefinition.create(recordSet, "ResponseStatus", ECoalesceFieldDataTypes.StringType);
-        CoalesceFieldDefinition.create(recordSet, "ResponseKey", ECoalesceFieldDataTypes.GuidType);
-        CoalesceFieldDefinition.create(recordSet, "Location", ECoalesceFieldDataTypes.GeocoordinateType);
+        CoalesceFieldDefinition.create(recordSet, "ResponseStatus", ECoalesceFieldDataTypes.STRING_TYPE);
+        CoalesceFieldDefinition.create(recordSet, "ResponseKey", ECoalesceFieldDataTypes.GUID_TYPE);
+        CoalesceFieldDefinition.create(recordSet, "Location", ECoalesceFieldDataTypes.GEOCOORDINATE_TYPE);
 
         // Create New Record
         _liveStatusRecord = recordSet.addNew();

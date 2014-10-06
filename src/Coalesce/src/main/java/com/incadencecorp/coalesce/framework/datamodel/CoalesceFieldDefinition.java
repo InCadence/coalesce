@@ -43,13 +43,17 @@ public class CoalesceFieldDefinition extends CoalesceDataObject implements ICoal
     // -----------------------------------------------------------------------//
 
     /**
-     * Creates an XsdFieldDefinition based for an XsdRecordset with the parameters of name and datatype provided.
+     * Creates a {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} based for an
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} with the parameters of name and datatype
+     * provided.
      * 
-     * @param parent XsdRecordset that the XsdFieldDefinition belongs to
-     * @param name String name of the XsdFieldDefinition
-     * @param dataType datatype that the XsdFieldDefinition will contain
+     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} that the
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} belongs to
+     * @param name String name of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
+     * @param dataType datatype that the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} will
+     *            contain
      * 
-     * @return XsdFieldDefinition
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
      */
     public static CoalesceFieldDefinition create(CoalesceRecordset parent, String name, ECoalesceFieldDataTypes dataType)
     {
@@ -57,161 +61,185 @@ public class CoalesceFieldDefinition extends CoalesceDataObject implements ICoal
     }
 
     /**
-     * Creates an XsdFieldDefinition based for an XsdRecordset with the parameters of name, datatype and noindex provided.
+     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} based for an
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} with the parameters of name, datatype and
+     * noindex provided.
      * 
-     * @param parent XsdRecordset that the XsdFieldDefinition belongs to
-     * @param name String name of the XsdFieldDefinition
-     * @param dataType datatype that the XsdFieldDefinition will contain
+     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} that the
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} belongs to
+     * @param name String name of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
+     * @param dataType datatype that the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} will
+     *            contain
      * @param noIndex boolean
      * 
-     * @return XsdFieldDefinition
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
      */
     public static CoalesceFieldDefinition create(CoalesceRecordset parent,
-                                            String name,
-                                            ECoalesceFieldDataTypes dataType,
-                                            boolean noIndex)
+                                                 String name,
+                                                 ECoalesceFieldDataTypes dataType,
+                                                 boolean noIndex)
     {
         return CoalesceFieldDefinition.create(parent, name, dataType, "", "U", "", noIndex);
     }
 
     /**
-     * Creates an XsdFieldDefinition with a boolean default value based for an XsdRecordset with the parameters provided
+     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} with a boolean default value
+     * based for an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} with the parameters provided
      * 
-     * @param parent XsdRecordset that the XsdFieldDefinition belongs to
-     * @param name String name of the XsdFieldDefinition
+     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} that the
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} belongs to
+     * @param name String name of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
      * @param label The label to be displayed with the field
      * @param defaultClassificationMarking the default classification
      * @param defaultValue the default value
      * 
-     * @return XsdFieldDefinition
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
      */
     public static CoalesceFieldDefinition create(CoalesceRecordset parent,
-                                            String name,
-                                            String label,
-                                            String defaultClassificationMarking,
-                                            boolean defaultValue)
+                                                 String name,
+                                                 String label,
+                                                 String defaultClassificationMarking,
+                                                 boolean defaultValue)
     {
         return CoalesceFieldDefinition.create(parent, name, label, defaultClassificationMarking, defaultValue, false);
     }
 
     /**
-     * Creates an XsdFieldDefinition with a boolean default value based for an XsdRecordset with the parameters provided
+     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} with a boolean default value
+     * based for an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} with the parameters provided
      * 
-     * @param parent XsdRecordset that the XsdFieldDefinition belongs to
-     * @param name String name of the XsdFieldDefinition
+     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} that the
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} belongs to
+     * @param name String name of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
      * @param label The label to be displayed with the field
      * @param defaultClassificationMarking the default classification
      * @param defaultValue the default value
      * @param noIndex boolean
      * 
-     * @return XsdFieldDefinition
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
      */
     public static CoalesceFieldDefinition create(CoalesceRecordset parent,
-                                            String name,
-                                            String label,
-                                            String defaultClassificationMarking,
-                                            boolean defaultValue,
-                                            boolean noIndex)
+                                                 String name,
+                                                 String label,
+                                                 String defaultClassificationMarking,
+                                                 boolean defaultValue,
+                                                 boolean noIndex)
     {
         return CoalesceFieldDefinition.create(parent,
-                                         name,
-                                         ECoalesceFieldDataTypes.BooleanType,
-                                         label,
-                                         defaultClassificationMarking,
-                                         Boolean.toString(defaultValue),
-                                         noIndex);
+                                              name,
+                                              ECoalesceFieldDataTypes.BOOLEAN_TYPE,
+                                              label,
+                                              defaultClassificationMarking,
+                                              Boolean.toString(defaultValue),
+                                              noIndex);
     }
 
     /**
-     * Creates an XsdFieldDefinition with a int default value based for an XsdRecordset with the parameters provided
+     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} with a int default value
+     * based for an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} with the parameters provided
      * 
-     * @param parent XsdRecordset that the XsdFieldDefinition belongs to
-     * @param name String name of the XsdFieldDefinition
+     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} that the
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} belongs to
+     * @param name String name of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
      * @param label The label to be displayed with the field
      * @param defaultClassificationMarking the default classification
      * @param defaultValue the default value
      * 
-     * @return XsdFieldDefinition
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
      */
     public static CoalesceFieldDefinition create(CoalesceRecordset parent,
-                                            String name,
-                                            String label,
-                                            String defaultClassificationMarking,
-                                            int defaultValue)
+                                                 String name,
+                                                 String label,
+                                                 String defaultClassificationMarking,
+                                                 int defaultValue)
     {
         return CoalesceFieldDefinition.create(parent, name, label, defaultClassificationMarking, defaultValue, false);
     }
 
     /**
-     * Creates an XsdFieldDefinition with a int default value based for an XsdRecordset with the parameters provided
+     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} with a int default value
+     * based for an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} with the parameters provided
      * 
-     * @param parent XsdRecordset that the XsdFieldDefinition belongs to
-     * @param name String name of the XsdFieldDefinition
+     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} that the
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} belongs to
+     * @param name String name of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
      * @param label The label to be displayed with the field
      * @param defaultClassificationMarking the default classification
      * @param defaultValue the default value
      * @param noIndex boolean
      * 
-     * @return XsdFieldDefinition
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
      */
     public static CoalesceFieldDefinition create(CoalesceRecordset parent,
-                                            String name,
-                                            String label,
-                                            String defaultClassificationMarking,
-                                            int defaultValue,
-                                            boolean noIndex)
+                                                 String name,
+                                                 String label,
+                                                 String defaultClassificationMarking,
+                                                 int defaultValue,
+                                                 boolean noIndex)
     {
         return CoalesceFieldDefinition.create(parent,
-                                         name,
-                                         ECoalesceFieldDataTypes.IntegerType,
-                                         label,
-                                         defaultClassificationMarking,
-                                         Integer.toString(defaultValue),
-                                         noIndex);
+                                              name,
+                                              ECoalesceFieldDataTypes.INTEGER_TYPE,
+                                              label,
+                                              defaultClassificationMarking,
+                                              Integer.toString(defaultValue),
+                                              noIndex);
     }
 
     /**
-     * Creates an XsdFieldDefinition with a string default value based for an XsdRecordset with the parameters provided
+     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} with a string default value
+     * based for an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} with the parameters provided
      * 
-     * @param parent XsdRecordset that the XsdFieldDefinition belongs to
-     * @param name String name of the XsdFieldDefinition
-     * @param dataType datatype that the XsdFieldDefinition will contain
+     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} that the
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} belongs to
+     * @param name String name of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
+     * @param dataType datatype that the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} will
+     *            contain
      * @param label The label to be displayed with the field
      * @param defaultClassificationMarking the default classification
      * @param defaultValue the default value
      * 
-     * @return XsdFieldDefinition
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
      */
     public static CoalesceFieldDefinition create(CoalesceRecordset parent,
-                                            String name,
-                                            ECoalesceFieldDataTypes dataType,
-                                            String label,
-                                            String defaultClassificationMarking,
-                                            String defaultValue)
+                                                 String name,
+                                                 ECoalesceFieldDataTypes dataType,
+                                                 String label,
+                                                 String defaultClassificationMarking,
+                                                 String defaultValue)
     {
-        return CoalesceFieldDefinition.create(parent, name, dataType, label, defaultClassificationMarking, defaultValue, false);
+        return CoalesceFieldDefinition.create(parent,
+                                              name,
+                                              dataType,
+                                              label,
+                                              defaultClassificationMarking,
+                                              defaultValue,
+                                              false);
     }
 
     /**
-     * Creates an XsdFieldDefinition with a string default value based for an XsdRecordset with the parameters provided
+     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} with a string default value
+     * based for an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} with the parameters provided
      * 
-     * @param parent XsdRecordset that the XsdFieldDefinition belongs to
-     * @param name String name of the XsdFieldDefinition
-     * @param dataType datatype that the XsdFieldDefinition will contain
+     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} that the
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} belongs to
+     * @param name String name of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
+     * @param dataType datatype that the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} will
+     *            contain
      * @param label The label to be displayed with the field
      * @param defaultClassificationMarking the default classification
      * @param defaultValue the default value
      * @param noIndex boolean
      * 
-     * @return XsdFieldDefinition
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
      */
     public static CoalesceFieldDefinition create(CoalesceRecordset parent,
-                                            String name,
-                                            ECoalesceFieldDataTypes dataType,
-                                            String label,
-                                            String defaultClassificationMarking,
-                                            String defaultValue,
-                                            boolean noIndex)
+                                                 String name,
+                                                 ECoalesceFieldDataTypes dataType,
+                                                 String label,
+                                                 String defaultClassificationMarking,
+                                                 String defaultValue,
+                                                 boolean noIndex)
     {
 
         if (parent == null || name == null || StringHelper.isNullOrEmpty(name.trim()) || dataType == null || label == null
@@ -237,9 +265,11 @@ public class CoalesceFieldDefinition extends CoalesceDataObject implements ICoal
     }
 
     /**
-     * Initializes a previously new Fielddefinition and ties it to its parent XsdRecordset.
+     * Initializes a previously new Fielddefinition and ties it to its parent
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}.
      * 
-     * @param parent XsdRecordset that the XsdFieldDefinition belongs to
+     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} that the
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} belongs to
      * @param fieldDefinition the Fielddefinition being initialized
      * 
      * @return boolean indicator of success/failure

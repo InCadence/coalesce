@@ -426,7 +426,7 @@ public class CoalesceRecordTest {
         CoalesceRecordset recordset = getMissionRecordset();
 
         CoalesceFieldDefinition.create(recordset, "Boolean", "", "(U)", false);
-        CoalesceFieldDefinition.create(recordset, "Binary", ECoalesceFieldDataTypes.BinaryType);
+        CoalesceFieldDefinition.create(recordset, "Binary", ECoalesceFieldDataTypes.BINARY_TYPE);
 
         CoalesceRecord newRecord = recordset.addNew();
         newRecord.getFieldByName("MissionIndicatorNumberBASE10").setTypedValue(CoalesceTypeInstances.TEST_MISSION_BASE64_VALUE);
@@ -492,7 +492,7 @@ public class CoalesceRecordTest {
         CoalesceRecordset recordset = getMissionRecordset();
 
         CoalesceFieldDefinition.create(recordset, "Boolean", "", "(U)", false);
-        CoalesceFieldDefinition.create(recordset, "Binary", ECoalesceFieldDataTypes.BinaryType);
+        CoalesceFieldDefinition.create(recordset, "Binary", ECoalesceFieldDataTypes.BINARY_TYPE);
 
         CoalesceRecord newRecord = recordset.addNew();
 
@@ -538,7 +538,7 @@ public class CoalesceRecordTest {
     {
         CoalesceRecordset recordset = getMissionRecordset();
 
-        CoalesceFieldDefinition.create(recordset, "Binary", ECoalesceFieldDataTypes.BinaryType);
+        CoalesceFieldDefinition.create(recordset, "Binary", ECoalesceFieldDataTypes.BINARY_TYPE);
 
         CoalesceRecord newRecord = recordset.addNew();
 

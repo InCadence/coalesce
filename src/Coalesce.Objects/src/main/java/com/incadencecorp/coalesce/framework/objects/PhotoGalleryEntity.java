@@ -48,15 +48,15 @@ public class PhotoGalleryEntity extends ActionBaseEntity {
         section = CoalesceSection.create(this, "Photographs Section");
         _photographRecordset = CoalesceRecordset.create(section, "Photographs Recordset");
 
-        CoalesceFieldDefinition.create(_photographRecordset, "Photo", ECoalesceFieldDataTypes.FileType);
-        CoalesceFieldDefinition.create(_photographRecordset, "OriginalFilename", ECoalesceFieldDataTypes.StringType);
-        CoalesceFieldDefinition.create(_photographRecordset, "Height", ECoalesceFieldDataTypes.StringType);
-        CoalesceFieldDefinition.create(_photographRecordset, "Width", ECoalesceFieldDataTypes.StringType);
-        CoalesceFieldDefinition.create(_photographRecordset, "Description", ECoalesceFieldDataTypes.StringType);
-        CoalesceFieldDefinition.create(_photographRecordset, "BagTagID", ECoalesceFieldDataTypes.StringType);
-        CoalesceFieldDefinition.create(_photographRecordset, "DegreesFromTrueNorth", ECoalesceFieldDataTypes.StringType);
-        CoalesceFieldDefinition.create(_photographRecordset, "PhotoDateTimeUTC", ECoalesceFieldDataTypes.DateTimeType);
-        CoalesceFieldDefinition.create(_photographRecordset, "PhotoLocation", ECoalesceFieldDataTypes.GeocoordinateType);
+        CoalesceFieldDefinition.create(_photographRecordset, "Photo", ECoalesceFieldDataTypes.FILE_TYPE);
+        CoalesceFieldDefinition.create(_photographRecordset, "OriginalFilename", ECoalesceFieldDataTypes.STRING_TYPE);
+        CoalesceFieldDefinition.create(_photographRecordset, "Height", ECoalesceFieldDataTypes.STRING_TYPE);
+        CoalesceFieldDefinition.create(_photographRecordset, "Width", ECoalesceFieldDataTypes.STRING_TYPE);
+        CoalesceFieldDefinition.create(_photographRecordset, "Description", ECoalesceFieldDataTypes.STRING_TYPE);
+        CoalesceFieldDefinition.create(_photographRecordset, "BagTagID", ECoalesceFieldDataTypes.STRING_TYPE);
+        CoalesceFieldDefinition.create(_photographRecordset, "DegreesFromTrueNorth", ECoalesceFieldDataTypes.STRING_TYPE);
+        CoalesceFieldDefinition.create(_photographRecordset, "PhotoDateTimeUTC", ECoalesceFieldDataTypes.DATE_TIME_TYPE);
+        CoalesceFieldDefinition.create(_photographRecordset, "PhotoLocation", ECoalesceFieldDataTypes.GEOCOORDINATE_TYPE);
         
         return true;
     }

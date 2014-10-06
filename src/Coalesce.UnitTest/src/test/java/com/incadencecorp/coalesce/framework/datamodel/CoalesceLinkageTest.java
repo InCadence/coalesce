@@ -347,13 +347,13 @@ public class CoalesceLinkageTest {
 
         DateTime now = JodaDateTimeHelper.nowInUtc();
 
-        assertEquals(ELinkTypes.IsChildOf, linkage.getLinkType());
+        assertEquals(ELinkTypes.IS_CHILD_OF, linkage.getLinkType());
 
-        linkage.setLinkType(ELinkTypes.IsParentOf);
+        linkage.setLinkType(ELinkTypes.IS_PARENT_OF);
 
         assertTrue(Math.abs(now.getMillis() - linkage.getLastModified().getMillis()) < 5);
 
-        assertEquals(ELinkTypes.IsParentOf, linkage.getLinkType());
+        assertEquals(ELinkTypes.IS_PARENT_OF, linkage.getLinkType());
 
         String entityXml = entity.toXml();
 
@@ -361,12 +361,12 @@ public class CoalesceLinkageTest {
         CoalesceLinkage desLinkage = getMissionLinkage(desEntity);
 
         assertTrue(Math.abs(now.getMillis() - linkage.getLastModified().getMillis()) < 5);
-        assertEquals(ELinkTypes.IsParentOf, desLinkage.getLinkType());
+        assertEquals(ELinkTypes.IS_PARENT_OF, desLinkage.getLinkType());
 
         CoalesceEntity newEntity = CoalesceEntity.create("Operation", "Portal", "1.2.3.4", "ID", "Type");
         CoalesceLinkage newLinkage = newEntity.getLinkageSection().createLinkage();
 
-        assertEquals(ELinkTypes.Undefined, newLinkage.getLinkType());
+        assertEquals(ELinkTypes.UNDEFINED, newLinkage.getLinkType());
 
     }
 

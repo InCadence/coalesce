@@ -960,7 +960,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
     {
         String objectType = dataObject.getType();
         String objectKey = dataObject.getKey();
-        String tableName = CoalesceTable.gettableNameForObjectType(objectType);
+        String tableName = CoalesceTable.getTableNameForObjectType(objectType);
 
         conn.executeCmd("DELETE FROM CoalesceObjectMap WHERE ObjectKey=?", new CoalesceParameter(objectKey));
         conn.executeCmd("DELETE FROM " + tableName + " WHERE ObjectKey=?", new CoalesceParameter(objectKey));
@@ -1050,7 +1050,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         {
             if (dataObject.getType().toLowerCase() == "field")
             {
-                if (((CoalesceField<?>) dataObject).getDataType() == ECoalesceFieldDataTypes.FileType)
+                if (((CoalesceField<?>) dataObject).getDataType() == ECoalesceFieldDataTypes.FILE_TYPE)
                 {
                     isSuccessful = persistFieldObject((CoalesceField<?>) dataObject, conn);
                 }
@@ -1118,7 +1118,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         DateTime lastModified = DateTime.now(DateTimeZone.UTC);
 
         // Determine the Table Name
-        String tableName = CoalesceTable.gettableNameForObjectType(ObjectType);
+        String tableName = CoalesceTable.getTableNameForObjectType(ObjectType);
         String dateValue = null;
 
         ResultSet results = conn.executeQuery("SELECT LastModified FROM " + tableName + " WHERE ObjectKey=?",
@@ -1147,7 +1147,7 @@ public class SQLServerPersistor extends CoalescePersisterBase {
         String sql = "";
 
         // Get Table Name
-        String tableName = CoalesceTable.gettableNameForObjectType(ObjectType);
+        String tableName = CoalesceTable.getTableNameForObjectType(ObjectType);
 
         // Check to see if its the Entity Table
         if (tableName.equals("CoalesceEntity")) isEntityTable = true;

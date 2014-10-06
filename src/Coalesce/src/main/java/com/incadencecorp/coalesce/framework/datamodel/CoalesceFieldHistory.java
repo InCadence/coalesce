@@ -43,11 +43,14 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> {
     // -----------------------------------------------------------------------//
 
     /**
-     * Creates an XsdFieldHistory and ties it to its parent XsdFieldBase.
+     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory} and ties it to its parent
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldBase}.
      * 
-     * @param parent XsdFieldBase base of extended field that is the XsdFieldHistory's parent
+     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldBase} base of extended field that is
+     *            the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory}'s parent
      * 
-     * @return XsdFieldHistory, resulting history created from the extended XsdFieldBase
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory}, resulting history created from
+     *         the extended {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldBase}
      */
     public static CoalesceFieldHistory create(CoalesceFieldBase<?> parent)
     {
@@ -58,11 +61,14 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> {
     }
 
     /**
-     * Creates an XsdFieldHistory and ties it to its parent XsdField.
+     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory} and ties it to its parent
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}.
      * 
-     * @param parent XsdField, the XsdFieldHistory's parent
+     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}, the
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory}'s parent
      * 
-     * @return XsdFieldHistory, resulting history created from the XsdField
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory}, resulting history created from
+     *         the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}
      */
     public static CoalesceFieldHistory create(CoalesceField<?> parent)
     {
@@ -97,9 +103,11 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> {
     }
 
     /**
-     * Initializes a brand new XsdFieldHistory and ties it to its parent XsdField.
+     * Initializes a brand new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory} and ties it to its
+     * parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}.
      * 
-     * @param parent XsdField, the XsdFieldHistory's parent
+     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}, the
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory}'s parent
      * 
      * @return boolean indicator of success/failure
      */
@@ -109,10 +117,13 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> {
     }
 
     /**
-     * Initializes a previously new XsdFieldHistory and ties it to its parent XsdField.
+     * Initializes a previously new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory} and ties it
+     * to its parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}.
      * 
-     * @param parent XsdField, the XsdFieldHistory's parent
-     * @param fieldHistory for which this XsdFieldHistory will be based on
+     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}, the
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory}'s parent
+     * @param fieldHistory for which this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory} will be
+     *            based on
      * 
      * @return boolean indicator of success/failure
      */
