@@ -369,8 +369,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
      */
     protected void setTypedValue(byte[] dataBytes)
     {
-        if (getDataType() != ECoalesceFieldDataTypes.BINARY_TYPE)
-        if (getDataType() != ECoalesceFieldDataTypes.BinaryType && getDataType() != ECoalesceFieldDataTypes.FileType)
+        if (getDataType() != ECoalesceFieldDataTypes.BINARY_TYPE && getDataType() != ECoalesceFieldDataTypes.FILE_TYPE)
         {
             throw new ClassCastException("Type mismatch");
         }

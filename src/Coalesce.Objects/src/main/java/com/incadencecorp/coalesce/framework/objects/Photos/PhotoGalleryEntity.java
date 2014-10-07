@@ -61,11 +61,11 @@ public class PhotoGalleryEntity extends ActionBaseEntity {
 
         CoalesceFieldDefinition.create(_photographRecordset, "Photo", ECoalesceFieldDataTypes.FILE_TYPE);
         CoalesceFieldDefinition.create(_photographRecordset, "OriginalFilename", ECoalesceFieldDataTypes.STRING_TYPE);
-        CoalesceFieldDefinition.create(_photographRecordset, "Height", ECoalesceFieldDataTypes.IntegerType);
-        CoalesceFieldDefinition.create(_photographRecordset, "Width", ECoalesceFieldDataTypes.IntegerType);
+        CoalesceFieldDefinition.create(_photographRecordset, "Height", ECoalesceFieldDataTypes.INTEGER_TYPE);
+        CoalesceFieldDefinition.create(_photographRecordset, "Width", ECoalesceFieldDataTypes.INTEGER_TYPE);
         CoalesceFieldDefinition.create(_photographRecordset, "Description", ECoalesceFieldDataTypes.STRING_TYPE);
         CoalesceFieldDefinition.create(_photographRecordset, "BagTagID", ECoalesceFieldDataTypes.STRING_TYPE);
-        CoalesceFieldDefinition.create(_photographRecordset, "DegreesFromTrueNorth", ECoalesceFieldDataTypes.IntegerType);
+        CoalesceFieldDefinition.create(_photographRecordset, "DegreesFromTrueNorth", ECoalesceFieldDataTypes.INTEGER_TYPE);
         CoalesceFieldDefinition.create(_photographRecordset, "PhotoDateTimeUTC", ECoalesceFieldDataTypes.DATE_TIME_TYPE);
         CoalesceFieldDefinition.create(_photographRecordset, "PhotoLocation", ECoalesceFieldDataTypes.GEOCOORDINATE_TYPE);
 
