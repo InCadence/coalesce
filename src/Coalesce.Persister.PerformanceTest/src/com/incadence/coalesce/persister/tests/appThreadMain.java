@@ -31,13 +31,14 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
+import com.incadencecorp.coalesce.framework.objects.MissionEntity;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 import com.incadencecorp.coalesce.framework.persistance.postgres.PostGresSQLPersistor;
 
 public class appThreadMain {
-	final static Logger log = Logger.getLogger("TesterLog");
-	static ServerConn serCon;
-	static PostGresSQLPersistor psPersister;
+	final static Logger _log = Logger.getLogger("TesterLog");
+	static ServerConn _serCon;
+	static PostGresSQLPersistor _psPersister;
 
 	public static void main(String[] args) {
 		int ITERATION_LIMIT = 10;
@@ -46,7 +47,7 @@ public class appThreadMain {
 		try {
 			if (appThreadMain.OpenConnection() == true) {
 				appRunner._coalesceFramework
-						.initialize(appThreadMain.psPersister);
+						.initialize(appThreadMain._psPersister);
 				// timeLogger = new ArrayList<TimeTrack>();
 				Thread vol1 = new Thread(new appRunner(ITERATION_LIMIT, 1));
 				vol1.setName("Thread #1");
@@ -98,58 +99,59 @@ public class appThreadMain {
 				vol16.start();
 			}
 		} catch (Exception ex) {
-			log.log(java.util.logging.Level.SEVERE, ex.toString());
+			_log.log(java.util.logging.Level.SEVERE, ex.toString());
 		}
 	}
 
 	public static boolean OpenConnection() throws SQLException {
-		serCon = new ServerConn();
-		serCon.setDatabase("CoalesceDatabase");
-		serCon.setUser("root");
-		serCon.setPassword("Passw0rd");
-		psPersister = new PostGresSQLPersistor();
-		psPersister.Initialize(serCon);
+		_serCon = new ServerConn();
+		_serCon.setDatabase("CoalesceDatabase");
+		_serCon.setUser("root");
+		_serCon.setPassword("Passw0rd");
+		_psPersister = new PostGresSQLPersistor();
+		_psPersister.Initialize(_serCon);
 		return true;
 	}
 }
 
 class appRunner implements Runnable {
 	private Object mutexXMLLogger = new Object();
-	static int ITERATION_LIMIT = 10;
-	static int CAPTURE_METRICS_INTERVAL = 1;
-	static ServerConn serCon;
+	int ITERATION_LIMIT = 10;
+	int CAPTURE_METRICS_INTERVAL = 1;
+	ServerConn serCon;
 
 	static CoalesceFramework _coalesceFramework;
-	private static String MODULE_NAME = "Coalesce.Persister.PerformanceTester";
-	private static String _threadID;
+	private String MODULE_NAME = "Coalesce.Persister.PerformanceTester";
+	private String _threadID;
 
-	public static String getThreadID() {
+	public String getThreadID() {
 		return _threadID;
 	}
 
-	public static void setThreadID(String string) {
-		appRunner._threadID = string;
+	public void setThreadID(String string) {
+		this._threadID = string;
 	}
 
-	static int minorVal = 0;
-	static int majorVal = 0;
-	static int masterCounter = 0;
-	static String startSaveTimeStamp = "";
-	static String completeSaveTimeStamp = "";
-	private static List<TimeTrack> timeLogger;
-	static Document dom;
+	int minorVal = 0;
+	int majorVal = 0;
+	int masterCounter = 0;
+	String startSaveTimeStamp = "";
+	String completeSaveTimeStamp = "";
+	private List<TimeTrack> timeLogger;
+	Document dom;
 
 	public appRunner(int iteration_lim) {
-		appRunner.ITERATION_LIMIT = iteration_lim;
+		this.ITERATION_LIMIT = iteration_lim;
 	}
 
 	public appRunner(int iteration_lim, int cap_interval) {
-		appRunner.ITERATION_LIMIT = iteration_lim;
-		appRunner.CAPTURE_METRICS_INTERVAL = cap_interval;
+		this.ITERATION_LIMIT = iteration_lim;
+		this.CAPTURE_METRICS_INTERVAL = cap_interval;
 	}
 
 	@Override
 	public void run() {
+		String threadID=String.valueOf(Thread.currentThread().getId());
 		try {
 			timeLogger = new ArrayList<TimeTrack>();
 			this.setThreadID(String.valueOf(Thread.currentThread().toString()));
@@ -159,20 +161,20 @@ class appRunner implements Runnable {
 							+ Thread.currentThread().activeCount()
 							+ " *************", false);
 			TimeTrack _timeTrack;
-			String startTime = appRunner.getCurrentTime();
+			String startTime = this.getCurrentTime();
 			int _iteration_counter = 0;
-			// appRunner.createDOMDocument();
+			this.createDOMDocument();
 			for (_iteration_counter = 0; _iteration_counter <= ITERATION_LIMIT; _iteration_counter++) {
 				_timeTrack = new TimeTrack();
 
 				CoalesceEntity _coalesceEntity = new CoalesceEntity();
-				String generateEntityVersionNumber = appRunner
+				String generateEntityVersionNumber = this
 						.generateEntityVersionNumber(_iteration_counter);
-				_coalesceEntity = appRunner.createEntity("1.0."
+				_coalesceEntity = this.createEntity("1.0."
 						.concat(generateEntityVersionNumber));
 				if (_coalesceEntity != null) {
-					if (appRunner.masterCounter % CAPTURE_METRICS_INTERVAL == 0) {
-						saveEntity(_timeTrack, _coalesceEntity);
+					if (this.masterCounter % CAPTURE_METRICS_INTERVAL == 0) {
+						saveEntity(_timeTrack, _coalesceEntity,threadID);
 						_timeTrack.setEntityID(_coalesceEntity.getKey());
 						timeLogger.add(_timeTrack);
 						_timeTrack = null;
@@ -183,27 +185,26 @@ class appRunner implements Runnable {
 					break;
 			}
 			synchronized (mutexXMLLogger) {
-				// appRunner.createDOMTree();
-				String stopTime = appRunner.getCurrentTime();
+				this.createDOMTree();
+				String stopTime = this.getCurrentTime();
 				outConsoleData(Thread.currentThread().getId(), "STARTTIME: "
 						+ startTime);
 				outConsoleData(Thread.currentThread().getId(), "STOPTIME: "
 						+ stopTime);
-
-				// appRunner.printToFile("datafile_" +
-				// Thread.currentThread().toString() + "_persistance.xml");
+				this.printToFile("datafile_" +
+						threadID + "_persistance.xml");
 			}
 		} catch (Exception ex) {
-			appThreadMain.log
+			appThreadMain._log
 					.log(java.util.logging.Level.SEVERE, ex.toString());
 		}
 	}
 
-	private static void outConsoleData(int cntValue, String msg) {
+	private void outConsoleData(int cntValue, String msg) {
 		System.out.println(msg + getCurrentTime() + "\t" + cntValue);
 	}
 
-	private static void outConsoleData(Thread cntValue, String msg) {
+	private void outConsoleData(Thread cntValue, String msg) {
 		System.out.println(msg + getCurrentTime() + "\t" + cntValue);
 	}
 
@@ -220,26 +221,29 @@ class appRunner implements Runnable {
 
 	}
 
-	private static void saveAppTimeStamps(TimeTrack _timeTrack,
+	private void saveAppTimeStamps(TimeTrack _timeTrack,
 			String startTime, String stopTime) {
 		_timeTrack.setAppStartTime(startTime);
 		_timeTrack.setStopTime(stopTime);
 	}
 
-	private static void saveEntity(TimeTrack _timeTrack, CoalesceEntity _xsdEntity)
+	private void saveEntity(TimeTrack _timeTrack, CoalesceEntity _coalesceEntity, String threadVal)
 			throws CoalescePersistorException {
 		_timeTrack.setStartTime(getCurrentTime());
+		_timeTrack.setStartMSTime(getCurrentTime(false));
 		_timeTrack.setIterationVal(String.valueOf(masterCounter));
 		_timeTrack.setIterationInterval(String
 				.valueOf(CAPTURE_METRICS_INTERVAL));
 		if (_timeTrack.getThread() == "" | _timeTrack.getThread() == null)
-			_timeTrack.setThread(String.valueOf(Thread.currentThread()));
+			_timeTrack.setThread(threadVal);
 
-		appRunner._coalesceFramework.saveCoalesceEntity(_xsdEntity);
+		appRunner._coalesceFramework.saveCoalesceEntity(_coalesceEntity);
 		_timeTrack.setStopTime(getCurrentTime());
+		_timeTrack.setStopMSTime(getCurrentTime(false));
 	}
 
-	private static String generateEntityVersionNumber(int currentIterationNumber) {
+
+	private  String generateEntityVersionNumber(int currentIterationNumber) {
 		String entityVersion = "";
 		masterCounter += 1;
 		if (currentIterationNumber % 10000 == 0) {
@@ -256,7 +260,7 @@ class appRunner implements Runnable {
 		return entityVersion;
 	}
 
-	private static void createDOMDocument() {
+	private void createDOMDocument() {
 		// get an instance of factory
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		try {
@@ -267,13 +271,20 @@ class appRunner implements Runnable {
 			System.out
 					.println("Error while trying to instantiate DocumentBuilder "
 							+ ex.toString());
-			appThreadMain.log
+			appThreadMain._log
 					.log(java.util.logging.Level.SEVERE, ex.toString());
 		}
 
 	}
-
-	private static String getCurrentTime() {
+	private static String getCurrentTime(boolean isNano) {
+		String currentTime;
+		if (isNano)
+			currentTime = String.valueOf(System.nanoTime());
+		else
+			currentTime = String.valueOf(System.currentTimeMillis());
+		return currentTime;
+	}
+	private String getCurrentTime() {
 		Calendar calStamp = Calendar.getInstance();
 		java.util.Date nowCurrentDate = calStamp.getTime();
 		java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(
@@ -281,7 +292,7 @@ class appRunner implements Runnable {
 		return currentTimestamp.toString();
 	}
 
-	private static void createDOMTree() {
+	private void createDOMTree() {
 		Element rootEle = dom.createElement("TimeTrack");
 		dom.appendChild(rootEle);
 		for (TimeTrack b : timeLogger) {
@@ -290,11 +301,11 @@ class appRunner implements Runnable {
 		}
 	}
 
-	private static Element createTimeTrackElement(TimeTrack b) {
+	private Element createTimeTrackElement(TimeTrack b) {
 
 		Element timeElement = dom.createElement("TimeTrack");
 		timeElement.setAttribute("ENTITYID", b.getEntityID());
-		timeElement.setAttribute("ITERATIONS", b.getIterationVal());
+		timeElement.setAttribute("COMPLETE_ITERATIONS", b.getIterationVal());
 		timeElement.setAttribute("CAPTURE_INTERVAL", b.getIterationInterval());
 		timeElement.setAttribute("THREAD", b.getThread());
 		// create start time element and start time text node and attach it to
@@ -310,12 +321,21 @@ class appRunner implements Runnable {
 		Text stopText = dom.createTextNode(b.getStopTime());
 		stopEle.appendChild(stopText);
 		timeElement.appendChild(stopEle);
+		
+		Element startEleMS = dom.createElement("INSERT_START_MS");
+		Text startMSText = dom.createTextNode(b.getStartMSTime());
+		startEleMS.appendChild(startMSText);
+		timeElement.appendChild(startEleMS);
 
+		Element stopEleMS = dom.createElement("INSERT_COMPLETE_MS");
+		Text stopMSText = dom.createTextNode(b.getStopMSTime());
+		stopEleMS.appendChild(stopMSText);
+		timeElement.appendChild(stopEleMS);
 		return timeElement;
 
 	}
 
-	private static void printToFile(String fileName) {
+	private void printToFile(String fileName) {
 		try {
 			// print
 			@SuppressWarnings("deprecation")
@@ -327,42 +347,29 @@ class appRunner implements Runnable {
 			serializer.serialize(dom);
 
 		} catch (IOException ex) {
-			appThreadMain.log
+			appThreadMain._log
 					.log(java.util.logging.Level.SEVERE, ex.toString());
 		}
 	}
-
-	private static CoalesceEntity createEntity(String entityVersion)
+	private  CoalesceEntity createEntity(String entityVersion)
 			throws CoalesceException {
-		try {
-			// Create Test Entity
-			CoalesceEntity _entity = new CoalesceEntity();
+		// Create Test Entity
+		CoalesceEntity _entity = new CoalesceEntity();
 
-			CoalesceSection section = null;
-			CoalesceRecordset recordSet = null;
-			CoalesceRecord record = null;
+		_entity=this.createMissionEntity(_entity, entityVersion);
 
-			// Create Entity
-			_entity = CoalesceEntity.create("Volume Push Test Entity", "Unit Test",
-					entityVersion, "", "", "");
-
-			CoalesceLinkageSection.create(_entity, true);
-
-			section = CoalesceSection.create(_entity, "Live Status Section", true);
-			recordSet = CoalesceRecordset.create(section, "Live Status Recordset");
-			CoalesceFieldDefinition.create(recordSet, "CurrentStatus",
-					ECoalesceFieldDataTypes.StringType);
-
-			record = recordSet.addNew();
-			record.setFieldValue("CurrentStatus", "Test Status");
-
-			String _fieldKey = record.getFieldByName("CurrentStatus").getKey();
-			return _entity;
-		} catch (CoalesceInvalidFieldException ex) {
-			appThreadMain.log
-					.log(java.util.logging.Level.SEVERE, ex.toString());
-			return null;
-		}
+		return _entity;
 	}
+	private  CoalesceEntity createMissionEntity(CoalesceEntity _entity,
+			String entityVersion) throws CoalesceException {
+		MissionEntity _missionEntity=new MissionEntity();
+		_missionEntity.initialize();
+		_missionEntity.setName("Mission Entity - Performance Testing");
+		_missionEntity.setSource("Coalesce_Mission");
+		_missionEntity.setVersion(entityVersion);
+		_entity=_missionEntity;
+		return _entity;
+	}
+
 
 }

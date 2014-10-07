@@ -43,14 +43,17 @@ import com.incadencecorp.coalesce.framework.objects.EActionStatuses;
 
 public class appMain {
 
-	static int _ITERATION_LIMIT = 1000;
+	static int _ITERATION_LIMIT = 100;
 	static int _CAPTURE_METRICS_INTERVAL = 10;
 
-	static Logger _log = Logger.getLogger("TesterLog");
-	static ServerConn _serCon;
-	static FileInputStream _inputStream = null;
 	static PostGresSQLPersistor _psPersister;
 	static CoalesceFramework _coalesceFramework;
+	static ServerConn _serCon;
+	
+	static Logger _log = Logger.getLogger("TesterLog");
+	
+	static FileInputStream _inputStream = null;
+
 	static int _minorVal = 0;
 	static int _majorVal = 0;
 	static int _masterCounter = 0;
@@ -59,8 +62,7 @@ public class appMain {
 	static List<TimeTrack> _timeLogger;
 	static String _entityXml = "";
 	static Document dom;
-	// Set to True to use the File XML for Persistance
-	// Set to False for the CoalesceTypeInstances.TEST_MISSION
+	// Set to True to use the File XML for Persistance OR Set to False for the CoalesceTypeInstances.TEST_MISSION
 	static boolean _isModeFile = false;
 
 	public static void main(String[] args) {
@@ -71,10 +73,10 @@ public class appMain {
 		try {
 			if (OpenConnection() == true) {
 				appMain._coalesceFramework.initialize(_psPersister);
-				_timeLogger = new ArrayList<TimeTrack>();
-				runVolume();
-				if (_inputStream != null)
-					_inputStream.close();
+				appMain._timeLogger = new ArrayList<TimeTrack>();
+				appMain.runVolume();
+				if (appMain._inputStream != null && appMain._isModeFile==true)
+					appMain._inputStream.close();
 			}
 		} catch (Exception ex) {
 			_log.log(java.util.logging.Level.SEVERE, ex.toString());
@@ -194,14 +196,14 @@ public class appMain {
 
 			String suserDir = System.getProperty("user.dir");
 			suserDir += "/EntityPerfFile.xml";
-			if (_inputStream == null)
-				_inputStream = new FileInputStream(suserDir);
-			if (_entityXml == "") {
-				_entityXml = IOUtils.toString(_inputStream);
+			if (appMain._inputStream == null)
+				appMain._inputStream = new FileInputStream(suserDir);
+			if (appMain._entityXml == "") {
+				appMain._entityXml = IOUtils.toString(appMain._inputStream);
 			}
 			try {
 				CoalesceEntity entity = new CoalesceEntity();
-				entity.initialize(_entityXml);
+				entity.initialize(appMain._entityXml);
 				CoalesceEntityTemplate template = CoalesceEntityTemplate
 						.create(entity);
 				_entity = template.createNewEntity();
@@ -221,12 +223,8 @@ public class appMain {
 				record.setFieldValue(
 						"Performance TestFieldDef",
 						"abcdefghijklmnopqrstuvwxyzABCDEFGHIZKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()_+-=;'[],./?><:{}");
-
-				// _fieldKey =
-				// record.getFieldByName("Performance TestFieldDef").getKey();
-
 			} finally {
-				// inputStream.close();
+				// appMain.inputStream.close();
 			}
 
 			return _entity;
@@ -314,7 +312,6 @@ public class appMain {
 		stopEleMS.appendChild(stopMSText);
 		timeElement.appendChild(stopEleMS);
 		return timeElement;
-
 	}
 
 	@SuppressWarnings("deprecation")
