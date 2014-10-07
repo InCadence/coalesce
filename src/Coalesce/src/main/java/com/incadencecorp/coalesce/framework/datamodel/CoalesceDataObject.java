@@ -339,8 +339,8 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
      * name; other attributes are those that fall into the
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s @XmlAnyAttribute HashMap.
      * 
-     * @param name String, @XmlAnyAttribute attribute name
-     * @param value, @XmlAnyAttribute attribute value
+     * @param name String @XmlAnyAttribute attribute name
+     * @param value @XmlAnyAttribute attribute value
      * @return boolean indicating success/failure
      */
     public boolean setOtherAttribute(String name, String value)
@@ -356,7 +356,7 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s @XmlAnyAttribute HashMap.
      * 
      * @param name String, @XmlAnyAttribute attribute name
-     * @param value, @XmlAnyAttribute attribute DateTime value
+     * @param value @XmlAnyAttribute attribute DateTime value
      */
     public void setOtherAttributeAsDate(String name, DateTime value)
     {

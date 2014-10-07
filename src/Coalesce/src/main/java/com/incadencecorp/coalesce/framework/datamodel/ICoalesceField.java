@@ -32,7 +32,7 @@ public interface ICoalesceField<T> {
     /**
      * Return the value of the Field's DataType attribute
      * 
-     * @return ECoalesceFieldDataTypes of the Field's DataType attribute
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes} of the Field's DataType attribute
      */
     public ECoalesceFieldDataTypes getDataType();
 

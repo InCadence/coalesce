@@ -41,10 +41,10 @@ public class CoalesceEntityTemplate {
     // -----------------------------------------------------------------------//
 
     /**
-     * Creates a CoalesceEntityTemplate based off of an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}.
+     * Creates a {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate} based off of an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}.
      * 
-     * @param entity {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} that will be used to create the CoalesceEntityTemplate
-     * @return CoalesceEntityTemplate created from the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}
+     * @param entity {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} that will be used to create the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate}
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate} created from the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}
      * 
      * @throws SAXException
      * @throws IOException
@@ -55,10 +55,10 @@ public class CoalesceEntityTemplate {
     }
 
     /**
-     * Creates a CoalesceEntityTemplate based off of an (XML) String.
+     * Creates a {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate} based off of an (XML) String.
      * 
      * @param templateXml String - xml string from/of an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}
-     * @return CoalesceEntityTemplate created from the xml string
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate} created from the xml string
      * 
      * @throws SAXException
      * @throws IOException
@@ -69,10 +69,10 @@ public class CoalesceEntityTemplate {
     }
 
     /**
-     * Creates a CoalesceEntityTemplate based off of an entity's org.w3c.dom Document.
+     * Creates a {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate} based off of an entity's org.w3c.dom Document.
      * 
-     * @param doc org.w3c.dom Document that will be used to create the CoalesceEntityTemplate
-     * @return CoalesceEntityTemplate created from the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} entity's Document
+     * @param doc org.w3c.dom Document that will be used to create the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate}
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate} created from the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} entity's Document
      * 
      * @throws SAXException
      * @throws IOException
@@ -94,9 +94,9 @@ public class CoalesceEntityTemplate {
     // -----------------------------------------------------------------------//
 
     /**
-     * Initializes a previously new CoalesceEntityTemplate based off of an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}.
+     * Initializes a previously new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate} based off of an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}.
      * 
-     * @param entity {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} that will be used to initialize the CoalesceEntityTemplate
+     * @param entity {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} that will be used to initialize the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate}
      * @return boolean indicator of success/failure
      * 
      * @throws SAXException
@@ -108,7 +108,7 @@ public class CoalesceEntityTemplate {
     }
 
     /**
-     * Initializes a previously new CoalesceEntityTemplate based off of a (XML) String.
+     * Initializes a previously new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate} based off of a (XML) String.
      * 
      * @param entityTemplateXml (XML) String from/of an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}
      * @return boolean indicator of success/failure
@@ -122,7 +122,7 @@ public class CoalesceEntityTemplate {
     }
 
     /**
-     * Initializes a previously new CoalesceEntityTemplate based off of an org.w3c.dom Document.
+     * Initializes a previously new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate} based off of an org.w3c.dom Document.
      * 
      * @param doc org.w3c.dom Document from/of an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}
      * @return boolean indicator of success/failure
@@ -148,9 +148,9 @@ public class CoalesceEntityTemplate {
     // -----------------------------------------------------------------------//
 
     /**
-     * Returns the CoalesceEntityTemplate's (org.w3c.dom Document) DataObjectDocument.
+     * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate}'s (org.w3c.dom Document) DataObjectDocument.
      * 
-     * @return Document representing the CoalesceEntityTemplate's entity
+     * @return Document representing the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate}'s entity
      */
     public Document getDataObjectDocument()
     {
@@ -158,9 +158,9 @@ public class CoalesceEntityTemplate {
     }
 
     /**
-     * Returns the CoalesceEntityTemplate's (org.w3c.dom Node) EntityNode.
+     * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate}'s (org.w3c.dom Node) EntityNode.
      * 
-     * @return Node representing the CoalesceEntityTemplate's entity
+     * @return Node representing the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate}'s entity
      */
     public Node getEntityNode()
     {
@@ -202,9 +202,9 @@ public class CoalesceEntityTemplate {
     // -----------------------------------------------------------------------//
 
     /**
-     * Creates and initializes a new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} based off of this CoalesceEntityTemplate's XML String.
+     * Creates and initializes a new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} based off of this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate}'s XML String.
      * 
-     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} of the new entity created from this CoalesceEntityTemplate
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} of the new entity created from this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate}
      */
     public CoalesceEntity createNewEntity()
     {
@@ -215,9 +215,9 @@ public class CoalesceEntityTemplate {
     }
 
     /**
-     * Returns the UTF-8 (XML) String of the CoalesceEntityTemplate.
+     * Returns the UTF-8 (XML) String of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate}.
      * 
-     * @return String (XML) of this CoalesceEntityTemplate
+     * @return String (XML) of this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate}
      */
     public String toXml()
     {

@@ -16,7 +16,7 @@ public interface ICoalesceDataObject {
      * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject} status identifying whether the
      * object is active, deleted or of another status.
      * 
-     * @return ECoalesceDataObjectStatus the DataObject's status
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.ECoalesceDataObjectStatus} the DataObject's status
      */
     public ECoalesceDataObjectStatus getStatus();
 
@@ -24,7 +24,7 @@ public interface ICoalesceDataObject {
      * Sets the status of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}, which identifies
      * whether the object is active, deleted or of another status.
      * 
-     * @param value ECoalesceDataObjectStatus the DataObject's status
+     * @param value {@link com.incadencecorp.coalesce.framework.datamodel.ECoalesceDataObjectStatus} the DataObject's status
      */
     public void setStatus(ECoalesceDataObjectStatus value);
 

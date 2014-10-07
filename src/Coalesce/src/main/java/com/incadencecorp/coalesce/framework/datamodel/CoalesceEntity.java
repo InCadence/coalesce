@@ -169,7 +169,7 @@ public class CoalesceEntity extends CoalesceDataObject {
     }
 
     /**
-     * Initializes a previously new XsdEntity by initializing skeletal dataObjectChildren.
+     * Initializes a previously new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} by initializing skeletal dataObjectChildren.
      * 
      * @return boolean indicator of success/failure
      */
@@ -264,9 +264,11 @@ public class CoalesceEntity extends CoalesceDataObject {
         return initializeReferences();
     }
 
-     /** 
-      * Initializes a previously new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} by initializing
-      *  skeletal dataObjectChildren.
+    /**
+     * Initializes a previously new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} by initializing
+     * skeletal dataObjectChildren.
+     * 
+     * @return boolean indicator of success/failure
      */
     protected boolean initializeChildren()
     {
@@ -516,7 +518,7 @@ public class CoalesceEntity extends CoalesceDataObject {
      * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}'s linkages from the
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}'s linkagesection.
      * 
-     * @return Map<String, CoalesceLinkage>, CoalesceLinkages of relationships to this
+     * @return Map<String, CoalesceLinkage> CoalesceLinkages of relationships to this
      *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}
      */
     public Map<String, CoalesceLinkage> getLinkages()
@@ -586,7 +588,7 @@ public class CoalesceEntity extends CoalesceDataObject {
     /**
      * Returns this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}'s sections.
      * 
-     * @return Map<String, {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}>, sections belonging to
+     * @return Map<String, {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}> sections belonging to
      *         this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}
      */
     public Map<String, CoalesceSection> getSections()
@@ -634,7 +636,7 @@ public class CoalesceEntity extends CoalesceDataObject {
      * Returns all linkages when the forEntityName parameter is null.
      * 
      * @param forEntityName String of the Entity Name to return linkages for
-     * @return Map<String, CoalesceLinkage>, linkages with matches for the Entity Name parameter
+     * @return Map<String, {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage}> linkages with matches for the Entity Name parameter
      */
     public Map<String, CoalesceLinkage> getLinkages(String forEntityName)
     {
@@ -665,7 +667,7 @@ public class CoalesceEntity extends CoalesceDataObject {
      * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}'s linkages, from the
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}'s linkagesection, based on LinkType.
      * 
-     * @return Map<String, CoalesceLinkage>, linkages with matches for the ELinkTypes parameter
+     * @return Map<String, {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage}> linkages with matches for the ELinkTypes parameter
      */
     public Map<String, CoalesceLinkage> getLinkages(ELinkTypes forLinkType)
     {
@@ -679,7 +681,7 @@ public class CoalesceEntity extends CoalesceDataObject {
      * 
      * @param forLinkType ELinkTypes (one link type), the type of relationship link to find matching linkages for
      * @param forEntityName String, the Entity name attribute to find matching linkages for
-     * @return Map<String, CoalesceLinkage>, linkages with matches for the Entity Name and ELinkType parameters
+     * @return Map<String, {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage}> linkages with matches for the Entity Name and ELinkType parameters
      */
     public Map<String, CoalesceLinkage> getLinkages(ELinkTypes forLinkType, String forEntityName)
     {
@@ -694,7 +696,7 @@ public class CoalesceEntity extends CoalesceDataObject {
      * @param forLinkType ELinkTypes, the type of relationship link to find matching linkages for
      * @param forEntityName String, the Entity name attribute to find matching linkages for
      * @param forEntitySource String, the Entity source attribute to find matching linkages for
-     * @return Map<String, CoalesceLinkage>, linkages with matches for the parameter criteria
+     * @return Map<String, {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage}> linkages with matches for the parameter criteria
      */
     public Map<String, CoalesceLinkage> getLinkages(ELinkTypes forLinkType, String forEntityName, String forEntitySource)
     {
@@ -805,10 +807,10 @@ public class CoalesceEntity extends CoalesceDataObject {
     }
 
     /**
-     * Creates a CoalesceEntitySyncShell based off of this
+     * Creates a {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell} based off of this
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}.
      * 
-     * @return CoalesceEntitySyncShell, newly created based on this
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell}, newly created based on this
      *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}
      * 
      * @throws SAXException
@@ -1084,8 +1086,8 @@ public class CoalesceEntity extends CoalesceDataObject {
     }
 
     /**
-     * Returns the UTF-16 (XML) String of the CoalesceEntityTemplate if the setSQLServer string parameter = "true". If
-     * setSQLServer parameter = "false", returns the UTF-8 (XML) String of the CoalesceEntityTemplate.
+     * Returns the UTF-16 (XML) String of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate} if the setSQLServer string parameter = "true". If
+     * setSQLServer parameter = "false", returns the UTF-8 (XML) String of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate}.
      * 
      * @param setSQLServer String, if "true" indicates desired return is UTF-16 (XML) String; otherwise, UTF-8 (XML) String
      *            will result

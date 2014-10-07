@@ -58,11 +58,11 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     // -----------------------------------------------------------------------//
 
     /**
-     * Creates an XsdRecordset, by name, and ties it to its parent XsdSection with default max and min records of 0.
+     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}, by name, and ties it to its parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} with default max and min records of 0.
      * 
-     * @param parent XsdSection the XsdSection that this new XsdRecordset will belong to
-     * @param name String the name of this XsdRecordset
-     * @return XsdRecordset, the new XsdRecordset
+     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} that this new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} will belong to
+     * @param name String the name of this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}, the new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      */
     public static CoalesceRecordset create(CoalesceSection parent, String name)
     {
@@ -70,13 +70,13 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     }
 
     /**
-     * Creates an XsdRecordset, by name, and ties it to its parent XsdSection with max and min records assignments.
+     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}, by name, and ties it to its parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} with max and min records assignments.
      * 
-     * @param parent XsdSection the XsdSection that this new XsdRecordset will belong to
-     * @param name String the name of this XsdRecordset
-     * @param minRecords integer, the minimum number of records this XsdRecordset can contain
-     * @param maxRecords integer, the maximum number of records this XsdRecordset can contain
-     * @return XsdRecordset, the new XsdRecordset
+     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} that this new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} will belong to
+     * @param name String the name of this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
+     * @param minRecords integer, the minimum number of records this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} can contain
+     * @param maxRecords integer, the maximum number of records this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} can contain
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}, the new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      */
     public static CoalesceRecordset create(CoalesceSection parent, String name, int minRecords, int maxRecords)
     {
@@ -117,10 +117,10 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     }
 
     /**
-     * Initializes a this XsdRecordset based on a Recordset and ties it to its parent XsdSection.
+     * Initializes a this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} based on a Recordset and ties it to its parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}.
      * 
-     * @param parent XsdSection the XsdSection that this new XsdRecordset will belong to
-     * @param recordset Recordset that this XsdRecordset will be based on
+     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} that this new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} will belong to
+     * @param recordset Recordset that this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} will be based on
      * @return boolean indicator of success/failure
      */
     protected boolean initialize(CoalesceSection parent, Recordset recordset)
@@ -191,9 +191,9 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     }
 
     /**
-     * Returns this XsdRecordset's ArrayList of XsdFieldDefinitions
+     * Returns this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s ArrayList of {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}s
      * 
-     * @return ArrayList<XsdFieldDefinition> the XsdFieldDefinition collection contained by this XsdRecordset
+     * @return ArrayList<{@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}> the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} collection contained by this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      */
     public ArrayList<CoalesceFieldDefinition> getFieldDefinitions()
     {
@@ -201,9 +201,9 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     }
 
     /**
-     * Returns this XsdRecordset's ArrayList of XsdRecords
+     * Returns this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s ArrayList of {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}s
      * 
-     * @return ArrayList<XsdRecord> the XsdRecord collection contained by this XsdRecordset
+     * @return ArrayList<{@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}> the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} collection contained by this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      */
     public ArrayList<CoalesceRecord> getRecords()
     {
@@ -235,9 +235,9 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     }
 
     /**
-     * Returns boolean indicator of the existence of this XsdRecordset's active XsdRecords
+     * Returns boolean indicator of the existence of this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s active {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}s
      * 
-     * @return boolean indication that the XsdRecordset has active XsdRecords
+     * @return boolean indication that the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} has active {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}s
      */
     public boolean getHasActiveRecords()
     {
@@ -257,9 +257,9 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     }
 
     /**
-     * Returns boolean indicator of the existence of this XsdRecordset's XsdRecords
+     * Returns boolean indicator of the existence of this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}s
      * 
-     * @return boolean indication that the XsdRecordset has XsdRecords, active or not
+     * @return boolean indication that the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} has {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}s, active or not
      */
     public boolean getHasRecords()
     {
@@ -299,15 +299,15 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     // -----------------------------------------------------------------------//
 
     /**
-     * Creates an XsdFieldDefinition for this XsdRecordset, with the name, datatype, label, default classification and
+     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} for this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}, with the name, datatype, label, default classification and
      * default value specified.
      * 
-     * @param name String name of the new XsdFieldDefinition
-     * @param dataType ECoalesceFieldDataTypes that a Field based on the new XsdFieldDefinition is to contain
+     * @param name String name of the new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
+     * @param dataType {@link com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes} that a Field based on the new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} is to contain
      * @param label String label to present to the user for this field/fielddefinition
      * @param defaultClassificationMarking the default classification for this field/fielddefinition
      * @param defaultValue the default value for this field/fielddefinition
-     * @return XsdFieldDefinition the new XsdFieldDefinition
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} the new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
      */
     public CoalesceFieldDefinition createFieldDefinition(String name,
                                                     ECoalesceFieldDataTypes dataType,
@@ -319,11 +319,11 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     }
 
     /**
-     * Creates an XsdFieldDefinition for this XsdRecordset, with the name and datatype specified.
+     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} for this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}, with the name and datatype specified.
      * 
-     * @param name String name of the new XsdFieldDefinition
-     * @param dataType ECoalesceFieldDataTypes that a Field based on the new XsdFieldDefinition is to contain
-     * @return XsdFieldDefinition the new XsdFieldDefinition
+     * @param name String name of the new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
+     * @param dataType {@link com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes} that a Field based on the new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} is to contain
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} the new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
      */
     public CoalesceFieldDefinition createFieldDefinition(String name, ECoalesceFieldDataTypes dataType)
     {
@@ -337,10 +337,10 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     }
 
     /**
-     * Returns the XsdRecordset's XsdFieldDefinition that matches the String fieldName parameter
+     * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} that matches the String fieldName parameter
      * 
-     * @param fieldName String name of the new XsdFieldDefinition
-     * @return XsdFieldDefinition with the matching field name
+     * @param fieldName String name of the new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} with the matching field name
      */
     public CoalesceFieldDefinition getFieldDefinition(String fieldName)
     {
@@ -357,9 +357,9 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     }
 
     /**
-     * Returns boolean indicator of XsdRecordset's ability to be edited
+     * Returns boolean indicator of {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s ability to be edited
      * 
-     * @return boolean indication of if the XsdRecordset is editable
+     * @return boolean indication of if the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} is editable
      */
     public boolean getAllowEdit()
     {
@@ -367,9 +367,9 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     }
 
     /**
-     * Returns boolean indicator of XsdRecordset's ability to add new records
+     * Returns boolean indicator of {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s ability to add new records
      * 
-     * @return boolean indication of if the XsdRecordset can have new records added to it
+     * @return boolean indication of if the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} can have new records added to it
      */
     public boolean getAllowNew()
     {
@@ -377,9 +377,9 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     }
 
     /**
-     * Returns boolean indicator of XsdRecordset's ability to add delete records
+     * Returns boolean indicator of {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s ability to add delete records
      * 
-     * @return boolean indication of if the XsdRecordset records can be removed
+     * @return boolean indication of if the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} records can be removed
      */
     public boolean getAllowRemove()
     {
@@ -387,9 +387,9 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     }
 
     /**
-     * Returns the number of XsdRecords contained within this XsdRecordset
+     * Returns the number of {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}s contained within this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      * 
-     * @return integer of how many XsdRecords are contained by this XsdRecordset
+     * @return integer of how many {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}s are contained by this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      */
     public int getCount()
     {
@@ -397,7 +397,7 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     }
 
     /**
-     * Returns a boolean indicator of the existence of the XsdRecord parameter within this XsdRecordset
+     * Returns a boolean indicator of the existence of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} parameter within this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      * 
      * @param value
      * @return
@@ -408,10 +408,10 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     }
 
     /**
-     * Returns Index of the Object parameter within this XsdRecordset
+     * Returns Index of the Object parameter within this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      * 
-     * @param value Object of XsdRecord
-     * @return integer position index of the XsdRecord Object parameter within this XsdRecordset
+     * @param value Object of {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
+     * @return integer position index of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} Object parameter within this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      */
     public int indexOf(Object value)
     {
@@ -419,9 +419,9 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     }
 
     /**
-     * Adds a new XsdRecord to this XsdRecordset and returns the XsdRecord
+     * Adds a new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} to this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} and returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
      * 
-     * @return XsdRecord, the new XsdRecord
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}, the new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
      */
     public CoalesceRecord addNew()
     {
@@ -436,10 +436,10 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     }
 
     /**
-     * Returns the XsdRecord at the specified index within this XsdRecordset
+     * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} at the specified index within this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      * 
-     * @param index integer position of the XsdRecordset's desired XsdRecord
-     * @return XsdRecord at the XsdRecordset's index position
+     * @param index integer position of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s desired {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} at the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s index position
      */
     public CoalesceRecord getItem(int index)
     {
@@ -456,9 +456,9 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     }
 
     /**
-     * Removes the XsdRecord at the specified index within this XsdRecordset
+     * Removes the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} at the specified index within this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      * 
-     * @param integer index position of the XsdRecordset's XsdRecord to remove
+     * @param integer index position of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} to remove
      */
     public void removeAt(Integer index)
     { // Implements System.Collections.IList.RemoveAt
@@ -493,16 +493,16 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     }
 
     /**
-     * Removes the XsdRecord, from within this XsdRecordset, that has the matching key passed by parameter
+     * Removes the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}, from within this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}, that has the matching key passed by parameter
      * 
-     * @param key String of the XsdRecord key to remove from the XsdRecordset
+     * @param key String of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} key to remove from the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      */
     public void remove(String key)
     {
         CoalesceRecord recordToRemove = null;
 
         // Find
-        // For Each Record As XsdRecord In this.Records
+        // For Each Record As CoalesceRecord In this.Records
         for (CoalesceRecord record : getRecords())
         {
             if (record.getKey().equals(key))
@@ -543,7 +543,7 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     /**
      * Returns the Record list contained by the Recordset
      * 
-     * @return List<Record>, the Recordset's record list
+     * @return List<Record> the Recordset's record list
      */
     protected List<Record> GetEntityRecords()
     {
@@ -553,7 +553,7 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     /**
      * Returns the Fielddefinition list contained by the Recordset
      * 
-     * @return List<Fielddefinition>, the Recordset's Fielddefinition list
+     * @return List<Fielddefinition> the Recordset's Fielddefinition list
      */
     protected List<Fielddefinition> GetEntityFieldDefinitions()
     {

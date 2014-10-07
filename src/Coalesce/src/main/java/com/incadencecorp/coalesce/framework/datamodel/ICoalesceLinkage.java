@@ -73,7 +73,7 @@ public interface ICoalesceLinkage {
     /**
      * Return the link type identifying the relationship between the two linked entities
      * 
-     * @return ELinkTypes of the Linkage's link type attribute
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.ELinkTypes} of the Linkage's link type attribute
      */
     public ELinkTypes getLinkType();
 

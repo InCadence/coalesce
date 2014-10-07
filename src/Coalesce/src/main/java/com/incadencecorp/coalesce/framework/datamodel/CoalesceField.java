@@ -506,7 +506,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     /**
      * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}'s change history collection
      * 
-     * @return ArrayList<CoalesceFieldHistory> all modification history of this field
+     * @return ArrayList<{@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory}> all modification history of this field
      */
     public ArrayList<CoalesceFieldHistory> getHistory()
     {

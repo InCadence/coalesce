@@ -55,7 +55,7 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> {
     public static CoalesceFieldHistory create(CoalesceFieldBase<?> parent)
     {
 
-        if (!(parent instanceof CoalesceField<?>)) throw new ClassCastException("Must be of type XsdField");
+        if (!(parent instanceof CoalesceField<?>)) throw new ClassCastException("Must be of type CoalesceField");
 
         return create((CoalesceField<?>) parent);
     }
