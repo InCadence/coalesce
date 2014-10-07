@@ -217,7 +217,7 @@ public class appMain {
 						CoalesceTypeInstances.TEST_MISSION_RECORDSET);
 				CoalesceFieldDefinition.create(recordSet,
 						"Performance TestFieldDef",
-						ECoalesceFieldDataTypes.StringType);
+						ECoalesceFieldDataTypes.STRING_TYPE);
 
 				record = recordSet.addNew();
 				record.setFieldValue(

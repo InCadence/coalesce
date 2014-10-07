@@ -1008,8 +1008,8 @@ public class GraphicsHelperTest {
                                                       "Thumbnail Testing");
         CoalesceSection section = entity.createSection("Testing Section");
         CoalesceRecordset recordset = section.createRecordset("Testing Recordset");
-        recordset.createFieldDefinition("File", ECoalesceFieldDataTypes.FileType);
-        recordset.createFieldDefinition("NotFile", ECoalesceFieldDataTypes.StringType);
+        recordset.createFieldDefinition("File", ECoalesceFieldDataTypes.FILE_TYPE);
+        recordset.createFieldDefinition("NotFile", ECoalesceFieldDataTypes.STRING_TYPE);
 
         CoalesceRecord record = recordset.addNew();
 

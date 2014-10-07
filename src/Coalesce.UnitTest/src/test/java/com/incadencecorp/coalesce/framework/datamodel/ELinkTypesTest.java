@@ -102,7 +102,7 @@ public class ELinkTypesTest {
     public void GetTypeForLabelIsAMemberOfTest()
     {
 
-        assertEquals(ELinkTypes.IsAMemberOf, ELinkTypes.getTypeForLabel("IsAMemberOf"));
+        assertEquals(ELinkTypes.IS_A_MEMBER_OF, ELinkTypes.getTypeForLabel("IsAMemberOf"));
 
     }
 
@@ -182,7 +182,7 @@ public class ELinkTypesTest {
     public void GetReciprocalLinkTypeIsAMemberOfTest()
     {
 
-        ELinkTypes value = ELinkTypes.IsAMemberOf;
+        ELinkTypes value = ELinkTypes.IS_A_MEMBER_OF;
         assertEquals(ELinkTypes.HAS_MEMBER, value.getReciprocalLinkType());
     }
 
@@ -191,7 +191,7 @@ public class ELinkTypesTest {
     {
 
         ELinkTypes value = ELinkTypes.HAS_MEMBER;
-        assertEquals(ELinkTypes.IsAMemberOf, value.getReciprocalLinkType());
+        assertEquals(ELinkTypes.IS_A_MEMBER_OF, value.getReciprocalLinkType());
     }
 
     @Test
@@ -371,7 +371,7 @@ public class ELinkTypesTest {
     {
 
         String a = "IsAMemberOf";
-        ELinkTypes value = ELinkTypes.IsAMemberOf;
+        ELinkTypes value = ELinkTypes.IS_A_MEMBER_OF;
 
         assertEquals(a, value.getLabel());
     }

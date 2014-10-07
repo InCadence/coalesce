@@ -444,7 +444,7 @@ public class MySQLPersistor implements IMySQLPersistor
 			if (getWsStatus().getServiceStatus()) {
 				String sqlStmt = "";
 				String tableName = CoalesceTable
-						.gettableNameForObjectType(ObjectKey.trim()
+						.getTableNameForObjectType(ObjectKey.trim()
 								.toLowerCase());
 				if (tableName.toLowerCase().compareTo(
 						"CoalesceEntity".toLowerCase()) == 0)

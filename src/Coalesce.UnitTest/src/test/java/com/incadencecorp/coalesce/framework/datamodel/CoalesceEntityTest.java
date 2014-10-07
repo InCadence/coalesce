@@ -1504,7 +1504,7 @@ public class CoalesceEntityTest {
 
         Entities entities = createEntityLinkages();
 
-        Map<String, CoalesceLinkage> linkages = entities.Entity.getLinkages(ELinkTypes.IsAMemberOf);
+        Map<String, CoalesceLinkage> linkages = entities.Entity.getLinkages(ELinkTypes.IS_A_MEMBER_OF);
 
         assertTrue(linkages.isEmpty());
 
@@ -2173,7 +2173,7 @@ public class CoalesceEntityTest {
         assertTrue(EntityLinkHelper.linkEntities(entities.Entity, ELinkTypes.HAS_USE_OF, entities.Entity2, false));
         assertTrue(EntityLinkHelper.linkEntities(entities.Entity, ELinkTypes.IS_PARENT_OF, entities.Entity3, false));
         assertTrue(EntityLinkHelper.linkEntities(entities.Entity2, ELinkTypes.WAS_CREATED_BY, entities.Entity, false));
-        assertTrue(EntityLinkHelper.linkEntities(entities.Entity4, ELinkTypes.IsAMemberOf, entities.Entity, false));
+        assertTrue(EntityLinkHelper.linkEntities(entities.Entity4, ELinkTypes.IS_A_MEMBER_OF, entities.Entity, false));
 
         return entities;
 

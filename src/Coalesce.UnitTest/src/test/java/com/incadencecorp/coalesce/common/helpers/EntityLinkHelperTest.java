@@ -402,7 +402,7 @@ public class EntityLinkHelperTest {
         {
             CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
             assertFalse(EntityLinkHelper.linkEntities(entity,
-                                                      ELinkTypes.IsAMemberOf,
+                                                      ELinkTypes.IS_A_MEMBER_OF,
                                                       null,
                                                       EntityLinkHelperTest.TOP_SECRET_MARKING,
                                                       "jford",

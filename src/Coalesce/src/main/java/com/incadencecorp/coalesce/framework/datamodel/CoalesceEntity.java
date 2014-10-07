@@ -264,8 +264,10 @@ public class CoalesceEntity extends CoalesceDataObject {
         return initializeReferences();
     }
 
-     * Initializes a previously new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} by initializing
-     * skeletal dataObjectChildren.
+     /** 
+      * Initializes a previously new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} by initializing
+      *  skeletal dataObjectChildren.
+     */
     protected boolean initializeChildren()
     {
         CoalesceLinkageSection linkageSection = new CoalesceLinkageSection();
