@@ -43,8 +43,8 @@ import com.incadencecorp.coalesce.framework.objects.EActionStatuses;
 
 public class appMain {
 
-	static int _ITERATION_LIMIT = 1000000;
-	static int _CAPTURE_METRICS_INTERVAL = 1000;
+	static int _ITERATION_LIMIT = 1000;
+	static int _CAPTURE_METRICS_INTERVAL = 10;
 
 	static Logger _log = Logger.getLogger("TesterLog");
 	static ServerConn _serCon;
@@ -174,46 +174,12 @@ public class appMain {
 
 	private static CoalesceEntity createMissionEntity(CoalesceEntity _entity,
 			String entityVersion) throws CoalesceException {
-		CoalesceSection section;
-		CoalesceRecordset recordSet;
-		@SuppressWarnings("unused")
-		CoalesceRecord _liveStatusRecord;
-		_entity.initialize(
-				"Mission Entity - Performance Testing",
-				"Coalesce_Mission",
-				entityVersion,
-				"",
-				"",
-				"TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionName,TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/IncidentTitle");
-		section = CoalesceSection.create(_entity, "Live Status Section");
-		recordSet = CoalesceRecordset.create(section, "Live Status Recordset");
-		CoalesceFieldDefinition.create(recordSet, "CurrentStatus",ECoalesceFieldDataTypes.StringType);
-		_liveStatusRecord = recordSet.addNew();
-		
-		section = CoalesceSection.create(_entity, MissionEntity.Name
-				+ " Information Section");
-		recordSet = CoalesceRecordset.create(section, MissionEntity.Name
-				+ " Information Recordset");
-
-		CoalesceFieldDefinition.create(recordSet, "ActionNumber",ECoalesceFieldDataTypes.StringType, "Action Number", "U", "0");
-		CoalesceFieldDefinition.create(recordSet, "IncidentNumber",	ECoalesceFieldDataTypes.StringType);
-		CoalesceFieldDefinition.create(recordSet, "IncidentTitle",ECoalesceFieldDataTypes.StringType);
-		CoalesceFieldDefinition.create(recordSet, "IncidentDescription",ECoalesceFieldDataTypes.StringType);
-		CoalesceFieldDefinition.create(recordSet, "IncidentDateTime",ECoalesceFieldDataTypes.DateTimeType);
-		CoalesceFieldDefinition.create(recordSet, "MissionName",ECoalesceFieldDataTypes.StringType);
-		CoalesceFieldDefinition.create(recordSet, "MissionType",ECoalesceFieldDataTypes.StringType);
-		CoalesceFieldDefinition.create(recordSet, "MissionDescription",	ECoalesceFieldDataTypes.StringType);
-		CoalesceFieldDefinition.create(recordSet, "MissionIndicatorColor",ECoalesceFieldDataTypes.StringType);
-		CoalesceFieldDefinition.create(recordSet, "MissionIndicatorShape",ECoalesceFieldDataTypes.StringType);
-		CoalesceFieldDefinition.create(recordSet, "MissionIndicatorNumber",	ECoalesceFieldDataTypes.StringType);
-		CoalesceFieldDefinition.create(recordSet,"MissionIndicatorNumberBASE10",ECoalesceFieldDataTypes.IntegerType);
-		CoalesceFieldDefinition.create(recordSet, "MissionStartDateTime",ECoalesceFieldDataTypes.DateTimeType);
-		CoalesceFieldDefinition.create(recordSet, "MissionEndDateTime",	ECoalesceFieldDataTypes.DateTimeType);
-		CoalesceFieldDefinition.create(recordSet, "MissionGeoLocation",	ECoalesceFieldDataTypes.GeocoordinateType);
-		CoalesceFieldDefinition.create(recordSet, "MissionAddress",	ECoalesceFieldDataTypes.StringType);
-
-		// _informationRecord = recordSet.addNew();
-		_liveStatusRecord = recordSet.addNew();
+		MissionEntity _missionEntity=new MissionEntity();
+		_missionEntity.initialize();
+		_missionEntity.setName("Mission Entity - Performance Testing");
+		_missionEntity.setSource("Coalesce_Mission");
+		_missionEntity.setVersion(entityVersion);
+		_entity=_missionEntity;
 		return _entity;
 	}
 
