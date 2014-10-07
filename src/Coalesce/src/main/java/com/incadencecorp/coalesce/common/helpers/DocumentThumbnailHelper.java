@@ -292,15 +292,33 @@ public class DocumentThumbnailHelper {
 
     private static BufferedImage getImageForResource(String resource) throws IOException
     {
-
-        Class<?> docClass = new DocumentProperties().getClass();
-
-        return getImage(docClass.getResource("/resources/" + resource));
+        return ImageIO.read(getResource(resource));
     }
+    
+    private static URL getResource(String resource){
 
-    private static BufferedImage getImage(URL url) throws IOException
-    {
-        return ImageIO.read(url);
+        URL url ;
+
+        // Try with the Thread Context Loader. 
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        if(classLoader != null){
+            url = classLoader.getResource(resource);
+            if(url != null){
+                return url;
+            }
+        }
+
+        // Let's now try with the System class loader
+        classLoader = System.class.getClassLoader();
+        if(classLoader != null){
+            url = classLoader.getResource(resource);
+            if(url != null){
+                return url;
+            }
+        }
+
+        // Last ditch attempt. Get the resource from the classpath.
+        return ClassLoader.getSystemResource(resource);
     }
 
 }

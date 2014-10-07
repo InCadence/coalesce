@@ -76,7 +76,7 @@ public class CoalesceAssert {
         {
             try
             {
-                CoalesceAssert.EXPECTED_DESERT_THUMBNAIL = ImageIO.read(new File("src/resources/desert_thumb.png"));
+                CoalesceAssert.EXPECTED_DESERT_THUMBNAIL = ImageIO.read(new File("src/test/resources/desert_thumb.png"));
             }
             catch (IOException e)
             {
