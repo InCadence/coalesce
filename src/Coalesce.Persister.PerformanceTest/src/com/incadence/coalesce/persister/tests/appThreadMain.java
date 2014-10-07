@@ -20,28 +20,21 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
-import com.incadencecorp.coalesce.common.exceptions.CoalesceInvalidFieldException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
-import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.objects.MissionEntity;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
-import com.incadencecorp.coalesce.framework.persistance.postgres.PostGresSQLPersistor;
+import com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLPersistor;
 
 public class appThreadMain {
 	final static Logger _log = Logger.getLogger("TesterLog");
 	static ServerConn _serCon;
-	static PostGresSQLPersistor _psPersister;
+	static PostGreSQLPersistor _psPersister;
 
 	public static void main(String[] args) {
-		int ITERATION_LIMIT = 10;
+		int ITERATION_LIMIT = 100;
+		int CAPTURE_INTERVAL=10;
 		appRunner._coalesceFramework = new CoalesceFramework();
 
 		try {
@@ -49,52 +42,52 @@ public class appThreadMain {
 				appRunner._coalesceFramework
 						.initialize(appThreadMain._psPersister);
 				// timeLogger = new ArrayList<TimeTrack>();
-				Thread vol1 = new Thread(new appRunner(ITERATION_LIMIT, 1));
+				Thread vol1 = new Thread(new appRunner(ITERATION_LIMIT, CAPTURE_INTERVAL));
 				vol1.setName("Thread #1");
 				vol1.start();
-				Thread vol2 = new Thread(new appRunner(ITERATION_LIMIT, 1));
+				Thread vol2 = new Thread(new appRunner(ITERATION_LIMIT, CAPTURE_INTERVAL));
 				vol2.setName("Thread #2");
 				vol2.start();
-				Thread vol3 = new Thread(new appRunner(ITERATION_LIMIT, 1));
+				Thread vol3 = new Thread(new appRunner(ITERATION_LIMIT, CAPTURE_INTERVAL));
 				vol3.setName("Thread #3");
 				vol3.start();
-				Thread vol4 = new Thread(new appRunner(ITERATION_LIMIT, 1));
+				Thread vol4 = new Thread(new appRunner(ITERATION_LIMIT, CAPTURE_INTERVAL));
 				vol4.setName("Thread #4");
 				vol4.start();
-				Thread vol5 = new Thread(new appRunner(ITERATION_LIMIT, 1));
+				Thread vol5 = new Thread(new appRunner(ITERATION_LIMIT, CAPTURE_INTERVAL));
 				vol5.setName("Thread #5");
 				vol5.start();
-				Thread vol6 = new Thread(new appRunner(ITERATION_LIMIT, 1));
+				Thread vol6 = new Thread(new appRunner(ITERATION_LIMIT, CAPTURE_INTERVAL));
 				vol6.setName("Thread #6");
 				vol6.start();
-				Thread vol7 = new Thread(new appRunner(ITERATION_LIMIT, 1));
+				Thread vol7 = new Thread(new appRunner(ITERATION_LIMIT, CAPTURE_INTERVAL));
 				vol7.setName("Thread #7");
 				vol7.start();
-				Thread vol8 = new Thread(new appRunner(ITERATION_LIMIT, 1));
+				Thread vol8 = new Thread(new appRunner(ITERATION_LIMIT, CAPTURE_INTERVAL));
 				vol8.setName("Thread #8");
 				vol8.start();
-				Thread vol9 = new Thread(new appRunner(ITERATION_LIMIT, 1));
+				Thread vol9 = new Thread(new appRunner(ITERATION_LIMIT, CAPTURE_INTERVAL));
 				vol9.setName("Thread #9");
 				vol9.start();
-				Thread vol10 = new Thread(new appRunner(ITERATION_LIMIT, 1));
+				Thread vol10 = new Thread(new appRunner(ITERATION_LIMIT, CAPTURE_INTERVAL));
 				vol10.setName("Thread #10");
 				vol10.start();
-				Thread vol11 = new Thread(new appRunner(ITERATION_LIMIT, 1));
+				Thread vol11 = new Thread(new appRunner(ITERATION_LIMIT, CAPTURE_INTERVAL));
 				vol11.setName("Thread #11");
 				vol11.start();
-				Thread vol12 = new Thread(new appRunner(ITERATION_LIMIT, 1));
+				Thread vol12 = new Thread(new appRunner(ITERATION_LIMIT, CAPTURE_INTERVAL));
 				vol12.setName("Thread #12");
 				vol12.start();
-				Thread vol13 = new Thread(new appRunner(ITERATION_LIMIT, 1));
+				Thread vol13 = new Thread(new appRunner(ITERATION_LIMIT, CAPTURE_INTERVAL));
 				vol13.setName("Thread #13");
 				vol13.start();
-				Thread vol14 = new Thread(new appRunner(ITERATION_LIMIT, 1));
+				Thread vol14 = new Thread(new appRunner(ITERATION_LIMIT, CAPTURE_INTERVAL));
 				vol14.setName("Thread #14");
 				vol14.start();
-				Thread vol15 = new Thread(new appRunner(ITERATION_LIMIT, 1));
+				Thread vol15 = new Thread(new appRunner(ITERATION_LIMIT, CAPTURE_INTERVAL));
 				vol15.setName("Thread #15");
 				vol15.start();
-				Thread vol16 = new Thread(new appRunner(ITERATION_LIMIT, 1));
+				Thread vol16 = new Thread(new appRunner(ITERATION_LIMIT, CAPTURE_INTERVAL));
 				vol16.setName("Thread #16");
 				vol16.start();
 			}
@@ -108,7 +101,7 @@ public class appThreadMain {
 		_serCon.setDatabase("CoalesceDatabase");
 		_serCon.setUser("root");
 		_serCon.setPassword("Passw0rd");
-		_psPersister = new PostGresSQLPersistor();
+		_psPersister = new PostGreSQLPersistor();
 		_psPersister.Initialize(_serCon);
 		return true;
 	}
@@ -151,7 +144,7 @@ class appRunner implements Runnable {
 
 	@Override
 	public void run() {
-		String threadID=String.valueOf(Thread.currentThread().getId());
+		String threadID = String.valueOf(Thread.currentThread().getId());
 		try {
 			timeLogger = new ArrayList<TimeTrack>();
 			this.setThreadID(String.valueOf(Thread.currentThread().toString()));
@@ -174,7 +167,7 @@ class appRunner implements Runnable {
 						.concat(generateEntityVersionNumber));
 				if (_coalesceEntity != null) {
 					if (this.masterCounter % CAPTURE_METRICS_INTERVAL == 0) {
-						saveEntity(_timeTrack, _coalesceEntity,threadID);
+						saveEntity(_timeTrack, _coalesceEntity, threadID);
 						_timeTrack.setEntityID(_coalesceEntity.getKey());
 						timeLogger.add(_timeTrack);
 						_timeTrack = null;
@@ -191,12 +184,11 @@ class appRunner implements Runnable {
 						+ startTime);
 				outConsoleData(Thread.currentThread().getId(), "STOPTIME: "
 						+ stopTime);
-				this.printToFile("datafile_" +
-						threadID + "_persistance.xml");
+				this.printToFile("datafile_" + threadID + "_persistance.xml");
 			}
 		} catch (Exception ex) {
-			appThreadMain._log
-					.log(java.util.logging.Level.SEVERE, ex.toString());
+			appThreadMain._log.log(java.util.logging.Level.SEVERE,
+					ex.toString());
 		}
 	}
 
@@ -221,13 +213,8 @@ class appRunner implements Runnable {
 
 	}
 
-	private void saveAppTimeStamps(TimeTrack _timeTrack,
-			String startTime, String stopTime) {
-		_timeTrack.setAppStartTime(startTime);
-		_timeTrack.setStopTime(stopTime);
-	}
-
-	private void saveEntity(TimeTrack _timeTrack, CoalesceEntity _coalesceEntity, String threadVal)
+	private void saveEntity(TimeTrack _timeTrack,
+			CoalesceEntity _coalesceEntity, String threadVal)
 			throws CoalescePersistorException {
 		_timeTrack.setStartTime(getCurrentTime());
 		_timeTrack.setStartMSTime(getCurrentTime(false));
@@ -242,8 +229,7 @@ class appRunner implements Runnable {
 		_timeTrack.setStopMSTime(getCurrentTime(false));
 	}
 
-
-	private  String generateEntityVersionNumber(int currentIterationNumber) {
+	private String generateEntityVersionNumber(int currentIterationNumber) {
 		String entityVersion = "";
 		masterCounter += 1;
 		if (currentIterationNumber % 10000 == 0) {
@@ -271,11 +257,12 @@ class appRunner implements Runnable {
 			System.out
 					.println("Error while trying to instantiate DocumentBuilder "
 							+ ex.toString());
-			appThreadMain._log
-					.log(java.util.logging.Level.SEVERE, ex.toString());
+			appThreadMain._log.log(java.util.logging.Level.SEVERE,
+					ex.toString());
 		}
 
 	}
+
 	private static String getCurrentTime(boolean isNano) {
 		String currentTime;
 		if (isNano)
@@ -284,6 +271,7 @@ class appRunner implements Runnable {
 			currentTime = String.valueOf(System.currentTimeMillis());
 		return currentTime;
 	}
+
 	private String getCurrentTime() {
 		Calendar calStamp = Calendar.getInstance();
 		java.util.Date nowCurrentDate = calStamp.getTime();
@@ -321,7 +309,7 @@ class appRunner implements Runnable {
 		Text stopText = dom.createTextNode(b.getStopTime());
 		stopEle.appendChild(stopText);
 		timeElement.appendChild(stopEle);
-		
+
 		Element startEleMS = dom.createElement("INSERT_START_MS");
 		Text startMSText = dom.createTextNode(b.getStartMSTime());
 		startEleMS.appendChild(startMSText);
@@ -347,29 +335,30 @@ class appRunner implements Runnable {
 			serializer.serialize(dom);
 
 		} catch (IOException ex) {
-			appThreadMain._log
-					.log(java.util.logging.Level.SEVERE, ex.toString());
+			appThreadMain._log.log(java.util.logging.Level.SEVERE,
+					ex.toString());
 		}
 	}
-	private  CoalesceEntity createEntity(String entityVersion)
+
+	private CoalesceEntity createEntity(String entityVersion)
 			throws CoalesceException {
 		// Create Test Entity
 		CoalesceEntity _entity = new CoalesceEntity();
 
-		_entity=this.createMissionEntity(_entity, entityVersion);
+		_entity = this.createMissionEntity(_entity, entityVersion);
 
 		return _entity;
 	}
-	private  CoalesceEntity createMissionEntity(CoalesceEntity _entity,
+
+	private CoalesceEntity createMissionEntity(CoalesceEntity _entity,
 			String entityVersion) throws CoalesceException {
-		MissionEntity _missionEntity=new MissionEntity();
+		MissionEntity _missionEntity = new MissionEntity();
 		_missionEntity.initialize();
 		_missionEntity.setName("Mission Entity - Performance Testing");
 		_missionEntity.setSource("Coalesce_Mission");
 		_missionEntity.setVersion(entityVersion);
-		_entity=_missionEntity;
+		_entity = _missionEntity;
 		return _entity;
 	}
-
 
 }

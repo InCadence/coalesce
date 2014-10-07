@@ -38,7 +38,7 @@ import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
 import com.incadencecorp.coalesce.framework.objects.MissionEntity;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 import com.incadencecorp.coalesce.framework.persistance.mysql.MySQLPersistor;
-import com.incadencecorp.coalesce.framework.persistance.postgres.PostGresSQLPersistor;
+import com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLPersistor;
 import com.incadencecorp.coalesce.framework.objects.EActionStatuses;
 
 public class appMain {
@@ -46,7 +46,7 @@ public class appMain {
 	static int _ITERATION_LIMIT = 100;
 	static int _CAPTURE_METRICS_INTERVAL = 10;
 
-	static PostGresSQLPersistor _psPersister;
+	static PostGreSQLPersistor _psPersister;
 	static CoalesceFramework _coalesceFramework;
 	static ServerConn _serCon;
 	
@@ -88,7 +88,7 @@ public class appMain {
 		_serCon.setDatabase("CoalesceDatabase");
 		_serCon.setUser("root");
 		_serCon.setPassword("Passw0rd");
-		_psPersister = new PostGresSQLPersistor();
+		_psPersister = new PostGreSQLPersistor();
 		_psPersister.Initialize(_serCon);
 		return true;
 	}

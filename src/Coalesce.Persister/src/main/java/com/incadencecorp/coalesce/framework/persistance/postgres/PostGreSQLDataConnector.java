@@ -7,9 +7,9 @@ import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 
-public class PostGresDataConnector extends CoalesceDataConnectorBase {
+public class PostGreSQLDataConnector extends CoalesceDataConnectorBase {
 
-    public PostGresDataConnector(ServerConn settings) throws CoalescePersistorException
+    public PostGreSQLDataConnector(ServerConn settings) throws CoalescePersistorException
     {
         try
         {

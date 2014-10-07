@@ -11,8 +11,8 @@ import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
-import com.incadencecorp.coalesce.framework.persistance.postgres.PostGresDataConnector;
-import com.incadencecorp.coalesce.framework.persistance.postgres.PostGresSQLPersistor;
+import com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLDataConnector;
+import com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLPersistor;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -67,7 +67,7 @@ public class PostGresPersistorTest extends CoalescePersistorBaseTest {
     @Override
     protected ICoalescePersistor getPersistor(ServerConn conn)
     {
-        PostGresSQLPersistor postGresSQLPersister = new PostGresSQLPersistor();
+        PostGreSQLPersistor postGresSQLPersister = new PostGreSQLPersistor();
         postGresSQLPersister.Initialize(conn);
 
         return postGresSQLPersister;
@@ -90,7 +90,7 @@ public class PostGresPersistorTest extends CoalescePersistorBaseTest {
     @Override
     protected CoalesceDataConnectorBase getDataConnector(ServerConn conn) throws CoalescePersistorException
     {
-        return new PostGresDataConnector(conn);
+        return new PostGreSQLDataConnector(conn);
     }
 
 }
