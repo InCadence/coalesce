@@ -60,7 +60,7 @@ public class CoalesceEntity extends CoalesceDataObject {
     // ----------------------------------------------------------------------//
 
     private Entity _entity;
-
+    
     // ----------------------------------------------------------------------//
     // Factory and Initialization
     // ----------------------------------------------------------------------//
@@ -159,6 +159,23 @@ public class CoalesceEntity extends CoalesceDataObject {
     }
 
     /**
+     * Initializes a previously new XsdEntity by initializing skeletal dataObjectChildren.
+     * 
+     * @return boolean indicator of success/failure
+     */
+    @Override
+    public boolean initialize()
+    {
+        this._entity = new Entity();
+
+        if (!super.initialize()) return false;
+
+        if (!initializeChildren()) return false;
+
+        return true;
+    }
+    
+    /**
      * Initializes core settings.
      *  
      * @param name String identifying the XsdEntity type to create
@@ -168,7 +185,7 @@ public class CoalesceEntity extends CoalesceDataObject {
      * @param entityIdType String identifying the entity id's type (guid, tcn, bag-tag id or other value)
      * @param title String that could be a a field namepath.
      */
-    public boolean initialize(String name, String source, String version, String entityId, String entityIdType, String title)
+    protected boolean initializeEntity(String name, String source, String version, String entityId, String entityIdType, String title)
     {
         this._entity = new Entity();
 
@@ -232,23 +249,6 @@ public class CoalesceEntity extends CoalesceDataObject {
 
         // Initialize References
         return initializeReferences();
-    }
-
-    /**
-     * Initializes a previously new XsdEntity by initializing skeletal dataObjectChildren.
-     * 
-     * @return boolean indicator of success/failure
-     */
-    @Override
-    public boolean initialize()
-    {
-        this._entity = new Entity();
-
-        if (!super.initialize()) return false;
-
-        if (!initializeChildren()) return false;
-
-        return true;
     }
 
     protected boolean initializeChildren()
@@ -605,7 +605,7 @@ public class CoalesceEntity extends CoalesceDataObject {
      * linkages when the forEntityName parameter is null.
      * 
      * @param forEntityName String of the Entity Name to return linkages for
-     * @return Map<String, XsdLinkage>, linkages with matches for the Entity Name parameter
+     * @return Map<String, XsdLinkage> linkages with matches for the Entity Name parameter
      */
     public Map<String, CoalesceLinkage> getLinkages(String forEntityName)
     {

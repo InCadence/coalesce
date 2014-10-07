@@ -950,7 +950,8 @@ public class GraphicsHelperTest {
 
         @SuppressWarnings("unchecked")
         CoalesceField<byte[]> file = (CoalesceField<byte[]>) record.getFieldByName("File");
-        assertTrue("Thumbnail creation failed for file type", GraphicsHelper.createFieldThumbnail(record.getFieldByName("File")));
+        assertTrue("Thumbnail creation failed for file type",
+                   GraphicsHelper.createFieldThumbnail(record.getFieldByName("File")));
 
         File thumbnail = new File(file.getCoalesceFullThumbnailFilename());
         assertTrue("Thumbnail was not created correctly!", thumbnail.exists());
@@ -968,13 +969,14 @@ public class GraphicsHelperTest {
 
         @SuppressWarnings("unchecked")
         CoalesceField<byte[]> file = (CoalesceField<byte[]>) record.getFieldByName("File");
-        assertTrue("Thumbnail creation failed for file type", GraphicsHelper.createFieldThumbnail(file.getCoalesceFullFilename()));
+        assertTrue("Thumbnail creation failed for file type",
+                   GraphicsHelper.createFieldThumbnail(file.getCoalesceFullFilename()));
 
         File thumbnail = new File(file.getCoalesceFullThumbnailFilename());
         assertTrue("Thumbnail was not created correctly!", thumbnail.exists());
 
         assertFalse("Thumbnail already exists", GraphicsHelper.createFieldThumbnail(file.getCoalesceFullFilename()));
-        
+
         assertFalse("Thumbnail creation should have failed for a non-file type",
                     GraphicsHelper.createFieldThumbnail(record.getFieldByName("NotFile").getCoalesceFullFilename()));
 
@@ -991,15 +993,19 @@ public class GraphicsHelperTest {
 
         Files.createDirectory(Paths.get(file.getCoalesceFullThumbnailFilename()));
 
-        assertFalse("Thumbnail creation should have failed due to directory existing", GraphicsHelper.createFieldThumbnail(file.getCoalesceFullFilename()));
-
+        assertFalse("Thumbnail creation should have failed due to directory existing",
+                    GraphicsHelper.createFieldThumbnail(file.getCoalesceFullFilename()));
 
     }
-    
+
     private static CoalesceRecord getFieldThumbnailRecord() throws CoalesceException, IOException
     {
-        CoalesceEntity entity = new CoalesceEntity();
-        entity.initialize("Test Entity", "Unit Test", "1.0.0.0", "TestEntity", "UnitTest", "Thumbnail Testing");
+        CoalesceEntity entity = CoalesceEntity.create("Test Entity",
+                                                      "Unit Test",
+                                                      "1.0.0.0",
+                                                      "TestEntity",
+                                                      "UnitTest",
+                                                      "Thumbnail Testing");
         CoalesceSection section = entity.createSection("Testing Section");
         CoalesceRecordset recordset = section.createRecordset("Testing Recordset");
         recordset.createFieldDefinition("File", ECoalesceFieldDataTypes.FileType);
@@ -1020,5 +1026,5 @@ public class GraphicsHelperTest {
         return record;
 
     }
-    
+
 }

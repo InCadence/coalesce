@@ -29,7 +29,15 @@ public class ActionBaseEntity extends CoalesceEntity {
     // Initialization
     // ----------------------------------------------------------------------//
 
-    public boolean initialize(String source, String version, String title)
+    @Override
+    public boolean initialize()
+    {
+        if (!initializeEntity("", "", "")) return false;
+
+        return initializeReferences();
+    }
+
+    protected boolean initializeEntity(String source, String version, String title)
     {
         CoalesceSection section;
         CoalesceRecordset recordSet;
@@ -38,17 +46,17 @@ public class ActionBaseEntity extends CoalesceEntity {
         if (_liveStatusRecord != null) return false;
 
         // Initialize Entity
-        if (!super.initialize(ActionBaseEntity.Name, source, version, "", "", title)) return false;
+        if (!super.initializeEntity(ActionBaseEntity.Name, source, version, "", "", title)) return false;
 
         // Create Live Section
         section = CoalesceSection.create(this, "Live Status Section");
         recordSet = CoalesceRecordset.create(section, "Live Status Recordset");
         CoalesceFieldDefinition.create(recordSet,
-                                  "CurrentStatus",
-                                  ECoalesceFieldDataTypes.StringType,
-                                  "Status",
-                                  "",
-                                  EActionStatuses.CollectionComplete.getLabel());
+                                       "CurrentStatus",
+                                       ECoalesceFieldDataTypes.StringType,
+                                       "Status",
+                                       "",
+                                       EActionStatuses.CollectionComplete.getLabel());
         CoalesceFieldDefinition.create(recordSet, "ResponseStatus", ECoalesceFieldDataTypes.StringType);
         CoalesceFieldDefinition.create(recordSet, "ResponseKey", ECoalesceFieldDataTypes.GuidType);
         CoalesceFieldDefinition.create(recordSet, "Location", ECoalesceFieldDataTypes.GeocoordinateType);
@@ -63,6 +71,7 @@ public class ActionBaseEntity extends CoalesceEntity {
     @Override
     protected boolean initializeReferences()
     {
+        if (!super.initializeReferences()) return false;
 
         // Live Status Record
         if (this._liveStatusRecord == null)

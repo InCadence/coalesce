@@ -27,13 +27,22 @@ public class PhotoGalleryEntity extends ActionBaseEntity {
     @Override
     public boolean initialize()
     {
+        if (!initializeEntity(PhotoGalleryEntity.Source, "1.0", "")) return false;
+        
+        // Initialize References
+        return this.initializeReferences();
+    }
+
+    @Override
+    protected boolean initializeEntity(String source, String version, String title)
+    {
         CoalesceSection section;
 
         // Already Initialized?
         if (_photographRecordset != null) return false;
 
         // Initialize Entity
-        if (!super.initialize(PhotoGalleryEntity.Source, "1.0", "")) return false;
+        if (!super.initializeEntity(source, version, title)) return false;
 
         // Create Live Section
         section = CoalesceSection.create(this, "Photographs Section");
@@ -48,9 +57,8 @@ public class PhotoGalleryEntity extends ActionBaseEntity {
         CoalesceFieldDefinition.create(_photographRecordset, "DegreesFromTrueNorth", ECoalesceFieldDataTypes.StringType);
         CoalesceFieldDefinition.create(_photographRecordset, "PhotoDateTimeUTC", ECoalesceFieldDataTypes.DateTimeType);
         CoalesceFieldDefinition.create(_photographRecordset, "PhotoLocation", ECoalesceFieldDataTypes.GeocoordinateType);
-
-        // Initialize References
-        return this.initializeReferences();
+        
+        return true;
     }
 
     @Override

@@ -37,6 +37,15 @@ public class MissionEntity extends CoalesceEntity {
     @Override
     public boolean initialize()
     {
+        if (!initializeEntity(MissionEntity.Source,
+                              "1.0",
+                              "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionName,TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/IncidentTitle")) return false;
+
+        return initializeReferences();
+    }
+
+    protected boolean initializeEntity(String source, String version, String title)
+    {
         CoalesceSection section;
         CoalesceRecordset recordSet;
 
@@ -44,12 +53,7 @@ public class MissionEntity extends CoalesceEntity {
         if (_liveStatusRecord != null || _informationRecord != null) return false;
 
         // Initialize Entity
-        if (!super.initialize(MissionEntity.Name,
-                              MissionEntity.Source,
-                              "1.0",
-                              "",
-                              "",
-                              "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionName,TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/IncidentTitle")) return false;
+        if (!super.initializeEntity(MissionEntity.Name, source, version, "", "", title)) return false;
 
         // Create Live Section
         section = CoalesceSection.create(this, "Live Status Section");
@@ -62,7 +66,12 @@ public class MissionEntity extends CoalesceEntity {
         // Create Mission Information Section
         section = CoalesceSection.create(this, MissionEntity.Name + " Information Section");
         recordSet = CoalesceRecordset.create(section, MissionEntity.Name + " Information Recordset");
-        CoalesceFieldDefinition.create(recordSet, "ActionNumber", ECoalesceFieldDataTypes.StringType, "Action Number", "U", "0");
+        CoalesceFieldDefinition.create(recordSet,
+                                       "ActionNumber",
+                                       ECoalesceFieldDataTypes.StringType,
+                                       "Action Number",
+                                       "U",
+                                       "0");
         CoalesceFieldDefinition.create(recordSet, "IncidentNumber", ECoalesceFieldDataTypes.StringType);
         CoalesceFieldDefinition.create(recordSet, "IncidentTitle", ECoalesceFieldDataTypes.StringType);
         CoalesceFieldDefinition.create(recordSet, "IncidentDescription", ECoalesceFieldDataTypes.StringType);
@@ -146,7 +155,7 @@ public class MissionEntity extends CoalesceEntity {
     {
         ((CoalesceStringField) this._liveStatusRecord.getFieldByName("CurrentStatus")).setValue(value.getLabel());
     }
-    
+
     public CoalesceStringField getActionNumber()
     {
         return (CoalesceStringField) _informationRecord.getFieldByName("ActionNumber");
