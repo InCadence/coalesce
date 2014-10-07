@@ -8,7 +8,7 @@
 		<module>../Coalesce.Persister</module>
 	</modules>
 	<parent>
-		<groupId>coalesce</groupId>
+		<groupId>com.incadencecorp.coalesce</groupId>
 		<artifactId>coalesce-bom</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>../Coalesce.Bom</relativePath>

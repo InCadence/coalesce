@@ -33,7 +33,7 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>coalesce</groupId>
+				<groupId>com.incadencecorp.coalesce</groupId>
 				<artifactId>coalesce-bom</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 				<type>pom</type>
@@ -55,7 +55,7 @@
 			<version>4.0.6.RELEASE</version>
 		</dependency>
 		<dependency>
-			<groupId>coalesce</groupId>
+			<groupId>com.incadencecorp.coalesce</groupId>
 			<artifactId>coalesce-core</artifactId>
 		</dependency>
 		<dependency>
@@ -85,7 +85,7 @@
 		</dependency>
 	</dependencies>
 	<parent>
-		<groupId>coalesce</groupId>
+		<groupId>com.incadencecorp.coalesce</groupId>
 		<artifactId>coalesce-pom</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>../Coalesce.Pom</relativePath>

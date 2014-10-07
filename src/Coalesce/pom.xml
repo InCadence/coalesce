@@ -103,7 +103,7 @@
 		</dependency>
 	</dependencies>
 	<parent>
-		<groupId>coalesce</groupId>
+		<groupId>com.incadencecorp.coalesce</groupId>
 		<artifactId>coalesce-pom</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>../Coalesce.Pom</relativePath>

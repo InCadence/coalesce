@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>coalesce</groupId>
+	<groupId>com.incadencecorp.coalesce</groupId>
 	<artifactId>coalesce-bom</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
@@ -13,12 +13,12 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>coalesce</groupId>
+				<groupId>com.incadencecorp.coalesce</groupId>
 				<artifactId>coalesce-core</artifactId>
 				<version>${coalesceVersion}</version>
 			</dependency>
 			<dependency>
-				<groupId>coalesce</groupId>
+				<groupId>com.incadencecorp.coalesce</groupId>
 				<artifactId>coalesce-persister</artifactId>
 				<version>${coalescePersisterVersion}</version>
 			</dependency>

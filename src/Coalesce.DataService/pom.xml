@@ -133,11 +133,11 @@
 			<version>2.3</version>
 		</dependency>
 		<dependency>
-			<groupId>coalesce</groupId>
+			<groupId>com.incadencecorp.coalesce</groupId>
 			<artifactId>coalesce-core</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>coalesce</groupId>
+			<groupId>com.incadencecorp.coalesce</groupId>
 			<artifactId>coalesce-persister</artifactId>
 		</dependency>
 		<dependency>
@@ -153,7 +153,7 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>coalesce</groupId>
+				<groupId>com.incadencecorp.coalesce</groupId>
 				<artifactId>coalesce-bom</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 				<type>pom</type>
