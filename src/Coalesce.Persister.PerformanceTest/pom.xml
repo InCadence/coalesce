@@ -33,22 +33,12 @@
 			<version>4.11</version>
 		</dependency>
 		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.31</version>
-		</dependency>
-		<dependency>
 			<groupId>com.incadencecorp.coalesce</groupId>
 			<artifactId>coalesce-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.incadencecorp.coalesce</groupId>
 			<artifactId>coalesce-persister</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>sqljdbc4</groupId>
-			<artifactId>sqljdbc4</artifactId>
-			<version>1.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.incadencecorp.coalesce</groupId>
@@ -72,12 +62,6 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
-			<dependency>
-				<groupId>neo4j</groupId>
-				<artifactId>neo4j-jdbc</artifactId>
-				<version>2.0.1</version>
-			</dependency>
-
 		</dependencies>
 	</dependencyManagement>
 </project>

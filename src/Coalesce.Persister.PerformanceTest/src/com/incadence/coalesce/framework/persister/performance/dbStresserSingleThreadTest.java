@@ -1,4 +1,4 @@
-package com.incadence.coalesce.persister.tests;
+package com.incadence.coalesce.framework.persister.performance;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -38,15 +38,17 @@ import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
 import com.incadencecorp.coalesce.framework.objects.MissionEntity;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 import com.incadencecorp.coalesce.framework.persistance.mysql.MySQLPersistor;
+import com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLDataConnector;
 import com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLPersistor;
 import com.incadencecorp.coalesce.framework.objects.EActionStatuses;
 
-public class appMain {
+public class dbStresserSingleThreadTest  {
+
 
 	static int _ITERATION_LIMIT = 100;
 	static int _CAPTURE_METRICS_INTERVAL = 10;
 
-	static PostGreSQLPersistor _psPersister;
+	static PostGreSQLPersistor _dbPersister;
 	static CoalesceFramework _coalesceFramework;
 	static ServerConn _serCon;
 	
@@ -69,62 +71,64 @@ public class appMain {
 		System.out.println("Performance Test Inserting " + _ITERATION_LIMIT
 				+ " XsdEntities Started **..** ");
 		String userDir = System.getProperty("user.dir");
-		appMain._coalesceFramework = new CoalesceFramework();
+		dbStresserSingleThreadTest._coalesceFramework = new CoalesceFramework();
 		try {
 			if (OpenConnection() == true) {
-				appMain._coalesceFramework.initialize(_psPersister);
-				appMain._timeLogger = new ArrayList<TimeTrack>();
-				appMain.runVolume();
-				if (appMain._inputStream != null && appMain._isModeFile==true)
-					appMain._inputStream.close();
+				dbStresserSingleThreadTest._coalesceFramework.initialize(_dbPersister);
+				dbStresserSingleThreadTest._timeLogger = new ArrayList<TimeTrack>();
+				dbStresserSingleThreadTest.runVolume();
+				if (dbStresserSingleThreadTest._inputStream != null && dbStresserSingleThreadTest._isModeFile==true)
+					dbStresserSingleThreadTest._inputStream.close();
 			}
 		} catch (Exception ex) {
 			_log.log(java.util.logging.Level.SEVERE, ex.toString());
 		}
 	}
 
+
 	public static boolean OpenConnection() throws SQLException {
 		_serCon = new ServerConn();
 		_serCon.setDatabase("CoalesceDatabase");
 		_serCon.setUser("root");
 		_serCon.setPassword("Passw0rd");
-		_psPersister = new PostGreSQLPersistor();
-		_psPersister.Initialize(_serCon);
+		_dbPersister = new PostGreSQLPersistor();
+		_dbPersister.Initialize(_serCon);
+		
 		return true;
 	}
 
 	private static void runVolume() {
 		try {
 			TimeTrack _timeTrack;
-			String startTime = appMain.getCurrentTime();
+			String startTime = dbStresserSingleThreadTest.getCurrentTime();
 			int _iteration_counter = 0;
-			appMain.createDOMDocument();
+			dbStresserSingleThreadTest.createDOMDocument();
 			for (_iteration_counter = 0; _iteration_counter <= _ITERATION_LIMIT; _iteration_counter++) {
 				_timeTrack = new TimeTrack();
 
 				CoalesceEntity _xsdEntity = new CoalesceEntity();
-				String generateEntityVersionNumber = appMain
+				String generateEntityVersionNumber = dbStresserSingleThreadTest
 						.generateEntityVersionNumber(_iteration_counter);
-				_xsdEntity = appMain.createEntity("1.0."
+				_xsdEntity = dbStresserSingleThreadTest.createEntity("1.0."
 						.concat(generateEntityVersionNumber));
 				if (_xsdEntity != null) {
-					if (appMain._masterCounter % _CAPTURE_METRICS_INTERVAL == 0) {
+					if (dbStresserSingleThreadTest._masterCounter % _CAPTURE_METRICS_INTERVAL == 0) {
 						saveEntity(_timeTrack, _xsdEntity);
 						_timeTrack.setEntityID(_xsdEntity.getKey());
 						_timeLogger.add(_timeTrack);
 						_timeTrack = null;
 					} else
-						appMain._coalesceFramework
+						dbStresserSingleThreadTest._coalesceFramework
 								.saveCoalesceEntity(_xsdEntity);
 				} else
 					break;
 			}
-			appMain.createDOMTree();
-			String stopTime = appMain.getCurrentTime();
+			dbStresserSingleThreadTest.createDOMTree();
+			String stopTime = dbStresserSingleThreadTest.getCurrentTime();
 			outConsoleData(1, "STARTTIME: " + startTime);
 			outConsoleData(2, "STOPTIME: " + stopTime);
 			String userDir = System.getProperty("user.dir");
-			appMain.printToFile(userDir + "/persistance.xml");
+			dbStresserSingleThreadTest.printToFile(userDir + "/persistance.xml");
 		} catch (Exception ex) {
 			_log.log(java.util.logging.Level.SEVERE, ex.toString());
 		}
@@ -137,7 +141,7 @@ public class appMain {
 		_timeTrack.setIterationVal(String.valueOf(_masterCounter));
 		_timeTrack.setIterationInterval(String
 				.valueOf(_CAPTURE_METRICS_INTERVAL));
-		appMain._coalesceFramework.saveCoalesceEntity(_xsdEntity);
+		dbStresserSingleThreadTest._coalesceFramework.saveCoalesceEntity(_xsdEntity);
 		_timeTrack.setStopTime(getCurrentTime());
 		_timeTrack.setStopMSTime(getCurrentTime(false));
 	}
@@ -164,11 +168,11 @@ public class appMain {
 		// Create Test Entity
 		CoalesceEntity _entity = new CoalesceEntity();
 
-		if (appMain._isModeFile == true) {
-			_entity = appMain.createEntityFromXMLFile(entityVersion);
+		if (dbStresserSingleThreadTest._isModeFile == true) {
+			_entity = dbStresserSingleThreadTest.createEntityFromXMLFile(entityVersion);
 			_entity.setVersion(entityVersion);
-		} else if (appMain._isModeFile == false) {
-			_entity=appMain.createMissionEntity(_entity, entityVersion);
+		} else if (dbStresserSingleThreadTest._isModeFile == false) {
+			_entity=dbStresserSingleThreadTest.createMissionEntity(_entity, entityVersion);
 		}
 
 		return _entity;
@@ -196,14 +200,14 @@ public class appMain {
 
 			String suserDir = System.getProperty("user.dir");
 			suserDir += "/EntityPerfFile.xml";
-			if (appMain._inputStream == null)
-				appMain._inputStream = new FileInputStream(suserDir);
-			if (appMain._entityXml == "") {
-				appMain._entityXml = IOUtils.toString(appMain._inputStream);
+			if (dbStresserSingleThreadTest._inputStream == null)
+				dbStresserSingleThreadTest._inputStream = new FileInputStream(suserDir);
+			if (dbStresserSingleThreadTest._entityXml == "") {
+				dbStresserSingleThreadTest._entityXml = IOUtils.toString(dbStresserSingleThreadTest._inputStream);
 			}
 			try {
 				CoalesceEntity entity = new CoalesceEntity();
-				entity.initialize(appMain._entityXml);
+				entity.initialize(dbStresserSingleThreadTest._entityXml);
 				CoalesceEntityTemplate template = CoalesceEntityTemplate
 						.create(entity);
 				_entity = template.createNewEntity();

@@ -1,4 +1,4 @@
-package com.incadence.coalesce.persister.tests;
+package com.incadence.coalesce.framework.persister.performance;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -27,7 +27,7 @@ import com.incadencecorp.coalesce.framework.objects.MissionEntity;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 import com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLPersistor;
 
-public class appThreadMain {
+public class dbStresserMultiThreadTest {
 	final static Logger _log = Logger.getLogger("TesterLog");
 	static ServerConn _serCon;
 	static PostGreSQLPersistor _psPersister;
@@ -38,9 +38,9 @@ public class appThreadMain {
 		appRunner._coalesceFramework = new CoalesceFramework();
 
 		try {
-			if (appThreadMain.OpenConnection() == true) {
+			if (dbStresserMultiThreadTest.OpenConnection() == true) {
 				appRunner._coalesceFramework
-						.initialize(appThreadMain._psPersister);
+						.initialize(dbStresserMultiThreadTest._psPersister);
 				// timeLogger = new ArrayList<TimeTrack>();
 				Thread vol1 = new Thread(new appRunner(ITERATION_LIMIT, CAPTURE_INTERVAL));
 				vol1.setName("Thread #1");
@@ -187,7 +187,7 @@ class appRunner implements Runnable {
 				this.printToFile("datafile_" + threadID + "_persistance.xml");
 			}
 		} catch (Exception ex) {
-			appThreadMain._log.log(java.util.logging.Level.SEVERE,
+			dbStresserMultiThreadTest._log.log(java.util.logging.Level.SEVERE,
 					ex.toString());
 		}
 	}
@@ -257,7 +257,7 @@ class appRunner implements Runnable {
 			System.out
 					.println("Error while trying to instantiate DocumentBuilder "
 							+ ex.toString());
-			appThreadMain._log.log(java.util.logging.Level.SEVERE,
+			dbStresserMultiThreadTest._log.log(java.util.logging.Level.SEVERE,
 					ex.toString());
 		}
 
@@ -335,7 +335,7 @@ class appRunner implements Runnable {
 			serializer.serialize(dom);
 
 		} catch (IOException ex) {
-			appThreadMain._log.log(java.util.logging.Level.SEVERE,
+			dbStresserMultiThreadTest._log.log(java.util.logging.Level.SEVERE,
 					ex.toString());
 		}
 	}
