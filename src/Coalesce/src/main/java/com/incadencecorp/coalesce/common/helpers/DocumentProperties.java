@@ -258,10 +258,9 @@ public class DocumentProperties {
     private boolean initializeJpegProperties(String fullFilename, boolean encrypted) throws ImageProcessingException,
             IOException
     {
-        // Set the latitude and longitude to out of range values as a flag to the outside code
-        // that we either could not find valid coordinates
-        setLatitude(200.0);
-        setLongitude(200.0);
+        // Set to Null
+        setLatitude(Double.NaN);
+        setLongitude(Double.NaN);
 
         Path path = Paths.get(fullFilename);
         if (Files.exists(path))
@@ -307,12 +306,16 @@ public class DocumentProperties {
     private void setGeoLocationInformation(String fullFilename, Metadata info) throws ImageProcessingException, IOException
     {
         GpsDirectory gpsDirectory = info.getDirectory(GpsDirectory.class);
-        GeoLocation location = gpsDirectory.getGeoLocation();
 
-        if (!location.isZero())
+        if (gpsDirectory != null)
         {
-            setLatitude(location.getLatitude());
-            setLongitude(location.getLongitude());
+            GeoLocation location = gpsDirectory.getGeoLocation();
+
+            if (location != null && !location.isZero())
+            {
+                setLatitude(location.getLatitude());
+                setLongitude(location.getLongitude());
+            }
         }
 
     }

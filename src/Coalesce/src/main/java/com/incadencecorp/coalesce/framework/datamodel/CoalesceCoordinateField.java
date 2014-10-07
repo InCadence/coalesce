@@ -51,4 +51,9 @@ public class CoalesceCoordinateField extends CoalesceField<Coordinate> {
         setTypedValue(value);
     }
 
+    public void setValue(double latitude, double longitude) throws CoalesceDataFormatException 
+    {
+        setTypedValue(new Coordinate(longitude, latitude));
+    }
+
 }

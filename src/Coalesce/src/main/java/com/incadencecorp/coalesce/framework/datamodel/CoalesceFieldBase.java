@@ -287,9 +287,12 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
             throw new ClassCastException("Type mismatch");
         }
 
-        assertValid(value);
+        if (!Double.isNaN(value.getX()) && !Double.isNaN(value.getY()))
+        {
+            assertValid(value);
 
-        setBaseValue(value.toText());
+            setBaseValue(value.toText());
+        }
     }
 
     /**
@@ -305,9 +308,12 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
             throw new ClassCastException("Type mismatch");
         }
 
-        assertValid(value);
+        if (!Double.isNaN(value.x) && !Double.isNaN(value.y))
+        {
+            assertValid(value);
 
-        setBaseValue(WKTWriter.toPoint(value));
+            setBaseValue(WKTWriter.toPoint(value));
+        }
     }
 
     /**
@@ -364,6 +370,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
     protected void setTypedValue(byte[] dataBytes)
     {
         if (getDataType() != ECoalesceFieldDataTypes.BINARY_TYPE)
+        if (getDataType() != ECoalesceFieldDataTypes.BinaryType && getDataType() != ECoalesceFieldDataTypes.FileType)
         {
             throw new ClassCastException("Type mismatch");
         }
@@ -734,7 +741,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
 
     private void assertValid(Coordinate location) throws CoalesceDataFormatException
     {
-        if (location == null || Math.abs(location.x) > 90 || Math.abs(location.y) > 90)
+        if (location == null || Math.abs(location.x) > 180 || Math.abs(location.y) > 90)
         {
             throw new CoalesceDataFormatException("Failed to parse coordinate value for: " + getName());
         }

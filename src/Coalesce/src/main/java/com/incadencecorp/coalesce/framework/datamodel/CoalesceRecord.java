@@ -48,6 +48,19 @@ public class CoalesceRecord extends CoalesceDataObject {
     // Factory and Initialization
     // -----------------------------------------------------------------------//
 
+    public CoalesceRecord()
+    {
+        // Do Nothing
+    }
+
+    public CoalesceRecord(CoalesceRecord record)
+    {
+        // Copy Member Variables
+        _entityRecord = record._entityRecord;
+        _parent = record._parent;
+        _childDataObjects = record._childDataObjects;
+    }
+
     /**
      * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} and ties it to its parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}.
      * 
