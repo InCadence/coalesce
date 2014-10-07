@@ -116,7 +116,7 @@ public class GraphicsHelperTest {
         File fieldFile = new File(GraphicsHelperTest.FILE_FIELD_IMAGE_PATH);
         fieldFile.getParentFile().mkdirs();
 
-        Files.copy(Paths.get("src/resources/Desert.jpg"),
+        Files.copy(Paths.get("src/test/resources/Desert.jpg"),
                    Paths.get(GraphicsHelperTest.FILE_FIELD_IMAGE_PATH),
                    StandardCopyOption.REPLACE_EXISTING);
 
@@ -145,7 +145,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleWithHeightSmallerTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleWithHeight(originalImage, 60);
 
@@ -156,7 +156,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleWithHeightLargerTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleWithHeight(originalImage, 768 * 2);
 
@@ -168,7 +168,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleWithZeroHeightTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleWithHeight(originalImage, 0);
 
@@ -180,7 +180,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleWithOneHeightTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleWithHeight(originalImage, 1);
 
@@ -192,7 +192,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleWithHeightSameTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleWithHeight(originalImage, 768);
 
@@ -215,7 +215,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleWithWidthSmallerTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleWithWidth(originalImage, 80);
 
@@ -226,7 +226,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleWithWidthLargerTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleWithWidth(originalImage, 1024 * 2);
 
@@ -238,7 +238,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleWithZeroWidthTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleWithWidth(originalImage, 0);
 
@@ -250,7 +250,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleWithOneWidthTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleWithWidth(originalImage, 1);
 
@@ -262,7 +262,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleWithWidthSameTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleWithWidth(originalImage, 1024);
 
@@ -285,7 +285,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToExactSmallerTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert_tall.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert_tall.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToExact(originalImage, 345, 234);
 
@@ -297,7 +297,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToExactLargerTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert_tall.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert_tall.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToExact(originalImage, 789, 456);
 
@@ -309,11 +309,11 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToExactWithZeroSizeTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert_tall.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert_tall.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToExact(originalImage, 0, 0);
 
-        assertEquals(1, thumbnail.getWidth());
+        org.junit.Assert.assertEquals((long)1, (long)thumbnail.getWidth());
         assertEquals(1, thumbnail.getHeight());
 
     }
@@ -321,7 +321,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToExactWithOneSizeTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert_tall.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert_tall.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToExact(originalImage, 1, 1);
 
@@ -333,7 +333,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToExactSameSizeTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert_tall.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert_tall.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToExact(originalImage, 618, 383);
 
@@ -367,7 +367,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToSmallestImageWideWidthSmallerTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToSmallest(originalImage, 768, 80);
 
@@ -380,7 +380,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToSmallestImageWideHeightSmallerTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToSmallest(originalImage, 60, 1024);
 
@@ -393,7 +393,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToSmallestImageExactTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToSmallest(originalImage, 60, 80);
 
@@ -406,7 +406,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToSmallestImageWidthZeroTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToSmallest(originalImage, 60, 0);
 
@@ -418,7 +418,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToSmallestImageHeightZeroTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToSmallest(originalImage, 0, 80);
 
@@ -430,7 +430,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToSmallestImageZeroTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToSmallest(originalImage, 0, 0);
 
@@ -442,7 +442,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToSmallestImageWideSameSizeTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToSmallest(originalImage, 768, 1024);
 
@@ -454,7 +454,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToSmallestImageWideHeightTallerTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToSmallest(originalImage, 768 * 2, 1024);
 
@@ -466,7 +466,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToSmallestImageWideWidthWiderTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToSmallest(originalImage, 768, 1024 * 2);
 
@@ -478,7 +478,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToSmallestImageWideBothLargerTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToSmallest(originalImage, 768 * 2, 1024 * 2);
 
@@ -490,7 +490,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToSmallestImageWideBothLargerHeightBiggestTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToSmallest(originalImage, 768 * 3, 1024 * 2);
 
@@ -502,7 +502,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToSmallestImageWideBothLargerWidthBiggestTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToSmallest(originalImage, 768 * 2, 1024 * 3);
 
@@ -514,7 +514,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToSmallestImageTallWidthSmallerTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert_Tall.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert_Tall.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToSmallest(originalImage, 618, 37);
 
@@ -526,7 +526,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToSmallestImageTallHeightSmallerTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert_Tall.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert_Tall.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToSmallest(originalImage, 60, 383);
 
@@ -538,7 +538,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToSmallestImageTallImageExactTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert_Tall.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert_Tall.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToSmallest(originalImage, 60, 37);
 
@@ -550,7 +550,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToSmallestImageTallImageWidthZeroTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert_Tall.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert_Tall.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToSmallest(originalImage, 60, 0);
 
@@ -562,7 +562,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToSmallestImageTallImageHeightZeroTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert_Tall.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert_Tall.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToSmallest(originalImage, 0, 37);
 
@@ -574,7 +574,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToSmallestImageTallImageZeroTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert_Tall.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert_Tall.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToSmallest(originalImage, 0, 0);
 
@@ -586,7 +586,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToSmallestImageTallSameSizeTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert_Tall.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert_Tall.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToSmallest(originalImage, 618, 383);
 
@@ -598,7 +598,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToSmallestImageTallHeightTallerTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert_Tall.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert_Tall.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToSmallest(originalImage, 618 * 2, 383);
 
@@ -610,7 +610,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToSmallestImageTallWidthWiderTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert_Tall.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert_Tall.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToSmallest(originalImage, 618, 383 * 2);
 
@@ -622,7 +622,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToSmallestImageTallBothLargerTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert_Tall.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert_Tall.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToSmallest(originalImage, 618 * 2, 383 * 2);
 
@@ -634,7 +634,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToSmallestImageTallBothLargerHeightBiggestTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert_Tall.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert_Tall.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToSmallest(originalImage, 618 * 3, 383 * 2);
 
@@ -646,7 +646,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToSmallestImageTallBothLargerWidthBiggestTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert_Tall.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert_Tall.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToSmallest(originalImage, 618 * 2, 383 * 3);
 
@@ -669,7 +669,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToLargestImageWideWidthSmallerTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToLargest(originalImage, 768, 80);
 
@@ -681,7 +681,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToLargestImageWideHeightSmallerTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToLargest(originalImage, 60, 1024);
 
@@ -693,7 +693,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToLargestImageExactTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToLargest(originalImage, 60, 80);
 
@@ -705,7 +705,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToLargestImageWidthZeroTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToLargest(originalImage, 60, 0);
 
@@ -717,7 +717,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToLargestImageHeightZeroTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToLargest(originalImage, 0, 80);
 
@@ -729,7 +729,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToLargestImageZeroTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToLargest(originalImage, 0, 0);
 
@@ -741,7 +741,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToLargestImageWideHeightTallerTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToLargest(originalImage, 768 * 2, 1024);
 
@@ -753,7 +753,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToLargestImageWideWidthWiderTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToLargest(originalImage, 768, 1024 * 2);
 
@@ -765,7 +765,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToLargestImageWideBothLargerTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToLargest(originalImage, 768 * 2, 1024 * 2);
 
@@ -777,7 +777,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToLargestImageWideBothLargerHeightBiggestTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToLargest(originalImage, 768 * 3, 1024 * 2);
 
@@ -789,7 +789,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToLargestImageWideBothLargerWidthBiggestTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToLargest(originalImage, 768 * 2, 1024 * 3);
 
@@ -801,7 +801,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToLargestImageTallWidthSmallerTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert_Tall.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert_Tall.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToLargest(originalImage, 618, 37);
 
@@ -813,7 +813,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToLargestImageTallHeightSmallerTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert_Tall.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert_Tall.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToLargest(originalImage, 60, 383);
 
@@ -825,7 +825,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToLargestImageTallImageExactTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert_Tall.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert_Tall.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToLargest(originalImage, 60, 37);
 
@@ -837,7 +837,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToLargestImageTallImageWidthZeroTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert_Tall.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert_Tall.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToLargest(originalImage, 60, 0);
 
@@ -849,7 +849,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToLargestImageTallImageHeightZeroTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert_Tall.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert_Tall.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToLargest(originalImage, 0, 37);
 
@@ -861,7 +861,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToLargestImageTallImageZeroTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert_Tall.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert_Tall.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToLargest(originalImage, 0, 0);
 
@@ -873,7 +873,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToLargestImageTallSameSizeTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert_Tall.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert_Tall.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToLargest(originalImage, 618, 383);
 
@@ -885,7 +885,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToLargestImageTallHeightTallerTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert_Tall.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert_Tall.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToLargest(originalImage, 618 * 2, 383);
 
@@ -897,7 +897,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToLargestImageTallWidthWiderTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert_Tall.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert_Tall.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToLargest(originalImage, 618, 383 * 2);
 
@@ -909,7 +909,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToLargestImageTallBothLargerTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert_Tall.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert_Tall.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToLargest(originalImage, 618 * 2, 383 * 2);
 
@@ -921,7 +921,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToLargestImageTallBothLargerHeightBiggestTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert_Tall.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert_Tall.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToLargest(originalImage, 618 * 3, 383 * 2);
 
@@ -933,7 +933,7 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToLargestImageTallBothLargerWidthBiggestTest() throws IOException
     {
-        BufferedImage originalImage = ImageIO.read(new File("src/resources/desert_Tall.jpg"));
+        BufferedImage originalImage = ImageIO.read(new File("src/test/resources/desert_Tall.jpg"));
 
         BufferedImage thumbnail = GraphicsHelper.resampleToLargest(originalImage, 618 * 2, 383 * 3);
 
@@ -1013,7 +1013,7 @@ public class GraphicsHelperTest {
 
         CoalesceRecord record = recordset.addNew();
 
-        record.setFieldValue("File", Files.readAllBytes(Paths.get("src/resources/desert.jpg")), "desert.jpg");
+        record.setFieldValue("File", Files.readAllBytes(Paths.get("src/test/resources/desert.jpg")), "desert.jpg");
 
         @SuppressWarnings("unchecked")
         CoalesceField<byte[]> file = (CoalesceField<byte[]>) record.getFieldByName("File");

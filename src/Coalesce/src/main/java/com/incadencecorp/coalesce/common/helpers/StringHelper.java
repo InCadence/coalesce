@@ -18,7 +18,7 @@ package com.incadencecorp.coalesce.common.helpers;
  -----------------------------------------------------------------------------*/
 
 /**
- * Provides helper methods for manipulating and testing <@link String> values
+ * Provides helper methods for manipulating and testing {@link String} values
  * 
  * @author InCadence
  *
@@ -51,10 +51,10 @@ public class StringHelper {
     }
 
     /**
-     * Returns the new <@link String> value with all leading and trailing parentheses removed.
+     * Returns the new {@link String} value with all leading and trailing parentheses removed.
      * 
      * @param value the string to be trimmed
-     * @return the new <@link String> value with all leading and trailing parentheses removed.
+     * @return the new {@link String} value with all leading and trailing parentheses removed.
      */
     public static String trimParentheses(String value)
     {

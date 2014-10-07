@@ -23,8 +23,8 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({ DocumentPropertiesTest.class, DocumentThumbnailHelperTest.class, EntityLinkHelperTest.class,
-               FileHelperTest.class, GUIDHelperTest.class, JodaDateTimeHelperTest.class, MimeHelperTest.class,
-               StringHelperTest.class, XmlHelperTest.class })
+               FileHelperTest.class, GraphicsHelperTest.class, GUIDHelperTest.class, JodaDateTimeHelperTest.class,
+               MimeHelperTest.class, StringHelperTest.class, XmlHelperTest.class })
 public class AllCommonHelpersTests {
 
 }

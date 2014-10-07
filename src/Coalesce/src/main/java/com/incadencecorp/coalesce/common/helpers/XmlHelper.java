@@ -53,11 +53,11 @@ import org.xml.sax.SAXException;
 public class XmlHelper {
 
     /**
-     * Return the <@link String> that contains the serialized representation of the provided object using the 'ISO-8859-1'
+     * Return the {@link String} that contains the serialized representation of the provided object using the 'ISO-8859-1'
      * encoding format.
      * 
      * @param obj the object to be serialized.
-     * @return the <@link String> that contains the serialized representation of the object.
+     * @return the {@link String} that contains the serialized representation of the object.
      */
     public static String serialize(Object obj)
     {
@@ -81,12 +81,12 @@ public class XmlHelper {
     }
 
     /**
-     * Return the <@link String> that contains the serialized representation of the provided object using the specified
+     * Return the {@link String} that contains the serialized representation of the provided object using the specified
      * encoding format.
      * 
      * @param obj the object to be serialized.
      * @param encodingFormat the encoding format to use.
-     * @return the <@link String> that contains the serialized representation of the object.
+     * @return the {@link String} that contains the serialized representation of the object.
      */
     public static String serialize(Object obj, String encodingFormat)
     {
@@ -165,7 +165,7 @@ public class XmlHelper {
     }
 
     /**
-     * Returns the attribute with the specified name in the provided node as a <@link org.joda.time.DateTime>. If the
+     * Returns the attribute with the specified name in the provided node as a {@link org.joda.time.DateTime}. If the
      * attribute name cannot be found then <code>null</code> is returned.
      * 
      * @param xmlNode the node containing the attribute.

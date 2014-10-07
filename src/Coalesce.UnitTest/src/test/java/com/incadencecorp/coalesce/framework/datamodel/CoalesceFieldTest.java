@@ -1205,10 +1205,10 @@ public class CoalesceFieldTest {
         CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
 
-        byte[] dataBytes = Files.readAllBytes(Paths.get("src\\resources\\TestDocument.docx"));
+        byte[] dataBytes = Files.readAllBytes(Paths.get("src\\test\\resources\\TestDocument.docx"));
 
         DocumentProperties docProps = new DocumentProperties();
-        docProps.initialize("src\\resources\\TestDocument.docx");
+        docProps.initialize("src\\test\\resources\\TestDocument.docx");
 
         field.setTypedValue(dataBytes, docProps);
 
@@ -1239,10 +1239,10 @@ public class CoalesceFieldTest {
         CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
 
-        byte[] dataBytes = Files.readAllBytes(Paths.get("src\\resources\\TestDocument.docx"));
+        byte[] dataBytes = Files.readAllBytes(Paths.get("src\\test\\resources\\TestDocument.docx"));
 
         DocumentProperties docProps = new DocumentProperties();
-        docProps.initialize("src\\resources\\TestDocument.docx");
+        docProps.initialize("src\\test\\resources\\TestDocument.docx");
 
         field.setTypedValue(dataBytes, docProps);
 
@@ -1461,7 +1461,7 @@ public class CoalesceFieldTest {
         CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
 
         DocumentProperties docProps = new DocumentProperties();
-        docProps.initialize("src\\resources\\desert.jpg");
+        docProps.initialize("src\\test\\resources\\desert.jpg");
 
         field.setTypedValue(new Coordinate(docProps.getLongitude(), docProps.getLatitude()));
         assertEquals("POINT ( 8.67243350003624 49.39875240003339 )", field.getBaseValue());

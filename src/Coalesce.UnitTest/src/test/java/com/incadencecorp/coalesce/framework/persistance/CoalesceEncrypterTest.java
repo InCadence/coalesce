@@ -47,7 +47,7 @@ public class CoalesceEncrypterTest {
         String passPhrase = CoalesceSettings.getPassPhrase();
         _aesCrypto = new CoalesceEncrypter(passPhrase);
 
-        _dotNetEncryptedBytes = Files.readAllBytes(Paths.get("src\\resources\\dotNetEncryptedTest.txt"));
+        _dotNetEncryptedBytes = Files.readAllBytes(Paths.get("src\\test\\resources\\dotNetEncryptedTest.txt"));
 
     }
 
