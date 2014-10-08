@@ -274,7 +274,7 @@ public class CoalesceFieldDefinition extends CoalesceDataObject implements ICoal
      * 
      * @return boolean indicator of success/failure
      */
-    public boolean initialize(CoalesceRecordset parent, Fielddefinition fieldDefinition)
+    protected boolean initialize(CoalesceRecordset parent, Fielddefinition fieldDefinition)
     {
 
         // Set References

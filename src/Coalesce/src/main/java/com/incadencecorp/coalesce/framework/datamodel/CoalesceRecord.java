@@ -104,7 +104,7 @@ public class CoalesceRecord extends CoalesceDataObject {
      * @param record Record that this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} will be based on
      * @return boolean indicator of success/failure
      */
-    public boolean initialize(CoalesceRecordset parent, Record record)
+    protected boolean initialize(CoalesceRecordset parent, Record record)
     {
         if (parent == null) throw new NullArgumentException("parent");
         if (record == null) throw new NullArgumentException("record");

@@ -77,7 +77,7 @@ public class CoalesceLinkage extends CoalesceDataObject implements ICoalesceLink
      * @param linkage Linkage, the linkage describing a relationship between two classes
      * @return boolean indicator of success/failure
      */
-    public boolean initialize(CoalesceLinkageSection parent, Linkage linkage)
+    protected boolean initialize(CoalesceLinkageSection parent, Linkage linkage)
     {
         if (parent == null) throw new NullArgumentException("parent");
         if (linkage == null) throw new NullArgumentException("linkage");

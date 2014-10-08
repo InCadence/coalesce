@@ -148,7 +148,7 @@ public class CoalesceSection extends CoalesceDataObject {
      * @param section that the new XsdSection will be based off of
      * @return boolean indicator of success/failure
      */
-    public boolean initialize(CoalesceEntity parent, Section section)
+    protected boolean initialize(CoalesceEntity parent, Section section)
     {
 
         if (parent == null) throw new NullArgumentException("parent");

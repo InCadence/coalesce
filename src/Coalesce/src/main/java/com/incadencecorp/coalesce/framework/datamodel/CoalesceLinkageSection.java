@@ -91,7 +91,7 @@ public class CoalesceLinkageSection extends CoalesceDataObject {
      *            base this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection} on
      * @return boolean indicator of success/failure
      */
-    public boolean initialize(CoalesceEntity parent)
+    protected boolean initialize(CoalesceEntity parent)
     {
         if (parent == null) throw new NullArgumentException("parent");
 

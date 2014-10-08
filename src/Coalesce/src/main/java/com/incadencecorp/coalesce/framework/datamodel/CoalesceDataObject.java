@@ -228,13 +228,16 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
     @Override
     public void setLastModified(DateTime value)
     {
-        // Set Last Modified
-        this.setObjectLastModified(value);
-
-        // Bubble Up to Parent
-        if (this._parent != null)
+        if (value != null)
         {
-            this._parent.setLastModified(value);
+            // Set Last Modified
+            this.setObjectLastModified(value);
+
+            // Bubble Up to Parent
+            if (this._parent != null)
+            {
+                this._parent.setLastModified(value);
+            }
         }
     }
 

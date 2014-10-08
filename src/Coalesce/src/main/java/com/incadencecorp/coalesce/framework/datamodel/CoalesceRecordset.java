@@ -123,7 +123,7 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
      * @param recordset Recordset that this XsdRecordset will be based on
      * @return boolean indicator of success/failure
      */
-    public boolean initialize(CoalesceSection parent, Recordset recordset)
+    protected boolean initialize(CoalesceSection parent, Recordset recordset)
     {
 
         if (parent == null) throw new NullArgumentException("parent");

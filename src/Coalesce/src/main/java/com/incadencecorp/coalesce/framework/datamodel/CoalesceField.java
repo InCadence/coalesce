@@ -67,7 +67,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
      * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}, belonging to the parent
      *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}, resulting from the fieldDefinition
      */
-    public static CoalesceField<?> create(CoalesceRecord parent, CoalesceFieldDefinition fieldDefinition)
+    protected static CoalesceField<?> create(CoalesceRecord parent, CoalesceFieldDefinition fieldDefinition)
     {
 
         Field newEntityField = new Field();
@@ -244,7 +244,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
      * 
      * @return boolean indicator of success/failure
      */
-    public boolean initialize(CoalesceRecord parent, Field field)
+    protected boolean initialize(CoalesceRecord parent, Field field)
     {
 
         // Set References
@@ -786,7 +786,6 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     protected void setObjectStatus(ECoalesceDataObjectStatus status)
     {
         _entityField.setStatus(status.getLabel());
-
     }
 
     // -----------------------------------------------------------------------//
@@ -798,7 +797,6 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
         // Does the new value differ from the existing?
         if ((oldValue == null && newValue != null) || !oldValue.equals(newValue))
         {
-
             // Yes; should we create a FieldHistory entry to reflect the
             // change?
             // We create FieldHistory entry if History is not Suspended; OR
@@ -806,31 +804,24 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
             // Value is unset
             if (!getSuspendHistory())
             {
-
                 switch (getDataType()) {
-
                 case BINARY_TYPE:
                 case FILE_TYPE:
                     // Don't Create History Entry for these types
                     break;
                 default:
-
-                    // Does LastModified = DateCreated?
+                    // Is Original Value?
                     if (getLastModified().compareTo(getDateCreated()) != 0)
                     {
-
                         // No; Create History Entry
                         setPreviousHistoryKey(CoalesceFieldHistory.create(this));
                     }
-
                 }
 
+                // Set LastModified
+                setLastModified(JodaDateTimeHelper.nowInUtc().plusSeconds(1));
             }
-
-            // Set LastModified
-            DateTime utcNow = JodaDateTimeHelper.nowInUtc();
-            if (utcNow != null) setLastModified(utcNow);
-
+            
         }
     }
 

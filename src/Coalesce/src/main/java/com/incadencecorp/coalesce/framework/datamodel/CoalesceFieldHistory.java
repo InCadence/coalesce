@@ -127,7 +127,7 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> {
      * 
      * @return boolean indicator of success/failure
      */
-    public boolean initialize(CoalesceField<?> parent, Fieldhistory fieldHistory)
+    protected boolean initialize(CoalesceField<?> parent, Fieldhistory fieldHistory)
     {
 
         // Set References
