@@ -1,8 +1,8 @@
 package com.incadencecorp.coalesce.framework.objects.Photos;
 
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceBinaryField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceCoordinateField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceDateTimeField;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceFileField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceIntegerField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceStringField;
@@ -19,9 +19,9 @@ public class PhotoRecord extends CoalesceRecord {
         super(record);
     }
 
-    public CoalesceBinaryField getPhoto()
+    public CoalesceFileField getPhoto()
     {
-        return (CoalesceBinaryField) this.getFieldByName("Photo");
+        return (CoalesceFileField) this.getFieldByName("Photo");
     }
 
     public CoalesceStringField getOriginalFilename()

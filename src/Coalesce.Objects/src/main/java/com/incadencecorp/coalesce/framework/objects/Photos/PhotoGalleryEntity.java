@@ -8,7 +8,6 @@ import com.drew.imaging.ImageProcessingException;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceCryptoException;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.helpers.DocumentProperties;
-import com.incadencecorp.coalesce.common.helpers.FileHelper;
 import com.incadencecorp.coalesce.common.runtime.CoalesceSettings;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
@@ -128,27 +127,12 @@ public class PhotoGalleryEntity extends ActionBaseEntity {
 
     public PhotoRecord addPhoto(DocumentProperties properties) throws CoalesceDataFormatException
     {
-        try
-        {
-            // Load Photo
-            byte[] bytes = FileHelper.getFileAsByteArray(properties.getFullFilename());
 
-            // Create Record
-            return addPhoto(bytes, properties);
-        }
-        catch (IOException e)
-        {
-            return null;
-        }
-    }
-
-    public PhotoRecord addPhoto(byte[] bytes, DocumentProperties properties) throws CoalesceDataFormatException
-    {
         // Create Record
         PhotoRecord record = new PhotoRecord(_photographRecordset.addNew());
 
         // Set Settings
-        record.getPhoto().setValue(bytes);
+        record.getPhoto().setValue(properties);
         record.getOriginalFilename().setValue(properties.getFilename());
         record.getHeight().setValue(properties.getImageHeight());
         record.getWidth().setValue(properties.getImageWidth());
