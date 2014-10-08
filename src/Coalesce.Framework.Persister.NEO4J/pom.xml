@@ -3,7 +3,6 @@
   <groupId>Coalesce.Framework.Persister.NEO4J</groupId>
   <artifactId>Coalesce.Framework.Persister.NEO4J</artifactId>
   <build>
-    <sourceDirectory>src</sourceDirectory>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>

@@ -3,7 +3,6 @@
   <groupId>Coalesce.Framework.Persister.SQLServer</groupId>
   <artifactId>Coalesce.Framework.Persister.SQLServer</artifactId>
   <build>
-    <sourceDirectory>src</sourceDirectory>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
