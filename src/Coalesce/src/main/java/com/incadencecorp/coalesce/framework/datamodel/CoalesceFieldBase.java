@@ -1,5 +1,6 @@
 package com.incadencecorp.coalesce.framework.datamodel;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -10,14 +11,18 @@ import java.util.UUID;
 import org.apache.commons.lang.LocaleUtils;
 import org.apache.commons.lang.NullArgumentException;
 import org.apache.xerces.impl.dv.util.Base64;
+import org.jdom2.JDOMException;
 import org.joda.time.DateTime;
 
+import com.drew.imaging.ImageProcessingException;
 import com.incadencecorp.coalesce.common.classification.Marking;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceCryptoException;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.helpers.DocumentProperties;
 import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
+import com.incadencecorp.coalesce.common.runtime.CoalesceSettings;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.MultiPoint;
@@ -144,6 +149,40 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
     /*--------------------------------------------------------------------------
     Public Functions
     --------------------------------------------------------------------------*/
+
+    public String getCoalesceFilename()
+    {
+        if (getDataType() != ECoalesceFieldDataTypes.FILE_TYPE) throw new ClassCastException("Type mismatch");
+
+        return GUIDHelper.removeBrackets(getKey()) + "." + getExtension();
+    }
+
+    public String getCoalesceFullFilename()
+    {
+        return getCoalesceFullFilename(getCoalesceFilename());
+    }
+
+    public String getCoalesceFilenameWithLastModifiedTag()
+    {
+        return getCoalesceFilenameWithLastModifiedTag(getCoalesceFullFilename());
+    }
+
+    public String getCoalesceThumbnailFilename()
+    {
+        if (getDataType() != ECoalesceFieldDataTypes.FILE_TYPE) throw new ClassCastException("Type mismatch");
+
+        return GUIDHelper.removeBrackets(getKey()) + "_thumb.jpg";
+    }
+
+    public String getCoalesceThumbnailFullFilename()
+    {
+        return getCoalesceFullFilename(getCoalesceThumbnailFilename());
+    }
+
+    public String getCoalesceThumbnailFilenameWithLastModifiedTag()
+    {
+        return getCoalesceFilenameWithLastModifiedTag(getCoalesceThumbnailFullFilename());
+    }
 
     /**
      * Returns the field value with the classification marking.
@@ -373,8 +412,8 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
         {
             throw new ClassCastException("Type mismatch");
         }
-        String value = Base64.encode(dataBytes);
-        setBaseValue(value);
+
+        setBaseValue(Base64.encode(dataBytes));
         setSize(dataBytes.length);
     }
 
@@ -388,8 +427,14 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
      */
     protected void setTypedValue(byte[] dataBytes, String filename, String extension, String mimeType)
     {
-        String value = Base64.encode(dataBytes);
-        setBaseValue(value);
+        if (getDataType() != ECoalesceFieldDataTypes.BINARY_TYPE && getDataType() != ECoalesceFieldDataTypes.FILE_TYPE)
+        {
+            throw new ClassCastException("Type mismatch");
+        }
+
+        if (dataBytes == null) throw new NullArgumentException("dataBytes");
+
+        setBaseValue(Base64.encode(dataBytes));
         setFilename(filename);
         setExtension(extension);
         setMimeType(mimeType);
@@ -406,6 +451,11 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
      */
     protected void setTypedValue(String filename, String extension, String mimeType, String hash)
     {
+        if (getDataType() != ECoalesceFieldDataTypes.FILE_TYPE)
+        {
+            throw new ClassCastException("Type mismatch");
+        }
+
         setFilename(filename);
         setExtension(extension);
         setMimeType(mimeType);
@@ -426,13 +476,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
             throw new ClassCastException("Type mismatch");
         }
 
-        // Set Bytes
-        setBaseValue(Base64.encode(dataBytes));
-        setFilename(docProps.getFilename());
-        setExtension(docProps.getExtension());
-        setMimeType(docProps.getMimeType());
-        setSize(dataBytes.length);
-
+        setTypedValue(dataBytes, docProps.getFilename(), docProps.getExtension(), docProps.getMimeType());
     }
 
     /**
@@ -452,15 +496,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
         Path path = Paths.get(docProps.getFullFilename());
         if (Files.exists(path))
         {
-            // Read Bytes
-            byte[] fileBytes = Files.readAllBytes(path);
-
-            // Set Bytes
-            setBaseValue(Base64.encode(fileBytes));
-            setFilename(docProps.getFilename());
-            setExtension(docProps.getExtension());
-            setMimeType(docProps.getMimeType());
-            setSize(fileBytes.length);
+            setTypedValue(Files.readAllBytes(path), docProps);
         }
     }
 
@@ -734,10 +770,69 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
         }
     }
 
+    /**
+     * Returns the document properties of a File type.
+     * 
+     * @return DocumentProperties The properties of the file stored within the Coalesce Entity.
+     * 
+     * @throws ClassCastException
+     */
+    protected DocumentProperties getFileValue() throws CoalesceDataFormatException
+    {
+        if (getDataType() != ECoalesceFieldDataTypes.FILE_TYPE)
+        {
+            throw new ClassCastException("Type mismatch");
+        }
+
+        try
+        {
+            // Initialize Properties from Filename
+            DocumentProperties properties = new DocumentProperties();
+            properties.initialize(getFilename());
+
+            return properties;
+        }
+        catch (ImageProcessingException | CoalesceCryptoException | IOException | JDOMException e)
+        {
+            throw new CoalesceDataFormatException("Invalid File");
+        }
+    }
+
     /*--------------------------------------------------------------------------
     Private Functions
     --------------------------------------------------------------------------*/
 
+    private String getCoalesceFullFilename(String fileName)
+    {
+        // Add Sub Directory?
+        if (CoalesceSettings.getSubDirectoryLength() > 0 && CoalesceSettings.getSubDirectoryLength() < fileName.length())
+        {
+            fileName = CoalesceSettings.getBinaryFileStoreBasePath() + File.separator
+                    + fileName.substring(0, CoalesceSettings.getSubDirectoryLength()) + File.separator + fileName;
+        }
+        else
+        {
+            fileName = CoalesceSettings.getBinaryFileStoreBasePath() + File.separator + fileName;
+        }
+
+        return fileName;
+    }
+    
+    private String getCoalesceFilenameWithLastModifiedTag(String fileName)
+    {
+        try
+        {
+            File file = new File(getCoalesceFullFilename());
+
+            return fileName + "?" + file.lastModified();
+        }
+        catch (Exception ex)
+        {
+            // Return Now
+            return fileName + "?" + JodaDateTimeHelper.nowInUtc().getMillis();
+        }
+    }
+    
     private void assertValid(Coordinate location) throws CoalesceDataFormatException
     {
         if (location == null || Math.abs(location.x) > 180 || Math.abs(location.y) > 90)
