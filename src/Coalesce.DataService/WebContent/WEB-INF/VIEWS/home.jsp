@@ -117,7 +117,7 @@ select count(*) from coalesceentity;
 	
 	<br />
 	<br />jdbc/devsys
-	<table cellspacing="0" cellpadding="0">
+	<table style="border-collapse: collapse;0px; padding: 0px">
 		<tr>
 			<td>View Service WSDL URL</td>
 			<td><button class="button" type="submit" onclick="showWSDL()">Show

@@ -185,7 +185,7 @@ public class Neo4JPersistor extends CoalescePersisterBase {
         return false;
     }
 
-    protected String getValues(CoalesceDataObject dataObject, Map values)
+    protected String getValues(CoalesceDataObject dataObject, Map<?, ?> values)
     {
         switch (dataObject.getStatus()) {
         case ACTIVE:
@@ -204,6 +204,8 @@ public class Neo4JPersistor extends CoalescePersisterBase {
                     break;
                 }
             }
+		default:
+			break;
         }
         return null;
     }

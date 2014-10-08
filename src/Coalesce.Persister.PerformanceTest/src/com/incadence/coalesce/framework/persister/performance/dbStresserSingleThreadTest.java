@@ -66,7 +66,6 @@ public class dbStresserSingleThreadTest  {
 	public static void main(String[] args) {
 		System.out.println("Performance Test Inserting " + _ITERATION_LIMIT
 				+ " XsdEntities Started **..** ");
-		String userDir = System.getProperty("user.dir");
 		dbStresserSingleThreadTest._coalesceFramework = new CoalesceFramework();
 		try {
 			if (OpenConnection() == true) {

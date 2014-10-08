@@ -3,6 +3,10 @@ package com.incadence.coalesce.framework.persister.performance;
 import java.io.Serializable;
 
 public class TimeTrack implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String _appStartTime;
 	private String _appStopTime;
 	private String _entityID;

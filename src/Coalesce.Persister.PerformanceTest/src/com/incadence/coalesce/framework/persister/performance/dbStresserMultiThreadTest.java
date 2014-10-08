@@ -114,7 +114,6 @@ class appRunner implements Runnable {
 	ServerConn serCon;
 
 	static CoalesceFramework _coalesceFramework;
-	private String MODULE_NAME = "Coalesce.Persister.PerformanceTester";
 	private String _threadID;
 
 	public String getThreadID() {
@@ -148,10 +147,11 @@ class appRunner implements Runnable {
 		try {
 			timeLogger = new ArrayList<TimeTrack>();
 			this.setThreadID(String.valueOf(Thread.currentThread().toString()));
+			Thread.currentThread();
 			outConsoleData(Thread.currentThread().getId(),
 					"************* STARTING THREAD # "
 							+ Thread.currentThread().getName() + " of "
-							+ Thread.currentThread().activeCount()
+							+ Thread.activeCount()
 							+ " *************", false);
 			TimeTrack _timeTrack;
 			String startTime = this.getCurrentTime();
@@ -192,13 +192,13 @@ class appRunner implements Runnable {
 		}
 	}
 
-	private void outConsoleData(int cntValue, String msg) {
-		System.out.println(msg + getCurrentTime() + "\t" + cntValue);
-	}
-
-	private void outConsoleData(Thread cntValue, String msg) {
-		System.out.println(msg + getCurrentTime() + "\t" + cntValue);
-	}
+//	private void outConsoleData(int cntValue, String msg) {
+//		System.out.println(msg + getCurrentTime() + "\t" + cntValue);
+//	}
+//
+//	private void outConsoleData(Thread cntValue, String msg) {
+//		System.out.println(msg + getCurrentTime() + "\t" + cntValue);
+//	}
 
 	private void outConsoleData(long id, String msg) {
 		System.out.println(msg + getCurrentTime() + "\t" + id);
