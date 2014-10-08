@@ -20,21 +20,6 @@ package com.incadencecorp.coalesce.framework.datamodel;
 
 public class CoalesceStringField extends CoalesceField<String> {
 
-    // -----------------------------------------------------------------------//
-    // Factory and Initialization
-    // -----------------------------------------------------------------------//
-
-    /**
-     * 
-     * @param parent
-     * @param fieldDefinition
-     * @return
-     */
-    public static CoalesceStringField create(CoalesceRecord parent, CoalesceFieldDefinition fieldDefinition)
-    {
-        return (CoalesceStringField) CoalesceField.create(parent,  fieldDefinition);
-    }
-    
     /*
      * (non-Javadoc)
      * 

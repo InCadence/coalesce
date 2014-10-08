@@ -117,7 +117,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
 
         case FILE_TYPE:
             return new CoalesceFileField();
-            
+
         case BINARY_TYPE:
             return new CoalesceBinaryField();
 
@@ -726,51 +726,18 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
      * @param marking classification marking of the field
      * @param user user making the change
      * @param ip user ip responsible for the change
+     * @throws CoalesceDataFormatException
      */
-    public void change(String value, String marking, String user, String ip)
+    public void change(T value, String marking, String user, String ip) throws CoalesceDataFormatException
     {
         // Does the new value differ from the existing?
         if (!(getBaseValue().equals(value) && getClassificationMarking().equals(marking)))
         {
-
-            // Yes; should we create a FieldHistory entry to reflect the
-            // change?
-            // We create FieldHistory entry if History is not Suspended; OR
-            // if DataType is binary; OR if DateCreated=LastModified and
-            // Value is unset
-            if (!getSuspendHistory())
-            {
-
-                // Does LastModified = DateCreated?
-                if (getLastModified().compareTo(getDateCreated()) != 0)
-                {
-                    // CoalesceFieldHistory to create another.
-                    setPreviousHistoryKey(CoalesceFieldHistory.create(this));
-                }
-            }
-
             // Change Values
-            if (getDataType() == ECoalesceFieldDataTypes.DATE_TIME_TYPE && !StringHelper.isNullOrEmpty(value))
-            {
-
-                DateTime valueDate = JodaDateTimeHelper.fromXmlDateTimeUTC(value);
-
-                setTypedValue(valueDate);
-
-            }
-            else
-            {
-                setBaseValue(value);
-            }
-
+            setValue(value);
             setClassificationMarking(marking);
             setModifiedBy(user);
             setModifiedByIP(ip);
-
-            // Set LastModified
-            DateTime utcNow = JodaDateTimeHelper.nowInUtc().plusSeconds(1);
-            if (utcNow != null) setLastModified(utcNow);
-
         }
     }
 
@@ -821,9 +788,9 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
                 }
 
                 // Set LastModified
-                setLastModified(JodaDateTimeHelper.nowInUtc().plusSeconds(1));
+                setLastModified(JodaDateTimeHelper.nowInUtc());//.plusSeconds(1));
             }
-            
+
         }
     }
 

@@ -148,7 +148,7 @@ public class CoalesceRecord extends CoalesceDataObject {
     }
 
     @Override
-    public void setObjectKey(String value)
+    protected void setObjectKey(String value)
     {
         _entityRecord.setKey(value);
     }
@@ -301,28 +301,24 @@ public class CoalesceRecord extends CoalesceDataObject {
     @Override
     public DateTime getDateCreated()
     {
-        // return new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityRecord.getDatecreated());
-        return _entityRecord.getDatecreated();
+         return _entityRecord.getDatecreated();
     }
 
     @Override
     public void setDateCreated(DateTime value)
     {
-        // _entityRecord.setDatecreated(new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
         _entityRecord.setDatecreated(value);
     }
 
     @Override
     public DateTime getLastModified()
     {
-        // return new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityRecord.getLastmodified());
         return _entityRecord.getLastmodified();
     }
 
     @Override
     protected void setObjectLastModified(DateTime value)
     {
-        // _entityRecord.setLastmodified(new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
         _entityRecord.setLastmodified(value);
     }
 
