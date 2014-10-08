@@ -135,6 +135,7 @@ public class CoalesceFieldHistoryTest {
         entity.setCurrentStatus(EActionStatuses.ExploitationPending);
 
         // Verify
+        assertEquals(entity.getCurrentStatusHistory().get(0).getValue(), EActionStatuses.CollectionPending.getLabel());
         assertTrue(entity.getCurrentStatusHistory().size() == 1);
 
         // Create New Action from entity
@@ -143,8 +144,6 @@ public class CoalesceFieldHistoryTest {
         
         // Change Value (Same Value no History Should be Created)
         entity2.setCurrentStatus(EActionStatuses.ExploitationPending);
-        
-        
         
         // Verify 
         assertTrue(entity2.getCurrentStatusHistory().size() == 1);
@@ -156,7 +155,7 @@ public class CoalesceFieldHistoryTest {
         
         // Verify
         assertTrue(entity2.getCurrentStatusHistory().size() == 2);
-        assertTrue(EActionStatuses.fromLabel(entity2.getCurrentStatusHistory().get(0).getValue()) == EActionStatuses.ExploitationPending);
+        assertEquals(entity2.getCurrentStatusHistory().get(0).getValue(), EActionStatuses.ExploitationPending.getLabel());
     }
     
     @Test
@@ -165,7 +164,7 @@ public class CoalesceFieldHistoryTest {
         // Create New Mission
         MissionEntity entity = new MissionEntity();
         entity.initialize();
-
+        
         // Change Value (History Should not be Created)
         entity.getMissionName().setValue("No history should be added");
 
