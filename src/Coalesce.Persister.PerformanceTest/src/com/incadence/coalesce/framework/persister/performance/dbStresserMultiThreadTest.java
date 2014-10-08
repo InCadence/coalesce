@@ -1,8 +1,8 @@
 package com.incadence.coalesce.framework.persister.performance;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -13,11 +13,12 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.XMLSerializer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
+import org.w3c.dom.ls.DOMImplementationLS;
+import org.w3c.dom.ls.LSOutput;
+import org.w3c.dom.ls.LSSerializer;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
@@ -33,8 +34,8 @@ public class dbStresserMultiThreadTest {
 	static PostGreSQLPersistor _psPersister;
 
 	public static void main(String[] args) {
-		int ITERATION_LIMIT = 100;
-		int CAPTURE_INTERVAL=10;
+		int ITERATION_LIMIT = 10;
+		int CAPTURE_INTERVAL=1;
 		appRunner._coalesceFramework = new CoalesceFramework();
 
 		try {
@@ -323,20 +324,25 @@ class appRunner implements Runnable {
 
 	}
 
-	private void printToFile(String fileName) {
-		try {
-			// print
-			@SuppressWarnings("deprecation")
-			OutputFormat format = new OutputFormat(dom);
-			format.setIndenting(true);
-			@SuppressWarnings("deprecation")
-			XMLSerializer serializer = new XMLSerializer(new FileOutputStream(
-					new File(fileName)), format);
-			serializer.serialize(dom);
 
+	private void printToFile(String fileName) throws IOException {
+		FileOutputStream fileOutputStream = null;
+		try {
+			DOMImplementationLS DOMiLS = (DOMImplementationLS) (dom
+					.getImplementation()).getFeature("LS", "3.0");
+			LSOutput lsoOutput = DOMiLS.createLSOutput();
+			fileOutputStream = new FileOutputStream(fileName);
+			lsoOutput.setByteStream((OutputStream) fileOutputStream);
+			LSSerializer LSS = DOMiLS.createLSSerializer();
+			boolean isDoneSerializing = LSS.write(dom, lsoOutput);
+			if (isDoneSerializing)
+				System.out.println("Persistor Test Data File Available with Results.");
+			else
+				System.out.println("Data file for Test not available.  Write error.");
 		} catch (IOException ex) {
-			dbStresserMultiThreadTest._log.log(java.util.logging.Level.SEVERE,
-					ex.toString());
+			dbStresserMultiThreadTest._log.log(java.util.logging.Level.SEVERE, ex.toString());
+		}finally {
+			fileOutputStream.close();
 		}
 	}
 

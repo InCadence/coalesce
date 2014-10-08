@@ -1,6 +1,5 @@
 package com.incadence.coalesce.framework.persister.performance;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -16,8 +15,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.XMLSerializer;
+import java.io.*;
+import org.w3c.dom.ls.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
@@ -38,8 +37,7 @@ import com.incadencecorp.coalesce.framework.objects.MissionEntity;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 import com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLPersistor;
 
-public class dbStresserSingleThreadTest  {
-
+public class dbStresserSingleThreadTest {
 
 	static int _ITERATION_LIMIT = 100;
 	static int _CAPTURE_METRICS_INTERVAL = 10;
@@ -47,9 +45,9 @@ public class dbStresserSingleThreadTest  {
 	static PostGreSQLPersistor _dbPersister;
 	static CoalesceFramework _coalesceFramework;
 	static ServerConn _serCon;
-	
+
 	static Logger _log = Logger.getLogger("TesterLog");
-	
+
 	static FileInputStream _inputStream = null;
 
 	static int _minorVal = 0;
@@ -60,7 +58,8 @@ public class dbStresserSingleThreadTest  {
 	static List<TimeTrack> _timeLogger;
 	static String _entityXml = "";
 	static Document dom;
-	// Set to True to use the File XML for Persistance OR Set to False for the CoalesceTypeInstances.TEST_MISSION
+	// Set to True to use the File XML for Persistance OR Set to False for the
+	// CoalesceTypeInstances.TEST_MISSION
 	static boolean _isModeFile = false;
 
 	public static void main(String[] args) {
@@ -69,17 +68,18 @@ public class dbStresserSingleThreadTest  {
 		dbStresserSingleThreadTest._coalesceFramework = new CoalesceFramework();
 		try {
 			if (OpenConnection() == true) {
-				dbStresserSingleThreadTest._coalesceFramework.initialize(_dbPersister);
+				dbStresserSingleThreadTest._coalesceFramework
+						.initialize(_dbPersister);
 				dbStresserSingleThreadTest._timeLogger = new ArrayList<TimeTrack>();
 				dbStresserSingleThreadTest.runVolume();
-				if (dbStresserSingleThreadTest._inputStream != null && dbStresserSingleThreadTest._isModeFile==true)
+				if (dbStresserSingleThreadTest._inputStream != null
+						&& dbStresserSingleThreadTest._isModeFile == true)
 					dbStresserSingleThreadTest._inputStream.close();
 			}
 		} catch (Exception ex) {
 			_log.log(java.util.logging.Level.SEVERE, ex.toString());
 		}
 	}
-
 
 	public static boolean OpenConnection() throws SQLException {
 		_serCon = new ServerConn();
@@ -88,7 +88,7 @@ public class dbStresserSingleThreadTest  {
 		_serCon.setPassword("Passw0rd");
 		_dbPersister = new PostGreSQLPersistor();
 		_dbPersister.Initialize(_serCon);
-		
+
 		return true;
 	}
 
@@ -107,7 +107,8 @@ public class dbStresserSingleThreadTest  {
 				_xsdEntity = dbStresserSingleThreadTest.createEntity("1.0."
 						.concat(generateEntityVersionNumber));
 				if (_xsdEntity != null) {
-					if (dbStresserSingleThreadTest._masterCounter % _CAPTURE_METRICS_INTERVAL == 0) {
+					if (dbStresserSingleThreadTest._masterCounter
+							% _CAPTURE_METRICS_INTERVAL == 0) {
 						saveEntity(_timeTrack, _xsdEntity);
 						_timeTrack.setEntityID(_xsdEntity.getKey());
 						_timeLogger.add(_timeTrack);
@@ -123,7 +124,8 @@ public class dbStresserSingleThreadTest  {
 			outConsoleData(1, "STARTTIME: " + startTime);
 			outConsoleData(2, "STOPTIME: " + stopTime);
 			String userDir = System.getProperty("user.dir");
-			dbStresserSingleThreadTest.printToFile(userDir + "/persistance.xml");
+			dbStresserSingleThreadTest
+					.printToFile(userDir + "/persistance.xml");
 		} catch (Exception ex) {
 			_log.log(java.util.logging.Level.SEVERE, ex.toString());
 		}
@@ -136,7 +138,8 @@ public class dbStresserSingleThreadTest  {
 		_timeTrack.setIterationVal(String.valueOf(_masterCounter));
 		_timeTrack.setIterationInterval(String
 				.valueOf(_CAPTURE_METRICS_INTERVAL));
-		dbStresserSingleThreadTest._coalesceFramework.saveCoalesceEntity(_xsdEntity);
+		dbStresserSingleThreadTest._coalesceFramework
+				.saveCoalesceEntity(_xsdEntity);
 		_timeTrack.setStopTime(getCurrentTime());
 		_timeTrack.setStopMSTime(getCurrentTime(false));
 	}
@@ -164,10 +167,12 @@ public class dbStresserSingleThreadTest  {
 		CoalesceEntity _entity = new CoalesceEntity();
 
 		if (dbStresserSingleThreadTest._isModeFile == true) {
-			_entity = dbStresserSingleThreadTest.createEntityFromXMLFile(entityVersion);
+			_entity = dbStresserSingleThreadTest
+					.createEntityFromXMLFile(entityVersion);
 			_entity.setVersion(entityVersion);
 		} else if (dbStresserSingleThreadTest._isModeFile == false) {
-			_entity=dbStresserSingleThreadTest.createMissionEntity(_entity, entityVersion);
+			_entity = dbStresserSingleThreadTest.createMissionEntity(_entity,
+					entityVersion);
 		}
 
 		return _entity;
@@ -175,12 +180,12 @@ public class dbStresserSingleThreadTest  {
 
 	private static CoalesceEntity createMissionEntity(CoalesceEntity _entity,
 			String entityVersion) throws CoalesceException {
-		MissionEntity _missionEntity=new MissionEntity();
+		MissionEntity _missionEntity = new MissionEntity();
 		_missionEntity.initialize();
 		_missionEntity.setName("Mission Entity - Performance Testing");
 		_missionEntity.setSource("Coalesce_Mission");
 		_missionEntity.setVersion(entityVersion);
-		_entity=_missionEntity;
+		_entity = _missionEntity;
 		return _entity;
 	}
 
@@ -196,9 +201,11 @@ public class dbStresserSingleThreadTest  {
 			String suserDir = System.getProperty("user.dir");
 			suserDir += "/EntityPerfFile.xml";
 			if (dbStresserSingleThreadTest._inputStream == null)
-				dbStresserSingleThreadTest._inputStream = new FileInputStream(suserDir);
+				dbStresserSingleThreadTest._inputStream = new FileInputStream(
+						suserDir);
 			if (dbStresserSingleThreadTest._entityXml == "") {
-				dbStresserSingleThreadTest._entityXml = IOUtils.toString(dbStresserSingleThreadTest._inputStream);
+				dbStresserSingleThreadTest._entityXml = IOUtils
+						.toString(dbStresserSingleThreadTest._inputStream);
 			}
 			try {
 				CoalesceEntity entity = new CoalesceEntity();
@@ -219,10 +226,12 @@ public class dbStresserSingleThreadTest  {
 						ECoalesceFieldDataTypes.STRING_TYPE);
 
 				record = recordSet.addNew();
-				
-				CoalesceStringField testField = (CoalesceStringField) record.getFieldByName("Performance TestFieldDef");
-				testField.setValue("abcdefghijklmnopqrstuvwxyzABCDEFGHIZKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()_+-=;'[],./?><:{}");
-				
+
+				CoalesceStringField testField = (CoalesceStringField) record
+						.getFieldByName("Performance TestFieldDef");
+				testField
+						.setValue("abcdefghijklmnopqrstuvwxyzABCDEFGHIZKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()_+-=;'[],./?><:{}");
+
 			} finally {
 				// appMain.inputStream.close();
 			}
@@ -314,18 +323,24 @@ public class dbStresserSingleThreadTest  {
 		return timeElement;
 	}
 
-	@SuppressWarnings("deprecation")
-	private static void printToFile(String fileName) {
+	private static void printToFile(String fileName) throws IOException {
+		FileOutputStream fileOutputStream = null;
 		try {
-			// print
-			OutputFormat format = new OutputFormat(dom);
-			format.setIndenting(true);
-			XMLSerializer serializer = new XMLSerializer(new FileOutputStream(
-					new File(fileName)), format);
-			serializer.serialize(dom);
-
+			DOMImplementationLS DOMiLS = (DOMImplementationLS) (dom
+					.getImplementation()).getFeature("LS", "3.0");
+			LSOutput lsoOutput = DOMiLS.createLSOutput();
+			fileOutputStream = new FileOutputStream(fileName);
+			lsoOutput.setByteStream((OutputStream) fileOutputStream);
+			LSSerializer LSS = DOMiLS.createLSSerializer();
+			boolean isDoneSerializing = LSS.write(dom, lsoOutput);
+			if (isDoneSerializing)
+				System.out.println("Persistor Test Data File Available with Results.");
+			else
+				System.out.println("Data file for Test not available.  Write error.");
 		} catch (IOException ex) {
 			_log.log(java.util.logging.Level.SEVERE, ex.toString());
+		}finally {
+			fileOutputStream.close();
 		}
 	}
 
