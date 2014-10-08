@@ -79,7 +79,7 @@ public class CoalesceFieldDefinition extends CoalesceDataObject implements ICoal
                                                  ECoalesceFieldDataTypes dataType,
                                                  boolean noIndex)
     {
-        return CoalesceFieldDefinition.create(parent, name, dataType, "", "U", "", noIndex);
+        return CoalesceFieldDefinition.create(parent, name, dataType, null, "U", null, noIndex);
     }
 
     /**
@@ -242,8 +242,7 @@ public class CoalesceFieldDefinition extends CoalesceDataObject implements ICoal
                                                  boolean noIndex)
     {
 
-        if (parent == null || name == null || StringHelper.isNullOrEmpty(name.trim()) || dataType == null || label == null
-                || defaultClassificationMarking == null || defaultValue == null) return null;
+        if (parent == null || StringHelper.isNullOrEmpty(name)) return null;
 
         Fielddefinition newEntityFieldDefinition = new Fielddefinition();
         parent.GetEntityFieldDefinitions().add(newEntityFieldDefinition);
@@ -252,11 +251,11 @@ public class CoalesceFieldDefinition extends CoalesceDataObject implements ICoal
 
         if (!fieldDefinition.initialize(parent, newEntityFieldDefinition)) return null;
 
-        fieldDefinition.setName(name.trim());
+        fieldDefinition.setName(name);
         fieldDefinition.setNoIndex(noIndex);
         fieldDefinition.setDataType(dataType);
 
-        fieldDefinition.setLabel(label.trim());
+        fieldDefinition.setLabel(label);
         fieldDefinition.setDefaultClassificationMarking(defaultClassificationMarking);
         fieldDefinition.setDefaultValue(defaultValue);
 
@@ -330,7 +329,7 @@ public class CoalesceFieldDefinition extends CoalesceDataObject implements ICoal
     @Override
     public String getLabel()
     {
-        return getStringElement(_entityFieldDefinition.getLabel());
+        return _entityFieldDefinition.getLabel();
     }
 
     @Override
@@ -449,9 +448,9 @@ public class CoalesceFieldDefinition extends CoalesceDataObject implements ICoal
         map.put(new QName("status"), _entityFieldDefinition.getStatus());
         map.put(new QName("name"), getStringElement(_entityFieldDefinition.getName()));
         map.put(new QName("defaultclassificationmarking"),
-                _entityFieldDefinition.getDefaultclassificationmarking().toString());
-        map.put(new QName("defaultvalue"), _entityFieldDefinition.getDefaultvalue().toString());
-        map.put(new QName("datatype"), _entityFieldDefinition.getDatatype().toString());
+                _entityFieldDefinition.getDefaultclassificationmarking());
+        map.put(new QName("defaultvalue"), _entityFieldDefinition.getDefaultvalue());
+        map.put(new QName("datatype"), _entityFieldDefinition.getDatatype());
         return map;
     }
 

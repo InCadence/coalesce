@@ -72,7 +72,7 @@ public class CoalesceRecord extends CoalesceDataObject {
     {
         if (parent == null) throw new NullArgumentException("parent");
         if (name == null) throw new NullArgumentException("name");
-        if (StringHelper.isNullOrEmpty(name.trim())) throw new IllegalArgumentException("name cannot be an empty string");
+        if (StringHelper.isNullOrEmpty(name)) throw new IllegalArgumentException("name cannot be an empty string");
 
         Record newEntityRecord = new Record();
         parent.GetEntityRecords().add(newEntityRecord);

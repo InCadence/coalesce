@@ -244,13 +244,24 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
     @Override
     public boolean getNoIndex()
     {
-        return Boolean.parseBoolean(this.getAttribute("noindex"));
+        String value = this.getAttribute("noindex");
+
+        if (StringHelper.isNullOrEmpty(value)) return false;
+
+        return Boolean.parseBoolean(value);
     }
 
     @Override
     public void setNoIndex(boolean value)
     {
-        this.setAttribute("noindex", Boolean.toString(value));
+        if (value)
+        {
+            setAttribute("noindex", Boolean.toString(value));
+        }
+        else
+        {
+            getOtherAttributes().remove("noindex");
+        }
     }
 
     @Override

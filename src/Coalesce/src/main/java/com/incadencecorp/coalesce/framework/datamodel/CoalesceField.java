@@ -315,6 +315,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
         String oldValue = _entityField.getValue();
 
         setChanged(oldValue, value);
+
         _entityField.setValue(value);
     }
 
@@ -764,7 +765,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     protected void setChanged(Object oldValue, Object newValue)
     {
         // Does the new value differ from the existing?
-        if ((oldValue == null && newValue != null) || !oldValue.equals(newValue))
+        if ((oldValue == null && newValue != null) || (oldValue != null && !oldValue.equals(newValue)))
         {
             // Yes; should we create a FieldHistory entry to reflect the
             // change?
@@ -788,7 +789,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
                 }
 
                 // Set LastModified
-                setLastModified(JodaDateTimeHelper.nowInUtc());//.plusSeconds(1));
+                setLastModified(JodaDateTimeHelper.nowInUtc());// .plusSeconds(1));
             }
 
         }
