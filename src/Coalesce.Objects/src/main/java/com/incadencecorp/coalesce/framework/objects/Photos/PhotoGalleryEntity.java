@@ -22,11 +22,10 @@ public class PhotoGalleryEntity extends ActionBaseEntity {
     // Static Properties
     // ----------------------------------------------------------------------//
 
-    public static final String Name = ActionBaseEntity.Name;
-    public static final String Source = "Photos: Supporting";
+    public static final String SOURCE = "Photos: Supporting";
 
     // ----------------------------------------------------------------------//
-    // Protected Member Variables
+    // Private Member Variables
     // ----------------------------------------------------------------------//
 
     private CoalesceRecordset _photographRecordset;
@@ -38,8 +37,8 @@ public class PhotoGalleryEntity extends ActionBaseEntity {
     @Override
     public boolean initialize()
     {
-        if (!initializeEntity(PhotoGalleryEntity.Source, "1.0", "")) return false;
-
+        if (!initializeEntity(PhotoGalleryEntity.SOURCE, "1.0", "")) return false;
+        
         // Initialize References
         return this.initializeReferences();
     }
@@ -155,7 +154,6 @@ public class PhotoGalleryEntity extends ActionBaseEntity {
         record.getWidth().setValue(properties.getImageWidth());
         record.getDescription().setValue(properties.getDescription());
         record.getDateTaken().setValue(properties.getCreated());
-        
         record.getLocationTaken().setValue(properties.getLatitude(), properties.getLongitude());
 
         // Return Record

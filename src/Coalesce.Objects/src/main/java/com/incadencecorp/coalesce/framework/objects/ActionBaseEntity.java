@@ -16,8 +16,8 @@ public class ActionBaseEntity extends CoalesceEntity {
     // Static Properties
     // ----------------------------------------------------------------------//
 
-    public static final String Name = "Action";
-    public static final String Source = "Coalesce";
+    public static final String NAME = "Action";
+    public static final String SOURCE = "Coalesce";
 
     // ----------------------------------------------------------------------//
     // Protected Member Variables
@@ -46,7 +46,7 @@ public class ActionBaseEntity extends CoalesceEntity {
         if (_liveStatusRecord != null) return false;
 
         // Initialize Entity
-        if (!super.initializeEntity(ActionBaseEntity.Name, source, version, "", "", title)) return false;
+        if (!super.initializeEntity(ActionBaseEntity.NAME, source, version, "", "", title)) return false;
 
         // Create Live Section
         section = CoalesceSection.create(this, "Live Status Section");

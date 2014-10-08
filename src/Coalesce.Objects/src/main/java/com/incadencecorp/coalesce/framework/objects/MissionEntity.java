@@ -20,8 +20,8 @@ public class MissionEntity extends CoalesceEntity {
     // Static Properties
     // ----------------------------------------------------------------------//
 
-    public static final String Name = "Mission";
-    public static final String Source = "Coalesce";
+    public static final String NAME = "Mission";
+    public static final String SOURCE = "Coalesce";
 
     // ----------------------------------------------------------------------//
     // Protected Member Variables
@@ -37,7 +37,7 @@ public class MissionEntity extends CoalesceEntity {
     @Override
     public boolean initialize()
     {
-        if (!initializeEntity(MissionEntity.Source,
+        if (!initializeEntity(MissionEntity.SOURCE,
                               "1.0",
                               "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionName,TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/IncidentTitle")) return false;
 
@@ -53,7 +53,7 @@ public class MissionEntity extends CoalesceEntity {
         if (_liveStatusRecord != null || _informationRecord != null) return false;
 
         // Initialize Entity
-        if (!super.initializeEntity(MissionEntity.Name, source, version, "", "", title)) return false;
+        if (!super.initializeEntity(MissionEntity.NAME, source, version, "", "", title)) return false;
 
         // Create Live Section
         section = CoalesceSection.create(this, "Live Status Section");
@@ -64,8 +64,8 @@ public class MissionEntity extends CoalesceEntity {
         _liveStatusRecord = recordSet.addNew();
 
         // Create Mission Information Section
-        section = CoalesceSection.create(this, MissionEntity.Name + " Information Section");
-        recordSet = CoalesceRecordset.create(section, MissionEntity.Name + " Information Recordset");
+        section = CoalesceSection.create(this, MissionEntity.NAME + " Information Section");
+        recordSet = CoalesceRecordset.create(section, MissionEntity.NAME + " Information Recordset");
         CoalesceFieldDefinition.create(recordSet, "ActionNumber", ECoalesceFieldDataTypes.STRING_TYPE, "Action Number", "U", "0");
         CoalesceFieldDefinition.create(recordSet, "IncidentNumber", ECoalesceFieldDataTypes.STRING_TYPE);
         CoalesceFieldDefinition.create(recordSet, "IncidentTitle", ECoalesceFieldDataTypes.STRING_TYPE);
@@ -96,7 +96,7 @@ public class MissionEntity extends CoalesceEntity {
         // Live Status Record
         if (this._liveStatusRecord == null)
         {
-            CoalesceRecordset recordSet = (CoalesceRecordset) this.getDataObjectForNamePath(MissionEntity.Name
+            CoalesceRecordset recordSet = (CoalesceRecordset) this.getDataObjectForNamePath(MissionEntity.NAME
                     + "/Live Status Section/Live Status Recordset");
 
             // Valid Xml?
@@ -116,8 +116,8 @@ public class MissionEntity extends CoalesceEntity {
         // Mission Information Record
         if (this._informationRecord == null)
         {
-            CoalesceRecordset recordSet = (CoalesceRecordset) this.getDataObjectForNamePath(MissionEntity.Name + "/"
-                    + MissionEntity.Name + " Information Section/" + MissionEntity.Name + " Information Recordset");
+            CoalesceRecordset recordSet = (CoalesceRecordset) this.getDataObjectForNamePath(MissionEntity.NAME + "/"
+                    + MissionEntity.NAME + " Information Section/" + MissionEntity.NAME + " Information Recordset");
 
             // Valid Xml?
             if (recordSet == null) return false;
