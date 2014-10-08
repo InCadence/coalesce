@@ -1,13 +1,9 @@
-/**
- * 
- */
 package com.incadencecorp.coalesce.framework.datamodel;
 
 import java.io.IOException;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.helpers.DocumentProperties;
-
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -26,11 +22,7 @@ import com.incadencecorp.coalesce.common.helpers.DocumentProperties;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-/**
- *
- */
-public class CoalesceFileField extends CoalesceField<DocumentProperties>
-{
+public class CoalesceFileField extends CoalesceField<DocumentProperties> {
 
     /*
      * (non-Javadoc)
@@ -57,9 +49,44 @@ public class CoalesceFileField extends CoalesceField<DocumentProperties>
         }
         catch (IOException e)
         {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
-    
+
+    /**
+     * Sets the Field's value by the byte array parameter. Also sets the filename, extension and MIME type.
+     * 
+     * @param dataBytes, field's value as a byte array
+     * @param filename, field's filename
+     * @param extension, field's extension
+     */
+    public void setValue(byte[] dataBytes, String filename, String extension)
+    {
+        setTypedValue(dataBytes, filename, extension);
+    }
+
+    /**
+     * Sets the Field's hash value. Also sets the filename, extension and MIME type.
+     * 
+     * @param filename, field's filename
+     * @param extension, field's extension
+     * @param hash, field's hash value
+     */
+    public void setValue(String filename, String extension, String hash)
+    {
+        setTypedValue(filename, extension, hash);
+    }
+
+    /**
+     * Sets the Field's value by the byte array parameter. Also sets the filename, extension and MIME type by the Document
+     * Properties.
+     * 
+     * @param dataBytes, file's value as a byte array
+     * @param docProps, file's DocumentProperties
+     */
+    protected void setValue(byte[] dataBytes, DocumentProperties docProps)
+    {
+        setTypedValue(dataBytes, docProps);
+    }
+
 }

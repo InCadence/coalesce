@@ -132,7 +132,9 @@ public class CoalesceEntitySyncShellTest {
 
         // Modify Entity
         CoalesceRecord record = (CoalesceRecord) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/");
-        record.setFieldValue("MissionName", "test");
+        
+        CoalesceStringField missionName = (CoalesceStringField) record.getFieldByName("MissionName");
+        missionName.setValue("test");
 
         String fieldKeyValid = record.getFieldByName("MissionName").getKey();
         String fieldKeyInValid = record.getFieldByName("MissionDescription").getKey();

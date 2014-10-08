@@ -1,13 +1,11 @@
 package com.incadencecorp.coalesce.framework.datamodel;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,16 +14,7 @@ import org.joda.time.DateTime;
 import org.junit.Test;
 
 import com.incadencecorp.coalesce.common.CoalesceTypeInstances;
-import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
-import com.incadencecorp.coalesce.common.exceptions.CoalesceInvalidFieldException;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
-import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.generatedjaxb.Entity.Section.Recordset.Record;
 
 /*-----------------------------------------------------------------------------'
@@ -394,188 +383,6 @@ public class CoalesceRecordTest {
         field = null;
         field = record.getFieldByKey("B0101194-B600-4FE6-BBB8-019300C812DC");
         assertNull(field);
-
-    }
-
-    @Test
-    public void getFieldValueTest() throws CoalesceException
-    {
-        CoalesceRecord record = getMissionRecord();
-
-        assertEquals("0", record.getFieldValue("ActionNumber"));
-
-        assertEquals("Checkpoint Operations", record.getFieldValue("MissionType"));
-
-        assertEquals(null, record.getFieldValue("MissionAddress"));
-
-    }
-
-    @Test(expected = CoalesceInvalidFieldException.class)
-    public void getFieldValueInvalidFieldNameTest() throws CoalesceException
-    {
-        CoalesceRecord record = getMissionRecord();
-
-        @SuppressWarnings("unused")
-        String value = record.getFieldValue("Invalid");
-
-    }
-
-    @Test
-    public void getTypedFieldValueTest() throws CoalesceException, UnsupportedEncodingException
-    {
-        CoalesceRecordset recordset = getMissionRecordset();
-
-        CoalesceFieldDefinition.create(recordset, "Boolean", "", "(U)", false);
-        CoalesceFieldDefinition.create(recordset, "Binary", ECoalesceFieldDataTypes.BINARY_TYPE);
-
-        CoalesceRecord newRecord = recordset.addNew();
-        newRecord.getFieldByName("MissionIndicatorNumberBASE10").setTypedValue(CoalesceTypeInstances.TEST_MISSION_BASE64_VALUE);
-        newRecord.getFieldByName("Boolean").setTypedValue(true);
-        newRecord.getFieldByName("MissionStartDateTime").setTypedValue(JodaDateTimeHelper.fromXmlDateTimeUTC(CoalesceTypeInstances.TEST_MISSION_START_TIME_VALUE));
-
-        String byteString = "Testing String";
-        byte[] dataBytes = byteString.getBytes("US-ASCII");
-        newRecord.getFieldByName("Binary").setTypedValue(dataBytes);
-
-        assertEquals(CoalesceTypeInstances.TEST_MISSION_BASE64_VALUE,
-                     newRecord.getIntegerFieldValue("MissionIndicatorNumberBASE10"));
-        assertEquals(true, newRecord.getBooleanFieldValue("Boolean"));
-        assertEquals(JodaDateTimeHelper.fromXmlDateTimeUTC(CoalesceTypeInstances.TEST_MISSION_START_TIME_VALUE),
-                     newRecord.getDateTimeFieldValue("MissionStartDateTime"));
-        assertArrayEquals(dataBytes, newRecord.getBinaryFieldValue("Binary"));
-
-    }
-
-    @Test(expected = CoalesceInvalidFieldException.class)
-    public void getTypedFieldValueIntegerInvalidFieldNameTest() throws CoalesceException
-    {
-        CoalesceRecord record = getMissionRecord();
-
-        @SuppressWarnings("unused")
-        int value = record.getIntegerFieldValue("Invalid");
-
-    }
-
-    @Test(expected = CoalesceInvalidFieldException.class)
-    public void getTypedFieldValueBooleanInvalidFieldNameTest() throws CoalesceException
-    {
-        CoalesceRecord record = getMissionRecord();
-
-        @SuppressWarnings("unused")
-        boolean value = record.getBooleanFieldValue("Invalid");
-
-    }
-
-    @Test(expected = CoalesceInvalidFieldException.class)
-    public void getTypedFieldValueDateTimeInvalidFieldNameTest() throws CoalesceException
-    {
-        CoalesceRecord record = getMissionRecord();
-
-        @SuppressWarnings("unused")
-        DateTime value = record.getDateTimeFieldValue("Invalid");
-
-    }
-
-    @Test(expected = CoalesceInvalidFieldException.class)
-    public void getTypedFieldValueBinaryInvalidFieldNameTest() throws CoalesceException
-    {
-        CoalesceRecord record = getMissionRecord();
-
-        @SuppressWarnings("unused")
-        byte[] value = record.getBinaryFieldValue("Invalid");
-
-    }
-
-    @Test
-    public void fieldValueAsTest() throws UnsupportedEncodingException, CoalesceException
-    {
-        CoalesceRecordset recordset = getMissionRecordset();
-
-        CoalesceFieldDefinition.create(recordset, "Boolean", "", "(U)", false);
-        CoalesceFieldDefinition.create(recordset, "Binary", ECoalesceFieldDataTypes.BINARY_TYPE);
-
-        CoalesceRecord newRecord = recordset.addNew();
-
-        CoalesceField<?> binaryField = (CoalesceField<?>) newRecord.getFieldByName("Binary");
-
-        assertEquals("default address", newRecord.getFieldValueAsString("Invalid", "default address"));
-        assertEquals(5555, newRecord.getFieldValueAsInteger("MissionIndicatorNumberBASE10", 5555));
-        assertEquals(3333, newRecord.getFieldValueAsInteger("Invalid", 3333));
-        assertEquals(true, newRecord.getFieldValueAsBoolean("Invalid", true));
-
-        DateTime testDate = JodaDateTimeHelper.convertyyyyMMddDateStringToDateTime("19800122");
-        assertEquals(testDate, newRecord.getFieldValueAsDate("MissionEndDateTime", testDate));
-        assertEquals(testDate, newRecord.getFieldValueAsDate("Invalid", testDate));
-
-        String defaultByteString = "DefaultTesting String";
-        byte[] defaultDataBytes = defaultByteString.getBytes("US-ASCII");
-        assertArrayEquals(defaultDataBytes, newRecord.getFieldValueAsByteArray("Invalid", defaultDataBytes));
-
-        newRecord.setFieldValue("MissionIndicatorNumberBASE10", CoalesceTypeInstances.TEST_MISSION_BASE64_VALUE);
-        newRecord.setFieldValue("Boolean", true);
-        newRecord.setFieldValue("MissionStartDateTime",
-                                JodaDateTimeHelper.fromXmlDateTimeUTC(CoalesceTypeInstances.TEST_MISSION_START_TIME_VALUE));
-
-        String byteString = "Testing String";
-        byte[] dataBytes = byteString.getBytes("US-ASCII");
-        newRecord.setFieldValue("Binary", dataBytes);
-
-        assertEquals(CoalesceTypeInstances.TEST_MISSION_BASE64_VALUE,
-                     newRecord.getFieldValueAsInteger("MissionIndicatorNumberBASE10", 5555));
-        assertEquals(true, newRecord.getFieldValueAsBoolean("Boolean", false));
-        assertEquals(JodaDateTimeHelper.fromXmlDateTimeUTC(CoalesceTypeInstances.TEST_MISSION_START_TIME_VALUE),
-                     newRecord.getFieldValueAsDate("MissionStartDateTime", testDate));
-
-        assertArrayEquals(dataBytes, newRecord.getFieldValueAsByteArray("Binary", defaultDataBytes));
-        assertEquals("", binaryField.getFilename());
-        assertEquals("", binaryField.getExtension());
-        assertEquals("", binaryField.getMimeType());
-
-    }
-
-    @Test
-    public void fieldValueAsBinaryFileNameTest() throws UnsupportedEncodingException, CoalesceException
-    {
-        CoalesceRecordset recordset = getMissionRecordset();
-
-        CoalesceFieldDefinition.create(recordset, "Binary", ECoalesceFieldDataTypes.BINARY_TYPE);
-
-        CoalesceRecord newRecord = recordset.addNew();
-
-        CoalesceField<?> binaryField = (CoalesceField<?>) newRecord.getFieldByName("Binary");
-
-        String defaultByteString = "DefaultTesting String";
-        byte[] defaultDataBytes = defaultByteString.getBytes("US-ASCII");
-
-        String filenameByteString = "Testing String";
-        byte[] filenameDataBytes = filenameByteString.getBytes("US-ASCII");
-        newRecord.setFieldValue("Binary", filenameDataBytes, "testingFileName");
-
-        assertArrayEquals(filenameDataBytes, newRecord.getFieldValueAsByteArray("Binary", defaultDataBytes));
-        assertEquals("{testingFileName}", binaryField.getFilename());
-        assertEquals("jpg", binaryField.getExtension());
-        assertEquals("", binaryField.getMimeType());
-
-        newRecord.setFieldValue("Binary", filenameDataBytes, null);
-
-        assertArrayEquals(filenameDataBytes, newRecord.getFieldValueAsByteArray("Binary", defaultDataBytes));
-        assertEquals("{testingFileName}", binaryField.getFilename());
-        assertEquals("jpg", binaryField.getExtension());
-        assertEquals("", binaryField.getMimeType());
-
-        newRecord.setFieldValue("Binary", filenameDataBytes, "");
-
-        assertArrayEquals(filenameDataBytes, newRecord.getFieldValueAsByteArray("Binary", defaultDataBytes));
-        assertEquals("{testingFileName}", binaryField.getFilename());
-        assertEquals("jpg", binaryField.getExtension());
-        assertEquals("", binaryField.getMimeType());
-
-        newRecord.setFieldValue("Binary", filenameDataBytes, "   ");
-
-        assertArrayEquals(filenameDataBytes, newRecord.getFieldValueAsByteArray("Binary", defaultDataBytes));
-        assertEquals("{testingFileName}", binaryField.getFilename());
-        assertEquals("jpg", binaryField.getExtension());
-        assertEquals("", binaryField.getMimeType());
 
     }
 

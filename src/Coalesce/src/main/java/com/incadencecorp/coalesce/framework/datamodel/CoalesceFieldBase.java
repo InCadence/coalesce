@@ -21,6 +21,7 @@ import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.helpers.DocumentProperties;
 import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
+import com.incadencecorp.coalesce.common.helpers.MimeHelper;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.runtime.CoalesceSettings;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -423,9 +424,8 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
      * @param dataBytes, field's value as a byte array
      * @param filename, field's filename
      * @param extension, field's extension
-     * @param mimeType, field's mimetype
      */
-    protected void setTypedValue(byte[] dataBytes, String filename, String extension, String mimeType)
+    protected void setTypedValue(byte[] dataBytes, String filename, String extension)
     {
         if (getDataType() != ECoalesceFieldDataTypes.BINARY_TYPE && getDataType() != ECoalesceFieldDataTypes.FILE_TYPE)
         {
@@ -437,19 +437,18 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
         setBaseValue(Base64.encode(dataBytes));
         setFilename(filename);
         setExtension(extension);
-        setMimeType(mimeType);
+        setMimeType(MimeHelper.getMimeTypeForExtension(extension));
         setSize(dataBytes.length);
     }
 
     /**
-     * Sets the Field's hash value. Also sets the filename, extension and mimetype.
+     * Sets the Field's hash value. Also sets the filename, extension and MIME type.
      * 
      * @param filename, field's filename
      * @param extension, field's extension
-     * @param mimeType, field's mimetype
      * @param hash, field's hash value
      */
-    protected void setTypedValue(String filename, String extension, String mimeType, String hash)
+    protected void setTypedValue(String filename, String extension, String hash)
     {
         if (getDataType() != ECoalesceFieldDataTypes.FILE_TYPE)
         {
@@ -458,7 +457,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
 
         setFilename(filename);
         setExtension(extension);
-        setMimeType(mimeType);
+        setMimeType(MimeHelper.getMimeTypeForExtension(extension));
         setHash(hash);
     }
 
@@ -476,7 +475,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
             throw new ClassCastException("Type mismatch");
         }
 
-        setTypedValue(dataBytes, docProps.getFilename(), docProps.getExtension(), docProps.getMimeType());
+        setTypedValue(dataBytes, docProps.getFilename(), docProps.getExtension());
     }
 
     /**
@@ -754,11 +753,9 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
             throw new ClassCastException("Type mismatch");
         }
 
-        // Basic Check
         String rawValue = getBaseValue();
         if (rawValue.length() > 0)
         {
-            // Needs to be tested for compatibility with .Net. Should be.
             byte[] bytes = Base64.decode(rawValue);
 
             return bytes;
@@ -817,7 +814,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
 
         return fileName;
     }
-    
+
     private String getCoalesceFilenameWithLastModifiedTag(String fileName)
     {
         try
@@ -832,7 +829,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
             return fileName + "?" + JodaDateTimeHelper.nowInUtc().getMillis();
         }
     }
-    
+
     private void assertValid(Coordinate location) throws CoalesceDataFormatException
     {
         if (location == null || Math.abs(location.x) > 180 || Math.abs(location.y) > 90)

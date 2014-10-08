@@ -36,35 +36,35 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceStringField;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
-import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
-import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
-import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor.EntityMetaData;
 import com.incadencecorp.unity.connector.local.LocalConfigurationsConnector;
 
 /*-----------------------------------------------------------------------------'
-Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
+ Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
 
-Notwithstanding any contractor copyright notice, the Government has Unlimited
-Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
-of this work other than as specifically authorized by these DFARS Clauses may
-violate Government rights in this work.
+ Notwithstanding any contractor copyright notice, the Government has Unlimited
+ Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+ of this work other than as specifically authorized by these DFARS Clauses may
+ violate Government rights in this work.
 
-DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
-Unlimited Rights. The Government has the right to use, modify, reproduce,
-perform, display, release or disclose this computer software and to have or
-authorize others to do so.
+ DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+ Unlimited Rights. The Government has the right to use, modify, reproduce,
+ perform, display, release or disclose this computer software and to have or
+ authorize others to do so.
 
-Distribution Statement D. Distribution authorized to the Department of
-Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
------------------------------------------------------------------------------*/
+ Distribution Statement D. Distribution authorized to the Department of
+ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+ -----------------------------------------------------------------------------*/
 
 /**
- * Provides an extendable JUnit base class for testing the interface logic defined in {@link com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor}. All
- * classes that extend this JUnit base class must provide {@link com.incadencecorp.coalesce.framework.persistance.ServerConn} and {@link com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor} instances that
- * the base class will use to run the interface tests against. The following methods must be implemented by the subclass in
- * addition to all abstract methods.
+ * Provides an extendable JUnit base class for testing the interface logic defined in
+ * {@link com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor}. All classes that extend this JUnit base class
+ * must provide {@link com.incadencecorp.coalesce.framework.persistance.ServerConn} and
+ * {@link com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor} instances that the base class will use to run
+ * the interface tests against. The following methods must be implemented by the subclass in addition to all abstract
+ * methods.
  * 
  * <pre>
  * 
@@ -349,7 +349,9 @@ public abstract class CoalescePersistorBaseTest {
     @Test
     public void testGetEntityByNameAndIdAndType() throws CoalescePersistorException
     {
-        CoalesceEntity ent = _coalesceFramework.getEntity(_entity.getName(), _entity.getEntityId(), _entity.getEntityIdType());
+        CoalesceEntity ent = _coalesceFramework.getEntity(_entity.getName(),
+                                                          _entity.getEntityId(),
+                                                          _entity.getEntityIdType());
 
         CoalesceAssert.assertXmlEquals(_entityXml, ent.toXml(), "UTF-8");
     }
@@ -465,7 +467,8 @@ public abstract class CoalescePersistorBaseTest {
         CoalesceFieldDefinition.create(recordSet, "CurrentStatus", ECoalesceFieldDataTypes.STRING_TYPE);
 
         CoalesceRecord record = recordSet.addNew();
-        record.setFieldValue("CurrentStatus", "Test Status");
+        CoalesceStringField status = (CoalesceStringField) record.getFieldByName("CurrentStatus");
+        status.setValue("Test Status");
 
         return entity;
 

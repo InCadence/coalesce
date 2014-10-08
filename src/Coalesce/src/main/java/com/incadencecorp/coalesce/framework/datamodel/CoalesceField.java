@@ -116,6 +116,8 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
             return new CoalesceDateTimeField();
 
         case FILE_TYPE:
+            return new CoalesceFileField();
+            
         case BINARY_TYPE:
             return new CoalesceBinaryField();
 

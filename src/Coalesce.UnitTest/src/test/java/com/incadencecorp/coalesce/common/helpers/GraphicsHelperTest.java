@@ -27,6 +27,7 @@ import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.runtime.CoalesceSettings;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceFileField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
@@ -1013,7 +1014,8 @@ public class GraphicsHelperTest {
 
         CoalesceRecord record = recordset.addNew();
 
-        record.setFieldValue("File", Files.readAllBytes(Paths.get("src/test/resources/desert.jpg")), "desert.jpg");
+        CoalesceFileField fileField = (CoalesceFileField) record.getFieldByName("File");
+        fileField.setValue(Files.readAllBytes(Paths.get("src/test/resources/desert.jpg")), "desert.jpg", "jpg");
 
         @SuppressWarnings("unchecked")
         CoalesceField<byte[]> file = (CoalesceField<byte[]>) record.getFieldByName("File");

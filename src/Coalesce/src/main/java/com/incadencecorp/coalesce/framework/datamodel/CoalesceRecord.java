@@ -10,9 +10,6 @@ import javax.xml.namespace.QName;
 import org.apache.commons.lang.NullArgumentException;
 import org.joda.time.DateTime;
 
-import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
-import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
-import com.incadencecorp.coalesce.common.exceptions.CoalesceInvalidFieldException;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
@@ -62,11 +59,14 @@ public class CoalesceRecord extends CoalesceDataObject {
     }
 
     /**
-     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} and ties it to its parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}.
+     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} and ties it to its parent
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}.
      * 
-     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} the Recordset that this new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} will belong to
+     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} the Recordset that this new
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} will belong to
      * @param name {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} name attribute
-     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} the new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} the new
+     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
      */
     public static CoalesceRecord create(CoalesceRecordset parent, String name)
     {
@@ -98,9 +98,11 @@ public class CoalesceRecord extends CoalesceDataObject {
     }
 
     /**
-     * Initializes a this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} based on a Record and ties it to its parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}.
+     * Initializes a this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} based on a Record and ties it
+     * to its parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}.
      * 
-     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} the Recordset that this new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} will belong to
+     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} the Recordset that this new
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} will belong to
      * @param record Record that this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} will be based on
      * @return boolean indicator of success/failure
      */
@@ -170,9 +172,11 @@ public class CoalesceRecord extends CoalesceDataObject {
     }
 
     /**
-     * Returns a list of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}s that belong to this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
+     * Returns a list of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}s that belong to this
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
      * 
-     * @return List<CoalesceField> list of {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}s contained by this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
+     * @return List<CoalesceField> list of {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}s contained by
+     *         this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
      */
     public List<CoalesceField<?>> getFields()
     {
@@ -193,7 +197,9 @@ public class CoalesceRecord extends CoalesceDataObject {
     /**
      * Returns a String list of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's names
      * 
-     * @return List<String> list of the field names from the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}s contained by this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
+     * @return List<String> list of the field names from the
+     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}s contained by this
+     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
      */
     public List<String> getFieldNames()
     {
@@ -213,7 +219,9 @@ public class CoalesceRecord extends CoalesceDataObject {
     /**
      * Returns a String list of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's keys
      * 
-     * @return List<String> list of the field keys from the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}s contained by this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
+     * @return List<String> list of the field keys from the
+     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}s contained by this
+     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
      */
     public List<String> getFieldKeys()
     {
@@ -231,10 +239,12 @@ public class CoalesceRecord extends CoalesceDataObject {
     }
 
     /**
-     * Returns an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField} with the specified {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's key
+     * Returns an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField} with the specified
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's key
      * 
      * @param key String of the desired Field's key
-     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField} that has the key parameter. Null if not present.
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField} that has the key parameter. Null if not
+     *         present.
      */
     public CoalesceField<?> getFieldByKey(String key)
     {
@@ -250,10 +260,12 @@ public class CoalesceRecord extends CoalesceDataObject {
     }
 
     /**
-     * Returns an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField} with the specified {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's name
+     * Returns an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField} with the specified
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's name
      * 
      * @param name String of the desired Field name
-     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField} that has the name parameter. Null if not present.
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField} that has the name parameter. Null if not
+     *         present.
      */
     public CoalesceField<?> getFieldByName(String name)
     {
@@ -269,391 +281,15 @@ public class CoalesceRecord extends CoalesceDataObject {
     }
 
     /**
-     * Returns a String value with the specified {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's name
-     * 
-     * @param fieldName String of the desired Field name
-     * @return String value of the desired Field
-     * @throws CoalesceException
-     */
-    public String getFieldValue(String fieldName) throws CoalesceException
-    {
-        CoalesceField<?> field = getFieldByName(fieldName);
-
-        // Do we have this Field?
-        if (field != null)
-        {
-            // Yes; return Value;
-            return field.getBaseValue();
-        }
-        else
-        {
-            throw new CoalesceInvalidFieldException(fieldName);
-        }
-    }
-
-    /**
-     * Returns a boolean value with the specified {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's name
-     * 
-     * @param fieldName String of the desired Field name
-     * @return boolean value of the desired Field
-     * @throws CoalesceException
-     */
-    public boolean getBooleanFieldValue(String fieldName) throws CoalesceException
-    {
-        CoalesceField<?> field = getFieldByName(fieldName);
-
-        // Do we have this Field?
-        if (field != null)
-        {
-            // Yes; Set Value
-
-            boolean value = field.getBooleanValue();
-
-            return value;
-
-        }
-        else
-        {
-            throw new CoalesceInvalidFieldException(fieldName);
-        }
-    }
-
-    /**
-     * Returns a int value with the specified {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's name
-     * 
-     * @param fieldName String of the desired Field name
-     * @return integer value of the desired Field
-     * @throws CoalesceException
-     */
-    public int getIntegerFieldValue(String fieldName) throws CoalesceException
-    {
-        CoalesceField<?> field = getFieldByName(fieldName);
-
-        // Do we have this Field?
-        if (field != null)
-        {
-            // Yes; Set Value
-            int value = field.getIntegerValue();
-
-            return value;
-
-        }
-        else
-        {
-            throw new CoalesceInvalidFieldException(fieldName);
-        }
-    }
-
-    /**
-     * Returns a DateTime value with the specified {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's name
-     * 
-     * @param fieldName String of the desired Field name
-     * @return DateTime value of the desired Field
-     * @throws CoalesceException
-     */
-    public DateTime getDateTimeFieldValue(String fieldName) throws CoalesceException
-    {
-        CoalesceField<?> field = (CoalesceField<?>) getFieldByName(fieldName);
-
-        // Do we have this Field?
-        if (field != null)
-        {
-            // Yes; Set Value
-            DateTime value = field.getDateTimeValue();
-
-            if (value == null) throw new CoalesceDataFormatException("Failed to parse Datetime value for: " + fieldName);
-
-            return value;
-
-        }
-        else
-        {
-            throw new CoalesceInvalidFieldException(fieldName);
-        }
-    }
-
-    /**
-     * Returns a (binary) byte[] value with the specified {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's name
-     * 
-     * @param fieldName String of the desired Field name
-     * @return byte[] value of the desired Field
-     * @throws CoalesceException
-     */
-    public byte[] getBinaryFieldValue(String fieldName) throws CoalesceException
-    {
-        CoalesceField<?> field = (CoalesceField<?>) getFieldByName(fieldName);
-
-        // Do we have this Field?
-        if (field != null)
-        {
-            // Yes; Set Value
-            byte[] value = field.getBinaryValue();
-
-            return value;
-
-        }
-        else
-        {
-            throw new CoalesceInvalidFieldException(fieldName);
-        }
-    }
-
-    /**
-     * Returns a String default value for the specified {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's name
-     * 
-     * @param fieldName String of the desired Field name
-     * @param defaultValue, value returned if fieldName parameter does not have a field
-     * @return String value of the desired Field or the defaultValue parameter if fieldName parameter does not have a field
-     */
-    public String getFieldValueAsString(String fieldName, String defaultValue)
-    {
-        try
-        {
-            String value = getFieldValue(fieldName);
-
-            return value;
-
-        }
-        catch (CoalesceException ife)
-        {
-            return defaultValue;
-        }
-    }
-
-    /**
-     * Returns a boolean default value for the specified {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's name
-     * 
-     * @param fieldName String of the desired Field name
-     * @param defaultValue, value returned if fieldName parameter does not have a field
-     * @return boolean value of the desired Field or the defaultValue parameter if fieldName parameter does not have a field
-     */
-    public boolean getFieldValueAsBoolean(String fieldName, boolean defaultValue)
-    {
-        try
-        {
-            Boolean value = getBooleanFieldValue(fieldName);
-
-            return value;
-
-        }
-        catch (CoalesceException ife)
-        {
-            return defaultValue;
-        }
-    }
-
-    /**
-     * Returns a int default value for the specified {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's name
-     * 
-     * @param fieldName String of the desired Field name
-     * @param defaultValue, value returned if fieldName parameter does not have a field
-     * @return integer value of the desired Field or the defaultValue parameter if fieldName parameter does not have a field
-     */
-    public int getFieldValueAsInteger(String fieldName, int defaultValue)
-    {
-        try
-        {
-            int value = getIntegerFieldValue(fieldName);
-
-            return value;
-
-        }
-        catch (CoalesceException ife)
-        {
-            return defaultValue;
-        }
-    }
-
-    /**
-     * Returns a DateTime default value for the specified {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's name
-     * 
-     * @param fieldName String of the desired Field name
-     * @param defaultValue, value returned if fieldName parameter does not have a field
-     * @return DateTime value of the desired Field or the defaultValue parameter if fieldName parameter does not have a field
-     */
-    public DateTime getFieldValueAsDate(String fieldName, DateTime defaultValue)
-    {
-        try
-        {
-            DateTime value = getDateTimeFieldValue(fieldName);
-
-            return value;
-
-        }
-        catch (CoalesceException ife)
-        {
-            return defaultValue;
-        }
-    }
-
-    /**
-     * Returns a (binary) byte[] default value for the specified {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's name
-     * 
-     * @param fieldName String of the desired Field name
-     * @param defaultValue, value returned if fieldName parameter does not have a field
-     * @return byte[] value of the desired Field or the defaultValue parameter if fieldName parameter does not have a field
-     */
-    public byte[] getFieldValueAsByteArray(String fieldName, byte[] defaultValue)
-    {
-        try
-        {
-            byte[] value = getBinaryFieldValue(fieldName);
-
-            return value;
-
-        }
-        catch (CoalesceException ife)
-        {
-            return defaultValue;
-        }
-    }
-
-    /**
-     * Set a String Field's value with the specified {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's name
-     * 
-     * @param fieldName String of the desired Field name
-     * @param value String, new value for the field
-     * @throws CoalesceException
-     */
-    public void setFieldValue(String fieldName, String value) throws CoalesceException
-    {
-        CoalesceField<?> field = (CoalesceField<?>) getFieldByName(fieldName);
-
-        // Do we have this Field?
-        if (field != null)
-        {
-            field.setBaseValue(value);
-        }
-        else
-        {
-            throw new CoalesceInvalidFieldException(fieldName);
-        }
-    }
-
-    /**
-     * Set a boolean Field's value with the specified {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's name
-     * 
-     * @param fieldName String of the desired Field name
-     * @param value boolean, new value for the field
-     * @throws CoalesceException
-     */
-    public void setFieldValue(String fieldName, boolean value) throws CoalesceException
-    {
-        CoalesceField<?> field = (CoalesceField<?>) getFieldByName(fieldName);
-
-        // Do we have this Field?
-        if (field != null)
-        {
-            field.setTypedValue(value);
-        }
-        else
-        {
-            throw new CoalesceInvalidFieldException(fieldName);
-        }
-    }
-
-    /**
-     * Set a int Field's value with the specified {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's name
-     * 
-     * @param fieldName String of the desired Field name
-     * @param value integer, new value for the field
-     * @throws CoalesceException
-     */
-    public void setFieldValue(String fieldName, int value) throws CoalesceException
-    {
-        CoalesceField<?> field = (CoalesceField<?>) getFieldByName(fieldName);
-
-        // Do we have this Field?
-        if (field != null)
-        {
-            field.setTypedValue(value);
-        }
-        else
-        {
-            throw new CoalesceInvalidFieldException(fieldName);
-        }
-    }
-
-    /**
-     * Set a DateTime Field's value with the specified {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's name
-     * 
-     * @param fieldName String of the desired Field name
-     * @param value DateTime, new value for the field
-     * @throws CoalesceException
-     */
-    public void setFieldValue(String fieldName, DateTime value) throws CoalesceException
-    {
-        CoalesceField<?> field = (CoalesceField<?>) getFieldByName(fieldName);
-
-        // Do we have this Field?
-        if (field != null)
-        {
-            field.setTypedValue(value);
-        }
-        else
-        {
-            throw new CoalesceInvalidFieldException(fieldName);
-        }
-    }
-
-    /**
-     * Set a (binary) byte[] Field's value with the specified {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's name
-     * 
-     * @param fieldName String of the desired Field name
-     * @param value byte[], new value for the field
-     * @throws CoalesceException
-     */
-    public void setFieldValue(String fieldName, byte[] value) throws CoalesceException
-    {
-        setFieldValue(fieldName, value, "");
-    }
-
-    /**
-     * Set a (binary) byte[] Field's value with the specified {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's name and file name
-     * 
-     * @param fieldName String of the desired Field name
-     * @param value byte[], new value for the field
-     * @param fileName String of the file name
-     * @throws CoalesceException
-     */
-    public void setFieldValue(String fieldName, byte[] value, String fileName) throws CoalesceException
-    {
-        CoalesceField<?> field = (CoalesceField<?>) getFieldByName(fieldName);
-
-        // Do we have this Field?
-        if (field != null)
-        {
-
-            if (fileName == null || StringHelper.isNullOrEmpty(fileName.trim()))
-            {
-                field.setTypedValue(value);
-            }
-            else
-            {
-                field.setTypedValue(value, "{" + fileName + "}", ".jpg", "");
-            }
-
-        }
-        else
-        {
-            throw new CoalesceInvalidFieldException(fieldName);
-        }
-
-    }
-
-    /**
-     * Returns boolean indicator of the existence of the specified Field's name within the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
+     * Returns boolean indicator of the existence of the specified Field's name within the
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
      * 
      * @param name String of the desired Field name
      * @return boolean indication that the Record does/does not have the named Field in its collection
      */
     public Boolean hasField(String name)
     {
-
-        CoalesceField<?> field = (CoalesceField<?>) getFieldByName(name);
-
-        return (field != null);
-
+        return (getFieldByName(name) != null);
     }
 
     @Override

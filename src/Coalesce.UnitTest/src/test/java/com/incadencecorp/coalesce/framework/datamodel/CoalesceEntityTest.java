@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.NullArgumentException;
+import org.apache.xerces.impl.dv.util.Base64;
 import org.joda.time.DateTime;
 import org.junit.Rule;
 import org.junit.Test;
@@ -23,22 +24,11 @@ import org.xml.sax.SAXException;
 
 import com.incadencecorp.coalesce.common.CoalesceAssert;
 import com.incadencecorp.coalesce.common.CoalesceTypeInstances;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.helpers.EntityLinkHelper;
 import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
-import com.incadencecorp.coalesce.framework.datamodel.ECoalesceDataObjectStatus;
-import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
-import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -153,7 +143,7 @@ public class CoalesceEntityTest {
     public void createFromXmlWithTitleNewXpathTest()
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION,
-                                            "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionName");
+                                                      "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionName");
 
         assertEquals(((CoalesceField<?>) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH)).getBaseValue(),
                      entity.getTitle());
@@ -272,7 +262,12 @@ public class CoalesceEntityTest {
     @Test
     public void createDetailedWithTitleTest()
     {
-        CoalesceEntity entity = CoalesceEntity.create("Operation", "Portal", "1.1.1.1", "Entity Id", "Entity Type", "A New Title");
+        CoalesceEntity entity = CoalesceEntity.create("Operation",
+                                                      "Portal",
+                                                      "1.1.1.1",
+                                                      "Entity Id",
+                                                      "Entity Type",
+                                                      "A New Title");
 
         assertEmptyEntity(entity);
 
@@ -306,7 +301,12 @@ public class CoalesceEntityTest {
     @Test
     public void createDetailedWithTitleNullSourceTest()
     {
-        CoalesceEntity entity = CoalesceEntity.create("Operation", null, "1.1.1.1", "Entity Id", "Entity Type", "A New Title");
+        CoalesceEntity entity = CoalesceEntity.create("Operation",
+                                                      null,
+                                                      "1.1.1.1",
+                                                      "Entity Id",
+                                                      "Entity Type",
+                                                      "A New Title");
 
         assertEmptyEntity(entity);
 
@@ -428,11 +428,11 @@ public class CoalesceEntityTest {
 
         // Create Entity
         CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
-                                            "TREX Portal",
-                                            "1.0.0.0",
-                                            "",
-                                            "",
-                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+                                                      "TREX Portal",
+                                                      "1.0.0.0",
+                                                      "",
+                                                      "",
+                                                      "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         // Verify Entity Creation
         assertEquals("TREXOperation", entity.getName());
@@ -456,7 +456,8 @@ public class CoalesceEntityTest {
 
         // Create Information Section
         CoalesceSection informationSection = CoalesceSection.create(entity, "Operation Information Section", true);
-        CoalesceRecordset informationRecordSet = CoalesceRecordset.create(informationSection, "Operation Information Recordset");
+        CoalesceRecordset informationRecordSet = CoalesceRecordset.create(informationSection,
+                                                                          "Operation Information Recordset");
 
         CoalesceFieldDefinition.create(informationRecordSet, "OperationName", ECoalesceFieldDataTypes.STRING_TYPE);
 
@@ -493,11 +494,11 @@ public class CoalesceEntityTest {
 
         // Create Entity
         CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
-                                            "TREX Portal",
-                                            "1.0.0.0",
-                                            "",
-                                            "",
-                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+                                                      "TREX Portal",
+                                                      "1.0.0.0",
+                                                      "",
+                                                      "",
+                                                      "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         // Verify Entity Creation
         assertTrue(entity.getSource().equals("TREX Portal"));
@@ -860,11 +861,11 @@ public class CoalesceEntityTest {
     public void getTitleXPathInvalidTest()
     {
         CoalesceEntity entity = CoalesceEntity.create("Operation",
-                                            "Portal",
-                                            "1.1.1.1",
-                                            "Entity Id",
-                                            "Entity Id Type",
-                                            "Operation/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionName,TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/IncidentTitle");
+                                                      "Portal",
+                                                      "1.1.1.1",
+                                                      "Entity Id",
+                                                      "Entity Id Type",
+                                                      "Operation/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionName,TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/IncidentTitle");
 
         String title = entity.getTitle();
 
@@ -1117,11 +1118,11 @@ public class CoalesceEntityTest {
     {
         // Create Entity
         CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
-                                            "TREX Portal",
-                                            "1.0.0.0",
-                                            "",
-                                            "",
-                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+                                                      "TREX Portal",
+                                                      "1.0.0.0",
+                                                      "",
+                                                      "",
+                                                      "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         // Create Live Status Section
         assertNull(entity.getSection("TREXOperation/Live Status Section"));
@@ -1136,11 +1137,11 @@ public class CoalesceEntityTest {
     {
         // Create Entity
         CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
-                                            "TREX Portal",
-                                            "1.0.0.0",
-                                            "",
-                                            "",
-                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+                                                      "TREX Portal",
+                                                      "1.0.0.0",
+                                                      "",
+                                                      "",
+                                                      "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         // Create Live Status Section
         assertNull(entity.getSection("TREXOperation/Live Status Section"));
@@ -1178,11 +1179,11 @@ public class CoalesceEntityTest {
     {
         // Create Entity
         CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
-                                            "TREX Portal",
-                                            "1.0.0.0",
-                                            "",
-                                            "",
-                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+                                                      "TREX Portal",
+                                                      "1.0.0.0",
+                                                      "",
+                                                      "",
+                                                      "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         // Create Live Status Section
         assertNull(entity.getSection("TREXOperation/Live Status Section"));
@@ -1197,11 +1198,11 @@ public class CoalesceEntityTest {
     {
         // Create Entity
         CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
-                                            "TREX Portal",
-                                            "1.0.0.0",
-                                            "",
-                                            "",
-                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+                                                      "TREX Portal",
+                                                      "1.0.0.0",
+                                                      "",
+                                                      "",
+                                                      "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         // Create Live Status Section
         assertNull(entity.getSection("TREXOperation/Live Status Section"));
@@ -1217,11 +1218,11 @@ public class CoalesceEntityTest {
     {
         // Create Entity
         CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
-                                            "TREX Portal",
-                                            "1.0.0.0",
-                                            "",
-                                            "",
-                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+                                                      "TREX Portal",
+                                                      "1.0.0.0",
+                                                      "",
+                                                      "",
+                                                      "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         // Create Live Status Section
         assertNull(entity.getSection("TREXOperation/Live Status Section"));
@@ -1316,11 +1317,11 @@ public class CoalesceEntityTest {
 
         // Create Entity
         CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
-                                            "TREX Portal",
-                                            "1.0.0.0",
-                                            "",
-                                            "",
-                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+                                                      "TREX Portal",
+                                                      "1.0.0.0",
+                                                      "",
+                                                      "",
+                                                      "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         // Create Live Status Section
         CoalesceSection liveSection = entity.createSection("Live Status Section", true);
@@ -1352,11 +1353,11 @@ public class CoalesceEntityTest {
 
         // Create Entity
         CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
-                                            "TREX Portal",
-                                            "1.0.0.0",
-                                            "",
-                                            "",
-                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+                                                      "TREX Portal",
+                                                      "1.0.0.0",
+                                                      "",
+                                                      "",
+                                                      "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         CoalesceLinkageSection entityLinkageSection = entity.getLinkageSection();
         assertNotNull(entityLinkageSection);
@@ -1554,7 +1555,9 @@ public class CoalesceEntityTest {
 
         Entities entities = createEntityLinkages();
 
-        Map<String, CoalesceLinkage> linkages = entities.Entity.getLinkages(ELinkTypes.HAS_OWNERSHIP_OF, "Operation", "Portal0");
+        Map<String, CoalesceLinkage> linkages = entities.Entity.getLinkages(ELinkTypes.HAS_OWNERSHIP_OF,
+                                                                            "Operation",
+                                                                            "Portal0");
 
         assertTrue(linkages.isEmpty());
 
@@ -1565,8 +1568,8 @@ public class CoalesceEntityTest {
     {
         Entities entities = createEntityLinkages();
 
-        Map<String, CoalesceLinkage> linkages = entities.Entity.getLinkages(Arrays.asList(ELinkTypes.HAS_USE_OF, ELinkTypes.CREATED),
-                                                                       "Operation");
+        Map<String, CoalesceLinkage> linkages = entities.Entity.getLinkages(Arrays.asList(ELinkTypes.HAS_USE_OF,
+                                                                                          ELinkTypes.CREATED), "Operation");
 
         assertEquals(2, linkages.size());
 
@@ -1600,7 +1603,8 @@ public class CoalesceEntityTest {
         Entities entities = createEntityLinkages();
 
         Map<String, CoalesceLinkage> linkages = entities.Entity.getLinkages(Arrays.asList(ELinkTypes.HAS_USE_OF,
-                                                                                     ELinkTypes.IS_A_PEER_OF), "Operation");
+                                                                                          ELinkTypes.IS_A_PEER_OF),
+                                                                            "Operation");
 
         assertEquals(1, linkages.size());
 
@@ -1629,7 +1633,8 @@ public class CoalesceEntityTest {
         Entities entities = createEntityLinkages();
 
         Map<String, CoalesceLinkage> linkages = entities.Entity.getLinkages(Arrays.asList(ELinkTypes.HAS_OWNERSHIP_OF,
-                                                                                     ELinkTypes.IS_A_PEER_OF), "Operation");
+                                                                                          ELinkTypes.IS_A_PEER_OF),
+                                                                            "Operation");
 
         assertTrue(linkages.isEmpty());
 
@@ -1640,11 +1645,11 @@ public class CoalesceEntityTest {
     {
         // Create Entity
         CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
-                                            "TREX Portal",
-                                            "1.0.0.0",
-                                            "",
-                                            "",
-                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+                                                      "TREX Portal",
+                                                      "1.0.0.0",
+                                                      "",
+                                                      "",
+                                                      "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         // Create Live Status Section
         CoalesceSection.create(entity, "Live Status Section", true);
@@ -1665,11 +1670,11 @@ public class CoalesceEntityTest {
     {
 
         CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
-                                            "TREX Portal",
-                                            "1.0.0.0",
-                                            "First,Second",
-                                            "Type1,Type2",
-                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+                                                      "TREX Portal",
+                                                      "1.0.0.0",
+                                                      "First,Second",
+                                                      "Type1,Type2",
+                                                      "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         List<String> type1List = entity.getEntityId("Type1");
         assertEquals(1, type1List.size());
@@ -1686,11 +1691,11 @@ public class CoalesceEntityTest {
     {
 
         CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
-                                            "TREX Portal",
-                                            "1.0.0.0",
-                                            "First,Second",
-                                            "Type1,Type2",
-                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+                                                      "TREX Portal",
+                                                      "1.0.0.0",
+                                                      "First,Second",
+                                                      "Type1,Type2",
+                                                      "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         assertTrue(entity.getEntityId("Type3").isEmpty());
 
@@ -1701,11 +1706,11 @@ public class CoalesceEntityTest {
     {
 
         CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
-                                            "TREX Portal",
-                                            "1.0.0.0",
-                                            "First,Second",
-                                            "Type1,Type2",
-                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+                                                      "TREX Portal",
+                                                      "1.0.0.0",
+                                                      "First,Second",
+                                                      "Type1,Type2",
+                                                      "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         assertTrue(entity.getEntityId(null).isEmpty());
 
@@ -1716,11 +1721,11 @@ public class CoalesceEntityTest {
     {
 
         CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
-                                            "TREX Portal",
-                                            "1.0.0.0",
-                                            "First,Second,Third",
-                                            "Type1,Type2,Type1",
-                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+                                                      "TREX Portal",
+                                                      "1.0.0.0",
+                                                      "First,Second,Third",
+                                                      "Type1,Type2,Type1",
+                                                      "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         List<String> ids = entity.getEntityId("Type1");
 
@@ -1733,11 +1738,11 @@ public class CoalesceEntityTest {
     public void setEntityIdDoesNotExistTest()
     {
         CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
-                                            "TREX Portal",
-                                            "1.0.0.0",
-                                            "",
-                                            "",
-                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+                                                      "TREX Portal",
+                                                      "1.0.0.0",
+                                                      "",
+                                                      "",
+                                                      "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         entity.setEntityId("Type1", "First");
 
@@ -1751,11 +1756,11 @@ public class CoalesceEntityTest {
     {
 
         CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
-                                            "TREX Portal",
-                                            "1.0.0.0",
-                                            "First",
-                                            "Type1",
-                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+                                                      "TREX Portal",
+                                                      "1.0.0.0",
+                                                      "First",
+                                                      "Type1",
+                                                      "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         entity.setEntityId("Type1", "Second");
 
@@ -1768,11 +1773,11 @@ public class CoalesceEntityTest {
     public void setEntityIdSingleAddTest()
     {
         CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
-                                            "TREX Portal",
-                                            "1.0.0.0",
-                                            "First",
-                                            "Type1",
-                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+                                                      "TREX Portal",
+                                                      "1.0.0.0",
+                                                      "First",
+                                                      "Type1",
+                                                      "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         entity.setEntityId("Type2", "Second");
 
@@ -1785,11 +1790,11 @@ public class CoalesceEntityTest {
     public void setEntityIdMultipleAddTest()
     {
         CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
-                                            "TREX Portal",
-                                            "1.0.0.0",
-                                            "First,Second",
-                                            "Type1,Type2",
-                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+                                                      "TREX Portal",
+                                                      "1.0.0.0",
+                                                      "First,Second",
+                                                      "Type1,Type2",
+                                                      "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         entity.setEntityId("Type3", "Third");
 
@@ -1805,11 +1810,11 @@ public class CoalesceEntityTest {
         thrown.expectMessage("typeParam");
 
         CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
-                                            "TREX Portal",
-                                            "1.0.0.0",
-                                            "First,Second",
-                                            "Type1,Type2",
-                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+                                                      "TREX Portal",
+                                                      "1.0.0.0",
+                                                      "First,Second",
+                                                      "Type1,Type2",
+                                                      "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         assertFalse(entity.setEntityId(null, "Third"));
 
@@ -1822,11 +1827,11 @@ public class CoalesceEntityTest {
         thrown.expectMessage("value");
 
         CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
-                                            "TREX Portal",
-                                            "1.0.0.0",
-                                            "First,Second",
-                                            "Type1,Type2",
-                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+                                                      "TREX Portal",
+                                                      "1.0.0.0",
+                                                      "First,Second",
+                                                      "Type1,Type2",
+                                                      "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         assertFalse(entity.setEntityId("Type3", null));
 
@@ -1839,11 +1844,11 @@ public class CoalesceEntityTest {
         thrown.expectMessage("typeParam");
 
         CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
-                                            "TREX Portal",
-                                            "1.0.0.0",
-                                            "First,Second",
-                                            "Type1,Type2",
-                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+                                                      "TREX Portal",
+                                                      "1.0.0.0",
+                                                      "First,Second",
+                                                      "Type1,Type2",
+                                                      "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         assertFalse(entity.setEntityId(null, null));
 
@@ -1853,11 +1858,11 @@ public class CoalesceEntityTest {
     public void markAsDeletedNotDeletedYetTest()
     {
         CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
-                                            "TREX Portal",
-                                            "1.0.0.0",
-                                            "First,Second",
-                                            "Type1,Type2",
-                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+                                                      "TREX Portal",
+                                                      "1.0.0.0",
+                                                      "First,Second",
+                                                      "Type1,Type2",
+                                                      "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         assertEquals(ECoalesceDataObjectStatus.ACTIVE, entity.getStatus());
 
@@ -1871,11 +1876,11 @@ public class CoalesceEntityTest {
     public void markAsDeletedAlreadyDeletedTest()
     {
         CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
-                                            "TREX Portal",
-                                            "1.0.0.0",
-                                            "First,Second",
-                                            "Type1,Type2",
-                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+                                                      "TREX Portal",
+                                                      "1.0.0.0",
+                                                      "First,Second",
+                                                      "Type1,Type2",
+                                                      "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         entity.setStatus(ECoalesceDataObjectStatus.DELETED);
 
@@ -1891,7 +1896,7 @@ public class CoalesceEntityTest {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         String xml = entity.toXml();
-        
+
         CoalesceAssert.assertXmlEquals(CoalesceTypeInstances.TEST_MISSION, xml, "UTF-8");
 
     }
@@ -1913,13 +1918,7 @@ public class CoalesceEntityTest {
         recordset.createFieldDefinition("File3", ECoalesceFieldDataTypes.FILE_TYPE, "", "(U)", "");
 
         CoalesceRecord record = recordset.addNew();
-        record.setFieldValue("Binary1", "Binary1".getBytes("US-ASCII"));
-        record.setFieldValue("Binary2", "Binary2".getBytes("US-ASCII"));
-        record.setFieldValue("Binary3", "Binary3".getBytes("US-ASCII"));
-
-        record.setFieldValue("File1", "File1".getBytes("US-ASCII"), "file1");
-        record.setFieldValue("File2", "File2".getBytes("US-ASCII"), "file2");
-        record.setFieldValue("File3", "File3".getBytes("US-ASCII"), "file3");
+        setBinaryFileFieldValues(record);
 
         String xml = entity.toXml(false);
 
@@ -1927,13 +1926,13 @@ public class CoalesceEntityTest {
 
         CoalesceRecord desRecord = (CoalesceRecord) desEntity.getDataObjectForNamePath("Testing Entity/Testing Section/Testing Recordset/Testing Recordset Record");
 
-        assertArrayEquals("Binary1".getBytes("US-ASCII"), desRecord.getFieldValueAsByteArray("Binary1", null));
-        assertArrayEquals("Binary2".getBytes("US-ASCII"), desRecord.getFieldValueAsByteArray("Binary2", null));
-        assertArrayEquals("Binary3".getBytes("US-ASCII"), desRecord.getFieldValueAsByteArray("Binary3", null));
+        assertBinaryField(desRecord, "Binary1", "Binary1");
+        assertBinaryField(desRecord, "Binary2", "Binary2");
+        assertBinaryField(desRecord, "Binary3", "Binary3");
 
-        assertArrayEquals("File1".getBytes("US-ASCII"), desRecord.getFieldValueAsByteArray("File1", null));
-        assertArrayEquals("File2".getBytes("US-ASCII"), desRecord.getFieldValueAsByteArray("File2", null));
-        assertArrayEquals("File3".getBytes("US-ASCII"), desRecord.getFieldValueAsByteArray("File3", null));
+        assertFilefiled(desRecord, "File1", "File1");
+        assertFilefiled(desRecord, "File2", "File2");
+        assertFilefiled(desRecord, "File3", "File3");
 
     }
 
@@ -1954,13 +1953,7 @@ public class CoalesceEntityTest {
         recordset.createFieldDefinition("File3", ECoalesceFieldDataTypes.FILE_TYPE, "", "(U)", "");
 
         CoalesceRecord record = recordset.addNew();
-        record.setFieldValue("Binary1", "Binary1".getBytes("US-ASCII"));
-        record.setFieldValue("Binary2", "Binary2".getBytes("US-ASCII"));
-        record.setFieldValue("Binary3", "Binary3".getBytes("US-ASCII"));
-
-        record.setFieldValue("File1", "File1".getBytes("US-ASCII"), "file1");
-        record.setFieldValue("File2", "File2".getBytes("US-ASCII"), "file2");
-        record.setFieldValue("File3", "File3".getBytes("US-ASCII"), "file3");
+        setBinaryFileFieldValues(record);
 
         String xml = entity.toXml(true);
 
@@ -1968,13 +1961,13 @@ public class CoalesceEntityTest {
 
         CoalesceRecord desRecord = (CoalesceRecord) desEntity.getDataObjectForNamePath("Testing Entity/Testing Section/Testing Recordset/Testing Recordset Record");
 
-        assertArrayEquals(new byte[0], desRecord.getFieldValueAsByteArray("Binary1", null));
-        assertArrayEquals(new byte[0], desRecord.getFieldValueAsByteArray("Binary2", null));
-        assertArrayEquals(new byte[0], desRecord.getFieldValueAsByteArray("Binary3", null));
+        assertBinaryField(desRecord, "Binary1", "");
+        assertBinaryField(desRecord, "Binary2", "");
+        assertBinaryField(desRecord, "Binary3", "");
 
-        assertArrayEquals(new byte[0], desRecord.getFieldValueAsByteArray("File1", null));
-        assertArrayEquals(new byte[0], desRecord.getFieldValueAsByteArray("File2", null));
-        assertArrayEquals(new byte[0], desRecord.getFieldValueAsByteArray("File3", null));
+        assertFilefiled(desRecord, "File1", "");
+        assertFilefiled(desRecord, "File2", "");
+        assertFilefiled(desRecord, "File3", "");
 
     }
 
@@ -2037,16 +2030,16 @@ public class CoalesceEntityTest {
             entity2MissionName.setTypedValue("Should be the new value");
 
             // Merge Entities
-            //XsdEntity mergedEntity = XsdEntity.mergeSyncEntity(entity1, entity2);
+            // XsdEntity mergedEntity = XsdEntity.mergeSyncEntity(entity1, entity2);
             CoalesceEntity mergedEntity = CoalesceEntity.mergeSyncEntity(entity1, entity2);
             System.out.println(mergedEntity.toXml());
 
             // Get Mission Name Field of Merged Entity
             CoalesceField<?> mergedEntityMissionName = (CoalesceField<?>) mergedEntity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
-         
+
             // Validate Merge
             assertEquals(entity2MissionName.getBaseValue(), mergedEntityMissionName.getBaseValue());
-            assertEquals(entity1MissionName.getBaseValue(),(mergedEntityMissionName.getHistory().get(0).getBaseValue()));        
+            assertEquals(entity1MissionName.getBaseValue(), (mergedEntityMissionName.getHistory().get(0).getBaseValue()));
 
         }
         catch (CoalesceException | InterruptedException e)
@@ -2124,6 +2117,45 @@ public class CoalesceEntityTest {
     // -----------------------------------------------------------------------//
     // Private Methods
     // -----------------------------------------------------------------------//
+
+    private void setBinaryFileFieldValues(CoalesceRecord record) throws UnsupportedEncodingException
+    {
+        setBinaryFieldValue(record, "Binary1");
+        setBinaryFieldValue(record, "Binary2");
+        setBinaryFieldValue(record, "Binary3");
+
+        setFileFieldValue(record, "File1");
+        setFileFieldValue(record, "File2");
+        setFileFieldValue(record, "File3");
+
+    }
+
+    private void setBinaryFieldValue(CoalesceRecord record, String fieldName) throws UnsupportedEncodingException
+    {
+        CoalesceBinaryField binaryField = (CoalesceBinaryField) record.getFieldByName(fieldName);
+        binaryField.setValue(fieldName.getBytes("US-ASCII"));
+    }
+
+    private void setFileFieldValue(CoalesceRecord record, String fieldName) throws UnsupportedEncodingException
+    {
+        CoalesceFileField fileField = (CoalesceFileField) record.getFieldByName(fieldName);
+        fileField.setValue(fieldName.getBytes("US-ASCII"), fieldName + ".jpg", "jpg");
+
+    }
+
+    private void assertBinaryField(CoalesceRecord record, String fieldName, String expectedValue)
+            throws UnsupportedEncodingException, CoalesceDataFormatException
+    {
+        CoalesceBinaryField binaryField = (CoalesceBinaryField) record.getFieldByName(fieldName);
+        assertArrayEquals(expectedValue.getBytes("US-ASCII"), binaryField.getValue());
+    }
+
+    private void assertFilefiled(CoalesceRecord record, String fieldName, String expectedValue)
+            throws UnsupportedEncodingException
+    {
+        CoalesceFileField fileField = (CoalesceFileField) record.getFieldByName(fieldName);
+        assertArrayEquals(expectedValue.getBytes("US-ASCII"), Base64.decode(fileField.getBaseValue()));
+    }
 
     private void assertEmptyEntity(CoalesceEntity entity)
     {
