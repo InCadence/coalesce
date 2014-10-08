@@ -223,7 +223,7 @@ public class dbStresserSingleThreadTest  {
 						ECoalesceFieldDataTypes.STRING_TYPE);
 
 				record = recordSet.addNew();
-				record.setFieldValue(
+				record.setAttribute(
 						"Performance TestFieldDef",
 						"abcdefghijklmnopqrstuvwxyzABCDEFGHIZKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()_+-=;'[],./?><:{}");
 			} finally {
