@@ -79,11 +79,6 @@
 			<version>1.2</version>
 		</dependency>
 		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.31</version>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.servicemix.bundles</groupId>
 			<artifactId>
   			org.apache.servicemix.bundles.jaxb-api-2.0
@@ -137,10 +132,6 @@
 			<artifactId>coalesce-core</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.incadencecorp.coalesce</groupId>
-			<artifactId>coalesce-persister</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>com.incadencecorp.unity</groupId>
 			<artifactId>unity-core</artifactId>
 		</dependency>
@@ -149,6 +140,26 @@
 			<artifactId>joda-time</artifactId>
 			<version>2.4</version>
 		</dependency>
+		<dependency>
+			<groupId>com.incadencecorp.coalesce</groupId>
+			<artifactId>coalesce-framework-persister-mysql</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.incadencecorp.coalesce</groupId>
+			<artifactId>
+				coalesce-framework-persister-postgresql
+			</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.incadencecorp.coalesce</groupId>
+			<artifactId>
+				coalesce-framework-persister-sqlserver
+			</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.incadencecorp.coalesce</groupId>
+			<artifactId>coalesce-framework-persister-neo4j</artifactId>
+		</dependency>		
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>

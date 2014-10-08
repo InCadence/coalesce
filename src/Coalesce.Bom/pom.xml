@@ -8,8 +8,11 @@
 	<name>coalesce.bom</name>
 	<properties>
 		<coalesceVersion>0.0.1-SNAPSHOT</coalesceVersion>
-		<coalescePersisterVersion>0.0.1-SNAPSHOT</coalescePersisterVersion>
 		<coalesceObjectsVersion>0.0.1-SNAPSHOT</coalesceObjectsVersion>
+		<coalescePersisterVersionMySQL>0.0.1-SNAPSHOT</coalescePersisterVersionMySQL>
+		<coalescePersisterVersionPostGreSQL>0.0.1-SNAPSHOT</coalescePersisterVersionPostGreSQL>
+		<coalescePersisterVersionSQLServer>0.0.1-SNAPSHOT</coalescePersisterVersionSQLServer>
+		<coalescePersisterVersionNEO4J>0.0.1-SNAPSHOT</coalescePersisterVersionNEO4J>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -20,14 +23,29 @@
 			</dependency>
 			<dependency>
 				<groupId>com.incadencecorp.coalesce</groupId>
-				<artifactId>coalesce-persister</artifactId>
-				<version>${coalescePersisterVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.incadencecorp.coalesce</groupId>
 				<artifactId>coalesce-objects</artifactId>
 				<version>${coalesceObjectsVersion}</version>
 			</dependency>
+			<dependency>
+				<groupId>com.incadencecorp.coalesce</groupId>
+				<artifactId>coalesce-framework-persister-mysql</artifactId>
+				<version>${coalescePersisterVersionMySQL}</version>
+			</dependency>			
+			<dependency>
+				<groupId>com.incadencecorp.coalesce</groupId>
+				<artifactId>coalesce-framework-persister-postgresql</artifactId>
+				<version>${coalescePersisterVersionPostGreSQL}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.incadencecorp.coalesce</groupId>
+				<artifactId>coalesce-framework-persister-sqlserver</artifactId>
+				<version>${coalescePersisterVersionSQLServer}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.incadencecorp.coalesce</groupId>
+				<artifactId>coalesce-framework-persister-neo4j</artifactId>
+				<version>${coalescePersisterVersionNEO4J}</version>
+			</dependency>			
 		</dependencies>
 	</dependencyManagement>
 	<distributionManagement>

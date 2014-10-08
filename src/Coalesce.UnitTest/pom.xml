@@ -54,22 +54,28 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.31</version>
-		</dependency>
-		<dependency>
 			<groupId>com.incadencecorp.coalesce</groupId>
 			<artifactId>coalesce-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.incadencecorp.coalesce</groupId>
-			<artifactId>coalesce-persister</artifactId>
+			<artifactId>coalesce-framework-persister-mysql</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>sqljdbc4</groupId>
-			<artifactId>sqljdbc4</artifactId>
-			<version>1.0.0</version>
+			<groupId>com.incadencecorp.coalesce</groupId>
+			<artifactId>
+				coalesce-framework-persister-postgresql
+			</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.incadencecorp.coalesce</groupId>
+			<artifactId>
+				coalesce-framework-persister-sqlserver
+			</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.incadencecorp.coalesce</groupId>
+			<artifactId>coalesce-framework-persister-neo4j</artifactId>
 		</dependency>
 	</dependencies>
 	<dependencyManagement>

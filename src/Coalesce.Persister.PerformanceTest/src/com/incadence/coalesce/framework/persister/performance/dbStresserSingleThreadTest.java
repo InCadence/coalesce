@@ -37,7 +37,6 @@ import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
 import com.incadencecorp.coalesce.framework.objects.MissionEntity;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
-import com.incadencecorp.coalesce.framework.persistance.mysql.MySQLPersistor;
 import com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLDataConnector;
 import com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLPersistor;
 import com.incadencecorp.coalesce.framework.objects.EActionStatuses;

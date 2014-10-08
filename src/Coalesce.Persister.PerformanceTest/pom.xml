@@ -38,12 +38,14 @@
 		</dependency>
 		<dependency>
 			<groupId>com.incadencecorp.coalesce</groupId>
-			<artifactId>coalesce-persister</artifactId>
+			<artifactId>coalesce-objects</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.incadencecorp.coalesce</groupId>
-			<artifactId>coalesce.objects</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<artifactId>
+				coalesce-framework-persister-postgresql
+			</artifactId>
 		</dependency>
 	</dependencies>
 	<dependencyManagement>

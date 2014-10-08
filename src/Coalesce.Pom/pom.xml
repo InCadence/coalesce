@@ -5,8 +5,11 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>../Coalesce</module>
-		<module>../Coalesce.Persister</module>
 		<module>../Coalesce.Objects</module>
+		<module>../Coalesce.Framework.Persister.MySQL</module>
+		<module>../Coalesce.Framework.Persister.NEO4J</module>
+		<module>../Coalesce.Framework.Persister.PostgreSQL</module>
+		<module>../Coalesce.Framework.Persister.SQLServer</module>
 	</modules>
 	<parent>
 		<groupId>com.incadencecorp.coalesce</groupId>

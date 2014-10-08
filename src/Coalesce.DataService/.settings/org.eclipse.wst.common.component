@@ -11,9 +11,6 @@
         <dependent-module archiveName="unity-common-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/Unity.Common/Unity.Common">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="coalesce-persister-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/Coalesce.Persister/Coalesce.Persister">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
         <dependent-module archiveName="unity-core-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/Unity/Unity">
             <dependency-type>uses</dependency-type>
         </dependent-module>
