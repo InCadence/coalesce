@@ -8,7 +8,7 @@ import com.incadencecorp.coalesce.common.classification.AllCommonClassificationT
 import com.incadencecorp.coalesce.common.helpers.AllCommonHelpersTests;
 import com.incadencecorp.coalesce.common.runtime.AllCommonRunTimeTests;
 import com.incadencecorp.coalesce.framework.datamodel.AllFrameworkDataModelTests;
-import com.incadencecorp.coalesce.framework.persistance.AllFrameworkPersisterTests;
+import com.incadencecorp.coalesce.framework.persistance.AllFrameworkPersistorTests;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -29,7 +29,7 @@ import com.incadencecorp.coalesce.framework.persistance.AllFrameworkPersisterTes
 
 @RunWith(Suite.class)
 @SuiteClasses({ AllCommonClassificationTests.class, AllCommonHelpersTests.class, AllCommonRunTimeTests.class,
-               AllFrameworkDataModelTests.class, AllFrameworkPersisterTests.class })
+               AllFrameworkDataModelTests.class, AllFrameworkPersistorTests.class })
 public class AllCoalesceTests {
 
 }

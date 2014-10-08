@@ -40,17 +40,17 @@ public class CoalesceFramework {
     	Private Member Variables
     --------------------------------------------------------------------------*/
 
-    private ICoalescePersistor _Persister;
+    private ICoalescePersistor _Persistor;
     private boolean _IsInitialized = false;
 
     /*--------------------------------------------------------------------------
     	Public Functions
     --------------------------------------------------------------------------*/
 
-    public boolean initialize(ICoalescePersistor persister)
+    public boolean initialize(ICoalescePersistor persistor)
     {
 
-        this._Persister = persister;
+        this._Persistor = persistor;
         this._IsInitialized = true;
 
         return true;
@@ -67,32 +67,32 @@ public class CoalesceFramework {
 
     public CoalesceEntity getCoalesceEntity(String Key) throws CoalescePersistorException
     {
-        return this._Persister.getEntity(Key);
+        return this._Persistor.getEntity(Key);
     }
 
     public CoalesceEntity getEntity(String EntityId, String EntityIdType) throws CoalescePersistorException
     {
-        return this._Persister.getEntity(EntityId, EntityIdType);
+        return this._Persistor.getEntity(EntityId, EntityIdType);
     }
 
     public CoalesceEntity getEntity(String Name, String EntityId, String EntityIdType) throws CoalescePersistorException
     {
-        return this._Persister.getEntity(Name, EntityId, EntityIdType);
+        return this._Persistor.getEntity(Name, EntityId, EntityIdType);
     }
 
     public String getEntityXml(String Key) throws CoalescePersistorException
     {
-        return this._Persister.getEntityXml(Key);
+        return this._Persistor.getEntityXml(Key);
     }
 
     public String getEntityXml(String EntityId, String EntityIdType) throws CoalescePersistorException
     {
-        return this._Persister.getEntityXml(EntityId, EntityIdType);
+        return this._Persistor.getEntityXml(EntityId, EntityIdType);
     }
 
     public String getEntityXml(String Name, String EntityId, String EntityIdType) throws CoalescePersistorException
     {
-        return this._Persister.getEntityXml(Name, EntityId, EntityIdType);
+        return this._Persistor.getEntityXml(Name, EntityId, EntityIdType);
     }
 
     /*--------------------------------------------------------------------------
@@ -148,7 +148,7 @@ public class CoalesceFramework {
             for (int i = 0; i < EntityIdTypeList.length; i++)
             {
 
-                list.addAll(this._Persister.getCoalesceEntityKeysForEntityId(EntityIdList[i],
+                list.addAll(this._Persistor.getCoalesceEntityKeysForEntityId(EntityIdList[i],
                                                                              EntityIdTypeList[i],
                                                                              EntityName,
                                                                              EntitySource));
@@ -163,7 +163,7 @@ public class CoalesceFramework {
 
     public EntityMetaData getCoalesceEntityIdAndTypeForKey(String Key) throws CoalescePersistorException
     {
-        return this._Persister.getCoalesceEntityIdAndTypeForKey(Key);
+        return this._Persistor.getCoalesceEntityIdAndTypeForKey(Key);
     }
 
     /*--------------------------------------------------------------------------
@@ -172,7 +172,7 @@ public class CoalesceFramework {
 
     public DateTime getCoalesceEntityLastModified(String key, String objectType) throws CoalescePersistorException
     {
-        return this._Persister.getCoalesceDataObjectLastModified(key, objectType);
+        return this._Persistor.getCoalesceDataObjectLastModified(key, objectType);
     }
 
     public boolean saveCoalesceEntity(CoalesceEntity entity) throws CoalescePersistorException
@@ -182,22 +182,22 @@ public class CoalesceFramework {
 
     public boolean saveCoalesceEntity(CoalesceEntity entity, boolean AllowRemoval) throws CoalescePersistorException
     {
-        return this._Persister.saveEntity(entity, AllowRemoval);
+        return this._Persistor.saveEntity(entity, AllowRemoval);
     }
 
     public String getCoalesceFieldValue(String FieldKey) throws CoalescePersistorException
     {
-        return (String) this._Persister.getFieldValue(FieldKey);
+        return (String) this._Persistor.getFieldValue(FieldKey);
     }
 
     public CoalesceRecord getCoalesceRecord(String Key) throws CoalescePersistorException
     {
         CoalesceRecord record = null;
 
-        ElementMetaData metaData = this._Persister.getXPath(Key, "record");
+        ElementMetaData metaData = this._Persistor.getXPath(Key, "record");
         if (metaData != null)
         {
-            CoalesceEntity entity = this._Persister.getEntity(metaData.entityKey);
+            CoalesceEntity entity = this._Persistor.getEntity(metaData.entityKey);
             if (entity != null)
             {
                 record = (CoalesceRecord) entity.getDataObjectForNamePath(metaData.elementXPath);
@@ -211,11 +211,11 @@ public class CoalesceFramework {
     {
         CoalesceStringField field = null;
 
-        ElementMetaData metaData = this._Persister.getXPath(Key, "field");
+        ElementMetaData metaData = this._Persistor.getXPath(Key, "field");
 
         if (metaData != null)
         {
-            CoalesceEntity entity = this._Persister.getEntity(metaData.entityKey);
+            CoalesceEntity entity = this._Persistor.getEntity(metaData.entityKey);
 
             if (entity != null)
             {
@@ -232,7 +232,7 @@ public class CoalesceFramework {
 
     public boolean saveCoalesceEntityTemplate(CoalesceEntityTemplate template) throws CoalescePersistorException
     {
-        return this._Persister.persistEntityTemplate(template);
+        return this._Persistor.persistEntityTemplate(template);
     }
 
     public CoalesceEntityTemplate getCoalesceEntityTemplate(String Name, String Source, String Version) throws SAXException,
@@ -250,22 +250,22 @@ public class CoalesceFramework {
 
     public String getCoalesceEntityTemplateXml(String Key) throws CoalescePersistorException
     {
-        return this._Persister.getEntityTemplateXml(Key);
+        return this._Persistor.getEntityTemplateXml(Key);
     }
 
     public String getCoalesceEntityTemplateXml(String Name, String Source, String Version) throws CoalescePersistorException
     {
-        return this._Persister.getEntityTemplateXml(Name, Source, Version);
+        return this._Persistor.getEntityTemplateXml(Name, Source, Version);
     }
 
     public String getCoalesceEntityTemplateKey(String Name, String Source, String Version) throws CoalescePersistorException
     {
-        return this._Persister.getEntityTemplateKey(Name, Source, Version);
+        return this._Persistor.getEntityTemplateKey(Name, Source, Version);
     }
 
     public String getCoalesceEntityTemplateMetadata() throws CoalescePersistorException
     {
-        return this._Persister.getEntityTemplateMetadata();
+        return this._Persistor.getEntityTemplateMetadata();
     }
 
     public CoalesceEntity createEntityFromTemplate(String Name, String Source, String Version) throws CoalescePersistorException

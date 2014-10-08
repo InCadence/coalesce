@@ -25,7 +25,7 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-public abstract class CoalescePersisterBase implements ICoalescePersistor {
+public abstract class CoalescePersistorBase implements ICoalescePersistor {
 
     /*--------------------------------------------------------------------------
     	Private Member Variables

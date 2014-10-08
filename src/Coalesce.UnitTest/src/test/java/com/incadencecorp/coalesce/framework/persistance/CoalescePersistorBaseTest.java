@@ -75,7 +75,7 @@ import com.incadencecorp.unity.connector.local.LocalConfigurationsConnector;
  * 
  *     &lt;SubclassPersistor&gt; tester = new &lt;SubclassPersistor&gt;();
  * 
- *     CoalescePersisterBaseTest.setupBeforeClassBase(tester);
+ *     CoalescePersistorBaseTest.setupBeforeClassBase(tester);
  * 
  * }
  * 
@@ -84,7 +84,7 @@ import com.incadencecorp.unity.connector.local.LocalConfigurationsConnector;
  * {
  *     &lt;SubclassPersistor&gt; tester = new &lt;SubclassPersistor&gt;();
  * 
- *     CoalescePersisterBaseTest.tearDownAfterClassBase(tester);
+ *     CoalescePersistorBaseTest.tearDownAfterClassBase(tester);
  * 
  * }
  * </pre>

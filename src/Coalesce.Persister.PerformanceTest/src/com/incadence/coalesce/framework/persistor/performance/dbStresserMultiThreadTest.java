@@ -1,4 +1,4 @@
-package com.incadence.coalesce.framework.persister.performance;
+package com.incadence.coalesce.framework.persistor.performance;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -31,7 +31,7 @@ import com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLPersi
 public class dbStresserMultiThreadTest {
 	final static Logger _log = Logger.getLogger("TesterLog");
 	static ServerConn _serCon;
-	static PostGreSQLPersistor _psPersister;
+	static PostGreSQLPersistor _psPersistor;
 
 	public static void main(String[] args) {
 		int ITERATION_LIMIT = 10;
@@ -41,7 +41,7 @@ public class dbStresserMultiThreadTest {
 		try {
 			if (dbStresserMultiThreadTest.OpenConnection() == true) {
 				appRunner._coalesceFramework
-						.initialize(dbStresserMultiThreadTest._psPersister);
+						.initialize(dbStresserMultiThreadTest._psPersistor);
 				// timeLogger = new ArrayList<TimeTrack>();
 				Thread vol1 = new Thread(new appRunner(ITERATION_LIMIT, CAPTURE_INTERVAL));
 				vol1.setName("Thread #1");
@@ -102,8 +102,8 @@ public class dbStresserMultiThreadTest {
 		_serCon.setDatabase("CoalesceDatabase");
 		_serCon.setUser("root");
 		_serCon.setPassword("Passw0rd");
-		_psPersister = new PostGreSQLPersistor();
-		_psPersister.Initialize(_serCon);
+		_psPersistor = new PostGreSQLPersistor();
+		_psPersistor.Initialize(_serCon);
 		return true;
 	}
 }

@@ -1,4 +1,4 @@
-package com.incadence.coalesce.framework.persister.performance;
+package com.incadence.coalesce.framework.persistor.performance;
 
 import java.io.Serializable;
 

@@ -16,12 +16,12 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
-import com.incadencecorp.coalesce.framework.persistance.CoalescePersisterBase;
+import com.incadencecorp.coalesce.framework.persistance.CoalescePersistorBase;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceTable;
 import com.incadencecorp.coalesce.framework.persistance.ICoalesceCacher;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 
-public class Neo4JPersistor extends CoalescePersisterBase {
+public class Neo4JPersistor extends CoalescePersistorBase {
 
     private ServerConn serCon;
 

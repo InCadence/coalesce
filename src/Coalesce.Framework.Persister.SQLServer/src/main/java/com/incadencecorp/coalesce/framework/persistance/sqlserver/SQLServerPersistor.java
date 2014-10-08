@@ -29,7 +29,7 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceDataObjectStatus;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
-import com.incadencecorp.coalesce.framework.persistance.CoalescePersisterBase;
+import com.incadencecorp.coalesce.framework.persistance.CoalescePersistorBase;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceTable;
 import com.incadencecorp.coalesce.framework.persistance.ICoalesceCacher;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
@@ -53,7 +53,7 @@ import com.incadencecorp.coalesce.framework.persistance.ServerConn;
  -----------------------------------------------------------------------------*/
 
 @Repository("SQLServerPersistor")
-public class SQLServerPersistor extends CoalescePersisterBase {
+public class SQLServerPersistor extends CoalescePersistorBase {
 
     public SQLServerPersistor()
     {
