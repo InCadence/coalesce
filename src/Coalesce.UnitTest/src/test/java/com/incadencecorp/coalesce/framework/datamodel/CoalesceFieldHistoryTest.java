@@ -24,7 +24,9 @@ import com.incadencecorp.coalesce.framework.generatedjaxb.Entity.Section.Records
 import com.incadencecorp.coalesce.framework.generatedjaxb.Entity.Section.Recordset.Record;
 import com.incadencecorp.coalesce.framework.generatedjaxb.Entity.Section.Recordset.Record.Field;
 import com.incadencecorp.coalesce.framework.generatedjaxb.Entity.Section.Recordset.Record.Field.Fieldhistory;
+import com.incadencecorp.coalesce.framework.objects.EActionStatuses;
 import com.incadencecorp.coalesce.framework.objects.MissionEntity;
+import com.incadencecorp.coalesce.framework.objects.Photos.PhotoGalleryEntity;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -117,6 +119,48 @@ public class CoalesceFieldHistoryTest {
     }
 
     @Test
+    public void addFieldHistoryDefaultValues()
+    {
+        // Create New Action
+        PhotoGalleryEntity entity = new PhotoGalleryEntity();
+        entity.initialize();
+
+        // Change Value (Current Status has a Default Value)
+        entity.setCurrentStatus(EActionStatuses.CollectionPending);
+
+        // Verify
+        assertTrue(entity.getCurrentStatusHistory().size() == 0);
+
+        // Change Value (Current Status has a Default Value)
+        entity.setCurrentStatus(EActionStatuses.ExploitationPending);
+
+        // Verify
+        assertTrue(entity.getCurrentStatusHistory().size() == 0);
+
+        // Create New Action from entity
+        PhotoGalleryEntity entity2 = new PhotoGalleryEntity();
+        entity2.initialize(entity.toXml());
+        
+        // Change Value (Same Value no History Should be Created)
+        entity2.setCurrentStatus(EActionStatuses.ExploitationPending);
+        
+        // Verify 
+        assertTrue(entity2.getCurrentStatusHistory().size() == 0);
+        
+        // Change Value (History Should be Created)
+        entity2.setCurrentStatus(EActionStatuses.CollectionComplete);
+        
+        // Verify 
+        assertTrue(entity2.getCurrentStatusHistory().size() == 1);
+
+        System.out.println(entity2.toXml());
+        
+        // Verify
+        assertTrue(entity2.getCurrentStatusHistory().size() == 1);
+        assertTrue(EActionStatuses.fromLabel(entity2.getCurrentStatusHistory().get(0).getValue()) == EActionStatuses.ExploitationPending);
+    }
+    
+    @Test
     public void addFieldHistory()
     {
         // Create New Mission
@@ -132,8 +176,6 @@ public class CoalesceFieldHistoryTest {
         // Change Value (History Should be Created)
         entity.getMissionName().setValue("History should be added");
 
-        System.out.println(entity.toXml());
-        
         // Verify
         assertTrue(entity.getMissionName().getHistory().size() == 1);
         assertTrue(entity.getMissionName().getHistory().get(0).getValue() == "No history should be added");

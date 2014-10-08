@@ -1,8 +1,11 @@
 package com.incadencecorp.coalesce.framework.objects;
 
+import java.util.ArrayList;
+
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceCoordinateField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceGUIDField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
@@ -53,7 +56,7 @@ public class ActionBaseEntity extends CoalesceEntity {
         recordSet = CoalesceRecordset.create(section, "Live Status Recordset");
         CoalesceFieldDefinition.create(recordSet,
                                        "CurrentStatus",
-                                  ECoalesceFieldDataTypes.STRING_TYPE,
+                                       ECoalesceFieldDataTypes.STRING_TYPE,
                                        "Status",
                                        "",
                                        EActionStatuses.CollectionComplete.getLabel());
@@ -111,6 +114,11 @@ public class ActionBaseEntity extends CoalesceEntity {
         ((CoalesceStringField) this._liveStatusRecord.getFieldByName("CurrentStatus")).setValue(value.getLabel());
     }
 
+    public ArrayList<CoalesceFieldHistory> getCurrentStatusHistory()
+    {
+        return this._liveStatusRecord.getFieldByName("CurrentStatus").getHistory();
+    }
+
     // Response Status
     public EResponseStatuses getResponseStatus()
     {
@@ -120,6 +128,11 @@ public class ActionBaseEntity extends CoalesceEntity {
     public void setResponseStatus(EResponseStatuses value)
     {
         ((CoalesceStringField) this._liveStatusRecord.getFieldByName("ResponseStatus")).setValue(value.getLabel());
+    }
+
+    public ArrayList<CoalesceFieldHistory> getResponseStatusHistory()
+    {
+        return this._liveStatusRecord.getFieldByName("ResponseStatus").getHistory();
     }
 
     // Response Key
