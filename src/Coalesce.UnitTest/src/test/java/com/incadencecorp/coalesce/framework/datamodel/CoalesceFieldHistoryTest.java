@@ -19,21 +19,12 @@ import com.incadencecorp.coalesce.common.classification.MarkingValueTest;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceStringField;
-import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.generatedjaxb.Entity.Section;
 import com.incadencecorp.coalesce.framework.generatedjaxb.Entity.Section.Recordset;
 import com.incadencecorp.coalesce.framework.generatedjaxb.Entity.Section.Recordset.Record;
 import com.incadencecorp.coalesce.framework.generatedjaxb.Entity.Section.Recordset.Record.Field;
 import com.incadencecorp.coalesce.framework.generatedjaxb.Entity.Section.Recordset.Record.Field.Fieldhistory;
+import com.incadencecorp.coalesce.framework.objects.MissionEntity;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -123,6 +114,31 @@ public class CoalesceFieldHistoryTest {
         @SuppressWarnings("unused")
         CoalesceFieldHistory fh = CoalesceFieldHistory.create(field);
 
+    }
+
+    @Test
+    public void addFieldHistory()
+    {
+        // Create New Mission
+        MissionEntity entity = new MissionEntity();
+        entity.initialize();
+
+        // Change Value (History Should not be Created)
+        entity.getMissionName().setValue("No history should be added");
+
+        // Verify
+        assertTrue(entity.getMissionName().getHistory().size() == 0);
+
+        // Change Value (History Should be Created)
+        entity.getMissionName().setValue("History should be added");
+
+        System.out.println(entity.toXml());
+        
+        // Verify
+        assertTrue(entity.getMissionName().getHistory().size() == 1);
+        assertTrue(entity.getMissionName().getHistory().get(0).getValue() == "No history should be added");
+        assertTrue(entity.getMissionName().getPreviousHistoryKey() == entity.getMissionName().getHistory().get(0).getKey());
+        assertTrue(entity.getMissionName().getHistory().get(0).getPreviousHistoryKey() == "00000000-0000-0000-0000-000000000000");
     }
 
     @Test
@@ -274,11 +290,12 @@ public class CoalesceFieldHistoryTest {
     {
         CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceFieldHistory stringField = GetTestMissionFieldHistoryByName(mission, CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+        CoalesceFieldHistory stringField = GetTestMissionFieldHistoryByName(mission,
+                                                                            CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
         assertEquals(ECoalesceFieldDataTypes.STRING_TYPE, stringField.getDataType());
 
         CoalesceFieldHistory dateField = GetTestMissionFieldHistoryByName(mission,
-                                                                     CoalesceTypeInstances.TEST_MISSION_INCIDENT_DATE_TIME_PATH);
+                                                                          CoalesceTypeInstances.TEST_MISSION_INCIDENT_DATE_TIME_PATH);
         assertEquals(ECoalesceFieldDataTypes.DATE_TIME_TYPE, dateField.getDataType());
 
     }
@@ -288,22 +305,23 @@ public class CoalesceFieldHistoryTest {
     {
         CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceFieldHistory stringField = GetTestMissionFieldHistoryByName(mission, CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+        CoalesceFieldHistory stringField = GetTestMissionFieldHistoryByName(mission,
+                                                                            CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
         stringField.setDataType(ECoalesceFieldDataTypes.DATE_TIME_TYPE);
 
         CoalesceFieldHistory dateField = GetTestMissionFieldHistoryByName(mission,
-                                                                     CoalesceTypeInstances.TEST_MISSION_INCIDENT_DATE_TIME_PATH);
+                                                                          CoalesceTypeInstances.TEST_MISSION_INCIDENT_DATE_TIME_PATH);
         dateField.setDataType(ECoalesceFieldDataTypes.INTEGER_TYPE);
 
         String serializedMission = mission.toXml();
         CoalesceEntity savedMission = CoalesceEntity.create(serializedMission);
 
         CoalesceFieldHistory savedStringField = GetTestMissionFieldHistoryByName(savedMission,
-                                                                            CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+                                                                                 CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
         assertEquals(ECoalesceFieldDataTypes.DATE_TIME_TYPE, savedStringField.getDataType());
 
         CoalesceFieldHistory savedDateField = GetTestMissionFieldHistoryByName(savedMission,
-                                                                          CoalesceTypeInstances.TEST_MISSION_INCIDENT_DATE_TIME_PATH);
+                                                                               CoalesceTypeInstances.TEST_MISSION_INCIDENT_DATE_TIME_PATH);
         assertEquals(ECoalesceFieldDataTypes.INTEGER_TYPE, savedDateField.getDataType());
 
     }
@@ -736,7 +754,9 @@ public class CoalesceFieldHistoryTest {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
-        CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset, "Uri", ECoalesceFieldDataTypes.URI_TYPE);
+        CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset,
+                                                                              "Uri",
+                                                                              ECoalesceFieldDataTypes.URI_TYPE);
 
         CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
@@ -769,7 +789,7 @@ public class CoalesceFieldHistoryTest {
         CoalesceFieldHistory fh = field.getHistory().get(0);
 
         DateTime newDate = now.plusDays(1);
-        
+
         fh.setTypedValue(newDate);
 
         assertEquals(newDate, fh.getDateTimeValue());
@@ -798,8 +818,8 @@ public class CoalesceFieldHistoryTest {
 
         CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
         CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset,
-                                                                    "Boolean",
-                                                                    ECoalesceFieldDataTypes.BOOLEAN_TYPE);
+                                                                              "Boolean",
+                                                                              ECoalesceFieldDataTypes.BOOLEAN_TYPE);
 
         CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
@@ -818,10 +838,10 @@ public class CoalesceFieldHistoryTest {
 
         fh.setTypedValue(false);
 
-        //data = null;
+        // data = null;
         data = Boolean.parseBoolean(fh.getValue());
 
-        //assertTrue(data instanceof Boolean);
+        // assertTrue(data instanceof Boolean);
         assertEquals(false, data);
         assertEquals("false", fh.getBaseValue().toLowerCase());
         assertEquals(false, fh.getBooleanValue());
@@ -848,8 +868,8 @@ public class CoalesceFieldHistoryTest {
 
         CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
         CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset,
-                                                                    "Integer",
-                                                                    ECoalesceFieldDataTypes.INTEGER_TYPE);
+                                                                              "Integer",
+                                                                              ECoalesceFieldDataTypes.INTEGER_TYPE);
 
         CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
@@ -862,7 +882,7 @@ public class CoalesceFieldHistoryTest {
 
         int data = Integer.parseInt(fh.getValue());
 
-        //assertTrue(data instanceof Integer);
+        // assertTrue(data instanceof Integer);
         assertEquals("1111", fh.getBaseValue());
         assertEquals(1111, fh.getIntegerValue().intValue());
         assertEquals(1111, data);
@@ -871,7 +891,7 @@ public class CoalesceFieldHistoryTest {
 
         data = Integer.parseInt(fh.getValue());
 
-        //assertTrue(data instanceof Integer);
+        // assertTrue(data instanceof Integer);
         assertEquals(3333, data);
         assertEquals("3333", fh.getBaseValue());
         assertEquals(3333, fh.getIntegerValue().intValue());
@@ -898,8 +918,8 @@ public class CoalesceFieldHistoryTest {
 
         CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
         CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset,
-                                                                    "GUID",
-                                                                    ECoalesceFieldDataTypes.GUID_TYPE);
+                                                                              "GUID",
+                                                                              ECoalesceFieldDataTypes.GUID_TYPE);
 
         CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);

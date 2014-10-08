@@ -43,6 +43,11 @@
 			<version>2.4</version>
 		</dependency>
 		<dependency>
+			<groupId>com.incadencecorp.coalesce</groupId>
+			<artifactId>coalesce-objects</artifactId>
+			<scope>test</scope>
+		</dependency>		
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.11</version>

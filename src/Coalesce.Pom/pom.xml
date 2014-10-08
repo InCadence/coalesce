@@ -6,6 +6,7 @@
 	<modules>
 		<module>../Coalesce</module>
 		<module>../Coalesce.Persister</module>
+		<module>../Coalesce.Objects</module>
 	</modules>
 	<parent>
 		<groupId>com.incadencecorp.coalesce</groupId>

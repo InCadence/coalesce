@@ -9,6 +9,7 @@
 	<properties>
 		<coalesceVersion>0.0.1-SNAPSHOT</coalesceVersion>
 		<coalescePersisterVersion>0.0.1-SNAPSHOT</coalescePersisterVersion>
+		<coalesceObjectsVersion>0.0.1-SNAPSHOT</coalesceObjectsVersion>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -21,6 +22,11 @@
 				<groupId>com.incadencecorp.coalesce</groupId>
 				<artifactId>coalesce-persister</artifactId>
 				<version>${coalescePersisterVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.incadencecorp.coalesce</groupId>
+				<artifactId>coalesce-objects</artifactId>
+				<version>${coalesceObjectsVersion}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
