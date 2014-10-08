@@ -24,7 +24,6 @@ import org.w3c.dom.Text;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.common.helpers.EntityLinkHelper;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
@@ -33,13 +32,11 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceStringField;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
-import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
 import com.incadencecorp.coalesce.framework.objects.MissionEntity;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
-import com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLDataConnector;
 import com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLPersistor;
-import com.incadencecorp.coalesce.framework.objects.EActionStatuses;
 
 public class dbStresserSingleThreadTest  {
 
@@ -223,9 +220,10 @@ public class dbStresserSingleThreadTest  {
 						ECoalesceFieldDataTypes.STRING_TYPE);
 
 				record = recordSet.addNew();
-				record.setAttribute(
-						"Performance TestFieldDef",
-						"abcdefghijklmnopqrstuvwxyzABCDEFGHIZKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()_+-=;'[],./?><:{}");
+				
+				CoalesceStringField testField = (CoalesceStringField) record.getFieldByName("Performance TestFieldDef");
+				testField.setValue("abcdefghijklmnopqrstuvwxyzABCDEFGHIZKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()_+-=;'[],./?><:{}");
+				
 			} finally {
 				// appMain.inputStream.close();
 			}
