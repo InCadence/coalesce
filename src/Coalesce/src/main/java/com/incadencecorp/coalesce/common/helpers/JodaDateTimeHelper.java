@@ -339,7 +339,7 @@ public class JodaDateTimeHelper {
      */
     public static DateTime fromXmlDateTimeUTC(String xmlDate)
     {
-        if (xmlDate == null) throw new NullArgumentException("xmlDate");
+        if (xmlDate == null) return null;
 
         try
         {

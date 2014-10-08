@@ -242,7 +242,7 @@ public class CoalesceFieldDefinition extends CoalesceDataObject implements ICoal
                                                  boolean noIndex)
     {
 
-        if (parent == null || StringHelper.isNullOrEmpty(name)) return null;
+        if (parent == null || StringHelper.isNullOrEmpty(name) || dataType == null) return null;
 
         Fielddefinition newEntityFieldDefinition = new Fielddefinition();
         parent.GetEntityFieldDefinitions().add(newEntityFieldDefinition);

@@ -1119,10 +1119,7 @@ public class CoalesceFieldTest {
         CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
 
-        byte[] bytes = new byte[0];
-
-        assertArrayEquals(bytes, field.getBinaryValue());
-
+        assertNull(field.getBinaryValue());
     }
 
     @Test
@@ -1208,7 +1205,7 @@ public class CoalesceFieldTest {
         CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
 
         assertFalse(field.getBooleanValue());
-        assertEquals("false", field.getBaseValue().toLowerCase());
+        assertNull(field.getBaseValue());
 
         field.setTypedValue(true);
 
@@ -1261,7 +1258,7 @@ public class CoalesceFieldTest {
         CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
 
-        assertEquals("", field.getBaseValue());
+        assertNull(field.getBaseValue());
 
         field.setTypedValue(1111);
 
@@ -1314,7 +1311,7 @@ public class CoalesceFieldTest {
         CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
 
-        assertEquals("", field.getBaseValue());
+        assertNull(field.getBaseValue());
 
         UUID guid = UUID.randomUUID();
         field.setTypedValue(guid);
@@ -1800,16 +1797,13 @@ public class CoalesceFieldTest {
     @Test
     public void parseCoordinateWhiteSpaceTest() throws CoalesceDataFormatException
     {
-        thrown.expect(CoalesceDataFormatException.class);
-        thrown.expectMessage(CoalesceFieldTest.POINT_ERROR_MESSAGE);
-
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
 
         field.setBaseValue("  ");
 
-        field.getValue();
+        assertNull(field.getValue());
     }
 
     @Test

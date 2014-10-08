@@ -88,11 +88,11 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
         newField.setSuspendHistory(false);
 
         // Boolean Type? If so then default initial value to false if not a boolean default value.
-        if (fieldDefinition.getDataType() == ECoalesceFieldDataTypes.BOOLEAN_TYPE
-                && !(newField.getBaseValue().equalsIgnoreCase("true") || newField.getBaseValue().equalsIgnoreCase("false")))
-        {
-            newField.setBaseValue("false");
-        }
+        /*
+         * if (fieldDefinition.getDataType() == ECoalesceFieldDataTypes.BOOLEAN_TYPE &&
+         * !(newField.getBaseValue().equalsIgnoreCase("true") || newField.getBaseValue().equalsIgnoreCase("false"))) {
+         * newField.setBaseValue("false"); }
+         */
 
         // Add to Parent's Child Collection
         if (!(parent._childDataObjects.containsKey(newField.getKey())))
@@ -507,7 +507,8 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     /**
      * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}'s change history collection
      * 
-     * @return ArrayList<{@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory}> all modification history of this field
+     * @return ArrayList<{@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory}> all modification
+     *         history of this field
      */
     public ArrayList<CoalesceFieldHistory> getHistory()
     {
@@ -789,7 +790,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
                 }
 
                 // Set LastModified
-                setLastModified(JodaDateTimeHelper.nowInUtc());// .plusSeconds(1));
+                setLastModified(JodaDateTimeHelper.nowInUtc().plusSeconds(1));
             }
 
         }

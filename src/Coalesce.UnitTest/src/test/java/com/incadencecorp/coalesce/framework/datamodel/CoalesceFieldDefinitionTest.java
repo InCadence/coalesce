@@ -1,6 +1,7 @@
 package com.incadencecorp.coalesce.framework.datamodel;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.UUID;
 
@@ -10,14 +11,7 @@ import org.junit.Test;
 import com.incadencecorp.coalesce.common.CoalesceTypeInstances;
 import com.incadencecorp.coalesce.common.classification.Marking;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
-import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
+import com.incadencecorp.coalesce.common.helpers.StringHelper;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -57,8 +51,8 @@ public class CoalesceFieldDefinitionTest {
         CoalesceRecordset recordSet = createTestRecordset();
 
         CoalesceFieldDefinition newFieldDef = CoalesceFieldDefinition.create(recordSet,
-                                                                   "Field Def Name",
-                                                                   ECoalesceFieldDataTypes.STRING_TYPE);
+                                                                             "Field Def Name",
+                                                                             ECoalesceFieldDataTypes.STRING_TYPE);
 
         CoalesceDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
 
@@ -67,9 +61,9 @@ public class CoalesceFieldDefinitionTest {
         assertFieldDefinition(recordSet,
                               "Field Def Name",
                               ECoalesceFieldDataTypes.STRING_TYPE,
-                              "",
+                              null,
                               CoalesceFieldDefinitionTest.UNCLASS_MARKING,
-                              "",
+                              null,
                               false,
                               (CoalesceFieldDefinition) xdo);
 
@@ -81,11 +75,11 @@ public class CoalesceFieldDefinitionTest {
         CoalesceRecordset recordSet = createTestRecordset();
 
         CoalesceFieldDefinition newFieldDef = CoalesceFieldDefinition.create(recordSet,
-                                                                   "Field Def Name",
-                                                                   "Boolean Def",
-                                                                   "(TS)",
-                                                                   false,
-                                                                   true);
+                                                                             "Field Def Name",
+                                                                             "Boolean Def",
+                                                                             "(TS)",
+                                                                             false,
+                                                                             true);
 
         CoalesceDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
 
@@ -112,11 +106,11 @@ public class CoalesceFieldDefinitionTest {
         CoalesceRecordset recordSet = createTestRecordset();
 
         CoalesceFieldDefinition newFieldDef = CoalesceFieldDefinition.create(recordSet,
-                                                                   "Field Def Name",
-                                                                   "Boolean Def",
-                                                                   "(U)",
-                                                                   true,
-                                                                   true);
+                                                                             "Field Def Name",
+                                                                             "Boolean Def",
+                                                                             "(U)",
+                                                                             true,
+                                                                             true);
 
         CoalesceDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
 
@@ -143,11 +137,11 @@ public class CoalesceFieldDefinitionTest {
         CoalesceRecordset recordSet = createTestRecordset();
 
         CoalesceFieldDefinition newFieldDef = CoalesceFieldDefinition.create(recordSet,
-                                                                   "Field Def Name",
-                                                                   "Boolean Def",
-                                                                   "(TS)",
-                                                                   false,
-                                                                   false);
+                                                                             "Field Def Name",
+                                                                             "Boolean Def",
+                                                                             "(TS)",
+                                                                             false,
+                                                                             false);
 
         CoalesceDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
 
@@ -174,11 +168,11 @@ public class CoalesceFieldDefinitionTest {
         CoalesceRecordset recordSet = createTestRecordset();
 
         CoalesceFieldDefinition newFieldDef = CoalesceFieldDefinition.create(recordSet,
-                                                                   "Field Def Name",
-                                                                   "Boolean Def",
-                                                                   "(U)",
-                                                                   true,
-                                                                   false);
+                                                                             "Field Def Name",
+                                                                             "Boolean Def",
+                                                                             "(U)",
+                                                                             true,
+                                                                             false);
 
         CoalesceDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
 
@@ -205,11 +199,11 @@ public class CoalesceFieldDefinitionTest {
         CoalesceRecordset recordSet = createTestRecordset();
 
         CoalesceFieldDefinition newFieldDef = CoalesceFieldDefinition.create(recordSet,
-                                                                   "Field Def Name",
-                                                                   "Integer Def",
-                                                                   "(TS)",
-                                                                   5,
-                                                                   true);
+                                                                             "Field Def Name",
+                                                                             "Integer Def",
+                                                                             "(TS)",
+                                                                             5,
+                                                                             true);
 
         CoalesceDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
 
@@ -236,11 +230,11 @@ public class CoalesceFieldDefinitionTest {
         CoalesceRecordset recordSet = createTestRecordset();
 
         CoalesceFieldDefinition newFieldDef = CoalesceFieldDefinition.create(recordSet,
-                                                                   "Field Def Name",
-                                                                   "Integer Def",
-                                                                   "(U)",
-                                                                   5,
-                                                                   false);
+                                                                             "Field Def Name",
+                                                                             "Integer Def",
+                                                                             "(U)",
+                                                                             5,
+                                                                             false);
 
         CoalesceDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
 
@@ -267,12 +261,12 @@ public class CoalesceFieldDefinitionTest {
         CoalesceRecordset recordSet = createTestRecordset();
 
         CoalesceFieldDefinition newFieldDef = CoalesceFieldDefinition.create(recordSet,
-                                                                   "Field Def Name",
-                                                                   ECoalesceFieldDataTypes.STRING_TYPE,
-                                                                   "String Def",
-                                                                   "(TS)",
-                                                                   "Unknown",
-                                                                   true);
+                                                                             "Field Def Name",
+                                                                             ECoalesceFieldDataTypes.STRING_TYPE,
+                                                                             "String Def",
+                                                                             "(TS)",
+                                                                             "Unknown",
+                                                                             true);
 
         CoalesceDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
 
@@ -299,12 +293,12 @@ public class CoalesceFieldDefinitionTest {
         CoalesceRecordset recordSet = createTestRecordset();
 
         CoalesceFieldDefinition newFieldDef = CoalesceFieldDefinition.create(recordSet,
-                                                                   "Field Def Name",
-                                                                   ECoalesceFieldDataTypes.STRING_TYPE,
-                                                                   "String Def",
-                                                                   "(TS)",
-                                                                   "XXX",
-                                                                   false);
+                                                                             "Field Def Name",
+                                                                             ECoalesceFieldDataTypes.STRING_TYPE,
+                                                                             "String Def",
+                                                                             "(TS)",
+                                                                             "XXX",
+                                                                             false);
 
         CoalesceDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
 
@@ -332,12 +326,12 @@ public class CoalesceFieldDefinitionTest {
 
         DateTime now = JodaDateTimeHelper.nowInUtc();
         CoalesceFieldDefinition newFieldDef = CoalesceFieldDefinition.create(recordSet,
-                                                                   "Field Def Name",
-                                                                   ECoalesceFieldDataTypes.DATE_TIME_TYPE,
-                                                                   "DateTime Def",
-                                                                   "(TS)",
-                                                                   JodaDateTimeHelper.toXmlDateTimeUTC(now),
-                                                                   true);
+                                                                             "Field Def Name",
+                                                                             ECoalesceFieldDataTypes.DATE_TIME_TYPE,
+                                                                             "DateTime Def",
+                                                                             "(TS)",
+                                                                             JodaDateTimeHelper.toXmlDateTimeUTC(now),
+                                                                             true);
 
         CoalesceDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
 
@@ -512,7 +506,15 @@ public class CoalesceFieldDefinitionTest {
     {
         assertEquals(fieldDefinition.getName(), field.getName());
         assertEquals(fieldDefinition.getDataType(), field.getDataType());
-        assertEquals(fieldDefinition.getLabel(), field.getLabel());
+        if (fieldDefinition.getLabel() == null)
+        {
+            assertTrue(StringHelper.isNullOrEmpty(field.getLabel()));
+        }
+        else
+        {
+            assertEquals(fieldDefinition.getLabel(), field.getLabel());
+        }
+
         assertEquals(fieldDefinition.getDefaultClassificationMarking().toString(),
                      field.getClassificationMarking().toString());
         assertEquals(fieldDefinition.getDefaultValue(), field.getBaseValue());

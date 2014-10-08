@@ -560,12 +560,9 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
             throw new ClassCastException("Type mismatch");
         }
 
-        if (StringHelper.isNullOrEmpty(getBaseValue())) throw new ClassCastException("Type mismatch");
+        if (StringHelper.isNullOrEmpty(getBaseValue())) return false;
 
-        boolean value = Boolean.parseBoolean(getBaseValue());
-
-        return value;
-
+        return Boolean.parseBoolean(getBaseValue());
     }
 
     /**
@@ -754,7 +751,10 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
         }
 
         String rawValue = getBaseValue();
-        if (rawValue.length() > 0)
+        
+        if (rawValue == null) return null;
+        
+        if (rawValue != null && rawValue.length() > 0)
         {
             byte[] bytes = Base64.decode(rawValue);
 
