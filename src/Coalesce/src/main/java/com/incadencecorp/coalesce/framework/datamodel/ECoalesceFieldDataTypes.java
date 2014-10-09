@@ -17,7 +17,7 @@ public enum ECoalesceFieldDataTypes
     FILE_TYPE("file"),
     GEOCOORDINATE_LIST_TYPE("geocoordinatelist"),
     DOUBLE_TYPE("double"),
-    FLOAT_TYPE("geocoordinatelist");
+    FLOAT_TYPE("float");
 
     private String _label;
 
