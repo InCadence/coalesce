@@ -2,7 +2,6 @@ package com.incadencecorp.coalesce.framework.persistance;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -309,13 +308,12 @@ public abstract class CoalescePersistorBaseTest {
 
     }
 
-
     @Test
     public void testFAILCheckLastModified() throws CoalescePersistorException
     {
         DateTime lastModified = _coalesceFramework.getCoalesceEntityLastModified(_entity.getKey(), "linkage");
-        
-        assertNotEquals(lastModified, _entity.getLastModified());
+
+        assertNull(lastModified);
 
     }
 
