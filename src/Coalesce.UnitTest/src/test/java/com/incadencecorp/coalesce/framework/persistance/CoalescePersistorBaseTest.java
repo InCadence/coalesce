@@ -2,6 +2,7 @@ package com.incadencecorp.coalesce.framework.persistance;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -11,7 +12,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeComparator;
 import org.junit.After;
 import org.junit.Test;
 import org.w3c.dom.NamedNodeMap;
@@ -309,32 +309,13 @@ public abstract class CoalescePersistorBaseTest {
 
     }
 
-    //
-    // @Test
-    // public void testFAILCheckLastModified()
-    // {
-    // try
-    // {
-    // DateTime last_t Entity
-    // lastModified = _coalesceFramework.GetCoalesceEntityLastModified(_entity.getKey(),
-    // "linkage");
-    // assertTrue(DateTimeComparator.getInstance().compare(lastModified, _entity.getLastModified()) == 1);
-    // }
-    // catch (Exception ex)
-    // {
-    // fail(ex.getMessage());
-    // }
-    // }
-    //
+
     @Test
     public void testFAILCheckLastModified() throws CoalescePersistorException
     {
-        DateTime lastModified;
-
-        // Test Entity
-        lastModified = CoalescePersistorBaseTest._coalesceFramework.getCoalesceEntityLastModified(_entity.getKey(),
-                                                                                                  "linkage");
-        assertTrue(DateTimeComparator.getInstance().compare(lastModified, _entity.getLastModified()) == 1);
+        DateTime lastModified = _coalesceFramework.getCoalesceEntityLastModified(_entity.getKey(), "linkage");
+        
+        assertNotEquals(lastModified, _entity.getLastModified());
 
     }
 
