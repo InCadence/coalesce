@@ -19,6 +19,7 @@ import org.apache.xerces.impl.dv.util.Base64;
 import org.jdom2.JDOMException;
 import org.joda.time.DateTime;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -68,14 +69,20 @@ public class CoalesceFieldTest {
     private static final String POINT_ERROR_MESSAGE = "Failed to parse point value for: MissionGeoLocation";
 
     @BeforeClass
-    public static void setUpBeforeClass()
+    public static void setUpBeforeClass() throws IOException
     {
+        CoalesceUnitTestSettings.initialize();
+
         initializeSettings();
     }
 
+    @AfterClass
+    public static void tearDownAfterClass() throws Exception
+    {
+        CoalesceUnitTestSettings.tearDownAfterClass();
+    }
+
     /*
-     * @AfterClass public static void tearDownAfterClass() throws Exception { }
-     * 
      * @Before public void setUp() throws Exception { }
      */
 
@@ -527,53 +534,53 @@ public class CoalesceFieldTest {
         CoalesceRecordset testRecordset = testSection.createRecordset("TestRecordset");
         testRecordset.createFieldDefinition("Track", ECoalesceFieldDataTypes.STRING_TYPE, "", "(U)", "");
         testRecordset.createFieldDefinition("NoTrack", ECoalesceFieldDataTypes.INTEGER_TYPE, "", "(TS)", "", true);
-        
+
         CoalesceRecord testRecord = testRecordset.addNew();
-        
+
         CoalesceStringField trackField = (CoalesceStringField) testRecord.getFieldByName("Track");
         CoalesceIntegerField noTrackField = (CoalesceIntegerField) testRecord.getFieldByName("NoTrack");
-        
+
         trackField.setValue("Test one");
         trackField.setValue("Test two");
-        
+
         assertEquals(1, trackField.getHistory().size());
         assertFalse(trackField.toXml().toLowerCase().contains("disablehistory"));
-        
+
         noTrackField.setValue(1111);
         noTrackField.setValue(2222);
-        
+
         assertTrue("Field with tracking disabled has history", noTrackField.getHistory().isEmpty());
-        
+
         noTrackField.setDisableHistory(false);
-        
+
         assertFalse(noTrackField.toXml().toLowerCase().contains("disablehistory"));
-        
+
         noTrackField.setValue(3333);
         noTrackField.setValue(4444);
-        
+
         assertEquals(2, noTrackField.getHistory().size());
-        
+
         noTrackField.setDisableHistory(true);
-        
+
         assertEquals(2, noTrackField.getHistory().size());
 
         assertTrue(noTrackField.isDisableHistory());
         assertTrue(noTrackField.isSuspendHistory());
-        
+
         noTrackField.setSuspendHistory(false);
 
         assertTrue(noTrackField.isSuspendHistory());
 
         String entityXml = testEntity.toXml();
         CoalesceEntity desEntity = CoalesceEntity.create(entityXml);
-        
+
         CoalesceIntegerField desNoTrackField = (CoalesceIntegerField) desEntity.getDataObjectForNamePath("Test/TestSection/TestRecordset/TestRecordset Record/NoTrack");
         assertEquals(2, desNoTrackField.getHistory().size());
         assertTrue(desNoTrackField.isDisableHistory());
         assertTrue(desNoTrackField.isSuspendHistory());
-        
+
     }
-    
+
     @Test
     public void getSuspendHistoryTest()
     {

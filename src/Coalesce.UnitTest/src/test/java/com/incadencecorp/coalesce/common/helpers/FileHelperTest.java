@@ -3,13 +3,16 @@ package com.incadencecorp.coalesce.common.helpers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.apache.commons.io.FilenameUtils;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.incadencecorp.coalesce.common.helpers.FileHelper;
+import com.incadencecorp.coalesce.common.CoalesceUnitTestSettings;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -32,7 +35,17 @@ public class FileHelperTest {
 
     private static final String GUID = "313dab28-ac40-4cf2-b990-92f0e85eb15c";
 
-    private static final String _binaryFileStoreBasePath = "C:\\Program Files\\Java\\jre7\\bin\\uploads\\";
+    @BeforeClass
+    public static void setUpBeforeClass() throws IOException
+    {
+        CoalesceUnitTestSettings.initialize();
+    }
+
+    @AfterClass
+    public static void tearDownAfterClass()
+    {
+        CoalesceUnitTestSettings.tearDownAfterClass();
+    }
 
     /*
      * @BeforeClass public static void setUpBeforeClass() { }
@@ -47,45 +60,45 @@ public class FileHelperTest {
     @Test
     public void getExtensionNullTest()
     {
-       assertEquals("", FileHelper.getExtension(null)); 
+        assertEquals("", FileHelper.getExtension(null));
     }
-    
+
     @Test
     public void getExtensionEmptyStringTest()
     {
         assertEquals("", FileHelper.getExtension(""));
     }
-    
+
     @Test
     public void getExtensionWhiteSpaceTest()
     {
         assertEquals("", FileHelper.getExtension("  "));
     }
-    
+
     @Test
     public void getExtensionNoneTest()
     {
         assertEquals("", FileHelper.getExtension("file"));
     }
-    
+
     @Test
     public void getShortFilenameTest()
     {
         assertEquals("testFile.txt", FileHelper.getShortFilename("C:\\location\\testFile.txt"));
     }
-    
+
     @Test
     public void getShortFilenameJustFilenameTest()
     {
         assertEquals("testFile.txt", FileHelper.getShortFilename("testFile.txt"));
     }
-    
+
     @Test
     public void getShortFilenameNullTest()
     {
         assertEquals(null, FileHelper.getShortFilename(null));
     }
-    
+
     @Test
     public void getShortFilenameEmptyTest()
     {
@@ -103,7 +116,10 @@ public class FileHelperTest {
             IllegalAccessException, IllegalArgumentException, InvocationTargetException
     {
 
-        String filename = callGetBaseFilenameWithFullDirectoryPathForKey(_binaryFileStoreBasePath, 0, null, false);
+        String filename = callGetBaseFilenameWithFullDirectoryPathForKey(CoalesceUnitTestSettings.getBinaryFileStoreBasePath(),
+                                                                         0,
+                                                                         null,
+                                                                         false);
 
         assertNull(filename);
     }
@@ -113,7 +129,10 @@ public class FileHelperTest {
             IllegalAccessException, IllegalArgumentException, InvocationTargetException
     {
 
-        String filename = callGetBaseFilenameWithFullDirectoryPathForKey(_binaryFileStoreBasePath, 0, "", false);
+        String filename = callGetBaseFilenameWithFullDirectoryPathForKey(CoalesceUnitTestSettings.getBinaryFileStoreBasePath(),
+                                                                         0,
+                                                                         "",
+                                                                         false);
 
         assertNull(filename);
 
@@ -124,7 +143,10 @@ public class FileHelperTest {
             IllegalAccessException, IllegalArgumentException, InvocationTargetException
     {
 
-        String filename = callGetBaseFilenameWithFullDirectoryPathForKey(_binaryFileStoreBasePath, 0, " ", false);
+        String filename = callGetBaseFilenameWithFullDirectoryPathForKey(CoalesceUnitTestSettings.getBinaryFileStoreBasePath(),
+                                                                         0,
+                                                                         " ",
+                                                                         false);
 
         assertNull(filename);
 
@@ -135,7 +157,10 @@ public class FileHelperTest {
             IllegalAccessException, IllegalArgumentException, InvocationTargetException
     {
 
-        String filename = callGetBaseFilenameWithFullDirectoryPathForKey(_binaryFileStoreBasePath, 0, "ABCD", false);
+        String filename = callGetBaseFilenameWithFullDirectoryPathForKey(CoalesceUnitTestSettings.getBinaryFileStoreBasePath(),
+                                                                         0,
+                                                                         "ABCD",
+                                                                         false);
 
         assertNull(filename);
 
@@ -146,9 +171,12 @@ public class FileHelperTest {
             IllegalAccessException, IllegalArgumentException, InvocationTargetException
     {
 
-        String filename = callGetBaseFilenameWithFullDirectoryPathForKey(_binaryFileStoreBasePath, 0, GUID, false);
+        String filename = callGetBaseFilenameWithFullDirectoryPathForKey(CoalesceUnitTestSettings.getBinaryFileStoreBasePath(),
+                                                                         0,
+                                                                         GUID,
+                                                                         false);
 
-        assertEquals(_binaryFileStoreBasePath + GUID.toUpperCase(), filename);
+        assertEquals(CoalesceUnitTestSettings.getBinaryFileStoreBasePath() + GUID.toUpperCase(), filename);
     }
 
     @Test
@@ -156,11 +184,13 @@ public class FileHelperTest {
             IllegalAccessException, IllegalArgumentException, InvocationTargetException
     {
 
-        String filename = callGetBaseFilenameWithFullDirectoryPathForKey(_binaryFileStoreBasePath, 1, GUID, false);
+        String filename = callGetBaseFilenameWithFullDirectoryPathForKey(CoalesceUnitTestSettings.getBinaryFileStoreBasePath(),
+                                                                         1,
+                                                                         GUID,
+                                                                         false);
 
-        assertEquals(FilenameUtils.concat(_binaryFileStoreBasePath,
-                                          GUID.substring(0, 1).toUpperCase() + "\\" + GUID.toUpperCase()),
-                     filename);
+        assertEquals(FilenameUtils.concat(CoalesceUnitTestSettings.getBinaryFileStoreBasePath(),
+                                          GUID.substring(0, 1).toUpperCase() + "\\" + GUID.toUpperCase()), filename);
     }
 
     @Test
@@ -168,11 +198,13 @@ public class FileHelperTest {
             SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
     {
 
-        String filename = callGetBaseFilenameWithFullDirectoryPathForKey(_binaryFileStoreBasePath, 35, GUID, false);
+        String filename = callGetBaseFilenameWithFullDirectoryPathForKey(CoalesceUnitTestSettings.getBinaryFileStoreBasePath(),
+                                                                         35,
+                                                                         GUID,
+                                                                         false);
 
-        assertEquals(FilenameUtils.concat(_binaryFileStoreBasePath,
-                                          GUID.substring(0, 35).toUpperCase() + "\\" + GUID.toUpperCase()),
-                     filename);
+        assertEquals(FilenameUtils.concat(CoalesceUnitTestSettings.getBinaryFileStoreBasePath(),
+                                          GUID.substring(0, 35).toUpperCase() + "\\" + GUID.toUpperCase()), filename);
     }
 
     @Test
@@ -180,9 +212,12 @@ public class FileHelperTest {
             SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
     {
 
-        String filename = callGetBaseFilenameWithFullDirectoryPathForKey(_binaryFileStoreBasePath, 36, GUID, false);
+        String filename = callGetBaseFilenameWithFullDirectoryPathForKey(CoalesceUnitTestSettings.getBinaryFileStoreBasePath(),
+                                                                         36,
+                                                                         GUID,
+                                                                         false);
 
-        assertEquals(_binaryFileStoreBasePath + GUID.toUpperCase(), filename);
+        assertEquals(CoalesceUnitTestSettings.getBinaryFileStoreBasePath() + GUID.toUpperCase(), filename);
     }
 
     @Test
@@ -190,9 +225,12 @@ public class FileHelperTest {
             SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
     {
 
-        String filename = callGetBaseFilenameWithFullDirectoryPathForKey(_binaryFileStoreBasePath, 37, GUID, false);
+        String filename = callGetBaseFilenameWithFullDirectoryPathForKey(CoalesceUnitTestSettings.getBinaryFileStoreBasePath(),
+                                                                         37,
+                                                                         GUID,
+                                                                         false);
 
-        assertEquals(_binaryFileStoreBasePath + GUID.toUpperCase(), filename);
+        assertEquals(CoalesceUnitTestSettings.getBinaryFileStoreBasePath() + GUID.toUpperCase(), filename);
     }
 
     private String callGetBaseFilenameWithFullDirectoryPathForKey(String binaryFileStoreBasePath,

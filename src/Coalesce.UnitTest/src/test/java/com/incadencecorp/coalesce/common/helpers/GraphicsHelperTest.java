@@ -13,7 +13,6 @@ import java.nio.file.StandardCopyOption;
 
 import javax.imageio.ImageIO;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.NullArgumentException;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -23,6 +22,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import com.incadencecorp.coalesce.common.CoalesceAssert;
+import com.incadencecorp.coalesce.common.CoalesceUnitTestSettings;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.runtime.CoalesceSettings;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
@@ -69,7 +69,7 @@ public class GraphicsHelperTest {
     @BeforeClass
     public static void setUpBeforeClass() throws Exception
     {
-        CoalesceSettings.setBinaryFileStoreBasePath("C:\\Coalesce.UnitTest");
+        CoalesceUnitTestSettings.initialize();
 
         GraphicsHelperTest.copyTestImagesToBin();
 
@@ -78,17 +78,7 @@ public class GraphicsHelperTest {
     @AfterClass
     public static void tearDownAfterClass() throws Exception
     {
-        // Files.delete(Paths.get(GraphicsHelperTest.FILE_FIELD_IMAGE_PATH));
-
-        File testDirectory = new File(CoalesceSettings.getBinaryFileStoreBasePath());
-
-        if (testDirectory.exists())
-        {
-            FileUtils.deleteDirectory(testDirectory);
-        }
-
-        // GraphicsHelperTest.cleanUpTestThumbnails();
-
+        CoalesceUnitTestSettings.tearDownAfterClass();
     }
 
     @Before
@@ -308,7 +298,7 @@ public class GraphicsHelperTest {
 
         BufferedImage thumbnail = GraphicsHelper.resampleToExact(originalImage, 0, 0);
 
-        org.junit.Assert.assertEquals((long)1, (long)thumbnail.getWidth());
+        org.junit.Assert.assertEquals((long) 1, (long) thumbnail.getWidth());
         assertEquals(1, thumbnail.getHeight());
 
     }

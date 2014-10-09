@@ -11,18 +11,19 @@ import java.security.NoSuchAlgorithmException;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.NullArgumentException;
 import org.jdom2.JDOMException;
 import org.joda.time.DateTime;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import com.drew.imaging.ImageProcessingException;
+import com.incadencecorp.coalesce.common.CoalesceUnitTestSettings;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceCryptoException;
-import com.incadencecorp.coalesce.common.helpers.DocumentProperties;
-import com.incadencecorp.coalesce.common.helpers.MimeHelper;
 import com.incadencecorp.coalesce.common.runtime.CoalesceSettings;
 
 public class DocumentPropertiesTest {
@@ -30,27 +31,23 @@ public class DocumentPropertiesTest {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
+    @BeforeClass
+    public static void setUpBeforeClass() throws Exception
+    {
+        CoalesceUnitTestSettings.initialize();
+    }
+
+    @AfterClass
+    public static void tearDownAfterClass() throws Exception
+    {
+        CoalesceUnitTestSettings.tearDownAfterClass();
+    }
+
     /*
-     * @AfterClass public static void tearDownAfterClass() throws Exception { }
-     * 
      * @Before public void setUp() throws Exception { }
      * 
      * @After public void tearDown() throws Exception { }
      */
-
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception
-    {
-        removeOldTestImages();
-
-    }
-
-    private static void removeOldTestImages()
-    {
-        File testThumbnail = new File("bin\\desert_thumbnail_test.jpg");
-        testThumbnail.delete();
-
-    }
 
     @Test
     public void initializeJpgTest() throws IOException, JDOMException, ImageProcessingException, CoalesceCryptoException
@@ -71,12 +68,13 @@ public class DocumentPropertiesTest {
         assertEquals(MimeHelper.getMimeTypeForExtension("jpg"), docProps.getMimeType());
         assertEquals(MimeHelper.getFileTypeForMimeType(docProps.getMimeType()), docProps.getDocumentType());
         assertEquals(new DateTime("2008-03-14T17:59:26.000Z"), docProps.getCreated());
-        //assertEquals(new DateTime("2014-09-19T15:51:18.637Z"), docProps.getModified());
+        // assertEquals(new DateTime("2014-09-19T15:51:18.637Z"), docProps.getModified());
         assertEquals("", docProps.getThumbnailFilename());
-        
+
         ImageIO.write(docProps.getThumbnail(),
                       CoalesceSettings.getImageFormat(),
-                      new File("bin\\desert_thumbnail_test.jpg"));
+                      new File(FilenameUtils.concat(CoalesceUnitTestSettings.getDefaultApplicationRoot(),
+                                                    "desert_thumbnail_test.jpg")));
     }
 
     @Test
@@ -113,7 +111,8 @@ public class DocumentPropertiesTest {
     }
 
     @Test
-    public void initializeDocXMultiPageTest() throws ImageProcessingException, CoalesceCryptoException, IOException, JDOMException
+    public void initializeDocXMultiPageTest() throws ImageProcessingException, CoalesceCryptoException, IOException,
+            JDOMException
     {
         DocumentProperties docProps = new DocumentProperties();
 
@@ -205,9 +204,8 @@ public class DocumentPropertiesTest {
 
         assertEquals("", docProps.getThumbnailFilename());
         docProps.setThumbnailFilename("testingFilename.txt");
-        
+
         assertEquals("testingFilename.txt", docProps.getThumbnailFilename());
     }
-
 
 }
