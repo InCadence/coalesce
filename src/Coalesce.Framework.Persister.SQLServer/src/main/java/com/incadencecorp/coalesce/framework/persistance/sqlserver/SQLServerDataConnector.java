@@ -30,7 +30,7 @@ public class SQLServerDataConnector extends CoalesceDataConnectorBase {
         this._settings.setPostGres(false);
 
         SQLServerDataSource sqlDataSource = new SQLServerDataSource();
-
+        //  On Linux change set setIntegratedSecurity(false)
         sqlDataSource.setIntegratedSecurity(true);
         sqlDataSource.setServerName(this._settings.getServerName());
         sqlDataSource.setPortNumber(this._settings.getPortNumber());

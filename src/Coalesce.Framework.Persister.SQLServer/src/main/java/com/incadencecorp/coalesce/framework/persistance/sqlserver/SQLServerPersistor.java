@@ -1071,8 +1071,8 @@ public class SQLServerPersistor extends CoalescePersistorBase {
     {
         boolean isSuccessful = false;
 
-        System.out.println(coalesceDataObject.getStatus().getLabel() + " OBJECT [" + coalesceDataObject.getName() + " : "
-                + coalesceDataObject.getType() + "] Processing Key:  " + coalesceDataObject.getKey());
+//        System.out.println(coalesceDataObject.getStatus().getLabel() + " OBJECT [" + coalesceDataObject.getName() + " : "
+//                + coalesceDataObject.getType() + "] Processing Key:  " + coalesceDataObject.getKey());
 
         switch (coalesceDataObject.getStatus()) {
         case ACTIVE:
@@ -1116,7 +1116,7 @@ public class SQLServerPersistor extends CoalescePersistorBase {
     private DateTime getCoalesceDataObjectLastModified(String Key, String ObjectType, SQLServerDataConnector conn)
             throws SQLException
     {
-        DateTime lastModified = DateTime.now(DateTimeZone.UTC);
+        DateTime lastModified = null;
 
         // Determine the Table Name
         String tableName = CoalesceTable.getTableNameForObjectType(ObjectType);
