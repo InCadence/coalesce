@@ -15,7 +15,9 @@ public enum ECoalesceFieldDataTypes
     GUID_TYPE("guid"),
     GEOCOORDINATE_TYPE("geocoordinate"),
     FILE_TYPE("file"),
-    GEOCOORDINATE_LIST_TYPE("geocoordinatelist");
+    GEOCOORDINATE_LIST_TYPE("geocoordinatelist"),
+    DOUBLE_TYPE("double"),
+    FLOAT_TYPE("geocoordinatelist");
 
     private String _label;
 

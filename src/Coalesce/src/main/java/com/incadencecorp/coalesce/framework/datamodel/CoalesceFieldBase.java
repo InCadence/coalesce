@@ -313,6 +313,36 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
 
         setBaseValue(String.valueOf(value));
     }
+    
+    /**
+     * Sets the Field's value by the int parameter
+     * 
+     * @param value, field's value as an integer
+     */
+    protected void setTypedValue(double value)
+    {
+        if (getDataType() != ECoalesceFieldDataTypes.DOUBLE_TYPE)
+        {
+            throw new ClassCastException("Type mismatch");
+        }
+
+        setBaseValue(Double.toString(value));
+    }
+    
+    /**
+     * Sets the Field's value by the int parameter
+     * 
+     * @param value, field's value as an integer
+     */
+    protected void setTypedValue(float value)
+    {
+        if (getDataType() != ECoalesceFieldDataTypes.FLOAT_TYPE)
+        {
+            throw new ClassCastException("Type mismatch");
+        }
+
+        setBaseValue(Float.toString(value));
+    }
 
     /**
      * Sets the Field's value by the geometry Point parameter
@@ -582,6 +612,62 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
         {
 
             int value = Integer.parseInt(getBaseValue());
+
+            return value;
+
+        }
+        catch (NumberFormatException nfe)
+        {
+            throw new CoalesceDataFormatException("Failed to parse integer value for: " + getName());
+        }
+
+    }
+    
+    /**
+     * Returns the Field's Double value.
+     * 
+     * @return integer, field's value as an Double
+     * @throws CoalesceDataFormatException
+     */
+    protected Double getDoubleValue() throws CoalesceDataFormatException
+    {
+        if (getDataType() != ECoalesceFieldDataTypes.DOUBLE_TYPE)
+        {
+            throw new ClassCastException("Type mismatch");
+        }
+
+        try
+        {
+
+            Double value = Double.parseDouble(getBaseValue());
+
+            return value;
+
+        }
+        catch (NumberFormatException nfe)
+        {
+            throw new CoalesceDataFormatException("Failed to parse integer value for: " + getName());
+        }
+
+    }
+    
+    /**
+     * Returns the Field's Float value.
+     * 
+     * @return integer, field's value as an Float
+     * @throws CoalesceDataFormatException
+     */
+    protected Float getFloatValue() throws CoalesceDataFormatException
+    {
+        if (getDataType() != ECoalesceFieldDataTypes.FLOAT_TYPE)
+        {
+            throw new ClassCastException("Type mismatch");
+        }
+
+        try
+        {
+
+            Float value = Float.parseFloat(getBaseValue());
 
             return value;
 

@@ -129,6 +129,12 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
         case GEOCOORDINATE_LIST_TYPE:
             return new CoalesceCoordinateListField();
 
+        case DOUBLE_TYPE:
+            return new CoalesceDoubleField();
+            
+        case FLOAT_TYPE:
+            return new CoalesceFloatField();
+
         default:
             throw new NotImplementedException(dataType + " not implemented");
         }
@@ -172,6 +178,12 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
         case GEOCOORDINATE_LIST_TYPE:
             return (T) getCoordinateListValue();
 
+        case DOUBLE_TYPE:
+            return (T) getDoubleValue();
+            
+        case FLOAT_TYPE:
+            return (T) getFloatValue();
+            
         default:
             throw new NotImplementedException(getDataType() + " not implemented");
         }
@@ -185,8 +197,6 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     @Override
     public void setValue(T value) throws CoalesceDataFormatException
     {
-        ;
-
         switch (getDataType()) {
         case STRING_TYPE:
         case URI_TYPE:
@@ -221,7 +231,13 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
         case GEOCOORDINATE_LIST_TYPE:
             setTypedValue((Coordinate[]) value);
             break;
-
+        
+        case DOUBLE_TYPE:
+            setTypedValue((Double) value);
+            
+        case FLOAT_TYPE:
+            setTypedValue((Float) value);
+            
         default:
             throw new NotImplementedException(getDataType() + " not implemented");
         }
