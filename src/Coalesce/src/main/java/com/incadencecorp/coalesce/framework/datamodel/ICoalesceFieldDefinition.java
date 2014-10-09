@@ -13,14 +13,14 @@ public interface ICoalesceFieldDefinition {
     public String getName();
 
     /**
-     * Return the value of the FieldDefinitions's Label attribute
+     * Return the value of the FieldDefinition's Label attribute
      * 
      * @return String of the FieldDefinition's label attribute
      */
     public String getLabel();
 
     /**
-     * Return the value of the FieldDefinitions's DataType attribute
+     * Return the value of the FieldDefinition's DataType attribute
      * 
      * @return ECoalesceFieldDataTypes of the FieldDefinition's value attribute
      */
@@ -40,6 +40,13 @@ public interface ICoalesceFieldDefinition {
      */
     public Marking getDefaultClassificationMarking();
 
+    /**
+     * Return the value of the FieldDefinition's DisableHistory attribute
+     * 
+     * @return Boolean of the FieldDefinition's disable history attribute
+     */
+    public boolean getDisableHistory();
+    
     /**
      * Sets the value of the FieldDefinitions's Name attribute
      * 
@@ -74,4 +81,12 @@ public interface ICoalesceFieldDefinition {
      * @param value Marking class to be the FieldDefinition's default classification marking attribute
      */
     public void setDefaultClassificationMarking(Marking value);
+    
+    /**
+     * Sets the value of the FieldDefinitions's DisableHistory attribute
+     *  
+     * @param value Boolean to be the FieldDefinition's disable history attribute
+     */
+    public void setDisableHistory(boolean value);
+    
 }

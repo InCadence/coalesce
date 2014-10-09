@@ -241,6 +241,42 @@ public class CoalesceFieldDefinition extends CoalesceDataObject implements ICoal
                                                  String defaultValue,
                                                  boolean noIndex)
     {
+        return CoalesceFieldDefinition.create(parent,
+                                              name,
+                                              dataType,
+                                              label,
+                                              defaultClassificationMarking,
+                                              defaultValue,
+                                              noIndex,
+                                              false);
+    }
+
+    /**
+     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} with a string default value
+     * based for an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} with the parameters provided
+     * 
+     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} that the
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} belongs to
+     * @param name String name of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
+     * @param dataType datatype that the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} will
+     *            contain
+     * @param label The label to be displayed with the field
+     * @param defaultClassificationMarking the default classification
+     * @param defaultValue the default value
+     * @param noIndex boolean
+     * @param disableHistory the value defining if a field should track history
+     * 
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
+     */
+    public static CoalesceFieldDefinition create(CoalesceRecordset parent,
+                                                 String name,
+                                                 ECoalesceFieldDataTypes dataType,
+                                                 String label,
+                                                 String defaultClassificationMarking,
+                                                 String defaultValue,
+                                                 boolean noIndex,
+                                                 boolean disableHistory)
+    {
 
         if (parent == null || StringHelper.isNullOrEmpty(name) || dataType == null) return null;
 
@@ -253,6 +289,7 @@ public class CoalesceFieldDefinition extends CoalesceDataObject implements ICoal
 
         fieldDefinition.setName(name);
         fieldDefinition.setNoIndex(noIndex);
+        fieldDefinition.setDisableHistory(disableHistory);
         fieldDefinition.setDataType(dataType);
 
         fieldDefinition.setLabel(label);
@@ -412,6 +449,18 @@ public class CoalesceFieldDefinition extends CoalesceDataObject implements ICoal
         _entityFieldDefinition.setLastmodified(value);
     }
 
+    @Override
+    public boolean getDisableHistory()
+    {
+        return Boolean.parseBoolean(getOtherAttribute("disablehistory"));
+    }
+    
+    @Override
+    public void setDisableHistory(boolean value)
+    {
+        setOtherAttribute("disablehistory", Boolean.toString(value));
+    }
+    
     // -----------------------------------------------------------------------//
     // Public Methods
     // -----------------------------------------------------------------------//
@@ -447,8 +496,7 @@ public class CoalesceFieldDefinition extends CoalesceDataObject implements ICoal
         map.put(new QName("lastmodified"), JodaDateTimeHelper.toXmlDateTimeUTC(_entityFieldDefinition.getLastmodified()));
         map.put(new QName("status"), _entityFieldDefinition.getStatus());
         map.put(new QName("name"), getStringElement(_entityFieldDefinition.getName()));
-        map.put(new QName("defaultclassificationmarking"),
-                _entityFieldDefinition.getDefaultclassificationmarking());
+        map.put(new QName("defaultclassificationmarking"), _entityFieldDefinition.getDefaultclassificationmarking());
         map.put(new QName("defaultvalue"), _entityFieldDefinition.getDefaultvalue());
         map.put(new QName("datatype"), _entityFieldDefinition.getDatatype());
         return map;
@@ -491,7 +539,7 @@ public class CoalesceFieldDefinition extends CoalesceDataObject implements ICoal
     @Override
     protected Map<QName, String> getOtherAttributes()
     {
-        return this._entityFieldDefinition.getOtherAttributes();
+        return _entityFieldDefinition.getOtherAttributes();
     }
 
 }

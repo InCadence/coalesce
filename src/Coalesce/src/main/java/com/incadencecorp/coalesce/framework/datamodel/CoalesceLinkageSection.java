@@ -73,11 +73,7 @@ public class CoalesceLinkageSection extends CoalesceDataObject {
 
         linkageSection.setNoIndex(noIndex);
 
-        // Add to parent's child collection
-        if (!parent._childDataObjects.containsKey(linkageSection.getKey()))
-        {
-            parent._childDataObjects.put(linkageSection.getKey(), linkageSection);
-        }
+        parent.addChild(linkageSection);
 
         return linkageSection;
 

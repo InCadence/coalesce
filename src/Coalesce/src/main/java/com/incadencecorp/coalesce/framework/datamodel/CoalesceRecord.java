@@ -88,11 +88,7 @@ public class CoalesceRecord extends CoalesceDataObject {
 
         newRecord.setName(name);
 
-        // Add to parent's child collection
-        if (!parent._childDataObjects.containsKey(newRecord.getKey()))
-        {
-            parent._childDataObjects.put(newRecord.getKey(), newRecord);
-        }
+        parent.addChild(newRecord);
 
         return newRecord;
     }

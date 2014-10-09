@@ -356,7 +356,7 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
      */
     public boolean setOtherAttribute(String name, String value)
     {
-        this.getOtherAttributes().put(new QName(name), value);
+        getOtherAttributes().put(new QName(name), value);
         return true;
     }
 
@@ -500,4 +500,13 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
         return value;
     }
 
+    protected void addChild(CoalesceDataObject newChild)
+    {
+        // Add to Parent's Child Collection
+        if (!(_childDataObjects.containsKey(newChild.getKey())))
+        {
+            _childDataObjects.put(newChild.getKey(), newChild);
+        }
+
+    }
 }

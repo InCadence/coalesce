@@ -46,6 +46,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     // protected Member Variables
     // -----------------------------------------------------------------------//
 
+    private boolean _creatingNewEntity = false;
     private boolean _suspendHistory = false;
     protected Field _entityField;
 
@@ -76,30 +77,22 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
         CoalesceField<?> newField = createTypeField(fieldDefinition.getDataType());
         if (!newField.initialize(parent, newEntityField)) return null;
 
+        newField._creatingNewEntity = true;
         newField.setSuspendHistory(true);
-
+        
         newField.setName(fieldDefinition.getName());
         newField.setDataType(fieldDefinition.getDataType());
         newField.setBaseValue(fieldDefinition.getDefaultValue());
         newField.setClassificationMarking(fieldDefinition.getDefaultClassificationMarking());
         newField.setLabel(fieldDefinition.getLabel());
         newField.setNoIndex(fieldDefinition.getNoIndex());
-
+        newField.setDisableHistory(fieldDefinition.getDisableHistory());
+        
         newField.setSuspendHistory(false);
+        newField._creatingNewEntity = false;
 
-        // Boolean Type? If so then default initial value to false if not a boolean default value.
-        /*
-         * if (fieldDefinition.getDataType() == ECoalesceFieldDataTypes.BOOLEAN_TYPE &&
-         * !(newField.getBaseValue().equalsIgnoreCase("true") || newField.getBaseValue().equalsIgnoreCase("false"))) {
-         * newField.setBaseValue("false"); }
-         */
-
-        // Add to Parent's Child Collection
-        if (!(parent._childDataObjects.containsKey(newField.getKey())))
-        {
-            parent._childDataObjects.put(newField.getKey(), newField);
-        }
-
+        parent.addChild(newField);
+        
         return newField;
 
     }
@@ -482,26 +475,46 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
         _entityField.setHash(value);
     }
 
-    /**
-     * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}'s suspendHistory value suspendHistory
-     * value.
-     * 
-     * @return boolean, {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}'s suspendHistory value
-     */
-    public boolean getSuspendHistory()
+    public boolean getDisableHistory()
     {
-        return _suspendHistory;
+        return Boolean.parseBoolean(getOtherAttribute("disablehistory"));
+    }
+
+    public void setDisableHistory(boolean disable)
+    {
+        boolean oldDisableHistory = Boolean.parseBoolean(getOtherAttribute("disablehistory"));
+
+        setChanged(oldDisableHistory, disable);
+        setOtherAttribute("disablehistory", Boolean.toString(disable));
+
+        _suspendHistory = disable;
+
     }
 
     /**
-     * Sets the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}'s suspendHistory value.
+     * <code>true<code> if history is currently being suspended for this field
+     * value.
      * 
-     * @param value boolean, new value for the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}'s
-     *            suspendHistory value
+     * @return <code>true<code> if history is currently being suspended for this field
      */
-    public void setSuspendHistory(boolean value)
+    public boolean getSuspendHistory()
     {
-        _suspendHistory = value;
+        return (_suspendHistory || getDisableHistory());
+    }
+
+    /**
+     * Sets the value indicating if history should be maintained for changes made to this object instance of a field. This
+     * setting is not persisted with the field. The value of the fields disablehistory attribute (
+     * {@link CoalesceField#getDisableHistory()}) overrides this temporary suspension.
+     * 
+     * @param suspend the value indicating if history should be temporarily suspended.
+     */
+    public void setSuspendHistory(boolean suspend)
+    {
+        if (!getDisableHistory())
+        {
+            _suspendHistory = suspend;
+        }
     }
 
     /**
@@ -789,10 +802,14 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
                     }
                 }
 
+            }
+
+            if (!_creatingNewEntity)
+            {
                 // Set LastModified
                 setLastModified(JodaDateTimeHelper.nowInUtc().plusSeconds(1));
             }
-
+            
         }
     }
 

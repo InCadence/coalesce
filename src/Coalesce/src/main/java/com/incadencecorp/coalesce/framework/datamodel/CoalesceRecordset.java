@@ -58,11 +58,15 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     // -----------------------------------------------------------------------//
 
     /**
-     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}, by name, and ties it to its parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} with default max and min records of 0.
+     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}, by name, and ties it to its
+     * parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} with default max and min records of 0.
      * 
-     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} that this new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} will belong to
+     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} the
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} that this new
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} will belong to
      * @param name String the name of this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
-     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}, the new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}, the new
+     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      */
     public static CoalesceRecordset create(CoalesceSection parent, String name)
     {
@@ -70,13 +74,19 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     }
 
     /**
-     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}, by name, and ties it to its parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} with max and min records assignments.
+     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}, by name, and ties it to its
+     * parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} with max and min records assignments.
      * 
-     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} that this new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} will belong to
+     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} the
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} that this new
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} will belong to
      * @param name String the name of this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
-     * @param minRecords integer, the minimum number of records this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} can contain
-     * @param maxRecords integer, the maximum number of records this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} can contain
-     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}, the new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
+     * @param minRecords integer, the minimum number of records this
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} can contain
+     * @param maxRecords integer, the maximum number of records this
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} can contain
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}, the new
+     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      */
     public static CoalesceRecordset create(CoalesceSection parent, String name, int minRecords, int maxRecords)
     {
@@ -106,21 +116,21 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
         newRecordset.setMinRecords(minRecords);
         newRecordset.setMaxRecords(maxRecords);
 
-        // Add to parent's child collection
-        if (!parent._childDataObjects.containsKey(newRecordset.getKey()))
-        {
-            parent._childDataObjects.put(newRecordset.getKey(), newRecordset);
-        }
+        parent.addChild(newRecordset);
 
         return newRecordset;
 
     }
 
     /**
-     * Initializes a this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} based on a Recordset and ties it to its parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}.
+     * Initializes a this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} based on a Recordset and
+     * ties it to its parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}.
      * 
-     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} that this new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} will belong to
-     * @param recordset Recordset that this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} will be based on
+     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} the
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} that this new
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} will belong to
+     * @param recordset Recordset that this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} will be
+     *            based on
      * @return boolean indicator of success/failure
      */
     protected boolean initialize(CoalesceSection parent, Recordset recordset)
@@ -191,9 +201,12 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     }
 
     /**
-     * Returns this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s ArrayList of {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}s
+     * Returns this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s ArrayList of
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}s
      * 
-     * @return ArrayList<{@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}> the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} collection contained by this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
+     * @return ArrayList<{@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}> the
+     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} collection contained by this
+     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      */
     public ArrayList<CoalesceFieldDefinition> getFieldDefinitions()
     {
@@ -201,9 +214,12 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     }
 
     /**
-     * Returns this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s ArrayList of {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}s
+     * Returns this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s ArrayList of
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}s
      * 
-     * @return ArrayList<{@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}> the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} collection contained by this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
+     * @return ArrayList<{@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}> the
+     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} collection contained by this
+     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      */
     public ArrayList<CoalesceRecord> getRecords()
     {
@@ -235,9 +251,12 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     }
 
     /**
-     * Returns boolean indicator of the existence of this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s active {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}s
+     * Returns boolean indicator of the existence of this
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s active
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}s
      * 
-     * @return boolean indication that the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} has active {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}s
+     * @return boolean indication that the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} has
+     *         active {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}s
      */
     public boolean getHasActiveRecords()
     {
@@ -257,9 +276,12 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     }
 
     /**
-     * Returns boolean indicator of the existence of this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}s
+     * Returns boolean indicator of the existence of this
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}s
      * 
-     * @return boolean indication that the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} has {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}s, active or not
+     * @return boolean indication that the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} has
+     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}s, active or not
      */
     public boolean getHasRecords()
     {
@@ -299,31 +321,71 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     // -----------------------------------------------------------------------//
 
     /**
-     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} for this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}, with the name, datatype, label, default classification and
-     * default value specified.
+     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} for this
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}, with the name, datatype, label, default
+     * classification and default value specified.
      * 
      * @param name String name of the new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
-     * @param dataType {@link com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes} that a Field based on the new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} is to contain
+     * @param dataType {@link com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes} that a Field based on
+     *            the new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} is to contain
      * @param label String label to present to the user for this field/fielddefinition
      * @param defaultClassificationMarking the default classification for this field/fielddefinition
      * @param defaultValue the default value for this field/fielddefinition
-     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} the new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
+     * 
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} the new
+     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
      */
     public CoalesceFieldDefinition createFieldDefinition(String name,
-                                                    ECoalesceFieldDataTypes dataType,
-                                                    String label,
-                                                    String defaultClassificationMarking,
-                                                    String defaultValue)
+                                                         ECoalesceFieldDataTypes dataType,
+                                                         String label,
+                                                         String defaultClassificationMarking,
+                                                         String defaultValue)
     {
         return CoalesceFieldDefinition.create(this, name, dataType, label, defaultClassificationMarking, defaultValue);
     }
 
     /**
-     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} for this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}, with the name and datatype specified.
+     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} for this
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}, with the name, datatype, label, default
+     * classification and default value specified.
      * 
      * @param name String name of the new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
-     * @param dataType {@link com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes} that a Field based on the new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} is to contain
-     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} the new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
+     * @param dataType {@link com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes} that a Field based on
+     *            the new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} is to contain
+     * @param label String label to present to the user for this field/field definition
+     * @param defaultClassificationMarking the default classification for this field/field definition
+     * @param defaultValue the default value for this field/field definition
+     * @param disableHistory the value defining if a field should track history
+     * 
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} the new
+     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
+     */
+    public CoalesceFieldDefinition createFieldDefinition(String name,
+                                                         ECoalesceFieldDataTypes dataType,
+                                                         String label,
+                                                         String defaultClassificationMarking,
+                                                         String defaultValue,
+                                                         boolean disableHistory)
+    {
+        return CoalesceFieldDefinition.create(this,
+                                              name,
+                                              dataType,
+                                              label,
+                                              defaultClassificationMarking,
+                                              defaultValue,
+                                              false,
+                                              disableHistory);
+    }
+
+    /**
+     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} for this
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}, with the name and datatype specified.
+     * 
+     * @param name String name of the new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
+     * @param dataType {@link com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes} that a Field based on
+     *            the new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} is to contain
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} the new
+     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
      */
     public CoalesceFieldDefinition createFieldDefinition(String name, ECoalesceFieldDataTypes dataType)
     {
@@ -337,7 +399,9 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     }
 
     /**
-     * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} that matches the String fieldName parameter
+     * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} that matches the String fieldName
+     * parameter
      * 
      * @param fieldName String name of the new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
      * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} with the matching field name
@@ -357,9 +421,11 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     }
 
     /**
-     * Returns boolean indicator of {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s ability to be edited
+     * Returns boolean indicator of {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s ability to be
+     * edited
      * 
-     * @return boolean indication of if the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} is editable
+     * @return boolean indication of if the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} is
+     *         editable
      */
     public boolean getAllowEdit()
     {
@@ -367,9 +433,11 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     }
 
     /**
-     * Returns boolean indicator of {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s ability to add new records
+     * Returns boolean indicator of {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s ability to add
+     * new records
      * 
-     * @return boolean indication of if the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} can have new records added to it
+     * @return boolean indication of if the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} can have
+     *         new records added to it
      */
     public boolean getAllowNew()
     {
@@ -377,9 +445,11 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     }
 
     /**
-     * Returns boolean indicator of {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s ability to add delete records
+     * Returns boolean indicator of {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s ability to add
+     * delete records
      * 
-     * @return boolean indication of if the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} records can be removed
+     * @return boolean indication of if the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} records
+     *         can be removed
      */
     public boolean getAllowRemove()
     {
@@ -387,9 +457,11 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     }
 
     /**
-     * Returns the number of {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}s contained within this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
+     * Returns the number of {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}s contained within this
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      * 
-     * @return integer of how many {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}s are contained by this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
+     * @return integer of how many {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}s are contained by
+     *         this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      */
     public int getCount()
     {
@@ -397,7 +469,9 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     }
 
     /**
-     * Returns a boolean indicator of the existence of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} parameter within this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
+     * Returns a boolean indicator of the existence of the
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} parameter within this
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      * 
      * @param value
      * @return
@@ -408,10 +482,12 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     }
 
     /**
-     * Returns Index of the Object parameter within this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
+     * Returns Index of the Object parameter within this
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      * 
      * @param value Object of {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
-     * @return integer position index of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} Object parameter within this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
+     * @return integer position index of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} Object
+     *         parameter within this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      */
     public int indexOf(Object value)
     {
@@ -419,9 +495,12 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     }
 
     /**
-     * Adds a new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} to this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} and returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
+     * Adds a new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} to this
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} and returns the
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
      * 
-     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}, the new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}, the new
+     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
      */
     public CoalesceRecord addNew()
     {
@@ -436,10 +515,13 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     }
 
     /**
-     * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} at the specified index within this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
+     * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} at the specified index within this
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      * 
-     * @param index integer position of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s desired {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
-     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} at the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s index position
+     * @param index integer position of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s
+     *            desired {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} at the
+     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s index position
      */
     public CoalesceRecord getItem(int index)
     {
@@ -456,9 +538,11 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     }
 
     /**
-     * Removes the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} at the specified index within this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
+     * Removes the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} at the specified index within this
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      * 
-     * @param integer index position of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} to remove
+     * @param integer index position of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} to remove
      */
     public void removeAt(Integer index)
     { // Implements System.Collections.IList.RemoveAt
@@ -493,9 +577,12 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     }
 
     /**
-     * Removes the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}, from within this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}, that has the matching key passed by parameter
+     * Removes the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}, from within this
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}, that has the matching key passed by
+     * parameter
      * 
-     * @param key String of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} key to remove from the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
+     * @param key String of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} key to remove from the
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}
      */
     public void remove(String key)
     {

@@ -87,11 +87,7 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> {
             // Append to parent's child node collection
             parent.GetEntityFieldHistories().add(0, newFieldHistory._entityFieldHistory);
 
-            // Add to Parent's Child Collection
-            if (!parent._childDataObjects.containsKey(newFieldHistory.getKey()))
-            {
-                parent._childDataObjects.put(newFieldHistory.getKey(), newFieldHistory);
-            }
+            parent.addChild(newFieldHistory);
 
             return newFieldHistory;
 

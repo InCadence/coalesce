@@ -122,11 +122,7 @@ public class CoalesceSection extends CoalesceDataObject {
 
         newSection.setNoIndex(noIndex);
 
-        // Add to parent's child collection
-        if (!parent._childDataObjects.containsKey(newSection.getKey()))
-        {
-            parent._childDataObjects.put(newSection.getKey(), newSection);
-        }
+        parent.addChild(newSection);
 
         return newSection;
     }

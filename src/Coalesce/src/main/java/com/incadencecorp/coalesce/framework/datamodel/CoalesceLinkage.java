@@ -58,11 +58,7 @@ public class CoalesceLinkage extends CoalesceDataObject implements ICoalesceLink
 
         newLinkage.setName("Linkage");
 
-        // Add to Parent's Child Collection
-        if (!(parent._childDataObjects.containsKey(newLinkage.getKey())))
-        {
-            parent._childDataObjects.put(newLinkage.getKey(), newLinkage);
-        }
+        parent.addChild(newLinkage);
 
         return newLinkage;
 

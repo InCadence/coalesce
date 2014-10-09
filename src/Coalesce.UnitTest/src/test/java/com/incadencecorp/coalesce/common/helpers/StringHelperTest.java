@@ -70,7 +70,7 @@ public class StringHelperTest {
     @Test
     public void isNullOrEmptyWhiteSpaceTest()
     {
-        assertFalse(StringHelper.isNullOrEmpty(" "));
+        assertTrue(StringHelper.isNullOrEmpty(" "));
     }
 
     @Test

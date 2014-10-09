@@ -520,6 +520,39 @@ public class CoalesceFieldTest {
     }
 
     @Test
+    public void trackHistoryTest()
+    {
+        CoalesceEntity testEntity = CoalesceEntity.create("Test", "UnitTest", "1.0", "Testing", "UnitTesting");
+        CoalesceSection testSection = testEntity.createSection("TestSection");
+        CoalesceRecordset testRecordset = testSection.createRecordset("TestRecordset");
+        testRecordset.createFieldDefinition("Track", ECoalesceFieldDataTypes.STRING_TYPE, "", "(U)", "");
+        testRecordset.createFieldDefinition("NoTrack", ECoalesceFieldDataTypes.INTEGER_TYPE, "", "(TS)", "", true);
+        
+        CoalesceRecord testRecord = testRecordset.addNew();
+        
+        CoalesceStringField trackField = (CoalesceStringField) testRecord.getFieldByName("Track");
+        CoalesceIntegerField noTrackField = (CoalesceIntegerField) testRecord.getFieldByName("NoTrack");
+        
+        trackField.setValue("Test one");
+        trackField.setValue("Test two");
+        
+        assertEquals(1, trackField.getHistory().size());
+        
+        noTrackField.setValue(1111);
+        noTrackField.setValue(2222);
+        
+        assertTrue("Field with tracking disabled has history", noTrackField.getHistory().isEmpty());
+        
+        noTrackField.setDisableHistory(false);
+        
+        noTrackField.setValue(3333);
+        noTrackField.setValue(4444);
+        
+        assertEquals(2, noTrackField.getHistory().size());
+        
+    }
+    
+    @Test
     public void getSuspendHistoryTest()
     {
 
@@ -1434,7 +1467,7 @@ public class CoalesceFieldTest {
 
         CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
 
-        field.setTypedValue(new Coordinate(181.0000000000001, 0));
+        field.setTypedValue(new Coordinate(180.0000000000001, 0));
 
     }
 
