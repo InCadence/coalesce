@@ -1127,7 +1127,7 @@ public class MySQLPersistor extends CoalescePersistorBase {
     private DateTime getCoalesceDataObjectLastModified(String Key, String ObjectType, MySQLDataConnector conn)
             throws SQLException
     {
-        DateTime lastModified = DateTime.now(DateTimeZone.UTC);
+        DateTime lastModified = null;
 
         // Determine the Table Name
         String tableName = CoalesceTable.getTableNameForObjectType(ObjectType);
