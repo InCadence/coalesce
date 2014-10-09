@@ -161,7 +161,7 @@ public class JodaDateTimeHelperTest {
     {
         DateTime now = JodaDateTimeHelper.nowInUtc();
         
-        assertEquals("(2 days till)", JodaDateTimeHelper.getElapsedGMTTimeString(now.plusDays(2), true, false));
+        assertEquals("(2 days till)", JodaDateTimeHelper.getElapsedGMTTimeString(now.plusDays(2).plusSeconds(1), true, false));
         
     }
     
