@@ -79,20 +79,20 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
 
         newField._creatingNewEntity = true;
         newField.setSuspendHistory(true);
-        
+
         newField.setName(fieldDefinition.getName());
         newField.setDataType(fieldDefinition.getDataType());
         newField.setBaseValue(fieldDefinition.getDefaultValue());
         newField.setClassificationMarking(fieldDefinition.getDefaultClassificationMarking());
         newField.setLabel(fieldDefinition.getLabel());
         newField.setNoIndex(fieldDefinition.getNoIndex());
-        newField.setDisableHistory(fieldDefinition.getDisableHistory());
-        
+        newField.setDisableHistory(fieldDefinition.isDisableHistory());
+
         newField.setSuspendHistory(false);
         newField._creatingNewEntity = false;
 
         parent.addChild(newField);
-        
+
         return newField;
 
     }
@@ -475,17 +475,37 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
         _entityField.setHash(value);
     }
 
-    public boolean getDisableHistory()
+    /**
+     * Returns the value indicating if history is disabled for this field. Unlike SuspendHistory, this value is persisted
+     * with the object. This value overrides the SuspendHistory value.
+     * 
+     * @return <code>true</code> if history is to be disabled.
+     */
+    public boolean isDisableHistory()
     {
-        return Boolean.parseBoolean(getOtherAttribute("disablehistory"));
+        return getBooleanElement(_entityField.isDisablehistory());
     }
 
+    /**
+     * Sets  the value indicating if history will be disabled for this field.  Unlike SuspendHistory, this value is persisted
+     * with the object. The setting of this value overrides the SuspendHistory value.
+     * 
+     * @param disable the value to set the disable hsitory attribute to.
+     */
     public void setDisableHistory(boolean disable)
     {
-        boolean oldDisableHistory = Boolean.parseBoolean(getOtherAttribute("disablehistory"));
+        boolean oldDisableHistory = isDisableHistory();
 
         setChanged(oldDisableHistory, disable);
-        setOtherAttribute("disablehistory", Boolean.toString(disable));
+
+        if (disable)
+        {
+            _entityField.setDisablehistory(disable);
+        }
+        else
+        {
+            _entityField.setDisablehistory(null);
+        }
 
         _suspendHistory = disable;
 
@@ -497,9 +517,9 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
      * 
      * @return <code>true<code> if history is currently being suspended for this field
      */
-    public boolean getSuspendHistory()
+    public boolean isSuspendHistory()
     {
-        return (_suspendHistory || getDisableHistory());
+        return (_suspendHistory || isDisableHistory());
     }
 
     /**
@@ -511,7 +531,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
      */
     public void setSuspendHistory(boolean suspend)
     {
-        if (!getDisableHistory())
+        if (!isDisableHistory())
         {
             _suspendHistory = suspend;
         }
@@ -786,7 +806,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
             // We create FieldHistory entry if History is not Suspended; OR
             // if DataType is binary; OR if DateCreated=LastModified and
             // Value is unset
-            if (!getSuspendHistory())
+            if (!isSuspendHistory())
             {
                 switch (getDataType()) {
                 case BINARY_TYPE:
@@ -809,7 +829,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
                 // Set LastModified
                 setLastModified(JodaDateTimeHelper.nowInUtc().plusSeconds(1));
             }
-            
+
         }
     }
 

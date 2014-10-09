@@ -27,7 +27,7 @@ public class CoalesceGeneratedFileModifier {
 	public static void RunWithSingleClass(){
 		
 		//Get the file list to be modified
-		String directory = "C:\\06-jcoalesce\\src\\Coalesce\\src\\Coalesce\\Framework\\GeneratedJAXB\\";
+		String directory = "C:\\06-jcoalesce\\src\\Coalesce\\src\\main\\java\\com\\incadencecorp\\coalesce\\framework\\generatedjaxb\\";
 		//Entity.java should already have @XmlRootElement(name = "entity")
 		String[] files = {"Entity.java"};
 		
@@ -122,7 +122,7 @@ public class CoalesceGeneratedFileModifier {
 	
 	public static void RunWithMultipleClasses(){
 		//Get the file list to be modified
-		String directory = "C:\\06-jcoalesce\\src\\Coalesce\\src\\Coalesce\\Framework\\GeneratedJAXB\\";
+        String directory = "C:\\06-jcoalesce\\src\\Coalesce\\src\\main\\java\\com\\incadencecorp\\coalesce\\framework\\generatedjaxb\\";
 		//Entity.java should already have @XmlRootElement(name = "entity")
 		String[] files = {"Field.java", "Fielddefinition.java", "Fieldhistory.java", "Linkage.java", "Linkagesection.java", "Record.java", "Recordset.java", "Section.java"};
 		

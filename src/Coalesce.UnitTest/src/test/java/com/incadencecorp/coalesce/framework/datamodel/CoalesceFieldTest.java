@@ -520,7 +520,7 @@ public class CoalesceFieldTest {
     }
 
     @Test
-    public void trackHistoryTest()
+    public void disableHistoryTest()
     {
         CoalesceEntity testEntity = CoalesceEntity.create("Test", "UnitTest", "1.0", "Testing", "UnitTesting");
         CoalesceSection testSection = testEntity.createSection("TestSection");
@@ -537,6 +537,7 @@ public class CoalesceFieldTest {
         trackField.setValue("Test two");
         
         assertEquals(1, trackField.getHistory().size());
+        assertFalse(trackField.toXml().toLowerCase().contains("disablehistory"));
         
         noTrackField.setValue(1111);
         noTrackField.setValue(2222);
@@ -545,10 +546,31 @@ public class CoalesceFieldTest {
         
         noTrackField.setDisableHistory(false);
         
+        assertFalse(noTrackField.toXml().toLowerCase().contains("disablehistory"));
+        
         noTrackField.setValue(3333);
         noTrackField.setValue(4444);
         
         assertEquals(2, noTrackField.getHistory().size());
+        
+        noTrackField.setDisableHistory(true);
+        
+        assertEquals(3, noTrackField.getHistory().size());
+
+        assertTrue(noTrackField.isDisableHistory());
+        assertTrue(noTrackField.isSuspendHistory());
+        
+        noTrackField.setSuspendHistory(false);
+
+        assertTrue(noTrackField.isSuspendHistory());
+
+        String entityXml = testEntity.toXml();
+        CoalesceEntity desEntity = CoalesceEntity.create(entityXml);
+        
+        CoalesceIntegerField desNoTrackField = (CoalesceIntegerField) desEntity.getDataObjectForNamePath("Test/TestSection/TestRecordset/TestRecordset Record/NoTrack");
+        assertEquals(3, desNoTrackField.getHistory().size());
+        assertTrue(desNoTrackField.isDisableHistory());
+        assertTrue(desNoTrackField.isSuspendHistory());
         
     }
     
@@ -560,15 +582,15 @@ public class CoalesceFieldTest {
 
         CoalesceField<?> field = getTestMissionNameField(mission);
 
-        assertFalse(field.getSuspendHistory());
+        assertFalse(field.isSuspendHistory());
 
         field.setSuspendHistory(true);
 
-        assertTrue(field.getSuspendHistory());
+        assertTrue(field.isSuspendHistory());
 
         field.setSuspendHistory(false);
 
-        assertFalse(field.getSuspendHistory());
+        assertFalse(field.isSuspendHistory());
     }
 
     @Test

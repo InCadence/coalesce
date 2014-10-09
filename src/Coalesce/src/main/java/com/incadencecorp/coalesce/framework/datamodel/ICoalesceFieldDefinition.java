@@ -45,7 +45,7 @@ public interface ICoalesceFieldDefinition {
      * 
      * @return Boolean of the FieldDefinition's disable history attribute
      */
-    public boolean getDisableHistory();
+    public boolean isDisableHistory();
     
     /**
      * Sets the value of the FieldDefinitions's Name attribute
@@ -85,8 +85,8 @@ public interface ICoalesceFieldDefinition {
     /**
      * Sets the value of the FieldDefinitions's DisableHistory attribute
      *  
-     * @param value Boolean to be the FieldDefinition's disable history attribute
+     * @param disable Boolean to be the FieldDefinition's disable history attribute
      */
-    public void setDisableHistory(boolean value);
+    public void setDisableHistory(boolean disable);
     
 }

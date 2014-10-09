@@ -6,7 +6,7 @@
     <jxb:globalBindings>
         <!-- use JODA-Time DateTime for xs:date -->
         <jxb:javaType name="org.joda.time.DateTime" xmlType="xs:date"
-            parseMethod="Coalesce.Common.Helpers.DateTimeConverter.parseDate"
-            printMethod="Coalesce.Common.Helpers.DateTimeConverter.printDate"/>
+            parseMethod="com.incadencecorp.coalesce.common.helpers.DateTimeConverter.parseDate"
+            printMethod="com.incadencecorp.coalesce.common.helpers.DateTimeConverter.printDate"/>
     </jxb:globalBindings>        
 </jxb:bindings>

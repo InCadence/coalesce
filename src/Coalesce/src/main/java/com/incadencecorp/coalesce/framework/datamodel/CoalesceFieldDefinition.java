@@ -450,17 +450,24 @@ public class CoalesceFieldDefinition extends CoalesceDataObject implements ICoal
     }
 
     @Override
-    public boolean getDisableHistory()
+    public boolean isDisableHistory()
     {
-        return Boolean.parseBoolean(getOtherAttribute("disablehistory"));
+        return getBooleanElement(_entityFieldDefinition.isDisablehistory());
     }
-    
+
     @Override
-    public void setDisableHistory(boolean value)
+    public void setDisableHistory(boolean disable)
     {
-        setOtherAttribute("disablehistory", Boolean.toString(value));
+        if (disable)
+        {
+            _entityFieldDefinition.setDisablehistory(disable);
+        }
+        else
+        {
+            _entityFieldDefinition.setDisablehistory(null);
+        }
     }
-    
+
     // -----------------------------------------------------------------------//
     // Public Methods
     // -----------------------------------------------------------------------//

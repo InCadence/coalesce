@@ -55,6 +55,7 @@
                         <xs:attribute name="defaultvalue" type="xs:string" />
                         <xs:attribute name="datatype" type="xs:string" />
                         <xs:attribute name="label" type="xs:string" />
+                        <xs:attribute name="disablehistory" type="xs:boolean" />
 						<xs:anyAttribute />
                       </xs:complexType>
                     </xs:element>
@@ -97,6 +98,7 @@
                               <xs:attribute name="label" type="xs:string" />
                               <xs:attribute name="value" type="xs:string" />
                               <xs:attribute name="status" type="xs:string" />
+                              <xs:attribute name="disablehistory" type="xs:boolean" />
                               <xs:attribute name="previoushistorykey" type="xs:string" />
                               <xs:attribute name="modifiedby" type="xs:string" />
                               <xs:attribute name="modifiedbyip" type="xs:string" />
