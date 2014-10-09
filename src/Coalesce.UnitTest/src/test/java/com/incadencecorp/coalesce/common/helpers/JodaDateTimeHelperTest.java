@@ -685,11 +685,7 @@ public class JodaDateTimeHelperTest {
     @Test
     public void fromXmlDateTimeUTCNullStringTest()
     {
-        thrown.expect(NullArgumentException.class);
-        thrown.expectMessage("xmlDate");
-  
-        @SuppressWarnings("unused")
-        DateTime fromDate = JodaDateTimeHelper.fromXmlDateTimeUTC(null);
+        assertNull(JodaDateTimeHelper.fromXmlDateTimeUTC(null));
     }
 
     @Test
