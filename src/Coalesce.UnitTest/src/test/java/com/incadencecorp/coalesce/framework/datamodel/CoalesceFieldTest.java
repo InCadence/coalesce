@@ -555,7 +555,7 @@ public class CoalesceFieldTest {
         
         noTrackField.setDisableHistory(true);
         
-        assertEquals(3, noTrackField.getHistory().size());
+        assertEquals(2, noTrackField.getHistory().size());
 
         assertTrue(noTrackField.isDisableHistory());
         assertTrue(noTrackField.isSuspendHistory());
@@ -568,7 +568,7 @@ public class CoalesceFieldTest {
         CoalesceEntity desEntity = CoalesceEntity.create(entityXml);
         
         CoalesceIntegerField desNoTrackField = (CoalesceIntegerField) desEntity.getDataObjectForNamePath("Test/TestSection/TestRecordset/TestRecordset Record/NoTrack");
-        assertEquals(3, desNoTrackField.getHistory().size());
+        assertEquals(2, desNoTrackField.getHistory().size());
         assertTrue(desNoTrackField.isDisableHistory());
         assertTrue(desNoTrackField.isSuspendHistory());
         

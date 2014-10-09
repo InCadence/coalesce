@@ -381,7 +381,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
      * @param value, field's value as a geometry coordinate array
      * @throws CoalesceDataFormatException
      */
-    protected void setTypedValue(Coordinate value[]) throws CoalesceDataFormatException
+    protected void setTypedValue(Coordinate[] value) throws CoalesceDataFormatException
     {
 
         if (getDataType() != ECoalesceFieldDataTypes.GEOCOORDINATE_LIST_TYPE)
@@ -390,7 +390,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
         }
 
         // Initialize Array
-        Point points[] = new Point[value.length];
+        Point[] points = new Point[value.length];
 
         // Couple Values
         for (int ii = 0; ii < value.length; ii++)

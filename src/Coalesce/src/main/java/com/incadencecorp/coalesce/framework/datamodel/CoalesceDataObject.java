@@ -502,9 +502,16 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
 
     protected boolean getBooleanElement(Boolean value)
     {
-        return value == null ? false : value;
+        if (value == null)
+        {
+            return false;
+        }
+        else
+        {
+            return value;
+        }
     }
-    
+
     protected void addChild(CoalesceDataObject newChild)
     {
         // Add to Parent's Child Collection

@@ -494,10 +494,6 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
      */
     public void setDisableHistory(boolean disable)
     {
-        boolean oldDisableHistory = isDisableHistory();
-
-        setChanged(oldDisableHistory, disable);
-
         if (disable)
         {
             _entityField.setDisablehistory(disable);
