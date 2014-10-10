@@ -41,8 +41,8 @@ public class CoalesceEntitySyncShell {
     // protected Member Variables
     // -----------------------------------------------------------------------//
 
-    private Document _DataObjectDocument;
-    private Node _EntityNode;
+    private Document _dataObjectDocument;
+    private Node _entityNode;
 
     // -----------------------------------------------------------------------//
     // Static Creates
@@ -66,16 +66,16 @@ public class CoalesceEntitySyncShell {
     /**
      * Creates a {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell} based of an (XML) String.
      * 
-     * @param EntitySyncShellXml (XML) String of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} to
+     * @param entitySyncShellXml (XML) String of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} to
      *            create the shell from
      * @return The new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell}
      * 
      * @throws SAXException
      * @throws IOException
      */
-    public static CoalesceEntitySyncShell create(String EntitySyncShellXml) throws SAXException, IOException
+    public static CoalesceEntitySyncShell create(String entitySyncShellXml) throws SAXException, IOException
     {
-        return CoalesceEntitySyncShell.create(XmlHelper.loadXmlFrom(EntitySyncShellXml));
+        return CoalesceEntitySyncShell.create(XmlHelper.loadXmlFrom(entitySyncShellXml));
     }
 
     /**
@@ -92,13 +92,13 @@ public class CoalesceEntitySyncShell {
     public static CoalesceEntitySyncShell create(Document doc) throws SAXException, IOException
     {
         // Create a new CoalesceEntityTemplate
-        CoalesceEntitySyncShell EntitySyncShell = new CoalesceEntitySyncShell();
+        CoalesceEntitySyncShell entitySyncShell = new CoalesceEntitySyncShell();
 
         // Initialize
-        if (!EntitySyncShell.initialize(doc)) return null;
+        if (!entitySyncShell.initialize(doc)) return null;
 
         // return
-        return EntitySyncShell;
+        return entitySyncShell;
     }
 
     // -----------------------------------------------------------------------//
@@ -109,15 +109,15 @@ public class CoalesceEntitySyncShell {
      * Initializes a previously new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell} based off
      * an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}.
      * 
-     * @param Entity {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} to initialize the shell from
+     * @param entity {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} to initialize the shell from
      * @return boolean indicating success/failure
      * 
      * @throws SAXException
      * @throws IOException
      */
-    public boolean initialize(CoalesceEntity Entity) throws SAXException, IOException
+    public boolean initialize(CoalesceEntity entity) throws SAXException, IOException
     {
-        return this.initialize(Entity.toXml());
+        return this.initialize(entity.toXml());
     }
 
     /**
@@ -147,7 +147,7 @@ public class CoalesceEntitySyncShell {
     public boolean initialize(Document doc)
     {
         // Prune Nodes
-        CoalesceEntitySyncShell.PruneNodes(doc);
+        CoalesceEntitySyncShell.pruneNodes(doc);
 
         // Set DataObjectDocument
         this.setDataObjectDocument(doc);
@@ -168,7 +168,7 @@ public class CoalesceEntitySyncShell {
      */
     public Document getDataObjectDocument()
     {
-        return this._DataObjectDocument;
+        return this._dataObjectDocument;
     }
 
     /**
@@ -180,8 +180,8 @@ public class CoalesceEntitySyncShell {
      */
     public void setDataObjectDocument(Document value)
     {
-        this._DataObjectDocument = value;
-        this._EntityNode = value.getElementsByTagName("entity").item(0);
+        this._dataObjectDocument = value;
+        this._entityNode = value.getElementsByTagName("entity").item(0);
     }
 
     /**
@@ -192,7 +192,7 @@ public class CoalesceEntitySyncShell {
      */
     public Node getEntityNode()
     {
-        return this._EntityNode;
+        return this._entityNode;
     }
 
     /**
@@ -210,11 +210,11 @@ public class CoalesceEntitySyncShell {
         factory.setNamespaceAware(true);
         DocumentBuilder builder = factory.newDocumentBuilder();
 
-        this._DataObjectDocument = builder.newDocument();
-        Node importedNode = this._DataObjectDocument.importNode(value, true);
-        this._DataObjectDocument.appendChild(importedNode);
+        this._dataObjectDocument = builder.newDocument();
+        Node importedNode = this._dataObjectDocument.importNode(value, true);
+        this._dataObjectDocument.appendChild(importedNode);
 
-        this._EntityNode = value;
+        this._entityNode = value;
     }
 
     /**
@@ -225,7 +225,7 @@ public class CoalesceEntitySyncShell {
      */
     public String toXml()
     {
-        return XmlHelper.formatXml(this._DataObjectDocument);
+        return XmlHelper.formatXml(this._dataObjectDocument);
     }
 
     // -----------------------------------------------------------------------//
@@ -234,45 +234,45 @@ public class CoalesceEntitySyncShell {
 
     /**
      * Creates and returns a clone/copy of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell}
-     * passed in as a param
+     * passed in as a param.
      * 
-     * @param syncShell {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell} (original)
-     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell} (clone/copy)
+     * @param syncShell {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell} (original).
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell} (clone/copy).
      */
     public static CoalesceEntitySyncShell clone(CoalesceEntitySyncShell syncShell)
     {
         // Create new Instance
-        CoalesceEntitySyncShell SyncShellClone = new CoalesceEntitySyncShell();
+        CoalesceEntitySyncShell syncShellClone = new CoalesceEntitySyncShell();
 
         // Initialize
         // TODO: make sure .Clone's are same between vb and java. Java required a boolean.
-        SyncShellClone.initialize((Document) syncShell.getDataObjectDocument().cloneNode(true));
-        return SyncShellClone;
+        syncShellClone.initialize((Document) syncShell.getDataObjectDocument().cloneNode(true));
+        return syncShellClone;
     }
 
     /**
      * Returns a {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell} containing the
-     * LocalFullSyncShell changed nodes from the RemoteFullSyncShell
+     * LocalFullSyncShell changed nodes from the RemoteFullSyncShell.
      * 
-     * @param localFullSyncShell {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell} local copy
-     * @param RemoteFullSyncShell {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell} original
+     * @param localFullSyncShell {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell} local copy.
+     * @param remoteFullSyncShell {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell} original.
      * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell} local copy's changes from the
-     *         original
+     *         original.
      */
     public static CoalesceEntitySyncShell getRequiredChangesSyncShell(CoalesceEntitySyncShell localFullSyncShell,
-                                                                      CoalesceEntitySyncShell RemoteFullSyncShell)
+                                                                      CoalesceEntitySyncShell remoteFullSyncShell)
     {
         // Create the RequiredChangesSyncShell as a Clone of the RemoteFullSyncShell. We will
         // then prune out nodes that aren't required recursively as we compare against
         // the nodes in LocalFullSyncShell.
-        CoalesceEntitySyncShell requiredChangesSyncShell = CoalesceEntitySyncShell.clone(RemoteFullSyncShell);
+        CoalesceEntitySyncShell requiredChangesSyncShell = CoalesceEntitySyncShell.clone(remoteFullSyncShell);
 
         if (requiredChangesSyncShell.equals(null)) return requiredChangesSyncShell;
 
         // Prune Unchanged Nodes
-        CoalesceEntitySyncShell.PruneUnchangedNodes(CoalesceEntitySyncShell.GenerateMap(localFullSyncShell.getDataObjectDocument()),
-                                                    RemoteFullSyncShell.getDataObjectDocument(),
-                                                    CoalesceEntitySyncShell.GenerateMap(requiredChangesSyncShell.getDataObjectDocument()));
+        CoalesceEntitySyncShell.pruneUnchangedNodes(CoalesceEntitySyncShell.generateMap(localFullSyncShell.getDataObjectDocument()),
+                                                    remoteFullSyncShell.getDataObjectDocument(),
+                                                    CoalesceEntitySyncShell.generateMap(requiredChangesSyncShell.getDataObjectDocument()));
 
         return requiredChangesSyncShell;
     }
@@ -282,12 +282,12 @@ public class CoalesceEntitySyncShell {
     // ----------------------------------------------------------------------//
 
     /**
-     * Remove nodes that do not require an update; called by GetRequiredChangesSyncShell
+     * Remove nodes that do not require an update; called by GetRequiredChangesSyncShell.
      * 
-     * @param NodeToPrune Node to check for updates
-     * @return boolean indicator of success/failure
+     * @param nodeToPrune Node to check for updates.
+     * @return boolean indicator of success/failure.
      */
-    private static boolean PruneNodes(Node NodeToPrune)
+    private static boolean pruneNodes(Node nodeToPrune)
     {
         try
         {
@@ -295,12 +295,12 @@ public class CoalesceEntitySyncShell {
 
             // TODO: Make sure the Node/Attribute "switch" is ok
             // Prune Unnecessary Attributes
-            if (NodeToPrune.getAttributes() != null)
+            if (nodeToPrune.getAttributes() != null)
             {
-                if (NodeToPrune.getAttributes().getLength() > 0)
+                if (nodeToPrune.getAttributes().getLength() > 0)
                 {
-                    ArrayList<String> RemoveList = new ArrayList<String>();
-                    NamedNodeMap attributeList = NodeToPrune.getAttributes();
+                    ArrayList<String> removeList = new ArrayList<String>();
+                    NamedNodeMap attributeList = nodeToPrune.getAttributes();
 
                     // Find Attributes to Remove
                     for (int i = 0; i < attributeList.getLength(); i++)
@@ -316,12 +316,12 @@ public class CoalesceEntitySyncShell {
                             break;
                         default:
                             // Mark for Deletion
-                            RemoveList.add(attributeName);
+                            removeList.add(attributeName);
                         }
                     }
 
                     // Remove Attributes
-                    for (String attributeName : RemoveList)
+                    for (String attributeName : removeList)
                     {
                         attributeList.removeNamedItem(attributeName);
                     }
@@ -329,42 +329,42 @@ public class CoalesceEntitySyncShell {
             }
 
             // Prune Unnecessary Nodes
-            if (NodeToPrune.hasChildNodes())
+            if (nodeToPrune.hasChildNodes())
             {
-                if (NodeToPrune.getChildNodes().getLength() > 0)
+                if (nodeToPrune.getChildNodes().getLength() > 0)
                 {
-                    ArrayList<Node> RemoveList = new ArrayList<Node>();
-                    NodeList children = NodeToPrune.getChildNodes();
+                    ArrayList<Node> removeList = new ArrayList<Node>();
+                    NodeList children = nodeToPrune.getChildNodes();
 
                     // Find Nodes to Remove
                     // for (Node ChildNode : NodeToPrune.getChildNodes()){
                     for (int i = 0; i < children.getLength(); i++)
                     {
-                        Node ChildNode = children.item(i);
+                        Node childNode = children.item(i);
 
-                        switch (ChildNode.getNodeType()) {
+                        switch (childNode.getNodeType()) {
                         case Node.ELEMENT_NODE:
                             // Keep
                             break;
                         default:
                             // Add to Remove List
-                            RemoveList.add(ChildNode);
+                            removeList.add(childNode);
                         }
                     }
 
                     // Remove
-                    for (Node ChildNode : RemoveList)
+                    for (Node childNode : removeList)
                     {
-                        NodeToPrune.removeChild(ChildNode);
+                        nodeToPrune.removeChild(childNode);
                     }
                 }
             }
 
             // Recurse Child Nodes
-            for (int i = 0; i < NodeToPrune.getChildNodes().getLength(); i++)
+            for (int i = 0; i < nodeToPrune.getChildNodes().getLength(); i++)
             {
-                Node ChildNode = NodeToPrune.getChildNodes().item(i);
-                isSuccess = PruneNodes(ChildNode);
+                Node childNode = nodeToPrune.getChildNodes().item(i);
+                isSuccess = pruneNodes(childNode);
             }
 
             // return Success
@@ -378,8 +378,8 @@ public class CoalesceEntitySyncShell {
         }
     }
 
-    private static void PruneUnchangedNodes(HashMap<String, Node> localNodes,
-                                            Node RemoteSyncShellNode,
+    private static void pruneUnchangedNodes(HashMap<String, Node> localNodes,
+                                            Node remoteSyncShellNode,
                                             HashMap<String, Node> requiredNodes)
     {
         /*
@@ -387,32 +387,32 @@ public class CoalesceEntitySyncShell {
          * correct pruning. We rely on whether or not a node has children remaining as one of the decision points on whether
          * or not the node itself needs to remain.)
          */
-        NodeList children = RemoteSyncShellNode.getChildNodes();
+        NodeList children = remoteSyncShellNode.getChildNodes();
 
         for (int ii = 0; ii < children.getLength(); ii++)
         {
             // Recursive
-            CoalesceEntitySyncShell.PruneUnchangedNodes(localNodes, children.item(ii), requiredNodes);
+            CoalesceEntitySyncShell.pruneUnchangedNodes(localNodes, children.item(ii), requiredNodes);
         }
 
         // Check RemoteSyncShellNode
-        String key = XmlHelper.getAttribute(RemoteSyncShellNode, "key");
+        String key = XmlHelper.getAttribute(remoteSyncShellNode, "key");
 
         if (!StringHelper.isNullOrEmpty(key))
         {
             // Evaluate Based on the Coalesce Object Type
-            switch (RemoteSyncShellNode.getNodeName().toUpperCase()) {
+            switch (remoteSyncShellNode.getNodeName().toUpperCase()) {
             case "FIELD":
             case "LINKAGE":
             case "FIELDHISTORY":
             case "FIELDDEFINITION":
-                if (!CoalesceEntitySyncShell.IsNewer(localNodes.get(key), RemoteSyncShellNode))
+                if (!CoalesceEntitySyncShell.isNewer(localNodes.get(key), remoteSyncShellNode))
                 {
                     /*
                      * Local is newer or the same date; Prune from the RequiredChangesSyncShell IF there are no remaining
                      * children below the node. If there are children, then we keep the node even if it's older.
                      */
-                    CoalesceEntitySyncShell.PruneNode(requiredNodes.get(key));
+                    CoalesceEntitySyncShell.pruneNode(requiredNodes.get(key));
                 }
                 break;
             case "LINKAGESECTION":
@@ -428,14 +428,14 @@ public class CoalesceEntitySyncShell {
                  * node, the presence of child nodes means that a child object to this object required updating, therefore we
                  * have to keep this object's node. If there are no child nodes, then we can prune this object's node.
                  */
-                CoalesceEntitySyncShell.PruneNode(requiredNodes.get(key));
+                CoalesceEntitySyncShell.pruneNode(requiredNodes.get(key));
                 break;
             }
         }
 
     }
 
-    private static void PruneNode(Node node)
+    private static void pruneNode(Node node)
     {
         if (node != null && node.getParentNode() != null && !node.hasChildNodes())
         {
@@ -443,7 +443,7 @@ public class CoalesceEntitySyncShell {
         }
     }
 
-    private static boolean IsNewer(Node oldNode, Node newNode)
+    private static boolean isNewer(Node oldNode, Node newNode)
     {
         boolean isNewer = true;
 
@@ -472,7 +472,7 @@ public class CoalesceEntitySyncShell {
         return isNewer;
     }
 
-    private static HashMap<String, Node> GenerateMap(Document doc)
+    private static HashMap<String, Node> generateMap(Document doc)
     {
 
         HashMap<String, Node> nodeMap = new HashMap<String, Node>();

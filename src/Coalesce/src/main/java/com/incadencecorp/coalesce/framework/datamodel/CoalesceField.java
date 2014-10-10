@@ -60,13 +60,13 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}.
      * 
      * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} that the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField} will belong to
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField} will belong to.
      * @param fieldDefinition {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} "template" that
      *            the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField} will be based off of, for default
-     *            values/settings
+     *            values/settings.
      * 
      * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}, belonging to the parent
-     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}, resulting from the fieldDefinition
+     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}, resulting from the fieldDefinition.
      */
     protected static CoalesceField<?> create(CoalesceRecord parent, CoalesceFieldDefinition fieldDefinition)
     {
@@ -143,8 +143,8 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     /**
      * Returns an Field's value as type T.
      * 
-     * @return Object base type to contain the field's data, which could be any data type
-     * @throws CoalesceDataFormatException
+     * @return Object base type to contain the field's data, which could be any data type.
+     * @throws CoalesceDataFormatException.
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -192,7 +192,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     /**
      * Sets the Field's value as type T.
      * 
-     * @throws CoalesceDataFormatException
+     * @throws CoalesceDataFormatException.
      */
     @Override
     public void setValue(T value) throws CoalesceDataFormatException
@@ -250,10 +250,10 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
      * in, in the event that the field is not new.
      * 
      * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} that the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField} will belong to
-     * @param field Field being initialized
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField} will belong to.
+     * @param field Field being initialized.
      * 
-     * @return boolean indicator of success/failure
+     * @return boolean indicator of success/failure.
      */
     protected boolean initialize(CoalesceRecord parent, Field field)
     {
@@ -335,9 +335,9 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     }
 
     /**
-     * Sets the value of the Field's DataType attribute
+     * Sets the value of the Field's DataType attribute.
      * 
-     * @param value ECoalesceFieldDataTypes to be the Field's DataType attribute
+     * @param value ECoalesceFieldDataTypes to be the Field's DataType attribute.
      */
     private void setDataType(ECoalesceFieldDataTypes value)
     {
@@ -527,7 +527,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
      * <code>true<code> if history is currently being suspended for this field
      * value.
      * 
-     * @return <code>true<code> if history is currently being suspended for this field
+     * @return <code>true<code> if history is currently being suspended for this field.
      */
     public boolean isSuspendHistory()
     {
@@ -550,10 +550,10 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     }
 
     /**
-     * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}'s change history collection
+     * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}'s change history collection.
      * 
      * @return ArrayList<{@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory}> all modification
-     *         history of this field
+     *         history of this field.
      */
     public ArrayList<CoalesceFieldHistory> getHistory()
     {
@@ -575,10 +575,10 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     }
 
     /**
-     * Returns an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}'s change history entry
+     * Returns an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}'s change history entry.
      * 
      * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory} the modification history of this
-     *         field with matching key
+     *         field with matching key.
      */
     public CoalesceFieldHistory getHistoryRecord(String historyKey)
     {
@@ -630,7 +630,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
      * {@link CoalesceSettings#getBinaryFileStoreBasePath()} and {@link CoalesceSettings#getSubDirectoryLength()} to build
      * the directory path.
      * 
-     * @return String, full filename
+     * @return String, full filename.
      */
     public String getCoalesceFullFilename()
     {
@@ -653,7 +653,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
      * {@link CoalesceSettings#getBinaryFileStoreBasePath()} and {@link CoalesceSettings#getSubDirectoryLength()} to build
      * the directory path.
      *
-     * @return String, full thumbnail filename
+     * @return String, full thumbnail filename.
      */
     public String getCoalesceFullThumbnailFilename()
     {
@@ -673,7 +673,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
      * Returns the filename with a long representation of last modified datetime (Name?lastmodifiedlong). Returns empty
      * string when filename does not exist. If an error is encountered, only the filename is returned.
      * 
-     * @return String, full filename with LastModifiedTag appended
+     * @return String, full filename with LastModifiedTag appended.
      */
     public String getCoalesceFilenameWithLastModifiedTag()
     {
@@ -698,7 +698,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
      * Returns the thumbnail filename with a long representation of last modified datetime (Name?lastmodifiedlong). Returns
      * empty string when filename does not exist. If an error is encountered, only the thumbnail filename is returned.
      * 
-     * @return String, full thumbnail filename with LastModifiedTag appended
+     * @return String, full thumbnail filename with LastModifiedTag appended.
      */
     public String getCoalesceThumbnailFilenameWithLastModifiedTag()
     {
@@ -722,7 +722,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     /**
      * Returns the base filename and extension.
      * 
-     * @return String, the filename and extension, without the path
+     * @return String, the filename and extension, without the path.
      */
     public String getCoalesceFilename()
     {
@@ -745,7 +745,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     /**
      * Returns the thumbnail base filename and extension.
      * 
-     * @return String, the thumbnail's filename and extension, without the path
+     * @return String, the thumbnail's filename and extension, without the path.
      */
     public String getCoalesceThumbnailFilename()
     {
@@ -769,11 +769,11 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
      * Update the value and/or classification marking of the
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}.
      * 
-     * @param value String, value contained by the field
-     * @param marking classification marking of the field
-     * @param user user making the change
-     * @param ip user ip responsible for the change
-     * @throws CoalesceDataFormatException
+     * @param value String, value contained by the field.
+     * @param marking classification marking of the field.
+     * @param user user making the change.
+     * @param ip user ip responsible for the change.
+     * @throws CoalesceDataFormatException.
      */
     public void change(T value, String marking, String user, String ip) throws CoalesceDataFormatException
     {
@@ -845,7 +845,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
         }
     }
 
-    protected List<Fieldhistory> GetEntityFieldHistories()
+    protected List<Fieldhistory> getEntityFieldHistories()
     {
         return _entityField.getFieldhistory();
     }

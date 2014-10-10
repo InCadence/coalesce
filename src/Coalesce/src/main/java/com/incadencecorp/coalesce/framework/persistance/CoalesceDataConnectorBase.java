@@ -48,19 +48,19 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
     /**
      * Returns the results from the executed SQL Command.
      * 
-     * @param SQL the statement to be executed against the database.
+     * @param sql the statement to be executed against the database.
      * @param parameters the multiple parameters to be applied to the SQL statement
      * @return ResultSet - A table of data representing a database result set.
      * @throws SQLException
      * @throws CoalescePersistorException
      */
-    public ResultSet executeQuery(String SQL, CoalesceParameter... parameters) throws SQLException
+    public ResultSet executeQuery(String sql, CoalesceParameter... parameters) throws SQLException
     {
 
         // Open Connection if not already created
         if (this._conn == null) this.openConnection();
 
-        CallableStatement stmt = this._conn.prepareCall(SQL);
+        CallableStatement stmt = this._conn.prepareCall(sql);
 
         // Add Parameters
         for (int ii = 0; ii < parameters.length; ii++)
@@ -75,20 +75,20 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
     /**
      * Returns the results from the executed SQL Command, that contains LIKE wildcards.
      * 
-     * @param SQL the statement to be executed against the database.
+     * @param sql the statement to be executed against the database.
      * @param likeParams the number of like parameters in the SQL statement
      * @param parameters the multiple parameters to be applied to the SQL statement
      * @return ResultSet - A table of data representing a database result set.
      * @throws SQLException
      * @throws CoalescePersistorException
      */
-    public ResultSet executeLikeQuery(String SQL, int likeParams, CoalesceParameter... parameters) throws SQLException
+    public ResultSet executeLikeQuery(String sql, int likeParams, CoalesceParameter... parameters) throws SQLException
     {
 
         // Open Connection if not already created
         if (this._conn == null) this.openConnection();
 
-        CallableStatement stmt = this._conn.prepareCall(SQL);
+        CallableStatement stmt = this._conn.prepareCall(sql);
 
         // Add Parameters
         for (int ii = 0; ii < parameters.length; ii++)
@@ -110,17 +110,17 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
     /**
      * Executes a SQL statement on a database.
      * 
-     * @param SQL the statement to be executed against the database.
+     * @param sql the statement to be executed against the database.
      * @param parameters the multiple parameters to be applied to the SQL statement
      * @return true = success
      * @throws SQLException
      */
-    public boolean executeCmd(String SQL, CoalesceParameter... parameters) throws SQLException
+    public boolean executeCmd(String sql, CoalesceParameter... parameters) throws SQLException
     {
         // Open Connection if not already created
         if (this._conn == null) this.openConnection();
 
-        CallableStatement stmt = this._conn.prepareCall(SQL);
+        CallableStatement stmt = this._conn.prepareCall(sql);
 
         // Add Parameters
         for (int ii = 0; ii < parameters.length; ii++)
@@ -136,16 +136,16 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
     /**
      * Executes a SQL statement on a database.
      * 
-     * @param SQL the statement to be executed against the database.
+     * @param sql the statement to be executed against the database.
      * @return true = success
      * @throws SQLException
      */
-    public boolean executeCmd(String SQL) throws SQLException
+    public boolean executeCmd(String sql) throws SQLException
     {
         // Open Connection if not already created
         if (this._conn == null) this.openConnection();
 
-        CallableStatement stmt = this._conn.prepareCall(SQL);
+        CallableStatement stmt = this._conn.prepareCall(sql);
 
         stmt.executeUpdate();
 

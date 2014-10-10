@@ -63,10 +63,10 @@ public class CoalesceRecord extends CoalesceDataObject {
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}.
      * 
      * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} the Recordset that this new
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} will belong to
-     * @param name {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} name attribute
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} will belong to.
+     * @param name {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} name attribute.
      * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} the new
-     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
+     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}.
      */
     public static CoalesceRecord create(CoalesceRecordset parent, String name)
     {
@@ -75,7 +75,7 @@ public class CoalesceRecord extends CoalesceDataObject {
         if (StringHelper.isNullOrEmpty(name)) throw new IllegalArgumentException("name cannot be an empty string");
 
         Record newEntityRecord = new Record();
-        parent.GetEntityRecords().add(newEntityRecord);
+        parent.getEntityRecords().add(newEntityRecord);
 
         CoalesceRecord newRecord = new CoalesceRecord();
         if (!newRecord.initialize(parent, newEntityRecord)) return null;
@@ -98,9 +98,9 @@ public class CoalesceRecord extends CoalesceDataObject {
      * to its parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}.
      * 
      * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} the Recordset that this new
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} will belong to
-     * @param record Record that this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} will be based on
-     * @return boolean indicator of success/failure
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} will belong to.
+     * @param record Record that this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} will be based on.
+     * @return boolean indicator of success/failure.
      */
     protected boolean initialize(CoalesceRecordset parent, Record record)
     {
@@ -169,10 +169,10 @@ public class CoalesceRecord extends CoalesceDataObject {
 
     /**
      * Returns a list of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}s that belong to this
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}.
      * 
      * @return List<CoalesceField> list of {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}s contained by
-     *         this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
+     *         this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}.
      */
     public List<CoalesceField<?>> getFields()
     {
@@ -191,11 +191,11 @@ public class CoalesceRecord extends CoalesceDataObject {
     }
 
     /**
-     * Returns a String list of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's names
+     * Returns a String list of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's names.
      * 
      * @return List<String> list of the field names from the
      *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}s contained by this
-     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
+     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}.
      */
     public List<String> getFieldNames()
     {
@@ -213,11 +213,11 @@ public class CoalesceRecord extends CoalesceDataObject {
     }
 
     /**
-     * Returns a String list of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's keys
+     * Returns a String list of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's keys.
      * 
      * @return List<String> list of the field keys from the
      *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}s contained by this
-     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
+     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}.
      */
     public List<String> getFieldKeys()
     {
@@ -236,9 +236,9 @@ public class CoalesceRecord extends CoalesceDataObject {
 
     /**
      * Returns an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField} with the specified
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's key
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's key.
      * 
-     * @param key String of the desired Field's key
+     * @param key String of the desired Field's key.
      * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField} that has the key parameter. Null if not
      *         present.
      */
@@ -257,9 +257,9 @@ public class CoalesceRecord extends CoalesceDataObject {
 
     /**
      * Returns an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField} with the specified
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's name
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}'s Field's name.
      * 
-     * @param name String of the desired Field name
+     * @param name String of the desired Field name.
      * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField} that has the name parameter. Null if not
      *         present.
      */
@@ -278,10 +278,10 @@ public class CoalesceRecord extends CoalesceDataObject {
 
     /**
      * Returns boolean indicator of the existence of the specified Field's name within the
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}.
      * 
-     * @param name String of the desired Field name
-     * @return boolean indication that the Record does/does not have the named Field in its collection
+     * @param name String of the desired Field name.
+     * @return boolean indication that the Record does/does not have the named Field in its collection.
      */
     public Boolean hasField(String name)
     {

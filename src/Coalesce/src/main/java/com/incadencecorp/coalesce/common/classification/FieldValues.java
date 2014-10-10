@@ -457,11 +457,10 @@ public class FieldValues {
 
     /**
      * Uses predicate validation to find a specific ISO3166Country within a
-     * ISO3166Country list based on caller provided ISO3166Country name
+     *            ISO3166Country list based on caller provided ISO3166Country name.
      * 
-     * @param countryName
-     *            Country name to use for selecting
-     * @return The country that matches the country name
+     * @param countryName Country name to use for selecting.
+     * @return The country that matches the country name.
      */
     public static ISO3166Country getCountryByName(String countryName)
     {
@@ -481,11 +480,10 @@ public class FieldValues {
 
     /**
      * Uses predicate validation to find a specific ISO3166Country within a
-     * ISO3166Country list based on caller provided ISO3166Country Alpha3
+     * ISO3166Country list based on caller provided ISO3166Country Alpha3.
      * 
-     * @param countryAlpha3
-     *            Country Alpha3 to use for selecting
-     * @return The country that matches the country Alpha3
+     * @param countryAlpha3 Country Alpha3 to use for selecting.
+     * @return The country that matches the country Alpha3.
      */
     public static ISO3166Country getCountryByAlpha3(String countryAlpha3)
     {
@@ -505,11 +503,10 @@ public class FieldValues {
 
     /**
      * Uses predicate validation to find a specific MarkingValue within a
-     * MarkingValue list based on caller provided MarkingValue title
+     * MarkingValue list based on caller provided MarkingValue title.
      * 
-     * @param markingValueTitle
-     *            Title to use for selecting
-     * @return The MarkingValue for the title
+     * @param markingValueTitle Title to use for selecting.
+     * @return The MarkingValue for the title.
      */
     public static MarkingValue getMarkingValueByTitle(String markingValueTitle, List<MarkingValue> markings)
     {
@@ -526,11 +523,10 @@ public class FieldValues {
 
     /**
      * Uses predicate validation to find a specific MarkingValue within a
-     * MarkingValue list based on caller provided MarkingValue portion
+     * MarkingValue list based on caller provided MarkingValue portion.
      * 
-     * @param markingValuePortion
-     *            Portion to use for selecting
-     * @return The MarkingValue for the portion
+     * @param markingValuePortion Portion to use for selecting.
+     * @return The MarkingValue for the portion.
      */
     public static MarkingValue getMarkingValueByPortion(String markingValuePortion, List<MarkingValue> markings)
     {
@@ -557,10 +553,10 @@ public class FieldValues {
         {
             if (_filter == null) return (object == null);
             
-            return _filter.equals(GetValue(object));
+            return _filter.equals(getValue(object));
         }
 
-        protected abstract String GetValue(Object object);
+        protected abstract String getValue(Object object);
 
     }
 
@@ -570,7 +566,7 @@ public class FieldValues {
             super(filter);
         }
 
-        protected String GetValue(Object object)
+        protected String getValue(Object object)
         {
             if (!(object instanceof ISO3166Country)) return null;
             return ((ISO3166Country) object).getName();
@@ -583,7 +579,7 @@ public class FieldValues {
             super(filter);
         }
 
-        protected String GetValue(Object object)
+        protected String getValue(Object object)
         {
             if (!(object instanceof ISO3166Country)) return null;
             return ((ISO3166Country) object).getAlpha3();
@@ -596,7 +592,7 @@ public class FieldValues {
             super(filter);
         }
 
-        protected String GetValue(Object object)
+        protected String getValue(Object object)
         {
             if (!(object instanceof MarkingValue)) return null;
             return ((MarkingValue) object).getTitle();
@@ -609,7 +605,7 @@ public class FieldValues {
             super(filter);
         }
 
-        protected String GetValue(Object object)
+        protected String getValue(Object object)
         {
             if (!(object instanceof MarkingValue)) return null;
             return ((MarkingValue) object).getPortion();

@@ -3370,7 +3370,7 @@ public class MarkingTest {
 
         Marking mk = new Marking("UNCLASSIFIED//DISPLAY ONLY AND USA");
 
-        assertTrue(mk.getIsDISPLAY_ONLY());
+        assertTrue(mk.getIsDisplay_Only());
     }
 
     @Test
@@ -3379,7 +3379,7 @@ public class MarkingTest {
 
         Marking mk = new Marking("//UNCLASSIFIED");
 
-        assertFalse(mk.getIsDISPLAY_ONLY());
+        assertFalse(mk.getIsDisplay_Only());
     }
 
     @Test
@@ -3538,7 +3538,7 @@ public class MarkingTest {
 
         Marking mk = new Marking("//UNCLASSIFIED");
 
-        assertFalse(mk.getIsDISPLAY_ONLY());
+        assertFalse(mk.getIsDisplay_Only());
     }
 
     @SuppressWarnings("unchecked")

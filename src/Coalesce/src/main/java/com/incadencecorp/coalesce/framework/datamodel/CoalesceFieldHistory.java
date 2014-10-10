@@ -47,10 +47,10 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> {
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldBase}.
      * 
      * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldBase} base of extended field that is
-     *            the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory}'s parent
+     *            the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory}'s parent.
      * 
      * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory}, resulting history created from
-     *         the extended {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldBase}
+     *         the extended {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldBase}.
      */
     public static CoalesceFieldHistory create(CoalesceFieldBase<?> parent)
     {
@@ -65,10 +65,10 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> {
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}.
      * 
      * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}, the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory}'s parent
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory}'s parent.
      * 
      * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory}, resulting history created from
-     *         the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}
+     *         the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}.
      */
     public static CoalesceFieldHistory create(CoalesceField<?> parent)
     {
@@ -85,7 +85,7 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> {
             newFieldHistory.setPreviousHistoryKey(parent.getPreviousHistoryKey());
 
             // Append to parent's child node collection
-            parent.GetEntityFieldHistories().add(0, newFieldHistory._entityFieldHistory);
+            parent.getEntityFieldHistories().add(0, newFieldHistory._entityFieldHistory);
 
             parent.addChild(newFieldHistory);
 
@@ -103,9 +103,9 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> {
      * parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}.
      * 
      * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}, the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory}'s parent
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory}'s parent.
      * 
-     * @return boolean indicator of success/failure
+     * @return boolean indicator of success/failure.
      */
     private boolean initialize(CoalesceField<?> parent)
     {
@@ -117,11 +117,11 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> {
      * to its parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}.
      * 
      * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}, the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory}'s parent
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory}'s parent.
      * @param fieldHistory for which this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory} will be
-     *            based on
+     *            based on.
      * 
-     * @return boolean indicator of success/failure
+     * @return boolean indicator of success/failure.
      */
     protected boolean initialize(CoalesceField<?> parent, Fieldhistory fieldHistory)
     {
@@ -199,9 +199,9 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> {
     }
 
     /**
-     * Sets the value of the Field's DataType attribute
+     * Sets the value of the Field's DataType attribute.
      * 
-     * @param value ECoalesceFieldDataTypes to be the Field's DataType attribute
+     * @param value ECoalesceFieldDataTypes to be the Field's DataType attribute.
      */
     public void setDataType(ECoalesceFieldDataTypes value)
     {

@@ -20,7 +20,7 @@ import org.apache.commons.lang.NullArgumentException;
  -----------------------------------------------------------------------------*/
 
 /**
- * Provides helper methods for obtaining MIME type information
+ * Provides helper methods for obtaining MIME type information.
  * 
  * @author InCadence
  *
@@ -41,8 +41,8 @@ public class MimeHelper {
      * Returns the MIME type for an extension. Some MIME types are associated with multiple extensions. In this case only one
      * of the possible extensions will be returned.
      * 
-     * @param mimeType the MIME type
-     * @return the extension the corresponds to the MIME type
+     * @param mimeType the MIME type.
+     * @return the extension the corresponds to the MIME type.
      */
     public static String getExtensionForMimeType(String mimeType)
     {
@@ -1047,7 +1047,7 @@ public class MimeHelper {
     /**
      * Return the description of the file based on the MIME type of the file.
      * 
-     * @param mimeType the MIME type of the file
+     * @param mimeType the MIME type of the file.
      * @return the description of the file type.
      */
     public static String getFileTypeForMimeType(String mimeType)
@@ -1108,7 +1108,7 @@ public class MimeHelper {
     /**
      * Return the description of the file based on the extension of the file.
      * 
-     * @param extension the extension of the file
+     * @param extension the extension of the file.
      * @return the description of the file type.
      */
     public static String getFileTypeForExtension(String extension)

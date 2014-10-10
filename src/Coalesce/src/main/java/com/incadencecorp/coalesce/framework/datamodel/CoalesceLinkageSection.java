@@ -43,9 +43,9 @@ public class CoalesceLinkageSection extends CoalesceDataObject {
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}.
      * 
      * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} that the new
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection} will belong to
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection} will belong to.
      * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection} the new
-     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}
+     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}.
      */
     public static CoalesceLinkageSection create(CoalesceEntity parent)
     {
@@ -57,10 +57,10 @@ public class CoalesceLinkageSection extends CoalesceDataObject {
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}. Also sets the noIndex attribute.
      * 
      * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} that the new
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection} will belong to
-     * @param noIndex boolean value
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection} will belong to.
+     * @param noIndex boolean value.
      * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection} the new
-     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}
+     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}.
      */
     public static CoalesceLinkageSection create(CoalesceEntity parent, boolean noIndex)
     {
@@ -84,8 +84,8 @@ public class CoalesceLinkageSection extends CoalesceDataObject {
      * to its parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}.
      * 
      * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} containing an LinkageSection to
-     *            base this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection} on
-     * @return boolean indicator of success/failure
+     *            base this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection} on.
+     * @return boolean indicator of success/failure.
      */
     protected boolean initialize(CoalesceEntity parent)
     {
@@ -160,10 +160,10 @@ public class CoalesceLinkageSection extends CoalesceDataObject {
 
     /**
      * Returns a hashmap of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage}s contained in the
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}.
      * 
      * @return HashMap of this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}'s
-     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage}s
+     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage}s.
      */
     public Map<String, CoalesceLinkage> getLinkages()
     {
@@ -186,7 +186,7 @@ public class CoalesceLinkageSection extends CoalesceDataObject {
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}.
      * 
      * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage} newly created and added to this
-     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}
+     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}.
      */
     public CoalesceLinkage createLinkage()
     {

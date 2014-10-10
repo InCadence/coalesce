@@ -144,9 +144,9 @@ public class CoalesceEncrypter implements ICoalesceEncrypter {
     public String decryptValue(String valueEncryptedBase64) throws CoalesceCryptoException
     {
 
-        byte[] DecodedBytes = Base64.decode(valueEncryptedBase64);
+        byte[] decodedBytes = Base64.decode(valueEncryptedBase64);
 
-        return decryptValue(DecodedBytes);
+        return decryptValue(decodedBytes);
 
     }
 
@@ -167,11 +167,11 @@ public class CoalesceEncrypter implements ICoalesceEncrypter {
     }
 
     @Override
-    public byte[] encryptValue(String Value) throws CoalesceCryptoException
+    public byte[] encryptValue(String value) throws CoalesceCryptoException
     {
         try
         {
-            return encryptValue(Value.getBytes("UTF8"));
+            return encryptValue(value.getBytes("UTF8"));
         }
         catch (UnsupportedEncodingException uee)
         {
@@ -181,10 +181,10 @@ public class CoalesceEncrypter implements ICoalesceEncrypter {
     }
 
     @Override
-    public String encryptValueToBase64(String Value) throws CoalesceCryptoException
+    public String encryptValueToBase64(String value) throws CoalesceCryptoException
     {
 
-        byte[] utf8 = encryptValue(Value);
+        byte[] utf8 = encryptValue(value);
 
         if (utf8 != null)
         {
@@ -227,13 +227,13 @@ public class CoalesceEncrypter implements ICoalesceEncrypter {
             // Salt
             byte[] salt = { 0x0, 0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, (byte) 0xF1, (byte) 0xF0, (byte) 0xEE, 0x21, 0x22, 0x45 };
 
-            Rfc2898DeriveBytes derived_bytes = new Rfc2898DeriveBytes(passPhrase, salt, 1000);
+            Rfc2898DeriveBytes derived_Bytes = new Rfc2898DeriveBytes(passPhrase, salt, 1000);
 
             // Create Key and IV
-            byte[] key_bytes = derived_bytes.getBytes(32);
-            iv = derived_bytes.getBytes(16);
+            byte[] key_Bytes = derived_Bytes.getBytes(32);
+            iv = derived_Bytes.getBytes(16);
 
-            key = new SecretKeySpec(key_bytes, "AES");
+            key = new SecretKeySpec(key_Bytes, "AES");
 
         }
     }

@@ -18,7 +18,7 @@ package com.incadencecorp.coalesce.common.helpers;
  -----------------------------------------------------------------------------*/
 
 /**
- * Provides helper methods for manipulating and testing {@link String} values
+ * Provides helper methods for manipulating and testing {@link String} values.
  * 
  * @author InCadence
  *
@@ -33,7 +33,7 @@ public class StringHelper {
     /**
      * Returns <code>true</code> if any of the values are either <code>null</code> or an empty string.
      * 
-     * @param values the values to check
+     * @param values the values to check.
      * @return <code>true</code> if any of the values are either <code>null</code>or an empty string.
      */
     public static boolean isNullOrEmpty(String... values)
@@ -53,7 +53,7 @@ public class StringHelper {
     /**
      * Returns the new {@link String} value with all leading and trailing parentheses removed.
      * 
-     * @param value the string to be trimmed
+     * @param value the string to be trimmed.
      * @return the new {@link String} value with all leading and trailing parentheses removed.
      */
     public static String trimParentheses(String value)

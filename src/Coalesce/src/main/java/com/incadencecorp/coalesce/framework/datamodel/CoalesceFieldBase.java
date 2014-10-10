@@ -88,16 +88,16 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
     public abstract void setModifiedByIP(String value);
 
     /**
-     * Returns the string representation of the classification marking
+     * Returns the string representation of the classification marking.
      * 
-     * @return String, the classification marking
+     * @return String, the classification marking.
      */
     public abstract String getClassificationMarkingAsString();
 
     /**
-     * Sets the classification marking to the value of the string parameter
+     * Sets the classification marking to the value of the string parameter.
      * 
-     * @param value, String, the new classification marking
+     * @param value, String, the new classification marking.
      */
     public abstract void setClassificationMarking(String value);
 
@@ -188,7 +188,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
     /**
      * Returns the field value with the classification marking.
      * 
-     * @return String, Marking + " " + value
+     * @return String, Marking + " " + value.
      */
     public String getValueWithMarking()
     {
@@ -216,9 +216,9 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
     };
 
     /**
-     * Returns the portion marking representation of the full classification marking
+     * Returns the portion marking representation of the full classification marking.
      * 
-     * @return String, the portion marking
+     * @return String, the portion marking.
      */
     public String getPortionMarking()
     {
@@ -227,9 +227,9 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
     }
 
     /**
-     * Sets the key value for the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory}
+     * Sets the key value for the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory}.
      * 
-     * @param fieldHistory, provides the value of the newer field's Previous History Key
+     * @param fieldHistory, provides the value of the newer field's Previous History Key.
      */
     public void setPreviousHistoryKey(CoalesceFieldHistory fieldHistory)
     {
@@ -239,9 +239,9 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
     }
 
     /**
-     * Sets the Field's value by the String parameter
+     * Sets the Field's value by the String parameter.
      * 
-     * @param value, field's value as a String
+     * @param value, field's value as a String.
      */
     protected void setTypedValue(String value)
     {
@@ -255,9 +255,9 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
     }
 
     /**
-     * Sets the Field's value by the UUID parameter
+     * Sets the Field's value by the UUID parameter.
      * 
-     * @param value, field's value as a UUID
+     * @param value, field's value as a UUID.
      */
     protected void setTypedValue(UUID value)
     {
@@ -270,9 +270,9 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
     }
 
     /**
-     * Sets the Field's value by the DateTime parameter
+     * Sets the Field's value by the DateTime parameter.
      * 
-     * @param value, field's value as a DateTime
+     * @param value, field's value as a DateTime.
      */
     protected void setTypedValue(DateTime value)
     {
@@ -285,9 +285,9 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
     }
 
     /**
-     * Sets the Field's value by the boolean parameter
+     * Sets the Field's value by the boolean parameter.
      * 
-     * @param value, field's value as a boolean
+     * @param value, field's value as a boolean.
      */
     protected void setTypedValue(boolean value)
     {
@@ -300,9 +300,9 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
     }
 
     /**
-     * Sets the Field's value by the int parameter
+     * Sets the Field's value by the int parameter.
      * 
-     * @param value, field's value as an integer
+     * @param value, field's value as an integer.
      */
     protected void setTypedValue(int value)
     {
@@ -345,10 +345,10 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
     }
 
     /**
-     * Sets the Field's value by the geometry Point parameter
+     * Sets the Field's value by the geometry Point parameter.
      * 
-     * @param value, field's value as a geometry point
-     * @throws CoalesceDataFormatException
+     * @param value, field's value as a geometry point.
+     * @throws CoalesceDataFormatException.
      */
     protected void setTypedValue(Point value) throws CoalesceDataFormatException
     {
@@ -366,10 +366,10 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
     }
 
     /**
-     * Sets the Field's value by the geometry Coordinate parameter
+     * Sets the Field's value by the geometry Coordinate parameter.
      * 
-     * @param value, field's value as a geometry coordinate
-     * @throws CoalesceDataFormatException
+     * @param value, field's value as a geometry coordinate.
+     * @throws CoalesceDataFormatException.
      */
     protected void setTypedValue(Coordinate value) throws CoalesceDataFormatException
     {
@@ -387,10 +387,10 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
     }
 
     /**
-     * Sets the Field's value by the geometry MultiPoint parameter
+     * Sets the Field's value by the geometry MultiPoint parameter.
      * 
-     * @param multiPoint, field's value as a geometry multipoint
-     * @throws CoalesceDataFormatException
+     * @param multiPoint, field's value as a geometry multipoint.
+     * @throws CoalesceDataFormatException.
      */
     protected void setTypedValue(MultiPoint multiPoint) throws CoalesceDataFormatException
     {
@@ -406,10 +406,10 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
     }
 
     /**
-     * Sets the Field's value by the geometry coordinate array parameter
+     * Sets the Field's value by the geometry coordinate array parameter.
      * 
-     * @param value, field's value as a geometry coordinate array
-     * @throws CoalesceDataFormatException
+     * @param value, field's value as a geometry coordinate array.
+     * @throws CoalesceDataFormatException.
      */
     protected void setTypedValue(Coordinate[] value) throws CoalesceDataFormatException
     {
@@ -433,9 +433,9 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
     }
 
     /**
-     * Sets the Field's value by the byte array parameter
+     * Sets the Field's value by the byte array parameter.
      * 
-     * @param dataBytes, field's value as a byte array
+     * @param dataBytes, field's value as a byte array.
      */
     protected void setTypedValue(byte[] dataBytes)
     {
@@ -451,9 +451,9 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
     /**
      * Sets the Field's value by the byte array parameter. Also sets the filename, extension and mimetype.
      * 
-     * @param dataBytes, field's value as a byte array
-     * @param filename, field's filename
-     * @param extension, field's extension
+     * @param dataBytes, field's value as a byte array.
+     * @param filename, field's filename.
+     * @param extension, field's extension.
      */
     protected void setTypedValue(byte[] dataBytes, String filename, String extension)
     {
@@ -474,9 +474,9 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
     /**
      * Sets the Field's hash value. Also sets the filename, extension and MIME type.
      * 
-     * @param filename, field's filename
-     * @param extension, field's extension
-     * @param hash, field's hash value
+     * @param filename, field's filename.
+     * @param extension, field's extension.
+     * @param hash, field's hash value.
      */
     protected void setTypedValue(String filename, String extension, String hash)
     {
@@ -495,8 +495,8 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
      * Sets the Field's value by the byte array parameter. Also sets the filename, extension and mimetype by the Document
      * Properties.
      * 
-     * @param dataBytes, file's value as a byte array
-     * @param docProps, file's DocumentProperties
+     * @param dataBytes, file's value as a byte array.
+     * @param docProps, file's DocumentProperties.
      */
     protected void setTypedValue(byte[] dataBytes, DocumentProperties docProps)
     {
@@ -511,8 +511,8 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
     /**
      * Sets value, filename, extension, mimetype if the datatype equals the file type and the file exists.
      * 
-     * @param docProps, file's DocumentProperties
-     * @throws IOException
+     * @param docProps, file's DocumentProperties.
+     * @throws IOException.
      */
     protected void setTypedValue(DocumentProperties docProps) throws IOException
     {
@@ -530,10 +530,10 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
     }
 
     /**
-     * Returns the UUID value of the field
+     * Returns the UUID value of the field.
      * 
      * @return UUID, field's value as a UUID. Null if not a UUID.
-     * @throws ClassCastException
+     * @throws ClassCastException.
      */
     protected UUID getGuidValue() throws ClassCastException
     {
@@ -559,7 +559,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
      * Returns the Field's DateTime value.
      * 
      * @return DateTime, field's value as a DateTime. Null if not populated or invalid.
-     * @throws ClassCastException
+     * @throws ClassCastException.
      */
     protected DateTime getDateTimeValue() throws ClassCastException
     {
@@ -580,8 +580,8 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
     /**
      * Returns the Field's boolean value.
      * 
-     * @return boolean, field's value as a boolean
-     * @throws ClassCastException
+     * @return boolean, field's value as a boolean.
+     * @throws ClassCastException.
      */
     protected Boolean getBooleanValue() throws ClassCastException
     {
@@ -598,8 +598,8 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
     /**
      * Returns the Field's Integer value.
      * 
-     * @return integer, field's value as an int
-     * @throws CoalesceDataFormatException
+     * @return integer, field's value as an int.
+     * @throws CoalesceDataFormatException.
      */
     protected Integer getIntegerValue() throws CoalesceDataFormatException
     {
@@ -682,8 +682,8 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
     /**
      * Returns the Field's geometry Point value.
      * 
-     * @return Point, field's value as a geometry point
-     * @throws CoalesceDataFormatException
+     * @return Point, field's value as a geometry point.
+     * @throws CoalesceDataFormatException.
      */
     protected Point getPointValue() throws CoalesceDataFormatException
     {
@@ -713,8 +713,8 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
     /**
      * Returns the Field's geometry Coordinate value.
      * 
-     * @return Coordinate, field's value as a geometry Coordinate. Null if not populated
-     * @throws CoalesceDataFormatException
+     * @return Coordinate, field's value as a geometry Coordinate. Null if not populated.
+     * @throws CoalesceDataFormatException.
      */
     protected Coordinate getCoordinateValue() throws CoalesceDataFormatException
     {
@@ -730,8 +730,8 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
     /**
      * Returns the Field's geometry MultiPoint value.
      * 
-     * @return MultiPoint, field's value as a geometry MultiPoint
-     * @throws CoalesceDataFormatException
+     * @return MultiPoint, field's value as a geometry MultiPoint.
+     * @throws CoalesceDataFormatException.
      */
     protected MultiPoint getMultiPointValue() throws CoalesceDataFormatException
     {
@@ -813,9 +813,9 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
     /**
      * Returns the Field's Coordinate array values.
      * 
-     * @return Coordinate[], field's value as a geometry Coordinate array
+     * @return Coordinate[], field's value as a geometry Coordinate array.
      * 
-     * @throws CoalesceDataFormatException
+     * @throws CoalesceDataFormatException.
      */
     protected Coordinate[] getCoordinateListValue() throws CoalesceDataFormatException
     {
@@ -825,9 +825,9 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
     /**
      * Returns the binary value of Field's associated file.
      * 
-     * @return byte[], field's value as a byte array
+     * @return byte[], field's value as a byte array.
      * 
-     * @throws ClassCastException
+     * @throws ClassCastException.
      */
     protected byte[] getBinaryValue() throws ClassCastException
     {
@@ -858,7 +858,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
      * 
      * @return DocumentProperties The properties of the file stored within the Coalesce Entity.
      * 
-     * @throws ClassCastException
+     * @throws ClassCastException.
      */
     protected DocumentProperties getFileValue() throws CoalesceDataFormatException
     {

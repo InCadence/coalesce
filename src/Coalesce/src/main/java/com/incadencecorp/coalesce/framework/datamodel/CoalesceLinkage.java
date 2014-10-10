@@ -319,10 +319,9 @@ public class CoalesceLinkage extends CoalesceDataObject implements ICoalesceLink
     }
 
     /**
-     * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage}'s status identifying if it is
-     * current or deleted
+     * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage}'s status identifying if it is current or deleted.
      * 
-     * @return boolean indicates if the linkage has been marked as deleted
+     * @return boolean indicates if the linkage has been marked as deleted.
      */
     public boolean getIsMarkedDeleted()
     {

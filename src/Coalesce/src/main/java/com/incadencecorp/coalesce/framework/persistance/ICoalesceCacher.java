@@ -21,13 +21,13 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 
 public interface ICoalesceCacher {
 
-    public boolean containsEntity(String Key);
+    public boolean containsEntity(String key);
 
     public boolean storeEntity(CoalesceEntity entity);
 
     public CoalesceEntity retrieveEntity(String Key);
 
-    public boolean removeEntity(String Key);
+    public boolean removeEntity(String key);
 
     public long entityCount();
 

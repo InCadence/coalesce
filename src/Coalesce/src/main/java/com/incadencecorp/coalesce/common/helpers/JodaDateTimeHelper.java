@@ -398,15 +398,15 @@ public class JodaDateTimeHelper {
     private static String getLessThanHourElapsedTime(String elapsedString, long totalSeconds, boolean isFutureDate)
     {
 
-        long TotalMinutes = totalSeconds / 60;
+        long totalMinutes = totalSeconds / 60;
 
-        if (TotalMinutes == 1)
+        if (totalMinutes == 1)
         {
             elapsedString = "1 minute";
         }
         else
         {
-            elapsedString = TotalMinutes + " minutes";
+            elapsedString = totalMinutes + " minutes";
         }
 
         if (isFutureDate)
@@ -425,15 +425,15 @@ public class JodaDateTimeHelper {
     private static String getLessThanDayElapsedTime(String elapsedString, long totalSeconds, boolean isFutureDate)
     {
 
-        long TotalHours = (totalSeconds / 3600);
+        long totalHours = (totalSeconds / 3600);
 
-        if (TotalHours == 1)
+        if (totalHours == 1)
         {
             elapsedString = "1 hour";
         }
         else
         {
-            elapsedString = TotalHours + " hours";
+            elapsedString = totalHours + " hours";
         }
 
         if (isFutureDate)
@@ -452,15 +452,15 @@ public class JodaDateTimeHelper {
     private static String getYearOrMoreElapsedTime(String elapsedString, long totalSeconds, boolean isFutureDate)
     {
 
-        long TotalYears = totalSeconds / 31536000;
+        long totalYears = totalSeconds / 31536000;
 
-        if (TotalYears == 1)
+        if (totalYears == 1)
         {
             elapsedString = "1 year";
         }
         else
         {
-            elapsedString = TotalYears + " years";
+            elapsedString = totalYears + " years";
         }
 
         if (isFutureDate)

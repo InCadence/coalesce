@@ -879,30 +879,30 @@ public class CoalesceEntity extends CoalesceDataObject {
         }
     }
 
-    private static void resolveConflicts(CoalesceDataObject Entity1, CoalesceDataObject Entity2)
+    private static void resolveConflicts(CoalesceDataObject entity1, CoalesceDataObject entity2)
     {
 
-        if (Entity1 instanceof CoalesceField<?>)
+        if (entity1 instanceof CoalesceField<?>)
         {
             // do we have matching keys?
-            if (Entity1.getKey().equals(Entity2.getKey()))
+            if (entity1.getKey().equals(entity2.getKey()))
             {
                 // check for conflicts
-                resolveFieldConflicts((CoalesceField<?>) Entity1, (CoalesceField<?>) Entity2);
+                resolveFieldConflicts((CoalesceField<?>) entity1, (CoalesceField<?>) entity2);
             }
         }
         else
         {
             // no matching keys, get children and recall function
-            Map<String, CoalesceDataObject> Entity1Children = Entity1.getChildDataObjects();
-            Map<String, CoalesceDataObject> Entity2Children = Entity2.getChildDataObjects();
-            for (Map.Entry<String, CoalesceDataObject> Entity1Child : Entity1Children.entrySet())
+            Map<String, CoalesceDataObject> entity1Children = entity1.getChildDataObjects();
+            Map<String, CoalesceDataObject> entity2Children = entity2.getChildDataObjects();
+            for (Map.Entry<String, CoalesceDataObject> entity1Child : entity1Children.entrySet())
             {
-                for (Map.Entry<String, CoalesceDataObject> Entity2Child : Entity2Children.entrySet())
+                for (Map.Entry<String, CoalesceDataObject> entity2Child : entity2Children.entrySet())
                 {
-                    if (Entity1Child != null && Entity2Child != null)
+                    if (entity1Child != null && entity2Child != null)
                     {
-                        resolveConflicts(Entity1Child.getValue(), Entity2Child.getValue());
+                        resolveConflicts(entity1Child.getValue(), entity2Child.getValue());
                     }
                 }
             }
@@ -1075,20 +1075,20 @@ public class CoalesceEntity extends CoalesceDataObject {
         {
 
             // Set a copy of the Xml without the Binary data in it.
-            Document NoBinaryXmlDoc;
+            Document noBinaryXmlDoc;
             try
             {
-                NoBinaryXmlDoc = XmlHelper.loadXmlFrom(entityXml);
+                noBinaryXmlDoc = XmlHelper.loadXmlFrom(entityXml);
 
                 // Get all Binary Field Nodes. Ensures that the 'binary' attribute value is handled in a case insensitive
                 // way.
-                clearFieldTypeValue("binary", NoBinaryXmlDoc);
+                clearFieldTypeValue("binary", noBinaryXmlDoc);
 
                 // Get all File Field Nodes. Ensures that the 'file' attribute value is handled in a case insensitive way.
-                clearFieldTypeValue("file", NoBinaryXmlDoc);
+                clearFieldTypeValue("file", noBinaryXmlDoc);
 
                 // Get Xml
-                entityXml = XmlHelper.formatXml(NoBinaryXmlDoc);
+                entityXml = XmlHelper.formatXml(noBinaryXmlDoc);
 
             }
             catch (SAXException e)

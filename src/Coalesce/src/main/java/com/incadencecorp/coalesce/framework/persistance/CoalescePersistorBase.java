@@ -94,15 +94,15 @@ public abstract class CoalescePersistorBase implements ICoalescePersistor {
         {
 
             // No; Load Entity's XML
-            String EntityXml = this.getEntityXml(key);
+            String entityXml = this.getEntityXml(key);
 
             // Found?
-            if (EntityXml != null)
+            if (entityXml != null)
             {
 
                 // Yes; Initialize Entity
                 entity = new CoalesceEntity();
-                entity.initialize(EntityXml);
+                entity.initialize(entityXml);
 
                 // Add Entity to Cache
                 this.addEntityToCache(entity);
@@ -258,18 +258,18 @@ public abstract class CoalescePersistorBase implements ICoalescePersistor {
     private boolean addEntityToCache(CoalesceEntity entity)
     {
 
-        boolean IsModified = false;
+        boolean isModified = false;
 
         // Cacher Initialized?
         if (this._cacher != null)
         {
 
             // Yes; Retrieve Entity
-            IsModified = this._cacher.storeEntity(entity);
+            isModified = this._cacher.storeEntity(entity);
 
         }
 
-        return IsModified;
+        return isModified;
 
     }
 
