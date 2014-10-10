@@ -165,6 +165,8 @@ public class DocumentPropertiesTest {
 
         assertFalse(docProps.initialize("abc.xyz", true));
 
+        assertFalse(docProps.initialize("abc<.txt", false));
+        
     }
 
     @Test
@@ -172,10 +174,10 @@ public class DocumentPropertiesTest {
             CoalesceCryptoException
     {
         DocumentProperties plainTextDocProps = new DocumentProperties();
-        plainTextDocProps.initialize("src\\resources\\TestDocument.docx", false);
+        plainTextDocProps.initialize("src\\test\\resources\\TestDocument.docx", false);
 
         DocumentProperties encryptedDocProps = new DocumentProperties();
-        encryptedDocProps.initialize("src\\resources\\encryptedTestDocument.docx", true);
+        encryptedDocProps.initialize("src\\test\\resources\\encryptedTestDocument.docx", true);
 
         assertEquals(plainTextDocProps.getCategory(), encryptedDocProps.getCategory());
         assertEquals(plainTextDocProps.getContentStatus(), encryptedDocProps.getContentStatus());

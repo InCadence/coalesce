@@ -47,6 +47,10 @@ public class CoalesceUnitTestSettings extends CoalesceSettings {
 
         root.mkdirs();
 
+        File uploads = new File(CoalesceUnitTestSettings.getBinaryFileStoreBasePath());
+        
+        uploads.mkdirs();
+        
     }
 
     public static void tearDownAfterClass()

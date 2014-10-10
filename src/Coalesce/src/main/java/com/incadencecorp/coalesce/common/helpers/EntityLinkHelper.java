@@ -195,9 +195,6 @@ public class EntityLinkHelper {
                                          Locale inputLang,
                                          boolean updateExisting)
     {
-        if (linkageSection == null) throw new NullArgumentException("linkageSection");
-        if (entity == null) throw new NullArgumentException("entity");
-        if (otherEntity == null) throw new NullArgumentException("otherEntity");
 
         CoalesceLinkage linkage = null;
         // Do we already have the Linkage made? (Same Entities and Same LinkType)?

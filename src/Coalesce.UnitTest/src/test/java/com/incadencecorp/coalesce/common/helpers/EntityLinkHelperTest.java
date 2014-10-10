@@ -52,7 +52,7 @@ public class EntityLinkHelperTest {
      */
 
     @Test
-    public void LinkEntitiesNullFirstDontUpdateAllTypesExistingTest()
+    public void linkEntitiesNullFirstDontUpdateAllTypesExistingTest()
     {
         for (ELinkTypes linkType : ELinkTypes.values())
         {
@@ -73,7 +73,7 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void LinkEntitiesNullSecondDontUpdateAllTypesExistingTest()
+    public void linkEntitiesNullSecondDontUpdateAllTypesExistingTest()
     {
         for (ELinkTypes linkType : ELinkTypes.values())
         {
@@ -94,7 +94,7 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void LinkEntitiesNullBothDontUpdateAllTypesExistingTest()
+    public void linkEntitiesNullBothDontUpdateAllTypesExistingTest()
     {
         for (ELinkTypes linkType : ELinkTypes.values())
         {
@@ -114,7 +114,7 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void LinkEntitiesNullFirstUpdateAllTypesExistingTest()
+    public void linkEntitiesNullFirstUpdateAllTypesExistingTest()
     {
         for (ELinkTypes linkType : ELinkTypes.values())
         {
@@ -135,7 +135,7 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void LinkEntitiesNullSecondUpdateAllTypesExistingTest()
+    public void linkEntitiesNullSecondUpdateAllTypesExistingTest()
     {
         for (ELinkTypes linkType : ELinkTypes.values())
         {
@@ -156,7 +156,7 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void LinkEntitiesNullBothUpdateAllTypesExistingTest()
+    public void linkEntitiesNullBothUpdateAllTypesExistingTest()
     {
         for (ELinkTypes linkType : ELinkTypes.values())
         {
@@ -176,7 +176,62 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void LinkEntitiesDontUpdateExistingAllLinkTypesNoExistingTest()
+    public void linkEntitiestUpdateExistingTest()
+    {
+        CoalesceEntity entity1 = CoalesceEntity.create("LinkTest", "UnitTest", "1.0", "Unit", "Test", "Entity1");
+        entity1.createSection("TestSection");
+        CoalesceEntity entity2 = CoalesceEntity.create("LinkTest", "UnitTest", "1.0", "Unit", "Test", "Entity2");
+        entity2.createSection("TestSection");
+
+        EntityLinkHelper.linkEntities(entity1,
+                                      ELinkTypes.IS_PARENT_OF,
+                                      entity2,
+                                      EntityLinkHelperTest.UNCLASSIFIED_MARKING,
+                                      "tester1",
+                                      Locale.US,
+                                      false);
+
+        assertLinkages(ELinkTypes.IS_PARENT_OF,
+                       entity1,
+                       entity2,
+                       EntityLinkHelperTest.UNCLASSIFIED_MARKING,
+                       "tester1",
+                       Locale.US);
+
+        EntityLinkHelper.linkEntities(entity1,
+                                      ELinkTypes.IS_PARENT_OF,
+                                      entity2,
+                                      EntityLinkHelperTest.TOP_SECRET_MARKING,
+                                      "tester2",
+                                      Locale.CANADA,
+                                      false);
+
+        assertLinkages(ELinkTypes.IS_PARENT_OF,
+                       entity1,
+                       entity2,
+                       EntityLinkHelperTest.UNCLASSIFIED_MARKING,
+                       "tester1",
+                       Locale.US);
+
+        EntityLinkHelper.linkEntities(entity1,
+                                      ELinkTypes.IS_PARENT_OF,
+                                      entity2,
+                                      EntityLinkHelperTest.TOP_SECRET_MARKING,
+                                      "tester2",
+                                      Locale.CANADA,
+                                      true);
+
+        assertLinkages(ELinkTypes.IS_PARENT_OF,
+                       entity1,
+                       entity2,
+                       EntityLinkHelperTest.TOP_SECRET_MARKING,
+                       "tester2",
+                       Locale.CANADA);
+
+    }
+
+    @Test
+    public void linkEntitiesDontUpdateExistingAllLinkTypesNoExistingTest()
     {
         for (ELinkTypes linkType : ELinkTypes.values())
         {
@@ -195,7 +250,7 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void LinkEntitiesDontUpdateExistingAllLinkTypesExistingTest()
+    public void linkEntitiesDontUpdateExistingAllLinkTypesExistingTest()
     {
         for (ELinkTypes linkType : ELinkTypes.values())
         {
@@ -240,7 +295,7 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void LinkEntitiesUpdateExistingAllLinkTypesNoExistingTest()
+    public void linkEntitiesUpdateExistingAllLinkTypesNoExistingTest()
     {
         for (ELinkTypes linkType : ELinkTypes.values())
         {
@@ -258,7 +313,7 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void LinkEntitiesUpdateExistingAllLinkTypesExistingTest()
+    public void linkEntitiesUpdateExistingAllLinkTypesExistingTest()
     {
         for (ELinkTypes linkType : ELinkTypes.values())
         {
@@ -301,7 +356,7 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void LinkEntitiesDetailedNullFirstDontUpdateExistingTest()
+    public void linkEntitiesDetailedNullFirstDontUpdateExistingTest()
     {
         try
         {
@@ -325,7 +380,7 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void LinkEntitiesDetailedNullSecondDontUpdateExistingTest()
+    public void linkEntitiesDetailedNullSecondDontUpdateExistingTest()
     {
         try
         {
@@ -349,7 +404,7 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void LinkEntitiesDetailedNullBothDontUpdateExistingTest()
+    public void linkEntitiesDetailedNullBothDontUpdateExistingTest()
     {
         try
         {
@@ -372,7 +427,7 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void LinkEntitiesDetailedNullFirstUpdateExistingTest()
+    public void linkEntitiesDetailedNullFirstUpdateExistingTest()
     {
         try
         {
@@ -396,7 +451,7 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void LinkEntitiesDetailedNullSecondUpdateExistingTest()
+    public void linkEntitiesDetailedNullSecondUpdateExistingTest()
     {
         try
         {
@@ -420,7 +475,7 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void LinkEntitiesDetailedNullBothUpdateExistingTest()
+    public void linkEntitiesDetailedNullBothUpdateExistingTest()
     {
         try
         {
@@ -443,7 +498,7 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void LinkEntitiesDetailedDontUpdateExistingANoExistingTest()
+    public void linkEntitiesDetailedDontUpdateExistingANoExistingTest()
     {
         CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
         CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
@@ -459,12 +514,17 @@ public class EntityLinkHelperTest {
         assertEquals(1, entity1.getLinkageSection().getChildDataObjects().size());
         assertEquals(1, entity2.getLinkageSection().getChildDataObjects().size());
 
-        assertLinkages(ELinkTypes.IS_A_PEER_OF, EntityLinkHelperTest.TOP_SECRET_MARKING, "jford", Locale.UK, entity1, entity2);
+        assertLinkages(ELinkTypes.IS_A_PEER_OF,
+                       EntityLinkHelperTest.TOP_SECRET_MARKING,
+                       "jford",
+                       Locale.UK,
+                       entity1,
+                       entity2);
 
     }
 
     @Test
-    public void LinkEntitiesDetailedDontUpdateExistingExistingTest()
+    public void linkEntitiesDetailedDontUpdateExistingExistingTest()
     {
         CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
         CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
@@ -506,7 +566,7 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void LinkEntitiesDetailedUpdateExistingNoExistingTest()
+    public void linkEntitiesDetailedUpdateExistingNoExistingTest()
     {
         CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
         CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
@@ -527,7 +587,7 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void LinkEntitiesDetailedUpdateExistingExistingTest()
+    public void linkEntitiesDetailedUpdateExistingExistingTest()
     {
         CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
         CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
@@ -889,6 +949,41 @@ public class EntityLinkHelperTest {
                       entity1,
                       (CoalesceLinkage) entity2.getLinkageSection().getChildDataObjects().values().iterator().next());
 
+    }
+
+    private void assertLinkages(ELinkTypes linkType,
+                                CoalesceEntity entity1,
+                                CoalesceEntity entity2,
+                                Marking classificationMarking,
+                                String modifiedBy,
+                                Locale inputLang)
+    {
+        CoalesceLinkage entity1Linakge = (CoalesceLinkage) entity1.getLinkageSection().getChildDataObjects().values().iterator().next();
+        assertEquals(classificationMarking, entity1Linakge.getClassificationMarking());
+        assertEquals(modifiedBy, entity1Linakge.getModifiedBy());
+        assertEquals(inputLang, entity1Linakge.getInputLang());
+
+        CoalesceLinkage entity2Linakge = (CoalesceLinkage) entity2.getLinkageSection().getChildDataObjects().values().iterator().next();
+        assertEquals(classificationMarking, entity2Linakge.getClassificationMarking());
+        assertEquals(modifiedBy, entity2Linakge.getModifiedBy());
+        assertEquals(inputLang, entity2Linakge.getInputLang());
+
+        assertLinkage(linkType,
+                      classificationMarking,
+                      modifiedBy,
+                      inputLang,
+                      entity1,
+                      entity2,
+                      (CoalesceLinkage) entity1.getLinkageSection().getChildDataObjects().values().iterator().next());
+
+        assertLinkage(linkType.getReciprocalLinkType(),
+                      classificationMarking,
+                      modifiedBy,
+                      inputLang,
+                      entity2,
+                      entity1,
+                      (CoalesceLinkage) entity2.getLinkageSection().getChildDataObjects().values().iterator().next());
+        
     }
 
     private void assertLinkages(ELinkTypes linkType, CoalesceEntity entity1, CoalesceEntity entity2)

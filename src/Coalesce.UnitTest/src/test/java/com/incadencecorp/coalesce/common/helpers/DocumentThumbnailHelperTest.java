@@ -13,12 +13,28 @@ import java.nio.file.Paths;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.io.FilenameUtils;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.incadencecorp.coalesce.common.CoalesceAssert;
+import com.incadencecorp.coalesce.common.CoalesceUnitTestSettings;
 import com.incadencecorp.coalesce.common.helpers.DocumentThumbnailHelper.DocumentThumbnailResults;
 
 public class DocumentThumbnailHelperTest {
+
+    @BeforeClass
+    public static void setUpBeforeClass() throws Exception
+    {
+        CoalesceUnitTestSettings.initialize();
+    }
+
+    @AfterClass
+    public static void tearDownAfterClass() throws Exception
+    {
+        CoalesceUnitTestSettings.tearDownAfterClass();
+    }
 
     /*
      * @BeforeClass public static void setUpBeforeClass() throws Exception { }
@@ -42,7 +58,8 @@ public class DocumentThumbnailHelperTest {
     @Test
     public void getThumbnailForFileFullFilenameWithoutEncryptionTest() throws IOException
     {
-        DocumentThumbnailResults results = DocumentThumbnailHelper.getThumbnailForFile("src/test/resources/desert.jpg", false);
+        DocumentThumbnailResults results = DocumentThumbnailHelper.getThumbnailForFile("src/test/resources/desert.jpg",
+                                                                                       false);
 
         CoalesceAssert.assertThumbnail(results);
 
@@ -55,6 +72,24 @@ public class DocumentThumbnailHelperTest {
                                                                                        true);
 
         CoalesceAssert.assertThumbnail(results);
+
+    }
+
+    @Test
+    public void getThumbnailForFileFullFilenameEmtpyImageTest() throws IOException
+    {
+        File emptyImageFile = new File(FilenameUtils.concat(CoalesceUnitTestSettings.getBinaryFileStoreBasePath(),
+                                                            "emptyImage.jpg"));
+
+        if (emptyImageFile.exists()) emptyImageFile.delete();
+        
+        emptyImageFile.createNewFile();
+
+        DocumentThumbnailResults results = DocumentThumbnailHelper.getThumbnailForFile(emptyImageFile.getAbsolutePath());
+
+        assertEquals(0, results.getOriginalHeight());
+        assertEquals(0, results.getOriginalWidth());
+        assertTrue("Empty jpg thumbnail incorrect", testImagesEqual("LargeIcon_Image.png", results.getThumbnail()));
 
     }
 
@@ -90,6 +125,17 @@ public class DocumentThumbnailHelperTest {
         DocumentThumbnailResults results = DocumentThumbnailHelper.getThumbnailForFile(bytes);
 
         CoalesceAssert.assertThumbnail(results);
+
+    }
+
+    @Test
+    public void getThumbnailForFilebytesEmptyTest() throws IOException
+    {
+        DocumentThumbnailResults results = DocumentThumbnailHelper.getThumbnailForFile(new byte[0]);
+
+        assertEquals(0, results.getOriginalHeight());
+        assertEquals(0, results.getOriginalWidth());
+        assertTrue("Empty byte array thumbnail incorrect", testImagesEqual("LargeIcon_Image.png", results.getThumbnail()));
 
     }
 
