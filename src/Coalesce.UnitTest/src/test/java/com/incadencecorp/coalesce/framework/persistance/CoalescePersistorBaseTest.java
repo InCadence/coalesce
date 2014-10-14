@@ -209,16 +209,12 @@ public abstract class CoalescePersistorBaseTest {
 
     protected abstract ServerConn getInvalidConnection();
 
-    @Test(expected = SQLException.class)
-    public void testFAILConnection() throws SQLException, Exception, CoalescePersistorException
-    {
-        ServerConn serConFail = getInvalidConnection();
-
-        try (CoalesceDataConnectorBase conn = getDataConnector(serConFail))
-        {
-            conn.openConnection();
-        }
-    }
+    /*
+     * @Test(expected = SQLException.class) public void testFAILConnection() throws SQLException, Exception,
+     * CoalescePersistorException { ServerConn serConFail = getInvalidConnection();
+     * 
+     * try (CoalesceDataConnectorBase conn = getDataConnector(serConFail)) { conn.openConnection(); } }
+     */
 
     @Test
     public void testSaveMissionEntity() throws CoalescePersistorException
