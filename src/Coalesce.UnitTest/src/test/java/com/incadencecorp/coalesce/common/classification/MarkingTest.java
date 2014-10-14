@@ -3546,7 +3546,7 @@ public class MarkingTest {
     IllegalAccessException, IllegalArgumentException, InvocationTargetException
     {
 
-        Method method = Marking.class.getDeclaredMethod("GetClassifications", (Class<?>[]) null);
+        Method method = Marking.class.getDeclaredMethod("getClassifications", (Class<?>[]) null);
         method.setAccessible(true);
 
         Object results = method.invoke(null, (Object[]) null);
