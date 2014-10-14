@@ -1022,7 +1022,7 @@ public class FieldValuesTest {
         methodArgs[3] = String.class;
         methodArgs[4] = String.class;
 
-        Method method = FieldValues.class.getDeclaredMethod("ClassListAdd", methodArgs);
+        Method method = FieldValues.class.getDeclaredMethod("classListAdd", methodArgs);
         method.setAccessible(true);
 
         method.invoke(null, classList, parent, title, abbreviation, portion);
