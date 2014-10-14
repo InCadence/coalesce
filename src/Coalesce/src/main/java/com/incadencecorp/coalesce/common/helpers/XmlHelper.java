@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -52,6 +53,8 @@ import org.xml.sax.SAXException;
  */
 public class XmlHelper {
 
+    protected static ConcurrentHashMap<String, JAXBContext> jaxbContexts = new ConcurrentHashMap<String, JAXBContext>();
+    
     /**
      * Return the {@link String} that contains the serialized representation of the provided object using the 'ISO-8859-1'
      * encoding format.
@@ -64,9 +67,20 @@ public class XmlHelper {
         try
         {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
+            
+            // Get JAXB Context
+            String className = obj.getClass().getName();            
             JAXBContext context;
-            context = JAXBContext.newInstance(obj.getClass());
+            
+            if (jaxbContexts.containsKey(className)) {
+                context = jaxbContexts.get(className);
+            } else {
+                // Haven't seen before; create and add to concurrent hash map
+                context = JAXBContext.newInstance(obj.getClass());
+                jaxbContexts.put(className, context);
+            }
 
+            // Marshal
             Marshaller marshaller = context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true); // pretty
             marshaller.setProperty(Marshaller.JAXB_ENCODING, "ISO-8859-1"); // specify
@@ -93,9 +107,20 @@ public class XmlHelper {
         try
         {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
-            JAXBContext context;
-            context = JAXBContext.newInstance(obj.getClass());
 
+            // Get JAXB Context
+            String className = obj.getClass().getName();            
+            JAXBContext context;
+            
+            if (jaxbContexts.containsKey(className)) {
+                context = jaxbContexts.get(className);
+            } else {
+                // Haven't seen before; create and add to concurrent hash map
+                context = JAXBContext.newInstance(obj.getClass());
+                jaxbContexts.put(className, context);
+            }
+
+            // Marshal
             Marshaller marshaller = context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true); // pretty
             marshaller.setProperty(Marshaller.JAXB_ENCODING, encodingFormat); // specify
@@ -122,7 +147,19 @@ public class XmlHelper {
         try
         {
             InputStream in = new ByteArrayInputStream(xml.getBytes());
-            JAXBContext context = JAXBContext.newInstance(classType);
+            
+            // Get JAXB Context
+            String className = classType.getName();            
+            JAXBContext context;
+            
+            if (jaxbContexts.containsKey(className)) {
+                context = jaxbContexts.get(className);
+            } else {
+                // Haven't seen before; create and add to concurrent hash map
+                context = JAXBContext.newInstance(classType);
+                jaxbContexts.put(className, context);
+            }
+            
             Unmarshaller unmarshaller = context.createUnmarshaller();
 
             return unmarshaller.unmarshal(in);
