@@ -33,10 +33,9 @@ public class DateTimeConverter {
     // Make static class
     private DateTimeConverter()
     {
-        
+
     }
-    
-    
+
     // -----------------------------------------------------------------------'
     // Public Shared Methods
     // -----------------------------------------------------------------------'

@@ -33,7 +33,6 @@ import com.incadencecorp.coalesce.framework.persistance.CoalesceTable;
 import com.incadencecorp.coalesce.framework.persistance.ICoalesceCacher;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 
-
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
 
@@ -619,7 +618,6 @@ public class SQLServerPersistor extends CoalescePersistorBase {
         // Return true if no update is required.
         if (!checkLastModified(entity, conn)) return true;
 
-
         // Yes; Call Store Procedure
         return conn.executeProcedure("CoalesceEntity_InsertOrUpdate",
                                      new CoalesceParameter(entity.getKey()),
@@ -655,7 +653,7 @@ public class SQLServerPersistor extends CoalescePersistorBase {
                                      new CoalesceParameter(section.getParent().getType()),
                                      new CoalesceParameter(section.getLastModified()),
                                      new CoalesceParameter(section.getDateCreated()));
-                                     
+
     }
 
     /**
@@ -1070,8 +1068,8 @@ public class SQLServerPersistor extends CoalescePersistorBase {
     {
         boolean isSuccessful = false;
 
-//        System.out.println(coalesceDataObject.getStatus().getLabel() + " OBJECT [" + coalesceDataObject.getName() + " : "
-//                + coalesceDataObject.getType() + "] Processing Key:  " + coalesceDataObject.getKey());
+        // System.out.println(coalesceDataObject.getStatus().getLabel() + " OBJECT [" + coalesceDataObject.getName() + " : "
+        // + coalesceDataObject.getType() + "] Processing Key:  " + coalesceDataObject.getKey());
 
         switch (coalesceDataObject.getStatus()) {
         case ACTIVE:
