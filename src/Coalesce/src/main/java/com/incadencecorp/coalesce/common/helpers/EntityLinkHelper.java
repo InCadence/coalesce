@@ -109,7 +109,7 @@ public class EntityLinkHelper {
         CoalesceLinkageSection linkageSection2 = entity2.getLinkageSection();
         if (linkageSection2 == null) return false;
 
-        EstablishLinkage(linkageSection1,
+        establishLinkage(linkageSection1,
                          entity1,
                          linkType,
                          entity2,
@@ -118,7 +118,7 @@ public class EntityLinkHelper {
                          inputLang,
                          updateExisting);
 
-        EstablishLinkage(linkageSection2,
+        establishLinkage(linkageSection2,
                          entity2,
                          linkType.getReciprocalLinkType(),
                          entity1,
@@ -168,15 +168,15 @@ public class EntityLinkHelper {
         CoalesceLinkageSection linkageSection2 = entity2.getLinkageSection();
         if (linkageSection2 == null) return false;
 
-        MarkLinkageAsDeleted(linkageSection1, entity1, entity2, linkType);
+        markLinkageAsDeleted(linkageSection1, entity1, entity2, linkType);
 
         if (linkType == null)
         {
-            MarkLinkageAsDeleted(linkageSection2, entity2, entity1, null);
+            markLinkageAsDeleted(linkageSection2, entity2, entity1, null);
         }
         else
         {
-            MarkLinkageAsDeleted(linkageSection2, entity2, entity1, linkType.getReciprocalLinkType());
+            markLinkageAsDeleted(linkageSection2, entity2, entity1, linkType.getReciprocalLinkType());
         }
 
         return true;
@@ -186,7 +186,7 @@ public class EntityLinkHelper {
     // Private Methods
     // -----------------------------------------------------------------------//
 
-    private static void EstablishLinkage(CoalesceLinkageSection linkageSection,
+    private static void establishLinkage(CoalesceLinkageSection linkageSection,
                                          CoalesceEntity entity,
                                          ELinkTypes linkType,
                                          CoalesceEntity otherEntity,
@@ -235,7 +235,7 @@ public class EntityLinkHelper {
         }
     }
 
-    private static boolean MarkLinkageAsDeleted(CoalesceLinkageSection linkageSection,
+    private static boolean markLinkageAsDeleted(CoalesceLinkageSection linkageSection,
                                                 CoalesceEntity entity,
                                                 CoalesceEntity otherEntity,
                                                 ELinkTypes linkType)
