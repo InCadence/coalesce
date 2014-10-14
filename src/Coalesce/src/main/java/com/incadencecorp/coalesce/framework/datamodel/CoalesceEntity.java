@@ -60,7 +60,7 @@ public class CoalesceEntity extends CoalesceDataObject {
     // ----------------------------------------------------------------------//
 
     private Entity _entity;
-    
+
     // ----------------------------------------------------------------------//
     // Factory and Initialization
     // ----------------------------------------------------------------------//
@@ -169,14 +169,15 @@ public class CoalesceEntity extends CoalesceDataObject {
     }
 
     /**
-     * Initializes a previously new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} by initializing skeletal dataObjectChildren.
+     * Initializes a previously new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} by initializing
+     * skeletal dataObjectChildren.
      * 
      * @return boolean indicator of success/failure
      */
     @Override
     public boolean initialize()
     {
-        this._entity = new Entity();
+        _entity = new Entity();
 
         if (!super.initialize()) return false;
 
@@ -184,7 +185,7 @@ public class CoalesceEntity extends CoalesceDataObject {
 
         return true;
     }
-    
+
     /**
      * Initializes core settings.
      * 
@@ -196,9 +197,14 @@ public class CoalesceEntity extends CoalesceDataObject {
      * @param entityIdType String identifying the entity id's type (guid, tcn, bag-tag id or other value)
      * @param title String that could be a a field namepath.
      */
-    protected boolean initializeEntity(String name, String source, String version, String entityId, String entityIdType, String title)
+    protected boolean initializeEntity(String name,
+                                       String source,
+                                       String version,
+                                       String entityId,
+                                       String entityIdType,
+                                       String title)
     {
-        this._entity = new Entity();
+        _entity = new Entity();
 
         if (!super.initialize()) return false;
 
@@ -419,11 +425,11 @@ public class CoalesceEntity extends CoalesceDataObject {
     {
         String title = _entity.getTitle();
 
-        // Check if value contains an XPath
-        if (title != null && title.contains("/") && title.length() > 50)
-        {
+        String pathTitle = null;
 
-            String pathTitle = "";
+        // Check if value contains an XPath
+        if (title != null && title.contains("/"))
+        {
 
             String[] paths = title.split(",");
             for (String path : paths)
@@ -431,24 +437,46 @@ public class CoalesceEntity extends CoalesceDataObject {
 
                 CoalesceDataObject dataObject = getDataObjectForNamePath(path);
 
-                if (dataObject != null && dataObject instanceof CoalesceField<?>)
+                if (dataObject != null)
                 {
-                    CoalesceField<?> field = (CoalesceField<?>) dataObject;
-                    pathTitle += field.getBaseValue() + ", ";
+                    if (dataObject instanceof CoalesceField<?>)
+
+                    {
+                        CoalesceField<?> field = (CoalesceField<?>) dataObject;
+
+                        if (pathTitle == null) pathTitle = "";
+                        pathTitle += getStringElement(field.getBaseValue()) + ", ";
+                    }
                 }
             }
 
-            title = StringUtils.strip(pathTitle, ", ");
+            pathTitle = StringUtils.strip(pathTitle, ", ");
 
         }
 
-        if (title == null || title.trim().equals(""))
+        // If not found
+        if (pathTitle == null)
         {
-            return this.getSource();
+            if (StringHelper.isNullOrEmpty(title))
+            {
+                return getSource();
+            }
+            else
+            {
+                return title;
+            }
         }
         else
         {
-            return title;
+            // If field not set
+            if (StringHelper.isNullOrEmpty(pathTitle))
+            {
+                return getSource();
+            }
+            else
+            {
+                return pathTitle;
+            }
         }
 
     }
@@ -588,8 +616,8 @@ public class CoalesceEntity extends CoalesceDataObject {
     /**
      * Returns this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}'s sections.
      * 
-     * @return Map<String, {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}> sections belonging to
-     *         this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}
+     * @return Map<String, {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}> sections belonging to this
+     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}
      */
     public Map<String, CoalesceSection> getSections()
     {
@@ -636,7 +664,8 @@ public class CoalesceEntity extends CoalesceDataObject {
      * Returns all linkages when the forEntityName parameter is null.
      * 
      * @param forEntityName String of the Entity Name to return linkages for
-     * @return Map<String, {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage}> linkages with matches for the Entity Name parameter
+     * @return Map<String, {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage}> linkages with matches for
+     *         the Entity Name parameter
      */
     public Map<String, CoalesceLinkage> getLinkages(String forEntityName)
     {
@@ -667,7 +696,8 @@ public class CoalesceEntity extends CoalesceDataObject {
      * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}'s linkages, from the
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}'s linkagesection, based on LinkType.
      * 
-     * @return Map<String, {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage}> linkages with matches for the ELinkTypes parameter
+     * @return Map<String, {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage}> linkages with matches for
+     *         the ELinkTypes parameter
      */
     public Map<String, CoalesceLinkage> getLinkages(ELinkTypes forLinkType)
     {
@@ -681,7 +711,8 @@ public class CoalesceEntity extends CoalesceDataObject {
      * 
      * @param forLinkType ELinkTypes (one link type), the type of relationship link to find matching linkages for
      * @param forEntityName String, the Entity name attribute to find matching linkages for
-     * @return Map<String, {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage}> linkages with matches for the Entity Name and ELinkType parameters
+     * @return Map<String, {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage}> linkages with matches for
+     *         the Entity Name and ELinkType parameters
      */
     public Map<String, CoalesceLinkage> getLinkages(ELinkTypes forLinkType, String forEntityName)
     {
@@ -696,7 +727,8 @@ public class CoalesceEntity extends CoalesceDataObject {
      * @param forLinkType ELinkTypes, the type of relationship link to find matching linkages for
      * @param forEntityName String, the Entity name attribute to find matching linkages for
      * @param forEntitySource String, the Entity source attribute to find matching linkages for
-     * @return Map<String, {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage}> linkages with matches for the parameter criteria
+     * @return Map<String, {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage}> linkages with matches for
+     *         the parameter criteria
      */
     public Map<String, CoalesceLinkage> getLinkages(ELinkTypes forLinkType, String forEntityName, String forEntitySource)
     {
@@ -777,11 +809,11 @@ public class CoalesceEntity extends CoalesceDataObject {
     {
         if (typeParam == null) throw new NullArgumentException("typeParam");
         if (value == null) throw new NullArgumentException("value");
-        if (typeParam.trim() == "") throw new IllegalArgumentException("typeParam cannot be empty");
-        if (value.trim() == "") throw new IllegalAccessError("value cannot be empty");
+        if (typeParam.trim().equals("")) throw new IllegalArgumentException("typeParam cannot be empty");
+        if (value.trim().equals("")) throw new IllegalArgumentException("value cannot be empty");
 
         // Collection Already have Unique ID?
-        if (getEntityId() == null || getEntityId().trim() == "")
+        if (StringHelper.isNullOrEmpty(getEntityId()))
         {
             // No; Add
             setEntityIdType(typeParam);
@@ -1156,7 +1188,7 @@ public class CoalesceEntity extends CoalesceDataObject {
         if (linkageSection == null)
         {
             linkageSection = new Entity.Linkagesection();
-            this._entity.setLinkagesection(linkageSection);
+            _entity.setLinkagesection(linkageSection);
         }
 
         return linkageSection;
@@ -1223,7 +1255,7 @@ public class CoalesceEntity extends CoalesceDataObject {
 
     protected Map<QName, String> getOtherAttributes()
     {
-        return this._entity.getOtherAttributes();
+        return _entity.getOtherAttributes();
     }
 
 }

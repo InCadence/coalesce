@@ -17,6 +17,7 @@ import java.util.Map;
 import org.apache.commons.lang.NullArgumentException;
 import org.apache.xerces.impl.dv.util.Base64;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeComparator;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -26,6 +27,7 @@ import com.incadencecorp.coalesce.common.CoalesceAssert;
 import com.incadencecorp.coalesce.common.CoalesceTypeInstances;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
+import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.EntityLinkHelper;
 import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
@@ -612,14 +614,40 @@ public class CoalesceEntityTest {
     }
 
     @Test
+    public void initializeFromNonEntityTest()
+    {
+        CoalesceEntity entity = new CoalesceEntity();
+        entity.initialize();
+
+        String linkageSectionXml = entity.getLinkageSection().toXml();
+
+        CoalesceEntity desEntity = new CoalesceEntity();
+
+        assertFalse(desEntity.initialize(linkageSectionXml));
+    }
+
+    @Test
     public void initializeTest()
     {
-
         CoalesceEntity entity = new CoalesceEntity();
 
         assertTrue(entity.initialize());
 
         assertEmptyEntity(entity);
+
+    }
+
+    @Test
+    public void initializeEntityTest()
+    {
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        CoalesceEntity copiedEntity = new CoalesceEntity();
+        copiedEntity.initialize(entity);
+
+        assertEquals(entity.getParent(), copiedEntity.getParent());
+        assertEquals(entity.toXml(), copiedEntity.toXml());
+        assertEquals(entity.getChildDataObjects(), copiedEntity.getChildDataObjects());
 
     }
 
@@ -869,6 +897,99 @@ public class CoalesceEntityTest {
 
         String title = entity.getTitle();
 
+        assertEquals("Operation/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionName,TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/IncidentTitle",
+                     title);
+
+    }
+
+    @Test
+    public void getTitleXPathNotAFieldTest()
+    {
+        CoalesceEntity entity = CoalesceEntity.create("Operation",
+                                                      "Portal",
+                                                      "1.1.1.1",
+                                                      "Entity Id",
+                                                      "Entity Id Type",
+                                                      "Operation/Operation Section/Operation Recordset/Operation Recordset Record");
+        CoalesceSection section = entity.createSection("Operation Section");
+        CoalesceRecordset recordset = section.createRecordset("Operation Recordset");
+        recordset.createFieldDefinition("Name", ECoalesceFieldDataTypes.STRING_TYPE);
+
+        CoalesceRecord record = recordset.addNew();
+
+        CoalesceStringField nameField = (CoalesceStringField) record.getFieldByName("Name");
+        nameField.setValue("Testing Title Length");
+
+        String title = entity.getTitle();
+
+        assertEquals("Operation/Operation Section/Operation Recordset/Operation Recordset Record", title);
+
+    }
+
+    @Test
+    public void getTitleXPathInvalidFieldTest()
+    {
+        CoalesceEntity entity = CoalesceEntity.create("Operation",
+                                                      "Portal",
+                                                      "1.1.1.1",
+                                                      "Entity Id",
+                                                      "Entity Id Type",
+                                                      "Operation/Section/Recordset/Recordset Record/Unknown");
+        CoalesceSection section = entity.createSection("Section");
+        CoalesceRecordset recordset = section.createRecordset("Recordset");
+        recordset.createFieldDefinition("Name", ECoalesceFieldDataTypes.STRING_TYPE);
+
+        CoalesceRecord record = recordset.addNew();
+
+        CoalesceStringField nameField = (CoalesceStringField) record.getFieldByName("Name");
+        nameField.setValue("Testing Title Length");
+
+        String title = entity.getTitle();
+
+        assertEquals("Operation/Section/Recordset/Recordset Record/Unknown", title);
+
+    }
+
+    @Test
+    public void getTitleLengthUnderFiftyTest()
+    {
+        CoalesceEntity entity = CoalesceEntity.create("Operation",
+                                                      "Portal",
+                                                      "1.1.1.1",
+                                                      "Entity Id",
+                                                      "Entity Id Type",
+                                                      "Operation/Section/Recordset/Recordset Record/Name");
+        CoalesceSection section = entity.createSection("Section");
+        CoalesceRecordset recordset = section.createRecordset("Recordset");
+        recordset.createFieldDefinition("Name", ECoalesceFieldDataTypes.STRING_TYPE);
+
+        CoalesceRecord record = recordset.addNew();
+
+        CoalesceStringField nameField = (CoalesceStringField) record.getFieldByName("Name");
+        nameField.setValue("Testing Title Length");
+
+        String title = entity.getTitle();
+
+        assertEquals("Testing Title Length", title);
+
+    }
+
+    @Test
+    public void getTitleFieldNotSetTest()
+    {
+        CoalesceEntity entity = CoalesceEntity.create("Operation",
+                                                      "Portal",
+                                                      "1.1.1.1",
+                                                      "Entity Id",
+                                                      "Entity Id Type",
+                                                      "Operation/Section/Recordset/Recordset Record/Name");
+        CoalesceSection section = entity.createSection("Section");
+        CoalesceRecordset recordset = section.createRecordset("Recordset");
+        recordset.createFieldDefinition("Name", ECoalesceFieldDataTypes.STRING_TYPE);
+        recordset.addNew();
+
+        String title = entity.getTitle();
+
         assertEquals("Portal", title);
 
     }
@@ -919,6 +1040,69 @@ public class CoalesceEntityTest {
         entity.setTitle("Mission Entity Title");
 
         assertEquals("Mission Entity Title", entity.getTitle());
+    }
+
+    @Test
+    public void setTitleNullTest() throws InterruptedException
+    {
+        CoalesceEntity entity = CoalesceEntity.create("Operation",
+                                                      "Portal",
+                                                      "1.1.1.1",
+                                                      "Entity Id",
+                                                      "Entity Id Type",
+                                                      "Operation/Section/Recordset/Recordset Record/Name");
+
+        DateTime lastModified = entity.getLastModified();
+        Thread.sleep(500);
+
+        entity.setTitle(null);
+
+        assertEquals("Portal", entity.getTitle());
+        assertTrue("Last modified should be more recent",
+                   DateTimeComparator.getInstance().compare(entity.getLastModified(), lastModified) > 0);
+
+    }
+
+    @Test
+    public void setTitleNullWasNullTest() throws InterruptedException
+    {
+        CoalesceEntity entity = CoalesceEntity.create("Operation", "Portal", "1.1.1.1", "Entity Id", "Entity Id Type");
+
+        DateTime lastModified = entity.getLastModified();
+        Thread.sleep(500);
+
+        entity.setTitle(null);
+
+        assertEquals("Portal", entity.getTitle());
+        assertEquals(entity.getLastModified(), lastModified);
+
+    }
+
+    @Test
+    public void setTitleWasNullTest() throws InterruptedException
+    {
+        CoalesceEntity entity = CoalesceEntity.create("Operation", "Portal", "1.1.1.1", "Entity Id", "Entity Id Type");
+        CoalesceSection section = entity.createSection("Operation Section");
+        CoalesceRecordset recordset = section.createRecordset("Operation Recordset");
+        recordset.createFieldDefinition("Name", ECoalesceFieldDataTypes.STRING_TYPE);
+
+        CoalesceRecord record = recordset.addNew();
+
+        CoalesceStringField nameField = (CoalesceStringField) record.getFieldByName("Name");
+        nameField.setValue("Testing Title");
+
+        DateTime lastModified = entity.getLastModified();
+        Thread.sleep(500);
+
+        entity.setTitle("Operation/Operation Section/Operation Recordset/Operation Recordset Record/Name");
+
+        assertEquals("Testing Title", entity.getTitle());
+
+        DateTime newLastModified = entity.getLastModified();
+        // TODO: need to verify this logic before adding test
+        // assertTrue("Last modified should be more recent", DateTimeComparator.getInstance().compare(newLastModified,
+        // lastModified) > 0);
+
     }
 
     @Test
@@ -1099,6 +1283,52 @@ public class CoalesceEntityTest {
 
             }
         }
+
+    }
+
+    @Test
+    public void getLinkagesWithoutInitializingTest()
+    {
+        CoalesceEntity entity = new CoalesceEntity();
+
+        assertNull("Entity should return null for linkages", entity.getLinkages(ELinkTypes.IS_PARENT_OF));
+
+    }
+
+    @Test
+    public void getLinkagesIncludingDeletedLinakgeTest()
+    {
+        CoalesceEntity entity1 = CoalesceEntity.create("Test Entity",
+                                                       "Unit Test",
+                                                       "1.0",
+                                                       "Unit Testing",
+                                                       "Unit Test",
+                                                       "Entity1");
+        CoalesceEntity entity2 = CoalesceEntity.create("Test Entity",
+                                                       "Unit Test",
+                                                       "1.0",
+                                                       "Unit Testing",
+                                                       "Unit Test",
+                                                       "Entity2");
+        CoalesceEntity entity3 = CoalesceEntity.create("Test Entity",
+                                                       "Unit Test",
+                                                       "1.0",
+                                                       "Unit Testing",
+                                                       "Unit Test",
+                                                       "Entity2");
+
+        EntityLinkHelper.linkEntities(entity1, ELinkTypes.IS_PARENT_OF, entity2, true);
+        EntityLinkHelper.linkEntities(entity1, ELinkTypes.IS_PARENT_OF, entity3, true);
+
+        Map<String, CoalesceLinkage> originalLinkages = entity1.getLinkages(ELinkTypes.IS_PARENT_OF);
+
+        assertEquals(2, originalLinkages.size());
+
+        EntityLinkHelper.unLinkEntities(entity1, entity2, ELinkTypes.IS_PARENT_OF);
+
+        Map<String, CoalesceLinkage> linkagesMinusDeleted = entity1.getLinkages(ELinkTypes.IS_PARENT_OF);
+
+        assertEquals(1, linkagesMinusDeleted.size());
 
     }
 
@@ -1361,6 +1591,17 @@ public class CoalesceEntityTest {
 
         CoalesceLinkageSection entityLinkageSection = entity.getLinkageSection();
         assertNotNull(entityLinkageSection);
+
+    }
+
+    @Test
+    public void getLinkageSectionEntityNotInitializedTest()
+    {
+        CoalesceEntity entity = new CoalesceEntity();
+
+        assertNull(entity.getLinkageSection());
+
+        assertNull(entity.getLinkages("Entity"));
 
     }
 
@@ -1666,6 +1907,17 @@ public class CoalesceEntityTest {
     }
 
     @Test
+    public void getSectionPathNotSectionTest()
+    {
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        CoalesceSection section = entity.getSection("TREXMission/Linkages");
+
+        assertNull("Section path shouldn't return a valid section", section);
+
+    }
+
+    @Test
     public void getEntityIdParamExistsTest()
     {
 
@@ -1855,6 +2107,40 @@ public class CoalesceEntityTest {
     }
 
     @Test
+    public void setEntityIDEmptyTypeParamTest()
+    {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("typeParam cannot be empty");
+
+        CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
+                                                      "TREX Portal",
+                                                      "1.0.0.0",
+                                                      "First,Second",
+                                                      "Type1,Type2",
+                                                      "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+
+        assertFalse(entity.setEntityId("", "something"));
+
+    }
+
+    @Test
+    public void setEntityIDEmptyValueTest()
+    {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("value cannot be empty");
+
+        CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
+                                                      "TREX Portal",
+                                                      "1.0.0.0",
+                                                      "First,Second",
+                                                      "Type1,Type2",
+                                                      "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+
+        assertFalse(entity.setEntityId("something", ""));
+
+    }
+
+    @Test
     public void markAsDeletedNotDeletedYetTest()
     {
         CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
@@ -1887,6 +2173,19 @@ public class CoalesceEntityTest {
         entity.markAsDeleted();
 
         assertEquals(ECoalesceDataObjectStatus.DELETED, entity.getStatus());
+
+    }
+
+    @Test
+    public void getSyncEntityTest() throws CoalescePersistorException, SAXException, IOException
+    {
+
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        CoalesceEntitySyncShell shell = entity.getSyncEntity();
+
+        assertNotNull(shell.toXml());
+        assertTrue(CoalesceEntitySyncShellTest.ValidateSyncShell(shell));
 
     }
 
