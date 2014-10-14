@@ -29,11 +29,11 @@ public class Marking implements Serializable, Comparable<Marking> {
 
     private static final long serialVersionUID = 956620060017206311L;
 
-    public static String UNCLASSIFIED = "UNCLASSIFIED";
-    public static String RESTRICTED = "RESTRICTED";
-    public static String CONFIDENTIAL = "CONFIDENTIAL";
-    public static String SECRET = "SECRET";
-    public static String TOPSECRET = "TOP SECRET";
+    public static final String UNCLASSIFIED = "UNCLASSIFIED";
+    public static final String RESTRICTED = "RESTRICTED";
+    public static final String CONFIDENTIAL = "CONFIDENTIAL";
+    public static final String SECRET = "SECRET";
+    public static final String TOPSECRET = "TOP SECRET";
 
     private boolean _isNATO;
     private List<ISO3166Country> _selectedCountries;
