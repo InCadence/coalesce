@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.springframework.stereotype.Repository;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
