@@ -36,7 +36,7 @@ public class CoalesceEntitySyncShellTest {
 
         // Validate
         assertNotNull(shell.toXml());
-        assertTrue(this.ValidateSyncShell(shell));
+        assertTrue(CoalesceEntitySyncShellTest.ValidateSyncShell(shell));
 
     }
 
@@ -52,7 +52,7 @@ public class CoalesceEntitySyncShellTest {
         // Validate
         assertNotNull(shell.toXml());
         assertNotNull(shell.getEntityNode());
-        assertTrue(this.ValidateSyncShell(shell));
+        assertTrue(CoalesceEntitySyncShellTest.ValidateSyncShell(shell));
 
     }
 
@@ -71,7 +71,7 @@ public class CoalesceEntitySyncShellTest {
         String shellXml = shell2.toXml();
 
         // Validate
-        assertTrue(this.ValidateSyncShell(shell2));
+        assertTrue(CoalesceEntitySyncShellTest.ValidateSyncShell(shell2));
         assertNotNull(shellXml);
     }
 
@@ -82,7 +82,7 @@ public class CoalesceEntitySyncShellTest {
         CoalesceEntitySyncShell shell = CoalesceEntitySyncShell.create(CoalesceTypeInstances.TEST_MISSION);
 
         // Validate
-        assertTrue(this.ValidateSyncShell(shell));
+        assertTrue(CoalesceEntitySyncShellTest.ValidateSyncShell(shell));
     }
 
     @Test
@@ -95,7 +95,7 @@ public class CoalesceEntitySyncShellTest {
         CoalesceEntitySyncShell shell = CoalesceEntitySyncShell.create(XmlDoc);
 
         // Validate
-        assertTrue(this.ValidateSyncShell(shell));
+        assertTrue(CoalesceEntitySyncShellTest.ValidateSyncShell(shell));
 
     }
 
@@ -128,7 +128,7 @@ public class CoalesceEntitySyncShellTest {
         CoalesceEntitySyncShell localShell = CoalesceEntitySyncShell.create(entity);
 
         // Validate Local
-        assertTrue(this.ValidateSyncShell(localShell));
+        assertTrue(CoalesceEntitySyncShellTest.ValidateSyncShell(localShell));
 
         // Modify Entity
         CoalesceRecord record = (CoalesceRecord) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/");
@@ -143,7 +143,7 @@ public class CoalesceEntitySyncShellTest {
         CoalesceEntitySyncShell remoteShell = CoalesceEntitySyncShell.create(entity);
 
         // Validate Remote
-        assertTrue(this.ValidateSyncShell(remoteShell));
+        assertTrue(CoalesceEntitySyncShellTest.ValidateSyncShell(remoteShell));
 
         // Create Change Shell
         CoalesceEntitySyncShell changesShell = CoalesceEntitySyncShell.getRequiredChangesSyncShell(localShell, remoteShell);
@@ -174,7 +174,7 @@ public class CoalesceEntitySyncShellTest {
 
     }
 
-    private boolean ValidateSyncShell(CoalesceEntitySyncShell shell)
+    public static boolean ValidateSyncShell(CoalesceEntitySyncShell shell)
     {
         // Validate
         NodeList nodeList = shell.getDataObjectDocument().getElementsByTagName("*");

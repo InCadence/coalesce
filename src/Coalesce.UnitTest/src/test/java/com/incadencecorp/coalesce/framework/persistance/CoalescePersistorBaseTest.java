@@ -28,6 +28,8 @@ import com.incadencecorp.coalesce.common.runtime.CoalesceSettings;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShellTest;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
@@ -272,6 +274,49 @@ public abstract class CoalescePersistorBaseTest {
                                                                                      _entity.getVersion());
         CoalesceAssert.assertXmlEquals(templateXml, templateXmlFromAttr.replace("UTF-16", "UTF-8"), "UTF-8");
 
+        CoalesceEntityTemplate persistedTemplate = _coalesceFramework.getCoalesceEntityTemplate(_entity.getName(),
+                                                                                                _entity.getSource(),
+                                                                                                _entity.getVersion());
+
+        CoalesceAssert.assertXmlEquals(templateXml, persistedTemplate.toXml().replace("UTF-16", "UTF-8"), "UTF-8");
+
+    }
+
+    // TODO: getCoalesceEntityTemplateMetadata
+
+    @Test
+    public void testCreateEntityFromTemplate() throws CoalescePersistorException, SAXException, IOException
+    {
+        CoalesceEntityTemplate template = testTemplate(CoalesceEntityTemplate.create(_entity));
+        assertTrue(_coalesceFramework.saveCoalesceEntityTemplate(template));
+
+        String templateKey = _coalesceFramework.getCoalesceEntityTemplateKey(_entity.getName(),
+                                                                             _entity.getSource(),
+                                                                             _entity.getVersion());
+
+        _testTemplateKey = templateKey;
+
+        CoalesceEntity entity = _coalesceFramework.createEntityFromTemplate(_entity.getName(),
+                                                                            _entity.getSource(),
+                                                                            _entity.getVersion());
+
+        @SuppressWarnings("unused")
+        String entityXml = entity.toXml();
+
+        CoalesceAssert.assertTemplateCreation(_entity, entity);
+
+    }
+
+    @Test
+    public void testGetCoalesceEntitySyncShell() throws CoalescePersistorException, SAXException, IOException
+    {
+
+        CoalesceEntitySyncShell shell = _coalesceFramework.getCoalesceEntitySyncShell(_entity.getKey());
+
+        // Validate
+        assertNotNull(shell.toXml());
+        assertTrue(CoalesceEntitySyncShellTest.ValidateSyncShell(shell));
+
     }
 
     @Test
@@ -366,6 +411,7 @@ public abstract class CoalescePersistorBaseTest {
 
     }
 
+    @Test
     public void testFAILGetEntityKeyForEntityId() throws CoalescePersistorException
     {
 
@@ -378,17 +424,47 @@ public abstract class CoalescePersistorBaseTest {
     @Test
     public void testGetEntityKeyForEntityIdName() throws CoalescePersistorException
     {
-        List<String> objectKey = _coalesceFramework.getCoalesceEntityKeysForEntityId(_entity.getEntityId(),
-                                                                                     _entity.getEntityIdType(),
-                                                                                     _entity.getName(),
-                                                                                     _entity.getSource());
-        assertFalse(objectKey.isEmpty());
+        List<String> objectKeys = _coalesceFramework.getCoalesceEntityKeysForEntityId(_entity.getEntityId(),
+                                                                                      _entity.getEntityIdType(),
+                                                                                      _entity.getName(),
+                                                                                      _entity.getSource());
+
+        assertEquals(1, objectKeys.size());
+        assertEquals(_entity.getKey().toUpperCase(), objectKeys.get(0).toUpperCase());
+    }
+
+    @Test
+    public void testGetEntityKeyForEntityIdNameLists() throws CoalescePersistorException
+    {
+        List<String> objectKeys = _coalesceFramework.getCoalesceEntityKeysForEntityId(_entity.getEntityId()
+                                                                                              + ",AnotherEntityId",
+                                                                                      _entity.getEntityIdType()
+                                                                                              + ",AnotherEntityIdType",
+                                                                                      _entity.getName(),
+                                                                                      _entity.getSource());
+
+        assertEquals(1, objectKeys.size());
+        assertEquals(_entity.getKey().toUpperCase(), objectKeys.get(0).toUpperCase());
     }
 
     @Test
     public void testFAILGetEntityKeyForEntityIdName() throws CoalescePersistorException
     {
         List<String> objectKey = _coalesceFramework.getCoalesceEntityKeysForEntityId("", "", "", "");
+        assertTrue(objectKey.isEmpty());
+    }
+
+    @Test
+    public void testGetEntityKeyForEntityIdNameMismatchLists() throws CoalescePersistorException
+    {
+        List<String> objectKey = _coalesceFramework.getCoalesceEntityKeysForEntityId(_entity.getEntityId() + ",EntityID",
+                                                                                     _entity.getEntityIdType(),
+                                                                                     _entity.getName(),
+                                                                                     _entity.getSource());
+        assertTrue(objectKey.isEmpty());
+
+        objectKey = _coalesceFramework.getCoalesceEntityKeysForEntityId(_entity.getEntityId(), _entity.getEntityIdType()
+                + ",EntityIDType", _entity.getName(), _entity.getSource());
         assertTrue(objectKey.isEmpty());
     }
 
@@ -428,6 +504,26 @@ public abstract class CoalescePersistorBaseTest {
                                                                               _entity.getName(),
                                                                               _entity.getSource());
         assertEquals(_entity.getKey().toUpperCase(), objectKey.toUpperCase());
+
+    }
+
+    @Test
+    public void testGetEntityXmlEntityIdEntityIdtype() throws CoalescePersistorException
+    {
+        String entityXml = _coalesceFramework.getEntityXml(_entity.getEntityId(), _entity.getEntityIdType());
+
+        CoalesceAssert.assertXmlEquals(_entity.toXml(), entityXml, "UTF-8");
+
+    }
+
+    @Test
+    public void testGetEntityXmlNameEntityIdEntityIdtype() throws CoalescePersistorException
+    {
+        String entityXml = _coalesceFramework.getEntityXml(_entity.getName(),
+                                                           _entity.getEntityId(),
+                                                           _entity.getEntityIdType());
+
+        CoalesceAssert.assertXmlEquals(_entity.toXml(), entityXml, "UTF-8");
 
     }
 

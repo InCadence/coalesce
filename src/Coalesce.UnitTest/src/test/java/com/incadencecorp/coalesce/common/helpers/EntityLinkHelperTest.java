@@ -629,7 +629,7 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void UnLinkEntitiesNullFirstTest()
+    public void unlinkEntitiesNullFirstTest()
     {
         try
         {
@@ -647,7 +647,7 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void UnLinkEntitiesNullSecondTest()
+    public void unlinkEntitiesNullSecondTest()
     {
         try
         {
@@ -665,7 +665,7 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void UnLinkEntitiesNullBothTest()
+    public void unlinkEntitiesNullBothTest()
     {
         try
         {
@@ -682,7 +682,7 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void UnLinkEntitiesLinkTypeNullFirstTest()
+    public void unlinkEntitiesLinkTypeNullFirstTest()
     {
         try
         {
@@ -700,7 +700,7 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void UnLinkEntitiesLinkTypeNullSecondTest()
+    public void unlinkEntitiesLinkTypeNullSecondTest()
     {
         try
         {
@@ -718,7 +718,7 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void UnLinkEntitiesLinkTypeNullBothTest()
+    public void unlinkEntitiesLinkTypeNullBothTest()
     {
         try
         {
@@ -735,7 +735,7 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void UnLinkEntitiesLinkTypeNullLinkTypeTest()
+    public void unlinkEntitiesLinkTypeNullLinkTypeTest()
     {
         CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
         CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
@@ -751,7 +751,7 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void UnLinkEntitiesAllLinkTypesTest()
+    public void unlinkEntitiesAllLinkTypesTest()
     {
 
         for (ELinkTypes linkType : ELinkTypes.values())
@@ -772,7 +772,7 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void UnLinkEntitiesNotLinkedTest()
+    public void unlinkEntitiesNotLinkedTest()
     {
 
         CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
@@ -785,7 +785,7 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void UnLinkEntitiesNotLinkedFirstTest()
+    public void unlinkEntitiesNotLinkedFirstTest()
     {
 
         CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
@@ -808,7 +808,7 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void UnLinkEntitiesNotLinkedSecondTest()
+    public void unlinkEntitiesNotLinkedSecondTest()
     {
 
         CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
@@ -831,7 +831,7 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void UnLinkEntitiesLinkTypesTest()
+    public void unlinkEntitiesLinkTypesTest()
     {
         CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
         CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
@@ -847,7 +847,7 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void UnLinkEntitiesLinkTypesMismatchTest()
+    public void unlinkEntitiesLinkTypesMismatchTest()
     {
         CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
         CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
@@ -863,7 +863,7 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void UnLinkEntitiesLinkageTypeNotLinkedTest()
+    public void unlinkEntitiesLinkageTypeNotLinkedTest()
     {
 
         CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
@@ -876,7 +876,7 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void UnLinkEntitiesLinkageTypeNotLinkedFirstTest()
+    public void unlinkEntitiesLinkageTypeNotLinkedFirstTest()
     {
 
         CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
@@ -899,7 +899,7 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void UnLinkEntitiesLinkagetypeNotLinkedSecondTest()
+    public void unlinkEntitiesLinkagetypeNotLinkedSecondTest()
     {
 
         CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);

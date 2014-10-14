@@ -1,15 +1,8 @@
-package com.incadencecorp.coalesce.common;
+package com.incadencecorp.coalesce.framework;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
-
-import com.incadencecorp.coalesce.common.classification.AllCommonClassificationTests;
-import com.incadencecorp.coalesce.common.helpers.AllCommonHelpersTests;
-import com.incadencecorp.coalesce.common.runtime.AllCommonRunTimeTests;
-import com.incadencecorp.coalesce.framework.AllFrameworkTests;
-import com.incadencecorp.coalesce.framework.datamodel.AllFrameworkDataModelTests;
-import com.incadencecorp.coalesce.framework.persistance.AllFrameworkPersistorTests;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -29,8 +22,7 @@ import com.incadencecorp.coalesce.framework.persistance.AllFrameworkPersistorTes
  -----------------------------------------------------------------------------*/
 
 @RunWith(Suite.class)
-@SuiteClasses({ AllCommonClassificationTests.class, AllCommonHelpersTests.class, AllCommonRunTimeTests.class,
-               AllFrameworkTests.class, AllFrameworkDataModelTests.class, AllFrameworkPersistorTests.class })
-public class AllCoalesceTests {
+@SuiteClasses({ CoalesceFrameworkTest.class })
+public class AllFrameworkTests {
 
 }

@@ -1,15 +1,11 @@
-package com.incadencecorp.coalesce.common;
+package com.incadencecorp.coalesce.framework;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-import com.incadencecorp.coalesce.common.classification.AllCommonClassificationTests;
-import com.incadencecorp.coalesce.common.helpers.AllCommonHelpersTests;
-import com.incadencecorp.coalesce.common.runtime.AllCommonRunTimeTests;
-import com.incadencecorp.coalesce.framework.AllFrameworkTests;
-import com.incadencecorp.coalesce.framework.datamodel.AllFrameworkDataModelTests;
-import com.incadencecorp.coalesce.framework.persistance.AllFrameworkPersistorTests;
+import org.junit.Test;
+
+import com.incadencecorp.coalesce.framework.persistance.mysql.MySQLPersistor;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -28,9 +24,31 @@ import com.incadencecorp.coalesce.framework.persistance.AllFrameworkPersistorTes
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-@RunWith(Suite.class)
-@SuiteClasses({ AllCommonClassificationTests.class, AllCommonHelpersTests.class, AllCommonRunTimeTests.class,
-               AllFrameworkTests.class, AllFrameworkDataModelTests.class, AllFrameworkPersistorTests.class })
-public class AllCoalesceTests {
+public class CoalesceFrameworkTest {
 
+    /*
+     * @BeforeClass public static void setUpBeforeClass() throws Exception { }
+     * 
+     * 
+     * @AfterClass public static void tearDownAfterClass() throws Exception { }
+     * 
+     * @Before public void setUp() throws Exception { }
+     * 
+     * @After public void tearDown() throws Exception { }
+     */
+
+    @Test
+    public void isInitializedTest()
+    {
+        CoalesceFramework framework = new CoalesceFramework();
+
+        assertFalse(framework.isInitialized());
+
+        MySQLPersistor persistor = new MySQLPersistor();
+
+        framework.initialize(persistor);
+
+        assertTrue(framework.isInitialized());
+
+    }
 }

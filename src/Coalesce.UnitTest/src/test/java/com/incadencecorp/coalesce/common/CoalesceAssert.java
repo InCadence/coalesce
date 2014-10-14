@@ -1,15 +1,25 @@
 package com.incadencecorp.coalesce.common;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 
 import com.incadencecorp.coalesce.common.helpers.DocumentThumbnailHelper.DocumentThumbnailResults;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
 
 public class CoalesceAssert {
 
@@ -20,6 +30,10 @@ public class CoalesceAssert {
     {
 
     }
+
+    /*--------------------------------------------------------------------------
+    Public Static Functions
+    --------------------------------------------------------------------------*/
 
     public static void assertXmlEquals(String expected, String actual, String encoding)
     {
@@ -69,6 +83,116 @@ public class CoalesceAssert {
         }
         return true;
     }
+
+    public static void assertTemplateCreation(CoalesceEntity expectedEntity, CoalesceEntity templateEntity)
+    {
+        // Check entity attributes
+        assertNotEquals(expectedEntity.getKey().toLowerCase(), templateEntity.getKey().toLowerCase());
+        assertEquals(expectedEntity.getName(), templateEntity.getName());
+        assertEquals(expectedEntity.getSource(), templateEntity.getSource());
+        assertEquals(expectedEntity.getVersion(), templateEntity.getVersion());
+        assertEquals("", templateEntity.getEntityId());
+        assertEquals("", templateEntity.getEntityIdType());
+        assertEquals(templateEntity.getSource(), templateEntity.getTitle());
+
+        // Check linkage section
+        CoalesceLinkageSection expectedLinkageSection = expectedEntity.getLinkageSection();
+        CoalesceLinkageSection templateLinkageSection = templateEntity.getLinkageSection();
+
+        assertTrue(templateLinkageSection.getLinkages().isEmpty());
+        assertNotEquals(expectedLinkageSection.getKey().toLowerCase(), templateLinkageSection.getKey().toLowerCase());
+        assertEquals(expectedLinkageSection.getName(), templateLinkageSection.getName());
+
+        assertTemplateSection(expectedEntity.getSections(), templateEntity.getSections());
+
+    }
+
+    public static void assertTemplateSection(Map<String, CoalesceSection> expectedSections,
+                                             Map<String, CoalesceSection> templateSections)
+    {
+        Map<String, CoalesceSection> templateSectionsByName = new HashMap<String, CoalesceSection>();
+        for (CoalesceSection templateSection : templateSections.values())
+        {
+            templateSectionsByName.put(templateSection.getName(), templateSection);
+        }
+
+        assertEquals(expectedSections.size(), templateSectionsByName.size());
+
+        for (Map.Entry<String, CoalesceSection> sectionEntry : expectedSections.entrySet())
+        {
+            CoalesceSection expectedSection = sectionEntry.getValue();
+            CoalesceSection templateSection = templateSectionsByName.get(expectedSection.getName());
+
+            assertNotNull("Expected section not found in template section list", templateSection);
+            assertNotEquals(expectedSection.getKey().toLowerCase(), templateSection.getKey().toLowerCase());
+            assertEquals(expectedSection.getName(), templateSection.getName());
+
+            assertTemplateRecordSection(expectedSection.getRecordsets(), templateSection.getRecordsets());
+
+        }
+
+    }
+
+    public static void assertTemplateRecordSection(Map<String, CoalesceRecordset> expectedRecordsets,
+                                                   Map<String, CoalesceRecordset> templateRecordsets)
+    {
+        Map<String, CoalesceRecordset> templateRecordsetsByName = new HashMap<String, CoalesceRecordset>();
+        for (CoalesceRecordset templateRecordset : templateRecordsets.values())
+        {
+            templateRecordsetsByName.put(templateRecordset.getName(), templateRecordset);
+        }
+
+        assertEquals(expectedRecordsets.size(), templateRecordsetsByName.size());
+
+        for (Map.Entry<String, CoalesceRecordset> recordsetEntry : expectedRecordsets.entrySet())
+        {
+            CoalesceRecordset expectedRecordset = recordsetEntry.getValue();
+            CoalesceRecordset templateRecordset = templateRecordsetsByName.get(expectedRecordset.getName());
+
+            assertNotNull("Expected recordset not found in template recordset list", templateRecordset);
+            assertNotEquals(expectedRecordset.getKey().toLowerCase(), templateRecordset.getKey().toLowerCase());
+            assertEquals(expectedRecordset.getName(), templateRecordset.getName());
+            assertTrue("Template recordset should not have records", templateRecordset.getRecords().isEmpty());
+
+            assertTemplateFieldDefinitions(expectedRecordset.getFieldDefinitions(), templateRecordset.getFieldDefinitions());
+
+        }
+    }
+
+    public static void assertTemplateFieldDefinitions(ArrayList<CoalesceFieldDefinition> expectedFieldDefinitions,
+                                                      ArrayList<CoalesceFieldDefinition> templateFieldDefinitions)
+    {
+
+        assertEquals(expectedFieldDefinitions.size(), templateFieldDefinitions.size());
+
+        Map<String, CoalesceFieldDefinition> templateFieldDefinitionMap = new HashMap<String, CoalesceFieldDefinition>();
+        for (CoalesceFieldDefinition templateFieldDef : templateFieldDefinitions)
+        {
+            templateFieldDefinitionMap.put(templateFieldDef.getName(), templateFieldDef);
+        }
+
+        for (CoalesceFieldDefinition expectedFieldDef : expectedFieldDefinitions)
+        {
+            CoalesceFieldDefinition templateFieldDef = templateFieldDefinitionMap.get(expectedFieldDef.getName());
+
+            assertNotNull("Expected field definition not found in template field definition list", templateFieldDef);
+            assertNotEquals(expectedFieldDef.getKey().toLowerCase(), templateFieldDef.getKey().toLowerCase());
+
+            assertEquals(expectedFieldDef.getName(), templateFieldDef.getName());
+            assertEquals(expectedFieldDef.getDataType(), templateFieldDef.getDataType());
+            assertEquals(expectedFieldDef.getDefaultValue(), templateFieldDef.getDefaultValue());
+            assertEquals(expectedFieldDef.getDefaultClassificationMarking(),
+                         templateFieldDef.getDefaultClassificationMarking());
+            assertEquals(expectedFieldDef.getLabel(), templateFieldDef.getLabel());
+            assertEquals(expectedFieldDef.getNoIndex(), templateFieldDef.getNoIndex());
+            assertEquals(expectedFieldDef.isDisableHistory(), templateFieldDef.isDisableHistory());
+
+        }
+    }
+
+    /*--------------------------------------------------------------------------
+    Private Static Functions
+    --------------------------------------------------------------------------*/
 
     private static BufferedImage getExpectedThumbnail()
     {
