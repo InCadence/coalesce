@@ -223,6 +223,21 @@ public class CoalesceEntityTemplate {
     {
         return XmlHelper.formatXml(_dataObjectDocument);
     }
+    /**
+     * Returns the UTF-16 (XML) String of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate} if the setSQLServer string parameter = "true". If
+     * setSQLServer parameter = "false", returns the UTF-8 (XML) String of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate}.
+     * 
+     * @param setSQLServer String, if "true" indicates desired return is UTF-16 (XML) String; otherwise, UTF-8 (XML) String
+     *            will result
+     * @return (XML) String UTF-16 (XML) String or UTF-8 (XML) String depending on parameter
+     */
+    public String toXml(boolean setSQLServer)
+    {
+        if (setSQLServer)
+            return toXml(true).replace("UTF-8", "UTF-16");
+        else
+            return toXml();
+    }
 
     /*--------------------------------------------------------------------------
     Private Functions

@@ -4,8 +4,21 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.soap.Node;
+
+import org.joda.time.DateTime;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.common.helpers.DateTimeConverter;
+import com.incadencecorp.coalesce.common.helpers.XmlHelper;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -196,7 +209,73 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
         stmt.executeUpdate();
 
         return true;
+
+    }
+
+    public String getTemplateMetaData(String SQL) throws SQLException, ParserConfigurationException
+    {
+
+        // Open Connection if not already created
+        if (this._conn == null) this.openConnection();
+
+        CallableStatement stmt = this._conn.prepareCall(SQL);
+        ResultSet rs = stmt.executeQuery();
+        DocumentBuilderFactory docBuildFact = DocumentBuilderFactory.newInstance();
+        DocumentBuilder docBuild = docBuildFact.newDocumentBuilder();
+        Document domDocument = docBuild.newDocument();
+        Element rootEle = domDocument.createElement("TemplateMetaData");
+        domDocument.appendChild(rootEle);
+        String xmlTemplate="";
+        while(rs.next())
+        {
+
+            Element mdElement = domDocument.createElement("coalescetemplate");
+            //mdElement.setAttribute("coalescetemplate", null);
+            
+            Element tempKey = domDocument.createElement("templatekey");
+            Text tempKeyText = domDocument.createTextNode((String) rs.getObject(1));
+            tempKey.appendChild(tempKeyText);
+            mdElement.appendChild(tempKey);
+
+            Element tempNAME = domDocument.createElement("name");
+            Text tempNAMEText = domDocument.createTextNode((String) rs.getObject(2));
+            tempNAME.appendChild(tempNAMEText);
+            mdElement.appendChild(tempNAME);
+            
+            Element tempSource = domDocument.createElement("source");
+            Text tempSourceText = domDocument.createTextNode((String) rs.getObject(3));
+            tempSource.appendChild(tempSourceText);
+            mdElement.appendChild(tempSource);
+            
+            Element tempVersion = domDocument.createElement("version");
+            Text tempVersionText = domDocument.createTextNode((String) rs.getObject(4));
+            tempVersion.appendChild(tempVersionText);
+            mdElement.appendChild(tempVersion);
+            
+            Element tempCreated = domDocument.createElement("datecreated");
+            Text tempCreatedText=null;
+            if (rs.getObject(5) != null)
+                tempCreatedText = domDocument.createTextNode(rs.getString(5));
+            else
+                tempCreatedText = domDocument.createTextNode("");
+            tempCreated.appendChild(tempCreatedText);
+            mdElement.appendChild(tempCreated);
+            
+            Element tempModified = domDocument.createElement("lastmodified");
+            Text tempModifiedText=null;
+            if (rs.getObject(6) != null)
+                tempModifiedText = domDocument.createTextNode(rs.getString(6));
+            else
+                tempModifiedText = domDocument.createTextNode("");
+            tempModified.appendChild(tempModifiedText);
+            mdElement.appendChild(tempModified);
+            rootEle.appendChild(mdElement);
+            xmlTemplate=XmlHelper.formatXml(domDocument);
+        }
         
+      
+        return xmlTemplate;
+
     }
 
     @Override

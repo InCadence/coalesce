@@ -1044,21 +1044,7 @@ public class CoalesceEntity extends CoalesceDataObject {
         return toXml(false);
     }
 
-    /**
-     * Returns the UTF-16 (XML) String of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate} if the setSQLServer string parameter = "true". If
-     * setSQLServer parameter = "false", returns the UTF-8 (XML) String of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate}.
-     * 
-     * @param setSQLServer String, if "true" indicates desired return is UTF-16 (XML) String; otherwise, UTF-8 (XML) String
-     *            will result
-     * @return (XML) String UTF-16 (XML) String or UTF-8 (XML) String depending on parameter
-     */
-    public String toXml(String setSQLServer)
-    {
-        if (setSQLServer.trim().toLowerCase() == "true")
-            return toXml(true).replace("UTF-8", "UTF-16");
-        else
-            return toXml();
-    }
+
 
     /**
      * Returns the UTF-8 (XML) String of the Entity and, when removeBinary is true, removes the binary values.

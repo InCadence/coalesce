@@ -197,7 +197,7 @@ public class SQLServerPersistor extends CoalescePersistorBase {
                                          new CoalesceParameter(template.getName()),
                                          new CoalesceParameter(template.getSource()),
                                          new CoalesceParameter(template.getVersion()),
-                                         new CoalesceParameter(template.toXml().replace("UTF-8", "UTF-16")),
+                                         new CoalesceParameter(template.toXml(true)),
                                          new CoalesceParameter(JodaDateTimeHelper.nowInUtc()),
                                          new CoalesceParameter(JodaDateTimeHelper.nowInUtc()));
         }
