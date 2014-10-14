@@ -450,18 +450,25 @@ public class SQLServerPersistor extends CoalescePersistorBase {
     }
 
     @Override
-    public String getEntityTemplateMetadata()
+    public String getEntityTemplateMetadata() throws CoalescePersistorException
     {
-        // TODO - I need to make sure it cannot be done!!!
-        // *************************************************************************************************************************************
-        // SQL in the .NET version does not seem to be supported in MySQL - it uses
-        // "FOR XML RAW, ROOT('coalesceentitytemplates')"
-        //
-        // means: By specifying the ROOT option in the FOR XML query, you can request a single, top-level element for
-        // the resulting XML, as shown in query. The argument specified for the ROOT directive provides the root element
-        // name. http://msdn.microsoft.com/en-us/library/bb522623.aspx
-        // *************************************************************************************************************************************
-        return null;
+        try (SQLServerDataConnector conn = new SQLServerDataConnector(_serCon))
+        {
+            String value = null;
+            String sqlStmt = "SELECT TemplateKey, Name, Source, Version, DateCreated, LastModified FROM CoalesceEntityTemplate";
+            value = conn.getTemplateMetaData(sqlStmt);
+
+            return value;
+        }
+
+        catch (SQLException ex)
+        {
+            throw new CoalescePersistorException("getEntityTemplateMetadata", ex);
+        }
+        catch (Exception ex)
+        {
+            throw new CoalescePersistorException("getEntityTemplateMetadata", ex);
+        }
     }
 
     @Override

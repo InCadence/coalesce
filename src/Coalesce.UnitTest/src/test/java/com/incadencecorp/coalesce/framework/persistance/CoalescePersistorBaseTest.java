@@ -502,6 +502,13 @@ public abstract class CoalescePersistorBaseTest {
         assertEquals(_entity.getKey().toUpperCase(), objectKey.toUpperCase());
 
     }
+    
+    @Test
+    public void testGetEntityTemplateMetadata() throws CoalescePersistorException {
+        String xmlValue=_coalesceFramework.getCoalesceEntityTemplateMetadata();
+        
+        assertNotNull(xmlValue);
+    }
 
     @Test
     public void testGetEntityXmlEntityIdEntityIdtype() throws CoalescePersistorException

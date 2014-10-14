@@ -223,15 +223,14 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
         DocumentBuilderFactory docBuildFact = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuild = docBuildFact.newDocumentBuilder();
         Document domDocument = docBuild.newDocument();
-        Element rootEle = domDocument.createElement("TemplateMetaData");
+        Element rootEle = domDocument.createElement("coalescetemplate");
         domDocument.appendChild(rootEle);
         String xmlTemplate="";
         while(rs.next())
         {
 
-            Element mdElement = domDocument.createElement("coalescetemplate");
-            //mdElement.setAttribute("coalescetemplate", null);
-            
+            Element mdElement = domDocument.createElement("metadata");
+           
             Element tempKey = domDocument.createElement("templatekey");
             Text tempKeyText = domDocument.createTextNode((String) rs.getObject(1));
             tempKey.appendChild(tempKeyText);

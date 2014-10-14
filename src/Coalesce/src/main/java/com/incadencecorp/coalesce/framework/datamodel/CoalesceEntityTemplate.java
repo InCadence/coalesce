@@ -252,7 +252,7 @@ public class CoalesceEntityTemplate {
     public String toXml(boolean setSQLServer)
     {
         if (setSQLServer)
-            return toXml(true).replace("UTF-8", "UTF-16");
+            return toXml().replace("UTF-8", "UTF-16");
         else
             return toXml();
     }
