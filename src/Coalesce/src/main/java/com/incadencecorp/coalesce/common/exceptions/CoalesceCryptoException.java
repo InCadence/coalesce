@@ -39,7 +39,6 @@ public class CoalesceCryptoException extends CoalesceException {
     public CoalesceCryptoException(String message, Exception ex)
     {
         super(message, ex);
-        // TODO Auto-generated constructor stub
     }
 
 }

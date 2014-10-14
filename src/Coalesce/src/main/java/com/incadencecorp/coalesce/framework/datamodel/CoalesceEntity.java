@@ -921,47 +921,6 @@ public class CoalesceEntity extends CoalesceDataObject {
         DateTime field1LastModified = field1.getLastModified();
         DateTime field2LastModified = field2.getLastModified();
 
-        // switch (field1LastModified.compareTo(field2LastModified)) {
-        // case -1:
-        // if (field1.getValue() != null)
-        // {
-        // field1Value = field1.getValue();
-        // }
-        //
-        // if (field2.getValue() != null)
-        // {
-        // field2Value = field2.getValue();
-        // }
-        //
-        // if (!field1Value.equals(field2Value) && !field1.getHistory().isEmpty())
-        // {
-        // // TODO: delete duplicate history?
-        // }
-        // // TODO: can't pass in null as arg?
-        // // call setChanged to create field history if values are different
-        // field1.setChanged(field1Value, field2Value);
-        // break;
-        // default:
-        // if (field1.getValue() != null)
-        // {
-        // field1Value = field1.getValue();
-        // }
-        //
-        // if (field2.getValue() != null)
-        // {
-        // field2Value = field2.getValue();
-        // }
-        //
-        // if (!field2Value.equals(field1Value) && !field2.getHistory().isEmpty())
-        // {
-        // // TODO: delete duplicate history?
-        // }
-        // // TODO: can't pass in null as arg?
-        // // call setChanged to create field history if values are different
-        // field2.setChanged(field2Value, field1Value);
-        //
-        // }
-
         if (field1.getBaseValue() != null)
         {
             field1Value = field1.getBaseValue();

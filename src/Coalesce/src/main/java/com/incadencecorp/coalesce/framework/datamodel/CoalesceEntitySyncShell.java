@@ -241,18 +241,13 @@ public class CoalesceEntitySyncShell {
      */
     public static CoalesceEntitySyncShell clone(CoalesceEntitySyncShell syncShell)
     {
-
         // Create new Instance
         CoalesceEntitySyncShell SyncShellClone = new CoalesceEntitySyncShell();
 
         // Initialize
         // TODO: make sure .Clone's are same between vb and java. Java required a boolean.
-        // return SyncShellClone.Initialize(SyncShell.DataObjectDocument.Clone) //vb
-        // return SyncShellClone.Initialize(SyncShell.GetDataObjectDocument()); //1st java thought
         SyncShellClone.initialize((Document) syncShell.getDataObjectDocument().cloneNode(true));
         return SyncShellClone;
-        // return CallResult.failedCallResult; //SyncShellClone.InitializeFromEntity((CoalesceEntity)
-        // SyncShell.GetDataObjectDocument().cloneNode(true));
     }
 
     /**

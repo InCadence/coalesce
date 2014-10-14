@@ -65,11 +65,4 @@ public class CoalesceSettingTest {
         assertEquals("C:\\Program Files\\Java\\jre7\\bin", CoalesceSettings.getDefaultApplicationRoot());
         
     }
-    
-	@Test
-	public void test()
-	{
-	    // TODO: Complete testing
-	}
-
 }
