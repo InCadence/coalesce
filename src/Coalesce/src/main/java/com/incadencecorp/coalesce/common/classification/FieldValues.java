@@ -29,7 +29,7 @@ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
 
 public class FieldValues {
 
-    private static void ClassListAdd(ArrayList<MarkingValue> classList,
+    private static void classListAdd(ArrayList<MarkingValue> classList,
                                      String parent,
                                      String title,
                                      String abbreviation,
@@ -56,25 +56,25 @@ public class FieldValues {
         ArrayList<MarkingValue> classList = new ArrayList<MarkingValue>();
 
         if (all) {
-            ClassListAdd(classList, "", "COSMIC TOP SECRET", "", "CTS");
-            ClassListAdd(classList, "", "COSMIC TOP SECRET ATOMAL", "", "CTS-A");
-            ClassListAdd(classList, "", "COSMIC TOP SECRET BOHEMIA", "", "CTS-B");
-            ClassListAdd(classList, "", "NATO SECRET", "", "NS");
-            ClassListAdd(classList, "", "SECRET ATOMAL", "", "NS-A");
-            ClassListAdd(classList, "", "NATO CONFIDENTIAL", "", "NC");
-            ClassListAdd(classList, "", "CONFIDENTIAL ATOMAL", "", "NC-A");
-            ClassListAdd(classList, "", "NATO RESTRICTED", "", "NR");
-            ClassListAdd(classList, "", "NATO UNCLASSIFIED", "", "NU");
-            ClassListAdd(classList, "", "JOINT TOP SECRET", "", "JOINT TS");
-            ClassListAdd(classList, "", "JOINT SECRET", "", "JOINT S");
-            ClassListAdd(classList, "", "JOINT CONFIDENTIAL", "", "JOINT C");
-            ClassListAdd(classList, "", "JOINT RESTRICTED", "", "JOINT R");
-            ClassListAdd(classList, "", "JOINT UNCLASSIFIED", "", "JOINT U");
-            ClassListAdd(classList, "", "TOP SECRET", "", "TS");
-            ClassListAdd(classList, "", "SECRET", "", "S");
-            ClassListAdd(classList, "", "CONFIDENTIAL", "", "C");
-            ClassListAdd(classList, "", "RESTRICTED", "", "R");
-            ClassListAdd(classList, "", "UNCLASSIFIED", "", "U");
+            classListAdd(classList, "", "COSMIC TOP SECRET", "", "CTS");
+            classListAdd(classList, "", "COSMIC TOP SECRET ATOMAL", "", "CTS-A");
+            classListAdd(classList, "", "COSMIC TOP SECRET BOHEMIA", "", "CTS-B");
+            classListAdd(classList, "", "NATO SECRET", "", "NS");
+            classListAdd(classList, "", "SECRET ATOMAL", "", "NS-A");
+            classListAdd(classList, "", "NATO CONFIDENTIAL", "", "NC");
+            classListAdd(classList, "", "CONFIDENTIAL ATOMAL", "", "NC-A");
+            classListAdd(classList, "", "NATO RESTRICTED", "", "NR");
+            classListAdd(classList, "", "NATO UNCLASSIFIED", "", "NU");
+            classListAdd(classList, "", "JOINT TOP SECRET", "", "JOINT TS");
+            classListAdd(classList, "", "JOINT SECRET", "", "JOINT S");
+            classListAdd(classList, "", "JOINT CONFIDENTIAL", "", "JOINT C");
+            classListAdd(classList, "", "JOINT RESTRICTED", "", "JOINT R");
+            classListAdd(classList, "", "JOINT UNCLASSIFIED", "", "JOINT U");
+            classListAdd(classList, "", "TOP SECRET", "", "TS");
+            classListAdd(classList, "", "SECRET", "", "S");
+            classListAdd(classList, "", "CONFIDENTIAL", "", "C");
+            classListAdd(classList, "", "RESTRICTED", "", "R");
+            classListAdd(classList, "", "UNCLASSIFIED", "", "U");
 
         } else {
 
@@ -84,15 +84,15 @@ public class FieldValues {
                 
             } else if (marking.getIsNATO()) {
 
-                ClassListAdd(classList, "", "COSMIC TOP SECRET", "", "CTS");
-                ClassListAdd(classList, "", "COSMIC TOP SECRET ATOMAL", "", "CTS-A");
-                ClassListAdd(classList, "", "COSMIC TOP SECRET BOHEMIA", "", "CTS-B");
-                ClassListAdd(classList, "", "NATO SECRET", "", "NS");
-                ClassListAdd(classList, "", "SECRET ATOMAL", "", "NS-A");
-                ClassListAdd(classList, "", "NATO CONFIDENTIAL", "", "NC");
-                ClassListAdd(classList, "", "CONFIDENTIAL ATOMAL", "", "NC-A");
-                ClassListAdd(classList, "", "NATO RESTRICTED", "", "NR");
-                ClassListAdd(classList, "", "NATO UNCLASSIFIED", "", "NU");
+                classListAdd(classList, "", "COSMIC TOP SECRET", "", "CTS");
+                classListAdd(classList, "", "COSMIC TOP SECRET ATOMAL", "", "CTS-A");
+                classListAdd(classList, "", "COSMIC TOP SECRET BOHEMIA", "", "CTS-B");
+                classListAdd(classList, "", "NATO SECRET", "", "NS");
+                classListAdd(classList, "", "SECRET ATOMAL", "", "NS-A");
+                classListAdd(classList, "", "NATO CONFIDENTIAL", "", "NC");
+                classListAdd(classList, "", "CONFIDENTIAL ATOMAL", "", "NC-A");
+                classListAdd(classList, "", "NATO RESTRICTED", "", "NR");
+                classListAdd(classList, "", "NATO UNCLASSIFIED", "", "NU");
 
             } else if (marking.getSelectedCountries().size() == 0) {
 
@@ -104,23 +104,23 @@ public class FieldValues {
 
             } else if (marking.getIsJOINT()) {
 
-                ClassListAdd(classList, "", "JOINT TOP SECRET", "", "JOINT TS");
-                ClassListAdd(classList, "", "JOINT SECRET", "", "JOINT S");
-                ClassListAdd(classList, "", "JOINT CONFIDENTIAL", "", "JOINT C");
+                classListAdd(classList, "", "JOINT TOP SECRET", "", "JOINT TS");
+                classListAdd(classList, "", "JOINT SECRET", "", "JOINT S");
+                classListAdd(classList, "", "JOINT CONFIDENTIAL", "", "JOINT C");
                 if (!marking.getSelectedCountries().contains(ISO3166Country.withAlpha3EqualTo("USA"))) {
-                    ClassListAdd(classList, "", "JOINT RESTRICTED", "", "JOINT R");
+                    classListAdd(classList, "", "JOINT RESTRICTED", "", "JOINT R");
                 }
-                ClassListAdd(classList, "", "JOINT UNCLASSIFIED", "", "JOINT U");
+                classListAdd(classList, "", "JOINT UNCLASSIFIED", "", "JOINT U");
 
             } else {
 
-                ClassListAdd(classList, "", "TOP SECRET", "", "TS");
-                ClassListAdd(classList, "", "SECRET", "", "S");
-                ClassListAdd(classList, "", "CONFIDENTIAL", "", "C");
+                classListAdd(classList, "", "TOP SECRET", "", "TS");
+                classListAdd(classList, "", "SECRET", "", "S");
+                classListAdd(classList, "", "CONFIDENTIAL", "", "C");
                 if (!marking.getSelectedCountries().contains(ISO3166Country.withAlpha3EqualTo("USA"))) {
-                    ClassListAdd(classList, "", "RESTRICTED", "", "R");
+                    classListAdd(classList, "", "RESTRICTED", "", "R");
                 }
-                ClassListAdd(classList, "", "UNCLASSIFIED", "", "U");
+                classListAdd(classList, "", "UNCLASSIFIED", "", "U");
             }
         }
 

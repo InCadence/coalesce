@@ -56,7 +56,7 @@ public abstract class CoalescePersistorBase implements ICoalescePersistor {
         if (this._cacher == null || entity.getType().toLowerCase().equals("entity"))
         {
             // Yes; Persist and Flatten Now
-            isSuccessful = this.FlattenObject(entity, allowRemoval);
+            isSuccessful = this.flattenObject(entity, allowRemoval);
         }
         else
         {
@@ -64,12 +64,12 @@ public abstract class CoalescePersistorBase implements ICoalescePersistor {
             if (this._cacher.getSupportsDelayedSave() && this._cacher.getState() == ECoalesceCacheStates.SPACE_AVAILABLE)
             {
                 // Yes; Only Flatten Core Elements
-                isSuccessful = this.FlattenCore(entity, allowRemoval);
+                isSuccessful = this.flattenCore(entity, allowRemoval);
             }
             else
             {
                 // No; Persist and Flatten Entity Now
-                isSuccessful = this.FlattenObject(entity, allowRemoval);
+                isSuccessful = this.flattenObject(entity, allowRemoval);
             }
 
             // If Successful Add to Cache
@@ -223,9 +223,9 @@ public abstract class CoalescePersistorBase implements ICoalescePersistor {
     Abstract Protected Functions
     --------------------------------------------------------------------------*/
 
-    protected abstract boolean FlattenObject(CoalesceEntity entity, boolean allowRemoval) throws CoalescePersistorException;
+    protected abstract boolean flattenObject(CoalesceEntity entity, boolean allowRemoval) throws CoalescePersistorException;
 
-    protected abstract boolean FlattenCore(CoalesceEntity entity, boolean allowRemoval) throws CoalescePersistorException;
+    protected abstract boolean flattenCore(CoalesceEntity entity, boolean allowRemoval) throws CoalescePersistorException;
 
     /*--------------------------------------------------------------------------
     	Private Functions

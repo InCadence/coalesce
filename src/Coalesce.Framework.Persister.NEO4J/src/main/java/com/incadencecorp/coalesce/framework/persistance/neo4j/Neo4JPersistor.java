@@ -145,7 +145,7 @@ public class Neo4JPersistor extends CoalescePersistorBase {
     }
 
     @Override
-    protected boolean FlattenObject(CoalesceEntity entity, boolean AllowRemoval) throws CoalescePersistorException
+    protected boolean flattenObject(CoalesceEntity entity, boolean AllowRemoval) throws CoalescePersistorException
     {
         boolean isSuccessful = false;
 
@@ -266,7 +266,7 @@ public class Neo4JPersistor extends CoalescePersistorBase {
     }
 
     @Override
-    protected boolean FlattenCore(CoalesceEntity entity, boolean AllowRemoval) throws CoalescePersistorException
+    protected boolean flattenCore(CoalesceEntity entity, boolean AllowRemoval) throws CoalescePersistorException
     {
         // TODO Auto-generated method stub
         return false;
