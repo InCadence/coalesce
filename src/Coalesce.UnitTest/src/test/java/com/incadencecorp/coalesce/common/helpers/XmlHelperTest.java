@@ -128,7 +128,7 @@ public class XmlHelperTest {
         assertNotNull("Searialize failed", xml);
         assertFalse("xml empty", xml.isEmpty());
 
-        String stripped = xml.toString().replace("<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"yes\"?>", "");
+        String stripped = xml.toString().replace("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>", "");
         assertEquals(CoalesceTypeInstances.TEST_MISSION_LINKAGE_SECTION.replaceAll("\\s+", ""),
                      stripped.replace(" ", "").replaceAll("\\s+", ""));
 
