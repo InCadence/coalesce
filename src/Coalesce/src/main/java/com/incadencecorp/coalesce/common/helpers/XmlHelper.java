@@ -53,8 +53,9 @@ import org.xml.sax.SAXException;
  */
 public class XmlHelper {
 
-    protected static ConcurrentHashMap<String, JAXBContext> jaxbContexts = new ConcurrentHashMap<String, JAXBContext>();
-    
+    private static ConcurrentHashMap<String, JAXBContext> jaxbContexts = new ConcurrentHashMap<String, JAXBContext>();
+    private static String syncObject = "";
+
     /**
      * Return the {@link String} that contains the serialized representation of the provided object using the 'ISO-8859-1'
      * encoding format.
@@ -64,34 +65,8 @@ public class XmlHelper {
      */
     public static String serialize(Object obj)
     {
-        try
-        {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            
-            // Get JAXB Context
-            String className = obj.getClass().getName();            
-            JAXBContext context;
-            
-            if (jaxbContexts.containsKey(className)) {
-                context = jaxbContexts.get(className);
-            } else {
-                // Haven't seen before; create and add to concurrent hash map
-                context = JAXBContext.newInstance(obj.getClass());
-                jaxbContexts.put(className, context);
-            }
-
-            // Marshal
-            Marshaller marshaller = context.createMarshaller();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true); // pretty
-            marshaller.setProperty(Marshaller.JAXB_ENCODING, "ISO-8859-1"); // specify
-            marshaller.marshal(obj, out);
-
-            return new String(out.toByteArray());
-        }
-        catch (JAXBException e)
-        {
-            return null;
-        }
+        // Serialize with the default UTF-8 encoding
+        return XmlHelper.serialize(obj, "UTF-8");
     }
 
     /**
@@ -108,20 +83,11 @@ public class XmlHelper {
         {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-            // Get JAXB Context
-            String className = obj.getClass().getName();            
-            JAXBContext context;
-            
-            if (jaxbContexts.containsKey(className)) {
-                context = jaxbContexts.get(className);
-            } else {
-                // Haven't seen before; create and add to concurrent hash map
-                context = JAXBContext.newInstance(obj.getClass());
-                jaxbContexts.put(className, context);
-            }
+            // Get JAXB Context and Create the Marshaler
+            JAXBContext context = getJAXBContextForClass(obj.getClass());
+            Marshaller marshaller = context.createMarshaller();
 
             // Marshal
-            Marshaller marshaller = context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true); // pretty
             marshaller.setProperty(Marshaller.JAXB_ENCODING, encodingFormat); // specify
             marshaller.marshal(obj, out);
@@ -147,27 +113,52 @@ public class XmlHelper {
         try
         {
             InputStream in = new ByteArrayInputStream(xml.getBytes());
-            
-            // Get JAXB Context
-            String className = classType.getName();            
-            JAXBContext context;
-            
-            if (jaxbContexts.containsKey(className)) {
-                context = jaxbContexts.get(className);
-            } else {
-                // Haven't seen before; create and add to concurrent hash map
-                context = JAXBContext.newInstance(classType);
-                jaxbContexts.put(className, context);
-            }
-            
+
+            // Get JAXB Context and Create the Unmarshaller
+            JAXBContext context = getJAXBContextForClass(classType);
             Unmarshaller unmarshaller = context.createUnmarshaller();
 
+            // Unmarshal
             return unmarshaller.unmarshal(in);
         }
         catch (JAXBException ex)
         {
             return null;
         }
+    }
+
+    private static JAXBContext getJAXBContextForClass(Class<?> classType) throws JAXBException
+    {
+
+        // Get the Class Name
+        String className = classType.getName();
+
+        if (jaxbContexts.containsKey(className))
+        {
+            return jaxbContexts.get(className);
+        }
+        else
+        {
+            // More than one thread may end up in here, so we will synchronize,
+            // and the first one to get the lock will create and add, the others
+            // will find the if() conditional evaluating to true, so it will
+            // go get the one that was added.
+            synchronized (syncObject)
+            {
+                if (!jaxbContexts.containsKey(className))
+                {
+                    // Haven't seen before; create and add to concurrent hash map
+                    JAXBContext context = JAXBContext.newInstance(classType);
+                    jaxbContexts.put(className, context);
+                    return context;
+                }
+                else
+                {
+                    return jaxbContexts.get(className);
+                }
+            }
+        }
+
     }
 
     // -----------------------------------------------------------------------'
