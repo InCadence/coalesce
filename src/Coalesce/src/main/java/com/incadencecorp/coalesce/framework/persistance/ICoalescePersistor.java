@@ -229,8 +229,8 @@ public interface ICoalescePersistor {
     public String getEntityTemplateKey(String name, String source, String version) throws CoalescePersistorException;
 
     /**
-     * 
-     * @return
+     * Returns the Coalesce entity templates.
+     * @return XML of meta data
      * @throws CoalescePersistorException
      */
     public String getEntityTemplateMetadata() throws CoalescePersistorException;

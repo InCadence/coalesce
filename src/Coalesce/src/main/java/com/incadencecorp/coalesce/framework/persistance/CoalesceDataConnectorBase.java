@@ -207,7 +207,13 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
         return true;
 
     }
-
+    /**
+     * Returns meta data for Coalesce Entity Template as XML.
+     * @param SQL statement specifying the elements to be returned.
+     * @return XML of meta data for template.
+     * @throws SQLException
+     * @throws ParserConfigurationException
+     */
     public String getTemplateMetaData(String SQL) throws SQLException, ParserConfigurationException
     {
 
