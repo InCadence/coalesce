@@ -4,20 +4,16 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.soap.Node;
 
-import org.joda.time.DateTime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.common.helpers.DateTimeConverter;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
 
 /*-----------------------------------------------------------------------------'
@@ -225,12 +221,12 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
         Document domDocument = docBuild.newDocument();
         Element rootEle = domDocument.createElement("coalescetemplate");
         domDocument.appendChild(rootEle);
-        String xmlTemplate="";
-        while(rs.next())
+        String xmlTemplate = "";
+        while (rs.next())
         {
 
             Element mdElement = domDocument.createElement("metadata");
-           
+
             Element tempKey = domDocument.createElement("templatekey");
             Text tempKeyText = domDocument.createTextNode((String) rs.getObject(1));
             tempKey.appendChild(tempKeyText);
@@ -240,28 +236,28 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
             Text tempNAMEText = domDocument.createTextNode((String) rs.getObject(2));
             tempNAME.appendChild(tempNAMEText);
             mdElement.appendChild(tempNAME);
-            
+
             Element tempSource = domDocument.createElement("source");
             Text tempSourceText = domDocument.createTextNode((String) rs.getObject(3));
             tempSource.appendChild(tempSourceText);
             mdElement.appendChild(tempSource);
-            
+
             Element tempVersion = domDocument.createElement("version");
             Text tempVersionText = domDocument.createTextNode((String) rs.getObject(4));
             tempVersion.appendChild(tempVersionText);
             mdElement.appendChild(tempVersion);
-            
+
             Element tempCreated = domDocument.createElement("datecreated");
-            Text tempCreatedText=null;
+            Text tempCreatedText = null;
             if (rs.getObject(5) != null)
                 tempCreatedText = domDocument.createTextNode(rs.getString(5));
             else
                 tempCreatedText = domDocument.createTextNode("");
             tempCreated.appendChild(tempCreatedText);
             mdElement.appendChild(tempCreated);
-            
+
             Element tempModified = domDocument.createElement("lastmodified");
-            Text tempModifiedText=null;
+            Text tempModifiedText = null;
             if (rs.getObject(6) != null)
                 tempModifiedText = domDocument.createTextNode(rs.getString(6));
             else
@@ -269,10 +265,9 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
             tempModified.appendChild(tempModifiedText);
             mdElement.appendChild(tempModified);
             rootEle.appendChild(mdElement);
-            xmlTemplate=XmlHelper.formatXml(domDocument);
+            xmlTemplate = XmlHelper.formatXml(domDocument);
         }
-        
-      
+
         return xmlTemplate;
 
     }
