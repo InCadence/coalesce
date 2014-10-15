@@ -13,9 +13,9 @@ import org.joda.time.DateTime;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
-import com.incadencecorp.coalesce.framework.generatedjaxb.Recordset;
 import com.incadencecorp.coalesce.framework.generatedjaxb.Fielddefinition;
 import com.incadencecorp.coalesce.framework.generatedjaxb.Record;
+import com.incadencecorp.coalesce.framework.generatedjaxb.Recordset;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -512,7 +512,7 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
         // TODO: Raise the Changed Event
         // RaiseEvent ListChanged(this, new
         // ListChangedEventArgs(ListChangedType.ItemAdded,
-        // this.GetRecords().Count - 1));
+        // getRecords().Count - 1));
 
         return newRecord;
     }
@@ -525,12 +525,14 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
      *            desired {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}.
      * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} at the
      *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s index position.
+     * 
+     * @throws IndexOutOfBoundsException if the <code>index</code> is not within the bounds of available records
      */
     public CoalesceRecord getItem(int index)
     {
 
         // Iterate List
-        if (index >= 0 && index < this.getRecords().size())
+        if (index >= 0 && index < getRecords().size())
         {
             return getRecords().get(index);
         }
@@ -547,36 +549,31 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
      * @param integer index position of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s
      *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} to remove.
      */
-    public void removeAt(Integer index)
-    { // Implements System.Collections.IList.RemoveAt
-      // Get Record
-        CoalesceRecord record = (CoalesceRecord) this.getItem(index);
+    public void removeAt(int index)
+    {
+        if (index < 0 || index >= getRecords().size()) return;
 
-        // Evaluate
-        if (record != null)
-        {
+        CoalesceRecord record = (CoalesceRecord) getItem(index);
 
-            getRecords().remove(record);
+        getRecords().remove(record);
 
-            // Set as Status as Deleted
-            record.setStatus(ECoalesceDataObjectStatus.DELETED);
+        record.setStatus(ECoalesceDataObjectStatus.DELETED);
 
-            // // Determine new Index
-            // int NewIndex;
-            // if (index == 0) {
-            // if (this.Count > 0) {
-            // NewIndex = 0;
-            // }else{
-            // NewIndex = -1;
-            // }
-            // }else{
-            // NewIndex = index - 1;
-            // }
+        // // Determine new Index
+        // int NewIndex;
+        // if (index == 0) {
+        // if (this.Count > 0) {
+        // NewIndex = 0;
+        // }else{
+        // NewIndex = -1;
+        // }
+        // }else{
+        // NewIndex = index - 1;
+        // }
 
-            // TODO: Raise ListChanged Event
-            // RaiseEvent ListChanged(this, new
-            // ListChangedEventArgs(ListChangedType.ItemDeleted, NewIndex));
-        }
+        // TODO: Raise ListChanged Event
+        // RaiseEvent ListChanged(this, new
+        // ListChangedEventArgs(ListChangedType.ItemDeleted, NewIndex));
     }
 
     /**
@@ -606,7 +603,7 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
         if (recordToRemove != null)
         {
             // Remove from the Records Collection
-            this.getRecords().remove(recordToRemove);
+            getRecords().remove(recordToRemove);
 
             // Set as Status as Deleted
             recordToRemove.setStatus(ECoalesceDataObjectStatus.DELETED);
@@ -682,7 +679,7 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
             {
                 return false;
             }
-            
+
         case "maxrecords":
             try
             {

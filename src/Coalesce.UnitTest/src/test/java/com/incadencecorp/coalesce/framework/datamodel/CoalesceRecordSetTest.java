@@ -16,13 +16,7 @@ import org.junit.Test;
 
 import com.incadencecorp.coalesce.common.CoalesceTypeInstances;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
-import com.incadencecorp.coalesce.framework.datamodel.ECoalesceDataObjectStatus;
-import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
+import com.incadencecorp.coalesce.common.helpers.XmlHelper;
 import com.incadencecorp.coalesce.framework.generatedjaxb.Recordset;
 
 /*-----------------------------------------------------------------------------'
@@ -512,7 +506,11 @@ public class CoalesceRecordSetTest {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
         CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
-        assertNotNull(recordset.createFieldDefinition("Field def", ECoalesceFieldDataTypes.STRING_TYPE, null, "(U)", "Default"));
+        assertNotNull(recordset.createFieldDefinition("Field def",
+                                                      ECoalesceFieldDataTypes.STRING_TYPE,
+                                                      null,
+                                                      "(U)",
+                                                      "Default"));
 
     }
 
@@ -546,7 +544,11 @@ public class CoalesceRecordSetTest {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
         CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
-        assertNotNull(recordset.createFieldDefinition("Field def", ECoalesceFieldDataTypes.STRING_TYPE, "Label", null, "Default"));
+        assertNotNull(recordset.createFieldDefinition("Field def",
+                                                      ECoalesceFieldDataTypes.STRING_TYPE,
+                                                      "Label",
+                                                      null,
+                                                      "Default"));
 
     }
 
@@ -604,7 +606,11 @@ public class CoalesceRecordSetTest {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
         CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
-        assertNotNull(recordset.createFieldDefinition("Field def", ECoalesceFieldDataTypes.STRING_TYPE, "Label", "(U)", "   "));
+        assertNotNull(recordset.createFieldDefinition("Field def",
+                                                      ECoalesceFieldDataTypes.STRING_TYPE,
+                                                      "Label",
+                                                      "(U)",
+                                                      "   "));
 
     }
 
@@ -621,6 +627,18 @@ public class CoalesceRecordSetTest {
 
     }
 
+    @Test
+    public void getAllowTests()
+    {
+        CoalesceEntity missionEntity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceRecordset missionRecordset = (CoalesceRecordset) missionEntity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+ 
+        assertTrue(missionRecordset.getAllowEdit());
+        assertTrue(missionRecordset.getAllowNew());
+        assertTrue(missionRecordset.getAllowRemove());
+    }
+    
+    
     @Test
     public void getCountTest()
     {
@@ -651,6 +669,26 @@ public class CoalesceRecordSetTest {
 
     }
 
+    @Test
+    public void indexOfTest()
+    {
+        CoalesceEntity missionEntity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceRecord missionRecord = (CoalesceRecord) missionEntity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record");
+        CoalesceRecordset missionRecordset = (CoalesceRecordset) missionRecord.getParent();
+        
+        CoalesceRecord newRecord = missionRecordset.addNew();
+        
+        CoalesceRecord record = new CoalesceRecord();
+        
+        assertEquals(0, missionRecordset.indexOf(missionRecord));
+        assertEquals(1, missionRecordset.indexOf(newRecord));
+        assertEquals(-1, missionRecordset.indexOf(record));
+        assertEquals(-1, missionRecordset.indexOf(null));
+        assertEquals(-1, missionRecordset.indexOf("Testing"));
+        
+        
+    }
+        
     @Test
     public void addNewTest()
     {
@@ -723,6 +761,12 @@ public class CoalesceRecordSetTest {
         assertTrue(recordset.getHasActiveRecords());
         assertTrue(recordset.getHasRecords());
 
+        recordset.removeAt(2);
+        assertEquals(2, recordset.getCount());
+        
+        recordset.removeAt(-1);
+        assertEquals(2, recordset.getCount());
+        
         recordset.removeAt(1);
 
         assertFalse(recordset.contains(newRecord));
@@ -755,6 +799,9 @@ public class CoalesceRecordSetTest {
         assertTrue(recordset.getHasActiveRecords());
         assertTrue(recordset.getHasRecords());
 
+        recordset.remove(UUID.randomUUID().toString());
+        assertEquals(2, recordset.getCount());
+        
         recordset.remove(newRecord.getKey());
 
         assertFalse(recordset.contains(newRecord));
@@ -802,6 +849,106 @@ public class CoalesceRecordSetTest {
         assertTrue(recordset.getHasActiveRecords());
         assertTrue(recordset.getHasRecords());
         assertEquals(1, recordset.getRecords().size());
+
+    }
+
+    @Test
+    public void toXmlTest()
+    {
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        String recordsetXml = recordset.toXml();
+
+        Recordset desRecordset = (Recordset) XmlHelper.deserialize(recordsetXml, Recordset.class);
+
+        assertEquals(recordset.getRecords().size(), desRecordset.getRecord().size());
+        assertEquals(recordset.getKey(), desRecordset.getKey());
+        assertEquals(recordset.getName(), desRecordset.getName());
+        assertEquals(recordset.getDateCreated(), desRecordset.getDatecreated());
+        assertEquals(recordset.getLastModified(), desRecordset.getLastmodified());
+        assertEquals(recordset.getMinRecords(), Integer.parseInt(desRecordset.getMinrecords()));
+        assertEquals(recordset.getMaxRecords(), Integer.parseInt(desRecordset.getMaxrecords()));
+        assertEquals(recordset.getStatus(), ECoalesceDataObjectStatus.getTypeForLabel(desRecordset.getStatus()));
+        assertEquals(recordset.getFieldDefinitions().size(), desRecordset.getFielddefinition().size());
+
+    }
+
+    @Test
+    public void setStatusTest()
+    {
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+
+        assertEquals(ECoalesceDataObjectStatus.ACTIVE, recordset.getStatus());
+
+        recordset.setStatus(ECoalesceDataObjectStatus.UNKNOWN);
+        String recordsetXml = recordset.toXml();
+
+        Recordset desRecordset = (Recordset) XmlHelper.deserialize(recordsetXml, Recordset.class);
+
+        assertEquals(ECoalesceDataObjectStatus.UNKNOWN, ECoalesceDataObjectStatus.getTypeForLabel(desRecordset.getStatus()));
+
+    }
+
+    @Test
+    public void attributeTest()
+    {
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        recordset.setAttribute("TestAttribute", "TestingValue");
+
+        assertEquals(7, recordset.getAttributes().size());
+
+        assertEquals("TestingValue", recordset.getAttribute("TestAttribute"));
+
+        assertEquals("Mission Information Recordset", recordset.getName());
+        assertEquals(false, recordset.getNoIndex());
+
+        recordset.setAttribute("Name", "TestingName");
+        assertEquals("TestingName", recordset.getName());
+        assertEquals("TestingName", recordset.getAttribute("Name"));
+
+        UUID guid = UUID.randomUUID();
+        recordset.setAttribute("Key", guid.toString());
+        assertEquals(guid.toString(), recordset.getKey());
+        assertEquals(guid.toString(), recordset.getAttribute("Key"));
+
+        DateTime now = JodaDateTimeHelper.nowInUtc();
+        DateTime future = now.plusDays(2);
+
+        recordset.setAttribute("DateCreated", JodaDateTimeHelper.toXmlDateTimeUTC(now));
+        assertEquals(now, recordset.getDateCreated());
+
+        recordset.setAttribute("MinRecords", "123");
+        assertEquals(123, recordset.getMinRecords());
+
+        recordset.setAttribute("MaxRecords", "234");
+        assertEquals(234, recordset.getMaxRecords());
+
+        recordset.setAttribute("NoIndex", "True");
+        assertEquals(true, recordset.getNoIndex());
+
+        recordset.setAttribute("Status", ECoalesceDataObjectStatus.UNKNOWN.getLabel());
+        assertEquals(ECoalesceDataObjectStatus.UNKNOWN, recordset.getStatus());
+
+        recordset.setAttribute("LastModified", JodaDateTimeHelper.toXmlDateTimeUTC(future));
+        assertEquals(future, recordset.getLastModified());
+
+        String entityXml = entity.toXml();
+        CoalesceEntity desEntity = CoalesceEntity.create(entityXml);
+        CoalesceRecordset desRecordset = (CoalesceRecordset) desEntity.getDataObjectForNamePath("TREXMission/Mission Information Section/TestingName");
+
+        assertEquals("TestingValue", desRecordset.getAttribute("TestAttribute"));
+        assertEquals("TestingName", desRecordset.getName());
+        assertEquals(guid.toString(), desRecordset.getKey());
+        assertEquals(now, desRecordset.getDateCreated());
+        assertEquals(future, desRecordset.getLastModified());
+        assertEquals(123, desRecordset.getMinRecords());
+        assertEquals(234, desRecordset.getMaxRecords());
+        assertEquals(true, desRecordset.getNoIndex());
+        assertEquals(ECoalesceDataObjectStatus.UNKNOWN, desRecordset.getStatus());
 
     }
 }
