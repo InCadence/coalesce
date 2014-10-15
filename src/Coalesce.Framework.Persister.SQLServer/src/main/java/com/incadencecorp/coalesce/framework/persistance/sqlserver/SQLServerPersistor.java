@@ -456,13 +456,8 @@ public class SQLServerPersistor extends CoalescePersistorBase {
     {
         try (SQLServerDataConnector conn = new SQLServerDataConnector(_serCon))
         {
-            String value = null;
-            String sqlStmt = "SELECT TemplateKey, Name, Source, Version, DateCreated, LastModified FROM CoalesceEntityTemplate";
-            value = conn.getTemplateMetaData(sqlStmt);
-
-            return value;
+            return conn.getTemplateMetaData("SELECT * FROM CoalesceEntityTemplate");
         }
-
         catch (SQLException ex)
         {
             throw new CoalescePersistorException("getEntityTemplateMetadata", ex);

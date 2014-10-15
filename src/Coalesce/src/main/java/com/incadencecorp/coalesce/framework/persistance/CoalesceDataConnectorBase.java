@@ -61,6 +61,23 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
      * Returns the results from the executed SQL Command.
      * 
      * @param sql the statement to be executed against the database.
+     * @return ResultSet - A table of data representing a database result set.
+     * @throws SQLException
+     * @throws CoalescePersistorException
+     */
+    public final ResultSet executeQuery(final String sql) throws SQLException
+    {
+        openDataConnection();
+
+        CallableStatement stmt = this._conn.prepareCall(sql);
+
+        return stmt.executeQuery();
+    }
+    
+    /**
+     * Returns the results from the executed SQL Command.
+     * 
+     * @param sql the statement to be executed against the database.
      * @param parameters the multiple parameters to be applied to the SQL statement
      * @return ResultSet - A table of data representing a database result set.
      * @throws SQLException
@@ -222,66 +239,37 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
      */
     public final String getTemplateMetaData(final String sql) throws SQLException, ParserConfigurationException
     {
-
-        // Open Connection if not already created
-        openDataConnection();
-
-        CallableStatement stmt = this._conn.prepareCall(sql);
-        ResultSet rs = stmt.executeQuery();
-        DocumentBuilderFactory docBuildFact = DocumentBuilderFactory.newInstance();
-        DocumentBuilder docBuild = docBuildFact.newDocumentBuilder();
-        Document domDocument = docBuild.newDocument();
-        Element rootEle = domDocument.createElement("coalescetemplate");
-        domDocument.appendChild(rootEle);
-        String xmlTemplate = "";
-        while (rs.next())
+        // Execute Query
+        ResultSet results = executeQuery(sql);
+        
+        // Create Document
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document doc = builder.newDocument();
+        
+        // Create Root Node
+        Element rootElement = doc.createElement("coalescetemplates");
+        doc.appendChild(rootElement);
+        
+        while (results.next())
         {
+            // Create New Template Element
+            Element templateElement = doc.createElement("coalescetemplate");
+            
+            // Set Attributes
+            templateElement.setAttribute("templatekey", results.getString("TemplateKey")); 
+            templateElement.setAttribute("name", results.getString("Name")); 
+            templateElement.setAttribute("source", results.getString("Source")); 
+            templateElement.setAttribute("version", results.getString("Version")); 
+            templateElement.setAttribute("lastmodified", results.getString("LastModified")); 
+            templateElement.setAttribute("datecreated", results.getString("DateCreated")); 
 
-            Element mdElement = domDocument.createElement("metadata");
-
-            Element tempKey = domDocument.createElement("templatekey");
-            Text tempKeyText = domDocument.createTextNode((String) rs.getObject(1));
-            tempKey.appendChild(tempKeyText);
-            mdElement.appendChild(tempKey);
-
-            Element tempNAME = domDocument.createElement("name");
-            Text tempNAMEText = domDocument.createTextNode((String) rs.getObject(2));
-            tempNAME.appendChild(tempNAMEText);
-            mdElement.appendChild(tempNAME);
-
-            Element tempSource = domDocument.createElement("source");
-            Text tempSourceText = domDocument.createTextNode((String) rs.getObject(3));
-            tempSource.appendChild(tempSourceText);
-            mdElement.appendChild(tempSource);
-
-            Element tempVersion = domDocument.createElement("version");
-            Text tempVersionText = domDocument.createTextNode((String) rs.getObject(4));
-            tempVersion.appendChild(tempVersionText);
-            mdElement.appendChild(tempVersion);
-
-            Element tempCreated = domDocument.createElement("datecreated");
-            Text tempCreatedText = null;
-            if (rs.getObject(5) != null)
-                tempCreatedText = domDocument.createTextNode(rs.getString(5));
-            else
-                tempCreatedText = domDocument.createTextNode("");
-            tempCreated.appendChild(tempCreatedText);
-            mdElement.appendChild(tempCreated);
-
-            Element tempModified = domDocument.createElement("lastmodified");
-            Text tempModifiedText = null;
-            if (rs.getObject(6) != null)
-                tempModifiedText = domDocument.createTextNode(rs.getString(6));
-            else
-                tempModifiedText = domDocument.createTextNode("");
-            tempModified.appendChild(tempModifiedText);
-            mdElement.appendChild(tempModified);
-            rootEle.appendChild(mdElement);
-            xmlTemplate = XmlHelper.formatXml(domDocument);
+            // Append Element
+            rootElement.appendChild(templateElement);
         }
 
-        return xmlTemplate;
-
+        // Serialize to String
+        return XmlHelper.formatXml(doc);
     }
 
     @Override
