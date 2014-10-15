@@ -320,9 +320,9 @@ public abstract class CoalescePersistorBaseTest {
     {
         EntityMetaData objectKey = _coalesceFramework.getCoalesceEntityIdAndTypeForKey(_entity.getKey());
 
-        assertEquals(_entity.getEntityId(), objectKey.entityId);
-        assertEquals(_entity.getKey().toUpperCase(), objectKey.entityKey.toUpperCase());
-        assertEquals(_entity.getEntityIdType(), objectKey.entityType);
+        assertEquals(_entity.getEntityId(), objectKey.getEntityId());
+        assertEquals(_entity.getKey().toUpperCase(), objectKey.getEntityKey().toUpperCase());
+        assertEquals(_entity.getEntityIdType(), objectKey.getEntityType());
     }
 
     @Test

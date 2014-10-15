@@ -32,6 +32,8 @@ import com.incadencecorp.coalesce.framework.persistance.CoalescePersistorBase;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceTable;
 import com.incadencecorp.coalesce.framework.persistance.ICoalesceCacher;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
+import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor.ElementMetaData;
+import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor.EntityMetaData;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -870,7 +872,7 @@ public class SQLServerPersistor extends CoalescePersistorBase {
      */
     protected EntityMetaData getCoalesceEntityIdAndTypeForKey(String Key, SQLServerDataConnector conn) throws SQLException
     {
-        EntityMetaData metaData = new EntityMetaData();
+        EntityMetaData metaData = null;
 
         // Execute Query
         ResultSet results = conn.executeQuery("SELECT EntityId,EntityIdType,ObjectKey FROM CoalesceEntity WHERE ObjectKey=?",
@@ -878,9 +880,9 @@ public class SQLServerPersistor extends CoalescePersistorBase {
         // Get Results
         while (results.next())
         {
-            metaData.entityId = results.getString("EntityId");
-            metaData.entityType = results.getString("EntityIdType");
-            metaData.entityKey = results.getString("ObjectKey");
+            metaData = new EntityMetaData(results.getString("EntityId"),
+                                          results.getString("EntityIdType"),
+                                          results.getString("ObjectKey"));
         }
 
         return metaData;
@@ -1142,7 +1144,7 @@ public class SQLServerPersistor extends CoalescePersistorBase {
 
     }
 
-    private ElementMetaData getXPathRecursive(String Key, String ObjectType, String XPath, SQLServerDataConnector conn)
+    private ElementMetaData getXPathRecursive(String key, String objectType, String xPath, SQLServerDataConnector conn)
             throws SQLException
     {
 
@@ -1152,7 +1154,7 @@ public class SQLServerPersistor extends CoalescePersistorBase {
         String sql = "";
 
         // Get Table Name
-        String tableName = CoalesceTable.getTableNameForObjectType(ObjectType);
+        String tableName = CoalesceTable.getTableNameForObjectType(objectType);
 
         // Check to see if its the Entity Table
         if (tableName.equals("CoalesceEntity")) isEntityTable = true;
@@ -1166,7 +1168,7 @@ public class SQLServerPersistor extends CoalescePersistorBase {
             sql = "SELECT name, ParentKey, ParentType FROM ".concat(tableName).concat(" WHERE ObjectKey=?");
         }
 
-        ResultSet results = conn.executeQuery(sql, new CoalesceParameter(Key.trim()));
+        ResultSet results = conn.executeQuery(sql, new CoalesceParameter(key.trim()));
 
         // Valid Results?
         while (results.next())
@@ -1176,26 +1178,23 @@ public class SQLServerPersistor extends CoalescePersistorBase {
 
             if (isEntityTable)
             {
-                XPath = name + "/" + XPath;
+                xPath = name + "/" + xPath;
 
                 // Set Meta Data
-                meteData = new ElementMetaData();
-                meteData.entityKey = Key;
-                meteData.elementXPath = XPath;
-
+                meteData = new ElementMetaData(key, xPath);
             }
             else
             {
                 String parentKey = results.getString("ParentKey");
                 String parentType = results.getString("ParentType");
 
-                if (XPath == null || XPath == "")
+                if (xPath == null || xPath == "")
                 {
                     meteData = getXPathRecursive(parentKey, parentType, name, conn);
                 }
                 else
                 {
-                    meteData = getXPathRecursive(parentKey, parentType, name + "/" + XPath, conn);
+                    meteData = getXPathRecursive(parentKey, parentType, name + "/" + xPath, conn);
                 }
             }
 

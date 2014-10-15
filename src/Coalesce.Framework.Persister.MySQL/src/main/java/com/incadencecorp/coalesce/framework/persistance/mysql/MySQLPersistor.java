@@ -461,8 +461,8 @@ public class MySQLPersistor extends CoalescePersistorBase {
         try (MySQLDataConnector conn = new MySQLDataConnector(this.serCon))
         {
             String value = null;
-            String sqlStmt="SELECT TemplateKey, Name, Source, Version, DateCreated, LastModified FROM CoalesceEntityTemplate";
-            value=conn.getTemplateMetaData(sqlStmt);
+            String sqlStmt = "SELECT TemplateKey, Name, Source, Version, DateCreated, LastModified FROM CoalesceEntityTemplate";
+            value = conn.getTemplateMetaData(sqlStmt);
 
             return value;
         }
@@ -780,7 +780,8 @@ public class MySQLPersistor extends CoalescePersistorBase {
      * @return True = Successful add/update operation.
      * @throws SQLException
      */
-    protected boolean persistFieldHistoryObject(CoalesceFieldHistory fieldHistory, MySQLDataConnector conn) throws SQLException
+    protected boolean persistFieldHistoryObject(CoalesceFieldHistory fieldHistory, MySQLDataConnector conn)
+            throws SQLException
     {
         // Return true if no update is required.
         if (!this.checkLastModified(fieldHistory, conn)) return true;
@@ -873,7 +874,7 @@ public class MySQLPersistor extends CoalescePersistorBase {
      */
     protected EntityMetaData getCoalesceEntityIdAndTypeForKey(String Key, MySQLDataConnector conn) throws SQLException
     {
-        EntityMetaData metaData = new EntityMetaData();
+        EntityMetaData metaData = null;
 
         // Execute Query
         ResultSet results = conn.executeQuery("SELECT EntityId,EntityIdType,ObjectKey FROM CoalesceEntity WHERE ObjectKey=?",
@@ -881,9 +882,9 @@ public class MySQLPersistor extends CoalescePersistorBase {
         // Get Results
         if (results != null && results.first())
         {
-            metaData.entityId = results.getString("EntityId");
-            metaData.entityType = results.getString("EntityIdType");
-            metaData.entityKey = results.getString("ObjectKey");
+            metaData = new EntityMetaData(results.getString("EntityId"),
+                                          results.getString("EntityIdType"),
+                                          results.getString("ObjectKey"));
         }
 
         return metaData;
@@ -1138,7 +1139,8 @@ public class MySQLPersistor extends CoalescePersistorBase {
         String tableName = CoalesceTable.getTableNameForObjectType(ObjectType);
         String dateValue = null;
 
-        ResultSet results = conn.executeQuery("SELECT LastModified FROM " + tableName + " WHERE ObjectKey=?", new CoalesceParameter(Key.trim()));
+        ResultSet results = conn.executeQuery("SELECT LastModified FROM " + tableName + " WHERE ObjectKey=?",
+                                              new CoalesceParameter(Key.trim()));
         ResultSetMetaData resultsmd = results.getMetaData();
 
         // JODA Function DateTimeFormat will adjust for the Server timezone when converting the time.
@@ -1154,7 +1156,7 @@ public class MySQLPersistor extends CoalescePersistorBase {
 
     }
 
-    private ElementMetaData getXPathRecursive(String Key, String ObjectType, String XPath, MySQLDataConnector conn)
+    private ElementMetaData getXPathRecursive(String key, String objectType, String xPath, MySQLDataConnector conn)
             throws SQLException
     {
 
@@ -1164,7 +1166,7 @@ public class MySQLPersistor extends CoalescePersistorBase {
         String sql = "";
 
         // Get Table Name
-        String tableName = CoalesceTable.getTableNameForObjectType(ObjectType);
+        String tableName = CoalesceTable.getTableNameForObjectType(objectType);
 
         // Check to see if its the Entity Table
         if (tableName.equals("CoalesceEntity")) isEntityTable = true;
@@ -1178,7 +1180,7 @@ public class MySQLPersistor extends CoalescePersistorBase {
             sql = "SELECT name, ParentKey, ParentType FROM ".concat(tableName).concat(" WHERE ObjectKey=?");
         }
 
-        ResultSet results = conn.executeQuery(sql, new CoalesceParameter(Key.trim()));
+        ResultSet results = conn.executeQuery(sql, new CoalesceParameter(key.trim()));
 
         // Valid Results?
         if (results.first())
@@ -1188,12 +1190,10 @@ public class MySQLPersistor extends CoalescePersistorBase {
 
             if (isEntityTable)
             {
-                XPath = name + "/" + XPath;
+                xPath = name + "/" + xPath;
 
                 // Set Meta Data
-                meteData = new ElementMetaData();
-                meteData.entityKey = Key;
-                meteData.elementXPath = XPath;
+                meteData = new ElementMetaData(key, xPath);
 
             }
             else
@@ -1201,13 +1201,13 @@ public class MySQLPersistor extends CoalescePersistorBase {
                 String parentKey = results.getString("ParentKey");
                 String parentType = results.getString("ParentType");
 
-                if (XPath == null || XPath == "")
+                if (xPath == null || xPath == "")
                 {
                     meteData = getXPathRecursive(parentKey, parentType, name, conn);
                 }
                 else
                 {
-                    meteData = getXPathRecursive(parentKey, parentType, name + "/" + XPath, conn);
+                    meteData = getXPathRecursive(parentKey, parentType, name + "/" + xPath, conn);
                 }
             }
 

@@ -197,10 +197,10 @@ public class CoalesceFramework {
         ElementMetaData metaData = this._persistor.getXPath(key, "record");
         if (metaData != null)
         {
-            CoalesceEntity entity = this._persistor.getEntity(metaData.entityKey);
+            CoalesceEntity entity = this._persistor.getEntity(metaData.getEntityKey());
             if (entity != null)
             {
-                record = (CoalesceRecord) entity.getDataObjectForNamePath(metaData.elementXPath);
+                record = (CoalesceRecord) entity.getDataObjectForNamePath(metaData.getElementXPath());
             }
         }
 
@@ -215,7 +215,7 @@ public class CoalesceFramework {
 
         if (metaData != null)
         {
-            CoalesceEntity entity = this._persistor.getEntity(metaData.entityKey);
+            CoalesceEntity entity = this._persistor.getEntity(metaData.getEntityKey());
 
             if (entity != null)
             {
