@@ -16,9 +16,7 @@ import org.junit.Test;
 import com.incadencecorp.coalesce.common.CoalesceTypeInstances;
 import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
+import com.incadencecorp.coalesce.common.helpers.XmlHelper;
 import com.incadencecorp.coalesce.framework.generatedjaxb.Entity.Section;
 
 public class CoalesceSectionTest {
@@ -38,11 +36,11 @@ public class CoalesceSectionTest {
     {
         // Create Entity
         CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
-                                            "TREX Portal",
-                                            "1.0.0.0",
-                                            "",
-                                            "",
-                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+                                                      "TREX Portal",
+                                                      "1.0.0.0",
+                                                      "",
+                                                      "",
+                                                      "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         // Create Live Status Section
         assertNull(entity.getSection("TREXOperation/Live Status Section"));
@@ -102,11 +100,11 @@ public class CoalesceSectionTest {
     {
         // Create Entity
         CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
-                                            "TREX Portal",
-                                            "1.0.0.0",
-                                            "",
-                                            "",
-                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+                                                      "TREX Portal",
+                                                      "1.0.0.0",
+                                                      "",
+                                                      "",
+                                                      "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         @SuppressWarnings("unused")
         CoalesceSection section = CoalesceSection.create(entity, null);
@@ -118,11 +116,11 @@ public class CoalesceSectionTest {
     {
         // Create Entity
         CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
-                                            "TREX Portal",
-                                            "1.0.0.0",
-                                            "",
-                                            "",
-                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+                                                      "TREX Portal",
+                                                      "1.0.0.0",
+                                                      "",
+                                                      "",
+                                                      "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         @SuppressWarnings("unused")
         CoalesceSection section = CoalesceSection.create(entity, "");
@@ -134,11 +132,11 @@ public class CoalesceSectionTest {
     {
         // Create Entity
         CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
-                                            "TREX Portal",
-                                            "1.0.0.0",
-                                            "",
-                                            "",
-                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+                                                      "TREX Portal",
+                                                      "1.0.0.0",
+                                                      "",
+                                                      "",
+                                                      "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         @SuppressWarnings("unused")
         CoalesceSection section = CoalesceSection.create(entity, "  ");
@@ -157,11 +155,11 @@ public class CoalesceSectionTest {
     {
         // Create Entity
         CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
-                                            "TREX Portal",
-                                            "1.0.0.0",
-                                            "",
-                                            "",
-                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+                                                      "TREX Portal",
+                                                      "1.0.0.0",
+                                                      "",
+                                                      "",
+                                                      "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         CoalesceSection liveSection = CoalesceSection.create(entity, "Live Status Section", true);
         assertEquals(liveSection, entity.getSection("TREXOperation/Live Status Section"));
@@ -180,11 +178,11 @@ public class CoalesceSectionTest {
     {
         // Create Entity
         CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
-                                            "TREX Portal",
-                                            "1.0.0.0",
-                                            "",
-                                            "",
-                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+                                                      "TREX Portal",
+                                                      "1.0.0.0",
+                                                      "",
+                                                      "",
+                                                      "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         CoalesceSection liveSection = CoalesceSection.create(entity, "Live Status Section", false);
         assertEquals(liveSection, entity.getSection("TREXOperation/Live Status Section"));
@@ -196,11 +194,11 @@ public class CoalesceSectionTest {
     {
         // Create Entity
         CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
-                                            "TREX Portal",
-                                            "1.0.0.0",
-                                            "",
-                                            "",
-                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+                                                      "TREX Portal",
+                                                      "1.0.0.0",
+                                                      "",
+                                                      "",
+                                                      "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         CoalesceSection liveSection = CoalesceSection.create(entity, "Live Status Section", true);
         assertEquals(liveSection, entity.getSection("TREXOperation/Live Status Section"));
@@ -213,11 +211,11 @@ public class CoalesceSectionTest {
     {
         // Create Entity
         CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
-                                            "TREX Portal",
-                                            "1.0.0.0",
-                                            "",
-                                            "",
-                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+                                                      "TREX Portal",
+                                                      "1.0.0.0",
+                                                      "",
+                                                      "",
+                                                      "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         CoalesceSection liveSection = CoalesceSection.create(entity, "Live Status Section", false);
         assertEquals(liveSection, entity.getSection("TREXOperation/Live Status Section"));
@@ -274,11 +272,11 @@ public class CoalesceSectionTest {
     {
         // Create Entity
         CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
-                                            "TREX Portal",
-                                            "1.0.0.0",
-                                            "",
-                                            "",
-                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+                                                      "TREX Portal",
+                                                      "1.0.0.0",
+                                                      "",
+                                                      "",
+                                                      "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         @SuppressWarnings("unused")
         CoalesceSection section = CoalesceSection.create(entity, null, false);
@@ -290,11 +288,11 @@ public class CoalesceSectionTest {
     {
         // Create Entity
         CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
-                                            "TREX Portal",
-                                            "1.0.0.0",
-                                            "",
-                                            "",
-                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+                                                      "TREX Portal",
+                                                      "1.0.0.0",
+                                                      "",
+                                                      "",
+                                                      "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         @SuppressWarnings("unused")
         CoalesceSection section = CoalesceSection.create(entity, null, true);
@@ -329,11 +327,11 @@ public class CoalesceSectionTest {
     {
         // Create Entity
         CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
-                                            "TREX Portal",
-                                            "1.0.0.0",
-                                            "",
-                                            "",
-                                            "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+                                                      "TREX Portal",
+                                                      "1.0.0.0",
+                                                      "",
+                                                      "",
+                                                      "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         CoalesceSection section = new CoalesceSection();
 
@@ -611,4 +609,93 @@ public class CoalesceSectionTest {
 
     }
 
+    @Test
+    public void toXmlTest()
+    {
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        CoalesceSection section = entity.getSection("TREXMission/Mission Information Section");
+        String sectionXml = section.toXml();
+
+        Section desSection = (Section) XmlHelper.deserialize(sectionXml, Section.class);
+
+        assertEquals(section.getRecordsets().size(), desSection.getRecordset().size());
+        assertEquals(section.getKey(), desSection.getKey());
+        assertEquals(section.getName(), desSection.getName());
+        assertEquals(section.getNoIndex(), Boolean.parseBoolean(desSection.getNoindex()));
+        assertEquals(section.getDateCreated(), desSection.getDatecreated());
+        assertEquals(section.getLastModified(), desSection.getLastmodified());
+        assertEquals(section.getStatus(), ECoalesceDataObjectStatus.getTypeForLabel(desSection.getStatus()));
+
+    }
+
+    @Test
+    public void setStatusTest()
+    {
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceSection section = entity.getSection("TREXMission/Mission Information Section");
+
+        assertEquals(ECoalesceDataObjectStatus.ACTIVE, section.getStatus());
+
+        section.setStatus(ECoalesceDataObjectStatus.UNKNOWN);
+        String sectionXml = section.toXml();
+
+        Section desSection = (Section) XmlHelper.deserialize(sectionXml, Section.class);
+
+        assertEquals(ECoalesceDataObjectStatus.UNKNOWN, ECoalesceDataObjectStatus.getTypeForLabel(desSection.getStatus()));
+
+    }
+
+    @Test
+    public void attributeTest()
+    {
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        CoalesceSection section = entity.getSection("TREXMission/Mission Information Section");
+        section.setAttribute("TestAttribute", "TestingValue");
+
+        assertEquals(6, section.getAttributes().size());
+        
+        assertEquals("TestingValue", section.getAttribute("TestAttribute"));
+
+        assertEquals("Mission Information Section", section.getName());
+        assertEquals(false, section.getNoIndex());
+
+        section.setAttribute("Name", "TestingName");
+        assertEquals("TestingName", section.getName());
+        assertEquals("TestingName", section.getAttribute("Name"));
+
+        UUID guid = UUID.randomUUID();
+        section.setAttribute("Key", guid.toString());
+        assertEquals(guid.toString(), section.getKey());
+        assertEquals(guid.toString(), section.getAttribute("Key"));
+
+        DateTime now = JodaDateTimeHelper.nowInUtc();
+        DateTime future = now.plusDays(2);
+
+        section.setAttribute("DateCreated", JodaDateTimeHelper.toXmlDateTimeUTC(now));
+        assertEquals(now, section.getDateCreated());
+
+        section.setAttribute("NoIndex", "True");
+        assertEquals(true, section.getNoIndex());
+
+        section.setAttribute("Status", ECoalesceDataObjectStatus.UNKNOWN.getLabel());
+        assertEquals(ECoalesceDataObjectStatus.UNKNOWN, section.getStatus());
+
+        section.setAttribute("LastModified", JodaDateTimeHelper.toXmlDateTimeUTC(future));
+        assertEquals(future, section.getLastModified());
+
+        String entityXml = entity.toXml();
+        CoalesceEntity desEntity = CoalesceEntity.create(entityXml);
+        CoalesceSection desSection = desEntity.getSection("TREXMission/TestingName");
+
+        assertEquals("TestingValue", desSection.getAttribute("TestAttribute"));
+        assertEquals("TestingName", desSection.getName());
+        assertEquals(guid.toString(), desSection.getKey());
+        assertEquals(now, desSection.getDateCreated());
+        assertEquals(future, desSection.getLastModified());
+        assertEquals(true, desSection.getNoIndex());
+        assertEquals(ECoalesceDataObjectStatus.UNKNOWN, desSection.getStatus());
+
+    }
 }

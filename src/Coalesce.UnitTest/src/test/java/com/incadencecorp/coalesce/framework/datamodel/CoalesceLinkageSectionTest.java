@@ -3,6 +3,7 @@ package com.incadencecorp.coalesce.framework.datamodel;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Map;
@@ -14,9 +15,11 @@ import org.junit.Test;
 
 import com.incadencecorp.coalesce.common.CoalesceTypeInstances;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
+import com.incadencecorp.coalesce.common.helpers.XmlHelper;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection;
+import com.incadencecorp.coalesce.framework.generatedjaxb.Entity.Linkagesection;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -79,6 +82,26 @@ public class CoalesceLinkageSectionTest {
         assertNotNull(linkageSection);
         assertEquals(entity, linkageSection.getParent());
         assertFalse(linkageSection.getNoIndex());
+
+    }
+
+    @Test
+    public void createLinkageSectionParentMissingLinkageSection()
+    {
+        CoalesceEntity entity = new CoalesceEntity();
+        entity.initialize();
+        entity.getChildDataObjects().clear();
+
+        assertNull("Parent entity shouldn't have a linkage section yet", entity.getLinkageSection());
+
+        CoalesceLinkageSection linkageSection = CoalesceLinkageSection.create(entity, false);
+
+        assertNotNull(linkageSection);
+        assertEquals(entity.getLinkageSection(), linkageSection);
+        assertEquals(entity, linkageSection.getParent());
+        assertFalse(linkageSection.getNoIndex());
+
+        assertTrue(entity.getChildDataObjects().containsKey(linkageSection.getKey()));
 
     }
 
@@ -239,6 +262,101 @@ public class CoalesceLinkageSectionTest {
         assertEquals(now, linkageSection.getLastModified());
 
     }
+
+    @Test
+    public void toXmlTest()
+    {
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        CoalesceLinkageSection linkageSection = entity.getLinkageSection();
+        String linkageXml = linkageSection.toXml();
+
+        Linkagesection desLinkageSection = (Linkagesection) XmlHelper.deserialize(linkageXml, Linkagesection.class);
+
+        assertEquals(linkageSection.getLinkages().size(), desLinkageSection.getLinkage().size());
+        assertEquals(linkageSection.getKey(), desLinkageSection.getKey());
+        assertEquals(linkageSection.getName(), desLinkageSection.getName());
+        assertEquals(linkageSection.getNoIndex(), Boolean.parseBoolean(desLinkageSection.getNoindex()));
+        assertEquals(linkageSection.getDateCreated(), desLinkageSection.getDatecreated());
+        assertEquals(linkageSection.getLastModified(), desLinkageSection.getLastmodified());
+        assertEquals(linkageSection.getStatus(), ECoalesceDataObjectStatus.getTypeForLabel(desLinkageSection.getStatus()));
+
+    }
+
+    @Test
+    public void setStatusTest()
+    {
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceLinkageSection linkageSection = entity.getLinkageSection();
+
+        assertEquals(ECoalesceDataObjectStatus.ACTIVE, linkageSection.getStatus());
+        
+        linkageSection.setStatus(ECoalesceDataObjectStatus.UNKNOWN);
+        String linkageXml = linkageSection.toXml();
+
+        Linkagesection desLinkageSection = (Linkagesection) XmlHelper.deserialize(linkageXml, Linkagesection.class);
+
+        assertEquals(ECoalesceDataObjectStatus.UNKNOWN, ECoalesceDataObjectStatus.getTypeForLabel(desLinkageSection.getStatus()));
+
+    }
+    
+    @Test
+    public void attributeTest()
+    {
+        CoalesceEntity entity = new CoalesceEntity();
+        entity.initialize();
+        
+        CoalesceLinkageSection linkageSection = entity.getLinkageSection();
+        linkageSection.setAttribute("TestAttribute", "TestingValue");
+        
+        assertEquals(6, linkageSection.getAttributes().size());
+        
+        assertEquals("TestingValue", linkageSection.getAttribute("TestAttribute"));
+        
+        assertEquals("Linkages", linkageSection.getName());
+        assertEquals(false, linkageSection.getNoIndex());
+        
+        linkageSection.setAttribute("Name", "TestingName");
+        assertEquals("TestingName", linkageSection.getName());
+        assertEquals("TestingName", linkageSection.getAttribute("Name"));
+
+        UUID guid = UUID.randomUUID();
+        linkageSection.setAttribute("Key", guid.toString());
+        assertEquals(guid.toString(), linkageSection.getKey());
+        assertEquals(guid.toString(), linkageSection.getAttribute("Key"));
+        
+        DateTime now = JodaDateTimeHelper.nowInUtc();
+        DateTime future = now.plusDays(2);
+        
+        linkageSection.setAttribute("DateCreated", JodaDateTimeHelper.toXmlDateTimeUTC(now));
+        assertEquals(now, linkageSection.getDateCreated());
+        
+        linkageSection.setAttribute("NoIndex", "True");
+        assertEquals(true, linkageSection.getNoIndex());
+        
+        linkageSection.setAttribute("Status", ECoalesceDataObjectStatus.UNKNOWN.getLabel());
+        assertEquals(ECoalesceDataObjectStatus.UNKNOWN, linkageSection.getStatus());
+        
+        linkageSection.setAttribute("LastModified", JodaDateTimeHelper.toXmlDateTimeUTC(future));
+        assertEquals(future, linkageSection.getLastModified());
+
+        String entityXml = entity.toXml();
+        CoalesceEntity desEntity = CoalesceEntity.create(entityXml);
+        CoalesceLinkageSection desLinkageSection = desEntity.getLinkageSection();
+
+        assertEquals("TestingValue", desLinkageSection.getAttribute("TestAttribute"));
+        assertEquals("TestingName", desLinkageSection.getName());
+        assertEquals(guid.toString(), desLinkageSection.getKey());
+        assertEquals(now, desLinkageSection.getDateCreated());
+        assertEquals(future, desLinkageSection.getLastModified());
+        assertEquals(true, desLinkageSection.getNoIndex());
+        assertEquals(ECoalesceDataObjectStatus.UNKNOWN, desLinkageSection.getStatus());
+        
+    }
+    
+    // -----------------------------------------------------------------------//
+    // Private Methods
+    // -----------------------------------------------------------------------//
 
     private CoalesceLinkageSection getMissionLinkageSection()
     {

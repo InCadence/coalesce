@@ -297,7 +297,7 @@ public class CoalesceRecord extends CoalesceDataObject {
     @Override
     public DateTime getDateCreated()
     {
-         return _entityRecord.getDatecreated();
+        return _entityRecord.getDatecreated();
     }
 
     @Override
@@ -361,13 +361,13 @@ public class CoalesceRecord extends CoalesceDataObject {
     @Override
     protected Map<QName, String> getOtherAttributes()
     {
-        return this._entityRecord.getOtherAttributes();
+        return _entityRecord.getOtherAttributes();
     }
 
     @Override
     public boolean setAttribute(String name, String value)
     {
-        switch (name) {
+        switch (name.toLowerCase()) {
         case "key":
             _entityRecord.setKey(value);
             return true;

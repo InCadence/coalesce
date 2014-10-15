@@ -255,7 +255,12 @@ public class CoalesceLinkage extends CoalesceDataObject implements ICoalesceLink
 
         if (inputLang == null) return null;
 
-        return LocaleUtils.toLocale(inputLang.replace("-", "_"));
+        String[] parts = inputLang.replace("-", "_").split("_");
+
+        if (parts.length != 2) return null;
+
+        return LocaleUtils.toLocale(parts[0].toLowerCase() + "_" + parts[1].toUpperCase());
+
     }
 
     @Override
@@ -319,7 +324,8 @@ public class CoalesceLinkage extends CoalesceDataObject implements ICoalesceLink
     }
 
     /**
-     * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage}'s status identifying if it is current or deleted.
+     * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage}'s status identifying if it is
+     * current or deleted.
      * 
      * @return boolean indicates if the linkage has been marked as deleted.
      */
@@ -398,67 +404,83 @@ public class CoalesceLinkage extends CoalesceDataObject implements ICoalesceLink
     @Override
     protected Map<QName, String> getOtherAttributes()
     {
-        return this._entityLinkage.getOtherAttributes();
+        return _entityLinkage.getOtherAttributes();
     }
 
     @Override
     public boolean setAttribute(String name, String value)
     {
-        switch (name) {
+        switch (name.toLowerCase()) {
         case "key":
-            _entityLinkage.setKey(value);
+            setKey(value);
             return true;
         case "datecreated":
-            _entityLinkage.setDatecreated(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
+            setDateCreated(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
             return true;
         case "lastmodified":
-            _entityLinkage.setLastmodified(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
+            setLastModified(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
             return true;
         case "name":
-            _entityLinkage.setName(value);
+            setName(value);
             return true;
         case "entity1key":
-            _entityLinkage.setEntity1Key(value);
+            setEntity1Key(value);
             return true;
         case "entity1name":
-            _entityLinkage.setEntity1Name(value);
+            setEntity1Name(value);
             return true;
         case "entity1source":
-            _entityLinkage.setEntity1Source(value);
+            setEntity1Source(value);
             return true;
         case "entity1version":
-            _entityLinkage.setEntity1Version(value);
+            setEntity1Version(value);
             return true;
         case "linktype":
-            _entityLinkage.setLinktype(value);
+            setLinkType(ELinkTypes.getTypeForLabel(value));
             return true;
         case "entity2key":
-            _entityLinkage.setEntity2Key(value);
+            setEntity2Key(value);
             return true;
         case "entity2name":
-            _entityLinkage.setEntity2Name(value);
+            setEntity2Name(value);
             return true;
         case "entity2source":
-            _entityLinkage.setEntity2Source(value);
+            setEntity2Source(value);
             return true;
         case "entity2version":
-            _entityLinkage.setEntity2Version(value);
+            setEntity2Version(value);
             return true;
         case "classificationmarking":
-            _entityLinkage.setClassificationmarking(value);
+            setClassificationMarking(new Marking(value));
             return true;
         case "modifiedby":
-            _entityLinkage.setModifiedby(value);
+            setModifiedBy(value);
             return true;
         case "inputlang":
-            _entityLinkage.setInputlang(value);
+
+            String[] parts = value.replace("-", "_").split("_");
+
+            if (parts.length != 2) return false;
+
+            Locale inputLang = LocaleUtils.toLocale(parts[0].toLowerCase() + "_" + parts[1].toUpperCase());
+
+            setInputLang(inputLang);
+
             return true;
+
         case "status":
-            _entityLinkage.setStatus(value);
+            setStatus(ECoalesceDataObjectStatus.getTypeForLabel(value));
             return true;
         default:
-            this.setOtherAttribute(name, value);
-            return true;
+            if (setOtherAttribute(name, value))
+            {
+                setChanged();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 

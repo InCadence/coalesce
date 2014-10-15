@@ -70,16 +70,20 @@ public class CoalesceSection extends CoalesceDataObject {
      * 
      * // return Success return CallResult.successCallResult;
      * 
-     * }catch(Exception ex){ // return Failed Error return new CallResult(CallResults.FAILED_ERROR, ex, CoalesceSection.MODULE); }
-     * }
+     * }catch(Exception ex){ // return Failed Error return new CallResult(CallResults.FAILED_ERROR, ex,
+     * CoalesceSection.MODULE); } }
      */
 
     /**
-     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}, by name, and ties it to its parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}.
+     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}, by name, and ties it to its parent
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}.
      * 
-     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} that the new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} will belong to.
-     * @param name String, the name/namepath to be assigned to the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}.
-     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}, the new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}.
+     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} that the new
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} will belong to.
+     * @param name String, the name/namepath to be assigned to the
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}.
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}, the new
+     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}.
      */
     public static CoalesceSection create(CoalesceEntity parent, String name)
     {
@@ -87,12 +91,16 @@ public class CoalesceSection extends CoalesceDataObject {
     }
 
     /**
-     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}, by name, and ties it to its parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}. Also sets the noIndex attribute.
+     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}, by name, and ties it to its parent
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}. Also sets the noIndex attribute.
      * 
-     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} that the new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} will belong to.
-     * @param name String, the name/namepath to be assigned to the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}.
+     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} that the new
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} will belong to.
+     * @param name String, the name/namepath to be assigned to the
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}.
      * @param noIndex boolean value.
-     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}, the new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}.
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}, the new
+     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}.
      */
     public static CoalesceSection create(CoalesceEntity parent, String name, boolean noIndex)
     {
@@ -138,10 +146,13 @@ public class CoalesceSection extends CoalesceDataObject {
      */
 
     /**
-     * Initializes this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} based on a Section and ties it to its parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}.
+     * Initializes this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} based on a Section and ties it
+     * to its parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}.
      * 
-     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} that the new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} will belong to.
-     * @param section that the new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} will be based off of.
+     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} that the new
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} will belong to.
+     * @param section that the new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} will be based off
+     *            of.
      * @return boolean indicator of success/failure.
      */
     protected boolean initialize(CoalesceEntity parent, Section section)
@@ -219,10 +230,12 @@ public class CoalesceSection extends CoalesceDataObject {
      */
 
     /**
-     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} for this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}, with the name specified.
+     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} for this
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}, with the name specified.
      * 
      * @param name of the new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}.
-     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}, the new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}.
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}, the new
+     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}.
      */
     public CoalesceRecordset createRecordset(String name)
     {
@@ -230,10 +243,13 @@ public class CoalesceSection extends CoalesceDataObject {
     }
 
     /**
-     * Returns {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}'s {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} with the matching String NamePath.
+     * Returns {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}'s
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} with the matching String NamePath.
      * 
      * @param namePath of the new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}.
-     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}, the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} with the name path. Null if the name path is not a {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} or doesn't exist.
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}, the
+     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} with the name path. Null if the name
+     *         path is not a {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} or doesn't exist.
      */
     public CoalesceRecordset getRecordset(String namePath)
     {
@@ -248,9 +264,11 @@ public class CoalesceSection extends CoalesceDataObject {
     }
 
     /**
-     * Returns a hashmap of this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}'s {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}s.
+     * Returns a hashmap of this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}'s
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}s.
      * 
-     * @return hashmap of {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}s contained by this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}.
+     * @return hashmap of {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}s contained by this
+     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}.
      */
     public Map<String, CoalesceRecordset> getRecordsets()
     {
@@ -350,34 +368,33 @@ public class CoalesceSection extends CoalesceDataObject {
     @Override
     protected Map<QName, String> getOtherAttributes()
     {
-        return this._entitySection.getOtherAttributes();
+        return _entitySection.getOtherAttributes();
     }
 
     @Override
     public boolean setAttribute(String name, String value)
     {
-        switch (name) {
+        switch (name.toLowerCase()) {
         case "key":
-            _entitySection.setKey(value);
+            setKey(value);
             return true;
         case "datecreated":
-            _entitySection.setDatecreated(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
+            setDateCreated(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
             return true;
         case "lastmodified":
-            _entitySection.setLastmodified(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
+            setLastModified(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
             return true;
         case "name":
-            _entitySection.setName(value);
+            setName(value);
             return true;
         case "noindex":
-            _entitySection.setNoindex(value);
+            setNoIndex(Boolean.parseBoolean(value));
             return true;
         case "status":
-            _entitySection.setStatus(value);
+            setStatus(ECoalesceDataObjectStatus.getTypeForLabel(value));
             return true;
         default:
-            this.setOtherAttribute(name, value);
-            return true;
+            return setOtherAttribute(name, value);
         }
     }
 

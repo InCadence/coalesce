@@ -430,13 +430,13 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> {
     @Override
     protected Map<QName, String> getOtherAttributes()
     {
-        return this._entityFieldHistory.getOtherAttributes();
+        return _entityFieldHistory.getOtherAttributes();
     }
 
     @Override
     public boolean setAttribute(String name, String value)
     {
-        switch (name) {
+        switch (name.toLowerCase()) {
         case "key":
             _entityFieldHistory.setKey(value);
             return true;

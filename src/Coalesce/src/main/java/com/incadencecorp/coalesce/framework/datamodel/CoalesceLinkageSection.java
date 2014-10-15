@@ -9,6 +9,7 @@ import org.apache.commons.lang.NullArgumentException;
 import org.joda.time.DateTime;
 
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
+import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
 import com.incadencecorp.coalesce.framework.generatedjaxb.Entity.Linkagesection;
 import com.incadencecorp.coalesce.framework.generatedjaxb.Entity.Linkagesection.Linkage;
@@ -97,7 +98,7 @@ public class CoalesceLinkageSection extends CoalesceDataObject {
 
         super.initialize();
 
-        this.setName("Linkages");
+        if (StringHelper.isNullOrEmpty(getName())) setName("Linkages");
 
         if (_entityLinkageSection != null)
         {
@@ -263,34 +264,33 @@ public class CoalesceLinkageSection extends CoalesceDataObject {
     @Override
     protected Map<QName, String> getOtherAttributes()
     {
-        return this._entityLinkageSection.getOtherAttributes();
+        return _entityLinkageSection.getOtherAttributes();
     }
 
     @Override
     public boolean setAttribute(String name, String value)
     {
-        switch (name) {
+        switch (name.toLowerCase()) {
         case "key":
-            _entityLinkageSection.setKey(value);
+            setKey(value);
             return true;
         case "datecreated":
-            _entityLinkageSection.setDatecreated(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
+            setDateCreated(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
             return true;
         case "lastmodified":
-            _entityLinkageSection.setLastmodified(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
+            setLastModified(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
             return true;
         case "name":
-            _entityLinkageSection.setName(value);
+            setName(value);
             return true;
         case "noindex":
-            _entityLinkageSection.setNoindex(value);
+            setNoIndex(Boolean.parseBoolean(value));
             return true;
         case "status":
-            _entityLinkageSection.setStatus(value);
+            setStatus(ECoalesceDataObjectStatus.getTypeForLabel(value));
             return true;
         default:
-            this.setOtherAttribute(name, value);
-            return true;
+            return setOtherAttribute(name, value);
         }
     }
 

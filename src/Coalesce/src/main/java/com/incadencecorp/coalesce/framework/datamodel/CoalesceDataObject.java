@@ -308,11 +308,11 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
      */
     public String getAttribute(String name)
     {
-        String attribute = getAttributes().get(new QName(name));
+        String attribute = getAttributes().get(new QName(name.toLowerCase()));
 
         if (attribute == null)
         {
-            attribute = getOtherAttributes().get(new QName(name));
+            attribute = getOtherAttributes().get(new QName(name.toLowerCase()));
         }
 
         return attribute;
@@ -356,7 +356,7 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
      */
     public boolean setOtherAttribute(String name, String value)
     {
-        getOtherAttributes().put(new QName(name), value);
+        getOtherAttributes().put(new QName(name.toLowerCase()), value);
         return true;
     }
 

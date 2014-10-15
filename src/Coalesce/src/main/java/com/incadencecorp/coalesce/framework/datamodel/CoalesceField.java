@@ -864,7 +864,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     @Override
     public boolean setAttribute(String name, String value)
     {
-        switch (name) {
+        switch (name.toLowerCase()) {
         case "key":
             _entityField.setKey(value);
             return true;

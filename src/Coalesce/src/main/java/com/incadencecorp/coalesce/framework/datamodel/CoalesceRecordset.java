@@ -265,8 +265,6 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     public boolean getHasActiveRecords()
     {
 
-        // Iterate Records
-        // For Each Record As CoalesceRecord In this._Records
         for (CoalesceRecord record : getRecords())
         {
             if (record.getStatus() == ECoalesceDataObjectStatus.ACTIVE)
@@ -289,7 +287,7 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
      */
     public boolean getHasRecords()
     {
-        return !_entityRecordset.getRecord().isEmpty();
+        return (!_entityRecordset.getRecord().isEmpty());
     }
 
     @Override
@@ -655,13 +653,13 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     @Override
     protected Map<QName, String> getOtherAttributes()
     {
-        return this._entityRecordset.getOtherAttributes();
+        return _entityRecordset.getOtherAttributes();
     }
 
     @Override
     public boolean setAttribute(String name, String value)
     {
-        switch (name) {
+        switch (name.toLowerCase()) {
         case "key":
             _entityRecordset.setKey(value);
             return true;

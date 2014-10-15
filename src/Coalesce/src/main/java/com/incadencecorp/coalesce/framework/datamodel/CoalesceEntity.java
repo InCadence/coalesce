@@ -1076,8 +1076,6 @@ public class CoalesceEntity extends CoalesceDataObject {
         return toXml(false);
     }
 
-
-
     /**
      * Returns the UTF-8 (XML) String of the Entity and, when removeBinary is true, removes the binary values.
      * 
@@ -1219,7 +1217,7 @@ public class CoalesceEntity extends CoalesceDataObject {
     @Override
     public boolean setAttribute(String name, String value)
     {
-        switch (name) {
+        switch (name.toLowerCase()) {
         case "key":
             _entity.setKey(value);
             return true;

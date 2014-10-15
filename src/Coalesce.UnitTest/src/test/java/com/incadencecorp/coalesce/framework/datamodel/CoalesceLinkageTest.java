@@ -9,6 +9,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
+import org.apache.commons.lang.LocaleUtils;
 import org.apache.commons.lang.NullArgumentException;
 import org.joda.time.DateTime;
 import org.junit.Test;
@@ -18,11 +19,7 @@ import com.incadencecorp.coalesce.common.classification.Marking;
 import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection;
-import com.incadencecorp.coalesce.framework.datamodel.ECoalesceDataObjectStatus;
-import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
+import com.incadencecorp.coalesce.common.helpers.XmlHelper;
 import com.incadencecorp.coalesce.framework.generatedjaxb.Entity.Linkagesection.Linkage;
 
 /*-----------------------------------------------------------------------------'
@@ -441,6 +438,168 @@ public class CoalesceLinkageTest {
         assertFalse(linkage.getIsMarkedDeleted());
 
     }
+
+    @Test
+    public void toXmlTest()
+    {
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        CoalesceLinkage linkage = entity.getLinkageSection().getLinkages().get("DB7E0EAF-F4EF-4473-94A9-B93A7F46281E");
+        String linkageXml = linkage.toXml();
+
+        Linkage desLinkage = (Linkage) XmlHelper.deserialize(linkageXml, Linkage.class);
+
+        assertEquals(linkage.getKey(), desLinkage.getKey());
+        assertEquals(linkage.getDateCreated(), desLinkage.getDatecreated());
+        assertEquals(linkage.getLastModified(), desLinkage.getLastmodified());
+        assertEquals(linkage.getName(), desLinkage.getName());
+        assertEquals(linkage.getEntity1Key(), desLinkage.getEntity1Key());
+        assertEquals(linkage.getEntity1Name(), desLinkage.getEntity1Name());
+        assertEquals(linkage.getEntity1Source(), desLinkage.getEntity1Source());
+        assertEquals(linkage.getEntity1Version(), desLinkage.getEntity1Version());
+        assertEquals(linkage.getLinkType(), ELinkTypes.getTypeForLabel(desLinkage.getLinktype()));
+        assertEquals(linkage.getEntity2Key(), desLinkage.getEntity2Key());
+        assertEquals(linkage.getEntity2Name(), desLinkage.getEntity2Name());
+        assertEquals(linkage.getEntity2Source(), desLinkage.getEntity2Source());
+        assertEquals(linkage.getEntity2Version(), desLinkage.getEntity2Version());
+        assertEquals(linkage.getClassificationMarking(), new Marking(desLinkage.getClassificationmarking()));
+        assertEquals(linkage.getModifiedBy(), desLinkage.getModifiedby());
+        
+        String[] parts = desLinkage.getInputlang().replace("-", "_").split("_");
+        
+        assertTrue("Invalid InputLang format", parts.length == 2);
+        
+        Locale inputLang = LocaleUtils.toLocale(parts[0].toLowerCase() + "_" + parts[1].toUpperCase());
+
+        assertEquals(linkage.getInputLang(), inputLang);
+
+        assertEquals(linkage.getStatus(), ECoalesceDataObjectStatus.getTypeForLabel(desLinkage.getStatus()));
+
+    }
+
+    @Test
+    public void setStatusTest()
+    {
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceLinkage linkage = entity.getLinkageSection().getLinkages().get("DB7E0EAF-F4EF-4473-94A9-B93A7F46281E");
+
+        assertEquals(ECoalesceDataObjectStatus.ACTIVE, linkage.getStatus());
+
+        linkage.setStatus(ECoalesceDataObjectStatus.UNKNOWN);
+        String linkageXml = linkage.toXml();
+
+        Linkage desLinkage = (Linkage) XmlHelper.deserialize(linkageXml, Linkage.class);
+
+        assertEquals(ECoalesceDataObjectStatus.UNKNOWN, ECoalesceDataObjectStatus.getTypeForLabel(desLinkage.getStatus()));
+
+    }
+
+    @Test
+    public void attributeTest()
+    {
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        CoalesceLinkage linkage = entity.getLinkageSection().getLinkages().get("DB7E0EAF-F4EF-4473-94A9-B93A7F46281E");
+        linkage.setAttribute("TestAttribute", "TestingValue");
+
+        assertEquals(17, linkage.getAttributes().size());
+
+        assertEquals("TestingValue", linkage.getAttribute("TestAttribute"));
+
+        assertEquals("Linkage", linkage.getName());
+        assertEquals(false, linkage.getNoIndex());
+
+        linkage.setAttribute("Name", "TestingName");
+        assertEquals("TestingName", linkage.getName());
+        assertEquals("TestingName", linkage.getAttribute("Name"));
+
+        UUID guid = UUID.randomUUID();
+        linkage.setAttribute("Key", guid.toString());
+        assertEquals(guid.toString(), linkage.getKey());
+        assertEquals(guid.toString(), linkage.getAttribute("Key"));
+
+        DateTime now = JodaDateTimeHelper.nowInUtc();
+        DateTime future = now.plusDays(2);
+
+        linkage.setAttribute("DateCreated", JodaDateTimeHelper.toXmlDateTimeUTC(now));
+        assertEquals(now, linkage.getDateCreated());
+
+        UUID entity1Guid = UUID.randomUUID();
+        linkage.setAttribute("EnTiTy1Key", entity1Guid.toString());
+        assertEquals(entity1Guid.toString(), linkage.getEntity1Key());
+
+        linkage.setAttribute("Entity1Name", "TestEntity1Name");
+        assertEquals("TestEntity1Name", linkage.getEntity1Name());
+
+        linkage.setAttribute("Entity1Source", "TestEntity1Source");
+        assertEquals("TestEntity1Source", linkage.getEntity1Source());
+
+        linkage.setAttribute("Entity1Version", "TestEntity1Version");
+        assertEquals("TestEntity1Version", linkage.getEntity1Version());
+
+        linkage.setAttribute("LinkType", ELinkTypes.HAS_MEMBER.getLabel());
+        assertEquals(ELinkTypes.HAS_MEMBER, linkage.getLinkType());
+
+        UUID entity2Guid = UUID.randomUUID();
+        linkage.setAttribute("EnTiTy2Key", entity2Guid.toString());
+        assertEquals(entity2Guid.toString(), linkage.getEntity2Key());
+
+        linkage.setAttribute("Entity2Name", "TestEntity2Name");
+        assertEquals("TestEntity2Name", linkage.getEntity2Name());
+
+        linkage.setAttribute("Entity2Source", "TestEntity2Source");
+        assertEquals("TestEntity2Source", linkage.getEntity2Source());
+
+        linkage.setAttribute("Entity2Version", "TestEntity2Version");
+        assertEquals("TestEntity2Version", linkage.getEntity2Version());
+
+        linkage.setAttribute("ClassificationMarking", "(TS)");
+        assertEquals(new Marking("(TS)"), linkage.getClassificationMarking());
+
+        linkage.setAttribute("ModifiedBy", "TestingUser");
+        assertEquals("TestingUser", linkage.getModifiedBy());
+
+        linkage.setAttribute("InputLang", "en-gb");
+        assertEquals(Locale.UK, linkage.getInputLang());
+
+        linkage.setAttribute("NoIndex", "True");
+        assertEquals(true, linkage.getNoIndex());
+
+        linkage.setAttribute("Status", ECoalesceDataObjectStatus.UNKNOWN.getLabel());
+        assertEquals(ECoalesceDataObjectStatus.UNKNOWN, linkage.getStatus());
+
+        linkage.setAttribute("LastModified", JodaDateTimeHelper.toXmlDateTimeUTC(future));
+        assertEquals(future, linkage.getLastModified());
+
+        String entityXml = entity.toXml();
+        CoalesceEntity desEntity = CoalesceEntity.create(entityXml);
+        CoalesceLinkage desLinkage = desEntity.getLinkageSection().getLinkages().get(guid.toString());
+
+        assertEquals("TestingValue", desLinkage.getAttribute("TestAttribute"));
+        assertEquals("TestingName", desLinkage.getName());
+        assertEquals(guid.toString(), desLinkage.getKey());
+        assertEquals(now, desLinkage.getDateCreated());
+        assertEquals(future, desLinkage.getLastModified());
+        assertEquals(entity1Guid.toString(), desLinkage.getEntity1Key());
+        assertEquals("TestEntity1Name", desLinkage.getEntity1Name());
+        assertEquals("TestEntity1Source", desLinkage.getEntity1Source());
+        assertEquals("TestEntity1Version", desLinkage.getEntity1Version());
+        assertEquals(ELinkTypes.HAS_MEMBER, desLinkage.getLinkType());
+        assertEquals(entity2Guid.toString(), desLinkage.getEntity2Key());
+        assertEquals("TestEntity2Name", desLinkage.getEntity2Name());
+        assertEquals("TestEntity2Source", desLinkage.getEntity2Source());
+        assertEquals("TestEntity2Version", desLinkage.getEntity2Version());
+        assertEquals(new Marking("(TS)"), desLinkage.getClassificationMarking());
+        assertEquals("TestingUser", desLinkage.getModifiedBy());
+        assertEquals(Locale.UK, desLinkage.getInputLang());
+        assertEquals(true, desLinkage.getNoIndex());
+        assertEquals(ECoalesceDataObjectStatus.UNKNOWN, desLinkage.getStatus());
+
+    }
+
+    // -----------------------------------------------------------------------//
+    // Private Methods
+    // -----------------------------------------------------------------------//
 
     private CoalesceLinkage getMissionLinkage()
     {

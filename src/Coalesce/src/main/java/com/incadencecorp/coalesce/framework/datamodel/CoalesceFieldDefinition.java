@@ -513,7 +513,7 @@ public class CoalesceFieldDefinition extends CoalesceDataObject implements ICoal
     public boolean setAttribute(String name, String value)
     {
 
-        switch (name) {
+        switch (name.toLowerCase()) {
         case "key":
             _entityFieldDefinition.setKey(value);
             return true;
