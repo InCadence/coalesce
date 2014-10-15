@@ -369,23 +369,22 @@ public class CoalesceRecord extends CoalesceDataObject {
     {
         switch (name.toLowerCase()) {
         case "key":
-            _entityRecord.setKey(value);
+            setKey(value);
             return true;
         case "datecreated":
-            _entityRecord.setDatecreated(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
+            setDateCreated(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
             return true;
         case "lastmodified":
-            _entityRecord.setLastmodified(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
+            setLastModified(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
             return true;
         case "status":
-            _entityRecord.setStatus(value);
+            setStatus(ECoalesceDataObjectStatus.getTypeForLabel(value));
             return true;
         case "name":
-            _entityRecord.setName(value);
+            setName(value);
             return true;
         default:
-            this.setOtherAttribute(name, value);
-            return true;
+            return setOtherAttribute(name, value);
         }
     }
 

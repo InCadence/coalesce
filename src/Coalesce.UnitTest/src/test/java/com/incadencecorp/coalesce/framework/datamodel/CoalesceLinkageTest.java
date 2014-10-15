@@ -564,6 +564,12 @@ public class CoalesceLinkageTest {
         linkage.setAttribute("ModifiedBy", "TestingUser");
         assertEquals("TestingUser", linkage.getModifiedBy());
 
+        linkage.setAttribute("InputLang", "en");
+        assertEquals(Locale.ENGLISH, linkage.getInputLang());
+        
+        linkage.setAttribute("InputLang", "en-gb_xxx");
+        assertEquals(new Locale("en", "gb", "xxx"), linkage.getInputLang());
+        
         linkage.setAttribute("InputLang", "en-gb");
         assertEquals(Locale.UK, linkage.getInputLang());
 

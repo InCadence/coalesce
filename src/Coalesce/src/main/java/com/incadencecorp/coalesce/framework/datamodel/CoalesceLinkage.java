@@ -257,9 +257,26 @@ public class CoalesceLinkage extends CoalesceDataObject implements ICoalesceLink
 
         String[] parts = inputLang.replace("-", "_").split("_");
 
-        if (parts.length != 2) return null;
+        String formatted;
+        switch (parts.length) {
+        case 1:
+            formatted = parts[0].toLowerCase();
+            break;
 
-        return LocaleUtils.toLocale(parts[0].toLowerCase() + "_" + parts[1].toUpperCase());
+        case 2:
+            formatted = parts[0].toLowerCase() + "_" + parts[1].toUpperCase();
+            break;
+
+        case 3:
+            formatted = parts[0].toLowerCase() + "_" + parts[1].toUpperCase() + "_" + parts[2];
+            break;
+
+        default:
+            return null;
+            
+        }
+        
+        return LocaleUtils.toLocale(formatted);
 
     }
 
@@ -460,9 +477,26 @@ public class CoalesceLinkage extends CoalesceDataObject implements ICoalesceLink
 
             String[] parts = value.replace("-", "_").split("_");
 
-            if (parts.length != 2) return false;
+            String formatted;
+            switch (parts.length) {
+            case 1:
+                formatted = parts[0].toLowerCase();
+                break;
 
-            Locale inputLang = LocaleUtils.toLocale(parts[0].toLowerCase() + "_" + parts[1].toUpperCase());
+            case 2:
+                formatted = parts[0].toLowerCase() + "_" + parts[1].toUpperCase();
+                break;
+
+            case 3:
+                formatted = parts[0].toLowerCase() + "_" + parts[1].toUpperCase() + "_" + parts[2];
+                break;
+
+            default:
+                return false;
+                
+            }
+
+            Locale inputLang = LocaleUtils.toLocale(formatted);
 
             setInputLang(inputLang);
 

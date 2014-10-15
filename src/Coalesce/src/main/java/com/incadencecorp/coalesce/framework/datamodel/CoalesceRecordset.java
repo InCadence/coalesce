@@ -661,29 +661,44 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     {
         switch (name.toLowerCase()) {
         case "key":
-            _entityRecordset.setKey(value);
+            setKey(value);
             return true;
         case "datecreated":
-            _entityRecordset.setDatecreated(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
+            setDateCreated(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
             return true;
         case "lastmodified":
-            _entityRecordset.setLastmodified(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
+            setLastModified(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
             return true;
         case "name":
-            _entityRecordset.setName(value);
+            setName(value);
             return true;
         case "minrecords":
-            _entityRecordset.setMinrecords(value);
-            return true;
+            try
+            {
+                setMinRecords(Integer.parseInt(value));
+                return true;
+            }
+            catch (NumberFormatException nfe)
+            {
+                return false;
+            }
+            
         case "maxrecords":
-            _entityRecordset.setMaxrecords(value);
-            return true;
+            try
+            {
+                setMaxRecords(Integer.parseInt(value));
+                return true;
+            }
+            catch (NumberFormatException nfe)
+            {
+                return false;
+            }
+
         case "status":
-            _entityRecordset.setStatus(value);
+            setStatus(ECoalesceDataObjectStatus.getTypeForLabel(value));
             return true;
         default:
-            this.setOtherAttribute(name, value);
-            return true;
+            return setOtherAttribute(name, value);
         }
     }
 
