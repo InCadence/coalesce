@@ -573,7 +573,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
         // Return history items in the same order they are in the Entity
         for (Fieldhistory fh : _entityField.getFieldhistory())
         {
-            
+
             CoalesceDataObject fdo = getChildDataObject(fh.getKey());
 
             if (fdo != null && fdo instanceof CoalesceFieldHistory)

@@ -261,11 +261,11 @@ public class CoalesceEntity extends CoalesceDataObject {
      */
     public boolean initialize(CoalesceEntity entity)
     {
-        super.initialize(entity); 
-        
+        super.initialize(entity);
+
         // Copy Member Variables
         _entity = entity._entity;
-        
+
         // Initialize References
         return initializeReferences();
     }

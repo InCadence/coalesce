@@ -199,7 +199,7 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
             {
                 sb.append(",");
             }
-            
+
             sb.append("?");
         }
 

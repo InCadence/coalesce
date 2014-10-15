@@ -273,9 +273,9 @@ public class CoalesceLinkage extends CoalesceDataObject implements ICoalesceLink
 
         default:
             return null;
-            
+
         }
-        
+
         return LocaleUtils.toLocale(formatted);
 
     }
@@ -493,7 +493,7 @@ public class CoalesceLinkage extends CoalesceDataObject implements ICoalesceLink
 
             default:
                 return false;
-                
+
             }
 
             Locale inputLang = LocaleUtils.toLocale(formatted);

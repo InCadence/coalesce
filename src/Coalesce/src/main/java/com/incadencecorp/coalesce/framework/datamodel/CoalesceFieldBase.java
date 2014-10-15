@@ -313,7 +313,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
 
         setBaseValue(String.valueOf(value));
     }
-    
+
     /**
      * Sets the Field's value by the int parameter
      * 
@@ -328,7 +328,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
 
         setBaseValue(Double.toString(value));
     }
-    
+
     /**
      * Sets the Field's value by the int parameter
      * 
@@ -622,7 +622,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
         }
 
     }
-    
+
     /**
      * Returns the Field's Double value.
      * 
@@ -650,7 +650,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
         }
 
     }
-    
+
     /**
      * Returns the Field's Float value.
      * 
@@ -837,9 +837,9 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
         }
 
         String rawValue = getBaseValue();
-        
+
         if (rawValue == null) return null;
-        
+
         if (rawValue != null && rawValue.length() > 0)
         {
             byte[] bytes = Base64.decode(rawValue);

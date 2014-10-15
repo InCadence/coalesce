@@ -53,7 +53,7 @@ public class CoalesceRecord extends CoalesceDataObject {
     public CoalesceRecord(CoalesceRecord record)
     {
         super(record);
-        
+
         // Copy Member Variables
         _entityRecord = record._entityRecord;
     }

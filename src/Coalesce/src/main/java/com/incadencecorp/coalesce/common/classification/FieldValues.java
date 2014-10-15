@@ -11,21 +11,21 @@ import org.apache.commons.collections.Predicate;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 
 /*-----------------------------------------------------------------------------'
-Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
+ Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
 
-Notwithstanding any contractor copyright notice, the Government has Unlimited
-Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
-of this work other than as specifically authorized by these DFARS Clauses may
-violate Government rights in this work.
+ Notwithstanding any contractor copyright notice, the Government has Unlimited
+ Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+ of this work other than as specifically authorized by these DFARS Clauses may
+ violate Government rights in this work.
 
-DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
-Unlimited Rights. The Government has the right to use, modify, reproduce,
-perform, display, release or disclose this computer software and to have or
-authorize others to do so.
+ DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+ Unlimited Rights. The Government has the right to use, modify, reproduce,
+ perform, display, release or disclose this computer software and to have or
+ authorize others to do so.
 
-Distribution Statement D. Distribution authorized to the Department of
-Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
------------------------------------------------------------------------------*/
+ Distribution Statement D. Distribution authorized to the Department of
+ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+ -----------------------------------------------------------------------------*/
 
 public class FieldValues {
 
@@ -55,7 +55,8 @@ public class FieldValues {
 
         ArrayList<MarkingValue> classList = new ArrayList<MarkingValue>();
 
-        if (all) {
+        if (all)
+        {
             classListAdd(classList, "", "COSMIC TOP SECRET", "", "CTS");
             classListAdd(classList, "", "COSMIC TOP SECRET ATOMAL", "", "CTS-A");
             classListAdd(classList, "", "COSMIC TOP SECRET BOHEMIA", "", "CTS-B");
@@ -76,13 +77,18 @@ public class FieldValues {
             classListAdd(classList, "", "RESTRICTED", "", "R");
             classListAdd(classList, "", "UNCLASSIFIED", "", "U");
 
-        } else {
+        }
+        else
+        {
 
-            if (marking == null) {
-                
+            if (marking == null)
+            {
+
                 return new ArrayList<MarkingValue>();
-                
-            } else if (marking.getIsNATO()) {
+
+            }
+            else if (marking.getIsNATO())
+            {
 
                 classListAdd(classList, "", "COSMIC TOP SECRET", "", "CTS");
                 classListAdd(classList, "", "COSMIC TOP SECRET ATOMAL", "", "CTS-A");
@@ -94,30 +100,40 @@ public class FieldValues {
                 classListAdd(classList, "", "NATO RESTRICTED", "", "NR");
                 classListAdd(classList, "", "NATO UNCLASSIFIED", "", "NU");
 
-            } else if (marking.getSelectedCountries().size() == 0) {
+            }
+            else if (marking.getSelectedCountries().size() == 0)
+            {
 
                 return new ArrayList<MarkingValue>();
 
-            } else if (marking.getSelectedCountries().size() < 2 && marking.getIsJOINT()) {
+            }
+            else if (marking.getSelectedCountries().size() < 2 && marking.getIsJOINT())
+            {
 
                 return new ArrayList<MarkingValue>();
 
-            } else if (marking.getIsJOINT()) {
+            }
+            else if (marking.getIsJOINT())
+            {
 
                 classListAdd(classList, "", "JOINT TOP SECRET", "", "JOINT TS");
                 classListAdd(classList, "", "JOINT SECRET", "", "JOINT S");
                 classListAdd(classList, "", "JOINT CONFIDENTIAL", "", "JOINT C");
-                if (!marking.getSelectedCountries().contains(ISO3166Country.withAlpha3EqualTo("USA"))) {
+                if (!marking.getSelectedCountries().contains(ISO3166Country.withAlpha3EqualTo("USA")))
+                {
                     classListAdd(classList, "", "JOINT RESTRICTED", "", "JOINT R");
                 }
                 classListAdd(classList, "", "JOINT UNCLASSIFIED", "", "JOINT U");
 
-            } else {
+            }
+            else
+            {
 
                 classListAdd(classList, "", "TOP SECRET", "", "TS");
                 classListAdd(classList, "", "SECRET", "", "S");
                 classListAdd(classList, "", "CONFIDENTIAL", "", "C");
-                if (!marking.getSelectedCountries().contains(ISO3166Country.withAlpha3EqualTo("USA"))) {
+                if (!marking.getSelectedCountries().contains(ISO3166Country.withAlpha3EqualTo("USA")))
+                {
                     classListAdd(classList, "", "RESTRICTED", "", "R");
                 }
                 classListAdd(classList, "", "UNCLASSIFIED", "", "U");
@@ -456,8 +472,8 @@ public class FieldValues {
     }
 
     /**
-     * Uses predicate validation to find a specific ISO3166Country within a
-     *            ISO3166Country list based on caller provided ISO3166Country name.
+     * Uses predicate validation to find a specific ISO3166Country within a ISO3166Country list based on caller provided
+     * ISO3166Country name.
      * 
      * @param countryName Country name to use for selecting.
      * @return The country that matches the country name.
@@ -479,8 +495,8 @@ public class FieldValues {
     }
 
     /**
-     * Uses predicate validation to find a specific ISO3166Country within a
-     * ISO3166Country list based on caller provided ISO3166Country Alpha3.
+     * Uses predicate validation to find a specific ISO3166Country within a ISO3166Country list based on caller provided
+     * ISO3166Country Alpha3.
      * 
      * @param countryAlpha3 Country Alpha3 to use for selecting.
      * @return The country that matches the country Alpha3.
@@ -492,8 +508,7 @@ public class FieldValues {
         List<ISO3166Country> countryList = FieldValues.getListOfCountries();
 
         @SuppressWarnings("unchecked")
-        Collection<ISO3166Country> filtered = CollectionUtils.select(countryList,
-                                                                     new CountryAlpha3Predicate(countryAlpha3));
+        Collection<ISO3166Country> filtered = CollectionUtils.select(countryList, new CountryAlpha3Predicate(countryAlpha3));
         if (filtered.isEmpty()) return null;
 
         ISO3166Country item = filtered.toArray(new ISO3166Country[filtered.size()])[0];
@@ -502,8 +517,8 @@ public class FieldValues {
     }
 
     /**
-     * Uses predicate validation to find a specific MarkingValue within a
-     * MarkingValue list based on caller provided MarkingValue title.
+     * Uses predicate validation to find a specific MarkingValue within a MarkingValue list based on caller provided
+     * MarkingValue title.
      * 
      * @param markingValueTitle Title to use for selecting.
      * @return The MarkingValue for the title.
@@ -522,8 +537,8 @@ public class FieldValues {
     }
 
     /**
-     * Uses predicate validation to find a specific MarkingValue within a
-     * MarkingValue list based on caller provided MarkingValue portion.
+     * Uses predicate validation to find a specific MarkingValue within a MarkingValue list based on caller provided
+     * MarkingValue portion.
      * 
      * @param markingValuePortion Portion to use for selecting.
      * @return The MarkingValue for the portion.
@@ -545,14 +560,15 @@ public class FieldValues {
 
         private String _filter;
 
-        public FilterPredicate(String filter) {
+        public FilterPredicate(String filter)
+        {
             _filter = filter;
         }
 
         public boolean evaluate(Object object)
         {
             if (_filter == null) return (object == null);
-            
+
             return _filter.equals(getValue(object));
         }
 
@@ -562,7 +578,8 @@ public class FieldValues {
 
     private static class CountryNamePredicate extends FilterPredicate {
 
-        public CountryNamePredicate(String filter) {
+        public CountryNamePredicate(String filter)
+        {
             super(filter);
         }
 
@@ -575,7 +592,8 @@ public class FieldValues {
 
     private static class CountryAlpha3Predicate extends FilterPredicate {
 
-        public CountryAlpha3Predicate(String filter) {
+        public CountryAlpha3Predicate(String filter)
+        {
             super(filter);
         }
 
@@ -588,7 +606,8 @@ public class FieldValues {
 
     private static class MarkingValueTitlePredicate extends FilterPredicate {
 
-        public MarkingValueTitlePredicate(String filter) {
+        public MarkingValueTitlePredicate(String filter)
+        {
             super(filter);
         }
 
@@ -601,7 +620,8 @@ public class FieldValues {
 
     private static class MarkingValuePortionPredicate extends FilterPredicate {
 
-        public MarkingValuePortionPredicate(String filter) {
+        public MarkingValuePortionPredicate(String filter)
+        {
             super(filter);
         }
 

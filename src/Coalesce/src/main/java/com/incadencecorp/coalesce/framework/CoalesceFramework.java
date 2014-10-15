@@ -268,7 +268,8 @@ public class CoalesceFramework {
         return this._persistor.getEntityTemplateMetadata();
     }
 
-    public CoalesceEntity createEntityFromTemplate(String name, String source, String version) throws CoalescePersistorException
+    public CoalesceEntity createEntityFromTemplate(String name, String source, String version)
+            throws CoalescePersistorException
     {
 
         String Xml = this.getCoalesceEntityTemplateXml(name, source, version);
