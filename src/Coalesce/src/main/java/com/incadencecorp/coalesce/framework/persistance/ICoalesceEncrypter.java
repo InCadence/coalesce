@@ -21,24 +21,24 @@ import com.incadencecorp.coalesce.common.exceptions.CoalesceCryptoException;
 
 public interface ICoalesceEncrypter {
 
-    public String decryptEntity(byte[] entityEncryptedBytes) throws CoalesceCryptoException;
+    String decryptEntity(byte[] entityEncryptedBytes) throws CoalesceCryptoException;
 
-    public String decryptEntity(String entityEncryptedBase64) throws CoalesceCryptoException;
+    String decryptEntity(String entityEncryptedBase64) throws CoalesceCryptoException;
 
-    public byte[] encryptEntity(String entityXml) throws CoalesceCryptoException;
+    byte[] encryptEntity(String entityXml) throws CoalesceCryptoException;
 
-    public String encryptEntityToBase64(String entityXml) throws CoalesceCryptoException;
+    String encryptEntityToBase64(String entityXml) throws CoalesceCryptoException;
 
-    public String decryptValue(byte[] valueEncryptedBytes) throws CoalesceCryptoException;
+    String decryptValue(byte[] valueEncryptedBytes) throws CoalesceCryptoException;
 
-    public String decryptValue(String valueEncryptedBase64) throws CoalesceCryptoException;
+    String decryptValue(String valueEncryptedBase64) throws CoalesceCryptoException;
 
-    public byte[] decryptValueToBytes(byte[] valueEncryptedBytes) throws CoalesceCryptoException;
+    byte[] decryptValueToBytes(byte[] valueEncryptedBytes) throws CoalesceCryptoException;
 
-    public byte[] encryptValue(String value) throws CoalesceCryptoException;
+    byte[] encryptValue(String value) throws CoalesceCryptoException;
 
-    public String encryptValueToBase64(String value) throws CoalesceCryptoException;
+    String encryptValueToBase64(String value) throws CoalesceCryptoException;
 
-    public byte[] encryptValue(byte[] valueBytes) throws CoalesceCryptoException;
+    byte[] encryptValue(byte[] valueBytes) throws CoalesceCryptoException;
 
 }

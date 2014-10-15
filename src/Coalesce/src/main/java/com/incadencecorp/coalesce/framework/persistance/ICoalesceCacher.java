@@ -21,20 +21,20 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 
 public interface ICoalesceCacher {
 
-    public boolean containsEntity(String key);
+    boolean containsEntity(String key);
 
-    public boolean storeEntity(CoalesceEntity entity);
+    boolean storeEntity(CoalesceEntity entity);
 
-    public CoalesceEntity retrieveEntity(String Key);
+    CoalesceEntity retrieveEntity(String key);
 
-    public boolean removeEntity(String key);
+    boolean removeEntity(String key);
 
-    public long entityCount();
+    long entityCount();
 
-    public boolean clearCache();
+    boolean clearCache();
 
-    public ECoalesceCacheStates getState();
+    ECoalesceCacheStates getState();
 
-    public boolean getSupportsDelayedSave();
+    boolean getSupportsDelayedSave();
 
 }

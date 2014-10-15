@@ -26,7 +26,7 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
  -----------------------------------------------------------------------------*/
 
 /**
- * Stores and retrieves Coalesce entities from different databases depending on the implementation.
+ * Interface for storing and retrieving Coalesce entities from different databases depending on the implementation.
  */
 public interface ICoalescePersistor {
 
