@@ -969,7 +969,7 @@ public class CoalesceEntity extends CoalesceDataObject {
         }
         // TODO: can't pass in null as arg?
         // call setChanged to create field history if values are different
-        field1.setChanged(field1Value, field2Value);
+        field1.createHistory(field1Value, field2Value);
 
         // revert back to previous LastModified times
         field1.setLastModified(field1LastModified);

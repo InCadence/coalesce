@@ -46,7 +46,6 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     // protected Member Variables
     // -----------------------------------------------------------------------//
 
-    private boolean _creatingNewEntity = false;
     private boolean _suspendHistory = false;
     protected Field _entityField;
 
@@ -77,19 +76,25 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
         CoalesceField<?> newField = createTypeField(fieldDefinition.getDataType());
         if (!newField.initialize(parent, newEntityField)) return null;
 
-        newField._creatingNewEntity = true;
         newField.setSuspendHistory(true);
 
         newField.setName(fieldDefinition.getName());
         newField.setDataType(fieldDefinition.getDataType());
-        newField.setBaseValue(fieldDefinition.getDefaultValue());
+
+        // Is Default Value Null?
+        if (fieldDefinition.getDefaultValue() != null)
+        {
+            // No; set value; Otherwise leave null to indicate value has never been set (Used to determine if history should
+            // be created).
+            newField.setBaseValue(fieldDefinition.getDefaultValue());
+        }
+
         newField.setClassificationMarking(fieldDefinition.getDefaultClassificationMarking());
         newField.setLabel(fieldDefinition.getLabel());
         newField.setNoIndex(fieldDefinition.getNoIndex());
         newField.setDisableHistory(fieldDefinition.isDisableHistory());
 
         newField.setSuspendHistory(false);
-        newField._creatingNewEntity = false;
 
         parent.addChild(newField);
 
@@ -131,7 +136,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
 
         case DOUBLE_TYPE:
             return new CoalesceDoubleField();
-            
+
         case FLOAT_TYPE:
             return new CoalesceFloatField();
 
@@ -180,10 +185,10 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
 
         case DOUBLE_TYPE:
             return (T) getDoubleValue();
-            
+
         case FLOAT_TYPE:
             return (T) getFloatValue();
-            
+
         default:
             throw new NotImplementedException(getDataType() + " not implemented");
         }
@@ -231,13 +236,13 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
         case GEOCOORDINATE_LIST_TYPE:
             setTypedValue((Coordinate[]) value);
             break;
-        
+
         case DOUBLE_TYPE:
             setTypedValue((Double) value);
-            
+
         case FLOAT_TYPE:
             setTypedValue((Float) value);
-            
+
         default:
             throw new NotImplementedException(getDataType() + " not implemented");
         }
@@ -321,9 +326,10 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     @Override
     protected void setBaseValue(String value)
     {
-        String oldValue = _entityField.getValue();
+        // Don't Allow null
+        if (value == null) value = "";
 
-        setChanged(oldValue, value);
+        createHistory(_entityField.getValue(), value);
 
         _entityField.setValue(value);
     }
@@ -408,9 +414,10 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     @Override
     public void setClassificationMarking(String value)
     {
-        String oldValue = _entityField.getClassificationmarking();
+        // Don't Allow null
+        if (value == null) value = "";
 
-        setChanged(oldValue, value);
+        createHistory(_entityField.getClassificationmarking(), value);
         _entityField.setClassificationmarking(value);
     }
 
@@ -443,9 +450,10 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     @Override
     public void setFilename(String value)
     {
-        String oldFilename = _entityField.getFilename();
+        // Don't Allow null
+        if (value == null) value = "";
 
-        setChanged(oldFilename, value);
+        createHistory(_entityField.getFilename(), value);
         _entityField.setFilename(value);
     }
 
@@ -458,9 +466,10 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     @Override
     public void setExtension(String value)
     {
-        String oldExtension = _entityField.getExtension();
+        // Don't Allow null
+        if (value == null) value = "";
 
-        setChanged(oldExtension, value);
+        createHistory(_entityField.getExtension(), value);
         _entityField.setExtension(value.replace(".", ""));
     }
 
@@ -485,9 +494,10 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     @Override
     public void setHash(String value)
     {
-        String oldHash = _entityField.getHash();
+        // Don't Allow null
+        if (value == null) value = "";
 
-        setChanged(oldHash, value);
+        createHistory(_entityField.getHash(), value);
         _entityField.setHash(value);
     }
 
@@ -503,7 +513,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     }
 
     /**
-     * Sets  the value indicating if history will be disabled for this field.  Unlike SuspendHistory, this value is persisted
+     * Sets the value indicating if history will be disabled for this field. Unlike SuspendHistory, this value is persisted
      * with the object. The setting of this value overrides the SuspendHistory value.
      * 
      * @param disable the value to set the disable hsitory attribute to.
@@ -808,40 +818,25 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     // protected Methods
     // -----------------------------------------------------------------------//
 
-    protected void setChanged(Object oldValue, Object newValue)
+    protected void createHistory(Object oldValue, Object newValue)
     {
-        // Does the new value differ from the existing?
-        if ((oldValue == null && newValue != null) || (oldValue != null && !oldValue.equals(newValue)))
+        // Is old Value not null and does it differ from the new value?
+        if (oldValue != null && newValue != null && !oldValue.equals(newValue))
         {
-            // Yes; should we create a FieldHistory entry to reflect the
-            // change?
-            // We create FieldHistory entry if History is not Suspended; OR
-            // if DataType is binary; OR if DateCreated=LastModified and
-            // Value is unset
+            // Yes; History Suspended?
             if (!isSuspendHistory())
             {
+                // No; Check Type
                 switch (getDataType()) {
                 case BINARY_TYPE:
                 case FILE_TYPE:
                     // Don't Create History Entry for these types
                     break;
                 default:
-                    // Is Original Value?
-                    if (getLastModified().compareTo(getDateCreated()) != 0)
-                    {
-                        // No; Create History Entry
-                        setPreviousHistoryKey(CoalesceFieldHistory.create(this));
-                    }
+                    // Add History
+                    setPreviousHistoryKey(CoalesceFieldHistory.create(this));
                 }
-
             }
-
-            if (!_creatingNewEntity)
-            {
-                // Set LastModified
-                setLastModified(JodaDateTimeHelper.nowInUtc().plusSeconds(1));
-            }
-
         }
     }
 

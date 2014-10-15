@@ -532,7 +532,7 @@ public class CoalesceFieldTest {
         CoalesceEntity testEntity = CoalesceEntity.create("Test", "UnitTest", "1.0", "Testing", "UnitTesting");
         CoalesceSection testSection = testEntity.createSection("TestSection");
         CoalesceRecordset testRecordset = testSection.createRecordset("TestRecordset");
-        testRecordset.createFieldDefinition("Track", ECoalesceFieldDataTypes.STRING_TYPE, "", "(U)", "");
+        testRecordset.createFieldDefinition("Track", ECoalesceFieldDataTypes.STRING_TYPE, "", "(U)", null);
         testRecordset.createFieldDefinition("NoTrack", ECoalesceFieldDataTypes.INTEGER_TYPE, "", "(TS)", "", true);
 
         CoalesceRecord testRecord = testRecordset.addNew();

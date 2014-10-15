@@ -129,14 +129,14 @@ public class CoalesceFieldHistoryTest {
         entity.setCurrentStatus(EActionStatuses.CollectionPending);
 
         // Verify
-        assertTrue(entity.getCurrentStatusHistory().size() == 0);
+        assertTrue(entity.getCurrentStatusHistory().size() == 1);
 
         // Change Value 
         entity.setCurrentStatus(EActionStatuses.ExploitationPending);
 
         // Verify
         assertEquals(entity.getCurrentStatusHistory().get(0).getValue(), EActionStatuses.CollectionPending.getLabel());
-        assertTrue(entity.getCurrentStatusHistory().size() == 1);
+        assertTrue(entity.getCurrentStatusHistory().size() == 2);
 
         // Create New Action from entity
         PhotoGalleryEntity entity2 = new PhotoGalleryEntity();
@@ -146,15 +146,13 @@ public class CoalesceFieldHistoryTest {
         entity2.setCurrentStatus(EActionStatuses.ExploitationPending);
         
         // Verify 
-        assertTrue(entity2.getCurrentStatusHistory().size() == 1);
+        assertTrue(entity2.getCurrentStatusHistory().size() == 2);
         
         // Change Value (History Should be Created)
         entity2.setCurrentStatus(EActionStatuses.CollectionComplete);
         
-        System.out.println(entity2.toXml());
-        
         // Verify
-        assertTrue(entity2.getCurrentStatusHistory().size() == 2);
+        assertTrue(entity2.getCurrentStatusHistory().size() == 3);
         assertEquals(entity2.getCurrentStatusHistory().get(0).getValue(), EActionStatuses.ExploitationPending.getLabel());
     }
     
@@ -173,8 +171,6 @@ public class CoalesceFieldHistoryTest {
 
         // Change Value (History Should be Created)
         entity.getMissionName().setValue("History should be added");
-
-        System.out.println(entity.toXml());
 
         // Verify
         assertTrue(entity.getMissionName().getHistory().size() == 1);
