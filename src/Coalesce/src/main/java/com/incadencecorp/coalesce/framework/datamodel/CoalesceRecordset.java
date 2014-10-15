@@ -233,25 +233,25 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     @Override
     public int getMaxRecords()
     {
-        return Integer.parseInt(_entityRecordset.getMaxrecords());
+        return _entityRecordset.getMaxrecords();
     }
 
     @Override
     public void setMaxRecords(int value)
     {
-        _entityRecordset.setMaxrecords(String.valueOf(value));
+        _entityRecordset.setMaxrecords(value);
     }
 
     @Override
     public int getMinRecords()
     {
-        return Integer.parseInt(_entityRecordset.getMinrecords());
+        return _entityRecordset.getMinrecords();
     }
 
     @Override
     public void setMinRecords(int value)
     {
-        _entityRecordset.setMinrecords(String.valueOf(value));
+        _entityRecordset.setMinrecords(value);
     }
 
     /**
@@ -707,8 +707,8 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
         map.put(new QName("datecreated"), JodaDateTimeHelper.toXmlDateTimeUTC(_entityRecordset.getDatecreated()));
         map.put(new QName("lastmodified"), JodaDateTimeHelper.toXmlDateTimeUTC(_entityRecordset.getLastmodified()));
         map.put(new QName("name"), _entityRecordset.getName());
-        map.put(new QName("minrecords"), _entityRecordset.getMinrecords());
-        map.put(new QName("maxrecords"), _entityRecordset.getMaxrecords());
+        map.put(new QName("minrecords"), _entityRecordset.getMinrecords().toString());
+        map.put(new QName("maxrecords"), _entityRecordset.getMaxrecords().toString());
         map.put(new QName("status"), _entityRecordset.getStatus());
         return map;
 
