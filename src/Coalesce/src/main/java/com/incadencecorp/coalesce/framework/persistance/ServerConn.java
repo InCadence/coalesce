@@ -18,9 +18,9 @@ public class ServerConn {
         return _postGres;
     }
 
-    public void setPostGres(boolean _postGres)
+    public void setPostGres(boolean postGres)
     {
-        this._postGres = _postGres;
+        this._postGres = postGres;
     }
 
     public String getDatabase()
@@ -84,9 +84,9 @@ public class ServerConn {
         this._db = db.trim();
     }
 
-    public void setIntegratedSecurity(boolean _integratedSecurity)
+    public void setIntegratedSecurity(boolean integratedSecurity)
     {
-        this._integratedSecurity = _integratedSecurity;
+        this._integratedSecurity = integratedSecurity;
     }
 
     public void setPassword(String pass)
@@ -95,14 +95,14 @@ public class ServerConn {
         this._props.setProperty("password", this._password);
     }
 
-    public void setPortNumber(int _portNumber)
+    public void setPortNumber(int portNumber)
     {
-        this._portNumber = _portNumber;
+        this._portNumber = portNumber;
     }
 
-    public void setServerName(String _serverName)
+    public void setServerName(String serverName)
     {
-        this._serverName = _serverName;
+        this._serverName = serverName;
     }
 
     public void setUser(String user)
