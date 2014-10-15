@@ -33,6 +33,9 @@ import com.incadencecorp.coalesce.common.helpers.XmlHelper;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
+/**
+ * Defines default behavior for Data Connectors that extends this abstract class.
+ */
 public abstract class CoalesceDataConnectorBase implements AutoCloseable {
 
     /*-----------------------------------------------------------------------------'
@@ -63,11 +66,10 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
      * @throws SQLException
      * @throws CoalescePersistorException
      */
-    public ResultSet executeQuery(String sql, CoalesceParameter... parameters) throws SQLException
+    public final ResultSet executeQuery(final String sql, final CoalesceParameter... parameters) throws SQLException
     {
 
-        // Open Connection if not already created
-        if (this._conn == null) this.openConnection();
+        openDataConnection();
 
         CallableStatement stmt = this._conn.prepareCall(sql);
 
@@ -91,11 +93,11 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
      * @throws SQLException
      * @throws CoalescePersistorException
      */
-    public ResultSet executeLikeQuery(String sql, int likeParams, CoalesceParameter... parameters) throws SQLException
+    public final ResultSet executeLikeQuery(final String sql, final int likeParams, final CoalesceParameter... parameters)
+            throws SQLException
     {
 
-        // Open Connection if not already created
-        if (this._conn == null) this.openConnection();
+        openDataConnection();
 
         CallableStatement stmt = this._conn.prepareCall(sql);
 
@@ -103,13 +105,13 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
         for (int ii = 0; ii < parameters.length; ii++)
         {
             if (ii + 1 <= likeParams)
+            {
                 stmt.setObject(ii + 1, "%" + parameters[ii].getValue().trim() + "%", parameters[ii].getType()); // Like
-            // Clause
-            // Search
-            // String
+            }
             else
+            {
                 stmt.setObject(ii + 1, parameters[ii].getValue().trim(), parameters[ii].getType()); // Normal
-            // parameter
+            }
         }
 
         return stmt.executeQuery();
@@ -124,10 +126,9 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
      * @return true = success
      * @throws SQLException
      */
-    public boolean executeCmd(String sql, CoalesceParameter... parameters) throws SQLException
+    public final boolean executeCmd(final String sql, final CoalesceParameter... parameters) throws SQLException
     {
-        // Open Connection if not already created
-        if (this._conn == null) this.openConnection();
+        openDataConnection();
 
         CallableStatement stmt = this._conn.prepareCall(sql);
 
@@ -149,10 +150,9 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
      * @return true = success
      * @throws SQLException
      */
-    public boolean executeCmd(String sql) throws SQLException
+    public final boolean executeCmd(final String sql) throws SQLException
     {
-        // Open Connection if not already created
-        if (this._conn == null) this.openConnection();
+        openDataConnection();
 
         CallableStatement stmt = this._conn.prepareCall(sql);
 
@@ -169,7 +169,8 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
      * @return true = success
      * @throws SQLException
      */
-    public boolean executeProcedure(String procedureName, CoalesceParameter... parameters) throws SQLException
+    public final boolean executeProcedure(final String procedureName, final CoalesceParameter... parameters)
+            throws SQLException
     {
 
         // Compile SQL Command
@@ -177,7 +178,11 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
 
         for (int ii = 0; ii < parameters.length; ii++)
         {
-            if (ii != 0) sb.append(",");
+            if (ii != 0)
+            {
+                sb.append(",");
+            }
+            
             sb.append("?");
         }
 
@@ -185,8 +190,7 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
 
         // TODO: Implement Retry
 
-        // Open Connection if not already created
-        if (this._conn == null) this.openConnection();
+        openDataConnection();
 
         CallableStatement stmt = this._conn.prepareCall(sb.toString());
 
@@ -207,20 +211,22 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
         return true;
 
     }
+
     /**
      * Returns meta data for Coalesce Entity Template as XML.
-     * @param SQL statement specifying the elements to be returned.
+     * 
+     * @param sql statement specifying the elements to be returned.
      * @return XML of meta data for template.
      * @throws SQLException
      * @throws ParserConfigurationException
      */
-    public String getTemplateMetaData(String SQL) throws SQLException, ParserConfigurationException
+    public final String getTemplateMetaData(final String sql) throws SQLException, ParserConfigurationException
     {
 
         // Open Connection if not already created
-        if (this._conn == null) this.openConnection();
+        openDataConnection();
 
-        CallableStatement stmt = this._conn.prepareCall(SQL);
+        CallableStatement stmt = this._conn.prepareCall(sql);
         ResultSet rs = stmt.executeQuery();
         DocumentBuilderFactory docBuildFact = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuild = docBuildFact.newDocumentBuilder();
@@ -279,11 +285,15 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
     }
 
     @Override
-    public void close() throws Exception
+    public final void close() throws Exception
     {
         if (this._conn != null)
         {
-            if (!this._conn.getAutoCommit()) this._conn.commit();
+            if (!this._conn.getAutoCommit())
+            {
+                this._conn.commit();
+            }
+
             this._conn.close();
         }
     }
@@ -295,5 +305,13 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
     /*-----------------------------------------------------------------------------'
     Private Functions
     -----------------------------------------------------------------------------*/
+
+    private void openDataConnection() throws SQLException
+    {
+        if (this._conn == null)
+        {
+            this.openConnection();
+        }
+    }
 
 }

@@ -2,6 +2,10 @@ package com.incadencecorp.coalesce.framework.persistance;
 
 import java.util.Properties;
 
+/**
+ * Stores credentials and other settings for database connections.
+ * @see CoalesceDataConnectorBase
+ */
 public class ServerConn {
 
     private String _db = "";
@@ -11,7 +15,7 @@ public class ServerConn {
     private String _serverName = "";
     private int _portNumber = 0;
     private boolean _postGres = false;
-    Properties _props = new Properties();
+    private Properties _props = new Properties();
 
     public boolean isPostGres()
     {
