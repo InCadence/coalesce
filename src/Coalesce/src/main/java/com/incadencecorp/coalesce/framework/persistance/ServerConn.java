@@ -31,7 +31,9 @@ public class ServerConn {
     public String getPassword()
     {
         if (_postGres == false)
+        {
             return this._password.trim();
+        }
         else
         {
             return this._props.getProperty(_password);
@@ -63,7 +65,9 @@ public class ServerConn {
     public String getUser()
     {
         if (_postGres == false)
+        {
             return this._user.trim();
+        }
         else
         {
             return this._props.getProperty(_user);

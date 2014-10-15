@@ -47,7 +47,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     // -----------------------------------------------------------------------//
 
     private boolean _suspendHistory = false;
-    protected Field _entityField;
+    private Field _entityField;
 
     // -----------------------------------------------------------------------//
     // Factory and Initialization
@@ -264,7 +264,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     {
 
         // Set References
-        _parent = parent;
+        setParent(parent);
         _entityField = field;
 
         super.initialize();
@@ -276,7 +276,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
             fieldHistory.initialize(this, entityFieldHistory);
 
             // Add to Child Collection
-            _childDataObjects.put(fieldHistory.getKey(), fieldHistory);
+            setChildDataObject(fieldHistory.getKey(), fieldHistory);
         }
 
         return true;
@@ -573,11 +573,12 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
         // Return history items in the same order they are in the Entity
         for (Fieldhistory fh : _entityField.getFieldhistory())
         {
-            CoalesceDataObject fdo = _childDataObjects.get(fh.getKey());
+            
+            CoalesceDataObject fdo = getChildDataObject(fh.getKey());
 
             if (fdo != null && fdo instanceof CoalesceFieldHistory)
             {
-                historyList.add((CoalesceFieldHistory) _childDataObjects.get(fh.getKey()));
+                historyList.add((CoalesceFieldHistory) getChildDataObject(fh.getKey()));
             }
         }
 
@@ -592,7 +593,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
      */
     public CoalesceFieldHistory getHistoryRecord(String historyKey)
     {
-        CoalesceFieldHistory historyRecord = (CoalesceFieldHistory) _childDataObjects.get(historyKey);
+        CoalesceFieldHistory historyRecord = (CoalesceFieldHistory) getChildDataObject(historyKey);
 
         return historyRecord;
 
@@ -799,7 +800,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     }
 
     // -----------------------------------------------------------------------//
-    // protected Methods
+    // protected Override Methods
     // -----------------------------------------------------------------------//
 
     @Override
@@ -815,8 +816,13 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     }
 
     // -----------------------------------------------------------------------//
-    // protected Methods
+    // Protected Methods
     // -----------------------------------------------------------------------//
+
+    protected Field getBaseField()
+    {
+        return _entityField;
+    }
 
     protected void createHistory(Object oldValue, Object newValue)
     {

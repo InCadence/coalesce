@@ -52,10 +52,10 @@ public class CoalesceRecord extends CoalesceDataObject {
 
     public CoalesceRecord(CoalesceRecord record)
     {
+        super(record);
+        
         // Copy Member Variables
         _entityRecord = record._entityRecord;
-        _parent = record._parent;
-        _childDataObjects = record._childDataObjects;
     }
 
     /**
@@ -108,7 +108,7 @@ public class CoalesceRecord extends CoalesceDataObject {
         if (record == null) throw new NullArgumentException("record");
 
         // Set References
-        _parent = parent;
+        setParent(parent);
         _entityRecord = record;
 
         super.initialize();
@@ -119,13 +119,13 @@ public class CoalesceRecord extends CoalesceDataObject {
             if (!newField.initialize(this, entityField)) return false;
 
             // Add to Child Collection
-            _childDataObjects.put(newField.getKey(), newField);
+            setChildDataObject(newField.getKey(), newField);
         }
 
         // Add to Parent Collections (if we're Active)
         if (getStatus() == ECoalesceDataObjectStatus.ACTIVE)
         {
-            parent._childDataObjects.put(getKey(), this);
+            parent.setChildDataObject(getKey(), this);
             parent.getRecords().add(this);
         }
 
@@ -178,7 +178,7 @@ public class CoalesceRecord extends CoalesceDataObject {
     {
         List<CoalesceField<?>> fields = new ArrayList<CoalesceField<?>>();
 
-        for (CoalesceDataObject dataObject : _childDataObjects.values())
+        for (CoalesceDataObject dataObject : getChildDataObjects().values())
         {
 
             if (dataObject instanceof CoalesceField<?>)
@@ -201,7 +201,7 @@ public class CoalesceRecord extends CoalesceDataObject {
     {
         List<String> fieldNames = new ArrayList<String>();
 
-        for (CoalesceDataObject dataObject : _childDataObjects.values())
+        for (CoalesceDataObject dataObject : getChildDataObjects().values())
         {
             if (dataObject instanceof CoalesceField<?>)
             {
@@ -223,7 +223,7 @@ public class CoalesceRecord extends CoalesceDataObject {
     {
         List<String> fieldKeys = new ArrayList<String>();
 
-        for (CoalesceDataObject dataObject : _childDataObjects.values())
+        for (CoalesceDataObject dataObject : getChildDataObjects().values())
         {
             if (dataObject instanceof CoalesceField<?>)
             {
@@ -403,7 +403,7 @@ public class CoalesceRecord extends CoalesceDataObject {
 
     private CoalesceRecordset getCastParent()
     {
-        return (CoalesceRecordset) _parent;
+        return (CoalesceRecordset) getParent();
     }
 
 }

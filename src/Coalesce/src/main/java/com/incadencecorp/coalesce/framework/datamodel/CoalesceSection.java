@@ -162,7 +162,7 @@ public class CoalesceSection extends CoalesceDataObject {
         if (section == null) throw new NullArgumentException("section");
 
         // Set References
-        _parent = parent;
+        setParent(parent);
         _entitySection = section;
 
         super.initialize();
@@ -173,9 +173,9 @@ public class CoalesceSection extends CoalesceDataObject {
             CoalesceRecordset newRecordSet = new CoalesceRecordset();
             if (!newRecordSet.initialize(this, childRecordSet)) continue;
 
-            if (!_childDataObjects.containsKey(newRecordSet.getKey()))
+            if (!getChildDataObjects().containsKey(newRecordSet.getKey()))
             {
-                _childDataObjects.put(newRecordSet.getKey(), newRecordSet);
+                setChildDataObject(newRecordSet.getKey(), newRecordSet);
             }
         }
 
@@ -275,7 +275,7 @@ public class CoalesceSection extends CoalesceDataObject {
 
         Map<String, CoalesceRecordset> recordSets = new HashMap<String, CoalesceRecordset>();
 
-        for (CoalesceDataObject child : _childDataObjects.values())
+        for (CoalesceDataObject child : getChildDataObjects().values())
         {
             if (child instanceof CoalesceRecordset)
             {

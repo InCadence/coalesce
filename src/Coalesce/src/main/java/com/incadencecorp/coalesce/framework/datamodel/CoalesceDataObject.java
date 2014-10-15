@@ -34,8 +34,23 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
     Protected Member Variables
     --------------------------------------------------------------------------*/
 
-    protected CoalesceDataObject _parent;
-    protected HashMap<String, CoalesceDataObject> _childDataObjects = new HashMap<String, CoalesceDataObject>();
+    private CoalesceDataObject _parent;
+    private HashMap<String, CoalesceDataObject> _childDataObjects = new HashMap<String, CoalesceDataObject>();
+
+    /*--------------------------------------------------------------------------
+    Constructors
+    --------------------------------------------------------------------------*/
+    CoalesceDataObject()
+    {
+        // Do Nothing
+    }
+
+    CoalesceDataObject(CoalesceDataObject dataObject)
+    {
+        // Copy Member Variables
+        setParent(dataObject.getParent());
+        _childDataObjects = dataObject.getChildDataObjects();
+    }
 
     /*--------------------------------------------------------------------------
     Public Abstract Functions
@@ -265,7 +280,7 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
     }
 
     @Override
-    public Map<String, CoalesceDataObject> getChildDataObjects()
+    public HashMap<String, CoalesceDataObject> getChildDataObjects()
     {
         return this._childDataObjects;
     }
@@ -277,9 +292,14 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
      * @param key key identifying the childDataObject
      * @param value childDataObject to add to the DataObject's children
      */
-    public void setChildDataObjects(String key, CoalesceDataObject value)
+    public void setChildDataObject(String key, CoalesceDataObject value)
     {
         this._childDataObjects.put(key, value);
+    }
+
+    public CoalesceDataObject getChildDataObject(String key)
+    {
+        return this._childDataObjects.get(key);
     }
 
     @Override
@@ -491,6 +511,15 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
 
         return true;
 
+    }
+
+    protected boolean initialize(CoalesceDataObject dataObject)
+    {
+        setParent(dataObject.getParent());
+        
+        _childDataObjects = dataObject.getChildDataObjects();
+        
+        return true;
     }
 
     protected String getStringElement(String value)

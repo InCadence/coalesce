@@ -127,7 +127,7 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> {
     {
 
         // Set References
-        _parent = parent;
+        setParent(parent);
         _entityFieldHistory = fieldHistory;
 
         return super.initialize();
@@ -386,7 +386,7 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> {
 
     private void setAttributes(CoalesceField<?> field)
     {
-        Field entityField = field._entityField;
+        Field entityField = field.getBaseField();
 
         _entityFieldHistory.setName(entityField.getName());
         _entityFieldHistory.setValue(entityField.getValue());

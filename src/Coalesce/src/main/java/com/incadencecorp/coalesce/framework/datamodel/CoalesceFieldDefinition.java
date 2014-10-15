@@ -314,7 +314,7 @@ public class CoalesceFieldDefinition extends CoalesceDataObject implements ICoal
     {
 
         // Set References
-        _parent = parent;
+        setParent(parent);
         _entityFieldDefinition = fieldDefinition;
 
         super.initialize();
@@ -322,7 +322,7 @@ public class CoalesceFieldDefinition extends CoalesceDataObject implements ICoal
         // Add to Parent Collections
         if (getStatus() == ECoalesceDataObjectStatus.ACTIVE)
         {
-            parent._childDataObjects.put(getKey(), this);
+            parent.setChildDataObject(getKey(), this);
             parent.getFieldDefinitions().add(this);
         }
 

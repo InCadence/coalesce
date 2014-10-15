@@ -50,8 +50,8 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
 
     private Recordset _entityRecordset;
 
-    protected ArrayList<CoalesceFieldDefinition> _fieldDefinitions;
-    protected ArrayList<CoalesceRecord> _records;
+    private ArrayList<CoalesceFieldDefinition> _fieldDefinitions;
+    private ArrayList<CoalesceRecord> _records;
 
     // -----------------------------------------------------------------------//
     // Factory and Initialization
@@ -117,9 +117,9 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
         newRecordset.setMaxRecords(maxRecords);
 
         // Add to parent's child collection
-        if (!parent._childDataObjects.containsKey(newRecordset.getKey()))
+        if (!parent.getChildDataObjects().containsKey(newRecordset.getKey()))
         {
-            parent._childDataObjects.put(newRecordset.getKey(), newRecordset);
+            parent.setChildDataObject(newRecordset.getKey(), newRecordset);
         }
 
         return newRecordset;
@@ -144,7 +144,7 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
         if (recordset == null) throw new NullArgumentException("recordset");
 
         // Set References
-        _parent = parent;
+        setParent(parent);
         _entityRecordset = recordset;
 
         super.initialize();

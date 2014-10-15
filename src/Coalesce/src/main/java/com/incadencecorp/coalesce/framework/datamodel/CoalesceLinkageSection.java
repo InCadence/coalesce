@@ -93,7 +93,7 @@ public class CoalesceLinkageSection extends CoalesceDataObject {
         if (parent == null) throw new NullArgumentException("parent");
 
         // Set References
-        _parent = parent;
+        setParent(parent);
         _entityLinkageSection = parent.getEntityLinkageSection();
 
         super.initialize();
@@ -110,9 +110,9 @@ public class CoalesceLinkageSection extends CoalesceDataObject {
                 CoalesceLinkage newLinkage = new CoalesceLinkage();
                 if (!newLinkage.initialize(this, childLinkage)) continue;
 
-                if (!_childDataObjects.containsKey(newLinkage.getKey()))
+                if (!getChildDataObjects().containsKey(newLinkage.getKey()))
                 {
-                    _childDataObjects.put(newLinkage.getKey(), newLinkage);
+                    setChildDataObject(newLinkage.getKey(), newLinkage);
                 }
             }
 
@@ -170,7 +170,7 @@ public class CoalesceLinkageSection extends CoalesceDataObject {
     {
         Map<String, CoalesceLinkage> linkages = new HashMap<String, CoalesceLinkage>();
 
-        for (CoalesceDataObject xdo : _childDataObjects.values())
+        for (CoalesceDataObject xdo : getChildDataObjects().values())
         {
             if (xdo instanceof CoalesceLinkage)
             {

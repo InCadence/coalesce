@@ -261,11 +261,11 @@ public class CoalesceEntity extends CoalesceDataObject {
      */
     public boolean initialize(CoalesceEntity entity)
     {
+        super.initialize(entity); 
+        
         // Copy Member Variables
         _entity = entity._entity;
-        _parent = entity._parent;
-        _childDataObjects = entity._childDataObjects;
-
+        
         // Initialize References
         return initializeReferences();
     }
@@ -282,7 +282,7 @@ public class CoalesceEntity extends CoalesceDataObject {
 
         if (!linkageSection.initialize(this)) return false;
 
-        _childDataObjects.put(linkageSection.getKey(), linkageSection);
+        setChildDataObject(linkageSection.getKey(), linkageSection);
 
         for (Section entitySection : _entity.getSection())
         {
@@ -290,7 +290,7 @@ public class CoalesceEntity extends CoalesceDataObject {
 
             if (!section.initialize(this, entitySection)) return false;
 
-            _childDataObjects.put(section.getKey(), section);
+            setChildDataObject(section.getKey(), section);
 
         }
 
@@ -624,7 +624,7 @@ public class CoalesceEntity extends CoalesceDataObject {
 
         Map<String, CoalesceSection> sections = new HashMap<String, CoalesceSection>();
 
-        for (CoalesceDataObject child : _childDataObjects.values())
+        for (CoalesceDataObject child : getChildDataObjects().values())
         {
             if (child instanceof CoalesceSection)
             {
@@ -646,7 +646,7 @@ public class CoalesceEntity extends CoalesceDataObject {
     public CoalesceLinkageSection getLinkageSection()
     {
 
-        for (CoalesceDataObject child : _childDataObjects.values())
+        for (CoalesceDataObject child : getChildDataObjects().values())
         {
             if (child instanceof CoalesceLinkageSection)
             {

@@ -78,7 +78,7 @@ public class CoalesceLinkage extends CoalesceDataObject implements ICoalesceLink
         if (parent == null) throw new NullArgumentException("parent");
         if (linkage == null) throw new NullArgumentException("linkage");
 
-        _parent = parent;
+        setParent(parent);
         _entityLinkage = linkage;
 
         return super.initialize();
