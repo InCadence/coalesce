@@ -24,13 +24,13 @@ import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.generatedjaxb.Entity;
-import com.incadencecorp.coalesce.framework.generatedjaxb.Entity.Linkagesection;
-import com.incadencecorp.coalesce.framework.generatedjaxb.Entity.Section;
-import com.incadencecorp.coalesce.framework.generatedjaxb.Entity.Linkagesection.Linkage;
-import com.incadencecorp.coalesce.framework.generatedjaxb.Entity.Section.Recordset;
-import com.incadencecorp.coalesce.framework.generatedjaxb.Entity.Section.Recordset.Record;
-import com.incadencecorp.coalesce.framework.generatedjaxb.Entity.Section.Recordset.Record.Field;
-import com.incadencecorp.coalesce.framework.generatedjaxb.Entity.Section.Recordset.Record.Field.Fieldhistory;
+import com.incadencecorp.coalesce.framework.generatedjaxb.Linkagesection;
+import com.incadencecorp.coalesce.framework.generatedjaxb.Section;
+import com.incadencecorp.coalesce.framework.generatedjaxb.Linkage;
+import com.incadencecorp.coalesce.framework.generatedjaxb.Recordset;
+import com.incadencecorp.coalesce.framework.generatedjaxb.Record;
+import com.incadencecorp.coalesce.framework.generatedjaxb.Field;
+import com.incadencecorp.coalesce.framework.generatedjaxb.Fieldhistory;
 
 
 /*-----------------------------------------------------------------------------'

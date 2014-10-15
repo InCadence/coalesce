@@ -17,7 +17,10 @@ import com.incadencecorp.coalesce.common.CoalesceTypeInstances;
 import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
-import com.incadencecorp.coalesce.framework.generatedjaxb.Entity.Section;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
+import com.incadencecorp.coalesce.framework.generatedjaxb.Section;
 
 public class CoalesceSectionTest {
 

@@ -16,7 +16,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
@@ -35,18 +34,14 @@ import org.joda.time.DateTime;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element ref="{}linkagesection"/>
+ *         &lt;element ref="{}recordset" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element ref="{}section" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="key" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="datecreated" type="{http://www.w3.org/2001/XMLSchema}date" />
  *       &lt;attribute name="lastmodified" type="{http://www.w3.org/2001/XMLSchema}date" />
  *       &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="source" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="version" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="entityid" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="entityidtype" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="title" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="noindex" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="status" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;anyAttribute processContents='skip' namespace='##other'/>
  *     &lt;/restriction>
@@ -58,14 +53,13 @@ import org.joda.time.DateTime;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "linkagesection",
+    "recordset",
     "section"
 })
-@XmlRootElement(name = "entity")
-public class Entity {
+@XmlRootElement(name = "section")
+public class Section {
 
-    @XmlElement(required = true)
-    protected Linkagesection linkagesection;
+    protected List<Recordset> recordset;
     protected List<Section> section;
     @XmlAttribute(name = "key")
     protected String key;
@@ -79,43 +73,40 @@ public class Entity {
     protected DateTime lastmodified;
     @XmlAttribute(name = "name")
     protected String name;
-    @XmlAttribute(name = "source")
-    protected String source;
-    @XmlAttribute(name = "version")
-    protected String version;
-    @XmlAttribute(name = "entityid")
-    protected String entityid;
-    @XmlAttribute(name = "entityidtype")
-    protected String entityidtype;
-    @XmlAttribute(name = "title")
-    protected String title;
+    @XmlAttribute(name = "noindex")
+    protected String noindex;
     @XmlAttribute(name = "status")
     protected String status;
     @XmlAnyAttribute
     private Map<QName, String> otherAttributes = new HashMap<QName, String>();
 
     /**
-     * Gets the value of the linkagesection property.
+     * Gets the value of the recordset property.
      * 
-     * @return
-     *     possible object is
-     *     {@link Linkagesection }
-     *     
-     */
-    public Linkagesection getLinkagesection() {
-        return linkagesection;
-    }
-
-    /**
-     * Sets the value of the linkagesection property.
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the recordset property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link Linkagesection }
-     *     
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getRecordset().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link Recordset }
+     * 
+     * 
      */
-    public void setLinkagesection(Linkagesection value) {
-        this.linkagesection = value;
+    public List<Recordset> getRecordset() {
+        if (recordset == null) {
+            recordset = new ArrayList<Recordset>();
+        }
+        return this.recordset;
     }
 
     /**
@@ -244,123 +235,27 @@ public class Entity {
     }
 
     /**
-     * Gets the value of the source property.
+     * Gets the value of the noindex property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getSource() {
-        return source;
+    public String getNoindex() {
+        return noindex;
     }
 
     /**
-     * Sets the value of the source property.
+     * Sets the value of the noindex property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setSource(String value) {
-        this.source = value;
-    }
-
-    /**
-     * Gets the value of the version property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getVersion() {
-        return version;
-    }
-
-    /**
-     * Sets the value of the version property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setVersion(String value) {
-        this.version = value;
-    }
-
-    /**
-     * Gets the value of the entityid property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getEntityid() {
-        return entityid;
-    }
-
-    /**
-     * Sets the value of the entityid property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setEntityid(String value) {
-        this.entityid = value;
-    }
-
-    /**
-     * Gets the value of the entityidtype property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getEntityidtype() {
-        return entityidtype;
-    }
-
-    /**
-     * Sets the value of the entityidtype property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setEntityidtype(String value) {
-        this.entityidtype = value;
-    }
-
-    /**
-     * Gets the value of the title property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getTitle() {
-        return title;
-    }
-
-    /**
-     * Sets the value of the title property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setTitle(String value) {
-        this.title = value;
+    public void setNoindex(String value) {
+        this.noindex = value;
     }
 
     /**

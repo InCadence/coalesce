@@ -11,8 +11,8 @@ import org.joda.time.DateTime;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
-import com.incadencecorp.coalesce.framework.generatedjaxb.Entity.Linkagesection;
-import com.incadencecorp.coalesce.framework.generatedjaxb.Entity.Linkagesection.Linkage;
+import com.incadencecorp.coalesce.framework.generatedjaxb.Linkagesection;
+import com.incadencecorp.coalesce.framework.generatedjaxb.Linkage;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved

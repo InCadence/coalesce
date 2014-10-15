@@ -15,7 +15,7 @@ import org.junit.Test;
 
 import com.incadencecorp.coalesce.common.CoalesceTypeInstances;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
-import com.incadencecorp.coalesce.framework.generatedjaxb.Entity.Section.Recordset.Record;
+import com.incadencecorp.coalesce.framework.generatedjaxb.Record;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved

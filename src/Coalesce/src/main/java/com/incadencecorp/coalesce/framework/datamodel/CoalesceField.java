@@ -19,8 +19,8 @@ import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
 import com.incadencecorp.coalesce.common.runtime.CoalesceSettings;
-import com.incadencecorp.coalesce.framework.generatedjaxb.Entity.Section.Recordset.Record.Field;
-import com.incadencecorp.coalesce.framework.generatedjaxb.Entity.Section.Recordset.Record.Field.Fieldhistory;
+import com.incadencecorp.coalesce.framework.generatedjaxb.Field;
+import com.incadencecorp.coalesce.framework.generatedjaxb.Fieldhistory;
 import com.vividsolutions.jts.geom.Coordinate;
 
 /*-----------------------------------------------------------------------------'

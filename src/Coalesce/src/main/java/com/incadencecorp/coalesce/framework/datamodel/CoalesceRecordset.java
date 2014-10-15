@@ -13,9 +13,9 @@ import org.joda.time.DateTime;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
-import com.incadencecorp.coalesce.framework.generatedjaxb.Entity.Section.Recordset;
-import com.incadencecorp.coalesce.framework.generatedjaxb.Entity.Section.Recordset.Fielddefinition;
-import com.incadencecorp.coalesce.framework.generatedjaxb.Entity.Section.Recordset.Record;
+import com.incadencecorp.coalesce.framework.generatedjaxb.Recordset;
+import com.incadencecorp.coalesce.framework.generatedjaxb.Fielddefinition;
+import com.incadencecorp.coalesce.framework.generatedjaxb.Record;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved

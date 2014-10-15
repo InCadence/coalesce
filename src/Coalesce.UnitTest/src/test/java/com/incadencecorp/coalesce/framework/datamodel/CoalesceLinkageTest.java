@@ -20,7 +20,12 @@ import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
-import com.incadencecorp.coalesce.framework.generatedjaxb.Entity.Linkagesection.Linkage;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection;
+import com.incadencecorp.coalesce.framework.datamodel.ECoalesceDataObjectStatus;
+import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
+import com.incadencecorp.coalesce.framework.generatedjaxb.Linkage;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved

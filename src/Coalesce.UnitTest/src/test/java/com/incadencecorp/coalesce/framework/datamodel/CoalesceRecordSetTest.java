@@ -23,7 +23,7 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceDataObjectStatus;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
-import com.incadencecorp.coalesce.framework.generatedjaxb.Entity.Section.Recordset;
+import com.incadencecorp.coalesce.framework.generatedjaxb.Recordset;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved

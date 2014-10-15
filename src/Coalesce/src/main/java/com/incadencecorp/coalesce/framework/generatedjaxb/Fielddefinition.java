@@ -8,15 +8,12 @@
 
 package com.incadencecorp.coalesce.framework.generatedjaxb;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
@@ -35,19 +32,17 @@ import org.joda.time.DateTime;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element ref="{}linkagesection"/>
- *         &lt;element ref="{}section" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="key" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="datecreated" type="{http://www.w3.org/2001/XMLSchema}date" />
  *       &lt;attribute name="lastmodified" type="{http://www.w3.org/2001/XMLSchema}date" />
- *       &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="source" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="version" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="entityid" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="entityidtype" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="title" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="status" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="defaultclassificationmarking" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="defaultvalue" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="datatype" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="label" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="disablehistory" type="{http://www.w3.org/2001/XMLSchema}boolean" />
  *       &lt;anyAttribute processContents='skip' namespace='##other'/>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -57,16 +52,10 @@ import org.joda.time.DateTime;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "linkagesection",
-    "section"
-})
-@XmlRootElement(name = "entity")
-public class Entity {
+@XmlType(name = "")
+@XmlRootElement(name = "fielddefinition")
+public class Fielddefinition {
 
-    @XmlElement(required = true)
-    protected Linkagesection linkagesection;
-    protected List<Section> section;
     @XmlAttribute(name = "key")
     protected String key;
     @XmlAttribute(name = "datecreated")
@@ -77,75 +66,22 @@ public class Entity {
     @XmlJavaTypeAdapter(Adapter1 .class)
     @XmlSchemaType(name = "date")
     protected DateTime lastmodified;
-    @XmlAttribute(name = "name")
-    protected String name;
-    @XmlAttribute(name = "source")
-    protected String source;
-    @XmlAttribute(name = "version")
-    protected String version;
-    @XmlAttribute(name = "entityid")
-    protected String entityid;
-    @XmlAttribute(name = "entityidtype")
-    protected String entityidtype;
-    @XmlAttribute(name = "title")
-    protected String title;
     @XmlAttribute(name = "status")
     protected String status;
+    @XmlAttribute(name = "name")
+    protected String name;
+    @XmlAttribute(name = "defaultclassificationmarking")
+    protected String defaultclassificationmarking;
+    @XmlAttribute(name = "defaultvalue")
+    protected String defaultvalue;
+    @XmlAttribute(name = "datatype")
+    protected String datatype;
+    @XmlAttribute(name = "label")
+    protected String label;
+    @XmlAttribute(name = "disablehistory")
+    protected Boolean disablehistory;
     @XmlAnyAttribute
     private Map<QName, String> otherAttributes = new HashMap<QName, String>();
-
-    /**
-     * Gets the value of the linkagesection property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Linkagesection }
-     *     
-     */
-    public Linkagesection getLinkagesection() {
-        return linkagesection;
-    }
-
-    /**
-     * Sets the value of the linkagesection property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Linkagesection }
-     *     
-     */
-    public void setLinkagesection(Linkagesection value) {
-        this.linkagesection = value;
-    }
-
-    /**
-     * Gets the value of the section property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the section property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getSection().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Section }
-     * 
-     * 
-     */
-    public List<Section> getSection() {
-        if (section == null) {
-            section = new ArrayList<Section>();
-        }
-        return this.section;
-    }
 
     /**
      * Gets the value of the key property.
@@ -220,6 +156,30 @@ public class Entity {
     }
 
     /**
+     * Gets the value of the status property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getStatus() {
+        return status;
+    }
+
+    /**
+     * Sets the value of the status property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setStatus(String value) {
+        this.status = value;
+    }
+
+    /**
      * Gets the value of the name property.
      * 
      * @return
@@ -244,147 +204,123 @@ public class Entity {
     }
 
     /**
-     * Gets the value of the source property.
+     * Gets the value of the defaultclassificationmarking property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getSource() {
-        return source;
+    public String getDefaultclassificationmarking() {
+        return defaultclassificationmarking;
     }
 
     /**
-     * Sets the value of the source property.
+     * Sets the value of the defaultclassificationmarking property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setSource(String value) {
-        this.source = value;
+    public void setDefaultclassificationmarking(String value) {
+        this.defaultclassificationmarking = value;
     }
 
     /**
-     * Gets the value of the version property.
+     * Gets the value of the defaultvalue property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getVersion() {
-        return version;
+    public String getDefaultvalue() {
+        return defaultvalue;
     }
 
     /**
-     * Sets the value of the version property.
+     * Sets the value of the defaultvalue property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setVersion(String value) {
-        this.version = value;
+    public void setDefaultvalue(String value) {
+        this.defaultvalue = value;
     }
 
     /**
-     * Gets the value of the entityid property.
+     * Gets the value of the datatype property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getEntityid() {
-        return entityid;
+    public String getDatatype() {
+        return datatype;
     }
 
     /**
-     * Sets the value of the entityid property.
+     * Sets the value of the datatype property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setEntityid(String value) {
-        this.entityid = value;
+    public void setDatatype(String value) {
+        this.datatype = value;
     }
 
     /**
-     * Gets the value of the entityidtype property.
+     * Gets the value of the label property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getEntityidtype() {
-        return entityidtype;
+    public String getLabel() {
+        return label;
     }
 
     /**
-     * Sets the value of the entityidtype property.
+     * Sets the value of the label property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setEntityidtype(String value) {
-        this.entityidtype = value;
+    public void setLabel(String value) {
+        this.label = value;
     }
 
     /**
-     * Gets the value of the title property.
+     * Gets the value of the disablehistory property.
      * 
      * @return
      *     possible object is
-     *     {@link String }
+     *     {@link Boolean }
      *     
      */
-    public String getTitle() {
-        return title;
+    public Boolean isDisablehistory() {
+        return disablehistory;
     }
 
     /**
-     * Sets the value of the title property.
+     * Sets the value of the disablehistory property.
      * 
      * @param value
      *     allowed object is
-     *     {@link String }
+     *     {@link Boolean }
      *     
      */
-    public void setTitle(String value) {
-        this.title = value;
-    }
-
-    /**
-     * Gets the value of the status property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getStatus() {
-        return status;
-    }
-
-    /**
-     * Sets the value of the status property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setStatus(String value) {
-        this.status = value;
+    public void setDisablehistory(Boolean value) {
+        this.disablehistory = value;
     }
 
     /**

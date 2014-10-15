@@ -13,7 +13,7 @@ import org.joda.time.DateTime;
 import com.incadencecorp.coalesce.common.classification.Marking;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
-import com.incadencecorp.coalesce.framework.generatedjaxb.Entity.Linkagesection.Linkage;
+import com.incadencecorp.coalesce.framework.generatedjaxb.Linkage;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved

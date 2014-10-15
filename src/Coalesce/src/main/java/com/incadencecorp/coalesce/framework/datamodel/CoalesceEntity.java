@@ -33,8 +33,8 @@ import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
 import com.incadencecorp.coalesce.framework.generatedjaxb.Entity;
-import com.incadencecorp.coalesce.framework.generatedjaxb.Entity.Linkagesection;
-import com.incadencecorp.coalesce.framework.generatedjaxb.Entity.Section;
+import com.incadencecorp.coalesce.framework.generatedjaxb.Linkagesection;
+import com.incadencecorp.coalesce.framework.generatedjaxb.Section;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -1179,13 +1179,13 @@ public class CoalesceEntity extends CoalesceDataObject {
 
     }
 
-    protected Entity.Linkagesection getEntityLinkageSection()
+    protected Linkagesection getEntityLinkageSection()
     {
         Linkagesection linkageSection = _entity.getLinkagesection();
 
         if (linkageSection == null)
         {
-            linkageSection = new Entity.Linkagesection();
+            linkageSection = new Linkagesection();
             _entity.setLinkagesection(linkageSection);
         }
 
