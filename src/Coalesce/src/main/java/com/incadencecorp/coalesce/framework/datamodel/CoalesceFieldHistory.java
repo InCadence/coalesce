@@ -44,24 +44,6 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> {
 
     /**
      * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory} and ties it to its parent
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldBase}.
-     * 
-     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldBase} base of extended field that is
-     *            the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory}'s parent.
-     * 
-     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory}, resulting history created from
-     *         the extended {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldBase}.
-     */
-    public static CoalesceFieldHistory create(CoalesceFieldBase<?> parent)
-    {
-
-        if (!(parent instanceof CoalesceField<?>)) throw new ClassCastException("Must be of type CoalesceField");
-
-        return create((CoalesceField<?>) parent);
-    }
-
-    /**
-     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory} and ties it to its parent
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}.
      * 
      * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}, the
@@ -438,38 +420,37 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> {
     {
         switch (name.toLowerCase()) {
         case "key":
-            _entityFieldHistory.setKey(value);
+            setKey(value);
             return true;
         case "datecreated":
-            _entityFieldHistory.setDatecreated(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
+            setDateCreated(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
             return true;
         case "lastmodified":
-            _entityFieldHistory.setLastmodified(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
+            setLastModified(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
             return true;
         case "name":
-            _entityFieldHistory.setName(value);
+            setName(value);
             return true;
         case "datatype":
-            _entityFieldHistory.setDatatype(value);
+            setDataType(ECoalesceFieldDataTypes.getTypeForCoalesceType(value));
             return true;
         case "classificationmarking":
-            _entityFieldHistory.setClassificationmarking(value);
+            setClassificationMarking(value);
             return true;
         case "label":
-            _entityFieldHistory.setLabel(value);
+            setLabel(value);
             return true;
         case "value":
-            _entityFieldHistory.setValue(value);
+            setValue(value);
             return true;
         case "status":
-            _entityFieldHistory.setStatus(value);
+            setStatus(ECoalesceDataObjectStatus.getTypeForLabel(value));
             return true;
         case "previoushistorykey":
-            _entityFieldHistory.setPrevioushistorykey(value);
+            setPreviousHistoryKey(value);
             return true;
         default:
-            this.setOtherAttribute(name, value);
-            return true;
+             return setOtherAttribute(name, value);
         }
     }
 

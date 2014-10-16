@@ -19,6 +19,7 @@ import com.incadencecorp.coalesce.common.classification.MarkingValueTest;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
+import com.incadencecorp.coalesce.common.helpers.XmlHelper;
 import com.incadencecorp.coalesce.framework.generatedjaxb.Section;
 import com.incadencecorp.coalesce.framework.generatedjaxb.Recordset;
 import com.incadencecorp.coalesce.framework.generatedjaxb.Record;
@@ -59,18 +60,6 @@ public class CoalesceFieldHistoryTest {
      * @After public void tearDown() throws Exception { }
      */
 
-    @Test(expected = ClassCastException.class)
-    public void ConstructorXsdFieldBaseXsdFieldHistoryTest()
-    {
-
-        CoalesceFieldHistory fh1 = new CoalesceFieldHistory();
-        fh1.initialize(null, new Fieldhistory());
-
-        @SuppressWarnings("unused")
-        CoalesceFieldHistory fh2 = CoalesceFieldHistory.create(fh1);
-
-    }
-
     @Test
     public void ConstructorXsdFieldBaseXsdFieldTest()
     {
@@ -80,18 +69,6 @@ public class CoalesceFieldHistoryTest {
 
         @SuppressWarnings("unused")
         CoalesceFieldHistory fh = CoalesceFieldHistory.create(field);
-
-    }
-
-    @Test(expected = ClassCastException.class)
-    public void ConstructorXsdFieldHistoryNullTest()
-    {
-
-        CoalesceFieldHistory fh1 = new CoalesceFieldHistory();
-        fh1.initialize(null, new Fieldhistory());
-
-        @SuppressWarnings("unused")
-        CoalesceFieldHistory fh2 = CoalesceFieldHistory.create(fh1);
 
     }
 
@@ -112,7 +89,7 @@ public class CoalesceFieldHistoryTest {
 
         CoalesceField<?> field = new CoalesceStringField();
         field.initialize(record, new Field());
-        
+
         @SuppressWarnings("unused")
         CoalesceFieldHistory fh = CoalesceFieldHistory.create(field);
 
@@ -131,7 +108,7 @@ public class CoalesceFieldHistoryTest {
         // Verify
         assertTrue(entity.getCurrentStatusHistory().size() == 1);
 
-        // Change Value 
+        // Change Value
         entity.setCurrentStatus(EActionStatuses.ExploitationPending);
 
         // Verify
@@ -141,28 +118,28 @@ public class CoalesceFieldHistoryTest {
         // Create New Action from entity
         PhotoGalleryEntity entity2 = new PhotoGalleryEntity();
         entity2.initialize(entity.toXml());
-        
+
         // Change Value (Same Value no History Should be Created)
         entity2.setCurrentStatus(EActionStatuses.ExploitationPending);
-        
-        // Verify 
+
+        // Verify
         assertTrue(entity2.getCurrentStatusHistory().size() == 2);
-        
+
         // Change Value (History Should be Created)
         entity2.setCurrentStatus(EActionStatuses.CollectionComplete);
-        
+
         // Verify
         assertTrue(entity2.getCurrentStatusHistory().size() == 3);
         assertEquals(entity2.getCurrentStatusHistory().get(0).getValue(), EActionStatuses.ExploitationPending.getLabel());
     }
-    
+
     @Test
     public void addFieldHistory()
     {
         // Create New Mission
         MissionEntity entity = new MissionEntity();
         entity.initialize();
-        
+
         // Change Value (History Should not be Created)
         entity.getMissionName().setValue("No history should be added");
 
@@ -565,6 +542,10 @@ public class CoalesceFieldHistoryTest {
 
         CoalesceFieldHistory field = GetTestMissionNameFieldHistory();
 
+        assertEquals("00000000-0000-0000-0000-000000000000", field.getPreviousHistoryKey());
+
+        field.setPreviousHistoryKey("");
+        
         assertEquals("00000000-0000-0000-0000-000000000000", field.getPreviousHistoryKey());
 
     }
@@ -999,6 +980,123 @@ public class CoalesceFieldHistoryTest {
 
         CoalesceFieldHistory fh = field.getHistory().get(0);
         fh.setTypedValue(UUID.randomUUID());
+
+    }
+
+    @Test
+    public void toXmlTest()
+    {
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceStringField field = (CoalesceStringField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/ActionNumber");
+        CoalesceFieldHistory fh = field.getHistoryRecord("00BB7A9F-4F37-46E9-85EB-9280ED3619CC");
+
+        String fhXml = fh.toXml();
+
+        Fieldhistory desFh = (Fieldhistory) XmlHelper.deserialize(fhXml, Fieldhistory.class);
+
+        assertEquals(fh.getKey(), desFh.getKey());
+        assertEquals(fh.getName(), desFh.getName());
+        assertEquals(fh.getDateCreated(), desFh.getDatecreated());
+        assertEquals(fh.getLastModified(), desFh.getLastmodified());
+        assertEquals(fh.getDataType(), ECoalesceFieldDataTypes.getTypeForCoalesceType(desFh.getDatatype()));
+        assertEquals(fh.getClassificationMarking(), new Marking(desFh.getClassificationmarking()));
+        assertEquals(fh.getLabel(), desFh.getLabel());
+        assertEquals(fh.getValue(), desFh.getValue());
+        assertEquals(fh.getPreviousHistoryKey(), desFh.getPrevioushistorykey());
+        assertEquals(fh.getStatus(), ECoalesceDataObjectStatus.getTypeForLabel(desFh.getStatus()));
+
+    }
+
+    @Test
+    public void setStatusTest()
+    {
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceStringField field = (CoalesceStringField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/ActionNumber");
+        CoalesceFieldHistory fh = field.getHistoryRecord("00BB7A9F-4F37-46E9-85EB-9280ED3619CC");
+
+        assertEquals(ECoalesceDataObjectStatus.ACTIVE, fh.getStatus());
+
+        fh.setStatus(ECoalesceDataObjectStatus.UNKNOWN);
+        String fhXml = fh.toXml();
+
+        Fieldhistory desFh = (Fieldhistory) XmlHelper.deserialize(fhXml, Fieldhistory.class);
+
+        assertEquals(ECoalesceDataObjectStatus.UNKNOWN, ECoalesceDataObjectStatus.getTypeForLabel(desFh.getStatus()));
+
+    }
+
+    @Test
+    public void attributeTest() throws CoalesceDataFormatException
+    {
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceStringField field = (CoalesceStringField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/ActionNumber");
+        CoalesceFieldHistory fh = field.getHistoryRecord("00BB7A9F-4F37-46E9-85EB-9280ED3619CC");
+
+        fh.setAttribute("TestAttribute", "TestingValue");
+
+        assertEquals(10, fh.getAttributes().size());
+
+        assertEquals("TestingValue", fh.getAttribute("TestAttribute"));
+
+        assertEquals("ActionNumber", fh.getName());
+        assertEquals(false, fh.getNoIndex());
+
+        fh.setAttribute("Name", "TestingName");
+        assertEquals("TestingName", fh.getName());
+        assertEquals("TestingName", fh.getAttribute("Name"));
+
+        UUID guid = UUID.randomUUID();
+        fh.setAttribute("Key", guid.toString());
+        assertEquals(guid.toString(), fh.getKey());
+        assertEquals(guid.toString(), fh.getAttribute("Key"));
+
+        DateTime now = JodaDateTimeHelper.nowInUtc();
+        DateTime future = now.plusDays(2);
+
+        fh.setAttribute("DateCreated", JodaDateTimeHelper.toXmlDateTimeUTC(now));
+        assertEquals(now, fh.getDateCreated());
+
+        fh.setAttribute("NoIndex", "True");
+        assertEquals(true, fh.getNoIndex());
+
+        fh.setAttribute("DataType", "Integer");
+        assertEquals(ECoalesceFieldDataTypes.INTEGER_TYPE, fh.getDataType());
+
+        fh.setAttribute("Classificationmarking", "(TS)");
+        assertEquals(new Marking("(TS)"), fh.getClassificationMarking());
+
+        fh.setAttribute("Label", "labelTest");
+        assertEquals("labelTest", fh.getLabel());
+
+        fh.setAttribute("Value", "123");
+        assertEquals("123", fh.getValue());
+
+        UUID previousGuid = UUID.randomUUID();
+        fh.setAttribute("PreviousHistoryKey", previousGuid.toString());
+        assertEquals(previousGuid.toString(), fh.getPreviousHistoryKey());
+
+        fh.setAttribute("Status", ECoalesceDataObjectStatus.UNKNOWN.getLabel());
+        assertEquals(ECoalesceDataObjectStatus.UNKNOWN, fh.getStatus());
+
+        fh.setAttribute("LastModified", JodaDateTimeHelper.toXmlDateTimeUTC(future));
+        assertEquals(future, fh.getLastModified());
+
+        String entityXml = entity.toXml();
+        CoalesceEntity desEntity = CoalesceEntity.create(entityXml);
+        CoalesceFieldHistory desFh = ((CoalesceStringField) desEntity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/ActionNumber")).getHistoryRecord(guid.toString());
+
+        assertEquals("TestingValue", desFh.getAttribute("TestAttribute"));
+        assertEquals("TestingName", desFh.getName());
+        assertEquals(guid.toString(), desFh.getKey());
+        assertEquals(now, desFh.getDateCreated());
+        assertEquals(future, desFh.getLastModified());
+        assertEquals(true, desFh.getNoIndex());
+        assertEquals(ECoalesceFieldDataTypes.INTEGER_TYPE, desFh.getDataType());
+        assertEquals(new Marking("(TS)"), desFh.getClassificationMarking());
+        assertEquals("labelTest", desFh.getLabel());
+        assertEquals("123", desFh.getValue());
+        assertEquals(previousGuid.toString(), desFh.getPreviousHistoryKey());
+        assertEquals(ECoalesceDataObjectStatus.UNKNOWN, desFh.getStatus());
 
     }
 

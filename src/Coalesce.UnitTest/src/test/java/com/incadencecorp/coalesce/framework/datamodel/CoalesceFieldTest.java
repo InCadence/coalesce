@@ -16,7 +16,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.UUID;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.apache.xerces.impl.dv.util.Base64;
 import org.jdom2.JDOMException;
 import org.joda.time.DateTime;
@@ -118,26 +117,6 @@ public class CoalesceFieldTest {
 
         assertEquals("field", doubleField.getType());
         assertEquals("field", floatField.getType());
-
-    }
-
-    @Test
-    public void createFieldNotImplemented()
-    {
-        thrown.expect(NotImplementedException.class);
-        thrown.expectMessage("Long not implemented");
-
-        CoalesceEntity entity = CoalesceEntity.create("TestingName", "Testingsource", "1.1", "EntityID", "entityType");
-        CoalesceSection section = entity.createSection("TestSection");
-        CoalesceRecordset recordset = section.createRecordset("TestRecordset");
-        recordset.createFieldDefinition("Long", ECoalesceFieldDataTypes.INTEGER_TYPE);
-
-        recordset.addNew();
-
-        String entityXml = entity.toXml();
-        String customField = entityXml.replace("integer", "long");
-        @SuppressWarnings("unused")
-        CoalesceEntity desEntity = CoalesceEntity.create(customField);
 
     }
 
