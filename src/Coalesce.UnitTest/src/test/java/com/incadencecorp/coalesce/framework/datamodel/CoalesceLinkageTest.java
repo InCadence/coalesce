@@ -330,7 +330,7 @@ public class CoalesceLinkageTest {
         CoalesceEntity desEntity = CoalesceEntity.create(entityXml);
         CoalesceLinkage desLinkage = getMissionLinkage(desEntity);
 
-        assertTrue(lastMod.isBefore(linkage.getLastModified()));
+        assertTrue(lastMod.isBefore(desLinkage.getLastModified()));
         assertEquals(Locale.UK, desLinkage.getInputLang());
 
         CoalesceEntity newEntity = CoalesceEntity.create("Operation", "Portal", "1.2.3.4", "ID", "Type");

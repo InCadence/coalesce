@@ -14,6 +14,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Locale;
 import java.util.UUID;
 
 import org.apache.xerces.impl.dv.util.Base64;
@@ -567,6 +568,47 @@ public class CoalesceFieldTest {
 
         assertEquals("", field.getHash());
 
+    }
+
+    @Test
+    public void inputLangTest()
+    {
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        CoalesceStringField field = (CoalesceStringField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionName");
+
+        assertEquals(null, field.getInputLang());
+
+        field.setInputLang(Locale.UK);
+
+        assertEquals(Locale.UK, field.getInputLang());
+
+        String entityXml = entity.toXml();
+
+        CoalesceEntity desEntity = CoalesceEntity.create(entityXml);
+        CoalesceStringField desField = (CoalesceStringField) desEntity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionName");
+
+        assertEquals(Locale.UK, desField.getInputLang());
+
+        CoalesceEntity newEntity = CoalesceEntity.create("Operation", "Portal", "1.2.3.4", "ID", "Type");
+        CoalesceSection newSection = newEntity.createSection("NewSection");
+        CoalesceRecordset newRecordset = newSection.createRecordset("NewRecordset");
+        newRecordset.createFieldDefinition("NewField", ECoalesceFieldDataTypes.STRING_TYPE);
+
+        CoalesceRecord newRecord = newRecordset.addNew();
+
+        CoalesceStringField newField = (CoalesceStringField) newRecord.getFieldByName("NewField");
+
+        assertEquals(null, newField.getInputLang());
+
+        newField.setInputLang(Locale.UK);
+        
+        String newEntityXml = newEntity.toXml();
+        CoalesceEntity desNewEntity = CoalesceEntity.create(newEntityXml);
+        CoalesceStringField desNewField = (CoalesceStringField) desNewEntity.getDataObjectForNamePath("Operation/NewSection/NewRecordset/NewRecordset Record/NewField");
+        
+        assertEquals(Locale.UK, desNewField.getInputLang());
+        
     }
 
     @Test
@@ -2351,6 +2393,7 @@ public class CoalesceFieldTest {
         assertEquals(field.getClassificationMarking(), new Marking(desField.getClassificationmarking()));
         assertEquals(field.getLabel(), desField.getLabel());
         assertEquals(field.getValue(), desField.getValue());
+        assertEquals(field.getInputLang(), desField.getInputlang());
         assertEquals(field.getStatus(), ECoalesceDataObjectStatus.getTypeForLabel(desField.getStatus()));
 
     }
@@ -2378,7 +2421,7 @@ public class CoalesceFieldTest {
         CoalesceStringField field = (CoalesceStringField) getTestMissionNameField(entity);
         field.setAttribute("TestAttribute", "TestingValue");
 
-        assertEquals(9, field.getAttributes().size());
+        assertEquals(10, field.getAttributes().size());
 
         assertEquals("TestingValue", field.getAttribute("TestAttribute"));
 
@@ -2415,6 +2458,15 @@ public class CoalesceFieldTest {
         field.setAttribute("Value", "123");
         assertEquals("123", field.getValue());
 
+        field.setAttribute("InputLang", "");
+        assertEquals(null, field.getInputLang());
+        
+        field.setAttribute("InputLang", "en-gb");
+        assertEquals(Locale.UK, field.getInputLang());
+        
+        field.setAttribute("InputLang", "engb");
+        assertEquals(Locale.UK, field.getInputLang());
+       
         field.setAttribute("Status", ECoalesceDataObjectStatus.UNKNOWN.getLabel());
         assertEquals(ECoalesceDataObjectStatus.UNKNOWN, field.getStatus());
 
@@ -2435,6 +2487,7 @@ public class CoalesceFieldTest {
         assertEquals(new Marking("(TS)"), desField.getClassificationMarking());
         assertEquals("labelTest", desField.getLabel());
         assertEquals(new Integer(123), desField.getValue());
+        assertEquals(Locale.UK, field.getInputLang());
         assertEquals(ECoalesceDataObjectStatus.UNKNOWN, desField.getStatus());
 
     }

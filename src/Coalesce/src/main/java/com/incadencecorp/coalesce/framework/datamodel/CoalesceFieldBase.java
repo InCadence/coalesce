@@ -60,6 +60,10 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
 
     protected abstract void setBaseValue(String value);
 
+    protected abstract String getEntityInputLang();
+    
+    protected abstract void setEntityInputLang(String value);
+    
     @Override
     public abstract ECoalesceFieldDataTypes getDataType();
 
@@ -134,7 +138,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
     @Override
     public Locale getInputLang()
     {
-        String inputLang = getAttribute("inputlang");
+        String inputLang = getEntityInputLang();
 
         if (inputLang == null) return null;
 
@@ -144,7 +148,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
     @Override
     public void setInputLang(Locale value)
     {
-        setAttribute("inputlang", value.toString());
+        setEntityInputLang(value.toString());
     }
 
     /*--------------------------------------------------------------------------

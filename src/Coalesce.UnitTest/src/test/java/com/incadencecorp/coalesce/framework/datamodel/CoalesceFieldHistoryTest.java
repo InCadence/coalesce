@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
@@ -665,6 +666,27 @@ public class CoalesceFieldHistoryTest {
     }
 
     @Test
+    public void inputLangTest()
+    {
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceFieldHistory fh = ((CoalesceStringField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/ActionNumber")).getHistoryRecord("00BB7A9F-4F37-46E9-85EB-9280ED3619CC");
+
+        assertEquals(null, fh.getInputLang());
+
+        fh.setInputLang(Locale.UK);
+
+        assertEquals(Locale.UK, fh.getInputLang());
+
+        String entityXml = entity.toXml();
+
+        CoalesceEntity desEntity = CoalesceEntity.create(entityXml);
+        CoalesceFieldHistory desFh = ((CoalesceStringField) desEntity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/ActionNumber")).getHistoryRecord("00BB7A9F-4F37-46E9-85EB-9280ED3619CC");
+
+        assertEquals(Locale.UK, desFh.getInputLang());
+  
+    }
+    
+    @Test
     public void GetDateCreatedExistTest()
     {
 
@@ -987,8 +1009,7 @@ public class CoalesceFieldHistoryTest {
     public void toXmlTest()
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        CoalesceStringField field = (CoalesceStringField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/ActionNumber");
-        CoalesceFieldHistory fh = field.getHistoryRecord("00BB7A9F-4F37-46E9-85EB-9280ED3619CC");
+        CoalesceFieldHistory fh = ((CoalesceStringField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/ActionNumber")).getHistoryRecord("00BB7A9F-4F37-46E9-85EB-9280ED3619CC");
 
         String fhXml = fh.toXml();
 
@@ -1011,8 +1032,7 @@ public class CoalesceFieldHistoryTest {
     public void setStatusTest()
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        CoalesceStringField field = (CoalesceStringField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/ActionNumber");
-        CoalesceFieldHistory fh = field.getHistoryRecord("00BB7A9F-4F37-46E9-85EB-9280ED3619CC");
+        CoalesceFieldHistory fh = ((CoalesceStringField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/ActionNumber")).getHistoryRecord("00BB7A9F-4F37-46E9-85EB-9280ED3619CC");
 
         assertEquals(ECoalesceDataObjectStatus.ACTIVE, fh.getStatus());
 
@@ -1029,12 +1049,11 @@ public class CoalesceFieldHistoryTest {
     public void attributeTest() throws CoalesceDataFormatException
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        CoalesceStringField field = (CoalesceStringField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/ActionNumber");
-        CoalesceFieldHistory fh = field.getHistoryRecord("00BB7A9F-4F37-46E9-85EB-9280ED3619CC");
+        CoalesceFieldHistory fh = ((CoalesceStringField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/ActionNumber")).getHistoryRecord("00BB7A9F-4F37-46E9-85EB-9280ED3619CC");
 
         fh.setAttribute("TestAttribute", "TestingValue");
 
-        assertEquals(10, fh.getAttributes().size());
+        assertEquals(11, fh.getAttributes().size());
 
         assertEquals("TestingValue", fh.getAttribute("TestAttribute"));
 
@@ -1075,6 +1094,15 @@ public class CoalesceFieldHistoryTest {
         fh.setAttribute("PreviousHistoryKey", previousGuid.toString());
         assertEquals(previousGuid.toString(), fh.getPreviousHistoryKey());
 
+        fh.setAttribute("InputLang", "");
+        assertEquals(null, fh.getInputLang());
+        
+        fh.setAttribute("InputLang", "en-gb");
+        assertEquals(Locale.UK, fh.getInputLang());
+        
+        fh.setAttribute("InputLang", "engb");
+        assertEquals(Locale.UK, fh.getInputLang());
+
         fh.setAttribute("Status", ECoalesceDataObjectStatus.UNKNOWN.getLabel());
         assertEquals(ECoalesceDataObjectStatus.UNKNOWN, fh.getStatus());
 
@@ -1096,6 +1124,7 @@ public class CoalesceFieldHistoryTest {
         assertEquals("labelTest", desFh.getLabel());
         assertEquals("123", desFh.getValue());
         assertEquals(previousGuid.toString(), desFh.getPreviousHistoryKey());
+        assertEquals(Locale.UK, fh.getInputLang());
         assertEquals(ECoalesceDataObjectStatus.UNKNOWN, desFh.getStatus());
 
     }

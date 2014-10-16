@@ -1,6 +1,7 @@
 package com.incadencecorp.coalesce.framework.datamodel;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
@@ -172,6 +173,18 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> {
     protected void setBaseValue(String value)
     {
         _entityFieldHistory.setValue(value);
+    }
+
+    @Override
+    protected String getEntityInputLang()
+    {
+        return _entityFieldHistory.getInputlang();
+    }
+
+    @Override
+    protected void setEntityInputLang(String value)
+    {
+        _entityFieldHistory.setInputlang(value);
     }
 
     @Override
@@ -443,6 +456,16 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> {
         case "value":
             setValue(value);
             return true;
+        case "inputlang":
+            
+            Locale inputLang = CoalesceDataObject.parseLocale(value);
+
+            if (inputLang == null) return false;
+            
+            setInputLang(inputLang);
+
+            return true;
+
         case "status":
             setStatus(ECoalesceDataObjectStatus.getTypeForLabel(value));
             return true;
@@ -450,7 +473,7 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> {
             setPreviousHistoryKey(value);
             return true;
         default:
-             return setOtherAttribute(name, value);
+            return setOtherAttribute(name, value);
         }
     }
 
@@ -466,6 +489,7 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> {
         map.put(new QName("classificationmarking"), _entityFieldHistory.getClassificationmarking());
         map.put(new QName("label"), _entityFieldHistory.getLabel());
         map.put(new QName("value"), _entityFieldHistory.getValue());
+        map.put(new QName("inputlang"), _entityFieldHistory.getInputlang());
         map.put(new QName("status"), _entityFieldHistory.getStatus());
         map.put(new QName("previoushistorykey"), _entityFieldHistory.getPrevioushistorykey());
         return map;

@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
@@ -333,6 +334,18 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
         createHistory(_entityField.getValue(), value);
 
         _entityField.setValue(value);
+    }
+
+    @Override
+    protected String getEntityInputLang()
+    {
+        return _entityField.getInputlang();
+    }
+
+    @Override
+    protected void setEntityInputLang(String value)
+    {
+        _entityField.setInputlang(value);
     }
 
     @Override
@@ -864,6 +877,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
         map.put(new QName("classificationmarking"), _entityField.getClassificationmarking());
         map.put(new QName("label"), _entityField.getLabel());
         map.put(new QName("value"), _entityField.getValue());
+        map.put(new QName("inputlang"), _entityField.getInputlang());
         map.put(new QName("status"), _entityField.getStatus());
         return map;
     }
@@ -896,6 +910,16 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
         case "value":
             setBaseValue(value);
             return true;
+        case "inputlang":
+
+            Locale inputLang = CoalesceDataObject.parseLocale(value);
+
+            if (inputLang == null) return false;
+
+            setInputLang(inputLang);
+
+            return true;
+
         case "status":
             setStatus(ECoalesceDataObjectStatus.getTypeForLabel(value));
             return true;
