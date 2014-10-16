@@ -58,7 +58,7 @@ public class XmlHelper {
     private static String syncObject = "";
 
     /**
-     * Return the {@link String} that contains the serialized representation of the provided object using the 'ISO-8859-1'
+     * Return the {@link String} that contains the serialized representation of the provided object using the 'UTF-8'
      * encoding format.
      * 
      * @param obj the object to be serialized.
@@ -67,7 +67,7 @@ public class XmlHelper {
     public static String serialize(Object obj)
     {
         // Serialize with the default UTF-8 encoding
-        return XmlHelper.serialize(obj, "UTF-8");
+        return XmlHelper.serialize(obj, Charset.forName("UTF-8"));
     }
 
     /**
@@ -75,10 +75,23 @@ public class XmlHelper {
      * encoding format.
      * 
      * @param obj the object to be serialized.
-     * @param encoding the encoding format to use.
+     * @param encoding the desired encoding.
      * @return the {@link String} that contains the serialized representation of the object.
      */
     public static String serialize(Object obj, String encoding)
+    {
+        return XmlHelper.serialize(obj, Charset.forName(encoding)); 
+    }
+
+    /**
+     * Return the {@link String} that contains the serialized representation of the provided object using the specified
+     * encoding format.
+     * 
+     * @param obj the object to be serialized.
+     * @param charset character set to use for encoding.
+     * @return the {@link String} that contains the serialized representation of the object.
+     */
+    public static String serialize(Object obj, Charset charset)
     {
         try
         {
@@ -90,10 +103,10 @@ public class XmlHelper {
 
             // Marshal
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true); // pretty
-            marshaller.setProperty(Marshaller.JAXB_ENCODING, encoding); // specify
+            marshaller.setProperty(Marshaller.JAXB_ENCODING, charset.name()); // specify
             marshaller.marshal(obj, out);
 
-            return new String(out.toByteArray(), Charset.forName(encoding));
+            return new String(out.toByteArray(), charset);
         }
         catch (JAXBException e)
         {
@@ -279,11 +292,9 @@ public class XmlHelper {
      */
     public static String formatXml(Document doc)
     {
-        if (doc == null) return null;
-
-        return formatXml(doc.getFirstChild());
+        return formatXml(doc, Charset.forName("UTF-8"));
     }
-    
+
     /**
      * Returns the XML representation of the {@link org.w3c.dom.Document} provided.
      * 
@@ -293,9 +304,21 @@ public class XmlHelper {
      */
     public static String formatXml(Document doc, String encoding)
     {
+        return formatXml(doc, Charset.forName(encoding));
+    }
+    
+    /**
+     * Returns the XML representation of the {@link org.w3c.dom.Document} provided.
+     * 
+     * @param doc the document to be converted.
+     * @param charset character set to use for encoding.
+     * @return the XML representation of the {@link org.w3c.dom.Document} in the specified encoding.
+     */
+    public static String formatXml(Document doc, Charset charset)
+    {
         if (doc == null) return null;
 
-        return formatXml(doc.getFirstChild(), encoding);
+        return formatXml(doc.getFirstChild(), charset);
     }
 
     /**
@@ -306,16 +329,29 @@ public class XmlHelper {
      */
     public static String formatXml(Node node)
     {
-        return formatXml(node, "UTF-8");
+        return formatXml(node, Charset.forName("UTF-8"));
+    }
+
+    /**
+     * Returns the XML representation of the {@link org.w3c.dom.Node} provided.
+     * 
+     * @param node the node to be converted.
+     * @param encoding the desired encoding.
+     * @return the XML representation of the {@link org.w3c.dom.Node} in the specified encoding.
+     */
+    public static String formatXml(Node node, String encoding)
+    {
+        return formatXml(node, Charset.forName("UTF-8"));
     }
     
     /**
      * Returns the XML representation of the {@link org.w3c.dom.Node} provided.
+     * 
      * @param node the node to be converted.
-     * @param encoding the desired encoding
+     * @param charset character set to use for encoding.
      * @return the XML representation of the {@link org.w3c.dom.Node} in the specified encoding.
      */
-    public static String formatXml(Node node, String encoding)
+    public static String formatXml(Node node, Charset charset)
     {
         if (node == null) return null;
 
@@ -323,7 +359,7 @@ public class XmlHelper {
         {
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            transformer.setOutputProperty(OutputKeys.ENCODING, encoding);
+            transformer.setOutputProperty(OutputKeys.ENCODING, charset.name());
 
             StreamResult result = new StreamResult(new StringWriter());
             DOMSource source = new DOMSource(node);

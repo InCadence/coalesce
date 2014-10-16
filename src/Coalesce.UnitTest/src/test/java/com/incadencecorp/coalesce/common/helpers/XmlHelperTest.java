@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.UnsupportedCharsetException;
 
 import org.apache.commons.lang.NullArgumentException;
 import org.joda.time.DateTime;
@@ -81,7 +82,7 @@ public class XmlHelperTest {
     public void serializeEntityTypeEncodingFormatMission()
     {
         Entity entity = new Entity();
-
+        
         entity = (Entity) XmlHelper.deserialize(CoalesceTypeInstances.TEST_MISSION, Entity.class);
 
         String entityXml = XmlHelper.serialize(entity, "UTF8");
@@ -93,6 +94,8 @@ public class XmlHelperTest {
     @Test
     public void serializeEntityTypeInvalidFormatTest()
     {
+        thrown.expect(UnsupportedCharsetException.class);
+
         Entity entity = new Entity();
 
         entity = (Entity) XmlHelper.deserialize(CoalesceTypeInstances.TEST_MISSION, Entity.class);
