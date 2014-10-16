@@ -32,8 +32,6 @@ import com.incadencecorp.coalesce.framework.persistance.CoalescePersistorBase;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceTable;
 import com.incadencecorp.coalesce.framework.persistance.ICoalesceCacher;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
-import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor.ElementMetaData;
-import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor.EntityMetaData;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -198,7 +196,7 @@ public class SQLServerPersistor extends CoalescePersistorBase {
                                          new CoalesceParameter(template.getName()),
                                          new CoalesceParameter(template.getSource()),
                                          new CoalesceParameter(template.getVersion()),
-                                         new CoalesceParameter(template.toXml(true)),
+                                         new CoalesceParameter(template.toXml("UTF-16")),
                                          new CoalesceParameter(JodaDateTimeHelper.nowInUtc()),
                                          new CoalesceParameter(JodaDateTimeHelper.nowInUtc()));
         }
@@ -630,7 +628,7 @@ public class SQLServerPersistor extends CoalescePersistorBase {
                                      new CoalesceParameter(entity.getVersion()),
                                      new CoalesceParameter(entity.getEntityId()),
                                      new CoalesceParameter(entity.getEntityIdType()),
-                                     new CoalesceParameter(entity.toXml().replace("UTF-8", "UTF-16")),
+                                     new CoalesceParameter(entity.toXml("UTF-16")),
                                      new CoalesceParameter(entity.getDateCreated()),
                                      new CoalesceParameter(entity.getLastModified()));
     }

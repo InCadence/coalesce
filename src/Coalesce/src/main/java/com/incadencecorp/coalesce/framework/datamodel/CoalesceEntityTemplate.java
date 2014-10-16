@@ -233,7 +233,7 @@ public class CoalesceEntityTemplate {
     /**
      * Returns the UTF-8 (XML) String of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate}.
      * 
-     * @return String (XML) of this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate}
+     * @return String (XML) in UTF-8 of this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate}
      */
     public String toXml()
     {
@@ -241,20 +241,14 @@ public class CoalesceEntityTemplate {
     }
 
     /**
-     * Returns the UTF-16 (XML) String of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate}
-     * if the setSQLServer string parameter = "true". If setSQLServer parameter = "false", returns the UTF-8 (XML) String of
-     * the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate}.
-     * 
-     * @param setSQLServer String, if "true" indicates desired return is UTF-16 (XML) String; otherwise, UTF-8 (XML) String
-     *            will result
-     * @return (XML) String UTF-16 (XML) String or UTF-8 (XML) String depending on parameter
+     * Returns the (XML) String in the desired encoding of the
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate}.
+     * @param encoding the desired encoding.
+     * @return (XML) String in the desired encoding.
      */
-    public String toXml(boolean setSQLServer)
+    public String toXml(String encoding)
     {
-        if (setSQLServer)
-            return toXml().replace("UTF-8", "UTF-16");
-        else
-            return toXml();
+        return XmlHelper.formatXml(_dataObjectDocument, encoding);
     }
 
     /*--------------------------------------------------------------------------

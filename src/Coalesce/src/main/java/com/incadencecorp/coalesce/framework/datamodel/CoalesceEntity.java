@@ -1070,22 +1070,55 @@ public class CoalesceEntity extends CoalesceDataObject {
         }
     }
 
-    @Override
-    public String toXml()
+    /**
+     * Serializes the Coalesce Entity into XML without binary data using the specified encoding.
+     * 
+     * @param encoding the encoding format to use.
+     * @return (XML) String of the entity without the binary data.
+     */
+    public String toXml(String encoding)
     {
-        return toXml(false);
+        return toXml(false, encoding);
     }
 
     /**
-     * Returns the UTF-8 (XML) String of the Entity and, when removeBinary is true, removes the binary values.
+     * Serializes the Coalesce Entity into UTF-8 XML without binary.
      * 
-     * @param removeBinary boolean. If true, field values of binary and file will be removed from the entityXml string output
-     * @return (XML) String of the entity in UTF-8, with or without the fields of binary/file based on the parameter
+     * @return (XML) String of the entity in UTF-8 without the binary data.
      */
-    public String toXml(Boolean removeBinary)
+    @Override
+    public String toXml()
+    {
+        return toXml(false, "UTF-8");
+    }
+
+    /**
+     * Serializes the Coalesce Entity into UTF-8 XML and, when removeBinary is true, removes the binary values.
+     * 
+     * @param removeBinary boolean. If true, field values of binary and file will be removed from the entityXml string
+     *            output.
+     * @return (XML) String of the entity in UTF-8, with or without the fields of binary/file based on the parameter.
+     */
+    public String toXml(boolean removeBinary)
+    {
+        return toXml(removeBinary, "UTF-8");
+    }
+
+    public static final String UTF8_BOM = "\uFEFF";
+
+    /**
+     * Serializes the Coalesce Entity into XML using the specified encoding and, when removeBinary is true, removes the
+     * binary values.
+     * 
+     * @param removeBinary boolean. If true, field values of binary and file will be removed from the entityXml string
+     *            output.
+     * @param encoding the encoding format to use.
+     * @return (XML) String of the entity, with or without the fields of binary/file based on the parameter.
+     */
+    public String toXml(boolean removeBinary, String encoding)
     {
 
-        String entityXml = XmlHelper.serialize(_entity, "UTF-8");
+        String entityXml = XmlHelper.serialize(_entity, encoding);
 
         if (removeBinary)
         {

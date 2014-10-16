@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.nio.charset.Charset;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.xml.bind.JAXBContext;
@@ -74,10 +75,10 @@ public class XmlHelper {
      * encoding format.
      * 
      * @param obj the object to be serialized.
-     * @param encodingFormat the encoding format to use.
+     * @param encoding the encoding format to use.
      * @return the {@link String} that contains the serialized representation of the object.
      */
-    public static String serialize(Object obj, String encodingFormat)
+    public static String serialize(Object obj, String encoding)
     {
         try
         {
@@ -89,10 +90,10 @@ public class XmlHelper {
 
             // Marshal
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true); // pretty
-            marshaller.setProperty(Marshaller.JAXB_ENCODING, encodingFormat); // specify
+            marshaller.setProperty(Marshaller.JAXB_ENCODING, encoding); // specify
             marshaller.marshal(obj, out);
 
-            return new String(out.toByteArray());
+            return new String(out.toByteArray(), Charset.forName(encoding));
         }
         catch (JAXBException e)
         {
@@ -271,7 +272,7 @@ public class XmlHelper {
     // -----------------------------------------------------------------------'
 
     /**
-     * Returns the XML representation of the {@link org.w3c.dom.Document} provided.
+     * Returns the XML representation of the {@link org.w3c.dom.Document} provided in UTF-8.
      * 
      * @param doc the document to be converted.
      * @return the XML representation of the {@link org.w3c.dom.Document}.
@@ -282,14 +283,39 @@ public class XmlHelper {
 
         return formatXml(doc.getFirstChild());
     }
+    
+    /**
+     * Returns the XML representation of the {@link org.w3c.dom.Document} provided.
+     * 
+     * @param doc the document to be converted.
+     * @param encoding the desired encoding
+     * @return the XML representation of the {@link org.w3c.dom.Document} in the specified encoding.
+     */
+    public static String formatXml(Document doc, String encoding)
+    {
+        if (doc == null) return null;
+
+        return formatXml(doc.getFirstChild(), encoding);
+    }
 
     /**
-     * Returns the XML representation of the {@link org.w3c.dom.Node} provided.
+     * Returns the XML representation of the {@link org.w3c.dom.Node} provided in UTF-8.
      * 
      * @param node the node to be converted.
      * @return the XML representation of the {@link org.w3c.dom.Node}.
      */
     public static String formatXml(Node node)
+    {
+        return formatXml(node, "UTF-8");
+    }
+    
+    /**
+     * Returns the XML representation of the {@link org.w3c.dom.Node} provided.
+     * @param node the node to be converted.
+     * @param encoding the desired encoding
+     * @return the XML representation of the {@link org.w3c.dom.Node} in the specified encoding.
+     */
+    public static String formatXml(Node node, String encoding)
     {
         if (node == null) return null;
 
@@ -297,6 +323,7 @@ public class XmlHelper {
         {
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty(OutputKeys.ENCODING, encoding);
 
             StreamResult result = new StreamResult(new StringWriter());
             DOMSource source = new DOMSource(node);
