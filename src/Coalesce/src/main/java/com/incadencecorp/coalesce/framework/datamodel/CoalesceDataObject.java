@@ -436,7 +436,7 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
             {
                 String childName = child.getName();
 
-                if (childName != null && childName.equals(names[names.length - 1]))
+                if (childName != null && childName.equals(names[1]))
                 {
                     dataObject = child;
                     break;
@@ -446,7 +446,7 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
             if (dataObject != null)
             {
 
-                String newPath = namePath.substring(namePath.lastIndexOf("/") + 1);
+                String newPath = namePath.substring(namePath.indexOf("/") + 1);
 
                 return dataObject.getDataObjectForNamePath(newPath);
 
