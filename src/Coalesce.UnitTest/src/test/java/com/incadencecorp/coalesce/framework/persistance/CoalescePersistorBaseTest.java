@@ -251,7 +251,6 @@ public abstract class CoalescePersistorBaseTest {
         CoalesceEntityTemplate template = testTemplate(CoalesceEntityTemplate.create(_entity));
         assertTrue(_coalesceFramework.saveCoalesceEntityTemplate(template));
 
-        // String templateXml = template.toXml().replace("UTF-8", "UTF-16");
         String templateXml = template.toXml();
 
         String templateKey = _coalesceFramework.getCoalesceEntityTemplateKey(_entity.getName(),
@@ -263,27 +262,26 @@ public abstract class CoalescePersistorBaseTest {
 
         String templateXmlFromKey = _coalesceFramework.getCoalesceEntityTemplateXml(templateKey);
 
-        CoalesceAssert.assertXmlEquals(templateXml, templateXmlFromKey.replace("UTF-16", "UTF-8"), "UTF-8");
+        CoalesceAssert.assertXmlEquals(templateXml, templateXmlFromKey);
 
         String templateXmlFromAttr = _coalesceFramework.getCoalesceEntityTemplateXml(_entity.getName(),
                                                                                      _entity.getSource(),
                                                                                      _entity.getVersion());
-        CoalesceAssert.assertXmlEquals(templateXml, templateXmlFromAttr.replace("UTF-16", "UTF-8"), "UTF-8");
+        CoalesceAssert.assertXmlEquals(templateXml, templateXmlFromAttr);
 
         CoalesceEntityTemplate persistedTemplate = _coalesceFramework.getCoalesceEntityTemplate(_entity.getName(),
                                                                                                 _entity.getSource(),
                                                                                                 _entity.getVersion());
 
-        CoalesceAssert.assertXmlEquals(templateXml, persistedTemplate.toXml().replace("UTF-16", "UTF-8"), "UTF-8");
+        CoalesceAssert.assertXmlEquals(templateXml, persistedTemplate.toXml());
 
     }
-
-    // TODO: getCoalesceEntityTemplateMetadata
 
     @Test
     public void testCreateEntityFromTemplate() throws CoalescePersistorException, SAXException, IOException
     {
         CoalesceEntityTemplate template = testTemplate(CoalesceEntityTemplate.create(_entity));
+        
         assertTrue(_coalesceFramework.saveCoalesceEntityTemplate(template));
 
         String templateKey = _coalesceFramework.getCoalesceEntityTemplateKey(_entity.getName(),
@@ -330,7 +328,7 @@ public abstract class CoalescePersistorBaseTest {
     {
         CoalesceEntity ent = _coalesceFramework.getCoalesceEntity(_entity.getKey());
 
-        CoalesceAssert.assertXmlEquals(_entityXml, ent.toXml(), "UTF-8");
+        CoalesceAssert.assertXmlEquals(_entityXml, ent.toXml());
     }
 
     @Test
@@ -363,7 +361,7 @@ public abstract class CoalescePersistorBaseTest {
     {
         CoalesceEntity ent = _coalesceFramework.getEntity(_entity.getEntityId(), _entity.getEntityIdType());
 
-        CoalesceAssert.assertXmlEquals(_entityXml, ent.toXml(), "UTF-8");
+        CoalesceAssert.assertXmlEquals(_entityXml, ent.toXml());
     }
 
     @Test
@@ -373,7 +371,7 @@ public abstract class CoalescePersistorBaseTest {
                                                           _entity.getEntityId(),
                                                           _entity.getEntityIdType());
 
-        CoalesceAssert.assertXmlEquals(_entityXml, ent.toXml(), "UTF-8");
+        CoalesceAssert.assertXmlEquals(_entityXml, ent.toXml());
     }
 
     @Test
@@ -502,12 +500,16 @@ public abstract class CoalescePersistorBaseTest {
         assertEquals(_entity.getKey().toUpperCase(), objectKey.toUpperCase());
 
     }
-    
+
     @Test
-    public void testGetEntityTemplateMetadata() throws CoalescePersistorException {
-        String xmlValue=_coalesceFramework.getCoalesceEntityTemplateMetadata();
+    public void getEntityTemplateMetadataTest() throws CoalescePersistorException, SAXException, IOException
+    {
+        // Ensure Database has a Template
+        String xmlMetaData = _coalesceFramework.getCoalesceEntityTemplateMetadata();
+
+        System.out.println(xmlMetaData);
         
-        assertNotNull(xmlValue);
+        assertNotNull(xmlMetaData);
     }
 
     @Test
@@ -515,7 +517,7 @@ public abstract class CoalescePersistorBaseTest {
     {
         String entityXml = _coalesceFramework.getEntityXml(_entity.getEntityId(), _entity.getEntityIdType());
 
-        CoalesceAssert.assertXmlEquals(_entity.toXml(), entityXml, "UTF-8");
+        CoalesceAssert.assertXmlEquals(_entity.toXml(), entityXml);
 
     }
 
@@ -526,7 +528,7 @@ public abstract class CoalescePersistorBaseTest {
                                                            _entity.getEntityId(),
                                                            _entity.getEntityIdType());
 
-        CoalesceAssert.assertXmlEquals(_entity.toXml(), entityXml, "UTF-8");
+        CoalesceAssert.assertXmlEquals(_entity.toXml(), entityXml);
 
     }
 

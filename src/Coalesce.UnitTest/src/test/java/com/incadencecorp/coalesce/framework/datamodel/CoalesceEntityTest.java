@@ -2199,7 +2199,7 @@ public class CoalesceEntityTest {
 
         String xml = entity.toXml();
 
-        CoalesceAssert.assertXmlEquals(CoalesceTypeInstances.TEST_MISSION, xml, "UTF-8");
+        CoalesceAssert.assertXmlEquals(CoalesceTypeInstances.TEST_MISSION, xml);
 
     }
 

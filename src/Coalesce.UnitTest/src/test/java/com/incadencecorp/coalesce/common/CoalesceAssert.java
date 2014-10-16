@@ -35,29 +35,23 @@ public class CoalesceAssert {
     Public Static Functions
     --------------------------------------------------------------------------*/
 
-    public static void assertXmlEquals(String expected, String actual, String encoding)
+    public static void assertXmlEquals(String expected, String actual)
     {
-        String stripped = actual.replace("<?xml version=\"1.0\" encoding=\"" + encoding + "\" standalone=\"yes\"?>", "");
-        stripped = stripped.replace("<?xml version=\"1.0\" encoding=\"" + encoding + "\"?>", "");
-        String converted = stripped.replace(" ", "").replaceAll("\\s+", "").replaceAll("[^.]...Z\\\"", "Z\\\"");
-
-        String expectedStripped = expected.replace("<?xml version=\"1.0\" encoding=\"" + encoding
-                + "\" standalone=\"yes\"?>", "");
-        expectedStripped = expectedStripped.replace("<?xml version=\"1.0\" encoding=\"" + encoding + "\"?>", "");
-
-        String expectedConverted = expectedStripped.replaceAll("\\s+", "").replaceAll("[^.]...Z\\\"", "Z\\\"");
-
-        assertEquals(expectedConverted, converted);
-
+        expected = expected.replaceAll("<\\?xml.*\\?>", "");
+        expected = expected.replaceAll("\\s+", "").replaceAll("[^.]...Z\\\"", "Z\\\"");
+        
+        actual = actual.replaceAll("<\\?xml.*\\?>", "");
+        actual = actual.replaceAll("\\s+", "").replaceAll("[^.]...Z\\\"", "Z\\\"");
+        
+        assertEquals(expected, actual);
     }
-
+    
     public static void assertThumbnail(DocumentThumbnailResults actual)
     {
         assertEquals(1024, actual.getOriginalWidth());
         assertEquals(768, actual.getOriginalHeight());
 
         assertThumbnail(actual.getThumbnail());
-
     }
 
     public static void assertThumbnail(BufferedImage actual)

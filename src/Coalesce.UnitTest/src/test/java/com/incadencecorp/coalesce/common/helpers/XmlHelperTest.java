@@ -86,7 +86,7 @@ public class XmlHelperTest {
 
         String entityXml = XmlHelper.serialize(entity, "UTF8");
 
-        CoalesceAssert.assertXmlEquals(CoalesceTypeInstances.TEST_MISSION, entityXml, "UTF8");
+        CoalesceAssert.assertXmlEquals(CoalesceTypeInstances.TEST_MISSION, entityXml);
 
     }
 
@@ -576,7 +576,7 @@ public class XmlHelperTest {
 
         String docEntityXml = docEntity.toXml();
 
-        CoalesceAssert.assertXmlEquals(entityXml, docEntityXml, "UTF-8");
+        CoalesceAssert.assertXmlEquals(entityXml, docEntityXml);
 
     }
 
