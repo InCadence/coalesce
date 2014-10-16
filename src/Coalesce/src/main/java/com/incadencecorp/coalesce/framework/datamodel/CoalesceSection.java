@@ -260,7 +260,17 @@ public class CoalesceSection extends CoalesceDataObject {
             }
         }
 
-        // TODO: Need to add another loop child Sections if they are added
+        // loop for child Sections if they exist
+        for (Section subSection : _entitySection.getSection())
+        {
+            CoalesceSection newsection = new CoalesceSection();
+
+            if (!newsection.initialize(this, subSection)) return false;
+
+            setChildDataObject(newsection.getKey(), newsection);
+
+        }
+
 
         return true;
     }
