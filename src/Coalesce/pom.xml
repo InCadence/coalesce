@@ -43,6 +43,11 @@
 	</repositories>
 	<dependencies>
 		<dependency>
+			<groupId>com.incadencecorp.unity</groupId>
+			<artifactId>unity-local-connector</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.geotools</groupId>
 			<artifactId>gt-shapefile</artifactId>
 			<version>12-RC1</version>

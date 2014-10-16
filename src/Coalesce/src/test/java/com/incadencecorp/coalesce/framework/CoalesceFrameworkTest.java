@@ -1,11 +1,6 @@
 package com.incadencecorp.coalesce.framework;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
-
-import com.incadencecorp.coalesce.framework.persistance.mysql.MySQLPersistor;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -40,15 +35,6 @@ public class CoalesceFrameworkTest {
     @Test
     public void isInitializedTest()
     {
-        CoalesceFramework framework = new CoalesceFramework();
-
-        assertFalse(framework.isInitialized());
-
-        MySQLPersistor persistor = new MySQLPersistor();
-
-        framework.initialize(persistor);
-
-        assertTrue(framework.isInitialized());
 
     }
 }

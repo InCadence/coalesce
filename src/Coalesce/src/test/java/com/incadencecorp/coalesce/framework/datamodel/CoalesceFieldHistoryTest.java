@@ -21,14 +21,11 @@ import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
-import com.incadencecorp.coalesce.framework.generatedjaxb.Section;
-import com.incadencecorp.coalesce.framework.generatedjaxb.Recordset;
-import com.incadencecorp.coalesce.framework.generatedjaxb.Record;
 import com.incadencecorp.coalesce.framework.generatedjaxb.Field;
 import com.incadencecorp.coalesce.framework.generatedjaxb.Fieldhistory;
-import com.incadencecorp.coalesce.framework.objects.EActionStatuses;
-import com.incadencecorp.coalesce.framework.objects.MissionEntity;
-import com.incadencecorp.coalesce.framework.objects.Photos.PhotoGalleryEntity;
+import com.incadencecorp.coalesce.framework.generatedjaxb.Record;
+import com.incadencecorp.coalesce.framework.generatedjaxb.Recordset;
+import com.incadencecorp.coalesce.framework.generatedjaxb.Section;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -96,6 +93,9 @@ public class CoalesceFieldHistoryTest {
 
     }
 
+    // TODO: replace these unit test with functions that don't require Coalesce.Objects
+    
+    /*
     @Test
     public void addFieldHistoryWithDefaultValue()
     {
@@ -156,7 +156,7 @@ public class CoalesceFieldHistoryTest {
         assertTrue(entity.getMissionName().getPreviousHistoryKey() == entity.getMissionName().getHistory().get(0).getKey());
         assertTrue(entity.getMissionName().getHistory().get(0).getPreviousHistoryKey() == "00000000-0000-0000-0000-000000000000");
     }
-
+*/
     @Test
     public void ConstructorNoPreviousHistory()
     {
