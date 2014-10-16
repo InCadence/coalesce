@@ -45,21 +45,52 @@ public class CoalesceSectionTest {
                                                       "",
                                                       "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
-        // Create Live Status Section
+        // Verify Sections Don't Exists
+        assertNull(entity.getSection("TREXOperation/section 1/section 1.1"));
+        assertNull(entity.getSection("TREXOperation/section 1/section 1.1/section 1.1.1"));
+        assertNull(entity.getSection("TREXOperation/section 1/section 1.1/section 1.1.2"));
         assertNull(entity.getSection("TREXOperation/Live Status Section"));
 
-        CoalesceSection liveSection = CoalesceSection.create(entity, "Live Status Section");
-        assertNotNull(GUIDHelper.isValid(liveSection.getKey()));
-        assertEquals(liveSection, entity.getSection("TREXOperation/Live Status Section"));
-        assertFalse(liveSection.getNoIndex());
+        // Create First Section
+        CoalesceSection section1 = CoalesceSection.create(entity, "section 1");
+        
+        // Verify Section Creation
+        assertNotNull(GUIDHelper.isValid(section1.getKey()));
+        assertEquals(section1, entity.getSection("TREXOperation/section 1"));
+        assertFalse(section1.getNoIndex());
 
-        // Create Live Status Section
-        assertNull(entity.getSection("TREXOperation/Live Status Section/Live Status Sub Section"));
+        // Create Nested Sections
+        CoalesceSection section1_1 = CoalesceSection.create(section1, "section 1.1");
+        CoalesceSection section1_1_1 = CoalesceSection.create(section1_1, "section 1.1.1");
+        CoalesceSection section1_1_2 = CoalesceSection.create(section1_1, "section 1.1.2");
+        
+        // Verify Nested Section Creations
+        assertEquals(section1_1, entity.getSection("TREXOperation/section 1/section 1.1"));
+        assertEquals(section1_1_1, entity.getSection("TREXOperation/section 1/section 1.1/section 1.1.1"));
+        assertEquals(section1_1_2, entity.getSection("TREXOperation/section 1/section 1.1/section 1.1.2"));
 
-        CoalesceSection liveSubSection = CoalesceSection.create(liveSection, "Live Status Sub Section");
-        assertNotNull(GUIDHelper.isValid(liveSubSection.getKey()));
-        assertEquals(liveSubSection, liveSection.getSection("Live Status Section/Live Status Sub Section"));
-        assertFalse(liveSubSection.getNoIndex());
+        // Verify Section Lists
+        assertEquals(section1.getSections().size(), 1);
+        assertEquals(section1_1.getSections().size(), 2);
+        assertEquals(section1_1_1.getSections().size(), 0);
+        assertEquals(section1_1_2.getSections().size(), 0);
+        
+        // Create New Entity
+        String entityXml = entity.toXml();
+        CoalesceEntity entity2 = CoalesceEntity.create(entityXml); 
+
+        // Get Section
+        section1_1 = entity2.getSection("TREXOperation/section 1/section 1.1");
+        section1_1_1 = entity2.getSection("TREXOperation/section 1/section 1.1/section 1.1.1");
+        section1_1_2 = entity2.getSection("TREXOperation/section 1/section 1.1/section 1.1.2");
+        
+        System.out.println(entityXml);
+
+        // Verify
+        assertNotNull(section1_1);
+        assertNotNull(section1_1_1);
+        assertNotNull(section1_1_2);
+        
     }
 
     @Test
