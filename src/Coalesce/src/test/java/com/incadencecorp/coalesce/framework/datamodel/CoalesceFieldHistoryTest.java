@@ -26,6 +26,9 @@ import com.incadencecorp.coalesce.framework.generatedjaxb.Fieldhistory;
 import com.incadencecorp.coalesce.framework.generatedjaxb.Record;
 import com.incadencecorp.coalesce.framework.generatedjaxb.Recordset;
 import com.incadencecorp.coalesce.framework.generatedjaxb.Section;
+import com.incadencecorp.coalesce.framework.testobjects.EActionStatuses;
+import com.incadencecorp.coalesce.framework.testobjects.MissionEntity;
+import com.incadencecorp.coalesce.framework.testobjects.Photos.PhotoGalleryEntity;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -95,7 +98,6 @@ public class CoalesceFieldHistoryTest {
 
     // TODO: replace these unit test with functions that don't require Coalesce.Objects
     
-    /*
     @Test
     public void addFieldHistoryWithDefaultValue()
     {
@@ -156,7 +158,7 @@ public class CoalesceFieldHistoryTest {
         assertTrue(entity.getMissionName().getPreviousHistoryKey() == entity.getMissionName().getHistory().get(0).getKey());
         assertTrue(entity.getMissionName().getHistory().get(0).getPreviousHistoryKey() == "00000000-0000-0000-0000-000000000000");
     }
-*/
+
     @Test
     public void ConstructorNoPreviousHistory()
     {

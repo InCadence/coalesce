@@ -1,9 +1,10 @@
-package com.incadencecorp.coalesce.framework.objects;
+package com.incadencecorp.coalesce.framework.testobjects;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
+
 
 public enum EMissionStatuses
 {

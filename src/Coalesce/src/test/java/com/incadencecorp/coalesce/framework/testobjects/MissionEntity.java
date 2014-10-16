@@ -1,4 +1,4 @@
-package com.incadencecorp.coalesce.framework.objects;
+package com.incadencecorp.coalesce.framework.testobjects;
 
 import org.joda.time.DateTime;
 
@@ -13,7 +13,6 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceStringField;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
-import com.incadencecorp.coalesce.framework.testobjects.EMissionStatuses;
 
 public class MissionEntity extends CoalesceEntity {
 
