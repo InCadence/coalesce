@@ -92,6 +92,22 @@ public class CoalesceSection extends CoalesceDataObject {
 
     /**
      * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}, by name, and ties it to its parent
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}.
+     * 
+     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} that the new
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} will belong to.
+     * @param name String, the name/namepath to be assigned to the
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}.
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}, the new
+     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}.
+     */
+    public static CoalesceSection create(CoalesceSection parent, String name)
+    {
+        return CoalesceSection.create(parent, name, false);
+    }
+
+    /**
+     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}, by name, and ties it to its parent
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}. Also sets the noIndex attribute.
      * 
      * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} that the new
@@ -133,22 +149,6 @@ public class CoalesceSection extends CoalesceDataObject {
         parent.addChild(newSection);
 
         return newSection;
-    }
-
-    /**
-     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}, by name, and ties it to its parent
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}.
-     * 
-     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} that the new
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} will belong to.
-     * @param name String, the name/namepath to be assigned to the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}.
-     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}, the new
-     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}.
-     */
-    public static CoalesceSection create(CoalesceSection parent, String name)
-    {
-        return CoalesceSection.create(parent, name, false);
     }
 
     /**
@@ -195,6 +195,7 @@ public class CoalesceSection extends CoalesceDataObject {
 
         return newSection;
     }
+    
     // TODO: Need to get Entity with nested sections
     /*
      * public CallResult Initialize(CoalesceSection Parent, Node DataObjectNode) { try{ // Since the Section can be
@@ -217,31 +218,7 @@ public class CoalesceSection extends CoalesceDataObject {
      */
     protected boolean initialize(CoalesceEntity parent, Section section)
     {
-
-        if (parent == null) throw new NullArgumentException("parent");
-        if (section == null) throw new NullArgumentException("section");
-
-        // Set References
-        setParent(parent);
-        _entitySection = section;
-
-        super.initialize();
-
-        for (Recordset childRecordSet : _entitySection.getRecordset())
-        {
-
-            CoalesceRecordset newRecordSet = new CoalesceRecordset();
-            if (!newRecordSet.initialize(this, childRecordSet)) continue;
-
-            if (!getChildDataObjects().containsKey(newRecordSet.getKey()))
-            {
-                setChildDataObject(newRecordSet.getKey(), newRecordSet);
-            }
-        }
-
-        // TODO: Need to add another loop child Sections if they are added
-
-        return true;
+           return initialize((CoalesceDataObject) parent, section);
     }
 
     /**
@@ -255,6 +232,11 @@ public class CoalesceSection extends CoalesceDataObject {
      * @return boolean indicator of success/failure.
      */
     protected boolean initialize(CoalesceSection parent, Section section)
+    {
+        return initialize((CoalesceDataObject) parent, section);
+    }
+    
+    private boolean initialize(CoalesceDataObject parent, Section section)
     {
 
         if (parent == null) throw new NullArgumentException("parent");
@@ -282,6 +264,7 @@ public class CoalesceSection extends CoalesceDataObject {
 
         return true;
     }
+
     // -----------------------------------------------------------------------//
     // public Methods
     // -----------------------------------------------------------------------//
