@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-	
+<!-- 
+<xs:import namespace = "http://www.w3.org/XML/1998/namespace"></xs:import>
+-->
+
   <xs:element name="NewDataSet">
     <xs:complexType>
       <xs:sequence>
@@ -62,7 +65,7 @@
       <xs:attribute name="entity2version" type="xs:string"/>
       <xs:attribute name="classificationmarking" type="xs:string"/>
       <xs:attribute name="modifiedby" type="xs:string"/>
-      <xs:attribute name="inputlang" type="xs:string"/>
+      <xs:attribute name="inputlang" type="xs:language"/>
       <xs:attribute name="status" type="xs:string"/>
       <xs:anyAttribute namespace="##other" processContents="skip"/>
     </xs:complexType>
@@ -150,7 +153,7 @@
       <xs:attribute name="previoushistorykey" type="xs:string"/>
       <xs:attribute name="modifiedby" type="xs:string"/>
       <xs:attribute name="modifiedbyip" type="xs:string"/>
-      <xs:attribute name="inputlang" type="xs:string"/>
+      <xs:attribute name="inputlang" type="xs:language"/>
       <xs:attribute name="filename" type="xs:string"/>
       <xs:attribute name="extension" type="xs:string"/>
       <xs:attribute name="mimetype" type="xs:string"/>
@@ -175,7 +178,7 @@
       <xs:attribute name="previoushistorykey" type="xs:string"/>
       <xs:attribute name="modifiedby" type="xs:string"/>
       <xs:attribute name="modifiedbyip" type="xs:string"/>
-      <xs:attribute name="inputlang" type="xs:string"/>
+      <xs:attribute name="inputlang" type="xs:language"/>
       <xs:attribute name="filename" type="xs:string"/>
       <xs:attribute name="extension" type="xs:string"/>
       <xs:attribute name="mimetype" type="xs:string"/>
