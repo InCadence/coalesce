@@ -40,7 +40,7 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceStringField;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor.EntityMetaData;
-import com.incadencecorp.unity.connector.local.LocalConfigurationsConnector;
+import com.incadencecorp.unity.local.connector.LocalConfigurationsConnector;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
