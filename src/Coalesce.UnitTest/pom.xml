@@ -54,6 +54,11 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>com.incadencecorp.unity</groupId>
+			<artifactId>unity-local-connector</artifactId>
+			<scope>test</scope>
+		</dependency>		
+		<dependency>
 			<groupId>com.incadencecorp.coalesce</groupId>
 			<artifactId>coalesce-core</artifactId>
 		</dependency>
