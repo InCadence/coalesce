@@ -100,10 +100,7 @@ public class XmlHelperTest {
 
         entity = (Entity) XmlHelper.deserialize(CoalesceTypeInstances.TEST_MISSION, Entity.class);
 
-        String entityXml = XmlHelper.serialize(entity, "Xyz");
-
-        assertNull("Invalid encoding format generated output", entityXml);
-
+        XmlHelper.serialize(entity, "Xyz");
     }
 
     @Test
