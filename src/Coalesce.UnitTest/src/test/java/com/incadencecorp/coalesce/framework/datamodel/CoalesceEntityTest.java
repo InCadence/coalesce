@@ -70,6 +70,8 @@ public class CoalesceEntityTest {
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
+        assertEquals("TREXMission", entity.getNamePath());
+
         String title = entity.getTitle();
         assertEquals("NORTHCOM Volunteer Background Checks Changed, NORTHCOM Volunteer Background Checks", title);
         assertEquals(4, entity.getLinkages().values().size());
@@ -920,6 +922,8 @@ public class CoalesceEntityTest {
         CoalesceStringField nameField = (CoalesceStringField) record.getFieldByName("Name");
         nameField.setValue("Testing Title Length");
 
+        assertEquals("Operation/Operation Section/Operation Recordset/Operation Recordset Record/Name",
+                     nameField.getNamePath());
         String title = entity.getTitle();
 
         assertEquals("Operation/Operation Section/Operation Recordset/Operation Recordset Record", title);
@@ -1099,9 +1103,8 @@ public class CoalesceEntityTest {
         assertEquals("Testing Title", entity.getTitle());
 
         DateTime newLastModified = entity.getLastModified();
-        // TODO: need to verify this logic before adding test
-        // assertTrue("Last modified should be more recent", DateTimeComparator.getInstance().compare(newLastModified,
-        // lastModified) > 0);
+        assertTrue("Last modified should be more recent",
+                   DateTimeComparator.getInstance().compare(newLastModified, lastModified) > 0);
 
     }
 

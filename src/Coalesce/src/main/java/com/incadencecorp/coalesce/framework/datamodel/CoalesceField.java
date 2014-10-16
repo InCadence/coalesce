@@ -12,6 +12,7 @@ import javax.xml.namespace.QName;
 import org.apache.commons.lang.NotImplementedException;
 import org.joda.time.DateTime;
 
+import com.incadencecorp.coalesce.common.classification.Marking;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.helpers.FileHelper;
 import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
@@ -786,7 +787,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
      * @param ip user ip responsible for the change.
      * @throws CoalesceDataFormatException.
      */
-    public void change(T value, String marking, String user, String ip) throws CoalesceDataFormatException
+    public void change(T value, Marking marking, String user, String ip) throws CoalesceDataFormatException
     {
         // Does the new value differ from the existing?
         if (!(getBaseValue().equals(value) && getClassificationMarking().equals(marking)))
@@ -872,35 +873,34 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     {
         switch (name.toLowerCase()) {
         case "key":
-            _entityField.setKey(value);
+            setKey(value);
             return true;
         case "datecreated":
-            _entityField.setDatecreated(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
+            setDateCreated(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
             return true;
         case "lastmodified":
-            _entityField.setLastmodified(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
+            setLastModified(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
             return true;
         case "name":
-            _entityField.setName(value);
+            setName(value);
             return true;
         case "datatype":
-            _entityField.setDatatype(value);
+            setDataType(ECoalesceFieldDataTypes.getTypeForCoalesceType(value));
             return true;
         case "classificationmarking":
-            _entityField.setClassificationmarking(value);
+            setClassificationMarking(value);
             return true;
         case "label":
-            _entityField.setLabel(value);
+            setLabel(value);
             return true;
         case "value":
-            _entityField.setValue(value);
+            setBaseValue(value);
             return true;
         case "status":
-            _entityField.setStatus(value);
+            setStatus(ECoalesceDataObjectStatus.getTypeForLabel(value));
             return true;
         default:
-            this.setOtherAttribute(name, value);
-            return true;
+            return setOtherAttribute(name, value);
         }
     }
 
