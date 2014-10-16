@@ -38,22 +38,17 @@ public class CoalesceSectionTest {
     public void createSectionTest()
     {
         // Create Entity
-        CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
-                                                      "TREX Portal",
-                                                      "1.0.0.0",
-                                                      "",
-                                                      "",
-                                                      "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
+        CoalesceEntity entity = CoalesceEntity.create("TREXOperation", "TREX Portal", "1.0.0.0", "", "", "");
 
         // Verify Sections Don't Exists
         assertNull(entity.getSection("TREXOperation/section 1/section 1.1"));
         assertNull(entity.getSection("TREXOperation/section 1/section 1.1/section 1.1.1"));
         assertNull(entity.getSection("TREXOperation/section 1/section 1.1/section 1.1.2"));
-        assertNull(entity.getSection("TREXOperation/Live Status Section"));
+        assertNull(entity.getSection("TREXOperation/section 1"));
 
         // Create First Section
         CoalesceSection section1 = CoalesceSection.create(entity, "section 1");
-        
+
         // Verify Section Creation
         assertNotNull(GUIDHelper.isValid(section1.getKey()));
         assertEquals(section1, entity.getSection("TREXOperation/section 1"));
@@ -63,7 +58,7 @@ public class CoalesceSectionTest {
         CoalesceSection section1_1 = CoalesceSection.create(section1, "section 1.1");
         CoalesceSection section1_1_1 = CoalesceSection.create(section1_1, "section 1.1.1");
         CoalesceSection section1_1_2 = CoalesceSection.create(section1_1, "section 1.1.2");
-        
+
         // Verify Nested Section Creations
         assertEquals(section1_1, entity.getSection("TREXOperation/section 1/section 1.1"));
         assertEquals(section1_1_1, entity.getSection("TREXOperation/section 1/section 1.1/section 1.1.1"));
@@ -74,23 +69,23 @@ public class CoalesceSectionTest {
         assertEquals(section1_1.getSections().size(), 2);
         assertEquals(section1_1_1.getSections().size(), 0);
         assertEquals(section1_1_2.getSections().size(), 0);
-        
+
         // Create New Entity
         String entityXml = entity.toXml();
-        CoalesceEntity entity2 = CoalesceEntity.create(entityXml); 
+        CoalesceEntity entity2 = CoalesceEntity.create(entityXml);
 
         // Get Section
         section1_1 = entity2.getSection("TREXOperation/section 1/section 1.1");
         section1_1_1 = entity2.getSection("TREXOperation/section 1/section 1.1/section 1.1.1");
         section1_1_2 = entity2.getSection("TREXOperation/section 1/section 1.1/section 1.1.2");
-        
+
         System.out.println(entityXml);
 
         // Verify
         assertNotNull(section1_1);
         assertNotNull(section1_1_1);
         assertNotNull(section1_1_2);
-        
+
     }
 
     @Test
@@ -494,9 +489,9 @@ public class CoalesceSectionTest {
         CoalesceSection desSection = desEntity.getSection("TREXMission/A New Section");
         CoalesceSection desSubSection = desSection.getSection("TREXMission/A New Section/A New Sub Section");
         if (desSubSection == null) desSubSection = desEntity.getSection("A New Section/A New Sub Section");
-        //TODO: Figure out why the following is happening (desSubSection == null)
-        // 1) (why) subsection is null, 
-        // 2) (OK) entity has 4 children (linkagesection; live status, mission info and new section), 
+        // TODO: Figure out why the following is happening (desSubSection == null)
+        // 1) (why) subsection is null,
+        // 2) (OK) entity has 4 children (linkagesection; live status, mission info and new section),
         // 3) (why) "new" section has 0 children
         if (desSubSection != null)
         {
