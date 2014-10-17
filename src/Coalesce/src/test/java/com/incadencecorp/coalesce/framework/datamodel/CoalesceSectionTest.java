@@ -410,11 +410,6 @@ public class CoalesceSectionTest {
 
     }
 
-    /* ***************************************************************************************
-     * This is where I left off when going function by function. Switching to clear errors
-     * *************************************************************************************
-     */
-
     @Test
     public void createSectionWithNoIndexTrueForExistingNoIndexFalseTest()
     {
@@ -487,18 +482,10 @@ public class CoalesceSectionTest {
         CoalesceEntity desEntity = CoalesceEntity.create(entityXml);
 
         CoalesceSection desSection = desEntity.getSection("TREXMission/A New Section");
-        CoalesceSection desSubSection = desSection.getSection("TREXMission/A New Section/A New Sub Section");
-        if (desSubSection == null) desSubSection = desEntity.getSection("A New Section/A New Sub Section");
-        // TODO: Figure out why the following is happening (desSubSection == null)
-        // 1) (why) subsection is null,
-        // 2) (OK) entity has 4 children (linkagesection; live status, mission info and new section),
-        // 3) (why) "new" section has 0 children
-        if (desSubSection != null)
-        {
-            assertEquals(newSubSection.getKey(), desSubSection.getKey());
-            assertEquals(newSubSection.getName(), desSubSection.getName());
-            assertEquals(newSubSection.getNoIndex(), desSubSection.getNoIndex());
-        }
+        CoalesceSection desSubSection = desSection.getSection("A New Section/A New Sub Section");
+        assertEquals(newSubSection.getKey(), desSubSection.getKey());
+        assertEquals(newSubSection.getName(), desSubSection.getName());
+        assertEquals(newSubSection.getNoIndex(), desSubSection.getNoIndex());
     }
 
     @Test(expected = NullArgumentException.class)
