@@ -77,3 +77,4 @@ src/Coalesce.Spatial/.settings/org.eclipse.jpt.core.prefs
 src/Coalesce.Spatial/.settings/org.eclipse.wst.common.project.facet.core.prefs.xml
 src/Coalesce.Spatial/.settings/org.eclipse.wst.common.project.facet.core.xml
 src/Coalesce/doc/
+src/Coalesce.UnitTest/.project
