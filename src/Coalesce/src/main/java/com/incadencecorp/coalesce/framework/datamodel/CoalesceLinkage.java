@@ -6,12 +6,12 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.apache.commons.lang.LocaleUtils;
 import org.apache.commons.lang.NullArgumentException;
 import org.joda.time.DateTime;
 
 import com.incadencecorp.coalesce.common.classification.Marking;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
+import com.incadencecorp.coalesce.common.helpers.LocaleConverter;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
 import com.incadencecorp.coalesce.framework.generatedjaxb.Linkage;
 
@@ -251,39 +251,13 @@ public class CoalesceLinkage extends CoalesceDataObject implements ICoalesceLink
     @Override
     public Locale getInputLang()
     {
-        String inputLang = _entityLinkage.getInputlang();
-
-        if (inputLang == null) return null;
-
-        String[] parts = inputLang.replace("-", "_").split("_");
-
-        String formatted;
-        switch (parts.length) {
-        case 1:
-            formatted = parts[0].toLowerCase();
-            break;
-
-        case 2:
-            formatted = parts[0].toLowerCase() + "_" + parts[1].toUpperCase();
-            break;
-
-        case 3:
-            formatted = parts[0].toLowerCase() + "_" + parts[1].toUpperCase() + "_" + parts[2];
-            break;
-
-        default:
-            return null;
-
-        }
-
-        return LocaleUtils.toLocale(formatted);
-
+        return _entityLinkage.getInputlang();
     }
 
     @Override
     public void setInputLang(Locale value)
     {
-        _entityLinkage.setInputlang(value.toString());
+        _entityLinkage.setInputlang(value);
         setChanged();
     }
 
@@ -475,10 +449,10 @@ public class CoalesceLinkage extends CoalesceDataObject implements ICoalesceLink
             return true;
         case "inputlang":
 
-            Locale inputLang = CoalesceDataObject.parseLocale(value);
+            Locale inputLang = LocaleConverter.parseLocale(value);
 
             if (inputLang == null) return false;
-            
+
             setInputLang(inputLang);
 
             return true;
@@ -518,7 +492,16 @@ public class CoalesceLinkage extends CoalesceDataObject implements ICoalesceLink
         map.put(new QName("entity2version"), _entityLinkage.getEntity2Version());
         map.put(new QName("classificationmarking"), _entityLinkage.getClassificationmarking());
         map.put(new QName("modifiedby"), _entityLinkage.getModifiedby());
-        map.put(new QName("inputlang"), _entityLinkage.getInputlang());
+
+        if (_entityLinkage.getInputlang() == null)
+        {
+            map.put(new QName("inputlang"), null);
+        }
+        else
+        {
+            map.put(new QName("inputlang"), _entityLinkage.getInputlang().toString());
+        }
+
         map.put(new QName("status"), _entityLinkage.getStatus());
         return map;
     }

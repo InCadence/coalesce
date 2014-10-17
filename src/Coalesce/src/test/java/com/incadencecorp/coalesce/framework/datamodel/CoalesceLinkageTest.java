@@ -9,22 +9,19 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
-import org.apache.commons.lang.LocaleUtils;
 import org.apache.commons.lang.NullArgumentException;
 import org.joda.time.DateTime;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import com.incadencecorp.coalesce.common.CoalesceTypeInstances;
 import com.incadencecorp.coalesce.common.classification.Marking;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection;
-import com.incadencecorp.coalesce.framework.datamodel.ECoalesceDataObjectStatus;
-import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
 import com.incadencecorp.coalesce.framework.generatedjaxb.Linkage;
 
 /*-----------------------------------------------------------------------------'
@@ -45,6 +42,9 @@ import com.incadencecorp.coalesce.framework.generatedjaxb.Linkage;
  -----------------------------------------------------------------------------*/
 
 public class CoalesceLinkageTest {
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     private static final Marking UNCLASSIFIED_MARKING = new Marking("(U)");
     private static final Marking TOP_SECRET_MARKING = new Marking("(//TS)");
@@ -469,15 +469,7 @@ public class CoalesceLinkageTest {
         assertEquals(linkage.getEntity2Version(), desLinkage.getEntity2Version());
         assertEquals(linkage.getClassificationMarking(), new Marking(desLinkage.getClassificationmarking()));
         assertEquals(linkage.getModifiedBy(), desLinkage.getModifiedby());
-        
-        String[] parts = desLinkage.getInputlang().replace("-", "_").split("_");
-        
-        assertTrue("Invalid InputLang format", parts.length == 2);
-        
-        Locale inputLang = LocaleUtils.toLocale(parts[0].toLowerCase() + "_" + parts[1].toUpperCase());
-
-        assertEquals(linkage.getInputLang(), inputLang);
-
+        assertEquals(linkage.getInputLang(), desLinkage.getInputlang());
         assertEquals(linkage.getStatus(), ECoalesceDataObjectStatus.getTypeForLabel(desLinkage.getStatus()));
 
     }
@@ -566,12 +558,6 @@ public class CoalesceLinkageTest {
 
         linkage.setAttribute("InputLang", "en");
         assertEquals(Locale.ENGLISH, linkage.getInputLang());
-        
-        linkage.setAttribute("InputLang", "en-gb_xxx");
-        assertEquals(new Locale("en", "gb", "xxx"), linkage.getInputLang());
-        
-        linkage.setAttribute("InputLang", "en-gb");
-        assertEquals(Locale.UK, linkage.getInputLang());
 
         linkage.setAttribute("NoIndex", "True");
         assertEquals(true, linkage.getNoIndex());
@@ -602,9 +588,35 @@ public class CoalesceLinkageTest {
         assertEquals("TestEntity2Version", desLinkage.getEntity2Version());
         assertEquals(new Marking("(TS)"), desLinkage.getClassificationMarking());
         assertEquals("TestingUser", desLinkage.getModifiedBy());
-        assertEquals(Locale.UK, desLinkage.getInputLang());
+        assertEquals(Locale.ENGLISH, desLinkage.getInputLang());
         assertEquals(true, desLinkage.getNoIndex());
         assertEquals(ECoalesceDataObjectStatus.UNKNOWN, desLinkage.getStatus());
+
+    }
+
+    @Test
+    public void setAttributeInputLangInvalidCaseTest() throws CoalesceDataFormatException
+    {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("");
+        
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceLinkage linkage = entity.getLinkageSection().getLinkages().get("DB7E0EAF-F4EF-4473-94A9-B93A7F46281E");
+
+        linkage.setAttribute("InputLang", "en-gb");
+
+    }
+    
+    @Test
+    public void setAttributeInputLangMissingDashTest() throws CoalesceDataFormatException
+    {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("");
+        
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceLinkage linkage = entity.getLinkageSection().getLinkages().get("DB7E0EAF-F4EF-4473-94A9-B93A7F46281E");
+        
+        linkage.setAttribute("InputLang", "engb");
 
     }
 

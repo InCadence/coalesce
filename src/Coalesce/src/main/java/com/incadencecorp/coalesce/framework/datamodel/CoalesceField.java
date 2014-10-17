@@ -18,6 +18,7 @@ import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.helpers.FileHelper;
 import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
+import com.incadencecorp.coalesce.common.helpers.LocaleConverter;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
 import com.incadencecorp.coalesce.common.runtime.CoalesceSettings;
@@ -337,13 +338,13 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     }
 
     @Override
-    protected String getEntityInputLang()
+    public Locale getInputLang()
     {
         return _entityField.getInputlang();
     }
 
     @Override
-    protected void setEntityInputLang(String value)
+    public void setInputLang(Locale value)
     {
         _entityField.setInputlang(value);
     }
@@ -877,7 +878,13 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
         map.put(new QName("classificationmarking"), _entityField.getClassificationmarking());
         map.put(new QName("label"), _entityField.getLabel());
         map.put(new QName("value"), _entityField.getValue());
-        map.put(new QName("inputlang"), _entityField.getInputlang());
+        
+        if (_entityField.getInputlang() == null)
+        {
+            map.put(new QName("inputlang"), null);
+        } else {
+            map.put(new QName("inputlang"), _entityField.getInputlang().toString());
+        }
         map.put(new QName("status"), _entityField.getStatus());
         return map;
     }
@@ -912,7 +919,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
             return true;
         case "inputlang":
 
-            Locale inputLang = CoalesceDataObject.parseLocale(value);
+            Locale inputLang = LocaleConverter.parseLocale(value);
 
             if (inputLang == null) return false;
 

@@ -1,13 +1,11 @@
 package com.incadencecorp.coalesce.framework.datamodel;
 
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
 import javax.xml.namespace.QName;
 
-import org.apache.commons.lang.LocaleUtils;
 import org.joda.time.DateTime;
 
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
@@ -553,40 +551,4 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
 
     }
 
-    protected static Locale parseLocale(String value)
-    {
-        String[] parts = value.replace("-", "_").split("_");
-
-        String formatted;
-        switch (parts.length) {
-        case 1:
-            formatted = parts[0].toLowerCase();
-            break;
-
-        case 2:
-            formatted = parts[0].toLowerCase() + "_" + parts[1].toUpperCase();
-            break;
-
-        case 3:
-            formatted = parts[0].toLowerCase() + "_" + parts[1].toUpperCase() + "_" + parts[2];
-            break;
-
-        default:
-            return null;
-
-        }
-
-        try
-        {
-            Locale inputLang = LocaleUtils.toLocale(formatted);
-
-            return inputLang;
-
-        }
-        catch (IllegalArgumentException iae)
-        {
-            return null;
-        }
-
-    }
 }

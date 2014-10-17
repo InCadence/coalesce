@@ -8,7 +8,6 @@ import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.UUID;
 
-import org.apache.commons.lang.LocaleUtils;
 import org.apache.commons.lang.NullArgumentException;
 import org.apache.xerces.impl.dv.util.Base64;
 import org.jdom2.JDOMException;
@@ -60,10 +59,6 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
 
     protected abstract void setBaseValue(String value);
 
-    protected abstract String getEntityInputLang();
-    
-    protected abstract void setEntityInputLang(String value);
-    
     @Override
     public abstract ECoalesceFieldDataTypes getDataType();
 
@@ -136,20 +131,10 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
     public abstract void setHash(String value);
 
     @Override
-    public Locale getInputLang()
-    {
-        String inputLang = getEntityInputLang();
-
-        if (inputLang == null) return null;
-
-        return LocaleUtils.toLocale(inputLang.replace("-", "_"));
-    }
+    public abstract Locale getInputLang();
 
     @Override
-    public void setInputLang(Locale value)
-    {
-        setEntityInputLang(value.toString());
-    }
+    public abstract void setInputLang(Locale value);
 
     /*--------------------------------------------------------------------------
     Public Functions

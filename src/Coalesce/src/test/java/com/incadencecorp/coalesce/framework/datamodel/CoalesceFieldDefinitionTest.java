@@ -194,6 +194,36 @@ public class CoalesceFieldDefinitionTest {
     }
 
     @Test
+    public void createBooleanDefaultValueTrueTest()
+    {
+        CoalesceRecordset recordSet = createTestRecordset();
+
+        CoalesceFieldDefinition newFieldDef = CoalesceFieldDefinition.create(recordSet,
+                                                                             "Field Def Name",
+                                                                             "Boolean Def",
+                                                                             "(U)",
+                                                                             true);
+
+        CoalesceDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
+
+        assertEquals(newFieldDef, xdo);
+
+        assertFieldDefinition(recordSet,
+                              "Field Def Name",
+                              ECoalesceFieldDataTypes.BOOLEAN_TYPE,
+                              "Boolean Def",
+                              CoalesceFieldDefinitionTest.UNCLASS_MARKING,
+                              Boolean.TRUE.toString(),
+                              false,
+                              (CoalesceFieldDefinition) xdo);
+
+        CoalesceRecord record = recordSet.addNew();
+
+        CoalesceFieldDefinitionTest.assertNewField(newFieldDef, record.getFieldByName("Field Def Name"));
+
+    }
+
+    @Test
     public void createIntegerNoIndexTest()
     {
         CoalesceRecordset recordSet = createTestRecordset();
@@ -235,6 +265,36 @@ public class CoalesceFieldDefinitionTest {
                                                                              "(U)",
                                                                              5,
                                                                              false);
+
+        CoalesceDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
+
+        assertEquals(newFieldDef, xdo);
+
+        assertFieldDefinition(recordSet,
+                              "Field Def Name",
+                              ECoalesceFieldDataTypes.INTEGER_TYPE,
+                              "Integer Def",
+                              CoalesceFieldDefinitionTest.UNCLASS_MARKING,
+                              Integer.toString(5),
+                              false,
+                              (CoalesceFieldDefinition) xdo);
+
+        CoalesceRecord record = recordSet.addNew();
+
+        CoalesceFieldDefinitionTest.assertNewField(newFieldDef, record.getFieldByName("Field Def Name"));
+
+    }
+
+    @Test
+    public void createIntegerTest()
+    {
+        CoalesceRecordset recordSet = createTestRecordset();
+
+        CoalesceFieldDefinition newFieldDef = CoalesceFieldDefinition.create(recordSet,
+                                                                             "Field Def Name",
+                                                                             "Integer Def",
+                                                                             "(U)",
+                                                                             5);
 
         CoalesceDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
 
@@ -316,6 +376,68 @@ public class CoalesceFieldDefinitionTest {
         CoalesceRecord record = recordSet.addNew();
 
         CoalesceFieldDefinitionTest.assertNewField(newFieldDef, record.getFieldByName("Field Def Name"));
+
+    }
+
+    @Test
+    public void createStringTest()
+    {
+        CoalesceRecordset recordSet = createTestRecordset();
+
+        CoalesceFieldDefinition newFieldDef = CoalesceFieldDefinition.create(recordSet,
+                                                                             "Field Def Name",
+                                                                             ECoalesceFieldDataTypes.STRING_TYPE,
+                                                                             "String Def",
+                                                                             "(TS)",
+                                                                             "XXX");
+
+        CoalesceDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
+
+        assertEquals(newFieldDef, xdo);
+
+        assertFieldDefinition(recordSet,
+                              "Field Def Name",
+                              ECoalesceFieldDataTypes.STRING_TYPE,
+                              "String Def",
+                              CoalesceFieldDefinitionTest.TS_MARKING,
+                              "XXX",
+                              false,
+                              (CoalesceFieldDefinition) xdo);
+
+        CoalesceRecord record = recordSet.addNew();
+
+        CoalesceFieldDefinitionTest.assertNewField(newFieldDef, record.getFieldByName("Field Def Name"));
+
+    }
+
+    @Test
+    public void createStringNullNameTest()
+    {
+        CoalesceRecordset recordSet = createTestRecordset();
+
+        CoalesceFieldDefinition newFieldDef = CoalesceFieldDefinition.create(recordSet,
+                                                                             null,
+                                                                             ECoalesceFieldDataTypes.STRING_TYPE,
+                                                                             "String Def",
+                                                                             "(TS)",
+                                                                             "XXX");
+
+        assertEquals(null, newFieldDef);
+
+    }
+
+    @Test
+    public void createStringNullParentTest()
+    {
+
+        CoalesceFieldDefinition newFieldDef = CoalesceFieldDefinition.create(null,
+                                                                             "Field Def Name",
+                                                                             ECoalesceFieldDataTypes.STRING_TYPE,
+                                                                             "String Def",
+                                                                             "(TS)",
+                                                                             "XXX");
+
+        assertEquals(null, newFieldDef);
 
     }
 

@@ -8,20 +8,20 @@
 
 package com.incadencecorp.coalesce.framework.generatedjaxb;
 
+import java.util.Locale;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
-import org.joda.time.DateTime;
 
-public class Adapter1
-    extends XmlAdapter<String, DateTime>
+public class Adapter2
+    extends XmlAdapter<String, Locale>
 {
 
 
-    public DateTime unmarshal(String value) {
-        return (com.incadencecorp.coalesce.common.helpers.DateTimeConverter.parseDate(value));
+    public Locale unmarshal(String value) {
+        return (com.incadencecorp.coalesce.common.helpers.LocaleConverter.parseLocale(value));
     }
 
-    public String marshal(DateTime value) {
-        return (com.incadencecorp.coalesce.common.helpers.DateTimeConverter.printDate(value));
+    public String marshal(Locale value) {
+        return (com.incadencecorp.coalesce.common.helpers.LocaleConverter.printLocale(value));
     }
 
 }

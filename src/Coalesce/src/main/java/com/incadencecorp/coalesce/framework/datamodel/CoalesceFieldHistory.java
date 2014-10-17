@@ -9,6 +9,7 @@ import javax.xml.namespace.QName;
 import org.joda.time.DateTime;
 
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
+import com.incadencecorp.coalesce.common.helpers.LocaleConverter;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
 import com.incadencecorp.coalesce.framework.generatedjaxb.Field;
@@ -176,13 +177,13 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> {
     }
 
     @Override
-    protected String getEntityInputLang()
+    public Locale getInputLang()
     {
         return _entityFieldHistory.getInputlang();
     }
 
     @Override
-    protected void setEntityInputLang(String value)
+    public void setInputLang(Locale value)
     {
         _entityFieldHistory.setInputlang(value);
     }
@@ -399,6 +400,7 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> {
         _entityFieldHistory.setValue(entityField.getValue());
         _entityFieldHistory.setDatecreated(entityField.getDatecreated());
         _entityFieldHistory.setLastmodified(entityField.getLastmodified());
+        _entityFieldHistory.setInputlang(entityField.getInputlang());
         _entityFieldHistory.setStatus(entityField.getStatus());
 
         Map<QName, String> otherAttributes = getAttributes();
@@ -457,11 +459,11 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> {
             setValue(value);
             return true;
         case "inputlang":
-            
-            Locale inputLang = CoalesceDataObject.parseLocale(value);
+
+            Locale inputLang = LocaleConverter.parseLocale(value);
 
             if (inputLang == null) return false;
-            
+
             setInputLang(inputLang);
 
             return true;
@@ -489,7 +491,14 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> {
         map.put(new QName("classificationmarking"), _entityFieldHistory.getClassificationmarking());
         map.put(new QName("label"), _entityFieldHistory.getLabel());
         map.put(new QName("value"), _entityFieldHistory.getValue());
-        map.put(new QName("inputlang"), _entityFieldHistory.getInputlang());
+        
+        if (_entityFieldHistory.getInputlang() == null)
+        {
+            map.put(new QName("inputlang"), null);
+        } else {
+            map.put(new QName("inputlang"), _entityFieldHistory.getInputlang().toString());
+        }
+        
         map.put(new QName("status"), _entityFieldHistory.getStatus());
         map.put(new QName("previoushistorykey"), _entityFieldHistory.getPrevioushistorykey());
         return map;
