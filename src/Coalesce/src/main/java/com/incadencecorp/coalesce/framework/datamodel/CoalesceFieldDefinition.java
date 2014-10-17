@@ -491,7 +491,22 @@ public class CoalesceFieldDefinition extends CoalesceDataObject implements ICoal
     @Override
     protected void setObjectStatus(ECoalesceDataObjectStatus status)
     {
+        if (status == getStatus()) return;
+
         _entityFieldDefinition.setStatus(status.getLabel());
+
+        if (status == ECoalesceDataObjectStatus.ACTIVE)
+        {
+            if (getCastParent().getFieldDefinition(getName()) == null)
+            {
+                getCastParent().getFieldDefinitions().add(this);
+            }
+        }
+        else
+        {
+            getCastParent().getFieldDefinitions().remove(this);
+        }
+
     }
 
     @Override
@@ -504,6 +519,7 @@ public class CoalesceFieldDefinition extends CoalesceDataObject implements ICoal
         map.put(new QName("status"), _entityFieldDefinition.getStatus());
         map.put(new QName("name"), getStringElement(_entityFieldDefinition.getName()));
         map.put(new QName("defaultclassificationmarking"), _entityFieldDefinition.getDefaultclassificationmarking());
+        map.put(new QName("label"), _entityFieldDefinition.getLabel());
         map.put(new QName("defaultvalue"), _entityFieldDefinition.getDefaultvalue());
         map.put(new QName("datatype"), _entityFieldDefinition.getDatatype());
         return map;
@@ -515,31 +531,34 @@ public class CoalesceFieldDefinition extends CoalesceDataObject implements ICoal
 
         switch (name.toLowerCase()) {
         case "key":
-            _entityFieldDefinition.setKey(value);
+            setKey(value);
             return true;
         case "datecreated":
-            _entityFieldDefinition.setDatecreated(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
+            setDateCreated(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
             return true;
         case "lastmodified":
-            _entityFieldDefinition.setLastmodified(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
+            setLastModified(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
             return true;
         case "status":
-            _entityFieldDefinition.setStatus(value);
+            setStatus(ECoalesceDataObjectStatus.getTypeForLabel(value));
             return true;
         case "name":
-            _entityFieldDefinition.setName(value);
+            setName(value);
+            return true;
+        case "label":
+            setLabel(value);
             return true;
         case "defaultclassificationmarking":
-            _entityFieldDefinition.setDefaultclassificationmarking(value);
+            setDefaultClassificationMarking(value);
             return true;
         case "defaultvalue":
-            _entityFieldDefinition.setDefaultvalue(value);
+            setDefaultValue(value);
             return true;
         case "datatype":
-            _entityFieldDefinition.setDatatype(value);
-        default:
-            this.setOtherAttribute(name, value);
+            setDataType(ECoalesceFieldDataTypes.getTypeForCoalesceType(value));
             return true;
+        default:
+            return setOtherAttribute(name, value);
         }
     }
 
@@ -547,6 +566,11 @@ public class CoalesceFieldDefinition extends CoalesceDataObject implements ICoal
     protected Map<QName, String> getOtherAttributes()
     {
         return _entityFieldDefinition.getOtherAttributes();
+    }
+
+    private CoalesceRecordset getCastParent()
+    {
+        return (CoalesceRecordset) getParent();
     }
 
 }

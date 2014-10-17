@@ -1,6 +1,7 @@
 package com.incadencecorp.coalesce.framework.datamodel;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.UUID;
@@ -10,8 +11,11 @@ import org.junit.Test;
 
 import com.incadencecorp.coalesce.common.CoalesceTypeInstances;
 import com.incadencecorp.coalesce.common.classification.Marking;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
+import com.incadencecorp.coalesce.common.helpers.XmlHelper;
+import com.incadencecorp.coalesce.framework.generatedjaxb.Fielddefinition;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -644,17 +648,176 @@ public class CoalesceFieldDefinitionTest {
 
     }
 
+    @Test
+    public void toXmlTest()
+    {
+        CoalesceFieldDefinition fd = getFieldDefinitionFromXml(CoalesceTypeInstances.TEST_MISSION);
+
+        String fdXml = fd.toXml();
+
+        Fielddefinition desFd = (Fielddefinition) XmlHelper.deserialize(fdXml, Fielddefinition.class);
+
+        assertEquals(fd.getKey(), desFd.getKey());
+        assertEquals(fd.getName(), desFd.getName());
+        assertEquals(fd.getDateCreated(), desFd.getDatecreated());
+        assertEquals(fd.getLastModified(), desFd.getLastmodified());
+        assertEquals(fd.getDataType(), ECoalesceFieldDataTypes.getTypeForCoalesceType(desFd.getDatatype()));
+        assertEquals(fd.getDefaultClassificationMarking(), new Marking(desFd.getDefaultclassificationmarking()));
+        assertEquals(fd.getLabel(), desFd.getLabel());
+        assertEquals(fd.getDefaultValue(), desFd.getDefaultvalue());
+        assertEquals(fd.getStatus(), ECoalesceDataObjectStatus.getTypeForLabel(desFd.getStatus()));
+
+    }
+
+    @Test
+    public void setStatusTest()
+    {
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceFieldDefinition fd = getFieldDefinition(entity);
+
+        assertEquals(ECoalesceDataObjectStatus.ACTIVE, fd.getStatus());
+
+        fd.setStatus(ECoalesceDataObjectStatus.UNKNOWN);
+        String fdXml = fd.toXml();
+
+        Fielddefinition desFd = (Fielddefinition) XmlHelper.deserialize(fdXml, Fielddefinition.class);
+
+        assertEquals(ECoalesceDataObjectStatus.UNKNOWN, ECoalesceDataObjectStatus.getTypeForLabel(desFd.getStatus()));
+
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        
+        assertEquals(16, recordset.getFieldDefinitions().size());
+        
+        fd.setStatus(ECoalesceDataObjectStatus.ACTIVE);
+        assertEquals(ECoalesceDataObjectStatus.ACTIVE, fd.getStatus());
+
+        assertEquals(17, recordset.getFieldDefinitions().size());
+
+        fd.setStatus(ECoalesceDataObjectStatus.ACTIVE);
+        assertEquals(ECoalesceDataObjectStatus.ACTIVE, fd.getStatus());
+
+        assertEquals(17, recordset.getFieldDefinitions().size());
+
+    }
+
+    @Test
+    public void attributeTest() throws CoalesceDataFormatException
+    {
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceFieldDefinition fd = getFieldDefinition(entity);
+        fd.setAttribute("TestAttribute", "TestingValue");
+
+        assertEquals(9, fd.getAttributes().size());
+
+        assertEquals("TestingValue", fd.getAttribute("TestAttribute"));
+
+        assertEquals("ActionNumber", fd.getName());
+        assertEquals(false, fd.getNoIndex());
+
+        fd.setAttribute("Name", "TestingName");
+        assertEquals("TestingName", fd.getName());
+        assertEquals("TestingName", fd.getAttribute("Name"));
+
+        UUID guid = UUID.randomUUID();
+        fd.setAttribute("Key", guid.toString());
+        assertEquals(guid.toString(), fd.getKey());
+        assertEquals(guid.toString(), fd.getAttribute("Key"));
+
+        DateTime now = JodaDateTimeHelper.nowInUtc();
+        DateTime future = now.plusDays(2);
+
+        fd.setAttribute("DateCreated", JodaDateTimeHelper.toXmlDateTimeUTC(now));
+        assertEquals(now, fd.getDateCreated());
+
+        fd.setAttribute("NoIndex", "True");
+        assertEquals(true, fd.getNoIndex());
+
+        fd.setAttribute("DataType", "Integer");
+        assertEquals(ECoalesceFieldDataTypes.INTEGER_TYPE, fd.getDataType());
+
+        fd.setAttribute("DefaultClassificationmarking", "(TS)");
+        assertEquals(new Marking("(TS)"), fd.getDefaultClassificationMarking());
+
+        fd.setAttribute("Label", "labelTest");
+        assertEquals("labelTest", fd.getLabel());
+
+        fd.setAttribute("DefaultValue", "123");
+        assertEquals("123", fd.getDefaultValue());
+
+        fd.setAttribute("Status", ECoalesceDataObjectStatus.UNKNOWN.getLabel());
+        assertEquals(ECoalesceDataObjectStatus.UNKNOWN, fd.getStatus());
+
+        fd.setAttribute("Status", ECoalesceDataObjectStatus.ACTIVE.getLabel());
+        assertEquals(ECoalesceDataObjectStatus.ACTIVE, fd.getStatus());
+
+        fd.setAttribute("LastModified", JodaDateTimeHelper.toXmlDateTimeUTC(future));
+        assertEquals(future, fd.getLastModified());
+
+        String entityXml = entity.toXml();
+        CoalesceEntity desEntity = CoalesceEntity.create(entityXml);
+        CoalesceFieldDefinition desFd = (CoalesceFieldDefinition) desEntity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/TestingName");
+
+        assertEquals("TestingValue", desFd.getAttribute("TestAttribute"));
+        assertEquals("TestingName", desFd.getName());
+        assertEquals(guid.toString(), desFd.getKey());
+        assertEquals(now, desFd.getDateCreated());
+        assertEquals(future, desFd.getLastModified());
+        assertEquals(true, desFd.getNoIndex());
+        assertEquals(ECoalesceFieldDataTypes.INTEGER_TYPE, desFd.getDataType());
+        assertEquals(new Marking("(TS)"), desFd.getDefaultClassificationMarking());
+        assertEquals("labelTest", desFd.getLabel());
+        assertEquals("123", desFd.getDefaultValue());
+        assertEquals(ECoalesceDataObjectStatus.ACTIVE, desFd.getStatus());
+
+    }
+
+    @Test
+    public void notActiveFieldDefinitionTest() throws CoalesceDataFormatException
+    {
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        
+        assertEquals(17, recordset.getFieldDefinitions().size());
+        
+        CoalesceFieldDefinition fd = getFieldDefinition(entity);
+
+        fd.setAttribute("Status", ECoalesceDataObjectStatus.UNKNOWN.getLabel());
+        assertEquals(ECoalesceDataObjectStatus.UNKNOWN, fd.getStatus());
+
+        assertEquals(16, recordset.getFieldDefinitions().size());
+        
+        String entityXml = entity.toXml();
+        CoalesceEntity desEntity = CoalesceEntity.create(entityXml);
+
+        CoalesceRecordset desRecordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+
+        assertEquals(16, desRecordset.getFieldDefinitions().size());
+        
+        CoalesceFieldDefinition desFd = (CoalesceFieldDefinition) desEntity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/TestingName");
+
+        assertNull(desFd);
+
+    }
+    
     // -----------------------------------------------------------------------//
     // Private Methods
     // -----------------------------------------------------------------------//
+
+    private CoalesceFieldDefinition getFieldDefinition(CoalesceEntity entity)
+    {
+        CoalesceFieldDefinition fieldDefinition = (CoalesceFieldDefinition) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/ActionNumber");
+
+        return fieldDefinition;
+
+    }
 
     private CoalesceFieldDefinition getFieldDefinitionFromXml(String entityXml)
     {
         CoalesceEntity entity = CoalesceEntity.create(entityXml);
 
-        CoalesceFieldDefinition fieldDefinition = (CoalesceFieldDefinition) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/ActionNumber");
+        return getFieldDefinition(entity);
 
-        return fieldDefinition;
     }
 
     private CoalesceRecordset createTestRecordset()
