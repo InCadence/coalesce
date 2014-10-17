@@ -13,6 +13,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.lang.NullArgumentException;
 import org.apache.xerces.impl.dv.util.Base64;
@@ -1109,6 +1110,21 @@ public class CoalesceEntityTest {
     }
 
     @Test
+    public void setTitleSameTest() throws InterruptedException
+    {
+        CoalesceEntity entity = CoalesceEntity.create("Operation", "Portal", "1.0", "EntityId", "EntityIdType", "Operation Title");
+
+        DateTime lastModified = entity.getLastModified();
+        
+        Thread.sleep(200);
+        
+        entity.setTitle("Operation Title");
+
+        assertEquals("Operation Title", entity.getTitle());
+        assertEquals(lastModified, entity.getLastModified());
+    }
+
+    @Test
     public void getDateCreatedFromXmlTest()
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
@@ -1799,7 +1815,7 @@ public class CoalesceEntityTest {
 
         Entities entities = createEntityLinkages();
 
-        Map<String, CoalesceLinkage> linkages = entities.Entity.getLinkages(ELinkTypes.HAS_OWNERSHIP_OF,
+        Map<String, CoalesceLinkage> linkages = entities.Entity.getLinkages(ELinkTypes.HAS_USE_OF,
                                                                             "Operation",
                                                                             "Portal0");
 
@@ -2414,6 +2430,85 @@ public class CoalesceEntityTest {
         {
             fail(e.getMessage());
         }
+    }
+
+    @Test
+    public void attributeTest() throws CoalesceDataFormatException
+    {
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        assertEquals(1, entity.getOtherAttributes().size());
+
+        entity.setAttribute("TestAttribute", "TestingValue");
+
+        assertEquals(2, entity.getOtherAttributes().size());
+        
+        assertEquals("TestingValue", entity.getAttribute("TestAttribute"));
+
+        assertEquals("TREXMission", entity.getName());
+        assertEquals(false, entity.getNoIndex());
+
+        entity.setAttribute("Name", "TestingName");
+        assertEquals("TestingName", entity.getName());
+        assertEquals("TestingName", entity.getAttribute("Name"));
+
+        UUID guid = UUID.randomUUID();
+        entity.setAttribute("Key", guid.toString());
+        assertEquals(guid.toString(), entity.getKey());
+        assertEquals(guid.toString(), entity.getAttribute("Key"));
+
+        DateTime now = JodaDateTimeHelper.nowInUtc();
+        DateTime future = now.plusDays(2);
+
+        entity.setAttribute("DateCreated", JodaDateTimeHelper.toXmlDateTimeUTC(now));
+        assertEquals(now, entity.getDateCreated());
+
+        assertEquals(2, entity.getOtherAttributes().size());
+        
+        entity.setAttribute("NoIndex", "True");
+        assertEquals(true, entity.getNoIndex());
+
+        assertEquals(3, entity.getOtherAttributes().size());
+        
+        entity.setAttribute("Source", "OtherSource");
+        assertEquals("OtherSource", entity.getSource());
+        
+        entity.setAttribute("Version", "1.0.0.1");
+        assertEquals("1.0.0.1", entity.getVersion());
+        
+        entity.setAttribute("EntityId", "TestingEntityId");
+        assertEquals("TestingEntityId", entity.getEntityId()    );
+        
+        entity.setAttribute("EntityIdType", "TestingEntityType");
+        assertEquals("TestingEntityType", entity.getEntityIdType());
+        
+        entity.setAttribute("Title", "TestingTitle");
+        assertEquals("TestingTitle", entity.getTitle());
+        
+        entity.setAttribute("Status", ECoalesceDataObjectStatus.UNKNOWN.getLabel());
+        assertEquals(ECoalesceDataObjectStatus.UNKNOWN, entity.getStatus());
+
+        entity.setAttribute("LastModified", JodaDateTimeHelper.toXmlDateTimeUTC(future));
+        assertEquals(future, entity.getLastModified());
+
+        String entityXml = entity.toXml();
+        CoalesceEntity desEntity = CoalesceEntity.create(entityXml);
+
+        assertEquals(3, desEntity.getOtherAttributes().size());
+        
+        assertEquals("TestingValue", desEntity.getAttribute("TestAttribute"));
+        assertEquals("TestingName", desEntity.getName());
+        assertEquals(guid.toString(), desEntity.getKey());
+        assertEquals(now, desEntity.getDateCreated());
+        assertEquals(future, desEntity.getLastModified());
+        assertEquals(true, desEntity.getNoIndex());
+        assertEquals("OtherSource", desEntity.getSource());
+        assertEquals("1.0.0.1", desEntity.getVersion());
+        assertEquals("TestingEntityId", desEntity.getEntityId()    );
+        assertEquals("TestingEntityType", desEntity.getEntityIdType());
+        assertEquals("TestingTitle", desEntity.getTitle());
+       assertEquals(ECoalesceDataObjectStatus.UNKNOWN, desEntity.getStatus());
+
     }
 
     // -----------------------------------------------------------------------//

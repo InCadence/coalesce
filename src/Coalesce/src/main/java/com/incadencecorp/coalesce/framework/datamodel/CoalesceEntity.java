@@ -1198,6 +1198,7 @@ public class CoalesceEntity extends CoalesceDataObject {
             {
 
                 CoalesceLinkage linkage = (CoalesceLinkage) cdo;
+                
                 if ((forEntityName == null || linkage.getEntity2Name().equalsIgnoreCase(forEntityName))
                         && forLinkTypes.contains(linkage.getLinkType())
                         && (forEntitySource == null || linkage.getEntity2Source().equalsIgnoreCase(forEntitySource))
@@ -1271,6 +1272,9 @@ public class CoalesceEntity extends CoalesceDataObject {
             return true;
         case "entityid":
             _entity.setEntityid(value);
+            return true;
+        case "entityidtype":
+            setEntityIdType(value);
             return true;
         case "title":
             _entity.setTitle(value);
