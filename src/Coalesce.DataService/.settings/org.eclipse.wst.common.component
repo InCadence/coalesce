@@ -17,6 +17,9 @@
         <dependent-module archiveName="coalesce-framework-persister-mysql-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/Coalesce.Framework.Persister.MySQL/Coalesce.Framework.Persister.MySQL">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="unity-local-connector-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/Unity.Local.Connector/Unity.Local.Connector">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <dependent-module archiveName="coalesce-framework-persister-postgresql-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/Coalesce.Framework.Persister.PostgreSQL/Coalesce.Framework.Persister.PostgreSQL">
             <dependency-type>uses</dependency-type>
         </dependent-module>

@@ -59,9 +59,24 @@
 			<artifactId>coalesce-core</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.incadencecorp.coalesce</groupId>
+			<version>${coalesceVersion}</version>
+			<artifactId>coalesce-core</artifactId>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<version>9.3-1102-jdbc41</version>
+		</dependency>
+		<dependency>
+			<groupId>com.incadencecorp.unity</groupId>
+			<artifactId>unity-local-connector</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.incadencecorp.unity</groupId>
+			<artifactId>unity-core</artifactId>
 		</dependency>
 	</dependencies>
 	<parent>
