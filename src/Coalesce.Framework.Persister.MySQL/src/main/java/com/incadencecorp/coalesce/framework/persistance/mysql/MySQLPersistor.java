@@ -899,7 +899,7 @@ public class MySQLPersistor extends CoalescePersistorBase {
     }
 
     /**
-     * Returns the EntityMetaData for the Coalesce entity that matches the given parameters
+     * Returns the EntityMetaData for the Coalesce entity that matches the given parameters.
      * 
      * @param Key primary key of the Coalesce entity
      * @param conn is the MySQLDataConnector database connection
@@ -925,9 +925,9 @@ public class MySQLPersistor extends CoalescePersistorBase {
     }
 
     /**
-     * Returns the rounded milliseconds
+     * Returns the rounded milliseconds.
      * 
-     * @param Ticks time in milliseconds to be rounded up
+     * @param Ticks time in milliseconds to be rounded up.
      * @return Ticks rounded up time in milliseconds.
      */
     protected long roundTicksForSQL(long Ticks)
@@ -992,7 +992,7 @@ public class MySQLPersistor extends CoalescePersistorBase {
     }
 
     /**
-     * Deletes the Coalesce object & CoalesceObjectMap that matches the given parameters
+     * Deletes the Coalesce object & CoalesceObjectMap that matches the given parameters.
      * 
      * @param dataObject the XsdDataObject to be deleted
      * @param conn is the MySQLDataConnector database connection
