@@ -372,8 +372,8 @@ public class SQLServerPersistor extends CoalescePersistorBase {
             isSuccessful = updateDataObject(entity, conn, AllowRemoval);
 
             // Persist Entity Last to Include Changes
-            switch (entity.getType().toLowerCase()) {
-            case "entity":
+            if (isSuccessful)
+            {
                 isSuccessful = persistEntityObject(entity, conn);
             }
 
@@ -1015,8 +1015,8 @@ public class SQLServerPersistor extends CoalescePersistorBase {
      * @return List<String> of primary keys for the matching Coalesce entity.
      * @throws SQLException,Exception,CoalescePersistorException
      */
-    protected List<String> getCoalesceEntityKeysForEntityId(String EntityId, String EntityIdType, String EntityName)
-            throws SQLException, Exception, CoalescePersistorException
+    private List<String> getCoalesceEntityKeysForEntityId(String EntityId, String EntityIdType, String EntityName)
+            throws Exception
     {
         List<String> keyList = new ArrayList<String>();
 
@@ -1047,13 +1047,11 @@ public class SQLServerPersistor extends CoalescePersistorBase {
      * @return List<String> of primary keys for the matching Coalesce entity.
      * @throws SQLException,Exception,CoalescePersistorException
      */
-    protected List<String> getCoalesceEntityKeysForEntityIdAndSource(String EntityId,
-                                                                     String EntityIdType,
-                                                                     String EntityName,
-                                                                     String EntitySource) throws SQLException, Exception,
-            CoalescePersistorException
+    private List<String> getCoalesceEntityKeysForEntityIdAndSource(String EntityId,
+                                                                   String EntityIdType,
+                                                                   String EntityName,
+                                                                   String EntitySource) throws Exception
     {
-
         try (SQLServerDataConnector conn = new SQLServerDataConnector(_serCon))
         {
             List<String> keyList = new ArrayList<String>();

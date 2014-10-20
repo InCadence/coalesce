@@ -379,8 +379,8 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
             isSuccessful = this.updateDataObject(entity, conn, AllowRemoval);
 
             // Persist Entity Last to Include Changes
-            switch (entity.getType().toLowerCase()) {
-            case "entity":
+            if (isSuccessful)
+            {
                 isSuccessful = persistEntityObject(entity, conn);
             }
 
@@ -927,38 +927,6 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     }
 
     /**
-     * Returns the rounded milliseconds.
-     * 
-     * @param Ticks time in milliseconds to be rounded up
-     * @return Ticks rounded up time in milliseconds.
-     */
-    protected long roundTicksForSQL(long Ticks)
-    {
-        int iTick = (int) (Ticks % 10);
-
-        switch (iTick) {
-        case 0:
-        case 3:
-        case 7:
-            break;
-        case 1:
-        case 4:
-        case 8:
-            Ticks = Ticks - 1;
-            break;
-        case 2:
-        case 6:
-        case 9:
-            Ticks = Ticks + 1;
-            break;
-        case 5:
-            Ticks = Ticks + 2;
-            break;
-        }
-        return Ticks;
-    }
-
-    /**
      * Returns the comparison for the XsdDataObject last modified date versus the same objects value in the database.
      * 
      * @param dataObject the XsdDataObject to have it's last modified date checked.
@@ -1022,8 +990,8 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
      * @return List<String> of primary keys for the matching Coalesce entity.
      * @throws SQLException,Exception,CoalescePersistorException
      */
-    protected List<String> getCoalesceEntityKeysForEntityId(String EntityId, String EntityIdType, String EntityName)
-            throws SQLException, Exception, CoalescePersistorException
+    private List<String> getCoalesceEntityKeysForEntityId(String EntityId, String EntityIdType, String EntityName)
+            throws Exception
     {
         List<String> keyList = new ArrayList<String>();
 
@@ -1055,11 +1023,10 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
      * @return List<String> of primary keys for the matching Coalesce entity.
      * @throws SQLException,Exception,CoalescePersistorException
      */
-    protected List<String> getCoalesceEntityKeysForEntityIdAndSource(String EntityId,
+    private List<String> getCoalesceEntityKeysForEntityIdAndSource(String EntityId,
                                                                      String EntityIdType,
                                                                      String EntityName,
-                                                                     String EntitySource) throws SQLException, Exception,
-            CoalescePersistorException
+                                                                     String EntitySource) throws Exception
     {
 
         try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this.serCon))
