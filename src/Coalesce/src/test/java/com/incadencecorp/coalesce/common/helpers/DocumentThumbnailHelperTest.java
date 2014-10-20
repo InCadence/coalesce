@@ -1,6 +1,7 @@
 package com.incadencecorp.coalesce.common.helpers;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -76,12 +77,14 @@ public class DocumentThumbnailHelperTest {
     }
 
     @Test
-    public void getThumbnailForFileFullFilenameEmtpyImageTest() throws IOException
+    public void getThumbnailForFileFullFilenameEmtpyImageTest() throws IOException, InterruptedException
     {
         File emptyImageFile = new File(FilenameUtils.concat(CoalesceUnitTestSettings.getBinaryFileStoreBasePath(),
                                                             "emptyImage.jpg"));
 
         if (emptyImageFile.exists()) emptyImageFile.delete();
+
+        assertFalse(emptyImageFile.exists());
         
         emptyImageFile.createNewFile();
 

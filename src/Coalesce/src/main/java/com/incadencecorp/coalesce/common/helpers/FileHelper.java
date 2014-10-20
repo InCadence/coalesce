@@ -4,11 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalesceCryptoException;
@@ -135,15 +137,26 @@ public class FileHelper {
     }
 
     /**
-     * Deletes the file if it exists.
+     * Deletes the file if it exists. If the <code>filename</code> is a directory then the deletion will fail.
      * 
      * @param filename the full path and name of the file to be deleted.
      * @return <code>true</code> if the file is successfully deleted.
      */
     public static boolean deleteFile(String filename)
     {
-        Path path = Paths.get(filename);
-        if (Files.exists(path))
+        if (filename == null) return false;
+
+        Path path;
+        try
+        {
+            path = Paths.get(filename);
+        }
+        catch (InvalidPathException ipe)
+        {
+            return false;
+        }
+
+        if (Files.exists(path) && !Files.isDirectory(path))
         {
             try
             {
@@ -163,35 +176,66 @@ public class FileHelper {
     }
 
     /**
-     * Deletes the folder if it exists. If the folder path does not point to a folder then it will not be deleted.
+     * Deletes the folder if it exists. If the folder path does not point to a folder then it will not be deleted. Folders
+     * will be delete even if they are not empty.
      * 
      * @param folderPath the full folder path
      * @return <code>true</code> if the folder is successfully deleted.
      */
     public static boolean deleteFolder(String folderPath)
     {
-        Path path = Paths.get(folderPath);
-        if (Files.isDirectory(path) && Files.exists(path))
-        {
-            try
-            {
-                Files.delete(path);
-            }
-            catch (IOException e)
-            {
-                return false;
-            }
-
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return FileHelper.deleteFolder(folderPath, true);
     }
 
     /**
-     * Checks if the folder already exists in the filesystem and if it does not then attempts to create it.
+     * Deletes the folder if it exists. If the folder path does not point to a folder then it will not be deleted. Folders
+     * that are not empty will only be deleted if <code>forceDelete</code> is <code>true</code>.
+     * 
+     * @param folderPath the full folder path
+     * @return <code>true</code> if the folder is successfully deleted.
+     */
+    public static boolean deleteFolder(String folderPath, boolean forceDelete)
+    {
+        if (folderPath == null) return false;
+
+        Path path;
+        try
+        {
+            path = Paths.get(folderPath);
+        }
+        catch (InvalidPathException ipe)
+        {
+            return false;
+        }
+
+        if (Files.exists(path) && Files.isDirectory(path))
+        {
+            try
+            {
+                if (forceDelete)
+                {
+                    FileUtils.cleanDirectory(new File(folderPath));
+                    Files.delete(Paths.get(folderPath));
+                }
+                else
+                {
+                    Files.delete(path);
+                }
+
+                return true;
+
+            }
+            catch (IOException e)
+            {
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if the folder already exists in the file system and if it does not then attempts to create it including all
+     * missing parent directories.
      * 
      * @param folderPath the full folder path
      * @return <code>true</code> if the folder already exists or was successfully created. <code>false</code> if the
@@ -199,12 +243,21 @@ public class FileHelper {
      */
     public static boolean checkFolder(String folderPath)
     {
-        Path path = Paths.get(folderPath);
+        if (folderPath == null) return false;
+
+        Path path;
+        try
+        {
+            path = Paths.get(folderPath);
+        }
+        catch (InvalidPathException ipe)
+        {
+            return false;
+        }
+
         if (Files.exists(path))
         {
-
             return Files.isDirectory(path);
-
         }
         else
         {
@@ -212,14 +265,16 @@ public class FileHelper {
             try
             {
                 Files.createDirectory(path);
+
+                return true;
             }
             catch (IOException e)
             {
-                return false;
             }
 
-            return true;
         }
+
+        return false;
     }
 
     /**
