@@ -841,25 +841,32 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
 
     protected void createHistory(Object oldValue, Object newValue)
     {
-        // Is old Value not null and does it differ from the new value?
-        if (oldValue != null && newValue != null && !oldValue.equals(newValue))
+        // newValue cannot be null, because setBaseValue: 'if (value == null) value = "";'
+        if (newValue == null) throw new IllegalArgumentException("newValue");
+
+        // Has Value Changed?
+        if (!newValue.equals(oldValue))
         {
-            // Yes; History Suspended?
-            if (!isSuspendHistory())
+            // Initial Value?
+            if (oldValue != null)
             {
-                // No; Check Type
-                switch (getDataType()) {
-                case BINARY_TYPE:
-                case FILE_TYPE:
-                    // Don't Create History Entry for these types
-                    break;
-                default:
-                    // Add History
-                    setPreviousHistoryKey(CoalesceFieldHistory.create(this));
+                // No; History Suspended?
+                if (!isSuspendHistory())
+                {
+                    // No; Check Type
+                    switch (getDataType()) {
+                    case BINARY_TYPE:
+                    case FILE_TYPE:
+                        // Don't Create History Entry for these types
+                        break;
+                    default:
+                        // Add History
+                        setPreviousHistoryKey(CoalesceFieldHistory.create(this));
+                    }
                 }
             }
-            
-            // Set Last Modified
+
+            // Update Last Modified
             setLastModified(JodaDateTimeHelper.nowInUtc());
         }
     }
