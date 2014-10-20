@@ -37,14 +37,6 @@ import com.incadencecorp.coalesce.framework.generatedjaxb.Recordset;
 public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRecordset {
 
     // -----------------------------------------------------------------------//
-    // Public Events
-    // -----------------------------------------------------------------------//
-
-    // TODO: Java Events
-    // public Event ListChanged(ByVal sender As Object, ByVal e As System.ComponentModel.ListChangedEventArgs) Implements
-    // System.ComponentModel.IBindingList.ListChanged
-
-    // -----------------------------------------------------------------------//
     // protected Member Variables
     // -----------------------------------------------------------------------//
 
@@ -509,11 +501,6 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     {
         CoalesceRecord newRecord = CoalesceRecord.create(this, getName() + " Record");
 
-        // TODO: Raise the Changed Event
-        // RaiseEvent ListChanged(this, new
-        // ListChangedEventArgs(ListChangedType.ItemAdded,
-        // getRecords().Count - 1));
-
         return newRecord;
     }
 
@@ -559,21 +546,6 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
 
         record.setStatus(ECoalesceDataObjectStatus.DELETED);
 
-        // // Determine new Index
-        // int NewIndex;
-        // if (index == 0) {
-        // if (this.Count > 0) {
-        // NewIndex = 0;
-        // }else{
-        // NewIndex = -1;
-        // }
-        // }else{
-        // NewIndex = index - 1;
-        // }
-
-        // TODO: Raise ListChanged Event
-        // RaiseEvent ListChanged(this, new
-        // ListChangedEventArgs(ListChangedType.ItemDeleted, NewIndex));
     }
 
     /**
@@ -713,103 +685,5 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
         return map;
 
     }
+    
 }
-
-// TODO: CoalesceFieldDefinitionMemberDescriptor class
-// public Class CoalesceFieldDefinitionMemberDescriptor
-// Inherits MemberDescriptor
-//
-// public Sub New(String Name)
-// MyBase.New(Name)
-// }
-// End Class
-
-// TODO: CoalesceFieldDefinitionPropertyDescriptor class
-// public Class CoalesceFieldDefinitionPropertyDescriptor
-// Inherits PropertyDescriptor
-//
-// public Sub New(CoalesceFieldDefinitionMemberDescriptor MemberDescriptor)
-// MyBase.New(MemberDescriptor)
-// }
-//
-// public Overrides Function CanResetValue(Object component) As Boolean
-// // return true; If we're asked to reset the value, we can reset to
-// // Empty String or CoalesceFielDefinition's Default Value
-// return true
-// }
-//
-// public Overrides ReadOnly Property ComponentType As System.Type
-// Get
-// // For this PropertyDescriptor, the Component Type is a CoalesceRecord
-// return GetType(CoalesceRecord)
-// }
-//
-//
-// public Overrides Function GetValue(Object component) As Object
-// try{
-// // Cast to CoalesceRecord and Get Field Value
-// return CType(component, CoalesceRecord).GetFieldByName(this.Name).Value
-//
-// }catch(Exception ex){
-// // Log
-// CallResult.log(CallResults.FAILED_ERROR, ex, this)
-//
-// // return null
-// return null
-// }
-// }
-//
-// public Overrides ReadOnly Property IsReadOnly As Boolean
-// Get
-// // We're not Read Only
-// return false
-// }
-//
-//
-// public Overrides ReadOnly Property PropertyType As System.Type
-// Get
-// // For binding, all types are treated as String.
-// return GetType(String)
-// }
-//
-//
-// public Overrides Sub ResetValue(Object component){
-// try{
-// if (component != null) {
-// CallResult rst;
-//
-// Dim Record As CoalesceRecord = CType(component, CoalesceRecord)
-// Dim Recordset As CoalesceRecordset = CType(Record.Parent, CoalesceRecordset)
-// Dim FieldDefinition As CoalesceFieldDefinition = null
-//
-// rst = Recordset.GetFieldDefinition(this.Name, FieldDefinition)
-//
-// // Evaluate
-// if (rst.getIsSuccess()) {
-// Dim Field As CoalesceField = Record.GetFieldByName(this.Name)
-// Field.ClassificationMarking = FieldDefinition.DefaultClassificationMarking
-// Field.Value = FieldDefinition.DefaultValue
-// }
-// }
-// }catch(Exception ex){
-// // Log
-// CallResult.log(CallResults.FAILED_ERROR, ex, this);
-// }
-// }
-//
-// @Override
-// public SetValue(Object component, Object value)
-// try{
-// ((CoalesceRecord) component).GetFieldByName(this.Name).Value = value;
-// }catch(Exception ex){
-// // Log
-// CallResult.log(CallResults.FAILED_ERROR, ex, this);
-// }
-// }
-//
-// @Override
-// public boolean ShouldSerializeValue(Object component) {
-// return false;
-// }
-//
-// }

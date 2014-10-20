@@ -38,6 +38,8 @@ public class CoalesceUnitTestSettings extends CoalesceSettings {
 
         CoalesceUnitTestSettings.setDefaultApplicationRoot(FilenameUtils.concat(projectPath, "UnitTestBin\\bin"));
 
+        CoalesceUnitTestSettings.setDefaultApplicationName("Coalesce.UnitTest");
+        
         File root = new File(CoalesceUnitTestSettings.getDefaultApplicationRoot());
 
         if (root.exists())

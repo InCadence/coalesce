@@ -72,11 +72,12 @@ public class CoalesceSettings extends SettingsBase {
 
     public static int getSubDirectoryLength()
     {
-        return CoalesceSettings.getSettingWithMax(getConfigurationFileName(),
-                                                  "Coalesce.FileStore.SubDirectoryLength",
-                                                  2,
-                                                  5,
-                                                  true);
+        return CoalesceSettings.getSettingWithMinMax(getConfigurationFileName(),
+                                                     "Coalesce.FileStore.SubDirectoryLength",
+                                                     2,
+                                                     0,
+                                                     5,
+                                                     true);
     }
 
     public static String getBinaryFileStoreBasePath()
