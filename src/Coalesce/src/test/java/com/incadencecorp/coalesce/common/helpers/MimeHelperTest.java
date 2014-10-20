@@ -29,7 +29,7 @@ import com.incadencecorp.coalesce.common.helpers.MimeHelper;
 public class MimeHelperTest {
 
     @Rule
-    public ExpectedException thrown = ExpectedException.none();
+    private ExpectedException _thrown = ExpectedException.none();
 
     /*
      * @BeforeClass public static void setUpBeforeClass() throws Exception { }
@@ -195,8 +195,8 @@ public class MimeHelperTest {
     @Test
     public void getExtensionForMimeTypeNullTest()
     {
-        thrown.expect(NullArgumentException.class);
-        thrown.expectMessage("mimeType");
+        _thrown.expect(NullArgumentException.class);
+        _thrown.expectMessage("mimeType");
 
         MimeHelper.getExtensionForMimeType(null);
 
@@ -434,8 +434,8 @@ public class MimeHelperTest {
     @Test
     public void getMimeTypeForExtensionNullTest()
     {
-        thrown.expect(NullArgumentException.class);
-        thrown.expectMessage("extension");
+        _thrown.expect(NullArgumentException.class);
+        _thrown.expectMessage("extension");
 
         MimeHelper.getMimeTypeForExtension(null);
 
@@ -509,8 +509,8 @@ public class MimeHelperTest {
     @Test
     public void getFileTypeForMimeTypeNullTest()
     {
-        thrown.expect(NullArgumentException.class);
-        thrown.expectMessage("mimeType");
+        _thrown.expect(NullArgumentException.class);
+        _thrown.expectMessage("mimeType");
 
         MimeHelper.getFileTypeForMimeType(null);
 
@@ -565,8 +565,8 @@ public class MimeHelperTest {
     @Test
     public void getFileTypeForExtensionNullTest()
     {
-        thrown.expect(NullArgumentException.class);
-        thrown.expectMessage("extension");
+        _thrown.expect(NullArgumentException.class);
+        _thrown.expectMessage("extension");
 
         MimeHelper.getFileTypeForExtension(null);
 

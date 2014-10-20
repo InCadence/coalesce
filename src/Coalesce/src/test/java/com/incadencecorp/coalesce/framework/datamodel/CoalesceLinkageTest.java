@@ -44,7 +44,7 @@ import com.incadencecorp.coalesce.framework.generatedjaxb.Linkage;
 public class CoalesceLinkageTest {
 
     @Rule
-    public ExpectedException thrown = ExpectedException.none();
+    private ExpectedException _thrown = ExpectedException.none();
 
     private static final Marking UNCLASSIFIED_MARKING = new Marking("(U)");
     private static final Marking TOP_SECRET_MARKING = new Marking("(//TS)");
@@ -597,8 +597,8 @@ public class CoalesceLinkageTest {
     @Test
     public void setAttributeInputLangInvalidCaseTest() throws CoalesceDataFormatException
     {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("");
+        _thrown.expect(IllegalArgumentException.class);
+        _thrown.expectMessage("");
         
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
         CoalesceLinkage linkage = entity.getLinkageSection().getLinkages().get("DB7E0EAF-F4EF-4473-94A9-B93A7F46281E");
@@ -610,8 +610,8 @@ public class CoalesceLinkageTest {
     @Test
     public void setAttributeInputLangMissingDashTest() throws CoalesceDataFormatException
     {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("");
+        _thrown.expect(IllegalArgumentException.class);
+        _thrown.expectMessage("");
         
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
         CoalesceLinkage linkage = entity.getLinkageSection().getLinkages().get("DB7E0EAF-F4EF-4473-94A9-B93A7F46281E");

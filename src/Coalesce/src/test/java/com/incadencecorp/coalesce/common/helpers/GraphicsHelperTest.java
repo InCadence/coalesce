@@ -54,7 +54,7 @@ import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 public class GraphicsHelperTest {
 
     @Rule
-    public ExpectedException thrown = ExpectedException.none();
+    private ExpectedException _thrown = ExpectedException.none();
 
     private static String FILE_FIELD_IMAGE_PATH;
     private static final String FILE_FIELD_GUID = "228df990-4d5b-11e4-916c-0800200c9a66";
@@ -189,8 +189,8 @@ public class GraphicsHelperTest {
     @Test
     public void resampleWithHeightNullTest()
     {
-        thrown.expect(NullArgumentException.class);
-        thrown.expectMessage("imageToResample");
+        _thrown.expect(NullArgumentException.class);
+        _thrown.expectMessage("imageToResample");
 
         @SuppressWarnings("unused")
         BufferedImage thumbnail = GraphicsHelper.resampleWithHeight(null, 768);
@@ -259,8 +259,8 @@ public class GraphicsHelperTest {
     @Test
     public void resampleWithWidthNullTest()
     {
-        thrown.expect(NullArgumentException.class);
-        thrown.expectMessage("imageToResample");
+        _thrown.expect(NullArgumentException.class);
+        _thrown.expectMessage("imageToResample");
 
         @SuppressWarnings("unused")
         BufferedImage thumbnail = GraphicsHelper.resampleWithWidth(null, 768);
@@ -330,8 +330,8 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToExactNullTest()
     {
-        thrown.expect(NullArgumentException.class);
-        thrown.expectMessage("imageToResample");
+        _thrown.expect(NullArgumentException.class);
+        _thrown.expectMessage("imageToResample");
 
         @SuppressWarnings("unused")
         BufferedImage thumbnail = GraphicsHelper.resampleToExact(null, 768, 888);
@@ -341,8 +341,8 @@ public class GraphicsHelperTest {
     @Test
     public void resampleSmallestNullTest()
     {
-        thrown.expect(NullArgumentException.class);
-        thrown.expectMessage("imageToResample");
+        _thrown.expect(NullArgumentException.class);
+        _thrown.expectMessage("imageToResample");
 
         @SuppressWarnings("unused")
         BufferedImage thumbnail = GraphicsHelper.resampleToSmallest(null, 768, 888);
@@ -643,8 +643,8 @@ public class GraphicsHelperTest {
     @Test
     public void resampleToLargestNullTest()
     {
-        thrown.expect(NullArgumentException.class);
-        thrown.expectMessage("imageToResample");
+        _thrown.expect(NullArgumentException.class);
+        _thrown.expectMessage("imageToResample");
 
         @SuppressWarnings("unused")
         BufferedImage thumbnail = GraphicsHelper.resampleToLargest(null, 768, 888);

@@ -53,7 +53,7 @@ import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 public class CoalesceEntityTest {
 
     @Rule
-    public ExpectedException thrown = ExpectedException.none();
+    private ExpectedException _thrown = ExpectedException.none();
 
     /*
      * @BeforeClass public static void setUpBeforeClass() throws Exception { }
@@ -2077,8 +2077,8 @@ public class CoalesceEntityTest {
     @Test
     public void setEntityIDNullTypeTest()
     {
-        thrown.expect(NullArgumentException.class);
-        thrown.expectMessage("typeParam");
+        _thrown.expect(NullArgumentException.class);
+        _thrown.expectMessage("typeParam");
 
         CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
                                                       "TREX Portal",
@@ -2094,8 +2094,8 @@ public class CoalesceEntityTest {
     @Test
     public void setEntityIDNullNameTest()
     {
-        thrown.expect(NullArgumentException.class);
-        thrown.expectMessage("value");
+        _thrown.expect(NullArgumentException.class);
+        _thrown.expectMessage("value");
 
         CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
                                                       "TREX Portal",
@@ -2111,8 +2111,8 @@ public class CoalesceEntityTest {
     @Test
     public void setEntityIDNullBothTest()
     {
-        thrown.expect(NullArgumentException.class);
-        thrown.expectMessage("typeParam");
+        _thrown.expect(NullArgumentException.class);
+        _thrown.expectMessage("typeParam");
 
         CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
                                                       "TREX Portal",
@@ -2128,8 +2128,8 @@ public class CoalesceEntityTest {
     @Test
     public void setEntityIDEmptyTypeParamTest()
     {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("typeParam cannot be empty");
+        _thrown.expect(IllegalArgumentException.class);
+        _thrown.expectMessage("typeParam cannot be empty");
 
         CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
                                                       "TREX Portal",
@@ -2145,8 +2145,8 @@ public class CoalesceEntityTest {
     @Test
     public void setEntityIDEmptyValueTest()
     {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("value cannot be empty");
+        _thrown.expect(IllegalArgumentException.class);
+        _thrown.expectMessage("value cannot be empty");
 
         CoalesceEntity entity = CoalesceEntity.create("TREXOperation",
                                                       "TREX Portal",

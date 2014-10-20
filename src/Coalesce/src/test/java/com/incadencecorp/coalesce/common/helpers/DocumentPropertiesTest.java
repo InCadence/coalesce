@@ -29,7 +29,7 @@ import com.incadencecorp.coalesce.common.runtime.CoalesceSettings;
 public class DocumentPropertiesTest {
 
     @Rule
-    public ExpectedException thrown = ExpectedException.none();
+    private ExpectedException _thrown = ExpectedException.none();
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception
@@ -126,8 +126,8 @@ public class DocumentPropertiesTest {
     public void initializeNullFilenameTest() throws ImageProcessingException, IOException, JDOMException,
             CoalesceCryptoException
     {
-        thrown.expect(NullArgumentException.class);
-        thrown.expectMessage("fullFilename");
+        _thrown.expect(NullArgumentException.class);
+        _thrown.expectMessage("fullFilename");
 
         DocumentProperties docProps = new DocumentProperties();
 

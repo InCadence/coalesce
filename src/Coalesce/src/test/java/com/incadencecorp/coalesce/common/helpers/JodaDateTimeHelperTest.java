@@ -32,7 +32,7 @@ import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 public class JodaDateTimeHelperTest {
 
     @Rule
-    public ExpectedException thrown = ExpectedException.none();
+    private ExpectedException _thrown = ExpectedException.none();
 
     /*
      * @BeforeClass public static void setUpBeforeClass() throws Exception { }
@@ -72,8 +72,8 @@ public class JodaDateTimeHelperTest {
     @Test
     public void convertYYYYMMDDDateStringToDateTimeNullTest()
     {
-        thrown.expect(NullArgumentException.class);
-        thrown.expectMessage("value");
+        _thrown.expect(NullArgumentException.class);
+        _thrown.expectMessage("value");
         
         @SuppressWarnings("unused")
         DateTime converted = JodaDateTimeHelper.convertyyyyMMddDateStringToDateTime(null);
@@ -114,8 +114,8 @@ public class JodaDateTimeHelperTest {
     @Test
     public void militaryFormatNullDateTest()
     {
-        thrown.expect(NullArgumentException.class);
-        thrown.expectMessage("value");
+        _thrown.expect(NullArgumentException.class);
+        _thrown.expectMessage("value");
         
         @SuppressWarnings("unused")
         String milDate = JodaDateTimeHelper.militaryFormat(null, true);
@@ -124,8 +124,8 @@ public class JodaDateTimeHelperTest {
     @Test
     public void militaryFormatNullDateNoDateTest()
     {
-        thrown.expect(NullArgumentException.class);
-        thrown.expectMessage("value");
+        _thrown.expect(NullArgumentException.class);
+        _thrown.expectMessage("value");
         
         @SuppressWarnings("unused")
         String milDate = JodaDateTimeHelper.militaryFormat(null, false);
@@ -168,8 +168,8 @@ public class JodaDateTimeHelperTest {
     @Test
     public void getElapsedGMTTimeStringNullFirstDateTest()
     {
-        thrown.expect(NullArgumentException.class);
-        thrown.expectMessage("firstDate");
+        _thrown.expect(NullArgumentException.class);
+        _thrown.expectMessage("firstDate");
         
         JodaDateTimeHelper.getElapsedGMTTimeString(null, JodaDateTimeHelper.nowInUtc(), true, true, true);
                 
@@ -178,8 +178,8 @@ public class JodaDateTimeHelperTest {
     @Test
     public void getElapsedGMTTimeStringNullSecondDateTest()
     {
-        thrown.expect(NullArgumentException.class);
-        thrown.expectMessage("secondDate");
+        _thrown.expect(NullArgumentException.class);
+        _thrown.expectMessage("secondDate");
         
         JodaDateTimeHelper.getElapsedGMTTimeString(JodaDateTimeHelper.nowInUtc(), null, true, true, true);
                 
@@ -188,8 +188,8 @@ public class JodaDateTimeHelperTest {
     @Test
     public void getElapsedGMTTimeStringNullBothDatesTest()
     {
-        thrown.expect(NullArgumentException.class);
-        thrown.expectMessage("firstDate");
+        _thrown.expect(NullArgumentException.class);
+        _thrown.expectMessage("firstDate");
         
         JodaDateTimeHelper.getElapsedGMTTimeString(null, null, true, true, true);
                 
@@ -656,8 +656,8 @@ public class JodaDateTimeHelperTest {
     @Test
     public void toXmlDateTimeUTCNullDateTest()
     {
-        thrown.expect(NullArgumentException.class);
-        thrown.expectMessage("forDate");
+        _thrown.expect(NullArgumentException.class);
+        _thrown.expectMessage("forDate");
         
         @SuppressWarnings("unused")
         String utcTime = JodaDateTimeHelper.toXmlDateTimeUTC(null);

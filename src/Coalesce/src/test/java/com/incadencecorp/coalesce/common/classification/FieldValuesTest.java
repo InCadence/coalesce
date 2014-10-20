@@ -35,7 +35,7 @@ import com.incadencecorp.coalesce.common.classification.MarkingValue;
 
 public class FieldValuesTest {
 
-    public static List<MarkingValue> AllClassifications;
+    private static List<MarkingValue> _allClassifications;
     private static List<MarkingValue> _natoClassifications;
     private static List<MarkingValue> _jointNotUSAClassifications;
     private static List<MarkingValue> _jointUSAClassifications;
@@ -45,6 +45,11 @@ public class FieldValuesTest {
     private static List<MarkingValue> _compartments;
 
     private static List<ISO3166Country> _countries;
+
+    public static List<MarkingValue> getAllClassifications()
+    {
+        return _allClassifications;
+    }
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception
@@ -86,7 +91,7 @@ public class FieldValuesTest {
         allClassifications.add(new MarkingValue("", "RESTRICTED", "", "R"));
         allClassifications.add(new MarkingValue("", "UNCLASSIFIED", "", "U"));
 
-        AllClassifications = Collections.unmodifiableList(allClassifications);
+        _allClassifications = Collections.unmodifiableList(allClassifications);
 
     }
 
@@ -438,7 +443,7 @@ public class FieldValuesTest {
 
     @Test
     public void ClassListAddTest() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException,
-    NoSuchMethodException, SecurityException
+            NoSuchMethodException, SecurityException
     {
 
         ArrayList<MarkingValue> markingValues = new ArrayList<MarkingValue>();
@@ -453,8 +458,8 @@ public class FieldValuesTest {
     }
 
     @Test
-    public void ClassListAddToExistingListTest() throws NoSuchMethodException, SecurityException,
-    IllegalAccessException, IllegalArgumentException, InvocationTargetException
+    public void ClassListAddToExistingListTest() throws NoSuchMethodException, SecurityException, IllegalAccessException,
+            IllegalArgumentException, InvocationTargetException
     {
 
         List<MarkingValue> markingValues = FieldValues.getListOfSciControlSystems();
@@ -463,7 +468,8 @@ public class FieldValuesTest {
 
         assertEquals(5, markingValues.size());
 
-        for (int i = 0; i < _compartments.size(); i++) {
+        for (int i = 0; i < _compartments.size(); i++)
+        {
 
             MarkingValueTest.assertMarkingValue(_compartments.get(i), markingValues.get(i));
         }
@@ -484,7 +490,7 @@ public class FieldValuesTest {
         List<MarkingValue> classifications = FieldValues.getListOfClassifications(mv, true);
 
         assertEquals(0, mv.getSelectedCountries().size());
-        assertClassifications(AllClassifications, classifications);
+        assertClassifications(_allClassifications, classifications);
 
     }
 
@@ -499,7 +505,7 @@ public class FieldValuesTest {
         List<MarkingValue> classifications = FieldValues.getListOfClassifications(mv, true);
 
         assertEquals(1, mv.getSelectedCountries().size());
-        assertClassifications(AllClassifications, classifications);
+        assertClassifications(_allClassifications, classifications);
 
     }
 
@@ -514,7 +520,7 @@ public class FieldValuesTest {
         List<MarkingValue> classifications = FieldValues.getListOfClassifications(mv, true);
 
         assertEquals(1, mv.getSelectedCountries().size());
-        assertClassifications(AllClassifications, classifications);
+        assertClassifications(_allClassifications, classifications);
 
     }
 
@@ -529,7 +535,7 @@ public class FieldValuesTest {
         List<MarkingValue> classifications = FieldValues.getListOfClassifications(mv, true);
 
         assertEquals(2, mv.getSelectedCountries().size());
-        assertClassifications(AllClassifications, classifications);
+        assertClassifications(_allClassifications, classifications);
 
     }
 
@@ -544,7 +550,7 @@ public class FieldValuesTest {
         List<MarkingValue> classifications = FieldValues.getListOfClassifications(mv, true);
 
         assertEquals(2, mv.getSelectedCountries().size());
-        assertClassifications(AllClassifications, classifications);
+        assertClassifications(_allClassifications, classifications);
 
     }
 
@@ -560,7 +566,7 @@ public class FieldValuesTest {
         List<MarkingValue> classifications = FieldValues.getListOfClassifications(mv, true);
 
         assertEquals(0, mv.getSelectedCountries().size());
-        assertClassifications(AllClassifications, classifications);
+        assertClassifications(_allClassifications, classifications);
 
     }
 
@@ -575,7 +581,7 @@ public class FieldValuesTest {
         List<MarkingValue> classifications = FieldValues.getListOfClassifications(mv, true);
 
         assertEquals(1, mv.getSelectedCountries().size());
-        assertClassifications(AllClassifications, classifications);
+        assertClassifications(_allClassifications, classifications);
 
     }
 
@@ -590,7 +596,7 @@ public class FieldValuesTest {
         List<MarkingValue> classifications = FieldValues.getListOfClassifications(mv, true);
 
         assertEquals(1, mv.getSelectedCountries().size());
-        assertClassifications(AllClassifications, classifications);
+        assertClassifications(_allClassifications, classifications);
 
     }
 
@@ -605,7 +611,7 @@ public class FieldValuesTest {
         List<MarkingValue> classifications = FieldValues.getListOfClassifications(mv, true);
 
         assertEquals(2, mv.getSelectedCountries().size());
-        assertClassifications(AllClassifications, classifications);
+        assertClassifications(_allClassifications, classifications);
 
     }
 
@@ -620,7 +626,7 @@ public class FieldValuesTest {
         List<MarkingValue> classifications = FieldValues.getListOfClassifications(mv, true);
 
         assertEquals(2, mv.getSelectedCountries().size());
-        assertClassifications(AllClassifications, classifications);
+        assertClassifications(_allClassifications, classifications);
 
     }
 
@@ -782,7 +788,7 @@ public class FieldValuesTest {
 
         List<MarkingValue> classifications = FieldValues.getListOfClassifications(null, true);
 
-        assertClassifications(AllClassifications, classifications);
+        assertClassifications(_allClassifications, classifications);
 
     }
 
@@ -914,7 +920,7 @@ public class FieldValuesTest {
     public void GetMarkingValueByTitleTest()
     {
 
-        MarkingValue mv = FieldValues.getMarkingValueByTitle("COSMIC TOP SECRET", AllClassifications);
+        MarkingValue mv = FieldValues.getMarkingValueByTitle("COSMIC TOP SECRET", _allClassifications);
 
         MarkingValueTest.assertMarkingValue("", "COSMIC TOP SECRET", "", "CTS", mv);
     }
@@ -923,7 +929,7 @@ public class FieldValuesTest {
     public void GetMarkingValueByTitleNullTest()
     {
 
-        MarkingValue mv = FieldValues.getMarkingValueByTitle(null, AllClassifications);
+        MarkingValue mv = FieldValues.getMarkingValueByTitle(null, _allClassifications);
 
         assertNull(mv);
 
@@ -933,7 +939,7 @@ public class FieldValuesTest {
     public void GetMarkingValueByTitleEmptyTest()
     {
 
-        MarkingValue mv = FieldValues.getMarkingValueByTitle("", AllClassifications);
+        MarkingValue mv = FieldValues.getMarkingValueByTitle("", _allClassifications);
 
         assertNull(mv);
 
@@ -943,7 +949,7 @@ public class FieldValuesTest {
     public void GetMarkingValueByTitleUnknownTest()
     {
 
-        MarkingValue mv = FieldValues.getMarkingValueByTitle("Unknown", AllClassifications);
+        MarkingValue mv = FieldValues.getMarkingValueByTitle("Unknown", _allClassifications);
 
         assertNull(mv);
     }
@@ -952,7 +958,7 @@ public class FieldValuesTest {
     public void GetMarkingValueByPortionTest()
     {
 
-        MarkingValue mv = FieldValues.getMarkingValueByPortion("CTS", AllClassifications);
+        MarkingValue mv = FieldValues.getMarkingValueByPortion("CTS", _allClassifications);
 
         MarkingValueTest.assertMarkingValue("", "COSMIC TOP SECRET", "", "CTS", mv);
     }
@@ -961,7 +967,7 @@ public class FieldValuesTest {
     public void GetMarkingValueByPortionNullTest()
     {
 
-        MarkingValue mv = FieldValues.getMarkingValueByPortion(null, AllClassifications);
+        MarkingValue mv = FieldValues.getMarkingValueByPortion(null, _allClassifications);
 
         assertNull(mv);
 
@@ -971,7 +977,7 @@ public class FieldValuesTest {
     public void GetMarkingValueByPortionEmptyTest()
     {
 
-        MarkingValue mv = FieldValues.getMarkingValueByPortion("", AllClassifications);
+        MarkingValue mv = FieldValues.getMarkingValueByPortion("", _allClassifications);
 
         assertNull(mv);
 
@@ -981,7 +987,7 @@ public class FieldValuesTest {
     public void GetMarkingValueByPortionUnknownTest()
     {
 
-        MarkingValue mv = FieldValues.getMarkingValueByPortion("Unknown", AllClassifications);
+        MarkingValue mv = FieldValues.getMarkingValueByPortion("Unknown", _allClassifications);
 
         assertNull(mv);
     }
@@ -994,7 +1000,8 @@ public class FieldValuesTest {
 
         assertEquals(_countries.size(), testCountries.size());
 
-        for (int i = 0; i < _countries.size(); i++) {
+        for (int i = 0; i < _countries.size(); i++)
+        {
 
             ISO3166Country expCountry = _countries.get(i);
             ISO3166Country testCountry = testCountries.get(i);
@@ -1011,8 +1018,8 @@ public class FieldValuesTest {
                                   String parent,
                                   String title,
                                   String abbreviation,
-                                  String portion) throws NoSuchMethodException, SecurityException,
-    IllegalAccessException, IllegalArgumentException, InvocationTargetException
+                                  String portion) throws NoSuchMethodException, SecurityException, IllegalAccessException,
+            IllegalArgumentException, InvocationTargetException
     {
 
         Class<?>[] methodArgs = new Class[5];
@@ -1033,22 +1040,26 @@ public class FieldValuesTest {
 
         assertEquals(expected.size(), actual.size());
 
-        for (MarkingValue expectedValue : expected) {
+        for (MarkingValue expectedValue : expected)
+        {
 
             boolean found = false;
-            for (MarkingValue actualValue : actual) {
+            for (MarkingValue actualValue : actual)
+            {
 
                 if (expectedValue.getParent().equals(actualValue.getParent())
-                && expectedValue.getTitle().equals(actualValue.getTitle())
-                && expectedValue.getAbbreviation().equals(actualValue.getAbbreviation())
-                && expectedValue.getPortion().equals(actualValue.getPortion())) {
+                        && expectedValue.getTitle().equals(actualValue.getTitle())
+                        && expectedValue.getAbbreviation().equals(actualValue.getAbbreviation())
+                        && expectedValue.getPortion().equals(actualValue.getPortion()))
+                {
                     found = true;
                     break;
                 }
             }
 
             assertTrue("MarkingValue: " + expectedValue.getParent() + " " + expectedValue.getTitle() + " "
-            + expectedValue.getAbbreviation() + " " + expectedValue.getPortion(), found);
+                               + expectedValue.getAbbreviation() + " " + expectedValue.getPortion(),
+                       found);
 
         }
     }
@@ -1058,21 +1069,25 @@ public class FieldValuesTest {
 
         assertEquals(expected.size(), actual.size());
 
-        for (ISO3166Country expectedValue : expected) {
+        for (ISO3166Country expectedValue : expected)
+        {
 
             boolean found = false;
-            for (ISO3166Country actualValue : actual) {
+            for (ISO3166Country actualValue : actual)
+            {
 
                 if (expectedValue.getAlpha2().equals(actualValue.getAlpha2())
-                && expectedValue.getAlpha3().equals(actualValue.getAlpha3())
-                && expectedValue.getName().equals(actualValue.getName())) {
+                        && expectedValue.getAlpha3().equals(actualValue.getAlpha3())
+                        && expectedValue.getName().equals(actualValue.getName()))
+                {
                     found = true;
                     break;
                 }
             }
 
             assertTrue("MarkingValue: " + expectedValue.getAlpha2() + " " + expectedValue.getAlpha3() + " "
-            + expectedValue.getName(), found);
+                               + expectedValue.getName(),
+                       found);
 
         }
     }

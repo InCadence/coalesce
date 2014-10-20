@@ -52,7 +52,7 @@ import com.incadencecorp.coalesce.framework.testobjects.Photos.PhotoGalleryEntit
 public class CoalesceFieldHistoryTest {
 
     @Rule
-    public ExpectedException thrown = ExpectedException.none();
+    private ExpectedException _thrown = ExpectedException.none();
 
     private static final Marking TOPSECRETCLASSIFICATIONMARKING = new Marking("//JOINT TOP SECRET AND USA//FOUO-LES//SBU/ACCM-BOB");
 
@@ -1136,8 +1136,8 @@ public class CoalesceFieldHistoryTest {
     @Test
     public void setAttributeInputLangInvalidCaseTest() throws CoalesceDataFormatException
     {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("");
+        _thrown.expect(IllegalArgumentException.class);
+        _thrown.expectMessage("");
         
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
         CoalesceFieldHistory fh = ((CoalesceStringField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/ActionNumber")).getHistoryRecord("00BB7A9F-4F37-46E9-85EB-9280ED3619CC");
@@ -1149,8 +1149,8 @@ public class CoalesceFieldHistoryTest {
     @Test
     public void setAttributeInputLangMissingDashTest() throws CoalesceDataFormatException
     {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("");
+        _thrown.expect(IllegalArgumentException.class);
+        _thrown.expectMessage("");
         
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
         CoalesceFieldHistory fh = ((CoalesceStringField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/ActionNumber")).getHistoryRecord("00BB7A9F-4F37-46E9-85EB-9280ED3619CC");

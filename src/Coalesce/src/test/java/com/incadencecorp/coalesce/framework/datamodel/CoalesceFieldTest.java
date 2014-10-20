@@ -65,7 +65,7 @@ import com.vividsolutions.jts.geom.Point;
 public class CoalesceFieldTest {
 
     @Rule
-    public ExpectedException thrown = ExpectedException.none();
+    private ExpectedException _thrown = ExpectedException.none();
 
     private static final Marking TOPSECRETCLASSIFICATIONMARKING = new Marking("//JOINT TOP SECRET AND USA//FOUO-LES//SBU/ACCM-BOB");
     private static final String COORDINATE_ERROR_MESSAGE = "Failed to parse coordinate value for: MissionGeoLocation";
@@ -1657,8 +1657,8 @@ public class CoalesceFieldTest {
     @Test
     public void coordinateLatitudeToLargeTest() throws CoalesceDataFormatException
     {
-        thrown.expect(CoalesceDataFormatException.class);
-        thrown.expectMessage(CoalesceFieldTest.COORDINATE_ERROR_MESSAGE);
+        _thrown.expect(CoalesceDataFormatException.class);
+        _thrown.expectMessage(CoalesceFieldTest.COORDINATE_ERROR_MESSAGE);
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -1671,8 +1671,8 @@ public class CoalesceFieldTest {
     @Test
     public void coordinateLatitudeToSmallTest() throws CoalesceDataFormatException
     {
-        thrown.expect(CoalesceDataFormatException.class);
-        thrown.expectMessage(CoalesceFieldTest.COORDINATE_ERROR_MESSAGE);
+        _thrown.expect(CoalesceDataFormatException.class);
+        _thrown.expectMessage(CoalesceFieldTest.COORDINATE_ERROR_MESSAGE);
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -1685,8 +1685,8 @@ public class CoalesceFieldTest {
     @Test
     public void coordinateLongitudeToLargeTest() throws CoalesceDataFormatException
     {
-        thrown.expect(CoalesceDataFormatException.class);
-        thrown.expectMessage(CoalesceFieldTest.COORDINATE_ERROR_MESSAGE);
+        _thrown.expect(CoalesceDataFormatException.class);
+        _thrown.expectMessage(CoalesceFieldTest.COORDINATE_ERROR_MESSAGE);
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -1699,8 +1699,8 @@ public class CoalesceFieldTest {
     @Test
     public void coordinateLongitudeToSmallTest() throws CoalesceDataFormatException
     {
-        thrown.expect(CoalesceDataFormatException.class);
-        thrown.expectMessage(CoalesceFieldTest.COORDINATE_ERROR_MESSAGE);
+        _thrown.expect(CoalesceDataFormatException.class);
+        _thrown.expectMessage(CoalesceFieldTest.COORDINATE_ERROR_MESSAGE);
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -1713,8 +1713,8 @@ public class CoalesceFieldTest {
     @Test
     public void coordinateBothTooLargeTest() throws CoalesceDataFormatException
     {
-        thrown.expect(CoalesceDataFormatException.class);
-        thrown.expectMessage(CoalesceFieldTest.COORDINATE_ERROR_MESSAGE);
+        _thrown.expect(CoalesceDataFormatException.class);
+        _thrown.expectMessage(CoalesceFieldTest.COORDINATE_ERROR_MESSAGE);
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -1727,8 +1727,8 @@ public class CoalesceFieldTest {
     @Test
     public void coordinateBothTooSmallTest() throws CoalesceDataFormatException
     {
-        thrown.expect(CoalesceDataFormatException.class);
-        thrown.expectMessage(CoalesceFieldTest.COORDINATE_ERROR_MESSAGE);
+        _thrown.expect(CoalesceDataFormatException.class);
+        _thrown.expectMessage(CoalesceFieldTest.COORDINATE_ERROR_MESSAGE);
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -1778,8 +1778,8 @@ public class CoalesceFieldTest {
     @Test
     public void parseCoordinateLatitudeToLargeTest() throws CoalesceDataFormatException
     {
-        thrown.expect(CoalesceDataFormatException.class);
-        thrown.expectMessage(CoalesceFieldTest.COORDINATE_ERROR_MESSAGE);
+        _thrown.expect(CoalesceDataFormatException.class);
+        _thrown.expectMessage(CoalesceFieldTest.COORDINATE_ERROR_MESSAGE);
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -1793,8 +1793,8 @@ public class CoalesceFieldTest {
     @Test
     public void parseCoordinateLatitudeToSmallTest() throws CoalesceDataFormatException
     {
-        thrown.expect(CoalesceDataFormatException.class);
-        thrown.expectMessage(CoalesceFieldTest.COORDINATE_ERROR_MESSAGE);
+        _thrown.expect(CoalesceDataFormatException.class);
+        _thrown.expectMessage(CoalesceFieldTest.COORDINATE_ERROR_MESSAGE);
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -1808,8 +1808,8 @@ public class CoalesceFieldTest {
     @Test
     public void parseCoordinateLongitudeToLargeTest() throws CoalesceDataFormatException
     {
-        thrown.expect(CoalesceDataFormatException.class);
-        thrown.expectMessage(CoalesceFieldTest.COORDINATE_ERROR_MESSAGE);
+        _thrown.expect(CoalesceDataFormatException.class);
+        _thrown.expectMessage(CoalesceFieldTest.COORDINATE_ERROR_MESSAGE);
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -1823,8 +1823,8 @@ public class CoalesceFieldTest {
     @Test
     public void parseCoordinateLongitudeToSmallTest() throws CoalesceDataFormatException
     {
-        thrown.expect(CoalesceDataFormatException.class);
-        thrown.expectMessage(CoalesceFieldTest.COORDINATE_ERROR_MESSAGE);
+        _thrown.expect(CoalesceDataFormatException.class);
+        _thrown.expectMessage(CoalesceFieldTest.COORDINATE_ERROR_MESSAGE);
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -1838,8 +1838,8 @@ public class CoalesceFieldTest {
     @Test
     public void parseCoordinateBothTooLargeTest() throws CoalesceDataFormatException
     {
-        thrown.expect(CoalesceDataFormatException.class);
-        thrown.expectMessage(CoalesceFieldTest.COORDINATE_ERROR_MESSAGE);
+        _thrown.expect(CoalesceDataFormatException.class);
+        _thrown.expectMessage(CoalesceFieldTest.COORDINATE_ERROR_MESSAGE);
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -1853,8 +1853,8 @@ public class CoalesceFieldTest {
     @Test
     public void parseCoordinateBothTooSmallTest() throws CoalesceDataFormatException
     {
-        thrown.expect(CoalesceDataFormatException.class);
-        thrown.expectMessage(CoalesceFieldTest.COORDINATE_ERROR_MESSAGE);
+        _thrown.expect(CoalesceDataFormatException.class);
+        _thrown.expectMessage(CoalesceFieldTest.COORDINATE_ERROR_MESSAGE);
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -1868,8 +1868,8 @@ public class CoalesceFieldTest {
     @Test
     public void parseCoordinateMissingLeftParenTest() throws CoalesceDataFormatException
     {
-        thrown.expect(CoalesceDataFormatException.class);
-        thrown.expectMessage(CoalesceFieldTest.POINT_ERROR_MESSAGE);
+        _thrown.expect(CoalesceDataFormatException.class);
+        _thrown.expectMessage(CoalesceFieldTest.POINT_ERROR_MESSAGE);
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -1883,8 +1883,8 @@ public class CoalesceFieldTest {
     @Test
     public void parseCoordinateMissingRightParenTest() throws CoalesceDataFormatException
     {
-        thrown.expect(CoalesceDataFormatException.class);
-        thrown.expectMessage(CoalesceFieldTest.POINT_ERROR_MESSAGE);
+        _thrown.expect(CoalesceDataFormatException.class);
+        _thrown.expectMessage(CoalesceFieldTest.POINT_ERROR_MESSAGE);
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -1898,8 +1898,8 @@ public class CoalesceFieldTest {
     @Test
     public void parseCoordinateMissingBothParenTest() throws CoalesceDataFormatException
     {
-        thrown.expect(CoalesceDataFormatException.class);
-        thrown.expectMessage(CoalesceFieldTest.POINT_ERROR_MESSAGE);
+        _thrown.expect(CoalesceDataFormatException.class);
+        _thrown.expectMessage(CoalesceFieldTest.POINT_ERROR_MESSAGE);
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -1928,8 +1928,8 @@ public class CoalesceFieldTest {
     @Test
     public void parseCoordinateMissingPOINTTest() throws CoalesceDataFormatException
     {
-        thrown.expect(CoalesceDataFormatException.class);
-        thrown.expectMessage(CoalesceFieldTest.POINT_ERROR_MESSAGE);
+        _thrown.expect(CoalesceDataFormatException.class);
+        _thrown.expectMessage(CoalesceFieldTest.POINT_ERROR_MESSAGE);
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -1943,8 +1943,8 @@ public class CoalesceFieldTest {
     @Test
     public void parseCoordinateLatitudeNotNumberTest() throws CoalesceDataFormatException
     {
-        thrown.expect(CoalesceDataFormatException.class);
-        thrown.expectMessage(CoalesceFieldTest.POINT_ERROR_MESSAGE);
+        _thrown.expect(CoalesceDataFormatException.class);
+        _thrown.expectMessage(CoalesceFieldTest.POINT_ERROR_MESSAGE);
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -1958,8 +1958,8 @@ public class CoalesceFieldTest {
     @Test
     public void parseGeolocatioLongitudeNotNumberTest() throws CoalesceDataFormatException
     {
-        thrown.expect(CoalesceDataFormatException.class);
-        thrown.expectMessage(CoalesceFieldTest.POINT_ERROR_MESSAGE);
+        _thrown.expect(CoalesceDataFormatException.class);
+        _thrown.expectMessage(CoalesceFieldTest.POINT_ERROR_MESSAGE);
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -1973,8 +1973,8 @@ public class CoalesceFieldTest {
     @Test
     public void parseCoordinateBothNotNumberTest() throws CoalesceDataFormatException
     {
-        thrown.expect(CoalesceDataFormatException.class);
-        thrown.expectMessage(CoalesceFieldTest.POINT_ERROR_MESSAGE);
+        _thrown.expect(CoalesceDataFormatException.class);
+        _thrown.expectMessage(CoalesceFieldTest.POINT_ERROR_MESSAGE);
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -1988,8 +1988,8 @@ public class CoalesceFieldTest {
     @Test
     public void parseCoordinateMissingValueTest() throws CoalesceDataFormatException
     {
-        thrown.expect(CoalesceDataFormatException.class);
-        thrown.expectMessage(CoalesceFieldTest.POINT_ERROR_MESSAGE);
+        _thrown.expect(CoalesceDataFormatException.class);
+        _thrown.expectMessage(CoalesceFieldTest.POINT_ERROR_MESSAGE);
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -2040,8 +2040,8 @@ public class CoalesceFieldTest {
     public void setTypedValueGeolocationTypeTypeMismatchTest() throws UnsupportedEncodingException,
             CoalesceDataFormatException
     {
-        thrown.expect(ClassCastException.class);
-        thrown.expectMessage("Type mismatch");
+        _thrown.expect(ClassCastException.class);
+        _thrown.expectMessage("Type mismatch");
 
         CoalesceField<?> field = getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
 
@@ -2053,8 +2053,8 @@ public class CoalesceFieldTest {
     public void setTypedValueGeolocationTypeTypeMismatchGeolocationsListTest() throws UnsupportedEncodingException,
             CoalesceDataFormatException
     {
-        thrown.expect(ClassCastException.class);
-        thrown.expectMessage("Type mismatch");
+        _thrown.expect(ClassCastException.class);
+        _thrown.expectMessage("Type mismatch");
 
         CoalesceField<?> field = getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_LOCATION_LIST_PATH);
 
@@ -2119,8 +2119,8 @@ public class CoalesceFieldTest {
     @Test
     public void parseCoordinateMultipointLatitudeToLargeTest() throws CoalesceDataFormatException
     {
-        thrown.expect(CoalesceDataFormatException.class);
-        thrown.expectMessage(CoalesceFieldTest.COORDINATE_ERROR_MESSAGE);
+        _thrown.expect(CoalesceDataFormatException.class);
+        _thrown.expectMessage(CoalesceFieldTest.COORDINATE_ERROR_MESSAGE);
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -2135,8 +2135,8 @@ public class CoalesceFieldTest {
     @Test
     public void parseCoordinateMultipointLatitudeToSmallTest() throws CoalesceDataFormatException
     {
-        thrown.expect(CoalesceDataFormatException.class);
-        thrown.expectMessage(CoalesceFieldTest.COORDINATE_ERROR_MESSAGE);
+        _thrown.expect(CoalesceDataFormatException.class);
+        _thrown.expectMessage(CoalesceFieldTest.COORDINATE_ERROR_MESSAGE);
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -2151,8 +2151,8 @@ public class CoalesceFieldTest {
     @Test
     public void parseCoordinateMultipointLongitudeToLargeTest() throws CoalesceDataFormatException
     {
-        thrown.expect(CoalesceDataFormatException.class);
-        thrown.expectMessage(CoalesceFieldTest.COORDINATE_ERROR_MESSAGE);
+        _thrown.expect(CoalesceDataFormatException.class);
+        _thrown.expectMessage(CoalesceFieldTest.COORDINATE_ERROR_MESSAGE);
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -2167,8 +2167,8 @@ public class CoalesceFieldTest {
     @Test
     public void parseCoordinateMultipointLongitudeToSmallTest() throws CoalesceDataFormatException
     {
-        thrown.expect(CoalesceDataFormatException.class);
-        thrown.expectMessage(CoalesceFieldTest.COORDINATE_ERROR_MESSAGE);
+        _thrown.expect(CoalesceDataFormatException.class);
+        _thrown.expectMessage(CoalesceFieldTest.COORDINATE_ERROR_MESSAGE);
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -2183,8 +2183,8 @@ public class CoalesceFieldTest {
     @Test
     public void parseCoordinateMultipointBothTooLargeTest() throws CoalesceDataFormatException
     {
-        thrown.expect(CoalesceDataFormatException.class);
-        thrown.expectMessage(CoalesceFieldTest.COORDINATE_ERROR_MESSAGE);
+        _thrown.expect(CoalesceDataFormatException.class);
+        _thrown.expectMessage(CoalesceFieldTest.COORDINATE_ERROR_MESSAGE);
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -2199,8 +2199,8 @@ public class CoalesceFieldTest {
     @Test
     public void parseCoordinateMultipointBothTooSmallTest() throws CoalesceDataFormatException
     {
-        thrown.expect(CoalesceDataFormatException.class);
-        thrown.expectMessage(CoalesceFieldTest.COORDINATE_ERROR_MESSAGE);
+        _thrown.expect(CoalesceDataFormatException.class);
+        _thrown.expectMessage(CoalesceFieldTest.COORDINATE_ERROR_MESSAGE);
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -2215,8 +2215,8 @@ public class CoalesceFieldTest {
     @Test
     public void parseCoordinateMultipointMissingLeftParenTest() throws CoalesceDataFormatException
     {
-        thrown.expect(CoalesceDataFormatException.class);
-        thrown.expectMessage(CoalesceFieldTest.COORDINATES_ERROR_MESSAGE);
+        _thrown.expect(CoalesceDataFormatException.class);
+        _thrown.expectMessage(CoalesceFieldTest.COORDINATES_ERROR_MESSAGE);
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -2231,8 +2231,8 @@ public class CoalesceFieldTest {
     @Test
     public void parseCoordinateMultipointMissingRightParenTest() throws CoalesceDataFormatException
     {
-        thrown.expect(CoalesceDataFormatException.class);
-        thrown.expectMessage(CoalesceFieldTest.COORDINATES_ERROR_MESSAGE);
+        _thrown.expect(CoalesceDataFormatException.class);
+        _thrown.expectMessage(CoalesceFieldTest.COORDINATES_ERROR_MESSAGE);
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -2247,8 +2247,8 @@ public class CoalesceFieldTest {
     @Test
     public void parseCoordinateMultipointMissingBothParenTest() throws CoalesceDataFormatException
     {
-        thrown.expect(CoalesceDataFormatException.class);
-        thrown.expectMessage(CoalesceFieldTest.COORDINATES_ERROR_MESSAGE);
+        _thrown.expect(CoalesceDataFormatException.class);
+        _thrown.expectMessage(CoalesceFieldTest.COORDINATES_ERROR_MESSAGE);
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -2263,8 +2263,8 @@ public class CoalesceFieldTest {
     @Test
     public void parseCoordinateMultipointMissingPointParenTest() throws CoalesceDataFormatException
     {
-        thrown.expect(CoalesceDataFormatException.class);
-        thrown.expectMessage(CoalesceFieldTest.COORDINATES_ERROR_MESSAGE);
+        _thrown.expect(CoalesceDataFormatException.class);
+        _thrown.expectMessage(CoalesceFieldTest.COORDINATES_ERROR_MESSAGE);
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -2297,8 +2297,8 @@ public class CoalesceFieldTest {
     @Test
     public void parseCoordinateMultipointMissingMULTIPOINTTest() throws CoalesceDataFormatException
     {
-        thrown.expect(CoalesceDataFormatException.class);
-        thrown.expectMessage(CoalesceFieldTest.COORDINATES_ERROR_MESSAGE);
+        _thrown.expect(CoalesceDataFormatException.class);
+        _thrown.expectMessage(CoalesceFieldTest.COORDINATES_ERROR_MESSAGE);
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -2312,8 +2312,8 @@ public class CoalesceFieldTest {
     @Test
     public void parseCoordinateMultipointLatitudeNotNumberTest() throws CoalesceDataFormatException
     {
-        thrown.expect(CoalesceDataFormatException.class);
-        thrown.expectMessage(CoalesceFieldTest.COORDINATES_ERROR_MESSAGE);
+        _thrown.expect(CoalesceDataFormatException.class);
+        _thrown.expectMessage(CoalesceFieldTest.COORDINATES_ERROR_MESSAGE);
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -2326,8 +2326,8 @@ public class CoalesceFieldTest {
     @Test
     public void parseGeolocatioMultipointLongitudeNotNumberTest() throws CoalesceDataFormatException
     {
-        thrown.expect(CoalesceDataFormatException.class);
-        thrown.expectMessage(CoalesceFieldTest.COORDINATES_ERROR_MESSAGE);
+        _thrown.expect(CoalesceDataFormatException.class);
+        _thrown.expectMessage(CoalesceFieldTest.COORDINATES_ERROR_MESSAGE);
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -2340,8 +2340,8 @@ public class CoalesceFieldTest {
     @Test
     public void parseCoordinateMultipointBothNotNumberTest() throws CoalesceDataFormatException
     {
-        thrown.expect(CoalesceDataFormatException.class);
-        thrown.expectMessage(CoalesceFieldTest.COORDINATES_ERROR_MESSAGE);
+        _thrown.expect(CoalesceDataFormatException.class);
+        _thrown.expectMessage(CoalesceFieldTest.COORDINATES_ERROR_MESSAGE);
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -2354,8 +2354,8 @@ public class CoalesceFieldTest {
     @Test
     public void parseCoordinateMultipointMissingValueTest() throws CoalesceDataFormatException
     {
-        thrown.expect(CoalesceDataFormatException.class);
-        thrown.expectMessage(CoalesceFieldTest.COORDINATES_ERROR_MESSAGE);
+        _thrown.expect(CoalesceDataFormatException.class);
+        _thrown.expectMessage(CoalesceFieldTest.COORDINATES_ERROR_MESSAGE);
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -2370,8 +2370,8 @@ public class CoalesceFieldTest {
     public void setTypedValueGeolocationListTypeTypeMismatchTest() throws UnsupportedEncodingException,
             CoalesceDataFormatException
     {
-        thrown.expect(ClassCastException.class);
-        thrown.expectMessage("Type mismatch");
+        _thrown.expect(ClassCastException.class);
+        _thrown.expectMessage("Type mismatch");
 
         CoalesceField<?> field = getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
 
@@ -2383,8 +2383,8 @@ public class CoalesceFieldTest {
     public void setTypedValueGeolocationListTypeTypeMismatchGeolocationsTest() throws UnsupportedEncodingException,
             CoalesceDataFormatException
     {
-        thrown.expect(ClassCastException.class);
-        thrown.expectMessage("Type mismatch");
+        _thrown.expect(ClassCastException.class);
+        _thrown.expectMessage("Type mismatch");
 
         CoalesceField<?> field = getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_LOCATION_PATH);
 
@@ -2507,8 +2507,8 @@ public class CoalesceFieldTest {
     @Test
     public void setAttributeInputLangInvalidCaseTest() throws CoalesceDataFormatException
     {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("");
+        _thrown.expect(IllegalArgumentException.class);
+        _thrown.expectMessage("");
         
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
         CoalesceStringField field = (CoalesceStringField) getTestMissionNameField(entity);
@@ -2520,8 +2520,8 @@ public class CoalesceFieldTest {
     @Test
     public void setAttributeInputLangMissingDashTest() throws CoalesceDataFormatException
     {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("");
+        _thrown.expect(IllegalArgumentException.class);
+        _thrown.expectMessage("");
         
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
         CoalesceStringField field = (CoalesceStringField) getTestMissionNameField(entity);

@@ -1,6 +1,8 @@
 package com.incadencecorp.coalesce.common.classification;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -9,11 +11,6 @@ import java.util.List;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import com.incadencecorp.coalesce.common.classification.FieldValues;
-import com.incadencecorp.coalesce.common.classification.ISO3166Country;
-import com.incadencecorp.coalesce.common.classification.Marking;
-import com.incadencecorp.coalesce.common.classification.MarkingValue;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -102,7 +99,7 @@ public class MarkingTest {
 
         List<MarkingValue> classifications = CallGetClassifications();
 
-        FieldValuesTest.assertClassifications(FieldValuesTest.AllClassifications, classifications);
+        FieldValuesTest.assertClassifications(FieldValuesTest.getAllClassifications(), classifications);
 
     }
 
