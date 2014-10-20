@@ -18,17 +18,13 @@ package com.incadencecorp.coalesce.common.exceptions;
  -----------------------------------------------------------------------------*/
 
 /**
- * @author Tom.Johnson
- *
+ * Exception that is thrown by Coalesce whenever there is an error with persisting or retrieving Coalesce entities.
  */
 public class CoalescePersistorException extends CoalesceException {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 6544606397288281154L;
     
-    public CoalescePersistorException(String message, Exception ex) {
+    public CoalescePersistorException(final String message, final Exception ex) {
         super(message, ex);
     }
 

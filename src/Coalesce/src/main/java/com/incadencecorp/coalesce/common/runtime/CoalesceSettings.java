@@ -24,6 +24,10 @@ import com.incadencecorp.unity.common.SettingsBase;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
+/**
+ * Contains all the settings used by Coalesce. Settings are not persisted between application restarts unless you specify a
+ * connector by calling {@link SettingsBase#initialize(com.incadencecorp.unity.common.IConfigurationsConnector)}.
+ */
 public class CoalesceSettings extends SettingsBase {
 
     /*--------------------------------------------------------------------------

@@ -1,8 +1,4 @@
-/**
- * 
- */
 package com.incadencecorp.coalesce.common.exceptions;
-
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -22,14 +18,13 @@ package com.incadencecorp.coalesce.common.exceptions;
  -----------------------------------------------------------------------------*/
 
 /**
- * @author Tom.Johnson
- *
+ * Exception that is thrown by Coalesce whenever there is an error with setting the values of a field.
  */
 public class CoalesceInvalidFieldException extends CoalesceException {
 
     private static final long serialVersionUID = 1096699796765997918L;
     
-    public CoalesceInvalidFieldException(String message) {
+    public CoalesceInvalidFieldException(final String message) {
         super(message);
     }
 

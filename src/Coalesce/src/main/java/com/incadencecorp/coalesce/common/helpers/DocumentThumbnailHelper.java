@@ -26,11 +26,8 @@ import javax.imageio.ImageIO;
 
 /**
  * Provides helper methods for creating thumbnail images for files.
- * 
- * @author InCadence
- *
  */
-public class DocumentThumbnailHelper {
+public final class DocumentThumbnailHelper {
 
     // Make class static
     private DocumentThumbnailHelper()
@@ -38,6 +35,9 @@ public class DocumentThumbnailHelper {
 
     }
 
+    /**
+     * Contains the bytes and original dimensions of a thumbnail image. 
+     */
     public static class DocumentThumbnailResults {
 
         private int _originalWidth = 0;
@@ -63,21 +63,20 @@ public class DocumentThumbnailHelper {
 
         }
         
-        public int getOriginalWidth()
+        public final int getOriginalWidth()
         {
             return _originalWidth;
         }
 
-        public int getOriginalHeight()
+        public final int getOriginalHeight()
         {
             return _originalHeight;
         }
 
-        public BufferedImage getThumbnail()
+        public final BufferedImage getThumbnail()
         {
             return _thumbnail;
         }
-
     }
 
     // -----------------------------------------------------------------------//

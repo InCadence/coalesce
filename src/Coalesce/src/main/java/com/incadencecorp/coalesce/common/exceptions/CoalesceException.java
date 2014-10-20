@@ -22,21 +22,17 @@ package com.incadencecorp.coalesce.common.exceptions;
  -----------------------------------------------------------------------------*/
 
 /**
- * @author Tom.Johnson
- *
+ * Base exception used by Coalesce.
  */
 public class CoalesceException extends Exception {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = -675879916269321942L;
 
-    public CoalesceException(String message, Exception ex) {
+    public CoalesceException(final String message, final Exception ex) {
         super(message, ex);
     }
     
-    public CoalesceException(String message) {
+    public CoalesceException(final String message) {
         super(message);
     }
 }

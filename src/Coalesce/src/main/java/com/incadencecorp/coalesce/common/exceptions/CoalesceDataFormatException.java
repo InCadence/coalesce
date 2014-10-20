@@ -17,11 +17,14 @@ package com.incadencecorp.coalesce.common.exceptions;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
+/**
+ * Exception that is thrown by Coalesce whenever there is an error during the parsing or formatting of data.
+ */
 public class CoalesceDataFormatException extends CoalesceException {
 
     private static final long serialVersionUID = -4679217177054112286L;
     
-    public CoalesceDataFormatException(String message)
+    public CoalesceDataFormatException(final String message)
     {
         super(message);
     }

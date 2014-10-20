@@ -34,6 +34,9 @@ import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor.Entit
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
+/**
+ * Application using Coalesce should access the persistor (database) through CoalesceFramework.
+ */
 public class CoalesceFramework {
 
     /*--------------------------------------------------------------------------

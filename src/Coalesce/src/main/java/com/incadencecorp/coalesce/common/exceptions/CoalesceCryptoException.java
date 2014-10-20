@@ -3,7 +3,6 @@
  */
 package com.incadencecorp.coalesce.common.exceptions;
 
-
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
 
@@ -22,21 +21,13 @@ package com.incadencecorp.coalesce.common.exceptions;
  -----------------------------------------------------------------------------*/
 
 /**
- * @author Tom.Johnson
- *
+ * Exception that is thrown by Coalesce whenever there is an error with the crypto providers.
  */
 public class CoalesceCryptoException extends CoalesceException {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 2092914763132572518L;
 
-    /**
-     * @param message
-     * @param ex
-     */
-    public CoalesceCryptoException(String message, Exception ex)
+    public CoalesceCryptoException(final String message, final Exception ex)
     {
         super(message, ex);
     }
