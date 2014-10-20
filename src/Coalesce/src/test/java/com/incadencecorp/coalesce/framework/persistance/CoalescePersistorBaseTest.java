@@ -223,22 +223,27 @@ public abstract class CoalescePersistorBaseTest {
         CoalesceEntity entity = CoalesceEntity.create("FlattenTest", "UnitTest", "1.0", "", "");
         
         // Create Recordset
-        CoalesceSection section = CoalesceSection.create(entity, "Flatten Section");
-        CoalesceRecordset recordSet = CoalesceRecordset.create(section, "Flatten Recordset");
-        CoalesceFieldDefinition.create(recordSet, "Flatten Field", ECoalesceFieldDataTypes.STRING_TYPE);
+        CoalesceSection section = CoalesceSection.create(entity, "No Flatten Section");
+        CoalesceRecordset recordSet = CoalesceRecordset.create(section, "No Flatten Recordset");
         CoalesceFieldDefinition.create(recordSet, "No Flatten Field", ECoalesceFieldDataTypes.STRING_TYPE);
         
+        CoalesceSection sectionFlatten = CoalesceSection.create(entity, "Flatten Section");
+        CoalesceRecordset recordSetFlatten = CoalesceRecordset.create(sectionFlatten, "Flatten Recordset");
+        CoalesceFieldDefinition.create(recordSetFlatten, "Flatten Field", ECoalesceFieldDataTypes.STRING_TYPE);
+
         // Add New Record
         CoalesceRecord record = recordSet.addNew(); 
-        CoalesceStringField flattenField = (CoalesceStringField) record.getFieldByName("Flatten Field");
-        CoalesceStringField noFlattenField = (CoalesceStringField) record.getFieldByName("No Flatten Field");
+        CoalesceRecord recordFlatten = recordSetFlatten.addNew();
+        
+        // Get Fields
+        CoalesceStringField field = (CoalesceStringField) record.getFieldByName("No Flatten Field");
+        CoalesceStringField fieldFlatten = (CoalesceStringField) recordFlatten.getFieldByName("Flatten Field");
         
         // Set Field Values
-        flattenField.setValue("Flattened");
-        noFlattenField.setValue("Not Flattened");
+        fieldFlatten.setValue("Flattened");
+        field.setValue("Not Flattened");
         
         // Disable Flattening
-        noFlattenField.setFlatten(false);
         section.setFlatten(false);
         
         System.out.println(entity.toXml());
@@ -247,11 +252,11 @@ public abstract class CoalescePersistorBaseTest {
         _coalesceFramework.saveCoalesceEntity(entity);
         
         // Get Persisted Values
-        String shouldHaveValue = _coalesceFramework.getCoalesceFieldValue(flattenField.getKey());
-        String shouldBeNull = _coalesceFramework.getCoalesceFieldValue(noFlattenField.getKey());
+        String shouldHaveValue = _coalesceFramework.getCoalesceFieldValue(fieldFlatten.getKey());
+        String shouldBeNull = _coalesceFramework.getCoalesceFieldValue(field.getKey());
         
         // Verify
-        assertEquals(shouldHaveValue, flattenField.getValue());
+        assertEquals(shouldHaveValue, fieldFlatten.getValue());
         assertNull(shouldBeNull);
     }
 

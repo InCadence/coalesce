@@ -545,80 +545,77 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     {
         boolean isSuccessful = true;
 
-        if (dataObject.getFlatten())
-        {
-            switch (dataObject.getType()) {
-            case "entity":
+        switch (dataObject.getType()) {
+        case "entity":
 
-                isSuccessful = this.checkLastModified(dataObject, conn);
-                // isSuccessful = PersistEntityObject(dataObject);
-                break;
+            isSuccessful = this.checkLastModified(dataObject, conn);
+            // isSuccessful = PersistEntityObject(dataObject);
+            break;
 
-            case "section":
-                if (CoalesceSettings.getUseIndexing())
-                {
-                    isSuccessful = persistSectionObject((CoalesceSection) dataObject, conn);
-                }
-                break;
-
-            case "recordset":
-                if (CoalesceSettings.getUseIndexing())
-                {
-                    isSuccessful = persistRecordsetObject((CoalesceRecordset) dataObject, conn);
-                }
-                break;
-            case "fielddefinition":
-                if (CoalesceSettings.getUseIndexing())
-                {
-                    // Removed Field Definition Persisting
-                    // isSuccessful = PersistFieldDefinitionObject((XsdFieldDefinition) dataObject, conn);
-                }
-                break;
-
-            case "record":
-                if (CoalesceSettings.getUseIndexing())
-                {
-                    isSuccessful = persistRecordObject((CoalesceRecord) dataObject, conn);
-                }
-                break;
-
-            case "field":// Not testing the type to ascertain if it is BINARY now.
-                if (CoalesceSettings.getUseIndexing())
-                {
-                    isSuccessful = persistFieldObject((CoalesceField<?>) dataObject, conn);
-                }
-                break;
-
-            case "fieldhistory":
-                if (CoalesceSettings.getUseIndexing())
-                {
-                    isSuccessful = persistFieldHistoryObject((CoalesceFieldHistory) dataObject, conn);
-                }
-                break;
-
-            case "linkagesection":
-                if (CoalesceSettings.getUseIndexing())
-                {
-                    isSuccessful = persistLinkageSectionObject((CoalesceLinkageSection) dataObject, conn);
-                }
-                break;
-
-            case "linkage":
-                if (CoalesceSettings.getUseIndexing())
-                {
-                    isSuccessful = persistLinkageObject((CoalesceLinkage) dataObject, conn);
-                }
-                break;
-
-            default:
-                isSuccessful = false;
-            }
-
-            if (isSuccessful && CoalesceSettings.getUseIndexing())
+        case "section":
+            if (CoalesceSettings.getUseIndexing())
             {
-                // Persist Map Table Entry
-                isSuccessful = persistMapTableEntry(dataObject, conn);
+                isSuccessful = persistSectionObject((CoalesceSection) dataObject, conn);
             }
+            break;
+
+        case "recordset":
+            if (CoalesceSettings.getUseIndexing())
+            {
+                isSuccessful = persistRecordsetObject((CoalesceRecordset) dataObject, conn);
+            }
+            break;
+        case "fielddefinition":
+            if (CoalesceSettings.getUseIndexing())
+            {
+                // Removed Field Definition Persisting
+                // isSuccessful = PersistFieldDefinitionObject((XsdFieldDefinition) dataObject, conn);
+            }
+            break;
+
+        case "record":
+            if (CoalesceSettings.getUseIndexing())
+            {
+                isSuccessful = persistRecordObject((CoalesceRecord) dataObject, conn);
+            }
+            break;
+
+        case "field":// Not testing the type to ascertain if it is BINARY now.
+            if (CoalesceSettings.getUseIndexing())
+            {
+                isSuccessful = persistFieldObject((CoalesceField<?>) dataObject, conn);
+            }
+            break;
+
+        case "fieldhistory":
+            if (CoalesceSettings.getUseIndexing())
+            {
+                isSuccessful = persistFieldHistoryObject((CoalesceFieldHistory) dataObject, conn);
+            }
+            break;
+
+        case "linkagesection":
+            if (CoalesceSettings.getUseIndexing())
+            {
+                isSuccessful = persistLinkageSectionObject((CoalesceLinkageSection) dataObject, conn);
+            }
+            break;
+
+        case "linkage":
+            if (CoalesceSettings.getUseIndexing())
+            {
+                isSuccessful = persistLinkageObject((CoalesceLinkage) dataObject, conn);
+            }
+            break;
+
+        default:
+            isSuccessful = false;
+        }
+
+        if (isSuccessful && CoalesceSettings.getUseIndexing())
+        {
+            // Persist Map Table Entry
+            isSuccessful = persistMapTableEntry(dataObject, conn);
         }
 
         return isSuccessful;
@@ -1154,10 +1151,14 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
         {
 
             // Yes; Iterate Through Children
-            for (Map.Entry<String, CoalesceDataObject> s : coalesceDataObject.getChildDataObjects().entrySet())
+            for (CoalesceDataObject childObject : coalesceDataObject.getChildDataObjects().values())
             {
-                updateDataObject(s.getValue(), conn, AllowRemoval);
+                if (childObject.getFlatten())
+                {
+                    updateDataObject(childObject, conn, AllowRemoval);
+                }
             }
+
         }
 
         return isSuccessful;
