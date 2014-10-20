@@ -95,34 +95,97 @@ public class CoalesceSettingTest {
         assertEquals(2, CoalesceSettings.getSubDirectoryLength());
 
         CoalesceUnitTestSettings.setSubDirectoryLength(5);
-
         assertEquals(5, CoalesceSettings.getSubDirectoryLength());
 
         CoalesceUnitTestSettings.setSubDirectoryLength(6);
-
         assertEquals(5, CoalesceSettings.getSubDirectoryLength());
 
-        CoalesceUnitTestSettings.setSubDirectoryLength(2);
-
         CoalesceUnitTestSettings.setSubDirectoryLength(-1);
-
         assertEquals(0, CoalesceSettings.getSubDirectoryLength());
 
         CoalesceUnitTestSettings.setSubDirectoryLength(-10);
-
         assertEquals(0, CoalesceSettings.getSubDirectoryLength());
 
         CoalesceUnitTestSettings.setSubDirectoryLength(2);
+        assertEquals(2, CoalesceSettings.getSubDirectoryLength());
+
+    }
+
+    @Test
+    public void binaryFileStoreBasePathTest()
+    {
+        assertEquals(FilenameUtils.concat(CoalesceSettings.getDefaultApplicationRoot(), "..\\images\\uploads\\"),
+                     CoalesceSettings.getBinaryFileStoreBasePath());
+
+        CoalesceSettings.setBinaryFileStoreBasePath("C:\\UnitTesting.Coalesce.Testing.config");
+
+        assertEquals("C:\\UnitTesting.Coalesce.Testing.config", CoalesceSettings.getBinaryFileStoreBasePath());
+
+        CoalesceSettings.setBinaryFileStoreBasePath(FilenameUtils.concat(CoalesceSettings.getDefaultApplicationRoot(),
+                                                                         "..\\images\\uploads\\"));
         
     }
 
     @Test
-    public void getBinaryFileStoreBasePathTest()
+    public void useEncryption()
     {
-        assertEquals(FilenameUtils.concat(CoalesceSettings.getDefaultApplicationRoot(), "..\\images\\uploads\\"),
-                     CoalesceSettings.getBinaryFileStoreBasePath());
+        assertFalse(CoalesceSettings.getUseEncryption());
+        
+        CoalesceSettings.setUseEncryption(true);
+        
+        assertTrue(CoalesceSettings.getUseEncryption());
+        
+        CoalesceSettings.setUseEncryption(false);
+        
+        assertFalse(CoalesceSettings.getUseEncryption());
+        
+    }
+    
+    @Test
+    public void passPhraseTest()
+    {
+        assertEquals("9UFAF8FI98BDLQEZ", CoalesceSettings.getPassPhrase());
+        
+        CoalesceSettings.setPassPhrase("ABCDEFG12345");
+        
+        assertEquals("ABCDEFG12345", CoalesceSettings.getPassPhrase());
+        
+        CoalesceSettings.setPassPhrase("9UFAF8FI98BDLQEZ");
+        
+    }
+    
+    @Test
+    public void auditSelectStatementsTest()
+    {
+        assertTrue(CoalesceSettings.getAuditSelectStatements());
+        
+        CoalesceSettings.setAuditSelectStatements(false);
+        
+        assertFalse(CoalesceSettings.getAuditSelectStatements());
+        
+        CoalesceSettings.setAuditSelectStatements(true);
+        
+        assertTrue(CoalesceSettings.getAuditSelectStatements());
+        
     }
 
+    @Test
+    public void imageFormatTest()
+    {
+        assertEquals("jpg", CoalesceSettings.getImageFormat());
+        
+        CoalesceSettings.setImageFormat("raw");
+        
+        assertEquals("raw", CoalesceSettings.getImageFormat());
+        
+        CoalesceSettings.setImageFormat(".GiF");
+        
+        assertEquals(".GiF", CoalesceSettings.getImageFormat());
+        
+        CoalesceSettings.setImageFormat("jpg");
+        
+    }
+    
     private static void getDefaultApplicationRootNotSetTest()
     {
         String root = CoalesceSettings.getDefaultApplicationRoot();
