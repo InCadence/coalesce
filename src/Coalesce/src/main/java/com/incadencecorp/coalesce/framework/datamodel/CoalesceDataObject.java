@@ -231,7 +231,12 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
     @Override
     public boolean getFlatten()
     {
-        return Boolean.parseBoolean(this.getAttribute("flatten"));
+        String value = this.getAttribute("flatten");
+        
+        // Default Behavior.
+        if (value == null) return true;
+        
+        return Boolean.parseBoolean(value);
     }
 
     @Override

@@ -537,84 +537,88 @@ public class SQLServerPersistor extends CoalescePersistorBase {
     {
         boolean isSuccessful = true;
 
-        switch (dataObject.getType()) {
-        case "entity":
-
-            isSuccessful = checkLastModified(dataObject, conn);
-            // isSuccessful = PersistEntityObject(dataObject);
-            break;
-
-        case "section":
-            if (CoalesceSettings.getUseIndexing())
-            {
-                isSuccessful = persistSectionObject((CoalesceSection) dataObject, conn);
-            }
-            break;
-
-        case "recordset":
-            if (CoalesceSettings.getUseIndexing())
-            {
-                isSuccessful = persistRecordsetObject((CoalesceRecordset) dataObject, conn);
-            }
-            break;
-        case "fielddefinition":
-            if (CoalesceSettings.getUseIndexing())
-            {
-                // Removed Field Definition Persisting
-                // isSuccessful = PersistFieldDefinitionObject((XsdFieldDefinition) dataObject, conn);
-            }
-            break;
-
-        case "record":
-            if (CoalesceSettings.getUseIndexing())
-            {
-                isSuccessful = persistRecordObject((CoalesceRecord) dataObject, conn);
-            }
-            break;
-
-        case "field":// Not testing the type to ascertain if it is BINARY now.
-            if (CoalesceSettings.getUseIndexing())
-            {
-                isSuccessful = persistFieldObject((CoalesceField<?>) dataObject, conn);
-            }
-            break;
-
-        case "fieldhistory":
-            if (CoalesceSettings.getUseIndexing())
-            {
-                isSuccessful = persistFieldHistoryObject((CoalesceFieldHistory) dataObject, conn);
-            }
-            break;
-
-        case "linkagesection":
-            if (CoalesceSettings.getUseIndexing())
-            {
-                isSuccessful = persistLinkageSectionObject((CoalesceLinkageSection) dataObject, conn);
-            }
-            break;
-
-        case "linkage":
-            if (CoalesceSettings.getUseIndexing())
-            {
-                isSuccessful = persistLinkageObject((CoalesceLinkage) dataObject, conn);
-            }
-            break;
-
-        default:
-            isSuccessful = false;
-        }
-
-        if (isSuccessful && CoalesceSettings.getUseIndexing())
+        if (dataObject.getFlatten())
         {
-            // Persist Map Table Entry
-            isSuccessful = persistMapTableEntry(dataObject, conn);
-        }
+            switch (dataObject.getType()) {
+            case "entity":
 
+                isSuccessful = checkLastModified(dataObject, conn);
+                // isSuccessful = PersistEntityObject(dataObject);
+                break;
+
+            case "section":
+                if (CoalesceSettings.getUseIndexing())
+                {
+                    isSuccessful = persistSectionObject((CoalesceSection) dataObject, conn);
+                }
+                break;
+
+            case "recordset":
+                if (CoalesceSettings.getUseIndexing())
+                {
+                    isSuccessful = persistRecordsetObject((CoalesceRecordset) dataObject, conn);
+                }
+                break;
+            case "fielddefinition":
+                if (CoalesceSettings.getUseIndexing())
+                {
+                    // Removed Field Definition Persisting
+                    // isSuccessful = PersistFieldDefinitionObject((XsdFieldDefinition) dataObject, conn);
+                }
+                break;
+
+            case "record":
+                if (CoalesceSettings.getUseIndexing())
+                {
+                    isSuccessful = persistRecordObject((CoalesceRecord) dataObject, conn);
+                }
+                break;
+
+            case "field":// Not testing the type to ascertain if it is BINARY now.
+                if (CoalesceSettings.getUseIndexing())
+                {
+                    isSuccessful = persistFieldObject((CoalesceField<?>) dataObject, conn);
+                }
+                break;
+
+            case "fieldhistory":
+                if (CoalesceSettings.getUseIndexing())
+                {
+                    isSuccessful = persistFieldHistoryObject((CoalesceFieldHistory) dataObject, conn);
+                }
+                break;
+
+            case "linkagesection":
+                if (CoalesceSettings.getUseIndexing())
+                {
+                    isSuccessful = persistLinkageSectionObject((CoalesceLinkageSection) dataObject, conn);
+                }
+                break;
+
+            case "linkage":
+                if (CoalesceSettings.getUseIndexing())
+                {
+                    isSuccessful = persistLinkageObject((CoalesceLinkage) dataObject, conn);
+                }
+                break;
+
+            default:
+                isSuccessful = false;
+            }
+
+            if (isSuccessful && CoalesceSettings.getUseIndexing())
+            {
+                // Persist Map Table Entry
+                isSuccessful = persistMapTableEntry(dataObject, conn);
+            }
+        }
+        
         return isSuccessful;
     }
 
     /**
-     * Adds or updates map table entry for a given element. 
+     * Adds or updates map table entry for a given element.
+     * 
      * @param dataObject the XsdDataObject to be added or updated
      * @param conn is the SQLServerDataConnector database connection
      * @return True if successfully added/updated.
@@ -627,7 +631,7 @@ public class SQLServerPersistor extends CoalescePersistorBase {
 
         if (dataObject.getParent() != null)
         {
-            parentKey= dataObject.getParent().getKey();
+            parentKey = dataObject.getParent().getKey();
             parentType = dataObject.getParent().getType();
         }
         else

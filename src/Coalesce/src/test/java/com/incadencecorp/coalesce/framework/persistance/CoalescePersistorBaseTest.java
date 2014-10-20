@@ -217,6 +217,45 @@ public abstract class CoalescePersistorBaseTest {
      */
 
     @Test
+    public void flattenObjectTest() throws CoalescePersistorException
+    {
+        // Create Test Entity
+        CoalesceEntity entity = CoalesceEntity.create("FlattenTest", "UnitTest", "1.0", "", "");
+        
+        // Create Recordset
+        CoalesceSection section = CoalesceSection.create(entity, "Flatten Section");
+        CoalesceRecordset recordSet = CoalesceRecordset.create(section, "Flatten Recordset");
+        CoalesceFieldDefinition.create(recordSet, "Flatten Field", ECoalesceFieldDataTypes.STRING_TYPE);
+        CoalesceFieldDefinition.create(recordSet, "No Flatten Field", ECoalesceFieldDataTypes.STRING_TYPE);
+        
+        // Add New Record
+        CoalesceRecord record = recordSet.addNew(); 
+        CoalesceStringField flattenField = (CoalesceStringField) record.getFieldByName("Flatten Field");
+        CoalesceStringField noFlattenField = (CoalesceStringField) record.getFieldByName("No Flatten Field");
+        
+        // Set Field Values
+        flattenField.setValue("Flattened");
+        noFlattenField.setValue("Not Flattened");
+        
+        // Disable Flattening
+        noFlattenField.setFlatten(false);
+        section.setFlatten(false);
+        
+        System.out.println(entity.toXml());
+        
+        // Persist Entity
+        _coalesceFramework.saveCoalesceEntity(entity);
+        
+        // Get Persisted Values
+        String shouldHaveValue = _coalesceFramework.getCoalesceFieldValue(flattenField.getKey());
+        String shouldBeNull = _coalesceFramework.getCoalesceFieldValue(noFlattenField.getKey());
+        
+        // Verify
+        assertEquals(shouldHaveValue, flattenField.getValue());
+        assertNull(shouldBeNull);
+    }
+
+    @Test
     public void testSaveMissionEntity() throws CoalescePersistorException
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
@@ -281,7 +320,7 @@ public abstract class CoalescePersistorBaseTest {
     public void testCreateEntityFromTemplate() throws CoalescePersistorException, SAXException, IOException
     {
         CoalesceEntityTemplate template = testTemplate(CoalesceEntityTemplate.create(_entity));
-        
+
         assertTrue(_coalesceFramework.saveCoalesceEntityTemplate(template));
 
         String templateKey = _coalesceFramework.getCoalesceEntityTemplateKey(_entity.getName(),
@@ -508,7 +547,7 @@ public abstract class CoalescePersistorBaseTest {
         String xmlMetaData = _coalesceFramework.getCoalesceEntityTemplateMetadata();
 
         System.out.println(xmlMetaData);
-        
+
         assertNotNull(xmlMetaData);
     }
 
