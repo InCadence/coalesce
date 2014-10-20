@@ -1118,49 +1118,42 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     {
         boolean isSuccessful = false;
 
-        // System.out.println(xsdDataObject.getStatus().getLabel() + " OBJECT [" + xsdDataObject.getName() + " : "
-        // + xsdDataObject.getType() + "] Processing Key:  " + xsdDataObject.getKey());
-
-        switch (coalesceDataObject.getStatus()) {
-        case ACTIVE:
-            // Persist Object
-            isSuccessful = persistObject(coalesceDataObject, conn);
-            break;
-
-        case DELETED:
-            if (AllowRemoval)
-            {
-                // Delete Object
-                isSuccessful = deleteObject(coalesceDataObject, conn);
-            }
-            else
-            {
-                // Mark Object as Deleted
-                isSuccessful = persistObject(coalesceDataObject, conn);
-            }
-
-            break;
-
-        default:
-            isSuccessful = false;
-
-        }
-
-        // Successful?
-        if (isSuccessful)
+        if (coalesceDataObject.getFlatten())
         {
+            switch (coalesceDataObject.getStatus()) {
+            case ACTIVE:
+                // Persist Object
+                isSuccessful = persistObject(coalesceDataObject, conn);
+                break;
 
-            // Yes; Iterate Through Children
-            for (CoalesceDataObject childObject : coalesceDataObject.getChildDataObjects().values())
+            case DELETED:
+                if (AllowRemoval)
+                {
+                    // Delete Object
+                    isSuccessful = deleteObject(coalesceDataObject, conn);
+                }
+                else
+                {
+                    // Mark Object as Deleted
+                    isSuccessful = persistObject(coalesceDataObject, conn);
+                }
+
+                break;
+
+            default:
+                isSuccessful = false;
+            }
+
+            // Successful?
+            if (isSuccessful)
             {
-                if (childObject.getFlatten())
+                // Yes; Iterate Through Children
+                for (CoalesceDataObject childObject : coalesceDataObject.getChildDataObjects().values())
                 {
                     updateDataObject(childObject, conn, AllowRemoval);
                 }
             }
-
         }
-
         return isSuccessful;
     }
 
