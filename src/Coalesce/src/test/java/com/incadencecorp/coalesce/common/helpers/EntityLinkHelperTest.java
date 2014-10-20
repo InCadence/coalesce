@@ -522,6 +522,20 @@ public class EntityLinkHelperTest {
                        entity2);
 
     }
+    
+    @Test
+    public void linkEntitiesToSelfTest()
+    {
+        CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+
+        assertFalse(EntityLinkHelper.linkEntities(entity1,
+                                                 ELinkTypes.IS_A_PEER_OF,
+                                                 entity1,
+                                                 EntityLinkHelperTest.TOP_SECRET_MARKING,
+                                                 "jford",
+                                                 Locale.UK,
+                                                 false));
+    }
 
     @Test
     public void linkEntitiesDetailedDontUpdateExistingExistingTest()

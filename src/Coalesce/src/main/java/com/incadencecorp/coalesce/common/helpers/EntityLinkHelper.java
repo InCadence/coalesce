@@ -98,6 +98,9 @@ public class EntityLinkHelper {
     {
 
         if (entity1 == null || entity2 == null) throw new IllegalArgumentException(MODULE_NAME + " : LinkEntities");
+        
+        // Don't allow linking to self. 
+        if (entity1.getKey().equalsIgnoreCase(entity2.getKey())) return false;
 
         // Get the LinkageSections for each Entity. Create if not found.
 
