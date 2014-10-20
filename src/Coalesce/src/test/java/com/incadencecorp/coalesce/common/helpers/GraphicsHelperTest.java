@@ -54,7 +54,7 @@ import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 public class GraphicsHelperTest {
 
     @Rule
-    private ExpectedException _thrown = ExpectedException.none();
+    public ExpectedException _thrown = ExpectedException.none();
 
     private static String FILE_FIELD_IMAGE_PATH;
     private static final String FILE_FIELD_GUID = "228df990-4d5b-11e4-916c-0800200c9a66";

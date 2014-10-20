@@ -52,7 +52,7 @@ import com.incadencecorp.coalesce.framework.testobjects.Photos.PhotoGalleryEntit
 public class CoalesceFieldHistoryTest {
 
     @Rule
-    private ExpectedException _thrown = ExpectedException.none();
+    public ExpectedException _thrown = ExpectedException.none();
 
     private static final Marking TOPSECRETCLASSIFICATIONMARKING = new Marking("//JOINT TOP SECRET AND USA//FOUO-LES//SBU/ACCM-BOB");
 

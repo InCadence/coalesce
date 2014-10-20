@@ -29,7 +29,7 @@ import com.incadencecorp.coalesce.common.helpers.MimeHelper;
 public class MimeHelperTest {
 
     @Rule
-    private ExpectedException _thrown = ExpectedException.none();
+    public ExpectedException _thrown = ExpectedException.none();
 
     /*
      * @BeforeClass public static void setUpBeforeClass() throws Exception { }

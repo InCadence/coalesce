@@ -44,7 +44,7 @@ import com.incadencecorp.coalesce.framework.generatedjaxb.Linkage;
 public class CoalesceLinkageTest {
 
     @Rule
-    private ExpectedException _thrown = ExpectedException.none();
+    public ExpectedException _thrown = ExpectedException.none();
 
     private static final Marking UNCLASSIFIED_MARKING = new Marking("(U)");
     private static final Marking TOP_SECRET_MARKING = new Marking("(//TS)");

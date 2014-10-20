@@ -32,7 +32,7 @@ import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 public class JodaDateTimeHelperTest {
 
     @Rule
-    private ExpectedException _thrown = ExpectedException.none();
+    public ExpectedException _thrown = ExpectedException.none();
 
     /*
      * @BeforeClass public static void setUpBeforeClass() throws Exception { }

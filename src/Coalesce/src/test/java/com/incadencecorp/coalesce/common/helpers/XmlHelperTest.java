@@ -48,7 +48,7 @@ import com.incadencecorp.coalesce.framework.generatedjaxb.Recordset;
 public class XmlHelperTest {
 
     @Rule
-    private ExpectedException _thrown = ExpectedException.none();
+    public ExpectedException _thrown = ExpectedException.none();
 
     /*
      * @BeforeClass public static void setUpBeforeClass() throws Exception { }

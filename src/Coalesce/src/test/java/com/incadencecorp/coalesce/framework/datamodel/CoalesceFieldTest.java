@@ -65,7 +65,7 @@ import com.vividsolutions.jts.geom.Point;
 public class CoalesceFieldTest {
 
     @Rule
-    private ExpectedException _thrown = ExpectedException.none();
+    public ExpectedException _thrown = ExpectedException.none();
 
     private static final Marking TOPSECRETCLASSIFICATIONMARKING = new Marking("//JOINT TOP SECRET AND USA//FOUO-LES//SBU/ACCM-BOB");
     private static final String COORDINATE_ERROR_MESSAGE = "Failed to parse coordinate value for: MissionGeoLocation";
