@@ -5,9 +5,6 @@ import org.junit.BeforeClass;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
-import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
-import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 import com.incadencecorp.coalesce.framework.persistance.sqlserver.SQLServerDataConnector;
 import com.incadencecorp.coalesce.framework.persistance.sqlserver.SQLServerPersistor;
 

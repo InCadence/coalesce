@@ -8,9 +8,6 @@ import org.xml.sax.SAXException;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
-import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
-import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 import com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLDataConnector;
 import com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLPersistor;
 
