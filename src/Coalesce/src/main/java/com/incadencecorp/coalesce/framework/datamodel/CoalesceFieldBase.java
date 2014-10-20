@@ -524,7 +524,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
      * @return UUID, field's value as a UUID. Null if not a UUID.
      * @throws ClassCastException.
      */
-    protected UUID getGuidValue() throws ClassCastException
+    protected UUID getGuidValue() 
     {
 
         if (getDataType() != ECoalesceFieldDataTypes.GUID_TYPE)
@@ -550,7 +550,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
      * @return DateTime, field's value as a DateTime. Null if not populated or invalid.
      * @throws ClassCastException.
      */
-    protected DateTime getDateTimeValue() throws ClassCastException
+    protected DateTime getDateTimeValue() 
     {
 
         if (getDataType() != ECoalesceFieldDataTypes.DATE_TIME_TYPE)
@@ -572,7 +572,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
      * @return boolean, field's value as a boolean.
      * @throws ClassCastException.
      */
-    protected Boolean getBooleanValue() throws ClassCastException
+    protected Boolean getBooleanValue() 
     {
         if (getDataType() != ECoalesceFieldDataTypes.BOOLEAN_TYPE)
         {
@@ -818,7 +818,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
      * 
      * @throws ClassCastException.
      */
-    protected byte[] getBinaryValue() throws ClassCastException
+    protected byte[] getBinaryValue() 
     {
         if (getDataType() != ECoalesceFieldDataTypes.BINARY_TYPE && getDataType() != ECoalesceFieldDataTypes.FILE_TYPE)
         {

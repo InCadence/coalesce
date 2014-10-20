@@ -112,8 +112,8 @@ public class FileHelperTest {
     }
 
     @Test
-    public void getBaseFilenameWithFullDirectoryPathForKeyNullTest() throws NoSuchMethodException, SecurityException,
-            IllegalAccessException, IllegalArgumentException, InvocationTargetException
+    public void getBaseFilenameWithFullDirectoryPathForKeyNullTest() throws NoSuchMethodException, IllegalAccessException,
+            InvocationTargetException
     {
 
         String filename = callGetBaseFilenameWithFullDirectoryPathForKey(CoalesceUnitTestSettings.getBinaryFileStoreBasePath(),
@@ -125,8 +125,8 @@ public class FileHelperTest {
     }
 
     @Test
-    public void getBaseFilenameWithFullDirectoryPathForKeyEmptyTest() throws NoSuchMethodException, SecurityException,
-            IllegalAccessException, IllegalArgumentException, InvocationTargetException
+    public void getBaseFilenameWithFullDirectoryPathForKeyEmptyTest() throws NoSuchMethodException, IllegalAccessException,
+            InvocationTargetException
     {
 
         String filename = callGetBaseFilenameWithFullDirectoryPathForKey(CoalesceUnitTestSettings.getBinaryFileStoreBasePath(),
@@ -139,8 +139,8 @@ public class FileHelperTest {
     }
 
     @Test
-    public void getBaseFilenameWithFullDirectoryPathForKeyWhitespaceTest() throws NoSuchMethodException, SecurityException,
-            IllegalAccessException, IllegalArgumentException, InvocationTargetException
+    public void getBaseFilenameWithFullDirectoryPathForKeyWhitespaceTest() throws NoSuchMethodException,
+            IllegalAccessException, InvocationTargetException
     {
 
         String filename = callGetBaseFilenameWithFullDirectoryPathForKey(CoalesceUnitTestSettings.getBinaryFileStoreBasePath(),
@@ -153,8 +153,8 @@ public class FileHelperTest {
     }
 
     @Test
-    public void getBaseFilenameWithFullDirectoryPathForKeyInvalidGuidTest() throws NoSuchMethodException, SecurityException,
-            IllegalAccessException, IllegalArgumentException, InvocationTargetException
+    public void getBaseFilenameWithFullDirectoryPathForKeyInvalidGuidTest() throws NoSuchMethodException,
+            IllegalAccessException, InvocationTargetException
     {
 
         String filename = callGetBaseFilenameWithFullDirectoryPathForKey(CoalesceUnitTestSettings.getBinaryFileStoreBasePath(),
@@ -167,8 +167,8 @@ public class FileHelperTest {
     }
 
     @Test
-    public void getBaseFilenameWithFullDirectoryPathForKeySubDirZeroTest() throws NoSuchMethodException, SecurityException,
-            IllegalAccessException, IllegalArgumentException, InvocationTargetException
+    public void getBaseFilenameWithFullDirectoryPathForKeySubDirZeroTest() throws NoSuchMethodException,
+            IllegalAccessException, InvocationTargetException
     {
 
         String filename = callGetBaseFilenameWithFullDirectoryPathForKey(CoalesceUnitTestSettings.getBinaryFileStoreBasePath(),
@@ -180,8 +180,8 @@ public class FileHelperTest {
     }
 
     @Test
-    public void getBaseFilenameWithFullDirectoryPathForKeySubDirOneTest() throws NoSuchMethodException, SecurityException,
-            IllegalAccessException, IllegalArgumentException, InvocationTargetException
+    public void getBaseFilenameWithFullDirectoryPathForKeySubDirOneTest() throws NoSuchMethodException,
+            IllegalAccessException, InvocationTargetException
     {
 
         String filename = callGetBaseFilenameWithFullDirectoryPathForKey(CoalesceUnitTestSettings.getBinaryFileStoreBasePath(),
@@ -195,7 +195,7 @@ public class FileHelperTest {
 
     @Test
     public void getBaseFilenameWithFullDirectoryPathForKeySubDirThirtyFiveTest() throws NoSuchMethodException,
-            SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
+            IllegalAccessException, InvocationTargetException
     {
 
         String filename = callGetBaseFilenameWithFullDirectoryPathForKey(CoalesceUnitTestSettings.getBinaryFileStoreBasePath(),
@@ -208,8 +208,8 @@ public class FileHelperTest {
     }
 
     @Test
-    public void GetBaseFilenameWithFullDirectoryPathForKeySubDirThirtySixTest() throws NoSuchMethodException,
-            SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
+    public void getBaseFilenameWithFullDirectoryPathForKeySubDirThirtySixTest() throws NoSuchMethodException,
+            IllegalAccessException, InvocationTargetException
     {
 
         String filename = callGetBaseFilenameWithFullDirectoryPathForKey(CoalesceUnitTestSettings.getBinaryFileStoreBasePath(),
@@ -222,7 +222,7 @@ public class FileHelperTest {
 
     @Test
     public void getBaseFilenameWithFullDirectoryPathForKeySubDirThirtySevenTest() throws NoSuchMethodException,
-            SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
+            IllegalAccessException, InvocationTargetException
     {
 
         String filename = callGetBaseFilenameWithFullDirectoryPathForKey(CoalesceUnitTestSettings.getBinaryFileStoreBasePath(),
@@ -237,8 +237,7 @@ public class FileHelperTest {
                                                                   int subDirectoryLength,
                                                                   String key,
                                                                   boolean createIfDoesNotExist)
-            throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException,
-            InvocationTargetException
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException
     {
         Class<?>[] args = new Class[4];
         args[0] = String.class;

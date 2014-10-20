@@ -93,8 +93,8 @@ public class MarkingTest {
     }
 
     @Test
-    public void GetClassifications() throws NoSuchMethodException, SecurityException, IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException
+    public void GetClassifications() throws NoSuchMethodException, IllegalAccessException,
+            InvocationTargetException
     {
 
         List<MarkingValue> classifications = CallGetClassifications();
@@ -3539,8 +3539,8 @@ public class MarkingTest {
     }
 
     @SuppressWarnings("unchecked")
-    private List<MarkingValue> CallGetClassifications() throws NoSuchMethodException, SecurityException,
-            IllegalAccessException, IllegalArgumentException, InvocationTargetException
+    private List<MarkingValue> CallGetClassifications() throws NoSuchMethodException, 
+            IllegalAccessException, InvocationTargetException
     {
 
         Method method = Marking.class.getDeclaredMethod("getClassifications", (Class<?>[]) null);

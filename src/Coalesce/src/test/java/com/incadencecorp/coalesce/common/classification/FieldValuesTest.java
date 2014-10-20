@@ -442,8 +442,8 @@ public class FieldValuesTest {
      */
 
     @Test
-    public void ClassListAddTest() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException,
-            NoSuchMethodException, SecurityException
+    public void ClassListAddTest() throws IllegalAccessException,  InvocationTargetException,
+            NoSuchMethodException
     {
 
         ArrayList<MarkingValue> markingValues = new ArrayList<MarkingValue>();
@@ -458,8 +458,8 @@ public class FieldValuesTest {
     }
 
     @Test
-    public void ClassListAddToExistingListTest() throws NoSuchMethodException, SecurityException, IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException
+    public void ClassListAddToExistingListTest() throws NoSuchMethodException, IllegalAccessException,
+            InvocationTargetException
     {
 
         List<MarkingValue> markingValues = FieldValues.getListOfSciControlSystems();
@@ -1018,8 +1018,8 @@ public class FieldValuesTest {
                                   String parent,
                                   String title,
                                   String abbreviation,
-                                  String portion) throws NoSuchMethodException, SecurityException, IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException
+                                  String portion) throws NoSuchMethodException, IllegalAccessException,
+            InvocationTargetException
     {
 
         Class<?>[] methodArgs = new Class[5];

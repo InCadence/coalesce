@@ -73,7 +73,7 @@ public class LocaleConverter {
      * 
      * @throws IllegalArgumentException if <code>value</code> cannot be parsed correctly
      */
-    public static Locale parseLocale(String value) throws IllegalArgumentException
+    public static Locale parseLocale(String value) 
     {
         if (StringHelper.isNullOrEmpty(value)) return null;
 

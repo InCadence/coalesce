@@ -591,7 +591,7 @@ public class CoalesceFieldTest {
         assertEquals(new Locale("en"), desField.getInputLang());
 
     }
-    
+
     @Test
     public void inputLangNewEntityTest()
     {
@@ -607,18 +607,18 @@ public class CoalesceFieldTest {
         assertEquals(null, field.getInputLang());
 
         field.setInputLang(Locale.UK);
-        
+
         String entityXml = entity.toXml();
         CoalesceEntity desEntity = CoalesceEntity.create(entityXml);
         CoalesceStringField desField = (CoalesceStringField) desEntity.getDataObjectForNamePath("Operation/NewSection/NewRecordset/NewRecordset Record/NewField");
-        
+
         assertEquals(Locale.UK, desField.getInputLang());
 
         CoalesceEntity desEntityEmptyLocale = CoalesceEntity.create(entityXml.replace("en-GB", ""));
         CoalesceStringField desFieldEmtpyLocale = (CoalesceStringField) desEntityEmptyLocale.getDataObjectForNamePath("Operation/NewSection/NewRecordset/NewRecordset Record/NewField");
 
         assertEquals(null, desFieldEmtpyLocale.getInputLang());
-        
+
         CoalesceEntity desEntityBadLocale = CoalesceEntity.create(entityXml.replace("en-GB", "engb"));
         CoalesceStringField desFieldBadLocale = (CoalesceStringField) desEntityBadLocale.getDataObjectForNamePath("Operation/NewSection/NewRecordset/NewRecordset Record/NewField");
 
@@ -947,16 +947,16 @@ public class CoalesceFieldTest {
     }
 
     @Test
-    public void getCoalesceFullFilenameTwoSubDirTest() throws NoSuchMethodException, SecurityException,
-            IllegalAccessException, IllegalArgumentException, InvocationTargetException
+    public void getCoalesceFullFilenameTwoSubDirTest() throws NoSuchMethodException, IllegalAccessException,
+             InvocationTargetException
     {
 
         getCoalesceFullFilename();
     }
 
     @Test
-    public void getCoalesceFullFilenameZeroSubDirTest() throws NoSuchMethodException, SecurityException,
-            IllegalAccessException, IllegalArgumentException, InvocationTargetException
+    public void getCoalesceFullFilenameZeroSubDirTest() throws NoSuchMethodException, IllegalAccessException,
+             InvocationTargetException
     {
 
         CoalesceUnitTestSettings.setSubDirectoryLength(0);
@@ -965,8 +965,8 @@ public class CoalesceFieldTest {
     }
 
     @Test
-    public void getCoalesceFullFilenameFiveSubDirTest() throws NoSuchMethodException, SecurityException,
-            IllegalAccessException, IllegalArgumentException, InvocationTargetException
+    public void getCoalesceFullFilenameFiveSubDirTest() throws NoSuchMethodException, IllegalAccessException,
+             InvocationTargetException
     {
 
         CoalesceUnitTestSettings.setSubDirectoryLength(5);
@@ -975,8 +975,8 @@ public class CoalesceFieldTest {
 
     }
 
-    private void getCoalesceFullFilename() throws NoSuchMethodException, SecurityException, IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException
+    private void getCoalesceFullFilename() throws NoSuchMethodException, 
+            InvocationTargetException, IllegalAccessException
     {
 
         FileTestResult result = getJpgFile();
@@ -995,16 +995,16 @@ public class CoalesceFieldTest {
     }
 
     @Test
-    public void getCoalesceFullThumbnailFilenameTwoSubDirTest() throws NoSuchMethodException, SecurityException,
-            IllegalAccessException, IllegalArgumentException, InvocationTargetException
+    public void getCoalesceFullThumbnailFilenameTwoSubDirTest() throws NoSuchMethodException, IllegalAccessException,
+            InvocationTargetException
     {
 
         getCoalesceFullThumbnailFilename();
     }
 
     @Test
-    public void getCoalesceFullThumbnailFilenameZeroSubDirTest() throws NoSuchMethodException, SecurityException,
-            IllegalAccessException, IllegalArgumentException, InvocationTargetException
+    public void getCoalesceFullThumbnailFilenameZeroSubDirTest() throws NoSuchMethodException, IllegalAccessException,
+            InvocationTargetException
     {
 
         CoalesceUnitTestSettings.setSubDirectoryLength(0);
@@ -1013,8 +1013,8 @@ public class CoalesceFieldTest {
     }
 
     @Test
-    public void getCoalesceFullThumbnailFilenameFiveSubDirTest() throws NoSuchMethodException, SecurityException,
-            IllegalAccessException, IllegalArgumentException, InvocationTargetException
+    public void getCoalesceFullThumbnailFilenameFiveSubDirTest() throws NoSuchMethodException, IllegalAccessException,
+            InvocationTargetException
     {
 
         CoalesceUnitTestSettings.setSubDirectoryLength(5);
@@ -1023,8 +1023,8 @@ public class CoalesceFieldTest {
 
     }
 
-    private void getCoalesceFullThumbnailFilename() throws NoSuchMethodException, SecurityException, IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException
+    private void getCoalesceFullThumbnailFilename() throws NoSuchMethodException, InvocationTargetException,
+            IllegalAccessException
     {
 
         FileTestResult result = getJpgFile();
@@ -1043,16 +1043,14 @@ public class CoalesceFieldTest {
     }
 
     @Test
-    public void getCoalesceFilenameWithLastModifiedTagTwoSubDirTest() throws NoSuchMethodException, SecurityException,
-            IllegalAccessException, IllegalArgumentException, InvocationTargetException
+    public void getCoalesceFilenameWithLastModifiedTagTwoSubDirTest() throws NoSuchMethodException, IllegalAccessException
     {
 
         getCoalesceFilenameWithLastModifiedTag();
     }
 
     @Test
-    public void getCoalesceFilenameWithLastModifiedTagZeroSubDirTest() throws NoSuchMethodException, SecurityException,
-            IllegalAccessException, IllegalArgumentException, InvocationTargetException
+    public void getCoalesceFilenameWithLastModifiedTagZeroSubDirTest() throws NoSuchMethodException, IllegalAccessException
     {
 
         CoalesceUnitTestSettings.setSubDirectoryLength(0);
@@ -1061,8 +1059,7 @@ public class CoalesceFieldTest {
     }
 
     @Test
-    public void getCoalesceFilenameWithLastModifiedTagFiveSubDirTest() throws NoSuchMethodException, SecurityException,
-            IllegalAccessException, IllegalArgumentException, InvocationTargetException
+    public void getCoalesceFilenameWithLastModifiedTagFiveSubDirTest() throws NoSuchMethodException, IllegalAccessException
     {
 
         CoalesceUnitTestSettings.setSubDirectoryLength(5);
@@ -1071,8 +1068,7 @@ public class CoalesceFieldTest {
 
     }
 
-    private void getCoalesceFilenameWithLastModifiedTag() throws NoSuchMethodException, SecurityException,
-            IllegalAccessException, IllegalArgumentException, InvocationTargetException
+    private void getCoalesceFilenameWithLastModifiedTag() throws NoSuchMethodException, IllegalAccessException
     {
 
         FileTestResult result = getJpgFile();
@@ -1105,26 +1101,21 @@ public class CoalesceFieldTest {
     }
 
     @Test
-    public void getCoalesceThumbnailFilenameWithLastModifiedTagTwoSubDirTest() throws NoSuchMethodException,
-            SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
+    public void getCoalesceThumbnailFilenameWithLastModifiedTagTwoSubDirTest() throws NoSuchMethodException
     {
-
         getCoalesceThumbnailFilenameWithLastModifiedTag();
     }
 
     @Test
-    public void getCoalesceThumbnailFilenameWithLastModifiedTagZeroSubDirTest() throws NoSuchMethodException,
-            SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
+    public void getCoalesceThumbnailFilenameWithLastModifiedTagZeroSubDirTest() throws NoSuchMethodException
     {
-
         CoalesceUnitTestSettings.setSubDirectoryLength(0);
 
         getCoalesceThumbnailFilenameWithLastModifiedTag();
     }
 
     @Test
-    public void getCoalesceThumbnailFilenameWithLastModifiedTagFiveSubDirTest() throws NoSuchMethodException,
-            SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
+    public void getCoalesceThumbnailFilenameWithLastModifiedTagFiveSubDirTest() throws NoSuchMethodException
     {
 
         CoalesceUnitTestSettings.setSubDirectoryLength(5);
@@ -1133,8 +1124,7 @@ public class CoalesceFieldTest {
 
     }
 
-    private void getCoalesceThumbnailFilenameWithLastModifiedTag() throws NoSuchMethodException, SecurityException,
-            IllegalAccessException, IllegalArgumentException, InvocationTargetException
+    private void getCoalesceThumbnailFilenameWithLastModifiedTag() throws NoSuchMethodException
     {
         FileTestResult result = getJpgFile();
 
@@ -2475,10 +2465,10 @@ public class CoalesceFieldTest {
 
         field.setAttribute("InputLang", "");
         assertEquals(null, field.getInputLang());
-        
+
         field.setAttribute("InputLang", "en-GB");
         assertEquals(Locale.UK, field.getInputLang());
-        
+
         field.setAttribute("Status", ECoalesceDataObjectStatus.UNKNOWN.getLabel());
         assertEquals(ECoalesceDataObjectStatus.UNKNOWN, field.getStatus());
 
@@ -2509,23 +2499,23 @@ public class CoalesceFieldTest {
     {
         _thrown.expect(IllegalArgumentException.class);
         _thrown.expectMessage("");
-        
+
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
         CoalesceStringField field = (CoalesceStringField) getTestMissionNameField(entity);
 
         field.setAttribute("InputLang", "en-gb");
 
     }
-    
+
     @Test
     public void setAttributeInputLangMissingDashTest() throws CoalesceDataFormatException
     {
         _thrown.expect(IllegalArgumentException.class);
         _thrown.expectMessage("");
-        
+
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
         CoalesceStringField field = (CoalesceStringField) getTestMissionNameField(entity);
-        
+
         field.setAttribute("InputLang", "engb");
 
     }

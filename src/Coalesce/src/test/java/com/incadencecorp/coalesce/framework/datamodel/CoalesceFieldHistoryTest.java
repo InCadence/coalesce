@@ -207,7 +207,7 @@ public class CoalesceFieldHistoryTest {
     }
 
     @Test
-    public void ConstructorPreviousHistory() throws ClassCastException, CoalesceDataFormatException
+    public void constructorPreviousHistory() throws CoalesceDataFormatException
     {
 
         CoalesceField<?> field = CoalesceFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_BASE64_PATH);
@@ -227,7 +227,7 @@ public class CoalesceFieldHistoryTest {
     }
 
     @Test
-    public void GetKeyTest()
+    public void getKeyTest()
     {
 
         CoalesceFieldHistory field = GetTestMissionNameFieldHistory();
@@ -237,7 +237,7 @@ public class CoalesceFieldHistoryTest {
     }
 
     @Test
-    public void SetKeyTest()
+    public void setKeyTest()
     {
 
         CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
