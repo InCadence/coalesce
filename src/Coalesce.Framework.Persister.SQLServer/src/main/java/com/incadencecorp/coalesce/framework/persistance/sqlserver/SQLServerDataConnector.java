@@ -13,7 +13,7 @@ public class SQLServerDataConnector extends CoalesceDataConnectorBase {
     {
         try
         {
-            _settings = settings;
+            setSettings(settings);
 
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         }
@@ -27,21 +27,21 @@ public class SQLServerDataConnector extends CoalesceDataConnectorBase {
     public void openConnection() throws SQLException
     {
 
-        this._settings.setPostGres(false);
+        getSettings().setPostGres(false);
 
         SQLServerDataSource sqlDataSource = new SQLServerDataSource();
         //  On Linux change set setIntegratedSecurity(false)
         sqlDataSource.setIntegratedSecurity(true);
-        sqlDataSource.setServerName(this._settings.getServerName());
-        sqlDataSource.setPortNumber(this._settings.getPortNumber());
-        sqlDataSource.setDatabaseName(this._settings.getDatabase());
+        sqlDataSource.setServerName(getSettings().getServerName());
+        sqlDataSource.setPortNumber(getSettings().getPortNumber());
+        sqlDataSource.setDatabaseName(getSettings().getDatabase());
 
-        this._conn = sqlDataSource.getConnection();
+        setConnection(sqlDataSource.getConnection());
     }
 
     @Override
     protected String getProcedurePrefix()
     {
-        return "call " + _settings.getDatabase() + ".dbo.";
+        return "call " + getSettings().getDatabase() + ".dbo.";
     }
 }

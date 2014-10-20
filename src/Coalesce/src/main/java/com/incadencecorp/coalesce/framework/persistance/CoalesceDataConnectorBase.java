@@ -12,7 +12,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
 
 /*-----------------------------------------------------------------------------'
@@ -41,8 +40,8 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
     Private Member Variables
     -----------------------------------------------------------------------------*/
 
-    protected Connection _conn = null;
-    protected ServerConn _settings;
+    private Connection _conn = null;
+    private ServerConn _settings;
 
     /*-----------------------------------------------------------------------------'
     Abstract Functions
@@ -72,7 +71,7 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
 
         return stmt.executeQuery();
     }
-    
+
     /**
      * Returns the results from the executed SQL Command.
      * 
@@ -240,28 +239,28 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
     {
         // Execute Query
         ResultSet results = executeQuery(sql);
-        
+
         // Create Document
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document doc = builder.newDocument();
-        
+
         // Create Root Node
         Element rootElement = doc.createElement("coalescetemplates");
         doc.appendChild(rootElement);
-        
+
         while (results.next())
         {
             // Create New Template Element
             Element templateElement = doc.createElement("coalescetemplate");
-            
+
             // Set Attributes
-            templateElement.setAttribute("templatekey", results.getString("TemplateKey")); 
-            templateElement.setAttribute("name", results.getString("Name")); 
-            templateElement.setAttribute("source", results.getString("Source")); 
-            templateElement.setAttribute("version", results.getString("Version")); 
-            templateElement.setAttribute("lastmodified", results.getString("LastModified")); 
-            templateElement.setAttribute("datecreated", results.getString("DateCreated")); 
+            templateElement.setAttribute("templatekey", results.getString("TemplateKey"));
+            templateElement.setAttribute("name", results.getString("Name"));
+            templateElement.setAttribute("source", results.getString("Source"));
+            templateElement.setAttribute("version", results.getString("Version"));
+            templateElement.setAttribute("lastmodified", results.getString("LastModified"));
+            templateElement.setAttribute("datecreated", results.getString("DateCreated"));
 
             // Append Element
             rootElement.appendChild(templateElement);
@@ -288,6 +287,21 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
     /*-----------------------------------------------------------------------------'
     Protected Functions
     -----------------------------------------------------------------------------*/
+
+    protected final void setConnection(final Connection conn)
+    {
+        _conn = conn;
+    }
+
+    protected final void setSettings(final ServerConn settings)
+    {
+        _settings = settings;
+    }
+
+    protected final ServerConn getSettings()
+    {
+        return _settings;
+    }
 
     /*-----------------------------------------------------------------------------'
     Private Functions

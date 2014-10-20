@@ -13,7 +13,7 @@ public class MySQLDataConnector extends CoalesceDataConnectorBase {
     {
         try
         {
-            _settings = settings;
+            setSettings(settings);
 
             Class.forName("com.mysql.jdbc.Driver");
         }
@@ -27,16 +27,16 @@ public class MySQLDataConnector extends CoalesceDataConnectorBase {
     public void openConnection() throws SQLException
     {
 
-        String url = "jdbc:mysql://" + _settings.getServerNameWithPort() + "/" + _settings.getDatabase();
+        String url = "jdbc:mysql://" + getSettings().getServerNameWithPort() + "/" + getSettings().getDatabase();
 
-        this._settings.setPostGres(false);
-        this._conn = DriverManager.getConnection(url, this._settings.getUser(), this._settings.getPassword());
+        getSettings().setPostGres(false);
+        setConnection(DriverManager.getConnection(url, this.getSettings().getUser(), this.getSettings().getPassword()));
     }
 
     @Override
     protected String getProcedurePrefix()
     {
-        return "call " + _settings.getDatabase() + ".";
+        return "call " + getSettings().getDatabase() + ".";
     }
 
 }

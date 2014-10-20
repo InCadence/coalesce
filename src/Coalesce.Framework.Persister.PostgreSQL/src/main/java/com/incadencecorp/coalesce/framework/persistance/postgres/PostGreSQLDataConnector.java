@@ -13,7 +13,7 @@ public class PostGreSQLDataConnector extends CoalesceDataConnectorBase {
     {
         try
         {
-            _settings = settings;
+            setSettings(settings);
 
             Class.forName("org.postgresql.Driver");
         }
@@ -26,10 +26,10 @@ public class PostGreSQLDataConnector extends CoalesceDataConnectorBase {
     @Override
     public void openConnection() throws SQLException
     {
-        String url = "jdbc:postgresql://" + _settings.getServerNameWithPort() + "/" + _settings.getDatabase();
+        String url = "jdbc:postgresql://" + getSettings().getServerNameWithPort() + "/" + getSettings().getDatabase();
 
-        this._settings.setPostGres(true);
-        this._conn = DriverManager.getConnection(url, this._settings.getProperties());
+        getSettings().setPostGres(true);
+        setConnection(DriverManager.getConnection(url, this.getSettings().getProperties()));
     }
 
     @Override
