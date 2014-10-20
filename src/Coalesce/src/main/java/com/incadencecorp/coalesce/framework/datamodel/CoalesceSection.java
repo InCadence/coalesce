@@ -40,40 +40,6 @@ public class CoalesceSection extends CoalesceDataObject {
     // Factory and Initialization
     // -----------------------------------------------------------------------//
 
-    // TODO: Nested sections are not currently part of the Entity object
-    /*
-     * public CallResult Create(CoalesceSection Parent, CoalesceSection NewSection, String Name) { try{ return Create(Parent,
-     * NewSection, Name, false); }catch(Exception ex){ // return Failed Error return new CallResult(CallResults.FAILED_ERROR,
-     * ex, CoalesceSection.MODULE); } }
-     * 
-     * public CallResult Create(CoalesceSection Parent, CoalesceSection NewSection, String Name, boolean NoIndex) { try{
-     * CallResult rst; Node NewNode = null;
-     * 
-     * // Create CoalesceSection Node NewSection = new CoalesceSection();
-     * 
-     * //TODO:Node creation (remove null assignment above) // Create the DataObjectNode //.DOCUMENT_NODE //NewNode =
-     * Parent.GetDataObjectDocument().CreateNode(Node.ELEMENT_NODE, "section", ""); //NewNode =
-     * Parent.GetDataObjectDocument().CreateNode(XmlNodeType.Element, "section", "");
-     * Parent.GetDataObjectNode().appendChild(NewNode);
-     * 
-     * // Initialize the CoalesceField Object rst = NewSection.Initialize(Parent, NewNode); if ( !(rst.getIsSuccess()))
-     * return rst;
-     * 
-     * Date UTCDate = new Date(); DateTimeHelper dth = new DateTimeHelper(); dth.ConvertDateToGMT(UTCDate);
-     * 
-     * // Set Default Values //TODO: GUIDHelper //rst = GUIDHelper.GetGuidString(Guid.NewGuid, NewSection.Key)
-     * NewSection.SetKey(java.util.UUID.randomUUID().toString()); NewSection.SetName(Name);
-     * NewSection.SetDateCreated(UTCDate); NewSection.SetLastModified(UTCDate); if (NoIndex) NewSection.NoIndex = true;
-     * 
-     * // Add to Parent's Child Collection if ( !(Parent.GetChildDataObjects().containsKey(NewSection.GetKey())) ) {
-     * Parent.GetChildDataObjects().put(NewSection.GetKey(), NewSection); }
-     * 
-     * // return Success return CallResult.successCallResult;
-     * 
-     * }catch(Exception ex){ // return Failed Error return new CallResult(CallResults.FAILED_ERROR, ex,
-     * CoalesceSection.MODULE); } }
-     */
-
     /**
      * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}, by name, and ties it to its parent
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}.
@@ -196,16 +162,6 @@ public class CoalesceSection extends CoalesceDataObject {
         return newSection;
     }
     
-    // TODO: Need to get Entity with nested sections
-    /*
-     * public CallResult Initialize(CoalesceSection Parent, Node DataObjectNode) { try{ // Since the Section can be
-     * initialized with an Entity as a parent or // another Section as a parent, we have a private method that takes in // an
-     * ICoalesceDataObject, and these public methods expose the strongly // typed interface to outside callers. return
-     * this.Initialize((ICoalesceDataObject)Parent, DataObjectNode);
-     * 
-     * }catch(Exception ex){ // return Failed Error return new CallResult(CallResults.FAILED_ERROR, ex, this); } }
-     */
-
     /**
      * Initializes this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} based on a Section and ties it
      * to its parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}.
@@ -309,17 +265,6 @@ public class CoalesceSection extends CoalesceDataObject {
         return "section";
     }
 
-    // TODO: Need nested sections
-    /*
-     * public CallResult CreateSection(CoalesceSection newSection, String name) { try{ CallResult rst;
-     * 
-     * // Create new Section rst = CoalesceSection.Create(this, newSection, name); if (!rst.getIsSuccess()) return rst;
-     * 
-     * return CallResult.successCallResult;
-     * 
-     * }catch(Exception ex){ return new CallResult(CallResults.FAILED_ERROR, ex, this); } }
-     */
-
     /**
      * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} for this
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}, with the name specified.
@@ -388,7 +333,6 @@ public class CoalesceSection extends CoalesceDataObject {
      */
     public CoalesceSection createSection(String name)
     {
-        //TODO: create function for (Section, name)
         return CoalesceSection.create(this, name);
     }
 
