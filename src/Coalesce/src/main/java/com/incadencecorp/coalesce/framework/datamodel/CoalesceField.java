@@ -858,6 +858,9 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
                     setPreviousHistoryKey(CoalesceFieldHistory.create(this));
                 }
             }
+            
+            // Set Last Modified
+            setLastModified(JodaDateTimeHelper.nowInUtc());
         }
     }
 
