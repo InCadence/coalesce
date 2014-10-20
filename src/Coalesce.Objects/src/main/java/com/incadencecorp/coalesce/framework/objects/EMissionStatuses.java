@@ -30,16 +30,16 @@ public enum EMissionStatuses
     // Static Methods
     // ----------------------------------------------------------------------//
 
-    private static Map<String, EMissionStatuses> codeToStatusMapping;
+    private static Map<String, EMissionStatuses> _codeToStatusMapping;
 
     private static void initMapping()
     {
-        if (codeToStatusMapping == null)
+        if (_codeToStatusMapping == null)
         {
-            codeToStatusMapping = new HashMap<String, EMissionStatuses>();
+            _codeToStatusMapping = new HashMap<String, EMissionStatuses>();
             for (EMissionStatuses s : values())
             {
-                codeToStatusMapping.put(s._label.toLowerCase(), s);
+                _codeToStatusMapping.put(s._label.toLowerCase(), s);
             }
         }
     }
@@ -51,7 +51,7 @@ public enum EMissionStatuses
 
         if (StringHelper.isNullOrEmpty(label)) return EMissionStatuses.Unknown;
 
-        EMissionStatuses value = codeToStatusMapping.get(label.trim().toLowerCase());
+        EMissionStatuses value = _codeToStatusMapping.get(label.trim().toLowerCase());
 
         if (value == null) value = EMissionStatuses.Unknown;
 
