@@ -611,9 +611,46 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
         default:
             isSuccessful = false;
         }
+        
+        if (isSuccessful && CoalesceSettings.getUseIndexing())
+        {
+            // Persist Map Table Entry
+            isSuccessful = persistMapTableEntry(dataObject, conn);
+        }
+
         return isSuccessful;
     }
 
+    /**
+     * Adds or updates map table entry for a given element. 
+     * @param dataObject the XsdDataObject to be added or updated
+     * @param conn is the SQLServerDataConnector database connection
+     * @return True if successfully added/updated.
+     * @throws SQLException
+     */
+    protected boolean persistMapTableEntry(CoalesceDataObject dataObject, PostGreSQLDataConnector conn) throws SQLException
+    {
+        String parentKey;
+        String parentType;
+
+        if (dataObject.getParent() != null)
+        {
+            parentKey= dataObject.getParent().getKey();
+            parentType = dataObject.getParent().getType();
+        }
+        else
+        {
+            parentKey = "00000000-0000-0000-0000-000000000000";
+            parentType = "";
+        }
+
+        return conn.executeProcedure("CoalesceObjectMap_Insert",
+                                     new CoalesceParameter(parentKey, Types.OTHER),
+                                     new CoalesceParameter(parentType),
+                                     new CoalesceParameter(dataObject.getKey(), Types.OTHER),
+                                     new CoalesceParameter(dataObject.getType()));
+    }
+    
     /**
      * Adds or Updates a Coalesce entity that matches the given parameters.
      * 
