@@ -64,10 +64,15 @@ public class CoalesceUnitTestSettings extends CoalesceSettings {
             FileUtils.cleanDirectory(new File(dirPath.toUri()));
             
             Files.delete(dirPath);
+            
         }
         catch (IOException e)
         {
         }
+        
+        setDefaultApplicationName(null);
+        
+        setDefaultApplicationRoot(null);
     }
 
     public static boolean setSubDirectoryLength(int value)
