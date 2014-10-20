@@ -48,7 +48,7 @@ import com.incadencecorp.coalesce.framework.generatedjaxb.Recordset;
 public class XmlHelperTest {
 
     @Rule
-    public ExpectedException thrown = ExpectedException.none();
+    private ExpectedException _thrown = ExpectedException.none();
 
     /*
      * @BeforeClass public static void setUpBeforeClass() throws Exception { }
@@ -94,7 +94,7 @@ public class XmlHelperTest {
     @Test
     public void serializeEntityTypeInvalidFormatTest()
     {
-        thrown.expect(UnsupportedCharsetException.class);
+        _thrown.expect(UnsupportedCharsetException.class);
 
         Entity entity = new Entity();
 
@@ -227,8 +227,8 @@ public class XmlHelperTest {
     @Test
     public void getAttributeNullNodeTest()
     {
-        thrown.expect(NullArgumentException.class);
-        thrown.expectMessage("xmlNode");
+        _thrown.expect(NullArgumentException.class);
+        _thrown.expectMessage("xmlNode");
 
         XmlHelper.getAttribute(null, "Test");
 
@@ -271,8 +271,8 @@ public class XmlHelperTest {
     @Test
     public void getAttributeAsDateNullNodeTest()
     {
-        thrown.expect(NullArgumentException.class);
-        thrown.expectMessage("xmlNode");
+        _thrown.expect(NullArgumentException.class);
+        _thrown.expectMessage("xmlNode");
 
         XmlHelper.getAttributeAsDate(null, "lastmodified");
     }
@@ -343,8 +343,8 @@ public class XmlHelperTest {
     @Test
     public void setAttributeNullDocTest() throws SAXException, IOException
     {
-        thrown.expect(NullArgumentException.class);
-        thrown.expectMessage("doc");
+        _thrown.expect(NullArgumentException.class);
+        _thrown.expectMessage("doc");
 
         Document entityDoc = XmlHelper.loadXmlFrom(CoalesceTypeInstances.TEST_MISSION);
 
@@ -359,8 +359,8 @@ public class XmlHelperTest {
     @Test
     public void setAttributeNullNodeTest() throws SAXException, IOException
     {
-        thrown.expect(NullArgumentException.class);
-        thrown.expectMessage("xmlNode");
+        _thrown.expect(NullArgumentException.class);
+        _thrown.expectMessage("xmlNode");
 
         Document entityDoc = XmlHelper.loadXmlFrom(CoalesceTypeInstances.TEST_MISSION);
 
@@ -371,8 +371,8 @@ public class XmlHelperTest {
     @Test
     public void setAttributeNullNameTest() throws SAXException, IOException
     {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("name cannot be null or empty");
+        _thrown.expect(IllegalArgumentException.class);
+        _thrown.expectMessage("name cannot be null or empty");
 
         Document entityDoc = XmlHelper.loadXmlFrom(CoalesceTypeInstances.TEST_MISSION);
 
@@ -385,8 +385,8 @@ public class XmlHelperTest {
     @Test
     public void setAttributeEmptyNameTest() throws SAXException, IOException
     {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("name cannot be null or empty");
+        _thrown.expect(IllegalArgumentException.class);
+        _thrown.expectMessage("name cannot be null or empty");
 
         Document entityDoc = XmlHelper.loadXmlFrom(CoalesceTypeInstances.TEST_MISSION);
 
@@ -399,8 +399,8 @@ public class XmlHelperTest {
     @Test
     public void setAttributeWhitespaceNameTest() throws SAXException, IOException
     {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("name cannot be null or empty");
+        _thrown.expect(IllegalArgumentException.class);
+        _thrown.expectMessage("name cannot be null or empty");
 
         Document entityDoc = XmlHelper.loadXmlFrom(CoalesceTypeInstances.TEST_MISSION);
 
@@ -474,8 +474,8 @@ public class XmlHelperTest {
     @Test
     public void setAttributeAsDateNullDocTest() throws SAXException, IOException
     {
-        thrown.expect(NullArgumentException.class);
-        thrown.expectMessage("doc");
+        _thrown.expect(NullArgumentException.class);
+        _thrown.expectMessage("doc");
 
         Document entityDoc = XmlHelper.loadXmlFrom(CoalesceTypeInstances.TEST_MISSION);
 
@@ -490,8 +490,8 @@ public class XmlHelperTest {
     @Test
     public void setAttributeAsDateNullNodeTest() throws SAXException, IOException
     {
-        thrown.expect(NullArgumentException.class);
-        thrown.expectMessage("xmlNode");
+        _thrown.expect(NullArgumentException.class);
+        _thrown.expectMessage("xmlNode");
 
         Document entityDoc = XmlHelper.loadXmlFrom(CoalesceTypeInstances.TEST_MISSION);
 
@@ -504,8 +504,8 @@ public class XmlHelperTest {
     @Test
     public void setAttributeAsDateNullNameTest() throws SAXException, IOException
     {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("name cannot be null or empty");
+        _thrown.expect(IllegalArgumentException.class);
+        _thrown.expectMessage("name cannot be null or empty");
 
         Document entityDoc = XmlHelper.loadXmlFrom(CoalesceTypeInstances.TEST_MISSION);
 
@@ -520,8 +520,8 @@ public class XmlHelperTest {
     @Test
     public void setAttributeAsDateEmptyNameTest() throws SAXException, IOException
     {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("name cannot be null or empty");
+        _thrown.expect(IllegalArgumentException.class);
+        _thrown.expectMessage("name cannot be null or empty");
 
         Document entityDoc = XmlHelper.loadXmlFrom(CoalesceTypeInstances.TEST_MISSION);
 
@@ -536,8 +536,8 @@ public class XmlHelperTest {
     @Test
     public void setAttributeAsDateWhitespaceNameTest() throws SAXException, IOException
     {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("name cannot be null or empty");
+        _thrown.expect(IllegalArgumentException.class);
+        _thrown.expectMessage("name cannot be null or empty");
 
         Document entityDoc = XmlHelper.loadXmlFrom(CoalesceTypeInstances.TEST_MISSION);
 
@@ -599,8 +599,8 @@ public class XmlHelperTest {
     @Test
     public void loadXmlFromNullXmlTest() throws SAXException, IOException
     {
-        thrown.expect(NullArgumentException.class);
-        thrown.expectMessage("xml");
+        _thrown.expect(NullArgumentException.class);
+        _thrown.expectMessage("xml");
 
         XmlHelper.loadXmlFrom((String) null);
     }
@@ -608,8 +608,8 @@ public class XmlHelperTest {
     @Test
     public void loadXmlFromEmptyXmlTest() throws SAXException, IOException
     {
-        thrown.expect(SAXException.class);
-        thrown.expectMessage("Premature end of file.");
+        _thrown.expect(SAXException.class);
+        _thrown.expectMessage("Premature end of file.");
 
         assertNull(XmlHelper.loadXmlFrom(""));
 
@@ -618,8 +618,8 @@ public class XmlHelperTest {
     @Test
     public void loadXmlFromInvalidXmlTest() throws SAXException, IOException
     {
-        thrown.expect(SAXException.class);
-        thrown.expectMessage("XML document structures must start and end within the same entity.");
+        _thrown.expect(SAXException.class);
+        _thrown.expectMessage("XML document structures must start and end within the same entity.");
 
         XmlHelper.loadXmlFrom("<entity >");
     }
@@ -627,8 +627,8 @@ public class XmlHelperTest {
     @Test
     public void loadXmlFromISNullStreamTest() throws SAXException, IOException
     {
-        thrown.expect(NullArgumentException.class);
-        thrown.expectMessage("is");
+        _thrown.expect(NullArgumentException.class);
+        _thrown.expectMessage("is");
 
         XmlHelper.loadXmlFrom((InputStream) null);
     }

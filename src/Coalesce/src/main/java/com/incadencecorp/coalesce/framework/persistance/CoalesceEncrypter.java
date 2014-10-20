@@ -68,7 +68,7 @@ public class CoalesceEncrypter implements ICoalesceEncrypter {
             Cipher cipher = Cipher.getInstance(_transformation);
 
             // Initialize Cipher
-            cipher.init(Cipher.ENCRYPT_MODE, _parameter.key, new IvParameterSpec(_parameter.iv));
+            cipher.init(Cipher.ENCRYPT_MODE, _parameter.getKey(), new IvParameterSpec(_parameter.getIV()));
 
             return cipher;
 
@@ -88,7 +88,7 @@ public class CoalesceEncrypter implements ICoalesceEncrypter {
             Cipher cipher = Cipher.getInstance(_transformation);
 
             // Initialize Cipher
-            cipher.init(Cipher.DECRYPT_MODE, _parameter.key, new IvParameterSpec(_parameter.iv));
+            cipher.init(Cipher.DECRYPT_MODE, _parameter.getKey(), new IvParameterSpec(_parameter.getIV()));
 
             return cipher;
 
@@ -215,26 +215,37 @@ public class CoalesceEncrypter implements ICoalesceEncrypter {
         }
     }
 
+    /**
+     * Contains the key and initial vector used for encryption. 
+     */
     private class EncoderParameters {
 
-        public final SecretKey key;
-        public final byte[] iv;
+        private final SecretKey _key;
+        private final byte[] _iv;
 
-        public EncoderParameters(String passPhrase) throws InvalidKeyException, NoSuchAlgorithmException,
+        public EncoderParameters(final String passPhrase) throws InvalidKeyException, NoSuchAlgorithmException,
                 UnsupportedEncodingException
         {
-
             // Salt
             byte[] salt = { 0x0, 0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, (byte) 0xF1, (byte) 0xF0, (byte) 0xEE, 0x21, 0x22, 0x45 };
 
-            Rfc2898DeriveBytes derived_Bytes = new Rfc2898DeriveBytes(passPhrase, salt, 1000);
+            Rfc2898DeriveBytes derivedBytes = new Rfc2898DeriveBytes(passPhrase, salt, 1000);
 
             // Create Key and IV
-            byte[] key_Bytes = derived_Bytes.getBytes(32);
-            iv = derived_Bytes.getBytes(16);
+            byte[] keyBytes = derivedBytes.getBytes(32);
+            _iv = derivedBytes.getBytes(16);
 
-            key = new SecretKeySpec(key_Bytes, "AES");
+            _key = new SecretKeySpec(keyBytes, "AES");
+        }
 
+        public SecretKey getKey()
+        {
+            return _key;
+        }
+
+        public byte[] getIV()
+        {
+            return _iv;
         }
     }
 
