@@ -50,7 +50,7 @@ public class FileHelperTest {
     }
 
     @AfterClass
-    public static void tearDownAfterClass()
+    public static void tearDownAfterClass() throws IOException
     {
         CoalesceUnitTestSettings.tearDownAfterClass();
     }

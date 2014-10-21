@@ -55,6 +55,8 @@ import com.incadencecorp.coalesce.common.exceptions.CoalesceCryptoException;
 import com.incadencecorp.coalesce.common.helpers.DocumentThumbnailHelper.DocumentThumbnailResults;
 import com.incadencecorp.coalesce.common.runtime.CoalesceSettings;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceEncrypter;
+import com.incadencecorp.unity.common.CallResult;
+import com.incadencecorp.unity.common.CallResult.CallResults;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -216,31 +218,32 @@ public class DocumentProperties {
             String docType = MimeHelper.getFileTypeForMimeType(getMimeType());
             if (docType != null) setDocumentType(docType);
 
-            BasicFileAttributes attr;
             try
             {
-                attr = Files.readAttributes(path, BasicFileAttributes.class);
+                BasicFileAttributes attr = Files.readAttributes(path, BasicFileAttributes.class);
 
                 try
                 {
+                    // Date Created
                     FileTime creation = attr.creationTime();
                     String creationStr = creation.toString();
                     if (_created == null) setCreated(new DateTime(creationStr));
                 }
                 catch (IllegalArgumentException iae)
                 {
-                    // Something wrong with date format
+                    CallResult.log(CallResults.FAILED, iae, "coalesce.common.helpers.DocumentProperties");
                 }
 
                 try
                 {
+                    // Last Modified
                     FileTime lastMod = attr.lastModifiedTime();
                     String lastModStr = lastMod.toString();
                     if (_modified == null) setModified(new DateTime(lastModStr));
                 }
                 catch (IllegalArgumentException iae)
                 {
-                    // Something wrong with date format
+                    CallResult.log(CallResults.FAILED, iae, "coalesce.common.helpers.DocumentProperties");
                 }
             }
             catch (IOException e)

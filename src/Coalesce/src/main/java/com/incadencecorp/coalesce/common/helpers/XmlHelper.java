@@ -80,7 +80,7 @@ public class XmlHelper {
      */
     public static String serialize(Object obj, String encoding)
     {
-        return XmlHelper.serialize(obj, Charset.forName(encoding)); 
+        return XmlHelper.serialize(obj, Charset.forName(encoding));
     }
 
     /**
@@ -306,7 +306,7 @@ public class XmlHelper {
     {
         return formatXml(doc, Charset.forName(encoding));
     }
-    
+
     /**
      * Returns the XML representation of the {@link org.w3c.dom.Document} provided.
      * 
@@ -343,7 +343,7 @@ public class XmlHelper {
     {
         return formatXml(node, Charset.forName("UTF-8"));
     }
-    
+
     /**
      * Returns the XML representation of the {@link org.w3c.dom.Node} provided.
      * 
@@ -413,17 +413,15 @@ public class XmlHelper {
             Document doc = builder.parse(is);
 
             return doc;
-
         }
         catch (ParserConfigurationException ex)
         {
+            return null;
         }
         finally
         {
             is.close();
         }
-
-        return null;
 
     }
 

@@ -39,7 +39,7 @@ public class CoalesceUnitTestSettings extends CoalesceSettings {
         CoalesceUnitTestSettings.setDefaultApplicationRoot(FilenameUtils.concat(projectPath, "UnitTestBin\\bin"));
 
         CoalesceUnitTestSettings.setDefaultApplicationName("Coalesce.UnitTest");
-        
+
         File root = new File(CoalesceUnitTestSettings.getDefaultApplicationRoot());
 
         if (root.exists())
@@ -50,28 +50,21 @@ public class CoalesceUnitTestSettings extends CoalesceSettings {
         root.mkdirs();
 
         File uploads = new File(CoalesceUnitTestSettings.getBinaryFileStoreBasePath());
-        
+
         uploads.mkdirs();
-        
+
     }
 
-    public static void tearDownAfterClass()
+    public static void tearDownAfterClass() throws IOException
     {
-        try
-        {
-            Path dirPath = Paths.get(FilenameUtils.concat(CoalesceUnitTestSettings.getDefaultApplicationRoot(), ".."));
+        Path dirPath = Paths.get(FilenameUtils.concat(CoalesceUnitTestSettings.getDefaultApplicationRoot(), ".."));
 
-            FileUtils.cleanDirectory(new File(dirPath.toUri()));
-            
-            Files.delete(dirPath);
-            
-        }
-        catch (IOException e)
-        {
-        }
-        
+        FileUtils.cleanDirectory(new File(dirPath.toUri()));
+
+        Files.delete(dirPath);
+
         setDefaultApplicationName(null);
-        
+
         setDefaultApplicationRoot(null);
     }
 

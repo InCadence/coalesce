@@ -1125,29 +1125,34 @@ public class CoalesceEntity extends CoalesceDataObject {
 
             // Set a copy of the Xml without the Binary data in it.
             Document noBinaryXmlDoc;
+
             try
             {
                 noBinaryXmlDoc = XmlHelper.loadXmlFrom(entityXml);
+            }
+            catch (SAXException | IOException e)
+            {
+                // Failed to Load XML
+                return null;
+            }
 
+            try
+            {
                 // Get all Binary Field Nodes. Ensures that the 'binary' attribute value is handled in a case insensitive
                 // way.
                 clearFieldTypeValue("binary", noBinaryXmlDoc);
 
                 // Get all File Field Nodes. Ensures that the 'file' attribute value is handled in a case insensitive way.
                 clearFieldTypeValue("file", noBinaryXmlDoc);
-
-                // Get Xml
-                entityXml = XmlHelper.formatXml(noBinaryXmlDoc);
-
             }
-            catch (SAXException e)
+            catch (XPathExpressionException e)
             {
-                // loadXmlFrom failed
+                // Failed to Remove Binary
+                return null;
             }
-            catch (IOException e)
-            {
-                // loadXmlFrom failed
-            }
+
+            // Get Xml
+            entityXml = XmlHelper.formatXml(noBinaryXmlDoc);
         }
 
         return entityXml;
@@ -1158,28 +1163,22 @@ public class CoalesceEntity extends CoalesceDataObject {
     Private and Protected Functions
     --------------------------------------------------------------------------*/
 
-    private void clearFieldTypeValue(String fieldType, Document xmlDoc)
+    private void clearFieldTypeValue(String fieldType, Document xmlDoc) throws XPathExpressionException
     {
-        try
+
+        String expression = "//field[translate(@datatype,'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='"
+                + fieldType + "']";
+
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        NodeList nodes = (NodeList) xPath.evaluate(expression, xmlDoc.getDocumentElement(), XPathConstants.NODESET);
+
+        for (int i = 0; i < nodes.getLength(); i++)
         {
-            String expression = "//field[translate(@datatype,'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='"
-                    + fieldType + "']";
+            Node childNode = (Node) nodes.item(i);
 
-            XPath xPath = XPathFactory.newInstance().newXPath();
-            NodeList nodes = (NodeList) xPath.evaluate(expression, xmlDoc.getDocumentElement(), XPathConstants.NODESET);
-
-            for (int i = 0; i < nodes.getLength(); i++)
-            {
-                Node childNode = (Node) nodes.item(i);
-
-                XmlHelper.setAttribute(xmlDoc, childNode, "value", "");
-            }
-
+            XmlHelper.setAttribute(xmlDoc, childNode, "value", "");
         }
-        catch (XPathExpressionException xee)
-        {
-            // Xpath failed. Do nothing
-        }
+
     }
 
     private Map<String, CoalesceLinkage> getLinkages(List<ELinkTypes> forLinkTypes,
@@ -1198,7 +1197,7 @@ public class CoalesceEntity extends CoalesceDataObject {
             {
 
                 CoalesceLinkage linkage = (CoalesceLinkage) cdo;
-                
+
                 if ((forEntityName == null || linkage.getEntity2Name().equalsIgnoreCase(forEntityName))
                         && forLinkTypes.contains(linkage.getLinkType())
                         && (forEntitySource == null || linkage.getEntity2Source().equalsIgnoreCase(forEntitySource))

@@ -39,14 +39,14 @@ public class CoalesceAssert {
     {
         expected = expected.replaceAll("<\\?xml.*\\?>", "");
         expected = expected.replaceAll("\\s+", "").replaceAll("[^.]...Z\\\"", "Z\\\"");
-        
+
         actual = actual.replaceAll("<\\?xml.*\\?>", "");
         actual = actual.replaceAll("\\s+", "").replaceAll("[^.]...Z\\\"", "Z\\\"");
-        
+
         assertEquals(expected, actual);
     }
-    
-    public static void assertThumbnail(DocumentThumbnailResults actual)
+
+    public static void assertThumbnail(DocumentThumbnailResults actual) throws IOException
     {
         assertEquals(1024, actual.getOriginalWidth());
         assertEquals(768, actual.getOriginalHeight());
@@ -54,7 +54,7 @@ public class CoalesceAssert {
         assertThumbnail(actual.getThumbnail());
     }
 
-    public static void assertThumbnail(BufferedImage actual)
+    public static void assertThumbnail(BufferedImage actual) throws IOException
     {
         assertTrue("Thumbnail is not correct", testImagesEqual(CoalesceAssert.getExpectedThumbnail(), actual));
     }
@@ -188,17 +188,11 @@ public class CoalesceAssert {
     Private Static Functions
     --------------------------------------------------------------------------*/
 
-    private static BufferedImage getExpectedThumbnail()
+    private static BufferedImage getExpectedThumbnail() throws IOException
     {
         if (CoalesceAssert.EXPECTED_DESERT_THUMBNAIL == null)
         {
-            try
-            {
-                CoalesceAssert.EXPECTED_DESERT_THUMBNAIL = ImageIO.read(new File("src/test/resources/desert_thumb.png"));
-            }
-            catch (IOException e)
-            {
-            }
+            CoalesceAssert.EXPECTED_DESERT_THUMBNAIL = ImageIO.read(new File("src/test/resources/desert_thumb.png"));
         }
 
         return CoalesceAssert.EXPECTED_DESERT_THUMBNAIL;

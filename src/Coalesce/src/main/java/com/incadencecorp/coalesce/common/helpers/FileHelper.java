@@ -227,6 +227,7 @@ public class FileHelper {
             }
             catch (IOException e)
             {
+                return false;
             }
         }
 
@@ -261,7 +262,6 @@ public class FileHelper {
         }
         else
         {
-
             try
             {
                 Files.createDirectory(path);
@@ -270,11 +270,9 @@ public class FileHelper {
             }
             catch (IOException e)
             {
+                return false;
             }
-
         }
-
-        return false;
     }
 
     /**

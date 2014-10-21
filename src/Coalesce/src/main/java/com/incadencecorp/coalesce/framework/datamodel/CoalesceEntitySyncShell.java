@@ -449,7 +449,6 @@ public class CoalesceEntitySyncShell {
 
         if (oldNode != null)
         {
-
             DateTime oldModified = XmlHelper.getAttributeAsDate(oldNode, "lastmodified");
             DateTime newLastModified = XmlHelper.getAttributeAsDate(newNode, "lastmodified");
 
@@ -462,12 +461,7 @@ public class CoalesceEntitySyncShell {
                 isNewer = true;
                 break;
             }
-
-        }
-        else
-        {
-            // Remote Node not found in LocalFullSyncShell; Keep in the RequiredChangesSyncShell
-        }
+        } // Else; Remote Node not found in LocalFullSyncShell; Keep in the RequiredChangesSyncShell
 
         return isNewer;
     }

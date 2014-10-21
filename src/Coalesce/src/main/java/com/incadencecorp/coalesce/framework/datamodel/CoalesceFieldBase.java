@@ -524,7 +524,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
      * @return UUID, field's value as a UUID. Null if not a UUID.
      * @throws ClassCastException.
      */
-    protected UUID getGuidValue() 
+    protected UUID getGuidValue()
     {
 
         if (getDataType() != ECoalesceFieldDataTypes.GUID_TYPE)
@@ -550,7 +550,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
      * @return DateTime, field's value as a DateTime. Null if not populated or invalid.
      * @throws ClassCastException.
      */
-    protected DateTime getDateTimeValue() 
+    protected DateTime getDateTimeValue()
     {
 
         if (getDataType() != ECoalesceFieldDataTypes.DATE_TIME_TYPE)
@@ -572,7 +572,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
      * @return boolean, field's value as a boolean.
      * @throws ClassCastException.
      */
-    protected Boolean getBooleanValue() 
+    protected Boolean getBooleanValue()
     {
         if (getDataType() != ECoalesceFieldDataTypes.BOOLEAN_TYPE)
         {
@@ -749,6 +749,8 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
 
     private void validateMultiPointFormat(String value) throws CoalesceDataFormatException
     {
+        boolean isSuccessful = false;
+
         if (value.endsWith("MULTIPOINT EMPTY")) return;
 
         if (value.startsWith("MULTIPOINT (") || value.startsWith("MULTIPOINT("))
@@ -759,43 +761,52 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
             {
                 trimmed = trimmed.replaceAll("\\)$", "");
 
+                // Get Points
                 String[] points = trimmed.split(", ");
+                
                 for (String point : points)
                 {
+                    isSuccessful = false;
+                    
                     if (point.startsWith("(") && point.endsWith(")"))
                     {
                         String trimmedPoint = point.replace("(", "").replace(")", "");
 
                         String[] values = trimmedPoint.split(" ");
 
-                        if (values.length == 2)
+                        // At Least 2D Point?
+                        if (values.length >= 2)
                         {
                             try
                             {
-                                @SuppressWarnings("unused")
-                                double longitude = Double.parseDouble(values[0]);
-                                @SuppressWarnings("unused")
-                                double latitude = Double.parseDouble(values[1]);
-
-                                continue;
-
+                                // Yes; Verify Each Number
+                                for (String number : values)
+                                {
+                                    Double.parseDouble(number);
+                                }
                             }
                             catch (NumberFormatException nfe)
                             {
+                                throw new CoalesceDataFormatException("Invalid coordinate (" + getName() + "): "
+                                        + nfe.getMessage());
                             }
+
+                            isSuccessful = true;
                         }
                     }
-
-                    throw new CoalesceDataFormatException("Failed to parse coordinates value for: " + getName());
-
+                    
+                    // Exit for loop if any point is not successful
+                    if (!isSuccessful) break;
                 }
-
-                return;
-
             }
         }
 
-        throw new CoalesceDataFormatException("Failed to parse coordinates value for: " + getName());
+        if (!isSuccessful)
+        {
+            throw new CoalesceDataFormatException("Invalid coordinate (" + getName() + "): Malformed");
+        }
+
+        return;
 
     }
 
@@ -818,7 +829,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
      * 
      * @throws ClassCastException.
      */
-    protected byte[] getBinaryValue() 
+    protected byte[] getBinaryValue()
     {
         if (getDataType() != ECoalesceFieldDataTypes.BINARY_TYPE && getDataType() != ECoalesceFieldDataTypes.FILE_TYPE)
         {

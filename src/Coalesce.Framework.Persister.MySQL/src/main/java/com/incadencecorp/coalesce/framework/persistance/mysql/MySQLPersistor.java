@@ -563,11 +563,11 @@ public class MySQLPersistor extends CoalescePersistorBase {
             }
             break;
         case "fielddefinition":
-            if (CoalesceSettings.getUseIndexing())
-            {
+            //if (CoalesceSettings.getUseIndexing())
+            //{
                 // Removed Field Definition Persisting
                 // isSuccessful = PersistFieldDefinitionObject((XsdFieldDefinition) dataObject, conn);
-            }
+            //}
             break;
 
         case "record":
