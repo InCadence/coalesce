@@ -27,6 +27,16 @@ public class CoalesceCryptoException extends CoalesceException {
 
     private static final long serialVersionUID = 2092914763132572518L;
 
+    /**
+     * Constructor function. Sets the message and exception to the parameter passed in.
+     * 
+     * @param message
+     *     allowed object is
+     *     {@link String }
+     * @param ex
+     *     allowed object is
+     *     {@link Exception }
+     */
     public CoalesceCryptoException(final String message, final Exception ex)
     {
         super(message, ex);

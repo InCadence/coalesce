@@ -611,11 +611,25 @@ public class FieldValues {
 
         private String _filter;
 
+        /**
+         * Constructor function. Sets the filter property to the value of the String parameter
+         * 
+         * @param filter
+         *     allowed object is
+         *     {@link String }
+         */
         public FilterPredicate(String filter)
         {
             _filter = filter;
         }
 
+        /**
+         * Returns boolean indicator indicating if the filter property is equal to the Object parameter
+         * 
+         * @param object
+         *     allowed object is
+         *     {@link Object }
+         */
         public boolean evaluate(Object object)
         {
             if (_filter == null) return (object == null);
@@ -629,6 +643,13 @@ public class FieldValues {
 
     private static class CountryNamePredicate extends FilterPredicate {
 
+        /**
+         * Constructor function. Sets the filter property to the value of the String parameter
+         * 
+         * @param filter
+         *     allowed object is
+         *     {@link String }
+         */
         public CountryNamePredicate(String filter)
         {
             super(filter);
@@ -643,6 +664,13 @@ public class FieldValues {
 
     private static class CountryAlpha3Predicate extends FilterPredicate {
 
+        /**
+         * Constructor function. Sets the filter property to the value of the String parameter
+         * 
+         * @param filter
+         *     allowed object is
+         *     {@link String }
+         */
         public CountryAlpha3Predicate(String filter)
         {
             super(filter);
@@ -657,6 +685,13 @@ public class FieldValues {
 
     private static class MarkingValueTitlePredicate extends FilterPredicate {
 
+        /**
+         * Constructor function. Sets the filter property to the value of the String parameter
+         * 
+         * @param filter
+         *     allowed object is
+         *     {@link String }
+         */
         public MarkingValueTitlePredicate(String filter)
         {
             super(filter);
@@ -671,6 +706,13 @@ public class FieldValues {
 
     private static class MarkingValuePortionPredicate extends FilterPredicate {
 
+        /**
+         * Constructor function. Sets the filter property to the value of the String parameter
+         * 
+         * @param filter
+         *     allowed object is
+         *     {@link String }
+         */
         public MarkingValuePortionPredicate(String filter)
         {
             super(filter);
