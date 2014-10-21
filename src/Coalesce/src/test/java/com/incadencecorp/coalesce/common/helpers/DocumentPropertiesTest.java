@@ -54,9 +54,10 @@ public class DocumentPropertiesTest {
     {
         DocumentProperties docProps = new DocumentProperties();
 
-        assertTrue(docProps.initialize("src\\test\\resources\\Desert.jpg"));
+        String imagePath = CoalesceUnitTestSettings.getResourceAbsolutePath("Desert.jpg");
+        assertTrue(docProps.initialize(imagePath));
 
-        assertEquals("src\\test\\resources\\Desert.jpg", docProps.getFullFilename());
+        assertEquals(imagePath, docProps.getFullFilename());
         assertEquals("Desert.jpg", docProps.getFilename());
         assertEquals("Desert", docProps.getFilenameWithoutExtension());
         assertEquals("jpg", docProps.getExtension());
@@ -82,7 +83,8 @@ public class DocumentPropertiesTest {
     {
         DocumentProperties docProps = new DocumentProperties();
 
-        assertTrue(docProps.initialize("src\\test\\resources\\TestDocument.docx"));
+        String imagePath = CoalesceUnitTestSettings.getResourceAbsolutePath("TestDocument.docx");
+        assertTrue(docProps.initialize(imagePath));
 
         assertEquals("Documentation", docProps.getCategory());
         assertEquals("Draft", docProps.getContentStatus());
@@ -116,7 +118,8 @@ public class DocumentPropertiesTest {
     {
         DocumentProperties docProps = new DocumentProperties();
 
-        assertTrue(docProps.initialize("src\\test\\resources\\TestDocumentMultiPage.docx"));
+        String imagePath = CoalesceUnitTestSettings.getResourceAbsolutePath("TestDocumentMultiPage.docx");
+        assertTrue(docProps.initialize(imagePath));
 
         assertEquals(4, docProps.getPageCount());
 

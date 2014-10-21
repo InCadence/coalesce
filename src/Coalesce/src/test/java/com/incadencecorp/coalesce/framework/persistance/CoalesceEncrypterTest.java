@@ -14,6 +14,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.incadencecorp.coalesce.common.CoalesceTypeInstances;
+import com.incadencecorp.coalesce.common.CoalesceUnitTestSettings;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceCryptoException;
 import com.incadencecorp.coalesce.common.runtime.CoalesceSettings;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
@@ -46,7 +47,8 @@ public class CoalesceEncrypterTest {
         String passPhrase = CoalesceSettings.getPassPhrase();
         _aesCrypto = new CoalesceEncrypter(passPhrase);
 
-        _dotNetEncryptedBytes = Files.readAllBytes(Paths.get("src\\test\\resources\\dotNetEncryptedTest.txt"));
+        String filePath = CoalesceUnitTestSettings.getResourceAbsolutePath("dotNetEncryptedTest.txt");
+        _dotNetEncryptedBytes = Files.readAllBytes(Paths.get(filePath));
 
     }
 

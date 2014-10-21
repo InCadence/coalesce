@@ -2,6 +2,8 @@ package com.incadencecorp.coalesce.common;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -71,6 +73,58 @@ public class CoalesceUnitTestSettings extends CoalesceSettings {
     public static boolean setSubDirectoryLength(int value)
     {
         return CoalesceSettings.setSetting(getConfigurationFileName(), "Coalesce.FileStore.SubDirectoryLength", value);
+    }
+
+    public static URL getResource(String resource)
+    {
+        URL url;
+
+        // Try with the Thread Context Loader.
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        if (classLoader != null)
+        {
+            url = classLoader.getResource(resource);
+            if (url != null)
+            {
+                return url;
+            }
+        }
+
+        // Let's now try with the System class loader
+        classLoader = System.class.getClassLoader();
+        if (classLoader != null)
+        {
+            url = classLoader.getResource(resource);
+            if (url != null)
+            {
+                return url;
+            }
+        }
+
+        // Last ditch attempt. Get the resource from the classpath.
+        return ClassLoader.getSystemResource(resource);
+    }
+
+    public static String getResourceAbsolutePath(String resource)
+    {
+        URL url = CoalesceUnitTestSettings.getResource(resource);
+
+        if (url != null)
+        {
+            try
+            {
+                return new File(url.toURI()).getAbsolutePath();
+            }
+            catch (URISyntaxException e)
+            {
+                return null;
+            }
+        }
+        else
+        {
+            return null;
+        }
+
     }
 
 }

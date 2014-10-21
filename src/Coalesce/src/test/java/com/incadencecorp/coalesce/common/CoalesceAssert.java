@@ -192,7 +192,8 @@ public class CoalesceAssert {
     {
         if (CoalesceAssert.EXPECTED_DESERT_THUMBNAIL == null)
         {
-            CoalesceAssert.EXPECTED_DESERT_THUMBNAIL = ImageIO.read(new File("src/test/resources/desert_thumb.png"));
+            String testPath = CoalesceUnitTestSettings.getResourceAbsolutePath("desert_thumb.png");
+            CoalesceAssert.EXPECTED_DESERT_THUMBNAIL = ImageIO.read(new File(testPath));
         }
 
         return CoalesceAssert.EXPECTED_DESERT_THUMBNAIL;

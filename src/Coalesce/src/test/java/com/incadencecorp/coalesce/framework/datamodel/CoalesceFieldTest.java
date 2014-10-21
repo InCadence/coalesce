@@ -1387,7 +1387,8 @@ public class CoalesceFieldTest {
     {
         CoalesceFileField field = getFileField();
 
-        byte[] dataBytes = Files.readAllBytes(Paths.get("src\\test\\resources\\TestDocument.docx"));
+        String filePath = CoalesceUnitTestSettings.getResourceAbsolutePath("TestDocument.docx");
+        byte[] dataBytes = Files.readAllBytes(Paths.get(filePath));
 
         field.setTypedValue(dataBytes, "TestDocument.docx", "docx");
 
@@ -1401,10 +1402,11 @@ public class CoalesceFieldTest {
     {
         CoalesceFileField field = getFileField();
 
-        byte[] dataBytes = Files.readAllBytes(Paths.get("src\\test\\resources\\TestDocument.docx"));
+        String filePath = CoalesceUnitTestSettings.getResourceAbsolutePath("TestDocument.docx");
+        byte[] dataBytes = Files.readAllBytes(Paths.get(filePath));
 
         DocumentProperties docProps = new DocumentProperties();
-        docProps.initialize("src\\test\\resources\\TestDocument.docx");
+        docProps.initialize(filePath);
 
         field.setTypedValue(dataBytes, docProps);
 
@@ -1614,7 +1616,8 @@ public class CoalesceFieldTest {
         CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocation");
 
         DocumentProperties docProps = new DocumentProperties();
-        docProps.initialize("src\\test\\resources\\desert.jpg");
+        String filePath = CoalesceUnitTestSettings.getResourceAbsolutePath("desert.jpg");
+        docProps.initialize(filePath);
 
         field.setTypedValue(new Coordinate(docProps.getLongitude(), docProps.getLatitude()));
         assertEquals("POINT ( 8.67243350003624 49.39875240003339 )", field.getBaseValue());
