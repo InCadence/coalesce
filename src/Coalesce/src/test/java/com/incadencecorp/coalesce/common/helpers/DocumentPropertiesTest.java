@@ -177,10 +177,12 @@ public class DocumentPropertiesTest {
             CoalesceCryptoException
     {
         DocumentProperties plainTextDocProps = new DocumentProperties();
-        plainTextDocProps.initialize("src\\test\\resources\\TestDocument.docx", false);
+        String filePath = CoalesceUnitTestSettings.getResourceAbsolutePath("TestDocument.docx");
+        assertTrue(plainTextDocProps.initialize(filePath, false));
 
         DocumentProperties encryptedDocProps = new DocumentProperties();
-        encryptedDocProps.initialize("src\\test\\resources\\encryptedTestDocument.docx", true);
+        String encryptedFilePath = CoalesceUnitTestSettings.getResourceAbsolutePath("encryptedTestDocument.docx");
+        assertTrue(encryptedDocProps.initialize(encryptedFilePath, true));
 
         assertEquals(plainTextDocProps.getCategory(), encryptedDocProps.getCategory());
         assertEquals(plainTextDocProps.getContentStatus(), encryptedDocProps.getContentStatus());
