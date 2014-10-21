@@ -25,10 +25,27 @@ public class CoalesceException extends Exception {
 
     private static final long serialVersionUID = -675879916269321942L;
 
+    /**
+     * Constructor function. Sets the message and exception to the parameter passed in.
+     * 
+     * @param message
+     *     allowed object is
+     *     {@link String }
+     * @param ex
+     *     allowed object is
+     *     {@link Exception }
+     */
     public CoalesceException(final String message, final Exception ex) {
         super(message, ex);
     }
     
+    /**
+     * Constructor function. Sets the message to the parameter passed in.
+     * 
+     * @param message
+     *     allowed object is
+     *     {@link String }
+     */
     public CoalesceException(final String message) {
         super(message);
     }

@@ -24,6 +24,13 @@ public class CoalesceInvalidFieldException extends CoalesceException {
 
     private static final long serialVersionUID = 1096699796765997918L;
     
+    /**
+     * Constructor function. Sets the message to the parameter passed in.
+     * 
+     * @param message
+     *     allowed object is
+     *     {@link String }
+     */
     public CoalesceInvalidFieldException(final String message) {
         super(message);
     }
