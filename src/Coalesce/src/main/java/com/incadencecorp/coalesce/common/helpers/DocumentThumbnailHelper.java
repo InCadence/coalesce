@@ -36,7 +36,7 @@ public final class DocumentThumbnailHelper {
     }
 
     /**
-     * Contains the bytes and original dimensions of a thumbnail image. 
+     * Contains the bytes and original dimensions of a thumbnail image.
      */
     public static class DocumentThumbnailResults {
 
@@ -58,11 +58,11 @@ public final class DocumentThumbnailHelper {
                 _originalWidth = original.getWidth();
                 _originalHeight = original.getHeight();
             }
-            
+
             _thumbnail = thumbnail;
 
         }
-        
+
         public final int getOriginalWidth()
         {
             return _originalWidth;
@@ -123,7 +123,8 @@ public final class DocumentThumbnailHelper {
 
             byte[] bytes = FileHelper.getFileAsByteArray(fullFilename, encrypted);
 
-            if (bytes.length > 0) {
+            if (bytes.length > 0)
+            {
                 return DocumentThumbnailHelper.getThumbnailForFile(bytes);
             }
 
@@ -151,7 +152,7 @@ public final class DocumentThumbnailHelper {
             BufferedImage image = ImageIO.read(bais);
 
             BufferedImage thumbnail = null;
-            
+
             if (image != null) thumbnail = GraphicsHelper.resampleToSmallest(image, 80, 80);
 
             if (thumbnail == null) thumbnail = DocumentThumbnailHelper.getImageForResource("LargeIcon_Image.png");
@@ -293,25 +294,30 @@ public final class DocumentThumbnailHelper {
     {
         return ImageIO.read(getResource(resource));
     }
-    
-    private static URL getResource(String resource){
 
-        URL url ;
+    private static URL getResource(String resource)
+    {
 
-        // Try with the Thread Context Loader. 
+        URL url;
+
+        // Try with the Thread Context Loader.
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        if(classLoader != null){
+        if (classLoader != null)
+        {
             url = classLoader.getResource(resource);
-            if(url != null){
+            if (url != null)
+            {
                 return url;
             }
         }
 
         // Let's now try with the System class loader
         classLoader = System.class.getClassLoader();
-        if(classLoader != null){
+        if (classLoader != null)
+        {
             url = classLoader.getResource(resource);
-            if(url != null){
+            if (url != null)
+            {
                 return url;
             }
         }
