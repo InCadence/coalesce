@@ -232,7 +232,7 @@ public class CoalesceFieldHistoryTest {
 
         CoalesceFieldHistory field = GetTestMissionNameFieldHistory();
 
-        assertEquals(CoalesceTypeInstances.TEST_MISSION_NAME_KEY, field.getKey());
+        assertEquals(CoalesceTypeInstances.TEST_MISSION_NAME_HISTORY_KEY, field.getKey());
 
     }
 

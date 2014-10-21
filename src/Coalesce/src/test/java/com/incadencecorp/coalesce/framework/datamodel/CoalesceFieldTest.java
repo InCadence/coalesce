@@ -69,7 +69,7 @@ public class CoalesceFieldTest {
 
     private static final Marking TOPSECRETCLASSIFICATIONMARKING = new Marking("//JOINT TOP SECRET AND USA//FOUO-LES//SBU/ACCM-BOB");
     private static final String COORDINATE_ERROR_MESSAGE = "Failed to parse coordinate value for: MissionGeoLocation";
-    private static final String COORDINATES_ERROR_MESSAGE = "Failed to parse coordinates value for: MissionGeoLocation";
+    //private static final String COORDINATES_ERROR_MESSAGE = "Failed to parse coordinates value for: MissionGeoLocation";
     private static final String POINT_ERROR_MESSAGE = "Failed to parse point value for: MissionGeoLocation";
 
     @BeforeClass
@@ -931,10 +931,11 @@ public class CoalesceFieldTest {
 
         CoalesceField<?> field = getTestMissionNameField();
 
-        String fieldXml = field.toXml();
+        String fieldXml = field.toXml().replace("\n", "").replace("\r", "").replace("    ", "");
+        
 
         assertEquals(CoalesceTypeInstances.TEST_MISSION_NAME_XML,
-                     fieldXml.replace("\n", "").replace("\r", "").replace("    ", ""));
+                     fieldXml);
 
     }
 
