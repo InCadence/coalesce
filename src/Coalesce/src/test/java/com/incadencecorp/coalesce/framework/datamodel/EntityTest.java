@@ -22,15 +22,14 @@ import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
-import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.generatedjaxb.Entity;
-import com.incadencecorp.coalesce.framework.generatedjaxb.Linkagesection;
-import com.incadencecorp.coalesce.framework.generatedjaxb.Section;
-import com.incadencecorp.coalesce.framework.generatedjaxb.Linkage;
-import com.incadencecorp.coalesce.framework.generatedjaxb.Recordset;
-import com.incadencecorp.coalesce.framework.generatedjaxb.Record;
 import com.incadencecorp.coalesce.framework.generatedjaxb.Field;
 import com.incadencecorp.coalesce.framework.generatedjaxb.Fieldhistory;
+import com.incadencecorp.coalesce.framework.generatedjaxb.Linkage;
+import com.incadencecorp.coalesce.framework.generatedjaxb.Linkagesection;
+import com.incadencecorp.coalesce.framework.generatedjaxb.Record;
+import com.incadencecorp.coalesce.framework.generatedjaxb.Recordset;
+import com.incadencecorp.coalesce.framework.generatedjaxb.Section;
 
 
 /*-----------------------------------------------------------------------------'

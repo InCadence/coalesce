@@ -10,8 +10,6 @@ import java.util.UUID;
 
 import org.junit.Test;
 
-import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
-
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
 

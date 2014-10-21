@@ -1,6 +1,8 @@
 package com.incadencecorp.coalesce.common.helpers;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import org.apache.commons.lang.NullArgumentException;
 import org.joda.time.DateTime;
@@ -9,8 +11,6 @@ import org.joda.time.Duration;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-
-import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved

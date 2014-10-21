@@ -20,9 +20,6 @@ import com.incadencecorp.coalesce.common.CoalesceTypeInstances;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
 
 public class CoalesceEntitySyncShellTest {
 

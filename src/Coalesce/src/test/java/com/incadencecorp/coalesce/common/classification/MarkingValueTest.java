@@ -11,8 +11,6 @@ import java.io.ObjectOutputStream;
 import org.apache.commons.lang.NullArgumentException;
 import org.junit.Test;
 
-import com.incadencecorp.coalesce.common.classification.MarkingValue;
-
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
 

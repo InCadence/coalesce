@@ -4,8 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
-
 public class ELinkTypesTest {
 
     /*

@@ -21,8 +21,6 @@ import org.xml.sax.SAXException;
 
 import com.incadencecorp.coalesce.common.CoalesceAssert;
 import com.incadencecorp.coalesce.common.CoalesceTypeInstances;
-import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
-import com.incadencecorp.coalesce.common.helpers.XmlHelper;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.generatedjaxb.Entity;
 import com.incadencecorp.coalesce.framework.generatedjaxb.Linkagesection;

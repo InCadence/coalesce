@@ -1,6 +1,7 @@
 package com.incadencecorp.coalesce.common.classification;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -10,8 +11,6 @@ import java.io.ObjectOutputStream;
 
 import org.apache.commons.lang.NullArgumentException;
 import org.junit.Test;
-
-import com.incadencecorp.coalesce.common.classification.ISO3166Country;
 
 /*-----------------------------------------------------------------------------'
 Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
