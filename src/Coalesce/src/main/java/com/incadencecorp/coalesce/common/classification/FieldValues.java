@@ -45,11 +45,30 @@ public class FieldValues {
         classList.add(value);
     }
 
+    /**
+     * Returns a list of MarkingValues that match the Marking parameter
+     * @param marking
+     *     allowed object is
+     *     {@link Marking }
+     * @return
+     *     possible object is
+     *     {@link List<MarkingValue> }
+     */
     public static List<MarkingValue> getListOfClassifications(Marking marking)
     {
         return getListOfClassifications(marking, false);
     }
 
+    /**
+     * Returns a list of MarkingValues that match the Marking parameter, unless boolean all 
+     * parameter is true. Then the returned list will contain all MarkingValues. 
+     * @param marking
+     *     allowed object is
+     *     {@link Marking }
+     * @return
+     *     possible object is
+     *     {@link List<MarkingValue> }
+     */
     public static List<MarkingValue> getListOfClassifications(Marking marking, boolean all)
     {
 
@@ -146,6 +165,13 @@ public class FieldValues {
 
     // SCI must be processed only on an information system accredited for SCI
     // processing, per page 71 of DoDM 5200.01-V2, February 24, 2012
+    /**
+     * Returns a list of MarkingValues that pertain to SCI controls.
+     * 
+     * @return
+     *     possible object is
+     *     {@link List<MarkingValue> }
+     */
     public static List<MarkingValue> getListOfSciControlSystems()
     {
 
@@ -168,6 +194,15 @@ public class FieldValues {
 
     }
 
+    /**
+     * Returns a list of MarkingValues that pertain to SCI controls.
+     * SCI controls may have compartments and sub-compartments, but the return
+     * only includes the SCI controls.
+     * 
+     * @return
+     *     possible object is
+     *     {@link List<MarkingValue> }
+     */
     public static List<MarkingValue> getListOfCompartments()
     {
 
@@ -189,6 +224,15 @@ public class FieldValues {
         return compartmentList;
     }
 
+    /**
+     * Returns a list of MarkingValues that pertain to SCI controls.
+     * SCI controls may have compartments and sub-compartments, but the return
+     * only includes the SCI controls.
+     * 
+     * @return
+     *     possible object is
+     *     {@link List<MarkingValue> }
+     */
     public static List<MarkingValue> getListOfSubCompartments()
     {
 
@@ -211,6 +255,13 @@ public class FieldValues {
     }
 
     // ISO 3166 country codes
+    /**
+     * Returns a list of ISO3166Countries (based on ISO 3166 country codes).
+     * 
+     * @return
+     *     possible object is
+     *     {@link List<ISO3166Country> }
+     */
     public static List<ISO3166Country> getListOfCountries()
     {
 

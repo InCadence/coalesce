@@ -40,6 +40,14 @@ public class CoalesceCoordinateListField extends CoalesceField<Coordinate[]> {
         return getCoordinateListValue();
     }
 
+    /**
+     * Returns the MultiPoint coordinates for this CoalesceCoordinateListField
+     * 
+     * @return
+     *     possible object is
+     *     {@link MultiPoint }
+     * @throws CoalesceDataFormatException
+     */
     public MultiPoint getValueAsMultiPoint() throws CoalesceDataFormatException
     {
         return getMultiPointValue();
@@ -56,6 +64,13 @@ public class CoalesceCoordinateListField extends CoalesceField<Coordinate[]> {
         setTypedValue(value);
     }
     
+    /**
+     * Sets the MultiPoint coordinates for this CoalesceCoordinateListField
+     * @param value
+     *     allowed object is
+     *     {@link MultiPoint }
+     * @throws CoalesceDataFormatException
+     */
     public void setValue(MultiPoint value) throws CoalesceDataFormatException
     {
         setTypedValue(value);

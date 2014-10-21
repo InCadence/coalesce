@@ -49,11 +49,28 @@ public enum ELinkTypes
         }
     }
 
+    /**
+     * Returns the Label property of the ELinkTypes type
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     */
     public String getLabel()
     {
         return _label;
     }
 
+    /**
+     * Returns the ELinkTypes type for the String type parameter
+     * 
+     * @param coalesceType
+     *     allowed object is
+     *     {@link String }
+     * @return
+     *     possible object is
+     *     {@link ELinkTypes }
+     */
     public static ELinkTypes getTypeForLabel(String coalesceType)
     {
 
@@ -69,6 +86,13 @@ public enum ELinkTypes
 
     }
 
+    /**
+     * Returns the reverse relationship ELinkTypes link type for this ELinkTypes
+     * 
+     * @return
+     *     possible object is
+     *     {@link ELinkTypes }
+     */
     public ELinkTypes getReciprocalLinkType()
     {
 

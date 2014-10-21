@@ -1212,6 +1212,12 @@ public class CoalesceEntity extends CoalesceDataObject {
 
     }
 
+    /**
+     * Returns the  Linkagesection that belong to this {@link CoalesceEntity}
+     * @return
+     *     possible object is
+     *     {@link List<Section> }
+     */
     protected Linkagesection getEntityLinkageSection()
     {
         Linkagesection linkageSection = _entity.getLinkagesection();
@@ -1225,6 +1231,12 @@ public class CoalesceEntity extends CoalesceDataObject {
         return linkageSection;
     }
 
+    /**
+     * Returns a list of {@link Section} that belong to this {@link CoalesceEntity}
+     * @return
+     *     possible object is
+     *     {@link List<Section> }
+     */
     protected List<Section> getEntitySections()
     {
         return _entity.getSection();

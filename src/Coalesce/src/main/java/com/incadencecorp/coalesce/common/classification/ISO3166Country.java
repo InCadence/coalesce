@@ -1,6 +1,7 @@
 package com.incadencecorp.coalesce.common.classification;
 
 import java.io.Serializable;
+
 import org.apache.commons.lang.NullArgumentException;
 
 /*-----------------------------------------------------------------------------'
@@ -30,9 +31,28 @@ public class ISO3166Country implements Serializable, Comparable<ISO3166Country> 
     private String _alpha3;
     private String _name;
     
+    /**
+     * Class constructor. Creates an ISO3166Country class.
+     */
     public ISO3166Country() {
     }
     
+    /**
+     * Class constructor. Creates an ISO3166Country class assigning the parameters to its properties.
+     * 
+     * @param alpha2
+     *      The two character alpha string representation of the country
+     *     allowed object is
+     *     {@link String }
+     * @param alpha3
+     *      The three character alpha string representation of the country
+     *     allowed object is
+     *     {@link String }
+     * @param name
+     *      The full name string of the country
+     *     allowed object is
+     *     {@link String }
+     */
     public ISO3166Country(String alpha2,
                           String alpha3,
                           String name) {
@@ -46,12 +66,30 @@ public class ISO3166Country implements Serializable, Comparable<ISO3166Country> 
     	_name = name;
     }
     
+    /**
+     * Returns an ISO3166Country shell that is empty except for the three character alpha string passed in as a parameter
+     * 
+     * @param alpha3
+     *      The three character alpha string representation of the country
+     *     allowed object is
+     *     {@link String }
+     * @return
+     *     possible object is
+     *     {@link ISO3166Country }
+     */
     public static ISO3166Country withAlpha3EqualTo(String alpha3) {
     	ISO3166Country country = new ISO3166Country();
     	country.setAlpha3(alpha3);
     	return country;
     }
     
+    /**
+     * Returns an ISO3166Country representative of the United States of America
+     * 
+     * @return
+     *     possible object is
+     *     {@link ISO3166Country }
+     */
     public static ISO3166Country getUSA() {
     	return new ISO3166Country("US", "USA", "UNITED STATES");
     }
@@ -71,28 +109,70 @@ public class ISO3166Country implements Serializable, Comparable<ISO3166Country> 
 		return getName().compareTo(other.getName());
     }
     
+    /**
+     * Returns the two character string property representing this ISO3166Country
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     */
 	public String getAlpha2() {
 		return _alpha2;
 	}
 	
+    /**
+     * Sets the two character string property representing this ISO3166Country
+     * 
+     * @param alpha2
+     *     allowed object is
+     *     {@link String }
+     */
 	public void setAlpha2(String alpha2) {
     	if (alpha2 == null) throw new NullArgumentException("alpha2");
 		_alpha2 = alpha2;
 	}
 	
+    /**
+     * Returns the three character string property representing this ISO3166Country
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     */
 	public String getAlpha3() {
 		return _alpha3;
 	}
 	
+    /**
+     * Sets the three character string property representing this ISO3166Country
+     * 
+     * @param alhpa3
+     *     allowed object is
+     *     {@link String }
+     */
 	public void setAlpha3(String alhpa3) {
     	if (alhpa3 == null) throw new NullArgumentException("alhpa3");
 		_alpha3 = alhpa3;
 	}
 	
+    /**
+     * Returns the name string property for this ISO3166Country
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     */
     public String getName() {
     	return _name;
     }
     
+    /**
+     * Sets the name string property for this ISO3166Country
+     * 
+     * @param alhpa3
+     *     allowed object is
+     *     {@link String }
+     */
     public void setName(String name) {
     	if (name == null) throw new NullArgumentException("name");
     	_name = name;

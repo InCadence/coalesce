@@ -491,6 +491,12 @@ public class CoalesceSection extends CoalesceDataObject {
         }
     }
 
+    /**
+     * Returns a list of {@link Section} that belong to this {@link CoalesceSection}
+     * @return
+     *     possible object is
+     *     {@link List<Section> }
+     */
     protected List<Section> getSectionSections()
     {
         return _entitySection.getSection();

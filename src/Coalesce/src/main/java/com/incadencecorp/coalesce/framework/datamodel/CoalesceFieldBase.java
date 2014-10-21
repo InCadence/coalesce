@@ -140,6 +140,13 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
     Public Functions
     --------------------------------------------------------------------------*/
 
+    /**
+     * Returns the filename and extension, as stored in coalesce
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     */
     public String getCoalesceFilename()
     {
         if (getDataType() != ECoalesceFieldDataTypes.FILE_TYPE) throw new ClassCastException("Type mismatch");
@@ -147,16 +154,37 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
         return GUIDHelper.removeBrackets(getKey()) + "." + getExtension();
     }
 
+    /**
+     * Returns the full filename, with directory, and extension, as stored in coalesce
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     */
     public String getCoalesceFullFilename()
     {
         return getCoalesceFullFilename(getCoalesceFilename());
     }
 
+    /**
+     * Returns the full filename, with last modified date, and extension, separated by a question mark.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     */
     public String getCoalesceFilenameWithLastModifiedTag()
     {
         return getCoalesceFilenameWithLastModifiedTag(getCoalesceFullFilename());
     }
 
+    /**
+     * Returns the thumbnail image full filename, with directory, and extension, as stored in coalesce
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     */
     public String getCoalesceThumbnailFilename()
     {
         if (getDataType() != ECoalesceFieldDataTypes.FILE_TYPE) throw new ClassCastException("Type mismatch");
@@ -164,11 +192,25 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
         return GUIDHelper.removeBrackets(getKey()) + "_thumb.jpg";
     }
 
+    /**
+     * Returns the thumbnail image full filename, with directory, and extension, as stored in coalesce
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     */
     public String getCoalesceThumbnailFullFilename()
     {
         return getCoalesceFullFilename(getCoalesceThumbnailFilename());
     }
 
+    /**
+     * Returns the thumbnail image full filename, with last modified date, and extension, separated by a question mark.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     */
     public String getCoalesceThumbnailFilenameWithLastModifiedTag()
     {
         return getCoalesceFilenameWithLastModifiedTag(getCoalesceThumbnailFullFilename());

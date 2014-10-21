@@ -40,11 +40,21 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
     /*--------------------------------------------------------------------------
     Constructors
     --------------------------------------------------------------------------*/
+    /**
+     * Class constructor. Creates a CoalesceDataObject class.
+     */
     CoalesceDataObject()
     {
         // Do Nothing
     }
 
+    /**
+     * Class constructor. Creates a CoalesceDataObject class.
+     * 
+     * @param dataObject
+      *     allowed object is
+     *     {@link {@link CoalesceDataObject }
+    */
     CoalesceDataObject(CoalesceDataObject dataObject)
     {
         // Copy Member Variables
@@ -302,6 +312,16 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
         this._childDataObjects.put(key, value);
     }
 
+    /**
+     * Returns the child CoalesceDataObject, for this CoalesceDataObject based on the String key parameter
+     * 
+     * @param key
+     *     allowed object is
+     *     {@link String }
+     * @return
+     *     possible object is
+     *     {@link CoalesceDataObject }
+     */
     public CoalesceDataObject getChildDataObject(String key)
     {
         return this._childDataObjects.get(key);

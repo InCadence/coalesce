@@ -35,6 +35,13 @@ public class CoalesceCoordinateField extends CoalesceField<Coordinate> {
         return getCoordinateValue();
     }
 
+    /**
+     * Returns the geometry Point for the CoalesceCoordinateField
+     * @return
+     *     possible object is
+     *     {@link Point }
+     * @throws CoalesceDataFormatException
+     */
     public Point getValueAsPoint() throws CoalesceDataFormatException
     {
         return getPointValue();
@@ -46,11 +53,28 @@ public class CoalesceCoordinateField extends CoalesceField<Coordinate> {
         setTypedValue(value);
     }
 
+    /**
+     * Sets the geometry Point for the CoalesceCoordinateField
+     * @param value
+     *     allowed object is
+     *     {@link Point }
+     * @throws CoalesceDataFormatException
+     */
     public void setValue(Point value) throws CoalesceDataFormatException
     {
         setTypedValue(value);
     }
 
+    /**
+     * Sets the geometry Coordinate for the CoalesceCoordinateField based on the lat/long parameter doubles 
+     * @param latitude
+     *     allowed object is
+     *     {@link double }
+     * @param longitude
+     *     allowed object is
+     *     {@link double }
+     * @throws CoalesceDataFormatException
+     */
     public void setValue(double latitude, double longitude) throws CoalesceDataFormatException 
     {
         setTypedValue(new Coordinate(longitude, latitude));

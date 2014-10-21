@@ -30,10 +30,31 @@ public class MarkingValue implements Serializable {
     private String _abbreviation = "";
     private String _portion = "";
 
+    /**
+     * Class constructor. Creates a blank MarkingValue class.
+     */
     public MarkingValue()
     {
     }
 
+    /**
+     * Class constructor. Creates a MarkingValue class based on the parameters that are passed in.
+     * 
+     * @param parent
+     *     allowed object is
+     *     {@link String }
+     * @param title
+     *      The initial assignment for what should appear on a Title page
+     *     allowed object is
+     *     {@link String }
+     * @param abbreviation
+     *     allowed object is
+     *     {@link String }
+     * @param portion
+     *      The initial assignment for what should appear in the portion markings
+     *     allowed object is
+     *     {@link String }
+     */
     public MarkingValue(String parent, String title, String abbreviation, String portion)
     {
 
@@ -48,44 +69,100 @@ public class MarkingValue implements Serializable {
         _portion = portion;
     }
 
+    /**
+     * Returns the value of the Parent property
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     */
     public String getParent()
     {
         return _parent;
     }
 
+    /**
+     * Sets the value of the Parent property
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     */
     public void setParent(String parent)
     {
         if (parent == null) throw new NullArgumentException("parent");
         _parent = parent;
     }
 
+    /**
+     * Returns the value of the Title property
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     */
     public String getTitle()
     {
         return _title;
     }
 
+    /**
+     * Sets the value of the Title property
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     */
     public void setTitle(String title)
     {
         if (title == null) throw new NullArgumentException("title");
         _title = title;
     }
 
+    /**
+     * Returns the value of the Abbreviation property
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     */
     public String getAbbreviation()
     {
         return _abbreviation;
     }
 
+    /**
+     * Sets the value of the Abbreviation property
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     */
     public void setAbbreviation(String abbreviation)
     {
         if (abbreviation == null) throw new NullArgumentException("abbreviation");
         _abbreviation = abbreviation;
     }
 
+    /**
+     * Returns the value of the Portion property
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     */
     public String getPortion()
     {
         return _portion;
     }
 
+    /**
+     * Sets the value of the Portion property
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     */
     public void setPortion(String portion)
     {
         if (portion == null) throw new NullArgumentException("portion");

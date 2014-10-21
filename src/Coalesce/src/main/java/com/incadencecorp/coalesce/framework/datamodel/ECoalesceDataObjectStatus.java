@@ -31,11 +31,28 @@ public enum ECoalesceDataObjectStatus
         }
     }
 
+    /**
+     * Returns the Label property of the ECoalesceDataObjectStatus type
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     */
     public String getLabel()
     {
         return _label;
     }
 
+    /**
+     * Returns the ECoalesceDataObjectStatus type for the String label parameter
+     * 
+     * @param coalesceType
+     *     allowed object is
+     *     {@link String }
+     * @return
+     *     possible object is
+     *     {@link ECoalesceDataObjectStatus }
+     */
     public static ECoalesceDataObjectStatus getTypeForLabel(String label)
     {
         initMapping();

@@ -147,11 +147,20 @@ public class Marking implements Serializable, Comparable<Marking> {
 
     }
 
+    /**
+     * Class constructor. Creates a Marking class with a default value of Unclassified.
+     */
     public Marking()
     {
         this("UNCLASSIFIED");
     }
 
+    /**
+     * Class constructor. Creates a Marking class with a classification set to the contents of the String parameter
+     * @param markingString
+     *     allowed object is
+     *     {@link String }
+     */
     public Marking(String markingString)
     {
 
@@ -475,121 +484,289 @@ public class Marking implements Serializable, Comparable<Marking> {
 
     }
 
+    /**
+     * Returns the value of the isNATO property
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     */
     public boolean getIsNATO()
     {
         return _isNATO;
     }
 
+    /**
+     * Sets the value of the isNATO property
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     */
     public void setIsNATO(boolean value)
     {
         _isNATO = value;
     }
 
+    /**
+     * Returns the value of the isJOINT property
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     */
     public boolean getIsJOINT()
     {
         return getSelectedCountries().size() > 1;
     }
 
+    /**
+     * Returns the value of the isFOUO property
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     */
     public boolean getIsFOUO()
     {
         return _isFOUO;
     }
 
+    /**
+     * Sets the value of the isFOUO property
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     */
     public void setIsFOUO(boolean value)
     {
         _isFOUO = value;
     }
 
+    /**
+     * Returns the value of the isLES property
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     */
     public boolean getIsLES()
     {
         return _isLES;
     }
 
+    /**
+     * Sets the value of the isLES property
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     */
     public void setIsLES(boolean value)
     {
         _isLES = value;
     }
 
+    /**
+     * Returns the value of the isORCON property
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     */
     public boolean getIsORCON()
     {
         return _isORCON;
     }
 
+    /**
+     * Sets the value of the isORCON property
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     */
     public void setIsORCON(boolean value)
     {
         _isORCON = value;
     }
 
+    /**
+     * Returns the value of the isIMCON property
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     */
     public boolean getIsIMCON()
     {
         return _isIMCON;
     }
 
+    /**
+     * Sets the value of the isIMCON property
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     */
     public void setIsIMCON(boolean value)
     {
         _isIMCON = value;
     }
 
+    /**
+     * Returns the True if there are Display Only countries for this Marking
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     */
     public boolean getIsDisplay_Only()
     {
         return getDisplayOnlyCountries().size() > 0;
     }
 
+    /**
+     * Returns the value of the isDSEN property
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     */
     public boolean getIsDSEN()
     {
         return _isDSEN;
     }
 
+    /**
+     * Sets the value of the isDSEN property
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     */
     public void setIsDSEN(boolean value)
     {
         _isDSEN = value;
     }
-
+    
+    /**
+     * Returns the value of the isFISA property
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     */
     public boolean getIsFISA()
     {
         return _isFISA;
     }
 
+    /**
+     * Sets the value of the isFISA property
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     */
     public void setIsFISA(boolean value)
     {
         _isFISA = value;
     }
 
+    /**
+     * Returns the value of the isPROPIN property
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     */
     public boolean getIsPROPIN()
     {
         return _isPROPIN;
     }
 
+    /**
+     * Sets the value of the isPROPIN property
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     */
     public void setIsPROPIN(boolean value)
     {
         _isPROPIN = value;
     }
 
+    /**
+     * Returns the value of the isRELIDO property
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     */
     public boolean getIsRELIDO()
     {
         return _isRELIDO;
     }
 
+    /**
+     * Sets the value of the isRELIDO property
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     */
     public void setIsRELIDO(boolean value)
     {
         _isRELIDO = value;
     }
 
+    /**
+     * Returns the True if there are Releaseable To countries for this Marking
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     */
     public boolean getIsReleaseTo()
     {
         return getReleaseToCountries().size() > 0;
     }
 
+    /**
+     * Returns the value of the isNOFORN property
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     */
     public boolean getIsNOFORN()
     {
         return _isNOFORN;
     }
 
+    /**
+     * Sets the value of the isNOFORN property
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     */
     public void setIsNOFORN(boolean value)
     {
         _isNOFORN = value;
     }
 
+    /**
+     * Returns a list of countries that are owners/producers of this classified information
+     * 
+     * @return
+     *     possible object is
+     *     {@link List<ISO3166Country> }
+     */
     public List<ISO3166Country> getSelectedCountries()
     {
         if (_selectedCountries == null)
@@ -600,6 +777,13 @@ public class Marking implements Serializable, Comparable<Marking> {
         return _selectedCountries;
     }
 
+    /**
+     * Returns a list of countries that this classified information is Releaseable To
+     * 
+     * @return
+     *     possible object is
+     *     {@link List<ISO3166Country> }
+     */
     public List<ISO3166Country> getReleaseToCountries()
     {
         if (_releaseToCountries == null)
@@ -610,6 +794,13 @@ public class Marking implements Serializable, Comparable<Marking> {
         return _releaseToCountries;
     }
 
+    /**
+     * Returns a list of countries that this classified information is Displayable To
+     * 
+     * @return
+     *     possible object is
+     *     {@link List<ISO3166Country> }
+     */
     public List<ISO3166Country> getDisplayOnlyCountries()
     {
         if (_displayOnlyCountries == null)
@@ -620,6 +811,13 @@ public class Marking implements Serializable, Comparable<Marking> {
         return _displayOnlyCountries;
     }
 
+    /**
+     * Returns the MarkingValue classification assigned to this information
+     * 
+     * @return
+     *     possible object is
+     *     {@link MarkingValue }
+     */
     public MarkingValue getClassification()
     {
         if (_classification == null)
@@ -630,56 +828,133 @@ public class Marking implements Serializable, Comparable<Marking> {
         return _classification;
     }
 
+    /**
+     * Sets the MarkingValue classification assigned to this information
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link MarkingValue }
+     */
     public void setClassification(MarkingValue value)
     {
         _classification = value;
     }
 
+    /**
+     * Returns the value of the isLIMDIS property
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     */
     public boolean getIsLIMDIS()
     {
         return _isLIMDIS;
     }
 
+    /**
+     * Sets the value of the isLIMDIS property
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     */
     public void setIsLIMDIS(boolean value)
     {
         _isLIMDIS = value;
     }
 
+    /**
+     * Returns the value of the isEXDIS property
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     */
     public boolean getIsEXDIS()
     {
         return _isEXDIS;
     }
 
+    /**
+     * Sets the value of the isEXDIS property
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     */
     public void setIsEXDIS(boolean value)
     {
         _isEXDIS = value;
     }
 
+    /**
+     * Returns the value of the isSBU property
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     */
     public boolean getIsSBU()
     {
         return _isSBU;
     }
 
+    /**
+     * Sets the value of the isSBU property
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     */
     public void setIsSBU(boolean value)
     {
         _isSBU = value;
     }
 
+    /**
+     * Returns the value of the isSBUNF property
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     */
     public boolean getIsSBUNF()
     {
         return _isSBUNF;
     }
 
+    /**
+     * Sets the value of the isSBUNF property
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     */
     public void setIsSBUNF(boolean value)
     {
         _isSBUNF = value;
     }
 
+    /**
+     * Returns the True if there are ACCM nicknames for this Marking
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     */
     public boolean getIsACCM()
     {
         return getNicknames().size() > 0;
     }
 
+    /**
+     * Returns a list of ACCM nicknames that are assigned to this classified information 
+     * 
+     * @return
+     *     possible object is
+     *     {@link List<String> }
+     */
     public List<String> getNicknames()
     {
         if (_nicknames == null)
@@ -691,28 +966,70 @@ public class Marking implements Serializable, Comparable<Marking> {
         return _nicknames;
     }
 
+    /**
+     * Returns True if dissemination controls have been applied to this Marking
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     */
     public boolean hasDeseminationControls()
     {
         return getIsFOUO() || getIsLES() || getIsORCON() || getIsIMCON() || getIsDSEN() || getIsDisplay_Only()
                 || getIsFISA() || getIsNOFORN() || getIsPROPIN() || getIsPROPIN() || getIsReleaseTo() || getIsRELIDO();
     }
 
+    /**
+     * Returns True if non-IC markings have been applied to this Marking
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     */
     public boolean hasOtherDeseminationControls()
     {
         return getIsLIMDIS() || getIsEXDIS() || getIsSBU() || getIsSBUNF() || getIsACCM();
     }
 
+    /**
+     * Returns the classification to be applied to a section, part, paragraph, or similar portion of a 
+     * classified document
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     */
     public String toPortionString()
     {
         return "(" + toString(true) + ")";
     }
 
+    /**
+     * Returns the classification and associated markings of a classified document
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     */
     @Override
     public String toString()
     {
         return toString(false);
     }
 
+    /**
+     * Returns the classification of a classified set of data, either full or portion based on the boolean parameter.
+     * If True, the String returned applies to a section, part, paragraph, or similar portion 
+     * If False, the String returned is the full classification and associated markings
+     * 
+     * @param toPortion
+     *     allowed object is
+     *     {@link Boolean }
+     *     
+     * @return
+     *     possible object is
+     *     {@link String }
+     */
     public String toString(boolean toPortion)
     {
 

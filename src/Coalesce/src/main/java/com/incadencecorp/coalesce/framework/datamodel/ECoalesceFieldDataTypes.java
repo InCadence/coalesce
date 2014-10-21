@@ -44,11 +44,28 @@ public enum ECoalesceFieldDataTypes
         }
     }
 
+    /**
+     * Returns the Label property of the ECoalesceFieldDataTypes type
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     */
     public String getLabel()
     {
         return _label;
     }
 
+    /**
+     * Returns the ECoalesceFieldDataTypes type for the String type parameter
+     * 
+     * @param coalesceType
+     *     allowed object is
+     *     {@link String }
+     * @return
+     *     possible object is
+     *     {@link ECoalesceFieldDataTypes }
+     */
     public static ECoalesceFieldDataTypes getTypeForCoalesceType(String coalesceType)
     {
         initMapping();
@@ -60,6 +77,16 @@ public enum ECoalesceFieldDataTypes
         return value;
     }
 
+    /**
+     * Returns the ECoalesceFieldDataTypes type for the String sqltype parameter
+     * 
+     * @param coalesceType
+     *     allowed object is
+     *     {@link String }
+     * @return
+     *     possible object is
+     *     {@link ECoalesceFieldDataTypes }
+     */
     public static ECoalesceFieldDataTypes getTypeForSQLType(String sqlType)
     {
         switch (sqlType.toUpperCase()) {

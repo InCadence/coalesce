@@ -45,11 +45,19 @@ public class CoalesceRecord extends CoalesceDataObject {
     // Factory and Initialization
     // -----------------------------------------------------------------------//
 
+    /**
+     * Class constructor. Creates a CoalesceRecord class.
+     */
     public CoalesceRecord()
     {
         // Do Nothing
     }
 
+    /**
+     * Class constructor. Creates a CoalesceRecord class off of an existing CoalesceRecord.
+     * 
+     * @param record
+     */
     public CoalesceRecord(CoalesceRecord record)
     {
         super(record);
