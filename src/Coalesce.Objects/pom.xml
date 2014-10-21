@@ -1,56 +1,18 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <artifactId>coalesce-objects</artifactId>
-  <version>${coalesceObjectsVersion}</version>
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.1</version>
-        <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-  	<repositories>
-		<repository>
-			<releases>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-				<checksumPolicy>warn</checksumPolicy>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-				<checksumPolicy>fail</checksumPolicy>
-			</snapshots>
-			<id>public</id>
-			<url>http://10.15.0.70:8081/nexus/content/groups/public</url>
-		</repository>
-	</repositories>
-  	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>com.incadencecorp.coalesce</groupId>
-				<artifactId>coalesce-bom</artifactId>
-				<version>0.0.1-SNAPSHOT</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-  <dependencies>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>coalesce-objects</artifactId>
+	<version>${coalesceObjectsVersion}</version>
+	<parent>
+		<groupId>com.incadencecorp.coalesce</groupId>
+		<artifactId>coalesce-pom</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>../Coalesce.Pom</relativePath>
+	</parent>
+	<dependencies>
 		<dependency>
 			<groupId>com.incadencecorp.coalesce</groupId>
 			<artifactId>coalesce-core</artifactId>
 		</dependency>
-  </dependencies>
-  <parent>
-  	<groupId>com.incadencecorp.coalesce</groupId>
-  	<artifactId>coalesce-pom</artifactId>
-  	<version>0.0.1-SNAPSHOT</version>
-  	<relativePath>../Coalesce.Pom</relativePath>
-  </parent>
+	</dependencies>
 </project>

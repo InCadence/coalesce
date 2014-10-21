@@ -6,14 +6,6 @@
 	<build>
 		<plugins>
 			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
-				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
-				</configuration>
-			</plugin>
-			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>2.2</version>
@@ -27,6 +19,12 @@
 			</plugin>
 		</plugins>
 	</build>
+	<parent>
+		<groupId>com.incadencecorp.coalesce</groupId>
+		<artifactId>coalesce-pom</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>../Coalesce.Pom</relativePath>
+	</parent>
 	<repositories>
 		<repository>
 			<id>maven2-repository.dev.java.net</id>
@@ -124,21 +122,4 @@
 			<artifactId>unity-common</artifactId>
 		</dependency>
 	</dependencies>
-	<parent>
-		<groupId>com.incadencecorp.coalesce</groupId>
-		<artifactId>coalesce-pom</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
-		<relativePath>../Coalesce.Pom</relativePath>
-	</parent>
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>com.incadencecorp.unity</groupId>
-				<artifactId>unity-bom</artifactId>
-				<version>0.0.1-SNAPSHOT</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 </project>

@@ -11,6 +11,18 @@
 		<module>../Coalesce.Framework.Persister.PostgreSQL</module>
 		<module>../Coalesce.Framework.Persister.SQLServer</module>
 	</modules>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 	<parent>
 		<groupId>com.incadencecorp.coalesce</groupId>
 		<artifactId>coalesce-bom</artifactId>
@@ -25,4 +37,15 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.incadencecorp.unity</groupId>
+				<artifactId>unity-bom</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>		
 </project>
