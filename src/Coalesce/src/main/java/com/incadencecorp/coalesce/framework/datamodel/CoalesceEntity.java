@@ -1005,7 +1005,7 @@ public class CoalesceEntity extends CoalesceDataObject {
                 }
 
                 // Add syncAttribute if it is not there
-                if (attributeReplaced == false)
+                if (!attributeReplaced)
                 {
                     myEntityDocAttributes.add(syncAttribute.detach());
                 }
@@ -1026,7 +1026,7 @@ public class CoalesceEntity extends CoalesceDataObject {
             }
 
             // Add syncAttribute if it is not there
-            if (attributeFound == false)
+            if (!attributeFound)
             {
                 myEntityDocAttributes.add(syncAttribute.detach());
             }
