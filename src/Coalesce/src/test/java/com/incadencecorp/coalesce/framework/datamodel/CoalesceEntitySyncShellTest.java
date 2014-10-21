@@ -144,9 +144,6 @@ public class CoalesceEntitySyncShellTest {
 
         // Create Change Shell
         CoalesceEntitySyncShell changesShell = CoalesceEntitySyncShell.getRequiredChangesSyncShell(localShell, remoteShell);
-        // Print XML
-        //String changesXml = changesShell.toXml();
-        //System.out.println(changesXml);
 
         // Validate Change
         boolean foundChange = false;

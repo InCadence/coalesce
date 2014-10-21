@@ -246,7 +246,7 @@ public abstract class CoalescePersistorBaseTest {
         // Disable Flattening
         section.setFlatten(false);
         
-        System.out.println(entity.toXml());
+        //System.out.println(entity.toXml());
         
         // Persist Entity
         _coalesceFramework.saveCoalesceEntity(entity);
@@ -551,7 +551,7 @@ public abstract class CoalescePersistorBaseTest {
         // Ensure Database has a Template
         String xmlMetaData = _coalesceFramework.getCoalesceEntityTemplateMetadata();
 
-        System.out.println(xmlMetaData);
+        //System.out.println(xmlMetaData);
 
         assertNotNull(xmlMetaData);
     }

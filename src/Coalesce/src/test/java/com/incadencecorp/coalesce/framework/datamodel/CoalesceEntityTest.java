@@ -2350,7 +2350,7 @@ public class CoalesceEntityTest {
             // Merge Entities
             // XsdEntity mergedEntity = XsdEntity.mergeSyncEntity(entity1, entity2);
             CoalesceEntity mergedEntity = CoalesceEntity.mergeSyncEntity(entity1, entity2);
-            System.out.println(mergedEntity.toXml());
+            //System.out.println(mergedEntity.toXml());
 
             // Get Mission Name Field of Merged Entity
             CoalesceField<?> mergedEntityMissionName = (CoalesceField<?>) mergedEntity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
