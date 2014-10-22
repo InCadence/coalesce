@@ -26,7 +26,12 @@ import java.util.UUID;
  * @author InCadence
  *
  */
-public class GUIDHelper {
+public final class GUIDHelper {
+
+    private GUIDHelper()
+    {
+        // Do Nothing
+    }
 
     // -----------------------------------------------------------------------//
     // Public Shared Methods

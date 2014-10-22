@@ -52,10 +52,15 @@ import org.xml.sax.SAXException;
  * @author InCadence
  *
  */
-public class XmlHelper {
+public final class XmlHelper {
 
     private static ConcurrentHashMap<String, JAXBContext> jaxbContexts = new ConcurrentHashMap<String, JAXBContext>();
     private static String syncObject = "";
+
+    private XmlHelper()
+    {
+        // Do Nothing
+    }
 
     /**
      * Return the {@link String} that contains the serialized representation of the provided object using the 'UTF-8'

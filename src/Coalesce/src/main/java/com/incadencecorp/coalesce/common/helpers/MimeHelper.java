@@ -25,12 +25,12 @@ import org.apache.commons.lang.NullArgumentException;
  * @author InCadence
  *
  */
-public class MimeHelper {
+public final class MimeHelper {
 
     // Make class static
     private MimeHelper()
     {
-
+        // Do Nothing
     }
 
     // -----------------------------------------------------------------------//

@@ -28,12 +28,12 @@ import org.joda.time.format.ISODateTimeFormat;
  * @author InCadence
  *
  */
-public class DateTimeConverter {
+public final class DateTimeConverter {
 
     // Make static class
     private DateTimeConverter()
     {
-
+        // Do nothing
     }
 
     // -----------------------------------------------------------------------'

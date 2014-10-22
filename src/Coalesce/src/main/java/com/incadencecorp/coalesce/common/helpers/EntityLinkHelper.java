@@ -31,11 +31,8 @@ import com.incadencecorp.coalesce.framework.datamodel.ICoalesceDataObject;
 
 /**
  * Provides helper methods for linking two {@link CoalesceEntity} objects together.
- * 
- * @author InCadence
- *
  */
-public class EntityLinkHelper {
+public final class EntityLinkHelper {
 
     // ----------------------------------------------------------------------//
     // Private and protected Objects
@@ -50,6 +47,7 @@ public class EntityLinkHelper {
     // Make static class
     private EntityLinkHelper()
     {
+        // Do Nothing
     }
 
     // -----------------------------------------------------------------------//

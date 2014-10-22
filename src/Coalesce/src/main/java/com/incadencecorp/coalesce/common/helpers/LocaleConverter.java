@@ -28,12 +28,12 @@ import org.apache.commons.lang.LocaleUtils;
  * @author InCadence
  *
  */
-public class LocaleConverter {
+public final class LocaleConverter {
 
     // Make static class
     private LocaleConverter()
     {
-
+        // Do Nothing
     }
 
     // -----------------------------------------------------------------------'

@@ -41,12 +41,12 @@ import com.incadencecorp.coalesce.framework.persistance.ICoalesceEncrypter;
  * @author InCadence
  *
  */
-public class FileHelper {
+public final class FileHelper {
 
     // Make static
     private FileHelper()
     {
-
+        // Do Nothing
     }
 
     /*--------------------------------------------------------------------------

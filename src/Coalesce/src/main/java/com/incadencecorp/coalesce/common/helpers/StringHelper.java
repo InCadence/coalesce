@@ -23,11 +23,12 @@ package com.incadencecorp.coalesce.common.helpers;
  * @author InCadence
  *
  */
-public class StringHelper {
+public final class StringHelper {
 
     // Make static class
     private StringHelper()
     {
+        // Do Nothing
     }
 
     /**

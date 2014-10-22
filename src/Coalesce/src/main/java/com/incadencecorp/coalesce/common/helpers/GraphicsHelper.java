@@ -11,7 +11,6 @@ import org.imgscalr.Scalr;
 
 import com.incadencecorp.coalesce.common.runtime.CoalesceSettings;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceStringField;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -36,12 +35,12 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceStringField;
  * @author InCadence
  *
  */
-public class GraphicsHelper {
+public final class GraphicsHelper {
 
     // Make class static
     private GraphicsHelper()
     {
-
+        // Do Nothing
     }
 
     // -----------------------------------------------------------------------//

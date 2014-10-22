@@ -34,11 +34,12 @@ import com.incadencecorp.unity.common.CallResult.CallResults;
  * @author InCadence
  *
  */
-public class JodaDateTimeHelper {
+public final class JodaDateTimeHelper {
 
     // Make static class
     private JodaDateTimeHelper()
     {
+        // Do Nothing
     }
 
     // -----------------------------------------------------------------------'

@@ -32,7 +32,7 @@ public final class DocumentThumbnailHelper {
     // Make class static
     private DocumentThumbnailHelper()
     {
-
+        // Do Nothing
     }
 
     /**
