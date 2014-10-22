@@ -10,6 +10,7 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.common.helpers.CoalesceTableHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
@@ -17,7 +18,6 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
 import com.incadencecorp.coalesce.framework.persistance.CoalescePersistorBase;
-import com.incadencecorp.coalesce.framework.persistance.CoalesceTable;
 import com.incadencecorp.coalesce.framework.persistance.ICoalesceCacher;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 
@@ -243,7 +243,7 @@ public class Neo4JPersistor extends CoalescePersistorBase {
         DateTime lastModified = DateTime.now(DateTimeZone.UTC);
 
         // Determine the Table Name
-        String tableName = CoalesceTable.getTableNameForObjectType(ObjectType);
+        String tableName = CoalesceTableHelper.getTableNameForObjectType(ObjectType);
         String dateValue = null;
 
         ResultSet results = conn.executeQuery("?", new CoalesceParameter(Key.trim()));

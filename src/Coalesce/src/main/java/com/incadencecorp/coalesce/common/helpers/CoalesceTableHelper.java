@@ -1,6 +1,14 @@
-package com.incadencecorp.coalesce.framework.persistance;
+package com.incadencecorp.coalesce.common.helpers;
 
-public class CoalesceTable {
+/**
+ * This is a utility class for mapping Coalesce objects to database tables.
+ */
+public final class CoalesceTableHelper {
+
+    private CoalesceTableHelper()
+    {
+        // Do Nothing
+    }
 
     /**
      * Returns the Coalesce object database name matching the given parameters.

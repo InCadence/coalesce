@@ -12,6 +12,7 @@ import org.joda.time.DateTime;
 import org.springframework.stereotype.Repository;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.common.helpers.CoalesceTableHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.runtime.CoalesceSettings;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject;
@@ -29,7 +30,6 @@ import com.incadencecorp.coalesce.framework.datamodel.ECoalesceDataObjectStatus;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
 import com.incadencecorp.coalesce.framework.persistance.CoalescePersistorBase;
-import com.incadencecorp.coalesce.framework.persistance.CoalesceTable;
 import com.incadencecorp.coalesce.framework.persistance.ICoalesceCacher;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 
@@ -998,7 +998,7 @@ public class SQLServerPersistor extends CoalescePersistorBase {
     {
         String objectType = dataObject.getType();
         String objectKey = dataObject.getKey();
-        String tableName = CoalesceTable.getTableNameForObjectType(objectType);
+        String tableName = CoalesceTableHelper.getTableNameForObjectType(objectType);
 
         conn.executeCmd("DELETE FROM CoalesceObjectMap WHERE ObjectKey=?", new CoalesceParameter(objectKey));
         conn.executeCmd("DELETE FROM " + tableName + " WHERE ObjectKey=?", new CoalesceParameter(objectKey));
@@ -1151,7 +1151,7 @@ public class SQLServerPersistor extends CoalescePersistorBase {
         DateTime lastModified = null;
 
         // Determine the Table Name
-        String tableName = CoalesceTable.getTableNameForObjectType(ObjectType);
+        String tableName = CoalesceTableHelper.getTableNameForObjectType(ObjectType);
         String dateValue = null;
 
         ResultSet results = conn.executeQuery("SELECT LastModified FROM " + tableName + " WHERE ObjectKey=?",
@@ -1180,7 +1180,7 @@ public class SQLServerPersistor extends CoalescePersistorBase {
         String sql = "";
 
         // Get Table Name
-        String tableName = CoalesceTable.getTableNameForObjectType(objectType);
+        String tableName = CoalesceTableHelper.getTableNameForObjectType(objectType);
 
         // Check to see if its the Entity Table
         if (tableName.equals("CoalesceEntity")) isEntityTable = true;
