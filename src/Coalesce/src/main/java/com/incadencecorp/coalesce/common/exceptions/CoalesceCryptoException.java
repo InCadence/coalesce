@@ -30,12 +30,8 @@ public class CoalesceCryptoException extends CoalesceException {
     /**
      * Constructor function. Sets the message and exception to the parameter passed in.
      * 
-     * @param message
-     *     allowed object is
-     *     {@link String }
-     * @param ex
-     *     allowed object is
-     *     {@link Exception }
+     * @param message allowed object is {@link String }
+     * @param ex allowed object is {@link Exception }
      */
     public CoalesceCryptoException(final String message, final Exception ex)
     {

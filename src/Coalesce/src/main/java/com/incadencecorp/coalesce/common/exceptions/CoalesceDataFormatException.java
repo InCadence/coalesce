@@ -23,13 +23,11 @@ package com.incadencecorp.coalesce.common.exceptions;
 public class CoalesceDataFormatException extends CoalesceException {
 
     private static final long serialVersionUID = -4679217177054112286L;
-    
+
     /**
      * Constructor function. Sets the message to the parameter passed in.
      * 
-     * @param message
-     *     allowed object is
-     *     {@link String }
+     * @param message allowed object is {@link String }
      */
     public CoalesceDataFormatException(final String message)
     {

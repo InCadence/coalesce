@@ -23,18 +23,15 @@ package com.incadencecorp.coalesce.common.exceptions;
 public class CoalescePersistorException extends CoalesceException {
 
     private static final long serialVersionUID = 6544606397288281154L;
-    
+
     /**
      * Constructor function. Sets the message and exception to the parameter passed in.
      * 
-     * @param message
-     *     allowed object is
-     *     {@link String }
-     * @param ex
-     *     allowed object is
-     *     {@link Exception }
+     * @param message allowed object is {@link String }
+     * @param ex allowed object is {@link Exception }
      */
-    public CoalescePersistorException(final String message, final Exception ex) {
+    public CoalescePersistorException(final String message, final Exception ex)
+    {
         super(message, ex);
     }
 

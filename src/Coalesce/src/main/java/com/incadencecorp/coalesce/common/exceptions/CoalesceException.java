@@ -1,6 +1,5 @@
 package com.incadencecorp.coalesce.common.exceptions;
 
-
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
 
@@ -28,25 +27,21 @@ public class CoalesceException extends Exception {
     /**
      * Constructor function. Sets the message and exception to the parameter passed in.
      * 
-     * @param message
-     *     allowed object is
-     *     {@link String }
-     * @param ex
-     *     allowed object is
-     *     {@link Exception }
+     * @param message allowed object is {@link String }
+     * @param ex allowed object is {@link Exception }
      */
-    public CoalesceException(final String message, final Exception ex) {
+    public CoalesceException(final String message, final Exception ex)
+    {
         super(message, ex);
     }
-    
+
     /**
      * Constructor function. Sets the message to the parameter passed in.
      * 
-     * @param message
-     *     allowed object is
-     *     {@link String }
+     * @param message allowed object is {@link String }
      */
-    public CoalesceException(final String message) {
+    public CoalesceException(final String message)
+    {
         super(message);
     }
 }
