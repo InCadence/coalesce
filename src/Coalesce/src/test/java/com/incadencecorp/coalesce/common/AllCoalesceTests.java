@@ -6,7 +6,6 @@ import org.junit.runners.Suite.SuiteClasses;
 
 import com.incadencecorp.coalesce.common.classification.AllCommonClassificationTests;
 import com.incadencecorp.coalesce.common.helpers.AllCommonHelpersTests;
-import com.incadencecorp.coalesce.common.runtime.AllCommonRunTimeTests;
 import com.incadencecorp.coalesce.framework.AllFrameworkTests;
 import com.incadencecorp.coalesce.framework.datamodel.AllFrameworkDataModelTests;
 import com.incadencecorp.coalesce.framework.persistance.AllFrameworkPersistorTests;
@@ -29,7 +28,7 @@ import com.incadencecorp.coalesce.framework.persistance.AllFrameworkPersistorTes
  -----------------------------------------------------------------------------*/
 
 @RunWith(Suite.class)
-@SuiteClasses({ AllCommonClassificationTests.class, AllCommonHelpersTests.class, AllCommonRunTimeTests.class,
+@SuiteClasses({ AllCommonClassificationTests.class, AllCommonHelpersTests.class,
                AllFrameworkTests.class, AllFrameworkDataModelTests.class, AllFrameworkPersistorTests.class })
 public class AllCoalesceTests {
 
