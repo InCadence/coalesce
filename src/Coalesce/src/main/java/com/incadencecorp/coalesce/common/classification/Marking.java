@@ -156,7 +156,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Class constructor. Creates a Marking class with a classification set to the contents of the String parameter
+     * Class constructor. Creates a Marking class with a classification set to the contents of the String parameter.
      * @param markingString
      *     allowed object is
      *     {@link String }
@@ -485,7 +485,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Returns the value of the isNATO property
+     * Returns the value of the isNATO property.
      * 
      * @return
      *     possible object is
@@ -497,7 +497,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Sets the value of the isNATO property
+     * Sets the value of the isNATO property.
      * 
      * @param value
      *     allowed object is
@@ -509,7 +509,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Returns the value of the isJOINT property
+     * Returns the value of the isJOINT property.
      * 
      * @return
      *     possible object is
@@ -521,7 +521,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Returns the value of the isFOUO property
+     * Returns the value of the isFOUO property.
      * 
      * @return
      *     possible object is
@@ -533,7 +533,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Sets the value of the isFOUO property
+     * Sets the value of the isFOUO property.
      * 
      * @param value
      *     allowed object is
@@ -545,7 +545,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Returns the value of the isLES property
+     * Returns the value of the isLES property.
      * 
      * @return
      *     possible object is
@@ -557,7 +557,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Sets the value of the isLES property
+     * Sets the value of the isLES property.
      * 
      * @param value
      *     allowed object is
@@ -569,7 +569,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Returns the value of the isORCON property
+     * Returns the value of the isORCON property.
      * 
      * @return
      *     possible object is
@@ -581,7 +581,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Sets the value of the isORCON property
+     * Sets the value of the isORCON property.
      * 
      * @param value
      *     allowed object is
@@ -593,7 +593,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Returns the value of the isIMCON property
+     * Returns the value of the isIMCON property.
      * 
      * @return
      *     possible object is
@@ -605,7 +605,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Sets the value of the isIMCON property
+     * Sets the value of the isIMCON property.
      * 
      * @param value
      *     allowed object is
@@ -617,7 +617,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Returns the True if there are Display Only countries for this Marking
+     * Returns the True if there are Display Only countries for this Marking.
      * 
      * @return
      *     possible object is
@@ -629,7 +629,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Returns the value of the isDSEN property
+     * Returns the value of the isDSEN property.
      * 
      * @return
      *     possible object is
@@ -641,7 +641,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Sets the value of the isDSEN property
+     * Sets the value of the isDSEN property.
      * 
      * @param value
      *     allowed object is
@@ -653,7 +653,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
     
     /**
-     * Returns the value of the isFISA property
+     * Returns the value of the isFISA property.
      * 
      * @return
      *     possible object is
@@ -665,7 +665,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Sets the value of the isFISA property
+     * Sets the value of the isFISA property.
      * 
      * @param value
      *     allowed object is
@@ -677,7 +677,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Returns the value of the isPROPIN property
+     * Returns the value of the isPROPIN property.
      * 
      * @return
      *     possible object is
@@ -689,7 +689,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Sets the value of the isPROPIN property
+     * Sets the value of the isPROPIN property.
      * 
      * @param value
      *     allowed object is
@@ -701,7 +701,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Returns the value of the isRELIDO property
+     * Returns the value of the isRELIDO property.
      * 
      * @return
      *     possible object is
@@ -713,7 +713,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Sets the value of the isRELIDO property
+     * Sets the value of the isRELIDO property.
      * 
      * @param value
      *     allowed object is
@@ -725,7 +725,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Returns the True if there are Releaseable To countries for this Marking
+     * Returns the True if there are Releaseable To countries for this Marking.
      * 
      * @return
      *     possible object is
@@ -737,7 +737,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Returns the value of the isNOFORN property
+     * Returns the value of the isNOFORN property.
      * 
      * @return
      *     possible object is
@@ -749,7 +749,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Sets the value of the isNOFORN property
+     * Sets the value of the isNOFORN property.
      * 
      * @param value
      *     allowed object is
@@ -761,7 +761,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Returns a list of countries that are owners/producers of this classified information
+     * Returns a list of countries that are owners/producers of this classified information.
      * 
      * @return
      *     possible object is
@@ -778,7 +778,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Returns a list of countries that this classified information is Releaseable To
+     * Returns a list of countries that this classified information is Releaseable To.
      * 
      * @return
      *     possible object is
@@ -795,7 +795,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Returns a list of countries that this classified information is Displayable To
+     * Returns a list of countries that this classified information is Displayable To.
      * 
      * @return
      *     possible object is
@@ -812,7 +812,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Returns the MarkingValue classification assigned to this information
+     * Returns the MarkingValue classification assigned to this information.
      * 
      * @return
      *     possible object is
@@ -829,7 +829,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Sets the MarkingValue classification assigned to this information
+     * Sets the MarkingValue classification assigned to this information.
      * 
      * @param value
      *     allowed object is
@@ -841,7 +841,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Returns the value of the isLIMDIS property
+     * Returns the value of the isLIMDIS property.
      * 
      * @return
      *     possible object is
@@ -853,7 +853,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Sets the value of the isLIMDIS property
+     * Sets the value of the isLIMDIS property.
      * 
      * @param value
      *     allowed object is
@@ -865,7 +865,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Returns the value of the isEXDIS property
+     * Returns the value of the isEXDIS property.
      * 
      * @return
      *     possible object is
@@ -877,7 +877,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Sets the value of the isEXDIS property
+     * Sets the value of the isEXDIS property.
      * 
      * @param value
      *     allowed object is
@@ -889,7 +889,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Returns the value of the isSBU property
+     * Returns the value of the isSBU property.
      * 
      * @return
      *     possible object is
@@ -901,7 +901,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Sets the value of the isSBU property
+     * Sets the value of the isSBU property.
      * 
      * @param value
      *     allowed object is
@@ -913,7 +913,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Returns the value of the isSBUNF property
+     * Returns the value of the isSBUNF property.
      * 
      * @return
      *     possible object is
@@ -925,7 +925,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Sets the value of the isSBUNF property
+     * Sets the value of the isSBUNF property.
      * 
      * @param value
      *     allowed object is
@@ -937,7 +937,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Returns the True if there are ACCM nicknames for this Marking
+     * Returns the True if there are ACCM nicknames for this Marking.
      * 
      * @return
      *     possible object is
@@ -949,7 +949,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Returns a list of ACCM nicknames that are assigned to this classified information 
+     * Returns a list of ACCM nicknames that are assigned to this classified information.
      * 
      * @return
      *     possible object is
@@ -967,7 +967,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Returns True if dissemination controls have been applied to this Marking
+     * Returns True if dissemination controls have been applied to this Marking.
      * 
      * @return
      *     possible object is
@@ -980,7 +980,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Returns True if non-IC markings have been applied to this Marking
+     * Returns True if non-IC markings have been applied to this Marking.
      * 
      * @return
      *     possible object is
@@ -993,7 +993,7 @@ public class Marking implements Serializable, Comparable<Marking> {
 
     /**
      * Returns the classification to be applied to a section, part, paragraph, or similar portion of a 
-     * classified document
+     * classified document.
      * 
      * @return
      *     possible object is
@@ -1005,7 +1005,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Returns the classification and associated markings of a classified document
+     * Returns the classification and associated markings of a classified document.
      * 
      * @return
      *     possible object is
@@ -1019,8 +1019,8 @@ public class Marking implements Serializable, Comparable<Marking> {
 
     /**
      * Returns the classification of a classified set of data, either full or portion based on the boolean parameter.
-     * If True, the String returned applies to a section, part, paragraph, or similar portion 
-     * If False, the String returned is the full classification and associated markings
+     * If True, the String returned applies to a section, part, paragraph, or similar portion. 
+     * If False, the String returned is the full classification and associated markings.
      * 
      * @param toPortion
      *     allowed object is

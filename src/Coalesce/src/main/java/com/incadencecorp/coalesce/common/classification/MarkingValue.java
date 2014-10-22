@@ -70,7 +70,7 @@ public class MarkingValue implements Serializable {
     }
 
     /**
-     * Returns the value of the Parent property
+     * Returns the value of the Parent property.
      * 
      * @return
      *     possible object is
@@ -82,7 +82,7 @@ public class MarkingValue implements Serializable {
     }
 
     /**
-     * Sets the value of the Parent property
+     * Sets the value of the Parent property.
      * 
      * @param value
      *     allowed object is
@@ -95,7 +95,7 @@ public class MarkingValue implements Serializable {
     }
 
     /**
-     * Returns the value of the Title property
+     * Returns the value of the Title property.
      * 
      * @return
      *     possible object is
@@ -107,7 +107,7 @@ public class MarkingValue implements Serializable {
     }
 
     /**
-     * Sets the value of the Title property
+     * Sets the value of the Title property.
      * 
      * @param value
      *     allowed object is
@@ -120,7 +120,7 @@ public class MarkingValue implements Serializable {
     }
 
     /**
-     * Returns the value of the Abbreviation property
+     * Returns the value of the Abbreviation property.
      * 
      * @return
      *     possible object is
@@ -132,7 +132,7 @@ public class MarkingValue implements Serializable {
     }
 
     /**
-     * Sets the value of the Abbreviation property
+     * Sets the value of the Abbreviation property.
      * 
      * @param value
      *     allowed object is
@@ -145,7 +145,7 @@ public class MarkingValue implements Serializable {
     }
 
     /**
-     * Returns the value of the Portion property
+     * Returns the value of the Portion property.
      * 
      * @return
      *     possible object is
@@ -157,7 +157,7 @@ public class MarkingValue implements Serializable {
     }
 
     /**
-     * Sets the value of the Portion property
+     * Sets the value of the Portion property.
      * 
      * @param value
      *     allowed object is

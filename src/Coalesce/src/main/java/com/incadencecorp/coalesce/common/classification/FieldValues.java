@@ -46,13 +46,10 @@ public class FieldValues {
     }
 
     /**
-     * Returns a list of MarkingValues that match the Marking parameter
-     * @param marking
-     *     allowed object is
-     *     {@link Marking }
-     * @return
-     *     possible object is
-     *     {@link List<MarkingValue> }
+     * Returns a list of MarkingValues that match the Marking parameter.
+     * 
+     * @param marking allowed object is {@link Marking }
+     * @return possible object is {@link List<MarkingValue> }
      */
     public static List<MarkingValue> getListOfClassifications(Marking marking)
     {
@@ -60,14 +57,11 @@ public class FieldValues {
     }
 
     /**
-     * Returns a list of MarkingValues that match the Marking parameter, unless boolean all 
-     * parameter is true. Then the returned list will contain all MarkingValues. 
-     * @param marking
-     *     allowed object is
-     *     {@link Marking }
-     * @return
-     *     possible object is
-     *     {@link List<MarkingValue> }
+     * Returns a list of MarkingValues that match the Marking parameter, unless boolean all parameter is true. Then the
+     * returned list will contain all MarkingValues.
+     * 
+     * @param marking allowed object is {@link Marking }
+     * @return possible object is {@link List<MarkingValue> }
      */
     public static List<MarkingValue> getListOfClassifications(Marking marking, boolean all)
     {
@@ -168,9 +162,7 @@ public class FieldValues {
     /**
      * Returns a list of MarkingValues that pertain to SCI controls.
      * 
-     * @return
-     *     possible object is
-     *     {@link List<MarkingValue> }
+     * @return possible object is {@link List<MarkingValue> }
      */
     public static List<MarkingValue> getListOfSciControlSystems()
     {
@@ -195,13 +187,10 @@ public class FieldValues {
     }
 
     /**
-     * Returns a list of MarkingValues that pertain to SCI controls.
-     * SCI controls may have compartments and sub-compartments, but the return
-     * only includes the SCI controls.
+     * Returns a list of MarkingValues that pertain to SCI controls. SCI controls may have compartments and sub-compartments,
+     * but the return only includes the SCI controls.
      * 
-     * @return
-     *     possible object is
-     *     {@link List<MarkingValue> }
+     * @return possible object is {@link List<MarkingValue> }
      */
     public static List<MarkingValue> getListOfCompartments()
     {
@@ -225,13 +214,10 @@ public class FieldValues {
     }
 
     /**
-     * Returns a list of MarkingValues that pertain to SCI controls.
-     * SCI controls may have compartments and sub-compartments, but the return
-     * only includes the SCI controls.
+     * Returns a list of MarkingValues that pertain to SCI controls. SCI controls may have compartments and sub-compartments,
+     * but the return only includes the SCI controls.
      * 
-     * @return
-     *     possible object is
-     *     {@link List<MarkingValue> }
+     * @return possible object is {@link List<MarkingValue> }
      */
     public static List<MarkingValue> getListOfSubCompartments()
     {
@@ -258,9 +244,7 @@ public class FieldValues {
     /**
      * Returns a list of ISO3166Countries (based on ISO 3166 country codes).
      * 
-     * @return
-     *     possible object is
-     *     {@link List<ISO3166Country> }
+     * @return possible object is {@link List<ISO3166Country> }
      */
     public static List<ISO3166Country> getListOfCountries()
     {
@@ -612,11 +596,9 @@ public class FieldValues {
         private String _filter;
 
         /**
-         * Constructor function. Sets the filter property to the value of the String parameter
+         * Constructor function. Sets the filter property to the value of the String parameter.
          * 
-         * @param filter
-         *     allowed object is
-         *     {@link String }
+         * @param filter allowed object is {@link String }
          */
         public FilterPredicate(String filter)
         {
@@ -624,11 +606,9 @@ public class FieldValues {
         }
 
         /**
-         * Returns boolean indicator indicating if the filter property is equal to the Object parameter
+         * Returns boolean indicator indicating if the filter property is equal to the Object parameter.
          * 
-         * @param object
-         *     allowed object is
-         *     {@link Object }
+         * @param object allowed object is {@link Object }
          */
         public boolean evaluate(Object object)
         {
@@ -646,9 +626,7 @@ public class FieldValues {
         /**
          * Constructor function. Sets the filter property to the value of the String parameter
          * 
-         * @param filter
-         *     allowed object is
-         *     {@link String }
+         * @param filter allowed object is {@link String }
          */
         public CountryNamePredicate(String filter)
         {
@@ -667,9 +645,7 @@ public class FieldValues {
         /**
          * Constructor function. Sets the filter property to the value of the String parameter
          * 
-         * @param filter
-         *     allowed object is
-         *     {@link String }
+         * @param filter allowed object is {@link String }
          */
         public CountryAlpha3Predicate(String filter)
         {
@@ -688,9 +664,7 @@ public class FieldValues {
         /**
          * Constructor function. Sets the filter property to the value of the String parameter
          * 
-         * @param filter
-         *     allowed object is
-         *     {@link String }
+         * @param filter allowed object is {@link String }
          */
         public MarkingValueTitlePredicate(String filter)
         {
@@ -709,9 +683,7 @@ public class FieldValues {
         /**
          * Constructor function. Sets the filter property to the value of the String parameter
          * 
-         * @param filter
-         *     allowed object is
-         *     {@link String }
+         * @param filter allowed object is {@link String }
          */
         public MarkingValuePortionPredicate(String filter)
         {
