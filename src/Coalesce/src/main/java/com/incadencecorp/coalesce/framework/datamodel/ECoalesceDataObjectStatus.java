@@ -32,7 +32,7 @@ public enum ECoalesceDataObjectStatus
     }
 
     /**
-     * Returns the Label property of the ECoalesceDataObjectStatus type
+     * Returns the Label property of the ECoalesceDataObjectStatus type.
      * 
      * @return
      *     possible object is
@@ -44,7 +44,7 @@ public enum ECoalesceDataObjectStatus
     }
 
     /**
-     * Returns the ECoalesceDataObjectStatus type for the String label parameter
+     * Returns the ECoalesceDataObjectStatus type for the String label parameter.
      * 
      * @param coalesceType
      *     allowed object is

@@ -253,7 +253,7 @@ public class CoalesceFieldDefinition extends CoalesceDataObject implements ICoal
 
     /**
      * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} with a string default value
-     * based for an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} with the parameters provided
+     * based for an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} with the parameters provided.
      * 
      * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} that the
      *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} belongs to

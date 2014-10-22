@@ -141,7 +141,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
     --------------------------------------------------------------------------*/
 
     /**
-     * Returns the filename and extension, as stored in coalesce
+     * Returns the filename and extension, as stored in coalesce.
      * 
      * @return
      *     possible object is
@@ -155,7 +155,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
     }
 
     /**
-     * Returns the full filename, with directory, and extension, as stored in coalesce
+     * Returns the full filename, with directory, and extension, as stored in coalesce.
      * 
      * @return
      *     possible object is
@@ -179,7 +179,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
     }
 
     /**
-     * Returns the thumbnail image full filename, with directory, and extension, as stored in coalesce
+     * Returns the thumbnail image full filename, with directory, and extension, as stored in coalesce.
      * 
      * @return
      *     possible object is
@@ -193,7 +193,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
     }
 
     /**
-     * Returns the thumbnail image full filename, with directory, and extension, as stored in coalesce
+     * Returns the thumbnail image full filename, with directory, and extension, as stored in coalesce.
      * 
      * @return
      *     possible object is
@@ -346,7 +346,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
     }
 
     /**
-     * Sets the Field's value by the int parameter
+     * Sets the Field's value by the int parameter.
      * 
      * @param value, field's value as an integer
      */
@@ -361,9 +361,9 @@ public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements
     }
 
     /**
-     * Sets the Field's value by the int parameter
+     * Sets the Field's value by the int parameter.
      * 
-     * @param value, field's value as an integer
+     * @param value, field's value as an integer.
      */
     protected void setTypedValue(float value)
     {

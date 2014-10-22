@@ -1213,7 +1213,7 @@ public class CoalesceEntity extends CoalesceDataObject {
     }
 
     /**
-     * Returns the  Linkagesection that belong to this {@link CoalesceEntity}
+     * Returns the  Linkagesection that belong to this {@link CoalesceEntity}.
      * @return
      *     possible object is
      *     {@link List<Section> }
@@ -1232,7 +1232,7 @@ public class CoalesceEntity extends CoalesceDataObject {
     }
 
     /**
-     * Returns a list of {@link Section} that belong to this {@link CoalesceEntity}
+     * Returns a list of {@link Section} that belong to this {@link CoalesceEntity}.
      * @return
      *     possible object is
      *     {@link List<Section> }

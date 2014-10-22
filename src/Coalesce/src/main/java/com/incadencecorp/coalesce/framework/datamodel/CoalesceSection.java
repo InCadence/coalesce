@@ -161,7 +161,7 @@ public class CoalesceSection extends CoalesceDataObject {
 
         return newSection;
     }
-    
+
     /**
      * Initializes this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} based on a Section and ties it
      * to its parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}.
@@ -174,7 +174,7 @@ public class CoalesceSection extends CoalesceDataObject {
      */
     protected boolean initialize(CoalesceEntity parent, Section section)
     {
-           return initialize((CoalesceDataObject) parent, section);
+        return initialize((CoalesceDataObject) parent, section);
     }
 
     /**
@@ -191,7 +191,7 @@ public class CoalesceSection extends CoalesceDataObject {
     {
         return initialize((CoalesceDataObject) parent, section);
     }
-    
+
     private boolean initialize(CoalesceDataObject parent, Section section)
     {
 
@@ -226,7 +226,6 @@ public class CoalesceSection extends CoalesceDataObject {
             setChildDataObject(newsection.getKey(), newsection);
 
         }
-
 
         return true;
     }
@@ -380,6 +379,7 @@ public class CoalesceSection extends CoalesceDataObject {
         return sections;
 
     }
+
     @Override
     public boolean getNoIndex()
     {
@@ -492,10 +492,9 @@ public class CoalesceSection extends CoalesceDataObject {
     }
 
     /**
-     * Returns a list of {@link Section} that belong to this {@link CoalesceSection}
-     * @return
-     *     possible object is
-     *     {@link List<Section> }
+     * Returns a list of {@link Section} that belong to this {@link CoalesceSection}.
+     * 
+     * @return possible object is {@link List<Section> }
      */
     protected List<Section> getSectionSections()
     {

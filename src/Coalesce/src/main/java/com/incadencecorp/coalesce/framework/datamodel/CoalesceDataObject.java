@@ -313,7 +313,7 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
     }
 
     /**
-     * Returns the child CoalesceDataObject, for this CoalesceDataObject based on the String key parameter
+     * Returns the child CoalesceDataObject, for this CoalesceDataObject based on the String key parameter.
      * 
      * @param key
      *     allowed object is

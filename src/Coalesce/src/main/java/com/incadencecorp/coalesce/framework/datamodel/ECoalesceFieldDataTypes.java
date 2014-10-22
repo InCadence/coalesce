@@ -45,7 +45,7 @@ public enum ECoalesceFieldDataTypes
     }
 
     /**
-     * Returns the Label property of the ECoalesceFieldDataTypes type
+     * Returns the Label property of the ECoalesceFieldDataTypes type.
      * 
      * @return
      *     possible object is
@@ -57,7 +57,7 @@ public enum ECoalesceFieldDataTypes
     }
 
     /**
-     * Returns the ECoalesceFieldDataTypes type for the String type parameter
+     * Returns the ECoalesceFieldDataTypes type for the String type parameter.
      * 
      * @param coalesceType
      *     allowed object is
@@ -78,7 +78,7 @@ public enum ECoalesceFieldDataTypes
     }
 
     /**
-     * Returns the ECoalesceFieldDataTypes type for the String sqltype parameter
+     * Returns the ECoalesceFieldDataTypes type for the String sqltype parameter.
      * 
      * @param coalesceType
      *     allowed object is

@@ -41,7 +41,7 @@ public class CoalesceCoordinateListField extends CoalesceField<Coordinate[]> {
     }
 
     /**
-     * Returns the MultiPoint coordinates for this CoalesceCoordinateListField
+     * Returns the MultiPoint coordinates for this CoalesceCoordinateListField.
      * 
      * @return
      *     possible object is
@@ -65,7 +65,7 @@ public class CoalesceCoordinateListField extends CoalesceField<Coordinate[]> {
     }
     
     /**
-     * Sets the MultiPoint coordinates for this CoalesceCoordinateListField
+     * Sets the MultiPoint coordinates for this CoalesceCoordinateListField.
      * @param value
      *     allowed object is
      *     {@link MultiPoint }
