@@ -31,7 +31,7 @@ import com.incadencecorp.coalesce.framework.generatedjaxb.Linkage;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-public class CoalesceLinkageSection extends CoalesceDataObject {
+public class CoalesceLinkageSection extends CoalesceObject {
 
     private Linkagesection _entityLinkageSection;
 
@@ -74,7 +74,7 @@ public class CoalesceLinkageSection extends CoalesceDataObject {
 
         linkageSection.setNoIndex(noIndex);
 
-        parent.addChild(linkageSection);
+        parent.addChildCoalesceObject(linkageSection);
 
         return linkageSection;
 
@@ -110,9 +110,9 @@ public class CoalesceLinkageSection extends CoalesceDataObject {
                 CoalesceLinkage newLinkage = new CoalesceLinkage();
                 if (!newLinkage.initialize(this, childLinkage)) continue;
 
-                if (!getChildDataObjects().containsKey(newLinkage.getKey()))
+                if (!getChildCoalesceObjects().containsKey(newLinkage.getKey()))
                 {
-                    setChildDataObject(newLinkage.getKey(), newLinkage);
+                    addChildCoalesceObject(newLinkage.getKey(), newLinkage);
                 }
             }
 
@@ -170,7 +170,7 @@ public class CoalesceLinkageSection extends CoalesceDataObject {
     {
         Map<String, CoalesceLinkage> linkages = new HashMap<String, CoalesceLinkage>();
 
-        for (CoalesceDataObject xdo : getChildDataObjects().values())
+        for (CoalesceObject xdo : getChildCoalesceObjects().values())
         {
             if (xdo instanceof CoalesceLinkage)
             {
@@ -251,7 +251,7 @@ public class CoalesceLinkageSection extends CoalesceDataObject {
     }
 
     @Override
-    protected void setObjectStatus(ECoalesceDataObjectStatus status)
+    protected void setObjectStatus(ECoalesceObjectStatus status)
     {
         _entityLinkageSection.setStatus(status.getLabel());
     }
@@ -287,7 +287,7 @@ public class CoalesceLinkageSection extends CoalesceDataObject {
             setNoIndex(Boolean.parseBoolean(value));
             return true;
         case "status":
-            setStatus(ECoalesceDataObjectStatus.getTypeForLabel(value));
+            setStatus(ECoalesceObjectStatus.getTypeForLabel(value));
             return true;
         default:
             return setOtherAttribute(name, value);

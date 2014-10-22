@@ -99,7 +99,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
 
         newField.setSuspendHistory(false);
 
-        parent.addChild(newField);
+        parent.addChildCoalesceObject(newField);
 
         return newField;
 
@@ -279,7 +279,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
             fieldHistory.initialize(this, entityFieldHistory);
 
             // Add to Child Collection
-            setChildDataObject(fieldHistory.getKey(), fieldHistory);
+            addChildCoalesceObject(fieldHistory.getKey(), fieldHistory);
         }
 
         return true;
@@ -589,11 +589,11 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
         for (Fieldhistory fh : _entityField.getFieldhistory())
         {
 
-            CoalesceDataObject fdo = getChildDataObject(fh.getKey());
+            CoalesceObject fdo = getChildCoalesceObject(fh.getKey());
 
             if (fdo != null && fdo instanceof CoalesceFieldHistory)
             {
-                historyList.add((CoalesceFieldHistory) getChildDataObject(fh.getKey()));
+                historyList.add((CoalesceFieldHistory) getChildCoalesceObject(fh.getKey()));
             }
         }
 
@@ -608,7 +608,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
      */
     public CoalesceFieldHistory getHistoryRecord(String historyKey)
     {
-        CoalesceFieldHistory historyRecord = (CoalesceFieldHistory) getChildDataObject(historyKey);
+        CoalesceFieldHistory historyRecord = (CoalesceFieldHistory) getChildCoalesceObject(historyKey);
 
         return historyRecord;
 
@@ -825,7 +825,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     }
 
     @Override
-    protected void setObjectStatus(ECoalesceDataObjectStatus status)
+    protected void setObjectStatus(ECoalesceObjectStatus status)
     {
         _entityField.setStatus(status.getLabel());
     }
@@ -938,7 +938,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
             return true;
 
         case "status":
-            setStatus(ECoalesceDataObjectStatus.getTypeForLabel(value));
+            setStatus(ECoalesceObjectStatus.getTypeForLabel(value));
             return true;
         default:
             return setOtherAttribute(name, value);

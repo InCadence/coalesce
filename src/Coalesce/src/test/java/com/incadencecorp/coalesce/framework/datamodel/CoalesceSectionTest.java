@@ -968,7 +968,7 @@ public class CoalesceSectionTest {
         assertEquals(section.getNoIndex(), Boolean.parseBoolean(desSection.getNoindex()));
         assertEquals(section.getDateCreated(), desSection.getDatecreated());
         assertEquals(section.getLastModified(), desSection.getLastmodified());
-        assertEquals(section.getStatus(), ECoalesceDataObjectStatus.getTypeForLabel(desSection.getStatus()));
+        assertEquals(section.getStatus(), ECoalesceObjectStatus.getTypeForLabel(desSection.getStatus()));
 
     }
 
@@ -978,14 +978,14 @@ public class CoalesceSectionTest {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
         CoalesceSection section = entity.getSection("TREXMission/Mission Information Section");
 
-        assertEquals(ECoalesceDataObjectStatus.ACTIVE, section.getStatus());
+        assertEquals(ECoalesceObjectStatus.ACTIVE, section.getStatus());
 
-        section.setStatus(ECoalesceDataObjectStatus.UNKNOWN);
+        section.setStatus(ECoalesceObjectStatus.UNKNOWN);
         String sectionXml = section.toXml();
 
         Section desSection = (Section) XmlHelper.deserialize(sectionXml, Section.class);
 
-        assertEquals(ECoalesceDataObjectStatus.UNKNOWN, ECoalesceDataObjectStatus.getTypeForLabel(desSection.getStatus()));
+        assertEquals(ECoalesceObjectStatus.UNKNOWN, ECoalesceObjectStatus.getTypeForLabel(desSection.getStatus()));
 
     }
 
@@ -1022,8 +1022,8 @@ public class CoalesceSectionTest {
         section.setAttribute("NoIndex", "True");
         assertEquals(true, section.getNoIndex());
 
-        section.setAttribute("Status", ECoalesceDataObjectStatus.UNKNOWN.getLabel());
-        assertEquals(ECoalesceDataObjectStatus.UNKNOWN, section.getStatus());
+        section.setAttribute("Status", ECoalesceObjectStatus.UNKNOWN.getLabel());
+        assertEquals(ECoalesceObjectStatus.UNKNOWN, section.getStatus());
 
         section.setAttribute("LastModified", JodaDateTimeHelper.toXmlDateTimeUTC(future));
         assertEquals(future, section.getLastModified());
@@ -1038,7 +1038,7 @@ public class CoalesceSectionTest {
         assertEquals(now, desSection.getDateCreated());
         assertEquals(future, desSection.getLastModified());
         assertEquals(true, desSection.getNoIndex());
-        assertEquals(ECoalesceDataObjectStatus.UNKNOWN, desSection.getStatus());
+        assertEquals(ECoalesceObjectStatus.UNKNOWN, desSection.getStatus());
 
     }
 }

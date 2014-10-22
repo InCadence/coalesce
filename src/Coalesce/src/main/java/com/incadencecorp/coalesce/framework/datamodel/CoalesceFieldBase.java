@@ -49,7 +49,7 @@ import com.vividsolutions.jts.io.WKTWriter;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-public abstract class CoalesceFieldBase<T> extends CoalesceDataObject implements ICoalesceField<T> {
+public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICoalesceField<T> {
 
     /*--------------------------------------------------------------------------
     Public Abstract Functions

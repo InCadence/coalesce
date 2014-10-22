@@ -8,9 +8,9 @@ import com.incadencecorp.coalesce.common.classification.Marking;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection;
-import com.incadencecorp.coalesce.framework.datamodel.ECoalesceDataObjectStatus;
+import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
 import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
-import com.incadencecorp.coalesce.framework.datamodel.ICoalesceDataObject;
+import com.incadencecorp.coalesce.framework.datamodel.ICoalesceObject;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -199,7 +199,7 @@ public final class EntityLinkHelper {
 
         CoalesceLinkage linkage = null;
         // Do we already have the Linkage made? (Same Entities and Same LinkType)?
-        for (ICoalesceDataObject cdo : linkageSection.getChildDataObjects().values())
+        for (ICoalesceObject cdo : linkageSection.getChildCoalesceObjects().values())
         {
             if (cdo instanceof CoalesceLinkage)
             {
@@ -241,7 +241,7 @@ public final class EntityLinkHelper {
                                                 CoalesceEntity otherEntity,
                                                 ELinkTypes linkType)
     {
-        for (ICoalesceDataObject cdo : linkageSection.getChildDataObjects().values())
+        for (ICoalesceObject cdo : linkageSection.getChildCoalesceObjects().values())
         {
             if (cdo instanceof CoalesceLinkage)
             {
@@ -254,7 +254,7 @@ public final class EntityLinkHelper {
                             && linkage.getEntity2Key().equals(otherEntity.getKey()))
                     {
 
-                        linkage.setStatus(ECoalesceDataObjectStatus.DELETED);
+                        linkage.setStatus(ECoalesceObjectStatus.DELETED);
 
                         return true;
                     }

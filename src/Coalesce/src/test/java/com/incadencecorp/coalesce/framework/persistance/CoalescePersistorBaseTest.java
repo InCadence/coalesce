@@ -26,7 +26,7 @@ import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.CoalesceSettings;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShellTest;
@@ -600,7 +600,7 @@ public abstract class CoalescePersistorBaseTest {
 
     private static CoalesceField<?> getCurrentStatusField(CoalesceEntity entity)
     {
-        CoalesceField<?> field = (CoalesceField<?>) entity.getDataObjectForNamePath("TestEntity/Live Status Section/Live Status Recordset/Live Status Recordset Record/CurrentStatus");
+        CoalesceField<?> field = (CoalesceField<?>) entity.getCoalesceObjectForNamePath("TestEntity/Live Status Section/Live Status Recordset/Live Status Recordset Record/CurrentStatus");
 
         return field;
 
@@ -616,7 +616,7 @@ public abstract class CoalescePersistorBaseTest {
 
     }
 
-    private static void deleteEntity(CoalesceDataConnectorBase conn, CoalesceDataObject xdo)
+    private static void deleteEntity(CoalesceDataConnectorBase conn, CoalesceObject xdo)
     {
         String table = "";
 
@@ -672,7 +672,7 @@ public abstract class CoalescePersistorBaseTest {
             CoalescePersistorBaseTest.pergeTestRecords(conn, table, xdo.getKey());
         }
 
-        for (CoalesceDataObject child : xdo.getChildDataObjects().values())
+        for (CoalesceObject child : xdo.getChildCoalesceObjects().values())
         {
             CoalescePersistorBaseTest.deleteEntity(conn, child);
         }
@@ -702,7 +702,7 @@ public abstract class CoalescePersistorBaseTest {
         assertEquals("1.0.0.0", template.getVersion());
 
         // Confirm Values
-        NodeList nodeList = template.getDataObjectDocument().getElementsByTagName("*");
+        NodeList nodeList = template.getCoalesceObjectDocument().getElementsByTagName("*");
 
         for (int jj = 0; jj < nodeList.getLength(); jj++)
         {

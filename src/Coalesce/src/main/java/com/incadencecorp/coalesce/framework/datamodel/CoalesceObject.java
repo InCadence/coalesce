@@ -28,38 +28,36 @@ import com.incadencecorp.coalesce.common.helpers.StringHelper;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-public abstract class CoalesceDataObject implements ICoalesceDataObject {
+public abstract class CoalesceObject implements ICoalesceObject {
 
     /*--------------------------------------------------------------------------
     Protected Member Variables
     --------------------------------------------------------------------------*/
 
-    private CoalesceDataObject _parent;
-    private HashMap<String, CoalesceDataObject> _childDataObjects = new HashMap<String, CoalesceDataObject>();
+    private CoalesceObject _parent;
+    private HashMap<String, CoalesceObject> _children = new HashMap<String, CoalesceObject>();
 
     /*--------------------------------------------------------------------------
     Constructors
     --------------------------------------------------------------------------*/
     /**
-     * Class constructor. Creates a CoalesceDataObject class.
+     * Class constructor. Creates a CoalesceObject class.
      */
-    CoalesceDataObject()
+    CoalesceObject()
     {
         // Do Nothing
     }
 
     /**
-     * Class constructor. Creates a CoalesceDataObject class.
+     * Class constructor. Creates a CoalesceObject class.
      * 
-     * @param dataObject
-      *     allowed object is
-     *     {@link {@link CoalesceDataObject }
-    */
-    CoalesceDataObject(CoalesceDataObject dataObject)
+     * @param coalesceObject allowed object is {@link {@link CoalesceObject }
+     */
+    CoalesceObject(CoalesceObject coalesceObject)
     {
         // Copy Member Variables
-        setParent(dataObject.getParent());
-        _childDataObjects = dataObject.getChildDataObjects();
+        setParent(coalesceObject.getParent());
+        _children = coalesceObject.getChildCoalesceObjects();
     }
 
     /*--------------------------------------------------------------------------
@@ -85,15 +83,15 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
     public abstract String getType();
 
     /**
-     * Returns the (XML) String of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}.
+     * Returns the (XML) String of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}.
      * 
-     * @return (XML) String of the DataObject
+     * @return (XML) String of the Coalesce object
      */
     public abstract String toXml();
 
     /**
-     * Sets the value of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s attribute
-     * corresponding to the name argument.
+     * Sets the value of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s attribute corresponding
+     * to the name argument.
      * 
      * @param name String, name of attribute to be set
      * @param value String, value to be assigned to the attribute
@@ -106,59 +104,57 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
     --------------------------------------------------------------------------*/
 
     /**
-     * Returns the value of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s key attribute
-     * which should be the same as the entity's ObjectKey database value.
+     * Returns the value of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s key attribute which
+     * should be the same as the entity's ObjectKey database value.
      * 
-     * @return String of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s object key
+     * @return String of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s object key
      */
     protected abstract String getObjectKey();
 
     /**
-     * Sets the value of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s key attribute.
+     * Sets the value of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s key attribute.
      * 
-     * @param value String to be the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s object key
+     * @param value String to be the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s object key
      */
     protected abstract void setObjectKey(String value);
 
     /**
-     * Sets the value of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s LastModified
-     * attribute.
+     * Sets the value of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s LastModified attribute.
      * 
-     * @param value DateTime to be the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s last
-     *            modified date
+     * @param value DateTime to be the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s last modified
+     *            date
      */
     protected abstract void setObjectLastModified(DateTime value);
 
     /**
-     * Returns the value of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s status attribute.
+     * Returns the value of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s status attribute.
      * 
-     * @return String of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s status
+     * @return String of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s status
      */
     protected abstract String getObjectStatus();
 
     /**
-     * Sets the value of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s status attribute.
+     * Sets the value of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s status attribute.
      * 
-     * @param _value ECoalesceDataObjectStatus to be the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s status
+     * @param _value ECoalesceObjectStatus to be the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s
+     *            status
      */
-    protected abstract void setObjectStatus(ECoalesceDataObjectStatus status);
+    protected abstract void setObjectStatus(ECoalesceObjectStatus status);
 
     /**
-     * Returns a hashmap key-value pair of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s
+     * Returns a hashmap key-value pair of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s
      * attributes.
      * 
-     * @return Map<QName, String> of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s
-     *         attributes
+     * @return Map<QName, String> of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s attributes
      */
     protected abstract Map<QName, String> getAttributes();
 
     /**
-     * Returns a hashmap key-value pair of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s
-     * other attributes - attributes that fall into the
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s @XmlAnyAttribute HashMap.
+     * Returns a hashmap key-value pair of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s other
+     * attributes - attributes that fall into the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s @XmlAnyAttribute
+     * HashMap.
      * 
-     * @return Map<QName, String> of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s other
+     * @return Map<QName, String> of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s other
      *         attributes falling into the @XmlAnyAttribute because they weren't specified in the schema
      */
     protected abstract Map<QName, String> getOtherAttributes();
@@ -168,7 +164,7 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
     --------------------------------------------------------------------------*/
 
     @Override
-    public ECoalesceDataObjectStatus getStatus()
+    public ECoalesceObjectStatus getStatus()
     {
         // Get Status
         String statusString = this.getObjectStatus();
@@ -177,17 +173,17 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
         if (StringHelper.isNullOrEmpty(statusString))
         {
             // No; Return Default
-            return ECoalesceDataObjectStatus.ACTIVE;
+            return ECoalesceObjectStatus.ACTIVE;
         }
         else
         {
             // Yes; Parse String
-            return ECoalesceDataObjectStatus.getTypeForLabel(getObjectStatus());
+            return ECoalesceObjectStatus.getTypeForLabel(getObjectStatus());
         }
     }
 
     @Override
-    public void setStatus(ECoalesceDataObjectStatus value)
+    public void setStatus(ECoalesceObjectStatus value)
     {
         // Set Status SUccessful?
         this.setObjectStatus(value);
@@ -197,13 +193,13 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
     }
 
     @Override
-    public CoalesceDataObject getParent()
+    public CoalesceObject getParent()
     {
         return this._parent;
     }
 
     @Override
-    public void setParent(CoalesceDataObject parent)
+    public void setParent(CoalesceObject parent)
     {
         this._parent = parent;
     }
@@ -242,10 +238,10 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
     public boolean getFlatten()
     {
         String value = this.getAttribute("flatten");
-        
+
         // Default Behavior.
         if (value == null) return true;
-        
+
         return Boolean.parseBoolean(value);
     }
 
@@ -295,36 +291,32 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
     }
 
     @Override
-    public HashMap<String, CoalesceDataObject> getChildDataObjects()
+    public HashMap<String, CoalesceObject> getChildCoalesceObjects()
     {
-        return this._childDataObjects;
+        return this._children;
     }
 
     /**
-     * Sets the value of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s DataObject Children,
-     * childDataObjects. New values with new keys are added, values with existing keys are replaced.
+     * Adds {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject} as a child. New values with new keys are
+     * added, values with existing keys are replaced.
      * 
-     * @param key key identifying the childDataObject
-     * @param value childDataObject to add to the DataObject's children
+     * @param key key identifying the child Coalesce object.
+     * @param value child Coalesce object to add to the Coalesce object's children
      */
-    public void setChildDataObject(String key, CoalesceDataObject value)
+    public void addChildCoalesceObject(String key, CoalesceObject value)
     {
-        this._childDataObjects.put(key, value);
+        this._children.put(key, value);
     }
 
     /**
-     * Returns the child CoalesceDataObject, for this CoalesceDataObject based on the String key parameter.
+     * Returns the child CoalesceObject, for this CoalesceObject based on the String key parameter.
      * 
-     * @param key
-     *     allowed object is
-     *     {@link String }
-     * @return
-     *     possible object is
-     *     {@link CoalesceDataObject }
+     * @param key allowed object is {@link String }
+     * @return possible object is {@link CoalesceObject }
      */
-    public CoalesceDataObject getChildDataObject(String key)
+    public CoalesceObject getChildCoalesceObject(String key)
     {
-        return this._childDataObjects.get(key);
+        return this._children.get(key);
     }
 
     @Override
@@ -345,7 +337,7 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
     --------------------------------------------------------------------------*/
 
     /**
-     * Returns the value of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s attribute that
+     * Returns the value of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s attribute that
      * corresponds to the name.
      * 
      * @param name Attribute's name
@@ -364,9 +356,9 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
     }
 
     /**
-     * Returns the String value of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s other
+     * Returns the String value of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s other
      * attribute that corresponds to the name; other attributes are those that fall into the
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s @XmlAnyAttribute HashMap.
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s @XmlAnyAttribute HashMap.
      * 
      * @param name Attribute's name
      * @return String, Attribute's value
@@ -377,9 +369,9 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
     }
 
     /**
-     * Returns the DateTime value of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s other
+     * Returns the DateTime value of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s other
      * attribute that corresponds to the name; other attributes are those that fall into the
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s @XmlAnyAttribute HashMap.
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s @XmlAnyAttribute HashMap.
      * 
      * @param name Attribute's name
      * @return DateTime, Attribute's value
@@ -390,10 +382,10 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
     }
 
     /**
-     * Sets the String value of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s other attribute that corresponds to the
-     * name; other attributes are those that fall into the
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s @XmlAnyAttribute HashMap.
+     * Sets the String value of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s other attribute that corresponds to the name;
+     * other attributes are those that fall into the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s @XmlAnyAttribute
+     * HashMap.
      * 
      * @param name String @XmlAnyAttribute attribute name
      * @param value @XmlAnyAttribute attribute value
@@ -406,10 +398,10 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
     }
 
     /**
-     * Sets the DateTime value of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s other attribute that corresponds to the
-     * name; other attributes are those that fall into the
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s @XmlAnyAttribute HashMap.
+     * Sets the DateTime value of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s other attribute that corresponds to the name;
+     * other attributes are those that fall into the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s @XmlAnyAttribute
+     * HashMap.
      * 
      * @param name String, @XmlAnyAttribute attribute name
      * @param value @XmlAnyAttribute attribute DateTime value
@@ -420,14 +412,14 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
     }
 
     /**
-     * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s childDataObject that
-     * corresponds to the provided namepath.
+     * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s children that corresponds
+     * to the provided name path.
      * 
-     * @param namePath String corresponding to the desired childDataObject.
-     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject} of the childDataObject or null if
-     *         one is not found
+     * @param namePath String corresponding to the desired child.
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject} of the child or null if one is
+     *         not found
      */
-    public CoalesceDataObject getDataObjectForNamePath(String namePath)
+    public CoalesceObject getCoalesceObjectForNamePath(String namePath)
     {
         if (namePath == null) return null;
 
@@ -453,25 +445,25 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
         default:
 
             // Find next child
-            CoalesceDataObject dataObject = null;
+            CoalesceObject coalesceObject = null;
 
-            for (CoalesceDataObject child : _childDataObjects.values())
+            for (CoalesceObject child : _children.values())
             {
                 String childName = child.getName();
 
                 if (childName != null && childName.equals(names[1]))
                 {
-                    dataObject = child;
+                    coalesceObject = child;
                     break;
                 }
             }
 
-            if (dataObject != null)
+            if (coalesceObject != null)
             {
 
                 String newPath = namePath.substring(namePath.indexOf("/") + 1);
 
-                return dataObject.getDataObjectForNamePath(newPath);
+                return coalesceObject.getCoalesceObjectForNamePath(newPath);
 
             }
 
@@ -483,16 +475,16 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
     }
 
     /**
-     * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s childDataObject that
-     * corresponds to the provided objectkey.
+     * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s child that corresponds
+     * to the provided key.
      * 
-     * @param key String corresponding to the desired childDataObject objectkey.
-     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject} for childDataObject or null if one
-     *         is not found
+     * @param key String corresponding to the desired child key.
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject} for the child or null if one is
+     *         not found
      */
-    public CoalesceDataObject getCoalesceDataObjectForKey(String key)
+    public CoalesceObject getCoalesceObjectForKey(String key)
     {
-        CoalesceDataObject result = null;
+        CoalesceObject result = null;
 
         if (this.getKey().equalsIgnoreCase(key))
         {
@@ -501,9 +493,9 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
         else
         {
 
-            for (CoalesceDataObject child : _childDataObjects.values())
+            for (CoalesceObject child : _children.values())
             {
-                result = child.getCoalesceDataObjectForKey(key);
+                result = child.getCoalesceObjectForKey(key);
                 if (result != null) break;
             }
         }
@@ -538,11 +530,11 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
 
     }
 
-    protected boolean initialize(CoalesceDataObject dataObject)
+    protected boolean initialize(CoalesceObject coalesceObject)
     {
-        setParent(dataObject.getParent());
+        setParent(coalesceObject.getParent());
 
-        _childDataObjects = dataObject.getChildDataObjects();
+        _children = coalesceObject.getChildCoalesceObjects();
 
         return true;
     }
@@ -566,12 +558,12 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
         }
     }
 
-    protected void addChild(CoalesceDataObject newChild)
+    protected void addChildCoalesceObject(CoalesceObject newChild)
     {
         // Add to Parent's Child Collection
-        if (!(_childDataObjects.containsKey(newChild.getKey())))
+        if (!(_children.containsKey(newChild.getKey())))
         {
-            _childDataObjects.put(newChild.getKey(), newChild);
+            _children.put(newChild.getKey(), newChild);
         }
 
     }

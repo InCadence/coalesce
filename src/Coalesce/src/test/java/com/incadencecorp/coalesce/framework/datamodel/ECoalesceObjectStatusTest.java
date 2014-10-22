@@ -14,47 +14,47 @@ import org.junit.Test;
  * @After public void tearDown() throws Exception { }
  */
 
-public class ECoalesceDataObjectStatusTest {
+public class ECoalesceObjectStatusTest {
 
     @Test
     public void getTypeForLabelActiveStatusUpperCaseTest()
     {
-        assertEquals(ECoalesceDataObjectStatus.ACTIVE, ECoalesceDataObjectStatus.getTypeForLabel("ACTIVE"));
+        assertEquals(ECoalesceObjectStatus.ACTIVE, ECoalesceObjectStatus.getTypeForLabel("ACTIVE"));
 
     }
 
     @Test
     public void getTypeForLabelDeletedStatusUpperCaseTest()
     {
-        assertEquals(ECoalesceDataObjectStatus.DELETED, ECoalesceDataObjectStatus.getTypeForLabel("DELETED"));
+        assertEquals(ECoalesceObjectStatus.DELETED, ECoalesceObjectStatus.getTypeForLabel("DELETED"));
 
     }
 
     @Test
     public void getTypeForLabelUnknownStatusUpperCaseTest()
     {
-        assertEquals(ECoalesceDataObjectStatus.UNKNOWN, ECoalesceDataObjectStatus.getTypeForLabel("UNKNOWN"));
+        assertEquals(ECoalesceObjectStatus.UNKNOWN, ECoalesceObjectStatus.getTypeForLabel("UNKNOWN"));
 
     }
 
     @Test
     public void getTypeForLabelActiveStatusLowerCaseTest()
     {
-        assertEquals(ECoalesceDataObjectStatus.ACTIVE, ECoalesceDataObjectStatus.getTypeForLabel("active"));
+        assertEquals(ECoalesceObjectStatus.ACTIVE, ECoalesceObjectStatus.getTypeForLabel("active"));
 
     }
 
     @Test
     public void getTypeForLabelDeletedStatusLowerCaseTest()
     {
-        assertEquals(ECoalesceDataObjectStatus.DELETED, ECoalesceDataObjectStatus.getTypeForLabel("deleted"));
+        assertEquals(ECoalesceObjectStatus.DELETED, ECoalesceObjectStatus.getTypeForLabel("deleted"));
 
     }
 
     @Test
     public void getTypeForLabelUnknownStatusLowerCaseTest()
     {
-        assertEquals(ECoalesceDataObjectStatus.UNKNOWN, ECoalesceDataObjectStatus.getTypeForLabel("unknown"));
+        assertEquals(ECoalesceObjectStatus.UNKNOWN, ECoalesceObjectStatus.getTypeForLabel("unknown"));
 
     }
 
@@ -63,7 +63,7 @@ public class ECoalesceDataObjectStatusTest {
     {
 
         String a = "Active";
-        ECoalesceDataObjectStatus value = ECoalesceDataObjectStatus.ACTIVE;
+        ECoalesceObjectStatus value = ECoalesceObjectStatus.ACTIVE;
 
         assertEquals(a, value.getLabel());
     }
@@ -73,7 +73,7 @@ public class ECoalesceDataObjectStatusTest {
     {
 
         String a = "Deleted";
-        ECoalesceDataObjectStatus value = ECoalesceDataObjectStatus.DELETED;
+        ECoalesceObjectStatus value = ECoalesceObjectStatus.DELETED;
 
         assertEquals(a, value.getLabel());
     }
@@ -83,7 +83,7 @@ public class ECoalesceDataObjectStatusTest {
     {
 
         String a = "Unknown";
-        ECoalesceDataObjectStatus value = ECoalesceDataObjectStatus.UNKNOWN;
+        ECoalesceObjectStatus value = ECoalesceObjectStatus.UNKNOWN;
 
         assertEquals(a, value.getLabel());
     }

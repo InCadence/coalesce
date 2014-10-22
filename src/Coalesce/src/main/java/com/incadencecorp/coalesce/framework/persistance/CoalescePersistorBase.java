@@ -187,7 +187,7 @@ public abstract class CoalescePersistorBase implements ICoalescePersistor {
     public abstract ElementMetaData getXPath(String key, String objectType) throws CoalescePersistorException;
 
     @Override
-    public abstract DateTime getCoalesceDataObjectLastModified(String key, String objectType)
+    public abstract DateTime getCoalesceObjectLastModified(String key, String objectType)
             throws CoalescePersistorException;
 
     @Override

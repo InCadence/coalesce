@@ -53,7 +53,7 @@ import com.incadencecorp.coalesce.framework.generatedjaxb.Section;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-public class CoalesceEntity extends CoalesceDataObject {
+public class CoalesceEntity extends CoalesceObject {
 
     // ----------------------------------------------------------------------//
     // Private and protected Objects
@@ -170,7 +170,7 @@ public class CoalesceEntity extends CoalesceDataObject {
 
     /**
      * Initializes a previously new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} by initializing
-     * skeletal dataObjectChildren.
+     * skeletal child objects.
      * 
      * @return boolean indicator of success/failure
      */
@@ -272,7 +272,7 @@ public class CoalesceEntity extends CoalesceDataObject {
 
     /**
      * Initializes a previously new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} by initializing
-     * skeletal dataObjectChildren.
+     * skeletal child objects.
      * 
      * @return boolean indicator of success/failure
      */
@@ -282,7 +282,7 @@ public class CoalesceEntity extends CoalesceDataObject {
 
         if (!linkageSection.initialize(this)) return false;
 
-        setChildDataObject(linkageSection.getKey(), linkageSection);
+        addChildCoalesceObject(linkageSection.getKey(), linkageSection);
 
         for (Section entitySection : _entity.getSection())
         {
@@ -290,7 +290,7 @@ public class CoalesceEntity extends CoalesceDataObject {
 
             if (!section.initialize(this, entitySection)) return false;
 
-            setChildDataObject(section.getKey(), section);
+            addChildCoalesceObject(section.getKey(), section);
 
         }
 
@@ -435,14 +435,14 @@ public class CoalesceEntity extends CoalesceDataObject {
             for (String path : paths)
             {
 
-                CoalesceDataObject dataObject = getDataObjectForNamePath(path);
+                CoalesceObject coalesceObject = getCoalesceObjectForNamePath(path);
 
-                if (dataObject != null)
+                if (coalesceObject != null)
                 {
-                    if (dataObject instanceof CoalesceField<?>)
+                    if (coalesceObject instanceof CoalesceField<?>)
 
                     {
-                        CoalesceField<?> field = (CoalesceField<?>) dataObject;
+                        CoalesceField<?> field = (CoalesceField<?>) coalesceObject;
 
                         if (pathTitle == null) pathTitle = "";
                         pathTitle += getStringElement(field.getBaseValue()) + ", ";
@@ -537,7 +537,7 @@ public class CoalesceEntity extends CoalesceDataObject {
     }
 
     @Override
-    protected void setObjectStatus(ECoalesceDataObjectStatus status)
+    protected void setObjectStatus(ECoalesceObjectStatus status)
     {
         _entity.setStatus(status.getLabel());
     }
@@ -624,7 +624,7 @@ public class CoalesceEntity extends CoalesceDataObject {
 
         Map<String, CoalesceSection> sections = new HashMap<String, CoalesceSection>();
 
-        for (CoalesceDataObject child : getChildDataObjects().values())
+        for (CoalesceObject child : getChildCoalesceObjects().values())
         {
             if (child instanceof CoalesceSection)
             {
@@ -646,7 +646,7 @@ public class CoalesceEntity extends CoalesceDataObject {
     public CoalesceLinkageSection getLinkageSection()
     {
 
-        for (CoalesceDataObject child : getChildDataObjects().values())
+        for (CoalesceObject child : getChildCoalesceObjects().values())
         {
             if (child instanceof CoalesceLinkageSection)
             {
@@ -675,7 +675,7 @@ public class CoalesceEntity extends CoalesceDataObject {
         CoalesceLinkageSection linkageSection = getLinkageSection();
         if (linkageSection == null) return null;
 
-        for (ICoalesceDataObject cdo : linkageSection.getChildDataObjects().values())
+        for (ICoalesceObject cdo : linkageSection.getChildCoalesceObjects().values())
         {
             if (cdo instanceof CoalesceLinkage)
             {
@@ -759,11 +759,11 @@ public class CoalesceEntity extends CoalesceDataObject {
      */
     public CoalesceSection getSection(String namePath)
     {
-        CoalesceDataObject dataObject = getDataObjectForNamePath(namePath);
+        CoalesceObject coalesceObject = getCoalesceObjectForNamePath(namePath);
 
-        if (dataObject != null && dataObject instanceof CoalesceSection)
+        if (coalesceObject != null && coalesceObject instanceof CoalesceSection)
         {
-            return (CoalesceSection) dataObject;
+            return (CoalesceSection) coalesceObject;
         }
 
         return null;
@@ -835,7 +835,7 @@ public class CoalesceEntity extends CoalesceDataObject {
      */
     public void markAsDeleted()
     {
-        this.setStatus(ECoalesceDataObjectStatus.DELETED);
+        this.setStatus(ECoalesceObjectStatus.DELETED);
     }
 
     /**
@@ -911,7 +911,7 @@ public class CoalesceEntity extends CoalesceDataObject {
         }
     }
 
-    private static void resolveConflicts(CoalesceDataObject entity1, CoalesceDataObject entity2)
+    private static void resolveConflicts(CoalesceObject entity1, CoalesceObject entity2)
     {
 
         if (entity1 instanceof CoalesceField<?>)
@@ -926,11 +926,11 @@ public class CoalesceEntity extends CoalesceDataObject {
         else
         {
             // no matching keys, get children and recall function
-            Map<String, CoalesceDataObject> entity1Children = entity1.getChildDataObjects();
-            Map<String, CoalesceDataObject> entity2Children = entity2.getChildDataObjects();
-            for (Map.Entry<String, CoalesceDataObject> entity1Child : entity1Children.entrySet())
+            Map<String, CoalesceObject> entity1Children = entity1.getChildCoalesceObjects();
+            Map<String, CoalesceObject> entity2Children = entity2.getChildCoalesceObjects();
+            for (Map.Entry<String, CoalesceObject> entity1Child : entity1Children.entrySet())
             {
-                for (Map.Entry<String, CoalesceDataObject> entity2Child : entity2Children.entrySet())
+                for (Map.Entry<String, CoalesceObject> entity2Child : entity2Children.entrySet())
                 {
                     if (entity1Child != null && entity2Child != null)
                     {
@@ -1191,7 +1191,7 @@ public class CoalesceEntity extends CoalesceDataObject {
         CoalesceLinkageSection linkageSection = getLinkageSection();
         if (linkageSection == null) return null;
 
-        for (ICoalesceDataObject cdo : linkageSection.getChildDataObjects().values())
+        for (ICoalesceObject cdo : linkageSection.getChildCoalesceObjects().values())
         {
             if (cdo instanceof CoalesceLinkage)
             {
@@ -1201,7 +1201,7 @@ public class CoalesceEntity extends CoalesceDataObject {
                 if ((forEntityName == null || linkage.getEntity2Name().equalsIgnoreCase(forEntityName))
                         && forLinkTypes.contains(linkage.getLinkType())
                         && (forEntitySource == null || linkage.getEntity2Source().equalsIgnoreCase(forEntitySource))
-                        && linkage.getStatus() != ECoalesceDataObjectStatus.DELETED)
+                        && linkage.getStatus() != ECoalesceObjectStatus.DELETED)
                 {
                     linkages.put(linkage.getKey(), linkage);
                 }

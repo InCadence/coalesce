@@ -96,7 +96,7 @@ public class MissionEntity extends CoalesceEntity {
         // Live Status Record
         if (this._liveStatusRecord == null)
         {
-            CoalesceRecordset recordSet = (CoalesceRecordset) this.getDataObjectForNamePath(MissionEntity.NAME
+            CoalesceRecordset recordSet = (CoalesceRecordset) this.getCoalesceObjectForNamePath(MissionEntity.NAME
                     + "/Live Status Section/Live Status Recordset");
 
             // Valid Xml?
@@ -116,7 +116,7 @@ public class MissionEntity extends CoalesceEntity {
         // Mission Information Record
         if (this._informationRecord == null)
         {
-            CoalesceRecordset recordSet = (CoalesceRecordset) this.getDataObjectForNamePath(MissionEntity.NAME + "/"
+            CoalesceRecordset recordSet = (CoalesceRecordset) this.getCoalesceObjectForNamePath(MissionEntity.NAME + "/"
                     + MissionEntity.NAME + " Information Section/" + MissionEntity.NAME + " Information Recordset");
 
             // Valid Xml?

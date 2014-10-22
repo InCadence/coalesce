@@ -78,11 +78,11 @@ public class CoalesceEntityTest {
         assertEquals(4, entity.getLinkages().values().size());
         assertEquals(2, entity.getSections().size());
         assertEquals(1,
-                     ((CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH)).getCount());
+                     ((CoalesceRecordset) entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH)).getCount());
         assertEquals(17,
-                     ((CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH)).getFieldDefinitions().size());
+                     ((CoalesceRecordset) entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH)).getFieldDefinitions().size());
         assertEquals(17,
-                     entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORD_PATH).getChildDataObjects().size());
+                     entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORD_PATH).getChildCoalesceObjects().size());
     }
 
     @Test
@@ -150,7 +150,7 @@ public class CoalesceEntityTest {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION,
                                                       "TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionName");
 
-        assertEquals(((CoalesceField<?>) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH)).getBaseValue(),
+        assertEquals(((CoalesceField<?>) entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH)).getBaseValue(),
                      entity.getTitle());
     }
 
@@ -568,11 +568,11 @@ public class CoalesceEntityTest {
         assertEquals(4, entity.getLinkages().values().size());
         assertEquals(2, entity.getSections().size());
         assertEquals(1,
-                     ((CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH)).getCount());
+                     ((CoalesceRecordset) entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH)).getCount());
         assertEquals(17,
-                     ((CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH)).getFieldDefinitions().size());
+                     ((CoalesceRecordset) entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH)).getFieldDefinitions().size());
         assertEquals(17,
-                     entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORD_PATH).getChildDataObjects().size());
+                     entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORD_PATH).getChildCoalesceObjects().size());
     }
 
     @Test
@@ -650,7 +650,7 @@ public class CoalesceEntityTest {
 
         assertEquals(entity.getParent(), copiedEntity.getParent());
         assertEquals(entity.toXml(), copiedEntity.toXml());
-        assertEquals(entity.getChildDataObjects(), copiedEntity.getChildDataObjects());
+        assertEquals(entity.getChildCoalesceObjects(), copiedEntity.getChildCoalesceObjects());
 
     }
 
@@ -1016,8 +1016,8 @@ public class CoalesceEntityTest {
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceField<?> missionName = (CoalesceField<?>) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
-        CoalesceField<?> incidentTitle = (CoalesceField<?>) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_INCIDENT_TITLE_PATH);
+        CoalesceField<?> missionName = (CoalesceField<?>) entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+        CoalesceField<?> incidentTitle = (CoalesceField<?>) entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_INCIDENT_TITLE_PATH);
 
         missionName.setBaseValue("Mission Name");
         incidentTitle.setBaseValue("Incident Title");
@@ -2169,11 +2169,11 @@ public class CoalesceEntityTest {
                                                       "Type1,Type2",
                                                       "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
-        assertEquals(ECoalesceDataObjectStatus.ACTIVE, entity.getStatus());
+        assertEquals(ECoalesceObjectStatus.ACTIVE, entity.getStatus());
 
         entity.markAsDeleted();
 
-        assertEquals(ECoalesceDataObjectStatus.DELETED, entity.getStatus());
+        assertEquals(ECoalesceObjectStatus.DELETED, entity.getStatus());
 
     }
 
@@ -2187,11 +2187,11 @@ public class CoalesceEntityTest {
                                                       "Type1,Type2",
                                                       "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
-        entity.setStatus(ECoalesceDataObjectStatus.DELETED);
+        entity.setStatus(ECoalesceObjectStatus.DELETED);
 
         entity.markAsDeleted();
 
-        assertEquals(ECoalesceDataObjectStatus.DELETED, entity.getStatus());
+        assertEquals(ECoalesceObjectStatus.DELETED, entity.getStatus());
 
     }
 
@@ -2242,7 +2242,7 @@ public class CoalesceEntityTest {
 
         CoalesceEntity desEntity = CoalesceEntity.create(xml);
 
-        CoalesceRecord desRecord = (CoalesceRecord) desEntity.getDataObjectForNamePath("Testing Entity/Testing Section/Testing Recordset/Testing Recordset Record");
+        CoalesceRecord desRecord = (CoalesceRecord) desEntity.getCoalesceObjectForNamePath("Testing Entity/Testing Section/Testing Recordset/Testing Recordset Record");
 
         assertBinaryField(desRecord, "Binary1", "Binary1");
         assertBinaryField(desRecord, "Binary2", "Binary2");
@@ -2277,7 +2277,7 @@ public class CoalesceEntityTest {
 
         CoalesceEntity desEntity = CoalesceEntity.create(xml);
 
-        CoalesceRecord desRecord = (CoalesceRecord) desEntity.getDataObjectForNamePath("Testing Entity/Testing Section/Testing Recordset/Testing Recordset Record");
+        CoalesceRecord desRecord = (CoalesceRecord) desEntity.getCoalesceObjectForNamePath("Testing Entity/Testing Section/Testing Recordset/Testing Recordset Record");
 
         assertBinaryField(desRecord, "Binary1", "");
         assertBinaryField(desRecord, "Binary2", "");
@@ -2295,7 +2295,7 @@ public class CoalesceEntityTest {
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceDataObject xdo = entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+        CoalesceObject xdo = entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
 
         assertTrue(xdo instanceof CoalesceField<?>);
 
@@ -2304,7 +2304,7 @@ public class CoalesceEntityTest {
         assertEquals(1, nameField.getHistory().size());
         assertEquals(CoalesceTypeInstances.TEST_MISSION_NAME_HISTORY_VALUE, nameField.getHistory().get(0).getBaseValue());
 
-        xdo = entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_ACTION_NUMBER_PATH);
+        xdo = entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_ACTION_NUMBER_PATH);
 
         assertTrue(xdo instanceof CoalesceField<?>);
 
@@ -2314,7 +2314,7 @@ public class CoalesceEntityTest {
         assertEquals(CoalesceTypeInstances.TEST_MISSION_ACTION_NUMBER_LABEL_HISTORY,
                      actionNumberField.getHistory().get(0).getLabel());
 
-        xdo = entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_BASE64_PATH);
+        xdo = entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_BASE64_PATH);
 
         assertTrue(xdo instanceof CoalesceField<?>);
 
@@ -2335,8 +2335,8 @@ public class CoalesceEntityTest {
             CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
             // Get Mission Name Fields
-            CoalesceField<?> entity1MissionName = (CoalesceField<?>) entity1.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
-            CoalesceField<?> entity2MissionName = (CoalesceField<?>) entity2.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+            CoalesceField<?> entity1MissionName = (CoalesceField<?>) entity1.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+            CoalesceField<?> entity2MissionName = (CoalesceField<?>) entity2.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
 
             // Modify Entity 1
             entity1MissionName.setTypedValue("Should be added as history");
@@ -2353,7 +2353,7 @@ public class CoalesceEntityTest {
             //System.out.println(mergedEntity.toXml());
 
             // Get Mission Name Field of Merged Entity
-            CoalesceField<?> mergedEntityMissionName = (CoalesceField<?>) mergedEntity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+            CoalesceField<?> mergedEntityMissionName = (CoalesceField<?>) mergedEntity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
 
             // Validate Merge
             assertEquals(entity2MissionName.getBaseValue(), mergedEntityMissionName.getBaseValue());
@@ -2377,8 +2377,8 @@ public class CoalesceEntityTest {
             CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
             // Get Mission Name Fields
-            CoalesceField<?> entity1MissionName = (CoalesceField<?>) entity1.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
-            CoalesceField<?> entity2MissionName = (CoalesceField<?>) entity2.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+            CoalesceField<?> entity1MissionName = (CoalesceField<?>) entity1.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+            CoalesceField<?> entity2MissionName = (CoalesceField<?>) entity2.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
 
             // Modify Entity 1
             entity1MissionName.setOtherAttribute("newattr1", "1");
@@ -2393,7 +2393,7 @@ public class CoalesceEntityTest {
             CoalesceEntity mergedEntity = CoalesceEntity.mergeSyncEntity(entity1, entity2);
 
             // Get Mission Name Field of Merged Entity
-            CoalesceField<?> mergedEntityMissionName = (CoalesceField<?>) mergedEntity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+            CoalesceField<?> mergedEntityMissionName = (CoalesceField<?>) mergedEntity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
 
             // Validate Merge
             assertEquals(mergedEntityMissionName.getAttribute("newattr1"), "1");
@@ -2416,13 +2416,13 @@ public class CoalesceEntityTest {
             CoalesceEntity myEntity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_HISTORY);
             CoalesceEntity updatedEntity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_HISTORY);
 
-            CoalesceFieldDefinition fieldDefinition = (CoalesceFieldDefinition) updatedEntity.getCoalesceDataObjectForKey("1A7DA2CD-8A83-4E86-ADE8-15FDECE0564E");
+            CoalesceFieldDefinition fieldDefinition = (CoalesceFieldDefinition) updatedEntity.getCoalesceObjectForKey("1A7DA2CD-8A83-4E86-ADE8-15FDECE0564E");
             fieldDefinition.setDefaultValue("UpdatedIncidentDescription");
             fieldDefinition.setLastModified(new DateTime());
             updatedEntity.setLastModified(new DateTime());
 
             myEntity = CoalesceEntity.mergeSyncEntity(myEntity, updatedEntity);
-            CoalesceFieldDefinition myfieldDefinition = (CoalesceFieldDefinition) myEntity.getCoalesceDataObjectForKey("1A7DA2CD-8A83-4E86-ADE8-15FDECE0564E");
+            CoalesceFieldDefinition myfieldDefinition = (CoalesceFieldDefinition) myEntity.getCoalesceObjectForKey("1A7DA2CD-8A83-4E86-ADE8-15FDECE0564E");
             assertEquals("UpdatedIncidentDescription", myfieldDefinition.getAttribute("defaultvalue"));
 
         }
@@ -2485,8 +2485,8 @@ public class CoalesceEntityTest {
         entity.setAttribute("Title", "TestingTitle");
         assertEquals("TestingTitle", entity.getTitle());
         
-        entity.setAttribute("Status", ECoalesceDataObjectStatus.UNKNOWN.getLabel());
-        assertEquals(ECoalesceDataObjectStatus.UNKNOWN, entity.getStatus());
+        entity.setAttribute("Status", ECoalesceObjectStatus.UNKNOWN.getLabel());
+        assertEquals(ECoalesceObjectStatus.UNKNOWN, entity.getStatus());
 
         entity.setAttribute("LastModified", JodaDateTimeHelper.toXmlDateTimeUTC(future));
         assertEquals(future, entity.getLastModified());
@@ -2507,7 +2507,7 @@ public class CoalesceEntityTest {
         assertEquals("TestingEntityId", desEntity.getEntityId()    );
         assertEquals("TestingEntityType", desEntity.getEntityIdType());
         assertEquals("TestingTitle", desEntity.getTitle());
-       assertEquals(ECoalesceDataObjectStatus.UNKNOWN, desEntity.getStatus());
+       assertEquals(ECoalesceObjectStatus.UNKNOWN, desEntity.getStatus());
 
     }
 

@@ -71,7 +71,7 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> {
             // Append to parent's child node collection
             parent.getEntityFieldHistories().add(0, newFieldHistory._entityFieldHistory);
 
-            parent.addChild(newFieldHistory);
+            parent.addChildCoalesceObject(newFieldHistory);
 
             return newFieldHistory;
 
@@ -419,7 +419,7 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> {
     }
 
     @Override
-    protected void setObjectStatus(ECoalesceDataObjectStatus status)
+    protected void setObjectStatus(ECoalesceObjectStatus status)
     {
         _entityFieldHistory.setStatus(status.getLabel());
     }
@@ -469,7 +469,7 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> {
             return true;
 
         case "status":
-            setStatus(ECoalesceDataObjectStatus.getTypeForLabel(value));
+            setStatus(ECoalesceObjectStatus.getTypeForLabel(value));
             return true;
         case "previoushistorykey":
             setPreviousHistoryKey(value);

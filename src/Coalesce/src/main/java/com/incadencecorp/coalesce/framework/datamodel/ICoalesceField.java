@@ -107,7 +107,7 @@ public interface ICoalesceField<T> {
 
     /**
      * Return the Key value of the Field's most recent previous history
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}.
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}.
      * 
      * @return String to be the Field's PreviousHistoryKey attribute.
      */
@@ -199,7 +199,7 @@ public interface ICoalesceField<T> {
 
     /**
      * Sets the Key value corresponding to the Field's most recent previous history
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}.
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}.
      * 
      * @param value String to be the Field's PreviousHistoryKey attribute.
      */

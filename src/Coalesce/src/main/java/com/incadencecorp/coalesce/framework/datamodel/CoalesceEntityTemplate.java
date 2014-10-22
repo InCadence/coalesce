@@ -33,7 +33,7 @@ public class CoalesceEntityTemplate {
     // Protected Member Variables
     // -----------------------------------------------------------------------//
 
-    private Document _dataObjectDocument;
+    private Document _document;
     private Node _entityNode;
 
     // -----------------------------------------------------------------------//
@@ -146,8 +146,8 @@ public class CoalesceEntityTemplate {
         removeNodes(doc, "linkage");
         removeAttributes(doc);
 
-        // Set DataObjectDocument
-        _dataObjectDocument = doc;
+        // Set Document
+        _document = doc;
         _entityNode = doc.getElementsByTagName("entity").item(0);
 
         // return Success
@@ -160,14 +160,14 @@ public class CoalesceEntityTemplate {
 
     /**
      * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate}'s (org.w3c.dom Document)
-     * DataObjectDocument.
+     * Document.
      * 
      * @return Document representing the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate}'s
      *         entity
      */
-    public Document getDataObjectDocument()
+    public Document getCoalesceObjectDocument()
     {
-        return _dataObjectDocument;
+        return _document;
     }
 
     /**
@@ -237,7 +237,7 @@ public class CoalesceEntityTemplate {
      */
     public String toXml()
     {
-        return XmlHelper.formatXml(_dataObjectDocument);
+        return XmlHelper.formatXml(_document);
     }
 
     /**
@@ -248,7 +248,7 @@ public class CoalesceEntityTemplate {
      */
     public String toXml(String encoding)
     {
-        return XmlHelper.formatXml(_dataObjectDocument, encoding);
+        return XmlHelper.formatXml(_document, encoding);
     }
 
     /*--------------------------------------------------------------------------

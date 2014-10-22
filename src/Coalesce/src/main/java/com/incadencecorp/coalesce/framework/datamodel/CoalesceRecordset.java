@@ -34,7 +34,7 @@ import com.incadencecorp.coalesce.framework.generatedjaxb.Recordset;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRecordset {
+public class CoalesceRecordset extends CoalesceObject implements ICoalesceRecordset {
 
     // -----------------------------------------------------------------------//
     // protected Member Variables
@@ -109,9 +109,9 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
         newRecordset.setMaxRecords(maxRecords);
 
         // Add to parent's child collection
-        if (!parent.getChildDataObjects().containsKey(newRecordset.getKey()))
+        if (!parent.getChildCoalesceObjects().containsKey(newRecordset.getKey()))
         {
-            parent.setChildDataObject(newRecordset.getKey(), newRecordset);
+            parent.addChildCoalesceObject(newRecordset.getKey(), newRecordset);
         }
 
         return newRecordset;
@@ -259,7 +259,7 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
 
         for (CoalesceRecord record : getRecords())
         {
-            if (record.getStatus() == ECoalesceDataObjectStatus.ACTIVE)
+            if (record.getStatus() == ECoalesceObjectStatus.ACTIVE)
             {
                 return true;
             }
@@ -544,7 +544,7 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
 
         getRecords().remove(record);
 
-        record.setStatus(ECoalesceDataObjectStatus.DELETED);
+        record.setStatus(ECoalesceObjectStatus.DELETED);
 
     }
 
@@ -578,7 +578,7 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
             getRecords().remove(recordToRemove);
 
             // Set as Status as Deleted
-            recordToRemove.setStatus(ECoalesceDataObjectStatus.DELETED);
+            recordToRemove.setStatus(ECoalesceObjectStatus.DELETED);
 
         }
     }
@@ -594,7 +594,7 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
     }
 
     @Override
-    protected void setObjectStatus(ECoalesceDataObjectStatus status)
+    protected void setObjectStatus(ECoalesceObjectStatus status)
     {
         _entityRecordset.setStatus(status.getLabel());
     }
@@ -664,7 +664,7 @@ public class CoalesceRecordset extends CoalesceDataObject implements ICoalesceRe
             }
 
         case "status":
-            setStatus(ECoalesceDataObjectStatus.getTypeForLabel(value));
+            setStatus(ECoalesceObjectStatus.getTypeForLabel(value));
             return true;
         default:
             return setOtherAttribute(name, value);

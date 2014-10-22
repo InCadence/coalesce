@@ -280,7 +280,7 @@ public class CoalesceRecordSetTest {
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertEquals("7A158E39-B6C4-4912-A712-DF296375A368", recordset.getKey());
 
@@ -303,7 +303,7 @@ public class CoalesceRecordSetTest {
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertEquals("Mission Information Recordset", recordset.getName());
 
@@ -318,7 +318,7 @@ public class CoalesceRecordSetTest {
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertEquals("recordset", recordset.getType());
 
@@ -349,14 +349,14 @@ public class CoalesceRecordSetTest {
         CoalesceRecordset recordset = CoalesceRecordset.create(section, "Recordset");
 
         CoalesceRecord record = recordset.addNew();
-        record.setStatus(ECoalesceDataObjectStatus.DELETED);
+        record.setStatus(ECoalesceObjectStatus.DELETED);
 
         record = recordset.addNew();
-        record.setStatus(ECoalesceDataObjectStatus.UNKNOWN);
+        record.setStatus(ECoalesceObjectStatus.UNKNOWN);
 
         assertFalse(recordset.getHasActiveRecords());
 
-        record.setStatus(ECoalesceDataObjectStatus.ACTIVE);
+        record.setStatus(ECoalesceObjectStatus.ACTIVE);
 
         assertTrue(recordset.getHasActiveRecords());
 
@@ -370,17 +370,17 @@ public class CoalesceRecordSetTest {
         CoalesceRecordset recordset = CoalesceRecordset.create(section, "Recordset");
 
         CoalesceRecord record = recordset.addNew();
-        record.setStatus(ECoalesceDataObjectStatus.DELETED);
+        record.setStatus(ECoalesceObjectStatus.DELETED);
 
         record = recordset.addNew();
-        record.setStatus(ECoalesceDataObjectStatus.UNKNOWN);
+        record.setStatus(ECoalesceObjectStatus.UNKNOWN);
 
         record = recordset.addNew();
-        record.setStatus(ECoalesceDataObjectStatus.ACTIVE);
+        record.setStatus(ECoalesceObjectStatus.ACTIVE);
 
         assertTrue(recordset.getHasActiveRecords());
 
-        record.setStatus(ECoalesceDataObjectStatus.DELETED);
+        record.setStatus(ECoalesceObjectStatus.DELETED);
 
         assertFalse(recordset.getHasActiveRecords());
 
@@ -396,8 +396,8 @@ public class CoalesceRecordSetTest {
         assertFalse(recordset.getHasRecords());
 
         CoalesceRecord record = recordset.addNew();
-        record.setStatus(ECoalesceDataObjectStatus.DELETED);
-        record.setStatus(ECoalesceDataObjectStatus.UNKNOWN);
+        record.setStatus(ECoalesceObjectStatus.DELETED);
+        record.setStatus(ECoalesceObjectStatus.UNKNOWN);
         assertTrue(recordset.getHasRecords());
 
     }
@@ -407,7 +407,7 @@ public class CoalesceRecordSetTest {
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertFalse(recordset.getNoIndex());
 
@@ -416,7 +416,7 @@ public class CoalesceRecordSetTest {
         String entityXml = entity.toXml();
 
         CoalesceEntity desEntity = CoalesceEntity.create(entityXml);
-        CoalesceRecordset desRecordset = (CoalesceRecordset) desEntity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceRecordset desRecordset = (CoalesceRecordset) desEntity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertTrue(desRecordset.getNoIndex());
 
@@ -433,7 +433,7 @@ public class CoalesceRecordSetTest {
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertEquals(JodaDateTimeHelper.fromXmlDateTimeUTC("2014-05-02T14:33:51.8525751Z"), recordset.getDateCreated());
 
@@ -449,7 +449,7 @@ public class CoalesceRecordSetTest {
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertEquals(JodaDateTimeHelper.fromXmlDateTimeUTC("2014-05-02T14:33:59.193995Z"), recordset.getLastModified());
 
@@ -464,7 +464,7 @@ public class CoalesceRecordSetTest {
     public void createFieldDefinitionFullNullNameTest()
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertNull(recordset.createFieldDefinition(null, ECoalesceFieldDataTypes.STRING_TYPE, "Label", "(U)", "Default"));
 
@@ -474,7 +474,7 @@ public class CoalesceRecordSetTest {
     public void createFieldDefinitionFullEmptyNameTest()
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertNull(recordset.createFieldDefinition("", ECoalesceFieldDataTypes.STRING_TYPE, "Label", "(U)", "Default"));
 
@@ -484,7 +484,7 @@ public class CoalesceRecordSetTest {
     public void createFieldDefinitionFullWhiteSpaceNameTest()
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertNull(recordset.createFieldDefinition("   ", ECoalesceFieldDataTypes.STRING_TYPE, "Label", "(U)", "Default"));
 
@@ -494,7 +494,7 @@ public class CoalesceRecordSetTest {
     public void createFieldDefinitionFullNullDataTypeTest()
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertNull(recordset.createFieldDefinition("Field def", null, "Label", "(U)", "Default"));
 
@@ -504,7 +504,7 @@ public class CoalesceRecordSetTest {
     public void createFieldDefinitionFullNullLabelTest()
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertNotNull(recordset.createFieldDefinition("Field def",
                                                       ECoalesceFieldDataTypes.STRING_TYPE,
@@ -518,7 +518,7 @@ public class CoalesceRecordSetTest {
     public void createFieldDefinitionFullEmptyLabelTest()
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertNotNull(recordset.createFieldDefinition("Field def", ECoalesceFieldDataTypes.STRING_TYPE, "", "(U)", "Default"));
 
@@ -528,7 +528,7 @@ public class CoalesceRecordSetTest {
     public void createFieldDefinitionFullWhiteSpaceLabelTest()
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertNotNull(recordset.createFieldDefinition("Field def",
                                                       ECoalesceFieldDataTypes.STRING_TYPE,
@@ -542,7 +542,7 @@ public class CoalesceRecordSetTest {
     public void createFieldDefinitionFullNullDefaultClassTest()
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertNotNull(recordset.createFieldDefinition("Field def",
                                                       ECoalesceFieldDataTypes.STRING_TYPE,
@@ -556,7 +556,7 @@ public class CoalesceRecordSetTest {
     public void createFieldDefinitionFullEmptyDefaultClassTest()
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertNotNull(recordset.createFieldDefinition("Field def",
                                                       ECoalesceFieldDataTypes.STRING_TYPE,
@@ -570,7 +570,7 @@ public class CoalesceRecordSetTest {
     public void createFieldDefinitionFullWhiteSpaceDefaultClassTest()
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertNotNull(recordset.createFieldDefinition("Field def",
                                                       ECoalesceFieldDataTypes.STRING_TYPE,
@@ -584,7 +584,7 @@ public class CoalesceRecordSetTest {
     public void createFieldDefinitionFullNullDefaultValueTest()
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertNotNull(recordset.createFieldDefinition("Field def", ECoalesceFieldDataTypes.STRING_TYPE, "Label", "(U)", null));
 
@@ -594,7 +594,7 @@ public class CoalesceRecordSetTest {
     public void createFieldDefinitionFullEmptyDefaultValueTest()
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertNotNull(recordset.createFieldDefinition("Field def", ECoalesceFieldDataTypes.STRING_TYPE, "Label", "(U)", ""));
 
@@ -604,7 +604,7 @@ public class CoalesceRecordSetTest {
     public void createFieldDefinitionFullWhiteSpaceDefaultValueTest()
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertNotNull(recordset.createFieldDefinition("Field def",
                                                       ECoalesceFieldDataTypes.STRING_TYPE,
@@ -618,7 +618,7 @@ public class CoalesceRecordSetTest {
     public void getFieldDefinitionTest()
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertEquals("93C6A209-AD86-4474-9FFB-D6801B2548AA", recordset.getFieldDefinition("ActionNumber").getKey());
         assertEquals("1EF2E901-DDD8-4C38-A5BF-858CB13F9562", recordset.getFieldDefinition("MissionAddress").getKey());
@@ -631,7 +631,7 @@ public class CoalesceRecordSetTest {
     public void getAllowTests()
     {
         CoalesceEntity missionEntity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        CoalesceRecordset missionRecordset = (CoalesceRecordset) missionEntity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        CoalesceRecordset missionRecordset = (CoalesceRecordset) missionEntity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
  
         assertTrue(missionRecordset.getAllowEdit());
         assertTrue(missionRecordset.getAllowNew());
@@ -643,7 +643,7 @@ public class CoalesceRecordSetTest {
     public void getCountTest()
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         assertEquals(1, recordset.getCount());
 
@@ -657,9 +657,9 @@ public class CoalesceRecordSetTest {
     public void containsTest()
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
-        CoalesceRecord existingRecord = (CoalesceRecord) recordset.getDataObjectForNamePath("Mission Information Recordset/Mission Information Recordset Record");
+        CoalesceRecord existingRecord = (CoalesceRecord) recordset.getCoalesceObjectForNamePath("Mission Information Recordset/Mission Information Recordset Record");
 
         CoalesceRecord newRecord = recordset.addNew();
 
@@ -673,7 +673,7 @@ public class CoalesceRecordSetTest {
     public void indexOfTest()
     {
         CoalesceEntity missionEntity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        CoalesceRecord missionRecord = (CoalesceRecord) missionEntity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record");
+        CoalesceRecord missionRecord = (CoalesceRecord) missionEntity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record");
         CoalesceRecordset missionRecordset = (CoalesceRecordset) missionRecord.getParent();
         
         CoalesceRecord newRecord = missionRecordset.addNew();
@@ -693,7 +693,7 @@ public class CoalesceRecordSetTest {
     public void addNewTest()
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         List<CoalesceRecord> records = recordset.getRecords();
 
@@ -711,9 +711,9 @@ public class CoalesceRecordSetTest {
     public void getItemTest()
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
-        CoalesceRecord existingRecord = (CoalesceRecord) recordset.getDataObjectForNamePath("Mission Information Recordset/Mission Information Recordset Record");
+        CoalesceRecord existingRecord = (CoalesceRecord) recordset.getCoalesceObjectForNamePath("Mission Information Recordset/Mission Information Recordset Record");
 
         CoalesceRecord newRecord = recordset.addNew();
 
@@ -726,7 +726,7 @@ public class CoalesceRecordSetTest {
     public void getItemNegativeTest()
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         recordset.getItem(-1);
 
@@ -736,7 +736,7 @@ public class CoalesceRecordSetTest {
     public void getItemGreaterTest()
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
         @SuppressWarnings("unused")
         CoalesceRecord newRecord = recordset.addNew();
@@ -749,9 +749,9 @@ public class CoalesceRecordSetTest {
     public void removeAtTest()
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
-        CoalesceRecord existingRecord = (CoalesceRecord) recordset.getDataObjectForNamePath("Mission Information Recordset/Mission Information Recordset Record");
+        CoalesceRecord existingRecord = (CoalesceRecord) recordset.getCoalesceObjectForNamePath("Mission Information Recordset/Mission Information Recordset Record");
 
         CoalesceRecord newRecord = recordset.addNew();
 
@@ -787,9 +787,9 @@ public class CoalesceRecordSetTest {
     public void removeTest()
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
-        CoalesceRecord existingRecord = (CoalesceRecord) recordset.getDataObjectForNamePath("Mission Information Recordset/Mission Information Recordset Record");
+        CoalesceRecord existingRecord = (CoalesceRecord) recordset.getCoalesceObjectForNamePath("Mission Information Recordset/Mission Information Recordset Record");
 
         CoalesceRecord newRecord = recordset.addNew();
 
@@ -822,9 +822,9 @@ public class CoalesceRecordSetTest {
     public void changeRecordStatusTest()
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
-        CoalesceRecord existingRecord = (CoalesceRecord) recordset.getDataObjectForNamePath("Mission Information Recordset/Mission Information Recordset Record");
+        CoalesceRecord existingRecord = (CoalesceRecord) recordset.getCoalesceObjectForNamePath("Mission Information Recordset/Mission Information Recordset Record");
 
         CoalesceRecord newRecord = recordset.addNew();
 
@@ -832,19 +832,19 @@ public class CoalesceRecordSetTest {
         assertTrue(recordset.getHasRecords());
         assertEquals(2, recordset.getRecords().size());
 
-        existingRecord.setStatus(ECoalesceDataObjectStatus.DELETED);
+        existingRecord.setStatus(ECoalesceObjectStatus.DELETED);
 
         assertTrue(recordset.getHasActiveRecords());
         assertTrue(recordset.getHasRecords());
         assertEquals(1, recordset.getRecords().size());
 
-        newRecord.setStatus(ECoalesceDataObjectStatus.UNKNOWN);
+        newRecord.setStatus(ECoalesceObjectStatus.UNKNOWN);
 
         assertFalse(recordset.getHasActiveRecords());
         assertTrue(recordset.getHasRecords());
         assertEquals(0, recordset.getRecords().size());
 
-        existingRecord.setStatus(ECoalesceDataObjectStatus.ACTIVE);
+        existingRecord.setStatus(ECoalesceObjectStatus.ACTIVE);
 
         assertTrue(recordset.getHasActiveRecords());
         assertTrue(recordset.getHasRecords());
@@ -857,7 +857,7 @@ public class CoalesceRecordSetTest {
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
         String recordsetXml = recordset.toXml();
 
         Recordset desRecordset = (Recordset) XmlHelper.deserialize(recordsetXml, Recordset.class);
@@ -869,7 +869,7 @@ public class CoalesceRecordSetTest {
         assertEquals(recordset.getLastModified(), desRecordset.getLastmodified());
         assertEquals(recordset.getMinRecords(), desRecordset.getMinrecords().intValue());
         assertEquals(recordset.getMaxRecords(), desRecordset.getMaxrecords().intValue());
-        assertEquals(recordset.getStatus(), ECoalesceDataObjectStatus.getTypeForLabel(desRecordset.getStatus()));
+        assertEquals(recordset.getStatus(), ECoalesceObjectStatus.getTypeForLabel(desRecordset.getStatus()));
         assertEquals(recordset.getFieldDefinitions().size(), desRecordset.getFielddefinition().size());
 
     }
@@ -878,16 +878,16 @@ public class CoalesceRecordSetTest {
     public void setStatusTest()
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
-        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
 
-        assertEquals(ECoalesceDataObjectStatus.ACTIVE, recordset.getStatus());
+        assertEquals(ECoalesceObjectStatus.ACTIVE, recordset.getStatus());
 
-        recordset.setStatus(ECoalesceDataObjectStatus.UNKNOWN);
+        recordset.setStatus(ECoalesceObjectStatus.UNKNOWN);
         String recordsetXml = recordset.toXml();
 
         Recordset desRecordset = (Recordset) XmlHelper.deserialize(recordsetXml, Recordset.class);
 
-        assertEquals(ECoalesceDataObjectStatus.UNKNOWN, ECoalesceDataObjectStatus.getTypeForLabel(desRecordset.getStatus()));
+        assertEquals(ECoalesceObjectStatus.UNKNOWN, ECoalesceObjectStatus.getTypeForLabel(desRecordset.getStatus()));
 
     }
 
@@ -896,7 +896,7 @@ public class CoalesceRecordSetTest {
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
         recordset.setAttribute("TestAttribute", "TestingValue");
 
         assertEquals(7, recordset.getAttributes().size());
@@ -930,15 +930,15 @@ public class CoalesceRecordSetTest {
         recordset.setAttribute("NoIndex", "True");
         assertEquals(true, recordset.getNoIndex());
 
-        recordset.setAttribute("Status", ECoalesceDataObjectStatus.UNKNOWN.getLabel());
-        assertEquals(ECoalesceDataObjectStatus.UNKNOWN, recordset.getStatus());
+        recordset.setAttribute("Status", ECoalesceObjectStatus.UNKNOWN.getLabel());
+        assertEquals(ECoalesceObjectStatus.UNKNOWN, recordset.getStatus());
 
         recordset.setAttribute("LastModified", JodaDateTimeHelper.toXmlDateTimeUTC(future));
         assertEquals(future, recordset.getLastModified());
 
         String entityXml = entity.toXml();
         CoalesceEntity desEntity = CoalesceEntity.create(entityXml);
-        CoalesceRecordset desRecordset = (CoalesceRecordset) desEntity.getDataObjectForNamePath("TREXMission/Mission Information Section/TestingName");
+        CoalesceRecordset desRecordset = (CoalesceRecordset) desEntity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/TestingName");
 
         assertEquals("TestingValue", desRecordset.getAttribute("TestAttribute"));
         assertEquals("TestingName", desRecordset.getName());
@@ -948,7 +948,7 @@ public class CoalesceRecordSetTest {
         assertEquals(123, desRecordset.getMinRecords());
         assertEquals(234, desRecordset.getMaxRecords());
         assertEquals(true, desRecordset.getNoIndex());
-        assertEquals(ECoalesceDataObjectStatus.UNKNOWN, desRecordset.getStatus());
+        assertEquals(ECoalesceObjectStatus.UNKNOWN, desRecordset.getStatus());
 
     }
 }

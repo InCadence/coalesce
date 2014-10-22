@@ -32,7 +32,7 @@ import com.incadencecorp.coalesce.framework.generatedjaxb.Recordset;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-public class CoalesceSection extends CoalesceDataObject {
+public class CoalesceSection extends CoalesceObject {
 
     private Section _entitySection;
 
@@ -112,7 +112,7 @@ public class CoalesceSection extends CoalesceDataObject {
 
         newSection.setNoIndex(noIndex);
 
-        parent.addChild(newSection);
+        parent.addChildCoalesceObject(newSection);
 
         return newSection;
     }
@@ -157,7 +157,7 @@ public class CoalesceSection extends CoalesceDataObject {
 
         newSection.setNoIndex(noIndex);
 
-        parent.addChild(newSection);
+        parent.addChildCoalesceObject(newSection);
 
         return newSection;
     }
@@ -174,7 +174,7 @@ public class CoalesceSection extends CoalesceDataObject {
      */
     protected boolean initialize(CoalesceEntity parent, Section section)
     {
-        return initialize((CoalesceDataObject) parent, section);
+        return initialize((CoalesceObject) parent, section);
     }
 
     /**
@@ -189,10 +189,10 @@ public class CoalesceSection extends CoalesceDataObject {
      */
     protected boolean initialize(CoalesceSection parent, Section section)
     {
-        return initialize((CoalesceDataObject) parent, section);
+        return initialize((CoalesceObject) parent, section);
     }
 
-    private boolean initialize(CoalesceDataObject parent, Section section)
+    private boolean initialize(CoalesceObject parent, Section section)
     {
 
         if (parent == null) throw new NullArgumentException("parent");
@@ -210,9 +210,9 @@ public class CoalesceSection extends CoalesceDataObject {
             CoalesceRecordset newRecordSet = new CoalesceRecordset();
             if (!newRecordSet.initialize(this, childRecordSet)) continue;
 
-            if (!getChildDataObjects().containsKey(newRecordSet.getKey()))
+            if (!getChildCoalesceObjects().containsKey(newRecordSet.getKey()))
             {
-                setChildDataObject(newRecordSet.getKey(), newRecordSet);
+                addChildCoalesceObject(newRecordSet.getKey(), newRecordSet);
             }
         }
 
@@ -223,7 +223,7 @@ public class CoalesceSection extends CoalesceDataObject {
 
             if (!newsection.initialize(this, subSection)) return false;
 
-            setChildDataObject(newsection.getKey(), newsection);
+            addChildCoalesceObject(newsection.getKey(), newsection);
 
         }
 
@@ -288,11 +288,11 @@ public class CoalesceSection extends CoalesceDataObject {
      */
     public CoalesceRecordset getRecordset(String namePath)
     {
-        CoalesceDataObject dataObject = getDataObjectForNamePath(namePath);
+        CoalesceObject coalesceObject = getCoalesceObjectForNamePath(namePath);
 
-        if (dataObject != null && dataObject instanceof CoalesceRecordset)
+        if (coalesceObject != null && coalesceObject instanceof CoalesceRecordset)
         {
-            return (CoalesceRecordset) dataObject;
+            return (CoalesceRecordset) coalesceObject;
         }
 
         return null;
@@ -310,7 +310,7 @@ public class CoalesceSection extends CoalesceDataObject {
 
         Map<String, CoalesceRecordset> recordSets = new HashMap<String, CoalesceRecordset>();
 
-        for (CoalesceDataObject child : getChildDataObjects().values())
+        for (CoalesceObject child : getChildCoalesceObjects().values())
         {
             if (child instanceof CoalesceRecordset)
             {
@@ -346,11 +346,11 @@ public class CoalesceSection extends CoalesceDataObject {
      */
     public CoalesceSection getSection(String namePath)
     {
-        CoalesceDataObject dataObject = getDataObjectForNamePath(namePath);
+        CoalesceObject coalesceObject = getCoalesceObjectForNamePath(namePath);
 
-        if (dataObject != null && dataObject instanceof CoalesceSection)
+        if (coalesceObject != null && coalesceObject instanceof CoalesceSection)
         {
-            return (CoalesceSection) dataObject;
+            return (CoalesceSection) coalesceObject;
         }
 
         return null;
@@ -368,7 +368,7 @@ public class CoalesceSection extends CoalesceDataObject {
 
         Map<String, CoalesceSection> sections = new HashMap<String, CoalesceSection>();
 
-        for (CoalesceDataObject child : getChildDataObjects().values())
+        for (CoalesceObject child : getChildCoalesceObjects().values())
         {
             if (child instanceof CoalesceSection)
             {
@@ -437,7 +437,7 @@ public class CoalesceSection extends CoalesceDataObject {
     }
 
     @Override
-    protected void setObjectStatus(ECoalesceDataObjectStatus status)
+    protected void setObjectStatus(ECoalesceObjectStatus status)
     {
         _entitySection.setStatus(status.getLabel());
     }
@@ -484,7 +484,7 @@ public class CoalesceSection extends CoalesceDataObject {
             setNoIndex(Boolean.parseBoolean(value));
             return true;
         case "status":
-            setStatus(ECoalesceDataObjectStatus.getTypeForLabel(value));
+            setStatus(ECoalesceObjectStatus.getTypeForLabel(value));
             return true;
         default:
             return setOtherAttribute(name, value);

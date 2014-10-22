@@ -215,7 +215,7 @@ public interface ICoalescePersistor {
      * @return DateTime containing the last modified date for the Coalesce object matching the values.
      * @throws CoalescePersistorException
      */
-    DateTime getCoalesceDataObjectLastModified(String key, String objectType) throws CoalescePersistorException;
+    DateTime getCoalesceObjectLastModified(String key, String objectType) throws CoalescePersistorException;
 
     /**
      * Returns the Coalesce entity keys that matches the given parameters.

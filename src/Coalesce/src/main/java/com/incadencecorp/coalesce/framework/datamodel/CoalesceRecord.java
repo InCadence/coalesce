@@ -33,7 +33,7 @@ import com.incadencecorp.coalesce.framework.generatedjaxb.Field;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-public class CoalesceRecord extends CoalesceDataObject {
+public class CoalesceRecord extends CoalesceObject {
 
     // -----------------------------------------------------------------------//
     // Private Member Variables
@@ -96,7 +96,7 @@ public class CoalesceRecord extends CoalesceDataObject {
 
         newRecord.setName(name);
 
-        parent.addChild(newRecord);
+        parent.addChildCoalesceObject(newRecord);
 
         return newRecord;
     }
@@ -127,13 +127,13 @@ public class CoalesceRecord extends CoalesceDataObject {
             if (!newField.initialize(this, entityField)) return false;
 
             // Add to Child Collection
-            setChildDataObject(newField.getKey(), newField);
+            addChildCoalesceObject(newField.getKey(), newField);
         }
 
         // Add to Parent Collections (if we're Active)
-        if (getStatus() == ECoalesceDataObjectStatus.ACTIVE)
+        if (getStatus() == ECoalesceObjectStatus.ACTIVE)
         {
-            parent.setChildDataObject(getKey(), this);
+            parent.addChildCoalesceObject(getKey(), this);
             parent.getRecords().add(this);
         }
 
@@ -186,12 +186,12 @@ public class CoalesceRecord extends CoalesceDataObject {
     {
         List<CoalesceField<?>> fields = new ArrayList<CoalesceField<?>>();
 
-        for (CoalesceDataObject dataObject : getChildDataObjects().values())
+        for (CoalesceObject coalesceObject : getChildCoalesceObjects().values())
         {
 
-            if (dataObject instanceof CoalesceField<?>)
+            if (coalesceObject instanceof CoalesceField<?>)
             {
-                fields.add((CoalesceField<?>) dataObject);
+                fields.add((CoalesceField<?>) coalesceObject);
             }
         }
 
@@ -209,11 +209,11 @@ public class CoalesceRecord extends CoalesceDataObject {
     {
         List<String> fieldNames = new ArrayList<String>();
 
-        for (CoalesceDataObject dataObject : getChildDataObjects().values())
+        for (CoalesceObject coalesceObject : getChildCoalesceObjects().values())
         {
-            if (dataObject instanceof CoalesceField<?>)
+            if (coalesceObject instanceof CoalesceField<?>)
             {
-                fieldNames.add(dataObject.getName());
+                fieldNames.add(coalesceObject.getName());
             }
         }
 
@@ -231,11 +231,11 @@ public class CoalesceRecord extends CoalesceDataObject {
     {
         List<String> fieldKeys = new ArrayList<String>();
 
-        for (CoalesceDataObject dataObject : getChildDataObjects().values())
+        for (CoalesceObject coalesceObject : getChildCoalesceObjects().values())
         {
-            if (dataObject instanceof CoalesceField<?>)
+            if (coalesceObject instanceof CoalesceField<?>)
             {
-                fieldKeys.add(dataObject.getKey());
+                fieldKeys.add(coalesceObject.getKey());
             }
         }
 
@@ -337,13 +337,13 @@ public class CoalesceRecord extends CoalesceDataObject {
     }
 
     @Override
-    protected void setObjectStatus(ECoalesceDataObjectStatus status)
+    protected void setObjectStatus(ECoalesceObjectStatus status)
     {
         if (status == getStatus()) return;
 
         _entityRecord.setStatus(status.getLabel());
 
-        if (status == ECoalesceDataObjectStatus.ACTIVE)
+        if (status == ECoalesceObjectStatus.ACTIVE)
         {
             if (!getCastParent().contains(this))
             {
@@ -386,7 +386,7 @@ public class CoalesceRecord extends CoalesceDataObject {
             setLastModified(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
             return true;
         case "status":
-            setStatus(ECoalesceDataObjectStatus.getTypeForLabel(value));
+            setStatus(ECoalesceObjectStatus.getTypeForLabel(value));
             return true;
         case "name":
             setName(value);

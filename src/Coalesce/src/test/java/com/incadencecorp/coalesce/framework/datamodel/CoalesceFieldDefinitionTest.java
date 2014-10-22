@@ -58,7 +58,7 @@ public class CoalesceFieldDefinitionTest {
                                                                              "Field Def Name",
                                                                              ECoalesceFieldDataTypes.STRING_TYPE);
 
-        CoalesceDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
+        CoalesceObject xdo = recordSet.getCoalesceObjectForNamePath("Entity Information Section/Field Def Name");
 
         assertEquals(newFieldDef, xdo);
 
@@ -85,7 +85,7 @@ public class CoalesceFieldDefinitionTest {
                                                                              false,
                                                                              true);
 
-        CoalesceDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
+        CoalesceObject xdo = recordSet.getCoalesceObjectForNamePath("Entity Information Section/Field Def Name");
 
         assertEquals(newFieldDef, xdo);
 
@@ -116,7 +116,7 @@ public class CoalesceFieldDefinitionTest {
                                                                              true,
                                                                              true);
 
-        CoalesceDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
+        CoalesceObject xdo = recordSet.getCoalesceObjectForNamePath("Entity Information Section/Field Def Name");
 
         assertEquals(newFieldDef, xdo);
 
@@ -147,7 +147,7 @@ public class CoalesceFieldDefinitionTest {
                                                                              false,
                                                                              false);
 
-        CoalesceDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
+        CoalesceObject xdo = recordSet.getCoalesceObjectForNamePath("Entity Information Section/Field Def Name");
 
         assertEquals(newFieldDef, xdo);
 
@@ -178,7 +178,7 @@ public class CoalesceFieldDefinitionTest {
                                                                              true,
                                                                              false);
 
-        CoalesceDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
+        CoalesceObject xdo = recordSet.getCoalesceObjectForNamePath("Entity Information Section/Field Def Name");
 
         assertEquals(newFieldDef, xdo);
 
@@ -208,7 +208,7 @@ public class CoalesceFieldDefinitionTest {
                                                                              "(U)",
                                                                              true);
 
-        CoalesceDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
+        CoalesceObject xdo = recordSet.getCoalesceObjectForNamePath("Entity Information Section/Field Def Name");
 
         assertEquals(newFieldDef, xdo);
 
@@ -239,7 +239,7 @@ public class CoalesceFieldDefinitionTest {
                                                                              5,
                                                                              true);
 
-        CoalesceDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
+        CoalesceObject xdo = recordSet.getCoalesceObjectForNamePath("Entity Information Section/Field Def Name");
 
         assertEquals(newFieldDef, xdo);
 
@@ -270,7 +270,7 @@ public class CoalesceFieldDefinitionTest {
                                                                              5,
                                                                              false);
 
-        CoalesceDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
+        CoalesceObject xdo = recordSet.getCoalesceObjectForNamePath("Entity Information Section/Field Def Name");
 
         assertEquals(newFieldDef, xdo);
 
@@ -300,7 +300,7 @@ public class CoalesceFieldDefinitionTest {
                                                                              "(U)",
                                                                              5);
 
-        CoalesceDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
+        CoalesceObject xdo = recordSet.getCoalesceObjectForNamePath("Entity Information Section/Field Def Name");
 
         assertEquals(newFieldDef, xdo);
 
@@ -332,7 +332,7 @@ public class CoalesceFieldDefinitionTest {
                                                                              "Unknown",
                                                                              true);
 
-        CoalesceDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
+        CoalesceObject xdo = recordSet.getCoalesceObjectForNamePath("Entity Information Section/Field Def Name");
 
         assertEquals(newFieldDef, xdo);
 
@@ -364,7 +364,7 @@ public class CoalesceFieldDefinitionTest {
                                                                              "XXX",
                                                                              false);
 
-        CoalesceDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
+        CoalesceObject xdo = recordSet.getCoalesceObjectForNamePath("Entity Information Section/Field Def Name");
 
         assertEquals(newFieldDef, xdo);
 
@@ -395,7 +395,7 @@ public class CoalesceFieldDefinitionTest {
                                                                              "(TS)",
                                                                              "XXX");
 
-        CoalesceDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
+        CoalesceObject xdo = recordSet.getCoalesceObjectForNamePath("Entity Information Section/Field Def Name");
 
         assertEquals(newFieldDef, xdo);
 
@@ -459,7 +459,7 @@ public class CoalesceFieldDefinitionTest {
                                                                              JodaDateTimeHelper.toXmlDateTimeUTC(now),
                                                                              true);
 
-        CoalesceDataObject xdo = recordSet.getDataObjectForNamePath("Entity Information Section/Field Def Name");
+        CoalesceObject xdo = recordSet.getCoalesceObjectForNamePath("Entity Information Section/Field Def Name");
 
         assertEquals(newFieldDef, xdo);
 
@@ -665,7 +665,7 @@ public class CoalesceFieldDefinitionTest {
         assertEquals(fd.getDefaultClassificationMarking(), new Marking(desFd.getDefaultclassificationmarking()));
         assertEquals(fd.getLabel(), desFd.getLabel());
         assertEquals(fd.getDefaultValue(), desFd.getDefaultvalue());
-        assertEquals(fd.getStatus(), ECoalesceDataObjectStatus.getTypeForLabel(desFd.getStatus()));
+        assertEquals(fd.getStatus(), ECoalesceObjectStatus.getTypeForLabel(desFd.getStatus()));
 
     }
 
@@ -675,26 +675,26 @@ public class CoalesceFieldDefinitionTest {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
         CoalesceFieldDefinition fd = getFieldDefinition(entity);
 
-        assertEquals(ECoalesceDataObjectStatus.ACTIVE, fd.getStatus());
+        assertEquals(ECoalesceObjectStatus.ACTIVE, fd.getStatus());
 
-        fd.setStatus(ECoalesceDataObjectStatus.UNKNOWN);
+        fd.setStatus(ECoalesceObjectStatus.UNKNOWN);
         String fdXml = fd.toXml();
 
         Fielddefinition desFd = (Fielddefinition) XmlHelper.deserialize(fdXml, Fielddefinition.class);
 
-        assertEquals(ECoalesceDataObjectStatus.UNKNOWN, ECoalesceDataObjectStatus.getTypeForLabel(desFd.getStatus()));
+        assertEquals(ECoalesceObjectStatus.UNKNOWN, ECoalesceObjectStatus.getTypeForLabel(desFd.getStatus()));
 
-        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
         
         assertEquals(16, recordset.getFieldDefinitions().size());
         
-        fd.setStatus(ECoalesceDataObjectStatus.ACTIVE);
-        assertEquals(ECoalesceDataObjectStatus.ACTIVE, fd.getStatus());
+        fd.setStatus(ECoalesceObjectStatus.ACTIVE);
+        assertEquals(ECoalesceObjectStatus.ACTIVE, fd.getStatus());
 
         assertEquals(17, recordset.getFieldDefinitions().size());
 
-        fd.setStatus(ECoalesceDataObjectStatus.ACTIVE);
-        assertEquals(ECoalesceDataObjectStatus.ACTIVE, fd.getStatus());
+        fd.setStatus(ECoalesceObjectStatus.ACTIVE);
+        assertEquals(ECoalesceObjectStatus.ACTIVE, fd.getStatus());
 
         assertEquals(17, recordset.getFieldDefinitions().size());
 
@@ -744,18 +744,18 @@ public class CoalesceFieldDefinitionTest {
         fd.setAttribute("DefaultValue", "123");
         assertEquals("123", fd.getDefaultValue());
 
-        fd.setAttribute("Status", ECoalesceDataObjectStatus.UNKNOWN.getLabel());
-        assertEquals(ECoalesceDataObjectStatus.UNKNOWN, fd.getStatus());
+        fd.setAttribute("Status", ECoalesceObjectStatus.UNKNOWN.getLabel());
+        assertEquals(ECoalesceObjectStatus.UNKNOWN, fd.getStatus());
 
-        fd.setAttribute("Status", ECoalesceDataObjectStatus.ACTIVE.getLabel());
-        assertEquals(ECoalesceDataObjectStatus.ACTIVE, fd.getStatus());
+        fd.setAttribute("Status", ECoalesceObjectStatus.ACTIVE.getLabel());
+        assertEquals(ECoalesceObjectStatus.ACTIVE, fd.getStatus());
 
         fd.setAttribute("LastModified", JodaDateTimeHelper.toXmlDateTimeUTC(future));
         assertEquals(future, fd.getLastModified());
 
         String entityXml = entity.toXml();
         CoalesceEntity desEntity = CoalesceEntity.create(entityXml);
-        CoalesceFieldDefinition desFd = (CoalesceFieldDefinition) desEntity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/TestingName");
+        CoalesceFieldDefinition desFd = (CoalesceFieldDefinition) desEntity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/TestingName");
 
         assertEquals("TestingValue", desFd.getAttribute("TestAttribute"));
         assertEquals("TestingName", desFd.getName());
@@ -767,7 +767,7 @@ public class CoalesceFieldDefinitionTest {
         assertEquals(new Marking("(TS)"), desFd.getDefaultClassificationMarking());
         assertEquals("labelTest", desFd.getLabel());
         assertEquals("123", desFd.getDefaultValue());
-        assertEquals(ECoalesceDataObjectStatus.ACTIVE, desFd.getStatus());
+        assertEquals(ECoalesceObjectStatus.ACTIVE, desFd.getStatus());
 
     }
 
@@ -776,25 +776,25 @@ public class CoalesceFieldDefinitionTest {
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceRecordset recordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        CoalesceRecordset recordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
         
         assertEquals(17, recordset.getFieldDefinitions().size());
         
         CoalesceFieldDefinition fd = getFieldDefinition(entity);
 
-        fd.setAttribute("Status", ECoalesceDataObjectStatus.UNKNOWN.getLabel());
-        assertEquals(ECoalesceDataObjectStatus.UNKNOWN, fd.getStatus());
+        fd.setAttribute("Status", ECoalesceObjectStatus.UNKNOWN.getLabel());
+        assertEquals(ECoalesceObjectStatus.UNKNOWN, fd.getStatus());
 
         assertEquals(16, recordset.getFieldDefinitions().size());
         
         String entityXml = entity.toXml();
         CoalesceEntity desEntity = CoalesceEntity.create(entityXml);
 
-        CoalesceRecordset desRecordset = (CoalesceRecordset) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
+        CoalesceRecordset desRecordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
 
         assertEquals(16, desRecordset.getFieldDefinitions().size());
         
-        CoalesceFieldDefinition desFd = (CoalesceFieldDefinition) desEntity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/TestingName");
+        CoalesceFieldDefinition desFd = (CoalesceFieldDefinition) desEntity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/TestingName");
 
         assertNull(desFd);
 
@@ -806,7 +806,7 @@ public class CoalesceFieldDefinitionTest {
 
     private CoalesceFieldDefinition getFieldDefinition(CoalesceEntity entity)
     {
-        CoalesceFieldDefinition fieldDefinition = (CoalesceFieldDefinition) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/ActionNumber");
+        CoalesceFieldDefinition fieldDefinition = (CoalesceFieldDefinition) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/ActionNumber");
 
         return fieldDefinition;
 

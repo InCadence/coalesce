@@ -434,11 +434,11 @@ public class CoalesceLinkageTest {
 
         assertFalse(linkage.getIsMarkedDeleted());
 
-        linkage.setStatus(ECoalesceDataObjectStatus.DELETED);
+        linkage.setStatus(ECoalesceObjectStatus.DELETED);
 
         assertTrue(linkage.getIsMarkedDeleted());
 
-        linkage.setStatus(ECoalesceDataObjectStatus.UNKNOWN);
+        linkage.setStatus(ECoalesceObjectStatus.UNKNOWN);
 
         assertFalse(linkage.getIsMarkedDeleted());
 
@@ -470,7 +470,7 @@ public class CoalesceLinkageTest {
         assertEquals(linkage.getClassificationMarking(), new Marking(desLinkage.getClassificationmarking()));
         assertEquals(linkage.getModifiedBy(), desLinkage.getModifiedby());
         assertEquals(linkage.getInputLang(), desLinkage.getInputlang());
-        assertEquals(linkage.getStatus(), ECoalesceDataObjectStatus.getTypeForLabel(desLinkage.getStatus()));
+        assertEquals(linkage.getStatus(), ECoalesceObjectStatus.getTypeForLabel(desLinkage.getStatus()));
 
     }
 
@@ -480,14 +480,14 @@ public class CoalesceLinkageTest {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
         CoalesceLinkage linkage = entity.getLinkageSection().getLinkages().get("DB7E0EAF-F4EF-4473-94A9-B93A7F46281E");
 
-        assertEquals(ECoalesceDataObjectStatus.ACTIVE, linkage.getStatus());
+        assertEquals(ECoalesceObjectStatus.ACTIVE, linkage.getStatus());
 
-        linkage.setStatus(ECoalesceDataObjectStatus.UNKNOWN);
+        linkage.setStatus(ECoalesceObjectStatus.UNKNOWN);
         String linkageXml = linkage.toXml();
 
         Linkage desLinkage = (Linkage) XmlHelper.deserialize(linkageXml, Linkage.class);
 
-        assertEquals(ECoalesceDataObjectStatus.UNKNOWN, ECoalesceDataObjectStatus.getTypeForLabel(desLinkage.getStatus()));
+        assertEquals(ECoalesceObjectStatus.UNKNOWN, ECoalesceObjectStatus.getTypeForLabel(desLinkage.getStatus()));
 
     }
 
@@ -562,8 +562,8 @@ public class CoalesceLinkageTest {
         linkage.setAttribute("NoIndex", "True");
         assertEquals(true, linkage.getNoIndex());
 
-        linkage.setAttribute("Status", ECoalesceDataObjectStatus.UNKNOWN.getLabel());
-        assertEquals(ECoalesceDataObjectStatus.UNKNOWN, linkage.getStatus());
+        linkage.setAttribute("Status", ECoalesceObjectStatus.UNKNOWN.getLabel());
+        assertEquals(ECoalesceObjectStatus.UNKNOWN, linkage.getStatus());
 
         linkage.setAttribute("LastModified", JodaDateTimeHelper.toXmlDateTimeUTC(future));
         assertEquals(future, linkage.getLastModified());
@@ -590,7 +590,7 @@ public class CoalesceLinkageTest {
         assertEquals("TestingUser", desLinkage.getModifiedBy());
         assertEquals(Locale.ENGLISH, desLinkage.getInputLang());
         assertEquals(true, desLinkage.getNoIndex());
-        assertEquals(ECoalesceDataObjectStatus.UNKNOWN, desLinkage.getStatus());
+        assertEquals(ECoalesceObjectStatus.UNKNOWN, desLinkage.getStatus());
 
     }
 

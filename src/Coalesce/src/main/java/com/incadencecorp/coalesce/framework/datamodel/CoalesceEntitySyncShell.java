@@ -41,7 +41,7 @@ public class CoalesceEntitySyncShell {
     // protected Member Variables
     // -----------------------------------------------------------------------//
 
-    private Document _dataObjectDocument;
+    private Document _document;
     private Node _entityNode;
 
     // -----------------------------------------------------------------------//
@@ -149,8 +149,8 @@ public class CoalesceEntitySyncShell {
         // Prune Nodes
         CoalesceEntitySyncShell.pruneNodes(doc);
 
-        // Set DataObjectDocument
-        this.setDataObjectDocument(doc);
+        // Set Document
+        this.setCoalesceObjectDocument(doc);
 
         // return Success
         return true;
@@ -162,25 +162,25 @@ public class CoalesceEntitySyncShell {
 
     /**
      * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell}'s (org.w3c.dom Document)
-     * DataObjectDocument.
+     * Document.
      * 
      * @return org.w3c.dom Document of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell}
      */
-    public Document getDataObjectDocument()
+    public Document getCoalesceObjectDocument()
     {
-        return this._dataObjectDocument;
+        return this._document;
     }
 
     /**
      * Sets the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell}'s (org.w3c.dom Document)
-     * DataObjectDocument and EntityNode.
+     * Document and EntityNode.
      * 
      * @param value org.w3c.dom Document Document to assign to the
      *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell}
      */
-    public void setDataObjectDocument(Document value)
+    public void setCoalesceObjectDocument(Document value)
     {
-        this._dataObjectDocument = value;
+        this._document = value;
         this._entityNode = value.getElementsByTagName("entity").item(0);
     }
 
@@ -210,22 +210,22 @@ public class CoalesceEntitySyncShell {
         factory.setNamespaceAware(true);
         DocumentBuilder builder = factory.newDocumentBuilder();
 
-        this._dataObjectDocument = builder.newDocument();
-        Node importedNode = this._dataObjectDocument.importNode(value, true);
-        this._dataObjectDocument.appendChild(importedNode);
+        this._document = builder.newDocument();
+        Node importedNode = this._document.importNode(value, true);
+        this._document.appendChild(importedNode);
 
         this._entityNode = value;
     }
 
     /**
      * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell}'s (XML) String of the
-     * DataObjectDocument.
+     * Document.
      * 
-     * @return (XML) String of the DataObjectDocument.
+     * @return (XML) String of the Document.
      */
     public String toXml()
     {
-        return XmlHelper.formatXml(this._dataObjectDocument);
+        return XmlHelper.formatXml(this._document);
     }
 
     // -----------------------------------------------------------------------//
@@ -246,7 +246,7 @@ public class CoalesceEntitySyncShell {
 
         // Initialize
         // TODO: make sure .Clone's are same between vb and java. Java required a boolean.
-        syncShellClone.initialize((Document) syncShell.getDataObjectDocument().cloneNode(true));
+        syncShellClone.initialize((Document) syncShell.getCoalesceObjectDocument().cloneNode(true));
         return syncShellClone;
     }
 
@@ -270,9 +270,9 @@ public class CoalesceEntitySyncShell {
         if (requiredChangesSyncShell.equals(null)) return requiredChangesSyncShell;
 
         // Prune Unchanged Nodes
-        CoalesceEntitySyncShell.pruneUnchangedNodes(CoalesceEntitySyncShell.generateMap(localFullSyncShell.getDataObjectDocument()),
-                                                    remoteFullSyncShell.getDataObjectDocument(),
-                                                    CoalesceEntitySyncShell.generateMap(requiredChangesSyncShell.getDataObjectDocument()));
+        CoalesceEntitySyncShell.pruneUnchangedNodes(CoalesceEntitySyncShell.generateMap(localFullSyncShell.getCoalesceObjectDocument()),
+                                                    remoteFullSyncShell.getCoalesceObjectDocument(),
+                                                    CoalesceEntitySyncShell.generateMap(requiredChangesSyncShell.getCoalesceObjectDocument()));
 
         return requiredChangesSyncShell;
     }

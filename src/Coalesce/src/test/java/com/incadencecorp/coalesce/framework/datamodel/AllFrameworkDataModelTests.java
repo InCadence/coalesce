@@ -22,7 +22,7 @@ import org.junit.runners.Suite.SuiteClasses;
  -----------------------------------------------------------------------------*/
 
 @RunWith(Suite.class)
-@SuiteClasses({ CoalesceEntitySyncShellTest.class, CoalesceEntityTemplateTest.class, ECoalesceDataObjectStatusTest.class,
+@SuiteClasses({ CoalesceEntitySyncShellTest.class, CoalesceEntityTemplateTest.class, ECoalesceObjectStatusTest.class,
                ECoalesceFieldDataTypesTest.class, ELinkTypesTest.class, EntityTest.class, CoalesceEntityTest.class,
                CoalesceFieldDefinitionTest.class, CoalesceFieldHistoryTest.class, CoalesceFieldTest.class,
                CoalesceLinkageSectionTest.class, CoalesceLinkageTest.class, CoalesceRecordSetTest.class,

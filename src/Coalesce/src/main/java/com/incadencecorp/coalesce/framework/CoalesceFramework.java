@@ -175,7 +175,7 @@ public class CoalesceFramework {
 
     public DateTime getCoalesceEntityLastModified(String key, String objectType) throws CoalescePersistorException
     {
-        return this._persistor.getCoalesceDataObjectLastModified(key, objectType);
+        return this._persistor.getCoalesceObjectLastModified(key, objectType);
     }
 
     public boolean saveCoalesceEntity(CoalesceEntity entity) throws CoalescePersistorException
@@ -203,7 +203,7 @@ public class CoalesceFramework {
             CoalesceEntity entity = this._persistor.getEntity(metaData.getEntityKey());
             if (entity != null)
             {
-                record = (CoalesceRecord) entity.getDataObjectForNamePath(metaData.getElementXPath());
+                record = (CoalesceRecord) entity.getCoalesceObjectForNamePath(metaData.getElementXPath());
             }
         }
 
@@ -222,7 +222,7 @@ public class CoalesceFramework {
 
             if (entity != null)
             {
-                field = (CoalesceStringField) entity.getCoalesceDataObjectForKey(key);
+                field = (CoalesceStringField) entity.getCoalesceObjectForKey(key);
             }
         }
 

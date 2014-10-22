@@ -30,7 +30,7 @@ import com.incadencecorp.coalesce.framework.generatedjaxb.Fielddefinition;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-public class CoalesceFieldDefinition extends CoalesceDataObject implements ICoalesceFieldDefinition {
+public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesceFieldDefinition {
 
     // -----------------------------------------------------------------------//
     // Protected Member Variables
@@ -320,9 +320,9 @@ public class CoalesceFieldDefinition extends CoalesceDataObject implements ICoal
         super.initialize();
 
         // Add to Parent Collections
-        if (getStatus() == ECoalesceDataObjectStatus.ACTIVE)
+        if (getStatus() == ECoalesceObjectStatus.ACTIVE)
         {
-            parent.setChildDataObject(getKey(), this);
+            parent.addChildCoalesceObject(getKey(), this);
             parent.getFieldDefinitions().add(this);
         }
 
@@ -489,13 +489,13 @@ public class CoalesceFieldDefinition extends CoalesceDataObject implements ICoal
     }
 
     @Override
-    protected void setObjectStatus(ECoalesceDataObjectStatus status)
+    protected void setObjectStatus(ECoalesceObjectStatus status)
     {
         if (status == getStatus()) return;
 
         _entityFieldDefinition.setStatus(status.getLabel());
 
-        if (status == ECoalesceDataObjectStatus.ACTIVE)
+        if (status == ECoalesceObjectStatus.ACTIVE)
         {
             if (getCastParent().getFieldDefinition(getName()) == null)
             {
@@ -540,7 +540,7 @@ public class CoalesceFieldDefinition extends CoalesceDataObject implements ICoal
             setLastModified(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
             return true;
         case "status":
-            setStatus(ECoalesceDataObjectStatus.getTypeForLabel(value));
+            setStatus(ECoalesceObjectStatus.getTypeForLabel(value));
             return true;
         case "name":
             setName(value);

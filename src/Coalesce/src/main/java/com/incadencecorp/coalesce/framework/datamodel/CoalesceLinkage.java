@@ -32,7 +32,7 @@ import com.incadencecorp.coalesce.framework.generatedjaxb.Linkage;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-public class CoalesceLinkage extends CoalesceDataObject implements ICoalesceLinkage {
+public class CoalesceLinkage extends CoalesceObject implements ICoalesceLinkage {
 
     private Linkage _entityLinkage;
 
@@ -58,7 +58,7 @@ public class CoalesceLinkage extends CoalesceDataObject implements ICoalesceLink
 
         newLinkage.setName("Linkage");
 
-        parent.addChild(newLinkage);
+        parent.addChildCoalesceObject(newLinkage);
 
         return newLinkage;
 
@@ -309,7 +309,7 @@ public class CoalesceLinkage extends CoalesceDataObject implements ICoalesceLink
     }
 
     @Override
-    protected void setObjectStatus(ECoalesceDataObjectStatus status)
+    protected void setObjectStatus(ECoalesceObjectStatus status)
     {
         _entityLinkage.setStatus(status.getLabel());
     }
@@ -322,7 +322,7 @@ public class CoalesceLinkage extends CoalesceDataObject implements ICoalesceLink
      */
     public boolean getIsMarkedDeleted()
     {
-        return (getStatus() == ECoalesceDataObjectStatus.DELETED);
+        return (getStatus() == ECoalesceObjectStatus.DELETED);
     }
 
     // -----------------------------------------------------------------------//
@@ -369,7 +369,7 @@ public class CoalesceLinkage extends CoalesceDataObject implements ICoalesceLink
         DateTime utcNow = JodaDateTimeHelper.nowInUtc();
         setLastModified(utcNow);
 
-        setStatus(ECoalesceDataObjectStatus.ACTIVE);
+        setStatus(ECoalesceObjectStatus.ACTIVE);
     }
 
     @Override
@@ -458,7 +458,7 @@ public class CoalesceLinkage extends CoalesceDataObject implements ICoalesceLink
             return true;
 
         case "status":
-            setStatus(ECoalesceDataObjectStatus.getTypeForLabel(value));
+            setStatus(ECoalesceObjectStatus.getTypeForLabel(value));
             return true;
         default:
             if (setOtherAttribute(name, value))

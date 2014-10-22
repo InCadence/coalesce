@@ -111,7 +111,7 @@ public class CoalesceEntitySyncShellTest {
 
         // Validate
         assertTrue(xml1.equals(xml2));
-        assertNotEquals(shell.getDataObjectDocument(), clone.getDataObjectDocument());
+        assertNotEquals(shell.getCoalesceObjectDocument(), clone.getCoalesceObjectDocument());
 
     }
 
@@ -128,7 +128,7 @@ public class CoalesceEntitySyncShellTest {
         assertTrue(CoalesceEntitySyncShellTest.validateSyncShell(localShell));
 
         // Modify Entity
-        CoalesceRecord record = (CoalesceRecord) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/");
+        CoalesceRecord record = (CoalesceRecord) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/");
         
         CoalesceStringField missionName = (CoalesceStringField) record.getFieldByName("MissionName");
         missionName.setValue("test");
@@ -148,7 +148,7 @@ public class CoalesceEntitySyncShellTest {
         // Validate Change
         boolean foundChange = false;
 
-        NodeList nodeList = changesShell.getDataObjectDocument().getElementsByTagName("*");
+        NodeList nodeList = changesShell.getCoalesceObjectDocument().getElementsByTagName("*");
 
         for (int ii = 0; ii < nodeList.getLength(); ii++)
         {
@@ -171,7 +171,7 @@ public class CoalesceEntitySyncShellTest {
     public static boolean validateSyncShell(CoalesceEntitySyncShell shell)
     {
         // Validate
-        NodeList nodeList = shell.getDataObjectDocument().getElementsByTagName("*");
+        NodeList nodeList = shell.getCoalesceObjectDocument().getElementsByTagName("*");
 
         for (int jj = 0; jj < nodeList.getLength(); jj++)
         {

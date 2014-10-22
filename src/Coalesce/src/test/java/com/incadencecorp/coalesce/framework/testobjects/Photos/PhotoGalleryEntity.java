@@ -77,7 +77,7 @@ public class PhotoGalleryEntity extends ActionBaseEntity {
 
         if (_photographRecordset == null)
         {
-            _photographRecordset = (CoalesceRecordset) getDataObjectForNamePath(getName()
+            _photographRecordset = (CoalesceRecordset) getCoalesceObjectForNamePath(getName()
                     + "/Photographs Section/Photographs Recordset");
 
         }

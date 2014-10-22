@@ -3,7 +3,7 @@ package com.incadencecorp.coalesce.framework.datamodel;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum ECoalesceDataObjectStatus
+public enum ECoalesceObjectStatus
 {
     ACTIVE("Active"), DELETED("Deleted"), UNKNOWN("Unknown");
 
@@ -12,9 +12,9 @@ public enum ECoalesceDataObjectStatus
     /**
      * A mapping between the string representation and its corresponding Status to facilitate lookup by code.
      */
-    private static Map<String, ECoalesceDataObjectStatus> _labelToStatusMapping;
+    private static Map<String, ECoalesceObjectStatus> _labelToStatusMapping;
 
-    private ECoalesceDataObjectStatus(String label)
+    private ECoalesceObjectStatus(String label)
     {
         _label = label;
     }
@@ -23,8 +23,8 @@ public enum ECoalesceDataObjectStatus
     {
         if (_labelToStatusMapping == null)
         {
-            _labelToStatusMapping = new HashMap<String, ECoalesceDataObjectStatus>();
-            for (ECoalesceDataObjectStatus s : values())
+            _labelToStatusMapping = new HashMap<String, ECoalesceObjectStatus>();
+            for (ECoalesceObjectStatus s : values())
             {
                 _labelToStatusMapping.put(s._label.trim().toLowerCase(), s);
             }
@@ -32,7 +32,7 @@ public enum ECoalesceDataObjectStatus
     }
 
     /**
-     * Returns the Label property of the ECoalesceDataObjectStatus type.
+     * Returns the Label property of the ECoalesceObjectStatus type.
      * 
      * @return
      *     possible object is
@@ -44,24 +44,24 @@ public enum ECoalesceDataObjectStatus
     }
 
     /**
-     * Returns the ECoalesceDataObjectStatus type for the String label parameter.
+     * Returns the ECoalesceObjectStatus type for the String label parameter.
      * 
      * @param coalesceType
      *     allowed object is
      *     {@link String }
      * @return
      *     possible object is
-     *     {@link ECoalesceDataObjectStatus }
+     *     {@link ECoalesceObjectStatus }
      */
-    public static ECoalesceDataObjectStatus getTypeForLabel(String label)
+    public static ECoalesceObjectStatus getTypeForLabel(String label)
     {
         initMapping();
 
-        if (label == null) return ECoalesceDataObjectStatus.UNKNOWN;
+        if (label == null) return ECoalesceObjectStatus.UNKNOWN;
 
-        ECoalesceDataObjectStatus value = _labelToStatusMapping.get(label.trim().toLowerCase());
+        ECoalesceObjectStatus value = _labelToStatusMapping.get(label.trim().toLowerCase());
 
-        if (value == null) value = ECoalesceDataObjectStatus.UNKNOWN;
+        if (value == null) value = ECoalesceObjectStatus.UNKNOWN;
 
         return value;
     }

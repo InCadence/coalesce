@@ -12,7 +12,7 @@ import org.joda.time.DateTimeZone;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.CoalesceTableHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
@@ -185,13 +185,13 @@ public class Neo4JPersistor extends CoalescePersistorBase {
         return false;
     }
 
-    protected String getValues(CoalesceDataObject dataObject, Map<?, ?> values)
+    protected String getValues(CoalesceObject coalesceObject, Map<?, ?> values)
     {
-        switch (dataObject.getStatus()) {
+        switch (coalesceObject.getStatus()) {
         case ACTIVE:
-            switch (dataObject.getType().toLowerCase()) {
+            switch (coalesceObject.getType().toLowerCase()) {
             case "field":
-                CoalesceField<?> fieldObject = (CoalesceField<?>) dataObject;
+                CoalesceField<?> fieldObject = (CoalesceField<?>) coalesceObject;
                 switch (fieldObject.getType().toUpperCase()) {
                 case "BINARY":
                 case "FILE":
@@ -210,18 +210,18 @@ public class Neo4JPersistor extends CoalescePersistorBase {
         return null;
     }
 
-    protected boolean checkLastModified(CoalesceDataObject dataObject, Neo4JDataConnector conn) throws SQLException
+    protected boolean checkLastModified(CoalesceObject coalesceObject, Neo4JDataConnector conn) throws SQLException
     {
         boolean isOutOfDate = true;
 
         // Get LastModified from the Database
-        DateTime LastModified = this.getCoalesceDataObjectLastModified(dataObject.getKey(), dataObject.getType(), conn);
+        DateTime LastModified = this.getCoalesceObjectLastModified(coalesceObject.getKey(), coalesceObject.getType(), conn);
 
         // DB Has Valid Time?
         if (LastModified != null)
         {
             // Remove NanoSeconds (100 ns / Tick and 1,000,000 ns / ms = 10,000 Ticks / ms)
-            long ObjectTicks = dataObject.getLastModified().getMillis();
+            long ObjectTicks = coalesceObject.getLastModified().getMillis();
             long SQLRecordTicks = LastModified.getMillis();
 
             // TODO: Round Ticks for SQL (Not sure if this is required for .NET)
@@ -237,7 +237,7 @@ public class Neo4JPersistor extends CoalescePersistorBase {
         return isOutOfDate;
     }
 
-    private DateTime getCoalesceDataObjectLastModified(String Key, String ObjectType, Neo4JDataConnector conn)
+    private DateTime getCoalesceObjectLastModified(String Key, String ObjectType, Neo4JDataConnector conn)
             throws SQLException
     {
         DateTime lastModified = DateTime.now(DateTimeZone.UTC);
@@ -273,19 +273,19 @@ public class Neo4JPersistor extends CoalescePersistorBase {
     }
 
     @Override
-    public DateTime getCoalesceDataObjectLastModified(String Key, String ObjectType) throws CoalescePersistorException
+    public DateTime getCoalesceObjectLastModified(String Key, String ObjectType) throws CoalescePersistorException
     {
         try (Neo4JDataConnector conn = new Neo4JDataConnector(this.serCon))
         {
-            return this.getCoalesceDataObjectLastModified(Key, ObjectType, conn);
+            return this.getCoalesceObjectLastModified(Key, ObjectType, conn);
         }
         catch (SQLException e)
         {
-            throw new CoalescePersistorException("GetCoalesceDataObjectLastModified", e);
+            throw new CoalescePersistorException("GetCoalesceObjectLastModified", e);
         }
         catch (Exception e)
         {
-            throw new CoalescePersistorException("GetCoalesceDataObjectLastModified", e);
+            throw new CoalescePersistorException("GetCoalesceObjectLastModified", e);
         }
     }
 

@@ -17,7 +17,7 @@ import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.CoalesceTableHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.framework.CoalesceSettings;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
@@ -28,7 +28,7 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
-import com.incadencecorp.coalesce.framework.datamodel.ECoalesceDataObjectStatus;
+import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
 import com.incadencecorp.coalesce.framework.persistance.CoalescePersistorBase;
@@ -144,19 +144,19 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     }
 
     @Override
-    public DateTime getCoalesceDataObjectLastModified(String Key, String ObjectType) throws CoalescePersistorException
+    public DateTime getCoalesceObjectLastModified(String Key, String ObjectType) throws CoalescePersistorException
     {
         try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this.serCon))
         {
-            return this.getCoalesceDataObjectLastModified(Key, ObjectType, conn);
+            return this.getCoalesceObjectLastModified(Key, ObjectType, conn);
         }
         catch (SQLException e)
         {
-            throw new CoalescePersistorException("GetCoalesceDataObjectLastModified", e);
+            throw new CoalescePersistorException("GetCoalesceObjectLastModified", e);
         }
         catch (Exception e)
         {
-            throw new CoalescePersistorException("GetCoalesceDataObjectLastModified", e);
+            throw new CoalescePersistorException("GetCoalesceObjectLastModified", e);
         }
     }
 
@@ -376,7 +376,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
             conn.openConnection();
 
             // Persist (Recursively)
-            isSuccessful = this.updateDataObject(entity, conn, AllowRemoval);
+            isSuccessful = this.updateCoalesceObject(entity, conn, AllowRemoval);
 
             // Persist Entity Last to Include Changes
             if (isSuccessful)
@@ -536,75 +536,75 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     /**
      * Adds or Updates a Coalesce object that matches the given parameters.
      * 
-     * @param dataObject the XsdDataObject to be added or updated
+     * @param coalesceObject the Coalesce object to be added or updated
      * @param conn is the PostGresDataConnector database connection
      * @return isSuccessful = True = Successful add/update operation.
      * @throws SQLException
      */
-    protected boolean persistObject(CoalesceDataObject dataObject, PostGreSQLDataConnector conn) throws SQLException
+    protected boolean persistObject(CoalesceObject coalesceObject, PostGreSQLDataConnector conn) throws SQLException
     {
         boolean isSuccessful = true;
 
-        switch (dataObject.getType()) {
+        switch (coalesceObject.getType()) {
         case "entity":
 
-            isSuccessful = this.checkLastModified(dataObject, conn);
-            // isSuccessful = PersistEntityObject(dataObject);
+            isSuccessful = this.checkLastModified(coalesceObject, conn);
+            // isSuccessful = PersistEntityObject(coalesceObject);
             break;
 
         case "section":
             if (CoalesceSettings.getUseIndexing())
             {
-                isSuccessful = persistSectionObject((CoalesceSection) dataObject, conn);
+                isSuccessful = persistSectionObject((CoalesceSection) coalesceObject, conn);
             }
             break;
 
         case "recordset":
             if (CoalesceSettings.getUseIndexing())
             {
-                isSuccessful = persistRecordsetObject((CoalesceRecordset) dataObject, conn);
+                isSuccessful = persistRecordsetObject((CoalesceRecordset) coalesceObject, conn);
             }
             break;
         case "fielddefinition":
             //if (CoalesceSettings.getUseIndexing())
             //{
                 // Removed Field Definition Persisting
-                // isSuccessful = PersistFieldDefinitionObject((XsdFieldDefinition) dataObject, conn);
+                // isSuccessful = PersistFieldDefinitionObject((CoalesceFieldDefinition) coalesceObject, conn);
             //}
             break;
 
         case "record":
             if (CoalesceSettings.getUseIndexing())
             {
-                isSuccessful = persistRecordObject((CoalesceRecord) dataObject, conn);
+                isSuccessful = persistRecordObject((CoalesceRecord) coalesceObject, conn);
             }
             break;
 
         case "field":// Not testing the type to ascertain if it is BINARY now.
             if (CoalesceSettings.getUseIndexing())
             {
-                isSuccessful = persistFieldObject((CoalesceField<?>) dataObject, conn);
+                isSuccessful = persistFieldObject((CoalesceField<?>) coalesceObject, conn);
             }
             break;
 
         case "fieldhistory":
             if (CoalesceSettings.getUseIndexing())
             {
-                isSuccessful = persistFieldHistoryObject((CoalesceFieldHistory) dataObject, conn);
+                isSuccessful = persistFieldHistoryObject((CoalesceFieldHistory) coalesceObject, conn);
             }
             break;
 
         case "linkagesection":
             if (CoalesceSettings.getUseIndexing())
             {
-                isSuccessful = persistLinkageSectionObject((CoalesceLinkageSection) dataObject, conn);
+                isSuccessful = persistLinkageSectionObject((CoalesceLinkageSection) coalesceObject, conn);
             }
             break;
 
         case "linkage":
             if (CoalesceSettings.getUseIndexing())
             {
-                isSuccessful = persistLinkageObject((CoalesceLinkage) dataObject, conn);
+                isSuccessful = persistLinkageObject((CoalesceLinkage) coalesceObject, conn);
             }
             break;
 
@@ -615,7 +615,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
         if (isSuccessful && CoalesceSettings.getUseIndexing())
         {
             // Persist Map Table Entry
-            isSuccessful = persistMapTableEntry(dataObject, conn);
+            isSuccessful = persistMapTableEntry(coalesceObject, conn);
         }
 
         return isSuccessful;
@@ -624,20 +624,20 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     /**
      * Adds or updates map table entry for a given element.
      * 
-     * @param dataObject the XsdDataObject to be added or updated
+     * @param coalesceObject the Coalesce object to be added or updated
      * @param conn is the SQLServerDataConnector database connection
      * @return True if successfully added/updated.
      * @throws SQLException
      */
-    protected boolean persistMapTableEntry(CoalesceDataObject dataObject, PostGreSQLDataConnector conn) throws SQLException
+    protected boolean persistMapTableEntry(CoalesceObject coalesceObject, PostGreSQLDataConnector conn) throws SQLException
     {
         String parentKey;
         String parentType;
 
-        if (dataObject.getParent() != null)
+        if (coalesceObject.getParent() != null)
         {
-            parentKey = dataObject.getParent().getKey();
-            parentType = dataObject.getParent().getType();
+            parentKey = coalesceObject.getParent().getKey();
+            parentType = coalesceObject.getParent().getType();
         }
         else
         {
@@ -648,8 +648,8 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
         return conn.executeProcedure("CoalesceObjectMap_Insert",
                                      new CoalesceParameter(parentKey, Types.OTHER),
                                      new CoalesceParameter(parentType),
-                                     new CoalesceParameter(dataObject.getKey(), Types.OTHER),
-                                     new CoalesceParameter(dataObject.getType()));
+                                     new CoalesceParameter(coalesceObject.getKey(), Types.OTHER),
+                                     new CoalesceParameter(coalesceObject.getType()));
     }
 
     /**
@@ -927,25 +927,25 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     }
 
     /**
-     * Returns the comparison for the XsdDataObject last modified date versus the same objects value in the database.
+     * Returns the comparison for the Coalesce object last modified date versus the same objects value in the database.
      * 
-     * @param dataObject the XsdDataObject to have it's last modified date checked.
+     * @param coalesceObject the Coalesce object to have it's last modified date checked.
      * @param conn is the PostGresDataConnector database connection
      * @return False = Out of Date
      * @throws SQLException
      */
-    protected boolean checkLastModified(CoalesceDataObject dataObject, PostGreSQLDataConnector conn) throws SQLException
+    protected boolean checkLastModified(CoalesceObject coalesceObject, PostGreSQLDataConnector conn) throws SQLException
     {
         boolean isOutOfDate = true;
 
         // Get LastModified from the Database
-        DateTime LastModified = this.getCoalesceDataObjectLastModified(dataObject.getKey(), dataObject.getType(), conn);
+        DateTime LastModified = this.getCoalesceObjectLastModified(coalesceObject.getKey(), coalesceObject.getType(), conn);
 
         // DB Has Valid Time?
         if (LastModified != null)
         {
             // Remove NanoSeconds (100 ns / Tick and 1,000,000 ns / ms = 10,000 Ticks / ms)
-            long ObjectTicks = dataObject.getLastModified().getMillis();
+            long ObjectTicks = coalesceObject.getLastModified().getMillis();
             long SQLRecordTicks = LastModified.getMillis();
 
             // TODO: Round Ticks for SQL (Not sure if this is required for .NET)
@@ -964,15 +964,15 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     /**
      * Deletes the Coalesce object & CoalesceObjectMap that matches the given parameters.
      * 
-     * @param dataObject the XsdDataObject to be deleted
+     * @param coalesceObject the Coalesce object to be deleted
      * @param conn is the PostGresDataConnector database connection
      * @return True = Successful delete
      * @throws SQLException
      */
-    protected boolean deleteObject(CoalesceDataObject dataObject, PostGreSQLDataConnector conn) throws SQLException
+    protected boolean deleteObject(CoalesceObject coalesceObject, PostGreSQLDataConnector conn) throws SQLException
     {
-        String objectType = dataObject.getType();
-        String objectKey = dataObject.getKey();
+        String objectType = coalesceObject.getType();
+        String objectKey = coalesceObject.getKey();
         String tableName = CoalesceTableHelper.getTableNameForObjectType(objectType);
 
         conn.executeCmd("DELETE FROM CoalesceObjectMap WHERE ObjectKey=?", new CoalesceParameter(objectKey, Types.OTHER));
@@ -1052,25 +1052,25 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     /**
      * Sets the active Coalesce field objects matching the parameters given.
      * 
-     * @param dataObject the Coalesce field object.
+     * @param coalesceObject the Coalesce field object.
      * @param conn is the PostGresDataConnector database connection
      * @throws SQLException,Exception,CoalescePersistorException
      */
-    protected boolean updateFileContent(CoalesceDataObject dataObject, PostGreSQLDataConnector conn) throws SQLException
+    protected boolean updateFileContent(CoalesceObject coalesceObject, PostGreSQLDataConnector conn) throws SQLException
     {
         boolean isSuccessful = false;
 
-        if (dataObject.getStatus() == ECoalesceDataObjectStatus.ACTIVE)
+        if (coalesceObject.getStatus() == ECoalesceObjectStatus.ACTIVE)
         {
-            if (dataObject.getType().toLowerCase() == "field")
+            if (coalesceObject.getType().toLowerCase() == "field")
             {
-                if (((CoalesceField<?>) dataObject).getDataType() == ECoalesceFieldDataTypes.FILE_TYPE)
+                if (((CoalesceField<?>) coalesceObject).getDataType() == ECoalesceFieldDataTypes.FILE_TYPE)
                 {
-                    isSuccessful = persistFieldObject((CoalesceField<?>) dataObject, conn);
+                    isSuccessful = persistFieldObject((CoalesceField<?>) coalesceObject, conn);
                 }
             }
 
-            for (Map.Entry<String, CoalesceDataObject> s : dataObject.getChildDataObjects().entrySet())
+            for (Map.Entry<String, CoalesceObject> s : coalesceObject.getChildCoalesceObjects().entrySet())
             {
                 isSuccessful = updateFileContent(s.getValue(), conn);
             }
@@ -1078,31 +1078,31 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
         return isSuccessful;
     }
 
-    private boolean updateDataObject(CoalesceDataObject coalesceDataObject,
+    private boolean updateCoalesceObject(CoalesceObject coalesceObject,
                                      PostGreSQLDataConnector conn,
                                      boolean AllowRemoval) throws SQLException
 
     {
         boolean isSuccessful = false;
 
-        if (coalesceDataObject.getFlatten())
+        if (coalesceObject.getFlatten())
         {
-            switch (coalesceDataObject.getStatus()) {
+            switch (coalesceObject.getStatus()) {
             case ACTIVE:
                 // Persist Object
-                isSuccessful = persistObject(coalesceDataObject, conn);
+                isSuccessful = persistObject(coalesceObject, conn);
                 break;
 
             case DELETED:
                 if (AllowRemoval)
                 {
                     // Delete Object
-                    isSuccessful = deleteObject(coalesceDataObject, conn);
+                    isSuccessful = deleteObject(coalesceObject, conn);
                 }
                 else
                 {
                     // Mark Object as Deleted
-                    isSuccessful = persistObject(coalesceDataObject, conn);
+                    isSuccessful = persistObject(coalesceObject, conn);
                 }
 
                 break;
@@ -1115,16 +1115,16 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
             if (isSuccessful)
             {
                 // Yes; Iterate Through Children
-                for (CoalesceDataObject childObject : coalesceDataObject.getChildDataObjects().values())
+                for (CoalesceObject childObject : coalesceObject.getChildCoalesceObjects().values())
                 {
-                    updateDataObject(childObject, conn, AllowRemoval);
+                    updateCoalesceObject(childObject, conn, AllowRemoval);
                 }
             }
         }
         return isSuccessful;
     }
 
-    private DateTime getCoalesceDataObjectLastModified(String Key, String ObjectType, PostGreSQLDataConnector conn)
+    private DateTime getCoalesceObjectLastModified(String Key, String ObjectType, PostGreSQLDataConnector conn)
             throws SQLException
     {
         DateTime lastModified = null;

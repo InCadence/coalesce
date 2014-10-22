@@ -79,7 +79,7 @@ public class ActionBaseEntity extends CoalesceEntity {
         // Live Status Record
         if (this._liveStatusRecord == null)
         {
-            CoalesceRecordset recordSet = (CoalesceRecordset) this.getDataObjectForNamePath(this.getName()
+            CoalesceRecordset recordSet = (CoalesceRecordset) this.getCoalesceObjectForNamePath(this.getName()
                     + "/Live Status Section/Live Status Recordset");
 
             // Valid Xml?

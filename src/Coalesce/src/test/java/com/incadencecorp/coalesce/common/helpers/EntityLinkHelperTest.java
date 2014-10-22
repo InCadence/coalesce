@@ -11,10 +11,10 @@ import org.junit.Test;
 
 import com.incadencecorp.coalesce.common.CoalesceTypeInstances;
 import com.incadencecorp.coalesce.common.classification.Marking;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage;
-import com.incadencecorp.coalesce.framework.datamodel.ECoalesceDataObjectStatus;
+import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
 import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
 
 /*-----------------------------------------------------------------------------'
@@ -239,8 +239,8 @@ public class EntityLinkHelperTest {
 
             assertTrue(EntityLinkHelper.linkEntities(entity1, linkType, entity2, false));
 
-            assertEquals(1, entity1.getLinkageSection().getChildDataObjects().size());
-            assertEquals(1, entity2.getLinkageSection().getChildDataObjects().size());
+            assertEquals(1, entity1.getLinkageSection().getChildCoalesceObjects().size());
+            assertEquals(1, entity2.getLinkageSection().getChildCoalesceObjects().size());
 
             assertLinkages(linkType, entity1, entity2);
 
@@ -303,8 +303,8 @@ public class EntityLinkHelperTest {
 
             assertTrue(EntityLinkHelper.linkEntities(entity1, linkType, entity2, true));
 
-            assertEquals(1, entity1.getLinkageSection().getChildDataObjects().size());
-            assertEquals(1, entity2.getLinkageSection().getChildDataObjects().size());
+            assertEquals(1, entity1.getLinkageSection().getChildCoalesceObjects().size());
+            assertEquals(1, entity2.getLinkageSection().getChildCoalesceObjects().size());
 
             assertLinkages(linkType, entity1, entity2);
 
@@ -510,8 +510,8 @@ public class EntityLinkHelperTest {
                                                  Locale.UK,
                                                  false));
 
-        assertEquals(1, entity1.getLinkageSection().getChildDataObjects().size());
-        assertEquals(1, entity2.getLinkageSection().getChildDataObjects().size());
+        assertEquals(1, entity1.getLinkageSection().getChildCoalesceObjects().size());
+        assertEquals(1, entity2.getLinkageSection().getChildCoalesceObjects().size());
 
         assertLinkages(ELinkTypes.IS_A_PEER_OF,
                        EntityLinkHelperTest.TOP_SECRET_MARKING,
@@ -592,8 +592,8 @@ public class EntityLinkHelperTest {
                                                  Locale.UK,
                                                  true));
 
-        assertEquals(1, entity1.getLinkageSection().getChildDataObjects().size());
-        assertEquals(1, entity2.getLinkageSection().getChildDataObjects().size());
+        assertEquals(1, entity1.getLinkageSection().getChildCoalesceObjects().size());
+        assertEquals(1, entity2.getLinkageSection().getChildCoalesceObjects().size());
 
         assertLinkages(ELinkTypes.IS_CHILD_OF, EntityLinkHelperTest.TOP_SECRET_MARKING, "jford", Locale.UK, entity1, entity2);
 
@@ -756,10 +756,10 @@ public class EntityLinkHelperTest {
         EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, true);
 
         assertTrue(EntityLinkHelper.unLinkEntities(entity1, entity2, null));
-        assertEquals(ECoalesceDataObjectStatus.DELETED,
-                     entity1.getLinkageSection().getChildDataObjects().values().iterator().next().getStatus());
-        assertEquals(ECoalesceDataObjectStatus.DELETED,
-                     entity2.getLinkageSection().getChildDataObjects().values().iterator().next().getStatus());
+        assertEquals(ECoalesceObjectStatus.DELETED,
+                     entity1.getLinkageSection().getChildCoalesceObjects().values().iterator().next().getStatus());
+        assertEquals(ECoalesceObjectStatus.DELETED,
+                     entity2.getLinkageSection().getChildCoalesceObjects().values().iterator().next().getStatus());
 
     }
 
@@ -776,10 +776,10 @@ public class EntityLinkHelperTest {
             EntityLinkHelper.linkEntities(entity1, linkType, entity2, true);
 
             assertTrue(EntityLinkHelper.unLinkEntities(entity1, entity2));
-            assertEquals(ECoalesceDataObjectStatus.DELETED,
-                         entity1.getLinkageSection().getChildDataObjects().values().iterator().next().getStatus());
-            assertEquals(ECoalesceDataObjectStatus.DELETED,
-                         entity2.getLinkageSection().getChildDataObjects().values().iterator().next().getStatus());
+            assertEquals(ECoalesceObjectStatus.DELETED,
+                         entity1.getLinkageSection().getChildCoalesceObjects().values().iterator().next().getStatus());
+            assertEquals(ECoalesceObjectStatus.DELETED,
+                         entity2.getLinkageSection().getChildCoalesceObjects().values().iterator().next().getStatus());
 
         }
     }
@@ -792,8 +792,8 @@ public class EntityLinkHelperTest {
         CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
 
         assertTrue(EntityLinkHelper.unLinkEntities(entity1, entity2));
-        assertTrue(entity1.getLinkageSection().getChildDataObjects().isEmpty());
-        assertTrue(entity2.getLinkageSection().getChildDataObjects().isEmpty());
+        assertTrue(entity1.getLinkageSection().getChildCoalesceObjects().isEmpty());
+        assertTrue(entity2.getLinkageSection().getChildCoalesceObjects().isEmpty());
 
     }
 
@@ -808,14 +808,14 @@ public class EntityLinkHelperTest {
         EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, true);
 
         assertTrue(EntityLinkHelper.unLinkEntities(entity1, entity3));
-        assertEquals(ECoalesceDataObjectStatus.ACTIVE,
-                     entity1.getLinkageSection().getChildDataObjects().values().iterator().next().getStatus());
-        assertEquals(ECoalesceDataObjectStatus.ACTIVE,
-                     entity2.getLinkageSection().getChildDataObjects().values().iterator().next().getStatus());
+        assertEquals(ECoalesceObjectStatus.ACTIVE,
+                     entity1.getLinkageSection().getChildCoalesceObjects().values().iterator().next().getStatus());
+        assertEquals(ECoalesceObjectStatus.ACTIVE,
+                     entity2.getLinkageSection().getChildCoalesceObjects().values().iterator().next().getStatus());
 
-        for (CoalesceDataObject xdo : entity3.getChildDataObjects().values())
+        for (CoalesceObject xdo : entity3.getChildCoalesceObjects().values())
         {
-            assertEquals(ECoalesceDataObjectStatus.ACTIVE, xdo.getStatus());
+            assertEquals(ECoalesceObjectStatus.ACTIVE, xdo.getStatus());
         }
 
     }
@@ -831,14 +831,14 @@ public class EntityLinkHelperTest {
         EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, true);
 
         assertTrue(EntityLinkHelper.unLinkEntities(entity3, entity2));
-        assertEquals(ECoalesceDataObjectStatus.ACTIVE,
-                     entity1.getLinkageSection().getChildDataObjects().values().iterator().next().getStatus());
-        assertEquals(ECoalesceDataObjectStatus.ACTIVE,
-                     entity2.getLinkageSection().getChildDataObjects().values().iterator().next().getStatus());
+        assertEquals(ECoalesceObjectStatus.ACTIVE,
+                     entity1.getLinkageSection().getChildCoalesceObjects().values().iterator().next().getStatus());
+        assertEquals(ECoalesceObjectStatus.ACTIVE,
+                     entity2.getLinkageSection().getChildCoalesceObjects().values().iterator().next().getStatus());
 
-        for (CoalesceDataObject xdo : entity3.getChildDataObjects().values())
+        for (CoalesceObject xdo : entity3.getChildCoalesceObjects().values())
         {
-            assertEquals(ECoalesceDataObjectStatus.ACTIVE, xdo.getStatus());
+            assertEquals(ECoalesceObjectStatus.ACTIVE, xdo.getStatus());
         }
 
     }
@@ -852,10 +852,10 @@ public class EntityLinkHelperTest {
         EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, true);
 
         assertTrue(EntityLinkHelper.unLinkEntities(entity1, entity2, ELinkTypes.CREATED));
-        assertEquals(ECoalesceDataObjectStatus.DELETED,
-                     entity1.getLinkageSection().getChildDataObjects().values().iterator().next().getStatus());
-        assertEquals(ECoalesceDataObjectStatus.DELETED,
-                     entity2.getLinkageSection().getChildDataObjects().values().iterator().next().getStatus());
+        assertEquals(ECoalesceObjectStatus.DELETED,
+                     entity1.getLinkageSection().getChildCoalesceObjects().values().iterator().next().getStatus());
+        assertEquals(ECoalesceObjectStatus.DELETED,
+                     entity2.getLinkageSection().getChildCoalesceObjects().values().iterator().next().getStatus());
 
     }
 
@@ -868,10 +868,10 @@ public class EntityLinkHelperTest {
         EntityLinkHelper.linkEntities(entity1, ELinkTypes.HAS_PARTICIPANT, entity2, true);
 
         assertTrue(EntityLinkHelper.unLinkEntities(entity1, entity2, ELinkTypes.HAS_USE_OF));
-        assertEquals(ECoalesceDataObjectStatus.ACTIVE,
-                     entity1.getLinkageSection().getChildDataObjects().values().iterator().next().getStatus());
-        assertEquals(ECoalesceDataObjectStatus.ACTIVE,
-                     entity2.getLinkageSection().getChildDataObjects().values().iterator().next().getStatus());
+        assertEquals(ECoalesceObjectStatus.ACTIVE,
+                     entity1.getLinkageSection().getChildCoalesceObjects().values().iterator().next().getStatus());
+        assertEquals(ECoalesceObjectStatus.ACTIVE,
+                     entity2.getLinkageSection().getChildCoalesceObjects().values().iterator().next().getStatus());
 
     }
 
@@ -883,8 +883,8 @@ public class EntityLinkHelperTest {
         CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
 
         assertTrue(EntityLinkHelper.unLinkEntities(entity1, entity2, ELinkTypes.CREATED));
-        assertTrue(entity1.getLinkageSection().getChildDataObjects().isEmpty());
-        assertTrue(entity2.getLinkageSection().getChildDataObjects().isEmpty());
+        assertTrue(entity1.getLinkageSection().getChildCoalesceObjects().isEmpty());
+        assertTrue(entity2.getLinkageSection().getChildCoalesceObjects().isEmpty());
 
     }
 
@@ -899,14 +899,14 @@ public class EntityLinkHelperTest {
         EntityLinkHelper.linkEntities(entity1, ELinkTypes.HAS_MEMBER, entity2, true);
 
         assertTrue(EntityLinkHelper.unLinkEntities(entity1, entity3, ELinkTypes.HAS_MEMBER));
-        assertEquals(ECoalesceDataObjectStatus.ACTIVE,
-                     entity1.getLinkageSection().getChildDataObjects().values().iterator().next().getStatus());
-        assertEquals(ECoalesceDataObjectStatus.ACTIVE,
-                     entity2.getLinkageSection().getChildDataObjects().values().iterator().next().getStatus());
+        assertEquals(ECoalesceObjectStatus.ACTIVE,
+                     entity1.getLinkageSection().getChildCoalesceObjects().values().iterator().next().getStatus());
+        assertEquals(ECoalesceObjectStatus.ACTIVE,
+                     entity2.getLinkageSection().getChildCoalesceObjects().values().iterator().next().getStatus());
 
-        for (CoalesceDataObject xdo : entity3.getChildDataObjects().values())
+        for (CoalesceObject xdo : entity3.getChildCoalesceObjects().values())
         {
-            assertEquals(ECoalesceDataObjectStatus.ACTIVE, xdo.getStatus());
+            assertEquals(ECoalesceObjectStatus.ACTIVE, xdo.getStatus());
         }
 
     }
@@ -922,14 +922,14 @@ public class EntityLinkHelperTest {
         EntityLinkHelper.linkEntities(entity1, ELinkTypes.HAS_OWNERSHIP_OF, entity2, true);
 
         assertTrue(EntityLinkHelper.unLinkEntities(entity3, entity2, ELinkTypes.HAS_OWNERSHIP_OF));
-        assertEquals(ECoalesceDataObjectStatus.ACTIVE,
-                     entity1.getLinkageSection().getChildDataObjects().values().iterator().next().getStatus());
-        assertEquals(ECoalesceDataObjectStatus.ACTIVE,
-                     entity2.getLinkageSection().getChildDataObjects().values().iterator().next().getStatus());
+        assertEquals(ECoalesceObjectStatus.ACTIVE,
+                     entity1.getLinkageSection().getChildCoalesceObjects().values().iterator().next().getStatus());
+        assertEquals(ECoalesceObjectStatus.ACTIVE,
+                     entity2.getLinkageSection().getChildCoalesceObjects().values().iterator().next().getStatus());
 
-        for (CoalesceDataObject xdo : entity3.getChildDataObjects().values())
+        for (CoalesceObject xdo : entity3.getChildCoalesceObjects().values())
         {
-            assertEquals(ECoalesceDataObjectStatus.ACTIVE, xdo.getStatus());
+            assertEquals(ECoalesceObjectStatus.ACTIVE, xdo.getStatus());
         }
 
     }
@@ -952,7 +952,7 @@ public class EntityLinkHelperTest {
                       inputLang,
                       entity1,
                       entity2,
-                      (CoalesceLinkage) entity1.getLinkageSection().getChildDataObjects().values().iterator().next());
+                      (CoalesceLinkage) entity1.getLinkageSection().getChildCoalesceObjects().values().iterator().next());
 
         assertLinkage(linkType.getReciprocalLinkType(),
                       classificationMarking,
@@ -960,7 +960,7 @@ public class EntityLinkHelperTest {
                       inputLang,
                       entity2,
                       entity1,
-                      (CoalesceLinkage) entity2.getLinkageSection().getChildDataObjects().values().iterator().next());
+                      (CoalesceLinkage) entity2.getLinkageSection().getChildCoalesceObjects().values().iterator().next());
 
     }
 
@@ -971,12 +971,12 @@ public class EntityLinkHelperTest {
                                 String modifiedBy,
                                 Locale inputLang)
     {
-        CoalesceLinkage entity1Linakge = (CoalesceLinkage) entity1.getLinkageSection().getChildDataObjects().values().iterator().next();
+        CoalesceLinkage entity1Linakge = (CoalesceLinkage) entity1.getLinkageSection().getChildCoalesceObjects().values().iterator().next();
         assertEquals(classificationMarking, entity1Linakge.getClassificationMarking());
         assertEquals(modifiedBy, entity1Linakge.getModifiedBy());
         assertEquals(inputLang, entity1Linakge.getInputLang());
 
-        CoalesceLinkage entity2Linakge = (CoalesceLinkage) entity2.getLinkageSection().getChildDataObjects().values().iterator().next();
+        CoalesceLinkage entity2Linakge = (CoalesceLinkage) entity2.getLinkageSection().getChildCoalesceObjects().values().iterator().next();
         assertEquals(classificationMarking, entity2Linakge.getClassificationMarking());
         assertEquals(modifiedBy, entity2Linakge.getModifiedBy());
         assertEquals(inputLang, entity2Linakge.getInputLang());
@@ -987,7 +987,7 @@ public class EntityLinkHelperTest {
                       inputLang,
                       entity1,
                       entity2,
-                      (CoalesceLinkage) entity1.getLinkageSection().getChildDataObjects().values().iterator().next());
+                      (CoalesceLinkage) entity1.getLinkageSection().getChildCoalesceObjects().values().iterator().next());
 
         assertLinkage(linkType.getReciprocalLinkType(),
                       classificationMarking,
@@ -995,7 +995,7 @@ public class EntityLinkHelperTest {
                       inputLang,
                       entity2,
                       entity1,
-                      (CoalesceLinkage) entity2.getLinkageSection().getChildDataObjects().values().iterator().next());
+                      (CoalesceLinkage) entity2.getLinkageSection().getChildCoalesceObjects().values().iterator().next());
         
     }
 
@@ -1005,12 +1005,12 @@ public class EntityLinkHelperTest {
         assertLinkage(linkType,
                       entity1,
                       entity2,
-                      (CoalesceLinkage) entity1.getLinkageSection().getChildDataObjects().values().iterator().next());
+                      (CoalesceLinkage) entity1.getLinkageSection().getChildCoalesceObjects().values().iterator().next());
 
         assertLinkage(linkType.getReciprocalLinkType(),
                       entity2,
                       entity1,
-                      (CoalesceLinkage) entity2.getLinkageSection().getChildDataObjects().values().iterator().next());
+                      (CoalesceLinkage) entity2.getLinkageSection().getChildCoalesceObjects().values().iterator().next());
 
     }
 
