@@ -139,7 +139,7 @@ public abstract class CoalesceDataObject implements ICoalesceDataObject {
     /**
      * Sets the value of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s status attribute.
      * 
-     * @param value ECoalesceDataObjectStatus to be the
+     * @param _value ECoalesceDataObjectStatus to be the
      *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceDataObject}'s status
      */
     protected abstract void setObjectStatus(ECoalesceDataObjectStatus status);

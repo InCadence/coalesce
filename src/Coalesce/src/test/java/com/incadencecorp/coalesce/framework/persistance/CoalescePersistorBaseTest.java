@@ -353,7 +353,7 @@ public abstract class CoalescePersistorBaseTest {
 
         // Validate
         assertNotNull(shell.toXml());
-        assertTrue(CoalesceEntitySyncShellTest.ValidateSyncShell(shell));
+        assertTrue(CoalesceEntitySyncShellTest.validateSyncShell(shell));
 
     }
 

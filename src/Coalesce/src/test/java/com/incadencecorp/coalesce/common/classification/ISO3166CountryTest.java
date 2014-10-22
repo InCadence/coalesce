@@ -42,7 +42,7 @@ public class ISO3166CountryTest {
      */
 
     @Test
-    public void CountryEmptyConstructorTest()
+    public void countryEmptyConstructorTest() 
     {
 
         ISO3166Country country = new ISO3166Country();
@@ -51,7 +51,7 @@ public class ISO3166CountryTest {
     }
 
     @Test
-    public void CountryCompleteConstructorTest()
+    public void countryCompleteConstructorTest() 
     {
 
         ISO3166Country country = new ISO3166Country("Test1", "Test2", "Test3");
@@ -61,7 +61,7 @@ public class ISO3166CountryTest {
     }
 
     @Test(expected = NullArgumentException.class)
-    public void CountryConstructorNullAlpha2Test()
+    public void countryConstructorNullAlpha2Test() 
     {
 
         @SuppressWarnings("unused")
@@ -70,7 +70,7 @@ public class ISO3166CountryTest {
     }
 
     @Test(expected = NullArgumentException.class)
-    public void CountryConstructorNullAlpha3Test()
+    public void countryConstructorNullAlpha3Test() 
     {
 
         @SuppressWarnings("unused")
@@ -79,7 +79,7 @@ public class ISO3166CountryTest {
     }
 
     @Test(expected = NullArgumentException.class)
-    public void CountryConstructorNullNameTest()
+    public void countryConstructorNullNameTest() 
     {
 
         @SuppressWarnings("unused")
@@ -88,7 +88,7 @@ public class ISO3166CountryTest {
     }
 
     @Test
-    public void CountryConstructorWithAlpha3EqualToTest()
+    public void countryConstructorWithAlpha3EqualToTest() 
     {
 
         ISO3166Country country = ISO3166Country.withAlpha3EqualTo("Test2");
@@ -97,7 +97,7 @@ public class ISO3166CountryTest {
     }
 
     @Test(expected = NullArgumentException.class)
-    public void CountryConstructorWithAlpha3EqualToNullTest()
+    public void countryConstructorWithAlpha3EqualToNullTest() 
     {
 
         @SuppressWarnings("unused")
@@ -106,7 +106,7 @@ public class ISO3166CountryTest {
     }
 
     @Test
-    public void CountryUSATest()
+    public void countryUSATest() 
     {
 
         ISO3166Country country = ISO3166Country.getUSA();
@@ -116,7 +116,7 @@ public class ISO3166CountryTest {
     }
 
     @Test
-    public void CountryUSAEqualsTest()
+    public void countryUSAEqualsTest() 
     {
 
         ISO3166Country country = ISO3166Country.getUSA();
@@ -127,7 +127,7 @@ public class ISO3166CountryTest {
     }
 
     @Test
-    public void CountryEqualsUSAEqualsAlpha2DifferentTest()
+    public void countryEqualsUSAEqualsAlpha2DifferentTest() 
     {
 
         ISO3166Country country = ISO3166Country.getUSA();
@@ -138,7 +138,7 @@ public class ISO3166CountryTest {
     }
 
     @Test
-    public void CountryEqualsUSAEqualsNameDifferentTest()
+    public void countryEqualsUSAEqualsNameDifferentTest() 
     {
 
         ISO3166Country country = ISO3166Country.getUSA();
@@ -149,7 +149,7 @@ public class ISO3166CountryTest {
     }
 
     @Test
-    public void CountryEqualsUSANotEqualsTest()
+    public void countryEqualsUSANotEqualsTest() 
     {
 
         ISO3166Country country = ISO3166Country.getUSA();
@@ -160,7 +160,7 @@ public class ISO3166CountryTest {
     }
 
     @Test
-    public void CountryEqualsAfganTest()
+    public void countryEqualsAfganTest() 
     {
 
         ISO3166Country country = new ISO3166Country("AF", "AFG", "AFGHANISTAN");
@@ -172,7 +172,7 @@ public class ISO3166CountryTest {
     }
 
     @Test
-    public void CountrySetAlpha2Test()
+    public void countrySetAlpha2Test() 
     {
 
         ISO3166Country country = ISO3166Country.getUSA();
@@ -183,7 +183,7 @@ public class ISO3166CountryTest {
     }
 
     @Test(expected = NullArgumentException.class)
-    public void CountrySetAlpha2NullTest()
+    public void countrySetAlpha2NullTest() 
     {
 
         ISO3166Country country = ISO3166Country.getUSA();
@@ -193,7 +193,7 @@ public class ISO3166CountryTest {
     }
 
     @Test
-    public void CountrySetAlpha3Test()
+    public void countrySetAlpha3Test() 
     {
 
         ISO3166Country country = ISO3166Country.getUSA();
@@ -204,7 +204,7 @@ public class ISO3166CountryTest {
     }
 
     @Test(expected = NullArgumentException.class)
-    public void CountrySetAlpha3NullTest()
+    public void countrySetAlpha3NullTest() 
     {
 
         ISO3166Country country = ISO3166Country.getUSA();
@@ -214,7 +214,7 @@ public class ISO3166CountryTest {
     }
 
     @Test
-    public void CountrySetNameTest()
+    public void countrySetNameTest() 
     {
 
         ISO3166Country country = ISO3166Country.getUSA();
@@ -225,7 +225,7 @@ public class ISO3166CountryTest {
     }
 
     @Test(expected = NullArgumentException.class)
-    public void CountrySetNameNullTest()
+    public void countrySetNameNullTest() 
     {
 
         ISO3166Country country = ISO3166Country.getUSA();
@@ -235,7 +235,7 @@ public class ISO3166CountryTest {
     }
 
     @Test()
-    public void CountrySerializeDeserializeTest() throws IOException, ClassNotFoundException
+    public void countrySerializeDeserializeTest() throws IOException, ClassNotFoundException 
     {
 
         ISO3166Country country = new ISO3166Country("AF", "AFG", "AFGHANISTAN");
@@ -257,7 +257,7 @@ public class ISO3166CountryTest {
     }
 
     @Test()
-    public void CountrySerializeDeserializeBlankCountryTest() throws IOException, ClassNotFoundException
+    public void countrySerializeDeserializeBlankCountryTest() throws IOException, ClassNotFoundException 
     {
 
         ISO3166Country country = new ISO3166Country();

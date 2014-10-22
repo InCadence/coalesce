@@ -46,7 +46,7 @@ public class MarkingTest {
      */
 
     @Test
-    public void CompareToContainsTest()
+    public void compareToContainsTest()
     {
 
         MarkingValue mv = new MarkingValue("", "Testing Testing TOP SECRET TESTING", "", "");
@@ -56,7 +56,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ListContainsUSATest()
+    public void listContainsUSATest()
     {
 
         List<ISO3166Country> countries = FieldValues.getListOfCountries();
@@ -65,7 +65,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ListNotContainsUSATest()
+    public void listNotContainsUSATest()
     {
 
         List<ISO3166Country> countries = new ArrayList<ISO3166Country>();
@@ -76,7 +76,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void TernaryConditionalTest()
+    public void ternaryConditionalTest()
     {
 
         List<String> joint = new ArrayList<String>();
@@ -93,18 +93,18 @@ public class MarkingTest {
     }
 
     @Test
-    public void GetClassifications() throws NoSuchMethodException, IllegalAccessException,
+    public void getClassifications() throws NoSuchMethodException, IllegalAccessException,
             InvocationTargetException
     {
 
-        List<MarkingValue> classifications = CallGetClassifications();
+        List<MarkingValue> classifications = callGetClassifications();
 
         FieldValuesTest.assertClassifications(FieldValuesTest.getAllClassifications(), classifications);
 
     }
 
     @Test
-    public void CompareToTopSecretTopSecretTest()
+    public void compareToTopSecretTopSecretTest()
     {
 
         Marking first = new Marking("//ATA TOP SECRET");
@@ -115,7 +115,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void CompareToTopSecretSecretTest()
+    public void compareToTopSecretSecretTest()
     {
 
         Marking first = new Marking("//ATA TOP SECRET");
@@ -126,7 +126,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void CompareToTopSecretConfidentialTest()
+    public void compareToTopSecretConfidentialTest()
     {
 
         Marking first = new Marking("//ATA TOP SECRET");
@@ -137,7 +137,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void CompareToTopSecretRestrictedTest()
+    public void compareToTopSecretRestrictedTest()
     {
 
         Marking first = new Marking("//ATA TOP SECRET");
@@ -148,7 +148,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void CompareToTopSecretUnclassifiedTest()
+    public void compareToTopSecretUnclassifiedTest()
     {
 
         Marking first = new Marking("//ATA TOP SECRET");
@@ -159,7 +159,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void CompareToSecretTopSecretTest()
+    public void compareToSecretTopSecretTest()
     {
 
         Marking first = new Marking("//ATA SECRET");
@@ -170,7 +170,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void CompareToSecretSecretTest()
+    public void compareToSecretSecretTest()
     {
 
         Marking first = new Marking("//ATA SECRET");
@@ -181,7 +181,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void CompareToSecretConfidentialTest()
+    public void compareToSecretConfidentialTest()
     {
 
         Marking first = new Marking("//ATA SECRET");
@@ -192,7 +192,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void CompareToSecretRestrictedTest()
+    public void compareToSecretRestrictedTest()
     {
 
         Marking first = new Marking("//ATA SECRET");
@@ -203,7 +203,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void CompareToSecretUnclassifiedTest()
+    public void compareToSecretUnclassifiedTest()
     {
 
         Marking first = new Marking("//ATA SECRET");
@@ -214,7 +214,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void CompareToConfidentialTopSecretTest()
+    public void compareToConfidentialTopSecretTest()
     {
 
         Marking first = new Marking("//ATA CONFIDENTIAL");
@@ -225,7 +225,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void CompareToConfidentialSecretTest()
+    public void compareToConfidentialSecretTest()
     {
 
         Marking first = new Marking("//ATA CONFIDENTIAL");
@@ -236,7 +236,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void CompareToConfidentialConfidentialTest()
+    public void compareToConfidentialConfidentialTest()
     {
 
         Marking first = new Marking("//ATA CONFIDENTIAL");
@@ -247,7 +247,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void CompareToConfidentialRestrictedTest()
+    public void compareToConfidentialRestrictedTest()
     {
 
         Marking first = new Marking("//ATA CONFIDENTIAL");
@@ -258,7 +258,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void CompareToConfidentialUnclassifiedTest()
+    public void compareToConfidentialUnclassifiedTest()
     {
 
         Marking first = new Marking("//ATA CONFIDENTIAL");
@@ -269,7 +269,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void CompareToRestrictedTopSecretTest()
+    public void compareToRestrictedTopSecretTest()
     {
 
         Marking first = new Marking("//ATA RESTRICTED");
@@ -280,7 +280,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void CompareToRestrictedSecretTest()
+    public void compareToRestrictedSecretTest()
     {
 
         Marking first = new Marking("//ATA RESTRICTED");
@@ -291,7 +291,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void CompareToRestrictedConfidentialTest()
+    public void compareToRestrictedConfidentialTest()
     {
 
         Marking first = new Marking("//ATA RESTRICTED");
@@ -302,7 +302,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void CompareToRestrictedRestrictedTest()
+    public void compareToRestrictedRestrictedTest()
     {
 
         Marking first = new Marking("//ATA RESTRICTED");
@@ -313,7 +313,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void CompareToRestrictedUnclassifiedTest()
+    public void compareToRestrictedUnclassifiedTest()
     {
 
         Marking first = new Marking("//ATA RESTRICTED");
@@ -324,7 +324,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void CompareToUnclassifiedTopSecretTest()
+    public void compareToUnclassifiedTopSecretTest()
     {
 
         Marking first = new Marking("//ATA UNCLASSIFIED");
@@ -335,7 +335,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void CompareToUnclassifiedSecretTest()
+    public void compareToUnclassifiedSecretTest()
     {
 
         Marking first = new Marking("//ATA UNCLASSIFIED");
@@ -346,7 +346,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void CompareToUnclassifiedConfidentialTest()
+    public void compareToUnclassifiedConfidentialTest()
     {
 
         Marking first = new Marking("//ATA UNCLASSIFIED");
@@ -357,7 +357,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void CompareToUnclassifiedRestrictedTest()
+    public void compareToUnclassifiedRestrictedTest()
     {
 
         Marking first = new Marking("//ATA UNCLASSIFIED");
@@ -368,7 +368,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void CompareToUnclassifiedUnclassifiedTest()
+    public void compareToUnclassifiedUnclassifiedTest()
     {
 
         Marking first = new Marking("//ATA UNCLASSIFIED");
@@ -379,7 +379,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void CompareToUnknownUnclassifiedTest()
+    public void compareToUnknownUnclassifiedTest()
     {
 
         Marking first = new Marking("//ATA");
@@ -390,7 +390,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingString()
+    public void constructorMarkingString()
     {
 
         Marking mk = new Marking();
@@ -419,7 +419,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringNull()
+    public void constructorMarkingStringNull()
     {
 
         Marking mk = new Marking(null);
@@ -449,7 +449,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringInvalidPortion()
+    public void constructorMarkingStringInvalidPortion()
     {
 
         Marking mk = new Marking("()");
@@ -480,7 +480,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringInvalidNotPortion()
+    public void constructorMarkingStringInvalidNotPortion()
     {
 
         Marking mk = new Marking("SECRE");
@@ -510,7 +510,7 @@ public class MarkingTest {
 
     }
 
-    public void ConstructorMarkingStringNoSlashPortion()
+    public void constructorMarkingStringNoSlashPortion()
     {
 
         Marking mk = new Marking("(R)");
@@ -545,7 +545,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashNoPortion()
+    public void constructorMarkingStringSlashNoPortion()
     {
 
         Marking mk = new Marking("RESTRICTED");
@@ -579,7 +579,7 @@ public class MarkingTest {
 
     }
 
-    public void ConstructorMarkingStringSlashPortionBlank()
+    public void constructorMarkingStringSlashPortionBlank()
     {
 
         Marking mk = new Marking("(//)");
@@ -614,7 +614,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashNoPortionBlank()
+    public void constructorMarkingStringSlashNoPortionBlank()
     {
 
         Marking mk = new Marking("//");
@@ -648,7 +648,7 @@ public class MarkingTest {
 
     }
 
-    public void ConstructorMarkingStringSlashPortionBeginClass()
+    public void constructorMarkingStringSlashPortionBeginClass()
     {
 
         Marking mk = new Marking("(TS//)");
@@ -683,7 +683,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashNoPortionBeginClass()
+    public void constructorMarkingStringSlashNoPortionBeginClass()
     {
 
         Marking mk = new Marking("TOP SECRET//");
@@ -718,7 +718,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashPortionClassAfterEmpty()
+    public void constructorMarkingStringSlashPortionClassAfterEmpty()
     {
 
         Marking mk = new Marking("(//TS)");
@@ -752,7 +752,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashNoPortionClassAfterEmpty()
+    public void constructorMarkingStringSlashNoPortionClassAfterEmpty()
     {
 
         Marking mk = new Marking("//TOP SECRET");
@@ -786,7 +786,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashPortionClassAfter()
+    public void constructorMarkingStringSlashPortionClassAfter()
     {
 
         Marking mk = new Marking("(//AND TS)");
@@ -821,7 +821,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashNoPortionClassAfter()
+    public void constructorMarkingStringSlashNoPortionClassAfter()
     {
 
         Marking mk = new Marking("//AND SECRET");
@@ -856,7 +856,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashPortionClassAfterInvalid()
+    public void constructorMarkingStringSlashPortionClassAfterInvalid()
     {
 
         Marking mk = new Marking("(//XYZ TS)");
@@ -890,7 +890,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashNoPortionClassAfterInvalid()
+    public void constructorMarkingStringSlashNoPortionClassAfterInvalid()
     {
 
         Marking mk = new Marking("//XYZ SECRET");
@@ -924,7 +924,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashPortionClassAfterJointInvalid()
+    public void constructorMarkingStringSlashPortionClassAfterJointInvalid()
     {
 
         Marking mk = new Marking("(//JOINT TS AND)");
@@ -958,7 +958,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashNoPortionClassAfterJointInvalid()
+    public void constructorMarkingStringSlashNoPortionClassAfterJointInvalid()
     {
 
         Marking mk = new Marking("//JOINT SECRET AND");
@@ -992,7 +992,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashNoPortionClassAfterJointInvalidTopSecret()
+    public void constructorMarkingStringSlashNoPortionClassAfterJointInvalidTopSecret()
     {
 
         Marking mk = new Marking("//JOINT TOP SECRET AND");
@@ -1026,7 +1026,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashPortionClassAfterJoint()
+    public void constructorMarkingStringSlashPortionClassAfterJoint()
     {
 
         Marking mk = new Marking("(//JOINT TS AND USA)");
@@ -1062,7 +1062,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashNoPortionClassAfterJoint()
+    public void constructorMarkingStringSlashNoPortionClassAfterJoint()
     {
 
         Marking mk = new Marking("//JOINT SECRET AND USA");
@@ -1098,7 +1098,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashNoPortionClassAfterJointTopSecret()
+    public void constructorMarkingStringSlashNoPortionClassAfterJointTopSecret()
     {
 
         Marking mk = new Marking("//JOINT TOP SECRET AND USA");
@@ -1134,7 +1134,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashNoPortionClassAfterJointTopSecretReverseCountries()
+    public void constructorMarkingStringSlashNoPortionClassAfterJointTopSecretReverseCountries()
     {
 
         Marking mk = new Marking("//JOINT TOP SECRET USA AND");
@@ -1170,7 +1170,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashPortionClassAfterCosmic()
+    public void constructorMarkingStringSlashPortionClassAfterCosmic()
     {
 
         Marking mk = new Marking("(//CTS-B)");
@@ -1204,7 +1204,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashPortionClassAfterNato()
+    public void constructorMarkingStringSlashPortionClassAfterNato()
     {
 
         Marking mk = new Marking("(//NU)");
@@ -1238,7 +1238,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashPortionClassAfterAtomal()
+    public void constructorMarkingStringSlashPortionClassAfterAtomal()
     {
 
         Marking mk = new Marking("(//NC-A)");
@@ -1272,7 +1272,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashNoPortionClassAfterCosmic()
+    public void constructorMarkingStringSlashNoPortionClassAfterCosmic()
     {
 
         Marking mk = new Marking("//COSMIC TOP SECRET BOHEMIA");
@@ -1304,7 +1304,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashNoPortionClassAfterNato()
+    public void constructorMarkingStringSlashNoPortionClassAfterNato()
     {
 
         Marking mk = new Marking("//NATO SECRET");
@@ -1338,7 +1338,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashNoPortionClassAfterAtomal()
+    public void constructorMarkingStringSlashNoPortionClassAfterAtomal()
     {
 
         Marking mk = new Marking("//SECRET ATOMAL");
@@ -1372,7 +1372,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashPortionClassAfterJointFOUO_LES()
+    public void constructorMarkingStringSlashPortionClassAfterJointFOUO_LES()
     {
 
         Marking mk = new Marking("(//JOINT TS AND USA//FOUO-LES)");
@@ -1408,7 +1408,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashNoPortionClassAfterJointFOUO_LES()
+    public void constructorMarkingStringSlashNoPortionClassAfterJointFOUO_LES()
     {
 
         Marking mk = new Marking("//JOINT SECRET AND USA//FOUO-LES");
@@ -1444,7 +1444,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashPortionClassAfterJointFOUO()
+    public void constructorMarkingStringSlashPortionClassAfterJointFOUO()
     {
 
         Marking mk = new Marking("(//JOINT TS AND USA//FOUO)");
@@ -1480,7 +1480,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashNoPortionClassAfterJointFOUO()
+    public void constructorMarkingStringSlashNoPortionClassAfterJointFOUO()
     {
 
         Marking mk = new Marking("//JOINT SECRET AND USA//FOUO");
@@ -1516,7 +1516,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashPortionClassAfterJointLES()
+    public void constructorMarkingStringSlashPortionClassAfterJointLES()
     {
 
         Marking mk = new Marking("(//JOINT TS AND USA//LES)");
@@ -1552,7 +1552,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashNoPortionClassAfterJointLES()
+    public void constructorMarkingStringSlashNoPortionClassAfterJointLES()
     {
 
         Marking mk = new Marking("//JOINT SECRET AND USA//LES");
@@ -1588,7 +1588,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashPortionClassAfterJointRELIDO()
+    public void constructorMarkingStringSlashPortionClassAfterJointRELIDO()
     {
 
         Marking mk = new Marking("(//JOINT TS AND USA//RELIDO)");
@@ -1624,7 +1624,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashNoPortionClassAfterJointRELIDO()
+    public void constructorMarkingStringSlashNoPortionClassAfterJointRELIDO()
     {
 
         Marking mk = new Marking("//JOINT SECRET AND USA//RELIDO");
@@ -1660,7 +1660,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashPortionClassAfterJointPROPIN()
+    public void constructorMarkingStringSlashPortionClassAfterJointPROPIN()
     {
 
         Marking mk = new Marking("(//JOINT TS AND USA//PR)");
@@ -1696,7 +1696,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashNoPortionClassAfterJointPROPIN()
+    public void constructorMarkingStringSlashNoPortionClassAfterJointPROPIN()
     {
 
         Marking mk = new Marking("//JOINT SECRET AND USA//PROPIN");
@@ -1732,7 +1732,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashPortionClassAfterJointFISA()
+    public void constructorMarkingStringSlashPortionClassAfterJointFISA()
     {
 
         Marking mk = new Marking("(//JOINT TS AND USA//FISA)");
@@ -1768,7 +1768,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashNoPortionClassAfterJointFISA()
+    public void constructorMarkingStringSlashNoPortionClassAfterJointFISA()
     {
 
         Marking mk = new Marking("//JOINT SECRET AND USA//FISA");
@@ -1804,7 +1804,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashPortionClassAfterJointIMCON()
+    public void constructorMarkingStringSlashPortionClassAfterJointIMCON()
     {
 
         Marking mk = new Marking("(//JOINT TS AND USA//IMC)");
@@ -1840,7 +1840,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashNoPortionClassAfterJointIMCON()
+    public void constructorMarkingStringSlashNoPortionClassAfterJointIMCON()
     {
 
         Marking mk = new Marking("//JOINT SECRET AND USA//IMCON");
@@ -1876,7 +1876,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashPortionClassAfterJointORCON()
+    public void constructorMarkingStringSlashPortionClassAfterJointORCON()
     {
 
         Marking mk = new Marking("(//JOINT TS AND USA//OC)");
@@ -1912,7 +1912,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashNoPortionClassAfterJointORCON()
+    public void constructorMarkingStringSlashNoPortionClassAfterJointORCON()
     {
 
         Marking mk = new Marking("//JOINT SECRET AND USA//ORCON");
@@ -1948,7 +1948,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashPortionClassAfterJointDSEN()
+    public void constructorMarkingStringSlashPortionClassAfterJointDSEN()
     {
 
         Marking mk = new Marking("(//JOINT TS AND USA//DSEN)");
@@ -1984,7 +1984,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashNoPortionClassAfterJointDSEN()
+    public void constructorMarkingStringSlashNoPortionClassAfterJointDSEN()
     {
 
         Marking mk = new Marking("//JOINT SECRET AND USA//DSEN");
@@ -2020,7 +2020,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashPortionClassAfterJointNOFORN()
+    public void constructorMarkingStringSlashPortionClassAfterJointNOFORN()
     {
 
         Marking mk = new Marking("(//JOINT TS AND USA//NF)");
@@ -2056,7 +2056,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashNoPortionClassAfterJointNOFORN()
+    public void constructorMarkingStringSlashNoPortionClassAfterJointNOFORN()
     {
 
         Marking mk = new Marking("//JOINT SECRET AND USA//NOFORN");
@@ -2092,7 +2092,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashPortionClassAfterJointDisplayOnlyEmpty()
+    public void constructorMarkingStringSlashPortionClassAfterJointDisplayOnlyEmpty()
     {
 
         Marking mk = new Marking("(//JOINT TS AND USA//DISPLAY ONLY)");
@@ -2128,7 +2128,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashNoPortionClassAfterJointDisplayOnlyEmpty()
+    public void constructorMarkingStringSlashNoPortionClassAfterJointDisplayOnlyEmpty()
     {
 
         Marking mk = new Marking("//JOINT SECRET AND USA//DISPLAY ONLY");
@@ -2164,7 +2164,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashPortionClassAfterJointDisplayOnlyOne()
+    public void constructorMarkingStringSlashPortionClassAfterJointDisplayOnlyOne()
     {
 
         Marking mk = new Marking("(//JOINT TS AND USA//DISPLAY ONLY BMU)");
@@ -2201,7 +2201,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashNoPortionClassAfterJointDisplayOnlyOne()
+    public void constructorMarkingStringSlashNoPortionClassAfterJointDisplayOnlyOne()
     {
 
         Marking mk = new Marking("//JOINT SECRET AND USA//DISPLAY ONLY BMU");
@@ -2238,7 +2238,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashPortionClassAfterJointDisplayOnlyTwo()
+    public void constructorMarkingStringSlashPortionClassAfterJointDisplayOnlyTwo()
     {
 
         Marking mk = new Marking("(//JOINT TS AND USA//DISPLAY ONLY BMU COL)");
@@ -2276,7 +2276,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashNoPortionClassAfterJointDisplayOnlyTwo()
+    public void constructorMarkingStringSlashNoPortionClassAfterJointDisplayOnlyTwo()
     {
 
         Marking mk = new Marking("//JOINT SECRET AND USA//DISPLAY ONLY BMU COL");
@@ -2314,7 +2314,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashPortionClassAfterJointDisplayOnlyTwoCommas()
+    public void constructorMarkingStringSlashPortionClassAfterJointDisplayOnlyTwoCommas()
     {
 
         Marking mk = new Marking("(//JOINT TS AND USA//DISPLAY ONLY BMU, COL)");
@@ -2352,7 +2352,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashNoPortionClassAfterJointDisplayOnlyTwoCommas()
+    public void constructorMarkingStringSlashNoPortionClassAfterJointDisplayOnlyTwoCommas()
     {
 
         Marking mk = new Marking("//JOINT SECRET AND USA//DISPLAY ONLY BMU, COL");
@@ -2390,7 +2390,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashPortionClassAfterJointReleaseToEmpty()
+    public void constructorMarkingStringSlashPortionClassAfterJointReleaseToEmpty()
     {
 
         Marking mk = new Marking("(//JOINT TS AND USA//REL TO)");
@@ -2426,7 +2426,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashNoPortionClassAfterJointReleaseToEmpty()
+    public void constructorMarkingStringSlashNoPortionClassAfterJointReleaseToEmpty()
     {
 
         Marking mk = new Marking("//JOINT SECRET AND USA//REL TO");
@@ -2462,7 +2462,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashPortionClassAfterJointReleaseToOne()
+    public void constructorMarkingStringSlashPortionClassAfterJointReleaseToOne()
     {
 
         Marking mk = new Marking("(//JOINT TS AND USA//REL TO BMU)");
@@ -2499,7 +2499,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashNoPortionClassAfterJointReleaseToOne()
+    public void constructorMarkingStringSlashNoPortionClassAfterJointReleaseToOne()
     {
 
         Marking mk = new Marking("//JOINT SECRET AND USA//REL TO BMU");
@@ -2536,7 +2536,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashPortionClassAfterJointReleaseToTwo()
+    public void constructorMarkingStringSlashPortionClassAfterJointReleaseToTwo()
     {
 
         Marking mk = new Marking("(//JOINT TS AND USA//REL TO BMU COL)");
@@ -2574,7 +2574,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashNoPortionClassAfterJointReleaseToTwo()
+    public void constructorMarkingStringSlashNoPortionClassAfterJointReleaseToTwo()
     {
 
         Marking mk = new Marking("//JOINT SECRET AND USA//REL TO BMU COL");
@@ -2612,7 +2612,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashPortionClassAfterJointReleaseToTwoCommas()
+    public void constructorMarkingStringSlashPortionClassAfterJointReleaseToTwoCommas()
     {
 
         Marking mk = new Marking("(//JOINT TS AND USA//REL TO BMU, COL)");
@@ -2650,7 +2650,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashNoPortionClassAfterJointReleaseToTwoCommas()
+    public void constructorMarkingStringSlashNoPortionClassAfterJointReleaseToTwoCommas()
     {
 
         Marking mk = new Marking("//JOINT SECRET AND USA//REL TO BMU, COL");
@@ -2688,7 +2688,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashPortionClassAfterJointSUBNOFORN()
+    public void constructorMarkingStringSlashPortionClassAfterJointSUBNOFORN()
     {
 
         Marking mk = new Marking("(//JOINT TS AND USA//SBU-NF)");
@@ -2724,7 +2724,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashNoPortionClassAfterJointSBUNOFORN()
+    public void constructorMarkingStringSlashNoPortionClassAfterJointSBUNOFORN()
     {
 
         Marking mk = new Marking("//JOINT SECRET AND USA//SBU NOFORN");
@@ -2759,7 +2759,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashPortionClassAfterJointSBU()
+    public void constructorMarkingStringSlashPortionClassAfterJointSBU()
     {
 
         Marking mk = new Marking("(//JOINT TS AND USA//SBU)");
@@ -2794,7 +2794,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashNoPortionClassAfterJointSBU()
+    public void constructorMarkingStringSlashNoPortionClassAfterJointSBU()
     {
 
         Marking mk = new Marking("//JOINT SECRET AND USA//SBU");
@@ -2829,7 +2829,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashPortionClassAfterJointEXDIS()
+    public void constructorMarkingStringSlashPortionClassAfterJointEXDIS()
     {
 
         Marking mk = new Marking("(//JOINT TS AND USA//XD)");
@@ -2864,7 +2864,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashNoPortionClassAfterJointEXDIS()
+    public void constructorMarkingStringSlashNoPortionClassAfterJointEXDIS()
     {
 
         Marking mk = new Marking("//JOINT SECRET AND USA//EXDIS");
@@ -2899,7 +2899,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashPortionClassAfterJointDS()
+    public void constructorMarkingStringSlashPortionClassAfterJointDS()
     {
 
         Marking mk = new Marking("(//JOINT TS AND USA//DS)");
@@ -2934,7 +2934,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashNoPortionClassAfterJointDS()
+    public void constructorMarkingStringSlashNoPortionClassAfterJointDS()
     {
 
         Marking mk = new Marking("//JOINT SECRET AND USA//LIMITED DISTRIBUTION");
@@ -2968,7 +2968,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashPortionClassAfterJointACCMOne()
+    public void constructorMarkingStringSlashPortionClassAfterJointACCMOne()
     {
 
         Marking mk = new Marking("(//JOINT TS AND USA//ACCM-BOB)");
@@ -3004,7 +3004,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashNoPortionClassAfterJointACCMOne()
+    public void constructorMarkingStringSlashNoPortionClassAfterJointACCMOne()
     {
 
         Marking mk = new Marking("//JOINT SECRET AND USA//ACCM-BOB");
@@ -3040,7 +3040,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashPortionClassAfterJointACCMTwo()
+    public void constructorMarkingStringSlashPortionClassAfterJointACCMTwo()
     {
 
         Marking mk = new Marking("(//JOINT TS AND USA//ACCM-BOB/JIM)");
@@ -3077,7 +3077,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashNoPortionClassAfterJointACCMTwo()
+    public void constructorMarkingStringSlashNoPortionClassAfterJointACCMTwo()
     {
 
         Marking mk = new Marking("//JOINT SECRET AND USA//ACCM-BOB/JIM");
@@ -3114,7 +3114,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashPortionClassAfterJointACCMEmpty()
+    public void constructorMarkingStringSlashPortionClassAfterJointACCMEmpty()
     {
 
         Marking mk = new Marking("(//JOINT TS AND USA//ACCM-)");
@@ -3149,7 +3149,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashNoPortionClassAfterJointACCMEmpty()
+    public void constructorMarkingStringSlashNoPortionClassAfterJointACCMEmpty()
     {
 
         Marking mk = new Marking("//JOINT SECRET AND USA//ACCM-");
@@ -3184,7 +3184,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashPortionClassAfterJointEverything()
+    public void constructorMarkingStringSlashPortionClassAfterJointEverything()
     {
 
         Marking mk = new Marking("(//JOINT TS AND USA//FOUO-LES//FOUO/LES/RELIDO/PR/FISA/IMC/OC/DSEN//NF/DISPLAY ONLY VIR IND/REL TO BMU COL//SBU-NF/SBU/XD/DS/ACCM-BOB/JIM)");
@@ -3227,7 +3227,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void ConstructorMarkingStringSlashNoPortionClassAfterJointEverything()
+    public void constructorMarkingStringSlashNoPortionClassAfterJointEverything()
     {
 
         Marking mk = new Marking("//JOINT SECRET AND USA//FOUO-LES/FOUO/LES/RELIDO/PROPIN/FISA/IMCON/ORCON/DSEN/NOFORN/DISPLAY ONLY VIR IND/REL TO BMU COL//SBU NOFORN/SBU/EXDIS/LIMITED DISTRIBUTION/ACCM-BOB/JIM");
@@ -3270,7 +3270,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void SetIsNATOTest()
+    public void setIsNATOTest()
     {
 
         Marking mk = new Marking();
@@ -3282,7 +3282,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void GetIsJointSelectedCountriesZeroTest()
+    public void getIsJointSelectedCountriesZeroTest()
     {
         Marking mk = new Marking("");
         mk.getSelectedCountries().clear();
@@ -3293,7 +3293,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void GetIsJointSelectedCountriesOneTest()
+    public void getIsJointSelectedCountriesOneTest()
     {
         Marking mk = new Marking("//USA TOP SECRET ");
 
@@ -3303,7 +3303,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void GetIsJointSelectedCoutnreisTwoTest()
+    public void getIsJointSelectedCoutnreisTwoTest()
     {
         Marking mk = new Marking("//JOINT TOP SECRET USA AND");
 
@@ -3313,7 +3313,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void SetIsFOUOTest()
+    public void setIsFOUOTest()
     {
 
         Marking mk = new Marking();
@@ -3325,7 +3325,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void SetIsLESTest()
+    public void setIsLESTest()
     {
 
         Marking mk = new Marking();
@@ -3338,7 +3338,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void SetIsORCONTest()
+    public void setIsORCONTest()
     {
 
         Marking mk = new Marking();
@@ -3350,7 +3350,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void SetIsIMCONTest()
+    public void setIsIMCONTest()
     {
 
         Marking mk = new Marking();
@@ -3362,7 +3362,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void GetIsDisplayOnlyTest()
+    public void getIsDisplayOnlyTest()
     {
 
         Marking mk = new Marking("UNCLASSIFIED//DISPLAY ONLY AND USA");
@@ -3371,7 +3371,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void GetIsDisplayOnlyEmptyTest()
+    public void getIsDisplayOnlyEmptyTest()
     {
 
         Marking mk = new Marking("//UNCLASSIFIED");
@@ -3380,7 +3380,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void SetIsDSENTest()
+    public void setIsDSENTest()
     {
 
         Marking mk = new Marking();
@@ -3392,7 +3392,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void SetIsFISATest()
+    public void setIsFISATest()
     {
 
         Marking mk = new Marking();
@@ -3404,7 +3404,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void SetIsPROPINTest()
+    public void setIsPROPINTest()
     {
 
         Marking mk = new Marking();
@@ -3416,7 +3416,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void SetIsRELIDOTest()
+    public void setIsRELIDOTest()
     {
 
         Marking mk = new Marking();
@@ -3429,7 +3429,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void GetIsReleaseToTest()
+    public void getIsReleaseToTest()
     {
 
         Marking mk = new Marking("//UNCLASSIFIED USA//REL TO AND USA");
@@ -3438,7 +3438,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void GetIsReleaseToEmptyTest()
+    public void getIsReleaseToEmptyTest()
     {
 
         Marking mk = new Marking("//UNCLASSIFIED");
@@ -3447,7 +3447,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void SetIsNOFORNTest()
+    public void setIsNOFORNTest()
     {
 
         Marking mk = new Marking();
@@ -3459,7 +3459,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void SetClassificationTest()
+    public void setClassificationTest()
     {
 
         Marking mk = new Marking();
@@ -3472,7 +3472,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void SetIsLIMDISTest()
+    public void setIsLIMDISTest()
     {
 
         Marking mk = new Marking();
@@ -3484,7 +3484,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void SetIsEXDISTest()
+    public void setIsEXDISTest()
     {
 
         Marking mk = new Marking();
@@ -3496,7 +3496,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void SetIsSBUTest()
+    public void setIsSBUTest()
     {
 
         Marking mk = new Marking();
@@ -3509,7 +3509,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void SetIsSBUNFTest()
+    public void setIsSBUNFTest()
     {
 
         Marking mk = new Marking();
@@ -3521,7 +3521,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void GetIsACCMTest()
+    public void getIsACCMTest()
     {
 
         Marking mk = new Marking("UNCLASSIFIED//ACCM-BOB/JIM");
@@ -3530,7 +3530,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void GetIsACCMEmptyTest()
+    public void getIsACCMEmptyTest()
     {
 
         Marking mk = new Marking("//UNCLASSIFIED");
@@ -3539,7 +3539,7 @@ public class MarkingTest {
     }
 
     @SuppressWarnings("unchecked")
-    private List<MarkingValue> CallGetClassifications() throws NoSuchMethodException, 
+    private List<MarkingValue> callGetClassifications() throws NoSuchMethodException, 
             IllegalAccessException, InvocationTargetException
     {
 

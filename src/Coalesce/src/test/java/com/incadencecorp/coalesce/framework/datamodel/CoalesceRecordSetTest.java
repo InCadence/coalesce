@@ -429,7 +429,7 @@ public class CoalesceRecordSetTest {
     }
 
     @Test
-    public void DateCreatedTest()
+    public void dateCreatedTest()
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -445,7 +445,7 @@ public class CoalesceRecordSetTest {
     }
 
     @Test
-    public void LastModifiedTest()
+    public void lastModifiedTest()
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 

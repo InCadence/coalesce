@@ -17,7 +17,7 @@ public class ELinkTypesTest {
      */
 
     @Test
-    public void GetTypeForLabelUndefinedTest()
+    public void getTypeForLabelUndefinedTest()
     {
 
         assertEquals(ELinkTypes.UNDEFINED, ELinkTypes.getTypeForLabel("Undefined"));
@@ -25,7 +25,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetTypeForLabelUndefinedLowerCaseTest()
+    public void getTypeForLabelUndefinedLowerCaseTest()
     {
 
         assertEquals(ELinkTypes.UNDEFINED, ELinkTypes.getTypeForLabel("undefined"));
@@ -33,7 +33,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetTypeForLabelUndefinedUpperCaseTest()
+    public void getTypeForLabelUndefinedUpperCaseTest()
     {
 
         assertEquals(ELinkTypes.UNDEFINED, ELinkTypes.getTypeForLabel("Undefined".toUpperCase()));
@@ -41,7 +41,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetTypeForLabelIsChildOfTest()
+    public void getTypeForLabelIsChildOfTest()
     {
 
         assertEquals(ELinkTypes.IS_CHILD_OF, ELinkTypes.getTypeForLabel("IsChildOf"));
@@ -49,7 +49,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetTypeForLabelNullTest()
+    public void getTypeForLabelNullTest()
     {
 
         assertEquals(ELinkTypes.UNDEFINED, ELinkTypes.getTypeForLabel(null));
@@ -57,7 +57,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetTypeForLabelEmptyTest()
+    public void getTypeForLabelEmptyTest()
     {
 
         assertEquals(ELinkTypes.UNDEFINED, ELinkTypes.getTypeForLabel(""));
@@ -65,7 +65,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetTypeForLabelIsParentOfTest()
+    public void getTypeForLabelIsParentOfTest()
     {
 
         assertEquals(ELinkTypes.IS_PARENT_OF, ELinkTypes.getTypeForLabel("IsParentOf"));
@@ -73,7 +73,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetTypeForLabelCreatedTest()
+    public void getTypeForLabelCreatedTest()
     {
 
         assertEquals(ELinkTypes.CREATED, ELinkTypes.getTypeForLabel("Created"));
@@ -81,7 +81,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetTypeForLabelWasCreatedByTest()
+    public void getTypeForLabelWasCreatedByTest()
     {
 
         assertEquals(ELinkTypes.WAS_CREATED_BY, ELinkTypes.getTypeForLabel("WasCreatedBy"));
@@ -89,7 +89,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetTypeForLabelHasMemberTest()
+    public void getTypeForLabelHasMemberTest()
     {
 
         assertEquals(ELinkTypes.HAS_MEMBER, ELinkTypes.getTypeForLabel("HasMember"));
@@ -97,7 +97,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetTypeForLabelIsAMemberOfTest()
+    public void getTypeForLabelIsAMemberOfTest()
     {
 
         assertEquals(ELinkTypes.IS_A_MEMBER_OF, ELinkTypes.getTypeForLabel("IsAMemberOf"));
@@ -105,7 +105,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetTypeForLabelHasParticipantTest()
+    public void getTypeForLabelHasParticipantTest()
     {
 
         assertEquals(ELinkTypes.HAS_PARTICIPANT, ELinkTypes.getTypeForLabel("HasParticipant"));
@@ -113,7 +113,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetTypeForLabelIsAParticipantTest()
+    public void getTypeForLabelIsAParticipantTest()
     {
 
         assertEquals(ELinkTypes.IS_A_PARTICIPANT_OF, ELinkTypes.getTypeForLabel("IsAParticipantOf"));
@@ -121,7 +121,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetTypeForLabelIsWatchingTest()
+    public void getTypeForLabelIsWatchingTest()
     {
 
         assertEquals(ELinkTypes.IS_WATCHING, ELinkTypes.getTypeForLabel("IsWatching"));
@@ -129,7 +129,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetTypeForLabelIsBeingWatchedByTest()
+    public void getTypeForLabelIsBeingWatchedByTest()
     {
 
         assertEquals(ELinkTypes.IS_BEING_WATCHED_BY, ELinkTypes.getTypeForLabel("IsBeingWatchedBy"));
@@ -137,7 +137,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetTypeForLabelIsAPeerOfTest()
+    public void getTypeForLabelIsAPeerOfTest()
     {
 
         assertEquals(ELinkTypes.IS_A_PEER_OF, ELinkTypes.getTypeForLabel("IsAPeerOf"));
@@ -145,7 +145,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetTypeForLabelIsOwnedByTest()
+    public void getTypeForLabelIsOwnedByTest()
     {
 
         assertEquals(ELinkTypes.IS_OWNED_BY, ELinkTypes.getTypeForLabel("IsOwnedBy"));
@@ -153,7 +153,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetTypeForLabelHasOwnershipOfTest()
+    public void getTypeForLabelHasOwnershipOfTest()
     {
 
         assertEquals(ELinkTypes.HAS_OWNERSHIP_OF, ELinkTypes.getTypeForLabel("HasOwnershipOf"));
@@ -161,7 +161,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetTypeForLabelIsUsedByTest()
+    public void getTypeForLabelIsUsedByTest()
     {
 
         assertEquals(ELinkTypes.IS_USED_BY, ELinkTypes.getTypeForLabel("IsUsedBy"));
@@ -169,7 +169,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetTypeForLabelHasUseOfTest()
+    public void getTypeForLabelHasUseOfTest()
     {
 
         assertEquals(ELinkTypes.HAS_USE_OF, ELinkTypes.getTypeForLabel("HasUseOf"));
@@ -177,7 +177,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetReciprocalLinkTypeIsAMemberOfTest()
+    public void getReciprocalLinkTypeIsAMemberOfTest()
     {
 
         ELinkTypes value = ELinkTypes.IS_A_MEMBER_OF;
@@ -185,7 +185,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetReciprocalLinkTypeHasMemberTest()
+    public void getReciprocalLinkTypeHasMemberTest()
     {
 
         ELinkTypes value = ELinkTypes.HAS_MEMBER;
@@ -193,7 +193,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetReciprocalLinkTypeIsChildOfTest()
+    public void getReciprocalLinkTypeIsChildOfTest()
     {
 
         ELinkTypes value = ELinkTypes.IS_CHILD_OF;
@@ -201,7 +201,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetReciprocalLinkTypeIsParentOfTest()
+    public void getReciprocalLinkTypeIsParentOfTest()
     {
 
         ELinkTypes value = ELinkTypes.IS_PARENT_OF;
@@ -209,7 +209,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetReciprocalLinkTypeWasCreatedByTest()
+    public void getReciprocalLinkTypeWasCreatedByTest()
     {
 
         ELinkTypes value = ELinkTypes.WAS_CREATED_BY;
@@ -217,7 +217,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetReciprocalLinkTypeCreatedTest()
+    public void getReciprocalLinkTypeCreatedTest()
     {
 
         ELinkTypes value = ELinkTypes.CREATED;
@@ -225,7 +225,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetReciprocalLinkTypeUndefinedTest()
+    public void getReciprocalLinkTypeUndefinedTest()
     {
 
         ELinkTypes value = ELinkTypes.UNDEFINED;
@@ -233,7 +233,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetReciprocalLinkTypeHasParticipantTest()
+    public void getReciprocalLinkTypeHasParticipantTest()
     {
 
         ELinkTypes value = ELinkTypes.HAS_PARTICIPANT;
@@ -241,7 +241,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetReciprocalLinkTypeIsAParticipantOfTest()
+    public void getReciprocalLinkTypeIsAParticipantOfTest()
     {
 
         ELinkTypes value = ELinkTypes.IS_A_PARTICIPANT_OF;
@@ -249,7 +249,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetReciprocalLinkTypeIsWatchingTest()
+    public void getReciprocalLinkTypeIsWatchingTest()
     {
 
         ELinkTypes value = ELinkTypes.IS_WATCHING;
@@ -257,7 +257,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetReciprocalLinkTypeIsBeingWatchedByTest()
+    public void getReciprocalLinkTypeIsBeingWatchedByTest()
     {
 
         ELinkTypes value = ELinkTypes.IS_BEING_WATCHED_BY;
@@ -265,7 +265,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetReciprocalLinkTypeIsAPeerOfTest()
+    public void getReciprocalLinkTypeIsAPeerOfTest()
     {
 
         ELinkTypes value = ELinkTypes.IS_A_PEER_OF;
@@ -273,7 +273,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetReciprocalLinkTypeIsOwnedByTest()
+    public void getReciprocalLinkTypeIsOwnedByTest()
     {
 
         ELinkTypes value = ELinkTypes.IS_OWNED_BY;
@@ -281,7 +281,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetReciprocalLinkTypeHasOwnershipOfTest()
+    public void getReciprocalLinkTypeHasOwnershipOfTest()
     {
 
         ELinkTypes value = ELinkTypes.HAS_OWNERSHIP_OF;
@@ -289,7 +289,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetReciprocalLinkTypeIsUsedByTest()
+    public void getReciprocalLinkTypeIsUsedByTest()
     {
 
         ELinkTypes value = ELinkTypes.IS_USED_BY;
@@ -297,7 +297,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetReciprocalLinkTypeHasUseOfTest()
+    public void getReciprocalLinkTypeHasUseOfTest()
     {
 
         ELinkTypes value = ELinkTypes.HAS_USE_OF;
@@ -305,7 +305,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetLabelUndefinedTest()
+    public void getLabelUndefinedTest()
     {
 
         String a = "Undefined";
@@ -315,7 +315,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetLabelIsChildOfTest()
+    public void getLabelIsChildOfTest()
     {
 
         String a = "IsChildOf";
@@ -325,7 +325,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetLabelIsParentOfTest()
+    public void getLabelIsParentOfTest()
     {
 
         String a = "IsParentOf";
@@ -335,7 +335,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetLabelCreatedTest()
+    public void getLabelCreatedTest()
     {
 
         String a = "Created";
@@ -345,7 +345,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetLabelWasCreatedByTest()
+    public void getLabelWasCreatedByTest()
     {
 
         String a = "WasCreatedBy";
@@ -355,7 +355,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetLabelHasMemberTest()
+    public void getLabelHasMemberTest()
     {
 
         String a = "HasMember";
@@ -365,7 +365,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetLabelIsAMemberOfTest()
+    public void getLabelIsAMemberOfTest()
     {
 
         String a = "IsAMemberOf";
@@ -375,7 +375,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetLabelHasParticipantTest()
+    public void getLabelHasParticipantTest()
     {
 
         String a = "HasParticipant";
@@ -385,7 +385,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetLabelIsAParticipantOfTest()
+    public void getLabelIsAParticipantOfTest()
     {
 
         String a = "IsAParticipantOf";
@@ -395,7 +395,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetLabelIsWatchingTest()
+    public void getLabelIsWatchingTest()
     {
 
         String a = "IsWatching";
@@ -405,7 +405,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetLabelIsBeingWatchedByTest()
+    public void getLabelIsBeingWatchedByTest()
     {
 
         String a = "IsBeingWatchedBy";
@@ -415,7 +415,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetLabelIsAPeerOfTest()
+    public void getLabelIsAPeerOfTest()
     {
 
         String a = "IsAPeerOf";
@@ -425,7 +425,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetLabelIsOwnedByTest()
+    public void getLabelIsOwnedByTest()
     {
 
         String a = "IsOwnedBy";
@@ -435,7 +435,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetLabelHasOwnershipOfTest()
+    public void getLabelHasOwnershipOfTest()
     {
 
         String a = "HasOwnershipOf";
@@ -445,7 +445,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetLabelIsUsedByTest()
+    public void getLabelIsUsedByTest()
     {
 
         String a = "IsUsedBy";
@@ -455,7 +455,7 @@ public class ELinkTypesTest {
     }
 
     @Test
-    public void GetLabelHasUseOfTest()
+    public void getLabelHasUseOfTest()
     {
 
         String a = "HasUseOf";

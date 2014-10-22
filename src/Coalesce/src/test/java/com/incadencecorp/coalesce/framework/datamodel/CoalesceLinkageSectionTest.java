@@ -233,7 +233,7 @@ public class CoalesceLinkageSectionTest {
     }
 
     @Test
-    public void DateCreatedTest()
+    public void dateCreatedTest()
     {
         CoalesceLinkageSection linkageSection = getMissionLinkageSection();
 
@@ -247,7 +247,7 @@ public class CoalesceLinkageSectionTest {
     }
 
     @Test
-    public void LastModifiedTest()
+    public void lastModifiedTest()
     {
         CoalesceLinkageSection linkageSection = getMissionLinkageSection();
 

@@ -53,163 +53,163 @@ public class GUIDHelperTest {
      */
 
     @Test
-    public void IsValidTest()
+    public void isValidTest()
     {
         assertTrue(GUIDHelper.isValid(UUID.randomUUID().toString().toLowerCase()));
     }
 
     @Test
-    public void IsValidLowerCaseWithBracketsTest()
+    public void isValidLowerCaseWithBracketsTest()
     {
         assertTrue(GUIDHelper.isValid(LOWERCASE_WITH_BRACKETS));
     }
 
     @Test
-    public void IsValidLowerCaseWithoutBracketsTest()
+    public void isValidLowerCaseWithoutBracketsTest()
     {
         assertTrue(GUIDHelper.isValid(LOWERCASE_NO_BRACKETS));
     }
 
     @Test
-    public void IsValidUpperCaseWithBracketsTest()
+    public void isValidUpperCaseWithBracketsTest()
     {
         assertTrue(GUIDHelper.isValid(UPPERCASE_WITH_BRACKETS));
     }
 
     @Test
-    public void IsValidUpperCaseWithoutBracketsTest()
+    public void isValidUpperCaseWithoutBracketsTest()
     {
         assertTrue(GUIDHelper.isValid(UPPERCASE_NO_BRACKETS));
     }
 
     @Test
-    public void IsValidUpperCaseNullTest()
+    public void isValidUpperCaseNullTest()
     {
         assertFalse(GUIDHelper.isValid(null));
     }
 
     @Test
-    public void IsValidUpperCaseEmptyTest()
+    public void isValidUpperCaseEmptyTest()
     {
         assertFalse(GUIDHelper.isValid(""));
     }
 
     @Test
-    public void IsValidUpperCaseWhitespaceTest()
+    public void isValidUpperCaseWhitespaceTest()
     {
         assertFalse(GUIDHelper.isValid(" "));
     }
 
     @Test
-    public void IsValidUpperCaseStringTest()
+    public void isValidUpperCaseStringTest()
     {
         assertFalse(GUIDHelper.isValid("String"));
     }
 
     @Test
-    public void IsValidInvalidShortTest()
+    public void isValidInvalidShortTest()
     {
         assertFalse(GUIDHelper.isValid(UPPERCASE_NO_BRACKETS_SHORT));
     }
 
     @Test
-    public void IsValidInvalidLongTest()
+    public void isValidInvalidLongTest()
     {
         assertFalse(GUIDHelper.isValid(UPPERCASE_NO_BRACKETS_LONG));
     }
 
     @Test
-    public void IsValidInvalidWrongLeterTest()
+    public void isValidInvalidWrongLeterTest()
     {
         assertFalse(GUIDHelper.isValid(UPPERCASE_NO_BRACKETS_WRONG_LETTER));
     }
 
     @Test
-    public void IsValidInvalidSpecialCharacterTest()
+    public void isValidInvalidSpecialCharacterTest()
     {
         assertFalse(GUIDHelper.isValid(UPPERCASE_NO_BRACKETS_SPECIAL_CHAR));
     }
 
     @Test
-    public void IsValidInvalidMissingOpenningBracketTest()
+    public void isValidInvalidMissingOpenningBracketTest()
     {
         assertFalse(GUIDHelper.isValid(UPPERCASE_MISSING_OPENING_BRACKET));
     }
 
     @Test
-    public void IsValidInvalidMissingClosingBracketTest()
+    public void isValidInvalidMissingClosingBracketTest()
     {
         assertFalse(GUIDHelper.isValid(UPPERCASE_MISSING_CLOSING_BRACKET));
     }
 
     @Test
-    public void HasBracketsTest()
+    public void hasBracketsTest()
     {
         assertFalse(GUIDHelper.hasBrackets(UUID.randomUUID().toString().toLowerCase()));
     }
 
     @Test
-    public void HasBracketsLowerCaseWithBracketsTest()
+    public void hasBracketsLowerCaseWithBracketsTest()
     {
         assertTrue(GUIDHelper.hasBrackets(LOWERCASE_WITH_BRACKETS));
     }
 
     @Test
-    public void HasBracketsLowerCaseWithoutBracketsTest()
+    public void hasBracketsLowerCaseWithoutBracketsTest()
     {
         assertFalse(GUIDHelper.hasBrackets(LOWERCASE_NO_BRACKETS));
     }
 
     @Test
-    public void HasBracketsUpperCaseWithBracketsTest()
+    public void hasBracketsUpperCaseWithBracketsTest()
     {
         assertTrue(GUIDHelper.hasBrackets(UPPERCASE_WITH_BRACKETS));
     }
 
     @Test
-    public void HasBracketsUpperCaseWithoutBracketsTest()
+    public void hasBracketsUpperCaseWithoutBracketsTest()
     {
         assertFalse(GUIDHelper.hasBrackets(UPPERCASE_NO_BRACKETS));
     }
 
     @Test
-    public void HasBracketsInvalidShortTest()
+    public void hasBracketsInvalidShortTest()
     {
         assertFalse(GUIDHelper.hasBrackets(UPPERCASE_NO_BRACKETS_SHORT));
     }
 
     @Test
-    public void HasBracketsInvalidLongTest()
+    public void hasBracketsInvalidLongTest()
     {
         assertFalse(GUIDHelper.hasBrackets(UPPERCASE_NO_BRACKETS_LONG));
     }
 
     @Test
-    public void HasBracketsInvalidWithBracketsTest()
+    public void hasBracketsInvalidWithBracketsTest()
     {
         assertFalse(GUIDHelper.hasBrackets(UPPERCASE_WITH_BRACKETS_WRONG_LETTER));
     }
 
     @Test
-    public void HasBracketsInvalidWithoutBracketsTest()
+    public void hasBracketsInvalidWithoutBracketsTest()
     {
         assertFalse(GUIDHelper.hasBrackets(UPPERCASE_NO_BRACKETS_WRONG_LETTER));
     }
 
     @Test
-    public void HasBracketsInvalidMissingOpeningBracketTest()
+    public void hasBracketsInvalidMissingOpeningBracketTest()
     {
         assertFalse(GUIDHelper.hasBrackets(UPPERCASE_MISSING_OPENING_BRACKET));
     }
 
     @Test
-    public void HasBracketsInvalidMissingClosingBracketTest()
+    public void hasBracketsInvalidMissingClosingBracketTest()
     {
         assertFalse(GUIDHelper.hasBrackets(UPPERCASE_MISSING_CLOSING_BRACKET));
     }
 
     @Test
-    public void AddBracketsTest()
+    public void addBracketsTest()
     {
 
         String uuid = UUID.randomUUID().toString().toLowerCase();
@@ -220,7 +220,7 @@ public class GUIDHelperTest {
     }
 
     @Test
-    public void AddBracketsLowerCaseWithBracketsTest()
+    public void addBracketsLowerCaseWithBracketsTest()
     {
 
         String value = GUIDHelper.addBrackets(LOWERCASE_WITH_BRACKETS);
@@ -229,7 +229,7 @@ public class GUIDHelperTest {
     }
 
     @Test
-    public void AddBracketsLowerCaseWithoutBracketsTest()
+    public void addBracketsLowerCaseWithoutBracketsTest()
     {
 
         String value = GUIDHelper.addBrackets(LOWERCASE_NO_BRACKETS);
@@ -238,7 +238,7 @@ public class GUIDHelperTest {
     }
 
     @Test
-    public void AddBracketsUpperCaseWithBracketsTest()
+    public void addBracketsUpperCaseWithBracketsTest()
     {
 
         String value = GUIDHelper.addBrackets(UPPERCASE_WITH_BRACKETS);
@@ -247,7 +247,7 @@ public class GUIDHelperTest {
     }
 
     @Test
-    public void AddBracketsUpperCaseWithoutBracketsTest()
+    public void addBracketsUpperCaseWithoutBracketsTest()
     {
 
         String value = GUIDHelper.addBrackets(UPPERCASE_NO_BRACKETS);
@@ -256,7 +256,7 @@ public class GUIDHelperTest {
     }
 
     @Test
-    public void AddBracketsInvalidShortTest()
+    public void addBracketsInvalidShortTest()
     {
 
         String validUuid = GUIDHelper.addBrackets(UPPERCASE_NO_BRACKETS_SHORT);
@@ -265,7 +265,7 @@ public class GUIDHelperTest {
     }
 
     @Test
-    public void AddBracketsInvalidLongTest()
+    public void addBracketsInvalidLongTest()
     {
 
         String validUuid = GUIDHelper.addBrackets(UPPERCASE_NO_BRACKETS_LONG);
@@ -274,7 +274,7 @@ public class GUIDHelperTest {
     }
 
     @Test
-    public void AddBracketsInvalidWithBracketsTest()
+    public void addBracketsInvalidWithBracketsTest()
     {
 
         String value = GUIDHelper.addBrackets(UPPERCASE_WITH_BRACKETS_WRONG_LETTER);
@@ -283,7 +283,7 @@ public class GUIDHelperTest {
     }
 
     @Test
-    public void AddBracketsInvalidWithoutBracketsTest()
+    public void addBracketsInvalidWithoutBracketsTest()
     {
 
         String value = GUIDHelper.addBrackets(UPPERCASE_NO_BRACKETS_WRONG_LETTER);
@@ -292,7 +292,7 @@ public class GUIDHelperTest {
     }
 
     @Test
-    public void RemoveBracketsTest()
+    public void removeBracketsTest()
     {
 
         String uuid = UUID.randomUUID().toString().toLowerCase();
@@ -303,7 +303,7 @@ public class GUIDHelperTest {
     }
 
     @Test
-    public void RemoveBracketsLowerCaseWithBracketsTest()
+    public void removeBracketsLowerCaseWithBracketsTest()
     {
 
         String value = GUIDHelper.removeBrackets(LOWERCASE_WITH_BRACKETS);
@@ -312,7 +312,7 @@ public class GUIDHelperTest {
     }
 
     @Test
-    public void RemoveBracketsLowerCaseWithoutBracketsTest()
+    public void removeBracketsLowerCaseWithoutBracketsTest()
     {
 
         String value = GUIDHelper.removeBrackets(LOWERCASE_NO_BRACKETS);
@@ -321,7 +321,7 @@ public class GUIDHelperTest {
     }
 
     @Test
-    public void RemoveBracketsUpperCaseWithBracketsTest()
+    public void removeBracketsUpperCaseWithBracketsTest()
     {
 
         String value = GUIDHelper.removeBrackets(UPPERCASE_WITH_BRACKETS);
@@ -330,7 +330,7 @@ public class GUIDHelperTest {
     }
 
     @Test
-    public void RemoveBracketsUpperCaseWithoutBracketsTest()
+    public void removeBracketsUpperCaseWithoutBracketsTest()
     {
 
         String value = GUIDHelper.removeBrackets(UPPERCASE_NO_BRACKETS);
@@ -339,7 +339,7 @@ public class GUIDHelperTest {
     }
 
     @Test
-    public void RemoveBracketsInvalidShortTest()
+    public void removeBracketsInvalidShortTest()
     {
 
         String validUuid = GUIDHelper.removeBrackets(UPPERCASE_NO_BRACKETS_SHORT);
@@ -348,7 +348,7 @@ public class GUIDHelperTest {
     }
 
     @Test
-    public void RemoveBracketsInvalidLongTest()
+    public void removeBracketsInvalidLongTest()
     {
 
         String validUuid = GUIDHelper.removeBrackets(UPPERCASE_NO_BRACKETS_LONG);
@@ -357,7 +357,7 @@ public class GUIDHelperTest {
     }
 
     @Test
-    public void RemoveBracketsInvalidWithBracketsTest()
+    public void removeBracketsInvalidWithBracketsTest()
     {
 
         String value = GUIDHelper.removeBrackets(UPPERCASE_WITH_BRACKETS_WRONG_LETTER);
@@ -366,7 +366,7 @@ public class GUIDHelperTest {
     }
 
     @Test
-    public void RemoveBracketsInvalidWithoutBracketsTest()
+    public void removeBracketsInvalidWithoutBracketsTest()
     {
 
         String value = GUIDHelper.removeBrackets(UPPERCASE_NO_BRACKETS_WRONG_LETTER);
@@ -375,7 +375,7 @@ public class GUIDHelperTest {
     }
 
     @Test
-    public void GetGuidLowerCaseWithBracketsTest()
+    public void getGuidLowerCaseWithBracketsTest()
     {
 
         UUID guid = GUIDHelper.getGuid(LOWERCASE_WITH_BRACKETS);
@@ -384,7 +384,7 @@ public class GUIDHelperTest {
     }
 
     @Test
-    public void GetGuidLowerCaseWithoutBracketsTest()
+    public void getGuidLowerCaseWithoutBracketsTest()
     {
 
         UUID guid = GUIDHelper.getGuid(LOWERCASE_NO_BRACKETS);
@@ -393,7 +393,7 @@ public class GUIDHelperTest {
     }
 
     @Test
-    public void GetGuidUpperCaseWithBracketsTest()
+    public void getGuidUpperCaseWithBracketsTest()
     {
 
         UUID guid = GUIDHelper.getGuid(UPPERCASE_WITH_BRACKETS);
@@ -402,7 +402,7 @@ public class GUIDHelperTest {
     }
 
     @Test
-    public void GetGuidUpperCaseWithoutBracketsTest()
+    public void getGuidUpperCaseWithoutBracketsTest()
     {
 
         UUID guid = GUIDHelper.getGuid(UPPERCASE_NO_BRACKETS);
@@ -411,7 +411,7 @@ public class GUIDHelperTest {
     }
 
     @Test
-    public void GetGuidInvalidShortTest()
+    public void getGuidInvalidShortTest()
     {
 
         UUID guid = GUIDHelper.getGuid(UPPERCASE_NO_BRACKETS_SHORT);
@@ -420,7 +420,7 @@ public class GUIDHelperTest {
     }
 
     @Test
-    public void GetGuidInvalidLongTest()
+    public void getGuidInvalidLongTest()
     {
 
         UUID guid = GUIDHelper.getGuid(UPPERCASE_NO_BRACKETS_LONG);
@@ -429,7 +429,7 @@ public class GUIDHelperTest {
     }
 
     @Test
-    public void GetGuidInvalidWithBracketsTest()
+    public void getGuidInvalidWithBracketsTest()
     {
 
         UUID guid = GUIDHelper.getGuid(UPPERCASE_WITH_BRACKETS_WRONG_LETTER);
@@ -438,7 +438,7 @@ public class GUIDHelperTest {
     }
 
     @Test
-    public void GetGuidInvalidWithoutBracketsTest()
+    public void getGuidInvalidWithoutBracketsTest()
     {
 
         UUID guid = GUIDHelper.getGuid(UPPERCASE_NO_BRACKETS_WRONG_LETTER);
@@ -447,7 +447,7 @@ public class GUIDHelperTest {
     }
 
     @Test
-    public void GetGuidStringTest()
+    public void getGuidStringTest()
     {
 
         UUID guid = GUIDHelper.getGuid(UPPERCASE_NO_BRACKETS);
@@ -458,7 +458,7 @@ public class GUIDHelperTest {
     }
 
     @Test
-    public void GetGuidStringNullTest()
+    public void getGuidStringNullTest()
     {
 
         String guidString = GUIDHelper.getGuidString(null);
@@ -467,7 +467,7 @@ public class GUIDHelperTest {
     }
 
     @Test
-    public void GetGuidStringWithBracketsFalseTest()
+    public void getGuidStringWithBracketsFalseTest()
     {
 
         UUID guid = GUIDHelper.getGuid(UPPERCASE_NO_BRACKETS);
@@ -478,7 +478,7 @@ public class GUIDHelperTest {
     }
 
     @Test
-    public void GetGuidStringWithBracketsFalseNullTest()
+    public void getGuidStringWithBracketsFalseNullTest()
     {
 
         String guidString = null;
@@ -497,7 +497,7 @@ public class GUIDHelperTest {
     }
 
     @Test
-    public void GetGuidStringWithBracketsTrueTest()
+    public void getGuidStringWithBracketsTrueTest()
     {
 
         UUID guid = GUIDHelper.getGuid(UPPERCASE_NO_BRACKETS);
@@ -508,7 +508,7 @@ public class GUIDHelperTest {
     }
 
     @Test
-    public void GetGuidStringWithBracketsTrueNullTest()
+    public void getGuidStringWithBracketsTrueNullTest()
     {
 
         String guidString = GUIDHelper.getGuidString(null, true);

@@ -54,8 +54,8 @@ import org.xml.sax.SAXException;
  */
 public final class XmlHelper {
 
-    private static ConcurrentHashMap<String, JAXBContext> jaxbContexts = new ConcurrentHashMap<String, JAXBContext>();
-    private static String syncObject = "";
+    private static ConcurrentHashMap<String, JAXBContext> _jaxbContexts = new ConcurrentHashMap<String, JAXBContext>();
+    private static String _syncObject = "";
 
     private XmlHelper()
     {
@@ -152,9 +152,9 @@ public final class XmlHelper {
         // Get the Class Name
         String className = classType.getName();
 
-        if (jaxbContexts.containsKey(className))
+        if (_jaxbContexts.containsKey(className))
         {
-            return jaxbContexts.get(className);
+            return _jaxbContexts.get(className);
         }
         else
         {
@@ -162,18 +162,18 @@ public final class XmlHelper {
             // and the first one to get the lock will create and add, the others
             // will find the if() conditional evaluating to true, so it will
             // go get the one that was added.
-            synchronized (syncObject)
+            synchronized (_syncObject)
             {
-                if (!jaxbContexts.containsKey(className))
+                if (!_jaxbContexts.containsKey(className))
                 {
                     // Haven't seen before; create and add to concurrent hash map
                     JAXBContext context = JAXBContext.newInstance(classType);
-                    jaxbContexts.put(className, context);
+                    _jaxbContexts.put(className, context);
                     return context;
                 }
                 else
                 {
-                    return jaxbContexts.get(className);
+                    return _jaxbContexts.get(className);
                 }
             }
         }

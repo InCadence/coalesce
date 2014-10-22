@@ -29,7 +29,7 @@ public enum ELinkTypes
     /**
      * A mapping between the integer code and its corresponding Status to facilitate lookup by code.
      */
-    private static Map<String, ELinkTypes> codeToStatusMapping;
+    private static Map<String, ELinkTypes> _codeToStatusMapping;
 
     private ELinkTypes(String label)
     {
@@ -39,12 +39,12 @@ public enum ELinkTypes
     private static void initMapping()
     {
 
-        if (codeToStatusMapping == null)
+        if (_codeToStatusMapping == null)
         {
-            codeToStatusMapping = new HashMap<String, ELinkTypes>();
+            _codeToStatusMapping = new HashMap<String, ELinkTypes>();
             for (ELinkTypes s : values())
             {
-                codeToStatusMapping.put(s._label.toLowerCase(), s);
+                _codeToStatusMapping.put(s._label.toLowerCase(), s);
             }
         }
     }
@@ -78,7 +78,7 @@ public enum ELinkTypes
 
         if (StringHelper.isNullOrEmpty(coalesceType)) return ELinkTypes.UNDEFINED;
         
-        ELinkTypes value = codeToStatusMapping.get(coalesceType.trim().toLowerCase());
+        ELinkTypes value = _codeToStatusMapping.get(coalesceType.trim().toLowerCase());
 
         if (value == null) value = ELinkTypes.UNDEFINED;
 

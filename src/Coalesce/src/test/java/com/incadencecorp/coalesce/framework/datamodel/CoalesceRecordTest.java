@@ -429,7 +429,7 @@ public class CoalesceRecordTest {
     }
 
     @Test
-    public void DateCreatedTest()
+    public void dateCreatedTest()
     {
         CoalesceRecord record = getMissionRecord();
 
@@ -443,7 +443,7 @@ public class CoalesceRecordTest {
     }
 
     @Test
-    public void LastModifiedTest()
+    public void lastModifiedTest()
     {
         CoalesceRecord record = getMissionRecord();
 

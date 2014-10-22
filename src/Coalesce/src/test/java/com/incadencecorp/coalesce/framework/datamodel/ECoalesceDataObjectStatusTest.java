@@ -17,49 +17,49 @@ import org.junit.Test;
 public class ECoalesceDataObjectStatusTest {
 
     @Test
-    public void GetTypeForLabelActiveStatusUpperCaseTest()
+    public void getTypeForLabelActiveStatusUpperCaseTest()
     {
         assertEquals(ECoalesceDataObjectStatus.ACTIVE, ECoalesceDataObjectStatus.getTypeForLabel("ACTIVE"));
 
     }
 
     @Test
-    public void GetTypeForLabelDeletedStatusUpperCaseTest()
+    public void getTypeForLabelDeletedStatusUpperCaseTest()
     {
         assertEquals(ECoalesceDataObjectStatus.DELETED, ECoalesceDataObjectStatus.getTypeForLabel("DELETED"));
 
     }
 
     @Test
-    public void GetTypeForLabelUnknownStatusUpperCaseTest()
+    public void getTypeForLabelUnknownStatusUpperCaseTest()
     {
         assertEquals(ECoalesceDataObjectStatus.UNKNOWN, ECoalesceDataObjectStatus.getTypeForLabel("UNKNOWN"));
 
     }
 
     @Test
-    public void GetTypeForLabelActiveStatusLowerCaseTest()
+    public void getTypeForLabelActiveStatusLowerCaseTest()
     {
         assertEquals(ECoalesceDataObjectStatus.ACTIVE, ECoalesceDataObjectStatus.getTypeForLabel("active"));
 
     }
 
     @Test
-    public void GetTypeForLabelDeletedStatusLowerCaseTest()
+    public void getTypeForLabelDeletedStatusLowerCaseTest()
     {
         assertEquals(ECoalesceDataObjectStatus.DELETED, ECoalesceDataObjectStatus.getTypeForLabel("deleted"));
 
     }
 
     @Test
-    public void GetTypeForLabelUnknownStatusLowerCaseTest()
+    public void getTypeForLabelUnknownStatusLowerCaseTest()
     {
         assertEquals(ECoalesceDataObjectStatus.UNKNOWN, ECoalesceDataObjectStatus.getTypeForLabel("unknown"));
 
     }
 
     @Test
-    public void GetLabelActiveStatusTest()
+    public void getLabelActiveStatusTest()
     {
 
         String a = "Active";
@@ -69,7 +69,7 @@ public class ECoalesceDataObjectStatusTest {
     }
 
     @Test
-    public void GetLabelDeletedStatusTest()
+    public void getLabelDeletedStatusTest()
     {
 
         String a = "Deleted";
@@ -79,7 +79,7 @@ public class ECoalesceDataObjectStatusTest {
     }
 
     @Test
-    public void GetLabelUnknownStatusTest()
+    public void getLabelUnknownStatusTest()
     {
 
         String a = "Unknown";

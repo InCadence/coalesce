@@ -30,16 +30,16 @@ public enum EResponseStatuses
     // Static Methods
     // ----------------------------------------------------------------------//
 
-    private static Map<String, EResponseStatuses> codeToStatusMapping;
+    private static Map<String, EResponseStatuses> _codeToStatusMapping;
 
     private static void initMapping()
     {
-        if (codeToStatusMapping == null)
+        if (_codeToStatusMapping == null)
         {
-            codeToStatusMapping = new HashMap<String, EResponseStatuses>();
+            _codeToStatusMapping = new HashMap<String, EResponseStatuses>();
             for (EResponseStatuses s : values())
             {
-                codeToStatusMapping.put(s._label.toLowerCase(), s);
+                _codeToStatusMapping.put(s._label.toLowerCase(), s);
             }
         }
     }
@@ -51,7 +51,7 @@ public enum EResponseStatuses
 
         if (StringHelper.isNullOrEmpty(label)) return EResponseStatuses.Unknown;
 
-        EResponseStatuses value = codeToStatusMapping.get(label.trim().toLowerCase());
+        EResponseStatuses value = _codeToStatusMapping.get(label.trim().toLowerCase());
 
         if (value == null) value = EResponseStatuses.Unknown;
 

@@ -275,10 +275,10 @@ public class CoalesceFramework {
             throws CoalescePersistorException
     {
 
-        String Xml = this.getCoalesceEntityTemplateXml(name, source, version);
+        String xml = this.getCoalesceEntityTemplateXml(name, source, version);
 
         CoalesceEntity entity = new CoalesceEntity();
-        entity.initialize(Xml);
+        entity.initialize(xml);
 
         return entity;
 

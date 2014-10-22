@@ -51,20 +51,20 @@ public class FieldValuesTest {
     @BeforeClass
     public static void setUpBeforeClass() throws Exception
     {
-        InitializeAllClassifications();
-        InitializeNATOClassifications();
-        InitializeJointNotUSAClassifications();
-        InitializeJointUSAClassifications();
-        InitializeNotJointNotUSAClassifications();
-        InitializeNotJointUSAClassifications();
+        initializeAllClassifications();
+        initializeNATOClassifications();
+        initializeJointNotUSAClassifications();
+        initializeJointUSAClassifications();
+        initializeNotJointNotUSAClassifications();
+        initializeNotJointUSAClassifications();
 
-        InitializeCompartments();
+        initializeCompartments();
 
-        InitializeListOfCountries();
+        initializeListOfCountries();
 
     }
 
-    private static void InitializeAllClassifications()
+    private static void initializeAllClassifications()
     {
         List<MarkingValue> allClassifications = new ArrayList<MarkingValue>();
 
@@ -92,7 +92,7 @@ public class FieldValuesTest {
 
     }
 
-    private static void InitializeNATOClassifications()
+    private static void initializeNATOClassifications()
     {
         List<MarkingValue> natoClassifications = new ArrayList<MarkingValue>();
 
@@ -110,7 +110,7 @@ public class FieldValuesTest {
 
     }
 
-    private static void InitializeJointNotUSAClassifications()
+    private static void initializeJointNotUSAClassifications()
     {
         List<MarkingValue> jointNotUSAClassification = new ArrayList<MarkingValue>();
 
@@ -123,7 +123,7 @@ public class FieldValuesTest {
         _jointNotUSAClassifications = Collections.unmodifiableList(jointNotUSAClassification);
     }
 
-    private static void InitializeJointUSAClassifications()
+    private static void initializeJointUSAClassifications()
     {
         List<MarkingValue> jointUSAClassification = new ArrayList<MarkingValue>();
 
@@ -135,7 +135,7 @@ public class FieldValuesTest {
         _jointUSAClassifications = Collections.unmodifiableList(jointUSAClassification);
     }
 
-    private static void InitializeNotJointNotUSAClassifications()
+    private static void initializeNotJointNotUSAClassifications()
     {
         List<MarkingValue> notJointNotUSAClassification = new ArrayList<MarkingValue>();
 
@@ -148,7 +148,7 @@ public class FieldValuesTest {
         _notJointNotUSAClassifications = Collections.unmodifiableList(notJointNotUSAClassification);
     }
 
-    private static void InitializeNotJointUSAClassifications()
+    private static void initializeNotJointUSAClassifications()
     {
         List<MarkingValue> notJointUSAClassification = new ArrayList<MarkingValue>();
 
@@ -160,7 +160,7 @@ public class FieldValuesTest {
         _notJointUSAClassifications = Collections.unmodifiableList(notJointUSAClassification);
     }
 
-    private static void InitializeCompartments()
+    private static void initializeCompartments()
     {
         List<MarkingValue> compartments = new ArrayList<MarkingValue>();
 
@@ -172,7 +172,7 @@ public class FieldValuesTest {
         _compartments = Collections.unmodifiableList(compartments);
     }
 
-    private static void InitializeListOfCountries()
+    private static void initializeListOfCountries()
     {
 
         List<ISO3166Country> countryList = new ArrayList<ISO3166Country>();
@@ -439,13 +439,13 @@ public class FieldValuesTest {
      */
 
     @Test
-    public void ClassListAddTest() throws IllegalAccessException,  InvocationTargetException,
+    public void classListAddTest() throws IllegalAccessException,  InvocationTargetException,
             NoSuchMethodException
     {
 
         ArrayList<MarkingValue> markingValues = new ArrayList<MarkingValue>();
 
-        CallClassListAdd(markingValues, "Parent", "Title", "Abbreviation", "Portion");
+        callClassListAdd(markingValues, "Parent", "Title", "Abbreviation", "Portion");
 
         assertEquals(1, markingValues.size());
 
@@ -455,13 +455,13 @@ public class FieldValuesTest {
     }
 
     @Test
-    public void ClassListAddToExistingListTest() throws NoSuchMethodException, IllegalAccessException,
+    public void classListAddToExistingListTest() throws NoSuchMethodException, IllegalAccessException,
             InvocationTargetException
     {
 
         List<MarkingValue> markingValues = FieldValues.getListOfSciControlSystems();
 
-        CallClassListAdd(markingValues, "Parent", "Title", "Abbreviation", "Portion");
+        callClassListAdd(markingValues, "Parent", "Title", "Abbreviation", "Portion");
 
         assertEquals(5, markingValues.size());
 
@@ -477,7 +477,7 @@ public class FieldValuesTest {
 
     // All IsNato Selected 0 !IsJoint !USA
     @Test
-    public void GetListOfClassificationsAllIsNatoSelectedEmptyNotJointNotUSATest()
+    public void getListOfClassificationsAllIsNatoSelectedEmptyNotJointNotUSATest()
     {
 
         Marking mv = new Marking();
@@ -493,7 +493,7 @@ public class FieldValuesTest {
 
     // All IsNato Selected 1 !IsJoint USA
     @Test
-    public void GetListOfClassificationsAllIsNatoSelectedEmptyNotJointTest()
+    public void getListOfClassificationsAllIsNatoSelectedEmptyNotJointTest()
     {
 
         Marking mv = new Marking();
@@ -508,7 +508,7 @@ public class FieldValuesTest {
 
     // All IsNato Selected 1 !IsJoint !USA
     @Test
-    public void GetListOfClassificationsAllIsNatoSelectedOneNotJointNotUSATest()
+    public void getListOfClassificationsAllIsNatoSelectedOneNotJointNotUSATest()
     {
 
         Marking mv = new Marking("//ATA UNCLASSIFIED");
@@ -523,7 +523,7 @@ public class FieldValuesTest {
 
     // All IsNato Selected 2 IsJoint USA
     @Test
-    public void GetListOfClassificationsAllIsNatoSelectedTwoJointUSATest()
+    public void getListOfClassificationsAllIsNatoSelectedTwoJointUSATest()
     {
 
         Marking mv = new Marking("//JOINT UNCLASSIFIED ALA USA");
@@ -538,7 +538,7 @@ public class FieldValuesTest {
 
     // All IsNato Selected 2 IsJoint !USA
     @Test
-    public void GetListOfClassificationsAllIsNatoSelectedTwoJointNotUSATest()
+    public void getListOfClassificationsAllIsNatoSelectedTwoJointNotUSATest()
     {
 
         Marking mv = new Marking("//JOINT UNCLASSIFIED ALA ATA");
@@ -553,7 +553,7 @@ public class FieldValuesTest {
 
     // All !IsNato Selected 0 !IsJoint !USA
     @Test
-    public void GetListOfClassificationsAllNotIsNatoSelectedEmptyNotJointNotUSATest()
+    public void getListOfClassificationsAllNotIsNatoSelectedEmptyNotJointNotUSATest()
     {
 
         Marking mv = new Marking();
@@ -569,7 +569,7 @@ public class FieldValuesTest {
 
     // All !IsNato Selected 1 !IsJoint USA
     @Test
-    public void GetListOfClassificationsAllNotIsNatoSelectedEmptyNotJointTest()
+    public void getListOfClassificationsAllNotIsNatoSelectedEmptyNotJointTest()
     {
 
         Marking mv = new Marking();
@@ -584,7 +584,7 @@ public class FieldValuesTest {
 
     // All !IsNato Selected 1 !IsJoint !USA
     @Test
-    public void GetListOfClassificationsAllNotIsNatoSelectedOneNotJointNotUSATest()
+    public void getListOfClassificationsAllNotIsNatoSelectedOneNotJointNotUSATest()
     {
 
         Marking mv = new Marking("//ATA UNCLASSIFIED");
@@ -599,7 +599,7 @@ public class FieldValuesTest {
 
     // All !IsNato Selected 2 IsJoint USA
     @Test
-    public void GetListOfClassificationsAllNotIsNatoSelectedTwoJointUSATest()
+    public void getListOfClassificationsAllNotIsNatoSelectedTwoJointUSATest()
     {
 
         Marking mv = new Marking("//JOINT UNCLASSIFIED ALA USA");
@@ -614,7 +614,7 @@ public class FieldValuesTest {
 
     // All !IsNato Selected 2 IsJoint !USA
     @Test
-    public void GetListOfClassificationsAllNotIsNatoSelectedTwoJointNotUSATest()
+    public void getListOfClassificationsAllNotIsNatoSelectedTwoJointNotUSATest()
     {
 
         Marking mv = new Marking("//JOINT UNCLASSIFIED ALA ATA");
@@ -629,7 +629,7 @@ public class FieldValuesTest {
 
     // !All IsNato Selected 0 !IsJoint !USA
     @Test
-    public void GetListOfClassificationsNotAllIsNatoSelectedEmptyNotJointNotUSATest()
+    public void getListOfClassificationsNotAllIsNatoSelectedEmptyNotJointNotUSATest()
     {
 
         Marking mv = new Marking();
@@ -645,7 +645,7 @@ public class FieldValuesTest {
 
     // !All IsNato Selected 1 !IsJoint USA
     @Test
-    public void GetListOfClassificationsNotAllIsNatoSelectedOneNotJointTest()
+    public void getListOfClassificationsNotAllIsNatoSelectedOneNotJointTest()
     {
 
         Marking mv = new Marking();
@@ -660,7 +660,7 @@ public class FieldValuesTest {
 
     // !All IsNato Selected 1 !IsJoint !USA
     @Test
-    public void GetListOfClassificationsNotAllIsNatoSelectedOneNotJointNotUSATest()
+    public void getListOfClassificationsNotAllIsNatoSelectedOneNotJointNotUSATest()
     {
 
         Marking mv = new Marking("//ATA UNCLASSIFIED");
@@ -675,7 +675,7 @@ public class FieldValuesTest {
 
     // !All IsNato Selected 2 IsJoint USA
     @Test
-    public void GetListOfClassificationsNotAllIsNatoSelectedTwoJointUSATest()
+    public void getListOfClassificationsNotAllIsNatoSelectedTwoJointUSATest()
     {
 
         Marking mv = new Marking("//JOINT UNCLASSIFIED ALA USA");
@@ -690,7 +690,7 @@ public class FieldValuesTest {
 
     // !All IsNato Selected 2 IsJoint !USA
     @Test
-    public void GetListOfClassificationsNotAllIsNatoSelectedTwoJointNotUSATest()
+    public void getListOfClassificationsNotAllIsNatoSelectedTwoJointNotUSATest()
     {
 
         Marking mv = new Marking("//JOINT UNCLASSIFIED ALA ATA");
@@ -705,7 +705,7 @@ public class FieldValuesTest {
 
     // !All !IsNato Selected 0 !IsJoint !USA
     @Test
-    public void GetListOfClassificationsNotAllNotIsNatoSelectedEmptyNotJointNotUSATest()
+    public void getListOfClassificationsNotAllNotIsNatoSelectedEmptyNotJointNotUSATest()
     {
 
         Marking mv = new Marking();
@@ -721,7 +721,7 @@ public class FieldValuesTest {
 
     // !All !IsNato Selected 1 !IsJoint USA
     @Test
-    public void GetListOfClassificationsNotAllNotIsNatoSelectedOneNotJointTest()
+    public void getListOfClassificationsNotAllNotIsNatoSelectedOneNotJointTest()
     {
 
         Marking mv = new Marking();
@@ -736,7 +736,7 @@ public class FieldValuesTest {
 
     // !All !IsNato Selected 1 !IsJoint !USA
     @Test
-    public void GetListOfClassificationsNotAllNotIsNatoSelectedOneNotJointNotUSATest()
+    public void getListOfClassificationsNotAllNotIsNatoSelectedOneNotJointNotUSATest()
     {
 
         Marking mv = new Marking("//ATA UNCLASSIFIED");
@@ -751,7 +751,7 @@ public class FieldValuesTest {
 
     // !All !IsNato Selected 2 IsJoint USA
     @Test
-    public void GetListOfClassificationsNotAllNotIsNatoSelectedTwoJointUSATest()
+    public void getListOfClassificationsNotAllNotIsNatoSelectedTwoJointUSATest()
     {
 
         Marking mv = new Marking("//JOINT UNCLASSIFIED ALA USA");
@@ -766,7 +766,7 @@ public class FieldValuesTest {
 
     // !All !IsNato Selected 2 IsJoint !USA
     @Test
-    public void GetListOfClassificationsNotAllNotIsNatoSelectedTwoJointNotUSATest()
+    public void getListOfClassificationsNotAllNotIsNatoSelectedTwoJointNotUSATest()
     {
 
         Marking mv = new Marking("//JOINT UNCLASSIFIED ALA ATA");
@@ -780,7 +780,7 @@ public class FieldValuesTest {
     }
 
     @Test
-    public void GetListOfClassificationsNullMarkingAllTest()
+    public void getListOfClassificationsNullMarkingAllTest()
     {
 
         List<MarkingValue> classifications = FieldValues.getListOfClassifications(null, true);
@@ -790,7 +790,7 @@ public class FieldValuesTest {
     }
 
     @Test
-    public void GetListOfClassificationsNullMarkingNotAllTest()
+    public void getListOfClassificationsNullMarkingNotAllTest()
     {
 
         List<MarkingValue> classifications = FieldValues.getListOfClassifications(null, false);
@@ -800,7 +800,7 @@ public class FieldValuesTest {
     }
 
     @Test
-    public void GetListOfSCIcontrolSystemsTest()
+    public void getListOfSCIcontrolSystemsTest()
     {
 
         List<MarkingValue> systems = FieldValues.getListOfSciControlSystems();
@@ -809,7 +809,7 @@ public class FieldValuesTest {
     }
 
     @Test
-    public void GetListOfCompartmentsTest()
+    public void getListOfCompartmentsTest()
     {
 
         List<MarkingValue> compartments = FieldValues.getListOfCompartments();
@@ -818,7 +818,7 @@ public class FieldValuesTest {
     }
 
     @Test
-    public void GetListOfSubCompartmentsTest()
+    public void getListOfSubCompartmentsTest()
     {
 
         List<MarkingValue> subCompartments = FieldValues.getListOfSubCompartments();
@@ -827,7 +827,7 @@ public class FieldValuesTest {
     }
 
     @Test
-    public void GetListOfCountriesTest()
+    public void getListOfCountriesTest()
     {
 
         List<ISO3166Country> countries = FieldValues.getListOfCountries();
@@ -836,7 +836,7 @@ public class FieldValuesTest {
     }
 
     @Test
-    public void GetCountryByNameTest()
+    public void getCountryByNameTest()
     {
 
         ISO3166Country country = FieldValues.getCountryByName("SAN MARINO");
@@ -845,7 +845,7 @@ public class FieldValuesTest {
     }
 
     @Test
-    public void GetCountryByNameNullTest()
+    public void getCountryByNameNullTest()
     {
 
         ISO3166Country country = FieldValues.getCountryByName(null);
@@ -855,7 +855,7 @@ public class FieldValuesTest {
     }
 
     @Test
-    public void GetCountryByNameEmptyTest()
+    public void getCountryByNameEmptyTest()
     {
 
         ISO3166Country country = FieldValues.getCountryByName("");
@@ -865,7 +865,7 @@ public class FieldValuesTest {
     }
 
     @Test
-    public void GetCountryByNameUnknownTest()
+    public void getCountryByNameUnknownTest()
     {
 
         ISO3166Country country = FieldValues.getCountryByName("Unknown");
@@ -875,7 +875,7 @@ public class FieldValuesTest {
     }
 
     @Test
-    public void GetCountryByAlhpa3Test()
+    public void getCountryByAlhpa3Test()
     {
 
         ISO3166Country country = FieldValues.getCountryByAlpha3("SMR");
@@ -884,7 +884,7 @@ public class FieldValuesTest {
     }
 
     @Test
-    public void GetCountryByAlpha3NullTest()
+    public void getCountryByAlpha3NullTest()
     {
 
         ISO3166Country country = FieldValues.getCountryByAlpha3(null);
@@ -894,7 +894,7 @@ public class FieldValuesTest {
     }
 
     @Test
-    public void GetCountryByAlpha3EmptyTest()
+    public void getCountryByAlpha3EmptyTest()
     {
 
         ISO3166Country country = FieldValues.getCountryByAlpha3("");
@@ -904,7 +904,7 @@ public class FieldValuesTest {
     }
 
     @Test
-    public void GetCountryByAlpha3UnknownTest()
+    public void getCountryByAlpha3UnknownTest()
     {
 
         ISO3166Country country = FieldValues.getCountryByAlpha3("Unknown");
@@ -914,7 +914,7 @@ public class FieldValuesTest {
     }
 
     @Test
-    public void GetMarkingValueByTitleTest()
+    public void getMarkingValueByTitleTest()
     {
 
         MarkingValue mv = FieldValues.getMarkingValueByTitle("COSMIC TOP SECRET", _allClassifications);
@@ -923,7 +923,7 @@ public class FieldValuesTest {
     }
 
     @Test
-    public void GetMarkingValueByTitleNullTest()
+    public void getMarkingValueByTitleNullTest()
     {
 
         MarkingValue mv = FieldValues.getMarkingValueByTitle(null, _allClassifications);
@@ -933,7 +933,7 @@ public class FieldValuesTest {
     }
 
     @Test
-    public void GetMarkingValueByTitleEmptyTest()
+    public void getMarkingValueByTitleEmptyTest()
     {
 
         MarkingValue mv = FieldValues.getMarkingValueByTitle("", _allClassifications);
@@ -943,7 +943,7 @@ public class FieldValuesTest {
     }
 
     @Test
-    public void GetMarkingValueByTitleUnknownTest()
+    public void getMarkingValueByTitleUnknownTest()
     {
 
         MarkingValue mv = FieldValues.getMarkingValueByTitle("Unknown", _allClassifications);
@@ -952,7 +952,7 @@ public class FieldValuesTest {
     }
 
     @Test
-    public void GetMarkingValueByPortionTest()
+    public void getMarkingValueByPortionTest()
     {
 
         MarkingValue mv = FieldValues.getMarkingValueByPortion("CTS", _allClassifications);
@@ -961,7 +961,7 @@ public class FieldValuesTest {
     }
 
     @Test
-    public void GetMarkingValueByPortionNullTest()
+    public void getMarkingValueByPortionNullTest()
     {
 
         MarkingValue mv = FieldValues.getMarkingValueByPortion(null, _allClassifications);
@@ -971,7 +971,7 @@ public class FieldValuesTest {
     }
 
     @Test
-    public void GetMarkingValueByPortionEmptyTest()
+    public void getMarkingValueByPortionEmptyTest()
     {
 
         MarkingValue mv = FieldValues.getMarkingValueByPortion("", _allClassifications);
@@ -981,7 +981,7 @@ public class FieldValuesTest {
     }
 
     @Test
-    public void GetMarkingValueByPortionUnknownTest()
+    public void getMarkingValueByPortionUnknownTest()
     {
 
         MarkingValue mv = FieldValues.getMarkingValueByPortion("Unknown", _allClassifications);
@@ -990,7 +990,7 @@ public class FieldValuesTest {
     }
 
     @Test
-    public void GetListOfClassifications()
+    public void getListOfClassifications()
     {
 
         List<ISO3166Country> testCountries = FieldValues.getListOfCountries();
@@ -1011,7 +1011,7 @@ public class FieldValuesTest {
 
     }
 
-    private void CallClassListAdd(List<MarkingValue> classList,
+    private void callClassListAdd(List<MarkingValue> classList,
                                   String parent,
                                   String title,
                                   String abbreviation,

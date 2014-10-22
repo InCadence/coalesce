@@ -29,7 +29,7 @@ public class CoalesceFieldCommon {
 
     }
 
-    public static String CallGetBaseFilenameWithFullDirectoryPathForKey(String key, boolean createIfDoesNotExist)
+    public static String callGetBaseFilenameWithFullDirectoryPathForKey(String key, boolean createIfDoesNotExist)
             throws NoSuchMethodException, InvocationTargetException, IllegalAccessException
     {
         Class<?>[] args = new Class[2];

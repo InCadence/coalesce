@@ -479,7 +479,7 @@ public class CoalesceFieldDefinitionTest {
     }
 
     @Test
-    public void KeyTest()
+    public void keyTest()
     {
         CoalesceFieldDefinition fieldDefinition = getFieldDefinitionFromXml(CoalesceTypeInstances.TEST_MISSION);
 
@@ -494,7 +494,7 @@ public class CoalesceFieldDefinitionTest {
     }
 
     @Test
-    public void NameTest()
+    public void nameTest()
     {
         CoalesceFieldDefinition fieldDefinition = getFieldDefinitionFromXml(CoalesceTypeInstances.TEST_MISSION);
 
@@ -507,7 +507,7 @@ public class CoalesceFieldDefinitionTest {
     }
 
     @Test
-    public void TypeTest()
+    public void typeTest()
     {
         CoalesceFieldDefinition fieldDefinition = getFieldDefinitionFromXml(CoalesceTypeInstances.TEST_MISSION);
 
@@ -516,7 +516,7 @@ public class CoalesceFieldDefinitionTest {
     }
 
     @Test
-    public void LabelTest()
+    public void labelTest()
     {
         CoalesceFieldDefinition fieldDefinition = getFieldDefinitionFromXml(CoalesceTypeInstances.TEST_MISSION);
 
@@ -529,7 +529,7 @@ public class CoalesceFieldDefinitionTest {
     }
 
     @Test
-    public void DataTypeTest()
+    public void dataTypeTest()
     {
         CoalesceFieldDefinition fieldDefinition = getFieldDefinitionFromXml(CoalesceTypeInstances.TEST_MISSION);
 
@@ -542,7 +542,7 @@ public class CoalesceFieldDefinitionTest {
     }
 
     @Test
-    public void DefaultClassificationMarkingStringTest()
+    public void defaultClassificationMarkingStringTest()
     {
         CoalesceFieldDefinition fieldDefinition = getFieldDefinitionFromXml(CoalesceTypeInstances.TEST_MISSION);
 
@@ -557,7 +557,7 @@ public class CoalesceFieldDefinitionTest {
     }
 
     @Test
-    public void DefaultClassificationMarkingStringPortionTest()
+    public void defaultClassificationMarkingStringPortionTest()
     {
         CoalesceFieldDefinition fieldDefinition = getFieldDefinitionFromXml(CoalesceTypeInstances.TEST_MISSION);
 
@@ -572,7 +572,7 @@ public class CoalesceFieldDefinitionTest {
     }
 
     @Test
-    public void DefaultClassificationMarkingMarkingTest()
+    public void defaultClassificationMarkingMarkingTest()
     {
         CoalesceFieldDefinition fieldDefinition = getFieldDefinitionFromXml(CoalesceTypeInstances.TEST_MISSION);
 
@@ -587,7 +587,7 @@ public class CoalesceFieldDefinitionTest {
     }
 
     @Test
-    public void DefaultValue()
+    public void defaultValue()
     {
         CoalesceFieldDefinition fieldDefinition = getFieldDefinitionFromXml(CoalesceTypeInstances.TEST_MISSION);
 
@@ -600,7 +600,7 @@ public class CoalesceFieldDefinitionTest {
     }
 
     @Test
-    public void DateCreatedTest()
+    public void dateCreatedTest()
     {
         CoalesceFieldDefinition fieldDefinition = getFieldDefinitionFromXml(CoalesceTypeInstances.TEST_MISSION);
 
@@ -614,7 +614,7 @@ public class CoalesceFieldDefinitionTest {
     }
 
     @Test
-    public void LastModifiedTest()
+    public void lastModifiedTest()
     {
         CoalesceFieldDefinition fieldDefinition = getFieldDefinitionFromXml(CoalesceTypeInstances.TEST_MISSION);
 

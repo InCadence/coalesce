@@ -67,7 +67,7 @@ public class CoalesceFieldHistoryTest {
      */
 
     @Test
-    public void ConstructorXsdFieldBaseXsdFieldTest()
+    public void constructorCoalesceFieldBaseCoalesceFieldTest()
     {
 
         CoalesceStringField field = new CoalesceStringField();
@@ -79,7 +79,7 @@ public class CoalesceFieldHistoryTest {
     }
 
     @Test
-    public void ConstructorXsdFieldHistoryTest()
+    public void constructorCoalesceFieldHistoryTest()
     {
         CoalesceEntity entity = new CoalesceEntity();
         entity.initialize();
@@ -165,7 +165,7 @@ public class CoalesceFieldHistoryTest {
     }
 
     @Test
-    public void ConstructorNoPreviousHistory()
+    public void constructorNoPreviousHistory()
     {
         CoalesceField<?> field = CoalesceFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_BASE64_PATH);
 
@@ -230,7 +230,7 @@ public class CoalesceFieldHistoryTest {
     public void getKeyTest()
     {
 
-        CoalesceFieldHistory field = GetTestMissionNameFieldHistory();
+        CoalesceFieldHistory field = getTestMissionNameFieldHistory();
 
         assertEquals(CoalesceTypeInstances.TEST_MISSION_NAME_HISTORY_KEY, field.getKey());
 
@@ -242,247 +242,247 @@ public class CoalesceFieldHistoryTest {
 
         CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceFieldHistory field = GetTestMissionNameFieldHistory(mission);
+        CoalesceFieldHistory field = getTestMissionNameFieldHistory(mission);
 
         UUID newGuid = UUID.randomUUID();
         field.setKey(newGuid.toString());
 
-        CoalesceFieldHistory savedField = GetSavedTestMissionFieldHistory(mission);
+        CoalesceFieldHistory savedField = getSavedTestMissionFieldHistory(mission);
 
         assertEquals(savedField.getKey().toUpperCase(), newGuid.toString().toUpperCase());
 
     }
 
     @Test
-    public void GetNameTest()
+    public void getNameTest()
     {
 
-        CoalesceFieldHistory field = GetTestMissionNameFieldHistory();
+        CoalesceFieldHistory field = getTestMissionNameFieldHistory();
 
         assertEquals(CoalesceTypeInstances.TEST_MISSION_NAME_NAME, field.getName());
 
     }
 
     @Test
-    public void SetNameTest()
+    public void setNameTest()
     {
 
         CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceFieldHistory field = GetTestMissionNameFieldHistory(mission);
+        CoalesceFieldHistory field = getTestMissionNameFieldHistory(mission);
 
         field.setName("Testingname");
 
         String serializedMission = mission.toXml();
         CoalesceEntity savedMission = CoalesceEntity.create(serializedMission);
 
-        CoalesceFieldHistory savedField = GetTestMissionNameFieldHistory(savedMission);
+        CoalesceFieldHistory savedField = getTestMissionNameFieldHistory(savedMission);
 
         assertEquals("Testingname", savedField.getName());
 
     }
 
     @Test
-    public void GetValueTest()
+    public void getValueTest()
     {
 
-        CoalesceFieldHistory field = GetTestMissionNameFieldHistory();
+        CoalesceFieldHistory field = getTestMissionNameFieldHistory();
 
         assertEquals(CoalesceTypeInstances.TEST_MISSION_NAME_HISTORY_VALUE, field.getBaseValue());
 
     }
 
     @Test
-    public void SetValueTest()
+    public void setValueTest()
     {
 
         CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceFieldHistory field = GetTestMissionNameFieldHistory(mission);
+        CoalesceFieldHistory field = getTestMissionNameFieldHistory(mission);
 
         field.setBaseValue("Testingvalue");
 
-        CoalesceFieldHistory savedField = GetSavedTestMissionFieldHistory(mission);
+        CoalesceFieldHistory savedField = getSavedTestMissionFieldHistory(mission);
 
         assertEquals("Testingvalue", savedField.getBaseValue());
 
     }
 
     @Test
-    public void GetDataType()
+    public void getDataType()
     {
         CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceFieldHistory stringField = GetTestMissionFieldHistoryByName(mission,
+        CoalesceFieldHistory stringField = getTestMissionFieldHistoryByName(mission,
                                                                             CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
         assertEquals(ECoalesceFieldDataTypes.STRING_TYPE, stringField.getDataType());
 
-        CoalesceFieldHistory dateField = GetTestMissionFieldHistoryByName(mission,
+        CoalesceFieldHistory dateField = getTestMissionFieldHistoryByName(mission,
                                                                           CoalesceTypeInstances.TEST_MISSION_INCIDENT_DATE_TIME_PATH);
         assertEquals(ECoalesceFieldDataTypes.DATE_TIME_TYPE, dateField.getDataType());
 
     }
 
     @Test
-    public void SetDateType()
+    public void setDateType()
     {
         CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceFieldHistory stringField = GetTestMissionFieldHistoryByName(mission,
+        CoalesceFieldHistory stringField = getTestMissionFieldHistoryByName(mission,
                                                                             CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
         stringField.setDataType(ECoalesceFieldDataTypes.DATE_TIME_TYPE);
 
-        CoalesceFieldHistory dateField = GetTestMissionFieldHistoryByName(mission,
+        CoalesceFieldHistory dateField = getTestMissionFieldHistoryByName(mission,
                                                                           CoalesceTypeInstances.TEST_MISSION_INCIDENT_DATE_TIME_PATH);
         dateField.setDataType(ECoalesceFieldDataTypes.INTEGER_TYPE);
 
         String serializedMission = mission.toXml();
         CoalesceEntity savedMission = CoalesceEntity.create(serializedMission);
 
-        CoalesceFieldHistory savedStringField = GetTestMissionFieldHistoryByName(savedMission,
+        CoalesceFieldHistory savedStringField = getTestMissionFieldHistoryByName(savedMission,
                                                                                  CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
         assertEquals(ECoalesceFieldDataTypes.DATE_TIME_TYPE, savedStringField.getDataType());
 
-        CoalesceFieldHistory savedDateField = GetTestMissionFieldHistoryByName(savedMission,
+        CoalesceFieldHistory savedDateField = getTestMissionFieldHistoryByName(savedMission,
                                                                                CoalesceTypeInstances.TEST_MISSION_INCIDENT_DATE_TIME_PATH);
         assertEquals(ECoalesceFieldDataTypes.INTEGER_TYPE, savedDateField.getDataType());
 
     }
 
     @Test
-    public void GetLabelTest()
+    public void getLabelTest()
     {
 
-        CoalesceFieldHistory field = GetTestMissionFieldHistoryByName(CoalesceTypeInstances.TEST_MISSION_ACTION_NUMBER_PATH);
+        CoalesceFieldHistory field = getTestMissionFieldHistoryByName(CoalesceTypeInstances.TEST_MISSION_ACTION_NUMBER_PATH);
 
         assertEquals(CoalesceTypeInstances.TEST_MISSION_ACTION_NUMBER_LABEL_HISTORY, field.getLabel());
 
     }
 
     @Test
-    public void GetLabelDoesNotExistTest()
+    public void getLabelDoesNotExistTest()
     {
 
-        CoalesceFieldHistory field = GetTestMissionFieldHistoryByName(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+        CoalesceFieldHistory field = getTestMissionFieldHistoryByName(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
 
         assertEquals("", field.getLabel());
 
     }
 
     @Test
-    public void SetLabelTest()
+    public void setLabelTest()
     {
 
         CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceFieldHistory field = GetTestMissionNameFieldHistory(mission);
+        CoalesceFieldHistory field = getTestMissionNameFieldHistory(mission);
 
         field.setLabel("Testinglabel");
 
-        CoalesceFieldHistory savedField = GetSavedTestMissionFieldHistory(mission);
+        CoalesceFieldHistory savedField = getSavedTestMissionFieldHistory(mission);
 
         assertEquals("Testinglabel", savedField.getLabel());
 
     }
 
     @Test
-    public void SetLabelNullTest()
+    public void setLabelNullTest()
     {
 
         CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceFieldHistory field = GetTestMissionNameFieldHistory(mission);
+        CoalesceFieldHistory field = getTestMissionNameFieldHistory(mission);
 
         field.setLabel(null);
 
-        CoalesceFieldHistory savedField = GetSavedTestMissionFieldHistory(mission);
+        CoalesceFieldHistory savedField = getSavedTestMissionFieldHistory(mission);
 
         assertEquals("", savedField.getLabel());
 
     }
 
     @Test
-    public void GetSizeDoesNotExistTest()
+    public void getSizeDoesNotExistTest()
     {
-        CoalesceFieldHistory field = GetTestMissionNameFieldHistory();
+        CoalesceFieldHistory field = getTestMissionNameFieldHistory();
 
         assertEquals(0, field.getSize());
 
     }
 
     @Test
-    public void SetSizeTest()
+    public void setSizeTest()
     {
         CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceFieldHistory field = GetTestMissionNameFieldHistory(mission);
+        CoalesceFieldHistory field = getTestMissionNameFieldHistory(mission);
         field.setSize(128);
 
         String serializedMission = mission.toXml();
         CoalesceEntity savedMission = CoalesceEntity.create(serializedMission);
 
-        CoalesceFieldHistory savedField = GetTestMissionNameFieldHistory(savedMission);
+        CoalesceFieldHistory savedField = getTestMissionNameFieldHistory(savedMission);
         assertEquals(128, savedField.getSize());
 
     }
 
     @Test
-    public void GetModifiedByDoesNotExistTest()
+    public void getModifiedByDoesNotExistTest()
     {
 
-        CoalesceFieldHistory field = GetTestMissionNameFieldHistory();
+        CoalesceFieldHistory field = getTestMissionNameFieldHistory();
 
         assertEquals("", field.getModifiedBy());
 
     }
 
     @Test
-    public void SetModifiedByTest()
+    public void setModifiedByTest()
     {
 
         CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceFieldHistory field = GetTestMissionNameFieldHistory(mission);
+        CoalesceFieldHistory field = getTestMissionNameFieldHistory(mission);
 
         field.setModifiedBy("TestingModifiedBy");
 
-        CoalesceFieldHistory savedField = GetSavedTestMissionFieldHistory(mission);
+        CoalesceFieldHistory savedField = getSavedTestMissionFieldHistory(mission);
 
         assertEquals("TestingModifiedBy", savedField.getModifiedBy());
 
     }
 
     @Test
-    public void GetModifiedByIpDoesNotExistTest()
+    public void getModifiedByIpDoesNotExistTest()
     {
 
-        CoalesceFieldHistory field = GetTestMissionNameFieldHistory();
+        CoalesceFieldHistory field = getTestMissionNameFieldHistory();
 
         assertEquals("", field.getModifiedByIP());
 
     }
 
     @Test
-    public void SetModifiedByIpTest()
+    public void setModifiedByIpTest()
     {
 
         CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceFieldHistory field = GetTestMissionNameFieldHistory(mission);
+        CoalesceFieldHistory field = getTestMissionNameFieldHistory(mission);
 
         field.setModifiedByIP("192.168.2.2");
 
-        CoalesceFieldHistory savedField = GetSavedTestMissionFieldHistory(mission);
+        CoalesceFieldHistory savedField = getSavedTestMissionFieldHistory(mission);
 
         assertEquals("192.168.2.2", savedField.getModifiedByIP());
 
     }
 
     @Test
-    public void GetClassificationMarkingDefaultTest()
+    public void getClassificationMarkingDefaultTest()
     {
 
-        CoalesceFieldHistory field = GetTestMissionNameFieldHistory();
+        CoalesceFieldHistory field = getTestMissionNameFieldHistory();
 
         MarkingValueTest.assertMarkingValue(new Marking().getClassification(),
                                             field.getClassificationMarking().getClassification());
@@ -490,15 +490,15 @@ public class CoalesceFieldHistoryTest {
     }
 
     @Test
-    public void GetClassificationMarkingAfterSetAndSerializedTest()
+    public void getClassificationMarkingAfterSetAndSerializedTest()
     {
         CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceFieldHistory field = GetTestMissionNameFieldHistory(mission);
+        CoalesceFieldHistory field = getTestMissionNameFieldHistory(mission);
 
         field.setClassificationMarking(TOPSECRETCLASSIFICATIONMARKING);
 
-        CoalesceFieldHistory savedField = GetSavedTestMissionFieldHistory(mission);
+        CoalesceFieldHistory savedField = getSavedTestMissionFieldHistory(mission);
 
         MarkingValueTest.assertMarkingValue(TOPSECRETCLASSIFICATIONMARKING.getClassification(),
                                             savedField.getClassificationMarking().getClassification());
@@ -506,7 +506,7 @@ public class CoalesceFieldHistoryTest {
     }
 
     @Test
-    public void SetClassificationMarkingTopSecretTest()
+    public void setClassificationMarkingTopSecretTest()
     {
 
         CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
@@ -527,28 +527,28 @@ public class CoalesceFieldHistoryTest {
     }
 
     @Test
-    public void GetValueWithMarkingTest()
+    public void getValueWithMarkingTest()
     {
 
-        CoalesceFieldHistory field = GetTestMissionNameFieldHistory();
+        CoalesceFieldHistory field = getTestMissionNameFieldHistory();
 
         assertEquals("UNCLASSIFIED NORTHCOM Volunteer Background Checks", field.getValueWithMarking());
     }
 
     @Test
-    public void GetPortionMarkingTest()
+    public void getPortionMarkingTest()
     {
 
-        CoalesceFieldHistory field = GetTestMissionNameFieldHistory();
+        CoalesceFieldHistory field = getTestMissionNameFieldHistory();
 
         assertEquals("(U)", field.getPortionMarking());
     }
 
     @Test
-    public void GetPreviousHistoryKeyNoPreviousTest()
+    public void getPreviousHistoryKeyNoPreviousTest()
     {
 
-        CoalesceFieldHistory field = GetTestMissionNameFieldHistory();
+        CoalesceFieldHistory field = getTestMissionNameFieldHistory();
 
         assertEquals("00000000-0000-0000-0000-000000000000", field.getPreviousHistoryKey());
 
@@ -559,114 +559,114 @@ public class CoalesceFieldHistoryTest {
     }
 
     @Test
-    public void GetPreviousHistoryKeyPreviousTest()
+    public void getPreviousHistoryKeyPreviousTest()
     {
 
-        CoalesceFieldHistory field = GetTestMissionNameFieldHistory();
+        CoalesceFieldHistory field = getTestMissionNameFieldHistory();
 
         assertEquals("00000000-0000-0000-0000-000000000000", field.getPreviousHistoryKey());
 
     }
 
     @Test
-    public void GetFilenameDoesNotExistTest()
+    public void getFilenameDoesNotExistTest()
     {
 
-        CoalesceFieldHistory field = GetTestMissionNameFieldHistory();
+        CoalesceFieldHistory field = getTestMissionNameFieldHistory();
 
         assertEquals("", field.getFilename());
 
     }
 
     @Test
-    public void SetFilenameTest()
+    public void setFilenameTest()
     {
 
         CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceFieldHistory field = GetTestMissionNameFieldHistory(mission);
+        CoalesceFieldHistory field = getTestMissionNameFieldHistory(mission);
 
         field.setFilename("c:/Program Files/java/jre7/bin");
 
-        CoalesceFieldHistory savedField = GetSavedTestMissionFieldHistory(mission);
+        CoalesceFieldHistory savedField = getSavedTestMissionFieldHistory(mission);
 
         assertEquals("c:/Program Files/java/jre7/bin", savedField.getFilename());
 
     }
 
     @Test
-    public void GetExtensionDoesNotExistTest()
+    public void getExtensionDoesNotExistTest()
     {
 
-        CoalesceFieldHistory field = GetTestMissionNameFieldHistory();
+        CoalesceFieldHistory field = getTestMissionNameFieldHistory();
 
         assertEquals("", field.getExtension());
 
     }
 
     @Test
-    public void SetExtensionTest()
+    public void setExtensionTest()
     {
 
         CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceFieldHistory field = GetTestMissionNameFieldHistory(mission);
+        CoalesceFieldHistory field = getTestMissionNameFieldHistory(mission);
 
         field.setExtension(".jpeg");
 
-        CoalesceFieldHistory savedField = GetSavedTestMissionFieldHistory(mission);
+        CoalesceFieldHistory savedField = getSavedTestMissionFieldHistory(mission);
 
         assertEquals("jpeg", savedField.getExtension());
 
     }
 
     @Test
-    public void GetMimeTypeDoesNotExistTest()
+    public void getMimeTypeDoesNotExistTest()
     {
 
-        CoalesceFieldHistory field = GetTestMissionNameFieldHistory();
+        CoalesceFieldHistory field = getTestMissionNameFieldHistory();
 
         assertEquals("", field.getMimeType());
 
     }
 
     @Test
-    public void SetMimeTypeTest()
+    public void setMimeTypeTest()
     {
 
         CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceFieldHistory field = GetTestMissionNameFieldHistory(mission);
+        CoalesceFieldHistory field = getTestMissionNameFieldHistory(mission);
 
         field.setMimeType("application/pdf");
 
-        CoalesceFieldHistory savedField = GetSavedTestMissionFieldHistory(mission);
+        CoalesceFieldHistory savedField = getSavedTestMissionFieldHistory(mission);
 
         assertEquals("application/pdf", savedField.getMimeType());
 
     }
 
     @Test
-    public void GetHashDoesNotExistTest()
+    public void getHashDoesNotExistTest()
     {
 
-        CoalesceFieldHistory field = GetTestMissionNameFieldHistory();
+        CoalesceFieldHistory field = getTestMissionNameFieldHistory();
 
         assertEquals("", field.getHash());
 
     }
 
     @Test
-    public void SetHashTest()
+    public void setHashTest()
     {
 
         CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceFieldHistory field = GetTestMissionNameFieldHistory(mission);
+        CoalesceFieldHistory field = getTestMissionNameFieldHistory(mission);
 
         field.setHash("8743b52063cd84097a65d1633f5c74f5");
 
-        CoalesceFieldHistory savedField = GetSavedTestMissionFieldHistory(mission);
+        CoalesceFieldHistory savedField = getSavedTestMissionFieldHistory(mission);
 
         assertEquals("8743b52063cd84097a65d1633f5c74f5", savedField.getHash());
 
@@ -694,66 +694,66 @@ public class CoalesceFieldHistoryTest {
     }
     
     @Test
-    public void GetDateCreatedExistTest()
+    public void getDateCreatedExistTest()
     {
 
-        CoalesceFieldHistory field = GetTestMissionNameFieldHistory();
+        CoalesceFieldHistory field = getTestMissionNameFieldHistory();
 
         assertEquals(CoalesceTypeInstances.TEST_MISSION_NAME_CREATED, field.getDateCreated());
 
     }
 
     @Test
-    public void SetDateCreatedTest()
+    public void setDateCreatedTest()
     {
 
         CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceFieldHistory field = GetTestMissionNameFieldHistory(mission);
+        CoalesceFieldHistory field = getTestMissionNameFieldHistory(mission);
 
         DateTime now = JodaDateTimeHelper.nowInUtc();
 
         field.setDateCreated(now);
 
-        CoalesceFieldHistory savedField = GetSavedTestMissionFieldHistory(mission);
+        CoalesceFieldHistory savedField = getSavedTestMissionFieldHistory(mission);
 
         assertEquals(now, savedField.getDateCreated());
 
     }
 
     @Test
-    public void GetLastModifiedExistTest()
+    public void getLastModifiedExistTest()
     {
 
-        CoalesceFieldHistory field = GetTestMissionNameFieldHistory();
+        CoalesceFieldHistory field = getTestMissionNameFieldHistory();
 
         assertEquals(CoalesceTypeInstances.TEST_MISSION_NAME_HISTORY_MODIFIED, field.getLastModified());
 
     }
 
     @Test
-    public void SetLastModifiedTest()
+    public void setLastModifiedTest()
     {
 
         CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        CoalesceFieldHistory field = GetTestMissionNameFieldHistory(mission);
+        CoalesceFieldHistory field = getTestMissionNameFieldHistory(mission);
 
         DateTime now = JodaDateTimeHelper.nowInUtc();
 
         field.setLastModified(now);
 
-        CoalesceFieldHistory savedField = GetSavedTestMissionFieldHistory(mission);
+        CoalesceFieldHistory savedField = getSavedTestMissionFieldHistory(mission);
 
         assertEquals(now, savedField.getLastModified());
 
     }
 
     @Test
-    public void ToXmlTest()
+    public void toXmlTest()
     {
 
-        CoalesceFieldHistory field = GetTestMissionNameFieldHistory();
+        CoalesceFieldHistory field = getTestMissionNameFieldHistory();
 
         String fieldXml = field.toXml();
 
@@ -762,7 +762,7 @@ public class CoalesceFieldHistoryTest {
     }
 
     @Test
-    public void StringTypeTest() throws CoalesceDataFormatException
+    public void stringTypeTest() throws CoalesceDataFormatException
     {
 
         CoalesceField<?> field = CoalesceFieldTest.getTestMissionNameField();
@@ -784,7 +784,7 @@ public class CoalesceFieldHistoryTest {
     }
 
     @Test(expected = ClassCastException.class)
-    public void SetTypedValueStringTypeTypeMismatchTest()
+    public void setTypedValueStringTypeTypeMismatchTest()
     {
 
         CoalesceField<?> field = CoalesceFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
@@ -797,7 +797,7 @@ public class CoalesceFieldHistoryTest {
     }
 
     @Test
-    public void UriTypeTest() throws CoalesceDataFormatException
+    public void uriTypeTest() throws CoalesceDataFormatException
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -809,7 +809,7 @@ public class CoalesceFieldHistoryTest {
         CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
 
-        Sleep();
+        sleep();
         field.setTypedValue("uri:document/pdf");
         field.setTypedValue("uri:document/xyz");
 
@@ -827,7 +827,7 @@ public class CoalesceFieldHistoryTest {
     }
 
     @Test
-    public void GetDataSetTypedValueDateTimeTypeTest() throws CoalesceDataFormatException
+    public void getDataSetTypedValueDateTimeTypeTest() throws CoalesceDataFormatException
     {
         CoalesceField<?> field = CoalesceFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
 
@@ -845,7 +845,7 @@ public class CoalesceFieldHistoryTest {
     }
 
     @Test(expected = ClassCastException.class)
-    public void SetTypedValueDateTimeTypeTypeMismatchTest()
+    public void setTypedValueDateTimeTypeTypeMismatchTest()
     {
 
         CoalesceField<?> field = CoalesceFieldTest.getTestMissionNameField();
@@ -860,7 +860,7 @@ public class CoalesceFieldHistoryTest {
     }
 
     @Test
-    public void GetDataSetTypedValueBooleanTypeTest() throws CoalesceDataFormatException
+    public void getDataSetTypedValueBooleanTypeTest() throws CoalesceDataFormatException
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -872,7 +872,7 @@ public class CoalesceFieldHistoryTest {
         CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
 
-        Sleep();
+        sleep();
         field.setTypedValue(true);
         field.setTypedValue(false);
 
@@ -897,7 +897,7 @@ public class CoalesceFieldHistoryTest {
     }
 
     @Test(expected = ClassCastException.class)
-    public void SetTypedValueBooleanTypeTypeMismatchTest() throws UnsupportedEncodingException
+    public void setTypedValueBooleanTypeTypeMismatchTest() throws UnsupportedEncodingException
     {
 
         CoalesceField<?> field = CoalesceFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
@@ -910,7 +910,7 @@ public class CoalesceFieldHistoryTest {
     }
 
     @Test
-    public void GetDataSetTypedValueIntegerTypeTest() throws CoalesceDataFormatException
+    public void getDataSetTypedValueIntegerTypeTest() throws CoalesceDataFormatException
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -922,7 +922,7 @@ public class CoalesceFieldHistoryTest {
         CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
 
-        Sleep();
+        sleep();
         field.setTypedValue(1111);
         field.setTypedValue(2222);
 
@@ -947,7 +947,7 @@ public class CoalesceFieldHistoryTest {
     }
 
     @Test(expected = ClassCastException.class)
-    public void SetTypedValueIntgerTypeTypeMismatchTest() throws UnsupportedEncodingException
+    public void setTypedValueIntgerTypeTypeMismatchTest() throws UnsupportedEncodingException
     {
 
         CoalesceField<?> field = CoalesceFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
@@ -960,7 +960,7 @@ public class CoalesceFieldHistoryTest {
     }
 
     @Test
-    public void GetDataSetTypedValueGuidTypeTest() throws CoalesceDataFormatException
+    public void getDataSetTypedValueGuidTypeTest() throws CoalesceDataFormatException
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -972,7 +972,7 @@ public class CoalesceFieldHistoryTest {
         CoalesceRecord parentRecord = parentRecordset.getItem(0);
         CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
 
-        Sleep();
+        sleep();
         UUID guid = UUID.randomUUID();
         field.setTypedValue(guid);
         field.setTypedValue(UUID.randomUUID());
@@ -1000,7 +1000,7 @@ public class CoalesceFieldHistoryTest {
     }
 
     @Test(expected = ClassCastException.class)
-    public void SetTypedValueGUIDTypeTypeMismatchTest() throws UnsupportedEncodingException
+    public void setTypedValueGUIDTypeTypeMismatchTest() throws UnsupportedEncodingException
     {
 
         CoalesceField<?> field = CoalesceFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
@@ -1013,7 +1013,7 @@ public class CoalesceFieldHistoryTest {
     }
 
     @Test
-    public void toXmlTest()
+    public void toXmlTest2()
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
         CoalesceFieldHistory fh = ((CoalesceStringField) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/ActionNumber")).getHistoryRecord("00BB7A9F-4F37-46E9-85EB-9280ED3619CC");
@@ -1163,39 +1163,39 @@ public class CoalesceFieldHistoryTest {
     // Private Static Methods
     // -----------------------------------------------------------------------//
 
-    private static CoalesceFieldHistory GetTestMissionNameFieldHistory(String entityXml)
+    private static CoalesceFieldHistory getTestMissionNameFieldHistory(String entityXml)
     {
 
         CoalesceEntity entity = CoalesceEntity.create(entityXml);
 
-        return GetTestMissionNameFieldHistory(entity);
+        return getTestMissionNameFieldHistory(entity);
 
     }
 
-    private static CoalesceFieldHistory GetTestMissionNameFieldHistory(CoalesceEntity entity)
+    private static CoalesceFieldHistory getTestMissionNameFieldHistory(CoalesceEntity entity)
     {
 
-        return GetTestMissionFieldHistoryByName(entity, CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+        return getTestMissionFieldHistoryByName(entity, CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
 
     }
 
-    private static CoalesceFieldHistory GetTestMissionNameFieldHistory()
+    private static CoalesceFieldHistory getTestMissionNameFieldHistory()
     {
 
-        return GetTestMissionNameFieldHistory(CoalesceTypeInstances.TEST_MISSION);
+        return getTestMissionNameFieldHistory(CoalesceTypeInstances.TEST_MISSION);
 
     }
 
-    private static CoalesceFieldHistory GetTestMissionFieldHistoryByName(String fieldPath)
+    private static CoalesceFieldHistory getTestMissionFieldHistoryByName(String fieldPath)
     {
 
         CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        return GetTestMissionFieldHistoryByName(mission, fieldPath);
+        return getTestMissionFieldHistoryByName(mission, fieldPath);
 
     }
 
-    private static CoalesceFieldHistory GetTestMissionFieldHistoryByName(CoalesceEntity entity, String fieldPath)
+    private static CoalesceFieldHistory getTestMissionFieldHistoryByName(CoalesceEntity entity, String fieldPath)
     {
 
         CoalesceDataObject fdo = entity.getDataObjectForNamePath(fieldPath);
@@ -1215,16 +1215,16 @@ public class CoalesceFieldHistoryTest {
 
     }
 
-    private static CoalesceFieldHistory GetSavedTestMissionFieldHistory(CoalesceEntity entity)
+    private static CoalesceFieldHistory getSavedTestMissionFieldHistory(CoalesceEntity entity)
     {
 
         String serializedMission = entity.toXml();
 
-        return GetTestMissionNameFieldHistory(serializedMission);
+        return getTestMissionNameFieldHistory(serializedMission);
 
     }
 
-    private void Sleep()
+    private void sleep()
     {
 
         try

@@ -41,7 +41,7 @@ public class MarkingValueTest {
      */
 
     @Test
-    public void MarkingValueEmptyConstructorTest()
+    public void markingValueEmptyConstructorTest()
     {
 
         MarkingValue mv = new MarkingValue();
@@ -50,7 +50,7 @@ public class MarkingValueTest {
     }
 
     @Test
-    public void MarkingValueArgConstructorTest()
+    public void markingValueArgConstructorTest()
     {
 
         MarkingValue mv = new MarkingValue("parent1", "title1", "abbreviation1", "portion1");
@@ -59,7 +59,7 @@ public class MarkingValueTest {
     }
 
     @Test(expected = NullArgumentException.class)
-    public void MarkingValueNullParentArgConstructorTest()
+    public void markingValueNullParentArgConstructorTest()
     {
 
         @SuppressWarnings("unused")
@@ -68,7 +68,7 @@ public class MarkingValueTest {
     }
 
     @Test(expected = NullArgumentException.class)
-    public void MarkingValueNullTitleArgConstructorTest()
+    public void markingValueNullTitleArgConstructorTest()
     {
 
         @SuppressWarnings("unused")
@@ -77,7 +77,7 @@ public class MarkingValueTest {
     }
 
     @Test(expected = NullArgumentException.class)
-    public void MarkingValueNullAbbreviationArgConstructorTest()
+    public void markingValueNullAbbreviationArgConstructorTest()
     {
 
         @SuppressWarnings("unused")
@@ -86,7 +86,7 @@ public class MarkingValueTest {
     }
 
     @Test(expected = NullArgumentException.class)
-    public void MarkingValueNullPortionArgConstructorTest()
+    public void markingValueNullPortionArgConstructorTest()
     {
 
         @SuppressWarnings("unused")
@@ -95,7 +95,7 @@ public class MarkingValueTest {
     }
 
     @Test
-    public void MarkingValueSetParentTest()
+    public void markingValueSetParentTest()
     {
 
         MarkingValue mv = new MarkingValue();
@@ -106,7 +106,7 @@ public class MarkingValueTest {
     }
 
     @Test(expected = NullArgumentException.class)
-    public void MarkingValueSetParentNullTest()
+    public void markingValueSetParentNullTest()
     {
 
         MarkingValue mv = new MarkingValue();
@@ -116,7 +116,7 @@ public class MarkingValueTest {
     }
 
     @Test
-    public void MarkingValueSetTitleTest()
+    public void markingValueSetTitleTest()
     {
 
         MarkingValue mv = new MarkingValue();
@@ -127,7 +127,7 @@ public class MarkingValueTest {
     }
 
     @Test(expected = NullArgumentException.class)
-    public void MarkingValueSetTitleNullTest()
+    public void markingValueSetTitleNullTest()
     {
 
         MarkingValue mv = new MarkingValue();
@@ -137,7 +137,7 @@ public class MarkingValueTest {
     }
 
     @Test
-    public void MarkingValueSetAbbreviationTest()
+    public void markingValueSetAbbreviationTest()
     {
 
         MarkingValue mv = new MarkingValue();
@@ -148,7 +148,7 @@ public class MarkingValueTest {
     }
 
     @Test(expected = NullArgumentException.class)
-    public void MarkingValueSetAbbreviationtNullTest()
+    public void markingValueSetAbbreviationtNullTest()
     {
 
         MarkingValue mv = new MarkingValue();
@@ -158,7 +158,7 @@ public class MarkingValueTest {
     }
 
     @Test
-    public void MarkingValueSetPortionTest()
+    public void markingValueSetPortionTest()
     {
 
         MarkingValue mv = new MarkingValue();
@@ -169,7 +169,7 @@ public class MarkingValueTest {
     }
 
     @Test(expected = NullArgumentException.class)
-    public void MarkingValueSetPortionNullTest()
+    public void markingValueSetPortionNullTest()
     {
 
         MarkingValue mv = new MarkingValue();
@@ -179,7 +179,7 @@ public class MarkingValueTest {
     }
 
     @Test()
-    public void MarkingValueSerializeDeserializeTest() throws IOException, ClassNotFoundException
+    public void markingValueSerializeDeserializeTest() throws IOException, ClassNotFoundException
     {
 
         MarkingValue mv = new MarkingValue("parent1", "title1", "abbreviation1", "portion1");
@@ -201,7 +201,7 @@ public class MarkingValueTest {
     }
 
     @Test()
-    public void MarkingValueSerializeDeserializeBlankMarkingValueTest() throws IOException, ClassNotFoundException
+    public void markingValueSerializeDeserializeBlankMarkingValueTest() throws IOException, ClassNotFoundException
     {
 
         MarkingValue mv = new MarkingValue();
@@ -236,13 +236,13 @@ public class MarkingValueTest {
         assertEquals(expectedPortion, testValue.getPortion());
     }
 
-    public static void assertMarkingValue(MarkingValue exptectedValue, MarkingValue testValue)
+    public static void assertMarkingValue(MarkingValue expectedValue, MarkingValue testValue)
     {
 
-        assertEquals(exptectedValue.getParent(), testValue.getParent());
-        assertEquals(exptectedValue.getTitle(), testValue.getTitle());
-        assertEquals(exptectedValue.getAbbreviation(), testValue.getAbbreviation());
-        assertEquals(exptectedValue.getPortion(), testValue.getPortion());
+        assertEquals(expectedValue.getParent(), testValue.getParent());
+        assertEquals(expectedValue.getTitle(), testValue.getTitle());
+        assertEquals(expectedValue.getAbbreviation(), testValue.getAbbreviation());
+        assertEquals(expectedValue.getPortion(), testValue.getPortion());
     }
 
 }

@@ -627,7 +627,7 @@ public class CoalesceFieldTest {
     }
 
     @Test
-    public void PreviousHistoryOrderTest() throws CoalesceDataFormatException
+    public void previousHistoryOrderTest() throws CoalesceDataFormatException
     {
 
         CoalesceField<?> field = CoalesceFieldTest.getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_BASE64_PATH);
@@ -771,7 +771,7 @@ public class CoalesceFieldTest {
 
         FileTestResult result = getJpgFile();
 
-        CoalesceField<?> field = result.SavedField;
+        CoalesceField<?> field = result.savedField;
         assertTrue(field.getHistory().isEmpty());
 
         field.setBaseValue("Something");
@@ -926,7 +926,7 @@ public class CoalesceFieldTest {
     }
 
     @Test
-    public void ToXmlTest()
+    public void toXmlTest()
     {
 
         CoalesceField<?> field = getTestMissionNameField();
@@ -982,8 +982,8 @@ public class CoalesceFieldTest {
 
         FileTestResult result = getJpgFile();
 
-        assertEquals(CoalesceFieldCommon.CallGetBaseFilenameWithFullDirectoryPathForKey(result.Field.getKey(), false)
-                + ".jpg", result.SavedField.getCoalesceFullFilename());
+        assertEquals(CoalesceFieldCommon.callGetBaseFilenameWithFullDirectoryPathForKey(result.field.getKey(), false)
+                + ".jpg", result.savedField.getCoalesceFullFilename());
 
     }
 
@@ -1030,8 +1030,8 @@ public class CoalesceFieldTest {
 
         FileTestResult result = getJpgFile();
 
-        assertEquals(CoalesceFieldCommon.CallGetBaseFilenameWithFullDirectoryPathForKey(result.Field.getKey(), false)
-                + "_thumb.jpg", result.SavedField.getCoalesceFullThumbnailFilename());
+        assertEquals(CoalesceFieldCommon.callGetBaseFilenameWithFullDirectoryPathForKey(result.field.getKey(), false)
+                + "_thumb.jpg", result.savedField.getCoalesceFullThumbnailFilename());
 
     }
 
@@ -1075,7 +1075,7 @@ public class CoalesceFieldTest {
         FileTestResult result = getJpgFile();
 
         // Create file
-        File fieldFile = new File(result.Field.getCoalesceFullFilename());
+        File fieldFile = new File(result.field.getCoalesceFullFilename());
         try
         {
             fieldFile.createNewFile();
@@ -1086,7 +1086,7 @@ public class CoalesceFieldTest {
         }
 
         assertEquals(fieldFile.getName() + "?" + fieldFile.lastModified(),
-                     result.SavedField.getCoalesceFilenameWithLastModifiedTag());
+                     result.savedField.getCoalesceFilenameWithLastModifiedTag());
 
         // Delete file
         fieldFile.delete();
@@ -1130,7 +1130,7 @@ public class CoalesceFieldTest {
         FileTestResult result = getJpgFile();
 
         // Create file
-        File fieldFile = new File(result.Field.getCoalesceFullThumbnailFilename());
+        File fieldFile = new File(result.field.getCoalesceFullThumbnailFilename());
         try
         {
             fieldFile.createNewFile();
@@ -1141,7 +1141,7 @@ public class CoalesceFieldTest {
         }
 
         assertEquals(fieldFile.getName() + "?" + fieldFile.lastModified(),
-                     result.SavedField.getCoalesceThumbnailFilenameWithLastModifiedTag());
+                     result.savedField.getCoalesceThumbnailFilenameWithLastModifiedTag());
 
         // Delete file
         fieldFile.delete();
@@ -1162,7 +1162,7 @@ public class CoalesceFieldTest {
 
         FileTestResult result = getJpgFile();
 
-        assertEquals(GUIDHelper.removeBrackets(result.Field.getKey()) + ".jpg", result.SavedField.getCoalesceFilename());
+        assertEquals(GUIDHelper.removeBrackets(result.field.getKey()) + ".jpg", result.savedField.getCoalesceFilename());
 
     }
 
@@ -1180,8 +1180,8 @@ public class CoalesceFieldTest {
 
         FileTestResult result = getJpgFile();
 
-        assertEquals(GUIDHelper.removeBrackets(result.Field.getKey()) + "_thumb.jpg",
-                     result.SavedField.getCoalesceThumbnailFilename());
+        assertEquals(GUIDHelper.removeBrackets(result.field.getKey()) + "_thumb.jpg",
+                     result.savedField.getCoalesceThumbnailFilename());
 
     }
 
@@ -1223,7 +1223,7 @@ public class CoalesceFieldTest {
     }
 
     @Test
-    public void StringTypeTest() throws CoalesceDataFormatException
+    public void stringTypeTest() throws CoalesceDataFormatException
     {
 
         CoalesceField<?> field = getTestMissionNameField();
@@ -2387,7 +2387,7 @@ public class CoalesceFieldTest {
     }
 
     @Test
-    public void toXmlTest()
+    public void toXmlTest2()
     {
         CoalesceStringField field = (CoalesceStringField) getTestMissionNameField();
         String fieldXml = field.toXml();
@@ -2617,13 +2617,13 @@ public class CoalesceFieldTest {
 
     private class FileTestResult {
 
-        public CoalesceField<?> Field;
-        public CoalesceField<?> SavedField;
+        public CoalesceField<?> field;
+        public CoalesceField<?> savedField;
 
-        public FileTestResult(CoalesceField<?> field, CoalesceField<?> savedField)
+        public FileTestResult(CoalesceField<?> fieldParam, CoalesceField<?> savedFieldParam)
         {
-            Field = field;
-            SavedField = savedField;
+            field = fieldParam;
+            savedField = savedFieldParam;
         }
     }
 

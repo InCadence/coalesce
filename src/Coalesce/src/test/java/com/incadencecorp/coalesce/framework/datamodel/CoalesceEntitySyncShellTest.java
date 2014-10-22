@@ -33,7 +33,7 @@ public class CoalesceEntitySyncShellTest {
 
         // Validate
         assertNotNull(shell.toXml());
-        assertTrue(CoalesceEntitySyncShellTest.ValidateSyncShell(shell));
+        assertTrue(CoalesceEntitySyncShellTest.validateSyncShell(shell));
 
     }
 
@@ -49,7 +49,7 @@ public class CoalesceEntitySyncShellTest {
         // Validate
         assertNotNull(shell.toXml());
         assertNotNull(shell.getEntityNode());
-        assertTrue(CoalesceEntitySyncShellTest.ValidateSyncShell(shell));
+        assertTrue(CoalesceEntitySyncShellTest.validateSyncShell(shell));
 
     }
 
@@ -68,7 +68,7 @@ public class CoalesceEntitySyncShellTest {
         String shellXml = shell2.toXml();
 
         // Validate
-        assertTrue(CoalesceEntitySyncShellTest.ValidateSyncShell(shell2));
+        assertTrue(CoalesceEntitySyncShellTest.validateSyncShell(shell2));
         assertNotNull(shellXml);
     }
 
@@ -79,20 +79,20 @@ public class CoalesceEntitySyncShellTest {
         CoalesceEntitySyncShell shell = CoalesceEntitySyncShell.create(CoalesceTypeInstances.TEST_MISSION);
 
         // Validate
-        assertTrue(CoalesceEntitySyncShellTest.ValidateSyncShell(shell));
+        assertTrue(CoalesceEntitySyncShellTest.validateSyncShell(shell));
     }
 
     @Test
     public void testCreateFromDocument() throws SAXException, IOException
     {
         // Load Document
-        Document XmlDoc = XmlHelper.loadXmlFrom(CoalesceTypeInstances.TEST_MISSION);
+        Document xmlDoc = XmlHelper.loadXmlFrom(CoalesceTypeInstances.TEST_MISSION);
 
         // Initialize
-        CoalesceEntitySyncShell shell = CoalesceEntitySyncShell.create(XmlDoc);
+        CoalesceEntitySyncShell shell = CoalesceEntitySyncShell.create(xmlDoc);
 
         // Validate
-        assertTrue(CoalesceEntitySyncShellTest.ValidateSyncShell(shell));
+        assertTrue(CoalesceEntitySyncShellTest.validateSyncShell(shell));
 
     }
 
@@ -116,7 +116,7 @@ public class CoalesceEntitySyncShellTest {
     }
 
     @Test
-    public void GetRequiredChangesSyncShell() throws CoalesceException, SAXException, IOException
+    public void getRequiredChangesSyncShell() throws CoalesceException, SAXException, IOException
     {
         // Load Document
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
@@ -125,7 +125,7 @@ public class CoalesceEntitySyncShellTest {
         CoalesceEntitySyncShell localShell = CoalesceEntitySyncShell.create(entity);
 
         // Validate Local
-        assertTrue(CoalesceEntitySyncShellTest.ValidateSyncShell(localShell));
+        assertTrue(CoalesceEntitySyncShellTest.validateSyncShell(localShell));
 
         // Modify Entity
         CoalesceRecord record = (CoalesceRecord) entity.getDataObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/");
@@ -140,7 +140,7 @@ public class CoalesceEntitySyncShellTest {
         CoalesceEntitySyncShell remoteShell = CoalesceEntitySyncShell.create(entity);
 
         // Validate Remote
-        assertTrue(CoalesceEntitySyncShellTest.ValidateSyncShell(remoteShell));
+        assertTrue(CoalesceEntitySyncShellTest.validateSyncShell(remoteShell));
 
         // Create Change Shell
         CoalesceEntitySyncShell changesShell = CoalesceEntitySyncShell.getRequiredChangesSyncShell(localShell, remoteShell);
@@ -168,7 +168,7 @@ public class CoalesceEntitySyncShellTest {
 
     }
 
-    public static boolean ValidateSyncShell(CoalesceEntitySyncShell shell)
+    public static boolean validateSyncShell(CoalesceEntitySyncShell shell)
     {
         // Validate
         NodeList nodeList = shell.getDataObjectDocument().getElementsByTagName("*");
