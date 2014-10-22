@@ -11,7 +11,7 @@ import java.nio.file.Paths;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
-import com.incadencecorp.coalesce.common.runtime.CoalesceSettings;
+import com.incadencecorp.coalesce.framework.CoalesceSettings;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved

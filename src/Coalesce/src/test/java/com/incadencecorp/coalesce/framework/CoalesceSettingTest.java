@@ -1,4 +1,4 @@
-package com.incadencecorp.coalesce.common.runtime;
+package com.incadencecorp.coalesce.framework;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

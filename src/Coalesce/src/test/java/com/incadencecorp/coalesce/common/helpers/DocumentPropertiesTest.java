@@ -24,7 +24,7 @@ import org.junit.rules.ExpectedException;
 import com.drew.imaging.ImageProcessingException;
 import com.incadencecorp.coalesce.common.CoalesceUnitTestSettings;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceCryptoException;
-import com.incadencecorp.coalesce.common.runtime.CoalesceSettings;
+import com.incadencecorp.coalesce.framework.CoalesceSettings;
 
 public class DocumentPropertiesTest {
 

@@ -22,7 +22,7 @@ import org.junit.runners.Suite.SuiteClasses;
  -----------------------------------------------------------------------------*/
 
 @RunWith(Suite.class)
-@SuiteClasses({ CoalesceFrameworkTest.class })
+@SuiteClasses({ CoalesceFrameworkTest.class, CoalesceSettingTest.class})
 public class AllFrameworkTests {
 
 }

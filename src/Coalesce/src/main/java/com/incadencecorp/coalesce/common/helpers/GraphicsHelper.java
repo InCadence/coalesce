@@ -9,7 +9,7 @@ import javax.imageio.ImageIO;
 import org.apache.commons.lang.NullArgumentException;
 import org.imgscalr.Scalr;
 
-import com.incadencecorp.coalesce.common.runtime.CoalesceSettings;
+import com.incadencecorp.coalesce.framework.CoalesceSettings;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
 
 /*-----------------------------------------------------------------------------'
