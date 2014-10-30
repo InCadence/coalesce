@@ -66,7 +66,7 @@ public class NEO4JPersistorTest extends CoalescePersistorBaseTest {
     protected ICoalescePersistor getPersistor(ServerConn conn)
     {
         Neo4JPersistor neo4jPersistor = new Neo4JPersistor();
-        neo4jPersistor.Initialize(conn);
+        neo4jPersistor.initialize(conn);
 
         return neo4jPersistor;
 

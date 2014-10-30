@@ -23,7 +23,7 @@ import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 
 public class Neo4JPersistor extends CoalescePersistorBase {
 
-    private ServerConn serCon;
+    private ServerConn _serCon;
 
     /*--------------------------------------------------------------------------
     Constructor / Initializers
@@ -34,38 +34,38 @@ public class Neo4JPersistor extends CoalescePersistorBase {
         /***********
          * Define the PostGresSQL Database Connection in the URL, change to whatever the schema name is on your system
          ***********/
-        serCon = new ServerConn();
+        _serCon = new ServerConn();
         /* Set URL, User, Pass */
     }
 
-    public void Initialize(ServerConn svConn)
+    public void initialize(ServerConn svConn)
     {
-        serCon = svConn;
+        _serCon = svConn;
     }
 
-    public boolean Initialize(ICoalesceCacher cacher, ServerConn svConn) throws CoalescePersistorException
+    public boolean initialize(ICoalesceCacher cacher, ServerConn svConn) throws CoalescePersistorException
     {
-        serCon = svConn;
+        _serCon = svConn;
 
         return super.initialize(cacher);
     }
 
     @Override
-    public String getEntityXml(String Key) throws CoalescePersistorException
+    public String getEntityXml(String key) throws CoalescePersistorException
     {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public String getEntityXml(String EntityId, String EntityIdType) throws CoalescePersistorException
+    public String getEntityXml(String entityId, String entityIdType) throws CoalescePersistorException
     {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public String getEntityXml(String Name, String EntityId, String EntityIdType) throws CoalescePersistorException
+    public String getEntityXml(String name, String entityId, String entityIdType) throws CoalescePersistorException
     {
         // TODO Auto-generated method stub
         return null;
@@ -79,59 +79,59 @@ public class Neo4JPersistor extends CoalescePersistorBase {
     }
 
     @Override
-    public ElementMetaData getXPath(String Key, String ObjectType) throws CoalescePersistorException
+    public ElementMetaData getXPath(String key, String objectType) throws CoalescePersistorException
     {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public List<String> getCoalesceEntityKeysForEntityId(String EntityId,
-                                                         String EntityIdType,
-                                                         String EntityName,
-                                                         String EntitySource) throws CoalescePersistorException
+    public List<String> getCoalesceEntityKeysForEntityId(String entityId,
+                                                         String entityIdType,
+                                                         String entityName,
+                                                         String entitySource) throws CoalescePersistorException
     {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public EntityMetaData getCoalesceEntityIdAndTypeForKey(String Key) throws CoalescePersistorException
+    public EntityMetaData getCoalesceEntityIdAndTypeForKey(String key) throws CoalescePersistorException
     {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public byte[] getBinaryArray(String BinaryFieldKey) throws CoalescePersistorException
+    public byte[] getBinaryArray(String binaryFieldKey) throws CoalescePersistorException
     {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public boolean persistEntityTemplate(CoalesceEntityTemplate EntityTemplate) throws CoalescePersistorException
+    public boolean persistEntityTemplate(CoalesceEntityTemplate entityTemplate) throws CoalescePersistorException
     {
         // TODO Auto-generated method stub
         return false;
     }
 
     @Override
-    public String getEntityTemplateXml(String Key) throws CoalescePersistorException
+    public String getEntityTemplateXml(String key) throws CoalescePersistorException
     {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public String getEntityTemplateXml(String Name, String Source, String Version) throws CoalescePersistorException
+    public String getEntityTemplateXml(String name, String source, String version) throws CoalescePersistorException
     {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public String getEntityTemplateKey(String Name, String Source, String Version) throws CoalescePersistorException
+    public String getEntityTemplateKey(String name, String source, String version) throws CoalescePersistorException
     {
         // TODO Auto-generated method stub
         return null;
@@ -145,12 +145,12 @@ public class Neo4JPersistor extends CoalescePersistorBase {
     }
 
     @Override
-    protected boolean flattenObject(CoalesceEntity entity, boolean AllowRemoval) throws CoalescePersistorException
+    protected boolean flattenObject(CoalesceEntity entity, boolean allowRemoval) throws CoalescePersistorException
     {
         boolean isSuccessful = false;
 
         // Create a Database Connection
-        try (Neo4JDataConnector conn = new Neo4JDataConnector(this.serCon))
+        try (Neo4JDataConnector conn = new Neo4JDataConnector(this._serCon))
         {
 
             conn.openConnection();
@@ -215,19 +215,19 @@ public class Neo4JPersistor extends CoalescePersistorBase {
         boolean isOutOfDate = true;
 
         // Get LastModified from the Database
-        DateTime LastModified = this.getCoalesceObjectLastModified(coalesceObject.getKey(), coalesceObject.getType(), conn);
+        DateTime lastModified = this.getCoalesceObjectLastModified(coalesceObject.getKey(), coalesceObject.getType(), conn);
 
         // DB Has Valid Time?
-        if (LastModified != null)
+        if (lastModified != null)
         {
             // Remove NanoSeconds (100 ns / Tick and 1,000,000 ns / ms = 10,000 Ticks / ms)
-            long ObjectTicks = coalesceObject.getLastModified().getMillis();
-            long SQLRecordTicks = LastModified.getMillis();
+            long objectTicks = coalesceObject.getLastModified().getMillis();
+            long SQLRecordTicks = lastModified.getMillis();
 
             // TODO: Round Ticks for SQL (Not sure if this is required for .NET)
             // ObjectTicks = this.RoundTicksForSQL(ObjectTicks);
 
-            if (ObjectTicks == SQLRecordTicks)
+            if (objectTicks == SQLRecordTicks)
             {
                 // They're equal; No Update Required
                 isOutOfDate = false;
@@ -237,16 +237,16 @@ public class Neo4JPersistor extends CoalescePersistorBase {
         return isOutOfDate;
     }
 
-    private DateTime getCoalesceObjectLastModified(String Key, String ObjectType, Neo4JDataConnector conn)
+    private DateTime getCoalesceObjectLastModified(String key, String objectType, Neo4JDataConnector conn)
             throws SQLException
     {
         DateTime lastModified = DateTime.now(DateTimeZone.UTC);
 
         // Determine the Table Name
-        String tableName = CoalesceTableHelper.getTableNameForObjectType(ObjectType);
+        String tableName = CoalesceTableHelper.getTableNameForObjectType(objectType);
         String dateValue = null;
 
-        ResultSet results = conn.executeQuery("?", new CoalesceParameter(Key.trim()));
+        ResultSet results = conn.executeQuery("?", new CoalesceParameter(key.trim()));
         ResultSetMetaData resultsmd = results.getMetaData();
 
         // JODA Function DateTimeFormat will adjust for the Server timezone when converting the time.
@@ -266,18 +266,18 @@ public class Neo4JPersistor extends CoalescePersistorBase {
     }
 
     @Override
-    protected boolean flattenCore(CoalesceEntity entity, boolean AllowRemoval) throws CoalescePersistorException
+    protected boolean flattenCore(CoalesceEntity entity, boolean allowRemoval) throws CoalescePersistorException
     {
         // TODO Auto-generated method stub
         return false;
     }
 
     @Override
-    public DateTime getCoalesceObjectLastModified(String Key, String ObjectType) throws CoalescePersistorException
+    public DateTime getCoalesceObjectLastModified(String key, String objectType) throws CoalescePersistorException
     {
-        try (Neo4JDataConnector conn = new Neo4JDataConnector(this.serCon))
+        try (Neo4JDataConnector conn = new Neo4JDataConnector(this._serCon))
         {
-            return this.getCoalesceObjectLastModified(Key, ObjectType, conn);
+            return this.getCoalesceObjectLastModified(key, objectType, conn);
         }
         catch (SQLException e)
         {

@@ -771,7 +771,7 @@ public class CoalesceFieldTest {
 
         FileTestResult result = getJpgFile();
 
-        CoalesceField<?> field = result.savedField;
+        CoalesceField<?> field = result._savedField;
         assertTrue(field.getHistory().isEmpty());
 
         field.setBaseValue("Something");
@@ -982,8 +982,8 @@ public class CoalesceFieldTest {
 
         FileTestResult result = getJpgFile();
 
-        assertEquals(CoalesceFieldCommon.callGetBaseFilenameWithFullDirectoryPathForKey(result.field.getKey(), false)
-                + ".jpg", result.savedField.getCoalesceFullFilename());
+        assertEquals(CoalesceFieldCommon.callGetBaseFilenameWithFullDirectoryPathForKey(result._field.getKey(), false)
+                + ".jpg", result._savedField.getCoalesceFullFilename());
 
     }
 
@@ -1030,8 +1030,8 @@ public class CoalesceFieldTest {
 
         FileTestResult result = getJpgFile();
 
-        assertEquals(CoalesceFieldCommon.callGetBaseFilenameWithFullDirectoryPathForKey(result.field.getKey(), false)
-                + "_thumb.jpg", result.savedField.getCoalesceFullThumbnailFilename());
+        assertEquals(CoalesceFieldCommon.callGetBaseFilenameWithFullDirectoryPathForKey(result._field.getKey(), false)
+                + "_thumb.jpg", result._savedField.getCoalesceFullThumbnailFilename());
 
     }
 
@@ -1075,7 +1075,7 @@ public class CoalesceFieldTest {
         FileTestResult result = getJpgFile();
 
         // Create file
-        File fieldFile = new File(result.field.getCoalesceFullFilename());
+        File fieldFile = new File(result._field.getCoalesceFullFilename());
         try
         {
             fieldFile.createNewFile();
@@ -1086,7 +1086,7 @@ public class CoalesceFieldTest {
         }
 
         assertEquals(fieldFile.getName() + "?" + fieldFile.lastModified(),
-                     result.savedField.getCoalesceFilenameWithLastModifiedTag());
+                     result._savedField.getCoalesceFilenameWithLastModifiedTag());
 
         // Delete file
         fieldFile.delete();
@@ -1130,7 +1130,7 @@ public class CoalesceFieldTest {
         FileTestResult result = getJpgFile();
 
         // Create file
-        File fieldFile = new File(result.field.getCoalesceFullThumbnailFilename());
+        File fieldFile = new File(result._field.getCoalesceFullThumbnailFilename());
         try
         {
             fieldFile.createNewFile();
@@ -1141,7 +1141,7 @@ public class CoalesceFieldTest {
         }
 
         assertEquals(fieldFile.getName() + "?" + fieldFile.lastModified(),
-                     result.savedField.getCoalesceThumbnailFilenameWithLastModifiedTag());
+                     result._savedField.getCoalesceThumbnailFilenameWithLastModifiedTag());
 
         // Delete file
         fieldFile.delete();
@@ -1162,7 +1162,7 @@ public class CoalesceFieldTest {
 
         FileTestResult result = getJpgFile();
 
-        assertEquals(GUIDHelper.removeBrackets(result.field.getKey()) + ".jpg", result.savedField.getCoalesceFilename());
+        assertEquals(GUIDHelper.removeBrackets(result._field.getKey()) + ".jpg", result._savedField.getCoalesceFilename());
 
     }
 
@@ -1180,8 +1180,8 @@ public class CoalesceFieldTest {
 
         FileTestResult result = getJpgFile();
 
-        assertEquals(GUIDHelper.removeBrackets(result.field.getKey()) + "_thumb.jpg",
-                     result.savedField.getCoalesceThumbnailFilename());
+        assertEquals(GUIDHelper.removeBrackets(result._field.getKey()) + "_thumb.jpg",
+                     result._savedField.getCoalesceThumbnailFilename());
 
     }
 
@@ -2617,13 +2617,13 @@ public class CoalesceFieldTest {
 
     private class FileTestResult {
 
-        public CoalesceField<?> field;
-        public CoalesceField<?> savedField;
+        public CoalesceField<?> _field;
+        public CoalesceField<?> _savedField;
 
         public FileTestResult(CoalesceField<?> fieldParam, CoalesceField<?> savedFieldParam)
         {
-            field = fieldParam;
-            savedField = savedFieldParam;
+            _field = fieldParam;
+            _savedField = savedFieldParam;
         }
     }
 

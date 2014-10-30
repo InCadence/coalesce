@@ -623,7 +623,7 @@ public class Marking implements Serializable, Comparable<Marking> {
      *     possible object is
      *     {@link Boolean }
      */
-    public boolean getIsDisplay_Only()
+    public boolean getIsDisplayOnly()
     {
         return getDisplayOnlyCountries().size() > 0;
     }
@@ -975,7 +975,7 @@ public class Marking implements Serializable, Comparable<Marking> {
      */
     public boolean hasDeseminationControls()
     {
-        return getIsFOUO() || getIsLES() || getIsORCON() || getIsIMCON() || getIsDSEN() || getIsDisplay_Only()
+        return getIsFOUO() || getIsLES() || getIsORCON() || getIsIMCON() || getIsDSEN() || getIsDisplayOnly()
                 || getIsFISA() || getIsNOFORN() || getIsPROPIN() || getIsPROPIN() || getIsReleaseTo() || getIsRELIDO();
     }
 
@@ -1088,7 +1088,7 @@ public class Marking implements Serializable, Comparable<Marking> {
 
             marking = addDeseminations(marking, "REL TO ", getIsReleaseTo(), getReleaseToCountries());
 
-            marking = addDeseminations(marking, "DISPLAY ONLY ", getIsDisplay_Only(), getDisplayOnlyCountries());
+            marking = addDeseminations(marking, "DISPLAY ONLY ", getIsDisplayOnly(), getDisplayOnlyCountries());
 
             if (getIsRELIDO()) marking += "RELIDO/";
             if (getIsPROPIN()) marking += toPortion ? "PR/" : "PROPIN/";

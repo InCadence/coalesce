@@ -1629,7 +1629,7 @@ public class CoalesceEntityTest {
     {
         Entities entities = createEntityLinkages();
 
-        Map<String, CoalesceLinkage> linkages = entities.entity.getLinkages("Operation");
+        Map<String, CoalesceLinkage> linkages = entities._entity.getLinkages("Operation");
 
         assertEquals(3, linkages.size());
 
@@ -1638,19 +1638,19 @@ public class CoalesceEntityTest {
             switch (linkage.getLinkType()) {
             case HAS_USE_OF:
 
-                assertLinkage(entities.entity, entities.entity2, linkage.getLinkType(), linkage);
+                assertLinkage(entities._entity, entities._entity2, linkage.getLinkType(), linkage);
 
                 break;
 
             case CREATED:
 
-                assertLinkage(entities.entity, entities.entity2, linkage.getLinkType(), linkage);
+                assertLinkage(entities._entity, entities._entity2, linkage.getLinkType(), linkage);
 
                 break;
 
             case HAS_MEMBER:
 
-                assertLinkage(entities.entity, entities.entity4, linkage.getLinkType(), linkage);
+                assertLinkage(entities._entity, entities._entity4, linkage.getLinkType(), linkage);
 
                 break;
 
@@ -1661,7 +1661,7 @@ public class CoalesceEntityTest {
             }
         }
 
-        linkages = entities.entity.getLinkages("Mission");
+        linkages = entities._entity.getLinkages("Mission");
 
         assertEquals(1, linkages.size());
 
@@ -1670,7 +1670,7 @@ public class CoalesceEntityTest {
             switch (linkage.getLinkType()) {
             case IS_PARENT_OF:
 
-                assertLinkage(entities.entity, entities.entity3, linkage.getLinkType(), linkage);
+                assertLinkage(entities._entity, entities._entity3, linkage.getLinkType(), linkage);
 
                 break;
 
@@ -1687,7 +1687,7 @@ public class CoalesceEntityTest {
 
         Entities entities = createEntityLinkages();
 
-        Map<String, CoalesceLinkage> linkages = entities.entity.getLinkages("User");
+        Map<String, CoalesceLinkage> linkages = entities._entity.getLinkages("User");
 
         assertTrue(linkages.isEmpty());
 
@@ -1698,7 +1698,7 @@ public class CoalesceEntityTest {
     {
         Entities entities = createEntityLinkages();
 
-        Map<String, CoalesceLinkage> linkages = entities.entity.getLinkages(ELinkTypes.HAS_USE_OF, "Operation");
+        Map<String, CoalesceLinkage> linkages = entities._entity.getLinkages(ELinkTypes.HAS_USE_OF, "Operation");
 
         assertEquals(1, linkages.size());
 
@@ -1707,7 +1707,7 @@ public class CoalesceEntityTest {
             switch (linkage.getLinkType()) {
             case HAS_USE_OF:
 
-                assertLinkage(entities.entity, entities.entity2, linkage.getLinkType(), linkage);
+                assertLinkage(entities._entity, entities._entity2, linkage.getLinkType(), linkage);
 
                 break;
 
@@ -1726,7 +1726,7 @@ public class CoalesceEntityTest {
 
         Entities entities = createEntityLinkages();
 
-        Map<String, CoalesceLinkage> linkages = entities.entity.getLinkages("User");
+        Map<String, CoalesceLinkage> linkages = entities._entity.getLinkages("User");
 
         assertTrue(linkages.isEmpty());
 
@@ -1737,7 +1737,7 @@ public class CoalesceEntityTest {
     {
         Entities entities = createEntityLinkages();
 
-        Map<String, CoalesceLinkage> linkages = entities.entity.getLinkages(ELinkTypes.HAS_USE_OF);
+        Map<String, CoalesceLinkage> linkages = entities._entity.getLinkages(ELinkTypes.HAS_USE_OF);
 
         assertEquals(1, linkages.size());
 
@@ -1746,7 +1746,7 @@ public class CoalesceEntityTest {
             switch (linkage.getLinkType()) {
             case HAS_USE_OF:
 
-                assertLinkage(entities.entity, entities.entity2, linkage.getLinkType(), linkage);
+                assertLinkage(entities._entity, entities._entity2, linkage.getLinkType(), linkage);
 
                 break;
 
@@ -1765,7 +1765,7 @@ public class CoalesceEntityTest {
 
         Entities entities = createEntityLinkages();
 
-        Map<String, CoalesceLinkage> linkages = entities.entity.getLinkages(ELinkTypes.IS_A_MEMBER_OF);
+        Map<String, CoalesceLinkage> linkages = entities._entity.getLinkages(ELinkTypes.IS_A_MEMBER_OF);
 
         assertTrue(linkages.isEmpty());
 
@@ -1776,7 +1776,7 @@ public class CoalesceEntityTest {
     {
         Entities entities = createEntityLinkages();
 
-        Map<String, CoalesceLinkage> linkages = entities.entity.getLinkages((ELinkTypes) null);
+        Map<String, CoalesceLinkage> linkages = entities._entity.getLinkages((ELinkTypes) null);
 
         assertTrue(linkages.isEmpty());
 
@@ -1787,7 +1787,7 @@ public class CoalesceEntityTest {
     {
         Entities entities = createEntityLinkages();
 
-        Map<String, CoalesceLinkage> linkages = entities.entity.getLinkages(ELinkTypes.HAS_USE_OF, "Operation", "Portal");
+        Map<String, CoalesceLinkage> linkages = entities._entity.getLinkages(ELinkTypes.HAS_USE_OF, "Operation", "Portal");
 
         assertEquals(1, linkages.size());
 
@@ -1796,7 +1796,7 @@ public class CoalesceEntityTest {
             switch (linkage.getLinkType()) {
             case HAS_USE_OF:
 
-                assertLinkage(entities.entity, entities.entity2, linkage.getLinkType(), linkage);
+                assertLinkage(entities._entity, entities._entity2, linkage.getLinkType(), linkage);
 
                 break;
 
@@ -1815,7 +1815,7 @@ public class CoalesceEntityTest {
 
         Entities entities = createEntityLinkages();
 
-        Map<String, CoalesceLinkage> linkages = entities.entity.getLinkages(ELinkTypes.HAS_USE_OF,
+        Map<String, CoalesceLinkage> linkages = entities._entity.getLinkages(ELinkTypes.HAS_USE_OF,
                                                                             "Operation",
                                                                             "Portal0");
 
@@ -1828,7 +1828,7 @@ public class CoalesceEntityTest {
     {
         Entities entities = createEntityLinkages();
 
-        Map<String, CoalesceLinkage> linkages = entities.entity.getLinkages(Arrays.asList(ELinkTypes.HAS_USE_OF,
+        Map<String, CoalesceLinkage> linkages = entities._entity.getLinkages(Arrays.asList(ELinkTypes.HAS_USE_OF,
                                                                                           ELinkTypes.CREATED), "Operation");
 
         assertEquals(2, linkages.size());
@@ -1838,13 +1838,13 @@ public class CoalesceEntityTest {
             switch (linkage.getLinkType()) {
             case HAS_USE_OF:
 
-                assertLinkage(entities.entity, entities.entity2, linkage.getLinkType(), linkage);
+                assertLinkage(entities._entity, entities._entity2, linkage.getLinkType(), linkage);
 
                 break;
 
             case CREATED:
 
-                assertLinkage(entities.entity, entities.entity2, linkage.getLinkType(), linkage);
+                assertLinkage(entities._entity, entities._entity2, linkage.getLinkType(), linkage);
 
                 break;
 
@@ -1862,7 +1862,7 @@ public class CoalesceEntityTest {
     {
         Entities entities = createEntityLinkages();
 
-        Map<String, CoalesceLinkage> linkages = entities.entity.getLinkages(Arrays.asList(ELinkTypes.HAS_USE_OF,
+        Map<String, CoalesceLinkage> linkages = entities._entity.getLinkages(Arrays.asList(ELinkTypes.HAS_USE_OF,
                                                                                           ELinkTypes.IS_A_PEER_OF),
                                                                             "Operation");
 
@@ -1873,7 +1873,7 @@ public class CoalesceEntityTest {
             switch (linkage.getLinkType()) {
             case HAS_USE_OF:
 
-                assertLinkage(entities.entity, entities.entity2, linkage.getLinkType(), linkage);
+                assertLinkage(entities._entity, entities._entity2, linkage.getLinkType(), linkage);
 
                 break;
 
@@ -1892,7 +1892,7 @@ public class CoalesceEntityTest {
 
         Entities entities = createEntityLinkages();
 
-        Map<String, CoalesceLinkage> linkages = entities.entity.getLinkages(Arrays.asList(ELinkTypes.HAS_OWNERSHIP_OF,
+        Map<String, CoalesceLinkage> linkages = entities._entity.getLinkages(Arrays.asList(ELinkTypes.HAS_OWNERSHIP_OF,
                                                                                           ELinkTypes.IS_A_PEER_OF),
                                                                             "Operation");
 
@@ -2580,10 +2580,10 @@ public class CoalesceEntityTest {
 
     private class Entities {
 
-        public CoalesceEntity entity;
-        public CoalesceEntity entity2;
-        public CoalesceEntity entity3;
-        public CoalesceEntity entity4;
+        public CoalesceEntity _entity;
+        public CoalesceEntity _entity2;
+        public CoalesceEntity _entity3;
+        public CoalesceEntity _entity4;
 
     }
 
@@ -2591,18 +2591,18 @@ public class CoalesceEntityTest {
     {
         Entities entities = new Entities();
 
-        entities.entity = CoalesceEntity.create("Operation", "Portal", "1.1.1.1", "ID", "Type");
+        entities._entity = CoalesceEntity.create("Operation", "Portal", "1.1.1.1", "ID", "Type");
 
-        entities.entity2 = CoalesceEntity.create("Operation", "Portal", "1.2.3.4", "Id2", "Type2");
+        entities._entity2 = CoalesceEntity.create("Operation", "Portal", "1.2.3.4", "Id2", "Type2");
 
-        entities.entity3 = CoalesceEntity.create("Mission", "Portal2", "2.3.4.5", "Id3", "Type3");
+        entities._entity3 = CoalesceEntity.create("Mission", "Portal2", "2.3.4.5", "Id3", "Type3");
 
-        entities.entity4 = CoalesceEntity.create("Operation", "Portal2", "3.4.5.6", "Id4", "Type4");
+        entities._entity4 = CoalesceEntity.create("Operation", "Portal2", "3.4.5.6", "Id4", "Type4");
 
-        assertTrue(EntityLinkHelper.linkEntities(entities.entity, ELinkTypes.HAS_USE_OF, entities.entity2, false));
-        assertTrue(EntityLinkHelper.linkEntities(entities.entity, ELinkTypes.IS_PARENT_OF, entities.entity3, false));
-        assertTrue(EntityLinkHelper.linkEntities(entities.entity2, ELinkTypes.WAS_CREATED_BY, entities.entity, false));
-        assertTrue(EntityLinkHelper.linkEntities(entities.entity4, ELinkTypes.IS_A_MEMBER_OF, entities.entity, false));
+        assertTrue(EntityLinkHelper.linkEntities(entities._entity, ELinkTypes.HAS_USE_OF, entities._entity2, false));
+        assertTrue(EntityLinkHelper.linkEntities(entities._entity, ELinkTypes.IS_PARENT_OF, entities._entity3, false));
+        assertTrue(EntityLinkHelper.linkEntities(entities._entity2, ELinkTypes.WAS_CREATED_BY, entities._entity, false));
+        assertTrue(EntityLinkHelper.linkEntities(entities._entity4, ELinkTypes.IS_A_MEMBER_OF, entities._entity, false));
 
         return entities;
 
