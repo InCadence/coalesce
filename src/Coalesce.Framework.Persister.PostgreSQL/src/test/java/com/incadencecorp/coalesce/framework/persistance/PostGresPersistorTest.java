@@ -65,7 +65,7 @@ public class PostGresPersistorTest extends CoalescePersistorBaseTest {
     protected ICoalescePersistor getPersistor(ServerConn conn)
     {
         PostGreSQLPersistor postGresSQLPersistor = new PostGreSQLPersistor();
-        postGresSQLPersistor.Initialize(conn);
+        postGresSQLPersistor.initialize(conn);
 
         return postGresSQLPersistor;
 

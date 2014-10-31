@@ -72,7 +72,7 @@ public class SQLServerPersistor extends CoalescePersistorBase {
      * 
      * @param server connection object.
      */
-    public void Initialize(ServerConn svConn)
+    public void initialize(ServerConn svConn)
     {
         _serCon = svConn;
     }
@@ -83,7 +83,7 @@ public class SQLServerPersistor extends CoalescePersistorBase {
      * @param base class cacher.
      * @param server connection object.
      */
-    public boolean Initialize(ICoalesceCacher cacher, ServerConn svConn) throws CoalescePersistorException
+    public boolean initialize(ICoalesceCacher cacher, ServerConn svConn) throws CoalescePersistorException
     {
         _serCon = svConn;
 
@@ -95,20 +95,20 @@ public class SQLServerPersistor extends CoalescePersistorBase {
     --------------------------------------------------------------------------*/
 
     @Override
-    public List<String> getCoalesceEntityKeysForEntityId(String EntityId,
-                                                         String EntityIdType,
-                                                         String EntityName,
-                                                         String EntitySource) throws CoalescePersistorException
+    public List<String> getCoalesceEntityKeysForEntityId(String entityId,
+                                                         String entityIdType,
+                                                         String entityName,
+                                                         String entitySource) throws CoalescePersistorException
     {
         try
         {
-            if (EntitySource != null && EntitySource != "")
+            if (entitySource != null && entitySource != "")
             {
-                return getCoalesceEntityKeysForEntityIdAndSource(EntityId, EntityIdType, EntityName, EntitySource);
+                return getCoalesceEntityKeysForEntityIdAndSource(entityId, entityIdType, entityName, entitySource);
             }
             else
             {
-                return getCoalesceEntityKeysForEntityId(EntityId, EntityIdType, EntityName);
+                return getCoalesceEntityKeysForEntityId(entityId, entityIdType, entityName);
             }
         }
         catch (SQLException e)
@@ -122,11 +122,11 @@ public class SQLServerPersistor extends CoalescePersistorBase {
     }
 
     @Override
-    public EntityMetaData getCoalesceEntityIdAndTypeForKey(String Key) throws CoalescePersistorException
+    public EntityMetaData getCoalesceEntityIdAndTypeForKey(String key) throws CoalescePersistorException
     {
         try (SQLServerDataConnector conn = new SQLServerDataConnector(_serCon))
         {
-            return getCoalesceEntityIdAndTypeForKey(Key, conn);
+            return getCoalesceEntityIdAndTypeForKey(key, conn);
         }
         catch (SQLException e)
         {
@@ -139,11 +139,11 @@ public class SQLServerPersistor extends CoalescePersistorBase {
     }
 
     @Override
-    public DateTime getCoalesceObjectLastModified(String Key, String ObjectType) throws CoalescePersistorException
+    public DateTime getCoalesceObjectLastModified(String key, String objectType) throws CoalescePersistorException
     {
         try (SQLServerDataConnector conn = new SQLServerDataConnector(_serCon))
         {
-            return getCoalesceObjectLastModified(Key, ObjectType, conn);
+            return getCoalesceObjectLastModified(key, objectType, conn);
         }
         catch (SQLException e)
         {
@@ -211,11 +211,11 @@ public class SQLServerPersistor extends CoalescePersistorBase {
     }
 
     @Override
-    public ElementMetaData getXPath(String Key, String ObjectType) throws CoalescePersistorException
+    public ElementMetaData getXPath(String key, String objectType) throws CoalescePersistorException
     {
         try (SQLServerDataConnector conn = new SQLServerDataConnector(_serCon))
         {
-            return getXPathRecursive(Key, ObjectType, "", conn);
+            return getXPathRecursive(key, objectType, "", conn);
         }
         catch (SQLException e)
         {
@@ -228,14 +228,14 @@ public class SQLServerPersistor extends CoalescePersistorBase {
     }
 
     @Override
-    public String getFieldValue(String FieldKey) throws CoalescePersistorException
+    public String getFieldValue(String fieldKey) throws CoalescePersistorException
     {
         try (SQLServerDataConnector conn = new SQLServerDataConnector(_serCon))
         {
             String value = null;
 
             ResultSet results = conn.executeQuery("SELECT value FROM CoalesceField WHERE ObjectKey =?",
-                                                  new CoalesceParameter(FieldKey));
+                                                  new CoalesceParameter(fieldKey));
 
             while (results.next() && value == null)
             {
@@ -255,14 +255,14 @@ public class SQLServerPersistor extends CoalescePersistorBase {
     }
 
     @Override
-    public String getEntityXml(String Key) throws CoalescePersistorException
+    public String getEntityXml(String key) throws CoalescePersistorException
     {
         try (SQLServerDataConnector conn = new SQLServerDataConnector(_serCon))
         {
             String value = null;
 
             ResultSet results = conn.executeQuery("SELECT EntityXml from CoalesceEntity WHERE ObjectKey=?",
-                                                  new CoalesceParameter(Key));
+                                                  new CoalesceParameter(key));
 
             while (results.next())
             {
@@ -282,15 +282,15 @@ public class SQLServerPersistor extends CoalescePersistorBase {
     }
 
     @Override
-    public String getEntityXml(String EntityId, String EntityIdType) throws CoalescePersistorException
+    public String getEntityXml(String entityId, String entityIdType) throws CoalescePersistorException
     {
         try (SQLServerDataConnector conn = new SQLServerDataConnector(_serCon))
         {
             String value = null;
 
             ResultSet results = conn.executeQuery("SELECT EntityXml from CoalesceEntity WHERE EntityId=? AND EntityIdType=?",
-                                                  new CoalesceParameter(EntityId),
-                                                  new CoalesceParameter(EntityIdType));
+                                                  new CoalesceParameter(entityId),
+                                                  new CoalesceParameter(entityIdType));
 
             while (results.next() && value == null)
             {
@@ -310,16 +310,16 @@ public class SQLServerPersistor extends CoalescePersistorBase {
     }
 
     @Override
-    public String getEntityXml(String Name, String EntityId, String EntityIdType) throws CoalescePersistorException
+    public String getEntityXml(String name, String entityId, String entityIdType) throws CoalescePersistorException
     {
         try (SQLServerDataConnector conn = new SQLServerDataConnector(_serCon))
         {
             String value = null;
 
             ResultSet results = conn.executeQuery("SELECT EntityXml from CoalesceEntity WHERE Name=? AND EntityId=? AND EntityIdType=?",
-                                                  new CoalesceParameter(Name),
-                                                  new CoalesceParameter(EntityId),
-                                                  new CoalesceParameter(EntityIdType));
+                                                  new CoalesceParameter(name),
+                                                  new CoalesceParameter(entityId),
+                                                  new CoalesceParameter(entityIdType));
 
             while (results.next() && value == null)
             {
@@ -360,7 +360,7 @@ public class SQLServerPersistor extends CoalescePersistorBase {
      */
 
     @Override
-    protected boolean flattenObject(CoalesceEntity entity, boolean AllowRemoval) throws CoalescePersistorException
+    protected boolean flattenObject(CoalesceEntity entity, boolean allowRemoval) throws CoalescePersistorException
     {
         boolean isSuccessful = false;
 
@@ -369,7 +369,7 @@ public class SQLServerPersistor extends CoalescePersistorBase {
         {
 
             // Persist (Recursively)
-            isSuccessful = updateCoalesceObject(entity, conn, AllowRemoval);
+            isSuccessful = updateCoalesceObject(entity, conn, allowRemoval);
 
             // Persist Entity Last to Include Changes
             if (isSuccessful)
@@ -390,7 +390,7 @@ public class SQLServerPersistor extends CoalescePersistorBase {
     }
 
     @Override
-    protected boolean flattenCore(CoalesceEntity entity, boolean AllowRemoval) throws CoalescePersistorException
+    protected boolean flattenCore(CoalesceEntity entity, boolean allowRemoval) throws CoalescePersistorException
     {
         boolean isSuccessful = false;
 
@@ -421,16 +421,16 @@ public class SQLServerPersistor extends CoalescePersistorBase {
     }
 
     @Override
-    public String getEntityTemplateKey(String Name, String Source, String Version) throws CoalescePersistorException
+    public String getEntityTemplateKey(String name, String source, String version) throws CoalescePersistorException
     {
         try (SQLServerDataConnector conn = new SQLServerDataConnector(_serCon))
         {
             String value = null;
 
             ResultSet results = conn.executeQuery("SELECT TemplateKey FROM CoalesceEntityTemplate WHERE Name=? and Source=? and Version=?",
-                                                  new CoalesceParameter(Name),
-                                                  new CoalesceParameter(Source),
-                                                  new CoalesceParameter(Version));
+                                                  new CoalesceParameter(name),
+                                                  new CoalesceParameter(source),
+                                                  new CoalesceParameter(version));
 
             while (results.next() && value == null)
             {
@@ -467,14 +467,14 @@ public class SQLServerPersistor extends CoalescePersistorBase {
     }
 
     @Override
-    public String getEntityTemplateXml(String Key) throws CoalescePersistorException
+    public String getEntityTemplateXml(String key) throws CoalescePersistorException
     {
         try (SQLServerDataConnector conn = new SQLServerDataConnector(_serCon))
         {
             String value = null;
 
             ResultSet results = conn.executeQuery("SELECT TemplateXml FROM CoalesceEntityTemplate WHERE TemplateKey=?",
-                                                  new CoalesceParameter(Key));
+                                                  new CoalesceParameter(key));
 
             while (results.next())
             {
@@ -494,16 +494,16 @@ public class SQLServerPersistor extends CoalescePersistorBase {
     }
 
     @Override
-    public String getEntityTemplateXml(String Name, String Source, String Version) throws CoalescePersistorException
+    public String getEntityTemplateXml(String name, String source, String version) throws CoalescePersistorException
     {
         try (SQLServerDataConnector conn = new SQLServerDataConnector(_serCon))
         {
             String value = null;
 
             ResultSet results = conn.executeQuery("SELECT TemplateXml FROM CoalesceEntityTemplate WHERE Name=? and Source=? and Version=?",
-                                                  new CoalesceParameter(Name),
-                                                  new CoalesceParameter(Source),
-                                                  new CoalesceParameter(Version));
+                                                  new CoalesceParameter(name),
+                                                  new CoalesceParameter(source),
+                                                  new CoalesceParameter(version));
 
             while (results.next())
             {
@@ -896,18 +896,18 @@ public class SQLServerPersistor extends CoalescePersistorBase {
     /**
      * Returns the EntityMetaData for the Coalesce entity that matches the given parameters.
      * 
-     * @param Key primary key of the Coalesce entity
+     * @param key primary key of the Coalesce entity
      * @param conn is the SQLServerDataConnector database connection
      * @return metaData the EntityMetaData for the Coalesce entity.
      * @throws SQLException
      */
-    protected EntityMetaData getCoalesceEntityIdAndTypeForKey(String Key, SQLServerDataConnector conn) throws SQLException
+    protected EntityMetaData getCoalesceEntityIdAndTypeForKey(String key, SQLServerDataConnector conn) throws SQLException
     {
         EntityMetaData metaData = null;
 
         // Execute Query
         ResultSet results = conn.executeQuery("SELECT EntityId,EntityIdType,ObjectKey FROM CoalesceEntity WHERE ObjectKey=?",
-                                              new CoalesceParameter(Key));
+                                              new CoalesceParameter(key));
         // Get Results
         while (results.next())
         {
@@ -922,12 +922,12 @@ public class SQLServerPersistor extends CoalescePersistorBase {
     /**
      * Returns the rounded milliseconds.
      * 
-     * @param Ticks time in milliseconds to be rounded up
+     * @param ticks time in milliseconds to be rounded up
      * @return Ticks rounded up time in milliseconds.
      */
-    protected long roundTicksForSQL(long Ticks)
+    protected long roundTicksForSQL(long ticks)
     {
-        int iTick = (int) (Ticks % 10);
+        int iTick = (int) (ticks % 10);
 
         switch (iTick) {
         case 0:
@@ -937,18 +937,18 @@ public class SQLServerPersistor extends CoalescePersistorBase {
         case 1:
         case 4:
         case 8:
-            Ticks = Ticks - 1;
+            ticks = ticks - 1;
             break;
         case 2:
         case 6:
         case 9:
-            Ticks = Ticks + 1;
+            ticks = ticks + 1;
             break;
         case 5:
-            Ticks = Ticks + 2;
+            ticks = ticks + 2;
             break;
         }
-        return Ticks;
+        return ticks;
     }
 
     /**
@@ -964,19 +964,19 @@ public class SQLServerPersistor extends CoalescePersistorBase {
         boolean isOutOfDate = true;
 
         // Get LastModified from the Database
-        DateTime LastModified = getCoalesceObjectLastModified(coalesceObject.getKey(), coalesceObject.getType(), conn);
+        DateTime lastModified = getCoalesceObjectLastModified(coalesceObject.getKey(), coalesceObject.getType(), conn);
 
         // DB Has Valid Time?
-        if (LastModified != null)
+        if (lastModified != null)
         {
             // Remove NanoSeconds (100 ns / Tick and 1,000,000 ns / ms = 10,000 Ticks / ms)
-            long ObjectTicks = coalesceObject.getLastModified().getMillis();
-            long SQLRecordTicks = LastModified.getMillis();
+            long objectTicks = coalesceObject.getLastModified().getMillis();
+            long SQLRecordTicks = lastModified.getMillis();
 
             // TODO: Round Ticks for SQL (Not sure if is required for .NET)
-            ObjectTicks = roundTicksForSQL(ObjectTicks);
+            objectTicks = roundTicksForSQL(objectTicks);
 
-            if (ObjectTicks == SQLRecordTicks)
+            if (objectTicks == SQLRecordTicks)
             {
                 // They're equal; No Update Required
                 isOutOfDate = false;
@@ -1009,13 +1009,13 @@ public class SQLServerPersistor extends CoalescePersistorBase {
     /**
      * Returns the Coalesce entity keys that matches the given parameters.
      * 
-     * @param EntityId of the entity.
-     * @param EntityIdType of the entity.
-     * @param EntityName of the entity.
+     * @param entityId of the entity.
+     * @param entityIdType of the entity.
+     * @param entityName of the entity.
      * @return List<String> of primary keys for the matching Coalesce entity.
      * @throws SQLException,Exception,CoalescePersistorException
      */
-    private List<String> getCoalesceEntityKeysForEntityId(String EntityId, String EntityIdType, String EntityName)
+    private List<String> getCoalesceEntityKeysForEntityId(String entityId, String entityIdType, String entityName)
             throws Exception
     {
         List<String> keyList = new ArrayList<String>();
@@ -1023,9 +1023,9 @@ public class SQLServerPersistor extends CoalescePersistorBase {
         try (SQLServerDataConnector conn = new SQLServerDataConnector(_serCon))
         {
             ResultSet results = conn.executeQuery("SELECT ObjectKey FROM CoalesceEntity WHERE (ISNULL(EntityId,' ') like ? ) AND (ISNULL(EntityIdType,' ') like  ? ) AND Name=?",
-                                                  new CoalesceParameter(EntityId),
-                                                  new CoalesceParameter(EntityIdType),
-                                                  new CoalesceParameter(EntityName));
+                                                  new CoalesceParameter(entityId),
+                                                  new CoalesceParameter(entityIdType),
+                                                  new CoalesceParameter(entityName));
 
             while (results.next())
             {
@@ -1040,27 +1040,27 @@ public class SQLServerPersistor extends CoalescePersistorBase {
     /**
      * Returns the Coalesce entity keys that matches the given parameters.
      * 
-     * @param EntityId of the entity.
-     * @param EntityIdType of the entity.
-     * @param EntityName of the entity.
-     * @param EntitySource of the entity.
+     * @param entityId of the entity.
+     * @param entityIdType of the entity.
+     * @param entityName of the entity.
+     * @param entitySource of the entity.
      * @return List<String> of primary keys for the matching Coalesce entity.
      * @throws SQLException,Exception,CoalescePersistorException
      */
-    private List<String> getCoalesceEntityKeysForEntityIdAndSource(String EntityId,
-                                                                   String EntityIdType,
-                                                                   String EntityName,
-                                                                   String EntitySource) throws Exception
+    private List<String> getCoalesceEntityKeysForEntityIdAndSource(String entityId,
+                                                                   String entityIdType,
+                                                                   String entityName,
+                                                                   String entitySource) throws Exception
     {
         try (SQLServerDataConnector conn = new SQLServerDataConnector(_serCon))
         {
             List<String> keyList = new ArrayList<String>();
 
             ResultSet results = conn.executeQuery("SELECT ObjectKey FROM CoalesceEntity WHERE (ISNULL(EntityId,' ')  like  ? ) AND (ISNULL(EntityIdType,' ')  like  ? ) AND (Name=?) AND (Source=?)",
-                                                  new CoalesceParameter(EntityId),
-                                                  new CoalesceParameter(EntityIdType),
-                                                  new CoalesceParameter(EntityName),
-                                                  new CoalesceParameter(EntitySource));
+                                                  new CoalesceParameter(entityId),
+                                                  new CoalesceParameter(entityIdType),
+                                                  new CoalesceParameter(entityName),
+                                                  new CoalesceParameter(entitySource));
 
             while (results.next())
             {
@@ -1100,7 +1100,7 @@ public class SQLServerPersistor extends CoalescePersistorBase {
         return isSuccessful;
     }
 
-    private boolean updateCoalesceObject(CoalesceObject coalesceObject, SQLServerDataConnector conn, boolean AllowRemoval)
+    private boolean updateCoalesceObject(CoalesceObject coalesceObject, SQLServerDataConnector conn, boolean allowRemoval)
             throws SQLException
 
     {
@@ -1115,7 +1115,7 @@ public class SQLServerPersistor extends CoalescePersistorBase {
                 break;
 
             case DELETED:
-                if (AllowRemoval)
+                if (allowRemoval)
                 {
                     // Delete Object
                     isSuccessful = deleteObject(coalesceObject, conn);
@@ -1138,24 +1138,24 @@ public class SQLServerPersistor extends CoalescePersistorBase {
                 // Yes; Iterate Through Children
                 for (CoalesceObject childObject : coalesceObject.getChildCoalesceObjects().values())
                 {
-                    updateCoalesceObject(childObject, conn, AllowRemoval);
+                    updateCoalesceObject(childObject, conn, allowRemoval);
                 }
             }
         }
         return isSuccessful;
     }
 
-    private DateTime getCoalesceObjectLastModified(String Key, String ObjectType, SQLServerDataConnector conn)
+    private DateTime getCoalesceObjectLastModified(String key, String objectType, SQLServerDataConnector conn)
             throws SQLException
     {
         DateTime lastModified = null;
 
         // Determine the Table Name
-        String tableName = CoalesceTableHelper.getTableNameForObjectType(ObjectType);
+        String tableName = CoalesceTableHelper.getTableNameForObjectType(objectType);
         String dateValue = null;
 
         ResultSet results = conn.executeQuery("SELECT LastModified FROM " + tableName + " WHERE ObjectKey=?",
-                                              new CoalesceParameter(Key.trim()));
+                                              new CoalesceParameter(key.trim()));
         // JODA Function DateTimeFormat will adjust for the Server timezone when converting the time.
         while (results.next())
         {

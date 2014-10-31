@@ -59,7 +59,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     Private Member Variables
     --------------------------------------------------------------------------*/
 
-    private ServerConn serCon;
+    private ServerConn _serCon;
 
     /*--------------------------------------------------------------------------
     Constructor / Initializers
@@ -67,8 +67,8 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
 
     public PostGreSQLPersistor()
     {
-        serCon = new ServerConn();
-        serCon.setPostGres(true);
+        _serCon = new ServerConn();
+        _serCon.setPostGres(true);
     }
 
     /**
@@ -76,10 +76,10 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
      * 
      * @param server connection object.
      */
-    public void Initialize(ServerConn svConn)
+    public void initialize(ServerConn svConn)
     {
-        serCon = svConn;
-        serCon.setPostGres(true);
+        _serCon = svConn;
+        _serCon.setPostGres(true);
     }
 
     /**
@@ -88,10 +88,10 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
      * @param base class cacher.
      * @param server connection object.
      */
-    public boolean Initialize(ICoalesceCacher cacher, ServerConn svConn) throws CoalescePersistorException
+    public boolean initialize(ICoalesceCacher cacher, ServerConn svConn) throws CoalescePersistorException
     {
-        serCon = svConn;
-        serCon.setPostGres(true);
+        _serCon = svConn;
+        _serCon.setPostGres(true);
         return super.initialize(cacher);
     }
 
@@ -100,20 +100,20 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     --------------------------------------------------------------------------*/
 
     @Override
-    public List<String> getCoalesceEntityKeysForEntityId(String EntityId,
-                                                         String EntityIdType,
-                                                         String EntityName,
-                                                         String EntitySource) throws CoalescePersistorException
+    public List<String> getCoalesceEntityKeysForEntityId(String entityId,
+                                                         String entityIdType,
+                                                         String entityName,
+                                                         String entitySource) throws CoalescePersistorException
     {
         try
         {
-            if (EntitySource != null && EntitySource != "")
+            if (entitySource != null && entitySource != "")
             {
-                return this.getCoalesceEntityKeysForEntityIdAndSource(EntityId, EntityIdType, EntityName, EntitySource);
+                return this.getCoalesceEntityKeysForEntityIdAndSource(entityId, entityIdType, entityName, entitySource);
             }
             else
             {
-                return this.getCoalesceEntityKeysForEntityId(EntityId, EntityIdType, EntityName);
+                return this.getCoalesceEntityKeysForEntityId(entityId, entityIdType, entityName);
             }
         }
         catch (SQLException e)
@@ -127,11 +127,11 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     }
 
     @Override
-    public EntityMetaData getCoalesceEntityIdAndTypeForKey(String Key) throws CoalescePersistorException
+    public EntityMetaData getCoalesceEntityIdAndTypeForKey(String key) throws CoalescePersistorException
     {
-        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this.serCon))
+        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this._serCon))
         {
-            return this.getCoalesceEntityIdAndTypeForKey(Key, conn);
+            return this.getCoalesceEntityIdAndTypeForKey(key, conn);
         }
         catch (SQLException e)
         {
@@ -144,11 +144,11 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     }
 
     @Override
-    public DateTime getCoalesceObjectLastModified(String Key, String ObjectType) throws CoalescePersistorException
+    public DateTime getCoalesceObjectLastModified(String key, String objectType) throws CoalescePersistorException
     {
-        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this.serCon))
+        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this._serCon))
         {
-            return this.getCoalesceObjectLastModified(Key, ObjectType, conn);
+            return this.getCoalesceObjectLastModified(key, objectType, conn);
         }
         catch (SQLException e)
         {
@@ -163,7 +163,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     @Override
     public byte[] getBinaryArray(String key) throws CoalescePersistorException
     {
-        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this.serCon))
+        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this._serCon))
         {
 
             byte[] binaryArray = null;
@@ -193,7 +193,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     @Override
     public boolean persistEntityTemplate(CoalesceEntityTemplate template) throws CoalescePersistorException
     {
-        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this.serCon))
+        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this._serCon))
         {
             // Always persist template
             return conn.executeProcedure("CoalesceEntityTemplate_InsertOrUpdate",
@@ -216,11 +216,11 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     }
 
     @Override
-    public ElementMetaData getXPath(String Key, String ObjectType) throws CoalescePersistorException
+    public ElementMetaData getXPath(String key, String objectType) throws CoalescePersistorException
     {
-        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this.serCon))
+        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this._serCon))
         {
-            return this.getXPathRecursive(Key, ObjectType, "", conn);
+            return this.getXPathRecursive(key, objectType, "", conn);
         }
         catch (SQLException e)
         {
@@ -233,14 +233,14 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     }
 
     @Override
-    public String getFieldValue(String FieldKey) throws CoalescePersistorException
+    public String getFieldValue(String fieldKey) throws CoalescePersistorException
     {
-        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this.serCon))
+        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this._serCon))
         {
             String value = null;
 
             ResultSet results = conn.executeQuery("SELECT value FROM CoalesceField WHERE ObjectKey =?",
-                                                  new CoalesceParameter(FieldKey, Types.OTHER));
+                                                  new CoalesceParameter(fieldKey, Types.OTHER));
 
             while (results.next())
             {
@@ -260,14 +260,14 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     }
 
     @Override
-    public String getEntityXml(String Key) throws CoalescePersistorException
+    public String getEntityXml(String key) throws CoalescePersistorException
     {
-        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this.serCon))
+        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this._serCon))
         {
             String value = null;
 
             ResultSet results = conn.executeQuery("SELECT EntityXml from CoalesceEntity WHERE ObjectKey=?",
-                                                  new CoalesceParameter(Key, Types.OTHER));
+                                                  new CoalesceParameter(key, Types.OTHER));
 
             while (results.next())
             {
@@ -287,15 +287,15 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     }
 
     @Override
-    public String getEntityXml(String EntityId, String EntityIdType) throws CoalescePersistorException
+    public String getEntityXml(String entityId, String entityIdType) throws CoalescePersistorException
     {
-        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this.serCon))
+        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this._serCon))
         {
             String value = null;
 
             ResultSet results = conn.executeQuery("SELECT EntityXml from CoalesceEntity WHERE EntityId=? AND EntityIdType=?",
-                                                  new CoalesceParameter(EntityId),
-                                                  new CoalesceParameter(EntityIdType));
+                                                  new CoalesceParameter(entityId),
+                                                  new CoalesceParameter(entityIdType));
 
             while (results.next())
             {
@@ -315,16 +315,16 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     }
 
     @Override
-    public String getEntityXml(String Name, String EntityId, String EntityIdType) throws CoalescePersistorException
+    public String getEntityXml(String name, String entityId, String entityIdType) throws CoalescePersistorException
     {
-        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this.serCon))
+        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this._serCon))
         {
             String value = null;
 
             ResultSet results = conn.executeQuery("SELECT EntityXml from CoalesceEntity WHERE Name=? AND EntityId=? AND EntityIdType=?",
-                                                  new CoalesceParameter(Name),
-                                                  new CoalesceParameter(EntityId),
-                                                  new CoalesceParameter(EntityIdType));
+                                                  new CoalesceParameter(name),
+                                                  new CoalesceParameter(entityId),
+                                                  new CoalesceParameter(entityIdType));
 
             while (results.next())
             {
@@ -365,18 +365,18 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
      */
 
     @Override
-    protected boolean flattenObject(CoalesceEntity entity, boolean AllowRemoval) throws CoalescePersistorException
+    protected boolean flattenObject(CoalesceEntity entity, boolean allowRemoval) throws CoalescePersistorException
     {
         boolean isSuccessful = false;
 
         // Create a Database Connection
-        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this.serCon))
+        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this._serCon))
         {
 
             conn.openConnection();
 
             // Persist (Recursively)
-            isSuccessful = this.updateCoalesceObject(entity, conn, AllowRemoval);
+            isSuccessful = this.updateCoalesceObject(entity, conn, allowRemoval);
 
             // Persist Entity Last to Include Changes
             if (isSuccessful)
@@ -398,12 +398,12 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     }
 
     @Override
-    protected boolean flattenCore(CoalesceEntity entity, boolean AllowRemoval) throws CoalescePersistorException
+    protected boolean flattenCore(CoalesceEntity entity, boolean allowRemoval) throws CoalescePersistorException
     {
         boolean isSuccessful = false;
 
         // Create a Database Connection
-        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this.serCon))
+        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this._serCon))
         {
 
             conn.openConnection();
@@ -429,16 +429,16 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     }
 
     @Override
-    public String getEntityTemplateKey(String Name, String Source, String Version) throws CoalescePersistorException
+    public String getEntityTemplateKey(String name, String source, String version) throws CoalescePersistorException
     {
-        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this.serCon))
+        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this._serCon))
         {
             String value = null;
 
             ResultSet results = conn.executeQuery("SELECT TemplateKey FROM CoalesceEntityTemplate WHERE Name=? and Source=? and Version=?",
-                                                  new CoalesceParameter(Name),
-                                                  new CoalesceParameter(Source),
-                                                  new CoalesceParameter(Version));
+                                                  new CoalesceParameter(name),
+                                                  new CoalesceParameter(source),
+                                                  new CoalesceParameter(version));
 
             while (results.next())
             {
@@ -460,7 +460,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     @Override
     public String getEntityTemplateMetadata() throws CoalescePersistorException
     {
-        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this.serCon))
+        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this._serCon))
         {
             return conn.getTemplateMetaData("SELECT * FROM CoalesceEntityTemplate");
         }
@@ -475,14 +475,14 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     }
 
     @Override
-    public String getEntityTemplateXml(String Key) throws CoalescePersistorException
+    public String getEntityTemplateXml(String key) throws CoalescePersistorException
     {
-        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this.serCon))
+        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this._serCon))
         {
             String value = null;
 
             ResultSet results = conn.executeQuery("SELECT TemplateXml FROM CoalesceEntityTemplate WHERE TemplateKey=?",
-                                                  new CoalesceParameter(Key, Types.OTHER));
+                                                  new CoalesceParameter(key, Types.OTHER));
 
             while (results.next())
             {
@@ -502,16 +502,16 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     }
 
     @Override
-    public String getEntityTemplateXml(String Name, String Source, String Version) throws CoalescePersistorException
+    public String getEntityTemplateXml(String name, String source, String version) throws CoalescePersistorException
     {
-        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this.serCon))
+        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this._serCon))
         {
             String value = null;
 
             ResultSet results = conn.executeQuery("SELECT TemplateXml FROM CoalesceEntityTemplate WHERE Name=? and Source=? and Version=?",
-                                                  new CoalesceParameter(Name),
-                                                  new CoalesceParameter(Source),
-                                                  new CoalesceParameter(Version));
+                                                  new CoalesceParameter(name),
+                                                  new CoalesceParameter(source),
+                                                  new CoalesceParameter(version));
 
             while (results.next())
             {
@@ -903,18 +903,18 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     /**
      * Returns the EntityMetaData for the Coalesce entity that matches the given parameters.
      * 
-     * @param Key primary key of the Coalesce entity
+     * @param key primary key of the Coalesce entity
      * @param conn is the PostGresDataConnector database connection
      * @return metaData the EntityMetaData for the Coalesce entity.
      * @throws SQLException
      */
-    protected EntityMetaData getCoalesceEntityIdAndTypeForKey(String Key, PostGreSQLDataConnector conn) throws SQLException
+    protected EntityMetaData getCoalesceEntityIdAndTypeForKey(String key, PostGreSQLDataConnector conn) throws SQLException
     {
         EntityMetaData metaData = null;
 
         // Execute Query
         ResultSet results = conn.executeQuery("SELECT EntityId,EntityIdType,ObjectKey FROM CoalesceEntity WHERE ObjectKey=?",
-                                              new CoalesceParameter(Key, Types.OTHER));
+                                              new CoalesceParameter(key, Types.OTHER));
         // Get Results
         while (results.next())
         {
@@ -939,19 +939,19 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
         boolean isOutOfDate = true;
 
         // Get LastModified from the Database
-        DateTime LastModified = this.getCoalesceObjectLastModified(coalesceObject.getKey(), coalesceObject.getType(), conn);
+        DateTime lastModified = this.getCoalesceObjectLastModified(coalesceObject.getKey(), coalesceObject.getType(), conn);
 
         // DB Has Valid Time?
-        if (LastModified != null)
+        if (lastModified != null)
         {
             // Remove NanoSeconds (100 ns / Tick and 1,000,000 ns / ms = 10,000 Ticks / ms)
-            long ObjectTicks = coalesceObject.getLastModified().getMillis();
-            long SQLRecordTicks = LastModified.getMillis();
+            long objectTicks = coalesceObject.getLastModified().getMillis();
+            long SQLRecordTicks = lastModified.getMillis();
 
             // TODO: Round Ticks for SQL (Not sure if this is required for .NET)
             // ObjectTicks = this.RoundTicksForSQL(ObjectTicks);
 
-            if (ObjectTicks == SQLRecordTicks)
+            if (objectTicks == SQLRecordTicks)
             {
                 // They're equal; No Update Required
                 isOutOfDate = false;
@@ -984,24 +984,24 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     /**
      * Returns the Coalesce entity keys that matches the given parameters.
      * 
-     * @param EntityId of the entity.
-     * @param EntityIdType of the entity.
-     * @param EntityName of the entity.
+     * @param entityId of the entity.
+     * @param entityIdType of the entity.
+     * @param entityName of the entity.
      * @return List<String> of primary keys for the matching Coalesce entity.
      * @throws SQLException,Exception,CoalescePersistorException
      */
-    private List<String> getCoalesceEntityKeysForEntityId(String EntityId, String EntityIdType, String EntityName)
+    private List<String> getCoalesceEntityKeysForEntityId(String entityId, String entityIdType, String entityName)
             throws Exception
     {
         List<String> keyList = new ArrayList<String>();
 
-        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this.serCon))
+        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this._serCon))
         {
             ResultSet results = conn.executeLikeQuery("SELECT ObjectKey FROM CoalesceEntity WHERE (EntityId like ?) AND (EntityIdType like ?) AND (Name=?)",
                                                       2,
-                                                      new CoalesceParameter(EntityId),
-                                                      new CoalesceParameter(EntityIdType),
-                                                      new CoalesceParameter(EntityName));
+                                                      new CoalesceParameter(entityId),
+                                                      new CoalesceParameter(entityIdType),
+                                                      new CoalesceParameter(entityName));
 
             while (results.next())
             {
@@ -1016,29 +1016,29 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     /**
      * Returns the Coalesce entity keys that matches the given parameters.
      * 
-     * @param EntityId of the entity.
-     * @param EntityIdType of the entity.
-     * @param EntityName of the entity.
-     * @param EntitySource of the entity.
+     * @param entityId of the entity.
+     * @param entityIdType of the entity.
+     * @param entityName of the entity.
+     * @param entitySource of the entity.
      * @return List<String> of primary keys for the matching Coalesce entity.
      * @throws SQLException,Exception,CoalescePersistorException
      */
-    private List<String> getCoalesceEntityKeysForEntityIdAndSource(String EntityId,
-                                                                     String EntityIdType,
-                                                                     String EntityName,
-                                                                     String EntitySource) throws Exception
+    private List<String> getCoalesceEntityKeysForEntityIdAndSource(String entityId,
+                                                                     String entityIdType,
+                                                                     String entityName,
+                                                                     String entitySource) throws Exception
     {
 
-        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this.serCon))
+        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this._serCon))
         {
             List<String> keyList = new ArrayList<String>();
 
             ResultSet results = conn.executeLikeQuery("SELECT ObjectKey FROM CoalesceEntity WHERE (EntityId like ? ) AND (EntityIdType like  ? ) AND (Name=?) AND (Source=?)",
                                                       2,
-                                                      new CoalesceParameter(EntityId),
-                                                      new CoalesceParameter(EntityIdType),
-                                                      new CoalesceParameter(EntityName),
-                                                      new CoalesceParameter(EntitySource));
+                                                      new CoalesceParameter(entityId),
+                                                      new CoalesceParameter(entityIdType),
+                                                      new CoalesceParameter(entityName),
+                                                      new CoalesceParameter(entitySource));
 
             while (results.next())
             {
@@ -1080,7 +1080,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
 
     private boolean updateCoalesceObject(CoalesceObject coalesceObject,
                                      PostGreSQLDataConnector conn,
-                                     boolean AllowRemoval) throws SQLException
+                                     boolean allowRemoval) throws SQLException
 
     {
         boolean isSuccessful = false;
@@ -1094,7 +1094,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
                 break;
 
             case DELETED:
-                if (AllowRemoval)
+                if (allowRemoval)
                 {
                     // Delete Object
                     isSuccessful = deleteObject(coalesceObject, conn);
@@ -1117,24 +1117,24 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
                 // Yes; Iterate Through Children
                 for (CoalesceObject childObject : coalesceObject.getChildCoalesceObjects().values())
                 {
-                    updateCoalesceObject(childObject, conn, AllowRemoval);
+                    updateCoalesceObject(childObject, conn, allowRemoval);
                 }
             }
         }
         return isSuccessful;
     }
 
-    private DateTime getCoalesceObjectLastModified(String Key, String ObjectType, PostGreSQLDataConnector conn)
+    private DateTime getCoalesceObjectLastModified(String key, String objectType, PostGreSQLDataConnector conn)
             throws SQLException
     {
         DateTime lastModified = null;
 
         // Determine the Table Name
-        String tableName = CoalesceTableHelper.getTableNameForObjectType(ObjectType);
+        String tableName = CoalesceTableHelper.getTableNameForObjectType(objectType);
         String dateValue = null;
 
         ResultSet results = conn.executeQuery("SELECT LastModified FROM " + tableName + " WHERE ObjectKey=?",
-                                              new CoalesceParameter(Key.trim(), Types.OTHER));
+                                              new CoalesceParameter(key.trim(), Types.OTHER));
         ResultSetMetaData resultsmd = results.getMetaData();
 
         // JODA Function DateTimeFormat will adjust for the Server timezone when converting the time.

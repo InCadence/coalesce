@@ -62,7 +62,7 @@ public class SQLServerPersistorTest extends CoalescePersistorBaseTest {
     protected ICoalescePersistor getPersistor(ServerConn conn)
     {
         SQLServerPersistor mySQLServerPersistor = new SQLServerPersistor();
-        mySQLServerPersistor.Initialize(conn);
+        mySQLServerPersistor.initialize(conn);
 
         return mySQLServerPersistor;
 
