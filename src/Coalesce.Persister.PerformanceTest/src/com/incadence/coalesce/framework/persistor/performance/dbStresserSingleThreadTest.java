@@ -87,7 +87,7 @@ public class dbStresserSingleThreadTest {
 		_serCon.setUser("root");
 		_serCon.setPassword("Passw0rd");
 		_dbPersistor = new PostGreSQLPersistor();
-		_dbPersistor.Initialize(_serCon);
+		_dbPersistor.initialize(_serCon);
 
 		return true;
 	}

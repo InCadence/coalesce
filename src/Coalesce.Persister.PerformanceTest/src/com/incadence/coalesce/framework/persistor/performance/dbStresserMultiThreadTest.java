@@ -103,7 +103,7 @@ public class dbStresserMultiThreadTest {
 		_serCon.setUser("root");
 		_serCon.setPassword("Passw0rd");
 		_psPersistor = new PostGreSQLPersistor();
-		_psPersistor.Initialize(_serCon);
+		_psPersistor.initialize(_serCon);
 		return true;
 	}
 }
