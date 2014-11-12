@@ -546,8 +546,7 @@ public class CoalesceEntity extends CoalesceObject {
      * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}'s linkages from the
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}'s linkagesection.
      * 
-     * @return Map<String, CoalesceLinkage> CoalesceLinkages of relationships to this
-     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}
+     * @return Map<String, CoalesceLinkage> CoalesceLinkages of relationships to this CoalesceEntity
      */
     public Map<String, CoalesceLinkage> getLinkages()
     {
@@ -616,8 +615,7 @@ public class CoalesceEntity extends CoalesceObject {
     /**
      * Returns this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}'s sections.
      * 
-     * @return Map<String, {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}> sections belonging to this
-     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}
+     * @return Map<String, CoalesceSection> sections belonging to this CoalesceEntity
      */
     public Map<String, CoalesceSection> getSections()
     {
@@ -664,8 +662,7 @@ public class CoalesceEntity extends CoalesceObject {
      * Returns all linkages when the forEntityName parameter is null.
      * 
      * @param forEntityName String of the Entity Name to return linkages for
-     * @return Map<String, {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage}> linkages with matches for
-     *         the Entity Name parameter
+     * @return Map<String, CoalesceLinkage> linkages with matches for the Entity Name parameter
      */
     public Map<String, CoalesceLinkage> getLinkages(String forEntityName)
     {
@@ -696,8 +693,7 @@ public class CoalesceEntity extends CoalesceObject {
      * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}'s linkages, from the
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}'s linkagesection, based on LinkType.
      * 
-     * @return Map<String, {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage}> linkages with matches for
-     *         the ELinkTypes parameter
+     * @return Map<String, CoalesceLinkage> linkages with matches for the ELinkTypes parameter
      */
     public Map<String, CoalesceLinkage> getLinkages(ELinkTypes forLinkType)
     {
@@ -711,8 +707,7 @@ public class CoalesceEntity extends CoalesceObject {
      * 
      * @param forLinkType ELinkTypes (one link type), the type of relationship link to find matching linkages for
      * @param forEntityName String, the Entity name attribute to find matching linkages for
-     * @return Map<String, {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage}> linkages with matches for
-     *         the Entity Name and ELinkType parameters
+     * @return Map<String, CoalesceLinkage> linkages with matches for the Entity Name and ELinkType parameters
      */
     public Map<String, CoalesceLinkage> getLinkages(ELinkTypes forLinkType, String forEntityName)
     {
@@ -727,8 +722,7 @@ public class CoalesceEntity extends CoalesceObject {
      * @param forLinkType ELinkTypes, the type of relationship link to find matching linkages for
      * @param forEntityName String, the Entity name attribute to find matching linkages for
      * @param forEntitySource String, the Entity source attribute to find matching linkages for
-     * @return Map<String, {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage}> linkages with matches for
-     *         the parameter criteria
+     * @return Map<String, CoalesceLinkage> linkages with matches for the parameter criteria
      */
     public Map<String, CoalesceLinkage> getLinkages(ELinkTypes forLinkType, String forEntityName, String forEntitySource)
     {
