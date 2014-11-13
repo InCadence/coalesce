@@ -5,7 +5,6 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>../Coalesce</module>
-		<module>../Coalesce.Objects</module>
 		<module>../Coalesce.Framework.Persister.MySQL</module>
 		<module>../Coalesce.Framework.Persister.NEO4J</module>
 		<module>../Coalesce.Framework.Persister.PostgreSQL</module>
