@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 
-public enum EActionStatuses
+public enum EIntelligenceStatuses
 {
     CollectionPending("pending"), 
     CollectionInProgress("inprogress"), 
@@ -17,7 +17,7 @@ public enum EActionStatuses
 
     private String _label;
 
-    EActionStatuses(String label)
+    EIntelligenceStatuses(String label)
     {
         this._label = label;
     }
@@ -31,30 +31,30 @@ public enum EActionStatuses
     // Static Methods
     // ----------------------------------------------------------------------//
 
-    private static Map<String, EActionStatuses> _codeToStatusMapping;
+    private static Map<String, EIntelligenceStatuses> _codeToStatusMapping;
 
     private static void initMapping()
     {
         if (_codeToStatusMapping == null)
         {
-            _codeToStatusMapping = new HashMap<String, EActionStatuses>();
-            for (EActionStatuses s : values())
+            _codeToStatusMapping = new HashMap<String, EIntelligenceStatuses>();
+            for (EIntelligenceStatuses s : values())
             {
                 _codeToStatusMapping.put(s._label.toLowerCase(), s);
             }
         }
     }
 
-    public static EActionStatuses fromLabel(String label)
+    public static EIntelligenceStatuses fromLabel(String label)
     {
         
         initMapping();
         
-        if (StringHelper.isNullOrEmpty(label)) return EActionStatuses.Unknown;
+        if (StringHelper.isNullOrEmpty(label)) return EIntelligenceStatuses.Unknown;
     
-        EActionStatuses value = _codeToStatusMapping.get(label.trim().toLowerCase());
+        EIntelligenceStatuses value = _codeToStatusMapping.get(label.trim().toLowerCase());
 
-        if (value == null) value = EActionStatuses.Unknown;
+        if (value == null) value = EIntelligenceStatuses.Unknown;
 
         return value;
     }

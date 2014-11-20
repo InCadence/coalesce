@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 
-public enum EResponseStatuses
+public enum EForensicStatuses
 {
     WatchList("watchlist"),
     Alert("alertstatus"),
@@ -16,7 +16,7 @@ public enum EResponseStatuses
 
     private String _label;
 
-    EResponseStatuses(String label)
+    EForensicStatuses(String label)
     {
         this._label = label;
     }
@@ -30,30 +30,30 @@ public enum EResponseStatuses
     // Static Methods
     // ----------------------------------------------------------------------//
 
-    private static Map<String, EResponseStatuses> _codeToStatusMapping;
+    private static Map<String, EForensicStatuses> _codeToStatusMapping;
 
     private static void initMapping()
     {
         if (_codeToStatusMapping == null)
         {
-            _codeToStatusMapping = new HashMap<String, EResponseStatuses>();
-            for (EResponseStatuses s : values())
+            _codeToStatusMapping = new HashMap<String, EForensicStatuses>();
+            for (EForensicStatuses s : values())
             {
                 _codeToStatusMapping.put(s._label.toLowerCase(), s);
             }
         }
     }
 
-    public static EResponseStatuses fromLabel(String label)
+    public static EForensicStatuses fromLabel(String label)
     {
 
         initMapping();
 
-        if (StringHelper.isNullOrEmpty(label)) return EResponseStatuses.Unknown;
+        if (StringHelper.isNullOrEmpty(label)) return EForensicStatuses.Unknown;
 
-        EResponseStatuses value = _codeToStatusMapping.get(label.trim().toLowerCase());
+        EForensicStatuses value = _codeToStatusMapping.get(label.trim().toLowerCase());
 
-        if (value == null) value = EResponseStatuses.Unknown;
+        if (value == null) value = EForensicStatuses.Unknown;
 
         return value;
     }
