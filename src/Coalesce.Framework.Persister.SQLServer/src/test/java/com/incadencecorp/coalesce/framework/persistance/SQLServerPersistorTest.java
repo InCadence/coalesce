@@ -69,18 +69,6 @@ public class SQLServerPersistorTest extends CoalescePersistorBaseTest {
     }
 
     @Override
-    protected ServerConn getInvalidConnection()
-    {
-        ServerConn serConFail = new ServerConn();
-        serConFail.setServerName("192.168.1.1");
-        serConFail.setPortNumber(1433);
-        serConFail.setDatabase("coalescedatabase");
-
-        return serConFail;
-
-    }
-    
-    @Override
     protected CoalesceDataConnectorBase getDataConnector(ServerConn conn) throws CoalescePersistorException
     {
         return new SQLServerDataConnector(conn);

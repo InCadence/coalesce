@@ -40,7 +40,7 @@ public class CoalesceSection extends CoalesceObject {
     // Factory and Initialization
     // -----------------------------------------------------------------------//
 
-    /**
+        /**
      * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}, by name, and ties it to its parent
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}.
      * 

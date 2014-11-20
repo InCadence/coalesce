@@ -36,20 +36,23 @@ public class CoalesceParameter {
 
     public CoalesceParameter(String value)
     {
-        _value = value; 
-        _type = Types.CHAR; 
+        this(value, Types.CHAR);
     }
-    
+
     public CoalesceParameter(DateTime value)
     {
-        _value = JodaDateTimeHelper.toMySQLDateTime(value); 
-        _type = Types.CHAR; 
+        this(JodaDateTimeHelper.toMySQLDateTime(value));
     }
 
     public CoalesceParameter(String value, int type)
     {
-        _value = value; 
-        _type = type; 
+        if (value != null)
+        {
+            value = value.trim();
+        }
+        
+        _value = value;
+        _type = type;
     }
 
     public String getValue()

@@ -31,6 +31,26 @@
 			<artifactId>coalesce-core</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.incadencecorp.coalesce</groupId>
+			<version>${coalesceVersion}</version>
+			<artifactId>coalesce-core</artifactId>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.incadencecorp.coalesce</groupId>
+			<artifactId>coalesce-framework-persister-mysql</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.incadencecorp.coalesce</groupId>
+			<artifactId>coalesce-framework-persister-postgresql</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.incadencecorp.unity</groupId>
+			<artifactId>unity-local-connector</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.neo4j</groupId>
 			<artifactId>neo4j</artifactId>
 			<version>2.1.4</version>

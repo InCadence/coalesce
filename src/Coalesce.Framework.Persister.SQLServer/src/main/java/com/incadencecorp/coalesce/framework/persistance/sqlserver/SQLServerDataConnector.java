@@ -27,8 +27,6 @@ public class SQLServerDataConnector extends CoalesceDataConnectorBase {
     public void openConnection() throws SQLException
     {
 
-        getSettings().setPostGres(false);
-
         SQLServerDataSource sqlDataSource = new SQLServerDataSource();
         //  On Linux change set setIntegratedSecurity(false)
         sqlDataSource.setIntegratedSecurity(true);

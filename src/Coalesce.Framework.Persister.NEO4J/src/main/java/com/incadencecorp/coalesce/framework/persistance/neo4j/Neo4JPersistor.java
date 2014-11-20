@@ -12,14 +12,32 @@ import org.joda.time.DateTimeZone;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.CoalesceTableHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
+import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
 import com.incadencecorp.coalesce.framework.persistance.CoalescePersistorBase;
 import com.incadencecorp.coalesce.framework.persistance.ICoalesceCacher;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
+
+/*-----------------------------------------------------------------------------'
+Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
+
+Notwithstanding any contractor copyright notice, the Government has Unlimited
+Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+of this work other than as specifically authorized by these DFARS Clauses may
+violate Government rights in this work.
+
+DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+Unlimited Rights. The Government has the right to use, modify, reproduce,
+perform, display, release or disclose this computer software and to have or
+authorize others to do so.
+
+Distribution Statement D. Distribution authorized to the Department of
+Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+-----------------------------------------------------------------------------*/
 
 public class Neo4JPersistor extends CoalescePersistorBase {
 
@@ -150,7 +168,7 @@ public class Neo4JPersistor extends CoalescePersistorBase {
         boolean isSuccessful = false;
 
         // Create a Database Connection
-        try (Neo4JDataConnector conn = new Neo4JDataConnector(this._serCon))
+        try (CoalesceDataConnectorBase conn = new Neo4JDataConnector(this._serCon))
         {
 
             conn.openConnection();
@@ -175,7 +193,13 @@ public class Neo4JPersistor extends CoalescePersistorBase {
         return isSuccessful;
     }
 
-    protected boolean persistEntityObject(CoalesceEntity entity, Neo4JDataConnector conn) throws SQLException
+    @Override
+    protected CoalesceDataConnectorBase getDataConnector() throws CoalescePersistorException
+    {
+        return new Neo4JDataConnector(getConnectionSettings());
+    }
+
+    protected boolean persistEntityObject(CoalesceEntity entity, CoalesceDataConnectorBase conn) throws SQLException
     {
         // Return true if no update is required.
         // if (!this.checkLastModified(entity, conn)) return true;
@@ -210,7 +234,7 @@ public class Neo4JPersistor extends CoalescePersistorBase {
         return null;
     }
 
-    protected boolean checkLastModified(CoalesceObject coalesceObject, Neo4JDataConnector conn) throws SQLException
+    protected boolean checkLastModified(CoalesceObject coalesceObject, CoalesceDataConnectorBase conn) throws SQLException
     {
         boolean isOutOfDate = true;
 
@@ -237,7 +261,7 @@ public class Neo4JPersistor extends CoalescePersistorBase {
         return isOutOfDate;
     }
 
-    private DateTime getCoalesceObjectLastModified(String key, String objectType, Neo4JDataConnector conn)
+    private DateTime getCoalesceObjectLastModified(String key, String objectType, CoalesceDataConnectorBase conn)
             throws SQLException
     {
         DateTime lastModified = DateTime.now(DateTimeZone.UTC);
@@ -275,7 +299,7 @@ public class Neo4JPersistor extends CoalescePersistorBase {
     @Override
     public DateTime getCoalesceObjectLastModified(String key, String objectType) throws CoalescePersistorException
     {
-        try (Neo4JDataConnector conn = new Neo4JDataConnector(this._serCon))
+        try (CoalesceDataConnectorBase conn = new Neo4JDataConnector(this._serCon))
         {
             return this.getCoalesceObjectLastModified(key, objectType, conn);
         }

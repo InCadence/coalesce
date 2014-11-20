@@ -52,7 +52,6 @@ public class MySQLPersistorTest extends CoalescePersistorBaseTest {
     protected ServerConn getConnection()
     {
         ServerConn serCon = new ServerConn();
-        serCon = new ServerConn();
         serCon.setUser("root");
         serCon.setPassword("Passw0rd");
         serCon.setServerName("127.0.0.1");
@@ -70,21 +69,6 @@ public class MySQLPersistorTest extends CoalescePersistorBaseTest {
         mySQLPersistor.initialize(conn);
 
         return mySQLPersistor;
-
-    }
-
-    @Override
-    protected ServerConn getInvalidConnection()
-    {
-        ServerConn serConFail = new ServerConn();
-        serConFail.setServerName("192.168.1.1");
-        serConFail.setPortNumber(3306);
-        serConFail.setDatabase("coalescedatabase");
-
-        serConFail.setUser("root");
-        serConFail.setPassword("Passw0rd");
-
-        return serConFail;
 
     }
 

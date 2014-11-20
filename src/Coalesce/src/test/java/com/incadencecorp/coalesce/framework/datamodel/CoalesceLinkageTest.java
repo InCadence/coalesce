@@ -432,15 +432,15 @@ public class CoalesceLinkageTest {
     {
         CoalesceLinkage linkage = getMissionLinkage();
 
-        assertFalse(linkage.getIsMarkedDeleted());
+        assertFalse(linkage.isMarkedDeleted());
 
         linkage.setStatus(ECoalesceObjectStatus.DELETED);
 
-        assertTrue(linkage.getIsMarkedDeleted());
+        assertTrue(linkage.isMarkedDeleted());
 
         linkage.setStatus(ECoalesceObjectStatus.UNKNOWN);
 
-        assertFalse(linkage.getIsMarkedDeleted());
+        assertFalse(linkage.isMarkedDeleted());
 
     }
 

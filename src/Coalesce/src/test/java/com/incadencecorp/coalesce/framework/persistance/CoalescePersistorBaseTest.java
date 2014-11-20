@@ -158,7 +158,6 @@ public abstract class CoalescePersistorBaseTest {
                                                                                           "EntityIdType",
                                                                                           "TestEntity",
                                                                                           "Unit Test");
-
             for (String objectKey : objectKeys)
             {
                 deleteEntity(conn, objectKey);
@@ -206,15 +205,6 @@ public abstract class CoalescePersistorBaseTest {
             conn.openConnection();
         }
     }
-
-    protected abstract ServerConn getInvalidConnection();
-
-    /*
-     * @Test(expected = SQLException.class) public void testFAILConnection() throws SQLException, Exception,
-     * CoalescePersistorException { ServerConn serConFail = getInvalidConnection();
-     * 
-     * try (CoalesceDataConnectorBase conn = getDataConnector(serConFail)) { conn.openConnection(); } }
-     */
 
     @Test
     public void flattenObjectTest() throws CoalescePersistorException

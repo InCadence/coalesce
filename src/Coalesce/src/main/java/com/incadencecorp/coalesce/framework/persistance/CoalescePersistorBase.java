@@ -32,9 +32,49 @@ public abstract class CoalescePersistorBase implements ICoalescePersistor {
     --------------------------------------------------------------------------*/
 
     private ICoalesceCacher _cacher = null;
+    private ServerConn _serCon;
 
     /*--------------------------------------------------------------------------
-    	Interface Implementation
+    Constructor / Initializers
+    --------------------------------------------------------------------------*/
+
+    public CoalescePersistorBase()
+    {
+        _serCon = new ServerConn();
+    }
+
+    /**
+     * Sets the server connection.
+     * 
+     * @param server connection object.
+     */
+    public void initialize(ServerConn svConn)
+    {
+        _serCon = svConn;
+    }
+
+    /**
+     * Sets the cacher and server connection.
+     * 
+     * @param base class cacher.
+     * @param server connection object.
+     */
+    public boolean initialize(ICoalesceCacher cacher, ServerConn svConn) throws CoalescePersistorException
+    {
+        _serCon = svConn;
+
+        return initialize(cacher);
+    }
+
+    protected ServerConn getConnectionSettings()
+    {
+        return _serCon;
+    }
+
+    protected abstract CoalesceDataConnectorBase getDataConnector() throws CoalescePersistorException;
+
+    /*--------------------------------------------------------------------------
+    Interface Implementation
     --------------------------------------------------------------------------*/
 
     @Override
@@ -187,8 +227,7 @@ public abstract class CoalescePersistorBase implements ICoalescePersistor {
     public abstract ElementMetaData getXPath(String key, String objectType) throws CoalescePersistorException;
 
     @Override
-    public abstract DateTime getCoalesceObjectLastModified(String key, String objectType)
-            throws CoalescePersistorException;
+    public abstract DateTime getCoalesceObjectLastModified(String key, String objectType) throws CoalescePersistorException;
 
     @Override
     public abstract List<String> getCoalesceEntityKeysForEntityId(String entityId,

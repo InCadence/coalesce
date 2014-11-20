@@ -4,6 +4,7 @@ import java.util.Properties;
 
 /**
  * Stores credentials and other settings for database connections.
+ * 
  * @see CoalesceDataConnectorBase
  */
 public class ServerConn {
@@ -14,18 +15,7 @@ public class ServerConn {
     private boolean _integratedSecurity = false;
     private String _serverName = "";
     private int _portNumber = 0;
-    private boolean _postGres = false;
     private Properties _props = new Properties();
-
-    public boolean isPostGres()
-    {
-        return _postGres;
-    }
-
-    public void setPostGres(boolean postGres)
-    {
-        this._postGres = postGres;
-    }
 
     public String getDatabase()
     {
@@ -34,14 +24,7 @@ public class ServerConn {
 
     public String getPassword()
     {
-        if (_postGres == false)
-        {
-            return this._password.trim();
-        }
-        else
-        {
-            return this._props.getProperty(_password);
-        }
+        return this._password;
     }
 
     public int getPortNumber()
@@ -68,14 +51,8 @@ public class ServerConn {
 
     public String getUser()
     {
-        if (_postGres == false)
-        {
-            return this._user.trim();
-        }
-        else
-        {
-            return this._props.getProperty(_user);
-        }
+
+        return this._user;
     }
 
     public boolean isIntegratedSecurity()

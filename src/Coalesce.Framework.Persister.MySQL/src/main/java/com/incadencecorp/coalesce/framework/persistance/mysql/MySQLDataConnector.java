@@ -29,7 +29,6 @@ public class MySQLDataConnector extends CoalesceDataConnectorBase {
 
         String url = "jdbc:mysql://" + getSettings().getServerNameWithPort() + "/" + getSettings().getDatabase();
 
-        getSettings().setPostGres(false);
         setConnection(DriverManager.getConnection(url, this.getSettings().getUser(), this.getSettings().getPassword()));
     }
 

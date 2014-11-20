@@ -72,19 +72,6 @@ public class PostGresPersistorTest extends CoalescePersistorBaseTest {
     }
 
     @Override
-    protected ServerConn getInvalidConnection()
-    {
-        ServerConn serConFail = new ServerConn();
-        serConFail.setServerName("192.168.1.1");
-        serConFail.setDatabase("CoalesceDatabase");
-        serConFail.setUser("postgres");
-        serConFail.setPassword("Passw0rd");
-
-        return serConFail;
-
-    }
-
-    @Override
     protected CoalesceDataConnectorBase getDataConnector(ServerConn conn) throws CoalescePersistorException
     {
         return new PostGreSQLDataConnector(conn);

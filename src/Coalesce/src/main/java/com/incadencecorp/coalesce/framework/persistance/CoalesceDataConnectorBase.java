@@ -2,6 +2,7 @@ package com.incadencecorp.coalesce.framework.persistance;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -67,7 +68,7 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
     {
         openDataConnection();
 
-        CallableStatement stmt = this._conn.prepareCall(sql);
+        PreparedStatement stmt = this._conn.prepareStatement(sql);
 
         return stmt.executeQuery();
     }
@@ -86,14 +87,14 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
 
         openDataConnection();
 
-        CallableStatement stmt = this._conn.prepareCall(sql);
+        PreparedStatement stmt = this._conn.prepareStatement(sql);
 
         // Add Parameters
         for (int ii = 0; ii < parameters.length; ii++)
         {
-            stmt.setObject(ii + 1, parameters[ii].getValue().trim(), parameters[ii].getType());
+            stmt.setObject(ii + 1, parameters[ii].getValue(), parameters[ii].getType());
         }
-
+        
         return stmt.executeQuery();
 
     }
@@ -114,18 +115,18 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
 
         openDataConnection();
 
-        CallableStatement stmt = this._conn.prepareCall(sql);
+        PreparedStatement stmt = this._conn.prepareStatement(sql);
 
         // Add Parameters
         for (int ii = 0; ii < parameters.length; ii++)
         {
             if (ii + 1 <= likeParams)
             {
-                stmt.setObject(ii + 1, "%" + parameters[ii].getValue().trim() + "%", parameters[ii].getType()); // Like
+                stmt.setObject(ii + 1, "%" + parameters[ii].getValue() + "%", parameters[ii].getType()); // Like
             }
             else
             {
-                stmt.setObject(ii + 1, parameters[ii].getValue().trim(), parameters[ii].getType()); // Normal
+                stmt.setObject(ii + 1, parameters[ii].getValue(), parameters[ii].getType()); // Normal
             }
         }
 
@@ -145,12 +146,12 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
     {
         openDataConnection();
 
-        CallableStatement stmt = this._conn.prepareCall(sql);
+        PreparedStatement stmt = this._conn.prepareStatement(sql);
 
         // Add Parameters
         for (int ii = 0; ii < parameters.length; ii++)
         {
-            stmt.setObject(ii + 1, parameters[ii].getValue().trim(), parameters[ii].getType());
+            stmt.setObject(ii + 1, parameters[ii].getValue(), parameters[ii].getType());
         }
 
         stmt.executeUpdate();
@@ -169,7 +170,7 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
     {
         openDataConnection();
 
-        CallableStatement stmt = this._conn.prepareCall(sql);
+        PreparedStatement stmt = this._conn.prepareStatement(sql);
 
         stmt.executeUpdate();
 
@@ -212,13 +213,7 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
         // Add Parameters
         for (int ii = 0; ii < parameters.length; ii++)
         {
-            String value = parameters[ii].getValue();
-            if (value != null)
-            {
-                value = value.trim();
-            }
-
-            stmt.setObject(ii + 1, value, parameters[ii].getType());
+            stmt.setObject(ii + 1, parameters[ii].getValue(), parameters[ii].getType());
         }
 
         stmt.executeUpdate();

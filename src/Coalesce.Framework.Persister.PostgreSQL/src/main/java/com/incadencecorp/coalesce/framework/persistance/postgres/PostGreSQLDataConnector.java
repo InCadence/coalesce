@@ -28,7 +28,6 @@ public class PostGreSQLDataConnector extends CoalesceDataConnectorBase {
     {
         String url = "jdbc:postgresql://" + getSettings().getServerNameWithPort() + "/" + getSettings().getDatabase();
 
-        getSettings().setPostGres(true);
         setConnection(DriverManager.getConnection(url, this.getSettings().getProperties()));
     }
 

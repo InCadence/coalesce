@@ -11,7 +11,7 @@ import javax.jws.WebService;
 import org.springframework.beans.BeansException;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.proto.irems.data.persistor.MySQLPersistor;
+import com.incadencecorp.coalesce.framework.persistance.mysql.MySQLPersistor;
 //import javax.jws.soap.SOAPBinding;
 //
 //import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,8 @@ import com.proto.irems.data.persistor.MySQLPersistor;
 //@BindingType(value="http://www.w3.org/2003/05/soap/bindings/HTTP/")
 public class CoalesceImpl 
 {
-	MySQLPersistor mSQLP;
+    //com.incadencecorp.coalesce.framework.persistance.mysql.MySQLPersistor
+    MySQLPersistor mSQLP;
 	
 	/**
 	 * @return the mSQLP

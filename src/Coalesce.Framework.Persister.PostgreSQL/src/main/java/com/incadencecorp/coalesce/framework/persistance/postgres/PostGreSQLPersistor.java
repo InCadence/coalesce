@@ -17,7 +17,6 @@ import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.CoalesceTableHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.framework.CoalesceSettings;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
@@ -25,15 +24,15 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
-import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
+import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
+import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
 import com.incadencecorp.coalesce.framework.persistance.CoalescePersistorBase;
-import com.incadencecorp.coalesce.framework.persistance.ICoalesceCacher;
-import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -54,46 +53,6 @@ import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 
 @Repository("PostGresSQLPersistor")
 public class PostGreSQLPersistor extends CoalescePersistorBase {
-
-    /*--------------------------------------------------------------------------
-    Private Member Variables
-    --------------------------------------------------------------------------*/
-
-    private ServerConn _serCon;
-
-    /*--------------------------------------------------------------------------
-    Constructor / Initializers
-    --------------------------------------------------------------------------*/
-
-    public PostGreSQLPersistor()
-    {
-        _serCon = new ServerConn();
-        _serCon.setPostGres(true);
-    }
-
-    /**
-     * Sets the server connection. Sets connection type as PostGresSQL
-     * 
-     * @param server connection object.
-     */
-    public void initialize(ServerConn svConn)
-    {
-        _serCon = svConn;
-        _serCon.setPostGres(true);
-    }
-
-    /**
-     * Sets the cacher and server connection. Sets connection type as PostGresSQL
-     * 
-     * @param base class cacher.
-     * @param server connection object.
-     */
-    public boolean initialize(ICoalesceCacher cacher, ServerConn svConn) throws CoalescePersistorException
-    {
-        _serCon = svConn;
-        _serCon.setPostGres(true);
-        return super.initialize(cacher);
-    }
 
     /*--------------------------------------------------------------------------
     Overrided Functions
@@ -129,7 +88,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     @Override
     public EntityMetaData getCoalesceEntityIdAndTypeForKey(String key) throws CoalescePersistorException
     {
-        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this._serCon))
+        try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings()))
         {
             return this.getCoalesceEntityIdAndTypeForKey(key, conn);
         }
@@ -146,7 +105,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     @Override
     public DateTime getCoalesceObjectLastModified(String key, String objectType) throws CoalescePersistorException
     {
-        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this._serCon))
+        try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings()))
         {
             return this.getCoalesceObjectLastModified(key, objectType, conn);
         }
@@ -163,7 +122,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     @Override
     public byte[] getBinaryArray(String key) throws CoalescePersistorException
     {
-        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this._serCon))
+        try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings()))
         {
 
             byte[] binaryArray = null;
@@ -193,7 +152,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     @Override
     public boolean persistEntityTemplate(CoalesceEntityTemplate template) throws CoalescePersistorException
     {
-        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this._serCon))
+        try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings()))
         {
             // Always persist template
             return conn.executeProcedure("CoalesceEntityTemplate_InsertOrUpdate",
@@ -218,7 +177,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     @Override
     public ElementMetaData getXPath(String key, String objectType) throws CoalescePersistorException
     {
-        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this._serCon))
+        try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings()))
         {
             return this.getXPathRecursive(key, objectType, "", conn);
         }
@@ -235,7 +194,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     @Override
     public String getFieldValue(String fieldKey) throws CoalescePersistorException
     {
-        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this._serCon))
+        try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings()))
         {
             String value = null;
 
@@ -262,7 +221,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     @Override
     public String getEntityXml(String key) throws CoalescePersistorException
     {
-        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this._serCon))
+        try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings()))
         {
             String value = null;
 
@@ -289,7 +248,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     @Override
     public String getEntityXml(String entityId, String entityIdType) throws CoalescePersistorException
     {
-        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this._serCon))
+        try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings()))
         {
             String value = null;
 
@@ -317,7 +276,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     @Override
     public String getEntityXml(String name, String entityId, String entityIdType) throws CoalescePersistorException
     {
-        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this._serCon))
+        try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings()))
         {
             String value = null;
 
@@ -341,6 +300,12 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
         {
             throw new CoalescePersistorException("GetEntityXml", e);
         }
+    }
+
+    @Override
+    protected CoalesceDataConnectorBase getDataConnector() throws CoalescePersistorException
+    {
+        return new PostGreSQLDataConnector(getConnectionSettings());
     }
 
     /*
@@ -370,7 +335,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
         boolean isSuccessful = false;
 
         // Create a Database Connection
-        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this._serCon))
+        try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings()))
         {
 
             conn.openConnection();
@@ -403,7 +368,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
         boolean isSuccessful = false;
 
         // Create a Database Connection
-        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this._serCon))
+        try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings()))
         {
 
             conn.openConnection();
@@ -431,7 +396,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     @Override
     public String getEntityTemplateKey(String name, String source, String version) throws CoalescePersistorException
     {
-        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this._serCon))
+        try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings()))
         {
             String value = null;
 
@@ -460,7 +425,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     @Override
     public String getEntityTemplateMetadata() throws CoalescePersistorException
     {
-        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this._serCon))
+        try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings()))
         {
             return conn.getTemplateMetaData("SELECT * FROM CoalesceEntityTemplate");
         }
@@ -477,7 +442,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     @Override
     public String getEntityTemplateXml(String key) throws CoalescePersistorException
     {
-        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this._serCon))
+        try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings()))
         {
             String value = null;
 
@@ -504,7 +469,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     @Override
     public String getEntityTemplateXml(String name, String source, String version) throws CoalescePersistorException
     {
-        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this._serCon))
+        try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings()))
         {
             String value = null;
 
@@ -541,7 +506,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
      * @return isSuccessful = True = Successful add/update operation.
      * @throws SQLException
      */
-    protected boolean persistObject(CoalesceObject coalesceObject, PostGreSQLDataConnector conn) throws SQLException
+    protected boolean persistObject(CoalesceObject coalesceObject, CoalesceDataConnectorBase conn) throws SQLException
     {
         boolean isSuccessful = true;
 
@@ -566,11 +531,11 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
             }
             break;
         case "fielddefinition":
-            //if (CoalesceSettings.getUseIndexing())
-            //{
-                // Removed Field Definition Persisting
-                // isSuccessful = PersistFieldDefinitionObject((CoalesceFieldDefinition) coalesceObject, conn);
-            //}
+            // if (CoalesceSettings.getUseIndexing())
+            // {
+            // Removed Field Definition Persisting
+            // isSuccessful = PersistFieldDefinitionObject((CoalesceFieldDefinition) coalesceObject, conn);
+            // }
             break;
 
         case "record":
@@ -629,7 +594,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
      * @return True if successfully added/updated.
      * @throws SQLException
      */
-    protected boolean persistMapTableEntry(CoalesceObject coalesceObject, PostGreSQLDataConnector conn) throws SQLException
+    protected boolean persistMapTableEntry(CoalesceObject coalesceObject, CoalesceDataConnectorBase conn) throws SQLException
     {
         String parentKey;
         String parentType;
@@ -661,7 +626,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
      * @return True = Successful add/update operation.
      * @throws SQLException
      */
-    protected boolean persistEntityObject(CoalesceEntity entity, PostGreSQLDataConnector conn) throws SQLException
+    protected boolean persistEntityObject(CoalesceEntity entity, CoalesceDataConnectorBase conn) throws SQLException
     {
         // Return true if no update is required.
         if (!this.checkLastModified(entity, conn)) return true;
@@ -688,7 +653,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
      * @return True = Successful add/update operation.
      * @throws SQLException
      */
-    protected boolean persistSectionObject(CoalesceSection section, PostGreSQLDataConnector conn) throws SQLException
+    protected boolean persistSectionObject(CoalesceSection section, CoalesceDataConnectorBase conn) throws SQLException
     {
         // Return true if no update is required.
         if (!this.checkLastModified(section, conn)) return true;
@@ -712,7 +677,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
      * @return True = Successful add/update operation.
      * @throws SQLException
      */
-    protected boolean persistRecordsetObject(CoalesceRecordset recordset, PostGreSQLDataConnector conn) throws SQLException
+    protected boolean persistRecordsetObject(CoalesceRecordset recordset, CoalesceDataConnectorBase conn) throws SQLException
     {
         // Return true if no update is required.
         if (!this.checkLastModified(recordset, conn)) return true;
@@ -736,7 +701,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
      * @return True = Successful add/update operation.
      * @throws SQLException
      */
-    protected boolean persistFieldDefinitionObject(CoalesceFieldDefinition fieldDefinition, PostGreSQLDataConnector conn)
+    protected boolean persistFieldDefinitionObject(CoalesceFieldDefinition fieldDefinition, CoalesceDataConnectorBase conn)
             throws SQLException
     {
 
@@ -762,7 +727,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
      * @return True = Successful add/update operation.
      * @throws SQLException
      */
-    protected boolean persistRecordObject(CoalesceRecord record, PostGreSQLDataConnector conn) throws SQLException
+    protected boolean persistRecordObject(CoalesceRecord record, CoalesceDataConnectorBase conn) throws SQLException
     {
         // Return true if no update is required.
         if (!this.checkLastModified(record, conn)) return true;
@@ -786,7 +751,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
      * @return True = Successful add/update operation.
      * @throws SQLException
      */
-    protected boolean persistFieldObject(CoalesceField<?> field, PostGreSQLDataConnector conn) throws SQLException
+    protected boolean persistFieldObject(CoalesceField<?> field, CoalesceDataConnectorBase conn) throws SQLException
     {
         // Return true if no update is required.
         if (!this.checkLastModified(field, conn)) return true;
@@ -816,7 +781,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
      * @return True = Successful add/update operation.
      * @throws SQLException
      */
-    protected boolean persistFieldHistoryObject(CoalesceFieldHistory fieldHistory, PostGreSQLDataConnector conn)
+    protected boolean persistFieldHistoryObject(CoalesceFieldHistory fieldHistory, CoalesceDataConnectorBase conn)
             throws SQLException
     {
         // Return true if no update is required.
@@ -847,7 +812,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
      * @return True = Successful add/update operation.
      * @throws SQLException
      */
-    protected boolean persistLinkageSectionObject(CoalesceLinkageSection linkageSection, PostGreSQLDataConnector conn)
+    protected boolean persistLinkageSectionObject(CoalesceLinkageSection linkageSection, CoalesceDataConnectorBase conn)
             throws SQLException
     {
         // Return true if no update is required.
@@ -872,7 +837,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
      * @return True = Successful add/update operation.
      * @throws SQLException
      */
-    protected boolean persistLinkageObject(CoalesceLinkage linkage, PostGreSQLDataConnector conn) throws SQLException
+    protected boolean persistLinkageObject(CoalesceLinkage linkage, CoalesceDataConnectorBase conn) throws SQLException
     {
         // Return true if no update is required.
         if (!this.checkLastModified(linkage, conn)) return true;
@@ -908,7 +873,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
      * @return metaData the EntityMetaData for the Coalesce entity.
      * @throws SQLException
      */
-    protected EntityMetaData getCoalesceEntityIdAndTypeForKey(String key, PostGreSQLDataConnector conn) throws SQLException
+    protected EntityMetaData getCoalesceEntityIdAndTypeForKey(String key, CoalesceDataConnectorBase conn) throws SQLException
     {
         EntityMetaData metaData = null;
 
@@ -934,7 +899,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
      * @return False = Out of Date
      * @throws SQLException
      */
-    protected boolean checkLastModified(CoalesceObject coalesceObject, PostGreSQLDataConnector conn) throws SQLException
+    protected boolean checkLastModified(CoalesceObject coalesceObject, CoalesceDataConnectorBase conn) throws SQLException
     {
         boolean isOutOfDate = true;
 
@@ -969,7 +934,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
      * @return True = Successful delete
      * @throws SQLException
      */
-    protected boolean deleteObject(CoalesceObject coalesceObject, PostGreSQLDataConnector conn) throws SQLException
+    protected boolean deleteObject(CoalesceObject coalesceObject, CoalesceDataConnectorBase conn) throws SQLException
     {
         String objectType = coalesceObject.getType();
         String objectKey = coalesceObject.getKey();
@@ -995,7 +960,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     {
         List<String> keyList = new ArrayList<String>();
 
-        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this._serCon))
+        try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings()))
         {
             ResultSet results = conn.executeLikeQuery("SELECT ObjectKey FROM CoalesceEntity WHERE (EntityId like ?) AND (EntityIdType like ?) AND (Name=?)",
                                                       2,
@@ -1024,12 +989,12 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
      * @throws SQLException,Exception,CoalescePersistorException
      */
     private List<String> getCoalesceEntityKeysForEntityIdAndSource(String entityId,
-                                                                     String entityIdType,
-                                                                     String entityName,
-                                                                     String entitySource) throws Exception
+                                                                   String entityIdType,
+                                                                   String entityName,
+                                                                   String entitySource) throws Exception
     {
 
-        try (PostGreSQLDataConnector conn = new PostGreSQLDataConnector(this._serCon))
+        try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings()))
         {
             List<String> keyList = new ArrayList<String>();
 
@@ -1056,7 +1021,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
      * @param conn is the PostGresDataConnector database connection
      * @throws SQLException,Exception,CoalescePersistorException
      */
-    protected boolean updateFileContent(CoalesceObject coalesceObject, PostGreSQLDataConnector conn) throws SQLException
+    protected boolean updateFileContent(CoalesceObject coalesceObject, CoalesceDataConnectorBase conn) throws SQLException
     {
         boolean isSuccessful = false;
 
@@ -1078,9 +1043,8 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
         return isSuccessful;
     }
 
-    private boolean updateCoalesceObject(CoalesceObject coalesceObject,
-                                     PostGreSQLDataConnector conn,
-                                     boolean allowRemoval) throws SQLException
+    private boolean updateCoalesceObject(CoalesceObject coalesceObject, CoalesceDataConnectorBase conn, boolean allowRemoval)
+            throws SQLException
 
     {
         boolean isSuccessful = false;
@@ -1124,7 +1088,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
         return isSuccessful;
     }
 
-    private DateTime getCoalesceObjectLastModified(String key, String objectType, PostGreSQLDataConnector conn)
+    private DateTime getCoalesceObjectLastModified(String key, String objectType, CoalesceDataConnectorBase conn)
             throws SQLException
     {
         DateTime lastModified = null;
@@ -1153,7 +1117,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
 
     }
 
-    private ElementMetaData getXPathRecursive(String key, String objectType, String xPath, PostGreSQLDataConnector conn)
+    private ElementMetaData getXPathRecursive(String key, String objectType, String xPath, CoalesceDataConnectorBase conn)
             throws SQLException
     {
 

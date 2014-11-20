@@ -685,5 +685,5 @@ public class CoalesceRecordset extends CoalesceObject implements ICoalesceRecord
         return map;
 
     }
-    
+
 }

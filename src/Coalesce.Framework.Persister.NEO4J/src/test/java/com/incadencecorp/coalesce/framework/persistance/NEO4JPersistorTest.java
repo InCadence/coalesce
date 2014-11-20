@@ -73,17 +73,6 @@ public class NEO4JPersistorTest extends CoalescePersistorBaseTest {
     }
 
     @Override
-    protected ServerConn getInvalidConnection()
-    {
-        ServerConn serConFail = new ServerConn();
-        serConFail.setServerName("192.168.1.1");
-        serConFail.setPortNumber(7474);
-
-        return serConFail;
-
-    }
-
-    @Override
     protected CoalesceDataConnectorBase getDataConnector(ServerConn conn) throws CoalescePersistorException
     {
         return new Neo4JDataConnector(conn);

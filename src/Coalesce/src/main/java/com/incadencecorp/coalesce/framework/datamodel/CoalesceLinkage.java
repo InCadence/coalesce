@@ -320,7 +320,7 @@ public class CoalesceLinkage extends CoalesceObject implements ICoalesceLinkage 
      * 
      * @return boolean indicates if the linkage has been marked as deleted.
      */
-    public boolean getIsMarkedDeleted()
+    public boolean isMarkedDeleted()
     {
         return (getStatus() == ECoalesceObjectStatus.DELETED);
     }

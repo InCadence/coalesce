@@ -16,7 +16,6 @@ import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.CoalesceTableHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.framework.CoalesceSettings;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
@@ -24,15 +23,15 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
-import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
+import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
+import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
 import com.incadencecorp.coalesce.framework.persistance.CoalescePersistorBase;
-import com.incadencecorp.coalesce.framework.persistance.ICoalesceCacher;
-import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 import com.mysql.jdbc.Blob;
 
 /*-----------------------------------------------------------------------------'
@@ -58,40 +57,6 @@ public class MySQLPersistor extends CoalescePersistorBase {
     /*--------------------------------------------------------------------------
     Private Member Variables
     --------------------------------------------------------------------------*/
-
-    private ServerConn _serCon;
-
-    /*--------------------------------------------------------------------------
-    Constructor / Initializers
-    --------------------------------------------------------------------------*/
-
-    public MySQLPersistor()
-    {
-        _serCon = new ServerConn();
-    }
-
-    /**
-     * Sets the server connection.
-     * 
-     * @param server connection object.
-     */
-    public void initialize(ServerConn svConn)
-    {
-        _serCon = svConn;
-    }
-
-    /**
-     * Sets the cacher and server connection.
-     * 
-     * @param base class cacher.
-     * @param server connection object.
-     */
-    public boolean initialize(ICoalesceCacher cacher, ServerConn svConn) throws CoalescePersistorException
-    {
-        _serCon = svConn;
-
-        return super.initialize(cacher);
-    }
 
     /*--------------------------------------------------------------------------
     Overrided Functions
@@ -127,7 +92,7 @@ public class MySQLPersistor extends CoalescePersistorBase {
     @Override
     public EntityMetaData getCoalesceEntityIdAndTypeForKey(String key) throws CoalescePersistorException
     {
-        try (MySQLDataConnector conn = new MySQLDataConnector(this._serCon))
+        try (CoalesceDataConnectorBase conn = new MySQLDataConnector(getConnectionSettings()))
         {
             return this.getCoalesceEntityIdAndTypeForKey(key, conn);
         }
@@ -144,7 +109,7 @@ public class MySQLPersistor extends CoalescePersistorBase {
     @Override
     public DateTime getCoalesceObjectLastModified(String key, String objectType) throws CoalescePersistorException
     {
-        try (MySQLDataConnector conn = new MySQLDataConnector(this._serCon))
+        try (CoalesceDataConnectorBase conn = new MySQLDataConnector(getConnectionSettings()))
         {
             return this.getCoalesceObjectLastModified(key, objectType, conn);
         }
@@ -161,7 +126,7 @@ public class MySQLPersistor extends CoalescePersistorBase {
     @Override
     public byte[] getBinaryArray(String key) throws CoalescePersistorException
     {
-        try (MySQLDataConnector conn = new MySQLDataConnector(this._serCon))
+        try (CoalesceDataConnectorBase conn = new MySQLDataConnector(getConnectionSettings()))
         {
 
             byte[] binaryArray = null;
@@ -191,7 +156,7 @@ public class MySQLPersistor extends CoalescePersistorBase {
     @Override
     public boolean persistEntityTemplate(CoalesceEntityTemplate template) throws CoalescePersistorException
     {
-        try (MySQLDataConnector conn = new MySQLDataConnector(this._serCon))
+        try (CoalesceDataConnectorBase conn = new MySQLDataConnector(getConnectionSettings()))
         {
             // Always persist template
             return conn.executeProcedure("CoalesceEntityTemplate_InsertOrUpdate",
@@ -216,7 +181,7 @@ public class MySQLPersistor extends CoalescePersistorBase {
     @Override
     public ElementMetaData getXPath(String key, String objectType) throws CoalescePersistorException
     {
-        try (MySQLDataConnector conn = new MySQLDataConnector(this._serCon))
+        try (CoalesceDataConnectorBase conn = new MySQLDataConnector(getConnectionSettings()))
         {
             return this.getXPathRecursive(key, objectType, "", conn);
         }
@@ -233,7 +198,7 @@ public class MySQLPersistor extends CoalescePersistorBase {
     @Override
     public String getFieldValue(String fieldKey) throws CoalescePersistorException
     {
-        try (MySQLDataConnector conn = new MySQLDataConnector(this._serCon))
+        try (CoalesceDataConnectorBase conn = new MySQLDataConnector(getConnectionSettings()))
         {
             String value = null;
 
@@ -260,7 +225,7 @@ public class MySQLPersistor extends CoalescePersistorBase {
     @Override
     public String getEntityXml(String key) throws CoalescePersistorException
     {
-        try (MySQLDataConnector conn = new MySQLDataConnector(this._serCon))
+        try (CoalesceDataConnectorBase conn = new MySQLDataConnector(getConnectionSettings()))
         {
             String value = null;
 
@@ -287,7 +252,7 @@ public class MySQLPersistor extends CoalescePersistorBase {
     @Override
     public String getEntityXml(String entityId, String entityIdType) throws CoalescePersistorException
     {
-        try (MySQLDataConnector conn = new MySQLDataConnector(this._serCon))
+        try (CoalesceDataConnectorBase conn = new MySQLDataConnector(getConnectionSettings()))
         {
             String value = null;
 
@@ -315,7 +280,7 @@ public class MySQLPersistor extends CoalescePersistorBase {
     @Override
     public String getEntityXml(String name, String entityId, String entityIdType) throws CoalescePersistorException
     {
-        try (MySQLDataConnector conn = new MySQLDataConnector(this._serCon))
+        try (CoalesceDataConnectorBase conn = new MySQLDataConnector(getConnectionSettings()))
         {
             String value = null;
 
@@ -341,6 +306,12 @@ public class MySQLPersistor extends CoalescePersistorBase {
         }
     }
 
+    @Override
+    protected CoalesceDataConnectorBase getDataConnector() throws CoalescePersistorException
+    {
+        return new MySQLDataConnector(getConnectionSettings());
+    }
+    
     /*
      * @Override public String[] GetEntityXmlAsStrings(String EntityId, String EntityIdType) {
      * 
@@ -368,7 +339,7 @@ public class MySQLPersistor extends CoalescePersistorBase {
         boolean isSuccessful = false;
 
         // Create a Database Connection
-        try (MySQLDataConnector conn = new MySQLDataConnector(this._serCon))
+        try (CoalesceDataConnectorBase conn = new MySQLDataConnector(getConnectionSettings()))
         {
 
             conn.openConnection();
@@ -400,7 +371,7 @@ public class MySQLPersistor extends CoalescePersistorBase {
         boolean isSuccessful = false;
 
         // Create a Database Connection
-        try (MySQLDataConnector conn = new MySQLDataConnector(this._serCon))
+        try (CoalesceDataConnectorBase conn = new MySQLDataConnector(getConnectionSettings()))
         {
 
             conn.openConnection();
@@ -428,7 +399,7 @@ public class MySQLPersistor extends CoalescePersistorBase {
     @Override
     public String getEntityTemplateKey(String name, String source, String version) throws CoalescePersistorException
     {
-        try (MySQLDataConnector conn = new MySQLDataConnector(this._serCon))
+        try (CoalesceDataConnectorBase conn = new MySQLDataConnector(getConnectionSettings()))
         {
             String value = null;
 
@@ -457,7 +428,7 @@ public class MySQLPersistor extends CoalescePersistorBase {
     @Override
     public String getEntityTemplateMetadata() throws CoalescePersistorException
     {
-        try (MySQLDataConnector conn = new MySQLDataConnector(this._serCon))
+        try (CoalesceDataConnectorBase conn = new MySQLDataConnector(getConnectionSettings()))
         {
             return conn.getTemplateMetaData("SELECT * FROM CoalesceEntityTemplate");
         }
@@ -474,7 +445,7 @@ public class MySQLPersistor extends CoalescePersistorBase {
     @Override
     public String getEntityTemplateXml(String key) throws CoalescePersistorException
     {
-        try (MySQLDataConnector conn = new MySQLDataConnector(this._serCon))
+        try (CoalesceDataConnectorBase conn = new MySQLDataConnector(getConnectionSettings()))
         {
             String value = null;
 
@@ -501,7 +472,7 @@ public class MySQLPersistor extends CoalescePersistorBase {
     @Override
     public String getEntityTemplateXml(String name, String source, String version) throws CoalescePersistorException
     {
-        try (MySQLDataConnector conn = new MySQLDataConnector(this._serCon))
+        try (CoalesceDataConnectorBase conn = new MySQLDataConnector(getConnectionSettings()))
         {
             String value = null;
 
@@ -538,7 +509,7 @@ public class MySQLPersistor extends CoalescePersistorBase {
      * @return isSuccessful = True = Successful add/update operation.
      * @throws SQLException
      */
-    protected boolean persistObject(CoalesceObject coalesceObject, MySQLDataConnector conn) throws SQLException
+    protected boolean persistObject(CoalesceObject coalesceObject, CoalesceDataConnectorBase conn) throws SQLException
     {
         boolean isSuccessful = true;
 
@@ -563,11 +534,11 @@ public class MySQLPersistor extends CoalescePersistorBase {
             }
             break;
         case "fielddefinition":
-            //if (CoalesceSettings.getUseIndexing())
-            //{
-                // Removed Field Definition Persisting
-                // isSuccessful = PersistFieldDefinitionObject((XsdFieldDefinition) coalesceObject, conn);
-            //}
+            // if (CoalesceSettings.getUseIndexing())
+            // {
+            // Removed Field Definition Persisting
+            // isSuccessful = PersistFieldDefinitionObject((XsdFieldDefinition) coalesceObject, conn);
+            // }
             break;
 
         case "record":
@@ -626,7 +597,7 @@ public class MySQLPersistor extends CoalescePersistorBase {
      * @return True if successfully added/updated.
      * @throws SQLException
      */
-    protected boolean persistMapTableEntry(CoalesceObject coalesceObject, MySQLDataConnector conn) throws SQLException
+    protected boolean persistMapTableEntry(CoalesceObject coalesceObject, CoalesceDataConnectorBase conn) throws SQLException
     {
         String parentKey;
         String parentType;
@@ -658,7 +629,7 @@ public class MySQLPersistor extends CoalescePersistorBase {
      * @return True = Successful add/update operation.
      * @throws SQLException
      */
-    protected boolean persistEntityObject(CoalesceEntity entity, MySQLDataConnector conn) throws SQLException
+    protected boolean persistEntityObject(CoalesceEntity entity, CoalesceDataConnectorBase conn) throws SQLException
     {
         // Return true if no update is required.
         if (!this.checkLastModified(entity, conn)) return true;
@@ -685,7 +656,7 @@ public class MySQLPersistor extends CoalescePersistorBase {
      * @return True = Successful add/update operation.
      * @throws SQLException
      */
-    protected boolean persistSectionObject(CoalesceSection section, MySQLDataConnector conn) throws SQLException
+    protected boolean persistSectionObject(CoalesceSection section, CoalesceDataConnectorBase conn) throws SQLException
     {
         // Return true if no update is required.
         if (!this.checkLastModified(section, conn)) return true;
@@ -709,7 +680,7 @@ public class MySQLPersistor extends CoalescePersistorBase {
      * @return True = Successful add/update operation.
      * @throws SQLException
      */
-    protected boolean persistRecordsetObject(CoalesceRecordset recordset, MySQLDataConnector conn) throws SQLException
+    protected boolean persistRecordsetObject(CoalesceRecordset recordset, CoalesceDataConnectorBase conn) throws SQLException
     {
         // Return true if no update is required.
         if (!this.checkLastModified(recordset, conn)) return true;
@@ -733,7 +704,7 @@ public class MySQLPersistor extends CoalescePersistorBase {
      * @return True = Successful add/update operation.
      * @throws SQLException
      */
-    protected boolean persistFieldDefinitionObject(CoalesceFieldDefinition fieldDefinition, MySQLDataConnector conn)
+    protected boolean persistFieldDefinitionObject(CoalesceFieldDefinition fieldDefinition, CoalesceDataConnectorBase conn)
             throws SQLException
     {
 
@@ -759,7 +730,7 @@ public class MySQLPersistor extends CoalescePersistorBase {
      * @return True = Successful add/update operation.
      * @throws SQLException
      */
-    protected boolean persistRecordObject(CoalesceRecord record, MySQLDataConnector conn) throws SQLException
+    protected boolean persistRecordObject(CoalesceRecord record, CoalesceDataConnectorBase conn) throws SQLException
     {
         // Return true if no update is required.
         if (!this.checkLastModified(record, conn)) return true;
@@ -783,7 +754,7 @@ public class MySQLPersistor extends CoalescePersistorBase {
      * @return True = Successful add/update operation.
      * @throws SQLException
      */
-    protected boolean persistFieldObject(CoalesceField<?> field, MySQLDataConnector conn) throws SQLException
+    protected boolean persistFieldObject(CoalesceField<?> field, CoalesceDataConnectorBase conn) throws SQLException
     {
         // Return true if no update is required.
         if (!this.checkLastModified(field, conn)) return true;
@@ -813,7 +784,7 @@ public class MySQLPersistor extends CoalescePersistorBase {
      * @return True = Successful add/update operation.
      * @throws SQLException
      */
-    protected boolean persistFieldHistoryObject(CoalesceFieldHistory fieldHistory, MySQLDataConnector conn)
+    protected boolean persistFieldHistoryObject(CoalesceFieldHistory fieldHistory, CoalesceDataConnectorBase conn)
             throws SQLException
     {
         // Return true if no update is required.
@@ -844,7 +815,7 @@ public class MySQLPersistor extends CoalescePersistorBase {
      * @return True = Successful add/update operation.
      * @throws SQLException
      */
-    protected boolean persistLinkageSectionObject(CoalesceLinkageSection linkageSection, MySQLDataConnector conn)
+    protected boolean persistLinkageSectionObject(CoalesceLinkageSection linkageSection, CoalesceDataConnectorBase conn)
             throws SQLException
     {
         // Return true if no update is required.
@@ -869,7 +840,7 @@ public class MySQLPersistor extends CoalescePersistorBase {
      * @return True = Successful add/update operation.
      * @throws SQLException
      */
-    protected boolean persistLinkageObject(CoalesceLinkage linkage, MySQLDataConnector conn) throws SQLException
+    protected boolean persistLinkageObject(CoalesceLinkage linkage, CoalesceDataConnectorBase conn) throws SQLException
     {
         // Return true if no update is required.
         if (!this.checkLastModified(linkage, conn)) return true;
@@ -905,7 +876,7 @@ public class MySQLPersistor extends CoalescePersistorBase {
      * @return metaData the EntityMetaData for the Coalesce entity.
      * @throws SQLException
      */
-    protected EntityMetaData getCoalesceEntityIdAndTypeForKey(String key, MySQLDataConnector conn) throws SQLException
+    protected EntityMetaData getCoalesceEntityIdAndTypeForKey(String key, CoalesceDataConnectorBase conn) throws SQLException
     {
         EntityMetaData metaData = null;
 
@@ -913,11 +884,16 @@ public class MySQLPersistor extends CoalescePersistorBase {
         ResultSet results = conn.executeQuery("SELECT EntityId,EntityIdType,ObjectKey FROM CoalesceEntity WHERE ObjectKey=?",
                                               new CoalesceParameter(key));
         // Get Results
-        if (results != null && results.first())
+        if (results != null)
         {
-            metaData = new EntityMetaData(results.getString("EntityId"),
-                                          results.getString("EntityIdType"),
-                                          results.getString("ObjectKey"));
+            if (results.first())
+            {
+                metaData = new EntityMetaData(results.getString("EntityId"),
+                                              results.getString("EntityIdType"),
+                                              results.getString("ObjectKey"));
+            }
+
+            results.close();
         }
 
         return metaData;
@@ -931,7 +907,7 @@ public class MySQLPersistor extends CoalescePersistorBase {
      * @return False = Out of Date
      * @throws SQLException
      */
-    protected boolean checkLastModified(CoalesceObject coalesceObject, MySQLDataConnector conn) throws SQLException
+    protected boolean checkLastModified(CoalesceObject coalesceObject, CoalesceDataConnectorBase conn) throws SQLException
     {
         boolean isOutOfDate = true;
 
@@ -966,7 +942,7 @@ public class MySQLPersistor extends CoalescePersistorBase {
      * @return True = Successful delete
      * @throws SQLException
      */
-    protected boolean deleteObject(CoalesceObject coalesceObject, MySQLDataConnector conn) throws SQLException
+    protected boolean deleteObject(CoalesceObject coalesceObject, CoalesceDataConnectorBase conn) throws SQLException
     {
         String objectType = coalesceObject.getType();
         String objectKey = coalesceObject.getKey();
@@ -992,7 +968,7 @@ public class MySQLPersistor extends CoalescePersistorBase {
     {
         List<String> keyList = new ArrayList<String>();
 
-        try (MySQLDataConnector conn = new MySQLDataConnector(this._serCon))
+        try (CoalesceDataConnectorBase conn = new MySQLDataConnector(getConnectionSettings()))
         {
             ResultSet results = conn.executeQuery("SELECT ObjectKey FROM CoalesceEntity WHERE (EntityId like '%' ? '%') AND (EntityIdType like '%' ? '%') AND (Name=?)",
                                                   new CoalesceParameter(entityId),
@@ -1031,7 +1007,7 @@ public class MySQLPersistor extends CoalescePersistorBase {
 
     {
 
-        try (MySQLDataConnector conn = new MySQLDataConnector(this._serCon))
+        try (CoalesceDataConnectorBase conn = new MySQLDataConnector(getConnectionSettings()))
         {
             List<String> keyList = new ArrayList<String>();
 
@@ -1061,7 +1037,7 @@ public class MySQLPersistor extends CoalescePersistorBase {
      * @param conn is the MySQLDataConnector database connection
      * @throws SQLException,Exception,CoalescePersistorException
      */
-    protected boolean updateFileContent(CoalesceObject coalesceObject, MySQLDataConnector conn) throws SQLException
+    protected boolean updateFileContent(CoalesceObject coalesceObject, CoalesceDataConnectorBase conn) throws SQLException
     {
         boolean isSuccessful = false;
 
@@ -1083,7 +1059,7 @@ public class MySQLPersistor extends CoalescePersistorBase {
         return isSuccessful;
     }
 
-    private boolean updateCoalesceObject(CoalesceObject coalesceObject, MySQLDataConnector conn, boolean allowRemoval)
+    private boolean updateCoalesceObject(CoalesceObject coalesceObject, CoalesceDataConnectorBase conn, boolean allowRemoval)
             throws SQLException
 
     {
@@ -1129,7 +1105,7 @@ public class MySQLPersistor extends CoalescePersistorBase {
         return isSuccessful;
     }
 
-    private DateTime getCoalesceObjectLastModified(String key, String objectType, MySQLDataConnector conn)
+    private DateTime getCoalesceObjectLastModified(String key, String objectType, CoalesceDataConnectorBase conn)
             throws SQLException
     {
         DateTime lastModified = null;
@@ -1155,7 +1131,7 @@ public class MySQLPersistor extends CoalescePersistorBase {
 
     }
 
-    private ElementMetaData getXPathRecursive(String key, String objectType, String xPath, MySQLDataConnector conn)
+    private ElementMetaData getXPathRecursive(String key, String objectType, String xPath, CoalesceDataConnectorBase conn)
             throws SQLException
     {
 
