@@ -31,13 +31,13 @@ import com.incadencecorp.coalesce.framework.persistance.neo4j.Neo4JPersistor;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-public class NEO4JPersistorTest extends CoalescePersistorBaseTest {
+public class Neo4JPersistorTest extends CoalescePersistorBaseTest {
 
     @BeforeClass
     public static void setupBeforeClass() throws SAXException, IOException, CoalesceException
     {
 
-        NEO4JPersistorTest tester = new NEO4JPersistorTest();
+        Neo4JPersistorTest tester = new Neo4JPersistorTest();
 
         CoalescePersistorBaseTest.setupBeforeClassBase(tester);
 
@@ -46,7 +46,7 @@ public class NEO4JPersistorTest extends CoalescePersistorBaseTest {
     @AfterClass
     public static void tearDownAfterClass()
     {
-        NEO4JPersistorTest tester = new NEO4JPersistorTest();
+        Neo4JPersistorTest tester = new Neo4JPersistorTest();
 
         CoalescePersistorBaseTest.tearDownAfterClassBase(tester);
 
