@@ -4,13 +4,6 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import org.neo4j.graphdb.DynamicLabel;
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Label;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.ResourceIterator;
-import org.neo4j.graphdb.Transaction;
-
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
@@ -19,7 +12,6 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
-import com.incadencecorp.coalesce.framework.persistance.CoalescePersistorBase;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 import com.incadencecorp.coalesce.framework.persistance.mysql.MySQLPersistor;
 
@@ -214,7 +206,7 @@ public class Neo4JMySQLPersistor extends MySQLPersistor {
                                new CoalesceParameter(linkage.getEntity1Key()),
                                new CoalesceParameter(linkage.getEntity2Key()));
     }
-
+    /*
     private void persistEntityObject(CoalesceEntity entity, GraphDatabaseService graphDB)
     {
 
@@ -259,6 +251,7 @@ public class Neo4JMySQLPersistor extends MySQLPersistor {
             tx.success();
         }
     }
+    */
 
     private void getFieldValues(CoalesceObject coalesceObject, HashMap<String, String> results)
     {

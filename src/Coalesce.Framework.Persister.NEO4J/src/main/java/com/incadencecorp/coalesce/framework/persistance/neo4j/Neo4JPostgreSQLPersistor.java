@@ -4,13 +4,6 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import org.neo4j.graphdb.DynamicLabel;
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Label;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.ResourceIterator;
-import org.neo4j.graphdb.Transaction;
-
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
@@ -215,51 +208,6 @@ public class Neo4JPostgreSQLPersistor extends PostGreSQLPersistor {
                                new CoalesceParameter(linkage.getEntity2Key()));
     }
 
-    private void persistEntityObject(CoalesceEntity entity, GraphDatabaseService graphDB)
-    {
-
-        // Obtain a list of all field values
-        HashMap<String, String> fieldValues = new HashMap<String, String>();
-        this.getFieldValues(entity, fieldValues);
-
-        try (Transaction tx = graphDB.beginTx())
-        {
-            Label label = DynamicLabel.label(entity.getName());
-
-            Node entityNode;
-
-            // Search for Entity
-            try (ResourceIterator<Node> entities = graphDB.findNodesByLabelAndProperty(label, "key", entity.getKey()).iterator())
-            {
-                if (entities.hasNext())
-                {
-                    // Get First Entity
-                    entityNode = entities.next();
-                }
-                else
-                {
-                    // Create New Entity
-                    entityNode = graphDB.createNode();
-                    entityNode.addLabel(label);
-                    entityNode.setProperty("name", entity.getName());
-                    entityNode.setProperty("source", entity.getSource());
-                    entityNode.setProperty("key", entity.getKey());
-                }
-            }
-
-            entityNode.setProperty("title", entity.getTitle());
-            entityNode.setProperty("lastmodified", entity.getLastModified());
-
-            // Add Field Values
-            for (Entry<String, String> entry : fieldValues.entrySet())
-            {
-                entityNode.setProperty(entry.getKey(), entry.getValue());
-            }
-
-            tx.success();
-        }
-    }
-
     private void getFieldValues(CoalesceObject coalesceObject, HashMap<String, String> results)
     {
         // Is Active?
@@ -269,7 +217,7 @@ public class Neo4JPostgreSQLPersistor extends PostGreSQLPersistor {
             if (coalesceObject.getType().equalsIgnoreCase("field"))
             {
                 // Yes; Check Data Type
-                CoalesceField field = (CoalesceField) coalesceObject;
+                CoalesceField<?> field = (CoalesceField<?>) coalesceObject;
 
                 switch (field.getDataType()) {
                 case BINARY_TYPE:
