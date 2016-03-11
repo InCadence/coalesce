@@ -177,11 +177,11 @@
 			<groupId>com.incadencecorp.unity</groupId>
 			<artifactId>unity-common</artifactId>
 		</dependency>
-		<dependency>
+<!--		<dependency>
 			<groupId>com.incadencecorp.unity</groupId>
 			<artifactId>unity-local-connector</artifactId>
 			<scope>test</scope>
-		</dependency>
+		</dependency>-->
 
 		<!-- These dependencies are for the custom validator -->
 		<dependency>
