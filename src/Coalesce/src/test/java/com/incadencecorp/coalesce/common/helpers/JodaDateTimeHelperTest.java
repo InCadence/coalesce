@@ -103,7 +103,7 @@ public class JodaDateTimeHelperTest {
     public void militaryFormatNoDateTest()
     {
 
-        DateTime date = new DateTime(2014, 5, 6, 7, 8, 9, DateTimeZone.UTC);
+        DateTime date = new DateTime(2014, 5, 6, 7, 8, 9, 0, DateTimeZone.UTC);
 
         String milDate = JodaDateTimeHelper.militaryFormat(date, true);
 
@@ -135,7 +135,7 @@ public class JodaDateTimeHelperTest {
     public void militaryFormatDateTest()
     {
 
-        DateTime date = new DateTime(2014, 5, 6, 7, 8, 9, DateTimeZone.UTC);
+        DateTime date = new DateTime(2014, 5, 6, 7, 8, 9, 0, DateTimeZone.UTC);
 
         String milDate = JodaDateTimeHelper.militaryFormat(date, false);
 
@@ -147,7 +147,7 @@ public class JodaDateTimeHelperTest {
     public void militaryFormatNoUTCTest()
     {
 
-        DateTime date = new DateTime(2014, 5, 6, 7, 8, 9);
+        DateTime date = new DateTime(2014, 5, 6, 7, 8, 9, 0);
 
         String milDate = JodaDateTimeHelper.militaryFormat(date, false);
 
@@ -200,7 +200,7 @@ public class JodaDateTimeHelperTest {
     public void getElapsedGMTTimeStringSameTimeTest()
     {
 
-        DateTime date = new DateTime(2014, 5, 6, 7, 8, 9);
+        DateTime date = new DateTime(2014, 5, 6, 7, 8, 9, 0);
         DateTime now = new DateTime(date);
 
         String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(now, date, true, false, true);
@@ -212,8 +212,8 @@ public class JodaDateTimeHelperTest {
     public void getElapsedGMTTimeStringOneSecondTest()
     {
 
-        DateTime date = new DateTime(2014, 5, 6, 7, 8, 9);
-        DateTime now = new DateTime(2014, 5, 6, 7, 8, 10);
+        DateTime date = new DateTime(2014, 5, 6, 7, 8, 9, 0);
+        DateTime now = new DateTime(2014, 5, 6, 7, 8, 10, 0);
 
         String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
@@ -224,8 +224,8 @@ public class JodaDateTimeHelperTest {
     public void getElapsedGMTTimeStringTwoSecondsTest()
     {
 
-        DateTime date = new DateTime(2014, 5, 6, 7, 8, 9);
-        DateTime now = new DateTime(2014, 5, 6, 7, 8, 11);
+        DateTime date = new DateTime(2014, 5, 6, 7, 8, 9, 0);
+        DateTime now = new DateTime(2014, 5, 6, 7, 8, 11, 0);
 
         String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
@@ -236,8 +236,8 @@ public class JodaDateTimeHelperTest {
     public void getElapsedGMTTimeStringFiftyNineTest()
     {
 
-        DateTime date = new DateTime(2014, 5, 6, 7, 8, 9);
-        DateTime now = new DateTime(2014, 5, 6, 7, 9, 8);
+        DateTime date = new DateTime(2014, 5, 6, 7, 8, 9, 0);
+        DateTime now = new DateTime(2014, 5, 6, 7, 9, 8, 0);
 
         String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
@@ -248,8 +248,8 @@ public class JodaDateTimeHelperTest {
     public void getElapsedGMTTimeStringLessThanMinuteInFutureTest()
     {
 
-        DateTime now = new DateTime(2014, 5, 6, 7, 8, 9);
-        DateTime date = new DateTime(2014, 5, 6, 7, 9, 8);
+        DateTime now = new DateTime(2014, 5, 6, 7, 8, 9, 0);
+        DateTime date = new DateTime(2014, 5, 6, 7, 9, 8, 0);
 
         String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
@@ -260,8 +260,8 @@ public class JodaDateTimeHelperTest {
     public void getElapsedGMTTimeStringOneMinuteTest()
     {
 
-        DateTime date = new DateTime(2014, 5, 6, 7, 8, 9);
-        DateTime now = new DateTime(2014, 5, 6, 7, 9, 9);
+        DateTime date = new DateTime(2014, 5, 6, 7, 8, 9, 0);
+        DateTime now = new DateTime(2014, 5, 6, 7, 9, 9, 0);
 
         String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
@@ -272,8 +272,8 @@ public class JodaDateTimeHelperTest {
     public void getElapsedGMTTimeStringOneMinuteOneSecondTest()
     {
 
-        DateTime date = new DateTime(2014, 5, 6, 7, 8, 9);
-        DateTime now = new DateTime(2014, 5, 6, 7, 9, 10);
+        DateTime date = new DateTime(2014, 5, 6, 7, 8, 9, 0);
+        DateTime now = new DateTime(2014, 5, 6, 7, 9, 10, 0);
 
         String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
@@ -284,8 +284,8 @@ public class JodaDateTimeHelperTest {
     public void getElapsedGMTTimeStringOneMinuteFiftyNineSecondsTest()
     {
 
-        DateTime date = new DateTime(2014, 5, 6, 7, 8, 9);
-        DateTime now = new DateTime(2014, 5, 6, 7, 10, 8);
+        DateTime date = new DateTime(2014, 5, 6, 7, 8, 9, 0);
+        DateTime now = new DateTime(2014, 5, 6, 7, 10, 8, 0);
 
         String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
@@ -296,8 +296,8 @@ public class JodaDateTimeHelperTest {
     public void getElapsedGMTTimeStringTwoMinutesTest()
     {
 
-        DateTime date = new DateTime(2014, 5, 6, 7, 8, 9);
-        DateTime now = new DateTime(2014, 5, 6, 7, 10, 9);
+        DateTime date = new DateTime(2014, 5, 6, 7, 8, 9, 0);
+        DateTime now = new DateTime(2014, 5, 6, 7, 10, 9, 0);
 
         String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
@@ -308,8 +308,8 @@ public class JodaDateTimeHelperTest {
     public void getElapsedGMTTimeStringTwoMinutesOneSecondTest()
     {
 
-        DateTime date = new DateTime(2014, 5, 6, 7, 8, 9);
-        DateTime now = new DateTime(2014, 5, 6, 7, 10, 10);
+        DateTime date = new DateTime(2014, 5, 6, 7, 8, 9, 0);
+        DateTime now = new DateTime(2014, 5, 6, 7, 10, 10, 0);
 
         String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
@@ -320,8 +320,8 @@ public class JodaDateTimeHelperTest {
     public void getElapsedGMTTimeStringFiftyNineMinutesFiftyNineSecondsTest()
     {
 
-        DateTime date = new DateTime(2014, 5, 6, 7, 8, 9);
-        DateTime now = new DateTime(2014, 5, 6, 8, 8, 8);
+        DateTime date = new DateTime(2014, 5, 6, 7, 8, 9, 0);
+        DateTime now = new DateTime(2014, 5, 6, 8, 8, 8, 0);
 
         String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
@@ -332,8 +332,8 @@ public class JodaDateTimeHelperTest {
     public void getElapsedGMTTimeStringMinutesInFutureTest()
     {
 
-        DateTime now = new DateTime(2014, 5, 6, 8, 8, 8);
-        DateTime date = new DateTime(2014, 5, 6, 8, 38, 8);
+        DateTime now = new DateTime(2014, 5, 6, 8, 8, 8, 0);
+        DateTime date = new DateTime(2014, 5, 6, 8, 38, 8, 0);
 
         String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
@@ -344,8 +344,8 @@ public class JodaDateTimeHelperTest {
     public void getElapsedGMTTimeStringOneHourTest()
     {
 
-        DateTime date = new DateTime(2014, 5, 6, 7, 8, 9);
-        DateTime now = new DateTime(2014, 5, 6, 8, 8, 9);
+        DateTime date = new DateTime(2014, 5, 6, 7, 8, 9, 0);
+        DateTime now = new DateTime(2014, 5, 6, 8, 8, 9, 0);
 
         String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
@@ -356,8 +356,8 @@ public class JodaDateTimeHelperTest {
     public void getElapsedGMTTimeStringOneHourOneSecondTest()
     {
 
-        DateTime date = new DateTime(2014, 5, 6, 7, 8, 9);
-        DateTime now = new DateTime(2014, 5, 6, 8, 8, 10);
+        DateTime date = new DateTime(2014, 5, 6, 7, 8, 9, 0);
+        DateTime now = new DateTime(2014, 5, 6, 8, 8, 10, 0);
 
         String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
@@ -368,8 +368,8 @@ public class JodaDateTimeHelperTest {
     public void getElapsedGMTTimeStringOneHourThirtyMinutesTest()
     {
 
-        DateTime date = new DateTime(2014, 5, 6, 7, 8, 9);
-        DateTime now = new DateTime(2014, 5, 6, 8, 38, 8);
+        DateTime date = new DateTime(2014, 5, 6, 7, 8, 9, 0);
+        DateTime now = new DateTime(2014, 5, 6, 8, 38, 8, 0);
 
         String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
@@ -380,8 +380,8 @@ public class JodaDateTimeHelperTest {
     public void getElapsedGMTTimeStringOneHourFiftyNineMinutesFiftyNineSecondsTest()
     {
 
-        DateTime date = new DateTime(2014, 5, 6, 6, 8, 9);
-        DateTime now = new DateTime(2014, 5, 6, 8, 8, 8);
+        DateTime date = new DateTime(2014, 5, 6, 6, 8, 9, 0);
+        DateTime now = new DateTime(2014, 5, 6, 8, 8, 8, 0);
 
         String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
@@ -392,8 +392,8 @@ public class JodaDateTimeHelperTest {
     public void getElapsedGMTTimeStringOneHourThirtyMinutesInFutureTest()
     {
 
-        DateTime now = new DateTime(2014, 5, 6, 7, 8, 9);
-        DateTime date = new DateTime(2014, 5, 6, 8, 38, 9);
+        DateTime now = new DateTime(2014, 5, 6, 7, 8, 9, 0);
+        DateTime date = new DateTime(2014, 5, 6, 8, 38, 9, 0);
 
         String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
@@ -404,8 +404,8 @@ public class JodaDateTimeHelperTest {
     public void getElapsedGMTTimeStringTwoHoursTest()
     {
 
-        DateTime date = new DateTime(2014, 5, 6, 6, 8, 9);
-        DateTime now = new DateTime(2014, 5, 6, 8, 8, 9);
+        DateTime date = new DateTime(2014, 5, 6, 6, 8, 9, 0);
+        DateTime now = new DateTime(2014, 5, 6, 8, 8, 9, 0);
 
         String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
@@ -416,8 +416,8 @@ public class JodaDateTimeHelperTest {
     public void getElapsedGMTTimeStringTwentyThreeHoursFiftyNineMinutesFiftyNineSecondsTest()
     {
 
-        DateTime date = new DateTime(2014, 5, 6, 6, 8, 9);
-        DateTime now = new DateTime(2014, 5, 7, 6, 8, 8);
+        DateTime date = new DateTime(2014, 5, 6, 6, 8, 9, 0);
+        DateTime now = new DateTime(2014, 5, 7, 6, 8, 8, 0);
 
         String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
@@ -428,8 +428,8 @@ public class JodaDateTimeHelperTest {
     public void getElapsedGMTTimeStringTwentyFourHoursAgoTest()
     {
 
-        DateTime date = new DateTime(2014, 5, 6, 6, 8, 9);
-        DateTime now = new DateTime(2014, 5, 7, 6, 8, 9);
+        DateTime date = new DateTime(2014, 5, 6, 6, 8, 9, 0);
+        DateTime now = new DateTime(2014, 5, 7, 6, 8, 9, 0);
 
         String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
@@ -440,8 +440,8 @@ public class JodaDateTimeHelperTest {
     public void getElapsedGMTTimeStringFourtySevenFiftyNineMinutesFiftyNineSecondsAgoTest()
     {
 
-        DateTime date = new DateTime(2014, 5, 6, 6, 8, 9);
-        DateTime now = new DateTime(2014, 5, 8, 6, 8, 8);
+        DateTime date = new DateTime(2014, 5, 6, 6, 8, 9, 0);
+        DateTime now = new DateTime(2014, 5, 8, 6, 8, 8, 0);
 
         String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
@@ -452,8 +452,8 @@ public class JodaDateTimeHelperTest {
     public void getElapsedGMTTimeStringTomorrowTest()
     {
 
-        DateTime now = new DateTime(2014, 5, 6, 6, 8, 9);
-        DateTime date = new DateTime(2014, 5, 8, 6, 8, 8);
+        DateTime now = new DateTime(2014, 5, 6, 6, 8, 9, 0);
+        DateTime date = new DateTime(2014, 5, 8, 6, 8, 8, 0);
 
         String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
@@ -464,8 +464,8 @@ public class JodaDateTimeHelperTest {
     public void getElapsedGMTTimeStringFourtyEightHoursAgoTest()
     {
 
-        DateTime date = new DateTime(2014, 5, 6, 6, 8, 9);
-        DateTime now = new DateTime(2014, 5, 8, 6, 8, 9);
+        DateTime date = new DateTime(2014, 5, 6, 6, 8, 9, 0);
+        DateTime now = new DateTime(2014, 5, 8, 6, 8, 9, 0);
 
         String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
@@ -476,8 +476,8 @@ public class JodaDateTimeHelperTest {
     public void getElapsedGMTTimeStringFourtyEightHoursTillTest()
     {
 
-        DateTime now = new DateTime(2014, 5, 6, 6, 8, 9);
-        DateTime date = new DateTime(2014, 5, 8, 6, 8, 9);
+        DateTime now = new DateTime(2014, 5, 6, 6, 8, 9, 0);
+        DateTime date = new DateTime(2014, 5, 8, 6, 8, 9, 0);
 
         String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
@@ -488,8 +488,8 @@ public class JodaDateTimeHelperTest {
     public void getElapsedGMTTimeStringThreeHundredFiftyFourDaysFiftyNineMinutesFiftyNineSecondsAgoTest()
     {
 
-        DateTime date = new DateTime(2014, 5, 6, 6, 8, 9);
-        DateTime now = new DateTime(2015, 5, 6, 6, 8, 8);
+        DateTime date = new DateTime(2014, 5, 6, 6, 8, 9, 0);
+        DateTime now = new DateTime(2015, 5, 6, 6, 8, 8, 0);
 
         String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
@@ -500,8 +500,8 @@ public class JodaDateTimeHelperTest {
     public void getElapsedGMTTimeStringOneYearAgoTest()
     {
 
-        DateTime date = new DateTime(2014, 5, 6, 6, 8, 9);
-        DateTime now = new DateTime(2015, 5, 6, 6, 8, 9);
+        DateTime date = new DateTime(2014, 5, 6, 6, 8, 9, 0);
+        DateTime now = new DateTime(2015, 5, 6, 6, 8, 9, 0);
 
         String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
@@ -512,8 +512,8 @@ public class JodaDateTimeHelperTest {
     public void getElapsedGMTTimeStringOneYearThreeHundredFiftyFourDaysFiftyNineMinuesFiftyNineSecondsAgoTest()
     {
 
-        DateTime date = new DateTime(2014, 5, 6, 6, 8, 9);
-        DateTime now = new DateTime(2016, 5, 5, 6, 8, 8);
+        DateTime date = new DateTime(2014, 5, 6, 6, 8, 9, 0);
+        DateTime now = new DateTime(2016, 5, 5, 6, 8, 8, 0);
 
         String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
@@ -524,8 +524,8 @@ public class JodaDateTimeHelperTest {
     public void getElapsedGMTTimeStringTwoYearsAgoTest()
     {
 
-        DateTime date = new DateTime(2014, 5, 6, 6, 8, 9);
-        DateTime now = new DateTime(2016, 5, 5, 6, 8, 9);
+        DateTime date = new DateTime(2014, 5, 6, 6, 8, 9, 0);
+        DateTime now = new DateTime(2016, 5, 5, 6, 8, 9, 0);
 
         String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
@@ -536,8 +536,8 @@ public class JodaDateTimeHelperTest {
     public void getElapsedGMTTimeStringOneYearTillTest()
     {
 
-        DateTime now = new DateTime(2014, 5, 6, 6, 8, 9);
-        DateTime date = new DateTime(2015, 5, 6, 6, 8, 9);
+        DateTime now = new DateTime(2014, 5, 6, 6, 8, 9, 0);
+        DateTime date = new DateTime(2015, 5, 6, 6, 8, 9, 0);
 
         String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, false, true);
 
@@ -548,8 +548,8 @@ public class JodaDateTimeHelperTest {
     public void getElapsedGMTTimeStringWithoutParenthesisTest()
     {
 
-        DateTime now = new DateTime(2014, 5, 6, 6, 8, 9);
-        DateTime date = new DateTime(2015, 5, 6, 6, 8, 9);
+        DateTime now = new DateTime(2014, 5, 6, 6, 8, 9, 0);
+        DateTime date = new DateTime(2015, 5, 6, 6, 8, 9, 0);
 
         String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, false, false, true);
 
@@ -560,8 +560,8 @@ public class JodaDateTimeHelperTest {
     public void getElapsedGMTTimeStringWithDateTimeTest()
     {
 
-        DateTime date = new DateTime(2014, 5, 6, 6, 8, 9, DateTimeZone.UTC);
-        DateTime now = new DateTime(2016, 5, 6, 6, 7, 9, DateTimeZone.UTC);
+        DateTime date = new DateTime(2014, 5, 6, 6, 8, 9, 0, DateTimeZone.UTC);
+        DateTime now = new DateTime(2016, 5, 6, 6, 7, 9, 0, DateTimeZone.UTC);
 
         String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, true, false);
 
@@ -572,8 +572,8 @@ public class JodaDateTimeHelperTest {
     public void getElapsedGMTTimeStringWithDateTimeNotUTCTest()
     {
 
-        DateTime date = new DateTime(2014, 5, 6, 6, 8, 9);
-        DateTime now = new DateTime(2016, 5, 6, 6, 7, 9);
+        DateTime date = new DateTime(2014, 5, 6, 6, 8, 9, 0);
+        DateTime now = new DateTime(2016, 5, 6, 6, 7, 9, 0);
 
         String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, true, false);
 
@@ -585,8 +585,8 @@ public class JodaDateTimeHelperTest {
     public void getElapsedGMTTimeStringWithDateOnlyTest()
     {
 
-        DateTime date = new DateTime(2014, 5, 6, 6, 8, 9, DateTimeZone.UTC);
-        DateTime now = new DateTime(2016, 5, 6, 6, 7, 9, DateTimeZone.UTC);
+        DateTime date = new DateTime(2014, 5, 6, 6, 8, 9, 0, DateTimeZone.UTC);
+        DateTime now = new DateTime(2016, 5, 6, 6, 7, 9, 0, DateTimeZone.UTC);
 
         String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, true, true);
 
@@ -597,8 +597,8 @@ public class JodaDateTimeHelperTest {
     public void getElapsedGMTTimeStringAllOffTest()
     {
 
-        DateTime date = new DateTime(2014, 5, 6, 6, 8, 9, DateTimeZone.UTC);
-        DateTime now = new DateTime(2016, 5, 6, 6, 7, 9, DateTimeZone.UTC);
+        DateTime date = new DateTime(2014, 5, 6, 6, 8, 9, 0, DateTimeZone.UTC);
+        DateTime now = new DateTime(2016, 5, 6, 6, 7, 9, 0, DateTimeZone.UTC);
 
         String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, false, false, false);
 
@@ -609,8 +609,8 @@ public class JodaDateTimeHelperTest {
     public void getElapsedGMTTimeStringTimeZoneTest()
     {
 
-        DateTime date = new DateTime(2014, 5, 6, 6, 8, 9, DateTimeZone.forOffsetHours(-4));
-        DateTime now = new DateTime(2016, 5, 6, 6, 7, 9, DateTimeZone.UTC);
+        DateTime date = new DateTime(2014, 5, 6, 6, 8, 9, 0, DateTimeZone.forOffsetHours(-4));
+        DateTime now = new DateTime(2016, 5, 6, 6, 7, 9, 0, DateTimeZone.UTC);
 
         String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, true, false);
 
@@ -621,8 +621,8 @@ public class JodaDateTimeHelperTest {
     public void getElapsedGMTTimeStringFourHoursTillTimeZoneTest()
     {
 
-        DateTime date = new DateTime(2014, 5, 6, 6, 8, 9, DateTimeZone.forOffsetHours(-4));
-        DateTime now = new DateTime(2014, 5, 6, 6, 8, 9, DateTimeZone.UTC);
+        DateTime date = new DateTime(2014, 5, 6, 6, 8, 9, 0, DateTimeZone.forOffsetHours(-4));
+        DateTime now = new DateTime(2014, 5, 6, 6, 8, 9, 0, DateTimeZone.UTC);
 
         String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, true, false);
 
@@ -633,8 +633,8 @@ public class JodaDateTimeHelperTest {
     public void getElapsedGMTTimeStringThreeHoursFiftyNineSecondsTillTimeZoneTest()
     {
 
-        DateTime date = new DateTime(2014, 5, 6, 6, 8, 9, DateTimeZone.forOffsetHours(-4));
-        DateTime now = new DateTime(2014, 5, 6, 6, 8, 10, DateTimeZone.UTC);
+        DateTime date = new DateTime(2014, 5, 6, 6, 8, 9, 0, DateTimeZone.forOffsetHours(-4));
+        DateTime now = new DateTime(2014, 5, 6, 6, 8, 10, 0, DateTimeZone.UTC);
 
         String elapsed = JodaDateTimeHelper.getElapsedGMTTimeString(date, now, true, true, false);
 
@@ -645,7 +645,7 @@ public class JodaDateTimeHelperTest {
     public void toXmlDateTimeUTCTest()
     {
 
-        DateTime date = new DateTime(2014, 5, 6, 6, 8, 9, DateTimeZone.forOffsetHours(-4));
+        DateTime date = new DateTime(2014, 5, 6, 6, 8, 9, 0, DateTimeZone.forOffsetHours(-4));
 
         String utcTime = JodaDateTimeHelper.toXmlDateTimeUTC(date);
 
@@ -667,7 +667,7 @@ public class JodaDateTimeHelperTest {
     public void fromXmlDateTimeUTCTest()
     {
 
-        DateTime date = new DateTime(2014, 5, 6, 6, 8, 9, DateTimeZone.forOffsetHours(-4));
+        DateTime date = new DateTime(2014, 5, 6, 6, 8, 9, 0, DateTimeZone.forOffsetHours(-4));
 
         String utcTime = JodaDateTimeHelper.toXmlDateTimeUTC(date);
 

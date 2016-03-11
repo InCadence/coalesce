@@ -8,8 +8,8 @@ import static org.junit.Assert.assertTrue;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
@@ -87,7 +87,7 @@ public class CoalesceAssert {
         assertEquals(expectedEntity.getVersion(), templateEntity.getVersion());
         assertEquals("", templateEntity.getEntityId());
         assertEquals("", templateEntity.getEntityIdType());
-        assertEquals(templateEntity.getSource(), templateEntity.getTitle());
+        assertEquals(templateEntity.getName(), templateEntity.getTitle());
 
         // Check linkage section
         CoalesceLinkageSection expectedLinkageSection = expectedEntity.getLinkageSection();
@@ -148,13 +148,13 @@ public class CoalesceAssert {
             assertEquals(expectedRecordset.getName(), templateRecordset.getName());
             assertTrue("Template recordset should not have records", templateRecordset.getRecords().isEmpty());
 
-            assertTemplateFieldDefinitions(expectedRecordset.getFieldDefinitions(), templateRecordset.getFieldDefinitions());
+            assertFieldDefinitions(expectedRecordset.getFieldDefinitions(), templateRecordset.getFieldDefinitions());
 
         }
     }
 
-    public static void assertTemplateFieldDefinitions(ArrayList<CoalesceFieldDefinition> expectedFieldDefinitions,
-                                                      ArrayList<CoalesceFieldDefinition> templateFieldDefinitions)
+    public static void assertFieldDefinitions(List<CoalesceFieldDefinition> expectedFieldDefinitions,
+                                                      List<CoalesceFieldDefinition> templateFieldDefinitions)
     {
 
         assertEquals(expectedFieldDefinitions.size(), templateFieldDefinitions.size());

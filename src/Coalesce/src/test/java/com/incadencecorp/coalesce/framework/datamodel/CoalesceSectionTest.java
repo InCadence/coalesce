@@ -17,7 +17,6 @@ import com.incadencecorp.coalesce.common.CoalesceTypeInstances;
 import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
-import com.incadencecorp.coalesce.framework.generatedjaxb.Section;
 
 public class CoalesceSectionTest {
 
@@ -965,10 +964,10 @@ public class CoalesceSectionTest {
         assertEquals(section.getRecordsets().size(), desSection.getRecordset().size());
         assertEquals(section.getKey(), desSection.getKey());
         assertEquals(section.getName(), desSection.getName());
-        assertEquals(section.getNoIndex(), Boolean.parseBoolean(desSection.getNoindex()));
+        assertEquals(null, desSection.isNoindex());
         assertEquals(section.getDateCreated(), desSection.getDatecreated());
         assertEquals(section.getLastModified(), desSection.getLastmodified());
-        assertEquals(section.getStatus(), ECoalesceObjectStatus.getTypeForLabel(desSection.getStatus()));
+        assertEquals(section.getStatus(), desSection.getStatus());
 
     }
 
@@ -985,7 +984,7 @@ public class CoalesceSectionTest {
 
         Section desSection = (Section) XmlHelper.deserialize(sectionXml, Section.class);
 
-        assertEquals(ECoalesceObjectStatus.UNKNOWN, ECoalesceObjectStatus.getTypeForLabel(desSection.getStatus()));
+        assertEquals(ECoalesceObjectStatus.UNKNOWN, desSection.getStatus());
 
     }
 
@@ -995,9 +994,12 @@ public class CoalesceSectionTest {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         CoalesceSection section = entity.getSection("TREXMission/Mission Information Section");
+
+        int before = section.getAttributes().size();
+
         section.setAttribute("TestAttribute", "TestingValue");
 
-        assertEquals(6, section.getAttributes().size());
+        assertEquals(before + 1, section.getAttributes().size());
 
         assertEquals("TestingValue", section.getAttribute("TestAttribute"));
 
@@ -1022,7 +1024,7 @@ public class CoalesceSectionTest {
         section.setAttribute("NoIndex", "True");
         assertEquals(true, section.getNoIndex());
 
-        section.setAttribute("Status", ECoalesceObjectStatus.UNKNOWN.getLabel());
+        section.setAttribute("Status", ECoalesceObjectStatus.UNKNOWN.toString());
         assertEquals(ECoalesceObjectStatus.UNKNOWN, section.getStatus());
 
         section.setAttribute("LastModified", JodaDateTimeHelper.toXmlDateTimeUTC(future));

@@ -1,19 +1,11 @@
 package com.incadencecorp.coalesce.framework.datamodel;
 
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.joda.time.DateTime;
-
-import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.LocaleConverter;
-import com.incadencecorp.coalesce.common.helpers.StringHelper;
-import com.incadencecorp.coalesce.common.helpers.XmlHelper;
-import com.incadencecorp.coalesce.framework.generatedjaxb.Field;
-import com.incadencecorp.coalesce.framework.generatedjaxb.Fieldhistory;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -32,7 +24,7 @@ import com.incadencecorp.coalesce.framework.generatedjaxb.Fieldhistory;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-public class CoalesceFieldHistory extends CoalesceFieldBase<String> {
+public class CoalesceFieldHistory extends CoalesceFieldBase<String> implements ICoalesceHistory {
 
     // -----------------------------------------------------------------------//
     // protected Member Variables
@@ -45,14 +37,20 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> {
     // -----------------------------------------------------------------------//
 
     /**
-     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory} and ties it to its parent
+     * Creates an
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory}
+     * and ties it to its parent
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}.
      * 
-     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}, the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory}'s parent.
+     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}
+     *            , the
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory}
+     *            's parent.
      * 
-     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory}, resulting history created from
-     *         the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}.
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory}
+     *         , resulting history created from the
+     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}
+     *         .
      */
     public static CoalesceFieldHistory create(CoalesceField<?> parent)
     {
@@ -61,7 +59,8 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> {
 
             // Set References
             CoalesceFieldHistory newFieldHistory = new CoalesceFieldHistory();
-            if (!newFieldHistory.initialize(parent)) return null;
+            if (!newFieldHistory.initialize(parent))
+                return null;
 
             // Copy attributes from parent node
             newFieldHistory.setAttributes(parent);
@@ -83,11 +82,15 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> {
     }
 
     /**
-     * Initializes a brand new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory} and ties it to its
-     * parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}.
+     * Initializes a brand new
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory}
+     * and ties it to its parent
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}.
      * 
-     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}, the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory}'s parent.
+     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}
+     *            , the
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory}
+     *            's parent.
      * 
      * @return boolean indicator of success/failure.
      */
@@ -97,13 +100,18 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> {
     }
 
     /**
-     * Initializes a previously new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory} and ties it
-     * to its parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}.
+     * Initializes a previously new
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory}
+     * and ties it to its parent
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}.
      * 
-     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}, the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory}'s parent.
-     * @param fieldHistory for which this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory} will be
-     *            based on.
+     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}
+     *            , the
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory}
+     *            's parent.
+     * @param fieldHistory for which this
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory}
+     *            will be based on.
      * 
      * @return boolean indicator of success/failure.
      */
@@ -114,43 +122,13 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> {
         setParent(parent);
         _entityFieldHistory = fieldHistory;
 
-        return super.initialize();
+        return super.initialize(_entityFieldHistory);
 
     }
 
     // -----------------------------------------------------------------------//
     // public Properties
     // -----------------------------------------------------------------------//
-
-    @Override
-    protected String getObjectKey()
-    {
-        return _entityFieldHistory.getKey();
-    }
-
-    @Override
-    public void setObjectKey(String value)
-    {
-        _entityFieldHistory.setKey(value);
-    }
-
-    @Override
-    public String getName()
-    {
-        return getStringElement(_entityFieldHistory.getName());
-    }
-
-    @Override
-    public void setName(String value)
-    {
-        _entityFieldHistory.setName(value);
-    }
-
-    @Override
-    public String getType()
-    {
-        return "fieldhistory";
-    }
 
     @Override
     public String getValue()
@@ -197,7 +175,8 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> {
     /**
      * Sets the value of the Field's DataType attribute.
      * 
-     * @param value ECoalesceFieldDataTypes to be the Field's DataType attribute.
+     * @param value ECoalesceFieldDataTypes to be the Field's DataType
+     *            attribute.
      */
     public void setDataType(ECoalesceFieldDataTypes value)
     {
@@ -236,30 +215,6 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> {
     }
 
     @Override
-    public String getModifiedBy()
-    {
-        return getStringElement(_entityFieldHistory.getModifiedby());
-    }
-
-    @Override
-    public void setModifiedBy(String value)
-    {
-        _entityFieldHistory.setModifiedby(value);
-    }
-
-    @Override
-    public String getModifiedByIP()
-    {
-        return getStringElement(_entityFieldHistory.getModifiedbyip());
-    }
-
-    @Override
-    public void setModifiedByIP(String value)
-    {
-        _entityFieldHistory.setModifiedbyip(value);
-    }
-
-    @Override
     public String getClassificationMarkingAsString()
     {
         return _entityFieldHistory.getClassificationmarking();
@@ -269,26 +224,6 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> {
     public void setClassificationMarking(String value)
     {
         _entityFieldHistory.setClassificationmarking(value);
-    }
-
-    @Override
-    public String getPreviousHistoryKey()
-    {
-        String prevHistKey = _entityFieldHistory.getPrevioushistorykey();
-        if (StringHelper.isNullOrEmpty(prevHistKey))
-        {
-            return "00000000-0000-0000-0000-000000000000";
-        }
-        else
-        {
-            return prevHistKey;
-        }
-    }
-
-    @Override
-    public void setPreviousHistoryKey(String value)
-    {
-        _entityFieldHistory.setPrevioushistorykey(value);
     }
 
     @Override
@@ -339,46 +274,9 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> {
         _entityFieldHistory.setHash(value);
     }
 
-    @Override
-    public DateTime getDateCreated()
-    {
-        // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityFieldHistory.getDatecreated());
-        return _entityFieldHistory.getDatecreated();
-    }
-
-    @Override
-    public void setDateCreated(DateTime value)
-    {
-        // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
-        _entityFieldHistory.setDatecreated(value);
-    }
-
-    @Override
-    public DateTime getLastModified()
-    {
-        // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityFieldHistory.getLastmodified());
-        return _entityFieldHistory.getLastmodified();
-    }
-
-    // -----------------------------------------------------------------------//
-    // public Methods
-    // -----------------------------------------------------------------------//
-
-    @Override
-    public String toXml()
-    {
-        return XmlHelper.serialize(_entityFieldHistory);
-    }
-
     // -----------------------------------------------------------------------//
     // protected Methods
     // -----------------------------------------------------------------------//
-
-    @Override
-    protected void setObjectLastModified(DateTime value)
-    {
-        _entityFieldHistory.setLastmodified(value);
-    }
 
     private void setAttributes(CoalesceField<?> field)
     {
@@ -397,55 +295,29 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> {
         _entityFieldHistory.setExtension(entityField.getExtension());
         _entityFieldHistory.setMimetype(entityField.getMimetype());
         _entityFieldHistory.setHash(entityField.getHash());
-        _entityFieldHistory.setValue(entityField.getValue());
         _entityFieldHistory.setDatecreated(entityField.getDatecreated());
         _entityFieldHistory.setLastmodified(entityField.getLastmodified());
         _entityFieldHistory.setInputlang(entityField.getInputlang());
         _entityFieldHistory.setStatus(entityField.getStatus());
+        _entityFieldHistory.setObjectversion(entityField.getObjectversion());
 
-        Map<QName, String> otherAttributes = getAttributes();
-
-        for (Map.Entry<QName, String> otherAttr : field.getAttributes().entrySet())
+        for (Map.Entry<QName, String> otherAttr : entityField.getOtherAttributes().entrySet())
         {
-
-            otherAttributes.put(otherAttr.getKey(), otherAttr.getValue());
+            _entityFieldHistory.getOtherAttributes().put(otherAttr.getKey(), otherAttr.getValue());
         }
     }
 
     @Override
-    protected String getObjectStatus()
+    protected boolean prune(CoalesceObjectType child)
     {
-        return _entityFieldHistory.getStatus();
+        // This element has no children
+        return false;
     }
 
     @Override
-    protected void setObjectStatus(ECoalesceObjectStatus status)
-    {
-        _entityFieldHistory.setStatus(status.getLabel());
-    }
-
-    @Override
-    protected Map<QName, String> getOtherAttributes()
-    {
-        return _entityFieldHistory.getOtherAttributes();
-    }
-
-    @Override
-    public boolean setAttribute(String name, String value)
+    protected boolean setExtendedAttributes(String name, String value)
     {
         switch (name.toLowerCase()) {
-        case "key":
-            setKey(value);
-            return true;
-        case "datecreated":
-            setDateCreated(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
-            return true;
-        case "lastmodified":
-            setLastModified(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
-            return true;
-        case "name":
-            setName(value);
-            return true;
         case "datatype":
             setDataType(ECoalesceFieldDataTypes.getTypeForCoalesceType(value));
             return true;
@@ -462,15 +334,13 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> {
 
             Locale inputLang = LocaleConverter.parseLocale(value);
 
-            if (inputLang == null) return false;
+            if (inputLang == null)
+                return false;
 
             setInputLang(inputLang);
 
             return true;
 
-        case "status":
-            setStatus(ECoalesceObjectStatus.getTypeForLabel(value));
-            return true;
         case "previoushistorykey":
             setPreviousHistoryKey(value);
             return true;
@@ -482,24 +352,22 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> {
     @Override
     protected Map<QName, String> getAttributes()
     {
-        Map<QName, String> map = new HashMap<QName, String>();
-        map.put(new QName("key"), _entityFieldHistory.getKey());
-        map.put(new QName("datecreated"), JodaDateTimeHelper.toXmlDateTimeUTC(_entityFieldHistory.getDatecreated()));
-        map.put(new QName("lastmodified"), JodaDateTimeHelper.toXmlDateTimeUTC(_entityFieldHistory.getLastmodified()));
-        map.put(new QName("name"), _entityFieldHistory.getName());
+        Map<QName, String> map = super.getAttributes();
+
         map.put(new QName("datatype"), _entityFieldHistory.getDatatype());
         map.put(new QName("classificationmarking"), _entityFieldHistory.getClassificationmarking());
         map.put(new QName("label"), _entityFieldHistory.getLabel());
         map.put(new QName("value"), _entityFieldHistory.getValue());
-        
+
         if (_entityFieldHistory.getInputlang() == null)
         {
             map.put(new QName("inputlang"), null);
-        } else {
+        }
+        else
+        {
             map.put(new QName("inputlang"), _entityFieldHistory.getInputlang().toString());
         }
-        
-        map.put(new QName("status"), _entityFieldHistory.getStatus());
+
         map.put(new QName("previoushistorykey"), _entityFieldHistory.getPrevioushistorykey());
         return map;
     }

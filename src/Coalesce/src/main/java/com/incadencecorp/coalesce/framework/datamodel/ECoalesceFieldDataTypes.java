@@ -1,55 +1,72 @@
+/*-----------------------------------------------------------------------------'
+ Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
+
+ Notwithstanding any contractor copyright notice, the Government has Unlimited
+ Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+ of this work other than as specifically authorized by these DFARS Clauses may
+ violate Government rights in this work.
+
+ DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+ Unlimited Rights. The Government has the right to use, modify, reproduce,
+ perform, display, release or disclose this computer software and to have or
+ authorize others to do so.
+
+ Distribution Statement D. Distribution authorized to the Department of
+ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+ -----------------------------------------------------------------------------*/
+
 package com.incadencecorp.coalesce.framework.datamodel;
 
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Data types supported by Coalesce.
+ * 
+ * @author n78554
+ */
 public enum ECoalesceFieldDataTypes
 {
 
-    STRING_TYPE("string"),
-    DATE_TIME_TYPE("datetime"),
-    URI_TYPE("uri"),
-    BINARY_TYPE("binary"),
-    BOOLEAN_TYPE("boolean"),
-    INTEGER_TYPE("integer"),
-    GUID_TYPE("guid"),
-    GEOCOORDINATE_TYPE("geocoordinate"),
-    FILE_TYPE("file"),
-    GEOCOORDINATE_LIST_TYPE("geocoordinatelist"),
-    DOUBLE_TYPE("double"),
-    FLOAT_TYPE("float");
+    STRING_TYPE("string"), 
+    STRING_LIST_TYPE("stringlist"), 
+    DATE_TIME_TYPE("datetime"), 
+    URI_TYPE("uri"), 
+    BINARY_TYPE("binary"), 
+    BOOLEAN_TYPE("boolean"), 
+    BOOLEAN_LIST_TYPE("booleanlist"), 
+    INTEGER_TYPE("integer"), 
+    INTEGER_LIST_TYPE("integerlist"), 
+    GUID_TYPE("guid"), 
+    GUID_LIST_TYPE("guidlist"), 
+    GEOCOORDINATE_TYPE("geocoordinate"), 
+    GEOCOORDINATE_LIST_TYPE("geocoordinatelist"), 
+    LINE_STRING_TYPE("linestring"), 
+    POLYGON_TYPE("polygon"), 
+    CIRCLE_TYPE("circle"),
+    FILE_TYPE("file"), 
+    DOUBLE_TYPE("double"), 
+    DOUBLE_LIST_TYPE("doublelist"), 
+    FLOAT_TYPE("float"), 
+    FLOAT_LIST_TYPE("floatlist"), 
+    LONG_TYPE("long"), 
+    LONG_LIST_TYPE("longlist");
 
     private String _label;
 
     /**
-     * A mapping between the string representation and its corresponding Status to facilitate lookup by code.
+     * A mapping between the string representation and its corresponding Status
+     * to facilitate lookup by code.
      */
-    private static Map<String, ECoalesceFieldDataTypes> _labelToStatusMapping;
+    private static Map<String, ECoalesceFieldDataTypes> _mapping;
 
     private ECoalesceFieldDataTypes(String label)
     {
         this._label = label;
     }
 
-    private static void initMapping()
-    {
-        if (_labelToStatusMapping == null)
-        {
-            _labelToStatusMapping = new HashMap<String, ECoalesceFieldDataTypes>();
-            for (ECoalesceFieldDataTypes s : values())
-            {
-                _labelToStatusMapping.put(s._label.trim().toLowerCase(), s);
-            }
-
-        }
-    }
-
     /**
-     * Returns the Label property of the ECoalesceFieldDataTypes type.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return the Label property of the ECoalesceFieldDataTypes type.
      */
     public String getLabel()
     {
@@ -57,64 +74,66 @@ public enum ECoalesceFieldDataTypes
     }
 
     /**
-     * Returns the ECoalesceFieldDataTypes type for the String type parameter.
-     * 
-     * @param coalesceType
-     *     allowed object is
-     *     {@link String }
-     * @return
-     *     possible object is
-     *     {@link ECoalesceFieldDataTypes }
+     * @param coalesceType allowed object is {@link String }
+     * @return the ECoalesceFieldDataTypes type for the String type parameter.
      */
     public static ECoalesceFieldDataTypes getTypeForCoalesceType(String coalesceType)
     {
-        initMapping();
+        ECoalesceFieldDataTypes value = getMapping().get(coalesceType.trim().toLowerCase());
 
-        ECoalesceFieldDataTypes value = _labelToStatusMapping.get(coalesceType.trim().toLowerCase());
-
-        if (value == null) value = ECoalesceFieldDataTypes.STRING_TYPE;
+        if (value == null)
+            value = ECoalesceFieldDataTypes.STRING_TYPE;
 
         return value;
     }
 
     /**
-     * Returns the ECoalesceFieldDataTypes type for the String sqltype parameter.
-     * 
-     * @param coalesceType
-     *     allowed object is
-     *     {@link String }
-     * @return
-     *     possible object is
-     *     {@link ECoalesceFieldDataTypes }
+     * @param sqlType allowed object is {@link String }
+     * @return the ECoalesceFieldDataTypes type for the String sqltype parameter.
      */
-    public static ECoalesceFieldDataTypes getTypeForSQLType(String sqlType)
-    {
-        switch (sqlType.toUpperCase()) {
+//    public static ECoalesceFieldDataTypes getTypeForSQLType(String sqlType)
+//    {
+//        switch (sqlType.toUpperCase()) {
+//
+//        case "ADVARWCHAR":
+//        case "ADLONGVARWCHAR":
+//            return ECoalesceFieldDataTypes.STRING_TYPE;
+//
+//        case "ADDBTIMESTAMP":
+//            return ECoalesceFieldDataTypes.DATE_TIME_TYPE;
+//
+//        case "ADBOOLEAN":
+//            return ECoalesceFieldDataTypes.BOOLEAN_TYPE;
+//
+//        case "ADGUID":
+//            return ECoalesceFieldDataTypes.GUID_TYPE;
+//
+//        case "ADSMALLINT":
+//        case "ADINTEGER":
+//            return ECoalesceFieldDataTypes.INTEGER_TYPE;
+//
+//        case "ADLONGVARBINARY":
+//            return ECoalesceFieldDataTypes.BINARY_TYPE;
+//
+//        default:
+//            return ECoalesceFieldDataTypes.STRING_TYPE;
+//        }
+//
+//    }
+    
+    private static synchronized Map<String, ECoalesceFieldDataTypes> getMapping() {
 
-        case "ADVARWCHAR":
-        case "ADLONGVARWCHAR":
-            return ECoalesceFieldDataTypes.STRING_TYPE;
+        if (_mapping == null) {
 
-        case "ADDBTIMESTAMP":
-            return ECoalesceFieldDataTypes.DATE_TIME_TYPE;
+            _mapping = new HashMap<String, ECoalesceFieldDataTypes>();
 
-        case "ADBOOLEAN":
-            return ECoalesceFieldDataTypes.BOOLEAN_TYPE;
+            for (ECoalesceFieldDataTypes s: values()) {
+                _mapping.put(s._label.trim().toLowerCase(), s);
+            }
 
-        case "ADGUID":
-            return ECoalesceFieldDataTypes.GUID_TYPE;
-
-        case "ADSMALLINT":
-        case "ADINTEGER":
-            return ECoalesceFieldDataTypes.INTEGER_TYPE;
-
-        case "ADLONGVARBINARY":
-            return ECoalesceFieldDataTypes.BINARY_TYPE;
-
-        default:
-            return ECoalesceFieldDataTypes.STRING_TYPE;
         }
 
+        return _mapping;
     }
 
 }

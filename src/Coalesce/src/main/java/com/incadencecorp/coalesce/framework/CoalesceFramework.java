@@ -35,7 +35,8 @@ import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor.Entit
  -----------------------------------------------------------------------------*/
 
 /**
- * Application using Coalesce should access the persistor (database) through CoalesceFramework.
+ * Application using Coalesce should access the persistor (database) through
+ * CoalesceFramework.
  */
 public class CoalesceFramework {
 
@@ -68,9 +69,33 @@ public class CoalesceFramework {
     	Get Entity
     --------------------------------------------------------------------------*/
 
-    public CoalesceEntity getCoalesceEntity(String key) throws CoalescePersistorException
+    /**
+     * @param key
+     * @return an array of Coalesce Entities.
+     * @throws CoalescePersistorException
+     */
+    public CoalesceEntity[] getCoalesceEntities(String... key) throws CoalescePersistorException
     {
         return this._persistor.getEntity(key);
+    }
+
+    /**
+     * @param key
+     * @return a single Coalesce Entity
+     * @throws CoalescePersistorException
+     */
+    public CoalesceEntity getCoalesceEntity(String key) throws CoalescePersistorException
+    {
+        CoalesceEntity result = null;
+        CoalesceEntity[] results = _persistor.getEntity(key);
+
+        if (results != null && results.length == 1)
+        {
+            result = results[0];
+        }
+
+        return result;
+
     }
 
     public CoalesceEntity getEntity(String entityId, String entityIdType) throws CoalescePersistorException
@@ -83,9 +108,32 @@ public class CoalesceFramework {
         return this._persistor.getEntity(name, entityId, entityIdType);
     }
 
-    public String getEntityXml(String key) throws CoalescePersistorException
+    /**
+     * @param key
+     * @return an Array of Coalesce Entity's XML
+     * @throws CoalescePersistorException
+     */
+    public String[] getEntityXmls(String... key) throws CoalescePersistorException
     {
         return this._persistor.getEntityXml(key);
+    }
+
+    /**
+     * @param key
+     * @return the XML of a single CoalesceEnttiy
+     * @throws CoalescePersistorException
+     */
+    public String getEntityXml(String key) throws CoalescePersistorException
+    {
+        String result = null;
+        String[] results = _persistor.getEntityXml(key);
+
+        if (results != null && results.length > 1)
+        {
+            result = results[0];
+        }
+
+        return result;
     }
 
     public String getEntityXml(String entityId, String entityIdType) throws CoalescePersistorException
@@ -178,14 +226,14 @@ public class CoalesceFramework {
         return this._persistor.getCoalesceObjectLastModified(key, objectType);
     }
 
-    public boolean saveCoalesceEntity(CoalesceEntity entity) throws CoalescePersistorException
+    public boolean saveCoalesceEntity(CoalesceEntity... entities) throws CoalescePersistorException
     {
-        return this.saveCoalesceEntity(entity, false);
+        return this.saveCoalesceEntity(false, entities);
     }
 
-    public boolean saveCoalesceEntity(CoalesceEntity entity, boolean allowRemoval) throws CoalescePersistorException
+    public boolean saveCoalesceEntity(boolean allowRemoval, CoalesceEntity... entities) throws CoalescePersistorException
     {
-        return this._persistor.saveEntity(entity, allowRemoval);
+        return this._persistor.saveEntity(allowRemoval, entities);
     }
 
     public String getCoalesceFieldValue(String fieldKey) throws CoalescePersistorException
@@ -200,11 +248,14 @@ public class CoalesceFramework {
         ElementMetaData metaData = this._persistor.getXPath(key, "record");
         if (metaData != null)
         {
-            CoalesceEntity entity = this._persistor.getEntity(metaData.getEntityKey());
-            if (entity != null)
+            
+            CoalesceEntity[] results = _persistor.getEntity(metaData.getEntityKey());
+
+            if (results != null && results.length == 1 && results[0] != null)
             {
-                record = (CoalesceRecord) entity.getCoalesceObjectForNamePath(metaData.getElementXPath());
+                record = (CoalesceRecord) results[0].getCoalesceObjectForNamePath(metaData.getElementXPath());
             }
+
         }
 
         return record;
@@ -218,12 +269,14 @@ public class CoalesceFramework {
 
         if (metaData != null)
         {
-            CoalesceEntity entity = this._persistor.getEntity(metaData.getEntityKey());
 
-            if (entity != null)
+            CoalesceEntity[] results = _persistor.getEntity(metaData.getEntityKey());
+
+            if (results != null && results.length == 1 && results[0] != null)
             {
-                field = (CoalesceStringField) entity.getCoalesceObjectForKey(key);
+                field = (CoalesceStringField) results[0].getCoalesceObjectForKey(key);
             }
+
         }
 
         return field;
@@ -238,14 +291,30 @@ public class CoalesceFramework {
         return this._persistor.persistEntityTemplate(template);
     }
 
+    /**
+     * @param name
+     * @param source
+     * @param version
+     * @return <code>null</code> is the template is not found.
+     * @throws SAXException
+     * @throws IOException
+     * @throws CoalescePersistorException
+     */
     public CoalesceEntityTemplate getCoalesceEntityTemplate(String name, String source, String version) throws SAXException,
             IOException, CoalescePersistorException
     {
 
-        CoalesceEntityTemplate template = new CoalesceEntityTemplate();
+        CoalesceEntityTemplate template = null;
 
-        // Initialize Template
-        template.initialize(this.getCoalesceEntityTemplateXml(name, source, version));
+        // Retrieve Template
+        String xml = this.getCoalesceEntityTemplateXml(name, source, version);
+
+        if (xml != null)
+        {
+            // Initialize Template
+            template = new CoalesceEntityTemplate();
+            template.initialize(xml);
+        }
 
         return template;
 

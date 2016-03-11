@@ -1,21 +1,14 @@
 package com.incadencecorp.coalesce.framework.datamodel;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
 
 import org.apache.commons.lang.NullArgumentException;
-import org.joda.time.DateTime;
 
-import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
-import com.incadencecorp.coalesce.common.helpers.XmlHelper;
-import com.incadencecorp.coalesce.framework.generatedjaxb.Fielddefinition;
-import com.incadencecorp.coalesce.framework.generatedjaxb.Record;
-import com.incadencecorp.coalesce.framework.generatedjaxb.Recordset;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -33,8 +26,12 @@ import com.incadencecorp.coalesce.framework.generatedjaxb.Recordset;
  Distribution Statement D. Distribution authorized to the Department of
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
-
-public class CoalesceRecordset extends CoalesceObject implements ICoalesceRecordset {
+/**
+ * This is a container for records.
+ * 
+ * @author n78554
+ */
+public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesceRecordset {
 
     // -----------------------------------------------------------------------//
     // protected Member Variables
@@ -42,23 +39,18 @@ public class CoalesceRecordset extends CoalesceObject implements ICoalesceRecord
 
     private Recordset _entityRecordset;
 
-    private ArrayList<CoalesceFieldDefinition> _fieldDefinitions;
-    private ArrayList<CoalesceRecord> _records;
-
     // -----------------------------------------------------------------------//
     // Factory and Initialization
     // -----------------------------------------------------------------------//
 
     /**
-     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}, by name, and ties it to its
-     * parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} with default max and min records of 0.
+     * Creates an {@link CoalesceRecordset}, by name, and ties it to its parent
+     * {@link CoalesceSection} with default max and min records of 0.
      * 
-     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} that this new
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} will belong to.
-     * @param name String the name of this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}.
-     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}, the new
-     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}.
+     * @param parent {@link CoalesceSection} the {@link CoalesceSection} that
+     *            this new {@link CoalesceRecordset} will belong to.
+     * @param name String the name of this {@link CoalesceRecordset} .
+     * @return {@link CoalesceRecordset} , the new {@link CoalesceRecordset} .
      */
     public static CoalesceRecordset create(CoalesceSection parent, String name)
     {
@@ -66,28 +58,30 @@ public class CoalesceRecordset extends CoalesceObject implements ICoalesceRecord
     }
 
     /**
-     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}, by name, and ties it to its
-     * parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} with max and min records assignments.
+     * Creates an {@link CoalesceRecordset}, by name, and ties it to its parent
+     * {@link CoalesceSection} with max and min records assignments.
      * 
-     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} that this new
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} will belong to.
-     * @param name String the name of this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}.
+     * @param parent {@link CoalesceSection} the {@link CoalesceSection} that
+     *            this new {@link CoalesceRecordset} will belong to.
+     * @param name String the name of this {@link CoalesceRecordset} .
      * @param minRecords integer, the minimum number of records this
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} can contain.
+     *            {@link CoalesceRecordset} can contain.
      * @param maxRecords integer, the maximum number of records this
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} can contain.
-     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}, the new
-     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}.
+     *            {@link CoalesceRecordset} can contain.
+     * @return {@link CoalesceRecordset} , the new {@link CoalesceRecordset} .
      */
     public static CoalesceRecordset create(CoalesceSection parent, String name, int minRecords, int maxRecords)
     {
 
-        if (parent == null) throw new NullArgumentException("parent");
-        if (name == null) throw new NullArgumentException("name");
-        if (StringHelper.isNullOrEmpty(name.trim())) throw new IllegalArgumentException("name cannot be empty");
+        if (parent == null)
+            throw new NullArgumentException("parent");
+        if (name == null)
+            throw new NullArgumentException("name");
+        if (StringHelper.isNullOrEmpty(name.trim()))
+            throw new IllegalArgumentException("name cannot be empty");
 
-        if (minRecords < 0 || maxRecords < minRecords) return null;
+        if (minRecords < 0 || maxRecords < minRecords)
+            return null;
 
         // Check that a recordset with the same name doesn't already exist
         for (CoalesceRecordset recordset : parent.getRecordsets().values())
@@ -102,7 +96,8 @@ public class CoalesceRecordset extends CoalesceObject implements ICoalesceRecord
         parent.getEntityRecordSets().add(newEntityRecordset);
 
         CoalesceRecordset newRecordset = new CoalesceRecordset();
-        if (!newRecordset.initialize(parent, newEntityRecordset)) return null;
+        if (!newRecordset.initialize(parent, newEntityRecordset))
+            return null;
 
         newRecordset.setName(name);
         newRecordset.setMinRecords(minRecords);
@@ -119,37 +114,57 @@ public class CoalesceRecordset extends CoalesceObject implements ICoalesceRecord
     }
 
     /**
-     * Initializes a this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} based on a Recordset and
-     * ties it to its parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}.
+     * Class constructor. Creates a CoalesceRecordset class.
      * 
-     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection} that this new
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} will belong to.
-     * @param recordset Recordset that this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} will be
+     */
+    public CoalesceRecordset()
+    {
+        super();
+    }
+
+    /**
+     * Class constructor. Creates a CoalesceRecordset class off of an existing
+     * CoalesceRecordset.
+     * 
+     * @param recordset
+     * 
+     */
+    public CoalesceRecordset(CoalesceRecordset recordset)
+    {
+        super(recordset);
+
+        // Copy Member Variables
+        _entityRecordset = recordset._entityRecordset;
+    }
+
+    /**
+     * Initializes a this {@link CoalesceRecordset} based on a Recordset and
+     * ties it to its parent {@link CoalesceSection}.
+     * 
+     * @param parent {@link CoalesceSection} the {@link CoalesceSection} that
+     *            this new {@link CoalesceRecordset} will belong to.
+     * @param recordset Recordset that this {@link CoalesceRecordset} will be
      *            based on.
      * @return boolean indicator of success/failure.
      */
     protected boolean initialize(CoalesceSection parent, Recordset recordset)
     {
 
-        if (parent == null) throw new NullArgumentException("parent");
-        if (recordset == null) throw new NullArgumentException("recordset");
+        if (parent == null)
+            throw new NullArgumentException("parent");
+        if (recordset == null)
+            throw new NullArgumentException("recordset");
 
         // Set References
         setParent(parent);
         _entityRecordset = recordset;
 
-        super.initialize();
-
-        // Create Collections
-        _fieldDefinitions = new ArrayList<CoalesceFieldDefinition>();
-        _records = new ArrayList<CoalesceRecord>();
+        super.initialize(_entityRecordset);
 
         for (Fielddefinition entityFieldDefinition : _entityRecordset.getFielddefinition())
         {
             CoalesceFieldDefinition newFieldDefinition = new CoalesceFieldDefinition();
             newFieldDefinition.initialize(this, entityFieldDefinition);
-
         }
 
         for (Record entityRecord : _entityRecordset.getRecord())
@@ -166,60 +181,81 @@ public class CoalesceRecordset extends CoalesceObject implements ICoalesceRecord
     // public Properties
     // -----------------------------------------------------------------------//
 
-    @Override
-    protected String getObjectKey()
+    /**
+     * @return a list of field definitions that are defined for this recorset.
+     */
+    public List<CoalesceFieldDefinition> getFieldDefinitions()
     {
-        return _entityRecordset.getKey();
-    }
+        List<CoalesceFieldDefinition> results = new ArrayList<CoalesceFieldDefinition>();
 
-    @Override
-    protected void setObjectKey(String value)
-    {
-        _entityRecordset.setKey(value);
-    }
+        for (Fielddefinition def : _entityRecordset.getFielddefinition())
+        {
+            for (CoalesceObject xdo : getChildCoalesceObjects().values())
+            {
+                if (xdo instanceof CoalesceFieldDefinition && xdo.getKey().equalsIgnoreCase(def.getKey()))
+                {
+                    if (xdo.getStatus() != ECoalesceObjectStatus.DELETED && xdo.getStatus() != ECoalesceObjectStatus.UNKNOWN)
+                    {
+                        results.add((CoalesceFieldDefinition) xdo);
+                    }
 
-    @Override
-    public String getName()
-    {
-        return _entityRecordset.getName();
-    }
+                    break;
+                }
+            }
 
-    @Override
-    public void setName(String value)
-    {
-        _entityRecordset.setName(value);
-    }
+        }
 
-    @Override
-    public String getType()
-    {
-        return "recordset";
+        return results;
     }
 
     /**
-     * Returns this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s ArrayList of
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}s.
-     * 
-     * @return ArrayList<{@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}> the
-     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} collection contained by this
-     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}.
+     * @return a complete list of all the records within this recordset whether
+     *         they are marked as deleted or not.
      */
-    public ArrayList<CoalesceFieldDefinition> getFieldDefinitions()
+    public List<CoalesceRecord> getAllRecords()
     {
-        return _fieldDefinitions;
+        List<CoalesceRecord> results = new ArrayList<CoalesceRecord>();
+
+        for (Record record : _entityRecordset.getRecord())
+        {
+            for (CoalesceObject xdo : getChildCoalesceObjects().values())
+            {
+                if (xdo instanceof CoalesceRecord && xdo.getKey().equalsIgnoreCase(record.getKey()))
+                {
+                    results.add((CoalesceRecord) xdo);
+                    break;
+                }
+            }
+
+        }
+
+        return results;
     }
 
     /**
-     * Returns this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s ArrayList of
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}s.
-     * 
-     * @return ArrayList<{@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}> the
-     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} collection contained by this
-     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}.
+     * @return a list of active records within this recordset.
      */
-    public ArrayList<CoalesceRecord> getRecords()
+    public List<CoalesceRecord> getRecords()
     {
-        return _records;
+        List<CoalesceRecord> results = new ArrayList<CoalesceRecord>();
+
+        for (Record record : _entityRecordset.getRecord())
+        {
+            for (CoalesceObject xdo : getChildCoalesceObjects().values())
+            {
+                if (xdo instanceof CoalesceRecord && xdo.getKey().equalsIgnoreCase(record.getKey()))
+                {
+                    if (xdo.getStatus() != ECoalesceObjectStatus.DELETED)
+                    {
+                        results.add((CoalesceRecord) xdo);
+                        break;
+                    }
+                }
+            }
+
+        }
+
+        return results;
     }
 
     @Override
@@ -248,21 +284,21 @@ public class CoalesceRecordset extends CoalesceObject implements ICoalesceRecord
 
     /**
      * Returns boolean indicator of the existence of this
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s active
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}s.
+     * {@link CoalesceRecordset} 's active {@link CoalesceRecord}s.
      * 
-     * @return boolean indication that the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} has
-     *         active {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}s.
+     * @return boolean indication that the {@link CoalesceRecordset} has active
+     *         {@link CoalesceRecord} s.
      */
     public boolean getHasActiveRecords()
     {
 
         for (CoalesceRecord record : getRecords())
         {
-            if (record.getStatus() == ECoalesceObjectStatus.ACTIVE)
+            if (record.isActive())
             {
                 return true;
             }
+
         }
 
         // No Active Records
@@ -271,43 +307,14 @@ public class CoalesceRecordset extends CoalesceObject implements ICoalesceRecord
 
     /**
      * Returns boolean indicator of the existence of this
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}s.
+     * {@link CoalesceRecordset} 's {@link CoalesceRecord} s.
      * 
-     * @return boolean indication that the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} has
-     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}s, active or not.
+     * @return boolean indication that the {@link CoalesceRecordset} has
+     *         {@link CoalesceRecord} s, active or not.
      */
     public boolean getHasRecords()
     {
         return (!_entityRecordset.getRecord().isEmpty());
-    }
-
-    @Override
-    public DateTime getDateCreated()
-    {
-        // return new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityRecordset.getDatecreated());
-        return _entityRecordset.getDatecreated();
-    }
-
-    @Override
-    public void setDateCreated(DateTime value)
-    {
-        // _entityRecordset.setDatecreated(new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
-        _entityRecordset.setDatecreated(value);
-    }
-
-    @Override
-    public DateTime getLastModified()
-    {
-        // return new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityRecordset.getLastmodified());
-        return _entityRecordset.getLastmodified();
-    }
-
-    @Override
-    protected void setObjectLastModified(DateTime value)
-    {
-        // _entityRecordset.setLastmodified(new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
-        _entityRecordset.setLastmodified(value);
     }
 
     // -----------------------------------------------------------------------//
@@ -315,19 +322,21 @@ public class CoalesceRecordset extends CoalesceObject implements ICoalesceRecord
     // -----------------------------------------------------------------------//
 
     /**
-     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} for this
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}, with the name, datatype, label, default
+     * Creates an {@link CoalesceFieldDefinition} for this
+     * {@link CoalesceRecordset}, with the name, datatype, label, default
      * classification and default value specified.
      * 
-     * @param name String name of the new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}.
-     * @param dataType {@link com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes} that a Field based on
-     *            the new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} is to contain.
-     * @param label String label to present to the user for this field/fielddefinition.
-     * @param defaultClassificationMarking the default classification for this field/fielddefinition.
+     * @param name String name of the new {@link CoalesceFieldDefinition} .
+     * @param dataType {@link ECoalesceFieldDataTypes} that a Field based on the
+     *            new {@link CoalesceFieldDefinition} is to contain.
+     * @param label String label to present to the user for this
+     *            field/fielddefinition.
+     * @param defaultClassificationMarking the default classification for this
+     *            field/fielddefinition.
      * @param defaultValue the default value for this field/fielddefinition.
      * 
-     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} the new
-     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}.
+     * @return {@link CoalesceFieldDefinition} the new
+     *         {@link CoalesceFieldDefinition} .
      */
     public CoalesceFieldDefinition createFieldDefinition(String name,
                                                          ECoalesceFieldDataTypes dataType,
@@ -339,20 +348,22 @@ public class CoalesceRecordset extends CoalesceObject implements ICoalesceRecord
     }
 
     /**
-     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} for this
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}, with the name, datatype, label, default
+     * Creates an {@link CoalesceFieldDefinition} for this
+     * {@link CoalesceRecordset}, with the name, datatype, label, default
      * classification and default value specified.
      * 
-     * @param name String name of the new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
-     * @param dataType {@link com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes} that a Field based on
-     *            the new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} is to contain
-     * @param label String label to present to the user for this field/field definition
-     * @param defaultClassificationMarking the default classification for this field/field definition
+     * @param name String name of the new {@link CoalesceFieldDefinition}
+     * @param dataType {@link ECoalesceFieldDataTypes} that a Field based on the
+     *            new {@link CoalesceFieldDefinition} is to contain
+     * @param label String label to present to the user for this field/field
+     *            definition
+     * @param defaultClassificationMarking the default classification for this
+     *            field/field definition
      * @param defaultValue the default value for this field/field definition
      * @param disableHistory the value defining if a field should track history
      * 
-     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} the new
-     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
+     * @return {@link CoalesceFieldDefinition} the new
+     *         {@link CoalesceFieldDefinition}
      */
     public CoalesceFieldDefinition createFieldDefinition(String name,
                                                          ECoalesceFieldDataTypes dataType,
@@ -372,54 +383,48 @@ public class CoalesceRecordset extends CoalesceObject implements ICoalesceRecord
     }
 
     /**
-     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} for this
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}, with the name and datatype specified.
+     * Creates an {@link CoalesceFieldDefinition} for this
+     * {@link CoalesceRecordset}, with the name and datatype specified.
      * 
-     * @param name String name of the new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}.
-     * @param dataType {@link com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes} that a Field based on
-     *            the new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} is to contain.
-     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} the new
-     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}.
+     * @param name String name of the new {@link CoalesceFieldDefinition} .
+     * @param dataType {@link ECoalesceFieldDataTypes} that a Field based on the
+     *            new {@link CoalesceFieldDefinition} is to contain.
+     * @return {@link CoalesceFieldDefinition} the new
+     *         {@link CoalesceFieldDefinition} .
      */
     public CoalesceFieldDefinition createFieldDefinition(String name, ECoalesceFieldDataTypes dataType)
     {
         return CoalesceFieldDefinition.create(this, name, dataType);
     }
 
-    @Override
-    public String toXml()
-    {
-        return XmlHelper.serialize(_entityRecordset);
-    }
-
     /**
-     * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} that matches the String fieldName
-     * parameter.
+     * Returns the {@link CoalesceRecordset} 's {@link CoalesceFieldDefinition}
+     * that matches the String fieldName parameter.
      * 
-     * @param fieldName String name of the new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
-     *            .
-     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} with the matching field name.
+     * @param fieldName String name of the new {@link CoalesceFieldDefinition} .
+     * @return {@link CoalesceFieldDefinition} with the matching field name.
      */
     public CoalesceFieldDefinition getFieldDefinition(String fieldName)
     {
+        CoalesceFieldDefinition result = null;
+
         for (CoalesceFieldDefinition fieldDefinition : getFieldDefinitions())
         {
-            if (fieldDefinition.getName().toUpperCase().equals(fieldName.toUpperCase()))
+            if (fieldDefinition.getName().equalsIgnoreCase(fieldName))
             {
-
-                return fieldDefinition;
+                result = fieldDefinition;
+                break;
             }
         }
 
-        return null;
+        return result;
     }
 
     /**
-     * Returns boolean indicator of {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s ability to be
+     * Returns boolean indicator of {@link CoalesceRecordset} 's ability to be
      * edited.
      * 
-     * @return boolean indication of if the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} is
+     * @return boolean indication of if the {@link CoalesceRecordset} is
      *         editable.
      */
     public boolean getAllowEdit()
@@ -428,10 +433,10 @@ public class CoalesceRecordset extends CoalesceObject implements ICoalesceRecord
     }
 
     /**
-     * Returns boolean indicator of {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s ability to add
+     * Returns boolean indicator of {@link CoalesceRecordset} 's ability to add
      * new records.
      * 
-     * @return boolean indication of if the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} can have
+     * @return boolean indication of if the {@link CoalesceRecordset} can have
      *         new records added to it.
      */
     public boolean getAllowNew()
@@ -440,10 +445,10 @@ public class CoalesceRecordset extends CoalesceObject implements ICoalesceRecord
     }
 
     /**
-     * Returns boolean indicator of {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s ability to add
+     * Returns boolean indicator of {@link CoalesceRecordset} 's ability to add
      * delete records.
      * 
-     * @return boolean indication of if the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} records
+     * @return boolean indication of if the {@link CoalesceRecordset} records
      *         can be removed.
      */
     public boolean getAllowRemove()
@@ -452,11 +457,11 @@ public class CoalesceRecordset extends CoalesceObject implements ICoalesceRecord
     }
 
     /**
-     * Returns the number of {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}s contained within this
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}.
+     * Returns the number of {@link CoalesceRecord}s contained within this
+     * {@link CoalesceRecordset}.
      * 
-     * @return integer of how many {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}s are contained by
-     *         this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}.
+     * @return integer of how many {@link CoalesceRecord} s are contained by
+     *         this {@link CoalesceRecordset} .
      */
     public int getCount()
     {
@@ -464,12 +469,12 @@ public class CoalesceRecordset extends CoalesceObject implements ICoalesceRecord
     }
 
     /**
-     * Returns a boolean indicator of the existence of the
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} parameter within this
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}.
+     * 
      * 
      * @param value
-     * @return
+     * @return a boolean indicator of the existence of the
+     *         {@link CoalesceRecord} parameter within this
+     *         {@link CoalesceRecordset} .
      */
     public boolean contains(Object value)
     {
@@ -478,11 +483,11 @@ public class CoalesceRecordset extends CoalesceObject implements ICoalesceRecord
 
     /**
      * Returns Index of the Object parameter within this
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}.
+     * {@link CoalesceRecordset}.
      * 
-     * @param value Object of {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}.
-     * @return integer position index of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} Object
-     *         parameter within this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}.
+     * @param value Object of {@link CoalesceRecord} .
+     * @return integer position index of the {@link CoalesceRecord} Object
+     *         parameter within this {@link CoalesceRecordset} .
      */
     public int indexOf(Object value)
     {
@@ -490,12 +495,10 @@ public class CoalesceRecordset extends CoalesceObject implements ICoalesceRecord
     }
 
     /**
-     * Adds a new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} to this
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset} and returns the
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}.
+     * Adds a new {@link CoalesceRecord} to this {@link CoalesceRecordset} and
+     * returns the {@link CoalesceRecord}.
      * 
-     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}, the new
-     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}.
+     * @return {@link CoalesceRecord} , the new {@link CoalesceRecord} .
      */
     public CoalesceRecord addNew()
     {
@@ -505,23 +508,26 @@ public class CoalesceRecordset extends CoalesceObject implements ICoalesceRecord
     }
 
     /**
-     * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} at the specified index within this
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}.
+     * Returns the {@link CoalesceRecord} at the specified index within this
+     * {@link CoalesceRecordset}.
      * 
-     * @param index integer position of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s
-     *            desired {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}.
-     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} at the
-     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s index position.
+     * @param index integer position of the {@link CoalesceRecordset} 's desired
+     *            {@link CoalesceRecord} .
+     * @return {@link CoalesceRecord} at the {@link CoalesceRecordset} 's index
+     *         position.
      * 
-     * @throws IndexOutOfBoundsException if the <code>index</code> is not within the bounds of available records
+     * @throws IndexOutOfBoundsException if the <code>index</code> is not within
+     *             the bounds of available records
      */
     public CoalesceRecord getItem(int index)
     {
 
+        List<CoalesceRecord> records = getRecords();
+
         // Iterate List
-        if (index >= 0 && index < getRecords().size())
+        if (index >= 0 && index < records.size())
         {
-            return getRecords().get(index);
+            return records.get(index);
         }
         else
         {
@@ -530,31 +536,31 @@ public class CoalesceRecordset extends CoalesceObject implements ICoalesceRecord
     }
 
     /**
-     * Removes the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} at the specified index within this
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}.
+     * Removes the {@link CoalesceRecord} at the specified index within this
+     * {@link CoalesceRecordset}.
      * 
-     * @param integer index position of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}'s
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} to remove.
+     * @param index index position of the {@link CoalesceRecordset} 's
+     *            {@link CoalesceRecord} to remove.
      */
     public void removeAt(int index)
     {
-        if (index < 0 || index >= getRecords().size()) return;
+        if (index < 0 || index >= getRecords().size())
+            return;
 
         CoalesceRecord record = (CoalesceRecord) getItem(index);
 
-        getRecords().remove(record);
+        // getRecords().remove(record);
 
         record.setStatus(ECoalesceObjectStatus.DELETED);
 
     }
 
     /**
-     * Removes the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}, from within this
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}, that has the matching key passed by
-     * parameter.
+     * Removes the {@link CoalesceRecord}, from within this
+     * {@link CoalesceRecordset}, that has the matching key passed by parameter.
      * 
-     * @param key String of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} key to remove from the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset}.
+     * @param key String of the {@link CoalesceRecord} key to remove from the
+     *            {@link CoalesceRecordset} .
      */
     public void remove(String key)
     {
@@ -575,7 +581,7 @@ public class CoalesceRecordset extends CoalesceObject implements ICoalesceRecord
         if (recordToRemove != null)
         {
             // Remove from the Records Collection
-            getRecords().remove(recordToRemove);
+            // getRecords().remove(recordToRemove);
 
             // Set as Status as Deleted
             recordToRemove.setStatus(ECoalesceObjectStatus.DELETED);
@@ -583,21 +589,21 @@ public class CoalesceRecordset extends CoalesceObject implements ICoalesceRecord
         }
     }
 
+    /**
+     * Removes all of the records.
+     */
+    public void removeAll()
+    {
+        while (getRecords().size() > 0)
+        {
+            removeAt(0);
+        }
+
+    }
+
     // -----------------------------------------------------------------------//
     // Protected Methods
     // -----------------------------------------------------------------------//
-
-    @Override
-    protected String getObjectStatus()
-    {
-        return _entityRecordset.getStatus();
-    }
-
-    @Override
-    protected void setObjectStatus(ECoalesceObjectStatus status)
-    {
-        _entityRecordset.setStatus(status.getLabel());
-    }
 
     /**
      * Returns the Record list contained by the Recordset.
@@ -620,27 +626,30 @@ public class CoalesceRecordset extends CoalesceObject implements ICoalesceRecord
     }
 
     @Override
-    protected Map<QName, String> getOtherAttributes()
+    protected boolean prune(CoalesceObjectType child)
     {
-        return _entityRecordset.getOtherAttributes();
+        boolean isSuccessful = false;
+
+        if (child instanceof History)
+        {
+            isSuccessful = _entityRecordset.getHistory().remove(child);
+        }
+        else if (child instanceof Fielddefinition)
+        {
+            isSuccessful = _entityRecordset.getFielddefinition().remove(child);
+        }
+        else if (child instanceof Record)
+        {
+            isSuccessful = _entityRecordset.getRecord().remove(child);
+        }
+
+        return isSuccessful;
     }
 
     @Override
-    public boolean setAttribute(String name, String value)
+    protected boolean setExtendedAttributes(String name, String value)
     {
         switch (name.toLowerCase()) {
-        case "key":
-            setKey(value);
-            return true;
-        case "datecreated":
-            setDateCreated(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
-            return true;
-        case "lastmodified":
-            setLastModified(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
-            return true;
-        case "name":
-            setName(value);
-            return true;
         case "minrecords":
             try
             {
@@ -663,9 +672,6 @@ public class CoalesceRecordset extends CoalesceObject implements ICoalesceRecord
                 return false;
             }
 
-        case "status":
-            setStatus(ECoalesceObjectStatus.getTypeForLabel(value));
-            return true;
         default:
             return setOtherAttribute(name, value);
         }
@@ -674,16 +680,18 @@ public class CoalesceRecordset extends CoalesceObject implements ICoalesceRecord
     @Override
     protected Map<QName, String> getAttributes()
     {
-        Map<QName, String> map = new HashMap<QName, String>();
-        map.put(new QName("key"), _entityRecordset.getKey());
-        map.put(new QName("datecreated"), JodaDateTimeHelper.toXmlDateTimeUTC(_entityRecordset.getDatecreated()));
-        map.put(new QName("lastmodified"), JodaDateTimeHelper.toXmlDateTimeUTC(_entityRecordset.getLastmodified()));
-        map.put(new QName("name"), _entityRecordset.getName());
-        map.put(new QName("minrecords"), _entityRecordset.getMinrecords().toString());
-        map.put(new QName("maxrecords"), _entityRecordset.getMaxrecords().toString());
-        map.put(new QName("status"), _entityRecordset.getStatus());
-        return map;
+        Map<QName, String> map = super.getAttributes();
 
+        if (_entityRecordset.getMinrecords() != null)
+        {
+            map.put(new QName("minrecords"), _entityRecordset.getMinrecords().toString());
+        }
+        if (_entityRecordset.getMaxrecords() != null)
+        {
+            map.put(new QName("maxrecords"), _entityRecordset.getMaxrecords().toString());
+        }
+
+        return map;
     }
 
 }

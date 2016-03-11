@@ -1,37 +1,3 @@
-package com.incadencecorp.coalesce.framework.datamodel;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Locale;
-import java.util.UUID;
-
-import org.apache.commons.lang.NullArgumentException;
-import org.apache.xerces.impl.dv.util.Base64;
-import org.jdom2.JDOMException;
-import org.joda.time.DateTime;
-
-import com.drew.imaging.ImageProcessingException;
-import com.incadencecorp.coalesce.common.classification.Marking;
-import com.incadencecorp.coalesce.common.exceptions.CoalesceCryptoException;
-import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
-import com.incadencecorp.coalesce.common.helpers.DocumentProperties;
-import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
-import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
-import com.incadencecorp.coalesce.common.helpers.MimeHelper;
-import com.incadencecorp.coalesce.common.helpers.StringHelper;
-import com.incadencecorp.coalesce.framework.CoalesceSettings;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.MultiPoint;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
-import com.vividsolutions.jts.io.ParseException;
-import com.vividsolutions.jts.io.WKTReader;
-import com.vividsolutions.jts.io.WKTWriter;
-
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
 
@@ -49,6 +15,56 @@ import com.vividsolutions.jts.io.WKTWriter;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
+package com.incadencecorp.coalesce.framework.datamodel;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.UUID;
+
+import org.apache.commons.lang.NullArgumentException;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.xerces.impl.dv.util.Base64;
+import org.jdom2.JDOMException;
+import org.joda.time.DateTime;
+
+import com.drew.imaging.ImageProcessingException;
+import com.incadencecorp.coalesce.common.classification.Marking;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceCryptoException;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
+import com.incadencecorp.coalesce.common.helpers.ArrayHelper;
+import com.incadencecorp.coalesce.common.helpers.DocumentProperties;
+import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
+import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
+import com.incadencecorp.coalesce.common.helpers.MimeHelper;
+import com.incadencecorp.coalesce.common.helpers.StringHelper;
+import com.incadencecorp.coalesce.framework.CoalesceSettings;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.io.ParseException;
+import com.vividsolutions.jts.io.WKTReader;
+import com.vividsolutions.jts.io.WKTWriter;
+
+/**
+ * Abstract class that provides common functionality between fields and their
+ * history.
+ * 
+ * @author n78554
+ *
+ * @param <T>
+ */
 public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICoalesceField<T> {
 
     /*--------------------------------------------------------------------------
@@ -74,18 +90,6 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
     @Override
     public abstract void setSize(int value);
 
-    @Override
-    public abstract String getModifiedBy();
-
-    @Override
-    public abstract void setModifiedBy(String value);
-
-    @Override
-    public abstract String getModifiedByIP();
-
-    @Override
-    public abstract void setModifiedByIP(String value);
-
     /**
      * Returns the string representation of the classification marking.
      * 
@@ -96,15 +100,9 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
     /**
      * Sets the classification marking to the value of the string parameter.
      * 
-     * @param value, String, the new classification marking.
+     * @param value String, the new classification marking.
      */
     public abstract void setClassificationMarking(String value);
-
-    @Override
-    public abstract String getPreviousHistoryKey();
-
-    @Override
-    public abstract void setPreviousHistoryKey(String value);
 
     @Override
     public abstract String getFilename();
@@ -143,23 +141,21 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
     /**
      * Returns the filename and extension, as stored in coalesce.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      */
     public String getCoalesceFilename()
     {
-        if (getDataType() != ECoalesceFieldDataTypes.FILE_TYPE) throw new ClassCastException("Type mismatch");
+        if (getDataType() != ECoalesceFieldDataTypes.FILE_TYPE)
+            throw new ClassCastException("Type mismatch");
 
         return GUIDHelper.removeBrackets(getKey()) + "." + getExtension();
     }
 
     /**
-     * Returns the full filename, with directory, and extension, as stored in coalesce.
+     * Returns the full filename, with directory, and extension, as stored in
+     * coalesce.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      */
     public String getCoalesceFullFilename()
     {
@@ -167,11 +163,10 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
     }
 
     /**
-     * Returns the full filename, with last modified date, and extension, separated by a question mark.
+     * Returns the full filename, with last modified date, and extension,
+     * separated by a question mark.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      */
     public String getCoalesceFilenameWithLastModifiedTag()
     {
@@ -179,25 +174,24 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
     }
 
     /**
-     * Returns the thumbnail image full filename, with directory, and extension, as stored in coalesce.
+     * Returns the thumbnail image full filename, with directory, and extension,
+     * as stored in coalesce.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      */
     public String getCoalesceThumbnailFilename()
     {
-        if (getDataType() != ECoalesceFieldDataTypes.FILE_TYPE) throw new ClassCastException("Type mismatch");
+        if (getDataType() != ECoalesceFieldDataTypes.FILE_TYPE)
+            throw new ClassCastException("Type mismatch");
 
         return GUIDHelper.removeBrackets(getKey()) + "_thumb.jpg";
     }
 
     /**
-     * Returns the thumbnail image full filename, with directory, and extension, as stored in coalesce.
+     * Returns the thumbnail image full filename, with directory, and extension,
+     * as stored in coalesce.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      */
     public String getCoalesceThumbnailFullFilename()
     {
@@ -205,11 +199,10 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
     }
 
     /**
-     * Returns the thumbnail image full filename, with last modified date, and extension, separated by a question mark.
+     * Returns the thumbnail image full filename, with last modified date, and
+     * extension, separated by a question mark.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      */
     public String getCoalesceThumbnailFilenameWithLastModifiedTag()
     {
@@ -247,7 +240,8 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
     };
 
     /**
-     * Returns the portion marking representation of the full classification marking.
+     * Returns the portion marking representation of the full classification
+     * marking.
      * 
      * @return String, the portion marking.
      */
@@ -258,13 +252,17 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
     }
 
     /**
-     * Sets the key value for the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory}.
+     * Sets the key value for the
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory}
+     * .
      * 
-     * @param fieldHistory, provides the value of the newer field's Previous History Key.
+     * @param fieldHistory provides the value of the newer field's Previous
+     *            History Key.
      */
     public void setPreviousHistoryKey(CoalesceFieldHistory fieldHistory)
     {
-        if (fieldHistory == null) throw new NullArgumentException("fieldHistory");
+        if (fieldHistory == null)
+            throw new NullArgumentException("fieldHistory");
 
         setPreviousHistoryKey(fieldHistory.getKey());
     }
@@ -272,7 +270,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
     /**
      * Sets the Field's value by the String parameter.
      * 
-     * @param value, field's value as a String.
+     * @param value field's value as a String.
      */
     protected void setTypedValue(String value)
     {
@@ -285,10 +283,20 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
         setBaseValue(value);
     }
 
+    protected void setTypedValue(String[] values)
+    {
+        if (getDataType() != ECoalesceFieldDataTypes.STRING_LIST_TYPE)
+        {
+            throw new ClassCastException("Type mismatch");
+        }
+
+        setArray(values);
+    }
+
     /**
      * Sets the Field's value by the UUID parameter.
      * 
-     * @param value, field's value as a UUID.
+     * @param value field's value as a UUID.
      */
     protected void setTypedValue(UUID value)
     {
@@ -297,13 +305,47 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
             throw new ClassCastException("Type mismatch");
         }
 
-        setBaseValue(GUIDHelper.getGuidString(value));
+        if (value == null)
+        {
+            setBaseValue(null);
+        }
+        else
+        {
+            setBaseValue(GUIDHelper.getGuidString(value));
+        }
+
+    }
+
+    protected void setTypedValue(UUID[] values)
+    {
+        if (getDataType() != ECoalesceFieldDataTypes.GUID_LIST_TYPE)
+        {
+            throw new ClassCastException("Type mismatch");
+        }
+
+        String[] results;
+
+        if (values != null)
+        {
+            results = new String[values.length];
+
+            for (int ii = 0; ii < values.length; ii++)
+            {
+                results[ii] = GUIDHelper.getGuidString(values[ii]);
+            }
+        }
+        else
+        {
+            results = null;
+        }
+
+        setArray(results);
     }
 
     /**
      * Sets the Field's value by the DateTime parameter.
      * 
-     * @param value, field's value as a DateTime.
+     * @param value field's value as a DateTime.
      */
     protected void setTypedValue(DateTime value)
     {
@@ -312,74 +354,248 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
             throw new ClassCastException("Type mismatch");
         }
 
-        setBaseValue(JodaDateTimeHelper.toXmlDateTimeUTC(value));
+        if (value == null)
+        {
+            setBaseValue(null);
+        }
+        else
+        {
+            setBaseValue(JodaDateTimeHelper.toXmlDateTimeUTC(value));
+        }
     }
 
     /**
      * Sets the Field's value by the boolean parameter.
      * 
-     * @param value, field's value as a boolean.
+     * @param value field's value as a boolean.
      */
-    protected void setTypedValue(boolean value)
+    protected void setTypedValue(Boolean value)
     {
         if (getDataType() != ECoalesceFieldDataTypes.BOOLEAN_TYPE)
         {
             throw new ClassCastException("Type mismatch");
         }
 
-        setBaseValue(String.valueOf(value));
+        if (value == null)
+        {
+            setBaseValue(null);
+        }
+        else
+        {
+            setBaseValue(value.toString());
+        }
+
+    }
+
+    protected void setTypedValue(boolean[] values)
+    {
+        if (getDataType() != ECoalesceFieldDataTypes.BOOLEAN_LIST_TYPE)
+        {
+            throw new ClassCastException("Type mismatch");
+        }
+
+        setArray(ArrayHelper.toStringArray(values));
     }
 
     /**
      * Sets the Field's value by the int parameter.
      * 
-     * @param value, field's value as an integer.
+     * @param value field's value as an integer.
      */
-    protected void setTypedValue(int value)
+    protected void setTypedValue(Integer value)
     {
         if (getDataType() != ECoalesceFieldDataTypes.INTEGER_TYPE)
         {
             throw new ClassCastException("Type mismatch");
         }
 
-        setBaseValue(String.valueOf(value));
+        if (value == null)
+        {
+            setBaseValue(null);
+        }
+        else
+        {
+            setBaseValue(value.toString());
+        }
+
+    }
+
+    protected void setTypedValue(int[] values)
+    {
+        if (getDataType() != ECoalesceFieldDataTypes.INTEGER_LIST_TYPE)
+        {
+            throw new ClassCastException("Type mismatch");
+        }
+
+        String[] results;
+
+        if (values != null)
+        {
+            results = new String[values.length];
+
+            for (int ii = 0; ii < values.length; ii++)
+            {
+                results[ii] = Integer.toString(values[ii]);
+            }
+        }
+        else
+        {
+            results = null;
+        }
+
+        setArray(results);
     }
 
     /**
      * Sets the Field's value by the int parameter.
      * 
-     * @param value, field's value as an integer
+     * @param value field's value as an integer
      */
-    protected void setTypedValue(double value)
+    protected void setTypedValue(Double value)
     {
         if (getDataType() != ECoalesceFieldDataTypes.DOUBLE_TYPE)
         {
             throw new ClassCastException("Type mismatch");
         }
 
-        setBaseValue(Double.toString(value));
+        if (value == null)
+        {
+            setBaseValue(null);
+        }
+        else
+        {
+            setBaseValue(value.toString());
+        }
+    }
+
+    protected void setTypedValue(double[] values)
+    {
+        if (getDataType() != ECoalesceFieldDataTypes.DOUBLE_LIST_TYPE)
+        {
+            throw new ClassCastException("Type mismatch");
+        }
+
+        String[] results;
+
+        if (values != null)
+        {
+            results = new String[values.length];
+
+            for (int ii = 0; ii < values.length; ii++)
+            {
+                results[ii] = Double.toString(values[ii]);
+            }
+        }
+        else
+        {
+            results = null;
+        }
+
+        setArray(results);
     }
 
     /**
-     * Sets the Field's value by the int parameter.
+     * Sets the Field's value by the float parameter.
      * 
-     * @param value, field's value as an integer.
+     * @param value field's value as an integer.
      */
-    protected void setTypedValue(float value)
+    protected void setTypedValue(Float value)
     {
         if (getDataType() != ECoalesceFieldDataTypes.FLOAT_TYPE)
         {
             throw new ClassCastException("Type mismatch");
         }
 
-        setBaseValue(Float.toString(value));
+        if (value == null)
+        {
+            setBaseValue(null);
+        }
+        else
+        {
+            setBaseValue(value.toString());
+        }
+    }
+
+    protected void setTypedValue(float[] values)
+    {
+        if (getDataType() != ECoalesceFieldDataTypes.FLOAT_LIST_TYPE)
+        {
+            throw new ClassCastException("Type mismatch");
+        }
+
+        String[] results;
+
+        if (values != null)
+        {
+            results = new String[values.length];
+
+            for (int ii = 0; ii < values.length; ii++)
+            {
+                results[ii] = Float.toString(values[ii]);
+            }
+        }
+        else
+        {
+            results = null;
+        }
+
+        setArray(results);
+    }
+
+    /**
+     * Sets the Field's value by the int parameter.
+     * 
+     * @param value field's value as an integer.
+     */
+    protected void setTypedValue(Long value)
+    {
+        if (getDataType() != ECoalesceFieldDataTypes.LONG_TYPE)
+        {
+            throw new ClassCastException("Type mismatch");
+        }
+
+        if (value == null)
+        {
+            setBaseValue(null);
+        }
+        else
+        {
+            setBaseValue(value.toString());
+        }
+
+    }
+
+    protected void setTypedValue(long[] values)
+    {
+        if (getDataType() != ECoalesceFieldDataTypes.LONG_LIST_TYPE)
+        {
+            throw new ClassCastException("Type mismatch");
+        }
+
+        String[] results;
+
+        if (values != null)
+        {
+            results = new String[values.length];
+
+            for (int ii = 0; ii < values.length; ii++)
+            {
+                results[ii] = Long.toString(values[ii]);
+            }
+        }
+        else
+        {
+            results = null;
+        }
+
+        setArray(results);
     }
 
     /**
      * Sets the Field's value by the geometry Point parameter.
      * 
-     * @param value, field's value as a geometry point.
-     * @throws CoalesceDataFormatException.
+     * @param value field's value as a geometry point.
+     * @throws CoalesceDataFormatException
      */
     protected void setTypedValue(Point value) throws CoalesceDataFormatException
     {
@@ -388,40 +604,42 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
             throw new ClassCastException("Type mismatch");
         }
 
-        if (!Double.isNaN(value.getX()) && !Double.isNaN(value.getY()))
+        if (value == null)
+        {
+            setBaseValue(null);
+        }
+        else
         {
             assertValid(value);
 
-            setBaseValue(value.toText());
+            setBaseValue(geometryToWKT(value));
         }
     }
 
     /**
      * Sets the Field's value by the geometry Coordinate parameter.
      * 
-     * @param value, field's value as a geometry coordinate.
-     * @throws CoalesceDataFormatException.
+     * @param value field's value as a geometry coordinate.
+     * @throws CoalesceDataFormatException
      */
     protected void setTypedValue(Coordinate value) throws CoalesceDataFormatException
     {
-        if (getDataType() != ECoalesceFieldDataTypes.GEOCOORDINATE_TYPE)
+        if (value == null)
         {
-            throw new ClassCastException("Type mismatch");
+            setBaseValue(null);
         }
-
-        if (!Double.isNaN(value.x) && !Double.isNaN(value.y))
+        else
         {
-            assertValid(value);
-
-            setBaseValue(WKTWriter.toPoint(value));
+            GeometryFactory factory = new GeometryFactory();
+            setTypedValue(factory.createPoint(value));
         }
     }
 
     /**
      * Sets the Field's value by the geometry MultiPoint parameter.
      * 
-     * @param multiPoint, field's value as a geometry multipoint.
-     * @throws CoalesceDataFormatException.
+     * @param multiPoint field's value as a geometry multipoint.
+     * @throws CoalesceDataFormatException
      */
     protected void setTypedValue(MultiPoint multiPoint) throws CoalesceDataFormatException
     {
@@ -431,16 +649,24 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
             throw new ClassCastException("Type mismatch");
         }
 
-        assertValid(multiPoint);
+        if (multiPoint == null)
+        {
+            setBaseValue(null);
+        }
+        else
+        {
+            assertValid(multiPoint);
+            WKTWriter writer = new WKTWriter(3);
+            setBaseValue(writer.write(multiPoint));
 
-        setBaseValue(multiPoint.toText());
+        }
     }
 
     /**
      * Sets the Field's value by the geometry coordinate array parameter.
      * 
-     * @param value, field's value as a geometry coordinate array.
-     * @throws CoalesceDataFormatException.
+     * @param value field's value as a geometry coordinate array.
+     * @throws CoalesceDataFormatException
      */
     protected void setTypedValue(Coordinate[] value) throws CoalesceDataFormatException
     {
@@ -450,23 +676,97 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
             throw new ClassCastException("Type mismatch");
         }
 
-        // Initialize Array
-        Point[] points = new Point[value.length];
-
-        // Couple Values
-        for (int ii = 0; ii < value.length; ii++)
+        if (value == null)
         {
-            points[ii] = new Point(new CoordinateArraySequence(new Coordinate[] { new Coordinate(value[ii].x, value[ii].y) }),
-                                   new GeometryFactory());
+            setTypedValue((MultiPoint) null);
+        }
+        else
+        {
+
+            GeometryFactory factory = new GeometryFactory();
+
+            // Initialize Array
+            Point[] points = new Point[value.length];
+
+            for (int ii = 0; ii < value.length; ii++)
+            {
+                points[ii] = factory.createPoint(value[ii]);
+            }
+
+            setTypedValue(new MultiPoint(points, factory));
+        }
+    }
+
+    protected void setTypedValue(LineString value) throws CoalesceDataFormatException
+    {
+
+        if (getDataType() != ECoalesceFieldDataTypes.LINE_STRING_TYPE)
+        {
+            throw new ClassCastException("Type mismatch");
         }
 
-        setTypedValue(new MultiPoint(points, new GeometryFactory()));
+        if (value == null)
+        {
+            setBaseValue(null);
+        }
+        else
+        {
+
+            assertValid(value.getCoordinates());
+            WKTWriter writer = new WKTWriter(3);
+            setBaseValue(writer.write(value));
+
+        }
+    }
+
+    protected void setTypedValue(Polygon value) throws CoalesceDataFormatException
+    {
+
+        if (getDataType() != ECoalesceFieldDataTypes.POLYGON_TYPE)
+        {
+            throw new ClassCastException("Type mismatch");
+        }
+
+        if (value == null)
+        {
+            setBaseValue(null);
+        }
+        else
+        {
+            assertValid(value.getCoordinates());
+            WKTWriter writer = new WKTWriter(3);
+            setBaseValue(writer.write(value));
+
+        }
+    }
+
+    protected void setTypedValue(CoalesceCircle value) throws CoalesceDataFormatException
+    {
+
+        if (getDataType() != ECoalesceFieldDataTypes.CIRCLE_TYPE)
+        {
+            throw new ClassCastException("Type mismatch");
+        }
+
+        if (value == null)
+        {
+            setBaseValue(null);
+        }
+        else
+        {
+            assertValid(value.getCenter());
+
+            GeometryFactory factory = new GeometryFactory();
+            setBaseValue(geometryToWKT(factory.createPoint(value.getCenter())));
+            setAttribute("radius", Double.toString(value.getRadius()));
+
+        }
     }
 
     /**
      * Sets the Field's value by the byte array parameter.
      * 
-     * @param dataBytes, field's value as a byte array.
+     * @param dataBytes field's value as a byte array.
      */
     protected void setTypedValue(byte[] dataBytes)
     {
@@ -475,16 +775,25 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
             throw new ClassCastException("Type mismatch");
         }
 
-        setBaseValue(Base64.encode(dataBytes));
-        setSize(dataBytes.length);
+        if (dataBytes != null)
+        {
+            setBaseValue(Base64.encode(dataBytes));
+            setSize(dataBytes.length);
+        }
+        else
+        {
+            setBaseValue(null);
+            setSize(0);
+        }
     }
 
     /**
-     * Sets the Field's value by the byte array parameter. Also sets the filename, extension and mimetype.
+     * Sets the Field's value by the byte array parameter. Also sets the
+     * filename, extension and mimetype.
      * 
-     * @param dataBytes, field's value as a byte array.
-     * @param filename, field's filename.
-     * @param extension, field's extension.
+     * @param dataBytes field's value as a byte array.
+     * @param filename field's filename.
+     * @param extension field's extension.
      */
     protected void setTypedValue(byte[] dataBytes, String filename, String extension)
     {
@@ -493,21 +802,34 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
             throw new ClassCastException("Type mismatch");
         }
 
-        if (dataBytes == null) throw new NullArgumentException("dataBytes");
+        if (filename == null)
+        {
+            setBaseValue(null);
+            setFilename(null);
+            setExtension(null);
+            setMimeType(null);
+            setSize(0);
+        }
+        else
+        {
+            if (dataBytes == null)
+                throw new NullArgumentException("dataBytes");
 
-        setBaseValue(Base64.encode(dataBytes));
-        setFilename(filename);
-        setExtension(extension);
-        setMimeType(MimeHelper.getMimeTypeForExtension(extension));
-        setSize(dataBytes.length);
+            setBaseValue(Base64.encode(dataBytes));
+            setFilename(filename);
+            setExtension(extension);
+            setMimeType(MimeHelper.getMimeTypeForExtension(extension));
+            setSize(dataBytes.length);
+        }
     }
 
     /**
-     * Sets the Field's hash value. Also sets the filename, extension and MIME type.
+     * Sets the Field's hash value. Also sets the filename, extension and MIME
+     * type.
      * 
-     * @param filename, field's filename.
-     * @param extension, field's extension.
-     * @param hash, field's hash value.
+     * @param filename field's filename.
+     * @param extension field's extension.
+     * @param hash field's hash value.
      */
     protected void setTypedValue(String filename, String extension, String hash)
     {
@@ -523,11 +845,11 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
     }
 
     /**
-     * Sets the Field's value by the byte array parameter. Also sets the filename, extension and mimetype by the Document
-     * Properties.
+     * Sets the Field's value by the byte array parameter. Also sets the
+     * filename, extension and mimetype by the Document Properties.
      * 
-     * @param dataBytes, file's value as a byte array.
-     * @param docProps, file's DocumentProperties.
+     * @param dataBytes file's value as a byte array.
+     * @param docProps file's DocumentProperties.
      */
     protected void setTypedValue(byte[] dataBytes, DocumentProperties docProps)
     {
@@ -536,14 +858,22 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
             throw new ClassCastException("Type mismatch");
         }
 
-        setTypedValue(dataBytes, docProps.getFilename(), docProps.getExtension());
+        if (docProps != null)
+        {
+            setTypedValue(dataBytes, docProps.getFilename(), docProps.getExtension());
+        }
+        else
+        {
+            setTypedValue(dataBytes, null, null);
+        }
     }
 
     /**
-     * Sets value, filename, extension, mimetype if the datatype equals the file type and the file exists.
+     * Sets value, filename, extension, mimetype if the datatype equals the file
+     * type and the file exists.
      * 
-     * @param docProps, file's DocumentProperties.
-     * @throws IOException.
+     * @param docProps file's DocumentProperties.
+     * @throws IOException
      */
     protected void setTypedValue(DocumentProperties docProps) throws IOException
     {
@@ -552,19 +882,26 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
             throw new ClassCastException("Type mismatch");
         }
 
-        // Does File Exist?
-        Path path = Paths.get(docProps.getFullFilename());
-        if (Files.exists(path))
+        if (docProps != null)
         {
-            setTypedValue(Files.readAllBytes(path), docProps);
+            // Does File Exist?
+            Path path = Paths.get(docProps.getFullFilename());
+            if (Files.exists(path))
+            {
+                setTypedValue(Files.readAllBytes(path), docProps);
+            }
         }
+        else
+        {
+            setTypedValue(null, null);
+        }
+
     }
 
     /**
      * Returns the UUID value of the field.
      * 
      * @return UUID, field's value as a UUID. Null if not a UUID.
-     * @throws ClassCastException.
      */
     protected UUID getGuidValue()
     {
@@ -586,11 +923,23 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
         }
     }
 
+    protected UUID[] getGuidListValue()
+    {
+
+        if (getDataType() != ECoalesceFieldDataTypes.GUID_LIST_TYPE)
+        {
+            throw new ClassCastException("Type mismatch");
+        }
+
+        return ArrayHelper.toUUIDArray(getArray());
+
+    }
+
     /**
      * Returns the Field's DateTime value.
      * 
-     * @return DateTime, field's value as a DateTime. Null if not populated or invalid.
-     * @throws ClassCastException.
+     * @return DateTime, field's value as a DateTime. Null if not populated or
+     *         invalid.
      */
     protected DateTime getDateTimeValue()
     {
@@ -602,7 +951,8 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
 
         DateTime value = JodaDateTimeHelper.fromXmlDateTimeUTC(getBaseValue());
 
-        if (value == null) return null;
+        if (value == null)
+            return null;
 
         return value;
 
@@ -612,7 +962,6 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
      * Returns the Field's boolean value.
      * 
      * @return boolean, field's value as a boolean.
-     * @throws ClassCastException.
      */
     protected Boolean getBooleanValue()
     {
@@ -621,16 +970,42 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
             throw new ClassCastException("Type mismatch");
         }
 
-        if (StringHelper.isNullOrEmpty(getBaseValue())) return false;
+        if (StringHelper.isNullOrEmpty(getBaseValue()))
+            return null;
 
         return Boolean.parseBoolean(getBaseValue());
+    }
+
+    /**
+     * Returns the Field's Coordinate array values.
+     * 
+     * @return Boolean[], field's value as a boolean array.
+     * 
+     * @throws CoalesceDataFormatException
+     */
+    protected boolean[] getBooleanListValue() throws CoalesceDataFormatException
+    {
+
+        if (getDataType() != ECoalesceFieldDataTypes.BOOLEAN_LIST_TYPE)
+        {
+            throw new ClassCastException("Type mismatch");
+        }
+
+        if (StringHelper.isNullOrEmpty(getBaseValue()))
+        {
+            return null;
+        }
+        else
+        {
+            return ArrayHelper.toBooleanArray(getArray());
+        }
     }
 
     /**
      * Returns the Field's Integer value.
      * 
      * @return integer, field's value as an int.
-     * @throws CoalesceDataFormatException.
+     * @throws CoalesceDataFormatException
      */
     protected Integer getIntegerValue() throws CoalesceDataFormatException
     {
@@ -642,9 +1017,10 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
         try
         {
 
-            int value = Integer.parseInt(getBaseValue());
+            if (StringHelper.isNullOrEmpty(getBaseValue()))
+                return null;
 
-            return value;
+            return Integer.parseInt(getBaseValue());
 
         }
         catch (NumberFormatException nfe)
@@ -652,6 +1028,16 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
             throw new CoalesceDataFormatException("Failed to parse integer value for: " + getName());
         }
 
+    }
+
+    protected int[] getIntegerListValue()
+    {
+        if (getDataType() != ECoalesceFieldDataTypes.INTEGER_LIST_TYPE)
+        {
+            throw new ClassCastException("Type mismatch");
+        }
+
+        return ArrayHelper.toIntegerArray(getArray());
     }
 
     /**
@@ -670,9 +1056,10 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
         try
         {
 
-            Double value = Double.parseDouble(getBaseValue());
+            if (StringHelper.isNullOrEmpty(getBaseValue()))
+                return null;
 
-            return value;
+            return Double.parseDouble(getBaseValue());
 
         }
         catch (NumberFormatException nfe)
@@ -682,10 +1069,21 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
 
     }
 
+    protected double[] getDoubleListValue()
+    {
+
+        if (getDataType() != ECoalesceFieldDataTypes.DOUBLE_LIST_TYPE)
+        {
+            throw new ClassCastException("Type mismatch");
+        }
+
+        return ArrayHelper.toDoubleArray(getArray());
+    }
+
     /**
      * Returns the Field's Float value.
      * 
-     * @return integer, field's value as an Float
+     * @return Float, field's value as an Float
      * @throws CoalesceDataFormatException
      */
     protected Float getFloatValue() throws CoalesceDataFormatException
@@ -698,9 +1096,10 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
         try
         {
 
-            Float value = Float.parseFloat(getBaseValue());
+            if (StringHelper.isNullOrEmpty(getBaseValue()))
+                return null;
 
-            return value;
+            return Float.parseFloat(getBaseValue());
 
         }
         catch (NumberFormatException nfe)
@@ -710,11 +1109,63 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
 
     }
 
+    protected float[] getFloatListValue()
+    {
+
+        if (getDataType() != ECoalesceFieldDataTypes.FLOAT_LIST_TYPE)
+        {
+            throw new ClassCastException("Type mismatch");
+        }
+
+        return ArrayHelper.toFloatArray(getArray());
+
+    }
+
+    /**
+     * Returns the Field's Long value.
+     * 
+     * @return Long, field's value as an Float
+     * @throws CoalesceDataFormatException
+     */
+    protected Long getLongValue() throws CoalesceDataFormatException
+    {
+        if (getDataType() != ECoalesceFieldDataTypes.LONG_TYPE)
+        {
+            throw new ClassCastException("Type mismatch");
+        }
+
+        try
+        {
+
+            if (StringHelper.isNullOrEmpty(getBaseValue()))
+                return null;
+
+            return Long.parseLong(getBaseValue());
+
+        }
+        catch (NumberFormatException nfe)
+        {
+            throw new CoalesceDataFormatException("Failed to parse integer value for: " + getName());
+        }
+
+    }
+
+    protected long[] getLongListValue()
+    {
+        if (getDataType() != ECoalesceFieldDataTypes.LONG_LIST_TYPE)
+        {
+            throw new ClassCastException("Type mismatch");
+        }
+
+        return ArrayHelper.toLongArray(getArray());
+
+    }
+
     /**
      * Returns the Field's geometry Point value.
      * 
      * @return Point, field's value as a geometry point.
-     * @throws CoalesceDataFormatException.
+     * @throws CoalesceDataFormatException
      */
     protected Point getPointValue() throws CoalesceDataFormatException
     {
@@ -725,7 +1176,8 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
 
         try
         {
-            if (StringHelper.isNullOrEmpty(getBaseValue())) return null;
+            if (StringHelper.isNullOrEmpty(getBaseValue()))
+                return null;
 
             WKTReader reader = new WKTReader();
             Point point = (Point) reader.read(getBaseValue());
@@ -744,14 +1196,16 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
     /**
      * Returns the Field's geometry Coordinate value.
      * 
-     * @return Coordinate, field's value as a geometry Coordinate. Null if not populated.
-     * @throws CoalesceDataFormatException.
+     * @return Coordinate, field's value as a geometry Coordinate. Null if not
+     *         populated.
+     * @throws CoalesceDataFormatException
      */
     protected Coordinate getCoordinateValue() throws CoalesceDataFormatException
     {
         Point point = getPointValue();
 
-        if (point == null) return null;
+        if (point == null)
+            return null;
 
         assertValid(point);
 
@@ -762,7 +1216,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
      * Returns the Field's geometry MultiPoint value.
      * 
      * @return MultiPoint, field's value as a geometry MultiPoint.
-     * @throws CoalesceDataFormatException.
+     * @throws CoalesceDataFormatException
      */
     protected MultiPoint getMultiPointValue() throws CoalesceDataFormatException
     {
@@ -773,6 +1227,10 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
 
         try
         {
+
+            if (StringHelper.isNullOrEmpty(getBaseValue()))
+                return null;
+
             validateMultiPointFormat(getBaseValue());
 
             WKTReader reader = new WKTReader();
@@ -793,7 +1251,8 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
     {
         boolean isSuccessful = false;
 
-        if (value.endsWith("MULTIPOINT EMPTY")) return;
+        if (value.endsWith("MULTIPOINT EMPTY"))
+            return;
 
         if (value.startsWith("MULTIPOINT (") || value.startsWith("MULTIPOINT("))
         {
@@ -805,40 +1264,41 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
 
                 // Get Points
                 String[] points = trimmed.split(", ");
-                
+
                 for (String point : points)
                 {
                     isSuccessful = false;
-                    
+
                     if (point.startsWith("(") && point.endsWith(")"))
                     {
-                        String trimmedPoint = point.replace("(", "").replace(")", "");
-
-                        String[] values = trimmedPoint.split(" ");
-
-                        // At Least 2D Point?
-                        if (values.length >= 2)
-                        {
-                            try
-                            {
-                                // Yes; Verify Each Number
-                                for (String number : values)
-                                {
-                                    Double.parseDouble(number);
-                                }
-                            }
-                            catch (NumberFormatException nfe)
-                            {
-                                throw new CoalesceDataFormatException("Invalid coordinate (" + getName() + "): "
-                                        + nfe.getMessage());
-                            }
-
-                            isSuccessful = true;
-                        }
+                        point = point.replace("(", "").replace(")", "");
                     }
-                    
+
+                    String[] values = point.split(" ");
+
+                    // At Least 2D Point?
+                    if (values.length >= 2)
+                    {
+                        try
+                        {
+                            // Yes; Verify Each Number
+                            for (String number : values)
+                            {
+                                Double.parseDouble(number);
+                            }
+                        }
+                        catch (NumberFormatException nfe)
+                        {
+                            throw new CoalesceDataFormatException("Invalid coordinate (" + getName() + "): "
+                                    + nfe.getMessage());
+                        }
+
+                        isSuccessful = true;
+                    }
+
                     // Exit for loop if any point is not successful
-                    if (!isSuccessful) break;
+                    if (!isSuccessful)
+                        break;
                 }
             }
         }
@@ -857,19 +1317,119 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
      * 
      * @return Coordinate[], field's value as a geometry Coordinate array.
      * 
-     * @throws CoalesceDataFormatException.
+     * @throws CoalesceDataFormatException
      */
     protected Coordinate[] getCoordinateListValue() throws CoalesceDataFormatException
     {
-        return getMultiPointValue().getCoordinates();
+        if (StringHelper.isNullOrEmpty(getBaseValue()))
+        {
+            return null;
+        }
+        else
+        {
+            return getMultiPointValue().getCoordinates();
+        }
+    }
+
+    /**
+     * Returns the Field's geometry LineString value.
+     * 
+     * @return Point, field's value as a geometry LineString.
+     * @throws CoalesceDataFormatException
+     */
+    protected LineString getLineStringValue() throws CoalesceDataFormatException
+    {
+        if (getDataType() != ECoalesceFieldDataTypes.LINE_STRING_TYPE)
+        {
+            throw new ClassCastException("Type mismatch");
+        }
+
+        try
+        {
+            if (StringHelper.isNullOrEmpty(getBaseValue()))
+                return null;
+
+            WKTReader reader = new WKTReader();
+            LineString retval = (LineString) reader.read(getBaseValue());
+
+            assertValid(retval.getCoordinates());
+
+            return retval;
+
+        }
+        catch (ParseException e)
+        {
+            throw new CoalesceDataFormatException("Failed to parse point value for: " + getName());
+        }
+    }
+
+    /**
+     * Returns the Field's geometry Polygon value.
+     * 
+     * @return Point, field's value as a geometry Polygon.
+     * @throws CoalesceDataFormatException
+     */
+    protected Polygon getPolygonValue() throws CoalesceDataFormatException
+    {
+        if (getDataType() != ECoalesceFieldDataTypes.POLYGON_TYPE)
+        {
+            throw new ClassCastException("Type mismatch");
+        }
+
+        try
+        {
+            if (StringHelper.isNullOrEmpty(getBaseValue()))
+                return null;
+
+            WKTReader reader = new WKTReader();
+            Polygon polygon = (Polygon) reader.read(getBaseValue());
+
+            assertValid(polygon.getCoordinates());
+
+            return polygon;
+
+        }
+        catch (ParseException e)
+        {
+            throw new CoalesceDataFormatException("Failed to parse point value for: " + getName());
+        }
+    }
+
+    protected CoalesceCircle getCircleValue() throws CoalesceDataFormatException
+    {
+
+        if (getDataType() != ECoalesceFieldDataTypes.CIRCLE_TYPE)
+        {
+            throw new ClassCastException("Type mismatch");
+        }
+
+        try
+        {
+            if (StringHelper.isNullOrEmpty(getBaseValue()))
+                return null;
+
+            WKTReader reader = new WKTReader();
+            Point point = (Point) reader.read(getBaseValue());
+
+            assertValid(point);
+
+            CoalesceCircle reval = new CoalesceCircle();
+            reval.setCenter(point.getCoordinate());
+            reval.setRadius(Double.valueOf(getAttribute("radius")));
+
+            return reval;
+
+        }
+        catch (ParseException e)
+        {
+            throw new CoalesceDataFormatException("Failed to parse point value for: " + getName());
+        }
     }
 
     /**
      * Returns the binary value of Field's associated file.
      * 
      * @return byte[], field's value as a byte array.
-     * 
-     * @throws ClassCastException.
      */
     protected byte[] getBinaryValue()
     {
@@ -880,7 +1440,8 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
 
         String rawValue = getBaseValue();
 
-        if (rawValue == null) return null;
+        if (rawValue == null)
+            return null;
 
         if (rawValue != null && rawValue.length() > 0)
         {
@@ -898,9 +1459,10 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
     /**
      * Returns the document properties of a File type.
      * 
-     * @return DocumentProperties The properties of the file stored within the Coalesce Entity.
+     * @return DocumentProperties The properties of the file stored within the
+     *         Coalesce Entity.
      * 
-     * @throws ClassCastException.
+     * @throws CoalesceDataFormatException
      */
     protected DocumentProperties getFileValue() throws CoalesceDataFormatException
     {
@@ -911,6 +1473,9 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
 
         try
         {
+            if (StringHelper.isNullOrEmpty(getFilename()))
+                return null;
+
             // Initialize Properties from Filename
             DocumentProperties properties = new DocumentProperties();
             properties.initialize(getFilename());
@@ -921,6 +1486,66 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
         {
             throw new CoalesceDataFormatException("Invalid File");
         }
+    }
+
+    protected String[] getArray()
+    {
+
+        String[] results;
+
+        if (!StringHelper.isNullOrEmpty(this.getBaseValue()))
+        {
+            results = this.getBaseValue().split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
+
+            for (int ii = 0; ii < results.length; ii++)
+            {
+                results[ii] = StringEscapeUtils.unescapeCsv(results[ii]);
+            }
+
+        }
+        else
+        {
+            results = new String[0];
+        }
+
+        return results;
+
+    }
+
+    protected void addArray(String[] values)
+    {
+
+        List<String> list = new ArrayList<String>();
+
+        // Combine List
+        list.addAll(Arrays.asList(getArray()));
+        list.addAll(Arrays.asList(values));
+
+        // Set List
+        setArray(list.toArray(new String[list.size()]));
+
+    }
+
+    protected void setArray(String[] values)
+    {
+
+        if (values != null && values.length > 0)
+        {
+
+            String[] escaped = new String[values.length];
+
+            for (int ii = 0; ii < values.length; ii++)
+            {
+                escaped[ii] = StringEscapeUtils.escapeCsv(values[ii]);
+            }
+
+            setBaseValue(StringUtils.join(escaped, ","));
+        }
+        else
+        {
+            setBaseValue(null);
+        }
+
     }
 
     /*--------------------------------------------------------------------------
@@ -958,12 +1583,52 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
         }
     }
 
+    private String geometryToWKT(Geometry geometry)
+    {
+
+        WKTWriter writer = new WKTWriter(3);
+
+        String wkt = writer.write(geometry);
+
+        return wkt;
+
+        // Add the following code back in to support NaN
+
+        // Get Local Symbols
+        // Locale def = Locale.getDefault(Locale.Category.FORMAT);
+        // DecimalFormatSymbols symbols = new DecimalFormatSymbols(def);
+
+        // Replace NaN symbol with 'NaN'
+        // return wkt.replaceAll(symbols.getNaN(), "NaN");
+
+    }
+
     private void assertValid(Coordinate location) throws CoalesceDataFormatException
     {
-        if (location == null || Math.abs(location.x) > 180 || Math.abs(location.y) > 90)
+
+        if (location != null)
         {
-            throw new CoalesceDataFormatException("Failed to parse coordinate value for: " + getName());
+
+            // Valid Number?
+            if (Double.isNaN(location.x) || Double.isNaN(location.y))
+            {
+                throw new CoalesceDataFormatException("X and Y Coordinates cannot be NaN: " + getName());
+            }
+
+            // In Range?
+            if (!CoalesceSettings.EAxis.X.isValid(location.x) || !CoalesceSettings.EAxis.Y.isValid(location.y)
+                    || !CoalesceSettings.EAxis.Z.isValid(location.z))
+            {
+                throw new CoalesceDataFormatException("Coordinate out of range: " + getName());
+            }
+
+            if (Double.isNaN(location.z))
+            {
+                location.z = CoalesceSettings.getDefaultZValue();
+            }
+
         }
+
     }
 
     private void assertValid(Point location) throws CoalesceDataFormatException
@@ -976,6 +1641,14 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
         assertValid(location.getCoordinate());
     }
 
+    private void assertValid(Coordinate[] values) throws CoalesceDataFormatException
+    {
+        for (Coordinate location : values)
+        {
+            assertValid(location);
+        }
+    }
+
     private void assertValid(MultiPoint multiPoint) throws CoalesceDataFormatException
     {
         for (Coordinate location : multiPoint.getCoordinates())
@@ -983,4 +1656,5 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
             assertValid(location);
         }
     }
+
 }

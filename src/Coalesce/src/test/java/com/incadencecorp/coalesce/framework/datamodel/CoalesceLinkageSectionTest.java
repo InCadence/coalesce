@@ -16,7 +16,6 @@ import org.junit.Test;
 import com.incadencecorp.coalesce.common.CoalesceTypeInstances;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
-import com.incadencecorp.coalesce.framework.generatedjaxb.Linkagesection;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -106,8 +105,7 @@ public class CoalesceLinkageSectionTest {
     public void initializeNullTest()
     {
         CoalesceLinkageSection linkageSection = new CoalesceLinkageSection();
-        linkageSection.initialize(null);
-
+        linkageSection.initialize((CoalesceEntity) null);
     }
 
     @Test
@@ -273,10 +271,10 @@ public class CoalesceLinkageSectionTest {
         assertEquals(linkageSection.getLinkages().size(), desLinkageSection.getLinkage().size());
         assertEquals(linkageSection.getKey(), desLinkageSection.getKey());
         assertEquals(linkageSection.getName(), desLinkageSection.getName());
-        assertEquals(linkageSection.getNoIndex(), Boolean.parseBoolean(desLinkageSection.getNoindex()));
+        assertEquals(linkageSection.getNoIndex(), desLinkageSection.isNoindex());
         assertEquals(linkageSection.getDateCreated(), desLinkageSection.getDatecreated());
         assertEquals(linkageSection.getLastModified(), desLinkageSection.getLastmodified());
-        assertEquals(linkageSection.getStatus(), ECoalesceObjectStatus.getTypeForLabel(desLinkageSection.getStatus()));
+        assertEquals(linkageSection.getStatus(), desLinkageSection.getStatus());
 
     }
 
@@ -293,7 +291,7 @@ public class CoalesceLinkageSectionTest {
 
         Linkagesection desLinkageSection = (Linkagesection) XmlHelper.deserialize(linkageXml, Linkagesection.class);
 
-        assertEquals(ECoalesceObjectStatus.UNKNOWN, ECoalesceObjectStatus.getTypeForLabel(desLinkageSection.getStatus()));
+        assertEquals(ECoalesceObjectStatus.UNKNOWN, desLinkageSection.getStatus());
 
     }
     
@@ -304,9 +302,12 @@ public class CoalesceLinkageSectionTest {
         entity.initialize();
         
         CoalesceLinkageSection linkageSection = entity.getLinkageSection();
+        
+        int before = linkageSection.getAttributes().size();
+
         linkageSection.setAttribute("TestAttribute", "TestingValue");
         
-        assertEquals(6, linkageSection.getAttributes().size());
+        assertEquals(before + 1, linkageSection.getAttributes().size());
         
         assertEquals("TestingValue", linkageSection.getAttribute("TestAttribute"));
         
@@ -331,7 +332,7 @@ public class CoalesceLinkageSectionTest {
         linkageSection.setAttribute("NoIndex", "True");
         assertEquals(true, linkageSection.getNoIndex());
         
-        linkageSection.setAttribute("Status", ECoalesceObjectStatus.UNKNOWN.getLabel());
+        linkageSection.setAttribute("Status", ECoalesceObjectStatus.UNKNOWN.toString());
         assertEquals(ECoalesceObjectStatus.UNKNOWN, linkageSection.getStatus());
         
         linkageSection.setAttribute("LastModified", JodaDateTimeHelper.toXmlDateTimeUTC(future));

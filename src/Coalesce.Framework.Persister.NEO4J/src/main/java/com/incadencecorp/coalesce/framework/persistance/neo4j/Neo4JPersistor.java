@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
@@ -22,21 +21,21 @@ import com.incadencecorp.coalesce.framework.persistance.ICoalesceCacher;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 
 /*-----------------------------------------------------------------------------'
-Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
+ Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
 
-Notwithstanding any contractor copyright notice, the Government has Unlimited
-Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
-of this work other than as specifically authorized by these DFARS Clauses may
-violate Government rights in this work.
+ Notwithstanding any contractor copyright notice, the Government has Unlimited
+ Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+ of this work other than as specifically authorized by these DFARS Clauses may
+ violate Government rights in this work.
 
-DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
-Unlimited Rights. The Government has the right to use, modify, reproduce,
-perform, display, release or disclose this computer software and to have or
-authorize others to do so.
+ DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+ Unlimited Rights. The Government has the right to use, modify, reproduce,
+ perform, display, release or disclose this computer software and to have or
+ authorize others to do so.
 
-Distribution Statement D. Distribution authorized to the Department of
-Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
------------------------------------------------------------------------------*/
+ Distribution Statement D. Distribution authorized to the Department of
+ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+ -----------------------------------------------------------------------------*/
 
 public class Neo4JPersistor extends CoalescePersistorBase {
 
@@ -49,18 +48,21 @@ public class Neo4JPersistor extends CoalescePersistorBase {
     public Neo4JPersistor()
     {
         /***********
-         * Define the PostGresSQL Database Connection in the URL, change to whatever the schema name is on your system
+         * Define the PostGresSQL Database Connection in the URL, change to
+         * whatever the schema name is on your system
          ***********/
         _serCon = new ServerConn();
         /* Set URL, User, Pass */
     }
 
+    @Override
     public void initialize(ServerConn svConn)
     {
         _serCon = svConn;
     }
 
-    public boolean initialize(ICoalesceCacher cacher, ServerConn svConn) throws CoalescePersistorException
+    @Override
+    public boolean initialize(ICoalesceCacher cacher, ServerConn svConn)
     {
         _serCon = svConn;
 
@@ -68,7 +70,7 @@ public class Neo4JPersistor extends CoalescePersistorBase {
     }
 
     @Override
-    public String getEntityXml(String key) throws CoalescePersistorException
+    public String[] getEntityXml(String... keys) throws CoalescePersistorException
     {
         // TODO Auto-generated method stub
         return null;
@@ -127,7 +129,8 @@ public class Neo4JPersistor extends CoalescePersistorBase {
     }
 
     @Override
-    public boolean persistEntityTemplate(CoalesceEntityTemplate entityTemplate) throws CoalescePersistorException
+    public boolean persistEntityTemplate(CoalesceEntityTemplate entityTemplate, CoalesceDataConnectorBase conn)
+            throws CoalescePersistorException
     {
         // TODO Auto-generated method stub
         return false;
@@ -162,31 +165,39 @@ public class Neo4JPersistor extends CoalescePersistorBase {
     }
 
     @Override
-    protected boolean flattenObject(CoalesceEntity entity, boolean allowRemoval) throws CoalescePersistorException
+    protected boolean flattenObject(boolean allowRemoval, CoalesceEntity... entities) throws CoalescePersistorException
     {
-        boolean isSuccessful = false;
+        boolean isSuccessful = true;
+
+        CoalesceDataConnectorBase conn = new Neo4JDataConnector(_serCon);
+        ;
 
         // Create a Database Connection
-        try (CoalesceDataConnectorBase conn = new Neo4JDataConnector(this._serCon))
+        try
         {
+            conn.openConnection(false);
 
-            conn.openConnection();
-            conn.executeCmd("CONSTRAINT ON (item:" + entity.getName() + ") ASSERT item.EntityKey IS UNIQUE");
+            for (CoalesceEntity entity : entities)
+            {
+                conn.executeCmd("CREATE CONSTRAINT ON (item:" + entity.getName() + ") ASSERT item.EntityKey IS UNIQUE");
 
-            // Persist Entity Last to Include Changes
-            switch (entity.getType().toLowerCase()) {
-            case "entity":
-                isSuccessful = persistEntityObject(entity, conn);
+                // Persist Entity Last to Include Changes
+                switch (entity.getType().toLowerCase()) {
+                case "entity":
+                    isSuccessful &= persistEntityObject(entity, conn);
+                }
             }
-
-        }
-        catch (SQLException e)
-        {
-            throw new CoalescePersistorException("FlattenObject", e);
+            conn.commit();
         }
         catch (Exception e)
         {
+            conn.rollback();
+
             throw new CoalescePersistorException("FlattenObject", e);
+        }
+        finally
+        {
+            conn.close();
         }
 
         return isSuccessful;
@@ -203,15 +214,16 @@ public class Neo4JPersistor extends CoalescePersistorBase {
         // Return true if no update is required.
         // if (!this.checkLastModified(entity, conn)) return true;
 
-        //String sqlStmt = "(Entity:".concat(entity.getName().concat(" {EntityKey: {ParamEntityKey}})"));
+        // String sqlStmt =
+        // "(Entity:".concat(entity.getName().concat(" {EntityKey: {ParamEntityKey}})"));
 
         return false;
     }
 
     protected String getValues(CoalesceObject coalesceObject, Map<?, ?> values)
     {
-        switch (coalesceObject.getStatus()) {
-        case ACTIVE:
+        if (coalesceObject.isActive())
+        {
             switch (coalesceObject.getType().toLowerCase()) {
             case "field":
                 CoalesceField<?> fieldObject = (CoalesceField<?>) coalesceObject;
@@ -227,8 +239,6 @@ public class Neo4JPersistor extends CoalescePersistorBase {
                     break;
                 }
             }
-		default:
-			break;
         }
         return null;
     }
@@ -243,7 +253,8 @@ public class Neo4JPersistor extends CoalescePersistorBase {
         // DB Has Valid Time?
         if (lastModified != null)
         {
-            // Remove NanoSeconds (100 ns / Tick and 1,000,000 ns / ms = 10,000 Ticks / ms)
+            // Remove NanoSeconds (100 ns / Tick and 1,000,000 ns / ms = 10,000
+            // Ticks / ms)
             long objectTicks = coalesceObject.getLastModified().getMillis();
             long SQLRecordTicks = lastModified.getMillis();
 
@@ -263,16 +274,18 @@ public class Neo4JPersistor extends CoalescePersistorBase {
     private DateTime getCoalesceObjectLastModified(String key, String objectType, CoalesceDataConnectorBase conn)
             throws SQLException
     {
-        DateTime lastModified = DateTime.now(DateTimeZone.UTC);
+        DateTime lastModified = JodaDateTimeHelper.nowInUtc();
 
         // Determine the Table Name
-        //String tableName = CoalesceTableHelper.getTableNameForObjectType(objectType);
+        // String tableName =
+        // CoalesceTableHelper.getTableNameForObjectType(objectType);
         String dateValue = null;
 
         ResultSet results = conn.executeQuery("?", new CoalesceParameter(key.trim()));
         ResultSetMetaData resultsmd = results.getMetaData();
 
-        // JODA Function DateTimeFormat will adjust for the Server timezone when converting the time.
+        // JODA Function DateTimeFormat will adjust for the Server timezone when
+        // converting the time.
         if (resultsmd.getColumnCount() <= 1)
         {
             while (results.next())
@@ -289,7 +302,7 @@ public class Neo4JPersistor extends CoalescePersistorBase {
     }
 
     @Override
-    protected boolean flattenCore(CoalesceEntity entity, boolean allowRemoval) throws CoalescePersistorException
+    protected boolean flattenCore(boolean allowRemoval, CoalesceEntity... entities) throws CoalescePersistorException
     {
         // TODO Auto-generated method stub
         return false;
@@ -298,7 +311,7 @@ public class Neo4JPersistor extends CoalescePersistorBase {
     @Override
     public DateTime getCoalesceObjectLastModified(String key, String objectType) throws CoalescePersistorException
     {
-        try (CoalesceDataConnectorBase conn = new Neo4JDataConnector(this._serCon))
+        try (CoalesceDataConnectorBase conn = new Neo4JDataConnector(_serCon))
         {
             return this.getCoalesceObjectLastModified(key, objectType, conn);
         }

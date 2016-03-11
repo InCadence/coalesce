@@ -21,6 +21,12 @@ import org.apache.commons.lang.NullArgumentException;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
+/**
+ * This class represents a classification marking and how to display it.
+ * 
+ * @author wbrannock
+ *
+ */
 public class MarkingValue implements Serializable {
 
     private static final long serialVersionUID = 4042377574862929570L;
@@ -38,30 +44,27 @@ public class MarkingValue implements Serializable {
     }
 
     /**
-     * Class constructor. Creates a MarkingValue class based on the parameters that are passed in.
+     * Class constructor. Creates a MarkingValue class based on the parameters
+     * that are passed in.
      * 
-     * @param parent
-     *     allowed object is
-     *     {@link String }
-     * @param title
-     *      The initial assignment for what should appear on a Title page
-     *     allowed object is
-     *     {@link String }
-     * @param abbreviation
-     *     allowed object is
-     *     {@link String }
-     * @param portion
-     *      The initial assignment for what should appear in the portion markings
-     *     allowed object is
-     *     {@link String }
+     * @param parent allowed object is {@link String }
+     * @param title The initial assignment for what should appear on a Title
+     *            page allowed object is {@link String }
+     * @param abbreviation allowed object is {@link String }
+     * @param portion The initial assignment for what should appear in the
+     *            portion markings allowed object is {@link String }
      */
     public MarkingValue(String parent, String title, String abbreviation, String portion)
     {
 
-        if (parent == null) throw new NullArgumentException("parent");
-        if (title == null) throw new NullArgumentException("title");
-        if (abbreviation == null) throw new NullArgumentException("abbreviation");
-        if (portion == null) throw new NullArgumentException("portion");
+        if (parent == null)
+            throw new NullArgumentException("parent");
+        if (title == null)
+            throw new NullArgumentException("title");
+        if (abbreviation == null)
+            throw new NullArgumentException("abbreviation");
+        if (portion == null)
+            throw new NullArgumentException("portion");
 
         _parent = parent;
         _title = title;
@@ -72,9 +75,7 @@ public class MarkingValue implements Serializable {
     /**
      * Returns the value of the Parent property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      */
     public String getParent()
     {
@@ -84,22 +85,19 @@ public class MarkingValue implements Serializable {
     /**
      * Sets the value of the Parent property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param parent allowed object is {@link String }
      */
     public void setParent(String parent)
     {
-        if (parent == null) throw new NullArgumentException("parent");
+        if (parent == null)
+            throw new NullArgumentException("parent");
         _parent = parent;
     }
 
     /**
      * Returns the value of the Title property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      */
     public String getTitle()
     {
@@ -109,22 +107,19 @@ public class MarkingValue implements Serializable {
     /**
      * Sets the value of the Title property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param title allowed object is {@link String }
      */
     public void setTitle(String title)
     {
-        if (title == null) throw new NullArgumentException("title");
+        if (title == null)
+            throw new NullArgumentException("title");
         _title = title;
     }
 
     /**
      * Returns the value of the Abbreviation property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      */
     public String getAbbreviation()
     {
@@ -134,22 +129,19 @@ public class MarkingValue implements Serializable {
     /**
      * Sets the value of the Abbreviation property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param abbreviation allowed object is {@link String }
      */
     public void setAbbreviation(String abbreviation)
     {
-        if (abbreviation == null) throw new NullArgumentException("abbreviation");
+        if (abbreviation == null)
+            throw new NullArgumentException("abbreviation");
         _abbreviation = abbreviation;
     }
 
     /**
      * Returns the value of the Portion property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      */
     public String getPortion()
     {
@@ -159,13 +151,17 @@ public class MarkingValue implements Serializable {
     /**
      * Sets the value of the Portion property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param portion allowed object is {@link String }
      */
     public void setPortion(String portion)
     {
-        if (portion == null) throw new NullArgumentException("portion");
+        if (portion == null)
+            throw new NullArgumentException("portion");
         _portion = portion;
+    }
+
+    public MarkingValue clone()
+    {
+        return new MarkingValue(_parent, _title, _abbreviation, _portion);
     }
 }

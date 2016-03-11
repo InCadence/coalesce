@@ -15,7 +15,6 @@ import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
-import com.incadencecorp.coalesce.framework.generatedjaxb.Fielddefinition;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -96,6 +95,36 @@ public class CoalesceFieldDefinitionTest {
                               CoalesceFieldDefinitionTest.TS_MARKING,
                               Boolean.FALSE.toString(),
                               true,
+                              (CoalesceFieldDefinition) xdo);
+
+        CoalesceRecord record = recordSet.addNew();
+
+        CoalesceFieldDefinitionTest.assertNewField(newFieldDef, record.getFieldByName("Field Def Name"));
+
+    }
+    
+    @Test
+    public void createBooleanDefaultValueFalseWithNullTest()
+    {
+        CoalesceRecordset recordSet = createTestRecordset();
+
+        CoalesceFieldDefinition newFieldDef = CoalesceFieldDefinition.create(recordSet,
+                                                                             "Field Def Name",
+                                                                             null,
+                                                                             null,
+                                                                             false);
+
+        CoalesceObject xdo = recordSet.getCoalesceObjectForNamePath("Entity Information Section/Field Def Name");
+
+        assertEquals(newFieldDef, xdo);
+
+        assertFieldDefinition(recordSet,
+                              "Field Def Name",
+                              ECoalesceFieldDataTypes.BOOLEAN_TYPE,
+                              null,
+                              CoalesceFieldDefinitionTest.UNCLASS_MARKING,
+                              Boolean.FALSE.toString(),
+                              false,
                               (CoalesceFieldDefinition) xdo);
 
         CoalesceRecord record = recordSet.addNew();
@@ -665,7 +694,7 @@ public class CoalesceFieldDefinitionTest {
         assertEquals(fd.getDefaultClassificationMarking(), new Marking(desFd.getDefaultclassificationmarking()));
         assertEquals(fd.getLabel(), desFd.getLabel());
         assertEquals(fd.getDefaultValue(), desFd.getDefaultvalue());
-        assertEquals(fd.getStatus(), ECoalesceObjectStatus.getTypeForLabel(desFd.getStatus()));
+        assertEquals(fd.getStatus(), desFd.getStatus());
 
     }
 
@@ -682,7 +711,7 @@ public class CoalesceFieldDefinitionTest {
 
         Fielddefinition desFd = (Fielddefinition) XmlHelper.deserialize(fdXml, Fielddefinition.class);
 
-        assertEquals(ECoalesceObjectStatus.UNKNOWN, ECoalesceObjectStatus.getTypeForLabel(desFd.getStatus()));
+        assertEquals(ECoalesceObjectStatus.UNKNOWN, desFd.getStatus());
 
         CoalesceRecordset recordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
         
@@ -705,9 +734,12 @@ public class CoalesceFieldDefinitionTest {
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
         CoalesceFieldDefinition fd = getFieldDefinition(entity);
+
+        int before = fd.getAttributes().size();
+
         fd.setAttribute("TestAttribute", "TestingValue");
 
-        assertEquals(9, fd.getAttributes().size());
+        assertEquals(before + 1, fd.getAttributes().size());
 
         assertEquals("TestingValue", fd.getAttribute("TestAttribute"));
 
@@ -744,10 +776,10 @@ public class CoalesceFieldDefinitionTest {
         fd.setAttribute("DefaultValue", "123");
         assertEquals("123", fd.getDefaultValue());
 
-        fd.setAttribute("Status", ECoalesceObjectStatus.UNKNOWN.getLabel());
+        fd.setAttribute("Status", ECoalesceObjectStatus.UNKNOWN.toString());
         assertEquals(ECoalesceObjectStatus.UNKNOWN, fd.getStatus());
 
-        fd.setAttribute("Status", ECoalesceObjectStatus.ACTIVE.getLabel());
+        fd.setAttribute("Status", ECoalesceObjectStatus.ACTIVE.toString());
         assertEquals(ECoalesceObjectStatus.ACTIVE, fd.getStatus());
 
         fd.setAttribute("LastModified", JodaDateTimeHelper.toXmlDateTimeUTC(future));
@@ -782,7 +814,7 @@ public class CoalesceFieldDefinitionTest {
         
         CoalesceFieldDefinition fd = getFieldDefinition(entity);
 
-        fd.setAttribute("Status", ECoalesceObjectStatus.UNKNOWN.getLabel());
+        fd.setAttribute("Status", ECoalesceObjectStatus.UNKNOWN.toString());
         assertEquals(ECoalesceObjectStatus.UNKNOWN, fd.getStatus());
 
         assertEquals(16, recordset.getFieldDefinitions().size());

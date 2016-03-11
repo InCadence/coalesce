@@ -123,7 +123,7 @@ public final class DocumentThumbnailHelper {
 
             byte[] bytes = FileHelper.getFileAsByteArray(fullFilename, encrypted);
 
-            if (bytes.length > 0)
+            if (bytes != null && bytes.length > 0)
             {
                 return DocumentThumbnailHelper.getThumbnailForFile(bytes);
             }

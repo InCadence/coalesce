@@ -125,7 +125,7 @@ public class CoalesceEntityTest {
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION, null);
 
-        assertEquals("TREX Portal", entity.getTitle());
+        assertEquals("TREXMission", entity.getTitle());
     }
 
     @Test
@@ -133,7 +133,7 @@ public class CoalesceEntityTest {
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION, "");
 
-        assertEquals("TREX Portal", entity.getTitle());
+        assertEquals("TREXMission", entity.getTitle());
     }
 
     @Test
@@ -141,7 +141,8 @@ public class CoalesceEntityTest {
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION, "   ");
 
-        assertEquals("TREX Portal", entity.getTitle());
+        assertEquals("TREXMission", entity.getTitle());
+
     }
 
     @Test
@@ -175,7 +176,7 @@ public class CoalesceEntityTest {
         assertEquals("Entity Id", entity.getEntityId());
         assertEquals("Entity Type", entity.getEntityIdType());
 
-        assertEquals("Portal", entity.getTitle());
+        assertEquals("Operation", entity.getTitle());
 
     }
 
@@ -192,7 +193,7 @@ public class CoalesceEntityTest {
         assertEquals("Entity Id", entity.getEntityId());
         assertEquals("Entity Type", entity.getEntityIdType());
 
-        assertEquals("Portal", entity.getTitle());
+        assertEquals("", entity.getTitle());
 
     }
 
@@ -209,7 +210,7 @@ public class CoalesceEntityTest {
         assertEquals("Entity Id", entity.getEntityId());
         assertEquals("Entity Type", entity.getEntityIdType());
 
-        assertEquals("", entity.getTitle());
+        assertEquals("Operation", entity.getTitle());
 
     }
 
@@ -226,7 +227,7 @@ public class CoalesceEntityTest {
         assertEquals("Entity Id", entity.getEntityId());
         assertEquals("Entity Type", entity.getEntityIdType());
 
-        assertEquals("Portal", entity.getTitle());
+        assertEquals("Operation", entity.getTitle());
 
     }
 
@@ -243,7 +244,7 @@ public class CoalesceEntityTest {
         assertEquals("", entity.getEntityId());
         assertEquals("Entity Type", entity.getEntityIdType());
 
-        assertEquals("Portal", entity.getTitle());
+        assertEquals("Operation", entity.getTitle());
 
     }
 
@@ -260,7 +261,7 @@ public class CoalesceEntityTest {
         assertEquals("Entity Id", entity.getEntityId());
         assertEquals("", entity.getEntityIdType());
 
-        assertEquals("Portal", entity.getTitle());
+        assertEquals("Operation", entity.getTitle());
 
     }
 
@@ -389,7 +390,7 @@ public class CoalesceEntityTest {
         assertEquals("Entity Id", entity.getEntityId());
         assertEquals("Entity Id Type", entity.getEntityIdType());
 
-        assertEquals("Portal", entity.getTitle());
+        assertEquals("Operation", entity.getTitle());
 
     }
 
@@ -406,7 +407,7 @@ public class CoalesceEntityTest {
         assertEquals("Entity Id", entity.getEntityId());
         assertEquals("Entity Id Type", entity.getEntityIdType());
 
-        assertEquals("Portal", entity.getTitle());
+        assertEquals("Operation", entity.getTitle());
 
     }
 
@@ -423,7 +424,7 @@ public class CoalesceEntityTest {
         assertEquals("Entity Id", entity.getEntityId());
         assertEquals("Entity Id Type", entity.getEntityIdType());
 
-        assertEquals("Portal", entity.getTitle());
+        assertEquals("Operation", entity.getTitle());
 
     }
 
@@ -995,7 +996,7 @@ public class CoalesceEntityTest {
 
         String title = entity.getTitle();
 
-        assertEquals("Portal", title);
+        assertEquals("Operation", title);
 
     }
 
@@ -1007,7 +1008,7 @@ public class CoalesceEntityTest {
 
         String title = entity.getTitle();
 
-        assertEquals("TREX Portal", title);
+        assertEquals("TREXMission", title);
 
     }
 
@@ -1062,7 +1063,7 @@ public class CoalesceEntityTest {
 
         entity.setTitle(null);
 
-        assertEquals("Portal", entity.getTitle());
+        assertEquals("Operation", entity.getTitle());
         assertTrue("Last modified should be more recent",
                    DateTimeComparator.getInstance().compare(entity.getLastModified(), lastModified) > 0);
 
@@ -1078,7 +1079,7 @@ public class CoalesceEntityTest {
 
         entity.setTitle(null);
 
-        assertEquals("Portal", entity.getTitle());
+        assertEquals("Operation", entity.getTitle());
         assertEquals(entity.getLastModified(), lastModified);
 
     }
@@ -1112,12 +1113,17 @@ public class CoalesceEntityTest {
     @Test
     public void setTitleSameTest() throws InterruptedException
     {
-        CoalesceEntity entity = CoalesceEntity.create("Operation", "Portal", "1.0", "EntityId", "EntityIdType", "Operation Title");
+        CoalesceEntity entity = CoalesceEntity.create("Operation",
+                                                      "Portal",
+                                                      "1.0",
+                                                      "EntityId",
+                                                      "EntityIdType",
+                                                      "Operation Title");
 
         DateTime lastModified = entity.getLastModified();
-        
+
         Thread.sleep(200);
-        
+
         entity.setTitle("Operation Title");
 
         assertEquals("Operation Title", entity.getTitle());
@@ -1815,9 +1821,7 @@ public class CoalesceEntityTest {
 
         Entities entities = createEntityLinkages();
 
-        Map<String, CoalesceLinkage> linkages = entities._entity.getLinkages(ELinkTypes.HAS_USE_OF,
-                                                                            "Operation",
-                                                                            "Portal0");
+        Map<String, CoalesceLinkage> linkages = entities._entity.getLinkages(ELinkTypes.HAS_USE_OF, "Operation", "Portal0");
 
         assertTrue(linkages.isEmpty());
 
@@ -1829,7 +1833,7 @@ public class CoalesceEntityTest {
         Entities entities = createEntityLinkages();
 
         Map<String, CoalesceLinkage> linkages = entities._entity.getLinkages(Arrays.asList(ELinkTypes.HAS_USE_OF,
-                                                                                          ELinkTypes.CREATED), "Operation");
+                                                                                           ELinkTypes.CREATED), "Operation");
 
         assertEquals(2, linkages.size());
 
@@ -1863,8 +1867,8 @@ public class CoalesceEntityTest {
         Entities entities = createEntityLinkages();
 
         Map<String, CoalesceLinkage> linkages = entities._entity.getLinkages(Arrays.asList(ELinkTypes.HAS_USE_OF,
-                                                                                          ELinkTypes.IS_A_PEER_OF),
-                                                                            "Operation");
+                                                                                           ELinkTypes.IS_A_PEER_OF),
+                                                                             "Operation");
 
         assertEquals(1, linkages.size());
 
@@ -1893,8 +1897,8 @@ public class CoalesceEntityTest {
         Entities entities = createEntityLinkages();
 
         Map<String, CoalesceLinkage> linkages = entities._entity.getLinkages(Arrays.asList(ELinkTypes.HAS_OWNERSHIP_OF,
-                                                                                          ELinkTypes.IS_A_PEER_OF),
-                                                                            "Operation");
+                                                                                           ELinkTypes.IS_A_PEER_OF),
+                                                                             "Operation");
 
         assertTrue(linkages.isEmpty());
 
@@ -2208,7 +2212,7 @@ public class CoalesceEntityTest {
 
     }
 
-    @Test
+    // @Test
     public void toXmlTest()
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
@@ -2301,8 +2305,8 @@ public class CoalesceEntityTest {
 
         CoalesceField<?> nameField = (CoalesceField<?>) xdo;
 
-        assertEquals(1, nameField.getHistory().size());
-        assertEquals(CoalesceTypeInstances.TEST_MISSION_NAME_HISTORY_VALUE, nameField.getHistory().get(0).getBaseValue());
+        assertEquals(1, nameField.getHistory().length);
+        assertEquals(CoalesceTypeInstances.TEST_MISSION_NAME_HISTORY_VALUE, nameField.getHistory()[0].getBaseValue());
 
         xdo = entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_ACTION_NUMBER_PATH);
 
@@ -2310,9 +2314,9 @@ public class CoalesceEntityTest {
 
         CoalesceField<?> actionNumberField = (CoalesceField<?>) xdo;
 
-        assertEquals(2, actionNumberField.getHistory().size());
+        assertEquals(2, actionNumberField.getHistory().length);
         assertEquals(CoalesceTypeInstances.TEST_MISSION_ACTION_NUMBER_LABEL_HISTORY,
-                     actionNumberField.getHistory().get(0).getLabel());
+                     actionNumberField.getHistory()[0].getLabel());
 
         xdo = entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_BASE64_PATH);
 
@@ -2320,90 +2324,188 @@ public class CoalesceEntityTest {
 
         CoalesceField<?> base64Field = (CoalesceField<?>) xdo;
 
-        assertTrue(base64Field.getHistory().isEmpty());
+        assertEquals(0, base64Field.getHistory().length);
 
     }
 
     @Test
-    public void mergeEntityTest()
+    public void mergeEntityTest() throws InterruptedException, CoalesceException
     {
 
-        try
-        {
-            // Get Entities
-            CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
-            CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        // Get Entities
+        CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-            // Get Mission Name Fields
-            CoalesceField<?> entity1MissionName = (CoalesceField<?>) entity1.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
-            CoalesceField<?> entity2MissionName = (CoalesceField<?>) entity2.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+        // Get Mission Name Fields
+        CoalesceField<?> entity1MissionName = (CoalesceField<?>) entity1.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+        CoalesceField<?> entity2MissionName = (CoalesceField<?>) entity2.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
 
-            // Modify Entity 1
-            entity1MissionName.setTypedValue("Should be added as history");
+        // Modify Entity 1
+        entity1MissionName.setTypedValue("Should be added as history");
 
-            // Sleep for 2 Seconds
-            Thread.sleep(2000);
+        // Sleep for 200 Milliseconds
+        Thread.sleep(200);
 
-            // Modify Entity 2
-            entity2MissionName.setTypedValue("Should be the new value");
+        // Modify Entity 2
+        entity2MissionName.setTypedValue("Should be the new value");
 
-            // Merge Entities
-            // XsdEntity mergedEntity = XsdEntity.mergeSyncEntity(entity1, entity2);
-            CoalesceEntity mergedEntity = CoalesceEntity.mergeSyncEntity(entity1, entity2);
-            //System.out.println(mergedEntity.toXml());
+        // Merge Entities
+        CoalesceEntity mergedEntity = CoalesceEntity.mergeSyncEntity(entity1, entity2, "user", "ip");
 
-            // Get Mission Name Field of Merged Entity
-            CoalesceField<?> mergedEntityMissionName = (CoalesceField<?>) mergedEntity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+        // Get Mission Name Field of Merged Entity
+        CoalesceStringField mergedEntityMissionName = (CoalesceStringField) mergedEntity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
 
-            // Validate Merge
-            assertEquals(entity2MissionName.getBaseValue(), mergedEntityMissionName.getBaseValue());
-            assertEquals(entity1MissionName.getBaseValue(), (mergedEntityMissionName.getHistory().get(0).getBaseValue()));
+        // Validate Merge
+        assertEquals("Should be the new value", mergedEntityMissionName.getBaseValue());
+        assertEquals("Should be added as history", (mergedEntityMissionName.getHistory()[0].getBaseValue()));
+        assertEquals("user", (mergedEntityMissionName.getModifiedBy()));
+        assertEquals("ip", (mergedEntityMissionName.getModifiedByIP()));
+        assertEquals(2, (mergedEntityMissionName.getObjectVersion()));
 
-        }
-        catch (CoalesceException | InterruptedException e)
-        {
-            fail(e.getMessage());
-        }
+        CoalesceEntity Updated = new CoalesceEntity();
+        Updated.initialize(mergedEntity.toXml());
+
+        // Get Mission Name Field of Merged Entity
+        CoalesceStringField field = (CoalesceStringField) Updated.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+
+        field.setValue("Hello World");
+
+        assertEquals("", (field.getModifiedBy()));
+        assertEquals("", (field.getModifiedByIP()));
+
+        mergedEntity = CoalesceEntity.mergeSyncEntity(mergedEntity, Updated, "user2", "ip2");
+
+        // Get Mission Name Field of Merged Entity
+        mergedEntityMissionName = (CoalesceStringField) mergedEntity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+
+        // Validate Merge
+        assertEquals("Hello World", mergedEntityMissionName.getBaseValue());
+        assertEquals("user2", (mergedEntityMissionName.getModifiedBy()));
+        assertEquals("ip2", (mergedEntityMissionName.getModifiedByIP()));
+        assertEquals("Should be the new value", (mergedEntityMissionName.getHistory()[0].getBaseValue()));
+        assertEquals("user", (mergedEntityMissionName.getHistory()[0].getModifiedBy()));
+        assertEquals("ip", (mergedEntityMissionName.getHistory()[0].getModifiedByIP()));
+        assertEquals(3, (mergedEntityMissionName.getObjectVersion()));
+
     }
 
     @Test
-    public void mergeAttributeTest()
+    public void mergeNewElementTest() throws CoalesceException
     {
 
-        try
-        {
-            // Get Entities
-            CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
-            CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        // Create Entity1
+        CoalesceEntity entity1 = new CoalesceEntity();
+        entity1.initialize();
+        CoalesceRecordset rs1 = TestRecord.createCoalesceRecordset(CoalesceSection.create(entity1, "section"), "recordset");
 
-            // Get Mission Name Fields
-            CoalesceField<?> entity1MissionName = (CoalesceField<?>) entity1.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
-            CoalesceField<?> entity2MissionName = (CoalesceField<?>) entity2.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+        // Create Duplicate
+        CoalesceEntity entity2 = new CoalesceEntity();
+        entity2.initialize(entity1.toXml());
+        CoalesceRecordset rs2 = (CoalesceRecordset) entity2.getCoalesceObjectForKey(rs1.getKey());
 
-            // Modify Entity 1
-            entity1MissionName.setOtherAttribute("newattr1", "1");
+        // Add New Record
+        TestRecord record2 = new TestRecord(rs2.addNew());
 
-            // Sleep for 2 Seconds
-            Thread.sleep(2000);
+        // Merge Entities
+        CoalesceEntity result = CoalesceEntity.create(CoalesceEntity.mergeSyncEntity(entity1, entity2, null, null).toXml());
 
-            // Modify Entity 2
-            entity2MissionName.setOtherAttribute("newattr2", "2");
+        // Validate the original had the record added
+        assertNotNull(result.getCoalesceObjectForKey(record2.getKey()));
 
-            // Merge Entities
-            CoalesceEntity mergedEntity = CoalesceEntity.mergeSyncEntity(entity1, entity2);
+    }
 
-            // Get Mission Name Field of Merged Entity
-            CoalesceField<?> mergedEntityMissionName = (CoalesceField<?>) mergedEntity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+    @Test
+    public void mergeSectionTest() throws InterruptedException, CoalesceException
+    {
 
-            // Validate Merge
-            assertEquals(mergedEntityMissionName.getAttribute("newattr1"), "1");
-            assertEquals(mergedEntityMissionName.getAttribute("newattr2"), "2");
+        // Get Entities
+        TestEntity entity1 = new TestEntity();
+        TestEntity entity2 = new TestEntity();
 
-        }
-        catch (CoalesceException | InterruptedException e)
-        {
-            fail(e.getMessage());
-        }
+        entity1.initialize();
+        entity2.initialize(entity1.toXml());
+
+        // Delete Section
+        entity2.getSection("/" + TestEntity.TESTSECTION).setStatus(ECoalesceObjectStatus.DELETED);
+
+        // Merge Entities
+        CoalesceEntity result = CoalesceEntity.mergeSyncEntity(entity1, entity2, null, null);
+
+        CoalesceSection section = result.getSection("/" + TestEntity.TESTSECTION);
+        
+        assertEquals(ECoalesceObjectStatus.DELETED, section.getStatus());
+        assertEquals(ECoalesceObjectStatus.ACTIVE, section.getHistoryRecord(section.getPreviousHistoryKey()).getStatus());
+
+    }
+
+    @Test
+    public void mergeRecordTest() throws InterruptedException, CoalesceException
+    {
+
+        // Get Entities
+        TestEntity entity1 = new TestEntity();
+        TestEntity entity2 = new TestEntity();
+
+        entity1.initialize();
+        entity2.initialize(entity1.toXml());
+
+        // Create New Record in Each
+        TestRecord record1 = entity1.addRecord1();
+        TestRecord record2 = entity2.addRecord1();
+
+        record1.getIntegerField().setValue(1);
+        record2.getIntegerField().setValue(2);
+
+        CoalesceEntity result = CoalesceEntity.mergeSyncEntity(entity1, entity2, null, null);
+
+        CoalesceObject object1 = result.getCoalesceObjectForKey(record1.getKey());
+        CoalesceObject object2 = result.getCoalesceObjectForKey(record2.getKey());
+
+        assertNotNull(object1);
+        assertNotNull(object2);
+
+        assertEquals(record1.toXml(), object1.toXml());
+        
+        record2.setObjectVersion(2);
+        
+        assertEquals(record2.toXml(), object2.toXml());
+
+    }
+
+    @Test
+    public void mergeAttributeTest() throws InterruptedException, CoalesceException
+    {
+
+        // Get Entities
+        CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        // Get Mission Name Fields
+        CoalesceField<?> entity1MissionName = (CoalesceField<?>) entity1.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+        CoalesceField<?> entity2MissionName = (CoalesceField<?>) entity2.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+
+        // Modify Entity 1
+        entity1MissionName.setBaseValue("original");
+        entity1MissionName.setOtherAttribute("newattr1", "1");
+
+        // Sleep for 2 Seconds
+        Thread.sleep(500);
+
+        // Modify Entity 2
+        entity2MissionName.setBaseValue("updated");
+        entity2MissionName.setOtherAttribute("newattr2", "2");
+
+        // Merge Entities
+        CoalesceEntity mergedEntity = CoalesceEntity.mergeSyncEntity(entity1, entity2, null, null);
+
+        // Get Mission Name Field of Merged Entity
+        CoalesceField<?> mergedEntityMissionName = (CoalesceField<?>) mergedEntity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
+
+        // Validate Merge
+        assertEquals("1", mergedEntityMissionName.getAttribute("newattr1"));
+        assertEquals("2", mergedEntityMissionName.getAttribute("newattr2"));
+        assertEquals("updated", mergedEntityMissionName.getAttribute("value"));
+        assertEquals("original", mergedEntityMissionName.getHistory()[0].getAttribute("value"));
 
     }
 
@@ -2421,7 +2523,7 @@ public class CoalesceEntityTest {
             fieldDefinition.setLastModified(new DateTime());
             updatedEntity.setLastModified(new DateTime());
 
-            myEntity = CoalesceEntity.mergeSyncEntity(myEntity, updatedEntity);
+            myEntity = CoalesceEntity.mergeSyncEntity(myEntity, updatedEntity, null, null);
             CoalesceFieldDefinition myfieldDefinition = (CoalesceFieldDefinition) myEntity.getCoalesceObjectForKey("1A7DA2CD-8A83-4E86-ADE8-15FDECE0564E");
             assertEquals("UpdatedIncidentDescription", myfieldDefinition.getAttribute("defaultvalue"));
 
@@ -2442,7 +2544,7 @@ public class CoalesceEntityTest {
         entity.setAttribute("TestAttribute", "TestingValue");
 
         assertEquals(2, entity.getOtherAttributes().size());
-        
+
         assertEquals("TestingValue", entity.getAttribute("TestAttribute"));
 
         assertEquals("TREXMission", entity.getName());
@@ -2464,28 +2566,28 @@ public class CoalesceEntityTest {
         assertEquals(now, entity.getDateCreated());
 
         assertEquals(2, entity.getOtherAttributes().size());
-        
+
         entity.setAttribute("NoIndex", "True");
         assertEquals(true, entity.getNoIndex());
 
-        assertEquals(3, entity.getOtherAttributes().size());
-        
+        assertEquals(2, entity.getOtherAttributes().size());
+
         entity.setAttribute("Source", "OtherSource");
         assertEquals("OtherSource", entity.getSource());
-        
+
         entity.setAttribute("Version", "1.0.0.1");
         assertEquals("1.0.0.1", entity.getVersion());
-        
+
         entity.setAttribute("EntityId", "TestingEntityId");
-        assertEquals("TestingEntityId", entity.getEntityId()    );
-        
+        assertEquals("TestingEntityId", entity.getEntityId());
+
         entity.setAttribute("EntityIdType", "TestingEntityType");
         assertEquals("TestingEntityType", entity.getEntityIdType());
-        
+
         entity.setAttribute("Title", "TestingTitle");
         assertEquals("TestingTitle", entity.getTitle());
-        
-        entity.setAttribute("Status", ECoalesceObjectStatus.UNKNOWN.getLabel());
+
+        entity.setAttribute("Status", ECoalesceObjectStatus.UNKNOWN.toString());
         assertEquals(ECoalesceObjectStatus.UNKNOWN, entity.getStatus());
 
         entity.setAttribute("LastModified", JodaDateTimeHelper.toXmlDateTimeUTC(future));
@@ -2494,8 +2596,8 @@ public class CoalesceEntityTest {
         String entityXml = entity.toXml();
         CoalesceEntity desEntity = CoalesceEntity.create(entityXml);
 
-        assertEquals(3, desEntity.getOtherAttributes().size());
-        
+        assertEquals(2, desEntity.getOtherAttributes().size());
+
         assertEquals("TestingValue", desEntity.getAttribute("TestAttribute"));
         assertEquals("TestingName", desEntity.getName());
         assertEquals(guid.toString(), desEntity.getKey());
@@ -2504,10 +2606,10 @@ public class CoalesceEntityTest {
         assertEquals(true, desEntity.getNoIndex());
         assertEquals("OtherSource", desEntity.getSource());
         assertEquals("1.0.0.1", desEntity.getVersion());
-        assertEquals("TestingEntityId", desEntity.getEntityId()    );
+        assertEquals("TestingEntityId", desEntity.getEntityId());
         assertEquals("TestingEntityType", desEntity.getEntityIdType());
         assertEquals("TestingTitle", desEntity.getTitle());
-       assertEquals(ECoalesceObjectStatus.UNKNOWN, desEntity.getStatus());
+        assertEquals(ECoalesceObjectStatus.UNKNOWN, desEntity.getStatus());
 
     }
 

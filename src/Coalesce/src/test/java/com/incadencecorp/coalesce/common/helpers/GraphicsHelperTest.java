@@ -101,7 +101,7 @@ public class GraphicsHelperTest {
         File fieldFile = new File(GraphicsHelperTest.FILE_FIELD_IMAGE_PATH);
         fieldFile.getParentFile().mkdirs();
 
-        String testPath = CoalesceUnitTestSettings.getResourceAbsolutePath("desert.jpg");
+        String testPath = CoalesceUnitTestSettings.getResourceAbsolutePath("Desert.jpg");
         Files.copy(Paths.get(testPath),
                    Paths.get(GraphicsHelperTest.FILE_FIELD_IMAGE_PATH),
                    StandardCopyOption.REPLACE_EXISTING);
@@ -1000,8 +1000,8 @@ public class GraphicsHelperTest {
         CoalesceRecord record = recordset.addNew();
 
         CoalesceFileField fileField = (CoalesceFileField) record.getFieldByName("File");
-        String filePath = CoalesceUnitTestSettings.getResourceAbsolutePath("desert.jpg");
-        fileField.setValue(Files.readAllBytes(Paths.get(filePath)), "desert.jpg", "jpg");
+        String filePath = CoalesceUnitTestSettings.getResourceAbsolutePath("Desert.jpg");
+        fileField.setValue(Files.readAllBytes(Paths.get(filePath)), "Desert.jpg", "jpg");
 
         @SuppressWarnings("unchecked")
         CoalesceField<byte[]> file = (CoalesceField<byte[]>) record.getFieldByName("File");
@@ -1017,12 +1017,12 @@ public class GraphicsHelperTest {
 
     private BufferedImage getDesert() throws IOException
     {
-        return getImage("desert.jpg");
+        return getImage("Desert.jpg");
     }
     
     private BufferedImage getDesertTall() throws IOException
     {
-        return getImage("desert_Tall.jpg");
+        return getImage("Desert_Tall.jpg");
     }
     
     private BufferedImage getImage(String resource) throws IOException

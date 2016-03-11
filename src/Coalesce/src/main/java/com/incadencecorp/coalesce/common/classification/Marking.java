@@ -25,21 +25,48 @@ import com.incadencecorp.coalesce.common.helpers.StringHelper;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
+/**
+ * Used to parse and format the classification and dissemination controls for a
+ * given marking.
+ * 
+ * @author wbrannock, Derek
+ *
+ */
 public class Marking implements Serializable, Comparable<Marking> {
 
     private static final long serialVersionUID = 956620060017206311L;
 
+    /**
+     * Unclassified
+     */
     public static final String UNCLASSIFIED = "UNCLASSIFIED";
+    /**
+     * Restricted
+     */
     public static final String RESTRICTED = "RESTRICTED";
+    /**
+     * Confidential
+     */
     public static final String CONFIDENTIAL = "CONFIDENTIAL";
+    /**
+     * Secret
+     */
     public static final String SECRET = "SECRET";
+    /**
+     * Top Secret
+     */
     public static final String TOPSECRET = "TOP SECRET";
+
+    private SCIControl controlSCI = new SCIControl();
+    private SAPControl controlSAP = new SAPControl();
+    private ACCMControl controlACCM = new ACCMControl();
 
     private boolean _isNATO;
     private List<ISO3166Country> _selectedCountries;
     private MarkingValue _classification;
     private boolean _isFOUO;
     private boolean _isLES;
+    private boolean _isLESNF;
     private boolean _isORCON;
     private boolean _isIMCON;
     private boolean _isRELIDO;
@@ -53,7 +80,9 @@ public class Marking implements Serializable, Comparable<Marking> {
     private boolean _isEXDIS;
     private boolean _isSBU;
     private boolean _isSBUNF;
-    private List<String> _nicknames;
+    private boolean _isNODIS;
+    private boolean _isRSEN;
+    private boolean _isSSI;
 
     private static List<MarkingValue> _classificationList;
 
@@ -70,9 +99,10 @@ public class Marking implements Serializable, Comparable<Marking> {
     @Override
     public boolean equals(Object other)
     {
-        if (!(other instanceof Marking)) return false;
+        if (!(other instanceof Marking))
+            return false;
 
-        return toPortionString().equals(((Marking) other).toPortionString());
+        return toPortionString().equalsIgnoreCase(((Marking) other).toPortionString());
     }
 
     @Override
@@ -148,7 +178,8 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Class constructor. Creates a Marking class with a default value of Unclassified.
+     * Class constructor. Creates a Marking class with a default value of
+     * Unclassified.
      */
     public Marking()
     {
@@ -156,10 +187,10 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Class constructor. Creates a Marking class with a classification set to the contents of the String parameter.
-     * @param markingString
-     *     allowed object is
-     *     {@link String }
+     * Class constructor. Creates a Marking class with a classification set to
+     * the contents of the String parameter.
+     * 
+     * @param markingString allowed object is {@link String }
      */
     public Marking(String markingString)
     {
@@ -172,19 +203,22 @@ public class Marking implements Serializable, Comparable<Marking> {
             markingString = "";
         }
 
-        // CLASSIFICATION//CONTROLSYSTEM1/CONTROLSYSTEM2-COMPARTMENT1 SUBCOMPARTMENT1 SUBCOMPARTMENT2-COMPARTMENT2//
+        markingString = markingString.trim().toUpperCase();
+
+        // CLASSIFICATION//CONTROLSYSTEM1/CONTROLSYSTEM2-COMPARTMENT1
+        // SUBCOMPARTMENT1 SUBCOMPARTMENT2-COMPARTMENT2//
         // SPECIAL ACCESS REQUIRED-PROGRAM NICKNAME/CODEWORD//" & _
         // RD-SG 1//FGI DEU//FOUO//LIMDIS
 
-        markingString = markingString.trim();
-
+        // Is a portion marking?
         if (markingString.startsWith("(") && markingString.endsWith(")"))
         {
+            // Yes; Trim Parentheses
             isPortionMarking = true;
             markingString = StringHelper.trimParentheses(markingString);
         }
 
-        // If it is blank or invalid make it Unclass
+        // If it is blank or invalid make it unclassified
         if (isPortionMarking)
         {
             if (markingString.length() < 1)
@@ -221,7 +255,10 @@ public class Marking implements Serializable, Comparable<Marking> {
         markingString = markingString.replace("//", "|");
         String[] parts = markingString.split("\\|");
 
-        if (parts.length == 0) return; // Invalid Classification marking
+        if (parts.length == 0)
+        {
+            throw new IllegalArgumentException("Invalid Classification Marking");
+        }
 
         // Reset values first
         _isNATO = false;
@@ -258,9 +295,13 @@ public class Marking implements Serializable, Comparable<Marking> {
                 List<String> joint = Arrays.asList(parts[index].split(" "));
                 String marking = "";
 
-                // The count must be at least 4 unless TS which would make it 5 eg. '//JOINT TOP SECRET USA DEU' or
+                // The count must be at least 4 unless TS which would make it 5
+                // eg. '//JOINT TOP SECRET USA DEU' or
                 // '//JOINT TS USA DEU' for a portion
-                if (joint.size() < (joint.contains("TOP") ? 5 : 4)) return; // Invalid Joint Classification marking
+                if (joint.size() < (joint.contains("TOP") ? 5 : 4))
+                {
+                    throw new IllegalArgumentException("Invalid Joint Classification Marking");
+                }
 
                 marking = joint.contains("TOP") ? "JOINT TOP SECRET" : "JOINT " + joint.get(1);
 
@@ -298,7 +339,10 @@ public class Marking implements Serializable, Comparable<Marking> {
 
                 List<String> fgc = Arrays.asList(parts[index].split(" "));
 
-                if (fgc.size() < (fgc.contains("TOP") ? 3 : 2)) return; // Invalid FGC Classification marking
+                if (fgc.size() < (fgc.contains("TOP") ? 3 : 2))
+                {
+                    throw new IllegalArgumentException("Invalid FGC Classification Marking");
+                }
 
                 ISO3166Country country = FieldValues.getCountryByAlpha3(fgc.get(0));
                 if (country != null)
@@ -324,184 +368,182 @@ public class Marking implements Serializable, Comparable<Marking> {
 
         while (parts.length > index)
         {
-            // CLASSIFICATION//CONTROLSYSTEM1/CONTROLSYSTEM2-COMPARTMENT1 SUBCOMPARTMENT1 SUBCOMPARTMENT2-COMPARTMENT2//
+
+            // CLASSIFICATION//CONTROLSYSTEM1/CONTROLSYSTEM2-COMPARTMENT1
+            // SUBCOMPARTMENT1 SUBCOMPARTMENT2-COMPARTMENT2//
             // SPECIAL ACCESS REQUIRED-PROGRAM NICKNAME/CODEWORD//" & _
             // RD-SG 1//FGI DEU//FOUO//LIMDIS/ACCM-ALPHA/BRAVO
 
-            String[] subparts = parts[index].split("/");
-            boolean isACCM = false;
-
-            for (String subpart : subparts)
+            if (parts[index].startsWith("ACCM-"))
             {
-                // Disem
-                if (subpart.startsWith("FOUO-LES"))
+                controlACCM = new ACCMControl(parts[index]);
+            }
+            else if (parts[index].startsWith("SAR-")
+                    || (isPortionMarking && parts[index].startsWith("SPECIAL ACCESS REQUIRED-")))
+            {
+                controlSAP = new SAPControl(parts[index]);
+            }
+            else if (parts[index].startsWith("HCS") || parts[index].startsWith("KDK") || parts[index].startsWith("RSV")
+                    || parts[index].startsWith("SI") || parts[index].startsWith("G") || parts[index].startsWith("TK")
+                    || parts[index].contains("-") && !parts[index].contains("-NF"))
+            {
+                controlSCI = new SCIControl(parts[index]);
+            }
+            else
+            {
+
+                String[] subparts = parts[index].split("/");
+
+                for (int ii = 0; ii < subparts.length; ii++)
                 {
+                    String subpart = subparts[ii];
 
-                    _isFOUO = true;
-                    _isLES = true;
-
-                }
-                else if (subpart.startsWith("FOUO"))
-                {
-
-                    _isFOUO = true;
-
-                }
-                else if (subpart.startsWith("LES"))
-                {
-
-                    _isLES = true;
-
-                }
-                else if (subpart.startsWith("RELIDO"))
-                {
-
-                    _isRELIDO = true;
-
-                }
-                else if (subpart.startsWith("PROPIN") || (isPortionMarking && subpart.startsWith("PR")))
-                {
-
-                    _isPROPIN = true;
-
-                }
-                else if (subpart.startsWith("FISA"))
-                {
-
-                    _isFISA = true;
-
-                }
-                else if (subpart.startsWith("IMCON") || (isPortionMarking && subpart.startsWith("IMC")))
-                {
-
-                    _isIMCON = true;
-
-                }
-                else if (subpart.startsWith("ORCON") || (isPortionMarking && subpart.startsWith("OC")))
-                {
-
-                    _isORCON = true;
-
-                }
-                else if (subpart.startsWith("DSEN"))
-                {
-
-                    _isDSEN = true;
-
-                }
-                else if (subpart.startsWith("NOFORN") || (isPortionMarking && subpart.startsWith("NF")))
-                {
-
-                    _isNOFORN = true;
-
-                }
-                else if (subpart.startsWith("DISPLAY ONLY"))
-                {
-
-                    // Pull the commas out
-                    subpart = subpart.replace(",", "");
-                    String[] disp = subpart.split(" ");
-
-                    if (disp.length < 3) return; // Invalid DISPLAY ONLY Desemination marking
-
-                    for (int pos = 2; pos < disp.length; pos++)
+                    // Disem
+                    if (subpart.startsWith("FOUO-LES"))
                     {
-                        getDisplayOnlyCountries().add(FieldValues.getCountryByAlpha3(disp[pos]));
+                        _isFOUO = true;
+                        _isLES = true;
                     }
-
-                }
-                else if (subpart.startsWith("REL TO"))
-                {
-
-                    // Pull the commas out
-                    subpart = subpart.replace(",", "");
-                    String[] relto = subpart.split(" ");
-
-                    if (relto.length < 3) return; // Invalid REL TO Desemination marking
-
-                    for (int pos = 2; pos < relto.length; pos++)
+                    else if (subpart.startsWith("FOUO"))
                     {
-                        getReleaseToCountries().add(FieldValues.getCountryByAlpha3(relto[pos]));
+                        _isFOUO = true;
                     }
+                    else if (subpart.startsWith("LES"))
+                    {
+                        _isLES = true;
+                    }
+                    else if (subpart.startsWith("LES NOFORN") || (isPortionMarking && subpart.startsWith("LES-NF")))
+                    {
+                        _isLESNF = true;
+                    }
+                    else if (subpart.startsWith("RELIDO"))
+                    {
+                        _isRELIDO = true;
+                    }
+                    else if (subpart.startsWith("PROPIN") || (isPortionMarking && subpart.startsWith("PR")))
+                    {
+                        _isPROPIN = true;
+                    }
+                    else if (subpart.startsWith("FISA"))
+                    {
+                        _isFISA = true;
+                    }
+                    else if (subpart.startsWith("IMCON") || (isPortionMarking && subpart.startsWith("IMC")))
+                    {
+                        _isIMCON = true;
+                    }
+                    else if (subpart.startsWith("ORCON") || (isPortionMarking && subpart.startsWith("OC")))
+                    {
+                        _isORCON = true;
+                    }
+                    else if (subpart.startsWith("DSEN"))
+                    {
+                        _isDSEN = true;
+                    }
+                    else if (subpart.startsWith("NOFORN") || (isPortionMarking && subpart.startsWith("NF")))
+                    {
+                        _isNOFORN = true;
+                    }
+                    else if (subpart.startsWith("RSEN") || (isPortionMarking && subpart.startsWith("RS")))
+                    {
+                        _isRSEN = true;
+                    }
+                    else if (subpart.startsWith("DISPLAY ONLY"))
+                    {
 
-                    // Other Disem
-                }
-                else if (subpart.startsWith("SBU NOFORN") || (isPortionMarking && subpart.startsWith("SBU-NF")))
-                {
+                        // Pull the commas out
+                        subpart = subpart.replace(",", "");
+                        String[] disp = subpart.split(" ");
 
-                    _isSBUNF = true;
+                        if (disp.length < 3)
+                        {
+                            throw new IllegalArgumentException("Invalid DISPLAY ONLY Marking");
+                        }
 
-                }
-                else if (subpart.startsWith("SBU"))
-                {
+                        for (int pos = 2; pos < disp.length; pos++)
+                        {
+                            getDisplayOnlyCountries().add(FieldValues.getCountryByAlpha3(disp[pos]));
+                        }
 
-                    _isSBU = true;
+                    }
+                    else if (subpart.startsWith("REL TO"))
+                    {
 
-                }
-                else if (subpart.startsWith("EXDIS") || (isPortionMarking && subpart.startsWith("XD")))
-                {
+                        // Pull the commas out
+                        subpart = subpart.replace(",", "");
+                        String[] relto = subpart.split(" ");
 
-                    _isEXDIS = true;
+                        if (relto.length < 3)
+                        {
+                            throw new IllegalArgumentException("Invalid REL TO Marking");
+                        }
 
-                }
-                else if (subpart.startsWith("LIMITED DISTRIBUTION") || (isPortionMarking && subpart.startsWith("DS")))
-                {
+                        for (int pos = 2; pos < relto.length; pos++)
+                        {
+                            getReleaseToCountries().add(FieldValues.getCountryByAlpha3(relto[pos]));
+                        }
 
-                    _isLIMDIS = true;
-
-                }
-                else if (subpart.startsWith("ACCM"))
-                {
-
-                    isACCM = true;
-
-                    String[] accm = subpart.split("-");
-
-                    if (accm.length != 2) return; // Invalid ACCM Other Desemination marking
-
-                    getNicknames().add(accm[1]);
-
-                }
-                else
-                {
-
-                    if (isACCM)
-                    { // Assume this is a ACCM Nickname
-
-                        getNicknames().add(subpart);
+                        // Other Disem
+                    }
+                    else if (subpart.startsWith("SBU NOFORN") || (isPortionMarking && subpart.startsWith("SBU-NF")))
+                    {
+                        _isSBUNF = true;
+                    }
+                    else if (subpart.startsWith("SBU"))
+                    {
+                        _isSBU = true;
+                    }
+                    else if (subpart.startsWith("EXDIS") || (isPortionMarking && subpart.startsWith("XD")))
+                    {
+                        _isEXDIS = true;
+                    }
+                    else if (subpart.startsWith("LIMITED DISTRIBUTION") || (isPortionMarking && subpart.startsWith("DS")))
+                    {
+                        _isLIMDIS = true;
+                    }
+                    else if (subpart.startsWith("NODIS") || (isPortionMarking && subpart.startsWith("ND")))
+                    {
+                        _isNODIS = true;
+                    }
+                    else if (subpart.startsWith("SSI"))
+                    {
+                        _isSSI = true;
                     }
                     else
                     {
+                        // First Control?
+                        if (ii == 0 && !controlSCI.hasControls())
+                        {
+                            // Yes; Treat it as SCI
+                            controlSCI = new SCIControl(parts[index]);
+                            break;
+                        }
+                        else
+                        {
+                            throw new IllegalArgumentException("Invalid Classification Marking: " + subpart);
+                        }
 
-                        return; // Unrecognized marking
                     }
-                }
-            } // subparts
+                } // subparts
 
+            }
             index += 1;
-
         }
 
     }
 
     /**
-     * Returns the value of the isNATO property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
+     * @return whether this is a NATO classification.
      */
-    public boolean getIsNATO()
+    public boolean isNATO()
     {
         return _isNATO;
     }
 
     /**
-     * Sets the value of the isNATO property.
+     * Sets whether this is marked as a NATO classification.
      * 
      * @param value
-     *     allowed object is
-     *     {@link Boolean }
      */
     public void setIsNATO(boolean value)
     {
@@ -509,35 +551,25 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Returns the value of the isJOINT property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
+     * @return whether this is marked as a JOINT classification.
      */
-    public boolean getIsJOINT()
+    public boolean isJOINT()
     {
         return getSelectedCountries().size() > 1;
     }
 
     /**
-     * Returns the value of the isFOUO property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
+     * @return whether this is marked as for official use only.
      */
-    public boolean getIsFOUO()
+    public boolean isFOUO()
     {
         return _isFOUO;
     }
 
     /**
-     * Sets the value of the isFOUO property.
+     * Sets whether this is marked as for official use only.
      * 
      * @param value
-     *     allowed object is
-     *     {@link Boolean }
      */
     public void setIsFOUO(boolean value)
     {
@@ -545,23 +577,17 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Returns the value of the isLES property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
+     * @return whether this is marked as law enforcement sensitive.
      */
-    public boolean getIsLES()
+    public boolean isLES()
     {
         return _isLES;
     }
 
     /**
-     * Sets the value of the isLES property.
+     * Sets whether this is marked as law enforcement sensitive.
      * 
      * @param value
-     *     allowed object is
-     *     {@link Boolean }
      */
     public void setIsLES(boolean value)
     {
@@ -569,23 +595,17 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Returns the value of the isORCON property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
+     * @return whether this is marked as originator controlled.
      */
-    public boolean getIsORCON()
+    public boolean isORCON()
     {
         return _isORCON;
     }
 
     /**
-     * Sets the value of the isORCON property.
+     * Sets whether this is marked as originator controlled.
      * 
      * @param value
-     *     allowed object is
-     *     {@link Boolean }
      */
     public void setIsORCON(boolean value)
     {
@@ -593,23 +613,19 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Returns the value of the isIMCON property.
      * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
+     * 
+     * @return whether this is marked as controlled imagery.
      */
-    public boolean getIsIMCON()
+    public boolean isIMCON()
     {
         return _isIMCON;
     }
 
     /**
-     * Sets the value of the isIMCON property.
+     * Sets whether this is marked as controlled imagery.
      * 
      * @param value
-     *     allowed object is
-     *     {@link Boolean }
      */
     public void setIsIMCON(boolean value)
     {
@@ -617,59 +633,44 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Returns the True if there are Display Only countries for this Marking.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
+     * @return <code>true</code> if there are Display Only countries for this
+     *         Marking.
      */
-    public boolean getIsDisplayOnly()
+    public boolean isDisplayOnly()
     {
         return getDisplayOnlyCountries().size() > 0;
     }
 
     /**
-     * Returns the value of the isDSEN property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
+     * @return whether this is marked as DEA sensitive.
      */
-    public boolean getIsDSEN()
+    public boolean isDSEN()
     {
         return _isDSEN;
     }
 
     /**
-     * Sets the value of the isDSEN property.
+     * Sets whether this is marked as DEA sensitive.
      * 
      * @param value
-     *     allowed object is
-     *     {@link Boolean }
      */
     public void setIsDSEN(boolean value)
     {
         _isDSEN = value;
     }
-    
+
     /**
-     * Returns the value of the isFISA property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
+     * @return whether this is marked as foreign intelligence surveillance act.
      */
-    public boolean getIsFISA()
+    public boolean isFISA()
     {
         return _isFISA;
     }
 
     /**
-     * Sets the value of the isFISA property.
+     * Sets whether this is marked as foreign intelligence surveillance act.
      * 
      * @param value
-     *     allowed object is
-     *     {@link Boolean }
      */
     public void setIsFISA(boolean value)
     {
@@ -677,23 +678,18 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Returns the value of the isPROPIN property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
+     * @return whether this is marked as caution-proprietary information
+     *         involved.
      */
-    public boolean getIsPROPIN()
+    public boolean isPROPIN()
     {
         return _isPROPIN;
     }
 
     /**
-     * Sets the value of the isPROPIN property.
+     * Sets whether this is marked as caution-proprietary information involved.
      * 
      * @param value
-     *     allowed object is
-     *     {@link Boolean }
      */
     public void setIsPROPIN(boolean value)
     {
@@ -701,23 +697,19 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Returns the value of the isRELIDO property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
+     * @return whether this is marked as releasable by information disclosure
+     *         official.
      */
-    public boolean getIsRELIDO()
+    public boolean isRELIDO()
     {
         return _isRELIDO;
     }
 
     /**
-     * Sets the value of the isRELIDO property.
+     * Sets whether this is marked as releasable by information disclosure
+     * official.
      * 
      * @param value
-     *     allowed object is
-     *     {@link Boolean }
      */
     public void setIsRELIDO(boolean value)
     {
@@ -725,35 +717,26 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Returns the True if there are Releaseable To countries for this Marking.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
+     * @return <code>true</code> if there are Releaseable To countries for this
+     *         Marking.
      */
-    public boolean getIsReleaseTo()
+    public boolean isReleaseTo()
     {
         return getReleaseToCountries().size() > 0;
     }
 
     /**
-     * Returns the value of the isNOFORN property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
+     * @return whether this is marked as not releasable to foreign nationals.
      */
-    public boolean getIsNOFORN()
+    public boolean isNOFORN()
     {
         return _isNOFORN;
     }
 
     /**
-     * Sets the value of the isNOFORN property.
+     * Sets whether this is marked as not releasable to foreign nationals.
      * 
      * @param value
-     *     allowed object is
-     *     {@link Boolean }
      */
     public void setIsNOFORN(boolean value)
     {
@@ -761,11 +744,8 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Returns a list of countries that are owners/producers of this classified information.
-     * 
-     * @return
-     *     possible object is
-     *     {@link List<ISO3166Country> }
+     * @return a list of countries that are owners/producers of this classified
+     *         information.
      */
     public List<ISO3166Country> getSelectedCountries()
     {
@@ -778,11 +758,8 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Returns a list of countries that this classified information is Releaseable To.
-     * 
-     * @return
-     *     possible object is
-     *     {@link List<ISO3166Country> }
+     * @return a list of countries that this classified information is
+     *         releasable To.
      */
     public List<ISO3166Country> getReleaseToCountries()
     {
@@ -795,11 +772,8 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Returns a list of countries that this classified information is Displayable To.
-     * 
-     * @return
-     *     possible object is
-     *     {@link List<ISO3166Country> }
+     * @return a list of countries that this classified information is
+     *         displayable To.
      */
     public List<ISO3166Country> getDisplayOnlyCountries()
     {
@@ -812,11 +786,7 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Returns the MarkingValue classification assigned to this information.
-     * 
-     * @return
-     *     possible object is
-     *     {@link MarkingValue }
+     * @return the MarkingValue classification assigned to this information.
      */
     public MarkingValue getClassification()
     {
@@ -832,32 +802,24 @@ public class Marking implements Serializable, Comparable<Marking> {
      * Sets the MarkingValue classification assigned to this information.
      * 
      * @param value
-     *     allowed object is
-     *     {@link MarkingValue }
      */
     public void setClassification(MarkingValue value)
     {
-        _classification = value;
+        _classification = value.clone();
     }
 
     /**
-     * Returns the value of the isLIMDIS property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
+     * @return whether this is marked as limited distribution.
      */
-    public boolean getIsLIMDIS()
+    public boolean isLIMDIS()
     {
         return _isLIMDIS;
     }
 
     /**
-     * Sets the value of the isLIMDIS property.
+     * Sets whether this is marked as limited distribution.
      * 
      * @param value
-     *     allowed object is
-     *     {@link Boolean }
      */
     public void setIsLIMDIS(boolean value)
     {
@@ -865,23 +827,17 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Returns the value of the isEXDIS property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
+     * @return whether this is marked as exclusive distribution.
      */
-    public boolean getIsEXDIS()
+    public boolean isEXDIS()
     {
         return _isEXDIS;
     }
 
     /**
-     * Sets the value of the isEXDIS property.
+     * Sets whether this is marked as exclusive distribution.
      * 
      * @param value
-     *     allowed object is
-     *     {@link Boolean }
      */
     public void setIsEXDIS(boolean value)
     {
@@ -889,23 +845,17 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Returns the value of the isSBU property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
+     * @return the whether its marked sensitive but unclassified.
      */
-    public boolean getIsSBU()
+    public boolean isSBU()
     {
         return _isSBU;
     }
 
     /**
-     * Sets the value of the isSBU property.
+     * Sets whether its marked sensitive but unclassified.
      * 
      * @param value
-     *     allowed object is
-     *     {@link Boolean }
      */
     public void setIsSBU(boolean value)
     {
@@ -913,23 +863,17 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Returns the value of the isSBUNF property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
+     * @return whether its marked sensitive but unclassified and no foreign.
      */
-    public boolean getIsSBUNF()
+    public boolean isSBUNF()
     {
         return _isSBUNF;
     }
 
     /**
-     * Sets the value of the isSBUNF property.
+     * Sets whether its marked sensitive but unclassified and no foreign.
      * 
      * @param value
-     *     allowed object is
-     *     {@link Boolean }
      */
     public void setIsSBUNF(boolean value)
     {
@@ -937,67 +881,151 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Returns the True if there are ACCM nicknames for this Marking.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
+     * @return whether its marked law enforcement sensitive no foreign.
      */
-    public boolean getIsACCM()
+    public boolean isLESNF()
     {
-        return getNicknames().size() > 0;
+        return _isLESNF;
     }
 
     /**
-     * Returns a list of ACCM nicknames that are assigned to this classified information.
+     * Sets whether its marked law enforcement sensitive no foreign.
      * 
-     * @return
-     *     possible object is
-     *     {@link List<String> }
+     * @param _isLESNF
      */
-    public List<String> getNicknames()
+    public void setIsLESNF(boolean _isLESNF)
     {
-        if (_nicknames == null)
-        {
-            _nicknames = new ArrayList<String>();
-        }
-        ;
-
-        return _nicknames;
+        this._isLESNF = _isLESNF;
     }
 
     /**
-     * Returns True if dissemination controls have been applied to this Marking.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
+     * @return whether its marked no distribution.
      */
-    public boolean hasDeseminationControls()
+    public boolean isNODIS()
     {
-        return getIsFOUO() || getIsLES() || getIsORCON() || getIsIMCON() || getIsDSEN() || getIsDisplayOnly()
-                || getIsFISA() || getIsNOFORN() || getIsPROPIN() || getIsPROPIN() || getIsReleaseTo() || getIsRELIDO();
+        return _isNODIS;
     }
 
     /**
-     * Returns True if non-IC markings have been applied to this Marking.
+     * Sets whether its marked no distribution.
      * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
+     * @param _isNODIS
      */
-    public boolean hasOtherDeseminationControls()
+    public void setIsNODIS(boolean _isNODIS)
     {
-        return getIsLIMDIS() || getIsEXDIS() || getIsSBU() || getIsSBUNF() || getIsACCM();
+        this._isNODIS = _isNODIS;
     }
 
     /**
-     * Returns the classification to be applied to a section, part, paragraph, or similar portion of a 
-     * classified document.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return whether its marked risk sensitive.
+     */
+    public boolean isRSEN()
+    {
+        return _isRSEN;
+    }
+
+    /**
+     * Sets whether its marked risk sensitive.
+     * 
+     * @param _isRSEN
+     */
+    public void setIsRSEN(boolean _isRSEN)
+    {
+        this._isRSEN = _isRSEN;
+    }
+
+    /**
+     * @return whether its marked sensitive security information.
+     */
+    public boolean isSSI()
+    {
+        return _isSSI;
+    }
+
+    /**
+     * Sets whether its marked sensitive security information.
+     * 
+     * @param _isSSI
+     */
+    public void setIsSSI(boolean _isSSI)
+    {
+        this._isSSI = _isSSI;
+    }
+
+    /**
+     * @return a list of alternative or compensatory control measures (ACCM)
+     *         which are defined as a list of personnel to who the specific
+     *         classified information has been or may be provided together with
+     *         the use of an unclassified project name.
+     */
+    public ACCMNickname[] getACCMNicknames()
+    {
+        return controlACCM.getNicknames();
+    }
+
+    /**
+     * @param value
+     */
+    public void addACCMNickname(ACCMNickname value)
+    {
+        controlACCM.addNickname(value);
+    }
+
+    /**
+     * @return the SAP programs included within the marking.
+     */
+    public SAPProgram[] getSAPPrograms()
+    {
+        return controlSAP.getPrograms();
+    }
+
+    /**
+     * @param value
+     */
+    public void addSAPProgram(SAPProgram value)
+    {
+        controlSAP.addProgram(value);
+    }
+    
+    /**
+     * @return the SCI projects included within the marking.
+     */
+    public SCIElement[] getSCIElements()
+    {
+        return controlSCI.getElements();
+    }
+
+    /**
+     * @param value
+     */
+    public void addSCIElement(SCIElement value)
+    {
+        controlSCI.addElement(value);
+    }
+    
+    /**
+     * @return <code>true</code> if dissemination controls have been applied to
+     *         this Marking.
+     */
+    public boolean hasDisseminationControls()
+    {
+        return isRSEN() || isFOUO() || isORCON() || isIMCON() || isNOFORN() || isDSEN() || isDisplayOnly() || isFISA()
+                || isNOFORN() || isPROPIN() || isPROPIN() || isReleaseTo() || isRELIDO();
+    }
+
+    /**
+     * @return <code>true</code> if non-IC markings have been applied to this
+     *         Marking.
+     */
+    public boolean hasOtherDisseminationControls()
+    {
+        return isLIMDIS() || isEXDIS() || isNODIS() || isSBU() || isSBUNF() || isLES() || isLESNF() || isSSI();
+    }
+
+    /**
+     * @return the classification to be applied to a section, part, paragraph,
+     *         or similar portion of a classified document.
      */
     public String toPortionString()
     {
@@ -1005,11 +1033,8 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Returns the classification and associated markings of a classified document.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return the classification and associated markings of a classified
+     *         document.
      */
     @Override
     public String toString()
@@ -1018,17 +1043,13 @@ public class Marking implements Serializable, Comparable<Marking> {
     }
 
     /**
-     * Returns the classification of a classified set of data, either full or portion based on the boolean parameter.
-     * If True, the String returned applies to a section, part, paragraph, or similar portion. 
-     * If False, the String returned is the full classification and associated markings.
+     * @param toPortion allowed object is {@link Boolean }
      * 
-     * @param toPortion
-     *     allowed object is
-     *     {@link Boolean }
-     *     
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return the classification of a classified set of data, either full or
+     *         portion based on the boolean parameter. If True, the String
+     *         returned applies to a section, part, paragraph, or similar
+     *         portion. If False, the String returned is the full classification
+     *         and associated markings.
      */
     public String toString(boolean toPortion)
     {
@@ -1036,12 +1057,13 @@ public class Marking implements Serializable, Comparable<Marking> {
         String marking = "";
 
         // JOINT and NATO and FGI start with //
-        if (getIsJOINT() || getIsNATO() || !getSelectedCountries().contains(ISO3166Country.getUSA()))
+        if (isJOINT() || isNATO() || !getSelectedCountries().contains(ISO3166Country.getUSA()))
         {
 
             marking += "//";
 
-            // If there is only one country and we know it is not USA then this if FGI eg. '//DEU SECRET'
+            // If there is only one country and we know it is not USA then this
+            // if FGI eg. '//DEU SECRET'
             if (getSelectedCountries().size() == 1)
             {
                 marking += getSelectedCountries().get(0).getAlpha3() + " ";
@@ -1052,7 +1074,7 @@ public class Marking implements Serializable, Comparable<Marking> {
         marking += toPortion ? getClassification().getPortion() : getClassification().getTitle();
 
         // JOINT then adds the list of countries
-        if (getIsJOINT())
+        if (isJOINT())
         {
 
             for (ISO3166Country country : getSelectedCountries())
@@ -1061,69 +1083,72 @@ public class Marking implements Serializable, Comparable<Marking> {
             }
         }
 
-        if (hasDeseminationControls())
+        if (controlSCI.hasControls())
+        {
+            marking += "//" + controlSCI.toString();
+        }
+        if (controlSAP.hasControls())
+        {
+            marking += "//" + controlSAP.toString();
+        }
+        if (controlACCM.hasControls())
+        {
+            marking += "//" + controlACCM.toString();
+        }
+
+        if (hasDisseminationControls())
         {
 
             marking += "//";
 
-            if (getIsFOUO())
-            {
+            if (isFOUO())
+                marking += "FOUO/";
 
-                if (getIsLES())
-                {
-                    marking += "FOUO-LES/";
-                }
-                else
-                {
-                    marking += "FOUO/";
-                }
-            }
-            else
-            {
-                if (getIsLES())
-                {
-                    marking += "LES/";
-                }
-            }
+            marking = addDisseminations(marking, "REL TO ", isReleaseTo(), getReleaseToCountries());
 
-            marking = addDeseminations(marking, "REL TO ", getIsReleaseTo(), getReleaseToCountries());
+            marking = addDisseminations(marking, "DISPLAY ONLY ", isDisplayOnly(), getDisplayOnlyCountries());
 
-            marking = addDeseminations(marking, "DISPLAY ONLY ", getIsDisplayOnly(), getDisplayOnlyCountries());
-
-            if (getIsRELIDO()) marking += "RELIDO/";
-            if (getIsPROPIN()) marking += toPortion ? "PR/" : "PROPIN/";
-            if (getIsFISA()) marking += "FISA/";
-            if (getIsIMCON()) marking += toPortion ? "IMC/" : "IMCON/";
-            if (getIsORCON()) marking += toPortion ? "OC/" : "ORCON/";
-            if (getIsDSEN()) marking += "DSEN/";
-            if (getIsNOFORN()) marking += toPortion ? "NF/" : "NOFORN/";
+            if (isRSEN())
+                marking += toPortion ? "RS/" : "RSEN/";
+            if (isRELIDO())
+                marking += "RELIDO/";
+            if (isPROPIN())
+                marking += toPortion ? "PR/" : "PROPIN/";
+            if (isFISA())
+                marking += "FISA/";
+            if (isIMCON())
+                marking += toPortion ? "IMC/" : "IMCON/";
+            if (isORCON())
+                marking += toPortion ? "OC/" : "ORCON/";
+            if (isDSEN())
+                marking += "DSEN/";
+            if (isNOFORN())
+                marking += toPortion ? "NF/" : "NOFORN/";
 
             marking = marking.substring(0, marking.length() - 1);
         }
 
-        if (hasOtherDeseminationControls())
+        if (hasOtherDisseminationControls())
         {
 
             marking += "//";
 
-            if (getIsLIMDIS()) marking += toPortion ? "DS/" : "LIMITED DISTRIBUTION/";
-            if (getIsEXDIS()) marking += toPortion ? "XD/" : "EXDIS/";
-            if (getIsSBU()) marking += "SBU/";
-            if (getIsSBUNF()) marking += toPortion ? "SBU-NF/" : "SBU NOFORN/";
-
-            if (getIsACCM())
-            {
-
-                marking += "ACCM-";
-
-                Collections.sort(_nicknames);
-                for (String nickname : getNicknames())
-                {
-
-                    marking += nickname + "/";
-                }
-
-            }
+            if (isLES())
+                marking += "LES/";
+            if (isLESNF())
+                marking += toPortion ? "LES-NF/" : "LES NOFORN/";
+            if (isLIMDIS())
+                marking += toPortion ? "DS/" : "LIMITED DISTRIBUTION/";
+            if (isEXDIS())
+                marking += toPortion ? "XD/" : "EXDIS/";
+            if (isNODIS())
+                marking += toPortion ? "ND/" : "NODIS/";
+            if (isSBU())
+                marking += "SBU/";
+            if (isSBUNF())
+                marking += toPortion ? "SBU-NF/" : "SBU NOFORN/";
+            if (isSSI())
+                marking += "SSI/";
 
             // Remove trailing /
             marking = marking.substring(0, marking.length() - 1);
@@ -1133,7 +1158,7 @@ public class Marking implements Serializable, Comparable<Marking> {
 
     }
 
-    private String addDeseminations(String marking, String label, boolean display, List<ISO3166Country> countries)
+    private String addDisseminations(String marking, String label, boolean display, List<ISO3166Country> countries)
     {
 
         if (display && countries.size() > 0)

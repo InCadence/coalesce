@@ -1,10 +1,12 @@
 package com.incadencecorp.coalesce.framework.persistance;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.joda.time.DateTime;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 
@@ -25,6 +27,11 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
+/**
+ * Defines common functionality between persistors.
+ * 
+ * @author Derek C.
+ */
 public abstract class CoalescePersistorBase implements ICoalescePersistor {
 
     /*--------------------------------------------------------------------------
@@ -38,6 +45,9 @@ public abstract class CoalescePersistorBase implements ICoalescePersistor {
     Constructor / Initializers
     --------------------------------------------------------------------------*/
 
+    /**
+     * Default Constructor
+     */
     public CoalescePersistorBase()
     {
         _serCon = new ServerConn();
@@ -46,7 +56,7 @@ public abstract class CoalescePersistorBase implements ICoalescePersistor {
     /**
      * Sets the server connection.
      * 
-     * @param server connection object.
+     * @param svConn connection object.
      */
     public void initialize(ServerConn svConn)
     {
@@ -56,10 +66,11 @@ public abstract class CoalescePersistorBase implements ICoalescePersistor {
     /**
      * Sets the cacher and server connection.
      * 
-     * @param base class cacher.
-     * @param server connection object.
+     * @param cacher class cacher.
+     * @param svConn connection object.
+     * @return <code>true</code> is successful.
      */
-    public boolean initialize(ICoalesceCacher cacher, ServerConn svConn) throws CoalescePersistorException
+    public boolean initialize(ICoalesceCacher cacher, ServerConn svConn)
     {
         _serCon = svConn;
 
@@ -78,7 +89,7 @@ public abstract class CoalescePersistorBase implements ICoalescePersistor {
     --------------------------------------------------------------------------*/
 
     @Override
-    public boolean initialize(ICoalesceCacher cacher) throws CoalescePersistorException
+    public boolean initialize(ICoalesceCacher cacher)
     {
 
         this._cacher = cacher;
@@ -88,15 +99,15 @@ public abstract class CoalescePersistorBase implements ICoalescePersistor {
     }
 
     @Override
-    public boolean saveEntity(CoalesceEntity entity, boolean allowRemoval) throws CoalescePersistorException
+    public boolean saveEntity(boolean allowRemoval, CoalesceEntity... entities) throws CoalescePersistorException
     {
         boolean isSuccessful = false;
 
         // Cacher Disabled or not an Entity
-        if (this._cacher == null || entity.getType().toLowerCase().equals("entity"))
+        if (this._cacher == null)
         {
             // Yes; Persist and Flatten Now
-            isSuccessful = this.flattenObject(entity, allowRemoval);
+            isSuccessful = this.flattenObject(allowRemoval, entities);
         }
         else
         {
@@ -104,16 +115,22 @@ public abstract class CoalescePersistorBase implements ICoalescePersistor {
             if (this._cacher.getSupportsDelayedSave() && this._cacher.getState() == ECoalesceCacheStates.SPACE_AVAILABLE)
             {
                 // Yes; Only Flatten Core Elements
-                isSuccessful = this.flattenCore(entity, allowRemoval);
+                isSuccessful = this.flattenCore(allowRemoval, entities);
             }
             else
             {
                 // No; Persist and Flatten Entity Now
-                isSuccessful = this.flattenObject(entity, allowRemoval);
+                isSuccessful = this.flattenObject(allowRemoval, entities);
             }
 
             // If Successful Add to Cache
-            if (isSuccessful) isSuccessful = this._cacher.storeEntity(entity);
+            if (isSuccessful)
+            {
+                for (CoalesceEntity entity : entities)
+                {
+                    isSuccessful = this._cacher.storeEntity(entity);
+                }
+            }
 
         }
 
@@ -121,28 +138,43 @@ public abstract class CoalescePersistorBase implements ICoalescePersistor {
     }
 
     @Override
-    public CoalesceEntity getEntity(String key) throws CoalescePersistorException
+    public CoalesceEntity[] getEntity(String... keys) throws CoalescePersistorException
     {
 
-        CoalesceEntity entity = null;
+        List<CoalesceEntity> results = new ArrayList<CoalesceEntity>();
+        List<String> keysToQuery = new ArrayList<String>();
 
-        // Get Entity From Cache
-        entity = this.getEntityFromCache(key);
-
-        // Entity Cached?
-        if (entity == null)
+        for (String key : keys)
         {
 
-            // No; Load Entity's XML
-            String entityXml = this.getEntityXml(key);
+            // Get From Cache
+            CoalesceEntity entity = this.getEntityFromCache(key);
+
+            // Cached?
+            if (entity != null)
+            {
+                // Yes; Add to Results
+                results.add(entity);
+            }
+            else
+            {
+                // No; Add to Query List
+                keysToQuery.add(key);
+            }
+
+        }
+
+        for (String xml : getEntityXml(keysToQuery.toArray(new String[keysToQuery.size()])))
+        {
+
+            CoalesceEntity entity = new CoalesceEntity();
 
             // Found?
-            if (entityXml != null)
+            if (!StringHelper.isNullOrEmpty(xml) && entity.initialize(xml))
             {
 
-                // Yes; Initialize Entity
-                entity = new CoalesceEntity();
-                entity.initialize(entityXml);
+                // Yes; Add to Results
+                results.add(entity);
 
                 // Add Entity to Cache
                 this.addEntityToCache(entity);
@@ -151,7 +183,7 @@ public abstract class CoalescePersistorBase implements ICoalescePersistor {
 
         }
 
-        return entity;
+        return results.toArray(new CoalesceEntity[results.size()]);
 
     }
 
@@ -207,12 +239,24 @@ public abstract class CoalescePersistorBase implements ICoalescePersistor {
 
     }
 
+    @Override
+    public boolean persistEntityTemplate(CoalesceEntityTemplate entityTemplate) throws CoalescePersistorException {
+        
+        try (CoalesceDataConnectorBase conn = getDataConnector())
+        {
+            // Always persist template
+            return persistEntityTemplate(entityTemplate, conn);
+        }
+        
+    }
+
+    
     /*--------------------------------------------------------------------------
     Abstract Public Functions
     --------------------------------------------------------------------------*/
 
     @Override
-    public abstract String getEntityXml(String key) throws CoalescePersistorException;
+    public abstract String[] getEntityXml(String... keys) throws CoalescePersistorException;
 
     @Override
     public abstract String getEntityXml(String entityId, String entityIdType) throws CoalescePersistorException;
@@ -242,9 +286,6 @@ public abstract class CoalescePersistorBase implements ICoalescePersistor {
     public abstract byte[] getBinaryArray(String binaryFieldKey) throws CoalescePersistorException;
 
     @Override
-    public abstract boolean persistEntityTemplate(CoalesceEntityTemplate entityTemplate) throws CoalescePersistorException;
-
-    @Override
     public abstract String getEntityTemplateXml(String key) throws CoalescePersistorException;
 
     @Override
@@ -258,13 +299,17 @@ public abstract class CoalescePersistorBase implements ICoalescePersistor {
     @Override
     public abstract String getEntityTemplateMetadata() throws CoalescePersistorException;
 
+    protected abstract boolean persistEntityTemplate(CoalesceEntityTemplate entityTemplate, CoalesceDataConnectorBase conn) throws CoalescePersistorException;
+
     /*--------------------------------------------------------------------------
     Abstract Protected Functions
     --------------------------------------------------------------------------*/
 
-    protected abstract boolean flattenObject(CoalesceEntity entity, boolean allowRemoval) throws CoalescePersistorException;
+    protected abstract boolean flattenObject(boolean allowRemoval, CoalesceEntity... entities)
+            throws CoalescePersistorException;
 
-    protected abstract boolean flattenCore(CoalesceEntity entity, boolean allowRemoval) throws CoalescePersistorException;
+    protected abstract boolean flattenCore(boolean allowRemoval, CoalesceEntity... entities)
+            throws CoalescePersistorException;
 
     /*--------------------------------------------------------------------------
     	Private Functions

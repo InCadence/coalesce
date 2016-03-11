@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 import org.junit.After;
+import org.junit.Assume;
 import org.junit.Test;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -25,8 +26,6 @@ import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
-import com.incadencecorp.coalesce.framework.CoalesceSettings;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShellTest;
@@ -34,13 +33,13 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceStringField;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor.EntityMetaData;
-import com.incadencecorp.unity.local.connector.LocalConfigurationsConnector;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -60,12 +59,15 @@ import com.incadencecorp.unity.local.connector.LocalConfigurationsConnector;
  -----------------------------------------------------------------------------*/
 
 /**
- * Provides an extendable JUnit base class for testing the interface logic defined in
- * {@link com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor}. All classes that extend this JUnit base class
- * must provide {@link com.incadencecorp.coalesce.framework.persistance.ServerConn} and
- * {@link com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor} instances that the base class will use to run
- * the interface tests against. The following methods must be implemented by the subclass in addition to all abstract
- * methods.
+ * Provides an extendable JUnit base class for testing the interface logic
+ * defined in
+ * {@link com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor}.
+ * All classes that extend this JUnit base class must provide
+ * {@link com.incadencecorp.coalesce.framework.persistance.ServerConn} and
+ * {@link com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor}
+ * instances that the base class will use to run the interface tests against.
+ * The following methods must be implemented by the subclass in addition to all
+ * abstract methods.
  * 
  * <pre>
  * 
@@ -120,8 +122,6 @@ public abstract class CoalescePersistorBaseTest {
 
     protected static void setupBeforeClassBase(CoalescePersistorBaseTest tester) throws CoalesceException
     {
-        CoalesceSettings.initialize(new LocalConfigurationsConnector());
-
         _serCon = tester.getConnection();
 
         ICoalescePersistor persistor = tester.getPersistor(_serCon);
@@ -136,7 +136,25 @@ public abstract class CoalescePersistorBaseTest {
 
         _fieldKey = CoalescePersistorBaseTest.getCurrentStatusField(_entity).getKey();
 
-        assertTrue(_coalesceFramework.saveCoalesceEntity(_entity));
+        try
+        {
+            assertTrue(_coalesceFramework.saveCoalesceEntity(_entity));
+        }
+        catch (CoalescePersistorException e)
+        {
+
+            if (e.getCause() != null)
+            {
+                System.out.println(e.getCause().getMessage());
+            }
+            else
+            {
+                System.out.println(e.getMessage());
+            }
+            
+            // If entity fails to save halt the persister test.
+            Assume.assumeNoException(e);
+        }
 
     }
 
@@ -202,7 +220,7 @@ public abstract class CoalescePersistorBaseTest {
     {
         try (CoalesceDataConnectorBase conn = getDataConnector(_serCon))
         {
-            conn.openConnection();
+            conn.openConnection(true);
         }
     }
 
@@ -211,40 +229,40 @@ public abstract class CoalescePersistorBaseTest {
     {
         // Create Test Entity
         CoalesceEntity entity = CoalesceEntity.create("FlattenTest", "UnitTest", "1.0", "", "");
-        
+
         // Create Recordset
         CoalesceSection section = CoalesceSection.create(entity, "No Flatten Section");
         CoalesceRecordset recordSet = CoalesceRecordset.create(section, "No Flatten Recordset");
         CoalesceFieldDefinition.create(recordSet, "No Flatten Field", ECoalesceFieldDataTypes.STRING_TYPE);
-        
+
         CoalesceSection sectionFlatten = CoalesceSection.create(entity, "Flatten Section");
         CoalesceRecordset recordSetFlatten = CoalesceRecordset.create(sectionFlatten, "Flatten Recordset");
         CoalesceFieldDefinition.create(recordSetFlatten, "Flatten Field", ECoalesceFieldDataTypes.STRING_TYPE);
 
         // Add New Record
-        CoalesceRecord record = recordSet.addNew(); 
+        CoalesceRecord record = recordSet.addNew();
         CoalesceRecord recordFlatten = recordSetFlatten.addNew();
-        
+
         // Get Fields
         CoalesceStringField field = (CoalesceStringField) record.getFieldByName("No Flatten Field");
         CoalesceStringField fieldFlatten = (CoalesceStringField) recordFlatten.getFieldByName("Flatten Field");
-        
+
         // Set Field Values
         fieldFlatten.setValue("Flattened");
         field.setValue("Not Flattened");
-        
+
         // Disable Flattening
         section.setFlatten(false);
-        
-        //System.out.println(entity.toXml());
-        
+
+        // System.out.println(entity.toXml());
+
         // Persist Entity
         _coalesceFramework.saveCoalesceEntity(entity);
-        
+
         // Get Persisted Values
         String shouldHaveValue = _coalesceFramework.getCoalesceFieldValue(fieldFlatten.getKey());
         String shouldBeNull = _coalesceFramework.getCoalesceFieldValue(field.getKey());
-        
+
         // Verify
         assertEquals(shouldHaveValue, fieldFlatten.getValue());
         assertNull(shouldBeNull);
@@ -443,7 +461,7 @@ public abstract class CoalescePersistorBaseTest {
     public void testFAILGetEntityKeyForEntityId() throws CoalescePersistorException
     {
 
-        String objectKey = _coalesceFramework.getCoalesceEntityKeyForEntityId("", "", "");
+        String objectKey = _coalesceFramework.getCoalesceEntityKeyForEntityId("Invalid", "", "");
 
         assertNull(objectKey);
 
@@ -457,8 +475,7 @@ public abstract class CoalescePersistorBaseTest {
                                                                                       _entity.getName(),
                                                                                       _entity.getSource());
 
-        assertEquals(1, objectKeys.size());
-        assertEquals(_entity.getKey().toUpperCase(), objectKeys.get(0).toUpperCase());
+        assertTrue(objectKeys.contains(_entity.getKey()));
     }
 
     @Test
@@ -470,15 +487,13 @@ public abstract class CoalescePersistorBaseTest {
                                                                                               + ",AnotherEntityIdType",
                                                                                       _entity.getName(),
                                                                                       _entity.getSource());
-
-        assertEquals(1, objectKeys.size());
-        assertEquals(_entity.getKey().toUpperCase(), objectKeys.get(0).toUpperCase());
+        assertTrue(objectKeys.contains(_entity.getKey()));
     }
 
     @Test
     public void testFAILGetEntityKeyForEntityIdName() throws CoalescePersistorException
     {
-        List<String> objectKey = _coalesceFramework.getCoalesceEntityKeysForEntityId("", "", "", "");
+        List<String> objectKey = _coalesceFramework.getCoalesceEntityKeysForEntityId("Invalid", "", "", "");
         assertTrue(objectKey.isEmpty());
     }
 
@@ -520,7 +535,7 @@ public abstract class CoalescePersistorBaseTest {
     @Test
     public void testFAILGetEntityKeyForEntityIdSource() throws CoalescePersistorException
     {
-        List<String> objectKeys = _coalesceFramework.getCoalesceEntityKeysForEntityId("", "", "");
+        List<String> objectKeys = _coalesceFramework.getCoalesceEntityKeysForEntityId("Invalid", "", "");
         assertTrue(objectKeys.isEmpty());
     }
 
@@ -541,7 +556,7 @@ public abstract class CoalescePersistorBaseTest {
         // Ensure Database has a Template
         String xmlMetaData = _coalesceFramework.getCoalesceEntityTemplateMetadata();
 
-        //System.out.println(xmlMetaData);
+        // System.out.println(xmlMetaData);
 
         assertNotNull(xmlMetaData);
     }
@@ -572,7 +587,9 @@ public abstract class CoalescePersistorBaseTest {
 
     private static CoalesceEntity createEntity() throws CoalesceException
     {
-        CoalesceEntity entity = CoalesceEntity.create("TestEntity", "Unit Test", "1.0.0.0", "EntityId", "EntityIdType", "");
+        CoalesceEntity entity = CoalesceEntity.create("TestEntity", "Unit Test", "1.0.0.0", null, null, "");
+
+        entity.setEntityId("GUID", entity.getKey());
 
         CoalesceLinkageSection.create(entity, true);
 
@@ -709,13 +726,17 @@ public abstract class CoalescePersistorBaseTest {
 
                     if (attribute.getNodeName().equalsIgnoreCase("name")
                             || attribute.getNodeName().equalsIgnoreCase("source")
-                            || attribute.getNodeName().equalsIgnoreCase("version"))
+                            || attribute.getNodeName().equalsIgnoreCase("version")
+                            || attribute.getNodeName().equalsIgnoreCase("flatten")
+                            || attribute.getNodeName().equalsIgnoreCase("noindex")
+                            || attribute.getNodeName().equalsIgnoreCase("datatype"))
                     {
                         assertNotNull(attribute.getNodeValue());
                     }
                     else
                     {
-                        assertTrue(StringHelper.isNullOrEmpty(attribute.getNodeValue()));
+                        assertTrue(attribute.getNodeName() + " is not null",
+                                   StringHelper.isNullOrEmpty(attribute.getNodeValue()));
                     }
                 }
             }
@@ -725,8 +746,10 @@ public abstract class CoalescePersistorBaseTest {
         CoalesceEntity entity2 = template.createNewEntity();
 
         String entityXml = entity2.toXml();
-        // System.out.println("Copy of Entity made from Template: " + entity2.getKey());
-        // System.out.println("**********************************\n" + entityXml);
+        // System.out.println("Copy of Entity made from Template: " +
+        // entity2.getKey());
+        // System.out.println("**********************************\n" +
+        // entityXml);
 
         // Confirm Entity
         assertFalse("Entity not generated", StringHelper.isNullOrEmpty(entityXml));

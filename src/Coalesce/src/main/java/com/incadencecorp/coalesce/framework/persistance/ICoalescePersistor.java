@@ -26,7 +26,8 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
  -----------------------------------------------------------------------------*/
 
 /**
- * Interface for storing and retrieving Coalesce entities from different databases depending on the implementation.
+ * Interface for storing and retrieving Coalesce entities from different
+ * databases depending on the implementation.
  */
 public interface ICoalescePersistor {
 
@@ -41,6 +42,12 @@ public interface ICoalescePersistor {
         private String _entityType;
         private String _entityKey;
 
+        /**
+         * 
+         * @param id
+         * @param type
+         * @param key
+         */
         public EntityMetaData(final String id, final String type, final String key)
         {
             _entityId = id;
@@ -49,7 +56,8 @@ public interface ICoalescePersistor {
         }
 
         /**
-         * @return a comma separated value (CSV) list of unique identifiers that represents a Coalesce entity.
+         * @return a comma separated value (CSV) list of unique identifiers that
+         *         represents a Coalesce entity.
          */
         public final String getEntityId()
         {
@@ -57,7 +65,8 @@ public interface ICoalescePersistor {
         }
 
         /**
-         * @return comma separated value (CSV) list of type identifiers that map 1 to 1 with _entityId.
+         * @return comma separated value (CSV) list of type identifiers that map
+         *         1 to 1 with _entityId.
          */
         public final String getEntityType()
         {
@@ -84,6 +93,11 @@ public interface ICoalescePersistor {
         private String _entityKey;
         private String _elementXPath;
 
+        /**
+         * 
+         * @param key
+         * @param xPath
+         */
         public ElementMetaData(final String key, final String xPath)
         {
             _entityKey = key;
@@ -91,7 +105,8 @@ public interface ICoalescePersistor {
         }
 
         /**
-         * Contains a GUID that uniquely identifies a Coalesce entity that contains the element of interest.
+         * @return the GUID that uniquely identifies a Coalesce entity that
+         *         contains the element of interest.
          */
         public final String getEntityKey()
         {
@@ -99,7 +114,8 @@ public interface ICoalescePersistor {
         }
 
         /**
-         * Contains a XML path within the Coalesce entity specified by _entityKey that contains the element of interest.
+         * @return the XML path within the Coalesce entity specified by
+         *         _entityKey that contains the element of interest.
          */
         public final String getElementXPath()
         {
@@ -113,28 +129,28 @@ public interface ICoalescePersistor {
      * 
      * @param cacher Pass null if caching is not wanted
      * @return true if successful
-     * @throws CoalescePersistorException
      */
-    boolean initialize(ICoalesceCacher cacher) throws CoalescePersistorException;
+    boolean initialize(ICoalesceCacher cacher);
 
     /**
      * Saves the Coalesce entity to the database.
      * 
-     * @param entity the Coalesce entity to be saved.
-     * @param allowRemoval specifies whether an entity marked as deleted should be removed from the database.
+     * @param entities the Coalesce entities to be saved.
+     * @param allowRemoval specifies whether an entity marked as deleted should
+     *            be removed from the database.
      * @return true if successfully saved.
      * @throws CoalescePersistorException
      */
-    boolean saveEntity(CoalesceEntity entity, boolean allowRemoval) throws CoalescePersistorException;
+    boolean saveEntity(boolean allowRemoval, CoalesceEntity... entities) throws CoalescePersistorException;
 
     /**
      * Returns the Coalesce entity that matches the given parameters.
      * 
-     * @param key the primary key of the entity.
+     * @param keys the primary key of the entity.
      * @return the matching Coalesce entity.
      * @throws CoalescePersistorException
      */
-    CoalesceEntity getEntity(String key) throws CoalescePersistorException;
+    CoalesceEntity[] getEntity(String... keys) throws CoalescePersistorException;
 
     /**
      * Returns the Coalesce entity that matches the given parameters.
@@ -160,11 +176,11 @@ public interface ICoalescePersistor {
     /**
      * Returns the Coalesce entity's XML that matches the given parameters.
      * 
-     * @param key the primary key of the entity.
+     * @param keys the primary key of the entity.
      * @return the matching Coalesce entity's XML.
      * @throws CoalescePersistorException
      */
-    String getEntityXml(String key) throws CoalescePersistorException;
+    String[] getEntityXml(String... keys) throws CoalescePersistorException;
 
     /**
      * Returns the Coalesce entity's XML that matches the given parameters.
@@ -197,7 +213,8 @@ public interface ICoalescePersistor {
     Object getFieldValue(String fieldKey) throws CoalescePersistorException;
 
     /**
-     * Returns the ElementMetaData for the Coalesce object that matches the given parameters.
+     * Returns the ElementMetaData for the Coalesce object that matches the
+     * given parameters.
      * 
      * @param key the Coalesce object primary key
      * @param objectType the Coalesce object type specification.
@@ -207,12 +224,13 @@ public interface ICoalescePersistor {
     ElementMetaData getXPath(String key, String objectType) throws CoalescePersistorException;
 
     /**
-     * Returns the last modified date for the Coalesce object (entity, field, record, linkage, etc.) that matches the given
-     * parameters.
+     * Returns the last modified date for the Coalesce object (entity, field,
+     * record, linkage, etc.) that matches the given parameters.
      * 
      * @param key the primary key of the Coalesce object.
      * @param objectType is the Coalesce object to retrieve the information for.
-     * @return DateTime containing the last modified date for the Coalesce object matching the values.
+     * @return DateTime containing the last modified date for the Coalesce
+     *         object matching the values.
      * @throws CoalescePersistorException
      */
     DateTime getCoalesceObjectLastModified(String key, String objectType) throws CoalescePersistorException;
@@ -253,13 +271,14 @@ public interface ICoalescePersistor {
     /**
      * 
      * @param entityTemplate
-     * @return
+     * @return <code>true</code> is successful.
      * @throws CoalescePersistorException
      */
     boolean persistEntityTemplate(CoalesceEntityTemplate entityTemplate) throws CoalescePersistorException;
 
     /**
-     * Returns the Coalesce entity template XML that matches the given parameters.
+     * Returns the Coalesce entity template XML that matches the given
+     * parameters.
      * 
      * @param key the primary key of the entity.
      * @return the matching Coalesce entity's XML.
@@ -268,7 +287,8 @@ public interface ICoalescePersistor {
     String getEntityTemplateXml(String key) throws CoalescePersistorException;
 
     /**
-     * Returns the Coalesce entity template XML that matches the given parameters.
+     * Returns the Coalesce entity template XML that matches the given
+     * parameters.
      * 
      * @param name of the entity.
      * @param source of the entity.
@@ -279,7 +299,8 @@ public interface ICoalescePersistor {
     String getEntityTemplateXml(String name, String source, String version) throws CoalescePersistorException;
 
     /**
-     * Returns the Coalesce entity template key that matches the given parameters.
+     * Returns the Coalesce entity template key that matches the given
+     * parameters.
      * 
      * @param name of the entity.
      * @param source of the entity.

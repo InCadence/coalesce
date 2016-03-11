@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
+import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -46,6 +47,12 @@ public class CoalesceEncrypterTest {
     {
         String passPhrase = CoalesceSettings.getPassPhrase();
         _aesCrypto = new CoalesceEncrypter(passPhrase);
+        
+        try {
+            _aesCrypto.getEncryptionCipher();
+        } catch (CoalesceCryptoException e) {
+            Assume.assumeNoException(e);
+        }
 
         String filePath = CoalesceUnitTestSettings.getResourceAbsolutePath("dotNetEncryptedTest.txt");
         _dotNetEncryptedBytes = Files.readAllBytes(Paths.get(filePath));

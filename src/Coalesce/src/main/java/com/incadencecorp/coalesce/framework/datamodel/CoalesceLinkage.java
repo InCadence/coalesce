@@ -1,19 +1,14 @@
 package com.incadencecorp.coalesce.framework.datamodel;
 
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
 
 import org.apache.commons.lang.NullArgumentException;
-import org.joda.time.DateTime;
 
 import com.incadencecorp.coalesce.common.classification.Marking;
-import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.LocaleConverter;
-import com.incadencecorp.coalesce.common.helpers.XmlHelper;
-import com.incadencecorp.coalesce.framework.generatedjaxb.Linkage;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -32,29 +27,39 @@ import com.incadencecorp.coalesce.framework.generatedjaxb.Linkage;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-public class CoalesceLinkage extends CoalesceObject implements ICoalesceLinkage {
+/**
+ * This class represents the association between two Coalesce Entities.
+ * 
+ * @author Derek C.
+ */
+public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceLinkage {
 
     private Linkage _entityLinkage;
 
     /**
-     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage} and ties it to its parent
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}.
+     * Creates an
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage}
+     * and ties it to its parent
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}
+     * .
      * 
-     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}, the linkage section that
-     *            this new linkage will belong to
-     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage}, the new linkage to describe a
-     *         relationship between two classes
+     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}
+     *            , the linkage section that this new linkage will belong to
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage}
+     *         , the new linkage to describe a relationship between two classes
      */
     public static CoalesceLinkage create(CoalesceLinkageSection parent)
     {
-        if (parent == null) throw new NullArgumentException("parent");
+        if (parent == null)
+            throw new NullArgumentException("parent");
 
         CoalesceLinkage newLinkage = new CoalesceLinkage();
 
         Linkage entityLinkage = new Linkage();
         parent.getEntityLinkageSection().getLinkage().add(entityLinkage);
 
-        if (!newLinkage.initialize(parent, entityLinkage)) return null;
+        if (!newLinkage.initialize(parent, entityLinkage))
+            return null;
 
         newLinkage.setName("Linkage");
 
@@ -65,71 +70,34 @@ public class CoalesceLinkage extends CoalesceObject implements ICoalesceLinkage 
     }
 
     /**
-     * Initializes a previously new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage} and ties it to its
-     * parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}.
+     * Initializes a previously new
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage}
+     * and ties it to its parent
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}
+     * .
      * 
-     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}, the linkage section that
-     *            this new linkage will belong to
-     * @param linkage Linkage, the linkage describing a relationship between two classes
+     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}
+     *            , the linkage section that this new linkage will belong to
+     * @param linkage Linkage, the linkage describing a relationship between two
+     *            classes
      * @return boolean indicator of success/failure
      */
     protected boolean initialize(CoalesceLinkageSection parent, Linkage linkage)
     {
-        if (parent == null) throw new NullArgumentException("parent");
-        if (linkage == null) throw new NullArgumentException("linkage");
+        if (parent == null)
+            throw new NullArgumentException("parent");
+        if (linkage == null)
+            throw new NullArgumentException("linkage");
 
         setParent(parent);
         _entityLinkage = linkage;
 
-        return super.initialize();
+        return super.initialize(_entityLinkage);
     }
 
     // -----------------------------------------------------------------------//
     // public Properties
     // -----------------------------------------------------------------------//
-
-    @Override
-    public String getObjectKey()
-    {
-        return _entityLinkage.getKey();
-    }
-
-    @Override
-    public void setObjectKey(String value)
-    {
-        _entityLinkage.setKey(value);
-    }
-
-    @Override
-    public String getName()
-    {
-        return _entityLinkage.getName();
-    }
-
-    @Override
-    public void setName(String value)
-    {
-        _entityLinkage.setName(value);
-    }
-
-    @Override
-    public String getType()
-    {
-        return "linkage";
-    }
-
-    @Override
-    public String getModifiedBy()
-    {
-        return _entityLinkage.getModifiedby();
-    }
-
-    @Override
-    public void setModifiedBy(String value)
-    {
-        _entityLinkage.setModifiedby(value);
-        setChanged();
-    }
 
     @Override
     public Marking getClassificationMarking()
@@ -141,7 +109,7 @@ public class CoalesceLinkage extends CoalesceObject implements ICoalesceLinkage 
     public void setClassificationMarking(Marking value)
     {
         _entityLinkage.setClassificationmarking(value.toPortionString());
-        setChanged();
+        updateLastModified();
     }
 
     @Override
@@ -154,7 +122,7 @@ public class CoalesceLinkage extends CoalesceObject implements ICoalesceLinkage 
     public void setEntity1Key(String value)
     {
         _entityLinkage.setEntity1Key(value);
-        setChanged();
+        updateLastModified();
     }
 
     @Override
@@ -167,7 +135,7 @@ public class CoalesceLinkage extends CoalesceObject implements ICoalesceLinkage 
     public void setEntity1Name(String value)
     {
         _entityLinkage.setEntity1Name(value);
-        setChanged();
+        updateLastModified();
     }
 
     @Override
@@ -180,7 +148,7 @@ public class CoalesceLinkage extends CoalesceObject implements ICoalesceLinkage 
     public void setEntity1Source(String value)
     {
         _entityLinkage.setEntity1Source(value);
-        setChanged();
+        updateLastModified();
     }
 
     @Override
@@ -193,7 +161,7 @@ public class CoalesceLinkage extends CoalesceObject implements ICoalesceLinkage 
     public void setEntity1Version(String value)
     {
         _entityLinkage.setEntity1Version(value);
-        setChanged();
+        updateLastModified();
     }
 
     @Override
@@ -206,7 +174,7 @@ public class CoalesceLinkage extends CoalesceObject implements ICoalesceLinkage 
     public void setEntity2Key(String value)
     {
         _entityLinkage.setEntity2Key(value);
-        setChanged();
+        updateLastModified();
     }
 
     @Override
@@ -219,7 +187,7 @@ public class CoalesceLinkage extends CoalesceObject implements ICoalesceLinkage 
     public void setEntity2Name(String value)
     {
         _entityLinkage.setEntity2Name(value);
-        setChanged();
+        updateLastModified();
     }
 
     @Override
@@ -232,7 +200,7 @@ public class CoalesceLinkage extends CoalesceObject implements ICoalesceLinkage 
     public void setEntity2Source(String value)
     {
         _entityLinkage.setEntity2Source(value);
-        setChanged();
+        updateLastModified();
     }
 
     @Override
@@ -245,7 +213,19 @@ public class CoalesceLinkage extends CoalesceObject implements ICoalesceLinkage 
     public void setEntity2Version(String value)
     {
         _entityLinkage.setEntity2Version(value);
-        setChanged();
+        updateLastModified();
+    }
+
+    @Override
+    public int getEntity2ObjectVersion()
+    {
+        return _entityLinkage.getEntity2Objectversion();
+    }
+
+    @Override
+    public void setEntity2ObjectVersion(int value)
+    {
+        _entityLinkage.setEntity2Objectversion(value);
     }
 
     @Override
@@ -258,7 +238,7 @@ public class CoalesceLinkage extends CoalesceObject implements ICoalesceLinkage 
     public void setInputLang(Locale value)
     {
         _entityLinkage.setInputlang(value);
-        setChanged();
+        updateLastModified();
     }
 
     @Override
@@ -271,58 +251,19 @@ public class CoalesceLinkage extends CoalesceObject implements ICoalesceLinkage 
     public void setLinkType(ELinkTypes value)
     {
         _entityLinkage.setLinktype(value.getLabel());
-        setChanged();
+        updateLastModified();
     }
 
     @Override
-    public DateTime getDateCreated()
+    public String getLabel()
     {
-        // return new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityLinkage.getDatecreated());
-        return _entityLinkage.getDatecreated();
+        return _entityLinkage.getLabel();
     }
 
     @Override
-    public void setDateCreated(DateTime value)
+    public void setLabel(String value)
     {
-        // _entityLinkage.setDatecreated(new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
-        _entityLinkage.setDatecreated(value);
-    }
-
-    @Override
-    public DateTime getLastModified()
-    {
-        // return new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityLinkage.getLastmodified());
-        return _entityLinkage.getLastmodified();
-    }
-
-    @Override
-    protected void setObjectLastModified(DateTime value)
-    {
-        // _entityLinkage.setLastmodified(new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
-        _entityLinkage.setLastmodified(value);
-    }
-
-    @Override
-    protected String getObjectStatus()
-    {
-        return _entityLinkage.getStatus();
-    }
-
-    @Override
-    protected void setObjectStatus(ECoalesceObjectStatus status)
-    {
-        _entityLinkage.setStatus(status.getLabel());
-    }
-
-    /**
-     * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage}'s status identifying if it is
-     * current or deleted.
-     * 
-     * @return boolean indicates if the linkage has been marked as deleted.
-     */
-    public boolean isMarkedDeleted()
-    {
-        return (getStatus() == ECoalesceObjectStatus.DELETED);
+        _entityLinkage.setLabel(value);
     }
 
     // -----------------------------------------------------------------------//
@@ -330,26 +271,99 @@ public class CoalesceLinkage extends CoalesceObject implements ICoalesceLinkage 
     // -----------------------------------------------------------------------//
 
     /**
-     * Sets the two entities key, name, source and version as well as the link type, classification, modified by, input
-     * language, dates created and modified and active status.
+     * Sets the two entities key, name, source and version as well as the link
+     * type, classification, modified by, input language, dates created and
+     * modified and active status.
      * 
-     * @param entity1 {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} belonging to the first entity.
-     *            Provides the entity's key, name, source and version
-     * @param linkType ELinkTypes value for the relationship type identification between the entities
-     * @param entity2 {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} belonging to the second entity.
-     *            Provides the entity's key, name, source and version
-     * @param classificationMarking Marking of the classification of the relationship
+     * @param entity1 {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}
+     *            belonging to the first entity. Provides the entity's key,
+     *            name, source and version
+     * @param linkType ELinkTypes value for the relationship type identification
+     *            between the entities
+     * @param entity2 {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}
+     *            belonging to the second entity. Provides the entity's key,
+     *            name, source and version
+     * @param classificationMarking Marking of the classification of the
+     *            relationship
      * @param modifiedBy identification of who entered the relationship
+     * @param modifiedByIP
+     * @param label
      * @param inputLang language that the relationship was created in
+     * @param isReadOnly
      */
     public void establishLinkage(CoalesceEntity entity1,
                                  ELinkTypes linkType,
                                  CoalesceEntity entity2,
                                  Marking classificationMarking,
                                  String modifiedBy,
-                                 Locale inputLang)
+                                 String modifiedByIP,
+                                 String label,
+                                 Locale inputLang,
+                                 boolean isReadOnly)
     {
+
+        establishLinkage(entity1,
+                         linkType,
+                         entity2.getKey(),
+                         entity2.getName(),
+                         entity2.getSource(),
+                         entity2.getVersion(),
+                         entity2.getObjectVersion(),
+                         classificationMarking,
+                         modifiedBy,
+                         modifiedByIP,
+                         label,
+                         inputLang,
+                         isReadOnly);
+
+    }
+
+    /**
+     * Creates a link between entity1 and entity2
+     * 
+     * @param entity1
+     * @param linkType
+     * @param entity2Key
+     * @param entity2Name
+     * @param entity2Source
+     * @param entity2Version
+     * @param entity2ObjectVersion
+     * @param classificationMarking
+     * @param modifiedBy
+     * @param modifiedByIP
+     * @param label
+     * @param inputLang
+     * @param isReadOnly
+     */
+    public void establishLinkage(CoalesceEntity entity1,
+                                 ELinkTypes linkType,
+                                 String entity2Key,
+                                 String entity2Name,
+                                 String entity2Source,
+                                 String entity2Version,
+                                 int entity2ObjectVersion,
+                                 Marking classificationMarking,
+                                 String modifiedBy,
+                                 String modifiedByIP,
+                                 String label,
+                                 Locale inputLang,
+                                 boolean isReadOnly)
+    {
+        createHistory(modifiedBy, modifiedByIP, null);
+
+        if (isReadOnly)
+        {
+            setStatus(ECoalesceObjectStatus.READONLY);
+        }
+        else
+        {
+            setStatus(ECoalesceObjectStatus.ACTIVE);
+        }
+
         // Set Values
+        setObjectVersion(entity1.getObjectVersion());
+        setLabel(label);
+
         setEntity1Key(entity1.getKey());
         setEntity1Name(entity1.getName());
         setEntity1Source(entity1.getSource());
@@ -357,35 +371,18 @@ public class CoalesceLinkage extends CoalesceObject implements ICoalesceLinkage 
 
         setLinkType(linkType);
 
-        setEntity2Key(entity2.getKey());
-        setEntity2Name(entity2.getName());
-        setEntity2Source(entity2.getSource());
-        setEntity2Version(entity2.getVersion());
+        setEntity2Key(entity2Key);
+        setEntity2Name(entity2Name);
+        setEntity2Source(entity2Source);
+        setEntity2Version(entity2Version);
+        setEntity2ObjectVersion(entity2ObjectVersion);
 
         setClassificationMarking(classificationMarking);
         setModifiedBy(modifiedBy);
+        setModifiedByIP(modifiedByIP);
         setInputLang(inputLang);
 
-        DateTime utcNow = JodaDateTimeHelper.nowInUtc();
-        setLastModified(utcNow);
-
-        setStatus(ECoalesceObjectStatus.ACTIVE);
-    }
-
-    @Override
-    public String toXml()
-    {
-        return XmlHelper.serialize(_entityLinkage);
-    }
-
-    // -----------------------------------------------------------------------//
-    // Private and protected Methods
-    // -----------------------------------------------------------------------//
-
-    private void setChanged()
-    {
-        DateTime utcNow = JodaDateTimeHelper.nowInUtc();
-        setLastModified(utcNow);
+        updateLastModified();
     }
 
     // -----------------------------------------------------------------------//
@@ -393,27 +390,22 @@ public class CoalesceLinkage extends CoalesceObject implements ICoalesceLinkage 
     // -----------------------------------------------------------------------//
 
     @Override
-    protected Map<QName, String> getOtherAttributes()
+    protected boolean prune(CoalesceObjectType child)
     {
-        return _entityLinkage.getOtherAttributes();
+        boolean isSuccessful = false;
+
+        if (child instanceof History)
+        {
+            isSuccessful = _entityLinkage.getHistory().remove(child);
+        }
+
+        return isSuccessful;
     }
 
     @Override
-    public boolean setAttribute(String name, String value)
+    protected boolean setExtendedAttributes(String name, String value)
     {
         switch (name.toLowerCase()) {
-        case "key":
-            setKey(value);
-            return true;
-        case "datecreated":
-            setDateCreated(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
-            return true;
-        case "lastmodified":
-            setLastModified(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
-            return true;
-        case "name":
-            setName(value);
-            return true;
         case "entity1key":
             setEntity1Key(value);
             return true;
@@ -441,29 +433,27 @@ public class CoalesceLinkage extends CoalesceObject implements ICoalesceLinkage 
         case "entity2version":
             setEntity2Version(value);
             return true;
+        case "entity2objectversion":
+            setEntity2ObjectVersion(Integer.valueOf(value));
+            return true;
         case "classificationmarking":
             setClassificationMarking(new Marking(value));
-            return true;
-        case "modifiedby":
-            setModifiedBy(value);
             return true;
         case "inputlang":
 
             Locale inputLang = LocaleConverter.parseLocale(value);
 
-            if (inputLang == null) return false;
+            if (inputLang == null)
+                return false;
 
             setInputLang(inputLang);
 
             return true;
 
-        case "status":
-            setStatus(ECoalesceObjectStatus.getTypeForLabel(value));
-            return true;
         default:
             if (setOtherAttribute(name, value))
             {
-                setChanged();
+                updateLastModified();
                 return true;
             }
             else
@@ -476,11 +466,8 @@ public class CoalesceLinkage extends CoalesceObject implements ICoalesceLinkage 
     @Override
     protected Map<QName, String> getAttributes()
     {
-        Map<QName, String> map = new HashMap<QName, String>();
-        map.put(new QName("key"), _entityLinkage.getKey());
-        map.put(new QName("datecreated"), JodaDateTimeHelper.toXmlDateTimeUTC(_entityLinkage.getDatecreated()));
-        map.put(new QName("lastmodified"), JodaDateTimeHelper.toXmlDateTimeUTC(_entityLinkage.getLastmodified()));
-        map.put(new QName("name"), _entityLinkage.getName());
+        Map<QName, String> map = super.getAttributes();
+
         map.put(new QName("entity1key"), _entityLinkage.getEntity1Key());
         map.put(new QName("entity1name"), _entityLinkage.getEntity1Name());
         map.put(new QName("entity1source"), _entityLinkage.getEntity1Source());
@@ -491,7 +478,15 @@ public class CoalesceLinkage extends CoalesceObject implements ICoalesceLinkage 
         map.put(new QName("entity2source"), _entityLinkage.getEntity2Source());
         map.put(new QName("entity2version"), _entityLinkage.getEntity2Version());
         map.put(new QName("classificationmarking"), _entityLinkage.getClassificationmarking());
-        map.put(new QName("modifiedby"), _entityLinkage.getModifiedby());
+
+        if (_entityLinkage.getEntity2Objectversion() == null)
+        {
+            map.put(new QName("entity2objectversion"), "0");
+        }
+        else
+        {
+            map.put(new QName("entity2objectversion"), Integer.toString(_entityLinkage.getEntity2Objectversion()));
+        }
 
         if (_entityLinkage.getInputlang() == null)
         {
@@ -502,7 +497,12 @@ public class CoalesceLinkage extends CoalesceObject implements ICoalesceLinkage 
             map.put(new QName("inputlang"), _entityLinkage.getInputlang().toString());
         }
 
-        map.put(new QName("status"), _entityLinkage.getStatus());
         return map;
     }
+
+    protected Linkage getBaseLinkage()
+    {
+        return _entityLinkage;
+    }
+
 }

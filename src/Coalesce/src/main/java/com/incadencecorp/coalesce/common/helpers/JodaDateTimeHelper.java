@@ -1,5 +1,7 @@
 package com.incadencecorp.coalesce.common.helpers;
 
+import java.util.Date;
+
 import org.apache.commons.lang.NullArgumentException;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -60,7 +62,7 @@ public final class JodaDateTimeHelper {
 
         try
         {
-            DateTimeFormatter dateFormat = ISODateTimeFormat.basicDate().withZoneUTC();
+            DateTimeFormatter dateFormat = ISODateTimeFormat.basicDate().withZone(DateTimeZone.UTC);
 
             return dateFormat.parseDateTime(value);
 
@@ -121,7 +123,10 @@ public final class JodaDateTimeHelper {
             value = value + "Z";
         }
 
-        return DateTime.parse(value);
+        DateTimeFormatter formatter = ISODateTimeFormat.dateTime().withZone(DateTimeZone.UTC);
+        return formatter.parseDateTime(value);
+        
+        //return DateTime.parse(value);
     }
 
     /**
@@ -147,8 +152,8 @@ public final class JodaDateTimeHelper {
         try
         {
             DateTimeFormatter outputFormatter = DateTimeFormat.forPattern("yyyy-MM-dd H:mm:ss.SSSZ").withZone(DateTimeZone.UTC);
-            DateTime dtOut = DateTime.parse(value, outputFormatter);
-            return dtOut;
+
+            return outputFormatter.parseDateTime(value);
         }
         catch (Exception ex)
         {
@@ -314,7 +319,7 @@ public final class JodaDateTimeHelper {
 
     /**
      * Converts a {@link org.joda.time.DateTime} to the string format used in the serialization of
-     * {@link com.incadencecorp.coalesce.framework.generatedjaxb.Entity} to XML.
+     * {@link com.incadencecorp.coalesce.framework.datamodel.generated.Entity} to XML.
      * 
      * @param forDate the date.
      * @return the string representation of the {@link org.joda.time.DateTime}.
@@ -323,17 +328,15 @@ public final class JodaDateTimeHelper {
     {
         if (forDate == null) throw new NullArgumentException("forDate");
 
-        DateTimeFormatter formatter = ISODateTimeFormat.dateTime().withZoneUTC();
+        DateTimeFormatter formatter = ISODateTimeFormat.dateTime().withZone(DateTimeZone.UTC);
 
-        String toXmlDate = formatter.print(forDate);
-
-        return toXmlDate;
+        return formatter.print(forDate);
 
     }
 
     /**
      * Converts a date/time stored in the XML format used to serialize
-     * {@link com.incadencecorp.coalesce.framework.generatedjaxb.Entity} to a {@link org.joda.time.DateTime}. If the string
+     * {@link com.incadencecorp.coalesce.framework.datamodel.generated.Entity} to a {@link org.joda.time.DateTime}. If the string
      * cannot be parsed then <code>null</code> is returned.
      * 
      * @param xmlDate the XML date string.
@@ -346,11 +349,9 @@ public final class JodaDateTimeHelper {
 
         try
         {
-            DateTimeFormatter formatter = ISODateTimeFormat.dateTime().withZoneUTC();
+            DateTimeFormatter formatter = ISODateTimeFormat.dateTime().withZone(DateTimeZone.UTC);
 
-            DateTime forDate = formatter.parseDateTime(xmlDate);
-
-            return forDate;
+            return formatter.parseDateTime(xmlDate);
 
         }
         catch (IllegalArgumentException iae)
@@ -367,6 +368,16 @@ public final class JodaDateTimeHelper {
     public static DateTime nowInUtc()
     {
         return new DateTime(DateTimeZone.UTC);
+    }
+    
+    /**
+     * Returns a {@link org.joda.time.DateTime} for the current time and a time zone set to UTC.
+     * 
+     * @return the {@link org.joda.time.DateTime} for the current time and a time zone set to UTC.
+     */
+    public static Date nowInUtcAsDate()
+    {
+        return new Date(nowInUtc().getMillis());
     }
 
     // -----------------------------------------------------------------------'

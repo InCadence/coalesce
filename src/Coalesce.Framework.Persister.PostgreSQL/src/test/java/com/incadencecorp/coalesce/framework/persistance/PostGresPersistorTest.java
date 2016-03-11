@@ -52,10 +52,19 @@ public class PostGresPersistorTest extends CoalescePersistorBaseTest {
     protected ServerConn getConnection()
     {
         ServerConn serCon = new ServerConn();
-        serCon.setServerName("127.0.0.1");
-        serCon.setDatabase("CoalesceDatabase");
-        serCon.setUser("postgres");
-        serCon.setPassword("Passw0rd");
+
+        // InCadence Settings
+        // serCon.setServerName("127.0.0.1");
+        // serCon.setDatabase("CoalesceDatabase");
+        // serCon.setUser("postgres");
+        // serCon.setPassword("Passw0rd");
+
+        // ACINT Settings
+        serCon.setServerName("dbsp3");
+        serCon.setDatabase("OMEGA");
+        serCon.setUser("enterprisedb");
+        serCon.setPassword("enterprisedb");
+        serCon.setPortNumber(5444);
 
         return serCon;
 
@@ -66,6 +75,7 @@ public class PostGresPersistorTest extends CoalescePersistorBaseTest {
     {
         PostGreSQLPersistor postGresSQLPersistor = new PostGreSQLPersistor();
         postGresSQLPersistor.initialize(conn);
+        postGresSQLPersistor.setSchema("coalesce");
 
         return postGresSQLPersistor;
 
@@ -74,7 +84,7 @@ public class PostGresPersistorTest extends CoalescePersistorBaseTest {
     @Override
     protected CoalesceDataConnectorBase getDataConnector(ServerConn conn) throws CoalescePersistorException
     {
-        return new PostGreSQLDataConnector(conn);
+        return new PostGreSQLDataConnector(conn, null);
     }
 
 }

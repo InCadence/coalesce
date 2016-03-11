@@ -232,10 +232,10 @@ public class FileHelperTest {
 
         assertTrue(newFolder.mkdir());
 
-        File newFile = new File(newFolder.getAbsolutePath() + "\\file1.txt");
+        File newFile = new File(newFolder.getAbsolutePath() + File.separator + "file1.txt");
 
         newFile.createNewFile();
-
+        
         assertFalse(FileHelper.deleteFolder(newFolder.getAbsolutePath(), false));
 
         assertTrue(newFolder.exists());
@@ -282,7 +282,7 @@ public class FileHelperTest {
         
         assertFalse(FileHelper.checkFolder(null));
         
-        File badPathFolder = new File(FilenameUtils.concat(CoalesceSettings.getBinaryFileStoreBasePath(), "this<file>"));
+        File badPathFolder = new File(FilenameUtils.concat(CoalesceSettings.getBinaryFileStoreBasePath(), "/this<file>"));
         
         assertFalse(badPathFolder.exists());
         

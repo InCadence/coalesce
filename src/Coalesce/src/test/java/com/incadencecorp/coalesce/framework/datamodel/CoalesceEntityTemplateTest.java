@@ -1,5 +1,6 @@
 package com.incadencecorp.coalesce.framework.datamodel;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -65,7 +66,7 @@ public class CoalesceEntityTemplateTest {
     public static void testTemplate(CoalesceEntityTemplate template)
     {
         String templateXml = template.toXml();
-        //System.out.print(templateXml);
+        // System.out.print(templateXml);
 
         // Confirm Template
         assertNotNull(templateXml);
@@ -91,7 +92,10 @@ public class CoalesceEntityTemplateTest {
 
                     if (!attribute.getNodeName().equalsIgnoreCase("name")
                             && !attribute.getNodeName().equalsIgnoreCase("source")
-                            && !attribute.getNodeName().equalsIgnoreCase("version"))
+                            && !attribute.getNodeName().equalsIgnoreCase("version")
+                            && !attribute.getNodeName().equalsIgnoreCase("noindex")
+                            && !attribute.getNodeName().equalsIgnoreCase("flatten")
+                            && !attribute.getNodeName().equalsIgnoreCase("datatype"))
                     {
                         assertTrue(StringHelper.isNullOrEmpty(attribute.getNodeValue()));
                     }
@@ -107,7 +111,7 @@ public class CoalesceEntityTemplateTest {
         CoalesceEntity entity2 = template.createNewEntity();
 
         String entityXml = entity2.toXml();
-        //System.out.print(entityXml);
+        // System.out.print(entityXml);
 
         // Confirm Entity
         assertNotNull(entityXml);
@@ -115,6 +119,49 @@ public class CoalesceEntityTemplateTest {
         assertTrue(entity2.getName().equalsIgnoreCase("trexmission"));
         assertTrue(entity2.getSource().equalsIgnoreCase("trex portal"));
         assertTrue(entity2.getVersion().equalsIgnoreCase("1.0.0.0"));
+    }
+
+    /**
+     * Test to verify the template compareTo method works correctly.
+     * 
+     * @throws SAXException
+     * @throws IOException
+     */
+    @Test
+    public void compareTemplateTest() throws SAXException, IOException
+    {
+
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        CoalesceEntityTemplate template = CoalesceEntityTemplate.create(entity);
+
+        assertEquals(0, template.compareTo(template));
+
+    }
+
+    /**
+     * Test to verify the template compareTo method correctly returns non-zero
+     * when templates do not match.
+     * 
+     * @throws SAXException
+     * @throws IOException
+     */
+    @Test
+    public void compareTemplateFailureTest() throws SAXException, IOException
+    {
+
+        CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+
+        CoalesceEntityTemplate template1 = CoalesceEntityTemplate.create(entity1);
+        
+        CoalesceEntity entity2 = new CoalesceEntity();
+        entity2.initialize();
+        CoalesceSection.create(entity2, "unit test");
+
+        CoalesceEntityTemplate template2 = CoalesceEntityTemplate.create(entity2);
+
+        assertEquals(1, template1.compareTo(template2));
+
     }
 
 }

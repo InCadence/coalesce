@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import com.incadencecorp.coalesce.common.CoalesceTypeInstances;
 import com.incadencecorp.coalesce.common.classification.Marking;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage;
@@ -37,8 +38,8 @@ import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
 public class EntityLinkHelperTest {
 
     private static final Marking UNCLASSIFIED_MARKING = new Marking("(U)");
-    private static final Marking SECRET_USA_MARKING = new Marking("(//S USA)");
-    private static final Marking TOP_SECRET_MARKING = new Marking("(//TS)");
+    private static final Marking SECRET_USA_MARKING = new Marking("(S//USA)");
+    private static final Marking TOP_SECRET_MARKING = new Marking("(TS)");
 
     /*
      * @BeforeClass public static void setUpBeforeClass() throws Exception { }
@@ -50,132 +51,66 @@ public class EntityLinkHelperTest {
      * @After public void tearDown() throws Exception { }
      */
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void linkEntitiesNullFirstDontUpdateAllTypesExistingTest()
     {
         for (ELinkTypes linkType : ELinkTypes.values())
         {
-            try
-            {
-                CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-                assertFalse(EntityLinkHelper.linkEntities(null, linkType, entity, false));
-            }
-            catch (IllegalArgumentException ex)
-            {
-                // Passed
-            }
-            catch (Exception ex)
-            {
-                fail(ex.getMessage());
-            }
+            CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+            EntityLinkHelper.linkEntities(null, linkType, entity, false);
         }
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void linkEntitiesNullSecondDontUpdateAllTypesExistingTest()
     {
         for (ELinkTypes linkType : ELinkTypes.values())
         {
-            try
-            {
-                CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-                assertFalse(EntityLinkHelper.linkEntities(entity, linkType, null, false));
-            }
-            catch (IllegalArgumentException ex)
-            {
-                // Passed
-            }
-            catch (Exception ex)
-            {
-                fail(ex.getMessage());
-            }
+            CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+            EntityLinkHelper.linkEntities(entity, linkType, null, false);
         }
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void linkEntitiesNullBothDontUpdateAllTypesExistingTest()
     {
         for (ELinkTypes linkType : ELinkTypes.values())
         {
-            try
-            {
-                assertFalse(EntityLinkHelper.linkEntities(null, linkType, null, false));
-            }
-            catch (IllegalArgumentException ex)
-            {
-                // Passed
-            }
-            catch (Exception ex)
-            {
-                fail(ex.getMessage());
-            }
+            EntityLinkHelper.linkEntities(null, linkType, null, false);
         }
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void linkEntitiesNullFirstUpdateAllTypesExistingTest()
     {
         for (ELinkTypes linkType : ELinkTypes.values())
         {
-            try
-            {
-                CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-                assertFalse(EntityLinkHelper.linkEntities(null, linkType, entity, true));
-            }
-            catch (IllegalArgumentException ex)
-            {
-                // Passed
-            }
-            catch (Exception ex)
-            {
-                fail(ex.getMessage());
-            }
+            CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+            EntityLinkHelper.linkEntities(null, linkType, entity, true);
         }
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void linkEntitiesNullSecondUpdateAllTypesExistingTest()
     {
         for (ELinkTypes linkType : ELinkTypes.values())
         {
-            try
-            {
-                CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-                assertFalse(EntityLinkHelper.linkEntities(entity, linkType, null, true));
-            }
-            catch (IllegalArgumentException ex)
-            {
-                // Passed
-            }
-            catch (Exception ex)
-            {
-                fail(ex.getMessage());
-            }
+            CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+            EntityLinkHelper.linkEntities(entity, linkType, null, true);
         }
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void linkEntitiesNullBothUpdateAllTypesExistingTest()
     {
         for (ELinkTypes linkType : ELinkTypes.values())
         {
-            try
-            {
-                assertFalse(EntityLinkHelper.linkEntities(null, linkType, null, true));
-            }
-            catch (IllegalArgumentException ex)
-            {
-                // Passed
-            }
-            catch (Exception ex)
-            {
-                fail(ex.getMessage());
-            }
+            EntityLinkHelper.linkEntities(null, linkType, null, true);
         }
     }
 
     @Test
-    public void linkEntitiestUpdateExistingTest()
+    public void linkEntitiestUpdateExistingTest() throws Exception
     {
         CoalesceEntity entity1 = CoalesceEntity.create("LinkTest", "UnitTest", "1.0", "Unit", "Test", "Entity1");
         entity1.createSection("TestSection");
@@ -187,6 +122,8 @@ public class EntityLinkHelperTest {
                                       entity2,
                                       EntityLinkHelperTest.UNCLASSIFIED_MARKING,
                                       "tester1",
+                                      "",
+                                      "",
                                       Locale.US,
                                       false);
 
@@ -202,6 +139,8 @@ public class EntityLinkHelperTest {
                                       entity2,
                                       EntityLinkHelperTest.TOP_SECRET_MARKING,
                                       "tester2",
+                                      "",
+                                      "",
                                       Locale.CANADA,
                                       false);
 
@@ -217,6 +156,8 @@ public class EntityLinkHelperTest {
                                       entity2,
                                       EntityLinkHelperTest.TOP_SECRET_MARKING,
                                       "tester2",
+                                      "",
+                                      "",
                                       Locale.CANADA,
                                       true);
 
@@ -354,161 +295,110 @@ public class EntityLinkHelperTest {
         }
     }
 
-    @Test
-    public void linkEntitiesDetailedNullFirstDontUpdateExistingTest()
+    @Test(expected = IllegalArgumentException.class)
+    public void linkEntitiesDetailedNullFirstDontUpdateExistingTest() throws CoalesceException
     {
-        try
-        {
-            CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-            assertFalse(EntityLinkHelper.linkEntities(null,
-                                                      ELinkTypes.HAS_MEMBER,
-                                                      entity,
-                                                      EntityLinkHelperTest.TOP_SECRET_MARKING,
-                                                      "jford",
-                                                      Locale.UK,
-                                                      false));
-        }
-        catch (IllegalArgumentException ex)
-        {
-            // Passed
-        }
-        catch (Exception ex)
-        {
-            fail(ex.getMessage());
-        }
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+        EntityLinkHelper.linkEntities(null,
+                                      ELinkTypes.HAS_MEMBER,
+                                      entity,
+                                      EntityLinkHelperTest.TOP_SECRET_MARKING,
+                                      "jford",
+                                      "",
+                                      "",
+                                      Locale.UK,
+                                      false);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void linkEntitiesDetailedNullSecondDontUpdateExistingTest() throws CoalesceException
+    {
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+        EntityLinkHelper.linkEntities(entity,
+                                      ELinkTypes.HAS_OWNERSHIP_OF,
+                                      null,
+                                      EntityLinkHelperTest.TOP_SECRET_MARKING,
+                                      "jford",
+                                      "",
+                                      "",
+                                      Locale.UK,
+                                      false);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void linkEntitiesDetailedNullBothDontUpdateExistingTest() throws CoalesceException
+    {
+        EntityLinkHelper.linkEntities(null,
+                                      ELinkTypes.HAS_PARTICIPANT,
+                                      null,
+                                      EntityLinkHelperTest.TOP_SECRET_MARKING,
+                                      "jford",
+                                      "",
+                                      "",
+                                      Locale.UK,
+                                      false);
+
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void linkEntitiesDetailedNullFirstUpdateExistingTest() throws CoalesceException
+    {
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+        EntityLinkHelper.linkEntities(null,
+                                      ELinkTypes.HAS_USE_OF,
+                                      entity,
+                                      EntityLinkHelperTest.TOP_SECRET_MARKING,
+                                      "jford",
+                                      "",
+                                      "",
+                                      Locale.UK,
+                                      true);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void linkEntitiesDetailedNullSecondUpdateExistingTest() throws CoalesceException
+    {
+        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+        EntityLinkHelper.linkEntities(entity,
+                                      ELinkTypes.IS_A_MEMBER_OF,
+                                      null,
+                                      EntityLinkHelperTest.TOP_SECRET_MARKING,
+                                      "jford",
+                                      "",
+                                      "",
+                                      Locale.UK,
+                                      true);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void linkEntitiesDetailedNullBothUpdateExistingTest() throws CoalesceException
+    {
+        EntityLinkHelper.linkEntities(null,
+                                      ELinkTypes.IS_A_PARTICIPANT_OF,
+                                      null,
+                                      EntityLinkHelperTest.TOP_SECRET_MARKING,
+                                      "jford",
+                                      "",
+                                      "",
+                                      Locale.UK,
+                                      true);
     }
 
     @Test
-    public void linkEntitiesDetailedNullSecondDontUpdateExistingTest()
-    {
-        try
-        {
-            CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-            assertFalse(EntityLinkHelper.linkEntities(entity,
-                                                      ELinkTypes.HAS_OWNERSHIP_OF,
-                                                      null,
-                                                      EntityLinkHelperTest.TOP_SECRET_MARKING,
-                                                      "jford",
-                                                      Locale.UK,
-                                                      false));
-        }
-        catch (IllegalArgumentException ex)
-        {
-            // Passed
-        }
-        catch (Exception ex)
-        {
-            fail(ex.getMessage());
-        }
-    }
-
-    @Test
-    public void linkEntitiesDetailedNullBothDontUpdateExistingTest()
-    {
-        try
-        {
-            assertFalse(EntityLinkHelper.linkEntities(null,
-                                                      ELinkTypes.HAS_PARTICIPANT,
-                                                      null,
-                                                      EntityLinkHelperTest.TOP_SECRET_MARKING,
-                                                      "jford",
-                                                      Locale.UK,
-                                                      false));
-        }
-        catch (IllegalArgumentException ex)
-        {
-            // Passed
-        }
-        catch (Exception ex)
-        {
-            fail(ex.getMessage());
-        }
-    }
-
-    @Test
-    public void linkEntitiesDetailedNullFirstUpdateExistingTest()
-    {
-        try
-        {
-            CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-            assertFalse(EntityLinkHelper.linkEntities(null,
-                                                      ELinkTypes.HAS_USE_OF,
-                                                      entity,
-                                                      EntityLinkHelperTest.TOP_SECRET_MARKING,
-                                                      "jford",
-                                                      Locale.UK,
-                                                      true));
-        }
-        catch (IllegalArgumentException ex)
-        {
-            // Passed
-        }
-        catch (Exception ex)
-        {
-            fail(ex.getMessage());
-        }
-    }
-
-    @Test
-    public void linkEntitiesDetailedNullSecondUpdateExistingTest()
-    {
-        try
-        {
-            CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-            assertFalse(EntityLinkHelper.linkEntities(entity,
-                                                      ELinkTypes.IS_A_MEMBER_OF,
-                                                      null,
-                                                      EntityLinkHelperTest.TOP_SECRET_MARKING,
-                                                      "jford",
-                                                      Locale.UK,
-                                                      true));
-        }
-        catch (IllegalArgumentException ex)
-        {
-            // Passed
-        }
-        catch (Exception ex)
-        {
-            fail(ex.getMessage());
-        }
-    }
-
-    @Test
-    public void linkEntitiesDetailedNullBothUpdateExistingTest()
-    {
-        try
-        {
-            assertFalse(EntityLinkHelper.linkEntities(null,
-                                                      ELinkTypes.IS_A_PARTICIPANT_OF,
-                                                      null,
-                                                      EntityLinkHelperTest.TOP_SECRET_MARKING,
-                                                      "jford",
-                                                      Locale.UK,
-                                                      true));
-        }
-        catch (IllegalArgumentException ex)
-        {
-            // Passed
-        }
-        catch (Exception ex)
-        {
-            fail(ex.getMessage());
-        }
-    }
-
-    @Test
-    public void linkEntitiesDetailedDontUpdateExistingANoExistingTest()
+    public void linkEntitiesDetailedDontUpdateExistingANoExistingTest() throws Exception
     {
         CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
         CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
 
-        assertTrue(EntityLinkHelper.linkEntities(entity1,
-                                                 ELinkTypes.IS_A_PEER_OF,
-                                                 entity2,
-                                                 EntityLinkHelperTest.TOP_SECRET_MARKING,
-                                                 "jford",
-                                                 Locale.UK,
-                                                 false));
+        EntityLinkHelper.linkEntities(entity1,
+                                      ELinkTypes.IS_A_PEER_OF,
+                                      entity2,
+                                      EntityLinkHelperTest.TOP_SECRET_MARKING,
+                                      "jford",
+                                      "",
+                                      "",
+                                      Locale.UK,
+                                      false);
 
         assertEquals(1, entity1.getLinkageSection().getChildCoalesceObjects().size());
         assertEquals(1, entity2.getLinkageSection().getChildCoalesceObjects().size());
@@ -521,23 +411,25 @@ public class EntityLinkHelperTest {
                        entity2);
 
     }
-    
-    @Test
-    public void linkEntitiesToSelfTest()
+
+    @Test(expected = IllegalArgumentException.class)
+    public void linkEntitiesToSelfTest() throws Exception
     {
         CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
 
-        assertFalse(EntityLinkHelper.linkEntities(entity1,
-                                                 ELinkTypes.IS_A_PEER_OF,
-                                                 entity1,
-                                                 EntityLinkHelperTest.TOP_SECRET_MARKING,
-                                                 "jford",
-                                                 Locale.UK,
-                                                 false));
+        EntityLinkHelper.linkEntities(entity1,
+                                      ELinkTypes.IS_A_PEER_OF,
+                                      entity1,
+                                      EntityLinkHelperTest.TOP_SECRET_MARKING,
+                                      "jford",
+                                      "",
+                                      "",
+                                      Locale.UK,
+                                      false);
     }
 
     @Test
-    public void linkEntitiesDetailedDontUpdateExistingExistingTest()
+    public void linkEntitiesDetailedDontUpdateExistingExistingTest() throws Exception
     {
         CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
         CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
@@ -547,6 +439,8 @@ public class EntityLinkHelperTest {
                                       entity2,
                                       EntityLinkHelperTest.TOP_SECRET_MARKING,
                                       "jford",
+                                      "",
+                                      "",
                                       Locale.UK,
                                       false);
 
@@ -561,13 +455,15 @@ public class EntityLinkHelperTest {
         modifiedEntity2.setSource("Entity2source");
         modifiedEntity2.setVersion("Entity2version");
 
-        assertTrue(EntityLinkHelper.linkEntities(modifiedEntity1,
-                                                 ELinkTypes.IS_BEING_WATCHED_BY,
-                                                 modifiedEntity2,
-                                                 EntityLinkHelperTest.SECRET_USA_MARKING,
-                                                 "bob",
-                                                 Locale.US,
-                                                 false));
+        EntityLinkHelper.linkEntities(modifiedEntity1,
+                                      ELinkTypes.IS_BEING_WATCHED_BY,
+                                      modifiedEntity2,
+                                      EntityLinkHelperTest.SECRET_USA_MARKING,
+                                      "bob",
+                                      "",
+                                      "",
+                                      Locale.US,
+                                      false);
 
         assertLinkages(ELinkTypes.IS_BEING_WATCHED_BY,
                        EntityLinkHelperTest.TOP_SECRET_MARKING,
@@ -579,18 +475,20 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void linkEntitiesDetailedUpdateExistingNoExistingTest()
+    public void linkEntitiesDetailedUpdateExistingNoExistingTest() throws Exception
     {
         CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
         CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
 
-        assertTrue(EntityLinkHelper.linkEntities(entity1,
-                                                 ELinkTypes.IS_CHILD_OF,
-                                                 entity2,
-                                                 EntityLinkHelperTest.TOP_SECRET_MARKING,
-                                                 "jford",
-                                                 Locale.UK,
-                                                 true));
+        EntityLinkHelper.linkEntities(entity1,
+                                      ELinkTypes.IS_CHILD_OF,
+                                      entity2,
+                                      EntityLinkHelperTest.TOP_SECRET_MARKING,
+                                      "jford",
+                                      "",
+                                      "",
+                                      Locale.UK,
+                                      true);
 
         assertEquals(1, entity1.getLinkageSection().getChildCoalesceObjects().size());
         assertEquals(1, entity2.getLinkageSection().getChildCoalesceObjects().size());
@@ -600,7 +498,7 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void linkEntitiesDetailedUpdateExistingExistingTest()
+    public void linkEntitiesDetailedUpdateExistingExistingTest() throws Exception
     {
         CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
         CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
@@ -610,6 +508,8 @@ public class EntityLinkHelperTest {
                                       entity2,
                                       EntityLinkHelperTest.TOP_SECRET_MARKING,
                                       "jford",
+                                      "",
+                                      "",
                                       Locale.UK,
                                       true);
 
@@ -624,13 +524,15 @@ public class EntityLinkHelperTest {
         modifiedEntity2.setSource("Entity2source");
         modifiedEntity2.setVersion("Entity2version");
 
-        assertTrue(EntityLinkHelper.linkEntities(modifiedEntity1,
-                                                 ELinkTypes.IS_OWNED_BY,
-                                                 modifiedEntity2,
-                                                 EntityLinkHelperTest.SECRET_USA_MARKING,
-                                                 "bob",
-                                                 Locale.US,
-                                                 true));
+        EntityLinkHelper.linkEntities(modifiedEntity1,
+                                      ELinkTypes.IS_OWNED_BY,
+                                      modifiedEntity2,
+                                      EntityLinkHelperTest.SECRET_USA_MARKING,
+                                      "bob",
+                                      "",
+                                      "",
+                                      Locale.US,
+                                      true);
 
         assertLinkages(ELinkTypes.IS_OWNED_BY,
                        EntityLinkHelperTest.SECRET_USA_MARKING,
@@ -996,7 +898,7 @@ public class EntityLinkHelperTest {
                       entity2,
                       entity1,
                       (CoalesceLinkage) entity2.getLinkageSection().getChildCoalesceObjects().values().iterator().next());
-        
+
     }
 
     private void assertLinkages(ELinkTypes linkType, CoalesceEntity entity1, CoalesceEntity entity2)

@@ -142,6 +142,7 @@ public final class XmlHelper {
         }
         catch (JAXBException ex)
         {
+            ex.printStackTrace();
             return null;
         }
     }
@@ -421,7 +422,8 @@ public final class XmlHelper {
         }
         catch (ParserConfigurationException ex)
         {
-            return null;
+            throw new IOException(ex);
+            //return null;
         }
         finally
         {

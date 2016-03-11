@@ -1,5 +1,6 @@
 package com.incadencecorp.coalesce.framework.persistance.postgres;
 
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
@@ -9,11 +10,14 @@ import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 
 public class PostGreSQLDataConnector extends CoalesceDataConnectorBase {
 
-    public PostGreSQLDataConnector(ServerConn settings) throws CoalescePersistorException
+    private String _prefix;
+
+    public PostGreSQLDataConnector(ServerConn settings, String prefix) throws CoalescePersistorException
     {
         try
         {
             setSettings(settings);
+            _prefix = prefix;
 
             Class.forName("org.postgresql.Driver");
         }
@@ -24,17 +28,17 @@ public class PostGreSQLDataConnector extends CoalesceDataConnectorBase {
     }
 
     @Override
-    public void openConnection() throws SQLException
+    public Connection getDBConnection() throws SQLException
     {
         String url = "jdbc:postgresql://" + getSettings().getServerNameWithPort() + "/" + getSettings().getDatabase();
 
-        setConnection(DriverManager.getConnection(url, this.getSettings().getProperties()));
+        return DriverManager.getConnection(url, getSettings().getProperties());
     }
 
     @Override
     protected String getProcedurePrefix()
     {
-        return "call public.";
+        return "call " + _prefix;
     }
 
 }

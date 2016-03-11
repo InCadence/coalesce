@@ -7,12 +7,15 @@ target/
 logs/
 config/
 .vpprefdata/
+.settings/
 
  
 # OS Files #
 .DS_Store
  
 *.class
+.classpath
+.project
  
 # Package Files #
 *.jar

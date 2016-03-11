@@ -1,6 +1,7 @@
 package com.incadencecorp.coalesce.common.helpers;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
@@ -50,7 +51,7 @@ public final class DateTimeConverter {
     public static String printDate(DateTime value)
     {
 
-        DateTimeFormatter formatter = ISODateTimeFormat.dateTime().withZoneUTC();
+        DateTimeFormatter formatter = ISODateTimeFormat.dateTime().withZone(DateTimeZone.UTC);
 
         return formatter.print(value);
 
@@ -66,7 +67,7 @@ public final class DateTimeConverter {
     public static DateTime parseDate(String value)
     {
 
-        DateTimeFormatter formatter = ISODateTimeFormat.dateTime().withZoneUTC();
+        DateTimeFormatter formatter = ISODateTimeFormat.dateTime().withZone(DateTimeZone.UTC);
 
         return formatter.parseDateTime(value);
 

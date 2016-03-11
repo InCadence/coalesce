@@ -33,36 +33,36 @@ public class ActionBaseEntity extends CoalesceEntity {
     // ----------------------------------------------------------------------//
 
     @Override
-    public boolean initialize()
-    {
-        if (!initializeEntity("", "", "")) return false;
+    public boolean initialize() {
+        if (!initializeEntity("", "", ""))
+            return false;
 
         return initializeReferences();
     }
 
-    protected boolean initializeEntity(String source, String version, String title)
-    {
+    protected boolean initializeEntity(String source, String version, String title) {
         CoalesceSection section;
         CoalesceRecordset recordSet;
 
         // Already Initialized?
-        if (_liveStatusRecord != null) return false;
+        if (_liveStatusRecord != null)
+            return false;
 
         // Initialize Entity
-        if (!super.initializeEntity(ActionBaseEntity.NAME, source, version, "", "", title)) return false;
+        if (!super.initializeEntity(ActionBaseEntity.NAME, source, version, "", "", title))
+            return false;
 
         // Create Live Section
         section = CoalesceSection.create(this, "Live Status Section");
         recordSet = CoalesceRecordset.create(section, "Live Status Recordset");
-        CoalesceFieldDefinition.create(recordSet,
-                                       "CurrentStatus",
-                                       ECoalesceFieldDataTypes.STRING_TYPE,
-                                       "Status",
-                                       "",
+        CoalesceFieldDefinition.create(recordSet, "CurrentStatus",
+                                       ECoalesceFieldDataTypes.STRING_TYPE, "Status", "",
                                        EIntelligenceStatuses.CollectionComplete.getLabel());
-        CoalesceFieldDefinition.create(recordSet, "ResponseStatus", ECoalesceFieldDataTypes.STRING_TYPE);
+        CoalesceFieldDefinition.create(recordSet, "ResponseStatus",
+                                       ECoalesceFieldDataTypes.STRING_TYPE);
         CoalesceFieldDefinition.create(recordSet, "ResponseKey", ECoalesceFieldDataTypes.GUID_TYPE);
-        CoalesceFieldDefinition.create(recordSet, "Location", ECoalesceFieldDataTypes.GEOCOORDINATE_TYPE);
+        CoalesceFieldDefinition.create(recordSet, "Location",
+                                       ECoalesceFieldDataTypes.GEOCOORDINATE_TYPE);
 
         // Create New Record
         _liveStatusRecord = recordSet.addNew();
@@ -70,27 +70,25 @@ public class ActionBaseEntity extends CoalesceEntity {
         // Initialize References
         return true;
     }
-    
+
     @Override
-    protected boolean initializeReferences()
-    {
-        if (!super.initializeReferences()) return false;
+    protected boolean initializeReferences() {
+        if (!super.initializeReferences())
+            return false;
 
         // Live Status Record
-        if (this._liveStatusRecord == null)
-        {
-            CoalesceRecordset recordSet = (CoalesceRecordset) this.getCoalesceObjectForNamePath(this.getName()
-                    + "/Live Status Section/Live Status Recordset");
+        if (this._liveStatusRecord == null) {
+            CoalesceRecordset recordSet =
+                    (CoalesceRecordset) this.getCoalesceObjectForNamePath(this.getName()
+                            + "/Live Status Section/Live Status Recordset");
 
             // Valid Xml?
-            if (recordSet == null) return false;
+            if (recordSet == null)
+                return false;
 
-            if (recordSet.getCount() == 0)
-            {
+            if (recordSet.getCount() == 0) {
                 this._liveStatusRecord = recordSet.addNew();
-            }
-            else
-            {
+            } else {
                 this._liveStatusRecord = recordSet.getItem(0);
             }
 
@@ -104,46 +102,42 @@ public class ActionBaseEntity extends CoalesceEntity {
     // ----------------------------------------------------------------------//
 
     // Current Status
-    public EIntelligenceStatuses getCurrentStatus()
-    {
-        return EIntelligenceStatuses.fromLabel(this._liveStatusRecord.getFieldByName("CurrentStatus").getBaseValue());
+    public EIntelligenceStatuses getCurrentStatus() {
+        return EIntelligenceStatuses.fromLabel(this._liveStatusRecord
+                .getFieldByName("CurrentStatus").getBaseValue());
     }
 
-    public void setCurrentStatus(EIntelligenceStatuses value)
-    {
-        ((CoalesceStringField) this._liveStatusRecord.getFieldByName("CurrentStatus")).setValue(value.getLabel());
+    public void setCurrentStatus(EIntelligenceStatuses value) {
+        ((CoalesceStringField) this._liveStatusRecord.getFieldByName("CurrentStatus"))
+                .setValue(value.getLabel());
     }
 
-    public ArrayList<CoalesceFieldHistory> getCurrentStatusHistory()
-    {
+    public CoalesceFieldHistory[] getCurrentStatusHistory() {
         return this._liveStatusRecord.getFieldByName("CurrentStatus").getHistory();
     }
 
     // Response Status
-    public EForensicStatuses getResponseStatus()
-    {
-        return EForensicStatuses.fromLabel(this._liveStatusRecord.getFieldByName("ResponseStatus").getBaseValue());
+    public EForensicStatuses getResponseStatus() {
+        return EForensicStatuses.fromLabel(this._liveStatusRecord.getFieldByName("ResponseStatus")
+                .getBaseValue());
     }
 
-    public void setResponseStatus(EForensicStatuses value)
-    {
-        ((CoalesceStringField) this._liveStatusRecord.getFieldByName("ResponseStatus")).setValue(value.getLabel());
+    public void setResponseStatus(EForensicStatuses value) {
+        ((CoalesceStringField) this._liveStatusRecord.getFieldByName("ResponseStatus"))
+                .setValue(value.getLabel());
     }
 
-    public ArrayList<CoalesceFieldHistory> getResponseStatusHistory()
-    {
+    public CoalesceFieldHistory[] getResponseStatusHistory() {
         return this._liveStatusRecord.getFieldByName("ResponseStatus").getHistory();
     }
 
     // Response Key
-    public CoalesceGUIDField getResponseKey()
-    {
+    public CoalesceGUIDField getResponseKey() {
         return (CoalesceGUIDField) this._liveStatusRecord.getFieldByName("ResponseKey");
     }
 
     // Location
-    public CoalesceCoordinateField getLocation()
-    {
+    public CoalesceCoordinateField getLocation() {
         return (CoalesceCoordinateField) this._liveStatusRecord.getFieldByName("ResponseKey");
     }
 

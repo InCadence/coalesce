@@ -3,14 +3,12 @@ package com.incadencecorp.coalesce.framework.persistance;
 import java.io.IOException;
 
 import org.junit.AfterClass;
+import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.xml.sax.SAXException;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
-import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
-import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 import com.incadencecorp.coalesce.framework.persistance.neo4j.Neo4JDataConnector;
 import com.incadencecorp.coalesce.framework.persistance.neo4j.Neo4JPersistor;
 
@@ -37,6 +35,9 @@ public class Neo4JPersistorTest extends CoalescePersistorBaseTest {
     public static void setupBeforeClass() throws SAXException, IOException, CoalesceException
     {
 
+        // Skip this test.
+        Assume.assumeTrue(false);
+
         Neo4JPersistorTest tester = new Neo4JPersistorTest();
 
         CoalescePersistorBaseTest.setupBeforeClassBase(tester);
@@ -56,6 +57,7 @@ public class Neo4JPersistorTest extends CoalescePersistorBaseTest {
     protected ServerConn getConnection()
     {
         ServerConn serCon = new ServerConn();
+        serCon.setServerName("dbsp3");
         serCon.setPortNumber(7474);
 
         return serCon;

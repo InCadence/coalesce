@@ -27,6 +27,11 @@ import com.incadencecorp.coalesce.common.helpers.StringHelper;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
+/**
+ * Defines soft enumerations used for classification markings.
+ * 
+ * @author wbrannock, Derek
+ */
 public class FieldValues {
 
     private static void classListAdd(ArrayList<MarkingValue> classList,
@@ -49,7 +54,7 @@ public class FieldValues {
      * Returns a list of MarkingValues that match the Marking parameter.
      * 
      * @param marking allowed object is {@link Marking }
-     * @return possible object is {@link List<MarkingValue> }
+     * @return a list of {@link MarkingValue }
      */
     public static List<MarkingValue> getListOfClassifications(Marking marking)
     {
@@ -57,11 +62,13 @@ public class FieldValues {
     }
 
     /**
-     * Returns a list of MarkingValues that match the Marking parameter, unless boolean all parameter is true. Then the
-     * returned list will contain all MarkingValues.
+     * Returns a list of MarkingValues that match the Marking parameter, unless
+     * boolean all parameter is true. Then the returned list will contain all
+     * MarkingValues.
      * 
      * @param marking allowed object is {@link Marking }
-     * @return possible object is {@link List<MarkingValue> }
+     * @param all
+     * @return a list of {@link MarkingValue }
      */
     public static List<MarkingValue> getListOfClassifications(Marking marking, boolean all)
     {
@@ -100,7 +107,7 @@ public class FieldValues {
                 return new ArrayList<MarkingValue>();
 
             }
-            else if (marking.getIsNATO())
+            else if (marking.isNATO())
             {
 
                 classListAdd(classList, "", "COSMIC TOP SECRET", "", "CTS");
@@ -120,13 +127,13 @@ public class FieldValues {
                 return new ArrayList<MarkingValue>();
 
             }
-            else if (marking.getSelectedCountries().size() < 2 && marking.getIsJOINT())
+            else if (marking.getSelectedCountries().size() < 2 && marking.isJOINT())
             {
 
                 return new ArrayList<MarkingValue>();
 
             }
-            else if (marking.getIsJOINT())
+            else if (marking.isJOINT())
             {
 
                 classListAdd(classList, "", "JOINT TOP SECRET", "", "JOINT TS");
@@ -162,7 +169,7 @@ public class FieldValues {
     /**
      * Returns a list of MarkingValues that pertain to SCI controls.
      * 
-     * @return possible object is {@link List<MarkingValue> }
+     * @return a list of {@link MarkingValue }
      */
     public static List<MarkingValue> getListOfSciControlSystems()
     {
@@ -170,16 +177,10 @@ public class FieldValues {
         List<MarkingValue> controlSystemList = new ArrayList<MarkingValue>();
 
         controlSystemList.add(new MarkingValue("", "COMINT", "SI", "SI"));
-        controlSystemList.add(new MarkingValue("", "HCS", "HCS", "HCS")); // NOFORN
-                                                                          // must
-                                                                          // also
-                                                                          // be
-                                                                          // selected
-        controlSystemList.add(new MarkingValue("", "KLONDIKE", "KDK", "KDK")); // NOFORN
-                                                                               // must
-                                                                               // also
-                                                                               // be
-                                                                               // selected
+        // NOFORN must also be selected
+        controlSystemList.add(new MarkingValue("", "HCS", "HCS", "HCS"));
+        // NOFORN must also be selected
+        controlSystemList.add(new MarkingValue("", "KLONDIKE", "KDK", "KDK"));
         controlSystemList.add(new MarkingValue("", "TALENT KEYHOLE", "TK", "TK"));
 
         return controlSystemList;
@@ -187,10 +188,11 @@ public class FieldValues {
     }
 
     /**
-     * Returns a list of MarkingValues that pertain to SCI controls. SCI controls may have compartments and sub-compartments,
-     * but the return only includes the SCI controls.
+     * Returns a list of MarkingValues that pertain to SCI controls. SCI
+     * controls may have compartments and sub-compartments, but the return only
+     * includes the SCI controls.
      * 
-     * @return possible object is {@link List<MarkingValue> }
+     * @return a list of {@link MarkingValue }
      */
     public static List<MarkingValue> getListOfCompartments()
     {
@@ -198,26 +200,21 @@ public class FieldValues {
         List<MarkingValue> compartmentList = new ArrayList<MarkingValue>();
 
         compartmentList.add(new MarkingValue("", "COMINT", "SI", "SI"));
-        compartmentList.add(new MarkingValue("", "HCS", "HCS", "HCS")); // NOFORN
-                                                                        // must
-                                                                        // also
-                                                                        // be
-                                                                        // selected
-        compartmentList.add(new MarkingValue("", "KLONDIKE", "KDK", "KDK")); // NOFORN
-                                                                             // must
-                                                                             // also
-                                                                             // be
-                                                                             // selected
+        // NOFORN must also be selected
+        compartmentList.add(new MarkingValue("", "HCS", "HCS", "HCS"));
+        // NOFORN must also be selected
+        compartmentList.add(new MarkingValue("", "KLONDIKE", "KDK", "KDK"));
         compartmentList.add(new MarkingValue("", "TALENT KEYHOLE", "TK", "TK"));
 
         return compartmentList;
     }
 
     /**
-     * Returns a list of MarkingValues that pertain to SCI controls. SCI controls may have compartments and sub-compartments,
-     * but the return only includes the SCI controls.
+     * Returns a list of MarkingValues that pertain to SCI controls. SCI
+     * controls may have compartments and sub-compartments, but the return only
+     * includes the SCI controls.
      * 
-     * @return possible object is {@link List<MarkingValue> }
+     * @return a list of {@link MarkingValue }
      */
     public static List<MarkingValue> getListOfSubCompartments()
     {
@@ -225,16 +222,10 @@ public class FieldValues {
         List<MarkingValue> subCompartmentList = new ArrayList<MarkingValue>();
 
         subCompartmentList.add(new MarkingValue("", "COMINT", "SI", "SI"));
-        subCompartmentList.add(new MarkingValue("", "HCS", "HCS", "HCS")); // NOFORN
-                                                                           // must
-                                                                           // also
-                                                                           // be
-                                                                           // selected
-        subCompartmentList.add(new MarkingValue("", "KLONDIKE", "KDK", "KDK")); // NOFORN
-                                                                                // must
-                                                                                // also
-                                                                                // be
-                                                                                // selected
+        // NOFORN must also be selected
+        subCompartmentList.add(new MarkingValue("", "HCS", "HCS", "HCS"));
+        // NOFORN must also be selected
+        subCompartmentList.add(new MarkingValue("", "KLONDIKE", "KDK", "KDK"));
         subCompartmentList.add(new MarkingValue("", "TALENT KEYHOLE", "TK", "TK"));
 
         return subCompartmentList;
@@ -244,7 +235,7 @@ public class FieldValues {
     /**
      * Returns a list of ISO3166Countries (based on ISO 3166 country codes).
      * 
-     * @return possible object is {@link List<ISO3166Country> }
+     * @return a list of {@link ISO3166Country }
      */
     public static List<ISO3166Country> getListOfCountries()
     {
@@ -305,7 +296,7 @@ public class FieldValues {
         countryList.add(new ISO3166Country("KR", "KOR", "KOREA, REPUBLIC OF"));
         countryList.add(new ISO3166Country("KP", "PRK", "KOREA, DEMOCRATIC PEOPLE'S REPUBLIC OF"));
         countryList.add(new ISO3166Country("CR", "CRI", "COSTA RICA"));
-        countryList.add(new ISO3166Country("CI", "CIV", "CÔTE D'IVOIRE"));
+        countryList.add(new ISO3166Country("CI", "CIV", "Cï¿½TE D'IVOIRE"));
         countryList.add(new ISO3166Country("HR", "HRV", "CROATIA"));
         countryList.add(new ISO3166Country("CU", "CUB", "CUBA"));
         countryList.add(new ISO3166Country("DK", "DNK", "DENMARK"));
@@ -428,7 +419,7 @@ public class FieldValues {
         countryList.add(new ISO3166Country("PR", "PRI", "PUERTO RICO"));
         countryList.add(new ISO3166Country("PT", "PRT", "PORTUGAL"));
         countryList.add(new ISO3166Country("QA", "QAT", "QATAR"));
-        countryList.add(new ISO3166Country("RE", "REU", "RÉUNION"));
+        countryList.add(new ISO3166Country("RE", "REU", "Rï¿½UNION"));
         countryList.add(new ISO3166Country("RO", "ROU", "ROMANIA"));
         countryList.add(new ISO3166Country("GB", "GBR", "UNITED KINGDOM"));
         countryList.add(new ISO3166Country("RU", "RUS", "RUSSIAN FEDERATION"));
@@ -488,16 +479,16 @@ public class FieldValues {
         countryList.add(new ISO3166Country("ZM", "ZMB", "ZAMBIA"));
         countryList.add(new ISO3166Country("ZW", "ZWE", "ZIMBABWE"));
         countryList.add(new ISO3166Country("PS", "PSE", "PALESTINIAN TERRITORY, OCCUPIED"));
-        countryList.add(new ISO3166Country("AX", "ALA", "ÅLAND ISLANDS"));
+        countryList.add(new ISO3166Country("AX", "ALA", "ï¿½LAND ISLANDS"));
         countryList.add(new ISO3166Country("JE", "JEY", "JERSEY"));
         countryList.add(new ISO3166Country("IM", "IMN", "ISLE OF MAN"));
         countryList.add(new ISO3166Country("GG", "GGY", "GUERNSEY"));
         countryList.add(new ISO3166Country("ME", "MNE", "MONTENEGRO"));
         countryList.add(new ISO3166Country("RS", "SRB", "SERBIA"));
-        countryList.add(new ISO3166Country("BL", "BLM", "SAINT BARTHÉLEMY"));
+        countryList.add(new ISO3166Country("BL", "BLM", "SAINT BARTHï¿½LEMY"));
         countryList.add(new ISO3166Country("MF", "MAF", "SAINT MARTIN (FRENCH PART)"));
         countryList.add(new ISO3166Country("BQ", "BES", "BONAIRE, SAINT EUSTATIUS AND SABA"));
-        countryList.add(new ISO3166Country("CW", "CUW", "CURAÇAO"));
+        countryList.add(new ISO3166Country("CW", "CUW", "CURAï¿½AO"));
         countryList.add(new ISO3166Country("SX", "SXM", "SINT MAARTEN (DUTCH PART)"));
 
         Collections.sort(countryList);
@@ -507,8 +498,8 @@ public class FieldValues {
     }
 
     /**
-     * Uses predicate validation to find a specific ISO3166Country within a ISO3166Country list based on caller provided
-     * ISO3166Country name.
+     * Uses predicate validation to find a specific ISO3166Country within a
+     * ISO3166Country list based on caller provided ISO3166Country name.
      * 
      * @param countryName Country name to use for selecting.
      * @return The country that matches the country name.
@@ -516,12 +507,14 @@ public class FieldValues {
     public static ISO3166Country getCountryByName(String countryName)
     {
 
-        if (StringHelper.isNullOrEmpty(countryName)) return null;
+        if (StringHelper.isNullOrEmpty(countryName))
+            return null;
 
         List<ISO3166Country> countryList = FieldValues.getListOfCountries();
         @SuppressWarnings("unchecked")
         Collection<ISO3166Country> filtered = CollectionUtils.select(countryList, new CountryNamePredicate(countryName));
-        if (filtered.isEmpty()) return null;
+        if (filtered.isEmpty())
+            return null;
 
         ISO3166Country item = filtered.toArray(new ISO3166Country[filtered.size()])[0];
 
@@ -530,21 +523,23 @@ public class FieldValues {
     }
 
     /**
-     * Uses predicate validation to find a specific ISO3166Country within a ISO3166Country list based on caller provided
-     * ISO3166Country Alpha3.
+     * Uses predicate validation to find a specific ISO3166Country within a
+     * ISO3166Country list based on caller provided ISO3166Country Alpha3.
      * 
      * @param countryAlpha3 Country Alpha3 to use for selecting.
      * @return The country that matches the country Alpha3.
      */
     public static ISO3166Country getCountryByAlpha3(String countryAlpha3)
     {
-        if (StringHelper.isNullOrEmpty(countryAlpha3)) return null;
+        if (StringHelper.isNullOrEmpty(countryAlpha3))
+            return null;
 
         List<ISO3166Country> countryList = FieldValues.getListOfCountries();
 
         @SuppressWarnings("unchecked")
         Collection<ISO3166Country> filtered = CollectionUtils.select(countryList, new CountryAlpha3Predicate(countryAlpha3));
-        if (filtered.isEmpty()) return null;
+        if (filtered.isEmpty())
+            return null;
 
         ISO3166Country item = filtered.toArray(new ISO3166Country[filtered.size()])[0];
 
@@ -552,10 +547,11 @@ public class FieldValues {
     }
 
     /**
-     * Uses predicate validation to find a specific MarkingValue within a MarkingValue list based on caller provided
-     * MarkingValue title.
+     * Uses predicate validation to find a specific MarkingValue within a
+     * MarkingValue list based on caller provided MarkingValue title.
      * 
      * @param markingValueTitle Title to use for selecting.
+     * @param markings
      * @return The MarkingValue for the title.
      */
     public static MarkingValue getMarkingValueByTitle(String markingValueTitle, List<MarkingValue> markings)
@@ -564,18 +560,18 @@ public class FieldValues {
         @SuppressWarnings("unchecked")
         Collection<MarkingValue> filtered = CollectionUtils.select(markings,
                                                                    new MarkingValueTitlePredicate(markingValueTitle));
-        if (filtered.isEmpty()) return null;
+        if (filtered.isEmpty())
+            return null;
 
-        MarkingValue item = filtered.toArray(new MarkingValue[filtered.size()])[0];
-
-        return item;
+        return filtered.toArray(new MarkingValue[filtered.size()])[0].clone();
     }
 
     /**
-     * Uses predicate validation to find a specific MarkingValue within a MarkingValue list based on caller provided
-     * MarkingValue portion.
+     * Uses predicate validation to find a specific MarkingValue within a
+     * MarkingValue list based on caller provided MarkingValue portion.
      * 
      * @param markingValuePortion Portion to use for selecting.
+     * @param markings
      * @return The MarkingValue for the portion.
      */
     public static MarkingValue getMarkingValueByPortion(String markingValuePortion, List<MarkingValue> markings)
@@ -584,11 +580,10 @@ public class FieldValues {
         @SuppressWarnings("unchecked")
         Collection<MarkingValue> filtered = CollectionUtils.select(markings,
                                                                    new MarkingValuePortionPredicate(markingValuePortion));
-        if (filtered.isEmpty()) return null;
+        if (filtered.isEmpty())
+            return null;
 
-        MarkingValue item = filtered.toArray(new MarkingValue[filtered.size()])[0];
-
-        return item;
+        return filtered.toArray(new MarkingValue[filtered.size()])[0].clone();
     }
 
     private abstract static class FilterPredicate implements Predicate {
@@ -596,7 +591,8 @@ public class FieldValues {
         private String _filter;
 
         /**
-         * Constructor function. Sets the filter property to the value of the String parameter.
+         * Constructor function. Sets the filter property to the value of the
+         * String parameter.
          * 
          * @param filter allowed object is {@link String }
          */
@@ -606,13 +602,15 @@ public class FieldValues {
         }
 
         /**
-         * Returns boolean indicator indicating if the filter property is equal to the Object parameter.
+         * Returns boolean indicator indicating if the filter property is equal
+         * to the Object parameter.
          * 
          * @param object allowed object is {@link Object }
          */
         public boolean evaluate(Object object)
         {
-            if (_filter == null) return (object == null);
+            if (_filter == null)
+                return (object == null);
 
             return _filter.equals(getValue(object));
         }
@@ -624,7 +622,8 @@ public class FieldValues {
     private static class CountryNamePredicate extends FilterPredicate {
 
         /**
-         * Constructor function. Sets the filter property to the value of the String parameter
+         * Constructor function. Sets the filter property to the value of the
+         * String parameter
          * 
          * @param filter allowed object is {@link String }
          */
@@ -635,7 +634,8 @@ public class FieldValues {
 
         protected String getValue(Object object)
         {
-            if (!(object instanceof ISO3166Country)) return null;
+            if (!(object instanceof ISO3166Country))
+                return null;
             return ((ISO3166Country) object).getName();
         }
     }
@@ -643,7 +643,8 @@ public class FieldValues {
     private static class CountryAlpha3Predicate extends FilterPredicate {
 
         /**
-         * Constructor function. Sets the filter property to the value of the String parameter
+         * Constructor function. Sets the filter property to the value of the
+         * String parameter
          * 
          * @param filter allowed object is {@link String }
          */
@@ -654,7 +655,8 @@ public class FieldValues {
 
         protected String getValue(Object object)
         {
-            if (!(object instanceof ISO3166Country)) return null;
+            if (!(object instanceof ISO3166Country))
+                return null;
             return ((ISO3166Country) object).getAlpha3();
         }
     }
@@ -662,7 +664,8 @@ public class FieldValues {
     private static class MarkingValueTitlePredicate extends FilterPredicate {
 
         /**
-         * Constructor function. Sets the filter property to the value of the String parameter
+         * Constructor function. Sets the filter property to the value of the
+         * String parameter
          * 
          * @param filter allowed object is {@link String }
          */
@@ -673,7 +676,8 @@ public class FieldValues {
 
         protected String getValue(Object object)
         {
-            if (!(object instanceof MarkingValue)) return null;
+            if (!(object instanceof MarkingValue))
+                return null;
             return ((MarkingValue) object).getTitle();
         }
     }
@@ -681,7 +685,8 @@ public class FieldValues {
     private static class MarkingValuePortionPredicate extends FilterPredicate {
 
         /**
-         * Constructor function. Sets the filter property to the value of the String parameter
+         * Constructor function. Sets the filter property to the value of the
+         * String parameter
          * 
          * @param filter allowed object is {@link String }
          */
@@ -692,7 +697,8 @@ public class FieldValues {
 
         protected String getValue(Object object)
         {
-            if (!(object instanceof MarkingValue)) return null;
+            if (!(object instanceof MarkingValue))
+                return null;
             return ((MarkingValue) object).getPortion();
         }
     }

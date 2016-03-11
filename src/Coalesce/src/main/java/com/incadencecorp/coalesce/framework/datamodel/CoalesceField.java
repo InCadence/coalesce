@@ -1,31 +1,3 @@
-package com.incadencecorp.coalesce.framework.datamodel;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.UUID;
-
-import javax.xml.namespace.QName;
-
-import org.apache.commons.lang.NotImplementedException;
-import org.joda.time.DateTime;
-
-import com.incadencecorp.coalesce.common.classification.Marking;
-import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
-import com.incadencecorp.coalesce.common.helpers.FileHelper;
-import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
-import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
-import com.incadencecorp.coalesce.common.helpers.LocaleConverter;
-import com.incadencecorp.coalesce.common.helpers.StringHelper;
-import com.incadencecorp.coalesce.common.helpers.XmlHelper;
-import com.incadencecorp.coalesce.framework.CoalesceSettings;
-import com.incadencecorp.coalesce.framework.generatedjaxb.Field;
-import com.incadencecorp.coalesce.framework.generatedjaxb.Fieldhistory;
-import com.vividsolutions.jts.geom.Coordinate;
-
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
 
@@ -43,7 +15,39 @@ import com.vividsolutions.jts.geom.Coordinate;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-public class CoalesceField<T> extends CoalesceFieldBase<T> {
+package com.incadencecorp.coalesce.framework.datamodel;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.UUID;
+
+import javax.xml.namespace.QName;
+
+import org.apache.commons.lang.NotImplementedException;
+import org.joda.time.DateTime;
+
+import com.incadencecorp.coalesce.common.classification.Marking;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
+import com.incadencecorp.coalesce.common.helpers.FileHelper;
+import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
+import com.incadencecorp.coalesce.common.helpers.LocaleConverter;
+import com.incadencecorp.coalesce.common.helpers.StringHelper;
+import com.incadencecorp.coalesce.framework.CoalesceSettings;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.Polygon;
+
+/**
+ * Base class providing common functionality across the different data types.
+ * 
+ * @author n78554
+ *
+ * @param <T>
+ */
+public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceObjectHistory {
 
     // -----------------------------------------------------------------------//
     // protected Member Variables
@@ -57,18 +61,26 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     // -----------------------------------------------------------------------//
 
     /**
-     * Creates an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField} based off of an
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} and ties it to its parent
+     * Creates an
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}
+     * based off of an
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
+     * and ties it to its parent
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}.
      * 
-     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} that the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField} will belong to.
-     * @param fieldDefinition {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition} "template" that
-     *            the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField} will be based off of, for default
-     *            values/settings.
-     * 
-     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}, belonging to the parent
-     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}, resulting from the fieldDefinition.
+     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
+     *            that the
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}
+     *            will belong to.
+     * @param fieldDefinition
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition}
+     *            "template" that the
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}
+     *            will be based off of, for default values/settings.
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}
+     *         , belonging to the parent
+     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
+     *         , resulting from the fieldDefinition.
      */
     protected static CoalesceField<?> create(CoalesceRecord parent, CoalesceFieldDefinition fieldDefinition)
     {
@@ -77,7 +89,8 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
         parent.getEntityFields().add(newEntityField);
 
         CoalesceField<?> newField = createTypeField(fieldDefinition.getDataType());
-        if (!newField.initialize(parent, newEntityField)) return null;
+        if (!newField.initialize(parent, newEntityField))
+            return null;
 
         newField.setSuspendHistory(true);
 
@@ -87,7 +100,9 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
         // Is Default Value Null?
         if (fieldDefinition.getDefaultValue() != null)
         {
-            // No; set value; Otherwise leave null to indicate value has never been set (Used to determine if history should
+            // No; set value; Otherwise leave null to indicate value has never
+            // been set (Used to
+            // determine if history should
             // be created).
             newField.setBaseValue(fieldDefinition.getDefaultValue());
         }
@@ -105,6 +120,12 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
 
     }
 
+    /**
+     * Factory class for initiating the correct template field.
+     * 
+     * @param dataType
+     * @return
+     */
     protected static CoalesceField<?> createTypeField(ECoalesceFieldDataTypes dataType)
     {
         switch (dataType) {
@@ -125,6 +146,9 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
         case BOOLEAN_TYPE:
             return new CoalesceBooleanField();
 
+        case BOOLEAN_LIST_TYPE:
+            return new CoalesceBooleanListField();
+
         case INTEGER_TYPE:
             return new CoalesceIntegerField();
 
@@ -137,22 +161,54 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
         case GEOCOORDINATE_LIST_TYPE:
             return new CoalesceCoordinateListField();
 
+        case POLYGON_TYPE:
+            return new CoalescePolygonField();
+
+        case LINE_STRING_TYPE:
+            return new CoalesceLineStringField();
+
+        case CIRCLE_TYPE:
+            return new CoalesceCircleField();
+
         case DOUBLE_TYPE:
             return new CoalesceDoubleField();
 
         case FLOAT_TYPE:
             return new CoalesceFloatField();
 
+        case LONG_TYPE:
+            return new CoalesceLongField();
+
+        case DOUBLE_LIST_TYPE:
+            return new CoalesceDoubleListField();
+
+        case FLOAT_LIST_TYPE:
+            return new CoalesceFloatListField();
+
+        case GUID_LIST_TYPE:
+            return new CoalesceGUIDListField();
+
+        case INTEGER_LIST_TYPE:
+            return new CoalesceIntegerListField();
+
+        case LONG_LIST_TYPE:
+            return new CoalesceLongListField();
+
+        case STRING_LIST_TYPE:
+            return new CoalesceStringListField();
+
         default:
             throw new NotImplementedException(dataType + " not implemented");
+
         }
     }
 
     /**
      * Returns an Field's value as type T.
      * 
-     * @return Object base type to contain the field's data, which could be any data type.
-     * @throws CoalesceDataFormatException.
+     * @return Object base type to contain the field's data, which could be any
+     *         data type.
+     * @throws CoalesceDataFormatException
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -164,6 +220,9 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
         case URI_TYPE:
             return (T) getBaseValue();
 
+        case STRING_LIST_TYPE:
+            return (T) getArray();
+
         case DATE_TIME_TYPE:
             return (T) getDateTimeValue();
 
@@ -174,11 +233,20 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
         case BOOLEAN_TYPE:
             return (T) getBooleanValue();
 
+        case BOOLEAN_LIST_TYPE:
+            return (T) getBooleanListValue();
+
         case INTEGER_TYPE:
             return (T) getIntegerValue();
 
+        case INTEGER_LIST_TYPE:
+            return (T) getIntegerListValue();
+
         case GUID_TYPE:
             return (T) getGuidValue();
+
+        case GUID_LIST_TYPE:
+            return (T) getGuidListValue();
 
         case GEOCOORDINATE_TYPE:
             return (T) getCoordinateValue();
@@ -186,11 +254,32 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
         case GEOCOORDINATE_LIST_TYPE:
             return (T) getCoordinateListValue();
 
+        case LINE_STRING_TYPE:
+            return (T) getLineStringValue();
+
+        case POLYGON_TYPE:
+            return (T) getPolygonValue();
+
+        case CIRCLE_TYPE:
+            return (T) getCircleValue();
+
         case DOUBLE_TYPE:
             return (T) getDoubleValue();
 
+        case DOUBLE_LIST_TYPE:
+            return (T) getDoubleListValue();
+
         case FLOAT_TYPE:
             return (T) getFloatValue();
+
+        case FLOAT_LIST_TYPE:
+            return (T) getFloatListValue();
+
+        case LONG_TYPE:
+            return (T) getLongValue();
+
+        case LONG_LIST_TYPE:
+            return (T) getLongListValue();
 
         default:
             throw new NotImplementedException(getDataType() + " not implemented");
@@ -200,7 +289,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     /**
      * Sets the Field's value as type T.
      * 
-     * @throws CoalesceDataFormatException.
+     * @throws CoalesceDataFormatException
      */
     @Override
     public void setValue(T value) throws CoalesceDataFormatException
@@ -209,6 +298,10 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
         case STRING_TYPE:
         case URI_TYPE:
             setTypedValue((String) value);
+            break;
+
+        case STRING_LIST_TYPE:
+            setTypedValue((String[]) value);
             break;
 
         case DATE_TIME_TYPE:
@@ -224,12 +317,24 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
             setTypedValue((Boolean) value);
             break;
 
+        case BOOLEAN_LIST_TYPE:
+            setTypedValue((boolean[]) value);
+            break;
+
         case INTEGER_TYPE:
             setTypedValue((Integer) value);
             break;
 
+        case INTEGER_LIST_TYPE:
+            setTypedValue((int[]) value);
+            break;
+
         case GUID_TYPE:
             setTypedValue((UUID) value);
+            break;
+
+        case GUID_LIST_TYPE:
+            setTypedValue((UUID[]) value);
             break;
 
         case GEOCOORDINATE_TYPE:
@@ -240,27 +345,57 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
             setTypedValue((Coordinate[]) value);
             break;
 
+        case LINE_STRING_TYPE:
+            setTypedValue((LineString) value);
+            break;
+
+        case POLYGON_TYPE:
+            setTypedValue((Polygon) value);
+            break;
+
+        case CIRCLE_TYPE:
+            setTypedValue((CoalesceCircle) value);
+            break;
+
         case DOUBLE_TYPE:
             setTypedValue((Double) value);
+            break;
+
+        case DOUBLE_LIST_TYPE:
+            setTypedValue((double[]) value);
+            break;
 
         case FLOAT_TYPE:
             setTypedValue((Float) value);
+            break;
 
-        default:
-            throw new NotImplementedException(getDataType() + " not implemented");
+        case FLOAT_LIST_TYPE:
+            setTypedValue((float[]) value);
+            break;
+
+        case LONG_TYPE:
+            setTypedValue((Long) value);
+            break;
+
+        case LONG_LIST_TYPE:
+            setTypedValue((long[]) value);
+            break;
+
         }
 
     }
 
     /**
      * Initializes an existing Field and ties it to its parent
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}. The field may be new, but field history is tied
-     * in, in the event that the field is not new.
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}.
+     * The field may be new, but field history is tied in, in the event that the
+     * field is not new.
      * 
-     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord} that the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField} will belong to.
+     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
+     *            that the
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}
+     *            will belong to.
      * @param field Field being initialized.
-     * 
      * @return boolean indicator of success/failure.
      */
     protected boolean initialize(CoalesceRecord parent, Field field)
@@ -270,7 +405,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
         setParent(parent);
         _entityField = field;
 
-        super.initialize();
+        super.initialize(_entityField);
 
         for (Fieldhistory entityFieldHistory : _entityField.getFieldhistory())
         {
@@ -291,36 +426,6 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     // -----------------------------------------------------------------------//
 
     @Override
-    protected String getObjectKey()
-    {
-        return _entityField.getKey();
-    }
-
-    @Override
-    public void setObjectKey(String value)
-    {
-        _entityField.setKey(value);
-    }
-
-    @Override
-    public String getName()
-    {
-        return getStringElement(_entityField.getName());
-    }
-
-    @Override
-    public void setName(String value)
-    {
-        _entityField.setName(value);
-    }
-
-    @Override
-    public String getType()
-    {
-        return "field";
-    }
-
-    @Override
     public String getBaseValue()
     {
         return _entityField.getValue();
@@ -330,11 +435,13 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     protected void setBaseValue(String value)
     {
         // Don't Allow null
-        if (value == null) value = "";
+        if (value == null)
+            value = "";
 
         createHistory(_entityField.getValue(), value);
 
         _entityField.setValue(value);
+
     }
 
     @Override
@@ -358,7 +465,8 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     /**
      * Sets the value of the Field's DataType attribute.
      * 
-     * @param value ECoalesceFieldDataTypes to be the Field's DataType attribute.
+     * @param value ECoalesceFieldDataTypes to be the Field's DataType
+     *            attribute.
      */
     private void setDataType(ECoalesceFieldDataTypes value)
     {
@@ -397,30 +505,6 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     }
 
     @Override
-    public String getModifiedBy()
-    {
-        return getStringElement(_entityField.getModifiedby());
-    }
-
-    @Override
-    public void setModifiedBy(String value)
-    {
-        _entityField.setModifiedby(value);
-    }
-
-    @Override
-    public String getModifiedByIP()
-    {
-        return getStringElement(_entityField.getModifiedbyip());
-    }
-
-    @Override
-    public void setModifiedByIP(String value)
-    {
-        _entityField.setModifiedbyip(value);
-    }
-
-    @Override
     public String getClassificationMarkingAsString()
     {
         return _entityField.getClassificationmarking();
@@ -430,30 +514,11 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     public void setClassificationMarking(String value)
     {
         // Don't Allow null
-        if (value == null) value = "";
+        if (value == null)
+            value = "";
 
         createHistory(_entityField.getClassificationmarking(), value);
         _entityField.setClassificationmarking(value);
-    }
-
-    @Override
-    public String getPreviousHistoryKey()
-    {
-        String prevHistKey = _entityField.getPrevioushistorykey();
-        if (StringHelper.isNullOrEmpty(prevHistKey))
-        {
-            return "00000000-0000-0000-0000-000000000000";
-        }
-        else
-        {
-            return prevHistKey;
-        }
-    }
-
-    @Override
-    public void setPreviousHistoryKey(String value)
-    {
-        _entityField.setPrevioushistorykey(value);
     }
 
     @Override
@@ -466,7 +531,8 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     public void setFilename(String value)
     {
         // Don't Allow null
-        if (value == null) value = "";
+        if (value == null)
+            value = "";
 
         createHistory(_entityField.getFilename(), value);
         _entityField.setFilename(value);
@@ -482,7 +548,8 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     public void setExtension(String value)
     {
         // Don't Allow null
-        if (value == null) value = "";
+        if (value == null)
+            value = "";
 
         createHistory(_entityField.getExtension(), value);
         _entityField.setExtension(value.replace(".", ""));
@@ -510,29 +577,20 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     public void setHash(String value)
     {
         // Don't Allow null
-        if (value == null) value = "";
+        if (value == null)
+            value = "";
 
         createHistory(_entityField.getHash(), value);
         _entityField.setHash(value);
     }
 
-    /**
-     * Returns the value indicating if history is disabled for this field. Unlike SuspendHistory, this value is persisted
-     * with the object. This value overrides the SuspendHistory value.
-     * 
-     * @return <code>true</code> if history is to be disabled.
-     */
+    @Override
     public boolean isDisableHistory()
     {
         return getBooleanElement(_entityField.isDisablehistory());
     }
 
-    /**
-     * Sets the value indicating if history will be disabled for this field. Unlike SuspendHistory, this value is persisted
-     * with the object. The setting of this value overrides the SuspendHistory value.
-     * 
-     * @param disable the value to set the disable hsitory attribute to.
-     */
+    @Override
     public void setDisableHistory(boolean disable)
     {
         if (disable)
@@ -548,24 +606,13 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
 
     }
 
-    /**
-     * <code>true<code> if history is currently being suspended for this field
-     * value.
-     * 
-     * @return <code>true<code> if history is currently being suspended for this field.
-     */
+    @Override
     public boolean isSuspendHistory()
     {
         return (_suspendHistory || isDisableHistory());
     }
 
-    /**
-     * Sets the value indicating if history should be maintained for changes made to this object instance of a field. This
-     * setting is not persisted with the field. The value of the fields disablehistory attribute (
-     * {@link CoalesceField#getDisableHistory()}) overrides this temporary suspension.
-     * 
-     * @param suspend the value indicating if history should be temporarily suspended.
-     */
+    @Override
     public void setSuspendHistory(boolean suspend)
     {
         if (!isDisableHistory())
@@ -574,13 +621,8 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
         }
     }
 
-    /**
-     * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}'s change history collection.
-     * 
-     * @return ArrayList<{@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory}> all modification
-     *         history of this field.
-     */
-    public ArrayList<CoalesceFieldHistory> getHistory()
+    @Override
+    public CoalesceFieldHistory[] getHistory()
     {
 
         ArrayList<CoalesceFieldHistory> historyList = new ArrayList<CoalesceFieldHistory>();
@@ -597,15 +639,17 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
             }
         }
 
-        return historyList;
+        return historyList.toArray(new CoalesceFieldHistory[historyList.size()]);
     }
 
-    /**
-     * Returns an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}'s change history entry.
-     * 
-     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory} the modification history of this
-     *         field with matching key.
-     */
+    @Override
+    public void clearHistory()
+    {
+        _entityField.setPrevioushistorykey(null);
+        _entityField.getFieldhistory().clear();
+    }
+
+    @Override
     public CoalesceFieldHistory getHistoryRecord(String historyKey)
     {
         CoalesceFieldHistory historyRecord = (CoalesceFieldHistory) getChildCoalesceObject(historyKey);
@@ -614,47 +658,12 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
 
     }
 
-    @Override
-    public DateTime getDateCreated()
-    {
-
-        // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityField.getDatecreated());
-        return _entityField.getDatecreated();
-    }
-
-    @Override
-    public void setDateCreated(DateTime value)
-    {
-        // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
-        _entityField.setDatecreated(value);
-    }
-
-    @Override
-    public DateTime getLastModified()
-    {
-        // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").parse(_entityField.getLastmodified());
-        return _entityField.getLastmodified();
-    }
-
-    @Override
-    protected void setObjectLastModified(DateTime value)
-    {
-        // SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ").format(value));
-        _entityField.setLastmodified(value);
-    }
-
-    @Override
-    public String toXml()
-    {
-        return XmlHelper.serialize(_entityField);
-    }
-
     /**
      * Returns the filename with directory path and file extension.
-     * 
-     * <code>NOTE:</code> This method relies on the configuration settings for both
-     * {@link CoalesceSettings#getBinaryFileStoreBasePath()} and {@link CoalesceSettings#getSubDirectoryLength()} to build
-     * the directory path.
+     * <code>NOTE:</code> This method relies on the configuration settings for
+     * both {@link CoalesceSettings#getBinaryFileStoreBasePath()} and
+     * {@link CoalesceSettings#getSubDirectoryLength()} to build the directory
+     * path.
      * 
      * @return String, full filename.
      */
@@ -673,11 +682,12 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     }
 
     /**
-     * Returns the filename with directory path and file extension for a thumbnail image.
-     * 
-     * <code>NOTE:</code> This method relies on the configuration settings for both
-     * {@link CoalesceSettings#getBinaryFileStoreBasePath()} and {@link CoalesceSettings#getSubDirectoryLength()} to build
-     * the directory path.
+     * Returns the filename with directory path and file extension for a
+     * thumbnail image. <code>NOTE:</code> This method relies on the
+     * configuration settings for both
+     * {@link CoalesceSettings#getBinaryFileStoreBasePath()} and
+     * {@link CoalesceSettings#getSubDirectoryLength()} to build the directory
+     * path.
      *
      * @return String, full thumbnail filename.
      */
@@ -696,8 +706,9 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     }
 
     /**
-     * Returns the filename with a long representation of last modified datetime (Name?lastmodifiedlong). Returns empty
-     * string when filename does not exist. If an error is encountered, only the filename is returned.
+     * Returns the filename with a long representation of last modified datetime
+     * (Name?lastmodifiedlong). Returns empty string when filename does not
+     * exist. If an error is encountered, only the filename is returned.
      * 
      * @return String, full filename with LastModifiedTag appended.
      */
@@ -706,7 +717,8 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
         try
         {
             String fullPath = getCoalesceFullFilename();
-            if (StringHelper.isNullOrEmpty(fullPath)) return "";
+            if (StringHelper.isNullOrEmpty(fullPath))
+                return "";
 
             File theFile = new File(fullPath);
             long lastModifiedTicks = theFile.lastModified();
@@ -721,8 +733,10 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     }
 
     /**
-     * Returns the thumbnail filename with a long representation of last modified datetime (Name?lastmodifiedlong). Returns
-     * empty string when filename does not exist. If an error is encountered, only the thumbnail filename is returned.
+     * Returns the thumbnail filename with a long representation of last
+     * modified datetime (Name?lastmodifiedlong). Returns empty string when
+     * filename does not exist. If an error is encountered, only the thumbnail
+     * filename is returned.
      * 
      * @return String, full thumbnail filename with LastModifiedTag appended.
      */
@@ -731,7 +745,8 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
         try
         {
             String fullThumbPath = getCoalesceFullThumbnailFilename();
-            if (StringHelper.isNullOrEmpty(fullThumbPath)) return "";
+            if (StringHelper.isNullOrEmpty(fullThumbPath))
+                return "";
 
             File theFile = new File(fullThumbPath);
             long lastModifiedTicks = theFile.lastModified();
@@ -799,7 +814,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
      * @param marking classification marking of the field.
      * @param user user making the change.
      * @param ip user ip responsible for the change.
-     * @throws CoalesceDataFormatException.
+     * @throws CoalesceDataFormatException
      */
     public void change(T value, Marking marking, String user, String ip) throws CoalesceDataFormatException
     {
@@ -811,23 +826,40 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
             setClassificationMarking(marking);
             setModifiedBy(user);
             setModifiedByIP(ip);
+
         }
     }
 
-    // -----------------------------------------------------------------------//
-    // protected Override Methods
-    // -----------------------------------------------------------------------//
-
-    @Override
-    protected String getObjectStatus()
+    /**
+     * @return an array of values if the field is a list type, array of size 0
+     *         if the field is null, or array of one with the basevalue if its a
+     *         non list.
+     */
+    public String[] getBaseValues()
     {
-        return _entityField.getStatus();
-    }
 
-    @Override
-    protected void setObjectStatus(ECoalesceObjectStatus status)
-    {
-        _entityField.setStatus(status.getLabel());
+        String[] results;
+
+        if (getDataType().toString().endsWith("_LIST_TYPE"))
+        {
+            results = getArray();
+        }
+        else
+        {
+            if (!StringHelper.isNullOrEmpty(getBaseValue()))
+            {
+                results = new String[] {
+                    getBaseValue()
+                };
+            }
+            else
+            {
+                results = new String[0];
+            }
+        }
+
+        return results;
+
     }
 
     // -----------------------------------------------------------------------//
@@ -839,10 +871,42 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
         return _entityField;
     }
 
+    @Override
+    public void createHistory(String user, String ip, Integer version)
+    {
+
+        // No; History Suspended?
+        if (!isSuspendHistory())
+        {
+
+            // No; Check Type
+            switch (getDataType()) {
+            case BINARY_TYPE:
+            case FILE_TYPE:
+                // Don't Create History Entry for these types
+                break;
+            default:
+                // Add History
+                setPreviousHistoryKey(CoalesceFieldHistory.create(this).getKey());
+                setModifiedBy(user);
+                setModifiedByIP(ip);
+                setObjectVersion(version);
+
+                // Suspend Addition History
+                setSuspendHistory(true);
+
+            }
+
+        }
+
+    }
+
     protected void createHistory(Object oldValue, Object newValue)
     {
-        // newValue cannot be null, because setBaseValue: 'if (value == null) value = "";'
-        if (newValue == null) throw new IllegalArgumentException("newValue");
+        // newValue cannot be null, because setBaseValue: 'if (value == null)
+        // value = "";'
+        if (newValue == null)
+            throw new IllegalArgumentException("newValue");
 
         // Has Value Changed?
         if (!newValue.equals(oldValue))
@@ -862,12 +926,16 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
                     default:
                         // Add History
                         setPreviousHistoryKey(CoalesceFieldHistory.create(this));
+                        _entityField.setModifiedby(null);
+                        _entityField.setModifiedbyip(null);
+                        _entityField.setObjectversion(null);
+
                     }
                 }
             }
 
             // Update Last Modified
-            setLastModified(JodaDateTimeHelper.nowInUtc());
+            updateLastModified();
         }
     }
 
@@ -879,42 +947,42 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
     @Override
     protected Map<QName, String> getAttributes()
     {
-        Map<QName, String> map = new HashMap<QName, String>();
-        map.put(new QName("key"), _entityField.getKey());
-        map.put(new QName("datecreated"), JodaDateTimeHelper.toXmlDateTimeUTC(_entityField.getDatecreated()));
-        map.put(new QName("lastmodified"), JodaDateTimeHelper.toXmlDateTimeUTC(_entityField.getLastmodified()));
-        map.put(new QName("name"), _entityField.getName());
+        Map<QName, String> map = super.getAttributes();
+
         map.put(new QName("datatype"), _entityField.getDatatype());
         map.put(new QName("classificationmarking"), _entityField.getClassificationmarking());
         map.put(new QName("label"), _entityField.getLabel());
         map.put(new QName("value"), _entityField.getValue());
-        
+
         if (_entityField.getInputlang() == null)
         {
             map.put(new QName("inputlang"), null);
-        } else {
+        }
+        else
+        {
             map.put(new QName("inputlang"), _entityField.getInputlang().toString());
         }
-        map.put(new QName("status"), _entityField.getStatus());
+
         return map;
     }
 
     @Override
-    public boolean setAttribute(String name, String value)
+    protected boolean prune(CoalesceObjectType child)
+    {
+        boolean isSuccessful = false;
+
+        if (child instanceof Fieldhistory)
+        {
+            isSuccessful = _entityField.getFieldhistory().remove(child);
+        }
+
+        return isSuccessful;
+    }
+
+    @Override
+    protected boolean setExtendedAttributes(String name, String value)
     {
         switch (name.toLowerCase()) {
-        case "key":
-            setKey(value);
-            return true;
-        case "datecreated":
-            setDateCreated(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
-            return true;
-        case "lastmodified":
-            setLastModified(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
-            return true;
-        case "name":
-            setName(value);
-            return true;
         case "datatype":
             setDataType(ECoalesceFieldDataTypes.getTypeForCoalesceType(value));
             return true;
@@ -931,24 +999,16 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> {
 
             Locale inputLang = LocaleConverter.parseLocale(value);
 
-            if (inputLang == null) return false;
+            if (inputLang == null)
+                return false;
 
             setInputLang(inputLang);
 
             return true;
 
-        case "status":
-            setStatus(ECoalesceObjectStatus.getTypeForLabel(value));
-            return true;
         default:
             return setOtherAttribute(name, value);
         }
-    }
-
-    @Override
-    protected Map<QName, String> getOtherAttributes()
-    {
-        return _entityField.getOtherAttributes();
     }
 
 }

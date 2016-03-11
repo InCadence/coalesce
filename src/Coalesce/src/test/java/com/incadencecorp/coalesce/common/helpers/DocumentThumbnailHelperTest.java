@@ -11,17 +11,23 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 
 import javax.imageio.ImageIO;
 
 import org.apache.commons.io.FilenameUtils;
 import org.junit.AfterClass;
+import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.incadencecorp.coalesce.common.CoalesceAssert;
 import com.incadencecorp.coalesce.common.CoalesceUnitTestSettings;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceCryptoException;
 import com.incadencecorp.coalesce.common.helpers.DocumentThumbnailHelper.DocumentThumbnailResults;
+import com.incadencecorp.coalesce.framework.CoalesceSettings;
+import com.incadencecorp.coalesce.framework.persistance.CoalesceEncrypter;
 
 public class DocumentThumbnailHelperTest {
 
@@ -50,7 +56,7 @@ public class DocumentThumbnailHelperTest {
     @Test
     public void getThumbnailForFileFullFilenameTest() throws IOException
     {
-        String imagePath = CoalesceUnitTestSettings.getResourceAbsolutePath("desert.jpg");
+        String imagePath = CoalesceUnitTestSettings.getResourceAbsolutePath("Desert.jpg");
         DocumentThumbnailResults results = DocumentThumbnailHelper.getThumbnailForFile(imagePath);
 
         CoalesceAssert.assertThumbnail(results);
@@ -60,7 +66,7 @@ public class DocumentThumbnailHelperTest {
     @Test
     public void getThumbnailForFileFullFilenameWithoutEncryptionTest() throws IOException
     {
-        String imagePath = CoalesceUnitTestSettings.getResourceAbsolutePath("desert.jpg");
+        String imagePath = CoalesceUnitTestSettings.getResourceAbsolutePath("Desert.jpg");
         DocumentThumbnailResults results = DocumentThumbnailHelper.getThumbnailForFile(imagePath, false);
 
         CoalesceAssert.assertThumbnail(results);
@@ -68,8 +74,10 @@ public class DocumentThumbnailHelperTest {
     }
 
     @Test
-    public void getThumbnailForFileFullFilenameWithEncryptionTest() throws IOException
+    public void getThumbnailForFileFullFilenameWithEncryptionTest() throws IOException  
     {
+        CoalesceUnitTestSettings.verifyEncryption();
+        
         String imagePath = CoalesceUnitTestSettings.getResourceAbsolutePath("desert_encrypted.jpg");
         DocumentThumbnailResults results = DocumentThumbnailHelper.getThumbnailForFile(imagePath, true);
 
@@ -126,7 +134,7 @@ public class DocumentThumbnailHelperTest {
     @Test
     public void getThumbnailForFileBytesTest() throws IOException
     {
-        String imagePath = CoalesceUnitTestSettings.getResourceAbsolutePath("desert.jpg");
+        String imagePath = CoalesceUnitTestSettings.getResourceAbsolutePath("Desert.jpg");
         byte[] bytes = Files.readAllBytes(Paths.get(imagePath));
 
         DocumentThumbnailResults results = DocumentThumbnailHelper.getThumbnailForFile(bytes);
@@ -173,10 +181,10 @@ public class DocumentThumbnailHelperTest {
         getThumbnailForFileExtensionsTest("DocX", "LargeIcon_Word.png");
         getThumbnailForFileExtensionsTest("XLS", "LargeIcon_Excel.png");
         getThumbnailForFileExtensionsTest("XlsX", "LargeIcon_Excel.png");
-        getThumbnailForFileExtensionsTest("PPT", "LargeIcon_Powerpoint.png");
-        getThumbnailForFileExtensionsTest("PPTX", "LargeIcon_Powerpoint.png");
+        getThumbnailForFileExtensionsTest("PPT", "LargeIcon_PowerPoint.png");
+        getThumbnailForFileExtensionsTest("PPTX", "LargeIcon_PowerPoint.png");
         getThumbnailForFileExtensionsTest("ACCDB", "LargeIcon_Access.png");
-        getThumbnailForFileExtensionsTest("PDF", "LargeIcon_Pdf.png");
+        getThumbnailForFileExtensionsTest("PDF", "LargeIcon_PDF.png");
         getThumbnailForFileExtensionsTest("TXT", "LargeIcon_Text.png");
         getThumbnailForFileExtensionsTest("ZIP", "LargeIcon_Zip.png");
         getThumbnailForFileExtensionsTest("XYZ", "LargeIcon_Blank.png");
@@ -239,13 +247,13 @@ public class DocumentThumbnailHelperTest {
     @Test
     public void getDocumentThumbnailForMimeTypeMSPptTest() throws IOException
     {
-        getDocumentThumbnailForMimeTypeTest("PPT", "LargeIcon_Powerpoint.png");
+        getDocumentThumbnailForMimeTypeTest("PPT", "LargeIcon_PowerPoint.png");
     }
 
     @Test
     public void getDocumentThumbnailForMimeTypePptXTest() throws IOException
     {
-        getDocumentThumbnailForMimeTypeTest("PPTX", "LargeIcon_Powerpoint.png");
+        getDocumentThumbnailForMimeTypeTest("PPTX", "LargeIcon_PowerPoint.png");
     }
 
     @Test
@@ -257,7 +265,7 @@ public class DocumentThumbnailHelperTest {
     @Test
     public void getDocumentThumbnailForMimeTypePDFTest() throws IOException
     {
-        getDocumentThumbnailForMimeTypeTest("PDF", "LargeIcon_Pdf.png");
+        getDocumentThumbnailForMimeTypeTest("PDF", "LargeIcon_PDF.png");
     }
 
     @Test
@@ -284,7 +292,7 @@ public class DocumentThumbnailHelperTest {
 
         assertNotNull(image);
 
-        BufferedImage testImage = ImageIO.read(Thread.currentThread().getContextClassLoader().getResource(resourceName));
+        BufferedImage testImage = ImageIO.read(CoalesceUnitTestSettings.getResource(resourceName));
 
         assertTrue("Thumbnail for File extension failed: " + extension, CoalesceAssert.testImagesEqual(testImage, image));
 
@@ -314,7 +322,7 @@ public class DocumentThumbnailHelperTest {
 
     private boolean testImagesEqual(String resourceName, BufferedImage img2) throws IOException
     {
-        URL url = Thread.currentThread().getContextClassLoader().getResource(resourceName);
+        URL url = CoalesceUnitTestSettings.getResource(resourceName);
 
         BufferedImage img1 = ImageIO.read(url);
 

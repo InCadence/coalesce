@@ -114,7 +114,7 @@ public class ActionBaseEntity extends CoalesceEntity {
         ((CoalesceStringField) this._liveStatusRecord.getFieldByName("CurrentStatus")).setValue(value.getLabel());
     }
 
-    public ArrayList<CoalesceFieldHistory> getCurrentStatusHistory()
+    public CoalesceFieldHistory[] getCurrentStatusHistory()
     {
         return this._liveStatusRecord.getFieldByName("CurrentStatus").getHistory();
     }
@@ -130,7 +130,7 @@ public class ActionBaseEntity extends CoalesceEntity {
         ((CoalesceStringField) this._liveStatusRecord.getFieldByName("ResponseStatus")).setValue(value.getLabel());
     }
 
-    public ArrayList<CoalesceFieldHistory> getResponseStatusHistory()
+    public CoalesceFieldHistory[] getResponseStatusHistory()
     {
         return this._liveStatusRecord.getFieldByName("ResponseStatus").getHistory();
     }

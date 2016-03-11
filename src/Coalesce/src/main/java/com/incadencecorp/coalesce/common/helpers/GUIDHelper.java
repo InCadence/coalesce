@@ -158,6 +158,52 @@ public final class GUIDHelper {
             return value.toString().toUpperCase();
         }
     }
+    
+    /**
+     * Converts an array of Strings to UUIDs
+     * 
+     * @param values
+     * @return an array of UUIDs or throws an IllegalArgumentException if they
+     *         are not valid UUIDs.
+     * @throws IllegalArgumentException 
+     */
+    public static UUID[] toUUIDArray(String[] values) throws IllegalArgumentException
+    {
+
+        UUID[] result = new UUID[values.length];
+
+        for (int ii = 0; ii < values.length; ii++)
+        {
+            result[ii] = GUIDHelper.getGuid(values[ii]);
+            
+            if (result[ii] == null) {
+                throw new IllegalArgumentException("Invalid UUID string: " + values[ii]);
+            }
+        }
+
+        return result;
+
+    }
+
+    /**
+     * Converts an array of UUIDs to Strings
+     * 
+     * @param values
+     * @return an array of strings from the provided UUIDs.
+     */
+    public static String[] toStringArray(UUID[] values)
+    {
+
+        String[] result = new String[values.length];
+
+        for (int ii = 0; ii < values.length; ii++)
+        {
+            result[ii] = GUIDHelper.getGuidString(values[ii]);
+        }
+
+        return result;
+        
+    }
 
     // -----------------------------------------------------------------------//
     // Protected and Private Shared Methods

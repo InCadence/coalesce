@@ -118,7 +118,7 @@ public class DocumentPropertiesTest {
     {
         DocumentProperties docProps = new DocumentProperties();
 
-        String imagePath = CoalesceUnitTestSettings.getResourceAbsolutePath("TestDocumentMultiPage.docx");
+        String imagePath = CoalesceUnitTestSettings.getResourceAbsolutePath("TestDocumentMultipage.docx");
         assertTrue(docProps.initialize(imagePath));
 
         assertEquals(4, docProps.getPageCount());
@@ -176,6 +176,8 @@ public class DocumentPropertiesTest {
     public void initializeEncryptedFileTest() throws ImageProcessingException, IOException, JDOMException,
             CoalesceCryptoException
     {
+        CoalesceUnitTestSettings.verifyEncryption();
+        
         DocumentProperties plainTextDocProps = new DocumentProperties();
         String filePath = CoalesceUnitTestSettings.getResourceAbsolutePath("TestDocument.docx");
         assertTrue(plainTextDocProps.initialize(filePath, false));

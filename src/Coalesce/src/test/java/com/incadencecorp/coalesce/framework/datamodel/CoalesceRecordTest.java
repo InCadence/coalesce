@@ -16,7 +16,6 @@ import org.junit.Test;
 import com.incadencecorp.coalesce.common.CoalesceTypeInstances;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
-import com.incadencecorp.coalesce.framework.generatedjaxb.Record;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -393,7 +392,7 @@ public class CoalesceRecordTest {
         CoalesceRecord record = getMissionRecord();
 
         assertTrue(record.hasField("MissionName"));
-        assertFalse(record.hasField("Missionname"));
+        assertTrue(record.hasField("Missionname"));
         assertFalse(record.hasField("Invalid"));
     }
 
@@ -471,7 +470,7 @@ public class CoalesceRecordTest {
         assertEquals(record.getName(), desRecord.getName());
         assertEquals(record.getDateCreated(), desRecord.getDatecreated());
         assertEquals(record.getLastModified(), desRecord.getLastmodified());
-        assertEquals(record.getStatus(), ECoalesceObjectStatus.getTypeForLabel(desRecord.getStatus()));
+        assertEquals(record.getStatus(), desRecord.getStatus());
 
     }
 
@@ -491,7 +490,7 @@ public class CoalesceRecordTest {
 
         Record desRecord = (Record) XmlHelper.deserialize(recordXml, Record.class);
 
-        assertEquals(ECoalesceObjectStatus.DELETED, ECoalesceObjectStatus.getTypeForLabel(desRecord.getStatus()));
+        assertEquals(ECoalesceObjectStatus.DELETED, desRecord.getStatus());
 
     }
 
@@ -501,9 +500,12 @@ public class CoalesceRecordTest {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
         CoalesceRecord record = (CoalesceRecord) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record");
+
+        int before = record.getAttributes().size();
+
         record.setAttribute("TestAttribute", "TestingValue");
 
-        assertEquals(5, record.getAttributes().size());
+        assertEquals(before + 1, record.getAttributes().size());
 
         assertEquals("TestingValue", record.getAttribute("TestAttribute"));
 
@@ -528,7 +530,7 @@ public class CoalesceRecordTest {
         record.setAttribute("NoIndex", "True");
         assertEquals(true, record.getNoIndex());
 
-        record.setAttribute("Status", ECoalesceObjectStatus.UNKNOWN.getLabel());
+        record.setAttribute("Status", ECoalesceObjectStatus.UNKNOWN.toString());
         assertEquals(ECoalesceObjectStatus.DELETED, record.getStatus());
 
         record.setStatus(ECoalesceObjectStatus.ACTIVE);

@@ -13,6 +13,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
 
 /*-----------------------------------------------------------------------------'
@@ -33,7 +34,8 @@ import com.incadencecorp.coalesce.common.helpers.XmlHelper;
  -----------------------------------------------------------------------------*/
 
 /**
- * Defines default behavior for Data Connectors that extends this abstract class.
+ * Defines default behavior for Data Connectors that extends this abstract
+ * class.
  */
 public abstract class CoalesceDataConnectorBase implements AutoCloseable {
 
@@ -48,7 +50,7 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
     Abstract Functions
     -----------------------------------------------------------------------------*/
 
-    public abstract void openConnection() throws SQLException;
+    protected abstract Connection getDBConnection() throws SQLException;
 
     protected abstract String getProcedurePrefix();
 
@@ -57,12 +59,23 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
     -----------------------------------------------------------------------------*/
 
     /**
+     * Opens a connection.
+     * 
+     * @param autocommit
+     * @throws SQLException
+     */
+    public void openConnection(boolean autocommit) throws SQLException
+    {
+        _conn = getDBConnection();
+        _conn.setAutoCommit(autocommit);
+    }
+
+    /**
      * Returns the results from the executed SQL Command.
      * 
      * @param sql the statement to be executed against the database.
      * @return ResultSet - A table of data representing a database result set.
      * @throws SQLException
-     * @throws CoalescePersistorException
      */
     public final ResultSet executeQuery(final String sql) throws SQLException
     {
@@ -77,10 +90,10 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
      * Returns the results from the executed SQL Command.
      * 
      * @param sql the statement to be executed against the database.
-     * @param parameters the multiple parameters to be applied to the SQL statement
+     * @param parameters the multiple parameters to be applied to the SQL
+     *            statement
      * @return ResultSet - A table of data representing a database result set.
      * @throws SQLException
-     * @throws CoalescePersistorException
      */
     public final ResultSet executeQuery(final String sql, final CoalesceParameter... parameters) throws SQLException
     {
@@ -94,20 +107,21 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
         {
             stmt.setObject(ii + 1, parameters[ii].getValue(), parameters[ii].getType());
         }
-        
+
         return stmt.executeQuery();
 
     }
 
     /**
-     * Returns the results from the executed SQL Command, that contains LIKE wildcards.
+     * Returns the results from the executed SQL Command, that contains LIKE
+     * wildcards.
      * 
      * @param sql the statement to be executed against the database.
      * @param likeParams the number of like parameters in the SQL statement
-     * @param parameters the multiple parameters to be applied to the SQL statement
+     * @param parameters the multiple parameters to be applied to the SQL
+     *            statement
      * @return ResultSet - A table of data representing a database result set.
      * @throws SQLException
-     * @throws CoalescePersistorException
      */
     public final ResultSet executeLikeQuery(final String sql, final int likeParams, final CoalesceParameter... parameters)
             throws SQLException
@@ -138,7 +152,8 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
      * Executes a SQL statement on a database.
      * 
      * @param sql the statement to be executed against the database.
-     * @param parameters the multiple parameters to be applied to the SQL statement
+     * @param parameters the multiple parameters to be applied to the SQL
+     *            statement
      * @return true = success
      * @throws SQLException
      */
@@ -180,8 +195,10 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
     /**
      * Executes a stored procedure(or function) on a database.
      * 
-     * @param procedureName the name of the stored procedure to be executed against the database.
-     * @param parameters the multiple parameters to be applied to the SQL statement
+     * @param procedureName the name of the stored procedure to be executed
+     *            against the database.
+     * @param parameters the multiple parameters to be applied to the SQL
+     *            statement
      * @return true = success
      * @throws SQLException
      */
@@ -265,18 +282,76 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
         return XmlHelper.formatXml(doc);
     }
 
-    @Override
-    public final void close() throws Exception
+    /**
+     * Rolls back the connection.
+     * 
+     * @throws CoalescePersistorException
+     */
+    public final void rollback() throws CoalescePersistorException
     {
+
         if (this._conn != null)
         {
-            if (!this._conn.getAutoCommit())
+            try
+            {
+                this._conn.rollback();
+            }
+            catch (SQLException e)
+            {
+                throw new CoalescePersistorException("Failed to rollback the transaction: " + e.getMessage(), e);
+            }
+        }
+
+    }
+
+    /**
+     * Commits.
+     * 
+     * @throws CoalescePersistorException
+     */
+    public final void commit() throws CoalescePersistorException
+    {
+
+        try
+        {
+            if (this._conn != null && !_conn.getAutoCommit())
             {
                 this._conn.commit();
             }
-
-            this._conn.close();
         }
+        catch (SQLException e)
+        {
+            throw new CoalescePersistorException("Failed to commit: " + e.getMessage(), e);
+        }
+
+    }
+
+    @Override
+    public final void close() throws CoalescePersistorException
+    {
+        if (this._conn != null)
+        {
+            // if (!this._conn.getAutoCommit())
+            // {
+            // this._conn.commit();
+            // }
+
+            try
+            {
+                this._conn.close();
+            }
+            catch (SQLException e)
+            {
+                throw new CoalescePersistorException("Failed to close connection: " + e.getMessage(), e);
+            }
+        }
+    }
+
+    public final Connection getConnection() throws SQLException
+    {
+        openDataConnection();
+
+        return this._conn;
     }
 
     /*-----------------------------------------------------------------------------'
@@ -306,7 +381,7 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
     {
         if (this._conn == null)
         {
-            this.openConnection();
+            this.openConnection(true);
         }
     }
 

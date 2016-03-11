@@ -4,13 +4,14 @@ import java.io.IOException;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Test;
 import org.xml.sax.SAXException;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.persistance.neo4j.Neo4JPostgreSQLPersistor;
 import com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLDataConnector;
-
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -34,37 +35,24 @@ import com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLDataC
  */
 public class Neo4JPostGreSQLPersistorTest extends CoalescePersistorBaseTest {
 
-    /*
     @Test
     public void test() throws CoalescePersistorException
     {
-        Neo4JMySQLPersistor persistor = new Neo4JMySQLPersistor();
-        
+        Neo4JPostgreSQLPersistor persistor = new Neo4JPostgreSQLPersistor();
+        persistor.setSchema("coalesce");
+
         ServerConn svConnNeo4J = new ServerConn();
-
         svConnNeo4J.setPortNumber(7474);
-        svConnNeo4J.setServerName("localhost");
+        svConnNeo4J.setServerName("dbsp3");
+        ServerConn postgresSQLconn = getConnection();
 
-        ServerConn svConnMySQL = new ServerConn();
-
-        svConnMySQL = new ServerConn();
-        svConnMySQL.setUser("root");
-        svConnMySQL.setPassword("Passw0rd");
-        svConnMySQL.setServerName("127.0.0.1");
-        svConnMySQL.setPortNumber(3306);
-        svConnMySQL.setDatabase("coalescedatabase");
-
-        persistor.initialize(svConnMySQL, svConnNeo4J);
-        
+        persistor.initialize(postgresSQLconn, svConnNeo4J);
         CoalesceEntity entity = new CoalesceEntity();
         entity.initialize();
-        entity.setName("Test");
-        entity.setSource("Test");
-        
-        persistor.saveEntity(entity, true);
-        
-        
-    }*/
+        entity.setName("NeoTestEntity");
+        entity.setSource("OMEGA");
+        persistor.saveEntity(true, entity);
+    }
 
     @BeforeClass
     public static void setupBeforeClass() throws SAXException, IOException, CoalesceException
@@ -88,22 +76,15 @@ public class Neo4JPostGreSQLPersistorTest extends CoalescePersistorBaseTest {
     @Override
     protected ServerConn getConnection()
     {
-        ServerConn svConnMySQL = new ServerConn();
 
-        /*
-        svConnMySQL = new ServerConn();
-        svConnMySQL.setUser("root");
-        svConnMySQL.setPassword("Passw0rd");
-        svConnMySQL.setServerName("127.0.0.1");
-        svConnMySQL.setPortNumber(3306);
-        svConnMySQL.setDatabase("coalescedatabase");
-        */
-        svConnMySQL.setServerName("127.0.0.1");
-        svConnMySQL.setDatabase("CoalesceDatabase");
-        svConnMySQL.setUser("postgres");
-        svConnMySQL.setPassword("Passw0rd");
-        
-        return svConnMySQL;
+        ServerConn conPostgres = new ServerConn();
+        conPostgres.setServerName("10.0.51.90");
+        conPostgres.setDatabase("OMEGA");
+        conPostgres.setUser("enterprisedb");
+        conPostgres.setPassword("enterprisedb");
+        conPostgres.setPortNumber(5444);
+
+        return conPostgres;
 
     }
 
@@ -111,14 +92,15 @@ public class Neo4JPostGreSQLPersistorTest extends CoalescePersistorBaseTest {
     protected ICoalescePersistor getPersistor(ServerConn conn)
     {
         Neo4JPostgreSQLPersistor persistor = new Neo4JPostgreSQLPersistor();
-        
+
         ServerConn svConnNeo4J = new ServerConn();
 
         svConnNeo4J = new ServerConn();
-        svConnNeo4J.setServerName("localhost");
+        svConnNeo4J.setServerName("dbsp3");
         svConnNeo4J.setPortNumber(7474);
-        
+
         persistor.initialize(conn, svConnNeo4J);
+        persistor.setSchema("coalesce");
 
         return persistor;
 
@@ -127,7 +109,7 @@ public class Neo4JPostGreSQLPersistorTest extends CoalescePersistorBaseTest {
     @Override
     protected CoalesceDataConnectorBase getDataConnector(ServerConn conn) throws CoalescePersistorException
     {
-        return new PostGreSQLDataConnector(conn);
+        return new PostGreSQLDataConnector(conn, "omega");
     }
 
 }

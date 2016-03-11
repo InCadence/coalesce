@@ -54,23 +54,24 @@ public class IntelligenceEntity extends CoalesceEntity {
     // ----------------------------------------------------------------------//
 
     @Override
-    public boolean initialize()
-    {
-        if (!initializeEntity("", "", "")) return false;
+    public boolean initialize() {
+        if (!initializeEntity("", "", ""))
+            return false;
 
         return initializeReferences();
     }
 
-    protected boolean initializeEntity(String source, String version, String title)
-    {
+    protected boolean initializeEntity(String source, String version, String title) {
         CoalesceSection section;
         CoalesceRecordset recordSet;
 
         // Already Initialized?
-        if (_intelligenceRecord != null) return false;
+        if (_intelligenceRecord != null)
+            return false;
 
         // Initialize Entity
-        if (!super.initializeEntity(IntelligenceEntity.NAME, source, version, "", "", title)) return false;
+        if (!super.initializeEntity(IntelligenceEntity.NAME, source, version, "", "", title))
+            return false;
 
         // Create Intelligence Section
         section = CoalesceSection.create(this, IntelligenceEntity.NAME + " Section");
@@ -78,17 +79,16 @@ public class IntelligenceEntity extends CoalesceEntity {
 
         // Create Intelligence Recordset
         recordSet = CoalesceRecordset.create(section, IntelligenceEntity.NAME + " Recordset");
-        
+
         // TODO: Replace with Intelligence Fields
-        CoalesceFieldDefinition.create(recordSet,
-                                       "CurrentStatus",
-                                       ECoalesceFieldDataTypes.STRING_TYPE,
-                                       "Status",
-                                       "",
+        CoalesceFieldDefinition.create(recordSet, "CurrentStatus",
+                                       ECoalesceFieldDataTypes.STRING_TYPE, "Status", "",
                                        EIntelligenceStatuses.CollectionComplete.getLabel());
-        CoalesceFieldDefinition.create(recordSet, "ResponseStatus", ECoalesceFieldDataTypes.STRING_TYPE);
+        CoalesceFieldDefinition.create(recordSet, "ResponseStatus",
+                                       ECoalesceFieldDataTypes.STRING_TYPE);
         CoalesceFieldDefinition.create(recordSet, "ResponseKey", ECoalesceFieldDataTypes.GUID_TYPE);
-        CoalesceFieldDefinition.create(recordSet, "Location", ECoalesceFieldDataTypes.GEOCOORDINATE_TYPE);
+        CoalesceFieldDefinition.create(recordSet, "Location",
+                                       ECoalesceFieldDataTypes.GEOCOORDINATE_TYPE);
 
         // Create New Record
         _intelligenceRecord = recordSet.addNew();
@@ -98,25 +98,23 @@ public class IntelligenceEntity extends CoalesceEntity {
     }
 
     @Override
-    protected boolean initializeReferences()
-    {
-        if (!super.initializeReferences()) return false;
+    protected boolean initializeReferences() {
+        if (!super.initializeReferences())
+            return false;
 
         // Live Status Record
-        if (this._intelligenceRecord == null)
-        {
-            CoalesceRecordset recordSet = (CoalesceRecordset) this.getCoalesceObjectForNamePath(this.getName()
-                    + "/Intelligence Section/Intelligence Recordset");
+        if (this._intelligenceRecord == null) {
+            CoalesceRecordset recordSet =
+                    (CoalesceRecordset) this.getCoalesceObjectForNamePath(this.getName()
+                            + "/Intelligence Section/Intelligence Recordset");
 
             // Valid Xml?
-            if (recordSet == null) return false;
+            if (recordSet == null)
+                return false;
 
-            if (recordSet.getCount() == 0)
-            {
+            if (recordSet.getCount() == 0) {
                 this._intelligenceRecord = recordSet.addNew();
-            }
-            else
-            {
+            } else {
                 this._intelligenceRecord = recordSet.getItem(0);
             }
 
@@ -126,60 +124,55 @@ public class IntelligenceEntity extends CoalesceEntity {
     }
 
     /**
-     * Returns the parent section to be used for nesting modalities. 
+     * Returns the parent section to be used for nesting modalities.
      * 
-     * @return Returns the sections that contains the intelligence recordset. 
+     * @return Returns the sections that contains the intelligence recordset.
      */
-    protected CoalesceSection getParentSection()
-    {
+    protected CoalesceSection getParentSection() {
         return (CoalesceSection) this._intelligenceRecord.getParent().getParent();
     }
-    
+
     // ----------------------------------------------------------------------//
     // Entity Fields
     // ----------------------------------------------------------------------//
 
     // Current Status
-    public EIntelligenceStatuses getCurrentStatus()
-    {
-        return EIntelligenceStatuses.fromLabel(this._intelligenceRecord.getFieldByName("CurrentStatus").getBaseValue());
+    public EIntelligenceStatuses getCurrentStatus() {
+        return EIntelligenceStatuses.fromLabel(this._intelligenceRecord
+                .getFieldByName("CurrentStatus").getBaseValue());
     }
 
-    public void setCurrentStatus(EIntelligenceStatuses value)
-    {
-        ((CoalesceStringField) this._intelligenceRecord.getFieldByName("CurrentStatus")).setValue(value.getLabel());
+    public void setCurrentStatus(EIntelligenceStatuses value) {
+        ((CoalesceStringField) this._intelligenceRecord.getFieldByName("CurrentStatus"))
+                .setValue(value.getLabel());
     }
 
-    public ArrayList<CoalesceFieldHistory> getCurrentStatusHistory()
-    {
+    public CoalesceFieldHistory[] getCurrentStatusHistory() {
         return this._intelligenceRecord.getFieldByName("CurrentStatus").getHistory();
     }
 
     // Response Status
-    public EForensicStatuses getResponseStatus()
-    {
-        return EForensicStatuses.fromLabel(this._intelligenceRecord.getFieldByName("ResponseStatus").getBaseValue());
+    public EForensicStatuses getResponseStatus() {
+        return EForensicStatuses.fromLabel(this._intelligenceRecord
+                .getFieldByName("ResponseStatus").getBaseValue());
     }
 
-    public void setResponseStatus(EForensicStatuses value)
-    {
-        ((CoalesceStringField) this._intelligenceRecord.getFieldByName("ResponseStatus")).setValue(value.getLabel());
+    public void setResponseStatus(EForensicStatuses value) {
+        ((CoalesceStringField) this._intelligenceRecord.getFieldByName("ResponseStatus"))
+                .setValue(value.getLabel());
     }
 
-    public ArrayList<CoalesceFieldHistory> getResponseStatusHistory()
-    {
+    public CoalesceFieldHistory[] getResponseStatusHistory() {
         return this._intelligenceRecord.getFieldByName("ResponseStatus").getHistory();
     }
 
     // Response Key
-    public CoalesceGUIDField getResponseKey()
-    {
+    public CoalesceGUIDField getResponseKey() {
         return (CoalesceGUIDField) this._intelligenceRecord.getFieldByName("ResponseKey");
     }
 
     // Location
-    public CoalesceCoordinateField getLocation()
-    {
+    public CoalesceCoordinateField getLocation() {
         return (CoalesceCoordinateField) this._intelligenceRecord.getFieldByName("ResponseKey");
     }
 

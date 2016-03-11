@@ -27,7 +27,14 @@ import com.incadencecorp.coalesce.common.helpers.XmlHelper;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-public class CoalesceEntityTemplate {
+/**
+ * Coalesce Templates are used for registering data objects with the system and
+ * creating new data objects.
+ * 
+ * @author n78554
+ *
+ */
+public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate> {
 
     // -----------------------------------------------------------------------//
     // Protected Member Variables
@@ -41,13 +48,13 @@ public class CoalesceEntityTemplate {
     // -----------------------------------------------------------------------//
 
     /**
-     * Creates a {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate} based off of an
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}.
+     * Creates a {@link CoalesceEntityTemplate} based off of an
+     * {@link CoalesceEntity}.
      * 
-     * @param entity {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} that will be used to create the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate}
-     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate} created from the
-     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}
+     * @param entity {@link CoalesceEntity} that will be used to create the
+     *            {@link CoalesceEntityTemplate}
+     * @return {@link CoalesceEntityTemplate} created from the
+     *         {@link CoalesceEntity}
      * 
      * @throws SAXException
      * @throws IOException
@@ -58,11 +65,10 @@ public class CoalesceEntityTemplate {
     }
 
     /**
-     * Creates a {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate} based off of an (XML) String.
+     * Creates a {@link CoalesceEntityTemplate} based off of an (XML) String.
      * 
-     * @param templateXml String - xml string from/of an
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}
-     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate} created from the xml string
+     * @param templateXml String - xml string from/of an {@link CoalesceEntity}
+     * @return {@link CoalesceEntityTemplate} created from the xml string
      * 
      * @throws SAXException
      * @throws IOException
@@ -73,13 +79,13 @@ public class CoalesceEntityTemplate {
     }
 
     /**
-     * Creates a {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate} based off of an entity's
+     * Creates a {@link CoalesceEntityTemplate} based off of an entity's
      * org.w3c.dom Document.
      * 
      * @param doc org.w3c.dom Document that will be used to create the
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate}
-     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate} created from the
-     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} entity's Document
+     *            {@link CoalesceEntityTemplate}
+     * @return {@link CoalesceEntityTemplate} created from the
+     *         {@link CoalesceEntity} entity's Document
      * 
      * @throws SAXException
      * @throws IOException
@@ -90,7 +96,8 @@ public class CoalesceEntityTemplate {
         CoalesceEntityTemplate entTemp = new CoalesceEntityTemplate();
 
         // Initialize
-        if (!entTemp.initialize(doc)) return null;
+        if (!entTemp.initialize(doc))
+            return null;
 
         // return
         return entTemp;
@@ -101,11 +108,11 @@ public class CoalesceEntityTemplate {
     // -----------------------------------------------------------------------//
 
     /**
-     * Initializes a previously new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate} based off
-     * of an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}.
+     * Initializes a previously new {@link CoalesceEntityTemplate} based off of
+     * an {@link CoalesceEntity}.
      * 
-     * @param entity {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} that will be used to initialize
-     *            the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate}
+     * @param entity {@link CoalesceEntity} that will be used to initialize the
+     *            {@link CoalesceEntityTemplate}
      * @return boolean indicator of success/failure
      * 
      * @throws SAXException
@@ -117,10 +124,10 @@ public class CoalesceEntityTemplate {
     }
 
     /**
-     * Initializes a previously new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate} based off
-     * of a (XML) String.
+     * Initializes a previously new {@link CoalesceEntityTemplate} based off of
+     * a (XML) String.
      * 
-     * @param entityTemplateXml (XML) String from/of an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}
+     * @param entityTemplateXml (XML) String from/of an {@link CoalesceEntity}
      * @return boolean indicator of success/failure
      * 
      * @throws SAXException
@@ -132,10 +139,10 @@ public class CoalesceEntityTemplate {
     }
 
     /**
-     * Initializes a previously new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate} based off
-     * of an org.w3c.dom Document.
+     * Initializes a previously new {@link CoalesceEntityTemplate} based off of
+     * an org.w3c.dom Document.
      * 
-     * @param doc org.w3c.dom Document from/of an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}
+     * @param doc org.w3c.dom Document from/of an {@link CoalesceEntity}
      * @return boolean indicator of success/failure
      */
     public boolean initialize(Document doc)
@@ -159,10 +166,10 @@ public class CoalesceEntityTemplate {
     // -----------------------------------------------------------------------//
 
     /**
-     * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate}'s (org.w3c.dom Document)
+     * Returns the {@link CoalesceEntityTemplate} 's (org.w3c.dom Document)
      * Document.
      * 
-     * @return Document representing the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate}'s
+     * @return Document representing the {@link CoalesceEntityTemplate} 's
      *         entity
      */
     public Document getCoalesceObjectDocument()
@@ -171,10 +178,10 @@ public class CoalesceEntityTemplate {
     }
 
     /**
-     * Returns the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate}'s (org.w3c.dom Node)
+     * Returns the {@link CoalesceEntityTemplate} 's (org.w3c.dom Node)
      * EntityNode.
      * 
-     * @return Node representing the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate}'s entity
+     * @return Node representing the {@link CoalesceEntityTemplate} 's entity
      */
     public Node getEntityNode()
     {
@@ -216,11 +223,11 @@ public class CoalesceEntityTemplate {
     // -----------------------------------------------------------------------//
 
     /**
-     * Creates and initializes a new {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} based off of this
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate}'s XML String.
+     * Creates and initializes a new {@link CoalesceEntity} based off of this
+     * {@link CoalesceEntityTemplate} 's XML String.
      * 
-     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity} of the new entity created from this
-     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate}
+     * @return {@link CoalesceEntity} of the new entity created from this
+     *         {@link CoalesceEntityTemplate}
      */
     public CoalesceEntity createNewEntity()
     {
@@ -231,9 +238,9 @@ public class CoalesceEntityTemplate {
     }
 
     /**
-     * Returns the UTF-8 (XML) String of the {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate}.
+     * Returns the UTF-8 (XML) String of the {@link CoalesceEntityTemplate} .
      * 
-     * @return String (XML) in UTF-8 of this {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate}
+     * @return String (XML) in UTF-8 of this {@link CoalesceEntityTemplate}
      */
     public String toXml()
     {
@@ -242,7 +249,8 @@ public class CoalesceEntityTemplate {
 
     /**
      * Returns the (XML) String in the desired encoding of the
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate}.
+     * {@link CoalesceEntityTemplate} .
+     * 
      * @param encoding the desired encoding.
      * @return (XML) String in the desired encoding.
      */
@@ -284,7 +292,7 @@ public class CoalesceEntityTemplate {
         {
             Node node = nodeList.item(jj);
 
-            if (node.getNodeType() == Node.ELEMENT_NODE)
+            if (node.getNodeType() == Node.ELEMENT_NODE && !node.getNodeName().equalsIgnoreCase("constraint"))
             {
                 NamedNodeMap attributeList = node.getAttributes();
 
@@ -294,7 +302,10 @@ public class CoalesceEntityTemplate {
                     Node attribute = attributeList.item(ii);
                     if (!attribute.getNodeName().equalsIgnoreCase("name")
                             && !attribute.getNodeName().equalsIgnoreCase("source")
-                            && !attribute.getNodeName().equalsIgnoreCase("version"))
+                            && !attribute.getNodeName().equalsIgnoreCase("version")
+                            && !attribute.getNodeName().equalsIgnoreCase("flatten")
+                            && !attribute.getNodeName().equalsIgnoreCase("noindex")
+                            && !attribute.getNodeName().equalsIgnoreCase("datatype"))
                     {
                         attribute.setNodeValue("");
                     }
@@ -302,5 +313,73 @@ public class CoalesceEntityTemplate {
             }
         }
 
+    }
+
+    @Override
+    public int compareTo(CoalesceEntityTemplate template)
+    {
+
+        int compared = 0;
+
+        NodeList nodeList1 = template.getCoalesceObjectDocument().getElementsByTagName("*");
+        NodeList nodeList2 = this.getCoalesceObjectDocument().getElementsByTagName("*");
+
+        if (nodeList1.getLength() == nodeList2.getLength())
+        {
+
+            for (int jj = 0; jj < nodeList1.getLength(); jj++)
+            {
+                Node node1 = nodeList1.item(jj);
+                Node node2 = nodeList2.item(jj);
+
+                if (node1.getNodeType() == Node.ELEMENT_NODE)
+                {
+                    NamedNodeMap attributeList1 = node1.getAttributes();
+                    NamedNodeMap attributeList2 = node2.getAttributes();
+
+                    // Node contains same number of attributes.
+                    if (attributeList1.getLength() == attributeList2.getLength())
+                    {
+                        // Yes; Verify attribute values are the same.
+                        for (int ii = 0; ii < attributeList1.getLength(); ii++)
+                        {
+
+                            Node attribute1 = attributeList1.item(ii);
+                            Node attribute2 = attributeList2.item(ii);
+
+                            compared = attribute1.getNodeValue().compareToIgnoreCase(attribute2.getNodeValue());
+
+                            // Attribute Equivalent
+                            if (compared != 0)
+                            {
+                                // No; Exit For
+                                break;
+                            }
+
+                        }
+                    }
+                    else
+                    {
+                        // No; Templates Differ
+                        compared = 1;
+                    }
+                }
+
+                // So Far Equivalent?
+                if (compared != 0)
+                {
+                    // No; Exit For
+                    break;
+                }
+
+            }
+
+        }
+        else
+        {
+            compared = 1;
+        }
+
+        return compared;
     }
 }

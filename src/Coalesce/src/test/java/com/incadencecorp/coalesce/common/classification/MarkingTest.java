@@ -93,8 +93,7 @@ public class MarkingTest {
     }
 
     @Test
-    public void getClassifications() throws NoSuchMethodException, IllegalAccessException,
-            InvocationTargetException
+    public void getClassifications() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException
     {
 
         List<MarkingValue> classifications = callGetClassifications();
@@ -396,25 +395,25 @@ public class MarkingTest {
         Marking mk = new Marking();
 
         assertEquals("UNCLASSIFIED", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertFalse(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertFalse(mk.isJOINT());
         assertEquals(1, mk.getSelectedCountries().size());
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
 
     }
 
@@ -425,27 +424,27 @@ public class MarkingTest {
         Marking mk = new Marking(null);
 
         assertEquals("UNCLASSIFIED", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertFalse(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertFalse(mk.isJOINT());
         assertEquals(1, mk.getSelectedCountries().size());
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertFalse(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertFalse(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
     }
 
     @Test
@@ -455,27 +454,27 @@ public class MarkingTest {
         Marking mk = new Marking("()");
 
         assertEquals("UNCLASSIFIED", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertFalse(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertFalse(mk.isJOINT());
         assertEquals(1, mk.getSelectedCountries().size());
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertFalse(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertFalse(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -486,27 +485,27 @@ public class MarkingTest {
         Marking mk = new Marking("SECRE");
 
         assertEquals("UNCLASSIFIED", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertFalse(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertFalse(mk.isJOINT());
         assertEquals(1, mk.getSelectedCountries().size());
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertFalse(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertFalse(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -519,28 +518,28 @@ public class MarkingTest {
         assertEquals("RESTRICTED", mk.toString());
 
         assertEquals("RESTRICTED", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertFalse(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertFalse(mk.isJOINT());
         assertEquals(1, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(0));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertFalse(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertFalse(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -554,28 +553,28 @@ public class MarkingTest {
         assertEquals("RESTRICTED", mk.toString());
 
         assertEquals("RESTRICTED", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertFalse(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertFalse(mk.isJOINT());
         assertEquals(1, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(0));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertFalse(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertFalse(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -588,28 +587,28 @@ public class MarkingTest {
         assertEquals("UNCLASSIFIED", mk.toString());
 
         assertEquals("RESTRICTED", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertFalse(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertFalse(mk.isJOINT());
         assertEquals(1, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(0));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertFalse(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertFalse(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -623,28 +622,28 @@ public class MarkingTest {
         assertEquals("UNCLASSIFIED", mk.toString());
 
         assertEquals("UNCLASSIFIED", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertFalse(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertFalse(mk.isJOINT());
         assertEquals(1, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(0));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertFalse(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertFalse(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -657,28 +656,28 @@ public class MarkingTest {
         assertEquals("TOP SECRET", mk.toString());
 
         assertEquals("TOP SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertFalse(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertFalse(mk.isJOINT());
         assertEquals(1, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(0));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertFalse(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertFalse(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -692,32 +691,32 @@ public class MarkingTest {
         assertEquals("TOP SECRET", mk.toString());
 
         assertEquals("TOP SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertFalse(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertFalse(mk.isJOINT());
         assertEquals(1, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(0));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertFalse(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertFalse(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void constructorMarkingStringSlashPortionClassAfterEmpty()
     {
 
@@ -727,31 +726,31 @@ public class MarkingTest {
         assertEquals("//", mk.toString());
 
         MarkingValueTest.assertMarkingValue("", "", "", "", mk.getClassification());
-        assertFalse(mk.getIsNATO());
-        assertFalse(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertFalse(mk.isJOINT());
         assertEquals(0, mk.getSelectedCountries().size());
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertFalse(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertFalse(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void constructorMarkingStringSlashNoPortionClassAfterEmpty()
     {
 
@@ -761,27 +760,27 @@ public class MarkingTest {
         assertEquals("//", mk.toString());
 
         MarkingValueTest.assertMarkingValue("", "", "", "", mk.getClassification());
-        assertFalse(mk.getIsNATO());
-        assertFalse(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertFalse(mk.isJOINT());
         assertEquals(0, mk.getSelectedCountries().size());
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertFalse(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertFalse(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -795,28 +794,28 @@ public class MarkingTest {
         assertEquals("//AND TOP SECRET", mk.toString());
 
         assertEquals("TOP SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertFalse(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertFalse(mk.isJOINT());
         assertEquals(1, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertFalse(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertFalse(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -830,28 +829,28 @@ public class MarkingTest {
         assertEquals("//AND SECRET", mk.toString());
 
         assertEquals("SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertFalse(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertFalse(mk.isJOINT());
         assertEquals(1, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertFalse(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertFalse(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -865,27 +864,27 @@ public class MarkingTest {
         assertEquals("//TOP SECRET", mk.toString());
 
         assertEquals("TOP SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertFalse(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertFalse(mk.isJOINT());
         assertEquals(0, mk.getSelectedCountries().size());
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertFalse(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertFalse(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -899,31 +898,31 @@ public class MarkingTest {
         assertEquals("//SECRET", mk.toString());
 
         assertEquals("SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertFalse(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertFalse(mk.isJOINT());
         assertEquals(0, mk.getSelectedCountries().size());
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertFalse(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertFalse(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void constructorMarkingStringSlashPortionClassAfterJointInvalid()
     {
 
@@ -933,31 +932,31 @@ public class MarkingTest {
         assertEquals("//", mk.toString());
 
         MarkingValueTest.assertMarkingValue("", "", "", "", mk.getClassification());
-        assertFalse(mk.getIsNATO());
-        assertFalse(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertFalse(mk.isJOINT());
         assertEquals(0, mk.getSelectedCountries().size());
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertFalse(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertFalse(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void constructorMarkingStringSlashNoPortionClassAfterJointInvalid()
     {
 
@@ -967,31 +966,31 @@ public class MarkingTest {
         assertEquals("//", mk.toString());
 
         MarkingValueTest.assertMarkingValue("", "", "", "", mk.getClassification());
-        assertFalse(mk.getIsNATO());
-        assertFalse(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertFalse(mk.isJOINT());
         assertEquals(0, mk.getSelectedCountries().size());
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertFalse(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertFalse(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void constructorMarkingStringSlashNoPortionClassAfterJointInvalidTopSecret()
     {
 
@@ -1001,27 +1000,27 @@ public class MarkingTest {
         assertEquals("//", mk.toString());
 
         MarkingValueTest.assertMarkingValue("", "", "", "", mk.getClassification());
-        assertFalse(mk.getIsNATO());
-        assertFalse(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertFalse(mk.isJOINT());
         assertEquals(0, mk.getSelectedCountries().size());
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertFalse(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertFalse(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -1035,29 +1034,29 @@ public class MarkingTest {
         assertEquals("//JOINT TOP SECRET AND USA", mk.toString());
 
         assertEquals("JOINT TOP SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertFalse(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertFalse(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -1071,29 +1070,29 @@ public class MarkingTest {
         assertEquals("//JOINT SECRET AND USA", mk.toString());
 
         assertEquals("JOINT SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertFalse(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertFalse(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -1107,29 +1106,29 @@ public class MarkingTest {
         assertEquals("//JOINT TOP SECRET AND USA", mk.toString());
 
         assertEquals("JOINT TOP SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertFalse(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertFalse(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -1143,29 +1142,29 @@ public class MarkingTest {
         assertEquals("//JOINT TOP SECRET USA AND", mk.toString());
 
         assertEquals("JOINT TOP SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertFalse(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertFalse(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -1179,27 +1178,27 @@ public class MarkingTest {
         assertEquals("//COSMIC TOP SECRET BOHEMIA", mk.toString());
 
         assertEquals("COSMIC TOP SECRET BOHEMIA", mk.getClassification().getTitle());
-        assertTrue(mk.getIsNATO());
-        assertFalse(mk.getIsJOINT());
+        assertTrue(mk.isNATO());
+        assertFalse(mk.isJOINT());
         assertEquals(0, mk.getSelectedCountries().size());
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertFalse(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertFalse(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -1213,27 +1212,27 @@ public class MarkingTest {
         assertEquals("//NATO UNCLASSIFIED", mk.toString());
 
         assertEquals("NATO UNCLASSIFIED", mk.getClassification().getTitle());
-        assertTrue(mk.getIsNATO());
-        assertFalse(mk.getIsJOINT());
+        assertTrue(mk.isNATO());
+        assertFalse(mk.isJOINT());
         assertEquals(0, mk.getSelectedCountries().size());
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertFalse(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertFalse(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -1247,27 +1246,27 @@ public class MarkingTest {
         assertEquals("//CONFIDENTIAL ATOMAL", mk.toString());
 
         assertEquals("CONFIDENTIAL ATOMAL", mk.getClassification().getTitle());
-        assertTrue(mk.getIsNATO());
-        assertFalse(mk.getIsJOINT());
+        assertTrue(mk.isNATO());
+        assertFalse(mk.isJOINT());
         assertEquals(0, mk.getSelectedCountries().size());
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertFalse(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertFalse(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -1281,26 +1280,26 @@ public class MarkingTest {
         assertEquals("//COSMIC TOP SECRET BOHEMIA", mk.toString());
 
         assertEquals("COSMIC TOP SECRET BOHEMIA", mk.getClassification().getTitle());
-        assertTrue(mk.getIsNATO());
-        assertFalse(mk.getIsJOINT());
+        assertTrue(mk.isNATO());
+        assertFalse(mk.isJOINT());
         assertEquals(0, mk.getSelectedCountries().size());
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertFalse(mk.hasDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertFalse(mk.hasDisseminationControls());
     }
 
     @Test
@@ -1313,27 +1312,27 @@ public class MarkingTest {
         assertEquals("//NATO SECRET", mk.toString());
 
         assertEquals("NATO SECRET", mk.getClassification().getTitle());
-        assertTrue(mk.getIsNATO());
-        assertFalse(mk.getIsJOINT());
+        assertTrue(mk.isNATO());
+        assertFalse(mk.isJOINT());
         assertEquals(0, mk.getSelectedCountries().size());
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertFalse(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertFalse(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -1347,27 +1346,27 @@ public class MarkingTest {
         assertEquals("//SECRET ATOMAL", mk.toString());
 
         assertEquals("SECRET ATOMAL", mk.getClassification().getTitle());
-        assertTrue(mk.getIsNATO());
-        assertFalse(mk.getIsJOINT());
+        assertTrue(mk.isNATO());
+        assertFalse(mk.isJOINT());
         assertEquals(0, mk.getSelectedCountries().size());
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertFalse(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertFalse(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -1375,35 +1374,35 @@ public class MarkingTest {
     public void constructorMarkingStringSlashPortionClassAfterJointFOUO_LES()
     {
 
-        Marking mk = new Marking("(//JOINT TS AND USA//FOUO-LES)");
+        Marking mk = new Marking("(//JOINT TS AND USA//FOUO//LES)");
 
-        assertEquals("(//JOINT TS AND USA//FOUO-LES)", mk.toPortionString());
-        assertEquals("//JOINT TOP SECRET AND USA//FOUO-LES", mk.toString());
+        assertEquals("(//JOINT TS AND USA//FOUO//LES)", mk.toPortionString());
+        assertEquals("//JOINT TOP SECRET AND USA//FOUO//LES", mk.toString());
 
         assertEquals("JOINT TOP SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertTrue(mk.getIsFOUO());
-        assertTrue(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertTrue(mk.isFOUO());
+        assertTrue(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertTrue(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertTrue(mk.hasDisseminationControls());
+        assertTrue(mk.hasOtherDisseminationControls());
 
     }
 
@@ -1411,35 +1410,35 @@ public class MarkingTest {
     public void constructorMarkingStringSlashNoPortionClassAfterJointFOUO_LES()
     {
 
-        Marking mk = new Marking("//JOINT SECRET AND USA//FOUO-LES");
+        Marking mk = new Marking("//JOINT SECRET AND USA//FOUO//LES");
 
-        assertEquals("(//JOINT S AND USA//FOUO-LES)", mk.toPortionString());
-        assertEquals("//JOINT SECRET AND USA//FOUO-LES", mk.toString());
+        assertEquals("(//JOINT S AND USA//FOUO//LES)", mk.toPortionString());
+        assertEquals("//JOINT SECRET AND USA//FOUO//LES", mk.toString());
 
         assertEquals("JOINT SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertTrue(mk.getIsFOUO());
-        assertTrue(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertTrue(mk.isFOUO());
+        assertTrue(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertTrue(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertTrue(mk.hasDisseminationControls());
+        assertTrue(mk.hasOtherDisseminationControls());
 
     }
 
@@ -1453,29 +1452,29 @@ public class MarkingTest {
         assertEquals("//JOINT TOP SECRET AND USA//FOUO", mk.toString());
 
         assertEquals("JOINT TOP SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertTrue(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertTrue(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertTrue(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertTrue(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -1489,29 +1488,29 @@ public class MarkingTest {
         assertEquals("//JOINT SECRET AND USA//FOUO", mk.toString());
 
         assertEquals("JOINT SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertTrue(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertTrue(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertTrue(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertTrue(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -1525,29 +1524,29 @@ public class MarkingTest {
         assertEquals("//JOINT TOP SECRET AND USA//LES", mk.toString());
 
         assertEquals("JOINT TOP SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertTrue(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertTrue(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertTrue(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertFalse(mk.hasDisseminationControls());
+        assertTrue(mk.hasOtherDisseminationControls());
 
     }
 
@@ -1561,29 +1560,29 @@ public class MarkingTest {
         assertEquals("//JOINT SECRET AND USA//LES", mk.toString());
 
         assertEquals("JOINT SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertTrue(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertTrue(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertTrue(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertFalse(mk.hasDisseminationControls());
+        assertTrue(mk.hasOtherDisseminationControls());
 
     }
 
@@ -1597,29 +1596,29 @@ public class MarkingTest {
         assertEquals("//JOINT TOP SECRET AND USA//RELIDO", mk.toString());
 
         assertEquals("JOINT TOP SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertTrue(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertTrue(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertTrue(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertTrue(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -1633,29 +1632,29 @@ public class MarkingTest {
         assertEquals("//JOINT SECRET AND USA//RELIDO", mk.toString());
 
         assertEquals("JOINT SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertTrue(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertTrue(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertTrue(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertTrue(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -1669,29 +1668,29 @@ public class MarkingTest {
         assertEquals("//JOINT TOP SECRET AND USA//PROPIN", mk.toString());
 
         assertEquals("JOINT TOP SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertTrue(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertTrue(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertTrue(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertTrue(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -1705,29 +1704,29 @@ public class MarkingTest {
         assertEquals("//JOINT SECRET AND USA//PROPIN", mk.toString());
 
         assertEquals("JOINT SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertTrue(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertTrue(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertTrue(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertTrue(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -1741,29 +1740,29 @@ public class MarkingTest {
         assertEquals("//JOINT TOP SECRET AND USA//FISA", mk.toString());
 
         assertEquals("JOINT TOP SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertTrue(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertTrue(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertTrue(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertTrue(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -1777,29 +1776,29 @@ public class MarkingTest {
         assertEquals("//JOINT SECRET AND USA//FISA", mk.toString());
 
         assertEquals("JOINT SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertTrue(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertTrue(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertTrue(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertTrue(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -1813,29 +1812,29 @@ public class MarkingTest {
         assertEquals("//JOINT TOP SECRET AND USA//IMCON", mk.toString());
 
         assertEquals("JOINT TOP SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertTrue(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertTrue(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertTrue(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertTrue(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -1849,29 +1848,29 @@ public class MarkingTest {
         assertEquals("//JOINT SECRET AND USA//IMCON", mk.toString());
 
         assertEquals("JOINT SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertTrue(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertTrue(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertTrue(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertTrue(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -1885,29 +1884,29 @@ public class MarkingTest {
         assertEquals("//JOINT TOP SECRET AND USA//ORCON", mk.toString());
 
         assertEquals("JOINT TOP SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertTrue(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertTrue(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertTrue(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertTrue(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -1921,29 +1920,29 @@ public class MarkingTest {
         assertEquals("//JOINT SECRET AND USA//ORCON", mk.toString());
 
         assertEquals("JOINT SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertTrue(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertTrue(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertTrue(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertTrue(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -1957,29 +1956,29 @@ public class MarkingTest {
         assertEquals("//JOINT TOP SECRET AND USA//DSEN", mk.toString());
 
         assertEquals("JOINT TOP SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertTrue(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertTrue(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertTrue(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertTrue(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -1993,29 +1992,29 @@ public class MarkingTest {
         assertEquals("//JOINT SECRET AND USA//DSEN", mk.toString());
 
         assertEquals("JOINT SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertTrue(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertTrue(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertTrue(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertTrue(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -2029,29 +2028,29 @@ public class MarkingTest {
         assertEquals("//JOINT TOP SECRET AND USA//NOFORN", mk.toString());
 
         assertEquals("JOINT TOP SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertTrue(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertTrue(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertTrue(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertTrue(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -2065,33 +2064,33 @@ public class MarkingTest {
         assertEquals("//JOINT SECRET AND USA//NOFORN", mk.toString());
 
         assertEquals("JOINT SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertTrue(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertTrue(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertTrue(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertTrue(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void constructorMarkingStringSlashPortionClassAfterJointDisplayOnlyEmpty()
     {
 
@@ -2101,33 +2100,33 @@ public class MarkingTest {
         assertEquals("//JOINT TOP SECRET AND USA", mk.toString());
 
         assertEquals("JOINT TOP SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertFalse(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertFalse(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void constructorMarkingStringSlashNoPortionClassAfterJointDisplayOnlyEmpty()
     {
 
@@ -2137,29 +2136,29 @@ public class MarkingTest {
         assertEquals("//JOINT SECRET AND USA", mk.toString());
 
         assertEquals("JOINT SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertFalse(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertFalse(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -2173,30 +2172,30 @@ public class MarkingTest {
         assertEquals("//JOINT TOP SECRET AND USA//DISPLAY ONLY BMU", mk.toString());
 
         assertEquals("JOINT TOP SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(1, mk.getDisplayOnlyCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("BMU"), mk.getDisplayOnlyCountries().get(0));
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertTrue(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertTrue(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -2210,30 +2209,30 @@ public class MarkingTest {
         assertEquals("//JOINT SECRET AND USA//DISPLAY ONLY BMU", mk.toString());
 
         assertEquals("JOINT SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(1, mk.getDisplayOnlyCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("BMU"), mk.getDisplayOnlyCountries().get(0));
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertTrue(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertTrue(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -2247,31 +2246,31 @@ public class MarkingTest {
         assertEquals("//JOINT TOP SECRET AND USA//DISPLAY ONLY BMU, COL", mk.toString());
 
         assertEquals("JOINT TOP SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(2, mk.getDisplayOnlyCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("BMU"), mk.getDisplayOnlyCountries().get(0));
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("COL"), mk.getDisplayOnlyCountries().get(1));
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertTrue(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertTrue(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -2285,31 +2284,31 @@ public class MarkingTest {
         assertEquals("//JOINT SECRET AND USA//DISPLAY ONLY BMU, COL", mk.toString());
 
         assertEquals("JOINT SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(2, mk.getDisplayOnlyCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("BMU"), mk.getDisplayOnlyCountries().get(0));
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("COL"), mk.getDisplayOnlyCountries().get(1));
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertTrue(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertTrue(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -2323,31 +2322,31 @@ public class MarkingTest {
         assertEquals("//JOINT TOP SECRET AND USA//DISPLAY ONLY BMU, COL", mk.toString());
 
         assertEquals("JOINT TOP SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(2, mk.getDisplayOnlyCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("BMU"), mk.getDisplayOnlyCountries().get(0));
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("COL"), mk.getDisplayOnlyCountries().get(1));
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertTrue(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertTrue(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -2361,35 +2360,35 @@ public class MarkingTest {
         assertEquals("//JOINT SECRET AND USA//DISPLAY ONLY BMU, COL", mk.toString());
 
         assertEquals("JOINT SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(2, mk.getDisplayOnlyCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("BMU"), mk.getDisplayOnlyCountries().get(0));
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("COL"), mk.getDisplayOnlyCountries().get(1));
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertTrue(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertTrue(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void constructorMarkingStringSlashPortionClassAfterJointReleaseToEmpty()
     {
 
@@ -2399,33 +2398,33 @@ public class MarkingTest {
         assertEquals("//JOINT TOP SECRET AND USA", mk.toString());
 
         assertEquals("JOINT TOP SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertFalse(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertFalse(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void constructorMarkingStringSlashNoPortionClassAfterJointReleaseToEmpty()
     {
 
@@ -2435,29 +2434,29 @@ public class MarkingTest {
         assertEquals("//JOINT SECRET AND USA", mk.toString());
 
         assertEquals("JOINT SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertFalse(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertFalse(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -2471,30 +2470,30 @@ public class MarkingTest {
         assertEquals("//JOINT TOP SECRET AND USA//REL TO BMU", mk.toString());
 
         assertEquals("JOINT TOP SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(1, mk.getReleaseToCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("BMU"), mk.getReleaseToCountries().get(0));
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertTrue(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertTrue(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -2508,30 +2507,30 @@ public class MarkingTest {
         assertEquals("//JOINT SECRET AND USA//REL TO BMU", mk.toString());
 
         assertEquals("JOINT SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(1, mk.getReleaseToCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("BMU"), mk.getReleaseToCountries().get(0));
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertTrue(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertTrue(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -2545,31 +2544,31 @@ public class MarkingTest {
         assertEquals("//JOINT TOP SECRET AND USA//REL TO BMU, COL", mk.toString());
 
         assertEquals("JOINT TOP SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(2, mk.getReleaseToCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("BMU"), mk.getReleaseToCountries().get(0));
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("COL"), mk.getReleaseToCountries().get(1));
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertTrue(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertTrue(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -2583,31 +2582,31 @@ public class MarkingTest {
         assertEquals("//JOINT SECRET AND USA//REL TO BMU, COL", mk.toString());
 
         assertEquals("JOINT SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(2, mk.getReleaseToCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("BMU"), mk.getReleaseToCountries().get(0));
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("COL"), mk.getReleaseToCountries().get(1));
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertTrue(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertTrue(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -2621,31 +2620,31 @@ public class MarkingTest {
         assertEquals("//JOINT TOP SECRET AND USA//REL TO BMU, COL", mk.toString());
 
         assertEquals("JOINT TOP SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(2, mk.getReleaseToCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("BMU"), mk.getReleaseToCountries().get(0));
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("COL"), mk.getReleaseToCountries().get(1));
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertTrue(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertTrue(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -2659,31 +2658,31 @@ public class MarkingTest {
         assertEquals("//JOINT SECRET AND USA//REL TO BMU, COL", mk.toString());
 
         assertEquals("JOINT SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(2, mk.getReleaseToCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("BMU"), mk.getReleaseToCountries().get(0));
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("COL"), mk.getReleaseToCountries().get(1));
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertTrue(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertTrue(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
 
     }
 
@@ -2697,29 +2696,29 @@ public class MarkingTest {
         assertEquals("//JOINT TOP SECRET AND USA//SBU NOFORN", mk.toString());
 
         assertEquals("JOINT TOP SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertTrue(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertFalse(mk.hasDeseminationControls());
-        assertTrue(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertTrue(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertFalse(mk.hasDisseminationControls());
+        assertTrue(mk.hasOtherDisseminationControls());
 
     }
 
@@ -2733,29 +2732,29 @@ public class MarkingTest {
         assertEquals("//JOINT SECRET AND USA//SBU NOFORN", mk.toString());
 
         assertEquals("JOINT SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertTrue(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertFalse(mk.hasDeseminationControls());
-        assertTrue(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertTrue(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertFalse(mk.hasDisseminationControls());
+        assertTrue(mk.hasOtherDisseminationControls());
     }
 
     @Test
@@ -2768,29 +2767,29 @@ public class MarkingTest {
         assertEquals("//JOINT TOP SECRET AND USA//SBU", mk.toString());
 
         assertEquals("JOINT TOP SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertTrue(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertFalse(mk.hasDeseminationControls());
-        assertTrue(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertTrue(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertFalse(mk.hasDisseminationControls());
+        assertTrue(mk.hasOtherDisseminationControls());
     }
 
     @Test
@@ -2803,29 +2802,29 @@ public class MarkingTest {
         assertEquals("//JOINT SECRET AND USA//SBU", mk.toString());
 
         assertEquals("JOINT SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertTrue(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertFalse(mk.hasDeseminationControls());
-        assertTrue(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertTrue(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertFalse(mk.hasDisseminationControls());
+        assertTrue(mk.hasOtherDisseminationControls());
     }
 
     @Test
@@ -2838,29 +2837,29 @@ public class MarkingTest {
         assertEquals("//JOINT TOP SECRET AND USA//EXDIS", mk.toString());
 
         assertEquals("JOINT TOP SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertTrue(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertFalse(mk.hasDeseminationControls());
-        assertTrue(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertTrue(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertFalse(mk.hasDisseminationControls());
+        assertTrue(mk.hasOtherDisseminationControls());
     }
 
     @Test
@@ -2873,29 +2872,29 @@ public class MarkingTest {
         assertEquals("//JOINT SECRET AND USA//EXDIS", mk.toString());
 
         assertEquals("JOINT SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertTrue(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertFalse(mk.hasDeseminationControls());
-        assertTrue(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertTrue(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertFalse(mk.hasDisseminationControls());
+        assertTrue(mk.hasOtherDisseminationControls());
     }
 
     @Test
@@ -2908,29 +2907,29 @@ public class MarkingTest {
         assertEquals("//JOINT TOP SECRET AND USA//LIMITED DISTRIBUTION", mk.toString());
 
         assertEquals("JOINT TOP SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertTrue(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertFalse(mk.hasDeseminationControls());
-        assertTrue(mk.hasOtherDeseminationControls());
+        assertTrue(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertFalse(mk.hasDisseminationControls());
+        assertTrue(mk.hasOtherDisseminationControls());
     }
 
     @Test
@@ -2943,28 +2942,28 @@ public class MarkingTest {
         assertEquals("//JOINT SECRET AND USA//LIMITED DISTRIBUTION", mk.toString());
 
         assertEquals("JOINT SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertTrue(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertFalse(mk.hasDeseminationControls());
+        assertTrue(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertFalse(mk.hasDisseminationControls());
     }
 
     @Test
@@ -2977,30 +2976,30 @@ public class MarkingTest {
         assertEquals("//JOINT TOP SECRET AND USA//ACCM-BOB", mk.toString());
 
         assertEquals("JOINT TOP SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(1, mk.getNicknames().size());
-        assertEquals("BOB", mk.getNicknames().get(0));
-        assertFalse(mk.hasDeseminationControls());
-        assertTrue(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(1, mk.getACCMNicknames().length);
+        assertEquals("BOB", mk.getACCMNicknames()[0].getNickname());
+        assertFalse(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
     }
 
     @Test
@@ -3013,30 +3012,30 @@ public class MarkingTest {
         assertEquals("//JOINT SECRET AND USA//ACCM-BOB", mk.toString());
 
         assertEquals("JOINT SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(1, mk.getNicknames().size());
-        assertEquals("BOB", mk.getNicknames().get(0));
-        assertFalse(mk.hasDeseminationControls());
-        assertTrue(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(1, mk.getACCMNicknames().length);
+        assertEquals("BOB", mk.getACCMNicknames()[0].getNickname());
+        assertFalse(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
     }
 
     @Test
@@ -3049,31 +3048,31 @@ public class MarkingTest {
         assertEquals("//JOINT TOP SECRET AND USA//ACCM-BOB/JIM", mk.toString());
 
         assertEquals("JOINT TOP SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(2, mk.getNicknames().size());
-        assertEquals("BOB", mk.getNicknames().get(0));
-        assertEquals("JIM", mk.getNicknames().get(1));
-        assertFalse(mk.hasDeseminationControls());
-        assertTrue(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(2, mk.getACCMNicknames().length);
+        assertEquals("BOB", mk.getACCMNicknames()[0].getNickname());
+        assertEquals("JIM", mk.getACCMNicknames()[1].getNickname());
+        assertFalse(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
     }
 
     @Test
@@ -3086,31 +3085,69 @@ public class MarkingTest {
         assertEquals("//JOINT SECRET AND USA//ACCM-BOB/JIM", mk.toString());
 
         assertEquals("JOINT SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(2, mk.getNicknames().size());
-        assertEquals("BOB", mk.getNicknames().get(0));
-        assertEquals("JIM", mk.getNicknames().get(1));
-        assertFalse(mk.hasDeseminationControls());
-        assertTrue(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(2, mk.getACCMNicknames().length);
+        assertEquals("BOB", mk.getACCMNicknames()[0].getNickname());
+        assertEquals("JIM", mk.getACCMNicknames()[1].getNickname());
+        assertFalse(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
+    }
+
+    @Test
+    public void constructorMarkingStringWithACCMCaveats()
+    {
+
+        Marking mk = new Marking("(U//ACCM-XXX AAA BBB/YYY)");
+
+        System.out.println(mk.toString());
+
+        // assertEquals("(//JOINT TS AND USA)", mk.toPortionString());
+        assertEquals("UNCLASSIFIED//ACCM-XXX AAA BBB/YYY", mk.toString());
+
+        // assertEquals("JOINT TOP SECRET", mk.getClassification().getTitle());
+        assertFalse(mk.isNATO());
+        assertFalse(mk.isJOINT());
+        assertEquals(1, mk.getSelectedCountries().size());
+        assertEquals("UNITED STATES", mk.getSelectedCountries().get(0).getName());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
+        assertEquals(0, mk.getReleaseToCountries().size());
+        assertEquals(0, mk.getDisplayOnlyCountries().size());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(2, mk.getACCMNicknames().length);
+        assertEquals("XXX", mk.getACCMNicknames()[0].getNickname());
+        assertEquals("YYY", mk.getACCMNicknames()[1].getNickname());
+        assertFalse(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
     }
 
     @Test
@@ -3123,29 +3160,29 @@ public class MarkingTest {
         assertEquals("//JOINT TOP SECRET AND USA", mk.toString());
 
         assertEquals("JOINT TOP SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertFalse(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertFalse(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
     }
 
     @Test
@@ -3158,115 +3195,115 @@ public class MarkingTest {
         assertEquals("//JOINT SECRET AND USA", mk.toString());
 
         assertEquals("JOINT SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertFalse(mk.getIsFOUO());
-        assertFalse(mk.getIsLES());
-        assertFalse(mk.getIsORCON());
-        assertFalse(mk.getIsIMCON());
-        assertFalse(mk.getIsRELIDO());
-        assertFalse(mk.getIsPROPIN());
-        assertFalse(mk.getIsFISA());
-        assertFalse(mk.getIsNOFORN());
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isFOUO());
+        assertFalse(mk.isLES());
+        assertFalse(mk.isORCON());
+        assertFalse(mk.isIMCON());
+        assertFalse(mk.isRELIDO());
+        assertFalse(mk.isPROPIN());
+        assertFalse(mk.isFISA());
+        assertFalse(mk.isNOFORN());
+        assertFalse(mk.isDSEN());
         assertEquals(0, mk.getReleaseToCountries().size());
         assertEquals(0, mk.getDisplayOnlyCountries().size());
-        assertFalse(mk.getIsLIMDIS());
-        assertFalse(mk.getIsEXDIS());
-        assertFalse(mk.getIsSBU());
-        assertFalse(mk.getIsSBUNF());
-        assertEquals(0, mk.getNicknames().size());
-        assertFalse(mk.hasDeseminationControls());
-        assertFalse(mk.hasOtherDeseminationControls());
+        assertFalse(mk.isLIMDIS());
+        assertFalse(mk.isEXDIS());
+        assertFalse(mk.isSBU());
+        assertFalse(mk.isSBUNF());
+        assertEquals(0, mk.getACCMNicknames().length);
+        assertFalse(mk.hasDisseminationControls());
+        assertFalse(mk.hasOtherDisseminationControls());
     }
 
     @Test
     public void constructorMarkingStringSlashPortionClassAfterJointEverything()
     {
 
-        Marking mk = new Marking("(//JOINT TS AND USA//FOUO-LES//FOUO/LES/RELIDO/PR/FISA/IMC/OC/DSEN//NF/DISPLAY ONLY VIR IND/REL TO BMU COL//SBU-NF/SBU/XD/DS/ACCM-BOB/JIM)");
+        Marking mk = new Marking("(//JOINT TS AND USA//FOUO/LES/RELIDO/PR/FISA/IMC/OC/DSEN//NF/DISPLAY ONLY VIR IND/REL TO BMU COL//SBU-NF/SBU/XD/DS//ACCM-BOB/JIM)");
 
-        assertEquals("(//JOINT TS AND USA//FOUO-LES/REL TO BMU, COL/DISPLAY ONLY IND, VIR/RELIDO/PR/FISA/IMC/OC/DSEN/NF//DS/XD/SBU/SBU-NF/ACCM-BOB/JIM)",
+        assertEquals("(//JOINT TS AND USA//ACCM-BOB/JIM//FOUO/REL TO BMU, COL/DISPLAY ONLY IND, VIR/RELIDO/PR/FISA/IMC/OC/DSEN/NF//LES/DS/XD/SBU/SBU-NF)",
                      mk.toPortionString());
-        assertEquals("//JOINT TOP SECRET AND USA//FOUO-LES/REL TO BMU, COL/DISPLAY ONLY IND, VIR/RELIDO/PROPIN/FISA/IMCON/ORCON/DSEN/NOFORN//LIMITED DISTRIBUTION/EXDIS/SBU/SBU NOFORN/ACCM-BOB/JIM",
+        assertEquals("//JOINT TOP SECRET AND USA//ACCM-BOB/JIM//FOUO/REL TO BMU, COL/DISPLAY ONLY IND, VIR/RELIDO/PROPIN/FISA/IMCON/ORCON/DSEN/NOFORN//LES/LIMITED DISTRIBUTION/EXDIS/SBU/SBU NOFORN",
                      mk.toString());
 
         assertEquals("JOINT TOP SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertTrue(mk.getIsFOUO());
-        assertTrue(mk.getIsLES());
-        assertTrue(mk.getIsORCON());
-        assertTrue(mk.getIsIMCON());
-        assertTrue(mk.getIsRELIDO());
-        assertTrue(mk.getIsPROPIN());
-        assertTrue(mk.getIsFISA());
-        assertTrue(mk.getIsNOFORN());
-        assertTrue(mk.getIsDSEN());
+        assertTrue(mk.isFOUO());
+        assertTrue(mk.isLES());
+        assertTrue(mk.isORCON());
+        assertTrue(mk.isIMCON());
+        assertTrue(mk.isRELIDO());
+        assertTrue(mk.isPROPIN());
+        assertTrue(mk.isFISA());
+        assertTrue(mk.isNOFORN());
+        assertTrue(mk.isDSEN());
         assertEquals(2, mk.getReleaseToCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("BMU"), mk.getReleaseToCountries().get(0));
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("COL"), mk.getReleaseToCountries().get(1));
         assertEquals(2, mk.getDisplayOnlyCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("IND"), mk.getDisplayOnlyCountries().get(0));
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("VIR"), mk.getDisplayOnlyCountries().get(1));
-        assertTrue(mk.getIsLIMDIS());
-        assertTrue(mk.getIsEXDIS());
-        assertTrue(mk.getIsSBU());
-        assertTrue(mk.getIsSBUNF());
-        assertEquals(2, mk.getNicknames().size());
-        assertEquals("BOB", mk.getNicknames().get(0));
-        assertEquals("JIM", mk.getNicknames().get(1));
-        assertTrue(mk.hasDeseminationControls());
-        assertTrue(mk.hasOtherDeseminationControls());
+        assertTrue(mk.isLIMDIS());
+        assertTrue(mk.isEXDIS());
+        assertTrue(mk.isSBU());
+        assertTrue(mk.isSBUNF());
+        assertEquals(2, mk.getACCMNicknames().length);
+        assertEquals("BOB", mk.getACCMNicknames()[0].getNickname());
+        assertEquals("JIM", mk.getACCMNicknames()[1].getNickname());
+        assertTrue(mk.hasDisseminationControls());
+        assertTrue(mk.hasOtherDisseminationControls());
     }
 
     @Test
     public void constructorMarkingStringSlashNoPortionClassAfterJointEverything()
     {
 
-        Marking mk = new Marking("//JOINT SECRET AND USA//FOUO-LES/FOUO/LES/RELIDO/PROPIN/FISA/IMCON/ORCON/DSEN/NOFORN/DISPLAY ONLY VIR IND/REL TO BMU COL//SBU NOFORN/SBU/EXDIS/LIMITED DISTRIBUTION/ACCM-BOB/JIM");
+        Marking mk = new Marking("//JOINT SECRET AND USA//FOUO/LES/RELIDO/PROPIN/FISA/IMCON/ORCON/DSEN/NOFORN/DISPLAY ONLY VIR IND/REL TO BMU COL//SBU NOFORN/SBU/EXDIS/LIMITED DISTRIBUTION//ACCM-BOB/JIM");
 
-        assertEquals("(//JOINT S AND USA//FOUO-LES/REL TO BMU, COL/DISPLAY ONLY IND, VIR/RELIDO/PR/FISA/IMC/OC/DSEN/NF//DS/XD/SBU/SBU-NF/ACCM-BOB/JIM)",
+        assertEquals("(//JOINT S AND USA//ACCM-BOB/JIM//FOUO/REL TO BMU, COL/DISPLAY ONLY IND, VIR/RELIDO/PR/FISA/IMC/OC/DSEN/NF//LES/DS/XD/SBU/SBU-NF)",
                      mk.toPortionString());
-        assertEquals("//JOINT SECRET AND USA//FOUO-LES/REL TO BMU, COL/DISPLAY ONLY IND, VIR/RELIDO/PROPIN/FISA/IMCON/ORCON/DSEN/NOFORN//LIMITED DISTRIBUTION/EXDIS/SBU/SBU NOFORN/ACCM-BOB/JIM",
+        assertEquals("//JOINT SECRET AND USA//ACCM-BOB/JIM//FOUO/REL TO BMU, COL/DISPLAY ONLY IND, VIR/RELIDO/PROPIN/FISA/IMCON/ORCON/DSEN/NOFORN//LES/LIMITED DISTRIBUTION/EXDIS/SBU/SBU NOFORN",
                      mk.toString());
 
         assertEquals("JOINT SECRET", mk.getClassification().getTitle());
-        assertFalse(mk.getIsNATO());
-        assertTrue(mk.getIsJOINT());
+        assertFalse(mk.isNATO());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("AND"), mk.getSelectedCountries().get(0));
         ISO3166CountryTest.assertCountry(ISO3166Country.getUSA(), mk.getSelectedCountries().get(1));
-        assertTrue(mk.getIsFOUO());
-        assertTrue(mk.getIsLES());
-        assertTrue(mk.getIsORCON());
-        assertTrue(mk.getIsIMCON());
-        assertTrue(mk.getIsRELIDO());
-        assertTrue(mk.getIsPROPIN());
-        assertTrue(mk.getIsFISA());
-        assertTrue(mk.getIsNOFORN());
-        assertTrue(mk.getIsDSEN());
+        assertTrue(mk.isFOUO());
+        assertTrue(mk.isLES());
+        assertTrue(mk.isORCON());
+        assertTrue(mk.isIMCON());
+        assertTrue(mk.isRELIDO());
+        assertTrue(mk.isPROPIN());
+        assertTrue(mk.isFISA());
+        assertTrue(mk.isNOFORN());
+        assertTrue(mk.isDSEN());
         assertEquals(2, mk.getReleaseToCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("BMU"), mk.getReleaseToCountries().get(0));
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("COL"), mk.getReleaseToCountries().get(1));
         assertEquals(2, mk.getDisplayOnlyCountries().size());
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("IND"), mk.getDisplayOnlyCountries().get(0));
         ISO3166CountryTest.assertCountry(FieldValues.getCountryByAlpha3("VIR"), mk.getDisplayOnlyCountries().get(1));
-        assertTrue(mk.getIsLIMDIS());
-        assertTrue(mk.getIsEXDIS());
-        assertTrue(mk.getIsSBU());
-        assertTrue(mk.getIsSBUNF());
-        assertEquals(2, mk.getNicknames().size());
-        assertEquals("BOB", mk.getNicknames().get(0));
-        assertEquals("JIM", mk.getNicknames().get(1));
-        assertTrue(mk.hasDeseminationControls());
-        assertTrue(mk.hasOtherDeseminationControls());
+        assertTrue(mk.isLIMDIS());
+        assertTrue(mk.isEXDIS());
+        assertTrue(mk.isSBU());
+        assertTrue(mk.isSBUNF());
+        assertEquals(2, mk.getACCMNicknames().length);
+        assertEquals("BOB", mk.getACCMNicknames()[0].getNickname());
+        assertEquals("JIM", mk.getACCMNicknames()[1].getNickname());
+        assertTrue(mk.hasDisseminationControls());
+        assertTrue(mk.hasOtherDisseminationControls());
     }
 
     @Test
@@ -3275,39 +3312,39 @@ public class MarkingTest {
 
         Marking mk = new Marking();
 
-        assertFalse(mk.getIsNATO());
+        assertFalse(mk.isNATO());
 
         mk.setIsNATO(true);
-        assertTrue(mk.getIsNATO());
+        assertTrue(mk.isNATO());
     }
 
     @Test
-    public void getIsJointSelectedCountriesZeroTest()
+    public void isJointSelectedCountriesZeroTest()
     {
         Marking mk = new Marking("");
         mk.getSelectedCountries().clear();
 
-        assertFalse(mk.getIsJOINT());
+        assertFalse(mk.isJOINT());
         assertEquals(0, mk.getSelectedCountries().size());
 
     }
 
     @Test
-    public void getIsJointSelectedCountriesOneTest()
+    public void isJointSelectedCountriesOneTest()
     {
         Marking mk = new Marking("//USA TOP SECRET ");
 
-        assertFalse(mk.getIsJOINT());
+        assertFalse(mk.isJOINT());
         assertEquals(1, mk.getSelectedCountries().size());
 
     }
 
     @Test
-    public void getIsJointSelectedCoutnreisTwoTest()
+    public void isJointSelectedCoutnreisTwoTest()
     {
         Marking mk = new Marking("//JOINT TOP SECRET USA AND");
 
-        assertTrue(mk.getIsJOINT());
+        assertTrue(mk.isJOINT());
         assertEquals(2, mk.getSelectedCountries().size());
 
     }
@@ -3318,10 +3355,10 @@ public class MarkingTest {
 
         Marking mk = new Marking();
 
-        assertFalse(mk.getIsFOUO());
+        assertFalse(mk.isFOUO());
 
         mk.setIsFOUO(true);
-        assertTrue(mk.getIsFOUO());
+        assertTrue(mk.isFOUO());
     }
 
     @Test
@@ -3330,10 +3367,10 @@ public class MarkingTest {
 
         Marking mk = new Marking();
 
-        assertFalse(mk.getIsLES());
+        assertFalse(mk.isLES());
 
         mk.setIsLES(true);
-        assertTrue(mk.getIsLES());
+        assertTrue(mk.isLES());
 
     }
 
@@ -3343,10 +3380,10 @@ public class MarkingTest {
 
         Marking mk = new Marking();
 
-        assertFalse(mk.getIsORCON());
+        assertFalse(mk.isORCON());
 
         mk.setIsORCON(true);
-        assertTrue(mk.getIsORCON());
+        assertTrue(mk.isORCON());
     }
 
     @Test
@@ -3355,28 +3392,25 @@ public class MarkingTest {
 
         Marking mk = new Marking();
 
-        assertFalse(mk.getIsIMCON());
+        assertFalse(mk.isIMCON());
 
         mk.setIsIMCON(true);
-        assertTrue(mk.getIsIMCON());
+        assertTrue(mk.isIMCON());
     }
 
     @Test
-    public void getIsDisplayOnlyTest()
+    public void isDisplayOnlyTest()
     {
 
         Marking mk = new Marking("UNCLASSIFIED//DISPLAY ONLY AND USA");
 
-        assertTrue(mk.getIsDisplayOnly());
+        assertTrue(mk.isDisplayOnly());
     }
 
-    @Test
-    public void getIsDisplayOnlyEmptyTest()
+    @Test(expected = IllegalArgumentException.class)
+    public void isDisplayOnlyEmptyTest()
     {
-
         Marking mk = new Marking("//UNCLASSIFIED");
-
-        assertFalse(mk.getIsDisplayOnly());
     }
 
     @Test
@@ -3385,10 +3419,10 @@ public class MarkingTest {
 
         Marking mk = new Marking();
 
-        assertFalse(mk.getIsDSEN());
+        assertFalse(mk.isDSEN());
 
         mk.setIsDSEN(true);
-        assertTrue(mk.getIsDSEN());
+        assertTrue(mk.isDSEN());
     }
 
     @Test
@@ -3397,10 +3431,10 @@ public class MarkingTest {
 
         Marking mk = new Marking();
 
-        assertFalse(mk.getIsFISA());
+        assertFalse(mk.isFISA());
 
         mk.setIsFISA(true);
-        assertTrue(mk.getIsFISA());
+        assertTrue(mk.isFISA());
     }
 
     @Test
@@ -3409,10 +3443,10 @@ public class MarkingTest {
 
         Marking mk = new Marking();
 
-        assertFalse(mk.getIsPROPIN());
+        assertFalse(mk.isPROPIN());
 
         mk.setIsPROPIN(true);
-        assertTrue(mk.getIsPROPIN());
+        assertTrue(mk.isPROPIN());
     }
 
     @Test
@@ -3421,29 +3455,29 @@ public class MarkingTest {
 
         Marking mk = new Marking();
 
-        assertFalse(mk.getIsRELIDO());
+        assertFalse(mk.isRELIDO());
 
         mk.setIsRELIDO(true);
-        assertTrue(mk.getIsRELIDO());
+        assertTrue(mk.isRELIDO());
 
     }
 
     @Test
-    public void getIsReleaseToTest()
+    public void isReleaseToTest()
     {
 
         Marking mk = new Marking("//UNCLASSIFIED USA//REL TO AND USA");
 
-        assertTrue(mk.getIsReleaseTo());
+        assertTrue(mk.isReleaseTo());
     }
 
-    @Test
-    public void getIsReleaseToEmptyTest()
+    @Test(expected = IllegalArgumentException.class)
+    public void isReleaseToEmptyTest()
     {
 
         Marking mk = new Marking("//UNCLASSIFIED");
 
-        assertFalse(mk.getIsReleaseTo());
+        assertFalse(mk.isReleaseTo());
     }
 
     @Test
@@ -3452,10 +3486,10 @@ public class MarkingTest {
 
         Marking mk = new Marking();
 
-        assertFalse(mk.getIsNOFORN());
+        assertFalse(mk.isNOFORN());
 
         mk.setIsNOFORN(true);
-        assertTrue(mk.getIsNOFORN());
+        assertTrue(mk.isNOFORN());
     }
 
     @Test
@@ -3477,10 +3511,10 @@ public class MarkingTest {
 
         Marking mk = new Marking();
 
-        assertFalse(mk.getIsLIMDIS());
+        assertFalse(mk.isLIMDIS());
 
         mk.setIsLIMDIS(true);
-        assertTrue(mk.getIsLIMDIS());
+        assertTrue(mk.isLIMDIS());
     }
 
     @Test
@@ -3489,10 +3523,10 @@ public class MarkingTest {
 
         Marking mk = new Marking();
 
-        assertFalse(mk.getIsEXDIS());
+        assertFalse(mk.isEXDIS());
 
         mk.setIsEXDIS(true);
-        assertTrue(mk.getIsEXDIS());
+        assertTrue(mk.isEXDIS());
     }
 
     @Test
@@ -3501,11 +3535,11 @@ public class MarkingTest {
 
         Marking mk = new Marking();
 
-        assertFalse(mk.getIsSBU());
+        assertFalse(mk.isSBU());
 
         mk.setIsSBU(true);
 
-        assertTrue(mk.getIsSBU());
+        assertTrue(mk.isSBU());
     }
 
     @Test
@@ -3514,33 +3548,121 @@ public class MarkingTest {
 
         Marking mk = new Marking();
 
-        assertFalse(mk.getIsSBUNF());
+        assertFalse(mk.isSBUNF());
 
         mk.setIsSBUNF(true);
-        assertTrue(mk.getIsSBUNF());
+        assertTrue(mk.isSBUNF());
     }
 
     @Test
-    public void getIsACCMTest()
+    public void isACCMTest()
     {
 
         Marking mk = new Marking("UNCLASSIFIED//ACCM-BOB/JIM");
 
-        assertTrue(mk.getIsACCM());
+        assertTrue(mk.getACCMNicknames().length > 0);
     }
 
-    @Test
-    public void getIsACCMEmptyTest()
+    @Test(expected = IllegalArgumentException.class)
+    public void isACCMEmptyTest()
     {
 
         Marking mk = new Marking("//UNCLASSIFIED");
 
-        assertFalse(mk.getIsDisplayOnly());
+        assertFalse(mk.isDisplayOnly());
+    }
+
+    @Test
+    public void isRSENTest()
+    {
+
+        Marking mk = new Marking("UNCLASSIFIED");
+
+        mk.setIsRSEN(true);
+
+        assertEquals("UNCLASSIFIED//RSEN", mk.toString());
+        assertEquals("(U//RS)", mk.toPortionString());
+    }
+
+    @Test
+    public void isNODISTest()
+    {
+
+        Marking mk = new Marking("UNCLASSIFIED");
+
+        mk.setIsNODIS(true);
+
+        assertEquals("UNCLASSIFIED//NODIS", mk.toString());
+        assertEquals("(U//ND)", mk.toPortionString());
+
+    }
+
+    @Test
+    public void isLESNFTest()
+    {
+
+        Marking mk = new Marking("UNCLASSIFIED");
+
+        mk.setIsLESNF(true);
+
+        assertEquals("UNCLASSIFIED//LES NOFORN", mk.toString());
+        assertEquals("(U//LES-NF)", mk.toPortionString());
+
+    }
+
+    @Test
+    public void isSSITest()
+    {
+
+        Marking mk = new Marking("UNCLASSIFIED");
+
+        mk.setIsSSI(true);
+
+        assertEquals("UNCLASSIFIED//SSI", mk.toString());
+        assertEquals("(U//SSI)", mk.toPortionString());
+
+    }
+
+    @Test
+    public void usaDismTest()
+    {
+
+        Marking mk = new Marking("UNCLASSIFIED");
+
+        mk.getReleaseToCountries().add(FieldValues.getCountryByName("GERMANY"));
+        mk.getReleaseToCountries().add(FieldValues.getCountryByName("UNITED STATES"));
+
+        assertEquals("UNCLASSIFIED//REL TO USA, DEU", mk.toString());
+        assertEquals("(U//REL TO USA, DEU)", mk.toPortionString());
+
+    }
+    
+    @Test
+    public void sapTest()
+    {
+
+        Marking mk = new Marking("UNCLASSIFIED//SAR-BP-A12 CDE 125-121//NOFORN");
+
+        assertEquals(1, mk.getSAPPrograms().length);
+        assertEquals("BP", mk.getSAPPrograms()[0].getProgramName());
+        assertEquals(2, mk.getSAPPrograms()[0].getCompartments().length);
+        assertEquals("121", mk.getSAPPrograms()[0].getCompartments()[0].getCompartmentName());
+        assertEquals("A12", mk.getSAPPrograms()[0].getCompartments()[1].getCompartmentName());
+
+        assertEquals(0, mk.getSAPPrograms()[0].getCompartments()[0].getSubCompartments().length);
+        assertEquals(2, mk.getSAPPrograms()[0].getCompartments()[1].getSubCompartments().length);
+
+        assertEquals("125", mk.getSAPPrograms()[0].getCompartments()[1].getSubCompartments()[0]);
+        assertEquals("CDE", mk.getSAPPrograms()[0].getCompartments()[1].getSubCompartments()[1]);
+
+        assertTrue(mk.isNOFORN());
+        
+        
     }
 
     @SuppressWarnings("unchecked")
-    private List<MarkingValue> callGetClassifications() throws NoSuchMethodException, 
-            IllegalAccessException, InvocationTargetException
+    private List<MarkingValue> callGetClassifications() throws NoSuchMethodException, IllegalAccessException,
+            InvocationTargetException
     {
 
         Method method = Marking.class.getDeclaredMethod("getClassifications", (Class<?>[]) null);

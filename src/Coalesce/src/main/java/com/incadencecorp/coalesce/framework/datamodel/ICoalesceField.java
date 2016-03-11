@@ -1,3 +1,19 @@
+/*-----------------------------------------------------------------------------'
+ Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
+
+ Notwithstanding any contractor copyright notice, the Government has Unlimited
+ Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+ of this work other than as specifically authorized by these DFARS Clauses may
+ violate Government rights in this work.
+
+ DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+ Unlimited Rights. The Government has the right to use, modify, reproduce,
+ perform, display, release or disclose this computer software and to have or
+ authorize others to do so.
+
+ Distribution Statement D. Distribution authorized to the Department of
+ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+ -----------------------------------------------------------------------------*/
 package com.incadencecorp.coalesce.framework.datamodel;
 
 import java.util.Locale;
@@ -24,6 +40,7 @@ public interface ICoalesceField<T> {
      * Return the value of the Field's Value attribute.
      * 
      * @return String of the Field's value attribute.
+     * @throws CoalesceDataFormatException
      */
     T getValue() throws CoalesceDataFormatException;
 
@@ -37,31 +54,18 @@ public interface ICoalesceField<T> {
     /**
      * Return the value of the Field's DataType attribute.
      * 
-     * @return {@link com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes} of the Field's DataType
-     *         attribute.
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes}
+     *         of the Field's DataType attribute.
      */
     ECoalesceFieldDataTypes getDataType();
 
     /**
-     * Return a Marking class value of the Field's ClassificationMarking attribute.
+     * Return a Marking class value of the Field's ClassificationMarking
+     * attribute.
      * 
      * @return Marking class of the Field's ClassificationMarking attribute.
      */
     Marking getClassificationMarking();
-
-    /**
-     * Return identification of who modified the Field's Value attribute.
-     * 
-     * @return String of the Field's ModifiedBy attribute.
-     */
-    String getModifiedBy();
-
-    /**
-     * Return IP address of who modified the Field's Value attribute.
-     * 
-     * @return String of the Field's ModifiedByIP attribute.
-     */
-    String getModifiedByIP();
 
     /**
      * Returns the Input Language used when the Field's value was set.
@@ -71,7 +75,8 @@ public interface ICoalesceField<T> {
     Locale getInputLang();
 
     /**
-     * Return the Field's MimeType. MIME types form a standard way of classifying file types on the Internet.
+     * Return the Field's MimeType. MIME types form a standard way of
+     * classifying file types on the Internet.
      * 
      * @return String of the Field's MimeType attribute.
      */
@@ -85,7 +90,8 @@ public interface ICoalesceField<T> {
     String getFilename();
 
     /**
-     * Return the value of the Field's extension attribute which corresponds to the filename attribute.
+     * Return the value of the Field's extension attribute which corresponds to
+     * the filename attribute.
      * 
      * @return String of the Field's extension attribute.
      */
@@ -106,14 +112,6 @@ public interface ICoalesceField<T> {
     int getSize();
 
     /**
-     * Return the Key value of the Field's most recent previous history
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}.
-     * 
-     * @return String to be the Field's PreviousHistoryKey attribute.
-     */
-    String getPreviousHistoryKey();
-
-    /**
      * Sets the value of the Field's Name attribute.
      * 
      * @param value String to be the Field's Name attribute.
@@ -124,6 +122,7 @@ public interface ICoalesceField<T> {
      * Sets the value of the Field's Value attribute.
      * 
      * @param value String to be the Field's value attribute.
+     * @throws CoalesceDataFormatException
      */
     void setValue(T value) throws CoalesceDataFormatException;
 
@@ -135,25 +134,13 @@ public interface ICoalesceField<T> {
     void setLabel(String value);
 
     /**
-     * Sets the Field's ClassificationMarking attribute based on the Marking class value parameter.
+     * Sets the Field's ClassificationMarking attribute based on the Marking
+     * class value parameter.
      * 
-     * @param value Marking class to be the Field's ClassificationMarking attribute.
+     * @param value Marking class to be the Field's ClassificationMarking
+     *            attribute.
      */
     void setClassificationMarking(Marking value);
-
-    /**
-     * Sets the identification of who modified the Field's Value attribute.
-     * 
-     * @param value String to be the Field's ModifiedBy attribute.
-     */
-    void setModifiedBy(String value);
-
-    /**
-     * Sets the IP address of who modified the Field's Value attribute.
-     * 
-     * @param value String to be the Field's ModifiedByIP attribute.
-     */
-    void setModifiedByIP(String value);
 
     /**
      * Sets the Input Language used as the Field's value is set.
@@ -163,7 +150,8 @@ public interface ICoalesceField<T> {
     void setInputLang(Locale value);
 
     /**
-     * Sets the Field's MimeType. MIME types form a standard way of classifying file types on the Internet.
+     * Sets the Field's MimeType. MIME types form a standard way of classifying
+     * file types on the Internet.
      * 
      * @param value String to be the Field's MimeType attribute.
      */
@@ -177,7 +165,8 @@ public interface ICoalesceField<T> {
     void setFilename(String value);
 
     /**
-     * Sets the value of the Field's extension attribute which corresponds to the filename attribute.
+     * Sets the value of the Field's extension attribute which corresponds to
+     * the filename attribute.
      * 
      * @param value String to be the Field's extension attribute.
      */
@@ -197,11 +186,4 @@ public interface ICoalesceField<T> {
      */
     void setSize(int value);
 
-    /**
-     * Sets the Key value corresponding to the Field's most recent previous history
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}.
-     * 
-     * @param value String to be the Field's PreviousHistoryKey attribute.
-     */
-    void setPreviousHistoryKey(String value);
 }

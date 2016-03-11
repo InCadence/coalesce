@@ -2,16 +2,22 @@ package com.incadencecorp.coalesce.common;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.junit.Assume;
 
+import com.incadencecorp.coalesce.common.exceptions.CoalesceCryptoException;
 import com.incadencecorp.coalesce.framework.CoalesceSettings;
+import com.incadencecorp.coalesce.framework.persistance.CoalesceEncrypter;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -72,7 +78,7 @@ public class CoalesceUnitTestSettings extends CoalesceSettings {
 
     public static boolean setSubDirectoryLength(int value)
     {
-        return CoalesceSettings.setSetting(getConfigurationFileName(), "Coalesce.FileStore.SubDirectoryLength", value);
+        return settings.setSetting(getConfigurationFileName(), "Coalesce.FileStore.SubDirectoryLength", value);
     }
 
     public static URL getResource(String resource)
@@ -125,6 +131,19 @@ public class CoalesceUnitTestSettings extends CoalesceSettings {
             return null;
         }
 
+    }
+    
+    public static void verifyEncryption() 
+    {
+        try 
+        {
+            CoalesceEncrypter aes = new CoalesceEncrypter(CoalesceSettings.getPassPhrase());
+        
+            aes.getEncryptionCipher();
+        } 
+        catch (CoalesceCryptoException | InvalidKeyException | NoSuchAlgorithmException | UnsupportedEncodingException e) {
+            Assume.assumeNoException(e);
+        }
     }
 
 }

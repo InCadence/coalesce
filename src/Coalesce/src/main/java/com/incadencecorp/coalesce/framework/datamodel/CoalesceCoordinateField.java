@@ -66,8 +66,8 @@ public class CoalesceCoordinateField extends CoalesceField<Coordinate> {
     /**
      * Sets the geometry Coordinate for the CoalesceCoordinateField based on the lat/long parameter doubles.
      * 
-     * @param latitude allowed object is {@link double }
-     * @param longitude allowed object is {@link double }
+     * @param latitude
+     * @param longitude
      * @throws CoalesceDataFormatException
      */
     public void setValue(double latitude, double longitude) throws CoalesceDataFormatException
