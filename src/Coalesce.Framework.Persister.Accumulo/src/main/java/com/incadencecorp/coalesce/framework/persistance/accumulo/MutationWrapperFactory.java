@@ -72,72 +72,66 @@ public class MutationWrapperFactory extends CoalesceIterator {
     protected boolean visitCoalesceEntity(CoalesceEntity entity)
     {
 
-        Map<QName, String> attributes = getAttributes(entity);
-
-        for (Entry<QName, String> set : attributes.entrySet())
-        {
-
-            String attrName = set.getKey().toString();
-            String value = set.getValue();
-
-            if (value == null)
-            {
-                value = "NULL";
-            }
-
-            String columnQualifier = "";
-            String namePathColmnFamily = attrName;
-            
-            switch (attrName) {
-            case "entityidtype":
-                columnQualifier = entityTypeColumnQualifier;
-                break;
-            case "name":
-                columnQualifier = entityNameColumnQualifier;                
-                break;
-            case "version":
-                columnQualifier = entityVersionColumnQualifier;
-                break;
-            case "entityid":
-                columnQualifier = entityIdColumnQualifier;
-                break;
-            case "entitytype":
-                columnQualifier = entityIdTypeColumnQualifier;    
-            case "title":
-                columnQualifier = entityTitleColumnQualifier;
-                break;
-            case "source":
-                columnQualifier = entitySourceColumnQualifier;
-                break;    
-            case "classname":
-                columnQualifier = entityClassNameColumnQualifier;
-                break;     
-            case "lastmodified":
-                columnQualifier = entityLastModifiedColumnQualifier;
-                break;     
-            case "datecreated":
-                columnQualifier = entityCreatedColumnQualifier;
-                break;     
-
-            default:
-                // skip this guy
-                continue;
-            }
-            
-            MutationRow row =null;
-            if(useNamePath)
-            {
-                row = new MutationRow(namePathColmnFamily+entityColumnFamily, columnQualifier, value.getBytes(), entity.getNamePath());
-            }
-            else
-            {
-                row = new MutationRow(entityColumnFamily, columnQualifier, value.getBytes(), entity.getNamePath());
-            }
+        if(useNamePath){
+            addRow(entity);
+            MutationRow row  = new MutationRow(entity.getType()+":"+entity.getNamePath(), "entityxml", entity.toXml().getBytes(), entity.getNamePath());
             MutationGuy.addRow(row);
-
+        }else{
+            Map<QName, String> attributes = getAttributes(entity);
+            
+            for (Entry<QName, String> set : attributes.entrySet())
+            {
+    
+                String attrName = set.getKey().toString();
+                String value = set.getValue();
+    
+                if (value == null)
+                {
+                    value = "NULL";
+                }
+    
+                String columnQualifier = "";
+                switch (attrName) {
+                case "entityidtype":
+                    columnQualifier = entityTypeColumnQualifier;
+                    break;
+                case "name":
+                    columnQualifier = entityNameColumnQualifier;                
+                    break;
+                case "version":
+                    columnQualifier = entityVersionColumnQualifier;
+                    break;
+                case "entityid":
+                    columnQualifier = entityIdColumnQualifier;
+                    break;
+                case "entitytype":
+                    columnQualifier = entityIdTypeColumnQualifier;    
+                case "title":
+                    columnQualifier = entityTitleColumnQualifier;
+                    break;
+                case "source":
+                    columnQualifier = entitySourceColumnQualifier;
+                    break;    
+                case "classname":
+                    columnQualifier = entityClassNameColumnQualifier;
+                    break;     
+                case "lastmodified":
+                    columnQualifier = entityLastModifiedColumnQualifier;
+                    break;     
+                case "datecreated":
+                    columnQualifier = entityCreatedColumnQualifier;
+                    break;     
+    
+                default:
+                    // skip this guy
+                    continue;
+                }
+                MutationRow row = new MutationRow(entityColumnFamily, columnQualifier, value.getBytes(), entity.getNamePath());
+                MutationGuy.addRow(row);
+            }
         }
-
-        // Process Children
+        
+         // Process Children
         return true;
     }
 
@@ -255,9 +249,11 @@ public class MutationWrapperFactory extends CoalesceIterator {
     private void addRow(CoalesceObject object)
     {
         Map<QName, String> attributes = getAttributes(object);
+        String type = object.getType() + ":";
 
         for (Entry<QName, String> set : attributes.entrySet())
         {
+            
             String attrName = set.getKey().toString();
             String value = set.getValue();
 
@@ -266,7 +262,7 @@ public class MutationWrapperFactory extends CoalesceIterator {
                 value = "NULL";
             }
 
-            MutationRow row = new MutationRow(object.getNamePath(), attrName, value.getBytes(), object.getNamePath());
+            MutationRow row = new MutationRow(type + object.getNamePath(), attrName, value.getBytes(), object.getNamePath());
             MutationGuy.addRow(row);
 
         }
