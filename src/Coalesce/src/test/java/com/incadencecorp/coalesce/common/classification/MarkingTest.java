@@ -3410,6 +3410,7 @@ public class MarkingTest {
     @Test(expected = IllegalArgumentException.class)
     public void isDisplayOnlyEmptyTest()
     {
+        @SuppressWarnings("unused")
         Marking mk = new Marking("//UNCLASSIFIED");
     }
 

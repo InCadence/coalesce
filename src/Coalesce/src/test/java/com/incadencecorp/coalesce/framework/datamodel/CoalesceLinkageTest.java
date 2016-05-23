@@ -315,6 +315,7 @@ public class CoalesceLinkageTest {
 
         CoalesceLinkage linkage = getMissionLinkage(entity);
 
+        @SuppressWarnings("unused")
         DateTime now = JodaDateTimeHelper.nowInUtc();
 
         assertTrue(StringHelper.isNullOrEmpty(linkage.getModifiedBy()));

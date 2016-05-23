@@ -510,6 +510,7 @@ public class CoalesceMap<T> extends CoalesceRecordset implements Map<String, T> 
         /**
          * @return the field containing the value.
          */
+        @SuppressWarnings("unchecked")
         private CoalesceField<T> getValueField()
         {
             return (CoalesceField<T>) getFieldByName("value");

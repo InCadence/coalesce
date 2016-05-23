@@ -162,8 +162,8 @@ public final class CoalesceObjectFactory {
                 
                 
                 // No; Attempt Class Path
+                @SuppressWarnings("unchecked")
                 Class<? extends CoalesceEntity> clazz = (Class<? extends CoalesceEntity>) Class.forName(classname);
-
                 Constructor<? extends CoalesceEntity> constructor = clazz.getConstructor();
 
                 map.put(classname, constructor);

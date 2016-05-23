@@ -620,6 +620,7 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
         }
     }
 
+    @SuppressWarnings("unused")
     private CoalesceRecordset getCastParent()
     {
         return (CoalesceRecordset) getParent();

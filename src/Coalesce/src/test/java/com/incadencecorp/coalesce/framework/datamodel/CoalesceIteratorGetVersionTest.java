@@ -75,6 +75,7 @@ public class CoalesceIteratorGetVersionTest {
      * 
      * @throws Exception
      */
+    @SuppressWarnings("deprecation")
     @Test
     public void testLinkages() throws Exception
     {

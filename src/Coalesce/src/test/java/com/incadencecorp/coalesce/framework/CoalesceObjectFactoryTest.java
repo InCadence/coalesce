@@ -20,8 +20,6 @@ package com.incadencecorp.coalesce.framework;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.rmi.RemoteException;
-
 import org.junit.Test;
 
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;

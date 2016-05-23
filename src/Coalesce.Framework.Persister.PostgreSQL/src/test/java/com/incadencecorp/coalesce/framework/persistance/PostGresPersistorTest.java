@@ -54,17 +54,18 @@ public class PostGresPersistorTest extends CoalescePersistorBaseTest {
         ServerConn serCon = new ServerConn();
 
         // InCadence Settings
-        // serCon.setServerName("127.0.0.1");
-        // serCon.setDatabase("CoalesceDatabase");
-        // serCon.setUser("postgres");
-        // serCon.setPassword("Passw0rd");
-
+         serCon.setServerName("localhost");
+         //serCon.setServerName("127.0.0.1:5432");
+         serCon.setDatabase("CoalesceDatabase");
+         serCon.setUser("postgres");
+         serCon.setPassword("password");
+        
         // ACINT Settings
-        serCon.setServerName("dbsp3");
-        serCon.setDatabase("OMEGA");
-        serCon.setUser("enterprisedb");
-        serCon.setPassword("enterprisedb");
-        serCon.setPortNumber(5444);
+        //serCon.setServerName("dbsp3");
+        //serCon.setDatabase("OMEGA");
+        //serCon.setUser("enterprisedb");
+        //serCon.setPassword("enterprisedb");
+        //serCon.setPortNumber(5444);
 
         return serCon;
 

@@ -51,8 +51,8 @@ import com.incadencecorp.coalesce.common.exceptions.CoalesceCryptoException;
 import com.incadencecorp.coalesce.common.helpers.DocumentThumbnailHelper.DocumentThumbnailResults;
 import com.incadencecorp.coalesce.framework.CoalesceSettings;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceEncrypter;
-import com.incadencecorp.unity.common.CallResult;
-import com.incadencecorp.unity.common.CallResult.CallResults;
+import com.incadencecorp.coalesce.framework.CallResult;
+import com.incadencecorp.coalesce.framework.CallResult.CallResults;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -424,7 +424,7 @@ public class DocumentProperties {
 
     private Map<String, String> getXmlPartNames(byte[] zipBytes, Collection<Namespace> namespaces)
     {
-        try (@SuppressWarnings("resource")
+        try (
         // This is a known IDE bug in Eclipse (371614). ZipInputStream is Closable and will be automatically closed in the
         // finally
         ZipInputStream zipStream = new ZipInputStream(new ByteArrayInputStream(zipBytes)))

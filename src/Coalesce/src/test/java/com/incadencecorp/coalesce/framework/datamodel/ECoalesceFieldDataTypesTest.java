@@ -3,10 +3,6 @@
  */
 package com.incadencecorp.coalesce.framework.datamodel;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
-
 /*
  * @BeforeClass public static void setUpBeforeClass() throws Exception { }
  * 

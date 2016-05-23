@@ -51,6 +51,7 @@ public class EntityLinkHelperTest {
      * @After public void tearDown() throws Exception { }
      */
 
+    @SuppressWarnings("deprecation")
     @Test(expected = IllegalArgumentException.class)
     public void linkEntitiesNullFirstDontUpdateAllTypesExistingTest()
     {
@@ -61,6 +62,7 @@ public class EntityLinkHelperTest {
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Test(expected = IllegalArgumentException.class)
     public void linkEntitiesNullSecondDontUpdateAllTypesExistingTest()
     {
@@ -71,6 +73,7 @@ public class EntityLinkHelperTest {
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Test(expected = IllegalArgumentException.class)
     public void linkEntitiesNullBothDontUpdateAllTypesExistingTest()
     {
@@ -80,6 +83,7 @@ public class EntityLinkHelperTest {
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Test(expected = IllegalArgumentException.class)
     public void linkEntitiesNullFirstUpdateAllTypesExistingTest()
     {
@@ -90,6 +94,7 @@ public class EntityLinkHelperTest {
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Test(expected = IllegalArgumentException.class)
     public void linkEntitiesNullSecondUpdateAllTypesExistingTest()
     {
@@ -100,6 +105,7 @@ public class EntityLinkHelperTest {
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Test(expected = IllegalArgumentException.class)
     public void linkEntitiesNullBothUpdateAllTypesExistingTest()
     {
@@ -170,6 +176,7 @@ public class EntityLinkHelperTest {
 
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void linkEntitiesDontUpdateExistingAllLinkTypesNoExistingTest()
     {
@@ -189,6 +196,7 @@ public class EntityLinkHelperTest {
 
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void linkEntitiesDontUpdateExistingAllLinkTypesExistingTest()
     {
@@ -234,6 +242,7 @@ public class EntityLinkHelperTest {
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void linkEntitiesUpdateExistingAllLinkTypesNoExistingTest()
     {
@@ -252,6 +261,7 @@ public class EntityLinkHelperTest {
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void linkEntitiesUpdateExistingAllLinkTypesExistingTest()
     {
@@ -649,6 +659,7 @@ public class EntityLinkHelperTest {
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void unlinkEntitiesLinkTypeNullLinkTypeTest()
     {
@@ -665,6 +676,7 @@ public class EntityLinkHelperTest {
 
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void unlinkEntitiesAllLinkTypesTest()
     {
@@ -699,6 +711,7 @@ public class EntityLinkHelperTest {
 
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void unlinkEntitiesNotLinkedFirstTest()
     {
@@ -722,6 +735,7 @@ public class EntityLinkHelperTest {
 
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void unlinkEntitiesNotLinkedSecondTest()
     {
@@ -745,6 +759,7 @@ public class EntityLinkHelperTest {
 
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void unlinkEntitiesLinkTypesTest()
     {
@@ -761,6 +776,7 @@ public class EntityLinkHelperTest {
 
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void unlinkEntitiesLinkTypesMismatchTest()
     {
@@ -790,6 +806,7 @@ public class EntityLinkHelperTest {
 
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void unlinkEntitiesLinkageTypeNotLinkedFirstTest()
     {
@@ -813,6 +830,7 @@ public class EntityLinkHelperTest {
 
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void unlinkEntitiesLinkagetypeNotLinkedSecondTest()
     {

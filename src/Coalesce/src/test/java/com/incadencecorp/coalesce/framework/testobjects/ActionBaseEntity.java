@@ -1,7 +1,5 @@
 package com.incadencecorp.coalesce.framework.testobjects;
 
-import java.util.ArrayList;
-
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceCoordinateField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;

@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>coalesce-core</artifactId>
-	<version>${coalesceVersion}</version>
+	<!--version>${coalesceVersion}</version-->
 	<packaging>bundle</packaging>
 	<name>Coalesce Core</name>
 	<description>Contains the meta model used to create entities.</description>
@@ -173,10 +173,10 @@
 			<artifactId>xercesImpl</artifactId>
 			<version>2.11.0</version>
 		</dependency>
-		<dependency>
+<!-- 		<dependency>
 			<groupId>com.incadencecorp.unity</groupId>
 			<artifactId>unity-common</artifactId>
-		</dependency>
+		</dependency> -->
 <!--		<dependency>
 			<groupId>com.incadencecorp.unity</groupId>
 			<artifactId>unity-local-connector</artifactId>

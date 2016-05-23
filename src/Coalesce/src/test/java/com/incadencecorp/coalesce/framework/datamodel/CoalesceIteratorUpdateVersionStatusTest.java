@@ -166,6 +166,9 @@ public class CoalesceIteratorUpdateVersionStatusTest {
      * 
      * @throws Exception
      */
+    @SuppressWarnings({
+      "deprecation", "incomplete-switch"
+    })
     @Test
     public void testLinkages() throws Exception
     {

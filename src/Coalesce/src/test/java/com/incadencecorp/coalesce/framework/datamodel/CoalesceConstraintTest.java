@@ -71,6 +71,7 @@ public class CoalesceConstraintTest {
         field2.setTypedValue("d");
 
         // Validate
+        @SuppressWarnings("deprecation")
         Map<String, String> results = new CoalesceValidator().validate(entity, CoalesceEntityTemplate.create(entity));
 
         assertEquals("Invalid Input (D)", results.get(field1.getKey()));
@@ -84,6 +85,7 @@ public class CoalesceConstraintTest {
      * 
      * @throws Exception
      */
+    @SuppressWarnings("deprecation")
     @Test
     public void testMinMax() throws Exception
     {
@@ -153,6 +155,7 @@ public class CoalesceConstraintTest {
      * This test sets the field to null which creates an empty string.  
      * @throws Exception
      */
+    @SuppressWarnings("deprecation")
     @Test
     public void testMandatoryDoubleWithEmptyValue() throws Exception
     {
@@ -198,6 +201,7 @@ public class CoalesceConstraintTest {
      * 
      * @throws Exception
      */
+    @SuppressWarnings("deprecation")
     @Test
     public void testMandatory() throws Exception
     {
@@ -293,6 +297,7 @@ public class CoalesceConstraintTest {
         field3.setTypedValue("Bad Value");
 
         // Validate
+        @SuppressWarnings("deprecation")
         Map<String, String> results = new CoalesceValidator().validate(entity, CoalesceEntityTemplate.create(entity));
 
         assertEquals("Validator Not Found: Hello World", results.get(field2.getKey()));
@@ -306,6 +311,7 @@ public class CoalesceConstraintTest {
      * 
      * @throws Exception
      */
+    @SuppressWarnings("deprecation")
     @Test
     public void testEnumeration() throws Exception
     {

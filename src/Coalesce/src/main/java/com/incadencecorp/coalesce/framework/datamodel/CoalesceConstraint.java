@@ -51,12 +51,15 @@ public class CoalesceConstraint extends CoalesceObject implements ICoalesceConst
      * @param name
      * @return the new constraint.
      */
-    public static CoalesceConstraint createEnumeration(CoalesceFieldDefinition parent, String name, Class clazz)
+    public static CoalesceConstraint createEnumeration(CoalesceFieldDefinition parent, String name, @SuppressWarnings("rawtypes") Class clazz)
     {
 
         StringBuilder sb = new StringBuilder("");
 
-        for (Iterator it = EnumSet.allOf(clazz).iterator(); it.hasNext();)
+        for (@SuppressWarnings({
+          "rawtypes", "unchecked"
+        })
+        Iterator it = EnumSet.allOf(clazz).iterator(); it.hasNext();)
         {
             if (sb.length() != 0)
             {

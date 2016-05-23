@@ -8,18 +8,20 @@
 	<name>coalesce.bom</name>
 	
 	<properties>
-		<unityVersion>0.0.2-SNAPSHOT</unityVersion>
+<!-- 		<unityVersion>0.0.2-SNAPSHOT</unityVersion> -->
 		<coalesceVersion>0.0.6-SNAPSHOT</coalesceVersion>
 		<coalesceObjectsVersion>0.0.6-SNAPSHOT</coalesceObjectsVersion>
 		<coalescePersisterVersionMySQL>0.0.6-SNAPSHOT</coalescePersisterVersionMySQL>
 		<coalescePersisterVersionPostGreSQL>0.0.6-SNAPSHOT</coalescePersisterVersionPostGreSQL>
 		<coalescePersisterVersionSQLServer>0.0.6-SNAPSHOT</coalescePersisterVersionSQLServer>
 		<coalescePersisterVersionNEO4J>0.0.6-SNAPSHOT</coalescePersisterVersionNEO4J>
+		<coalescePersisterVersionAccumulo>0.0.1-SNAPSHOT</coalescePersisterVersionAccumulo>
 		<maven.bundle.version>2.3.7</maven.bundle.version>
 		<felix.osgi.version>1.4.0</felix.osgi.version>
         <felix.scr.version>1.8.2</felix.scr.version>
         <felix.scr.annotations.version>1.7.0</felix.scr.annotations.version>
 		<cxf.version>3.0.1</cxf.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	
 	<dependencyManagement>
@@ -34,11 +36,11 @@
 				<artifactId>coalesce-objects</artifactId>
 				<version>${coalesceObjectsVersion}</version>
 			</dependency>
-			<!-- <dependency> -->
-			<!-- <groupId>com.incadencecorp.coalesce</groupId> -->
-			<!-- <artifactId>coalesce-framework-persister-mysql</artifactId> -->
-			<!-- <version>${coalescePersisterVersionMySQL}</version> -->
-			<!-- </dependency> -->
+			<dependency> 
+			<groupId>com.incadencecorp.coalesce</groupId>
+			<artifactId>coalesce-framework-persister-accumulo</artifactId>
+			<version>${coalescePersisterVersionAccumulo}</version>
+			</dependency>
 			<dependency>
 				<groupId>com.incadencecorp.coalesce</groupId>
 				<artifactId>coalesce-framework-persister-postgresql</artifactId>

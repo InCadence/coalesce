@@ -72,6 +72,7 @@ public class CoalesceIteratorPromoteTest {
      * 
      * @throws Exception
      */
+    @SuppressWarnings("deprecation")
     @Test
     public void testPromoteLinkages() throws Exception
     {

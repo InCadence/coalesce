@@ -10,8 +10,8 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
-import com.incadencecorp.unity.common.CallResult;
-import com.incadencecorp.unity.common.CallResult.CallResults;
+import com.incadencecorp.coalesce.framework.CallResult;
+import com.incadencecorp.coalesce.framework.CallResult.CallResults;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved

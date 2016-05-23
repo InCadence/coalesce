@@ -1261,6 +1261,7 @@ public class CoalesceEntityTest {
                       linkages.get("6AD08B0F-C492-4105-8033-A5E43056B864"));
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void getLinkagesNewTest()
     {
@@ -1320,6 +1321,7 @@ public class CoalesceEntityTest {
 
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void getLinkagesIncludingDeletedLinakgeTest()
     {
@@ -2689,6 +2691,7 @@ public class CoalesceEntityTest {
 
     }
 
+    @SuppressWarnings("deprecation")
     private Entities createEntityLinkages()
     {
         Entities entities = new Entities();
