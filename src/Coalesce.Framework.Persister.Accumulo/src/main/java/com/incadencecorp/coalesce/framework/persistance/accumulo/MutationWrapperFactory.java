@@ -48,6 +48,7 @@ public class MutationWrapperFactory extends CoalesceIterator {
     private static String entityCreatedColumnQualifier = "Coalesce:EntityCreated";
     private static String linkTypeColumnQualifier = "Coalesce:";
 
+    
     private MutationWrapper MutationGuy;
     
     private boolean useNamePath=false;
@@ -62,8 +63,10 @@ public class MutationWrapperFactory extends CoalesceIterator {
         processAllElements(entity);
 
         // add the entity xml
-        MutationRow row = new MutationRow(entityColumnFamily, entityXMLColumnQualifier, entity.toXml().getBytes(), entity.getNamePath());
-        MutationGuy.addRow(row);
+        if(!useNamePath){
+            MutationRow row = new MutationRow(entityColumnFamily, entityXMLColumnQualifier, entity.toXml().getBytes(), entity.getNamePath());
+            MutationGuy.addRow(row);
+        }
         
         return MutationGuy;
     }
@@ -74,7 +77,7 @@ public class MutationWrapperFactory extends CoalesceIterator {
 
         if(useNamePath){
             addRow(entity);
-            MutationRow row  = new MutationRow(entity.getType()+":"+entity.getNamePath(), "entityxml", entity.toXml().getBytes(), entity.getNamePath());
+            MutationRow row  = new MutationRow(entity.getType()+": "+entity.getNamePath(), " entityxml ", entity.toXml().getBytes(), entity.getNamePath());
             MutationGuy.addRow(row);
         }else{
             Map<QName, String> attributes = getAttributes(entity);
@@ -130,7 +133,6 @@ public class MutationWrapperFactory extends CoalesceIterator {
                 MutationGuy.addRow(row);
             }
         }
-        
          // Process Children
         return true;
     }
@@ -138,8 +140,6 @@ public class MutationWrapperFactory extends CoalesceIterator {
     @Override
     protected boolean visitCoalesceLinkageSection(CoalesceLinkageSection section)
     {
-
-        // skip
         return true;
     }
 

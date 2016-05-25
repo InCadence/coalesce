@@ -6,29 +6,42 @@ import java.nio.charset.Charset;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
-
+import java.util.Map.Entry;
 import javax.xml.namespace.QName;
 
+import org.apache.accumulo.core.Constants;
 import org.apache.accumulo.core.client.AccumuloException;
 import org.apache.accumulo.core.client.AccumuloSecurityException;
 import org.apache.accumulo.core.client.BatchWriter;
 import org.apache.accumulo.core.client.BatchWriterConfig;
 import org.apache.accumulo.core.client.Connector;
+import org.apache.accumulo.core.client.IteratorSetting;
 // import org.apache.accumulo.core.client.Durability; // Accumulo 1.7 depenency
 import org.apache.accumulo.core.client.MutationsRejectedException;
 import org.apache.accumulo.core.client.TableExistsException;
 import org.apache.accumulo.core.client.TableNotFoundException;
 import org.apache.accumulo.core.data.Mutation;
+import org.apache.accumulo.core.data.Range;
 import org.apache.accumulo.core.data.Value;
+import org.apache.accumulo.core.client.Scanner;
+import org.apache.accumulo.core.iterators.user.RegExFilter;
+import org.apache.accumulo.core.security.Authorizations;
+import org.apache.hadoop.io.Text;
+import org.apache.accumulo.core.data.Key;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.common.helpers.CoalesceTableHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
@@ -72,24 +85,8 @@ public class AccumuloPersistor extends CoalescePersistorBase {
     private ServerConn _serCon;
     private boolean useNamepath=false;
     private AccumuloSettings settings;
-    private static String entityColumnFamily = "Coalesce:MetaData";
-    private static String linkageColumnFamily = "Coalesce:Linkage";
-    private static String linkColumnFamilyPrefix = "LinkID:";
-    private static String sectionColumnFamilyPrefix = "SectionID:";
-    private static String recordsetColumnFamilyPrefix = "RecordSetID:";
-    private static String fielddefinitionColumnFamilyPrefix = "FieldDefinitionID:";
-    private static String recordColumnFamilyPrefix = "RecordID:";
-    private static String entityTypeColumnQualifier = "Coalesce:EntityType";
-    private static String entityNameColumnQualifier = "Coalesce:EntityName";
-    private static String entityVersionColumnQualifier = "Coalesce:EntityVersion";
-    private static String entityIdTypeColumnQualifier = "Coalesce:EntityIdType";
-    private static String entityTitleColumnQualifier = "Coalesce:EntityTitle";
-    private static String entitySourceColumnQualifier = "Coalesce:EntitySource";
-    private static String entityClassNameColumnQualifier = "Coalesce:EntityClassName";
-    private static String entityXMLColumnQualifier = "Coalesce:EntityXML";
-    private static String entityLastModifiedColumnQualifier = "Coalesce:EntityLastModified";
-    private static String entityCreatedColumnQualifier = "Coalesce:EntityCreated";
     private static String coalesceTable = "Coalesce";
+    
 
     /*--------------------------------------------------------------------------
     Constructor / Initializers
@@ -308,7 +305,7 @@ public class AccumuloPersistor extends CoalescePersistorBase {
 			//boolean useNamePath = (AccumuloSettings) _serCon).i.useNamePath
 			Mutation m = createMutation(entity,useNamepath);
 			
-			storeLinkageSection(entity,m);
+			//storeLinkageSection(entity,m);
 			writer.addMutation(m);
 			
 			writer.close();
@@ -327,6 +324,7 @@ public class AccumuloPersistor extends CoalescePersistorBase {
     	
         return true;
     }
+
     
     private Mutation createMutation(CoalesceEntity entity, boolean useNamepath){
     	
@@ -336,93 +334,6 @@ public class AccumuloPersistor extends CoalescePersistorBase {
     }
     
     
-    
-    
-    //this method is replaced by createMutation(CoalesceEntity entity)
-    private void storeEntityMetadata(CoalesceEntity entity,Mutation m) {
-    	
-    	System.err.println("storeEntityMetadata");
-    	String entityIdType = entity.getEntityIdType();
-    	String entityName = entity.getName();
-    	String entityVersion = entity.getVersion();
-    	String entityClassName = entity.getClassName();
-    	String entityTitle = entity.getTitle();
-    	String entityType = entity.getType();
-    	String entitySource = entity.getSource();
-    	String entityXML = entity.toXml();
-    	DateTime entityDateCreated = entity.getDateCreated();
-    	DateTime entityDateModified = entity.getLastModified();
-		m.put(
-				entityColumnFamily, 
-				entityIdTypeColumnQualifier, 
-				new Value(entityIdType.getBytes()));
-
-		m.put(
-				entityColumnFamily, 
-				entityTypeColumnQualifier, 
-				new Value(entityType.getBytes()));
-		
-		m.put(
-				entityColumnFamily, 
-				entityNameColumnQualifier, 
-				new Value(entityName.getBytes()));
-
-		m.put(
-				entityColumnFamily, 
-				entityVersionColumnQualifier, 
-				new Value(entityVersion.getBytes()));
-
-		m.put(
-				entityColumnFamily, 
-				entitySourceColumnQualifier, 
-				new Value(entitySource.getBytes()));
-		
-		m.put(
-				entityColumnFamily, 
-				entityTitleColumnQualifier, 
-				new Value(entityTitle.getBytes()));
-
-		m.put(
-				entityColumnFamily, 
-				entityLastModifiedColumnQualifier, 
-				new Value(entityDateModified.toDateTimeISO().toString().getBytes()));
-
-		m.put(
-				entityColumnFamily, 
-				entityCreatedColumnQualifier, 
-				new Value(entityDateCreated.toDateTimeISO().toString().getBytes()));
-
-		m.put(
-				entityColumnFamily, 
-				entityXMLColumnQualifier, 
-				new Value(entityXML.getBytes()));
-
-		if (entityClassName == null) {
-			System.err.println("Null Entity ClassName");
-		} else {
-			m.put(
-					entityColumnFamily, 
-					entityClassNameColumnQualifier, 
-					new Value(entityClassName.getBytes()));				
-		}   	
-    }
-    
-    private void storeLinkageSection(CoalesceEntity entity,Mutation m) {
-    	System.err.println("storeLinkages");
-    	CoalesceLinkageSection linkage = entity.getLinkageSection();
-    	String linkagekey = linkage.getKey();
-    	String linkColumnFamily = linkColumnFamilyPrefix+linkagekey;
-		m.put(
-				linkageColumnFamily, 
-				"LinkID:"+linkagekey, 
-				new Value());
-		
-		Map<String,CoalesceLinkage> linkages = linkage.getLinkages();
-		for (Map.Entry<String,CoalesceLinkage> link : linkages.entrySet()) {
-			m.put(linkColumnFamily, link.getValue().getLinkType().toString(), new Value(link.getValue().getEntity2Key().getBytes()) );
-		}
-    	
-    }	
     protected String getValues(CoalesceObject coalesceObject, Map<?, ?> values)
     {
         if (coalesceObject.isActive())
@@ -446,7 +357,7 @@ public class AccumuloPersistor extends CoalescePersistorBase {
         return null;
     }
 
-    protected boolean checkLastModified(CoalesceObject coalesceObject, CoalesceDataConnectorBase conn) throws SQLException
+    protected boolean checkLastModified(CoalesceObject coalesceObject, CoalesceDataConnectorBase conn) throws SQLException, TableNotFoundException
     {
         boolean isOutOfDate = true;
 
@@ -473,36 +384,61 @@ public class AccumuloPersistor extends CoalescePersistorBase {
 
         return isOutOfDate;
     }
-
+    
+    //have not pass the section test
     private DateTime getCoalesceObjectLastModified(String key, String objectType, CoalesceDataConnectorBase conn)
-            throws SQLException
+            throws SQLException, TableNotFoundException
     {
-        DateTime lastModified = JodaDateTimeHelper.nowInUtc();
+        DateTime lastModified = null;
+        //DateTime lastModified = JodaDateTimeHelper.nowInUtc();
 
-        // Determine the Table Name
-        // String tableName =
-        // CoalesceTableHelper.getTableNameForObjectType(objectType);
         String dateValue = null;
+        System.err.println("AccumloPersistor.getCoalesceObjectLastModified");
+        Connector dbConnector = null;
+        try {
+            dbConnector = AccumuloDataConnector.getDBConnector();
+        } catch (CoalescePersistorException ex) {
+            System.err.println(ex.getLocalizedMessage());
+            return null;
+        }
 
-        ResultSet results = conn.executeQuery("?", new CoalesceParameter(key.trim()));
-        ResultSetMetaData resultsmd = results.getMetaData();
+        //initialize a scanner
+        Scanner scanner = dbConnector.createScanner(coalesceTable, Authorizations.EMPTY);
+        System.err.println("created Scanner");
+        IteratorSetting iter = new IteratorSetting(10, "lastModFltr", RegExFilter.class);
 
-        // JODA Function DateTimeFormat will adjust for the Server timezone when
-        // converting the time.
-        if (resultsmd.getColumnCount() <= 1)
-        {
-            while (results.next())
+//        String rowRegex =  null;
+//        String colfRegex = null;
+//        String colqRegex = null;
+//        String valueRegex = null;
+//        boolean orFields = false;
+//        
+//        if(objectType =="entity"){
+//            rowRegex =  key;
+//            colfRegex = objectType+".*";
+//            colqRegex = "lastmod.*";
+//        }
+//        else{
+//        }
+//        RegExFilter.setRegexs(iter, rowRegex, colfRegex, colqRegex, valueRegex, orFields);
+        RegExFilter.setRegexs(iter, key,  objectType+".*", "lastmod.*", null, false); 
+        
+        scanner.addScanIterator(iter);
+        
+        for(Entry<Key,Value> entry : scanner) {
+            Text row = entry.getKey().getRow();
+            Value value = entry.getValue();
+            System.err.println("key: " + entry.getKey().toString() + " value: " + entry.getValue());
+            dateValue = entry.getValue().toString();
+            if (dateValue != null)
             {
-                dateValue = results.getString("LastModified");
-                if (dateValue != null)
-                {
-                    lastModified = JodaDateTimeHelper.getPostGresDateTim(dateValue);
-                }
+                lastModified = JodaDateTimeHelper.fromXmlDateTimeUTC(dateValue);
             }
         }
         return lastModified;
 
     }
+
 
     @Override
     protected boolean flattenCore(boolean allowRemoval, CoalesceEntity... entities) throws CoalescePersistorException

@@ -17,7 +17,7 @@ public class MutationRow {
 		this.namePath = namePath;
 	}
 
-	public String getColumnFamily() {
+    public String getColumnFamily() {
 		return columnFamily;
 	}
 
