@@ -50,6 +50,7 @@ import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBas
 import com.incadencecorp.coalesce.framework.persistance.CoalescePersistorBase;
 import com.incadencecorp.coalesce.framework.persistance.ICoalesceCacher;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
+import com.incadencecorp.coalesce.framework.persistance.accumulo.MutationWrapper;
 
 /*-----------------------------------------------------------------------------'
 Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -68,7 +69,7 @@ Distribution Statement D. Distribution authorized to the Department of
 Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
 -----------------------------------------------------------------------------*/
 /**
-* @author Jing Yang
+* @author Dave Boyd
 * May 13, 2016
 */
 

@@ -10,7 +10,6 @@
   <artifactId>coalesce-core</artifactId>
   <packaging>bundle</packaging>
   <name>Coalesce Core</name>
-  <version>${coalesceVersion}</version>
   <description>Contains the meta model used to create entities.</description>
   <build>
     <plugins>
@@ -153,18 +152,6 @@
       <artifactId>jdom2</artifactId>
       <version>2.0.5</version>
       <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.incadencecorp.unity</groupId>
-      <artifactId>unity-common</artifactId>
-      <version>0.0.2-SNAPSHOT</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.incadencecorp.unity</groupId>
-      <artifactId>unity-local-connector</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.felix</groupId>

@@ -2,12 +2,13 @@ package com.incadencecorp.coalesce.framework.persistance;
 
 
 
+import static org.junit.Assert.assertNotNull;
+
 import org.junit.Test;
 
 import com.incadencecorp.coalesce.framework.persistance.accumulo.MutationWrapper;
 import com.incadencecorp.coalesce.framework.persistance.accumulo.MutationWrapperFactory;
 import com.incadencecorp.coalesce.framework.persistance.testobjects.MissionEntity;
-import com.incadencecorp.coalesce.framework.persistance.accumulo.MutationRow;
 
 
 public class MutationWrapperFactoryTest {
@@ -20,8 +21,10 @@ public class MutationWrapperFactoryTest {
 		//System.out.println(entity.toXml());
 		
 		MutationWrapperFactory factory = new MutationWrapperFactory(); 
+		assertNotNull(factory);
 		
 		MutationWrapper mutationGuy= factory.createMutationGuy(entity);
+		assertNotNull(mutationGuy);
 		
 /*		for(MutationRow row : mutationGuy.getMutationGuyList()){
 			

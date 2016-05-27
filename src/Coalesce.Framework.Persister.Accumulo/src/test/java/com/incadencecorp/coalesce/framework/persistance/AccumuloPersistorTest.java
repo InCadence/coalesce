@@ -25,15 +25,11 @@ import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.sql.SQLException;
 import java.util.Map;
-import java.io.File;
 
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assume;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.xml.sax.SAXException;
@@ -44,9 +40,7 @@ import org.apache.accumulo.minicluster.MiniAccumuloCluster;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 import com.incadencecorp.coalesce.framework.persistance.accumulo.AccumuloDataConnector;
 import com.incadencecorp.coalesce.framework.persistance.accumulo.AccumuloPersistor;
@@ -54,7 +48,6 @@ import com.incadencecorp.coalesce.framework.persistance.accumulo.AccumuloPersist
 import org.apache.accumulo.core.client.AccumuloException;
 import org.apache.accumulo.core.client.AccumuloSecurityException;
 import org.apache.accumulo.core.client.Connector;
-import org.apache.accumulo.core.client.security.tokens.PasswordToken;
 
 
 public class AccumuloPersistorTest extends CoalescePersistorBaseTest {

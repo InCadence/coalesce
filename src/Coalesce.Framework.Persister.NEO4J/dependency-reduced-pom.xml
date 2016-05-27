@@ -67,7 +67,7 @@
 							org.apache.lucene*;-split-package:=merge-last,
 							org.apache.http*;-split-package:=merge-last,
 							org.parboiled*;-split-package:=merge-last,
-
+							
 							org.apache.commons.codec*,
 							org.restlet*</Private-Package>
             <Import-Package>com.sun.*;resolution:=optional,
