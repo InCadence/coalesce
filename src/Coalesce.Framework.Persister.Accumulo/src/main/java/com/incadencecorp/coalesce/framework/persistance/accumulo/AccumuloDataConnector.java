@@ -46,7 +46,7 @@ Distribution Statement D. Distribution authorized to the Department of
 Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
 -----------------------------------------------------------------------------*/
 /**
-* @author Jing Yang
+* @author David Boyd
 * May 13, 2016
 */
 
@@ -63,10 +63,13 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase {
     private static String _password;
     private static Instance instance;
     private static Connector connector;
-    private static String coalesceTable = "Coalesce";
+    
+    //TODO These need to move to a constants or other common location
+    public static String coalesceTable = "Coalesce";
+    public static String coalesceTemplateTable = "CoalesceTemplates";
+    public static String coalesceEntityIndex = "CoalesceEntityIndex";
 
-    //public AccumuloDataConnector(ServerConn settings) throws CoalescePersistorException
-    public AccumuloDataConnector(AccumuloSettings settings) throws CoalescePersistorException
+    public AccumuloDataConnector(ServerConn settings) throws CoalescePersistorException
     {
         _instancename = settings.getDatabase();
         _zookeepers = settings.getServerName();
@@ -137,6 +140,29 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase {
 					e.printStackTrace();
 				}
 				System.err.println("created table " + coalesceTable);
+			}
+	    	
+			// Make sure the CoalesceTemplates table exists first time
+	    	if(!connector.tableOperations().exists(coalesceTemplateTable)) {
+				System.err.println("creating table " + coalesceTemplateTable);
+				try {
+					connector.tableOperations().create(coalesceTemplateTable);
+				} catch (TableExistsException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				System.err.println("created table " + coalesceTemplateTable);
+			}
+			// Make sure the CoalesceEntityIndex table exists first time
+	    	if(!connector.tableOperations().exists(coalesceEntityIndex)) {
+				System.err.println("creating table " + coalesceEntityIndex);
+				try {
+					connector.tableOperations().create(coalesceEntityIndex);
+				} catch (TableExistsException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				System.err.println("created table " + coalesceEntityIndex);
 			}
         }
     }

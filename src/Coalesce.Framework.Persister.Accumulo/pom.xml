@@ -15,7 +15,6 @@
 	</parent>
 
 	<build>
-		 <!-- sourceDirectory>src/main/java</sourceDirectory-->
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -121,165 +120,35 @@
 			<version>2.11.0</version>
 			<scope>test</scope>
 		</dependency>
-<!-- 		<dependency>
+		<dependency>
 			<groupId>com.incadencecorp.coalesce</groupId>
 			<artifactId>coalesce-framework-persister-postgresql</artifactId>
-		</dependency> -->
+		</dependency>
 		<!-- Accumulo Dependencies -->
 	    <dependency>
     	  <groupId>org.apache.accumulo</groupId>
 	      <artifactId>accumulo-core</artifactId>
-    	  <version>1.6.0</version>
+    	  <version>1.6.1</version>
     	</dependency>
-    	<dependency>
-      		<groupId>org.apache.accumulo</groupId>
-      		<artifactId>accumulo-minicluster</artifactId>
-      		<version>1.6.0</version>
-    	</dependency>
-    	<dependency>
-      		<groupId>org.apache.hadoop</groupId>
-      		<artifactId>hadoop-core</artifactId>
-      		<version>1.2.1</version>
-      		<scope>provided</scope>
-    	</dependency>
-    	<dependency>
-      		<groupId>org.slf4j</groupId>
-      		<artifactId>slf4j-log4j12</artifactId>
-      		<version>1.7.5</version>
-      		<scope>provided</scope>
-    	</dependency>
-    	<dependency>
-      		<groupId>org.apache.zookeeper</groupId>
-      		<artifactId>zookeeper</artifactId>
-      		<version>3.4.3</version>
-    	</dependency>
-    	<dependency>
-      		<groupId>org.apache.commons</groupId>
-      		<artifactId>commons-compress</artifactId>
-      		<version>1.5</version>
-    	</dependency>
-    	<dependency>
-      		<groupId>com.google.guava</groupId>
-      		<artifactId>guava</artifactId>
-      		<version>14.0.1</version>
-    	</dependency>
-    	<dependency>
-      		<groupId>org.eclipse.jetty</groupId>
-      		<artifactId>jetty-servlet</artifactId>
-      		<version>9.0.5.v20130815</version>
-    	</dependency>
-    	<dependency>
-      		<groupId>com.sun.jersey.contribs</groupId>
-      		<artifactId>jersey-guice</artifactId>
-      		<version>1.17.1</version>
-    	</dependency>
-    	<dependency>
-      		<groupId>info.bliki.wiki</groupId>
-      		<artifactId>bliki-core</artifactId>
-      		<version>3.0.19</version>
-    	</dependency>
-    	
-		<!-- Transitive Dependencies -->
-		<dependency>
-			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>jackson-mapper-asl</artifactId>
-			<version>1.9.13</version>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>jackson-core-asl</artifactId>
-			<version>1.9.13</version>
-		</dependency>
-		<dependency>
-			<groupId>com.googlecode.concurrentlinkedhashmap</groupId>
-			<artifactId>concurrentlinkedhashmap-lru</artifactId>
-			<version>1.4.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.scala-lang</groupId>
-			<artifactId>scala-library</artifactId>
-			<version>2.10.5</version>
-		</dependency>
-		<dependency>
-			<groupId>org.scala-lang</groupId>
-			<artifactId>scala-reflect</artifactId>
-			<version>2.10.5</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.servicemix.bundles</groupId>
-			<artifactId>org.apache.servicemix.bundles.restlet</artifactId>
-			<version>1.1.10_3</version>
-		</dependency>
-		<dependency>
-			<groupId>net.jcip</groupId>
-			<artifactId>jcip-annotations</artifactId>
-			<version>1.0</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.james</groupId>
-			<artifactId>apache-mime4j</artifactId>
-			<version>0.6</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-			<version>4.4.1</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpmime</artifactId>
-			<version>4.4.1</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpcore</artifactId>
-			<version>4.4.1</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jsslutils</groupId>
-			<artifactId>jsslutils</artifactId>
-			<version>1.0.7</version>
-		</dependency>
 
-		<dependency>
-			<groupId>commons-codec</groupId>
-			<artifactId>commons-codec</artifactId>
-			<version>1.10</version>
-			<scope>provided</scope>
-		</dependency>
-
-
-<!-- 		<dependency>
-			<groupId>com.mysema.querydsl</groupId>
-			<artifactId>querydsl-core</artifactId>
-			<version>3.6.3</version>
-			<exclusions>
-				<exclusion>
-					<groupId>com.google.code.findbugs</groupId>
-					<artifactId>jsr305</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.infradna.tool</groupId>
-					<artifactId>bridge-method-annotation</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
- 
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>18.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.mysema.commons</groupId>
-			<artifactId>mysema-commons-lang</artifactId>
-			<version>0.2.4</version>
-		</dependency>-->
+	    <dependency>
+	    	<groupId>org.apache.accumulo</groupId>
+	    	<artifactId>accumulo-minicluster</artifactId>
+	    	<version>1.6.1</version>
+	    	<scope>test</scope>
+	    </dependency>
+	    <dependency>
+	    	<groupId>org.apache.accumulo</groupId>
+	    	<artifactId>accumulo-server-base</artifactId>
+	    	<version>1.6.1</version>
+	    	<scope>test</scope>
+	    </dependency>
+	    <dependency>
+	    	<groupId>org.apache.accumulo</groupId>
+	    	<artifactId>accumulo-start</artifactId>
+	    	<version>1.6.1</version>
+	    	<scope>test</scope>
+	    </dependency>
 	</dependencies>
 
 </project>

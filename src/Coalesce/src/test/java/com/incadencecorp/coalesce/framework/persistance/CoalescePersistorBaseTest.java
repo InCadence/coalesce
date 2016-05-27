@@ -39,7 +39,11 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceStringField;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
+import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor.EntityMetaData;
+import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
+
+import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -101,14 +105,14 @@ public abstract class CoalescePersistorBaseTest {
     Private Variables
     --------------------------------------------------------------------------*/
 
-    private static ServerConn _serCon;
-    private static CoalesceFramework _coalesceFramework;
+    protected static ServerConn _serCon;
+    protected static CoalesceFramework _coalesceFramework;
 
-    private static CoalesceEntity _entity;
-    private static String _entityXml;
-    private static String _fieldKey;
+    protected static CoalesceEntity _entity;
+    protected static String _entityXml;
+    protected static String _fieldKey;
 
-    private static String _testTemplateKey = null;
+    protected static String _testTemplateKey = null;
 
     /*--------------------------------------------------------------------------
     JUnit Before/After functions
@@ -119,6 +123,7 @@ public abstract class CoalescePersistorBaseTest {
     protected abstract ICoalescePersistor getPersistor(ServerConn conn);
 
     protected abstract CoalesceDataConnectorBase getDataConnector(ServerConn conn) throws CoalescePersistorException;
+    
 
     protected static void setupBeforeClassBase(CoalescePersistorBaseTest tester) throws CoalesceException
     {
@@ -218,9 +223,13 @@ public abstract class CoalescePersistorBaseTest {
     @Test
     public void testConnection() throws CoalescePersistorException, Exception
     {
+
         try (CoalesceDataConnectorBase conn = getDataConnector(_serCon))
         {
             conn.openConnection(true);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -229,6 +238,7 @@ public abstract class CoalescePersistorBaseTest {
     {
         // Create Test Entity
         CoalesceEntity entity = CoalesceEntity.create("FlattenTest", "UnitTest", "1.0", "", "");
+        entity.setEntityId("GUID", entity.getKey());
 
         // Create Recordset
         CoalesceSection section = CoalesceSection.create(entity, "No Flatten Section");
@@ -585,7 +595,7 @@ public abstract class CoalescePersistorBaseTest {
     Private Methods
     --------------------------------------------------------------------------*/
 
-    private static CoalesceEntity createEntity() throws CoalesceException
+    protected static CoalesceEntity createEntity() throws CoalesceException
     {
         CoalesceEntity entity = CoalesceEntity.create("TestEntity", "Unit Test", "1.0.0.0", null, null, "");
 
@@ -605,7 +615,7 @@ public abstract class CoalescePersistorBaseTest {
 
     }
 
-    private static CoalesceField<?> getCurrentStatusField(CoalesceEntity entity)
+    protected static CoalesceField<?> getCurrentStatusField(CoalesceEntity entity)
     {
         CoalesceField<?> field = (CoalesceField<?>) entity.getCoalesceObjectForNamePath("TestEntity/Live Status Section/Live Status Recordset/Live Status Recordset Record/CurrentStatus");
 

@@ -19,6 +19,8 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
+import com.incadencecorp.coalesce.framework.persistance.accumulo.MutationWrapper;
+import com.incadencecorp.coalesce.framework.persistance.accumulo.MutationRow;
 
 public class MutationWrapperFactory extends CoalesceIterator {
 
@@ -28,17 +30,17 @@ public class MutationWrapperFactory extends CoalesceIterator {
     private static String sectionColumnFamilyPrefix = "SectionID:";
     private static String recordsetColumnFamilyPrefix = "RecordSetID:";
     private static String fielddefinitionColumnFamilyPrefix = "FieldDefinitionID:";
+    private static String recordsetColumnFamily = "Coalesce:RecordSet";
     private static String fieldNameColumnQualifierPrefix = "Coalesce:FieldName";
     private static String fieldTypeColumnQualifierPrefix = "Coalesce:FieldType";
     private static String fieldDefaultColumnQualifierPrefix = "Coalesce:FieldDefault";
-    private static String recordsetColumnQualifierPrefix = "Coalesce:RecordName";
     private static String recordColumnFamilyPrefix = "RecordID:";//
     private static String recordNameColumnFamilyPrefix = "RecordName:";//
-    private static String entityIdColumnQualifier = "Coalesce:EntityId";
     private static String entityTypeColumnQualifier = "Coalesce:EntityType";
     private static String entityNameColumnQualifier = "Coalesce:EntityName";
     private static String sectionNameColumnQualifier = "Coalesce:SectionName";
     private static String entityVersionColumnQualifier = "Coalesce:EntityVersion";
+    private static String entityIdColumnQualifier = "Coalesce:EntityId";
     private static String entityIdTypeColumnQualifier = "Coalesce:EntityIdType";
     private static String entityTitleColumnQualifier = "Coalesce:EntityTitle";
     private static String entitySourceColumnQualifier = "Coalesce:EntitySource";
@@ -48,25 +50,22 @@ public class MutationWrapperFactory extends CoalesceIterator {
     private static String entityCreatedColumnQualifier = "Coalesce:EntityCreated";
     private static String linkTypeColumnQualifier = "Coalesce:";
 
-    
     private MutationWrapper MutationGuy;
     
-    private boolean useNamePath=false;
+    public boolean useNamePath=true;
 
-    public MutationWrapper createMutationGuy(CoalesceEntity entity, boolean _useNamepath)
+    public MutationWrapper createMutationGuy(CoalesceEntity entity)
     {
-        useNamePath= _useNamepath;
-        Mutation m = new Mutation(entity.getEntityId());
+
+        Mutation m = new Mutation(entity.getKey());
 
         MutationGuy = new MutationWrapper(m);
 
         processAllElements(entity);
 
         // add the entity xml
-        if(!useNamePath){
-            MutationRow row = new MutationRow(entityColumnFamily, entityXMLColumnQualifier, entity.toXml().getBytes(), entity.getNamePath());
-            MutationGuy.addRow(row);
-        }
+ //       MutationRow row = new MutationRow(entityColumnFamily, entityXMLColumnQualifier, entity.toXml().getBytes(), entity.getNamePath());
+ //       MutationGuy.addRow(row);
         
         return MutationGuy;
     }
@@ -74,78 +73,101 @@ public class MutationWrapperFactory extends CoalesceIterator {
     @Override
     protected boolean visitCoalesceEntity(CoalesceEntity entity)
     {
-
-        if(useNamePath){
-            addRow(entity);
-            MutationRow row  = new MutationRow(entity.getType()+": "+entity.getNamePath(), " entityxml ", entity.toXml().getBytes(), entity.getNamePath());
-            MutationGuy.addRow(row);
-        }else{
-            Map<QName, String> attributes = getAttributes(entity);
+    	// If the entity is marked not to be flattened do not persist it or any children
+    	if (!entity.getFlatten())
+    		return false;
+    	 if(useNamePath){
+             addRow(entity);
+             // add the entity xml
+             MutationRow row = new MutationRow(entity.getType() + ":" + entity.getNamePath(), 
+            		 "entityxml", entity.toXml().getBytes(), entity.getNamePath());
+             MutationGuy.addRow(row);
             
-            for (Entry<QName, String> set : attributes.entrySet())
-            {
-    
-                String attrName = set.getKey().toString();
-                String value = set.getValue();
-    
-                if (value == null)
-                {
-                    value = "NULL";
-                }
-    
-                String columnQualifier = "";
-                switch (attrName) {
-                case "entityidtype":
-                    columnQualifier = entityTypeColumnQualifier;
-                    break;
-                case "name":
-                    columnQualifier = entityNameColumnQualifier;                
-                    break;
-                case "version":
-                    columnQualifier = entityVersionColumnQualifier;
-                    break;
-                case "entityid":
-                    columnQualifier = entityIdColumnQualifier;
-                    break;
-                case "entitytype":
-                    columnQualifier = entityIdTypeColumnQualifier;    
-                case "title":
-                    columnQualifier = entityTitleColumnQualifier;
-                    break;
-                case "source":
-                    columnQualifier = entitySourceColumnQualifier;
-                    break;    
-                case "classname":
-                    columnQualifier = entityClassNameColumnQualifier;
-                    break;     
-                case "lastmodified":
-                    columnQualifier = entityLastModifiedColumnQualifier;
-                    break;     
-                case "datecreated":
-                    columnQualifier = entityCreatedColumnQualifier;
-                    break;     
-    
-                default:
-                    // skip this guy
-                    continue;
-                }
-                MutationRow row = new MutationRow(entityColumnFamily, columnQualifier, value.getBytes(), entity.getNamePath());
-                MutationGuy.addRow(row);
-            }
-        }
-         // Process Children
+             
+         } else {
+	        Map<QName, String> attributes = getAttributes(entity);
+	        // add the entity xml
+	        MutationRow row = new MutationRow(entityColumnFamily, entityXMLColumnQualifier, entity.toXml().getBytes(), entity.getNamePath());
+	        MutationGuy.addRow(row);
+	
+	        for (Entry<QName, String> set : attributes.entrySet())
+	        {
+	
+	            String attrName = set.getKey().toString();
+	            String value = set.getValue();
+	
+	            if (value == null)
+	            {
+	                value = "NULL";
+	            }
+	
+	            String columnQualifier = "";
+	
+	            switch (attrName) {
+	            case "entitytype":
+	                columnQualifier = entityTypeColumnQualifier;
+	                break;
+	            case "entityidtype":
+	                columnQualifier = entityIdTypeColumnQualifier;
+	                break;
+	            case "name":
+	                columnQualifier = entityNameColumnQualifier;                
+	                break;
+	            case "version":
+	                columnQualifier = entityVersionColumnQualifier;
+	                break;
+	            case "entityid":
+	                columnQualifier = entityIdColumnQualifier;
+	                break;
+	            case "title":
+	                columnQualifier = entityTitleColumnQualifier;
+	                break;
+	            case "source":
+	                columnQualifier = entitySourceColumnQualifier;
+	                break;    
+	            case "classname":
+	                columnQualifier = entityClassNameColumnQualifier;
+	                break;     
+	            case "lastmodified":
+	                columnQualifier = entityLastModifiedColumnQualifier;
+	                break;     
+	            case "datecreated":
+	                columnQualifier = entityCreatedColumnQualifier;
+	                break;     
+	
+	            default:
+	                // skip this guy
+	                continue;
+	            }
+	
+	            row = new MutationRow(entityColumnFamily, columnQualifier, value.getBytes(), entity.getNamePath());
+	            MutationGuy.addRow(row);
+	
+	        }
+         }
+        // Process Children
         return true;
     }
 
     @Override
     protected boolean visitCoalesceLinkageSection(CoalesceLinkageSection section)
     {
+    	// If the section is marked not to be flattened then do not persist it or any children
+    	if (!section.getFlatten())
+    		return false;
+    	if (useNamePath) {
+    		addRow(section);
+    	}
+        // skip
         return true;
     }
 
     @Override
     protected boolean visitCoalesceLinkage(CoalesceLinkage linkage)
     {
+       	// If the linkage is marked not to be flattened then do not persist it or any children
+    	if (!linkage.getFlatten())
+    		return false;
         if(useNamePath){
             addRow(linkage);
         } else {
@@ -163,6 +185,9 @@ public class MutationWrapperFactory extends CoalesceIterator {
     @Override
     protected boolean visitCoalesceSection(CoalesceSection section)
     {
+       	// If the section is marked not to be flattened then do not persist it or any children
+    	if(!section.getFlatten())
+    		return false;
         if(useNamePath){
             addRow(section);
         } else {
@@ -177,13 +202,15 @@ public class MutationWrapperFactory extends CoalesceIterator {
     @Override
     protected boolean visitCoalesceRecordset(CoalesceRecordset recordset)
     {
+       	// If the recordset is marked not to be flattened then do not persist it or any children
+    	if (!recordset.getFlatten())
+    		return false;
         if(useNamePath){
             addRow(recordset);
         } else {
-        //RecordSetID:<GUID>, Coalesce:RecordName,Record Name
-        MutationRow row = new MutationRow(recordsetColumnFamilyPrefix+recordset.getKey(), recordsetColumnQualifierPrefix + recordset.getKey(), recordset.getName().getBytes(), recordset.getNamePath());
+
+        MutationRow row = new MutationRow(recordsetColumnFamily, recordsetColumnFamilyPrefix + recordset.getKey(), recordset.getName().getBytes(), recordset.getNamePath());
         MutationGuy.addRow(row);
-        //RecordSetID:<GUID>,  RecordID:<GUID>, null         
         MutationRow row2 = new MutationRow(sectionColumnFamilyPrefix + recordset.getParent().getKey(), recordsetColumnFamilyPrefix + recordset.getKey(), ("NULL").getBytes(), recordset.getNamePath());
         MutationGuy.addRow(row2);
         }
@@ -193,6 +220,9 @@ public class MutationWrapperFactory extends CoalesceIterator {
     @Override
     protected boolean visitCoalesceRecord(CoalesceRecord record)
     {
+       	// If the record is marked not to be flattened then do not persist it or any children
+    	if (!record.getFlatten())
+    		return false;
         if(useNamePath){
             addRow(record);
         } else {
@@ -206,11 +236,12 @@ public class MutationWrapperFactory extends CoalesceIterator {
         return true;
     }
 
-    
-    
     @Override
     protected boolean visitCoalesceField(CoalesceField<?> field)
     {
+       	// If the field is marked not to be flattened then do not persist it or any children
+    	if (!field.getFlatten())
+    		return false;
         if(useNamePath){
             addRow(field);
         } else {
@@ -226,6 +257,9 @@ public class MutationWrapperFactory extends CoalesceIterator {
     @Override
     protected boolean visitCoalesceFieldDefinition(CoalesceFieldDefinition definition)
     {
+       	// If the definition is marked not to be flattened then do not persist it or any children
+    	if (!definition.getFlatten())
+    		return false;
 
         if(useNamePath){
             addRow(definition);
@@ -238,8 +272,8 @@ public class MutationWrapperFactory extends CoalesceIterator {
             MutationRow row2 = new MutationRow(columnfamilyName, fieldTypeColumnQualifierPrefix+definition.getType(), definition.getType().getBytes(), definition.getNamePath());
             MutationGuy.addRow(row2);
 
-            MutationRow row3 = new MutationRow(columnfamilyName, fieldDefaultColumnQualifierPrefix+definition.getDefaultValue(), ("NULL").getBytes(), definition.getNamePath());
-            MutationGuy.addRow(row3);
+//            MutationRow row3 = new MutationRow(columnfamilyName, fieldDefaultColumnQualifierPrefix+definition.getDefaultValue(), definition.getDefaultValue().getBytes(), definition.getNamePath());
+//            MutationGuy.addRow(row3);
         }
        
         
@@ -250,10 +284,8 @@ public class MutationWrapperFactory extends CoalesceIterator {
     {
         Map<QName, String> attributes = getAttributes(object);
         String type = object.getType() + ":";
-
         for (Entry<QName, String> set : attributes.entrySet())
         {
-            
             String attrName = set.getKey().toString();
             String value = set.getValue();
 

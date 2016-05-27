@@ -27,24 +27,29 @@ import org.junit.rules.TemporaryFolder;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.sql.SQLException;
+import java.util.Map;
 import java.io.File;
 
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 import org.apache.accumulo.core.client.Instance;
+import org.apache.accumulo.core.client.TableNotFoundException;
 import org.apache.accumulo.core.client.ZooKeeperInstance;
 import org.apache.accumulo.minicluster.MiniAccumuloCluster;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.common.helpers.StringHelper;
+import com.incadencecorp.coalesce.framework.CoalesceFramework;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 import com.incadencecorp.coalesce.framework.persistance.accumulo.AccumuloDataConnector;
 import com.incadencecorp.coalesce.framework.persistance.accumulo.AccumuloPersistor;
-import com.incadencecorp.coalesce.framework.persistance.accumulo.AccumuloSettings;
 
 import org.apache.accumulo.core.client.AccumuloException;
 import org.apache.accumulo.core.client.AccumuloSecurityException;
@@ -56,18 +61,70 @@ public class AccumuloPersistorTest extends CoalescePersistorBaseTest {
 
 	private static MiniAccumuloCluster accumulo = null;
 	private static Instance instance;
-		
+	//private static ServerConn _serCon;
+   // private static CoalesceFramework _coalesceFramework;
+
+    //private static CoalesceEntity _entity;
+    //private static String _entityXml;
+    //private static String _fieldKey;
+
+    //private static String _testTemplateKey = null;
+    
+    private  static Connector conn;
+    
+    private static  CoalesceDataConnectorBase aconn;
+      
 	@Rule
 	public TemporaryFolder tempDirectory = new TemporaryFolder();
 	
     @BeforeClass
-    public static void setupBeforeClass() throws SAXException, IOException, CoalesceException
+    public static void setupBeforeClass() throws SAXException, IOException, CoalesceException, TableNotFoundException,
+    						AccumuloException, AccumuloSecurityException
     {
-        System.err.println("Creating AccumuloPersistorTest");
         AccumuloPersistorTest tester = new AccumuloPersistorTest();
-        System.err.println("Calling Base Setup");
 
-        CoalescePersistorBaseTest.setupBeforeClassBase(tester);
+        //CoalescePersistorBaseTest.setupBeforeClassBase(tester);
+        _serCon = tester.getConnection();
+        
+        ICoalescePersistor persistor = tester.getPersistor(_serCon);
+
+        _coalesceFramework = new CoalesceFramework();
+        _coalesceFramework.initialize(persistor);
+
+        //CoalescePersistorBaseTest.cleanUpDatabase(tester);
+        // Clean up the database
+        aconn = new AccumuloDataConnector(_serCon);
+        conn =  AccumuloDataConnector.getDBConnector();
+        
+        conn.tableOperations().deleteRows(AccumuloDataConnector.coalesceTable, null, null);
+        conn.tableOperations().deleteRows(AccumuloDataConnector.coalesceTemplateTable, null, null);
+        conn.tableOperations().deleteRows(AccumuloDataConnector.coalesceEntityIndex, null, null);
+        
+        _entity = CoalescePersistorBaseTest.createEntity();
+        _entityXml = _entity.toXml();
+
+        _fieldKey = CoalescePersistorBaseTest.getCurrentStatusField(_entity).getKey();
+
+        try
+        {
+            assertTrue(_coalesceFramework.saveCoalesceEntity(_entity));
+        }
+        catch (CoalescePersistorException e)
+        {
+
+            if (e.getCause() != null)
+            {
+                System.out.println(e.getCause().getMessage());
+            }
+            else
+            {
+                System.out.println(e.getMessage());
+            }
+            
+            // If entity fails to save halt the persister test.
+            Assume.assumeNoException(e);
+        }
+
 
     }
 
@@ -76,28 +133,26 @@ public class AccumuloPersistorTest extends CoalescePersistorBaseTest {
     {
         AccumuloPersistorTest tester = new AccumuloPersistorTest();
 
-        CoalescePersistorBaseTest.tearDownAfterClassBase(tester);
+        //CoalescePersistorBaseTest.tearDownAfterClassBase(tester);
 
     }
-
-    @Override
-    //protected ServerConn getConnection()
-    protected AccumuloSettings getConnection()
+    @After
+    public void tearDown() 
     {
-        //set name path mode in settings
-        AccumuloSettings settings =new AccumuloSettings();
-        //ServerConn serCon = new ServerConn();
+
+    }
+    @Override
+    protected ServerConn getConnection()
+    {
+        ServerConn serCon = new ServerConn();
 
         // InCadence Settings
          // serCon.setServerName("localhost");
          //serCon.setServerName("127.0.0.1:5432");
          //serCon.setDatabase("CoalesceDatabase");
-//         serCon.setUser("root");
-//         serCon.setPassword("secret");
-        settings.setUser("root");
-        settings.setPassword("secret");
-
-         /*******  MiniCluster Code for long term testing 
+         serCon.setUser("root");
+         serCon.setPassword("secret");
+         //  MiniCluster Code for long term testing 
          if (accumulo == null) {
         	 System.err.println("Creating MiniCluster");
     		 
@@ -121,22 +176,17 @@ public class AccumuloPersistorTest extends CoalescePersistorBaseTest {
         }
         serCon.setDatabase(accumulo.getInstanceName());
         serCon.setServerName(accumulo.getZooKeepers());
-*/
+//
          /*  Temp code to connect to my VM */
-//         serCon.setDatabase("accumulodev");
+ //        serCon.setDatabase("accumulodev");
 //         serCon.setServerName("accumulodev");
-         settings.setDatabase("accumulodev");
-         settings.setServerName("accumulodev");
-         //set use namepath? use true or false
-         settings.setUseNamePath(true);
-        //return serCon;
-         return settings;
+
+        return serCon;
 
     }
 
     @Override
     protected ICoalescePersistor getPersistor(ServerConn conn)
-
     {
     	System.err.println("getPersistor test:"+conn.getDatabase());
         AccumuloPersistor accumuloPersistor = new AccumuloPersistor();
@@ -150,8 +200,21 @@ public class AccumuloPersistorTest extends CoalescePersistorBaseTest {
     @Override
     protected CoalesceDataConnectorBase getDataConnector(ServerConn conn) throws CoalescePersistorException
     {
-    	System.err.println("getDataConnector test:"+conn.getDatabase());
-        return new AccumuloDataConnector((AccumuloSettings) conn);
+//    	System.err.println("getDataConnector test:"+conn.getDatabase());
+        return new AccumuloDataConnector(conn);
+    }
+    
+    @Test
+    public void testConnection() throws CoalescePersistorException, Exception
+    {
+
+    	Map<String,String> sysconf = conn.instanceOperations().getSystemConfiguration();
+    	assertNotNull(sysconf);
+    	for (Map.Entry<String,String> entry : sysconf.entrySet()) {
+    		System.out.println(entry.getKey() + ":" + entry.getValue());
+    		
+    	}
+
     }
 
 }
