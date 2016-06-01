@@ -31,12 +31,14 @@
 		<dependency>
 			<groupId>com.incadencecorp.coalesce</groupId>
 			<artifactId>coalesce-core</artifactId>
+			<version>0.0.6-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.incadencecorp.coalesce</groupId>
 			<artifactId>
-				coalesce-framework-persister-postgresql
+				coalesce-framework-persister-accumulo
 			</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 	<dependencyManagement>
@@ -44,7 +46,7 @@
 			<dependency>
 				<groupId>com.incadencecorp.coalesce</groupId>
 				<artifactId>coalesce-bom</artifactId>
-				<version>0.0.1-SNAPSHOT</version>
+				<version>0.0.6-SNAPSHOT</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -57,9 +59,9 @@
 			<dependency>
 				<groupId>com.incadencecorp.coalesce</groupId>
 				<artifactId>
-					coalesce-framework-persister-postgresql
+					coalesce-framework-persister-accumulo
 				</artifactId>
-				<version>0.0.6-SNAPSHOT</version>
+				<version>0.0.1-SNAPSHOT</version>
 				<type>bundle</type>
 			</dependency>
 		</dependencies>

@@ -80,6 +80,7 @@ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
 public class AccumuloPersistor extends CoalescePersistorBase {
 
     private ServerConn _serCon;
+    private static AccumuloDataConnector connect = null;
     /*
     private static String entityColumnFamily = "Coalesce:MetaData";
     private static String linkageColumnFamily = "Coalesce:Linkage";
@@ -118,12 +119,24 @@ public class AccumuloPersistor extends CoalescePersistorBase {
     public void initialize(ServerConn svConn)
     {
         _serCon = svConn;
+        try {
+			connect = new AccumuloDataConnector(_serCon);
+		} catch (CoalescePersistorException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
     @Override
     public boolean initialize(ICoalesceCacher cacher, ServerConn svConn)
     {
         _serCon = svConn;
+        try {
+			connect = new AccumuloDataConnector(_serCon);
+		} catch (CoalescePersistorException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
         return super.initialize(cacher);
     }
