@@ -97,9 +97,10 @@ public class MutationWrapperFactory extends CoalesceIterator {
     		return false;
     	 if(useNamePath){
              addRow(entity);
+             String entity_xml = entity.toXml();
              // add the entity xml
              MutationRow row = new MutationRow(entity.getType() + ":" + entity.getNamePath(), 
-            		 "entityxml", entity.toXml().getBytes(), entity.getNamePath());
+            		 "entityxml", entity_xml.getBytes(), entity.getNamePath());
              MutationGuy.addRow(row);
             
              

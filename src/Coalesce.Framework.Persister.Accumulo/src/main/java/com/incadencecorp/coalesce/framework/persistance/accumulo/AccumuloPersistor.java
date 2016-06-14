@@ -296,7 +296,7 @@ public class AccumuloPersistor extends CoalescePersistorBase {
         Connector dbConnector = null;
         Text cf = null;
         String key = null;
-        String value = null;
+        Object value = null;
         
         try {
         	dbConnector = AccumuloDataConnector.getDBConnector();
@@ -326,6 +326,7 @@ public class AccumuloPersistor extends CoalescePersistorBase {
 			valuescanner.fetchColumn(cf, new Text("value"));
 
 			if (valuescanner.iterator().hasNext()) {
+				
 	        	value = valuescanner.iterator().next().getValue().toString();
 	        	valuescanner.close();
 	        } else {
