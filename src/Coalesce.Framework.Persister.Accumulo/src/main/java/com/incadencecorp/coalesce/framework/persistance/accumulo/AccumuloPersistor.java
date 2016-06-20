@@ -778,30 +778,11 @@ public class AccumuloPersistor extends CoalescePersistorBase {
 			//config.setDurability(Durability.DEFAULT);  // Requires Accumulo 1.7
 			config.setMaxWriteThreads(10);
 			
-			BatchWriter writer = dbConnector.createBatchWriter(AccumuloDataConnector.coalesceTable, config);
+			persistBaseData(entity, dbConnector, config);
 			
+			persistEntityIndex(entity,dbConnector, config);
 			
-			
-			Mutation m = createMutation(entity);
-			
-			
-			writer.addMutation(m);
-			
-			writer.close();
-			
-			// Now create a  entity index so we can retrieve based on entityId, entityIdType
-			// entitySource, entityName
-			writer = dbConnector.createBatchWriter(AccumuloDataConnector.coalesceEntityIndex, config);
-			m = new Mutation(entity.getKey());
-			Text indexcf = new Text(entity.getEntityIdType() + "\0" +
-									entity.getEntityId() + "\0" +
-									entity.getName() + "\0" +
-									entity.getSource());
-			m.put(indexcf, new Text(entity.getNamePath()), new Value(new byte[0]));
-			writer.addMutation(m);
-			
-			
-			writer.close();
+
 		} catch (MutationsRejectedException ex) {
 			
 			System.err.println(ex.getLocalizedMessage()); // see Error Handling Example
@@ -812,6 +793,41 @@ public class AccumuloPersistor extends CoalescePersistorBase {
 
     	
         return true;
+    }
+    
+    private void persistBaseData(CoalesceEntity entity, Connector dbConnector, BatchWriterConfig config) 
+    		throws TableNotFoundException, MutationsRejectedException 
+    {
+		BatchWriter writer = dbConnector.createBatchWriter(AccumuloDataConnector.coalesceTable, config);
+		
+		
+		
+		Mutation m = createMutation(entity);
+		
+		
+		writer.addMutation(m);
+		
+		writer.close();
+	
+    }
+    
+    private void persistEntityIndex(CoalesceEntity entity, Connector dbConnector, BatchWriterConfig config) 
+    		throws TableNotFoundException, MutationsRejectedException
+    {
+		BatchWriter writer = dbConnector.createBatchWriter(AccumuloDataConnector.coalesceTable, config);
+		// Now create a  entity index so we can retrieve based on entityId, entityIdType
+		// entitySource, entityName
+		writer = dbConnector.createBatchWriter(AccumuloDataConnector.coalesceEntityIndex, config);
+		Mutation m = new Mutation(entity.getKey());
+		Text indexcf = new Text(entity.getEntityIdType() + "\0" +
+								entity.getEntityId() + "\0" +
+								entity.getName() + "\0" +
+								entity.getSource());
+		m.put(indexcf, new Text(entity.getNamePath()), new Value(new byte[0]));
+		writer.addMutation(m);
+		
+		
+		writer.close();  	
     }
     
     private Mutation createMutation(CoalesceEntity entity){
