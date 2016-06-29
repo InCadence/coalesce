@@ -524,7 +524,8 @@ public class SearchEntityTest {
         fileteredPoints = searchQueries.locationFilterByCircle(e1pt1, ent1Radius, pointCollection);
         
         for(Map.Entry<Double, Coordinate> entry: fileteredPoints.entrySet()){
-            System.out.println(entry.getKey()+" - "+entry.getValue());
+            //System.out.println(entry.getKey()+" - "+entry.getValue());
+            assertTrue(entry.getKey() <=ent1Radius);
         }
         
     }
