@@ -22,6 +22,10 @@ package com.incadencecorp.coalesce.framework.persistance;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.TreeMap;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -105,8 +109,8 @@ public class SearchEntityTest {
     /**
      * 3 individual points and 1 multi-point for each entity, total of 5 entities
      * test: the entity 1 will be in the center of the 5 entities,
-     * other 4 entities will be 90 degrees apart from the center and 50 km 
-     * away from the center   
+     * other 4 entities will be 90 degrees apart from the center starts from north
+     * and 50 km away from the center   
      *  */
     public void addPointsToEntity1Test() throws CoalesceDataFormatException
     {
@@ -144,12 +148,12 @@ public class SearchEntityTest {
         SearchCoordinates entity2point = entity1point.getTarget(range1to2, northbearing);
 
         Coordinate e2pt1 = new Coordinate(entity2point.getLongitude(), entity2point.getLatitude());
-        Coordinate e2pt2 = new Coordinate(e2pt1.x +0.1, e2pt1.y+0.2);
-        Coordinate e2pt3 = new Coordinate(e2pt2.x +0.1, e2pt2.y+0.2);
+        Coordinate e2pt2 = new Coordinate(e2pt1.x +0.2, e2pt1.y+0.1);
+        Coordinate e2pt3 = new Coordinate(e2pt2.x +0.2, e2pt2.y+0.1);
 
         Coordinate e2mp_1 = new Coordinate(e2pt1.x, e2pt1.y);
-        Coordinate e2mp_2 = new Coordinate(e2mp_1.x +0.3, e2mp_1.y+0.4);
-        Coordinate e2mp_3 = new Coordinate(e2mp_2.x +0.3, e2mp_2.y+0.4);
+        Coordinate e2mp_2 = new Coordinate(e2mp_1.x +0.4, e2mp_1.y+0.3);
+        Coordinate e2mp_3 = new Coordinate(e2mp_2.x +0.4, e2mp_2.y+0.3);
 
         searchEntity2.getGeocoordinatePointData().setValue(factory.createPoint(e2pt1));
         searchEntity2.getGeocoordinatePointData().setValue(factory.createPoint(e2pt2));
@@ -177,12 +181,12 @@ public class SearchEntityTest {
         SearchCoordinates entity3point = entity1point.getTarget(range1to3, eastbearing);
 
         Coordinate e3pt1 = new Coordinate(entity3point.getLongitude(), entity3point.getLatitude());
-        Coordinate e3pt2 = new Coordinate(e3pt1.x +0.1, e3pt1.y+0.2);
-        Coordinate e3pt3 = new Coordinate(e3pt2.x +0.1, e3pt2.y+0.2);
+        Coordinate e3pt2 = new Coordinate(e3pt1.x +0.2, e3pt1.y+0.1);
+        Coordinate e3pt3 = new Coordinate(e3pt2.x +0.2, e3pt2.y+0.1);
 
         Coordinate e3mp_1 = new Coordinate(e3pt1.x, e3pt1.y);
-        Coordinate e3mp_2 = new Coordinate(e3mp_1.x +0.3, e3mp_1.y+0.4);
-        Coordinate e3mp_3 = new Coordinate(e3mp_2.x +0.3, e3mp_2.y+0.4);
+        Coordinate e3mp_2 = new Coordinate(e3mp_1.x +0.4, e3mp_1.y+0.3);
+        Coordinate e3mp_3 = new Coordinate(e3mp_2.x +0.4, e3mp_2.y+0.3);
 
         searchEntity3.getGeocoordinatePointData().setValue(factory.createPoint(e3pt1));
         searchEntity3.getGeocoordinatePointData().setValue(factory.createPoint(e3pt2));
@@ -194,7 +198,7 @@ public class SearchEntityTest {
 
         //System.out.println(searchEntity3.toXml());
 
-        //check the geo queries between entity1 and entity2
+        //check the geo queries between entity1 and entity3
         double distance1to3 = entity1point.distanceTo(entity3point);
         assertEquals(range1to3, distance1to3, 0.01);
         
@@ -210,12 +214,12 @@ public class SearchEntityTest {
         SearchCoordinates entity4point = entity1point.getTarget(range1to4, southbearing);
 
         Coordinate e4pt1 = new Coordinate(entity4point.getLongitude(), entity4point.getLatitude());
-        Coordinate e4pt2 = new Coordinate(e4pt1.x +0.1, e4pt1.y+0.2);
-        Coordinate e4pt3 = new Coordinate(e4pt2.x +0.1, e4pt2.y+0.2);
+        Coordinate e4pt2 = new Coordinate(e4pt1.x +0.2, e4pt1.y+0.1);
+        Coordinate e4pt3 = new Coordinate(e4pt2.x +0.2, e4pt2.y+0.1);
 
         Coordinate e4mp_1 = new Coordinate(e4pt1.x, e4pt1.y);
-        Coordinate e4mp_2 = new Coordinate(e4mp_1.x +0.3, e4mp_1.y+0.4);
-        Coordinate e4mp_3 = new Coordinate(e4mp_2.x +0.3, e4mp_2.y+0.4);
+        Coordinate e4mp_2 = new Coordinate(e4mp_1.x +0.4, e4mp_1.y+0.3);
+        Coordinate e4mp_3 = new Coordinate(e4mp_2.x +0.4, e4mp_2.y+0.3);
 
         searchEntity4.getGeocoordinatePointData().setValue(factory.createPoint(e4pt1));
         searchEntity4.getGeocoordinatePointData().setValue(factory.createPoint(e4pt2));
@@ -227,7 +231,7 @@ public class SearchEntityTest {
 
         //System.out.println(searchEntity4.toXml());
         
-        //check the geo queries between entity1 and entity2
+        //check the geo queries between entity1 and entity4
         double distance1to4 = entity1point.distanceTo(entity4point);
         assertEquals(range1to4, distance1to4, 0.01);
         
@@ -243,12 +247,12 @@ public class SearchEntityTest {
         SearchCoordinates entity5point = entity1point.getTarget(range1to5, westbearing);
 
         Coordinate e5pt1 = new Coordinate(entity5point.getLongitude(), entity5point.getLatitude());
-        Coordinate e5pt2 = new Coordinate(e5pt1.x +0.1, e5pt1.y+0.2);
-        Coordinate e5pt3 = new Coordinate(e5pt2.x +0.1, e5pt2.y+0.2);
+        Coordinate e5pt2 = new Coordinate(e5pt1.x +0.2, e5pt1.y+0.1);
+        Coordinate e5pt3 = new Coordinate(e5pt2.x +0.2, e5pt2.y+0.1);
 
         Coordinate e5mp_1 = new Coordinate(e5pt1.x, e5pt1.y);
-        Coordinate e5mp_2 = new Coordinate(e5mp_1.x +0.3, e5mp_1.y+0.4);
-        Coordinate e5mp_3 = new Coordinate(e5mp_2.x +0.3, e5mp_2.y+0.4);
+        Coordinate e5mp_2 = new Coordinate(e5mp_1.x +0.4, e5mp_1.y+0.3);
+        Coordinate e5mp_3 = new Coordinate(e5mp_2.x +0.4, e5mp_2.y+0.3);
 
         searchEntity5.getGeocoordinatePointData().setValue(factory.createPoint(e5pt1));
         searchEntity5.getGeocoordinatePointData().setValue(factory.createPoint(e5pt2));
@@ -260,7 +264,7 @@ public class SearchEntityTest {
 
         //System.out.println(searchEntity5.toXml());
 
-        //check the geo queries between entity1 and entity2
+        //check the geo queries between entity1 and entity5
         double distance1to5 = entity1point.distanceTo(entity5point);
         assertEquals(range1to5, distance1to5, 0.01);
         
@@ -271,10 +275,19 @@ public class SearchEntityTest {
     }
 
     @Test
+    /**
+     * 3 individual points and 1 multi-point for each entity, total of 5 entities
+     * test: the entity 1 will be in the center of the 5 entities,
+     * other 4 entities will be 90 degrees apart from the center starts at 45 degrees
+     * east from the north and 80 km away from the center  
+     * test geo query on filter by cirle - pick up all points within a circle 
+     *  */
     public void addFeaturesToEntity2Test() throws CoalesceDataFormatException
     {
         GeometryFactory factory = new GeometryFactory();
-
+        SearchCoordinates searchQueries = new SearchCoordinates();
+        ArrayList<Coordinate> pointCollection = new ArrayList<>(); 
+        Map<Double, Coordinate> fileteredPoints = new TreeMap<>();
         //entity1
         CoalesceSearchTestEntity2 searchEntity1 = new CoalesceSearchTestEntity2();
         searchEntity1.initialize();
@@ -307,7 +320,10 @@ public class SearchEntityTest {
         searchEntity1.addLineRecord();
 
         //System.out.println(searchEntity1.toXml());
-
+        pointCollection.add(e1pt1);
+        pointCollection.add(e1pt2);
+        pointCollection.add(e1pt3);
+        
         //entity2
         CoalesceSearchTestEntity2 searchEntity2 = new CoalesceSearchTestEntity2();
         searchEntity2.initialize();
@@ -318,12 +334,12 @@ public class SearchEntityTest {
         SearchCoordinates entity2point = entity1point.getTarget(range1to2, nebearing);
 
         Coordinate e2pt1 = new Coordinate(entity2point.getLongitude(), entity2point.getLatitude());
-        Coordinate e2pt2 = new Coordinate(e2pt1.x +0.1, e2pt1.y+0.2);
-        Coordinate e2pt3 = new Coordinate(e2pt2.x +0.1, e2pt2.y+0.2);
+        Coordinate e2pt2 = new Coordinate(e2pt1.x +0.2, e2pt1.y+0.1);
+        Coordinate e2pt3 = new Coordinate(e2pt2.x +0.2, e2pt2.y+0.1);
 
         Coordinate e2mp_1 = new Coordinate(e2pt1.x, e2pt1.y);
-        Coordinate e2mp_2 = new Coordinate(e2mp_1.x +0.3, e2mp_1.y+0.4);
-        Coordinate e2mp_3 = new Coordinate(e2mp_2.x +0.3, e2mp_2.y+0.4);
+        Coordinate e2mp_2 = new Coordinate(e2mp_1.x +0.4, e2mp_1.y+0.3);
+        Coordinate e2mp_3 = new Coordinate(e2mp_2.x +0.4, e2mp_2.y+0.3);
 
         searchEntity2.getGeocoordinatePointData().setValue(factory.createPoint(e2pt1));
         searchEntity2.getGeocoordinatePointData().setValue(factory.createPoint(e2pt2));
@@ -346,6 +362,19 @@ public class SearchEntityTest {
         searchEntity2.addLineRecord();
 
         //System.out.println(searchEntity2.toXml());
+        
+        pointCollection.add(e2pt1);
+        pointCollection.add(e2pt2);
+        pointCollection.add(e2pt3);
+
+        //check the geo queries between entity1 and entity2
+        double distance1to2 = entity1point.distanceTo(entity2point);
+        assertEquals(range1to2, distance1to2, 0.01);
+        
+        double bearing1to2 = entity1point.getBearingAsDouble(entity2point);
+        assertEquals(nebearing, bearing1to2, 0.01);
+
+        
 
         //entity3
         CoalesceSearchTestEntity2 searchEntity3 = new CoalesceSearchTestEntity2();
@@ -356,12 +385,12 @@ public class SearchEntityTest {
         SearchCoordinates entity3point = entity1point.getTarget(range1to3, sebearing);
 
         Coordinate e3pt1 = new Coordinate(entity3point.getLongitude(), entity3point.getLatitude());
-        Coordinate e3pt2 = new Coordinate(e3pt1.x +0.1, e3pt1.y+0.2);
-        Coordinate e3pt3 = new Coordinate(e3pt2.x +0.1, e3pt2.y+0.2);
+        Coordinate e3pt2 = new Coordinate(e3pt1.x +0.2, e3pt1.y+0.1);
+        Coordinate e3pt3 = new Coordinate(e3pt2.x +0.2, e3pt2.y+0.1);
 
         Coordinate e3mp_1 = new Coordinate(e3pt1.x, e3pt1.y);
-        Coordinate e3mp_2 = new Coordinate(e3mp_1.x +0.3, e3mp_1.y+0.4);
-        Coordinate e3mp_3 = new Coordinate(e3mp_2.x +0.3, e3mp_2.y+0.4);
+        Coordinate e3mp_2 = new Coordinate(e3mp_1.x +0.4, e3mp_1.y+0.3);
+        Coordinate e3mp_3 = new Coordinate(e3mp_2.x +0.4, e3mp_2.y+0.3);
 
         searchEntity3.getGeocoordinatePointData().setValue(factory.createPoint(e3pt1));
         searchEntity3.getGeocoordinatePointData().setValue(factory.createPoint(e3pt2));
@@ -384,6 +413,17 @@ public class SearchEntityTest {
         searchEntity3.addLineRecord();
 
         //System.out.println(searchEntity3.toXml());
+        
+        pointCollection.add(e3pt1);
+        pointCollection.add(e3pt2);
+        pointCollection.add(e3pt3);
+
+        //check the geo queries between entity1 and entity3
+        double distance1to3 = entity1point.distanceTo(entity3point);
+        assertEquals(range1to3, distance1to3, 0.01);
+        
+        double bearing1to3 = entity1point.getBearingAsDouble(entity3point);
+        assertEquals(sebearing, bearing1to3, 0.01);
 
         //entity4
         CoalesceSearchTestEntity2 searchEntity4 = new CoalesceSearchTestEntity2();
@@ -394,12 +434,12 @@ public class SearchEntityTest {
         SearchCoordinates entity4point = entity1point.getTarget(range1to4, swbearing);
 
         Coordinate e4pt1 = new Coordinate(entity4point.getLongitude(), entity4point.getLatitude());
-        Coordinate e4pt2 = new Coordinate(e4pt1.x +0.1, e4pt1.y+0.2);
-        Coordinate e4pt3 = new Coordinate(e4pt2.x +0.1, e4pt2.y+0.2);
+        Coordinate e4pt2 = new Coordinate(e4pt1.x +0.2, e4pt1.y+0.1);
+        Coordinate e4pt3 = new Coordinate(e4pt2.x +0.2, e4pt2.y+0.1);
 
         Coordinate e4mp_1 = new Coordinate(e4pt1.x, e4pt1.y);
-        Coordinate e4mp_2 = new Coordinate(e4mp_1.x +0.3, e4mp_1.y+0.4);
-        Coordinate e4mp_3 = new Coordinate(e4mp_2.x +0.3, e4mp_2.y+0.4);
+        Coordinate e4mp_2 = new Coordinate(e4mp_1.x +0.4, e4mp_1.y+0.3);
+        Coordinate e4mp_3 = new Coordinate(e4mp_2.x +0.4, e4mp_2.y+0.3);
 
         searchEntity4.getGeocoordinatePointData().setValue(factory.createPoint(e4pt1));
         searchEntity4.getGeocoordinatePointData().setValue(factory.createPoint(e4pt2));
@@ -421,6 +461,17 @@ public class SearchEntityTest {
         searchEntity4.getLineGeometryData().setValue(factory.createLineString(new Coordinate[] {e4mp_3, e4mp_1, e4mp_2}));
         searchEntity4.addLineRecord();
 
+        pointCollection.add(e4pt1);
+        pointCollection.add(e4pt2);
+        pointCollection.add(e4pt3);
+
+        //check the geo queries between entity1 and entity4
+        double distance1to4 = entity1point.distanceTo(entity4point);
+        assertEquals(range1to4, distance1to4, 0.01);
+        
+        double bearing1to4 = entity1point.getBearingAsDouble(entity4point);
+        assertEquals(swbearing, bearing1to4, 0.01);
+
         
         //entity5
         CoalesceSearchTestEntity2 searchEntity5 = new CoalesceSearchTestEntity2();
@@ -431,12 +482,12 @@ public class SearchEntityTest {
         SearchCoordinates entity5point = entity1point.getTarget(range1to5, nwbearing);
 
         Coordinate e5pt1 = new Coordinate(entity5point.getLongitude(), entity5point.getLatitude());
-        Coordinate e5pt2 = new Coordinate(e5pt1.x +0.1, e5pt1.y+0.2);
-        Coordinate e5pt3 = new Coordinate(e5pt2.x +0.1, e5pt2.y+0.2);
+        Coordinate e5pt2 = new Coordinate(e5pt1.x +0.2, e5pt1.y+0.1);
+        Coordinate e5pt3 = new Coordinate(e5pt2.x +0.2, e5pt2.y+0.1);
 
         Coordinate e5mp_1 = new Coordinate(e5pt1.x, e5pt1.y);
-        Coordinate e5mp_2 = new Coordinate(e5mp_1.x +0.3, e5mp_1.y+0.4);
-        Coordinate e5mp_3 = new Coordinate(e5mp_2.x +0.3, e5mp_2.y+0.4);
+        Coordinate e5mp_2 = new Coordinate(e5mp_1.x +0.4, e5mp_1.y+0.3);
+        Coordinate e5mp_3 = new Coordinate(e5mp_2.x +0.4, e5mp_2.y+0.3);
 
         searchEntity5.getGeocoordinatePointData().setValue(factory.createPoint(e5pt1));
         searchEntity5.getGeocoordinatePointData().setValue(factory.createPoint(e5pt2));
@@ -458,7 +509,24 @@ public class SearchEntityTest {
         searchEntity5.getLineGeometryData().setValue(factory.createLineString(new Coordinate[] {e5mp_3, e5mp_1, e5mp_2}));
         searchEntity5.addLineRecord();
 
-        System.out.println(searchEntity5.toXml());
+        //System.out.println(searchEntity5.toXml());
+        pointCollection.add(e5pt1);
+        pointCollection.add(e5pt2);
+        pointCollection.add(e5pt3);
+
+        //check the geo queries between entity1 and entity5
+        double distance1to5 = entity1point.distanceTo(entity5point);
+        assertEquals(range1to5, distance1to5, 0.01);
+        
+        double bearing1to5 = entity1point.getBearingAsDouble(entity5point);
+        assertEquals(nwbearing, bearing1to5, 0.01);
+
+        fileteredPoints = searchQueries.locationFilterByCircle(e1pt1, ent1Radius, pointCollection);
+        
+        for(Map.Entry<Double, Coordinate> entry: fileteredPoints.entrySet()){
+            System.out.println(entry.getKey()+" - "+entry.getValue());
+        }
+        
     }
    
 }

@@ -1,5 +1,10 @@
 package com.incadencecorp.coalesce.framework.persistance;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
 import com.vividsolutions.jts.geom.Coordinate;
 
 /*-----------------------------------------------------------------------------'
@@ -164,6 +169,31 @@ public class SearchCoordinates {
         Double bearing = (Math.toDegrees(Math.atan2(y, x)) + 360) % 360;
 
         return bearing;
+    }
+    
+    /**
+     * search/filter all points within a circle
+     * @param center point of a circle
+     * @param radius of a circle
+     * @param collection of the points in Coordinate
+     * @return a sorted map, the shortest distance on the top
+     */
+    public Map<Double, Coordinate> locationFilterByCircle(Coordinate center, Double radius, ArrayList<Coordinate> collection){
+        Map<Double, Coordinate> fileteredPoints = new TreeMap<>();
+        SearchCoordinates centerPoint =  new SearchCoordinates(center);
+        if(collection!=null){
+            
+            for(Coordinate point: collection){
+                SearchCoordinates thisPoint = new SearchCoordinates(point);
+                double distance = centerPoint.distanceTo(thisPoint);
+                if(distance<=radius){
+                    Coordinate fltpoint = new Coordinate(thisPoint.getLongitude(), thisPoint.getLatitude(), 0.0);
+                    fileteredPoints.put(distance, fltpoint);
+                }
+            }
+            return (TreeMap<Double, Coordinate>) fileteredPoints;
+        }
+        return null;
     }
 
 }
