@@ -1,7 +1,6 @@
 package com.incadencecorp.coalesce.framework.persistance;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -176,7 +175,8 @@ public class SearchCoordinates {
      * @param center point of a circle
      * @param radius of a circle
      * @param collection of the points in Coordinate
-     * @return a sorted map, the shortest distance on the top
+     * @return a sorted map, the shortest distance on the top,
+     *      the distance in meters as the key, the location point in coordinate as the value
      */
     public Map<Double, Coordinate> locationFilterByCircle(Coordinate center, Double radius, ArrayList<Coordinate> collection){
         Map<Double, Coordinate> fileteredPoints = new TreeMap<>();
@@ -195,6 +195,34 @@ public class SearchCoordinates {
         }
         return null;
     }
-
+    
+    /**
+     * search query to check if a line and a circle is intersected
+     * @param center: center point of a circle
+     * @param radius: radius of a circle 
+     * @param linePoints: a collection of line points
+     * @return boolean: true or false
+     */
+    public boolean isIntersected(Coordinate center, Double radius, ArrayList<Coordinate> linePoints){
+        int inCircleCount = 0, outCircleCount = 0;
+        SearchCoordinates centerPoint =  new SearchCoordinates(center);
+        if(linePoints!=null){
+            
+            for(Coordinate point: linePoints){
+                SearchCoordinates thisPoint = new SearchCoordinates(point);
+                double distance = centerPoint.distanceTo(thisPoint);
+                if(distance<=radius){
+                    inCircleCount++;
+                }
+                else{
+                    outCircleCount++;
+                }
+            }
+            if(inCircleCount>0 && outCircleCount>0){
+                return true;
+            }
+        }
+        return false;
+    }
 }
 

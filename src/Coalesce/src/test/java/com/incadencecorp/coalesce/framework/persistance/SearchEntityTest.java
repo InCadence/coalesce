@@ -23,6 +23,7 @@ package com.incadencecorp.coalesce.framework.persistance;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -280,7 +281,7 @@ public class SearchEntityTest {
      * test: the entity 1 will be in the center of the 5 entities,
      * other 4 entities will be 90 degrees apart from the center starts at 45 degrees
      * east from the north and 80 km away from the center  
-     * test geo query on filter by cirle - pick up all points within a circle 
+     * test geo query on filter by circle - pick up all points within a circle 
      *  */
     public void addFeaturesToEntity2Test() throws CoalesceDataFormatException
     {
@@ -320,10 +321,19 @@ public class SearchEntityTest {
         searchEntity1.addLineRecord();
 
         //System.out.println(searchEntity1.toXml());
+        
+        //add point to collections
         pointCollection.add(e1pt1);
         pointCollection.add(e1pt2);
         pointCollection.add(e1pt3);
         
+        //check line and circle intersection
+        ArrayList<Coordinate> e1LinePoints = new ArrayList<Coordinate>(Arrays.asList(e1mp_1, e1mp_2, e1mp_3));
+        assertFalse(searchQueries.isIntersected(e1pt1, ent1Radius, e1LinePoints));
+        assertFalse(searchQueries.isIntersected(e1pt2, ent1Radius, e1LinePoints));
+        assertFalse(searchQueries.isIntersected(e1pt3, ent1Radius, e1LinePoints));
+        
+       
         //entity2
         CoalesceSearchTestEntity2 searchEntity2 = new CoalesceSearchTestEntity2();
         searchEntity2.initialize();
@@ -350,7 +360,7 @@ public class SearchEntityTest {
         searchEntity2.addMultiPointRecord();
 
         //add 3 cirles
-        Double ent2Radius=100000.0;
+        Double ent2Radius=70000.0;
         searchEntity2.getCirclegeomeryData().setValue(factory.createPoint(e2pt1), ent2Radius);
         searchEntity2.getCirclegeomeryData().setValue(factory.createPoint(e2pt2), ent2Radius);
         searchEntity2.getCirclegeomeryData().setValue(factory.createPoint(e2pt3), ent2Radius);
@@ -362,11 +372,18 @@ public class SearchEntityTest {
         searchEntity2.addLineRecord();
 
         //System.out.println(searchEntity2.toXml());
-        
+
+        //add point to collections
         pointCollection.add(e2pt1);
         pointCollection.add(e2pt2);
         pointCollection.add(e2pt3);
 
+        //check line and circle intersection
+        ArrayList<Coordinate> e2LinePoints = new ArrayList<Coordinate>(Arrays.asList(e2mp_1, e2mp_2, e2mp_3));
+        assertTrue(searchQueries.isIntersected(e2pt1, ent2Radius, e2LinePoints));
+        assertTrue(searchQueries.isIntersected(e2pt2, ent2Radius, e2LinePoints));
+        assertFalse(searchQueries.isIntersected(e2pt3, ent2Radius, e2LinePoints));
+        
         //check the geo queries between entity1 and entity2
         double distance1to2 = entity1point.distanceTo(entity2point);
         assertEquals(range1to2, distance1to2, 0.01);
@@ -400,8 +417,8 @@ public class SearchEntityTest {
         searchEntity3.getGeoMultiPointData().setValue(new Coordinate[] {e3mp_1, e3mp_2, e3mp_3});
         searchEntity3.addMultiPointRecord();
 
-        //add 3 cirles
-        Double ent3Radius=100000.0;
+        //add 3 circles
+        Double ent3Radius=80000.0;
         searchEntity3.getCirclegeomeryData().setValue(factory.createPoint(e3pt1), ent3Radius);
         searchEntity3.getCirclegeomeryData().setValue(factory.createPoint(e3pt2), ent3Radius);
         searchEntity3.getCirclegeomeryData().setValue(factory.createPoint(e3pt3), ent3Radius);
@@ -418,6 +435,12 @@ public class SearchEntityTest {
         pointCollection.add(e3pt2);
         pointCollection.add(e3pt3);
 
+        //check line and circle intersection
+        ArrayList<Coordinate> e3LinePoints = new ArrayList<Coordinate>(Arrays.asList(e3mp_1, e3mp_2, e3mp_3));
+        assertTrue(searchQueries.isIntersected(e3pt1, ent3Radius, e3LinePoints));
+        assertFalse(searchQueries.isIntersected(e3pt2, ent3Radius, e3LinePoints));
+        assertFalse(searchQueries.isIntersected(e3pt3, ent3Radius, e3LinePoints));
+        
         //check the geo queries between entity1 and entity3
         double distance1to3 = entity1point.distanceTo(entity3point);
         assertEquals(range1to3, distance1to3, 0.01);
@@ -449,8 +472,8 @@ public class SearchEntityTest {
         searchEntity4.getGeoMultiPointData().setValue(new Coordinate[] {e4mp_1, e4mp_2, e4mp_3});
         searchEntity4.addMultiPointRecord();
 
-        //add 3 cirles
-        Double ent4Radius=100000.0;
+        //add 3 circles
+        Double ent4Radius=90000.0;
         searchEntity4.getCirclegeomeryData().setValue(factory.createPoint(e4pt1), ent4Radius);
         searchEntity4.getCirclegeomeryData().setValue(factory.createPoint(e4pt2), ent4Radius);
         searchEntity4.getCirclegeomeryData().setValue(factory.createPoint(e4pt3), ent4Radius);
@@ -465,6 +488,12 @@ public class SearchEntityTest {
         pointCollection.add(e4pt2);
         pointCollection.add(e4pt3);
 
+        //check line and circle intersection
+        ArrayList<Coordinate> e4LinePoints = new ArrayList<Coordinate>(Arrays.asList(e4mp_1, e4mp_2, e4mp_3));
+        assertTrue(searchQueries.isIntersected(e4pt1, ent4Radius, e4LinePoints));
+        assertFalse(searchQueries.isIntersected(e4pt2, ent4Radius, e4LinePoints));
+        assertFalse(searchQueries.isIntersected(e4pt3, ent4Radius, e4LinePoints));
+        
         //check the geo queries between entity1 and entity4
         double distance1to4 = entity1point.distanceTo(entity4point);
         assertEquals(range1to4, distance1to4, 0.01);
@@ -497,8 +526,8 @@ public class SearchEntityTest {
         searchEntity5.getGeoMultiPointData().setValue(new Coordinate[] {e5mp_1, e5mp_2, e5mp_3});
         searchEntity5.addMultiPointRecord();
 
-        //add 3 cirles
-        Double ent5Radius=100000.0;
+        //add 3 circles
+        Double ent5Radius=85000.0;
         searchEntity5.getCirclegeomeryData().setValue(factory.createPoint(e5pt1), ent5Radius);
         searchEntity5.getCirclegeomeryData().setValue(factory.createPoint(e5pt2), ent5Radius);
         searchEntity5.getCirclegeomeryData().setValue(factory.createPoint(e5pt3), ent5Radius);
@@ -514,6 +543,12 @@ public class SearchEntityTest {
         pointCollection.add(e5pt2);
         pointCollection.add(e5pt3);
 
+        //check line and circle intersection
+        ArrayList<Coordinate> e5LinePoints = new ArrayList<Coordinate>(Arrays.asList(e5mp_1, e5mp_2, e5mp_3));
+        assertTrue(searchQueries.isIntersected(e5pt1, ent5Radius, e5LinePoints));
+        assertFalse(searchQueries.isIntersected(e5pt2, ent5Radius, e5LinePoints));
+        assertFalse(searchQueries.isIntersected(e5pt3, ent5Radius, e5LinePoints));
+        
         //check the geo queries between entity1 and entity5
         double distance1to5 = entity1point.distanceTo(entity5point);
         assertEquals(range1to5, distance1to5, 0.01);
@@ -521,10 +556,11 @@ public class SearchEntityTest {
         double bearing1to5 = entity1point.getBearingAsDouble(entity5point);
         assertEquals(nwbearing, bearing1to5, 0.01);
 
+        //check the search query - the geo filter to pick up all points within a circle
         fileteredPoints = searchQueries.locationFilterByCircle(e1pt1, ent1Radius, pointCollection);
         
         for(Map.Entry<Double, Coordinate> entry: fileteredPoints.entrySet()){
-            //System.out.println(entry.getKey()+" - "+entry.getValue());
+            //System.out.println("Distance in meters: " + entry.getKey()+" - "+entry.getValue());
             assertTrue(entry.getKey() <=ent1Radius);
         }
         
