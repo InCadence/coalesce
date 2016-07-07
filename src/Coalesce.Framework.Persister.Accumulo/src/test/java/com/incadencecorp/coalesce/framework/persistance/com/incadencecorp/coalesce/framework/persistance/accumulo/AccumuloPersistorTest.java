@@ -1,4 +1,4 @@
-package com.incadencecorp.coalesce.framework.persistance;
+package com.incadencecorp.coalesce.framework.persistance.accumulo;
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
 

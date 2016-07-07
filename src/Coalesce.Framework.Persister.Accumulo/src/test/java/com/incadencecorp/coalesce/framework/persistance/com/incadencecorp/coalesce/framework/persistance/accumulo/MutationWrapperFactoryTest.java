@@ -1,4 +1,4 @@
-package com.incadencecorp.coalesce.framework.persistance;
+package com.incadencecorp.coalesce.framework.persistance.accumulo;
 
 
 
@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import com.incadencecorp.coalesce.framework.persistance.accumulo.MutationWrapper;
 import com.incadencecorp.coalesce.framework.persistance.accumulo.MutationWrapperFactory;
-import com.incadencecorp.coalesce.framework.persistance.testobjects.MissionEntity;
+import com.incadencecorp.coalesce.framework.persistance.accumulo.testobjects.MissionEntity;
 
 
 public class MutationWrapperFactoryTest {

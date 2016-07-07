@@ -1,4 +1,4 @@
-package com.incadencecorp.coalesce.framework.persistance.testobjects;
+package com.incadencecorp.coalesce.framework.persistance.accumulo.testobjects;
 
 import org.joda.time.DateTime;
 
