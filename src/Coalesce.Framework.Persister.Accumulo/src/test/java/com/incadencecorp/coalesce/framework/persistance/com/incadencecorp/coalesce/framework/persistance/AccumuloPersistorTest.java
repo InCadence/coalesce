@@ -27,6 +27,7 @@ import org.junit.rules.TemporaryFolder;
 import java.io.IOException;
 import java.sql.Date;
 import java.util.Map;
+import java.util.UUID;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -38,19 +39,32 @@ import org.apache.accumulo.core.client.Instance;
 import org.apache.accumulo.core.client.TableNotFoundException;
 import org.apache.accumulo.core.client.ZooKeeperInstance;
 import org.apache.accumulo.minicluster.MiniAccumuloCluster;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.xerces.impl.dv.util.Base64;
+import org.jdom2.JDOMException;
 import org.joda.time.DateTime;
 
+import com.drew.imaging.ImageProcessingException;
+import com.incadencecorp.coalesce.common.CoalesceUnitTestSettings;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceCryptoException;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.common.helpers.DocumentProperties;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
+import com.incadencecorp.coalesce.common.helpers.MimeHelper;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
+import com.incadencecorp.coalesce.framework.CoalesceSettings;
+import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
+import com.incadencecorp.coalesce.framework.persistance.CoalescePersistorBaseTest;
+import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 import com.incadencecorp.coalesce.framework.persistance.accumulo.AccumuloDataConnector;
 import com.incadencecorp.coalesce.framework.persistance.accumulo.AccumuloPersistor;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.io.WKTWriter;
@@ -70,17 +84,22 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceCoordinateListFiel
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceDateTimeField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceDoubleField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceDoubleListField;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceFileField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceFloatField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceFloatListField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceGUIDField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceIntegerField;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceIntegerListField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceLongField;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceLongListField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceStringField;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceStringListField;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
 import com.incadencecorp.coalesce.framework.datamodel.TestRecord;
@@ -157,14 +176,15 @@ public class AccumuloPersistorTest extends CoalescePersistorBaseTest {
             Assume.assumeNoException(e);
         }
 
-
+        CoalesceUnitTestSettings.initialize();
     }
 
     @AfterClass
-    public static void tearDownAfterClass()
+    public static void tearDownAfterClass() throws IOException
     {
-        AccumuloPersistorTest tester = new AccumuloPersistorTest();
+        //AccumuloPersistorTest tester = new AccumuloPersistorTest();
 
+        CoalesceUnitTestSettings.tearDownAfterClass();
         //CoalescePersistorBaseTest.tearDownAfterClassBase(tester);
 
     }
@@ -184,6 +204,7 @@ public class AccumuloPersistorTest extends CoalescePersistorBaseTest {
          //serCon.setDatabase("CoalesceDatabase");
          serCon.setUser("root");
          serCon.setPassword("secret");
+         /*
          //  MiniCluster Code for long term testing 
          if (accumulo == null) {
         	 System.err.println("Creating MiniCluster");
@@ -208,10 +229,10 @@ public class AccumuloPersistorTest extends CoalescePersistorBaseTest {
         }
         serCon.setDatabase(accumulo.getInstanceName());
         serCon.setServerName(accumulo.getZooKeepers());
-//
+*/
          /*  Temp code to connect to my VM */
- //        serCon.setDatabase("accumulodev");
-//         serCon.setServerName("accumulodev");
+        serCon.setDatabase("accumulodev");
+        serCon.setServerName("accumulodev");
 
         return serCon;
 
@@ -248,9 +269,10 @@ public class AccumuloPersistorTest extends CoalescePersistorBaseTest {
     	}
 
     }
+	static private String TESTFILENAME = "Desert.jpg";
     
     @Test
-    public void AccumuloDataTypesTest() throws CoalesceDataFormatException, CoalescePersistorException
+    public void AccumuloDataTypesTest() throws CoalesceDataFormatException, CoalescePersistorException, SAXException, IOException
     {
     	double CIRCLERADIUS = 5.25;
     	
@@ -266,7 +288,7 @@ public class AccumuloPersistorTest extends CoalescePersistorBaseTest {
         Point center = new GeometryFactory().createPoint(new Coordinate(0, 0));
         circlefield.setValue(center, CIRCLERADIUS);
 
-        
+       
         // Create Polygon
         CoalescePolygonField polygonfield = record.getPolygonField();
         GeometricShapeFactory gsf = new GeometricShapeFactory();
@@ -282,7 +304,43 @@ public class AccumuloPersistorTest extends CoalescePersistorBaseTest {
         GeometryFactory gf = new GeometryFactory();
         LineString line = gf.createLineString(coords);  
         linefield.setValue(line);
+
+        // Create a geo list
+        CoalesceCoordinateListField geolistfield = record.getGeoListField();
+        MultiPoint geolist = new GeometryFactory().createMultiPoint(coords);
+        geolistfield.setValue(geolist);
         
+        // Create a point value
+        CoalesceCoordinateField coordfield = record.getGeoField();
+        coordfield.setValue(new Coordinate(10,10));
+        
+        // Int
+        CoalesceIntegerField intfield = record.getIntegerField();
+        intfield.setValue(42);
+        
+        // Check a int list field
+        int intlist[] = { 3,4,5,6 };
+        CoalesceIntegerListField intlistfield = record.getIntegerListField();
+        intlistfield.setValue(intlist);
+
+        // Long
+        CoalesceLongField longfield = record.getLongField();
+        longfield.setValue((long) 42);
+        
+        // Check a long list field
+        long longlist[] = { 3,4,5,6 };
+        CoalesceLongListField longlistfield = record.getLongListField();
+        longlistfield.setValue(longlist);
+
+        // String
+        CoalesceStringField stringfield = record.getStringField();
+        stringfield.setValue("Test String");
+        
+        // Check a string list field
+        String stringlist[] = { "A", "B", "C" };
+        CoalesceStringListField stringlistfield = record.getStringListField();
+        stringlistfield.setValue(stringlist);
+         
         // Float
         CoalesceFloatField floatfield = record.getFloatField();
         floatfield.setValue((float)3.145964);
@@ -304,11 +362,36 @@ public class AccumuloPersistorTest extends CoalescePersistorBaseTest {
         // Boolean
         CoalesceBooleanField booleanfield = record.getBooleanField();
         booleanfield.setValue(true);
-      
+        
+            
         // Date
         CoalesceDateTimeField datetimefield = record.getDateField();
         datetimefield.setValue(JodaDateTimeHelper.nowInUtc());
+        
+        // UUID
+        CoalesceGUIDField guidfield = record.getGuidField();
+        guidfield.setValue(UUID.randomUUID());
        
+        // File
+        CoalesceFileField filefield = record.getFileField();
+        String fileName = CoalesceUnitTestSettings.getResourceAbsolutePath(TESTFILENAME);     
+        
+        try
+        {
+            DocumentProperties properties = new DocumentProperties();
+            if (properties.initialize(fileName, CoalesceSettings.getUseEncryption()))
+            {
+            	filefield.setValue(properties);
+            }
+        }
+        catch (ImageProcessingException | CoalesceCryptoException | IOException | JDOMException e)
+        {
+            fail("Error processing image file: "+ e.getMessage());
+        }
+        
+        // Register a template for this entity so that search data is persisted
+        _coalesceFramework.saveCoalesceEntityTemplate(CoalesceEntityTemplate.create(entity));
+        
         // Persist Entity
         _coalesceFramework.saveCoalesceEntity(entity);
 
@@ -323,7 +406,11 @@ public class AccumuloPersistorTest extends CoalescePersistorBaseTest {
         boolean bvalue = Boolean.valueOf(_coalesceFramework.getCoalesceFieldValue(booleanfield.getKey()));
         String mydate = _coalesceFramework.getCoalesceFieldValue(datetimefield.getKey());
         DateTime datevalue = JodaDateTimeHelper.fromXmlDateTimeUTC(mydate);
-        
+        CoalesceEntity filefieldentity  = _coalesceFramework.getCoalesceEntity(entity.getKey());
+        CoalesceFileField filefieldvalue = (CoalesceFileField) filefieldentity.getCoalesceObjectForKey(filefield.getKey());
+        byte[] filefieldbytesvalue = Base64.decode(filefieldvalue.getBaseValue());
+		
+               
         // Create test values
         String ctest = new WKTWriter(3).write(center);
         String ptest = new WKTWriter(3).write(shape);
@@ -334,7 +421,8 @@ public class AccumuloPersistorTest extends CoalescePersistorBaseTest {
         double dlisttest[] = doublelistfield.getValue();
         boolean btest = booleanfield.getValue();
         DateTime datetest = datetimefield.getValue();
-        
+        byte[] fileFieldBytestest = Base64.decode(filefield.getBaseValue());
+       
         
         // Verify Circle
         assertEquals(ctest, cvalue);
@@ -367,6 +455,16 @@ public class AccumuloPersistorTest extends CoalescePersistorBaseTest {
         
         // Verify date
         assertEquals(datetest,datevalue);
+ 
+                		
+        // Verify File Field
+        assertTrue((filefieldvalue.getValue() instanceof DocumentProperties));
+        assertArrayEquals(filefieldbytesvalue, fileFieldBytestest);
+        
+        assertEquals(TESTFILENAME, filefieldvalue.getFilename());
+        assertEquals(FilenameUtils.getExtension(TESTFILENAME), filefieldvalue.getExtension());
+        assertEquals(MimeHelper.getMimeTypeForExtension(FilenameUtils.getExtension(TESTFILENAME)), filefieldvalue.getMimeType());
+        assertEquals(filefieldbytesvalue.length, filefield.getSize());
 
 
     }

@@ -18,11 +18,15 @@ import org.apache.accumulo.core.client.AccumuloException;
 import org.apache.accumulo.core.client.AccumuloSecurityException;
 import org.apache.accumulo.core.client.Connector;
 import org.apache.accumulo.core.client.security.tokens.PasswordToken;
+import org.geotools.data.DataStore;
+import org.geotools.data.DataStoreFinder;
 
 // Imports to allow compilation of unused routines
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 import java.sql.ResultSet;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
@@ -68,6 +72,18 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase {
     public static String coalesceTable = "Coalesce";
     public static String coalesceTemplateTable = "CoalesceTemplates";
     public static String coalesceEntityIndex = "CoalesceEntityIndex";
+    public static String coalesceSearchTable = "CoalesceSearch";
+    
+    // These variables are for connecting to GeoMesa for the search
+    private static Map<String,String> dsConf = new HashMap<String,String>();
+    private static DataStore dataStore;
+    
+	static final String INSTANCE_ID = "instanceId";
+	static final String ZOOKEEPERS = "zookeepers";
+	static final String USER = "user";
+	static final String PASSWORD = "password";
+	static final String AUTHS = "auths";
+	static final String TABLE_NAME = "tableName";
 
     public AccumuloDataConnector(ServerConn settings) throws CoalescePersistorException
     {
@@ -75,6 +91,14 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase {
         _zookeepers = settings.getServerName();
         _username = settings.getUser();
         _password = settings.getPassword();
+
+    	// Build the map for Geotools style connection from the connection information
+        dsConf.put(INSTANCE_ID, _instancename);
+        dsConf.put(ZOOKEEPERS, _zookeepers);
+        dsConf.put(USER, _username);
+        dsConf.put(PASSWORD, _password);
+        dsConf.put(TABLE_NAME, coalesceSearchTable);
+        dsConf.put(AUTHS, ""); //Auths will be empty for now
     }
 
      
@@ -92,6 +116,10 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase {
     		throw new CoalescePersistorException("Error Opening Data Connection - AccumuloSecurityException", e);
     	}
     	return connector;
+    }
+    
+    public static DataStore getGeoDataStore() {
+    	return dataStore;
     }
     
     @Override
@@ -163,7 +191,28 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase {
 					e.printStackTrace();
 				}
 				System.err.println("created table " + coalesceEntityIndex);
+				
+		
 			}
+			// Make sure the CoalesceSearch table exists first time
+	    	if(!connector.tableOperations().exists(coalesceSearchTable)) {
+				System.err.println("creating table " + coalesceSearchTable);
+				try {
+					connector.tableOperations().create(coalesceSearchTable);
+				} catch (TableExistsException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				System.err.println("created table " + coalesceSearchTable);
+				
+		
+			}
+	    	
+	    	// Now set up the GeoMesa connection
+	        // verify that we can see this Accumulo destination in a GeoTools manner
+	    	
+	        dataStore = DataStoreFinder.getDataStore(dsConf);
+
         }
     }
 

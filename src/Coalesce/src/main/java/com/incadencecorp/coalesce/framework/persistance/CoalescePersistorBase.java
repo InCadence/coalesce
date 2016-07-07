@@ -246,8 +246,10 @@ public abstract class CoalescePersistorBase implements ICoalescePersistor {
         {
             // Always persist template
             return persistEntityTemplate(entityTemplate, conn);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        
+        return false;
     }
 
     

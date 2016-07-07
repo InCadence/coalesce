@@ -159,14 +159,29 @@ public class CoalesceValidator extends CoalesceIterator {
     @Override
     protected boolean visitCoalesceRecordset(CoalesceRecordset recordset)
     {
+        String namepath = recordset.getNamePath();
         // Get Record Set from Actual Entity
-        CoalesceRecordset actutal = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(recordset.getNamePath());
+        CoalesceRecordset actutal = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(namepath);
 
-        // For Each Record
-        for (CoalesceRecord record : actutal.getRecords())
+        if (actutal != null)
         {
-            validateRecord(record, recordset.getFieldDefinitions());
+
+                 for (CoalesceRecord record : actutal.getRecords())
+                 {
+                     validateRecord(record, recordset.getFieldDefinitions());
+                 }
+
         }
+
+        else
+
+        {
+
+             violations.put(entity.getKey(),String.format("Recordset (%s) Not found",namepath));
+        }
+
+
+
 
         // Don't Process Children
         return false;

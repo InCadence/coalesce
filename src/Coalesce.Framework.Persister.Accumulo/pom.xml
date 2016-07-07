@@ -3,10 +3,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>coalesce-framework-persister-accumulo</artifactId>
 	<version>${coalescePersisterVersionAccumulo}</version>
+	
+	
 	<packaging>bundle</packaging>
 	<name>Coalesce Accumulo Persister</name>
 	<description>Persister used by Coalesce to connect to a Accumulo database.</description>
-
 	<parent>
 		<groupId>com.incadencecorp.coalesce</groupId>
 		<artifactId>coalesce-pom</artifactId>
@@ -101,7 +102,37 @@
 			</plugin>
 		</plugins>
 	</build>
-
+<repositories>
+  <repository>
+    <id>locationtech-releases</id>
+    <url>https://repo.locationtech.org/content/groups/releases</url>
+    <snapshots>
+      <enabled>false</enabled>
+    </snapshots>
+  </repository>
+  <repository>
+    <id>geomesa-snapshots</id>
+    <url>https://repo.locationtech.org/content/repositories/geomesa-snapshots</url>
+    <releases>
+      <enabled>false</enabled>
+    </releases>
+    <snapshots>
+      <enabled>true</enabled>
+    </snapshots>
+  </repository>
+  <repository>
+    <id>boundlessgeo</id>
+    <url>http://repo.boundlessgeo.com/main</url>
+  </repository>
+  <repository>
+    <id>osgeo</id>
+    <url>http://download.osgeo.org/webdav/geotools</url>
+  </repository>
+  <repository>
+    <id>conjars.org</id>
+    <url>http://conjars.org/repo</url>
+  </repository>
+</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>com.incadencecorp.coalesce</groupId>
@@ -128,27 +159,55 @@
 	    <dependency>
     	  <groupId>org.apache.accumulo</groupId>
 	      <artifactId>accumulo-core</artifactId>
-    	  <version>1.6.1</version>
+    	  <version>1.6.5</version>
     	</dependency>
 
 	    <dependency>
 	    	<groupId>org.apache.accumulo</groupId>
 	    	<artifactId>accumulo-minicluster</artifactId>
-	    	<version>1.6.1</version>
+	    	<version>1.6.5</version>
 	    	<scope>test</scope>
 	    </dependency>
 	    <dependency>
 	    	<groupId>org.apache.accumulo</groupId>
 	    	<artifactId>accumulo-server-base</artifactId>
-	    	<version>1.6.1</version>
+	    	<version>1.6.5</version>
 	    	<scope>test</scope>
 	    </dependency>
 	    <dependency>
 	    	<groupId>org.apache.accumulo</groupId>
 	    	<artifactId>accumulo-start</artifactId>
-	    	<version>1.6.1</version>
+	    	<version>1.6.5</version>
 	    	<scope>test</scope>
 	    </dependency>
+
+	    <dependency>
+            <groupId>org.locationtech.geomesa</groupId>
+            <artifactId>geomesa-accumulo-datastore</artifactId>
+	    	<version>1.2.3</version>
+	    	<exclusions>
+	    		<exclusion>
+	    			<artifactId>joda-time</artifactId>
+	    			<groupId>joda-time</groupId>
+	    		</exclusion>
+	    	</exclusions>
+	    </dependency>
+        <dependency>
+            <groupId>org.locationtech.geomesa</groupId>
+            <artifactId>geomesa-utils</artifactId>
+	    	<version>1.2.3</version>
+	    	<exclusions>
+	    		<exclusion>
+	    			<artifactId>joda-time</artifactId>
+	    			<groupId>joda-time</groupId>
+	    		</exclusion>
+	    	</exclusions>
+        </dependency>
+        <dependency>
+        	<groupId>org.apache.zookeeper</groupId>
+        	<artifactId>zookeeper</artifactId>
+        	<version>3.4.8</version>
+        </dependency>
 	</dependencies>
 
 </project>

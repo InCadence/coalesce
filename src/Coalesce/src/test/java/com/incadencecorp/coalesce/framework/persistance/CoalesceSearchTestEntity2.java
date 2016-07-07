@@ -122,11 +122,11 @@ public class CoalesceSearchTestEntity2 extends CoalesceSearchTestEntity1{
     
                 if (areaRecordSet.getCount() == 0)
                 {
-                    this.circleRecord = (SearchTestRecord) areaRecordSet.addNew();
+                    this.circleRecord =  areaRecordSet.addNew();
                 }
                 else
                 {
-                    this.circleRecord = (SearchTestRecord) areaRecordSet.getItem(0);
+                    this.circleRecord =  areaRecordSet.getItem(0);
                 }
     
             }

@@ -39,6 +39,7 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceStringField;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
+import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor.EntityMetaData;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
@@ -310,14 +311,21 @@ public abstract class CoalescePersistorBaseTest {
     @Test
     public void testEntityTemplate() throws SAXException, IOException, CoalescePersistorException
     {
-        CoalesceEntityTemplate template = testTemplate(CoalesceEntityTemplate.create(_entity));
+        // Test basic template functionality with the embedded entity
+        testTemplate(CoalesceEntityTemplate.create(_entity));
+        
+        
+        CoalesceEntity testentity = new TestEntity();
+        testentity.initialize();
+        
+        CoalesceEntityTemplate template = CoalesceEntityTemplate.create(testentity);
         assertTrue(_coalesceFramework.saveCoalesceEntityTemplate(template));
 
         String templateXml = template.toXml();
 
-        String templateKey = _coalesceFramework.getCoalesceEntityTemplateKey(_entity.getName(),
-                                                                             _entity.getSource(),
-                                                                             _entity.getVersion());
+        String templateKey = _coalesceFramework.getCoalesceEntityTemplateKey(testentity.getName(),
+                                                                             testentity.getSource(),
+                                                                             testentity.getVersion());
         assertFalse(StringHelper.isNullOrEmpty(templateKey));
 
         _testTemplateKey = templateKey;
@@ -326,14 +334,14 @@ public abstract class CoalescePersistorBaseTest {
 
         CoalesceAssert.assertXmlEquals(templateXml, templateXmlFromKey);
 
-        String templateXmlFromAttr = _coalesceFramework.getCoalesceEntityTemplateXml(_entity.getName(),
-                                                                                     _entity.getSource(),
-                                                                                     _entity.getVersion());
+        String templateXmlFromAttr = _coalesceFramework.getCoalesceEntityTemplateXml(testentity.getName(),
+                                                                                     testentity.getSource(),
+                                                                                     testentity.getVersion());
         CoalesceAssert.assertXmlEquals(templateXml, templateXmlFromAttr);
 
-        CoalesceEntityTemplate persistedTemplate = _coalesceFramework.getCoalesceEntityTemplate(_entity.getName(),
-                                                                                                _entity.getSource(),
-                                                                                                _entity.getVersion());
+        CoalesceEntityTemplate persistedTemplate = _coalesceFramework.getCoalesceEntityTemplate(testentity.getName(),
+                                                                                                testentity.getSource(),
+                                                                                                testentity.getVersion());
 
         CoalesceAssert.assertXmlEquals(templateXml, persistedTemplate.toXml());
 

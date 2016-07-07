@@ -1,13 +1,17 @@
 package com.incadencecorp.coalesce.framework.persistance.accumulo;
 
+
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -32,25 +36,61 @@ import org.apache.accumulo.core.security.Authorizations;
 import org.apache.accumulo.core.iterators.SortedKeyValueIterator;
 import org.apache.accumulo.core.iterators.user.RegExFilter;
 import org.apache.accumulo.core.iterators.user.WholeRowIterator;
-import org.apache.accumulo.core.iterators.user.IntersectingIterator;
-import org.apache.accumulo.core.iterators.user.IndexedDocIterator;
 import org.apache.hadoop.io.Text;
 import org.joda.time.DateTime;
+import org.locationtech.geomesa.utils.interop.WKTUtils;
+import org.geotools.data.DataStore;
+import org.geotools.data.FeatureStore;
+import org.geotools.data.simple.SimpleFeatureStore;
+import org.geotools.factory.Hints;
+import org.geotools.feature.DefaultFeatureCollection;
+import org.geotools.feature.FeatureCollection;
+import org.geotools.feature.simple.SimpleFeatureBuilder;
+import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Point; 
+import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.util.GeometricShapeFactory;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.LineString;
+
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
+import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
+import com.incadencecorp.coalesce.framework.CoalesceFramework;
+import com.incadencecorp.coalesce.framework.validation.CoalesceValidator;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceCircle;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceCircleField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceGUIDField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
+import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
+import com.incadencecorp.coalesce.framework.datamodel.Fielddefinition;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
 import com.incadencecorp.coalesce.framework.persistance.CoalescePersistorBase;
 import com.incadencecorp.coalesce.framework.persistance.ICoalesceCacher;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 import com.incadencecorp.coalesce.framework.persistance.accumulo.MutationWrapper;
+import com.incadencecorp.coalesce.framework.persistance.accumulo.AccumuloDataConnector;
+
 
 /*-----------------------------------------------------------------------------'
 Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -526,6 +566,8 @@ public class AccumuloPersistor extends CoalescePersistorBase {
 			String version = template.getVersion();
 			String time = JodaDateTimeHelper.nowInUtc().toString();
 
+			
+			
 			// See if a template with this name, source, version exists
 			String templateId = getEntityTemplateKey(name,source,version);
 			boolean newtemplate = false;
@@ -558,17 +600,177 @@ public class AccumuloPersistor extends CoalescePersistorBase {
 			
 			writer.close();
 			
+		   	// Create the associated search features for this template if it is new
+			// TODO:  Figure out what to do for updates to templates.   What to do with the data?
+	    	if (newtemplate) createSearchTables(template);
+			
+			
 		} catch (MutationsRejectedException ex) {
 			
 			System.err.println(ex.getLocalizedMessage()); // see Error Handling Example
 			
 		} catch (TableNotFoundException ex) {
 			System.err.println(ex.getLocalizedMessage());
-		}	
+		} catch (Exception ex ) {
+			System.err.println(ex.getLocalizedMessage());
+			ex.printStackTrace();
+		}
 
-    	
+ 
+
         return true;
         
+    }
+    
+    private boolean createSearchTables(CoalesceEntityTemplate template) {
+       	// Feature set name will be built as follows to avoid namespace collisions
+    	//   <template>:  <name>_<source>_<version>
+    	//   <featurename>:   <template>.<section>.<recordset>
+    	//
+    	//   All spaces in names will be converted to underscores.
+    	String templateName = (template.getName() + "_" + template.getSource() +
+    			"_" + template.getVersion() ).replaceAll(" ", "_");
+    	
+		//Document tempdoc = template.getCoalesceObjectDocument();
+        // Confirm Values
+        NodeList nodeList = template.getCoalesceObjectDocument().getElementsByTagName("*");
+        int numnodes = nodeList.getLength();
+        
+        String sectionName = null;
+        String recordName = null;
+        ArrayList<Fielddefinition> fieldlist = new ArrayList<Fielddefinition>();
+        
+        //TODO - Deal with noindex sections and records.
+        for (int jj = 0;jj < numnodes;jj++)
+        {
+            Node node = nodeList.item(jj);
+            String nodeName = node.getNodeName();
+            
+            if (nodeName.compareTo("section") == 0) {
+            	sectionName = node.getAttributes().getNamedItem("name").getNodeValue().replaceAll(" ", "_");
+            	recordName = null;
+            }
+            
+            if (nodeName.compareTo("recordset") == 0) {
+            	// If this is a new record write out the old one if it exists
+            	if (!fieldlist.isEmpty()) {
+                 	// Now create the geomesa featureset
+                 	createFeatureSet(templateName+"."+sectionName+"."+recordName,fieldlist);
+            	}
+            	recordName = node.getAttributes().getNamedItem("name").getNodeValue().replaceAll(" ", "_");
+            	fieldlist.clear();
+            }
+            
+            if (nodeName.compareTo("fielddefinition") == 0)
+            {
+        		Node fieldNode = nodeList.item(jj);
+         		String datatype = fieldNode.getAttributes().getNamedItem("datatype").getNodeValue();
+         		String fieldname = fieldNode.getAttributes().getNamedItem("name").getNodeValue();
+             	Fielddefinition field = new Fielddefinition();
+             	
+         		field.setDatatype(datatype);
+         		field.setName(fieldname.replaceAll(" ","_"));
+         		fieldlist.add(field);
+            }
+
+        }
+        // Write out last set of fields
+        if (!fieldlist.isEmpty())
+        	createFeatureSet(templateName+"."+sectionName+"."+recordName,fieldlist);
+
+    	return true;
+    }
+
+    private void createFeatureSet(String featurename, ArrayList<Fielddefinition> fields) 
+    {
+    	SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
+    	boolean defaultGeometrySet = false;
+    	tb.setName(featurename);
+    	
+    	//TODO - Deal with no index fields
+    	for (int jj = 0; jj < fields.size(); jj++)
+        {
+	    	String datatype = fields.get(jj).getDatatype();
+	    	ECoalesceFieldDataTypes type = ECoalesceFieldDataTypes.getTypeForCoalesceType(datatype);
+	    	Class<?> featuretype = getTypeForSimpleFeature(type);
+	    	
+	    	// Binary and File fields will return null so we do not persist them for search
+	    	if (featuretype != null) {
+	    		tb.add(fields.get(jj).getName(),featuretype);	
+	    	
+	    		// Index on the first geometry type in the recordset.
+	    		if (!defaultGeometrySet && Geometry.class.isAssignableFrom(featuretype)) {
+	    			defaultGeometrySet = true;
+	    			tb.setDefaultGeometry(fields.get(jj).getName());
+	    		}
+	    	}
+        }
+    	SimpleFeatureType feature = tb.buildFeatureType();
+    	try {
+			AccumuloDataConnector.getGeoDataStore().createSchema(feature);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			String msg = e.getMessage();
+			e.printStackTrace();
+		}
+        
+    }
+    private static Class<?> getTypeForSimpleFeature(final ECoalesceFieldDataTypes type) {
+
+
+        switch (type) {
+
+            case BOOLEAN_TYPE:
+                return Boolean.class;
+            	
+            case DOUBLE_TYPE:
+            case FLOAT_TYPE:
+                return Double.class;
+
+            case GEOCOORDINATE_LIST_TYPE:
+                return MultiPoint.class;
+                
+            case GEOCOORDINATE_TYPE:
+                return Point.class;
+
+            case LINE_STRING_TYPE:
+                return LineString.class;
+
+            case POLYGON_TYPE:
+            	return Polygon.class;
+            
+            	// Circles will be converted to polygons
+            case CIRCLE_TYPE:
+                return Polygon.class;
+
+            case INTEGER_TYPE:
+                return Integer.class;
+
+            case STRING_TYPE:
+            case URI_TYPE:
+            case STRING_LIST_TYPE:
+            case DOUBLE_LIST_TYPE:
+            case INTEGER_LIST_TYPE:
+            case LONG_LIST_TYPE:
+            case FLOAT_LIST_TYPE:
+            case GUID_LIST_TYPE:
+            case BOOLEAN_LIST_TYPE:
+                return String.class;
+
+            case GUID_TYPE:
+                return String.class;
+
+            case DATE_TIME_TYPE:
+                return Date.class;
+
+            case LONG_TYPE:
+                return Long.class;
+
+            case FILE_TYPE:
+            case BINARY_TYPE:
+            default:
+                return null;
+        }
     }
 
     @Override
@@ -630,6 +832,19 @@ public class AccumuloPersistor extends CoalescePersistorBase {
         return key;
     }
 
+    // Utility method to strip the row key, visibility, and timestamp from the 
+    // SortedMap returned from decodeRow
+    private static SortedMap<String,Value> columnMap(SortedMap<Key,Value> row)
+    {
+    	TreeMap<String,Value> colMap = new TreeMap<>();
+    	for(Map.Entry<Key, Value> e : row.entrySet()) {
+    		String cf = e.getKey().getColumnFamily().toString();
+    		String cq = e.getKey().getColumnQualifier().toString();
+    		colMap.put(cf + ":" + cq,  e.getValue());
+    	}
+    	return colMap;
+    }
+    
     @Override
     public String getEntityTemplateMetadata() throws CoalescePersistorException
     {
@@ -642,17 +857,16 @@ public class AccumuloPersistor extends CoalescePersistorBase {
         	dbConnector = AccumuloDataConnector.getDBConnector();
 
 	    	scanner = dbConnector.createScanner(AccumuloDataConnector.coalesceTemplateTable, Authorizations.EMPTY);
-			scanner.fetchColumn(new Text(coalesceTemplateColumnFamily),
+	    	Text templateColumnFamily = new Text(coalesceTemplateColumnFamily);
+			scanner.fetchColumn(templateColumnFamily,
 									new Text(coalesceTemplateNameQualifier));
-			scanner.fetchColumn(new Text(coalesceTemplateColumnFamily),
-					new Text(coalesceTemplateSourceQualifier));
-			scanner.fetchColumn(new Text(coalesceTemplateColumnFamily),
-					new Text(coalesceTemplateSourceQualifier));
-			scanner.fetchColumn(new Text(coalesceTemplateColumnFamily),
+			scanner.fetchColumn(templateColumnFamily,
+					new Text(coalesceTemplateSourceQualifier));			
+			scanner.fetchColumn(templateColumnFamily,
 					new Text(coalesceTemplateVersionQualifier));
-			scanner.fetchColumn(new Text(coalesceTemplateColumnFamily),
+			scanner.fetchColumn(templateColumnFamily,
 					new Text(coalesceTemplateDateCreatedQualifier));
-			scanner.fetchColumn(new Text(coalesceTemplateColumnFamily),
+			scanner.fetchColumn(templateColumnFamily,
 					new Text(coalesceTemplateDateModifiedQualifier));
 	        IteratorSetting iter = new IteratorSetting(1, "rowiterator", 
 	        		(Class<? extends SortedKeyValueIterator<Key, Value>>) WholeRowIterator.class);
@@ -686,18 +900,19 @@ public class AccumuloPersistor extends CoalescePersistorBase {
 
 	            
 	            // Set Attributes
-	            templateElement.setAttribute("templatekey", entry.getKey().toString());
-	            
+	            templateElement.setAttribute("templatekey", entry.getKey().getRow().toString());
+	            SortedMap<String,Value> colmap = columnMap(wholeRow);
+	           	            
 	            templateElement.setAttribute("name", 
-	            		wholeRow.get("coalesceTemplateNameQualifier").toString());          		
+	            		colmap.get(coalesceTemplateColumnFamily+":"+coalesceTemplateNameQualifier).toString());
 	            templateElement.setAttribute("source", 
-	            		wholeRow.get("coalesceTemplateSourceQualifier").toString());
+	            		colmap.get(coalesceTemplateColumnFamily+":"+coalesceTemplateSourceQualifier).toString());         		
 	            templateElement.setAttribute("version", 
-	            		wholeRow.get("coalesceTemplateVersionQualifier").toString());
+	            		colmap.get(coalesceTemplateColumnFamily+":"+coalesceTemplateVersionQualifier).toString());
 	            templateElement.setAttribute("lastmodified", 
-	            		wholeRow.get("coalesceTemplateDateModifiedQualifier").toString());
+	            		colmap.get(coalesceTemplateColumnFamily+":"+coalesceTemplateDateModifiedQualifier).toString());
 	            templateElement.setAttribute("datecreated", 
-	            		wholeRow.get("coalesceTemplateDateCreatedQualifier").toString());
+	            		colmap.get(coalesceTemplateColumnFamily+":"+coalesceTemplateDateCreatedQualifier).toString());
 	
 	            // Append Element
 	            rootElement.appendChild(templateElement);
@@ -735,17 +950,17 @@ public class AccumuloPersistor extends CoalescePersistorBase {
                     isSuccessful &= persistEntityObject(entity, conn);
                 }
             }
-            conn.commit();
+//            conn.commit();
         }
         catch (Exception e)
         {
-            conn.rollback();
+ //           conn.rollback();
 
             throw new CoalescePersistorException("FlattenObject", e);
         }
         finally
         {
-            conn.close();
+ //           conn.close();
         }
 
         return isSuccessful;
@@ -757,7 +972,7 @@ public class AccumuloPersistor extends CoalescePersistorBase {
         return new AccumuloDataConnector(getConnectionSettings());
     }
 
-    protected boolean persistEntityObject(CoalesceEntity entity, AccumuloDataConnector conn) throws SQLException
+    protected boolean persistEntityObject(CoalesceEntity entity, AccumuloDataConnector conn) throws SQLException, CoalescePersistorException, SAXException, IOException, CoalesceDataFormatException
     {
         Connector dbConnector = null;
         
@@ -782,6 +997,8 @@ public class AccumuloPersistor extends CoalescePersistorBase {
 			
 			persistEntityIndex(entity,dbConnector, config);
 			
+			persistEntitySearchData(entity, dbConnector,config);
+			
 
 		} catch (MutationsRejectedException ex) {
 			
@@ -804,7 +1021,7 @@ public class AccumuloPersistor extends CoalescePersistorBase {
 		
 		Mutation m = createMutation(entity);
 		
-		
+
 		writer.addMutation(m);
 		
 		writer.close();
@@ -830,6 +1047,183 @@ public class AccumuloPersistor extends CoalescePersistorBase {
 		writer.close();  	
     }
     
+    private void persistEntitySearchData(CoalesceEntity entity, Connector dbConnector, BatchWriterConfig config) 
+    		throws CoalescePersistorException, SAXException, IOException, CoalesceDataFormatException 
+    {
+    	CoalesceEntityTemplate template = null;
+    	CoalesceValidator validator = new CoalesceValidator();
+    	DataStore ds = AccumuloDataConnector.getGeoDataStore();
+    	
+    	String templatename=(entity.getName()+"_"+entity.getSource()+"_"+entity.getVersion()).replaceAll(" ", "_");
+    	// Find the template for this type
+        String xml = getEntityTemplateXml(entity.getName(),
+    			entity.getSource(),entity.getVersion());
+
+        if (xml != null)
+        {
+            // Initialize Template
+            template = new CoalesceEntityTemplate();
+            template.initialize(xml);
+        }
+    	    	
+    	// If the template does not exist do nothing
+    	if (template == null) return;
+    	
+    	//Validate the entity against the template
+    	Map<String,String> errors = validator.validate(entity,template);
+    	if (!errors.isEmpty()) {
+    		//throw new CoalescePersistorException("Error validating entity to template", null);
+    		return;
+    		
+    	}
+    	
+    	for (CoalesceSection section : entity.getSections().values()) {
+    		String sectionname = section.getName();
+    		for (CoalesceRecordset recordset : section.getRecordsets().values()) {
+    			String recordname = recordset.getName();
+    			String featuresetname = (templatename+"."+sectionname+"."+recordname).replaceAll(" ", "_");
+
+    			// Verify a featureset exists if not skip this record
+    			SimpleFeatureType featuretype = ds.getSchema(featuresetname);
+    			if (featuretype == null) break;
+   				// Do a feature collection for all records
+				DefaultFeatureCollection featurecollection = new DefaultFeatureCollection();
+				// Create a geo record for each record in the recordset
+    			for (CoalesceRecord record : recordset.getRecords()) {
+    				Object[] NO_VALUES = {};
+ 					SimpleFeature simplefeature = SimpleFeatureBuilder.build(featuretype, NO_VALUES, null);
+    				for (CoalesceField field : record.getFields()) {
+    					
+    					String fieldname = field.getName();
+    					ECoalesceFieldDataTypes fieldtype = field.getDataType();
+    					Object fieldvalue = field.getValue();
+    					
+    					// If there is not a value do not set the attribute.
+    					if (!(fieldvalue == null))
+    						setFeatureAttribute(simplefeature, fieldname, fieldtype, fieldvalue);
+    					
+    				}
+    				featurecollection.add(simplefeature);
+    				
+    			}
+    			SimpleFeatureStore featureStore = (SimpleFeatureStore) ds.getFeatureSource(featuresetname);
+    			featureStore.addFeatures(featurecollection);
+    		}
+    	}
+    	
+    }
+    
+    private void setFeatureAttribute(SimpleFeature simplefeature, String fieldname, ECoalesceFieldDataTypes fieldtype, Object fieldvalue) throws CoalesceDataFormatException
+    {
+    	String objclass = fieldvalue.getClass().getName();
+    	String liststring;
+    	
+        switch (fieldtype) {
+
+        	// These types should be able to be handled directly
+	        case BOOLEAN_TYPE:
+	        case DOUBLE_TYPE:
+	        case FLOAT_TYPE:
+	        case INTEGER_TYPE:
+	        case LONG_TYPE:
+	        case STRING_TYPE:
+	        case URI_TYPE:
+	        	simplefeature.setAttribute(fieldname, fieldvalue);
+	        	break;
+	        	
+	        case STRING_LIST_TYPE:
+	        	liststring = Arrays.toString((String[])fieldvalue);
+	        	simplefeature.setAttribute(fieldname, liststring);
+	        	break;
+	        case DOUBLE_LIST_TYPE:
+	        	liststring = Arrays.toString((double[])fieldvalue);
+	        	simplefeature.setAttribute(fieldname, liststring);
+	        	break;
+	        case INTEGER_LIST_TYPE:
+	        	liststring = Arrays.toString((int[])fieldvalue);
+	        	simplefeature.setAttribute(fieldname, liststring);
+	        	break;
+	        case LONG_LIST_TYPE:
+	        	liststring = Arrays.toString((long[])fieldvalue);
+	        	simplefeature.setAttribute(fieldname, liststring);
+	        	break;
+	        case FLOAT_LIST_TYPE:
+	        	liststring = Arrays.toString((float[])fieldvalue);
+	        	simplefeature.setAttribute(fieldname, liststring);
+	        	break;
+	        case GUID_LIST_TYPE:
+	        	liststring = Arrays.toString((UUID[])fieldvalue);
+	        	simplefeature.setAttribute(fieldname, liststring);
+	        	break;
+	        case BOOLEAN_LIST_TYPE:
+	        	
+	        	liststring = Arrays.toString((boolean[])fieldvalue);
+	        	simplefeature.setAttribute(fieldname, liststring);
+	        	break;
+	        	
+	        case GUID_TYPE:
+	        	String guid = ((UUID) fieldvalue).toString();
+	        	simplefeature.setAttribute(fieldname, guid);
+	        	break;
+	        
+	        case GEOCOORDINATE_LIST_TYPE:
+	        	MultiPoint points = new GeometryFactory().createMultiPoint((Coordinate[])fieldvalue);
+	        	simplefeature.setAttribute(fieldname, points);
+	        	break;
+	        	
+	        case GEOCOORDINATE_TYPE:
+	        	Point point = new GeometryFactory().createPoint((Coordinate)fieldvalue);
+	        	simplefeature.setAttribute(fieldname, point);
+	        	break;
+	        	
+	        case LINE_STRING_TYPE:
+	        	simplefeature.setAttribute(fieldname, fieldvalue);
+	        	break;
+	        	
+	        case POLYGON_TYPE:
+	        	simplefeature.setAttribute(fieldname, fieldvalue);
+	            break;
+	            
+	        	// Circles will be converted to polygons
+	        case CIRCLE_TYPE:
+	            // Create Polygon
+	        	
+	        	CoalesceCircle circle = (CoalesceCircle) fieldvalue;
+	            GeometricShapeFactory factory = new GeometricShapeFactory();
+	            factory.setSize(circle.getRadius());
+	            factory.setNumPoints(360); // 1 degree points
+	            factory.setCentre(circle.getCenter());
+	            Polygon shape = factory.createCircle();
+	            simplefeature.setAttribute(fieldname, shape);
+	            break;
+	
+	        case DATE_TIME_TYPE:
+	        	simplefeature.setAttribute(fieldname, ((DateTime)fieldvalue).toDate());
+	        	break;
+	        case FILE_TYPE:
+	        case BINARY_TYPE:
+	        default:
+	            break;
+        }
+		/*
+
+// accumulate this new feature in the collection
+featureCollection.add(simpleFeature);
+}
+
+return featureCollection;
+}
+
+static void insertFeatures(String simpleFeatureTypeName,
+               DataStore dataStore,
+               FeatureCollection featureCollection)
+throws IOException {
+
+FeatureStore featureStore = (SimpleFeatureStore) dataStore.getFeatureSource(simpleFeatureTypeName);
+featureStore.addFeatures(featureCollection);
+}
+		 */
+    }
     private Mutation createMutation(CoalesceEntity entity){
     	
         MutationWrapperFactory mfactory = new MutationWrapperFactory();
