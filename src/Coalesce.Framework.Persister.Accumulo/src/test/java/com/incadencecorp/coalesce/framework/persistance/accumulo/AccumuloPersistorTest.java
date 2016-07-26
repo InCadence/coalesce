@@ -21,15 +21,12 @@ package com.incadencecorp.coalesce.framework.persistance.accumulo;
  * May 13, 2016
  */
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -91,7 +88,6 @@ import com.incadencecorp.coalesce.framework.persistance.CoalescePersistorBaseTes
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 import com.incadencecorp.coalesce.framework.persistance.accumulo.testobjects.CoalesceSearchTestEntity1;
-import com.incadencecorp.coalesce.framework.persistance.accumulo.testobjects.SearchEntityTest;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
@@ -373,7 +369,7 @@ public class AccumuloPersistorTest extends CoalescePersistorBaseTest {
 		// Create/populate entity
 		CoalesceSearchTestEntity1 searchEntity1 = new CoalesceSearchTestEntity1();
 		searchEntity1.initialize();
-		SearchEntityTest.addPointsToEntity1(searchEntity1);
+		searchEntity1.addPointsToEntity();
 
 		// Prerequisite setup
 		_coalesceFramework.saveCoalesceEntityTemplate(CoalesceEntityTemplate.create(searchEntity1));
@@ -410,6 +406,47 @@ public class AccumuloPersistorTest extends CoalescePersistorBaseTest {
 		persistor.close();
 	}
 
+	private static void addPointsToEntity(CoalesceSearchTestEntity1 entity) throws CoalesceDataFormatException {
+		GeometryFactory factory = new GeometryFactory();
+
+		// entity1, the center point
+		Coordinate e1pt1 = new Coordinate(-77.455811, 38.944533);
+		Coordinate e1pt2 = new Coordinate(-77.037722, 38.852083);
+		Coordinate e1pt3 = new Coordinate(-76.668333, 39.175361);
+
+		Coordinate e1mp_1 = new Coordinate(-77.455811, 38.944533);
+		Coordinate e1mp_2 = new Coordinate(-77.037722, 38.852083);
+		Coordinate e1mp_3 = new Coordinate(-76.668333, 39.175361);
+
+		entity.getGeocoordinatePointData().setValue(factory.createPoint(e1pt1));
+		entity.getGeocoordinatePointData().setValue(factory.createPoint(e1pt2));
+		entity.getGeocoordinatePointData().setValue(factory.createPoint(e1pt3));
+		entity.getStringPointData().setValue("firstentitypoint");
+		entity.getIntegerPointData().setValue(1);
+		entity.getDateTimePointData().setValue(new DateTime());
+		// searchEntity1.addPointRecord();
+
+		entity.getGeoMultiPointData().setValue(new Coordinate[] { e1mp_1, e1mp_2, e1mp_3 });
+		// searchEntity1.addMultiPointRecord();
+		entity.getStringMultiPointData().setValue("somestringdatahere");
+		entity.getBooleanMultipointData().setValue(true);
+		entity.getDoubleMultipointData().setValue(5.0d);
+		entity.getFloatMultipointData().setValue((float) 0.1);
+		entity.getDateTimeMultiPointData().setValue(new DateTime());
+
+		List<Coordinate> coordinates = new ArrayList<>();
+		coordinates.add(new Coordinate(-77.455811, 38.944533));
+		coordinates.add(new Coordinate(-77.037722, 38.852083));
+		coordinates.add(new Coordinate(-76.668333, 39.175361));
+		coordinates.add(new Coordinate(-77.455811, 38.944533));
+		Polygon poly = new GeometryFactory().createPolygon(coordinates.toArray(new Coordinate[coordinates.size()]));
+		entity.getPolygonAreaData().setValue(poly);
+		entity.getStringAreaData().setValue("myareaname");
+		entity.getBooleanAreaData().setValue(true);
+		entity.getDateTimeAreaData().setValue(new DateTime());
+
+	}
+
 	@Test
 	public void testSearch()
 			throws CoalescePersistorException, CoalesceDataFormatException, SAXException, IOException, CQLException {
@@ -417,7 +454,7 @@ public class AccumuloPersistorTest extends CoalescePersistorBaseTest {
 		// Create/populate entity
 		CoalesceSearchTestEntity1 searchEntity1 = new CoalesceSearchTestEntity1();
 		searchEntity1.initialize();
-		SearchEntityTest.addPointsToEntity1(searchEntity1);
+		searchEntity1.addPointsToEntity();
 
 		// Prerequisite setup
 		_coalesceFramework.saveCoalesceEntityTemplate(CoalesceEntityTemplate.create(searchEntity1));
@@ -432,10 +469,13 @@ public class AccumuloPersistorTest extends CoalescePersistorBaseTest {
 				"2014-07-01T00:00:00.000Z", "2016-12-31T00:00:00.000Z", "(StringAreaData = 'myareaname')");
 		Query query = new Query("GeoSearch_Coalesce_1.0.GeoSearch_Area_Section.GeoSearch_Area_Recordset", cqlFilter);
 		List<CoalesceEntity> entities = persistor.search(query, null);
-		assertEquals(1, entities.size());
-		CoalesceEntity entity = entities.get(0);
-		assertEquals(searchEntity1.getKey(), entity.getKey());
-		persistor.close();		
+		assertFalse(entities.isEmpty());
+		List<String> keys = new ArrayList<>();
+		for (CoalesceEntity entity : entities) {
+			keys.add(entity.getKey());
+		}
+		assertTrue(keys.contains(searchEntity1.getKey()));
+		persistor.close();
 	}
 
 }

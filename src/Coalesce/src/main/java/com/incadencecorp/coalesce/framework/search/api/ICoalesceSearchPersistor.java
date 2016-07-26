@@ -1,4 +1,4 @@
-package com.incadencecorp.coalesce.search.api;
+package com.incadencecorp.coalesce.framework.search.api;
 
 import java.util.List;
 

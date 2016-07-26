@@ -1,7 +1,11 @@
 package com.incadencecorp.coalesce.framework.persistance.accumulo.testobjects;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.joda.time.DateTime;
 
+import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceBooleanField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceCoordinateField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceCoordinateListField;
@@ -18,6 +22,9 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceStringField;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Polygon;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -126,6 +133,47 @@ public class CoalesceSearchTestEntity1 extends CoalesceEntity{
         polygonRecord = areaRecordSet.addNew();
 
     }
+    
+    
+    public void addPointsToEntity() throws CoalesceDataFormatException {
+		GeometryFactory factory = new GeometryFactory();
+
+		// entity1, the center point
+		Coordinate e1pt1 = new Coordinate(-77.455811, 38.944533);
+		Coordinate e1pt2 = new Coordinate(-77.037722, 38.852083);
+		Coordinate e1pt3 = new Coordinate(-76.668333, 39.175361);
+
+		Coordinate e1mp_1 = new Coordinate(-77.455811, 38.944533);
+		Coordinate e1mp_2 = new Coordinate(-77.037722, 38.852083);
+		Coordinate e1mp_3 = new Coordinate(-76.668333, 39.175361);
+
+		getGeocoordinatePointData().setValue(factory.createPoint(e1pt1));
+		getGeocoordinatePointData().setValue(factory.createPoint(e1pt2));
+		getGeocoordinatePointData().setValue(factory.createPoint(e1pt3));
+		getStringPointData().setValue("firstentitypoint");
+		getIntegerPointData().setValue(1);
+		getDateTimePointData().setValue(new DateTime());
+		// searchEntity1.addPointRecord();
+
+		getGeoMultiPointData().setValue(new Coordinate[] { e1mp_1, e1mp_2, e1mp_3 });
+		// searchEntity1.addMultiPointRecord();
+		getStringMultiPointData().setValue("somestringdatahere");
+		getBooleanMultipointData().setValue(true);
+		getDoubleMultipointData().setValue(5.0d);
+		getFloatMultipointData().setValue((float) 0.1);
+		getDateTimeMultiPointData().setValue(new DateTime());
+
+		List<Coordinate> coordinates = new ArrayList<>();
+		coordinates.add(new Coordinate(-77.455811, 38.944533));
+		coordinates.add(new Coordinate(-77.037722, 38.852083));
+		coordinates.add(new Coordinate(-76.668333, 39.175361));
+		coordinates.add(new Coordinate(-77.455811, 38.944533));
+		Polygon poly = new GeometryFactory().createPolygon(coordinates.toArray(new Coordinate[coordinates.size()]));
+		getPolygonAreaData().setValue(poly);
+		getStringAreaData().setValue("myareaname");
+		getBooleanAreaData().setValue(true);
+		getDateTimeAreaData().setValue(new DateTime());
+	}
     
     protected boolean searchEntity1initRef(){
         // Point Record

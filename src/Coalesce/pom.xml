@@ -78,6 +78,7 @@
 							${project.groupId}.framework.compareables,
 							${project.groupId}.framework.datamodel,
 							${project.groupId}.framework.persistance,
+							${project.groupId}.framework.search*,
 							${project.groupId}.framework.validation*
 						</Export-Package>
 						<Private-Package>
