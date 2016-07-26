@@ -1,37 +1,25 @@
 package com.incadencecorp.coalesce.framework.persistance.accumulo;
 
-import java.io.File;
 import java.io.IOException;
-import java.lang.RuntimeException;
-
-import org.apache.accumulo.core.client.Instance;
-import org.apache.accumulo.core.client.TableExistsException;
-import org.apache.accumulo.core.client.ZooKeeperInstance;
-
-import com.google.common.io.Files;
-import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.framework.persistance.ServerConn;
-import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
-import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
+// Imports to allow compilation of unused routines
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.accumulo.core.client.AccumuloException;
 import org.apache.accumulo.core.client.AccumuloSecurityException;
 import org.apache.accumulo.core.client.Connector;
+import org.apache.accumulo.core.client.Instance;
+import org.apache.accumulo.core.client.TableExistsException;
+import org.apache.accumulo.core.client.ZooKeeperInstance;
 import org.apache.accumulo.core.client.security.tokens.PasswordToken;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 
-// Imports to allow compilation of unused routines
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-import java.sql.ResultSet;
-import java.sql.CallableStatement;
-import java.sql.PreparedStatement;
-
-
+import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
+import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 
 /*-----------------------------------------------------------------------------'
 Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -55,29 +43,26 @@ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
 */
 
 /**
-* This is an initial Accumulo connector using MiniAccumuloCluster. This class is referenced examples in the
-* Book: Accumulo Application Development, Table design, and best practice 
-*/
+ * This is an initial Accumulo connector using MiniAccumuloCluster. This class
+ * is referenced examples in the Book: Accumulo Application Development, Table
+ * design, and best practice
+ */
 
 public class AccumuloDataConnector extends CoalesceDataConnectorBase {
 
-    private static String _instancename;
-    private static String _zookeepers;
-    private static String _username;
-    private static String _password;
-    private static Instance instance;
-    private static Connector connector;
-    
-    //TODO These need to move to a constants or other common location
-    public static String coalesceTable = "Coalesce";
-    public static String coalesceTemplateTable = "CoalesceTemplates";
-    public static String coalesceEntityIndex = "CoalesceEntityIndex";
-    public static String coalesceSearchTable = "CoalesceSearch";
-    
-    // These variables are for connecting to GeoMesa for the search
-    private static Map<String,String> dsConf = new HashMap<String,String>();
-    private static DataStore dataStore;
-    
+	private static Instance instance;
+	private static Connector connector;
+
+	// TODO These need to move to a constants or other common location
+	public static String coalesceTable = "Coalesce";
+	public static String coalesceTemplateTable = "CoalesceTemplates";
+	public static String coalesceEntityIndex = "CoalesceEntityIndex";
+	public static String coalesceSearchTable = "CoalesceSearch";
+
+	// These variables are for connecting to GeoMesa for the search
+	private static Map<String, String> dsConf = new HashMap<String, String>();
+	private static DataStore dataStore;
+
 	static final String INSTANCE_ID = "instanceId";
 	static final String ZOOKEEPERS = "zookeepers";
 	static final String USER = "user";
@@ -85,138 +70,94 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase {
 	static final String AUTHS = "auths";
 	static final String TABLE_NAME = "tableName";
 
-    public AccumuloDataConnector(ServerConn settings) throws CoalescePersistorException
-    {
-        _instancename = settings.getDatabase();
-        _zookeepers = settings.getServerName();
-        _username = settings.getUser();
-        _password = settings.getPassword();
+	private final ServerConn serverConnection;
 
-    	// Build the map for Geotools style connection from the connection information
-        dsConf.put(INSTANCE_ID, _instancename);
-        dsConf.put(ZOOKEEPERS, _zookeepers);
-        dsConf.put(USER, _username);
-        dsConf.put(PASSWORD, _password);
-        dsConf.put(TABLE_NAME, coalesceSearchTable);
-        dsConf.put(AUTHS, ""); //Auths will be empty for now
-    }
+	public AccumuloDataConnector(ServerConn settings) throws CoalescePersistorException {
+		serverConnection = new ServerConn.Builder().copyOf(settings).build();
 
-     
- //   @Override
-    public static Connector getDBConnector() throws CoalescePersistorException {
-    	try {
-    		openDataConnection();
-    	} catch (IOException e) {
-    		throw new CoalescePersistorException("Error Opening Data Connection - IOException", e);
-    	} catch (InterruptedException e) {
-    		throw new CoalescePersistorException("Error Opening Data Connection - InterruptedException", e);
-    	} catch (AccumuloException e) {
-    		throw new CoalescePersistorException("Error Opening Data Connection - AccumuloException", e);
-    	} catch (AccumuloSecurityException e) {
-    		throw new CoalescePersistorException("Error Opening Data Connection - AccumuloSecurityException", e);
-    	}
-    	return connector;
-    }
-    
-    public static DataStore getGeoDataStore() {
-    	return dataStore;
-    }
-    
-    @Override
-    public void openConnection(boolean autocommit) 
-    {
-        System.err.println("AccumuloDataConnector:OpenConnection: Procedure not implemented");
-    }
+		// Build the map for Geotools style connection from the connection information
+		dsConf.put(INSTANCE_ID, settings.getDatabase());
+		dsConf.put(ZOOKEEPERS, settings.getServerName());
+		dsConf.put(USER, settings.getUser());
+		dsConf.put(PASSWORD, settings.getPassword());
+		dsConf.put(TABLE_NAME, coalesceSearchTable);
+		dsConf.put(AUTHS, ""); // Auths will be empty for now
+	}
 
-    
-    @Override
-    protected String getProcedurePrefix()
-    {
-    	return "";
-    }
-    
-    @Override
-    public Connection getDBConnection() throws SQLException
-    {
-   
-        System.err.println("AccumuloDataConnector:getDBConnection: Procedure not implemented");
+	// @Override
+	public Connector getDBConnector() throws CoalescePersistorException {
+		try {
+			openDataConnection();
+		} catch (IOException e) {
+			throw new CoalescePersistorException("Error Opening Data Connection - IOException", e);
+		} catch (InterruptedException e) {
+			throw new CoalescePersistorException("Error Opening Data Connection - InterruptedException", e);
+		} catch (AccumuloException e) {
+			throw new CoalescePersistorException("Error Opening Data Connection - AccumuloException", e);
+		} catch (AccumuloSecurityException e) {
+			throw new CoalescePersistorException("Error Opening Data Connection - AccumuloSecurityException", e);
+		}
+		return connector;
+	}
 
-        return null;
-    }
+	public DataStore getGeoDataStore() {
+		return dataStore;
+	}
 
-    /*-----------------------------------------------------------------------------'
-    Private Functions
-    -----------------------------------------------------------------------------*/
+	@Override
+	public void openConnection(boolean autocommit) {
+		System.err.println("AccumuloDataConnector:OpenConnection: Procedure not implemented");
+		throw new UnsupportedOperationException("AccumuloDataConnector:OpenConnection: Procedure not implemented");
+	}
 
-    private static void openDataConnection() throws IOException, InterruptedException, AccumuloException, AccumuloSecurityException
-    {
-    	   //TODO Add try catch for appropriate exceptions
-    	if (connector == null) {
-            System.err.println("AccumuloDataConnector:openDataConnection - connecting to accumulo");
+	@Override
+	protected String getProcedurePrefix() {
+		return "";
+	}
 
-			instance = new ZooKeeperInstance(_instancename, _zookeepers);
-			connector = instance.getConnector(_username, new PasswordToken(_password));
-			System.err.println("AccumuloDataConnector:openDataConnection - Connector User"+connector.whoami());
-			
-			// Make sure the Coalesce table exists first time
-	    	if(!connector.tableOperations().exists(coalesceTable)) {
-				System.err.println("creating table " + coalesceTable);
-				try {
-					connector.tableOperations().create(coalesceTable);
-				} catch (TableExistsException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+	@Override
+	public Connection getDBConnection() throws SQLException {
+		System.err.println("AccumuloDataConnector:getDBConnection: Procedure not implemented");
+		throw new UnsupportedOperationException("AccumuloDataConnector:getDBConnection: Procedure not implemented");
+	}
+
+	/*-----------------------------------------------------------------------------'
+	Private Functions
+	-----------------------------------------------------------------------------*/
+
+	private void createTables(Connector connector, String... tableNames) throws AccumuloException, AccumuloSecurityException {
+		if (connector != null) {
+			for (String table : tableNames) {
+				if (!connector.tableOperations().exists(table)) {
+					try {
+						connector.tableOperations().create(table);
+					} catch (TableExistsException e) {
+                        // Shouldn't happen because we just checked that it didn't exist.
+					}
 				}
-				System.err.println("created table " + coalesceTable);
 			}
-	    	
-			// Make sure the CoalesceTemplates table exists first time
-	    	if(!connector.tableOperations().exists(coalesceTemplateTable)) {
-				System.err.println("creating table " + coalesceTemplateTable);
-				try {
-					connector.tableOperations().create(coalesceTemplateTable);
-				} catch (TableExistsException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				System.err.println("created table " + coalesceTemplateTable);
-			}
-			// Make sure the CoalesceEntityIndex table exists first time
-	    	if(!connector.tableOperations().exists(coalesceEntityIndex)) {
-				System.err.println("creating table " + coalesceEntityIndex);
-				try {
-					connector.tableOperations().create(coalesceEntityIndex);
-				} catch (TableExistsException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				System.err.println("created table " + coalesceEntityIndex);
-				
-		
-			}
-			// Make sure the CoalesceSearch table exists first time
-	    	if(!connector.tableOperations().exists(coalesceSearchTable)) {
-				System.err.println("creating table " + coalesceSearchTable);
-				try {
-					connector.tableOperations().create(coalesceSearchTable);
-				} catch (TableExistsException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				System.err.println("created table " + coalesceSearchTable);
-				
-		
-			}
-	    	
-	    	// Now set up the GeoMesa connection
-	        // verify that we can see this Accumulo destination in a GeoTools manner
-	    	
-	        dataStore = DataStoreFinder.getDataStore(dsConf);
+		}
+	}
 
-        }
-    }
+	private void openDataConnection()
+			throws IOException, InterruptedException, AccumuloException, AccumuloSecurityException {
+		// TODO Add try catch for appropriate exceptions
+		if (connector == null) {
+			System.err.println("AccumuloDataConnector:openDataConnection - connecting to accumulo");
+
+			instance = new ZooKeeperInstance(serverConnection.getDatabase(), serverConnection.getServerName());
+			connector = instance.getConnector(serverConnection.getUser(),
+					new PasswordToken(serverConnection.getPassword()));
+			System.err.println("AccumuloDataConnector:openDataConnection - Connector User" + connector.whoami());
+
+			createTables(connector, coalesceTable, coalesceTemplateTable, coalesceEntityIndex,coalesceSearchTable);
+	
+			// Now set up the GeoMesa connection
+			// verify that we can see this Accumulo destination in a GeoTools
+			// manner
+
+			dataStore = DataStoreFinder.getDataStore(dsConf);
+		}
+	}
 
 }
- 
-
-

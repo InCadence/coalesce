@@ -6,9 +6,9 @@
 	<version>0.0.6-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>coalesce.bom</name>
-	
+
 	<properties>
-<!-- 		<unityVersion>0.0.2-SNAPSHOT</unityVersion> -->
+		<!-- <unityVersion>0.0.2-SNAPSHOT</unityVersion> -->
 		<coalesceVersion>0.0.6-SNAPSHOT</coalesceVersion>
 		<coalesceObjectsVersion>0.0.6-SNAPSHOT</coalesceObjectsVersion>
 		<coalescePersisterVersionMySQL>0.0.6-SNAPSHOT</coalescePersisterVersionMySQL>
@@ -18,15 +18,20 @@
 		<coalescePersisterVersionAccumulo>0.0.1-SNAPSHOT</coalescePersisterVersionAccumulo>
 		<maven.bundle.version>2.3.7</maven.bundle.version>
 		<felix.osgi.version>1.4.0</felix.osgi.version>
-        <felix.scr.version>1.8.2</felix.scr.version>
-        <felix.scr.annotations.version>1.7.0</felix.scr.annotations.version>
+		<felix.scr.version>1.8.2</felix.scr.version>
+		<felix.scr.annotations.version>1.7.0</felix.scr.annotations.version>
 		<cxf.version>3.0.1</cxf.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-	
+
 	<dependencyManagement>
 		<dependencies>
-			 <dependency>
+			<dependency>
+				<groupId>org.geotools</groupId>
+				<artifactId>gt-api</artifactId>
+				<version>14.1</version>
+			</dependency>
+			<dependency>
 				<groupId>com.incadencecorp.coalesce</groupId>
 				<artifactId>coalesce-core</artifactId>
 				<version>${coalesceVersion}</version>
@@ -36,10 +41,10 @@
 				<artifactId>coalesce-objects</artifactId>
 				<version>${coalesceObjectsVersion}</version>
 			</dependency>
-			<dependency> 
-			<groupId>com.incadencecorp.coalesce</groupId>
-			<artifactId>coalesce-framework-persister-accumulo</artifactId>
-			<version>${coalescePersisterVersionAccumulo}</version>
+			<dependency>
+				<groupId>com.incadencecorp.coalesce</groupId>
+				<artifactId>coalesce-framework-persister-accumulo</artifactId>
+				<version>${coalescePersisterVersionAccumulo}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.incadencecorp.coalesce</groupId>
@@ -67,54 +72,54 @@
 		</releases> <snapshots> <enabled>true</enabled> <updatePolicy>always</updatePolicy> 
 		<checksumPolicy>fail</checksumPolicy> </snapshots> <id>public</id> <url>http://10.15.0.70:8081/nexus/content/groups/public</url> 
 		</repository> </repositories> -->
-<!-- 	<repositories> -->
-<!-- 		<repository> -->
-<!-- 			<snapshots> -->
-<!-- 				<enabled>false</enabled> -->
-<!-- 			</snapshots> -->
-<!-- 			<id>acint-releases</id> -->
-<!-- 			<name>libs-release</name> -->
-<!-- 			<url>http://mvnkimmel.man.fs.lmco.com:8080/artifactory/libs-release</url> -->
-<!-- 		</repository> -->
-<!-- 		<repository> -->
-<!-- 			<snapshots /> -->
-<!-- 			<id>acint-snapshots</id> -->
-<!-- 			<name>libs-snapshot</name> -->
-<!-- 			<url>http://mvnkimmel.man.fs.lmco.com:8080/artifactory/libs-snapshot</url> -->
-<!-- 		</repository> -->
-<!-- 	</repositories> -->
-<!-- 	<distributionManagement> -->
-<!-- 		<repository> -->
-<!-- 			<uniqueVersion>false</uniqueVersion> -->
-<!-- 			<id>acint-releases</id> -->
-<!-- 			<name>ACINT Releases</name> -->
-<!-- 			<url>http://mvnkimmel.man.fs.lmco.com:8080/artifactory/libs-release-local</url> -->
-<!-- 		</repository> -->
-<!-- 		<snapshotRepository> -->
-<!-- 			<uniqueVersion>true</uniqueVersion> -->
-<!-- 			<id>acint-snapshots</id> -->
-<!-- 			<name>ACINT Snapshots</name> -->
-<!-- 			<url>http://mvnkimmel.man.fs.lmco.com:8080/artifactory/libs-snapshot-local</url> -->
-<!-- 		</snapshotRepository> -->
-<!-- 	</distributionManagement> -->
-<!-- 	<pluginRepositories> -->
-<!-- 		<pluginRepository> -->
-<!-- 			<snapshots> -->
-<!-- 				<enabled>false</enabled> -->
-<!-- 			</snapshots> -->
-<!-- 			<id>acint-plugins-releases</id> -->
-<!-- 			<name>plugins-release</name> -->
-<!-- 			<url>http://mvnkimmel.man.fs.lmco.com:8080/artifactory/plugins-release</url> -->
-<!-- 		</pluginRepository> -->
-<!-- 		<pluginRepository> -->
-<!-- 			<snapshots /> -->
-<!-- 			<id>acint-plugins-snapshots</id> -->
-<!-- 			<name>plugins-snapshot</name> -->
-<!-- 			<url>http://mvnkimmel.man.fs.lmco.com:8080/artifactory/plugins-snapshot</url> -->
-<!-- 		</pluginRepository> -->
-<!-- 	</pluginRepositories> -->
+	<!-- <repositories> -->
+	<!-- <repository> -->
+	<!-- <snapshots> -->
+	<!-- <enabled>false</enabled> -->
+	<!-- </snapshots> -->
+	<!-- <id>acint-releases</id> -->
+	<!-- <name>libs-release</name> -->
+	<!-- <url>http://mvnkimmel.man.fs.lmco.com:8080/artifactory/libs-release</url> -->
+	<!-- </repository> -->
+	<!-- <repository> -->
+	<!-- <snapshots /> -->
+	<!-- <id>acint-snapshots</id> -->
+	<!-- <name>libs-snapshot</name> -->
+	<!-- <url>http://mvnkimmel.man.fs.lmco.com:8080/artifactory/libs-snapshot</url> -->
+	<!-- </repository> -->
+	<!-- </repositories> -->
+	<!-- <distributionManagement> -->
+	<!-- <repository> -->
+	<!-- <uniqueVersion>false</uniqueVersion> -->
+	<!-- <id>acint-releases</id> -->
+	<!-- <name>ACINT Releases</name> -->
+	<!-- <url>http://mvnkimmel.man.fs.lmco.com:8080/artifactory/libs-release-local</url> -->
+	<!-- </repository> -->
+	<!-- <snapshotRepository> -->
+	<!-- <uniqueVersion>true</uniqueVersion> -->
+	<!-- <id>acint-snapshots</id> -->
+	<!-- <name>ACINT Snapshots</name> -->
+	<!-- <url>http://mvnkimmel.man.fs.lmco.com:8080/artifactory/libs-snapshot-local</url> -->
+	<!-- </snapshotRepository> -->
+	<!-- </distributionManagement> -->
+	<!-- <pluginRepositories> -->
+	<!-- <pluginRepository> -->
+	<!-- <snapshots> -->
+	<!-- <enabled>false</enabled> -->
+	<!-- </snapshots> -->
+	<!-- <id>acint-plugins-releases</id> -->
+	<!-- <name>plugins-release</name> -->
+	<!-- <url>http://mvnkimmel.man.fs.lmco.com:8080/artifactory/plugins-release</url> -->
+	<!-- </pluginRepository> -->
+	<!-- <pluginRepository> -->
+	<!-- <snapshots /> -->
+	<!-- <id>acint-plugins-snapshots</id> -->
+	<!-- <name>plugins-snapshot</name> -->
+	<!-- <url>http://mvnkimmel.man.fs.lmco.com:8080/artifactory/plugins-snapshot</url> -->
+	<!-- </pluginRepository> -->
+	<!-- </pluginRepositories> -->
 
 	<modules>
-		<module>../Coalesce.Pom</module>
+	  <module>../Coalesce.Pom</module> 
 	</modules>
 </project>
