@@ -5,16 +5,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.common.helpers.XmlHelper;
+import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -102,10 +99,13 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
 
         PreparedStatement stmt = this._conn.prepareStatement(sql);
 
-        // Add Parameters
-        for (int ii = 0; ii < parameters.length; ii++)
+        if (parameters != null)
         {
-            stmt.setObject(ii + 1, parameters[ii].getValue(), parameters[ii].getType());
+            // Add Parameters
+            for (int ii = 0; ii < parameters.length; ii++)
+            {
+                stmt.setObject(ii + 1, parameters[ii].getValue(), parameters[ii].getType());
+            }
         }
 
         return stmt.executeQuery();
@@ -157,7 +157,7 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
      * @return true = success
      * @throws SQLException
      */
-    public final boolean executeCmd(final String sql, final CoalesceParameter... parameters) throws SQLException
+    public final int executeUpdate(final String sql, final CoalesceParameter... parameters) throws SQLException
     {
         openDataConnection();
 
@@ -169,9 +169,7 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
             stmt.setObject(ii + 1, parameters[ii].getValue(), parameters[ii].getType());
         }
 
-        stmt.executeUpdate();
-
-        return true;
+        return stmt.executeUpdate();
     }
 
     /**
@@ -181,15 +179,13 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
      * @return true = success
      * @throws SQLException
      */
-    public final boolean executeCmd(final String sql) throws SQLException
+    public final int executeUpdate(final String sql) throws SQLException
     {
         openDataConnection();
 
         PreparedStatement stmt = this._conn.prepareStatement(sql);
 
-        stmt.executeUpdate();
-
-        return true;
+        return stmt.executeUpdate();
     }
 
     /**
@@ -247,39 +243,25 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
      * @throws SQLException
      * @throws ParserConfigurationException
      */
-    public final String getTemplateMetaData(final String sql) throws SQLException, ParserConfigurationException
+    public final List<ObjectMetaData> getTemplateMetaData(final String sql) throws SQLException,
+            ParserConfigurationException
     {
+        List<ObjectMetaData> templates = new ArrayList<ObjectMetaData>();
+
         // Execute Query
         ResultSet results = executeQuery(sql);
 
-        // Create Document
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        Document doc = builder.newDocument();
-
-        // Create Root Node
-        Element rootElement = doc.createElement("coalescetemplates");
-        doc.appendChild(rootElement);
-
         while (results.next())
         {
-            // Create New Template Element
-            Element templateElement = doc.createElement("coalescetemplate");
-
-            // Set Attributes
-            templateElement.setAttribute("templatekey", results.getString("TemplateKey"));
-            templateElement.setAttribute("name", results.getString("Name"));
-            templateElement.setAttribute("source", results.getString("Source"));
-            templateElement.setAttribute("version", results.getString("Version"));
-            templateElement.setAttribute("lastmodified", results.getString("LastModified"));
-            templateElement.setAttribute("datecreated", results.getString("DateCreated"));
-
-            // Append Element
-            rootElement.appendChild(templateElement);
+            templates.add(new ObjectMetaData(results.getString("TemplateKey"),
+                                             results.getString("Name"),
+                                             results.getString("Source"),
+                                             results.getString("Version"),
+                                             JodaDateTimeHelper.fromXmlDateTimeUTC(results.getString("DateCreated")),
+                                             JodaDateTimeHelper.fromXmlDateTimeUTC(results.getString("LastModified"))));
         }
 
-        // Serialize to String
-        return XmlHelper.formatXml(doc);
+        return templates;
     }
 
     /**
@@ -347,6 +329,10 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
         }
     }
 
+    /**
+     * @return the connection
+     * @throws SQLException
+     */
     public final Connection getConnection() throws SQLException
     {
         openDataConnection();

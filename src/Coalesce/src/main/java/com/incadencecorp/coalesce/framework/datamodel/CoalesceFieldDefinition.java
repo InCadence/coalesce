@@ -6,8 +6,9 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import com.incadencecorp.coalesce.common.classification.Marking;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
+import com.incadencecorp.coalesce.common.classification.Marking;
+import com.incadencecorp.coalesce.framework.CoalesceSettings;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -26,6 +27,9 @@ import com.incadencecorp.coalesce.common.helpers.StringHelper;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
+/**
+ * Wrapper for field definitions.
+ */
 public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesceFieldDefinition {
 
     // -----------------------------------------------------------------------//
@@ -37,6 +41,77 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
     // -----------------------------------------------------------------------//
     // Factory and Initialization
     // -----------------------------------------------------------------------//
+
+    /**
+     * @param parent
+     * @param name
+     * @param enumeration
+     * @return a field definition for a enumeration list type.
+     */
+    public static <E extends Enum<E>> CoalesceFieldDefinition createEnumerationListFieldDefinition(CoalesceRecordset parent,
+                                                                                                   String name,
+                                                                                                   Class<E> enumeration)
+    {
+        CoalesceFieldDefinition fd = create(parent, name, ECoalesceFieldDataTypes.ENUMERATION_LIST_TYPE);
+
+        CoalesceConstraint.createEnumeration(fd, fd.getName() + "enumeration", enumeration);
+
+        return fd;
+    }
+
+    /**
+     * 
+     * @param parent
+     * @param name
+     * @param enumeration
+     * @return a field definition for a enumeration list type.
+     */
+    public static CoalesceFieldDefinition createEnumerationListFieldDefinition(CoalesceRecordset parent,
+                                                                               String name,
+                                                                               String enumeration)
+    {
+        CoalesceFieldDefinition fd = create(parent, name, ECoalesceFieldDataTypes.ENUMERATION_LIST_TYPE);
+
+        CoalesceConstraint.createEnumeration(fd, fd.getName() + "enumeration", enumeration);
+
+        return fd;
+    }
+
+    /**
+     * 
+     * @param parent
+     * @param name
+     * @param enumeration
+     * @return a field definition for a enumeration type.
+     */
+    public static <E extends Enum<E>> CoalesceFieldDefinition createEnumerationFieldDefinition(CoalesceRecordset parent,
+                                                                                               String name,
+                                                                                               Class<E> enumeration)
+    {
+        CoalesceFieldDefinition fd = create(parent, name, ECoalesceFieldDataTypes.ENUMERATION_TYPE);
+
+        CoalesceConstraint.createEnumeration(fd, fd.getName() + "enumeration", enumeration);
+
+        return fd;
+    }
+
+    /**
+     * 
+     * @param parent
+     * @param name
+     * @param enumeration
+     * @return a field definition for a enumeration type.
+     */
+    public static CoalesceFieldDefinition createEnumerationFieldDefinition(CoalesceRecordset parent,
+                                                                           String name,
+                                                                           String enumeration)
+    {
+        CoalesceFieldDefinition fd = create(parent, name, ECoalesceFieldDataTypes.ENUMERATION_TYPE);
+
+        CoalesceConstraint.createEnumeration(fd, fd.getName() + "enumeration", enumeration);
+
+        return fd;
+    }
 
     /**
      * Creates a
@@ -478,6 +553,15 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
         return ECoalesceFieldDataTypes.getTypeForCoalesceType(_entityFieldDefinition.getDatatype());
     }
 
+    /**
+     * @return whether this field is a list type.
+     */
+    public boolean isListType()
+    {
+        return getDataType().toString().endsWith(CoalesceSettings.VAR_IS_LIST_TYPE)
+                && getDataType() != ECoalesceFieldDataTypes.GEOCOORDINATE_LIST_TYPE;
+    }
+
     @Override
     public void setDataType(ECoalesceFieldDataTypes value)
     {
@@ -618,11 +702,6 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
         default:
             return setOtherAttribute(name, value);
         }
-    }
-
-    private CoalesceRecordset getCastParent()
-    {
-        return (CoalesceRecordset) getParent();
     }
 
 }

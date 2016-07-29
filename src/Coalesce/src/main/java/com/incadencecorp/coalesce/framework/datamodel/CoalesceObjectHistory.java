@@ -22,6 +22,8 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import org.joda.time.DateTime;
+
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 
 /**
@@ -108,14 +110,12 @@ public abstract class CoalesceObjectHistory extends CoalesceObject implements IC
         // History Suspended?
         if (!isSuspendHistory())
         {
-
             History hObject = new History();
 
             // Set References
             CoalesceHistory history = new CoalesceHistory();
             if (history.initialize(this, hObject))
             {
-
                 Map<QName, String> attributes = getAttributes();
 
                 attributes.remove(new QName("key"));
@@ -127,21 +127,7 @@ public abstract class CoalesceObjectHistory extends CoalesceObject implements IC
                         history.setAttribute(attribute.getKey().toString(), attribute.getValue());
                     }
                 }
-
-                // // Copy attributes from parent node
-                // history.setModifiedBy(getModifiedBy());
-                // history.setModifiedByIP(getModifiedByIP());
-                // history.setPreviousHistoryKey(getPreviousHistoryKey());
-                // history.setStatus(getStatus());
-                // history.setObjectVersion(getObjectVersion());
-                //
-                // for (Map.Entry<QName, String> otherAttr :
-                // getOtherAttributes().entrySet())
-                // {
-                // history.setAttribute(otherAttr.getKey().toString(),
-                // otherAttr.getValue());
-                // }
-
+                
                 // Append to parent's child node collection
                 _object.getHistory().add(0, hObject);
 
@@ -152,7 +138,7 @@ public abstract class CoalesceObjectHistory extends CoalesceObject implements IC
                 setModifiedBy(user);
                 setModifiedByIP(ip);
                 setObjectVersion(version);
-
+                
             }
 
         }

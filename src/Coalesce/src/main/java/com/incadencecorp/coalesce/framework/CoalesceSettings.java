@@ -62,6 +62,19 @@ public class CoalesceSettings {
     private static final String PARAM_FILE_STORE_IMAGE_FORMAT = FILE_STORE + "ImageFormat";
 
     /*--------------------------------------------------------------------------
+    Threading Parameters
+    --------------------------------------------------------------------------*/
+
+    private static final String PARAM_COALESCE_THREADING = COALESCE + ".threads";
+    private static final String PARAM_CORE_COUNT = PARAM_COALESCE_THREADING + ".numberOfCores";
+    private static final String PARAM_MIN_THREADS = PARAM_COALESCE_THREADING + ".minThreads";
+    private static final String PARAM_MAX_THREADS = PARAM_COALESCE_THREADING + ".maxThreads";
+    /**
+     * In Seconds
+     */
+    private static final String PARAM_KEEP_ALIVE_TIME = PARAM_COALESCE_THREADING + ".keepAliveTime";
+
+    /*--------------------------------------------------------------------------
     Security Parameters
     --------------------------------------------------------------------------*/
 
@@ -89,6 +102,23 @@ public class CoalesceSettings {
     private static final String DEFAULT_IMAGE_FORMAT = "jpg";
     private static final double DEFAULT_Z_AXIS = 0;
     private static final int DEFAULT_DIRECTORY_LENGTH = 2;
+
+    private static final int DEFAULT_CORE_COUNT = Runtime.getRuntime().availableProcessors();
+    private static final int DEFAULT_MIN_THREADS = 10;
+    private static final int DEFAULT_MAX_THREADS = 20;
+
+    private static final int DEFAULT_KEEP_ALIVE_TIME = 60;
+
+    
+
+    /*--------------------------------------------------------------------------
+    Public Constants
+    --------------------------------------------------------------------------*/
+
+    /**
+     * String used to determine whether a data type is a list type.
+     */
+    public static final String VAR_IS_LIST_TYPE = "_LIST_TYPE";
 
     /*--------------------------------------------------------------------------
     Initialization
@@ -281,7 +311,88 @@ public class CoalesceSettings {
     {
         return settings.getSetting(getConfigurationFileName(), PARAM_COORD_DEFAULT_Z_AXIS, DEFAULT_Z_AXIS, true);
     }
+
+    /*--------------------------------------------------------------------------
+    Executive Service Settings
+    --------------------------------------------------------------------------*/
+
+    /**
+     * @return the max threads per core * core
+     */
+    public static int getMaxThreads() {
+        return getNumberOfCores() * getMaxThreadsPerCore();
+    }
+
+    /**
+     * @return the min threads per core * core
+     */
+    public static int getMinThreads() {
+        return getNumberOfCores() * getMinThreadsPerCore();
+    }
+
+    /**
+     * @return the number of available cores
+     */
+    public static int getNumberOfCores() {
+        return settings.getSetting(getConfigurationFileName(), PARAM_CORE_COUNT, DEFAULT_CORE_COUNT, true);
+    }
+
+    /**
+     * Sets the number of available cores
+     *
+     * @param value
+     */
+    public static void setNumberOfCores(int value) {
+        settings.setSetting(getConfigurationFileName(), PARAM_CORE_COUNT, value);
+    }
+
+    /**
+     * @return the minimum number of threads per core
+     */
+    public static int getMinThreadsPerCore() {
+        return settings.getSetting(getConfigurationFileName(), PARAM_MIN_THREADS, DEFAULT_MIN_THREADS, true);
+    }
+
+    /**
+     * Sets the minimum number of threads per core
+     *
+     * @param value
+     */
+    public static void setMinThreadsPerCore(int value) {
+        settings.setSetting(getConfigurationFileName(), PARAM_MIN_THREADS, value);
+    }
+
+    /**
+     * @return the maximum number of threads per core
+     */
+    public static int getMaxThreadsPerCore() {
+        return settings.getSetting(getConfigurationFileName(), PARAM_MAX_THREADS, DEFAULT_MAX_THREADS, true);
+    }
+
+    /**
+     * Sets the maximum number of threads per core
+     *
+     * @param value
+     */
+    public static void setMaxThreadsPerCore(int value) {
+        settings.setSetting(getConfigurationFileName(), PARAM_MAX_THREADS, value);
+    }
     
+    /**
+     * @return the time to keep the thread alive.
+     */
+    public static int getKeepAliveTime() {
+        return settings.getSetting(getConfigurationFileName(), PARAM_KEEP_ALIVE_TIME, DEFAULT_KEEP_ALIVE_TIME, true);
+    }
+
+    /**
+     * Sets the time to keep the thread alive.
+     *
+     * @param value
+     */
+    public static void setKeepAliveTime(int value) {
+        settings.setSetting(getConfigurationFileName(), PARAM_KEEP_ALIVE_TIME, value);
+    }
     /*--------------------------------------------------------------------------
     Supported Axis
     --------------------------------------------------------------------------*/

@@ -1,21 +1,41 @@
 package com.incadencecorp.coalesce.framework;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
+import com.incadencecorp.coalesce.api.IExceptionHandler;
+import com.incadencecorp.coalesce.api.persistance.ICoalesceExecutorService;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceStringField;
+import com.incadencecorp.coalesce.framework.jobs.AbstractCoalesceJob;
+import com.incadencecorp.coalesce.framework.jobs.AbstractCoalescePersistorsJob;
+import com.incadencecorp.coalesce.framework.jobs.CoalesceRegisterTemplateJob;
+import com.incadencecorp.coalesce.framework.jobs.CoalesceSaveEntityJob;
+import com.incadencecorp.coalesce.framework.jobs.CoalesceSaveEntityProperties;
+import com.incadencecorp.coalesce.framework.jobs.CoalesceSaveTemplateJob;
+import com.incadencecorp.coalesce.framework.persistance.ElementMetaData;
+import com.incadencecorp.coalesce.framework.persistance.EntityMetaData;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
-import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor.ElementMetaData;
-import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor.EntityMetaData;
+import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
+import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -38,31 +58,155 @@ import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor.Entit
  * Application using Coalesce should access the persistor (database) through
  * CoalesceFramework.
  */
-public class CoalesceFramework {
+public class CoalesceFramework implements ICoalesceExecutorService, Closeable {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CoalesceFramework.class);
 
     /*--------------------------------------------------------------------------
     	Private Member Variables
     --------------------------------------------------------------------------*/
 
-    private ICoalescePersistor _persistor;
-    private boolean _isInitialized = false;
+    private ICoalescePersistor _persistors[];
+    private ICoalescePersistor _authoritativePersistor;
+    private IExceptionHandler _handler;
+    private ExecutorService _pool;
+    private boolean _isAsyncUpdates = true;
 
-    /*--------------------------------------------------------------------------
-    	Public Functions
-    --------------------------------------------------------------------------*/
-
-    public boolean initialize(ICoalescePersistor persistor)
+    private ICoalescePersistor[] getSecondaryPersistors()
     {
-
-        this._persistor = persistor;
-        this._isInitialized = true;
-
-        return true;
+        return _persistors;
     }
 
+    private boolean hasSecondaryPersistors()
+    {
+        return _persistors.length > 0;
+    }
+
+    private ICoalescePersistor getAuthoritativePersistor()
+    {
+        return _authoritativePersistor;
+    }
+
+    /*--------------------------------------------------------------------------
+    	Initialization Functions  
+    --------------------------------------------------------------------------*/
+
+    /**
+     * Creates this framework with the default ThreadPoolExecutor based on
+     * {@link CoalesceSettings}.
+     */
+    public CoalesceFramework()
+    {
+        this(new ThreadPoolExecutor(CoalesceSettings.getMinThreads(),
+                                    CoalesceSettings.getMaxThreads(),
+                                    CoalesceSettings.getKeepAliveTime(),
+                                    TimeUnit.SECONDS,
+                                    new SynchronousQueue<Runnable>(),
+                                    new CoalesceThreadFactoryImpl(),
+                                    new ThreadPoolExecutor.CallerRunsPolicy()));
+    }
+
+    /**
+     * Creates this framework with the provided executor service.
+     * 
+     * @param pool
+     */
+    public CoalesceFramework(ExecutorService pool)
+    {
+        _pool = pool;
+
+        if (LOGGER.isInfoEnabled())
+        {
+            LOGGER.info("Executor Service ({})", pool.getClass().getName());
+        }
+    }
+
+    /**
+     * Sets the authoritative persistor which is blocking.
+     * 
+     * @param persistor
+     */
+    public void setAuthoritativePersistor(ICoalescePersistor persistor)
+    {
+        this._authoritativePersistor = persistor;
+
+        if (LOGGER.isInfoEnabled())
+        {
+            LOGGER.info("Authoritative Persistor ({})", persistor.getClass().getName());
+        }
+    }
+
+    /**
+     * Sets the secondary persistors which are not blocking.
+     * 
+     * @param persistors
+     */
+    public void setSecondaryPersistors(ICoalescePersistor... persistors)
+    {
+        this._persistors = persistors;
+
+        if (LOGGER.isInfoEnabled())
+        {
+            for (ICoalescePersistor persistor : persistors)
+            {
+                LOGGER.info("Secondary Persistor ({})", persistor.getClass().getName());
+            }
+        }
+    }
+
+    /**
+     * Sets the handler in the event of an error.
+     * 
+     * @param handler
+     */
+    public void setHandler(IExceptionHandler handler)
+    {
+        _handler = handler;
+
+        if (LOGGER.isInfoEnabled())
+        {
+            LOGGER.info("Error Handler ({})", handler.getName());
+        }
+    }
+
+    /**
+     * Sets whether updates to secondary persistors should be performed
+     * asynchronously.
+     * 
+     * @param value
+     */
+    public void setIsAnsyncUpdates(boolean value)
+    {
+        _isAsyncUpdates = value;
+
+        if (LOGGER.isInfoEnabled())
+        {
+            LOGGER.info("Asynchronous Updates ({})", value);
+        }
+    }
+
+    /**
+     * Initializes the {@link CoalesceTemplateUtil} with the authoritative
+     * persistor.
+     */
+    public void refreshCoalesceTemplateUtil()
+    {
+        try
+        {
+            CoalesceTemplateUtil.addTemplates(getAuthoritativePersistor());
+        }
+        catch (CoalescePersistorException e)
+        {
+            LOGGER.error("Initializing Templates", e);
+        }
+    }
+
+    /**
+     * @return whether the framework has been initialized.
+     */
     public boolean isInitialized()
     {
-        return this._isInitialized;
+        return this._authoritativePersistor != null;
     }
 
     /*--------------------------------------------------------------------------
@@ -76,7 +220,7 @@ public class CoalesceFramework {
      */
     public CoalesceEntity[] getCoalesceEntities(String... key) throws CoalescePersistorException
     {
-        return this._persistor.getEntity(key);
+        return getAuthoritativePersistor().getEntity(key);
     }
 
     /**
@@ -87,7 +231,7 @@ public class CoalesceFramework {
     public CoalesceEntity getCoalesceEntity(String key) throws CoalescePersistorException
     {
         CoalesceEntity result = null;
-        CoalesceEntity[] results = _persistor.getEntity(key);
+        CoalesceEntity[] results = getAuthoritativePersistor().getEntity(key);
 
         if (results != null && results.length == 1)
         {
@@ -98,14 +242,29 @@ public class CoalesceFramework {
 
     }
 
+    /**
+     * @see ICoalescePersistor#getEntity(String, String)
+     * @param entityId
+     * @param entityIdType
+     * @return {@link ICoalescePersistor#getEntity(String, String)}
+     * @throws CoalescePersistorException
+     */
     public CoalesceEntity getEntity(String entityId, String entityIdType) throws CoalescePersistorException
     {
-        return this._persistor.getEntity(entityId, entityIdType);
+        return getAuthoritativePersistor().getEntity(entityId, entityIdType);
     }
 
+    /**
+     * @see ICoalescePersistor#getEntity(String, String, String)
+     * @param name
+     * @param entityId
+     * @param entityIdType
+     * @return {@link ICoalescePersistor#getEntity(String, String, String)}
+     * @throws CoalescePersistorException
+     */
     public CoalesceEntity getEntity(String name, String entityId, String entityIdType) throws CoalescePersistorException
     {
-        return this._persistor.getEntity(name, entityId, entityIdType);
+        return getAuthoritativePersistor().getEntity(name, entityId, entityIdType);
     }
 
     /**
@@ -115,7 +274,7 @@ public class CoalesceFramework {
      */
     public String[] getEntityXmls(String... key) throws CoalescePersistorException
     {
-        return this._persistor.getEntityXml(key);
+        return getAuthoritativePersistor().getEntityXml(key);
     }
 
     /**
@@ -126,7 +285,7 @@ public class CoalesceFramework {
     public String getEntityXml(String key) throws CoalescePersistorException
     {
         String result = null;
-        String[] results = _persistor.getEntityXml(key);
+        String[] results = getAuthoritativePersistor().getEntityXml(key);
 
         if (results != null && results.length > 1)
         {
@@ -136,14 +295,29 @@ public class CoalesceFramework {
         return result;
     }
 
+    /**
+     * @see ICoalescePersistor#getEntityXml(String, String)
+     * @param entityId
+     * @param entityIdType
+     * @return {@link ICoalescePersistor#getEntityXml(String, String)}
+     * @throws CoalescePersistorException
+     */
     public String getEntityXml(String entityId, String entityIdType) throws CoalescePersistorException
     {
-        return this._persistor.getEntityXml(entityId, entityIdType);
+        return getAuthoritativePersistor().getEntityXml(entityId, entityIdType);
     }
 
+    /**
+     * @see ICoalescePersistor#getEntityXml(String, String, String)
+     * @param name
+     * @param entityId
+     * @param entityIdType
+     * @return {@link ICoalescePersistor#getEntityXml(String, String, String)}
+     * @throws CoalescePersistorException
+     */
     public String getEntityXml(String name, String entityId, String entityIdType) throws CoalescePersistorException
     {
-        return this._persistor.getEntityXml(name, entityId, entityIdType);
+        return getAuthoritativePersistor().getEntityXml(name, entityId, entityIdType);
     }
 
     /*--------------------------------------------------------------------------
@@ -199,10 +373,10 @@ public class CoalesceFramework {
             for (int i = 0; i < entityIdTypeList.length; i++)
             {
 
-                list.addAll(this._persistor.getCoalesceEntityKeysForEntityId(entityIdList[i],
-                                                                             entityIdTypeList[i],
-                                                                             entityName,
-                                                                             entitySource));
+                list.addAll(getAuthoritativePersistor().getCoalesceEntityKeysForEntityId(entityIdList[i],
+                                                                                         entityIdTypeList[i],
+                                                                                         entityName,
+                                                                                         entitySource));
 
             }
 
@@ -214,7 +388,7 @@ public class CoalesceFramework {
 
     public EntityMetaData getCoalesceEntityIdAndTypeForKey(String key) throws CoalescePersistorException
     {
-        return this._persistor.getCoalesceEntityIdAndTypeForKey(key);
+        return getAuthoritativePersistor().getCoalesceEntityIdAndTypeForKey(key);
     }
 
     /*--------------------------------------------------------------------------
@@ -223,33 +397,75 @@ public class CoalesceFramework {
 
     public DateTime getCoalesceEntityLastModified(String key, String objectType) throws CoalescePersistorException
     {
-        return this._persistor.getCoalesceObjectLastModified(key, objectType);
+        return getAuthoritativePersistor().getCoalesceObjectLastModified(key, objectType);
     }
 
+    /**
+     * Calls {@link #saveCoalesceEntity(boolean, CoalesceEntity...)} passing
+     * <code>false</code> for allowRemoval.
+     * 
+     * @param entities
+     * @return whether the authoritative was updated successfully.
+     * @throws CoalescePersistorException
+     */
     public boolean saveCoalesceEntity(CoalesceEntity... entities) throws CoalescePersistorException
     {
         return this.saveCoalesceEntity(false, entities);
     }
 
+    /**
+     * Updates the persistors with the provided entities blocking on the
+     * authoritative persistor.
+     * 
+     * @param allowRemoval
+     * @param entities
+     * @return whether the authoritative was updated successfully.
+     * @throws CoalescePersistorException
+     */
     public boolean saveCoalesceEntity(boolean allowRemoval, CoalesceEntity... entities) throws CoalescePersistorException
     {
-        return this._persistor.saveEntity(allowRemoval, entities);
+        boolean isSuccessful = getAuthoritativePersistor().saveEntity(allowRemoval, entities);
+
+        if (hasSecondaryPersistors())
+        {
+            if (LOGGER.isDebugEnabled())
+            {
+                LOGGER.debug("Creating Job {}", CoalesceSaveEntityJob.class.getName());
+            }
+
+            // Create Parameters
+            CoalesceSaveEntityProperties params = new CoalesceSaveEntityProperties();
+            params.setAllowRemoval(allowRemoval);
+            params.setEntities(entities);
+
+            // Create Job
+            CoalesceSaveEntityJob job = new CoalesceSaveEntityJob(params);
+            job.setHandler(_handler);
+            job.setExecutor(this);
+            job.setTarget(getSecondaryPersistors());
+
+            // Update Secondary Persistors
+            submit(job);
+        }
+
+        // Update Authoritative Persistor
+        return isSuccessful;
     }
 
     public String getCoalesceFieldValue(String fieldKey) throws CoalescePersistorException
     {
-        return (String) this._persistor.getFieldValue(fieldKey);
+        return (String) getAuthoritativePersistor().getFieldValue(fieldKey);
     }
 
     public CoalesceRecord getCoalesceRecord(String key) throws CoalescePersistorException
     {
         CoalesceRecord record = null;
 
-        ElementMetaData metaData = this._persistor.getXPath(key, "record");
+        ElementMetaData metaData = getAuthoritativePersistor().getXPath(key, "record");
         if (metaData != null)
         {
-            
-            CoalesceEntity[] results = _persistor.getEntity(metaData.getEntityKey());
+
+            CoalesceEntity[] results = getAuthoritativePersistor().getEntity(metaData.getEntityKey());
 
             if (results != null && results.length == 1 && results[0] != null)
             {
@@ -265,12 +481,12 @@ public class CoalesceFramework {
     {
         CoalesceStringField field = null;
 
-        ElementMetaData metaData = this._persistor.getXPath(key, "field");
+        ElementMetaData metaData = getAuthoritativePersistor().getXPath(key, "field");
 
         if (metaData != null)
         {
 
-            CoalesceEntity[] results = _persistor.getEntity(metaData.getEntityKey());
+            CoalesceEntity[] results = getAuthoritativePersistor().getEntity(metaData.getEntityKey());
 
             if (results != null && results.length == 1 && results[0] != null)
             {
@@ -286,9 +502,62 @@ public class CoalesceFramework {
     	Template Functions
     --------------------------------------------------------------------------*/
 
-    public boolean saveCoalesceEntityTemplate(CoalesceEntityTemplate template) throws CoalescePersistorException
+    /**
+     * Save the template as well as updates {@link CoalesceTemplateUtil}.
+     * 
+     * @see ICoalescePersistor#saveTemplate(CoalesceEntityTemplate...)
+     * @see CoalesceTemplateUtil#addTemplates(CoalesceEntityTemplate...)
+     * @param templates
+     * @throws CoalescePersistorException
+     */
+    public void saveCoalesceEntityTemplate(CoalesceEntityTemplate... templates) throws CoalescePersistorException
     {
-        return this._persistor.persistEntityTemplate(template);
+        // Update Authoritative Persistors
+        getAuthoritativePersistor().saveTemplate(templates);
+
+        // Update Date Types
+        CoalesceTemplateUtil.addTemplates(templates);
+
+        if (hasSecondaryPersistors())
+        {
+            // Create Job
+            CoalesceSaveTemplateJob job = new CoalesceSaveTemplateJob(templates);
+            job.setExecutor(this);
+            job.setHandler(_handler);
+            job.setTarget(getSecondaryPersistors());
+
+            // Update Secondary Persistors
+            submit(job);
+        }
+    }
+
+    /**
+     * Save the template as well as updates {@link CoalesceTemplateUtil}.
+     * 
+     * @see ICoalescePersistor#saveTemplate(CoalesceEntityTemplate...)
+     * @see CoalesceTemplateUtil#addTemplates(CoalesceEntityTemplate...)
+     * @param templates
+     * @throws CoalescePersistorException
+     */
+    public void registerTemplates(CoalesceEntityTemplate... templates) throws CoalescePersistorException
+    {
+        // Update Authoritative Persistors
+        getAuthoritativePersistor().registerTemplate(templates);
+
+        // Update Date Types
+        CoalesceTemplateUtil.addTemplates(templates);
+
+        if (hasSecondaryPersistors())
+        {
+            // Create Job
+            CoalesceRegisterTemplateJob job = new CoalesceRegisterTemplateJob(templates);
+            job.setExecutor(this);
+            job.setHandler(_handler);
+            job.setTarget(getSecondaryPersistors());
+
+            // Update Secondary Persistors
+            submit(job);
+        }
     }
 
     /**
@@ -322,22 +591,22 @@ public class CoalesceFramework {
 
     public String getCoalesceEntityTemplateXml(String key) throws CoalescePersistorException
     {
-        return this._persistor.getEntityTemplateXml(key);
+        return getAuthoritativePersistor().getEntityTemplateXml(key);
     }
 
     public String getCoalesceEntityTemplateXml(String name, String source, String version) throws CoalescePersistorException
     {
-        return this._persistor.getEntityTemplateXml(name, source, version);
+        return getAuthoritativePersistor().getEntityTemplateXml(name, source, version);
     }
 
     public String getCoalesceEntityTemplateKey(String name, String source, String version) throws CoalescePersistorException
     {
-        return this._persistor.getEntityTemplateKey(name, source, version);
+        return getAuthoritativePersistor().getEntityTemplateKey(name, source, version);
     }
 
-    public String getCoalesceEntityTemplateMetadata() throws CoalescePersistorException
+    public List<ObjectMetaData> getCoalesceEntityTemplateMetadata() throws CoalescePersistorException
     {
-        return this._persistor.getEntityTemplateMetadata();
+        return getAuthoritativePersistor().getEntityTemplateMetadata();
     }
 
     public CoalesceEntity createEntityFromTemplate(String name, String source, String version)
@@ -361,6 +630,97 @@ public class CoalesceFramework {
             IOException
     {
         return CoalesceEntitySyncShell.create(this.getCoalesceEntity(key));
+    }
+
+    @Override
+    public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks) throws InterruptedException
+    {
+        if (LOGGER.isTraceEnabled())
+        {
+            LOGGER.trace("Invoking Tasks");
+        }
+
+        if (_pool.isShutdown())
+        {
+            if (LOGGER.isDebugEnabled())
+            {
+                LOGGER.debug("Pool is Shutdown");
+            }
+            return null;
+        }
+        else
+        {
+            return _pool.invokeAll(tasks);
+        }
+    }
+
+    public <T, Y> Future<Y> submit(AbstractCoalesceJob<T, Y> job) throws CoalescePersistorException
+    {
+        
+        Future<Y> result = null;
+        
+        if (_isAsyncUpdates)
+        {
+            if (LOGGER.isTraceEnabled())
+            {
+                LOGGER.trace("Submitting {} job", job.getClass().getName());
+            }
+
+            result = _pool.submit(job);
+        }
+        else
+        {
+            try
+            {
+                job.call();
+            }
+            catch (Exception e)
+            {
+                throw new CoalescePersistorException("Failed to Update Secondary Persistors", e);
+            }
+        }
+        
+        return result;
+    }
+
+    @Override
+    public void close()
+    {
+        if (LOGGER.isDebugEnabled())
+        {
+            LOGGER.debug("Closing Framework");
+        }
+
+        try
+        {
+            // Graceful shutdown (Allow 1 minutes for jobs to finish)
+            _pool.shutdown();
+            _pool.awaitTermination(20, TimeUnit.SECONDS);
+        }
+        catch (InterruptedException e)
+        {
+            if (LOGGER.isDebugEnabled())
+            {
+                LOGGER.debug("Await Termination Interrupted");
+            }
+        }
+
+        if (!_pool.isTerminated())
+        {
+            if (LOGGER.isDebugEnabled())
+            {
+                LOGGER.debug("Failed to gracefully shutdown; Forcing the shutdown...");
+            }
+
+            List<Runnable> jobList = _pool.shutdownNow();
+            for (Runnable job : jobList)
+            {
+                if (job instanceof AbstractCoalesceJob<?, ?>)
+                {
+                    LOGGER.warn("Job Failed {}", job.getClass().getName());
+                }
+            }
+        }
     }
 
 }

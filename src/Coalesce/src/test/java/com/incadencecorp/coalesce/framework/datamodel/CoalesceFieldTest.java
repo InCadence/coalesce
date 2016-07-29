@@ -31,7 +31,7 @@ import com.drew.imaging.ImageProcessingException;
 import com.incadencecorp.coalesce.common.CoalesceTypeInstances;
 import com.incadencecorp.coalesce.common.CoalesceUnitTestSettings;
 import com.incadencecorp.coalesce.common.classification.Marking;
-import com.incadencecorp.coalesce.common.classification.MarkingValueTest;
+import com.incadencecorp.coalesce.common.classification.tests.MarkingValueTest;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceCryptoException;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.helpers.DocumentProperties;
@@ -195,6 +195,7 @@ public class CoalesceFieldTest {
         CoalesceField<?> field = getTestMissionNameField(mission);
 
         field.setName("Testingname");
+        field.getFieldDefinition().setName("Testingname");
 
         String serializedMission = mission.toXml();
         CoalesceEntity savedMission = CoalesceEntity.create(serializedMission);
@@ -2702,6 +2703,8 @@ public class CoalesceFieldTest {
         assertEquals(false, field.getNoIndex());
 
         field.setAttribute("Name", "TestingName");
+        field.getFieldDefinition().setName(field.getName());
+        
         assertEquals("TestingName", field.getName());
         assertEquals("TestingName", field.getAttribute("Name"));
 
@@ -2720,6 +2723,8 @@ public class CoalesceFieldTest {
         assertEquals(true, field.getNoIndex());
 
         field.setAttribute("DataType", "Integer");
+        field.getFieldDefinition().setDataType(ECoalesceFieldDataTypes.INTEGER_TYPE);
+        
         assertEquals(ECoalesceFieldDataTypes.INTEGER_TYPE, field.getDataType());
 
         field.setAttribute("Classificationmarking", "(TS)");

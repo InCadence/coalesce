@@ -50,7 +50,9 @@ public enum ECoalesceFieldDataTypes
     FLOAT_TYPE("float"), 
     FLOAT_LIST_TYPE("floatlist"), 
     LONG_TYPE("long"), 
-    LONG_LIST_TYPE("longlist");
+    LONG_LIST_TYPE("longlist"),
+    ENUMERATION_TYPE("enum"),
+    ENUMERATION_LIST_TYPE("enumlist");
 
     private String _label;
 

@@ -404,7 +404,8 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
      */
     protected void setTypedValue(Integer value)
     {
-        if (getDataType() != ECoalesceFieldDataTypes.INTEGER_TYPE)
+        if (getDataType() != ECoalesceFieldDataTypes.INTEGER_TYPE
+                && getDataType() != ECoalesceFieldDataTypes.ENUMERATION_TYPE)
         {
             throw new ClassCastException("Type mismatch");
         }
@@ -422,7 +423,8 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
 
     protected void setTypedValue(int[] values)
     {
-        if (getDataType() != ECoalesceFieldDataTypes.INTEGER_LIST_TYPE)
+        if (getDataType() != ECoalesceFieldDataTypes.INTEGER_LIST_TYPE
+                && getDataType() != ECoalesceFieldDataTypes.ENUMERATION_LIST_TYPE)
         {
             throw new ClassCastException("Type mismatch");
         }
@@ -1009,7 +1011,8 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
      */
     protected Integer getIntegerValue() throws CoalesceDataFormatException
     {
-        if (getDataType() != ECoalesceFieldDataTypes.INTEGER_TYPE)
+        if (getDataType() != ECoalesceFieldDataTypes.INTEGER_TYPE
+                && getDataType() != ECoalesceFieldDataTypes.ENUMERATION_TYPE)
         {
             throw new ClassCastException("Type mismatch");
         }
@@ -1032,7 +1035,8 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
 
     protected int[] getIntegerListValue()
     {
-        if (getDataType() != ECoalesceFieldDataTypes.INTEGER_LIST_TYPE)
+        if (getDataType() != ECoalesceFieldDataTypes.INTEGER_LIST_TYPE
+                && getDataType() != ECoalesceFieldDataTypes.ENUMERATION_LIST_TYPE)
         {
             throw new ClassCastException("Type mismatch");
         }

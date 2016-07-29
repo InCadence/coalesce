@@ -1,27 +1,5 @@
-package com.incadencecorp.coalesce.framework.persistance.neo4j;
-
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
-
-import org.joda.time.DateTime;
-
-import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
-import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
-import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
-import com.incadencecorp.coalesce.framework.persistance.CoalescePersistorBase;
-import com.incadencecorp.coalesce.framework.persistance.ICoalesceCacher;
-import com.incadencecorp.coalesce.framework.persistance.ServerConn;
-
 /*-----------------------------------------------------------------------------'
- Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
+ Copyright 2016 - InCadence Strategic Solutions Inc., All Rights Reserved
 
  Notwithstanding any contractor copyright notice, the Government has Unlimited
  Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
@@ -37,71 +15,494 @@ import com.incadencecorp.coalesce.framework.persistance.ServerConn;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
+package com.incadencecorp.coalesce.framework.persistance.neo4j;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Random;
+
+import javax.sql.rowset.CachedRowSet;
+import javax.sql.rowset.RowSetProvider;
+
+import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
+import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
+import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
+import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
+import com.incadencecorp.coalesce.framework.persistance.CoalescePersistorBase;
+import com.incadencecorp.coalesce.framework.persistance.ElementMetaData;
+import com.incadencecorp.coalesce.framework.persistance.EntityMetaData;
+import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
+
+/**
+ * Neo4j Implementation. Extend and override {@link #getGroups(CoalesceEntity)}
+ * and {@link #getClassification(CoalesceEntity)} to add security handling.
+ * 
+ * @author n78554
+ */
 public class Neo4JPersistor extends CoalescePersistorBase {
 
-    private ServerConn _serCon;
+    private static final Logger LOGGER = LoggerFactory.getLogger(Neo4JPersistor.class);
+
+    private static final String CYPHER_MERGE = "MERGE (Entity:%1$s {entityKey: {4}})"
+            + " ON CREATE SET Entity.title = {1}, Entity.lastModified = {2},"
+            + " Entity.deleted=%3$s, Entity.groups = %4$s, Entity.entityName = {3}," + " Entity.entityKey = {4}%2$s"
+            + " ON MATCH SET Entity.title = {1}, Entity.lastModified = {2},"
+            + " Entity.deleted=%3$s, Entity.groups = %4$s%2$s";
+
+    private static final String CYPHER_LINK_CLASSIFICATION = "MATCH (n:%s {entityKey: {1}}), (cls:CLASSIFICATION_LEVEL {name: {2}}) "
+            + "OPTIONAL MATCH n-[r:CLEARED_TO]->() DELETE r " + "CREATE UNIQUE n-[:CLEARED_TO]->(cls)";
+
+    private static final String CYPHER_DELETE_NODE = "MATCH (n:%s {entityKey: {1}}) OPTIONAL MATCH n-[r]-() DELETE n, r";
+
+    private static final String CYPHER_LINK = "MATCH (n1:%s {entityKey: {1}}), (n2:%s {entityKey: {2}}) CREATE UNIQUE (n1)-[:%s {key: {3}}]->(n2)";
+
+    private static final String CYPHER_UNLINK = "OPTIONAL MATCH (n1:%s {entityKey: {1}})-[rel:%s {key: {3}}]->(n2:%s {entityKey: {2}}) DELETE rel";
+
+    private static final String CYPHER_CONSTRAINT = "CREATE CONSTRAINT ON (n:%s) ASSERT n.entityKey IS UNIQUE";
 
     /*--------------------------------------------------------------------------
-    Constructor / Initializers
+    Constructor
     --------------------------------------------------------------------------*/
 
+    /**
+     * Default Constructor
+     */
     public Neo4JPersistor()
     {
-        /***********
-         * Define the PostGresSQL Database Connection in the URL, change to
-         * whatever the schema name is on your system
-         ***********/
-        _serCon = new ServerConn();
-        /* Set URL, User, Pass */
+        setConnectionSettings(Neo4jSettings.getServerConn());
+    }
+
+    /*--------------------------------------------------------------------------
+    Override Methods
+    --------------------------------------------------------------------------*/
+
+    @Override
+    protected CoalesceDataConnectorBase getDataConnector() throws CoalescePersistorException
+    {
+        return new Neo4JDataConnector(getConnectionSettings());
     }
 
     @Override
-    public void initialize(ServerConn svConn)
+    protected boolean flattenObject(boolean allowRemoval, CoalesceEntity... entities) throws CoalescePersistorException
     {
-        _serCon = svConn;
+        return flattenCore(allowRemoval, entities);
     }
 
     @Override
-    public boolean initialize(ICoalesceCacher cacher, ServerConn svConn)
+    protected boolean flattenCore(boolean allowRemoval, CoalesceEntity... entities) throws CoalescePersistorException
     {
-        _serCon = svConn;
 
-        return super.initialize(cacher);
+        boolean isSuccessful = false;
+        int tries = Neo4jSettings.getRetryAttempts();
+
+        try (CoalesceDataConnectorBase conn = getDataConnector())
+        {
+
+            while (!isSuccessful)
+            {
+
+                try
+                {
+                    conn.openConnection(false);
+
+                    // Reset start-time
+                    conn.rollback();
+
+                    for (CoalesceEntity entity : entities)
+                    {
+
+                        // if (entity.getStatus() !=
+                        // ECoalesceObjectStatus.DELETED) {
+
+                        // Persist Entity
+                        persistEntityObject(entity, conn);
+
+                        // Persist Security Linkages
+                        linkClassificationLevel(entity, conn);
+
+                        // Persist Linkages
+                        for (CoalesceLinkage linkage : entity.getLinkages().values())
+                        {
+                            persistLinkageObject(linkage, conn);
+                        }
+
+                        // } else {
+                        // deleteEntity(entity, conn);
+                        // }
+
+                    }
+
+                    conn.commit();
+
+                    isSuccessful = true;
+
+                }
+                catch (SQLException e)
+                {
+
+                    // Release Locks
+                    conn.rollback();
+
+                    if (LOGGER.isDebugEnabled())
+                    {
+                        LOGGER.warn("Neo4j: Flattening Object", e);
+                        LOGGER.debug("Cypher Attempt {} out of {}",
+                                     Neo4jSettings.getRetryAttempts() - tries + 1,
+                                     Neo4jSettings.getRetryAttempts());
+                    }
+
+                    // Max Tried Reached?
+                    if (tries-- <= 0)
+                    {
+                        // Yes; Throw an error
+                        throw new CoalescePersistorException("Saving Entity", e);
+                    }
+
+                    // Randomize Back Off Interval (Prevents threads from
+                    // awakening in sync)
+                    int millis = new Random().nextInt(Neo4jSettings.getBackoffInterval())
+                            + Neo4jSettings.getBackoffInterval();
+
+                    if (LOGGER.isDebugEnabled())
+                    {
+                        LOGGER.debug("Sleeping ({}) for {} ms", Thread.currentThread().getId(), millis);
+                    }
+
+                    // Back off to allow other threads to close their locks.
+                    Thread.sleep(millis);
+
+                    if (LOGGER.isDebugEnabled())
+                    {
+                        LOGGER.debug("Awaken ({})", Thread.currentThread().getId());
+                    }
+
+                }
+            }
+
+        }
+        catch (InterruptedException e1)
+        {
+            throw new CoalescePersistorException("Attempt Aborted", e1);
+        }
+
+        return isSuccessful;
+
     }
 
     @Override
-    public String[] getEntityXml(String... keys) throws CoalescePersistorException
+    public void saveTemplate(CoalesceDataConnectorBase conn, CoalesceEntityTemplate... templates)
+            throws CoalescePersistorException
     {
-        // TODO Auto-generated method stub
-        return null;
+
+        boolean isSuccessful = false;
+        int tries = Neo4jSettings.getRetryAttempts();
+
+        try
+        {
+
+            while (!isSuccessful)
+            {
+
+                try
+                {
+                    conn.openConnection(false);
+
+                    // Reset start-time
+                    conn.rollback();
+
+                    for (CoalesceEntityTemplate template : templates)
+                    {
+                        conn.executeUpdate(String.format(CYPHER_CONSTRAINT, normalizeName(template.getName())));
+                    }
+
+                    conn.commit();
+
+                    isSuccessful = true;
+
+                }
+                catch (SQLException e)
+                {
+
+                    // Release Locks
+                    conn.rollback();
+
+                    if (LOGGER.isDebugEnabled())
+                    {
+                        LOGGER.warn("Neo4j: Creating Constraint", e);
+                        LOGGER.debug("Cypher Attempt {} out of {}",
+                                     Neo4jSettings.getRetryAttempts() - tries + 1,
+                                     Neo4jSettings.getRetryAttempts());
+                    }
+
+                    // Max Tries Reached?
+                    if (tries-- <= 0)
+                    {
+                        // Yes; Throw an error
+                        throw new CoalescePersistorException("Creating Constraint", e);
+                    }
+
+                    // Randomize Back Off Interval (Prevents threads from
+                    // awakening in sync)
+                    int millis = new Random().nextInt(Neo4jSettings.getBackoffInterval())
+                            + Neo4jSettings.getBackoffInterval();
+
+                    LOGGER.debug("Sleeping ({}) for {} ms", Thread.currentThread().getId(), millis);
+
+                    // Back off to allow other threads to close their locks.
+                    Thread.sleep(millis);
+
+                    LOGGER.debug("Awaken ({})", Thread.currentThread().getId());
+
+                }
+            }
+
+        }
+        catch (InterruptedException e1)
+        {
+            throw new CoalescePersistorException("Attempt Aborted", e1);
+        }
+
+    }
+
+    /*--------------------------------------------------------------------------
+    Public Methods
+    --------------------------------------------------------------------------*/
+
+    /**
+     * @param query
+     * @param parameters
+     * @return a row set containing the nodes that match the query.
+     */
+    public CachedRowSet executeQuery(String query, CoalesceParameter... parameters)
+    {
+        if (LOGGER.isErrorEnabled())
+        {
+            LOGGER.debug("Executing Graph query: {}", query);
+        }
+
+        CachedRowSet rowset = null;
+
+        try (CoalesceDataConnectorBase conn = new Neo4JDataConnector(Neo4jSettings.getServerConn()))
+        {
+            rowset = RowSetProvider.newFactory().createCachedRowSet();
+
+            if (parameters != null)
+            {
+                rowset.populate(conn.executeQuery(query, parameters));
+            }
+            else
+            {
+                rowset.populate(conn.executeQuery(query));
+            }
+        }
+        catch (CoalescePersistorException | SQLException e)
+        {
+            throw new RuntimeException("Neo4j: Executing Query", e);
+        }
+
+        return rowset;
+    }
+
+    /*--------------------------------------------------------------------------
+    Protected Methods
+    --------------------------------------------------------------------------*/
+
+    protected boolean persistEntityObject(CoalesceEntity entity, CoalesceDataConnectorBase conn) throws SQLException
+    {
+        // Obtain a list of all field values
+        HashMap<String, String> fieldValues = new HashMap<String, String>();
+        getFieldValues(entity, fieldValues);
+
+        String groupsString = null;
+        List<String> groups = getGroups(entity);
+
+        if (groups != null && groups.size() != 0)
+        {
+            groupsString = "[\"" + StringUtils.join(getGroups(entity), "\",\"") + "\"]";
+            groupsString = groupsString.toUpperCase();
+        }
+
+        CoalesceParameter[] parameters = new CoalesceParameter[fieldValues.size() + 4];
+
+        int idx = 0;
+
+        parameters[idx++] = new CoalesceParameter(entity.getTitle());
+        parameters[idx++] = new CoalesceParameter(entity.getLastModified());
+        parameters[idx++] = new CoalesceParameter(entity.getName());
+        parameters[idx++] = new CoalesceParameter(entity.getKey());
+
+        StringBuilder sb = new StringBuilder("");
+
+        // Add Field Values
+        for (Entry<String, String> entry : fieldValues.entrySet())
+        {
+
+            parameters[idx] = new CoalesceParameter(entry.getValue());
+
+            idx++;
+
+            sb.append(", Entity." + normalizeName(entry.getKey().toLowerCase()) + " = {" + idx + "}");
+
+        }
+
+        String query = String.format(CYPHER_MERGE,
+                                     normalizeName(entity),
+                                     sb.toString(),
+                                     entity.isMarkedDeleted(),
+                                     groupsString);
+
+        return conn.executeUpdate(query, parameters) > 0;
+    }
+
+    protected boolean persistLinkageObject(CoalesceLinkage linkage, CoalesceDataConnectorBase conn) throws SQLException
+    {
+        String query;
+
+        if (linkage.isMarkedDeleted())
+        {
+            // Delete Link
+            query = String.format(CYPHER_UNLINK,
+                                  normalizeName(linkage.getEntity1Name()),
+                                  linkage.getLinkType(),
+                                  normalizeName(linkage.getEntity2Name()));
+        }
+        else
+        {
+            // Add / Update Link
+            query = String.format(CYPHER_LINK,
+                                  normalizeName(linkage.getEntity1Name()),
+                                  normalizeName(linkage.getEntity2Name()),
+                                  linkage.getLinkType());
+        }
+
+        // Execute Query
+        return conn.executeUpdate(query,
+                                  new CoalesceParameter(linkage.getEntity1Key()),
+                                  new CoalesceParameter(linkage.getEntity2Key()),
+                                  new CoalesceParameter(linkage.getKey())) > 0;
+    }
+
+    protected List<String> getGroups(CoalesceEntity entity) throws SQLException
+    {
+        return new ArrayList<String>();
+    }
+
+    protected String getClassification(CoalesceEntity entity) throws SQLException
+    {
+        return "U";
+    }
+
+    /*--------------------------------------------------------------------------
+    Private Methods
+    --------------------------------------------------------------------------*/
+
+    private void deleteEntity(CoalesceEntity entity, CoalesceDataConnectorBase conn) throws SQLException
+    {
+        // Delete Node
+        String query = String.format(CYPHER_DELETE_NODE, normalizeName(entity));
+        conn.executeUpdate(query, new CoalesceParameter(entity.getKey()));
+    }
+
+    private void linkClassificationLevel(CoalesceEntity entity, CoalesceDataConnectorBase conn) throws SQLException
+    {
+        // Add / Update Link
+        String query = String.format(CYPHER_LINK_CLASSIFICATION, normalizeName(entity));
+        conn.executeUpdate(query, new CoalesceParameter(entity.getKey()), new CoalesceParameter(getClassification(entity)));
+    }
+
+    private String normalizeName(CoalesceEntity entity)
+    {
+        return normalizeName(entity.getName());
+    }
+
+    private String normalizeName(String name)
+    {
+        return name.replaceAll("[^a-zA-Z0-9]", "_");
+    }
+
+    private void getFieldValues(CoalesceObject coalesceObject, HashMap<String, String> results)
+    {
+        // Is Active?
+        if (coalesceObject.getStatus() == ECoalesceObjectStatus.ACTIVE)
+        {
+            // Yes; Is a CoalesceField?
+            if (coalesceObject.getType().equalsIgnoreCase("field"))
+            {
+                // Yes; Check Data Type
+                CoalesceField<?> field = (CoalesceField<?>) coalesceObject;
+
+                switch (field.getDataType()) {
+                case BINARY_TYPE:
+                case FILE_TYPE:
+                    // Ignore these types.
+                    break;
+                default:
+                    // Add field value to results
+                    results.put(field.getName().replace(" ", ""), field.getBaseValue());
+                    break;
+                }
+            }
+
+            // Recurse Through Children
+            for (CoalesceObject child : coalesceObject.getChildCoalesceObjects().values())
+            {
+                getFieldValues(child, results);
+            }
+        }
+    }
+
+    /*--------------------------------------------------------------------------
+    Not Implemented
+    --------------------------------------------------------------------------*/
+
+    @Override
+    public DateTime getCoalesceObjectLastModified(String key, String objectType) throws CoalescePersistorException
+    {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public String[] getEntityXml(String... key) throws CoalescePersistorException
+    {
+        throw new NotImplementedException();
     }
 
     @Override
     public String getEntityXml(String entityId, String entityIdType) throws CoalescePersistorException
     {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public String getEntityXml(String name, String entityId, String entityIdType) throws CoalescePersistorException
     {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public Object getFieldValue(String fieldKey) throws CoalescePersistorException
     {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public ElementMetaData getXPath(String key, String objectType) throws CoalescePersistorException
     {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
@@ -110,219 +511,43 @@ public class Neo4JPersistor extends CoalescePersistorBase {
                                                          String entityName,
                                                          String entitySource) throws CoalescePersistorException
     {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public EntityMetaData getCoalesceEntityIdAndTypeForKey(String key) throws CoalescePersistorException
     {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public byte[] getBinaryArray(String binaryFieldKey) throws CoalescePersistorException
     {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public boolean persistEntityTemplate(CoalesceEntityTemplate entityTemplate, CoalesceDataConnectorBase conn)
-            throws CoalescePersistorException
-    {
-        // TODO Auto-generated method stub
-        return false;
+        throw new NotImplementedException();
     }
 
     @Override
     public String getEntityTemplateXml(String key) throws CoalescePersistorException
     {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public String getEntityTemplateXml(String name, String source, String version) throws CoalescePersistorException
     {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public String getEntityTemplateKey(String name, String source, String version) throws CoalescePersistorException
     {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
-    public String getEntityTemplateMetadata() throws CoalescePersistorException
+    public List<ObjectMetaData> getEntityTemplateMetadata() throws CoalescePersistorException
     {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    protected boolean flattenObject(boolean allowRemoval, CoalesceEntity... entities) throws CoalescePersistorException
-    {
-        boolean isSuccessful = true;
-
-        CoalesceDataConnectorBase conn = new Neo4JDataConnector(_serCon);
-        ;
-
-        // Create a Database Connection
-        try
-        {
-            conn.openConnection(false);
-
-            for (CoalesceEntity entity : entities)
-            {
-                conn.executeCmd("CREATE CONSTRAINT ON (item:" + entity.getName() + ") ASSERT item.EntityKey IS UNIQUE");
-
-                // Persist Entity Last to Include Changes
-                switch (entity.getType().toLowerCase()) {
-                case "entity":
-                    isSuccessful &= persistEntityObject(entity, conn);
-                }
-            }
-            conn.commit();
-        }
-        catch (Exception e)
-        {
-            conn.rollback();
-
-            throw new CoalescePersistorException("FlattenObject", e);
-        }
-        finally
-        {
-            conn.close();
-        }
-
-        return isSuccessful;
-    }
-
-    @Override
-    protected CoalesceDataConnectorBase getDataConnector() throws CoalescePersistorException
-    {
-        return new Neo4JDataConnector(getConnectionSettings());
-    }
-
-    protected boolean persistEntityObject(CoalesceEntity entity, CoalesceDataConnectorBase conn) throws SQLException
-    {
-        // Return true if no update is required.
-        // if (!this.checkLastModified(entity, conn)) return true;
-
-        // String sqlStmt =
-        // "(Entity:".concat(entity.getName().concat(" {EntityKey: {ParamEntityKey}})"));
-
-        return false;
-    }
-
-    protected String getValues(CoalesceObject coalesceObject, Map<?, ?> values)
-    {
-        if (coalesceObject.isActive())
-        {
-            switch (coalesceObject.getType().toLowerCase()) {
-            case "field":
-                CoalesceField<?> fieldObject = (CoalesceField<?>) coalesceObject;
-                switch (fieldObject.getType().toUpperCase()) {
-                case "BINARY":
-                case "FILE":
-                default: {
-                    if (values == null)
-                    {
-
-                    }
-                }
-                    break;
-                }
-            }
-        }
-        return null;
-    }
-
-    protected boolean checkLastModified(CoalesceObject coalesceObject, CoalesceDataConnectorBase conn) throws SQLException
-    {
-        boolean isOutOfDate = true;
-
-        // Get LastModified from the Database
-        DateTime lastModified = this.getCoalesceObjectLastModified(coalesceObject.getKey(), coalesceObject.getType(), conn);
-
-        // DB Has Valid Time?
-        if (lastModified != null)
-        {
-            // Remove NanoSeconds (100 ns / Tick and 1,000,000 ns / ms = 10,000
-            // Ticks / ms)
-            long objectTicks = coalesceObject.getLastModified().getMillis();
-            long SQLRecordTicks = lastModified.getMillis();
-
-            // TODO: Round Ticks for SQL (Not sure if this is required for .NET)
-            // ObjectTicks = this.RoundTicksForSQL(ObjectTicks);
-
-            if (objectTicks == SQLRecordTicks)
-            {
-                // They're equal; No Update Required
-                isOutOfDate = false;
-            }
-        }
-
-        return isOutOfDate;
-    }
-
-    private DateTime getCoalesceObjectLastModified(String key, String objectType, CoalesceDataConnectorBase conn)
-            throws SQLException
-    {
-        DateTime lastModified = JodaDateTimeHelper.nowInUtc();
-
-        // Determine the Table Name
-        // String tableName =
-        // CoalesceTableHelper.getTableNameForObjectType(objectType);
-        String dateValue = null;
-
-        ResultSet results = conn.executeQuery("?", new CoalesceParameter(key.trim()));
-        ResultSetMetaData resultsmd = results.getMetaData();
-
-        // JODA Function DateTimeFormat will adjust for the Server timezone when
-        // converting the time.
-        if (resultsmd.getColumnCount() <= 1)
-        {
-            while (results.next())
-            {
-                dateValue = results.getString("LastModified");
-                if (dateValue != null)
-                {
-                    lastModified = JodaDateTimeHelper.getPostGresDateTim(dateValue);
-                }
-            }
-        }
-        return lastModified;
-
-    }
-
-    @Override
-    protected boolean flattenCore(boolean allowRemoval, CoalesceEntity... entities) throws CoalescePersistorException
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public DateTime getCoalesceObjectLastModified(String key, String objectType) throws CoalescePersistorException
-    {
-        try (CoalesceDataConnectorBase conn = new Neo4JDataConnector(_serCon))
-        {
-            return this.getCoalesceObjectLastModified(key, objectType, conn);
-        }
-        catch (SQLException e)
-        {
-            throw new CoalescePersistorException("GetCoalesceObjectLastModified", e);
-        }
-        catch (Exception e)
-        {
-            throw new CoalescePersistorException("GetCoalesceObjectLastModified", e);
-        }
+        throw new NotImplementedException();
     }
 
 }

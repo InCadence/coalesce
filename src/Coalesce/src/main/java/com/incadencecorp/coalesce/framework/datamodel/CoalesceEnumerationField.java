@@ -1,0 +1,81 @@
+package com.incadencecorp.coalesce.framework.datamodel;
+
+import java.security.Principal;
+
+import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
+import com.incadencecorp.coalesce.framework.EnumerationProviderUtil;
+
+/*-----------------------------------------------------------------------------'
+ Copyright 2016 - InCadence Strategic Solutions Inc., All Rights Reserved
+
+ Notwithstanding any contractor copyright notice, the Government has Unlimited
+ Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+ of this work other than as specifically authorized by these DFARS Clauses may
+ violate Government rights in this work.
+
+ DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+ Unlimited Rights. The Government has the right to use, modify, reproduce,
+ perform, display, release or disclose this computer software and to have or
+ authorize others to do so.
+
+ Distribution Statement D. Distribution authorized to the Department of
+ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+ -----------------------------------------------------------------------------*/
+
+/**
+ * Represents a field that contains an Enumeration
+ * 
+ * @author n78554
+ */
+public class CoalesceEnumerationField extends CoalesceEnumerationFieldBase<Integer> {
+
+    @Override
+    public Integer getValue() throws CoalesceDataFormatException
+    {
+        return getIntegerValue();
+    }
+
+    /**
+     * 
+     * @param principal
+     * @return ordinal value converted to a String using
+     *         {@link EnumerationProviderUtil}.
+     * @throws CoalesceDataFormatException
+     */
+    public String getValueAsString(Principal principal) throws CoalesceDataFormatException
+    {
+        String results = null;
+        Integer ordinal = getIntegerValue();
+        
+        if (ordinal != null) {
+            results = EnumerationProviderUtil.toString(principal, getEnumerationName(), ordinal);
+        }
+        
+        return results;
+    }
+
+    @Override
+    public void setValue(Integer value)
+    {
+        setTypedValue(value);
+    }
+
+    /**
+     * Sets the ordinal value using {@link EnumerationProviderUtil}
+     * 
+     * @param principal
+     * @param value
+     */
+    public void setValueAsString(Principal principal, String value)
+    {
+        if (value != null)
+        {
+            setTypedValue(EnumerationProviderUtil.toPosition(principal, getEnumerationName(), value));
+        }
+        else
+        {
+            setTypedValue((Integer) null);
+        }
+    }
+
+}

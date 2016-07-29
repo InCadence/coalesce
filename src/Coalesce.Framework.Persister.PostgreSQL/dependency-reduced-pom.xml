@@ -3,14 +3,13 @@
   <parent>
     <artifactId>coalesce-pom</artifactId>
     <groupId>com.incadencecorp.coalesce</groupId>
-    <version>0.0.6-SNAPSHOT</version>
+    <version>0.0.12-SNAPSHOT</version>
     <relativePath>../Coalesce.Pom/pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>coalesce-framework-persister-postgresql</artifactId>
   <packaging>bundle</packaging>
   <name>Coalesce PostGreSQL Persister</name>
-  <version>${coalescePersisterVersionPostGreSQL}</version>
   <description>Persister used by Coalesce to connect to a PostGreSQL database.</description>
   <build>
     <plugins>
@@ -53,11 +52,12 @@
           <instructions>
             <Bundle-Name>${project.name}</Bundle-Name>
             <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
-            <Export-Package>${project.groupId}.framework.persistance.postgres,
-							org.postgresql.geometric;version="9.3-1102-jdbc41"</Export-Package>
+            <Export-Package>${project.groupId}.framework.persistance.postgres*,
+                            org.postgresql.geometric;version="9.3-1102-jdbc41"</Export-Package>
             <Private-Package>org.postgresql*</Private-Package>
-            <Import-Package>org.joda.time*;version="[1.6.2, 3)",
-							*</Import-Package>
+            <Import-Package>org.joda.time*;version="[1.6.2,
+                            3)",
+                            *</Import-Package>
           </instructions>
         </configuration>
       </plugin>
@@ -67,13 +67,25 @@
     <dependency>
       <groupId>com.incadencecorp.coalesce</groupId>
       <artifactId>coalesce-core</artifactId>
-      <version>0.0.6-SNAPSHOT</version>
+      <version>0.0.12-SNAPSHOT</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.incadencecorp.coalesce</groupId>
+      <artifactId>coalesce-search</artifactId>
+      <version>0.0.12-SNAPSHOT</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools.jdbc</groupId>
+      <artifactId>gt-jdbc-postgis</artifactId>
+      <version>13.1</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.incadencecorp.coalesce</groupId>
       <artifactId>coalesce-core</artifactId>
-      <version>0.0.6-SNAPSHOT</version>
+      <version>0.0.12-SNAPSHOT</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
@@ -82,12 +94,6 @@
       <artifactId>xercesImpl</artifactId>
       <version>2.11.0</version>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>xml-apis</artifactId>
-          <groupId>xml-apis</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.felix</groupId>
@@ -100,6 +106,24 @@
       <artifactId>joda-time</artifactId>
       <version>1.6.2</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.5</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>1.7.5</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>log4j</artifactId>
+          <groupId>log4j</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>junit</groupId>

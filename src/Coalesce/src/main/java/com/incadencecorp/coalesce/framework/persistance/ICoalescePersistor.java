@@ -32,105 +32,11 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 public interface ICoalescePersistor {
 
     /**
-     * Stores meta data about an Coalesce Entity.
-     * 
-     * @see {@link ICoalescePersistor#getCoalesceEntityIdAndTypeForKey(String)}.
-     */
-    public class EntityMetaData {
-
-        private String _entityId;
-        private String _entityType;
-        private String _entityKey;
-
-        /**
-         * 
-         * @param id
-         * @param type
-         * @param key
-         */
-        public EntityMetaData(final String id, final String type, final String key)
-        {
-            _entityId = id;
-            _entityType = type;
-            _entityKey = key;
-        }
-
-        /**
-         * @return a comma separated value (CSV) list of unique identifiers that
-         *         represents a Coalesce entity.
-         */
-        public final String getEntityId()
-        {
-            return _entityId;
-        }
-
-        /**
-         * @return comma separated value (CSV) list of type identifiers that map
-         *         1 to 1 with _entityId.
-         */
-        public final String getEntityType()
-        {
-            return _entityType;
-        }
-
-        /**
-         * @return a GUID that uniquely identifies a Coalesce entity.
-         */
-        public final String getEntityKey()
-        {
-            return _entityKey;
-        }
-
-    }
-
-    /**
-     * Stores meta data about an element within an Coalesce Entity.
-     * 
-     * @see {@link ICoalescePersistor#getXPath(String, String)}.
-     */
-    public class ElementMetaData {
-
-        private String _entityKey;
-        private String _elementXPath;
-
-        /**
-         * 
-         * @param key
-         * @param xPath
-         */
-        public ElementMetaData(final String key, final String xPath)
-        {
-            _entityKey = key;
-            _elementXPath = xPath;
-        }
-
-        /**
-         * @return the GUID that uniquely identifies a Coalesce entity that
-         *         contains the element of interest.
-         */
-        public final String getEntityKey()
-        {
-            return _entityKey;
-        }
-
-        /**
-         * @return the XML path within the Coalesce entity specified by
-         *         _entityKey that contains the element of interest.
-         */
-        public final String getElementXPath()
-        {
-            return _elementXPath;
-        }
-
-    }
-
-    /**
-     * Instantiates the persistor which must be done before using.
+     * Sets the cacher.
      * 
      * @param cacher Pass null if caching is not wanted
-     * @return true if successful
      */
-    boolean initialize(ICoalesceCacher cacher);
+    void setCacher(ICoalesceCacher cacher);
 
     /**
      * Saves the Coalesce entity to the database.
@@ -269,13 +175,22 @@ public interface ICoalescePersistor {
     byte[] getBinaryArray(String binaryFieldKey) throws CoalescePersistorException;
 
     /**
+     * Saves the template in the database.
      * 
-     * @param entityTemplate
-     * @return <code>true</code> is successful.
+     * @param templates
      * @throws CoalescePersistorException
      */
-    boolean persistEntityTemplate(CoalesceEntityTemplate entityTemplate) throws CoalescePersistorException;
+    void saveTemplate(CoalesceEntityTemplate... templates) throws CoalescePersistorException;
 
+    /**
+     * Saves the template in the database as well as creates tables and indexes
+     * needed for searching.
+     * 
+     * @param templates
+     * @throws CoalescePersistorException
+     */
+    void registerTemplate(final CoalesceEntityTemplate... templates) throws CoalescePersistorException;
+    
     /**
      * Returns the Coalesce entity template XML that matches the given
      * parameters.
@@ -315,7 +230,8 @@ public interface ICoalescePersistor {
      * 
      * @return XML of meta data
      * @throws CoalescePersistorException
+     * @since 0.0.9 interface was changed from a string.
      */
-    String getEntityTemplateMetadata() throws CoalescePersistorException;
+    List<ObjectMetaData> getEntityTemplateMetadata() throws CoalescePersistorException;
 
 }

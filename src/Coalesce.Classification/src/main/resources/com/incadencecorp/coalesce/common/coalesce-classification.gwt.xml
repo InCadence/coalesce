@@ -1,0 +1,4 @@
+<module>
+    <source path="classification" />
+    <source path="classification/helper" />
+</module>

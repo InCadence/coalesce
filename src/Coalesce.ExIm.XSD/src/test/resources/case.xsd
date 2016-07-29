@@ -1,0 +1,550 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    attributeFormDefault="qualified" elementFormDefault="qualified"
+    jxb:version="2.1"
+    targetNamespace="http://schema.coalesce.incadencecorp.com/CaseObject"
+    version="1.0" xmlns:jxb="http://java.sun.com/xml/ns/jaxb" xmlns:tns="http://schema.coalesce.incadencecorp.com/CaseObject">
+    <xs:element block="substitution" name="CaseObject">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="tns:baseType">
+                    <xs:all>
+                        <xs:element minOccurs="0" ref="tns:Linkages"/>
+                        <xs:element minOccurs="0" ref="tns:AccessControlSection"/>
+                        <xs:element minOccurs="0" ref="tns:BaseDataObjectSection"/>
+                        <xs:element minOccurs="0" ref="tns:SecuritySection"/>
+                        <xs:element minOccurs="0" ref="tns:Maps"/>
+                        <xs:element minOccurs="0" ref="tns:defaultSection"/>
+                    </xs:all>
+                    <xs:attribute name="source" type="tns:cdsString" use="required"/>
+                    <xs:attribute name="version" type="tns:cdsString" use="required"/>
+                    <xs:attribute name="entityid" type="tns:cdsString"/>
+                    <xs:attribute name="entityidtype" type="tns:cdsString"/>
+                    <xs:attribute name="title" type="tns:cdsString"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element block="substitution" name="AccessControlSection">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="tns:baseType">
+                    <xs:all>
+                        <xs:element minOccurs="0" ref="tns:AccessControlRecordset"/>
+                    </xs:all>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element block="substitution" name="AccessControlRecordset">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="tns:baseType">
+                    <xs:sequence>
+                        <xs:element block="substitution"
+                            maxOccurs="5000" minOccurs="0" name="AccessControlRecordsetRecord">
+                            <xs:complexType>
+                                <xs:complexContent>
+                                    <xs:extension base="tns:baseType">
+                                    <xs:all>
+                                    <xs:element
+                                    block="substitution"
+                                    name="accessScope" type="tns:cdsString"/>
+                                    <xs:element
+                                    block="substitution"
+                                    name="accessGroup" type="tns:cdsString"/>
+                                    <xs:element
+                                    block="substitution"
+                                    name="public" type="xs:boolean"/>
+                                    </xs:all>
+                                    </xs:extension>
+                                </xs:complexContent>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element block="substitution" name="BaseDataObjectSection">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="tns:baseType">
+                    <xs:all>
+                        <xs:element minOccurs="0" ref="tns:BaseDataObjectRecordset"/>
+                    </xs:all>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element block="substitution" name="BaseDataObjectRecordset">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="tns:baseType">
+                    <xs:sequence>
+                        <xs:element block="substitution"
+                            maxOccurs="5000" minOccurs="0" name="BaseDataObjectRecordsetRecord">
+                            <xs:complexType>
+                                <xs:complexContent>
+                                    <xs:extension base="tns:baseType">
+                                    <xs:all>
+                                    <xs:element
+                                    block="substitution"
+                                    name="createdBy" type="tns:cdsString"/>
+                                    <xs:element
+                                    block="substitution"
+                                    name="lastAccessedBy" type="tns:cdsString"/>
+                                    <xs:element
+                                    block="substitution"
+                                    name="lastAccessedDate" type="xs:dateTime"/>
+                                    <xs:element
+                                    block="substitution"
+                                    name="description" type="tns:cdsString"/>
+                                    <xs:element
+                                    block="substitution"
+                                    name="origin" type="tns:cdsString"/>
+                                    <xs:element
+                                    block="substitution"
+                                    name="category" type="tns:cdsString"/>
+                                    <xs:element
+                                    block="substitution"
+                                    name="reviewState" type="tns:cdsString"/>
+                                    <xs:element
+                                    block="substitution"
+                                    name="reviewTarget" type="tns:cdsString"/>
+                                    <xs:element
+                                    block="substitution"
+                                    name="productDevelopmentType" type="tns:cdsString"/>
+                                    <xs:element
+                                    block="substitution"
+                                    name="readOnly" type="xs:boolean"/>
+                                    </xs:all>
+                                    </xs:extension>
+                                </xs:complexContent>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element block="substitution" name="SecuritySection">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="tns:baseType">
+                    <xs:all>
+                        <xs:element minOccurs="0" ref="tns:SecurityRecordset"/>
+                    </xs:all>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element block="substitution" name="SecurityRecordset">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="tns:baseType">
+                    <xs:sequence>
+                        <xs:element block="substitution"
+                            maxOccurs="5000" minOccurs="0" name="SecurityRecordsetRecord">
+                            <xs:complexType>
+                                <xs:complexContent>
+                                    <xs:extension base="tns:baseType">
+                                    <xs:all>
+                                    <xs:element
+                                    block="substitution"
+                                    name="classification" type="tns:cdsString"/>
+                                    <xs:element
+                                    block="substitution"
+                                    name="classificationReason" type="tns:cdsString"/>
+                                    <xs:element
+                                    block="substitution"
+                                    name="classifiedBy" type="tns:cdsString"/>
+                                    <xs:element
+                                    block="substitution"
+                                    name="dateOfExemptedSource" type="xs:dateTime"/>
+                                    <xs:element
+                                    block="substitution"
+                                    name="declassificationDate" type="xs:dateTime"/>
+                                    <xs:element
+                                    block="substitution"
+                                    name="declassificationEvent" type="tns:cdsString"/>
+                                    <xs:element
+                                    block="substitution"
+                                    name="declassificationExemption" type="tns:cdsString"/>
+                                    <xs:element
+                                    block="substitution"
+                                    name="declassificationManualReview" type="xs:boolean"/>
+                                    <xs:element
+                                    block="substitution"
+                                    name="derivativelyClassifiedBy" type="tns:cdsString"/>
+                                    <xs:element
+                                    block="substitution"
+                                    name="derivedFrom" type="tns:cdsString"/>
+                                    <xs:element
+                                    block="substitution"
+                                    name="disseminationControls" type="tns:cdsString"/>
+                                    <xs:element
+                                    block="substitution"
+                                    name="FGISourceOpen" type="tns:cdsString"/>
+                                    <xs:element
+                                    block="substitution"
+                                    name="FGISourceProtected" type="tns:cdsString"/>
+                                    <xs:element
+                                    block="substitution"
+                                    name="nonICMarkings" type="tns:cdsString"/>
+                                    <xs:element
+                                    block="substitution"
+                                    name="ownerProducer" type="tns:cdsString"/>
+                                    <xs:element
+                                    block="substitution"
+                                    name="releasableTo" type="tns:cdsString"/>
+                                    <xs:element
+                                    block="substitution"
+                                    name="SARIdentifier" type="tns:cdsString"/>
+                                    <xs:element
+                                    block="substitution"
+                                    name="sci" type="tns:cdsString"/>
+                                    <xs:element
+                                    block="substitution"
+                                    name="sap" type="tns:cdsString"/>
+                                    <xs:element
+                                    block="substitution"
+                                    name="accm" type="tns:cdsString"/>
+                                    <xs:element
+                                    block="substitution"
+                                    name="typeOfExemptedSource" type="tns:cdsString"/>
+                                    </xs:all>
+                                    </xs:extension>
+                                </xs:complexContent>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element block="substitution" name="Maps">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="tns:baseType">
+                    <xs:all>
+                        <xs:element minOccurs="0" ref="tns:StringMap"/>
+                        <xs:element minOccurs="0" ref="tns:IntegerMap"/>
+                        <xs:element minOccurs="0" ref="tns:DoubleMap"/>
+                        <xs:element minOccurs="0" ref="tns:FloatMap"/>
+                        <xs:element minOccurs="0" ref="tns:DateTimeMap"/>
+                        <xs:element minOccurs="0" ref="tns:BooleanMap"/>
+                    </xs:all>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element block="substitution" name="StringMap">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="tns:baseType">
+                    <xs:sequence>
+                        <xs:element block="substitution"
+                            maxOccurs="5000" minOccurs="0" name="StringMapRecord">
+                            <xs:complexType>
+                                <xs:complexContent>
+                                    <xs:extension base="tns:baseType">
+                                    <xs:all>
+                                    <xs:element
+                                    block="substitution"
+                                    name="key" type="tns:cdsString"/>
+                                    <xs:element
+                                    block="substitution"
+                                    name="value" type="tns:cdsString"/>
+                                    </xs:all>
+                                    </xs:extension>
+                                </xs:complexContent>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element block="substitution" name="IntegerMap">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="tns:baseType">
+                    <xs:sequence>
+                        <xs:element block="substitution"
+                            maxOccurs="5000" minOccurs="0" name="IntegerMapRecord">
+                            <xs:complexType>
+                                <xs:complexContent>
+                                    <xs:extension base="tns:baseType">
+                                    <xs:all>
+                                    <xs:element
+                                    block="substitution"
+                                    name="key" type="tns:cdsString"/>
+                                    <xs:element
+                                    block="substitution"
+                                    name="value" type="xs:int"/>
+                                    </xs:all>
+                                    </xs:extension>
+                                </xs:complexContent>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element block="substitution" name="DoubleMap">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="tns:baseType">
+                    <xs:sequence>
+                        <xs:element block="substitution"
+                            maxOccurs="5000" minOccurs="0" name="DoubleMapRecord">
+                            <xs:complexType>
+                                <xs:complexContent>
+                                    <xs:extension base="tns:baseType">
+                                    <xs:all>
+                                    <xs:element
+                                    block="substitution"
+                                    name="key" type="tns:cdsString"/>
+                                    <xs:element
+                                    block="substitution"
+                                    name="value" type="xs:double"/>
+                                    </xs:all>
+                                    </xs:extension>
+                                </xs:complexContent>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element block="substitution" name="FloatMap">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="tns:baseType">
+                    <xs:sequence>
+                        <xs:element block="substitution"
+                            maxOccurs="5000" minOccurs="0" name="FloatMapRecord">
+                            <xs:complexType>
+                                <xs:complexContent>
+                                    <xs:extension base="tns:baseType">
+                                    <xs:all>
+                                    <xs:element
+                                    block="substitution"
+                                    name="key" type="tns:cdsString"/>
+                                    <xs:element
+                                    block="substitution"
+                                    name="value" type="xs:float"/>
+                                    </xs:all>
+                                    </xs:extension>
+                                </xs:complexContent>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element block="substitution" name="DateTimeMap">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="tns:baseType">
+                    <xs:sequence>
+                        <xs:element block="substitution"
+                            maxOccurs="5000" minOccurs="0" name="DateTimeMapRecord">
+                            <xs:complexType>
+                                <xs:complexContent>
+                                    <xs:extension base="tns:baseType">
+                                    <xs:all>
+                                    <xs:element
+                                    block="substitution"
+                                    name="key" type="tns:cdsString"/>
+                                    <xs:element
+                                    block="substitution"
+                                    name="value" type="xs:dateTime"/>
+                                    </xs:all>
+                                    </xs:extension>
+                                </xs:complexContent>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element block="substitution" name="BooleanMap">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="tns:baseType">
+                    <xs:sequence>
+                        <xs:element block="substitution"
+                            maxOccurs="5000" minOccurs="0" name="BooleanMapRecord">
+                            <xs:complexType>
+                                <xs:complexContent>
+                                    <xs:extension base="tns:baseType">
+                                    <xs:all>
+                                    <xs:element
+                                    block="substitution"
+                                    name="key" type="tns:cdsString"/>
+                                    <xs:element
+                                    block="substitution"
+                                    name="value" type="xs:boolean"/>
+                                    </xs:all>
+                                    </xs:extension>
+                                </xs:complexContent>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element block="substitution" name="defaultSection">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="tns:baseType">
+                    <xs:all>
+                        <xs:element minOccurs="0" ref="tns:CaseRecord"/>
+                    </xs:all>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element block="substitution" name="CaseRecord">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="tns:baseType">
+                    <xs:sequence>
+                        <xs:element block="substitution"
+                            maxOccurs="5000" minOccurs="0" name="CaseRecordRecord">
+                            <xs:complexType>
+                                <xs:complexContent>
+                                    <xs:extension base="tns:baseType">
+                                    <xs:all>
+                                    <xs:element
+                                    block="substitution"
+                                    name="oniCaseNumber" type="tns:cdsString"/>
+                                    <xs:element
+                                    block="substitution"
+                                    name="caseStartTime" type="xs:dateTime"/>
+                                    <xs:element
+                                    block="substitution"
+                                    name="caseStopTime" type="xs:dateTime"/>
+                                    <xs:element
+                                    block="substitution"
+                                    name="missionNumber" type="tns:cdsString"/>
+                                    <xs:element
+                                    block="substitution"
+                                    name="isDataAvailable" type="xs:boolean"/>
+                                    </xs:all>
+                                    </xs:extension>
+                                </xs:complexContent>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:simpleType name="ECoalesceObjectStatus">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="ACTIVE"/>
+            <xs:enumeration value="DELETED"/>
+            <xs:enumeration value="READONLY"/>
+            <xs:enumeration value="UNKNOWN"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="ELinkTypes">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="UNDEFINED"/>
+            <xs:enumeration value="IS_CHILD_OF"/>
+            <xs:enumeration value="IS_PARENT_OF"/>
+            <xs:enumeration value="CREATED"/>
+            <xs:enumeration value="WAS_CREATED_BY"/>
+            <xs:enumeration value="HAS_MEMBER"/>
+            <xs:enumeration value="IS_A_MEMBER_OF"/>
+            <xs:enumeration value="HAS_PARTICIPANT"/>
+            <xs:enumeration value="IS_A_PARTICIPANT_OF"/>
+            <xs:enumeration value="IS_WATCHING"/>
+            <xs:enumeration value="IS_BEING_WATCHED_BY"/>
+            <xs:enumeration value="IS_A_PEER_OF"/>
+            <xs:enumeration value="IS_OWNED_BY"/>
+            <xs:enumeration value="HAS_OWNERSHIP_OF"/>
+            <xs:enumeration value="IS_USED_BY"/>
+            <xs:enumeration value="HAS_USE_OF"/>
+            <xs:enumeration value="SUCCESSOR"/>
+            <xs:enumeration value="PREDECESSOR"/>
+            <xs:enumeration value="CROSS_DOMAIN_SOURCE"/>
+            <xs:enumeration value="CROSS_DOMAIN_TARGET"/>
+            <xs:enumeration value="IS_INPUT_PARAMETER_TO"/>
+            <xs:enumeration value="HAS_INPUT_PARAMETER_OF"/>
+            <xs:enumeration value="IS_INPUT_TO"/>
+            <xs:enumeration value="HAS_INPUT_OF"/>
+            <xs:enumeration value="IS_OUTPUT_TO"/>
+            <xs:enumeration value="HAS_OUTPUT_OF"/>
+            <xs:enumeration value="IS_PRODUCT_OF"/>
+            <xs:enumeration value="HAS_PRODUCT"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="baseType">
+        <xs:attribute name="key" type="tns:uuid" use="required"/>
+        <xs:attribute name="datecreated" type="xs:dateTime"/>
+        <xs:attribute name="lastmodified" type="xs:dateTime"/>
+        <xs:attribute default="ACTIVE" name="status" type="tns:ECoalesceObjectStatus"/>
+    </xs:complexType>
+    <xs:simpleType name="cdsString">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="20"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="uuid">
+        <xs:restriction base="xs:string">
+            <xs:length value="36"/>
+            <xs:pattern value="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[8-9a-bA-B][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:element block="substitution" name="Linkages">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="tns:baseType">
+                    <xs:sequence>
+                        <xs:element block="substitution"
+                            maxOccurs="5000" minOccurs="0" name="Linkage">
+                            <xs:complexType>
+                                <xs:complexContent>
+                                    <xs:extension base="tns:baseType">
+                                    <xs:all>
+                                    <xs:element
+                                    name="entity1key" type="tns:uuid"/>
+                                    <xs:element
+                                    name="entity1name" type="tns:cdsString"/>
+                                    <xs:element
+                                    name="entity1source" type="tns:cdsString"/>
+                                    <xs:element
+                                    name="entity1version" type="tns:cdsString"/>
+                                    <xs:element name="linktype" type="tns:ELinkTypes"/>
+                                    <xs:element
+                                    name="entity2key" type="tns:uuid"/>
+                                    <xs:element
+                                    name="entity2name" type="tns:cdsString"/>
+                                    <xs:element
+                                    name="entity2source" type="tns:cdsString"/>
+                                    <xs:element
+                                    name="entity2version" type="tns:cdsString"/>
+                                    <xs:element
+                                    name="entity2objectversion" type="tns:cdsString"/>
+                                    <xs:element
+                                    name="classificationmarking" type="tns:cdsString"/>
+                                    <xs:element name="label" type="tns:cdsString"/>
+                                    </xs:all>
+                                    </xs:extension>
+                                </xs:complexContent>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

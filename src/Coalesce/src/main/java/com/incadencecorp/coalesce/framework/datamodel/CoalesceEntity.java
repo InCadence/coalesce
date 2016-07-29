@@ -1,6 +1,7 @@
 package com.incadencecorp.coalesce.framework.datamodel;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -16,6 +17,8 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.commons.lang.NullArgumentException;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -49,6 +52,8 @@ import com.incadencecorp.coalesce.common.helpers.XmlHelper;
  * @author n78554
  */
 public class CoalesceEntity extends CoalesceObjectHistory {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CoalesceEntity.class);
 
     // ----------------------------------------------------------------------//
     // Private and protected Objects
@@ -622,6 +627,53 @@ public class CoalesceEntity extends CoalesceObjectHistory {
     public CoalesceSection createSection(String name)
     {
         return CoalesceSection.create(this, name);
+    }
+
+    /**
+     * Used to locate a record instance for a given record set. If not found its
+     * created.
+     * 
+     * @param clazz
+     * @param names
+     * 
+     * @return Coalesce Record
+     */
+    public <T extends CoalesceRecord> T createSingleton(Class<T> clazz, String... names)
+    {
+
+        T result = null;
+
+        // Get Record Set
+        CoalesceRecordset recordSet = getCoalesceRecordsetForNamePath(names);
+
+        // Found?
+        if (recordSet != null)
+        {
+
+            // Yes; Get Record
+            CoalesceRecord record = (CoalesceRecord) recordSet.getCoalesceObjectForNamePath(names[names.length - 1],
+                                                                                            names[names.length - 1]
+                                                                                                    + " Record");
+
+            // Found?
+            if (record == null)
+            {
+                // No; Create
+                record = recordSet.addNew();
+            }
+
+            try
+            {
+                result = clazz.getConstructor(CoalesceRecord.class).newInstance(record);
+            }
+            catch (SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException
+                   | InvocationTargetException | NoSuchMethodException e)
+            {
+                LOGGER.error("Failed to create record", e);
+            }
+        }
+
+        return result;
     }
 
     /**

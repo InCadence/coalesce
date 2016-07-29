@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.NullArgumentException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 
@@ -26,6 +28,8 @@ import com.incadencecorp.coalesce.common.helpers.StringHelper;
 
 public class CoalesceRecord extends CoalesceObjectHistory {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(CoalesceRecord.class);
+    
     // -----------------------------------------------------------------------//
     // Private Member Variables
     // -----------------------------------------------------------------------//
@@ -134,12 +138,19 @@ public class CoalesceRecord extends CoalesceObjectHistory {
 
         for (Field entityField : record.getField())
         {
-            CoalesceField<?> newField = CoalesceField.createTypeField(ECoalesceFieldDataTypes.getTypeForCoalesceType(entityField.getDatatype()));
-            if (!newField.initialize(this, entityField))
-                return false;
+            CoalesceFieldDefinition definition = this.getCastParent().getFieldDefinition(entityField.getName());
 
-            // Add to Child Collection
-            addChildCoalesceObject(newField.getKey(), newField);
+            if (definition != null)
+            {
+                CoalesceField<?> newField = CoalesceField.createTypeField(definition.getDataType());
+                if (!newField.initialize(this, definition, entityField))
+                    return false;
+
+                // Add to Child Collection
+                addChildCoalesceObject(newField.getKey(), newField);
+            } else {
+                LOGGER.warn("Failed to located defintion: {}", entityField.getName());
+            }
         }
 
         // Add to Parent Collections (if we're Active)
@@ -338,17 +349,20 @@ public class CoalesceRecord extends CoalesceObjectHistory {
     @Override
     protected boolean prune(CoalesceObjectType child)
     {
-        boolean isSuccessful = false; 
-        
-        if (child instanceof History) {
+        boolean isSuccessful = false;
+
+        if (child instanceof History)
+        {
             isSuccessful = _entityRecord.getHistory().remove(child);
-        } else if (child instanceof Field) {
+        }
+        else if (child instanceof Field)
+        {
             isSuccessful = _entityRecord.getField().remove(child);
         }
 
         return isSuccessful;
     }
-    
+
     @Override
     protected boolean setExtendedAttributes(String name, String value)
     {

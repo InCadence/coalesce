@@ -31,6 +31,9 @@ import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
 import com.incadencecorp.coalesce.framework.persistance.CoalescePersistorBase;
+import com.incadencecorp.coalesce.framework.persistance.ElementMetaData;
+import com.incadencecorp.coalesce.framework.persistance.EntityMetaData;
+import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -76,10 +79,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
         _schema = schema;
     }
 
-    /**
-     * @return the schema along with a '.'.
-     */
-    public String getSchemaPrefix()
+    protected String getSchemaPrefix()
     {
         if (_schema != null)
         {
@@ -89,6 +89,11 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
         {
             return "";
         }
+    }
+    
+    protected String getSchema()
+    {
+        return _schema;
     }
 
     @Override
@@ -183,29 +188,29 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     }
 
     @Override
-    public boolean persistEntityTemplate(CoalesceEntityTemplate template, CoalesceDataConnectorBase conn)
+    public void saveTemplate(CoalesceDataConnectorBase conn, CoalesceEntityTemplate... templates)
             throws CoalescePersistorException
     {
         try
         {
-            // Always persist template
-            return conn.executeProcedure("CoalesceEntityTemplate_InsertOrUpdate",
-                                         new CoalesceParameter(UUID.randomUUID().toString(), Types.OTHER),
-                                         new CoalesceParameter(template.getName()),
-                                         new CoalesceParameter(template.getSource()),
-                                         new CoalesceParameter(template.getVersion()),
-                                         new CoalesceParameter(template.toXml()),
-                                         new CoalesceParameter(JodaDateTimeHelper.nowInUtc().toString(), Types.OTHER),
-                                         new CoalesceParameter(JodaDateTimeHelper.nowInUtc().toString(), Types.OTHER));
-        }
-        catch (SQLException e)
-        {
-            throw new CoalescePersistorException("PersistEntityTemplate", e);
+            for (CoalesceEntityTemplate template : templates)
+            {
+                // Always persist template
+                conn.executeProcedure("CoalesceEntityTemplate_InsertOrUpdate",
+                                      new CoalesceParameter(UUID.randomUUID().toString(), Types.OTHER),
+                                      new CoalesceParameter(template.getName()),
+                                      new CoalesceParameter(template.getSource()),
+                                      new CoalesceParameter(template.getVersion()),
+                                      new CoalesceParameter(template.toXml()),
+                                      new CoalesceParameter(JodaDateTimeHelper.nowInUtc().toString(), Types.OTHER),
+                                      new CoalesceParameter(JodaDateTimeHelper.nowInUtc().toString(), Types.OTHER));
+            }
         }
         catch (Exception e)
         {
             throw new CoalescePersistorException("PersistEntityTemplate", e);
         }
+
     }
 
     @Override
@@ -495,15 +500,11 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     }
 
     @Override
-    public String getEntityTemplateMetadata() throws CoalescePersistorException
+    public List<ObjectMetaData> getEntityTemplateMetadata() throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings(), getSchemaPrefix()))
         {
             return conn.getTemplateMetaData("SELECT * FROM " + getSchemaPrefix() + "CoalesceEntityTemplate");
-        }
-        catch (SQLException ex)
-        {
-            throw new CoalescePersistorException("getEntityTemplateMetadata", ex);
         }
         catch (Exception ex)
         {
@@ -1045,9 +1046,9 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
         String objectKey = coalesceObject.getKey();
         String tableName = CoalesceTableHelper.getTableNameForObjectType(objectType);
 
-        conn.executeCmd("DELETE FROM " + getSchemaPrefix() + "CoalesceObjectMap WHERE ObjectKey=?",
+        conn.executeUpdate("DELETE FROM " + getSchemaPrefix() + "CoalesceObjectMap WHERE ObjectKey=?",
                         new CoalesceParameter(objectKey, Types.OTHER));
-        conn.executeCmd("DELETE FROM " + getSchemaPrefix() + tableName + " WHERE ObjectKey=?",
+        conn.executeUpdate("DELETE FROM " + getSchemaPrefix() + tableName + " WHERE ObjectKey=?",
                         new CoalesceParameter(objectKey, Types.OTHER));
 
         return true;
@@ -1292,4 +1293,5 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
         return meteData;
 
     }
+
 }

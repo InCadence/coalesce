@@ -58,23 +58,9 @@ public abstract class CoalescePersistorBase implements ICoalescePersistor {
      * 
      * @param svConn connection object.
      */
-    public void initialize(ServerConn svConn)
+    public void setConnectionSettings(ServerConn svConn)
     {
         _serCon = svConn;
-    }
-
-    /**
-     * Sets the cacher and server connection.
-     * 
-     * @param cacher class cacher.
-     * @param svConn connection object.
-     * @return <code>true</code> is successful.
-     */
-    public boolean initialize(ICoalesceCacher cacher, ServerConn svConn)
-    {
-        _serCon = svConn;
-
-        return initialize(cacher);
     }
 
     protected ServerConn getConnectionSettings()
@@ -89,13 +75,9 @@ public abstract class CoalescePersistorBase implements ICoalescePersistor {
     --------------------------------------------------------------------------*/
 
     @Override
-    public boolean initialize(ICoalesceCacher cacher)
+    public void setCacher(ICoalesceCacher cacher)
     {
-
         this._cacher = cacher;
-
-        return true;
-
     }
 
     @Override
@@ -164,23 +146,26 @@ public abstract class CoalescePersistorBase implements ICoalescePersistor {
 
         }
 
-        for (String xml : getEntityXml(keysToQuery.toArray(new String[keysToQuery.size()])))
+        if (keysToQuery.size() > 0)
         {
-
-            CoalesceEntity entity = new CoalesceEntity();
-
-            // Found?
-            if (!StringHelper.isNullOrEmpty(xml) && entity.initialize(xml))
+            for (String xml : getEntityXml(keysToQuery.toArray(new String[keysToQuery.size()])))
             {
 
-                // Yes; Add to Results
-                results.add(entity);
+                CoalesceEntity entity = new CoalesceEntity();
 
-                // Add Entity to Cache
-                this.addEntityToCache(entity);
+                // Found?
+                if (!StringHelper.isNullOrEmpty(xml) && entity.initialize(xml))
+                {
+
+                    // Yes; Add to Results
+                    results.add(entity);
+
+                    // Add Entity to Cache
+                    this.addEntityToCache(entity);
+
+                }
 
             }
-
         }
 
         return results.toArray(new CoalesceEntity[results.size()]);
@@ -240,17 +225,23 @@ public abstract class CoalescePersistorBase implements ICoalescePersistor {
     }
 
     @Override
-    public boolean persistEntityTemplate(CoalesceEntityTemplate entityTemplate) throws CoalescePersistorException {
-        
+    public void saveTemplate(CoalesceEntityTemplate... templates) throws CoalescePersistorException
+    {
         try (CoalesceDataConnectorBase conn = getDataConnector())
         {
-            // Always persist template
-            return persistEntityTemplate(entityTemplate, conn);
+            saveTemplate(conn, templates);
         }
-        
     }
 
-    
+    /*
+     * TODO This method really should be in the search interface.
+     */
+    @Override
+    public void registerTemplate(final CoalesceEntityTemplate... templates) throws CoalescePersistorException
+    {
+        saveTemplate(templates);
+    }
+
     /*--------------------------------------------------------------------------
     Abstract Public Functions
     --------------------------------------------------------------------------*/
@@ -297,9 +288,10 @@ public abstract class CoalescePersistorBase implements ICoalescePersistor {
             throws CoalescePersistorException;
 
     @Override
-    public abstract String getEntityTemplateMetadata() throws CoalescePersistorException;
+    public abstract List<ObjectMetaData> getEntityTemplateMetadata() throws CoalescePersistorException;
 
-    protected abstract boolean persistEntityTemplate(CoalesceEntityTemplate entityTemplate, CoalesceDataConnectorBase conn) throws CoalescePersistorException;
+    protected abstract void saveTemplate(CoalesceDataConnectorBase conn, CoalesceEntityTemplate... templates)
+            throws CoalescePersistorException;
 
     /*--------------------------------------------------------------------------
     Abstract Protected Functions

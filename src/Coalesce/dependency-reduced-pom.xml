@@ -3,14 +3,13 @@
   <parent>
     <artifactId>coalesce-pom</artifactId>
     <groupId>com.incadencecorp.coalesce</groupId>
-    <version>0.0.6-SNAPSHOT</version>
+    <version>0.0.12-SNAPSHOT</version>
     <relativePath>../Coalesce.Pom/pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>coalesce-core</artifactId>
   <packaging>bundle</packaging>
   <name>Coalesce Core</name>
-  <version>${coalesceVersion}</version>
   <description>Contains the meta model used to create entities.</description>
   <build>
     <plugins>
@@ -66,21 +65,31 @@
           <instructions>
             <Bundle-Name>${project.name}</Bundle-Name>
             <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
-            <Export-Package>${project.groupId}.api*,
-							${project.groupId}.common*,
-							${project.groupId}.framework,
-							${project.groupId}.framework.exim.impl,
-							${project.groupId}.framework.compareables,
-							${project.groupId}.framework.datamodel,
-							${project.groupId}.framework.persistance,
-							${project.groupId}.framework.validation*</Export-Package>
+            <Export-Package>${project.groupId}.api,
+                            ${project.groupId}.api.persistance,
+                            ${project.groupId}.mapper.impl,
+                            ${project.groupId}.common.exceptions,
+                            ${project.groupId}.common.helpers,
+                            ${project.groupId}.framework,
+                            ${project.groupId}.framework.util,
+                            ${project.groupId}.framework.iterators,
+                            ${project.groupId}.framework.exim.impl,
+                            ${project.groupId}.framework.compareables,
+                            ${project.groupId}.framework.datamodel,
+                            ${project.groupId}.framework.persistance,
+                            ${project.groupId}.framework.validation,
+                            ${project.groupId}.framework.validation.api,
+                            ${project.groupId}.framework.enumerationprovider.impl,
+                            ${project.groupId}.framework.jobs,
+                            ${project.groupId}.framework.tasks,
+                            ${project.groupId}.handlers</Export-Package>
             <Private-Package>${project.groupId}.framework.datamodel.generated,
-							com.drew*,
-							org.imgscalr*,
-							org.apache.xerces*,
-							com.adobe.xmp*</Private-Package>
+                            com.drew*,
+                            org.imgscalr*,
+                            org.apache.xerces*,
+                            com.adobe.xmp*</Private-Package>
             <Import-Package>org.joda.time*;version="[1.6.2, 3)",
-							*</Import-Package>
+                            *</Import-Package>
           </instructions>
         </configuration>
       </plugin>
@@ -157,14 +166,14 @@
     <dependency>
       <groupId>com.incadencecorp.unity</groupId>
       <artifactId>unity-common</artifactId>
-      <version>0.0.2-SNAPSHOT</version>
+      <version>0.0.3</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>com.incadencecorp.unity</groupId>
-      <artifactId>unity-local-connector</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-      <scope>test</scope>
+      <groupId>com.incadencecorp.coalesce</groupId>
+      <artifactId>coalesce-classification</artifactId>
+      <version>0.0.12-SNAPSHOT</version>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.felix</groupId>
@@ -185,6 +194,13 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>com.incadencecorp.coalesce</groupId>
+      <artifactId>coalesce-classification</artifactId>
+      <version>0.0.12-SNAPSHOT</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.apache.felix</groupId>
       <artifactId>org.osgi.core</artifactId>
       <version>1.4.0</version>
@@ -195,6 +211,24 @@
       <artifactId>joda-time</artifactId>
       <version>1.6.2</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.5</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>1.7.5</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>log4j</artifactId>
+          <groupId>log4j</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>junit</groupId>

@@ -17,11 +17,14 @@
 
 package com.incadencecorp.coalesce.framework.datamodel;
 
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.lang.NullArgumentException;
 
+import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 
 /**
@@ -47,16 +50,58 @@ public class CoalesceConstraint extends CoalesceObject implements ICoalesceConst
      * enumeration.
      * 
      * @param parent
+     * @param enumeration Enumeration type
+     * @param name
+     * @return the new constraint.
+     */
+    public static CoalesceConstraint createEnumeration(CoalesceFieldDefinition parent, String name, String enumeration)
+    {
+        return create(parent, name, ConstraintType.ENUMERATION, enumeration);
+    }
+
+    /**
+     * Creates a constraint restricting the field to values within the specify
+     * enumeration.
+     * 
+     * @param parent
      * @param clazz enumeration that should be used to constrain the field.
      * @param name
      * @return the new constraint.
      */
-    public static CoalesceConstraint createEnumeration(CoalesceFieldDefinition parent, String name, Class clazz)
+    public static <E extends Enum<E>> CoalesceConstraint createEnumeration(CoalesceFieldDefinition parent,
+                                                                           String name,
+                                                                           Class<E> clazz)
     {
+        CoalesceConstraint constraint;
 
+        switch (parent.getDataType()) {
+        case ENUMERATION_TYPE:
+        case ENUMERATION_LIST_TYPE:
+            constraint = create(parent, name, ConstraintType.ENUMERATION, clazz.getName());
+            constraint.setAttribute("regex", enumToRegEx(clazz));
+            break;
+        case STRING_TYPE:
+        case STRING_LIST_TYPE:
+            constraint = create(parent, name, ConstraintType.ENUMERATION, enumToRegEx(clazz));
+            break;
+        default:
+            throw new IllegalArgumentException(String.format(CoalesceErrors.INVALID_TYPE_CONSTRAINT,
+                                                             ConstraintType.ENUMERATION,
+                                                             parent.getDataType()));
+        }
+
+        return constraint;
+    }
+
+    /**
+     * @param clazz
+     * @return a RegEx representation of a enumeration.
+     */
+    public static <E extends Enum<E>> String enumToRegEx(Class<E> clazz)
+    {
         StringBuilder sb = new StringBuilder("");
 
-        for (Iterator it = EnumSet.allOf(clazz).iterator(); it.hasNext();)
+        for (Iterator<E> it = EnumSet.allOf(clazz).iterator(); it.hasNext();)
         {
             if (sb.length() != 0)
             {
@@ -66,9 +111,24 @@ public class CoalesceConstraint extends CoalesceObject implements ICoalesceConst
             sb.append(it.next());
         }
 
-        String regex = "(" + sb.toString() + ")";
+        return "(" + sb.toString() + ")";
+    }
 
-        return create(parent, name, ConstraintType.ENUMERATION, regex);
+    /**
+     * @param regex
+     * @return a list of values from a regular expression that was created by
+     *         {@link #enumToRegEx}
+     */
+    public static List<String> regExToValues(String regex)
+    {
+        List<String> results = null;
+
+        if (regex.startsWith("(") && regex.endsWith(")"))
+        {
+            results = Arrays.asList(regex.substring(1, regex.length() - 1).split("[|]"));
+        } 
+
+        return results;
     }
 
     /**
@@ -197,6 +257,8 @@ public class CoalesceConstraint extends CoalesceObject implements ICoalesceConst
             break;
         case INTEGER_TYPE:
         case INTEGER_LIST_TYPE:
+        case ENUMERATION_TYPE:
+        case ENUMERATION_LIST_TYPE:
             valueString = Integer.toString((int) value);
             break;
         default:
@@ -241,6 +303,7 @@ public class CoalesceConstraint extends CoalesceObject implements ICoalesceConst
         if (!constraint.initialize(parent, newConstraint))
             return null;
 
+        constraint.setName(name);
         constraint.setConstraintType(type);
         constraint.setValue(value);
 
@@ -301,6 +364,12 @@ public class CoalesceConstraint extends CoalesceObject implements ICoalesceConst
     {
         _constraint.setValue(value);
     }
+    
+    @Override
+    public CoalesceFieldDefinition getFieldDefinition() {
+        return getCastParent();
+    }
+
 
     /*--------------------------------------------------------------------------
     Protected Overrides

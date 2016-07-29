@@ -1,12 +1,8 @@
 package com.incadencecorp.coalesce.framework.persistance;
 
-import java.io.IOException;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.xml.sax.SAXException;
 
-import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLDataConnector;
 import com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLPersistor;
@@ -31,7 +27,7 @@ import com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLPersi
 public class PostGresPersistorTest extends CoalescePersistorBaseTest {
 
     @BeforeClass
-    public static void setupBeforeClass() throws SAXException, IOException, CoalesceException
+    public static void setupBeforeClass() throws Exception
     {
         PostGresPersistorTest tester = new PostGresPersistorTest();
 
@@ -40,7 +36,7 @@ public class PostGresPersistorTest extends CoalescePersistorBaseTest {
     }
 
     @AfterClass
-    public static void tearDownAfterClass()
+    public static void tearDownAfterClass() 
     {
         PostGresPersistorTest tester = new PostGresPersistorTest();
 
@@ -74,7 +70,7 @@ public class PostGresPersistorTest extends CoalescePersistorBaseTest {
     protected ICoalescePersistor getPersistor(ServerConn conn)
     {
         PostGreSQLPersistor postGresSQLPersistor = new PostGreSQLPersistor();
-        postGresSQLPersistor.initialize(conn);
+        postGresSQLPersistor.setConnectionSettings(conn);
         postGresSQLPersistor.setSchema("coalesce");
 
         return postGresSQLPersistor;
@@ -86,5 +82,5 @@ public class PostGresPersistorTest extends CoalescePersistorBaseTest {
     {
         return new PostGreSQLDataConnector(conn, null);
     }
-
+    
 }

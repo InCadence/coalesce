@@ -35,7 +35,9 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
  * visit method and return false all of its children wont be visited.
  * 
  * @author n78554
- *
+ * @deprecated
+ * @since Coalesce 0.0.9
+ * @see com.incadencecorp.coalesce.framework.iterators.CoalesceIterator
  */
 public abstract class CoalesceIterator {
 

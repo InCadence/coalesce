@@ -29,10 +29,15 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
+import com.incadencecorp.coalesce.common.helpers.ArrayHelper;
 import com.incadencecorp.coalesce.common.helpers.CoalesceIterator;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
+import com.incadencecorp.coalesce.framework.EnumerationProviderUtil;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceConstraint;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
@@ -40,7 +45,9 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
+import com.incadencecorp.coalesce.framework.datamodel.ConstraintType;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
+import com.incadencecorp.coalesce.framework.enumerationprovider.impl.ConstraintEnumerationProviderImpl;
 import com.incadencecorp.coalesce.framework.validation.api.ICustomValidator;
 
 /**
@@ -53,6 +60,8 @@ public class CoalesceValidator extends CoalesceIterator {
     private CoalesceEntity entity;
     private Principal principal;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(CoalesceValidator.class);
+
     /**
      * Calls {@link #validate(Principal, CoalesceEntity, Map)} passing
      * <code>null</coded> as the principle.
@@ -61,8 +70,7 @@ public class CoalesceValidator extends CoalesceIterator {
      * @param constraints
      * @return a map of errors where the key is the field's key and the value is
      *         the error; If the map is empty then there are no violations.
-     * @deprecated Use
-     *             {@link #validate(Principal, CoalesceEntity, Map)}
+     * @deprecated Use {@link #validate(Principal, CoalesceEntity, Map)}
      */
     public Map<String, String> validate(CoalesceEntity entity, Map<String, List<CoalesceFieldDefinition>> constraints)
     {
@@ -102,6 +110,10 @@ public class CoalesceValidator extends CoalesceIterator {
                 {
                     validateRecord(record, entry.getValue());
                 }
+            }
+            else
+            {
+                validateNoMandatory(entry.getKey(), entry.getValue());
             }
 
         }
@@ -144,13 +156,11 @@ public class CoalesceValidator extends CoalesceIterator {
 
         if (template != null)
         {
-
             this.entity = entity;
 
             CoalesceEntity templateEntity = template.createNewEntity();
 
             super.processActiveElements(templateEntity);
-
         }
 
         return violations;
@@ -162,10 +172,17 @@ public class CoalesceValidator extends CoalesceIterator {
         // Get Record Set from Actual Entity
         CoalesceRecordset actutal = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(recordset.getNamePath());
 
-        // For Each Record
-        for (CoalesceRecord record : actutal.getRecords())
+        if (actutal != null)
         {
-            validateRecord(record, recordset.getFieldDefinitions());
+            // For Each Record
+            for (CoalesceRecord record : actutal.getRecords())
+            {
+                validateRecord(record, recordset.getFieldDefinitions());
+            }
+        }
+        else
+        {
+            validateNoMandatory(recordset.getNamePath(), recordset.getFieldDefinitions());
         }
 
         // Don't Process Children
@@ -175,6 +192,22 @@ public class CoalesceValidator extends CoalesceIterator {
     /*--------------------------------------------------------------------------
     Private Methods
     --------------------------------------------------------------------------*/
+
+    private void validateNoMandatory(String path, List<CoalesceFieldDefinition> definitions)
+    {
+        // For Each Definition
+        for (CoalesceFieldDefinition definition : definitions)
+        {
+            for (CoalesceConstraint constraint : definition.getConstraints())
+            {
+                if (constraint.getConstraintType() == ConstraintType.MANDATORY)
+                {
+                    violations.put(path, "Missing Mandatory Recordset");
+                    break;
+                }
+            }
+        }
+    }
 
     private void validateRecord(CoalesceRecord record, List<CoalesceFieldDefinition> definitions)
     {
@@ -191,7 +224,6 @@ public class CoalesceValidator extends CoalesceIterator {
                 // Has Field?
                 if (field != null)
                 {
-
                     // Apply Each Constraint to Field
                     for (CoalesceConstraint constraint : definition.getConstraints())
                     {
@@ -223,9 +255,13 @@ public class CoalesceValidator extends CoalesceIterator {
 
                         if (result != null)
                         {
+                            if (LOGGER.isInfoEnabled())
+                            {
+                                LOGGER.warn("Field ({}.{}) is invalid beacuse ({})", record.getParent().getName(), field.getName(), result);
+                            }
+
                             violations.put(field.getKey(), result);
                         }
-
                     }
                 }
             }
@@ -235,12 +271,77 @@ public class CoalesceValidator extends CoalesceIterator {
 
     private String validateEnumeration(CoalesceField<?> field, CoalesceConstraint constraint)
     {
+        String result = null;
 
-        String result = validateRegEx(constraint.getValue(), field.getBaseValues());
-
-        if (result != null)
+        // Verify File Type = Definition
+        if (field.getDataType() != constraint.getFieldDefinition().getDataType())
         {
-            result = String.format("Invalid Enumeration (%s)", result);
+            result = String.format(CoalesceErrors.INVALID_DATA_TYPE,
+                                   field.getKey(),
+                                   field.getDataType(),
+                                   field.getEntity().getKey(),
+                                   constraint.getFieldDefinition().getDataType());
+            LOGGER.warn(result);
+        }
+        else
+        {
+            switch (field.getDataType()) {
+            case ENUMERATION_TYPE:
+            case ENUMERATION_LIST_TYPE:
+                // Ensure Constraint Enumeration Exists
+                ConstraintEnumerationProviderImpl provider = EnumerationProviderUtil.getProvider(ConstraintEnumerationProviderImpl.class);
+                if (provider != null)
+                {
+                    provider.add(constraint);
+                }
+
+                // Validate Values
+                result = validateEnumeration(constraint.getValue(), ArrayHelper.toIntegerArray(field.getBaseValues()));
+                break;
+            case STRING_TYPE:
+                result = validateRegEx(constraint.getValue(), field.getBaseValues());
+
+                if (result != null)
+                {
+                    result = String.format("Invalid Enumeration (%s)", result);
+                }
+                LOGGER.warn(String.format(CoalesceErrors.DEPRECATED_CONSTRAINT,
+                                          constraint.getName(),
+                                          field.getEntity().getKey(),
+                                          field.getDataType()));
+                break;
+            default:
+                // Do Nothing; Invalid Type
+                LOGGER.warn(String.format(CoalesceErrors.INVALID_CONSTRAINT,
+                                          constraint.getName(),
+                                          field.getEntity().getKey(),
+                                          field.getDataType()));
+
+            }
+        }
+
+        return result;
+    }
+
+    private String validateEnumeration(String type, int... values)
+    {
+        String result = null;
+
+        for (int value : values)
+        {
+            try
+            {
+                if (value < 0 || !EnumerationProviderUtil.isValid(principal, type, value))
+                {
+                    result = String.format(CoalesceErrors.INVALID_ENUMERATION_POSITION, value, type);
+                    break;
+                }
+            }
+            catch (IllegalStateException | IllegalArgumentException e)
+            {
+                result = e.getMessage();
+                break;
+            }
         }
 
         return result;
@@ -381,6 +482,8 @@ public class CoalesceValidator extends CoalesceIterator {
             break;
         case INTEGER_TYPE:
         case INTEGER_LIST_TYPE:
+        case ENUMERATION_TYPE:
+        case ENUMERATION_LIST_TYPE:
             result = Integer.compare(Integer.valueOf(value), Integer.valueOf(max));
             break;
         case LONG_TYPE:

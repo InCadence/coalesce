@@ -18,7 +18,7 @@ import org.junit.rules.ExpectedException;
 
 import com.incadencecorp.coalesce.common.CoalesceTypeInstances;
 import com.incadencecorp.coalesce.common.classification.Marking;
-import com.incadencecorp.coalesce.common.classification.MarkingValueTest;
+import com.incadencecorp.coalesce.common.classification.tests.MarkingValueTest;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
@@ -66,7 +66,7 @@ public class CoalesceFieldHistoryTest {
     {
 
         CoalesceStringField field = new CoalesceStringField();
-        field.initialize(null, new Field());
+        field.initialize(null, null, new Field());
 
         @SuppressWarnings("unused")
         CoalesceFieldHistory fh = CoalesceFieldHistory.create(field);
@@ -89,7 +89,7 @@ public class CoalesceFieldHistoryTest {
         record.initialize(rs, new Record());
 
         CoalesceField<?> field = new CoalesceStringField();
-        field.initialize(record, new Field());
+        field.initialize(record, null, new Field());
 
         @SuppressWarnings("unused")
         CoalesceFieldHistory fh = CoalesceFieldHistory.create(field);

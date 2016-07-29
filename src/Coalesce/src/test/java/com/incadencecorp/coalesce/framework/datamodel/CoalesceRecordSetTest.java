@@ -46,7 +46,6 @@ public class CoalesceRecordSetTest {
      * 
      * @After public void tearDown() throws Exception { }
      */
-
     @Test
     public void createRecordsetEmptyTest()
     {

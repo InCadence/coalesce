@@ -55,6 +55,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
 
     private boolean _suspendHistory = false;
     private Field _entityField;
+    private CoalesceFieldDefinition _definition;
 
     // -----------------------------------------------------------------------//
     // Factory and Initialization
@@ -89,11 +90,10 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
         parent.getEntityFields().add(newEntityField);
 
         CoalesceField<?> newField = createTypeField(fieldDefinition.getDataType());
-        if (!newField.initialize(parent, newEntityField))
+        if (!newField.initialize(parent, fieldDefinition, newEntityField))
             return null;
 
         newField.setSuspendHistory(true);
-
         newField.setName(fieldDefinition.getName());
         newField.setDataType(fieldDefinition.getDataType());
 
@@ -197,6 +197,12 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
         case STRING_LIST_TYPE:
             return new CoalesceStringListField();
 
+        case ENUMERATION_TYPE:
+            return new CoalesceEnumerationField();
+
+        case ENUMERATION_LIST_TYPE:
+            return new CoalesceEnumerationListField();
+
         default:
             throw new NotImplementedException(dataType + " not implemented");
 
@@ -236,9 +242,11 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
         case BOOLEAN_LIST_TYPE:
             return (T) getBooleanListValue();
 
+        case ENUMERATION_TYPE:
         case INTEGER_TYPE:
             return (T) getIntegerValue();
 
+        case ENUMERATION_LIST_TYPE:
         case INTEGER_LIST_TYPE:
             return (T) getIntegerListValue();
 
@@ -321,10 +329,12 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
             setTypedValue((boolean[]) value);
             break;
 
+        case ENUMERATION_TYPE:
         case INTEGER_TYPE:
             setTypedValue((Integer) value);
             break;
 
+        case ENUMERATION_LIST_TYPE:
         case INTEGER_LIST_TYPE:
             setTypedValue((int[]) value);
             break;
@@ -398,12 +408,13 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
      * @param field Field being initialized.
      * @return boolean indicator of success/failure.
      */
-    protected boolean initialize(CoalesceRecord parent, Field field)
+    protected boolean initialize(CoalesceRecord parent, CoalesceFieldDefinition definition, Field field)
     {
 
         // Set References
         setParent(parent);
         _entityField = field;
+        _definition = definition;
 
         super.initialize(_entityField);
 
@@ -460,6 +471,23 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
     public ECoalesceFieldDataTypes getDataType()
     {
         return ECoalesceFieldDataTypes.getTypeForCoalesceType(_entityField.getDatatype());
+    }
+
+    /**
+     * @return the field definition that created this field.
+     */
+    public CoalesceFieldDefinition getFieldDefinition()
+    {
+        return _definition;
+    }
+
+    /**
+     * @return whether this field is a list type.
+     */
+    public boolean isListType()
+    {
+        return getDataType().toString().endsWith(CoalesceSettings.VAR_IS_LIST_TYPE)
+                && getDataType() != ECoalesceFieldDataTypes.GEOCOORDINATE_LIST_TYPE;
     }
 
     /**
@@ -840,7 +868,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
 
         String[] results;
 
-        if (getDataType().toString().endsWith("_LIST_TYPE"))
+        if (isListType())
         {
             results = getArray();
         }
@@ -906,7 +934,9 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
         // newValue cannot be null, because setBaseValue: 'if (value == null)
         // value = "";'
         if (newValue == null)
+        {
             throw new IllegalArgumentException("newValue");
+        }
 
         // Has Value Changed?
         if (!newValue.equals(oldValue))
@@ -934,7 +964,6 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
                 }
             }
 
-            // Update Last Modified
             updateLastModified();
         }
     }

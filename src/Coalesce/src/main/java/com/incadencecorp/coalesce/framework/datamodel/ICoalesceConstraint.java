@@ -17,7 +17,6 @@ package com.incadencecorp.coalesce.framework.datamodel;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-
 /**
  * Interface for accessing constraints.
  * 
@@ -48,5 +47,10 @@ public interface ICoalesceConstraint {
      * @param value
      */
     void setValue(String value);
+
+    /**
+     * @return the field definition that this constraint belongs to.
+     */
+    CoalesceFieldDefinition getFieldDefinition();
 
 }

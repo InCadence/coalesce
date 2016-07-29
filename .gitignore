@@ -1,22 +1,22 @@
 
 # Directories #
 build/
-doc/
 bin/
 target/
 logs/
 config/
 .vpprefdata/
-.settings/
+
 
  
 # OS Files #
 .DS_Store
  
 *.class
+.settings/
 .classpath
 .project
- 
+
 # Package Files #
 *.jar
 *.war
@@ -75,3 +75,5 @@ local.properties
  
 # PDT-specific
 .buildpath
+src/Unity.UnitTest/${sys
+.recommenders/

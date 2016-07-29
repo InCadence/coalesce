@@ -2,7 +2,6 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>coalesce-framework-persister-neo4j</artifactId>
-	<version>${coalescePersisterVersionNEO4J}</version>
 	<packaging>bundle</packaging>
 	<name>Coalesce Neo4j Persister</name>
 	<description>Persister used by Coalesce to connect to a Neo4j database.</description>
@@ -10,10 +9,10 @@
 	<parent>
 		<groupId>com.incadencecorp.coalesce</groupId>
 		<artifactId>coalesce-pom</artifactId>
-		<version>0.0.6-SNAPSHOT</version>
+		<version>0.0.12-SNAPSHOT</version>
 		<relativePath>../Coalesce.Pom</relativePath>
 	</parent>
-
+	
 	<build>
 		<plugins>
 			<plugin>
@@ -34,7 +33,7 @@
 									<include>org.parboiled:*</include>
 									<include>org.apache.lucene:lucene-core</include>
 									<include>net.sf.opencsv:*</include>
-									<!-- <include>com.infradna.tool:bridge-method-annotation</include> -->
+									<include>com.infradna.tool:bridge-method-annotation</include>
 									<include>org.restlet:*</include>
 									<include>org.apache.httpcomponents:httpclient</include>
 									<include>org.apache.httpcomponents:httpmime</include>
@@ -75,7 +74,7 @@
 							org.apache.lucene*;-split-package:=merge-last,
 							org.apache.http*;-split-package:=merge-last,
 							org.parboiled*;-split-package:=merge-last,
-							<!-- com.infradna*, -->
+							com.infradna*,
 							org.apache.commons.codec*,
 							org.restlet*
 						</Private-Package>
@@ -109,7 +108,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.incadencecorp.coalesce</groupId>
-			<version>${coalesceVersion}</version>
+			<version>${project.version}</version>
 			<artifactId>coalesce-core</artifactId>
 			<type>test-jar</type>
 			<scope>test</scope>
@@ -121,13 +120,20 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.incadencecorp.coalesce</groupId>
-			<artifactId>coalesce-framework-persister-postgresql</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.neo4j</groupId>
 			<artifactId>neo4j</artifactId>
 			<version>2.3.0-M01</version>
+		</dependency>
+		<dependency>
+			<groupId>org.neo4j</groupId>
+			<artifactId>neo4j-jdbc</artifactId>
+			<version>2.2-lmco</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- Transitive Dependencies -->
@@ -231,25 +237,12 @@
 			<artifactId>mysema-commons-lang</artifactId>
 			<version>0.2.4</version>
 		</dependency>
-		<!-- TODO this dependency is not in the central reposiroty so it has to 
-			be manually installed into your .m2 or onto the nexus server. -->
-		<!-- <dependency> -->
-		<!-- <groupId>org.neo4j</groupId> -->
-		<!-- <artifactId>neo4j-jdbc</artifactId> -->
-		<!-- <version>2.2-lmco</version> -->
-		<!-- <exclusions> -->
-		<!-- <exclusion> -->
-		<!-- <groupId>commons-logging</groupId> -->
-		<!-- <artifactId>commons-logging</artifactId> -->
-		<!-- </exclusion> -->
-		<!-- </exclusions> -->
-		<!-- </dependency> -->
-		<!-- <dependency> -->
-		<!-- <groupId>com.infradna.tool</groupId> -->
-		<!-- <artifactId>bridge-method-annotation</artifactId> -->
-		<!-- <version>1.13</version> -->
-		<!-- <scope>provided</scope> -->
-		<!-- </dependency> -->
+		<dependency>
+			<groupId>com.infradna.tool</groupId>
+			<artifactId>bridge-method-annotation</artifactId>
+			<version>1.13</version>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
 
 </project>

@@ -39,7 +39,6 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceStringField;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
-import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor.EntityMetaData;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -127,7 +126,7 @@ public abstract class CoalescePersistorBaseTest {
         ICoalescePersistor persistor = tester.getPersistor(_serCon);
 
         _coalesceFramework = new CoalesceFramework();
-        _coalesceFramework.initialize(persistor);
+        _coalesceFramework.setAuthoritativePersistor(persistor);
 
         CoalescePersistorBaseTest.cleanUpDatabase(tester);
 
@@ -199,7 +198,7 @@ public abstract class CoalescePersistorBaseTest {
         {
             try (CoalesceDataConnectorBase conn = getDataConnector(_serCon))
             {
-                conn.executeCmd("delete from CoalesceEntityTemplate where TemplateKey = '" + _testTemplateKey + "'");
+                conn.executeUpdate("delete from CoalesceEntityTemplate where TemplateKey = '" + _testTemplateKey + "'");
             }
             catch (Exception e)
             {
@@ -301,7 +300,7 @@ public abstract class CoalescePersistorBaseTest {
     public void testEntityTemplate() throws SAXException, IOException, CoalescePersistorException
     {
         CoalesceEntityTemplate template = testTemplate(CoalesceEntityTemplate.create(_entity));
-        assertTrue(_coalesceFramework.saveCoalesceEntityTemplate(template));
+        _coalesceFramework.saveCoalesceEntityTemplate(template);
 
         String templateXml = template.toXml();
 
@@ -334,7 +333,7 @@ public abstract class CoalescePersistorBaseTest {
     {
         CoalesceEntityTemplate template = testTemplate(CoalesceEntityTemplate.create(_entity));
 
-        assertTrue(_coalesceFramework.saveCoalesceEntityTemplate(template));
+        _coalesceFramework.saveCoalesceEntityTemplate(template);
 
         String templateKey = _coalesceFramework.getCoalesceEntityTemplateKey(_entity.getName(),
                                                                              _entity.getSource(),
@@ -551,17 +550,6 @@ public abstract class CoalescePersistorBaseTest {
     }
 
     @Test
-    public void getEntityTemplateMetadataTest() throws CoalescePersistorException, SAXException, IOException
-    {
-        // Ensure Database has a Template
-        String xmlMetaData = _coalesceFramework.getCoalesceEntityTemplateMetadata();
-
-        // System.out.println(xmlMetaData);
-
-        assertNotNull(xmlMetaData);
-    }
-
-    @Test
     public void testGetEntityXmlEntityIdEntityIdtype() throws CoalescePersistorException
     {
         String entityXml = _coalesceFramework.getEntityXml(_entity.getEntityId(), _entity.getEntityIdType());
@@ -689,7 +677,7 @@ public abstract class CoalescePersistorBaseTest {
     {
         try
         {
-            conn.executeCmd("delete from " + tableName + " where ObjectKey = '" + key + "'");
+            conn.executeUpdate("delete from " + tableName + " where ObjectKey = '" + key + "'");
         }
         catch (SQLException e)
         {

@@ -19,10 +19,16 @@ package com.incadencecorp.coalesce.framework.datamodel;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.List;
 import java.util.Map;
 
+import org.junit.Assert;
 import org.junit.Test;
 
+import com.incadencecorp.coalesce.api.CoalesceErrors;
+import com.incadencecorp.coalesce.framework.EnumerationProviderUtil;
+import com.incadencecorp.coalesce.framework.enumerationprovider.impl.ConstraintEnumerationProviderImpl;
+import com.incadencecorp.coalesce.framework.enumerationprovider.impl.JavaEnumerationProviderImpl;
 import com.incadencecorp.coalesce.framework.validation.CoalesceValidator;
 import com.incadencecorp.coalesce.framework.validation.CustomValidatorImpl;
 
@@ -71,7 +77,7 @@ public class CoalesceConstraintTest {
         field2.setTypedValue("d");
 
         // Validate
-        Map<String, String> results = new CoalesceValidator().validate(entity, CoalesceEntityTemplate.create(entity));
+        Map<String, String> results = new CoalesceValidator().validate(null, entity, CoalesceEntityTemplate.create(entity));
 
         assertEquals("Invalid Input (D)", results.get(field1.getKey()));
         assertEquals("Invalid Input (d)", results.get(field2.getKey()));
@@ -125,32 +131,39 @@ public class CoalesceConstraintTest {
         fieldValid.setTypedValue(5);
         fieldInvalidMin.setTypedValue(-1.0);
         fieldInvalidMax.setTypedValue(10l);
-        fieldList.setTypedValue(new long[] {1, 3, 4, 10});
+        fieldList.setTypedValue(new long[] {
+                1, 3, 4, 10
+        });
 
         // Validate
-        Map<String, String> results = new CoalesceValidator().validate(entity, CoalesceEntityTemplate.create(entity));
+        Map<String, String> results = new CoalesceValidator().validate(null, entity, CoalesceEntityTemplate.create(entity));
 
         assertEquals(null, results.get(fieldValid.getKey()));
         assertEquals("Invalid Input (Value excceeds the min)", results.get(fieldInvalidMin.getKey()));
         assertEquals("Invalid Input (Value excceeds the max)", results.get(fieldInvalidMax.getKey()));
         assertEquals("Invalid Input (Value excceeds the max)", results.get(fieldList.getKey()));
 
-        fieldList.setTypedValue(new long[] {1, 3, 4, -2});
+        fieldList.setTypedValue(new long[] {
+                1, 3, 4, -2
+        });
 
-        results = new CoalesceValidator().validate(entity, CoalesceEntityTemplate.create(entity));
+        results = new CoalesceValidator().validate(null, entity, CoalesceEntityTemplate.create(entity));
 
         assertEquals("Invalid Input (Value excceeds the min)", results.get(fieldList.getKey()));
 
-        fieldList.setTypedValue(new long[] {1, 3, 4});
+        fieldList.setTypedValue(new long[] {
+                1, 3, 4
+        });
 
-        results = new CoalesceValidator().validate(entity, CoalesceEntityTemplate.create(entity));
+        results = new CoalesceValidator().validate(null, entity, CoalesceEntityTemplate.create(entity));
 
         assertEquals(null, results.get(fieldList.getKey()));
 
     }
 
     /**
-     * This test sets the field to null which creates an empty string.  
+     * This test sets the field to null which creates an empty string.
+     * 
      * @throws Exception
      */
     @Test
@@ -177,21 +190,21 @@ public class CoalesceConstraintTest {
         CoalesceField<?> field1 = record.getFieldByName("field1");
 
         field1.setValue(null);
-        
+
         // Validate
-        Map<String, String> results = new CoalesceValidator().validate(entity, CoalesceEntityTemplate.create(entity));
+        Map<String, String> results = new CoalesceValidator().validate(null, entity, CoalesceEntityTemplate.create(entity));
 
         assertEquals("Empty Mandatory Field", results.get(field1.getKey()));
 
         // Set Values
         field1.setTypedValue(4.2);
-        
-        results = new CoalesceValidator().validate(entity, CoalesceEntityTemplate.create(entity));
+
+        results = new CoalesceValidator().validate(null, entity, CoalesceEntityTemplate.create(entity));
 
         assertEquals(null, results.get(field1.getKey()));
 
     }
-    
+
     /**
      * This unit test adds mandatory constraints and verifies that the validator
      * reports appropriate constraint violations.
@@ -235,7 +248,7 @@ public class CoalesceConstraintTest {
         field1.setTypedValue("Hello World");
 
         // Validate
-        Map<String, String> results = new CoalesceValidator().validate(entity, CoalesceEntityTemplate.create(entity));
+        Map<String, String> results = new CoalesceValidator().validate(null, entity, CoalesceEntityTemplate.create(entity));
 
         assertEquals(null, results.get(field1.getKey()));
         assertEquals("Empty Mandatory Field", results.get(field2.getKey()));
@@ -248,7 +261,7 @@ public class CoalesceConstraintTest {
         field4.setValue(null);
 
         // Validate
-        results = new CoalesceValidator().validate(entity, CoalesceEntityTemplate.create(entity));
+        results = new CoalesceValidator().validate(null, entity, CoalesceEntityTemplate.create(entity));
 
         assertEquals(null, results.get(field1.getKey()));
         assertEquals("Empty Mandatory Field", results.get(field2.getKey()));
@@ -293,7 +306,7 @@ public class CoalesceConstraintTest {
         field3.setTypedValue("Bad Value");
 
         // Validate
-        Map<String, String> results = new CoalesceValidator().validate(entity, CoalesceEntityTemplate.create(entity));
+        Map<String, String> results = new CoalesceValidator().validate(null, entity, CoalesceEntityTemplate.create(entity));
 
         assertEquals("Validator Not Found: Hello World", results.get(field2.getKey()));
         assertEquals("test", results.get(field3.getKey()));
@@ -316,19 +329,10 @@ public class CoalesceConstraintTest {
         CoalesceRecordset recordset = CoalesceRecordset.create(section, "rs");
 
         // Create Field Definitions w/ Constraints
-        CoalesceFieldDefinition fd;
-
-        fd = CoalesceFieldDefinition.create(recordset, "field1", ECoalesceFieldDataTypes.STRING_TYPE);
-        CoalesceConstraint.createEnumeration(fd, "v1", ETest.class);
-
-        fd = CoalesceFieldDefinition.create(recordset, "field2", ECoalesceFieldDataTypes.STRING_TYPE);
-        CoalesceConstraint.createEnumeration(fd, "v1", ETest.class);
-
-        fd = CoalesceFieldDefinition.create(recordset, "field3", ECoalesceFieldDataTypes.STRING_TYPE);
-        CoalesceConstraint.createEnumeration(fd, "v1", ETest.class);
-
-        fd = CoalesceFieldDefinition.create(recordset, "field4", ECoalesceFieldDataTypes.STRING_LIST_TYPE);
-        CoalesceConstraint.createEnumeration(fd, "v1", ETest.class);
+        CoalesceFieldDefinition.createEnumerationFieldDefinition(recordset, "field1", ETest.class);
+        CoalesceFieldDefinition.createEnumerationFieldDefinition(recordset, "field2", ETest.class);
+        CoalesceFieldDefinition.createEnumerationFieldDefinition(recordset, "field3", ETest.class);
+        CoalesceFieldDefinition.createEnumerationListFieldDefinition(recordset, "field4", ETest.class);
 
         // Create New Record
         CoalesceRecord record = recordset.addNew();
@@ -340,55 +344,61 @@ public class CoalesceConstraintTest {
         CoalesceField<?> field4 = record.getFieldByName("field4");
 
         // Set Values
-        field1.setTypedValue("A");
-        field2.setTypedValue("Z");
-        field3.setTypedValue("AB");
-        field4.setTypedValue(new String[] {"A", "B", "BC"});
-        
+        field1.setTypedValue(1);
+        field2.setTypedValue(10);
+        field3.setTypedValue(11);
+        field4.setTypedValue(new int[] {
+                0, 1, 10
+        });
+
+        EnumerationProviderUtil.setEnumerationProviders(new JavaEnumerationProviderImpl(), new ConstraintEnumerationProviderImpl());
+
         // Validate
-        Map<String, String> results = new CoalesceValidator().validate(entity, CoalesceEntityTemplate.create(entity));
+        Map<String, String> results = new CoalesceValidator().validate(null, entity, CoalesceEntityTemplate.create(entity));
 
         assertEquals(null, results.get(field1.getKey()));
-        assertEquals("Invalid Enumeration (Z)", results.get(field2.getKey()));
-        assertEquals("Invalid Enumeration (AB)", results.get(field3.getKey()));
-        assertEquals("Invalid Enumeration (BC)", results.get(field4.getKey()));
+        assertEquals(String.format(CoalesceErrors.INVALID_ENUMERATION_POSITION, "10", ETest.class.getName()),
+                     results.get(field2.getKey()));
+        assertEquals(String.format(CoalesceErrors.INVALID_ENUMERATION_POSITION, "11", ETest.class.getName()),
+                     results.get(field3.getKey()));
+        assertEquals(String.format(CoalesceErrors.INVALID_ENUMERATION_POSITION, "10", ETest.class.getName()),
+                     results.get(field4.getKey()));
 
-        field4.setTypedValue(new String[] {"A", "B"});
+        field4.setTypedValue(new int[] {
+                0, 1
+        });
 
         // Validate
-        results = new CoalesceValidator().validate(entity, CoalesceEntityTemplate.create(entity));
+        results = new CoalesceValidator().validate(null, entity, CoalesceEntityTemplate.create(entity));
 
         assertEquals(null, results.get(field4.getKey()));
 
     }
-    
+
     /**
-     * This unit test adds enumeration constraints and verifies that the
-     * validator reports appropriate constraint violations.
+     * This test ensure that the conversion to regex back to a list of values
+     * works as expected.
      * 
      * @throws Exception
      */
-    @Test(expected = ClassCastException.class)
-    public void testInvalidEnumeration() throws Exception
+    @Test
+    public void testHelperMethods() throws Exception
     {
+        String regex = CoalesceConstraint.enumToRegEx(ETest.class);
 
-        // Create Entity
-        CoalesceEntity entity = CoalesceEntity.create("Constraint", "UNIT_TEST", "1.0", "", "");
-        CoalesceSection section = CoalesceSection.create(entity, "section");
-        CoalesceRecordset recordset = CoalesceRecordset.create(section, "rs");
+        List<String> values = CoalesceConstraint.regExToValues(regex);
 
-        // Create Field Definitions w/ Constraints
-        CoalesceFieldDefinition fd;
+        Assert.assertEquals(ETest.values().length, values.size());
 
-        fd = CoalesceFieldDefinition.create(recordset, "field1", ECoalesceFieldDataTypes.STRING_TYPE);
-        CoalesceConstraint.createEnumeration(fd, "v1", ENonEnumeration.class);
-        
+        int ii = 0;
+
+        for (ETest value : ETest.values())
+        {
+            Assert.assertEquals(value.toString(), values.get(ii++));
+        }
+
     }
 
-    private class ENonEnumeration {
-        
-    }
-    
     private enum ETest
     {
         A, B, C;

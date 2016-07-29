@@ -3,6 +3,8 @@ package com.incadencecorp.coalesce.common.helpers;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
@@ -62,7 +64,8 @@ public final class FileHelper {
      */
     public static String getExtension(String filename)
     {
-        if (StringHelper.isNullOrEmpty(filename)) return "";
+        if (StringHelper.isNullOrEmpty(filename))
+            return "";
 
         String extension = FilenameUtils.getExtension(filename).toLowerCase();
 
@@ -74,7 +77,8 @@ public final class FileHelper {
      * Gets the name minus the path from a full filename.
      *
      * @param filename the filename
-     * @return the name of the file without the path, or an empty string if none exists
+     * @return the name of the file without the path, or an empty string if none
+     *         exists
      * @see org.apache.commons.io.FilenameUtils#getName(String filename)
      */
     public static String getShortFilename(String filename)
@@ -91,8 +95,9 @@ public final class FileHelper {
     }
 
     /**
-     * Returns all the bytes for the file. If the file is encrypted then it is first decrypted using the pass phrase returned
-     * by {@link CoalesceSettings#getPassPhrase()}
+     * Returns all the bytes for the file. If the file is encrypted then it is
+     * first decrypted using the pass phrase returned by
+     * {@link CoalesceSettings#getPassPhrase()}
      * 
      * @param filename the filename
      * @param encrypted whether the file needs to be decrypted first
@@ -137,14 +142,16 @@ public final class FileHelper {
     }
 
     /**
-     * Deletes the file if it exists. If the <code>filename</code> is a directory then the deletion will fail.
+     * Deletes the file if it exists. If the <code>filename</code> is a
+     * directory then the deletion will fail.
      * 
      * @param filename the full path and name of the file to be deleted.
      * @return <code>true</code> if the file is successfully deleted.
      */
     public static boolean deleteFile(String filename)
     {
-        if (filename == null) return false;
+        if (filename == null)
+            return false;
 
         Path path;
         try
@@ -176,8 +183,9 @@ public final class FileHelper {
     }
 
     /**
-     * Deletes the folder if it exists. If the folder path does not point to a folder then it will not be deleted. Folders
-     * will be delete even if they are not empty.
+     * Deletes the folder if it exists. If the folder path does not point to a
+     * folder then it will not be deleted. Folders will be delete even if they
+     * are not empty.
      * 
      * @param folderPath the full folder path
      * @return <code>true</code> if the folder is successfully deleted.
@@ -188,15 +196,17 @@ public final class FileHelper {
     }
 
     /**
-     * Deletes the folder if it exists. If the folder path does not point to a folder then it will not be deleted. Folders
-     * that are not empty will only be deleted if <code>forceDelete</code> is <code>true</code>.
+     * Deletes the folder if it exists. If the folder path does not point to a
+     * folder then it will not be deleted. Folders that are not empty will only
+     * be deleted if <code>forceDelete</code> is <code>true</code>.
      * 
      * @param folderPath the full folder path
      * @return <code>true</code> if the folder is successfully deleted.
      */
     public static boolean deleteFolder(String folderPath, boolean forceDelete)
     {
-        if (folderPath == null) return false;
+        if (folderPath == null)
+            return false;
 
         Path path;
         try
@@ -235,16 +245,19 @@ public final class FileHelper {
     }
 
     /**
-     * Checks if the folder already exists in the file system and if it does not then attempts to create it including all
-     * missing parent directories.
+     * Checks if the folder already exists in the file system and if it does not
+     * then attempts to create it including all missing parent directories.
      * 
      * @param folderPath the full folder path
-     * @return <code>true</code> if the folder already exists or was successfully created. <code>false</code> if the
-     *         <code>folderPath</code> points to a non-folder or creation of the folder fails.
+     * @return <code>true</code> if the folder already exists or was
+     *         successfully created. <code>false</code> if the
+     *         <code>folderPath</code> points to a non-folder or creation of the
+     *         folder fails.
      */
     public static boolean checkFolder(String folderPath)
     {
-        if (folderPath == null) return false;
+        if (folderPath == null)
+            return false;
 
         Path path;
         try
@@ -276,8 +289,9 @@ public final class FileHelper {
     }
 
     /**
-     * Returns the base filename including the full path generated for the provided <code>key</code>. This method using the
-     * values from both {@link CoalesceSettings#getBinaryFileStoreBasePath()} and
+     * Returns the base filename including the full path generated for the
+     * provided <code>key</code>. This method using the values from both
+     * {@link CoalesceSettings#getBinaryFileStoreBasePath()} and
      * {@link CoalesceSettings#getSubDirectoryLength()} to build the path.
      * 
      * @param key the key to use for generating the path.
@@ -286,6 +300,25 @@ public final class FileHelper {
     public static String getBaseFilenameWithFullDirectoryPathForKey(String key)
     {
         return getBaseFilenameWithFullDirectoryPathForKey(key, true);
+    }
+
+    /**
+     * 
+     * @param value
+     * @return If the value provided is relative it will return a URI with an
+     *         absolute path from System.getProperty("user.dir").
+     * @throws URISyntaxException
+     */
+    public static URI getFullPath(String value) throws URISyntaxException
+    {
+        URI directory = new URI(value);
+
+        if (!directory.isAbsolute())
+        {
+            directory = Paths.get(System.getProperty("user.dir"), value).toUri();
+        }
+        
+        return directory;
     }
 
     /*--------------------------------------------------------------------------
@@ -306,11 +339,13 @@ public final class FileHelper {
                                                                      boolean createIfDoesNotExist)
     {
 
-        if (key == null || StringHelper.isNullOrEmpty(key.trim())) return null;
+        if (key == null || StringHelper.isNullOrEmpty(key.trim()))
+            return null;
 
         String baseFilename = GUIDHelper.removeBrackets(key);
 
-        if (baseFilename == null) return null;
+        if (baseFilename == null)
+            return null;
 
         String fullDirectory;
 

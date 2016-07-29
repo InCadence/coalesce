@@ -56,7 +56,6 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> implements I
     {
         try
         {
-
             // Set References
             CoalesceFieldHistory newFieldHistory = new CoalesceFieldHistory();
             if (!newFieldHistory.initialize(parent))
@@ -64,12 +63,10 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> implements I
 
             // Copy attributes from parent node
             newFieldHistory.setAttributes(parent);
-
             newFieldHistory.setPreviousHistoryKey(parent.getPreviousHistoryKey());
 
             // Append to parent's child node collection
             parent.getEntityFieldHistories().add(0, newFieldHistory._entityFieldHistory);
-
             parent.addChildCoalesceObject(newFieldHistory);
 
             return newFieldHistory;
@@ -121,6 +118,10 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> implements I
         // Set References
         setParent(parent);
         _entityFieldHistory = fieldHistory;
+        if (_entityFieldHistory.getLastmodified() == null)
+        {
+            _entityFieldHistory.setLastmodified(parent.getLastModified());
+        }
 
         return super.initialize(_entityFieldHistory);
 

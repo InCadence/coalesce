@@ -1,0 +1,256 @@
+/*-----------------------------------------------------------------------------'
+ Copyright 2016 - InCadence Strategic Solutions Inc., All Rights Reserved
+
+ Notwithstanding any contractor copyright notice, the Government has Unlimited
+ Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+ of this work other than as specifically authorized by these DFARS Clauses may
+ violate Government rights in this work.
+
+ DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+ Unlimited Rights. The Government has the right to use, modify, reproduce,
+ perform, display, release or disclose this computer software and to have or
+ authorize others to do so.
+
+ Distribution Statement D. Distribution authorized to the Department of
+ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+ -----------------------------------------------------------------------------*/
+
+package com.incadencecorp.coalesce.search.resultset;
+
+import java.io.Closeable;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+
+import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
+
+/**
+ * This implementation is to be used with persistors that do not have a JDBC
+ * connector.
+ * 
+ * @author n78554
+ */
+public class CoalesceResultSet extends CoalesceResultSetAbstract {
+
+    private Iterator<Object[]> data;
+    private Object[] currentRow;
+    private int row = -1;
+
+    /**
+     * @param resultset
+     * @return the column containing the entity keys.
+     * @throws SQLException
+     */
+    public static int getEntityKeyColumn(ResultSet resultset) throws SQLException
+    {
+        int keyIdx = -1;
+
+        for (int ii = 1; ii <= resultset.getMetaData().getColumnCount(); ii++)
+        {
+            String columnName = resultset.getMetaData().getColumnName(ii);
+            String columnObjectKey = CoalescePropertyFactory.getEntityKey().getPropertyName();
+
+            if (columnName.equalsIgnoreCase(columnObjectKey) || columnName.equalsIgnoreCase(columnObjectKey.split("[.]")[1]))
+            {
+                keyIdx = ii;
+                break;
+            }
+        }
+
+        return keyIdx;
+
+    }
+
+    /**
+     * Creates a result sets for the provided data and columns.
+     * 
+     * @param data
+     * @param columns
+     */
+    public CoalesceResultSet(Iterator<Object[]> data, List<CoalesceColumnMetadata> columns)
+    {
+        super(columns);
+        this.data = data;
+        data.hasNext();
+    }
+
+    /**
+     * Creates a result sets for the provided data and columns as Strings.
+     * 
+     * @param data
+     * @param columns
+     */
+    public CoalesceResultSet(Iterator<Object[]> data, String... columns)
+    {
+        super(columns);
+        this.data = data;
+        data.hasNext();
+    }
+
+    @Override
+    protected Object[] currentRow()
+    {
+        return currentRow;
+    }
+
+    @Override
+    public boolean next() throws SQLException
+    {
+        if (hasNext())
+        {
+            currentRow = data.next();
+            row++;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    @Override
+    public void close() throws SQLException
+    {
+        try
+        {
+            if (data instanceof AutoCloseable)
+            {
+                ((AutoCloseable) data).close();
+            }
+            else if (data instanceof Closeable)
+            {
+                ((Closeable) data).close();
+            }
+        }
+        catch (Exception e)
+        {
+            LOGGER.warn("Couldn't close resultset", e);
+        }
+
+        super.close();
+    }
+
+    private boolean hasNext()
+    {
+        return data.hasNext();
+    }
+
+    @Override
+    public boolean isBeforeFirst() throws SQLException
+    {
+        return row == -1;
+    }
+
+    @Override
+    public boolean isAfterLast() throws SQLException
+    {
+        return !hasNext();
+    }
+
+    @Override
+    public boolean isFirst() throws SQLException
+    {
+        return row == 0;
+    }
+
+    @Override
+    public boolean isLast() throws SQLException
+    {
+        return !hasNext();
+    }
+
+    @Override
+    public void beforeFirst() throws SQLException
+    {
+        throw new SQLException("Result set type is TYPE_FORWARD_ONLY");
+    }
+
+    @Override
+    public void afterLast() throws SQLException
+    {
+        throw new SQLException("Result set type is TYPE_FORWARD_ONLY");
+    }
+
+    @Override
+    public boolean first() throws SQLException
+    {
+        throw new SQLException("Result set type is TYPE_FORWARD_ONLY");
+    }
+
+    @Override
+    public boolean last() throws SQLException
+    {
+        throw new SQLException("Result set type is TYPE_FORWARD_ONLY");
+    }
+
+    @Override
+    public int getRow() throws SQLException
+    {
+        return row;
+    }
+
+    @Override
+    public boolean absolute(int i) throws SQLException
+    {
+        throw new SQLException("Result set type is TYPE_FORWARD_ONLY");
+    }
+
+    @Override
+    public boolean relative(int i) throws SQLException
+    {
+        throw new SQLException("Result set type is TYPE_FORWARD_ONLY");
+    }
+
+    @Override
+    public boolean previous() throws SQLException
+    {
+        throw new SQLException("Result set type is TYPE_FORWARD_ONLY");
+    }
+
+    @Override
+    public void setFetchDirection(int i) throws SQLException
+    {
+        if (i != ResultSet.FETCH_FORWARD)
+        {
+            throw new SQLException("Result set type is TYPE_FORWARD_ONLY");
+        }
+    }
+
+    @Override
+    public int getFetchDirection() throws SQLException
+    {
+        return ResultSet.FETCH_FORWARD;
+    }
+
+    @Override
+    public void setFetchSize(int i) throws SQLException
+    {
+    }
+
+    @Override
+    public int getFetchSize() throws SQLException
+    {
+        return 0;
+    }
+
+    @Override
+    public int getType() throws SQLException
+    {
+        return ResultSet.TYPE_FORWARD_ONLY;
+    }
+
+    @Override
+    public boolean isClosed() throws SQLException
+    {
+        return super.isClosed();
+    }
+
+    @Override
+    public String toString()
+    {
+        return super.toString() + " current row " + row + ": " + Arrays.toString(currentRow);
+    }
+
+}

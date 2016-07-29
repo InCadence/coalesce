@@ -23,6 +23,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
@@ -186,6 +187,54 @@ public class CoalesceIteratorGetVersionTest {
         assertHasRecords(iterator.getClonedVersion(v2, 2).getCoalesceObjectForNamePath(v2.getRecordset1().getNamePath()),
                          recordV0a.getKey(),
                          recordV0b.getKey());
+
+    }
+
+    /**
+     * This unit ensure that both logical paths for creating history retain the
+     * last modified and date created time stamps of the original entity.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testVersionTimestamp() throws Exception
+    {
+
+        // Create Entity
+        TestEntity v1a = new TestEntity();
+        v1a.initialize();
+
+        TestRecord recordv1a = v1a.addRecord1();
+        recordv1a.getBooleanField().setValue(false);
+
+        // Create Updated Entity
+        TestEntity v1b = new TestEntity();
+        v1b.initialize(v1a.toXml());
+
+        // Change Field Value
+        TestRecord recordv1b = new TestRecord((CoalesceRecord) v1b.getCoalesceObjectForKey(recordv1a.getKey()));
+        recordv1b.getBooleanField().setValue(true);
+
+        v1a.setDateCreated(v1a.getDateCreated().plusMinutes(5));
+        recordv1a.getBooleanField().setLastModified(v1a.getDateCreated());
+
+        // Merge Versions.
+        TestEntity v2 = new TestEntity();
+        v2.initialize(CoalesceEntity.mergeSyncEntity(v1a, v1b, "Derek", "127.0.0.1"));
+
+        // Verify Entity History LastModified
+        Assert.assertNotEquals(v2.getLastModified().getMillis(), v2.getHistory()[0].getLastModified().getMillis());
+        Assert.assertEquals(v1a.getLastModified().getMillis(), v2.getHistory()[0].getLastModified().getMillis(), 50);
+        Assert.assertEquals(recordv1b.getBooleanField().getLastModified().getMillis(),
+                            v2.getHistory()[0].getLastModified().getMillis(),
+                            50);
+
+        TestRecord recordv2 = new TestRecord((CoalesceRecord) v2.getCoalesceObjectForKey(recordv1a.getKey()));
+
+        // Verify Field History LastModified
+        Assert.assertEquals(recordv1a.getBooleanField().getDateCreated(), recordv2.getBooleanField().getDateCreated());
+        Assert.assertEquals(recordv1a.getBooleanField().getLastModified().getMillis(),
+                            recordv2.getBooleanField().getHistory()[0].getLastModified().getMillis(), 50);
 
     }
 
