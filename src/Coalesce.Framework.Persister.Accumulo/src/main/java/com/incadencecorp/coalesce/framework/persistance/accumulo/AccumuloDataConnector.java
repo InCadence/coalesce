@@ -43,9 +43,8 @@ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
 */
 
 /**
- * This is an initial Accumulo connector using MiniAccumuloCluster. This class
- * is referenced examples in the Book: Accumulo Application Development, Table
- * design, and best practice
+ * This is an initial Accumulo connector using MiniAccumuloCluster. This class is referenced examples in the Book:
+ * Accumulo Application Development, Table design, and best practice
  */
 
 public class AccumuloDataConnector extends CoalesceDataConnectorBase {
@@ -125,14 +124,15 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase {
 	Private Functions
 	-----------------------------------------------------------------------------*/
 
-	private void createTables(Connector connector, String... tableNames) throws AccumuloException, AccumuloSecurityException {
+	private void createTables(Connector connector, String... tableNames)
+			throws AccumuloException, AccumuloSecurityException {
 		if (connector != null) {
 			for (String table : tableNames) {
 				if (!connector.tableOperations().exists(table)) {
 					try {
 						connector.tableOperations().create(table);
 					} catch (TableExistsException e) {
-                        // Shouldn't happen because we just checked that it didn't exist.
+						// Shouldn't happen because we just checked that it didn't exist.
 					}
 				}
 			}
@@ -150,11 +150,10 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase {
 					new PasswordToken(serverConnection.getPassword()));
 			System.err.println("AccumuloDataConnector:openDataConnection - Connector User" + connector.whoami());
 
-			createTables(connector, coalesceTable, coalesceTemplateTable, coalesceEntityIndex,coalesceSearchTable);
-	
-			// Now set up the GeoMesa connection
-			// verify that we can see this Accumulo destination in a GeoTools
-			// manner
+			createTables(connector, coalesceTable, coalesceTemplateTable, coalesceEntityIndex, coalesceSearchTable);
+
+			// Now set up the GeoMesa connection verify that we can see this
+			// Accumulo destination in a GeoTools manner
 
 			dataStore = DataStoreFinder.getDataStore(dsConf);
 		}

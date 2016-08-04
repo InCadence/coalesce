@@ -1,6 +1,7 @@
 package com.incadencecorp.coalesce.framework.persistance.accumulo;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
 import java.nio.file.Files;

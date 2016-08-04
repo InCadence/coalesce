@@ -13,7 +13,6 @@ import java.util.TreeMap;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -34,6 +33,7 @@ import org.apache.accumulo.core.iterators.SortedKeyValueIterator;
 import org.apache.accumulo.core.iterators.user.RegExFilter;
 import org.apache.accumulo.core.iterators.user.WholeRowIterator;
 import org.apache.accumulo.core.security.Authorizations;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.io.Text;
 import org.geotools.data.DataStore;
 import org.geotools.data.FeatureSource;
@@ -112,25 +112,18 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 
 	private static AccumuloDataConnector connect = null;
 	/*
-	 * private static String entityColumnFamily = "Coalesce:MetaData"; private
-	 * static String linkageColumnFamily = "Coalesce:Linkage"; private static
-	 * String linkColumnFamilyPrefix = "LinkID:"; private static String
-	 * sectionColumnFamilyPrefix = "SectionID:"; private static String
-	 * recordsetColumnFamilyPrefix = "RecordSetID:"; private static String
-	 * fielddefinitionColumnFamilyPrefix = "FieldDefinitionID:"; private static
-	 * String recordColumnFamilyPrefix = "RecordID:"; private static String
-	 * entityTypeColumnQualifier = "Coalesce:EntityType"; private static String
-	 * entityNameColumnQualifier = "Coalesce:EntityName"; private static String
-	 * entityVersionColumnQualifier = "Coalesce:EntityVersion"; private static
-	 * String entityIdTypeColumnQualifier = "Coalesce:EntityIdType"; private
-	 * static String entityTitleColumnQualifier = "Coalesce:EntityTitle";
-	 * private static String entitySourceColumnQualifier =
-	 * "Coalesce:EntitySource"; private static String
-	 * entityClassNameColumnQualifier = "Coalesce:EntityClassName"; private
-	 * static String entityXMLColumnQualifier = "Coalesce:EntityXML"; private
-	 * static String entityLastModifiedColumnQualifier =
-	 * "Coalesce:EntityLastModified"; private static String
-	 * entityCreatedColumnQualifier = "Coalesce:EntityCreated";
+	 * private static String entityColumnFamily = "Coalesce:MetaData"; private static String linkageColumnFamily =
+	 * "Coalesce:Linkage"; private static String linkColumnFamilyPrefix = "LinkID:"; private static String
+	 * sectionColumnFamilyPrefix = "SectionID:"; private static String recordsetColumnFamilyPrefix = "RecordSetID:";
+	 * private static String fielddefinitionColumnFamilyPrefix = "FieldDefinitionID:"; private static String
+	 * recordColumnFamilyPrefix = "RecordID:"; private static String entityTypeColumnQualifier = "Coalesce:EntityType";
+	 * private static String entityNameColumnQualifier = "Coalesce:EntityName"; private static String
+	 * entityVersionColumnQualifier = "Coalesce:EntityVersion"; private static String entityIdTypeColumnQualifier =
+	 * "Coalesce:EntityIdType"; private static String entityTitleColumnQualifier = "Coalesce:EntityTitle"; private
+	 * static String entitySourceColumnQualifier = "Coalesce:EntitySource"; private static String
+	 * entityClassNameColumnQualifier = "Coalesce:EntityClassName"; private static String entityXMLColumnQualifier =
+	 * "Coalesce:EntityXML"; private static String entityLastModifiedColumnQualifier = "Coalesce:EntityLastModified";
+	 * private static String entityCreatedColumnQualifier = "Coalesce:EntityCreated";
 	 */
 
 	/*--------------------------------------------------------------------------
@@ -151,164 +144,100 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 	@Override
 	public String[] getEntityXml(String... keys) throws CoalescePersistorException {
 		List<String> results = new ArrayList<String>();
-		Connector dbConnector = null;
 		ArrayList<Range> ranges = new ArrayList<Range>();
 		for (String key : keys) {
 			ranges.add(new Range(key));
 		}
-		try {
-			dbConnector = connect.getDBConnector();
-
-			BatchScanner keyscanner = dbConnector.createBatchScanner(AccumuloDataConnector.coalesceTable,
-					Authorizations.EMPTY, 4);
-			keyscanner.setRanges(ranges);
+		Connector dbConnector = connect.getDBConnector();
+		try (CloseableBatchScanner scanner = new CloseableBatchScanner(dbConnector, AccumuloDataConnector.coalesceTable,
+				Authorizations.EMPTY, 4)) {
+			scanner.setRanges(ranges);
 			IteratorSetting iter = new IteratorSetting(1, "modifiedFilter", RegExFilter.class);
 			RegExFilter.setRegexs(iter, null, "entity:*", "entityxml", null, false, true);
+			scanner.addScanIterator(iter);
 
-			keyscanner.addScanIterator(iter);
-
-			for (Map.Entry<Key, Value> e : keyscanner) {
+			for (Map.Entry<Key, Value> e : scanner) {
 				String xml = new String(e.getValue().get());
-				// System.err.println(
-				// e.getKey().getRow().toString() + " " +
-				// e.getKey().getColumnFamily().toString() + " " +
-				// e.getKey().getColumnQualifier().toString() );
 				results.add(xml);
 			}
-			keyscanner.close();
 		} catch (TableNotFoundException ex) {
 			System.err.println(ex.getLocalizedMessage());
-			return null;
 		}
-
-		return results.toArray(new String[results.size()]);
+		return results != null ? results.toArray(new String[results.size()]) : null;
 	}
 
 	@Override
 	public String getEntityXml(String entityId, String entityIdType) throws CoalescePersistorException {
 		// Use are sharded term index to find the merged keys
-		Connector dbConnector = null;
-
-		String key = null;
-		Text cf = null;
-		String indexcf = entityIdType + "\0" + entityId + ".*";
 		String xml = null;
-
-		try {
-			dbConnector = connect.getDBConnector();
-
-			Scanner keyscanner = dbConnector.createScanner(AccumuloDataConnector.coalesceEntityIndex,
-					Authorizations.EMPTY);
-
+		String indexcf = entityIdType + "\0" + entityId + ".*";
+		Connector dbConnector = connect.getDBConnector();
+		try (CloseableScanner scanner = new CloseableScanner(dbConnector, AccumuloDataConnector.coalesceEntityIndex,
+				Authorizations.EMPTY)) {
 			// Set up an IntersectingIterator for the values
 			IteratorSetting iter = new IteratorSetting(1, "cfmatch", RegExFilter.class);
 			RegExFilter.setRegexs(iter, null, indexcf, null, null, false, true);
-			keyscanner.addScanIterator(iter);
-
+			scanner.addScanIterator(iter);
 			// Just return the first entry
-			if (keyscanner.iterator().hasNext()) {
-				Key rowKey = keyscanner.iterator().next().getKey();
-				key = rowKey.getRow().toString();
-				cf = new Text("entity:" + rowKey.getColumnQualifier().toString());
-				keyscanner.close();
-			} else {
-				// throw new CoalescePersistorException("No rows found for
-				// EntityID: "+ entityId +
-				// " and EntityIdType: " + entityIdType, null);
-				return null;
+			if (scanner.iterator().hasNext()) {
+				Key rowKey = scanner.iterator().next().getKey();
+				String key = rowKey.getRow().toString();
+				Text cf = new Text("entity:" + rowKey.getColumnQualifier().toString());
+				try (CloseableScanner xmlscanner = new CloseableScanner(dbConnector,
+						AccumuloDataConnector.coalesceTable, Authorizations.EMPTY)) {
+					xmlscanner.setRange(new Range(key));
+					xmlscanner.fetchColumn(cf, new Text("entityxml"));
+					if (xmlscanner.iterator().hasNext()) {
+						xml = xmlscanner.iterator().next().getValue().toString();
+					}
+				}
 			}
-			Scanner xmlscanner = dbConnector.createScanner(AccumuloDataConnector.coalesceTable, Authorizations.EMPTY);
-			xmlscanner.setRange(new Range(key));
-			xmlscanner.fetchColumn(cf, new Text("entityxml"));
-
-			if (xmlscanner.iterator().hasNext()) {
-				xml = xmlscanner.iterator().next().getValue().toString();
-				xmlscanner.close();
-			} else {
-				// throw new CoalescePersistorException("No rows found for
-				// EntityID: "+ entityId +
-				// " and EntityIdType: " + entityIdType, null);
-				return null;
-			}
-
 		} catch (TableNotFoundException ex) {
 			System.err.println(ex.getLocalizedMessage());
-			return null;
 		}
-
 		return xml;
 	}
 
 	@Override
 	public String getEntityXml(String name, String entityId, String entityIdType) throws CoalescePersistorException {
 		// Use are EWntityIndex to find the merged keys
-		Connector dbConnector = null;
-
-		String key = null;
-		Text cf = null;
 		String indexcf = entityIdType + "\0" + entityId + "\0" + name + ".*";
 		String xml = null;
-
-		try {
-			dbConnector = connect.getDBConnector();
-
-			Scanner keyscanner = dbConnector.createScanner(AccumuloDataConnector.coalesceEntityIndex,
-					Authorizations.EMPTY);
-
+		Connector dbConnector = connect.getDBConnector();
+		try (CloseableScanner keyscanner = new CloseableScanner(dbConnector, AccumuloDataConnector.coalesceEntityIndex,
+				Authorizations.EMPTY)) {
 			// Set up an IntersectingIterator for the values
 			IteratorSetting iter = new IteratorSetting(1, "cfmatch", RegExFilter.class);
 			RegExFilter.setRegexs(iter, null, indexcf, null, null, false, true);
 			keyscanner.addScanIterator(iter);
-
 			// Just return the first entry
 			if (keyscanner.iterator().hasNext()) {
 				Key rowKey = keyscanner.iterator().next().getKey();
-				key = rowKey.getRow().toString();
-				cf = new Text("entity:" + rowKey.getColumnQualifier().toString());
-				keyscanner.close();
-			} else {
-				// throw new CoalescePersistorException("No rows found for
-				// EntityID: "+ entityId +
-				// " and EntityIdType: " + entityIdType, null);
-				return null;
+				String key = rowKey.getRow().toString();
+				Text cf = new Text("entity:" + rowKey.getColumnQualifier().toString());
+				try (CloseableScanner xmlscanner = new CloseableScanner(dbConnector,
+						AccumuloDataConnector.coalesceTable, Authorizations.EMPTY)) {
+					xmlscanner.setRange(new Range(key));
+					xmlscanner.fetchColumn(cf, new Text("entityxml"));
+					if (xmlscanner.iterator().hasNext()) {
+						xml = xmlscanner.iterator().next().getValue().toString();
+					}
+				}
 			}
-			Scanner xmlscanner = dbConnector.createScanner(AccumuloDataConnector.coalesceTable, Authorizations.EMPTY);
-			xmlscanner.setRange(new Range(key));
-			xmlscanner.fetchColumn(cf, new Text("entityxml"));
-
-			if (xmlscanner.iterator().hasNext()) {
-				xml = xmlscanner.iterator().next().getValue().toString();
-				xmlscanner.close();
-			} else {
-				// throw new CoalescePersistorException("No rows found for
-				// EntityID: "+ entityId +
-				// " and EntityIdType: " + entityIdType, null);
-				return null;
-			}
-
 		} catch (TableNotFoundException ex) {
 			System.err.println(ex.getLocalizedMessage());
-			return null;
 		}
-
 		return xml;
-
 	}
 
 	@Override
 	public Object getFieldValue(String fieldKey) throws CoalescePersistorException {
 		// TODO We will want to create a a table of just field values by key for
 		// now we will scan the main table
-		Connector dbConnector = null;
-		Text cf = null;
-		String key = null;
 		Object value = null;
-
-		try {
-			dbConnector = connect.getDBConnector();
-
-			Scanner keyscanner = dbConnector.createScanner(AccumuloDataConnector.coalesceTable, Authorizations.EMPTY);
-
+		Connector dbConnector = connect.getDBConnector();
+		try (CloseableScanner keyscanner = new CloseableScanner(dbConnector, AccumuloDataConnector.coalesceTable,
+				Authorizations.EMPTY)) {
 			// Set up an RegEx Iterator to get the row with a field with the key
 			IteratorSetting iter = new IteratorSetting(20, "fieldkeymatch", RegExFilter.class);
 			// Only get rows for fields that hold key values and match the key
@@ -318,104 +247,64 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 			// Just return the first entry
 			if (keyscanner.iterator().hasNext()) {
 				Key rowKey = keyscanner.iterator().next().getKey();
-				key = rowKey.getRow().toString();
-				cf = rowKey.getColumnFamily();
-				keyscanner.close();
-			} else {
-				// throw new CoalescePersistorException("No rows found for
-				// EntityID: "+ entityId +
-				// " and EntityIdType: " + entityIdType, null);
-				return null;
+				String key = rowKey.getRow().toString();
+				Text cf = rowKey.getColumnFamily();
+				try (CloseableScanner valuescanner = new CloseableScanner(dbConnector,
+						AccumuloDataConnector.coalesceTable, Authorizations.EMPTY)) {
+					valuescanner.setRange(new Range(key));
+					valuescanner.fetchColumn(cf, new Text("value"));
+					if (valuescanner.iterator().hasNext()) {
+						value = valuescanner.iterator().next().getValue().toString();
+					}
+				}
 			}
-			Scanner valuescanner = dbConnector.createScanner(AccumuloDataConnector.coalesceTable, Authorizations.EMPTY);
-			valuescanner.setRange(new Range(key));
-			valuescanner.fetchColumn(cf, new Text("value"));
-
-			if (valuescanner.iterator().hasNext()) {
-
-				value = valuescanner.iterator().next().getValue().toString();
-				valuescanner.close();
-			} else {
-				// throw new CoalescePersistorException("No rows found for
-				// EntityID: "+ entityId +
-				// " and EntityIdType: " + entityIdType, null);
-				return null;
-			}
-
 		} catch (TableNotFoundException ex) {
 			System.err.println(ex.getLocalizedMessage());
-			return null;
 		}
-
 		return value;
 
 	}
 
 	@Override
 	public ElementMetaData getXPath(String key, String objectType) throws CoalescePersistorException {
-		Connector dbConnector = null;
+		Connector dbConnector = connect.getDBConnector();
 
 		String xpath = null;
 		String entityKey = null;
-
-		try {
-			dbConnector = connect.getDBConnector();
-
-			Scanner keyscanner = dbConnector.createScanner(AccumuloDataConnector.coalesceTable, Authorizations.EMPTY);
-
+		try (CloseableScanner keyscanner = new CloseableScanner(dbConnector, AccumuloDataConnector.coalesceTable,
+				Authorizations.EMPTY)) {
 			// Set up an RegEx Iterator to get the row with a field with the key
 			IteratorSetting iter = new IteratorSetting(20, "objectkeymatch", RegExFilter.class);
 			// Only get rows for fields that hold key values and match the key
 			RegExFilter.setRegexs(iter, null, objectType + ".*", "key", key, false, true);
 			keyscanner.addScanIterator(iter);
-
 			// Just return the first entry
 			if (keyscanner.iterator().hasNext()) {
 				Key rowKey = keyscanner.iterator().next().getKey();
-
 				// The plus one is to also eat up the colon between the
 				// objecttype and the namepath
 				xpath = rowKey.getColumnFamily().toString().substring(objectType.length() + 1);
 				entityKey = rowKey.getRow().toString();
-				keyscanner.close();
-			} else {
-				// throw new CoalescePersistorException("No rows found for
-				// EntityID: "+ entityId +
-				// " and EntityIdType: " + entityIdType, null);
-				return null;
 			}
 		} catch (TableNotFoundException ex) {
 			System.err.println(ex.getLocalizedMessage());
-			return null;
 		}
-		// TODO Auto-generated method stub
-		return new ElementMetaData(entityKey, xpath);
+		return entityKey != null && xpath != null ? new ElementMetaData(entityKey, xpath) : null;
 	}
 
 	@Override
 	public List<String> getCoalesceEntityKeysForEntityId(String entityId, String entityIdType, String entityName,
 			String entitySource) throws CoalescePersistorException {
 		// Use are EntityIndex to find the merged keys
-		Connector dbConnector = null;
-
 		ArrayList<String> keys = new ArrayList<String>();
 		// NOTE - Source can be null meaning find all sources so construct the
 		// string carefully
 
 		String indexcf = entityIdType + "\0" + entityId + "\0" + entityName;
-		if (entitySource == null) {
-			indexcf = indexcf + ".*";
-		} else {
-			indexcf = indexcf + "\0" + entitySource;
-		}
-
-		try {
-
-			dbConnector = connect.getDBConnector();
-
-			Scanner keyscanner = dbConnector.createScanner(AccumuloDataConnector.coalesceEntityIndex,
-					Authorizations.EMPTY);
-
+		indexcf = indexcf.concat(entitySource != null ? "\0" + entitySource : ".*");
+		Connector dbConnector = connect.getDBConnector();
+		try (CloseableScanner keyscanner = new CloseableScanner(dbConnector, AccumuloDataConnector.coalesceEntityIndex,
+				Authorizations.EMPTY)) {
 			// Set up an RegEx Iterator to get the row with a field with the key
 			IteratorSetting iter = new IteratorSetting(20, "cfmatch", RegExFilter.class);
 			// Only get rows for fields that hold key values and match the key
@@ -426,53 +315,45 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 			for (Entry<Key, Value> entry : keyscanner) {
 				keys.add(entry.getKey().getRow().toString());
 			}
-			keyscanner.close();
-
 		} catch (TableNotFoundException ex) {
 			System.err.println(ex.getLocalizedMessage());
-			return null;
 		}
-
 		return keys;
 	}
 
 	@Override
 	public EntityMetaData getCoalesceEntityIdAndTypeForKey(String key) throws CoalescePersistorException {
-		String entityid = null;
-		String entityidtype = null;
-		try {
-
-			Connector dbConnector = connect.getDBConnector();
-
-			Scanner keyscanner = dbConnector.createScanner(AccumuloDataConnector.coalesceTable, Authorizations.EMPTY);
-
+		EntityMetaData metadata = null;
+		Connector dbConnector = connect.getDBConnector();
+		try (CloseableScanner keyscanner = new CloseableScanner(dbConnector, AccumuloDataConnector.coalesceTable,
+				Authorizations.EMPTY)) {
 			// Set up an RegEx Iterator to get the row with a field with the key
 			IteratorSetting iter = new IteratorSetting(20, "entitymatch", RegExFilter.class);
-			// Only get rows for the entity with columnqualifiers for entityid,
-			// entityidType
+			// Only get rows for the entity with columnqualifiers for entityid, entityidType
 			RegExFilter.setRegexs(iter, null, "entity:.*", "(entityid)|(entityidtype)", null, false, true);
 			keyscanner.addScanIterator(iter);
 			keyscanner.setRange(Range.exact(key));
 
-			// Now we should have two entries one for the entityid and one for
-			// the entityidtype
+			// Now we should have two entries one for the entityid and one for the entityidtype
+			String entityid = null;
+			String entityidtype = null;
 			for (Entry<Key, Value> entry : keyscanner) {
 				String cf = entry.getKey().getColumnQualifier().toString();
 				String value = entry.getValue().toString();
-				if (cf.equals("entityid"))
+				if (cf.equals("entityid")) {
 					entityid = new String(value);
-
-				if (cf.equals("entityidtype"))
+				}
+				if (cf.equals("entityidtype")) {
 					entityidtype = new String(value);
+				}
 			}
-			keyscanner.close();
-
+			if (entityid != null && entityidtype != null) {
+				metadata = new EntityMetaData(entityid, entityidtype, key);
+			}
 		} catch (TableNotFoundException ex) {
 			System.err.println(ex.getLocalizedMessage());
-			return null;
 		}
-		// TODO Auto-generated method stub
-		return new EntityMetaData(entityid, entityidtype, key);
+		return metadata;
 	}
 
 	@Override
@@ -492,35 +373,24 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 	@Override
 	public boolean persistEntityTemplate(CoalesceEntityTemplate template, CoalesceDataConnectorBase conn)
 			throws CoalescePersistorException {
-		Connector dbConnector = null;
 
+		boolean persisted = false;
+		BatchWriter writer = null;
 		try {
-			dbConnector = connect.getDBConnector();
-		} catch (CoalescePersistorException ex) {
-			System.err.println(ex.getLocalizedMessage());
-			return false;
-		}
-		try {
-
+			Connector dbConnector = connect.getDBConnector();
 			BatchWriterConfig config = new BatchWriterConfig();
 			config.setMaxLatency(1, TimeUnit.SECONDS);
 			config.setMaxMemory(10240);
 			// config.setDurability(Durability.DEFAULT); // Requires Accumulo
 			// 1.7
 			config.setMaxWriteThreads(10);
-			BatchWriter writer = dbConnector.createBatchWriter(AccumuloDataConnector.coalesceTemplateTable, config);
+			writer = dbConnector.createBatchWriter(AccumuloDataConnector.coalesceTemplateTable, config);
 			/*
-			 * SQL we are eumulating return
-			 * conn.executeProcedure("CoalesceEntityTemplate_InsertOrUpdate",
-			 * new CoalesceParameter(UUID.randomUUID().toString(), Types.OTHER),
-			 * new CoalesceParameter(template.getName()), new
-			 * CoalesceParameter(template.getSource()), new
-			 * CoalesceParameter(template.getVersion()), new
-			 * CoalesceParameter(template.toXml()), new
-			 * CoalesceParameter(JodaDateTimeHelper.nowInUtc().toString(),
-			 * Types.OTHER), new
-			 * CoalesceParameter(JodaDateTimeHelper.nowInUtc().toString(),
-			 * Types.OTHER));
+			 * SQL we are eumulating return conn.executeProcedure("CoalesceEntityTemplate_InsertOrUpdate", new
+			 * CoalesceParameter(UUID.randomUUID().toString(), Types.OTHER), new CoalesceParameter(template.getName()),
+			 * new CoalesceParameter(template.getSource()), new CoalesceParameter(template.getVersion()), new
+			 * CoalesceParameter(template.toXml()), new CoalesceParameter(JodaDateTimeHelper.nowInUtc().toString(),
+			 * Types.OTHER), new CoalesceParameter(JodaDateTimeHelper.nowInUtc().toString(), Types.OTHER));
 			 */
 			String xml = template.toXml();
 			String name = template.getName();
@@ -550,6 +420,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 						new Value(templateId.getBytes()));
 			}
 			writer.addMutation(m);
+			writer.flush();
 			writer.close();
 			// Create the associated search features for this template if it is
 			// new
@@ -558,16 +429,18 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 			if (newtemplate) {
 				createSearchTables(template);
 			}
-		} catch (MutationsRejectedException ex) {
-			System.err.println(ex.getLocalizedMessage()); // see Error Handling
-															// Example
-		} catch (TableNotFoundException ex) {
+			persisted = true;
+		} catch (CoalescePersistorException | MutationsRejectedException | TableNotFoundException ex) {
 			System.err.println(ex.getLocalizedMessage());
-		} catch (Exception ex) {
-			System.err.println(ex.getLocalizedMessage());
-			ex.printStackTrace();
+			persisted = false;
 		}
-		return true;
+		if (writer != null) { // make sure writer closed even if exception happened before
+			try {
+				writer.close();
+			} catch (MutationsRejectedException e) {
+			}
+		}
+		return persisted;
 
 	}
 
@@ -642,11 +515,9 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 			ECoalesceFieldDataTypes type = ECoalesceFieldDataTypes.getTypeForCoalesceType(datatype);
 			Class<?> featuretype = getTypeForSimpleFeature(type);
 
-			// Binary and File fields will return null so we do not persist them
-			// for search
+			// Binary and File fields will return null so we do not persist them for search
 			if (featuretype != null) {
 				tb.add(field.getName(), featuretype);
-
 				// Index on the first geometry type in the recordset.
 				if (!defaultGeometrySet && Geometry.class.isAssignableFrom(featuretype)) {
 					defaultGeometrySet = true;
@@ -722,30 +593,22 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 
 	@Override
 	public String getEntityTemplateXml(String key) throws CoalescePersistorException {
-		Connector dbConnector = null;
 		Range range = new Range(key);
 		String xml = null;
-		try {
-			dbConnector = connect.getDBConnector();
-
-			Scanner keyscanner = dbConnector.createScanner(AccumuloDataConnector.coalesceTemplateTable,
-					Authorizations.EMPTY);
+		Connector dbConnector = connect.getDBConnector();
+		try (CloseableScanner keyscanner = new CloseableScanner(dbConnector,
+				AccumuloDataConnector.coalesceTemplateTable, Authorizations.EMPTY)) {
 			keyscanner.setRange(range);
 			keyscanner.fetchColumn(new Text(coalesceTemplateColumnFamily), new Text(coalesceTemplateXMLQualifier));
 
 			// TODO Add error handling if more than one row returned.
-			if (keyscanner.iterator().hasNext())
-				xml = keyscanner.iterator().next().getValue().toString(); // should
-																			// only
-																			// be
-																			// one
-																			// entry
-			keyscanner.close();
+			if (keyscanner.iterator().hasNext()) {
+				xml = keyscanner.iterator().next().getValue().toString();
+			}
 		} catch (TableNotFoundException ex) {
 			System.err.println(ex.getLocalizedMessage());
-			return null;
-		}
 
+		}
 		return xml;
 	}
 
@@ -757,31 +620,19 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 
 	@Override
 	public String getEntityTemplateKey(String name, String source, String version) throws CoalescePersistorException {
-		Connector dbConnector = null;
-
 		String key = null;
-		try {
-			dbConnector = connect.getDBConnector();
-
-			Scanner keyscanner = dbConnector.createScanner(AccumuloDataConnector.coalesceTemplateTable,
-					Authorizations.EMPTY);
-			// Uses special columnqualifier that is a concat of
-			// name+source+version
+		Connector dbConnector = connect.getDBConnector();
+		try (CloseableScanner keyscanner = new CloseableScanner(dbConnector,
+				AccumuloDataConnector.coalesceTemplateTable, Authorizations.EMPTY)) {
+			// Uses special columnqualifier that is a concat of name+source+version
 			keyscanner.fetchColumn(new Text(coalesceTemplateColumnFamily), new Text(name + source + version));
-
 			// TODO Add error handling if more than one row returned.
-			if (keyscanner.iterator().hasNext())
-				key = keyscanner.iterator().next().getValue().toString(); // should
-																			// only
-																			// be
-																			// one
-																			// entry
-			keyscanner.close();
+			if (keyscanner.iterator().hasNext()) {
+				key = keyscanner.iterator().next().getValue().toString();
+			}
 		} catch (TableNotFoundException ex) {
 			System.err.println(ex.getLocalizedMessage());
-			return null;
 		}
-
 		return key;
 	}
 
@@ -799,14 +650,11 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 
 	@Override
 	public String getEntityTemplateMetadata() throws CoalescePersistorException {
-		// Execute Query
-		Connector dbConnector = null;
-		Scanner scanner = null;
+		String templateMetaData = null;
+		Connector dbConnector = connect.getDBConnector();
 
-		try {
-			dbConnector = connect.getDBConnector();
-
-			scanner = dbConnector.createScanner(AccumuloDataConnector.coalesceTemplateTable, Authorizations.EMPTY);
+		try (CloseableScanner scanner = new CloseableScanner(dbConnector, AccumuloDataConnector.coalesceTemplateTable,
+				Authorizations.EMPTY)) {
 			Text templateColumnFamily = new Text(coalesceTemplateColumnFamily);
 			scanner.fetchColumn(templateColumnFamily, new Text(coalesceTemplateNameQualifier));
 			scanner.fetchColumn(templateColumnFamily, new Text(coalesceTemplateSourceQualifier));
@@ -815,33 +663,16 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 			scanner.fetchColumn(templateColumnFamily, new Text(coalesceTemplateDateModifiedQualifier));
 			IteratorSetting iter = new IteratorSetting(1, "rowiterator",
 					(Class<? extends SortedKeyValueIterator<Key, Value>>) WholeRowIterator.class);
-
 			scanner.addScanIterator(iter);
-
-		} catch (TableNotFoundException ex) {
-			System.err.println(ex.getLocalizedMessage());
-			return null;
-		}
-
-		// Create Document
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder builder = null;
-		try {
-			builder = factory.newDocumentBuilder();
-
-			Document doc = builder.newDocument();
-
-			// Create Root Node
+			// Create Document
+			Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
 			Element rootElement = doc.createElement("coalescetemplates");
 			doc.appendChild(rootElement);
-
 			for (Entry<Key, Value> entry : scanner) {
 				// Create New Template Element
 				Element templateElement = doc.createElement("coalescetemplate");
 				SortedMap<Key, Value> wholeRow = null;
-
 				wholeRow = WholeRowIterator.decodeRow(entry.getKey(), entry.getValue());
-
 				// Set Attributes
 				templateElement.setAttribute("templatekey", entry.getKey().getRow().toString());
 				SortedMap<String, Value> colmap = columnMap(wholeRow);
@@ -856,47 +687,28 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 						.get(coalesceTemplateColumnFamily + ":" + coalesceTemplateDateModifiedQualifier).toString());
 				templateElement.setAttribute("datecreated", colmap
 						.get(coalesceTemplateColumnFamily + ":" + coalesceTemplateDateCreatedQualifier).toString());
-
-				// Append Element
 				rootElement.appendChild(templateElement);
 			}
-			scanner.close();
-
-			// Serialize to String
-			return XmlHelper.formatXml(doc);
-
-		} catch (IOException | ParserConfigurationException e) {
-
+			templateMetaData = XmlHelper.formatXml(doc);
+		} catch (IOException | ParserConfigurationException | TableNotFoundException e) {
 			throw new CoalescePersistorException("Error Getting Template Metadata", e);
 		}
-
+		return templateMetaData;
 	}
 
 	@Override
 	protected boolean flattenObject(boolean allowRemoval, CoalesceEntity... entities)
 			throws CoalescePersistorException {
 		boolean isSuccessful = true;
-		try {
-
-			for (CoalesceEntity entity : entities) {
-				// conn.executeCmd("CREATE CONSTRAINT ON (item:" +
-				// entity.getName() + ") ASSERT item.EntityKey IS UNIQUE");
-
-				// Persist Entity Last to Include Changes
-				switch (entity.getType().toLowerCase()) {
-				case "entity":
+		for (CoalesceEntity entity : entities) {
+			if ("entity".equalsIgnoreCase(entity.getType())) {
+				try {
 					isSuccessful &= persistEntityObject(entity, connect);
+				} catch (CoalesceDataFormatException | SQLException | SAXException | IOException e) {
+					throw new CoalescePersistorException("FlattenObject", e);
 				}
 			}
-			// conn.commit();
-		} catch (Exception e) {
-			// conn.rollback();
-			e.printStackTrace();
-			throw new CoalescePersistorException("FlattenObject", e);
-		} finally {
-			// conn.close();
 		}
-
 		return isSuccessful;
 	}
 
@@ -907,52 +719,55 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 
 	protected boolean persistEntityObject(CoalesceEntity entity, AccumuloDataConnector conn)
 			throws SQLException, CoalescePersistorException, SAXException, IOException, CoalesceDataFormatException {
-
 		boolean persisted = false;
 		try {
 			Connector dbConnector = connect.getDBConnector();
 			BatchWriterConfig config = new BatchWriterConfig();
 			config.setMaxLatency(1, TimeUnit.SECONDS);
 			config.setMaxMemory(10240);
-			// config.setDurability(Durability.DEFAULT); // Requires Accumulo
-			// 1.7
+			// config.setDurability(Durability.DEFAULT); // Requires Accumulo 1.7
 			config.setMaxWriteThreads(10);
-			persistBaseData(entity, dbConnector, config);
-			persistEntityIndex(entity, dbConnector, config);
+			persisted = persistBaseData(entity, dbConnector, config) &&	persistEntityIndex(entity, dbConnector, config);
 			persistEntitySearchData(entity, dbConnector, config);
-			persisted = true;
-		} catch (CoalescePersistorException | MutationsRejectedException | TableNotFoundException ex) {
+ 		} catch (CoalescePersistorException ex) {
 			System.err.println(ex.getLocalizedMessage());
 			persisted = false;
 		}
 		return persisted;
 	}
 
-	private void persistBaseData(CoalesceEntity entity, Connector dbConnector, BatchWriterConfig config)
-			throws TableNotFoundException, MutationsRejectedException {
-		BatchWriter writer = dbConnector.createBatchWriter(AccumuloDataConnector.coalesceTable, config);
-		writer.addMutation(createMutation(entity));
-		writer.close();
+	private boolean persistBaseData(CoalesceEntity entity, Connector connect, BatchWriterConfig config) {
+		boolean persisted = false;
+		try (CloseableBatchWriter writer = new CloseableBatchWriter(connect, AccumuloDataConnector.coalesceTable,
+				config)) {
+			writer.addMutation(createMutation(entity));
+			writer.close();
+			persisted = true;
+		} catch (MutationsRejectedException | TableNotFoundException e) {
+			persisted = false;
+		}
+		return persisted;
 	}
 
-	private void persistEntityIndex(CoalesceEntity entity, Connector dbConnector, BatchWriterConfig config)
-			throws TableNotFoundException, MutationsRejectedException {
-		BatchWriter writer = dbConnector.createBatchWriter(AccumuloDataConnector.coalesceTable, config);
-		// Now create a entity index so we can retrieve based on entityId,
-		// entityIdType
-		// entitySource, entityName
-		writer = dbConnector.createBatchWriter(AccumuloDataConnector.coalesceEntityIndex, config);
-		Mutation m = new Mutation(entity.getKey());
-		Text indexcf = new Text(entity.getEntityIdType() + "\0" + entity.getEntityId() + "\0" + entity.getName() + "\0"
-				+ entity.getSource());
-		m.put(indexcf, new Text(entity.getNamePath()), new Value(new byte[0]));
-		writer.addMutation(m);
-		writer.close();
+	private boolean persistEntityIndex(CoalesceEntity entity, Connector dbConnector, BatchWriterConfig config) {
+		boolean persisted = false;
+		try (CloseableBatchWriter writer = new CloseableBatchWriter(dbConnector,
+				AccumuloDataConnector.coalesceEntityIndex, config)) {
+			Mutation m = new Mutation(entity.getKey());
+			Text indexcf = new Text(entity.getEntityIdType() + "\0" + entity.getEntityId() + "\0" + entity.getName()
+					+ "\0" + entity.getSource());
+			m.put(indexcf, new Text(entity.getNamePath()), new Value(new byte[0]));
+			writer.addMutation(m);
+			writer.close();
+			persisted = true;
+		} catch (MutationsRejectedException | TableNotFoundException e) {
+			persisted = false;
+		}
+		return persisted;
 	}
 
-	private void persistEntitySearchData(CoalesceEntity entity, Connector dbConnector, BatchWriterConfig config)
-			throws CoalescePersistorException, SAXException, IOException, CoalesceDataFormatException {
-
+	private boolean persistEntitySearchData(CoalesceEntity entity, Connector dbConnector, BatchWriterConfig config) {
+		boolean persisted = false;
 		CoalesceEntityTemplate template = null;
 		CoalesceValidator validator = new CoalesceValidator();
 		DataStore geoDataStore = connect.getGeoDataStore();
@@ -960,65 +775,59 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 		String templatename = (entity.getName() + "_" + entity.getSource() + "_" + entity.getVersion()).replaceAll(" ",
 				"_");
 		// Find the template for this type
-		String xml = getEntityTemplateXml(entity.getName(), entity.getSource(), entity.getVersion());
+		try {
+			String xml = getEntityTemplateXml(entity.getName(), entity.getSource(), entity.getVersion());
 
-		if (xml != null) {
-			// Initialize Template
-			template = new CoalesceEntityTemplate();
-			template.initialize(xml);
-		}
+			if (xml != null) {
+				template = new CoalesceEntityTemplate();
+				template.initialize(xml);
 
-		// If the template does not exist do nothing
-		if (template == null) {
-			return;
-		}
+				// Validate the entity against the template
+				Map<String, String> errors = validator.validate(entity, template);
+				if (errors.isEmpty()) {
+					for (CoalesceSection section : entity.getSections().values()) {
+						String sectionname = section.getName();
+						for (CoalesceRecordset recordset : section.getRecordsets().values()) {
+							String recordname = recordset.getName();
+							String featuresetname = (templatename + "." + sectionname + "." + recordname)
+									.replaceAll(" ", "_");
 
-		// Validate the entity against the template
-		Map<String, String> errors = validator.validate(entity, template);
-		if (!errors.isEmpty()) {
-			// throw new CoalescePersistorException("Error validating entity to
-			// template", null);
-			return;
-
-		}
-
-		for (CoalesceSection section : entity.getSections().values()) {
-			String sectionname = section.getName();
-			for (CoalesceRecordset recordset : section.getRecordsets().values()) {
-				String recordname = recordset.getName();
-				String featuresetname = (templatename + "." + sectionname + "." + recordname).replaceAll(" ", "_");
-
-				// Verify a featureset exists if not skip this record
-				SimpleFeatureType featuretype = geoDataStore.getSchema(featuresetname);
-				if (featuretype == null) {
-					break;
-				}
-				// Do a feature collection for all records
-				DefaultFeatureCollection featurecollection = new DefaultFeatureCollection();
-				// Create a geo record for each record in the recordset
-				for (CoalesceRecord record : recordset.getRecords()) {
-					Object[] NO_VALUES = {};
-					SimpleFeature simplefeature = SimpleFeatureBuilder.build(featuretype, NO_VALUES, null);
-
-					setFeatureAttribute(simplefeature, "entityKey", ECoalesceFieldDataTypes.STRING_TYPE,
-							entity.getKey());
-					for (CoalesceField field : record.getFields()) {
-						String fieldname = field.getName();
-						ECoalesceFieldDataTypes fieldtype = field.getDataType();
-						Object fieldvalue = field.getValue();
-						// If there is not a value do not set the attribute.
-						if (!(fieldvalue == null)) {
-							setFeatureAttribute(simplefeature, fieldname, fieldtype, fieldvalue);
+							// Verify a featureset exists if not skip this record
+							SimpleFeatureType featuretype = geoDataStore.getSchema(featuresetname);
+							if (featuretype == null) {
+								break;
+							}
+							// Do a feature collection for all records
+							DefaultFeatureCollection featurecollection = new DefaultFeatureCollection();
+							// Create a geo record for each record in the recordset
+							for (CoalesceRecord record : recordset.getRecords()) {
+								Object[] NO_VALUES = {};
+								SimpleFeature simplefeature = SimpleFeatureBuilder.build(featuretype, NO_VALUES, null);
+								setFeatureAttribute(simplefeature, "entityKey", ECoalesceFieldDataTypes.STRING_TYPE,
+										entity.getKey());
+								for (CoalesceField<?> field : record.getFields()) {
+									String fieldname = field.getName();
+									ECoalesceFieldDataTypes fieldtype = field.getDataType();
+									Object fieldvalue = field.getValue();
+									// If there is not a value do not set the attribute.
+									if (fieldvalue != null) {
+										setFeatureAttribute(simplefeature, fieldname, fieldtype, fieldvalue);
+									}
+								}
+								featurecollection.add(simplefeature);
+							}
+							SimpleFeatureStore featureStore = (SimpleFeatureStore) geoDataStore
+									.getFeatureSource(featuresetname);
+							featureStore.addFeatures(featurecollection);
+							persisted = true;
 						}
 					}
-					featurecollection.add(simplefeature);
-
 				}
-				SimpleFeatureStore featureStore = (SimpleFeatureStore) geoDataStore.getFeatureSource(featuresetname);
-				featureStore.addFeatures(featurecollection);
 			}
+		} catch (CoalescePersistorException | SAXException | IOException | CoalesceDataFormatException e) {
+			persisted = false;
 		}
-
+		return persisted;
 	}
 
 	private void setFeatureAttribute(SimpleFeature simplefeature, String fieldname, ECoalesceFieldDataTypes fieldtype,
@@ -1115,22 +924,19 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 		}
 		/*
 		 * 
-		 * // accumulate this new feature in the collection
-		 * featureCollection.add(simpleFeature); }
+		 * // accumulate this new feature in the collection featureCollection.add(simpleFeature); }
 		 * 
 		 * return featureCollection; }
 		 * 
-		 * static void insertFeatures(String simpleFeatureTypeName, DataStore
-		 * dataStore, FeatureCollection featureCollection) throws IOException {
+		 * static void insertFeatures(String simpleFeatureTypeName, DataStore dataStore, FeatureCollection
+		 * featureCollection) throws IOException {
 		 * 
-		 * FeatureStore featureStore = (SimpleFeatureStore)
-		 * dataStore.getFeatureSource(simpleFeatureTypeName);
+		 * FeatureStore featureStore = (SimpleFeatureStore) dataStore.getFeatureSource(simpleFeatureTypeName);
 		 * featureStore.addFeatures(featureCollection); }
 		 */
 	}
 
 	private Mutation createMutation(CoalesceEntity entity) {
-
 		MutationWrapperFactory mfactory = new MutationWrapperFactory();
 		MutationWrapper mutationGuy = mfactory.createMutationGuy(entity);
 		return mutationGuy.getMutation();
@@ -1187,35 +993,18 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 			throws SQLException, CoalescePersistorException {
 
 		DateTime lastModified = null;
-
-		Connector dbConn;
+		Connector dbConn = connect.getDBConnector();
 		String rowRegex = null;
-		String colfRegex = null;
+		String colfRegex = StringUtils.isNotBlank(objectType) ? objectType : null;
 		String colqRegex = "key";
-		String valueRegex = null;
-		// to use a filter, which is an iterator, you must create an
-		// IteratorSetting
+		String valueRegex = StringUtils.isNotBlank(key) ? key : null;
+		// to use a filter, which is an iterator, you must create an IteratorSetting
 		// specifying which iterator class you are using
 		IteratorSetting iter = new IteratorSetting(1, "modifiedFilter", RegExFilter.class);
-		if (key != null || key != "") {
-			valueRegex = key;
-		}
-		if (objectType != null || objectType != "") {
-			colfRegex = objectType + ".*";
-		}
 		RegExFilter.setRegexs(iter, rowRegex, colfRegex, colqRegex, valueRegex, false, true);
-		try {
-			dbConn = connect.getDBConnector();
-		} catch (CoalescePersistorException ex) {
-			System.err.println(ex.getLocalizedMessage());
-			return lastModified;
-		}
-
-		try {
-			Scanner scanner = dbConn.createScanner(AccumuloDataConnector.coalesceTable, Authorizations.EMPTY);
-
+		try (CloseableScanner scanner = new CloseableScanner(dbConn, AccumuloDataConnector.coalesceTable,
+				Authorizations.EMPTY)) {
 			scanner.addScanIterator(iter);
-
 			String objectkey = null;
 			Text objectcf = null;
 			// TODO Add error handling if more than one row returned.
@@ -1224,59 +1013,22 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 				Key rowKey = scanner.iterator().next().getKey();
 				objectkey = rowKey.getRow().toString();
 				objectcf = rowKey.getColumnFamily();
-			} else {
-				scanner.close();
-				return null;
+				// Get the lastmodified for that row and columnFamily
+				try (CloseableScanner keyscanner = new CloseableScanner(dbConn, AccumuloDataConnector.coalesceTable,
+						Authorizations.EMPTY)) {
+					keyscanner.setRange(new Range(objectkey));
+					keyscanner.fetchColumn(objectcf, new Text("lastmodified"));
+					// TODO Add error handling if more than one row returned. Throw CoalescePersistorException
+					if (keyscanner.iterator().hasNext()) {
+						String dateString = new String(keyscanner.iterator().next().getValue().get());
+						lastModified = JodaDateTimeHelper.fromXmlDateTimeUTC(dateString);
+					}
+				}
 			}
-			scanner.close();
-
-			// Get the lastmodified for that row and columnFamily
-			Scanner keyscanner = dbConn.createScanner(AccumuloDataConnector.coalesceTable, Authorizations.EMPTY);
-			keyscanner.setRange(new Range(objectkey));
-			keyscanner.fetchColumn(objectcf, new Text("lastmodified"));
-
-			// TODO Add error handling if more than one row returned. Throw
-			// CoalescePersistorException
-			if (keyscanner.iterator().hasNext()) {
-				String dateString = new String(keyscanner.iterator().next().getValue().get()); // should
-																								// only
-																								// be
-																								// one
-																								// entry
-																								// //TODO
-																								// Change
-																								// code
-																								// to
-																								// just
-																								// get
-																								// the
-																								// first
-																								// entry
-																								// returned
-																								// in
-																								// the
-																								// map
-																								// and
-																								// print
-																								// error
-																								// if
-																								// more
-																								// than
-																								// one
-																								// returned
-				lastModified = JodaDateTimeHelper.fromXmlDateTimeUTC(dateString);
-			} else {
-				keyscanner.close();
-				return null;
-			}
-
-			keyscanner.close();
-			// AccumuloException | AccumuloSecurityException
 		} catch (TableNotFoundException ex) {
 			System.err.println(ex.getLocalizedMessage());
 		}
 		return lastModified;
-
 	}
 
 	@Override
@@ -1301,8 +1053,8 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 		List<CoalesceEntity> coalesceEntities = new ArrayList<>();
 		try {
 			DataStore geoDataStore = ((AccumuloDataConnector) getDataConnector()).getGeoDataStore();
-			FeatureSource featureSource = geoDataStore.getFeatureSource(query.getTypeName());
-			FeatureIterator featureItr = featureSource.getFeatures(query).features();
+			FeatureSource<?, ?> featureSource = geoDataStore.getFeatureSource(query.getTypeName());
+			FeatureIterator<?> featureItr = featureSource.getFeatures(query).features();
 			List<String> entityKeys = new ArrayList<>();
 			while (featureItr.hasNext()) {
 				Feature feature = featureItr.next();
@@ -1312,17 +1064,16 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 			CoalesceEntity[] entities = getEntity(entityKeys.toArray(new String[entityKeys.size()]));
 			coalesceEntities.addAll(Arrays.asList(entities));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return coalesceEntities;
 	}
-	
+
 	public void close() {
-		 try {
-			((AccumuloDataConnector) getDataConnector()).getGeoDataStore().dispose();
+		try {
+			connect.getGeoDataStore().dispose();
+			connect.close();
 		} catch (CoalescePersistorException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

@@ -6,8 +6,6 @@ import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 
-import com.incadencecorp.coalesce.framework.persistance.accumulo.MutationWrapper;
-import com.incadencecorp.coalesce.framework.persistance.accumulo.MutationWrapperFactory;
 import com.incadencecorp.coalesce.framework.persistance.accumulo.testobjects.MissionEntity;
 
 
