@@ -39,6 +39,7 @@ import org.geotools.data.DataStore;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.Query;
 import org.geotools.data.simple.SimpleFeatureStore;
+import org.geotools.factory.Hints;
 import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
@@ -47,6 +48,7 @@ import org.joda.time.DateTime;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.GeometryDescriptor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -422,10 +424,8 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 			writer.addMutation(m);
 			writer.flush();
 			writer.close();
-			// Create the associated search features for this template if it is
-			// new
-			// TODO: Figure out what to do for updates to templates. What to do
-			// with the data?
+			// Create the associated search features for this template if it is new
+			// TODO: Figure out what to do for updates to templates. What to do with the data?
 			if (newtemplate) {
 				createSearchTables(template);
 			}
@@ -496,9 +496,9 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 
 		}
 		// Write out last set of fields
-		if (!fieldlist.isEmpty())
+		if (!fieldlist.isEmpty()) {
 			createFeatureSet(templateName + "." + sectionName + "." + recordName, fieldlist);
-
+		}
 		return true;
 	}
 
@@ -506,7 +506,6 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 		SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
 		boolean defaultGeometrySet = false;
 		tb.setName(featurename);
-		System.out.println("FeatureName: " + featurename);
 
 		// TODO - Deal with no index fields
 		tb.add("entityKey", getTypeForSimpleFeature(ECoalesceFieldDataTypes.STRING_TYPE));
@@ -727,9 +726,9 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 			config.setMaxMemory(10240);
 			// config.setDurability(Durability.DEFAULT); // Requires Accumulo 1.7
 			config.setMaxWriteThreads(10);
-			persisted = persistBaseData(entity, dbConnector, config) &&	persistEntityIndex(entity, dbConnector, config);
+			persisted = persistBaseData(entity, dbConnector, config) && persistEntityIndex(entity, dbConnector, config);
 			persistEntitySearchData(entity, dbConnector, config);
- 		} catch (CoalescePersistorException ex) {
+		} catch (CoalescePersistorException ex) {
 			System.err.println(ex.getLocalizedMessage());
 			persisted = false;
 		}
@@ -814,7 +813,10 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 										setFeatureAttribute(simplefeature, fieldname, fieldtype, fieldvalue);
 									}
 								}
-								featurecollection.add(simplefeature);
+								Object geomObj = simplefeature.getDefaultGeometry();
+								if (geomObj != null) {
+									featurecollection.add(simplefeature);
+								}
 							}
 							SimpleFeatureStore featureStore = (SimpleFeatureStore) geoDataStore
 									.getFeatureSource(featuresetname);
