@@ -19,7 +19,6 @@ public class CloseableBatchWriter implements BatchWriter, AutoCloseable {
 	@Override
 	public void addMutation(Mutation arg0) throws MutationsRejectedException {
 		writer.addMutation(arg0);
-
 	}
 
 	@Override

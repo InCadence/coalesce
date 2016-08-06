@@ -16,14 +16,12 @@ import java.util.concurrent.TimeUnit;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.accumulo.core.client.BatchScanner;
 import org.apache.accumulo.core.client.BatchWriter;
 import org.apache.accumulo.core.client.BatchWriterConfig;
 import org.apache.accumulo.core.client.Connector;
 import org.apache.accumulo.core.client.IteratorSetting;
 // import org.apache.accumulo.core.client.Durability; // Accumulo 1.7 depenency
 import org.apache.accumulo.core.client.MutationsRejectedException;
-import org.apache.accumulo.core.client.Scanner;
 import org.apache.accumulo.core.client.TableNotFoundException;
 import org.apache.accumulo.core.data.Key;
 import org.apache.accumulo.core.data.Mutation;
@@ -39,7 +37,6 @@ import org.geotools.data.DataStore;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.Query;
 import org.geotools.data.simple.SimpleFeatureStore;
-import org.geotools.factory.Hints;
 import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
@@ -48,7 +45,6 @@ import org.joda.time.DateTime;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.GeometryDescriptor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -112,7 +108,7 @@ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
 
 public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesceSearchPersistor {
 
-	private static AccumuloDataConnector connect = null;
+	private final AccumuloDataConnector connect;
 	/*
 	 * private static String entityColumnFamily = "Coalesce:MetaData"; private static String linkageColumnFamily =
 	 * "Coalesce:Linkage"; private static String linkColumnFamilyPrefix = "LinkID:"; private static String
