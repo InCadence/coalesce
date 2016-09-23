@@ -24,6 +24,7 @@ import javax.sql.rowset.CachedRowSet;
 import org.geotools.data.Query;
 
 import com.incadencecorp.coalesce.api.ICoalesceComponent;
+import com.incadencecorp.coalesce.api.ICoalesceSetup;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
@@ -34,13 +35,7 @@ import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
  * 
  * @author n78554
  */
-public interface IPersistorScan extends ICoalesceComponent {
-
-    /**
-     * This method bust be called before starting the scanner. If running from a
-     * blueprint add <code>init-method="setup"</code> to the bean.
-     */
-    void setup();
+public interface IPersistorScan extends ICoalesceComponent, ICoalesceSetup {
 
     /**
      * Sets the source that the scan will be executed against to create a result

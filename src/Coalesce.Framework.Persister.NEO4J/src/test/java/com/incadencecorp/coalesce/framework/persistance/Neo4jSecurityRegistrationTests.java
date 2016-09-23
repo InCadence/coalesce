@@ -17,14 +17,10 @@
 
 package com.incadencecorp.coalesce.framework.persistance;
 
-import java.sql.SQLException;
-
 import org.junit.Test;
 
 import com.incadencecorp.coalesce.common.classification.MarkingValue;
-import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.framework.persistance.neo4j.Neo4JDataConnector;
-import com.incadencecorp.coalesce.framework.persistance.neo4j.Neo4jSecurityRegistration;
+import com.incadencecorp.coalesce.framework.persistance.neo4j.Neo4JRegistration;
 
 /**
  * Test the neo4j implementation of the security registration.
@@ -34,33 +30,34 @@ import com.incadencecorp.coalesce.framework.persistance.neo4j.Neo4jSecurityRegis
  */
 public class Neo4jSecurityRegistrationTests {
 
+    /**
+     * Registers a test enumeration.
+     * 
+     * @throws Exception
+     */
     @Test
-    public void testRegisteringEnumeration() throws CoalescePersistorException, SQLException
+    public void testRegisteringEnumeration() throws Exception
     {
 
         ServerConn svConnNeo4j = new ServerConn();
         svConnNeo4j.setServerName("dbsp3");
         svConnNeo4j.setPortNumber(7474);
 
-        try (Neo4JDataConnector conn = new Neo4JDataConnector(svConnNeo4j))
+        MarkingValue[] values = new MarkingValue[EClassification.values().length];
+
+        int ii = 0;
+
+        for (EClassification value : EClassification.values())
         {
 
-            Neo4jSecurityRegistration registration = new Neo4jSecurityRegistration(conn);
-
-            MarkingValue[] values = new MarkingValue[EClassification.values().length];
-
-            int ii = 0;
-
-            for (EClassification value : EClassification.values())
-            {
-
-                values[ii++] = new MarkingValue("", value.toString(), value.toString(), "");
-
-            }
-
-            registration.registerClassificationLevels(values);
+            values[ii++] = new MarkingValue("", value.toString(), value.toString(), "");
 
         }
+
+        Neo4JRegistration registration = new Neo4JRegistration();
+        registration.setConnectionSettings(svConnNeo4j);
+        registration.setMarkings(values);
+        registration.register();
 
     }
 

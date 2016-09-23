@@ -26,7 +26,6 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceStringField;
 import com.incadencecorp.coalesce.framework.jobs.AbstractCoalesceJob;
-import com.incadencecorp.coalesce.framework.jobs.AbstractCoalescePersistorsJob;
 import com.incadencecorp.coalesce.framework.jobs.CoalesceRegisterTemplateJob;
 import com.incadencecorp.coalesce.framework.jobs.CoalesceSaveEntityJob;
 import com.incadencecorp.coalesce.framework.jobs.CoalesceSaveEntityProperties;
@@ -97,28 +96,45 @@ public class CoalesceFramework implements ICoalesceExecutorService, Closeable {
      */
     public CoalesceFramework()
     {
-        this(new ThreadPoolExecutor(CoalesceSettings.getMinThreads(),
-                                    CoalesceSettings.getMaxThreads(),
-                                    CoalesceSettings.getKeepAliveTime(),
-                                    TimeUnit.SECONDS,
-                                    new SynchronousQueue<Runnable>(),
-                                    new CoalesceThreadFactoryImpl(),
-                                    new ThreadPoolExecutor.CallerRunsPolicy()));
+        this(null);
     }
 
     /**
      * Creates this framework with the provided executor service.
      * 
-     * @param pool
+     * @param service
      */
-    public CoalesceFramework(ExecutorService pool)
+    public CoalesceFramework(ExecutorService service)
     {
-        _pool = pool;
+        if (service == null)
+        {
+            LOGGER.info("Using Default ExecutorService; Cores: {} Max Threads / Core: {}",
+                        CoalesceSettings.getNumberOfCores(), CoalesceSettings.getMaxThreadsPerCore());
+
+            
+            service = new ThreadPoolExecutor(CoalesceSettings.getMinThreads(),
+                                             CoalesceSettings.getMaxThreads(),
+                                             CoalesceSettings.getKeepAliveTime(),
+                                             TimeUnit.SECONDS,
+                                             new SynchronousQueue<Runnable>(),
+                                             new CoalesceThreadFactoryImpl(),
+                                             new ThreadPoolExecutor.CallerRunsPolicy());
+        }
+
+        _pool = service;
 
         if (LOGGER.isInfoEnabled())
         {
-            LOGGER.info("Executor Service ({})", pool.getClass().getName());
+            LOGGER.info("Executor Service ({})", service.getClass().getName());
         }
+    }
+
+    /**
+     * @return the service used to execute threads.
+     */
+    public ExecutorService getExecutorService()
+    {
+        return _pool;
     }
 
     /**
@@ -130,7 +146,7 @@ public class CoalesceFramework implements ICoalesceExecutorService, Closeable {
     {
         this._authoritativePersistor = persistor;
 
-        if (LOGGER.isInfoEnabled())
+        if (LOGGER.isInfoEnabled() && persistor != null)
         {
             LOGGER.info("Authoritative Persistor ({})", persistor.getClass().getName());
         }
@@ -145,11 +161,14 @@ public class CoalesceFramework implements ICoalesceExecutorService, Closeable {
     {
         this._persistors = persistors;
 
-        if (LOGGER.isInfoEnabled())
+        if (LOGGER.isInfoEnabled() && persistors != null)
         {
             for (ICoalescePersistor persistor : persistors)
             {
-                LOGGER.info("Secondary Persistor ({})", persistor.getClass().getName());
+                if (persistor != null)
+                {
+                    LOGGER.info("Secondary Persistor ({})", persistor.getClass().getName());
+                }
             }
         }
     }
@@ -163,7 +182,7 @@ public class CoalesceFramework implements ICoalesceExecutorService, Closeable {
     {
         _handler = handler;
 
-        if (LOGGER.isInfoEnabled())
+        if (LOGGER.isInfoEnabled() && handler != null)
         {
             LOGGER.info("Error Handler ({})", handler.getName());
         }
@@ -656,9 +675,9 @@ public class CoalesceFramework implements ICoalesceExecutorService, Closeable {
 
     public <T, Y> Future<Y> submit(AbstractCoalesceJob<T, Y> job) throws CoalescePersistorException
     {
-        
+
         Future<Y> result = null;
-        
+
         if (_isAsyncUpdates)
         {
             if (LOGGER.isTraceEnabled())
@@ -679,7 +698,7 @@ public class CoalesceFramework implements ICoalesceExecutorService, Closeable {
                 throw new CoalescePersistorException("Failed to Update Secondary Persistors", e);
             }
         }
-        
+
         return result;
     }
 
@@ -693,32 +712,41 @@ public class CoalesceFramework implements ICoalesceExecutorService, Closeable {
 
         try
         {
-            // Graceful shutdown (Allow 1 minutes for jobs to finish)
+            // Graceful shutdown (Allow 1 minute for jobs to finish)
             _pool.shutdown();
-            _pool.awaitTermination(20, TimeUnit.SECONDS);
+
+            if (!_pool.awaitTermination(1, TimeUnit.MINUTES))
+            {
+
+                LOGGER.warn("(FAILED) Graceful Pool Termination");
+
+                logFailedJobs(_pool.shutdownNow());
+
+                if (!_pool.awaitTermination(1, TimeUnit.MINUTES))
+                {
+                    LOGGER.error(" (FAILED) Pool Terminate");
+                }
+            }
         }
         catch (InterruptedException e)
         {
-            if (LOGGER.isDebugEnabled())
-            {
-                LOGGER.debug("Await Termination Interrupted");
-            }
+
+            LOGGER.warn("(FAILED) Graceful Pool Termination", e);
+
+            logFailedJobs(_pool.shutdownNow());
+
+            // Preserve Interrupt Status
+            Thread.currentThread().interrupt();
         }
+    }
 
-        if (!_pool.isTerminated())
+    private void logFailedJobs(List<Runnable> jobList)
+    {
+        for (Runnable job : jobList)
         {
-            if (LOGGER.isDebugEnabled())
+            if (job instanceof AbstractCoalesceJob<?, ?>)
             {
-                LOGGER.debug("Failed to gracefully shutdown; Forcing the shutdown...");
-            }
-
-            List<Runnable> jobList = _pool.shutdownNow();
-            for (Runnable job : jobList)
-            {
-                if (job instanceof AbstractCoalesceJob<?, ?>)
-                {
-                    LOGGER.warn("Job Failed {}", job.getClass().getName());
-                }
+                LOGGER.warn("Job Failed {}", job.getClass().getName());
             }
         }
     }

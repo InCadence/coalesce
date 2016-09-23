@@ -2,6 +2,7 @@ package com.incadencecorp.coalesce.framework.datamodel;
 
 import java.security.Principal;
 
+import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.framework.EnumerationProviderUtil;
 
@@ -46,18 +47,100 @@ public class CoalesceEnumerationField extends CoalesceEnumerationFieldBase<Integ
     {
         String results = null;
         Integer ordinal = getIntegerValue();
-        
-        if (ordinal != null) {
+
+        if (ordinal != null)
+        {
             results = EnumerationProviderUtil.toString(principal, getEnumerationName(), ordinal);
         }
-        
+
         return results;
+    }
+
+    /**
+     * @param clazz
+     * @return ordinal value converted to a String using
+     *         {@link EnumerationProviderUtil}.
+     */
+    public <E extends Enum<E>> E getValueAsEnumeration(Class<E> clazz)
+    {
+        return getValueAsEnumeration(null, clazz);
+    }
+
+    /**
+     * @param defaultValue
+     * @return ordinal value converted to a String using
+     *         {@link EnumerationProviderUtil}.
+     */
+    public <E extends Enum<E>> E getValueAsEnumeration(E defaultValue)
+    {
+        return getValueAsEnumeration(defaultValue, (Class<E>) defaultValue.getClass());
+    }
+
+    /**
+     * 
+     * @param defaultValue
+     * @param clazz
+     * @return ordinal value converted to a String using
+     *         {@link EnumerationProviderUtil}.
+     */
+    private <E extends Enum<E>> E getValueAsEnumeration(E defaultValue, Class<E> clazz)
+    {
+        E result = defaultValue;
+        Integer ordinal = null;
+
+        try
+        {
+            ordinal = getValue();
+
+            if (ordinal != null)
+            {
+                Enum<E>[] values = clazz.getEnumConstants();
+                result = (E) values[ordinal];
+            }
+
+        }
+        catch (CoalesceDataFormatException | IndexOutOfBoundsException e)
+        {
+            if (defaultValue == null)
+            {
+                if (ordinal != null)
+                {
+                    throw new RuntimeException(String.format(CoalesceErrors.INVALID_ENUMERATION_POSITION,
+                                                             ordinal,
+                                                             clazz.getName()));
+                }
+                else
+                {
+                    throw new RuntimeException(e);
+                }
+            }
+            result = defaultValue;
+        }
+
+        return result;
     }
 
     @Override
     public void setValue(Integer value)
     {
         setTypedValue(value);
+    }
+
+    /**
+     * Sets the ordinal value from the provided enumeration value.
+     * 
+     * @param value
+     */
+    public <E extends Enum<E>> void setValueAsEnumeration(E value)
+    {
+        if (value != null)
+        {
+            setTypedValue(value.ordinal());
+        }
+        else
+        {
+            setBaseValue(null);
+        }
     }
 
     /**

@@ -86,7 +86,14 @@ public class CoalesceEntity extends CoalesceObjectHistory {
         boolean passed = entity.initialize(entityXml);
 
         if (!passed)
+        {
+            if (LOGGER.isDebugEnabled())
+            {
+                LOGGER.debug("(FAILED) Xml: {}", entityXml);
+            }
+
             return null;
+        }
 
         return entity;
 
@@ -282,15 +289,24 @@ public class CoalesceEntity extends CoalesceObjectHistory {
 
             if (deserializedObject == null || !(deserializedObject instanceof Entity))
             {
+                LOGGER.error("Failed to parse XML");
                 return false;
             }
             _entity = (Entity) deserializedObject;
 
             if (!super.initialize(_entity))
+            {
+                LOGGER.error("Failed to intialize");
+
                 return false;
+            }
 
             if (!initializeChildren())
+            {
+                LOGGER.error("Failed to initialize children");
+
                 return false;
+            }
 
             return initializeReferences();
         }
@@ -312,6 +328,14 @@ public class CoalesceEntity extends CoalesceObjectHistory {
 
         // Initialize References
         return initializeReferences();
+    }
+
+    /**
+     * @return whether this object has been initialized or not.
+     */
+    public boolean isInitialized()
+    {
+        return _entity != null;
     }
 
     /**

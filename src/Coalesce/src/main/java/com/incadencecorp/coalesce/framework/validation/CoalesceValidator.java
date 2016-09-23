@@ -18,12 +18,14 @@
 package com.incadencecorp.coalesce.framework.validation;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -95,6 +97,7 @@ public class CoalesceValidator extends CoalesceIterator {
 
         this.violations.clear();
         this.principal = principal;
+        this.entity = entity;
 
         for (Map.Entry<String, List<CoalesceFieldDefinition>> entry : constraints.entrySet())
         {
@@ -202,7 +205,8 @@ public class CoalesceValidator extends CoalesceIterator {
             {
                 if (constraint.getConstraintType() == ConstraintType.MANDATORY)
                 {
-                    violations.put(path, "Missing Mandatory Recordset");
+                    violations.put(path, String.format(CoalesceErrors.INVALID_MANDOTORY_RECORDSET,
+                                                       definition.getParent().getName()));
                     break;
                 }
             }
@@ -249,7 +253,8 @@ public class CoalesceValidator extends CoalesceIterator {
                         case ENUMERATION:
                             result = validateEnumeration(field, constraint);
                             break;
-                        default:
+                        case SIZE:
+                            result = validateSize(field, constraint);
                             break;
                         }
 
@@ -257,7 +262,10 @@ public class CoalesceValidator extends CoalesceIterator {
                         {
                             if (LOGGER.isInfoEnabled())
                             {
-                                LOGGER.warn("Field ({}.{}) is invalid beacuse ({})", record.getParent().getName(), field.getName(), result);
+                                LOGGER.warn("Field ({}.{}) is invalid beacuse ({})",
+                                            record.getParent().getName(),
+                                            field.getName(),
+                                            result);
                             }
 
                             violations.put(field.getKey(), result);
@@ -303,7 +311,7 @@ public class CoalesceValidator extends CoalesceIterator {
 
                 if (result != null)
                 {
-                    result = String.format("Invalid Enumeration (%s)", result);
+                    result = String.format(CoalesceErrors.INVALID_ENUMERATION, result);
                 }
                 LOGGER.warn(String.format(CoalesceErrors.DEPRECATED_CONSTRAINT,
                                           constraint.getName(),
@@ -354,7 +362,7 @@ public class CoalesceValidator extends CoalesceIterator {
 
         if (result != null)
         {
-            result = String.format("Invalid Input (%s)", result);
+            result = String.format(CoalesceErrors.INVALID_INPUT, result);
         }
 
         return result;
@@ -378,6 +386,67 @@ public class CoalesceValidator extends CoalesceIterator {
         return result;
     }
 
+    private String validateSize(CoalesceField<?> field, CoalesceConstraint constraint)
+    {
+        String result = null;
+
+        // Field Contains Data?
+        if (!StringHelper.isNullOrEmpty(field.getBaseValue()))
+        {
+            // Yes; Is Constraint Numeric
+            if (StringUtils.isNumeric(constraint.getValue()))
+            {
+                if (field.getBaseValues().length != Integer.parseInt(constraint.getValue()))
+                {
+                    result = String.format(CoalesceErrors.INVALID_CONSTRAINT_LIST_LENGTH, field.getName());
+                }
+            }
+            else
+            {
+                int size;
+
+                // No; Validate Based on Field Data Type
+                if (field.getDataType() == ECoalesceFieldDataTypes.INTEGER_TYPE)
+                {
+                    // Field Specifies the Length
+                    size = Integer.parseInt(field.getBaseValue());
+                }
+                else
+                {
+                    // All Field's Sizes Must Match
+                    size = field.getBaseValues().length;
+                }
+
+                for (CoalesceField<?> fieldToCheck : getFields((CoalesceRecord) field.getParent(), constraint))
+                {
+                    if (fieldToCheck.getBaseValues().length != size)
+                    {
+                        result = String.format(CoalesceErrors.INVALID_CONSTRAINT_LIST_LENGTH, fieldToCheck.getName());
+                    }
+                }
+            }
+
+        }
+
+        return result;
+    }
+
+    private List<CoalesceField<?>> getFields(CoalesceRecord record, CoalesceConstraint constraint)
+    {
+        List<CoalesceField<?>> fields = new ArrayList<CoalesceField<?>>();
+
+        for (String name : constraint.getValue().split("[,]"))
+        {
+            CoalesceField<?> additionalField = record.getFieldByName(name);
+            if (additionalField != null)
+            {
+                fields.add(additionalField);
+            }
+        }
+
+        return fields;
+    }
+
     private String validateMandatory(CoalesceField<?> field, boolean allowEmpty)
     {
 
@@ -387,7 +456,7 @@ public class CoalesceValidator extends CoalesceIterator {
         if ((allowEmpty && value == null) || (!allowEmpty && StringHelper.isNullOrEmpty(value)))
         {
             // Not Valid
-            result = "Empty Mandatory Field";
+            result = String.format(CoalesceErrors.INVALID_MANDOTORY_FIELD, field.getName());
         }
 
         return result;
@@ -426,13 +495,13 @@ public class CoalesceValidator extends CoalesceIterator {
             if (compareResult == Integer.MAX_VALUE)
             {
                 // Invalid Data Type
-                result = "Invalid Data Type (Max constraint can only be applied to numerics)";
+                result = String.format(String.format(CoalesceErrors.INVALID_DATA_TYPE_NUMERIC, field.getName()));
                 break;
             }
             else if (compareResult > 0 || (!isInclusive && compareResult == 0))
             {
                 // Invalid Value
-                result = "Invalid Input (Value excceeds the max)";
+                result = String.format(CoalesceErrors.INVALID_INPUT_EXCEEDS, "max", field.getName());
                 break;
             }
         }
@@ -454,13 +523,13 @@ public class CoalesceValidator extends CoalesceIterator {
             if (compareResult == Integer.MAX_VALUE)
             {
                 // Invalid Data Type
-                result = "Invalid Data Type (Min constraint can only be applied to numerics)";
+                result = String.format(String.format(CoalesceErrors.INVALID_DATA_TYPE_NUMERIC, field.getName()));
                 break;
             }
             else if (compareResult < 0 || (!inclusive && compareResult == 0))
             {
                 // Invalid Value
-                result = "Invalid Input (Value excceeds the min)";
+                result = String.format(CoalesceErrors.INVALID_INPUT_EXCEEDS, "min", field.getName());
                 break;
             }
         }

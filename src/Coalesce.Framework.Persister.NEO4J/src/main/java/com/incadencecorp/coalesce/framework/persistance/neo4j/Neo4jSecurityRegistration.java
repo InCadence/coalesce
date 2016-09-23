@@ -27,6 +27,9 @@ import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
  * This is the Neo4j implementation.
  * 
  * @author n78554
+ * @deprecated
+ * @since 0.0.12-SNAPSHOT
+ * @see Neo4JRegistration
  */
 public class Neo4jSecurityRegistration implements ISecurityRegistration<Neo4JDataConnector> {
 
@@ -36,6 +39,8 @@ public class Neo4jSecurityRegistration implements ISecurityRegistration<Neo4JDat
 
     private static final String CLASSIFICATION_LINK = "MATCH (n1:CLASSIFICATION_LEVEL {name: {1}}), (n2:CLASSIFICATION_LEVEL {name: {2}}) "
             + "CREATE UNIQUE (n1)-[:IS_LOWER_THAN]->(n2)";
+
+    private static final String CYPHER_CLS_CONSTRAINT = "CREATE CONSTRAINT ON (n:CLASSIFICATION_LEVEL) ASSERT n.name IS UNIQUE";
 
     private Neo4JDataConnector conn;
 
@@ -52,6 +57,8 @@ public class Neo4jSecurityRegistration implements ISecurityRegistration<Neo4JDat
     {
 
         CoalesceParameter[] parameters;
+
+        conn.executeQuery(CYPHER_CLS_CONSTRAINT);
 
         if (values.length != 0)
         {

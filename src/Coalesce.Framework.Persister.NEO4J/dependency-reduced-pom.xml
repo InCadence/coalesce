@@ -3,14 +3,13 @@
   <parent>
     <artifactId>coalesce-pom</artifactId>
     <groupId>com.incadencecorp.coalesce</groupId>
-    <version>0.0.6-SNAPSHOT</version>
+    <version>0.0.16-SNAPSHOT</version>
     <relativePath>../Coalesce.Pom/pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>coalesce-framework-persister-neo4j</artifactId>
   <packaging>bundle</packaging>
   <name>Coalesce Neo4j Persister</name>
-  <version>${coalescePersisterVersionNEO4J}</version>
   <description>Persister used by Coalesce to connect to a Neo4j database.</description>
   <build>
     <plugins>
@@ -31,6 +30,7 @@
                   <include>org.parboiled:*</include>
                   <include>org.apache.lucene:lucene-core</include>
                   <include>net.sf.opencsv:*</include>
+                  <include>com.infradna.tool:bridge-method-annotation</include>
                   <include>org.restlet:*</include>
                   <include>org.apache.httpcomponents:httpclient</include>
                   <include>org.apache.httpcomponents:httpmime</include>
@@ -67,7 +67,7 @@
 							org.apache.lucene*;-split-package:=merge-last,
 							org.apache.http*;-split-package:=merge-last,
 							org.parboiled*;-split-package:=merge-last,
-
+							com.infradna*,
 							org.apache.commons.codec*,
 							org.restlet*</Private-Package>
             <Import-Package>com.sun.*;resolution:=optional,
@@ -92,13 +92,13 @@
     <dependency>
       <groupId>com.incadencecorp.coalesce</groupId>
       <artifactId>coalesce-core</artifactId>
-      <version>0.0.6-SNAPSHOT</version>
+      <version>0.0.16-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.incadencecorp.coalesce</groupId>
       <artifactId>coalesce-core</artifactId>
-      <version>0.0.6-SNAPSHOT</version>
+      <version>0.0.16-SNAPSHOT</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
@@ -113,12 +113,6 @@
           <groupId>xml-apis</groupId>
         </exclusion>
       </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>com.incadencecorp.coalesce</groupId>
-      <artifactId>coalesce-framework-persister-postgresql</artifactId>
-      <version>0.0.6-SNAPSHOT</version>
-      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.codehaus.jackson</groupId>
@@ -239,6 +233,18 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
+      <groupId>com.infradna.tool</groupId>
+      <artifactId>bridge-method-annotation</artifactId>
+      <version>1.13</version>
+      <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>annotation-indexer</artifactId>
+          <groupId>org.jenkins-ci</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
       <groupId>org.apache.felix</groupId>
       <artifactId>org.osgi.core</artifactId>
       <version>1.4.0</version>
@@ -249,6 +255,24 @@
       <artifactId>joda-time</artifactId>
       <version>1.6.2</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.5</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>1.7.5</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>log4j</artifactId>
+          <groupId>log4j</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>junit</groupId>

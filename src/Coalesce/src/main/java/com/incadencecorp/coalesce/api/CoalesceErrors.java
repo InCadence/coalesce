@@ -53,13 +53,57 @@ public final class CoalesceErrors {
 
     /**
      * Error reported when a constraint is used on an invalid field type.
-     * Format: "Constraint (%s) in Entity (%s) is invalid for field type (%s)
+     * Format: "Constraint (%s) in Entity (%s) is invalid for field type (%s)"
      */
     public static final String INVALID_CONSTRAINT = "Constraint (%s) in Entity (%s) is invalid for field type (%s)";
 
     /**
+     * Error reported when a mandatory record set is missing records. Format:
+     * "Missing Mandatory Recordset: (%s)"
+     */
+    public static final String INVALID_MANDOTORY_RECORDSET = "Missing Mandatory Recordset: (%s)";
+
+    /**
+     * Error reported when a mandatory field set is missing values. Format:
+     * "Missing Mandatory Field: (%s)"
+     */
+    public static final String INVALID_MANDOTORY_FIELD = "Missing Mandatory Field: (%s)";
+
+    /**
+     * Error reported when field's data does not match a regular expression.
+     * "Invalid Input (%s)"
+     */
+    public static final String INVALID_INPUT = "Invalid Input: (%s)";
+
+    /**
+     * Error reported when field's data does not match a regular expression.
+     * "Invalid Input (%s): (%s)"
+     */
+    public static final String INVALID_INPUT_REASON = "Invalid Input (%s): (%s)";
+
+    /**
+     * Error reported when field's data does not match a regular expression.
+     * "Invalid Input (Value exceeds the %s): (%s)"
+     */
+    public static final String INVALID_INPUT_EXCEEDS = "Invalid Input (Value exceeds the %s): (%s)";
+
+    /**
+     * Error reported when a list field's length does not match the constraint.
+     * "Invalid List Length: (%s)"
+     */
+    public static final String INVALID_CONSTRAINT_LIST_LENGTH = "Invalid List Length: (%s)";
+
+    /**
+     * Error reported when a min or max constraint is applied to a non numeric field.
+     * "Invalid Data Type (Min constraint can only be applied to numerics): (%s)"
+     */
+    public static final String INVALID_DATA_TYPE_NUMERIC = "Invalid Data Type (Constraint can only be applied to numerics): (%s)";
+
+    
+    /**
      * Error reported when a field's data types does not match its definition
-     * Format: "Field (%s) of type (%s) in Entity (%s) does not match it's definition of (%s)"
+     * Format:
+     * "Field (%s) of type (%s) in Entity (%s) does not match it's definition of (%s)"
      */
     public static final String INVALID_DATA_TYPE = "Field (%s) of type (%s) in Entity (%s) does not match it's definition of (%s)";
 
@@ -77,15 +121,33 @@ public final class CoalesceErrors {
     public static final String INVALID_TYPE_CONSTRAINT = "Constraint (%s) not valid for field type (%s)";
 
     /**
-     * Error reported when failing to load a template
-     * Format: "Template (%s) (%s) (%s) failed to load"
+     * Error reported when failing to load a template Format:
+     * "Template (%s) (%s) (%s) failed to load"
      */
     public static final String TEMPLATE_LOAD = "Template (%s) (%s) (%s) failed to load";
 
     /**
-     * Error reported when a task fails to execute.
-     * Format: "(FAILED) Task (%s) failed on (%s) because (%s)."
+     * Error reported when a task fails to execute. Format:
+     * "(FAILED) Task (%s) failed on (%s) because (%s)."
      */
     public static final String FAILED_TASK = "(FAILED) Task (%s) failed in (%s) because (%s).";
+
+    /**
+     * Error reported when attempting to verify a hash that has had items
+     * removed. Format: "Invalid Hash (One or more values were removed): %s"
+     */
+    public static final String ERR_HASH_VALUES_RMV = "Invalid Hash (One or more values were removed): %s";
+
+    /**
+     * Error reported when attempting to verify a hash that has had items
+     * modified. Format: "Invalid Hash (One or more values modified): %s"
+     */
+    public static final String ERR_HASH_VALUES_MODIFIED = "Invalid Hash (One or more values modified): %s";
+
+    /**
+     * Warning reported when attempting to verify a hash that has had items
+     * added. Format: "Updating Hash (%s values added): %s"
+     */
+    public static final String ERR_HASH_VALUES_ADD = "Updating Hash (%s values added): %s";
 
 }

@@ -40,6 +40,310 @@ import com.incadencecorp.coalesce.framework.validation.CustomValidatorImpl;
 public class CoalesceConstraintTest {
 
     /**
+     * Ensures that specifying definitions from different records will throw an
+     * exception.
+     * 
+     * @throws Exception
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testListSizeEqualsDifferentParentFailure() throws Exception
+    {
+
+        // Create Entity
+        CoalesceEntity entity = CoalesceEntity.create("Constraint", "UNIT_TEST", "1.0", "", "");
+        CoalesceSection section = CoalesceSection.create(entity, "section");
+        CoalesceRecordset recordset1 = CoalesceRecordset.create(section, "rs1");
+        CoalesceRecordset recordset2 = CoalesceRecordset.create(section, "rs2");
+
+        // Create Field Definitions w/ Constraints
+        CoalesceFieldDefinition fd1;
+        CoalesceFieldDefinition fd2;
+
+        fd1 = CoalesceFieldDefinition.create(recordset1, "field1", ECoalesceFieldDataTypes.STRING_LIST_TYPE);
+        fd2 = CoalesceFieldDefinition.create(recordset2, "field2", ECoalesceFieldDataTypes.STRING_LIST_TYPE);
+
+        CoalesceConstraint.createListSizeEquals("Size Constraint", fd1, fd2);
+
+    }
+
+    /**
+     * Ensures that specifying non-list type definitions will throw an
+     * exception.
+     * 
+     * @throws Exception
+     */
+    @Test(expected = ClassCastException.class)
+    public void testListSizeEqualsNonListTypeFailure() throws Exception
+    {
+
+        // Create Entity
+        CoalesceEntity entity = CoalesceEntity.create("Constraint", "UNIT_TEST", "1.0", "", "");
+        CoalesceSection section = CoalesceSection.create(entity, "section");
+        CoalesceRecordset recordset1 = CoalesceRecordset.create(section, "rs1");
+
+        // Create Field Definitions w/ Constraints
+        CoalesceFieldDefinition fd1;
+        CoalesceFieldDefinition fd2;
+
+        fd1 = CoalesceFieldDefinition.create(recordset1, "field1", ECoalesceFieldDataTypes.STRING_LIST_TYPE);
+        fd2 = CoalesceFieldDefinition.create(recordset1, "field2", ECoalesceFieldDataTypes.STRING_TYPE);
+
+        CoalesceConstraint.createListSizeEquals("Size Constraint", fd1, fd2);
+
+    }
+
+    /**
+     * Ensures that specifying non-list type definitions will throw an
+     * exception.
+     * 
+     * @throws Exception
+     */
+    @Test(expected = ClassCastException.class)
+    public void testListSizeNonListTypeFailure() throws Exception
+    {
+
+        // Create Entity
+        CoalesceEntity entity = CoalesceEntity.create("Constraint", "UNIT_TEST", "1.0", "", "");
+        CoalesceSection section = CoalesceSection.create(entity, "section");
+        CoalesceRecordset recordset1 = CoalesceRecordset.create(section, "rs");
+
+        // Create Field Definitions w/ Constraints
+        CoalesceFieldDefinition fd;
+
+        fd = CoalesceFieldDefinition.create(recordset1, "field1", ECoalesceFieldDataTypes.STRING_TYPE);
+
+        CoalesceConstraint.createListSize(fd, "Size Constraint", 5);
+
+    }
+
+    /**
+     * Ensures that specifying non-integer type definitions will throw an
+     * exception.
+     * 
+     * @throws Exception
+     */
+    @Test(expected = ClassCastException.class)
+    public void testListSizeNonIntegerTypeFailure() throws Exception
+    {
+
+        // Create Entity
+        CoalesceEntity entity = CoalesceEntity.create("Constraint", "UNIT_TEST", "1.0", "", "");
+        CoalesceSection section = CoalesceSection.create(entity, "section");
+        CoalesceRecordset recordset1 = CoalesceRecordset.create(section, "rs1");
+
+        // Create Field Definitions w/ Constraints
+        CoalesceFieldDefinition fd1;
+        CoalesceFieldDefinition fd2;
+
+        fd1 = CoalesceFieldDefinition.create(recordset1, "field1", ECoalesceFieldDataTypes.STRING_TYPE);
+        fd2 = CoalesceFieldDefinition.create(recordset1, "field2", ECoalesceFieldDataTypes.STRING_LIST_TYPE);
+
+        CoalesceConstraint.createListSize(fd1, "Size Constraint", fd2);
+
+    }
+
+    /**
+     * This unit test exercises
+     * {@link CoalesceConstraint#createListSize(CoalesceFieldDefinition, String, int)}
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testListSize() throws Exception
+    {
+        // Create Entity
+        CoalesceEntity entity = CoalesceEntity.create("Constraint", "UNIT_TEST", "1.0", "", "");
+        CoalesceSection section = CoalesceSection.create(entity, "section");
+        CoalesceRecordset recordset = CoalesceRecordset.create(section, "rs");
+
+        // Create Field Definitions w/ Constraints
+        CoalesceFieldDefinition fd;
+        fd = CoalesceFieldDefinition.create(recordset, "field1", ECoalesceFieldDataTypes.STRING_LIST_TYPE);
+        CoalesceConstraint.createListSize(fd, "Size Constraint", 3);
+
+        CoalesceEntityTemplate template = CoalesceEntityTemplate.create(entity);
+
+        CoalesceRecord record = recordset.addNew();
+
+        CoalesceValidator validator = new CoalesceValidator();
+
+        Assert.assertEquals(0, validator.validate(null, entity, template).size());
+
+        CoalesceStringListField field = (CoalesceStringListField) record.getFieldByName("field1");
+
+        field.setArray(new String[] {
+                "A", "B"
+        });
+
+        Map<String, String> results = validator.validate(null, entity, template);
+
+        Assert.assertEquals(1, results.size());
+        Assert.assertEquals(String.format(CoalesceErrors.INVALID_CONSTRAINT_LIST_LENGTH, field.getName()),
+                            results.get(field.getKey()));
+
+        field.setArray(new String[] {
+                "A", "B", "C"
+        });
+
+        Assert.assertEquals(0, validator.validate(null, entity, template).size());
+
+        field.setArray(new String[] {
+                "A", "B", "C", "B"
+        });
+
+        results = validator.validate(null, entity, template);
+
+        Assert.assertEquals(1, results.size());
+        Assert.assertEquals(String.format(CoalesceErrors.INVALID_CONSTRAINT_LIST_LENGTH, field.getName()),
+                            results.get(field.getKey()));
+
+    }
+
+    /**
+     * This unit test exercises
+     * {@link CoalesceConstraint#createListSizeEquals(String, CoalesceFieldDefinition...)}
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testListSizeEquals() throws Exception
+    {
+        CoalesceValidator validator = new CoalesceValidator();
+
+        // Create Entity
+        CoalesceEntity entity = CoalesceEntity.create("Constraint", "UNIT_TEST", "1.0", "", "");
+        CoalesceSection section = CoalesceSection.create(entity, "section");
+        CoalesceRecordset recordset = CoalesceRecordset.create(section, "rs");
+
+        // Create Field Definitions w/ Constraints
+        CoalesceFieldDefinition fd1;
+        CoalesceFieldDefinition fd2;
+        CoalesceFieldDefinition fd3;
+
+        fd1 = CoalesceFieldDefinition.create(recordset, "field1", ECoalesceFieldDataTypes.STRING_LIST_TYPE);
+        fd2 = CoalesceFieldDefinition.create(recordset, "field2", ECoalesceFieldDataTypes.STRING_LIST_TYPE);
+        fd3 = CoalesceFieldDefinition.create(recordset, "field3", ECoalesceFieldDataTypes.STRING_LIST_TYPE);
+
+        CoalesceConstraint.createListSizeEquals("Size Constraint", fd1, fd2, fd3);
+
+        CoalesceEntityTemplate template = CoalesceEntityTemplate.create(entity);
+
+        // Create New Record
+        CoalesceRecord record = recordset.addNew();
+
+        // Get Fields
+        CoalesceStringListField field1 = (CoalesceStringListField) record.getFieldByName("field1");
+        CoalesceStringListField field2 = (CoalesceStringListField) record.getFieldByName("field2");
+        CoalesceStringListField field3 = (CoalesceStringListField) record.getFieldByName("field3");
+
+        // Verify if not value is set it will pass
+        Assert.assertEquals(0, validator.validate(null, entity, template).size());
+
+        // Verify as long as the restraining field is not set validation will
+        // pass.
+        field2.setValue(new String[] {
+                "1", "2"
+        });
+        Assert.assertEquals(0, validator.validate(null, entity, template).size());
+
+        // Verify setting the restraining field will fail the validation
+        field1.setValue(new String[] {
+            "1"
+        });
+
+        Map<String, String> results = validator.validate(null, entity, template);
+
+        Assert.assertEquals(1, results.size());
+        Assert.assertEquals(String.format(CoalesceErrors.INVALID_CONSTRAINT_LIST_LENGTH, field2.getName()),
+                            results.get(field1.getKey()));
+
+        field2.setValue(new String[] {
+            "B"
+        });
+
+        results = validator.validate(null, entity, template);
+
+        Assert.assertEquals(1, results.size());
+        Assert.assertEquals(String.format(CoalesceErrors.INVALID_CONSTRAINT_LIST_LENGTH, field3.getName()),
+                            results.get(field1.getKey()));
+
+        field3.setValue(new String[] {
+            "A"
+        });
+
+        Assert.assertEquals(0, validator.validate(null, entity, template).size());
+
+    }
+
+    /**
+     * This unit test exercises
+     * {@link CoalesceConstraint#createListSize(CoalesceFieldDefinition, String, CoalesceFieldDefinition...)}
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testListSizeField() throws Exception
+    {
+        // Create Entity
+        CoalesceEntity entity = CoalesceEntity.create("Constraint", "UNIT_TEST", "1.0", "", "");
+        CoalesceSection section = CoalesceSection.create(entity, "section");
+        CoalesceRecordset recordset = CoalesceRecordset.create(section, "rs");
+
+        // Create Field Definitions w/ Constraints
+        CoalesceFieldDefinition fd;
+        CoalesceFieldDefinition fd1;
+        CoalesceFieldDefinition fd2;
+
+        fd = CoalesceFieldDefinition.create(recordset, "fieldConstraint", ECoalesceFieldDataTypes.INTEGER_TYPE);
+        fd1 = CoalesceFieldDefinition.create(recordset, "field1", ECoalesceFieldDataTypes.STRING_LIST_TYPE);
+        fd2 = CoalesceFieldDefinition.create(recordset, "field2", ECoalesceFieldDataTypes.STRING_LIST_TYPE);
+
+        // Create New Record
+        CoalesceRecord record = recordset.addNew();
+
+        // Get Fields
+        CoalesceIntegerField field = (CoalesceIntegerField) record.getFieldByName("fieldConstraint");
+        CoalesceStringListField field1 = (CoalesceStringListField) record.getFieldByName("field1");
+        CoalesceStringListField field2 = (CoalesceStringListField) record.getFieldByName("field2");
+
+        field.setValue(5);
+        field1.setValue(new String[] {
+            "1"
+        });
+
+        CoalesceConstraint.createListSize(fd, "Size Constraint", fd1, fd2);
+
+        CoalesceEntityTemplate template = CoalesceEntityTemplate.create(entity);
+
+        CoalesceValidator validator = new CoalesceValidator();
+
+        Map<String, String> results = validator.validate(null, entity, template);
+
+        Assert.assertEquals(1, results.size());
+        Assert.assertEquals(String.format(CoalesceErrors.INVALID_CONSTRAINT_LIST_LENGTH, field1.getName()),
+                            results.get(field.getKey()));
+
+        field1.setValue(new String[] {
+                "1", "2", "3", "4", "5"
+        });
+
+        results = validator.validate(null, entity, template);
+
+        Assert.assertEquals(1, results.size());
+        Assert.assertEquals(String.format(CoalesceErrors.INVALID_CONSTRAINT_LIST_LENGTH, field2.getName()),
+                            results.get(field.getKey()));
+
+        field2.setValue(new String[] {
+                "1", "2", "3", "4", "5"
+        });
+
+        results = validator.validate(null, entity, template);
+
+        Assert.assertEquals(0, results.size());
+
+    }
+
+    /**
      * This unit test adds regular express constraints and verifies that the
      * validator reports appropriate constraint violations.
      * 
@@ -79,8 +383,8 @@ public class CoalesceConstraintTest {
         // Validate
         Map<String, String> results = new CoalesceValidator().validate(null, entity, CoalesceEntityTemplate.create(entity));
 
-        assertEquals("Invalid Input (D)", results.get(field1.getKey()));
-        assertEquals("Invalid Input (d)", results.get(field2.getKey()));
+        assertEquals(String.format(CoalesceErrors.INVALID_INPUT, field1.getValue()), results.get(field1.getKey()));
+        assertEquals(String.format(CoalesceErrors.INVALID_INPUT, field2.getValue()), results.get(field2.getKey()));
 
     }
 
@@ -139,9 +443,12 @@ public class CoalesceConstraintTest {
         Map<String, String> results = new CoalesceValidator().validate(null, entity, CoalesceEntityTemplate.create(entity));
 
         assertEquals(null, results.get(fieldValid.getKey()));
-        assertEquals("Invalid Input (Value excceeds the min)", results.get(fieldInvalidMin.getKey()));
-        assertEquals("Invalid Input (Value excceeds the max)", results.get(fieldInvalidMax.getKey()));
-        assertEquals("Invalid Input (Value excceeds the max)", results.get(fieldList.getKey()));
+        assertEquals(String.format(CoalesceErrors.INVALID_INPUT_EXCEEDS, "min", fieldInvalidMin.getName()),
+                     results.get(fieldInvalidMin.getKey()));
+        assertEquals(String.format(CoalesceErrors.INVALID_INPUT_EXCEEDS, "max", fieldInvalidMax.getName()),
+                     results.get(fieldInvalidMax.getKey()));
+        assertEquals(String.format(CoalesceErrors.INVALID_INPUT_EXCEEDS, "max", fieldList.getName()),
+                     results.get(fieldList.getKey()));
 
         fieldList.setTypedValue(new long[] {
                 1, 3, 4, -2
@@ -149,7 +456,8 @@ public class CoalesceConstraintTest {
 
         results = new CoalesceValidator().validate(null, entity, CoalesceEntityTemplate.create(entity));
 
-        assertEquals("Invalid Input (Value excceeds the min)", results.get(fieldList.getKey()));
+        assertEquals(String.format(CoalesceErrors.INVALID_INPUT_EXCEEDS, "min", fieldList.getName()),
+                     results.get(fieldList.getKey()));
 
         fieldList.setTypedValue(new long[] {
                 1, 3, 4
@@ -194,7 +502,7 @@ public class CoalesceConstraintTest {
         // Validate
         Map<String, String> results = new CoalesceValidator().validate(null, entity, CoalesceEntityTemplate.create(entity));
 
-        assertEquals("Empty Mandatory Field", results.get(field1.getKey()));
+        assertEquals(String.format(CoalesceErrors.INVALID_MANDOTORY_FIELD, field1.getName()), results.get(field1.getKey()));
 
         // Set Values
         field1.setTypedValue(4.2);
@@ -251,9 +559,9 @@ public class CoalesceConstraintTest {
         Map<String, String> results = new CoalesceValidator().validate(null, entity, CoalesceEntityTemplate.create(entity));
 
         assertEquals(null, results.get(field1.getKey()));
-        assertEquals("Empty Mandatory Field", results.get(field2.getKey()));
-        assertEquals("Empty Mandatory Field", results.get(field3.getKey()));
-        assertEquals("Empty Mandatory Field", results.get(field4.getKey()));
+        assertEquals(String.format(CoalesceErrors.INVALID_MANDOTORY_FIELD, field2.getName()), results.get(field2.getKey()));
+        assertEquals(String.format(CoalesceErrors.INVALID_MANDOTORY_FIELD, field3.getName()), results.get(field3.getKey()));
+        assertEquals(String.format(CoalesceErrors.INVALID_MANDOTORY_FIELD, field4.getName()), results.get(field4.getKey()));
 
         // Set Values
         field2.setValue(null);
@@ -264,7 +572,7 @@ public class CoalesceConstraintTest {
         results = new CoalesceValidator().validate(null, entity, CoalesceEntityTemplate.create(entity));
 
         assertEquals(null, results.get(field1.getKey()));
-        assertEquals("Empty Mandatory Field", results.get(field2.getKey()));
+        assertEquals(String.format(CoalesceErrors.INVALID_MANDOTORY_FIELD, field2.getName()), results.get(field2.getKey()));
         assertEquals(null, results.get(field3.getKey()));
         assertEquals(null, results.get(field4.getKey()));
 
@@ -329,9 +637,9 @@ public class CoalesceConstraintTest {
         CoalesceRecordset recordset = CoalesceRecordset.create(section, "rs");
 
         // Create Field Definitions w/ Constraints
-        CoalesceFieldDefinition.createEnumerationFieldDefinition(recordset, "field1", ETest.class);
-        CoalesceFieldDefinition.createEnumerationFieldDefinition(recordset, "field2", ETest.class);
-        CoalesceFieldDefinition.createEnumerationFieldDefinition(recordset, "field3", ETest.class);
+        CoalesceFieldDefinition.createEnumerationFieldDefinition(recordset, "field1", ETest.class, null);
+        CoalesceFieldDefinition.createEnumerationFieldDefinition(recordset, "field2", ETest.class, null);
+        CoalesceFieldDefinition.createEnumerationFieldDefinition(recordset, "field3", ETest.class, ETest.A);
         CoalesceFieldDefinition.createEnumerationListFieldDefinition(recordset, "field4", ETest.class);
 
         // Create New Record
@@ -343,6 +651,11 @@ public class CoalesceConstraintTest {
         CoalesceField<?> field3 = record.getFieldByName("field3");
         CoalesceField<?> field4 = record.getFieldByName("field4");
 
+        Assert.assertNull(field1.getBaseValue());
+        Assert.assertNull(field2.getBaseValue());
+        Assert.assertEquals(ETest.A.ordinal(), Integer.parseInt(field3.getBaseValue()));
+        Assert.assertNull(field4.getBaseValue());
+        
         // Set Values
         field1.setTypedValue(1);
         field2.setTypedValue(10);
@@ -351,7 +664,8 @@ public class CoalesceConstraintTest {
                 0, 1, 10
         });
 
-        EnumerationProviderUtil.setEnumerationProviders(new JavaEnumerationProviderImpl(), new ConstraintEnumerationProviderImpl());
+        EnumerationProviderUtil.setEnumerationProviders(new JavaEnumerationProviderImpl(),
+                                                        new ConstraintEnumerationProviderImpl());
 
         // Validate
         Map<String, String> results = new CoalesceValidator().validate(null, entity, CoalesceEntityTemplate.create(entity));
@@ -396,7 +710,6 @@ public class CoalesceConstraintTest {
         {
             Assert.assertEquals(value.toString(), values.get(ii++));
         }
-
     }
 
     private enum ETest

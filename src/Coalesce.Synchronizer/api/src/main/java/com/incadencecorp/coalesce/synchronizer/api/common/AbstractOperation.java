@@ -154,6 +154,11 @@ public abstract class AbstractOperation<T extends AbstractOperationTask> extends
                 }
                 catch (ExecutionException e)
                 {
+                    if (LOGGER.isDebugEnabled())
+                    {
+                        LOGGER.debug("Operation Failed");
+                    }
+
                     if (handler == null || !handler.handle(tasks.get(ii).getSubset(), this, e))
                     {
                         throw e;

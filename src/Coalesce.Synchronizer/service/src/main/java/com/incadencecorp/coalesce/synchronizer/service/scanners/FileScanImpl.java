@@ -64,6 +64,7 @@ public class FileScanImpl extends AbstractScan {
 
     private long lastScanned;
     private URI directory;
+    private int blockSize = -1; // Unlimited
 
     @Override
     public void setProperties(Map<String, String> properties)
@@ -81,6 +82,11 @@ public class FileScanImpl extends AbstractScan {
             {
                 throw new IllegalArgumentException(CoalesceParameters.PARAM_DIRECTORY, e);
             }
+        }
+
+        if (parameters.containsKey(CoalesceParameters.PARAM_BLOCK_SIZE))
+        {
+            blockSize = Integer.parseInt(parameters.get(CoalesceParameters.PARAM_BLOCK_SIZE));
         }
 
     }
@@ -135,7 +141,23 @@ public class FileScanImpl extends AbstractScan {
                         LOGGER.debug("\t(INVALID) {}", filename);
                     }
 
-                    return FileVisitResult.CONTINUE;
+                    FileVisitResult result;
+
+                    if (blockSize == -1 || rows.size() < blockSize)
+                    {
+                        result = FileVisitResult.CONTINUE;
+                    }
+                    else
+                    {
+                        if (LOGGER.isTraceEnabled())
+                        {
+                            LOGGER.trace("Max Results {} Reached", blockSize);
+                        }
+
+                        result = FileVisitResult.TERMINATE;
+                    }
+
+                    return result;
                 }
             });
         }

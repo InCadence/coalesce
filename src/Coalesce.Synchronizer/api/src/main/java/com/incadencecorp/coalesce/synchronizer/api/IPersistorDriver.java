@@ -18,6 +18,7 @@
 package com.incadencecorp.coalesce.synchronizer.api;
 
 import com.incadencecorp.coalesce.api.ICoalesceComponent;
+import com.incadencecorp.coalesce.api.ICoalesceSetup;
 
 /**
  * This interface is for creating driver implementations to perform some
@@ -26,13 +27,7 @@ import com.incadencecorp.coalesce.api.ICoalesceComponent;
  * @author n78554
  *
  */
-public interface IPersistorDriver extends ICoalesceComponent {
-
-    /**
-     * This method bust be called before starting the driver. If running from a
-     * blueprint add <code>init-method="setup"</code> to the bean.
-     */
-    void setup();
+public interface IPersistorDriver extends ICoalesceComponent, ICoalesceSetup {
 
     /**
      * Starts the driver.

@@ -17,6 +17,8 @@
 
 package com.incadencecorp.coalesce.framework;
 
+import java.util.Map;
+
 import com.incadencecorp.unity.common.IConfigurationsConnector;
 import com.incadencecorp.unity.common.SettingType;
 
@@ -41,6 +43,18 @@ public class PropertyLoader {
     {
         this.connector = connector;
         this.configurationName = name;
+    }
+
+    /**
+     * Sets multiple properties by calling {@link #setProperty(String, String)}.
+     * 
+     * @param properties
+     */
+    public void setProperties(Map<String, String> properties)
+    {
+        for (Map.Entry<String, String> entry: properties.entrySet()) {
+            setProperty(entry.getKey(), entry.getValue());
+        }
     }
 
     /**

@@ -31,6 +31,12 @@ public final class CoalesceParameters {
     }
 
     private static final String INC = "com.incadencecorp.";
+    private static final String COALESCE = INC + "coalesce.";
+    private static final String SECURITY = COALESCE + "security.";
+
+    /*--------------------------------------------------------------------------
+    General Properties (com.incadencecorp.%)
+    --------------------------------------------------------------------------*/
 
     /**
      * (URI) Specifies a directory the scanner can use. This can either be
@@ -43,5 +49,32 @@ public final class CoalesceParameters {
      * sub-directory which is based of the first X characters of the UUID.
      */
     public static final String PARAM_SUBDIR_LEN = INC + "subdirlen";
+    
+    /**
+     * (Integer) Sets the number of items to process ina single run.
+     */
+    public static final String PARAM_BLOCK_SIZE = INC + "blocksize";
+
+    /*--------------------------------------------------------------------------
+    Hash Properties (com.incadencecorp.coalesce.security.hash.%)
+    --------------------------------------------------------------------------*/
+
+    private static final String HASH = SECURITY + "hash.";
+
+    /**
+     * (BigInteger) Hash value. Must be formatted with the name of the hash.
+     */
+    public static final String HASH_VALUE = HASH + "%s.value";
+    
+    /**
+     * (BigInteger) Number of strings that were used to produce the hash. Must
+     * be formatted with the name of the hash.
+     */
+    public static final String HASH_COUNT = HASH + "%s.count";
+    
+    /**
+     * (String) Hash algorithm to use for calculating hashes (ex: SHA1).
+     */
+    public static final String HASH_ALGORITHM = HASH + "algorithm";
 
 }

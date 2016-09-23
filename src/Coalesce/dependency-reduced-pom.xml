@@ -3,7 +3,7 @@
   <parent>
     <artifactId>coalesce-pom</artifactId>
     <groupId>com.incadencecorp.coalesce</groupId>
-    <version>0.0.12-SNAPSHOT</version>
+    <version>0.0.16-SNAPSHOT</version>
     <relativePath>../Coalesce.Pom/pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
@@ -68,6 +68,7 @@
             <Export-Package>${project.groupId}.api,
                             ${project.groupId}.api.persistance,
                             ${project.groupId}.mapper.impl,
+                            ${project.groupId}.common.bitmask,
                             ${project.groupId}.common.exceptions,
                             ${project.groupId}.common.helpers,
                             ${project.groupId}.framework,
@@ -172,7 +173,7 @@
     <dependency>
       <groupId>com.incadencecorp.coalesce</groupId>
       <artifactId>coalesce-classification</artifactId>
-      <version>0.0.12-SNAPSHOT</version>
+      <version>0.0.16-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -196,7 +197,7 @@
     <dependency>
       <groupId>com.incadencecorp.coalesce</groupId>
       <artifactId>coalesce-classification</artifactId>
-      <version>0.0.12-SNAPSHOT</version>
+      <version>0.0.16-SNAPSHOT</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>

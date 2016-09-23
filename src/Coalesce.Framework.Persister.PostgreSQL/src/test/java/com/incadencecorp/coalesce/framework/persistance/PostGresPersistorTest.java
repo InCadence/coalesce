@@ -57,7 +57,7 @@ public class PostGresPersistorTest extends CoalescePersistorBaseTest {
 
         // ACINT Settings
         serCon.setServerName("dbsp3");
-        serCon.setDatabase("OMEGA");
+        serCon.setDatabase("DSS_SNAPSHOT");
         serCon.setUser("enterprisedb");
         serCon.setPassword("enterprisedb");
         serCon.setPortNumber(5444);

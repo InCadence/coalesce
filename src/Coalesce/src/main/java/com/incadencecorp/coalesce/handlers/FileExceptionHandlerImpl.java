@@ -116,9 +116,9 @@ public class FileExceptionHandlerImpl extends CoalesceComponentImpl implements I
                 {
                     e.printStackTrace(new PrintWriter(fw));
 
-                    if (LOGGER.isDebugEnabled())
+                    if (LOGGER.isTraceEnabled())
                     {
-                        LOGGER.debug("Created {}", file.toString());
+                        LOGGER.trace("Created {}", file.toString());
                     }
                 }
 

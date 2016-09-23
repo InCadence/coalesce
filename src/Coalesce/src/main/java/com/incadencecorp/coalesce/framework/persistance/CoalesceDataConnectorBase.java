@@ -10,6 +10,9 @@ import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 
@@ -35,6 +38,8 @@ import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
  * class.
  */
 public abstract class CoalesceDataConnectorBase implements AutoCloseable {
+
+    private static Logger LOGGER = LoggerFactory.getLogger(CoalesceDataConnectorBase.class);
 
     /*-----------------------------------------------------------------------------'
     Private Member Variables
@@ -71,22 +76,6 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
      * Returns the results from the executed SQL Command.
      * 
      * @param sql the statement to be executed against the database.
-     * @return ResultSet - A table of data representing a database result set.
-     * @throws SQLException
-     */
-    public final ResultSet executeQuery(final String sql) throws SQLException
-    {
-        openDataConnection();
-
-        PreparedStatement stmt = this._conn.prepareStatement(sql);
-
-        return stmt.executeQuery();
-    }
-
-    /**
-     * Returns the results from the executed SQL Command.
-     * 
-     * @param sql the statement to be executed against the database.
      * @param parameters the multiple parameters to be applied to the SQL
      *            statement
      * @return ResultSet - A table of data representing a database result set.
@@ -94,22 +83,35 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
      */
     public final ResultSet executeQuery(final String sql, final CoalesceParameter... parameters) throws SQLException
     {
-
         openDataConnection();
 
         PreparedStatement stmt = this._conn.prepareStatement(sql);
 
+        if (LOGGER.isTraceEnabled())
+        {
+            LOGGER.trace("Executing: {}", sql);
+        }
+
         if (parameters != null)
         {
+            if (LOGGER.isTraceEnabled() && parameters.length > 0)
+            {
+                LOGGER.trace("Parameters:");
+            }
+
             // Add Parameters
             for (int ii = 0; ii < parameters.length; ii++)
             {
+                if (LOGGER.isTraceEnabled())
+                {
+                    LOGGER.trace("\t{}:{}", parameters[ii].getValue(), parameters[ii].getType());
+                }
+
                 stmt.setObject(ii + 1, parameters[ii].getValue(), parameters[ii].getType());
             }
         }
 
         return stmt.executeQuery();
-
     }
 
     /**
@@ -163,27 +165,29 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
 
         PreparedStatement stmt = this._conn.prepareStatement(sql);
 
-        // Add Parameters
-        for (int ii = 0; ii < parameters.length; ii++)
+        if (LOGGER.isTraceEnabled())
         {
-            stmt.setObject(ii + 1, parameters[ii].getValue(), parameters[ii].getType());
+            LOGGER.trace("Executing: {}", sql);
         }
 
-        return stmt.executeUpdate();
-    }
+        if (parameters != null)
+        {
+            if (LOGGER.isTraceEnabled() && parameters.length > 0)
+            {
+                LOGGER.trace("Parameters:");
+            }
 
-    /**
-     * Executes a SQL statement on a database.
-     * 
-     * @param sql the statement to be executed against the database.
-     * @return true = success
-     * @throws SQLException
-     */
-    public final int executeUpdate(final String sql) throws SQLException
-    {
-        openDataConnection();
+            // Add Parameters
+            for (int ii = 0; ii < parameters.length; ii++)
+            {
+                if (LOGGER.isTraceEnabled())
+                {
+                    LOGGER.trace("\t{}:{}", parameters[ii].getValue(), parameters[ii].getType());
+                }
 
-        PreparedStatement stmt = this._conn.prepareStatement(sql);
+                stmt.setObject(ii + 1, parameters[ii].getValue(), parameters[ii].getType());
+            }
+        }
 
         return stmt.executeUpdate();
     }
@@ -201,6 +205,10 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
     public final boolean executeProcedure(final String procedureName, final CoalesceParameter... parameters)
             throws SQLException
     {
+        if (LOGGER.isTraceEnabled())
+        {
+            LOGGER.trace("Executing Procedure: {}", procedureName);
+        }
 
         // Compile SQL Command
         StringBuilder sb = new StringBuilder("{" + getProcedurePrefix() + procedureName + " (");
@@ -223,9 +231,19 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
 
         CallableStatement stmt = this._conn.prepareCall(sb.toString());
 
+        if (LOGGER.isTraceEnabled() && parameters.length > 0)
+        {
+            LOGGER.trace("Parameters:");
+        }
+
         // Add Parameters
         for (int ii = 0; ii < parameters.length; ii++)
         {
+            if (LOGGER.isTraceEnabled())
+            {
+                LOGGER.trace("\t{}", parameters[ii].getValue());
+            }
+
             stmt.setObject(ii + 1, parameters[ii].getValue(), parameters[ii].getType());
         }
 

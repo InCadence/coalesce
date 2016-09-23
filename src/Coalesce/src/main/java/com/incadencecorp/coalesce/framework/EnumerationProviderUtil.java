@@ -20,7 +20,12 @@ package com.incadencecorp.coalesce.framework;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.IEnumerationProvider;
@@ -36,7 +41,10 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceEnumerationField;
  */
 public final class EnumerationProviderUtil {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(EnumerationProviderUtil.class);
+
     private static final List<IEnumerationProvider> providers = new ArrayList<IEnumerationProvider>();
+    private static final Map<String, String> lookup = new HashMap<String, String>();
 
     /*
      * -----------------------------------------------------------------------
@@ -65,6 +73,37 @@ public final class EnumerationProviderUtil {
         providers.addAll(Arrays.asList(values));
     }
 
+    /**
+     * Sets lookup entries to map enumeration names to a different value.
+     * 
+     * @param values
+     */
+    public static void setLookupEntries(Map<String, String> values)
+    {
+        lookup.clear();
+        addLookupEntries(values);
+    }
+
+    /**
+     * Adds lookup entries to map enumeration names to a different value.
+     * 
+     * @param values
+     */
+    public static void addLookupEntries(Map<String, String> values)
+    {
+        if (LOGGER.isInfoEnabled())
+        {
+            LOGGER.info("Enumeration Maps:");
+
+            for (Map.Entry<String, String> entry : values.entrySet())
+            {
+                LOGGER.info("\t{} => {}", entry.getKey(), entry.getValue());
+            }
+        }
+
+        lookup.putAll(values);
+    }
+
     /*
      * -----------------------------------------------------------------------
      * Utility Methods
@@ -84,6 +123,8 @@ public final class EnumerationProviderUtil {
      */
     public static String toString(Principal principal, String enumeration, int value) throws IndexOutOfBoundsException
     {
+        enumeration = lookupEnumeration(enumeration);
+
         return getProvider(principal, enumeration).toString(principal, enumeration, value);
     }
 
@@ -100,6 +141,8 @@ public final class EnumerationProviderUtil {
      */
     public static int toPosition(Principal principal, String enumeration, String value) throws IndexOutOfBoundsException
     {
+        enumeration = lookupEnumeration(enumeration);
+
         return getProvider(principal, enumeration).toPosition(principal, enumeration, value);
     }
 
@@ -115,6 +158,8 @@ public final class EnumerationProviderUtil {
      */
     public static boolean isValid(Principal principal, String enumeration, int value)
     {
+        enumeration = lookupEnumeration(enumeration);
+
         return getProvider(principal, enumeration).isValid(principal, enumeration, value);
     }
 
@@ -129,6 +174,8 @@ public final class EnumerationProviderUtil {
      */
     public static boolean isValid(Principal principal, String enumeration, String value)
     {
+        enumeration = lookupEnumeration(enumeration);
+
         return getProvider(principal, enumeration).isValid(principal, enumeration, value);
     }
 
@@ -142,6 +189,8 @@ public final class EnumerationProviderUtil {
      */
     public static List<String> getValues(Principal principal, String enumeration)
     {
+        enumeration = lookupEnumeration(enumeration);
+
         return getProvider(principal, enumeration).getValues(principal, enumeration);
     }
 
@@ -176,6 +225,16 @@ public final class EnumerationProviderUtil {
      * Private Methods
      * -----------------------------------------------------------------------
      */
+
+    private static String lookupEnumeration(String enumeration)
+    {
+        if (lookup.containsKey(enumeration))
+        {
+            enumeration = lookup.get(enumeration);
+        }
+
+        return enumeration;
+    }
 
     private static IEnumerationProvider getProvider(Principal principal, String enumeration)
     {

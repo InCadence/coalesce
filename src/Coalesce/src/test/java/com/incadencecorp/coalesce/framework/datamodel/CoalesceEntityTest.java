@@ -19,6 +19,7 @@ import org.apache.commons.lang.NullArgumentException;
 import org.apache.xerces.impl.dv.util.Base64;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeComparator;
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -2432,7 +2433,7 @@ public class CoalesceEntityTest {
         CoalesceEntity result = CoalesceEntity.mergeSyncEntity(entity1, entity2, null, null);
 
         CoalesceSection section = result.getSection("/" + TestEntity.TESTSECTION);
-        
+
         assertEquals(ECoalesceObjectStatus.DELETED, section.getStatus());
         assertEquals(ECoalesceObjectStatus.ACTIVE, section.getHistoryRecord(section.getPreviousHistoryKey()).getStatus());
 
@@ -2465,9 +2466,9 @@ public class CoalesceEntityTest {
         assertNotNull(object2);
 
         assertEquals(record1.toXml(), object1.toXml());
-        
+
         record2.setObjectVersion(2);
-        
+
         assertEquals(record2.toXml(), object2.toXml());
 
     }
@@ -2610,6 +2611,39 @@ public class CoalesceEntityTest {
         assertEquals("TestingEntityType", desEntity.getEntityIdType());
         assertEquals("TestingTitle", desEntity.getTitle());
         assertEquals(ECoalesceObjectStatus.UNKNOWN, desEntity.getStatus());
+
+    }
+
+    /**
+     * This test ensures that isInitialize() returns properly whether then
+     * entity has been initialized.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testIsInitialzie() throws Exception
+    {
+        CoalesceEntity entity = new CoalesceEntity();
+
+        Assert.assertFalse(entity.isInitialized());
+        
+        // Initializing New Entity
+        entity.initialize();
+
+        Assert.assertTrue(entity.isInitialized());
+        
+        // Initializing from Existing Entity
+        CoalesceEntity entity2 = new CoalesceEntity();
+        entity2.initialize(entity);
+
+        Assert.assertTrue(entity2.isInitialized());
+
+        // Initializing from XML
+        CoalesceEntity entity3 = new CoalesceEntity();
+        entity3.initialize(entity.toXml());
+        
+        Assert.assertTrue(entity3.isInitialized());
+
 
     }
 

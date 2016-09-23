@@ -78,7 +78,6 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
     }
 
     /**
-     * 
      * @param parent
      * @param name
      * @param enumeration
@@ -88,7 +87,30 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
                                                                                                String name,
                                                                                                Class<E> enumeration)
     {
-        CoalesceFieldDefinition fd = create(parent, name, ECoalesceFieldDataTypes.ENUMERATION_TYPE);
+        return createEnumerationFieldDefinition(parent, name, enumeration, null);
+    }
+
+    /**
+     * @param parent
+     * @param name
+     * @param enumeration
+     * @param defaultValue
+     * @return a field definition for a enumeration type that specifies a
+     *         default value.
+     */
+    public static <E extends Enum<E>> CoalesceFieldDefinition createEnumerationFieldDefinition(CoalesceRecordset parent,
+                                                                                               String name,
+                                                                                               Class<E> enumeration,
+                                                                                               E defaultValue)
+    {
+        String value = null;
+
+        if (defaultValue != null)
+        {
+            value = Integer.toString(defaultValue.ordinal());
+        }
+        
+        CoalesceFieldDefinition fd = create(parent, name, ECoalesceFieldDataTypes.ENUMERATION_TYPE, null, "U", value);
 
         CoalesceConstraint.createEnumeration(fd, fd.getName() + "enumeration", enumeration);
 
@@ -106,7 +128,36 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
                                                                            String name,
                                                                            String enumeration)
     {
-        CoalesceFieldDefinition fd = create(parent, name, ECoalesceFieldDataTypes.ENUMERATION_TYPE);
+        return createEnumerationFieldDefinition(parent, name, enumeration, null);
+    }
+
+    /**
+     * 
+     * @param parent
+     * @param name
+     * @param enumeration
+     * @param defaultValue
+     * @return a field definition for a enumeration type that specifies a
+     *         default value.
+     */
+    public static CoalesceFieldDefinition createEnumerationFieldDefinition(CoalesceRecordset parent,
+                                                                           String name,
+                                                                           String enumeration,
+                                                                           Integer defaultValue)
+    {
+        String value = null;
+
+        if (defaultValue != null)
+        {
+            value = Integer.toString(defaultValue);
+        }
+        
+        CoalesceFieldDefinition fd = create(parent,
+                                            name,
+                                            ECoalesceFieldDataTypes.ENUMERATION_TYPE,
+                                            null,
+                                            "U",
+                                            value);
 
         CoalesceConstraint.createEnumeration(fd, fd.getName() + "enumeration", enumeration);
 

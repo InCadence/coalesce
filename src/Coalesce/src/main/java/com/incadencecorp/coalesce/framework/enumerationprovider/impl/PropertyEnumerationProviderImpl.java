@@ -18,15 +18,18 @@
 package com.incadencecorp.coalesce.framework.enumerationprovider.impl;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.MissingResourceException;
-import java.util.Properties;
-import java.util.ResourceBundle;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.LineIterator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.incadencecorp.coalesce.api.CoalesceErrors;
 
 /**
  * This implementation will load the values of the enumeration from a property
@@ -36,6 +39,7 @@ import java.util.ResourceBundle;
  */
 public class PropertyEnumerationProviderImpl extends AbstractEnumerationProvider {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(PropertyEnumerationProviderImpl.class);
     private List<String> paths = new ArrayList<String>();
 
     /**
@@ -64,51 +68,45 @@ public class PropertyEnumerationProviderImpl extends AbstractEnumerationProvider
     {
         List<String> results = null;
 
-        try
+        // Attempt File System
+        for (String path : paths)
         {
-            // Load Resource
-            ResourceBundle config = ResourceBundle.getBundle(enumeration);
-
-            // Read Keys as Values
-            results = new ArrayList<String>();
-            results.addAll(config.keySet());
-        }
-        catch (MissingResourceException e)
-        {
-            // Failed to Load Resource
-            Properties props;
-
-            // Attempt File System
-            for (String path : paths)
+            if (!path.endsWith(File.separator))
             {
-                if (!path.endsWith(File.separator))
-                {
-                    path += File.separator;
-                }
+                path += File.separator;
+            }
 
-                File file = new File(path + enumeration + ".values");
+            File file = new File(path + enumeration + ".values");
 
-                if (file.exists())
+            if (file.exists())
+            {
+                LineIterator iterator;
+                try
                 {
+                    iterator = FileUtils.lineIterator(file, "UTF-8");
+
                     try
                     {
-                        // Load Property File
-                        props = new Properties();
-                        props.load(new FileInputStream(file));
-
                         // Read Keys as Values
                         results = new ArrayList<String>();
-                        for (Object key : props.keySet())
+
+                        while (iterator.hasNext())
                         {
-                            results.add((String) key);
+
+                            results.add(iterator.nextLine());
+
                         }
                     }
-                    catch (IOException e1)
+                    finally
                     {
-                        // Failed; Do Nothing
+                        iterator.close();
                     }
-                    break;
                 }
+                catch (IOException e)
+                {
+                    LOGGER.warn(String.format(CoalesceErrors.INVALID_ENUMERATION, enumeration), e);
+                }
+
             }
         }
 

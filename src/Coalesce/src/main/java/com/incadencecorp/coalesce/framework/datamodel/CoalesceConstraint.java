@@ -19,10 +19,13 @@ package com.incadencecorp.coalesce.framework.datamodel;
 
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.NullArgumentException;
+import org.apache.commons.lang.StringUtils;
 
 import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
@@ -44,6 +47,62 @@ public class CoalesceConstraint extends CoalesceObject implements ICoalesceConst
     /*--------------------------------------------------------------------------
     Factory Methods
     --------------------------------------------------------------------------*/
+
+    /**
+     * Creates a constraint restricting the specified fields (within the same
+     * record) to all contain list of the same length.
+     * 
+     * @param name
+     * @param definitions fields to be constrained; must be of a list type.
+     * @return the new constraint
+     */
+    public static CoalesceConstraint createListSizeEquals(String name, CoalesceFieldDefinition... definitions)
+    {
+        return create(definitions[0],
+                      name,
+                      ConstraintType.SIZE,
+                      verifyListType(definitions[0].getParent().getKey(), definitions));
+    }
+
+    /**
+     * Creates a constraint restricting the specified field to a given length.
+     * The field's data type must be a list type.
+     * 
+     * @param parent
+     * @param name
+     * @param size
+     * @return the new constraint
+     */
+    public static CoalesceConstraint createListSize(CoalesceFieldDefinition parent, String name, int size)
+    {
+        if (!parent.isListType())
+        {
+            throw new ClassCastException("Type mismatch");
+        }
+
+        return create(parent, name, ConstraintType.SIZE, Integer.toString(size));
+    }
+
+    /**
+     * Creates a constraint restricting the specified fields (within the same
+     * record) to be of a length specified by another field.
+     * 
+     * @param parent (integer) field specifying the length.
+     * @param name
+     * @param definitions fields to be constrained; must be of a list type.
+     * @return the new constraint
+     */
+    public static CoalesceConstraint createListSize(CoalesceFieldDefinition parent,
+                                                    String name,
+                                                    CoalesceFieldDefinition... definitions)
+    {
+        if (parent.getDataType() != ECoalesceFieldDataTypes.INTEGER_TYPE)
+        {
+            throw new ClassCastException("Type mismatch");
+        }
+
+        return create(parent, name, ConstraintType.SIZE, verifyListType(parent.getParent().getKey(), definitions));
+    }
 
     /**
      * Creates a constraint restricting the field to values within the specify
@@ -126,7 +185,7 @@ public class CoalesceConstraint extends CoalesceObject implements ICoalesceConst
         if (regex.startsWith("(") && regex.endsWith(")"))
         {
             results = Arrays.asList(regex.substring(1, regex.length() - 1).split("[|]"));
-        } 
+        }
 
         return results;
     }
@@ -364,12 +423,12 @@ public class CoalesceConstraint extends CoalesceObject implements ICoalesceConst
     {
         _constraint.setValue(value);
     }
-    
+
     @Override
-    public CoalesceFieldDefinition getFieldDefinition() {
+    public CoalesceFieldDefinition getFieldDefinition()
+    {
         return getCastParent();
     }
-
 
     /*--------------------------------------------------------------------------
     Protected Overrides
@@ -415,4 +474,33 @@ public class CoalesceConstraint extends CoalesceObject implements ICoalesceConst
         return (CoalesceFieldDefinition) getParent();
     }
 
+    /**
+     * Verifies each definition is a list type and belongs to the specified
+     * parent.
+     * 
+     * @param key
+     * @param definitions
+     * @return a comma separated list of fields. 
+     */
+    private static String verifyListType(String key, CoalesceFieldDefinition... definitions)
+    {
+        Set<String> xPaths = new HashSet<String>();
+
+        for (CoalesceFieldDefinition definition : definitions)
+        {
+            if (!definition.isListType())
+            {
+                throw new ClassCastException("Type mismatch");
+            }
+
+            if (!definition.getParent().getKey().equalsIgnoreCase(key))
+            {
+                throw new IllegalArgumentException("All definitions must belong to the same record");
+            }
+
+            xPaths.add(definition.getName());
+        }
+
+        return StringUtils.join(xPaths, ",");
+    }
 }

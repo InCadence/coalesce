@@ -9,7 +9,7 @@
 	<parent>
 		<groupId>com.incadencecorp.coalesce</groupId>
 		<artifactId>coalesce-pom</artifactId>
-		<version>0.0.12-SNAPSHOT</version>
+		<version>0.0.16-SNAPSHOT</version>
 		<relativePath>../Coalesce.Pom</relativePath>
 	</parent>
 	
@@ -241,6 +241,16 @@
 			<groupId>com.infradna.tool</groupId>
 			<artifactId>bridge-method-annotation</artifactId>
 			<version>1.13</version>
+			<!-- <exclusions> -->
+			<!-- <exclusion> -->
+			<!-- <groupId>org.jenkins-ci</groupId> -->
+			<!-- <artifactId>annotation-indexer</artifactId> -->
+			<!-- </exclusion> -->
+			<!-- <exclusion> -->
+			<!-- <groupId>com.google.code.findbugs</groupId> -->
+			<!-- <artifactId>jsr305</artifactId> -->
+			<!-- </exclusion> -->
+			<!-- </exclusions> -->
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>

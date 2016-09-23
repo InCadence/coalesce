@@ -194,12 +194,6 @@ public class PostGreSQLPersistorExt extends PostGreSQLPersistor implements ICoal
                             // Field Found?
                             if (field != null)
                             {
-                                // TODO: Validate column type with field type?
-                                // Its possible for the
-                                // xml to get modified outside of Coalesce which
-                                // could throw an
-                                // error.
-
                                 // Can flatten Field?
                                 if (field.getFlatten() && !StringHelper.isNullOrEmpty(field.getBaseValue()))
                                 {
@@ -444,8 +438,6 @@ public class PostGreSQLPersistorExt extends PostGreSQLPersistor implements ICoal
      */
     public CachedRowSet executeQuery(String query, CoalesceParameter... parameters)
     {
-        LOGGER.debug("Executing query: {}", query);
-
         CachedRowSet rowset = null;
 
         try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings(), getSchema()))
@@ -512,31 +504,26 @@ public class PostGreSQLPersistorExt extends PostGreSQLPersistor implements ICoal
     Protected Methods
     --------------------------------------------------------------------------*/
 
-    // TODO Not Implemented
     protected String getCreator(CoalesceEntity entity)
     {
         return null;
     }
 
-    // TODO Not Implemented
     protected String getType(CoalesceEntity entity)
     {
         return null;
     }
 
-    // TODO Not Implemented
     protected String getScope(CoalesceEntity entity)
     {
         return null;
     }
 
-    // TODO Not Implemented
     protected long getSecurityHigh(CoalesceEntity entity)
     {
         return 0;
     }
 
-    // TODO Not Implemented
     protected long getSecurityLow(CoalesceEntity entity)
     {
         return 0;
