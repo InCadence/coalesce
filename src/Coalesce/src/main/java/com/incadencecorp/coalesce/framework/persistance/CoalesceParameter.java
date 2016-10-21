@@ -27,39 +27,71 @@ import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
  -----------------------------------------------------------------------------*/
 
 /**
- *
+ * Represents parameters used when performing queries.
  */
 public class CoalesceParameter {
 
     private String _value;
     private int _type;
 
+    /**
+     * Creates an Integer parameter as type {@link Types#INTEGER}.
+     * 
+     * @param value
+     */
+    public CoalesceParameter(Integer value)
+    {
+        this(value.toString(), Types.INTEGER);
+    }
+
+    /**
+     * Creates a String parameter as type {@link Types#CHAR}.
+     * 
+     * @param value
+     */
     public CoalesceParameter(String value)
     {
         this(value, Types.CHAR);
     }
 
+    /**
+     * Creates a formatted String parameter as type {@link Types#CHAR}.
+     * 
+     * @param value
+     */
     public CoalesceParameter(DateTime value)
     {
         this(JodaDateTimeHelper.toMySQLDateTime(value));
     }
 
+    /**
+     * Creates a custom parameter type.
+     * 
+     * @param value
+     * @param type {@link Types}
+     */
     public CoalesceParameter(String value, int type)
     {
         if (value != null)
         {
             value = value.trim();
         }
-        
+
         _value = value;
         _type = type;
     }
 
+    /**
+     * @return the parameter's value.
+     */
     public String getValue()
     {
         return _value;
     }
 
+    /**
+     * @return the parameter's type.
+     */
     public int getType()
     {
         return _type;

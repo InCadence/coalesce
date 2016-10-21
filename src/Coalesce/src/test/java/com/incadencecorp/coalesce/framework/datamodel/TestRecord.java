@@ -97,11 +97,9 @@ public class TestRecord extends CoalesceRecord {
         CoalesceFieldDefinition.create(recordset, "poly", ECoalesceFieldDataTypes.POLYGON_TYPE);
         CoalesceFieldDefinition.create(recordset, "line", ECoalesceFieldDataTypes.LINE_STRING_TYPE);
         CoalesceFieldDefinition.create(recordset, "circle", ECoalesceFieldDataTypes.CIRCLE_TYPE);
-
-        CoalesceFieldDefinition definition = CoalesceFieldDefinition.create(recordset,
-                                                                            "noflatten",
-                                                                            ECoalesceFieldDataTypes.STRING_TYPE);
-
+        CoalesceFieldDefinition.create(recordset, "enum", ECoalesceFieldDataTypes.ENUMERATION_TYPE);
+        CoalesceFieldDefinition.create(recordset, "enumlist", ECoalesceFieldDataTypes.ENUMERATION_LIST_TYPE);
+        CoalesceFieldDefinition.create(recordset, "noflatten", ECoalesceFieldDataTypes.STRING_TYPE).setFlatten(false);
         CoalesceFieldDefinition.create(recordset, "doublelist", ECoalesceFieldDataTypes.DOUBLE_LIST_TYPE);
         CoalesceFieldDefinition.create(recordset, "intlist", ECoalesceFieldDataTypes.INTEGER_LIST_TYPE);
         CoalesceFieldDefinition.create(recordset, "floatlist", ECoalesceFieldDataTypes.FLOAT_LIST_TYPE);
@@ -109,8 +107,6 @@ public class TestRecord extends CoalesceRecord {
         CoalesceFieldDefinition.create(recordset, "stringlist", ECoalesceFieldDataTypes.STRING_LIST_TYPE);
         CoalesceFieldDefinition.create(recordset, "guidlist", ECoalesceFieldDataTypes.GUID_LIST_TYPE);
         CoalesceFieldDefinition.create(recordset, "booleanlist", ECoalesceFieldDataTypes.BOOLEAN_LIST_TYPE);
-
-        definition.setFlatten(false);
 
         return recordset;
 
@@ -204,7 +200,7 @@ public class TestRecord extends CoalesceRecord {
     {
         return (CoalesceStringField) getFieldByName("noflatten");
     }
-    
+
     public CoalesceDoubleListField getDoubleListField()
     {
         return (CoalesceDoubleListField) getFieldByName("doublelist");
@@ -219,21 +215,20 @@ public class TestRecord extends CoalesceRecord {
     {
         return (CoalesceFloatListField) getFieldByName("floatlist");
     }
-    
+
     public CoalesceLongListField getLongListField()
     {
         return (CoalesceLongListField) getFieldByName("longlist");
     }
-    
+
     public CoalesceStringListField getStringListField()
     {
         return (CoalesceStringListField) getFieldByName("stringlist");
     }
-    
+
     public CoalesceGUIDListField getGUIDListField()
     {
         return (CoalesceGUIDListField) getFieldByName("guidlist");
     }
-    
 
 }

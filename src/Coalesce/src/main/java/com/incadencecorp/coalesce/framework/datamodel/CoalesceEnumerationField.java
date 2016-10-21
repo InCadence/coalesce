@@ -3,6 +3,7 @@ package com.incadencecorp.coalesce.framework.datamodel;
 import java.security.Principal;
 
 import com.incadencecorp.coalesce.api.CoalesceErrors;
+import com.incadencecorp.coalesce.common.classification.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.framework.EnumerationProviderUtil;
 
@@ -34,6 +35,16 @@ public class CoalesceEnumerationField extends CoalesceEnumerationFieldBase<Integ
     public Integer getValue() throws CoalesceDataFormatException
     {
         return getIntegerValue();
+    }
+
+    /**
+     * @return ordinal value converted to a String using
+     *         {@link EnumerationProviderUtil}.
+     * @throws CoalesceDataFormatException
+     */
+    public String getValueAsString() throws CoalesceDataFormatException
+    {
+        return getValueAsString(null);
     }
 
     /**
@@ -146,12 +157,22 @@ public class CoalesceEnumerationField extends CoalesceEnumerationFieldBase<Integ
     /**
      * Sets the ordinal value using {@link EnumerationProviderUtil}
      * 
+     * @param value
+     */
+    public void setValueAsString(String value)
+    {
+        setValueAsString(null, value);
+    }
+
+    /**
+     * Sets the ordinal value using {@link EnumerationProviderUtil}
+     * 
      * @param principal
      * @param value
      */
     public void setValueAsString(Principal principal, String value)
     {
-        if (value != null)
+        if (!StringHelper.isNullOrEmpty(value))
         {
             setTypedValue(EnumerationProviderUtil.toPosition(principal, getEnumerationName(), value));
         }

@@ -102,7 +102,7 @@ public class FileExceptionHandlerImpl extends CoalesceComponentImpl implements I
         for (String key : keys)
         {
 
-            Path dir = Paths.get(directory.getPath(), caller.getName(), key.substring(0, subDirLen));
+            Path dir = Paths.get(directory).resolve(caller.getName()).resolve(key.substring(0, subDirLen));
             Path file = dir.resolve(key); 
 
             try

@@ -97,50 +97,48 @@ public class CoalesceAssert {
         assertNotEquals(expectedLinkageSection.getKey().toLowerCase(), templateLinkageSection.getKey().toLowerCase());
         assertEquals(expectedLinkageSection.getName(), templateLinkageSection.getName());
 
-        assertTemplateSection(expectedEntity.getSections(), templateEntity.getSections());
+        assertTemplateSection(expectedEntity.getSectionsAsList(), templateEntity.getSectionsAsList());
 
     }
 
-    public static void assertTemplateSection(Map<String, CoalesceSection> expectedSections,
-                                             Map<String, CoalesceSection> templateSections)
+    public static void assertTemplateSection(List<CoalesceSection> expectedSections,
+                                             List<CoalesceSection> templateSections)
     {
         Map<String, CoalesceSection> templateSectionsByName = new HashMap<String, CoalesceSection>();
-        for (CoalesceSection templateSection : templateSections.values())
+        for (CoalesceSection templateSection : templateSections)
         {
             templateSectionsByName.put(templateSection.getName(), templateSection);
         }
 
         assertEquals(expectedSections.size(), templateSectionsByName.size());
 
-        for (Map.Entry<String, CoalesceSection> sectionEntry : expectedSections.entrySet())
+        for (CoalesceSection expectedSection: expectedSections)
         {
-            CoalesceSection expectedSection = sectionEntry.getValue();
             CoalesceSection templateSection = templateSectionsByName.get(expectedSection.getName());
 
             assertNotNull("Expected section not found in template section list", templateSection);
             assertNotEquals(expectedSection.getKey().toLowerCase(), templateSection.getKey().toLowerCase());
             assertEquals(expectedSection.getName(), templateSection.getName());
 
-            assertTemplateRecordSection(expectedSection.getRecordsets(), templateSection.getRecordsets());
+            assertTemplateRecordSection(expectedSection.getRecordsetsAsList(), templateSection.getRecordsetsAsList());
 
         }
 
     }
 
-    public static void assertTemplateRecordSection(Map<String, CoalesceRecordset> expectedRecordsets,
-                                                   Map<String, CoalesceRecordset> templateRecordsets)
+    public static void assertTemplateRecordSection(List<CoalesceRecordset> expectedRecordsets,
+                                                   List<CoalesceRecordset> templateRecordsets)
     {
         Map<String, CoalesceRecordset> templateRecordsetsByName = new HashMap<String, CoalesceRecordset>();
-        for (CoalesceRecordset templateRecordset : templateRecordsets.values())
+        for (CoalesceRecordset templateRecordset : templateRecordsets)
         {
             templateRecordsetsByName.put(templateRecordset.getName(), templateRecordset);
         }
 
         assertEquals(expectedRecordsets.size(), templateRecordsetsByName.size());
 
-        for (Map.Entry<String, CoalesceRecordset> recordsetEntry : expectedRecordsets.entrySet())
+        for (CoalesceRecordset expectedRecordset : expectedRecordsets)
         {
-            CoalesceRecordset expectedRecordset = recordsetEntry.getValue();
             CoalesceRecordset templateRecordset = templateRecordsetsByName.get(expectedRecordset.getName());
 
             assertNotNull("Expected recordset not found in template recordset list", templateRecordset);

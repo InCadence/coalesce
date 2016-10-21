@@ -91,17 +91,60 @@ public final class EnumerationProviderUtil {
      */
     public static void addLookupEntries(Map<String, String> values)
     {
-        if (LOGGER.isInfoEnabled())
-        {
-            LOGGER.info("Enumeration Maps:");
-
-            for (Map.Entry<String, String> entry : values.entrySet())
-            {
-                LOGGER.info("\t{} => {}", entry.getKey(), entry.getValue());
-            }
-        }
-
         lookup.putAll(values);
+    }
+
+    /**
+     * @param name
+     * @return whether a lookup entry was created for the given enumeration
+     *         name.
+     */
+    public static boolean hasLookup(String name)
+    {
+        return lookup.containsKey(name);
+    }
+
+    /**
+     * Logs the lookup table if logging level is set to information or lower.
+     */
+    public static void logLookups()
+    {
+        LOGGER.info("Enumeration Maps:");
+
+        for (Map.Entry<String, String> entry : lookup.entrySet())
+        {
+            String value = entry.getValue();
+            String map;
+            StringBuilder sb = new StringBuilder(" => (" + value + ")");
+
+            while (lookup.containsKey(value))
+            {
+                value = lookup.get(value);
+                sb.append(" => (" + value + ")");
+            }
+
+            if (LOGGER.isTraceEnabled())
+            {
+                map = sb.toString();
+            }
+            else
+            {
+                map = " => (" + value + ")";
+            }
+
+            try
+            {
+                LOGGER.info("\t({}) {} provided by: ({})",
+                            entry.getKey(),
+                            map,
+                            getProvider(null, value).getClass().getSimpleName());
+            }
+            catch (IllegalArgumentException e)
+            {
+                LOGGER.error("\t({}) {} provided by: (NOT PROVIDED)", entry.getKey(), map);
+            }
+
+        }
     }
 
     /*
@@ -228,7 +271,7 @@ public final class EnumerationProviderUtil {
 
     private static String lookupEnumeration(String enumeration)
     {
-        if (lookup.containsKey(enumeration))
+        while (lookup.containsKey(enumeration))
         {
             enumeration = lookup.get(enumeration);
         }
@@ -243,12 +286,15 @@ public final class EnumerationProviderUtil {
             throw new IllegalStateException(String.format(CoalesceErrors.NOT_INITIALIZED, "Enumeration Providers"));
         }
 
-        for (IEnumerationProvider provider : providers)
+        if (enumeration != null)
         {
-            // Handles Enumeration?
-            if (provider.handles(principal, enumeration))
+            for (IEnumerationProvider provider : providers)
             {
-                return provider;
+                // Handles Enumeration?
+                if (provider.handles(principal, enumeration))
+                {
+                    return provider;
+                }
             }
         }
 

@@ -34,19 +34,21 @@ import com.incadencecorp.coalesce.common.helpers.LocaleConverter;
  */
 public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceLinkage {
 
+    /**
+     * Default name for linkage elements.
+     */
+    public static final String NAME = "Linkage";
+
     private Linkage _entityLinkage;
 
     /**
-     * Creates an
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage}
-     * and ties it to its parent
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}
-     * .
+     * Creates an {@link CoalesceLinkage} and ties it to its parent
+     * {@link CoalesceLinkageSection} .
      * 
-     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}
-     *            , the linkage section that this new linkage will belong to
-     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage}
-     *         , the new linkage to describe a relationship between two classes
+     * @param parent {@link CoalesceLinkageSection} , the linkage section that
+     *            this new linkage will belong to
+     * @return {@link CoalesceLinkage} , the new linkage to describe a
+     *         relationship between two classes
      */
     public static CoalesceLinkage create(CoalesceLinkageSection parent)
     {
@@ -61,7 +63,7 @@ public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceL
         if (!newLinkage.initialize(parent, entityLinkage))
             return null;
 
-        newLinkage.setName("Linkage");
+        newLinkage.setName(NAME);
 
         parent.addChildCoalesceObject(newLinkage);
 
@@ -70,14 +72,11 @@ public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceL
     }
 
     /**
-     * Initializes a previously new
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage}
-     * and ties it to its parent
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}
-     * .
+     * Initializes a previously new {@link CoalesceLinkage} and ties it to its
+     * parent {@link CoalesceLinkageSection} .
      * 
-     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}
-     *            , the linkage section that this new linkage will belong to
+     * @param parent {@link CoalesceLinkageSection} , the linkage section that
+     *            this new linkage will belong to
      * @param linkage Linkage, the linkage describing a relationship between two
      *            classes
      * @return boolean indicator of success/failure
@@ -275,14 +274,12 @@ public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceL
      * type, classification, modified by, input language, dates created and
      * modified and active status.
      * 
-     * @param entity1 {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}
-     *            belonging to the first entity. Provides the entity's key,
-     *            name, source and version
+     * @param entity1 {@link CoalesceEntity} belonging to the first entity.
+     *            Provides the entity's key, name, source and version
      * @param linkType ELinkTypes value for the relationship type identification
      *            between the entities
-     * @param entity2 {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}
-     *            belonging to the second entity. Provides the entity's key,
-     *            name, source and version
+     * @param entity2 {@link CoalesceEntity} belonging to the second entity.
+     *            Provides the entity's key, name, source and version
      * @param classificationMarking Marking of the classification of the
      *            relationship
      * @param modifiedBy identification of who entered the relationship

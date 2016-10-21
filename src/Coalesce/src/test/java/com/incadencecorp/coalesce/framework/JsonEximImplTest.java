@@ -231,7 +231,7 @@ public class JsonEximImplTest {
 
         // Should fail to import the values into the entity because its missing
         // the needed sections / record sets.
-        assertEquals(0, entity2.getSections().size());
+        assertEquals(0, entity2.getSectionsAsList().size());
     }
 
 }

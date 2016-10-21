@@ -94,12 +94,12 @@ public final class CoalesceErrors {
     public static final String INVALID_CONSTRAINT_LIST_LENGTH = "Invalid List Length: (%s)";
 
     /**
-     * Error reported when a min or max constraint is applied to a non numeric field.
+     * Error reported when a min or max constraint is applied to a non numeric
+     * field.
      * "Invalid Data Type (Min constraint can only be applied to numerics): (%s)"
      */
     public static final String INVALID_DATA_TYPE_NUMERIC = "Invalid Data Type (Constraint can only be applied to numerics): (%s)";
 
-    
     /**
      * Error reported when a field's data types does not match its definition
      * Format:
@@ -149,5 +149,11 @@ public final class CoalesceErrors {
      * added. Format: "Updating Hash (%s values added): %s"
      */
     public static final String ERR_HASH_VALUES_ADD = "Updating Hash (%s values added): %s";
+
+    /**
+     * Error reported when no access flag is set due to an invalid option.
+     * Format: "Invalid Hash Option (%s) for (%s)"
+     */
+    public static final String INVALID_HASH_OPTION = "Invalid Hash Option (%s) for (%s)";
 
 }

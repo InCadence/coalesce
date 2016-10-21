@@ -84,7 +84,7 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
             return null;
 
         // Check that a recordset with the same name doesn't already exist
-        for (CoalesceRecordset recordset : parent.getRecordsets().values())
+        for (CoalesceRecordset recordset : parent.getRecordsetsAsList())
         {
             if (recordset.getName().equalsIgnoreCase(name))
             {
@@ -186,26 +186,9 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
      */
     public List<CoalesceFieldDefinition> getFieldDefinitions()
     {
-        List<CoalesceFieldDefinition> results = new ArrayList<CoalesceFieldDefinition>();
-
-        for (Fielddefinition def : _entityRecordset.getFielddefinition())
-        {
-            for (CoalesceObject xdo : getChildCoalesceObjects().values())
-            {
-                if (xdo instanceof CoalesceFieldDefinition && xdo.getKey().equalsIgnoreCase(def.getKey()))
-                {
-                    if (xdo.getStatus() != ECoalesceObjectStatus.DELETED && xdo.getStatus() != ECoalesceObjectStatus.UNKNOWN)
-                    {
-                        results.add((CoalesceFieldDefinition) xdo);
-                    }
-
-                    break;
-                }
-            }
-
-        }
-
-        return results;
+        return getObjectsAsList(_entityRecordset.getFielddefinition(),
+                                ECoalesceObjectStatus.DELETED,
+                                ECoalesceObjectStatus.UNKNOWN);
     }
 
     /**
@@ -237,25 +220,7 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
      */
     public List<CoalesceRecord> getRecords()
     {
-        List<CoalesceRecord> results = new ArrayList<CoalesceRecord>();
-
-        for (Record record : _entityRecordset.getRecord())
-        {
-            for (CoalesceObject xdo : getChildCoalesceObjects().values())
-            {
-                if (xdo instanceof CoalesceRecord && xdo.getKey().equalsIgnoreCase(record.getKey()))
-                {
-                    if (xdo.getStatus() != ECoalesceObjectStatus.DELETED)
-                    {
-                        results.add((CoalesceRecord) xdo);
-                        break;
-                    }
-                }
-            }
-
-        }
-
-        return results;
+        return getObjectsAsList(_entityRecordset.getRecord(), ECoalesceObjectStatus.DELETED);
     }
 
     @Override

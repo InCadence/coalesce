@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,9 +25,16 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.lang.NullArgumentException;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.DOMConfiguration;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
+import org.w3c.dom.bootstrap.DOMImplementationRegistry;
+import org.w3c.dom.ls.DOMImplementationLS;
+import org.w3c.dom.ls.LSSerializer;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /*-----------------------------------------------------------------------------'
@@ -56,6 +64,7 @@ public final class XmlHelper {
 
     private static ConcurrentHashMap<String, JAXBContext> _jaxbContexts = new ConcurrentHashMap<String, JAXBContext>();
     private static String _syncObject = "";
+    private static final Logger LOGGER = LoggerFactory.getLogger(XmlHelper.class);
 
     private XmlHelper()
     {
@@ -115,6 +124,7 @@ public final class XmlHelper {
         }
         catch (JAXBException e)
         {
+            LOGGER.error("Failed: serialize", e);
             return null;
         }
     }
@@ -142,7 +152,7 @@ public final class XmlHelper {
         }
         catch (JAXBException ex)
         {
-            ex.printStackTrace();
+            LOGGER.error("Failed: deserialize", ex);
             return null;
         }
     }
@@ -351,6 +361,27 @@ public final class XmlHelper {
     }
 
     /**
+     * @param xml
+     * @return formatted XML w/ tabs.
+     */
+    public String format(String xml) {
+
+            final InputSource src = new InputSource(new StringReader(xml));
+            Node document;
+            try
+            {
+                document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(src).getDocumentElement();
+                return formatXml(document, Charset.forName("UTF-8"));
+            }
+            catch (SAXException | IOException | ParserConfigurationException e)
+            {
+                LOGGER.error("Failed: formatXml", e);
+                return null;
+            }
+
+    }
+    
+    /**
      * Returns the XML representation of the {@link org.w3c.dom.Node} provided.
      * 
      * @param node the node to be converted.
@@ -376,6 +407,7 @@ public final class XmlHelper {
         }
         catch (TransformerException e)
         {
+            LOGGER.error("Failed: formatXml", e);
             return null;
         }
     }

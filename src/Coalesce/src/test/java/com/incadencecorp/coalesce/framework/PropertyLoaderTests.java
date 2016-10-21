@@ -15,18 +15,18 @@
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-
 package com.incadencecorp.coalesce.framework;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.incadencecorp.unity.common.IConfigurationsConnector;
-import com.incadencecorp.unity.common.SettingType;
+import com.incadencecorp.unity.common.connectors.MemoryConnector;
 
+/**
+ * Ensures proper operation of the {@link PropertyLoader}.
+ * 
+ * @author n78554
+ */
 public class PropertyLoaderTests {
 
     private static final String PROPERTY_NAME = "prop";
@@ -60,52 +60,10 @@ public class PropertyLoaderTests {
     @Test
     public void testPropertyLoader()
     {
-        PropertyLoader loader = new PropertyLoader(new MockConnector(), "HelloWorld");
+        PropertyLoader loader = new PropertyLoader(new MemoryConnector(), "HelloWorld");
         loader.setProperty(PROPERTY_NAME, PROPERTY_VALUE);
 
         Assert.assertEquals(PROPERTY_VALUE, loader.getProperty(PROPERTY_NAME));
-
-    }
-
-    private class MockConnector implements IConfigurationsConnector {
-
-        private Map<String, String> cache = new HashMap<String, String>();
-
-        @Override
-        public String getAddress()
-        {
-            return null;
-        }
-
-        @Override
-        public int getPort()
-        {
-            return 0;
-        }
-
-        @Override
-        public String getSetting(String configurationFileName,
-                                 String settingPath,
-                                 String defaultValue,
-                                 SettingType type,
-                                 Boolean setIfNotFound)
-        {
-            return cache.get(settingPath);
-        }
-
-        @Override
-        public boolean setSetting(String configurationFileName, String settingPath, String value, SettingType type)
-        {
-            cache.put(settingPath, value);
-            return true;
-        }
-
-        @Override
-        public boolean log(String logName, String callResultXml)
-        {
-            // TODO Auto-generated method stub
-            return false;
-        }
 
     }
 

@@ -65,7 +65,13 @@ public abstract class AbstractEnumerationProvider implements IEnumerationProvide
     @Override
     public String toString(Principal principal, String enumeration, int value) throws IndexOutOfBoundsException
     {
-        return getEnumerationValues(principal, enumeration, false).get(value);
+        List<String> values = getEnumerationValues(principal, enumeration, false);
+        
+        if (value >= values.size()) {
+            throw new IllegalArgumentException(String.format(CoalesceErrors.INVALID_ENUMERATION_POSITION, value, enumeration));
+        }
+
+        return values.get(value);
     }
 
     @Override
@@ -131,7 +137,7 @@ public abstract class AbstractEnumerationProvider implements IEnumerationProvide
      * -----------------------------------------------------------------------
      */
     
-    private List<String> getEnumerationValues(Principal principal, String enumeration, boolean allNullResult)
+    private List<String> getEnumerationValues(Principal principal, String enumeration, boolean allowNullResult)
     {
         if (!supported.containsKey(enumeration))
         {
@@ -140,7 +146,7 @@ public abstract class AbstractEnumerationProvider implements IEnumerationProvide
 
         List<String> values = supported.get(enumeration);
         
-        if (!allNullResult && values == null) {
+        if (!allowNullResult && values == null) {
             throw new IllegalArgumentException(String.format(CoalesceErrors.INVALID_ENUMERATION, enumeration));
         }
         

@@ -1,0 +1,210 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    attributeFormDefault="qualified" elementFormDefault="qualified"
+    jxb:version="2.1"
+    targetNamespace="http://schema.coalesce.incadencecorp.com/TestEntityExample"
+    version="TestVersion" xmlns:jxb="http://java.sun.com/xml/ns/jaxb" xmlns:tns="http://schema.coalesce.incadencecorp.com/TestEntityExample">
+    <xs:element block="substitution" name="TestEntityExample">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="tns:baseType">
+                    <xs:all>
+                        <xs:element minOccurs="0" ref="tns:Linkages"/>
+                        <xs:element minOccurs="0" ref="tns:UnitTestSection"/>
+                    </xs:all>
+                    <xs:attribute name="source" type="tns:cdsString" use="required"/>
+                    <xs:attribute name="version" type="tns:cdsString" use="required"/>
+                    <xs:attribute name="entityid" type="tns:cdsString"/>
+                    <xs:attribute name="entityidtype" type="tns:cdsString"/>
+                    <xs:attribute name="title" type="tns:cdsString"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element block="substitution" name="UnitTestSection">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="tns:baseType">
+                    <xs:all>
+                        <xs:element minOccurs="0" ref="tns:UnitTestRecordset"/>
+                    </xs:all>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element block="substitution" name="UnitTestRecordset">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="tns:baseType">
+                    <xs:sequence>
+                        <xs:element block="substitution" minOccurs="1" name="UnitTestRecordsetRecord">
+                            <xs:complexType>
+                                <xs:complexContent>
+                                    <xs:extension base="tns:baseType">
+                                    <xs:all>
+                                    <xs:element
+                                    block="substitution"
+                                    minOccurs="0"
+                                    name="field1" type="tns:field1Type"/>
+                                    <xs:element
+                                    block="substitution"
+                                    minOccurs="0" name="field2">
+                                    <xs:complexType>
+                                    <xs:sequence>
+                                    <xs:element
+                                    maxOccurs="5000"
+                                    minOccurs="0"
+                                    name="values" type="tns:field2Type"/>
+                                    </xs:sequence>
+                                    </xs:complexType>
+                                    </xs:element>
+                                    <xs:element
+                                    block="substitution"
+                                    name="field3" type="tns:field3Type"/>
+                                    <xs:element
+                                    block="substitution"
+                                    minOccurs="0" name="field4">
+                                    <xs:complexType>
+                                    <xs:sequence>
+                                    <xs:element
+                                    maxOccurs="5000"
+                                    minOccurs="0"
+                                    name="values" type="tns:field4Type"/>
+                                    </xs:sequence>
+                                    </xs:complexType>
+                                    </xs:element>
+                                    </xs:all>
+                                    </xs:extension>
+                                </xs:complexContent>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:simpleType name="field1Type">
+        <xs:restriction base="tns:cdsString">
+            <xs:enumeration value="A"/>
+            <xs:enumeration value="B"/>
+            <xs:enumeration value="C"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="field2Type">
+        <xs:restriction base="xs:int">
+            <xs:minExclusive value="5"/>
+            <xs:maxExclusive value="10"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="field3Type">
+        <xs:restriction base="xs:int">
+            <xs:minInclusive value="0"/>
+            <xs:maxInclusive value="2"/>
+            <xs:pattern value=".*\S+.*"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="field4Type">
+        <xs:restriction base="xs:int">
+            <xs:minInclusive value="0"/>
+            <xs:maxInclusive value="2"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="ECoalesceObjectStatus">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="ACTIVE"/>
+            <xs:enumeration value="DELETED"/>
+            <xs:enumeration value="READONLY"/>
+            <xs:enumeration value="UNKNOWN"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="ELinkTypes">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="UNDEFINED"/>
+            <xs:enumeration value="IS_CHILD_OF"/>
+            <xs:enumeration value="IS_PARENT_OF"/>
+            <xs:enumeration value="CREATED"/>
+            <xs:enumeration value="WAS_CREATED_BY"/>
+            <xs:enumeration value="HAS_MEMBER"/>
+            <xs:enumeration value="IS_A_MEMBER_OF"/>
+            <xs:enumeration value="HAS_PARTICIPANT"/>
+            <xs:enumeration value="IS_A_PARTICIPANT_OF"/>
+            <xs:enumeration value="IS_WATCHING"/>
+            <xs:enumeration value="IS_BEING_WATCHED_BY"/>
+            <xs:enumeration value="IS_A_PEER_OF"/>
+            <xs:enumeration value="IS_OWNED_BY"/>
+            <xs:enumeration value="HAS_OWNERSHIP_OF"/>
+            <xs:enumeration value="IS_USED_BY"/>
+            <xs:enumeration value="HAS_USE_OF"/>
+            <xs:enumeration value="SUCCESSOR"/>
+            <xs:enumeration value="PREDECESSOR"/>
+            <xs:enumeration value="CROSS_DOMAIN_SOURCE"/>
+            <xs:enumeration value="CROSS_DOMAIN_TARGET"/>
+            <xs:enumeration value="IS_INPUT_PARAMETER_TO"/>
+            <xs:enumeration value="HAS_INPUT_PARAMETER_OF"/>
+            <xs:enumeration value="IS_INPUT_TO"/>
+            <xs:enumeration value="HAS_INPUT_OF"/>
+            <xs:enumeration value="IS_OUTPUT_TO"/>
+            <xs:enumeration value="HAS_OUTPUT_OF"/>
+            <xs:enumeration value="IS_PRODUCT_OF"/>
+            <xs:enumeration value="HAS_PRODUCT"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="baseType">
+        <xs:attribute name="key" type="tns:uuid" use="required"/>
+        <xs:attribute name="datecreated" type="xs:dateTime"/>
+        <xs:attribute name="lastmodified" type="xs:dateTime"/>
+        <xs:attribute default="ACTIVE" name="status" type="tns:ECoalesceObjectStatus"/>
+    </xs:complexType>
+    <xs:simpleType name="cdsString">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="20"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="uuid">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[8-9a-bA-B][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:element block="substitution" name="Linkages">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="tns:baseType">
+                    <xs:sequence>
+                        <xs:element block="substitution"
+                            maxOccurs="5000" minOccurs="0" name="Linkage">
+                            <xs:complexType>
+                                <xs:complexContent>
+                                    <xs:extension base="tns:baseType">
+                                    <xs:all>
+                                    <xs:element
+                                    name="entity1key" type="tns:uuid"/>
+                                    <xs:element
+                                    name="entity1name" type="tns:cdsString"/>
+                                    <xs:element
+                                    name="entity1source" type="tns:cdsString"/>
+                                    <xs:element
+                                    name="entity1version" type="tns:cdsString"/>
+                                    <xs:element name="linktype" type="tns:ELinkTypes"/>
+                                    <xs:element
+                                    name="entity2key" type="tns:uuid"/>
+                                    <xs:element
+                                    name="entity2name" type="tns:cdsString"/>
+                                    <xs:element
+                                    name="entity2source" type="tns:cdsString"/>
+                                    <xs:element
+                                    name="entity2version" type="tns:cdsString"/>
+                                    <xs:element
+                                    name="entity2objectversion" type="tns:cdsString"/>
+                                    <xs:element
+                                    name="classificationmarking" type="tns:cdsString"/>
+                                    <xs:element name="label" type="tns:cdsString"/>
+                                    </xs:all>
+                                    </xs:extension>
+                                </xs:complexContent>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

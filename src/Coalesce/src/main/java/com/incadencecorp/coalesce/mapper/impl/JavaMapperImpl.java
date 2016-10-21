@@ -58,6 +58,8 @@ public class JavaMapperImpl implements ICoalesceMapper<Class<?>> {
             break;
         case ENUMERATION_TYPE:
         case ENUMERATION_LIST_TYPE:
+            clazz = Enum.class;
+            break;
         case INTEGER_TYPE:
         case INTEGER_LIST_TYPE:
             clazz = Integer.class;

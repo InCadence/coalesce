@@ -62,6 +62,11 @@ public class CoalesceFeatureTypeFactory {
             }
 
             sb.append(entry.getKey() + ":" + mapper.map(entry.getValue()).getName());
+
+            if (LOGGER.isTraceEnabled())
+            {
+                LOGGER.trace(entry.getKey() + "=>" + mapper.map(entry.getValue()).getName());
+            }
         }
 
         if (LOGGER.isInfoEnabled())

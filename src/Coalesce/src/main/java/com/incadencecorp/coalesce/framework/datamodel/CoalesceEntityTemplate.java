@@ -218,6 +218,14 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
         return XmlHelper.getAttribute(getEntityNode(), "version");
     }
 
+    /**
+     * @return the fully qualified class name that created this template.
+     */
+    public String getClassName()
+    {
+        return XmlHelper.getAttribute(getEntityNode(), "classname");
+    }
+
     // -----------------------------------------------------------------------//
     // public Functions
     // -----------------------------------------------------------------------//
@@ -305,7 +313,10 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
                             && !attribute.getNodeName().equalsIgnoreCase("version")
                             && !attribute.getNodeName().equalsIgnoreCase("flatten")
                             && !attribute.getNodeName().equalsIgnoreCase("noindex")
-                            && !attribute.getNodeName().equalsIgnoreCase("datatype"))
+                            && !attribute.getNodeName().equalsIgnoreCase("datatype")
+                            && !attribute.getNodeName().equalsIgnoreCase("maxrecords")
+                            && !attribute.getNodeName().equalsIgnoreCase("minrecords")
+                            && !attribute.getNodeName().equalsIgnoreCase("classname"))
                     {
                         attribute.setNodeValue("");
                     }

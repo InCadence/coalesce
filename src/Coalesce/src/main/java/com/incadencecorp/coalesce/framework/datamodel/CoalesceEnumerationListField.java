@@ -6,8 +6,8 @@ import java.security.Principal;
 import org.apache.commons.lang.StringUtils;
 
 import com.incadencecorp.coalesce.api.CoalesceErrors;
+import com.incadencecorp.coalesce.common.classification.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
-import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.framework.EnumerationProviderUtil;
 
 /*-----------------------------------------------------------------------------'
@@ -34,8 +34,11 @@ import com.incadencecorp.coalesce.framework.EnumerationProviderUtil;
  */
 public class CoalesceEnumerationListField extends CoalesceEnumerationFieldBase<int[]> {
 
+    /**
+     * Defines the separator when returning a the enumerated list as a string.
+     */
     public static final String SEPERATOR = " ";
-    
+
     @Override
     public int[] getValue() throws CoalesceDataFormatException
     {
@@ -192,7 +195,7 @@ public class CoalesceEnumerationListField extends CoalesceEnumerationFieldBase<i
      */
     public void setValueAsString(Principal principal, String values)
     {
-        if (values != null)
+        if (!StringHelper.isNullOrEmpty(values))
         {
             setValueAsList(principal, values.split(SEPERATOR));
 
@@ -222,7 +225,7 @@ public class CoalesceEnumerationListField extends CoalesceEnumerationFieldBase<i
      */
     public void setValueAsList(Principal principal, String[] values)
     {
-        if (values != null)
+        if (values != null && values.length != 0)
         {
             int results[] = new int[values.length];
 

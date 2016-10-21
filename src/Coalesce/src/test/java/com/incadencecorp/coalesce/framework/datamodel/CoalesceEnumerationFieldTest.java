@@ -24,7 +24,6 @@ import org.junit.Test;
 
 import com.incadencecorp.coalesce.api.CoalesceAttributes;
 import com.incadencecorp.coalesce.api.CoalesceErrors;
-import com.incadencecorp.coalesce.api.persistance.ResultType;
 import com.incadencecorp.coalesce.framework.EnumerationProviderUtil;
 import com.incadencecorp.coalesce.framework.enumerationprovider.impl.ConstraintEnumerationProviderImpl;
 import com.incadencecorp.coalesce.framework.enumerationprovider.impl.JavaEnumerationProviderImpl;
@@ -644,12 +643,12 @@ public class CoalesceEnumerationFieldTest {
         Assert.assertEquals(String.format(CoalesceErrors.INVALID_ENUMERATION_POSITION, 10, "valid"),
                             results.get(field.getKey()));
 
-        // Empty String (Valid)
+        // Empty String (Same as Null)
         field.setValueAsString("");
 
         results = validator.validate(null, entity, template);
-        Assert.assertEquals(1, field.getValue().length);
-        Assert.assertFalse(results.containsKey(field.getKey()));
+        Assert.assertEquals(0, field.getValue().length);
+        Assert.assertTrue(results.containsKey(field.getKey()));
 
     }
 

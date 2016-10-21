@@ -76,6 +76,14 @@ public enum ECoalesceFieldDataTypes
     }
 
     /**
+     * @return whether the data type is a list type.
+     */
+    public boolean isListType()
+    {
+        return _label.endsWith("list");
+    }
+
+    /**
      * @param coalesceType allowed object is {@link String }
      * @return the ECoalesceFieldDataTypes type for the String type parameter.
      */
@@ -89,47 +97,17 @@ public enum ECoalesceFieldDataTypes
         return value;
     }
 
-    /**
-     * @param sqlType allowed object is {@link String }
-     * @return the ECoalesceFieldDataTypes type for the String sqltype parameter.
-     */
-//    public static ECoalesceFieldDataTypes getTypeForSQLType(String sqlType)
-//    {
-//        switch (sqlType.toUpperCase()) {
-//
-//        case "ADVARWCHAR":
-//        case "ADLONGVARWCHAR":
-//            return ECoalesceFieldDataTypes.STRING_TYPE;
-//
-//        case "ADDBTIMESTAMP":
-//            return ECoalesceFieldDataTypes.DATE_TIME_TYPE;
-//
-//        case "ADBOOLEAN":
-//            return ECoalesceFieldDataTypes.BOOLEAN_TYPE;
-//
-//        case "ADGUID":
-//            return ECoalesceFieldDataTypes.GUID_TYPE;
-//
-//        case "ADSMALLINT":
-//        case "ADINTEGER":
-//            return ECoalesceFieldDataTypes.INTEGER_TYPE;
-//
-//        case "ADLONGVARBINARY":
-//            return ECoalesceFieldDataTypes.BINARY_TYPE;
-//
-//        default:
-//            return ECoalesceFieldDataTypes.STRING_TYPE;
-//        }
-//
-//    }
-    
-    private static synchronized Map<String, ECoalesceFieldDataTypes> getMapping() {
 
-        if (_mapping == null) {
+    private static synchronized Map<String, ECoalesceFieldDataTypes> getMapping()
+    {
+
+        if (_mapping == null)
+        {
 
             _mapping = new HashMap<String, ECoalesceFieldDataTypes>();
 
-            for (ECoalesceFieldDataTypes s: values()) {
+            for (ECoalesceFieldDataTypes s : values())
+            {
                 _mapping.put(s._label.trim().toLowerCase(), s);
             }
 

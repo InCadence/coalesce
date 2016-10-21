@@ -83,20 +83,15 @@ public class TestEntity extends CoalesceEntity {
     @Override
     protected boolean initializeReferences()
     {
-
-        StringBuilder path;
         if (super.initializeReferences())
         {
             if (recordset1 == null)
             {
-                path = new StringBuilder("/").append(TESTSECTION).append("/").append(RECORDSET1);
-                recordset1 = (CoalesceRecordset) getCoalesceObjectForNamePath(getName() + path.toString());
-
+                recordset1 = (CoalesceRecordset) getCoalesceObjectForNamePath(getName(), TESTSECTION, RECORDSET1);
             }
-
         }
+        
         return recordset1 != null;
-
     }
 
     /**

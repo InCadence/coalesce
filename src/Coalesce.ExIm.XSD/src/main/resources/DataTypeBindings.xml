@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<jxb:bindings version="2.1"
+              xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
+              xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <jxb:globalBindings>
+        <!-- use JODA-Time DateTime for xs:date -->
+        <jxb:javaType name="org.joda.time.DateTime" xmlType="xs:dateTime"
+            parseMethod="com.incadencecorp.coalesce.common.helpers.DateTimeConverter.parseDate"
+            printMethod="com.incadencecorp.coalesce.common.helpers.DateTimeConverter.printDate"/>
+        <jxb:javaType name="java.util.Locale" xmlType="xs:language"
+            parseMethod="com.incadencecorp.coalesce.common.helpers.LocaleConverter.parseLocale"
+            printMethod="com.incadencecorp.coalesce.common.helpers.LocaleConverter.printLocale"/>
+    </jxb:globalBindings>        
+</jxb:bindings>

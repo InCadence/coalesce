@@ -15,6 +15,7 @@ import org.joda.time.DateTime;
 import org.junit.Test;
 
 import com.incadencecorp.coalesce.common.CoalesceTypeInstances;
+import com.incadencecorp.coalesce.common.helpers.ArrayHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
 
@@ -57,10 +58,10 @@ public class CoalesceRecordSetTest {
 
         assertNotNull(recordset);
 
-        Map<String, CoalesceRecordset> recordsets = section.getRecordsets();
+        List<CoalesceRecordset> recordsets = section.getRecordsetsAsList();
 
         assertEquals(1, recordsets.size());
-        assertNotNull(recordsets.get(recordset.getKey()));
+        assertNotNull(ArrayHelper.getItem(recordsets, recordset.getKey()));
 
     }
 
@@ -75,14 +76,14 @@ public class CoalesceRecordSetTest {
 
         assertNotNull(recordset);
 
-        Map<String, CoalesceRecordset> recordsets = section.getRecordsets();
+        List<CoalesceRecordset> recordsets = section.getRecordsetsAsList();
 
         assertEquals(2, recordsets.size());
 
-        CoalesceRecordset existingRecordset = recordsets.get("7A158E39-B6C4-4912-A712-DF296375A368");
+        CoalesceRecordset existingRecordset = ArrayHelper.getItem(recordsets, "7A158E39-B6C4-4912-A712-DF296375A368");
         assertNotNull(existingRecordset);
 
-        assertNotNull(recordsets.get(recordset.getKey()));
+        assertNotNull(ArrayHelper.getItem(recordsets, recordset.getKey()));
 
         List<CoalesceFieldDefinition> fieldDefinitions = existingRecordset.getFieldDefinitions();
 

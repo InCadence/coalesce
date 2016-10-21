@@ -6,7 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Map;
+import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.lang.NullArgumentException;
@@ -14,6 +14,7 @@ import org.joda.time.DateTime;
 import org.junit.Test;
 
 import com.incadencecorp.coalesce.common.CoalesceTypeInstances;
+import com.incadencecorp.coalesce.common.helpers.ArrayHelper;
 import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
@@ -61,10 +62,10 @@ public class CoalesceSectionTest {
         assertEquals(section1_1_2, entity.getSection("TREXOperation/section 1/section 1.1/section 1.1.2"));
 
         // Verify Section Lists
-        assertEquals(section1.getSections().size(), 1);
-        assertEquals(section1_1.getSections().size(), 2);
-        assertEquals(section1_1_1.getSections().size(), 0);
-        assertEquals(section1_1_2.getSections().size(), 0);
+        assertEquals(section1.getSectionsAsList().size(), 1);
+        assertEquals(section1_1.getSectionsAsList().size(), 2);
+        assertEquals(section1_1_1.getSectionsAsList().size(), 0);
+        assertEquals(section1_1_2.getSectionsAsList().size(), 0);
 
         // Create New Entity
         String entityXml = entity.toXml();
@@ -866,11 +867,11 @@ public class CoalesceSectionTest {
 
         CoalesceSection informationSection = entity.getSection(CoalesceTypeInstances.TEST_MISSION_INFO_SECTION_PATH);
 
-        Map<String, CoalesceRecordset> recordsets = informationSection.getRecordsets();
+        List<CoalesceRecordset> recordsets = informationSection.getRecordsetsAsList();
 
         assertEquals(1, recordsets.size());
-        assertNotNull(recordsets.get("7A158E39-B6C4-4912-A712-DF296375A368"));
-        assertEquals("Mission Information Recordset", recordsets.get("7A158E39-B6C4-4912-A712-DF296375A368").getName());
+        assertNotNull(ArrayHelper.getItem(recordsets, "7A158E39-B6C4-4912-A712-DF296375A368"));
+        assertEquals("Mission Information Recordset", ArrayHelper.getItem(recordsets, "7A158E39-B6C4-4912-A712-DF296375A368").getName());
 
     }
 
@@ -882,14 +883,14 @@ public class CoalesceSectionTest {
         CoalesceRecordset recordset1 = section.createRecordset("Recordset 1");
         CoalesceRecordset recordset2 = section.createRecordset("Recordset 2");
 
-        Map<String, CoalesceRecordset> recordsets = section.getRecordsets();
+        List<CoalesceRecordset> recordsets = section.getRecordsetsAsList();
 
         assertEquals(2, recordsets.size());
-        assertEquals(recordset1, recordsets.get(recordset1.getKey()));
-        assertEquals(recordset2, recordsets.get(recordset2.getKey()));
+        assertEquals(recordset1, ArrayHelper.getItem(recordsets, recordset1.getKey()));
+        assertEquals(recordset2, ArrayHelper.getItem(recordsets, recordset2.getKey()));
 
     }
-
+    
     @Test
     public void noIndexTest()
     {
@@ -961,7 +962,7 @@ public class CoalesceSectionTest {
 
         Section desSection = (Section) XmlHelper.deserialize(sectionXml, Section.class);
 
-        assertEquals(section.getRecordsets().size(), desSection.getRecordset().size());
+        assertEquals(section.getRecordsetsAsList().size(), desSection.getRecordset().size());
         assertEquals(section.getKey(), desSection.getKey());
         assertEquals(section.getName(), desSection.getName());
         assertEquals(null, desSection.isNoindex());

@@ -3,12 +3,12 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.incadencecorp.coalesce</groupId>
     <artifactId>coalesce-bom</artifactId>
-    <version>0.0.16-SNAPSHOT</version>
+    <version>0.0.16</version>
     <packaging>pom</packaging>
     <name>coalesce.bom</name>
 
     <properties>
-        <unityVersion>0.0.3</unityVersion>
+        <unityVersion>0.0.4</unityVersion>
         <maven.bundle.version>2.3.7</maven.bundle.version>
         <felix.osgi.version>1.4.0</felix.osgi.version>
         <felix.scr.version>1.8.2</felix.scr.version>
@@ -16,7 +16,7 @@
         <cxf.version>3.0.1</cxf.version>
         <geotools.version>13.1</geotools.version>
 
-        <changelog.start.tag>coalesce-0.0.14</changelog.start.tag>
+        <changelog.start.tag>coalesce-0.0.16</changelog.start.tag>
         <changelog.end.tag>HEAD</changelog.end.tag>
 
     </properties>
@@ -102,6 +102,11 @@
                 <artifactId>coalesce-classification</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.incadencecorp.coalesce</groupId>
+                <artifactId>coalesce-xsd</artifactId>
+                <version>${project.version}</version>
+            </dependency>            
         </dependencies>
     </dependencyManagement>
     <!-- <distributionManagement> <repository> <id>releases</id> <name>Internal 

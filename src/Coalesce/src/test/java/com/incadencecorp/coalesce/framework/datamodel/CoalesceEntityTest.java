@@ -30,6 +30,7 @@ import com.incadencecorp.coalesce.common.CoalesceTypeInstances;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.common.helpers.ArrayHelper;
 import com.incadencecorp.coalesce.common.helpers.EntityLinkHelper;
 import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
@@ -77,7 +78,7 @@ public class CoalesceEntityTest {
         String title = entity.getTitle();
         assertEquals("NORTHCOM Volunteer Background Checks Changed, NORTHCOM Volunteer Background Checks", title);
         assertEquals(4, entity.getLinkages().values().size());
-        assertEquals(2, entity.getSections().size());
+        assertEquals(2, entity.getSectionsAsList().size());
         assertEquals(1,
                      ((CoalesceRecordset) entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH)).getCount());
         assertEquals(17,
@@ -445,7 +446,7 @@ public class CoalesceEntityTest {
         assertEquals("TREXOperation", entity.getName());
         assertEquals("TREX Portal", entity.getSource());
         assertNotNull(entity.getLinkageSection());
-        assertTrue(entity.getSections().isEmpty());
+        assertTrue(entity.getSectionsAsList().isEmpty());
 
         entity.setOtherAttribute("testnewattribute", "test");
 
@@ -568,7 +569,7 @@ public class CoalesceEntityTest {
         String title = entity.getTitle();
         assertEquals("NORTHCOM Volunteer Background Checks Changed, NORTHCOM Volunteer Background Checks", title);
         assertEquals(4, entity.getLinkages().values().size());
-        assertEquals(2, entity.getSections().size());
+        assertEquals(2, entity.getSectionsAsList().size());
         assertEquals(1,
                      ((CoalesceRecordset) entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH)).getCount());
         assertEquals(17,
@@ -1542,14 +1543,14 @@ public class CoalesceEntityTest {
 
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        Map<String, CoalesceSection> sections = entity.getSections();
+        List<CoalesceSection> sections = entity.getSectionsAsList();
 
-        CoalesceSection liveSection = sections.get("85CB4256-4CC2-4F96-A03D-5EF880989822");
+        CoalesceSection liveSection = ArrayHelper.getItem(sections, "85CB4256-4CC2-4F96-A03D-5EF880989822");
 
         assertNotNull(liveSection);
         assertEquals("85CB4256-4CC2-4F96-A03D-5EF880989822", liveSection.getKey());
 
-        CoalesceSection informationSection = sections.get("383EA645-E695-4E75-ADA6-0C79BEC09A18");
+        CoalesceSection informationSection = ArrayHelper.getItem(sections, "383EA645-E695-4E75-ADA6-0C79BEC09A18");
         assertNotNull(informationSection);
         assertEquals("383EA645-E695-4E75-ADA6-0C79BEC09A18", informationSection.getKey());
 
@@ -1561,7 +1562,7 @@ public class CoalesceEntityTest {
 
         CoalesceEntity entity = CoalesceEntity.create("");
 
-        Map<String, CoalesceSection> sections = entity.getSections();
+        List<CoalesceSection> sections = entity.getSectionsAsList();
 
         assertTrue(sections.isEmpty());
 
@@ -1585,10 +1586,10 @@ public class CoalesceEntityTest {
         // Create Information Section
         CoalesceSection informationSection = entity.createSection("Operation Information Section", true);
 
-        Map<String, CoalesceSection> sections = entity.getSections();
+        List<CoalesceSection> sections = entity.getSectionsAsList();
 
-        assertEquals(liveSection, sections.get(liveSection.getKey()));
-        assertEquals(informationSection, sections.get(informationSection.getKey()));
+        assertEquals(liveSection, ArrayHelper.getItem(sections, liveSection.getKey()));
+        assertEquals(informationSection, ArrayHelper.getItem(sections, informationSection.getKey()));
 
     }
 
@@ -2694,7 +2695,7 @@ public class CoalesceEntityTest {
     {
 
         assertTrue(entity.getLinkages().values().isEmpty());
-        assertEquals(0, entity.getSections().size());
+        assertEquals(0, entity.getSectionsAsList().size());
     }
 
     private void assertLinkage(String entity1Key, ELinkTypes type, String entity2Key, CoalesceLinkage linkage)

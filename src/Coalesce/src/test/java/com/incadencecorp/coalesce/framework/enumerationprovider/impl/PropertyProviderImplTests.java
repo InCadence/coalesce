@@ -17,6 +17,7 @@
 
 package com.incadencecorp.coalesce.framework.enumerationprovider.impl;
 
+import java.io.File;
 import java.util.List;
 
 import org.junit.BeforeClass;
@@ -39,7 +40,8 @@ public class PropertyProviderImplTests {
     @BeforeClass
     public static void initialize()
     {
-        EnumerationProviderUtil.setEnumerationProviders(new PropertyEnumerationProviderImpl());
+        EnumerationProviderUtil.setEnumerationProviders(new PropertyEnumerationProviderImpl("src" + File.separator + "test"
+                + File.separator + "resources"));
     }
 
     /**
@@ -65,16 +67,16 @@ public class PropertyProviderImplTests {
         Assert.isTrue(values.contains("HELLO"));
         Assert.isTrue(values.contains("WORLD"));
     }
-    
+
     @Test
     public void testValidFiles()
     {
         PropertyEnumerationProviderImpl provider = new PropertyEnumerationProviderImpl();
-        
+
         provider.setPaths("./src/test/resources");
-        
+
         List<String> values = provider.lookup(null, "valid");
-        
+
         Assert.equals(2, values.size());
         Assert.isTrue(values.contains("HELLO"));
         Assert.isTrue(values.contains("WORLD"));

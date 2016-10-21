@@ -26,6 +26,11 @@ import com.incadencecorp.coalesce.common.helpers.StringHelper;
 
 public class CoalesceLinkageSection extends CoalesceObjectHistory {
 
+    /**
+     * Default name for linkage sections.
+     */
+    public static final String NAME = "Linkages";
+
     private Linkagesection _entityLinkageSection;
 
     // -----------------------------------------------------------------------//
@@ -33,19 +38,13 @@ public class CoalesceLinkageSection extends CoalesceObjectHistory {
     // -----------------------------------------------------------------------//
 
     /**
-     * Creates an
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}
-     * and ties it to its parent
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}.
+     * Creates an {@link CoalesceLinkageSection} and ties it to its parent
+     * {@link CoalesceEntity}.
      * 
-     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}
-     *            that the new
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}
-     *            will belong to.
-     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}
-     *         the new
-     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}
-     *         .
+     * @param parent {@link CoalesceEntity} that the new
+     *            {@link CoalesceLinkageSection} will belong to.
+     * @return {@link CoalesceLinkageSection} the new
+     *         {@link CoalesceLinkageSection} .
      */
     public static CoalesceLinkageSection create(CoalesceEntity parent)
     {
@@ -53,21 +52,14 @@ public class CoalesceLinkageSection extends CoalesceObjectHistory {
     }
 
     /**
-     * Creates an
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}
-     * and ties it to its parent
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}.
-     * Also sets the noIndex attribute.
+     * Creates an {@link CoalesceLinkageSection} and ties it to its parent
+     * {@link CoalesceEntity}. Also sets the noIndex attribute.
      * 
-     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}
-     *            that the new
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}
-     *            will belong to.
+     * @param parent {@link CoalesceEntity} that the new
+     *            {@link CoalesceLinkageSection} will belong to.
      * @param noIndex boolean value.
-     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}
-     *         the new
-     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}
-     *         .
+     * @return {@link CoalesceLinkageSection} the new
+     *         {@link CoalesceLinkageSection} .
      */
     public static CoalesceLinkageSection create(CoalesceEntity parent, boolean noIndex)
     {
@@ -90,15 +82,11 @@ public class CoalesceLinkageSection extends CoalesceObjectHistory {
     }
 
     /**
-     * Initializes a previously new
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}
-     * and ties it to its parent
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}.
+     * Initializes a previously new {@link CoalesceLinkageSection} and ties it
+     * to its parent {@link CoalesceEntity}.
      * 
-     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}
-     *            containing an LinkageSection to base this
-     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}
-     *            on.
+     * @param parent {@link CoalesceEntity} containing an LinkageSection to base
+     *            this {@link CoalesceLinkageSection} on.
      * @return boolean indicator of success/failure.
      */
     protected boolean initialize(CoalesceEntity parent)
@@ -113,7 +101,7 @@ public class CoalesceLinkageSection extends CoalesceObjectHistory {
         super.initialize(_entityLinkageSection);
 
         if (StringHelper.isNullOrEmpty(getName()))
-            setName("Linkages");
+            setName(NAME);
 
         if (_entityLinkageSection != null)
         {
@@ -146,17 +134,11 @@ public class CoalesceLinkageSection extends CoalesceObjectHistory {
     // -----------------------------------------------------------------------//
 
     /**
-     * Returns a hashmap of the
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage}s
-     * contained in the
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}
-     * .
+     * Returns a hashmap of the {@link CoalesceLinkage}s contained in the
+     * {@link CoalesceLinkageSection} .
      * 
-     * @return HashMap of this
-     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}
-     *         's
-     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage}
-     *         s.
+     * @return HashMap of this {@link CoalesceLinkageSection} 's
+     *         {@link CoalesceLinkage} s.
      */
     public Map<String, CoalesceLinkage> getLinkages()
     {
@@ -175,16 +157,11 @@ public class CoalesceLinkageSection extends CoalesceObjectHistory {
     }
 
     /**
-     * Creates an
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage}
-     * child for this
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}
-     * .
+     * Creates an {@link CoalesceLinkage} child for this
+     * {@link CoalesceLinkageSection} .
      * 
-     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage}
-     *         newly created and added to this
-     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}
-     *         .
+     * @return {@link CoalesceLinkage} newly created and added to this
+     *         {@link CoalesceLinkageSection} .
      */
     public CoalesceLinkage createLinkage()
     {
@@ -211,17 +188,20 @@ public class CoalesceLinkageSection extends CoalesceObjectHistory {
     @Override
     protected boolean prune(CoalesceObjectType child)
     {
-        boolean isSuccessful = false; 
-        
-        if (child instanceof History) {
+        boolean isSuccessful = false;
+
+        if (child instanceof History)
+        {
             isSuccessful = _entityLinkageSection.getHistory().remove(child);
-        } else if (child instanceof Linkage) {
+        }
+        else if (child instanceof Linkage)
+        {
             isSuccessful = _entityLinkageSection.getLinkage().remove(child);
         }
 
         return isSuccessful;
     }
-    
+
     @Override
     protected boolean setExtendedAttributes(String name, String value)
     {

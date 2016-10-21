@@ -89,11 +89,10 @@ public final class CoalesceTemplateUtil {
                 {
                     if (types.containsKey(entry.getKey()) && types.get(entry.getKey()) != entry.getValue())
                     {
-                        LOGGER.warn(String.format("Template: (%s) (%s) (%s)",
+                        LOGGER.warn(String.format("Template: (%s) (%s) (%s); Expected (%s) for (%s) not (%s)",
                                                   template.getName(),
                                                   template.getSource(),
-                                                  template.getVersion()));
-                        LOGGER.warn(String.format("Expected (%s) for (%s) not (%s)",
+                                                  template.getVersion(),
                                                   types.get(entry.getKey()),
                                                   entry.getKey(),
                                                   entry.getValue()));
@@ -122,8 +121,6 @@ public final class CoalesceTemplateUtil {
      */
     public static void addTemplates(ICoalescePersistor peristor) throws CoalescePersistorException
     {
-        initializeDefaults();
-
         List<CoalesceEntityTemplate> templates = new ArrayList<CoalesceEntityTemplate>();
 
         // Iterate Through All Templates
@@ -214,6 +211,7 @@ public final class CoalesceTemplateUtil {
             types.put("coalesceentity.title", ECoalesceFieldDataTypes.STRING_TYPE);
             types.put("coalesceentity.deleted", ECoalesceFieldDataTypes.BOOLEAN_TYPE);
             types.put("coalesceentity.creator", ECoalesceFieldDataTypes.STRING_TYPE);
+            types.put("coalesceentity.objectkey", ECoalesceFieldDataTypes.STRING_TYPE);
             types.put("coalesceentity.datecreated", ECoalesceFieldDataTypes.DATE_TIME_TYPE);
             types.put("coalesceentity.lastmodified", ECoalesceFieldDataTypes.DATE_TIME_TYPE);
         }

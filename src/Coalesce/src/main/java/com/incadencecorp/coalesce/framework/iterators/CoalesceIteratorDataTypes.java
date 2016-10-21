@@ -23,11 +23,15 @@ import java.util.Map;
 import com.incadencecorp.coalesce.api.ICoalesceNormalizer;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.DefaultNormalizer;
+import com.incadencecorp.coalesce.framework.EnumerationProviderUtil;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceConstraint;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
+import com.incadencecorp.coalesce.framework.datamodel.ConstraintType;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
+import com.incadencecorp.coalesce.framework.enumerationprovider.impl.ConstraintEnumerationProviderImpl;
 
 /**
  * This iterator returns all the data types within a given entity.
@@ -57,7 +61,7 @@ public class CoalesceIteratorDataTypes extends CoalesceIterator<Map<String, ECoa
     /**
      * @param entity
      * @return a map of datatypes used by this entity.
-     * @throws CoalesceException 
+     * @throws CoalesceException
      */
     public Map<String, ECoalesceFieldDataTypes> getDataTypes(CoalesceEntity entity) throws CoalesceException
     {
@@ -71,7 +75,7 @@ public class CoalesceIteratorDataTypes extends CoalesceIterator<Map<String, ECoa
     /**
      * @param template
      * @return a map of datatypes used by this template.
-     * @throws CoalesceException 
+     * @throws CoalesceException
      */
     public Map<String, ECoalesceFieldDataTypes> getDataTypes(CoalesceEntityTemplate template) throws CoalesceException
     {
@@ -81,10 +85,38 @@ public class CoalesceIteratorDataTypes extends CoalesceIterator<Map<String, ECoa
     @Override
     protected boolean visitCoalesceRecordset(CoalesceRecordset recordset, Map<String, ECoalesceFieldDataTypes> param)
     {
+        Map<String, String> enumerationLookups = new HashMap<String, String>();
+        
         for (CoalesceFieldDefinition definition : recordset.getFieldDefinitions())
         {
-            param.put(normalizer.normalize(recordset, definition), definition.getDataType());
+            String key = normalizer.normalize(recordset, definition);
+            
+            param.put(key, definition.getDataType());
+
+            // Is Enumeration?
+            if (definition.getDataType() == ECoalesceFieldDataTypes.ENUMERATION_LIST_TYPE
+                    || definition.getDataType() == ECoalesceFieldDataTypes.ENUMERATION_TYPE)
+            {
+                // Yes; Update Lookup Table
+                for (CoalesceConstraint constraint : definition.getConstraints())
+                {
+                    if (constraint.getConstraintType() == ConstraintType.ENUMERATION)
+                    {
+                        ConstraintEnumerationProviderImpl provider = EnumerationProviderUtil.getProvider(ConstraintEnumerationProviderImpl.class);
+                        if (provider != null)
+                        {
+                            provider.add(constraint);
+                        }
+                        
+                        enumerationLookups.put(key, constraint.getValue());
+                        break;
+                    }
+                }
+            }
+
         }
+
+        EnumerationProviderUtil.addLookupEntries(enumerationLookups);
 
         // Stop recursive processing
         return false;

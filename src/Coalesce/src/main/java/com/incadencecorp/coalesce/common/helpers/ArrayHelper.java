@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
+
 /**
  * Factory class for manipulating arrays.
  * 
@@ -108,7 +110,7 @@ public final class ArrayHelper {
 
         return results;
     }
-    
+
     /**
      * @param values
      * @return an array of UUID from the String array argument.
@@ -132,8 +134,9 @@ public final class ArrayHelper {
     public static final String[] toStringArray(boolean[] values)
     {
         String[] results = null;
-        
-        if (values != null) {
+
+        if (values != null)
+        {
 
             results = new String[values.length];
 
@@ -141,12 +144,12 @@ public final class ArrayHelper {
             {
                 results[ii] = Boolean.toString(values[ii]);
             }
-            
+
         }
 
         return results;
     }
-    
+
     /**
      * @param values
      * @return an array of strings
@@ -163,7 +166,7 @@ public final class ArrayHelper {
         return results;
     }
 
-/**
+    /**
      * @param values
      * @return an array of strings
      */
@@ -226,8 +229,8 @@ public final class ArrayHelper {
 
         return results;
     }
-    
-    /** 
+
+    /**
      * @param values
      * @return an array of strings
      */
@@ -236,7 +239,7 @@ public final class ArrayHelper {
         String[] results = new String[values.size()];
 
         int ii = 0;
-        
+
         for (UUID value : values)
         {
             results[ii++] = GUIDHelper.getGuidString(value);
@@ -244,8 +247,8 @@ public final class ArrayHelper {
 
         return results;
     }
-    
-    /** 
+
+    /**
      * @param values
      * @return an array of strings
      */
@@ -259,6 +262,26 @@ public final class ArrayHelper {
         }
 
         return results;
+    }
+
+    /**
+     * Searching a list of objects for a given key.
+     * 
+     * @param list
+     * @param key
+     * @return the object if found; otherwise <code>null</code>.
+     */
+    public static <T extends CoalesceObject> T getItem(List<T> list, String key)
+    {
+        for (T item : list)
+        {
+            if (item.getKey().equalsIgnoreCase(key))
+            {
+                return item;
+            }
+        }
+
+        return null;
     }
 
 }

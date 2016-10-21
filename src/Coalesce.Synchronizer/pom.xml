@@ -9,14 +9,14 @@
     <parent>
         <groupId>com.incadencecorp.coalesce</groupId>
         <artifactId>coalesce-pom</artifactId>
-        <version>0.0.16-SNAPSHOT</version>
+        <version>0.0.16</version>
         <relativePath>../Coalesce.Pom</relativePath>
     </parent>
 
     <modules>
         <module>api</module>
         <module>service</module>
-        <module>feature</module>
+<!--         <module>feature</module> -->
     </modules>
 
 </project>

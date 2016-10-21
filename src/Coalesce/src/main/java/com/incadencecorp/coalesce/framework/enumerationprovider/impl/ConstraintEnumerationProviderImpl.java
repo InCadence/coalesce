@@ -18,7 +18,6 @@
 package com.incadencecorp.coalesce.framework.enumerationprovider.impl;
 
 import java.security.Principal;
-import java.util.Arrays;
 import java.util.List;
 
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceConstraint;
@@ -30,6 +29,13 @@ import com.incadencecorp.coalesce.framework.datamodel.ConstraintType;
  * @author Derek
  */
 public class ConstraintEnumerationProviderImpl extends AbstractEnumerationProvider {
+
+    /**
+     * Creates a provider with no default constraints.
+     */
+    public ConstraintEnumerationProviderImpl()
+    {
+    }
 
     /**
      * Construct the provider with the given supported enumerations.

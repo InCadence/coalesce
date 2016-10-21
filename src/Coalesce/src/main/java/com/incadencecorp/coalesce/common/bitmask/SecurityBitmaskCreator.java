@@ -24,6 +24,11 @@ import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.incadencecorp.coalesce.api.CoalesceErrors;
+
 /**
  * This class is used for generating bitmasks based on the options provided
  * during construction.
@@ -34,7 +39,8 @@ public class SecurityBitmaskCreator {
 
     protected List<String> validOptions = new ArrayList<String>();
     private String name;
-    
+    private static final Logger LOGGER = LoggerFactory.getLogger(SecurityBitmaskCreator.class);
+
     /**
      * Constructs a creator.
      * 
@@ -77,7 +83,8 @@ public class SecurityBitmaskCreator {
     /**
      * @return the name.
      */
-    public String getName() {
+    public String getName()
+    {
         return name;
     }
 
@@ -86,10 +93,11 @@ public class SecurityBitmaskCreator {
      * 
      * @param value
      */
-    public void setName(String value) {
+    public void setName(String value)
+    {
         name = value;
     }
-    
+
     /**
      * 
      * @param value
@@ -138,6 +146,11 @@ public class SecurityBitmaskCreator {
                 }
                 else if (!ignoreInvalid)
                 {
+                    if (LOGGER.isWarnEnabled())
+                    {
+                        LOGGER.warn(String.format(CoalesceErrors.INVALID_HASH_OPTION, option, getName()));
+                    }
+
                     // Set No Access
                     mask[0] = true;
                 }

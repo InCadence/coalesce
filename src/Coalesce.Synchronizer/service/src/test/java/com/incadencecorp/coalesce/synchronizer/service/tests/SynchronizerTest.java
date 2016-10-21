@@ -125,7 +125,7 @@ public class SynchronizerTest {
         params = new HashMap<String, String>();
         params.put(SynchronizerParameters.PARAM_DRIVER_INTERVAL_UNITS, TimeUnit.MINUTES.toString());
         params.put(SynchronizerParameters.PARAM_OP_WINDOW_SIZE, "1");
-        params.put(CoalesceParameters.PARAM_DIRECTORY, "src/test/resources");
+        params.put(CoalesceParameters.PARAM_DIRECTORY, Paths.get("src", "test", "resources").toString());
 
         MockSearchPersister scanSource = new MockSearchPersister();
         MockSearchPersister source = new MockSearchPersister();

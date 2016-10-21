@@ -1,6 +1,9 @@
 package com.incadencecorp.coalesce.framework.datamodel;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -39,6 +42,31 @@ public abstract class CoalesceObject implements ICoalesceObject {
     /*--------------------------------------------------------------------------
     Protected Member Variables
     --------------------------------------------------------------------------*/
+
+    /**
+     * IP address of the last person to modified this object.
+     */
+    public static final String ATTRIBUTE_MODIFIEDBYIP = "modifiedbyip";
+    /**
+     * User who last modified this object.
+     */
+    public static final String ATTRIBUTE_MODIFIEDBY = "modifiedby";
+    /**
+     * Current status of this object
+     */
+    public static final String ATTRIBUTE_STATUS = "status";
+    /**
+     * The time this object was last modified.
+     */
+    public static final String ATTRIBUTE_LASTMODIFIED = "lastmodified";
+    /**
+     * The time this object was created.
+     */
+    public static final String ATTRIBUTE_DATECREATED = "datecreated";
+    /**
+     * Unique identifier for this object.
+     */
+    public static final String ATTRIBUTE_KEY = "key";
 
     private CoalesceObject _parent;
     private CoalesceObjectType _object;
@@ -286,16 +314,19 @@ public abstract class CoalesceObject implements ICoalesceObject {
     @Override
     public final CoalesceEntity getEntity()
     {
-        CoalesceObject element = this.getParent(); 
-        
-        while(element.getParent() != null) {
+        CoalesceObject element = this.getParent();
+
+        while (element.getParent() != null)
+        {
             element = element.getParent();
         }
-        
-        if (element instanceof CoalesceEntity) {
+
+        if (element instanceof CoalesceEntity)
+        {
             return (CoalesceEntity) element;
         }
-        else {
+        else
+        {
             return null;
         }
     }
@@ -454,25 +485,25 @@ public abstract class CoalesceObject implements ICoalesceObject {
     public final boolean setAttribute(String name, String value)
     {
         switch (name.toLowerCase()) {
-        case "key":
+        case ATTRIBUTE_KEY:
             setKey(value);
             return true;
-        case "datecreated":
+        case ATTRIBUTE_DATECREATED:
             setDateCreated(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
             return true;
-        case "lastmodified":
+        case ATTRIBUTE_LASTMODIFIED:
             setLastModified(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
             return true;
         case "name":
             setName(value);
             return true;
-        case "status":
+        case ATTRIBUTE_STATUS:
             setStatus(ECoalesceObjectStatus.valueOf(value));
             return true;
-        case "modifiedby":
+        case ATTRIBUTE_MODIFIEDBY:
             setModifiedBy(value);
             return true;
-        case "modifiedbyip":
+        case ATTRIBUTE_MODIFIEDBYIP:
             setModifiedByIP(value);
             return true;
         case "objectversion":
@@ -862,6 +893,68 @@ public abstract class CoalesceObject implements ICoalesceObject {
         return initialize(coalesceObject._object);
     }
 
+    /**
+     * @deprecated
+     * @see #getObjectsAsList(List, ECoalesceObjectStatus...)
+     * @param items
+     * @param exclusions status to exclude from the return set.
+     * @return a list of CoalesceObjects for the given list of XSD objects
+     */
+    protected <T extends CoalesceObject, Y extends CoalesceObjectType> Map<String, T> getObjectsAsMap(List<Y> items,
+                                                                                          ECoalesceObjectStatus... exclusions)
+    {
+        List<ECoalesceObjectStatus> statusList = Arrays.asList(exclusions);
+        Map<String, T> results = new HashMap<String, T>();
+
+        for (Y item : items)
+        {
+            // getChildCoalesceObjects().get(item.getKey()) always returns null
+            // therefore we have to loop
+            for (CoalesceObject xdo : getChildCoalesceObjects().values())
+            {
+                if (xdo.getKey().equalsIgnoreCase(item.getKey()) && !statusList.contains(xdo.getStatus()))
+                {
+                    // You should never get a cast error here because we control
+                    // what is inserted into the map.
+                    results.put(xdo.getKey(), (T) xdo);
+                    break;
+                }
+            }
+        }
+
+        return results;
+    }
+    
+    /**
+     * @param items
+     * @param exclusions status to exclude from the return set.
+     * @return a list of CoalesceObjects for the given list of XSD objects
+     */
+    protected <T extends CoalesceObject, Y extends CoalesceObjectType> List<T> getObjectsAsList(List<Y> items,
+                                                                                          ECoalesceObjectStatus... exclusions)
+    {
+        List<ECoalesceObjectStatus> statusList = Arrays.asList(exclusions);
+        List<T> results = new ArrayList<T>();
+
+        for (Y item : items)
+        {
+            // getChildCoalesceObjects().get(item.getKey()) always returns null
+            // therefore we have to loop
+            for (CoalesceObject xdo : getChildCoalesceObjects().values())
+            {
+                if (xdo.getKey().equalsIgnoreCase(item.getKey()) && !statusList.contains(xdo.getStatus()))
+                {
+                    // You should never get a cast error here because we control
+                    // what is inserted into the map.
+                    results.add((T) xdo);
+                    break;
+                }
+            }
+        }
+
+        return results;
+    }
+
     protected String getStringElement(String value)
     {
         if (value == null)
@@ -917,17 +1010,17 @@ public abstract class CoalesceObject implements ICoalesceObject {
         Map<QName, String> map = new HashMap<QName, String>();
 
         // Add Common Attributes
-        map.put(new QName("key"), getKey());
-        map.put(new QName("datecreated"), JodaDateTimeHelper.toXmlDateTimeUTC(getDateCreated()));
-        map.put(new QName("lastmodified"), JodaDateTimeHelper.toXmlDateTimeUTC(getLastModified()));
+        map.put(new QName(ATTRIBUTE_KEY), getKey());
+        map.put(new QName(ATTRIBUTE_DATECREATED), JodaDateTimeHelper.toXmlDateTimeUTC(getDateCreated()));
+        map.put(new QName(ATTRIBUTE_LASTMODIFIED), JodaDateTimeHelper.toXmlDateTimeUTC(getLastModified()));
         map.put(new QName("name"), getName());
-        map.put(new QName("status"), getStatus().toString());
+        map.put(new QName(ATTRIBUTE_STATUS), getStatus().toString());
         map.put(new QName("noindex"), Boolean.toString(getNoIndex()));
         map.put(new QName("objectversion"), Integer.toString(getObjectVersion()));
         map.put(new QName("objectversionstatus"), getObjectVersionStatus().toString());
         map.put(new QName("previoushistorykey"), getPreviousHistoryKey());
-        map.put(new QName("modifiedby"), getModifiedBy());
-        map.put(new QName("modifiedbyip"), getModifiedByIP());
+        map.put(new QName(ATTRIBUTE_MODIFIEDBY), getModifiedBy());
+        map.put(new QName(ATTRIBUTE_MODIFIEDBYIP), getModifiedByIP());
 
         map.putAll(_object.getOtherAttributes());
 
