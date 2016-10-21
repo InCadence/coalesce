@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.incadencecorp.coalesce</groupId>
     <artifactId>coalesce-bom</artifactId>
-    <version>0.0.16</version>
+    <version>0.0.17-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>coalesce.bom</name>
 
