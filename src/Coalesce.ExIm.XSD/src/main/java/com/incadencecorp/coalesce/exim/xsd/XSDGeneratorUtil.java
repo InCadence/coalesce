@@ -50,7 +50,6 @@ import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
 import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
 import com.incadencecorp.coalesce.framework.enumerationprovider.impl.ConstraintEnumerationProviderImpl;
-import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
 
 /**
  * This utility class creates a XSD schema from a {@link CoalesceEntityTemplate}

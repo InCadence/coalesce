@@ -19,6 +19,7 @@ package com.incadencecorp.coalesce.framework.enumerationprovider.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,6 +43,14 @@ public class PropertyEnumerationProviderImpl extends AbstractEnumerationProvider
     private static final Logger LOGGER = LoggerFactory.getLogger(PropertyEnumerationProviderImpl.class);
     private List<String> paths = new ArrayList<String>();
 
+    /**
+     * Default Constructor; defaults to src/main/resources
+     */
+    public PropertyEnumerationProviderImpl()
+    {
+        this(Paths.get("src", "main", "resources").toString());
+    }
+    
     /**
      * Constructs provider with paths.
      * 

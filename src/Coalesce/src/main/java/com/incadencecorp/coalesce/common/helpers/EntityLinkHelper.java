@@ -3,6 +3,8 @@ package com.incadencecorp.coalesce.common.helpers;
 import java.util.Locale;
 
 import org.apache.commons.lang.NullArgumentException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.incadencecorp.coalesce.common.classification.Marking;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
@@ -41,6 +43,7 @@ public final class EntityLinkHelper {
     // ----------------------------------------------------------------------//
 
     private static final String MODULE_NAME = EntityLinkHelper.class.getName();
+    private static final Logger LOGGER = LoggerFactory.getLogger(EntityLinkHelper.class);
 
     // ----------------------------------------------------------------------//
     // Factory and Initialization
@@ -375,6 +378,18 @@ public final class EntityLinkHelper {
                                          boolean canUpdateReadOnly) throws CoalesceException
     {
 
+        if (LOGGER.isDebugEnabled())
+        {
+            LOGGER.debug("Linking: ({}) ({}) ({}) -[{}]-> ({}) ({}) ({})",
+                         entity.getKey(),
+                         entity.getClassName(),
+                         entity.getObjectVersion(),
+                         linkType.toString(),
+                         otherEntity.getKey(),
+                         otherEntity.getClassName(),
+                         otherEntity.getObjectVersion());
+        }
+
         CoalesceLinkage linkage = null;
         // Do we already have the Linkage made? (Same Entities and Same
         // LinkType)?
@@ -449,6 +464,24 @@ public final class EntityLinkHelper {
                                                 String modifiedByIP,
                                                 boolean canUpdateReadOnly) throws CoalesceException
     {
+        if (LOGGER.isDebugEnabled())
+        {
+            String rel = "*"; 
+            
+            if (linkType != null) {
+                rel = linkType.toString();
+            }
+            
+            LOGGER.debug("Un-Linking: ({}) ({}) ({}) -[{}]-> ({}) ({}) ({})",
+                         entity.getKey(),
+                         entity.getClassName(),
+                         entity.getObjectVersion(),
+                         rel,
+                         otherEntity.getKey(),
+                         otherEntity.getClassName(),
+                         otherEntity.getObjectVersion());
+        }
+
         for (ICoalesceObject cdo : linkageSection.getChildCoalesceObjects().values())
         {
             if (cdo instanceof CoalesceLinkage)

@@ -32,6 +32,14 @@ import java.util.Map.Entry;
 public class CodeEnumerationProvider extends AbstractEnumerationProvider {
 
     /**
+     * Default Constructor; does not provide any enumeration support. 
+     */
+    public CodeEnumerationProvider()
+    {
+        // Do Nothing
+    }
+    
+    /**
      * Constructs a provider with user defined enumerations.
      * 
      * @param enumerations

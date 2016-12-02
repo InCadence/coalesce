@@ -399,26 +399,7 @@ public class XSDEximImplTest {
 
     private static String formatPretty(Node document)
     {
-
-        try
-        {
-
-            // May need this:
-            // System.setProperty(DOMImplementationRegistry.PROPERTY,"com.sun.org.apache.xerces.internal.dom.DOMImplementationSourceImpl");
-
-            final DOMImplementationRegistry registry = DOMImplementationRegistry.newInstance();
-            final DOMImplementationLS impl = (DOMImplementationLS) registry.getDOMImplementation("LS");
-            final LSSerializer writer = impl.createLSSerializer();
-
-            writer.getDomConfig().setParameter("format-pretty-print", Boolean.TRUE);
-            writer.getDomConfig().setParameter("xml-declaration", Boolean.FALSE);
-
-            return writer.writeToString(document);
-        }
-        catch (Exception e)
-        {
-            throw new RuntimeException(e);
-        }
+        return XmlHelper.formatXml(document);
     }
 
     private enum ETest

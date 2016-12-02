@@ -78,7 +78,7 @@ public class CoalesceFramework implements ICoalesceExecutorService, Closeable {
 
     private boolean hasSecondaryPersistors()
     {
-        return _persistors.length > 0;
+        return _persistors != null && _persistors.length > 0;
     }
 
     private ICoalescePersistor getAuthoritativePersistor()

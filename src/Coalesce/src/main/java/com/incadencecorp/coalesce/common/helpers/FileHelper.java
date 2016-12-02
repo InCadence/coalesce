@@ -311,14 +311,14 @@ public final class FileHelper {
      */
     public static URI getFullPath(String value) throws URISyntaxException
     {
-        Path directory = Paths.get(value);
+        URI directory = new URI(value);
 
         if (!directory.isAbsolute())
         {
-            directory = Paths.get(System.getProperty("user.dir"), value);
+            directory = Paths.get(System.getProperty("user.dir"), value).toUri();
         }
         
-        return directory.toUri();
+        return directory;
     }
 
     /*--------------------------------------------------------------------------

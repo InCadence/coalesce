@@ -17,12 +17,10 @@
 
 package com.incadencecorp.coalesce.framework.jobs;
 
+import java.util.UUID;
 import java.util.concurrent.Callable;
 
-import com.incadencecorp.coalesce.api.IExceptionHandler;
-import com.incadencecorp.coalesce.api.persistance.ICoalesceExecutorService;
 import com.incadencecorp.coalesce.framework.CoalesceComponentImpl;
-import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 
 /**
  * Abstract base for jobs in Coalesce.
@@ -38,6 +36,7 @@ public abstract class AbstractCoalesceJob<T, Y> extends CoalesceComponentImpl im
     --------------------------------------------------------------------------*/
 
     private T _params;
+    private UUID id;
 
     /*--------------------------------------------------------------------------
     Constructors

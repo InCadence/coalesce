@@ -53,6 +53,8 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
     // protected Member Variables
     // -----------------------------------------------------------------------//
 
+    public static final String ATTRIBUTE_VALUE = "value";
+    
     private boolean _suspendHistory = false;
     private Field _entityField;
     private CoalesceFieldDefinition _definition;
@@ -981,7 +983,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
         map.put(new QName("datatype"), _entityField.getDatatype());
         map.put(new QName("classificationmarking"), _entityField.getClassificationmarking());
         map.put(new QName("label"), _entityField.getLabel());
-        map.put(new QName("value"), _entityField.getValue());
+        map.put(new QName(ATTRIBUTE_VALUE), _entityField.getValue());
 
         if (_entityField.getInputlang() == null)
         {
@@ -1021,7 +1023,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
         case "label":
             setLabel(value);
             return true;
-        case "value":
+        case ATTRIBUTE_VALUE:
             setBaseValue(value);
             return true;
         case "inputlang":

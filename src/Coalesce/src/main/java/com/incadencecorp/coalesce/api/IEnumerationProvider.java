@@ -15,7 +15,6 @@
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-
 package com.incadencecorp.coalesce.api;
 
 import java.security.Principal;
@@ -31,7 +30,7 @@ import java.util.List;
 public interface IEnumerationProvider {
 
     /**
-     * @param principal 
+     * @param principal
      * @param enumeration
      * @return <code>true</code> if this provider handles the given enumeration;
      *         otherwise <code>false</code>
@@ -39,7 +38,7 @@ public interface IEnumerationProvider {
     boolean handles(Principal principal, String enumeration);
 
     /**
-     * @param principal 
+     * @param principal
      * @param enumeration
      * @param value
      * @return the string representation of the given enumeration position if
@@ -50,7 +49,7 @@ public interface IEnumerationProvider {
 
     /**
      * 
-     * @param principal 
+     * @param principal
      * @param enumeration
      * @param value
      * @return the position of the given enumeration string if valid; otherwise
@@ -61,7 +60,7 @@ public interface IEnumerationProvider {
 
     /**
      * 
-     * @param principal 
+     * @param principal
      * @param enumeration
      * @param value
      * @return <code>true</code> if the given value is within bounds for the
@@ -71,19 +70,25 @@ public interface IEnumerationProvider {
 
     /**
      * 
-     * @param principal 
+     * @param principal
      * @param enumeration
      * @param value
      * @return <code>true</code> is the given value is valid for the specified
      *         enumeration; otherwise <code>false</code>
      */
     boolean isValid(Principal principal, String enumeration, String value);
-    
+
     /**
      * @param principal
      * @param enumeration
      * @return a list of values for the given enumeration.
      */
     List<String> getValues(Principal principal, String enumeration);
+
+    /**
+     * @return a complete list of enumerations that are currently supported by
+     *         this provider.
+     */
+    List<String> getEnumerations();
 
 }

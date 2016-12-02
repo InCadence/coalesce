@@ -5,7 +5,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
-import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -16,18 +15,11 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.lang.NullArgumentException;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.DOMConfiguration;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -72,11 +64,12 @@ public final class XmlHelper {
     }
 
     /**
-     * Return the {@link String} that contains the serialized representation of the provided object using the 'UTF-8'
-     * encoding format.
+     * Return the {@link String} that contains the serialized representation of
+     * the provided object using the 'UTF-8' encoding format.
      * 
      * @param obj the object to be serialized.
-     * @return the {@link String} that contains the serialized representation of the object.
+     * @return the {@link String} that contains the serialized representation of
+     *         the object.
      */
     public static String serialize(Object obj)
     {
@@ -85,12 +78,13 @@ public final class XmlHelper {
     }
 
     /**
-     * Return the {@link String} that contains the serialized representation of the provided object using the specified
-     * encoding format.
+     * Return the {@link String} that contains the serialized representation of
+     * the provided object using the specified encoding format.
      * 
      * @param obj the object to be serialized.
      * @param encoding the desired encoding.
-     * @return the {@link String} that contains the serialized representation of the object.
+     * @return the {@link String} that contains the serialized representation of
+     *         the object.
      */
     public static String serialize(Object obj, String encoding)
     {
@@ -98,12 +92,13 @@ public final class XmlHelper {
     }
 
     /**
-     * Return the {@link String} that contains the serialized representation of the provided object using the specified
-     * encoding format.
+     * Return the {@link String} that contains the serialized representation of
+     * the provided object using the specified encoding format.
      * 
      * @param obj the object to be serialized.
      * @param charset character set to use for encoding.
-     * @return the {@link String} that contains the serialized representation of the object.
+     * @return the {@link String} that contains the serialized representation of
+     *         the object.
      */
     public static String serialize(Object obj, Charset charset)
     {
@@ -130,8 +125,10 @@ public final class XmlHelper {
     }
 
     /**
-     * Create the object instance of the <code>classType</code> that represents the serialized XML string provided using the
-     * <code>xml</code>. If there is any problem deserializing the object then <code>null</code> will be returned.
+     * Create the object instance of the <code>classType</code> that represents
+     * the serialized XML string provided using the <code>xml</code>. If there
+     * is any problem deserializing the object then <code>null</code> will be
+     * returned.
      * 
      * @param xml the XML string to be deserialized.
      * @param classType the type of the object to be deserialized.
@@ -177,7 +174,8 @@ public final class XmlHelper {
             {
                 if (!_jaxbContexts.containsKey(className))
                 {
-                    // Haven't seen before; create and add to concurrent hash map
+                    // Haven't seen before; create and add to concurrent hash
+                    // map
                     JAXBContext context = JAXBContext.newInstance(classType);
                     _jaxbContexts.put(className, context);
                     return context;
@@ -196,8 +194,8 @@ public final class XmlHelper {
     // -----------------------------------------------------------------------'
 
     /**
-     * Returns the attribute with the specified name in the provided node. If the attribute name cannot be found then an
-     * empty string is returned.
+     * Returns the attribute with the specified name in the provided node. If
+     * the attribute name cannot be found then an empty string is returned.
      * 
      * @param xmlNode the node containing the attribute.
      * @param name the name of the attribute.
@@ -205,9 +203,11 @@ public final class XmlHelper {
      */
     public static String getAttribute(Node xmlNode, String name)
     {
-        if (xmlNode == null) throw new NullArgumentException("xmlNode");
+        if (xmlNode == null)
+            throw new NullArgumentException("xmlNode");
 
-        if (StringHelper.isNullOrEmpty(name)) return "";
+        if (StringHelper.isNullOrEmpty(name))
+            return "";
 
         String value = "";
 
@@ -216,15 +216,17 @@ public final class XmlHelper {
         if (attributes != null)
         {
             Node attribute = attributes.getNamedItem(name);
-            if (attribute != null) value = attribute.getNodeValue();
+            if (attribute != null)
+                value = attribute.getNodeValue();
         }
 
         return value;
     }
 
     /**
-     * Returns the attribute with the specified name in the provided node as a {@link org.joda.time.DateTime}. If the
-     * attribute name cannot be found then <code>null</code> is returned.
+     * Returns the attribute with the specified name in the provided node as a
+     * {@link org.joda.time.DateTime}. If the attribute name cannot be found
+     * then <code>null</code> is returned.
      * 
      * @param xmlNode the node containing the attribute.
      * @param name the name of the attribute.
@@ -232,7 +234,8 @@ public final class XmlHelper {
      */
     public static DateTime getAttributeAsDate(Node xmlNode, String name)
     {
-        if (xmlNode == null) throw new NullArgumentException("xmlNode");
+        if (xmlNode == null)
+            throw new NullArgumentException("xmlNode");
 
         String dateString = getAttribute(xmlNode, name);
 
@@ -247,8 +250,9 @@ public final class XmlHelper {
     }
 
     /**
-     * Sets the value of the specified attribute using the provided value. If the attribute does not exist yet then a new
-     * attribute is created for the node and the value is set.
+     * Sets the value of the specified attribute using the provided value. If
+     * the attribute does not exist yet then a new attribute is created for the
+     * node and the value is set.
      * 
      * @param doc the parent XML document for the XML node.
      * @param xmlNode the XML node that contains the attribute to change.
@@ -257,9 +261,12 @@ public final class XmlHelper {
      */
     public static void setAttribute(Document doc, Node xmlNode, String name, String value)
     {
-        if (doc == null) throw new NullArgumentException("doc");
-        if (xmlNode == null) throw new NullArgumentException("xmlNode");
-        if (name == null || StringHelper.isNullOrEmpty(name.trim())) throw new IllegalArgumentException("name cannot be null or empty");
+        if (doc == null)
+            throw new NullArgumentException("doc");
+        if (xmlNode == null)
+            throw new NullArgumentException("xmlNode");
+        if (name == null || StringHelper.isNullOrEmpty(name.trim()))
+            throw new IllegalArgumentException("name cannot be null or empty");
 
         NamedNodeMap attributes = xmlNode.getAttributes();
         Node nameNode = attributes.getNamedItem(name);
@@ -276,8 +283,9 @@ public final class XmlHelper {
     }
 
     /**
-     * Sets the value of the specified attribute using the provided {@link DateTime}. If the attribute does not exist yet
-     * then a new attribute is created for the node and the value is set.
+     * Sets the value of the specified attribute using the provided
+     * {@link DateTime}. If the attribute does not exist yet then a new
+     * attribute is created for the node and the value is set.
      * 
      * @param doc the parent XML document for the XML node.
      * @param xmlNode the XML node that contains the attribute to change.
@@ -301,7 +309,8 @@ public final class XmlHelper {
     // -----------------------------------------------------------------------'
 
     /**
-     * Returns the XML representation of the {@link org.w3c.dom.Document} provided in UTF-8.
+     * Returns the XML representation of the {@link org.w3c.dom.Document}
+     * provided in UTF-8.
      * 
      * @param doc the document to be converted.
      * @return the XML representation of the {@link org.w3c.dom.Document}.
@@ -312,11 +321,13 @@ public final class XmlHelper {
     }
 
     /**
-     * Returns the XML representation of the {@link org.w3c.dom.Document} provided.
+     * Returns the XML representation of the {@link org.w3c.dom.Document}
+     * provided.
      * 
      * @param doc the document to be converted.
      * @param encoding the desired encoding
-     * @return the XML representation of the {@link org.w3c.dom.Document} in the specified encoding.
+     * @return the XML representation of the {@link org.w3c.dom.Document} in the
+     *         specified encoding.
      */
     public static String formatXml(Document doc, String encoding)
     {
@@ -324,21 +335,25 @@ public final class XmlHelper {
     }
 
     /**
-     * Returns the XML representation of the {@link org.w3c.dom.Document} provided.
+     * Returns the XML representation of the {@link org.w3c.dom.Document}
+     * provided.
      * 
      * @param doc the document to be converted.
      * @param charset character set to use for encoding.
-     * @return the XML representation of the {@link org.w3c.dom.Document} in the specified encoding.
+     * @return the XML representation of the {@link org.w3c.dom.Document} in the
+     *         specified encoding.
      */
     public static String formatXml(Document doc, Charset charset)
     {
-        if (doc == null) return null;
+        if (doc == null)
+            return null;
 
         return formatXml(doc.getFirstChild(), charset);
     }
 
     /**
-     * Returns the XML representation of the {@link org.w3c.dom.Node} provided in UTF-8.
+     * Returns the XML representation of the {@link org.w3c.dom.Node} provided
+     * in UTF-8.
      * 
      * @param node the node to be converted.
      * @return the XML representation of the {@link org.w3c.dom.Node}.
@@ -353,7 +368,8 @@ public final class XmlHelper {
      * 
      * @param node the node to be converted.
      * @param encoding the desired encoding.
-     * @return the XML representation of the {@link org.w3c.dom.Node} in the specified encoding.
+     * @return the XML representation of the {@link org.w3c.dom.Node} in the
+     *         specified encoding.
      */
     public static String formatXml(Node node, String encoding)
     {
@@ -364,52 +380,77 @@ public final class XmlHelper {
      * @param xml
      * @return formatted XML w/ tabs.
      */
-    public String format(String xml) {
+    public String format(String xml)
+    {
 
-            final InputSource src = new InputSource(new StringReader(xml));
-            Node document;
-            try
-            {
-                document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(src).getDocumentElement();
-                return formatXml(document, Charset.forName("UTF-8"));
-            }
-            catch (SAXException | IOException | ParserConfigurationException e)
-            {
-                LOGGER.error("Failed: formatXml", e);
-                return null;
-            }
+        final InputSource src = new InputSource(new StringReader(xml));
+        Node document;
+        try
+        {
+            document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(src).getDocumentElement();
+            return formatXml(document, Charset.forName("UTF-8"));
+        }
+        catch (SAXException | IOException | ParserConfigurationException e)
+        {
+            LOGGER.error("Failed: formatXml", e);
+            return null;
+        }
 
     }
-    
+
     /**
      * Returns the XML representation of the {@link org.w3c.dom.Node} provided.
      * 
      * @param node the node to be converted.
      * @param charset character set to use for encoding.
-     * @return the XML representation of the {@link org.w3c.dom.Node} in the specified encoding.
+     * @return the XML representation of the {@link org.w3c.dom.Node} in the
+     *         specified encoding.
      */
     public static String formatXml(Node node, Charset charset)
     {
-        if (node == null) return null;
+        if (node == null)
+            return null;
 
         try
         {
-            Transformer transformer = TransformerFactory.newInstance().newTransformer();
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            transformer.setOutputProperty(OutputKeys.ENCODING, charset.name());
+            final DOMImplementationRegistry registry = DOMImplementationRegistry.newInstance();
+            final DOMImplementationLS impl = (DOMImplementationLS) registry.getDOMImplementation("LS");
+            final LSSerializer writer = impl.createLSSerializer();
 
-            StreamResult result = new StreamResult(new StringWriter());
-            DOMSource source = new DOMSource(node);
+            writer.getDomConfig().setParameter("format-pretty-print", Boolean.TRUE);
+            writer.getDomConfig().setParameter("xml-declaration", Boolean.FALSE);
 
-            transformer.transform(source, result);
-
-            return result.getWriter().toString().replaceAll("(?m)^[ \t]*\r?\n", "");
+            return writer.writeToString(node);
         }
-        catch (TransformerException e)
+        catch (Exception e)
         {
-            LOGGER.error("Failed: formatXml", e);
-            return null;
+            throw new RuntimeException(e);
         }
+
+        // Derek - Replaced with the above code to resolve an issue with
+        // exporting to XSD. Left this in in case it breaks something else not
+        // covered by the unit tests.
+
+        // try
+        // {
+        // Transformer transformer =
+        // TransformerFactory.newInstance().newTransformer();
+        // transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        // transformer.setOutputProperty(OutputKeys.ENCODING, charset.name());
+        //
+        // StreamResult result = new StreamResult(new StringWriter());
+        // DOMSource source = new DOMSource(node);
+        //
+        // transformer.transform(source, result);
+        //
+        // return result.getWriter().toString().replaceAll("(?m)^[ \t]*\r?\n",
+        // "");
+        // }
+        // catch (TransformerException e)
+        // {
+        // LOGGER.error("Failed: formatXml", e);
+        // return null;
+        // }
     }
 
     /**
@@ -423,23 +464,27 @@ public final class XmlHelper {
      */
     public static Document loadXmlFrom(String xml) throws SAXException, IOException
     {
-        if (xml == null) throw new NullArgumentException("xml");
+        if (xml == null)
+            throw new NullArgumentException("xml");
 
         return loadXmlFrom(new ByteArrayInputStream(xml.getBytes()));
     }
 
     /**
-     * Returns the {@link org.w3c.dom.Document} representing the {@link InputStream} provided.
+     * Returns the {@link org.w3c.dom.Document} representing the
+     * {@link InputStream} provided.
      * 
      * @param is the InputStream containing the XML to convert.
-     * @return the {@link org.w3c.dom.Document} representing the {@link InputStream} provided.
+     * @return the {@link org.w3c.dom.Document} representing the
+     *         {@link InputStream} provided.
      * 
      * @throws SAXException
      * @throws IOException
      */
     public static Document loadXmlFrom(InputStream is) throws SAXException, IOException
     {
-        if (is == null) throw new NullArgumentException("is");
+        if (is == null)
+            throw new NullArgumentException("is");
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
@@ -455,7 +500,7 @@ public final class XmlHelper {
         catch (ParserConfigurationException ex)
         {
             throw new IOException(ex);
-            //return null;
+            // return null;
         }
         finally
         {

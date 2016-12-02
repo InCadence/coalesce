@@ -60,8 +60,7 @@ public class XSDEximImpl implements CoalesceExim<Document> {
     --------------------------------------------------------------------------*/
 
     private Document doc;
-
-    private static final String NS = "ns1";
+    private static final String NS = "cns";
     private String namespace;
 
     /*--------------------------------------------------------------------------

@@ -22,8 +22,6 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.joda.time.DateTime;
-
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 
 /**

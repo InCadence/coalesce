@@ -21,6 +21,7 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -29,17 +30,39 @@ import org.slf4j.LoggerFactory;
 
 import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.IEnumerationProvider;
+import com.incadencecorp.coalesce.common.classification.helpers.StringHelper;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEnumerationField;
+import com.incadencecorp.unity.common.IConfigurationsConnector;
+import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
+import com.incadencecorp.unity.common.factories.PropertyFactory;
 
 /**
  * This utility class allows for multiple implementations of
  * {@link IEnumerationProvider} to be used for defining enumerations used by the
- * {@link CoalesceEnumerationField}.
+ * {@link CoalesceEnumerationField}. If this utility is not initialized before
+ * using it will call {@link EnumerationProviderUtil#initializeFromConnector()}.
  * 
  * @author n78554
- *
  */
 public final class EnumerationProviderUtil {
+
+    /**
+     * Defines the environment variable that contains the location of the
+     * configuration files.
+     */
+    public static final String ENV_CONFIG_LOCATION = "DSS_CONFIG_LOCATION";
+
+    /**
+     * Defines the filename used to load the default providers; if this utility
+     * is not already initialized.
+     */
+    public static final String ENUMERATION_PROVIDERS_FILENAME = "enumeration-providers.properties";
+
+    /**
+     * Defines the filename used to load enumeration maps; if this utility is
+     * not already initialized.
+     */
+    public static final String ENUMERATION_LOOKUPS_FILENAME = "enumeration-lookups.properties";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EnumerationProviderUtil.class);
 
@@ -263,13 +286,85 @@ public final class EnumerationProviderUtil {
         return providers.size() > 0;
     }
 
-    /*
-     * -----------------------------------------------------------------------
-     * Private Methods
-     * -----------------------------------------------------------------------
+    /**
+     * Initializes this utility using a {@link FilePropertyConnector} using the
+     * environment variable {@link EnumerationProviderUtil#ENV_CONFIG_LOCATION}.
      */
+    public static void initializeFromConnector()
+    {
+        initializeFromConnector(new FilePropertyConnector(System.getenv(ENV_CONFIG_LOCATION)));
+    }
 
-    private static String lookupEnumeration(String enumeration)
+    /**
+     * Initializes this utility using the specified connector.
+     * 
+     * @param connector
+     */
+    public static void initializeFromConnector(IConfigurationsConnector connector)
+    {
+        providers.clear();
+        lookup.clear();
+
+        if (LOGGER.isDebugEnabled())
+        {
+            LOGGER.debug("Loading Default Provider(s)");
+        }
+
+        try
+        {
+            PropertyFactory factory = new PropertyFactory(connector);
+
+            // Load Enumeration Mappings
+            lookup.putAll(factory.getProperties(ENUMERATION_LOOKUPS_FILENAME));
+
+            Map<String, String> properties = factory.getProperties(ENUMERATION_PROVIDERS_FILENAME);
+
+            HashSet<Integer> keys = new HashSet<Integer>();
+
+            // Re-Order Based on Numeric Key
+            for (String key : properties.keySet())
+            {
+                keys.add(Integer.parseInt(key));
+            }
+
+            // Load Providers
+            for (Integer key : keys)
+            {
+                String classname = properties.get(key.toString());
+
+                if (!StringHelper.isNullOrEmpty(classname))
+                {
+                    if (LOGGER.isDebugEnabled())
+                    {
+                        LOGGER.debug("Loading Provider: ({})", classname);
+                    }
+
+                    Class<?> clazz = Class.forName(classname);
+                    providers.add((IEnumerationProvider) clazz.newInstance());
+                }
+            }
+        }
+        catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NumberFormatException e)
+        {
+            if (LOGGER.isDebugEnabled())
+            {
+                LOGGER.debug("FAILED", e);
+            }
+        }
+
+        if (!isInitialized())
+        {
+            throw new IllegalStateException(String.format(CoalesceErrors.NOT_INITIALIZED, "Enumeration Providers"));
+        }
+    }
+
+    /**
+     * Looks up an enumeration from the enumeration map.
+     * 
+     * @param enumeration
+     * @return the enumeration used to retrieve values.
+     */
+    public static String lookupEnumeration(String enumeration)
     {
         while (lookup.containsKey(enumeration))
         {
@@ -279,11 +374,17 @@ public final class EnumerationProviderUtil {
         return enumeration;
     }
 
+    /*
+     * -----------------------------------------------------------------------
+     * Private Methods
+     * -----------------------------------------------------------------------
+     */
+
     private static IEnumerationProvider getProvider(Principal principal, String enumeration)
     {
         if (!isInitialized())
         {
-            throw new IllegalStateException(String.format(CoalesceErrors.NOT_INITIALIZED, "Enumeration Providers"));
+            initializeFromConnector();
         }
 
         if (enumeration != null)

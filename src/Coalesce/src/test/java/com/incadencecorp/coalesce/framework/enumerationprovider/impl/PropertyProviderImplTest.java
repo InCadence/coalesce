@@ -32,7 +32,7 @@ import com.vividsolutions.jts.util.Assert;
  * @author n78554
  *
  */
-public class PropertyProviderImplTests {
+public class PropertyProviderImplTest {
 
     /**
      * Initializes these tests

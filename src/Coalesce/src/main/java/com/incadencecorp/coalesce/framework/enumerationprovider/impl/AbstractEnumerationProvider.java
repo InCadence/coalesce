@@ -18,6 +18,7 @@
 package com.incadencecorp.coalesce.framework.enumerationprovider.impl;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,8 +67,9 @@ public abstract class AbstractEnumerationProvider implements IEnumerationProvide
     public String toString(Principal principal, String enumeration, int value) throws IndexOutOfBoundsException
     {
         List<String> values = getEnumerationValues(principal, enumeration, false);
-        
-        if (value >= values.size()) {
+
+        if (value >= values.size())
+        {
             throw new IllegalArgumentException(String.format(CoalesceErrors.INVALID_ENUMERATION_POSITION, value, enumeration));
         }
 
@@ -105,6 +107,21 @@ public abstract class AbstractEnumerationProvider implements IEnumerationProvide
         return getEnumerationValues(principal, enumeration, false);
     }
 
+    @Override
+    public List<String> getEnumerations()
+    {
+        List<String> keys = new ArrayList<String>();
+        
+        for (Map.Entry<String, List<String>> entry : supported.entrySet()) {
+            if (entry.getValue() != null)
+            {
+                keys.add(entry.getKey());
+            }
+        }
+        
+        return keys;
+    }
+
     /*
      * -----------------------------------------------------------------------
      * Protected Methods
@@ -136,7 +153,7 @@ public abstract class AbstractEnumerationProvider implements IEnumerationProvide
      * Private Methods
      * -----------------------------------------------------------------------
      */
-    
+
     private List<String> getEnumerationValues(Principal principal, String enumeration, boolean allowNullResult)
     {
         if (!supported.containsKey(enumeration))
@@ -145,11 +162,12 @@ public abstract class AbstractEnumerationProvider implements IEnumerationProvide
         }
 
         List<String> values = supported.get(enumeration);
-        
-        if (!allowNullResult && values == null) {
+
+        if (!allowNullResult && values == null)
+        {
             throw new IllegalArgumentException(String.format(CoalesceErrors.INVALID_ENUMERATION, enumeration));
         }
-        
+
         return values;
     }
 

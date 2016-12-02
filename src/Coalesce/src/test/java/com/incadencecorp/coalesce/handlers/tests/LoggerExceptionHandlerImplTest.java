@@ -24,27 +24,26 @@ import org.junit.Test;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.CoalesceComponentImpl;
-import com.incadencecorp.coalesce.handlers.PassThroughExceptionHandlerImpl;
+import com.incadencecorp.coalesce.handlers.LoggerExceptionHandlerImpl;
 
 /**
- * These test test the {@link PassThroughExceptionHandlerImpl} implementation.
  * 
  * @author n78554
  *
  */
-public class PassThroughExceptionHandlerTests {
+public class LoggerExceptionHandlerImplTest {
 
     /**
-     * This implementation should always return false.
+     * Ensures that the handler always returns true.
      * 
      * @throws Exception
      */
     @Test
-    public void testPassThrough() throws Exception
+    public void testLoggerHandlerImpl() throws Exception
     {
 
-        PassThroughExceptionHandlerImpl handler = new PassThroughExceptionHandlerImpl();
-        Assert.assertFalse(handler.handle(new String[] {
+        LoggerExceptionHandlerImpl handler = new LoggerExceptionHandlerImpl();
+        Assert.assertTrue(handler.handle(new String[] {
             UUID.randomUUID().toString()
         }, new CoalesceComponentImpl(), new CoalesceException("Hello World")));
 

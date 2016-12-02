@@ -37,7 +37,7 @@ import com.incadencecorp.coalesce.handlers.FileExceptionHandlerImpl;
  * 
  * @author n78554
  */
-public class FileExceptionHandlerImplTests extends AbstractFileHandlerTests {
+public class FileExceptionHandlerImplTest extends AbstractFileHandlerTests {
 
     private static final int SUB_DIR_LEN = 2;
 
@@ -53,7 +53,7 @@ public class FileExceptionHandlerImplTests extends AbstractFileHandlerTests {
         String key2 = UUID.randomUUID().toString();
 
         Map<String, String> params = new HashMap<String, String>();
-        params.put(CoalesceParameters.PARAM_DIRECTORY, "/src/test/resources");
+        params.put(CoalesceParameters.PARAM_DIRECTORY, Paths.get("src", "test", "resources").toUri().toString());
         params.put(CoalesceParameters.PARAM_SUBDIR_LEN, Integer.toString(SUB_DIR_LEN));
 
         String keys[] = new String[] {
