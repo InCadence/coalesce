@@ -1,0 +1,39 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>coalesce-services-designer</artifactId>
+	<name>Coalesce Services Designer</name>
+	<description>Service to create, register, and modify Coalesce templates.</description>
+
+	<parent>
+		<groupId>com.incadencecorp.coalesce.services</groupId>
+		<artifactId>coalesce-services-parent</artifactId>
+		<version>0.0.20-SNAPSHOT</version>
+		<relativePath>..</relativePath>
+	</parent>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<version>${maven.bundle.version}</version>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Bundle-Name>${project.name}</Bundle-Name>
+						<Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+					</instructions>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.incadencecorp.coalesce.services</groupId>
+			<artifactId>coalesce-services-common</artifactId>
+		</dependency>
+	</dependencies>
+
+</project>

@@ -1,0 +1,32 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.incadencecorp.coalesce.services</groupId>
+	<artifactId>coalesce-services-parent</artifactId>
+	<name>Coalesce Services Parent</name>
+	<description>Parent POM for Coalesce Services</description>
+	<packaging>pom</packaging>
+
+	<parent>
+		<groupId>com.incadencecorp.coalesce</groupId>
+		<artifactId>coalesce-pom</artifactId>
+		<version>0.0.20-SNAPSHOT</version>
+		<relativePath>../Coalesce.Pom</relativePath>
+	</parent>
+
+	<modules>
+		<module>API</module>
+		<module>Common</module>
+		<module>CRUD</module>
+		<module>Search</module>
+		<module>Manager</module>
+		<module>Designer</module>
+	</modules>
+
+	<distributionManagement>
+		<site>
+			<id>mvnkimmel</id>
+			<url>scp://mvnkimmel.man.fs.lmco.com/var/www/html/sites/j-coalesce/${project.version}/${project.artifactId}</url>
+		</site>
+	</distributionManagement>
+</project>

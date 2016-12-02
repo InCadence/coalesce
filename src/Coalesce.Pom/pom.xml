@@ -19,6 +19,7 @@
 		<module>../Coalesce.Search</module>
         <module>../Coalesce.Synchronizer</module>
         <module>../Coalesce.ExIm.XSD</module>
+        <module>../Coalesce.Services</module>
     </modules>
 
     <build>
