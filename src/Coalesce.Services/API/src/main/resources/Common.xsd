@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://api.services.coalesce.incadencecorp.com/common"
+	xmlns:tns="http://api.services.coalesce.incadencecorp.com/common"
+	elementFormDefault="qualified" attributeFormDefault="qualified">
+
+	<xs:complexType name="BaseRequest">
+		<xs:sequence>
+			<xs:element name="asyncCall" type="xs:boolean"></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="BaseResponse">
+		<xs:sequence>
+			<xs:element name="jobId" type="xs:string"></xs:element>
+			<xs:element name="requestId" type="xs:string"></xs:element>
+			<xs:element name="jobStatus" type="tns:EJobStatusType"></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="BaseIdRequest">
+      <xs:complexContent>
+         <xs:extension base="tns:BaseRequest">
+            <xs:sequence>
+               <xs:element name="idList" type="xs:string" minOccurs="1" maxOccurs="unbounded"></xs:element>
+            </xs:sequence>
+         </xs:extension>         
+      </xs:complexContent>
+   </xs:complexType>
+
+	<xs:complexType name="MultipleResponse">
+		<xs:complexContent>
+			<xs:extension base="tns:BaseResponse">
+				<xs:sequence>
+					<xs:element name="jobResults" type="tns:ResponseResultsType"
+						minOccurs="0" maxOccurs="unbounded"></xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="StatusResponse">
+		<xs:complexContent>
+			<xs:extension base="tns:BaseResponse">
+				<xs:sequence>
+					<xs:element name="StatusList" type="tns:StatusType"
+						minOccurs="0" maxOccurs="unbounded"></xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="StringResponse">
+		<xs:complexContent>
+			<xs:extension base="tns:BaseResponse">
+				<xs:sequence>
+					<xs:element name="jobResults" type="tns:ResultsType"
+						minOccurs="0" maxOccurs="unbounded"></xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="ResponseResultsType">
+		<xs:sequence>
+			<xs:element name="status" type="tns:EResultStatusType"></xs:element>
+			<xs:element name="response" type="tns:BaseResponse"></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="MetricsResultsType">
+        <xs:complexContent>
+            <xs:extension base="tns:ResultsType">
+                <xs:sequence>
+                    <xs:element name="jobId" type="xs:string"></xs:element>
+                    <xs:element name="taskId" type="xs:string"></xs:element>
+                    <xs:element name="timeCreated" type="xs:long"></xs:element>
+                    <xs:element name="timeStarted" type="xs:long"></xs:element>
+                    <xs:element name="timeFinished" type="xs:long"></xs:element>
+                    <xs:element name="entityTypes" type="xs:string"
+                        minOccurs="0" maxOccurs="unbounded"></xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+	<xs:complexType name="ResultsType">
+		<xs:sequence>
+			<xs:element name="status" type="tns:EResultStatusType"></xs:element>
+			<xs:element name="result" type="xs:string"></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="StatusType">
+		<xs:sequence>
+			<xs:element name="status" type="tns:EResultStatusType"></xs:element>
+			<xs:element name="jobId" type="xs:string"></xs:element>
+			<xs:element name="jobStatus" type="tns:EJobStatusType"></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:simpleType name="EResultStatusType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="SUCCESS" />
+			<xs:enumeration value="FAILED" />
+			<xs:enumeration value="FAILED_PENDING" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="EJobStatusType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NEW" />
+			<xs:enumeration value="PENDING" />
+			<xs:enumeration value="IN_PROGRESS" />
+			<xs:enumeration value="COMPLETE" />
+			<xs:enumeration value="CANCELED" />
+			<xs:enumeration value="FAILED" />
+			<xs:enumeration value="NOT_FOUND" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="ELinkType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="UNDEFINED" />
+			<xs:enumeration value="IS_CHILD_OF" />
+			<xs:enumeration value="IS_PARENT_OF" />
+			<xs:enumeration value="CREATED" />
+			<xs:enumeration value="WAS_CREATED_BY" />
+			<xs:enumeration value="HAS_MEMBER" />
+			<xs:enumeration value="IS_A_MEMBER_OF" />
+			<xs:enumeration value="HAS_PARTICIPANT" />
+			<xs:enumeration value="IS_A_PARTICIPANT_OF" />
+			<xs:enumeration value="IS_WATCHING" />
+			<xs:enumeration value="IS_BEING_WATCHED_BY" />
+			<xs:enumeration value="IS_A_PEER_OF" />
+			<xs:enumeration value="IS_OWNED_BY" />
+			<xs:enumeration value="HAS_OWNERSHIP_OF" />
+			<xs:enumeration value="IS_USED_BY" />
+			<xs:enumeration value="HAS_USE_OF" />
+			<xs:enumeration value="SUCCESSOR" />
+			<xs:enumeration value="PREDECESSOR" />
+			<xs:enumeration value="CROSS_DOMAIN_SOURCE" />
+			<xs:enumeration value="CROSS_DOMAIN_TARGET" />
+			<xs:enumeration value="IS_INPUT_PARAMETER_TO" />
+			<xs:enumeration value="HAS_INPUT_PARAMETER_OF" />
+			<xs:enumeration value="IS_INPUT_TO" />
+			<xs:enumeration value="HAS_INPUT_OF" />
+			<xs:enumeration value="IS_OUTPUT_TO" />
+			<xs:enumeration value="HAS_OUTPUT_OF" />
+			<xs:enumeration value="IS_PRODUCT_OF" />
+			<xs:enumeration value="HAS_PRODUCT" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:complexType name="JobRequest">
+		<xs:complexContent>
+			<xs:extension base="tns:BaseRequest">
+				<xs:sequence>
+					<xs:element name="jobIdList" type="xs:string" minOccurs="1"
+						maxOccurs="unbounded"></xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+		
+	<!-- Get Job Status start -->
+	<xs:element name="JobStatusRequest" type="tns:JobRequest"></xs:element>
+	<xs:element name="JobStatusResponse" type="tns:StatusResponse"></xs:element>
+	<!-- Get Job Status end -->
+
+	<!-- Pickup Job start -->
+	<xs:element name="PickupJobRequest" type="tns:JobRequest"></xs:element>
+	<xs:element name="PickupJobResponse" type="tns:MultipleResponse"></xs:element>
+	<!-- Pickup Job end -->
+
+	<!-- Cancel Job start -->
+	<xs:element name="CancelJobRequest" type="tns:JobRequest"></xs:element>
+	<xs:element name="CancelJobResponse" type="tns:StringResponse"></xs:element>
+	<!-- Cancel Job end -->
+
+</xs:schema>

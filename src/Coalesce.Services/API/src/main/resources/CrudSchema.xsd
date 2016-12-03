@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ** * SECURITY CLASSIFICATION: UNCLASSIFIED * Copyright 2014 - Lockheed 
+	Martin Corporation, All Rights Reserved * * Notwithstanding any contractor 
+	copyright notice, the government has * Unlimited Rights in this work as defined 
+	by DFARS 252.227-7013 and * 252.227-7014. Use of this work other than as 
+	specifically authorized by * these DFARS Clauses may violate government rights 
+	in this work. * * DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 
+	(a)(16) * Unlimited Rights. The Government has the right to use, modify, 
+	* reproduce, perform, display, release or disclose this computer software 
+	* in whole or in part, in any manner, and for any purpose whatsoever, * and 
+	to have or authorize others to do so. * * Distribution Statement D. Distribution 
+	authorized to the Department of * Defense and U.S. DoD contractors only in 
+	support of US DoD efforts. * Other requests shall be referred to the ACINT 
+	Modernization Program * Management under the Director of the Office of Naval 
+	Intelligence. * * UNCLASSIFIED * -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://api.services.coalesce.incadencecorp.com/crud"
+	xmlns:tns="http://api.services.coalesce.incadencecorp.com/crud"
+	xmlns:cmn="http://api.services.coalesce.incadencecorp.com/common"
+	elementFormDefault="qualified" attributeFormDefault="qualified"
+	xmlns:fes="http://www.opengis.net/fes/2.0">
+
+	<xs:import namespace="http://api.services.coalesce.incadencecorp.com/common"
+		schemaLocation="Common.xsd" />
+
+	<xs:complexType name="DataObjectXmlRequest">
+		<xs:complexContent>
+			<xs:extension base="cmn:BaseRequest">
+				<xs:sequence>
+					<xs:element name="dataObjectXmlList" type="xs:string"
+						minOccurs="1" maxOccurs="unbounded"></xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="DataObjectNameRequest">
+		<xs:complexContent>
+			<xs:extension base="cmn:BaseRequest">
+				<xs:sequence>
+					<xs:element name="dataObjectNameList" type="tns:DataObjectNameType"
+						minOccurs="1" maxOccurs="unbounded"></xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="DataObjectNameQuantityRequest">
+		<xs:complexContent>
+			<xs:extension base="cmn:BaseRequest">
+				<xs:sequence>
+					<xs:element name="dataObjectNameQuantityList" type="tns:DataObjectNameQuantityType"
+						minOccurs="1" maxOccurs="unbounded"></xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="DataObjectIdRequest">
+		<xs:complexContent>
+			<xs:extension base="cmn:BaseRequest">
+				<xs:sequence>
+					<xs:element name="dataObjectIdList" type="tns:DataObjectIdType"
+						minOccurs="1" maxOccurs="unbounded"></xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="DataObjectUpdateStatusRequest">
+		<xs:complexContent>
+			<xs:extension base="cmn:BaseRequest">
+				<xs:sequence>
+					<xs:element name="taskList" type="tns:DataObjectStatusType"
+						minOccurs="1" maxOccurs="unbounded"></xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="DataObjectKeyRequest">
+		<xs:complexContent>
+			<xs:extension base="cmn:BaseRequest">
+				<xs:sequence>
+					<xs:element name="keyList" type="tns:DataObjectKeyType"
+						minOccurs="1" maxOccurs="unbounded"></xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="DataObjectLinkRequest">
+		<xs:complexContent>
+			<xs:extension base="cmn:BaseRequest">
+				<xs:sequence>
+					<xs:element name="linkagelist" type="tns:DataObjectLinkType"
+						minOccurs="1" maxOccurs="unbounded"></xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="DataObjectHistoryRequest">
+		<xs:complexContent>
+			<xs:extension base="cmn:BaseRequest">
+				<xs:sequence>
+					<xs:element name="keyList" type="tns:DataObjectDiffType"
+						minOccurs="1" maxOccurs="unbounded"></xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="DataObjectHistoryResponse">
+		<xs:complexContent>
+			<xs:extension base="cmn:BaseResponse">
+				<xs:sequence>
+					<xs:element name="historyList" type="tns:DataObjectHistoryType"
+						minOccurs="1" maxOccurs="unbounded"></xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="DataObjectKeyType">
+		<xs:sequence>
+			<xs:element name="key" type="xs:string"></xs:element>
+			<xs:element name="ver" type="xs:int"></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="DataObjectDiffType">
+		<xs:sequence>
+			<xs:element name="key" type="xs:string"></xs:element>
+			<xs:element name="lowerVersion" type="xs:int"></xs:element>
+			<xs:element name="upperVersion" type="xs:int"></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="DataObjectNameType">
+		<xs:sequence>
+			<xs:element name="name" type="xs:string"></xs:element>
+			<xs:element name="source" type="xs:string"></xs:element>
+			<xs:element name="version" type="xs:string"></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="DataObjectNameQuantityType">
+		<xs:complexContent>
+			<xs:extension base="tns:DataObjectNameType">
+				<xs:sequence>
+					<xs:element name="quantity" type="xs:int"></xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="DataObjectIdType">
+		<xs:sequence>
+			<xs:element name="entityId" type="xs:string"></xs:element>
+			<xs:element name="entityType" type="xs:string"></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="DataObjectStatusType">
+		<xs:sequence>
+			<xs:element name="key" type="xs:string"></xs:element>
+			<xs:element name="action" type="tns:DataObjectStatusActionType"></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:simpleType name="DataObjectStatusActionType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="markAsVisible" />
+			<xs:enumeration value="markAsHidden" />
+			<xs:enumeration value="markAsReadonly" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="DataObjectLinkType">
+		<xs:sequence>
+			<xs:element name="dataObjectKeySource" type="xs:string"></xs:element>
+			<xs:element name="dataObjectKeyTarget" type="xs:string"></xs:element>
+			<xs:element name="linkType" type="cmn:ELinkType"></xs:element>
+			<xs:element name="action" type="tns:DataObjectLinkActionType"></xs:element>
+			<xs:element name="label" type="xs:string"></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:simpleType name="DataObjectLinkActionType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="link" />
+			<xs:enumeration value="unlink" />
+			<xs:enumeration value="makereadonly" />
+		</xs:restriction>
+	</xs:simpleType>
+
+    <xs:complexType name="DataObjectHistoryType">
+        <xs:complexContent>
+            <xs:extension base="cmn:MetricsResultsType">
+                <xs:sequence>
+		            <xs:element name="key" type="xs:string"></xs:element>
+		            <xs:element name="versions" type="tns:DataObjectVersionType"
+		                minOccurs="0" maxOccurs="unbounded"></xs:element>
+                </xs:sequence>
+            </xs:extension>         
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="DataObjectVersionType">
+        <xs:sequence>
+            <xs:element name="version" type="xs:int"></xs:element>
+            <xs:element name="modifiedBy" type="xs:string"></xs:element>
+            <xs:element name="modifiedDate" type="xs:dateTime"></xs:element>
+            <xs:element name="changes"
+                type="tns:DataObjectVersionChangesType" minOccurs="0"
+                maxOccurs="unbounded"></xs:element>
+            <xs:element name="deleted" type="xs:boolean"></xs:element>
+                
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="DataObjectVersionChangesType">
+        <xs:sequence>
+            <xs:element name="key" type="xs:string"></xs:element>
+            <xs:element name="fieldname" type="xs:string"></xs:element>
+            <xs:element name="current" type="xs:string"></xs:element>
+            <xs:element name="old" type="xs:string"></xs:element>
+            <xs:element name="recordKey" type="xs:string"></xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    
+	<!-- Create Data Object start -->
+	<xs:element name="CreateDataObjectRequest" type="tns:DataObjectXmlRequest"></xs:element>
+
+	<xs:element name="CreateDataObjectResponse" type="cmn:StringResponse"></xs:element>
+	<!-- Create Data Object end -->
+
+	<!-- Update Data Object start -->
+	<xs:element name="UpdateDataObjectRequest" type="tns:DataObjectXmlRequest"></xs:element>
+
+	<xs:element name="UpdateDataObjectResponse" type="cmn:StringResponse"></xs:element>
+	<!-- Update Data Object end -->
+
+	<!-- Retrieve Data Object start -->
+	<xs:element name="RetrieveDataObjectRequest" type="tns:DataObjectKeyRequest"></xs:element>
+
+	<xs:element name="RetrieveDataObjectResponse" type="cmn:StringResponse"></xs:element>
+	<!-- Retrieve Data Object end -->
+
+	<!-- Unmarked for Deletion start -->
+	<xs:element name="UnmarkedForDeletionRequest" type="tns:DataObjectKeyRequest"></xs:element>
+
+	<xs:element name="UnmarkedForDeletionResponse" type="cmn:StringResponse"></xs:element>
+	<!-- Unmarked for Deletion end -->
+
+	<!-- Promote Data Object start -->
+	<xs:element name="PromoteDataObjectVersionRequest" type="tns:DataObjectKeyRequest"></xs:element>
+
+	<xs:element name="PromoteDataObjectVersionResponse" type="cmn:StringResponse"></xs:element>
+	<!-- Promote Data Object end -->
+
+	<!-- Hide Data Object start -->
+	<xs:element name="UpdateDataObjectStatusRequest" type="tns:DataObjectUpdateStatusRequest"></xs:element>
+	<xs:element name="UpdateDataObjectStatusResponse" type="cmn:StringResponse"></xs:element>
+	<!-- Hide Data Object end -->
+
+	<!-- Promote XML Data Object start -->
+	<xs:element name="PromoteXmlDataObjectVersionRequest" type="tns:DataObjectXmlRequest"></xs:element>
+	<xs:element name="PromoteXmlDataObjectVersionResponse" type="cmn:StringResponse"></xs:element>
+	<!-- Promote XML Data Object end -->
+
+	<!-- Link Data Object start -->
+	<xs:element name="LinkDataObjectRequest" type="tns:DataObjectLinkRequest"></xs:element>
+	<xs:element name="LinkDataObjectResponse" type="cmn:StringResponse"></xs:element>
+	<!-- Link Data Object end -->
+
+	<!-- Unlink Data Object start -->
+	<xs:element name="UnlinkDataObjectRequest" type="tns:DataObjectLinkRequest"></xs:element>
+
+	<xs:element name="UnlinkDataObjectResponse" type="cmn:StringResponse"></xs:element>
+	<!-- Unlink Data Object end -->
+
+	<!-- Create Pedigree Event start -->
+	<xs:element name="CreatePedigreeEventRequest" type="tns:DataObjectXmlRequest"></xs:element>
+	<xs:element name="CreatePedigreeEventResponse" type="cmn:StringResponse"></xs:element>
+	<!-- Create Pedigree Event end -->
+
+	<!-- Update Pedigree Event start -->
+	<xs:element name="UpdatePedigreeEventRequest" type="tns:DataObjectXmlRequest"></xs:element>
+	<xs:element name="UpdatePedigreeEventResponse" type="cmn:StringResponse"></xs:element>
+	<!-- Update Pedigree Event end -->
+
+	<!-- Template Events Start -->
+	<xs:element name="RegisterDataObjectTemplatesRequest" type="tns:DataObjectXmlRequest"></xs:element>
+	<xs:element name="RegisterDataObjectTemplatesResponse" type="cmn:StringResponse"></xs:element>
+
+	<xs:element name="RetrieveDataObjectTemplatesRequest" type="tns:DataObjectNameRequest"></xs:element>
+	<xs:element name="RetrieveDataObjectTemplatesResponse" type="cmn:StringResponse"></xs:element>
+
+	<xs:element name="CreateDataObjectsByTemplateRequest" type="tns:DataObjectNameQuantityRequest"></xs:element>
+	<xs:element name="CreateDataObjectsByTemplateResponse" type="cmn:StringResponse"></xs:element>
+	<!-- Template Events End -->
+
+	<!-- Retrieve Diff Start -->
+	<xs:element name="RetrieveDataObjectHistoryRequest" type="tns:DataObjectHistoryRequest"></xs:element>
+	<xs:element name="RetrieveDataObjectHistoryResponse" type="tns:DataObjectHistoryResponse"></xs:element>
+	<!-- Retrieve Diff End -->
+
+	<!-- Delete Data Object Version Start -->
+	<xs:element name="DeleteDataObjectVersionRequest" type="tns:DataObjectKeyRequest"></xs:element>
+	<xs:element name="DeleteDataObjectVersionResponse" type="cmn:StringResponse"></xs:element>
+	<!-- Delete Data Object Version End -->
+
+	<!-- Restore Data Object Version Start -->
+	<xs:element name="RestoreDataObjectVersionRequest" type="tns:DataObjectKeyRequest"></xs:element>
+	<xs:element name="RestoreDataObjectVersionResponse" type="cmn:StringResponse"></xs:element>
+	<!-- Restore Data Object Version End -->
+	
+</xs:schema>

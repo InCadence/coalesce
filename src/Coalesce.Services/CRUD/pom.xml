@@ -34,6 +34,10 @@
 			<groupId>com.incadencecorp.coalesce.services</groupId>
 			<artifactId>coalesce-services-common</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.incadencecorp.coalesce.services</groupId>
+			<artifactId>coalesce-services-api</artifactId>
+		</dependency>		
 	</dependencies>
 
 </project>

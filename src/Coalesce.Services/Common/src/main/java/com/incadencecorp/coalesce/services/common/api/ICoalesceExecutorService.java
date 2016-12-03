@@ -1,4 +1,4 @@
-package com.incadencecorp.coalesce.services.api;
+package com.incadencecorp.coalesce.services.common.api;
 
 import java.util.Collection;
 import java.util.List;
