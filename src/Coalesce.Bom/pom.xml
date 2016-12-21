@@ -114,87 +114,17 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-	<!-- <distributionManagement> -->
-	<!-- <repository> -->
-	<!-- <id>releases</id> -->
-	<!-- <name>Internal Releases</name> -->
-	<!-- <url>http://http://192.168.11.59/:8081/nexus/content/repositories/releases</url> -->
-	<!-- </repository> -->
-	<!-- <snapshotRepository> -->
-	<!-- <id>snapshots</id> -->
-	<!-- <name>Internal Snapshots</name> -->
-	<!-- <url>http://http://192.168.11.59/:8081/nexus/content/repositories/snapshots</url> -->
-	<!-- </snapshotRepository> -->
-	<!-- </distributionManagement> -->
-	<!-- <repositories> -->
-	<!-- <repository> -->
-	<!-- <releases> -->
-	<!-- <enabled>true</enabled> -->
-	<!-- <updatePolicy>always</updatePolicy> -->
-	<!-- <checksumPolicy>warn</checksumPolicy> -->
-	<!-- </releases> -->
-	<!-- <snapshots> -->
-	<!-- <enabled>true</enabled> -->
-	<!-- <updatePolicy>always</updatePolicy> -->
-	<!-- <checksumPolicy>fail</checksumPolicy> -->
-	<!-- </snapshots> -->
-	<!-- <id>public</id> -->
-	<!-- <url>http://http://192.168.11.59/:8081/nexus/content/groups/public</url> -->
-	<!-- </repository> -->
-	<!-- </repositories> -->
 
-	<!-- <repositories> -->
-	<!-- <repository> -->
-	<!-- <snapshots> -->
-	<!-- <enabled>false</enabled> -->
-	<!-- </snapshots> -->
-	<!-- <id>acint-releases</id> -->
-	<!-- <name>libs-release</name> -->
-	<!-- <url>http://mvnkimmel.man.fs.lmco.com:8080/artifactory/libs-release</url> -->
-	<!-- </repository> -->
-	<!-- <repository> -->
-	<!-- <snapshots /> -->
-	<!-- <id>acint-snapshots</id> -->
-	<!-- <name>libs-snapshot</name> -->
-	<!-- <url>http://mvnkimmel.man.fs.lmco.com:8080/artifactory/libs-snapshot</url> -->
-	<!-- </repository> -->
-	<!-- </repositories> -->
-
-	<!-- <distributionManagement> -->
-	<!-- <repository> -->
-	<!-- <uniqueVersion>false</uniqueVersion> -->
-	<!-- <id>acint-releases</id> -->
-	<!-- <name>ACINT Releases</name> -->
-	<!-- <url>http://mvnkimmel.man.fs.lmco.com:8080/artifactory/libs-release-local</url> -->
-	<!-- </repository> -->
-	<!-- <snapshotRepository> -->
-	<!-- <uniqueVersion>true</uniqueVersion> -->
-	<!-- <id>acint-snapshots</id> -->
-	<!-- <name>ACINT Snapshots</name> -->
-	<!-- <url>http://mvnkimmel.man.fs.lmco.com:8080/artifactory/libs-snapshot-local</url> -->
-	<!-- </snapshotRepository> -->
-	<!-- <site> -->
-	<!-- <id>mvnkimmel</id> -->
-	<!-- <url>scp://mvnkimmel.man.fs.lmco.com/var/www/html/sites/j-coalesce/${project.version}/</url> -->
-	<!-- </site> -->
-	<!-- </distributionManagement> -->
-
-	<!-- <pluginRepositories> -->
-	<!-- <pluginRepository> -->
-	<!-- <snapshots> -->
-	<!-- <enabled>false</enabled> -->
-	<!-- </snapshots> -->
-	<!-- <id>acint-plugins-releases</id> -->
-	<!-- <name>plugins-release</name> -->
-	<!-- <url>http://mvnkimmel.man.fs.lmco.com:8080/artifactory/plugins-release</url> -->
-	<!-- </pluginRepository> -->
-	<!-- <pluginRepository> -->
-	<!-- <snapshots /> -->
-	<!-- <id>acint-plugins-snapshots</id> -->
-	<!-- <name>plugins-snapshot</name> -->
-	<!-- <url>http://mvnkimmel.man.fs.lmco.com:8080/artifactory/plugins-snapshot</url> -->
-	<!-- </pluginRepository> -->
-	<!-- </pluginRepositories> -->
+	<distributionManagement>
+		<repository>
+			<id>nexus</id>
+			<url>http://10.15.0.230:8081/repository/maven-releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>nexus</id>
+			<url>http://10.15.0.230:8081/repository/maven-snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
 
 	<repositories>
 		<repository>
@@ -215,7 +145,6 @@
 			<name>OpenGeo Maven Repository</name>
 			<url>http://repo.opengeo.org</url>
 		</repository>
-
 		<repository>
 			<id>neo4j-release-repository</id>
 			<name>Neo4j Maven 2 release repository</name>
@@ -227,9 +156,7 @@
 				<enabled>false</enabled>
 			</snapshots>
 		</repository>
-
 	</repositories>
-
 
 	<reporting>
 		<plugins>
