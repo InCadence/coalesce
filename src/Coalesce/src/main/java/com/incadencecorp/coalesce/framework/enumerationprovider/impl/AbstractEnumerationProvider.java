@@ -56,6 +56,12 @@ public abstract class AbstractEnumerationProvider implements IEnumerationProvide
      * Override Methods
      * -----------------------------------------------------------------------
      */
+    
+    @Override
+    public void populate(Principal principal)
+    {
+        // Do Nothing
+    }
 
     @Override
     public boolean handles(Principal principal, String enumeration)
@@ -111,14 +117,15 @@ public abstract class AbstractEnumerationProvider implements IEnumerationProvide
     public List<String> getEnumerations()
     {
         List<String> keys = new ArrayList<String>();
-        
-        for (Map.Entry<String, List<String>> entry : supported.entrySet()) {
+
+        for (Map.Entry<String, List<String>> entry : supported.entrySet())
+        {
             if (entry.getValue() != null)
             {
                 keys.add(entry.getKey());
             }
         }
-        
+
         return keys;
     }
 

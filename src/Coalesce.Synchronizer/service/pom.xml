@@ -9,7 +9,7 @@
     <parent>
         <groupId>com.incadencecorp.coalesce.synchronizer</groupId>
         <artifactId>coalesce-synchronizer-parent</artifactId>
-        <version>0.0.20-SNAPSHOT</version>
+        <version>0.0.21-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
 
@@ -69,6 +69,11 @@
         <dependency>
             <groupId>com.incadencecorp.coalesce</groupId>
             <artifactId>coalesce-framework-persister-postgresql</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.incadencecorp.coalesce</groupId>
+            <artifactId>coalesce-framework-persister-neo4j</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

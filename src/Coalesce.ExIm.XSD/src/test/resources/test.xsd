@@ -91,8 +91,8 @@
     </xs:simpleType>
     <xs:simpleType name="field2Type">
         <xs:restriction base="xs:int">
-            <xs:maxExclusive value="10"/>
             <xs:minExclusive value="5"/>
+            <xs:maxExclusive value="10"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="field3Type">

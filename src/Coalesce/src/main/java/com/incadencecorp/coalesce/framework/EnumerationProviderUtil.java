@@ -68,6 +68,7 @@ public final class EnumerationProviderUtil {
 
     private static final List<IEnumerationProvider> providers = new ArrayList<IEnumerationProvider>();
     private static final Map<String, String> lookup = new HashMap<String, String>();
+    private static Principal defaultPrincipal;
 
     /*
      * -----------------------------------------------------------------------
@@ -115,6 +116,31 @@ public final class EnumerationProviderUtil {
     public static void addLookupEntries(Map<String, String> values)
     {
         lookup.putAll(values);
+    }
+
+    /**
+     * Populates providers with the given principal.
+     * 
+     * @param principal
+     */
+    public static void populate(Principal principal)
+    {
+        for (IEnumerationProvider provider : providers)
+        {
+            provider.populate(principal);
+        }
+    }
+
+    /**
+     * Sets the principal to use if non are provided. If a SAML principal is
+     * used keep in mind that tokens expire and the principal should be
+     * refreshed before each call into this utility.
+     * 
+     * @param principal
+     */
+    public static void setPrincipal(Principal principal)
+    {
+        defaultPrincipal = principal;
     }
 
     /**
@@ -189,6 +215,11 @@ public final class EnumerationProviderUtil {
      */
     public static String toString(Principal principal, String enumeration, int value) throws IndexOutOfBoundsException
     {
+        if (principal == null)
+        {
+            principal = defaultPrincipal;
+        }
+
         enumeration = lookupEnumeration(enumeration);
 
         return getProvider(principal, enumeration).toString(principal, enumeration, value);
@@ -207,6 +238,11 @@ public final class EnumerationProviderUtil {
      */
     public static int toPosition(Principal principal, String enumeration, String value) throws IndexOutOfBoundsException
     {
+        if (principal == null)
+        {
+            principal = defaultPrincipal;
+        }
+
         enumeration = lookupEnumeration(enumeration);
 
         return getProvider(principal, enumeration).toPosition(principal, enumeration, value);
@@ -224,6 +260,11 @@ public final class EnumerationProviderUtil {
      */
     public static boolean isValid(Principal principal, String enumeration, int value)
     {
+        if (principal == null)
+        {
+            principal = defaultPrincipal;
+        }
+
         enumeration = lookupEnumeration(enumeration);
 
         return getProvider(principal, enumeration).isValid(principal, enumeration, value);
@@ -240,6 +281,11 @@ public final class EnumerationProviderUtil {
      */
     public static boolean isValid(Principal principal, String enumeration, String value)
     {
+        if (principal == null)
+        {
+            principal = defaultPrincipal;
+        }
+
         enumeration = lookupEnumeration(enumeration);
 
         return getProvider(principal, enumeration).isValid(principal, enumeration, value);
@@ -255,6 +301,11 @@ public final class EnumerationProviderUtil {
      */
     public static List<String> getValues(Principal principal, String enumeration)
     {
+        if (principal == null)
+        {
+            principal = defaultPrincipal;
+        }
+
         enumeration = lookupEnumeration(enumeration);
 
         return getProvider(principal, enumeration).getValues(principal, enumeration);

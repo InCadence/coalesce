@@ -38,6 +38,12 @@ public class MarkingUtil {
      */
     public static final String SEPERATOR = "-";
 
+    /**
+     * @param values
+     * @return Converts the set of strings into {@link SAPProgram}s using
+     *         {@value #SEPERATOR} to split the string into program,
+     *         compartments, and sub-compartments.
+     */
     public static SAPProgram[] fromSAPSet(Set<String> values)
     {
         Map<String, SAPProgram> controls = new HashMap<String, SAPProgram>();
@@ -109,11 +115,21 @@ public class MarkingUtil {
         return controls.values().toArray(new SAPProgram[controls.size()]);
     }
 
+    /**
+     * @param programs
+     * @return {@link #toSet(SAPProgram[])} as an array
+     */
     public static String[] toArray(SAPProgram[] programs)
     {
         return toSet(programs).toArray(new String[programs.length]);
     }
 
+    /**
+     * @param programs
+     * @return Converts the {@link SAPProgram} into a enumeration using
+     *         {@value #SEPERATOR} to combine the programs, compartments, and
+     *         sub-compartments.
+     */
     public static Set<String> toSet(SAPProgram[] programs)
     {
 
@@ -139,6 +155,12 @@ public class MarkingUtil {
         return groups;
     }
 
+    /**
+     * @param values
+     * @return Converts the set of strings into {@link SCIElement}s using
+     *         {@value #SEPERATOR} to split the string into elements,
+     *         compartments, and sub-compartments.
+     */
     public static SCIElement[] fromSCISet(Set<String> values)
     {
         Map<String, SCIElement> controls = new HashMap<String, SCIElement>();
@@ -210,11 +232,21 @@ public class MarkingUtil {
         return controls.values().toArray(new SCIElement[controls.size()]);
     }
 
+    /**
+     * @param elements
+     * @return {@link #toSet(SCIElement[])} as an array
+     */
     public static String[] toArray(SCIElement[] elements)
     {
         return toSet(elements).toArray(new String[elements.length]);
     }
 
+    /**
+     * @param elements
+     * @return Converts the {@link SCIElement} into a enumeration using
+     *         {@value #SEPERATOR} to combine the elements, compartments, and
+     *         sub-compartments.
+     */
     public static Set<String> toSet(SCIElement[] elements)
     {
 
@@ -240,6 +272,10 @@ public class MarkingUtil {
         return groups;
     }
 
+    /**
+     * @param values
+     * @return Converts the set of strings into {@link ACCMNickname}s.
+     */
     public static ACCMNickname[] fromACCMSet(Set<String> values)
     {
         ACCMNickname[] results = new ACCMNickname[values.size()];
@@ -254,11 +290,19 @@ public class MarkingUtil {
         return results;
     }
 
+    /**
+     * @param nicknames
+     * @return {@link #toSet(ACCMNickname[])} as an array
+     */
     public static String[] toArray(ACCMNickname[] nicknames)
     {
         return toSet(nicknames).toArray(new String[nicknames.length]);
     }
 
+    /**
+     * @param nicknames
+     * @return Converts the {@link ACCMNickname} into a enumeration.
+     */
     public static Set<String> toSet(ACCMNickname[] nicknames)
     {
         Set<String> groups = new HashSet<String>();

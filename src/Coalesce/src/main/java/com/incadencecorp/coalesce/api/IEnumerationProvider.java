@@ -30,6 +30,13 @@ import java.util.List;
 public interface IEnumerationProvider {
 
     /**
+     * Populates the provider with the given principal.
+     * 
+     * @param principal
+     */
+    void populate(Principal principal);
+
+    /**
      * @param principal
      * @param enumeration
      * @return <code>true</code> if this provider handles the given enumeration;

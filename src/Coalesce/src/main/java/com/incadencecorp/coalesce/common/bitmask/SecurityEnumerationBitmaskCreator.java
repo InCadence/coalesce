@@ -57,6 +57,14 @@ public class SecurityEnumerationBitmaskCreator extends SecurityBitmaskCreator im
     }
 
     /**
+     * @return the enumeration used by this creator.
+     */
+    public String getEnumerationName()
+    {
+        return name;
+    }
+
+    /**
      * Loads the options for the specified enumeration.
      */
     @Override

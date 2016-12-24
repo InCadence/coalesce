@@ -211,7 +211,7 @@ public final class CoalesceTemplateUtil {
             types.put("coalesceentity.title", ECoalesceFieldDataTypes.STRING_TYPE);
             types.put("coalesceentity.deleted", ECoalesceFieldDataTypes.BOOLEAN_TYPE);
             types.put("coalesceentity.creator", ECoalesceFieldDataTypes.STRING_TYPE);
-            types.put("coalesceentity.objectkey", ECoalesceFieldDataTypes.STRING_TYPE);
+            types.put("coalesceentity.objectkey", ECoalesceFieldDataTypes.GUID_TYPE);
             types.put("coalesceentity.datecreated", ECoalesceFieldDataTypes.DATE_TIME_TYPE);
             types.put("coalesceentity.lastmodified", ECoalesceFieldDataTypes.DATE_TIME_TYPE);
         }
