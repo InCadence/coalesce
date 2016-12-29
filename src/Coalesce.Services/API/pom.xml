@@ -2,6 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>coalesce-services-api</artifactId>
+	<packaging>bundle</packaging>
 	<name>Coalesce Services API</name>
 	<description>Coalesce Service APIs</description>
 
@@ -40,6 +41,9 @@
 					<instructions>
 						<Bundle-Name>${project.name}</Bundle-Name>
 						<Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+						<Export-Package>
+							${project.groupId}.*
+						</Export-Package>
 					</instructions>
 				</configuration>
 			</plugin>
@@ -55,13 +59,18 @@
 						<configuration>
 							<defaultOptions>
 								<bindingFiles>
-									<bindingFile>${basedir}/src/main/resources/CoalesceBinding.xml</bindingFile>
+									<bindingFile>${basedir}/src/main/resources/CoalesceBinding.xjb</bindingFile>
 								</bindingFiles>
+								<extraargs>
+									<extraarg>-xjc-Xsetters</extraarg>
+									<extraarg>-xjc-Xinheritance</extraarg>
+								</extraargs>
 							</defaultOptions>
 							<wsdlRoot>${basedir}/src/main/resources</wsdlRoot>
 							<includes>
 								<include>*.wsdl</include>
 							</includes>
+							<fork>always</fork>
 						</configuration>
 						<goals>
 							<goal>wsdl2java</goal>
@@ -79,23 +88,23 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-tools-common</artifactId>
-			<version>${cxf.version}</version>
-			<scope>provided</scope>
+			<!-- Required for implementing interfaces -->
+			<groupId>org.jvnet.jaxb2_commons</groupId>
+			<artifactId>jaxb2-basics</artifactId>
+			<version>1.11.1</version>
+			<scope>compile</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>org.apache.cxf.xjc-utils</groupId>
 			<artifactId>cxf-xjc-runtime</artifactId>
 			<version>${cxf.version}</version>
-			<scope>provided</scope>
+			<scope>compile</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>xml-apis</groupId>
 			<artifactId>xml-apis</artifactId>
 			<version>1.4.01</version>
+			<scope>compile</scope>
 		</dependency>
 
 

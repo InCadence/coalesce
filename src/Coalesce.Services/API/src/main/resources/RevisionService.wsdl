@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- ** * SECURITY CLASSIFICATION: UNCLASSIFIED * Copyright 2014 - Lockheed 
+	Martin Corporation, All Rights Reserved * * Notwithstanding any contractor 
+	copyright notice, the government has * Unlimited Rights in this work as defined 
+	by DFARS 252.227-7013 and * 252.227-7014. Use of this work other than as 
+	specifically authorized by * these DFARS Clauses may violate government rights 
+	in this work. * * DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 
+	(a)(16) * Unlimited Rights. The Government has the right to use, modify, 
+	* reproduce, perform, display, release or disclose this computer software 
+	* in whole or in part, in any manner, and for any purpose whatsoever, * and 
+	to have or authorize others to do so. * * Distribution Statement D. Distribution 
+	authorized to the Department of * Defense and U.S. DoD contractors only in 
+	support of US DoD efforts. * Other requests shall be referred to the ACINT 
+	Modernization Program * Management under the Director of the Office of Naval 
+	Intelligence. * * UNCLASSIFIED * -->
+
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:tns="http://api.services.coalesce.incadencecorp.com/revision"
+	xmlns:cmn="http://api.services.coalesce.incadencecorp.com/common"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:wsp="http://www.w3.org/ns/ws-policy"
+	xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+	xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702"
+	xmlns:t="http://docs.oasis-open.org/ws-sx/ws-trust/200512" xmlns:wsaw="http://www.w3.org/2005/08/addressing"
+	xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" name="RevisionService"
+	targetNamespace="http://api.services.coalesce.incadencecorp.com/revision">
+	<wsdl:types>
+		<xsd:schema targetNamespace="http://api.services.coalesce.incadencecorp.com/revision"
+			xmlns:tns="http://api.services.coalesce.incadencecorp.com/revision"
+			xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+			attributeFormDefault="qualified">
+			<xsd:include schemaLocation="RevisionSchema.xsd" />
+		</xsd:schema>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<xs:import namespace="http://api.services.coalesce.incadencecorp.com/common"
+				schemaLocation="Common.xsd" />
+		</xsd:schema>
+	</wsdl:types>
+
+	<!-- GetJobStatus -->
+	<wsdl:message name="JobStatusRequest">
+		<wsdl:part name="request" element="cmn:JobStatusRequest"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="JobStatusResponse">
+		<wsdl:part name="response" element="cmn:JobStatusResponse"></wsdl:part>
+	</wsdl:message>
+
+	<!-- PickupJob -->
+	<wsdl:message name="PickupJobRequest">
+		<wsdl:part name="request" element="cmn:PickupJobRequest"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="PickupJobResponse">
+		<wsdl:part name="response" element="cmn:PickupJobResponse"></wsdl:part>
+	</wsdl:message>
+
+	<!-- CancelJob -->
+	<wsdl:message name="CancelJobRequest">
+		<wsdl:part name="request" element="cmn:CancelJobRequest"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="CancelJobResponse">
+		<wsdl:part name="response" element="cmn:CancelJobResponse"></wsdl:part>
+	</wsdl:message>
+
+	<!-- Promote Data Object -->
+	<wsdl:message name="PromoteDataObjectVersionRequest">
+		<wsdl:part name="request" element="tns:PromoteDataObjectVersionRequest"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="PromoteDataObjectVersionResponse">
+		<wsdl:part name="response" element="tns:PromoteDataObjectVersionResponse"></wsdl:part>
+	</wsdl:message>
+
+	<!-- Promote XML Data Object -->
+	<wsdl:message name="PromoteXmlDataObjectVersionRequest">
+		<wsdl:part name="request" element="tns:PromoteXmlDataObjectVersionRequest"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="PromoteXmlDataObjectVersionResponse">
+		<wsdl:part name="response" element="tns:PromoteXmlDataObjectVersionResponse"></wsdl:part>
+	</wsdl:message>
+
+	<!-- Retrieve Data Object History -->
+	<wsdl:message name="RetrieveDataObjectHistoryRequest">
+		<wsdl:part name="request" element="tns:RetrieveDataObjectHistoryRequest"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="RetrieveDataObjectHistoryResponse">
+		<wsdl:part name="response" element="tns:RetrieveDataObjectHistoryResponse"></wsdl:part>
+	</wsdl:message>
+
+	<!-- Delete Data Object Version -->
+	<wsdl:message name="DeleteDataObjectVersionRequest">
+		<wsdl:part name="request" element="tns:DeleteDataObjectVersionRequest"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="DeleteDataObjectVersionResponse">
+		<wsdl:part name="response" element="tns:DeleteDataObjectVersionResponse"></wsdl:part>
+	</wsdl:message>
+
+	<!-- Restore Data Object Version -->
+	<wsdl:message name="RestoreDataObjectVersionRequest">
+		<wsdl:part name="request" element="tns:RestoreDataObjectVersionRequest"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="RestoreDataObjectVersionResponse">
+		<wsdl:part name="response" element="tns:RestoreDataObjectVersionResponse"></wsdl:part>
+	</wsdl:message>
+
+	<wsdl:portType name="RevisionManager">
+
+		<wsdl:operation name="GetJobStatus">
+			<wsdl:input message="tns:JobStatusRequest"></wsdl:input>
+			<wsdl:output message="tns:JobStatusResponse"></wsdl:output>
+		</wsdl:operation>
+
+		<wsdl:operation name="PickupJobResults">
+			<wsdl:input message="tns:PickupJobRequest"></wsdl:input>
+			<wsdl:output message="tns:PickupJobResponse"></wsdl:output>
+		</wsdl:operation>
+
+		<wsdl:operation name="CancelJob">
+			<wsdl:input message="tns:CancelJobRequest"></wsdl:input>
+			<wsdl:output message="tns:CancelJobResponse"></wsdl:output>
+		</wsdl:operation>
+
+		<wsdl:operation name="PromoteDataObjectVersion">
+			<wsdl:input message="tns:PromoteDataObjectVersionRequest"></wsdl:input>
+			<wsdl:output message="tns:PromoteDataObjectVersionResponse"></wsdl:output>
+		</wsdl:operation>
+
+		<wsdl:operation name="PromoteXmlDataObjectVersion">
+			<wsdl:input message="tns:PromoteXmlDataObjectVersionRequest"></wsdl:input>
+			<wsdl:output message="tns:PromoteXmlDataObjectVersionResponse"></wsdl:output>
+		</wsdl:operation>
+
+		<wsdl:operation name="RetrieveDataObjectHistory">
+			<wsdl:input message="tns:RetrieveDataObjectHistoryRequest"></wsdl:input>
+			<wsdl:output message="tns:RetrieveDataObjectHistoryResponse"></wsdl:output>
+		</wsdl:operation>
+
+		<wsdl:operation name="DeleteDataObjectVersion">
+			<wsdl:input message="tns:DeleteDataObjectVersionRequest"></wsdl:input>
+			<wsdl:output message="tns:DeleteDataObjectVersionResponse"></wsdl:output>
+		</wsdl:operation>
+
+		<wsdl:operation name="RestoreDataObjectVersion">
+			<wsdl:input message="tns:RestoreDataObjectVersionRequest"></wsdl:input>
+			<wsdl:output message="tns:RestoreDataObjectVersionResponse"></wsdl:output>
+		</wsdl:operation>
+
+	</wsdl:portType>
+
+	<wsdl:binding name="RevisionServiceBinding" type="tns:RevisionManager">
+
+		<wsp:PolicyReference URI="#TransportSAML2Policy" />
+
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+
+		<wsdl:operation name="GetJobStatus">
+			<soap:operation soapAction="" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+
+		<wsdl:operation name="PickupJobResults">
+			<soap:operation soapAction="" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+
+		<wsdl:operation name="CancelJob">
+			<soap:operation soapAction="" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+
+		<wsdl:operation name="PromoteDataObjectVersion">
+			<soap:operation soapAction="" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+
+		<wsdl:operation name="PromoteXmlDataObjectVersion">
+			<soap:operation soapAction="" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+
+
+		<wsdl:operation name="DeleteDataObjectVersion">
+			<soap:operation soapAction="" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+
+		<wsdl:operation name="RestoreDataObjectVersion">
+			<soap:operation soapAction="" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+
+		<wsdl:operation name="RetrieveDataObjectHistory">
+			<soap:operation soapAction="" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+
+
+	</wsdl:binding>
+
+	<wsdl:service name="RevisionManagerService">
+		<wsdl:port binding="tns:RevisionServiceBinding" name="RevisionManagerPort">
+			<soap:address location="https://localhost:9001/revision/" />
+			<wswa:UsingAddressing xmlns:wswa="http://www.w3.org/2005/02/addressing/wsdl" />
+		</wsdl:port>
+	</wsdl:service>
+
+	<wsp:Policy wsu:Id="TransportSAML2Policy">
+		<wsp:ExactlyOne>
+			<wsp:All>
+				<sp:TransportBinding
+					xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702">
+					<wsp:Policy>
+						<sp:TransportToken>
+							<wsp:Policy>
+								<sp:HttpsToken>
+									<wsp:Policy />
+								</sp:HttpsToken>
+							</wsp:Policy>
+						</sp:TransportToken>
+						<sp:AlgorithmSuite>
+							<wsp:Policy>
+								<sp:TripleDesRsa15 />
+							</wsp:Policy>
+						</sp:AlgorithmSuite>
+						<sp:Layout>
+							<wsp:Policy>
+								<sp:Lax />
+							</wsp:Policy>
+						</sp:Layout>
+						<sp:IncludeTimestamp />
+					</wsp:Policy>
+				</sp:TransportBinding>
+				<sp:SignedSupportingTokens
+					xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702">
+					<wsp:Policy>
+						<sp:IssuedToken
+							sp:IncludeToken="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/IncludeToken/AlwaysToRecipient">
+							<sp:RequestSecurityTokenTemplate>
+								<t:TokenType>http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLV2.0
+								</t:TokenType>
+								<t:KeyType>http://docs.oasis-open.org/ws-sx/ws-trust/200512/Bearer
+								</t:KeyType>
+								<!-- <t:claims Dialect="http://schemas.xmlsoap.org/ws/2005/05/identity" 
+									xmlns:ic="http://schemas.xmlsoap.org/ws/2005/05/identity"> -->
+								<!-- <ic:ClaimType Uri="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/role" 
+									/> -->
+								<!-- </t:claims> -->
+							</sp:RequestSecurityTokenTemplate>
+							<wsp:Policy>
+								<sp:RequireInternalReference />
+							</wsp:Policy>
+						</sp:IssuedToken>
+					</wsp:Policy>
+				</sp:SignedSupportingTokens>
+				<sp:Wss11>
+					<wsp:Policy>
+						<sp:MustSupportRefIssuerSerial />
+						<sp:MustSupportRefThumbprint />
+						<sp:MustSupportRefEncryptedKey />
+					</wsp:Policy>
+				</sp:Wss11>
+				<sp:Trust13>
+					<wsp:Policy>
+						<sp:MustSupportIssuedTokens />
+						<sp:RequireClientEntropy />
+						<sp:RequireServerEntropy />
+					</wsp:Policy>
+				</sp:Trust13>
+			</wsp:All>
+		</wsp:ExactlyOne>
+	</wsp:Policy>
+
+</wsdl:definitions>

@@ -218,6 +218,9 @@ public class CoalesceIteratorUpdateVersionStatusTest {
             case HAS_USE_OF:
                 linkageHasUseOfKey = linkage.getKey();
                 break;
+            default:
+                // Do Nothing
+                break;
             }
         }
 

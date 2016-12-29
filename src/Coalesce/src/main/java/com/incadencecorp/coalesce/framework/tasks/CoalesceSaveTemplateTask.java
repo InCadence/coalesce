@@ -20,9 +20,9 @@ package com.incadencecorp.coalesce.framework.tasks;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.incadencecorp.coalesce.api.persistance.ResultType;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
+import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceStringResponseType;
 
 /**
  * This task saves templates.
@@ -32,9 +32,9 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 public class CoalesceSaveTemplateTask extends AbstractPersistorTask<CoalesceEntityTemplate[]> {
 
     @Override
-    protected ResultType doWork()
+    protected CoalesceStringResponseType doWork()
     {
-        ResultType result = new ResultType();
+        CoalesceStringResponseType result = new CoalesceStringResponseType();
 
         try
         {

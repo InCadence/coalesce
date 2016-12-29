@@ -86,7 +86,7 @@
                             ${project.groupId}.framework.validation,
                             ${project.groupId}.framework.validation.api,
                             ${project.groupId}.framework.enumerationprovider.impl,
-                            ${project.groupId}.framework.jobs,
+                            ${project.groupId}.framework.jobs*,
                             ${project.groupId}.framework.tasks,
                             ${project.groupId}.framework.populators,
                             ${project.groupId}.handlers
@@ -122,6 +122,11 @@
                                     <bindingFile>${basedir}/schema/DataTypeBindings.xml</bindingFile>
                                     <extension>true</extension>
                                 </xsdOption>
+                               <xsdOption>
+                                    <xsd>${basedir}/src/main/resources/Enumerations.xsd</xsd>
+                                    <packagename>com.incadencecorp.coalesce.api</packagename>
+                                    <extension>true</extension>
+                                </xsdOption>                                
                             </xsdOptions>
                         </configuration>
                         <goals>

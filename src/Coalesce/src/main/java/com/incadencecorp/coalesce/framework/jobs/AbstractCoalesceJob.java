@@ -19,8 +19,18 @@ package com.incadencecorp.coalesce.framework.jobs;
 
 import java.util.UUID;
 import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.incadencecorp.coalesce.api.EJobStatus;
+import com.incadencecorp.coalesce.api.EResultStatus;
+import com.incadencecorp.coalesce.api.ICoalesceJob;
+import com.incadencecorp.coalesce.api.ICoalesceResponseTypeBase;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.CoalesceComponentImpl;
+import com.incadencecorp.coalesce.framework.jobs.metrics.StopWatch;
 
 /**
  * Abstract base for jobs in Coalesce.
@@ -29,14 +39,21 @@ import com.incadencecorp.coalesce.framework.CoalesceComponentImpl;
  * @param <T> input type
  * @param <Y> output type
  */
-public abstract class AbstractCoalesceJob<T, Y> extends CoalesceComponentImpl implements Callable<Y> {
+public abstract class AbstractCoalesceJob<T, Y extends ICoalesceResponseTypeBase> extends CoalesceComponentImpl
+        implements ICoalesceJob, Callable<Y> {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCoalesceJob.class);
+    
     /*--------------------------------------------------------------------------
     Member Variables
     --------------------------------------------------------------------------*/
 
-    private T _params;
-    private UUID id;
+    private T params;
+    private StopWatch watch;
+    private String id;
+    private EJobStatus status;
+    private Y results;
+    private Future<Y> future;
 
     /*--------------------------------------------------------------------------
     Constructors
@@ -47,7 +64,10 @@ public abstract class AbstractCoalesceJob<T, Y> extends CoalesceComponentImpl im
      */
     public AbstractCoalesceJob(T params)
     {
-        _params = params;
+        this.params = params;
+        this.id = UUID.randomUUID().toString();
+        this.watch = new StopWatch();
+        this.status = EJobStatus.NEW;
     }
 
     /*--------------------------------------------------------------------------
@@ -55,9 +75,132 @@ public abstract class AbstractCoalesceJob<T, Y> extends CoalesceComponentImpl im
     --------------------------------------------------------------------------*/
 
     @Override
-    public final Y call() throws Exception
+    public final Y call()
     {
-        return doWork(_params);
+        // Set Start Time
+        watch.start();
+
+        // Set Status to In Progress
+        status = EJobStatus.IN_PROGRESS;
+
+        try
+        {
+            results = this.doWork(params);
+        }
+        catch (CoalesceException e)
+        {
+            LOGGER.error("(FAILED) Job Execution", e);
+
+            status = EJobStatus.FAILED;
+        }
+
+        // Set Complete Time
+        watch.finish();
+
+        if (results.getStatus() != EResultStatus.SUCCESS)
+        {
+            // All other states are treated as failures because this is a
+            // synchronous call.
+            status = EJobStatus.FAILED;
+        }
+
+        return results;
+    }
+
+    /*--------------------------------------------------------------------------
+    Public Methods
+    --------------------------------------------------------------------------*/
+
+    /**
+     * @return the job's status.
+     */
+    public final EJobStatus getJobStatus()
+    {
+        return status;
+    }
+
+    /**
+     * @return the job's ID
+     */
+    public final String getJobId()
+    {
+        return id;
+    }
+
+    /**
+     * @return the parameters.
+     */
+    public final T getParams()
+    {
+        return params;
+    }
+
+    /**
+     * @return the metrics for running the job.
+     */
+    public final StopWatch getMetrics()
+    {
+        return watch;
+    }
+
+    /**
+     * @return <code>true</code> if the job is complete.
+     * @see java.util.concurrent.Future#isDone()
+     */
+    public final boolean isDone()
+    {
+        return future != null && future.isDone();
+    }
+
+    /**
+     * @return <code>true</code> if the job is canceled.
+     * @see java.util.concurrent.Future#isCancelled()
+     */
+    public final boolean isCanceled()
+    {
+        return future != null && future.isCancelled();
+    }
+
+    /**
+     * @param future the future to set
+     */
+    public final void setFuture(Future<?> future)
+    {
+        this.future = (Future<Y>) future;
+    }
+
+    /**
+     * @return the {@link Future} for this job
+     */
+    public final Future<Y> getFuture()
+    {
+        return this.future;
+    }
+
+    /**
+     * @return <code>True</code> if the job is to be ran non-blocking, otherwise
+     *         <code>False</code>.
+     */
+    public boolean isAsync()
+    {
+        return false;
+    }
+
+    /*--------------------------------------------------------------------------
+    Protected Methods
+    --------------------------------------------------------------------------*/
+
+    public final void setJobStatus(EJobStatus value)
+    {
+        status = value;
+    }
+
+    /**
+     * @return the job's ID
+     */
+    public final void setJobId(String value)
+    {
+        id = value;
     }
 
     /*--------------------------------------------------------------------------
@@ -67,6 +210,6 @@ public abstract class AbstractCoalesceJob<T, Y> extends CoalesceComponentImpl im
     /**
      * Performs the work of the job.
      */
-    protected abstract Y doWork(T params) throws Exception;
+    protected abstract Y doWork(T params) throws CoalesceException;
 
 }

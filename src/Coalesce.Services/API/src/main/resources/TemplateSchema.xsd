@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ** * SECURITY CLASSIFICATION: UNCLASSIFIED * Copyright 2014 - Lockheed 
+	Martin Corporation, All Rights Reserved * * Notwithstanding any contractor 
+	copyright notice, the government has * Unlimited Rights in this work as defined 
+	by DFARS 252.227-7013 and * 252.227-7014. Use of this work other than as 
+	specifically authorized by * these DFARS Clauses may violate government rights 
+	in this work. * * DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 
+	(a)(16) * Unlimited Rights. The Government has the right to use, modify, 
+	* reproduce, perform, display, release or disclose this computer software 
+	* in whole or in part, in any manner, and for any purpose whatsoever, * and 
+	to have or authorize others to do so. * * Distribution Statement D. Distribution 
+	authorized to the Department of * Defense and U.S. DoD contractors only in 
+	support of US DoD efforts. * Other requests shall be referred to the ACINT 
+	Modernization Program * Management under the Director of the Office of Naval 
+	Intelligence. * * UNCLASSIFIED * -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://api.services.coalesce.incadencecorp.com/template"
+	xmlns:tns="http://api.services.coalesce.incadencecorp.com/template"
+	xmlns:cmn="http://api.services.coalesce.incadencecorp.com/common"
+	elementFormDefault="qualified" attributeFormDefault="qualified"
+	xmlns:fes="http://www.opengis.net/fes/2.0">
+
+	<xs:import namespace="http://api.services.coalesce.incadencecorp.com/common"
+		schemaLocation="Common.xsd" />
+
+	<xs:complexType name="DataObjectXmlRequest">
+		<xs:complexContent>
+			<xs:extension base="cmn:BaseRequest">
+				<xs:sequence>
+					<xs:element name="dataObjectXmlList" type="xs:string"
+						minOccurs="1" maxOccurs="unbounded"></xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="DataObjectNameRequest">
+		<xs:complexContent>
+			<xs:extension base="cmn:BaseRequest">
+				<xs:sequence>
+					<xs:element name="dataObjectNameList" type="tns:DataObjectNameType"
+						minOccurs="1" maxOccurs="unbounded"></xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="DataObjectNameQuantityRequest">
+		<xs:complexContent>
+			<xs:extension base="cmn:BaseRequest">
+				<xs:sequence>
+					<xs:element name="dataObjectNameQuantityList" type="tns:DataObjectNameQuantityType"
+						minOccurs="1" maxOccurs="unbounded"></xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="DataObjectNameType">
+		<xs:sequence>
+			<xs:element name="name" type="xs:string"></xs:element>
+			<xs:element name="source" type="xs:string"></xs:element>
+			<xs:element name="version" type="xs:string"></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="DataObjectNameQuantityType">
+		<xs:complexContent>
+			<xs:extension base="tns:DataObjectNameType">
+				<xs:sequence>
+					<xs:element name="quantity" type="xs:int"></xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:element name="RegisterDataObjectTemplatesRequest" type="tns:DataObjectXmlRequest"></xs:element>
+	<xs:element name="RegisterDataObjectTemplatesResponse" type="cmn:StringResponse"></xs:element>
+
+	<xs:element name="RetrieveDataObjectTemplatesRequest" type="tns:DataObjectNameRequest"></xs:element>
+	<xs:element name="RetrieveDataObjectTemplatesResponse" type="cmn:StringResponse"></xs:element>
+
+	<xs:element name="CreateDataObjectsByTemplateRequest" type="tns:DataObjectNameQuantityRequest"></xs:element>
+	<xs:element name="CreateDataObjectsByTemplateResponse" type="cmn:StringResponse"></xs:element>
+
+</xs:schema>

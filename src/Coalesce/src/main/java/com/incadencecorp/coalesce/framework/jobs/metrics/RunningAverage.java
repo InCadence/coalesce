@@ -15,7 +15,7 @@ Distribution Statement D. Distribution authorized to the Department of
 Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
 -----------------------------------------------------------------------------*/
 
-package com.incadencecorp.coalesce.services.common.metrics;
+package com.incadencecorp.coalesce.framework.jobs.metrics;
 
 /**
  * Stores the running average along with the maximum and minimal values.

@@ -32,13 +32,17 @@ import java.util.concurrent.TimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.incadencecorp.coalesce.api.EJobStatus;
+import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.api.ICoalesceComponent;
+import com.incadencecorp.coalesce.api.ICoalesceResponseType;
+import com.incadencecorp.coalesce.api.persistance.ICoalesceExecutorService;
+import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.CoalesceThreadFactoryImpl;
-import com.incadencecorp.coalesce.framework.jobs.AbstractCoalesceJob;
+import com.incadencecorp.coalesce.framework.jobs.metrics.JobMetricsCollectionAsync;
+import com.incadencecorp.coalesce.services.api.common.BaseRequest;
 import com.incadencecorp.coalesce.services.api.common.BaseResponse;
-import com.incadencecorp.coalesce.services.api.common.EJobStatusType;
-import com.incadencecorp.coalesce.services.api.common.EResultStatusType;
 import com.incadencecorp.coalesce.services.api.common.JobRequest;
 import com.incadencecorp.coalesce.services.api.common.MultipleResponse;
 import com.incadencecorp.coalesce.services.api.common.ResponseResultsType;
@@ -46,10 +50,8 @@ import com.incadencecorp.coalesce.services.api.common.ResultsType;
 import com.incadencecorp.coalesce.services.api.common.StatusResponse;
 import com.incadencecorp.coalesce.services.api.common.StatusType;
 import com.incadencecorp.coalesce.services.api.common.StringResponse;
-import com.incadencecorp.coalesce.services.common.api.ICoalesceExecutorService;
-import com.incadencecorp.coalesce.services.common.jobs.JobBase;
+import com.incadencecorp.coalesce.services.common.jobs.AbstractXSDJobBase;
 import com.incadencecorp.coalesce.services.common.jobs.JobManager;
-import com.incadencecorp.coalesce.services.common.metrics.JobMetricsCollectionAsync;
 
 /**
  * Base class for handling the queuing of jobs asynchronously, returning the
@@ -58,6 +60,7 @@ import com.incadencecorp.coalesce.services.common.metrics.JobMetricsCollectionAs
  * 
  * @author Derek C.
  */
+// TODO Remove the (BaseResponse) casting.
 public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceBase.class);
@@ -74,6 +77,7 @@ public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
     private JobManager jobs;
     private ExecutorService service;
     private JobMetricsCollectionAsync metrics;
+    private CoalesceFramework framework;
 
     // ----------------------------------------------------------------------//
     // Constructor and Initialization
@@ -104,6 +108,7 @@ public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
     {
         this.service = pool;
         this.jobs = new JobManager();
+        this.framework = framework;
     }
 
     /**
@@ -116,7 +121,7 @@ public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
      * @param interval specifies the frequency (in minutes) in which metrics
      *            should be persisted.
      */
-    public void enableMetricCollection(boolean enabled, int interval)
+    public final void enableMetricCollection(boolean enabled, int interval)
     {
         if (enabled)
         {
@@ -144,7 +149,7 @@ public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
      * @param request containing the ID of the job being inquired about.
      * @return the response containing the job's current status.
      */
-    public StatusResponse getJobStatus(JobRequest request)
+    public final StatusResponse getJobStatus(JobRequest request)
     {
 
         StatusResponse response = new StatusResponse();
@@ -157,12 +162,12 @@ public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
             result.setJobId(jobId);
             result.setJobStatus(getJobStatus(jobId));
 
-            response.getStatusList().add(result);
+            response.getResult().add(result);
 
         }
 
         response.setJobId(UUID.randomUUID().toString());
-        response.setJobStatus(EJobStatusType.COMPLETE);
+        response.setStatus(EResultStatus.SUCCESS);
 
         return response;
     }
@@ -171,18 +176,9 @@ public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
      * @param id of the job being inquired about.
      * @return the response containing the job's current status.
      */
-    private EJobStatusType getJobStatus(String id)
+    private EJobStatus getJobStatus(String id)
     {
-        return getJobStatus(UUID.fromString(id));
-    }
-
-    /**
-     * @param id of the job being inquired about.
-     * @return the response containing the job's current status.
-     */
-    private EJobStatusType getJobStatus(UUID id)
-    {
-        return jobs.getJobStatus(id);
+        return getJobStatus(id);
     }
 
     /**
@@ -190,7 +186,8 @@ public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
      * @return the response of the job indicated by the request if completed.
      *         Otherwise it returns the current status of job not found.
      */
-    public MultipleResponse pickupJobResults(JobRequest request)
+    // TODO Return a status response
+    public final MultipleResponse pickupJobResults(JobRequest request)
     {
 
         MultipleResponse response = new MultipleResponse();
@@ -199,11 +196,10 @@ public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
         {
 
             ResponseResultsType result = new ResponseResultsType();
-            JobBase<?, ?> job;
-            UUID jobId = UUID.fromString(key);
+            AbstractXSDJobBase<?, ?, ?> job;
 
             // Check the Job Manager for this Job's Status
-            EJobStatusType jobStatus = getJobStatus(jobId);
+            EJobStatus jobStatus = getJobStatus(key);
 
             switch (jobStatus) {
 
@@ -211,10 +207,10 @@ public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
             case COMPLETE:
             case FAILED:
                 // Job is complete in some way; return the results
-                job = jobs.removeJob(jobId);
+                job = jobs.removeJob(key);
 
-                result.setResponse(job.getResponse());
-                result.setStatus(EResultStatusType.SUCCESS);
+                result.setResult(job.getResponse());
+                result.setStatus(EResultStatus.SUCCESS);
 
                 if (metrics != null)
                 {
@@ -228,9 +224,9 @@ public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
             case PENDING:
             case IN_PROGRESS:
                 // Job is not complete; return job status response
-                job = jobs.getJob(jobId);
-                result.setResponse(job.getResponse());
-                result.setStatus(EResultStatusType.SUCCESS);
+                job = jobs.getJob(key);
+                result.setResult(job.getResponse());
+                result.setStatus(EResultStatus.SUCCESS);
 
                 break;
 
@@ -239,20 +235,20 @@ public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
                 // Unexpected state; return JOBNOTFOUND
                 BaseResponse failedResponse = new BaseResponse();
                 failedResponse.setJobId(key);
-                failedResponse.setJobStatus(EJobStatusType.NOT_FOUND);
+                failedResponse.setStatus(EResultStatus.FAILED);
 
-                result.setResponse(failedResponse);
-                result.setStatus(EResultStatusType.SUCCESS);
+                result.setResult(failedResponse);
+                result.setStatus(EResultStatus.SUCCESS);
 
                 break;
             }
 
-            response.getJobResults().add(result);
+            response.getResult().add(result);
 
         }
 
         response.setJobId(UUID.randomUUID().toString());
-        response.setJobStatus(EJobStatusType.COMPLETE);
+        response.setStatus(EResultStatus.SUCCESS);
 
         return response;
     }
@@ -265,7 +261,7 @@ public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
      * @return {@link BaseResponse#getJobStatus()} which states if cancel was
      *         successful.
      */
-    public StringResponse cancelJob(JobRequest request)
+    public final StringResponse cancelJob(JobRequest request)
     {
 
         StringResponse response = new StringResponse();
@@ -276,7 +272,7 @@ public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
 
             result.setResult(jobId);
 
-            JobBase<?, ?> job = jobs.removeJob(UUID.fromString(jobId));
+            AbstractXSDJobBase<?, ?, ?> job = jobs.removeJob(jobId);
 
             // Job Queued?
             if (job != null)
@@ -284,41 +280,42 @@ public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
                 // Yes; Cancel the job
                 if (!job.getFuture().cancel(true))
                 {
-                    result.setStatus(EResultStatusType.FAILED);
+                    result.setStatus(EResultStatus.FAILED);
                 }
                 else
                 {
-                    result.setStatus(EResultStatusType.SUCCESS);
+                    result.setStatus(EResultStatus.SUCCESS);
                 }
             }
             else
             {
                 // No; Return status not found
-                result.setStatus(EResultStatusType.FAILED);
+                result.setStatus(EResultStatus.FAILED);
             }
 
-            response.getJobResults().add(result);
+            response.getResult().add(result);
 
         }
 
         response.setJobId(UUID.randomUUID().toString());
-        response.setJobStatus(EJobStatusType.COMPLETE);
+        response.setStatus(EResultStatus.SUCCESS);
 
         return response;
     }
 
     /**
-     * Runs a job. If {@link JobBase#isAsync} is true then its queued within the
-     * thread pool and the requester should use {@link #pickupJobResults} to
-     * pick up the response.
+     * Runs a job. If {@link AbstractXSDJobBase#isAsync} is true then its queued
+     * within the thread pool and the requester should use
+     * {@link #pickupJobResults} to pick up the response.
      *
-     * @param job {@link JobBase}
-     * @return the response with results if {@link JobBase#isAsync} is false;
-     *         Otherwise a response with no results and a
-     *         {@link JobBase#getJobID() Job ID} that can be used to request the
-     *         results once the job has completed.
+     * @param job {@link AbstractXSDJobBase}
+     * @return the response with results if {@link AbstractXSDJobBase#isAsync}
+     *         is false; Otherwise a response with no results and a
+     *         {@link AbstractXSDJobBase#getJobID() Job ID} that can be used to
+     *         request the results once the job has completed.
+     * @throws Exception
      */
-    public BaseResponse performJob(JobBase<?, ?> job)
+    public final BaseResponse performJob(AbstractXSDJobBase<?, ?, ?> job) 
     {
         BaseResponse response = null;
 
@@ -328,7 +325,7 @@ public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
         if (job.isAsync())
         {
             // Yes; Get Response
-            response = job.getResponse();
+            response = (BaseResponse) job.getResponse();
 
             // Add to Job Manager
             jobs.addJob(job);
@@ -341,19 +338,33 @@ public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
             }
             else
             {
-                response.setJobStatus(EJobStatusType.FAILED);
+                response.setStatus(EResultStatus.FAILED);
             }
         }
         else
         {
-            response = job.call();
-            response.setJobId(job.getJobID().toString());
-            response.setJobStatus(job.getJobStatus());
+            response = (BaseResponse) job.call();
+            response.setJobId(job.getJobId().toString());
+            switch (job.getJobStatus()) {
+            case CANCELED:
+            case FAILED:
+            case NOT_FOUND:
+                response.setStatus(EResultStatus.FAILED);
+                break;
+            case IN_PROGRESS:
+            case NEW:
+            case PENDING:
+                response.setStatus(EResultStatus.FAILED_PENDING);
+                break;
+            case COMPLETE:
+                response.setStatus(EResultStatus.SUCCESS);
+                break;
+            }
 
             if (metrics != null)
             {
                 // Add Metrics
-                metrics.addJob(job, response);
+                metrics.addJob(job);
             }
         }
 
@@ -371,13 +382,13 @@ public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
      * @param minutes age of jobs to remove
      * @return Returns a list of expired jobs.
      */
-    public JobBase<?, ?>[] removeOldJobs(long minutes)
+    public final AbstractXSDJobBase<?, ?, ?>[] removeOldJobs(long minutes)
     {
         return jobs.removeOldJobs(minutes);
     }
 
     @Override
-    public void close()
+    public final void close()
     {
         try
         {
@@ -392,9 +403,9 @@ public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
             // Iterate through each failed job
             for (Runnable runnable : jobList)
             {
-                if (runnable instanceof JobBase<?, ?>)
+                if (runnable instanceof AbstractXSDJobBase<?, ?, ?>)
                 {
-                    LOGGER.warn("Job ({}) expired", ((JobBase<?, ?>) runnable).getJobID());
+                    LOGGER.warn("Job ({}) expired", ((AbstractXSDJobBase<?, ?, ?>) runnable).getJobId());
                 }
                 else if (runnable instanceof ICoalesceComponent)
                 {
@@ -414,53 +425,72 @@ public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
     --------------------------------------------------------------------------*/
 
     @Override
-    public void execute(Runnable command)
+    public final void execute(Runnable command)
     {
         service.execute(command);
     }
 
     @Override
-    public boolean isShutdown()
+    public final boolean isShutdown()
     {
         return service.isShutdown();
     }
 
     @Override
-    public boolean isTerminated()
+    public final boolean isTerminated()
     {
         return service.isTerminated();
     }
 
-    @Override
-    public <T, Y> Future<Y> submit(AbstractCoalesceJob<T, Y> job)
+    // @Override
+    public <T extends BaseRequest, Y extends BaseResponse, X extends ICoalesceResponseType<?>> Future<Y> submit(AbstractXSDJobBase<T, Y, X> job)
+            throws CoalescePersistorException
+    {
+        // TODO Not Implemented
+        return null; // service.submit(job);
+    }
+
+    public final <T> Future<T> submit(Callable<T> job)
     {
         return service.submit(job);
     }
 
     @Override
-    public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks) throws InterruptedException
+    public final <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks) throws InterruptedException
     {
         return service.invokeAll(tasks);
     }
 
     @Override
-    public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
+    public final <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
             throws InterruptedException
     {
         return service.invokeAll(tasks, timeout, unit);
     }
 
     @Override
-    public <T> T invokeAny(Collection<? extends Callable<T>> tasks) throws InterruptedException, ExecutionException
+    public final <T> T invokeAny(Collection<? extends Callable<T>> tasks) throws InterruptedException, ExecutionException
     {
         return service.invokeAny(tasks);
     }
 
     @Override
-    public <T> T invokeAny(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
+    public final <T> T invokeAny(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
             throws InterruptedException, ExecutionException, TimeoutException
     {
         return service.invokeAny(tasks, timeout, unit);
+    }
+
+    /*--------------------------------------------------------------------------
+    Protected Methods
+    --------------------------------------------------------------------------*/
+
+    /**
+     * @return the framework that this service was initialized with.
+     */
+    protected final CoalesceFramework getFramework()
+    {
+        return framework;
     }
 
 }

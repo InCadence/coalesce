@@ -20,9 +20,11 @@ package com.incadencecorp.coalesce.framework.tasks;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.incadencecorp.coalesce.api.persistance.ResultType;
+import com.incadencecorp.coalesce.api.EJobStatus;
+import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.jobs.CoalesceSaveEntityProperties;
+import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceStringResponseType;
 
 /**
  * This task is used to persist entities.
@@ -32,13 +34,20 @@ import com.incadencecorp.coalesce.framework.jobs.CoalesceSaveEntityProperties;
 public class CoalesceSaveEntityTask extends AbstractPersistorTask<CoalesceSaveEntityProperties> {
 
     @Override
-    public ResultType doWork()
+    public CoalesceStringResponseType doWork()
     {
-        ResultType result = new ResultType();
+        CoalesceStringResponseType result = new CoalesceStringResponseType();
 
         try
         {
-            result.setSuccessful(getPersistor().saveEntity(getParams().isAllowRemoval(), getParams().getEntities()));
+            if ((getPersistor().saveEntity(getParams().isAllowRemoval(), getParams().getEntities())))
+            {
+                result.setStatus(EResultStatus.SUCCESS);
+            }
+            else
+            {
+                result.setStatus(EResultStatus.FAILED);
+            }
         }
         catch (CoalescePersistorException e)
         {

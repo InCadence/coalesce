@@ -15,14 +15,13 @@ Distribution Statement D. Distribution authorized to the Department of
 Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
 -----------------------------------------------------------------------------*/
 
-package com.incadencecorp.coalesce.services.common.metrics;
+package com.incadencecorp.coalesce.framework.jobs.metrics;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.incadencecorp.coalesce.services.api.common.MetricsResultsType;
-import com.incadencecorp.coalesce.services.common.jobs.JobBase;
+import com.incadencecorp.coalesce.framework.jobs.AbstractCoalesceJob;
 
 /**
  * Stores the metrics for an individual job run.
@@ -34,9 +33,9 @@ public class JobMetrics {
     // ----------------------------------------------------------------------//
 
     private String name;
-    private JobBase<?, ?> job;
+    private AbstractCoalesceJob<?, ?> job;
 
-    private Collection<MetricsResultsType> taskMetrics;
+    private Collection<StopWatch> taskMetrics;
     private int totalTasks;
     private int totalTasksFailed;
     private int totalTasksSuccess;
@@ -53,7 +52,8 @@ public class JobMetrics {
      *
      * @param name
      */
-    public JobMetrics(final JobBase<?, ?> pJob, Collection<MetricsResultsType> pMetrics) {
+    public JobMetrics(final AbstractCoalesceJob<?, ?> pJob, Collection<StopWatch> pMetrics)
+    {
 
         job = pJob;
         name = job.getClass().getName();
@@ -61,7 +61,7 @@ public class JobMetrics {
         taskRunningMetrics = new RunningAverage();
         entityTypes = new HashSet<>();
 
-        calculateStatistics();
+//        calculateStatistics();
     }
 
     // ----------------------------------------------------------------------//
@@ -71,71 +71,83 @@ public class JobMetrics {
     /**
      * @return the jobId
      */
-    public JobBase<?, ?> getJob() {
+    public AbstractCoalesceJob<?, ?> getJob()
+    {
         return job;
     }
 
     /**
      * @return the totalJobTime
      */
-    public long getTotalJobTime() {
+    public long getTotalJobTime()
+    {
         return job.getMetrics().getTotalLife();
     }
 
     /**
      * @return the job start time
      */
-    public long getJobStartTime() {
+    public long getJobStartTime()
+    {
         return job.getMetrics().getStarted();
     }
 
     /**
      * @return the job finish time
      */
-    public long getJobFinishTime() {
+    public long getJobFinishTime()
+    {
         return job.getMetrics().getCompleted();
     }
 
     /**
      * @return the totalTasks
      */
-    public long getTotalTasks() {
+    public long getTotalTasks()
+    {
         return totalTasks;
     }
 
     /**
      * @return the totalTasksFailed
      */
-    public long getTotalTasksFailed() {
+    public long getTotalTasksFailed()
+    {
         return totalTasksFailed;
     }
 
     /**
      * @return the totalTasksSuccess
      */
-    public long getTotalTasksSuccess() {
+    public long getTotalTasksSuccess()
+    {
         return totalTasksSuccess;
     }
 
     /**
      * @return the taskMetrics
      */
-    public RunningAverage getTaskMetricAverages() {
+    public RunningAverage getTaskMetricAverages()
+    {
         return taskRunningMetrics;
     }
 
     /**
-     * @return the class name of the job type that is being handled by this class.
+     * @return the class name of the job type that is being handled by this
+     *         class.
      */
-    public final String getName() {
+    public final String getName()
+    {
         return name;
     }
 
-    public Collection<MetricsResultsType> getTaskMetrics() {
+    public Collection<StopWatch> getTaskMetrics()
+    {
         return taskMetrics;
     }
 
-    public Set<String> getEntityTypes() {
+    public Set<String> getEntityTypes()
+    {
         return entityTypes;
     }
 
@@ -143,24 +155,27 @@ public class JobMetrics {
     // Protected Functions
     // ----------------------------------------------------------------------//
 
-    private void calculateStatistics() {
-
-        totalTasks = taskMetrics.size();
-        totalTasksFailed = 0;
-        totalTasksSuccess = 0;
-
-        for (MetricsResultsType metric: taskMetrics) {
-            switch (metric.getStatus()) {
-                case FAILED:
-                case FAILED_PENDING:
-                    totalTasksFailed++;
-                    break;
-                case SUCCESS:
-                    totalTasksSuccess++;
-            }
-            taskRunningMetrics.add(metric.getTimeFinished() - metric.getTimeStarted());
-            entityTypes.addAll(metric.getEntityTypes());
-        }
-    }
+    // TODO Implement Task Metrics
+    
+    // private void calculateStatistics() {
+    //
+    // totalTasks = taskMetrics.size();
+    // totalTasksFailed = 0;
+    // totalTasksSuccess = 0;
+    //
+    // for (MetricsResultsType metric: taskMetrics) {
+    // switch (metric.getStatus()) {
+    // case FAILED:
+    // case FAILED_PENDING:
+    // totalTasksFailed++;
+    // break;
+    // case SUCCESS:
+    // totalTasksSuccess++;
+    // }
+    // taskRunningMetrics.add(metric.getTimeFinished() -
+    // metric.getTimeStarted());
+    // entityTypes.addAll(metric.getEntityTypes());
+    // }
+    // }
 
 }

@@ -15,7 +15,7 @@ Distribution Statement D. Distribution authorized to the Department of
 Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
 -----------------------------------------------------------------------------*/
 
-package com.incadencecorp.coalesce.services.common.metrics;
+package com.incadencecorp.coalesce.framework.jobs.metrics;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executors;
@@ -24,8 +24,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import com.incadencecorp.coalesce.framework.CoalesceThreadFactoryImpl;
-import com.incadencecorp.coalesce.services.api.common.BaseResponse;
-import com.incadencecorp.coalesce.services.common.jobs.JobBase;
+import com.incadencecorp.coalesce.framework.jobs.AbstractCoalesceJob;
 
 /**
  * Handles the processing of metrics collected. Every {@link #initialize X
@@ -81,21 +80,9 @@ public class JobMetricsCollectionAsync implements AutoCloseable {
      *
      * @param job
      */
-    public void addJob(JobBase<?, ?> job)
+    public void addJob(AbstractCoalesceJob<?, ?> job)
     {
-        addJob(job, job.getResponse());
-    }
-
-    /**
-     * Adds the job and response to the queue for future processing so not to
-     * block the main thread.
-     *
-     * @param job
-     * @param response
-     */
-    public void addJob(JobBase<?, ?> job, BaseResponse response)
-    {
-        jobQueue.add(new JobNode(job, response));
+        jobQueue.add(new JobNode(job));
     }
 
     /*
@@ -120,17 +107,15 @@ public class JobMetricsCollectionAsync implements AutoCloseable {
         // Private Members
         // ----------------------------------------------------------------------//
 
-        private JobBase<?, ?> job;
-        private BaseResponse response;
+        private AbstractCoalesceJob<?, ?> job;
 
         // ----------------------------------------------------------------------//
         // Constructor
         // ----------------------------------------------------------------------//
 
-        public JobNode(JobBase<?, ?> job, BaseResponse response)
+        public JobNode(AbstractCoalesceJob<?, ?> job)
         {
             this.job = job;
-            this.response = response;
         }
 
     }
@@ -158,7 +143,7 @@ public class JobMetricsCollectionAsync implements AutoCloseable {
             {
 
                 // Yes; Process
-                metrics.addJob(node.job, node.response);
+                metrics.addJob(node.job);
 
                 // Check for additional nodes.
                 node = jobQueue.poll();

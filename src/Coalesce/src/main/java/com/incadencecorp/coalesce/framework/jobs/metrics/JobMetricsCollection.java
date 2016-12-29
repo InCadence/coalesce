@@ -15,13 +15,12 @@ Distribution Statement D. Distribution authorized to the Department of
 Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
 -----------------------------------------------------------------------------*/
 
-package com.incadencecorp.coalesce.services.common.metrics;
+package com.incadencecorp.coalesce.framework.jobs.metrics;
 
 import java.util.Collection;
 import java.util.HashMap;
 
-import com.incadencecorp.coalesce.services.api.common.BaseResponse;
-import com.incadencecorp.coalesce.services.common.jobs.JobBase;
+import com.incadencecorp.coalesce.framework.jobs.AbstractCoalesceJob;
 
 /**
  * Stores the {@link JobMetricsType metrics} for multiple job types and combined their totals into a
@@ -54,16 +53,6 @@ public class JobMetricsCollection {
     // ----------------------------------------------------------------------//
 
     /**
-     * Adds the metrics of a given job to the running totals.
-     *
-     * @param job
-     *            the job
-     */
-    public void addJob(JobBase<?, ?> job) {
-        addJob(job, job.getResponse());
-    }
-
-    /**
      * Adds the metrics of a given job and response to the running totals.
      *
      * @param job
@@ -71,10 +60,10 @@ public class JobMetricsCollection {
      * @param response
      *            response
      */
-    public void addJob(JobBase<?, ?> job, BaseResponse response) {
+    public void addJob(AbstractCoalesceJob<?, ?> job) {
 
         JobMetricsType metric = getMetrics(job.getClass());
-        metric.addJobMetrics(job, response);
+        metric.addJobMetrics(job);
 
     }
 

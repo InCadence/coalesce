@@ -18,15 +18,18 @@
 package com.incadencecorp.coalesce.framework.tasks;
 
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.incadencecorp.coalesce.api.CoalesceErrors;
+import com.incadencecorp.coalesce.api.EResultStatus;
+import com.incadencecorp.coalesce.api.ICoalesceResponseTypeBase;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
-import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceStringResponseType;
-import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
+import com.incadencecorp.coalesce.framework.CoalesceFramework;
+import com.incadencecorp.coalesce.framework.jobs.metrics.StopWatch;
 
 /**
  * Abstract base for persister tasks in Coalesce.
@@ -35,29 +38,37 @@ import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
  *
  * @param <T>
  */
-public abstract class AbstractPersistorTask<T> implements Callable<CoalesceStringResponseType> {
+public abstract class AbstractFrameworkTask<T, Y extends ICoalesceResponseTypeBase> implements Callable<Y> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPersistorTask.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractFrameworkTask.class);
 
     /*--------------------------------------------------------------------------
     Private Member Variables
     --------------------------------------------------------------------------*/
 
-    private ICoalescePersistor _persistor;
+    private CoalesceFramework _framework;
     private T _params;
+    private StopWatch watch;
+    private String id;
 
+    public AbstractFrameworkTask()
+    {
+        id = UUID.randomUUID().toString();
+        watch = new StopWatch();
+    }
+    
     /*--------------------------------------------------------------------------
     Getters / Setters
     --------------------------------------------------------------------------*/
 
     /**
-     * Sets the persistor
+     * Sets the framework
      * 
      * @param value
      */
-    public void setPersistor(ICoalescePersistor value)
+    public final void setFramework(CoalesceFramework value)
     {
-        _persistor = value;
+        _framework = value;
     }
 
     /**
@@ -65,25 +76,16 @@ public abstract class AbstractPersistorTask<T> implements Callable<CoalesceStrin
      * 
      * @param value
      */
-    public void setParams(T value)
+    public final void setParams(T value)
     {
         _params = value;
     }
-
+    
     /**
-     * @return the persistor.
+     * @return the task's ID.
      */
-    public ICoalescePersistor getPersistor()
-    {
-        return _persistor;
-    }
-
-    /**
-     * @return the parameters.
-     */
-    public T getParams()
-    {
-        return _params;
+    public final String getId() {
+        return id;
     }
 
     /*--------------------------------------------------------------------------
@@ -91,23 +93,22 @@ public abstract class AbstractPersistorTask<T> implements Callable<CoalesceStrin
     --------------------------------------------------------------------------*/
 
     @Override
-    public CoalesceStringResponseType call()
+    public Y call()
     {
         try
         {
-            CoalesceStringResponseType result = doWork();
+            watch.start();
 
-            if (!result.isSuccessful())
+            Y result = doWork(_framework, _params);
+            
+            watch.finish();
+
+            if (result.getStatus() != EResultStatus.SUCCESS)
             {
                 LOGGER.error(String.format(CoalesceErrors.FAILED_TASK,
                                            this.getClass().getName(),
-                                           _persistor.getClass().getName(),
-                                           result.getResult()));
-
-                if (LOGGER.isDebugEnabled() && result.getException() != null)
-                {
-                    LOGGER.debug("Stack Trace", result.getException());
-                }
+                                           _framework.getClass().getName(),
+                                           ""));
 
                 logParameters();
             }
@@ -125,7 +126,7 @@ public abstract class AbstractPersistorTask<T> implements Callable<CoalesceStrin
 
             LOGGER.error(String.format(CoalesceErrors.FAILED_TASK,
                                        this.getClass().getName(),
-                                       _persistor.getClass().getName(),
+                                       _framework.getClass().getName(),
                                        reason));
             if (LOGGER.isDebugEnabled())
             {
@@ -159,7 +160,7 @@ public abstract class AbstractPersistorTask<T> implements Callable<CoalesceStrin
     Abstract Methods
     --------------------------------------------------------------------------*/
 
-    abstract protected CoalesceStringResponseType doWork();
+    abstract protected Y doWork(CoalesceFramework framework, T params);
 
     abstract protected Map<String, String> getParameters(T params, boolean isTrace);
 

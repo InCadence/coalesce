@@ -23,7 +23,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.incadencecorp.coalesce.common.classification.ACCMControl;
-import com.incadencecorp.coalesce.common.classification.ACCMNickname;
 import com.incadencecorp.coalesce.common.classification.Marking;
 import com.incadencecorp.coalesce.common.classification.MarkingUtil;
 import com.incadencecorp.coalesce.common.classification.SAPControl;

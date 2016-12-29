@@ -15,19 +15,17 @@ Distribution Statement D. Distribution authorized to the Department of
 Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
 -----------------------------------------------------------------------------*/
 
-package com.incadencecorp.coalesce.services.common.metrics;
+package com.incadencecorp.coalesce.framework.jobs.metrics;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.incadencecorp.coalesce.services.api.common.BaseResponse;
-import com.incadencecorp.coalesce.services.api.common.EResultStatusType;
-import com.incadencecorp.coalesce.services.api.common.MetricsResultsType;
-import com.incadencecorp.coalesce.services.common.jobs.JobBase;
+import com.incadencecorp.coalesce.framework.jobs.AbstractCoalesceJob;
 
 /**
- * Stores the {@link RunningAverage running averages} and totals for a given job type.
+ * Stores the {@link RunningAverage running averages} and totals for a given job
+ * type.
  *
  * @author Derek C.
  */
@@ -64,10 +62,10 @@ public class JobMetricsType {
     /**
      * Creates a JobMetrics object with the requested name.
      *
-     * @param name
-     *            the object name
+     * @param name the object name
      */
-    public JobMetricsType(String name) {
+    public JobMetricsType(String name)
+    {
 
         this.name = name;
 
@@ -96,107 +94,125 @@ public class JobMetricsType {
     // ----------------------------------------------------------------------//
 
     /**
-     * @return the total number of jobs that have been processed for the job type.
+     * @return the total number of jobs that have been processed for the job
+     *         type.
      */
-    public final long getTotalCount() {
+    public final long getTotalCount()
+    {
         return total;
     }
 
     /**
      * @return the total number of jobs that failed.
      */
-    public final long getFailedCount() {
+    public final long getFailedCount()
+    {
         return totalFailed;
     }
 
     /**
      * @return the total number of jobs that completed.
      */
-    public final long getCompletedCount() {
+    public final long getCompletedCount()
+    {
         return totalComplete;
     }
 
     /**
      * @return the total number of jobs that were canceled.
      */
-    public final long getCanceledCount() {
+    public final long getCanceledCount()
+    {
         return totalCanceled;
     }
 
     /**
      * @return the total number of jobs performed asynchronously.
      */
-    public final long getAsyncCount() {
+    public final long getAsyncCount()
+    {
         return totalAsync;
     }
 
     /**
-     * @return the class name of the job type that is being handled by this class.
+     * @return the class name of the job type that is being handled by this
+     *         class.
      */
-    public final String getName() {
+    public final String getName()
+    {
         return name;
     }
 
     /**
      * @return the response's pay load running averages of the jobs
      */
-    public final RunningAverage getAverageResponsePayload() {
+    public final RunningAverage getAverageResponsePayload()
+    {
         return responsePayloadMetrics;
     }
 
     /**
      * @return the request's pay load running averages of the jobs.
      */
-    public final RunningAverage getAverageRequestPayload() {
+    public final RunningAverage getAverageRequestPayload()
+    {
         return requestPayloadMetrics;
     }
 
     /**
      * @return the work time running averages of the jobs.
      */
-    public final RunningAverage getAverageWorkTime() {
+    public final RunningAverage getAverageWorkTime()
+    {
         return workTimeMetrics;
     }
 
     /**
      * @return the pending time running averages of the jobs.
      */
-    public final RunningAverage getAveragePendingTime() {
+    public final RunningAverage getAveragePendingTime()
+    {
         return pendingTimeMetrics;
     }
 
     /**
      * @return the total processing time running averages of the jobs.
      */
-    public final RunningAverage getAverageTotalTime() {
+    public final RunningAverage getAverageTotalTime()
+    {
         return totalTimeMetrics;
     }
 
     /**
-     * @return the total number of worker threads that have been processed for the job type.
+     * @return the total number of worker threads that have been processed for
+     *         the job type.
      */
-    public final long getTotalWorkerThreadCount() {
+    public final long getTotalWorkerThreadCount()
+    {
         return totalWorkerThreads;
     }
 
     /**
      * @return the total number of worker threads that failed.
      */
-    public final long getFailedWorkerThreadCount() {
+    public final long getFailedWorkerThreadCount()
+    {
         return totalWorkerThreadsFailed;
     }
 
     /**
      * @return the total number of worker threads that succeeded.
      */
-    public final long getSuccessWorkerThreadCount() {
+    public final long getSuccessWorkerThreadCount()
+    {
         return totalWorkerThreadsSuccess;
     }
 
     /**
      * @return the jobMetrics
      */
-    public List<JobMetrics> getIndividualJobMetrics() {
+    public List<JobMetrics> getIndividualJobMetrics()
+    {
         return jobMetrics;
     }
 
@@ -209,99 +225,93 @@ public class JobMetricsType {
      *
      * @param job
      */
-    protected final void addJobMetrics(final JobBase<?, ?> job) {
-        addJobMetrics(job, job.getResponse());
-    }
-
-    /**
-     * Adds the metrics of a given job and response to the running totals.
-     *
-     * @param job
-     */
-    protected final void addJobMetrics(final JobBase<?, ?> job, BaseResponse response) {
-
-        // TODO Do we need response????
+    protected final void addJobMetrics(final AbstractCoalesceJob<?, ?> job)
+    {
 
         // Valid Job Type?
-        if (name.compareToIgnoreCase(job.getClass().getName()) != 0) {
+        if (name.compareToIgnoreCase(job.getClass().getName()) != 0)
+        {
             // Invalid Job Type
             return;
         }
 
         // Increment running totals of status
         switch (job.getJobStatus()) {
-            case FAILED:
-                totalFailed += 1;
-                break;
-            case COMPLETE:
-                totalComplete += 1;
-                break;
-            case CANCELED:
-                totalCanceled += 1;
-                break;
-            default:
-                // Do Nothing
-                break;
+        case FAILED:
+            totalFailed += 1;
+            break;
+        case COMPLETE:
+            totalComplete += 1;
+            break;
+        case CANCELED:
+            totalCanceled += 1;
+            break;
+        default:
+            // Do Nothing
+            break;
         }
 
-        JobMetrics indJobMetrics;
-
-        Collection<MetricsResultsType> taskResults = job.getTaskResults();
-        if (taskResults.size() > 0) {
-            // Batch job - count tasks
-            indJobMetrics = new JobMetrics(job, taskResults);
-
-            totalWorkerThreads += taskResults.size();
-
-            int success = 0;
-
-            for (MetricsResultsType results: taskResults) {
-                if (results.getStatus() == EResultStatusType.SUCCESS) {
-                    success++;
-                }
-            }
-
-            totalWorkerThreadsSuccess += success;
-            totalWorkerThreadsFailed += taskResults.size() - success;
-        } else {
-            // Not a batch job - single worker thread
-
-            MetricsResultsType singleResult =
-                    new ArrayList<MetricsResultsType>(job.getTaskResults()).get(0);
-
-            if (singleResult != null) {
-                singleResult.setTimeCreated(job.getMetrics().getCreated());
-                singleResult.setTimeStarted(job.getMetrics().getStarted());
-                singleResult.setTimeFinished(job.getMetrics().getCompleted());
-            }
-
-            List<MetricsResultsType> metrics = new ArrayList<MetricsResultsType>();
-            metrics.add(singleResult);
-            indJobMetrics = new JobMetrics(job, metrics);
-
-            totalWorkerThreads += 1;
-
-            switch (job.getJobStatus()) {
-                case COMPLETE:
-                    totalWorkerThreadsSuccess += 1;
-                    break;
-                case FAILED:
-                case CANCELED:
-                    totalWorkerThreadsFailed += 1;
-                    break;
-                default:
-                    // Do Nothing
-                    break;
-            }
-        }
-
-        jobMetrics.add(indJobMetrics);
+        // TODO Implement Task Metics
+        // JobMetrics indJobMetrics;
+        //
+        // Collection<MetricsResultsType> taskResults = job.getTaskResults();
+        // if (taskResults.size() > 0) {
+        // // Batch job - count tasks
+        // indJobMetrics = new JobMetrics(job, taskResults);
+        //
+        // totalWorkerThreads += taskResults.size();
+        //
+        // int success = 0;
+        //
+        // for (MetricsResultsType results: taskResults) {
+        // if (results.getStatus() == EResultStatus.SUCCESS) {
+        // success++;
+        // }
+        // }
+        //
+        // totalWorkerThreadsSuccess += success;
+        // totalWorkerThreadsFailed += taskResults.size() - success;
+        // } else {
+        // // Not a batch job - single worker thread
+        //
+        // MetricsResultsType singleResult =
+        // new ArrayList<MetricsResultsType>(job.getTaskResults()).get(0);
+        //
+        // if (singleResult != null) {
+        // singleResult.setTimeCreated(job.getMetrics().getCreated());
+        // singleResult.setTimeStarted(job.getMetrics().getStarted());
+        // singleResult.setTimeFinished(job.getMetrics().getCompleted());
+        // }
+        //
+        // List<MetricsResultsType> metrics = new
+        // ArrayList<MetricsResultsType>();
+        // metrics.add(singleResult);
+        // indJobMetrics = new JobMetrics(job, metrics);
+        //
+        // totalWorkerThreads += 1;
+        //
+        // switch (job.getJobStatus()) {
+        // case COMPLETE:
+        // totalWorkerThreadsSuccess += 1;
+        // break;
+        // case FAILED:
+        // case CANCELED:
+        // totalWorkerThreadsFailed += 1;
+        // break;
+        // default:
+        // // Do Nothing
+        // break;
+        // }
+        // }
+        //
+        // jobMetrics.add(indJobMetrics);
 
         total += 1;
 
-        if (job.isAsync()) {
-            totalAsync += 1;
-        }
+        // TODO Implement Async Check
+        // if (job.isAsync()) {
+        // totalAsync += 1;
+        // }
 
         // Increment Metrics
         // TODO Not implemented

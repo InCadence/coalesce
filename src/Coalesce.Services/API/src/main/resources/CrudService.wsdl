@@ -82,14 +82,6 @@
 		<wsdl:part name="response" element="tns:UpdateDataObjectResponse"></wsdl:part>
 	</wsdl:message>
 	
-	<!-- Unmark Data Object For Deletion -->
-    <wsdl:message name="UnmarkedForDeletionRequest">
-        <wsdl:part name="request" element="tns:UnmarkedForDeletionRequest"></wsdl:part>
-    </wsdl:message>
-    <wsdl:message name="UnmarkedForDeletionResponse">
-        <wsdl:part name="response" element="tns:UnmarkedForDeletionResponse"></wsdl:part>
-    </wsdl:message>
-
 	<!-- Link Data Object -->
 	<wsdl:message name="LinkDataObjectRequest">
 		<wsdl:part name="request" element="tns:LinkDataObjectRequest"></wsdl:part>
@@ -114,92 +106,14 @@
 		<wsdl:part name="response" element="tns:RetrieveDataObjectResponse"></wsdl:part>
 	</wsdl:message>
 
-	<!-- Promote Data Object -->
-	<wsdl:message name="PromoteDataObjectVersionRequest">
-		<wsdl:part name="request" element="tns:PromoteDataObjectVersionRequest"></wsdl:part>
-	</wsdl:message>
-	<wsdl:message name="PromoteDataObjectVersionResponse">
-		<wsdl:part name="response" element="tns:PromoteDataObjectVersionResponse"></wsdl:part>
-	</wsdl:message>
-	
-	<!-- Promote XML Data Object -->
-    <wsdl:message name="PromoteXmlDataObjectVersionRequest">
-        <wsdl:part name="request" element="tns:PromoteXmlDataObjectVersionRequest"></wsdl:part>
-    </wsdl:message>
-    <wsdl:message name="PromoteXmlDataObjectVersionResponse">
-        <wsdl:part name="response" element="tns:PromoteXmlDataObjectVersionResponse"></wsdl:part>
-    </wsdl:message>
-
-	<!-- Add Workflow Pedigree Event -->
-	<wsdl:message name="CreatePedigreeEventRequest">
-		<wsdl:part name="request" element="tns:CreatePedigreeEventRequest"></wsdl:part>
-	</wsdl:message>
-	<wsdl:message name="CreatePedigreeEventResponse">
-		<wsdl:part name="response" element="tns:CreatePedigreeEventResponse"></wsdl:part>
-	</wsdl:message>
-
-	<!-- Add Non-Workflow Pedigree Event -->
-	<wsdl:message name="UpdatePedigreeEventRequest">
-		<wsdl:part name="request" element="tns:UpdatePedigreeEventRequest"></wsdl:part>
-	</wsdl:message>
-	<wsdl:message name="UpdatePedigreeEventResponse">
-		<wsdl:part name="response" element="tns:UpdatePedigreeEventResponse"></wsdl:part>	</wsdl:message>
-
-	<!-- Register Template -->
-	<wsdl:message name="RegisterDataObjectTemplatesRequest">
-		<wsdl:part name="request" element="tns:RegisterDataObjectTemplatesRequest"></wsdl:part>
-	</wsdl:message>
-	<wsdl:message name="RegisterDataObjectTemplatesResponse">
-		<wsdl:part name="response" element="tns:RegisterDataObjectTemplatesResponse"></wsdl:part>
-	</wsdl:message>
-
-	<!-- Retrieve Template -->
-	<wsdl:message name="RetrieveDataObjectTemplatesRequest">
-		<wsdl:part name="request" element="tns:RetrieveDataObjectTemplatesRequest"></wsdl:part>
-	</wsdl:message>
-	<wsdl:message name="RetrieveDataObjectTemplatesResponse">
-		<wsdl:part name="response" element="tns:RetrieveDataObjectTemplatesResponse"></wsdl:part>
-	</wsdl:message>
-
-	<!-- Create Objects From Template -->
-	<wsdl:message name="CreateDataObjectsByTemplateRequest">
-		<wsdl:part name="request" element="tns:CreateDataObjectsByTemplateRequest"></wsdl:part>
-	</wsdl:message>
-	<wsdl:message name="CreateDataObjectsByTemplateResponse">
-		<wsdl:part name="response" element="tns:CreateDataObjectsByTemplateResponse"></wsdl:part>
-	</wsdl:message>
-
-	<!-- Retrieve Data Object History -->
-	<wsdl:message name="RetrieveDataObjectHistoryRequest">
-		<wsdl:part name="request" element="tns:RetrieveDataObjectHistoryRequest"></wsdl:part>
-	</wsdl:message>
-	<wsdl:message name="RetrieveDataObjectHistoryResponse">
-		<wsdl:part name="response" element="tns:RetrieveDataObjectHistoryResponse"></wsdl:part>
-	</wsdl:message>
-
-	<!-- Delete Data Object Version -->
-	<wsdl:message name="DeleteDataObjectVersionRequest">
-		<wsdl:part name="request" element="tns:DeleteDataObjectVersionRequest"></wsdl:part>
-	</wsdl:message>
-	<wsdl:message name="DeleteDataObjectVersionResponse">
-		<wsdl:part name="response" element="tns:DeleteDataObjectVersionResponse"></wsdl:part>
-	</wsdl:message>
-
-	<!-- Restore Data Object Version -->
-	<wsdl:message name="RestoreDataObjectVersionRequest">
-		<wsdl:part name="request" element="tns:RestoreDataObjectVersionRequest"></wsdl:part>
-	</wsdl:message>
-	<wsdl:message name="RestoreDataObjectVersionResponse">
-		<wsdl:part name="response" element="tns:RestoreDataObjectVersionResponse"></wsdl:part>
-	</wsdl:message>
-	
 	<wsdl:portType name="CrudManager">
+	
 		<wsdl:operation name="GetJobStatus">
 			<wsdl:input message="tns:JobStatusRequest"></wsdl:input>
 			<wsdl:output message="tns:JobStatusResponse"></wsdl:output>
 		</wsdl:operation>
 
-		<wsdl:operation name="PickupJob">
+		<wsdl:operation name="PickupJobResults">
 			<wsdl:input message="tns:PickupJobRequest"></wsdl:input>
 			<wsdl:output message="tns:PickupJobResponse"></wsdl:output>
 		</wsdl:operation>
@@ -219,10 +133,6 @@
 			<wsdl:output message="tns:UpdateDataObjectResponse"></wsdl:output>
 		</wsdl:operation>
 		
-		<wsdl:operation name="UnmarkedForDeletion">
-            <wsdl:input message="tns:UnmarkedForDeletionRequest"></wsdl:input>
-            <wsdl:output message="tns:UnmarkedForDeletionResponse"></wsdl:output>
-        </wsdl:operation>
 
 		<wsdl:operation name="LinkDataObject">
 			<wsdl:input message="tns:LinkDataObjectRequest"></wsdl:input>
@@ -239,51 +149,6 @@
 			<wsdl:output message="tns:RetrieveDataObjectResponse"></wsdl:output>
 		</wsdl:operation>
 
-		<wsdl:operation name="PromoteDataObjectVersion">
-			<wsdl:input message="tns:PromoteDataObjectVersionRequest"></wsdl:input>
-			<wsdl:output message="tns:PromoteDataObjectVersionResponse"></wsdl:output>
-		</wsdl:operation>
-		
-		<wsdl:operation name="PromoteXmlDataObjectVersion">
-            <wsdl:input message="tns:PromoteXmlDataObjectVersionRequest"></wsdl:input>
-            <wsdl:output message="tns:PromoteXmlDataObjectVersionResponse"></wsdl:output>
-        </wsdl:operation>
-
-		<wsdl:operation name="RetrieveDataObjectHistory">
-			<wsdl:input message="tns:RetrieveDataObjectHistoryRequest"></wsdl:input>
-			<wsdl:output message="tns:RetrieveDataObjectHistoryResponse"></wsdl:output>
-		</wsdl:operation>
-
-		<wsdl:operation name="CreatePedigreeEvent">
-			<wsdl:input message="tns:CreatePedigreeEventRequest"></wsdl:input>
-			<wsdl:output message="tns:CreatePedigreeEventResponse"></wsdl:output>
-		</wsdl:operation>
-
-		<wsdl:operation name="UpdatePedigreeEvent">
-			<wsdl:input message="tns:UpdatePedigreeEventRequest"></wsdl:input>
-			<wsdl:output message="tns:UpdatePedigreeEventResponse"></wsdl:output>
-		</wsdl:operation>
-
-		<wsdl:operation name="RegisterDataObjectTemplates">
-			<wsdl:input message="tns:RegisterDataObjectTemplatesRequest"></wsdl:input>
-			<wsdl:output message="tns:RegisterDataObjectTemplatesResponse"></wsdl:output>
-		</wsdl:operation>
-
-		<wsdl:operation name="RetrieveDataObjectTemplates">
-			<wsdl:input message="tns:RetrieveDataObjectTemplatesRequest"></wsdl:input>
-			<wsdl:output message="tns:RetrieveDataObjectTemplatesResponse"></wsdl:output>
-		</wsdl:operation>
-
-		<wsdl:operation name="DeleteDataObjectVersion">
-			<wsdl:input message="tns:DeleteDataObjectVersionRequest"></wsdl:input>
-			<wsdl:output message="tns:DeleteDataObjectVersionResponse"></wsdl:output>
-		</wsdl:operation>
-
-		<wsdl:operation name="RestoreDataObjectVersion">
-			<wsdl:input message="tns:RestoreDataObjectVersionRequest"></wsdl:input>
-			<wsdl:output message="tns:RestoreDataObjectVersionResponse"></wsdl:output>
-		</wsdl:operation>
-		
 	</wsdl:portType>
 
 	<wsdl:binding name="CrudServiceBinding" type="tns:CrudManager">
@@ -303,7 +168,7 @@
 			</wsdl:output>
 		</wsdl:operation>
 
-		<wsdl:operation name="PickupJob">
+		<wsdl:operation name="PickupJobResults">
 			<soap:operation soapAction="" />
 			<wsdl:input>
 				<soap:body use="literal" />
@@ -343,16 +208,6 @@
 			</wsdl:output>
 		</wsdl:operation>
 		
-		<wsdl:operation name="UnmarkedForDeletion">
-            <soap:operation soapAction="" />
-            <wsdl:input>
-                <soap:body use="literal" />
-            </wsdl:input>
-            <wsdl:output>
-                <soap:body use="literal" />
-            </wsdl:output>
-        </wsdl:operation>
-
 		<wsdl:operation name="LinkDataObject">
 			<soap:operation soapAction="" />
 			<wsdl:input>
@@ -382,106 +237,6 @@
 				<soap:body use="literal" />
 			</wsdl:output>
 		</wsdl:operation>
-
-		<wsdl:operation name="PromoteDataObjectVersion">
-			<soap:operation soapAction="" />
-			<wsdl:input>
-				<soap:body use="literal" />
-			</wsdl:input>
-			<wsdl:output>
-				<soap:body use="literal" />
-			</wsdl:output>
-		</wsdl:operation>
-		
-		<wsdl:operation name="PromoteXmlDataObjectVersion">
-            <soap:operation soapAction="" />
-            <wsdl:input>
-                <soap:body use="literal" />
-            </wsdl:input>
-            <wsdl:output>
-                <soap:body use="literal" />
-            </wsdl:output>
-        </wsdl:operation>
-
-		<wsdl:operation name="DeleteDataObjectVersion">
-			<soap:operation soapAction="" />
-			<wsdl:input>
-				<soap:body use="literal" />
-			</wsdl:input>
-			<wsdl:output>
-				<soap:body use="literal" />
-			</wsdl:output>
-		</wsdl:operation>
-
-		<wsdl:operation name="RestoreDataObjectVersion">
-			<soap:operation soapAction="" />
-			<wsdl:input>
-				<soap:body use="literal" />
-			</wsdl:input>
-			<wsdl:output>
-				<soap:body use="literal" />
-			</wsdl:output>
-		</wsdl:operation>
-
-		<wsdl:operation name="RetrieveDataObjectHistory">
-			<soap:operation soapAction="" />
-			<wsdl:input>
-				<soap:body use="literal" />
-			</wsdl:input>
-			<wsdl:output>
-				<soap:body use="literal" />
-			</wsdl:output>
-		</wsdl:operation>
-
-		<wsdl:operation name="CreatePedigreeEvent">
-			<soap:operation soapAction="" />
-			<wsdl:input>
-				<soap:body use="literal" />
-			</wsdl:input>
-			<wsdl:output>
-				<soap:body use="literal" />
-			</wsdl:output>
-		</wsdl:operation>
-
-		<wsdl:operation name="UpdatePedigreeEvent">
-			<soap:operation soapAction="" />
-			<wsdl:input>
-				<soap:body use="literal" />
-			</wsdl:input>
-			<wsdl:output>
-				<soap:body use="literal" />
-			</wsdl:output>
-		</wsdl:operation>
-
-		<wsdl:operation name="RegisterDataObjectTemplates">
-			<soap:operation soapAction="" />
-			<wsdl:input>
-				<soap:body use="literal" />
-			</wsdl:input>
-			<wsdl:output>
-				<soap:body use="literal" />
-			</wsdl:output>
-		</wsdl:operation>
-
-		<wsdl:operation name="RetrieveDataObjectTemplates">
-			<soap:operation soapAction="" />
-			<wsdl:input>
-				<soap:body use="literal" />
-			</wsdl:input>
-			<wsdl:output>
-				<soap:body use="literal" />
-			</wsdl:output>
-		</wsdl:operation>
-		
-		<!-- <wsdl:operation name="CreateDataObjectsByTemplate"> -->
-		<!-- <soap:operation soapAction="" /> -->
-		<!-- <wsdl:input> -->
-		<!-- <soap:body use="literal" /> -->
-		<!-- </wsdl:input> -->
-		<!-- <wsdl:output> -->
-		<!-- <soap:body use="literal" /> -->
-		<!-- </wsdl:output> -->
-		<!-- </wsdl:operation> -->
 
 	</wsdl:binding>
 

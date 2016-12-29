@@ -23,7 +23,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
-import com.incadencecorp.coalesce.services.api.common.EJobStatusType;
+import com.incadencecorp.coalesce.api.EJobStatus;
 
 /**
  * Manages adding, removing, and getting job status for submitted jobs.
@@ -36,7 +36,7 @@ public class JobManager {
     // Protected Member Variables
     // ----------------------------------------------------------------------//
 
-    private ConcurrentHashMap<UUID, JobBase<?, ?>> jobsh;
+    private ConcurrentHashMap<String, AbstractXSDJobBase<?, ?, ?>> jobsh;
 
     // ----------------------------------------------------------------------//
     // Constructor and Initialization
@@ -48,7 +48,7 @@ public class JobManager {
     public JobManager()
     {
         // Initialize Data Structures
-        jobsh = new ConcurrentHashMap<UUID, JobBase<?, ?>>();
+        jobsh = new ConcurrentHashMap<String, AbstractXSDJobBase<?, ?, ?>>();
     }
 
     // ----------------------------------------------------------------------//
@@ -60,19 +60,19 @@ public class JobManager {
      *
      * @param job Job to be processed
      */
-    public void addJob(JobBase<?, ?> job)
+    public void addJob(AbstractXSDJobBase<?, ?, ?> job)
     {
         // Add to the Jobs HashMap first
-        jobsh.put(job.getJobID(), job);
+        jobsh.put(job.getJobId(), job);
     }
 
     /**
      * Returns the status of the requested job.
      *
      * @param jobID ID of job
-     * @return {@link EJobStatusType} of job.
+     * @return {@link EJobStatus} of job.
      */
-    public EJobStatusType getJobStatus(UUID jobID)
+    public EJobStatus getJobStatus(UUID jobID)
     {
         if (jobsh.containsKey(jobID))
         {
@@ -82,7 +82,7 @@ public class JobManager {
         else
         {
             // Job Not Found
-            return EJobStatusType.NOT_FOUND;
+            return EJobStatus.NOT_FOUND;
         }
     }
 
@@ -90,9 +90,9 @@ public class JobManager {
      * Removes the requested job from the processing queue.
      *
      * @param jobID ID of job
-     * @return {@link JobBase}
+     * @return {@link AbstractXSDJobBase}
      */
-    public JobBase<?, ?> removeJob(UUID jobID)
+    public AbstractXSDJobBase<?, ?, ?> removeJob(String jobID)
     {
         if (jobsh.containsKey(jobID))
         {
@@ -112,16 +112,16 @@ public class JobManager {
      *            before removing.
      * @return Returns an array of expired jobs.
      */
-    public JobBase<?, ?>[] removeOldJobs(long minutes)
+    public AbstractXSDJobBase<?, ?, ?>[] removeOldJobs(long minutes)
     {
 
-        List<JobBase<?, ?>> expiredList = new ArrayList<JobBase<?, ?>>();
+        List<AbstractXSDJobBase<?, ?, ?>> expiredList = new ArrayList<AbstractXSDJobBase<?, ?, ?>>();
 
         // Determine Max Queue Time
         long minCreateTime = System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(minutes);
 
         // For Each Job
-        for (JobBase<?, ?> job : jobsh.values())
+        for (AbstractXSDJobBase<?, ?, ?> job : jobsh.values())
         {
 
             // Expired?
@@ -143,13 +143,13 @@ public class JobManager {
         }
 
         // Remove Expired Jobs from Queue
-        for (JobBase<?, ?> job : expiredList)
+        for (AbstractXSDJobBase<?, ?, ?> job : expiredList)
         {
-            jobsh.remove(job.getJobID());
+            jobsh.remove(job.getJobId());
         }
 
         // Return Expired Jobs
-        return expiredList.toArray(new JobBase<?, ?>[expiredList.size()]);
+        return expiredList.toArray(new AbstractXSDJobBase<?, ?, ?>[expiredList.size()]);
 
     }
 
@@ -157,9 +157,9 @@ public class JobManager {
      * Returns the job requested.
      *
      * @param jobID ID of job
-     * @return {@link JobBase}
+     * @return {@link AbstractXSDJobBase}
      */
-    public JobBase<?, ?> getJob(UUID jobID)
+    public AbstractXSDJobBase<?, ?, ?> getJob(String jobID)
     {
         if (jobsh.containsKey(jobID))
         {

@@ -1,98 +1,48 @@
 package com.incadencecorp.coalesce.services.crud;
 
-import com.incadencecorp.coalesce.services.api.crud.*;
-import com.incadencecorp.coalesce.services.api.common.*;
+import com.incadencecorp.coalesce.services.api.common.StringResponse;
+import com.incadencecorp.coalesce.services.api.crud.CrudManager;
+import com.incadencecorp.coalesce.services.api.crud.DataObjectKeyRequest;
+import com.incadencecorp.coalesce.services.api.crud.DataObjectLinkRequest;
+import com.incadencecorp.coalesce.services.api.crud.DataObjectUpdateStatusRequest;
+import com.incadencecorp.coalesce.services.api.crud.DataObjectXmlRequest;
+import com.incadencecorp.coalesce.services.common.ServiceBase;
+import com.incadencecorp.coalesce.services.crud.jobs.CreateDataObjectJob;
+import com.incadencecorp.coalesce.services.crud.jobs.LinkDataObjectJob;
+import com.incadencecorp.coalesce.services.crud.jobs.RetrieveDataObjectJob;
+import com.incadencecorp.coalesce.services.crud.jobs.UpdateDataObjectJob;
+import com.incadencecorp.coalesce.services.crud.jobs.UpdateDataObjectStatusJob;
 
-public class CrudServiceImpl implements CrudManager {
+public class CrudServiceImpl extends ServiceBase implements CrudManager {
 
+    @Override
     public StringResponse retrieveDataObject(DataObjectKeyRequest request)
     {
-        return null;
+        return (StringResponse) performJob(new RetrieveDataObjectJob(request));
     }
 
+    @Override
     public StringResponse createDataObject(DataObjectXmlRequest request)
     {
-        return null;
+        return (StringResponse) performJob(new CreateDataObjectJob(request));
     }
 
-    public StringResponse retrieveDataObjectTemplates(DataObjectNameRequest request)
-    {
-        return null;
-    }
-
-    public StringResponse createPedigreeEvent(DataObjectXmlRequest request)
-    {
-        return null;
-    }
-
-    public StringResponse promoteDataObjectVersion(DataObjectKeyRequest request)
-    {
-        return null;
-    }
-
-    public StatusResponse getJobStatus(com.incadencecorp.coalesce.services.api.common.JobRequest request)
-    {
-        return null;
-    }
-
-    public StringResponse unmarkedForDeletion(DataObjectKeyRequest request)
-    {
-        return null;
-    }
-
-    public StringResponse restoreDataObjectVersion(DataObjectKeyRequest request)
-    {
-        return null;
-    }
-
-    public DataObjectHistoryResponse retrieveDataObjectHistory(DataObjectHistoryRequest request)
-    {
-        return null;
-    }
-
-    public StringResponse promoteXmlDataObjectVersion(DataObjectXmlRequest request)
-    {
-        return null;
-    }
-
+    @Override
     public StringResponse updateDataObjectStatus(DataObjectUpdateStatusRequest request)
     {
-        return null;
+        return (StringResponse) performJob(new UpdateDataObjectStatusJob(request));
     }
 
-    public StringResponse updateDataObject(DataObjectXmlRequest request)
-    {
-        return null;
-    }
-
-    public StringResponse cancelJob(com.incadencecorp.coalesce.services.api.common.JobRequest request)
-    {
-        return null;
-    }
-
-    public StringResponse registerDataObjectTemplates(DataObjectXmlRequest request)
-    {
-        return null;
-    }
-
+    @Override
     public StringResponse linkDataObject(DataObjectLinkRequest request)
     {
-        return null;
+        return (StringResponse) performJob(new LinkDataObjectJob(request));
     }
 
-    public StringResponse deleteDataObjectVersion(DataObjectKeyRequest request)
+    @Override
+    public StringResponse updateDataObject(DataObjectXmlRequest request)
     {
-        return null;
-    }
-
-    public StringResponse updatePedigreeEvent(DataObjectXmlRequest request)
-    {
-        return null;
-    }
-
-    public MultipleResponse pickupJob(com.incadencecorp.coalesce.services.api.common.JobRequest request)
-    {
-        return null;
+        return (StringResponse) performJob(new UpdateDataObjectJob(request));
     }
 
 }

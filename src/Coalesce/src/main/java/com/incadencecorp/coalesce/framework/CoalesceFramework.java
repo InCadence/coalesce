@@ -6,17 +6,20 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
+import com.incadencecorp.coalesce.api.ICoalesceResponseType;
 import com.incadencecorp.coalesce.api.IExceptionHandler;
 import com.incadencecorp.coalesce.api.persistance.ICoalesceExecutorService;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
@@ -30,6 +33,7 @@ import com.incadencecorp.coalesce.framework.jobs.CoalesceRegisterTemplateJob;
 import com.incadencecorp.coalesce.framework.jobs.CoalesceSaveEntityJob;
 import com.incadencecorp.coalesce.framework.jobs.CoalesceSaveEntityProperties;
 import com.incadencecorp.coalesce.framework.jobs.CoalesceSaveTemplateJob;
+import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceResponseType;
 import com.incadencecorp.coalesce.framework.persistance.ElementMetaData;
 import com.incadencecorp.coalesce.framework.persistance.EntityMetaData;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
@@ -109,9 +113,9 @@ public class CoalesceFramework implements ICoalesceExecutorService, Closeable {
         if (service == null)
         {
             LOGGER.info("Using Default ExecutorService; Cores: {} Max Threads / Core: {}",
-                        CoalesceSettings.getNumberOfCores(), CoalesceSettings.getMaxThreadsPerCore());
+                        CoalesceSettings.getNumberOfCores(),
+                        CoalesceSettings.getMaxThreadsPerCore());
 
-            
             service = new ThreadPoolExecutor(CoalesceSettings.getMinThreads(),
                                              CoalesceSettings.getMaxThreads(),
                                              CoalesceSettings.getKeepAliveTime(),
@@ -352,7 +356,8 @@ public class CoalesceFramework implements ICoalesceExecutorService, Closeable {
     public String getCoalesceEntityKeyForEntityId(String entityId,
                                                   String entityIdType,
                                                   String entityName,
-                                                  String entitySource) throws CoalescePersistorException
+                                                  String entitySource)
+            throws CoalescePersistorException
     {
 
         String entityKey = null;
@@ -378,7 +383,8 @@ public class CoalesceFramework implements ICoalesceExecutorService, Closeable {
     public List<String> getCoalesceEntityKeysForEntityId(String entityId,
                                                          String entityIdType,
                                                          String entityName,
-                                                         String entitySource) throws CoalescePersistorException
+                                                         String entitySource)
+            throws CoalescePersistorException
     {
 
         List<String> list = new ArrayList<String>();
@@ -588,8 +594,8 @@ public class CoalesceFramework implements ICoalesceExecutorService, Closeable {
      * @throws IOException
      * @throws CoalescePersistorException
      */
-    public CoalesceEntityTemplate getCoalesceEntityTemplate(String name, String source, String version) throws SAXException,
-            IOException, CoalescePersistorException
+    public CoalesceEntityTemplate getCoalesceEntityTemplate(String name, String source, String version)
+            throws SAXException, IOException, CoalescePersistorException
     {
 
         CoalesceEntityTemplate template = null;
@@ -645,8 +651,8 @@ public class CoalesceFramework implements ICoalesceExecutorService, Closeable {
     	Sync Shell Functions
     --------------------------------------------------------------------------*/
 
-    public CoalesceEntitySyncShell getCoalesceEntitySyncShell(String key) throws CoalescePersistorException, SAXException,
-            IOException
+    public CoalesceEntitySyncShell getCoalesceEntitySyncShell(String key)
+            throws CoalescePersistorException, SAXException, IOException
     {
         return CoalesceEntitySyncShell.create(this.getCoalesceEntity(key));
     }
@@ -673,7 +679,13 @@ public class CoalesceFramework implements ICoalesceExecutorService, Closeable {
         }
     }
 
-    public <T, Y> Future<Y> submit(AbstractCoalesceJob<T, Y> job) throws CoalescePersistorException
+    @Override
+    public <T> Future<T> submit(Callable<T> task) throws CoalescePersistorException
+    {
+        return _pool.submit(task);
+    }
+
+    public <T, Y extends ICoalesceResponseType<?>> Future<Y> submit(AbstractCoalesceJob<T, Y> job) throws CoalescePersistorException
     {
 
         Future<Y> result = null;
@@ -700,6 +712,44 @@ public class CoalesceFramework implements ICoalesceExecutorService, Closeable {
         }
 
         return result;
+    }
+
+    @Override
+    public final void execute(Runnable command)
+    {
+        _pool.execute(command);
+    }
+
+    @Override
+    public final boolean isShutdown()
+    {
+        return _pool.isShutdown();
+    }
+
+    @Override
+    public final boolean isTerminated()
+    {
+        return _pool.isTerminated();
+    }
+
+    @Override
+    public final <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
+            throws InterruptedException
+    {
+        return _pool.invokeAll(tasks, timeout, unit);
+    }
+
+    @Override
+    public final <T> T invokeAny(Collection<? extends Callable<T>> tasks) throws InterruptedException, ExecutionException
+    {
+        return _pool.invokeAny(tasks);
+    }
+
+    @Override
+    public final <T> T invokeAny(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
+            throws InterruptedException, ExecutionException, TimeoutException
+    {
+        return _pool.invokeAny(tasks, timeout, unit);
     }
 
     @Override

@@ -19,19 +19,19 @@
 
 package com.incadencecorp.coalesce.api;
 
-import com.incadencecorp.coalesce.api.persistance.ICoalesceExecutorService;
+import com.incadencecorp.coalesce.framework.CoalesceFramework;
 
 /**
  * 
  * @author n78554
  */
-public interface ICoalesceJob extends ICoalesceComponent {
+public interface ICoalesceFrameworkJob extends ICoalesceJob {
 
     /**
-     * Sets the service in which any threads created should be executed on.
+     * Sets the target(s) of this operation.
      * 
-     * @param service
+     * @param targets
      */
-    void setExecutor(ICoalesceExecutorService service);
+    void setTarget(CoalesceFramework framework);
     
 }

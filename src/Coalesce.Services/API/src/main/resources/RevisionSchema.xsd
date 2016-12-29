@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ** * SECURITY CLASSIFICATION: UNCLASSIFIED * Copyright 2014 - Lockheed 
+	Martin Corporation, All Rights Reserved * * Notwithstanding any contractor 
+	copyright notice, the government has * Unlimited Rights in this work as defined 
+	by DFARS 252.227-7013 and * 252.227-7014. Use of this work other than as 
+	specifically authorized by * these DFARS Clauses may violate government rights 
+	in this work. * * DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 
+	(a)(16) * Unlimited Rights. The Government has the right to use, modify, 
+	* reproduce, perform, display, release or disclose this computer software 
+	* in whole or in part, in any manner, and for any purpose whatsoever, * and 
+	to have or authorize others to do so. * * Distribution Statement D. Distribution 
+	authorized to the Department of * Defense and U.S. DoD contractors only in 
+	support of US DoD efforts. * Other requests shall be referred to the ACINT 
+	Modernization Program * Management under the Director of the Office of Naval 
+	Intelligence. * * UNCLASSIFIED * -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://api.services.coalesce.incadencecorp.com/revision"
+	xmlns:tns="http://api.services.coalesce.incadencecorp.com/revision"
+	xmlns:cmn="http://api.services.coalesce.incadencecorp.com/common"
+	elementFormDefault="qualified" attributeFormDefault="qualified"
+	xmlns:fes="http://www.opengis.net/fes/2.0">
+
+	<xs:import namespace="http://api.services.coalesce.incadencecorp.com/common"
+		schemaLocation="Common.xsd" />
+
+	<xs:complexType name="DataObjectXmlRequest">
+		<xs:complexContent>
+			<xs:extension base="cmn:BaseRequest">
+				<xs:sequence>
+					<xs:element name="dataObjectXmlList" type="xs:string"
+						minOccurs="1" maxOccurs="unbounded"></xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="DataObjectKeyRequest">
+		<xs:complexContent>
+			<xs:extension base="cmn:BaseRequest">
+				<xs:sequence>
+					<xs:element name="keyList" type="tns:DataObjectKeyType"
+						minOccurs="1" maxOccurs="unbounded"></xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="DataObjectHistoryRequest">
+		<xs:complexContent>
+			<xs:extension base="cmn:BaseRequest">
+				<xs:sequence>
+					<xs:element name="keyList" type="tns:DataObjectDiffType"
+						minOccurs="1" maxOccurs="unbounded"></xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="DataObjectHistoryResponse">
+		<xs:complexContent>
+			<xs:extension base="cmn:BaseResponse">
+				<xs:sequence>
+					<xs:element name="historyList" type="tns:DataObjectHistoryType"
+						minOccurs="1" maxOccurs="unbounded"></xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="DataObjectKeyType">
+		<xs:sequence>
+			<xs:element name="key" type="xs:string"></xs:element>
+			<xs:element name="ver" type="xs:int"></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="DataObjectDiffType">
+		<xs:sequence>
+			<xs:element name="key" type="xs:string"></xs:element>
+			<xs:element name="lowerVersion" type="xs:int"></xs:element>
+			<xs:element name="upperVersion" type="xs:int"></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+    <xs:complexType name="DataObjectHistoryType">
+        <xs:complexContent>
+            <xs:extension base="cmn:MetricsResultsType">
+                <xs:sequence>
+		            <xs:element name="key" type="xs:string"></xs:element>
+		            <xs:element name="versions" type="tns:DataObjectVersionType"
+		                minOccurs="0" maxOccurs="unbounded"></xs:element>
+                </xs:sequence>
+            </xs:extension>         
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="DataObjectVersionType">
+        <xs:sequence>
+            <xs:element name="version" type="xs:int"></xs:element>
+            <xs:element name="modifiedBy" type="xs:string"></xs:element>
+            <xs:element name="modifiedDate" type="xs:dateTime"></xs:element>
+            <xs:element name="changes"
+                type="tns:DataObjectVersionChangesType" minOccurs="0"
+                maxOccurs="unbounded"></xs:element>
+            <xs:element name="deleted" type="xs:boolean"></xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="DataObjectVersionChangesType">
+        <xs:sequence>
+            <xs:element name="key" type="xs:string"></xs:element>
+            <xs:element name="fieldname" type="xs:string"></xs:element>
+            <xs:element name="current" type="xs:string"></xs:element>
+            <xs:element name="old" type="xs:string"></xs:element>
+            <xs:element name="recordKey" type="xs:string"></xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    
+	<xs:element name="PromoteXmlDataObjectVersionRequest" type="tns:DataObjectXmlRequest"></xs:element>
+	<xs:element name="PromoteXmlDataObjectVersionResponse" type="cmn:StringResponse"></xs:element>
+
+	<xs:element name="PromoteDataObjectVersionRequest" type="tns:DataObjectKeyRequest"></xs:element>
+	<xs:element name="PromoteDataObjectVersionResponse" type="cmn:StringResponse"></xs:element>
+
+	<xs:element name="RetrieveDataObjectHistoryRequest" type="tns:DataObjectHistoryRequest"></xs:element>
+	<xs:element name="RetrieveDataObjectHistoryResponse" type="tns:DataObjectHistoryResponse"></xs:element>
+
+	<xs:element name="DeleteDataObjectVersionRequest" type="tns:DataObjectKeyRequest"></xs:element>
+	<xs:element name="DeleteDataObjectVersionResponse" type="cmn:StringResponse"></xs:element>
+
+	<xs:element name="RestoreDataObjectVersionRequest" type="tns:DataObjectKeyRequest"></xs:element>
+	<xs:element name="RestoreDataObjectVersionResponse" type="cmn:StringResponse"></xs:element>
+
+</xs:schema>

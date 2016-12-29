@@ -15,74 +15,26 @@
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-package com.incadencecorp.coalesce.api.persistance;
+package com.incadencecorp.coalesce.framework.jobs.responses;
+
+import com.incadencecorp.coalesce.api.EResultStatus;
 
 /**
  * 
  * @author Derek
  *
  */
-public class ResultType {
+public class CoalesceStringResponseType extends CoalesceResponseType<String> {
 
     /*--------------------------------------------------------------------------
     Private Member Variables
     --------------------------------------------------------------------------*/
 
-    private boolean isSuccessful;
-    private String message;
     private Exception exception;
-
-    /*--------------------------------------------------------------------------
-    Constructors
-    --------------------------------------------------------------------------*/
-
-    /**
-     * Default Constructor
-     */
-    public ResultType()
-    {
-        isSuccessful = true;
-    }
 
     /*--------------------------------------------------------------------------
     Getters / Setters
     --------------------------------------------------------------------------*/
-
-    /**
-     * @return whether this result was successful.
-     */
-    public boolean isSuccessful()
-    {
-        return isSuccessful;
-    }
-
-    /**
-     * Sets whether this result was successful.
-     * 
-     * @param isSuccessful
-     */
-    public void setSuccessful(boolean isSuccessful)
-    {
-        this.isSuccessful = isSuccessful;
-    }
-
-    /**
-     * @return details of this result.
-     */
-    public String getMessage()
-    {
-        return message;
-    }
-
-    /**
-     * Sets details of this result.
-     * 
-     * @param message
-     */
-    public void setMessage(String message)
-    {
-        this.message = message;
-    }
 
     /**
      * @return the exception that caused this result, if caused by an exception;
@@ -100,9 +52,10 @@ public class ResultType {
      */
     public void setException(Exception exception)
     {
-        this.setSuccessful(false);
+        this.setStatus(EResultStatus.FAILED);
         this.exception = exception;
-        this.message = exception.getMessage();
+        
+        setResult(exception.getMessage());
     }
-
+    
 }

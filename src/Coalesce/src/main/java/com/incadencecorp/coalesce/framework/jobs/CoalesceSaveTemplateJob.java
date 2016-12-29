@@ -20,7 +20,6 @@ package com.incadencecorp.coalesce.framework.jobs;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.tasks.AbstractPersistorTask;
 import com.incadencecorp.coalesce.framework.tasks.CoalesceSaveTemplateTask;

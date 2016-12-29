@@ -19,19 +19,26 @@
 
 package com.incadencecorp.coalesce.api;
 
-import com.incadencecorp.coalesce.api.persistance.ICoalesceExecutorService;
+import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 
 /**
  * 
  * @author n78554
  */
-public interface ICoalesceJob extends ICoalesceComponent {
+public interface ICoalescePersistorJob extends ICoalesceJob {
 
     /**
-     * Sets the service in which any threads created should be executed on.
+     * Sets the handler in the event of any exceptions.
      * 
-     * @param service
+     * @param handler
      */
-    void setExecutor(ICoalesceExecutorService service);
+    void setHandler(IExceptionHandler handler);
     
+    /**
+     * Sets the target(s) of this operation.
+     * 
+     * @param targets
+     */
+    void setTarget(ICoalescePersistor... targets);
+
 }

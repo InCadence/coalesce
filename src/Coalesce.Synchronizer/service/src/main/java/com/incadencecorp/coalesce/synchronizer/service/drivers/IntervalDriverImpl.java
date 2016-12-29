@@ -27,10 +27,12 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.CoalesceThreadFactoryImpl;
 import com.incadencecorp.coalesce.synchronizer.api.common.AbstractDriver;
 import com.incadencecorp.coalesce.synchronizer.api.common.SynchronizerParameters;
@@ -170,6 +172,50 @@ public class IntervalDriverImpl extends AbstractDriver {
     public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks) throws InterruptedException
     {
         return scheduler.invokeAll(tasks);
+    }
+    
+    @Override
+    public <T> Future<T> submit(Callable<T> task) throws CoalescePersistorException
+    {
+        return scheduler.submit(task);
+    }
+    
+    @Override
+    public final void execute(Runnable command)
+    {
+        scheduler.execute(command);
+    }
+
+    @Override
+    public final boolean isShutdown()
+    {
+        return scheduler.isShutdown();
+    }
+
+    @Override
+    public final boolean isTerminated()
+    {
+        return scheduler.isTerminated();
+    }
+
+    @Override
+    public final <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
+            throws InterruptedException
+    {
+        return scheduler.invokeAll(tasks, timeout, unit);
+    }
+
+    @Override
+    public final <T> T invokeAny(Collection<? extends Callable<T>> tasks) throws InterruptedException, ExecutionException
+    {
+        return scheduler.invokeAny(tasks);
+    }
+
+    @Override
+    public final <T> T invokeAny(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
+            throws InterruptedException, ExecutionException, TimeoutException
+    {
+        return scheduler.invokeAny(tasks, timeout, unit);
     }
 
 }

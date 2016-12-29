@@ -21,7 +21,8 @@ import java.util.Set;
 
 import javax.sql.rowset.CachedRowSet;
 
-import com.incadencecorp.coalesce.api.ICoalesceJob;
+import com.incadencecorp.coalesce.api.ICoalesceComponent;
+import com.incadencecorp.coalesce.api.ICoalescePersistorJob;
 import com.incadencecorp.coalesce.api.persistance.ICoalesceExecutorService;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
@@ -33,7 +34,7 @@ import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
  * @author n78554
  *
  */
-public interface IPersistorOperation extends ICoalesceJob {
+public interface IPersistorOperation extends ICoalescePersistorJob {
 
     /**
      * Sets the source used to obtain entities.

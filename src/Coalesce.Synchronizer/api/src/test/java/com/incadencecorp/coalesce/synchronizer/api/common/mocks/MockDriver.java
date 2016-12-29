@@ -20,10 +20,14 @@ package com.incadencecorp.coalesce.synchronizer.api.common.mocks;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
+import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.synchronizer.api.common.AbstractDriver;
 
 /**
@@ -51,6 +55,50 @@ public class MockDriver extends AbstractDriver {
     public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks) throws InterruptedException
     {
         return service.invokeAll(tasks);
+    }
+    
+    @Override
+    public <T> Future<T> submit(Callable<T> task) throws CoalescePersistorException
+    {
+        return service.submit(task);
+    }
+    
+    @Override
+    public final void execute(Runnable command)
+    {
+        service.execute(command);
+    }
+
+    @Override
+    public final boolean isShutdown()
+    {
+        return service.isShutdown();
+    }
+
+    @Override
+    public final boolean isTerminated()
+    {
+        return service.isTerminated();
+    }
+
+    @Override
+    public final <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
+            throws InterruptedException
+    {
+        return service.invokeAll(tasks, timeout, unit);
+    }
+
+    @Override
+    public final <T> T invokeAny(Collection<? extends Callable<T>> tasks) throws InterruptedException, ExecutionException
+    {
+        return service.invokeAny(tasks);
+    }
+
+    @Override
+    public final <T> T invokeAny(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
+            throws InterruptedException, ExecutionException, TimeoutException
+    {
+        return service.invokeAny(tasks, timeout, unit);
     }
 
 }

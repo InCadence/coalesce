@@ -25,10 +25,13 @@ import java.util.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.incadencecorp.coalesce.api.ICoalesceJob;
+import com.incadencecorp.coalesce.api.ICoalescePersistorJob;
+import com.incadencecorp.coalesce.api.ICoalesceResponseType;
 import com.incadencecorp.coalesce.api.IExceptionHandler;
 import com.incadencecorp.coalesce.api.persistance.ICoalesceExecutorService;
-import com.incadencecorp.coalesce.api.persistance.ResultType;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
+import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceResponseType;
+import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceStringResponseType;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import com.incadencecorp.coalesce.framework.tasks.AbstractPersistorTask;
 
@@ -38,8 +41,8 @@ import com.incadencecorp.coalesce.framework.tasks.AbstractPersistorTask;
  * @author Derek
  * @param <T> input type
  */
-public abstract class AbstractCoalescePersistorsJob<T> extends AbstractCoalesceJob<T, List<ResultType>> implements
-        ICoalesceJob {
+public abstract class AbstractCoalescePersistorsJob<T> extends AbstractCoalesceJob<T, ICoalesceResponseType<List<CoalesceStringResponseType>>>
+        implements ICoalescePersistorJob {
 
     private static Logger LOGGER = LoggerFactory.getLogger(AbstractCoalescePersistorsJob.class);
 
@@ -92,13 +95,13 @@ public abstract class AbstractCoalescePersistorsJob<T> extends AbstractCoalesceJ
     --------------------------------------------------------------------------*/
 
     @Override
-    public List<ResultType> doWork(T params) throws Exception
+    public final ICoalesceResponseType<List<CoalesceStringResponseType>> doWork(T params) throws CoalesceException
     {
-        List<ResultType> results = new ArrayList<ResultType>();
+        List<CoalesceStringResponseType> results = new ArrayList<CoalesceStringResponseType>();
 
         try
         {
-            ResultType result;
+            CoalesceStringResponseType result;
 
             List<AbstractPersistorTask<T>> tasks = new ArrayList<AbstractPersistorTask<T>>();
 
@@ -111,7 +114,7 @@ public abstract class AbstractCoalescePersistorsJob<T> extends AbstractCoalesceJ
             int ii = 0;
 
             // Execute Tasks
-            for (Future<ResultType> future : _service.invokeAll(tasks))
+            for (Future<CoalesceStringResponseType> future : _service.invokeAll(tasks))
             {
                 try
                 {
@@ -123,7 +126,7 @@ public abstract class AbstractCoalescePersistorsJob<T> extends AbstractCoalesceJ
                     LOGGER.error("Interrupted Task", e);
 
                     // Create Failed Result
-                    result = new ResultType();
+                    result = new CoalesceStringResponseType();
                     result.setException(e);
                 }
 
@@ -146,15 +149,18 @@ public abstract class AbstractCoalescePersistorsJob<T> extends AbstractCoalesceJ
         {
             LOGGER.error("Interrupted Job", e);
 
-            ResultType result = new ResultType();
+            CoalesceStringResponseType result = new CoalesceStringResponseType();
             result.setException(e);
 
-            results = new ArrayList<ResultType>();
+            results = new ArrayList<CoalesceStringResponseType>();
             results.add(result);
 
         }
 
-        return results;
+        CoalesceResponseType<List<CoalesceStringResponseType>> result = new CoalesceResponseType<List<CoalesceStringResponseType>>();
+        result.setResult(results);
+
+        return result;
     }
 
     /*--------------------------------------------------------------------------

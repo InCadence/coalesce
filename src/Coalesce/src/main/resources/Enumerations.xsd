@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://coalesce.incadencecorp.com/api" xmlns:tns="http://coalesce.incadencecorp.com/api"
+	elementFormDefault="qualified" attributeFormDefault="qualified">
+
+	<xs:simpleType name="EJobStatus">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NEW" />
+			<xs:enumeration value="PENDING" />
+			<xs:enumeration value="IN_PROGRESS" />
+			<xs:enumeration value="COMPLETE" />
+			<xs:enumeration value="CANCELED" />
+			<xs:enumeration value="FAILED" />
+			<xs:enumeration value="NOT_FOUND" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="EResultStatus">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="SUCCESS" />
+			<xs:enumeration value="FAILED" />
+			<xs:enumeration value="FAILED_PENDING" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="ELinkType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="UNDEFINED" />
+			<xs:enumeration value="IS_CHILD_OF" />
+			<xs:enumeration value="IS_PARENT_OF" />
+			<xs:enumeration value="CREATED" />
+			<xs:enumeration value="WAS_CREATED_BY" />
+			<xs:enumeration value="HAS_MEMBER" />
+			<xs:enumeration value="IS_A_MEMBER_OF" />
+			<xs:enumeration value="HAS_PARTICIPANT" />
+			<xs:enumeration value="IS_A_PARTICIPANT_OF" />
+			<xs:enumeration value="IS_WATCHING" />
+			<xs:enumeration value="IS_BEING_WATCHED_BY" />
+			<xs:enumeration value="IS_A_PEER_OF" />
+			<xs:enumeration value="IS_OWNED_BY" />
+			<xs:enumeration value="HAS_OWNERSHIP_OF" />
+			<xs:enumeration value="IS_USED_BY" />
+			<xs:enumeration value="HAS_USE_OF" />
+			<xs:enumeration value="SUCCESSOR" />
+			<xs:enumeration value="PREDECESSOR" />
+			<xs:enumeration value="CROSS_DOMAIN_SOURCE" />
+			<xs:enumeration value="CROSS_DOMAIN_TARGET" />
+			<xs:enumeration value="IS_INPUT_PARAMETER_TO" />
+			<xs:enumeration value="HAS_INPUT_PARAMETER_OF" />
+			<xs:enumeration value="IS_INPUT_TO" />
+			<xs:enumeration value="HAS_INPUT_OF" />
+			<xs:enumeration value="IS_OUTPUT_TO" />
+			<xs:enumeration value="HAS_OUTPUT_OF" />
+			<xs:enumeration value="IS_PRODUCT_OF" />
+			<xs:enumeration value="HAS_PRODUCT" />
+		</xs:restriction>
+	</xs:simpleType>
+
+</xs:schema>
