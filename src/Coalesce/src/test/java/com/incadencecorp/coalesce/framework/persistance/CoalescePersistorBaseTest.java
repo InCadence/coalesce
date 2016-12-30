@@ -150,7 +150,7 @@ public abstract class CoalescePersistorBaseTest {
             {
                 System.out.println(e.getMessage());
             }
-            
+
             // If entity fails to save halt the persister test.
             Assume.assumeNoException(e);
         }
@@ -208,6 +208,14 @@ public abstract class CoalescePersistorBaseTest {
                 _testTemplateKey = null;
             }
         }
+    }
+
+    /**
+     * @return the framework this test was initialized with.
+     */
+    protected CoalesceFramework getFramework()
+    {
+        return _coalesceFramework;
     }
 
     /*--------------------------------------------------------------------------
@@ -481,7 +489,7 @@ public abstract class CoalescePersistorBaseTest {
     public void testGetEntityKeyForEntityIdNameLists() throws CoalescePersistorException
     {
         List<String> objectKeys = _coalesceFramework.getCoalesceEntityKeysForEntityId(_entity.getEntityId()
-                                                                                              + ",AnotherEntityId",
+                + ",AnotherEntityId",
                                                                                       _entity.getEntityIdType()
                                                                                               + ",AnotherEntityIdType",
                                                                                       _entity.getName(),
@@ -505,8 +513,10 @@ public abstract class CoalescePersistorBaseTest {
                                                                                      _entity.getSource());
         assertTrue(objectKey.isEmpty());
 
-        objectKey = _coalesceFramework.getCoalesceEntityKeysForEntityId(_entity.getEntityId(), _entity.getEntityIdType()
-                + ",EntityIDType", _entity.getName(), _entity.getSource());
+        objectKey = _coalesceFramework.getCoalesceEntityKeysForEntityId(_entity.getEntityId(),
+                                                                        _entity.getEntityIdType() + ",EntityIDType",
+                                                                        _entity.getName(),
+                                                                        _entity.getSource());
         assertTrue(objectKey.isEmpty());
     }
 

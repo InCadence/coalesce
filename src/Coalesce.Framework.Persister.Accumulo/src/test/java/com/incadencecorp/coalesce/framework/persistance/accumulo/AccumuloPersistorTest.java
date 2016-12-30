@@ -262,23 +262,23 @@ public class AccumuloPersistorTest extends CoalescePersistorBaseTest {
 		}
 
 		// Register a template for this entity so that search data is persisted
-		_coalesceFramework.saveCoalesceEntityTemplate(CoalesceEntityTemplate.create(entity));
+		getFramework().saveCoalesceEntityTemplate(CoalesceEntityTemplate.create(entity));
 
 		// Persist Entity
-		_coalesceFramework.saveCoalesceEntity(entity);
+		getFramework().saveCoalesceEntity(entity);
 
 		// Get Persisted Values
-		String cvalue = _coalesceFramework.getCoalesceFieldValue(circlefield.getKey());
-		String pvalue = _coalesceFramework.getCoalesceFieldValue(polygonfield.getKey());
-		String lvalue = _coalesceFramework.getCoalesceFieldValue(linefield.getKey());
-		float fvalue = Float.valueOf(_coalesceFramework.getCoalesceFieldValue(floatfield.getKey()));
-		String flistvalue[] = _coalesceFramework.getCoalesceFieldValue(floatlistfield.getKey()).split(",");
-		double dvalue = Double.valueOf(_coalesceFramework.getCoalesceFieldValue(doublefield.getKey()));
-		String dlistvalue[] = _coalesceFramework.getCoalesceFieldValue(doublelistfield.getKey()).split(",");
-		boolean bvalue = Boolean.valueOf(_coalesceFramework.getCoalesceFieldValue(booleanfield.getKey()));
-		String mydate = _coalesceFramework.getCoalesceFieldValue(datetimefield.getKey());
+		String cvalue = getFramework().getCoalesceFieldValue(circlefield.getKey());
+		String pvalue = getFramework().getCoalesceFieldValue(polygonfield.getKey());
+		String lvalue = getFramework().getCoalesceFieldValue(linefield.getKey());
+		float fvalue = Float.valueOf(getFramework().getCoalesceFieldValue(floatfield.getKey()));
+		String flistvalue[] = getFramework().getCoalesceFieldValue(floatlistfield.getKey()).split(",");
+		double dvalue = Double.valueOf(getFramework().getCoalesceFieldValue(doublefield.getKey()));
+		String dlistvalue[] = getFramework().getCoalesceFieldValue(doublelistfield.getKey()).split(",");
+		boolean bvalue = Boolean.valueOf(getFramework().getCoalesceFieldValue(booleanfield.getKey()));
+		String mydate = getFramework().getCoalesceFieldValue(datetimefield.getKey());
 		DateTime datevalue = JodaDateTimeHelper.fromXmlDateTimeUTC(mydate);
-		CoalesceEntity filefieldentity = _coalesceFramework.getCoalesceEntity(entity.getKey());
+		CoalesceEntity filefieldentity = getFramework().getCoalesceEntity(entity.getKey());
 		CoalesceFileField filefieldvalue = (CoalesceFileField) filefieldentity
 				.getCoalesceObjectForKey(filefield.getKey());
 		byte[] filefieldbytesvalue = Base64.decode(filefieldvalue.getBaseValue());
@@ -357,7 +357,7 @@ public class AccumuloPersistorTest extends CoalescePersistorBaseTest {
 		GDELT_Test_Entity gdeltEntity = new GDELT_Test_Entity();
 		
 		// Prerequisite setup
-		_coalesceFramework.saveCoalesceEntityTemplate(CoalesceEntityTemplate.create(gdeltEntity));
+		getFramework().saveCoalesceEntityTemplate(CoalesceEntityTemplate.create(gdeltEntity));
 		CoalesceObjectFactory.register(GDELT_Test_Entity.class);
 		
 		//Persist

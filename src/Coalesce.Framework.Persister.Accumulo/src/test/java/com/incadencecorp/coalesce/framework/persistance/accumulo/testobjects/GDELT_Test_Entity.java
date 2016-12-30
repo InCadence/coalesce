@@ -144,7 +144,7 @@ public class GDELT_Test_Entity extends CoalesceEntity {
 			e.printStackTrace();
 		}
 
-		DateTime dt = new DateTime(2006, 07, 25, 00, 00, 00);
+		DateTime dt = new DateTime(2006, 07, 25, 00, 00, 00, 00);
 		((CoalesceDateTimeField) eventRecord.getFieldByName("DateTime")).setValue(dt);
 	}
 	
