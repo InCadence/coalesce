@@ -233,10 +233,10 @@ public class FieldValuesTest {
         countryList.add(new ISO3166Country("CR", "CRI", "COSTA RICA"));
         countryList.add(new ISO3166Country("HR", "HRV", "CROATIA"));
         countryList.add(new ISO3166Country("CU", "CUB", "CUBA"));
-        countryList.add(new ISO3166Country("CW", "CUW", "CURAÇAO"));
+        countryList.add(new ISO3166Country("CW", "CUW", "CURAÃ‡AO"));
         countryList.add(new ISO3166Country("CY", "CYP", "CYPRUS"));
         countryList.add(new ISO3166Country("CZ", "CZE", "CZECH REPUBLIC"));
-        countryList.add(new ISO3166Country("CI", "CIV", "CÔTE D'IVOIRE"));
+        countryList.add(new ISO3166Country("CI", "CIV", "CÃ”TE D'IVOIRE"));
         countryList.add(new ISO3166Country("DK", "DNK", "DENMARK"));
         countryList.add(new ISO3166Country("DJ", "DJI", "DJIBOUTI"));
         countryList.add(new ISO3166Country("DM", "DMA", "DOMINICA"));
@@ -360,8 +360,8 @@ public class FieldValuesTest {
         countryList.add(new ISO3166Country("RO", "ROU", "ROMANIA"));
         countryList.add(new ISO3166Country("RU", "RUS", "RUSSIAN FEDERATION"));
         countryList.add(new ISO3166Country("RW", "RWA", "RWANDA"));
-        countryList.add(new ISO3166Country("RE", "REU", "RÉUNION"));
-        countryList.add(new ISO3166Country("BL", "BLM", "SAINT BARTHÉLEMY"));
+        countryList.add(new ISO3166Country("RE", "REU", "RÃ‰UNION"));
+        countryList.add(new ISO3166Country("BL", "BLM", "SAINT BARTHÃ‰LEMY"));
         countryList.add(new ISO3166Country("SH", "SHN", "SAINT HELENA, ASCENSION AND TRISTAN DA CUNHA"));
         countryList.add(new ISO3166Country("KN", "KNA", "SAINT KITTS AND NEVIS"));
         countryList.add(new ISO3166Country("LC", "LCA", "SAINT LUCIA"));
@@ -425,7 +425,7 @@ public class FieldValuesTest {
         countryList.add(new ISO3166Country("YE", "YEM", "YEMEN"));
         countryList.add(new ISO3166Country("ZM", "ZMB", "ZAMBIA"));
         countryList.add(new ISO3166Country("ZW", "ZWE", "ZIMBABWE"));
-        countryList.add(new ISO3166Country("AX", "ALA", "ÅLAND ISLANDS"));
+        countryList.add(new ISO3166Country("AX", "ALA", "Ã…LAND ISLANDS"));
 
         _countries = Collections.unmodifiableList(countryList);
 

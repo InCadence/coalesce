@@ -1,0 +1,211 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>coalesce-framework-persister-accumulo</artifactId>
+
+	<packaging>bundle</packaging>
+	<name>Coalesce Accumulo Persister</name>
+	<description>Persister used by Coalesce to connect to a Accumulo database.</description>
+	<parent>
+		<groupId>com.incadencecorp.coalesce</groupId>
+		<artifactId>coalesce-pom</artifactId>
+		<version>0.0.21-SNAPSHOT</version>
+		<relativePath>../Coalesce.Pom</relativePath>
+	</parent>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>2.3</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<minimizeJar>false</minimizeJar>
+							<artifactSet>
+								<includes>
+									<!-- <include>org.neo4j:*</include> -->
+									<include>org.parboiled:*</include>
+									<include>org.apache.lucene:lucene-core</include>
+									<include>net.sf.opencsv:*</include>
+									<!-- <include>com.infradna.tool:bridge-method-annotation</include> -->
+									<include>org.restlet:*</include>
+									<include>org.apache.httpcomponents:httpclient</include>
+									<include>org.apache.httpcomponents:httpmime</include>
+									<include>org.apache.httpcomponents:httpcore</include>
+
+									<include>commons-codec:commons-codec</include>
+								</includes>
+							</artifactSet>
+							<filters>
+								<filter>
+									<artifact>*:*</artifact>
+									<excludes>
+										<exclude>META-INF/*.SF</exclude>
+										<exclude>META-INF/*.DSA</exclude>
+										<exclude>META-INF/*.RSA</exclude>
+									</excludes>
+								</filter>
+							</filters>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<version>${maven.bundle.version}</version>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Bundle-Name>${project.name}</Bundle-Name>
+						<Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+						<Export-Package>
+							${project.groupId}.framework.persistance.accumulo
+						</Export-Package>
+						<!-- <Private-Package> org.neo4j*;-split-package:=merge-last, au.com.bytecode.opencsv*;-split-package:=merge-last, 
+							org.apache.lucene*;-split-package:=merge-last, org.apache.http*;-split-package:=merge-last, 
+							org.parboiled*;-split-package:=merge-last, com.infradna*, org.apache.commons.codec*, 
+							org.restlet* </Private-Package> -->
+						<!-- <Import-Package> com.sun.*;resolution:=optional, sun.*;resolution:=optional, 
+							org.neo4j.test;resolution:=optional, net.sf.cglib*;resolution:=optional, 
+							org.jvnet.hudson.annotation_indexer;resolution:=optional, org.joda.time*;version="[1.6.2, 
+							3)", com.mysema.query.lucene;resolution:=optional, * </Import-Package> -->
+						<Embed-Dependency>
+							org.restlet.ext.httpclient,
+							org.restlet,
+							org.restlet.ext.ssl,
+							apache-mime4j,
+							jcip-annotations
+						</Embed-Dependency>
+					</instructions>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<repositories>
+		<repository>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<id>imageio-ext-repository</id>
+			<name>imageio-ext Repository</name>
+			<url>http://maven.geo-solutions.it/</url>
+		</repository>
+		<repository>
+			<id>locationtech-releases</id>
+			<url>https://repo.locationtech.org/content/groups/releases</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>geomesa-snapshots</id>
+			<url>https://repo.locationtech.org/content/repositories/geomesa-snapshots</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>boundlessgeo</id>
+			<url>http://repo.boundlessgeo.com/main</url>
+		</repository>
+		<repository>
+			<id>osgeo</id>
+			<url>http://download.osgeo.org/webdav/geotools</url>
+		</repository>
+		<repository>
+			<id>conjars.org</id>
+			<url>http://conjars.org/repo</url>
+		</repository>
+	</repositories>
+	<dependencies>
+		<dependency>
+			<groupId>com.incadencecorp.coalesce</groupId>
+			<artifactId>coalesce-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.incadencecorp.coalesce</groupId>
+			<artifactId>coalesce-search</artifactId>
+		</dependency>		
+		<dependency>
+			<groupId>com.incadencecorp.coalesce</groupId>
+			<version>${project.version}</version>
+			<artifactId>coalesce-core</artifactId>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>xerces</groupId>
+			<artifactId>xercesImpl</artifactId>
+			<version>2.11.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.incadencecorp.coalesce</groupId>
+			<artifactId>coalesce-framework-persister-postgresql</artifactId>
+		</dependency>
+		<!-- Accumulo Dependencies -->
+		<dependency>
+			<groupId>org.apache.accumulo</groupId>
+			<artifactId>accumulo-core</artifactId>
+			<version>1.6.5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.accumulo</groupId>
+			<artifactId>accumulo-minicluster</artifactId>
+			<version>1.6.5</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.accumulo</groupId>
+			<artifactId>accumulo-server-base</artifactId>
+			<version>1.6.5</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.accumulo</groupId>
+			<artifactId>accumulo-start</artifactId>
+			<version>1.6.5</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.locationtech.geomesa</groupId>
+			<artifactId>geomesa-accumulo-datastore</artifactId>
+			<version>1.2.4</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>joda-time</artifactId>
+					<groupId>joda-time</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.locationtech.geomesa</groupId>
+			<artifactId>geomesa-utils</artifactId>
+			<version>1.2.4</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>joda-time</artifactId>
+					<groupId>joda-time</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.zookeeper</groupId>
+			<artifactId>zookeeper</artifactId>
+			<version>3.4.8</version>
+		</dependency>
+	</dependencies>
+
+</project>

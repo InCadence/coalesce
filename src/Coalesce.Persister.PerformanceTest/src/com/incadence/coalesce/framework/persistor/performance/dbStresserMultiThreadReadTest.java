@@ -3,6 +3,7 @@ package com.incadence.coalesce.framework.persistor.performance;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.Array;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -28,34 +29,41 @@ import com.incadencecorp.coalesce.framework.testobjects.MissionEntity;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 import com.incadencecorp.coalesce.framework.persistance.accumulo.AccumuloPersistor;
 
-public class dbStresserMultiThreadTest {
+public class dbStresserMultiThreadReadTest {
 	final static Logger _log = Logger.getLogger("TesterLog");
 	static ServerConn _serCon;
 	static AccumuloPersistor _psPersistor;
 
 	public static void main(String[] args) {
-		int ITERATION_LIMIT = 100000;
-		int CAPTURE_INTERVAL=100;
-		appRunner._coalesceFramework = new CoalesceFramework();
+		int ITERATION_LIMIT = 10000;
+		int CAPTURE_INTERVAL=10;
+		int READ_SIZE = 100;
+		myappRunner._coalesceFramework = new CoalesceFramework();
 
 		try {
-			if (dbStresserMultiThreadTest.OpenConnection() == true) {
-				appRunner._coalesceFramework
-						.initialize(dbStresserMultiThreadTest._psPersistor);
+			if (dbStresserMultiThreadReadTest.OpenConnection() == true) {
+				myappRunner._coalesceFramework
+						.initialize(dbStresserMultiThreadReadTest._psPersistor);
+				try {
+					myappRunner.keys = myappRunner._coalesceFramework.getCoalesceEntityKeysForEntityId(".*", ".*", ".*");
+				} catch (CoalescePersistorException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				// timeLogger = new ArrayList<TimeTrack>();
-				Thread vol1 = new Thread(new appRunner(ITERATION_LIMIT, CAPTURE_INTERVAL));
+				Thread vol1 = new Thread(new myappRunner(ITERATION_LIMIT, CAPTURE_INTERVAL, READ_SIZE));
 				vol1.setName("Thread #1");
 				vol1.start();
-				Thread vol2 = new Thread(new appRunner(ITERATION_LIMIT, CAPTURE_INTERVAL));
+				Thread vol2 = new Thread(new myappRunner(ITERATION_LIMIT, CAPTURE_INTERVAL, READ_SIZE));
 				vol2.setName("Thread #2");
 				vol2.start();
-				Thread vol3 = new Thread(new appRunner(ITERATION_LIMIT, CAPTURE_INTERVAL));
+				Thread vol3 = new Thread(new myappRunner(ITERATION_LIMIT, CAPTURE_INTERVAL, READ_SIZE));
 				vol3.setName("Thread #3");
 				vol3.start();
-				Thread vol4 = new Thread(new appRunner(ITERATION_LIMIT, CAPTURE_INTERVAL));
+				Thread vol4 = new Thread(new myappRunner(ITERATION_LIMIT, CAPTURE_INTERVAL, READ_SIZE));
 				vol4.setName("Thread #4");
 				vol4.start();
-				Thread vol5 = new Thread(new appRunner(ITERATION_LIMIT, CAPTURE_INTERVAL));
+				/*Thread vol5 = new Thread(new appRunner(ITERATION_LIMIT, CAPTURE_INTERVAL));
 				vol5.setName("Thread #5");
 				vol5.start();
 				Thread vol6 = new Thread(new appRunner(ITERATION_LIMIT, CAPTURE_INTERVAL));
@@ -73,7 +81,7 @@ public class dbStresserMultiThreadTest {
 				Thread vol10 = new Thread(new appRunner(ITERATION_LIMIT, CAPTURE_INTERVAL));
 				vol10.setName("Thread #10");
 				vol10.start();
-				/*Thread vol11 = new Thread(new appRunner(ITERATION_LIMIT, CAPTURE_INTERVAL));
+				Thread vol11 = new Thread(new appRunner(ITERATION_LIMIT, CAPTURE_INTERVAL));
 				vol11.setName("Thread #11");
 				vol11.start();
 				Thread vol12 = new Thread(new appRunner(ITERATION_LIMIT, CAPTURE_INTERVAL));
@@ -109,14 +117,17 @@ public class dbStresserMultiThreadTest {
 	}
 }
 
-class appRunner implements Runnable {
+class myappRunner implements Runnable {
 	private Object mutexXMLLogger = new Object();
 	int ITERATION_LIMIT = 10;
 	int CAPTURE_METRICS_INTERVAL = 1;
-	int LOG_INTERVAL = 1000;
+	int LOG_INTERVAL = 100;
+	int READ_SIZE = 0;
 	ServerConn serCon;
 
 	static CoalesceFramework _coalesceFramework;
+	static List<String> keys;
+
 	private String _threadID;
 
 	public String getThreadID() {
@@ -135,18 +146,21 @@ class appRunner implements Runnable {
 	private List<TimeTrack> timeLogger;
 	Document dom;
 
-	public appRunner(int iteration_lim) {
+	public myappRunner(int iteration_lim) {
 		this.ITERATION_LIMIT = iteration_lim;
 	}
 
-	public appRunner(int iteration_lim, int cap_interval) {
+	public myappRunner(int iteration_lim, int cap_interval, int read_size) {
 		this.ITERATION_LIMIT = iteration_lim;
 		this.CAPTURE_METRICS_INTERVAL = cap_interval;
+		this.READ_SIZE=read_size;
 	}
 
 	@Override
 	public void run() {
 		String threadID = String.valueOf(Thread.currentThread().getId());
+		
+
 		try {
 			timeLogger = new ArrayList<TimeTrack>();
 			this.setThreadID(String.valueOf(Thread.currentThread().toString()));
@@ -162,26 +176,25 @@ class appRunner implements Runnable {
 			this.createDOMDocument();
 			for (_iteration_counter = 0; _iteration_counter <= ITERATION_LIMIT; _iteration_counter++) {
 				_timeTrack = new TimeTrack();
+				masterCounter += 1;
+				ArrayList<String> keyset = new ArrayList<String>();
+				for (int i=0;i<this.READ_SIZE;i++) {
+					keyset.add(keys.get((int) Math.round(Math.random()*keys.size())));
+				}
+				getEntities( _timeTrack,
+						keyset, threadID);				
+				if (this.masterCounter % CAPTURE_METRICS_INTERVAL == 0) {
+					timeLogger.add(_timeTrack);
+					if(this.masterCounter % LOG_INTERVAL == 0) {
+						System.out.println("Thread: " + threadID + " Completed: " + this.masterCounter);
+					}
+				
 
-				CoalesceEntity _coalesceEntity = new CoalesceEntity();
-				String generateEntityVersionNumber = this
-						.generateEntityVersionNumber(_iteration_counter);
-				_coalesceEntity = this.createEntity("1.0."
-						.concat(generateEntityVersionNumber));
-				if (_coalesceEntity != null) {
-					if (this.masterCounter % CAPTURE_METRICS_INTERVAL == 0) {
-						saveEntity(_timeTrack, _coalesceEntity, threadID);
-						_timeTrack.setEntityID(_coalesceEntity.getKey());
-						timeLogger.add(_timeTrack);
-						_timeTrack = null;
-						if(this.masterCounter % LOG_INTERVAL == 0) {
-							System.out.println("Thread: " + threadID + " Completed: " + this.masterCounter);
-						}
-					} else
-						appRunner._coalesceFramework
-								.saveCoalesceEntity(_coalesceEntity);
-				} else
-					break;
+				_timeTrack = null;
+				
+					
+				} 
+				
 			}
 			synchronized (mutexXMLLogger) {
 				this.createDOMTree();
@@ -193,7 +206,7 @@ class appRunner implements Runnable {
 				this.printToFile("datafile_" + threadID + "_persistance.xml");
 			}
 		} catch (Exception ex) {
-			dbStresserMultiThreadTest._log.log(java.util.logging.Level.SEVERE,
+			dbStresserMultiThreadReadTest._log.log(java.util.logging.Level.SEVERE,
 					ex.toString());
 		}
 	}
@@ -219,9 +232,10 @@ class appRunner implements Runnable {
 
 	}
 
-	private void saveEntity(TimeTrack _timeTrack,
-			CoalesceEntity _coalesceEntity, String threadVal)
+	private void getEntities(TimeTrack _timeTrack,
+			List<String>keyset, String threadVal)
 			throws CoalescePersistorException {
+		
 		_timeTrack.setStartTime(getCurrentTime());
 		_timeTrack.setStartMSTime(getCurrentTime(false));
 		_timeTrack.setIterationVal(String.valueOf(masterCounter));
@@ -229,16 +243,18 @@ class appRunner implements Runnable {
 				.valueOf(CAPTURE_METRICS_INTERVAL));
 		if (_timeTrack.getThread() == "" | _timeTrack.getThread() == null)
 			_timeTrack.setThread(threadVal);
+		String[] keys = (String []) Array.newInstance(String.class, keyset.size());
+		keys = keyset.toArray(keys);
+		myappRunner._coalesceFramework.getCoalesceEntities(keys);
 
-		appRunner._coalesceFramework.saveCoalesceEntity(_coalesceEntity);
+
 		_timeTrack.setStopTime(getCurrentTime());
 		_timeTrack.setStopMSTime(getCurrentTime(false));
 	}
 
 	private String generateEntityVersionNumber(int currentIterationNumber) {
 		String entityVersion = "";
-		masterCounter += 1;
-		if (currentIterationNumber % 10000 == 0) {
+			if (currentIterationNumber % 10000 == 0) {
 			majorVal += 1;
 			minorVal = 0;
 			// outConsoleData(masterCounter, "INCREMENT: ");
@@ -263,7 +279,7 @@ class appRunner implements Runnable {
 			System.out
 					.println("Error while trying to instantiate DocumentBuilder "
 							+ ex.toString());
-			dbStresserMultiThreadTest._log.log(java.util.logging.Level.SEVERE,
+			dbStresserMultiThreadReadTest._log.log(java.util.logging.Level.SEVERE,
 					ex.toString());
 		}
 
@@ -345,7 +361,7 @@ class appRunner implements Runnable {
 			else
 				System.out.println("Data file for Test not available.  Write error.");
 		} catch (IOException ex) {
-			dbStresserMultiThreadTest._log.log(java.util.logging.Level.SEVERE, ex.toString());
+			dbStresserMultiThreadReadTest._log.log(java.util.logging.Level.SEVERE, ex.toString());
 		}finally {
 			fileOutputStream.close();
 		}

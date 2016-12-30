@@ -15,6 +15,7 @@
 		<felix.scr.annotations.version>1.7.0</felix.scr.annotations.version>
 		<cxf.version>3.0.1</cxf.version>
 		<geotools.version>13.1</geotools.version>
+                <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<changelog.start.tag>coalesce-0.0.16</changelog.start.tag>
 		<changelog.end.tag>HEAD</changelog.end.tag>
@@ -67,11 +68,11 @@
 				<artifactId>coalesce-synchronizer-feature</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-			<!-- <dependency> -->
-			<!-- <groupId>com.incadencecorp.coalesce</groupId> -->
-			<!-- <artifactId>coalesce-framework-persister-mysql</artifactId> -->
-			<!-- <version>${coalescePersisterVersionMySQL}</version> -->
-			<!-- </dependency> -->
+			<dependency>
+				<groupId>com.incadencecorp.coalesce</groupId>
+				<artifactId>coalesce-framework-persister-accumulo</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>com.incadencecorp.coalesce</groupId>
 				<artifactId>coalesce-framework-persister-postgresql</artifactId>

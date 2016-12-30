@@ -33,16 +33,17 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceStringField;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
-import com.incadencecorp.coalesce.framework.objects.MissionEntity;
+import com.incadencecorp.coalesce.framework.testobjects.MissionEntity;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
-import com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLPersistor;
+import com.incadencecorp.coalesce.framework.persistance.accumulo.AccumuloPersistor;
 
 public class dbStresserSingleThreadTest {
 
-	static int _ITERATION_LIMIT = 100;
-	static int _CAPTURE_METRICS_INTERVAL = 10;
+	static int _ITERATION_LIMIT = 1000000;
+	static int _CAPTURE_METRICS_INTERVAL = 100;
+	static int _LOG_PROGRESS_INTERVAL = 1000;
 
-	static PostGreSQLPersistor _dbPersistor;
+	static AccumuloPersistor _dbPersistor;
 	static CoalesceFramework _coalesceFramework;
 	static ServerConn _serCon;
 
@@ -83,10 +84,11 @@ public class dbStresserSingleThreadTest {
 
 	public static boolean OpenConnection() throws SQLException {
 		_serCon = new ServerConn();
-		_serCon.setDatabase("CoalesceDatabase");
+		_serCon.setDatabase("accumulodev");
 		_serCon.setUser("root");
-		_serCon.setPassword("Passw0rd");
-		_dbPersistor = new PostGreSQLPersistor();
+		_serCon.setPassword("secret");
+		_serCon.setServerName("accumulodev");
+		_dbPersistor = new AccumuloPersistor();
 		_dbPersistor.initialize(_serCon);
 
 		return true;
@@ -113,6 +115,11 @@ public class dbStresserSingleThreadTest {
 						_timeTrack.setEntityID(_xsdEntity.getKey());
 						_timeLogger.add(_timeTrack);
 						_timeTrack = null;
+						if (dbStresserSingleThreadTest._masterCounter
+								% _LOG_PROGRESS_INTERVAL == 0) {
+							System.out.println("Completed interations: "+
+								dbStresserSingleThreadTest._masterCounter);
+						}
 					} else
 						dbStresserSingleThreadTest._coalesceFramework
 								.saveCoalesceEntity(_xsdEntity);
