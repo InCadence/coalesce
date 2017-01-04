@@ -126,7 +126,7 @@
                                     <xsd>${basedir}/src/main/resources/Enumerations.xsd</xsd>
                                     <packagename>com.incadencecorp.coalesce.api</packagename>
                                     <extension>true</extension>
-                                </xsdOption>                                
+                                </xsdOption>   
                             </xsdOptions>
                         </configuration>
                         <goals>

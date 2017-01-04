@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.incadencecorp.coalesce.framework.jobs.AbstractCoalesceJob;
+import com.incadencecorp.coalesce.framework.tasks.MetricResults;
 
 /**
  * Stores the metrics for an individual job run.
@@ -35,7 +36,7 @@ public class JobMetrics {
     private String name;
     private AbstractCoalesceJob<?, ?> job;
 
-    private Collection<StopWatch> taskMetrics;
+    private MetricResults<?>[] taskMetrics;
     private int totalTasks;
     private int totalTasksFailed;
     private int totalTasksSuccess;
@@ -52,7 +53,7 @@ public class JobMetrics {
      *
      * @param name
      */
-    public JobMetrics(final AbstractCoalesceJob<?, ?> pJob, Collection<StopWatch> pMetrics)
+    public JobMetrics(final AbstractCoalesceJob<?, ?> pJob, MetricResults<?>... pMetrics)
     {
 
         job = pJob;
@@ -61,7 +62,7 @@ public class JobMetrics {
         taskRunningMetrics = new RunningAverage();
         entityTypes = new HashSet<>();
 
-//        calculateStatistics();
+        calculateStatistics(pMetrics);
     }
 
     // ----------------------------------------------------------------------//
@@ -141,7 +142,7 @@ public class JobMetrics {
         return name;
     }
 
-    public Collection<StopWatch> getTaskMetrics()
+    public MetricResults<?>[] getTaskMetrics()
     {
         return taskMetrics;
     }
@@ -155,27 +156,31 @@ public class JobMetrics {
     // Protected Functions
     // ----------------------------------------------------------------------//
 
-    // TODO Implement Task Metrics
-    
-    // private void calculateStatistics() {
-    //
-    // totalTasks = taskMetrics.size();
-    // totalTasksFailed = 0;
-    // totalTasksSuccess = 0;
-    //
-    // for (MetricsResultsType metric: taskMetrics) {
-    // switch (metric.getStatus()) {
-    // case FAILED:
-    // case FAILED_PENDING:
-    // totalTasksFailed++;
-    // break;
-    // case SUCCESS:
-    // totalTasksSuccess++;
-    // }
-    // taskRunningMetrics.add(metric.getTimeFinished() -
-    // metric.getTimeStarted());
-    // entityTypes.addAll(metric.getEntityTypes());
-    // }
-    // }
+    private void calculateStatistics(MetricResults<?>... metrics)
+    {
+        totalTasks = metrics.length;
+        totalTasksFailed = 0;
+        totalTasksSuccess = 0;
+
+        for (MetricResults<?> metric : metrics)
+        {
+            if (metric.getResults() != null)
+            {
+                switch (metric.getResults().getStatus()) {
+                case FAILED:
+                case FAILED_PENDING:
+                    totalTasksFailed++;
+                    break;
+                case SUCCESS:
+                    totalTasksSuccess++;
+                }
+            }
+
+            taskRunningMetrics.add(metric.getWatch().getWorkLife());
+
+            // TODO Not Implemented
+            // entityTypes.addAll(metric.getEntityTypes());
+        }
+    }
 
 }

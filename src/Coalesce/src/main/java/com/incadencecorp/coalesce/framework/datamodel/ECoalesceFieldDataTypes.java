@@ -20,11 +20,16 @@ package com.incadencecorp.coalesce.framework.datamodel;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlType;
+
 /**
  * Data types supported by Coalesce.
  * 
  * @author n78554
  */
+@XmlType(name = "ECoalesceFieldDataTypes", namespace = "http://framework.coalesce.incadencecorp.com/datamodel")
+@XmlEnum
 public enum ECoalesceFieldDataTypes
 {
 

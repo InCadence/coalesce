@@ -17,6 +17,7 @@
 	<modules>
 		<module>API</module>
 		<module>Common</module>
+		<module>Client-Common</module>
 		<module>CRUD</module>
 		<module>Search</module>
 		<module>Manager</module>

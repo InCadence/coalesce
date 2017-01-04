@@ -64,6 +64,8 @@
 								<extraargs>
 									<extraarg>-xjc-Xsetters</extraarg>
 									<extraarg>-xjc-Xinheritance</extraarg>
+									<extraarg>-nexclude</extraarg>
+									<extraarg>http://coalesce.incadencecorp.com/api</extraarg>
 								</extraargs>
 							</defaultOptions>
 							<wsdlRoot>${basedir}/src/main/resources</wsdlRoot>

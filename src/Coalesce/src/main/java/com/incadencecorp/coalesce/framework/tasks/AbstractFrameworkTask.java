@@ -38,7 +38,7 @@ import com.incadencecorp.coalesce.framework.jobs.metrics.StopWatch;
  *
  * @param <T>
  */
-public abstract class AbstractFrameworkTask<T, Y extends ICoalesceResponseTypeBase> implements Callable<Y> {
+public abstract class AbstractFrameworkTask<T, Y extends ICoalesceResponseTypeBase> implements Callable<MetricResults<Y>> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractFrameworkTask.class);
 
@@ -88,22 +88,32 @@ public abstract class AbstractFrameworkTask<T, Y extends ICoalesceResponseTypeBa
         return id;
     }
 
+    /**
+     * @return the metrics for running the job.
+     */
+    public final StopWatch getMetrics()
+    {
+        return watch;
+    }
+    
     /*--------------------------------------------------------------------------
     Override Methods
     --------------------------------------------------------------------------*/
 
     @Override
-    public Y call()
+    public MetricResults<Y> call()
     {
         try
         {
+            MetricResults<Y> result = new MetricResults<Y>();
+            
             watch.start();
 
-            Y result = doWork(_framework, _params);
+            result.setResults(doWork(_framework, _params));
             
             watch.finish();
 
-            if (result.getStatus() != EResultStatus.SUCCESS)
+            if (!result.isSuccessful())
             {
                 LOGGER.error(String.format(CoalesceErrors.FAILED_TASK,
                                            this.getClass().getName(),
@@ -113,6 +123,8 @@ public abstract class AbstractFrameworkTask<T, Y extends ICoalesceResponseTypeBa
                 logParameters();
             }
 
+            result.setWatch(watch);
+            
             return result;
         }
         catch (Exception e)

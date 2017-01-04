@@ -17,6 +17,7 @@
 
 package com.incadencecorp.coalesce.framework.jobs;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
@@ -27,10 +28,11 @@ import org.slf4j.LoggerFactory;
 import com.incadencecorp.coalesce.api.EJobStatus;
 import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.api.ICoalesceJob;
-import com.incadencecorp.coalesce.api.ICoalesceResponseTypeBase;
+import com.incadencecorp.coalesce.api.ICoalesceResponseType;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.CoalesceComponentImpl;
 import com.incadencecorp.coalesce.framework.jobs.metrics.StopWatch;
+import com.incadencecorp.coalesce.framework.tasks.MetricResults;
 
 /**
  * Abstract base for jobs in Coalesce.
@@ -39,7 +41,7 @@ import com.incadencecorp.coalesce.framework.jobs.metrics.StopWatch;
  * @param <T> input type
  * @param <Y> output type
  */
-public abstract class AbstractCoalesceJob<T, Y extends ICoalesceResponseTypeBase> extends CoalesceComponentImpl
+public abstract class AbstractCoalesceJob<T, Y extends ICoalesceResponseType<?>> extends CoalesceComponentImpl
         implements ICoalesceJob, Callable<Y> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCoalesceJob.class);
@@ -186,6 +188,14 @@ public abstract class AbstractCoalesceJob<T, Y extends ICoalesceResponseTypeBase
         return false;
     }
 
+    /**
+     * @return the metrics of any task performed by this job.
+     */
+    public MetricResults<?>[] getTaskMetrics()
+    {
+        return null;
+    }
+    
     /*--------------------------------------------------------------------------
     Protected Methods
     --------------------------------------------------------------------------*/

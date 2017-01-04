@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://framework.coalesce.incadencecorp.com/datamodel" xmlns:tns="http://framework.coalesce.incadencecorp.com/datamodel"
+	elementFormDefault="qualified" attributeFormDefault="qualified">
+
+	<xs:simpleType name="ECoalesceFieldDataTypes">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="STRING_TYPE" />
+			<xs:enumeration value="STRING_LIST_TYPE" />
+			<xs:enumeration value="DATE_TIME_TYPE" />
+			<xs:enumeration value="URI_TYPE" />
+			<xs:enumeration value="BINARY_TYPE" />
+			<xs:enumeration value="BOOLEAN_TYPE" />
+			<xs:enumeration value="BOOLEAN_LIST_TYPE" />
+			<xs:enumeration value="INTEGER_TYPE" />
+			<xs:enumeration value="INTEGER_LIST_TYPE" />
+			<xs:enumeration value="GUID_TYPE" />
+			<xs:enumeration value="GUID_LIST_TYPE" />
+			<xs:enumeration value="GEOCOORDINATE_TYPE" />
+			<xs:enumeration value="GEOCOORDINATE_LIST_TYPE" />
+			<xs:enumeration value="LINE_STRING_TYPE" />
+			<xs:enumeration value="POLYGON_TYPE" />
+			<xs:enumeration value="CIRCLE_TYPE" />
+			<xs:enumeration value="FILE_TYPE" />
+			<xs:enumeration value="DOUBLE_TYPE" />
+			<xs:enumeration value="DOUBLE_LIST_TYPE" />
+			<xs:enumeration value="FLOAT_TYPE" />
+			<xs:enumeration value=" FLOAT_LIST_TYPE" />
+			<xs:enumeration value="LONG_TYPE" />
+			<xs:enumeration value="LONG_LIST_TYPE" />
+			<xs:enumeration value="ENUMERATION_TYPE" />
+			<xs:enumeration value="ENUMERATION_LIST_TYPE" />
+		</xs:restriction>
+	</xs:simpleType>
+
+</xs:schema>

@@ -17,18 +17,44 @@
 	</jxb:globalBindings>
 
 	<jxb:bindings schemaLocation="Common.xsd">
-	
+
+		<!-- Responses -->
+
 		<jxb:bindings node="//xs:complexType[@name='BaseResponse']">
 			<inheritance:implements>com.incadencecorp.coalesce.api.ICoalesceResponseTypeBase
 			</inheritance:implements>
 		</jxb:bindings>
 
-		<jxb:bindings node="//xs:complexType[@name='ResultsType']">
-			<inheritance:implements>com.incadencecorp.coalesce.api.ICoalesceResponseType&lt;java.lang.String&gt; </inheritance:implements>
+		<jxb:bindings node="//xs:complexType[@name='StringResponse']">
+			<inheritance:implements>com.incadencecorp.coalesce.api.ICoalesceResponseType&lt;java.util.List&lt;ResultsType&gt;&gt;
+			</inheritance:implements>
 		</jxb:bindings>
 
-		<jxb:bindings node="//xs:complexType[@name='StringResponse']">
-			<inheritance:implements>com.incadencecorp.coalesce.api.ICoalesceResponseType&lt;java.util.List&lt;ResultsType&gt;&gt; </inheritance:implements>
+		<jxb:bindings node="//xs:complexType[@name='MultipleResponse']">
+			<inheritance:implements>com.incadencecorp.coalesce.api.ICoalesceResponseType&lt;java.util.List&lt;ResponseResultsType&gt;&gt;
+			</inheritance:implements>
+		</jxb:bindings>
+
+		<jxb:bindings node="//xs:complexType[@name='StatusResponse']">
+			<inheritance:implements>com.incadencecorp.coalesce.api.ICoalesceResponseType&lt;java.util.List&lt;StatusType&gt;&gt;
+			</inheritance:implements>
+		</jxb:bindings>
+
+		<!-- Result Types -->
+
+		<jxb:bindings node="//xs:complexType[@name='ResponseResultsType']">
+			<inheritance:implements>com.incadencecorp.coalesce.api.ICoalesceResponseType&lt;BaseResponse&gt;
+			</inheritance:implements>
+		</jxb:bindings>
+
+		<jxb:bindings node="//xs:complexType[@name='ResultsType']">
+			<inheritance:implements>com.incadencecorp.coalesce.api.ICoalesceResponseType&lt;java.lang.String&gt;
+			</inheritance:implements>
+		</jxb:bindings>
+
+		<jxb:bindings node="//xs:complexType[@name='StatusType']">
+			<inheritance:implements>com.incadencecorp.coalesce.api.ICoalesceResponseType&lt;com.incadencecorp.coalesce.api.EJobStatus&gt;
+			</inheritance:implements>
 		</jxb:bindings>
 
 	</jxb:bindings>

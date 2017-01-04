@@ -32,6 +32,7 @@ public class CoalesceResponseType<T> implements ICoalesceResponseType<T> {
     --------------------------------------------------------------------------*/
 
     private EResultStatus _status;
+    private String id;
     private T _result;
 
     /*--------------------------------------------------------------------------
@@ -73,6 +74,20 @@ public class CoalesceResponseType<T> implements ICoalesceResponseType<T> {
     {
         _result = result;
     }
+    
+    @Override
+    public String getId()
+    {
+        return id;
+    }
+
+    @Override
+    public void setId(String value)
+    {
+        id = value;
+        
+    }
+
 
     /*--------------------------------------------------------------------------
     Getters / Setters

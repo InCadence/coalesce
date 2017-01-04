@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ** * SECURITY CLASSIFICATION: UNCLASSIFIED * Copyright 2014 - Lockheed 
+	Martin Corporation, All Rights Reserved * * Notwithstanding any contractor 
+	copyright notice, the government has * Unlimited Rights in this work as defined 
+	by DFARS 252.227-7013 and * 252.227-7014. Use of this work other than as 
+	specifically authorized by * these DFARS Clauses may violate government rights 
+	in this work. * * DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 
+	(a)(16) * Unlimited Rights. The Government has the right to use, modify, 
+	* reproduce, perform, display, release or disclose this computer software 
+	* in whole or in part, in any manner, and for any purpose whatsoever, * and 
+	to have or authorize others to do so. * * Distribution Statement D. Distribution 
+	authorized to the Department of * Defense and U.S. DoD contractors only in 
+	support of US DoD efforts. * Other requests shall be referred to the ACINT 
+	Modernization Program * Management under the Director of the Office of Naval 
+	Intelligence. * * UNCLASSIFIED * -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://api.services.coalesce.incadencecorp.com/crud"
+	xmlns:tns="http://api.services.coalesce.incadencecorp.com/crud"
+	xmlns:cmn="http://api.services.coalesce.incadencecorp.com/common"
+	xmlns:enn="http://coalesce.incadencecorp.com/api" elementFormDefault="qualified"
+	attributeFormDefault="qualified" xmlns:fes="http://www.opengis.net/fes/2.0">
+
+	<xs:import namespace="http://api.services.coalesce.incadencecorp.com/common"
+		schemaLocation="../../../../../API/src/main/resources/Common.xsd" />
+
+	<xs:import namespace="http://coalesce.incadencecorp.com/api"
+		schemaLocation="../../../../../../Coalesce/src/main/resources/Enumerations.xsd" />
+
+	<xs:complexType name="DataObjectXmlRequest">
+		<xs:complexContent>
+			<xs:extension base="cmn:BaseRequest">
+				<xs:sequence>
+					<xs:element name="dataObjectXmlList" type="xs:string"
+						minOccurs="1" maxOccurs="unbounded"></xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="DataObjectUpdateStatusRequest">
+		<xs:complexContent>
+			<xs:extension base="cmn:BaseRequest">
+				<xs:sequence>
+					<xs:element name="taskList" type="tns:DataObjectStatusType"
+						minOccurs="1" maxOccurs="unbounded"></xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="DataObjectKeyRequest">
+		<xs:complexContent>
+			<xs:extension base="cmn:BaseRequest">
+				<xs:sequence>
+					<xs:element name="keyList" type="tns:DataObjectKeyType"
+						minOccurs="1" maxOccurs="unbounded"></xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="DataObjectLinkRequest">
+		<xs:complexContent>
+			<xs:extension base="cmn:BaseRequest">
+				<xs:sequence>
+					<xs:element name="linkagelist" type="tns:DataObjectLinkType"
+						minOccurs="1" maxOccurs="unbounded"></xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="DataObjectKeyType">
+		<xs:sequence>
+			<xs:element name="key" type="xs:string"></xs:element>
+			<xs:element name="ver" type="xs:int"></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="DataObjectStatusType">
+		<xs:sequence>
+			<xs:element name="key" type="xs:string"></xs:element>
+			<xs:element name="action" type="tns:DataObjectStatusActionType"></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:simpleType name="DataObjectStatusActionType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="markAsActive" />
+			<xs:enumeration value="markAsDeleted" />
+			<xs:enumeration value="markAsReadonly" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="DataObjectLinkType">
+		<xs:sequence>
+			<xs:element name="dataObjectKeySource" type="xs:string"></xs:element>
+			<xs:element name="dataObjectKeyTarget" type="xs:string"></xs:element>
+			<xs:element name="linkType" type="enn:ELinkType"></xs:element>
+			<xs:element name="action" type="tns:ELinkAction"></xs:element>
+			<xs:element name="label" type="xs:string"></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:simpleType name="ELinkAction">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="link" />
+			<xs:enumeration value="unlink" />
+			<xs:enumeration value="makereadonly" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:element name="CreateDataObjectRequest" type="tns:DataObjectXmlRequest"></xs:element>
+	<xs:element name="CreateDataObjectResponse" type="cmn:StringResponse"></xs:element>
+
+	<xs:element name="UpdateDataObjectRequest" type="tns:DataObjectXmlRequest"></xs:element>
+	<xs:element name="UpdateDataObjectResponse" type="cmn:StringResponse"></xs:element>
+
+	<xs:element name="RetrieveDataObjectRequest" type="tns:DataObjectKeyRequest"></xs:element>
+	<xs:element name="RetrieveDataObjectResponse" type="cmn:StringResponse"></xs:element>
+
+	<xs:element name="UpdateDataObjectStatusRequest" type="tns:DataObjectUpdateStatusRequest"></xs:element>
+	<xs:element name="UpdateDataObjectStatusResponse" type="cmn:StringResponse"></xs:element>
+
+	<xs:element name="LinkDataObjectRequest" type="tns:DataObjectLinkRequest"></xs:element>
+	<xs:element name="LinkDataObjectResponse" type="cmn:StringResponse"></xs:element>
+
+	<xs:element name="UnlinkDataObjectRequest" type="tns:DataObjectLinkRequest"></xs:element>
+	<xs:element name="UnlinkDataObjectResponse" type="cmn:StringResponse"></xs:element>
+
+</xs:schema>

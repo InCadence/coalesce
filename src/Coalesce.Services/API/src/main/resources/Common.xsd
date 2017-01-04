@@ -42,7 +42,7 @@
 
 	<xs:complexType name="BaseResponse">
 		<xs:sequence>
-			<xs:element name="jobId" type="xs:string"></xs:element>
+			<xs:element name="id" type="xs:string"></xs:element>
 			<xs:element name="status" type="enn:EResultStatus"></xs:element>
 			<xs:element name="requestId" type="xs:string"></xs:element>
 		</xs:sequence>
@@ -85,6 +85,7 @@
 
 	<xs:complexType name="ResponseResultsType">
 		<xs:sequence>
+			<xs:element name="id" type="xs:string"></xs:element>
 			<xs:element name="status" type="enn:EResultStatus"></xs:element>
 			<xs:element name="result" type="tns:BaseResponse"></xs:element>
 		</xs:sequence>
@@ -92,6 +93,7 @@
 
 	<xs:complexType name="ResultsType">
 		<xs:sequence>
+			<xs:element name="id" type="xs:string"></xs:element>
 			<xs:element name="status" type="enn:EResultStatus"></xs:element>
 			<xs:element name="result" type="xs:string"></xs:element>
 		</xs:sequence>
@@ -99,26 +101,10 @@
 
 	<xs:complexType name="StatusType">
 		<xs:sequence>
+			<xs:element name="id" type="xs:string"></xs:element>
 			<xs:element name="status" type="enn:EResultStatus"></xs:element>
-			<xs:element name="jobId" type="xs:string"></xs:element>
-			<xs:element name="jobStatus" type="enn:EJobStatus"></xs:element>
+			<xs:element name="result" type="enn:EJobStatus"></xs:element>
 		</xs:sequence>
-	</xs:complexType>
-
-	<xs:complexType name="MetricsResultsType">
-		<xs:complexContent>
-			<xs:extension base="tns:ResultsType">
-				<xs:sequence>
-					<xs:element name="jobId" type="xs:string"></xs:element>
-					<xs:element name="taskId" type="xs:string"></xs:element>
-					<xs:element name="timeCreated" type="xs:long"></xs:element>
-					<xs:element name="timeStarted" type="xs:long"></xs:element>
-					<xs:element name="timeFinished" type="xs:long"></xs:element>
-					<xs:element name="entityTypes" type="xs:string"
-						minOccurs="0" maxOccurs="unbounded"></xs:element>
-				</xs:sequence>
-			</xs:extension>
-		</xs:complexContent>
 	</xs:complexType>
 
 	<!-- Element Definitions -->

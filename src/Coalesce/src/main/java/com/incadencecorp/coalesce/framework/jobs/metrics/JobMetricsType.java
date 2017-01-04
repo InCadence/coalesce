@@ -18,10 +18,12 @@ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
 package com.incadencecorp.coalesce.framework.jobs.metrics;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
+import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.framework.jobs.AbstractCoalesceJob;
+import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceResponseType;
+import com.incadencecorp.coalesce.framework.tasks.MetricResults;
 
 /**
  * Stores the {@link RunningAverage running averages} and totals for a given job
@@ -251,67 +253,67 @@ public class JobMetricsType {
             break;
         }
 
-        // TODO Implement Task Metics
-        // JobMetrics indJobMetrics;
-        //
-        // Collection<MetricsResultsType> taskResults = job.getTaskResults();
-        // if (taskResults.size() > 0) {
-        // // Batch job - count tasks
-        // indJobMetrics = new JobMetrics(job, taskResults);
-        //
-        // totalWorkerThreads += taskResults.size();
-        //
-        // int success = 0;
-        //
-        // for (MetricsResultsType results: taskResults) {
-        // if (results.getStatus() == EResultStatus.SUCCESS) {
-        // success++;
-        // }
-        // }
-        //
-        // totalWorkerThreadsSuccess += success;
-        // totalWorkerThreadsFailed += taskResults.size() - success;
-        // } else {
-        // // Not a batch job - single worker thread
-        //
-        // MetricsResultsType singleResult =
-        // new ArrayList<MetricsResultsType>(job.getTaskResults()).get(0);
-        //
-        // if (singleResult != null) {
-        // singleResult.setTimeCreated(job.getMetrics().getCreated());
-        // singleResult.setTimeStarted(job.getMetrics().getStarted());
-        // singleResult.setTimeFinished(job.getMetrics().getCompleted());
-        // }
-        //
-        // List<MetricsResultsType> metrics = new
-        // ArrayList<MetricsResultsType>();
-        // metrics.add(singleResult);
-        // indJobMetrics = new JobMetrics(job, metrics);
-        //
-        // totalWorkerThreads += 1;
-        //
-        // switch (job.getJobStatus()) {
-        // case COMPLETE:
-        // totalWorkerThreadsSuccess += 1;
-        // break;
-        // case FAILED:
-        // case CANCELED:
-        // totalWorkerThreadsFailed += 1;
-        // break;
-        // default:
-        // // Do Nothing
-        // break;
-        // }
-        // }
-        //
-        // jobMetrics.add(indJobMetrics);
+        JobMetrics indJobMetrics;
+
+        MetricResults<?>[] metrics = job.getTaskMetrics();
+        if (metrics != null)
+        {
+            // Batch job - count tasks
+            indJobMetrics = new JobMetrics(job, metrics);
+
+            totalWorkerThreads += metrics.length;
+
+            for (MetricResults<?> results : metrics)
+            {
+                if (results.isSuccessful())
+                {
+                    totalWorkerThreadsSuccess++;
+                }
+                else
+                {
+                    totalWorkerThreadsFailed++;
+                }
+            }
+        }
+        else
+        {
+            // Not a batch job - single worker thread
+            MetricResults<CoalesceResponseType<Boolean>> metric = new MetricResults<CoalesceResponseType<Boolean>>(); 
+            
+            totalWorkerThreads += 1;
+
+            CoalesceResponseType<Boolean> result = new CoalesceResponseType<Boolean>();
+
+            switch (job.getJobStatus()) {
+            case COMPLETE:
+                result.setStatus(EResultStatus.SUCCESS);
+                totalWorkerThreadsSuccess += 1;
+                break;
+            case FAILED:
+            case CANCELED:
+                result.setStatus(EResultStatus.FAILED);
+                totalWorkerThreadsFailed += 1;
+                break;
+            default:
+                result.setStatus(EResultStatus.FAILED_PENDING);
+                break;
+            }
+
+            metric.setWatch(job.getMetrics());
+            metric.setResults(result);
+
+            indJobMetrics = new JobMetrics(job, metric);
+
+        }
+
+        jobMetrics.add(indJobMetrics);
 
         total += 1;
 
-        // TODO Implement Async Check
-        // if (job.isAsync()) {
-        // totalAsync += 1;
-        // }
+        if (job.isAsync())
+        {
+            totalAsync += 1;
+        }
 
         // Increment Metrics
         // TODO Not implemented

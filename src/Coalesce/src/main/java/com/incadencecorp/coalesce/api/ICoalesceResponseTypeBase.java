@@ -32,10 +32,18 @@ public interface ICoalesceResponseTypeBase {
     EResultStatus getStatus();
 
     /**
-     * @return the status
+     * Sets the status
      */
     void setStatus(EResultStatus value);
 
+    /**
+     * @return the ID
+     */
+    String getId();
 
+    /**
+     * Sets the ID
+     */
+    void setId(String value);
     
 }

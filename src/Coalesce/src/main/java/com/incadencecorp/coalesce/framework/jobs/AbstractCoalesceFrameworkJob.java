@@ -17,6 +17,8 @@
 
 package com.incadencecorp.coalesce.framework.jobs;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -25,14 +27,16 @@ import java.util.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.incadencecorp.coalesce.api.EJobStatus;
 import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.api.ICoalesceFrameworkJob;
 import com.incadencecorp.coalesce.api.ICoalesceResponseType;
-import com.incadencecorp.coalesce.api.ICoalesceResponseTypeBase;
 import com.incadencecorp.coalesce.api.persistance.ICoalesceExecutorService;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
+import com.incadencecorp.coalesce.framework.jobs.metrics.StopWatch;
 import com.incadencecorp.coalesce.framework.tasks.AbstractFrameworkTask;
+import com.incadencecorp.coalesce.framework.tasks.MetricResults;
 
 /**
  * Abstract base for persister jobs in Coalesce.
@@ -40,8 +44,8 @@ import com.incadencecorp.coalesce.framework.tasks.AbstractFrameworkTask;
  * @author Derek
  * @param <T> input type
  */
-public abstract class AbstractCoalesceFrameworkJob<T, Y extends ICoalesceResponseTypeBase, X extends ICoalesceResponseType<?>>
-        extends AbstractCoalesceJob<T, ICoalesceResponseType<List<X>>> implements ICoalesceFrameworkJob {
+public abstract class AbstractCoalesceFrameworkJob<T, Y extends ICoalesceResponseType<List<X>>, X extends ICoalesceResponseType<?>>
+        extends AbstractCoalesceJob<T, Y> implements ICoalesceFrameworkJob {
 
     private static Logger LOGGER = LoggerFactory.getLogger(AbstractCoalesceFrameworkJob.class);
 
@@ -51,6 +55,7 @@ public abstract class AbstractCoalesceFrameworkJob<T, Y extends ICoalesceRespons
 
     private ICoalesceExecutorService _service;
     private CoalesceFramework _framework;
+    private List<MetricResults<X>> taskMetrics = null;
 
     /*--------------------------------------------------------------------------
     Constructors
@@ -71,15 +76,80 @@ public abstract class AbstractCoalesceFrameworkJob<T, Y extends ICoalesceRespons
     --------------------------------------------------------------------------*/
 
     @Override
-    public void setExecutor(ICoalesceExecutorService service)
+    public final void setExecutor(ICoalesceExecutorService service)
     {
         _service = service;
     }
 
     @Override
-    public void setTarget(CoalesceFramework framework)
+    public final void setTarget(CoalesceFramework framework)
     {
         _framework = framework;
+    }
+
+    @Override
+    public final MetricResults<X>[] getTaskMetrics()
+    {
+        return (MetricResults<X>[]) taskMetrics.toArray();
+    }
+    
+    /**
+     * @return the response with the job ID and status. Also includes the
+     *         results if completed or an error message if an exception was
+     *         thrown with the status of JOB_FAILED.
+     */
+    public final Y getResponse()
+    {
+        Y response = null;
+
+        if (isDone())
+        {
+            try
+            {
+                // Get Response
+                response = getFuture().get();
+                if (getJobStatus() == EJobStatus.COMPLETE)
+                {
+                    response.setStatus(EResultStatus.SUCCESS);
+                }
+                else
+                {
+                    response.setStatus(EResultStatus.FAILED_PENDING);
+                }
+            }
+            catch (InterruptedException | ExecutionException e)
+            {
+                LOGGER.error(e.getMessage(), e);
+
+                // Create Response w/ Error Message
+                response = createResponse();
+                response.setStatus(EResultStatus.FAILED);
+            }
+        }
+        else
+        {
+            // Create Response w/o Results
+            response = createResponse();
+            if (getJobStatus() == EJobStatus.COMPLETE)
+            {
+                response.setStatus(EResultStatus.SUCCESS);
+            }
+            else
+            {
+                response.setStatus(EResultStatus.FAILED_PENDING);
+            }
+
+            // Check for Race Condition (Job completed after isDone() check and
+            // before response creation)
+            if (getJobStatus() == EJobStatus.COMPLETE)
+            {
+                setJobStatus(EJobStatus.IN_PROGRESS);
+            }
+        }
+
+        response.setId(getJobId());
+
+        return response;
     }
 
     /*--------------------------------------------------------------------------
@@ -87,22 +157,25 @@ public abstract class AbstractCoalesceFrameworkJob<T, Y extends ICoalesceRespons
     --------------------------------------------------------------------------*/
 
     @Override
-    public final ICoalesceResponseType<List<X>> doWork(T params) throws CoalesceException
+    public final Y doWork(T params) throws CoalesceException
     {
-        ICoalesceResponseType<List<X>> response = createResponse();
+        Y response = createResponse();
 
         Collection<AbstractFrameworkTask<?, X>> tasks = getTasks(params);
-        
-        for (AbstractFrameworkTask<?, X> task : tasks) {
+
+        for (AbstractFrameworkTask<?, X> task : tasks)
+        {
             task.setFramework(_framework);
         }
-        
+
         // Execute Tasks
         try
         {
-            for (Future<X> future : _service.invokeAll(tasks))
+            taskMetrics = new ArrayList<MetricResults<X>>();
+
+            for (Future<MetricResults<X>> future : _service.invokeAll(tasks))
             {
-                X result;
+                MetricResults<X> result;
 
                 try
                 {
@@ -112,19 +185,22 @@ public abstract class AbstractCoalesceFrameworkJob<T, Y extends ICoalesceRespons
                 {
                     LOGGER.error(e.getMessage(), e);
 
-                    result = createFailedResults(e);
-                    result.setStatus(EResultStatus.FAILED);
+                    result = new MetricResults<X>();
+                    result.setResults(createFailedResults(e));
+                    result.getResults().setStatus(EResultStatus.FAILED);
                 }
 
+                taskMetrics.add(result);
+
                 // Add Result to Response
-                response.getResult().add(result);
+                response.getResult().add(result.getResults());
             }
         }
         catch (InterruptedException e)
         {
             throw new CoalesceException("Job Interrupted", e);
         }
-
+        
         return response;
     }
 
@@ -134,7 +210,7 @@ public abstract class AbstractCoalesceFrameworkJob<T, Y extends ICoalesceRespons
 
     protected abstract Collection<AbstractFrameworkTask<?, X>> getTasks(T params);
 
-    protected abstract ICoalesceResponseType<List<X>> createResponse();
+    protected abstract Y createResponse();
 
     protected abstract X createFailedResults(Exception e);
 

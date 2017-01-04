@@ -1,19 +1,19 @@
 /*-----------------------------------------------------------------------------'
-Copyright 2016 - InCadence Strategic Solutions Inc., All Rights Reserved
+ Copyright 2017 - InCadence Strategic Solutions Inc., All Rights Reserved
 
-Notwithstanding any contractor copyright notice, the Government has Unlimited
-Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
-of this work other than as specifically authorized by these DFARS Clauses may
-violate Government rights in this work.
+ Notwithstanding any contractor copyright notice, the Government has Unlimited
+ Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+ of this work other than as specifically authorized by these DFARS Clauses may
+ violate Government rights in this work.
 
-DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
-Unlimited Rights. The Government has the right to use, modify, reproduce,
-perform, display, release or disclose this computer software and to have or
-authorize others to do so.
+ DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+ Unlimited Rights. The Government has the right to use, modify, reproduce,
+ perform, display, release or disclose this computer software and to have or
+ authorize others to do so.
 
-Distribution Statement D. Distribution authorized to the Department of
-Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
------------------------------------------------------------------------------*/
+ Distribution Statement D. Distribution authorized to the Department of
+ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+ -----------------------------------------------------------------------------*/
 
 package com.incadencecorp.coalesce.services.common;
 
@@ -40,6 +40,7 @@ import com.incadencecorp.coalesce.api.persistance.ICoalesceExecutorService;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.CoalesceThreadFactoryImpl;
+import com.incadencecorp.coalesce.framework.jobs.JobManager;
 import com.incadencecorp.coalesce.framework.jobs.metrics.JobMetricsCollectionAsync;
 import com.incadencecorp.coalesce.services.api.common.BaseRequest;
 import com.incadencecorp.coalesce.services.api.common.BaseResponse;
@@ -50,8 +51,7 @@ import com.incadencecorp.coalesce.services.api.common.ResultsType;
 import com.incadencecorp.coalesce.services.api.common.StatusResponse;
 import com.incadencecorp.coalesce.services.api.common.StatusType;
 import com.incadencecorp.coalesce.services.api.common.StringResponse;
-import com.incadencecorp.coalesce.services.common.jobs.AbstractXSDJobBase;
-import com.incadencecorp.coalesce.services.common.jobs.JobManager;
+import com.incadencecorp.coalesce.services.common.jobs.AbstractServiceJob;
 
 /**
  * Base class for handling the queuing of jobs asynchronously, returning the
@@ -60,7 +60,6 @@ import com.incadencecorp.coalesce.services.common.jobs.JobManager;
  * 
  * @author Derek C.
  */
-// TODO Remove the (BaseResponse) casting.
 public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceBase.class);
@@ -74,7 +73,7 @@ public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
     private static final int MAX_THREADS = 5;
     private static final int TIME_TO_LIVE = 10;
 
-    private JobManager jobs;
+    private JobManager<AbstractServiceJob<?, ?, ?>> jobs;
     private ExecutorService service;
     private JobMetricsCollectionAsync metrics;
     private CoalesceFramework framework;
@@ -107,7 +106,7 @@ public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
     public ServiceBase(ExecutorService pool, CoalesceFramework framework)
     {
         this.service = pool;
-        this.jobs = new JobManager();
+        this.jobs = new JobManager<AbstractServiceJob<?, ?, ?>>();
         this.framework = framework;
     }
 
@@ -159,14 +158,14 @@ public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
 
             StatusType result = new StatusType();
 
-            result.setJobId(jobId);
-            result.setJobStatus(getJobStatus(jobId));
+            result.setId(jobId);
+            result.setResult(getJobStatus(jobId));
 
             response.getResult().add(result);
 
         }
 
-        response.setJobId(UUID.randomUUID().toString());
+        response.setId(UUID.randomUUID().toString());
         response.setStatus(EResultStatus.SUCCESS);
 
         return response;
@@ -186,7 +185,6 @@ public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
      * @return the response of the job indicated by the request if completed.
      *         Otherwise it returns the current status of job not found.
      */
-    // TODO Return a status response
     public final MultipleResponse pickupJobResults(JobRequest request)
     {
 
@@ -196,7 +194,7 @@ public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
         {
 
             ResponseResultsType result = new ResponseResultsType();
-            AbstractXSDJobBase<?, ?, ?> job;
+            AbstractServiceJob<?, ?, ?> job;
 
             // Check the Job Manager for this Job's Status
             EJobStatus jobStatus = getJobStatus(key);
@@ -209,7 +207,7 @@ public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
                 // Job is complete in some way; return the results
                 job = jobs.removeJob(key);
 
-                result.setResult(job.getResponse());
+                result.setResult((BaseResponse) job.getResponse());
                 result.setStatus(EResultStatus.SUCCESS);
 
                 if (metrics != null)
@@ -225,7 +223,8 @@ public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
             case IN_PROGRESS:
                 // Job is not complete; return job status response
                 job = jobs.getJob(key);
-                result.setResult(job.getResponse());
+
+                result.setResult((BaseResponse) job.getResponse());
                 result.setStatus(EResultStatus.SUCCESS);
 
                 break;
@@ -234,7 +233,7 @@ public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
             default:
                 // Unexpected state; return JOBNOTFOUND
                 BaseResponse failedResponse = new BaseResponse();
-                failedResponse.setJobId(key);
+                failedResponse.setId(key);
                 failedResponse.setStatus(EResultStatus.FAILED);
 
                 result.setResult(failedResponse);
@@ -247,7 +246,7 @@ public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
 
         }
 
-        response.setJobId(UUID.randomUUID().toString());
+        response.setId(UUID.randomUUID().toString());
         response.setStatus(EResultStatus.SUCCESS);
 
         return response;
@@ -272,7 +271,7 @@ public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
 
             result.setResult(jobId);
 
-            AbstractXSDJobBase<?, ?, ?> job = jobs.removeJob(jobId);
+            AbstractServiceJob<?, ?, ?> job = jobs.removeJob(jobId);
 
             // Job Queued?
             if (job != null)
@@ -297,27 +296,27 @@ public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
 
         }
 
-        response.setJobId(UUID.randomUUID().toString());
+        response.setId(UUID.randomUUID().toString());
         response.setStatus(EResultStatus.SUCCESS);
 
         return response;
     }
 
     /**
-     * Runs a job. If {@link AbstractXSDJobBase#isAsync} is true then its queued
+     * Runs a job. If {@link AbstractServiceJob#isAsync} is true then its queued
      * within the thread pool and the requester should use
      * {@link #pickupJobResults} to pick up the response.
      *
-     * @param job {@link AbstractXSDJobBase}
-     * @return the response with results if {@link AbstractXSDJobBase#isAsync}
+     * @param job {@link AbstractServiceJob}
+     * @return the response with results if {@link AbstractServiceJob#isAsync}
      *         is false; Otherwise a response with no results and a
-     *         {@link AbstractXSDJobBase#getJobID() Job ID} that can be used to
+     *         {@link AbstractServiceJob#getJobID() Job ID} that can be used to
      *         request the results once the job has completed.
      * @throws Exception
      */
-    public final BaseResponse performJob(AbstractXSDJobBase<?, ?, ?> job) 
+    public final <T extends BaseRequest, Y extends ICoalesceResponseType<List<X>>, X extends ICoalesceResponseType<?>> Y performJob(AbstractServiceJob<T, Y, X> job)
     {
-        BaseResponse response = null;
+        Y response = null;
 
         job.setExecutor(this);
 
@@ -325,7 +324,7 @@ public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
         if (job.isAsync())
         {
             // Yes; Get Response
-            response = (BaseResponse) job.getResponse();
+            response = job.getResponse();
 
             // Add to Job Manager
             jobs.addJob(job);
@@ -343,8 +342,8 @@ public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
         }
         else
         {
-            response = (BaseResponse) job.call();
-            response.setJobId(job.getJobId().toString());
+            response = job.call();
+            response.setId(job.getJobId().toString());
             switch (job.getJobStatus()) {
             case CANCELED:
             case FAILED:
@@ -382,7 +381,7 @@ public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
      * @param minutes age of jobs to remove
      * @return Returns a list of expired jobs.
      */
-    public final AbstractXSDJobBase<?, ?, ?>[] removeOldJobs(long minutes)
+    public final List<AbstractServiceJob<?, ?, ?>> removeOldJobs(long minutes)
     {
         return jobs.removeOldJobs(minutes);
     }
@@ -403,9 +402,9 @@ public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
             // Iterate through each failed job
             for (Runnable runnable : jobList)
             {
-                if (runnable instanceof AbstractXSDJobBase<?, ?, ?>)
+                if (runnable instanceof AbstractServiceJob<?, ?, ?>)
                 {
-                    LOGGER.warn("Job ({}) expired", ((AbstractXSDJobBase<?, ?, ?>) runnable).getJobId());
+                    LOGGER.warn("Job ({}) expired", ((AbstractServiceJob<?, ?, ?>) runnable).getJobId());
                 }
                 else if (runnable instanceof ICoalesceComponent)
                 {
@@ -443,11 +442,10 @@ public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
     }
 
     // @Override
-    public <T extends BaseRequest, Y extends BaseResponse, X extends ICoalesceResponseType<?>> Future<Y> submit(AbstractXSDJobBase<T, Y, X> job)
+    public <T extends BaseRequest, Y extends ICoalesceResponseType<List<X>>, X extends ICoalesceResponseType<?>> Future<Y> submit(AbstractServiceJob<T, Y, X> job)
             throws CoalescePersistorException
     {
-        // TODO Not Implemented
-        return null; // service.submit(job);
+        return service.submit(job);
     }
 
     public final <T> Future<T> submit(Callable<T> job)
