@@ -98,7 +98,7 @@ import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.io.WKTWriter;
 import com.vividsolutions.jts.util.GeometricShapeFactory;
 
-public class AccumuloPersistorTest extends CoalescePersistorBaseTest {
+public class AccumuloPersistorIT extends CoalescePersistorBaseTest {
 
 	private static MiniAccumuloCluster accumulo = null;
 
@@ -107,7 +107,7 @@ public class AccumuloPersistorTest extends CoalescePersistorBaseTest {
 		File tempDirectory = Files.createTempDirectory("accTemp").toFile();
 		accumulo = new MiniAccumuloCluster(tempDirectory, "password");
 		accumulo.start();
-		AccumuloPersistorTest tester = new AccumuloPersistorTest();
+		AccumuloPersistorIT tester = new AccumuloPersistorIT();
 		CoalescePersistorBaseTest.setupBeforeClassBase(tester);
 		CoalesceUnitTestSettings.initialize();
 	}

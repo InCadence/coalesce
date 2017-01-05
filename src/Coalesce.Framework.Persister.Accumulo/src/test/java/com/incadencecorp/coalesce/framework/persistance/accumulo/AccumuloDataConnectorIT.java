@@ -17,7 +17,7 @@ import org.junit.Test;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 
-public class AccumuloDataConnectorTest {
+public class AccumuloDataConnectorIT {
 
 	private static MiniAccumuloCluster accumulo = null;
 
