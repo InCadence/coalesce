@@ -79,6 +79,11 @@ public abstract class CoalescePersistorBase implements ICoalescePersistor {
     {
         this._cacher = cacher;
     }
+    
+    protected ICoalesceCacher getCacher()
+    {
+        return _cacher;
+    }
 
     @Override
     public boolean saveEntity(boolean allowRemoval, CoalesceEntity... entities) throws CoalescePersistorException

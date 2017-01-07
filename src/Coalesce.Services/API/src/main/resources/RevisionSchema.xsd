@@ -84,7 +84,7 @@
 
     <xs:complexType name="DataObjectHistoryType">
         <xs:complexContent>
-            <xs:extension base="cmn:MetricsResultsType">
+            <xs:extension base="cmn:ResultsType">
                 <xs:sequence>
 		            <xs:element name="key" type="xs:string"></xs:element>
 		            <xs:element name="versions" type="tns:DataObjectVersionType"

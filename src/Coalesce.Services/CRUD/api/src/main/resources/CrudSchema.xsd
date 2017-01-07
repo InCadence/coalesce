@@ -122,10 +122,7 @@
 	<xs:element name="UpdateDataObjectStatusRequest" type="tns:DataObjectUpdateStatusRequest"></xs:element>
 	<xs:element name="UpdateDataObjectStatusResponse" type="cmn:StringResponse"></xs:element>
 
-	<xs:element name="LinkDataObjectRequest" type="tns:DataObjectLinkRequest"></xs:element>
-	<xs:element name="LinkDataObjectResponse" type="cmn:StringResponse"></xs:element>
-
-	<xs:element name="UnlinkDataObjectRequest" type="tns:DataObjectLinkRequest"></xs:element>
-	<xs:element name="UnlinkDataObjectResponse" type="cmn:StringResponse"></xs:element>
+	<xs:element name="UpdateLinkagesRequest" type="tns:DataObjectLinkRequest"></xs:element>
+	<xs:element name="UpdateLinkagesResponse" type="cmn:StringResponse"></xs:element>
 
 </xs:schema>

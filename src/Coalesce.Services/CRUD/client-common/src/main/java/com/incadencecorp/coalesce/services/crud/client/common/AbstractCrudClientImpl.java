@@ -72,6 +72,18 @@ public abstract class AbstractCrudClientImpl extends AbstractBaseClient<ICrudEve
         return addAsyncResponse(updateLinkages(request), request);
     }
 
+    public Results<CoalesceEntity>[] retrieveDataObjects(String... keys) throws RemoteException
+    {
+        DataObjectKeyRequest request = createDataObjectKeyRequest(false, keys);
+        return retrieveEntityCallback(retrieveDataObject(request));
+    }
+
+    public String retrieveDataObjectsAsync(String... keys) throws RemoteException
+    {
+        DataObjectKeyRequest request = createDataObjectKeyRequest(true, keys);
+        return addAsyncResponse(retrieveDataObject(request), request);
+    }
+
     @Override
     public Results<CoalesceEntity>[] retrieveDataObjects(DataObjectKeyType... tasks) throws RemoteException
     {
@@ -132,27 +144,35 @@ public abstract class AbstractCrudClientImpl extends AbstractBaseClient<ICrudEve
     Callbacks
     --------------------------------------------------------------------------*/
 
-    private Results<CoalesceEntity>[] retrieveEntityCallback(final StringResponse response) {
+    private Results<CoalesceEntity>[] retrieveEntityCallback(final StringResponse response)
+    {
 
         Results<CoalesceEntity>[] results = new Results[response.getResult().size()];
 
         int ii = 0;
 
-        for (ResultsType result: response.getResult()) {
+        for (ResultsType result : response.getResult())
+        {
 
-            if (result.getStatus() == EResultStatus.SUCCESS) {
+            if (result.getStatus() == EResultStatus.SUCCESS)
+            {
 
                 CoalesceEntity entity = new CoalesceEntity();
-                if (entity.initialize(result.getResult())) {
+                if (entity.initialize(result.getResult()))
+                {
                     results[ii] = new Results<CoalesceEntity>(entity);
-                } else {
+                }
+                else
+                {
                     results[ii] = new Results<CoalesceEntity>("Failed to initialize");
 
                     // Raise Event
                     processFailedTask(response, ii, result.getResult());
                 }
 
-            } else {
+            }
+            else
+            {
 
                 results[ii] = new Results<CoalesceEntity>(result.getResult());
 
@@ -168,10 +188,27 @@ public abstract class AbstractCrudClientImpl extends AbstractBaseClient<ICrudEve
         return results;
 
     }
-    
+
     /*--------------------------------------------------------------------------
     Private Methods
     --------------------------------------------------------------------------*/
+
+    private DataObjectKeyRequest createDataObjectKeyRequest(final boolean async, final String... keys)
+    {
+
+        DataObjectKeyType[] list = new DataObjectKeyType[keys.length];
+
+        for (int ii = 0; ii < keys.length; ii++)
+        {
+
+            list[ii] = new DataObjectKeyType();
+            list[ii].setKey(keys[ii]);
+            list[ii].setVer(-1);
+
+        }
+
+        return createDataObjectKeyRequest(async, list);
+    }
 
     private DataObjectKeyRequest createDataObjectKeyRequest(final boolean async, final DataObjectKeyType... tasks)
     {

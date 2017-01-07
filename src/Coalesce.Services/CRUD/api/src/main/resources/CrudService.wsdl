@@ -79,11 +79,11 @@
 	</wsdl:message>
 	
 	<!-- Link Data Object -->
-	<wsdl:message name="LinkDataObjectRequest">
-		<wsdl:part name="request" element="tns:LinkDataObjectRequest"></wsdl:part>
+	<wsdl:message name="UpdateLinkagesRequest">
+		<wsdl:part name="request" element="tns:UpdateLinkagesRequest"></wsdl:part>
 	</wsdl:message>
-	<wsdl:message name="LinkDataObjectResponse">
-		<wsdl:part name="response" element="tns:LinkDataObjectResponse"></wsdl:part>
+	<wsdl:message name="UpdateLinkagesResponse">
+		<wsdl:part name="response" element="tns:UpdateLinkagesResponse"></wsdl:part>
 	</wsdl:message>
 
 	<!-- Update Data Object -->
@@ -130,9 +130,9 @@
 		</wsdl:operation>
 		
 
-		<wsdl:operation name="LinkDataObject">
-			<wsdl:input message="tns:LinkDataObjectRequest"></wsdl:input>
-			<wsdl:output message="tns:LinkDataObjectResponse"></wsdl:output>
+		<wsdl:operation name="UpdateDataObjectLinkages">
+			<wsdl:input message="tns:UpdateLinkagesRequest"></wsdl:input>
+			<wsdl:output message="tns:UpdateLinkagesResponse"></wsdl:output>
 		</wsdl:operation>
 
 		<wsdl:operation name="UpdateDataObjectStatus">
@@ -204,7 +204,7 @@
 			</wsdl:output>
 		</wsdl:operation>
 		
-		<wsdl:operation name="LinkDataObject">
+		<wsdl:operation name="UpdateDataObjectLinkages">
 			<soap:operation soapAction="" />
 			<wsdl:input>
 				<soap:body use="literal" />

@@ -28,7 +28,7 @@ import com.incadencecorp.coalesce.framework.tasks.AbstractFrameworkTask;
 import com.incadencecorp.coalesce.services.api.common.ResultsType;
 import com.incadencecorp.coalesce.services.api.crud.DataObjectLinkType;
 
-public class LinkDataObjectTask extends AbstractFrameworkTask<DataObjectLinkType[], ResultsType> {
+public class UpdateDataObjectLinkagesTask extends AbstractFrameworkTask<DataObjectLinkType[], ResultsType> {
 
     @Override
     protected ResultsType doWork(CoalesceFramework framework, DataObjectLinkType[] params)

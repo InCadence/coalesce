@@ -87,14 +87,7 @@ public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
      */
     public ServiceBase()
     {
-        this(new ThreadPoolExecutor(MIN_THREADS,
-                                    MAX_THREADS,
-                                    60,
-                                    TimeUnit.SECONDS,
-                                    new SynchronousQueue<Runnable>(),
-                                    new CoalesceThreadFactoryImpl(),
-                                    new ThreadPoolExecutor.CallerRunsPolicy()),
-             new CoalesceFramework());
+        this(null, null);
     }
 
     /**
@@ -105,6 +98,17 @@ public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
      */
     public ServiceBase(ExecutorService pool, CoalesceFramework framework)
     {
+        if (pool == null)
+        {
+            pool = new ThreadPoolExecutor(MIN_THREADS,
+                                          MAX_THREADS,
+                                          60,
+                                          TimeUnit.SECONDS,
+                                          new SynchronousQueue<Runnable>(),
+                                          new CoalesceThreadFactoryImpl(),
+                                          new ThreadPoolExecutor.CallerRunsPolicy());
+        }
+
         this.service = pool;
         this.jobs = new JobManager<AbstractServiceJob<?, ?, ?>>();
         this.framework = framework;
@@ -319,6 +323,7 @@ public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
         Y response = null;
 
         job.setExecutor(this);
+        job.setTarget(getFramework());
 
         // Async?
         if (job.isAsync())
@@ -488,6 +493,10 @@ public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
      */
     protected final CoalesceFramework getFramework()
     {
+        if (framework == null) {
+            framework = new CoalesceFramework();
+        }
+        
         return framework;
     }
 

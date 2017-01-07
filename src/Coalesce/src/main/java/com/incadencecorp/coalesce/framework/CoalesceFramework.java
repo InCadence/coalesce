@@ -310,7 +310,7 @@ public class CoalesceFramework implements ICoalesceExecutorService, Closeable {
         String result = null;
         String[] results = getAuthoritativePersistor().getEntityXml(key);
 
-        if (results != null && results.length > 1)
+        if (results != null && results.length >= 1)
         {
             result = results[0];
         }

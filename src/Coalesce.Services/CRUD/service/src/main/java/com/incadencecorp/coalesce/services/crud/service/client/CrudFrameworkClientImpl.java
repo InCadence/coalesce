@@ -18,7 +18,9 @@
 package com.incadencecorp.coalesce.services.crud.service.client;
 
 import java.rmi.RemoteException;
+import java.util.concurrent.ExecutorService;
 
+import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.services.api.common.BaseResponse;
 import com.incadencecorp.coalesce.services.api.common.JobRequest;
 import com.incadencecorp.coalesce.services.api.common.MultipleResponse;
@@ -29,6 +31,7 @@ import com.incadencecorp.coalesce.services.api.crud.DataObjectLinkRequest;
 import com.incadencecorp.coalesce.services.api.crud.DataObjectUpdateStatusRequest;
 import com.incadencecorp.coalesce.services.api.crud.DataObjectXmlRequest;
 import com.incadencecorp.coalesce.services.crud.client.common.AbstractCrudClientImpl;
+import com.incadencecorp.coalesce.services.crud.service.CrudServiceImpl;
 
 /**
  * This implementation uses the service directly w/o going through a WSDL.
@@ -37,7 +40,12 @@ import com.incadencecorp.coalesce.services.crud.client.common.AbstractCrudClient
  */
 public class CrudFrameworkClientImpl extends AbstractCrudClientImpl {
 
-    CrudFrameworkClientImpl client;
+    private CrudServiceImpl client;
+
+    public CrudFrameworkClientImpl(ExecutorService pool, CoalesceFramework framework)
+    {
+        client = new CrudServiceImpl(pool, framework);
+    }
 
     @Override
     protected StringResponse createDataObject(final DataObjectXmlRequest request)
@@ -66,7 +74,7 @@ public class CrudFrameworkClientImpl extends AbstractCrudClientImpl {
     @Override
     protected StringResponse updateLinkages(final DataObjectLinkRequest request)
     {
-        return client.updateLinkages(request);
+        return client.updateDataObjectLinkages(request);
     }
 
     @Override
@@ -78,25 +86,27 @@ public class CrudFrameworkClientImpl extends AbstractCrudClientImpl {
     @Override
     protected MultipleResponse pickupJob(final JobRequest request) throws RemoteException
     {
-        return client.pickupJob(request);
+        return client.pickupJobResults(request);
     }
 
     @Override
     protected StatusResponse getStatus(JobRequest request) throws RemoteException
     {
-        return client.getStatus(request);
+        return client.getJobStatus(request);
     }
 
     @Override
     protected void processResponse(BaseResponse response)
     {
-        client.processResponse(response);
+        // TODO Not Implemented
+        // client.processResponse(response);
     }
 
     @Override
     protected void processFailedTask(BaseResponse response, int task, String reason)
     {
-        client.processFailedTask(response, task, reason);
+        // TODO Not Implemented
+        // client.processFailedTask(response, task, reason);
     }
 
 }

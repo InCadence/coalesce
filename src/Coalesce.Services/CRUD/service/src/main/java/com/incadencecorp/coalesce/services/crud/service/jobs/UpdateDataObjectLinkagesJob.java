@@ -27,11 +27,11 @@ import com.incadencecorp.coalesce.services.api.common.StringResponse;
 import com.incadencecorp.coalesce.services.api.crud.DataObjectLinkRequest;
 import com.incadencecorp.coalesce.services.api.crud.DataObjectLinkType;
 import com.incadencecorp.coalesce.services.common.jobs.AbstractServiceJob;
-import com.incadencecorp.coalesce.services.crud.service.tasks.LinkDataObjectTask;
+import com.incadencecorp.coalesce.services.crud.service.tasks.UpdateDataObjectLinkagesTask;
 
-public class LinkDataObjectJob extends AbstractServiceJob<DataObjectLinkRequest, StringResponse, ResultsType> {
+public class UpdateDataObjectLinkagesJob extends AbstractServiceJob<DataObjectLinkRequest, StringResponse, ResultsType> {
 
-    public LinkDataObjectJob(DataObjectLinkRequest request)
+    public UpdateDataObjectLinkagesJob(DataObjectLinkRequest request)
     {
         super(request);
     }
@@ -43,7 +43,7 @@ public class LinkDataObjectJob extends AbstractServiceJob<DataObjectLinkRequest,
 
         for (DataObjectLinkType type : params.getLinkagelist())
         {
-            LinkDataObjectTask task = new LinkDataObjectTask(); 
+            UpdateDataObjectLinkagesTask task = new UpdateDataObjectLinkagesTask(); 
             task.setParams(new DataObjectLinkType[] {type});
             
             tasks.add(task);

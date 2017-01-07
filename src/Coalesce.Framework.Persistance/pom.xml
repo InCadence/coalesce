@@ -1,0 +1,27 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
+	<artifactId>persister-parent</artifactId>
+	<name>Coalesce Persister's Parent</name>
+	<description>Parent POM for Coalesce Persisters</description>
+	<packaging>pom</packaging>
+
+	<parent>
+		<groupId>com.incadencecorp.coalesce</groupId>
+		<artifactId>coalesce-pom</artifactId>
+		<version>0.0.21-SNAPSHOT</version>
+		<relativePath>../Coalesce.Pom</relativePath>
+	</parent>
+
+	<modules>
+		<module>Memory</module>
+	</modules>
+
+	<distributionManagement>
+		<site>
+			<id>mvnkimmel</id>
+			<url>scp://mvnkimmel.man.fs.lmco.com/var/www/html/sites/j-coalesce/${project.version}/${project.artifactId}</url>
+		</site>
+	</distributionManagement>
+</project>

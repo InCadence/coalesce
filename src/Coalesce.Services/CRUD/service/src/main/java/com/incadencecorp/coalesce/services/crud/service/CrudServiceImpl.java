@@ -17,6 +17,9 @@
 
 package com.incadencecorp.coalesce.services.crud.service;
 
+import java.util.concurrent.ExecutorService;
+
+import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.services.api.common.StringResponse;
 import com.incadencecorp.coalesce.services.api.crud.CrudManager;
 import com.incadencecorp.coalesce.services.api.crud.DataObjectKeyRequest;
@@ -25,13 +28,17 @@ import com.incadencecorp.coalesce.services.api.crud.DataObjectUpdateStatusReques
 import com.incadencecorp.coalesce.services.api.crud.DataObjectXmlRequest;
 import com.incadencecorp.coalesce.services.common.ServiceBase;
 import com.incadencecorp.coalesce.services.crud.service.jobs.CreateDataObjectJob;
-import com.incadencecorp.coalesce.services.crud.service.jobs.LinkDataObjectJob;
+import com.incadencecorp.coalesce.services.crud.service.jobs.UpdateDataObjectLinkagesJob;
 import com.incadencecorp.coalesce.services.crud.service.jobs.RetrieveDataObjectJob;
 import com.incadencecorp.coalesce.services.crud.service.jobs.UpdateDataObjectJob;
 import com.incadencecorp.coalesce.services.crud.service.jobs.UpdateDataObjectStatusJob;
 
 public class CrudServiceImpl extends ServiceBase implements CrudManager {
 
+    public CrudServiceImpl(ExecutorService pool, CoalesceFramework framework) {
+        super(pool, framework);
+    }
+    
     @Override
     public StringResponse retrieveDataObject(DataObjectKeyRequest request)
     {
@@ -51,9 +58,9 @@ public class CrudServiceImpl extends ServiceBase implements CrudManager {
     }
 
     @Override
-    public StringResponse linkDataObject(DataObjectLinkRequest request)
+    public StringResponse updateDataObjectLinkages(DataObjectLinkRequest request)
     {
-        return (StringResponse) performJob(new LinkDataObjectJob(request));
+        return (StringResponse) performJob(new UpdateDataObjectLinkagesJob(request));
     }
 
     @Override

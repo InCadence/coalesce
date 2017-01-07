@@ -73,6 +73,25 @@ public interface ICrudClient extends IBaseClient<ICrudEvents>{
      * @return Returns a list of objects retrieved from the database.
      * @throws RemoteException
      */
+    Results<CoalesceEntity>[] retrieveDataObjects(String... keys) throws RemoteException;
+
+    /**
+     * Asynchronously retrieves data objects from DSS at the specified versions.
+     *
+     * @param tasks
+     * @return the job ID. Call {@link #pickupJob(String...)} to get the
+     *         response.
+     * @throws RemoteException
+     */
+    String retrieveDataObjectsAsync(String... keys) throws RemoteException;
+
+    /**
+     * Retrieves data objects from DSS at the specified versions.
+     *
+     * @param tasks
+     * @return Returns a list of objects retrieved from the database.
+     * @throws RemoteException
+     */
     Results<CoalesceEntity>[] retrieveDataObjects(DataObjectKeyType... tasks) throws RemoteException;
 
     /**

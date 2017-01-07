@@ -48,12 +48,15 @@ public class UpdateDataObjectStatusTask extends AbstractFrameworkTask<DataObject
                 switch (task.getAction()) {
                 case MARK_AS_ACTIVE:
                     entity.setStatus(ECoalesceObjectStatus.ACTIVE);
+                    framework.saveCoalesceEntity(entity);
                     break;
                 case MARK_AS_DELETED:
                     entity.setStatus(ECoalesceObjectStatus.DELETED);
+                    framework.saveCoalesceEntity(entity);
                     break;
                 case MARK_AS_READONLY:
                     entity.setStatus(ECoalesceObjectStatus.READONLY);
+                    framework.saveCoalesceEntity(entity);
                     break;
                 default:
                     result.setStatus(EResultStatus.FAILED);
