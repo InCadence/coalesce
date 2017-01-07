@@ -943,7 +943,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
         }
 
         // Yes; Call Store Procedure
-        return conn.executeProcedure("CoalesceLinkage_InsertOrUpdate",
+        return conn.executeProcedure("CoalesceLinkage_InsertOrUpdate2",
                                      new CoalesceParameter(linkage.getKey(), Types.OTHER),
                                      new CoalesceParameter(linkage.getName()),
                                      new CoalesceParameter(linkage.getEntity1Key(), Types.OTHER),
@@ -951,6 +951,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
                                      new CoalesceParameter(linkage.getEntity1Source()),
                                      new CoalesceParameter(linkage.getEntity1Version()),
                                      new CoalesceParameter(linkage.getLinkType().getLabel()),
+                                     new CoalesceParameter(linkage.getLabel()),
                                      new CoalesceParameter(linkage.getStatus().toString()),
                                      new CoalesceParameter(linkage.getEntity2Key(), Types.OTHER),
                                      new CoalesceParameter(linkage.getEntity2Name()),

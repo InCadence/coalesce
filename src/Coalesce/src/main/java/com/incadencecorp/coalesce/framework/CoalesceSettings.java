@@ -90,6 +90,7 @@ public class CoalesceSettings {
     private static final String PARAM_COORD_IS_RESTRICTED = COORDINATES + "Restricted.";
     private static final String PARAM_COORD_MAX = COORDINATES + "Max.";
     private static final String PARAM_COORD_MIN = COORDINATES + "Min.";
+    private static final String PARAM_COORD_NUM_DECIMALS = COORDINATES + "numDecimals";
 
     /*--------------------------------------------------------------------------
     Default Values
@@ -101,6 +102,7 @@ public class CoalesceSettings {
     private static final String DEFAULT_PASS_PHRASE = "9UFAF8FI98BDLQEZ";
     private static final String DEFAULT_IMAGE_FORMAT = "jpg";
     private static final double DEFAULT_Z_AXIS = 0;
+    private static final int DEFAULT_NUM_DECIMALS = 6;
     private static final int DEFAULT_DIRECTORY_LENGTH = 2;
 
     private static final int DEFAULT_CORE_COUNT = Runtime.getRuntime().availableProcessors();
@@ -312,6 +314,24 @@ public class CoalesceSettings {
         return settings.getSetting(getConfigurationFileName(), PARAM_COORD_DEFAULT_Z_AXIS, DEFAULT_Z_AXIS, true);
     }
 
+    /**
+     * Sets the number of decimal places for coordinates.
+     * 
+     * @param value
+     */
+    public static void setNumDecimalsForCoordinates(int value)
+    {
+        settings.setSetting(getConfigurationFileName(), PARAM_COORD_NUM_DECIMALS, value);
+    }
+
+    /**
+     * @return the number of decimal places for coordinates.
+     */
+    public static int getNumDecimalsForCoordinates()
+    {
+        return settings.getSetting(getConfigurationFileName(), PARAM_COORD_NUM_DECIMALS, DEFAULT_NUM_DECIMALS, true);
+    }
+    
     /*--------------------------------------------------------------------------
     Executive Service Settings
     --------------------------------------------------------------------------*/

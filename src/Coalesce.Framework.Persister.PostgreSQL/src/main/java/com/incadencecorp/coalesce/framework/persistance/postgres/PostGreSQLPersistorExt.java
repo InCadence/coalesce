@@ -436,6 +436,30 @@ public class PostGreSQLPersistorExt extends PostGreSQLPersistor implements ICoal
      * @param parameters
      * @return the results
      */
+    public int executeUpdate(String query, CoalesceParameter... parameters)
+    {
+        int results;
+
+        try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings(), getSchema()))
+        {
+            results = conn.executeUpdate(query, parameters);
+        }
+        catch (CoalescePersistorException | SQLException e)
+        {
+            LOGGER.error("Failed to execute query.", e);
+            results = -1;
+        }
+
+        return results;
+    }
+    
+    /**
+     * Executes the given query
+     * 
+     * @param query
+     * @param parameters
+     * @return the results
+     */
     public CachedRowSet executeQuery(String query, CoalesceParameter... parameters)
     {
         CachedRowSet rowset = null;
