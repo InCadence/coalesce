@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.accumulo.core.client.Connector;
 import org.apache.accumulo.core.client.IteratorSetting;
+import org.apache.accumulo.core.client.IteratorSetting.Column;
 import org.apache.accumulo.core.client.Scanner;
 import org.apache.accumulo.core.client.TableNotFoundException;
 import org.apache.accumulo.core.data.Key;
@@ -128,5 +129,19 @@ public class CloseableScanner implements Scanner, AutoCloseable {
 	public void setTimeOut(int arg0) {
 		scanner.setTimeOut(arg0);
 	}
+
+    @Override
+    public void fetchColumn(Column arg0)
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public Authorizations getAuthorizations()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

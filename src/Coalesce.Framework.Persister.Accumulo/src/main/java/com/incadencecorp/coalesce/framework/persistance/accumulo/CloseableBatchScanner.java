@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.accumulo.core.client.BatchScanner;
 import org.apache.accumulo.core.client.Connector;
 import org.apache.accumulo.core.client.IteratorSetting;
+import org.apache.accumulo.core.client.IteratorSetting.Column;
 import org.apache.accumulo.core.client.TableNotFoundException;
 import org.apache.accumulo.core.data.Key;
 import org.apache.accumulo.core.data.Range;
@@ -83,5 +84,19 @@ public class CloseableBatchScanner implements BatchScanner, AutoCloseable {
 	public void setTimeout(long arg0, TimeUnit arg1) {
 		scanner.setTimeout(arg0, arg1);
 	}
+
+    @Override
+    public void fetchColumn(Column arg0)
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public Authorizations getAuthorizations()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }
