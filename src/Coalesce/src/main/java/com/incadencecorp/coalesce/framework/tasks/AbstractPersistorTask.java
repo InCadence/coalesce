@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
+import com.incadencecorp.coalesce.framework.jobs.metrics.StopWatch;
 import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceStringResponseType;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 
@@ -35,7 +36,7 @@ import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
  *
  * @param <T>
  */
-public abstract class AbstractPersistorTask<T> implements Callable<CoalesceStringResponseType> {
+public abstract class AbstractPersistorTask<T> implements Callable<MetricResults<CoalesceStringResponseType>> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPersistorTask.class);
 
@@ -44,6 +45,7 @@ public abstract class AbstractPersistorTask<T> implements Callable<CoalesceStrin
     --------------------------------------------------------------------------*/
 
     private ICoalescePersistor _persistor;
+    private final StopWatch watch = new StopWatch();
     private T _params;
 
     /*--------------------------------------------------------------------------
@@ -91,26 +93,34 @@ public abstract class AbstractPersistorTask<T> implements Callable<CoalesceStrin
     --------------------------------------------------------------------------*/
 
     @Override
-    public CoalesceStringResponseType call()
+    public MetricResults<CoalesceStringResponseType> call()
     {
         try
         {
-            CoalesceStringResponseType result = doWork();
+            MetricResults<CoalesceStringResponseType> result = new MetricResults<CoalesceStringResponseType>();
+
+            watch.start();
+
+            result.setResults(doWork());
+
+            watch.finish();
 
             if (!result.isSuccessful())
             {
                 LOGGER.error(String.format(CoalesceErrors.FAILED_TASK,
                                            this.getClass().getName(),
                                            _persistor.getClass().getName(),
-                                           result.getResult()));
-
-                if (LOGGER.isDebugEnabled() && result.getException() != null)
+                                           result.getResults().getError()));
+                
+                if (LOGGER.isDebugEnabled() && result.getResults().getException() != null)
                 {
-                    LOGGER.debug("Stack Trace", result.getException());
+                    LOGGER.debug("Stack Trace", result.getResults().getException());
                 }
 
                 logParameters();
             }
+            
+            result.setWatch(watch);
 
             return result;
         }

@@ -34,6 +34,7 @@ import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceResponseType;
 import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceStringResponseType;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import com.incadencecorp.coalesce.framework.tasks.AbstractPersistorTask;
+import com.incadencecorp.coalesce.framework.tasks.MetricResults;
 
 /**
  * Abstract base for persister jobs in Coalesce.
@@ -114,12 +115,15 @@ public abstract class AbstractCoalescePersistorsJob<T> extends AbstractCoalesceJ
             int ii = 0;
 
             // Execute Tasks
-            for (Future<CoalesceStringResponseType> future : _service.invokeAll(tasks))
+            for (Future<MetricResults<CoalesceStringResponseType>> future : _service.invokeAll(tasks))
             {
+                MetricResults<CoalesceStringResponseType> metrics;
+
                 try
                 {
                     // Get Result
-                    result = future.get();
+                    metrics = future.get();
+                    result = metrics.getResults();
                 }
                 catch (InterruptedException | ExecutionException e)
                 {

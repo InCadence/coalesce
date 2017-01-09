@@ -29,7 +29,7 @@ import com.incadencecorp.coalesce.api.EJobStatus;
  *
  * @author Derek C.
  */
-public class JobManager<T extends AbstractCoalesceFrameworkJob<?, ?, ?>> {
+public class JobManager<T extends AbstractCoalesceJob<?, ?, ?>> {
 
     // ----------------------------------------------------------------------//
     // Protected Member Variables

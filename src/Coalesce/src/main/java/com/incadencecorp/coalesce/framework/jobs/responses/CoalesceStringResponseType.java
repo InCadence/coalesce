@@ -55,7 +55,7 @@ public class CoalesceStringResponseType extends CoalesceResponseType<String> {
         this.setStatus(EResultStatus.FAILED);
         this.exception = exception;
         
-        setResult(exception.getMessage());
+        setError(exception.getMessage());
     }
     
 }
