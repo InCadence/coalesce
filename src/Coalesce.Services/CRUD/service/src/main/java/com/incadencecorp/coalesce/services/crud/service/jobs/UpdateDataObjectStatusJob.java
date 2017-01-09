@@ -59,8 +59,8 @@ public class UpdateDataObjectStatusJob extends AbstractServiceJob<DataObjectUpda
     }
 
     @Override
-    protected ResultsType createFailedResults(Exception e)
+    protected ResultsType createResults()
     {
-        return new ResultsType();
+        return new ResultsType(); 
     }
 }

@@ -58,9 +58,9 @@ public class CreateDataObjectJob extends AbstractServiceJob<DataObjectXmlRequest
     }
 
     @Override
-    protected ResultsType createFailedResults(Exception e)
+    protected ResultsType createResults()
     {
-        return new ResultsType();
+        return new ResultsType(); 
     }
     
 }

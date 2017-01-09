@@ -33,6 +33,7 @@ public class CoalesceResponseType<T> implements ICoalesceResponseType<T> {
 
     private EResultStatus _status;
     private String id;
+    private String error;
     private T _result;
 
     /*--------------------------------------------------------------------------
@@ -88,10 +89,18 @@ public class CoalesceResponseType<T> implements ICoalesceResponseType<T> {
         
     }
 
+    @Override
+    public String getError()
+    {
+        return error;
+    }
 
-    /*--------------------------------------------------------------------------
-    Getters / Setters
-    --------------------------------------------------------------------------*/
+    
+    @Override
+    public void setError(String error)
+    {
+        this.error = error;
+    }
 
     /**
      * @return whether the job / task was completed

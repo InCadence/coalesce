@@ -43,6 +43,8 @@
 									<extraarg>http://api.services.coalesce.incadencecorp.com/common</extraarg>
 									<extraarg>-nexclude</extraarg>
 									<extraarg>http://coalesce.incadencecorp.com/api</extraarg>
+									<extraarg>-nexclude</extraarg>
+									<extraarg>http://framework.coalesce.incadencecorp.com/datamodel</extraarg>
 								</extraargs>
 							</defaultOptions>
 							<wsdlRoot>${basedir}/src/main/resources</wsdlRoot>

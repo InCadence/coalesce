@@ -227,7 +227,7 @@ public class JobMetricsType {
      *
      * @param job
      */
-    protected final void addJobMetrics(final AbstractCoalesceJob<?, ?> job)
+    protected final void addJobMetrics(final AbstractCoalesceJob<?, ?, ?> job)
     {
 
         // Valid Job Type?

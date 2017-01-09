@@ -34,7 +34,7 @@ public class JobMetrics {
     // ----------------------------------------------------------------------//
 
     private String name;
-    private AbstractCoalesceJob<?, ?> job;
+    private AbstractCoalesceJob<?, ?, ?> job;
 
     private MetricResults<?>[] taskMetrics;
     private int totalTasks;
@@ -53,7 +53,7 @@ public class JobMetrics {
      *
      * @param name
      */
-    public JobMetrics(final AbstractCoalesceJob<?, ?> pJob, MetricResults<?>... pMetrics)
+    public JobMetrics(final AbstractCoalesceJob<?, ?, ?> pJob, MetricResults<?>... pMetrics)
     {
 
         job = pJob;
@@ -72,7 +72,7 @@ public class JobMetrics {
     /**
      * @return the jobId
      */
-    public AbstractCoalesceJob<?, ?> getJob()
+    public AbstractCoalesceJob<?, ?, ?> getJob()
     {
         return job;
     }

@@ -20,44 +20,80 @@ package com.incadencecorp.coalesce.services.crud.service.tasks;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.tasks.AbstractFrameworkTask;
+import com.incadencecorp.coalesce.framework.tasks.ExtraParams;
+import com.incadencecorp.coalesce.framework.validation.CoalesceValidator;
 import com.incadencecorp.coalesce.services.api.common.ResultsType;
 
 public class CreateDataObjectTask extends AbstractFrameworkTask<String[], ResultsType> {
 
     @Override
-    protected ResultsType doWork(CoalesceFramework framework, String[] params)
+    protected ResultsType doWork(ExtraParams extra, String[] params)
     {
         ResultsType result = new ResultsType();
+        CoalesceFramework framework = extra.getFramework();
+        CoalesceValidator validator = new CoalesceValidator();
 
         CoalesceEntity[] entities = new CoalesceEntity[params.length];
 
         for (int ii = 0; ii < params.length; ii++)
         {
-            entities[ii] = CoalesceEntity.create(params[ii]);
-        }
-
-        try
-        {
-            if (framework.saveCoalesceEntity(entities))
+            CoalesceEntity entity = new CoalesceEntity();
+            if (entity.initialize(params[ii]))
             {
-                result.setStatus(EResultStatus.SUCCESS);
+                entity.getLinkageSection().clearLinkages();
+                entity.setModifiedBy(extra.getPrincipalName());
+                entity.setModifiedByIP(extra.getIp());
+
+                // TODO Enable this
+                Map<String, String> results = new HashMap<String, String>();
+                // validator.validate(extra.getPrincipal(), entity,
+                // CoalesceConstraintCache.getCoalesceConstraints(entity));
+
+                if (results.size() != 0)
+                {
+                    result.setStatus(EResultStatus.FAILED);
+                    // TODO
+                    result.setResult("Validation Failed");
+                    break;
+                }
+
+                entities[ii] = entity;
             }
             else
             {
                 result.setStatus(EResultStatus.FAILED);
+                result.setResult(String.format(CoalesceErrors.NOT_INITIALIZED, "Entity"));
+                break;
             }
         }
-        catch (CoalescePersistorException e)
-        {
-            result.setStatus(EResultStatus.FAILED);
-            result.setResult(e.getMessage());
-        }
 
+        if (result.getStatus() != EResultStatus.FAILED)
+        {
+            try
+            {
+                // TODO Check to see if entity exists first.
+
+                if (framework.saveCoalesceEntity(entities))
+                {
+                    result.setStatus(EResultStatus.SUCCESS);
+                }
+                else
+                {
+                    result.setStatus(EResultStatus.FAILED);
+                }
+            }
+            catch (CoalescePersistorException e)
+            {
+                result.setStatus(EResultStatus.FAILED);
+                result.setResult(e.getMessage());
+            }
+        }
         return result;
     }
 

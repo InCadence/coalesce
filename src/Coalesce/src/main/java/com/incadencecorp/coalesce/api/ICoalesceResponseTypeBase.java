@@ -37,6 +37,16 @@ public interface ICoalesceResponseTypeBase {
     void setStatus(EResultStatus value);
 
     /**
+     * @return the status
+     */
+    String getError();
+
+    /**
+     * Sets the status
+     */
+    void setError(String value);
+    
+    /**
      * @return the ID
      */
     String getId();

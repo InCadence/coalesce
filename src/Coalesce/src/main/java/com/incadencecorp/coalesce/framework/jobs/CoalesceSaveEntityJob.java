@@ -20,7 +20,10 @@ package com.incadencecorp.coalesce.framework.jobs;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.incadencecorp.coalesce.api.ICoalesceResponseType;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
+import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceResponseType;
+import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceStringResponseType;
 import com.incadencecorp.coalesce.framework.tasks.AbstractPersistorTask;
 import com.incadencecorp.coalesce.framework.tasks.CoalesceSaveEntityTask;
 
@@ -58,6 +61,19 @@ public class CoalesceSaveEntityJob extends AbstractCoalescePersistorsJob<Coalesc
         }
 
         return keys.toArray(new String[keys.size()]);
+    }
+
+
+    @Override
+    protected ICoalesceResponseType<List<CoalesceStringResponseType>> createResponse()
+    {
+        return new CoalesceResponseType<List<CoalesceStringResponseType>>();
+    }
+
+    @Override
+    protected CoalesceStringResponseType createResults()
+    {
+        return new CoalesceStringResponseType(); 
     }
 
 }

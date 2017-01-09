@@ -17,44 +17,77 @@
 
 package com.incadencecorp.coalesce.services.crud.service.tasks;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceIteratorMerge;
 import com.incadencecorp.coalesce.framework.tasks.AbstractFrameworkTask;
+import com.incadencecorp.coalesce.framework.tasks.ExtraParams;
+import com.incadencecorp.coalesce.framework.validation.CoalesceValidator;
 import com.incadencecorp.coalesce.services.api.common.ResultsType;
 
 public class UpdateDataObjectTask extends AbstractFrameworkTask<String[], ResultsType> {
 
     @Override
-    protected ResultsType doWork(CoalesceFramework framework, String[] params)
+    protected ResultsType doWork(ExtraParams extra, String[] params)
     {
         ResultsType result = new ResultsType();
-
+        CoalesceFramework framework = extra.getFramework();
+        CoalesceValidator validator = new CoalesceValidator();
+        
         try
         {
+            List<CoalesceEntity> entities = new ArrayList<CoalesceEntity>();
+            
             for (String xml : params)
             {
-                CoalesceEntity updated = CoalesceEntity.create(xml);
-                CoalesceEntity original = framework.getCoalesceEntity(updated.getKey());
-
-                CoalesceIteratorMerge merger = new CoalesceIteratorMerge();
-                
-                // TODO Set user's ID and IP
-                updated = merger.merge(null, null, original, updated);
-
-                if (framework.saveCoalesceEntity(updated))
+                CoalesceEntity updated = new CoalesceEntity();
+                if (updated.initialize(xml))
                 {
-                    result.setStatus(EResultStatus.SUCCESS);
+                    CoalesceEntity original = framework.getCoalesceEntity(updated.getKey());
+
+                    if (!original.isReadOnly())
+                    {
+                        CoalesceIteratorMerge merger = new CoalesceIteratorMerge();
+
+                        updated.pruneCoalesceObject(updated.getLinkageSection());
+                        updated = merger.merge(extra.getPrincipalName(), extra.getIp(), original, updated);
+
+                        // TODO Enable this
+                        Map<String, String> results = new HashMap<String, String>();
+                        // validator.validate(extra.getPrincipal(), entity,
+                        // CoalesceConstraintCache.getCoalesceConstraints(entity));
+
+                        if (results.size() != 0)
+                        {
+                            result.setStatus(EResultStatus.FAILED);
+                            break;
+                        }
+                        
+                        entities.add(updated);
+                    }
                 }
                 else
                 {
                     result.setStatus(EResultStatus.FAILED);
+                    result.setResult(String.format(CoalesceErrors.NOT_INITIALIZED, "Entity"));
                 }
+            }
+
+            if (framework.saveCoalesceEntity(entities.toArray(new CoalesceEntity[entities.size()])))
+            {
+                result.setStatus(EResultStatus.SUCCESS);
+            }
+            else
+            {
+                result.setStatus(EResultStatus.FAILED);
             }
         }
         catch (CoalesceException e)

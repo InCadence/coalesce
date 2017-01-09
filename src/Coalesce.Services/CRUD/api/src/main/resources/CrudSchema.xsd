@@ -17,14 +17,14 @@
 	targetNamespace="http://api.services.coalesce.incadencecorp.com/crud"
 	xmlns:tns="http://api.services.coalesce.incadencecorp.com/crud"
 	xmlns:cmn="http://api.services.coalesce.incadencecorp.com/common"
-	xmlns:enn="http://coalesce.incadencecorp.com/api" elementFormDefault="qualified"
+	xmlns:dmn="http://framework.coalesce.incadencecorp.com/datamodel" elementFormDefault="qualified" 
 	attributeFormDefault="qualified" xmlns:fes="http://www.opengis.net/fes/2.0">
 
 	<xs:import namespace="http://api.services.coalesce.incadencecorp.com/common"
 		schemaLocation="../../../../../API/src/main/resources/Common.xsd" />
 
-	<xs:import namespace="http://coalesce.incadencecorp.com/api"
-		schemaLocation="../../../../../../Coalesce/src/main/resources/Enumerations.xsd" />
+	<xs:import namespace="http://framework.coalesce.incadencecorp.com/datamodel"
+		schemaLocation="../../../../../../Coalesce/src/main/resources/DataModelEnumerations.xsd" />
 
 	<xs:complexType name="DataObjectXmlRequest">
 		<xs:complexContent>
@@ -96,7 +96,7 @@
 		<xs:sequence>
 			<xs:element name="dataObjectKeySource" type="xs:string"></xs:element>
 			<xs:element name="dataObjectKeyTarget" type="xs:string"></xs:element>
-			<xs:element name="linkType" type="enn:ELinkType"></xs:element>
+			<xs:element name="linkType" type="dmn:ELinkTypes"></xs:element>
 			<xs:element name="action" type="tns:ELinkAction"></xs:element>
 			<xs:element name="label" type="xs:string"></xs:element>
 		</xs:sequence>

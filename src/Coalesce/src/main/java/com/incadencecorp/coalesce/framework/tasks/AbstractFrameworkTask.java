@@ -25,8 +25,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.incadencecorp.coalesce.api.CoalesceErrors;
-import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.api.ICoalesceResponseTypeBase;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.jobs.metrics.StopWatch;
@@ -101,7 +101,7 @@ public abstract class AbstractFrameworkTask<T, Y extends ICoalesceResponseTypeBa
     --------------------------------------------------------------------------*/
 
     @Override
-    public MetricResults<Y> call()
+    public MetricResults<Y> call() throws CoalesceException
     {
         try
         {
@@ -109,7 +109,10 @@ public abstract class AbstractFrameworkTask<T, Y extends ICoalesceResponseTypeBa
             
             watch.start();
 
-            result.setResults(doWork(_framework, _params));
+            ExtraParams extraParams = new ExtraParams();
+            extraParams.setFramework(_framework);
+            
+            result.setResults(doWork(extraParams, _params));
             
             watch.finish();
 
@@ -127,7 +130,7 @@ public abstract class AbstractFrameworkTask<T, Y extends ICoalesceResponseTypeBa
             
             return result;
         }
-        catch (Exception e)
+        catch (CoalesceException e)
         {
             String reason = e.getMessage();
 
@@ -172,7 +175,7 @@ public abstract class AbstractFrameworkTask<T, Y extends ICoalesceResponseTypeBa
     Abstract Methods
     --------------------------------------------------------------------------*/
 
-    abstract protected Y doWork(CoalesceFramework framework, T params);
+    abstract protected Y doWork(ExtraParams extraParams, T params) throws CoalesceException;
 
     abstract protected Map<String, String> getParameters(T params, boolean isTrace);
 

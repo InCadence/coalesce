@@ -26,38 +26,49 @@ import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceIteratorGetVersion;
 import com.incadencecorp.coalesce.framework.tasks.AbstractFrameworkTask;
+import com.incadencecorp.coalesce.framework.tasks.ExtraParams;
 import com.incadencecorp.coalesce.services.api.common.ResultsType;
 import com.incadencecorp.coalesce.services.api.crud.DataObjectKeyType;
 
 public class RetrieveDataObjectTask extends AbstractFrameworkTask<DataObjectKeyType[], ResultsType> {
 
     @Override
-    protected ResultsType doWork(CoalesceFramework framework, DataObjectKeyType[] params)
+    protected ResultsType doWork(ExtraParams extra, DataObjectKeyType[] params)
     {
         ResultsType result = new ResultsType();
+        CoalesceIteratorGetVersion it = new CoalesceIteratorGetVersion();
+        CoalesceFramework framework = extra.getFramework();
 
         try
         {
             for (DataObjectKeyType task : params)
             {
-                if (task.getVer() != -1)
+                CoalesceEntity entity = framework.getCoalesceEntity(task.getKey());
+
+                if (task.getVer() == -1)
                 {
-                    CoalesceIteratorGetVersion it = new CoalesceIteratorGetVersion();
+                    task.setVer(entity.getObjectVersion());
+                }
 
-                    // Revert to Specified Version
-                    CoalesceEntity entity = framework.getCoalesceEntity(task.getKey());
+                if (entity.isValidObjectVersion(task.getVer()))
+                {
                     it.getVersion(entity, task.getVer());
-
+                    result.setStatus(EResultStatus.SUCCESS);
                     result.setResult(entity.toXml());
                 }
                 else
                 {
-                    result.setResult(framework.getEntityXml(task.getKey()));
+                    result.setStatus(EResultStatus.FAILED);
+                    // TODO Add Error.
+                    // result.setResult(value);
                 }
+
                 result.setStatus(EResultStatus.SUCCESS);
             }
         }
-        catch (CoalescePersistorException e)
+        catch (
+
+        CoalescePersistorException e)
         {
             result.setStatus(EResultStatus.FAILED);
             result.setResult(e.getMessage());

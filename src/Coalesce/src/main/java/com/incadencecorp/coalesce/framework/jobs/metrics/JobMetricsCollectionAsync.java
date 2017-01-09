@@ -80,7 +80,7 @@ public class JobMetricsCollectionAsync implements AutoCloseable {
      *
      * @param job
      */
-    public void addJob(AbstractCoalesceJob<?, ?> job)
+    public void addJob(AbstractCoalesceJob<?, ?, ?> job)
     {
         jobQueue.add(new JobNode(job));
     }
@@ -107,13 +107,13 @@ public class JobMetricsCollectionAsync implements AutoCloseable {
         // Private Members
         // ----------------------------------------------------------------------//
 
-        private AbstractCoalesceJob<?, ?> job;
+        private AbstractCoalesceJob<?, ?, ?> job;
 
         // ----------------------------------------------------------------------//
         // Constructor
         // ----------------------------------------------------------------------//
 
-        public JobNode(AbstractCoalesceJob<?, ?> job)
+        public JobNode(AbstractCoalesceJob<?, ?, ?> job)
         {
             this.job = job;
         }

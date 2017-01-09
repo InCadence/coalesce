@@ -33,7 +33,6 @@ import com.incadencecorp.coalesce.framework.jobs.CoalesceRegisterTemplateJob;
 import com.incadencecorp.coalesce.framework.jobs.CoalesceSaveEntityJob;
 import com.incadencecorp.coalesce.framework.jobs.CoalesceSaveEntityProperties;
 import com.incadencecorp.coalesce.framework.jobs.CoalesceSaveTemplateJob;
-import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceResponseType;
 import com.incadencecorp.coalesce.framework.persistance.ElementMetaData;
 import com.incadencecorp.coalesce.framework.persistance.EntityMetaData;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
@@ -685,7 +684,8 @@ public class CoalesceFramework implements ICoalesceExecutorService, Closeable {
         return _pool.submit(task);
     }
 
-    public <T, Y extends ICoalesceResponseType<?>> Future<Y> submit(AbstractCoalesceJob<T, Y> job) throws CoalescePersistorException
+    public <T, Y extends ICoalesceResponseType<List<X>>, X extends ICoalesceResponseType<?>> Future<Y> submit(AbstractCoalesceJob<T, Y, X> job)
+            throws CoalescePersistorException
     {
 
         Future<Y> result = null;
@@ -794,7 +794,7 @@ public class CoalesceFramework implements ICoalesceExecutorService, Closeable {
     {
         for (Runnable job : jobList)
         {
-            if (job instanceof AbstractCoalesceJob<?, ?>)
+            if (job instanceof AbstractCoalesceJob<?, ?, ?>)
             {
                 LOGGER.warn("Job Failed {}", job.getClass().getName());
             }

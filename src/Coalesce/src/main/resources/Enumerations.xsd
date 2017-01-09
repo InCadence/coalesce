@@ -23,37 +23,4 @@
 		</xs:restriction>
 	</xs:simpleType>
 
-	<xs:simpleType name="ELinkType">
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="UNDEFINED" />
-			<xs:enumeration value="IS_CHILD_OF" />
-			<xs:enumeration value="IS_PARENT_OF" />
-			<xs:enumeration value="CREATED" />
-			<xs:enumeration value="WAS_CREATED_BY" />
-			<xs:enumeration value="HAS_MEMBER" />
-			<xs:enumeration value="IS_A_MEMBER_OF" />
-			<xs:enumeration value="HAS_PARTICIPANT" />
-			<xs:enumeration value="IS_A_PARTICIPANT_OF" />
-			<xs:enumeration value="IS_WATCHING" />
-			<xs:enumeration value="IS_BEING_WATCHED_BY" />
-			<xs:enumeration value="IS_A_PEER_OF" />
-			<xs:enumeration value="IS_OWNED_BY" />
-			<xs:enumeration value="HAS_OWNERSHIP_OF" />
-			<xs:enumeration value="IS_USED_BY" />
-			<xs:enumeration value="HAS_USE_OF" />
-			<xs:enumeration value="SUCCESSOR" />
-			<xs:enumeration value="PREDECESSOR" />
-			<xs:enumeration value="CROSS_DOMAIN_SOURCE" />
-			<xs:enumeration value="CROSS_DOMAIN_TARGET" />
-			<xs:enumeration value="IS_INPUT_PARAMETER_TO" />
-			<xs:enumeration value="HAS_INPUT_PARAMETER_OF" />
-			<xs:enumeration value="IS_INPUT_TO" />
-			<xs:enumeration value="HAS_INPUT_OF" />
-			<xs:enumeration value="IS_OUTPUT_TO" />
-			<xs:enumeration value="HAS_OUTPUT_OF" />
-			<xs:enumeration value="IS_PRODUCT_OF" />
-			<xs:enumeration value="HAS_PRODUCT" />
-		</xs:restriction>
-	</xs:simpleType>
-
 </xs:schema>

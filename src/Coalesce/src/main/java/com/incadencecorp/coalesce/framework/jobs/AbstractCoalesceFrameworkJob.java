@@ -17,8 +17,8 @@
 
 package com.incadencecorp.coalesce.framework.jobs;
 
+import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -34,7 +34,6 @@ import com.incadencecorp.coalesce.api.ICoalesceResponseType;
 import com.incadencecorp.coalesce.api.persistance.ICoalesceExecutorService;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
-import com.incadencecorp.coalesce.framework.jobs.metrics.StopWatch;
 import com.incadencecorp.coalesce.framework.tasks.AbstractFrameworkTask;
 import com.incadencecorp.coalesce.framework.tasks.MetricResults;
 
@@ -45,7 +44,7 @@ import com.incadencecorp.coalesce.framework.tasks.MetricResults;
  * @param <T> input type
  */
 public abstract class AbstractCoalesceFrameworkJob<T, Y extends ICoalesceResponseType<List<X>>, X extends ICoalesceResponseType<?>>
-        extends AbstractCoalesceJob<T, Y> implements ICoalesceFrameworkJob {
+        extends AbstractCoalesceJob<T, Y, X> implements ICoalesceFrameworkJob {
 
     private static Logger LOGGER = LoggerFactory.getLogger(AbstractCoalesceFrameworkJob.class);
 
@@ -56,6 +55,8 @@ public abstract class AbstractCoalesceFrameworkJob<T, Y extends ICoalesceRespons
     private ICoalesceExecutorService _service;
     private CoalesceFramework _framework;
     private List<MetricResults<X>> taskMetrics = null;
+    private Principal principal; 
+    private String ip;
 
     /*--------------------------------------------------------------------------
     Constructors
@@ -185,8 +186,12 @@ public abstract class AbstractCoalesceFrameworkJob<T, Y extends ICoalesceRespons
                 {
                     LOGGER.error(e.getMessage(), e);
 
+                    X task = createResults();
+                    task.setError(e.getMessage());
+                    task.setStatus(EResultStatus.FAILED);
+                    
                     result = new MetricResults<X>();
-                    result.setResults(createFailedResults(e));
+                    result.setResults(task);
                     result.getResults().setStatus(EResultStatus.FAILED);
                 }
 
@@ -208,10 +213,7 @@ public abstract class AbstractCoalesceFrameworkJob<T, Y extends ICoalesceRespons
     Abstract Methods
     --------------------------------------------------------------------------*/
 
-    protected abstract Collection<AbstractFrameworkTask<?, X>> getTasks(T params);
+    protected abstract Collection<AbstractFrameworkTask<?, X>> getTasks(T params) throws CoalesceException;
 
-    protected abstract Y createResponse();
-
-    protected abstract X createFailedResults(Exception e);
 
 }

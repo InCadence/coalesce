@@ -41,7 +41,7 @@ import com.incadencecorp.coalesce.framework.tasks.AbstractPersistorTask;
  * @author Derek
  * @param <T> input type
  */
-public abstract class AbstractCoalescePersistorsJob<T> extends AbstractCoalesceJob<T, ICoalesceResponseType<List<CoalesceStringResponseType>>>
+public abstract class AbstractCoalescePersistorsJob<T> extends AbstractCoalesceJob<T, ICoalesceResponseType<List<CoalesceStringResponseType>>, CoalesceStringResponseType>
         implements ICoalescePersistorJob {
 
     private static Logger LOGGER = LoggerFactory.getLogger(AbstractCoalescePersistorsJob.class);

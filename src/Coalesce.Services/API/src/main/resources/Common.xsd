@@ -44,6 +44,7 @@
 		<xs:sequence>
 			<xs:element name="id" type="xs:string"></xs:element>
 			<xs:element name="status" type="enn:EResultStatus"></xs:element>
+			<xs:element name="error" type="xs:string"></xs:element>
 			<xs:element name="requestId" type="xs:string"></xs:element>
 		</xs:sequence>
 	</xs:complexType>
@@ -87,6 +88,7 @@
 		<xs:sequence>
 			<xs:element name="id" type="xs:string"></xs:element>
 			<xs:element name="status" type="enn:EResultStatus"></xs:element>
+			<xs:element name="error" type="xs:string"></xs:element>
 			<xs:element name="result" type="tns:BaseResponse"></xs:element>
 		</xs:sequence>
 	</xs:complexType>
@@ -95,6 +97,7 @@
 		<xs:sequence>
 			<xs:element name="id" type="xs:string"></xs:element>
 			<xs:element name="status" type="enn:EResultStatus"></xs:element>
+			<xs:element name="error" type="xs:string"></xs:element>
 			<xs:element name="result" type="xs:string"></xs:element>
 		</xs:sequence>
 	</xs:complexType>
@@ -103,6 +106,7 @@
 		<xs:sequence>
 			<xs:element name="id" type="xs:string"></xs:element>
 			<xs:element name="status" type="enn:EResultStatus"></xs:element>
+			<xs:element name="error" type="xs:string"></xs:element>
 			<xs:element name="result" type="enn:EJobStatus"></xs:element>
 		</xs:sequence>
 	</xs:complexType>

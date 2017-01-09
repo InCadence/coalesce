@@ -59,8 +59,8 @@ public class RetrieveDataObjectJob extends AbstractServiceJob<DataObjectKeyReque
     }
 
     @Override
-    protected ResultsType createFailedResults(Exception e)
+    protected ResultsType createResults()
     {
-        return new ResultsType();
+        return new ResultsType(); 
     }
 }

@@ -22,11 +22,11 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.incadencecorp.coalesce.api.ELinkType;
 import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
+import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
 import com.incadencecorp.coalesce.framework.persistance.memory.MockPersister;
 import com.incadencecorp.coalesce.services.api.IBaseClient;
 import com.incadencecorp.coalesce.services.api.Results;
@@ -92,8 +92,6 @@ public class CrudFrameworkClientImplTest {
 
     }
 
-    // TODO Back end is not implemented yet.
-    @Ignore
     @Test
     public void testUpdateLinkages() throws Exception
     {
@@ -107,12 +105,31 @@ public class CrudFrameworkClientImplTest {
         task.setDataObjectKeySource(entity1.getKey());
         task.setDataObjectKeyTarget(entity2.getKey());
         task.setLabel("HelloWorld");
-        task.setLinkType(ELinkType.IS_PARENT_OF);
+        task.setLinkType(ELinkTypes.IS_PARENT_OF);
 
         assertResult(client.updateLinkages(task), client);
 
     }
 
+    
+    @Test
+    public void testUpdateLinkagesFailure() throws Exception
+    {
+        CoalesceEntity entity1 = CoalesceEntity.create("Hello", "World", "1", null, null);
+        CoalesceEntity entity2 = CoalesceEntity.create("Hello", "World", "1", null, null);
+
+        assertResult(client.createDataObject(entity1, entity2), client, entity1, entity2);
+
+        // Intentionally Not Specifying Linkage Action
+        DataObjectLinkType task = new DataObjectLinkType();
+        task.setDataObjectKeySource(entity1.getKey());
+        task.setDataObjectKeyTarget(entity2.getKey());
+        task.setLabel("HelloWorld");
+        task.setLinkType(ELinkTypes.IS_PARENT_OF);
+
+        Assert.assertFalse(client.updateLinkages(task));
+
+    }
     @Test
     public void testUpdateDataObjectStatus() throws Exception
     {
@@ -131,6 +148,19 @@ public class CrudFrameworkClientImplTest {
         assertResult(results);
 
         Assert.assertEquals(ECoalesceObjectStatus.READONLY, results[0].getResult().getStatus());
+    }
+    
+    @Test
+    public void testUpdateDataObjectStatusFailure() throws Exception
+    {
+        CoalesceEntity entity = CoalesceEntity.create("Hello", "World", "1", null, null);
+
+        assertResult(client.createDataObject(entity), client, entity);
+
+        DataObjectStatusType task = new DataObjectStatusType();
+        task.setKey(entity.getKey());
+        
+        Assert.assertFalse(client.updateDataObjectStatus(task));
     }
 
     // TODO Move these into a common package
@@ -164,7 +194,7 @@ public class CrudFrameworkClientImplTest {
                     //
                     // }
 
-                    Assert.fail(result.getResult());
+                    Assert.fail(result.getError());
                 }
             }
 

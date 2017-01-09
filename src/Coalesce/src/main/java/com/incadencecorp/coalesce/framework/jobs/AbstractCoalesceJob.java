@@ -41,11 +41,11 @@ import com.incadencecorp.coalesce.framework.tasks.MetricResults;
  * @param <T> input type
  * @param <Y> output type
  */
-public abstract class AbstractCoalesceJob<T, Y extends ICoalesceResponseType<?>> extends CoalesceComponentImpl
+public abstract class AbstractCoalesceJob<T, Y extends ICoalesceResponseType<List<X>>, X extends ICoalesceResponseType<?>> extends CoalesceComponentImpl
         implements ICoalesceJob, Callable<Y> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCoalesceJob.class);
-    
+
     /*--------------------------------------------------------------------------
     Member Variables
     --------------------------------------------------------------------------*/
@@ -54,7 +54,6 @@ public abstract class AbstractCoalesceJob<T, Y extends ICoalesceResponseType<?>>
     private StopWatch watch;
     private String id;
     private EJobStatus status;
-    private Y results;
     private Future<Y> future;
 
     /*--------------------------------------------------------------------------
@@ -79,6 +78,8 @@ public abstract class AbstractCoalesceJob<T, Y extends ICoalesceResponseType<?>>
     @Override
     public final Y call()
     {
+        Y results;
+        
         // Set Start Time
         watch.start();
 
@@ -94,12 +95,21 @@ public abstract class AbstractCoalesceJob<T, Y extends ICoalesceResponseType<?>>
             LOGGER.error("(FAILED) Job Execution", e);
 
             status = EJobStatus.FAILED;
+            
+            X result = createResults();
+            result.setStatus(EResultStatus.FAILED);
+            result.setError(e.getMessage());
+            
+            results = createResponse();
+            results.setStatus(EResultStatus.FAILED);
+            results.setError(e.getMessage());
+            results.getResult().add(result);
         }
 
         // Set Complete Time
         watch.finish();
 
-        if (results.getStatus() != EResultStatus.SUCCESS)
+        if (results != null && results.getStatus() != EResultStatus.SUCCESS)
         {
             // All other states are treated as failures because this is a
             // synchronous call.
@@ -195,20 +205,27 @@ public abstract class AbstractCoalesceJob<T, Y extends ICoalesceResponseType<?>>
     {
         return null;
     }
-    
+
     /*--------------------------------------------------------------------------
     Protected Methods
     --------------------------------------------------------------------------*/
 
-    public final void setJobStatus(EJobStatus value)
+    /**
+     * Sets the job's status.
+     * 
+     * @param value
+     */
+    protected final void setJobStatus(EJobStatus value)
     {
         status = value;
     }
 
     /**
-     * @return the job's ID
+     * Sets the job's ID
+     * 
+     * @param value
      */
-    public final void setJobId(String value)
+    protected final void setJobId(String value)
     {
         id = value;
     }
@@ -221,5 +238,9 @@ public abstract class AbstractCoalesceJob<T, Y extends ICoalesceResponseType<?>>
      * Performs the work of the job.
      */
     protected abstract Y doWork(T params) throws CoalesceException;
+
+    protected abstract Y createResponse();
+
+    protected abstract X createResults();
 
 }

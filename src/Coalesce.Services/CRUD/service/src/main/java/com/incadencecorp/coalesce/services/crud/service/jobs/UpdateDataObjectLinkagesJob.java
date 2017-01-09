@@ -19,8 +19,10 @@ package com.incadencecorp.coalesce.services.crud.service.jobs;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.tasks.AbstractFrameworkTask;
 import com.incadencecorp.coalesce.services.api.common.ResultsType;
 import com.incadencecorp.coalesce.services.api.common.StringResponse;
@@ -37,15 +39,15 @@ public class UpdateDataObjectLinkagesJob extends AbstractServiceJob<DataObjectLi
     }
 
     @Override
-    protected Collection<AbstractFrameworkTask<?, ResultsType>> getTasks(DataObjectLinkRequest params)
+    protected Collection<AbstractFrameworkTask<?, ResultsType>> getTasks(DataObjectLinkRequest params)throws CoalesceException
     {
         List<AbstractFrameworkTask<?, ResultsType>> tasks = new ArrayList<AbstractFrameworkTask<?, ResultsType>>();
 
-        for (DataObjectLinkType type : params.getLinkagelist())
+        for (DataObjectLinkBucket bucket : groupIntoBuckets(params.getLinkagelist()))
         {
-            UpdateDataObjectLinkagesTask task = new UpdateDataObjectLinkagesTask(); 
-            task.setParams(new DataObjectLinkType[] {type});
-            
+            UpdateDataObjectLinkagesTask task = new UpdateDataObjectLinkagesTask();
+            task.setParams(bucket.getItems());
+
             tasks.add(task);
         }
 
@@ -59,8 +61,142 @@ public class UpdateDataObjectLinkagesJob extends AbstractServiceJob<DataObjectLi
     }
 
     @Override
-    protected ResultsType createFailedResults(Exception e)
+    protected ResultsType createResults()
     {
-        return new ResultsType();
+        return new ResultsType(); 
+    }
+
+    /**
+     * Groups the linkage tasks that share keys into common buckets. This solves
+     * two issues: (1) Performance have to load / save the same object multiple
+     * time for different linkage task, (2) Read - Modify - Write conflicts
+     * between treads. The second issue also has be handled by locking or
+     * Optimistic Concurrency (OCC) at a lower level but this will prevent a
+     * single request from a user from conflicting.
+     *
+     * @param linkages
+     * @return
+     */
+    private List<DataObjectLinkBucket> groupIntoBuckets(List<DataObjectLinkType> linkages) throws CoalesceException
+    {
+
+        List<DataObjectLinkBucket> buckets = new ArrayList<DataObjectLinkBucket>();
+        DataObjectLinkBucket container;
+
+        // Create Tasks
+        for (DataObjectLinkType linkage : linkages)
+        {
+
+            // Action Specified by Client?
+            if (linkage.getAction() == null)
+            {
+                throw new CoalesceException("No Link Action Specified");
+            }
+
+            // Reset
+            container = null;
+
+            // Iterate Existing Buckets
+            for (DataObjectLinkBucket bucket : buckets)
+            {
+
+                // Belongs?
+                if (bucket.contains(linkage))
+                {
+
+                    // Already Has Bucket?
+                    if (container != null)
+                    {
+
+                        // Yes; Combine Buckets
+                        container.combine(bucket);
+
+                    }
+                    else
+                    {
+
+                        // No; Add to Existing Bucket
+                        container = bucket;
+
+                        container.add(linkage);
+
+                    }
+                }
+            }
+
+            // Added to Bucket?
+            if (container == null)
+            {
+                // No; Create New Bucket
+                buckets.add(new DataObjectLinkBucket(linkage));
+            }
+        }
+
+        return buckets;
+
+    }
+
+    /*--------------------------------------------------------------------------
+    Private Classes
+    --------------------------------------------------------------------------*/
+
+    private class DataObjectLinkBucket {
+
+        private HashSet<String> keys;
+        private List<DataObjectLinkType> linkages;
+
+        /**
+         * Creates a new bucket containing the linkage.
+         *
+         * @param linkage
+         */
+        public DataObjectLinkBucket(DataObjectLinkType linkage)
+        {
+
+            keys = new HashSet<String>();
+            linkages = new ArrayList<DataObjectLinkType>();
+
+            add(linkage);
+
+        }
+
+        public boolean contains(DataObjectLinkType linkage)
+        {
+
+            return keys.contains(linkage.getDataObjectKeySource()) || keys.contains(linkage.getDataObjectKeyTarget());
+
+        }
+
+        public void add(DataObjectLinkType linkage)
+        {
+
+            keys.add(linkage.getDataObjectKeySource());
+            keys.add(linkage.getDataObjectKeyTarget());
+
+            linkages.add(linkage);
+
+        }
+
+        public void combine(DataObjectLinkBucket bucket)
+        {
+
+            if (bucket instanceof DataObjectLinkBucket)
+            {
+
+                DataObjectLinkBucket linkBucket = bucket;
+
+                keys.addAll(linkBucket.keys);
+                linkages.addAll(linkBucket.linkages);
+
+                linkBucket.linkages.clear();
+                linkBucket.keys.clear();
+            }
+        }
+
+        public DataObjectLinkType[] getItems()
+        {
+            return linkages.toArray(new DataObjectLinkType[linkages.size()]);
+        }
+
     }
 }

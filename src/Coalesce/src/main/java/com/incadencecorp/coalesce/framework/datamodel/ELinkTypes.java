@@ -3,8 +3,13 @@ package com.incadencecorp.coalesce.framework.datamodel;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlType;
+
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 
+@XmlType(name = "ELinkTypes", namespace = "http://framework.coalesce.incadencecorp.com/datamodel")
+@XmlEnum
 public enum ELinkTypes {
     UNDEFINED("Undefined"),
     IS_CHILD_OF("IsChildOf"),

@@ -60,7 +60,7 @@ public class JobMetricsCollection {
      * @param response
      *            response
      */
-    public void addJob(AbstractCoalesceJob<?, ?> job) {
+    public void addJob(AbstractCoalesceJob<?, ?, ?> job) {
 
         JobMetricsType metric = getMetrics(job.getClass());
         metric.addJobMetrics(job);

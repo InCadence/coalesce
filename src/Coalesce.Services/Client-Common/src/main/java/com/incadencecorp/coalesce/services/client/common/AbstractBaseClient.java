@@ -315,12 +315,10 @@ public abstract class AbstractBaseClient<T extends ICoalesceEvents> extends Base
 
     protected boolean verifyResults(StringResponse response, BaseRequest request, String reason)
     {
-
         boolean isSuccessful = false;
 
         if (response != null)
         {
-
             if (request.isAsyncCall())
             {
                 addAsyncResponse(response, request, reason);
@@ -330,7 +328,6 @@ public abstract class AbstractBaseClient<T extends ICoalesceEvents> extends Base
             {
                 isSuccessful = verifyResults(response.getResult());
             }
-
         }
 
         return isSuccessful;
@@ -353,27 +350,22 @@ public abstract class AbstractBaseClient<T extends ICoalesceEvents> extends Base
 
     private boolean verifyResults(List<ResultsType> results)
     {
-
         boolean isSuccessful = false;
 
         if (results != null)
         {
-
             lastResults = results.toArray(new ResultsType[results.size()]);
 
             isSuccessful = true;
 
             for (ResultsType result : results)
             {
-
                 if (result == null || result.getStatus() != EResultStatus.SUCCESS)
                 {
                     isSuccessful = false;
                     break;
                 }
-
             }
-
         }
 
         return isSuccessful;
@@ -390,7 +382,6 @@ public abstract class AbstractBaseClient<T extends ICoalesceEvents> extends Base
             {
                 results.put(result.getId(), result.getResult());
             }
-
         }
 
         return results;

@@ -21,37 +21,106 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.incadencecorp.coalesce.api.EResultStatus;
-import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
+import com.incadencecorp.coalesce.common.helpers.EntityLinkHelper;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.tasks.AbstractFrameworkTask;
+import com.incadencecorp.coalesce.framework.tasks.ExtraParams;
 import com.incadencecorp.coalesce.services.api.common.ResultsType;
 import com.incadencecorp.coalesce.services.api.crud.DataObjectLinkType;
 
 public class UpdateDataObjectLinkagesTask extends AbstractFrameworkTask<DataObjectLinkType[], ResultsType> {
 
     @Override
-    protected ResultsType doWork(CoalesceFramework framework, DataObjectLinkType[] params)
+    protected ResultsType doWork(ExtraParams extra, DataObjectLinkType[] params) throws CoalesceException
     {
-        ResultsType result = new ResultsType(); 
-        
+        ResultsType result = new ResultsType();
+        CoalesceFramework framework = extra.getFramework();
+
+        // TODO Implement Authorization
+        // boolean isSysAdmin = UserValidator.isSysAdmin(userId);
+
+        String user = extra.getPrincipalName();
+        String ip = extra.getIp();
+        boolean isSysAdmin = false;
+
+        Map<String, CoalesceEntity> map = new HashMap<String, CoalesceEntity>();
+
+        // Determine complete list of keys
         for (DataObjectLinkType task : params)
         {
-            try
-            {
-                CoalesceEntity[] entities = framework.getCoalesceEntities(task.getDataObjectKeySource(),
-                                                                          task.getDataObjectKeyTarget());
 
-                // TODO Not Implemented
-            }
-            catch (CoalescePersistorException e)
+            // Same Source & Target?
+            if (task.getDataObjectKeySource().equalsIgnoreCase(task.getDataObjectKeyTarget()))
             {
-                result.setStatus(EResultStatus.FAILED);
-                result.setResult(e.getMessage());
+                throw new CoalesceException("Linking an object to itself is not allowed");
+            }
+
+            map.put(task.getDataObjectKeySource(), null);
+            map.put(task.getDataObjectKeyTarget(), null);
+
+        }
+
+        // Retrieve Entities
+        CoalesceEntity[] entities = framework.getCoalesceEntities(map.keySet().toArray(new String[map.size()]));
+
+        // Update Map with Entity
+        for (CoalesceEntity entity : entities)
+        {
+            map.put(entity.getKey(), entity);
+        }
+
+        // Link Objects
+        for (DataObjectLinkType task : params)
+        {
+            CoalesceEntity entity1 = map.get(task.getDataObjectKeySource());
+            CoalesceEntity entity2 = map.get(task.getDataObjectKeyTarget());
+
+            switch (task.getAction()) {
+            case MAKEREADONLY:
+                EntityLinkHelper.linkEntities(entity1,
+                                              task.getLinkType(),
+                                              entity2,
+                                              user,
+                                              ip,
+                                              task.getLabel(),
+                                              true,
+                                              true,
+                                              isSysAdmin);
+                break;
+            case LINK:
+
+                EntityLinkHelper.linkEntities(entity1,
+                                              task.getLinkType(),
+                                              entity2,
+                                              user,
+                                              ip,
+                                              task.getLabel(),
+                                              true,
+                                              false,
+                                              isSysAdmin);
+                break;
+            case UNLINK:
+
+                EntityLinkHelper.unLinkEntities(entity1, entity2, task.getLinkType(), user, ip, isSysAdmin);
+                break;
             }
 
         }
-        
+
+        // Save Objects
+        framework.saveCoalesceEntity(entities);
+
+        result.setStatus(EResultStatus.SUCCESS);
+
+        // TODO Since UpdateLinkageTask no longer always processes a single
+        // task there is no longer a one to one relationship to what the
+        // user requested and the result set they gets back. This means if
+        // one of the task fails its impossible to determine what linkages
+        // were involved in that task. This will need to be refactored to
+        // return a list of results ( 1 / Linkage processed).
+
         return result;
     }
 

@@ -493,10 +493,11 @@ public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
      */
     protected final CoalesceFramework getFramework()
     {
-        if (framework == null) {
+        if (framework == null)
+        {
             framework = new CoalesceFramework();
         }
-        
+
         return framework;
     }
 

@@ -21,25 +21,33 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.incadencecorp.coalesce.api.EResultStatus;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
 import com.incadencecorp.coalesce.framework.tasks.AbstractFrameworkTask;
+import com.incadencecorp.coalesce.framework.tasks.ExtraParams;
 import com.incadencecorp.coalesce.services.api.common.ResultsType;
 import com.incadencecorp.coalesce.services.api.crud.DataObjectStatusType;
 
 public class UpdateDataObjectStatusTask extends AbstractFrameworkTask<DataObjectStatusType[], ResultsType> {
 
     @Override
-    protected ResultsType doWork(CoalesceFramework framework, DataObjectStatusType[] params)
+    protected ResultsType doWork(ExtraParams extra, DataObjectStatusType[] params) throws CoalesceException
     {
         ResultsType result = new ResultsType();
-
+        CoalesceFramework framework = extra.getFramework();
+        
         try
         {
             for (DataObjectStatusType task : params)
             {
+                if (task.getAction() == null)
+                {
+                    throw new CoalesceException("No Link Action Specified");
+                }
+                
                 result.setStatus(EResultStatus.SUCCESS);
                 
                 // Revert to Specified Version
