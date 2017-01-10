@@ -26,13 +26,14 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.Map;
-import java.util.Properties;
 import java.util.UUID;
 
 import org.apache.accumulo.core.client.Connector;
+import org.apache.accumulo.minicluster.MiniAccumuloCluster;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.xerces.impl.dv.util.Base64;
 import org.geotools.data.DataStore;
@@ -43,6 +44,7 @@ import org.geotools.filter.text.cql2.CQL;
 import org.geotools.filter.text.cql2.CQLException;
 import org.jdom2.JDOMException;
 import org.joda.time.DateTime;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opengis.feature.Feature;
@@ -96,26 +98,30 @@ import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.io.WKTWriter;
 import com.vividsolutions.jts.util.GeometricShapeFactory;
 
-public class AccumuloPersistorIT extends CoalescePersistorBaseTest {
+public class AccumuloPersistorMiniIT extends CoalescePersistorBaseTest {
 
-    private static ServerConn conn;
+	private static MiniAccumuloCluster accumulo = null;
 
 	@BeforeClass
 	public static void setupBeforeClass() throws Exception {
-        InputStream in = AccumuloDataConnectorIT.class.getClassLoader().getResourceAsStream("/accumuloConnectionInfo.properties");
-        Properties props = new Properties();
-        props.load(in);
-        in.close();
-        String dbName = props.getProperty("database");
-        String zookeepers = props.getProperty("zookeepers");
-        String user = props.getProperty("userid");
-        String password = props.getProperty("password");
-        conn = new ServerConn.Builder().db(dbName).serverName(zookeepers).user(user).password(password).build();
-    }
+		File tempDirectory = Files.createTempDirectory("accTemp").toFile();
+		accumulo = new MiniAccumuloCluster(tempDirectory, "password");
+		accumulo.start();
+		AccumuloPersistorMiniIT tester = new AccumuloPersistorMiniIT();
+		CoalescePersistorBaseTest.setupBeforeClassBase(tester);
+		CoalesceUnitTestSettings.initialize();
+	}
 
-	@Override
+	@AfterClass
+	public static void tearDownAfterClass() throws Exception {
+		CoalesceUnitTestSettings.tearDownAfterClass();
+		accumulo.stop();
+	}
+
 	protected ServerConn getConnection() {
-		return conn;
+		String name = accumulo.getInstanceName();
+		String zookeepers = accumulo.getZooKeepers();
+		return new ServerConn.Builder().db(name).serverName(zookeepers).user("root").password("password").build();
 	}
 
 	@Override
