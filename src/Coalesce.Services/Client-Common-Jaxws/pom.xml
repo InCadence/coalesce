@@ -56,6 +56,7 @@
 			<artifactId>cxf-rt-frontend-jaxws</artifactId>
 			<version>${cxf.version}</version>
 		</dependency>
+
 	</dependencies>
 
 </project>

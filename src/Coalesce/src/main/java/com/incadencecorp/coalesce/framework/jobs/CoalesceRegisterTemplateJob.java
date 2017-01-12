@@ -54,7 +54,7 @@ public class CoalesceRegisterTemplateJob extends AbstractCoalescePersistorsJob<C
     protected String[] getKeys(AbstractPersistorTask<CoalesceEntityTemplate[]> task)
     {
         List<String> keys = new ArrayList<String>();
-
+        
         for (CoalesceEntityTemplate template : task.getParams())
         {
             keys.add(template.getName() + "_" + template.getSource() + "_" + template.getVersion());

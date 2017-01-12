@@ -70,6 +70,8 @@ public abstract class AbstractCoalesceFrameworkJob<T, Y extends ICoalesceRespons
     public AbstractCoalesceFrameworkJob(T params)
     {
         super(params);
+        
+        taskMetrics = new ArrayList<MetricResults<X>>();
     }
 
     /*--------------------------------------------------------------------------
@@ -91,7 +93,7 @@ public abstract class AbstractCoalesceFrameworkJob<T, Y extends ICoalesceRespons
     @Override
     public final MetricResults<X>[] getTaskMetrics()
     {
-        return (MetricResults<X>[]) taskMetrics.toArray();
+        return (MetricResults<X>[]) taskMetrics.toArray(new MetricResults<?>[taskMetrics.size()]);
     }
     
     /**
@@ -166,13 +168,13 @@ public abstract class AbstractCoalesceFrameworkJob<T, Y extends ICoalesceRespons
 
         for (AbstractFrameworkTask<?, X> task : tasks)
         {
-            task.setFramework(_framework);
+            task.setTarget(_framework);
         }
 
         // Execute Tasks
         try
         {
-            taskMetrics = new ArrayList<MetricResults<X>>();
+            
 
             for (Future<MetricResults<X>> future : _service.invokeAll(tasks))
             {

@@ -19,22 +19,21 @@ package com.incadencecorp.coalesce.framework.tasks;
 
 import java.security.Principal;
 
-import com.incadencecorp.coalesce.framework.CoalesceFramework;
+public class TaskParameters<T, Y> {
 
-public class ExtraParams {
-
-    private CoalesceFramework framework;
+    private T target;
+    private Y params;
     private Principal principal; 
     private String ip;
 
-    public CoalesceFramework getFramework()
+    public T getTarget()
     {
-        return framework;
+        return target;
     }
     
-    public void setFramework(CoalesceFramework _framework)
+    public void setTarget(T _framework)
     {
-        this.framework = _framework;
+        this.target = _framework;
     }
     
     public Principal getPrincipal()
@@ -61,5 +60,19 @@ public class ExtraParams {
     {
         this.ip = ip;
     }
+
+    
+    public Y getParams()
+    {
+        return params;
+    }
+
+    
+    public void setParams(Y params)
+    {
+        this.params = params;
+    }
+    
+    
     
 }

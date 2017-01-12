@@ -29,19 +29,20 @@ import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceIteratorMerge;
 import com.incadencecorp.coalesce.framework.tasks.AbstractFrameworkTask;
-import com.incadencecorp.coalesce.framework.tasks.ExtraParams;
+import com.incadencecorp.coalesce.framework.tasks.TaskParameters;
 import com.incadencecorp.coalesce.framework.validation.CoalesceValidator;
 import com.incadencecorp.coalesce.services.api.common.ResultsType;
 
 public class UpdateDataObjectTask extends AbstractFrameworkTask<String[], ResultsType> {
 
     @Override
-    protected ResultsType doWork(ExtraParams extra, String[] params)
+    protected ResultsType doWork(TaskParameters<CoalesceFramework, String[]> parameters)
     {
         ResultsType result = new ResultsType();
-        CoalesceFramework framework = extra.getFramework();
+        CoalesceFramework framework = parameters.getTarget();
         CoalesceValidator validator = new CoalesceValidator();
-        
+        String[] params = parameters.getParams();
+
         try
         {
             List<CoalesceEntity> entities = new ArrayList<CoalesceEntity>();
@@ -58,7 +59,7 @@ public class UpdateDataObjectTask extends AbstractFrameworkTask<String[], Result
                         CoalesceIteratorMerge merger = new CoalesceIteratorMerge();
 
                         updated.pruneCoalesceObject(updated.getLinkageSection());
-                        updated = merger.merge(extra.getPrincipalName(), extra.getIp(), original, updated);
+                        updated = merger.merge(parameters.getPrincipalName(), parameters.getIp(), original, updated);
 
                         // TODO Enable this
                         Map<String, String> results = new HashMap<String, String>();
@@ -111,5 +112,12 @@ public class UpdateDataObjectTask extends AbstractFrameworkTask<String[], Result
 
         return results;
     }
+    
+    @Override
+    protected ResultsType createResult()
+    {
+        return new ResultsType();
+    }
+
 
 }

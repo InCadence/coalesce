@@ -27,18 +27,19 @@ import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
 import com.incadencecorp.coalesce.framework.tasks.AbstractFrameworkTask;
-import com.incadencecorp.coalesce.framework.tasks.ExtraParams;
+import com.incadencecorp.coalesce.framework.tasks.TaskParameters;
 import com.incadencecorp.coalesce.services.api.common.ResultsType;
 import com.incadencecorp.coalesce.services.api.crud.DataObjectStatusType;
 
 public class UpdateDataObjectStatusTask extends AbstractFrameworkTask<DataObjectStatusType[], ResultsType> {
 
     @Override
-    protected ResultsType doWork(ExtraParams extra, DataObjectStatusType[] params) throws CoalesceException
+    protected ResultsType doWork(TaskParameters<CoalesceFramework, DataObjectStatusType[]> parameters) throws CoalesceException
     {
         ResultsType result = new ResultsType();
-        CoalesceFramework framework = extra.getFramework();
-        
+        CoalesceFramework framework = parameters.getTarget();
+        DataObjectStatusType[] params = parameters.getParams();
+
         try
         {
             for (DataObjectStatusType task : params)
@@ -94,5 +95,12 @@ public class UpdateDataObjectStatusTask extends AbstractFrameworkTask<DataObject
 
         return results;
     }
+    
+    @Override
+    protected ResultsType createResult()
+    {
+        return new ResultsType();
+    }
+
 
 }

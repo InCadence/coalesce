@@ -20,20 +20,23 @@ package com.incadencecorp.coalesce.framework.tasks;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceStringResponseType;
+import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 
 public class CoalesceRegisterTemplateTask extends AbstractPersistorTask<CoalesceEntityTemplate[]> {
 
     @Override
-    protected CoalesceStringResponseType doWork()
+    protected CoalesceStringResponseType doWork(TaskParameters<ICoalescePersistor, CoalesceEntityTemplate[]> parameters)
+            throws CoalesceException
     {
         CoalesceStringResponseType result = new CoalesceStringResponseType();
 
         try
         {
-            getPersistor().registerTemplate(getParams());
+            parameters.getTarget().registerTemplate(parameters.getParams());
         }
         catch (CoalescePersistorException e)
         {
@@ -64,6 +67,12 @@ public class CoalesceRegisterTemplateTask extends AbstractPersistorTask<Coalesce
         }
 
         return results;
+    }
+
+    @Override
+    protected CoalesceStringResponseType createResult()
+    {
+        return new CoalesceStringResponseType();
     }
 
 }

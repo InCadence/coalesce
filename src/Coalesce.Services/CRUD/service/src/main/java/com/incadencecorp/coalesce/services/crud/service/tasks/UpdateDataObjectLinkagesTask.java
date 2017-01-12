@@ -26,23 +26,24 @@ import com.incadencecorp.coalesce.common.helpers.EntityLinkHelper;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.tasks.AbstractFrameworkTask;
-import com.incadencecorp.coalesce.framework.tasks.ExtraParams;
+import com.incadencecorp.coalesce.framework.tasks.TaskParameters;
 import com.incadencecorp.coalesce.services.api.common.ResultsType;
 import com.incadencecorp.coalesce.services.api.crud.DataObjectLinkType;
 
 public class UpdateDataObjectLinkagesTask extends AbstractFrameworkTask<DataObjectLinkType[], ResultsType> {
 
     @Override
-    protected ResultsType doWork(ExtraParams extra, DataObjectLinkType[] params) throws CoalesceException
+    protected ResultsType doWork(TaskParameters<CoalesceFramework, DataObjectLinkType[]> parameters) throws CoalesceException
     {
         ResultsType result = new ResultsType();
-        CoalesceFramework framework = extra.getFramework();
+        CoalesceFramework framework = parameters.getTarget();
+        DataObjectLinkType[] params = parameters.getParams();
 
         // TODO Implement Authorization
         // boolean isSysAdmin = UserValidator.isSysAdmin(userId);
 
-        String user = extra.getPrincipalName();
-        String ip = extra.getIp();
+        String user = parameters.getPrincipalName();
+        String ip = parameters.getIp();
         boolean isSysAdmin = false;
 
         Map<String, CoalesceEntity> map = new HashMap<String, CoalesceEntity>();
@@ -140,5 +141,12 @@ public class UpdateDataObjectLinkagesTask extends AbstractFrameworkTask<DataObje
 
         return results;
     }
+    
+    @Override
+    protected ResultsType createResult()
+    {
+        return new ResultsType();
+    }
+
 
 }

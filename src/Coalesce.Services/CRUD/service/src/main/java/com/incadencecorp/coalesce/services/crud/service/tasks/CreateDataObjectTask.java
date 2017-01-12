@@ -26,17 +26,18 @@ import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.tasks.AbstractFrameworkTask;
-import com.incadencecorp.coalesce.framework.tasks.ExtraParams;
+import com.incadencecorp.coalesce.framework.tasks.TaskParameters;
 import com.incadencecorp.coalesce.framework.validation.CoalesceValidator;
 import com.incadencecorp.coalesce.services.api.common.ResultsType;
 
 public class CreateDataObjectTask extends AbstractFrameworkTask<String[], ResultsType> {
 
     @Override
-    protected ResultsType doWork(ExtraParams extra, String[] params)
+    protected ResultsType doWork(TaskParameters<CoalesceFramework, String[]> parameters)
     {
         ResultsType result = new ResultsType();
-        CoalesceFramework framework = extra.getFramework();
+        CoalesceFramework framework = parameters.getTarget();
+        String[] params = parameters.getParams();
         CoalesceValidator validator = new CoalesceValidator();
 
         CoalesceEntity[] entities = new CoalesceEntity[params.length];
@@ -47,8 +48,8 @@ public class CreateDataObjectTask extends AbstractFrameworkTask<String[], Result
             if (entity.initialize(params[ii]))
             {
                 entity.getLinkageSection().clearLinkages();
-                entity.setModifiedBy(extra.getPrincipalName());
-                entity.setModifiedByIP(extra.getIp());
+                entity.setModifiedBy(parameters.getPrincipalName());
+                entity.setModifiedByIP(parameters.getIp());
 
                 // TODO Enable this
                 Map<String, String> results = new HashMap<String, String>();
@@ -118,5 +119,12 @@ public class CreateDataObjectTask extends AbstractFrameworkTask<String[], Result
 
         return results;
     }
+    
+    @Override
+    protected ResultsType createResult()
+    {
+        return new ResultsType();
+    }
+
 
 }

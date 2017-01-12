@@ -41,8 +41,8 @@ import com.incadencecorp.coalesce.framework.tasks.MetricResults;
  * @param <T> input type
  * @param <Y> output type
  */
-public abstract class AbstractCoalesceJob<T, Y extends ICoalesceResponseType<List<X>>, X extends ICoalesceResponseType<?>> extends CoalesceComponentImpl
-        implements ICoalesceJob, Callable<Y> {
+public abstract class AbstractCoalesceJob<T, Y extends ICoalesceResponseType<List<X>>, X extends ICoalesceResponseType<?>>
+        extends CoalesceComponentImpl implements ICoalesceJob, Callable<Y> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCoalesceJob.class);
 
@@ -79,7 +79,7 @@ public abstract class AbstractCoalesceJob<T, Y extends ICoalesceResponseType<Lis
     public final Y call()
     {
         Y results;
-        
+
         // Set Start Time
         watch.start();
 
@@ -95,25 +95,39 @@ public abstract class AbstractCoalesceJob<T, Y extends ICoalesceResponseType<Lis
             LOGGER.error("(FAILED) Job Execution", e);
 
             status = EJobStatus.FAILED;
-            
+
             X result = createResults();
             result.setStatus(EResultStatus.FAILED);
             result.setError(e.getMessage());
-            
+
             results = createResponse();
             results.setStatus(EResultStatus.FAILED);
             results.setError(e.getMessage());
             results.getResult().add(result);
         }
-
-        // Set Complete Time
-        watch.finish();
+        finally
+        {
+            watch.finish();
+        }
 
         if (results != null && results.getStatus() != EResultStatus.SUCCESS)
         {
             // All other states are treated as failures because this is a
             // synchronous call.
             status = EJobStatus.FAILED;
+        }
+
+        for (MetricResults<X> result : getTaskMetrics())
+        {
+            if (result != null && result.getWatch() != null)
+            {
+                LOGGER.debug("({}) ({}) Pending ({}) Working ({}) Total ({})",
+                             result.isSuccessful() ? "SUCCESS" : "FAILED",
+                             this.getClass().getSimpleName(),
+                             result.getWatch().getPendingLife(),
+                             result.getWatch().getWorkLife(),
+                             result.getWatch().getTotalLife());
+            }
         }
 
         return results;
@@ -201,7 +215,7 @@ public abstract class AbstractCoalesceJob<T, Y extends ICoalesceResponseType<Lis
     /**
      * @return the metrics of any task performed by this job.
      */
-    public MetricResults<?>[] getTaskMetrics()
+    public MetricResults<X>[] getTaskMetrics()
     {
         return null;
     }

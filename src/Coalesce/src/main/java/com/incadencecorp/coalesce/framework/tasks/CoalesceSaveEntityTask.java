@@ -20,11 +20,12 @@ package com.incadencecorp.coalesce.framework.tasks;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.incadencecorp.coalesce.api.EJobStatus;
 import com.incadencecorp.coalesce.api.EResultStatus;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.jobs.CoalesceSaveEntityProperties;
 import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceStringResponseType;
+import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 
 /**
  * This task is used to persist entities.
@@ -34,13 +35,16 @@ import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceStringRespons
 public class CoalesceSaveEntityTask extends AbstractPersistorTask<CoalesceSaveEntityProperties> {
 
     @Override
-    public CoalesceStringResponseType doWork()
+    protected CoalesceStringResponseType doWork(TaskParameters<ICoalescePersistor, CoalesceSaveEntityProperties> parameters)
+            throws CoalesceException
     {
         CoalesceStringResponseType result = new CoalesceStringResponseType();
 
         try
         {
-            if ((getPersistor().saveEntity(getParams().isAllowRemoval(), getParams().getEntities())))
+            CoalesceSaveEntityProperties params = parameters.getParams();
+            
+            if ((parameters.getTarget().saveEntity(params.isAllowRemoval(), params.getEntities())))
             {
                 result.setStatus(EResultStatus.SUCCESS);
             }
@@ -79,4 +83,12 @@ public class CoalesceSaveEntityTask extends AbstractPersistorTask<CoalesceSaveEn
 
         return results;
     }
+    
+    @Override
+    protected CoalesceStringResponseType createResult()
+    {
+        return new CoalesceStringResponseType();
+    }
+
+
 }

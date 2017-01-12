@@ -26,18 +26,19 @@ import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceIteratorGetVersion;
 import com.incadencecorp.coalesce.framework.tasks.AbstractFrameworkTask;
-import com.incadencecorp.coalesce.framework.tasks.ExtraParams;
+import com.incadencecorp.coalesce.framework.tasks.TaskParameters;
 import com.incadencecorp.coalesce.services.api.common.ResultsType;
 import com.incadencecorp.coalesce.services.api.crud.DataObjectKeyType;
 
 public class RetrieveDataObjectTask extends AbstractFrameworkTask<DataObjectKeyType[], ResultsType> {
 
     @Override
-    protected ResultsType doWork(ExtraParams extra, DataObjectKeyType[] params)
+    protected ResultsType doWork(TaskParameters<CoalesceFramework, DataObjectKeyType[]> parameters)
     {
         ResultsType result = new ResultsType();
         CoalesceIteratorGetVersion it = new CoalesceIteratorGetVersion();
-        CoalesceFramework framework = extra.getFramework();
+        CoalesceFramework framework = parameters.getTarget();
+        DataObjectKeyType[] params = parameters.getParams();
 
         try
         {
@@ -88,6 +89,12 @@ public class RetrieveDataObjectTask extends AbstractFrameworkTask<DataObjectKeyT
         }
 
         return results;
+    }
+
+    @Override
+    protected ResultsType createResult()
+    {
+        return new ResultsType();
     }
 
 }

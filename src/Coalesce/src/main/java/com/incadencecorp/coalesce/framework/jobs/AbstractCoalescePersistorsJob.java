@@ -181,11 +181,7 @@ public abstract class AbstractCoalescePersistorsJob<T> extends AbstractCoalesceJ
 
     private AbstractPersistorTask<T> createTask(T params, ICoalescePersistor persistor)
     {
-        AbstractPersistorTask<T> task = createTask();
-        task.setParams(params);
-        task.setPersistor(persistor);
-
-        return task;
+        return createTask();
     }
 
 }
