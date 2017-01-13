@@ -17,8 +17,6 @@
 
 package com.incadencecorp.coalesce.framework.jobs;
 
-import java.security.Principal;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -30,8 +28,8 @@ import org.slf4j.LoggerFactory;
 import com.incadencecorp.coalesce.api.EJobStatus;
 import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.api.ICoalesceFrameworkJob;
+import com.incadencecorp.coalesce.api.ICoalescePrincipal;
 import com.incadencecorp.coalesce.api.ICoalesceResponseType;
-import com.incadencecorp.coalesce.api.persistance.ICoalesceExecutorService;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.tasks.AbstractFrameworkTask;
@@ -52,11 +50,7 @@ public abstract class AbstractCoalesceFrameworkJob<T, Y extends ICoalesceRespons
     Private Member Variables
     --------------------------------------------------------------------------*/
 
-    private ICoalesceExecutorService _service;
     private CoalesceFramework _framework;
-    private List<MetricResults<X>> taskMetrics = null;
-    private Principal principal; 
-    private String ip;
 
     /*--------------------------------------------------------------------------
     Constructors
@@ -70,8 +64,6 @@ public abstract class AbstractCoalesceFrameworkJob<T, Y extends ICoalesceRespons
     public AbstractCoalesceFrameworkJob(T params)
     {
         super(params);
-        
-        taskMetrics = new ArrayList<MetricResults<X>>();
     }
 
     /*--------------------------------------------------------------------------
@@ -79,23 +71,11 @@ public abstract class AbstractCoalesceFrameworkJob<T, Y extends ICoalesceRespons
     --------------------------------------------------------------------------*/
 
     @Override
-    public final void setExecutor(ICoalesceExecutorService service)
-    {
-        _service = service;
-    }
-
-    @Override
     public final void setTarget(CoalesceFramework framework)
     {
         _framework = framework;
     }
 
-    @Override
-    public final MetricResults<X>[] getTaskMetrics()
-    {
-        return (MetricResults<X>[]) taskMetrics.toArray(new MetricResults<?>[taskMetrics.size()]);
-    }
-    
     /**
      * @return the response with the job ID and status. Also includes the
      *         results if completed or an error message if an exception was
@@ -160,7 +140,7 @@ public abstract class AbstractCoalesceFrameworkJob<T, Y extends ICoalesceRespons
     --------------------------------------------------------------------------*/
 
     @Override
-    public final Y doWork(T params) throws CoalesceException
+    public final Y doWork(ICoalescePrincipal principal, T params) throws CoalesceException
     {
         Y response = createResponse();
 
@@ -169,14 +149,13 @@ public abstract class AbstractCoalesceFrameworkJob<T, Y extends ICoalesceRespons
         for (AbstractFrameworkTask<?, X> task : tasks)
         {
             task.setTarget(_framework);
+            task.setPrincipal(principal);
         }
 
         // Execute Tasks
         try
         {
-            
-
-            for (Future<MetricResults<X>> future : _service.invokeAll(tasks))
+            for (Future<MetricResults<X>> future : getService().invokeAll(tasks))
             {
                 MetricResults<X> result;
 
@@ -197,7 +176,7 @@ public abstract class AbstractCoalesceFrameworkJob<T, Y extends ICoalesceRespons
                     result.getResults().setStatus(EResultStatus.FAILED);
                 }
 
-                taskMetrics.add(result);
+                addResult(result);
 
                 // Add Result to Response
                 response.getResult().add(result.getResults());

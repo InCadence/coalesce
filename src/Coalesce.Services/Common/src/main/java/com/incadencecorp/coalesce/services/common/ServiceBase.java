@@ -324,6 +324,7 @@ public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
 
         job.setExecutor(this);
         job.setTarget(getFramework());
+        // TODO job.setPrincipal(principal);
 
         // Async?
         if (job.isAsync())

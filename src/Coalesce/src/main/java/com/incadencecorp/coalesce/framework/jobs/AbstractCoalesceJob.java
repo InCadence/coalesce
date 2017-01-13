@@ -17,6 +17,7 @@
 
 package com.incadencecorp.coalesce.framework.jobs;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Callable;
@@ -28,7 +29,9 @@ import org.slf4j.LoggerFactory;
 import com.incadencecorp.coalesce.api.EJobStatus;
 import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.api.ICoalesceJob;
+import com.incadencecorp.coalesce.api.ICoalescePrincipal;
 import com.incadencecorp.coalesce.api.ICoalesceResponseType;
+import com.incadencecorp.coalesce.api.persistance.ICoalesceExecutorService;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.CoalesceComponentImpl;
 import com.incadencecorp.coalesce.framework.jobs.metrics.StopWatch;
@@ -55,6 +58,10 @@ public abstract class AbstractCoalesceJob<T, Y extends ICoalesceResponseType<Lis
     private String id;
     private EJobStatus status;
     private Future<Y> future;
+    private ICoalescePrincipal principal;
+
+    private ICoalesceExecutorService service;
+    private List<MetricResults<X>> taskMetrics = new ArrayList<MetricResults<X>>();
 
     /*--------------------------------------------------------------------------
     Constructors
@@ -88,7 +95,7 @@ public abstract class AbstractCoalesceJob<T, Y extends ICoalesceResponseType<Lis
 
         try
         {
-            results = this.doWork(params);
+            results = this.doWork(principal, params);
         }
         catch (CoalesceException e)
         {
@@ -136,6 +143,12 @@ public abstract class AbstractCoalesceJob<T, Y extends ICoalesceResponseType<Lis
     /*--------------------------------------------------------------------------
     Public Methods
     --------------------------------------------------------------------------*/
+
+    @Override
+    public final void setExecutor(ICoalesceExecutorService value)
+    {
+        service = value;
+    }
 
     /**
      * @return the job's status.
@@ -213,11 +226,21 @@ public abstract class AbstractCoalesceJob<T, Y extends ICoalesceResponseType<Lis
     }
 
     /**
+     * Sets the principal that created this job.
+     * 
+     * @param principal
+     */
+    public void setPrincipal(ICoalescePrincipal principal)
+    {
+        this.principal = principal;
+    }
+
+    /**
      * @return the metrics of any task performed by this job.
      */
-    public MetricResults<X>[] getTaskMetrics()
+    public final MetricResults<X>[] getTaskMetrics()
     {
-        return null;
+        return (MetricResults<X>[]) taskMetrics.toArray(new MetricResults<?>[taskMetrics.size()]);
     }
 
     /*--------------------------------------------------------------------------
@@ -244,14 +267,29 @@ public abstract class AbstractCoalesceJob<T, Y extends ICoalesceResponseType<Lis
         id = value;
     }
 
+    protected final ICoalesceExecutorService getService()
+    {
+        return service;
+    }
+
+    protected final void addResult(MetricResults<X> value)
+    {
+        taskMetrics.add(value);
+    }
+
     /*--------------------------------------------------------------------------
     Abstract Methods
     --------------------------------------------------------------------------*/
 
     /**
      * Performs the work of the job.
+     * 
+     * @param principal
+     * @param params
+     * @return
+     * @throws CoalesceException
      */
-    protected abstract Y doWork(T params) throws CoalesceException;
+    protected abstract Y doWork(ICoalescePrincipal principal, T params) throws CoalesceException;
 
     protected abstract Y createResponse();
 

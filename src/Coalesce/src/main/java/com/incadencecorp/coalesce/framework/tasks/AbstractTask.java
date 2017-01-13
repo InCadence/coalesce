@@ -26,9 +26,9 @@ import org.slf4j.LoggerFactory;
 
 import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.EResultStatus;
+import com.incadencecorp.coalesce.api.ICoalescePrincipal;
 import com.incadencecorp.coalesce.api.ICoalesceResponseTypeBase;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
-import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.framework.jobs.metrics.StopWatch;
 
 /**
@@ -46,10 +46,9 @@ public abstract class AbstractTask<T, Y extends ICoalesceResponseTypeBase, X> im
     Private Member Variables
     --------------------------------------------------------------------------*/
 
-    private X target;
-    private T params;
     private StopWatch watch;
     private String id;
+    private TaskParameters<X, T> parameters = new TaskParameters<X, T>();
 
     public AbstractTask()
     {
@@ -68,7 +67,16 @@ public abstract class AbstractTask<T, Y extends ICoalesceResponseTypeBase, X> im
      */
     public final void setTarget(X value)
     {
-        target = value;
+        parameters.setTarget(value);
+    }
+    
+    /**
+     * Sets the principal of the user running this task.
+     * @param value
+     */
+    public final void setPrincipal(ICoalescePrincipal value)
+    {
+        parameters.setPrincipal(value);
     }
 
     /**
@@ -78,7 +86,7 @@ public abstract class AbstractTask<T, Y extends ICoalesceResponseTypeBase, X> im
      */
     public final void setParams(T value)
     {
-        params = value;
+        parameters.setParams(value);
     }
 
     /**
@@ -86,7 +94,7 @@ public abstract class AbstractTask<T, Y extends ICoalesceResponseTypeBase, X> im
      */
     public final T getParams()
     {
-        return params;
+        return parameters.getParams();
     }
 
     /**
@@ -118,18 +126,14 @@ public abstract class AbstractTask<T, Y extends ICoalesceResponseTypeBase, X> im
 
         try
         {
-            TaskParameters<X, T> extraParams = new TaskParameters<X, T>();
-            extraParams.setTarget(target);
-            extraParams.setParams(params);
-
-            result.setResults(doWork(extraParams));
+            result.setResults(doWork(parameters));
 
 
             if (!result.isSuccessful())
             {
                 LOGGER.error(String.format(CoalesceErrors.FAILED_TASK,
                                            this.getClass().getName(),
-                                           target.getClass().getName(),
+                                           parameters.getTarget().getClass().getName(),
                                            "Failure"));
 
                 logParameters();
@@ -177,7 +181,7 @@ public abstract class AbstractTask<T, Y extends ICoalesceResponseTypeBase, X> im
     {
         if (LOGGER.isDebugEnabled())
         {
-            for (Map.Entry<String, String> entry : getParameters(params, LOGGER.isTraceEnabled()).entrySet())
+            for (Map.Entry<String, String> entry : getParameters(parameters.getParams(), LOGGER.isTraceEnabled()).entrySet())
             {
                 LOGGER.debug(String.format("%s = %s", entry.getKey(), entry.getValue()));
             }

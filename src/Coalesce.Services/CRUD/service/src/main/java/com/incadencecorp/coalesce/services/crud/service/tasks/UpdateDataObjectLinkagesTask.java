@@ -43,7 +43,7 @@ public class UpdateDataObjectLinkagesTask extends AbstractFrameworkTask<DataObje
         // boolean isSysAdmin = UserValidator.isSysAdmin(userId);
 
         String user = parameters.getPrincipalName();
-        String ip = parameters.getIp();
+        String ip = parameters.getPrincipalIp();
         boolean isSysAdmin = false;
 
         Map<String, CoalesceEntity> map = new HashMap<String, CoalesceEntity>();

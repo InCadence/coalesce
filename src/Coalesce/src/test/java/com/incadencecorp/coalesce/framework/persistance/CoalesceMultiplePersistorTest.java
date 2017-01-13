@@ -42,7 +42,7 @@ import com.incadencecorp.coalesce.handlers.FileExceptionHandlerImpl;
  * @author n78554
  *
  */
-public class CoalesceMultiplePersistorTests extends AbstractFileHandlerTests {
+public class CoalesceMultiplePersistorTest extends AbstractFileHandlerTests {
 
     /**
      * Creates an entity with the MockPersistor to simulate an error and

@@ -17,62 +17,94 @@
 
 package com.incadencecorp.coalesce.framework.tasks;
 
-import java.security.Principal;
+import com.incadencecorp.coalesce.api.ICoalescePrincipal;
 
+/**
+ * This is a wrapper class for parameters to be passed down to individual tasks.
+ * 
+ * @author Derek Clemenzi
+ *
+ * @param <T>
+ * @param <Y>
+ */
 public class TaskParameters<T, Y> {
 
     private T target;
     private Y params;
-    private Principal principal; 
-    private String ip;
+    private ICoalescePrincipal principal;
 
+    /**
+     * Sets the task's target.
+     * 
+     * @return the task's target.
+     */
     public T getTarget()
     {
         return target;
     }
-    
-    public void setTarget(T _framework)
+
+    /**
+     * Sets the task's target.
+     * 
+     * @param value
+     */
+    public void setTarget(T value)
     {
-        this.target = _framework;
+        this.target = value;
     }
-    
-    public Principal getPrincipal()
+
+    /**
+     * @return the user's principal who kicked off the task.
+     */
+    public ICoalescePrincipal getPrincipal()
     {
         return principal;
     }
-    
+
+    /**
+     * @return the user's name who kicked off the task.
+     */
     public String getPrincipalName()
     {
         return principal == null ? "" : principal.getName();
     }
-    
-    public void setPrincipal(Principal principal)
+
+    /**
+     * Sets the user's principal who kicked off the task.
+     * 
+     * @param value
+     */
+    public void setPrincipal(ICoalescePrincipal value)
     {
-        this.principal = principal;
+        this.principal = value;
     }
     
-    public String getIp()
+
+    /**
+     * @return the user's IP who kicked off the task.
+     */
+    public String getPrincipalIp()
     {
-        return ip;
-    }
-    
-    public void setIp(String ip)
-    {
-        this.ip = ip;
+        return principal == null ? "" : principal.getIp();
     }
 
-    
+    /**
+     * @return the parameters from the original request that applies to this
+     *         task.
+     */
     public Y getParams()
     {
         return params;
     }
 
-    
-    public void setParams(Y params)
+    /**
+     * Sets the parameters from the original request that applies to this task.
+     * 
+     * @param value
+     */
+    public void setParams(Y value)
     {
-        this.params = params;
+        this.params = value;
     }
-    
-    
-    
+
 }

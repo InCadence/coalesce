@@ -25,10 +25,11 @@ import java.util.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.api.ICoalescePersistorJob;
+import com.incadencecorp.coalesce.api.ICoalescePrincipal;
 import com.incadencecorp.coalesce.api.ICoalesceResponseType;
 import com.incadencecorp.coalesce.api.IExceptionHandler;
-import com.incadencecorp.coalesce.api.persistance.ICoalesceExecutorService;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceResponseType;
 import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceStringResponseType;
@@ -51,7 +52,6 @@ public abstract class AbstractCoalescePersistorsJob<T> extends AbstractCoalesceJ
     Private Member Variables
     --------------------------------------------------------------------------*/
 
-    private ICoalesceExecutorService _service;
     private IExceptionHandler _handler;
     private ICoalescePersistor _persistors[];
 
@@ -74,12 +74,6 @@ public abstract class AbstractCoalescePersistorsJob<T> extends AbstractCoalesceJ
     --------------------------------------------------------------------------*/
 
     @Override
-    public void setExecutor(ICoalesceExecutorService service)
-    {
-        _service = service;
-    }
-
-    @Override
     public void setHandler(IExceptionHandler handler)
     {
         _handler = handler;
@@ -96,55 +90,63 @@ public abstract class AbstractCoalescePersistorsJob<T> extends AbstractCoalesceJ
     --------------------------------------------------------------------------*/
 
     @Override
-    public final ICoalesceResponseType<List<CoalesceStringResponseType>> doWork(T params) throws CoalesceException
+    public final ICoalesceResponseType<List<CoalesceStringResponseType>> doWork(ICoalescePrincipal principal, T params) throws CoalesceException
     {
         List<CoalesceStringResponseType> results = new ArrayList<CoalesceStringResponseType>();
 
         try
         {
-            CoalesceStringResponseType result;
-
             List<AbstractPersistorTask<T>> tasks = new ArrayList<AbstractPersistorTask<T>>();
 
             // Create Tasks
             for (int ii = 0; ii < _persistors.length; ii++)
             {
-                tasks.add(createTask(params, _persistors[ii]));
+                AbstractPersistorTask<T> task  = createTask();
+                task.setParams(params);
+                task.setTarget(_persistors[ii]);
+                task.setPrincipal(principal);
+                
+                tasks.add(task);
             }
 
             int ii = 0;
 
             // Execute Tasks
-            for (Future<MetricResults<CoalesceStringResponseType>> future : _service.invokeAll(tasks))
+            for (Future<MetricResults<CoalesceStringResponseType>> future : getService().invokeAll(tasks))
             {
                 MetricResults<CoalesceStringResponseType> metrics;
 
                 try
                 {
-                    // Get Result
                     metrics = future.get();
-                    result = metrics.getResults();
                 }
                 catch (InterruptedException | ExecutionException e)
                 {
                     LOGGER.error("Interrupted Task", e);
 
                     // Create Failed Result
-                    result = new CoalesceStringResponseType();
-                    result.setException(e);
+                    CoalesceStringResponseType task = createResults();
+                    task.setError(e.getMessage());
+                    task.setStatus(EResultStatus.FAILED);
+                    
+                    metrics = new MetricResults<CoalesceStringResponseType>();
+                    metrics.setResults(task);
+                    metrics.getResults().setStatus(EResultStatus.FAILED);
                 }
 
-                if (!result.isSuccessful() && _handler != null)
+                if (!metrics.isSuccessful() && _handler != null)
                 {
                     if (LOGGER.isTraceEnabled())
                     {
                         LOGGER.trace("Handling ({})", _handler.getName());
                     }
 
-                    _handler.handle(getKeys(tasks.get(ii)), this, result.getException());
+                    _handler.handle(getKeys(tasks.get(ii)), this, metrics.getResults().getException());
                 }
 
-                results.add(result);
+                addResult(metrics);
+                
+                results.add(metrics.getResults());
 
                 ii++;
             }
@@ -174,14 +176,4 @@ public abstract class AbstractCoalescePersistorsJob<T> extends AbstractCoalesceJ
     abstract protected AbstractPersistorTask<T> createTask();
 
     abstract protected String[] getKeys(AbstractPersistorTask<T> task);
-
-    /*--------------------------------------------------------------------------
-    Private Methods
-    --------------------------------------------------------------------------*/
-
-    private AbstractPersistorTask<T> createTask(T params, ICoalescePersistor persistor)
-    {
-        return createTask();
-    }
-
 }

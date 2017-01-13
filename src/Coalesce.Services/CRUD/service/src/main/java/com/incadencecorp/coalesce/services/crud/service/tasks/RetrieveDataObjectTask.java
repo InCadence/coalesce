@@ -61,7 +61,7 @@ public class RetrieveDataObjectTask extends AbstractFrameworkTask<DataObjectKeyT
                 {
                     result.setStatus(EResultStatus.FAILED);
                     // TODO Add Error.
-                    // result.setResult(value);
+                    // result.setError(value);
                 }
 
                 result.setStatus(EResultStatus.SUCCESS);

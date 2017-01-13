@@ -59,7 +59,7 @@ public class UpdateDataObjectTask extends AbstractFrameworkTask<String[], Result
                         CoalesceIteratorMerge merger = new CoalesceIteratorMerge();
 
                         updated.pruneCoalesceObject(updated.getLinkageSection());
-                        updated = merger.merge(parameters.getPrincipalName(), parameters.getIp(), original, updated);
+                        updated = merger.merge(parameters.getPrincipalName(), parameters.getPrincipalIp(), original, updated);
 
                         // TODO Enable this
                         Map<String, String> results = new HashMap<String, String>();

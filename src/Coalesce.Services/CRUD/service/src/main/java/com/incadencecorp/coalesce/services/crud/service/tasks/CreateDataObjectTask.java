@@ -49,7 +49,7 @@ public class CreateDataObjectTask extends AbstractFrameworkTask<String[], Result
             {
                 entity.getLinkageSection().clearLinkages();
                 entity.setModifiedBy(parameters.getPrincipalName());
-                entity.setModifiedByIP(parameters.getIp());
+                entity.setModifiedByIP(parameters.getPrincipalIp());
 
                 // TODO Enable this
                 Map<String, String> results = new HashMap<String, String>();
