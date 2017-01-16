@@ -18,7 +18,6 @@
 package com.incadencecorp.coalesce.services.crud.service.client;
 
 import java.rmi.RemoteException;
-import java.util.concurrent.ExecutorService;
 
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.services.api.common.BaseResponse;
@@ -42,9 +41,9 @@ public class CrudFrameworkClientImpl extends AbstractCrudClientImpl {
 
     private CrudServiceImpl client;
 
-    public CrudFrameworkClientImpl(ExecutorService pool, CoalesceFramework framework)
+    public CrudFrameworkClientImpl(CoalesceFramework framework)
     {
-        client = new CrudServiceImpl(pool, framework);
+        client = new CrudServiceImpl(framework);
     }
 
     @Override

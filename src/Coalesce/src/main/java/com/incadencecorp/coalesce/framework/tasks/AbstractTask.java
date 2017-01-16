@@ -36,9 +36,11 @@ import com.incadencecorp.coalesce.framework.jobs.metrics.StopWatch;
  * 
  * @author Derek
  *
- * @param <T>
+ * @param <INPUT>
+ * @param <OUTPUT>
+ * @param <TARGET>
  */
-public abstract class AbstractTask<T, Y extends ICoalesceResponseTypeBase, X> implements Callable<MetricResults<Y>> {
+public abstract class AbstractTask<INPUT, OUTPUT extends ICoalesceResponseTypeBase, TARGET> implements Callable<MetricResults<OUTPUT>> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractTask.class);
 
@@ -48,7 +50,7 @@ public abstract class AbstractTask<T, Y extends ICoalesceResponseTypeBase, X> im
 
     private StopWatch watch;
     private String id;
-    private TaskParameters<X, T> parameters = new TaskParameters<X, T>();
+    private TaskParameters<TARGET, INPUT> parameters = new TaskParameters<TARGET, INPUT>();
 
     public AbstractTask()
     {
@@ -65,7 +67,7 @@ public abstract class AbstractTask<T, Y extends ICoalesceResponseTypeBase, X> im
      * 
      * @param value
      */
-    public final void setTarget(X value)
+    public final void setTarget(TARGET value)
     {
         parameters.setTarget(value);
     }
@@ -84,7 +86,7 @@ public abstract class AbstractTask<T, Y extends ICoalesceResponseTypeBase, X> im
      * 
      * @param value
      */
-    public final void setParams(T value)
+    public final void setParams(INPUT value)
     {
         parameters.setParams(value);
     }
@@ -92,7 +94,7 @@ public abstract class AbstractTask<T, Y extends ICoalesceResponseTypeBase, X> im
     /**
      * @return the parameters.
      */
-    public final T getParams()
+    public final INPUT getParams()
     {
         return parameters.getParams();
     }
@@ -118,9 +120,9 @@ public abstract class AbstractTask<T, Y extends ICoalesceResponseTypeBase, X> im
     --------------------------------------------------------------------------*/
 
     @Override
-    public MetricResults<Y> call() throws CoalesceException
+    public MetricResults<OUTPUT> call() throws CoalesceException
     {
-        MetricResults<Y> result = new MetricResults<Y>();
+        MetricResults<OUTPUT> result = new MetricResults<OUTPUT>();
 
         watch.start();
 
@@ -141,6 +143,8 @@ public abstract class AbstractTask<T, Y extends ICoalesceResponseTypeBase, X> im
         }
         catch (CoalesceException e)
         {
+            LOGGER.error("(FAILED) Task", e);
+            
             result.setResults(createResult());
             result.getResults().setStatus(EResultStatus.FAILED);
             result.getResults().setError(e.getMessage());
@@ -192,10 +196,10 @@ public abstract class AbstractTask<T, Y extends ICoalesceResponseTypeBase, X> im
     Abstract Methods
     --------------------------------------------------------------------------*/
 
-    abstract protected Y doWork(TaskParameters<X, T> parameters) throws CoalesceException;
+    abstract protected OUTPUT doWork(TaskParameters<TARGET, INPUT> parameters) throws CoalesceException;
 
-    abstract protected Map<String, String> getParameters(T params, boolean isTrace);
+    abstract protected Map<String, String> getParameters(INPUT params, boolean isTrace);
 
-    abstract protected Y createResult();
+    abstract protected OUTPUT createResult();
 
 }

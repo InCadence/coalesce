@@ -44,6 +44,7 @@
                                     <include>org.imgscalr:imgscalr-lib</include>
                                     <include>com.drewnoakes:metadata-extractor</include>
                                     <include>xerces:xercesImpl</include>
+                                    <include>xml-apis:xml-apis</include>
                                 </includes>
                             </artifactSet>
                             <filters>
@@ -108,7 +109,7 @@
             <plugin>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-xjc-plugin</artifactId>
-                <version>${cxf.version}</version>
+                <version>${cxf.xjc.version}</version>
                 <executions>
                     <execution>
                         <id>generate-sources</id>

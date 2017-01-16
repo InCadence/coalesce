@@ -40,7 +40,7 @@
 			<groupId>com.incadencecorp.coalesce.services</groupId>
 			<artifactId>coalesce-services-client-common</artifactId>
 			<version>${project.version}</version>
-		</dependency>		
+		</dependency>
 	</dependencies>
 
 </project>

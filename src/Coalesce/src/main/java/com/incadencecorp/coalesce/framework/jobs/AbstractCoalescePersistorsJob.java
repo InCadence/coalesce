@@ -41,9 +41,9 @@ import com.incadencecorp.coalesce.framework.tasks.MetricResults;
  * Abstract base for persister jobs in Coalesce.
  * 
  * @author Derek
- * @param <T> input type
+ * @param <INPUT> input type
  */
-public abstract class AbstractCoalescePersistorsJob<T> extends AbstractCoalesceJob<T, ICoalesceResponseType<List<CoalesceStringResponseType>>, CoalesceStringResponseType>
+public abstract class AbstractCoalescePersistorsJob<INPUT> extends AbstractCoalesceJob<INPUT, ICoalesceResponseType<List<CoalesceStringResponseType>>, CoalesceStringResponseType>
         implements ICoalescePersistorJob {
 
     private static Logger LOGGER = LoggerFactory.getLogger(AbstractCoalescePersistorsJob.class);
@@ -64,7 +64,7 @@ public abstract class AbstractCoalescePersistorsJob<T> extends AbstractCoalesceJ
      * 
      * @param params task parameters.
      */
-    public AbstractCoalescePersistorsJob(T params)
+    public AbstractCoalescePersistorsJob(INPUT params)
     {
         super(params);
     }
@@ -90,18 +90,18 @@ public abstract class AbstractCoalescePersistorsJob<T> extends AbstractCoalesceJ
     --------------------------------------------------------------------------*/
 
     @Override
-    public final ICoalesceResponseType<List<CoalesceStringResponseType>> doWork(ICoalescePrincipal principal, T params) throws CoalesceException
+    public final ICoalesceResponseType<List<CoalesceStringResponseType>> doWork(ICoalescePrincipal principal, INPUT params) throws CoalesceException
     {
         List<CoalesceStringResponseType> results = new ArrayList<CoalesceStringResponseType>();
 
         try
         {
-            List<AbstractPersistorTask<T>> tasks = new ArrayList<AbstractPersistorTask<T>>();
+            List<AbstractPersistorTask<INPUT>> tasks = new ArrayList<AbstractPersistorTask<INPUT>>();
 
             // Create Tasks
             for (int ii = 0; ii < _persistors.length; ii++)
             {
-                AbstractPersistorTask<T> task  = createTask();
+                AbstractPersistorTask<INPUT> task  = createTask();
                 task.setParams(params);
                 task.setTarget(_persistors[ii]);
                 task.setPrincipal(principal);
@@ -173,7 +173,7 @@ public abstract class AbstractCoalescePersistorsJob<T> extends AbstractCoalesceJ
     Abstract Methods
     --------------------------------------------------------------------------*/
 
-    abstract protected AbstractPersistorTask<T> createTask();
+    abstract protected AbstractPersistorTask<INPUT> createTask();
 
-    abstract protected String[] getKeys(AbstractPersistorTask<T> task);
+    abstract protected String[] getKeys(AbstractPersistorTask<INPUT> task);
 }

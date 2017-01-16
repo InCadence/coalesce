@@ -20,6 +20,7 @@ package com.incadencecorp.coalesce.services.crud.service.tasks;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
@@ -60,16 +61,13 @@ public class RetrieveDataObjectTask extends AbstractFrameworkTask<DataObjectKeyT
                 else
                 {
                     result.setStatus(EResultStatus.FAILED);
-                    // TODO Add Error.
-                    // result.setError(value);
+                    result.setError(String.format(CoalesceErrors.INVALID_OBJECT_VERSION, task.getVer(), task.getKey()));
                 }
 
                 result.setStatus(EResultStatus.SUCCESS);
             }
         }
-        catch (
-
-        CoalescePersistorException e)
+        catch (CoalescePersistorException e)
         {
             result.setStatus(EResultStatus.FAILED);
             result.setResult(e.getMessage());

@@ -17,6 +17,7 @@
 
 package com.incadencecorp.coalesce.services.crud.client.jaxws;
 
+import java.net.URL;
 import java.rmi.RemoteException;
 
 import com.incadencecorp.coalesce.services.api.common.BaseResponse;
@@ -24,83 +25,87 @@ import com.incadencecorp.coalesce.services.api.common.JobRequest;
 import com.incadencecorp.coalesce.services.api.common.MultipleResponse;
 import com.incadencecorp.coalesce.services.api.common.StatusResponse;
 import com.incadencecorp.coalesce.services.api.common.StringResponse;
+import com.incadencecorp.coalesce.services.api.crud.CrudManager;
 import com.incadencecorp.coalesce.services.api.crud.DataObjectKeyRequest;
 import com.incadencecorp.coalesce.services.api.crud.DataObjectLinkRequest;
 import com.incadencecorp.coalesce.services.api.crud.DataObjectUpdateStatusRequest;
 import com.incadencecorp.coalesce.services.api.crud.DataObjectXmlRequest;
+import com.incadencecorp.coalesce.services.client.common.jaxws.util.JAXWSUtil;
 import com.incadencecorp.coalesce.services.crud.client.common.AbstractCrudClientImpl;
 
 public class CrudJaxwsClientImpl extends AbstractCrudClientImpl {
 
+    private CrudManager client;
+
+    /**
+     * Constructs the client for the provided URL.
+     * 
+     * @param url
+     */
+    public CrudJaxwsClientImpl(URL url)
+    {
+        client = JAXWSUtil.createClient(CrudManager.class, url);
+    }
+
     @Override
     protected StringResponse updateDataObjectStatus(DataObjectUpdateStatusRequest request)
     {
-        // TODO Auto-generated method stub
-        return null;
+        return client.updateDataObjectStatus(request);
     }
 
     @Override
     protected StringResponse createDataObject(DataObjectXmlRequest request)
     {
-        // TODO Auto-generated method stub
-        return null;
+        return client.createDataObject(request);
     }
 
     @Override
     protected StringResponse updateDataObject(DataObjectXmlRequest request)
     {
-        // TODO Auto-generated method stub
-        return null;
+        return client.updateDataObject(request);
     }
 
     @Override
     protected StringResponse retrieveDataObject(DataObjectKeyRequest request)
     {
-        // TODO Auto-generated method stub
-        return null;
+        return client.retrieveDataObject(request);
     }
 
     @Override
     protected StringResponse updateLinkages(DataObjectLinkRequest request)
     {
-        // TODO Auto-generated method stub
-        return null;
+        return client.updateDataObjectLinkages(request);
     }
 
     @Override
     protected StringResponse cancelJob(JobRequest request) throws RemoteException
     {
-        // TODO Auto-generated method stub
-        return null;
+        return client.cancelJob(request);
     }
 
     @Override
     protected StatusResponse getStatus(JobRequest request) throws RemoteException
     {
-        // TODO Auto-generated method stub
-        return null;
+        return client.getJobStatus(request);
     }
 
     @Override
     protected MultipleResponse pickupJob(JobRequest request) throws RemoteException
     {
-        // TODO Auto-generated method stub
-        return null;
+        return client.pickupJobResults(request);
     }
 
     @Override
     protected void processResponse(BaseResponse response)
     {
         // TODO Auto-generated method stub
-        
     }
 
     @Override
     protected void processFailedTask(BaseResponse response, int task, String reason)
     {
         // TODO Auto-generated method stub
-        
-    }
 
+    }
 
 }

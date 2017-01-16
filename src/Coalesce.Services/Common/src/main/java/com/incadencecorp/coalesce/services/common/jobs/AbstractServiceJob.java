@@ -28,11 +28,11 @@ import com.incadencecorp.coalesce.services.api.common.BaseResponse;
  * Abstract base class to be extended to create jobs.
  *
  * @author Derek C.
- * @param <T> Request that this job handles; must extend {@link BaseRequest}.
- * @param <Y> Response that this job produces; must extend {@link BaseResponse}.
+ * @param <INPUT> Request that this job handles; must extend {@link BaseRequest}.
+ * @param <OUTPUT> Response that this job produces; must extend {@link BaseResponse}.
  */
-public abstract class AbstractServiceJob<T extends BaseRequest, Y extends ICoalesceResponseType<List<X>>, X extends ICoalesceResponseType<?>>
-        extends AbstractCoalesceFrameworkJob<T, Y, X> {
+public abstract class AbstractServiceJob<INPUT extends BaseRequest, OUTPUT extends ICoalesceResponseType<List<TASKOUTPUT>>, TASKOUTPUT extends ICoalesceResponseType<?>>
+        extends AbstractCoalesceFrameworkJob<INPUT, OUTPUT, TASKOUTPUT> {
 
     /**
      * Creates a job based off of the request and initializes the response
@@ -40,7 +40,7 @@ public abstract class AbstractServiceJob<T extends BaseRequest, Y extends ICoale
      *
      * @param request the request
      */
-    public AbstractServiceJob(T request)
+    public AbstractServiceJob(INPUT request)
     {
         super(request);
     }

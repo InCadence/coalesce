@@ -39,10 +39,10 @@ import com.incadencecorp.coalesce.framework.tasks.MetricResults;
  * Abstract base for persister jobs in Coalesce.
  * 
  * @author Derek
- * @param <T> input type
+ * @param <INPUT> input type
  */
-public abstract class AbstractCoalesceFrameworkJob<T, Y extends ICoalesceResponseType<List<X>>, X extends ICoalesceResponseType<?>>
-        extends AbstractCoalesceJob<T, Y, X> implements ICoalesceFrameworkJob {
+public abstract class AbstractCoalesceFrameworkJob<INPUT, OUTPUT extends ICoalesceResponseType<List<TASKOUTPUT>>, TASKOUTPUT extends ICoalesceResponseType<?>>
+        extends AbstractCoalesceJob<INPUT, OUTPUT, TASKOUTPUT> implements ICoalesceFrameworkJob {
 
     private static Logger LOGGER = LoggerFactory.getLogger(AbstractCoalesceFrameworkJob.class);
 
@@ -61,7 +61,7 @@ public abstract class AbstractCoalesceFrameworkJob<T, Y extends ICoalesceRespons
      * 
      * @param params task parameters.
      */
-    public AbstractCoalesceFrameworkJob(T params)
+    public AbstractCoalesceFrameworkJob(INPUT params)
     {
         super(params);
     }
@@ -81,9 +81,9 @@ public abstract class AbstractCoalesceFrameworkJob<T, Y extends ICoalesceRespons
      *         results if completed or an error message if an exception was
      *         thrown with the status of JOB_FAILED.
      */
-    public final Y getResponse()
+    public final OUTPUT getResponse()
     {
-        Y response = null;
+        OUTPUT response = null;
 
         if (isDone())
         {
@@ -140,13 +140,13 @@ public abstract class AbstractCoalesceFrameworkJob<T, Y extends ICoalesceRespons
     --------------------------------------------------------------------------*/
 
     @Override
-    public final Y doWork(ICoalescePrincipal principal, T params) throws CoalesceException
+    public final OUTPUT doWork(ICoalescePrincipal principal, INPUT params) throws CoalesceException
     {
-        Y response = createResponse();
+        OUTPUT response = createResponse();
 
-        Collection<AbstractFrameworkTask<?, X>> tasks = getTasks(params);
+        Collection<AbstractFrameworkTask<?, TASKOUTPUT>> tasks = getTasks(params);
 
-        for (AbstractFrameworkTask<?, X> task : tasks)
+        for (AbstractFrameworkTask<?, TASKOUTPUT> task : tasks)
         {
             task.setTarget(_framework);
             task.setPrincipal(principal);
@@ -155,9 +155,9 @@ public abstract class AbstractCoalesceFrameworkJob<T, Y extends ICoalesceRespons
         // Execute Tasks
         try
         {
-            for (Future<MetricResults<X>> future : getService().invokeAll(tasks))
+            for (Future<MetricResults<TASKOUTPUT>> future : getService().invokeAll(tasks))
             {
-                MetricResults<X> result;
+                MetricResults<TASKOUTPUT> result;
 
                 try
                 {
@@ -167,11 +167,11 @@ public abstract class AbstractCoalesceFrameworkJob<T, Y extends ICoalesceRespons
                 {
                     LOGGER.error(e.getMessage(), e);
 
-                    X task = createResults();
+                    TASKOUTPUT task = createResults();
                     task.setError(e.getMessage());
                     task.setStatus(EResultStatus.FAILED);
                     
-                    result = new MetricResults<X>();
+                    result = new MetricResults<TASKOUTPUT>();
                     result.setResults(task);
                     result.getResults().setStatus(EResultStatus.FAILED);
                 }
@@ -194,7 +194,7 @@ public abstract class AbstractCoalesceFrameworkJob<T, Y extends ICoalesceRespons
     Abstract Methods
     --------------------------------------------------------------------------*/
 
-    protected abstract Collection<AbstractFrameworkTask<?, X>> getTasks(T params) throws CoalesceException;
+    protected abstract Collection<AbstractFrameworkTask<?, TASKOUTPUT>> getTasks(INPUT params) throws CoalesceException;
 
 
 }

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ///===========SECURITY CLASSIFICATION: UNCLASSIFIED======================== 
+	/// Copyright 2014 - Lockheed Martin Corporation, All Rights Reserved /// 
+	/// Notwithstanding any contractor copyright notice, the government has /// 
+	Unlimited Rights in this work as defined by DFARS 252.227-7013 and /// 252.227-7014. 
+	Use of this work other than as specifically authorized by /// these DFARS 
+	Clauses may violate government rights in this work. /// /// DFARS Clause 
+	reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16) /// Unlimited Rights. 
+	The Government has the right to use, modify, /// reproduce, perform, display, 
+	release or disclose this computer software /// in whole or in part, in any 
+	manner, and for any purpose whatsoever, /// and to have or authorize others 
+	to do so. /// /// Distribution Statement D. Distribution authorized to the 
+	Department of /// Defense and U.S. DoD contractors only in support of US 
+	DoD efforts. /// Other requests shall be referred to the ACINT Modernization 
+	Program /// Management under the Director of the Office of Naval Intelligence. 
+	/// ===============================UNCLASSIFIED================================= -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:cxf="http://cxf.apache.org/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:sec="http://cxf.apache.org/configuration/security" xmlns:http="http://cxf.apache.org/transports/http/configuration"
+	xmlns:http-conf="http://cxf.apache.org/transports/http/configuration"
+	xmlns:jaxws="http://cxf.apache.org/jaxws" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:wsa="http://cxf.apache.org/ws/addressing"
+	xsi:schemaLocation="http://cxf.apache.org/core            
+	http://cxf.apache.org/schemas/core.xsd            
+	http://cxf.apache.org/configuration/security            
+	http://cxf.apache.org/schemas/configuration/security.xsd            
+	http://cxf.apache.org/jaxws            
+	http://cxf.apache.org/schemas/jaxws.xsd            
+	http://cxf.apache.org/transports/http/configuration            
+	http://cxf.apache.org/schemas/configuration/http-conf.xsd            
+	http://www.springframework.org/schema/beans            
+	http://www.springframework.org/schema/beans/spring-beans.xsd		
+	http://www.springframework.org/schema/context             
+	http://www.springframework.org/schema/context/spring-context-3.1.xsd 
+	http://www.springframework.org/schema/util         
+	http://www.springframework.org/schema/util/spring-util-2.0.xsd">
+
+
+	<!-- This file contains the Spring configuration that sets up one or more 
+		secure Web Service Clients. The file is formatted such that it can be provided 
+		to a CXF Spring bus object during initialization. The bus will then configure 
+		itself and any web service clients that it ends up supporting using the below 
+		statements. -->
+
+	<!-- ======================= -->
+	<!-- Configuration Constants -->
+	<!-- ======================= -->
+
+	<!-- The following are constants used through this configuration file. They 
+		are placed here to simplify configuration. -->
+	<context:property-placeholder properties-ref="clientProperties" />
+
+	<util:properties id="clientProperties">
+		<prop key="clientstore">/etc/pki/CA/java/omega-clientkeystore.jks</prop>
+		<prop key="privatestore">/etc/pki/CA/java/omega-clientkeystore.jks</prop>
+
+        <!-- Creates the STS URL -->
+        <prop key="stsCertAlias">xfwp1</prop> 
+		<prop key="stshttpType">https</prop>
+        <prop key="stsIpOrHostname">${stsCertAlias}.nmic.navy-lmdev.mil</prop>
+        <prop key="stsPort">8443</prop>
+        <prop key="stsResolutionPath">newsts</prop>
+
+        <prop key="stsStoreProperties">file:/etc/pki/CA/conf/stsKeystore.properties</prop>
+
+<!-- 		<prop key="stsEndpoint">Transport_Kerberos_Port</prop> -->
+		<prop key="stsEndpoint">UT_Port</prop>
+
+        <!-- Kerberos Settings -->
+		<prop key="kerberosClientName">appv054</prop>
+		<prop key="kerberosServiceName">HTTP/xmlp001.nmic.navy-lmdev.mil</prop>
+	</util:properties>
+
+	<!-- ======================= -->
+	<!-- Bus-Level Configuration -->
+	<!-- ======================= -->
+
+	<!-- Enable or disable logging. When enabled, all web service traffic will 
+		be logged, regardless of which client is handling traffic. Logging can also 
+		be configured on a per-client basis if only specific service traffic should 
+		be logged. -->
+	<cxf:bus>
+		<cxf:features>
+			<!-- <cxf:logging /> -->
+		</cxf:features>
+	</cxf:bus>
+
+	<!-- =========================== -->
+	<!-- General Https Configuration -->
+	<!-- =========================== -->
+
+	<http:conduit name="*.http-conduit">
+
+		<!-- These properties configure the location of the public and private 
+			keys needed for SSL (TLS) implementation. -->
+		<http:tlsClientParameters disableCNCheck="true">
+			<sec:keyManagers keyPassword="q1w2E3R4">
+				<sec:keyStore file="${privatestore}" type="JKS" />
+			</sec:keyManagers>
+			<sec:trustManagers>
+				<sec:keyStore file="${clientstore}" type="JKS" />
+			</sec:trustManagers>
+
+			<!-- These properties specify which TLS protocol(s) will be specifically 
+				allowed and disallowed by this client. -->
+			<sec:cipherSuitesFilter>
+				<sec:include>TLS.*_WITH_AES_.*</sec:include>
+				<sec:include>TLS.*_WITH_3DES_.*</sec:include>
+				<sec:exclude>.*_NULL_.*</sec:exclude>
+				<sec:exclude>.*_anon_.*</sec:exclude>
+				<sec:exclude>.*KRB5.*</sec:exclude>
+			</sec:cipherSuitesFilter>
+
+		</http:tlsClientParameters>
+
+		<!-- Timeout Properties: Connection Timeout = Specifies the amount of time 
+			the client will attempt to establish a connection with a service provider. 
+			Units: msec ; 0 = infinite Receive Timeout = Specifies the interval of time 
+			that a connection can remain inactive (no message traffic) before the connection 
+			is terminated. Units: msec ; 0 = infinite -->
+		<http-conf:client ConnectionTimeout="120000"
+			ReceiveTimeout="120000" />
+
+	</http:conduit>
+
+</beans>

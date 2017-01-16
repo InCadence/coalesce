@@ -25,8 +25,8 @@ import com.incadencecorp.coalesce.framework.CoalesceFramework;
  * 
  * @author Derek
  *
- * @param <T>
+ * @param <INPUT>
  */
-public abstract class AbstractFrameworkTask<T, Y extends ICoalesceResponseTypeBase> extends AbstractTask<T, Y, CoalesceFramework> {
+public abstract class AbstractFrameworkTask<INPUT, OUTPUT extends ICoalesceResponseTypeBase> extends AbstractTask<INPUT, OUTPUT, CoalesceFramework> {
 
 }

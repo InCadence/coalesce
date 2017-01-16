@@ -19,15 +19,8 @@ package com.incadencecorp.coalesce.services.client.common.jaxws.kerberos;
 
 import java.util.Map;
 
-import javax.crypto.SecretKey;
-
-import org.apache.cxf.helpers.DOMUtils;
 import org.apache.cxf.ws.security.kerberos.KerberosClient;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
-import org.apache.wss4j.dom.WSSConfig;
-import org.apache.wss4j.dom.message.token.KerberosSecurity;
-import org.apache.wss4j.dom.util.WSSecurityUtil;
-import org.apache.xml.security.utils.Base64;
 
 import com.incadencecorp.coalesce.framework.PropertyLoader;
 
@@ -38,7 +31,7 @@ import com.incadencecorp.coalesce.framework.PropertyLoader;
  * 
  * @author Derek Clemenzi
  */
-public class OmegaKerberosClient extends KerberosClient {
+public class CoalesceKerberosClient extends KerberosClient {
 
     /**
      * (String) Location of the krb5.conf file to use.
@@ -188,29 +181,30 @@ public class OmegaKerberosClient extends KerberosClient {
     public SecurityToken requestSecurityToken() throws Exception
     {
 
-        KerberosSecurity bst = new KerberosSecurity(DOMUtils.createDocument());
-        bst.retrieveServiceTicket(getContextName(), getCallbackHandler(), getServiceName(), isServiceNameUsernameForm);
-        bst.addWSUNamespace();
-        bst.setID(WSSConfig.getNewInstance().getIdAllocator().createSecureId("BST-", bst));
-
-        SecurityToken token = new SecurityToken(bst.getID());
-        token.setToken(bst.getElement());
-        token.setWsuId(bst.getID());
-        token.setData(bst.getToken());
-        SecretKey secretKey = bst.getSecretKey();
-
-        if (secretKey != null)
-        {
-            token.setKey(secretKey);
-            token.setSecret(secretKey.getEncoded());
-        }
-
-        String sha1 = Base64.encode(WSSecurityUtil.generateDigest(bst.getToken()));
-
-        token.setSHA1(sha1);
-        token.setTokenType(bst.getValueType());
-
-        return token;
+//        KerberosSecurity bst = new KerberosSecurity(DOMUtils.createDocument());
+//        bst.retrieveServiceTicket(getContextName(), getCallbackHandler(), getServiceName(), isServiceNameUsernameForm);
+//        bst.addWSUNamespace();
+//        bst.setID(WSSConfig.getNewInstance().getIdAllocator().createSecureId("BST-", bst));
+//
+//        SecurityToken token = new SecurityToken(bst.getID());
+//        token.setToken(bst.getElement());
+//        token.setWsuId(bst.getID());
+//        token.setData(bst.getToken());
+//        SecretKey secretKey = bst.getSecretKey();
+//
+//        if (secretKey != null)
+//        {
+//            token.setKey(secretKey);
+//            token.setSecret(secretKey.getEncoded());
+//        }
+//
+//        String sha1 = Base64.encode(WSSecurityUtil.generateDigest(bst.getToken()));
+//
+//        token.setSHA1(sha1);
+//        token.setTokenType(bst.getValueType());
+//
+//        return token;
+        return null;
     }
 
 }

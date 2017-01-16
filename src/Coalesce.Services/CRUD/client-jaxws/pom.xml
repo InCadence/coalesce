@@ -35,7 +35,33 @@
 			<groupId>com.incadencecorp.coalesce.services.crud</groupId>
 			<artifactId>coalesce-crud-client-common</artifactId>
 			<version>${project.version}</version>
+			<scope>compile</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.incadencecorp.coalesce.services</groupId>
+			<artifactId>coalesce-services-client-common-jaxws</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+			<version>3.2.4.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>3.2.4.RELEASE</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.incadencecorp.coalesce.services.crud</groupId>
+			<artifactId>coalesce-crud-api</artifactId>
+			<version>${project.version}</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
 
 </project>

@@ -17,6 +17,7 @@
 	<modules>
 		<module>api</module>
 		<module>service</module>
+		<module>service-feature</module>
 		<module>client-common</module>
 		<module>client-jaxws</module>
 	</modules>

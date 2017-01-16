@@ -71,16 +71,19 @@ public final class JAXWSUtil {
     --------------------------------------------------------------------------*/
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JAXWSUtil.class);
-    private static final String SAML_NS = "saml2"; 
+    private static final String SAML_NS = "saml2";
     private static Bus bus;
-    
+
     // TODO Pull these values from a property file.
     private static final String RENEWER_USERNAME = "";
     private static final String RENEWER_PASSWORD = "";
     private static final int EXPIRATION_THRESHOLD = 600;
-    private static final String SPRING_CONFIG_PATH = "";
-    private static final boolean SPRING_VALIDATION = false;
-    
+    private static final String SPRING_CONFIG_PATH = "C:\\Users\\Derek/ Clemenzi\\Documents\\06-jcoalesce\\src\\Coalesce.Services\\CRUD\\client-jaxws\\src\\test\\resources\\wssec-client.xml"; // Paths.get("src",
+                                                                                                                                                                                                // "test",
+                                                                                                                                                                                                // "resources",
+                                                                                                                                                                                                // "wssec-client.xml").toString();//"src\test\resources";
+    private static final boolean SPRING_VALIDATION = true;
+
     /*--------------------------------------------------------------------------
     Default Constructor
     --------------------------------------------------------------------------*/
@@ -712,11 +715,17 @@ public final class JAXWSUtil {
         // Validation On?
         if (SPRING_VALIDATION)
         {
-
             // Yes; Create Bus
             final SpringBusFactory bf = new SpringBusFactory();
-            bus = bf.createBus(path);
 
+            try
+            {
+                bus = bf.createBus(path);
+            }
+            catch (Exception e)
+            {
+                bus = bf.createBus();
+            }
         }
         else
         {

@@ -35,8 +35,8 @@ import com.incadencecorp.coalesce.services.crud.service.jobs.UpdateDataObjectSta
 
 public class CrudServiceImpl extends ServiceBase implements CrudManager {
 
-    public CrudServiceImpl(ExecutorService pool, CoalesceFramework framework) {
-        super(pool, framework);
+    public CrudServiceImpl(CoalesceFramework framework) {
+        super(framework);
     }
     
     @Override

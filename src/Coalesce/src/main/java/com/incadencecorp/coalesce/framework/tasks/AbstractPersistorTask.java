@@ -25,8 +25,8 @@ import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
  * 
  * @author Derek
  *
- * @param <T>
+ * @param <INPUT>
  */
-public abstract class AbstractPersistorTask<T> extends AbstractTask<T, CoalesceStringResponseType, ICoalescePersistor> {
+public abstract class AbstractPersistorTask<INPUT> extends AbstractTask<INPUT, CoalesceStringResponseType, ICoalescePersistor> {
 
 }

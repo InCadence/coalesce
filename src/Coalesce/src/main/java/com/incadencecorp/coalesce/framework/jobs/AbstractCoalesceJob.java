@@ -41,11 +41,11 @@ import com.incadencecorp.coalesce.framework.tasks.MetricResults;
  * Abstract base for jobs in Coalesce.
  * 
  * @author Derek
- * @param <T> input type
- * @param <Y> output type
+ * @param <INPUT> input type
+ * @param <OUTPUT> output type
  */
-public abstract class AbstractCoalesceJob<T, Y extends ICoalesceResponseType<List<X>>, X extends ICoalesceResponseType<?>>
-        extends CoalesceComponentImpl implements ICoalesceJob, Callable<Y> {
+public abstract class AbstractCoalesceJob<INPUT, OUTPUT extends ICoalesceResponseType<List<TASKOUTPUT>>, TASKOUTPUT extends ICoalesceResponseType<?>>
+        extends CoalesceComponentImpl implements ICoalesceJob, Callable<OUTPUT> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCoalesceJob.class);
 
@@ -53,15 +53,15 @@ public abstract class AbstractCoalesceJob<T, Y extends ICoalesceResponseType<Lis
     Member Variables
     --------------------------------------------------------------------------*/
 
-    private T params;
+    private INPUT params;
     private StopWatch watch;
     private String id;
     private EJobStatus status;
-    private Future<Y> future;
+    private Future<OUTPUT> future;
     private ICoalescePrincipal principal;
 
     private ICoalesceExecutorService service;
-    private List<MetricResults<X>> taskMetrics = new ArrayList<MetricResults<X>>();
+    private List<MetricResults<TASKOUTPUT>> taskMetrics = new ArrayList<MetricResults<TASKOUTPUT>>();
 
     /*--------------------------------------------------------------------------
     Constructors
@@ -70,7 +70,7 @@ public abstract class AbstractCoalesceJob<T, Y extends ICoalesceResponseType<Lis
     /**
      * @param params parameters to pass to the task.
      */
-    public AbstractCoalesceJob(T params)
+    public AbstractCoalesceJob(INPUT params)
     {
         this.params = params;
         this.id = UUID.randomUUID().toString();
@@ -83,9 +83,9 @@ public abstract class AbstractCoalesceJob<T, Y extends ICoalesceResponseType<Lis
     --------------------------------------------------------------------------*/
 
     @Override
-    public final Y call()
+    public final OUTPUT call()
     {
-        Y results;
+        OUTPUT results;
 
         // Set Start Time
         watch.start();
@@ -99,11 +99,11 @@ public abstract class AbstractCoalesceJob<T, Y extends ICoalesceResponseType<Lis
         }
         catch (CoalesceException e)
         {
-            LOGGER.error("(FAILED) Job Execution", e);
+            LOGGER.error("(FAILED) Job", e);
 
             status = EJobStatus.FAILED;
 
-            X result = createResults();
+            TASKOUTPUT result = createResults();
             result.setStatus(EResultStatus.FAILED);
             result.setError(e.getMessage());
 
@@ -124,7 +124,7 @@ public abstract class AbstractCoalesceJob<T, Y extends ICoalesceResponseType<Lis
             status = EJobStatus.FAILED;
         }
 
-        for (MetricResults<X> result : getTaskMetrics())
+        for (MetricResults<TASKOUTPUT> result : getTaskMetrics())
         {
             if (result != null && result.getWatch() != null)
             {
@@ -169,7 +169,7 @@ public abstract class AbstractCoalesceJob<T, Y extends ICoalesceResponseType<Lis
     /**
      * @return the parameters.
      */
-    public final T getParams()
+    public final INPUT getParams()
     {
         return params;
     }
@@ -205,13 +205,13 @@ public abstract class AbstractCoalesceJob<T, Y extends ICoalesceResponseType<Lis
      */
     public final void setFuture(Future<?> future)
     {
-        this.future = (Future<Y>) future;
+        this.future = (Future<OUTPUT>) future;
     }
 
     /**
      * @return the {@link Future} for this job
      */
-    public final Future<Y> getFuture()
+    public final Future<OUTPUT> getFuture()
     {
         return this.future;
     }
@@ -238,9 +238,9 @@ public abstract class AbstractCoalesceJob<T, Y extends ICoalesceResponseType<Lis
     /**
      * @return the metrics of any task performed by this job.
      */
-    public final MetricResults<X>[] getTaskMetrics()
+    public final MetricResults<TASKOUTPUT>[] getTaskMetrics()
     {
-        return (MetricResults<X>[]) taskMetrics.toArray(new MetricResults<?>[taskMetrics.size()]);
+        return (MetricResults<TASKOUTPUT>[]) taskMetrics.toArray(new MetricResults<?>[taskMetrics.size()]);
     }
 
     /*--------------------------------------------------------------------------
@@ -272,7 +272,7 @@ public abstract class AbstractCoalesceJob<T, Y extends ICoalesceResponseType<Lis
         return service;
     }
 
-    protected final void addResult(MetricResults<X> value)
+    protected final void addResult(MetricResults<TASKOUTPUT> value)
     {
         taskMetrics.add(value);
     }
@@ -289,10 +289,10 @@ public abstract class AbstractCoalesceJob<T, Y extends ICoalesceResponseType<Lis
      * @return
      * @throws CoalesceException
      */
-    protected abstract Y doWork(ICoalescePrincipal principal, T params) throws CoalesceException;
+    protected abstract OUTPUT doWork(ICoalescePrincipal principal, INPUT params) throws CoalesceException;
 
-    protected abstract Y createResponse();
+    protected abstract OUTPUT createResponse();
 
-    protected abstract X createResults();
+    protected abstract TASKOUTPUT createResults();
 
 }

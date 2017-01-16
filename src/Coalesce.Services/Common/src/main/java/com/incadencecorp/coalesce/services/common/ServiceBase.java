@@ -24,8 +24,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -39,7 +37,6 @@ import com.incadencecorp.coalesce.api.ICoalesceResponseType;
 import com.incadencecorp.coalesce.api.persistance.ICoalesceExecutorService;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
-import com.incadencecorp.coalesce.framework.CoalesceThreadFactoryImpl;
 import com.incadencecorp.coalesce.framework.jobs.JobManager;
 import com.incadencecorp.coalesce.framework.jobs.metrics.JobMetricsCollectionAsync;
 import com.incadencecorp.coalesce.services.api.common.BaseRequest;
@@ -60,7 +57,7 @@ import com.incadencecorp.coalesce.services.common.jobs.AbstractServiceJob;
  * 
  * @author Derek C.
  */
-public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
+public abstract class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceBase.class);
 
@@ -69,8 +66,6 @@ public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
     // ----------------------------------------------------------------------//
 
     // TODO Make these configurable
-    private static final int MIN_THREADS = 2;
-    private static final int MAX_THREADS = 5;
     private static final int TIME_TO_LIVE = 10;
 
     private JobManager<AbstractServiceJob<?, ?, ?>> jobs;
@@ -87,7 +82,7 @@ public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
      */
     public ServiceBase()
     {
-        this(null, null);
+        this(null);
     }
 
     /**
@@ -96,20 +91,9 @@ public class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
      * @param pool
      * @param framework
      */
-    public ServiceBase(ExecutorService pool, CoalesceFramework framework)
+    public ServiceBase(CoalesceFramework framework)
     {
-        if (pool == null)
-        {
-            pool = new ThreadPoolExecutor(MIN_THREADS,
-                                          MAX_THREADS,
-                                          60,
-                                          TimeUnit.SECONDS,
-                                          new SynchronousQueue<Runnable>(),
-                                          new CoalesceThreadFactoryImpl(),
-                                          new ThreadPoolExecutor.CallerRunsPolicy());
-        }
-
-        this.service = pool;
+        this.service = framework.getExecutorService();
         this.jobs = new JobManager<AbstractServiceJob<?, ?, ?>>();
         this.framework = framework;
     }

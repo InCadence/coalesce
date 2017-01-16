@@ -51,15 +51,14 @@ public class CreateDataObjectTask extends AbstractFrameworkTask<String[], Result
                 entity.setModifiedBy(parameters.getPrincipalName());
                 entity.setModifiedByIP(parameters.getPrincipalIp());
 
-                // TODO Enable this
                 Map<String, String> results = new HashMap<String, String>();
-                // validator.validate(extra.getPrincipal(), entity,
+                // TODO validator.validate(parameters.getPrincipal(), entity,
                 // CoalesceConstraintCache.getCoalesceConstraints(entity));
 
                 if (results.size() != 0)
                 {
                     result.setStatus(EResultStatus.FAILED);
-                    // TODO
+                    // TODO Create a more meaniful error message
                     result.setResult("Validation Failed");
                     break;
                 }
@@ -119,12 +118,11 @@ public class CreateDataObjectTask extends AbstractFrameworkTask<String[], Result
 
         return results;
     }
-    
+
     @Override
     protected ResultsType createResult()
     {
         return new ResultsType();
     }
-
 
 }

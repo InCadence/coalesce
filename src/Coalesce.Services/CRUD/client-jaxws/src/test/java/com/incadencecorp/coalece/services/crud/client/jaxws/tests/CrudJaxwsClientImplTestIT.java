@@ -15,29 +15,53 @@
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-package com.incadencecorp.coalesce.services.crud.service.client.tests;
+package com.incadencecorp.coalece.services.crud.client.jaxws.tests;
 
+import java.net.InetAddress;
+import java.net.URL;
+
+import org.junit.Assume;
 import org.junit.BeforeClass;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.incadencecorp.coalesce.framework.CoalesceFramework;
-import com.incadencecorp.coalesce.framework.persistance.memory.MockPersister;
 import com.incadencecorp.coalesce.services.crud.api.test.AbstractCrudTests;
-import com.incadencecorp.coalesce.services.crud.service.client.CrudFrameworkClientImpl;
+import com.incadencecorp.coalesce.services.crud.client.jaxws.CrudJaxwsClientImpl;
 
 /**
  * These unit test ensure correct behavior of the CRUD server.
  * 
  * @author Derek Clemenzi
  */
-public class CrudFrameworkClientImplTest extends AbstractCrudTests {
+public class CrudJaxwsClientImplTestIT extends AbstractCrudTests {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CrudJaxwsClientImplTestIT.class);
 
     @BeforeClass
     public static void initialize() throws Exception
     {
-        CoalesceFramework framework = new CoalesceFramework();
-        framework.setAuthoritativePersistor(new MockPersister());
+        try
+        {
+            String host = "localhost";
+            URL url = new URL("http", host, 8181, "/cxf/crud?wsdl");
 
-        client = new CrudFrameworkClientImpl(framework);
+            LOGGER.info("Metadata Manager WSDL Location: {}", url.toString());
+
+            // Host Reachable?
+            InetAddress address = InetAddress.getByName(host);
+            Assume.assumeTrue(address.isReachable(5000));
+
+            // Create Client
+            client = new CrudJaxwsClientImpl(url);
+        }
+        catch (Exception e)
+        {
+            LOGGER.error("(Metadata Manager) Unit Test Initialization Failed", e);
+
+            // Skip Integration Tests
+            Assume.assumeNoException(e);
+        }
+
     }
 
 }
