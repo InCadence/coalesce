@@ -938,17 +938,12 @@ public abstract class CoalesceObject implements ICoalesceObject {
 
         for (Y item : items)
         {
-            // getChildCoalesceObjects().get(item.getKey()) always returns null
-            // therefore we have to loop
-            for (CoalesceObject xdo : getChildCoalesceObjects().values())
+            CoalesceObject childCoalesceObject = getChildCoalesceObject(item.getKey());
+            if (!statusList.contains(childCoalesceObject.getStatus()))
             {
-                if (xdo.getKey().equalsIgnoreCase(item.getKey()) && !statusList.contains(xdo.getStatus()))
-                {
-                    // You should never get a cast error here because we control
-                    // what is inserted into the map.
-                    results.add((T) xdo);
-                    break;
-                }
+                // You should never get a cast error here because we control
+                // what is inserted into the map.
+                results.add((T) childCoalesceObject);
             }
         }
 
