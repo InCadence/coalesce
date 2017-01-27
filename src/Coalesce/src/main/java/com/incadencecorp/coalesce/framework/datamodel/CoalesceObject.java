@@ -340,13 +340,25 @@ public abstract class CoalesceObject implements ICoalesceObject {
     @Override
     public String getKey()
     {
-        return _object.getKey();
+        return (_object == null) ? null : _object.getKey();
     }
 
     @Override
     public void setKey(String key)
     {
+        CoalesceObject parent = getParent();
+
+        if (parent != null)
+        {
+            parent.removeChildCoalesceObject(this);
+        }
+
         _object.setKey(key);
+
+        if (parent != null)
+        {
+            parent.addChildCoalesceObject(this);
+        }
     }
 
     @Override
@@ -530,21 +542,6 @@ public abstract class CoalesceObject implements ICoalesceObject {
     }
 
     /**
-     * Adds
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject} as
-     * a child. New values with new keys are added, values with existing keys
-     * are replaced.
-     * 
-     * @param key key identifying the child Coalesce object.
-     * @param value child Coalesce object to add to the Coalesce object's
-     *            children
-     */
-    public final void addChildCoalesceObject(String key, CoalesceObject value)
-    {
-        this._children.put(key, value);
-    }
-
-    /**
      * Returns the child CoalesceObject, for this CoalesceObject based on the
      * String key parameter.
      * 
@@ -598,8 +595,8 @@ public abstract class CoalesceObject implements ICoalesceObject {
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s
      * other attribute that corresponds to the name; other attributes are those
      * that fall into the
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s @XmlAnyAttribute
-     * HashMap.
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
+     * 's @XmlAnyAttribute HashMap.
      * 
      * @param name Attribute's name
      * @return String, Attribute's value
@@ -614,8 +611,8 @@ public abstract class CoalesceObject implements ICoalesceObject {
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s
      * other attribute that corresponds to the name; other attributes are those
      * that fall into the
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s @XmlAnyAttribute
-     * HashMap.
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
+     * 's @XmlAnyAttribute HashMap.
      * 
      * @param name Attribute's name
      * @return String, Attribute's value
@@ -630,8 +627,8 @@ public abstract class CoalesceObject implements ICoalesceObject {
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s
      * other attribute that corresponds to the name; other attributes are those
      * that fall into the
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s @XmlAnyAttribute
-     * HashMap.
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
+     * 's @XmlAnyAttribute HashMap.
      * 
      * @param name Attribute's name
      * @return DateTime, Attribute's value
@@ -647,8 +644,8 @@ public abstract class CoalesceObject implements ICoalesceObject {
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s
      * other attribute that corresponds to the name; other attributes are those
      * that fall into the
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s @XmlAnyAttribute
-     * HashMap.
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
+     * 's @XmlAnyAttribute HashMap.
      * 
      * @param name String @XmlAnyAttribute attribute name
      * @param value @XmlAnyAttribute attribute value
@@ -666,8 +663,8 @@ public abstract class CoalesceObject implements ICoalesceObject {
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s
      * other attribute that corresponds to the name; other attributes are those
      * that fall into the
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s @XmlAnyAttribute
-     * HashMap.
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
+     * 's @XmlAnyAttribute HashMap.
      * 
      * @param name String, @XmlAnyAttribute attribute name
      * @param value @XmlAnyAttribute attribute DateTime value
@@ -901,37 +898,32 @@ public abstract class CoalesceObject implements ICoalesceObject {
      * @return a list of CoalesceObjects for the given list of XSD objects
      */
     protected <T extends CoalesceObject, Y extends CoalesceObjectType> Map<String, T> getObjectsAsMap(List<Y> items,
-                                                                                          ECoalesceObjectStatus... exclusions)
+                                                                                                      ECoalesceObjectStatus... exclusions)
     {
         List<ECoalesceObjectStatus> statusList = Arrays.asList(exclusions);
         Map<String, T> results = new HashMap<String, T>();
 
         for (Y item : items)
         {
-            // getChildCoalesceObjects().get(item.getKey()) always returns null
-            // therefore we have to loop
-            for (CoalesceObject xdo : getChildCoalesceObjects().values())
+            CoalesceObject childCoalesceObject = getChildCoalesceObject(item.getKey());
+            if (childCoalesceObject != null && !statusList.contains(childCoalesceObject.getStatus()))
             {
-                if (xdo.getKey().equalsIgnoreCase(item.getKey()) && !statusList.contains(xdo.getStatus()))
-                {
-                    // You should never get a cast error here because we control
-                    // what is inserted into the map.
-                    results.put(xdo.getKey(), (T) xdo);
-                    break;
-                }
+                // You should never get a cast error here because we control
+                // what is inserted into the map.
+                results.put(item.key, (T) childCoalesceObject);
             }
         }
 
         return results;
     }
-    
+
     /**
      * @param items
      * @param exclusions status to exclude from the return set.
      * @return a list of CoalesceObjects for the given list of XSD objects
      */
     protected <T extends CoalesceObject, Y extends CoalesceObjectType> List<T> getObjectsAsList(List<Y> items,
-                                                                                          ECoalesceObjectStatus... exclusions)
+                                                                                                ECoalesceObjectStatus... exclusions)
     {
         List<ECoalesceObjectStatus> statusList = Arrays.asList(exclusions);
         List<T> results = new ArrayList<T>();
@@ -939,7 +931,7 @@ public abstract class CoalesceObject implements ICoalesceObject {
         for (Y item : items)
         {
             CoalesceObject childCoalesceObject = getChildCoalesceObject(item.getKey());
-            if (!statusList.contains(childCoalesceObject.getStatus()))
+            if (childCoalesceObject != null && !statusList.contains(childCoalesceObject.getStatus()))
             {
                 // You should never get a cast error here because we control
                 // what is inserted into the map.
@@ -976,6 +968,16 @@ public abstract class CoalesceObject implements ICoalesceObject {
         if (!(_children.containsKey(newChild.getKey())))
         {
             _children.put(newChild.getKey(), newChild);
+        }
+
+    }
+
+    protected void removeChildCoalesceObject(CoalesceObject newChild)
+    {
+        // Add to Parent's Child Collection
+        if (!(_children.containsKey(newChild.getKey())))
+        {
+            _children.remove(newChild.getKey());
         }
 
     }

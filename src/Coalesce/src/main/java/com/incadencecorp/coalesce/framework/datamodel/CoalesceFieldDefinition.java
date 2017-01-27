@@ -522,7 +522,7 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
         switch (getStatus()) {
         case READONLY:
         case ACTIVE:
-            parent.addChildCoalesceObject(getKey(), this);
+            parent.addChildCoalesceObject(this);
             break;
         default:
             // Skip

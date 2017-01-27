@@ -233,7 +233,7 @@ public class CoalesceSection extends CoalesceObjectHistory {
 
             if (!getChildCoalesceObjects().containsKey(newRecordSet.getKey()))
             {
-                addChildCoalesceObject(newRecordSet.getKey(), newRecordSet);
+                addChildCoalesceObject(newRecordSet);
             }
         }
 
@@ -245,7 +245,7 @@ public class CoalesceSection extends CoalesceObjectHistory {
             if (!newsection.initialize(this, subSection))
                 return false;
 
-            addChildCoalesceObject(newsection.getKey(), newsection);
+            addChildCoalesceObject(newsection);
 
         }
 

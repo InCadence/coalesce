@@ -388,7 +388,7 @@ public class CoalesceConstraint extends CoalesceObject implements ICoalesceConst
         // Add to Parent Collections
         if (!isMarkedDeleted())
         {
-            parent.addChildCoalesceObject(getKey(), this);
+            parent.addChildCoalesceObject(this);
             parent.getConstraints().add(this);
         }
 

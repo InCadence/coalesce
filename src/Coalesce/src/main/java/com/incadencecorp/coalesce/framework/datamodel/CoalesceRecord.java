@@ -133,7 +133,7 @@ public class CoalesceRecord extends CoalesceObjectHistory {
                     return false;
 
                 // Add to Child Collection
-                addChildCoalesceObject(newField.getKey(), newField);
+                addChildCoalesceObject(newField);
             } else {
                 LOGGER.warn("Failed to located defintion: {}", entityField.getName());
             }
@@ -142,7 +142,7 @@ public class CoalesceRecord extends CoalesceObjectHistory {
         // Add to Parent Collections (if we're Active)
         // if (getStatus() == ECoalesceObjectStatus.ACTIVE)
         {
-            parent.addChildCoalesceObject(getKey(), this);
+            parent.addChildCoalesceObject(this);
         }
 
         return true;

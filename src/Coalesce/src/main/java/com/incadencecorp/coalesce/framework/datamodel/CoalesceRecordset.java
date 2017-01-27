@@ -106,7 +106,7 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
         // Add to parent's child collection
         if (!parent.getChildCoalesceObjects().containsKey(newRecordset.getKey()))
         {
-            parent.addChildCoalesceObject(newRecordset.getKey(), newRecordset);
+            parent.addChildCoalesceObject(newRecordset);
         }
 
         return newRecordset;

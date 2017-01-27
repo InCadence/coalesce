@@ -342,7 +342,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
         if (!linkageSection.initialize(this))
             return false;
 
-        addChildCoalesceObject(linkageSection.getKey(), linkageSection);
+        addChildCoalesceObject(linkageSection);
 
         for (Section entitySection : _entity.getSection())
         {
@@ -351,7 +351,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
             if (!section.initialize(this, entitySection))
                 return false;
 
-            addChildCoalesceObject(section.getKey(), section);
+            addChildCoalesceObject(section);
 
         }
 

@@ -72,7 +72,7 @@ public abstract class CoalesceObjectHistory extends CoalesceObject implements IC
             coalesceHistory.initialize(this, history);
 
             // Add to Child Collection
-            addChildCoalesceObject(coalesceHistory.getKey(), coalesceHistory);
+            addChildCoalesceObject(coalesceHistory);
         }
 
         return super.initialize(object);
@@ -91,7 +91,7 @@ public abstract class CoalesceObjectHistory extends CoalesceObject implements IC
             coalesceHistory.initialize(this, history);
 
             // Add to Child Collection
-            addChildCoalesceObject(coalesceHistory.getKey(), coalesceHistory);
+            addChildCoalesceObject(coalesceHistory);
         }
 
         return super.initialize(coalesceObject);

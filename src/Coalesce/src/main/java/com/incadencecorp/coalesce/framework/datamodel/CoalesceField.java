@@ -427,7 +427,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
             fieldHistory.initialize(this, entityFieldHistory);
 
             // Add to Child Collection
-            addChildCoalesceObject(fieldHistory.getKey(), fieldHistory);
+            addChildCoalesceObject(fieldHistory);
         }
 
         return true;

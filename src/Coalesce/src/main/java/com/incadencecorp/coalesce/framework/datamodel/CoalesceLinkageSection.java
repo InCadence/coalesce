@@ -116,7 +116,7 @@ public class CoalesceLinkageSection extends CoalesceObjectHistory {
 
                 if (!getChildCoalesceObjects().containsKey(newLinkage.getKey()))
                 {
-                    addChildCoalesceObject(newLinkage.getKey(), newLinkage);
+                    addChildCoalesceObject(newLinkage);
                 }
             }
 

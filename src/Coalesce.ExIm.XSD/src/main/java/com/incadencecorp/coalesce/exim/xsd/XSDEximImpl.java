@@ -18,7 +18,9 @@
 package com.incadencecorp.coalesce.exim.xsd;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -114,6 +116,7 @@ public class XSDEximImpl implements CoalesceExim<Document> {
     private class XSDToCoalesceIterator extends CoalesceIterator {
 
         private Document doc;
+        private Map<String, String> keysToReplace = new HashMap<String, String>();
 
         public void createEntity(CoalesceEntity entity, Document doc)
         {
@@ -121,6 +124,11 @@ public class XSDEximImpl implements CoalesceExim<Document> {
             this.doc = doc;
 
             processAllElements(entity);
+
+            for (Map.Entry<String, String> entry : keysToReplace.entrySet())
+            {
+                entity.getCoalesceObjectForKey(entry.getKey()).setKey(entry.getValue());
+            }
 
         }
 
@@ -270,7 +278,15 @@ public class XSDEximImpl implements CoalesceExim<Document> {
                 for (int ii = 0; ii < attrs.getLength(); ii++)
                 {
                     Node attr = attrs.item(ii);
-                    coalesceObject.setAttribute(attr.getLocalName(), attr.getNodeValue());
+                    if (!attr.getLocalName().equalsIgnoreCase(CoalesceObject.ATTRIBUTE_KEY)
+                            || StringHelper.isNullOrEmpty(coalesceObject.getKey()))
+                    {
+                        coalesceObject.setAttribute(attr.getLocalName(), attr.getNodeValue());
+                    }
+                    else
+                    {
+                        keysToReplace.put(coalesceObject.getKey(), attr.getNodeValue());
+                    }
                 }
             }
         }
@@ -307,8 +323,8 @@ public class XSDEximImpl implements CoalesceExim<Document> {
             for (int ii = 0; ii < names.length; ii++)
             {
                 // Locate Element
-                while (result != null
-                        && (result.getLocalName() == null || !result.getLocalName().equalsIgnoreCase(XSDGeneratorUtil.normalize(names[ii]))))
+                while (result != null && (result.getLocalName() == null
+                        || !result.getLocalName().equalsIgnoreCase(XSDGeneratorUtil.normalize(names[ii]))))
                 {
                     result = getNextSiblingElement(result);
                 }
