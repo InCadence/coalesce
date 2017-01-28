@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bindings xmlns="http://java.sun.com/xml/ns/jaxb" version="2.1"
+	xmlns:jxb="http://java.sun.com/xml/ns/jaxb" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+	xmlns:inheritance="http://jaxb2-commons.dev.java.net/basic/inheritance"
+	extensionBindingPrefixes="xjc" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <bindings schemaLocation="http://www.w3.org/1999/xlink.xsd" version="1.0">
+            <bindings node=".//xs:attribute[@name='title']">
+                <property name="TitleAttribute"/>
+            </bindings>
+    </bindings>
+
+</bindings>
+

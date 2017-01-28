@@ -10,7 +10,7 @@
 
 	<!-- Request Definitions -->
 
-	<xs:complexType name="BaseRequest">
+	<xs:complexType abstract="true" name="BaseRequest">
 		<xs:sequence>
 			<xs:element name="asyncCall" type="xs:boolean"></xs:element>
 		</xs:sequence>
@@ -40,7 +40,7 @@
 
 	<!-- Response Definitions -->
 
-	<xs:complexType name="BaseResponse">
+	<xs:complexType abstract="true" name="BaseResponse">
 		<xs:sequence>
 			<xs:element name="id" type="xs:string"></xs:element>
 			<xs:element name="status" type="enn:EResultStatus"></xs:element>

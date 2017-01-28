@@ -17,8 +17,9 @@
 	targetNamespace="http://api.services.coalesce.incadencecorp.com/crud"
 	xmlns:tns="http://api.services.coalesce.incadencecorp.com/crud"
 	xmlns:cmn="http://api.services.coalesce.incadencecorp.com/common"
-	xmlns:dmn="http://framework.coalesce.incadencecorp.com/datamodel" elementFormDefault="qualified" 
-	attributeFormDefault="qualified" xmlns:fes="http://www.opengis.net/fes/2.0">
+	xmlns:dmn="http://framework.coalesce.incadencecorp.com/datamodel"
+	xmlns:fes="http://www.opengis.net/fes/2.0" elementFormDefault="qualified"
+	attributeFormDefault="qualified">
 
 	<xs:import namespace="http://api.services.coalesce.incadencecorp.com/common"
 		schemaLocation="../../../../../API/src/main/resources/Common.xsd" />

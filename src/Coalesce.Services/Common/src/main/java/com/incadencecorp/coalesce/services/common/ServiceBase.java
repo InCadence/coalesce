@@ -220,9 +220,10 @@ public abstract class ServiceBase implements ICoalesceExecutorService, AutoClose
             case NOT_FOUND:
             default:
                 // Unexpected state; return JOBNOTFOUND
-                BaseResponse failedResponse = new BaseResponse();
+                StringResponse failedResponse = new StringResponse();
                 failedResponse.setId(key);
                 failedResponse.setStatus(EResultStatus.FAILED);
+                failedResponse.setError("Job Not Found");
 
                 result.setResult(failedResponse);
                 result.setStatus(EResultStatus.SUCCESS);

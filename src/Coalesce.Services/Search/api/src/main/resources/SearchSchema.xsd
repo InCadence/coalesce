@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ** * SECURITY CLASSIFICATION: UNCLASSIFIED * Copyright 2014 - Lockheed 
+	Martin Corporation, All Rights Reserved * * Notwithstanding any contractor 
+	copyright notice, the government has * Unlimited Rights in this work as defined 
+	by DFARS 252.227-7013 and * 252.227-7014. Use of this work other than as 
+	specifically authorized by * these DFARS Clauses may violate government rights 
+	in this work. * * DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 
+	(a)(16) * Unlimited Rights. The Government has the right to use, modify, 
+	* reproduce, perform, display, release or disclose this computer software 
+	* in whole or in part, in any manner, and for any purpose whatsoever, * and 
+	to have or authorize others to do so. * * Distribution Statement D. Distribution 
+	authorized to the Department of * Defense and U.S. DoD contractors only in 
+	support of US DoD efforts. * Other requests shall be referred to the ACINT 
+	Modernization Program * Management under the Director of the Office of Naval 
+	Intelligence. * * UNCLASSIFIED * -->
+<!-- xmlns:fes="http://www.opengis.net/fes/2.0" -->
+<!-- xmlns:gml="http://www.opengis.net/gml/3.2" -->
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://api.services.coalesce.incadencecorp.com/search"
+	xmlns:tns="http://api.services.coalesce.incadencecorp.com/search"
+	xmlns:cmn="http://api.services.coalesce.incadencecorp.com/common"
+	xmlns:dmn="http://framework.coalesce.incadencecorp.com/datamodel"
+	xmlns:fes="http://www.opengis.net/fes/2.0" elementFormDefault="qualified">
+
+	<xs:import namespace="http://api.services.coalesce.incadencecorp.com/common"
+		schemaLocation="../../../../../API/src/main/resources/Common.xsd" />
+
+	<xs:import namespace="http://framework.coalesce.incadencecorp.com/datamodel"
+		schemaLocation="../../../../../../Coalesce/src/main/resources/DataModelEnumerations.xsd" />
+
+	<xs:import namespace="http://www.opengis.net/fes/2.0"
+		schemaLocation="fes/2.0.0/filter.xsd" />
+
+	<xs:complexType name="SearchDataObjectRequest">
+		<xs:complexContent>
+			<xs:extension base="cmn:BaseRequest">
+				<xs:sequence>
+					<xs:element name="queryList" type="fes:AbstractQueryExpressionType" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="SearchDataObjectResponse">
+		<xs:complexContent>
+			<xs:extension base="cmn:BaseRequest">
+				<xs:sequence>
+					<!-- TODO Modify to return a result set -->
+					<xs:element name="queryList" type="xs:string" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:element name="SearchDataObjectRequest" type="tns:SearchDataObjectRequest"></xs:element>
+	<xs:element name="SearchDataObjectResponse" type="tns:SearchDataObjectResponse"></xs:element>
+
+</xs:schema>

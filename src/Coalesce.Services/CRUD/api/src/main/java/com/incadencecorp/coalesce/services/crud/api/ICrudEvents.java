@@ -26,8 +26,6 @@ import com.incadencecorp.coalesce.services.api.crud.DataObjectStatusActionType;
 /**
  * This empty class does not implement any methods. It should be extended and only needed methods
  * should be overridden and implemented by the client.
- *
- * @author bearyman
  */
 public interface ICrudEvents extends ICoalesceEvents {
 

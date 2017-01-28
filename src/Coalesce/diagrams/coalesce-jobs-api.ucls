@@ -4,7 +4,7 @@
   <interface id="1" language="java" name="com.incadencecorp.coalesce.api.ICoalesceComponent" project="coalesce-core" 
     file="/coalesce-core/src/main/java/com/incadencecorp/coalesce/api/ICoalesceComponent.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="450" y="260"/>    
+    <position height="-1" width="-1" x="370" y="259"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="false" static="true"/>      
@@ -14,7 +14,7 @@
   <interface id="2" language="java" name="com.incadencecorp.coalesce.api.ICoalesceFrameworkJob" project="coalesce-core" 
     file="/coalesce-core/src/main/java/com/incadencecorp/coalesce/api/ICoalesceFrameworkJob.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="637" y="583"/>    
+    <position height="-1" width="-1" x="557" y="582"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="false" static="true"/>      
@@ -24,7 +24,7 @@
   <interface id="3" language="java" name="com.incadencecorp.coalesce.api.ICoalesceJob" project="coalesce-core" 
     file="/coalesce-core/src/main/java/com/incadencecorp/coalesce/api/ICoalesceJob.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="453" y="425"/>    
+    <position height="-1" width="-1" x="373" y="424"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="false" static="true"/>      
@@ -34,7 +34,7 @@
   <interface id="4" language="java" name="com.incadencecorp.coalesce.api.ICoalesceResponseType" project="coalesce-core" 
     file="/coalesce-core/src/main/java/com/incadencecorp/coalesce/api/ICoalesceResponseType.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1146" y="425"/>    
+    <position height="-1" width="-1" x="1193" y="425"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="false" static="true"/>      
@@ -44,7 +44,7 @@
   <interface id="5" language="java" name="com.incadencecorp.coalesce.api.ICoalescePersistorJob" project="coalesce-core" 
     file="/coalesce-core/src/main/java/com/incadencecorp/coalesce/api/ICoalescePersistorJob.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="349" y="573"/>    
+    <position height="-1" width="-1" x="269" y="572"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="false" static="true"/>      
@@ -55,7 +55,7 @@
     project="coalesce-core" 
     file="/coalesce-core/src/main/java/com/incadencecorp/coalesce/api/ICoalesceResponseTypeBase.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1150" y="586"/>    
+    <position height="-1" width="-1" x="1197" y="586"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="false" static="true"/>      
@@ -76,7 +76,7 @@
   <class id="8" language="java" name="com.incadencecorp.coalesce.framework.tasks.AbstractTask" project="coalesce-core" 
     file="/coalesce-core/src/main/java/com/incadencecorp/coalesce/framework/tasks/AbstractTask.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1153" y="815"/>    
+    <position height="-1" width="-1" x="1200" y="815"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="false" static="true"/>      
@@ -93,62 +93,62 @@
       <operations public="true" package="true" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <dependency id="10">    
-    <end type="SOURCE" refId="7"/>    
-    <end type="TARGET" refId="9"/>  
-  </dependency>  
-  <generalization id="11">    
-    <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="1"/>  
-  </generalization>  
-  <generalization id="12">    
-    <end type="SOURCE" refId="5"/>    
-    <end type="TARGET" refId="3"/>  
-  </generalization>  
-  <dependency id="13">    
-    <end type="SOURCE" refId="8"/>    
-    <end type="TARGET" refId="9"/>  
-  </dependency>  
-  <association id="14">    
+  <association id="10">    
     <end type="SOURCE" refId="7" navigable="false">      
-      <attribute id="15" name="future">        
-        <position height="0" width="0" x="0" y="0"/>      
+      <attribute id="11" name="future">        
+        <position height="0" width="0" x="47" y="0"/>      
       </attribute>      
-      <multiplicity id="16" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
+      <multiplicity id="12" minimum="0" maximum="1">        
+        <position height="0" width="0" x="47" y="0"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="4" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <generalization id="17">    
+  <generalization id="13">    
     <end type="SOURCE" refId="4"/>    
     <end type="TARGET" refId="6"/>  
   </generalization>  
-  <dependency id="18">    
-    <end type="SOURCE" refId="8"/>    
-    <end type="TARGET" refId="6"/>  
-  </dependency>  
-  <association id="19">    
+  <association id="14">    
     <end type="SOURCE" refId="9" navigable="false">      
-      <attribute id="20" name="results">        
-        <position height="0" width="0" x="0" y="0"/>      
+      <attribute id="15" name="results">        
+        <position height="0" width="0" x="47" y="0"/>      
       </attribute>      
-      <multiplicity id="21" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
+      <multiplicity id="16" minimum="0" maximum="1">        
+        <position height="0" width="0" x="47" y="0"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="6" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <realization id="22">    
-    <end type="SOURCE" refId="7"/>    
+  <generalization id="17">    
+    <end type="SOURCE" refId="5"/>    
     <end type="TARGET" refId="3"/>  
-  </realization>  
-  <generalization id="23">    
+  </generalization>  
+  <dependency id="18">    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="9"/>  
+  </dependency>  
+  <generalization id="19">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="1"/>  
+  </generalization>  
+  <generalization id="20">    
     <end type="SOURCE" refId="2"/>    
     <end type="TARGET" refId="3"/>  
   </generalization>  
+  <dependency id="21">    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="6"/>  
+  </dependency>  
+  <dependency id="22">    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="9"/>  
+  </dependency>  
+  <realization id="23">    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="3"/>  
+  </realization>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
     sort-features="false" accessors="true" visibility="true">    
     <attributes public="true" package="true" protected="true" private="false" static="true"/>    
