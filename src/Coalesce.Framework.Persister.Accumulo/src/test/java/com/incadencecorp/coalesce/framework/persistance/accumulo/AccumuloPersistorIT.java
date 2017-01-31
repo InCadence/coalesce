@@ -102,7 +102,7 @@ public class AccumuloPersistorIT extends CoalescePersistorBaseTest {
 
 	@BeforeClass
 	public static void setupBeforeClass() throws Exception {
-        InputStream in = AccumuloDataConnectorIT.class.getClassLoader().getResourceAsStream("/accumuloConnectionInfo.properties");
+        InputStream in = AccumuloDataConnectorIT.class.getResourceAsStream("/accumuloConnectionInfo.properties");
         Properties props = new Properties();
         props.load(in);
         in.close();
