@@ -22,18 +22,18 @@ import com.incadencecorp.coalesce.services.api.search.SearchDataObjectRequest;
 import com.incadencecorp.coalesce.services.api.search.SearchDataObjectResponse;
 import com.incadencecorp.coalesce.services.api.search.SearchManager;
 import com.incadencecorp.coalesce.services.common.ServiceBase;
+import com.incadencecorp.coalesce.services.search.service.jobs.SearchDataObjectJob;
 
-public class CrudServiceImpl extends ServiceBase implements SearchManager {
+public class SearchServiceImpl extends ServiceBase implements SearchManager {
 
-    public CrudServiceImpl(CoalesceFramework framework) {
+    public SearchServiceImpl(CoalesceFramework framework) {
         super(framework);
     }
 
     @Override
     public SearchDataObjectResponse searchDataObject(SearchDataObjectRequest request)
     {
-        // TODO Auto-generated method stub
-        return null;
+        return performJob(new SearchDataObjectJob(request));
     }
     
 }

@@ -4,11 +4,29 @@
 	xmlns:inheritance="http://jaxb2-commons.dev.java.net/basic/inheritance"
 	extensionBindingPrefixes="xjc" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-    <bindings schemaLocation="http://www.w3.org/1999/xlink.xsd" version="1.0">
-            <bindings node=".//xs:attribute[@name='title']">
-                <property name="TitleAttribute"/>
-            </bindings>
-    </bindings>
+	<!-- <bindings schemaLocation="http://www.w3.org/1999/xlink.xsd" version="1.0"> -->
+	<!-- <bindings node=".//xs:attribute[@name='title']"> -->
+	<!-- <property name="TitleAttribute"/> -->
+	<!-- </bindings> -->
+	<!-- </bindings> -->
+
+	<jxb:bindings schemaLocation="SearchSchema.xsd">
+
+		<!-- Responses -->
+
+		<jxb:bindings node="//xs:complexType[@name='SearchDataObjectResponse']">
+			<inheritance:implements>com.incadencecorp.coalesce.api.ICoalesceResponseType&lt;java.util.List&lt;QueryResultsType&gt;&gt;
+			</inheritance:implements>
+		</jxb:bindings>
+
+		<!-- Result Types -->
+
+		<jxb:bindings node="//xs:complexType[@name='QueryResultsType']">
+			<inheritance:implements>com.incadencecorp.coalesce.api.ICoalesceResponseType&lt;QueryResultType&gt;
+			</inheritance:implements>
+		</jxb:bindings>
+		
+	</jxb:bindings>
 
 </bindings>
 

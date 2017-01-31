@@ -54,19 +54,30 @@
 									<bindingFile>${basedir}/src/main/resources/Binding.xjb</bindingFile>
 								</bindingFiles>
 								<extraargs>
+									<extraarg>-xjc-Xsetters</extraarg>
+									<extraarg>-xjc-Xinheritance</extraarg>
 									<extraarg>-nexclude</extraarg>
 									<extraarg>http://api.services.coalesce.incadencecorp.com/common</extraarg>
 									<extraarg>-nexclude</extraarg>
 									<extraarg>http://coalesce.incadencecorp.com/api</extraarg>
 									<extraarg>-nexclude</extraarg>
 									<extraarg>http://framework.coalesce.incadencecorp.com/datamodel</extraarg>
+
+									<extraarg>-nexclude</extraarg>
+									<extraarg>http://www.opengis.net/fes/2.0=net.opengis.fes20</extraarg>
+
+									<extraarg>-nexclude</extraarg>
+									<extraarg>http://www.opengis.net/ows/1.1=net.opengis.ows11</extraarg>
+
+									<extraarg>-nexclude</extraarg>
+									<extraarg>http://www.w3.org/1999/xlink=org.w3.xlink</extraarg>
 								</extraargs>
 							</defaultOptions>
 							<wsdlRoot>${basedir}/src/main/resources</wsdlRoot>
 							<includes>
 								<include>*.wsdl</include>
 							</includes>
-							<fork>false</fork>
+							<fork>always</fork>
 						</configuration>
 						<goals>
 							<goal>wsdl2java</goal>
@@ -79,6 +90,25 @@
 
 	<dependencies>
 
+		<dependency>
+			<!-- Required for implementing interfaces -->
+			<groupId>org.jvnet.jaxb2_commons</groupId>
+			<artifactId>jaxb2-basics</artifactId>
+			<version>1.11.1</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.cxf.xjc-utils</groupId>
+			<artifactId>cxf-xjc-runtime</artifactId>
+			<version>${cxf.xjc.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>xml-apis</groupId>
+			<artifactId>xml-apis</artifactId>
+			<version>1.4.01</version>
+			<scope>compile</scope>
+		</dependency>
 		<dependency>
 			<groupId>com.incadencecorp.coalesce.services</groupId>
 			<artifactId>coalesce-services-api</artifactId>

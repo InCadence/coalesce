@@ -17,23 +17,146 @@
 
 package com.incadencecorp.coalesce.services.search.client.common;
 
+import javax.xml.transform.TransformerException;
+
+import org.opengis.filter.Filter;
+import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.sort.SortBy;
+
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
+import com.incadencecorp.coalesce.search.filter.FilterUtil;
+import com.incadencecorp.coalesce.search.filter.FilterUtil.EConfiguration;
+import com.incadencecorp.coalesce.services.api.search.ESortDirection;
+import com.incadencecorp.coalesce.services.api.search.QueryType;
 import com.incadencecorp.coalesce.services.api.search.SearchDataObjectRequest;
 import com.incadencecorp.coalesce.services.api.search.SearchDataObjectResponse;
+import com.incadencecorp.coalesce.services.api.search.SortByType;
 import com.incadencecorp.coalesce.services.client.common.AbstractBaseClient;
 import com.incadencecorp.coalesce.services.search.api.ISearchClient;
 import com.incadencecorp.coalesce.services.search.api.ISearchEvents;
 
-import net.opengis.fes._2.AbstractQueryExpressionType;
-
 public abstract class AbstractSearchClientImpl extends AbstractBaseClient<ISearchEvents> implements ISearchClient {
 
+    /*--------------------------------------------------------------------------
+    Private Members
+    --------------------------------------------------------------------------*/
+
+    private int pageSize = 200;
+
+    /*--------------------------------------------------------------------------
+    Override Methods
+    --------------------------------------------------------------------------*/
+
     @Override
-    public SearchDataObjectResponse search(AbstractQueryExpressionType query) {
-        SearchDataObjectRequest request = new SearchDataObjectRequest(); 
-        request.setQueryList(query);
-        return searchDataObject(request);
+    public void setPageSize(int value)
+    {
+        pageSize = value;
     }
-    
-    abstract protected SearchDataObjectResponse searchDataObject(SearchDataObjectRequest request);
+
+    @Override
+    public SearchDataObjectResponse search(Filter filter, int pageNumber) throws CoalesceException
+    {
+        return search(filter, pageNumber, null, null, false);
+    }
+
+    @Override
+    public String searchAsync(Filter filter, int pageNumber) throws CoalesceException
+    {
+        return searchAsync(filter, pageNumber, null, null, false);
+    }
+
+    @Override
+    public SearchDataObjectResponse search(Filter filter,
+                                           int pageNumber,
+                                           PropertyName[] properties,
+                                           SortBy[] sortBy,
+                                           boolean includeHidden)
+            throws CoalesceException
+    {
+        return search(createSearchDataObjectRequest(false, filter, pageNumber, properties, sortBy, includeHidden));
+    }
+
+    @Override
+    public String searchAsync(Filter filter,
+                              int pageNumber,
+                              PropertyName[] properties,
+                              SortBy[] sortBy,
+                              boolean includeHidden)
+            throws CoalesceException
+    {
+        SearchDataObjectRequest request = createSearchDataObjectRequest(true,
+                                                                        filter,
+                                                                        pageNumber,
+                                                                        properties,
+                                                                        sortBy,
+                                                                        includeHidden);
+
+        return addAsyncResponse(search(request), request);
+    }
+
+    /*--------------------------------------------------------------------------
+    Abstract Methods
+    --------------------------------------------------------------------------*/
+
+    abstract protected SearchDataObjectResponse search(SearchDataObjectRequest request);
+
+    /*--------------------------------------------------------------------------
+    Private Methods
+    --------------------------------------------------------------------------*/
+
+    private SearchDataObjectRequest createSearchDataObjectRequest(boolean async,
+                                                                  Filter filter,
+                                                                  int pageNumber,
+                                                                  PropertyName[] properties,
+                                                                  SortBy[] sortBy,
+                                                                  boolean includeHidden)
+            throws CoalesceException
+    {
+
+        String xml;
+        try
+        {
+            xml = FilterUtil.toXml(EConfiguration.CUSTOM, filter);
+        }
+        catch (TransformerException e)
+        {
+            throw new CoalesceException("Failed to serialize filter.", e);
+        }
+
+        // Create Request
+        QueryType query = new QueryType();
+        query.setFilter(xml);
+        query.setPageNumber(pageNumber);
+        query.setPageSize(pageSize);
+        query.setIncludeHidden(includeHidden);
+
+        if (properties != null)
+        {
+            for (PropertyName proeprty : properties)
+            {
+                query.getPropertyNames().add(proeprty.getPropertyName());
+            }
+        }
+
+        if (sortBy != null)
+        {
+            for (SortBy sort : sortBy)
+            {
+
+                SortByType type = new SortByType();
+
+                type.setPropertyName(sort.getPropertyName().getPropertyName());
+                type.setSortOrder(ESortDirection.valueOf(sort.getSortOrder().toSQL()));
+
+                query.getSortBy().add(type);
+            }
+        }
+
+        SearchDataObjectRequest request = new SearchDataObjectRequest();
+        request.getQuery().add(query);
+        request.setAsyncCall(async);
+
+        return request;
+    }
 
 }

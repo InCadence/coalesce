@@ -17,6 +17,11 @@
 
 package com.incadencecorp.coalesce.services.search.api.test;
 
+import org.geotools.factory.CommonFactoryFinder;
+import org.junit.Test;
+import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
+
 import com.incadencecorp.coalesce.services.search.api.ISearchClient;
 
 /**
@@ -31,5 +36,22 @@ public abstract class AbstractSearchTests {
      * Must set this in the @BeforeClass method.
      */
     protected static ISearchClient client;
+    
+    @Test
+    public void testSearch() throws Exception {
+        
+        FilterFactory ff = CommonFactoryFinder.getFilterFactory();
+        
+        Filter filter = ff.equals(ff.property("aa"), ff.literal("aa"));
+        
+        System.out.println(filter.toString());
+        
+        client.search(filter, 1);
+        
+//        FilterType query = new FilterTypeImpl();
+//        
+//        client.search(filter, 1);
+        
+    }
 
 }

@@ -17,8 +17,6 @@
 
 package com.incadencecorp.coalesce.services.crud.service;
 
-import java.util.concurrent.ExecutorService;
-
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.services.api.common.StringResponse;
 import com.incadencecorp.coalesce.services.api.crud.CrudManager;
@@ -28,9 +26,9 @@ import com.incadencecorp.coalesce.services.api.crud.DataObjectUpdateStatusReques
 import com.incadencecorp.coalesce.services.api.crud.DataObjectXmlRequest;
 import com.incadencecorp.coalesce.services.common.ServiceBase;
 import com.incadencecorp.coalesce.services.crud.service.jobs.CreateDataObjectJob;
-import com.incadencecorp.coalesce.services.crud.service.jobs.UpdateDataObjectLinkagesJob;
 import com.incadencecorp.coalesce.services.crud.service.jobs.RetrieveDataObjectJob;
 import com.incadencecorp.coalesce.services.crud.service.jobs.UpdateDataObjectJob;
+import com.incadencecorp.coalesce.services.crud.service.jobs.UpdateDataObjectLinkagesJob;
 import com.incadencecorp.coalesce.services.crud.service.jobs.UpdateDataObjectStatusJob;
 
 public class CrudServiceImpl extends ServiceBase implements CrudManager {
@@ -42,31 +40,31 @@ public class CrudServiceImpl extends ServiceBase implements CrudManager {
     @Override
     public StringResponse retrieveDataObject(DataObjectKeyRequest request)
     {
-        return (StringResponse) performJob(new RetrieveDataObjectJob(request));
+        return performJob(new RetrieveDataObjectJob(request));
     }
 
     @Override
     public StringResponse createDataObject(DataObjectXmlRequest request)
     {
-        return (StringResponse) performJob(new CreateDataObjectJob(request));
+        return performJob(new CreateDataObjectJob(request));
     }
 
     @Override
     public StringResponse updateDataObjectStatus(DataObjectUpdateStatusRequest request)
     {
-        return (StringResponse) performJob(new UpdateDataObjectStatusJob(request));
+        return performJob(new UpdateDataObjectStatusJob(request));
     }
 
     @Override
     public StringResponse updateDataObjectLinkages(DataObjectLinkRequest request)
     {
-        return (StringResponse) performJob(new UpdateDataObjectLinkagesJob(request));
+        return performJob(new UpdateDataObjectLinkagesJob(request));
     }
 
     @Override
     public StringResponse updateDataObject(DataObjectXmlRequest request)
     {
-        return (StringResponse) performJob(new UpdateDataObjectJob(request));
+        return performJob(new UpdateDataObjectJob(request));
     }
 
 }

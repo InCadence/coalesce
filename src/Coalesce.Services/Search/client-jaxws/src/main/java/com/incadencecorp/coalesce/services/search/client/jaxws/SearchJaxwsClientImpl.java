@@ -64,7 +64,7 @@ public class SearchJaxwsClientImpl extends AbstractSearchClientImpl {
     }
 
     @Override
-    protected SearchDataObjectResponse searchDataObject(SearchDataObjectRequest request)
+    protected SearchDataObjectResponse search(SearchDataObjectRequest request)
     {
         return client.searchDataObject(request);
     }

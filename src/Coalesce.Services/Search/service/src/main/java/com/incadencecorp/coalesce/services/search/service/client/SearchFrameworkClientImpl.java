@@ -28,7 +28,7 @@ import com.incadencecorp.coalesce.services.api.common.StringResponse;
 import com.incadencecorp.coalesce.services.api.search.SearchDataObjectRequest;
 import com.incadencecorp.coalesce.services.api.search.SearchDataObjectResponse;
 import com.incadencecorp.coalesce.services.search.client.common.AbstractSearchClientImpl;
-import com.incadencecorp.coalesce.services.search.service.CrudServiceImpl;
+import com.incadencecorp.coalesce.services.search.service.SearchServiceImpl;
 
 /**
  * This implementation uses the service directly w/o going through a WSDL.
@@ -37,11 +37,11 @@ import com.incadencecorp.coalesce.services.search.service.CrudServiceImpl;
  */
 public class SearchFrameworkClientImpl extends AbstractSearchClientImpl {
 
-    private CrudServiceImpl client;
+    private SearchServiceImpl client;
 
     public SearchFrameworkClientImpl(CoalesceFramework framework)
     {
-        client = new CrudServiceImpl(framework);
+        client = new SearchServiceImpl(framework);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class SearchFrameworkClientImpl extends AbstractSearchClientImpl {
     }
     
     @Override
-    protected SearchDataObjectResponse searchDataObject(SearchDataObjectRequest request)
+    protected SearchDataObjectResponse search(SearchDataObjectRequest request)
     {
         return client.searchDataObject(request);
     }
