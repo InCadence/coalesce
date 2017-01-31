@@ -50,8 +50,8 @@ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
 
 public class AccumuloDataConnector extends CoalesceDataConnectorBase {
 
-	private static Instance instance;
-	private static Connector connector;
+	protected static Instance instance;
+	protected static Connector connector;
 
 	// TODO These need to move to a constants or other common location
 	public static String coalesceTable = "Coalesce";
@@ -60,8 +60,8 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase {
 	public static String coalesceSearchTable = "CoalesceSearch";
 
 	// These variables are for connecting to GeoMesa for the search
-	private static Map<String, String> dsConf = new HashMap<String, String>();
-	private static DataStore dataStore;
+	protected static Map<String, String> dsConf = new HashMap<String, String>();
+	protected static DataStore dataStore;
 
 	static final String INSTANCE_ID = "instanceId";
 	static final String ZOOKEEPERS = "zookeepers";
@@ -70,7 +70,7 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase {
 	static final String AUTHS = "auths";
 	static final String TABLE_NAME = "tableName";
 
-	private final ServerConn serverConnection;
+	protected final ServerConn serverConnection;
 
 	public AccumuloDataConnector(ServerConn settings) throws CoalescePersistorException {
 		serverConnection = new ServerConn.Builder().copyOf(settings).build();
@@ -133,7 +133,7 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase {
 	Private Functions
 	-----------------------------------------------------------------------------*/
 
-	private void createTables(Connector connector, String... tableNames)
+	protected void createTables(Connector connector, String... tableNames)
 			throws AccumuloException, AccumuloSecurityException {
 		if (connector != null) {
 			for (String table : tableNames) {
@@ -148,7 +148,7 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase {
 		}
 	}
 
-	private void openDataConnection()
+	protected void openDataConnection()
 			throws IOException, InterruptedException, AccumuloException, AccumuloSecurityException {
 		// TODO Add try catch for appropriate exceptions
 		if (connector == null) {

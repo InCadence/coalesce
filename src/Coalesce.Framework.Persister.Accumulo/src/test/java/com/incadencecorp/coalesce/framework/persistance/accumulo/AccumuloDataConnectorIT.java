@@ -20,8 +20,9 @@ public class AccumuloDataConnectorIT {
     private static ServerConn conn;
 
     @BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-	    InputStream in = AccumuloDataConnectorIT.class.getResourceAsStream("/accumuloConnectionInfo.properties");
+    public static void setUpBeforeClass() throws Exception
+    {
+        InputStream in = AccumuloDataConnectorIT.class.getResourceAsStream("/accumuloConnectionInfo.properties");
         Properties props = new Properties();
         props.load(in);
         in.close();
@@ -30,47 +31,53 @@ public class AccumuloDataConnectorIT {
         String user = props.getProperty("userid");
         String password = props.getProperty("password");
         conn = new ServerConn.Builder().db(dbName).serverName(zookeepers).user(user).password(password).build();
-	}
+    }
 
-    protected ServerConn getConnection() {
+    protected ServerConn getConnection()
+    {
         return conn;
     }
-    
-	@Test (expected=UnsupportedOperationException.class)
-	public void testGetDBConnection() throws CoalescePersistorException, SQLException {
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void testGetDBConnection() throws CoalescePersistorException, SQLException
+    {
         AccumuloDataConnector accumuloDataConnector = new AccumuloDataConnector(getConnection());
         accumuloDataConnector.getDBConnection();
-        accumuloDataConnector.close();	
-    }
-
-	@Test
-	public void testGetProcedurePrefix() throws CoalescePersistorException {
-        AccumuloDataConnector accumuloDataConnector = new AccumuloDataConnector(getConnection());
-        assertEquals("",accumuloDataConnector.getProcedurePrefix());
         accumuloDataConnector.close();
     }
 
-	@Test (expected=UnsupportedOperationException.class)
-	public void testOpenConnection() throws CoalescePersistorException {
-		AccumuloDataConnector accumuloDataConnector = new AccumuloDataConnector(getConnection());
-	    accumuloDataConnector.openConnection(true);
-	    accumuloDataConnector.close();
-	}
+    @Test
+    public void testGetProcedurePrefix() throws CoalescePersistorException
+    {
+        AccumuloDataConnector accumuloDataConnector = new AccumuloDataConnector(getConnection());
+        assertEquals("", accumuloDataConnector.getProcedurePrefix());
+        accumuloDataConnector.close();
+    }
 
-	@Test 
-	public void testGetDBConnector() throws CoalescePersistorException {
-		AccumuloDataConnector accumuloDataConnector = new AccumuloDataConnector(getConnection());
-		Connector dbConnector = accumuloDataConnector.getDBConnector();
-		assertNotNull(dbConnector);
-		accumuloDataConnector.close();
-	}
+    @Test(expected = UnsupportedOperationException.class)
+    public void testOpenConnection() throws CoalescePersistorException
+    {
+        AccumuloDataConnector accumuloDataConnector = new AccumuloDataConnector(getConnection());
+        accumuloDataConnector.openConnection(true);
+        accumuloDataConnector.close();
+    }
 
-	@Test
-	public void testGetGeoDataStore() throws CoalescePersistorException {
-		AccumuloDataConnector accumuloDataConnector = new AccumuloDataConnector(getConnection());
-		DataStore dataStore = accumuloDataConnector.getGeoDataStore();
-		assertNotNull(dataStore);
-		accumuloDataConnector.close();
-	}
+    @Test
+    public void testGetDBConnector() throws CoalescePersistorException
+    {
+        AccumuloDataConnector accumuloDataConnector = new AccumuloDataConnector(getConnection());
+        Connector dbConnector = accumuloDataConnector.getDBConnector();
+        assertNotNull(dbConnector);
+        accumuloDataConnector.close();
+    }
+
+    @Test
+    public void testGetGeoDataStore() throws CoalescePersistorException
+    {
+        AccumuloDataConnector accumuloDataConnector = new AccumuloDataConnector(getConnection());
+        DataStore dataStore = accumuloDataConnector.getGeoDataStore();
+        assertNotNull(dataStore);
+        accumuloDataConnector.close();
+    }
 
 }

@@ -172,7 +172,7 @@ public class CoalesceConstraintTest {
         CoalesceStringListField field = (CoalesceStringListField) record.getFieldByName("field1");
 
         field.setArray(new String[] {
-                "A", "B"
+                                      "A", "B"
         });
 
         Map<String, String> results = validator.validate(null, entity, template);
@@ -182,13 +182,13 @@ public class CoalesceConstraintTest {
                             results.get(field.getKey()));
 
         field.setArray(new String[] {
-                "A", "B", "C"
+                                      "A", "B", "C"
         });
 
         Assert.assertEquals(0, validator.validate(null, entity, template).size());
 
         field.setArray(new String[] {
-                "A", "B", "C", "B"
+                                      "A", "B", "C", "B"
         });
 
         results = validator.validate(null, entity, template);
@@ -242,13 +242,13 @@ public class CoalesceConstraintTest {
         // Verify as long as the restraining field is not set validation will
         // pass.
         field2.setValue(new String[] {
-                "1", "2"
+                                       "1", "2"
         });
         Assert.assertEquals(0, validator.validate(null, entity, template).size());
 
         // Verify setting the restraining field will fail the validation
         field1.setValue(new String[] {
-            "1"
+                                       "1"
         });
 
         Map<String, String> results = validator.validate(null, entity, template);
@@ -258,7 +258,7 @@ public class CoalesceConstraintTest {
                             results.get(field1.getKey()));
 
         field2.setValue(new String[] {
-            "B"
+                                       "B"
         });
 
         results = validator.validate(null, entity, template);
@@ -268,7 +268,7 @@ public class CoalesceConstraintTest {
                             results.get(field1.getKey()));
 
         field3.setValue(new String[] {
-            "A"
+                                       "A"
         });
 
         Assert.assertEquals(0, validator.validate(null, entity, template).size());
@@ -308,7 +308,11 @@ public class CoalesceConstraintTest {
 
         field.setValue(5);
         field1.setValue(new String[] {
-            "1"
+                                       "1"
+        });
+
+        field2.setValue(new String[] {
+                                       "1", "2", "3", "4", "5"
         });
 
         CoalesceConstraint.createListSize(fd, "Size Constraint", fd1, fd2);
@@ -320,11 +324,16 @@ public class CoalesceConstraintTest {
         Map<String, String> results = validator.validate(null, entity, template);
 
         Assert.assertEquals(1, results.size());
+
         Assert.assertEquals(String.format(CoalesceErrors.INVALID_CONSTRAINT_LIST_LENGTH, field1.getName()),
                             results.get(field.getKey()));
 
         field1.setValue(new String[] {
-                "1", "2", "3", "4", "5"
+                                       "1", "2", "3", "4", "5"
+        });
+
+        field2.setValue(new String[] {
+                                       "1"
         });
 
         results = validator.validate(null, entity, template);
@@ -334,7 +343,7 @@ public class CoalesceConstraintTest {
                             results.get(field.getKey()));
 
         field2.setValue(new String[] {
-                "1", "2", "3", "4", "5"
+                                       "1", "2", "3", "4", "5"
         });
 
         results = validator.validate(null, entity, template);
@@ -436,7 +445,7 @@ public class CoalesceConstraintTest {
         fieldInvalidMin.setTypedValue(-1.0);
         fieldInvalidMax.setTypedValue(10l);
         fieldList.setTypedValue(new long[] {
-                1, 3, 4, 10
+                                             1, 3, 4, 10
         });
 
         // Validate
@@ -451,7 +460,7 @@ public class CoalesceConstraintTest {
                      results.get(fieldList.getKey()));
 
         fieldList.setTypedValue(new long[] {
-                1, 3, 4, -2
+                                             1, 3, 4, -2
         });
 
         results = new CoalesceValidator().validate(null, entity, CoalesceEntityTemplate.create(entity));
@@ -460,7 +469,7 @@ public class CoalesceConstraintTest {
                      results.get(fieldList.getKey()));
 
         fieldList.setTypedValue(new long[] {
-                1, 3, 4
+                                             1, 3, 4
         });
 
         results = new CoalesceValidator().validate(null, entity, CoalesceEntityTemplate.create(entity));
@@ -655,13 +664,13 @@ public class CoalesceConstraintTest {
         Assert.assertNull(field2.getBaseValue());
         Assert.assertEquals(ETest.A.ordinal(), Integer.parseInt(field3.getBaseValue()));
         Assert.assertNull(field4.getBaseValue());
-        
+
         // Set Values
         field1.setTypedValue(1);
         field2.setTypedValue(10);
         field3.setTypedValue(11);
         field4.setTypedValue(new int[] {
-                0, 1, 10
+                                         0, 1, 10
         });
 
         EnumerationProviderUtil.setEnumerationProviders(new JavaEnumerationProviderImpl(),
@@ -679,7 +688,7 @@ public class CoalesceConstraintTest {
                      results.get(field4.getKey()));
 
         field4.setTypedValue(new int[] {
-                0, 1
+                                         0, 1
         });
 
         // Validate

@@ -727,7 +727,9 @@ public abstract class CoalescePersistorBaseTest {
                             || attribute.getNodeName().equalsIgnoreCase("version")
                             || attribute.getNodeName().equalsIgnoreCase("flatten")
                             || attribute.getNodeName().equalsIgnoreCase("noindex")
-                            || attribute.getNodeName().equalsIgnoreCase("datatype"))
+                            || attribute.getNodeName().equalsIgnoreCase("datatype")
+                            || attribute.getNodeName().equalsIgnoreCase("maxrecords")
+                            || attribute.getNodeName().equalsIgnoreCase("minrecords"))
                     {
                         assertNotNull(attribute.getNodeValue());
                     }

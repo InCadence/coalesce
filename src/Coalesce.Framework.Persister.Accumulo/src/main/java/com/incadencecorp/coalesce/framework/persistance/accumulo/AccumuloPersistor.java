@@ -140,7 +140,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
     public AccumuloPersistor(ServerConn svConn) throws CoalescePersistorException
     {
         setConnectionSettings(svConn);
-        connect = new AccumuloDataConnector(svConn);
+        connect = (AccumuloDataConnector) getDataConnector();
 
     }
 
@@ -148,7 +148,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
     {
         setConnectionSettings(svConn);
         setCacher(cacher);
-        connect = new AccumuloDataConnector(svConn);
+        connect = (AccumuloDataConnector) getDataConnector();
     }
 
     @Override
@@ -606,7 +606,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
         boolean defaultGeometrySet = false;
         tb.setName(featurename);
-
+        
         // TODO - Deal with no index fields
         tb.add("entityKey", getTypeForSimpleFeature(ECoalesceFieldDataTypes.STRING_TYPE));
         for (Fielddefinition field : fields)

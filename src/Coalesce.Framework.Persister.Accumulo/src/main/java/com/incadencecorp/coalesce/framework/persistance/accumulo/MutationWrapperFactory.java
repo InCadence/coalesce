@@ -71,6 +71,14 @@ public class MutationWrapperFactory extends CoalesceIterator {
     
     public boolean useNamePath=true;
 
+    public MutationWrapperFactory(){};
+   
+    public MutationWrapperFactory(String config)
+    {
+    
+    	
+    }
+    
     public MutationWrapper createMutationGuy(CoalesceEntity entity)
     {
 

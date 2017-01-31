@@ -15,23 +15,12 @@
 
 	<build>
 		<plugins>
-			<!--  Commented out because this will cause the Integration tests to run during "mvn install"
-				  Add it back to run the Integration Tests automatically.
-			<plugin>
-            	<groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>2.19</version>
-                <executions>
-                    <execution>
-                        <id>integration-test</id>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-             -->
+			<!-- Commented out because this will cause the Integration tests to run 
+				during "mvn install" Add it back to run the Integration Tests automatically. 
+				<plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-failsafe-plugin</artifactId> 
+				<version>2.19</version> <executions> <execution> <id>integration-test</id> 
+				<goals> <goal>integration-test</goal> <goal>verify</goal> </goals> </execution> 
+				</executions> </plugin> -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
@@ -152,7 +141,7 @@
 		<dependency>
 			<groupId>com.incadencecorp.coalesce</groupId>
 			<artifactId>coalesce-search</artifactId>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>com.incadencecorp.coalesce</groupId>
 			<version>${project.version}</version>
@@ -170,18 +159,18 @@
 			<groupId>com.incadencecorp.coalesce</groupId>
 			<artifactId>coalesce-framework-persister-postgresql</artifactId>
 		</dependency>
+		<dependency>
+			<artifactId>joda-time</artifactId>
+			<groupId>joda-time</groupId>
+			<version>2.3</version>
+			<scope>provided</scope>
+		</dependency>
+		
 		<!-- Accumulo Dependencies -->
 		<dependency>
 			<groupId>org.apache.accumulo</groupId>
 			<artifactId>accumulo-core</artifactId>
 			<version>1.7.2</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.accumulo</groupId>
-			<artifactId>accumulo-minicluster</artifactId>
-			<version>1.7.2</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.accumulo</groupId>
