@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.accumulo.core.client.AccumuloException;
 import org.apache.accumulo.core.client.AccumuloSecurityException;
@@ -81,6 +82,14 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase {
 		dsConf.put(PASSWORD, settings.getPassword());
 		dsConf.put(TABLE_NAME, coalesceSearchTable);
 		dsConf.put(AUTHS, ""); // Auths will be empty for now
+		
+		// Set system properties for GeomesaBatchWriter
+		Properties props = System.getProperties();
+		props.setProperty("geomesa.batchwriter.latency.millis", "1000");
+		props.setProperty("geomesa.batchwriter.maxthreads", "10");
+		props.setProperty("geomesa.batchwriter.memory","52428800");
+		
+		
 	}
 
 	// @Override

@@ -859,7 +859,8 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             Connector dbConnector = connect.getDBConnector();
             BatchWriterConfig config = new BatchWriterConfig();
             config.setMaxLatency(1, TimeUnit.SECONDS);
-            config.setMaxMemory(10240);
+            config.setMaxMemory(52428800);
+            config.setTimeout(600, TimeUnit.SECONDS);
             // config.setDurability(Durability.DEFAULT); // Requires Accumulo
             // 1.7
             config.setMaxWriteThreads(10);
