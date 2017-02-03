@@ -17,9 +17,9 @@ package com.incadencecorp.coalesce.framework.persistance.accumulo;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 /**
- * @author Jing Yang
- * May 13, 2016
+ * @author Jing Yang May 13, 2016
  */
+
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -97,307 +97,358 @@ import com.vividsolutions.jts.util.GeometricShapeFactory;
 
 public class AccumuloPersistorTest extends CoalescePersistorBaseTest {
 
-	@BeforeClass
-	public static void setupBeforeClass() throws Exception {
-		
-		AccumuloPersistorTest tester = new AccumuloPersistorTest();
-		CoalescePersistorBaseTest.setupBeforeClassBase(tester);
-		CoalesceUnitTestSettings.initialize();
-	}
+    private static String TESTFILENAME = "Desert.jpg";
 
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-		CoalesceUnitTestSettings.tearDownAfterClass();
-	}
+    @BeforeClass
+    public static void setupBeforeClass() throws Exception
+    {
 
-	protected ServerConn getConnection() {
-		String name = "shouldnot";
-		String zookeepers = "matter";
-		return new ServerConn.Builder().db(name).serverName(zookeepers).user("root").password("password").build();
-	}
+        AccumuloPersistorTest tester = new AccumuloPersistorTest();
+        CoalescePersistorBaseTest.setupBeforeClassBase(tester);
+        CoalesceUnitTestSettings.initialize();
+        
+        AccumuloSettings.setPersistFieldDefAttr(true);
+        AccumuloSettings.setPersistSectionAttr(true);
+        AccumuloSettings.setPersistRecordsetAttr(true);
+        AccumuloSettings.setPersistRecordAttr(true);
+    }
 
-	@Override
-	protected ICoalescePersistor getPersistor(ServerConn conn) {
-		try {
-			return new AccumuloPersistor(conn){
-			
-				 @Override
-				    protected CoalesceDataConnectorBase getDataConnector() throws CoalescePersistorException
-				    {
-				        return new MockAccumuloDataConnector(getConnectionSettings());
-				    }
-				
-			};
-		} catch (CoalescePersistorException e) {
-			return null;
-		}
-	}
+    @AfterClass
+    public static void tearDownAfterClass() throws Exception
+    {
+        CoalesceUnitTestSettings.tearDownAfterClass();
+    }
 
-	@Override
-	protected CoalesceDataConnectorBase getDataConnector(ServerConn conn) throws CoalescePersistorException {
-		return new MockAccumuloDataConnector(conn);
-	}
+    protected ServerConn getConnection()
+    {
+        String name = "shouldnot";
+        String zookeepers = "matter";
+        return new ServerConn.Builder().db(name).serverName(zookeepers).user("root").password("password").build();
+    }
 
-	@Test
-	public void testConnection() throws CoalescePersistorException, Exception {
-		AccumuloDataConnector accumuloConnector = new AccumuloDataConnector(getConnection());
-		Connector conn = accumuloConnector.getDBConnector();
-		Map<String, String> sysconf = conn.instanceOperations().getSystemConfiguration();
-		assertNotNull(sysconf);
-		accumuloConnector.close();
-	}
+    @Override
+    protected ICoalescePersistor getPersistor(ServerConn conn)
+    {
+        try
+        {
+            return new AccumuloPersistor(conn) {
 
-	static private String TESTFILENAME = "Desert.jpg";
+                @Override
+                protected CoalesceDataConnectorBase getDataConnector() throws CoalescePersistorException
+                {
+                    return new MockAccumuloDataConnector(getConnectionSettings());
+                }
 
-	@Test
-	public void AccumuloDataTypesTest()
-			throws CoalesceDataFormatException, CoalescePersistorException, SAXException, IOException {
-		double CIRCLERADIUS = 5.25;
+            };
+        }
+        catch (CoalescePersistorException e)
+        {
+            return null;
+        }
+    }
 
-		// Create Entity
-		TestEntity entity = new TestEntity();
-		entity.initialize();
+    @Override
+    protected CoalesceDataConnectorBase getDataConnector(ServerConn conn) throws CoalescePersistorException
+    {
+        return new MockAccumuloDataConnector(conn);
+    }
 
-		// Create Record
-		TestRecord record = entity.addRecord1();
+    @Test
+    public void testConnection2()
+    {
 
-		// Create Circle
-		CoalesceCircleField circlefield = record.getCircleField();
-		Point center = new GeometryFactory().createPoint(new Coordinate(0, 0));
-		circlefield.setValue(center, CIRCLERADIUS);
+        TestEntity entity = new TestEntity();
+        entity.initialize();
+        
+        entity.addRecord1().getBooleanField().setValue(true);
+        
+        System.out.println(entity.toXml());
+        
+    }
 
-		// Create Polygon
-		CoalescePolygonField polygonfield = record.getPolygonField();
-		GeometricShapeFactory gsf = new GeometricShapeFactory();
-		gsf.setSize(10);
-		gsf.setNumPoints(20);
-		gsf.setCentre(new Coordinate(0, 0));
-		Polygon shape = gsf.createCircle();
-		polygonfield.setValue(shape);
+    @Test
+    public void testConnection() throws CoalescePersistorException, Exception
+    {
+        AccumuloDataConnector accumuloConnector = new AccumuloDataConnector(getConnection());
+        Connector conn = accumuloConnector.getDBConnector();
+        Map<String, String> sysconf = conn.instanceOperations().getSystemConfiguration();
+        assertNotNull(sysconf);
+        accumuloConnector.close();
+    }
 
-		// Create Line
-		CoalesceLineStringField linefield = record.getLineField();
-		Coordinate coords[] = { new Coordinate(0, 0), new Coordinate(1, 1), new Coordinate(2, 2) };
-		GeometryFactory gf = new GeometryFactory();
-		LineString line = gf.createLineString(coords);
-		linefield.setValue(line);
+    @Test
+    public void AccumuloDataTypesTest()
+            throws CoalesceDataFormatException, CoalescePersistorException, SAXException, IOException
+    {
+        double CIRCLERADIUS = 5.25;
 
-		// Create a geo list
-		CoalesceCoordinateListField geolistfield = record.getGeoListField();
-		MultiPoint geolist = new GeometryFactory().createMultiPoint(coords);
-		geolistfield.setValue(geolist);
+        // Create Entity
+        TestEntity entity = new TestEntity();
+        entity.initialize();
 
-		// Create a point value
-		CoalesceCoordinateField coordfield = record.getGeoField();
-		coordfield.setValue(new Coordinate(10, 10));
+        // Create Record
+        TestRecord record = entity.addRecord1();
 
-		// Int
-		CoalesceIntegerField intfield = record.getIntegerField();
-		intfield.setValue(42);
+        // Create Circle
+        CoalesceCircleField circlefield = record.getCircleField();
+        Point center = new GeometryFactory().createPoint(new Coordinate(0, 0));
+        circlefield.setValue(center, CIRCLERADIUS);
 
-		// Check a int list field
-		int intlist[] = { 3, 4, 5, 6 };
-		CoalesceIntegerListField intlistfield = record.getIntegerListField();
-		intlistfield.setValue(intlist);
+        // Create Polygon
+        CoalescePolygonField polygonfield = record.getPolygonField();
+        GeometricShapeFactory gsf = new GeometricShapeFactory();
+        gsf.setSize(10);
+        gsf.setNumPoints(20);
+        gsf.setCentre(new Coordinate(0, 0));
+        Polygon shape = gsf.createCircle();
+        polygonfield.setValue(shape);
 
-		// Long
-		CoalesceLongField longfield = record.getLongField();
-		longfield.setValue((long) 42);
+        // Create Line
+        CoalesceLineStringField linefield = record.getLineField();
+        Coordinate coords[] = { new Coordinate(0, 0), new Coordinate(1, 1), new Coordinate(2, 2) };
+        GeometryFactory gf = new GeometryFactory();
+        LineString line = gf.createLineString(coords);
+        linefield.setValue(line);
 
-		// Check a long list field
-		long longlist[] = { 3, 4, 5, 6 };
-		CoalesceLongListField longlistfield = record.getLongListField();
-		longlistfield.setValue(longlist);
+        // Create a geo list
+        CoalesceCoordinateListField geolistfield = record.getGeoListField();
+        MultiPoint geolist = new GeometryFactory().createMultiPoint(coords);
+        geolistfield.setValue(geolist);
 
-		// String
-		CoalesceStringField stringfield = record.getStringField();
-		stringfield.setValue("Test String");
+        // Create a point value
+        CoalesceCoordinateField coordfield = record.getGeoField();
+        coordfield.setValue(new Coordinate(10, 10));
 
-		// Check a string list field
-		String stringlist[] = { "A", "B", "C" };
-		CoalesceStringListField stringlistfield = record.getStringListField();
-		stringlistfield.setValue(stringlist);
+        // Int
+        CoalesceIntegerField intfield = record.getIntegerField();
+        intfield.setValue(42);
 
-		// Float
-		CoalesceFloatField floatfield = record.getFloatField();
-		floatfield.setValue((float) 3.145964);
+        // Check a int list field
+        int intlist[] = { 3, 4, 5, 6 };
+        CoalesceIntegerListField intlistfield = record.getIntegerListField();
+        intlistfield.setValue(intlist);
 
-		// Check a float list field
-		float floatlist[] = { (float) 3.145964, (float) 7.87856, (float) 10000.000045566 };
-		CoalesceFloatListField floatlistfield = record.getFloatListField();
-		floatlistfield.setValue(floatlist);
+        // Long
+        CoalesceLongField longfield = record.getLongField();
+        longfield.setValue((long) 42);
 
-		// Double
-		CoalesceDoubleField doublefield = record.getDoubleField();
-		doublefield.setValue(3.145964);
+        // Check a long list field
+        long longlist[] = { 3, 4, 5, 6 };
+        CoalesceLongListField longlistfield = record.getLongListField();
+        longlistfield.setValue(longlist);
 
-		// Check a Double list field
-		double doublelist[] = { 3.145964, 7.87856, 10000.000045566 };
-		CoalesceDoubleListField doublelistfield = record.getDoubleListField();
-		doublelistfield.setValue(doublelist);
+        // String
+        CoalesceStringField stringfield = record.getStringField();
+        stringfield.setValue("Test String");
 
-		// Boolean
-		CoalesceBooleanField booleanfield = record.getBooleanField();
-		booleanfield.setValue(true);
+        // Check a string list field
+        String stringlist[] = { "A", "B", "C" };
+        CoalesceStringListField stringlistfield = record.getStringListField();
+        stringlistfield.setValue(stringlist);
 
-		// Date
-		CoalesceDateTimeField datetimefield = record.getDateField();
-		datetimefield.setValue(JodaDateTimeHelper.nowInUtc());
+        // Float
+        CoalesceFloatField floatfield = record.getFloatField();
+        floatfield.setValue((float) 3.145964);
 
-		// UUID
-		CoalesceGUIDField guidfield = record.getGuidField();
-		guidfield.setValue(UUID.randomUUID());
+        // Check a float list field
+        float floatlist[] = { (float) 3.145964, (float) 7.87856, (float) 10000.000045566 };
+        CoalesceFloatListField floatlistfield = record.getFloatListField();
+        floatlistfield.setValue(floatlist);
 
-		// File
-		CoalesceFileField filefield = record.getFileField();
-		String fileName = CoalesceUnitTestSettings.getResourceAbsolutePath(TESTFILENAME);
+        // Double
+        CoalesceDoubleField doublefield = record.getDoubleField();
+        doublefield.setValue(3.145964);
 
-		try {
-			DocumentProperties properties = new DocumentProperties();
-			if (properties.initialize(fileName, CoalesceSettings.getUseEncryption())) {
-				filefield.setValue(properties);
-			}
-		} catch (ImageProcessingException | CoalesceCryptoException | IOException | JDOMException e) {
-			fail("Error processing image file: " + e.getMessage());
-		}
+        // Check a Double list field
+        double doublelist[] = { 3.145964, 7.87856, 10000.000045566 };
+        CoalesceDoubleListField doublelistfield = record.getDoubleListField();
+        doublelistfield.setValue(doublelist);
 
-		// Register a template for this entity so that search data is persisted
-		getFramework().saveCoalesceEntityTemplate(CoalesceEntityTemplate.create(entity));
+        // Boolean
+        CoalesceBooleanField booleanfield = record.getBooleanField();
+        booleanfield.setValue(true);
 
-		// Persist Entity
-		getFramework().saveCoalesceEntity(entity);
+        // Date
+        CoalesceDateTimeField datetimefield = record.getDateField();
+        datetimefield.setValue(JodaDateTimeHelper.nowInUtc());
 
-		// Get Persisted Values
-		String cvalue = getFramework().getCoalesceFieldValue(circlefield.getKey());
-		String pvalue = getFramework().getCoalesceFieldValue(polygonfield.getKey());
-		String lvalue = getFramework().getCoalesceFieldValue(linefield.getKey());
-		float fvalue = Float.valueOf(getFramework().getCoalesceFieldValue(floatfield.getKey()));
-		String flistvalue[] = getFramework().getCoalesceFieldValue(floatlistfield.getKey()).split(",");
-		double dvalue = Double.valueOf(getFramework().getCoalesceFieldValue(doublefield.getKey()));
-		String dlistvalue[] = getFramework().getCoalesceFieldValue(doublelistfield.getKey()).split(",");
-		boolean bvalue = Boolean.valueOf(getFramework().getCoalesceFieldValue(booleanfield.getKey()));
-		String mydate = getFramework().getCoalesceFieldValue(datetimefield.getKey());
-		DateTime datevalue = JodaDateTimeHelper.fromXmlDateTimeUTC(mydate);
-		CoalesceEntity filefieldentity = getFramework().getCoalesceEntity(entity.getKey());
-		CoalesceFileField filefieldvalue = (CoalesceFileField) filefieldentity
-				.getCoalesceObjectForKey(filefield.getKey());
-		byte[] filefieldbytesvalue = Base64.decode(filefieldvalue.getBaseValue());
+        // UUID
+        CoalesceGUIDField guidfield = record.getGuidField();
+        guidfield.setValue(UUID.randomUUID());
 
-		// Create test values
-		String ctest = new WKTWriter(3).write(center);
-		String ptest = new WKTWriter(3).write(shape);
-		String ltest = new WKTWriter(3).write(line);
-		float ftest = floatfield.getValue();
-		float flisttest[] = floatlistfield.getValue();
-		double dtest = doublefield.getValue();
-		double dlisttest[] = doublelistfield.getValue();
-		boolean btest = booleanfield.getValue();
-		DateTime datetest = datetimefield.getValue();
-		byte[] fileFieldBytestest = Base64.decode(filefield.getBaseValue());
+        // File
+        CoalesceFileField filefield = record.getFileField();
+        String fileName = CoalesceUnitTestSettings.getResourceAbsolutePath(TESTFILENAME);
 
-		// Verify Circle
-		assertEquals(ctest, cvalue);
-		assertEquals(CIRCLERADIUS, Double.valueOf(circlefield.getAttribute("radius")), 0);
+        try
+        {
+            DocumentProperties properties = new DocumentProperties();
+            if (properties.initialize(fileName, CoalesceSettings.getUseEncryption()))
+            {
+                filefield.setValue(properties);
+            }
+        }
+        catch (ImageProcessingException | CoalesceCryptoException | IOException | JDOMException e)
+        {
+            fail("Error processing image file: " + e.getMessage());
+        }
 
-		// Verify Polygon
-		assertEquals(ptest, pvalue);
+        // Register a template for this entity so that search data is persisted
+        getFramework().saveCoalesceEntityTemplate(CoalesceEntityTemplate.create(entity));
 
-		// Verify line
-		assertEquals(ltest, lvalue);
+        // Persist Entity
+        getFramework().saveCoalesceEntity(entity);
 
-		// Verify float
-		assertEquals(ftest, fvalue, 0);
+        // Get Persisted Values
+        String cvalue = getFramework().getCoalesceFieldValue(circlefield.getKey());
+        String pvalue = getFramework().getCoalesceFieldValue(polygonfield.getKey());
+        String lvalue = getFramework().getCoalesceFieldValue(linefield.getKey());
+        float fvalue = Float.valueOf(getFramework().getCoalesceFieldValue(floatfield.getKey()));
+        String flistvalue[] = getFramework().getCoalesceFieldValue(floatlistfield.getKey()).split(",");
+        double dvalue = Double.valueOf(getFramework().getCoalesceFieldValue(doublefield.getKey()));
+        String dlistvalue[] = getFramework().getCoalesceFieldValue(doublelistfield.getKey()).split(",");
+        boolean bvalue = Boolean.valueOf(getFramework().getCoalesceFieldValue(booleanfield.getKey()));
+        String mydate = getFramework().getCoalesceFieldValue(datetimefield.getKey());
+        DateTime datevalue = JodaDateTimeHelper.fromXmlDateTimeUTC(mydate);
+        CoalesceEntity filefieldentity = getFramework().getCoalesceEntity(entity.getKey());
+        CoalesceFileField filefieldvalue = (CoalesceFileField) filefieldentity.getCoalesceObjectForKey(filefield.getKey());
+        byte[] filefieldbytesvalue = Base64.decode(filefieldvalue.getBaseValue());
 
-		// Verify floatlist
-		assertEquals(flisttest.length, flistvalue.length);
-		for (int i = 0; i < flisttest.length; i++) {
-			assertEquals(flisttest[i], Float.valueOf(flistvalue[i]), 0);
-		}
+        // Create test values
+        String ctest = new WKTWriter(3).write(center);
+        String ptest = new WKTWriter(3).write(shape);
+        String ltest = new WKTWriter(3).write(line);
+        float ftest = floatfield.getValue();
+        float flisttest[] = floatlistfield.getValue();
+        double dtest = doublefield.getValue();
+        double dlisttest[] = doublelistfield.getValue();
+        boolean btest = booleanfield.getValue();
+        DateTime datetest = datetimefield.getValue();
+        byte[] fileFieldBytestest = Base64.decode(filefield.getBaseValue());
 
-		// Verify double
-		assertEquals(dtest, dvalue, 0);
+        // Verify Circle
+        assertEquals(ctest, cvalue);
+        assertEquals(CIRCLERADIUS, Double.valueOf(circlefield.getAttribute("radius")), 0);
 
-		// Verify doublelist
-		assertEquals(dlisttest.length, dlistvalue.length);
-		for (int i = 0; i < dlisttest.length; i++) {
-			assertEquals(dlisttest[i], Double.valueOf(dlistvalue[i]), 0);
-		}
+        // Verify Polygon
+        assertEquals(ptest, pvalue);
 
-		// Verify boolean
-		assertEquals(btest, bvalue);
+        // Verify line
+        assertEquals(ltest, lvalue);
 
-		// Verify date
-		assertEquals(datetest, datevalue);
+        // Verify float
+        assertEquals(ftest, fvalue, 0);
 
-		// Verify File Field
-		assertTrue((filefieldvalue.getValue() instanceof DocumentProperties));
-		assertArrayEquals(filefieldbytesvalue, fileFieldBytestest);
+        // Verify floatlist
+        assertEquals(flisttest.length, flistvalue.length);
+        for (int i = 0; i < flisttest.length; i++)
+        {
+            assertEquals(flisttest[i], Float.valueOf(flistvalue[i]), 0);
+        }
 
-		assertEquals(TESTFILENAME, filefieldvalue.getFilename());
-		assertEquals(FilenameUtils.getExtension(TESTFILENAME), filefieldvalue.getExtension());
-		assertEquals(MimeHelper.getMimeTypeForExtension(FilenameUtils.getExtension(TESTFILENAME)),
-				filefieldvalue.getMimeType());
-		assertEquals(filefieldbytesvalue.length, filefield.getSize());
+        // Verify double
+        assertEquals(dtest, dvalue, 0);
 
-	}
+        // Verify doublelist
+        assertEquals(dlisttest.length, dlistvalue.length);
+        for (int i = 0; i < dlisttest.length; i++)
+        {
+            assertEquals(dlisttest[i], Double.valueOf(dlistvalue[i]), 0);
+        }
 
-	private static Filter createFilter(String geomField, double x0, double y0, double x1, double y1, String dateField,
-			String t0, String t1, String attributesQuery) throws CQLException, IOException {
+        // Verify boolean
+        assertEquals(btest, bvalue);
 
-		String cqlGeometry = "BBOX(" + geomField + ", " + x0 + ", " + y0 + ", " + x1 + ", " + y1 + ")";
-		String cqlDates = "(" + dateField + " DURING " + t0 + "/" + t1 + ")";
-		String cqlAttributes = attributesQuery == null ? "INCLUDE" : attributesQuery;
-		String cql = cqlGeometry + " AND " + cqlDates + " AND " + cqlAttributes;
-		return CQL.toFilter(cql);
-	}
+        // Verify date
+        assertEquals(datetest, datevalue);
 
-	@Test
-	public void testPersistRetrieveSearchEntity()
-			throws CoalescePersistorException, CoalesceDataFormatException, SAXException, IOException, CQLException {
-		GDELT_Test_Entity gdeltEntity = new GDELT_Test_Entity();
-		
-		// Prerequisite setup
-		getFramework().saveCoalesceEntityTemplate(CoalesceEntityTemplate.create(gdeltEntity));
-		CoalesceObjectFactory.register(GDELT_Test_Entity.class);
-		
-		//Persist
-		AccumuloPersistor persistor = (AccumuloPersistor) this.getPersistor(this.getConnection());
-		persistor.saveEntity(true, gdeltEntity);
-		
-		//Retrieve
-		CoalesceEntity[] entities = persistor.getEntity(gdeltEntity.getKey());
-		assertEquals(1, entities.length);
-		assertEquals(gdeltEntity.getKey(), entities[0].getKey());
-		
-		
-		//Search
-		DataStore geoDataStore = ((AccumuloDataConnector) persistor.getDataConnector()).getGeoDataStore();
-		Filter cqlFilter = createFilter("Actor1Geo_Location", -180, -180, 180, 180, "DateTime",
-				"2000-07-01T00:00:00.000Z", "2016-12-31T00:00:00.000Z", null);
-		Query query = new Query(GDELT_Test_Entity.getQueryName(), cqlFilter);
+        // Verify File Field
+        assertTrue((filefieldvalue.getValue() instanceof DocumentProperties));
+        assertArrayEquals(filefieldbytesvalue, fileFieldBytestest);
 
-		FeatureSource<?, ?> featureSource = geoDataStore.getFeatureSource(GDELT_Test_Entity.getQueryName());
-		FeatureIterator<?> featureItr = featureSource.getFeatures(query).features();
-		assertTrue(featureItr.hasNext());
-		
-		Feature feature = featureItr.next();
-		assertEquals(gdeltEntity.getKey(), feature.getProperty("entityKey").getValue());
-		assertEquals(562505648, feature.getProperty("GlobalEventID").getValue());
-		assertEquals("EUROPE", feature.getProperty("Actor1Name").getValue());
-		featureItr.close();
-		persistor.close();
-	}
-	
-	@Override
-	 public void testEntityTemplate(){
-		//override CoalescePersistorBaseTest because it is failing and not related to AccumuloPersistor
-		assertTrue(true);		
-	 }
-	
-	@Override
-	 public void testCreateEntityFromTemplate(){
-		//override CoalescePersistorBaseTest because it is failing and not related to AccumuloPersistor
-		assertTrue(true);
-	 }
-	
+        assertEquals(TESTFILENAME, filefieldvalue.getFilename());
+        assertEquals(FilenameUtils.getExtension(TESTFILENAME), filefieldvalue.getExtension());
+        assertEquals(MimeHelper.getMimeTypeForExtension(FilenameUtils.getExtension(TESTFILENAME)),
+                     filefieldvalue.getMimeType());
+        assertEquals(filefieldbytesvalue.length, filefield.getSize());
+
+    }
+
+    private static Filter createFilter(String geomField,
+                                       double x0,
+                                       double y0,
+                                       double x1,
+                                       double y1,
+                                       String dateField,
+                                       String t0,
+                                       String t1,
+                                       String attributesQuery)
+            throws CQLException, IOException
+    {
+
+        String cqlGeometry = "BBOX(" + geomField + ", " + x0 + ", " + y0 + ", " + x1 + ", " + y1 + ")";
+        String cqlDates = "(" + dateField + " DURING " + t0 + "/" + t1 + ")";
+        String cqlAttributes = attributesQuery == null ? "INCLUDE" : attributesQuery;
+        String cql = cqlGeometry + " AND " + cqlDates + " AND " + cqlAttributes;
+        return CQL.toFilter(cql);
+    }
+
+    @Test
+    public void testPersistRetrieveSearchEntity()
+            throws CoalescePersistorException, CoalesceDataFormatException, SAXException, IOException, CQLException
+    {
+        GDELT_Test_Entity gdeltEntity = new GDELT_Test_Entity();
+
+        // Prerequisite setup
+        getFramework().saveCoalesceEntityTemplate(CoalesceEntityTemplate.create(gdeltEntity));
+        CoalesceObjectFactory.register(GDELT_Test_Entity.class);
+
+        // Persist
+        AccumuloPersistor persistor = (AccumuloPersistor) this.getPersistor(this.getConnection());
+        persistor.saveEntity(true, gdeltEntity);
+
+        // Retrieve
+        CoalesceEntity[] entities = persistor.getEntity(gdeltEntity.getKey());
+        assertEquals(1, entities.length);
+        assertEquals(gdeltEntity.getKey(), entities[0].getKey());
+
+        // Search
+        DataStore geoDataStore = ((AccumuloDataConnector) persistor.getDataConnector()).getGeoDataStore();
+        Filter cqlFilter = createFilter("Actor1Geo_Location",
+                                        -180,
+                                        -180,
+                                        180,
+                                        180,
+                                        "DateTime",
+                                        "2000-07-01T00:00:00.000Z",
+                                        "2016-12-31T00:00:00.000Z",
+                                        null);
+        Query query = new Query(GDELT_Test_Entity.getQueryName(), cqlFilter);
+
+        FeatureSource<?, ?> featureSource = geoDataStore.getFeatureSource(GDELT_Test_Entity.getQueryName());
+        FeatureIterator<?> featureItr = featureSource.getFeatures(query).features();
+        assertTrue(featureItr.hasNext());
+
+        Feature feature = featureItr.next();
+        assertEquals(gdeltEntity.getKey(), feature.getProperty("entityKey").getValue());
+        assertEquals(562505648, feature.getProperty("GlobalEventID").getValue());
+        assertEquals("EUROPE", feature.getProperty("Actor1Name").getValue());
+        featureItr.close();
+        persistor.close();
+    }
+
+    @Override
+    public void testEntityTemplate()
+    {
+        // override CoalescePersistorBaseTest because it is failing and not related to AccumuloPersistor
+        assertTrue(true);
+    }
+
+    @Override
+    public void testCreateEntityFromTemplate()
+    {
+        // override CoalescePersistorBaseTest because it is failing and not related to AccumuloPersistor
+        assertTrue(true);
+    }
+
 }

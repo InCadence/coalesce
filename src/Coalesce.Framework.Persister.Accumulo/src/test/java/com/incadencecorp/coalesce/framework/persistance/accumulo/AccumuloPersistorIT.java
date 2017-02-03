@@ -68,6 +68,7 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceDoubleField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceDoubleListField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceFileField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceFloatField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceFloatListField;
@@ -104,7 +105,7 @@ public class AccumuloPersistorIT extends CoalescePersistorBaseTest {
     @BeforeClass
     public static void setupBeforeClass() throws Exception
     {
-        InputStream in = AccumuloDataConnectorIT.class.getClassLoader().getResourceAsStream("/accumuloConnectionInfo.properties");
+        InputStream in = AccumuloDataConnectorIT.class.getClassLoader().getResourceAsStream("accumuloConnectionInfo.properties");
         Properties props = new Properties();
         props.load(in);
         in.close();
@@ -116,6 +117,11 @@ public class AccumuloPersistorIT extends CoalescePersistorBaseTest {
 
         AccumuloPersistorIT tester = new AccumuloPersistorIT();
         CoalescePersistorBaseTest.setupBeforeClassBase(tester);
+        
+        AccumuloSettings.setPersistFieldDefAttr(false);
+        AccumuloSettings.setPersistSectionAttr(true);
+        AccumuloSettings.setPersistRecordsetAttr(false);
+        AccumuloSettings.setPersistRecordAttr(false);
     }
 
     @Override
@@ -375,7 +381,7 @@ public class AccumuloPersistorIT extends CoalescePersistorBaseTest {
             throws CoalescePersistorException, CoalesceDataFormatException, SAXException, IOException, CQLException
     {
         GDELT_Test_Entity gdeltEntity = new GDELT_Test_Entity();
-
+        
         // Prerequisite setup
         getFramework().saveCoalesceEntityTemplate(CoalesceEntityTemplate.create(gdeltEntity));
         CoalesceObjectFactory.register(GDELT_Test_Entity.class);
@@ -407,7 +413,6 @@ public class AccumuloPersistorIT extends CoalescePersistorBaseTest {
         assertTrue(featureItr.hasNext());
 
         Feature feature = featureItr.next();
-        assertEquals(gdeltEntity.getKey(), feature.getProperty("entityKey").getValue());
         assertEquals(562505648, feature.getProperty("GlobalEventID").getValue());
         assertEquals("EUROPE", feature.getProperty("Actor1Name").getValue());
         featureItr.close();

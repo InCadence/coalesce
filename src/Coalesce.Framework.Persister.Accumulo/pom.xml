@@ -184,7 +184,6 @@
 			<version>1.7.2</version>
 			<scope>test</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>org.locationtech.geomesa</groupId>
 			<artifactId>geomesa-accumulo-datastore</artifactId>

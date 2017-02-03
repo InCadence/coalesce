@@ -19,6 +19,7 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
+
 /*-----------------------------------------------------------------------------'
 Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
 
@@ -36,49 +37,16 @@ Distribution Statement D. Distribution authorized to the Department of
 Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
 -----------------------------------------------------------------------------*/
 /**
-* @author Matt Defazio
-* May 13, 2016
-*/
+ * @author Matt Defazio May 13, 2016
+ */
 public class MutationWrapperFactory extends CoalesceIterator {
 
-    private static String entityColumnFamily = "Coalesce:MetaData";
-    private static String linkageColumnFamily = "Coalesce:Linkage";
-    private static String linkColumnFamilyPrefix = "LinkID:";
-    private static String sectionColumnFamilyPrefix = "SectionID:";
-    private static String recordsetColumnFamilyPrefix = "RecordSetID:";
-    private static String fielddefinitionColumnFamilyPrefix = "FieldDefinitionID:";
-    private static String recordsetColumnFamily = "Coalesce:RecordSet";
-    private static String fieldNameColumnQualifierPrefix = "Coalesce:FieldName";
-    private static String fieldTypeColumnQualifierPrefix = "Coalesce:FieldType";
-    //private static String fieldDefaultColumnQualifierPrefix = "Coalesce:FieldDefault";
-    private static String recordColumnFamilyPrefix = "RecordID:";//
-    private static String recordNameColumnFamilyPrefix = "RecordName:";//
-    private static String entityTypeColumnQualifier = "Coalesce:EntityType";
-    private static String entityNameColumnQualifier = "Coalesce:EntityName";
-    private static String sectionNameColumnQualifier = "Coalesce:SectionName";
-    private static String entityVersionColumnQualifier = "Coalesce:EntityVersion";
-    private static String entityIdColumnQualifier = "Coalesce:EntityId";
-    private static String entityIdTypeColumnQualifier = "Coalesce:EntityIdType";
-    private static String entityTitleColumnQualifier = "Coalesce:EntityTitle";
-    private static String entitySourceColumnQualifier = "Coalesce:EntitySource";
-    private static String entityClassNameColumnQualifier = "Coalesce:EntityClassName";
-    private static String entityXMLColumnQualifier = "Coalesce:EntityXML";
-    private static String entityLastModifiedColumnQualifier = "Coalesce:EntityLastModified";
-    private static String entityCreatedColumnQualifier = "Coalesce:EntityCreated";
-    private static String linkTypeColumnQualifier = "Coalesce:";
-
     private MutationWrapper MutationGuy;
-    
-    public boolean useNamePath=true;
 
-    public MutationWrapperFactory(){};
-   
-    public MutationWrapperFactory(String config)
+    public MutationWrapperFactory()
     {
-    
-    	
-    }
-    
+    };
+
     public MutationWrapper createMutationGuy(CoalesceEntity entity)
     {
 
@@ -88,89 +56,24 @@ public class MutationWrapperFactory extends CoalesceIterator {
 
         processAllElements(entity);
 
-        // add the entity xml
- //       MutationRow row = new MutationRow(entityColumnFamily, entityXMLColumnQualifier, entity.toXml().getBytes(), entity.getNamePath());
- //       MutationGuy.addRow(row);
-        
         return MutationGuy;
     }
 
     @Override
     protected boolean visitCoalesceEntity(CoalesceEntity entity)
     {
-    	// If the entity is marked not to be flattened do not persist it or any children
-    	if (!entity.getFlatten())
-    		return false;
-    	 if(useNamePath){
-             addRow(entity);
-             String entity_xml = entity.toXml();
-             // add the entity xml
-             MutationRow row = new MutationRow(entity.getType() + ":" + entity.getNamePath(), 
-            		 "entityxml", entity_xml.getBytes(), entity.getNamePath());
-             MutationGuy.addRow(row);
-            
-             
-         } else {
-	        Map<QName, String> attributes = getAttributes(entity);
-	        // add the entity xml
-	        MutationRow row = new MutationRow(entityColumnFamily, entityXMLColumnQualifier, entity.toXml().getBytes(), entity.getNamePath());
-	        MutationGuy.addRow(row);
-	
-	        for (Entry<QName, String> set : attributes.entrySet())
-	        {
-	
-	            String attrName = set.getKey().toString();
-	            String value = set.getValue();
-	
-	            if (value == null)
-	            {
-	                value = "NULL";
-	            }
-	
-	            String columnQualifier = "";
-	
-	            switch (attrName) {
-	            case "entitytype":
-	                columnQualifier = entityTypeColumnQualifier;
-	                break;
-	            case "entityidtype":
-	                columnQualifier = entityIdTypeColumnQualifier;
-	                break;
-	            case "name":
-	                columnQualifier = entityNameColumnQualifier;                
-	                break;
-	            case "version":
-	                columnQualifier = entityVersionColumnQualifier;
-	                break;
-	            case "entityid":
-	                columnQualifier = entityIdColumnQualifier;
-	                break;
-	            case "title":
-	                columnQualifier = entityTitleColumnQualifier;
-	                break;
-	            case "source":
-	                columnQualifier = entitySourceColumnQualifier;
-	                break;    
-	            case "classname":
-	                columnQualifier = entityClassNameColumnQualifier;
-	                break;     
-	            case "lastmodified":
-	                columnQualifier = entityLastModifiedColumnQualifier;
-	                break;     
-	            case "datecreated":
-	                columnQualifier = entityCreatedColumnQualifier;
-	                break;     
-	
-	            default:
-	                // skip this guy
-	                continue;
-	            }
-	
-	            row = new MutationRow(entityColumnFamily, columnQualifier, value.getBytes(), entity.getNamePath());
-	            MutationGuy.addRow(row);
-	
-	        }
-         }
+        // If the entity is marked not to be flattened do not persist it or any children
+        if (!entity.getFlatten()) return false;
+
+        addRow(entity);
+        String entity_xml = entity.toXml();
+        // add the entity xml
+        MutationRow row = new MutationRow(entity.getType() + ":" + entity.getNamePath(),
+                                          "entityxml",
+                                          entity_xml.getBytes(),
+                                          entity.getNamePath());
+        MutationGuy.addRow(row);
+
         // Process Children
         return true;
     }
@@ -178,12 +81,11 @@ public class MutationWrapperFactory extends CoalesceIterator {
     @Override
     protected boolean visitCoalesceLinkageSection(CoalesceLinkageSection section)
     {
-    	// If the section is marked not to be flattened then do not persist it or any children
-    	if (!section.getFlatten())
-    		return false;
-    	if (useNamePath) {
-    		addRow(section);
-    	}
+        // If the section is marked not to be flattened then do not persist it or any children
+        if (!section.getFlatten()) return false;
+
+        addRow(section);
+
         // skip
         return true;
     }
@@ -191,72 +93,52 @@ public class MutationWrapperFactory extends CoalesceIterator {
     @Override
     protected boolean visitCoalesceLinkage(CoalesceLinkage linkage)
     {
-       	// If the linkage is marked not to be flattened then do not persist it or any children
-    	if (!linkage.getFlatten())
-    		return false;
-        if(useNamePath){
-            addRow(linkage);
-        } else {
-        
-        MutationRow row = new MutationRow(linkageColumnFamily, linkColumnFamilyPrefix+ linkage.getKey(), ("NULL").getBytes(), linkage.getNamePath());
-        MutationGuy.addRow(row);
-        
-        MutationRow row2 = new MutationRow(linkColumnFamilyPrefix+ linkage.getKey(), linkTypeColumnQualifier+ linkage.getLinkType(), linkage.getEntity2Key().getBytes(), linkage.getNamePath());
-        MutationGuy.addRow(row2);
-        }
-        
+        // If the linkage is marked not to be flattened then do not persist it or any children
+        if (!linkage.getFlatten()) return false;
+
+        addRow(linkage);
+
         return true;
     }
 
     @Override
     protected boolean visitCoalesceSection(CoalesceSection section)
     {
-       	// If the section is marked not to be flattened then do not persist it or any children
-    	if(!section.getFlatten())
-    		return false;
-        if(useNamePath){
-            addRow(section);
-        } else {
+        // If the section is marked not to be flattened then do not persist it or any children
+        if (!section.getFlatten()) return false;
 
-        MutationRow row = new MutationRow(sectionColumnFamilyPrefix+ section.getKey(), sectionNameColumnQualifier, section.getName().getBytes(), section.getNamePath());
-        MutationGuy.addRow(row);
+        if (AccumuloSettings.getPersistSectionAttr())
+        {
+            addRow(section);
         }
-        
+
         return true;
+
     }
 
     @Override
     protected boolean visitCoalesceRecordset(CoalesceRecordset recordset)
     {
-       	// If the recordset is marked not to be flattened then do not persist it or any children
-    	if (!recordset.getFlatten())
-    		return false;
-        if(useNamePath){
-            addRow(recordset);
-        } else {
+        // If the recordset is marked not to be flattened then do not persist it or any children
+        if (!recordset.getFlatten()) return false;
 
-        MutationRow row = new MutationRow(recordsetColumnFamily, recordsetColumnFamilyPrefix + recordset.getKey(), recordset.getName().getBytes(), recordset.getNamePath());
-        MutationGuy.addRow(row);
-        MutationRow row2 = new MutationRow(sectionColumnFamilyPrefix + recordset.getParent().getKey(), recordsetColumnFamilyPrefix + recordset.getKey(), ("NULL").getBytes(), recordset.getNamePath());
-        MutationGuy.addRow(row2);
+        if (AccumuloSettings.getPersistRecordsetAttr())
+        {
+            addRow(recordset);
         }
+
         return true;
     }
 
     @Override
     protected boolean visitCoalesceRecord(CoalesceRecord record)
     {
-       	// If the record is marked not to be flattened then do not persist it or any children
-    	if (!record.getFlatten())
-    		return false;
-        if(useNamePath){
-            addRow(record);
-        } else {
+        // If the record is marked not to be flattened then do not persist it or any children
+        if (!record.getFlatten()) return false;
 
-        MutationRow row = new MutationRow(recordsetColumnFamilyPrefix+record.getParent().getKey(), recordColumnFamilyPrefix + record.getKey(), ("NULL").getBytes(), record.getNamePath());
-        MutationGuy.addRow(row);
-        MutationRow row2 = new MutationRow(recordsetColumnFamilyPrefix+record.getParent().getKey(), recordNameColumnFamilyPrefix , record.getName().getBytes(), record.getNamePath());
-        MutationGuy.addRow(row2);
+        if (AccumuloSettings.getPersistRecordAttr())
+        {
+            addRow(record);
         }
 
         return true;
@@ -265,15 +147,12 @@ public class MutationWrapperFactory extends CoalesceIterator {
     @Override
     protected boolean visitCoalesceField(CoalesceField<?> field)
     {
-       	// If the field is marked not to be flattened then do not persist it or any children
-    	if (!field.getFlatten())
-    		return false;
-        if(useNamePath){
-            addRow(field);
-        } else {
+        // If the field is marked not to be flattened then do not persist it or any children
+        if (!field.getFlatten()) return false;
 
-        MutationRow row = new MutationRow(recordColumnFamilyPrefix + field.getParent().getKey(), field.getName(), field.getBaseValue().getBytes(), field.getNamePath());
-        MutationGuy.addRow(row);
+        if (AccumuloSettings.getPersistFieldAttr())
+        {
+            addRow(field);
         }
 
         // Don't visit children
@@ -283,26 +162,14 @@ public class MutationWrapperFactory extends CoalesceIterator {
     @Override
     protected boolean visitCoalesceFieldDefinition(CoalesceFieldDefinition definition)
     {
-       	// If the definition is marked not to be flattened then do not persist it or any children
-    	if (!definition.getFlatten())
-    		return false;
+        // If the definition is marked not to be flattened then do not persist it or any children
+        if (!definition.getFlatten()) return false;
 
-        if(useNamePath){
+        if (AccumuloSettings.getPersistFieldDefAttr())
+        {
             addRow(definition);
-        } else {
-            String columnfamilyName = fielddefinitionColumnFamilyPrefix + definition.getKey();
-
-            MutationRow row = new MutationRow(columnfamilyName, fieldNameColumnQualifierPrefix+definition.getName(), definition.getName().getBytes(), definition.getNamePath());
-            MutationGuy.addRow(row);
-
-            MutationRow row2 = new MutationRow(columnfamilyName, fieldTypeColumnQualifierPrefix+definition.getType(), definition.getType().getBytes(), definition.getNamePath());
-            MutationGuy.addRow(row2);
-
-//            MutationRow row3 = new MutationRow(columnfamilyName, fieldDefaultColumnQualifierPrefix+definition.getDefaultValue(), definition.getDefaultValue().getBytes(), definition.getNamePath());
-//            MutationGuy.addRow(row3);
         }
-       
-        
+
         return true;
     }
 
@@ -310,20 +177,56 @@ public class MutationWrapperFactory extends CoalesceIterator {
     {
         Map<QName, String> attributes = getAttributes(object);
         String type = object.getType() + ":";
+
+        StringBuilder stringBuilder = new StringBuilder();
+
         for (Entry<QName, String> set : attributes.entrySet())
         {
             String attrName = set.getKey().toString();
             String value = set.getValue();
 
-            if (value == null)
+            if (persistAttr(attrName))
             {
-                value = "NULL";
+
+                if (value == null)
+                {
+                    value = "NULL";
+                }
+
+                MutationRow row = new MutationRow(type + object.getNamePath(),
+                                                  attrName,
+                                                  value.getBytes(),
+                                                  object.getNamePath());
+                MutationGuy.addRow(row);
+
+            }
+            else
+            {
+                // add to others
+                stringBuilder.append(attrName).append("=").append(value).append(",");
             }
 
-            MutationRow row = new MutationRow(type + object.getNamePath(), attrName, value.getBytes(), object.getNamePath());
-            MutationGuy.addRow(row);
-
         }
+
+        // add a single row for the other attributes
+        MutationRow row = new MutationRow(type + object.getNamePath(),
+                                          "Other Attributes",
+                                          stringBuilder.toString().replaceAll(",$", "").getBytes(),
+                                          object.getNamePath());
+        MutationGuy.addRow(row);
+    }
+
+    private boolean persistAttr(String attrName)
+    {
+
+        String[] attrFieldsArray = AccumuloSettings.getAttributeFields().split(",");
+
+        for (String attrField : attrFieldsArray)
+        {
+            if (attrName.equals(attrField)) return true;
+        }
+        
+        return false;
     }
 
     private Map<QName, String> getAttributes(CoalesceObject object)
@@ -338,8 +241,8 @@ public class MutationWrapperFactory extends CoalesceIterator {
             attributeMap = (Map<QName, String>) method.invoke(object, null);
 
         }
-        catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
-               | InvocationTargetException e)
+        catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException |
+               InvocationTargetException e)
         {
             // do nothing
         }
