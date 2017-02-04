@@ -21,15 +21,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.incadencecorp.coalesce.framework.tasks.AbstractFrameworkTask;
+import com.incadencecorp.coalesce.framework.CoalesceFramework;
+import com.incadencecorp.coalesce.framework.tasks.AbstractTask;
 import com.incadencecorp.coalesce.services.api.common.ResultsType;
 import com.incadencecorp.coalesce.services.api.common.StringResponse;
 import com.incadencecorp.coalesce.services.api.crud.DataObjectKeyRequest;
 import com.incadencecorp.coalesce.services.api.crud.DataObjectKeyType;
-import com.incadencecorp.coalesce.services.common.jobs.AbstractServiceJob;
+import com.incadencecorp.coalesce.services.common.jobs.AbstractFrameworkServiceJob;
 import com.incadencecorp.coalesce.services.crud.service.tasks.RetrieveDataObjectTask;
 
-public class RetrieveDataObjectJob extends AbstractServiceJob<DataObjectKeyRequest, StringResponse, ResultsType> {
+public class RetrieveDataObjectJob extends AbstractFrameworkServiceJob<DataObjectKeyRequest, StringResponse, ResultsType> {
 
     public RetrieveDataObjectJob(DataObjectKeyRequest request)
     {
@@ -37,15 +38,17 @@ public class RetrieveDataObjectJob extends AbstractServiceJob<DataObjectKeyReque
     }
 
     @Override
-    protected Collection<AbstractFrameworkTask<?, ResultsType>> getTasks(DataObjectKeyRequest params)
+    protected Collection<AbstractTask<?, ResultsType, CoalesceFramework>> getTasks(DataObjectKeyRequest params)
     {
-        List<AbstractFrameworkTask<?, ResultsType>> tasks = new ArrayList<AbstractFrameworkTask<?, ResultsType>>();
+        List<AbstractTask<?, ResultsType, CoalesceFramework>> tasks = new ArrayList<AbstractTask<?, ResultsType, CoalesceFramework>>();
 
         for (DataObjectKeyType type : params.getKeyList())
         {
-            RetrieveDataObjectTask task = new RetrieveDataObjectTask(); 
-            task.setParams(new DataObjectKeyType[] {type});
-            
+            RetrieveDataObjectTask task = new RetrieveDataObjectTask();
+            task.setParams(new DataObjectKeyType[] {
+                                                     type
+            });
+
             tasks.add(task);
         }
 
@@ -61,6 +64,6 @@ public class RetrieveDataObjectJob extends AbstractServiceJob<DataObjectKeyReque
     @Override
     protected ResultsType createResults()
     {
-        return new ResultsType(); 
+        return new ResultsType();
     }
 }

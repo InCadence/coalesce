@@ -77,12 +77,38 @@
 			<groupId>com.incadencecorp.coalesce.services.search</groupId>
 			<artifactId>coalesce-search-service</artifactId>
 			<version>${project.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.geotools</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.geotools.xsd</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
 			<artifactId>persister-memory</artifactId>
 			<version>${project.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.geotools</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.geotools.xsd</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
+
+        <dependency>
+            <groupId>com.incadencecorp.coalesce.bundles</groupId>
+            <artifactId>bundle-geotools</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
 		<dependency>
 			<groupId>joda-time</groupId>

@@ -21,15 +21,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.incadencecorp.coalesce.framework.tasks.AbstractFrameworkTask;
+import com.incadencecorp.coalesce.framework.CoalesceFramework;
+import com.incadencecorp.coalesce.framework.tasks.AbstractTask;
 import com.incadencecorp.coalesce.services.api.common.ResultsType;
 import com.incadencecorp.coalesce.services.api.common.StringResponse;
 import com.incadencecorp.coalesce.services.api.crud.DataObjectStatusType;
 import com.incadencecorp.coalesce.services.api.crud.DataObjectUpdateStatusRequest;
-import com.incadencecorp.coalesce.services.common.jobs.AbstractServiceJob;
+import com.incadencecorp.coalesce.services.common.jobs.AbstractFrameworkServiceJob;
 import com.incadencecorp.coalesce.services.crud.service.tasks.UpdateDataObjectStatusTask;
 
-public class UpdateDataObjectStatusJob extends AbstractServiceJob<DataObjectUpdateStatusRequest, StringResponse, ResultsType> {
+public class UpdateDataObjectStatusJob
+        extends AbstractFrameworkServiceJob<DataObjectUpdateStatusRequest, StringResponse, ResultsType> {
 
     public UpdateDataObjectStatusJob(DataObjectUpdateStatusRequest request)
     {
@@ -37,15 +39,17 @@ public class UpdateDataObjectStatusJob extends AbstractServiceJob<DataObjectUpda
     }
 
     @Override
-    protected Collection<AbstractFrameworkTask<?, ResultsType>> getTasks(DataObjectUpdateStatusRequest params)
+    protected Collection<AbstractTask<?, ResultsType, CoalesceFramework>> getTasks(DataObjectUpdateStatusRequest params)
     {
-        List<AbstractFrameworkTask<?, ResultsType>> tasks = new ArrayList<AbstractFrameworkTask<?, ResultsType>>();
+        List<AbstractTask<?, ResultsType, CoalesceFramework>> tasks = new ArrayList<AbstractTask<?, ResultsType, CoalesceFramework>>();
 
         for (DataObjectStatusType type : params.getTaskList())
         {
-            UpdateDataObjectStatusTask task = new UpdateDataObjectStatusTask(); 
-            task.setParams(new DataObjectStatusType[] {type});
-            
+            UpdateDataObjectStatusTask task = new UpdateDataObjectStatusTask();
+            task.setParams(new DataObjectStatusType[] {
+                                                        type
+            });
+
             tasks.add(task);
         }
 
@@ -61,6 +65,6 @@ public class UpdateDataObjectStatusJob extends AbstractServiceJob<DataObjectUpda
     @Override
     protected ResultsType createResults()
     {
-        return new ResultsType(); 
+        return new ResultsType();
     }
 }

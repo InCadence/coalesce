@@ -1,14 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>coalesce-crud-service-feature</artifactId>
+	<artifactId>coalesce-feature</artifactId>
 	<packaging>feature</packaging>
-	<name>Coalesce CRUD Service Feature</name>
-	<description>Karaf feature for the CRUD service</description>
+	<name>Coalesce Feature</name>
+	<description>Contains the feature repository for Coalesce.</description>
 
 	<parent>
-		<groupId>com.incadencecorp.coalesce.services.crud</groupId>
-		<artifactId>coalesce-crud-parent</artifactId>
+		<groupId>com.incadencecorp.coalesce</groupId>
+		<artifactId>coalesce-pom</artifactId>
 		<version>0.0.25-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
@@ -32,6 +32,7 @@
 							<Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
 						</instructions>
 						<unpackBundle>true</unpackBundle>
+						<aggregateFeatures>true</aggregateFeatures>
 					</configuration>
 				</plugin>
 				<!--This plugin's configuration is used to store Eclipse m2e settings 
@@ -74,50 +75,23 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>com.incadencecorp.coalesce</groupId>
+			<artifactId>coalesce-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>com.incadencecorp.coalesce.services.crud</groupId>
-			<artifactId>coalesce-crud-service</artifactId>
+			<artifactId>coalesce-crud-service-feature</artifactId>
 			<version>${project.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.geotools</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.geotools.xsd</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
+			<type>xml</type>
+			<classifier>features</classifier>
 		</dependency>
 		<dependency>
-			<groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
-			<artifactId>persister-memory</artifactId>
+			<groupId>com.incadencecorp.coalesce.services.search</groupId>
+			<artifactId>coalesce-search-service-feature</artifactId>
 			<version>${project.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.geotools</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.geotools.xsd</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
-			<version>2.9.7</version>
-		</dependency>
-		<dependency>
-			<groupId>xerces</groupId>
-			<artifactId>xercesImpl</artifactId>
-			<version>2.11.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.birt.runtime.3_7_1</groupId>
-			<artifactId>org.apache.xml.resolver</artifactId>
-			<version>1.2.0</version>
+			<type>xml</type>
+			<classifier>features</classifier>
 		</dependency>
 	</dependencies>
 

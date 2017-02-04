@@ -39,7 +39,7 @@ public class Neo4jSettings {
     Default Values
     --------------------------------------------------------------------------*/
 
-    private static final String DEFAULT_ADDRESS = "dbsp3";
+    private static final String DEFAULT_ADDRESS = "localhost";
     private static final int DEFAULT_PORT = 7474;
     private static final int DEFAULT_ONERROR_RETRIES = 5;
     private static final int DEFAULT_ONERROR_BACKOFF_INTERVAL = 500;

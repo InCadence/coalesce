@@ -27,30 +27,30 @@ import org.slf4j.LoggerFactory;
 
 import com.incadencecorp.coalesce.api.EJobStatus;
 import com.incadencecorp.coalesce.api.EResultStatus;
-import com.incadencecorp.coalesce.api.ICoalesceFrameworkJob;
+import com.incadencecorp.coalesce.api.ICoalesceTargetJob;
 import com.incadencecorp.coalesce.api.ICoalescePrincipal;
 import com.incadencecorp.coalesce.api.ICoalesceResponseType;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
-import com.incadencecorp.coalesce.framework.CoalesceFramework;
-import com.incadencecorp.coalesce.framework.tasks.AbstractFrameworkTask;
+import com.incadencecorp.coalesce.framework.tasks.AbstractTask;
 import com.incadencecorp.coalesce.framework.tasks.MetricResults;
 
 /**
- * Abstract base for persister jobs in Coalesce.
+ * Abstract base for jobs that spawn multiple task depending on parameters of
+ * the input.
  * 
  * @author Derek
  * @param <INPUT> input type
  */
-public abstract class AbstractCoalesceFrameworkJob<INPUT, OUTPUT extends ICoalesceResponseType<List<TASKOUTPUT>>, TASKOUTPUT extends ICoalesceResponseType<?>>
-        extends AbstractCoalesceJob<INPUT, OUTPUT, TASKOUTPUT> implements ICoalesceFrameworkJob {
+public abstract class AbstractCoalesceTargetJob<INPUT, OUTPUT extends ICoalesceResponseType<List<TASKOUTPUT>>, TASKOUTPUT extends ICoalesceResponseType<?>, TARGET>
+        extends AbstractCoalesceJob<INPUT, OUTPUT, TASKOUTPUT> implements ICoalesceTargetJob<TARGET> {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(AbstractCoalesceFrameworkJob.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(AbstractCoalesceTargetJob.class);
 
     /*--------------------------------------------------------------------------
     Private Member Variables
     --------------------------------------------------------------------------*/
 
-    private CoalesceFramework _framework;
+    private TARGET _target;
 
     /*--------------------------------------------------------------------------
     Constructors
@@ -61,7 +61,7 @@ public abstract class AbstractCoalesceFrameworkJob<INPUT, OUTPUT extends ICoales
      * 
      * @param params task parameters.
      */
-    public AbstractCoalesceFrameworkJob(INPUT params)
+    public AbstractCoalesceTargetJob(INPUT params)
     {
         super(params);
     }
@@ -71,9 +71,9 @@ public abstract class AbstractCoalesceFrameworkJob<INPUT, OUTPUT extends ICoales
     --------------------------------------------------------------------------*/
 
     @Override
-    public final void setTarget(CoalesceFramework framework)
+    public final void setTarget(TARGET value)
     {
-        _framework = framework;
+        _target = value;
     }
 
     /**
@@ -144,11 +144,11 @@ public abstract class AbstractCoalesceFrameworkJob<INPUT, OUTPUT extends ICoales
     {
         OUTPUT response = createResponse();
 
-        Collection<AbstractFrameworkTask<?, TASKOUTPUT>> tasks = getTasks(params);
+        Collection<AbstractTask<?, TASKOUTPUT, TARGET>> tasks = getTasks(params);
 
-        for (AbstractFrameworkTask<?, TASKOUTPUT> task : tasks)
+        for (AbstractTask<?, TASKOUTPUT, TARGET> task : tasks)
         {
-            task.setTarget(_framework);
+            task.setTarget(_target);
             task.setPrincipal(principal);
         }
 
@@ -170,7 +170,7 @@ public abstract class AbstractCoalesceFrameworkJob<INPUT, OUTPUT extends ICoales
                     TASKOUTPUT task = createResults();
                     task.setError(e.getMessage());
                     task.setStatus(EResultStatus.FAILED);
-                    
+
                     result = new MetricResults<TASKOUTPUT>();
                     result.setResults(task);
                     result.getResults().setStatus(EResultStatus.FAILED);
@@ -186,7 +186,7 @@ public abstract class AbstractCoalesceFrameworkJob<INPUT, OUTPUT extends ICoales
         {
             throw new CoalesceException("Job Interrupted", e);
         }
-        
+
         return response;
     }
 
@@ -194,7 +194,6 @@ public abstract class AbstractCoalesceFrameworkJob<INPUT, OUTPUT extends ICoales
     Abstract Methods
     --------------------------------------------------------------------------*/
 
-    protected abstract Collection<AbstractFrameworkTask<?, TASKOUTPUT>> getTasks(INPUT params) throws CoalesceException;
-
+    protected abstract Collection<AbstractTask<?, TASKOUTPUT, TARGET>> getTasks(INPUT params) throws CoalesceException;
 
 }

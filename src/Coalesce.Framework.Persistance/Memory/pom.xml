@@ -39,6 +39,10 @@
 			<groupId>com.incadencecorp.coalesce</groupId>
 			<artifactId>coalesce-core</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.incadencecorp.coalesce</groupId>
+			<artifactId>coalesce-search</artifactId>
+		</dependency>		
 	</dependencies>
 
 </project>

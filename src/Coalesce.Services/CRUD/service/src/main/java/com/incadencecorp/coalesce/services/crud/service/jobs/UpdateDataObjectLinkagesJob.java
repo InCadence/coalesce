@@ -23,15 +23,16 @@ import java.util.HashSet;
 import java.util.List;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
-import com.incadencecorp.coalesce.framework.tasks.AbstractFrameworkTask;
+import com.incadencecorp.coalesce.framework.CoalesceFramework;
+import com.incadencecorp.coalesce.framework.tasks.AbstractTask;
 import com.incadencecorp.coalesce.services.api.common.ResultsType;
 import com.incadencecorp.coalesce.services.api.common.StringResponse;
 import com.incadencecorp.coalesce.services.api.crud.DataObjectLinkRequest;
 import com.incadencecorp.coalesce.services.api.crud.DataObjectLinkType;
-import com.incadencecorp.coalesce.services.common.jobs.AbstractServiceJob;
+import com.incadencecorp.coalesce.services.common.jobs.AbstractFrameworkServiceJob;
 import com.incadencecorp.coalesce.services.crud.service.tasks.UpdateDataObjectLinkagesTask;
 
-public class UpdateDataObjectLinkagesJob extends AbstractServiceJob<DataObjectLinkRequest, StringResponse, ResultsType> {
+public class UpdateDataObjectLinkagesJob extends AbstractFrameworkServiceJob<DataObjectLinkRequest, StringResponse, ResultsType> {
 
     public UpdateDataObjectLinkagesJob(DataObjectLinkRequest request)
     {
@@ -39,10 +40,10 @@ public class UpdateDataObjectLinkagesJob extends AbstractServiceJob<DataObjectLi
     }
 
     @Override
-    protected Collection<AbstractFrameworkTask<?, ResultsType>> getTasks(DataObjectLinkRequest params)throws CoalesceException
+    protected Collection<AbstractTask<?, ResultsType, CoalesceFramework>> getTasks(DataObjectLinkRequest params) throws CoalesceException
     {
-        List<AbstractFrameworkTask<?, ResultsType>> tasks = new ArrayList<AbstractFrameworkTask<?, ResultsType>>();
-
+        List<AbstractTask<?, ResultsType, CoalesceFramework>> tasks = new ArrayList<AbstractTask<?, ResultsType, CoalesceFramework>>();
+        
         for (DataObjectLinkBucket bucket : groupIntoBuckets(params.getLinkagelist()))
         {
             UpdateDataObjectLinkagesTask task = new UpdateDataObjectLinkagesTask();

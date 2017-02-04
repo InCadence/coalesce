@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <features xmlns="http://karaf.apache.org/xmlns/features/v1.2.0"
-	name="coalesce-crud-service">
-	<feature name="coalesce-crud-service-feature">
-        <feature prerequisite="true" dependency="false">scr</feature>
-        <feature prerequisite="true" dependency="true">cxf</feature>
+	name="coalesce-services">
+	<feature name="${project.artifactId}">
+		<feature prerequisite="true" dependency="true">cxf</feature>
 		<!-- <feature>camel-jms</feature> -->
 		<!-- <feature>activemq-camel</feature> -->
 	</feature>

@@ -48,13 +48,19 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>com.incadencecorp.coalesce.services.crud</groupId>
+			<artifactId>coalesce-crud-service</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>		
+		<dependency>
 			<groupId>com.incadencecorp.coalesce.services.search</groupId>
 			<artifactId>coalesce-search-api</artifactId>
 			<version>${project.version}</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
-
+	
 	</dependencies>
 
 </project>

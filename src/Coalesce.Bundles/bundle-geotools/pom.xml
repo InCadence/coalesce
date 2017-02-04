@@ -1,0 +1,164 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>bundle-geotools</artifactId>
+	<packaging>bundle</packaging>
+	<name>Coalesce geotools OSGi Bundle</name>
+	<description>This OSGi bundle simply wraps the geo-tool artifacts.</description>
+
+	<parent>
+		<groupId>com.incadencecorp.coalesce.bundles</groupId>
+		<artifactId>coalesce-bundle-parent</artifactId>
+		<version>0.0.25-SNAPSHOT</version>
+		<relativePath>..</relativePath>
+	</parent>
+
+	<properties>
+		<com.vividsolutions.jts.version>1.9</com.vividsolutions.jts.version>
+		<org.geotools.version>13.1</org.geotools.version>
+		<org.eclipse.xsd.version>2.6.0</org.eclipse.xsd.version>
+	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>2.3</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<minimizeJar>true</minimizeJar>
+                            <artifactSet>
+                                <excludes>
+                                    <exclude>com.vividsolutions:jts</exclude>
+                                </excludes>
+                            </artifactSet>
+                            <filters>
+								<filter>
+									<artifact>*:*</artifact>
+									<excludes>
+										<exclude>META-INF/*.SF</exclude>
+										<exclude>META-INF/*.DSA</exclude>
+										<exclude>META-INF/*.RSA</exclude>
+									</excludes>
+								</filter>
+							</filters>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<version>2.1.0</version>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+						<DynamicImport-Package>
+							com.lmco.omega.dss.client.api.search.functions
+						</DynamicImport-Package>
+						<Export-Package>
+							org.opengis.*;version=${org.geotools.version};-split-package:=merge-last,
+							org.eclipse.xsd*;version=${org.eclipse.xsd.version},
+							org.geotools.*;version=${org.geotools.version};-split-package:=merge-last,
+						</Export-Package>
+						<Import-Package>
+							javax.imageio,
+							javax.imageio.event,
+							javax.imageio.metadata,
+							javax.imageio.plugins.jpeg,
+							javax.imageio.spi,
+							javax.imageio.stream,
+							javax.naming,
+							javax.sql,
+							javax.swing,
+							javax.swing.border,
+							javax.swing.event,
+							javax.swing.filechooser,
+							javax.swing.tree,
+							javax.xml.datatype,
+							javax.xml.namespace,
+							javax.xml.parsers,
+							javax.xml.stream;version="[1.2.0, 2)",
+							javax.xml.transform,
+							javax.xml.transform.dom,
+							javax.xml.transform.sax,
+							javax.xml.transform.stream,
+							org.w3c.dom,
+							org.w3c.dom.events,
+							org.xml.sax,
+							org.xml.sax.ext,
+							org.xml.sax.helpers,
+                            com.vividsolutions*,
+							!*
+						</Import-Package>
+					</instructions>
+					<unpackBundle>true</unpackBundle>
+				</configuration>
+
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-opengis</artifactId>
+			<version>${org.geotools.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-jdbc</artifactId>
+			<version>${org.geotools.version}</version>
+        </dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-geometry</artifactId>
+			<version>${org.geotools.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.geotools.xsd</groupId>
+			<artifactId>gt-xsd-fes</artifactId>
+			<version>${org.geotools.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools.xsd</groupId>
+			<artifactId>gt-xsd-filter</artifactId>
+			<version>${org.geotools.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.geotools.jdbc</groupId>
+			<artifactId>gt-jdbc-postgis</artifactId>
+			<version>${org.geotools.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.xsd</groupId>
+			<artifactId>xsd</artifactId>
+			<version>${org.eclipse.xsd.version}</version>
+		</dependency>
+
+	</dependencies>
+
+	<distributionManagement>
+		<repository>
+			<id>nexus</id>
+			<url>http://10.15.0.230:8081/repository/maven-releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>nexus</id>
+			<url>http://10.15.0.230:8081/repository/maven-snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+</project>

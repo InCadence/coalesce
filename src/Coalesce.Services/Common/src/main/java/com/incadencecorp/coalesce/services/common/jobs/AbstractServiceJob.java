@@ -20,19 +20,19 @@ package com.incadencecorp.coalesce.services.common.jobs;
 import java.util.List;
 
 import com.incadencecorp.coalesce.api.ICoalesceResponseType;
-import com.incadencecorp.coalesce.framework.jobs.AbstractCoalesceFrameworkJob;
+import com.incadencecorp.coalesce.framework.jobs.AbstractCoalesceTargetJob;
 import com.incadencecorp.coalesce.services.api.common.BaseRequest;
-import com.incadencecorp.coalesce.services.api.common.BaseResponse;
 
 /**
- * Abstract base class to be extended to create jobs.
+ * Abstract base class used by Coalesce services restricting the input to an XSD object.
  *
  * @author Derek C.
  * @param <INPUT> Request that this job handles; must extend {@link BaseRequest}.
- * @param <OUTPUT> Response that this job produces; must extend {@link BaseResponse}.
+ * @param <OUTPUT> Response that this job produces; must extend {@link ICoalesceResponseType<List<TASKOUTPUT>>}.
+ * @param <TASKOUTPUT>
  */
-public abstract class AbstractServiceJob<INPUT extends BaseRequest, OUTPUT extends ICoalesceResponseType<List<TASKOUTPUT>>, TASKOUTPUT extends ICoalesceResponseType<?>>
-        extends AbstractCoalesceFrameworkJob<INPUT, OUTPUT, TASKOUTPUT> {
+public abstract class AbstractServiceJob<INPUT extends BaseRequest, OUTPUT extends ICoalesceResponseType<List<TASKOUTPUT>>, TASKOUTPUT extends ICoalesceResponseType<?>, TARGET>
+        extends AbstractCoalesceTargetJob<INPUT, OUTPUT, TASKOUTPUT, TARGET> {
 
     /**
      * Creates a job based off of the request and initializes the response

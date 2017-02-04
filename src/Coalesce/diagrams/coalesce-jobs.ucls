@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <class-diagram version="1.1.13" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
   associations="true" dependencies="true" nesting-relationships="true" router="FAN">  
-  <class id="1" language="java" name="com.incadencecorp.coalesce.framework.jobs.AbstractCoalesceFrameworkJob" 
+  <class id="1" language="java" name="com.incadencecorp.coalesce.framework.jobs.AbstractCoalesceTargetJob" 
     project="coalesce-core" 
-    file="/coalesce-core/src/main/java/com/incadencecorp/coalesce/framework/jobs/AbstractCoalesceFrameworkJob.java" 
+    file="/coalesce-core/src/main/java/com/incadencecorp/coalesce/framework/jobs/AbstractCoalesceTargetJob.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1036" y="340"/>    
+    <position height="-1" width="-1" x="1012" y="351"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="false" private="false" static="true"/>      
@@ -34,18 +34,7 @@
       <operations public="true" package="true" protected="true" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="4" language="java" name="com.incadencecorp.coalesce.framework.tasks.AbstractFrameworkTask" 
-    project="coalesce-core" 
-    file="/coalesce-core/src/main/java/com/incadencecorp/coalesce/framework/tasks/AbstractFrameworkTask.java" 
-    binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="642" y="705"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
-      <operations public="true" package="true" protected="true" private="false" static="true"/>    
-    </display>  
-  </class>  
-  <class id="5" language="java" name="com.incadencecorp.coalesce.framework.jobs.JobManager" project="coalesce-core" 
+  <class id="4" language="java" name="com.incadencecorp.coalesce.framework.jobs.JobManager" project="coalesce-core" 
     file="/coalesce-core/src/main/java/com/incadencecorp/coalesce/framework/jobs/JobManager.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="501" y="-9"/>    
@@ -55,51 +44,18 @@
       <operations public="true" package="true" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="6" language="java" name="com.incadencecorp.coalesce.services.common.jobs.AbstractServiceJob" 
-    project="coalesce-services-common" 
-    file="/coalesce-services-common/src/main/java/com/incadencecorp/coalesce/services/common/jobs/AbstractServiceJob.java" 
-    binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1039" y="534"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="false" private="false" static="true"/>      
-      <operations public="true" package="true" protected="true" private="false" static="true"/>    
-    </display>  
-  </class>  
-  <class id="7" language="java" name="com.incadencecorp.coalesce.services.crud.service.jobs.CreateDataObjectJob" 
-    project="coalesce-crud-service" 
-    file="/coalesce-crud-service/src/main/java/com/incadencecorp/coalesce/services/crud/service/jobs/CreateDataObjectJob.java" 
-    binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1044" y="703"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="false" private="false" static="true"/>      
-      <operations public="true" package="true" protected="true" private="false" static="true"/>    
-    </display>  
-  </class>  
-  <class id="8" language="java" name="com.incadencecorp.coalesce.services.crud.service.tasks.CreateDataObjectTask" 
-    project="coalesce-crud-service" 
-    file="/coalesce-crud-service/src/main/java/com/incadencecorp/coalesce/services/crud/service/tasks/CreateDataObjectTask.java" 
-    binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1043" y="874"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="false" private="false" static="true"/>      
-      <operations public="true" package="true" protected="true" private="false" static="true"/>    
-    </display>  
-  </class>  
-  <class id="9" language="java" name="com.incadencecorp.coalesce.framework.jobs.CoalesceSaveEntityJob" 
+  <class id="5" language="java" name="com.incadencecorp.coalesce.framework.jobs.CoalesceSaveEntityJob" 
     project="coalesce-core" 
     file="/coalesce-core/src/main/java/com/incadencecorp/coalesce/framework/jobs/CoalesceSaveEntityJob.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="-71" y="574"/>    
+    <position height="-1" width="-1" x="-72" y="597"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="false" private="false" static="true"/>      
       <operations public="true" package="true" protected="true" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="10" language="java" name="com.incadencecorp.coalesce.framework.tasks.AbstractPersistorTask" 
+  <class id="6" language="java" name="com.incadencecorp.coalesce.framework.tasks.AbstractPersistorTask" 
     project="coalesce-core" 
     file="/coalesce-core/src/main/java/com/incadencecorp/coalesce/framework/tasks/AbstractPersistorTask.java" 
     binary="false" corner="BOTTOM_RIGHT">    
@@ -110,99 +66,143 @@
       <operations public="true" package="true" protected="true" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="11" language="java" name="com.incadencecorp.coalesce.framework.tasks.CoalesceSaveEntityTask" 
+  <class id="7" language="java" name="com.incadencecorp.coalesce.framework.tasks.CoalesceSaveEntityTask" 
     project="coalesce-core" 
     file="/coalesce-core/src/main/java/com/incadencecorp/coalesce/framework/tasks/CoalesceSaveEntityTask.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="-68" y="795"/>    
+    <position height="-1" width="-1" x="-69" y="818"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="false" private="false" static="true"/>      
       <operations public="true" package="true" protected="true" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="12" language="java" name="com.incadencecorp.coalesce.framework.tasks.AbstractTask" project="coalesce-core" 
-    file="/coalesce-core/src/main/java/com/incadencecorp/coalesce/framework/tasks/AbstractTask.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="504" y="918"/>    
+  <class id="8" language="java" name="com.incadencecorp.coalesce.services.common.jobs.AbstractFrameworkServiceJob" 
+    project="coalesce-services-common" 
+    file="/coalesce-services-common/src/main/java/com/incadencecorp/coalesce/services/common/jobs/AbstractFrameworkServiceJob.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1012" y="765"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
       <operations public="true" package="true" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <dependency id="13">    
-    <end type="SOURCE" refId="7"/>    
-    <end type="TARGET" refId="8"/>  
-  </dependency>  
-  <generalization id="14">    
-    <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="2"/>  
-  </generalization>  
-  <dependency id="15">    
-    <end type="SOURCE" refId="9"/>    
-    <end type="TARGET" refId="10"/>  
-  </dependency>  
-  <generalization id="16">    
-    <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="2"/>  
-  </generalization>  
-  <generalization id="17">    
-    <end type="SOURCE" refId="10"/>    
-    <end type="TARGET" refId="12"/>  
-  </generalization>  
-  <generalization id="18">    
-    <end type="SOURCE" refId="9"/>    
-    <end type="TARGET" refId="3"/>  
-  </generalization>  
-  <dependency id="19">    
-    <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="4"/>  
-  </dependency>  
-  <generalization id="20">    
-    <end type="SOURCE" refId="8"/>    
-    <end type="TARGET" refId="4"/>  
-  </generalization>  
-  <dependency id="21">    
-    <end type="SOURCE" refId="7"/>    
-    <end type="TARGET" refId="4"/>  
-  </dependency>  
-  <generalization id="22">    
-    <end type="SOURCE" refId="7"/>    
-    <end type="TARGET" refId="6"/>  
-  </generalization>  
-  <generalization id="23">    
-    <end type="SOURCE" refId="11"/>    
-    <end type="TARGET" refId="10"/>  
-  </generalization>  
-  <generalization id="24">    
-    <end type="SOURCE" refId="4"/>    
-    <end type="TARGET" refId="12"/>  
-  </generalization>  
-  <association id="25">    
-    <end type="SOURCE" refId="5" navigable="false">      
-      <attribute id="26" name="jobsh">        
+  <class id="9" language="java" name="com.incadencecorp.coalesce.services.common.jobs.AbstractServiceJob" 
+    project="coalesce-services-common" 
+    file="/coalesce-services-common/src/main/java/com/incadencecorp/coalesce/services/common/jobs/AbstractServiceJob.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1012" y="641"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="10" language="java" name="com.incadencecorp.coalesce.framework.tasks.AbstractTask" project="coalesce-core" 
+    file="/coalesce-core/src/main/java/com/incadencecorp/coalesce/framework/tasks/AbstractTask.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="495" y="919"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="11" language="java" name="com.incadencecorp.coalesce.framework.tasks.AbstractFrameworkTask" 
+    project="coalesce-core" 
+    file="/coalesce-core/src/main/java/com/incadencecorp/coalesce/framework/tasks/AbstractFrameworkTask.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="637" y="708"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="12" language="java" name="com.incadencecorp.coalesce.services.common.ServiceBase" 
+    project="coalesce-services-common" 
+    file="/coalesce-services-common/src/main/java/com/incadencecorp/coalesce/services/common/ServiceBase.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1494" y="275"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <association id="13">    
+    <end type="SOURCE" refId="4" navigable="false">      
+      <attribute id="14" name="jobsh">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="27" minimum="0" maximum="2147483647">        
+      <multiplicity id="15" minimum="0" maximum="2147483647">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="2" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <dependency id="28">    
-    <end type="SOURCE" refId="9"/>    
-    <end type="TARGET" refId="11"/>  
-  </dependency>  
-  <generalization id="29">    
-    <end type="SOURCE" refId="6"/>    
-    <end type="TARGET" refId="1"/>  
-  </generalization>  
-  <dependency id="30">    
+  <dependency id="16">    
     <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="6"/>  
+  </dependency>  
+  <dependency id="17">    
+    <end type="SOURCE" refId="5"/>    
+    <end type="TARGET" refId="6"/>  
+  </dependency>  
+  <generalization id="18">    
+    <end type="SOURCE" refId="11"/>    
+    <end type="TARGET" refId="10"/>  
+  </generalization>  
+  <generalization id="19">    
+    <end type="SOURCE" refId="5"/>    
+    <end type="TARGET" refId="3"/>  
+  </generalization>  
+  <dependency id="20">    
+    <end type="SOURCE" refId="12"/>    
+    <end type="TARGET" refId="9"/>  
+  </dependency>  
+  <generalization id="21">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="2"/>  
+  </generalization>  
+  <association id="22">    
+    <end type="SOURCE" refId="12" navigable="false">      
+      <attribute id="23" name="jobs"/>      
+      <multiplicity id="24" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="4" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <generalization id="25">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="10"/>  
+  </generalization>  
+  <generalization id="26">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="2"/>  
+  </generalization>  
+  <dependency id="27">    
+    <end type="SOURCE" refId="1"/>    
     <end type="TARGET" refId="10"/>  
   </dependency>  
+  <dependency id="28">    
+    <end type="SOURCE" refId="5"/>    
+    <end type="TARGET" refId="7"/>  
+  </dependency>  
+  <generalization id="29">    
+    <end type="SOURCE" refId="9"/>    
+    <end type="TARGET" refId="1"/>  
+  </generalization>  
+  <generalization id="30">    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="6"/>  
+  </generalization>  
+  <generalization id="31">    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="9"/>  
+  </generalization>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
     sort-features="false" accessors="true" visibility="true">    
     <attributes public="true" package="true" protected="true" private="true" static="true"/>    

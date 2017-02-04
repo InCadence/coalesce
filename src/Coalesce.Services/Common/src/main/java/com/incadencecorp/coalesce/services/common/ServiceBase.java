@@ -36,7 +36,6 @@ import com.incadencecorp.coalesce.api.ICoalesceComponent;
 import com.incadencecorp.coalesce.api.ICoalesceResponseType;
 import com.incadencecorp.coalesce.api.persistance.ICoalesceExecutorService;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.jobs.JobManager;
 import com.incadencecorp.coalesce.framework.jobs.metrics.JobMetricsCollectionAsync;
 import com.incadencecorp.coalesce.services.api.common.BaseRequest;
@@ -57,7 +56,7 @@ import com.incadencecorp.coalesce.services.common.jobs.AbstractServiceJob;
  * 
  * @author Derek C.
  */
-public abstract class ServiceBase implements ICoalesceExecutorService, AutoCloseable {
+public abstract class ServiceBase<T> implements ICoalesceExecutorService, AutoCloseable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceBase.class);
 
@@ -68,22 +67,14 @@ public abstract class ServiceBase implements ICoalesceExecutorService, AutoClose
     // TODO Make these configurable
     private static final int TIME_TO_LIVE = 10;
 
-    private JobManager<AbstractServiceJob<?, ?, ?>> jobs;
+    private JobManager<AbstractServiceJob<?, ?, ?, T>> jobs;
     private ExecutorService service;
     private JobMetricsCollectionAsync metrics;
-    private CoalesceFramework framework;
+    private T target;
 
     // ----------------------------------------------------------------------//
     // Constructor and Initialization
     // ----------------------------------------------------------------------//
-
-    /**
-     * Default Constructor
-     */
-    public ServiceBase()
-    {
-        this(null);
-    }
 
     /**
      * Construct service while specifying the service and framework to use.
@@ -91,11 +82,11 @@ public abstract class ServiceBase implements ICoalesceExecutorService, AutoClose
      * @param pool
      * @param framework
      */
-    public ServiceBase(CoalesceFramework framework)
+    public ServiceBase(T target, ExecutorService service)
     {
-        this.service = framework.getExecutorService();
-        this.jobs = new JobManager<AbstractServiceJob<?, ?, ?>>();
-        this.framework = framework;
+        this.service = service;
+        this.jobs = new JobManager<AbstractServiceJob<?, ?, ?, T>>();
+        this.target = target;
     }
 
     /**
@@ -182,7 +173,7 @@ public abstract class ServiceBase implements ICoalesceExecutorService, AutoClose
         {
 
             ResponseResultsType result = new ResponseResultsType();
-            AbstractServiceJob<?, ?, ?> job;
+            AbstractServiceJob<?, ?, ?, T> job;
 
             // Check the Job Manager for this Job's Status
             EJobStatus jobStatus = getJobStatus(key);
@@ -260,7 +251,7 @@ public abstract class ServiceBase implements ICoalesceExecutorService, AutoClose
 
             result.setResult(jobId);
 
-            AbstractServiceJob<?, ?, ?> job = jobs.removeJob(jobId);
+            AbstractServiceJob<?, ?, ?, T> job = jobs.removeJob(jobId);
 
             // Job Queued?
             if (job != null)
@@ -303,12 +294,12 @@ public abstract class ServiceBase implements ICoalesceExecutorService, AutoClose
      *         request the results once the job has completed.
      * @throws Exception
      */
-    public final <T extends BaseRequest, Y extends ICoalesceResponseType<List<X>>, X extends ICoalesceResponseType<?>> Y performJob(AbstractServiceJob<T, Y, X> job)
+    public final <REQUEST extends BaseRequest, RESPONSE extends ICoalesceResponseType<List<X>>, X extends ICoalesceResponseType<?>> RESPONSE performJob(AbstractServiceJob<REQUEST, RESPONSE, X, T> job)
     {
-        Y response = null;
+        RESPONSE response = null;
 
         job.setExecutor(this);
-        job.setTarget(getFramework());
+        job.setTarget(getTarget());
         // TODO job.setPrincipal(principal);
 
         // Async?
@@ -372,7 +363,7 @@ public abstract class ServiceBase implements ICoalesceExecutorService, AutoClose
      * @param minutes age of jobs to remove
      * @return Returns a list of expired jobs.
      */
-    public final List<AbstractServiceJob<?, ?, ?>> removeOldJobs(long minutes)
+    public final List<AbstractServiceJob<?, ?, ?, T>> removeOldJobs(long minutes)
     {
         return jobs.removeOldJobs(minutes);
     }
@@ -393,9 +384,9 @@ public abstract class ServiceBase implements ICoalesceExecutorService, AutoClose
             // Iterate through each failed job
             for (Runnable runnable : jobList)
             {
-                if (runnable instanceof AbstractServiceJob<?, ?, ?>)
+                if (runnable instanceof AbstractServiceJob<?, ?, ?, ?>)
                 {
-                    LOGGER.warn("Job ({}) expired", ((AbstractServiceJob<?, ?, ?>) runnable).getJobId());
+                    LOGGER.warn("Job ({}) expired", ((AbstractServiceJob<?, ?, ?, ?>) runnable).getJobId());
                 }
                 else if (runnable instanceof ICoalesceComponent)
                 {
@@ -433,7 +424,7 @@ public abstract class ServiceBase implements ICoalesceExecutorService, AutoClose
     }
 
     // @Override
-    public <T extends BaseRequest, Y extends ICoalesceResponseType<List<X>>, X extends ICoalesceResponseType<?>> Future<Y> submit(AbstractServiceJob<T, Y, X> job)
+    public <T extends BaseRequest, Y extends ICoalesceResponseType<List<X>>, X extends ICoalesceResponseType<?>> Future<Y> submit(AbstractServiceJob<T, Y, X, T> job)
             throws CoalescePersistorException
     {
         return service.submit(job);
@@ -477,14 +468,9 @@ public abstract class ServiceBase implements ICoalesceExecutorService, AutoClose
     /**
      * @return the framework that this service was initialized with.
      */
-    protected final CoalesceFramework getFramework()
+    protected final T getTarget()
     {
-        if (framework == null)
-        {
-            framework = new CoalesceFramework();
-        }
-
-        return framework;
+        return target;
     }
 
 }

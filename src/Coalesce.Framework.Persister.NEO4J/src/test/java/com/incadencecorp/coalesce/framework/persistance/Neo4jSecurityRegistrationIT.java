@@ -28,7 +28,7 @@ import com.incadencecorp.coalesce.framework.persistance.neo4j.Neo4JRegistration;
  * @author n78554
  *
  */
-public class Neo4jSecurityRegistrationTests {
+public class Neo4jSecurityRegistrationIT {
 
     /**
      * Registers a test enumeration.

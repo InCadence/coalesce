@@ -21,14 +21,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.incadencecorp.coalesce.framework.tasks.AbstractFrameworkTask;
+import com.incadencecorp.coalesce.framework.CoalesceFramework;
+import com.incadencecorp.coalesce.framework.tasks.AbstractTask;
 import com.incadencecorp.coalesce.services.api.common.ResultsType;
 import com.incadencecorp.coalesce.services.api.common.StringResponse;
 import com.incadencecorp.coalesce.services.api.crud.DataObjectXmlRequest;
-import com.incadencecorp.coalesce.services.common.jobs.AbstractServiceJob;
+import com.incadencecorp.coalesce.services.common.jobs.AbstractFrameworkServiceJob;
 import com.incadencecorp.coalesce.services.crud.service.tasks.UpdateDataObjectTask;
 
-public class UpdateDataObjectJob extends AbstractServiceJob<DataObjectXmlRequest, StringResponse, ResultsType> {
+public class UpdateDataObjectJob extends AbstractFrameworkServiceJob<DataObjectXmlRequest, StringResponse, ResultsType> {
 
     public UpdateDataObjectJob(DataObjectXmlRequest request)
     {
@@ -36,10 +37,9 @@ public class UpdateDataObjectJob extends AbstractServiceJob<DataObjectXmlRequest
     }
 
     @Override
-    protected Collection<AbstractFrameworkTask<?, ResultsType>> getTasks(DataObjectXmlRequest params)
+    protected Collection<AbstractTask<?, ResultsType, CoalesceFramework>> getTasks(DataObjectXmlRequest params)
     {
-        List<AbstractFrameworkTask<?, ResultsType>> tasks = new ArrayList<AbstractFrameworkTask<?, ResultsType>>();
-
+        List<AbstractTask<?, ResultsType, CoalesceFramework>> tasks = new ArrayList<AbstractTask<?, ResultsType, CoalesceFramework>>();
         for (String xml : params.getDataObjectXmlList())
         {
             UpdateDataObjectTask task = new UpdateDataObjectTask(); 

@@ -91,6 +91,13 @@
 
 	<xs:complexType name="QueryResultType">
 		<xs:sequence>
+			<xs:element name="hits" type="tns:HitType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="total" type="xs:integer" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="HitType">
+		<xs:sequence>
 			<xs:element name="entityKey" type="xs:string" />
 			<xs:element name="title" type="xs:string" />
 			<xs:element name="name" type="xs:string" />

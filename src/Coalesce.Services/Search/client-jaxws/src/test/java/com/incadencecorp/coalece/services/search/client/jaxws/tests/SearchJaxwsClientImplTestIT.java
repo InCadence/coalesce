@@ -25,6 +25,7 @@ import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.incadencecorp.coalesce.services.crud.client.jaxws.CrudJaxwsClientImpl;
 import com.incadencecorp.coalesce.services.search.api.test.AbstractSearchTests;
 import com.incadencecorp.coalesce.services.search.client.jaxws.SearchJaxwsClientImpl;
 
@@ -43,7 +44,7 @@ public class SearchJaxwsClientImplTestIT extends AbstractSearchTests {
         try
         {
             String host = "localhost";
-            URL url = new URL("http", host, 8181, "/cxf/crud?wsdl");
+            URL url = new URL("http", host, 8181, "/cxf/search?wsdl");
 
             LOGGER.info("Metadata Manager WSDL Location: {}", url.toString());
 
@@ -52,6 +53,7 @@ public class SearchJaxwsClientImplTestIT extends AbstractSearchTests {
             Assume.assumeTrue(address.isReachable(5000));
 
             // Create Client
+            crud = new CrudJaxwsClientImpl(new URL("http", host, 8181, "/cxf/crud?wsdl"));
             client = new SearchJaxwsClientImpl(url);
         }
         catch (Exception e)

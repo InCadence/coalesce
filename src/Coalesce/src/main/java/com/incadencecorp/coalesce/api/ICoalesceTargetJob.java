@@ -19,19 +19,17 @@
 
 package com.incadencecorp.coalesce.api;
 
-import com.incadencecorp.coalesce.framework.CoalesceFramework;
-
 /**
  * 
  * @author n78554
  */
-public interface ICoalesceFrameworkJob extends ICoalesceJob {
+public interface ICoalesceTargetJob<T> extends ICoalesceJob {
 
     /**
      * Sets the target(s) of this operation.
      * 
      * @param targets
      */
-    void setTarget(CoalesceFramework framework);
+    void setTarget(T value);
     
 }

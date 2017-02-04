@@ -18,8 +18,14 @@
 package com.incadencecorp.coalesce.services.search.service.client;
 
 import java.rmi.RemoteException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
-import com.incadencecorp.coalesce.framework.CoalesceFramework;
+import com.incadencecorp.coalesce.framework.CoalesceSettings;
+import com.incadencecorp.coalesce.framework.CoalesceThreadFactoryImpl;
+import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 import com.incadencecorp.coalesce.services.api.common.BaseResponse;
 import com.incadencecorp.coalesce.services.api.common.JobRequest;
 import com.incadencecorp.coalesce.services.api.common.MultipleResponse;
@@ -39,9 +45,17 @@ public class SearchFrameworkClientImpl extends AbstractSearchClientImpl {
 
     private SearchServiceImpl client;
 
-    public SearchFrameworkClientImpl(CoalesceFramework framework)
+    public SearchFrameworkClientImpl(ICoalesceSearchPersistor persister)
     {
-        client = new SearchServiceImpl(framework);
+        ExecutorService service = new ThreadPoolExecutor(CoalesceSettings.getMinThreads(),
+                                                         CoalesceSettings.getMaxThreads(),
+                                                         CoalesceSettings.getKeepAliveTime(),
+                                                         TimeUnit.SECONDS,
+                                                         new SynchronousQueue<Runnable>(),
+                                                         new CoalesceThreadFactoryImpl(),
+                                                         new ThreadPoolExecutor.CallerRunsPolicy());
+
+        client = new SearchServiceImpl(persister, service);
     }
 
     @Override
@@ -61,7 +75,7 @@ public class SearchFrameworkClientImpl extends AbstractSearchClientImpl {
     {
         return client.getJobStatus(request);
     }
-    
+
     @Override
     protected SearchDataObjectResponse search(SearchDataObjectRequest request)
     {

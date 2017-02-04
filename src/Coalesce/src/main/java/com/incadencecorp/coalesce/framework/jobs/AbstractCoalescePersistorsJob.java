@@ -38,12 +38,14 @@ import com.incadencecorp.coalesce.framework.tasks.AbstractPersistorTask;
 import com.incadencecorp.coalesce.framework.tasks.MetricResults;
 
 /**
- * Abstract base for persister jobs in Coalesce.
+ * Abstract base for jobs that perform the same task with the same parameters
+ * for each persister configured.
  * 
  * @author Derek
  * @param <INPUT> input type
  */
-public abstract class AbstractCoalescePersistorsJob<INPUT> extends AbstractCoalesceJob<INPUT, ICoalesceResponseType<List<CoalesceStringResponseType>>, CoalesceStringResponseType>
+public abstract class AbstractCoalescePersistorsJob<INPUT> extends
+        AbstractCoalesceJob<INPUT, ICoalesceResponseType<List<CoalesceStringResponseType>>, CoalesceStringResponseType>
         implements ICoalescePersistorJob {
 
     private static Logger LOGGER = LoggerFactory.getLogger(AbstractCoalescePersistorsJob.class);
@@ -90,7 +92,8 @@ public abstract class AbstractCoalescePersistorsJob<INPUT> extends AbstractCoale
     --------------------------------------------------------------------------*/
 
     @Override
-    public final ICoalesceResponseType<List<CoalesceStringResponseType>> doWork(ICoalescePrincipal principal, INPUT params) throws CoalesceException
+    public final ICoalesceResponseType<List<CoalesceStringResponseType>> doWork(ICoalescePrincipal principal, INPUT params)
+            throws CoalesceException
     {
         List<CoalesceStringResponseType> results = new ArrayList<CoalesceStringResponseType>();
 
@@ -101,11 +104,11 @@ public abstract class AbstractCoalescePersistorsJob<INPUT> extends AbstractCoale
             // Create Tasks
             for (int ii = 0; ii < _persistors.length; ii++)
             {
-                AbstractPersistorTask<INPUT> task  = createTask();
+                AbstractPersistorTask<INPUT> task = createTask();
                 task.setParams(params);
                 task.setTarget(_persistors[ii]);
                 task.setPrincipal(principal);
-                
+
                 tasks.add(task);
             }
 
@@ -128,7 +131,7 @@ public abstract class AbstractCoalescePersistorsJob<INPUT> extends AbstractCoale
                     CoalesceStringResponseType task = createResults();
                     task.setError(e.getMessage());
                     task.setStatus(EResultStatus.FAILED);
-                    
+
                     metrics = new MetricResults<CoalesceStringResponseType>();
                     metrics.setResults(task);
                     metrics.getResults().setStatus(EResultStatus.FAILED);
@@ -145,7 +148,7 @@ public abstract class AbstractCoalescePersistorsJob<INPUT> extends AbstractCoale
                 }
 
                 addResult(metrics);
-                
+
                 results.add(metrics.getResults());
 
                 ii++;

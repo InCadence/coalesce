@@ -21,7 +21,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.incadencecorp.coalesce.framework.tasks.AbstractFrameworkTask;
+import com.incadencecorp.coalesce.framework.tasks.AbstractTask;
+import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 import com.incadencecorp.coalesce.services.api.search.QueryResultsType;
 import com.incadencecorp.coalesce.services.api.search.QueryType;
 import com.incadencecorp.coalesce.services.api.search.SearchDataObjectRequest;
@@ -29,8 +30,8 @@ import com.incadencecorp.coalesce.services.api.search.SearchDataObjectResponse;
 import com.incadencecorp.coalesce.services.common.jobs.AbstractServiceJob;
 import com.incadencecorp.coalesce.services.search.service.tasks.SearchDataObjectTask;
 
-public class SearchDataObjectJob
-        extends AbstractServiceJob<SearchDataObjectRequest, SearchDataObjectResponse, QueryResultsType> {
+public class SearchDataObjectJob extends
+        AbstractServiceJob<SearchDataObjectRequest, SearchDataObjectResponse, QueryResultsType, ICoalesceSearchPersistor> {
 
     public SearchDataObjectJob(SearchDataObjectRequest request)
     {
@@ -38,9 +39,9 @@ public class SearchDataObjectJob
     }
 
     @Override
-    protected Collection<AbstractFrameworkTask<?, QueryResultsType>> getTasks(SearchDataObjectRequest params)
+    protected Collection<AbstractTask<?, QueryResultsType, ICoalesceSearchPersistor>> getTasks(SearchDataObjectRequest params)
     {
-        List<AbstractFrameworkTask<?, QueryResultsType>> tasks = new ArrayList<AbstractFrameworkTask<?, QueryResultsType>>();
+        List<AbstractTask<?, QueryResultsType, ICoalesceSearchPersistor>> tasks = new ArrayList<AbstractTask<?, QueryResultsType, ICoalesceSearchPersistor>>();
 
         for (QueryType query : params.getQuery())
         {

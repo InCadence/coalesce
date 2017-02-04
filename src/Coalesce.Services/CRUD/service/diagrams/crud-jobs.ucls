@@ -5,7 +5,7 @@
     project="coalesce-crud-service" 
     file="/coalesce-crud-service/src/main/java/com/incadencecorp/coalesce/services/crud/service/jobs/CreateDataObjectJob.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="81" width="246" x="1995" y="37"/>    
+    <position height="-1" width="-1" x="1097" y="337"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="false" static="true"/>      
@@ -16,7 +16,7 @@
     project="coalesce-crud-service" 
     file="/coalesce-crud-service/src/main/java/com/incadencecorp/coalesce/services/crud/service/jobs/UpdateDataObjectStatusJob.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="81" width="327" x="332" y="37"/>    
+    <position height="-1" width="-1" x="-254" y="324"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="false" static="true"/>      
@@ -27,7 +27,7 @@
     project="coalesce-crud-service" 
     file="/coalesce-crud-service/src/main/java/com/incadencecorp/coalesce/services/crud/service/jobs/UpdateDataObjectLinkagesJob.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="81" width="293" x="1156" y="37"/>    
+    <position height="-1" width="-1" x="281" y="337"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="false" static="true"/>      
@@ -39,7 +39,7 @@
     project="coalesce-crud-service" 
     file="/coalesce-crud-service/src/main/java/com/incadencecorp/coalesce/services/crud/service/jobs/UpdateDataObjectLinkagesJob.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="153" width="245" x="1156" y="446"/>    
+    <position height="-1" width="-1" x="451" y="513"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="false" static="true"/>      
@@ -50,7 +50,7 @@
     project="coalesce-crud-service" 
     file="/coalesce-crud-service/src/main/java/com/incadencecorp/coalesce/services/crud/service/jobs/RetrieveDataObjectJob.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="81" width="256" x="3076" y="37"/>    
+    <position height="-1" width="-1" x="1433" y="337"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="false" static="true"/>      
@@ -61,7 +61,7 @@
     project="coalesce-crud-service" 
     file="/coalesce-crud-service/src/main/java/com/incadencecorp/coalesce/services/crud/service/jobs/UpdateDataObjectJob.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="81" width="248" x="1707" y="37"/>    
+    <position height="-1" width="-1" x="810" y="337"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="false" static="true"/>      
@@ -73,7 +73,7 @@
     project="coalesce-crud-service" 
     file="/coalesce-crud-service/src/main/java/com/incadencecorp/coalesce/services/crud/service/tasks/UpdateDataObjectLinkagesTask.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="81" width="251" x="599" y="446"/>    
+    <position height="-1" width="-1" x="132" y="514"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="false" static="true"/>      
@@ -84,7 +84,7 @@
     project="coalesce-crud-service" 
     file="/coalesce-crud-service/src/main/java/com/incadencecorp/coalesce/services/crud/service/tasks/RetrieveDataObjectTask.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="81" width="251" x="3076" y="446"/>    
+    <position height="-1" width="-1" x="1442" y="458"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="false" static="true"/>      
@@ -95,7 +95,7 @@
     project="coalesce-crud-service" 
     file="/coalesce-crud-service/src/main/java/com/incadencecorp/coalesce/services/crud/service/tasks/CreateDataObjectTask.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="81" width="251" x="2242" y="446"/>    
+    <position height="-1" width="-1" x="1098" y="472"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="false" static="true"/>      
@@ -107,7 +107,7 @@
     project="coalesce-crud-service" 
     file="/coalesce-crud-service/src/main/java/com/incadencecorp/coalesce/services/crud/service/tasks/UpdateDataObjectStatusTask.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="81" width="251" x="41" y="446"/>    
+    <position height="-1" width="-1" x="-258" y="497"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="false" static="true"/>      
@@ -118,177 +118,68 @@
     project="coalesce-crud-service" 
     file="/coalesce-crud-service/src/main/java/com/incadencecorp/coalesce/services/crud/service/tasks/UpdateDataObjectTask.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="81" width="251" x="1441" y="446"/>    
+    <position height="-1" width="-1" x="802" y="473"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="false" static="true"/>      
       <operations public="true" package="true" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="12" language="java" name="com.incadencecorp.coalesce.services.api.crud.DataObjectKeyRequest" 
-    project="coalesce-crud-api" 
-    file="/coalesce-crud-api/target/generated-sources/cxf/com/incadencecorp/coalesce/services/api/crud/DataObjectKeyRequest.java" 
+  <class id="12" language="java" name="com.incadencecorp.coalesce.services.common.jobs.AbstractFrameworkServiceJob" 
+    project="coalesce-services-common" 
+    file="/coalesce-services-common/src/main/java/com/incadencecorp/coalesce/services/common/jobs/AbstractFrameworkServiceJob.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="117" width="212" x="3367" y="446"/>    
+    <position height="-1" width="-1" x="722" y="119"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="false" static="true"/>      
       <operations public="true" package="true" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="13" language="java" name="com.incadencecorp.coalesce.services.api.crud.DataObjectLinkRequest" 
-    project="coalesce-crud-api" 
-    file="/coalesce-crud-api/target/generated-sources/cxf/com/incadencecorp/coalesce/services/api/crud/DataObjectLinkRequest.java" 
-    binary="false" corner="BOTTOM_RIGHT">    
-    <position height="117" width="226" x="890" y="446"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
-      <operations public="true" package="true" protected="false" private="false" static="true"/>    
-    </display>  
-  </class>  
-  <class id="14" language="java" name="com.incadencecorp.coalesce.services.api.crud.DataObjectUpdateStatusRequest" 
-    project="coalesce-crud-api" 
-    file="/coalesce-crud-api/target/generated-sources/cxf/com/incadencecorp/coalesce/services/api/crud/DataObjectUpdateStatusRequest.java" 
-    binary="false" corner="BOTTOM_RIGHT">    
-    <position height="117" width="227" x="332" y="446"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
-      <operations public="true" package="true" protected="false" private="false" static="true"/>    
-    </display>  
-  </class>  
-  <class id="15" language="java" name="com.incadencecorp.coalesce.services.api.crud.DataObjectXmlRequest" 
-    project="coalesce-crud-api" 
-    file="/coalesce-crud-api/target/generated-sources/cxf/com/incadencecorp/coalesce/services/api/crud/DataObjectXmlRequest.java" 
-    binary="false" corner="BOTTOM_RIGHT">    
-    <position height="117" width="206" x="1732" y="446"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
-      <operations public="true" package="true" protected="false" private="false" static="true"/>    
-    </display>  
-  </class>  
-  <class id="16" language="java" name="com.incadencecorp.coalesce.services.api.common.MultipleResponse" 
-    project="coalesce-services-api" 
-    file="/coalesce-services-api/target/generated-sources/cxf/com/incadencecorp/coalesce/services/api/common/MultipleResponse.java" 
-    binary="false" corner="BOTTOM_RIGHT">    
-    <position height="171" width="239" x="2797" y="446"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
-      <operations public="true" package="true" protected="false" private="false" static="true"/>    
-    </display>  
-  </class>  
-  <class id="17" language="java" name="com.incadencecorp.coalesce.services.api.common.BaseResponse" 
-    project="coalesce-services-api" 
-    file="/coalesce-services-api/target/generated-sources/cxf/com/incadencecorp/coalesce/services/api/common/BaseResponse.java" 
-    binary="false" corner="BOTTOM_RIGHT">    
-    <position height="369" width="224" x="2533" y="37"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
-      <operations public="true" package="true" protected="false" private="false" static="true"/>    
-    </display>  
-  </class>  
-  <class id="18" language="java" name="com.incadencecorp.coalesce.services.api.common.StatusResponse" 
-    project="coalesce-services-api" 
-    file="/coalesce-services-api/target/generated-sources/cxf/com/incadencecorp/coalesce/services/api/common/StatusResponse.java" 
-    binary="false" corner="BOTTOM_RIGHT">    
-    <position height="171" width="224" x="2533" y="446"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
-      <operations public="true" package="true" protected="false" private="false" static="true"/>    
-    </display>  
-  </class>  
-  <class id="19" language="java" name="com.incadencecorp.coalesce.services.api.common.StringResponse" 
-    project="coalesce-services-api" 
-    file="/coalesce-services-api/target/generated-sources/cxf/com/incadencecorp/coalesce/services/api/common/StringResponse.java" 
-    binary="false" corner="BOTTOM_RIGHT">    
-    <position height="171" width="224" x="1978" y="446"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="false" static="true"/>      
-      <operations public="true" package="true" protected="false" private="false" static="true"/>    
-    </display>  
-  </class>  
+  <dependency id="13">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="7"/>  
+  </dependency>  
+  <generalization id="14">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="12"/>  
+  </generalization>  
+  <generalization id="15">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="12"/>  
+  </generalization>  
+  <generalization id="16">    
+    <end type="SOURCE" refId="5"/>    
+    <end type="TARGET" refId="12"/>  
+  </generalization>  
+  <dependency id="17">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="10"/>  
+  </dependency>  
+  <dependency id="18">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="9"/>  
+  </dependency>  
+  <dependency id="19">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="11"/>  
+  </dependency>  
   <nesting id="20">    
     <end type="SOURCE" refId="3"/>    
     <end type="TARGET" refId="4"/>  
   </nesting>  
-  <dependency id="21">    
-    <end type="SOURCE" refId="6"/>    
-    <end type="TARGET" refId="15"/>  
-  </dependency>  
-  <dependency id="22">    
-    <end type="SOURCE" refId="2"/>    
-    <end type="TARGET" refId="19"/>  
-  </dependency>  
-  <dependency id="23">    
+  <generalization id="21">    
     <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="13"/>  
-  </dependency>  
-  <dependency id="24">    
-    <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="7"/>  
-  </dependency>  
-  <dependency id="25">    
-    <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="19"/>  
-  </dependency>  
-  <dependency id="26">    
-    <end type="SOURCE" refId="5"/>    
     <end type="TARGET" refId="12"/>  
-  </dependency>  
-  <dependency id="27">    
-    <end type="SOURCE" refId="5"/>    
-    <end type="TARGET" refId="19"/>  
-  </dependency>  
-  <dependency id="28">    
+  </generalization>  
+  <generalization id="22">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="12"/>  
+  </generalization>  
+  <dependency id="23">    
     <end type="SOURCE" refId="5"/>    
     <end type="TARGET" refId="8"/>  
   </dependency>  
-  <dependency id="29">    
-    <end type="SOURCE" refId="2"/>    
-    <end type="TARGET" refId="14"/>  
-  </dependency>  
-  <dependency id="30">    
-    <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="19"/>  
-  </dependency>  
-  <dependency id="31">    
-    <end type="SOURCE" refId="6"/>    
-    <end type="TARGET" refId="19"/>  
-  </dependency>  
-  <dependency id="32">    
-    <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="15"/>  
-  </dependency>  
-  <dependency id="33">    
-    <end type="SOURCE" refId="6"/>    
-    <end type="TARGET" refId="11"/>  
-  </dependency>  
-  <dependency id="34">    
-    <end type="SOURCE" refId="2"/>    
-    <end type="TARGET" refId="10"/>  
-  </dependency>  
-  <generalization id="35">    
-    <end type="SOURCE" refId="19"/>    
-    <end type="TARGET" refId="17"/>  
-  </generalization>  
-  <dependency id="36">    
-    <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="9"/>  
-  </dependency>  
-  <generalization id="37">    
-    <end type="SOURCE" refId="16"/>    
-    <end type="TARGET" refId="17"/>  
-  </generalization>  
-  <generalization id="38">    
-    <end type="SOURCE" refId="18"/>    
-    <end type="TARGET" refId="17"/>  
-  </generalization>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
     sort-features="false" accessors="true" visibility="true">    
     <attributes public="true" package="true" protected="true" private="false" static="true"/>    

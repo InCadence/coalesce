@@ -31,10 +31,10 @@ import com.incadencecorp.coalesce.services.crud.service.jobs.UpdateDataObjectJob
 import com.incadencecorp.coalesce.services.crud.service.jobs.UpdateDataObjectLinkagesJob;
 import com.incadencecorp.coalesce.services.crud.service.jobs.UpdateDataObjectStatusJob;
 
-public class CrudServiceImpl extends ServiceBase implements CrudManager {
+public class CrudServiceImpl extends ServiceBase<CoalesceFramework> implements CrudManager {
 
     public CrudServiceImpl(CoalesceFramework framework) {
-        super(framework);
+        super(framework, framework.getExecutorService());
     }
     
     @Override

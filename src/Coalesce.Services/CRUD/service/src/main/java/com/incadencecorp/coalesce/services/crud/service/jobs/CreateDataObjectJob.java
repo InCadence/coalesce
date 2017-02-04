@@ -21,14 +21,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.incadencecorp.coalesce.framework.tasks.AbstractFrameworkTask;
+import com.incadencecorp.coalesce.framework.CoalesceFramework;
+import com.incadencecorp.coalesce.framework.tasks.AbstractTask;
 import com.incadencecorp.coalesce.services.api.common.ResultsType;
 import com.incadencecorp.coalesce.services.api.common.StringResponse;
 import com.incadencecorp.coalesce.services.api.crud.DataObjectXmlRequest;
-import com.incadencecorp.coalesce.services.common.jobs.AbstractServiceJob;
+import com.incadencecorp.coalesce.services.common.jobs.AbstractFrameworkServiceJob;
 import com.incadencecorp.coalesce.services.crud.service.tasks.CreateDataObjectTask;
 
-public class CreateDataObjectJob extends AbstractServiceJob<DataObjectXmlRequest, StringResponse, ResultsType> {
+public class CreateDataObjectJob extends AbstractFrameworkServiceJob<DataObjectXmlRequest, StringResponse, ResultsType> {
 
     public CreateDataObjectJob(DataObjectXmlRequest request)
     {
@@ -36,15 +37,17 @@ public class CreateDataObjectJob extends AbstractServiceJob<DataObjectXmlRequest
     }
 
     @Override
-    protected Collection<AbstractFrameworkTask<?, ResultsType>> getTasks(DataObjectXmlRequest params)
+    protected Collection<AbstractTask<?, ResultsType, CoalesceFramework>> getTasks(DataObjectXmlRequest params)
     {
-        List<AbstractFrameworkTask<?, ResultsType>> tasks = new ArrayList<AbstractFrameworkTask<?, ResultsType>>();
+        List<AbstractTask<?, ResultsType, CoalesceFramework>> tasks = new ArrayList<AbstractTask<?, ResultsType, CoalesceFramework>>();
 
         for (String xml : params.getDataObjectXmlList())
         {
-            CreateDataObjectTask task = new CreateDataObjectTask(); 
-            task.setParams(new String[] {xml});
-            
+            CreateDataObjectTask task = new CreateDataObjectTask();
+            task.setParams(new String[] {
+                                          xml
+            });
+
             tasks.add(task);
         }
 
@@ -60,7 +63,7 @@ public class CreateDataObjectJob extends AbstractServiceJob<DataObjectXmlRequest
     @Override
     protected ResultsType createResults()
     {
-        return new ResultsType(); 
+        return new ResultsType();
     }
-    
+
 }

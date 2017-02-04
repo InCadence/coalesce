@@ -2,15 +2,23 @@ package com.incadencecorp.coalesce.framework.persistance;
 
 import java.io.IOException;
 
+import javax.sql.rowset.CachedRowSet;
+
+import org.geotools.data.Query;
 import org.junit.AfterClass;
 import org.junit.Assume;
 import org.junit.BeforeClass;
+import org.junit.Test;
+import org.opengis.filter.Filter;
 import org.xml.sax.SAXException;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
 import com.incadencecorp.coalesce.framework.persistance.neo4j.Neo4JDataConnector;
 import com.incadencecorp.coalesce.framework.persistance.neo4j.Neo4JPersistor;
+import com.incadencecorp.coalesce.framework.persistance.neo4j.Neo4jSearchPersister;
+import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -29,16 +37,13 @@ import com.incadencecorp.coalesce.framework.persistance.neo4j.Neo4JPersistor;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-public class Neo4JPersistorTest extends CoalescePersistorBaseTest {
+public class Neo4JPersistorIT extends CoalescePersistorBaseTest {
 
     @BeforeClass
     public static void setupBeforeClass() throws SAXException, IOException, CoalesceException
     {
 
-        // Skip this test.
-        Assume.assumeTrue(false);
-
-        Neo4JPersistorTest tester = new Neo4JPersistorTest();
+        Neo4JPersistorIT tester = new Neo4JPersistorIT();
 
         CoalescePersistorBaseTest.setupBeforeClassBase(tester);
 
@@ -47,7 +52,7 @@ public class Neo4JPersistorTest extends CoalescePersistorBaseTest {
     @AfterClass
     public static void tearDownAfterClass()
     {
-        Neo4JPersistorTest tester = new Neo4JPersistorTest();
+        Neo4JPersistorIT tester = new Neo4JPersistorIT();
 
         CoalescePersistorBaseTest.tearDownAfterClassBase(tester);
 
@@ -78,6 +83,36 @@ public class Neo4JPersistorTest extends CoalescePersistorBaseTest {
     protected CoalesceDataConnectorBase getDataConnector(ServerConn conn) throws CoalescePersistorException
     {
         return new Neo4JDataConnector(conn);
+    }
+    
+    @Test
+    public void testSearchPersister() throws Exception
+    {
+
+        TestEntity entity = new TestEntity();
+        entity.initialize();
+        
+        Neo4jSearchPersister persister = new Neo4jSearchPersister();
+
+        persister.saveEntity(false, entity);
+
+        Filter filter = CoalescePropertyFactory.getEntityKey(entity.getKey());
+        Query query = new Query();
+        query.setFilter(filter);
+        query.setStartIndex(1);
+        query.setMaxFeatures(50);
+
+        CachedRowSet rowset = persister.search(query);
+
+        if (rowset.first())
+        {
+            do
+            {
+                System.out.println(rowset.getString("n.entityKey"));
+            }
+            while (rowset.next());
+        }
+
     }
 
 }

@@ -41,8 +41,9 @@ import com.incadencecorp.coalesce.framework.tasks.MetricResults;
  * Abstract base for jobs in Coalesce.
  * 
  * @author Derek
- * @param <INPUT> input type
- * @param <OUTPUT> output type
+ * @param <INPUT> input parameter type
+ * @param <OUTPUT> output type which contains a list of <TASKOUTPUT>.
+ * @param <TASKOUTPUT> task result type.
  */
 public abstract class AbstractCoalesceJob<INPUT, OUTPUT extends ICoalesceResponseType<List<TASKOUTPUT>>, TASKOUTPUT extends ICoalesceResponseType<?>>
         extends CoalesceComponentImpl implements ICoalesceJob, Callable<OUTPUT> {

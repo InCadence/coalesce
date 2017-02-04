@@ -17,16 +17,19 @@
 
 package com.incadencecorp.coalesce.services.search.api.test;
 
-import org.geotools.factory.CommonFactoryFinder;
+import org.junit.Assert;
 import org.junit.Test;
-import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory;
 
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
+import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
+import com.incadencecorp.coalesce.services.api.search.HitType;
+import com.incadencecorp.coalesce.services.api.search.SearchDataObjectResponse;
+import com.incadencecorp.coalesce.services.crud.api.ICrudClient;
 import com.incadencecorp.coalesce.services.search.api.ISearchClient;
 
 /**
- * These test exercise the Search API. When extending these test you must set the
- * client member variable.
+ * These test exercise the Search API. When extending these test you must set
+ * the client member variable.
  * 
  * @author Derek Clemenzi
  */
@@ -36,22 +39,37 @@ public abstract class AbstractSearchTests {
      * Must set this in the @BeforeClass method.
      */
     protected static ISearchClient client;
-    
+    protected static ICrudClient crud;
+
+    /**
+     * This is a simple test to verify that an entity saved will result in a hit
+     * when searching for the key.
+     * 
+     * @throws Exception
+     */
     @Test
-    public void testSearch() throws Exception {
-        
-        FilterFactory ff = CommonFactoryFinder.getFilterFactory();
-        
-        Filter filter = ff.equals(ff.property("aa"), ff.literal("aa"));
-        
-        System.out.println(filter.toString());
-        
-        client.search(filter, 1);
-        
-//        FilterType query = new FilterTypeImpl();
-//        
-//        client.search(filter, 1);
-        
+    public void testSearch() throws Exception
+    {
+        CoalesceEntity entity = new CoalesceEntity();
+        entity.initialize();
+
+        // Create Entity
+        crud.createDataObject(entity);
+
+        // Search for Entity Key
+        SearchDataObjectResponse results = client.search(CoalescePropertyFactory.getEntityKey(entity.getKey()), 1);
+
+        // Verify Hit
+        Assert.assertEquals(1, results.getResult().size());
+        Assert.assertEquals(1, results.getResult().get(0).getResult().getHits().size());
+
+        HitType hit = results.getResult().get(0).getResult().getHits().get(0);
+
+        // Verify HIt's Properties
+        Assert.assertEquals(entity.getKey(), hit.getEntityKey());
+        Assert.assertEquals(entity.getName(), hit.getName());
+        Assert.assertEquals(entity.getSource(), hit.getSource());
+        Assert.assertEquals(entity.getTitle(), hit.getTitle());
     }
 
 }

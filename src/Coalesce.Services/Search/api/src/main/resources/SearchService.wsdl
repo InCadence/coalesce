@@ -92,7 +92,7 @@
 
 	<wsdl:binding name="SearchServiceBinding" type="tns:SearchManager">
 
-		<wsp:PolicyReference URI="#TransportSAML2Policy" />
+<!-- 		<wsp:PolicyReference URI="#TransportSAML2Policy" /> -->
 
 		<soap:binding style="document"
 			transport="http://schemas.xmlsoap.org/soap/http" />

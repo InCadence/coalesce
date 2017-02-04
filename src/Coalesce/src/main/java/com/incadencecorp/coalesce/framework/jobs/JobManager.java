@@ -89,7 +89,7 @@ public class JobManager<T extends AbstractCoalesceJob<?, ?, ?>> {
      * Removes the requested job from the processing queue.
      *
      * @param jobID ID of job
-     * @return {@link AbstractCoalesceFrameworkJob}
+     * @return {@link AbstractCoalesceTargetJob}
      */
     public T removeJob(String jobID)
     {
@@ -156,7 +156,7 @@ public class JobManager<T extends AbstractCoalesceJob<?, ?, ?>> {
      * Returns the job requested.
      *
      * @param jobID ID of job
-     * @return {@link AbstractCoalesceFrameworkJob}
+     * @return {@link AbstractCoalesceTargetJob}
      */
     public T getJob(String jobID)
     {

@@ -13,6 +13,7 @@
 
 	<modules>
 		<module>../Coalesce</module>
+		<module>../Coalesce.Feature</module>
 		<module>../Coalesce.Framework.Persister.NEO4J</module>
 		<module>../Coalesce.Framework.Persister.PostgreSQL</module>
 		<module>../Coalesce.Classification</module>
@@ -22,6 +23,7 @@
 		<module>../Coalesce.Services</module>
 		<module>../Coalesce.Framework.Persistance</module>
 		<module>../Coalesce.Framework.Persister.Accumulo</module>
+		<module>../Coalesce.Bundles</module>
 	</modules>
 
 	<build>

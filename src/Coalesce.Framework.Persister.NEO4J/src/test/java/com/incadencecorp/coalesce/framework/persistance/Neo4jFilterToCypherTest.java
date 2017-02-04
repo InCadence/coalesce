@@ -21,20 +21,15 @@ package com.incadencecorp.coalesce.framework.persistance;
 
 import java.io.StringWriter;
 
-import javax.sql.rowset.CachedRowSet;
-
-import org.geotools.data.Query;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.opengis.filter.Filter;
 
-import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
 import com.incadencecorp.coalesce.framework.persistance.neo4j.Neo4jFilterToCypher;
-import com.incadencecorp.coalesce.framework.persistance.neo4j.Neo4jSearchPersister;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 
 public class Neo4jFilterToCypherTest {
 
+    // TODO Incomplete Test
     @Test
     public void testFilterToCypher() throws Exception
     {
@@ -50,37 +45,6 @@ public class Neo4jFilterToCypherTest {
         cypher.setDefaultLabelMapping("b");
 
         System.out.println(writer.toString());
-
-    }
-
-    @Ignore
-    @Test
-    public void testSearchPersister() throws Exception
-    {
-
-        TestEntity entity = new TestEntity();
-        entity.initialize();
-
-        Neo4jSearchPersister persister = new Neo4jSearchPersister();
-
-        persister.saveEntity(false, entity);
-
-        Filter filter = CoalescePropertyFactory.getEntityKey(entity.getKey());
-        Query query = new Query();
-        query.setFilter(filter);
-        query.setStartIndex(1);
-        query.setMaxFeatures(50);
-
-        CachedRowSet rowset = persister.search(query);
-
-        if (rowset.first())
-        {
-            do
-            {
-                System.out.println(rowset.getString("n.entityKey"));
-            }
-            while (rowset.next());
-        }
 
     }
 

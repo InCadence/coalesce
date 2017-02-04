@@ -20,7 +20,9 @@ package com.incadencecorp.coalesce.services.search.service.client.tests;
 import org.junit.BeforeClass;
 
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
-import com.incadencecorp.coalesce.framework.persistance.memory.MockPersister;
+import com.incadencecorp.coalesce.framework.persistance.memory.MockSearchPersister;
+import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
+import com.incadencecorp.coalesce.services.crud.service.client.CrudFrameworkClientImpl;
 import com.incadencecorp.coalesce.services.search.api.test.AbstractSearchTests;
 import com.incadencecorp.coalesce.services.search.service.client.SearchFrameworkClientImpl;
 
@@ -34,10 +36,13 @@ public class SearchFrameworkClientImplTest extends AbstractSearchTests {
     @BeforeClass
     public static void initialize() throws Exception
     {
-        CoalesceFramework framework = new CoalesceFramework();
-        framework.setAuthoritativePersistor(new MockPersister());
+        MockSearchPersister persistor = new MockSearchPersister();
 
-        client = new SearchFrameworkClientImpl(framework);
+        CoalesceFramework framework = new CoalesceFramework();
+        framework.setAuthoritativePersistor(persistor);
+        
+        crud = new CrudFrameworkClientImpl(framework);
+        client = new SearchFrameworkClientImpl((ICoalesceSearchPersistor) persistor);
     }
 
 }
