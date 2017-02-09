@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.incadencecorp.coalesce</groupId>
 	<artifactId>coalesce-bom</artifactId>
-	<version>0.0.24</version>
+	<version>0.0.25-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>coalesce.bom</name>
 
@@ -18,8 +18,8 @@
 		<geotools.version>13.1</geotools.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<changelog.start.tag>coalesce-0.0.16</changelog.start.tag>
-		<changelog.end.tag>coalesce-0.0.24</changelog.end.tag>
+		<changelog.start.tag>coalesce-0.0.24</changelog.start.tag>
+		<changelog.end.tag>HEAD</changelog.end.tag>
 
 	</properties>
 

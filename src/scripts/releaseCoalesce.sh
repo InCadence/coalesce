@@ -77,7 +77,7 @@ while true; do
 
 	    if [ "${isSnapshot}" = false ] ; then
 
-		git tag omega-dss-${version}
+		git tag ${tagname}-${version}
 
 	    fi
 
