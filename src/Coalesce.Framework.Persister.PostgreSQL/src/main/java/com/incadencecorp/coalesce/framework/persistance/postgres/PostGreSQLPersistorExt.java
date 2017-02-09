@@ -56,7 +56,7 @@ import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 
 /**
  * This extension flattens record sets into their own tables.
- * 
+ *
  * @author n78554
  */
 public class PostGreSQLPersistorExt extends PostGreSQLPersistor implements ICoalesceSearchPersistor {
@@ -431,7 +431,31 @@ public class PostGreSQLPersistorExt extends PostGreSQLPersistor implements ICoal
 
     /**
      * Executes the given query
-     * 
+     *
+     * @param query
+     * @param parameters
+     * @return the results
+     */
+    public int executeUpdate(String query, CoalesceParameter... parameters)
+    {
+        int results;
+
+        try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings(), getSchema()))
+        {
+            results = conn.executeUpdate(query, parameters);
+        }
+        catch (CoalescePersistorException | SQLException e)
+        {
+            LOGGER.error("Failed to execute query.", e);
+            results = -1;
+        }
+
+        return results;
+    }
+
+    /**
+     * Executes the given query
+     *
      * @param query
      * @param parameters
      * @return the results
@@ -456,7 +480,7 @@ public class PostGreSQLPersistorExt extends PostGreSQLPersistor implements ICoal
     /**
      * Cleared stored procedure cache that indicates whether a procedure exists
      * or not.
-     * 
+     *
      * @param entity
      */
     public void clearCache(CoalesceEntity entity)
@@ -492,7 +516,7 @@ public class PostGreSQLPersistorExt extends PostGreSQLPersistor implements ICoal
     /**
      * Cleared stored procedure cache that indicates whether a procedure exists
      * or not.
-     * 
+     *
      * @param template
      */
     public void clearCache(CoalesceEntityTemplate template)

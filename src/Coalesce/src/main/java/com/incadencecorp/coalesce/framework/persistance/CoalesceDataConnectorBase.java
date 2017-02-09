@@ -62,7 +62,7 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
 
     /**
      * Opens a connection.
-     * 
+     *
      * @param autocommit
      * @throws SQLException
      */
@@ -74,7 +74,7 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
 
     /**
      * Returns the results from the executed SQL Command.
-     * 
+     *
      * @param sql the statement to be executed against the database.
      * @param parameters the multiple parameters to be applied to the SQL
      *            statement
@@ -83,9 +83,10 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
      */
     public final ResultSet executeQuery(final String sql, final CoalesceParameter... parameters) throws SQLException
     {
+        ResultSet results = null;
         openDataConnection();
 
-        PreparedStatement stmt = this._conn.prepareStatement(sql);
+        PreparedStatement stmt = _conn.prepareStatement(sql);
 
         if (LOGGER.isTraceEnabled())
         {
@@ -111,13 +112,22 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
             }
         }
 
-        return stmt.executeQuery();
+        if (LOGGER.isTraceEnabled())
+        {
+            LOGGER.trace("Prepared Statement is: " + stmt.toString());
+        }
+
+        results = stmt.executeQuery();
+
+        // stmt.close(); // Cannot close here or ResultSet is closed. Possible
+        // resource leak.
+        return results;
     }
 
     /**
      * Returns the results from the executed SQL Command, that contains LIKE
      * wildcards.
-     * 
+     *
      * @param sql the statement to be executed against the database.
      * @param likeParams the number of like parameters in the SQL statement
      * @param parameters the multiple parameters to be applied to the SQL
@@ -128,10 +138,10 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
     public final ResultSet executeLikeQuery(final String sql, final int likeParams, final CoalesceParameter... parameters)
             throws SQLException
     {
-
+        ResultSet results = null;
         openDataConnection();
 
-        PreparedStatement stmt = this._conn.prepareStatement(sql);
+        PreparedStatement stmt = _conn.prepareStatement(sql);
 
         // Add Parameters
         for (int ii = 0; ii < parameters.length; ii++)
@@ -146,13 +156,15 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
             }
         }
 
-        return stmt.executeQuery();
-
+        results = stmt.executeQuery();
+        // stmt.close(); // cannot close here or ResultSet is closed. Possible
+        // resource leak.
+        return results;
     }
 
     /**
      * Executes a SQL statement on a database.
-     * 
+     *
      * @param sql the statement to be executed against the database.
      * @param parameters the multiple parameters to be applied to the SQL
      *            statement
@@ -161,9 +173,10 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
      */
     public final int executeUpdate(final String sql, final CoalesceParameter... parameters) throws SQLException
     {
+        int status = -1;
         openDataConnection();
 
-        PreparedStatement stmt = this._conn.prepareStatement(sql);
+        PreparedStatement stmt = _conn.prepareStatement(sql);
 
         if (LOGGER.isTraceEnabled())
         {
@@ -189,12 +202,18 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
             }
         }
 
-        return stmt.executeUpdate();
+        if (LOGGER.isTraceEnabled())
+        {
+            LOGGER.trace("Prepared Statement is: " + stmt.toString());
+        }
+        status = stmt.executeUpdate();
+        stmt.close();
+        return status;
     }
 
     /**
      * Executes a stored procedure(or function) on a database.
-     * 
+     *
      * @param procedureName the name of the stored procedure to be executed
      *            against the database.
      * @param parameters the multiple parameters to be applied to the SQL
@@ -229,7 +248,7 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
 
         openDataConnection();
 
-        CallableStatement stmt = this._conn.prepareCall(sb.toString());
+        CallableStatement stmt = _conn.prepareCall(sb.toString());
 
         if (LOGGER.isTraceEnabled() && parameters.length > 0)
         {
@@ -255,7 +274,7 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
 
     /**
      * Returns meta data for Coalesce Entity Template as XML.
-     * 
+     *
      * @param sql statement specifying the elements to be returned.
      * @return XML of meta data for template.
      * @throws SQLException
@@ -284,17 +303,17 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
 
     /**
      * Rolls back the connection.
-     * 
+     *
      * @throws CoalescePersistorException
      */
     public final void rollback() throws CoalescePersistorException
     {
 
-        if (this._conn != null)
+        if (_conn != null)
         {
             try
             {
-                this._conn.rollback();
+                _conn.rollback();
             }
             catch (SQLException e)
             {
@@ -306,7 +325,7 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
 
     /**
      * Commits.
-     * 
+     *
      * @throws CoalescePersistorException
      */
     public final void commit() throws CoalescePersistorException
@@ -314,9 +333,9 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
 
         try
         {
-            if (this._conn != null && !_conn.getAutoCommit())
+            if (_conn != null && !_conn.getAutoCommit())
             {
-                this._conn.commit();
+                _conn.commit();
             }
         }
         catch (SQLException e)
@@ -329,7 +348,7 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
     @Override
     public final void close() throws CoalescePersistorException
     {
-        if (this._conn != null)
+        if (_conn != null)
         {
             // if (!this._conn.getAutoCommit())
             // {
@@ -338,7 +357,7 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
 
             try
             {
-                this._conn.close();
+                _conn.close();
             }
             catch (SQLException e)
             {
@@ -355,7 +374,7 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
     {
         openDataConnection();
 
-        return this._conn;
+        return _conn;
     }
 
     /*-----------------------------------------------------------------------------'
@@ -383,9 +402,9 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
 
     private void openDataConnection() throws SQLException
     {
-        if (this._conn == null)
+        if (_conn == null)
         {
-            this.openConnection(true);
+            openConnection(true);
         }
     }
 

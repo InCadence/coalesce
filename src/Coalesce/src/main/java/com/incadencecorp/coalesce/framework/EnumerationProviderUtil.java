@@ -226,6 +226,30 @@ public final class EnumerationProviderUtil {
     }
 
     /**
+     * @param principal
+     * @param enumeration
+     * @param value
+     * @param defaultValue
+     * @return {@link #toString(Principal, String, int)}; Returns the default
+     *         value instead of an {@link IndexOutOfBoundsException} on failure.
+     */
+    public static String toString(Principal principal, String enumeration, int value, String defaultValue)
+    {
+        String result;
+
+        try
+        {
+            result = toString(principal, enumeration, value);
+        }
+        catch (IndexOutOfBoundsException | IllegalArgumentException e)
+        {
+            result = defaultValue;
+        }
+
+        return result;
+    }
+
+    /**
      * Calls {@link IEnumerationProvider#toPosition(Principal, String, String)}
      * on the first provider that handles the given enumeration.
      * 
@@ -246,6 +270,31 @@ public final class EnumerationProviderUtil {
         enumeration = lookupEnumeration(enumeration);
 
         return getProvider(principal, enumeration).toPosition(principal, enumeration, value);
+    }
+
+    /**
+     * @param principal
+     * @param enumeration
+     * @param value
+     * @param defaultValue
+     * @return {@link #toPosition(Principal, String, String)}; Returns the
+     *         default value instead of an {@link IndexOutOfBoundsException} on
+     *         failure.
+     */
+    public static int toPosition(Principal principal, String enumeration, String value, int defaultValue)
+    {
+        int result;
+
+        try
+        {
+            result = toPosition(principal, enumeration, value);
+        }
+        catch (IndexOutOfBoundsException e)
+        {
+            result = defaultValue;
+        }
+
+        return result;
     }
 
     /**

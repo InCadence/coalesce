@@ -19,19 +19,49 @@ package com.incadencecorp.coalesce.api.persistance;
 
 /**
  * Capabilities of Coalesce persistors.
- * 
- * @author Derek
  *
+ * @author Derek
  */
 public enum EPersistorCapabilities
 {
     /**
-     * Whether or not this persistor can return entities.
+     * Whether or not this persistor can create entities.
      */
-    READ, 
+    CREATE,
     /**
-     * Weather or not this persistor can return templates.
+     * Whether or not this persistor can read entities.
      */
-    READ_TEMPLATES;
-
+    READ,
+    /**
+     * Whether or not this persistor can get the value of a field.
+     */
+    GET_FIELD_VALUE,
+    /**
+     * Whather or not this persistor can read templates.
+     */
+    READ_TEMPLATES,
+    /**
+     * Whether or not this persistor can update entities.
+     */
+    UPDATE,
+    /**
+     * Whether or not this persistor can delete entities.
+     */
+    DELETE,
+    /**
+     * Whether or not this persistor can search for entities.
+     */
+    SEARCH,
+    /**
+     * Whether or not this persistor can store binary large objects (BLOB).
+     */
+    SUPPORTS_BLOB,
+    /**
+     * Whether or not this persistor can geospatially search entities.
+     */
+    GEOSPATIAL_SEARCH,
+    /**
+     * Whether or not this persistor can index fields.
+     */
+    INDEX_FIELDS;
 }

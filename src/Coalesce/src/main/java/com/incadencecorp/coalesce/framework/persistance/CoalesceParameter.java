@@ -43,6 +43,15 @@ public class CoalesceParameter {
     {
         this(value.toString(), Types.INTEGER);
     }
+    
+    /**
+     * Creates a Boolean parameter as type {@link Types#BOOLEAN}
+     * @param value
+     */
+    public CoalesceParameter(Boolean value)
+    {
+        this(value.toString(), Types.BOOLEAN);
+    }
 
     /**
      * Creates a String parameter as type {@link Types#CHAR}.

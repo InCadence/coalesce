@@ -62,7 +62,57 @@ public class CoalesceValidator extends CoalesceIterator {
     private CoalesceEntity entity;
     private Principal principal;
 
+    private final List<String> exclusions = new ArrayList<String>();
+
     private static final Logger LOGGER = LoggerFactory.getLogger(CoalesceValidator.class);
+    
+    /**
+     * Wild card used for specifying exclusions. '<record set name>.*' or '*'.  
+     */
+    public static final String WILD_CARD = "*";
+
+    /**
+     * If no exclusions are specified it will attempt to load them from this
+     * enumeration.
+     */
+    public static final String ENUM_EXCLUSIONS = "VALIDATION_EXCLUSIONS";
+
+    /**
+     * Default Constructor
+     */
+    public CoalesceValidator()
+    {
+        this(loadExclusions());
+    }
+
+    private static List<String> loadExclusions()
+    {
+        List<String> results;
+
+        try
+        {
+            results = EnumerationProviderUtil.getValues(null, ENUM_EXCLUSIONS);
+        }
+        catch (IllegalArgumentException | IllegalStateException e)
+        {
+            results = null;
+        }
+
+        return results;
+    }
+
+    /**
+     * Constructs a validator with a list of exclusions.
+     * 
+     * @param exclusions
+     */
+    public CoalesceValidator(List<String> exclusions)
+    {
+        if (exclusions != null)
+        {
+            this.exclusions.addAll(exclusions);
+        }
+    }
 
     /**
      * Calls {@link #validate(Principal, CoalesceEntity, Map)} passing
@@ -215,7 +265,6 @@ public class CoalesceValidator extends CoalesceIterator {
 
     private void validateRecord(CoalesceRecord record, List<CoalesceFieldDefinition> definitions)
     {
-
         // For Each Definition
         for (CoalesceFieldDefinition definition : definitions)
         {
@@ -228,104 +277,119 @@ public class CoalesceValidator extends CoalesceIterator {
                 // Has Field?
                 if (field != null)
                 {
-                    // Apply Each Constraint to Field
-                    for (CoalesceConstraint constraint : definition.getConstraints())
+                    String result = null;
+
+                    // Verify File Type = Definition
+                    if (field.getDataType() != definition.getDataType())
                     {
-
-                        String result = null;
-
-                        switch (constraint.getConstraintType()) {
-                        case MANDATORY:
-                            result = validateMandatory(field, Boolean.parseBoolean(constraint.getAttribute("allowEmpty")));
-                            break;
-                        case CUSTOM:
-                            result = validateCustom(field, constraint);
-                            break;
-                        case REGEX:
-                            result = validateRegEx(field, constraint);
-                            break;
-                        case MAX:
-                            result = validateMax(field, constraint);
-                            break;
-                        case MIN:
-                            result = validateMin(field, constraint);
-                            break;
-                        case ENUMERATION:
-                            result = validateEnumeration(field, constraint);
-                            break;
-                        case SIZE:
-                            result = validateSize(field, constraint);
-                            break;
-                        }
-
-                        if (result != null)
+                        result = String.format(CoalesceErrors.INVALID_DATA_TYPE,
+                                               field.getKey(),
+                                               field.getDataType(),
+                                               field.getEntity().getKey(),
+                                               definition.getDataType());
+                    }
+                    else
+                    {
+                        // Apply Each Constraint to Field
+                        for (CoalesceConstraint constraint : definition.getConstraints())
                         {
-                            if (LOGGER.isInfoEnabled())
-                            {
-                                LOGGER.warn("Field ({}.{}) is invalid beacuse ({})",
-                                            record.getParent().getName(),
-                                            field.getName(),
-                                            result);
+                            switch (constraint.getConstraintType()) {
+                            case MANDATORY:
+                                result = validateMandatory(field,
+                                                           Boolean.parseBoolean(constraint.getAttribute("allowEmpty")));
+                                break;
+                            case CUSTOM:
+                                result = validateCustom(field, constraint);
+                                break;
+                            case REGEX:
+                                result = validateRegEx(field, constraint);
+                                break;
+                            case MAX:
+                                result = validateMax(field, constraint);
+                                break;
+                            case MIN:
+                                result = validateMin(field, constraint);
+                                break;
+                            case ENUMERATION:
+                                result = validateEnumeration(field, constraint);
+                                break;
+                            case SIZE:
+                                result = validateSize(field, constraint);
+                                break;
                             }
 
+                            if (result != null)
+                            {
+                                break;
+                            }
+                        }
+                    }
+
+                    if (result != null)
+                    {
+                        if (LOGGER.isInfoEnabled())
+                        {
+                            LOGGER.warn("Field ({}.{}) is invalid beacuse ({})",
+                                        record.getParent().getName(),
+                                        field.getName(),
+                                        result);
+                        }
+
+                        if (!excludeValidation(field))
+                        {
                             violations.put(field.getKey(), result);
                         }
                     }
                 }
             }
-
         }
+    }
+
+    private boolean excludeValidation(CoalesceField<?> field)
+    {
+        String recordsetName = field.getParent().getParent().getName();
+
+        return exclusions.contains(WILD_CARD) || exclusions.contains(recordsetName + "." + WILD_CARD)
+                || exclusions.contains(recordsetName + "." + field.getName());
+
     }
 
     private String validateEnumeration(CoalesceField<?> field, CoalesceConstraint constraint)
     {
         String result = null;
 
-        // Verify File Type = Definition
-        if (field.getDataType() != constraint.getFieldDefinition().getDataType())
-        {
-            result = String.format(CoalesceErrors.INVALID_DATA_TYPE,
-                                   field.getKey(),
-                                   field.getDataType(),
-                                   field.getEntity().getKey(),
-                                   constraint.getFieldDefinition().getDataType());
-            LOGGER.warn(result);
-        }
-        else
-        {
-            switch (field.getDataType()) {
-            case ENUMERATION_TYPE:
-            case ENUMERATION_LIST_TYPE:
-                // Ensure Constraint Enumeration Exists
-                ConstraintEnumerationProviderImpl provider = EnumerationProviderUtil.getProvider(ConstraintEnumerationProviderImpl.class);
-                if (provider != null)
-                {
-                    provider.add(constraint);
-                }
-
-                // Validate Values
-                result = validateEnumeration(constraint.getValue(), ArrayHelper.toIntegerArray(field.getBaseValues()));
-                break;
-            case STRING_TYPE:
-                result = validateRegEx(constraint.getValue(), field.getBaseValues());
-
-                if (result != null)
-                {
-                    result = String.format(CoalesceErrors.INVALID_ENUMERATION, result);
-                }
-                LOGGER.warn(String.format(CoalesceErrors.DEPRECATED_CONSTRAINT,
-                                          constraint.getName(),
-                                          field.getEntity().getKey(),
-                                          field.getDataType()));
-                break;
-            default:
-                // Do Nothing; Invalid Type
-                LOGGER.warn(String.format(CoalesceErrors.INVALID_CONSTRAINT,
-                                          constraint.getName(),
-                                          field.getEntity().getKey(),
-                                          field.getDataType()));
-
+        switch (field.getDataType()) {
+        case ENUMERATION_TYPE:
+        case ENUMERATION_LIST_TYPE:
+            // Ensure Constraint Enumeration Exists
+            ConstraintEnumerationProviderImpl provider = EnumerationProviderUtil.getProvider(ConstraintEnumerationProviderImpl.class);
+            if (provider != null)
+            {
+                provider.add(constraint);
             }
+
+            // Validate Values
+            result = validateEnumeration(constraint.getValue(), ArrayHelper.toIntegerArray(field.getBaseValues()));
+            break;
+        case STRING_TYPE:
+            result = validateRegEx(constraint.getValue(), field.getBaseValues());
+
+            if (result != null)
+            {
+                result = String.format(CoalesceErrors.INVALID_ENUMERATION, result);
+            }
+            LOGGER.warn(String.format(CoalesceErrors.DEPRECATED_CONSTRAINT,
+                                      constraint.getName(),
+                                      field.getEntity().getKey(),
+                                      field.getDataType()));
+            break;
+        default:
+            // Do Nothing; Invalid Type
+            LOGGER.warn(String.format(CoalesceErrors.INVALID_CONSTRAINT,
+                                      constraint.getName(),
+                                      field.getEntity().getKey(),
+                                      field.getDataType()));
+
         }
 
         return result;

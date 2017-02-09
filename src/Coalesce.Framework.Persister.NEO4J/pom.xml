@@ -12,7 +12,7 @@
 		<version>0.0.21-SNAPSHOT</version>
 		<relativePath>../Coalesce.Pom</relativePath>
 	</parent>
-	
+
 	<build>
 		<plugins>
 			<plugin>
@@ -105,6 +105,10 @@
 		<dependency>
 			<groupId>com.incadencecorp.coalesce</groupId>
 			<artifactId>coalesce-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.incadencecorp.coalesce</groupId>
+			<artifactId>coalesce-search</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.incadencecorp.coalesce</groupId>
@@ -211,21 +215,21 @@
 		</dependency>
 
 
-<!-- 		<dependency> -->
-<!-- 			<groupId>com.mysema.querydsl</groupId> -->
-<!-- 			<artifactId>querydsl-core</artifactId> -->
-<!-- 			<version>3.6.3</version> -->
-<!-- 			<exclusions> -->
-<!-- 				<exclusion> -->
-<!-- 					<groupId>com.google.code.findbugs</groupId> -->
-<!-- 					<artifactId>jsr305</artifactId> -->
-<!-- 				</exclusion> -->
-<!-- 				<exclusion> -->
-<!-- 					<groupId>com.infradna.tool</groupId> -->
-<!-- 					<artifactId>bridge-method-annotation</artifactId> -->
-<!-- 				</exclusion> -->
-<!-- 			</exclusions> -->
-<!-- 		</dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>com.mysema.querydsl</groupId> -->
+		<!-- <artifactId>querydsl-core</artifactId> -->
+		<!-- <version>3.6.3</version> -->
+		<!-- <exclusions> -->
+		<!-- <exclusion> -->
+		<!-- <groupId>com.google.code.findbugs</groupId> -->
+		<!-- <artifactId>jsr305</artifactId> -->
+		<!-- </exclusion> -->
+		<!-- <exclusion> -->
+		<!-- <groupId>com.infradna.tool</groupId> -->
+		<!-- <artifactId>bridge-method-annotation</artifactId> -->
+		<!-- </exclusion> -->
+		<!-- </exclusions> -->
+		<!-- </dependency> -->
 
 		<dependency>
 			<groupId>com.google.guava</groupId>
@@ -237,12 +241,12 @@
 			<artifactId>mysema-commons-lang</artifactId>
 			<version>0.2.4</version>
 		</dependency>
-<!-- 		<dependency> -->
-<!-- 			<groupId>com.infradna.tool</groupId> -->
-<!-- 			<artifactId>bridge-method-annotation</artifactId> -->
-<!-- 			<version>1.13</version> -->
-<!-- 			<scope>provided</scope> -->
-<!-- 		</dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>com.infradna.tool</groupId> -->
+		<!-- <artifactId>bridge-method-annotation</artifactId> -->
+		<!-- <version>1.13</version> -->
+		<!-- <scope>provided</scope> -->
+		<!-- </dependency> -->
 	</dependencies>
 
 </project>

@@ -17,8 +17,6 @@
 
 package com.incadencecorp.coalesce.search.filter;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 import javax.xml.transform.TransformerException;
@@ -82,6 +80,7 @@ import org.opengis.filter.temporal.TOverlaps;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.helpers.AttributesImpl;
 
+import com.incadencecorp.coalesce.framework.CoalesceSettings;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -99,38 +98,34 @@ public class CoalesceFilterTransformer extends TransformerBase {
     /** The namespace to use if none is provided. */
     private static String defaultNamespace = "http://www.opengis.net/ogc";
 
-    /** Map of comparison types to sql representation */
-    private static Map comparisions = new HashMap();
-
-    /** Map of spatial types to sql representation */
-    private static Map spatial = new HashMap();
-
-    /** Map of logical types to sql representation */
-    private static Map logical = new HashMap();
-
     /**
      * A typed convenience method for converting a Filter into XML.
+     * 
+     * @param f
+     * @return filter as XML
+     * @throws TransformerException
      */
     public String transform(Filter f) throws TransformerException
     {
         return super.transform(f);
     }
 
+    @Override
     public org.geotools.xml.transform.Translator createTranslator(ContentHandler handler)
     {
-        return new FilterTranslator(handler);
+        return new FilterTranslator(handler, CoalesceSettings.getNumDecimalsForCoordinates());
     }
 
-    public static class FilterTranslator extends TranslatorSupport implements org.opengis.filter.FilterVisitor,
+    private static class FilterTranslator extends TranslatorSupport implements org.opengis.filter.FilterVisitor,
             org.opengis.filter.expression.ExpressionVisitor {
 
         GeometryTransformer.GeometryTranslator geometryEncoder;
 
-        public FilterTranslator(ContentHandler handler)
+        public FilterTranslator(ContentHandler handler, int numDecimals)
         {
             super(handler, "ogc", defaultNamespace);
 
-            geometryEncoder = new GeometryTransformer.GeometryTranslator(handler);
+            geometryEncoder = new GeometryTransformer.GeometryTranslator(handler, numDecimals);
 
             addNamespaceDeclarations(geometryEncoder);
         }

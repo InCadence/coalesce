@@ -1,10 +1,12 @@
 package com.incadencecorp.coalesce.framework.persistance;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 import org.joda.time.DateTime;
 
+import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
@@ -29,7 +31,7 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 
 /**
  * Defines common functionality between persistors.
- * 
+ *
  * @author Derek C.
  */
 public abstract class CoalescePersistorBase implements ICoalescePersistor {
@@ -55,7 +57,7 @@ public abstract class CoalescePersistorBase implements ICoalescePersistor {
 
     /**
      * Sets the server connection.
-     * 
+     *
      * @param svConn connection object.
      */
     public void setConnectionSettings(ServerConn svConn)
@@ -77,7 +79,7 @@ public abstract class CoalescePersistorBase implements ICoalescePersistor {
     @Override
     public void setCacher(ICoalesceCacher cacher)
     {
-        this._cacher = cacher;
+        _cacher = cacher;
     }
 
     @Override
@@ -86,23 +88,23 @@ public abstract class CoalescePersistorBase implements ICoalescePersistor {
         boolean isSuccessful = false;
 
         // Cacher Disabled or not an Entity
-        if (this._cacher == null)
+        if (_cacher == null)
         {
             // Yes; Persist and Flatten Now
-            isSuccessful = this.flattenObject(allowRemoval, entities);
+            isSuccessful = flattenObject(allowRemoval, entities);
         }
         else
         {
             // Delayed Persisting and Space Available?
-            if (this._cacher.getSupportsDelayedSave() && this._cacher.getState() == ECoalesceCacheStates.SPACE_AVAILABLE)
+            if (_cacher.getSupportsDelayedSave() && _cacher.getState() == ECoalesceCacheStates.SPACE_AVAILABLE)
             {
                 // Yes; Only Flatten Core Elements
-                isSuccessful = this.flattenCore(allowRemoval, entities);
+                isSuccessful = flattenCore(allowRemoval, entities);
             }
             else
             {
                 // No; Persist and Flatten Entity Now
-                isSuccessful = this.flattenObject(allowRemoval, entities);
+                isSuccessful = flattenObject(allowRemoval, entities);
             }
 
             // If Successful Add to Cache
@@ -110,7 +112,7 @@ public abstract class CoalescePersistorBase implements ICoalescePersistor {
             {
                 for (CoalesceEntity entity : entities)
                 {
-                    isSuccessful = this._cacher.storeEntity(entity);
+                    isSuccessful = _cacher.storeEntity(entity);
                 }
             }
 
@@ -130,7 +132,7 @@ public abstract class CoalescePersistorBase implements ICoalescePersistor {
         {
 
             // Get From Cache
-            CoalesceEntity entity = this.getEntityFromCache(key);
+            CoalesceEntity entity = getEntityFromCache(key);
 
             // Cached?
             if (entity != null)
@@ -161,7 +163,7 @@ public abstract class CoalescePersistorBase implements ICoalescePersistor {
                     results.add(entity);
 
                     // Add Entity to Cache
-                    this.addEntityToCache(entity);
+                    addEntityToCache(entity);
 
                 }
 
@@ -190,7 +192,7 @@ public abstract class CoalescePersistorBase implements ICoalescePersistor {
             entity.initialize(entityXml);
 
             // Add Entity to Cache
-            this.addEntityToCache(entity);
+            addEntityToCache(entity);
 
         }
 
@@ -216,7 +218,7 @@ public abstract class CoalescePersistorBase implements ICoalescePersistor {
             entity.initialize(entityXml);
 
             // Add Entity to Cache
-            this.addEntityToCache(entity);
+            addEntityToCache(entity);
 
         }
 
@@ -240,6 +242,16 @@ public abstract class CoalescePersistorBase implements ICoalescePersistor {
     public void registerTemplate(final CoalesceEntityTemplate... templates) throws CoalescePersistorException
     {
         saveTemplate(templates);
+    }
+
+    /**
+     * @return EnumSet of EPersistorCapabilities
+     */
+    @Override
+    public EnumSet<EPersistorCapabilities> getCapabilities()
+    {
+        EnumSet<EPersistorCapabilities> enumSet = EnumSet.of(EPersistorCapabilities.CREATE, EPersistorCapabilities.READ);
+        return enumSet;
     }
 
     /*--------------------------------------------------------------------------
@@ -313,15 +325,15 @@ public abstract class CoalescePersistorBase implements ICoalescePersistor {
         CoalesceEntity entity = null;
 
         // Cacher Initialized?
-        if (this._cacher != null)
+        if (_cacher != null)
         {
 
             // Yes; Contains Entity?
-            if (this._cacher.containsEntity(key))
+            if (_cacher.containsEntity(key))
             {
 
                 // Yes; Retrieve Entity
-                entity = this._cacher.retrieveEntity(key);
+                entity = _cacher.retrieveEntity(key);
 
             }
 
@@ -337,11 +349,11 @@ public abstract class CoalescePersistorBase implements ICoalescePersistor {
         boolean isModified = false;
 
         // Cacher Initialized?
-        if (this._cacher != null)
+        if (_cacher != null)
         {
 
             // Yes; Retrieve Entity
-            isModified = this._cacher.storeEntity(entity);
+            isModified = _cacher.storeEntity(entity);
 
         }
 

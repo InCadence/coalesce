@@ -18,8 +18,12 @@
 package com.incadencecorp.coalesce.search.factory;
 
 import org.geotools.factory.CommonFactoryFinder;
+import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.PropertyName;
+
+import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
+import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
 
 /**
  * Defines the properties of a CoalesceEntity.
@@ -30,19 +34,16 @@ public class CoalescePropertyFactory {
 
     private static FilterFactory ff;
 
-    /**
-     * Default Constructor
-     */
-    private CoalescePropertyFactory()
-    {
-    }
+    private static final String SEPERATOR = ".";
+    private static final String COALESCE_ENTITY_TABLE = "coalesceentity" + SEPERATOR;
+    private static final String COALESCE_LINKAGE_TABLE = "coalescelinkage" + SEPERATOR;
 
     /**
      * Overrides the default factory.
      *
      * @param value
      */
-    public static void initialize(FilterFactory value)
+    public final static void initialize(FilterFactory value)
     {
         ff = value;
     }
@@ -50,7 +51,7 @@ public class CoalescePropertyFactory {
     /**
      * @return the filter factory that this class has been initialized with.
      */
-    public static FilterFactory getFilterFactory()
+    public final static FilterFactory getFilterFactory()
     {
 
         if (ff == null)
@@ -70,7 +71,7 @@ public class CoalescePropertyFactory {
      */
     public static PropertyName getDateCreated()
     {
-        return getFilterFactory().property("coalesceentity.datecreated");
+        return getFilterFactory().property(COALESCE_ENTITY_TABLE + "datecreated");
     }
 
     /**
@@ -78,7 +79,7 @@ public class CoalescePropertyFactory {
      */
     public static PropertyName getLastModified()
     {
-        return getFilterFactory().property("coalesceentity.lastmodified");
+        return getFilterFactory().property(COALESCE_ENTITY_TABLE + "lastmodified");
     }
 
     /**
@@ -86,7 +87,15 @@ public class CoalescePropertyFactory {
      */
     public static PropertyName getVersion()
     {
-        return getFilterFactory().property("coalesceentity.version");
+        return getFilterFactory().property(COALESCE_ENTITY_TABLE + "version");
+    }
+
+    /**
+     * @return the property used for filtering on source.
+     */
+    public static PropertyName getSource()
+    {
+        return getFilterFactory().property(COALESCE_ENTITY_TABLE + "source");
     }
 
     /**
@@ -94,7 +103,7 @@ public class CoalescePropertyFactory {
      */
     public static PropertyName getName()
     {
-        return getFilterFactory().property("coalesceentity.name");
+        return getFilterFactory().property(COALESCE_ENTITY_TABLE + "name");
     }
 
     /**
@@ -102,7 +111,16 @@ public class CoalescePropertyFactory {
      */
     public static PropertyName getEntityKey()
     {
-        return getFilterFactory().property("coalesceentity.objectkey");
+        return getFilterFactory().property(COALESCE_ENTITY_TABLE + "objectkey");
+    }
+
+    /**
+     * @param key
+     * @return a filter objectkey = key
+     */
+    public static Filter getEntityKey(String key)
+    {
+        return getFilterFactory().equals(getEntityKey(), getFilterFactory().literal(key));
     }
 
     /**
@@ -110,7 +128,95 @@ public class CoalescePropertyFactory {
      */
     public static PropertyName getEntityTitle()
     {
-        return getFilterFactory().property("coalesceentity.title");
+        return getFilterFactory().property(COALESCE_ENTITY_TABLE + "title");
     }
 
+    /*--------------------------------------------------------------------------
+    Coalesce Linkage Table Expressions
+    --------------------------------------------------------------------------*/
+
+    /**
+     * @return the property used for filtering on the entity key of linked
+     *         entities.
+     */
+    public static PropertyName getLinkageEntityKey()
+    {
+        return getFilterFactory().property(COALESCE_LINKAGE_TABLE + "entity2key");
+    }
+
+    /**
+     * @param key
+     * @return a filter objectkey = key
+     */
+    public static Filter getLinkageEntityKey(String key)
+    {
+        return getFilterFactory().equals(getLinkageEntityKey(), getFilterFactory().literal(key));
+    }
+
+    /**
+     * @return the property used for filtering on versions of linked entities.
+     */
+    public static PropertyName getLinkageVersion()
+    {
+        return getFilterFactory().property(COALESCE_LINKAGE_TABLE + "entity2version");
+    }
+
+    /**
+     * @return the property used for filtering on sources of linked entities.
+     */
+    public static PropertyName getLinkageSource()
+    {
+        return getFilterFactory().property(COALESCE_LINKAGE_TABLE + "entity2source");
+    }
+
+    /**
+     * @return the property used for filtering on entity names of linked
+     *         entities.
+     */
+    public static PropertyName getLinkageName()
+    {
+        return getFilterFactory().property(COALESCE_LINKAGE_TABLE + "entity2name");
+    }
+
+    /**
+     * @return the property used for filtering on linkage types.
+     */
+    public static PropertyName getLinkageType()
+    {
+        return getFilterFactory().property(COALESCE_LINKAGE_TABLE + "linktype");
+    }
+
+    /**
+     * @param type
+     * @return the property used for filtering on linkage statuses.
+     */
+    public static Filter getLinkageType(ELinkTypes type)
+    {
+        return getFilterFactory().equals(getLinkageType(), getFilterFactory().literal(type.toString().toUpperCase()));
+    }
+
+    /**
+     * @return the property used for filtering on linkage statuses.
+     */
+    public static PropertyName getLinkageStatus()
+    {
+        return getFilterFactory().property(COALESCE_LINKAGE_TABLE + "linkstatus");
+    }
+
+    /**
+     * @param status
+     * @return the property used for filtering on linkage statuses.
+     */
+    public static Filter getLinkageStatus(ECoalesceObjectStatus status)
+    {
+        return getFilterFactory().equals(getLinkageStatus(), getFilterFactory().literal(status.toString().toUpperCase()));
+    }
+
+    /**
+     * @return the property used for filtering on linkage statuses.
+     */
+    public static PropertyName getLinkageLabel()
+    {
+        return getFilterFactory().property(COALESCE_LINKAGE_TABLE + "linklabel");
+    }
 }

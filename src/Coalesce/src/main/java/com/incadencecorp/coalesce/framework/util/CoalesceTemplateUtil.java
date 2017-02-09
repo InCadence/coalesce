@@ -214,6 +214,16 @@ public final class CoalesceTemplateUtil {
             types.put("coalesceentity.objectkey", ECoalesceFieldDataTypes.GUID_TYPE);
             types.put("coalesceentity.datecreated", ECoalesceFieldDataTypes.DATE_TIME_TYPE);
             types.put("coalesceentity.lastmodified", ECoalesceFieldDataTypes.DATE_TIME_TYPE);
+
+            types.put("coalescelinkage.entity2key", ECoalesceFieldDataTypes.GUID_TYPE);
+            types.put("coalescelinkage.entity2name", ECoalesceFieldDataTypes.STRING_TYPE);
+            types.put("coalescelinkage.entity2source", ECoalesceFieldDataTypes.STRING_TYPE);
+            types.put("coalescelinkage.entity2version", ECoalesceFieldDataTypes.STRING_TYPE);
+
+            types.put("coalescelinkage.linkstatus", ECoalesceFieldDataTypes.STRING_TYPE);
+            types.put("coalescelinkage.linktype", ECoalesceFieldDataTypes.STRING_TYPE);
+            types.put("coalescelinkage.linklabel", ECoalesceFieldDataTypes.STRING_TYPE);
+
         }
     }
 
