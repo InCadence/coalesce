@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.incadencecorp.coalesce</groupId>
 	<artifactId>coalesce-bom</artifactId>
-	<version>0.0.21-SNAPSHOT</version>
+	<version>0.0.24</version>
 	<packaging>pom</packaging>
 	<name>coalesce.bom</name>
 
@@ -19,7 +19,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<changelog.start.tag>coalesce-0.0.16</changelog.start.tag>
-		<changelog.end.tag>HEAD</changelog.end.tag>
+		<changelog.end.tag>coalesce-0.0.24</changelog.end.tag>
 
 	</properties>
 

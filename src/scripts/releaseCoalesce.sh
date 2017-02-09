@@ -2,7 +2,7 @@
 
 name="Coalesce"
 tagname="coalesce"
-parentpom="${parentpom}"
+parentpom="../Coalesce.Bom/pom.xml"
 
 preVersion=$(cat ${parentpom} | grep -E -m 1 -o "<version>(.*)</version>" | sed -e 's,.*<version>\([^<]*\)</version>.*,\1,g')
 version=${preVersion}
@@ -10,8 +10,8 @@ version=${preVersion}
 echo "Current version: ${preVersion}"
 
 case $version in
-	*-SNAPSHOT) isSnapshot=true;;
-	* ) isSnapshot=false;;
+    *-SNAPSHOT) isSnapshot=true;;
+    * ) isSnapshot=false;;
 esac
 
 while true; do
@@ -23,6 +23,12 @@ while true; do
                 read -p "New Version: " version
 
 		echo "Maven Setting version to ${version}..."
+
+                case $version in
+	            *-SNAPSHOT) isSnapshot=true;;
+	            * ) isSnapshot=false;;
+                esac
+
 		echo "isSnapshot set to: ${isSnapshot}"
 
 		mvn versions:set -DnewVersion=${version} -f ${parentpom}
@@ -125,7 +131,7 @@ while true; do
     case $doPush in
         y | yes)
 	    echo "pushing code to master"
-	    git push origin HEAD:refs/heads/master
+	    git push origin HEAD:refs/heads/develop
 
 
 	    if [ "${isSnapshot}" = false ] ; then
