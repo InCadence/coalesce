@@ -18,21 +18,33 @@ package com.incadencecorp.coalesce.common.exceptions;
  -----------------------------------------------------------------------------*/
 
 /**
- * Exception that is thrown by Coalesce whenever there is an error with persisting or retrieving Coalesce entities.
+ * Exception that is thrown by Coalesce whenever there is an error with
+ * persisting or retrieving Coalesce entities.
  */
 public class CoalescePersistorException extends CoalesceException {
 
     private static final long serialVersionUID = 6544606397288281154L;
 
     /**
-     * Constructor function. Sets the message and exception to the parameter passed in.
-     * 
+     * Constructor function. Sets the message and exception to the parameter
+     * passed in.
+     *
      * @param message allowed object is {@link String }
      * @param ex allowed object is {@link Exception }
      */
     public CoalescePersistorException(final String message, final Exception ex)
     {
         super(message, ex);
+    }
+
+    /**
+     * Constructor to simply pass an error message.
+     *
+     * @param message
+     */
+    public CoalescePersistorException(final String message)
+    {
+        super(message);
     }
 
 }

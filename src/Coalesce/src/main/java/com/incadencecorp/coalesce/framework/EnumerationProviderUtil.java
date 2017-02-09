@@ -241,7 +241,7 @@ public final class EnumerationProviderUtil {
         {
             result = toString(principal, enumeration, value);
         }
-        catch (IndexOutOfBoundsException e)
+        catch (IndexOutOfBoundsException | IllegalArgumentException e)
         {
             result = defaultValue;
         }

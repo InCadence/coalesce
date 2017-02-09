@@ -18,11 +18,13 @@
 package com.incadencecorp.coalesce.framework.persistance.neo4j;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
+import java.util.Set;
 
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
@@ -30,10 +32,13 @@ import javax.sql.rowset.RowSetProvider;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
+import org.opengis.filter.expression.PropertyName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceBooleanField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
@@ -46,6 +51,7 @@ import com.incadencecorp.coalesce.framework.persistance.CoalescePersistorBase;
 import com.incadencecorp.coalesce.framework.persistance.ElementMetaData;
 import com.incadencecorp.coalesce.framework.persistance.EntityMetaData;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
+import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 
 /**
  * Neo4j Implementation. Extend and override {@link #getGroups(CoalesceEntity)}
@@ -57,22 +63,46 @@ public class Neo4JPersistor extends CoalescePersistorBase {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Neo4JPersistor.class);
 
-    private static final String CYPHER_MERGE = "MERGE (Entity:%1$s {entityKey: {4}})"
-            + " ON CREATE SET Entity.title = {1}, Entity.lastModified = {2},"
-            + " Entity.deleted=%3$s, Entity.groups = %4$s, Entity.entityName = {3}," + " Entity.entityKey = {4}%2$s"
-            + " ON MATCH SET Entity.title = {1}, Entity.lastModified = {2},"
-            + " Entity.deleted=%3$s, Entity.groups = %4$s%2$s";
+    /**
+     * @see CoalescePropertyFactory#getEntityKey()
+     */
+    // TODO Phase this out for getName(CoalescePropertyFactory.getEntityKey());
+    // on DB wipe
+    public static final String KEY = "entityKey";
+    /**
+     * @see CoalescePropertyFactory#getName()
+     */
+    public static final String NAME = getName(CoalescePropertyFactory.getName());
+    /**
+     * @see CoalescePropertyFactory#getEntityTitle()
+     */
+    public static final String TITLE = getName(CoalescePropertyFactory.getEntityTitle());
+    /**
+     * @see CoalescePropertyFactory#getLastModified()
+     */
+    public static final String LASTMODIFIED = getName(CoalescePropertyFactory.getLastModified());
+    /**
+     * @see CoalescePropertyFactory#getDateCreated()
+     */
+    public static final String DATECREATED = getName(CoalescePropertyFactory.getDateCreated());
 
-    private static final String CYPHER_LINK_CLASSIFICATION = "MATCH (n:%s {entityKey: {1}}), (cls:CLASSIFICATION_LEVEL {name: {2}}) "
-            + "OPTIONAL MATCH n-[r:CLEARED_TO]->() DELETE r " + "CREATE UNIQUE n-[:CLEARED_TO]->(cls)";
+    private static final String CYPHER_MERGE = "MERGE (Entity:%1$s {" + KEY + ": {2}})"
+            + " ON CREATE SET Entity.deleted=%3$s, Entity.groups = %4$s, Entity." + NAME + " = {1}," + " Entity." + KEY
+            + " = {2}%2$s" + " ON MATCH SET Entity.deleted=%3$s, Entity.groups = %4$s%2$s";
 
-    private static final String CYPHER_DELETE_NODE = "MATCH (n:%s {entityKey: {1}}) OPTIONAL MATCH n-[r]-() DELETE n, r";
+    private static final String CYPHER_LINK_CLASSIFICATION = "MATCH (n:%s {" + KEY
+            + ": {1}}), (cls:CLASSIFICATION_LEVEL {name: {2}}) " + "OPTIONAL MATCH n-[r:CLEARED_TO]->() DELETE r "
+            + "CREATE UNIQUE n-[:CLEARED_TO]->(cls)";
 
-    private static final String CYPHER_LINK = "MATCH (n1:%s {entityKey: {1}}), (n2:%s {entityKey: {2}}) CREATE UNIQUE (n1)-[:%s {key: {3}}]->(n2)";
+    private static final String CYPHER_DELETE_NODE = "MATCH (n:%s {" + KEY + ": {1}}) OPTIONAL MATCH n-[r]-() DELETE n, r";
 
-    private static final String CYPHER_UNLINK = "OPTIONAL MATCH (n1:%s {entityKey: {1}})-[rel:%s {key: {3}}]->(n2:%s {entityKey: {2}}) DELETE rel";
+    private static final String CYPHER_LINK = "MATCH (n1:%s {" + KEY + ": {1}}), (n2:%s {" + KEY
+            + ": {2}}) CREATE UNIQUE (n1)-[:%s {key: {3}}]->(n2)";
 
-    private static final String CYPHER_CONSTRAINT = "CREATE CONSTRAINT ON (n:%s) ASSERT n.entityKey IS UNIQUE";
+    private static final String CYPHER_UNLINK = "OPTIONAL MATCH (n1:%s {" + KEY + ": {1}})-[rel:%s {key: {3}}]->(n2:%s {"
+            + KEY + ": {2}}) DELETE rel";
+
+    private static final String CYPHER_CONSTRAINT = "CREATE CONSTRAINT ON (n:%s) ASSERT n." + KEY + " IS UNIQUE";
 
     /*--------------------------------------------------------------------------
     Constructor
@@ -124,26 +154,24 @@ public class Neo4JPersistor extends CoalescePersistorBase {
 
                     for (CoalesceEntity entity : entities)
                     {
-
-                        // if (entity.getStatus() !=
-                        // ECoalesceObjectStatus.DELETED) {
-
-                        // Persist Entity
-                        persistEntityObject(entity, conn);
-
-                        // Persist Security Linkages
-                        linkClassificationLevel(entity, conn);
-
-                        // Persist Linkages
-                        for (CoalesceLinkage linkage : entity.getLinkages().values())
+                        if (entity.getStatus() != ECoalesceObjectStatus.DELETED || !Neo4jSettings.isAllowDelete())
                         {
-                            persistLinkageObject(linkage, conn);
+                            // Persist Entity
+                            persistEntityObject(entity, conn);
+
+                            // Persist Security Linkages
+                            linkClassificationLevel(entity, conn);
+
+                            // Persist Linkages
+                            for (CoalesceLinkage linkage : entity.getLinkages().values())
+                            {
+                                persistLinkageObject(linkage, conn);
+                            }
                         }
-
-                        // } else {
-                        // deleteEntity(entity, conn);
-                        // }
-
+                        else
+                        {
+                            deleteEntity(entity, conn);
+                        }
                     }
 
                     conn.commit();
@@ -324,38 +352,39 @@ public class Neo4JPersistor extends CoalescePersistorBase {
     protected boolean persistEntityObject(CoalesceEntity entity, CoalesceDataConnectorBase conn) throws SQLException
     {
         // Obtain a list of all field values
-        HashMap<String, String> fieldValues = new HashMap<String, String>();
+        Map<String, CoalesceParameter> fieldValues = new HashMap<String, CoalesceParameter>();
+
+        // Add Coalesce Entity's Fields
+        fieldValues.put(TITLE, new CoalesceParameter(entity.getTitle()));
+        fieldValues.put(LASTMODIFIED, new CoalesceParameter(entity.getAttribute(CoalesceObject.ATTRIBUTE_LASTMODIFIED)));
+        fieldValues.put(DATECREATED, new CoalesceParameter(entity.getAttribute(CoalesceObject.ATTRIBUTE_DATECREATED)));
+
         getFieldValues(entity, fieldValues);
 
         String groupsString = null;
-        List<String> groups = getGroups(entity);
+        Set<String> groups = getGroups(entity);
 
         if (groups != null && groups.size() != 0)
         {
-            groupsString = "[\"" + StringUtils.join(getGroups(entity), "\",\"") + "\"]";
+            groupsString = "[\"" + StringUtils.join(groups, "\",\"") + "\"]";
             groupsString = groupsString.toUpperCase();
         }
 
-        CoalesceParameter[] parameters = new CoalesceParameter[fieldValues.size() + 4];
+        CoalesceParameter[] parameters = new CoalesceParameter[fieldValues.size() + 2];
 
         int idx = 0;
 
-        parameters[idx++] = new CoalesceParameter(entity.getTitle());
-        parameters[idx++] = new CoalesceParameter(entity.getLastModified());
         parameters[idx++] = new CoalesceParameter(entity.getName());
         parameters[idx++] = new CoalesceParameter(entity.getKey());
 
         StringBuilder sb = new StringBuilder("");
 
         // Add Field Values
-        for (Entry<String, String> entry : fieldValues.entrySet())
+        for (Entry<String, CoalesceParameter> entry : fieldValues.entrySet())
         {
 
-            parameters[idx] = new CoalesceParameter(entry.getValue());
-
-            idx++;
-
-            sb.append(", Entity." + normalizeName(entry.getKey().toLowerCase()) + " = {" + idx + "}");
+            parameters[idx++] = entry.getValue();
+            sb.append(", Entity." + entry.getKey().toLowerCase() + " = {" + idx + "}");
 
         }
 
@@ -396,19 +425,25 @@ public class Neo4JPersistor extends CoalescePersistorBase {
                                   new CoalesceParameter(linkage.getKey())) > 0;
     }
 
-    protected List<String> getGroups(CoalesceEntity entity) throws SQLException
+    protected Set<String> getGroups(CoalesceEntity entity) throws SQLException
     {
-        return new ArrayList<String>();
+        return new HashSet<String>();
     }
 
     protected String getClassification(CoalesceEntity entity) throws SQLException
     {
-        return "U";
+        return null;
     }
 
     /*--------------------------------------------------------------------------
     Private Methods
     --------------------------------------------------------------------------*/
+
+    private static String getName(PropertyName property)
+    {
+        String[] tokens = property.getPropertyName().split("\\.");
+        return tokens[tokens.length - 1];
+    }
 
     private void deleteEntity(CoalesceEntity entity, CoalesceDataConnectorBase conn) throws SQLException
     {
@@ -419,9 +454,16 @@ public class Neo4JPersistor extends CoalescePersistorBase {
 
     private void linkClassificationLevel(CoalesceEntity entity, CoalesceDataConnectorBase conn) throws SQLException
     {
-        // Add / Update Link
-        String query = String.format(CYPHER_LINK_CLASSIFICATION, normalizeName(entity));
-        conn.executeUpdate(query, new CoalesceParameter(entity.getKey()), new CoalesceParameter(getClassification(entity)));
+        String cls = getClassification(entity);
+
+        if (cls != null)
+        {
+            // Add / Update Link
+            String query = String.format(CYPHER_LINK_CLASSIFICATION, normalizeName(entity));
+            conn.executeUpdate(query,
+                               new CoalesceParameter(entity.getKey()),
+                               new CoalesceParameter(getClassification(entity)));
+        }
     }
 
     private String normalizeName(CoalesceEntity entity)
@@ -434,7 +476,7 @@ public class Neo4JPersistor extends CoalescePersistorBase {
         return name.replaceAll("[^a-zA-Z0-9]", "_");
     }
 
-    private void getFieldValues(CoalesceObject coalesceObject, HashMap<String, String> results)
+    private void getFieldValues(CoalesceObject coalesceObject, Map<String, CoalesceParameter> results)
     {
         // Is Active?
         if (coalesceObject.getStatus() == ECoalesceObjectStatus.ACTIVE)
@@ -452,7 +494,7 @@ public class Neo4JPersistor extends CoalescePersistorBase {
                     break;
                 default:
                     // Add field value to results
-                    results.put(field.getName().replace(" ", ""), field.getBaseValue());
+                    results.put(field.getName().replace(" ", ""), new CoalesceParameter(field.getBaseValue()));
                     break;
                 }
             }

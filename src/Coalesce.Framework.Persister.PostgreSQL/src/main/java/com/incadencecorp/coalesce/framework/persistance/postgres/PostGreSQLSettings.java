@@ -32,8 +32,9 @@ public class PostGreSQLSettings {
     Private Member Variables
     --------------------------------------------------------------------------*/
 
-    private static final String CONFIG_NAME = "postgres-config.properties";
     private static final int SRID = 4326; // Spatial Reference ID, default is WGS84
+
+    private static String config_name = "postgres-config.properties";
     private static SettingsBase settings = new SettingsBase(null);
 
     /*--------------------------------------------------------------------------
@@ -73,8 +74,20 @@ public class PostGreSQLSettings {
      *
      * @param connector
      */
-    public static void initialize(final IConfigurationsConnector connector)
+    public static void setConnector(final IConfigurationsConnector connector)
     {
+        settings = new SettingsBase(connector);
+    }
+    
+    /**
+     * Configures the settings to use a particular connector and property name.
+     * 
+     * @param connector
+     * @param name
+     */
+    public static void setConnector(final IConfigurationsConnector connector, final String name)
+    {
+        config_name = name;
         settings = new SettingsBase(connector);
     }
 
@@ -85,7 +98,7 @@ public class PostGreSQLSettings {
      * @return Returns the address of the database.
      */
     public static String getDatabaseAddress() {
-        return settings.getSetting(CONFIG_NAME, DSS_DB_SERVER_NAME, "10.0.51.90", true);
+        return settings.getSetting(config_name, DSS_DB_SERVER_NAME, "10.0.51.90", true);
     }
 
     /**
@@ -94,14 +107,14 @@ public class PostGreSQLSettings {
      * @param databaseAddress
      */
     public static void setDatabaseAddress(String databaseAddress) {
-        settings.setSetting(CONFIG_NAME, DSS_DB_SERVER_NAME, databaseAddress);
+        settings.setSetting(config_name, DSS_DB_SERVER_NAME, databaseAddress);
     }
 
     /**
      * @return Returns the username used for accessing the database.
      */
     public static String getUserName() {
-        return settings.getSetting(CONFIG_NAME, DSS_DB_USER, DEFAULT_USERNAME, false);
+        return settings.getSetting(config_name, DSS_DB_USER, DEFAULT_USERNAME, false);
     }
 
     /**
@@ -110,14 +123,14 @@ public class PostGreSQLSettings {
      * @param userName
      */
     public static void setUserName(String userName) {
-        settings.setSetting(CONFIG_NAME, DSS_DB_USER, userName);
+        settings.setSetting(config_name, DSS_DB_USER, userName);
     }
 
     /**
      * @return Returns the password used for accessing the database.
      */
     public static String getUserPassword() {
-        return settings.getSetting(CONFIG_NAME, DSS_DB_PASSWORD, DEFAULT_PASSWORD, false);
+        return settings.getSetting(config_name, DSS_DB_PASSWORD, DEFAULT_PASSWORD, false);
     }
 
     /**
@@ -126,14 +139,14 @@ public class PostGreSQLSettings {
      * @param userPassword
      */
     public static void setUserPassword(String userPassword) {
-        settings.setSetting(CONFIG_NAME, DSS_DB_PASSWORD, userPassword);
+        settings.setSetting(config_name, DSS_DB_PASSWORD, userPassword);
     }
 
     /**
      * @return Returns the schema used for the database.
      */
     public static String getDatabaseSchema() {
-        return settings.getSetting(CONFIG_NAME, DSS_SCHEMA, "coalesce", true);
+        return settings.getSetting(config_name, DSS_SCHEMA, "coalesce", true);
     }
 
     /**
@@ -142,14 +155,14 @@ public class PostGreSQLSettings {
      * @param databaseSchema
      */
     public static void setDatabaseSchema(String databaseSchema) {
-        settings.setSetting(CONFIG_NAME, DSS_SCHEMA, databaseSchema);
+        settings.setSetting(config_name, DSS_SCHEMA, databaseSchema);
     }
 
     /**
      * @return Returns the database name.
      */
     public static String getDatabaseName() {
-        return settings.getSetting(CONFIG_NAME, DSS_DATABASE, "OMEGA", true);
+        return settings.getSetting(config_name, DSS_DATABASE, "OMEGA", true);
     }
 
     /**
@@ -158,14 +171,14 @@ public class PostGreSQLSettings {
      * @param databaseName
      */
     public static void setDatabaseName(String databaseName) {
-        settings.setSetting(CONFIG_NAME, DSS_DATABASE, databaseName);
+        settings.setSetting(config_name, DSS_DATABASE, databaseName);
     }
 
     /**
      * @return Returns the port used for accessing the database.
      */
     public static int getDatabasePort() {
-        return settings.getSetting(CONFIG_NAME, DSS_DB_SERVER_PORT, 5444, true);
+        return settings.getSetting(config_name, DSS_DB_SERVER_PORT, 5444, true);
     }
 
     /**
@@ -174,7 +187,7 @@ public class PostGreSQLSettings {
      * @param databasePort
      */
     public static void setDatabasePort(int databasePort) {
-        settings.setSetting(CONFIG_NAME, DSS_DB_SERVER_PORT, databasePort);
+        settings.setSetting(config_name, DSS_DB_SERVER_PORT, databasePort);
     }
 
     /**
@@ -199,7 +212,7 @@ public class PostGreSQLSettings {
      * @return SRID (Spatial Reference Identifier for geospatial fields)
      */
     public static int getSRID() {
-        return settings.getSetting(CONFIG_NAME, DSS_SRID, SRID, true);
+        return settings.getSetting(config_name, DSS_SRID, SRID, true);
     }
 
     /**
@@ -208,7 +221,7 @@ public class PostGreSQLSettings {
      * @param srid
      */
     public static void setSRID(int srid) {
-        settings.setSetting(CONFIG_NAME, DSS_SRID, srid);
+        settings.setSetting(config_name, DSS_SRID, srid);
     }
 
 }

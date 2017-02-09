@@ -32,8 +32,7 @@ public class Neo4jSettings {
     Private Members
     --------------------------------------------------------------------------*/
 
-    private static final String CONFIG_NAME = "neo4j-config.properties";
-
+    private static String config_name = "neo4j-config.properties";
     private static SettingsBase settings = new SettingsBase(null);
 
     /*--------------------------------------------------------------------------
@@ -44,6 +43,7 @@ public class Neo4jSettings {
     private static final int DEFAULT_PORT = 7474;
     private static final int DEFAULT_ONERROR_RETRIES = 5;
     private static final int DEFAULT_ONERROR_BACKOFF_INTERVAL = 500;
+    private static final boolean DEFAULT_ALLOW_DELETE = false;
 
     /*--------------------------------------------------------------------------
     Property Names
@@ -55,6 +55,7 @@ public class Neo4jSettings {
     private static final String PROPERTY_PASSWORD = "neo4j.dbPassword";
     private static final String PROPERTY_DATABASE_NAME = "neo4j.database";
     private static final String PROPERTY_PORT = "neo4j.dbServerPort";
+    private static final String PROPERTY_ALLOW_DELETE = "neo4j.allowDelete";
     private static final String PROPERTY_RETRY_ATTEMPTS = "neo4j.onerror.retryattempts";
     private static final String PROPERTY_BACKOFF_INTERVAL = "neo4j.onerror.backoffinterval";
 
@@ -75,8 +76,20 @@ public class Neo4jSettings {
      *
      * @param connector
      */
-    public static void initialize(final IConfigurationsConnector connector)
+    public static void setConnector(final IConfigurationsConnector connector)
     {
+        settings = new SettingsBase(connector);
+    }
+
+    /**
+     * Configures the settings to use a particular connector and property name.
+     * 
+     * @param connector
+     * @param name
+     */
+    public static void setConnector(final IConfigurationsConnector connector, final String name)
+    {
+        config_name = name;
         settings = new SettingsBase(connector);
     }
 
@@ -89,7 +102,7 @@ public class Neo4jSettings {
      */
     public static boolean isEnabled()
     {
-        return settings.getSetting(CONFIG_NAME, PROPERTY_ENABLED, true, true);
+        return settings.getSetting(config_name, PROPERTY_ENABLED, true, true);
     }
 
     /**
@@ -99,7 +112,7 @@ public class Neo4jSettings {
      */
     public static void setIsEnabled(boolean value)
     {
-        settings.setSetting(CONFIG_NAME, PROPERTY_ENABLED, value);
+        settings.setSetting(config_name, PROPERTY_ENABLED, value);
     }
 
     /**
@@ -107,7 +120,7 @@ public class Neo4jSettings {
      */
     public static String getDatabaseAddress()
     {
-        return settings.getSetting(CONFIG_NAME, PROPERTY_SERVER_NAME, DEFAULT_ADDRESS, true);
+        return settings.getSetting(config_name, PROPERTY_SERVER_NAME, DEFAULT_ADDRESS, true);
     }
 
     /**
@@ -117,7 +130,7 @@ public class Neo4jSettings {
      */
     public static void setDatabaseAddress(String databaseAddress)
     {
-        settings.setSetting(CONFIG_NAME, PROPERTY_SERVER_NAME, databaseAddress);
+        settings.setSetting(config_name, PROPERTY_SERVER_NAME, databaseAddress);
     }
 
     /**
@@ -125,7 +138,7 @@ public class Neo4jSettings {
      */
     public static String getUserName()
     {
-        return settings.getSetting(CONFIG_NAME, PROPERTY_USERNAME, "", false);
+        return settings.getSetting(config_name, PROPERTY_USERNAME, "", false);
     }
 
     /**
@@ -135,7 +148,7 @@ public class Neo4jSettings {
      */
     public static void setUserName(String userName)
     {
-        settings.setSetting(CONFIG_NAME, PROPERTY_USERNAME, userName);
+        settings.setSetting(config_name, PROPERTY_USERNAME, userName);
     }
 
     /**
@@ -143,7 +156,7 @@ public class Neo4jSettings {
      */
     public static String getUserPassword()
     {
-        return settings.getSetting(CONFIG_NAME, PROPERTY_PASSWORD, "", false);
+        return settings.getSetting(config_name, PROPERTY_PASSWORD, "", false);
     }
 
     /**
@@ -153,7 +166,7 @@ public class Neo4jSettings {
      */
     public static void setUserPassword(String userPassword)
     {
-        settings.setSetting(CONFIG_NAME, PROPERTY_PASSWORD, userPassword);
+        settings.setSetting(config_name, PROPERTY_PASSWORD, userPassword);
     }
 
     /**
@@ -161,7 +174,7 @@ public class Neo4jSettings {
      */
     public static String getDatabaseName()
     {
-        return settings.getSetting(CONFIG_NAME, PROPERTY_DATABASE_NAME, "", true);
+        return settings.getSetting(config_name, PROPERTY_DATABASE_NAME, "", true);
     }
 
     /**
@@ -171,7 +184,7 @@ public class Neo4jSettings {
      */
     public static void setDatabaseName(String databaseName)
     {
-        settings.setSetting(CONFIG_NAME, PROPERTY_DATABASE_NAME, databaseName);
+        settings.setSetting(config_name, PROPERTY_DATABASE_NAME, databaseName);
     }
 
     /**
@@ -179,7 +192,7 @@ public class Neo4jSettings {
      */
     public static int getDatabasePort()
     {
-        return settings.getSetting(CONFIG_NAME, PROPERTY_PORT, DEFAULT_PORT, true);
+        return settings.getSetting(config_name, PROPERTY_PORT, DEFAULT_PORT, true);
     }
 
     /**
@@ -189,7 +202,7 @@ public class Neo4jSettings {
      */
     public static void setDatabasePort(int databasePort)
     {
-        settings.setSetting(CONFIG_NAME, PROPERTY_PORT, databasePort);
+        settings.setSetting(config_name, PROPERTY_PORT, databasePort);
     }
 
     /**
@@ -197,7 +210,7 @@ public class Neo4jSettings {
      */
     public static int getRetryAttempts()
     {
-        return settings.getSetting(CONFIG_NAME, PROPERTY_RETRY_ATTEMPTS, DEFAULT_ONERROR_RETRIES, true);
+        return settings.getSetting(config_name, PROPERTY_RETRY_ATTEMPTS, DEFAULT_ONERROR_RETRIES, true);
     }
 
     /**
@@ -207,7 +220,7 @@ public class Neo4jSettings {
      */
     public static void setRetryAttempts(int value)
     {
-        settings.setSetting(CONFIG_NAME, PROPERTY_RETRY_ATTEMPTS, value);
+        settings.setSetting(config_name, PROPERTY_RETRY_ATTEMPTS, value);
     }
 
     /**
@@ -215,7 +228,7 @@ public class Neo4jSettings {
      */
     public static int getBackoffInterval()
     {
-        return settings.getSetting(CONFIG_NAME, PROPERTY_BACKOFF_INTERVAL, DEFAULT_ONERROR_BACKOFF_INTERVAL, true);
+        return settings.getSetting(config_name, PROPERTY_BACKOFF_INTERVAL, DEFAULT_ONERROR_BACKOFF_INTERVAL, true);
     }
 
     /**
@@ -225,7 +238,25 @@ public class Neo4jSettings {
      */
     public static void setBackoffInterval(int millis)
     {
-        settings.setSetting(CONFIG_NAME, PROPERTY_BACKOFF_INTERVAL, millis);
+        settings.setSetting(config_name, PROPERTY_BACKOFF_INTERVAL, millis);
+    }
+
+    /**
+     * @return whether marking a entity as deleted will remove it from the DB.
+     */
+    public static boolean isAllowDelete()
+    {
+        return settings.getSetting(config_name, PROPERTY_ALLOW_DELETE, DEFAULT_ALLOW_DELETE, true);
+    }
+
+    /**
+     * Sets whether marking a entity as deleted will remove it from the DB.
+     * 
+     * @param value
+     */
+    public static void setAllowDelete(boolean value)
+    {
+        settings.setSetting(config_name, PROPERTY_ALLOW_DELETE, value);
     }
 
     /**
