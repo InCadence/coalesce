@@ -19,8 +19,8 @@
 
 package com.incadencecorp.coalesce.framework.persistance.memory;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.persistance.ECoalesceCacheStates;
@@ -34,7 +34,7 @@ import com.incadencecorp.coalesce.framework.persistance.ICoalesceCacher;
  */
 public class MockCacher implements ICoalesceCacher {
 
-    private Map<String, CoalesceEntity> cache = new HashMap<String, CoalesceEntity>();
+    private ConcurrentMap<String, CoalesceEntity> cache = new ConcurrentHashMap<String, CoalesceEntity>();
 
     @Override
     public boolean containsEntity(String key)

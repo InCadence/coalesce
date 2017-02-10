@@ -35,64 +35,25 @@
 						<aggregateFeatures>true</aggregateFeatures>
 					</configuration>
 				</plugin>
-				<!--This plugin's configuration is used to store Eclipse m2e settings 
-					only. It has no influence on the Maven build itself. -->
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>
-											org.apache.karaf.tooling
-										</groupId>
-										<artifactId>
-											karaf-maven-plugin
-										</artifactId>
-										<versionRange>
-											[3.0.1,)
-										</versionRange>
-										<goals>
-											<goal>
-												features-generate-descriptor
-											</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore></ignore>
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
 
 	<dependencies>
 		<dependency>
-			<groupId>com.incadencecorp.coalesce</groupId>
-			<artifactId>coalesce-core</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.incadencecorp.coalesce.services.crud</groupId>
-			<artifactId>coalesce-crud-service-feature</artifactId>
+			<groupId>com.incadencecorp.coalesce.services</groupId>
+			<artifactId>coalesce-services-feature</artifactId>
 			<version>${project.version}</version>
 			<type>xml</type>
 			<classifier>features</classifier>
 		</dependency>
 		<dependency>
-			<groupId>com.incadencecorp.coalesce.services.search</groupId>
-			<artifactId>coalesce-search-service-feature</artifactId>
+			<groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
+			<artifactId>persister-feature</artifactId>
 			<version>${project.version}</version>
 			<type>xml</type>
 			<classifier>features</classifier>
-		</dependency>
+		</dependency>		
 	</dependencies>
 
 </project>

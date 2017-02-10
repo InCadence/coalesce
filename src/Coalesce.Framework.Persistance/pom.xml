@@ -15,13 +15,9 @@
 	</parent>
 
 	<modules>
-		<module>Memory</module>
+		<module>memory</module>
+		<module>derby</module>
+		<module>feature</module>
 	</modules>
 
-	<distributionManagement>
-		<site>
-			<id>mvnkimmel</id>
-			<url>scp://mvnkimmel.man.fs.lmco.com/var/www/html/sites/j-coalesce/${project.version}/${project.artifactId}</url>
-		</site>
-	</distributionManagement>
 </project>

@@ -23,6 +23,7 @@
 		<module>Search</module>
 		<module>Manager</module>
 		<module>Designer</module>
+		<module>feature</module>
 	</modules>
 
 	<distributionManagement>
