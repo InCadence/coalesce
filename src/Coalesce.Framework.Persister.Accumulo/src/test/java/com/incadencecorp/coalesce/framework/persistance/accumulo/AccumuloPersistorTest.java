@@ -42,10 +42,13 @@ import org.geotools.filter.text.cql2.CQLException;
 import org.jdom2.JDOMException;
 import org.joda.time.DateTime;
 import org.junit.AfterClass;
+import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opengis.feature.Feature;
 import org.opengis.filter.Filter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import com.drew.imaging.ImageProcessingException;
@@ -97,6 +100,7 @@ import com.vividsolutions.jts.util.GeometricShapeFactory;
 
 public class AccumuloPersistorTest extends CoalescePersistorBaseTest {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloPersistorTest.class);
     private static String TESTFILENAME = "Desert.jpg";
 
     @BeforeClass
@@ -106,11 +110,21 @@ public class AccumuloPersistorTest extends CoalescePersistorBaseTest {
         AccumuloPersistorTest tester = new AccumuloPersistorTest();
         CoalescePersistorBaseTest.setupBeforeClassBase(tester);
         CoalesceUnitTestSettings.initialize();
-        
+
         AccumuloSettings.setPersistFieldDefAttr(true);
         AccumuloSettings.setPersistSectionAttr(true);
         AccumuloSettings.setPersistRecordsetAttr(true);
         AccumuloSettings.setPersistRecordAttr(true);
+
+        String version = System.getProperty("java.version");
+
+        if(!version.contains("1.8")){
+            LOGGER.warn("JRE {} Detected. These unit tests require JRE 1.8", version);
+            LOGGER.warn("Skipping unit tests");
+            //skip these tests
+            Assume.assumeTrue(false);
+        }
+
     }
 
     @AfterClass
@@ -159,11 +173,11 @@ public class AccumuloPersistorTest extends CoalescePersistorBaseTest {
 
         TestEntity entity = new TestEntity();
         entity.initialize();
-        
+
         entity.addRecord1().getBooleanField().setValue(true);
-        
+
         System.out.println(entity.toXml());
-        
+
     }
 
     @Test

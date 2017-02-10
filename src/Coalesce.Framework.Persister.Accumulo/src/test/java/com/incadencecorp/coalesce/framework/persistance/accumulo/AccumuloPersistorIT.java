@@ -43,10 +43,13 @@ import org.geotools.filter.text.cql2.CQL;
 import org.geotools.filter.text.cql2.CQLException;
 import org.jdom2.JDOMException;
 import org.joda.time.DateTime;
+import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opengis.feature.Feature;
 import org.opengis.filter.Filter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import com.drew.imaging.ImageProcessingException;
@@ -101,6 +104,7 @@ public class AccumuloPersistorIT extends CoalescePersistorBaseTest {
 
     private static ServerConn conn;
     private static String TESTFILENAME = "Desert.jpg";
+    private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloPersistorIT.class);
 
     @BeforeClass
     public static void setupBeforeClass() throws Exception
@@ -122,6 +126,15 @@ public class AccumuloPersistorIT extends CoalescePersistorBaseTest {
         AccumuloSettings.setPersistSectionAttr(true);
         AccumuloSettings.setPersistRecordsetAttr(false);
         AccumuloSettings.setPersistRecordAttr(false);
+        
+        String version = System.getProperty("java.version");
+
+        if(!version.contains("1.8")){
+            LOGGER.warn("JRE {} Detected. These unit tests require JRE 1.8", version);
+            LOGGER.warn("Skipping unit tests");
+            //skip these tests
+            Assume.assumeTrue(false);
+        }
     }
 
     @Override
