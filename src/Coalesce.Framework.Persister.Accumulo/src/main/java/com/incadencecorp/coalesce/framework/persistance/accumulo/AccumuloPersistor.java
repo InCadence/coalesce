@@ -42,6 +42,7 @@ import org.geotools.feature.FeatureIterator;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.joda.time.DateTime;
+import org.locationtech.geomesa.utils.geohash.BoundingBox;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -75,12 +76,17 @@ import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 import com.incadencecorp.coalesce.framework.validation.CoalesceValidator;
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateSequence;
+import com.vividsolutions.jts.geom.CoordinateSequences;
+import com.vividsolutions.jts.geom.DefaultCoordinateSequenceFactory;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 import com.vividsolutions.jts.util.GeometricShapeFactory;
 
 /*-----------------------------------------------------------------------------'
@@ -108,6 +114,8 @@ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
 */
 
 public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesceSearchPersistor {
+
+    public static final String DEFAULT_GEO_FIELD_NAME = "theWorld";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloPersistor.class);
 
@@ -590,16 +598,16 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 
     private void createFeatureSet(String featurename, ArrayList<Fielddefinition> fields)
     {
-        final String geomesaTimeIndex="geomesa.index.dtg";
-        
+        final String geomesaTimeIndex = "geomesa.index.dtg";
+
         SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
-        
+
         boolean defaultGeometrySet = false;
         boolean defaultTimeSet = false;
-        String timeField=null;
- 
+        String timeField = null;
+
         tb.setName(featurename);
-        
+
         // TODO - Deal with no index fields
         tb.add("entityKey", getTypeForSimpleFeature(ECoalesceFieldDataTypes.STRING_TYPE));
         for (Fielddefinition field : fields)
@@ -619,19 +627,30 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                     defaultGeometrySet = true;
                     tb.setDefaultGeometry(field.getName());
                 }
-                if(!defaultTimeSet && Date.class.isAssignableFrom(featuretype))
+                if (!defaultTimeSet && Date.class.isAssignableFrom(featuretype))
                 {
                     defaultTimeSet = true;
-                    timeField=field.getName();
+                    timeField = field.getName();
                 }
             }
         }
+
+        if (defaultGeometrySet == false)
+        {
+            LOGGER.info("Creating bboftheworld for {} ", featurename);
+            tb.add(DEFAULT_GEO_FIELD_NAME, Polygon.class);
+            tb.setDefaultGeometry(DEFAULT_GEO_FIELD_NAME);
+        }
+
         SimpleFeatureType feature = tb.buildFeatureType();
-        if(null != timeField){
+        if (null != timeField)
+        {
             feature.getUserData().put(geomesaTimeIndex, timeField);
         }
         try
         {
+            LOGGER.info("Creating Feature for {} with fields lenght {}", featurename, fields.size());
+
             connect.getGeoDataStore().createSchema(feature);
         }
         catch (Exception e)
@@ -883,7 +902,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             }
             catch (IOException e)
             {
-                LOGGER.error(e.getMessage(),e);
+                LOGGER.error(e.getMessage(), e);
             }
 
         }
@@ -975,12 +994,6 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         // Find the template for this type
         try
         {
-            // String xml = getEntityTemplateXml(entity.getName(), entity.getSource(), entity.getVersion());
-            //
-            // if (xml != null)
-            // {
-            // template = new CoalesceEntityTemplate();
-            // template.initialize(xml);
 
             // Validate the entity against the template
             Map<String, String> errors = validator.validate(null, entity, CoalesceEntityTemplate.create(entity));
@@ -1020,6 +1033,8 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                         // recordset
                         for (CoalesceRecord record : recordset.getRecords())
                         {
+                            boolean hasGeoField = false;
+
                             Object[] NO_VALUES = {};
                             SimpleFeature simplefeature = SimpleFeatureBuilder.build(featuretype, NO_VALUES, null);
                             setFeatureAttribute(simplefeature,
@@ -1031,6 +1046,8 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                                 String fieldname = field.getName();
                                 ECoalesceFieldDataTypes fieldtype = field.getDataType();
                                 Object fieldvalue = field.getValue();
+                                boolean isGeoField = false;
+
                                 // If there is not a value do not set the
                                 // attribute.
                                 if (fieldvalue != null)
@@ -1038,37 +1055,78 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                                     LOGGER.trace("Setting FeatureAttribute {}, is type {}", fieldname, fieldtype);
                                     setFeatureAttribute(simplefeature, fieldname, fieldtype, fieldvalue);
                                 }
+
+                                isGeoField = isGeoField(fieldtype);
+
+                                if (isGeoField)
+                                {
+                                    hasGeoField = true;
+                                }
                             }
-                            Object geomObj = simplefeature.getDefaultGeometry();
-                            if (geomObj != null)
+
+                            if (!hasGeoField)
                             {
-                                featurecollection.add(simplefeature);
+                                // create a polygon of the WORLD!!!!!
+                                Coordinate coord1 = new Coordinate(-180, -90);
+                                Coordinate coord2 = new Coordinate(-180, 90);
+                                Coordinate coord3 = new Coordinate(180, 90);
+                                Coordinate coord4 = new Coordinate(180, -90);
+                                Coordinate coord5 = new Coordinate(-180, -90);
+
+                                GeometryFactory geoFactory = new GeometryFactory();
+
+                                CoordinateSequence coordSeq = new CoordinateArraySequence(new Coordinate[] { coord1, coord2,
+                                                                                                             coord3, coord4,
+                                                                                                             coord5 });
+
+                                LinearRing linearRing = new LinearRing(new CoordinateArraySequence(coordSeq), geoFactory);
+
+                                Polygon polygon = new Polygon(linearRing, null, geoFactory);
+
+                                simplefeature.setAttribute(DEFAULT_GEO_FIELD_NAME, polygon);
+
                             }
+                            featurecollection.add(simplefeature);
                         }
-                        // SimpleFeatureStore featureStore = (SimpleFeatureStore)
-                        // geoDataStore.getFeatureSource(featuresetname);
-                        // featureStore.addFeatures(featurecollection);
                         persisted = true;
                     }
                 }
             }
-            // }
         }
         catch (SAXException | IOException | CoalesceDataFormatException e)
         {
+            LOGGER.error(e.getMessage(), e);
             persisted = false;
         }
         return persisted;
     }
 
-    private void setFeatureAttribute(SimpleFeature simplefeature,
-                                     String fieldname,
-                                     ECoalesceFieldDataTypes fieldtype,
-                                     Object fieldvalue)
+    private boolean isGeoField(ECoalesceFieldDataTypes fieldtype)
+    {
+        boolean isGeoField;
+        switch (fieldtype) {
+        case CIRCLE_TYPE:
+        case GEOCOORDINATE_LIST_TYPE:
+        case GEOCOORDINATE_TYPE:
+        case POLYGON_TYPE:
+            isGeoField = true;
+            break;
+        default:
+            isGeoField = false;
+        }
+        return isGeoField;
+    }
+
+    private boolean setFeatureAttribute(SimpleFeature simplefeature,
+                                        String fieldname,
+                                        ECoalesceFieldDataTypes fieldtype,
+                                        Object fieldvalue)
             throws CoalesceDataFormatException
     {
         String objclass = fieldvalue.getClass().getName();
         String liststring;
+
+        boolean isGeoField = false;
 
         switch (fieldtype) {
 
@@ -1121,19 +1179,23 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         case GEOCOORDINATE_LIST_TYPE:
             MultiPoint points = new GeometryFactory().createMultiPoint((Coordinate[]) fieldvalue);
             simplefeature.setAttribute(fieldname, points);
+            isGeoField = true;
             break;
 
         case GEOCOORDINATE_TYPE:
             Point point = new GeometryFactory().createPoint((Coordinate) fieldvalue);
             simplefeature.setAttribute(fieldname, point);
+            isGeoField = true;
             break;
 
         case LINE_STRING_TYPE:
             simplefeature.setAttribute(fieldname, fieldvalue);
+            isGeoField = true;
             break;
 
         case POLYGON_TYPE:
             simplefeature.setAttribute(fieldname, fieldvalue);
+            isGeoField = true;
             break;
 
         // Circles will be converted to polygons
@@ -1147,6 +1209,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             factory.setCentre(circle.getCenter());
             Polygon shape = factory.createCircle();
             simplefeature.setAttribute(fieldname, shape);
+            isGeoField = true;
             break;
 
         case DATE_TIME_TYPE:
@@ -1157,6 +1220,8 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         default:
             break;
         }
+
+        return isGeoField;
         /*
          * 
          * // accumulate this new feature in the collection featureCollection.add(simpleFeature); }

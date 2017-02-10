@@ -168,19 +168,6 @@ public class AccumuloPersistorTest extends CoalescePersistorBaseTest {
     }
 
     @Test
-    public void testConnection2()
-    {
-
-        TestEntity entity = new TestEntity();
-        entity.initialize();
-
-        entity.addRecord1().getBooleanField().setValue(true);
-
-        System.out.println(entity.toXml());
-
-    }
-
-    @Test
     public void testConnection() throws CoalescePersistorException, Exception
     {
         AccumuloDataConnector accumuloConnector = new AccumuloDataConnector(getConnection());

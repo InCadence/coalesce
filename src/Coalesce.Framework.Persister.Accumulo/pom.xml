@@ -142,19 +142,7 @@
 			<groupId>com.incadencecorp.coalesce</groupId>
 			<artifactId>coalesce-search</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.incadencecorp.coalesce</groupId>
-			<version>${project.version}</version>
-			<artifactId>coalesce-core</artifactId>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>xerces</groupId>
-			<artifactId>xercesImpl</artifactId>
-			<version>2.11.0</version>
-			<scope>test</scope>
-		</dependency>
+
 		<dependency>
 			<groupId>com.incadencecorp.coalesce</groupId>
 			<artifactId>coalesce-framework-persister-postgresql</artifactId>
@@ -165,25 +153,14 @@
 			<version>2.3</version>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<!-- Accumulo Dependencies -->
 		<dependency>
 			<groupId>org.apache.accumulo</groupId>
 			<artifactId>accumulo-core</artifactId>
 			<version>1.7.2</version>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.accumulo</groupId>
-			<artifactId>accumulo-server-base</artifactId>
-			<version>1.7.2</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.accumulo</groupId>
-			<artifactId>accumulo-start</artifactId>
-			<version>1.7.2</version>
-			<scope>test</scope>
-		</dependency>
+
 		<dependency>
 			<groupId>org.locationtech.geomesa</groupId>
 			<artifactId>geomesa-accumulo-datastore</artifactId>
@@ -210,6 +187,45 @@
 			<groupId>org.apache.zookeeper</groupId>
 			<artifactId>zookeeper</artifactId>
 			<version>3.4.6</version>
+		</dependency>
+		<!-- Test Dependencies -->
+		<dependency>
+			<groupId>com.incadencecorp.coalesce</groupId>
+			<version>${project.version}</version>
+			<artifactId>coalesce-core</artifactId>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>xerces</groupId>
+			<artifactId>xercesImpl</artifactId>
+			<version>2.11.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.accumulo</groupId>
+			<artifactId>accumulo-server-base</artifactId>
+			<version>1.7.2</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.accumulo</groupId>
+			<artifactId>accumulo-start</artifactId>
+			<version>1.7.2</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.incadencecorp.coalesce.services.search</groupId>
+			<artifactId>coalesce-search-api</artifactId>
+			<version>${project.version}</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+				<dependency>
+			<groupId>com.incadencecorp.coalesce.services.search</groupId>
+			<artifactId>coalesce-search-client-common</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 

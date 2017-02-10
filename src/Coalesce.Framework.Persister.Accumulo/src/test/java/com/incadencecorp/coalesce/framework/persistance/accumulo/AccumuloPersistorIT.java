@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Random;
 import java.util.UUID;
 
 import org.apache.accumulo.core.client.Connector;
@@ -38,16 +39,24 @@ import org.apache.xerces.impl.dv.util.Base64;
 import org.geotools.data.DataStore;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.Query;
+import org.geotools.factory.CommonFactoryFinder;
+import org.geotools.factory.GeoTools;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.filter.text.cql2.CQLException;
+import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.jdom2.JDOMException;
 import org.joda.time.DateTime;
 import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.locationtech.geomesa.utils.geohash.BoundingBox;
 import org.opengis.feature.Feature;
+import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory2;
+import org.opengis.geometry.BoundingBox3D;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -82,6 +91,7 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceLineStringField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceLongField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceLongListField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalescePolygonField;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceStringField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceStringListField;
 import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
@@ -91,6 +101,7 @@ import com.incadencecorp.coalesce.framework.persistance.CoalescePersistorBaseTes
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 import com.incadencecorp.coalesce.framework.persistance.accumulo.testobjects.GDELT_Test_Entity;
+import com.incadencecorp.coalesce.framework.persistance.accumulo.testobjects.NonGeoEntity;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
@@ -430,6 +441,54 @@ public class AccumuloPersistorIT extends CoalescePersistorBaseTest {
         assertEquals("EUROPE", feature.getProperty("Actor1Name").getValue());
         featureItr.close();
         persistor.close();
+    }
+    
+    @Test
+    public void testSearchNonGeoEntity()
+            throws CoalescePersistorException, CoalesceDataFormatException, SAXException, IOException, CQLException
+    {
+        
+        NonGeoEntity nonGeoEntity = new NonGeoEntity();
+        
+        //set fields     
+        Integer expectedInt = (new Random()).nextInt();
+        
+        CoalesceRecord eventRecord = nonGeoEntity.getEventRecordSet().addNew();
+        nonGeoEntity.setIntegerField(eventRecord, "GlobalEventID", expectedInt);
+        nonGeoEntity.setStringField(eventRecord, "Actor1Name", "MERICA");
+
+        DateTime expectedDateTime = new DateTime();
+        ((CoalesceDateTimeField) eventRecord.getFieldByName("DateTime")).setValue(expectedDateTime);
+        
+        // Prerequisite setup
+        getFramework().saveCoalesceEntityTemplate(CoalesceEntityTemplate.create(nonGeoEntity));
+        CoalesceObjectFactory.register(GDELT_Test_Entity.class);
+
+        // Persist
+        AccumuloPersistor persistor = (AccumuloPersistor) this.getPersistor(this.getConnection());
+        persistor.saveEntity(true, nonGeoEntity);
+        
+        // Search
+        DataStore geoDataStore = ((AccumuloDataConnector) persistor.getDataConnector()).getGeoDataStore();
+        
+        FeatureSource<?, ?> featureSource = geoDataStore.getFeatureSource(NonGeoEntity.getQueryName());
+        
+        Filter trythis = CQL.toFilter("GlobalEventID =" + expectedInt.toString());
+        
+        LOGGER.debug(trythis.toString());
+        
+        Query query = new Query(NonGeoEntity.getQueryName(), trythis);
+
+        FeatureIterator<?> featureItr = featureSource.getFeatures(query).features();
+        assertTrue(featureItr.hasNext());
+        
+        Feature feature = featureItr.next();
+        assertEquals(expectedInt, feature.getProperty("GlobalEventID").getValue());
+        assertEquals("MERICA", feature.getProperty("Actor1Name").getValue());
+        
+        featureItr.close();
+        persistor.close();
+        
     }
 
 }
