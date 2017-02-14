@@ -39,6 +39,7 @@ import org.apache.xerces.impl.dv.util.Base64;
 import org.geotools.data.DataStore;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.Query;
+import org.geotools.data.simple.SimpleFeatureStore;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.factory.GeoTools;
 import org.geotools.feature.FeatureIterator;
@@ -132,18 +133,19 @@ public class AccumuloPersistorIT extends CoalescePersistorBaseTest {
 
         AccumuloPersistorIT tester = new AccumuloPersistorIT();
         CoalescePersistorBaseTest.setupBeforeClassBase(tester);
-        
+
         AccumuloSettings.setPersistFieldDefAttr(false);
         AccumuloSettings.setPersistSectionAttr(true);
         AccumuloSettings.setPersistRecordsetAttr(false);
         AccumuloSettings.setPersistRecordAttr(false);
-        
+
         String version = System.getProperty("java.version");
 
-        if(!version.contains("1.8")){
+        if (!version.contains("1.8"))
+        {
             LOGGER.warn("JRE {} Detected. These unit tests require JRE 1.8", version);
             LOGGER.warn("Skipping unit tests");
-            //skip these tests
+            // skip these tests
             Assume.assumeTrue(false);
         }
     }
@@ -405,7 +407,7 @@ public class AccumuloPersistorIT extends CoalescePersistorBaseTest {
             throws CoalescePersistorException, CoalesceDataFormatException, SAXException, IOException, CQLException
     {
         GDELT_Test_Entity gdeltEntity = new GDELT_Test_Entity();
-        
+
         // Prerequisite setup
         getFramework().saveCoalesceEntityTemplate(CoalesceEntityTemplate.create(gdeltEntity));
         CoalesceObjectFactory.register(GDELT_Test_Entity.class);
@@ -442,24 +444,24 @@ public class AccumuloPersistorIT extends CoalescePersistorBaseTest {
         featureItr.close();
         persistor.close();
     }
-    
+
     @Test
     public void testSearchNonGeoEntity()
             throws CoalescePersistorException, CoalesceDataFormatException, SAXException, IOException, CQLException
     {
-        
+
         NonGeoEntity nonGeoEntity = new NonGeoEntity();
-        
-        //set fields     
+
+        // set fields
         Integer expectedInt = (new Random()).nextInt();
-        
+
         CoalesceRecord eventRecord = nonGeoEntity.getEventRecordSet().addNew();
         nonGeoEntity.setIntegerField(eventRecord, "GlobalEventID", expectedInt);
         nonGeoEntity.setStringField(eventRecord, "Actor1Name", "MERICA");
 
         DateTime expectedDateTime = new DateTime();
         ((CoalesceDateTimeField) eventRecord.getFieldByName("DateTime")).setValue(expectedDateTime);
-        
+
         // Prerequisite setup
         getFramework().saveCoalesceEntityTemplate(CoalesceEntityTemplate.create(nonGeoEntity));
         CoalesceObjectFactory.register(GDELT_Test_Entity.class);
@@ -467,28 +469,86 @@ public class AccumuloPersistorIT extends CoalescePersistorBaseTest {
         // Persist
         AccumuloPersistor persistor = (AccumuloPersistor) this.getPersistor(this.getConnection());
         persistor.saveEntity(true, nonGeoEntity);
-        
+
         // Search
         DataStore geoDataStore = ((AccumuloDataConnector) persistor.getDataConnector()).getGeoDataStore();
-        
+
         FeatureSource<?, ?> featureSource = geoDataStore.getFeatureSource(NonGeoEntity.getQueryName());
-        
+
         Filter trythis = CQL.toFilter("GlobalEventID =" + expectedInt.toString());
-        
+
         LOGGER.debug(trythis.toString());
-        
+
         Query query = new Query(NonGeoEntity.getQueryName(), trythis);
 
         FeatureIterator<?> featureItr = featureSource.getFeatures(query).features();
         assertTrue(featureItr.hasNext());
-        
+
         Feature feature = featureItr.next();
         assertEquals(expectedInt, feature.getProperty("GlobalEventID").getValue());
         assertEquals("MERICA", feature.getProperty("Actor1Name").getValue());
-        
+
         featureItr.close();
         persistor.close();
-        
+
+    }
+
+    @Test
+    public void testSearchUpdateEntity()
+            throws CoalescePersistorException, CoalesceDataFormatException, SAXException, IOException, CQLException
+    {
+
+        NonGeoEntity nonGeoEntity = new NonGeoEntity();
+
+        // set fields
+        Integer expectedInt = (new Random()).nextInt();
+
+        CoalesceRecord eventRecord = nonGeoEntity.getEventRecordSet().addNew();
+        nonGeoEntity.setIntegerField(eventRecord, "GlobalEventID", expectedInt);
+        nonGeoEntity.setStringField(eventRecord, "Actor1Name", "MERICA");
+
+        DateTime expectedDateTime = new DateTime();
+        ((CoalesceDateTimeField) eventRecord.getFieldByName("DateTime")).setValue(expectedDateTime);
+
+        // Prerequisite setup
+        getFramework().saveCoalesceEntityTemplate(CoalesceEntityTemplate.create(nonGeoEntity));
+        CoalesceObjectFactory.register(GDELT_Test_Entity.class);
+
+        // Persist
+        AccumuloPersistor persistor = (AccumuloPersistor) this.getPersistor(this.getConnection());
+        persistor.saveEntity(true, nonGeoEntity);
+
+        // update
+        nonGeoEntity.setStringField(eventRecord, "Actor1Name", "TEXAS");
+        persistor.saveEntity(true, nonGeoEntity);
+
+        // Search
+        DataStore geoDataStore = ((AccumuloDataConnector) persistor.getDataConnector()).getGeoDataStore();
+
+        SimpleFeatureStore featureSource = (SimpleFeatureStore) geoDataStore.getFeatureSource(NonGeoEntity.getQueryName());
+
+        Filter filter = CQL.toFilter("GlobalEventID =" + expectedInt.toString());
+
+        Query query = new Query(NonGeoEntity.getQueryName(), filter);
+
+        FeatureIterator<?> featureItr = featureSource.getFeatures(query).features();
+        assertTrue(featureItr.hasNext());
+
+        Feature feature = featureItr.next();
+        assertEquals(expectedInt, feature.getProperty("GlobalEventID").getValue());
+        assertEquals("TEXAS", feature.getProperty("Actor1Name").getValue());
+
+        // should have only one result
+        if (featureItr.hasNext())
+        {
+            Feature feature2 = featureItr.next();
+            LOGGER.debug("{}", feature2.getProperty("Actor1Name").getValue());
+            fail("More than one search result returned");
+        }
+
+        featureItr.close();
+        persistor.close();
+
     }
 
 }
