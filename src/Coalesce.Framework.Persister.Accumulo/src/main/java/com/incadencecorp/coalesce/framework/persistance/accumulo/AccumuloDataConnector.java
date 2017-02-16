@@ -89,7 +89,8 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase {
 		props.setProperty("geomesa.batchwriter.maxthreads", "10");
 		props.setProperty("geomesa.batchwriter.memory","52428800");
 		
-		
+		//populate datastore and Connector fields
+		getDBConnector();
 	}
 
 	// @Override
