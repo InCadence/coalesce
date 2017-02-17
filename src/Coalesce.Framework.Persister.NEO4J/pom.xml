@@ -125,13 +125,19 @@
 		</dependency>
 		<dependency>
 			<groupId>org.neo4j</groupId>
-			<artifactId>neo4j</artifactId>
-			<version>2.3.0-M01</version>
+			<artifactId>neo4j-jdbc</artifactId>
+			<version>3.0.2-INC</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.neo4j</groupId>
-			<artifactId>neo4j-jdbc</artifactId>
-			<version>3.0.1</version>
+			<artifactId>neo4j-jdbc-driver</artifactId>
+			<version>3.0.2-INC</version>
 			<exclusions>
 				<exclusion>
 					<groupId>commons-logging</groupId>
