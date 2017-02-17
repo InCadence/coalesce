@@ -1,22 +1,13 @@
 package com.incadencecorp.coalesce.framework.persistance.accumulo.testobjects;
 
-import org.apache.commons.lang3.math.NumberUtils;
-import org.joda.time.DateTime;
-
-import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceCoordinateField;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceDateTimeField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceFloatField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceIntegerField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceStringField;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
 
 public class NonGeoEntity extends CoalesceEntity {
 
@@ -28,13 +19,13 @@ public class NonGeoEntity extends CoalesceEntity {
      *         NonGeoEntity extends the CoalesceEntity object.
      */
 
-    private static String NAME = "UnitTest_DATA";
-    private static String SOURCE = "UnitTest";
-    private static String VERSION = "1.0";
-    private static String TITLE = "UnitTestTitle";
-    private static String SECTION = "UnitTest_Section";
-    private static String RECORDSET = "UnitTest_Recordset";
-    private CoalesceRecordset eventRecordSet;
+    public static final String NAME = "UnitTest_DATA";
+    public static final String SOURCE = "UnitTest";
+    public static final String VERSION = "1.0";
+    public static final String TITLE = "UnitTestTitle";
+    public static final String SECTION = "UnitTest_Section";
+    public static final String RECORDSET = "UnitTest_Recordset";
+    public CoalesceRecordset eventRecordSet;
 
     public static String getRecordSetName()
     {
