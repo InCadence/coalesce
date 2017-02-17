@@ -13,6 +13,10 @@
 		<relativePath>../Coalesce.Pom</relativePath>
 	</parent>
 
+	<properties>
+		<neo4j-jdbc-version>3.0.2-INC</neo4j-jdbc-version>
+	</properties>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -29,7 +33,7 @@
 							<minimizeJar>false</minimizeJar>
 							<artifactSet>
 								<includes>
-									<include>org.neo4j:*</include>
+									<!-- <include>org.neo4j:*</include> -->
 									<include>org.parboiled:*</include>
 									<include>org.apache.lucene:lucene-core</include>
 									<include>net.sf.opencsv:*</include>
@@ -69,7 +73,7 @@
 							${project.groupId}.framework.persistance.neo4j
 						</Export-Package>
 						<Private-Package>
-							org.neo4j*;-split-package:=merge-last,
+							<!-- org.neo4j*;-split-package:=merge-last, -->
 							au.com.bytecode.opencsv*;-split-package:=merge-last,
 							org.apache.lucene*;-split-package:=merge-last,
 							org.apache.http*;-split-package:=merge-last,
@@ -81,17 +85,21 @@
 						<Import-Package>
 							com.sun.*;resolution:=optional,
 							sun.*;resolution:=optional,
-							org.neo4j.test;resolution:=optional,
+							<!-- org.neo4j.test;resolution:=optional, -->
 							net.sf.cglib*;resolution:=optional,
 							org.jvnet.hudson.annotation_indexer;resolution:=optional,
 							org.joda.time*;version="[1.6.2, 3)",
 							com.mysema.query.lucene;resolution:=optional,
+							org.apache.log;resolution:=optional,
 							*
 						</Import-Package>
 						<Embed-Dependency>
 							org.restlet.ext.httpclient,
 							org.restlet,
 							org.restlet.ext.ssl,
+							neo4j-jdbc-driver,
+							neo4j-jdbc,
+							commons-logging,
 							apache-mime4j,
 							jcip-annotations
 						</Embed-Dependency>
@@ -118,33 +126,27 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>xerces</groupId>
-			<artifactId>xercesImpl</artifactId>
-			<version>2.11.0</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.neo4j</groupId>
 			<artifactId>neo4j-jdbc</artifactId>
-			<version>3.0.2-INC</version>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
+			<version>${neo4j-jdbc-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.neo4j</groupId>
 			<artifactId>neo4j-jdbc-driver</artifactId>
-			<version>3.0.2-INC</version>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
+			<version>${neo4j-jdbc-version}</version>
 		</dependency>
+
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>1.1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.felix</groupId>
+			<artifactId>org.apache.felix.log</artifactId>
+			<version>1.0.1</version>
+		</dependency>
+
 
 		<!-- Transitive Dependencies -->
 		<dependency>
@@ -156,11 +158,6 @@
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-core-asl</artifactId>
 			<version>1.9.13</version>
-		</dependency>
-		<dependency>
-			<groupId>com.googlecode.concurrentlinkedhashmap</groupId>
-			<artifactId>concurrentlinkedhashmap-lru</artifactId>
-			<version>1.4.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.scala-lang</groupId>
@@ -237,11 +234,11 @@
 		<!-- </exclusions> -->
 		<!-- </dependency> -->
 
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>18.0</version>
-		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>com.google.guava</groupId> -->
+		<!-- <artifactId>guava</artifactId> -->
+		<!-- <version>18.0</version> -->
+		<!-- </dependency> -->
 		<dependency>
 			<groupId>com.mysema.commons</groupId>
 			<artifactId>mysema-commons-lang</artifactId>

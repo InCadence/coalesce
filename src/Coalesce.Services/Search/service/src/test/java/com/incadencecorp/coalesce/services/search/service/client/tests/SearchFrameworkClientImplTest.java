@@ -21,6 +21,7 @@ import org.junit.BeforeClass;
 
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.persistance.memory.MockSearchPersister;
+import com.incadencecorp.coalesce.framework.persistance.neo4j.Neo4jSearchPersister;
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 import com.incadencecorp.coalesce.services.crud.service.client.CrudFrameworkClientImpl;
 import com.incadencecorp.coalesce.services.search.api.test.AbstractSearchTests;
@@ -36,7 +37,7 @@ public class SearchFrameworkClientImplTest extends AbstractSearchTests {
     @BeforeClass
     public static void initialize() throws Exception
     {
-        MockSearchPersister persistor = new MockSearchPersister();
+        Neo4jSearchPersister persistor = new Neo4jSearchPersister();
 
         CoalesceFramework framework = new CoalesceFramework();
         framework.setAuthoritativePersistor(persistor);

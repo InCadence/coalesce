@@ -49,10 +49,34 @@
 			<type>xml</type>
 			<classifier>features</classifier>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
 			<artifactId>persister-derby-feature</artifactId>
+			<version>${project.version}</version>
+			<type>xml</type>
+			<classifier>features</classifier>
+		</dependency>
+
+		<dependency>
+			<groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
+			<artifactId>persister-neo4j-feature</artifactId>
+			<version>${project.version}</version>
+			<type>xml</type>
+			<classifier>features</classifier>
+		</dependency>
+
+		<dependency>
+			<groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
+			<artifactId>persister-postgres-feature</artifactId>
+			<version>${project.version}</version>
+			<type>xml</type>
+			<classifier>features</classifier>
+		</dependency>
+
+		<dependency>
+			<groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
+			<artifactId>persister-acumulo-feature</artifactId>
 			<version>${project.version}</version>
 			<type>xml</type>
 			<classifier>features</classifier>

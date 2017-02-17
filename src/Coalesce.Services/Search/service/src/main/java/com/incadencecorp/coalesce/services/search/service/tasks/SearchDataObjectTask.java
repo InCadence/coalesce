@@ -27,6 +27,10 @@ import javax.sql.rowset.CachedRowSet;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.geotools.data.Query;
+import org.geotools.filter.SortByImpl;
+import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.sort.SortBy;
+import org.opengis.filter.sort.SortOrder;
 import org.xml.sax.SAXException;
 
 import com.incadencecorp.coalesce.api.EResultStatus;
@@ -42,6 +46,7 @@ import com.incadencecorp.coalesce.services.api.search.HitType;
 import com.incadencecorp.coalesce.services.api.search.QueryResultType;
 import com.incadencecorp.coalesce.services.api.search.QueryResultsType;
 import com.incadencecorp.coalesce.services.api.search.QueryType;
+import com.incadencecorp.coalesce.services.api.search.SortByType;
 
 public class SearchDataObjectTask extends AbstractTask<QueryType, QueryResultsType, ICoalesceSearchPersistor> {
 
@@ -51,11 +56,11 @@ public class SearchDataObjectTask extends AbstractTask<QueryType, QueryResultsTy
         QueryResultsType result;
 
         StopWatch watch = new StopWatch();
-        
+
         try
         {
             watch.start();
-            
+
             List<String> properties = new ArrayList<String>();
             properties.add(CoalescePropertyFactory.getEntityKey().getPropertyName());
             properties.add(CoalescePropertyFactory.getName().getPropertyName());
@@ -66,9 +71,29 @@ public class SearchDataObjectTask extends AbstractTask<QueryType, QueryResultsTy
             watch.finish();
             System.out.println(watch.getWorkLife());
             watch.start();
-            
-            Query query = new Query(this.getId(), FilterUtil.fromXml(parameters.getParams().getFilter()));
+
+            SortBy[] sortby = new SortBy[parameters.getParams().getSortBy().size()];
+
+            for (int ii = 0; ii < parameters.getParams().getSortBy().size(); ii++)
+            {
+                SortByType sort = parameters.getParams().getSortBy().get(ii);
+                PropertyName property = CoalescePropertyFactory.getFilterFactory().property(sort.getPropertyName());
+
+                switch (sort.getSortOrder()) {
+                case ASC:
+                    sortby[ii] = new SortByImpl(property, SortOrder.ASCENDING);
+                    break;
+                case DESC:
+                    sortby[ii] = new SortByImpl(property, SortOrder.DESCENDING);
+                    break;
+                }
+            }
+
+            Query query = new Query("coalesce", FilterUtil.fromXml(parameters.getParams().getFilter()));
             query.setPropertyNames(properties);
+            query.setStartIndex(parameters.getParams().getPageNumber());
+            query.setMaxFeatures(parameters.getParams().getPageSize());
+            query.setSortBy(sortby);
 
             watch.finish();
             System.out.println(watch.getWorkLife());
@@ -84,8 +109,6 @@ public class SearchDataObjectTask extends AbstractTask<QueryType, QueryResultsTy
 
             if (rowset.first())
             {
-                List<String> keys = new ArrayList<String>();
-
                 int keyIdx = CoalesceResultSet.getEntityKeyColumn(rowset);
 
                 if (keyIdx == -1)

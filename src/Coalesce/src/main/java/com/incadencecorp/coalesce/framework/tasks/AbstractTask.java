@@ -136,14 +136,17 @@ public abstract class AbstractTask<INPUT, OUTPUT extends ICoalesceResponseTypeBa
                 LOGGER.error(String.format(CoalesceErrors.FAILED_TASK,
                                            this.getClass().getName(),
                                            parameters.getTarget().getClass().getName(),
-                                           "Failure"));
+                                           result.getResults().getError()));
 
                 logParameters();
             }
         }
         catch (CoalesceException e)
         {
-            LOGGER.error("(FAILED) Task", e);
+            LOGGER.error(String.format(CoalesceErrors.FAILED_TASK,
+                                       this.getClass().getName(),
+                                       parameters.getTarget().getClass().getName(),
+                                       "Exception"), e);
             
             result.setResults(createResult());
             result.getResults().setStatus(EResultStatus.FAILED);

@@ -50,8 +50,7 @@ public abstract class AbstractSearchTests {
     @Test
     public void testSearch() throws Exception
     {
-        CoalesceEntity entity = new CoalesceEntity();
-        entity.initialize();
+        CoalesceEntity entity = CoalesceEntity.create("Hello", "World", "1", null, null);
 
         // Create Entity
         crud.createDataObject(entity);
@@ -65,7 +64,7 @@ public abstract class AbstractSearchTests {
 
         HitType hit = results.getResult().get(0).getResult().getHits().get(0);
 
-        // Verify HIt's Properties
+        // Verify Hit's Properties
         Assert.assertEquals(entity.getKey(), hit.getEntityKey());
         Assert.assertEquals(entity.getName(), hit.getName());
         Assert.assertEquals(entity.getSource(), hit.getSource());

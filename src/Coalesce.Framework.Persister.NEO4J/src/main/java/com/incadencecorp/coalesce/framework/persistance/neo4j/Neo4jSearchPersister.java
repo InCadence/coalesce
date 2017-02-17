@@ -17,6 +17,9 @@
 
 package com.incadencecorp.coalesce.framework.persistance.neo4j;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.sql.rowset.CachedRowSet;
 
 import org.geotools.data.Query;
@@ -45,21 +48,36 @@ public class Neo4jSearchPersister extends Neo4JPersistor implements ICoalesceSea
         Neo4jFilterToCypher converter = new Neo4jFilterToCypher();
         converter.setInline(false);
         converter.setDefaultLabelMapping("n");
-
+        
         try
         {
             int offset = query.getMaxFeatures() * (query.getStartIndex() - 1);
 
-            String returnValues = "n.entityKey";
-
+            List<String> returnValues = new ArrayList<String>(); 
+            returnValues.add(KEY);
+            returnValues.add(NAME);
+            returnValues.add(SOURCE);
+            returnValues.add(TITLE);
+            
+            StringBuilder sb = new StringBuilder();
+            
+            for (int ii=0; ii<returnValues.size(); ii++) {
+                sb.append("n." + returnValues.get(ii) + " AS " + returnValues.get(ii));
+                
+                if (ii+1 != returnValues.size()) {
+                    sb.append(", ");
+                }
+            }
+            
             String cypher = String.format(QUERY,
                                           converter.encodeToString(query.getFilter()),
-                                          returnValues,
+                                          sb.toString(),
                                           offset,
                                           query.getMaxFeatures());
 
             try (CoalesceDataConnectorBase conn = new Neo4JDataConnector(Neo4jSettings.getServerConn()))
             {
+                // TODO Fix parameter names to have the record set name instead of 'n'
                 results = executeQuery(cypher);
             }
         }

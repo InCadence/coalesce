@@ -69,6 +69,7 @@ public class Neo4JPersistorIT extends CoalescePersistorBaseTest {
     {
         Neo4JPersistor neo4jPersistor = new Neo4JPersistor();
         neo4jPersistor.setConnectionSettings(conn);
+        neo4jPersistor.setIncludeXml(true);
 
         return neo4jPersistor;
 
@@ -104,7 +105,7 @@ public class Neo4JPersistorIT extends CoalescePersistorBaseTest {
         CachedRowSet rowset = persister.search(query);
 
         Assert.assertTrue(rowset.first());
-        Assert.assertEquals(entity.getKey(), rowset.getString("n.entityKey"));
+        Assert.assertEquals(entity.getKey(), rowset.getString(Neo4JPersistor.KEY));
         Assert.assertFalse(rowset.next());
     }
 

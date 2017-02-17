@@ -11,19 +11,24 @@
 		<relativePath>../Coalesce.Bom</relativePath>
 	</parent>
 
+	<profiles>
+		<profile>
+			<id>bundles</id>
+			<modules>
+				<module>../Coalesce.Bundles</module>
+			</modules>
+		</profile>
+	</profiles>
+
 	<modules>
 		<module>../Coalesce</module>
-		<module>../Coalesce.Feature</module>
-		<module>../Coalesce.Framework.Persister.NEO4J</module>
-		<module>../Coalesce.Framework.Persister.PostgreSQL</module>
 		<module>../Coalesce.Classification</module>
 		<module>../Coalesce.Search</module>
 		<module>../Coalesce.Synchronizer</module>
 		<module>../Coalesce.ExIm.XSD</module>
 		<module>../Coalesce.Services</module>
 		<module>../Coalesce.Framework.Persistance</module>
-		<module>../Coalesce.Framework.Persister.Accumulo</module>
-		<module>../Coalesce.Bundles</module>
+		<module>../Coalesce.Feature</module>
 	</modules>
 
 	<build>

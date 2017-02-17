@@ -17,7 +17,9 @@
 
 package com.incadencecorp.coalesce.framework.persistance.neo4j;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -36,9 +38,7 @@ import org.opengis.filter.expression.PropertyName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceBooleanField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
@@ -66,13 +66,15 @@ public class Neo4JPersistor extends CoalescePersistorBase {
     /**
      * @see CoalescePropertyFactory#getEntityKey()
      */
-    // TODO Phase this out for getName(CoalescePropertyFactory.getEntityKey());
-    // on DB wipe
-    public static final String KEY = "entityKey";
+    public static final String KEY = getName(CoalescePropertyFactory.getEntityKey());
     /**
      * @see CoalescePropertyFactory#getName()
      */
     public static final String NAME = getName(CoalescePropertyFactory.getName());
+    /**
+     * @see CoalescePropertyFactory#getName()
+     */
+    public static final String SOURCE = getName(CoalescePropertyFactory.getSource());
     /**
      * @see CoalescePropertyFactory#getEntityTitle()
      */
@@ -85,6 +87,10 @@ public class Neo4JPersistor extends CoalescePersistorBase {
      * @see CoalescePropertyFactory#getDateCreated()
      */
     public static final String DATECREATED = getName(CoalescePropertyFactory.getDateCreated());
+    /**
+     * @see CoalescePropertyFactory#getEntityXml()
+     */
+    public static final String ENTITYXML = getName(CoalescePropertyFactory.getEntityXml());
 
     private static final String CYPHER_MERGE = "MERGE (Entity:%1$s {" + KEY + ": {2}})"
             + " ON CREATE SET Entity.deleted=%3$s, Entity.groups = %4$s, Entity." + NAME + " = {1}," + " Entity." + KEY
@@ -104,6 +110,8 @@ public class Neo4JPersistor extends CoalescePersistorBase {
 
     private static final String CYPHER_CONSTRAINT = "CREATE CONSTRAINT ON (n:%s) ASSERT n." + KEY + " IS UNIQUE";
 
+    private boolean isIncludeXmlEnabled = false;
+
     /*--------------------------------------------------------------------------
     Constructor
     --------------------------------------------------------------------------*/
@@ -114,6 +122,11 @@ public class Neo4JPersistor extends CoalescePersistorBase {
     public Neo4JPersistor()
     {
         setConnectionSettings(Neo4jSettings.getServerConn());
+    }
+
+    public void setIncludeXml(boolean value)
+    {
+        isIncludeXmlEnabled = value;
     }
 
     /*--------------------------------------------------------------------------
@@ -197,7 +210,7 @@ public class Neo4JPersistor extends CoalescePersistorBase {
                     if (tries-- <= 0)
                     {
                         // Yes; Throw an error
-                        throw new CoalescePersistorException("Saving Entity", e);
+                        throw new CoalescePersistorException("Saving Entity: " + e.getMessage(), e);
                     }
 
                     // Randomize Back Off Interval (Prevents threads from
@@ -306,6 +319,57 @@ public class Neo4JPersistor extends CoalescePersistorBase {
 
     }
 
+    @Override
+    public String[] getEntityXml(String... keys) throws CoalescePersistorException
+    {
+        List<String> results = new ArrayList<String>();
+
+        if (isIncludeXmlEnabled)
+        {
+            try (CoalesceDataConnectorBase conn = new Neo4JDataConnector(Neo4jSettings.getServerConn()))
+            {
+                conn.openConnection(false);
+
+                // Reset start-time
+                conn.rollback();
+
+                StringBuilder sb = new StringBuilder("MATCH (n) WHERE n." + KEY + " IN [");
+
+                CoalesceParameter[] parameters = new CoalesceParameter[keys.length];
+
+                for (int ii = 0; ii < keys.length; ii++)
+                {
+                    parameters[ii] = new CoalesceParameter(keys[ii]);
+                    sb.append("?");
+
+                    if (ii + 1 != keys.length)
+                    {
+                        sb.append(",");
+                    }
+                }
+
+                sb.append("] RETURN n." + ENTITYXML);
+
+                ResultSet rowset = conn.executeQuery(sb.toString(), parameters);
+
+                while (rowset.next())
+                {
+                    results.add(rowset.getString(1));
+                }
+            }
+            catch (SQLException e)
+            {
+                throw new CoalescePersistorException("getEntityXml", e);
+            }
+        }
+        else
+        {
+            throw new NotImplementedException();
+        }
+
+        return results.toArray(new String[results.size()]);
+    }
+
     /*--------------------------------------------------------------------------
     Public Methods
     --------------------------------------------------------------------------*/
@@ -356,8 +420,14 @@ public class Neo4JPersistor extends CoalescePersistorBase {
 
         // Add Coalesce Entity's Fields
         fieldValues.put(TITLE, new CoalesceParameter(entity.getTitle()));
+        fieldValues.put(SOURCE, new CoalesceParameter(entity.getSource()));
         fieldValues.put(LASTMODIFIED, new CoalesceParameter(entity.getAttribute(CoalesceObject.ATTRIBUTE_LASTMODIFIED)));
         fieldValues.put(DATECREATED, new CoalesceParameter(entity.getAttribute(CoalesceObject.ATTRIBUTE_DATECREATED)));
+
+        if (isIncludeXmlEnabled)
+        {
+            fieldValues.put(ENTITYXML, new CoalesceParameter(entity.toXml()));
+        }
 
         getFieldValues(entity, fieldValues);
 
@@ -518,12 +588,6 @@ public class Neo4JPersistor extends CoalescePersistorBase {
     }
 
     @Override
-    public String[] getEntityXml(String... key) throws CoalescePersistorException
-    {
-        throw new NotImplementedException();
-    }
-
-    @Override
     public String getEntityXml(String entityId, String entityIdType) throws CoalescePersistorException
     {
         throw new NotImplementedException();
@@ -551,7 +615,8 @@ public class Neo4JPersistor extends CoalescePersistorBase {
     public List<String> getCoalesceEntityKeysForEntityId(String entityId,
                                                          String entityIdType,
                                                          String entityName,
-                                                         String entitySource) throws CoalescePersistorException
+                                                         String entitySource)
+            throws CoalescePersistorException
     {
         throw new NotImplementedException();
     }

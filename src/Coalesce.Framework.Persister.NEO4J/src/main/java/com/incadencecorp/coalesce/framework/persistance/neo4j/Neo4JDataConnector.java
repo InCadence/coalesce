@@ -1,6 +1,7 @@
 package com.incadencecorp.coalesce.framework.persistance.neo4j;
 
 import java.sql.Connection;
+import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
@@ -33,9 +34,10 @@ public class Neo4JDataConnector extends CoalesceDataConnectorBase {
         {
             setSettings(settings);
 
-            Class.forName("org.neo4j.jdbc.Driver");
+            Driver driver = new org.neo4j.jdbc.Driver();
+            DriverManager.registerDriver(driver);
         }
-        catch (ClassNotFoundException e)
+        catch (SQLException e)
         {
             throw new CoalescePersistorException("CoalesceDataConnector", e);
         }
@@ -44,7 +46,7 @@ public class Neo4JDataConnector extends CoalesceDataConnectorBase {
     @Override
     public Connection getDBConnection() throws SQLException
     {
-        String url = "jdbc:neo4j:http://" + getSettings().getServerName() + ":" + getSettings().getPortNumber() + "/";
+        String url = "jdbc:neo4j:http://" + getSettings().getServerName() + ":" + getSettings().getPortNumber();
 
         return DriverManager.getConnection(url);
     }

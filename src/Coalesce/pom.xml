@@ -43,7 +43,6 @@
                                 <includes>
                                     <include>org.imgscalr:imgscalr-lib</include>
                                     <include>com.drewnoakes:metadata-extractor</include>
-                                    <include>xerces:xercesImpl</include>
                                     <include>xml-apis:xml-apis</include>
                                 </includes>
                             </artifactSet>
@@ -96,7 +95,6 @@
                             ${project.groupId}.framework.datamodel.generated,
                             com.drew*,
                             org.imgscalr*,
-                            org.apache.xerces*,
                             com.adobe.xmp*
                         </Private-Package>
                         <Import-Package>
@@ -184,11 +182,6 @@
             <groupId>org.jdom</groupId>
             <artifactId>jdom2</artifactId>
             <version>2.0.5</version>
-        </dependency>
-        <dependency>
-            <groupId>xerces</groupId>
-            <artifactId>xercesImpl</artifactId>
-            <version>2.11.0</version>
         </dependency>
         <dependency>
             <groupId>com.incadencecorp.unity</groupId>

@@ -91,7 +91,7 @@ public class CreateDataObjectTask extends AbstractFrameworkTask<String[], Result
             catch (CoalescePersistorException e)
             {
                 result.setStatus(EResultStatus.FAILED);
-                result.setResult(e.getMessage());
+                result.setError(e.getMessage());
             }
         }
         return result;

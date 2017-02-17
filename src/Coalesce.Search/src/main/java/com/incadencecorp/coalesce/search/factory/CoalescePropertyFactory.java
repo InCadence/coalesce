@@ -69,6 +69,14 @@ public class CoalescePropertyFactory {
     /**
      * @return the property used for filtering on date created.
      */
+    public static PropertyName getEntityXml()
+    {
+        return getFilterFactory().property(COALESCE_ENTITY_TABLE + "entityxml");
+    }
+    
+    /**
+     * @return the property used for filtering on date created.
+     */
     public static PropertyName getDateCreated()
     {
         return getFilterFactory().property(COALESCE_ENTITY_TABLE + "datecreated");

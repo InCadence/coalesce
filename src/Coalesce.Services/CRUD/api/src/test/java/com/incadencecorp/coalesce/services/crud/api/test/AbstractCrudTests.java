@@ -97,7 +97,15 @@ public abstract class AbstractCrudTests {
         task.setLinkType(ELinkTypes.IS_PARENT_OF);
 
         assertResult(client.updateLinkages(task), client);
-
+        
+        Results<CoalesceEntity>[] results = client.retrieveDataObjects(entity1.getKey());
+        
+        Assert.assertEquals(1, results.length);
+        
+        CoalesceEntity entity = results[0].getResult();
+        
+        Assert.assertEquals(1, entity.getLinkages().size());
+        Assert.assertEquals(entity2.getKey(), entity.getLinkages().values().iterator().next().getEntity2Key());
     }
 
     @Test
