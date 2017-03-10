@@ -163,8 +163,8 @@
 
 		<dependency>
 			<groupId>org.locationtech.geomesa</groupId>
-			<artifactId>geomesa-accumulo-datastore</artifactId>
-			<version>1.2.7.2</version>
+			<artifactId>geomesa-accumulo-datastore_2.11</artifactId>
+			<version>1.3.0</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>joda-time</artifactId>
@@ -174,8 +174,8 @@
 		</dependency>
 		<dependency>
 			<groupId>org.locationtech.geomesa</groupId>
-			<artifactId>geomesa-utils</artifactId>
-			<version>1.2.7.2</version>
+			<artifactId>geomesa-utils_2.11</artifactId>
+			<version>1.3.0</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>joda-time</artifactId>

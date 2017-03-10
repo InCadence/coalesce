@@ -20,7 +20,7 @@ public class AccumuloDataConnectorTest {
     @Test(expected = UnsupportedOperationException.class)
     public void testGetDBConnection() throws CoalescePersistorException, SQLException
     {
-        ServerConn serverConnection = new ServerConn.Builder().db(NAME).serverName(ZOOKEEPERS).user("root").password("password").build();
+        ServerConn serverConnection = new ServerConn.Builder().db(NAME).serverName(ZOOKEEPERS).user("root").password("").build();
         MockAccumuloDataConnector accumuloDataConnector = new MockAccumuloDataConnector(serverConnection);
         accumuloDataConnector.getDBConnection();
         accumuloDataConnector.close();
