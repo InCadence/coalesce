@@ -4,7 +4,7 @@
 	<artifactId>coalesce-search-service</artifactId>
 	<packaging>bundle</packaging>
 	<name>Coalesce Search Service</name>
-	<description>Service to create, read, update, and delete Coalesce entities</description>
+	<description>Service that provides an interface to search Coalesce databases.</description>
 
 	<parent>
 		<groupId>com.incadencecorp.coalesce.services.search</groupId>
@@ -39,14 +39,6 @@
 			<groupId>com.incadencecorp.coalesce.services.search</groupId>
 			<artifactId>coalesce-search-client-common</artifactId>
 			<version>${project.version}</version>
-		</dependency>
-
-
-		<dependency>
-			<groupId>com.incadencecorp.coalesce</groupId>
-			<artifactId>coalesce-framework-persister-neo4j</artifactId>
-			<version>${project.version}</version>
-			<scope>test</scope>
 		</dependency>
 
 		<dependency>

@@ -18,6 +18,8 @@
 		<module>api</module>
 		<module>service</module>
 		<module>service-feature</module>
+		<module>service-web</module>
+		<module>service-web-feature</module>
 		<module>client-common</module>
 		<module>client-jaxws</module>
 	</modules>

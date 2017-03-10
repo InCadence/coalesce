@@ -9,7 +9,7 @@
 
 	<properties>
 		<unityVersion>0.0.4</unityVersion>
-		<maven.bundle.version>2.3.7</maven.bundle.version>
+		<maven.bundle.version>3.2.0</maven.bundle.version>
 		<felix.osgi.version>1.4.0</felix.osgi.version>
 		<felix.scr.version>1.8.2</felix.scr.version>
 		<felix.scr.annotations.version>1.7.0</felix.scr.annotations.version>
@@ -17,7 +17,12 @@
 		<cxf.xjc.version>3.1.0</cxf.xjc.version>
 		<geotools.version>13.1</geotools.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<spring.version>3.2.4.RELEASE</spring.version>
 
+		<dependency.bndlib.version>2.4.0</dependency.bndlib.version>
+		<bundle-plugin.version>3.2.0</bundle-plugin.version>
+
+		<baseline.version>0.0.24</baseline.version>
 		<changelog.start.tag>coalesce-0.0.24</changelog.start.tag>
 		<changelog.end.tag>HEAD</changelog.end.tag>
 
@@ -30,6 +35,14 @@
 	<build>
 		<pluginManagement>
 			<plugins>
+				<plugin>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.3</version>
+					<configuration>
+						<source>1.7</source>
+						<target>1.7</target>
+					</configuration>
+				</plugin>
 				<!-- Required to use scp when deploying site documentation -->
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -42,6 +55,39 @@
 							<version>1.0</version>
 						</dependency>
 					</dependencies>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.felix</groupId>
+					<artifactId>maven-bundle-plugin</artifactId>
+					<version>${bundle-plugin.version}</version>
+					<dependencies>
+						<dependency>
+							<groupId>biz.aQute.bnd</groupId>
+							<artifactId>bndlib</artifactId>
+							<version>${dependency.bndlib.version}</version>
+						</dependency>
+					</dependencies>
+					<executions>
+						<execution>
+							<id>bundle</id>
+							<goals>
+								<goal>bundle</goal>
+							</goals>
+							<configuration>
+								<obrRepository>NONE</obrRepository>
+							</configuration>
+						</execution>
+						<!-- <execution> -->
+						<!-- <id>baseline</id> -->
+						<!-- <goals> -->
+						<!-- <goal>baseline</goal> -->
+						<!-- </goals> -->
+						<!-- <configuration> -->
+						<!-- <comparisonVersion>${baseline.version}</comparisonVersion> -->
+						<!-- <failOnWarning>false</failOnWarning> -->
+						<!-- </configuration> -->
+						<!-- </execution> -->
+					</executions>
 				</plugin>
 			</plugins>
 		</pluginManagement>
