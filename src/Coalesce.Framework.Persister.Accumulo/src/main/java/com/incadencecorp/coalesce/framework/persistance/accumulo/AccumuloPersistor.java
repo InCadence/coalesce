@@ -933,9 +933,10 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                 transaction.commit();
                 transaction.close();
             }
-            catch (IOException e)
+            catch (IOException | IllegalArgumentException e)
             {
                 LOGGER.error(e.getMessage(), e);
+                LOGGER.error("Entry in error: "+ entry.getValue().toString());
             }
 
         }
@@ -1137,11 +1138,13 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                         setFeatureAttribute(simplefeature, fieldname, fieldtype, fieldvalue);
                     }
 
-                    isGeoField = isGeoField(fieldtype);
+                    // Geo fields with null values wont index
+                    isGeoField = isGeoField(fieldtype) && (fieldvalue != null);
 
                     if (isGeoField)
                     {
                         hasGeoField = true;
+                        LOGGER.debug("GeoForEntity: " + entity.getKey() + "Value: " + fieldvalue);
                     }
                 }
 
@@ -1162,9 +1165,11 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                     LinearRing linearRing = new LinearRing(new CoordinateArraySequence(coordSeq), geoFactory);
 
                     Polygon polygon = new Polygon(linearRing, null, geoFactory);
-
-                    simplefeature.setAttribute(DEFAULT_GEO_FIELD_NAME, polygon);
-
+                    String geomname = featuretype.getGeometryDescriptor().getName().toString();
+                    simplefeature.setAttribute(geomname, polygon);
+                    LOGGER.debug("NO Geo for entity: "+ entity.getKey());
+                } else {
+                	LOGGER.debug("Found Geo for entity: "+ entity.getKey());
                 }
                 featurecollection.add(simplefeature);
 
