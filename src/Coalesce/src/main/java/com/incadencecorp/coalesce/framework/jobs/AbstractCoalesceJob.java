@@ -124,6 +124,10 @@ public abstract class AbstractCoalesceJob<INPUT, OUTPUT extends ICoalesceRespons
             // synchronous call.
             status = EJobStatus.FAILED;
         }
+        else
+        {
+            status = EJobStatus.COMPLETE;
+        }
 
         for (MetricResults<TASKOUTPUT> result : getTaskMetrics())
         {

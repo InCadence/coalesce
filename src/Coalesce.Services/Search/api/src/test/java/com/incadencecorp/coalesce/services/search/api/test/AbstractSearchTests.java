@@ -20,6 +20,7 @@ package com.incadencecorp.coalesce.services.search.api.test;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.incadencecorp.coalesce.services.api.search.HitType;
@@ -61,7 +62,10 @@ public abstract class AbstractSearchTests {
         // Verify Hit
         Assert.assertEquals(1, results.getResult().size());
         Assert.assertEquals(1, results.getResult().get(0).getResult().getHits().size());
-
+        
+        Assert.assertEquals(EResultStatus.SUCCESS, results.getStatus());
+        Assert.assertEquals(EResultStatus.SUCCESS, results.getResult().get(0).getStatus());
+        
         HitType hit = results.getResult().get(0).getResult().getHits().get(0);
 
         // Verify Hit's Properties

@@ -28,42 +28,8 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>2.3</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <minimizeJar>false</minimizeJar>
-                            <artifactSet>
-                                <includes>
-                                    <include>org.imgscalr:imgscalr-lib</include>
-                                    <include>com.drewnoakes:metadata-extractor</include>
-                                    <include>xml-apis:xml-apis</include>
-                                </includes>
-                            </artifactSet>
-                            <filters>
-                                <filter>
-                                    <artifact>*:*</artifact>
-                                    <excludes>
-                                        <exclude>META-INF/*.SF</exclude>
-                                        <exclude>META-INF/*.DSA</exclude>
-                                        <exclude>META-INF/*.RSA</exclude>
-                                    </excludes>
-                                </filter>
-                            </filters>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
-                <version>${maven.bundle.version}</version>
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
@@ -91,15 +57,9 @@
                             ${project.groupId}.framework.populators,
                             ${project.groupId}.handlers
                         </Export-Package>
-                        <Private-Package>
-                            ${project.groupId}.framework.datamodel.generated,
-                            com.drew*,
-                            org.imgscalr*,
-                            com.adobe.xmp*
-                        </Private-Package>
                         <Import-Package>
                             org.joda.time*;version="[1.6.2, 3)",
-                            *
+                            *; resolution:=optional
                         </Import-Package>
                     </instructions>
                 </configuration>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<features xmlns="http://karaf.apache.org/xmlns/features/v1.2.0"
+	name="coalesce-services">
+	<feature name="${project.artifactId}">
+		<feature prerequisite="true" dependency="true">war</feature>
+		<feature prerequisite="true" dependency="true">spring-web</feature>
+		<feature prerequisite="true" dependency="true">spring-dm</feature>
+		<feature prerequisite="true" dependency="true">spring-dm-web</feature>
+		<feature prerequisite="true" dependency="true">coalesce-search-service-feature</feature>
+        <bundle>mvn:org.codehaus.jackson/jackson-jaxrs/1.9.0</bundle>
+        <bundle>mvn:com.incadencecorp.coalesce.services.search/coalesce-search-service-data-jaxrs/${project.version}/war</bundle>
+        <bundle>mvn:com.incadencecorp.coalesce.services.search/coalesce-search-service-data/${project.version}</bundle>
+	</feature>
+</features>

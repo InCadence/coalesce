@@ -401,6 +401,10 @@ public class Neo4JPersistor extends CoalescePersistorBase {
                 rowset.populate(conn.executeQuery(query));
             }
         }
+        catch (IndexOutOfBoundsException e)
+        {
+            // Do Nothing (ResultSet was empty)
+        }
         catch (CoalescePersistorException | SQLException e)
         {
             throw new RuntimeException("Neo4j: Executing Query", e);

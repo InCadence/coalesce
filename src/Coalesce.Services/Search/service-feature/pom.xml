@@ -52,14 +52,21 @@
 					<groupId>org.geotools.xsd</groupId>
 					<artifactId>*</artifactId>
 				</exclusion>
+				<exclusion>
+					<artifactId>xercesImpl</artifactId>
+					<groupId>xerces</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>stax-api</artifactId>
+					<groupId>stax</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>jaxb2-basics</artifactId>
+					<groupId>*</groupId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 
-        <dependency>
-            <groupId>com.incadencecorp.coalesce.bundles</groupId>
-            <artifactId>bundle-geotools</artifactId>
-            <version>${project.version}</version>
-        </dependency>
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>

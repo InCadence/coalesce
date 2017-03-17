@@ -156,18 +156,12 @@ public abstract class AbstractCoalescePersistorsJob<INPUT> extends
         }
         catch (InterruptedException e)
         {
-            LOGGER.error("Interrupted Job", e);
-
-            CoalesceStringResponseType result = new CoalesceStringResponseType();
-            result.setException(e);
-
-            results = new ArrayList<CoalesceStringResponseType>();
-            results.add(result);
-
+            throw new CoalesceException("Job Interrupted", e);
         }
 
         CoalesceResponseType<List<CoalesceStringResponseType>> result = new CoalesceResponseType<List<CoalesceStringResponseType>>();
         result.setResult(results);
+        result.setStatus(EResultStatus.SUCCESS);
 
         return result;
     }

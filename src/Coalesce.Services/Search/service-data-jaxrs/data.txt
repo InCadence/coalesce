@@ -1,0 +1,1 @@
+[{"recordset":"1","field":"2","comparer":"3","matchCase":false}]

@@ -18,8 +18,10 @@
 		<module>api</module>
 		<module>service</module>
 		<module>service-feature</module>
-		<module>service-web</module>
-		<module>service-web-feature</module>
+		<module>service-data</module>
+		<module>service-data-jaxrs</module>
+		<module>service-data-springboot</module>
+		<module>service-data-feature</module>
 		<module>client-common</module>
 		<module>client-jaxws</module>
 	</modules>

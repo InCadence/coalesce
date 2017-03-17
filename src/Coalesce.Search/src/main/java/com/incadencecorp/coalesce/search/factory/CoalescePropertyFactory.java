@@ -22,6 +22,7 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.PropertyName;
 
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
 import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
 
@@ -227,4 +228,21 @@ public class CoalescePropertyFactory {
     {
         return getFilterFactory().property(COALESCE_LINKAGE_TABLE + "linklabel");
     }
+    
+    /**
+     * @return the property used for filtering on the provided field
+     */
+    public static PropertyName createProperty(CoalesceField<?> field)
+    {
+        return createProperty(field.getParent().getParent().getName(), field.getName());
+    }
+
+    /**
+     * @return the property used for filtering on the provided recordset / field name
+     */
+    public static PropertyName createProperty(String recordset, String field)
+    {
+        return getFilterFactory().property(recordset + "." + field);
+    }
+
 }

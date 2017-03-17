@@ -143,6 +143,9 @@ public abstract class AbstractCoalesceTargetJob<INPUT, OUTPUT extends ICoalesceR
     public final OUTPUT doWork(ICoalescePrincipal principal, INPUT params) throws CoalesceException
     {
         OUTPUT response = createResponse();
+        
+        // Default to Success
+        response.setStatus(EResultStatus.SUCCESS);
 
         Collection<AbstractTask<?, TASKOUTPUT, TARGET>> tasks = getTasks(params);
 

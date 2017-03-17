@@ -20,50 +20,8 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<version>2.3</version>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals>
-						<configuration>
-							<minimizeJar>false</minimizeJar>
-							<artifactSet>
-								<includes>
-									<!-- <include>org.neo4j:*</include> -->
-									<include>org.parboiled:*</include>
-									<include>org.apache.lucene:lucene-core</include>
-									<include>net.sf.opencsv:*</include>
-									<include>com.infradna.tool:bridge-method-annotation</include>
-									<include>org.restlet:*</include>
-									<include>org.apache.httpcomponents:httpclient</include>
-									<include>org.apache.httpcomponents:httpmime</include>
-									<include>org.apache.httpcomponents:httpcore</include>
-
-									<include>commons-codec:commons-codec</include>
-								</includes>
-							</artifactSet>
-							<filters>
-								<filter>
-									<artifact>*:*</artifact>
-									<excludes>
-										<exclude>META-INF/*.SF</exclude>
-										<exclude>META-INF/*.DSA</exclude>
-										<exclude>META-INF/*.RSA</exclude>
-									</excludes>
-								</filter>
-							</filters>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
-				<version>${maven.bundle.version}</version>
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
@@ -72,37 +30,10 @@
 						<Export-Package>
 							${project.groupId}.framework.persistance.neo4j
 						</Export-Package>
-						<Private-Package>
-							<!-- org.neo4j*;-split-package:=merge-last, -->
-							au.com.bytecode.opencsv*;-split-package:=merge-last,
-							org.apache.lucene*;-split-package:=merge-last,
-							org.apache.http*;-split-package:=merge-last,
-							org.parboiled*;-split-package:=merge-last,
-							com.infradna*,
-							org.apache.commons.codec*,
-							org.restlet*
-						</Private-Package>
 						<Import-Package>
-							com.sun.*;resolution:=optional,
-							sun.*;resolution:=optional,
-							<!-- org.neo4j.test;resolution:=optional, -->
-							net.sf.cglib*;resolution:=optional,
-							org.jvnet.hudson.annotation_indexer;resolution:=optional,
 							org.joda.time*;version="[1.6.2, 3)",
-							com.mysema.query.lucene;resolution:=optional,
-							org.apache.log;resolution:=optional,
-							*
+							*; resolution:=optional
 						</Import-Package>
-						<Embed-Dependency>
-							org.restlet.ext.httpclient,
-							org.restlet,
-							org.restlet.ext.ssl,
-							neo4j-jdbc-driver,
-							neo4j-jdbc,
-							commons-logging,
-							apache-mime4j,
-							jcip-annotations
-						</Embed-Dependency>
 					</instructions>
 				</configuration>
 			</plugin>

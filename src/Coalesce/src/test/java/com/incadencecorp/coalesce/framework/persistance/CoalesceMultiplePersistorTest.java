@@ -126,9 +126,15 @@ public class CoalesceMultiplePersistorTest extends AbstractFileHandlerTests {
             // Authoritative Should Succeed
             Assert.assertFalse(Files.exists(file));
 
-            // Allow enough time for the job to submit the tasks. (This is a
-            // potential race condition)
-            Thread.sleep(2);
+            int max = 500;
+
+            // Allow enough time for the job to submit the tasks. Waits up for 1
+            // second (This is a potential race condition)
+            while (!Files.exists(file) && max > 0)
+            {
+                Thread.sleep(2);
+                max--;
+            }
         }
 
         // Secondary Should Fail
@@ -170,7 +176,7 @@ public class CoalesceMultiplePersistorTest extends AbstractFileHandlerTests {
 
     }
 
-     @Test
+    @Test
     public void testTemplates() throws Exception
     {
         MockPersister authoritative = new MockPersister();
