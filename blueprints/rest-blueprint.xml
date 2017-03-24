@@ -1,0 +1,63 @@
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxws="http://cxf.apache.org/blueprint/jaxws"
+	xmlns:jaxrs="http://cxf.apache.org/blueprint/jaxrs" xmlns:wsa="http://cxf.apache.org/ws/addressing"
+	xmlns:http="http://cxf.apache.org/transports/http/configuration"
+	xmlns:cxf="http://cxf.apache.org/blueprint/core" xmlns:sec="http://cxf.apache.org/configuration/security"
+	xsi:schemaLocation="
+                http://www.osgi.org/xmlns/blueprint/v1.0.0 
+                http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd  
+                http://cxf.apache.org/transports/http/configuration  
+                http://cxf.apache.org/schemas/configuration/http-conf.xsd  
+                http://cxf.apache.org/blueprint/jaxws http://cxf.apache.org/schemas/blueprint/jaxws.xsd 
+ 				http://cxf.apache.org/blueprint/jaxrs http://cxf.apache.org/schemas/blueprint/jaxrs.xsd                
+                http://cxf.apache.org/blueprint/core http://cxf.apache.org/schemas/blueprint/core.xsd">
+
+	<jaxrs:server address="/data" id="someRestService">
+		<jaxrs:serviceBeans>
+			<ref component-id="templateServiceImpl" />
+			<ref component-id="optionsServiceImpl" />
+			<ref component-id="searchServiceImpl" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<bean class="org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider" />
+			<bean class="org.apache.cxf.jaxrs.provider.RequestDispatcherProvider">
+				<property name="resourcePaths">
+					<map>
+						<entry key="/templates/*" value="/cxf/templates/*" />
+					</map>
+				</property>
+				<property name="beanName" value="data" />
+			</bean>
+		</jaxrs:providers>
+	</jaxrs:server>
+
+		<bean id="templateServiceImpl"
+		class="com.incadencecorp.coalesce.services.search.service.data.jaxrs.TemplateDataControllerJaxRS">
+	</bean>
+
+	<bean id="optionsServiceImpl"
+		class="com.incadencecorp.coalesce.services.search.service.data.jaxrs.OptionsDataControllerJaxRS">
+	</bean>
+
+	<bean id="searchServiceImpl"
+		class="com.incadencecorp.coalesce.services.search.service.data.jaxrs.SearchDataControllerJaxRS">
+		<argument ref="searchClient" />
+	</bean>
+
+	<bean id="searchClient"
+		class="com.incadencecorp.coalesce.services.search.service.client.SearchFrameworkClientImpl">
+		<argument ref="neo4jSearch" />
+	</bean>
+
+	<bean id="neo4jSearch"
+		class="com.incadencecorp.coalesce.framework.persistance.neo4j.Neo4jSearchPersister">
+		<property name="connectionSettings">
+			<bean class="com.incadencecorp.coalesce.framework.persistance.ServerConn">
+				<property name="portNumber" value="7474" />
+				<property name="serverName" value="localhost" />
+			</bean>
+		</property>
+		<property name="includeXml" value="true" />
+	</bean>
+
+</blueprint>
