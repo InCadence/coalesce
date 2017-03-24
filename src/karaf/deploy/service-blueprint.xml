@@ -59,8 +59,30 @@
 	<!-- ========================== -->
 	<!-- Persisters -->
 	<!-- ========================== -->
+	<bean id="memory"
+		class="com.incadencecorp.coalesce.framework.persistance.memory.MockSearchPersister" />
 
-	<bean id="memory" class="com.incadencecorp.coalesce.framework.persistance.memory.MockSearchPersister" />
+	<bean id="neo4jSearch"
+		class="com.incadencecorp.coalesce.framework.persistance.neo4j.Neo4jSearchPersister">
+		<property name="connectionSettings">
+			<bean class="com.incadencecorp.coalesce.framework.persistance.ServerConn">
+				<property name="portNumber" value="7474" />
+				<property name="serverName" value="localhost" />
+			</bean>
+		</property>
+		<property name="includeXml" value="true" />
+	</bean>
+
+	<bean id="neo4j"
+		class="com.incadencecorp.coalesce.framework.persistance.neo4j.Neo4JPersistor">
+		<property name="connectionSettings">
+			<bean class="com.incadencecorp.coalesce.framework.persistance.ServerConn">
+				<property name="portNumber" value="7474" />
+				<property name="serverName" value="localhost" />
+			</bean>
+		</property>
+		<property name="includeXml" value="true" />
+	</bean>
 
 	<!-- ========================== -->
 	<!-- CRUD Configuration -->
@@ -88,19 +110,21 @@
 
 	</jaxws:endpoint>
 
-	<bean id="crudservice" class="com.incadencecorp.coalesce.services.crud.service.CrudServiceImpl">
+	<bean id="crudservice"
+		class="com.incadencecorp.coalesce.services.crud.service.CrudServiceImpl">
 		<argument ref="framework" />
 	</bean>
 
 	<bean id="framework" class="com.incadencecorp.coalesce.framework.CoalesceFramework">
-		<property name="authoritativePersistor" ref="memory" />
+		<property name="authoritativePersistor" ref="neo4j" />
 	</bean>
 
 	<!-- ========================== -->
 	<!-- Search Configuration -->
 	<!-- ========================== -->
- 
-	<jaxws:endpoint xmlns:s="http://api.services.coalesce.incadencecorp.com/search" implementor="#searchservice" endpointName="s:SearchManagerPort"
+
+	<jaxws:endpoint xmlns:s="http://api.services.coalesce.incadencecorp.com/search"
+		implementor="#searchservice" endpointName="s:SearchManagerPort"
 		serviceName="s:SearchManagerService" address="/search" wsdlLocation="wsdl/SearchService.wsdl">
 
 		<jaxws:properties>
@@ -117,12 +141,13 @@
 
 		<jaxws:features>
 			<wsa:addressing allowDuplicates="false" />
-		</jaxws:features>
+		</jaxws:features> 
 
 	</jaxws:endpoint>
 
-	<bean id="searchservice" class="com.incadencecorp.coalesce.services.search.service.SearchServiceImpl">
-		<argument ref="memory"/>
+	<bean id="searchservice"
+		class="com.incadencecorp.coalesce.services.search.service.SearchServiceImpl">
+		<argument ref="neo4jSearch" />
 	</bean>
 
 	<!-- ======================== -->
@@ -132,10 +157,7 @@
 	<!-- Unlike the Spring configuration used for stand-alone client/server 
 		testing with a stand-alone jetty instance, all web server configurations 
 		in karaf are handled using karaf-home/etc/org.ops4j.pax.web.cfg and karaf-home/etc/jetty.xml 
-		config files. These files handle all web server configurations including
-		
-		
-		
+		config files. These files handle all web server configurations including 
 		ports, SSL, timeouts, etc. -->
 
 	<!-- ========================== -->
@@ -192,5 +214,5 @@
 		class="com.incadencecorp.unity.common.factories.PropertyFactory">
 		<argument ref="relativeConnector" />
 	</bean>
-
+	
 </blueprint>
