@@ -16,7 +16,7 @@
 
 	<modules>
 		<module>memory</module>
-		<module>derby</module>
+		<!--<module>derby</module>-->
 		<module>neo4j</module>
 		<module>postgres</module>
 		<module>acumulo</module>

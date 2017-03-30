@@ -144,6 +144,8 @@ public class SearchDataObjectTask extends AbstractTask<QueryType, QueryResultsTy
             watch.finish();
             System.out.println(watch.getWorkLife());
 
+            // TODO Set Total results
+            
             result = new QueryResultsType();
             result.setStatus(EResultStatus.SUCCESS);
             result.setResult(results);

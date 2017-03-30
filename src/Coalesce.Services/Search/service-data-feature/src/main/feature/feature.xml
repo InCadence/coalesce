@@ -7,8 +7,10 @@
 		<feature prerequisite="true" dependency="true">spring-dm</feature>
 		<feature prerequisite="true" dependency="true">spring-dm-web</feature>
 		<feature prerequisite="true" dependency="true">coalesce-search-service-feature</feature>
+		<feature prerequisite="true" dependency="true">persister-neo4j-feature</feature>
         <bundle>mvn:org.codehaus.jackson/jackson-jaxrs/1.9.0</bundle>
-        <bundle>mvn:com.incadencecorp.coalesce.services.search/coalesce-search-service-data-jaxrs/${project.version}/war</bundle>
+        <bundle>mvn:com.incadencecorp.coalesce.services.search/coalesce-search-service-data-jaxrs/${project.version}</bundle>
         <bundle>mvn:com.incadencecorp.coalesce.services.search/coalesce-search-service-data/${project.version}</bundle>
+        <bundle>mvn:com.incadencecorp.coalesce.services.search/coalesce-search-service-web/${project.version}/war</bundle>
 	</feature>
 </features>

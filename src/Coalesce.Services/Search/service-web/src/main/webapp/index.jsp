@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -21,7 +22,19 @@
 	var count = 0;
 	var root = "/cxf/data/";
 
-	$(document).ready(function() {
+	$(document)
+			.ready(
+					function() {
+
+
+	// 						var text = '{"id":"63e15500-1c0f-4d53-a4b3-ad1fa53b09cb","status":"SUCCESS","error":null,"requestId":null,'
+		// 								+ '"result":[{"id":null,"status":"SUCCESS","error":null,"result":{'
+		// 								+ '"hits":['
+		// 								+ '{"entityKey":"ab0822b4-8faf-4f14-94f5-fdc54d108526","title":"Hello","name":"Hello","source":"World","type":null,"excerpt":null,"values":[]},'
+		// 								+ '{"entityKey":"ab0822b4-8faf-4f14-94f5-fdc54d108526","title":"Hello","name":"Hello","source":"World","type":null,"excerpt":null,"values":[]}'
+		// 								+ '],"total":null}}],"query":null,"setStatus":true,"setId":true,"setRequestId":false,"setError":false}';
+		// 						populateResults(JSON.parse(text));
+
 		populateTemplates();
 	});
 
@@ -70,8 +83,9 @@
 
 							$.ajax({
 								type : "GET",
-								url : root + "templates/" + $("#templates").val()
-										+ "/" + rsControl.val(),
+								url : root + "templates/"
+										+ $("#templates").val() + "/"
+										+ rsControl.val(),
 								async : false,
 								success : function(fieldData) {
 
@@ -276,6 +290,41 @@
 		return;
 	}
 
+	function populateResults(data) {
+
+		$("#results").empty();
+
+		var htmlrow;
+
+		htmlrow += "<th>Entity Key</th>";
+		htmlrow += "<th>Title</th>";
+		htmlrow += "<th>Name</th>";
+		htmlrow += "<th>Source</th>";
+		htmlrow += "<th>Type</th>";
+
+		$.each(data.result[0].result.hits[0].values, function(key, value) {
+			htmlrow += "<th>" + key + "</th>";
+		});
+
+		$("#results").append('<tr>' + htmlrow + '</tr>');
+
+		$.each(data.result[0].result.hits, function(key, hit) {
+
+			htmlrow = "<td>" + hit.entityKey + "</td>";
+			htmlrow += "<td>" + hit.title + "</td>";
+			htmlrow += "<td>" + hit.name + "</td>";
+			htmlrow += "<td>" + hit.source + "</td>";
+			htmlrow += "<td>" + hit.type + "</td>";
+
+			$.each(hit.values, function(key, value) {
+				htmlrow += "<td>" + value + "</td>";
+			});
+
+			$("#results").append('<tr>' + htmlrow + '</tr>');
+
+		});
+	}
+
 	$(function() {
 
 		var dialog_template, dialog_save, dialog_load;
@@ -393,7 +442,7 @@
 				contentType : "application/json; charset=utf-8",
 				crossDomain : true,
 				success : function(data, status, jqXHR) {
-					updateStatus(JSON.stringify(data));
+					populateResults(data);
 				},
 
 				error : function(jqXHR, status) {
@@ -428,24 +477,24 @@
 <body>
 
     <nav class="navbar navbar-default">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <img class="navbar-icon" src="/search/resources/images/InCadence_Logo_Small_200_x_53.png" /> <a id="templateName" class="navbar-brand" href="#"></a>
-            </div>
-            <div class="collapse navbar-collapse" id="myNavbar">
-                <ul class="nav navbar-nav navbar-right">
-                    <li><a id="template-selection" href="#">Select</a></li>
-                    <li><a id="load-form" href="#">Load</a></li>
-                    <li><a id="save-form" href="#">Save</a></li>
-                    <li><a id="reset" href="#">Reset</a></li>
-                </ul>
-            </div>
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <img class="navbar-icon" src="/search/resources/images/InCadence_Logo_Small_200_x_53.png" /> <a id="templateName" class="navbar-brand" href="#"></a>
         </div>
+        <div class="collapse navbar-collapse" id="myNavbar">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a id="template-selection" href="#">Select</a></li>
+                <li><a id="load-form" href="#">Load</a></li>
+                <li><a id="save-form" href="#">Save</a></li>
+                <li><a id="reset" href="#">Reset</a></li>
+            </ul>
+        </div>
+    </div>
     </nav>
 
     <div class="container-fluid text-center templatecontainer">
@@ -472,6 +521,15 @@
             <td width="5%"></td>
             </tfooter>
         </table>
+
+    </div>
+    <div class="container-fluid text-left templatecontainer">
+        <table id="results" class="table">
+            <thead>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
     </div>
 
     <div class="container-fluid navbar-fixed-bottom">
@@ -489,9 +547,9 @@
 
         <!-- Footer -->
         <footer class="container-fluid bg-4 text-center">
-            <p>
-                Powered By <a href="#">Coalesce</a>
-            </p>
+        <p>
+            Powered By <a href="#">Coalesce</a>
+        </p>
         </footer>
     </div>
 
@@ -528,3 +586,5 @@
 
 </body>
 </html>
+
+

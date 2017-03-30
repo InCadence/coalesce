@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>coalesce-search-service-data-jaxrs</artifactId>
-	<packaging>war</packaging>
+	<packaging>bundle</packaging>
 	<name>Coalesce Search Data Service JAXRS</name>
 
 	<parent>
@@ -55,7 +55,6 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
-						<_wab>src/main/webapp</_wab>
 						<Bundle-Name>${project.name}</Bundle-Name>
 						<Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
 						<Bundle-Version>${project.version}</Bundle-Version>
@@ -63,10 +62,6 @@
 							*; resolution:=optional
 						</Import-Package>
 						<Export-Package>${project.groupId}.service.data.jaxrs*,!*</Export-Package>
-						<Bundle-Classpath>
-							WEB-INF/classes,
-						</Bundle-Classpath>
-						<Web-ContextPath>search</Web-ContextPath>
 					</instructions>
 				</configuration>
 			</plugin>
