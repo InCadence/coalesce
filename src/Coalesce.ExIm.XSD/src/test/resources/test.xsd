@@ -11,6 +11,7 @@
                         <xs:element minOccurs="0" ref="tns:Linkages"/>
                         <xs:element minOccurs="0" ref="tns:UnitTestSection"/>
                     </xs:all>
+                    <xs:attribute name="name" type="tns:cdsString" use="required"/>
                     <xs:attribute name="source" type="tns:cdsString" use="required"/>
                     <xs:attribute name="version" type="tns:cdsString" use="required"/>
                     <xs:attribute name="entityid" type="tns:cdsString"/>

@@ -181,6 +181,13 @@
 		<!-- <version>1.13</version> -->
 		<!-- <scope>provided</scope> -->
 		<!-- </dependency> -->
-	</dependencies>
+        <dependency>
+            <groupId>com.incadencecorp.coalesce</groupId>
+            <artifactId>coalesce-search</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+            <type>test-jar</type>
+        </dependency>
+    </dependencies>
 
 </project>

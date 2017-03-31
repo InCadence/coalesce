@@ -35,7 +35,6 @@ import org.w3c.dom.Node;
 import com.incadencecorp.coalesce.api.CoalesceExim;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.helpers.ArrayHelper;
-import com.incadencecorp.coalesce.common.helpers.CoalesceIterator;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
@@ -48,6 +47,7 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
+import com.incadencecorp.coalesce.framework.iterators.CoalesceIterator;
 
 /**
  * This implementation creates an XSD from a Coalesce Template.
@@ -61,7 +61,7 @@ public class XSDEximImpl implements CoalesceExim<Document> {
     Private Members
     --------------------------------------------------------------------------*/
 
-    private Document doc;
+    // private Document doc;
     private static final String NS = "cns";
     private String namespace;
 
@@ -74,6 +74,8 @@ public class XSDEximImpl implements CoalesceExim<Document> {
     {
         try
         {
+            Document doc;
+
             // Determine Namespace
             namespace = XSDGeneratorUtil.createNameSpace(entity.getClassName(), entity.getName());
 
@@ -81,7 +83,7 @@ public class XSDEximImpl implements CoalesceExim<Document> {
             factory.setNamespaceAware(true);
 
             doc = factory.newDocumentBuilder().newDocument();
-            doc.appendChild(createElement(entity));
+            doc.appendChild(createElement(doc, entity));
 
             return doc;
         }
@@ -113,17 +115,13 @@ public class XSDEximImpl implements CoalesceExim<Document> {
     Import Methods
     --------------------------------------------------------------------------*/
 
-    private class XSDToCoalesceIterator extends CoalesceIterator {
+    private class XSDToCoalesceIterator extends CoalesceIterator<Document> {
 
-        private Document doc;
         private Map<String, String> keysToReplace = new HashMap<String, String>();
 
-        public void createEntity(CoalesceEntity entity, Document doc)
+        public void createEntity(CoalesceEntity entity, Document doc) throws CoalesceException
         {
-
-            this.doc = doc;
-
-            processAllElements(entity);
+            processAllElements(entity, doc);
 
             for (Map.Entry<String, String> entry : keysToReplace.entrySet())
             {
@@ -133,23 +131,23 @@ public class XSDEximImpl implements CoalesceExim<Document> {
         }
 
         @Override
-        protected boolean visitCoalesceEntity(CoalesceEntity entity)
+        protected boolean visitCoalesceEntity(CoalesceEntity entity, Document doc)
         {
-            copyAttributes(entity);
+            copyAttributes(doc, entity);
             return true;
         }
 
         @Override
-        protected boolean visitCoalesceSection(CoalesceSection section)
+        protected boolean visitCoalesceSection(CoalesceSection section, Document doc)
         {
-            copyAttributes(section);
+            copyAttributes(doc, section);
             return true;
         }
 
         @Override
-        protected boolean visitCoalesceLinkageSection(CoalesceLinkageSection section)
+        protected boolean visitCoalesceLinkageSection(CoalesceLinkageSection section, Document doc)
         {
-            Element element = copyAttributes(section);
+            Element element = copyAttributes(doc, section);
 
             if (element != null)
             {
@@ -176,9 +174,9 @@ public class XSDEximImpl implements CoalesceExim<Document> {
         }
 
         @Override
-        protected boolean visitCoalesceRecordset(CoalesceRecordset recordset)
+        protected boolean visitCoalesceRecordset(CoalesceRecordset recordset, Document doc)
         {
-            Element element = copyAttributes(recordset);
+            Element element = copyAttributes(doc, recordset);
 
             if (element != null)
             {
@@ -262,9 +260,9 @@ public class XSDEximImpl implements CoalesceExim<Document> {
             return (Element) node;
         }
 
-        private Element copyAttributes(CoalesceObject coalesceObject)
+        private Element copyAttributes(Document doc, CoalesceObject coalesceObject)
         {
-            Element element = getElement(coalesceObject.getNamePath().split("[/]"));
+            Element element = getElement(doc, coalesceObject.getNamePath().split("[/]"));
             copyAttributes(element, coalesceObject);
             return element;
         }
@@ -315,7 +313,7 @@ public class XSDEximImpl implements CoalesceExim<Document> {
          * @param names
          * @return the element at the given xpath.
          */
-        private Element getElement(String... names)
+        private Element getElement(Document doc, String... names)
         {
             Element result = (Element) doc.getFirstChild();
 
@@ -350,45 +348,48 @@ public class XSDEximImpl implements CoalesceExim<Document> {
     Export Methods
     --------------------------------------------------------------------------*/
 
-    private Element createElement(CoalesceEntity entity)
+    private Element createElement(Document doc, CoalesceEntity entity)
     {
-        Element element = createBaseElement(entity);
+        Element element = createBaseElement(doc, entity);
+        element.setAttributeNS(namespace, CoalesceEntity.ATTRIBUTE_NAME, entity.getName());
         element.setAttributeNS(namespace, CoalesceEntity.ATTRIBUTE_SOURCE, entity.getSource());
-        element.setAttributeNS(namespace, CoalesceEntity.ATTRIBUTE_TITLE, entity.getTitle());
         element.setAttributeNS(namespace, CoalesceEntity.ATTRIBUTE_VERSION, entity.getVersion());
+        element.setAttributeNS(namespace, CoalesceEntity.ATTRIBUTE_TITLE, entity.getTitle());
         element.setAttributeNS(namespace, CoalesceEntity.ATTRIBUTE_ENTITYID, entity.getEntityId());
         element.setAttributeNS(namespace, CoalesceEntity.ATTRIBUTE_ENTITYIDTYPE, entity.getEntityIdType());
-        element.appendChild(createElement(entity.getLinkageSection()));
+        element.appendChild(createElement(doc, entity.getLinkageSection()));
 
         for (CoalesceSection section : entity.getSectionsAsList())
         {
-            element.appendChild(createElement(section));
+            element.appendChild(createElement(doc, section));
         }
 
         return element;
     }
 
-    private Element createElement(CoalesceLinkageSection linkageSection)
+    private Element createElement(Document doc, CoalesceLinkageSection linkageSection)
     {
 
-        Element element = createBaseElement(linkageSection);
+        Element element = createBaseElement(doc, linkageSection);
 
         for (CoalesceLinkage linkage : linkageSection.getLinkages().values())
         {
-            Element link = createBaseElement(linkage);
+            Element link = createBaseElement(doc, linkage);
 
-            link.appendChild(createElement("entity1key", linkage.getEntity1Key()));
-            link.appendChild(createElement("entity1name", linkage.getEntity1Name()));
-            link.appendChild(createElement("entity1source", linkage.getEntity1Source()));
-            link.appendChild(createElement("entity1version", linkage.getEntity1Version()));
-            link.appendChild(createElement("linktype", linkage.getLinkType().toString()));
-            link.appendChild(createElement("entity2key", linkage.getEntity2Key()));
-            link.appendChild(createElement("entity2name", linkage.getEntity2Name()));
-            link.appendChild(createElement("entity2source", linkage.getEntity2Source()));
-            link.appendChild(createElement("entity2version", linkage.getEntity2Version()));
-            link.appendChild(createElement("entity2objectversion", Integer.toString(linkage.getEntity2ObjectVersion())));
-            link.appendChild(createElement("classificationmarking", linkage.getClassificationMarking().toPortionString()));
-            link.appendChild(createElement("label", linkage.getLabel()));
+            link.appendChild(createElement(doc, "entity1key", linkage.getEntity1Key()));
+            link.appendChild(createElement(doc, "entity1name", linkage.getEntity1Name()));
+            link.appendChild(createElement(doc, "entity1source", linkage.getEntity1Source()));
+            link.appendChild(createElement(doc, "entity1version", linkage.getEntity1Version()));
+            link.appendChild(createElement(doc, "linktype", linkage.getLinkType().toString()));
+            link.appendChild(createElement(doc, "entity2key", linkage.getEntity2Key()));
+            link.appendChild(createElement(doc, "entity2name", linkage.getEntity2Name()));
+            link.appendChild(createElement(doc, "entity2source", linkage.getEntity2Source()));
+            link.appendChild(createElement(doc, "entity2version", linkage.getEntity2Version()));
+            link.appendChild(createElement(doc, "entity2objectversion", Integer.toString(linkage.getEntity2ObjectVersion())));
+            link.appendChild(createElement(doc,
+                                           "classificationmarking",
+                                           linkage.getClassificationMarking().toPortionString()));
+            link.appendChild(createElement(doc, "label", linkage.getLabel()));
 
             element.appendChild(link);
         }
@@ -397,7 +398,7 @@ public class XSDEximImpl implements CoalesceExim<Document> {
 
     }
 
-    private Element createElement(String name, String value)
+    private Element createElement(Document doc, String name, String value)
     {
         Element element = doc.createElementNS(namespace, name);
         element.setPrefix(NS);
@@ -406,38 +407,38 @@ public class XSDEximImpl implements CoalesceExim<Document> {
         return element;
     }
 
-    private Element createElement(CoalesceSection section)
+    private Element createElement(Document doc, CoalesceSection section)
     {
-        Element element = createBaseElement(section);
+        Element element = createBaseElement(doc, section);
 
         for (CoalesceSection childSection : section.getSectionsAsList())
         {
-            element.appendChild(createElement(childSection));
+            element.appendChild(createElement(doc, childSection));
         }
 
         for (CoalesceRecordset recordset : section.getRecordsetsAsList())
         {
-            element.appendChild(createElement(recordset));
+            element.appendChild(createElement(doc, recordset));
         }
 
         return element;
     }
 
-    private Element createElement(CoalesceRecordset recordset)
+    private Element createElement(Document doc, CoalesceRecordset recordset)
     {
-        Element element = createBaseElement(recordset);
+        Element element = createBaseElement(doc, recordset);
 
         for (CoalesceRecord record : recordset.getRecords())
         {
-            element.appendChild(createElement(record));
+            element.appendChild(createElement(doc, record));
         }
 
         return element;
     }
 
-    private Element createElement(CoalesceRecord record)
+    private Element createElement(Document doc, CoalesceRecord record)
     {
-        Element element = createBaseElement(record);
+        Element element = createBaseElement(doc, record);
 
         for (CoalesceField<?> field : record.getFields())
         {
@@ -469,7 +470,7 @@ public class XSDEximImpl implements CoalesceExim<Document> {
         return element;
     }
 
-    private Element createBaseElement(CoalesceObject object)
+    private Element createBaseElement(Document doc, CoalesceObject object)
     {
         Element element = doc.createElementNS(namespace, object.getName().replace(" ", ""));
         element.setPrefix(NS);

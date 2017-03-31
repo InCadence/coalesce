@@ -3,10 +3,7 @@ package com.incadencecorp.coalesce.framework.datamodel;
 import java.lang.reflect.Array;
 import java.security.Principal;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.incadencecorp.coalesce.api.CoalesceErrors;
-import com.incadencecorp.coalesce.common.classification.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.framework.EnumerationProviderUtil;
 
@@ -34,11 +31,6 @@ import com.incadencecorp.coalesce.framework.EnumerationProviderUtil;
  */
 public class CoalesceEnumerationListField extends CoalesceEnumerationFieldBase<int[]> {
 
-    /**
-     * Defines the separator when returning a the enumerated list as a string.
-     */
-    public static final String SEPERATOR = " ";
-
     @Override
     public int[] getValue() throws CoalesceDataFormatException
     {
@@ -52,7 +44,7 @@ public class CoalesceEnumerationListField extends CoalesceEnumerationFieldBase<i
      *         {@link EnumerationProviderUtil}.
      * @throws CoalesceDataFormatException
      */
-    public String getValueAsString() throws CoalesceDataFormatException
+    public String[] getValueAsString() throws CoalesceDataFormatException
     {
         return getValueAsString(null);
     }
@@ -64,31 +56,7 @@ public class CoalesceEnumerationListField extends CoalesceEnumerationFieldBase<i
      *         {@link EnumerationProviderUtil}.
      * @throws CoalesceDataFormatException
      */
-    public String getValueAsString(Principal principal) throws CoalesceDataFormatException
-    {
-        return StringUtils.join(getValueAsList(principal), SEPERATOR);
-    }
-
-    /**
-     * Uses a null principal.
-     * 
-     * @return converts the ordinal values into an array of Strings using
-     *         {@link EnumerationProviderUtil}.
-     * @throws CoalesceDataFormatException
-     */
-    public String[] getValueAsList() throws CoalesceDataFormatException
-    {
-        return getValueAsList(null);
-    }
-
-    /**
-     * 
-     * @param principal
-     * @return converts the ordinal values into an array of Strings using
-     *         {@link EnumerationProviderUtil}.
-     * @throws CoalesceDataFormatException
-     */
-    public String[] getValueAsList(Principal principal) throws CoalesceDataFormatException
+    public String[] getValueAsString(Principal principal) throws CoalesceDataFormatException
     {
         int values[] = getValue();
         String results[] = new String[values.length];
@@ -182,7 +150,7 @@ public class CoalesceEnumerationListField extends CoalesceEnumerationFieldBase<i
      * 
      * @param values
      */
-    public void setValueAsString(String values)
+    public void setValueAsString(String[] values)
     {
         setValueAsString(null, values);
     }
@@ -193,37 +161,7 @@ public class CoalesceEnumerationListField extends CoalesceEnumerationFieldBase<i
      * @param principal
      * @param values
      */
-    public void setValueAsString(Principal principal, String values)
-    {
-        if (!StringHelper.isNullOrEmpty(values))
-        {
-            setValueAsList(principal, values.split(SEPERATOR));
-
-        }
-        else
-        {
-            setTypedValue((int[]) null);
-        }
-    }
-
-    /**
-     * Sets the ordinal value(s) using {@link EnumerationProviderUtil} with a
-     * null principal.
-     * 
-     * @param values
-     */
-    public void setValueAsList(String[] values)
-    {
-        setValueAsList(null, values);
-    }
-
-    /**
-     * Sets the ordinal value(s) using {@link EnumerationProviderUtil}
-     * 
-     * @param principal
-     * @param values
-     */
-    public void setValueAsList(Principal principal, String[] values)
+    public void setValueAsString(Principal principal, String[] values)
     {
         if (values != null && values.length != 0)
         {
@@ -266,6 +204,18 @@ public class CoalesceEnumerationListField extends CoalesceEnumerationFieldBase<i
         }
     }
 
+    /**
+     * Adds the ordinal value(s) using {@link EnumerationProviderUtil} with a
+     * null principal.
+     * 
+     * @param values
+     * @throws CoalesceDataFormatException
+     */
+    public void addValueAsString(String[] values) throws CoalesceDataFormatException
+    {
+        addValueAsString(null, values);
+    }
+    
     /**
      * Adds the ordinal value(s) using {@link EnumerationProviderUtil}
      * 

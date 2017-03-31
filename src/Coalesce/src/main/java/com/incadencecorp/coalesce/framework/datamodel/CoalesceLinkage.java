@@ -416,7 +416,13 @@ public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceL
             setEntity1Version(value);
             return true;
         case "linktype":
-            setLinkType(ELinkTypes.getTypeForLabel(value));
+            ELinkTypes type = ELinkTypes.getTypeForLabel(value);
+            
+            if (type == ELinkTypes.UNDEFINED) {
+                type = ELinkTypes.valueOf(value);
+            }
+            
+            setLinkType(type);
             return true;
         case "entity2key":
             setEntity2Key(value);

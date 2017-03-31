@@ -1,5 +1,4 @@
 #!/bin/bash
-
 name="Coalesce"
 tagname="coalesce"
 parentpom="../Coalesce.Bom/pom.xml"
@@ -21,6 +20,11 @@ while true; do
 		git fetch
 
                 read -p "New Version: " version
+
+                case $version in
+                    *-SNAPSHOT) isSnapshot=true;;
+                    * ) isSnapshot=false;;
+                esac
 
 		echo "Maven Setting version to ${version}..."
 

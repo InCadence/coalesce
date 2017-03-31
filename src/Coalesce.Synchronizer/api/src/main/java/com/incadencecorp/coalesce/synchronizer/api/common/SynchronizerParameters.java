@@ -78,6 +78,12 @@ public final class SynchronizerParameters {
      */
     public static final String PARAM_OP_WINDOW_SIZE = OPS + "window";
 
+    /**
+     * (Boolean) If <code>true</code> then don't save changes to the target;
+     * just log them.
+     */
+    public static final String PARAM_OP_DRYRUN = OPS + "dryrun";
+
     /*--------------------------------------------------------------------------
     Scanner Parameters
     --------------------------------------------------------------------------*/

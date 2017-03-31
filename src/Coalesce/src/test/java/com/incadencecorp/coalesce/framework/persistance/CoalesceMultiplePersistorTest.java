@@ -165,9 +165,9 @@ public class CoalesceMultiplePersistorTest extends AbstractFileHandlerTests {
             framework.setSecondaryPersistors(secondary1, secondary2);
             framework.saveCoalesceEntity(entity);
 
-            // Allow enough time for the job to submit the tasks. (This is a
+            // TODO Allow enough time for the job to submit the tasks. (This is a
             // potential race condition)
-            Thread.sleep(2);
+            Thread.sleep(10);
         }
 
         // Verify

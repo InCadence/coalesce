@@ -266,8 +266,11 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
             stmt.setObject(ii + 1, parameters[ii].getValue(), parameters[ii].getType());
         }
 
+        LOGGER.trace(stmt.toString());
+
         stmt.executeUpdate();
 
+        
         return true;
 
     }
@@ -294,8 +297,8 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
                                              results.getString("Name"),
                                              results.getString("Source"),
                                              results.getString("Version"),
-                                             JodaDateTimeHelper.fromXmlDateTimeUTC(results.getString("DateCreated")),
-                                             JodaDateTimeHelper.fromXmlDateTimeUTC(results.getString("LastModified"))));
+                                             JodaDateTimeHelper.getPostGresDateTim(results.getString("DateCreated")),
+                                             JodaDateTimeHelper.getPostGresDateTim(results.getString("LastModified"))));
         }
 
         return templates;

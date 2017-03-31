@@ -11,8 +11,10 @@ import java.util.UUID;
 
 import org.apache.commons.lang.NullArgumentException;
 import org.joda.time.DateTime;
+import org.junit.Assert;
 import org.junit.Test;
 
+import com.incadencecorp.coalesce.api.ICoalesceFieldDefinitionFactory;
 import com.incadencecorp.coalesce.common.CoalesceTypeInstances;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
@@ -550,6 +552,69 @@ public class CoalesceRecordTest {
         assertEquals(true, desRecord.getNoIndex());
         assertEquals(ECoalesceObjectStatus.ACTIVE, desRecord.getStatus());
 
+    }
+
+    /**
+     * This test ensures that
+     * {@link CoalesceRecord#getFieldByName(String, ICoalesceFieldDefinitionFactory)}
+     * will create the field along with its definition using the provided
+     * factory if not found.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testMissingField() throws Exception
+    {
+        final String[] fields = new String[] {
+                "field1", "field2", "field3"
+        };
+
+        final ICoalesceFieldDefinitionFactory factory = new ICoalesceFieldDefinitionFactory() {
+
+            @Override
+            public CoalesceFieldDefinition create(CoalesceRecordset recordset, String name)
+            {
+                CoalesceFieldDefinition fd = null;
+
+                switch (name) {
+                case "field1":
+                    fd = CoalesceFieldDefinition.create(recordset, name, ECoalesceFieldDataTypes.STRING_TYPE);
+                    break;
+                case "field2":
+                    fd = CoalesceFieldDefinition.create(recordset, name, ECoalesceFieldDataTypes.STRING_TYPE);
+                    break;
+
+                }
+
+                return fd;
+            }
+
+        };
+
+        CoalesceEntity entity = new CoalesceEntity();
+        entity.initialize();
+
+        CoalesceRecordset rs = CoalesceRecordset.create(CoalesceSection.create(entity, "test"), "recordset");
+
+        CoalesceFieldDefinition.create(rs, fields[0], ECoalesceFieldDataTypes.STRING_TYPE);
+
+        CoalesceRecord record = rs.addNew();
+
+        Assert.assertNotNull(record.getFieldByName(fields[0]));
+        Assert.assertNull(record.getFieldByName(fields[1]));
+        Assert.assertNull(record.getFieldByName(fields[2]));
+
+        Assert.assertNotNull(rs.getFieldDefinition(fields[0]));
+        Assert.assertNull(rs.getFieldDefinition(fields[1]));
+        Assert.assertNull(rs.getFieldDefinition(fields[2]));
+
+        Assert.assertNotNull(record.getFieldByName(fields[0]));
+        Assert.assertNotNull(record.getFieldByName(fields[1], factory));
+        Assert.assertNull(record.getFieldByName(fields[2], factory));
+
+        Assert.assertNotNull(rs.getFieldDefinition(fields[0]));
+        Assert.assertNotNull(rs.getFieldDefinition(fields[1]));
+        Assert.assertNull(rs.getFieldDefinition(fields[2]));
     }
 
     // -----------------------------------------------------------------------//

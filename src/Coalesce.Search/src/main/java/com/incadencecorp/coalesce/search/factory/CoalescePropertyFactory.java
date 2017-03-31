@@ -100,6 +100,14 @@ public class CoalescePropertyFactory {
     }
 
     /**
+     * @return the property used for filtering on version.
+     */
+    public static PropertyName getDeleted()
+    {
+        return getFilterFactory().property(COALESCE_ENTITY_TABLE + "deleted");
+    }
+
+    /**
      * @return the property used for filtering on source.
      */
     public static PropertyName getSource()
@@ -138,6 +146,14 @@ public class CoalescePropertyFactory {
     public static PropertyName getEntityTitle()
     {
         return getFilterFactory().property(COALESCE_ENTITY_TABLE + "title");
+    }
+
+    /**
+     * @return the property used for filtering on the entity type.
+     */
+    public static PropertyName getEntityType()
+    {
+        return getFilterFactory().property(COALESCE_ENTITY_TABLE + "type");
     }
 
     /*--------------------------------------------------------------------------
@@ -245,4 +261,12 @@ public class CoalescePropertyFactory {
         return getFilterFactory().property(recordset + "." + field);
     }
 
+    /**
+     * @param property
+     * @return the normalized name used as the column name in a result set.
+     */
+    public static String getColumnName(PropertyName property)
+    {
+        return property.getPropertyName().replaceAll("[.]", "");
+    }
 }

@@ -119,6 +119,8 @@ public class Neo4jFilterToCypher implements FilterVisitor, ExpressionVisitor {
     /** The default property name replacement. */
     private String defaultName = null;
 
+    private String entityname = null;
+
     /**
      * Default constructor.
      */
@@ -230,6 +232,11 @@ public class Neo4jFilterToCypher implements FilterVisitor, ExpressionVisitor {
         {
             throw new CoalesceException("Filter type not supported");
         }
+    }
+
+    public String getEntityName()
+    {
+        return entityname;
     }
 
     /**
@@ -503,6 +510,11 @@ public class Neo4jFilterToCypher implements FilterVisitor, ExpressionVisitor {
     @Override
     public Object visit(PropertyIsEqualTo filter, Object extraData)
     {
+        if (filter.getExpression1().toString().equalsIgnoreCase(CoalescePropertyFactory.getName().getPropertyName()))
+        {
+            entityname = filter.getExpression2().toString();
+        }
+
         visit((BinaryComparisonOperator) filter, "=");
         return extraData;
     }
