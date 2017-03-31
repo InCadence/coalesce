@@ -20,6 +20,7 @@ package com.incadencecorp.coalesce.framework.persistance.neo4j;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -38,6 +39,7 @@ import org.opengis.filter.expression.PropertyName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
@@ -101,7 +103,7 @@ public class Neo4JPersistor extends CoalescePersistorBase {
             + " = {2}%2$s" + " ON MATCH SET Entity.deleted=%3$s, Entity.groups = %4$s%2$s";
 
     private static final String CYPHER_CREATE_PLACEHOLDER = "MERGE (Entity:%1$s {" + KEY + ": {2}})"
-            + " ON CREATE SET Entity." + NAME + " = {1}," + " Entity." + KEY + " = {2}";
+            + " ON CREATE SET Entity." + NAME + " = {1}," + " Entity." + KEY + " = {2}," + " Entity." + SOURCE + " = {3}";
 
     private static final String CYPHER_LINK_CLASSIFICATION = "MATCH (n:%s {" + KEY
             + ": {1}}), (cls:CLASSIFICATION_LEVEL {name: {2}}) " + "OPTIONAL MATCH n-[r:CLEARED_TO]->() DELETE r "
@@ -485,7 +487,8 @@ public class Neo4JPersistor extends CoalescePersistorBase {
 
         conn.executeUpdate(query,
                            new CoalesceParameter(linkage.getEntity2Name()),
-                           new CoalesceParameter(linkage.getEntity2Key()));
+                           new CoalesceParameter(linkage.getEntity2Key()),
+                           new CoalesceParameter(linkage.getEntity2Source()));
 
     }
 
@@ -679,6 +682,13 @@ public class Neo4JPersistor extends CoalescePersistorBase {
     public List<ObjectMetaData> getEntityTemplateMetadata() throws CoalescePersistorException
     {
         throw new NotImplementedException();
+    }
+    
+    @Override
+    public EnumSet<EPersistorCapabilities> getCapabilities()
+    {
+        EnumSet<EPersistorCapabilities> enumSet = EnumSet.of(EPersistorCapabilities.CREATE);
+        return enumSet;
     }
 
 }

@@ -27,6 +27,7 @@
 
 CREATE DATABASE :"mydatabase"
   WITH OWNER = :myowner
+       TEMPLATE = template0
        ENCODING = 'UTF8'
        TABLESPACE = pg_default
        LC_COLLATE = 'en_US.UTF-8'

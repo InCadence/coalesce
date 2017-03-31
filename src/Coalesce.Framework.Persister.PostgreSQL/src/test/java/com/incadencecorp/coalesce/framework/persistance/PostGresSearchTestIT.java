@@ -23,7 +23,7 @@ import org.junit.BeforeClass;
 
 import com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLPersistorExt;
 import com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLSettings;
-import com.incadencecorp.coalesce.search.AbstractSearchTests;
+import com.incadencecorp.coalesce.search.AbstractSearchTest;
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
 
 /**
@@ -31,7 +31,7 @@ import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
  * 
  * @author n78554
  */
-public class PostGresSearchTestIT extends AbstractSearchTests<PostGreSQLPersistorExt> {
+public class PostGresSearchTestIT extends AbstractSearchTest<PostGreSQLPersistorExt> {
 
     /**
      * Initializes the test configuration.

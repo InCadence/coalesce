@@ -23,7 +23,7 @@ import org.junit.BeforeClass;
 
 import com.incadencecorp.coalesce.framework.persistance.neo4j.Neo4jSearchPersister;
 import com.incadencecorp.coalesce.framework.persistance.neo4j.Neo4jSettings;
-import com.incadencecorp.coalesce.search.AbstractSearchTests;
+import com.incadencecorp.coalesce.search.AbstractSearchTest;
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
 
 /**
@@ -31,7 +31,7 @@ import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
  * 
  * @author n78554
  */
-public class Neo4jSearchTestIT extends AbstractSearchTests<Neo4jSearchPersister> {
+public class Neo4jSearchTestIT extends AbstractSearchTest<Neo4jSearchPersister> {
 
     /**
      * Initializes the test configuration.

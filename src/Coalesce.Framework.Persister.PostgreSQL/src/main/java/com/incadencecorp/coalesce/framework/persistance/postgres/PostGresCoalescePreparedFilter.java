@@ -87,6 +87,7 @@ import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.framework.EnumerationProviderUtil;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
+import com.incadencecorp.coalesce.search.api.EFilterEnumerationModes;
 import com.incadencecorp.coalesce.search.api.ICoalesceExpressionVistor;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.vividsolutions.jts.geom.Geometry;
@@ -100,8 +101,8 @@ import com.vividsolutions.jts.geom.Geometry;
 public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql implements ICoalesceExpressionVistor {
 
     private static final String ENTITY_KEY_COL_NAME = CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getEntityKey());
-    private static final String ENTITY_NAME_COL_NAME = CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getSource());
-    private static final String ENTITY_SOURCE_COL_NAME = CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getName());
+    private static final String ENTITY_NAME_COL_NAME = CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getName());
+    private static final String ENTITY_SOURCE_COL_NAME = CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getSource());
     private static final String ENTITY_TYPE_COL_NAME = CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getEntityType());
     private static final String ENTITY_TITLE_COL_NAME = CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getEntityTitle());
 

@@ -16,12 +16,14 @@
  -----------------------------------------------------------------------------*/
 package com.incadencecorp.coalesce.framework.persistance;
 
+import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.geotools.data.Query;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opengis.filter.expression.PropertyName;
 
@@ -29,8 +31,11 @@ import com.incadencecorp.coalesce.common.helpers.EntityLinkHelper;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceBooleanField;
 import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
 import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
+import com.incadencecorp.coalesce.framework.persistance.neo4j.Neo4JPersistor;
 import com.incadencecorp.coalesce.framework.persistance.neo4j.Neo4jSearchPersister;
+import com.incadencecorp.coalesce.framework.persistance.neo4j.Neo4jSettings;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
+import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
 
 /**
  * These unit test ensure proper operation of the persister against a neo4j
@@ -39,8 +44,23 @@ import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
  * @author n78554
  *
  */
-public class Neo4JPersistorIT {
+public class Neo4JPersistorIT extends AbstractCoalescePersistorTest<Neo4JPersistor> {
 
+    /**
+     * Initializes the test configuration.
+     */
+    @BeforeClass
+    public static void initialize()
+    {
+        Neo4jSettings.setConnector(new FilePropertyConnector(Paths.get("src", "test", "resources")));
+    }
+
+    @Override
+    protected Neo4JPersistor createPersister()
+    {
+        return new Neo4jSearchPersister();
+    }
+    
     /**
      * This unit test ensures that when creating linkages within Neo4j place
      * holders are created to preserve link information. Once the place holder's
@@ -49,7 +69,7 @@ public class Neo4JPersistorIT {
      * @throws Exception
      */
     @Test
-    public void testLinkagingEntities() throws Exception
+    public void testPlaceHolderCreation() throws Exception
     {
         // Create Entities
         TestEntity entity1 = new TestEntity();
@@ -90,10 +110,18 @@ public class Neo4JPersistorIT {
         // Verify Entity1 was saved
         rowset = persistor.search(query).getResults();
 
-        Assert.assertTrue(rowset.next());
-        Assert.assertEquals(entity1.getKey(), rowset.getString(1));
-        Assert.assertEquals(entity1.getTitle(), rowset.getString(2));
-        Assert.assertEquals(Boolean.toString(field1.getValue()), rowset.getString(3));
+        Assert.assertEquals(6, rowset.getMetaData().getColumnCount());
+        Assert.assertEquals(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getEntityKey()),
+                            rowset.getMetaData().getColumnName(1));
+        Assert.assertEquals(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getName()),
+                            rowset.getMetaData().getColumnName(2));
+        Assert.assertEquals(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getSource()),
+                            rowset.getMetaData().getColumnName(3));
+        Assert.assertEquals(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getEntityType()),
+                            rowset.getMetaData().getColumnName(4));
+        Assert.assertEquals(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getEntityTitle()),
+                            rowset.getMetaData().getColumnName(5));
+        Assert.assertEquals(CoalescePropertyFactory.getColumnName(field1), rowset.getMetaData().getColumnName(6));
 
         // Create Query for Entity2
         query.setFilter(CoalescePropertyFactory.getEntityKey(entity2.getKey()));
@@ -103,8 +131,11 @@ public class Neo4JPersistorIT {
 
         Assert.assertTrue(rowset.next());
         Assert.assertEquals(entity2.getKey(), rowset.getString(1));
-        Assert.assertNull(rowset.getString(2));
-        Assert.assertNull(rowset.getString(3));
+        Assert.assertEquals(entity2.getName(), rowset.getString(2));
+        Assert.assertEquals(entity2.getSource(), rowset.getString(3));
+        Assert.assertNull(rowset.getString(4));
+        Assert.assertNull(rowset.getString(5));
+        Assert.assertNull(rowset.getString(6));
 
         // Save Entity2
         persistor.saveEntity(false, entity2);
@@ -113,9 +144,9 @@ public class Neo4JPersistorIT {
         rowset = persistor.search(query).getResults();
 
         Assert.assertTrue(rowset.next());
-        Assert.assertEquals(entity2.getKey(), rowset.getString("n.entityKey"));
-        Assert.assertEquals(entity2.getTitle(), rowset.getString(2));
-        Assert.assertEquals(Boolean.toString(field2.getValue()), rowset.getString(3));
+        Assert.assertEquals(entity2.getKey(), rowset.getString(1));
+        Assert.assertEquals(entity2.getTitle(), rowset.getString(5));
+        Assert.assertEquals(Boolean.toString(field2.getValue()), rowset.getString(6));
 
     }
 }

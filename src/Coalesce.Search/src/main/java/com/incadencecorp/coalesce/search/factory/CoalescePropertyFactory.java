@@ -261,6 +261,11 @@ public class CoalescePropertyFactory {
         return getFilterFactory().property(recordset + "." + field);
     }
 
+    public static String getColumnName(CoalesceField<?> field)
+    {
+        return getColumnName(getFieldProperty(field));
+    }
+
     /**
      * @param property
      * @return the normalized name used as the column name in a result set.

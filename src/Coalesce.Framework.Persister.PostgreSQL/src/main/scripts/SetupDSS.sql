@@ -24,6 +24,6 @@
 CREATE SCHEMA :myschema;
 GRANT ALL ON SCHEMA :myschema TO :myowner;
 
-\i Coalesce_Setup_Omegadb.sql
+\i CoalescePopulatePostgresSQL.sql
 \i CreateCoalesceIndexes.sql
 \i unescape.sql

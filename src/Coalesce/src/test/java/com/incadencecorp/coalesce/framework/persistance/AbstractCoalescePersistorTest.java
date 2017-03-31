@@ -1,5 +1,17 @@
 package com.incadencecorp.coalesce.framework.persistance;
 
+import org.junit.Assert;
+import org.junit.Assume;
+import org.junit.Test;
+
+import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
+import com.incadencecorp.coalesce.common.helpers.EntityLinkHelper;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceBooleanField;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
+import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
+import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
+import com.incadencecorp.coalesce.framework.datamodel.TestRecord;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -18,9 +30,69 @@ package com.incadencecorp.coalesce.framework.persistance;
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
+public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor> {
 
-public abstract class AbstractCoalescePersistorTest {
+    protected abstract T createPersister();
 
-   abstract ICoalescePersistor createPersister();
-    
+    @Test
+    public void testCreation() throws Exception
+    {
+        T persister = createPersister();
+
+        Assume.assumeTrue(persister.getCapabilities().contains(EPersistorCapabilities.CREATE));
+
+        TestEntity entity = new TestEntity();
+        entity.initialize();
+
+        Assert.assertTrue(persister.saveEntity(false, entity));
+    }
+
+    @Test
+    public void testUpdates() throws Exception
+    {
+        T persister = createPersister();
+
+        Assume.assumeTrue(persister.getCapabilities().contains(EPersistorCapabilities.CREATE));
+        Assume.assumeTrue(persister.getCapabilities().contains(EPersistorCapabilities.READ));
+        
+        TestEntity entity = new TestEntity();
+        entity.initialize();
+
+        Assert.assertTrue(persister.saveEntity(false, entity));
+        
+        TestRecord record1 = entity.addRecord1();
+        record1.getBooleanField().setValue(true);
+
+        Assert.assertTrue(persister.saveEntity(false, entity));
+
+        CoalesceEntity updated = persister.getEntity(entity.getKey())[0];
+        
+        CoalesceRecord updatedRecord = (CoalesceRecord) updated.getCoalesceObjectForKey(record1.getKey());
+        
+        Assert.assertNotNull(updatedRecord);
+        Assert.assertEquals(record1.getBooleanField().getBaseValue(), updatedRecord.getFieldByName(record1.getBooleanField().getName()).getBaseValue());
+
+    }
+
+    @Test
+    public void testDeletion() throws Exception
+    {
+        T persister = createPersister();
+
+        Assume.assumeTrue(persister.getCapabilities().contains(EPersistorCapabilities.CREATE));
+        Assume.assumeTrue(persister.getCapabilities().contains(EPersistorCapabilities.DELETE));
+        
+        TestEntity entity = new TestEntity();
+        entity.initialize();
+
+        Assert.assertTrue(persister.saveEntity(false, entity));
+        Assert.assertNotNull(persister.getEntityXml(entity.getKey())[0]);
+        
+        entity.markAsDeleted();
+        
+        Assert.assertTrue(persister.saveEntity(true, entity));
+        Assert.assertEquals(0, persister.getEntityXml(entity.getKey()).length);
+        
+    }
+
 }

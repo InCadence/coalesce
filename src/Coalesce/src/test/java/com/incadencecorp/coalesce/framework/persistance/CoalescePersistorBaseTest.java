@@ -92,7 +92,7 @@ import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
  * </pre>
  * 
  * @author InCadence
- *
+ * @deprecated {@link AbstractCoalescePersistorTest}
  */
 public abstract class CoalescePersistorBaseTest {
 

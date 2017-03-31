@@ -18,6 +18,9 @@
 package com.incadencecorp.coalesce.framework.persistance.neo4j;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
 
 import javax.sql.rowset.CachedRowSet;
 
@@ -25,6 +28,7 @@ import org.geotools.data.Query;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.sort.SortBy;
 
+import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
@@ -41,8 +45,8 @@ import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 public class Neo4jSearchPersister extends Neo4JPersistor implements ICoalesceSearchPersistor {
 
     private static final String ENTITY_KEY_COL_NAME = CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getEntityKey());
-    private static final String ENTITY_NAME_COL_NAME = CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getSource());
-    private static final String ENTITY_SOURCE_COL_NAME = CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getName());
+    private static final String ENTITY_NAME_COL_NAME = CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getName());
+    private static final String ENTITY_SOURCE_COL_NAME = CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getSource());
     private static final String ENTITY_TYPE_COL_NAME = CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getEntityType());
     private static final String ENTITY_TITLE_COL_NAME = CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getEntityTitle());
 
@@ -63,6 +67,8 @@ public class Neo4jSearchPersister extends Neo4JPersistor implements ICoalesceSea
 
         try
         {
+            List<String> columns = new ArrayList<String>();
+
             StringBuilder sb = new StringBuilder();
             sb.append(LABEL + "." + Neo4JPersistor.KEY + " AS " + ENTITY_KEY_COL_NAME);
             sb.append(", " + LABEL + "." + Neo4JPersistor.NAME + " AS " + ENTITY_NAME_COL_NAME);
@@ -70,13 +76,26 @@ public class Neo4jSearchPersister extends Neo4JPersistor implements ICoalesceSea
             sb.append(", " + LABEL + "." + Neo4JPersistor.TYPE + " AS " + ENTITY_TYPE_COL_NAME);
             sb.append(", " + LABEL + "." + Neo4JPersistor.TITLE + " AS " + ENTITY_TITLE_COL_NAME);
 
+            columns.add(Neo4JPersistor.KEY);
+            columns.add(Neo4JPersistor.NAME);
+            columns.add(Neo4JPersistor.SOURCE);
+            columns.add(Neo4JPersistor.TYPE);
+            columns.add(Neo4JPersistor.TITLE);
+
             if (query.getProperties() != null)
             {
                 for (PropertyName property : query.getProperties())
                 {
                     String[] parts = property.getPropertyName().split("\\.");
-                    sb.append(", " + LABEL + "." + ((parts.length == 2) ? parts[1] : parts[0]));
-                    sb.append(" AS " + CoalescePropertyFactory.getColumnName(property));
+
+                    String propname = ((parts.length == 2) ? parts[1] : parts[0]);
+
+                    if (!columns.contains(propname))
+                    {
+                        sb.append(", " + LABEL + "." + propname);
+                        sb.append(" AS " + CoalescePropertyFactory.getColumnName(property));
+                        columns.add(propname);
+                    }
                 }
             }
 
@@ -99,12 +118,28 @@ public class Neo4jSearchPersister extends Neo4JPersistor implements ICoalesceSea
 
             try (CoalesceDataConnectorBase conn = new Neo4JDataConnector(Neo4jSettings.getServerConn()))
             {
-                results.setResults(executeQuery(cypher));
+                CachedRowSet hits = executeQuery(cypher);
 
-                CachedRowSet rowset = executeQuery(countCypher);
-                if (rowset.next())
+                hits.last();
+                int numberOfHits = hits.getRow();
+                hits.beforeFirst();
+
+                results.setResults(hits);
+
+                // Hits Exceeds a Page?
+                if (numberOfHits >= query.getMaxFeatures())
                 {
-                    results.setTotal(rowset.getLong(1));
+                    // Yes; Get Total Hits
+                    CachedRowSet rowset = executeQuery(countCypher);
+
+                    if (rowset.next())
+                    {
+                        results.setTotal(rowset.getLong(1));
+                    }
+                }
+                else
+                {
+                    results.setTotal(numberOfHits);
                 }
             }
         }
@@ -159,4 +194,14 @@ public class Neo4jSearchPersister extends Neo4JPersistor implements ICoalesceSea
 
         return sb.toString();
     }
+    
+    @Override
+    public EnumSet<EPersistorCapabilities> getCapabilities()
+    {
+        EnumSet<EPersistorCapabilities> results = super.getCapabilities();
+        results.add(EPersistorCapabilities.SEARCH);
+        
+        return results;
+    }
+
 }

@@ -121,8 +121,7 @@ public class PostGreSQLPersistorExt extends PostGreSQLPersistor implements ICoal
     --------------------------------------------------------------------------*/
 
     @Override
-    protected boolean persistRecordsetObject(CoalesceRecordset recordset, CoalesceDataConnectorBase conn)
-            throws SQLException
+    protected boolean persistRecordsetObject(CoalesceRecordset recordset, CoalesceDataConnectorBase conn) throws SQLException
     {
 
         // Get Parent's information
@@ -244,8 +243,7 @@ public class PostGreSQLPersistorExt extends PostGreSQLPersistor implements ICoal
     }
 
     @Override
-    protected boolean persistMapTableEntry(CoalesceObject coalesceObject, CoalesceDataConnectorBase conn)
-            throws SQLException
+    protected boolean persistMapTableEntry(CoalesceObject coalesceObject, CoalesceDataConnectorBase conn) throws SQLException
     {
         // Don't Persist
         return true;
@@ -363,17 +361,7 @@ public class PostGreSQLPersistorExt extends PostGreSQLPersistor implements ICoal
 
             try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings(), getSchemaPrefix()))
             {
-                String sql = String.format("SELECT DISTINCT COUNT(*) FROM %s %s", preparedFilter.getFrom(), where);
-
-                // Get Total Results
-                ResultSet rowset = conn.executeQuery(sql, params);
-
-                if (rowset.next())
-                {
-                    results.setTotal(rowset.getLong(1));
-                }
-
-                sql = String.format("SELECT DISTINCT %s FROM %s %s %s %s",
+                String sql = String.format("SELECT DISTINCT %s FROM %s %s %s %s",
                                     preparedFilter.getColumns(),
                                     preparedFilter.getFrom(),
                                     where,
@@ -381,10 +369,33 @@ public class PostGreSQLPersistorExt extends PostGreSQLPersistor implements ICoal
                                     preparedFilter.getLimit());
 
                 // Get Hits
-                CachedRowSet cached = RowSetProvider.newFactory().createCachedRowSet();
-                cached.populate(conn.executeQuery(sql, params));
-                
-                results.setResults(cached);
+                CachedRowSet hits = RowSetProvider.newFactory().createCachedRowSet();
+                hits.populate(conn.executeQuery(sql, params));
+
+                hits.last();
+                int numberOfHits = hits.getRow();
+                hits.beforeFirst();
+
+                // Hits Exceeds a Page?
+                if (numberOfHits >= query.getMaxFeatures())
+                {
+                    // Yes; Get Total Hits
+                    sql = String.format("SELECT DISTINCT COUNT(*) FROM %s %s", preparedFilter.getFrom(), where);
+
+                    // Get Total Results
+                    ResultSet rowset = conn.executeQuery(sql, params);
+
+                    if (rowset.next())
+                    {
+                        results.setTotal(rowset.getLong(1));
+                    }
+                }
+                else
+                {
+                    results.setTotal(numberOfHits);
+                }
+
+                results.setResults(hits);
             }
         }
         catch (FilterToSQLException | SQLException | ParseException | CoalesceException e1)
@@ -422,72 +433,6 @@ public class PostGreSQLPersistorExt extends PostGreSQLPersistor implements ICoal
 
     }
 
-    // @Override
-//     public CachedRowSet search(Query query, CoalesceParameter... parameters)
-//     throws CoalescePersistorException
-//     {
-//     CachedRowSet rowset = null;
-//     PostgisPSFilterToSql fitlerToSql = new PostgisPSFilterToSql(null);
-//    
-//     // Execute Query
-//     try (CoalesceDataConnectorBase conn = new
-//     PostGreSQLDataConnector(getConnectionSettings(), getSchemaPrefix()))
-//     {
-//     if (LOGGER.isDebugEnabled())
-//     {
-//     LOGGER.debug("Filter: {}", query.getFilter().toString());
-//     }
-//
-//     // Always Include EntityKey
-//     StringBuilder sb = new StringBuilder();
-//    
-//     for (PropertyName property : query.getProperties())
-//     {
-//     if (sb.length() != 0)
-//     {
-//     sb.append(", ");
-//     }
-//     sb.append(property.getPropertyName());
-//     }
-//    
-//     // TODO Complete this implementation (Does not support functions /
-//     // sorting / properties / etc)
-//     String sql = "SELECT " + sb.toString() + " FROM " + getSchemaPrefix() +
-//     "coalesceentity "
-//     + fitlerToSql.encodeToString(query.getFilter());
-//    
-//     if (LOGGER.isDebugEnabled())
-//     {
-//     LOGGER.debug("SQL: {}", sql);
-//    
-//     LOGGER.debug("Parameters:");
-//    
-//     if (parameters != null)
-//     {
-//     for (CoalesceParameter param : parameters)
-//     {
-//     LOGGER.debug("\t{}:{}", param.getValue(), param.getType());
-//     }
-//     }
-//     }
-//    
-//     ResultSet result = conn.executeQuery(sql, parameters);
-//    
-//     rowset = RowSetProvider.newFactory().createCachedRowSet();
-//     rowset.populate(result);
-//    
-//     }
-//     catch (SQLException | FilterToSQLException e)
-//     {
-//     throw new CoalescePersistorException("Search Failed", e);
-//     }
-//    
-//     SearchResults results = new SearchResults();
-//     results.setResults(rowset);
-//    
-//     return results;
-//     }
-
     /*--------------------------------------------------------------------------
     Public Methods
     --------------------------------------------------------------------------*/
@@ -515,7 +460,7 @@ public class PostGreSQLPersistorExt extends PostGreSQLPersistor implements ICoal
 
         return results;
     }
-    
+
     /**
      * Executes the given query
      * 
@@ -600,7 +545,8 @@ public class PostGreSQLPersistorExt extends PostGreSQLPersistor implements ICoal
      */
     public static boolean storedProcedureExists(final CoalesceIndexInfo info,
                                                 final String schema,
-                                                final CoalesceDataConnectorBase conn) throws SQLException
+                                                final CoalesceDataConnectorBase conn)
+            throws SQLException
     {
         return storedProcedureExists(info.getProcedureName(), schema, conn);
     }

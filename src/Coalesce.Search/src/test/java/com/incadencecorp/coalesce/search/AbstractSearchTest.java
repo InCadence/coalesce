@@ -17,20 +17,28 @@
 
 package com.incadencecorp.coalesce.search;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.sql.rowset.CachedRowSet;
 
 import org.geotools.data.Query;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
+import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceStringField;
 import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
@@ -41,17 +49,45 @@ import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 /**
  * This abstract test suite provides generic testing against persisters that
  * have implemented {@link ICoalesceSearchPersistor} to ensure basic
- * functionality.
+ * functionality. The {@link TestEntity} must have already been resgistered
+ * before running these test.
  * 
  * @author n78554
  *
  * @param <T>
  */
-public abstract class AbstractSearchTests<T extends ICoalescePersistor & ICoalesceSearchPersistor> {
+public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesceSearchPersistor> {
 
     private static final FilterFactory FF = CoalescePropertyFactory.getFilterFactory();
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSearchTest.class);
+
+    private boolean isInitialized = false;
 
     protected abstract T createPersister();
+
+    /**
+     * Registers the entities used by these tests.
+     * 
+     * @param persister
+     */
+    @Before
+    public void registerEntities()
+    {
+        if (!isInitialized)
+        {
+            TestEntity entity = new TestEntity();
+            entity.initialize();
+
+            try
+            {
+                createPersister().registerTemplate(CoalesceEntityTemplate.create(entity));
+            }
+            catch (CoalescePersistorException | SAXException | IOException e)
+            {
+                LOGGER.warn("Failed to register templates");
+            }
+        }
+    }
 
     /**
      * Execute a search with one parameter and specifying the search order.
@@ -111,9 +147,9 @@ public abstract class AbstractSearchTests<T extends ICoalescePersistor & ICoales
         Assert.assertEquals(6, rowset.getMetaData().getColumnCount());
         Assert.assertEquals(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getEntityKey()),
                             rowset.getMetaData().getColumnName(1));
-        Assert.assertEquals(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getSource()),
-                            rowset.getMetaData().getColumnName(2));
         Assert.assertEquals(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getName()),
+                            rowset.getMetaData().getColumnName(2));
+        Assert.assertEquals(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getSource()),
                             rowset.getMetaData().getColumnName(3));
         Assert.assertEquals(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getEntityType()),
                             rowset.getMetaData().getColumnName(4));
@@ -121,10 +157,10 @@ public abstract class AbstractSearchTests<T extends ICoalescePersistor & ICoales
                             rowset.getMetaData().getColumnName(5));
         Assert.assertEquals(CoalescePropertyFactory.getColumnName(properties.get(0)), rowset.getMetaData().getColumnName(6));
 
-        rowset.next();
+        Assert.assertTrue(rowset.next());
         Assert.assertEquals(entity1.getKey(), rowset.getString(1));
         Assert.assertEquals(field1.getValue(), rowset.getString(6));
-        rowset.next();
+        Assert.assertTrue(rowset.next());
         Assert.assertEquals(entity2.getKey(), rowset.getString(1));
         Assert.assertEquals(field2.getValue(), rowset.getString(6));
 
@@ -135,10 +171,10 @@ public abstract class AbstractSearchTests<T extends ICoalescePersistor & ICoales
 
         rowset = results.getResults();
 
-        rowset.next();
+        Assert.assertTrue(rowset.next());
         Assert.assertEquals(entity2.getKey(), rowset.getString(1));
         Assert.assertEquals(field2.getValue(), rowset.getString(6));
-        rowset.next();
+        Assert.assertTrue(rowset.next());
         Assert.assertEquals(entity1.getKey(), rowset.getString(1));
         Assert.assertEquals(field1.getValue(), rowset.getString(6));
 
@@ -156,7 +192,7 @@ public abstract class AbstractSearchTests<T extends ICoalescePersistor & ICoales
         T persister = createPersister();
 
         // Create Query
-        Filter query = FF.and(CoalescePropertyFactory.getEntityKey("AA"),
+        Filter query = FF.and(CoalescePropertyFactory.getEntityKey(UUID.randomUUID().toString()),
                               FF.equals(CoalescePropertyFactory.getName(), FF.literal(TestEntity.NAME)));
 
         Query searchQuery = new Query();
@@ -170,17 +206,9 @@ public abstract class AbstractSearchTests<T extends ICoalescePersistor & ICoales
 
         CachedRowSet rowset = results.getResults();
 
-        // 5 Default columns +1 parameter
+        // 5 Default columns
         Assert.assertEquals(5, rowset.getMetaData().getColumnCount());
-        Assert.assertEquals(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getEntityKey()),
-                            rowset.getMetaData().getColumnName(1));
-        Assert.assertEquals(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getSource()),
-                            rowset.getMetaData().getColumnName(2));
-        Assert.assertEquals(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getName()),
-                            rowset.getMetaData().getColumnName(3));
-        Assert.assertEquals(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getEntityType()),
-                            rowset.getMetaData().getColumnName(4));
-        Assert.assertEquals(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getEntityTitle()),
-                            rowset.getMetaData().getColumnName(5));
+        Assert.assertFalse(rowset.next());
     }
+
 }
