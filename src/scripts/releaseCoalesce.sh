@@ -1,8 +1,7 @@
 #!/bin/bash
-
 name="Coalesce"
 tagname="coalesce"
-parentpom="${parentpom}"
+parentpom="../Coalesce.Bom/pom.xml"
 
 preVersion=$(cat ${parentpom} | grep -E -m 1 -o "<version>(.*)</version>" | sed -e 's,.*<version>\([^<]*\)</version>.*,\1,g')
 version=${preVersion}
@@ -21,6 +20,11 @@ while true; do
 		git fetch
 
                 read -p "New Version: " version
+
+                case $version in
+                    *-SNAPSHOT) isSnapshot=true;;
+                    * ) isSnapshot=false;;
+                esac
 
 		echo "Maven Setting version to ${version}..."
 		echo "isSnapshot set to: ${isSnapshot}"
@@ -71,7 +75,7 @@ while true; do
 
 	    if [ "${isSnapshot}" = false ] ; then
 
-		git tag omega-dss-${version}
+		git tag ${tagname}-${version}
 
 	    fi
 

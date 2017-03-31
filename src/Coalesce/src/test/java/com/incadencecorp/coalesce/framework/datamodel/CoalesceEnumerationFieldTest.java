@@ -399,7 +399,7 @@ public class CoalesceEnumerationFieldTest {
 
         Assert.assertEquals(5, field.getValue().length);
 
-        String[] values = field.getValueAsList(null);
+        String[] values = field.getValueAsString(null);
 
         Assert.assertEquals(Test2.HELLO.toString(), values[0]);
         Assert.assertEquals(Test2.WORLD.toString(), values[1]);
@@ -413,7 +413,7 @@ public class CoalesceEnumerationFieldTest {
 
         Assert.assertEquals(1, field.getValue().length);
 
-        values = field.getValueAsList(null);
+        values = field.getValueAsString(null);
 
         Assert.assertEquals(Test2.WORLD.toString(), values[0]);
 
@@ -507,7 +507,7 @@ public class CoalesceEnumerationFieldTest {
 
         CoalesceEnumerationListField field = (CoalesceEnumerationListField) record.getFieldByName("enum");
 
-        field.setValueAsList(null, new String[] {
+        field.setValueAsString(new String[] {
             Test2.HELLO.toString()
         });
 
@@ -534,11 +534,13 @@ public class CoalesceEnumerationFieldTest {
         Assert.assertEquals(Test2.HELLO.ordinal(), field.getValue()[0]);
         Assert.assertEquals(Test2.WORLD.ordinal(), field.getValue()[1]);
 
-        field.setValueAsString(null, null);
+        field.setValueAsString(null);
 
         Assert.assertEquals(0, field.getValue().length);
 
-        field.setValueAsString(null, Test2.HELLO.toString());
+        field.setValueAsString(new String[] {
+                Test2.HELLO.toString()
+        });
 
         Assert.assertEquals(1, field.getValue().length);
         Assert.assertEquals(Test2.HELLO.ordinal(), field.getValue()[0]);
@@ -575,12 +577,16 @@ public class CoalesceEnumerationFieldTest {
         field.setBaseValue("0,1");
 
         Assert.assertEquals("0,1", field.getBaseValue());
-        Assert.assertEquals("HELLO" + CoalesceEnumerationListField.SEPERATOR + "WORLD", field.getValueAsString());
+        Assert.assertEquals(2, field.getValueAsString().length);
 
-        field.setValueAsString("WORLD" + CoalesceEnumerationListField.SEPERATOR + "HELLO");
+        field.setValueAsString(new String[] {
+                "WORLD", "HELLO"
+        });
 
         Assert.assertEquals("1,0", field.getBaseValue());
-        Assert.assertEquals("WORLD" + CoalesceEnumerationListField.SEPERATOR + "HELLO", field.getValueAsString());
+        Assert.assertEquals(2, field.getValueAsString().length);
+        Assert.assertEquals("WORLD", field.getValueAsString()[0]);
+        Assert.assertEquals("HELLO", field.getValueAsString()[1]);
 
     }
 
@@ -619,13 +625,16 @@ public class CoalesceEnumerationFieldTest {
                             results.get(field.getKey()));
 
         // Sets two positions
-        field.setValueAsString("HELLO WORLD");
+        field.setValueAsString(new String[] {
+                "HELLO", "WORLD"
+        });
 
         results = validator.validate(null, entity, template);
         Assert.assertEquals(2, field.getValue().length);
         Assert.assertFalse(results.containsKey(field.getKey()));
 
-        // Setting the field to null (Valid entry but should trigger mandatory constraint)
+        // Setting the field to null (Valid entry but should trigger mandatory
+        // constraint)
         field.setValueAsString(null);
 
         results = validator.validate(null, entity, template);
@@ -643,8 +652,7 @@ public class CoalesceEnumerationFieldTest {
         Assert.assertEquals(String.format(CoalesceErrors.INVALID_ENUMERATION_POSITION, 10, "valid"),
                             results.get(field.getKey()));
 
-        // Empty String (Same as Null)
-        field.setValueAsString("");
+        field.setValueAsString(null);
 
         results = validator.validate(null, entity, template);
         Assert.assertEquals(0, field.getValue().length);

@@ -84,14 +84,13 @@ public class CoalescePrunerIteratorTest {
 
         pruner.iterate(fieldsToPrune, entity1, entity2);
 
-        Assert.assertNull(record1.getStringField());
-        Assert.assertNull(record1.getBooleanField());
-        Assert.assertNotNull(record1.getIntegerField());
-
-        Assert.assertNull(record2.getStringField());
-        Assert.assertNull(record2.getBooleanField());
-        Assert.assertNotNull(record2.getIntegerField());
-
+        Assert.assertFalse(record1.hasField("string"));
+        Assert.assertFalse(record1.hasField("boolean"));
+        Assert.assertTrue(record1.hasField("int"));
+        
+        Assert.assertFalse(record2.hasField("string"));
+        Assert.assertFalse(record2.hasField("boolean"));
+        Assert.assertTrue(record2.hasField("int"));
     }
 
     /**
@@ -162,9 +161,9 @@ public class CoalescePrunerIteratorTest {
 
         pruner.iterate(fieldsToPrune, entity);
 
-        Assert.assertNull(record.getStringField());
-        Assert.assertNull(record.getBooleanField());
-        Assert.assertNotNull(record.getIntegerField());
+        Assert.assertFalse(record.hasField("string"));
+        Assert.assertFalse(record.hasField("boolean"));
+        Assert.assertTrue(record.hasField("int"));
     }
 
     /**

@@ -53,6 +53,14 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
     // protected Member Variables
     // -----------------------------------------------------------------------//
 
+    /**
+     * Attribute that specifies the datatype of the field
+     */
+    public static final String ATTRIBUTE_DATA_TYPE = "datatype";
+
+    /**
+     * Attribute that specifies the raw value of the field
+     */
     public static final String ATTRIBUTE_VALUE = "value";
     
     private boolean _suspendHistory = false;
@@ -891,7 +899,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
         return results;
 
     }
-
+    
     // -----------------------------------------------------------------------//
     // Protected Methods
     // -----------------------------------------------------------------------//
@@ -980,7 +988,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
     {
         Map<QName, String> map = super.getAttributes();
 
-        map.put(new QName("datatype"), _entityField.getDatatype());
+        map.put(new QName(ATTRIBUTE_DATA_TYPE), _entityField.getDatatype());
         map.put(new QName("classificationmarking"), _entityField.getClassificationmarking());
         map.put(new QName("label"), _entityField.getLabel());
         map.put(new QName(ATTRIBUTE_VALUE), _entityField.getValue());
@@ -1014,7 +1022,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
     protected boolean setExtendedAttributes(String name, String value)
     {
         switch (name.toLowerCase()) {
-        case "datatype":
+        case ATTRIBUTE_DATA_TYPE:
             setDataType(ECoalesceFieldDataTypes.getTypeForCoalesceType(value));
             return true;
         case "classificationmarking":

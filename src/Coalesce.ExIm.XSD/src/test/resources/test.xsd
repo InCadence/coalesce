@@ -11,6 +11,7 @@
                         <xs:element minOccurs="0" ref="tns:Linkages"/>
                         <xs:element minOccurs="0" ref="tns:UnitTestSection"/>
                     </xs:all>
+                    <xs:attribute name="name" type="tns:cdsString" use="required"/>
                     <xs:attribute name="source" type="tns:cdsString" use="required"/>
                     <xs:attribute name="version" type="tns:cdsString" use="required"/>
                     <xs:attribute name="entityid" type="tns:cdsString"/>
@@ -97,9 +98,9 @@
     </xs:simpleType>
     <xs:simpleType name="field3Type">
         <xs:restriction base="xs:int">
+            <xs:pattern value=".*\S+.*"/>
             <xs:minInclusive value="0"/>
             <xs:maxInclusive value="2"/>
-            <xs:pattern value=".*\S+.*"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="field4Type">

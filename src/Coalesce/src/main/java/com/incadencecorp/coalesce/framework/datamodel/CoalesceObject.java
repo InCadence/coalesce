@@ -44,6 +44,10 @@ public abstract class CoalesceObject implements ICoalesceObject {
     --------------------------------------------------------------------------*/
 
     /**
+     * Name of the element.
+     */
+    public static final String ATTRIBUTE_NAME = "name";
+    /**
      * IP address of the last person to modified this object.
      */
     public static final String ATTRIBUTE_MODIFIEDBYIP = "modifiedbyip";
@@ -494,7 +498,7 @@ public abstract class CoalesceObject implements ICoalesceObject {
         case ATTRIBUTE_LASTMODIFIED:
             setLastModified(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
             return true;
-        case "name":
+        case ATTRIBUTE_NAME:
             setName(value);
             return true;
         case ATTRIBUTE_STATUS:
@@ -1013,7 +1017,7 @@ public abstract class CoalesceObject implements ICoalesceObject {
         map.put(new QName(ATTRIBUTE_KEY), getKey());
         map.put(new QName(ATTRIBUTE_DATECREATED), JodaDateTimeHelper.toXmlDateTimeUTC(getDateCreated()));
         map.put(new QName(ATTRIBUTE_LASTMODIFIED), JodaDateTimeHelper.toXmlDateTimeUTC(getLastModified()));
-        map.put(new QName("name"), getName());
+        map.put(new QName(ATTRIBUTE_NAME), getName());
         map.put(new QName(ATTRIBUTE_STATUS), getStatus().toString());
         map.put(new QName("noindex"), Boolean.toString(getNoIndex()));
         map.put(new QName("objectversion"), Integer.toString(getObjectVersion()));

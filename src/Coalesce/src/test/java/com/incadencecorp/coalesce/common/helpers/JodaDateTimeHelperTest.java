@@ -8,6 +8,7 @@ import org.apache.commons.lang.NullArgumentException;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Duration;
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -74,7 +75,7 @@ public class JodaDateTimeHelperTest {
     {
         _thrown.expect(NullArgumentException.class);
         _thrown.expectMessage("value");
-        
+
         @SuppressWarnings("unused")
         DateTime converted = JodaDateTimeHelper.convertyyyyMMddDateStringToDateTime(null);
     }
@@ -116,7 +117,7 @@ public class JodaDateTimeHelperTest {
     {
         _thrown.expect(NullArgumentException.class);
         _thrown.expectMessage("value");
-        
+
         @SuppressWarnings("unused")
         String milDate = JodaDateTimeHelper.militaryFormat(null, true);
     }
@@ -126,7 +127,7 @@ public class JodaDateTimeHelperTest {
     {
         _thrown.expect(NullArgumentException.class);
         _thrown.expectMessage("value");
-        
+
         @SuppressWarnings("unused")
         String milDate = JodaDateTimeHelper.militaryFormat(null, false);
     }
@@ -160,42 +161,42 @@ public class JodaDateTimeHelperTest {
     public void getElapsedGMTTimeStringForDateTest()
     {
         DateTime now = JodaDateTimeHelper.nowInUtc();
-        
-        assertEquals("(2 days till)", JodaDateTimeHelper.getElapsedGMTTimeString(now.plusDays(2).plusSeconds(1), true, false));
-        
+
+        assertEquals("(2 days till)",
+                     JodaDateTimeHelper.getElapsedGMTTimeString(now.plusDays(2).plusSeconds(1), true, false));
+
     }
-    
+
     @Test
     public void getElapsedGMTTimeStringNullFirstDateTest()
     {
         _thrown.expect(NullArgumentException.class);
         _thrown.expectMessage("firstDate");
-        
+
         JodaDateTimeHelper.getElapsedGMTTimeString(null, JodaDateTimeHelper.nowInUtc(), true, true, true);
-                
+
     }
-    
+
     @Test
     public void getElapsedGMTTimeStringNullSecondDateTest()
     {
         _thrown.expect(NullArgumentException.class);
         _thrown.expectMessage("secondDate");
-        
+
         JodaDateTimeHelper.getElapsedGMTTimeString(JodaDateTimeHelper.nowInUtc(), null, true, true, true);
-                
+
     }
-    
+
     @Test
     public void getElapsedGMTTimeStringNullBothDatesTest()
     {
         _thrown.expect(NullArgumentException.class);
         _thrown.expectMessage("firstDate");
-        
+
         JodaDateTimeHelper.getElapsedGMTTimeString(null, null, true, true, true);
-                
+
     }
-    
-    
+
     @Test
     public void getElapsedGMTTimeStringSameTimeTest()
     {
@@ -641,6 +642,38 @@ public class JodaDateTimeHelperTest {
         assertEquals("2014-05-06 06:08:09-04:00 (3 hours till)", elapsed);
     }
 
+    /**
+     * This test ensure proper parsing of times using the PostGres format.
+     */
+    @Test
+    public void getPostGresDateTimeTest()
+    {
+        DateTime date;
+
+        date = JodaDateTimeHelper.getPostGresDateTim("2017-02-08 11:34:01.000-05");
+
+        Assert.assertNotNull(date);
+        Assert.assertEquals(2017, date.getYear());
+        Assert.assertEquals(2, date.getMonthOfYear());
+        Assert.assertEquals(8, date.getDayOfMonth());
+        Assert.assertEquals(16, date.getHourOfDay());
+        Assert.assertEquals(34, date.getMinuteOfHour());
+        Assert.assertEquals(1, date.getSecondOfMinute());
+        Assert.assertEquals(0, date.getMillisOfSecond());
+
+        date = JodaDateTimeHelper.getPostGresDateTim("2017-02-08 11:34:01-04");
+
+        Assert.assertNotNull(date);
+        Assert.assertEquals(2017, date.getYear());
+        Assert.assertEquals(2, date.getMonthOfYear());
+        Assert.assertEquals(8, date.getDayOfMonth());
+        Assert.assertEquals(15, date.getHourOfDay());
+        Assert.assertEquals(34, date.getMinuteOfHour());
+        Assert.assertEquals(1, date.getSecondOfMinute());
+        Assert.assertEquals(0, date.getMillisOfSecond());
+
+    }
+
     @Test
     public void toXmlDateTimeUTCTest()
     {
@@ -658,7 +691,7 @@ public class JodaDateTimeHelperTest {
     {
         _thrown.expect(NullArgumentException.class);
         _thrown.expectMessage("forDate");
-        
+
         @SuppressWarnings("unused")
         String utcTime = JodaDateTimeHelper.toXmlDateTimeUTC(null);
     }
@@ -781,11 +814,11 @@ public class JodaDateTimeHelperTest {
     public void nowInUtcTest()
     {
         DateTime now = new DateTime();
-        
+
         DateTime nowInUtc = JodaDateTimeHelper.nowInUtc();
-        
+
         Duration dateDiff = new Duration(now, nowInUtc);
         assertTrue(Math.abs(dateDiff.getStandardSeconds()) < 2);
-        
+
     }
 }

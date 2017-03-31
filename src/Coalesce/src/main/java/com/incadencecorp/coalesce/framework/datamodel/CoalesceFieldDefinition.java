@@ -60,6 +60,16 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
     }
 
     /**
+     * @param parent
+     * @param name
+     * @return a field definition for a enumeration list type with the enumeration mapping to the field name.
+     */
+    public static CoalesceFieldDefinition createEnumerationListFieldDefinition(CoalesceRecordset parent, String name)
+    {
+        return createEnumerationListFieldDefinition(parent, name, name);
+    }
+
+    /**
      * 
      * @param parent
      * @param name
@@ -93,6 +103,17 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
     /**
      * @param parent
      * @param name
+     * @return a field definition for a enumeration type with the enumeration mapping to the field name.
+     */
+    public static CoalesceFieldDefinition createEnumerationFieldDefinition(CoalesceRecordset parent, String name)
+    {
+        return createEnumerationFieldDefinition(parent, name, name);
+    }
+
+    
+    /**
+     * @param parent
+     * @param name
      * @param enumeration
      * @param defaultValue
      * @return a field definition for a enumeration type that specifies a
@@ -109,7 +130,7 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
         {
             value = Integer.toString(defaultValue.ordinal());
         }
-        
+
         CoalesceFieldDefinition fd = create(parent, name, ECoalesceFieldDataTypes.ENUMERATION_TYPE, null, "U", value);
 
         CoalesceConstraint.createEnumeration(fd, fd.getName() + "enumeration", enumeration);
@@ -151,13 +172,8 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
         {
             value = Integer.toString(defaultValue);
         }
-        
-        CoalesceFieldDefinition fd = create(parent,
-                                            name,
-                                            ECoalesceFieldDataTypes.ENUMERATION_TYPE,
-                                            null,
-                                            "U",
-                                            value);
+
+        CoalesceFieldDefinition fd = create(parent, name, ECoalesceFieldDataTypes.ENUMERATION_TYPE, null, "U", value);
 
         CoalesceConstraint.createEnumeration(fd, fd.getName() + "enumeration", enumeration);
 

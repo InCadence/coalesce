@@ -32,6 +32,9 @@ import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.IEnumerationProvider;
 import com.incadencecorp.coalesce.common.classification.helpers.StringHelper;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEnumerationField;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEnumerationFieldBase;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEnumerationListField;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
 import com.incadencecorp.unity.common.IConfigurationsConnector;
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
 import com.incadencecorp.unity.common.factories.PropertyFactory;
@@ -472,6 +475,28 @@ public final class EnumerationProviderUtil {
         }
 
         return enumeration;
+    }
+
+    /**
+     * Looks up an enumeration from a provided field.
+     * 
+     * @param field
+     * @return the enumeration used to retrieve values.
+     */
+    public static String lookupEnumeration(CoalesceField<?> field)
+    {
+        String enumeration;
+
+        if (field instanceof CoalesceEnumerationFieldBase)
+        {
+            enumeration = ((CoalesceEnumerationFieldBase<?>) field).getEnumerationName();
+        }
+        else
+        {
+            enumeration = String.format("%s.%s", field.getParent().getParent().getName(), field.getName());
+        }
+
+        return lookupEnumeration(enumeration);
     }
 
     /*

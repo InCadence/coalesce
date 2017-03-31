@@ -61,6 +61,21 @@ public final class EntityLinkHelper {
 
     /**
      * Links two entities together with a default Unclassified classification
+     * and {@link Locale#US}. 
+     * 
+     * @param entity1 the first entity to link
+     * @param linkType the type of linkage to create between the two entities.
+     * @param entity2 the second entity to link
+     * @throws CoalesceException 
+     */
+    public static void linkEntities(CoalesceEntity entity1, ELinkTypes linkType, CoalesceEntity entity2) throws CoalesceException
+    {
+
+        linkEntities(entity1, linkType, entity2, new Marking("(U)"), "", "", "", Locale.US, true, false, false);
+    }
+
+    /**
+     * Links two entities together with a default Unclassified classification
      * and {@link Locale#US}. If <code>updateExisting</code> is
      * <code>true</code> then the first linkage found between the two entities
      * with the same
@@ -72,7 +87,7 @@ public final class EntityLinkHelper {
      * @param entity2 the second entity to link
      * @param updateExisting whether to update an existing linkage.
      * @return <code>true</code> if successful.
-     * @deprecated this methods shallows the CoalesceException therefore you
+     * @deprecated this methods swallows the CoalesceException therefore you
      *             should use one of the others.
      */
     @Deprecated
@@ -466,12 +481,13 @@ public final class EntityLinkHelper {
     {
         if (LOGGER.isDebugEnabled())
         {
-            String rel = "*"; 
-            
-            if (linkType != null) {
+            String rel = "*";
+
+            if (linkType != null)
+            {
                 rel = linkType.toString();
             }
-            
+
             LOGGER.debug("Un-Linking: ({}) ({}) ({}) -[{}]-> ({}) ({}) ({})",
                          entity.getKey(),
                          entity.getClassName(),

@@ -6,12 +6,12 @@ import org.apache.commons.lang.NullArgumentException;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Duration;
-import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.incadencecorp.unity.common.CallResult;
-import com.incadencecorp.unity.common.CallResult.CallResults;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -31,12 +31,15 @@ import com.incadencecorp.unity.common.CallResult.CallResults;
  -----------------------------------------------------------------------------*/
 
 /**
- * Provides helper methods for converting between {@link java.lang.String} values and {@link org.joda.time.DateTime} objects.
+ * Provides helper methods for converting between {@link java.lang.String}
+ * values and {@link org.joda.time.DateTime} objects.
  * 
  * @author InCadence
  *
  */
 public final class JodaDateTimeHelper {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(JodaDateTimeHelper.class);
 
     // Make static class
     private JodaDateTimeHelper()
@@ -49,8 +52,9 @@ public final class JodaDateTimeHelper {
     // -----------------------------------------------------------------------'
 
     /**
-     * Returns the {@link org.joda.time.DateTime} object based on the provided value in the form of 'yyyyMMdd'. If the value
-     * cannot be correctly parsed then <code>null</code> is returned.
+     * Returns the {@link org.joda.time.DateTime} object based on the provided
+     * value in the form of 'yyyyMMdd'. If the value cannot be correctly parsed
+     * then <code>null</code> is returned.
      * 
      * @param value the date string in the form of 'yyyyMMdd'
      * @return the converted date object
@@ -58,7 +62,8 @@ public final class JodaDateTimeHelper {
      */
     public static DateTime convertyyyyMMddDateStringToDateTime(String value)
     {
-        if (value == null) throw new NullArgumentException("value");
+        if (value == null)
+            throw new NullArgumentException("value");
 
         try
         {
@@ -74,8 +79,9 @@ public final class JodaDateTimeHelper {
     }
 
     /**
-     * Returns a {@link String} representation of the value. If <code>dateOnly</code> is true then only the date will be
-     * generated otherwise the format will be 'yyyy-MM-dd HH:mm:ssZZ'.
+     * Returns a {@link String} representation of the value. If
+     * <code>dateOnly</code> is true then only the date will be generated
+     * otherwise the format will be 'yyyy-MM-dd HH:mm:ssZZ'.
      * 
      * @param value the date to be formatted as a string
      * @param dateOnly whether the time be included along with the date
@@ -83,7 +89,8 @@ public final class JodaDateTimeHelper {
      */
     public static String militaryFormat(DateTime value, boolean dateOnly)
     {
-        if (value == null) throw new NullArgumentException("value");
+        if (value == null)
+            throw new NullArgumentException("value");
 
         if (dateOnly)
         {
@@ -96,7 +103,8 @@ public final class JodaDateTimeHelper {
     }
 
     /**
-     * Returns a {@link String} representation of the {@link org.joda.time.DateTime} in the format used by MySQL.
+     * Returns a {@link String} representation of the
+     * {@link org.joda.time.DateTime} in the format used by MySQL.
      * 
      * @param value the date time to be converted.
      * @return the formatted string.
@@ -107,7 +115,8 @@ public final class JodaDateTimeHelper {
     }
 
     /**
-     * Returns a {@link org.joda.time.DateTime} converted from a date string from MySQL.
+     * Returns a {@link org.joda.time.DateTime} converted from a date string
+     * from MySQL.
      * 
      * @param value the MySQL string date.
      * @return the converted date
@@ -125,12 +134,13 @@ public final class JodaDateTimeHelper {
 
         DateTimeFormatter formatter = ISODateTimeFormat.dateTime().withZone(DateTimeZone.UTC);
         return formatter.parseDateTime(value);
-        
-        //return DateTime.parse(value);
+
+        // return DateTime.parse(value);
     }
 
     /**
-     * Returns a {@link String} representation of the {@link org.joda.time.DateTime} in the format used by PostGest.
+     * Returns a {@link String} representation of the
+     * {@link org.joda.time.DateTime} in the format used by PostGest.
      * 
      * @param value the date time to be converted.
      * @return the formatted string.
@@ -141,29 +151,32 @@ public final class JodaDateTimeHelper {
     }
 
     /**
-     * Returns a {@link org.joda.time.DateTime} converted from a date string from PostGres. If the string cannot be parsed
-     * correctly then <code>null</code> is returned;
+     * Returns a {@link org.joda.time.DateTime} converted from a date string
+     * from PostGres. If the string cannot be parsed correctly then
+     * <code>null</code> is returned;
      * 
      * @param value the PostGres string date.
-     * @return the converted date or <code>null</code> if the string cannot be parsed.
+     * @return the converted date or <code>null</code> if the string cannot be
+     *         parsed.
      */
     public static DateTime getPostGresDateTim(String value)
     {
         try
         {
-            DateTimeFormatter outputFormatter = DateTimeFormat.forPattern("yyyy-MM-dd H:mm:ss.SSSZ").withZone(DateTimeZone.UTC);
+            DateTimeFormatter outputFormatter = ISODateTimeFormat.dateTimeParser().withZone(DateTimeZone.UTC);
 
-            return outputFormatter.parseDateTime(value);
+            return outputFormatter.parseDateTime(value.replace(" ", "T"));
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            CallResult.log(CallResults.FAILED, ex, "JodaDateTimeHelper");
+            LOGGER.warn("Invalid Time Format: ({})", value, e);
             return null;
         }
     }
 
     /**
-     * Returns a string describing the elapsed time between the <code>forDate</code> and the current time using GMT.
+     * Returns a string describing the elapsed time between the
+     * <code>forDate</code> and the current time using GMT.
      * 
      * <pre>
      * Examples:
@@ -186,7 +199,8 @@ public final class JodaDateTimeHelper {
     }
 
     /**
-     * Returns a string describing the elapsed time between the <code>forDate</code> and the current time using GMT.
+     * Returns a string describing the elapsed time between the
+     * <code>forDate</code> and the current time using GMT.
      * 
      * <pre>
      * Examples:
@@ -218,7 +232,8 @@ public final class JodaDateTimeHelper {
     }
 
     /**
-     * Returns a string describing the elapsed time between the two dates using GMT.
+     * Returns a string describing the elapsed time between the two dates using
+     * GMT.
      * 
      * <pre>
      * Examples:
@@ -243,8 +258,10 @@ public final class JodaDateTimeHelper {
                                                  boolean includeDateTime,
                                                  boolean dateOnly)
     {
-        if (firstDate == null) throw new NullArgumentException("firstDate");
-        if (secondDate == null) throw new NullArgumentException("secondDate");
+        if (firstDate == null)
+            throw new NullArgumentException("firstDate");
+        if (secondDate == null)
+            throw new NullArgumentException("secondDate");
 
         boolean isFutureDate = false;
         String elapsedString = "";
@@ -318,15 +335,16 @@ public final class JodaDateTimeHelper {
     }
 
     /**
-     * Converts a {@link org.joda.time.DateTime} to the string format used in the serialization of
-     * {@link com.incadencecorp.coalesce.framework.datamodel.generated.Entity} to XML.
+     * Converts a {@link org.joda.time.DateTime} to the string format used in
+     * the serialization of {@link CoalesceEntity} to XML.
      * 
      * @param forDate the date.
      * @return the string representation of the {@link org.joda.time.DateTime}.
      */
     public static String toXmlDateTimeUTC(DateTime forDate)
     {
-        if (forDate == null) throw new NullArgumentException("forDate");
+        if (forDate == null)
+            throw new NullArgumentException("forDate");
 
         DateTimeFormatter formatter = ISODateTimeFormat.dateTime().withZone(DateTimeZone.UTC);
 
@@ -336,16 +354,17 @@ public final class JodaDateTimeHelper {
 
     /**
      * Converts a date/time stored in the XML format used to serialize
-     * {@link com.incadencecorp.coalesce.framework.datamodel.generated.Entity} to a {@link org.joda.time.DateTime}. If the string
+     * {@link CoalesceEntity} to a {@link org.joda.time.DateTime}. If the string
      * cannot be parsed then <code>null</code> is returned.
      * 
      * @param xmlDate the XML date string.
-     * @return the {@link org.joda.time.DateTime} representation of the XML string or <code>null</code> if the string cannot
-     *         be parsed.
+     * @return the {@link org.joda.time.DateTime} representation of the XML
+     *         string or <code>null</code> if the string cannot be parsed.
      */
     public static DateTime fromXmlDateTimeUTC(String xmlDate)
     {
-        if (xmlDate == null) return null;
+        if (xmlDate == null)
+            return null;
 
         try
         {
@@ -354,26 +373,31 @@ public final class JodaDateTimeHelper {
             return formatter.parseDateTime(xmlDate);
 
         }
-        catch (IllegalArgumentException iae)
+        catch (IllegalArgumentException e)
         {
+            LOGGER.warn("Invalid Time Format: ({})", xmlDate, e);
             return null;
         }
     }
 
     /**
-     * Returns a {@link org.joda.time.DateTime} for the current time and a time zone set to UTC.
+     * Returns a {@link org.joda.time.DateTime} for the current time and a time
+     * zone set to UTC.
      * 
-     * @return the {@link org.joda.time.DateTime} for the current time and a time zone set to UTC.
+     * @return the {@link org.joda.time.DateTime} for the current time and a
+     *         time zone set to UTC.
      */
     public static DateTime nowInUtc()
     {
         return new DateTime(DateTimeZone.UTC);
     }
-    
+
     /**
-     * Returns a {@link org.joda.time.DateTime} for the current time and a time zone set to UTC.
+     * Returns a {@link org.joda.time.DateTime} for the current time and a time
+     * zone set to UTC.
      * 
-     * @return the {@link org.joda.time.DateTime} for the current time and a time zone set to UTC.
+     * @return the {@link org.joda.time.DateTime} for the current time and a
+     *         time zone set to UTC.
      */
     public static Date nowInUtcAsDate()
     {

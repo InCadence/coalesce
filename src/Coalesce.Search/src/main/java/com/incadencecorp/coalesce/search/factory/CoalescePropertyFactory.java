@@ -22,6 +22,7 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.PropertyName;
 
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
 import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
 
@@ -91,6 +92,14 @@ public class CoalescePropertyFactory {
     }
 
     /**
+     * @return the property used for filtering on version.
+     */
+    public static PropertyName getDeleted()
+    {
+        return getFilterFactory().property(COALESCE_ENTITY_TABLE + "deleted");
+    }
+
+    /**
      * @return the property used for filtering on source.
      */
     public static PropertyName getSource()
@@ -129,6 +138,14 @@ public class CoalescePropertyFactory {
     public static PropertyName getEntityTitle()
     {
         return getFilterFactory().property(COALESCE_ENTITY_TABLE + "title");
+    }
+
+    /**
+     * @return the property used for filtering on the entity type.
+     */
+    public static PropertyName getEntityType()
+    {
+        return getFilterFactory().property(COALESCE_ENTITY_TABLE + "type");
     }
 
     /*--------------------------------------------------------------------------
@@ -218,5 +235,23 @@ public class CoalescePropertyFactory {
     public static PropertyName getLinkageLabel()
     {
         return getFilterFactory().property(COALESCE_LINKAGE_TABLE + "linklabel");
+    }
+
+    /**
+     * @param field
+     * @return the property used for filtering on the provided field.
+     */
+    public static PropertyName getFieldProperty(CoalesceField<?> field)
+    {
+        return getFilterFactory().property(field.getParent().getParent().getName() + "." + field.getName());
+    }
+
+    /**
+     * @param property
+     * @return the normalized name used as the column name in a result set.
+     */
+    public static String getColumnName(PropertyName property)
+    {
+        return property.getPropertyName().replaceAll("[.]", "");
     }
 }

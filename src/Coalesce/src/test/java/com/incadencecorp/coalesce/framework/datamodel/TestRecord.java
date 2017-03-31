@@ -97,8 +97,8 @@ public class TestRecord extends CoalesceRecord {
         CoalesceFieldDefinition.create(recordset, "poly", ECoalesceFieldDataTypes.POLYGON_TYPE);
         CoalesceFieldDefinition.create(recordset, "line", ECoalesceFieldDataTypes.LINE_STRING_TYPE);
         CoalesceFieldDefinition.create(recordset, "circle", ECoalesceFieldDataTypes.CIRCLE_TYPE);
-        CoalesceFieldDefinition.create(recordset, "enum", ECoalesceFieldDataTypes.ENUMERATION_TYPE);
-        CoalesceFieldDefinition.create(recordset, "enumlist", ECoalesceFieldDataTypes.ENUMERATION_LIST_TYPE);
+        CoalesceFieldDefinition.createEnumerationFieldDefinition(recordset, "enum");
+        CoalesceFieldDefinition.createEnumerationListFieldDefinition(recordset, "enumlist");
         CoalesceFieldDefinition.create(recordset, "noflatten", ECoalesceFieldDataTypes.STRING_TYPE).setFlatten(false);
         CoalesceFieldDefinition.create(recordset, "doublelist", ECoalesceFieldDataTypes.DOUBLE_LIST_TYPE);
         CoalesceFieldDefinition.create(recordset, "intlist", ECoalesceFieldDataTypes.INTEGER_LIST_TYPE);
@@ -230,5 +230,14 @@ public class TestRecord extends CoalesceRecord {
     {
         return (CoalesceGUIDListField) getFieldByName("guidlist");
     }
+    
+    public CoalesceEnumerationField getEnumerationField()
+    {
+        return (CoalesceEnumerationField) getFieldByName("enum");
+    }
 
+    public CoalesceEnumerationListField getEnumerationListField()
+    {
+        return (CoalesceEnumerationListField) getFieldByName("enumlist");
+    }
 }

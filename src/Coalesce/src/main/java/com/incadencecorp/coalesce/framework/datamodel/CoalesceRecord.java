@@ -7,6 +7,7 @@ import org.apache.commons.lang.NullArgumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.incadencecorp.coalesce.api.ICoalesceFieldDefinitionFactory;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 
 /*-----------------------------------------------------------------------------'
@@ -29,7 +30,7 @@ import com.incadencecorp.coalesce.common.helpers.StringHelper;
 public class CoalesceRecord extends CoalesceObjectHistory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CoalesceRecord.class);
-    
+
     // -----------------------------------------------------------------------//
     // Private Member Variables
     // -----------------------------------------------------------------------//
@@ -134,7 +135,9 @@ public class CoalesceRecord extends CoalesceObjectHistory {
 
                 // Add to Child Collection
                 addChildCoalesceObject(newField.getKey(), newField);
-            } else {
+            }
+            else
+            {
                 LOGGER.warn("Failed to located defintion: {}", entityField.getName());
             }
         }
@@ -240,15 +243,52 @@ public class CoalesceRecord extends CoalesceObjectHistory {
      */
     public CoalesceField<?> getFieldByName(String name)
     {
+        return getFieldByName(name, null);
+    }
+
+    /**
+     * Returns an {@link CoalesceField} with the specified
+     * {@link CoalesceRecord}'s Field's name.
+     * 
+     * @param name String of the desired Field name.
+     * @param factory used to create the field definition if the field is
+     *            missing.
+     * @return {@link CoalesceField} that has the name parameter. Creates the
+     *         field if not present.
+     */
+    public CoalesceField<?> getFieldByName(String name, ICoalesceFieldDefinitionFactory factory)
+    {
+        CoalesceField<?> result = null;
+
         for (CoalesceField<?> field : getFields())
         {
             if (field.getName().equalsIgnoreCase(name))
             {
-                return field;
+                result = field;
+                break;
             }
         }
 
-        return null;
+        if (result == null)
+        {
+            CoalesceFieldDefinition fd = null;
+
+            if (factory != null)
+            {
+                fd = factory.create(this.getCastParent(), name);
+            }
+            else
+            {
+                fd = this.getCastParent().getFieldDefinition(name);
+            }
+
+            if (fd != null)
+            {
+                result = CoalesceField.create(this, fd);
+            }
+        }
+
+        return result;
     }
 
     /**
@@ -261,7 +301,18 @@ public class CoalesceRecord extends CoalesceObjectHistory {
      */
     public Boolean hasField(String name)
     {
-        return (getFieldByName(name) != null);
+        boolean found = false;
+        
+        for (CoalesceField<?> field : getFields())
+        {
+            if (field.getName().equalsIgnoreCase(name))
+            {
+                found = true;
+                break;
+            }
+        }
+        
+        return found;
     }
 
     // -----------------------------------------------------------------------//

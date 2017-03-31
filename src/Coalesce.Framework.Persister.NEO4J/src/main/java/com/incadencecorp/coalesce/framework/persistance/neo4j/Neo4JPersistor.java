@@ -36,9 +36,7 @@ import org.opengis.filter.expression.PropertyName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceBooleanField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
@@ -74,6 +72,14 @@ public class Neo4JPersistor extends CoalescePersistorBase {
      */
     public static final String NAME = getName(CoalescePropertyFactory.getName());
     /**
+     * @see CoalescePropertyFactory#getSource()
+     */
+    public static final String SOURCE = getName(CoalescePropertyFactory.getSource());
+    /**
+     * @see CoalescePropertyFactory#getEntityType()
+     */
+    public static final String TYPE = getName(CoalescePropertyFactory.getEntityType());
+    /**
      * @see CoalescePropertyFactory#getEntityTitle()
      */
     public static final String TITLE = getName(CoalescePropertyFactory.getEntityTitle());
@@ -89,6 +95,9 @@ public class Neo4JPersistor extends CoalescePersistorBase {
     private static final String CYPHER_MERGE = "MERGE (Entity:%1$s {" + KEY + ": {2}})"
             + " ON CREATE SET Entity.deleted=%3$s, Entity.groups = %4$s, Entity." + NAME + " = {1}," + " Entity." + KEY
             + " = {2}%2$s" + " ON MATCH SET Entity.deleted=%3$s, Entity.groups = %4$s%2$s";
+
+    private static final String CYPHER_CREATE_PLACEHOLDER = "MERGE (Entity:%1$s {" + KEY + ": {2}})"
+            + " ON CREATE SET Entity." + NAME + " = {1}," + " Entity." + KEY + " = {2}";
 
     private static final String CYPHER_LINK_CLASSIFICATION = "MATCH (n:%s {" + KEY
             + ": {1}}), (cls:CLASSIFICATION_LEVEL {name: {2}}) " + "OPTIONAL MATCH n-[r:CLEARED_TO]->() DELETE r "
@@ -397,6 +406,17 @@ public class Neo4JPersistor extends CoalescePersistorBase {
         return conn.executeUpdate(query, parameters) > 0;
     }
 
+    protected void createPlaceHolder(CoalesceLinkage linkage, CoalesceDataConnectorBase conn) throws SQLException
+    {
+
+        String query = String.format(CYPHER_CREATE_PLACEHOLDER, normalizeName(linkage.getEntity2Name()));
+
+        conn.executeUpdate(query,
+                           new CoalesceParameter(linkage.getEntity2Name()),
+                           new CoalesceParameter(linkage.getEntity2Key()));
+
+    }
+
     protected boolean persistLinkageObject(CoalesceLinkage linkage, CoalesceDataConnectorBase conn) throws SQLException
     {
         String query;
@@ -411,6 +431,8 @@ public class Neo4JPersistor extends CoalescePersistorBase {
         }
         else
         {
+            createPlaceHolder(linkage, conn);
+
             // Add / Update Link
             query = String.format(CYPHER_LINK,
                                   normalizeName(linkage.getEntity1Name()),

@@ -33,9 +33,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-import org.w3c.dom.bootstrap.DOMImplementationRegistry;
-import org.w3c.dom.ls.DOMImplementationLS;
-import org.w3c.dom.ls.LSSerializer;
 
 import com.incadencecorp.coalesce.common.classification.Marking;
 import com.incadencecorp.coalesce.common.helpers.EntityLinkHelper;
@@ -80,7 +77,9 @@ import com.incadencecorp.coalesce.schema.testentityexample.UnitTestSection;
  */
 public class XSDEximImplTest {
 
-    private static final String ENTITY_NAME = "TestEntityExample";
+    private static final String ENTITY_NAME = "TestEntity Example";
+    private static final String ENTITY_SOURCE = "TestSource";
+    private static final String ENTITY_VERSION = "TestVersion";
     private static final String RECORDSET_NAME = "UnitTest Recordset";
     private static final String SECTION_NAME = "UnitTest Section";
     private static final String XSD_PATH = Paths.get(".", "src", "test", "resources", "test.xsd").toString();
@@ -166,7 +165,7 @@ public class XSDEximImplTest {
         CoalesceEntity entity2 = createEntity();
 
         EntityLinkHelper.linkEntities(entity,
-                                      ELinkTypes.CREATED,
+                                      ELinkTypes.HAS_INPUT_OF,
                                       entity2,
                                       new Marking(null),
                                       "",
@@ -197,6 +196,8 @@ public class XSDEximImplTest {
 
         // Validate Linkage
         Assert.assertEquals(1, imported.getLinkages().size());
+        Assert.assertNull("Linkage was Undefined", imported.getLinkage(ELinkTypes.UNDEFINED));
+        Assert.assertNotNull("Missing Linkage", imported.getLinkage(ELinkTypes.HAS_INPUT_OF));
         Assert.assertEquals(entity.getKey(), imported.getKey());
     }
 
@@ -248,8 +249,9 @@ public class XSDEximImplTest {
     {
         // Create Entity
         TestEntityExample example = new TestEntityExample();
-        example.setSource("TestSource");
-        example.setVersion("TestVersion");
+        example.setName(ENTITY_NAME);
+        example.setSource(ENTITY_SOURCE);
+        example.setVersion(ENTITY_VERSION);
         example.setKey(UUID.randomUUID().toString());
         example.setStatus(ECoalesceObjectStatus.ACTIVE);
 
@@ -351,8 +353,8 @@ public class XSDEximImplTest {
         CoalesceEntity entity = new CoalesceEntity();
         entity.initialize();
         entity.setName(ENTITY_NAME);
-        entity.setSource("TestSource");
-        entity.setVersion("TestVersion");
+        entity.setSource(ENTITY_SOURCE);
+        entity.setVersion(ENTITY_VERSION);
 
         CoalesceSection section = CoalesceSection.create(entity, SECTION_NAME);
         CoalesceRecordset rs = CoalesceRecordset.create(section, RECORDSET_NAME);

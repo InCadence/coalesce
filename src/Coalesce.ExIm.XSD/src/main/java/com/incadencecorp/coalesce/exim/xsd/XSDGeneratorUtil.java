@@ -411,10 +411,18 @@ public final class XSDGeneratorUtil {
 
         Element attribute;
 
+        // Name
+        attribute = doc.createElementNS(NS_XML_URI, "attribute");
+        attribute.setPrefix(NS_XML);
+        attribute.setAttribute(ATTRIBUTE_NAME, CoalesceEntity.ATTRIBUTE_NAME);
+        attribute.setAttribute(ATTRIBUTE_TYPE, CDS_STRING_TYPE_NS);
+        attribute.setAttribute(ATTRIBUTE_USE, "required");
+        sequence.getParentNode().appendChild(attribute);
+
         // Source
         attribute = doc.createElementNS(NS_XML_URI, "attribute");
         attribute.setPrefix(NS_XML);
-        attribute.setAttribute(ATTRIBUTE_NAME, "source");
+        attribute.setAttribute(ATTRIBUTE_NAME, CoalesceEntity.ATTRIBUTE_SOURCE);
         attribute.setAttribute(ATTRIBUTE_TYPE, CDS_STRING_TYPE_NS);
         attribute.setAttribute(ATTRIBUTE_USE, "required");
         sequence.getParentNode().appendChild(attribute);
@@ -422,7 +430,7 @@ public final class XSDGeneratorUtil {
         // Version
         attribute = doc.createElementNS(NS_XML_URI, "attribute");
         attribute.setPrefix(NS_XML);
-        attribute.setAttribute(ATTRIBUTE_NAME, "version");
+        attribute.setAttribute(ATTRIBUTE_NAME, CoalesceEntity.ATTRIBUTE_VERSION);
         attribute.setAttribute(ATTRIBUTE_TYPE, CDS_STRING_TYPE_NS);
         attribute.setAttribute(ATTRIBUTE_USE, "required");
         sequence.getParentNode().appendChild(attribute);
@@ -430,21 +438,21 @@ public final class XSDGeneratorUtil {
         // Entity ID
         attribute = doc.createElementNS(NS_XML_URI, "attribute");
         attribute.setPrefix(NS_XML);
-        attribute.setAttribute(ATTRIBUTE_NAME, "entityid");
+        attribute.setAttribute(ATTRIBUTE_NAME, CoalesceEntity.ATTRIBUTE_ENTITYID);
         attribute.setAttribute(ATTRIBUTE_TYPE, CDS_STRING_TYPE_NS);
         sequence.getParentNode().appendChild(attribute);
 
         // Entity ID Type
         attribute = doc.createElementNS(NS_XML_URI, "attribute");
         attribute.setPrefix(NS_XML);
-        attribute.setAttribute(ATTRIBUTE_NAME, "entityidtype");
+        attribute.setAttribute(ATTRIBUTE_NAME, CoalesceEntity.ATTRIBUTE_ENTITYIDTYPE);
         attribute.setAttribute(ATTRIBUTE_TYPE, CDS_STRING_TYPE_NS);
         sequence.getParentNode().appendChild(attribute);
 
         // Title
         attribute = doc.createElementNS(NS_XML_URI, "attribute");
         attribute.setPrefix(NS_XML);
-        attribute.setAttribute(ATTRIBUTE_NAME, "title");
+        attribute.setAttribute(ATTRIBUTE_NAME, CoalesceEntity.ATTRIBUTE_TITLE);
         attribute.setAttribute(ATTRIBUTE_TYPE, CDS_STRING_TYPE_NS);
         sequence.getParentNode().appendChild(attribute);
 
