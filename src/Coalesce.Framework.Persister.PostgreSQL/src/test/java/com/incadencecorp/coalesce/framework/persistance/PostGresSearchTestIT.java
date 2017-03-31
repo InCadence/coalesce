@@ -39,7 +39,10 @@ public class PostGresSearchTestIT extends AbstractSearchTest<PostGreSQLPersistor
     @BeforeClass
     public static void initialize()
     {
-        PostGreSQLSettings.setConnector(new FilePropertyConnector(Paths.get("src", "test", "resources")));
+        FilePropertyConnector connector = new FilePropertyConnector(Paths.get("src", "test", "resources"));
+        connector.setReadOnly(true);
+        
+        PostGreSQLSettings.setConnector(connector);
     }
 
     @Override

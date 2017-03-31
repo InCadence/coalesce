@@ -6,6 +6,7 @@ import org.junit.BeforeClass;
 
 import com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLPersistorExt;
 import com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLSettings;
+import com.incadencecorp.unity.common.IConfigurationsConnector;
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
 
 /*-----------------------------------------------------------------------------'
@@ -33,7 +34,10 @@ public class PostGresPersistorTestIT extends AbstractCoalescePersistorTest<PostG
     @BeforeClass
     public static void initialize() throws Exception
     {
-        PostGreSQLSettings.setConnector(new FilePropertyConnector(Paths.get("src", "test", "resources")));
+        FilePropertyConnector connector = new FilePropertyConnector(Paths.get("src", "test", "resources"));
+        connector.setReadOnly(true);
+        
+        PostGreSQLSettings.setConnector(connector);
     }
 
     @Override

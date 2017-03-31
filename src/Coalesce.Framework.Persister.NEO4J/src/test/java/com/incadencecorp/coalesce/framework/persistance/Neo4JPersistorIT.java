@@ -52,7 +52,10 @@ public class Neo4JPersistorIT extends AbstractCoalescePersistorTest<Neo4JPersist
     @BeforeClass
     public static void initialize()
     {
-        Neo4jSettings.setConnector(new FilePropertyConnector(Paths.get("src", "test", "resources")));
+        FilePropertyConnector connector = new FilePropertyConnector(Paths.get("src", "test", "resources"));
+        connector.setReadOnly(true);
+        
+        Neo4jSettings.setConnector(connector);
     }
 
     @Override
