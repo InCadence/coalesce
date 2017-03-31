@@ -44,7 +44,6 @@ import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.helpers.FileHelper;
 import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
-import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.incadencecorp.coalesce.search.resultset.CoalesceResultSet;
 import com.incadencecorp.coalesce.synchronizer.api.common.AbstractScan;
@@ -98,7 +97,7 @@ public class FileScanImpl extends AbstractScan {
     }
 
     @Override
-    public CachedRowSet doScan(Query query, CoalesceParameter... parameters) throws CoalesceException
+    public CachedRowSet doScan(Query query) throws CoalesceException
     {
         CachedRowSet results;
 

@@ -68,7 +68,7 @@ public class MockScanner extends AbstractScan {
     }
 
     @Override
-    public CachedRowSet doScan(Query query, CoalesceParameter... parameters) throws CoalesceException
+    public CachedRowSet doScan(Query query) throws CoalesceException
     {
         CachedRowSet results;
 
@@ -81,7 +81,7 @@ public class MockScanner extends AbstractScan {
             }
             else
             {
-                results = getSource().search(query, parameters);
+                results = getSource().search(query).getResults();
             }
         }
         catch (SQLException e)

@@ -29,7 +29,6 @@ import org.opengis.filter.expression.PropertyName;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.CoalesceComponentImpl;
-import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.incadencecorp.coalesce.synchronizer.api.IPersistorScan;
@@ -77,7 +76,7 @@ public abstract class AbstractScan extends CoalesceComponentImpl implements IPer
     }
 
     @Override
-    public final CachedRowSet scan(Query query, CoalesceParameter... parameters) throws CoalesceException
+    public final CachedRowSet scan(Query query) throws CoalesceException
     {
         List<PropertyName> properties = new ArrayList<PropertyName>();
 
@@ -95,10 +94,10 @@ public abstract class AbstractScan extends CoalesceComponentImpl implements IPer
 
         query.setProperties(properties);
 
-        return doScan(query, parameters);
+        return doScan(query);
     }
 
-    protected abstract CachedRowSet doScan(Query query, CoalesceParameter... parameters) throws CoalesceException;
+    protected abstract CachedRowSet doScan(Query query) throws CoalesceException;
 
     protected void doSetup()
     {

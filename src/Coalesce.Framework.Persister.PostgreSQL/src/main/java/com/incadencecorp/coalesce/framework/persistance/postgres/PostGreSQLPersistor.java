@@ -699,23 +699,69 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
      */
     protected boolean persistEntityObject(CoalesceEntity entity, CoalesceDataConnectorBase conn) throws SQLException
     {
+        String procedureName = "CoalesceEntity_InsertOrUpdate";
+
         // Return true if no update is required.
         if (!checkLastModified(entity, conn))
         {
             return true;
         }
 
-        // Yes; Call Store Procedure
-        return conn.executeProcedure("CoalesceEntity_InsertOrUpdate",
-                                     new CoalesceParameter(entity.getKey(), Types.OTHER),
-                                     new CoalesceParameter(entity.getName()),
-                                     new CoalesceParameter(entity.getSource()),
-                                     new CoalesceParameter(entity.getVersion()),
-                                     new CoalesceParameter(entity.getEntityId()),
-                                     new CoalesceParameter(entity.getEntityIdType()),
-                                     new CoalesceParameter(entity.toXml()),
-                                     new CoalesceParameter(entity.getDateCreated().toString(), Types.OTHER),
-                                     new CoalesceParameter(entity.getLastModified().toString(), Types.OTHER));
+        List<CoalesceParameter> params = new ArrayList<CoalesceParameter>();
+        params.add(new CoalesceParameter(entity.getKey(), Types.OTHER));
+        params.add(new CoalesceParameter(entity.getName()));
+        params.add(new CoalesceParameter(entity.getSource()));
+        params.add(new CoalesceParameter(entity.getVersion()));
+        params.add(new CoalesceParameter(entity.getEntityId()));
+        params.add(new CoalesceParameter(entity.getEntityIdType()));
+        params.add(new CoalesceParameter(entity.toXml()));
+        params.add(new CoalesceParameter(entity.getDateCreated().toString(), Types.OTHER));
+        params.add(new CoalesceParameter(entity.getLastModified().toString(), Types.OTHER));
+        params.add(new CoalesceParameter(entity.getTitle()));
+        params.add(new CoalesceParameter(Boolean.toString(entity.isMarkedDeleted()), Types.BOOLEAN));
+        params.add(new CoalesceParameter(getScope(entity)));
+        params.add(new CoalesceParameter(getCreator(entity)));
+        params.add(new CoalesceParameter(getType(entity)));
+
+        List<CoalesceParameter> securityColumns = getExtendedParameters(entity);
+
+        if (securityColumns.size() > 0)
+        {
+            params.addAll(securityColumns);
+            procedureName = "CoalesceEntityExt_InsertOrUpdate";
+        }
+
+        return conn.executeProcedure(procedureName, params.toArray(new CoalesceParameter[params.size()])) && !entity.isMarkedDeleted();
+    }
+
+
+    /*--------------------------------------------------------------------------
+    Protected Methods
+    --------------------------------------------------------------------------*/
+
+    protected String getCreator(CoalesceEntity entity)
+    {
+        return null;
+    }
+
+    protected String getType(CoalesceEntity entity)
+    {
+        return null;
+    }
+
+    protected String getScope(CoalesceEntity entity)
+    {
+        return null;
+    }
+
+    /**
+     * 
+     * @param entity
+     * @return additional rows that have been registered for your implementaion.
+     */
+    protected List<CoalesceParameter> getExtendedParameters(CoalesceEntity entity)
+    {
+        return new ArrayList<CoalesceParameter>();
     }
 
     /**
@@ -936,6 +982,8 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
             return true;
         }
 
+        // TODO Phase out CoalesceLinkage_InsertOrUpdate2 on the next DB wipe. 
+        
         // Yes; Call Store Procedure
         return conn.executeProcedure("CoalesceLinkage_InsertOrUpdate2",
                                      new CoalesceParameter(linkage.getKey(), Types.OTHER),
@@ -1169,7 +1217,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
                 if (allowRemoval)
                 {
                     // Delete Object
-                    isSuccessful = deleteObject(coalesceObject, conn);
+                    return deleteObject(coalesceObject, conn);
                 }
                 else
                 {

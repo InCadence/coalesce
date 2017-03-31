@@ -17,6 +17,7 @@
 
 package com.incadencecorp.coalesce.framework.persistance.postgres;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.Set;
@@ -33,6 +34,7 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.iterators.CoalesceIterator;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
+import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
 
 /**
  * Registers templates creating tables for flattening record sets to make the
@@ -44,6 +46,9 @@ import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBas
 public class PostGreSQLRegisterIterator extends CoalesceIterator<CoalesceDataConnectorBase> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PostGreSQLRegisterIterator.class);
+
+    private static final String SQL_GET_COLUMN_NAMES = "SELECT column_name, data_type FROM information_schema.columns WHERE "
+            + "table_name = ? AND table_schema=? ORDER BY ordinal_position";
 
     private static final String CREATE_PROCEDURE_FORMAT = "CREATE OR REPLACE FUNCTION %s_insertorupdate(%s) RETURNS void AS"
             + "\r$BODY$\rBEGIN\r" + "%s" + "\rIF NOT FOUND THEN\r" + "%s" + "\rEND IF;\r%s\rRETURN;\rEND;\r$BODY$"
@@ -263,7 +268,7 @@ public class PostGreSQLRegisterIterator extends CoalesceIterator<CoalesceDataCon
             sb.append("\tentitykey uuid NOT NULL,\r");
             sb.append("\tentityname text NOT NULL,\r");
             sb.append("\tentitysource text NOT NULL,\r");
-            sb.append("\tentitytype text NOT NULL,\r");
+            sb.append("\tentitytype text,\r");
 
             // Add Columns for Field Definitions
             for (CoalesceFieldDefinition fieldDefinition : recordset.getFieldDefinitions())
@@ -282,9 +287,15 @@ public class PostGreSQLRegisterIterator extends CoalesceIterator<CoalesceDataCon
                 {
                     sb.append("\t" + fieldDefinition.getName() + " " + columnType + ",\r");
                 }
+                else
+                {
+                    LOGGER.info("Not Registering ({})", fieldDefinition.getName());
+                }
             }
 
-            sb.append("\tCONSTRAINT " + info.getTableName() + "_pkey PRIMARY KEY (objectkey)");
+            sb.append("\tCONSTRAINT " + info.getTableName() + "_pkey PRIMARY KEY (objectkey),\r");
+            sb.append("\tCONSTRAINT " + info.getTableName() + "_fkey FOREIGN KEY (entitykey) REFERENCES " + schema
+                    + ".coalesceentity (objectkey) ON DELETE CASCADE");
 
             String sql = String.format(CREATE_TABLE_FORMAT,
                                        schema,
@@ -318,104 +329,107 @@ public class PostGreSQLRegisterIterator extends CoalesceIterator<CoalesceDataCon
         // Get Parent's information
         CoalesceIndexInfo info = new CoalesceIndexInfo(recordset);
 
-        // Already Exists?
-        if (!PostGreSQLPersistorExt.storedProcedureExists(info, schema, conn))
+        // No; Create
+        String update = String.format(UPDATE_FORMAT,
+                                      schema + "." + info.getTableName(),
+                                      formatBody("\t\t%1$s = ivar%1$s",
+                                                 "\t\t%1$s = " + createSpatialFormat("ivar%1$s"),
+                                                 "\t\t%1$s = " + createCircleFormat("ivar%1$s"),
+                                                 recordset));
+        String insert = String.format(INSERT_FORMAT,
+                                      schema + "." + info.getTableName(),
+                                      formatBody("\t\t%s", recordset),
+                                      formatBody("\t\tivar%s", "\t\t" + createSpatialFormat("ivar%s"), "\t\t"
+                                              + createCircleFormat("ivar%1$s"), recordset));
+
+        StringBuilder listsBuilder = new StringBuilder();
+
+        // Create Complete Script
+        StringBuilder sb = new StringBuilder();
+        sb.append("ivarobjectkey uuid, ");
+        sb.append("ivarentitykey uuid, ");
+        sb.append("ivarentityname text, ");
+        sb.append("ivarentitysource text, ");
+        sb.append("ivarentitytype text");
+
+        // Order procedure arguments to match the table.
+        ResultSet results = conn.executeQuery(SQL_GET_COLUMN_NAMES,
+                                              new CoalesceParameter(info.getTableName()),
+                                              new CoalesceParameter(schema));
+
+        if (results != null)
         {
 
-            // No; Create
-            String update = String.format(UPDATE_FORMAT,
-                                          schema + "." + info.getTableName(),
-                                          formatBody("\t\t%1$s = ivar%1$s",
-                                                     "\t\t%1$s = " + createSpatialFormat("ivar%1$s"),
-                                                     "\t\t%1$s = " + createCircleFormat("ivar%1$s"),
-                                                     recordset));
-            String insert = String.format(INSERT_FORMAT,
-                                          schema + "." + info.getTableName(),
-                                          formatBody("\t\t%s", recordset),
-                                          formatBody("\t\tivar%s", "\t\t" + createSpatialFormat("ivar%s"), "\t\t"
-                                                  + createCircleFormat("ivar%1$s"), recordset));
+            results.next(); // Skip Object Key
+            results.next(); // Skip Entity Key
+            results.next(); // Skip Entity Name
+            results.next(); // Skip Entity Source
+            results.next(); // Skip Entity Type
 
-            StringBuilder listsBuilder = new StringBuilder();
-
-            // Create Complete Script
-            StringBuilder sb = new StringBuilder();
-            sb.append("ivarobjectkey uuid, ");
-            sb.append("ivarentitykey uuid, ");
-            sb.append("ivarentityname text, ");
-            sb.append("ivarentitysource text, ");
-            sb.append("ivarentitytype text");
-
-            String dbSchema = schema;
-
-            for (CoalesceFieldDefinition fieldDefinition : recordset.getFieldDefinitions())
+            while (results.next())
             {
+                String field = results.getString(1);
 
-                String columnType = getSQLTypeForArgs(fieldDefinition.getDataType());
+                // Get Field's Definition
+                CoalesceFieldDefinition fieldDefinition = recordset.getFieldDefinition(field);
 
-                String fieldName = "ivar" + fieldDefinition.getName();
-                if (columnType != null && fieldDefinition.getFlatten())
+                // Template Contains Definition?
+                if (fieldDefinition != null)
                 {
-                    sb.append(", " + fieldName + " " + columnType);
+                    String columnType = getSQLTypeForArgs(fieldDefinition.getDataType());
 
-                    switch (fieldDefinition.getDataType()) {
-                    case CIRCLE_TYPE:
-                        // Add Radius as an Additional Parameter
-                        sb.append(", " + fieldName + "Radius " + getSQLTypeForArgs(ECoalesceFieldDataTypes.DOUBLE_TYPE));
-                        break;
-                    default:
-                        // Do Nothing
-                        break;
+                    String fieldName = "ivar" + fieldDefinition.getName();
+                    if (columnType != null && fieldDefinition.getFlatten())
+                    {
+                        sb.append(", " + fieldName + " " + columnType);
+
+                        switch (fieldDefinition.getDataType()) {
+                        case CIRCLE_TYPE:
+                            // Add Radius as an Additional Parameter
+                            sb.append(", " + fieldName + "Radius " + getSQLTypeForArgs(ECoalesceFieldDataTypes.DOUBLE_TYPE));
+                            break;
+                        default:
+                            // Do Nothing
+                            break;
+                        }
+
                     }
 
-                }
+                    String listColumnType = getListFieldSQLType(fieldDefinition.getDataType());
 
-                String listColumnType = getListFieldSQLType(fieldDefinition.getDataType());
-
-                if (listColumnType != null && fieldDefinition.getFlatten())
-                {
-                    listsBuilder.append("\r\tDELETE FROM " + dbSchema + ".fieldtable_"
-                            + fieldDefinition.getDataType().getLabel());
-                    listsBuilder.append("\r\t\tWHERE entitykey = ivarentitykey");
-                    listsBuilder.append("\r\t\t\tAND fieldname = " + fieldName + ";");
-                    listsBuilder.append("\r\tINSERT INTO " + dbSchema + ".fieldtable_"
-                            + fieldDefinition.getDataType().getLabel() + " (");
-                    listsBuilder.append("\r\t\tSELECT ivarobjectkey AS entitykey,");
-                    listsBuilder.append("\r\t\t\tE'" + fieldDefinition.getName() + "' AS fieldname,");
-                    listsBuilder.append("\r\t\t\tROW_NUMBER() OVER() AS listorder,");
-                    listsBuilder.append("\r\t\t\tfieldvalue");
-                    if (fieldDefinition.getDataType().equals(ECoalesceFieldDataTypes.STRING_LIST_TYPE))
+                    if (listColumnType != null && fieldDefinition.getFlatten())
                     {
-                        // Strings may have nested commas
-                        listsBuilder.append("\r\t\tFROM (SELECT " + dbSchema + ".unescape(regexp_split_to_table("
-                                + fieldName + ",',(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))')::" + listColumnType
-                                + ") AS fieldvalue) AS foo);");
-                    }
-                    else
-                    {
-                        listsBuilder.append("\r\t\tFROM (SELECT regexp_split_to_table(" + fieldName + ",',')::"
-                                + listColumnType + " AS fieldvalue) AS foo);");
+                        listsBuilder.append(String.format("PERFORM coalesce.%s_insertorupdate (ivarentitykey,ivarobjectkey,'%s',%s);\r",
+                                                          fieldDefinition.getDataType().getLabel(),
+                                                          fieldDefinition.getName(),
+                                                          fieldName));
                     }
                 }
+                else
+                {
+                    LOGGER.warn("Missing ({})'s Field Definition", field);
+                }
+
             }
-
-            String lists = listsBuilder.toString();
-
-            String sql = String.format(CREATE_PROCEDURE_FORMAT,
-                                       schema + "." + info.getTableName(),
-                                       sb.toString(),
-                                       update,
-                                       insert,
-                                       lists,
-                                       schema + "." + info.getTableName(),
-                                       sb.toString(),
-                                       JodaDateTimeHelper.toXmlDateTimeUTC(JodaDateTimeHelper.nowInUtc()));
-
-            LOGGER.debug("Create Stored Procedure");
-            LOGGER.debug(sql);
-
-            // Create Procedure
-            conn.executeUpdate(sql);
         }
+
+        String lists = listsBuilder.toString();
+
+        String sql = String.format(CREATE_PROCEDURE_FORMAT,
+                                   schema + "." + info.getTableName(),
+                                   sb.toString(),
+                                   update,
+                                   insert,
+                                   lists,
+                                   schema + "." + info.getTableName(),
+                                   sb.toString(),
+                                   JodaDateTimeHelper.toXmlDateTimeUTC(JodaDateTimeHelper.nowInUtc()));
+
+        LOGGER.debug("Create Stored Procedure");
+        LOGGER.debug(sql);
+
+        // Create Procedure
+        conn.executeUpdate(sql);
 
     }
 
@@ -447,10 +461,12 @@ public class PostGreSQLRegisterIterator extends CoalesceIterator<CoalesceDataCon
         String tableName = schema + "." + "fieldtable_" + dataType.getLabel();
 
         // Add Required Columns
+        sb.append("\trecordkey uuid NOT NULL,\r");
         sb.append("\tentitykey uuid NOT NULL,\r");
         sb.append("\tfieldname text NOT NULL,\r");
         sb.append("\tlistorder int NOT NULL,\r");
-        sb.append("\tfieldvalue " + columnType + " NOT NULL"); // Not null?
+        sb.append("\tfieldvalue " + columnType + " NOT NULL,\r"); // Not null?
+        sb.append("\tCONSTRAINT entitykey_fkey FOREIGN KEY (entitykey) REFERENCES " + schema + ".coalesceentity (objectkey) ON DELETE CASCADE");
 
         String sql = "CREATE TABLE IF NOT EXISTS " + tableName + "(\r" + sb.toString() + "\r);";
 
@@ -478,6 +494,43 @@ public class PostGreSQLRegisterIterator extends CoalesceIterator<CoalesceDataCon
         LOGGER.debug(sql);
 
         conn.executeUpdate(sql);
+
+        createListStoredProcedure(dataType, conn);
+
+    }
+
+    private void createListStoredProcedure(final ECoalesceFieldDataTypes dataType, final CoalesceDataConnectorBase conn)
+            throws SQLException
+    {
+        String format = "CREATE OR REPLACE FUNCTION %1$s.%2$s_insertorupdate(ivarentitykey uuid, ivarrecordkey uuid, ivarfieldname text, ivarvalues text)\r"
+                + "RETURNS void AS\r"
+                + "$BODY$\r"
+                + "BEGIN\r"
+                + "DELETE FROM coalesce.fieldtable_%2$s\r"
+                + "WHERE recordkey = ivarrecordkey AND fieldname = ivarfieldname;\r"
+                + "INSERT INTO coalesce.fieldtable_%2$s (\r"
+                + "SELECT ivarrecordkey AS recordkey,\r"
+                + "ivarentitykey AS entitykey,\r"
+                + "ivarfieldname AS fieldname,\r"
+                + "ROW_NUMBER() OVER() AS listorder,\r"
+                + "fieldvalue FROM (SELECT %3$s AS fieldvalue) AS foo);\r"
+                + "RETURN;\r"
+                + "END;\r"
+                + "$BODY$\r"
+                + "LANGUAGE plpgsql VOLATILE " + "COST 100;";
+
+        String parserFormat;
+
+        if (dataType == ECoalesceFieldDataTypes.STRING_LIST_TYPE)
+        {
+            parserFormat = "coalesce.unescape(regexp_split_to_table(ivarvalues,',(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))')::text)";
+        }
+        else
+        {
+            parserFormat = String.format("regexp_split_to_table(ivarvalues,',')::%s", getListFieldSQLType(dataType));
+        }
+
+        conn.executeUpdate(String.format(format, schema, dataType.getLabel(), parserFormat));
 
     }
 
