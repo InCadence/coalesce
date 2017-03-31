@@ -86,6 +86,8 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
             {
                 LOGGER.warn("Failed to register templates");
             }
+            
+            isInitialized = true;
         }
     }
 
