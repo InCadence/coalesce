@@ -177,6 +177,12 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         Assert.assertTrue(rowset.next());
         Assert.assertEquals(entity1.getKey(), rowset.getString(1));
         Assert.assertEquals(field1.getValue(), rowset.getString(6));
+        
+        // Cleanup
+        entity1.markAsDeleted();
+        entity2.markAsDeleted();
+        
+        persister.saveEntity(true, entity1, entity2);
 
     }
 

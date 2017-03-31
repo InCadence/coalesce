@@ -5,11 +5,8 @@ import org.junit.Assume;
 import org.junit.Test;
 
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
-import com.incadencecorp.coalesce.common.helpers.EntityLinkHelper;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceBooleanField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
-import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
 import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
 import com.incadencecorp.coalesce.framework.datamodel.TestRecord;
 
@@ -33,7 +30,7 @@ import com.incadencecorp.coalesce.framework.datamodel.TestRecord;
 public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor> {
 
     protected abstract T createPersister();
-
+    
     @Test
     public void testCreation() throws Exception
     {
@@ -45,6 +42,12 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
         entity.initialize();
 
         Assert.assertTrue(persister.saveEntity(false, entity));
+        
+        // Cleanup
+        entity.markAsDeleted();
+        
+        persister.saveEntity(true, entity);
+
     }
 
     @Test
@@ -71,6 +74,11 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
         
         Assert.assertNotNull(updatedRecord);
         Assert.assertEquals(record1.getBooleanField().getBaseValue(), updatedRecord.getFieldByName(record1.getBooleanField().getName()).getBaseValue());
+
+        // Cleanup
+        entity.markAsDeleted();
+        
+        persister.saveEntity(true, entity);
 
     }
 
