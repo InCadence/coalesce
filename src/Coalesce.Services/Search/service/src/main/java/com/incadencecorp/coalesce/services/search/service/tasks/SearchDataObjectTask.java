@@ -62,10 +62,11 @@ public class SearchDataObjectTask extends AbstractTask<QueryType, QueryResultsTy
             watch.start();
 
             List<String> properties = new ArrayList<String>();
-            properties.add(CoalescePropertyFactory.getEntityKey().getPropertyName());
-            properties.add(CoalescePropertyFactory.getName().getPropertyName());
-            properties.add(CoalescePropertyFactory.getSource().getPropertyName());
-            properties.add(CoalescePropertyFactory.getEntityTitle().getPropertyName());
+            // TODO Rethink the deault column idea
+            // properties.add(CoalescePropertyFactory.getEntityKey().getPropertyName());
+            // properties.add(CoalescePropertyFactory.getName().getPropertyName());
+            // properties.add(CoalescePropertyFactory.getSource().getPropertyName());
+            // properties.add(CoalescePropertyFactory.getEntityTitle().getPropertyName());
             properties.addAll(parameters.getParams().getPropertyNames());
 
             watch.finish();
@@ -109,14 +110,6 @@ public class SearchDataObjectTask extends AbstractTask<QueryType, QueryResultsTy
 
             if (rowset.first())
             {
-                int keyIdx = CoalesceResultSet.getEntityKeyColumn(rowset);
-
-                if (keyIdx == -1)
-                {
-                    throw new IllegalArgumentException("Missing Column: "
-                            + CoalescePropertyFactory.getEntityKey().getPropertyName());
-                }
-
                 // Obtain list of keys
                 do
                 {
@@ -126,6 +119,7 @@ public class SearchDataObjectTask extends AbstractTask<QueryType, QueryResultsTy
                     hit.setEntityKey(rowset.getString(idx++));
                     hit.setName(rowset.getString(idx++));
                     hit.setSource(rowset.getString(idx++));
+                    idx++; // Type
                     hit.setTitle(rowset.getString(idx++));
 
                     if (parameters.getParams().getPropertyNames() != null)
@@ -145,7 +139,7 @@ public class SearchDataObjectTask extends AbstractTask<QueryType, QueryResultsTy
             System.out.println(watch.getWorkLife());
 
             // TODO Set Total results
-            
+
             result = new QueryResultsType();
             result.setStatus(EResultStatus.SUCCESS);
             result.setResult(results);

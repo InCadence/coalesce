@@ -43,6 +43,12 @@ public class MockSearchPersister extends MockPersister implements ICoalesceSearc
 
         List<String> columns = new ArrayList<String>();
 
+        columns.add(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getEntityKey()));
+        columns.add(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getName()));
+        columns.add(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getSource()));
+        columns.add(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getEntityType()));
+        columns.add(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getEntityTitle()));
+
         if (query != null && query.getProperties() != null)
         {
             for (PropertyName property : query.getProperties())
@@ -53,34 +59,14 @@ public class MockSearchPersister extends MockPersister implements ICoalesceSearc
 
         List<Object[]> rows = new ArrayList<Object[]>();
 
-        int idxKey = columns.indexOf(CoalescePropertyFactory.getEntityKey().getPropertyName());
-        int idxName = columns.indexOf(CoalescePropertyFactory.getName().getPropertyName());
-        int idxSource = columns.indexOf(CoalescePropertyFactory.getSource().getPropertyName());
-        int idxTitle = columns.indexOf(CoalescePropertyFactory.getEntityTitle().getPropertyName());
-
         for (CoalesceEntity entity : getEntity(keys.toArray(new String[keys.size()])))
         {
             Object[] data = new Object[columns.size()];
 
-            if (idxKey != -1)
-            {
-                data[idxKey] = entity.getKey();
-            }
-
-            if (idxName != -1)
-            {
-                data[idxName] = entity.getName();
-            }
-
-            if (idxSource != -1)
-            {
-                data[idxSource] = entity.getSource();
-            }
-            
-            if (idxTitle != -1)
-            {
-                data[idxTitle] = entity.getTitle();
-            }
+            data[0] = entity.getKey();
+            data[1] = entity.getName();
+            data[2] = entity.getSource();
+            data[4] = entity.getTitle();
 
             rows.add(data);
         }
@@ -94,8 +80,8 @@ public class MockSearchPersister extends MockPersister implements ICoalesceSearc
         {
             throw new CoalescePersistorException("Failed", e);
         }
-        
-        SearchResults results = new SearchResults(); 
+
+        SearchResults results = new SearchResults();
         results.setResults(rowset);
 
         return results;

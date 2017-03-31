@@ -47,12 +47,13 @@ public class CoalesceResultSet extends CoalesceResultSetAbstract {
     {
         int keyIdx = -1;
 
+        String entitykeyColumn = CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getEntityKey());
+
         for (int ii = 1; ii <= resultset.getMetaData().getColumnCount(); ii++)
         {
             String columnName = resultset.getMetaData().getColumnName(ii);
-            String columnObjectKey = CoalescePropertyFactory.getEntityKey().getPropertyName();
 
-            if (columnName.equalsIgnoreCase(columnObjectKey) || columnName.equalsIgnoreCase(columnObjectKey.split("[.]")[1]))
+            if (columnName.replaceAll("[.]",  "").equalsIgnoreCase(entitykeyColumn))
             {
                 keyIdx = ii;
                 break;

@@ -1,6 +1,7 @@
 package com.incadencecorp.coalesce.framework.persistance.postgres;
 
 import java.sql.Connection;
+import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
@@ -19,9 +20,10 @@ public class PostGreSQLDataConnector extends CoalesceDataConnectorBase {
             setSettings(settings);
             _prefix = prefix;
 
-            Class.forName("org.postgresql.Driver");
+            Driver driver = new org.postgresql.Driver();
+            DriverManager.registerDriver(driver);
         }
-        catch (ClassNotFoundException e)
+        catch (SQLException e)
         {
             throw new CoalescePersistorException("CoalesceDataConnector", e);
         }

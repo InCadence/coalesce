@@ -999,7 +999,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
                                      new CoalesceParameter(linkage.getEntity2Name()),
                                      new CoalesceParameter(linkage.getEntity2Source()),
                                      new CoalesceParameter(linkage.getEntity2Version()),
-                                     new CoalesceParameter(linkage.getClassificationMarking().toPortionString()),
+                                     new CoalesceParameter(""), // FIXME linkage.getClassificationMarking().toPortionString()),
                                      new CoalesceParameter(linkage.getModifiedBy()),
                                      new CoalesceParameter(""),
                                      new CoalesceParameter(linkage.getParent().getKey(), Types.OTHER),
