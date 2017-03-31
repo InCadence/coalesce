@@ -26,7 +26,6 @@ import org.geotools.data.Query;
 import com.incadencecorp.coalesce.api.ICoalesceComponent;
 import com.incadencecorp.coalesce.api.ICoalesceSetup;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
-import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 
 /**
@@ -65,11 +64,10 @@ public interface IPersistorScan extends ICoalesceComponent, ICoalesceSetup {
      * Scan using a defined filter.
      * 
      * @param query
-     * @param parameters
      * @return the results of the scan with a minimal of a objectkey column.
      * @throws CoalesceException
      */
-    CachedRowSet scan(Query query, CoalesceParameter... parameters) throws CoalesceException;
+    CachedRowSet scan(Query query) throws CoalesceException;
 
     /**
      * Called when the driver running the scan completes to indicate whether is

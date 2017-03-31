@@ -63,7 +63,7 @@ public class SearchDataController {
 
         for (Option option : options)
         {
-            PropertyName property = CoalescePropertyFactory.createProperty(option.getRecordset(), option.getField());
+            PropertyName property = CoalescePropertyFactory.getFieldProperty(option.getRecordset(), option.getField());
 
             switch (option.getComparer()) {
             case "=":

@@ -17,9 +17,7 @@
 
 package com.incadencecorp.coalesce.synchronizer.service.scanners;
 
-import java.sql.Types;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,7 +71,7 @@ public class AfterLastModifiedScanImpl extends AbstractScan {
     }
 
     @Override
-    public CachedRowSet doScan(Query query, CoalesceParameter... parameters) throws CoalesceException
+    public CachedRowSet doScan(Query query) throws CoalesceException
     {
         List<CoalesceParameter> params = new ArrayList<CoalesceParameter>();
 
@@ -98,28 +96,14 @@ public class AfterLastModifiedScanImpl extends AbstractScan {
 
                 // Yes; Append Required Filter
                 query.setFilter(FF.and(query.getFilter(), requiredFilter));
-
-                if (LOGGER.isTraceEnabled())
-                {
-                    LOGGER.trace("{} Parameters Specified:", parameters.length);
-
-                    for (CoalesceParameter parameter : parameters)
-                    {
-                        LOGGER.trace("\t{}", parameter.getValue());
-                    }
-                }
-
-                // Add Filter Parameters
-                params.addAll(Arrays.asList(parameters));
             }
-
-            // Add Required Parameter
-            params.add(new CoalesceParameter(lastScanned, Types.OTHER));
-            parameters = params.toArray(new CoalesceParameter[params.size()]);
 
         }
 
-        return getSource().search(query, parameters);
+        query.setMaxFeatures(0);
+        query.setStartIndex(0);
+
+        return getSource().search(query).getResults();
     }
 
     @Override

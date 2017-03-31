@@ -31,9 +31,9 @@ import org.opengis.filter.expression.PropertyName;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
-import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
 import com.incadencecorp.coalesce.framework.persistance.MockPersister;
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
+import com.incadencecorp.coalesce.search.api.SearchResults;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.incadencecorp.coalesce.search.resultset.CoalesceResultSet;
 
@@ -50,9 +50,9 @@ public class MockSearchPersister extends MockPersister implements ICoalesceSearc
      * Returns the key and title of every entities saved.
      */
     @Override
-    public CachedRowSet search(Query query, CoalesceParameter... parameters) throws CoalescePersistorException
+    public SearchResults search(Query query) throws CoalescePersistorException
     {
-        CachedRowSet results;
+        CachedRowSet rowset;
 
         List<String> columns = new ArrayList<String>();
 
@@ -88,13 +88,16 @@ public class MockSearchPersister extends MockPersister implements ICoalesceSearc
 
         try
         {
-            results = RowSetProvider.newFactory().createCachedRowSet();
-            results.populate(new CoalesceResultSet(rows.iterator(), columns.toArray(new String[columns.size()])));
+            rowset = RowSetProvider.newFactory().createCachedRowSet();
+            rowset.populate(new CoalesceResultSet(rows.iterator(), columns.toArray(new String[columns.size()])));
         }
         catch (SQLException e)
         {
             throw new CoalescePersistorException("Failed", e);
         }
+
+        SearchResults results = new SearchResults();
+        results.setResults(rowset);
 
         return results;
     }

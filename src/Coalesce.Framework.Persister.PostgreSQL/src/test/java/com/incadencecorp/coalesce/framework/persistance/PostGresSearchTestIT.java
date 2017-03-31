@@ -15,27 +15,36 @@
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-package com.incadencecorp.coalesce.search.api;
+package com.incadencecorp.coalesce.framework.persistance;
 
-import org.geotools.data.Query;
+import java.nio.file.Paths;
 
-import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import org.junit.BeforeClass;
+
+import com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLPersistorExt;
+import com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLSettings;
+import com.incadencecorp.coalesce.search.AbstractSearchTests;
+import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
 
 /**
- * This interface is used to provide searching capability to persistors.
+ * This implementation execute test against {@link PostGreSQLPersistorExt}.
  * 
  * @author n78554
  */
-public interface ICoalesceSearchPersistor {
+public class PostGresSearchTestIT extends AbstractSearchTests<PostGreSQLPersistorExt> {
 
     /**
-     * Performs a search.
-     * 
-     * @param query
-     * @param parameters
-     * @return the results of the search
-     * @throws CoalescePersistorException
+     * Initializes the test configuration.
      */
-    SearchResults search(Query query) throws CoalescePersistorException;
+    @BeforeClass
+    public static void initialize()
+    {
+        PostGreSQLSettings.setConnector(new FilePropertyConnector(Paths.get("src", "test", "resources")));
+    }
 
+    @Override
+    protected PostGreSQLPersistorExt createPersister()
+    {
+        return new PostGreSQLPersistorExt();
+    }
 }

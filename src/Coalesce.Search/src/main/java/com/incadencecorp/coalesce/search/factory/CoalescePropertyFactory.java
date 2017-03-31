@@ -248,15 +248,15 @@ public class CoalescePropertyFactory {
     /**
      * @return the property used for filtering on the provided field
      */
-    public static PropertyName createProperty(CoalesceField<?> field)
+    public static PropertyName getFieldProperty(CoalesceField<?> field)
     {
-        return createProperty(field.getParent().getParent().getName(), field.getName());
+        return getFieldProperty(field.getParent().getParent().getName(), field.getName());
     }
 
     /**
      * @return the property used for filtering on the provided recordset / field name
      */
-    public static PropertyName createProperty(String recordset, String field)
+    public static PropertyName getFieldProperty(String recordset, String field)
     {
         return getFilterFactory().property(recordset + "." + field);
     }

@@ -99,7 +99,7 @@ public class SearchDataObjectTask extends AbstractTask<QueryType, QueryResultsTy
             System.out.println(watch.getWorkLife());
             watch.start();
 
-            CachedRowSet rowset = parameters.getTarget().search(query);
+            CachedRowSet rowset = parameters.getTarget().search(query).getResults();
 
             watch.finish();
             System.out.println(watch.getWorkLife());

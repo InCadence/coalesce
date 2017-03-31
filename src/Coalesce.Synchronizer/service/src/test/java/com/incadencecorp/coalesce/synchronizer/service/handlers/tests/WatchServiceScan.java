@@ -53,7 +53,6 @@ import org.slf4j.LoggerFactory;
 import com.incadencecorp.coalesce.api.CoalesceParameters;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.helpers.FileHelper;
-import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
 import com.incadencecorp.coalesce.search.resultset.CoalesceResultSet;
 import com.incadencecorp.coalesce.synchronizer.api.common.AbstractScan;
 
@@ -141,7 +140,7 @@ public class WatchServiceScan extends AbstractScan {
     }
 
     @Override
-    protected CachedRowSet doScan(Query query, CoalesceParameter... parameters) throws CoalesceException
+    protected CachedRowSet doScan(Query query) throws CoalesceException
     {
         CachedRowSet results;
 

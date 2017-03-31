@@ -20,6 +20,7 @@ package com.incadencecorp.coalesce.framework.persistance.postgres;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,8 +31,6 @@ import javax.sql.rowset.RowSetProvider;
 
 import org.geotools.data.Query;
 import org.geotools.data.jdbc.FilterToSQLException;
-import org.geotools.data.postgis.PostgisPSFilterToSql;
-import org.opengis.filter.expression.PropertyName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,6 +52,8 @@ import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBas
 import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
 import com.incadencecorp.coalesce.framework.persistance.postgres.mappers.StoredProcedureArgumentMapper;
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
+import com.incadencecorp.coalesce.search.api.SearchResults;
+import com.incadencecorp.coalesce.search.factory.CoalesceFeatureTypeFactory;
 
 /**
  * This extension flattens record sets into their own tables.
@@ -77,8 +78,6 @@ public class PostGreSQLPersistorExt extends PostGreSQLPersistor implements ICoal
     private static final String SQL_DELETE_ENTITYKEY = "DELETE FROM %s WHERE entitykey=?";
 
     private static final String SQL_DELETE_OBJECTKEY = "DELETE FROM %s WHERE objectkey=?";
-
-    private static final String SQL_DELETE_LIST_FIELD = "DELETE FROM %sfieldtable_%s WHERE entitykey=?";
 
     private static final ConcurrentMap<String, Boolean> STORED_PROCEDURE_EXTSTS_CACHE = new ConcurrentHashMap<String, Boolean>();
 
@@ -120,36 +119,6 @@ public class PostGreSQLPersistorExt extends PostGreSQLPersistor implements ICoal
     /*--------------------------------------------------------------------------
     Override Methods
     --------------------------------------------------------------------------*/
-
-    @Override
-    protected boolean persistEntityObject(CoalesceEntity entity, CoalesceDataConnectorBase conn) throws SQLException
-    {
-        // Return true if no update is required.
-        if (!checkLastModified(entity, conn))
-        {
-            return true;
-        }
-
-        // Yes; Call Store Procedure
-        return conn.executeProcedure("CoalesceEntity_InsertOrUpdate4",
-                                     new CoalesceParameter(entity.getKey(), Types.OTHER),
-                                     new CoalesceParameter(entity.getName()),
-                                     new CoalesceParameter(entity.getSource()),
-                                     new CoalesceParameter(entity.getVersion()),
-                                     new CoalesceParameter(entity.getEntityId()),
-                                     new CoalesceParameter(entity.getEntityIdType()),
-                                     new CoalesceParameter(entity.toXml()),
-                                     new CoalesceParameter(entity.getDateCreated().toString(), Types.OTHER),
-                                     new CoalesceParameter(entity.getLastModified().toString(), Types.OTHER),
-                                     new CoalesceParameter(entity.getTitle()),
-                                     new CoalesceParameter(Boolean.toString(entity.isMarkedDeleted()), Types.BOOLEAN),
-                                     new CoalesceParameter(Long.toString(getSecurityLow(entity)), Types.BIGINT),
-                                     new CoalesceParameter(Long.toString(getSecurityHigh(entity)), Types.BIGINT),
-                                     new CoalesceParameter(getScope(entity)),
-                                     new CoalesceParameter(getCreator(entity)),
-                                     new CoalesceParameter(getType(entity)));
-
-    }
 
     @Override
     protected boolean persistRecordsetObject(CoalesceRecordset recordset, CoalesceDataConnectorBase conn)
@@ -366,64 +335,158 @@ public class PostGreSQLPersistorExt extends PostGreSQLPersistor implements ICoal
     }
 
     @Override
-    public CachedRowSet search(Query query, CoalesceParameter... parameters) throws CoalescePersistorException
+    public SearchResults search(Query query) throws CoalescePersistorException
     {
-        CachedRowSet rowset = null;
-        PostgisPSFilterToSql fitlerToSql = new PostgisPSFilterToSql(null);
+        SearchResults results = new SearchResults();
+        results.setPage(query.getStartIndex());
+        results.setPageSize(query.getMaxFeatures());
 
-        // Execute Query
-        try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings(), getSchemaPrefix()))
+        try
         {
-            if (LOGGER.isDebugEnabled())
-            {
-                LOGGER.debug("Filter: {}", query.getFilter().toString());
-            }
+            // Create SQL Query
+            PostGresCoalescePreparedFilter preparedFilter = new PostGresCoalescePreparedFilter(PostGreSQLSettings.getDatabaseSchema());
+            preparedFilter.setPageNumber(query.getStartIndex());
+            preparedFilter.setPageSize(query.getMaxFeatures());
+            preparedFilter.setSortBy(query.getSortBy());
+            preparedFilter.setPropertNames(query.getPropertyNames());
+            preparedFilter.setIgnoreSecurity(true);
+            preparedFilter.setFeatureType(CoalesceFeatureTypeFactory.createSimpleFeatureType());
 
-            // Always Include EntityKey
-            StringBuilder sb = new StringBuilder();
+            // Create SQL
+            String where = preparedFilter.encodeToString(query.getFilter());
 
-            for (PropertyName property : query.getProperties())
+            // Add Parameters
+            List<CoalesceParameter> paramList = new ArrayList<CoalesceParameter>();
+            paramList.addAll(getParameters(preparedFilter));
+
+            CoalesceParameter[] params = paramList.toArray(new CoalesceParameter[paramList.size()]);
+
+            try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings(), getSchemaPrefix()))
             {
-                if (sb.length() != 0)
+                String sql = String.format("SELECT DISTINCT COUNT(*) FROM %s %s", preparedFilter.getFrom(), where);
+
+                // Get Total Results
+                ResultSet rowset = conn.executeQuery(sql, params);
+
+                if (rowset.next())
                 {
-                    sb.append(", ");
+                    results.setTotal(rowset.getLong(1));
                 }
-                sb.append(property.getPropertyName());
+
+                sql = String.format("SELECT DISTINCT %s FROM %s %s %s %s",
+                                    preparedFilter.getColumns(),
+                                    preparedFilter.getFrom(),
+                                    where,
+                                    preparedFilter.getSorting(),
+                                    preparedFilter.getLimit());
+
+                // Get Hits
+                CachedRowSet cached = RowSetProvider.newFactory().createCachedRowSet();
+                cached.populate(conn.executeQuery(sql, params));
+                
+                results.setResults(cached);
             }
-
-            // TODO Complete this implementation (Does not support functions /
-            // sorting / properties / etc)
-            String sql = "SELECT " + sb.toString() + " FROM " + getSchemaPrefix() + "coalesceentity "
-                    + fitlerToSql.encodeToString(query.getFilter());
-
-            if (LOGGER.isDebugEnabled())
-            {
-                LOGGER.debug("SQL: {}", sql);
-
-                LOGGER.debug("Parameters:");
-
-                if (parameters != null)
-                {
-                    for (CoalesceParameter param : parameters)
-                    {
-                        LOGGER.debug("\t{}:{}", param.getValue(), param.getType());
-                    }
-                }
-            }
-
-            ResultSet result = conn.executeQuery(sql, parameters);
-
-            rowset = RowSetProvider.newFactory().createCachedRowSet();
-            rowset.populate(result);
-
         }
-        catch (SQLException | FilterToSQLException e)
+        catch (FilterToSQLException | SQLException | ParseException | CoalesceException e1)
         {
-            throw new CoalescePersistorException("Search Failed", e);
+            throw new CoalescePersistorException("Search Failed", e1);
         }
 
-        return rowset;
+        return results;
     }
+
+    private List<CoalesceParameter> getParameters(PostGresCoalescePreparedFilter filter) throws ParseException
+    {
+
+        List<CoalesceParameter> parameters = new ArrayList<CoalesceParameter>();
+
+        // Add Parameters
+        for (Object value : filter.getLiteralValues())
+        {
+            parameters.add(new CoalesceParameter(value.toString(), Types.OTHER));
+        }
+
+        // if (!filter.isIgnoreSecurity())
+        // {
+        //
+        // for (EMasks mask : EMasks.values())
+        // {
+        // parameters.add(new
+        // CoalesceParameter(SecurityBitmaskHelper.toString(code.getMask(mask))));
+        // }
+        //
+        // parameters.add(new CoalesceParameter(userId, Types.CHAR));
+        // }
+
+        return parameters;
+
+    }
+
+    // @Override
+//     public CachedRowSet search(Query query, CoalesceParameter... parameters)
+//     throws CoalescePersistorException
+//     {
+//     CachedRowSet rowset = null;
+//     PostgisPSFilterToSql fitlerToSql = new PostgisPSFilterToSql(null);
+//    
+//     // Execute Query
+//     try (CoalesceDataConnectorBase conn = new
+//     PostGreSQLDataConnector(getConnectionSettings(), getSchemaPrefix()))
+//     {
+//     if (LOGGER.isDebugEnabled())
+//     {
+//     LOGGER.debug("Filter: {}", query.getFilter().toString());
+//     }
+//
+//     // Always Include EntityKey
+//     StringBuilder sb = new StringBuilder();
+//    
+//     for (PropertyName property : query.getProperties())
+//     {
+//     if (sb.length() != 0)
+//     {
+//     sb.append(", ");
+//     }
+//     sb.append(property.getPropertyName());
+//     }
+//    
+//     // TODO Complete this implementation (Does not support functions /
+//     // sorting / properties / etc)
+//     String sql = "SELECT " + sb.toString() + " FROM " + getSchemaPrefix() +
+//     "coalesceentity "
+//     + fitlerToSql.encodeToString(query.getFilter());
+//    
+//     if (LOGGER.isDebugEnabled())
+//     {
+//     LOGGER.debug("SQL: {}", sql);
+//    
+//     LOGGER.debug("Parameters:");
+//    
+//     if (parameters != null)
+//     {
+//     for (CoalesceParameter param : parameters)
+//     {
+//     LOGGER.debug("\t{}:{}", param.getValue(), param.getType());
+//     }
+//     }
+//     }
+//    
+//     ResultSet result = conn.executeQuery(sql, parameters);
+//    
+//     rowset = RowSetProvider.newFactory().createCachedRowSet();
+//     rowset.populate(result);
+//    
+//     }
+//     catch (SQLException | FilterToSQLException e)
+//     {
+//     throw new CoalescePersistorException("Search Failed", e);
+//     }
+//    
+//     SearchResults results = new SearchResults();
+//     results.setResults(rowset);
+//    
+//     return results;
+//     }
 
     /*--------------------------------------------------------------------------
     Public Methods
@@ -491,7 +554,7 @@ public class PostGreSQLPersistorExt extends PostGreSQLPersistor implements ICoal
         {
 
             // Iterate Through Record Sets
-            for (CoalesceRecordset recordset : section.getRecordsets().values())
+            for (CoalesceRecordset recordset : section.getRecordsetsAsList())
             {
 
                 // Determine Record Set's Cache Key
@@ -522,35 +585,6 @@ public class PostGreSQLPersistorExt extends PostGreSQLPersistor implements ICoal
     public void clearCache(CoalesceEntityTemplate template)
     {
         clearCache(template.createNewEntity());
-    }
-
-    /*--------------------------------------------------------------------------
-    Protected Methods
-    --------------------------------------------------------------------------*/
-
-    protected String getCreator(CoalesceEntity entity)
-    {
-        return null;
-    }
-
-    protected String getType(CoalesceEntity entity)
-    {
-        return null;
-    }
-
-    protected String getScope(CoalesceEntity entity)
-    {
-        return null;
-    }
-
-    protected long getSecurityHigh(CoalesceEntity entity)
-    {
-        return 0;
-    }
-
-    protected long getSecurityLow(CoalesceEntity entity)
-    {
-        return 0;
     }
 
     /*--------------------------------------------------------------------------

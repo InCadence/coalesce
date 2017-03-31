@@ -1,5 +1,8 @@
+package com.incadencecorp.coalesce.framework.persistance;
+
+
 /*-----------------------------------------------------------------------------'
- Copyright 2016 - InCadence Strategic Solutions Inc., All Rights Reserved
+ Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
 
  Notwithstanding any contractor copyright notice, the Government has Unlimited
  Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
@@ -15,27 +18,9 @@
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-package com.incadencecorp.coalesce.search.api;
 
-import org.geotools.data.Query;
+public abstract class AbstractCoalescePersistorTest {
 
-import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-
-/**
- * This interface is used to provide searching capability to persistors.
- * 
- * @author n78554
- */
-public interface ICoalesceSearchPersistor {
-
-    /**
-     * Performs a search.
-     * 
-     * @param query
-     * @param parameters
-     * @return the results of the search
-     * @throws CoalescePersistorException
-     */
-    SearchResults search(Query query) throws CoalescePersistorException;
-
+   abstract ICoalescePersistor createPersister();
+    
 }

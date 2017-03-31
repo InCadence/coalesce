@@ -12,7 +12,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.UUID;
@@ -49,7 +48,6 @@ import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
-import org.geotools.filter.Filters;
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.filter.text.cql2.CQLException;
 import org.joda.time.DateTime;
@@ -58,8 +56,6 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
-import org.opengis.filter.FilterVisitor;
-import org.opengis.filter.expression.PropertyName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
@@ -89,6 +85,7 @@ import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 import com.incadencecorp.coalesce.framework.validation.CoalesceValidator;
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
+import com.incadencecorp.coalesce.search.api.SearchResults;
 import com.incadencecorp.coalesce.search.resultset.CoalesceColumnMetadata;
 import com.incadencecorp.coalesce.search.resultset.CoalesceResultSet;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -1494,7 +1491,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
     }
 
     @Override
-    public CachedRowSet search(Query query, CoalesceParameter... parameters) throws CoalescePersistorException
+    public SearchResults search(Query query) throws CoalescePersistorException
     {
         CachedRowSet rowset = null;
 
@@ -1533,7 +1530,10 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             throw new CoalescePersistorException(e.getMessage(), e);
         }
 
-        return rowset;
+        SearchResults results = new SearchResults(); 
+        results.setResults(rowset);
+        
+        return results;
     }
 
     @Deprecated
