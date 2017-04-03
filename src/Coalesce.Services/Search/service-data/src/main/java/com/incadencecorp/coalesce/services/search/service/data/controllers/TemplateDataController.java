@@ -1,3 +1,19 @@
+/*-----------------------------------------------------------------------------'
+ Copyright 2017 - InCadence Strategic Solutions Inc., All Rights Reserved
+
+ Notwithstanding any contractor copyright notice, the Government has Unlimited
+ Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+ of this work other than as specifically authorized by these DFARS Clauses may
+ violate Government rights in this work.
+
+ DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+ Unlimited Rights. The Government has the right to use, modify, reproduce,
+ perform, display, release or disclose this computer software and to have or
+ authorize others to do so.
+
+ Distribution Statement D. Distribution authorized to the Department of
+ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+ -----------------------------------------------------------------------------*/
 package com.incadencecorp.coalesce.services.search.service.data.controllers;
 
 import java.io.IOException;
@@ -35,43 +51,6 @@ public class TemplateDataController {
     private static final Map<String, CoalesceEntity> TEMPLATES = new HashMap<String, CoalesceEntity>();
     private static final Logger LOGGER = LoggerFactory.getLogger(TemplateDataController.class);
     private static final String COALESCEENTITY_KEY = CoalesceEntity.class.getSimpleName();
-
-    /**
-     * Default Constructor (Used for Testing)
-     */
-    public TemplateDataController()
-    {
-        // TODO Remove this code
-        if (TEMPLATES.size() == 0)
-        {
-            LOGGER.warn("Creating Mock Templates");
-
-            CoalesceEntity template1 = CoalesceEntity.create("Template1", "Test", "1.0", null, null);
-
-            CoalesceSection section = CoalesceSection.create(template1, "Test1 Section");
-            CoalesceRecordset recordset = CoalesceRecordset.create(section, "Test1 RS");
-
-            CoalesceFieldDefinition.create(recordset, "field1", ECoalesceFieldDataTypes.BOOLEAN_TYPE);
-            CoalesceFieldDefinition.create(recordset, "field2", ECoalesceFieldDataTypes.STRING_TYPE);
-
-            TEMPLATES.put(template1.getKey(), template1);
-
-            CoalesceEntity template2 = CoalesceEntity.create("Template2", "Test", "1.0", null, null);
-            CoalesceSection section2 = CoalesceSection.create(template2, "Test2 Section");
-            CoalesceRecordset recordset2 = CoalesceRecordset.create(section2, "Test2 RS");
-
-            CoalesceFieldDefinition.create(recordset2, "field3", ECoalesceFieldDataTypes.BOOLEAN_TYPE);
-            CoalesceFieldDefinition.create(recordset2, "field4", ECoalesceFieldDataTypes.STRING_TYPE);
-
-            CoalesceRecordset recordset3 = CoalesceRecordset.create(section2, "Test3 RS");
-
-            CoalesceFieldDefinition.create(recordset3, "field5", ECoalesceFieldDataTypes.BOOLEAN_TYPE);
-            CoalesceFieldDefinition.create(recordset3, "field6", ECoalesceFieldDataTypes.STRING_TYPE);
-
-            TEMPLATES.put(template2.getKey(), template2);
-        }
-
-    }
 
     /**
      * Production Constructor
@@ -123,20 +102,20 @@ public class TemplateDataController {
 
         List<ObjectMetaData> results = new ArrayList<ObjectMetaData>();
 
-        for (CoalesceEntity template : TEMPLATES.values())
+        for (Map.Entry<String, CoalesceEntity> template : TEMPLATES.entrySet())
         {
             results.add(new ObjectMetaData(template.getKey(),
-                                           template.getName(),
-                                           template.getSource(),
-                                           template.getVersion(),
-                                           template.getDateCreated(),
-                                           template.getLastModified()));
+                                           template.getValue().getName(),
+                                           template.getValue().getSource(),
+                                           template.getValue().getVersion(),
+                                           template.getValue().getDateCreated(),
+                                           template.getValue().getLastModified()));
 
             LOGGER.trace("Including ({}) ({}) ({}) ({})",
                          template.getKey(),
-                         template.getName(),
-                         template.getSource(),
-                         template.getVersion());
+                         template.getValue().getName(),
+                         template.getValue().getSource(),
+                         template.getValue().getVersion());
 
         }
 

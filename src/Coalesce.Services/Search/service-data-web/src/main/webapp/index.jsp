@@ -20,27 +20,17 @@
 
 <script>
 	var count = 0;
+	var tempplatekey;
 	var root = "/cxf/data/";
 
-	$(document)
-			.ready(
-					function() {
-
-
-	// 						var text = '{"id":"63e15500-1c0f-4d53-a4b3-ad1fa53b09cb","status":"SUCCESS","error":null,"requestId":null,'
-		// 								+ '"result":[{"id":null,"status":"SUCCESS","error":null,"result":{'
-		// 								+ '"hits":['
-		// 								+ '{"entityKey":"ab0822b4-8faf-4f14-94f5-fdc54d108526","title":"Hello","name":"Hello","source":"World","type":null,"excerpt":null,"values":[]},'
-		// 								+ '{"entityKey":"ab0822b4-8faf-4f14-94f5-fdc54d108526","title":"Hello","name":"Hello","source":"World","type":null,"excerpt":null,"values":[]}'
-		// 								+ '],"total":null}}],"query":null,"setStatus":true,"setId":true,"setRequestId":false,"setError":false}';
-		// 						populateResults(JSON.parse(text));
-
+	$(document).ready(function() {
 		populateTemplates();
+
 	});
 
 	function reset() {
 		$("#parameters > tbody").empty();
-
+		$("#results").empty();
 		count = 0;
 	}
 
@@ -75,7 +65,7 @@
 
 					$.ajax({
 						type : "GET",
-						url : root + "templates/" + $("#templates").val(),
+						url : root + "templates/" + tempplatekey,
 						async : false,
 						success : function(rsData) {
 							var rsControl = populateRecordsetControl(count,
@@ -84,7 +74,7 @@
 							$.ajax({
 								type : "GET",
 								url : root + "templates/"
-										+ $("#templates").val() + "/"
+										+ tempplatekey + "/"
 										+ rsControl.val(),
 								async : false,
 								success : function(fieldData) {
@@ -211,14 +201,6 @@
 								+ item.name + '</option>');
 					});
 
-					createRow(count);
-
-					$.ajax({
-						url : root + "templates/" + $("#templates").val()
-					}).then(function(data) {
-						updateTemplateName();
-						populateRecordsetControl(count, data);
-					});
 				});
 	}
 
@@ -232,7 +214,7 @@
 		control.change(function(event) {
 			$.ajax(
 					{
-						url : root + "templates/" + $("#templates").val() + "/"
+						url : root + "templates/" + tempplatekey + "/"
 								+ control.val()
 					}).then(function(data) {
 				populateFieldControl(idx, data);
@@ -330,7 +312,7 @@
 		var dialog_template, dialog_save, dialog_load;
 
 		dialog_template = $("#dialog-template-form").dialog({
-			autoOpen : false,
+			autoOpen : true,
 			height : 250,
 			width : 350,
 			modal : true,
@@ -341,8 +323,11 @@
 					updateTemplateName();
 
 					createRow(count);
+					
+					tempplatekey = $("#templates").val();
+					
 					$.ajax({
-						url : root + "templates/" + $("#templates").val()
+						url : root + "templates/" + tempplatekey
 					}).then(function(data) {
 						populateRecordsetControl(count, data);
 					});
@@ -464,7 +449,7 @@
 			createRow(count);
 
 			$.ajax({
-				url : root + "templates/" + $("#templates").val()
+				url : root + "templates/" + tempplatekey
 			}).then(function(data) {
 				populateRecordsetControl(count, data);
 			});
@@ -586,5 +571,3 @@
 
 </body>
 </html>
-
-

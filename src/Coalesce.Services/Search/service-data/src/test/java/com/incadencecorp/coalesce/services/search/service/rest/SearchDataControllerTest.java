@@ -27,17 +27,17 @@ import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
 import com.incadencecorp.coalesce.framework.persistance.memory.MockSearchPersister;
 import com.incadencecorp.coalesce.services.api.search.SearchDataObjectResponse;
 import com.incadencecorp.coalesce.services.search.service.client.SearchFrameworkClientImpl;
-import com.incadencecorp.coalesce.services.search.service.rest.controllers.OptionsDataController;
-import com.incadencecorp.coalesce.services.search.service.rest.model.Option;
+import com.incadencecorp.coalesce.services.search.service.data.controllers.SearchDataController;
+import com.incadencecorp.coalesce.services.search.service.data.model.Option;
 
-public class OptionsDataControllerTest {
+public class SearchDataControllerTest {
 
     @Test
     public void testFilterCreation() throws Exception {
         
         MockSearchPersister persister = new MockSearchPersister();
         
-        OptionsDataController controller = new OptionsDataController(new SearchFrameworkClientImpl(persister));
+        SearchDataController controller = new SearchDataController(new SearchFrameworkClientImpl(persister));
         
         TestEntity entity = new TestEntity(); 
         entity.initialize();

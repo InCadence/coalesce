@@ -10,11 +10,6 @@ import com.incadencecorp.coalesce.services.search.service.data.controllers.Templ
  */
 public class TemplateDataControllerJaxRS extends TemplateDataController implements ITemplateDataControllerJaxRS {
 
-    public TemplateDataControllerJaxRS()
-    {
-        super();
-    }
-
     /**
      * Production Constructor
      * 

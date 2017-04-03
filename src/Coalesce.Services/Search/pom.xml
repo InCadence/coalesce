@@ -21,6 +21,7 @@
 		<module>service-data</module>
 		<module>service-data-jaxrs</module>
 		<!--<module>service-data-springboot</module>-->
+		<module>service-data-web</module>
 		<module>service-data-feature</module>
 		<module>client-common</module>
 		<module>client-jaxws</module>
