@@ -1,3 +1,5 @@
+-- Depercated
+
 -- Note: After running the create script to create the database, you must first connect to
 -- the CoalesceDatabase before running this script.
 
