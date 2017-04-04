@@ -40,7 +40,8 @@ import com.incadencecorp.coalesce.framework.jobs.metrics.StopWatch;
  * @param <OUTPUT>
  * @param <TARGET>
  */
-public abstract class AbstractTask<INPUT, OUTPUT extends ICoalesceResponseTypeBase, TARGET> implements Callable<MetricResults<OUTPUT>> {
+public abstract class AbstractTask<INPUT, OUTPUT extends ICoalesceResponseTypeBase, TARGET>
+        implements Callable<MetricResults<OUTPUT>> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractTask.class);
 
@@ -71,9 +72,10 @@ public abstract class AbstractTask<INPUT, OUTPUT extends ICoalesceResponseTypeBa
     {
         parameters.setTarget(value);
     }
-    
+
     /**
      * Sets the principal of the user running this task.
+     * 
      * @param value
      */
     public final void setPrincipal(ICoalescePrincipal value)
@@ -130,7 +132,6 @@ public abstract class AbstractTask<INPUT, OUTPUT extends ICoalesceResponseTypeBa
         {
             result.setResults(doWork(parameters));
 
-
             if (!result.isSuccessful())
             {
                 LOGGER.error(String.format(CoalesceErrors.FAILED_TASK,
@@ -146,8 +147,9 @@ public abstract class AbstractTask<INPUT, OUTPUT extends ICoalesceResponseTypeBa
             LOGGER.error(String.format(CoalesceErrors.FAILED_TASK,
                                        this.getClass().getName(),
                                        parameters.getTarget().getClass().getName(),
-                                       "Exception"), e);
-            
+                                       "Exception"),
+                         e);
+
             result.setResults(createResult());
             result.getResults().setStatus(EResultStatus.FAILED);
             result.getResults().setError(e.getMessage());
@@ -172,7 +174,9 @@ public abstract class AbstractTask<INPUT, OUTPUT extends ICoalesceResponseTypeBa
             //
             // // Re-throw
             // throw e;
-        } finally {
+        }
+        finally
+        {
             watch.finish();
         }
 
@@ -188,9 +192,14 @@ public abstract class AbstractTask<INPUT, OUTPUT extends ICoalesceResponseTypeBa
     {
         if (LOGGER.isDebugEnabled())
         {
-            for (Map.Entry<String, String> entry : getParameters(parameters.getParams(), LOGGER.isTraceEnabled()).entrySet())
+            Map<String, String> params = getParameters(parameters.getParams(), LOGGER.isTraceEnabled());
+
+            if (params != null)
             {
-                LOGGER.debug(String.format("%s = %s", entry.getKey(), entry.getValue()));
+                for (Map.Entry<String, String> entry : params.entrySet())
+                {
+                    LOGGER.debug(String.format("%s = %s", entry.getKey(), entry.getValue()));
+                }
             }
         }
     }
