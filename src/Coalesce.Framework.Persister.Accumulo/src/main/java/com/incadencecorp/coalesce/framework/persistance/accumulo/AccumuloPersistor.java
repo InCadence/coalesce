@@ -550,21 +550,19 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 
     private boolean createSearchTables(CoalesceEntityTemplate template)
     {
-        // Feature set name will be built as follows to avoid namespace
-        // collisions
-        // <template>: <name>_<source>_<version>
-        // <featurename>: <template>.<section>.<recordset>
+        // Feature set name will be the recordset name.
+    	// This is to match the postgres persistor
         //
         // All spaces in names will be converted to underscores.
-        String templateName = (template.getName() + "_" + template.getSource() + "_"
-                + template.getVersion()).replaceAll(" ", "_");
+        //String templateName = (template.getName() + "_" + template.getSource() + "_"
+        //         + template.getVersion()).replaceAll(" ", "_");
 
         // Document tempdoc = template.getCoalesceObjectDocument();
         // Confirm Values
         NodeList nodeList = template.getCoalesceObjectDocument().getElementsByTagName("*");
         int numnodes = nodeList.getLength();
 
-        String sectionName = null;
+        //String sectionName = null;
         String recordName = null;
         ArrayList<Fielddefinition> fieldlist = new ArrayList<Fielddefinition>();
 
@@ -576,8 +574,8 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 
             if (nodeName.compareTo("section") == 0)
             {
-                sectionName = node.getAttributes().getNamedItem("name").getNodeValue().replaceAll(" ", "_");
-                recordName = null;
+                //sectionName = node.getAttributes().getNamedItem("name").getNodeValue().replaceAll(" ", "_");
+                //recordName = null;
             }
 
             if (nodeName.compareTo("recordset") == 0)
@@ -586,7 +584,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                 if (!fieldlist.isEmpty())
                 {
                     // Now create the geomesa featureset
-                    createFeatureSet(templateName + "." + sectionName + "." + recordName, fieldlist);
+                    createFeatureSet(recordName, fieldlist);
                 }
                 recordName = node.getAttributes().getNamedItem("name").getNodeValue().replaceAll(" ", "_");
                 fieldlist.clear();
@@ -608,7 +606,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         // Write out last set of fields
         if (!fieldlist.isEmpty())
         {
-            createFeatureSet(templateName + "." + sectionName + "." + recordName, fieldlist);
+            createFeatureSet(recordName, fieldlist);
         }
         return true;
     }
@@ -1021,7 +1019,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         CoalesceValidator validator = new CoalesceValidator();
         DataStore geoDataStore = connect.getGeoDataStore();
 
-        String templatename = (entity.getName() + "_" + entity.getSource() + "_" + entity.getVersion()).replaceAll(" ", "_");
+        //String templatename = (entity.getName() + "_" + entity.getSource() + "_" + entity.getVersion()).replaceAll(" ", "_");
         // Find the template for this type
         try
         {
@@ -1033,11 +1031,11 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 
                 for (CoalesceSection section : entity.getSections().values())
                 {
-                    String sectionname = section.getName();
+                    //String sectionname = section.getName();
                     for (CoalesceRecordset recordset : section.getRecordsets().values())
                     {
                         String recordname = recordset.getName();
-                        String featuresetname = (templatename + "." + sectionname + "." + recordname).replaceAll(" ", "_");
+                        String featuresetname = (recordname).replaceAll(" ", "_");
 
                         // Verify a featureset exists if not skip this
                         // record

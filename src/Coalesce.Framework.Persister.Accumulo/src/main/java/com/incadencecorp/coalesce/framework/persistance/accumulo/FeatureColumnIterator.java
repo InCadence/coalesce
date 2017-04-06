@@ -48,5 +48,10 @@ public class FeatureColumnIterator<T> implements Iterator<T> {
        
         return (T) valuesList.toArray(new Object[0]);
     }
-
+    
+    @Override
+    public void remove()
+    {
+        return;
+    }
 }

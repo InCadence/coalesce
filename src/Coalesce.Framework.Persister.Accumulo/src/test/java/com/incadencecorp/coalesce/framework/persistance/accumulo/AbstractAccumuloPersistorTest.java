@@ -353,7 +353,9 @@ public abstract class AbstractAccumuloPersistorTest extends CoalescePersistorBas
                                         null);
         Query query = new Query(GDELT_Test_Entity.getQueryName(), cqlFilter);
 
+        System.out.println("Feature: "+GDELT_Test_Entity.getQueryName());
         FeatureSource<?, ?> featureSource = geoDataStore.getFeatureSource(GDELT_Test_Entity.getQueryName());
+
         FeatureIterator<?> featureItr = featureSource.getFeatures(query).features();
         assertTrue(featureItr.hasNext());
 

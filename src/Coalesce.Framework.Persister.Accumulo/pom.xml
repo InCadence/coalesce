@@ -144,10 +144,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.incadencecorp.coalesce</groupId>
-			<artifactId>coalesce-framework-persister-postgresql</artifactId>
-		</dependency>
-		<dependency>
 			<artifactId>joda-time</artifactId>
 			<groupId>joda-time</groupId>
 			<version>2.3</version>
@@ -244,6 +240,11 @@
 			<artifactId>coalesce-crud-service</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jdt</groupId>
+			<artifactId>core</artifactId>
+			<version>3.1.1</version>
 		</dependency>
 	</dependencies>
 

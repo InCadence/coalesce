@@ -42,11 +42,11 @@ public class GDELT_Test_Entity extends CoalesceEntity {
 	
 
 	public static String getRecordSetName() {
-		return NAME + "/" + SECTION + "/" + RECORDSET;
+		return RECORDSET;
 	}
 
 	public static String getQueryName() {
-		return NAME + "_" + SOURCE + "_" + VERSION + "." + SECTION + "." + RECORDSET;
+		return RECORDSET;
 	}
 
 	public GDELT_Test_Entity() {

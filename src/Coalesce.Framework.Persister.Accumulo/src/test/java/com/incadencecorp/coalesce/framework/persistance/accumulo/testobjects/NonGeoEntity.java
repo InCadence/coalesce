@@ -29,12 +29,12 @@ public class NonGeoEntity extends CoalesceEntity {
 
     public static String getRecordSetName()
     {
-        return NAME + "/" + SECTION + "/" + RECORDSET;
+        return RECORDSET; // NAME + "/" + SECTION + "/" + RECORDSET;
     }
 
     public static String getQueryName()
     {
-        return NAME + "_" + SOURCE + "_" + VERSION + "." + SECTION + "." + RECORDSET;
+        return RECORDSET; //NAME + "_" + SOURCE + "_" + VERSION + "." + SECTION + "." + RECORDSET;
     }
 
     public NonGeoEntity()
