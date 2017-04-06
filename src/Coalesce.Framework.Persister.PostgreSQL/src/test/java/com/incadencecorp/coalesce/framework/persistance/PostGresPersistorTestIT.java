@@ -6,7 +6,6 @@ import org.junit.BeforeClass;
 
 import com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLPersistorExt;
 import com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLSettings;
-import com.incadencecorp.unity.common.IConfigurationsConnector;
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
 
 /*-----------------------------------------------------------------------------'

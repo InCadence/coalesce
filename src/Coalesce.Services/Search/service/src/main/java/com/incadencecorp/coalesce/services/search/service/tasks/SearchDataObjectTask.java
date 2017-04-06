@@ -34,14 +34,13 @@ import org.opengis.filter.sort.SortOrder;
 import org.xml.sax.SAXException;
 
 import com.incadencecorp.coalesce.api.EResultStatus;
-import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.jobs.metrics.StopWatch;
 import com.incadencecorp.coalesce.framework.tasks.AbstractTask;
 import com.incadencecorp.coalesce.framework.tasks.TaskParameters;
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.incadencecorp.coalesce.search.filter.FilterUtil;
-import com.incadencecorp.coalesce.search.resultset.CoalesceResultSet;
 import com.incadencecorp.coalesce.services.api.search.HitType;
 import com.incadencecorp.coalesce.services.api.search.QueryResultType;
 import com.incadencecorp.coalesce.services.api.search.QueryResultsType;
@@ -52,6 +51,7 @@ public class SearchDataObjectTask extends AbstractTask<QueryType, QueryResultsTy
 
     @Override
     protected QueryResultsType doWork(TaskParameters<ICoalesceSearchPersistor, QueryType> parameters)
+            throws CoalesceException
     {
         QueryResultsType result;
 
@@ -62,11 +62,9 @@ public class SearchDataObjectTask extends AbstractTask<QueryType, QueryResultsTy
             watch.start();
 
             List<String> properties = new ArrayList<String>();
-            // TODO Rethink the deault column idea
-            // properties.add(CoalescePropertyFactory.getEntityKey().getPropertyName());
-            // properties.add(CoalescePropertyFactory.getName().getPropertyName());
-            // properties.add(CoalescePropertyFactory.getSource().getPropertyName());
-            // properties.add(CoalescePropertyFactory.getEntityTitle().getPropertyName());
+            properties.add(CoalescePropertyFactory.getName().getPropertyName());
+            properties.add(CoalescePropertyFactory.getSource().getPropertyName());
+            properties.add(CoalescePropertyFactory.getEntityTitle().getPropertyName());
             properties.addAll(parameters.getParams().getPropertyNames());
 
             watch.finish();
@@ -119,7 +117,6 @@ public class SearchDataObjectTask extends AbstractTask<QueryType, QueryResultsTy
                     hit.setEntityKey(rowset.getString(idx++));
                     hit.setName(rowset.getString(idx++));
                     hit.setSource(rowset.getString(idx++));
-                    idx++; // Type
                     hit.setTitle(rowset.getString(idx++));
 
                     if (parameters.getParams().getPropertyNames() != null)
@@ -145,11 +142,9 @@ public class SearchDataObjectTask extends AbstractTask<QueryType, QueryResultsTy
             result.setResult(results);
 
         }
-        catch (SAXException | IOException | ParserConfigurationException | CoalescePersistorException | SQLException e)
+        catch (SAXException | IOException | ParserConfigurationException | SQLException e)
         {
-            result = new QueryResultsType();
-            result.setStatus(EResultStatus.FAILED);
-            result.setError(e.getMessage());
+            throw new CoalesceException(e);
         }
 
         return result;

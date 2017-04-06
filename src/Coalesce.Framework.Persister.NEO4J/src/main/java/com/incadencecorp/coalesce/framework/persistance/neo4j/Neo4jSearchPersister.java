@@ -45,10 +45,6 @@ import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 public class Neo4jSearchPersister extends Neo4JPersistor implements ICoalesceSearchPersistor {
 
     private static final String ENTITY_KEY_COL_NAME = CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getEntityKey());
-    private static final String ENTITY_NAME_COL_NAME = CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getName());
-    private static final String ENTITY_SOURCE_COL_NAME = CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getSource());
-    private static final String ENTITY_TYPE_COL_NAME = CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getEntityType());
-    private static final String ENTITY_TITLE_COL_NAME = CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getEntityTitle());
 
     private static final String LABEL = "n";
     private static final String QUERY = "MATCH (%s) %s RETURN %s %s %s";
@@ -71,16 +67,6 @@ public class Neo4jSearchPersister extends Neo4JPersistor implements ICoalesceSea
 
             StringBuilder sb = new StringBuilder();
             sb.append(LABEL + "." + Neo4JPersistor.KEY + " AS " + ENTITY_KEY_COL_NAME);
-            sb.append(", " + LABEL + "." + Neo4JPersistor.NAME + " AS " + ENTITY_NAME_COL_NAME);
-            sb.append(", " + LABEL + "." + Neo4JPersistor.SOURCE + " AS " + ENTITY_SOURCE_COL_NAME);
-            sb.append(", " + LABEL + "." + Neo4JPersistor.TYPE + " AS " + ENTITY_TYPE_COL_NAME);
-            sb.append(", " + LABEL + "." + Neo4JPersistor.TITLE + " AS " + ENTITY_TITLE_COL_NAME);
-
-            columns.add(Neo4JPersistor.KEY);
-            columns.add(Neo4JPersistor.NAME);
-            columns.add(Neo4JPersistor.SOURCE);
-            columns.add(Neo4JPersistor.TYPE);
-            columns.add(Neo4JPersistor.TITLE);
 
             if (query.getProperties() != null)
             {

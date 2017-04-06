@@ -22,7 +22,6 @@ import java.util.Map;
 
 import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
-import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
@@ -34,50 +33,43 @@ import com.incadencecorp.coalesce.services.api.crud.DataObjectStatusType;
 public class UpdateDataObjectStatusTask extends AbstractFrameworkTask<DataObjectStatusType[], ResultsType> {
 
     @Override
-    protected ResultsType doWork(TaskParameters<CoalesceFramework, DataObjectStatusType[]> parameters) throws CoalesceException
+    protected ResultsType doWork(TaskParameters<CoalesceFramework, DataObjectStatusType[]> parameters)
+            throws CoalesceException
     {
         ResultsType result = new ResultsType();
         CoalesceFramework framework = parameters.getTarget();
         DataObjectStatusType[] params = parameters.getParams();
 
-        try
+        for (DataObjectStatusType task : params)
         {
-            for (DataObjectStatusType task : params)
+            if (task.getAction() == null)
             {
-                if (task.getAction() == null)
-                {
-                    throw new CoalesceException("No Link Action Specified");
-                }
-                
-                result.setStatus(EResultStatus.SUCCESS);
-                
-                // Revert to Specified Version
-                CoalesceEntity entity = framework.getCoalesceEntity(task.getKey());
-
-                switch (task.getAction()) {
-                case MARK_AS_ACTIVE:
-                    entity.setStatus(ECoalesceObjectStatus.ACTIVE);
-                    framework.saveCoalesceEntity(entity);
-                    break;
-                case MARK_AS_DELETED:
-                    entity.setStatus(ECoalesceObjectStatus.DELETED);
-                    framework.saveCoalesceEntity(entity);
-                    break;
-                case MARK_AS_READONLY:
-                    entity.setStatus(ECoalesceObjectStatus.READONLY);
-                    framework.saveCoalesceEntity(entity);
-                    break;
-                default:
-                    result.setStatus(EResultStatus.FAILED);
-                    result.setResult("Invalid Action");
-                    break;
-                }
+                throw new CoalesceException("No Link Action Specified");
             }
-        }
-        catch (CoalescePersistorException e)
-        {
-            result.setStatus(EResultStatus.FAILED);
-            result.setResult(e.getMessage());
+
+            result.setStatus(EResultStatus.SUCCESS);
+
+            // Revert to Specified Version
+            CoalesceEntity entity = framework.getCoalesceEntity(task.getKey());
+
+            switch (task.getAction()) {
+            case MARK_AS_ACTIVE:
+                entity.setStatus(ECoalesceObjectStatus.ACTIVE);
+                framework.saveCoalesceEntity(entity);
+                break;
+            case MARK_AS_DELETED:
+                entity.setStatus(ECoalesceObjectStatus.DELETED);
+                framework.saveCoalesceEntity(entity);
+                break;
+            case MARK_AS_READONLY:
+                entity.setStatus(ECoalesceObjectStatus.READONLY);
+                framework.saveCoalesceEntity(entity);
+                break;
+            default:
+                result.setStatus(EResultStatus.FAILED);
+                result.setResult("Invalid Action");
+                break;
+            }
         }
 
         return result;
@@ -95,12 +87,11 @@ public class UpdateDataObjectStatusTask extends AbstractFrameworkTask<DataObject
 
         return results;
     }
-    
+
     @Override
     protected ResultsType createResult()
     {
         return new ResultsType();
     }
-
 
 }

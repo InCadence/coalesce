@@ -86,7 +86,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
             {
                 LOGGER.warn("Failed to register templates");
             }
-            
+
             isInitialized = true;
         }
     }
@@ -99,7 +99,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
      * @throws Exception
      */
     @Test
-    public void searchMetadataWithSortingTest() throws Exception
+    public void testSearchWithSortingTest() throws Exception
     {
         T persister = createPersister();
 
@@ -127,10 +127,13 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         query = FF.and(FF.equals(CoalescePropertyFactory.getName(), FF.literal(TestEntity.NAME)), query);
 
         List<PropertyName> properties = new ArrayList<PropertyName>();
+        properties.add(CoalescePropertyFactory.getName());
+        properties.add(CoalescePropertyFactory.getSource());
+        properties.add(CoalescePropertyFactory.getEntityTitle());
         properties.add(CoalescePropertyFactory.getFieldProperty(entity2.addRecord1().getStringField()));
 
         SortBy[] sortBy = new SortBy[1];
-        sortBy[0] = FF.sort(properties.get(0).getPropertyName(), SortOrder.ASCENDING);
+        sortBy[0] = FF.sort(properties.get(3).getPropertyName(), SortOrder.ASCENDING);
 
         Query searchQuery = new Query();
         searchQuery.setStartIndex(1);
@@ -146,28 +149,25 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         CachedRowSet rowset = results.getResults();
 
         // 5 Default columns +1 parameter
-        Assert.assertEquals(6, rowset.getMetaData().getColumnCount());
+        Assert.assertEquals(properties.size() + 1, rowset.getMetaData().getColumnCount());
         Assert.assertEquals(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getEntityKey()),
                             rowset.getMetaData().getColumnName(1));
-        Assert.assertEquals(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getName()),
-                            rowset.getMetaData().getColumnName(2));
-        Assert.assertEquals(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getSource()),
-                            rowset.getMetaData().getColumnName(3));
-        Assert.assertEquals(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getEntityType()),
-                            rowset.getMetaData().getColumnName(4));
-        Assert.assertEquals(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getEntityTitle()),
-                            rowset.getMetaData().getColumnName(5));
-        Assert.assertEquals(CoalescePropertyFactory.getColumnName(properties.get(0)), rowset.getMetaData().getColumnName(6));
+
+        for (int ii = 0; ii < properties.size(); ii++)
+        {
+            Assert.assertEquals(CoalescePropertyFactory.getColumnName(properties.get(ii)),
+                                rowset.getMetaData().getColumnName(ii + 2));
+        }
 
         Assert.assertTrue(rowset.next());
         Assert.assertEquals(entity1.getKey(), rowset.getString(1));
-        Assert.assertEquals(field1.getValue(), rowset.getString(6));
+        Assert.assertEquals(field1.getValue(), rowset.getString(5));
         Assert.assertTrue(rowset.next());
         Assert.assertEquals(entity2.getKey(), rowset.getString(1));
-        Assert.assertEquals(field2.getValue(), rowset.getString(6));
+        Assert.assertEquals(field2.getValue(), rowset.getString(5));
 
         // // Switch Sort Order
-        sortBy[0] = FF.sort(properties.get(0).getPropertyName(), SortOrder.DESCENDING);
+        sortBy[0] = FF.sort(properties.get(3).getPropertyName(), SortOrder.DESCENDING);
 
         results = persister.search(searchQuery);
 
@@ -175,15 +175,15 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
 
         Assert.assertTrue(rowset.next());
         Assert.assertEquals(entity2.getKey(), rowset.getString(1));
-        Assert.assertEquals(field2.getValue(), rowset.getString(6));
+        Assert.assertEquals(field2.getValue(), rowset.getString(5));
         Assert.assertTrue(rowset.next());
         Assert.assertEquals(entity1.getKey(), rowset.getString(1));
-        Assert.assertEquals(field1.getValue(), rowset.getString(6));
-        
+        Assert.assertEquals(field1.getValue(), rowset.getString(5));
+
         // Cleanup
         entity1.markAsDeleted();
         entity2.markAsDeleted();
-        
+
         persister.saveEntity(true, entity1, entity2);
 
     }
@@ -195,7 +195,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
      * @throws Exception
      */
     @Test
-    public void searchNoResults() throws Exception
+    public void testSearchNoResults() throws Exception
     {
         T persister = createPersister();
 
@@ -215,7 +215,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         CachedRowSet rowset = results.getResults();
 
         // 5 Default columns
-        Assert.assertEquals(5, rowset.getMetaData().getColumnCount());
+        Assert.assertEquals(1, rowset.getMetaData().getColumnCount());
         Assert.assertFalse(rowset.next());
     }
 

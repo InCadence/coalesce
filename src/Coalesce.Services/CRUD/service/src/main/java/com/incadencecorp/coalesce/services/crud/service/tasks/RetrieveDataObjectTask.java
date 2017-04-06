@@ -22,7 +22,7 @@ import java.util.Map;
 
 import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.EResultStatus;
-import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceIteratorGetVersion;
@@ -34,43 +34,35 @@ import com.incadencecorp.coalesce.services.api.crud.DataObjectKeyType;
 public class RetrieveDataObjectTask extends AbstractFrameworkTask<DataObjectKeyType[], ResultsType> {
 
     @Override
-    protected ResultsType doWork(TaskParameters<CoalesceFramework, DataObjectKeyType[]> parameters)
+    protected ResultsType doWork(TaskParameters<CoalesceFramework, DataObjectKeyType[]> parameters) throws CoalesceException
     {
         ResultsType result = new ResultsType();
         CoalesceIteratorGetVersion it = new CoalesceIteratorGetVersion();
         CoalesceFramework framework = parameters.getTarget();
         DataObjectKeyType[] params = parameters.getParams();
 
-        try
+        for (DataObjectKeyType task : params)
         {
-            for (DataObjectKeyType task : params)
+            CoalesceEntity entity = framework.getCoalesceEntity(task.getKey());
+
+            if (task.getVer() == -1)
             {
-                CoalesceEntity entity = framework.getCoalesceEntity(task.getKey());
-
-                if (task.getVer() == -1)
-                {
-                    task.setVer(entity.getObjectVersion());
-                }
-
-                if (entity.isValidObjectVersion(task.getVer()))
-                {
-                    it.getVersion(entity, task.getVer());
-                    result.setStatus(EResultStatus.SUCCESS);
-                    result.setResult(entity.toXml());
-                }
-                else
-                {
-                    result.setStatus(EResultStatus.FAILED);
-                    result.setError(String.format(CoalesceErrors.INVALID_OBJECT_VERSION, task.getVer(), task.getKey()));
-                }
-
-                result.setStatus(EResultStatus.SUCCESS);
+                task.setVer(entity.getObjectVersion());
             }
-        }
-        catch (CoalescePersistorException e)
-        {
-            result.setStatus(EResultStatus.FAILED);
-            result.setResult(e.getMessage());
+
+            if (entity.isValidObjectVersion(task.getVer()))
+            {
+                it.getVersion(entity, task.getVer());
+                result.setStatus(EResultStatus.SUCCESS);
+                result.setResult(entity.toXml());
+            }
+            else
+            {
+                result.setStatus(EResultStatus.FAILED);
+                result.setError(String.format(CoalesceErrors.INVALID_OBJECT_VERSION, task.getVer(), task.getKey()));
+            }
+
+            result.setStatus(EResultStatus.SUCCESS);
         }
 
         return result;

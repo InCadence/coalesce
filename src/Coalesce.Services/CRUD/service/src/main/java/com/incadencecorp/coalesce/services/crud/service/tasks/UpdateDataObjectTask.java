@@ -36,65 +36,57 @@ import com.incadencecorp.coalesce.services.api.common.ResultsType;
 public class UpdateDataObjectTask extends AbstractFrameworkTask<String[], ResultsType> {
 
     @Override
-    protected ResultsType doWork(TaskParameters<CoalesceFramework, String[]> parameters)
+    protected ResultsType doWork(TaskParameters<CoalesceFramework, String[]> parameters) throws CoalesceException
     {
         ResultsType result = new ResultsType();
         CoalesceFramework framework = parameters.getTarget();
         CoalesceValidator validator = new CoalesceValidator();
         String[] params = parameters.getParams();
 
-        try
+        List<CoalesceEntity> entities = new ArrayList<CoalesceEntity>();
+
+        for (String xml : params)
         {
-            List<CoalesceEntity> entities = new ArrayList<CoalesceEntity>();
-            
-            for (String xml : params)
+            CoalesceEntity updated = new CoalesceEntity();
+            if (updated.initialize(xml))
             {
-                CoalesceEntity updated = new CoalesceEntity();
-                if (updated.initialize(xml))
-                {
-                    CoalesceEntity original = framework.getCoalesceEntity(updated.getKey());
+                CoalesceEntity original = framework.getCoalesceEntity(updated.getKey());
 
-                    if (!original.isReadOnly())
+                if (!original.isReadOnly())
+                {
+                    CoalesceIteratorMerge merger = new CoalesceIteratorMerge();
+
+                    updated.pruneCoalesceObject(updated.getLinkageSection());
+                    updated = merger.merge(parameters.getPrincipalName(), parameters.getPrincipalIp(), original, updated);
+
+                    // TODO Enable this
+                    Map<String, String> results = new HashMap<String, String>();
+                    // validator.validate(extra.getPrincipal(), entity,
+                    // CoalesceConstraintCache.getCoalesceConstraints(entity));
+
+                    if (results.size() != 0)
                     {
-                        CoalesceIteratorMerge merger = new CoalesceIteratorMerge();
-
-                        updated.pruneCoalesceObject(updated.getLinkageSection());
-                        updated = merger.merge(parameters.getPrincipalName(), parameters.getPrincipalIp(), original, updated);
-
-                        // TODO Enable this
-                        Map<String, String> results = new HashMap<String, String>();
-                        // validator.validate(extra.getPrincipal(), entity,
-                        // CoalesceConstraintCache.getCoalesceConstraints(entity));
-
-                        if (results.size() != 0)
-                        {
-                            result.setStatus(EResultStatus.FAILED);
-                            break;
-                        }
-                        
-                        entities.add(updated);
+                        result.setStatus(EResultStatus.FAILED);
+                        break;
                     }
-                }
-                else
-                {
-                    result.setStatus(EResultStatus.FAILED);
-                    result.setResult(String.format(CoalesceErrors.NOT_INITIALIZED, "Entity"));
-                }
-            }
 
-            if (framework.saveCoalesceEntity(entities.toArray(new CoalesceEntity[entities.size()])))
-            {
-                result.setStatus(EResultStatus.SUCCESS);
+                    entities.add(updated);
+                }
             }
             else
             {
                 result.setStatus(EResultStatus.FAILED);
+                result.setResult(String.format(CoalesceErrors.NOT_INITIALIZED, "Entity"));
             }
         }
-        catch (CoalesceException e)
+
+        if (framework.saveCoalesceEntity(entities.toArray(new CoalesceEntity[entities.size()])))
+        {
+            result.setStatus(EResultStatus.SUCCESS);
+        }
+        else
         {
             result.setStatus(EResultStatus.FAILED);
-            result.setResult(e.getMessage());
         }
 
         return result;
@@ -112,12 +104,11 @@ public class UpdateDataObjectTask extends AbstractFrameworkTask<String[], Result
 
         return results;
     }
-    
+
     @Override
     protected ResultsType createResult()
     {
         return new ResultsType();
     }
-
 
 }

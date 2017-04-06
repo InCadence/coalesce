@@ -22,7 +22,7 @@ import java.util.Map;
 
 import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.EResultStatus;
-import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.tasks.AbstractFrameworkTask;
@@ -33,7 +33,7 @@ import com.incadencecorp.coalesce.services.api.common.ResultsType;
 public class CreateDataObjectTask extends AbstractFrameworkTask<String[], ResultsType> {
 
     @Override
-    protected ResultsType doWork(TaskParameters<CoalesceFramework, String[]> parameters)
+    protected ResultsType doWork(TaskParameters<CoalesceFramework, String[]> parameters) throws CoalesceException
     {
         ResultsType result = new ResultsType();
         CoalesceFramework framework = parameters.getTarget();
@@ -75,23 +75,15 @@ public class CreateDataObjectTask extends AbstractFrameworkTask<String[], Result
 
         if (result.getStatus() != EResultStatus.FAILED)
         {
-            try
-            {
-                // TODO Check to see if entity exists first.
+            // TODO Check to see if entity exists first.
 
-                if (framework.saveCoalesceEntity(entities))
-                {
-                    result.setStatus(EResultStatus.SUCCESS);
-                }
-                else
-                {
-                    result.setStatus(EResultStatus.FAILED);
-                }
+            if (framework.saveCoalesceEntity(entities))
+            {
+                result.setStatus(EResultStatus.SUCCESS);
             }
-            catch (CoalescePersistorException e)
+            else
             {
                 result.setStatus(EResultStatus.FAILED);
-                result.setError(e.getMessage());
             }
         }
         return result;

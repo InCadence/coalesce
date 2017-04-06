@@ -101,15 +101,8 @@ import com.vividsolutions.jts.geom.Geometry;
 public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql implements ICoalesceExpressionVistor {
 
     private static final String ENTITY_KEY_COL_NAME = CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getEntityKey());
-    private static final String ENTITY_NAME_COL_NAME = CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getName());
-    private static final String ENTITY_SOURCE_COL_NAME = CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getSource());
-    private static final String ENTITY_TYPE_COL_NAME = CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getEntityType());
-    private static final String ENTITY_TITLE_COL_NAME = CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getEntityTitle());
 
-    private static final String SQL_COLUMNS = "coalesceentity.objectkey AS " + ENTITY_KEY_COL_NAME + "%1$s, "
-            + "coalesceentity.name AS " + ENTITY_NAME_COL_NAME + "%1$s, " + "coalesceentity.source AS "
-            + ENTITY_SOURCE_COL_NAME + "%1$s, " + "coalesceentity.type AS " + ENTITY_TYPE_COL_NAME + "%1$s, "
-            + "coalesceentity.title AS " + ENTITY_TITLE_COL_NAME + "%1$s";
+    private static final String SQL_COLUMNS = "coalesceentity.objectkey AS " + ENTITY_KEY_COL_NAME + "%1$s";
     private static final String COMMA_SPACE = ", ";
     private static final String COALESCEENTITY = "coalesceentity";
     private static final String QUESTION_MARK = "?";
