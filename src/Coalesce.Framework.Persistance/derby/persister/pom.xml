@@ -35,14 +35,35 @@
 	</build>
 
 	<dependencies>
+        <!-- Internal Dependencies -->
+        <dependency>
+            <groupId>com.incadencecorp.coalesce</groupId>
+            <artifactId>coalesce-core</artifactId>
+        </dependency>
+        
+        <!-- https://mvnrepository.com/artifact/org.apache.derby/derby -->
 		<dependency>
-			<groupId>com.incadencecorp.coalesce</groupId>
-			<artifactId>coalesce-core</artifactId>
+			<groupId>org.apache.derby</groupId>
+			<artifactId>derby</artifactId>
+			<version>10.13.1.1</version>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.derby/derbyclient -->
 		<dependency>
-			<groupId>com.incadencecorp.coalesce</groupId>
-			<artifactId>coalesce-search</artifactId>
-		</dependency>		
-	</dependencies>
+			<groupId>org.apache.derby</groupId>
+			<artifactId>derbyclient</artifactId>
+			<version>10.13.1.1</version>
+		</dependency>
+		
+		<!-- Unit Test Dependencies -->
+        <dependency>
+            <groupId>com.incadencecorp.coalesce</groupId>
+            <version>${project.version}</version>
+            <artifactId>coalesce-core</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
 
 </project>
