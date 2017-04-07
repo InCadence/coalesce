@@ -45,8 +45,8 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
     Private Member Variables
     -----------------------------------------------------------------------------*/
 
-    private Connection _conn = null;
-    private ServerConn _settings;
+    protected Connection _conn = null;
+    protected ServerConn _settings;
 
     /*-----------------------------------------------------------------------------'
     Abstract Functions

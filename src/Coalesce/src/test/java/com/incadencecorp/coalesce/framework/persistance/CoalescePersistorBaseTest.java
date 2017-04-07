@@ -141,7 +141,6 @@ public abstract class CoalescePersistorBaseTest {
         }
         catch (CoalescePersistorException e)
         {
-
             if (e.getCause() != null)
             {
                 System.out.println(e.getCause().getMessage());

@@ -1,0 +1,13 @@
+----------------------------------------------------------------
+Sun Feb 19 19:20:48 EST 2017:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.13.1.1 - (1765088): instance a816c00e-015a-58e4-6803-00000da95348 
+on database directory memory:/Users/mdaconta/06-jcoalesce/src/Coalesce.Framework.Persister.Derby/CoalesceDatabase with class loader sun.misc.Launcher$AppClassLoader@3764951d 
+Loaded from file:/Users/mdaconta/.m2/repository/org/apache/derby/derby/10.13.1.1/derby-10.13.1.1.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.8.0_25-b17
+user.dir=/Users/mdaconta/06-jcoalesce/src/Coalesce.Framework.Persister.Derby
+os.name=Mac OS X
+os.arch=x86_64
+os.version=10.12
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''
