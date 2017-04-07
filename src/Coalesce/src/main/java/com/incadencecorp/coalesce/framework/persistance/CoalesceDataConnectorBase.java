@@ -86,12 +86,12 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
         ResultSet results = null;
         openDataConnection();
 
-        PreparedStatement stmt = _conn.prepareStatement(sql);
-
         if (LOGGER.isTraceEnabled())
         {
             LOGGER.trace("Executing: {}", sql);
         }
+        
+        PreparedStatement stmt = _conn.prepareStatement(sql);
 
         if (parameters != null)
         {

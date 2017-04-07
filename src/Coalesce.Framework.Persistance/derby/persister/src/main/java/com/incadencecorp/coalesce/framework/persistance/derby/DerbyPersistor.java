@@ -5,13 +5,20 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.sql.rowset.CachedRowSet;
+import javax.sql.rowset.RowSetProvider;
+
+import org.geotools.data.Query;
+import org.geotools.data.jdbc.FilterToSQLException;
 import org.joda.time.DateTime;
 
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.CoalesceTableHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
@@ -34,9 +41,12 @@ import com.incadencecorp.coalesce.framework.persistance.CoalescePersistorBase;
 import com.incadencecorp.coalesce.framework.persistance.ElementMetaData;
 import com.incadencecorp.coalesce.framework.persistance.EntityMetaData;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
-import com.incadencecorp.coalesce.framework.persistance.ServerConn;
+import com.incadencecorp.coalesce.framework.persistance.postgres.PostGresCoalescePreparedFilter;
+import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
+import com.incadencecorp.coalesce.search.api.SearchResults;
+import com.incadencecorp.coalesce.search.factory.CoalesceFeatureTypeFactory;
 
-public class DerbyPersistor extends CoalescePersistorBase {
+public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSearchPersistor  {
 
     /*--------------------------------------------------------------------------
     Private Members
@@ -1036,6 +1046,106 @@ public class DerbyPersistor extends CoalescePersistorBase {
         {
             throw new CoalescePersistorException("GetEntityTemplateXml", e);
         }
+    }
+
+    @Override
+    public SearchResults search(Query query) throws CoalescePersistorException
+    {
+        SearchResults results = new SearchResults();
+        results.setPage(query.getStartIndex());
+        results.setPageSize(query.getMaxFeatures());
+
+        try
+        {
+            // Create SQL Query
+            PostGresCoalescePreparedFilter preparedFilter = new PostGresCoalescePreparedFilter(DerbySettings.getDatabaseSchema());
+            preparedFilter.setPageNumber(query.getStartIndex());
+            preparedFilter.setPageSize(query.getMaxFeatures());
+            preparedFilter.setSortBy(query.getSortBy());
+            preparedFilter.setPropertNames(query.getPropertyNames());
+            preparedFilter.setIgnoreSecurity(true);
+            preparedFilter.setFeatureType(CoalesceFeatureTypeFactory.createSimpleFeatureType());
+
+            // Create SQL
+            String where = preparedFilter.encodeToString(query.getFilter());
+
+            // Add Parameters
+            List<CoalesceParameter> paramList = new ArrayList<CoalesceParameter>();
+            paramList.addAll(getParameters(preparedFilter));
+
+            CoalesceParameter[] params = paramList.toArray(new CoalesceParameter[paramList.size()]);
+
+            try (CoalesceDataConnectorBase conn = new DerbyDataConnector(getConnectionSettings().getDatabase(), null, "memory"))
+            {
+                String sql = String.format("SELECT DISTINCT %s FROM %s %s %s",
+                                    preparedFilter.getColumns(),
+                                    preparedFilter.getFrom(),
+                                    where,
+                                    preparedFilter.getSorting());
+
+                // Get Hits
+                CachedRowSet hits = RowSetProvider.newFactory().createCachedRowSet();
+                hits.populate(conn.executeQuery(sql, params));
+
+                hits.last();
+                int numberOfHits = hits.getRow();
+                hits.beforeFirst();
+
+                // Hits Exceeds a Page?
+                if (numberOfHits >= query.getMaxFeatures())
+                {
+                    // Yes; Get Total Hits
+                    sql = String.format("SELECT DISTINCT COUNT(*) FROM %s %s", preparedFilter.getFrom(), where);
+
+                    // Get Total Results
+                    ResultSet rowset = conn.executeQuery(sql, params);
+
+                    if (rowset.next())
+                    {
+                        results.setTotal(rowset.getLong(1));
+                    }
+                }
+                else
+                {
+                    results.setTotal(numberOfHits);
+                }
+
+                results.setResults(hits);
+            }
+        }
+        catch (FilterToSQLException | SQLException | ParseException | CoalesceException e1)
+        {
+            throw new CoalescePersistorException("Search Failed", e1);
+        }
+
+        return results;
+    }
+    
+    private List<CoalesceParameter> getParameters(PostGresCoalescePreparedFilter filter) throws ParseException
+    {
+
+        List<CoalesceParameter> parameters = new ArrayList<CoalesceParameter>();
+
+        // Add Parameters
+        for (Object value : filter.getLiteralValues())
+        {
+            parameters.add(new CoalesceParameter(value.toString(), Types.OTHER));
+        }
+
+        // if (!filter.isIgnoreSecurity())
+        // {
+        //
+        // for (EMasks mask : EMasks.values())
+        // {
+        // parameters.add(new
+        // CoalesceParameter(SecurityBitmaskHelper.toString(code.getMask(mask))));
+        // }
+        //
+        // parameters.add(new CoalesceParameter(userId, Types.CHAR));
+        // }
+
+        return parameters;
+
     }
 
 }

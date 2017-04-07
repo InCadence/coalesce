@@ -24,10 +24,10 @@
 					<instructions>
 						<Bundle-Name>${project.name}</Bundle-Name>
 						<Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
-                        <Import-Package>
-                            org.joda.time*;version="[1.6.2, 3)",
-                            *
-                        </Import-Package>
+						<Import-Package>
+							org.joda.time*;version="[1.6.2, 3)",
+							*
+						</Import-Package>
 					</instructions>
 				</configuration>
 			</plugin>
@@ -35,13 +35,21 @@
 	</build>
 
 	<dependencies>
-        <!-- Internal Dependencies -->
-        <dependency>
-            <groupId>com.incadencecorp.coalesce</groupId>
-            <artifactId>coalesce-core</artifactId>
-        </dependency>
-        
-        <!-- https://mvnrepository.com/artifact/org.apache.derby/derby -->
+		<!-- Internal Dependencies -->
+		<dependency>
+			<groupId>com.incadencecorp.coalesce</groupId>
+			<artifactId>coalesce-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.incadencecorp.coalesce</groupId>
+			<artifactId>coalesce-search</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.incadencecorp.coalesce</groupId>
+			<artifactId>coalesce-framework-persister-postgresql</artifactId>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.derby/derby -->
 		<dependency>
 			<groupId>org.apache.derby</groupId>
 			<artifactId>derby</artifactId>
@@ -54,16 +62,24 @@
 			<artifactId>derbyclient</artifactId>
 			<version>10.13.1.1</version>
 		</dependency>
-		
-		<!-- Unit Test Dependencies -->
-        <dependency>
-            <groupId>com.incadencecorp.coalesce</groupId>
-            <version>${project.version}</version>
-            <artifactId>coalesce-core</artifactId>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
 
-    </dependencies>
+		<!-- Unit Test Dependencies -->
+		<dependency>
+			<groupId>com.incadencecorp.coalesce</groupId>
+			<version>${project.version}</version>
+			<artifactId>coalesce-core</artifactId>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.incadencecorp.coalesce</groupId>
+			<version>${project.version}</version>
+			<artifactId>coalesce-search</artifactId>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+
+	</dependencies>
 
 </project>
