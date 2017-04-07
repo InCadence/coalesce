@@ -10,6 +10,8 @@ import java.sql.Statement;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage;
@@ -23,15 +25,16 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
 	private static final String MEMORY = "memory";
 	private static final String CLASSPATH = "classpath";
 	private static final String JAR = "jar";
-	private static final String clientDriver = "org.apache.derby.jdbc.ClientDriver";
-	private static final String embeddedDriver = "org.apache.derby.jdbc.EmbeddedDriver";
+	private static final String CLIENT_DRIVER = "org.apache.derby.jdbc.ClientDriver";
+	private static final String EMBEDDED_DRIVER = "org.apache.derby.jdbc.EmbeddedDriver";
+	private static final Logger LOGGER = LoggerFactory.getLogger(DerbyDataConnector.class);
 
 	private String _prefix = "";
 	private boolean isEmbedded;
 	private String subSubProtocol;
 
 	public final static String DERBY_OBJECT_ALREADY_EXISTS_SQL_STATE = "X0Y32";
-
+	
 	/**
 	 * Note: Derby stored procedures cannot handle long XML types. So, we will
 	 * NOT use stored procedures in the derby persistor for the base tables.
@@ -220,7 +223,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
 			isEmbedded = true;
 			setSubSubProtocol(subSubProtocol);
 
-			Class.forName(embeddedDriver);
+			Class.forName(EMBEDDED_DRIVER);
 
 			// note: if the protocol is memory, the coalesce database needs to
 			// be created
@@ -240,7 +243,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
 			isEmbedded = false;
 			setSubSubProtocol(subSubProtocol);
 
-			Class.forName(clientDriver);
+			Class.forName(CLIENT_DRIVER);
 
 			// note: if the protocol is memory, the coalesce database needs to
 			// be created
@@ -323,7 +326,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
 					+ " CONSTRAINT CoalesceEntity_pkey PRIMARY KEY (ObjectKey)"
 					+ ")");
 
-			System.out.println("CoalesceEntity Table created");
+			LOGGER.debug("CoalesceEntity Table created");
 			stmt.close();
 		} catch (SQLException e) {
 			if (!DerbyDataConnector.tableAlreadyExists(e)) {
@@ -344,7 +347,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
 					+ " LastModified timestamp, "
 					+ "  CONSTRAINT CoalesceEntityTemplate_pkey PRIMARY KEY (TemplateKey) "
 					+ ")");
-			System.out.println("Coalesce Entity Template Table created");
+			LOGGER.debug("Coalesce Entity Template Table created");
 			stmt.close();
 		} catch (SQLException e) {
 			if (!DerbyDataConnector.tableAlreadyExists(e)) {
@@ -377,7 +380,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
 					+ " LastModified timestamp,"
 					+ " CONSTRAINT CoalesceLinkage_pkey PRIMARY KEY (ObjectKey)"
 					+ ")");
-			System.out.println("Coalesce Linkage Table created");
+			LOGGER.debug("Coalesce Linkage Table created");
 			stmt.close();
 
 		} catch (SQLException e) {
