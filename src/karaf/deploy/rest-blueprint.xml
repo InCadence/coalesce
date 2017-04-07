@@ -31,8 +31,9 @@
 		</jaxrs:providers>
 	</jaxrs:server>
 
-		<bean id="templateServiceImpl"
+	<bean id="templateServiceImpl"
 		class="com.incadencecorp.coalesce.services.search.service.data.jaxrs.TemplateDataControllerJaxRS">
+		<argument ref="postgres" />
 	</bean>
 
 	<bean id="optionsServiceImpl"
@@ -46,10 +47,10 @@
 
 	<bean id="searchClient"
 		class="com.incadencecorp.coalesce.services.search.service.client.SearchFrameworkClientImpl">
-		<argument ref="neo4jSearch" />
+		<argument ref="postgres" />
 	</bean>
 
-	<bean id="neo4jSearch"
+	<bean id="neo4j"
 		class="com.incadencecorp.coalesce.framework.persistance.neo4j.Neo4jSearchPersister">
 		<property name="connectionSettings">
 			<bean class="com.incadencecorp.coalesce.framework.persistance.ServerConn">
@@ -58,6 +59,23 @@
 			</bean>
 		</property>
 		<property name="includeXml" value="true" />
+	</bean>
+
+	<bean id="postgres"
+		class="com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLPersistorExt">
+		<property name="connectionSettings">
+			<ref component-id="aws" />
+		</property>
+		<property name="schema" value="coalesce" />
+	</bean>
+	
+	<bean id="aws"
+		class="com.incadencecorp.coalesce.framework.persistance.ServerConn">
+		<property name="database" value="coalesce" />
+		<property name="portNumber" value="5432" />
+		<property name="serverName" value="52.222.74.184" />
+		<property name="user" value="enterprisedb" />
+		<property name="password" value="enterprisedb" />
 	</bean>
 
 </blueprint>
