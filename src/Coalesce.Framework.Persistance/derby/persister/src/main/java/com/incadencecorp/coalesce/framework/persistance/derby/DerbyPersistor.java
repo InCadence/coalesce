@@ -93,17 +93,18 @@ public class DerbyPersistor extends CoalescePersistorBase {
     @Override
     protected CoalesceDataConnectorBase getDataConnector() throws CoalescePersistorException
     {
-        if (derbyDataConnector == null)
-        {
-            // create a default
-            ServerConn serverConnection = super.getConnectionSettings();
-            if (serverConnection == null)
-            {
-                serverConnection = DerbyDataConnector.getServerConnection();
-            }
-            derbyDataConnector = new DerbyDataConnector(serverConnection.getDatabase(), null, "memory");
-        }
-        return derbyDataConnector;
+//        if (derbyDataConnector == null)
+//        {
+//            // create a default
+//            ServerConn serverConnection = super.getConnectionSettings();
+//            if (serverConnection == null)
+//            {
+//                serverConnection = DerbyDataConnector.getServerConnection();
+//            }
+//            derbyDataConnector = new DerbyDataConnector(serverConnection.getDatabase(), null, "memory");
+//        }
+        // TODO Re-look this.
+        return new DerbyDataConnector(getConnectionSettings().getDatabase(), null, "memory");
     }
 
     @Override
