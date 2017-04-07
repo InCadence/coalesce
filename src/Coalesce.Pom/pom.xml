@@ -29,6 +29,7 @@
 		<module>../Coalesce.Services</module>
 		<module>../Coalesce.Framework.Persistance</module>
 		<module>../Coalesce.Feature</module>
+		<module>../Coalesce.Plugins</module>
 	</modules>
 
 	<build>
