@@ -128,9 +128,9 @@ public class DerbyPersistor extends CoalescePersistorBase {
     protected boolean flattenObject(boolean allowRemoval, CoalesceEntity... entities) throws CoalescePersistorException
     {
         boolean isSuccessful = true;
-        CoalesceDataConnectorBase conn = null;
+        CoalesceDataConnectorBase conn = derbyDataConnector;
 
-        if (derbyDataConnector == null)
+        if (conn == null)
         {
             conn = (DerbyDataConnector) this.getDataConnector();
         }
