@@ -308,12 +308,6 @@ public class DerbyPersistor extends CoalescePersistorBase {
             isSuccessful = false;
         }
 
-        if (isSuccessful && CoalesceSettings.getUseIndexing())
-        {
-            // Persist Map Table Entry
-            isSuccessful = persistMapTableEntry(coalesceObject, conn);
-        }
-
         return isSuccessful;
     }
 
