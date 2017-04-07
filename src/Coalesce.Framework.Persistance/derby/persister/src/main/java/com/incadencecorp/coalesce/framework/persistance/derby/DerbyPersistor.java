@@ -50,6 +50,7 @@ public class DerbyPersistor extends CoalescePersistorBase {
     public DerbyPersistor()
     {
         setConnectionSettings(DerbySettings.getServerConn());
+        setSchema(DerbySettings.getDatabaseSchema());
     }
 
     /**
