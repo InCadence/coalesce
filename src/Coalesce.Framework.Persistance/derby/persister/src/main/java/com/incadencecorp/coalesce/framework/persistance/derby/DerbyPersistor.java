@@ -130,7 +130,7 @@ public class DerbyPersistor extends CoalescePersistorBase {
         boolean isSuccessful = true;
         CoalesceDataConnectorBase conn = null;
 
-        if (derbyDataConnector == null)
+        if (conn == null)
         {
             conn = (DerbyDataConnector) this.getDataConnector();
         }
@@ -306,12 +306,6 @@ public class DerbyPersistor extends CoalescePersistorBase {
 
         default:
             isSuccessful = false;
-        }
-
-        if (isSuccessful && CoalesceSettings.getUseIndexing())
-        {
-            // Persist Map Table Entry
-            isSuccessful = persistMapTableEntry(coalesceObject, conn);
         }
 
         return isSuccessful;
