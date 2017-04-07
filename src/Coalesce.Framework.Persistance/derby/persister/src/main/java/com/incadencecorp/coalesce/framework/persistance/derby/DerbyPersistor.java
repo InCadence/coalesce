@@ -80,7 +80,7 @@ public class DerbyPersistor extends CoalescePersistorBase {
         return _schema;
     }
 
-    public void setDerbyDataConnector(DerbyDataConnector derbyDataCnonnector)
+    public void setDerbyDataConnector(DerbyDataConnector derbyDataConnector)
     {
         this.derbyDataConnector = derbyDataConnector;
     }
@@ -173,10 +173,8 @@ public class DerbyPersistor extends CoalescePersistorBase {
         String objectKey = coalesceObject.getKey();
         String tableName = CoalesceTableHelper.getTableNameForObjectType(objectType);
 
-        conn.executeUpdate("DELETE FROM " + getSchemaPrefix() + "CoalesceObjectMap WHERE ObjectKey=?",
-                           new CoalesceParameter(objectKey, Types.OTHER));
         conn.executeUpdate("DELETE FROM " + getSchemaPrefix() + tableName + " WHERE ObjectKey=?",
-                           new CoalesceParameter(objectKey, Types.OTHER));
+                           new CoalesceParameter(objectKey, Types.CHAR));
 
         return true;
     }
@@ -508,7 +506,7 @@ public class DerbyPersistor extends CoalescePersistorBase {
 
         // Execute Query
         ResultSet results = conn.executeQuery("SELECT EntityId,EntityIdType,ObjectKey FROM " + getSchemaPrefix()
-                + "CoalesceEntity WHERE ObjectKey=?", new CoalesceParameter(key, Types.OTHER));
+                + "CoalesceEntity WHERE ObjectKey=?", new CoalesceParameter(key, Types.CHAR));
         // Get Results
         while (results.next())
         {
@@ -623,7 +621,7 @@ public class DerbyPersistor extends CoalescePersistorBase {
             byte[] binaryArray = null;
 
             ResultSet results = conn.executeQuery("SELECT BinaryObject FROM " + getSchemaPrefix()
-                    + "CoalesceFieldBinaryData WHERE ObjectKey=?", new CoalesceParameter(key, Types.OTHER));
+                    + "CoalesceFieldBinaryData WHERE ObjectKey=?", new CoalesceParameter(key, Types.CHAR));
 
             // Get Results
             if (results != null && results.first())
@@ -654,13 +652,13 @@ public class DerbyPersistor extends CoalescePersistorBase {
             {
                 // Always persist template
                 conn.executeProcedure("CoalesceEntityTemplate_InsertOrUpdate",
-                                      new CoalesceParameter(UUID.randomUUID().toString(), Types.OTHER),
+                                      new CoalesceParameter(UUID.randomUUID().toString(), Types.CHAR),
                                       new CoalesceParameter(template.getName()),
                                       new CoalesceParameter(template.getSource()),
                                       new CoalesceParameter(template.getVersion()),
                                       new CoalesceParameter(template.toXml()),
-                                      new CoalesceParameter(JodaDateTimeHelper.nowInUtc().toString(), Types.OTHER),
-                                      new CoalesceParameter(JodaDateTimeHelper.nowInUtc().toString(), Types.OTHER));
+                                      new CoalesceParameter(JodaDateTimeHelper.nowInUtc().toString(), Types.CHAR),
+                                      new CoalesceParameter(JodaDateTimeHelper.nowInUtc().toString(), Types.CHAR));
             }
         }
         catch (Exception e)
@@ -695,7 +693,7 @@ public class DerbyPersistor extends CoalescePersistorBase {
             String value = null;
 
             ResultSet results = conn.executeQuery("SELECT value FROM " + getSchemaPrefix()
-                    + "CoalesceField WHERE ObjectKey =?", new CoalesceParameter(fieldKey, Types.OTHER));
+                    + "CoalesceField WHERE ObjectKey =?", new CoalesceParameter(fieldKey, Types.CHAR));
 
             while (results.next())
             {
@@ -732,7 +730,7 @@ public class DerbyPersistor extends CoalescePersistorBase {
                 }
 
                 sb.append("?");
-                parameters.add(new CoalesceParameter(key, Types.OTHER));
+                parameters.add(new CoalesceParameter(key, Types.CHAR));
             }
 
             String SQL = String.format("SELECT EntityXml FROM %sCoalesceEntity WHERE ObjectKey IN (%s)",
@@ -903,7 +901,7 @@ public class DerbyPersistor extends CoalescePersistorBase {
             sql = "SELECT name, ParentKey, ParentType FROM ".concat(getSchemaPrefix()).concat(tableName).concat(" WHERE ObjectKey=?");
         }
 
-        ResultSet results = conn.executeQuery(sql, new CoalesceParameter(key.trim(), Types.OTHER));
+        ResultSet results = conn.executeQuery(sql, new CoalesceParameter(key.trim(), Types.CHAR));
 
         // Valid Results?
         while (results.next())
@@ -990,7 +988,7 @@ public class DerbyPersistor extends CoalescePersistorBase {
             String value = null;
 
             ResultSet results = conn.executeQuery("SELECT TemplateXml FROM " + getSchemaPrefix()
-                    + "CoalesceEntityTemplate WHERE TemplateKey=?", new CoalesceParameter(key, Types.OTHER));
+                    + "CoalesceEntityTemplate WHERE TemplateKey=?", new CoalesceParameter(key, Types.CHAR));
 
             while (results.next())
             {

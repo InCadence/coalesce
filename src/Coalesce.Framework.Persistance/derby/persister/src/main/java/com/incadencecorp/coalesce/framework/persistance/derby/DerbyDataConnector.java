@@ -90,15 +90,18 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
 			// update
 			Statement stmt3 = conn.createStatement();
 			StringBuilder sql = new StringBuilder(
-					"update coalesce.coalescentity set name = ")
-					.append(ivarname).append(", source = ").append(ivarsource)
-					.append(", version = ").append(ivarversion)
-					.append(", entityid = ").append(ivarentityid).append(",")
-					.append("entityidtype = ").append(", entityxml=")
-					.append(ivarentityxml).append(", datecreated = ")
-					.append(ivardatecreated).append(", lastmodified=")
-					.append(ivarlastmodified).append(" where objectkey=")
-					.append(ivarobjectkey);
+					"update coalesce.coalesceentity set name = '")
+					.append(ivarname).append("', source = '").append(ivarsource)
+					.append("', version = '").append(ivarversion)
+					.append("', entityid = '").append(ivarentityid).append("',")
+					.append("entityidtype = '").append(ivarentityidtype).append("', entityxml='")
+					.append(ivarentityxml).append("', datecreated = '")
+					.append(dateCreated).append("', lastmodified='")
+					.append(lastModified).append("' where objectkey='")
+					.append(ivarobjectkey).append("'");
+			
+			System.out.println(sql.toString());
+			
 			stmt3.executeUpdate(sql.toString());
 		}
 		return true;
