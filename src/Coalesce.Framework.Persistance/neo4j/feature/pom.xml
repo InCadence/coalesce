@@ -63,7 +63,7 @@
 				<exclusion>
 					<artifactId>stax-api</artifactId>
 					<groupId>stax</groupId>
-				</exclusion>		
+				</exclusion>
 				<exclusion>
 					<artifactId>jaxb2-basics</artifactId>
 					<groupId>*</groupId>
@@ -94,19 +94,12 @@
 					<artifactId>jsslutils</artifactId>
 					<groupId>org.jsslutils</groupId>
 				</exclusion>
+				<exclusion>
+					<groupId>com.incadencecorp.coalesce</groupId>
+					<artifactId>coalesce-core</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
-
-<!-- 		<dependency> -->
-<!-- 			<groupId>com.fasterxml.jackson.core</groupId> -->
-<!-- 			<artifactId>jackson-core</artifactId> -->
-<!-- 			<version>2.8.7</version> -->
-<!-- 		</dependency> -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>com.fasterxml.jackson.core</groupId> -->
-<!-- 			<artifactId>jackson-databind</artifactId> -->
-<!-- 			<version>2.8.7</version> -->
-<!-- 		</dependency>		 -->
 	</dependencies>
 
 </project>

@@ -3,6 +3,8 @@
 	name="coalesce-services">
 	<feature name="${project.artifactId}">
         <feature prerequisite="true" dependency="true">cxf</feature>
+        <feature prerequisite="true" dependency="true">coalesce-core-feature</feature>
+        
 		<!-- <feature>camel-jms</feature> -->
 		<!-- <feature>activemq-camel</feature> -->
 	</feature>

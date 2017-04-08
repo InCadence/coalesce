@@ -60,11 +60,15 @@
 				<exclusion>
 					<artifactId>stax-api</artifactId>
 					<groupId>stax</groupId>
-				</exclusion>		
+				</exclusion>
 				<exclusion>
 					<artifactId>jaxb2-basics</artifactId>
 					<groupId>*</groupId>
-				</exclusion>						
+				</exclusion>
+				<exclusion>
+					<groupId>com.incadencecorp.coalesce</groupId>
+					<artifactId>coalesce-core</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 

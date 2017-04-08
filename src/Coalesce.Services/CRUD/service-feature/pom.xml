@@ -59,20 +59,17 @@
 				<exclusion>
 					<artifactId>stax-api</artifactId>
 					<groupId>stax</groupId>
-				</exclusion>			
+				</exclusion>
 				<exclusion>
 					<artifactId>jaxb2-basics</artifactId>
 					<groupId>*</groupId>
-				</exclusion>					
+				</exclusion>
+				<exclusion>
+					<groupId>com.incadencecorp.coalesce</groupId>
+					<artifactId>coalesce-core</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
-
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
-			<version>2.9.7</version>
-		</dependency>
-
 	</dependencies>
 
 </project>

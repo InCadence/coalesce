@@ -1,10 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>coalesce-feature</artifactId>
+	<artifactId>coalesce-core-feature</artifactId>
 	<packaging>feature</packaging>
-	<name>Coalesce Feature</name>
-	<description>Contains the feature repository for Coalesce.</description>
+	<name>Coalesce Core Feature</name>
 
 	<parent>
 		<groupId>com.incadencecorp.coalesce</groupId>
@@ -42,25 +41,31 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.incadencecorp.coalesce</groupId>
-			<artifactId>coalesce-core-feature</artifactId>
-			<version>${project.version}</version>
-			<type>xml</type>
-			<classifier>features</classifier>
-		</dependency>		
-		<dependency>
-			<groupId>com.incadencecorp.coalesce.services</groupId>
-			<artifactId>coalesce-services-feature</artifactId>
-			<version>${project.version}</version>
-			<type>xml</type>
-			<classifier>features</classifier>
+			<artifactId>coalesce-core</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>xercesImpl</artifactId>
+					<groupId>xerces</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>stax-api</artifactId>
+					<groupId>stax</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>jaxb2-basics</artifactId>
+					<groupId>*</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
+
 		<dependency>
-			<groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
-			<artifactId>persister-feature</artifactId>
-			<version>${project.version}</version>
-			<type>xml</type>
-			<classifier>features</classifier>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>2.9.7</version>
 		</dependency>
+
 	</dependencies>
+
+
 
 </project>
