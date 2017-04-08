@@ -32,9 +32,6 @@ public class AccumuloPersistorIT extends AbstractAccumuloPersistorTest {
         String password = props.getProperty("password");
         conn = new ServerConn.Builder().db(dbName).serverName(zookeepers).user(user).password(password).build();
 
-        AccumuloPersistorIT tester = new AccumuloPersistorIT();
-        CoalescePersistorBaseTest.setupBeforeClassBase(tester);
-
         AccumuloSettings.setPersistFieldDefAttr(false);
         AccumuloSettings.setPersistSectionAttr(true);
         AccumuloSettings.setPersistRecordsetAttr(false);
@@ -58,7 +55,7 @@ public class AccumuloPersistorIT extends AbstractAccumuloPersistorTest {
     }
 
     @Override
-    protected ICoalescePersistor getPersistor(ServerConn conn)
+    protected AccumuloPersistor  createPersister()
     {
         try
         {
@@ -74,6 +71,13 @@ public class AccumuloPersistorIT extends AbstractAccumuloPersistorTest {
     protected CoalesceDataConnectorBase getDataConnector(ServerConn conn) throws CoalescePersistorException
     {
         return new AccumuloDataConnector(conn);
+    }
+
+    @Override
+    protected AccumuloDataConnector getAccumuloDataConnector() throws CoalescePersistorException
+    {
+        // TODO Auto-generated method stub
+        return new AccumuloDataConnector(getConnection());
     }
 
 }

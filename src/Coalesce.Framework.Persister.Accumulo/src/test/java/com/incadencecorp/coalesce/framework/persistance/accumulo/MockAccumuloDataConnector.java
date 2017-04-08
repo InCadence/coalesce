@@ -102,7 +102,7 @@ public class MockAccumuloDataConnector extends AccumuloDataConnector {
         }
         catch (Exception e)
         {
-            throw new CoalescePersistorException("Error Opening Data Connection", e);
+            throw new CoalescePersistorException(e.getMessage(), e);
         }
 
         return connector;

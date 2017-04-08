@@ -137,6 +137,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
     private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloPersistor.class);
 
     private final AccumuloDataConnector connect;
+    private CoalesceValidator validator;
     /*
      * private static String entityColumnFamily = "Coalesce:MetaData"; private static String linkageColumnFamily =
      * "Coalesce:Linkage"; private static String linkColumnFamilyPrefix = "LinkID:"; private static String
@@ -159,6 +160,15 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
     {
         setConnectionSettings(svConn);
         connect = (AccumuloDataConnector) getDataConnector();
+        validator = new CoalesceValidator();
+
+    }
+
+    public AccumuloPersistor() throws CoalescePersistorException
+    {
+        setConnectionSettings(AccumuloSettings.getServerConn());
+        connect = (AccumuloDataConnector) getDataConnector();
+        validator = new CoalesceValidator();
 
     }
 
@@ -167,6 +177,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         setConnectionSettings(svConn);
         setCacher(cacher);
         connect = (AccumuloDataConnector) getDataConnector();
+        validator = new CoalesceValidator();
     }
 
     @Override
@@ -551,18 +562,18 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
     private boolean createSearchTables(CoalesceEntityTemplate template)
     {
         // Feature set name will be the recordset name.
-    	// This is to match the postgres persistor
+        // This is to match the postgres persistor
         //
         // All spaces in names will be converted to underscores.
-        //String templateName = (template.getName() + "_" + template.getSource() + "_"
-        //         + template.getVersion()).replaceAll(" ", "_");
+        // String templateName = (template.getName() + "_" + template.getSource() + "_"
+        // + template.getVersion()).replaceAll(" ", "_");
 
         // Document tempdoc = template.getCoalesceObjectDocument();
         // Confirm Values
         NodeList nodeList = template.getCoalesceObjectDocument().getElementsByTagName("*");
         int numnodes = nodeList.getLength();
 
-        //String sectionName = null;
+        // String sectionName = null;
         String recordName = null;
         ArrayList<Fielddefinition> fieldlist = new ArrayList<Fielddefinition>();
 
@@ -574,8 +585,8 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 
             if (nodeName.compareTo("section") == 0)
             {
-                //sectionName = node.getAttributes().getNamedItem("name").getNodeValue().replaceAll(" ", "_");
-                //recordName = null;
+                // sectionName = node.getAttributes().getNamedItem("name").getNodeValue().replaceAll(" ", "_");
+                // recordName = null;
             }
 
             if (nodeName.compareTo("recordset") == 0)
@@ -894,7 +905,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                 {
                     try
                     {
-                        isSuccessful &= persistEntityObject(entity, connect, writer, featureCollectionMap);
+                        isSuccessful &= persistEntityObject(entity, connect, writer, featureCollectionMap, allowRemoval);
                     }
                     catch (CoalesceDataFormatException | SQLException | SAXException | IOException e)
                     {
@@ -931,7 +942,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             catch (IOException | IllegalArgumentException e)
             {
                 LOGGER.error(e.getMessage(), e);
-                LOGGER.error("Entry in error: "+ entry.getValue().toString());
+                LOGGER.error("Entry in error: " + entry.getValue().toString());
             }
 
         }
@@ -946,7 +957,8 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
     protected boolean persistEntityObject(CoalesceEntity entity,
                                           AccumuloDataConnector conn,
                                           CloseableBatchWriter writer,
-                                          Map<String, DefaultFeatureCollection> featureCollectionMap)
+                                          Map<String, DefaultFeatureCollection> featureCollectionMap,
+                                          boolean allowRemoval)
             throws SQLException, CoalescePersistorException, SAXException, IOException, CoalesceDataFormatException
     {
         boolean persisted = false;
@@ -961,7 +973,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             // 1.7
             config.setMaxWriteThreads(10);
             persisted = persistBaseData(entity, dbConnector, writer) && persistEntityIndex(entity, dbConnector, config);
-            persistEntitySearchData(entity, dbConnector, config, featureCollectionMap);
+            persistEntitySearchData(entity, dbConnector, config, featureCollectionMap, allowRemoval);
         }
         catch (CoalescePersistorException ex)
         {
@@ -1012,14 +1024,15 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
     private boolean persistEntitySearchData(CoalesceEntity entity,
                                             Connector dbConnector,
                                             BatchWriterConfig config,
-                                            Map<String, DefaultFeatureCollection> featureCollectionMap)
+                                            Map<String, DefaultFeatureCollection> featureCollectionMap,
+                                            boolean allowRemoval)
     {
         boolean persisted = false;
         // CoalesceEntityTemplate template = null;
-        CoalesceValidator validator = new CoalesceValidator();
         DataStore geoDataStore = connect.getGeoDataStore();
 
-        //String templatename = (entity.getName() + "_" + entity.getSource() + "_" + entity.getVersion()).replaceAll(" ", "_");
+        // String templatename = (entity.getName() + "_" + entity.getSource() + "_" + entity.getVersion()).replaceAll(" ",
+        // "_");
         // Find the template for this type
         try
         {
@@ -1031,7 +1044,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 
                 for (CoalesceSection section : entity.getSections().values())
                 {
-                    //String sectionname = section.getName();
+                    // String sectionname = section.getName();
                     for (CoalesceRecordset recordset : section.getRecordsets().values())
                     {
                         String recordname = recordset.getName();
@@ -1049,7 +1062,15 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                             LOGGER.trace("Found featureSet {}", featuresetname);
                         }
 
-                        addNewFeatureForRecordSet(entity, featureCollectionMap, recordset, featuresetname, featuretype);
+                        if (allowRemoval)
+                        {
+                            deleteRecordset(featuresetname, recordset);
+                        }
+                        else
+                        {
+                            addNewFeatureForRecordSet(entity, featureCollectionMap, recordset, featuresetname, featuretype);
+
+                        }
 
                         persisted = true;
                     }
@@ -1063,6 +1084,16 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             persisted = false;
         }
         return persisted;
+    }
+
+    private void deleteRecordset(String featuresetname, CoalesceRecordset recordset) throws CQLException, IOException
+    {
+
+        for (CoalesceRecord record : recordset.getRecords())
+        {
+            deleteFeatureIfExists(featuresetname, record);
+        }
+
     }
 
     private DefaultFeatureCollection addNewFeatureForRecordSet(CoalesceEntity entity,
@@ -1162,9 +1193,11 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                     Polygon polygon = new Polygon(linearRing, null, geoFactory);
                     String geomname = featuretype.getGeometryDescriptor().getName().toString();
                     simplefeature.setAttribute(geomname, polygon);
-                    LOGGER.debug("NO Geo for entity: "+ entity.getKey());
-                } else {
-                	LOGGER.debug("Found Geo for entity: "+ entity.getKey());
+                    LOGGER.debug("NO Geo for entity: " + entity.getKey());
+                }
+                else
+                {
+                    LOGGER.debug("Found Geo for entity: " + entity.getKey());
                 }
                 featurecollection.add(simplefeature);
 
@@ -1528,9 +1561,9 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             throw new CoalescePersistorException(e.getMessage(), e);
         }
 
-        SearchResults results = new SearchResults(); 
+        SearchResults results = new SearchResults();
         results.setResults(rowset);
-        
+
         return results;
     }
 

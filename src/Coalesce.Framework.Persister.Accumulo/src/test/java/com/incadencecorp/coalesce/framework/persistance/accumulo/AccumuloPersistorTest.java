@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import com.incadencecorp.coalesce.common.CoalesceUnitTestSettings;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
 import com.incadencecorp.coalesce.framework.persistance.CoalescePersistorBaseTest;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
@@ -21,10 +22,8 @@ public class AccumuloPersistorTest extends AbstractAccumuloPersistorTest {
     public static void setupBeforeClass() throws Exception
     {
 
-        AccumuloPersistorTest tester = new AccumuloPersistorTest();
-        CoalescePersistorBaseTest.setupBeforeClassBase(tester);
         CoalesceUnitTestSettings.initialize();
-
+        
         AccumuloSettings.setPersistFieldDefAttr(true);
         AccumuloSettings.setPersistSectionAttr(true);
         AccumuloSettings.setPersistRecordsetAttr(true);
@@ -47,21 +46,18 @@ public class AccumuloPersistorTest extends AbstractAccumuloPersistorTest {
     {
         CoalesceUnitTestSettings.tearDownAfterClass();
     }
-    
-    @Override
-    protected ServerConn getConnection()
-    {
-        String name = "shouldnot";
-        String zookeepers = "matter";
-        return new ServerConn.Builder().db(name).serverName(zookeepers).user("root").password("password").build();
-    }
 
     @Override
-    protected ICoalescePersistor getPersistor(ServerConn conn)
+    protected AccumuloPersistor createPersister()
     {
+        
+       
+        ServerConn serverConn = getConnection();
+        
         try
         {
-            return new AccumuloPersistor(conn) {
+            //override to mockout AccumuloDataConnector
+            return new AccumuloPersistor(serverConn) {
 
                 @Override
                 protected CoalesceDataConnectorBase getDataConnector() throws CoalescePersistorException
@@ -73,6 +69,7 @@ public class AccumuloPersistorTest extends AbstractAccumuloPersistorTest {
         }
         catch (CoalescePersistorException e)
         {
+            LOGGER.error(e.getMessage(),e);
             return null;
         }
     }
@@ -81,5 +78,21 @@ public class AccumuloPersistorTest extends AbstractAccumuloPersistorTest {
     protected CoalesceDataConnectorBase getDataConnector(ServerConn conn) throws CoalescePersistorException
     {
         return new MockAccumuloDataConnector(conn);
+    }
+
+    @Override
+    protected ServerConn getConnection()
+    {
+        String name = "shouldnot";
+        String zookeepers = "matter";
+        
+        return new ServerConn.Builder().db(name).serverName(zookeepers).user("unittest").password("password").build();
+    }
+
+    @Override
+    protected AccumuloDataConnector getAccumuloDataConnector() throws CoalescePersistorException
+    {
+        // TODO Auto-generated method stub
+        return new MockAccumuloDataConnector(getConnection());
     }
 }

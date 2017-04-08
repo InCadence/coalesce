@@ -45,6 +45,7 @@ import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.DocumentProperties;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.MimeHelper;
+import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.CoalesceObjectFactory;
 import com.incadencecorp.coalesce.framework.CoalesceSettings;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceBooleanField;
@@ -71,7 +72,9 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceStringField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceStringListField;
 import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
 import com.incadencecorp.coalesce.framework.datamodel.TestRecord;
-import com.incadencecorp.coalesce.framework.persistance.CoalescePersistorBaseTest;
+import com.incadencecorp.coalesce.framework.persistance.AbstractCoalescePersistorTest;
+import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
+import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 import com.incadencecorp.coalesce.framework.persistance.accumulo.testobjects.GDELT_Test_Entity;
 import com.incadencecorp.coalesce.framework.persistance.accumulo.testobjects.NonGeoEntity;
 import com.incadencecorp.coalesce.services.api.search.HitType;
@@ -89,20 +92,26 @@ import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.io.WKTWriter;
 import com.vividsolutions.jts.util.GeometricShapeFactory;
 
-public abstract class AbstractAccumuloPersistorTest extends CoalescePersistorBaseTest {
+public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePersistorTest<AccumuloPersistor> {
 
     private static String TESTFILENAME = "Desert.jpg";
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractAccumuloPersistorTest.class);
+    protected static CoalesceFramework coalesceFramework;
 
     @Test
     public void testConnection() throws CoalescePersistorException, Exception
     {
-        AccumuloDataConnector accumuloConnector = new AccumuloDataConnector(getConnection());
+        // AccumuloDataConnector accumuloConnector = new AccumuloDataConnector(getConnection());
+        AccumuloDataConnector accumuloConnector = getAccumuloDataConnector();
         Connector conn = accumuloConnector.getDBConnector();
         Map<String, String> sysconf = conn.instanceOperations().getSystemConfiguration();
         assertNotNull(sysconf);
         accumuloConnector.close();
     }
+
+    protected abstract AccumuloDataConnector getAccumuloDataConnector() throws CoalescePersistorException;
+
+    protected abstract ServerConn getConnection();
 
     @Test
     public void AccumuloDataTypesTest()
@@ -302,6 +311,21 @@ public abstract class AbstractAccumuloPersistorTest extends CoalescePersistorBas
 
     }
 
+    private CoalesceFramework getFramework()
+    {
+
+        if (coalesceFramework == null)
+        {
+
+            coalesceFramework = new CoalesceFramework();
+
+            coalesceFramework.setAuthoritativePersistor(createPersister());
+
+        }
+
+        return coalesceFramework;
+    }
+
     private static Filter createFilter(String geomField,
                                        double x0,
                                        double y0,
@@ -332,8 +356,8 @@ public abstract class AbstractAccumuloPersistorTest extends CoalescePersistorBas
         CoalesceObjectFactory.register(GDELT_Test_Entity.class);
 
         // Persist
-        AccumuloPersistor persistor = (AccumuloPersistor) this.getPersistor(this.getConnection());
-        persistor.saveEntity(true, gdeltEntity);
+        AccumuloPersistor persistor = createPersister();
+        persistor.saveEntity(false, gdeltEntity);
 
         // Retrieve
         CoalesceEntity[] entities = persistor.getEntity(gdeltEntity.getKey());
@@ -353,7 +377,7 @@ public abstract class AbstractAccumuloPersistorTest extends CoalescePersistorBas
                                         null);
         Query query = new Query(GDELT_Test_Entity.getQueryName(), cqlFilter);
 
-        System.out.println("Feature: "+GDELT_Test_Entity.getQueryName());
+        System.out.println("Feature: " + GDELT_Test_Entity.getQueryName());
         FeatureSource<?, ?> featureSource = geoDataStore.getFeatureSource(GDELT_Test_Entity.getQueryName());
 
         FeatureIterator<?> featureItr = featureSource.getFeatures(query).features();
@@ -388,12 +412,12 @@ public abstract class AbstractAccumuloPersistorTest extends CoalescePersistorBas
         CoalesceObjectFactory.register(NonGeoEntity.class);
 
         // Persist
-        AccumuloPersistor persistor = (AccumuloPersistor) this.getPersistor(this.getConnection());
-        persistor.saveEntity(true, nonGeoEntity);
+        AccumuloPersistor persistor = createPersister();
+        persistor.saveEntity(false, nonGeoEntity);
 
         // update
         nonGeoEntity.setStringField(eventRecord, "Actor1Name", "TEXAS");
-        persistor.saveEntity(true, nonGeoEntity);
+        persistor.saveEntity(false, nonGeoEntity);
 
         // Search
         DataStore geoDataStore = ((AccumuloDataConnector) persistor.getDataConnector()).getGeoDataStore();
@@ -446,8 +470,8 @@ public abstract class AbstractAccumuloPersistorTest extends CoalescePersistorBas
         CoalesceObjectFactory.register(GDELT_Test_Entity.class);
 
         // Persist
-        AccumuloPersistor persistor = (AccumuloPersistor) this.getPersistor(this.getConnection());
-        persistor.saveEntity(true, nonGeoEntity);
+        AccumuloPersistor persistor = createPersister();
+        persistor.saveEntity(false, nonGeoEntity);
 
         // Search
         DataStore geoDataStore = ((AccumuloDataConnector) persistor.getDataConnector()).getGeoDataStore();
@@ -477,7 +501,8 @@ public abstract class AbstractAccumuloPersistorTest extends CoalescePersistorBas
     public void searchClientTest() throws Exception
     {
 
-        AccumuloPersistor persistor = (AccumuloPersistor) this.getPersistor(this.getConnection());
+        // AccumuloPersistor persistor = (AccumuloPersistor) this.getPersistor(this.getConnection());
+        AccumuloPersistor persistor = createPersister();
 
         ICrudClient crud = new CrudFrameworkClientImpl(getFramework());
         ISearchClient client = new SearchFrameworkClientImpl(persistor);
@@ -540,5 +565,7 @@ public abstract class AbstractAccumuloPersistorTest extends CoalescePersistorBas
         persistor.close();
 
     }
+
+    protected abstract CoalesceDataConnectorBase getDataConnector(ServerConn conn) throws CoalescePersistorException;
 
 }
