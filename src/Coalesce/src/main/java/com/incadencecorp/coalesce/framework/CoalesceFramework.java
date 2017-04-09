@@ -84,7 +84,7 @@ public class CoalesceFramework implements ICoalesceExecutorService, Closeable {
         return _persistors != null && _persistors.length > 0;
     }
 
-    public ICoalescePersistor getAuthoritativePersistor()
+    private ICoalescePersistor getAuthoritativePersistor()
     {
         return _authoritativePersistor;
     }

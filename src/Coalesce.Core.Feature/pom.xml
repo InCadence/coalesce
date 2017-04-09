@@ -6,10 +6,10 @@
 	<name>Coalesce Core Feature</name>
 
 	<parent>
-		<groupId>com.incadencecorp.coalesce</groupId>
-		<artifactId>coalesce-pom</artifactId>
-		<version>0.0.25-SNAPSHOT</version>
-		<relativePath>..</relativePath>
+ 	        <groupId>com.incadencecorp.coalesce</groupId>
+	        <artifactId>coalesce-pom</artifactId>
+	        <version>0.0.25-SNAPSHOT</version>
+	        <relativePath>../Coalesce.Pom</relativePath>
 	</parent>
 
 	<build>

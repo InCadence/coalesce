@@ -77,7 +77,6 @@ import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBas
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 import com.incadencecorp.coalesce.framework.persistance.accumulo.testobjects.GDELT_Test_Entity;
 import com.incadencecorp.coalesce.framework.persistance.accumulo.testobjects.NonGeoEntity;
-import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 import com.incadencecorp.coalesce.services.api.search.HitType;
 import com.incadencecorp.coalesce.services.api.search.SearchDataObjectResponse;
 import com.incadencecorp.coalesce.services.crud.api.ICrudClient;
@@ -98,6 +97,7 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
     private static String TESTFILENAME = "Desert.jpg";
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractAccumuloPersistorTest.class);
     protected static CoalesceFramework coalesceFramework;
+    private static AccumuloPersistor persistor;
 
     @Test
     public void testConnection() throws CoalescePersistorException, Exception
@@ -319,8 +319,9 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
         {
 
             coalesceFramework = new CoalesceFramework();
-
-            coalesceFramework.setAuthoritativePersistor(createPersister());
+            persistor = createPersister();
+            
+            coalesceFramework.setAuthoritativePersistor(persistor);
 
         }
 
@@ -366,7 +367,7 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
         assertEquals(gdeltEntity.getKey(), entities[0].getKey());
 
         // Search
-        DataStore geoDataStore = ((AccumuloDataConnector) ((AccumuloPersistor) getFramework().getAuthoritativePersistor()).getDataConnector()).getGeoDataStore();
+        DataStore geoDataStore = ((AccumuloDataConnector) persistor.getDataConnector()).getGeoDataStore();
         Filter cqlFilter = createFilter("Actor1Geo_Location",
                                         -180,
                                         -180,
@@ -421,7 +422,7 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
         getFramework().saveCoalesceEntity(false, nonGeoEntity);
 
         // Search
-        DataStore geoDataStore = ((AccumuloDataConnector) ((AccumuloPersistor) getFramework().getAuthoritativePersistor()).getDataConnector()).getGeoDataStore();
+        DataStore geoDataStore = ((AccumuloDataConnector) persistor.getDataConnector()).getGeoDataStore();
 
         SimpleFeatureStore featureSource = (SimpleFeatureStore) geoDataStore.getFeatureSource(NonGeoEntity.getQueryName());
 
@@ -473,7 +474,7 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
         getFramework().saveCoalesceEntity(false, nonGeoEntity);
 
         // Search
-        DataStore geoDataStore = ((AccumuloDataConnector) ((AccumuloPersistor) getFramework().getAuthoritativePersistor()).getDataConnector()).getGeoDataStore();
+        DataStore geoDataStore = ((AccumuloDataConnector) persistor.getDataConnector()).getGeoDataStore();
 
         FeatureSource<?, ?> featureSource = geoDataStore.getFeatureSource(NonGeoEntity.getQueryName());
 
@@ -502,7 +503,7 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
 
 
         ICrudClient crud = new CrudFrameworkClientImpl(getFramework());
-        ISearchClient client = new SearchFrameworkClientImpl((ICoalesceSearchPersistor) getFramework().getAuthoritativePersistor());
+        ISearchClient client = new SearchFrameworkClientImpl(persistor);
 
         NonGeoEntity nonGeoEntity = new NonGeoEntity();
 

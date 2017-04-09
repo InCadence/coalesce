@@ -30,6 +30,7 @@
 		<module>../Coalesce.Framework.Persistance</module>
 		<module>../Coalesce.Feature</module>
 		<module>../Coalesce.Plugins</module>
+		<module>../Coalesce.Core.Feature</module>
 	</modules>
 
 	<build>
