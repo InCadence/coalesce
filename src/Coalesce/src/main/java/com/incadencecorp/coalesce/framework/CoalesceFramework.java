@@ -84,7 +84,7 @@ public class CoalesceFramework implements ICoalesceExecutorService, Closeable {
         return _persistors != null && _persistors.length > 0;
     }
 
-    private ICoalescePersistor getAuthoritativePersistor()
+    public ICoalescePersistor getAuthoritativePersistor()
     {
         return _authoritativePersistor;
     }
@@ -154,6 +154,8 @@ public class CoalesceFramework implements ICoalesceExecutorService, Closeable {
             LOGGER.info("Authoritative Persistor ({})", persistor.getClass().getName());
         }
     }
+    
+ 
 
     /**
      * Sets the secondary persistors which are not blocking.

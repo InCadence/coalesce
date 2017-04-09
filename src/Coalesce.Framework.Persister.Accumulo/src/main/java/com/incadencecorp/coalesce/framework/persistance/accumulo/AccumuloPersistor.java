@@ -489,7 +489,6 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                 // Accumulo
                 // 1.7
                 config.setMaxWriteThreads(10);
-                writer = dbConnector.createBatchWriter(AccumuloDataConnector.coalesceTemplateTable, config);
                 /*
                  * SQL we are eumulating return conn.executeProcedure( "CoalesceEntityTemplate_InsertOrUpdate", new
                  * CoalesceParameter(UUID.randomUUID().toString(), Types.OTHER), new CoalesceParameter(template.getName()),
@@ -511,6 +510,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                     templateId = UUID.randomUUID().toString();
                     newtemplate = true;
                 }
+                writer = dbConnector.createBatchWriter(AccumuloDataConnector.coalesceTemplateTable, config);
                 Mutation m = new Mutation(templateId);
                 m.put(coalesceTemplateColumnFamily, coalesceTemplateXMLQualifier, new Value(xml.getBytes()));
                 m.put(coalesceTemplateColumnFamily, coalesceTemplateDateModifiedQualifier, new Value(time.getBytes()));
@@ -531,6 +531,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                 writer.addMutation(m);
                 writer.flush();
                 writer.close();
+                writer=null;
                 // Create the associated search features for this template if it
                 // is
                 // new
@@ -552,9 +553,11 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             try
             {
                 writer.close();
+                writer = null;
             }
             catch (MutationsRejectedException e)
             {
+                System.err.println(e.getLocalizedMessage());
             }
         }
     }
@@ -573,7 +576,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         NodeList nodeList = template.getCoalesceObjectDocument().getElementsByTagName("*");
         int numnodes = nodeList.getLength();
 
-        // String sectionName = null;
+        String sectionName = null;
         String recordName = null;
         ArrayList<Fielddefinition> fieldlist = new ArrayList<Fielddefinition>();
 
@@ -585,8 +588,14 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 
             if (nodeName.compareTo("section") == 0)
             {
-                // sectionName = node.getAttributes().getNamedItem("name").getNodeValue().replaceAll(" ", "_");
-                // recordName = null;
+                sectionName = node.getAttributes().getNamedItem("name").getNodeValue().replaceAll(" ", "_");
+                if (!fieldlist.isEmpty())
+                {
+                    // Now create the geomesa featureset
+                    createFeatureSet(recordName, fieldlist);
+                }
+                recordName = null;
+                fieldlist.clear();
             }
 
             if (nodeName.compareTo("recordset") == 0)
@@ -672,7 +681,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             tb.add(DEFAULT_GEO_FIELD_NAME, Polygon.class);
             tb.setDefaultGeometry(DEFAULT_GEO_FIELD_NAME);
         }
-
+      
         SimpleFeatureType feature = tb.buildFeatureType();
 
         // index recordkey, cardinality is high because there is only one record per key.
@@ -804,6 +813,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             {
                 key = keyscanner.iterator().next().getValue().toString();
             }
+            keyscanner.close();
         }
         catch (TableNotFoundException ex)
         {
@@ -1011,7 +1021,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                     + entity.getSource());
             m.put(indexcf, new Text(entity.getNamePath()), new Value(new byte[0]));
             writer.addMutation(m);
-            writer.close();
+            writer.flush();
             persisted = true;
         }
         catch (MutationsRejectedException | TableNotFoundException e)
@@ -1224,9 +1234,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             throws IOException, CQLException, CoalesceDataFormatException
     {
         boolean updated = false;
-        Transaction transaction = new DefaultTransaction();
         SimpleFeatureStore store = (SimpleFeatureStore) connect.getGeoDataStore().getFeatureSource(featuresetname);
-        store.setTransaction(transaction);
 
         Filter filter = CQL.toFilter("recordKey =" + "'" + record.getKey() + "'");
 
@@ -1234,6 +1242,9 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 
         if (collection.features().hasNext())
         {
+        	// Transactions not supported by GEOMESA
+        	//            Transaction transaction = new DefaultTransaction();
+        	//            store.setTransaction(transaction);
 
             for (CoalesceField<?> field : record.getFields())
             {
@@ -1242,11 +1253,11 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             }
 
             updated = true;
+            //transaction.commit();
+            //transaction.close();
 
         }
 
-        transaction.commit();
-        transaction.close();
 
         return updated;
     }
