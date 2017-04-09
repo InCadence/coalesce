@@ -1224,7 +1224,8 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         SimpleFeatureStore store = (SimpleFeatureStore) connect.getGeoDataStore().getFeatureSource(featuresetname);
         store.setTransaction(transaction);
 
-        Filter filter = CQL.toFilter(featuresetname+".recordKey =" + "'" + record.getKey() + "'");
+        // Filters need fully qualified column name must be quoted
+        Filter filter = CQL.toFilter("\""+featuresetname+".recordKey\" =" + "'" + record.getKey() + "'");
 
         store.removeFeatures(filter);
         transaction.commit();
@@ -1236,8 +1237,8 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
     {
         boolean updated = false;
         SimpleFeatureStore store = (SimpleFeatureStore) connect.getGeoDataStore().getFeatureSource(featuresetname);
-
-        Filter filter = CQL.toFilter(featuresetname+".recordKey =" + "'" + record.getKey() + "'");
+        // Need to escape the fully qualified column in the feature set for filters
+        Filter filter = CQL.toFilter("\""+featuresetname+".recordKey\" =" + "'" + record.getKey() + "'");
 
         SimpleFeatureCollection collection = store.getFeatures(new Query(featuresetname, filter, Query.NO_NAMES));
 
@@ -1250,7 +1251,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             for (CoalesceField<?> field : record.getFields())
             {
                 // update
-                store.modifyFeatures(field.getName(), field.getValue(), filter);
+                store.modifyFeatures(featuresetname+"."+field.getName(), field.getValue(), filter);
             }
 
             updated = true;

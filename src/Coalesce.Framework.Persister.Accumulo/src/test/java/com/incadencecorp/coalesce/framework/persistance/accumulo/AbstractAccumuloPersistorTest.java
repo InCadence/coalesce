@@ -367,12 +367,19 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
 
         // Search
         DataStore geoDataStore = ((AccumuloDataConnector) ((AccumuloPersistor) getFramework().getAuthoritativePersistor()).getDataConnector()).getGeoDataStore();
-        Filter cqlFilter = createFilter("Actor1Geo_Location",
+        String attributePrefix=gdeltEntity.getRecordSetName();
+        // These Quoted names need escaped as they are used in filters
+        String geomAttributeName = "\""+attributePrefix+".Actor1Geo_Location\"";
+        String dateAttributeName = "\""+attributePrefix+".DateTime\"";
+        // These do not need escaped
+        String idAttributeName = attributePrefix+".GlobalEventID";
+        String actorAttributeName = attributePrefix+".Actor1Name";
+        Filter cqlFilter = createFilter(geomAttributeName,
                                         -180,
                                         -180,
                                         180,
                                         180,
-                                        "DateTime",
+                                        dateAttributeName,
                                         "2000-07-01T00:00:00.000Z",
                                         "2016-12-31T00:00:00.000Z",
                                         null);
@@ -385,8 +392,8 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
         assertTrue(featureItr.hasNext());
 
         Feature feature = featureItr.next();
-        assertEquals(562505648, feature.getProperty("GlobalEventID").getValue());
-        assertEquals("EUROPE", feature.getProperty("Actor1Name").getValue());
+        assertEquals(562505648, feature.getProperty(idAttributeName).getValue());
+        assertEquals("EUROPE", feature.getProperty(actorAttributeName).getValue());
         featureItr.close();
         //persistor.close();
     }
@@ -425,7 +432,8 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
 
         SimpleFeatureStore featureSource = (SimpleFeatureStore) geoDataStore.getFeatureSource(NonGeoEntity.getQueryName());
 
-        Filter filter = CQL.toFilter("GlobalEventID =" + expectedInt.toString());
+        String filterstring = "\""+ nonGeoEntity.getRecordSetName()+".GlobalEventID\" ="+expectedInt.toString();
+        Filter filter = CQL.toFilter(filterstring);
 
         Query query = new Query(NonGeoEntity.getQueryName(), filter);
 
@@ -433,14 +441,14 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
         assertTrue(featureItr.hasNext());
 
         Feature feature = featureItr.next();
-        assertEquals(expectedInt, feature.getProperty("GlobalEventID").getValue());
-        assertEquals("TEXAS", feature.getProperty("Actor1Name").getValue());
+        assertEquals(expectedInt, feature.getProperty(nonGeoEntity.getRecordSetName()+".GlobalEventID").getValue());
+        assertEquals("TEXAS", feature.getProperty(nonGeoEntity.getRecordSetName()+".Actor1Name").getValue());
 
         // should have only one result
         if (featureItr.hasNext())
         {
             Feature feature2 = featureItr.next();
-            LOGGER.debug("{}", feature2.getProperty("Actor1Name").getValue());
+            LOGGER.debug("{}", feature2.getProperty(nonGeoEntity.getRecordSetName()+".Actor1Name").getValue());
             fail("More than one search result returned");
         }
 
@@ -476,8 +484,10 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
         DataStore geoDataStore = ((AccumuloDataConnector) ((AccumuloPersistor) getFramework().getAuthoritativePersistor()).getDataConnector()).getGeoDataStore();
 
         FeatureSource<?, ?> featureSource = geoDataStore.getFeatureSource(NonGeoEntity.getQueryName());
-
-        Filter trythis = CQL.toFilter("GlobalEventID =" + expectedInt.toString());
+        String fieldprefix=nonGeoEntity.getRecordSetName() + ".";
+        String filterstring = "\""+fieldprefix+"GlobalEventID\" ="+
+        		expectedInt.toString();
+        Filter trythis = CQL.toFilter(filterstring);
 
         LOGGER.debug(trythis.toString());
 
@@ -487,8 +497,8 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
         assertTrue(featureItr.hasNext());
 
         Feature feature = featureItr.next();
-        assertEquals(expectedInt, feature.getProperty("GlobalEventID").getValue());
-        assertEquals("MERICA", feature.getProperty("Actor1Name").getValue());
+        assertEquals(expectedInt, feature.getProperty(fieldprefix+"GlobalEventID").getValue());
+        assertEquals("MERICA", feature.getProperty(fieldprefix+"Actor1Name").getValue());
 
         featureItr.close();
         //persistor.close();
