@@ -592,7 +592,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                 if (!fieldlist.isEmpty())
                 {
                     // Now create the geomesa featureset
-                    createFeatureSet(recordName, fieldlist);
+                    createFeatureSet(recordName.replaceAll(" ", "_"), fieldlist);
                 }
                 recordName = null;
                 fieldlist.clear();
@@ -604,7 +604,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                 if (!fieldlist.isEmpty())
                 {
                     // Now create the geomesa featureset
-                    createFeatureSet(recordName, fieldlist);
+                    createFeatureSet(recordName.replaceAll(" ", "_"), fieldlist);
                 }
                 recordName = node.getAttributes().getNamedItem("name").getNodeValue().replaceAll(" ", "_");
                 fieldlist.clear();
@@ -634,6 +634,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
     private void createFeatureSet(String featurename, ArrayList<Fielddefinition> fields)
     {
         final String geomesaTimeIndex = "geomesa.index.dtg";
+        String featureprefix = featurename + ".";
 
         SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
 
@@ -644,11 +645,11 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         tb.setName(featurename);
 
         // TODO - Deal with no index fields
-        tb.add(ENTITY_KEY_COLUMN_NAME, getTypeForSimpleFeature(ECoalesceFieldDataTypes.STRING_TYPE));
-        tb.add(ENTITY_NAME_COLUMN_NAME, getTypeForSimpleFeature(ECoalesceFieldDataTypes.STRING_TYPE));
-        tb.add(ENTITY_SOURCE_COLUMN_NAME, getTypeForSimpleFeature(ECoalesceFieldDataTypes.STRING_TYPE));
-        tb.add(ENTITY_TITLE_COLUMN_NAME, getTypeForSimpleFeature(ECoalesceFieldDataTypes.STRING_TYPE));
-        tb.add(ENTITY_RECORD_KEY_COLUMN_NAME, getTypeForSimpleFeature(ECoalesceFieldDataTypes.STRING_TYPE));
+        tb.add(featureprefix + ENTITY_KEY_COLUMN_NAME, getTypeForSimpleFeature(ECoalesceFieldDataTypes.STRING_TYPE));
+        tb.add(featureprefix + ENTITY_NAME_COLUMN_NAME, getTypeForSimpleFeature(ECoalesceFieldDataTypes.STRING_TYPE));
+        tb.add(featureprefix + ENTITY_SOURCE_COLUMN_NAME, getTypeForSimpleFeature(ECoalesceFieldDataTypes.STRING_TYPE));
+        tb.add(featureprefix + ENTITY_TITLE_COLUMN_NAME, getTypeForSimpleFeature(ECoalesceFieldDataTypes.STRING_TYPE));
+        tb.add(featureprefix + ENTITY_RECORD_KEY_COLUMN_NAME, getTypeForSimpleFeature(ECoalesceFieldDataTypes.STRING_TYPE));
 
         for (Fielddefinition field : fields)
         {
@@ -660,17 +661,17 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             // for search
             if (featuretype != null)
             {
-                tb.add(field.getName(), featuretype);
+                tb.add(featureprefix + field.getName(), featuretype);
                 // Index on the first geometry type in the recordset.
                 if (!defaultGeometrySet && Geometry.class.isAssignableFrom(featuretype))
                 {
                     defaultGeometrySet = true;
-                    tb.setDefaultGeometry(field.getName());
+                    tb.setDefaultGeometry(featureprefix + field.getName());
                 }
                 if (!defaultTimeSet && Date.class.isAssignableFrom(featuretype))
                 {
                     defaultTimeSet = true;
-                    timeField = field.getName();
+                    timeField = featureprefix + field.getName();
                 }
             }
         }
@@ -678,15 +679,15 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         if (defaultGeometrySet == false)
         {
             LOGGER.debug("Creating theWorld for {} ", featurename);
-            tb.add(DEFAULT_GEO_FIELD_NAME, Polygon.class);
-            tb.setDefaultGeometry(DEFAULT_GEO_FIELD_NAME);
+            tb.add(featureprefix + DEFAULT_GEO_FIELD_NAME, Polygon.class);
+            tb.setDefaultGeometry(featureprefix + DEFAULT_GEO_FIELD_NAME);
         }
       
         SimpleFeatureType feature = tb.buildFeatureType();
 
         // index recordkey, cardinality is high because there is only one record per key.
-        feature.getDescriptor(ENTITY_RECORD_KEY_COLUMN_NAME).getUserData().put("index", "join");
-        feature.getDescriptor(ENTITY_RECORD_KEY_COLUMN_NAME).getUserData().put("cardinality", "high");
+        feature.getDescriptor(featureprefix + ENTITY_RECORD_KEY_COLUMN_NAME).getUserData().put("index", "join");
+        feature.getDescriptor(featureprefix + ENTITY_RECORD_KEY_COLUMN_NAME).getUserData().put("cardinality", "high");
 
         if (null != timeField)
         {
@@ -1120,7 +1121,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             featurecollection = new DefaultFeatureCollection();
             featureCollectionMap.put(featuresetname, featurecollection);
         }
-
+        String featureprefix=featuresetname+".";
         // Do a feature collection for all records
 
         // Create a geo record for each record in the
@@ -1139,29 +1140,29 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                 SimpleFeature simplefeature = SimpleFeatureBuilder.build(featuretype, new Object[] {}, null);
 
                 setFeatureAttribute(simplefeature,
-                                    ENTITY_KEY_COLUMN_NAME,
+                                    featureprefix+ENTITY_KEY_COLUMN_NAME,
                                     ECoalesceFieldDataTypes.STRING_TYPE,
                                     entity.getKey());
                 setFeatureAttribute(simplefeature,
-                                    ENTITY_NAME_COLUMN_NAME,
+                					featureprefix+ENTITY_NAME_COLUMN_NAME,
                                     ECoalesceFieldDataTypes.STRING_TYPE,
                                     entity.getName());
                 setFeatureAttribute(simplefeature,
-                                    ENTITY_SOURCE_COLUMN_NAME,
+                					featureprefix+ENTITY_SOURCE_COLUMN_NAME,
                                     ECoalesceFieldDataTypes.STRING_TYPE,
                                     entity.getSource());
                 setFeatureAttribute(simplefeature,
-                                    ENTITY_TITLE_COLUMN_NAME,
+                					featureprefix+ENTITY_TITLE_COLUMN_NAME,
                                     ECoalesceFieldDataTypes.STRING_TYPE,
                                     entity.getTitle());
                 setFeatureAttribute(simplefeature,
-                                    ENTITY_RECORD_KEY_COLUMN_NAME,
+                					featureprefix+ENTITY_RECORD_KEY_COLUMN_NAME,
                                     ECoalesceFieldDataTypes.STRING_TYPE,
                                     record.getKey());
 
                 for (CoalesceField<?> field : record.getFields())
                 {
-                    String fieldname = field.getName();
+                    String fieldname = featureprefix+field.getName();
                     ECoalesceFieldDataTypes fieldtype = field.getDataType();
                     Object fieldvalue = field.getValue();
                     boolean isGeoField = false;
@@ -1223,7 +1224,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         SimpleFeatureStore store = (SimpleFeatureStore) connect.getGeoDataStore().getFeatureSource(featuresetname);
         store.setTransaction(transaction);
 
-        Filter filter = CQL.toFilter("recordKey =" + "'" + record.getKey() + "'");
+        Filter filter = CQL.toFilter(featuresetname+".recordKey =" + "'" + record.getKey() + "'");
 
         store.removeFeatures(filter);
         transaction.commit();
@@ -1236,7 +1237,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         boolean updated = false;
         SimpleFeatureStore store = (SimpleFeatureStore) connect.getGeoDataStore().getFeatureSource(featuresetname);
 
-        Filter filter = CQL.toFilter("recordKey =" + "'" + record.getKey() + "'");
+        Filter filter = CQL.toFilter(featuresetname+".recordKey =" + "'" + record.getKey() + "'");
 
         SimpleFeatureCollection collection = store.getFeatures(new Query(featuresetname, filter, Query.NO_NAMES));
 
