@@ -50,7 +50,7 @@ public class Neo4jFilterToCypherTest {
 
     }
 
-    @Test
+//    @Test
     public void testSearchPersister() throws Exception
     {
 
