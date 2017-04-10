@@ -367,7 +367,7 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
         assertEquals(gdeltEntity.getKey(), entities[0].getKey());
 
         // Search
-        DataStore geoDataStore = ((AccumuloDataConnector) ((AccumuloPersistor) getFramework().getAuthoritativePersistor()).getDataConnector()).getGeoDataStore();
+        DataStore geoDataStore = ((AccumuloDataConnector) persistor.getDataConnector()).getGeoDataStore();
         String attributePrefix=gdeltEntity.getRecordSetName();
         // These Quoted names need escaped as they are used in filters
         String geomAttributeName = "\""+attributePrefix+".Actor1Geo_Location\"";
