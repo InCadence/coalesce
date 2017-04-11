@@ -433,7 +433,7 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
 
         SimpleFeatureStore featureSource = (SimpleFeatureStore) geoDataStore.getFeatureSource(NonGeoEntity.getQueryName());
 
-        String filterstring = "\""+ nonGeoEntity.getRecordSetName()+".GlobalEventID\" ="+expectedInt.toString();
+        String filterstring = "GlobalEventID ="+expectedInt.toString();
         Filter filter = CQL.toFilter(filterstring);
 
         Query query = new Query(NonGeoEntity.getQueryName(), filter);
@@ -442,14 +442,14 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
         assertTrue(featureItr.hasNext());
 
         Feature feature = featureItr.next();
-        assertEquals(expectedInt, feature.getProperty(nonGeoEntity.getRecordSetName()+".GlobalEventID").getValue());
-        assertEquals("TEXAS", feature.getProperty(nonGeoEntity.getRecordSetName()+".Actor1Name").getValue());
+        assertEquals(expectedInt, feature.getProperty("GlobalEventID").getValue());
+        assertEquals("TEXAS", feature.getProperty("Actor1Name").getValue());
 
         // should have only one result
         if (featureItr.hasNext())
         {
             Feature feature2 = featureItr.next();
-            LOGGER.debug("{}", feature2.getProperty(nonGeoEntity.getRecordSetName()+".Actor1Name").getValue());
+            LOGGER.debug("{}", feature2.getProperty("Actor1Name").getValue());
             fail("More than one search result returned");
         }
 
