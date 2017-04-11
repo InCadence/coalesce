@@ -368,13 +368,13 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
 
         // Search
         DataStore geoDataStore = ((AccumuloDataConnector) persistor.getDataConnector()).getGeoDataStore();
-        String attributePrefix=gdeltEntity.getRecordSetName();
+        
         // These Quoted names need escaped as they are used in filters
-        String geomAttributeName = "\""+attributePrefix+".Actor1Geo_Location\"";
-        String dateAttributeName = "\""+attributePrefix+".DateTime\"";
+        String geomAttributeName = "Actor1Geo_Location";
+        String dateAttributeName = "DateTime";
         // These do not need escaped
-        String idAttributeName = attributePrefix+".GlobalEventID";
-        String actorAttributeName = attributePrefix+".Actor1Name";
+        String idAttributeName = "GlobalEventID";
+        String actorAttributeName = "Actor1Name";
         Filter cqlFilter = createFilter(geomAttributeName,
                                         -180,
                                         -180,
@@ -485,8 +485,8 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
         DataStore geoDataStore = ((AccumuloDataConnector) persistor.getDataConnector()).getGeoDataStore();
 
         FeatureSource<?, ?> featureSource = geoDataStore.getFeatureSource(NonGeoEntity.getQueryName());
-        String fieldprefix=nonGeoEntity.getRecordSetName() + ".";
-        String filterstring = "\""+fieldprefix+"GlobalEventID\" ="+
+        
+        String filterstring = "GlobalEventID ="+
         		expectedInt.toString();
         Filter trythis = CQL.toFilter(filterstring);
 
@@ -498,8 +498,8 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
         assertTrue(featureItr.hasNext());
 
         Feature feature = featureItr.next();
-        assertEquals(expectedInt, feature.getProperty(fieldprefix+"GlobalEventID").getValue());
-        assertEquals("MERICA", feature.getProperty(fieldprefix+"Actor1Name").getValue());
+        assertEquals(expectedInt, feature.getProperty("GlobalEventID").getValue());
+        assertEquals("MERICA", feature.getProperty("Actor1Name").getValue());
 
         featureItr.close();
         //persistor.close();
