@@ -1084,11 +1084,10 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                         {
                             deleteRecordset(featuresetname, recordset);
                         }
-                        else
-                        {
-                            addNewFeatureForRecordSet(entity, featureCollectionMap, recordset, featuresetname, featuretype);
+                        
+                        addNewFeatureForRecordSet(entity, featureCollectionMap, recordset, featuresetname, featuretype);
 
-                        }
+                      
 
                         persisted = true;
                     }
