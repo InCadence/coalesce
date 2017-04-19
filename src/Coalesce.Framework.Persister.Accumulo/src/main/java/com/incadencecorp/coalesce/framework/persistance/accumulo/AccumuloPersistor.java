@@ -58,6 +58,7 @@ import org.joda.time.DateTime;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
@@ -647,7 +648,8 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         boolean defaultGeometrySet = false;
         boolean defaultTimeSet = false;
         String timeField = null;
-
+        String geomField = null;
+        
         tb.setName(featurename);
 
         // TODO - Deal with no index fields
@@ -672,7 +674,8 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                 if (!defaultGeometrySet && Geometry.class.isAssignableFrom(featuretype))
                 {
                     defaultGeometrySet = true;
-                    tb.setDefaultGeometry(field.getName());
+                    geomField = field.getName();
+                    tb.setDefaultGeometry(geomField);
                 }
                 if (!defaultTimeSet && Date.class.isAssignableFrom(featuretype))
                 {
@@ -687,6 +690,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             LOGGER.debug("Creating theWorld for {} ", featurename);
             tb.add(DEFAULT_GEO_FIELD_NAME, Polygon.class);
             tb.setDefaultGeometry(DEFAULT_GEO_FIELD_NAME);
+            geomField = DEFAULT_GEO_FIELD_NAME;
         }
        
         SimpleFeatureType feature = tb.buildFeatureType();
@@ -695,6 +699,24 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         feature.getDescriptor(ENTITY_RECORD_KEY_COLUMN_NAME).getUserData().put("index", "join");
         feature.getDescriptor(ENTITY_RECORD_KEY_COLUMN_NAME).getUserData().put("cardinality", "high");
         feature.getUserData().put( Hints.USE_PROVIDED_FID, true );
+        
+        // Loop through and add indexes for attributes
+        for (Fielddefinition field : fields)
+        {
+        	Boolean noIndex = field.isNoindex();
+        	// noIndex is true if no indexing is to be done
+        	// it is null by default (index the field)
+        	// it is never false
+        	if (noIndex == null) {
+        		
+        		// Skip additional indexes for time or geometry fields.
+        		if (((timeField != null) && (field.getName() == timeField)) || (field.getName() == geomField)) continue;
+        		
+	        	if (feature.getDescriptor(field.getName()) != null) {
+	        		feature.getDescriptor(field.getName()).getUserData().put("index","join");
+	        	}
+        	}
+        }
         if (null != timeField)
         {
             feature.getUserData().put(geomesaTimeIndex, timeField);
@@ -772,6 +794,8 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
     @Override
     public String getEntityTemplateXml(String key) throws CoalescePersistorException
     {
+    	if (key == null) return null;
+    	
         Range range = new Range(key);
         String xml = null;
         Connector dbConnector = connect.getDBConnector();
