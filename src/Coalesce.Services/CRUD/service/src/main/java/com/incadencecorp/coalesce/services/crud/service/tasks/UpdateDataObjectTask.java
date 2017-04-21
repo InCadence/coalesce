@@ -17,19 +17,19 @@
 
 package com.incadencecorp.coalesce.services.crud.service.tasks;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
+import com.incadencecorp.coalesce.enums.ECrudOperations;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceIteratorMerge;
 import com.incadencecorp.coalesce.framework.tasks.AbstractFrameworkTask;
 import com.incadencecorp.coalesce.framework.tasks.TaskParameters;
+import com.incadencecorp.coalesce.framework.util.CoalesceNotifierUtil;
 import com.incadencecorp.coalesce.framework.validation.CoalesceValidator;
 import com.incadencecorp.coalesce.services.api.common.ResultsType;
 
@@ -43,10 +43,12 @@ public class UpdateDataObjectTask extends AbstractFrameworkTask<String[], Result
         CoalesceValidator validator = new CoalesceValidator();
         String[] params = parameters.getParams();
 
-        List<CoalesceEntity> entities = new ArrayList<CoalesceEntity>();
+        CoalesceEntity[] entities = new CoalesceEntity[params.length];
 
-        for (String xml : params)
+        for (int ii = 0; ii < params.length; ii++)
         {
+            String xml = params[ii];
+
             CoalesceEntity updated = new CoalesceEntity();
             if (updated.initialize(xml))
             {
@@ -70,19 +72,22 @@ public class UpdateDataObjectTask extends AbstractFrameworkTask<String[], Result
                         break;
                     }
 
-                    entities.add(updated);
+                    entities[ii] = updated;
                 }
             }
             else
             {
                 result.setStatus(EResultStatus.FAILED);
                 result.setResult(String.format(CoalesceErrors.NOT_INITIALIZED, "Entity"));
+                break;
             }
         }
 
-        if (framework.saveCoalesceEntity(entities.toArray(new CoalesceEntity[entities.size()])))
+        if (result.getStatus() != EResultStatus.FAILED && framework.saveCoalesceEntity(entities))
         {
             result.setStatus(EResultStatus.SUCCESS);
+
+            CoalesceNotifierUtil.sendCrud(getName(), ECrudOperations.UPDATE, entities);
         }
         else
         {

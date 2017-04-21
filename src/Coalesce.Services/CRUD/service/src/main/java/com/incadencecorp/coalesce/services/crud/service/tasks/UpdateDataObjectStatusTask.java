@@ -23,11 +23,13 @@ import java.util.Map;
 import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
+import com.incadencecorp.coalesce.enums.ECrudOperations;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
 import com.incadencecorp.coalesce.framework.tasks.AbstractFrameworkTask;
 import com.incadencecorp.coalesce.framework.tasks.TaskParameters;
+import com.incadencecorp.coalesce.framework.util.CoalesceNotifierUtil;
 import com.incadencecorp.coalesce.services.api.common.ResultsType;
 import com.incadencecorp.coalesce.services.api.crud.DataObjectStatusType;
 
@@ -41,36 +43,43 @@ public class UpdateDataObjectStatusTask extends AbstractFrameworkTask<DataObject
         CoalesceFramework framework = parameters.getTarget();
         DataObjectStatusType[] params = parameters.getParams();
 
-        for (DataObjectStatusType task : params)
+        CoalesceEntity[] entities = new CoalesceEntity[params.length];
+
+        for (int ii = 0; ii < params.length; ii++)
         {
+            DataObjectStatusType task = params[ii];
+
             if (task.getAction() == null)
             {
                 throw new CoalesceException(String.format(CoalesceErrors.NOT_SPECIFIED, "Update Action"));
             }
 
-            result.setStatus(EResultStatus.SUCCESS);
-
-            // Revert to Specified Version
             CoalesceEntity entity = framework.getCoalesceEntity(task.getKey());
 
             switch (task.getAction()) {
             case MARK_AS_ACTIVE:
                 entity.setStatus(ECoalesceObjectStatus.ACTIVE);
-                framework.saveCoalesceEntity(entity);
                 break;
             case MARK_AS_DELETED:
                 entity.setStatus(ECoalesceObjectStatus.DELETED);
-                framework.saveCoalesceEntity(entity);
                 break;
             case MARK_AS_READONLY:
                 entity.setStatus(ECoalesceObjectStatus.READONLY);
-                framework.saveCoalesceEntity(entity);
-                break;
-            default:
-                result.setStatus(EResultStatus.FAILED);
-                result.setResult("Invalid Action");
                 break;
             }
+            
+            entities[ii] = entity;
+        }
+
+        if (framework.saveCoalesceEntity(entities))
+        {
+            result.setStatus(EResultStatus.SUCCESS);
+            
+            CoalesceNotifierUtil.sendCrud(getName(), ECrudOperations.UPDATE, entities);
+        }
+        else
+        {
+            result.setStatus(EResultStatus.FAILED);
         }
 
         return result;

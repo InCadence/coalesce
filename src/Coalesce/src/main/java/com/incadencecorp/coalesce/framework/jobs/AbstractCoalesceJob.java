@@ -36,6 +36,7 @@ import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.CoalesceComponentImpl;
 import com.incadencecorp.coalesce.framework.jobs.metrics.StopWatch;
 import com.incadencecorp.coalesce.framework.tasks.MetricResults;
+import com.incadencecorp.coalesce.framework.util.CoalesceNotifierUtil;
 
 /**
  * Abstract base for jobs in Coalesce.
@@ -129,17 +130,13 @@ public abstract class AbstractCoalesceJob<INPUT, OUTPUT extends ICoalesceRespons
             status = EJobStatus.COMPLETE;
         }
 
-        for (MetricResults<TASKOUTPUT> result : getTaskMetrics())
+        if (isAsync())
         {
-            if (result != null && result.getWatch() != null)
-            {
-                LOGGER.debug("({}) ({}) Pending ({}) Working ({}) Total ({})",
-                             result.isSuccessful() ? "SUCCESS" : "FAILED",
-                             this.getClass().getSimpleName(),
-                             result.getWatch().getPendingLife(),
-                             result.getWatch().getWorkLife(),
-                             result.getWatch().getTotalLife());
-            }
+            CoalesceNotifierUtil.sendJobComplete(this);
+        }
+        else
+        {
+            CoalesceNotifierUtil.sendMetrics(getName(), getTaskMetrics());
         }
 
         return results;

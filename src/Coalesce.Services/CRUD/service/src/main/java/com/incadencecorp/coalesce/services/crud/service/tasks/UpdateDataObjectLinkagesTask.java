@@ -23,10 +23,12 @@ import java.util.Map;
 import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.helpers.EntityLinkHelper;
+import com.incadencecorp.coalesce.enums.ECrudOperations;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.tasks.AbstractFrameworkTask;
 import com.incadencecorp.coalesce.framework.tasks.TaskParameters;
+import com.incadencecorp.coalesce.framework.util.CoalesceNotifierUtil;
 import com.incadencecorp.coalesce.services.api.common.ResultsType;
 import com.incadencecorp.coalesce.services.api.crud.DataObjectLinkType;
 
@@ -89,6 +91,12 @@ public class UpdateDataObjectLinkagesTask extends AbstractFrameworkTask<DataObje
                                               true,
                                               true,
                                               isSysAdmin);
+
+                CoalesceNotifierUtil.sendLinkage(getName(),
+                                                 ECrudOperations.UPDATE,
+                                                 entity1,
+                                                 task.getLinkType(),
+                                                 entity2);
                 break;
             case LINK:
 
@@ -101,19 +109,67 @@ public class UpdateDataObjectLinkagesTask extends AbstractFrameworkTask<DataObje
                                               true,
                                               false,
                                               isSysAdmin);
+
+                CoalesceNotifierUtil.sendLinkage(getName(),
+                                                 ECrudOperations.CREATE,
+                                                 entity1,
+                                                 task.getLinkType(),
+                                                 entity2);
                 break;
             case UNLINK:
-
                 EntityLinkHelper.unLinkEntities(entity1, entity2, task.getLinkType(), user, ip, isSysAdmin);
+
+                CoalesceNotifierUtil.sendLinkage(getName(),
+                                                 ECrudOperations.DELETE,
+                                                 entity1,
+                                                 task.getLinkType(),
+                                                 entity2);
                 break;
             }
 
         }
 
         // Save Objects
-        framework.saveCoalesceEntity(entities);
+        if (framework.saveCoalesceEntity(entities))
+        {
+            result.setStatus(EResultStatus.SUCCESS);
 
-        result.setStatus(EResultStatus.SUCCESS);
+            // Send Notifications
+            for (DataObjectLinkType task : params)
+            {
+                CoalesceEntity entity1 = map.get(task.getDataObjectKeySource());
+                CoalesceEntity entity2 = map.get(task.getDataObjectKeyTarget());
+
+                switch (task.getAction()) {
+                case MAKEREADONLY:
+                    CoalesceNotifierUtil.sendLinkage(getName(),
+                                                     ECrudOperations.UPDATE,
+                                                     entity1,
+                                                     task.getLinkType(),
+                                                     entity2);
+                    break;
+                case LINK:
+                    CoalesceNotifierUtil.sendLinkage(getName(),
+                                                     ECrudOperations.CREATE,
+                                                     entity1,
+                                                     task.getLinkType(),
+                                                     entity2);
+                    break;
+                case UNLINK:
+                    CoalesceNotifierUtil.sendLinkage(getName(),
+                                                     ECrudOperations.DELETE,
+                                                     entity1,
+                                                     task.getLinkType(),
+                                                     entity2);
+                    break;
+                }
+
+            }
+        }
+        else
+        {
+            result.setStatus(EResultStatus.FAILED);
+        }
 
         // TODO Since UpdateLinkageTask no longer always processes a single
         // task there is no longer a one to one relationship to what the
@@ -141,12 +197,11 @@ public class UpdateDataObjectLinkagesTask extends AbstractFrameworkTask<DataObje
 
         return results;
     }
-    
+
     @Override
     protected ResultsType createResult()
     {
         return new ResultsType();
     }
-
 
 }

@@ -23,6 +23,7 @@
 	<modules>
 		<module>../Coalesce</module>
 		<module>../Coalesce.Classification</module>
+		<module>../Coalesce.Notification</module>
 		<module>../Coalesce.Search</module>
 		<module>../Coalesce.Synchronizer</module>
 		<module>../Coalesce.ExIm.XSD</module>
