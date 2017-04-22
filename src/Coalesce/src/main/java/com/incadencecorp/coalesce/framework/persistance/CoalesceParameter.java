@@ -30,7 +30,8 @@ import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
  * Represents parameters used when performing queries.
  */
 public class CoalesceParameter {
-
+	
+	private String _name; // NOTE: name is optional
     private String _value;
     private int _type;
 
@@ -91,6 +92,16 @@ public class CoalesceParameter {
     }
 
     /**
+     * @param name The name of a parameter (optional).
+     * @param value The value of a parameter.
+     * @param type  The type of the parameter's value.
+     */
+    public CoalesceParameter(String name, String value, int type) {
+    	this(value, type);
+    	_name = name;
+    }
+    
+    /**
      * @return the parameter's value.
      */
     public String getValue()
@@ -104,6 +115,13 @@ public class CoalesceParameter {
     public int getType()
     {
         return _type;
+    }
+    
+    /**
+     * @return the parameter's name.  // may be null
+     */
+    public String getName() {
+    	return _name;
     }
 
 }
