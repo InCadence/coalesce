@@ -663,8 +663,8 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 
     private void createLinkageFeature(String featurename)
     {
-        final String geomesaTimeIndex = "geomesa.index.dtg";
-        
+        //final String geomesaTimeIndex = "geomesa.index.dtg";
+    	final  String indexes = "z2,records,id,attr";
         DataStore gs = connect.getGeoDataStore();
         try {
 			SimpleFeatureType linkschema =  gs.getSchema(featurename);
@@ -693,28 +693,31 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         tb.setDefaultGeometry(DEFAULT_GEO_FIELD_NAME);
        
         SimpleFeatureType feature = tb.buildFeatureType();
-        feature.getUserData().put(geomesaTimeIndex, LINKAGE_LAST_MODIFIED_COLUMN_NAME);
+        //feature.getUserData().put(geomesaTimeIndex, LINKAGE_LAST_MODIFIED_COLUMN_NAME);
 
         // index recordkey, cardinality is high because there is only one record per key.
-        feature.getDescriptor(LINKAGE_KEY_COLUMN_NAME).getUserData().put("index", "join");
+        feature.getDescriptor(LINKAGE_KEY_COLUMN_NAME).getUserData().put("index", "full");
         feature.getDescriptor(LINKAGE_KEY_COLUMN_NAME).getUserData().put("cardinality", "high");
-        feature.getDescriptor(LINKAGE_ENTITY1_KEY_COLUMN_NAME).getUserData().put("index", "join");
+        feature.getDescriptor(LINKAGE_ENTITY1_KEY_COLUMN_NAME).getUserData().put("index", "full");
         feature.getDescriptor(LINKAGE_ENTITY1_KEY_COLUMN_NAME).getUserData().put("cardinality", "high");
-        feature.getDescriptor(LINKAGE_ENTITY2_KEY_COLUMN_NAME).getUserData().put("index", "join");
+        feature.getDescriptor(LINKAGE_ENTITY2_KEY_COLUMN_NAME).getUserData().put("index", "full");
         feature.getDescriptor(LINKAGE_ENTITY2_KEY_COLUMN_NAME).getUserData().put("cardinality", "high");
-        //feature.getDescriptor(LINKAGE_LAST_MODIFIED_COLUMN_NAME).getUserData().put("index", "join");
-        //feature.getDescriptor(LINKAGE_LAST_MODIFIED_COLUMN_NAME).getUserData().put("cardinality", "high");
-        feature.getDescriptor(LINKAGE_LABEL_COLUMN_NAME).getUserData().put("index", "join");
+        feature.getDescriptor(LINKAGE_LAST_MODIFIED_COLUMN_NAME).getUserData().put("index", "full");
+        feature.getDescriptor(LINKAGE_LAST_MODIFIED_COLUMN_NAME).getUserData().put("cardinality", "high");
+        feature.getDescriptor(LINKAGE_LABEL_COLUMN_NAME).getUserData().put("index", "full");
         feature.getDescriptor(LINKAGE_LABEL_COLUMN_NAME).getUserData().put("cardinality", "low");
-        feature.getDescriptor(LINKAGE_LINK_TYPE_COLUMN_NAME).getUserData().put("index", "join");
+        feature.getDescriptor(LINKAGE_LINK_TYPE_COLUMN_NAME).getUserData().put("index", "full");
         feature.getDescriptor(LINKAGE_LINK_TYPE_COLUMN_NAME).getUserData().put("cardinality", "low");
-       feature.getUserData().put( Hints.USE_PROVIDED_FID, true );
-        
+        feature.getUserData().put( Hints.USE_PROVIDED_FID, true );
+//        feature.getUserData().put("geomesa.indexes.enabled",indexes);
+        feature.getUserData().put("geomesa.index.dtg",null);
+
         try
         {
             LOGGER.debug("Creating Feature for {} ", featurename);
 
             gs.createSchema(feature);
+
         }
         catch (Exception e)
         {
@@ -724,13 +727,13 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
     
     private void createFeatureSet(String featurename, ArrayList<Fielddefinition> fields)
     {
-        final String geomesaTimeIndex = "geomesa.index.dtg";
-
+        //final String geomesaTimeIndex = "geomesa.index.dtg";
+    	final  String indexes = "z2,records,id,attr";
         SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
 
         boolean defaultGeometrySet = false;
-        boolean defaultTimeSet = false;
-        String timeField = null;
+        //boolean defaultTimeSet = false;
+        //String timeField = null;
         String geomField = null;
         
         tb.setName(featurename);
@@ -760,11 +763,13 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                     geomField = field.getName();
                     tb.setDefaultGeometry(geomField);
                 }
-                if (!defaultTimeSet && Date.class.isAssignableFrom(featuretype))
-                {
-                    defaultTimeSet = true;
-                    timeField = field.getName();
-                }
+                // Turn of Z3 time indexing due to not allowing dates earlier than the EPOC.
+
+//                if (!defaultTimeSet && Date.class.isAssignableFrom(featuretype))
+//                {
+//                    defaultTimeSet = true;
+//                    timeField = field.getName();
+//                }
             }
         }
 
@@ -779,9 +784,11 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         SimpleFeatureType feature = tb.buildFeatureType();
 
         // index recordkey, cardinality is high because there is only one record per key.
-        feature.getDescriptor(ENTITY_RECORD_KEY_COLUMN_NAME).getUserData().put("index", "join");
+        feature.getDescriptor(ENTITY_RECORD_KEY_COLUMN_NAME).getUserData().put("index", "full");
         feature.getDescriptor(ENTITY_RECORD_KEY_COLUMN_NAME).getUserData().put("cardinality", "high");
         feature.getUserData().put( Hints.USE_PROVIDED_FID, true );
+//        feature.getUserData().put("geomesa.indexes.enabled",indexes);
+        feature.getUserData().put("geomesa.index.dtg",null);
         
         // Loop through and add indexes for attributes
         for (Fielddefinition field : fields)
@@ -793,23 +800,29 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         	if (noIndex == null) {
         		
         		// Skip additional indexes for time or geometry fields.
-        		if (((timeField != null) && (field.getName() == timeField)) || (field.getName() == geomField)) continue;
+//        		if (((timeField != null) && (field.getName() == timeField)) || (field.getName() == geomField)) continue;
+        		if ( field.getName() == geomField) continue;
         		
 	        	if (feature.getDescriptor(field.getName()) != null) {
-	        		feature.getDescriptor(field.getName()).getUserData().put("index","join");
+	        		feature.getDescriptor(field.getName()).getUserData().put("index","full");
+	        		feature.getDescriptor(field.getName()).getUserData().put("cardinality", "high");
 	        	}
         	}
         }
-        if (null != timeField)
-        {
-            feature.getUserData().put(geomesaTimeIndex, timeField);
-        }
+        
+       // Turn of Z3 time indexing due to not allowing dates earlier than the EPOC.
+//        if (null != timeField)
+//        {
+//            feature.getUserData().put(geomesaTimeIndex, timeField);
+//        }
 
         try
         {
             LOGGER.debug("Creating Feature for {} with fields lenght {}", featurename, fields.size());
 
             connect.getGeoDataStore().createSchema(feature);
+            SimpleFeatureType schema = connect.getGeoDataStore().getSchema(featurename);
+            schema.getUserData().put("geomesa.index.dtg",null);
         }
         catch (Exception e)
         {
@@ -1066,6 +1079,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                 featureStore.addFeatures(entry.getValue());
 //                transaction.commit();
 //                transaction.close();
+               
             }
             catch (IOException | IllegalArgumentException e)
             {
@@ -1195,7 +1209,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                             deleteRecordset(featuresetname, recordset);
                         }
                         
-                        addNewFeatureForRecordSet(entity, featureCollectionMap, recordset, featuresetname, featuretype);
+                        addNewFeatureForRecordSet(entity, featureCollectionMap, recordset, featuresetname, featuretype, allowRemoval);
 
                       
 
@@ -1317,7 +1331,8 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                                                                Map<String, DefaultFeatureCollection> featureCollectionMap,
                                                                CoalesceRecordset recordset,
                                                                String featuresetname,
-                                                               SimpleFeatureType featuretype)
+                                                               SimpleFeatureType featuretype,
+                                                               boolean allowRemoval)
             throws CoalesceDataFormatException, CQLException, IOException
     {
         DefaultFeatureCollection featurecollection = featureCollectionMap.get(featuresetname);
@@ -1334,9 +1349,15 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         for (CoalesceRecord record : recordset.getRecords())
         {
             boolean hasGeoField = false;
-
+            boolean updated;
             // delete the feature if it already exists for "update"
-            boolean updated = updateFeatureIfExists(featuresetname, record);
+            if (allowRemoval) {
+            	// If allowRemoval is true all features have been deleted already
+            	updated = false;
+            } else {
+            	updated = updateFeatureIfExists(featuresetname, record);
+            }
+            
 
             if (!updated)
             {
@@ -1344,7 +1365,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 
                 SimpleFeature simplefeature = SimpleFeatureBuilder.build(featuretype, new Object[] {}, record.getKey());
                 simplefeature.getUserData().put( Hints.USE_PROVIDED_FID, true );
-
+                simplefeature.getUserData().put( "geomesa.index.dtg", null );
                 setFeatureAttribute(simplefeature,
                                     ENTITY_KEY_COLUMN_NAME,
                                     ECoalesceFieldDataTypes.STRING_TYPE,
@@ -1435,6 +1456,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         Filter filter = CQL.toFilter("recordKey='" + record.getKey() + "'");
 
         store.removeFeatures(filter);
+        
 //        transaction.commit();
 //        transaction.close();
     }
@@ -1460,7 +1482,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         	// Transactions not supported by GEOMESA
         	//            Transaction transaction = new DefaultTransaction();
         	//            store.setTransaction(transaction);
-
+        	// TODO - This should be done all at once through arrays.  See linkage update.
             for (CoalesceField<?> field : record.getFields())
             {
                 // update
@@ -1473,7 +1495,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 
         }
 
-
+        collection.features().close();
         return updated;
     }
     private boolean updateLinkIfExists(String featuresetname, CoalesceLinkage link)
@@ -1491,13 +1513,13 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         //Filter filter = CQL.toFilter("\""+featuresetname+".recordKey\" =" + "'" + record.getKey() + "'");
 
         SimpleFeatureCollection collection = store.getFeatures(new Query(featuresetname, filter, Query.NO_NAMES));
-
+        
         if (collection.features().hasNext())
         {
         	// Transactions not supported by GEOMESA
         	//            Transaction transaction = new DefaultTransaction();
         	//            store.setTransaction(transaction);
-
+        	
         	  final String linkfields[] = {
         		     LINKAGE_ENTITY1_KEY_COLUMN_NAME,
         		     LINKAGE_ENTITY1_NAME_COLUMN_NAME,
@@ -1527,14 +1549,14 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 	
        			
         	store.modifyFeatures(linkfields, values, filter);
-        	collection.features().close();
             updated = true;
             //transaction.commit();
             //transaction.close();
+        	collection.features().close();
 
         }
 
-        
+
         return updated;
     }
     private boolean isGeoField(ECoalesceFieldDataTypes fieldtype)
