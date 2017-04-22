@@ -1,6 +1,19 @@
-/**
- * 
- */
+/*-----------------------------------------------------------------------------'
+ Copyright 2017 - InCadence Strategic Solutions Inc., All Rights Reserved
+
+ Notwithstanding any contractor copyright notice, the Government has Unlimited
+ Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+ of this work other than as specifically authorized by these DFARS Clauses may
+ violate Government rights in this work.
+
+ DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+ Unlimited Rights. The Government has the right to use, modify, reproduce,
+ perform, display, release or disclose this computer software and to have or
+ authorize others to do so.
+
+ Distribution Statement D. Distribution authorized to the Department of
+ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+ -----------------------------------------------------------------------------*/
 package com.incadencecorp.coalesce.framework.persistance.derby;
 
 import java.io.IOException;
@@ -34,27 +47,32 @@ import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
 
 /**
+ * TODO this needs to be refactored to use the abstract search tests. The reason
+ * it was done this way was issues with the field names within the TestEntity.
+ * 
  * @author mdaconta
- *
  */
 public class DerbyPersistorSearchIT {
+
     private static final FilterFactory FF = CoalescePropertyFactory.getFilterFactory();
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSearchTest.class);
 
     private boolean isInitialized = false;
-	
+
     /**
      * Initializes the test configuration.
      */
     @BeforeClass
     public static void initialize() throws Exception
     {
+        System.setProperty("derby.system.home", Paths.get("target", "derby").toFile().getAbsolutePath());
+        
         FilePropertyConnector connector = new FilePropertyConnector(Paths.get("src", "test", "resources"));
         connector.setReadOnly(true);
-        
+
         DerbySettings.setConnector(connector);
     }
-    
+
     @Before
     public void registerEntities()
     {
@@ -145,23 +163,24 @@ public class DerbyPersistorSearchIT {
 
         for (int ii = 0; ii < properties.size(); ii++)
         {
-        	LOGGER.info(rowset.getMetaData().getColumnName(ii+2));
-        	/*
-            Assert.assertEquals(CoalescePropertyFactory.getColumnName(properties.get(ii)),
-                                rowset.getMetaData().getColumnName(ii + 2));
-        	*/
+            LOGGER.info(rowset.getMetaData().getColumnName(ii + 2));
+            /*
+             * Assert.assertEquals(CoalescePropertyFactory.getColumnName(
+             * properties.get(ii)), rowset.getMetaData().getColumnName(ii + 2));
+             */
         }
 
-        while (rowset.next()) {
-        	LOGGER.info("Entity Key: " + rowset.getString(1));
-        	LOGGER.info("Entity Name: " + rowset.getString(2));
-        	LOGGER.info("Entity Source: " + rowset.getString(3));
-        	LOGGER.info("Entity Title: " + rowset.getString(4));
-        	LOGGER.info("Field 1: " + rowset.getString(5));
+        while (rowset.next())
+        {
+            LOGGER.info("Entity Key: " + rowset.getString(1));
+            LOGGER.info("Entity Name: " + rowset.getString(2));
+            LOGGER.info("Entity Source: " + rowset.getString(3));
+            LOGGER.info("Entity Title: " + rowset.getString(4));
+            LOGGER.info("Field 1: " + rowset.getString(5));
         }
-        
+
         rowset.beforeFirst();
-        
+
         Assert.assertTrue(rowset.next());
         Assert.assertEquals(entity1.getKey(), rowset.getString(1));
         Assert.assertEquals(field1.getValue(), rowset.getString(5));
@@ -221,6 +240,5 @@ public class DerbyPersistorSearchIT {
         Assert.assertEquals(1, rowset.getMetaData().getColumnCount());
         Assert.assertFalse(rowset.next());
     }
-
 
 }

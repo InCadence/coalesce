@@ -1,5 +1,5 @@
 /*-----------------------------------------------------------------------------'
- Copyright 2016 - InCadence Strategic Solutions Inc., All Rights Reserved
+ Copyright 2017 - InCadence Strategic Solutions Inc., All Rights Reserved
 
  Notwithstanding any contractor copyright notice, the Government has Unlimited
  Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
