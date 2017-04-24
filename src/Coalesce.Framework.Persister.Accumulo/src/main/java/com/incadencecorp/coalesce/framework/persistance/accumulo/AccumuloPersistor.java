@@ -1476,12 +1476,15 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         //Filter filter = CQL.toFilter("\""+featuresetname+".recordKey\" =" + "'" + record.getKey() + "'");
 
         SimpleFeatureCollection collection = store.getFeatures(filter);
-
-        if ((collection.size() > 0) && collection.features().hasNext() )
+        int size = collection.size();
+        boolean hasNext = collection.features().hasNext();
+        LOGGER.info("Entity Collection size: {}  hasNext: {}",size,hasNext);
+        
+        if (hasNext )
         {
-        	//SimpleFeature thefeature = collection.features().next();
-        	LOGGER.info("Features found: {}",collection.size());
-        	collection.features().close();
+        	SimpleFeature thefeature = collection.features().next();
+        	//LOGGER.info("Features found: {}",collection.size());
+        	//collection.features().close();
         	// Transactions not supported by GEOMESA
         	Transaction transaction = new DefaultTransaction();
         	store.setTransaction(transaction);
@@ -1585,27 +1588,17 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             {
                 LOGGER.error(e.getMessage(), e);
                 updated = false;
-/*                try {
-                	if (collection.size() > 0)
-                		collection.features().close();
-                }
-                catch ( Exception e2 ) {
-                	//LOGGER.error("DUMB CLOSE: "+e2.getMessage(), e2);
-                } */
+
                 return updated;
             }
             updated = true; 
             transaction.commit();
             transaction.close();
- /*           try {
-            	collection.features().close();
-            }
-            catch ( Exception e ) {
-            	//LOGGER.error("DUMB CLOSE: "+e.getMessage(), e);
-            } */
+ 
 
-        } 
-
+        } //else {
+        //	collection.features().close();
+       // }
 
         
         return updated;
@@ -1627,15 +1620,15 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         SimpleFeatureCollection collection = store.getFeatures(filter);
         int size = collection.size();
         boolean hasNext = collection.features().hasNext();
-        LOGGER.info("Collection size: {}  hasNext: {}",size,hasNext);
+        LOGGER.info("Linkage Collection size: {}  hasNext: {}",size,hasNext);
         
-        if ((size > 0) && hasNext )
+        if (hasNext)
         {
         	//LOGGER.info("Found Linkages: {}",collection.size());
         	SimpleFeature thefeature = collection.features().next();
-        	if (collection.features().hasNext()) {
-        		collection.features().close();
-        	}
+//        	if (collection.features().hasNext()) {
+//        		collection.features().close();
+//        	}
         	// Transactions not supported by GEOMESA
             Transaction transaction = new DefaultTransaction();
         	store.setTransaction(transaction);
@@ -1673,14 +1666,10 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             updated = true;
             transaction.commit();
             transaction.close();
-/*            try {
-            	if (collection.size() > 0)
-            		collection.features().close();
-            } catch (Exception e) {
-            	//LOGGER.error("DUMB CLOSE: "+ e.getMessage(),e);
-            } */
 
-        } 
+        } //else {
+        //	collection.features().close();
+       // }
 
         return updated;
     }
