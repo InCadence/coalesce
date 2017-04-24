@@ -14,18 +14,25 @@
  Distribution Statement D. Distribution authorized to the Department of
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
-package com.incadencecorp.coalesce.framework.datamodel;
+package com.incadencecorp.coalesce.framework.persistance.derby;
+
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
 
 /**
  * This class is a Coalesce Entity that contains recordsets with every data type
  * to be used during unit testing.
  * 
- * @author n78554
+ * TODO This is duplicate code to overcome an issue with the field names within
+ * TestEntity and needs to be phased out.
+ * 
+ * @author mdaconta
  */
-public class TestEntity extends CoalesceEntity {
+public class DerbyTestEntity extends CoalesceEntity {
 
-    public static final String NAME = "UNIT_TEST";
-    public static final String SOURCE = "DSS";
+    public static final String NAME = "DERBY_TEST";
+    public static final String SOURCE = "JUNIT";
     public static final String VERSION = "1.0";
 
     public static final String RECORDSET1 = "test1";
@@ -37,7 +44,7 @@ public class TestEntity extends CoalesceEntity {
     /**
      * Default Constructor
      */
-    public TestEntity()
+    public DerbyTestEntity()
     {
         // Do Nothing
     }
@@ -70,7 +77,7 @@ public class TestEntity extends CoalesceEntity {
             CoalesceSection section = CoalesceSection.create(this, TESTSECTION);
 
             // Create Record Sets
-            recordset1 = TestRecord.createCoalesceRecordset(section, RECORDSET1);
+            recordset1 = DerbyTestRecord.createCoalesceRecordset(section, RECORDSET1);
 
             isInitialized = true;
         }
@@ -113,9 +120,8 @@ public class TestEntity extends CoalesceEntity {
         return recordset1;
     }
 
-    public TestRecord addRecord1()
+    public DerbyTestRecord addRecord1()
     {
-        return new TestRecord(recordset1.addNew());
+        return new DerbyTestRecord(recordset1.addNew());
     }
-
 }
