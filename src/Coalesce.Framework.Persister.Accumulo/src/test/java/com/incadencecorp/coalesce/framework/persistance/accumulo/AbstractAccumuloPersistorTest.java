@@ -7,9 +7,12 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
+
+import javax.sql.rowset.CachedRowSet;
 
 import org.apache.accumulo.core.client.Connector;
 import org.apache.commons.io.FilenameUtils;
@@ -18,6 +21,7 @@ import org.geotools.data.DataStore;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.Query;
 import org.geotools.data.simple.SimpleFeatureStore;
+import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.filter.AttributeExpressionImpl;
 import org.geotools.filter.SortByImpl;
@@ -77,6 +81,7 @@ import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBas
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 import com.incadencecorp.coalesce.framework.persistance.accumulo.testobjects.GDELT_Test_Entity;
 import com.incadencecorp.coalesce.framework.persistance.accumulo.testobjects.NonGeoEntity;
+import com.incadencecorp.coalesce.search.api.SearchResults;
 import com.incadencecorp.coalesce.services.api.search.HitType;
 import com.incadencecorp.coalesce.services.api.search.SearchDataObjectResponse;
 import com.incadencecorp.coalesce.services.crud.api.ICrudClient;
@@ -459,7 +464,7 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
 
     @Test
     public void testSearchNonGeoEntity()
-            throws CoalescePersistorException, CoalesceDataFormatException, SAXException, IOException, CQLException
+            throws CoalescePersistorException, CoalesceDataFormatException, SAXException, IOException, CQLException, SQLException
     {
 
         NonGeoEntity nonGeoEntity = new NonGeoEntity();
@@ -484,7 +489,7 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
         // Search
         DataStore geoDataStore = ((AccumuloDataConnector) persistor.getDataConnector()).getGeoDataStore();
 
-        FeatureSource<?, ?> featureSource = geoDataStore.getFeatureSource(NonGeoEntity.getQueryName());
+        //FeatureSource<?, ?> featureSource = geoDataStore.getFeatureSource(NonGeoEntity.getQueryName());
         
         String filterstring = "GlobalEventID ="+
         		expectedInt.toString();
@@ -493,15 +498,16 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
         LOGGER.debug(trythis.toString());
 
         Query query = new Query(NonGeoEntity.getQueryName(), trythis);
+        CachedRowSet results = persistor.search(query).getResults();
+        
+        
+        assertTrue(results.next());
 
-        FeatureIterator<?> featureItr = featureSource.getFeatures(query).features();
-        assertTrue(featureItr.hasNext());
+        Integer id = results.getInt("GlobalEventID");
+        assertEquals(expectedInt, id);
+        assertEquals("MERICA", results.getString("Actor1Name"));
 
-        Feature feature = featureItr.next();
-        assertEquals(expectedInt, feature.getProperty("GlobalEventID").getValue());
-        assertEquals("MERICA", feature.getProperty("Actor1Name").getValue());
-
-        featureItr.close();
+        
         //persistor.close();
 
     }

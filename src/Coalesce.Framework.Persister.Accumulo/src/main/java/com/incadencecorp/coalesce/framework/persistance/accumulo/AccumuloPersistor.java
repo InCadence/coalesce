@@ -1074,11 +1074,11 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             {
                 SimpleFeatureStore featureStore = (SimpleFeatureStore) connect.getGeoDataStore().getFeatureSource(entry.getKey());
 //				GEOMESA Does not currently support transactions
-//               Transaction transaction = new DefaultTransaction();
-//                featureStore.setTransaction(transaction);
+               Transaction transaction = new DefaultTransaction();
+                featureStore.setTransaction(transaction);
                 featureStore.addFeatures(entry.getValue());
-//                transaction.commit();
-//                transaction.close();
+                transaction.commit();
+                transaction.close();
                
             }
             catch (IOException | IllegalArgumentException e)
@@ -1448,17 +1448,17 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 
     private void deleteFeatureIfExists(String featuresetname, CoalesceRecord record) throws IOException, CQLException
     {
-//        Transaction transaction = new DefaultTransaction();
+        Transaction transaction = new DefaultTransaction();
         SimpleFeatureStore store = (SimpleFeatureStore) connect.getGeoDataStore().getFeatureSource(featuresetname);
-//        store.setTransaction(transaction);
+        store.setTransaction(transaction);
 
         // Filters need fully qualified column name must be quoted
         Filter filter = CQL.toFilter("recordKey='" + record.getKey() + "'");
 
         store.removeFeatures(filter);
         
-//        transaction.commit();
-//        transaction.close();
+        transaction.commit();
+        transaction.close();
     }
 
     private boolean updateFeatureIfExists(String featuresetname, CoalesceRecord record)
@@ -1475,27 +1475,139 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         // Need to escape the fully qualified column in the feature set for filters
         //Filter filter = CQL.toFilter("\""+featuresetname+".recordKey\" =" + "'" + record.getKey() + "'");
 
-        SimpleFeatureCollection collection = store.getFeatures(new Query(featuresetname, filter, Query.NO_NAMES));
+        SimpleFeatureCollection collection = store.getFeatures(filter);
 
-        if (collection.features().hasNext())
+        if ((collection.size() > 0) && collection.features().hasNext() )
         {
+        	//SimpleFeature thefeature = collection.features().next();
+        	LOGGER.info("Features found: {}",collection.size());
+        	collection.features().close();
         	// Transactions not supported by GEOMESA
-        	//            Transaction transaction = new DefaultTransaction();
-        	//            store.setTransaction(transaction);
-        	// TODO - This should be done all at once through arrays.  See linkage update.
+        	Transaction transaction = new DefaultTransaction();
+        	store.setTransaction(transaction);
+        	
+        	List<String> fieldNames  = new ArrayList<String>();       	 
+        	List<Object> fieldVals = new ArrayList();
+        	String liststring;
             for (CoalesceField<?> field : record.getFields())
             {
                 // update
-                store.modifyFeatures(field.getName(), field.getValue(), filter);
+                //store.modifyFeatures(field.getName(), field.getValue(), filter);
+            	fieldNames.add(field.getName());
+            	Object fieldvalue = field.getValue();
+            	switch (field.getDataType()) {
+ 
+	                // These types should be able to be handled directly
+	                case BOOLEAN_TYPE:
+	                case DOUBLE_TYPE:
+	                case FLOAT_TYPE:
+	                case INTEGER_TYPE:
+	                case LONG_TYPE:
+	                case STRING_TYPE:
+	                case URI_TYPE:
+	                case LINE_STRING_TYPE:
+	                case POLYGON_TYPE:
+	                    fieldVals.add(fieldvalue);
+	                    break;
+	
+	                case STRING_LIST_TYPE:
+	                    liststring = Arrays.toString((String[]) fieldvalue);
+	                    fieldVals.add(liststring);
+	                    break;
+	                case DOUBLE_LIST_TYPE:
+	                    liststring = Arrays.toString((double[]) fieldvalue);
+	                    fieldVals.add(liststring);
+	                    break;
+	                case INTEGER_LIST_TYPE:
+	                    liststring = Arrays.toString((int[]) fieldvalue);
+	                    fieldVals.add(liststring);
+	                    break;
+	                case LONG_LIST_TYPE:
+	                    liststring = Arrays.toString((long[]) fieldvalue);
+	                    fieldVals.add(liststring);
+	                    break;
+	                case FLOAT_LIST_TYPE:
+	                    liststring = Arrays.toString((float[]) fieldvalue);
+	                    fieldVals.add(liststring);
+	                    break;
+	                case GUID_LIST_TYPE:
+	                    liststring = Arrays.toString((UUID[]) fieldvalue);
+	                    fieldVals.add(liststring);
+	                    break;
+	                case BOOLEAN_LIST_TYPE:
+	
+	                    liststring = Arrays.toString((boolean[]) fieldvalue);
+	                    fieldVals.add(liststring);
+	                    break;
+	
+	                case GUID_TYPE:
+	                    String guid = ((UUID) fieldvalue).toString();
+	                    fieldVals.add(guid);
+	                    break;
+	
+	                case GEOCOORDINATE_LIST_TYPE:
+	                    MultiPoint points = new GeometryFactory().createMultiPoint((Coordinate[]) fieldvalue);
+	                    fieldVals.add(points);
+	                    break;
+	
+	                case GEOCOORDINATE_TYPE:
+	                    Point point = new GeometryFactory().createPoint((Coordinate) fieldvalue);
+	                    fieldVals.add(point);
+	                    break;
+	
+	
+	                // Circles will be converted to polygons
+	                case CIRCLE_TYPE:
+	                    // Create Polygon
+	
+	                    CoalesceCircle circle = (CoalesceCircle) fieldvalue;
+	                    GeometricShapeFactory factory = new GeometricShapeFactory();
+	                    factory.setSize(circle.getRadius());
+	                    factory.setNumPoints(360); // 1 degree points
+	                    factory.setCentre(circle.getCenter());
+	                    Polygon shape = factory.createCircle();
+	                    fieldVals.add(shape);
+	                    break;
+	
+	                case DATE_TIME_TYPE:
+	                    fieldVals.add (((DateTime) fieldvalue).toDate());
+	                    break;
+	                case FILE_TYPE:
+	                case BINARY_TYPE:
+	                default:
+	                    break;
+            	}
             }
+            
+            try {
+            	store.modifyFeatures( fieldNames.toArray(new String[fieldNames.size()]), fieldVals.toArray(), filter);
+            } catch (IllegalArgumentException e)
+            {
+                LOGGER.error(e.getMessage(), e);
+                updated = false;
+/*                try {
+                	if (collection.size() > 0)
+                		collection.features().close();
+                }
+                catch ( Exception e2 ) {
+                	//LOGGER.error("DUMB CLOSE: "+e2.getMessage(), e2);
+                } */
+                return updated;
+            }
+            updated = true; 
+            transaction.commit();
+            transaction.close();
+ /*           try {
+            	collection.features().close();
+            }
+            catch ( Exception e ) {
+            	//LOGGER.error("DUMB CLOSE: "+e.getMessage(), e);
+            } */
 
-            updated = true;
-            //transaction.commit();
-            //transaction.close();
+        } 
 
-        }
 
-        collection.features().close();
+        
         return updated;
     }
     private boolean updateLinkIfExists(String featuresetname, CoalesceLinkage link)
@@ -1512,14 +1624,23 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         // Need to escape the fully qualified column in the feature set for filters
         //Filter filter = CQL.toFilter("\""+featuresetname+".recordKey\" =" + "'" + record.getKey() + "'");
 
-        SimpleFeatureCollection collection = store.getFeatures(new Query(featuresetname, filter, Query.NO_NAMES));
+        SimpleFeatureCollection collection = store.getFeatures(filter);
+        int size = collection.size();
+        boolean hasNext = collection.features().hasNext();
+        LOGGER.info("Collection size: {}  hasNext: {}",size,hasNext);
         
-        if (collection.features().hasNext())
+        if ((size > 0) && hasNext )
         {
+        	//LOGGER.info("Found Linkages: {}",collection.size());
+        	SimpleFeature thefeature = collection.features().next();
+        	if (collection.features().hasNext()) {
+        		collection.features().close();
+        	}
         	// Transactions not supported by GEOMESA
-        	//            Transaction transaction = new DefaultTransaction();
-        	//            store.setTransaction(transaction);
-        	
+            Transaction transaction = new DefaultTransaction();
+        	store.setTransaction(transaction);
+        	//SimpleFeature thefeature = collection.features().next();
+
         	  final String linkfields[] = {
         		     LINKAGE_ENTITY1_KEY_COLUMN_NAME,
         		     LINKAGE_ENTITY1_NAME_COLUMN_NAME,
@@ -1550,12 +1671,16 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
        			
         	store.modifyFeatures(linkfields, values, filter);
             updated = true;
-            //transaction.commit();
-            //transaction.close();
-        	collection.features().close();
+            transaction.commit();
+            transaction.close();
+/*            try {
+            	if (collection.size() > 0)
+            		collection.features().close();
+            } catch (Exception e) {
+            	//LOGGER.error("DUMB CLOSE: "+ e.getMessage(),e);
+            } */
 
-        }
-
+        } 
 
         return updated;
     }
@@ -1870,7 +1995,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 
             rowset = RowSetProvider.newFactory().createCachedRowSet();
             rowset.populate(resultSet);
-
+            featureItr.close();
         }
         catch (IOException | SQLException e)
         {
