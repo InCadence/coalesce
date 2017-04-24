@@ -77,33 +77,20 @@
 		</property>
 		<property name="includeXml" value="true" />
 	</bean>
-
-	<!-- <bean id="memory" -->
-	<!-- class="com.incadencecorp.coalesce.framework.persistance.memory.MockSearchPersister" 
-		/> -->
-
-	<!-- <bean id="neo4jSearch" -->
-	<!-- class="com.incadencecorp.coalesce.framework.persistance.neo4j.Neo4jSearchPersister"> -->
-	<!-- <property name="connectionSettings"> -->
-	<!-- <bean class="com.incadencecorp.coalesce.framework.persistance.ServerConn"> -->
-	<!-- <property name="portNumber" value="7474" /> -->
-	<!-- <property name="serverName" value="localhost" /> -->
-	<!-- </bean> -->
-	<!-- </property> -->
-	<!-- <property name="includeXml" value="true" /> -->
-	<!-- </bean> -->
-
-	<!-- <bean id="neo4j" -->
-	<!-- class="com.incadencecorp.coalesce.framework.persistance.neo4j.Neo4JPersistor"> -->
-	<!-- <property name="connectionSettings"> -->
-	<!-- <bean class="com.incadencecorp.coalesce.framework.persistance.ServerConn"> -->
-	<!-- <property name="portNumber" value="7474" /> -->
-	<!-- <property name="serverName" value="localhost" /> -->
-	<!-- </bean> -->
-	<!-- </property> -->
-	<!-- <property name="includeXml" value="true" /> -->
-	<!-- </bean> -->
-
+	
+	<!--
+	<bean id="accumulo"
+		class="com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLPersistorExt">
+		<property name="connectionSettings">
+			<bean class="com.incadencecorp.coalesce.framework.persistance.ServerConn">
+				<property name="database" value="rdk" />
+				<property name="serverName" value="bdpnode4:2181,bdpnode5:2181,bdpnode6:2181" />
+				<property name="user" value="root" />
+				<property name="password" value="cloudbase123" />
+			</bean>
+		</property>
+	</bean>
+	-->
 	<!-- ========================== -->
 	<!-- CRUD Configuration -->
 	<!-- ========================== -->

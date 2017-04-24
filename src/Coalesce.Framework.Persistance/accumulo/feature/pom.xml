@@ -1,14 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>persister-acumulo-feature</artifactId>
+	<artifactId>persister-accumulo-feature</artifactId>
 	<packaging>feature</packaging>
-	<name>Coalesce Acumulo Persister Feature</name>
+	<name>Coalesce Accumulo Persister Feature</name>
 	<description>Karaf feature for the Memory persister</description>
 
 	<parent>
 		<groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
-		<artifactId>persister-acumulo-parent</artifactId>
+		<artifactId>persister-accumulo-parent</artifactId>
 		<version>0.0.25-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
@@ -68,6 +68,18 @@
 				<exclusion>
 					<groupId>com.incadencecorp.coalesce</groupId>
 					<artifactId>coalesce-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.accumulo</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.locationtech.geomesa</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.zookeeper</groupId>
+					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>

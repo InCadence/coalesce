@@ -12,6 +12,10 @@
  				http://cxf.apache.org/blueprint/jaxrs http://cxf.apache.org/schemas/blueprint/jaxrs.xsd                
                 http://cxf.apache.org/blueprint/core http://cxf.apache.org/schemas/blueprint/core.xsd">
 
+	<!--
+	Endpoints
+	-->
+	
 	<jaxrs:server address="/data" id="someRestService">
 		<jaxrs:serviceBeans>
 			<ref component-id="templateServiceImpl" />
@@ -31,6 +35,10 @@
 		</jaxrs:providers>
 	</jaxrs:server>
 
+	<!--
+	Service Implementations
+	-->
+
 	<bean id="templateServiceImpl"
 		class="com.incadencecorp.coalesce.services.search.service.data.jaxrs.TemplateDataControllerJaxRS">
 		<argument ref="postgres" />
@@ -42,13 +50,16 @@
 
 	<bean id="searchServiceImpl"
 		class="com.incadencecorp.coalesce.services.search.service.data.jaxrs.SearchDataControllerJaxRS">
-		<argument ref="searchClient" />
+		<argument>
+			<bean class="com.incadencecorp.coalesce.services.search.service.client.SearchFrameworkClientImpl">
+				<argument ref="postgres" /> 
+			</bean>
+		</argument>
 	</bean>
 
-	<bean id="searchClient"
-		class="com.incadencecorp.coalesce.services.search.service.client.SearchFrameworkClientImpl">
-		<argument ref="postgres" />
-	</bean>
+	<!--
+	Available Persisters
+	-->
 
 	<bean id="neo4j"
 		class="com.incadencecorp.coalesce.framework.persistance.neo4j.Neo4jSearchPersister">
@@ -68,7 +79,19 @@
 		</property>
 		<property name="schema" value="coalesce" />
 	</bean>
-	
+	<!--
+	<bean id="accumulo"
+		class="com.incadencecorp.coalesce.framework.persistance.accumulo.AccumuloPersistor">
+		<property name="connectionSettings">
+			<bean class="com.incadencecorp.coalesce.framework.persistance.ServerConn">
+				<property name="database" value="rdk" />
+				<property name="serverName" value="bdpnode4:2181,bdpnode5:2181,bdpnode6:2181" />
+				<property name="user" value="root" />
+				<property name="password" value="cloudbase123" />
+			</bean>
+		</property>
+	</bean>
+	-->
 	<bean id="aws"
 		class="com.incadencecorp.coalesce.framework.persistance.ServerConn">
 		<property name="database" value="coalesce" />
@@ -77,5 +100,5 @@
 		<property name="user" value="enterprisedb" />
 		<property name="password" value="enterprisedb" />
 	</bean>
-
+	
 </blueprint>
