@@ -438,12 +438,11 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
 
         SimpleFeatureStore featureSource = (SimpleFeatureStore) geoDataStore.getFeatureSource(NonGeoEntity.getQueryName());
 
-        String filterstring = "GlobalEventID ="+expectedInt.toString();
+        String filterstring = "GlobalEventID ="+
+        		expectedInt.toString();
         Filter filter = CQL.toFilter(filterstring);
 
-        Query query = new Query(NonGeoEntity.getQueryName(), filter);
-
-        FeatureIterator<?> featureItr = featureSource.getFeatures(query).features();
+        FeatureIterator<?> featureItr = featureSource.getFeatures(filter).features();
         assertTrue(featureItr.hasNext());
 
         Feature feature = featureItr.next();

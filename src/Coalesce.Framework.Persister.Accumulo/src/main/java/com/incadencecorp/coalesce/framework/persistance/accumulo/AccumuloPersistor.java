@@ -42,10 +42,12 @@ import org.apache.hadoop.io.Text;
 import org.geotools.data.DataStore;
 import org.geotools.data.DefaultTransaction;
 import org.geotools.data.FeatureSource;
+import org.geotools.data.FeatureWriter;
 import org.geotools.data.Query;
 import org.geotools.data.Transaction;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureStore;
+import org.geotools.data.simple.SimpleFeatureWriter;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.factory.Hints;
 import org.geotools.feature.DefaultFeatureCollection;
@@ -1465,7 +1467,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             throws IOException, CQLException, CoalesceDataFormatException
     {
         boolean updated = false;
-        SimpleFeatureStore store = (SimpleFeatureStore) connect.getGeoDataStore().getFeatureSource(featuresetname);
+        DataStore store = connect.getGeoDataStore();
         FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
         
         FeatureId fid =ff.featureId(record.getKey());
@@ -1475,28 +1477,17 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         // Need to escape the fully qualified column in the feature set for filters
         //Filter filter = CQL.toFilter("\""+featuresetname+".recordKey\" =" + "'" + record.getKey() + "'");
 
-        SimpleFeatureCollection collection = store.getFeatures(filter);
-        int size = collection.size();
-        boolean hasNext = collection.features().hasNext();
-        LOGGER.info("Entity Collection size: {}  hasNext: {}",size,hasNext);
+        FeatureWriter<SimpleFeatureType, SimpleFeature> writer = store.getFeatureWriter(featuresetname, filter, Transaction.AUTO_COMMIT);
         
-        if (hasNext )
+        if (writer.hasNext() )
         {
-        	SimpleFeature thefeature = collection.features().next();
-        	//LOGGER.info("Features found: {}",collection.size());
-        	//collection.features().close();
-        	// Transactions not supported by GEOMESA
-        	Transaction transaction = new DefaultTransaction();
-        	store.setTransaction(transaction);
-        	
-        	List<String> fieldNames  = new ArrayList<String>();       	 
-        	List<Object> fieldVals = new ArrayList();
+        	SimpleFeature toModify = writer.next();
         	String liststring;
             for (CoalesceField<?> field : record.getFields())
             {
                 // update
                 //store.modifyFeatures(field.getName(), field.getValue(), filter);
-            	fieldNames.add(field.getName());
+            	String fieldname = field.getName();
             	Object fieldvalue = field.getValue();
             	switch (field.getDataType()) {
  
@@ -1510,52 +1501,52 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 	                case URI_TYPE:
 	                case LINE_STRING_TYPE:
 	                case POLYGON_TYPE:
-	                    fieldVals.add(fieldvalue);
+	                    toModify.setAttribute(fieldname, fieldvalue);
 	                    break;
 	
 	                case STRING_LIST_TYPE:
 	                    liststring = Arrays.toString((String[]) fieldvalue);
-	                    fieldVals.add(liststring);
+	                    toModify.setAttribute(fieldname, liststring);
 	                    break;
 	                case DOUBLE_LIST_TYPE:
 	                    liststring = Arrays.toString((double[]) fieldvalue);
-	                    fieldVals.add(liststring);
+	                    toModify.setAttribute(fieldname, liststring);
 	                    break;
 	                case INTEGER_LIST_TYPE:
 	                    liststring = Arrays.toString((int[]) fieldvalue);
-	                    fieldVals.add(liststring);
+	                    toModify.setAttribute(fieldname, liststring);
 	                    break;
 	                case LONG_LIST_TYPE:
 	                    liststring = Arrays.toString((long[]) fieldvalue);
-	                    fieldVals.add(liststring);
+	                    toModify.setAttribute(fieldname, liststring);
 	                    break;
 	                case FLOAT_LIST_TYPE:
 	                    liststring = Arrays.toString((float[]) fieldvalue);
-	                    fieldVals.add(liststring);
+	                    toModify.setAttribute(fieldname, liststring);
 	                    break;
 	                case GUID_LIST_TYPE:
 	                    liststring = Arrays.toString((UUID[]) fieldvalue);
-	                    fieldVals.add(liststring);
+	                    toModify.setAttribute(fieldname, liststring);
 	                    break;
 	                case BOOLEAN_LIST_TYPE:
 	
 	                    liststring = Arrays.toString((boolean[]) fieldvalue);
-	                    fieldVals.add(liststring);
+	                    toModify.setAttribute(fieldname, liststring);
 	                    break;
 	
 	                case GUID_TYPE:
 	                    String guid = ((UUID) fieldvalue).toString();
-	                    fieldVals.add(guid);
+	                    toModify.setAttribute(fieldname, guid);
 	                    break;
 	
 	                case GEOCOORDINATE_LIST_TYPE:
 	                    MultiPoint points = new GeometryFactory().createMultiPoint((Coordinate[]) fieldvalue);
-	                    fieldVals.add(points);
+	                    toModify.setAttribute(fieldname, points);
 	                    break;
 	
 	                case GEOCOORDINATE_TYPE:
 	                    Point point = new GeometryFactory().createPoint((Coordinate) fieldvalue);
-	                    fieldVals.add(point);
+	                    toModify.setAttribute(fieldname, point);
 	                    break;
 	
 	
@@ -1569,11 +1560,11 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 	                    factory.setNumPoints(360); // 1 degree points
 	                    factory.setCentre(circle.getCenter());
 	                    Polygon shape = factory.createCircle();
-	                    fieldVals.add(shape);
+	                    toModify.setAttribute(fieldname, shape);
 	                    break;
 	
 	                case DATE_TIME_TYPE:
-	                    fieldVals.add (((DateTime) fieldvalue).toDate());
+	                    toModify.setAttribute(fieldname, ((DateTime) fieldvalue).toDate());
 	                    break;
 	                case FILE_TYPE:
 	                case BINARY_TYPE:
@@ -1581,25 +1572,11 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 	                    break;
             	}
             }
-            
-            try {
-            	store.modifyFeatures( fieldNames.toArray(new String[fieldNames.size()]), fieldVals.toArray(), filter);
-            } catch (IllegalArgumentException e)
-            {
-                LOGGER.error(e.getMessage(), e);
-                updated = false;
+            updated = true;
+        	writer.write();
 
-                return updated;
-            }
-            updated = true; 
-            transaction.commit();
-            transaction.close();
- 
-
-        } //else {
-        //	collection.features().close();
-       // }
-
+        }
+        writer.close();
         
         return updated;
     }
@@ -1607,7 +1584,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             throws IOException, CQLException, CoalesceDataFormatException
     {
         boolean updated = false;
-        SimpleFeatureStore store = (SimpleFeatureStore) connect.getGeoDataStore().getFeatureSource(featuresetname);
+        DataStore store = connect.getGeoDataStore();
         FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
         
         FeatureId fid =ff.featureId(link.getKey());
@@ -1617,24 +1594,16 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         // Need to escape the fully qualified column in the feature set for filters
         //Filter filter = CQL.toFilter("\""+featuresetname+".recordKey\" =" + "'" + record.getKey() + "'");
 
-        SimpleFeatureCollection collection = store.getFeatures(filter);
-        int size = collection.size();
-        boolean hasNext = collection.features().hasNext();
-        LOGGER.info("Linkage Collection size: {}  hasNext: {}",size,hasNext);
+        //SimpleFeatureCollection collection = store.getFeatures(filter);
+        FeatureWriter<SimpleFeatureType, SimpleFeature> writer = store.getFeatureWriter(featuresetname, filter, Transaction.AUTO_COMMIT);
         
-        if (hasNext)
+                
+        if (writer.hasNext())
         {
-        	//LOGGER.info("Found Linkages: {}",collection.size());
-        	SimpleFeature thefeature = collection.features().next();
-//        	if (collection.features().hasNext()) {
-//        		collection.features().close();
-//        	}
-        	// Transactions not supported by GEOMESA
-            Transaction transaction = new DefaultTransaction();
-        	store.setTransaction(transaction);
-        	//SimpleFeature thefeature = collection.features().next();
+ 
+        	SimpleFeature toModify = writer.next();
 
-        	  final String linkfields[] = {
+        	final String linkfields[] = {
         		     LINKAGE_ENTITY1_KEY_COLUMN_NAME,
         		     LINKAGE_ENTITY1_NAME_COLUMN_NAME,
         		     LINKAGE_ENTITY1_SOURCE_COLUMN_NAME, 
@@ -1660,16 +1629,16 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 				link.getLabel(),
 				link.getLinkType()
 				};
-	
+        	for (int i = 0;i<linkfields.length;i++) 
+        	{
+        		toModify.setAttribute(linkfields[i], values[i]);
+        	}
        			
-        	store.modifyFeatures(linkfields, values, filter);
-            updated = true;
-            transaction.commit();
-            transaction.close();
+        	writer.write();
+        
 
-        } //else {
-        //	collection.features().close();
-       // }
+        } 
+        writer.close();
 
         return updated;
     }
