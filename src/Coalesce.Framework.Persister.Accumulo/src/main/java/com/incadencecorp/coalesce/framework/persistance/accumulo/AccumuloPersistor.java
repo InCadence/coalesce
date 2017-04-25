@@ -147,10 +147,10 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
     public static final String LINKAGE_ENTITY1_NAME_COLUMN_NAME = "entity1Name";
     public static final String LINKAGE_ENTITY1_SOURCE_COLUMN_NAME = "entity1Source";
     public static final String LINKAGE_ENTITY1_VERSION_COLUMN_NAME = "entity1Version";
-    public static final String LINKAGE_ENTITY2_KEY_COLUMN_NAME = "entity1Key";
-    public static final String LINKAGE_ENTITY2_NAME_COLUMN_NAME = "entity1Name";
-    public static final String LINKAGE_ENTITY2_SOURCE_COLUMN_NAME = "entity1Source";
-    public static final String LINKAGE_ENTITY2_VERSION_COLUMN_NAME = "entity1Version";
+    public static final String LINKAGE_ENTITY2_KEY_COLUMN_NAME = "entity2Key";
+    public static final String LINKAGE_ENTITY2_NAME_COLUMN_NAME = "entity2Name";
+    public static final String LINKAGE_ENTITY2_SOURCE_COLUMN_NAME = "entity2Source";
+    public static final String LINKAGE_ENTITY2_VERSION_COLUMN_NAME = "entity2Version";
     public static final String LINKAGE_KEY_COLUMN_NAME = "objectKey";
     public static final String LINKAGE_LAST_MODIFIED_COLUMN_NAME = "lastModified";
     public static final String LINKAGE_LINK_TYPE_COLUMN_NAME = "linkType";
