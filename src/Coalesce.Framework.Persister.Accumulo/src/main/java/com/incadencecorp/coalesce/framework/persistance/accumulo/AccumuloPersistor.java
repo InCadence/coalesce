@@ -1076,11 +1076,11 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             {
                 SimpleFeatureStore featureStore = (SimpleFeatureStore) connect.getGeoDataStore().getFeatureSource(entry.getKey());
 //				GEOMESA Does not currently support transactions
-               Transaction transaction = new DefaultTransaction();
-                featureStore.setTransaction(transaction);
+//               Transaction transaction = new DefaultTransaction();
+//                featureStore.setTransaction(transaction);
                 featureStore.addFeatures(entry.getValue());
-                transaction.commit();
-                transaction.close();
+//                transaction.commit();
+//                transaction.close();
                
             }
             catch (IOException | IllegalArgumentException e)
@@ -1450,17 +1450,17 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 
     private void deleteFeatureIfExists(String featuresetname, CoalesceRecord record) throws IOException, CQLException
     {
-        Transaction transaction = new DefaultTransaction();
+//        Transaction transaction = new DefaultTransaction();
         SimpleFeatureStore store = (SimpleFeatureStore) connect.getGeoDataStore().getFeatureSource(featuresetname);
-        store.setTransaction(transaction);
+//        store.setTransaction(transaction);
 
         // Filters need fully qualified column name must be quoted
         Filter filter = CQL.toFilter("recordKey='" + record.getKey() + "'");
 
         store.removeFeatures(filter);
         
-        transaction.commit();
-        transaction.close();
+//        transaction.commit();
+//        transaction.close();
     }
 
     private boolean updateFeatureIfExists(String featuresetname, CoalesceRecord record)
