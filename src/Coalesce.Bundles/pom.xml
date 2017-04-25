@@ -16,6 +16,7 @@
 
 	<modules>
 		<module>bundle-geotools</module>
+		<module>bundle-geomesa</module>
 	</modules>
 
 	<distributionManagement>

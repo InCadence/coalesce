@@ -76,7 +76,7 @@
 
 		<dependency>
 			<groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
-			<artifactId>persister-acumulo-feature</artifactId>
+			<artifactId>persister-accumulo-feature</artifactId>
 			<version>${project.version}</version>
 			<type>xml</type>
 			<classifier>features</classifier>

@@ -4,6 +4,7 @@
 	<feature name="coalesce-example">
 		<feature prerequisite="false" dependency="false">persister-postgres-feature</feature>
 		<feature prerequisite="false" dependency="false">persister-neo4j-feature</feature>
+		<feature prerequisite="false" dependency="false">persister-accumulo-feature</feature>
 		<feature prerequisite="false" dependency="false">coalesce-search-service-feature</feature>
 		<feature prerequisite="false" dependency="false">coalesce-crud-service-feature</feature>
 		<feature prerequisite="false" dependency="false">coalesce-search-service-data-feature</feature>

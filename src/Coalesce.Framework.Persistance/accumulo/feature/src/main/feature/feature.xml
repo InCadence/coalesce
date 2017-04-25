@@ -3,5 +3,9 @@
 	name="coalesce-services">
 	<feature name="${project.artifactId}">
         <feature prerequisite="true" dependency="true">coalesce-core-feature</feature>
+		<bundle>mvn:com.incadencecorp.coalesce.bundles/bundle-geotools/${project.version}
+		</bundle>
+		<bundle>mvn:com.incadencecorp.coalesce.bundles/bundle-geomesa/${project.version}
+		</bundle>
 	</feature>
 </features>
