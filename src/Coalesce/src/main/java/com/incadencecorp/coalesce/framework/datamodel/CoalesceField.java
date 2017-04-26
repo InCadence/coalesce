@@ -29,6 +29,7 @@ import javax.xml.namespace.QName;
 import org.apache.commons.lang.NotImplementedException;
 import org.joda.time.DateTime;
 
+import com.incadencecorp.coalesce.api.CoalesceAttributes;
 import com.incadencecorp.coalesce.common.classification.Marking;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.helpers.FileHelper;
@@ -1025,7 +1026,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
         case ATTRIBUTE_DATA_TYPE:
             setDataType(ECoalesceFieldDataTypes.getTypeForCoalesceType(value));
             return true;
-        case "classificationmarking":
+        case CoalesceAttributes.ATTRIBUTE_MARKING:
             setClassificationMarking(value);
             return true;
         case "label":
@@ -1034,7 +1035,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
         case ATTRIBUTE_VALUE:
             setBaseValue(value);
             return true;
-        case "inputlang":
+        case CoalesceAttributes.ATTRIBUTE_INPUTLANG:
 
             Locale inputLang = LocaleConverter.parseLocale(value);
 

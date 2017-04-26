@@ -265,6 +265,9 @@ public abstract class CoalesceObject implements ICoalesceObject {
 
     }
 
+    /**
+     * Marks the entity as {@link ECoalesceObjectStatus#DELETED}.
+     */
     public void markAsDeleted()
     {
         setStatus(ECoalesceObjectStatus.DELETED);
@@ -618,10 +621,9 @@ public abstract class CoalesceObject implements ICoalesceObject {
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
      * 's @XmlAnyAttribute HashMap.
      * 
-     * @param name Attribute's name
      * @return String, Attribute's value
      */
-    protected final Map<QName, String> getOtherAttributes()
+    public final Map<QName, String> getOtherAttributes()
     {
         return _object.getOtherAttributes();
     }
