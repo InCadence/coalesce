@@ -19,6 +19,8 @@ package com.incadencecorp.coalesce.framework.persistance.postgres;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -322,6 +324,31 @@ public class PostGreSQLRegisterIterator extends CoalesceIterator<CoalesceDataCon
         return false;
     }
 
+    private List<String> getColumnNames(final String tablename, final CoalesceDataConnectorBase conn) throws SQLException
+    {
+        List<String> columnList = new ArrayList<String>();
+
+        ResultSet results = conn.executeQuery(SQL_GET_COLUMN_NAMES,
+                                              new CoalesceParameter(tablename),
+                                              new CoalesceParameter(schema));
+
+        if (results != null)
+        {
+            results.next(); // Skip Object Key
+            results.next(); // Skip Entity Key
+            results.next(); // Skip Entity Name
+            results.next(); // Skip Entity Source
+            results.next(); // Skip Entity Type
+
+            while (results.next())
+            {
+                columnList.add(results.getString(1));
+            }
+        }
+
+        return columnList;
+    }
+
     private void createStoredProcedure(final CoalesceRecordset recordset, final CoalesceDataConnectorBase conn)
             throws SQLException
     {
@@ -329,18 +356,21 @@ public class PostGreSQLRegisterIterator extends CoalesceIterator<CoalesceDataCon
         // Get Parent's information
         CoalesceIndexInfo info = new CoalesceIndexInfo(recordset);
 
+        List<String> columns = getColumnNames(info.getTableName(), conn);
+
         // No; Create
         String update = String.format(UPDATE_FORMAT,
                                       schema + "." + info.getTableName(),
                                       formatBody("\t\t%1$s = ivar%1$s",
                                                  "\t\t%1$s = " + createSpatialFormat("ivar%1$s"),
                                                  "\t\t%1$s = " + createCircleFormat("ivar%1$s"),
-                                                 recordset));
+                                                 recordset,
+                                                 columns));
         String insert = String.format(INSERT_FORMAT,
                                       schema + "." + info.getTableName(),
-                                      formatBody("\t\t%s", recordset),
+                                      formatBody("\t\t%s", recordset, columns),
                                       formatBody("\t\tivar%s", "\t\t" + createSpatialFormat("ivar%s"), "\t\t"
-                                              + createCircleFormat("ivar%1$s"), recordset));
+                                              + createCircleFormat("ivar%1$s"), recordset, columns));
 
         StringBuilder listsBuilder = new StringBuilder();
 
@@ -352,64 +382,46 @@ public class PostGreSQLRegisterIterator extends CoalesceIterator<CoalesceDataCon
         sb.append("ivarentitysource text, ");
         sb.append("ivarentitytype text");
 
-        // Order procedure arguments to match the table.
-        ResultSet results = conn.executeQuery(SQL_GET_COLUMN_NAMES,
-                                              new CoalesceParameter(info.getTableName()),
-                                              new CoalesceParameter(schema));
-
-        if (results != null)
+        for (String field : columns)
         {
+            // Get Field's Definition
+            CoalesceFieldDefinition fieldDefinition = recordset.getFieldDefinition(field);
 
-            results.next(); // Skip Object Key
-            results.next(); // Skip Entity Key
-            results.next(); // Skip Entity Name
-            results.next(); // Skip Entity Source
-            results.next(); // Skip Entity Type
-
-            while (results.next())
+            // Template Contains Definition?
+            if (fieldDefinition != null)
             {
-                String field = results.getString(1);
+                String columnType = getSQLTypeForArgs(fieldDefinition.getDataType());
 
-                // Get Field's Definition
-                CoalesceFieldDefinition fieldDefinition = recordset.getFieldDefinition(field);
-
-                // Template Contains Definition?
-                if (fieldDefinition != null)
+                String fieldName = "ivar" + fieldDefinition.getName();
+                if (columnType != null && fieldDefinition.getFlatten())
                 {
-                    String columnType = getSQLTypeForArgs(fieldDefinition.getDataType());
+                    sb.append(", " + fieldName + " " + columnType);
 
-                    String fieldName = "ivar" + fieldDefinition.getName();
-                    if (columnType != null && fieldDefinition.getFlatten())
-                    {
-                        sb.append(", " + fieldName + " " + columnType);
-
-                        switch (fieldDefinition.getDataType()) {
-                        case CIRCLE_TYPE:
-                            // Add Radius as an Additional Parameter
-                            sb.append(", " + fieldName + "Radius " + getSQLTypeForArgs(ECoalesceFieldDataTypes.DOUBLE_TYPE));
-                            break;
-                        default:
-                            // Do Nothing
-                            break;
-                        }
-
+                    switch (fieldDefinition.getDataType()) {
+                    case CIRCLE_TYPE:
+                        // Add Radius as an Additional Parameter
+                        sb.append(", " + fieldName + "Radius " + getSQLTypeForArgs(ECoalesceFieldDataTypes.DOUBLE_TYPE));
+                        break;
+                    default:
+                        // Do Nothing
+                        break;
                     }
 
-                    String listColumnType = getListFieldSQLType(fieldDefinition.getDataType());
-
-                    if (listColumnType != null && fieldDefinition.getFlatten())
-                    {
-                        listsBuilder.append(String.format("PERFORM coalesce.%s_insertorupdate (ivarentitykey,ivarobjectkey,'%s',%s);\r",
-                                                          fieldDefinition.getDataType().getLabel(),
-                                                          fieldDefinition.getName(),
-                                                          fieldName));
-                    }
                 }
-                else
+
+                String listColumnType = getListFieldSQLType(fieldDefinition.getDataType());
+
+                if (listColumnType != null && fieldDefinition.getFlatten())
                 {
-                    LOGGER.warn("Missing ({})'s Field Definition", field);
+                    listsBuilder.append(String.format("PERFORM coalesce.%s_insertorupdate (ivarentitykey,ivarobjectkey,'%s',%s);\r",
+                                                      fieldDefinition.getDataType().getLabel(),
+                                                      fieldDefinition.getName(),
+                                                      fieldName));
                 }
-
+            }
+            else
+            {
+                LOGGER.warn("Missing ({})'s Field Definition", field);
             }
         }
 
@@ -534,7 +546,7 @@ public class PostGreSQLRegisterIterator extends CoalesceIterator<CoalesceDataCon
 
     }
 
-    private String formatBody(final String format, final CoalesceRecordset recordset)
+    private String formatBody(final String format, final CoalesceRecordset recordset, final List<String> columns)
     {
 
         StringBuilder sb = new StringBuilder();
@@ -545,7 +557,7 @@ public class PostGreSQLRegisterIterator extends CoalesceIterator<CoalesceDataCon
 
             String columnType = getSQLType(fieldDefinition.getDataType(), srid);
 
-            if (columnType != null && fieldDefinition.getFlatten())
+            if (columnType != null && fieldDefinition.getFlatten() && columns.contains(fieldDefinition.getName().toLowerCase()))
             {
                 sb.append(String.format(format + ",\r", fieldDefinition.getName()));
             }
@@ -560,7 +572,11 @@ public class PostGreSQLRegisterIterator extends CoalesceIterator<CoalesceDataCon
         return sb.toString();
     }
 
-    private String formatBody(final String format, String geoFormat, String circleFormat, final CoalesceRecordset recordset)
+    private String formatBody(final String format,
+                              String geoFormat,
+                              String circleFormat,
+                              final CoalesceRecordset recordset,
+                              final List<String> columns)
     {
 
         StringBuilder sb = new StringBuilder();
@@ -572,7 +588,7 @@ public class PostGreSQLRegisterIterator extends CoalesceIterator<CoalesceDataCon
             ECoalesceFieldDataTypes type = fieldDefinition.getDataType();
             String columnType = getSQLType(type, srid);
 
-            if (columnType != null && fieldDefinition.getFlatten())
+            if (columnType != null && fieldDefinition.getFlatten() && columns.contains(fieldDefinition.getName().toLowerCase()))
             {
                 switch (type) {
                 case GEOCOORDINATE_LIST_TYPE:

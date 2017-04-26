@@ -7,6 +7,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.commons.lang.NullArgumentException;
 
+import com.incadencecorp.coalesce.api.CoalesceAttributes;
 import com.incadencecorp.coalesce.common.classification.Marking;
 import com.incadencecorp.coalesce.common.helpers.LocaleConverter;
 
@@ -35,9 +36,64 @@ import com.incadencecorp.coalesce.common.helpers.LocaleConverter;
 public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceLinkage {
 
     /**
+     * Key of the entity this entity is linked to.
+     */
+    public static final String ATTRIBUTE_ENTITY2KEY = "entity2key";
+
+    /**
+     * Name of the entity this entity is linked to.
+     */
+    public static final String ATTRIBUTE_ENTITY2NAME = "entity2name";
+
+    /**
+     * Source of the entity this entity is linked to.
+     */
+    public static final String ATTRIBUTE_ENTITY2SOURCE = "entity2source";
+
+    /**
+     * Model version of the entity this entity is linked to.
+     */
+    public static final String ATTRIBUTE_ENTITY2VERSION = "entity2version";
+
+    /**
+     * Object version of the entity this entity is linked to.
+     */
+    public static final String ATTRIBUTE_ENTITY2OBJECTVERSION = "entity2objectversion";
+
+    /**
+     * Type of linkage
+     */
+    public static final String ATTRIBUTE_LINKTYPE = "linktype";
+
+    /**
+     * Key of this entity
+     */
+    public static final String ATTRIBUTE_ENTITY1KEY = "entity1key";
+
+    /**
+     * Name of this entity
+     */
+    public static final String ATTRIBUTE_ENTITY1NAME = "entity1name";
+
+    /**
+     * Source of this entity
+     */
+    public static final String ATTRIBUTE_ENTITY1SOURCE = "entity1source";
+
+    /**
+     * Model version of this entity
+     */
+    public static final String ATTRIBUTE_ENTITY1VERSION = "entity1version";
+
+    /**
      * Default name for linkage elements.
      */
     public static final String NAME = "Linkage";
+
+    /**
+     * Label assigned to the linkage.
+     */
+    public static final String ATTRIBUTE_LABEL = "label";
 
     private Linkage _entityLinkage;
 
@@ -403,46 +459,47 @@ public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceL
     protected boolean setExtendedAttributes(String name, String value)
     {
         switch (name.toLowerCase()) {
-        case "entity1key":
+        case ATTRIBUTE_ENTITY1KEY:
             setEntity1Key(value);
             return true;
-        case "entity1name":
+        case ATTRIBUTE_ENTITY1NAME:
             setEntity1Name(value);
             return true;
-        case "entity1source":
+        case ATTRIBUTE_ENTITY1SOURCE:
             setEntity1Source(value);
             return true;
-        case "entity1version":
+        case ATTRIBUTE_ENTITY1VERSION:
             setEntity1Version(value);
             return true;
-        case "linktype":
+        case ATTRIBUTE_LINKTYPE:
             ELinkTypes type = ELinkTypes.getTypeForLabel(value);
-            
-            if (type == ELinkTypes.UNDEFINED) {
+
+            if (type == ELinkTypes.UNDEFINED)
+            {
                 type = ELinkTypes.valueOf(value);
             }
-            
+
             setLinkType(type);
             return true;
-        case "entity2key":
+        case ATTRIBUTE_ENTITY2KEY:
             setEntity2Key(value);
             return true;
-        case "entity2name":
+        case ATTRIBUTE_ENTITY2NAME:
             setEntity2Name(value);
             return true;
-        case "entity2source":
+        case ATTRIBUTE_ENTITY2SOURCE:
             setEntity2Source(value);
             return true;
-        case "entity2version":
+        case ATTRIBUTE_ENTITY2VERSION:
             setEntity2Version(value);
             return true;
-        case "entity2objectversion":
+        case ATTRIBUTE_ENTITY2OBJECTVERSION:
             setEntity2ObjectVersion(Integer.valueOf(value));
             return true;
-        case "classificationmarking":
+        case CoalesceAttributes.ATTRIBUTE_MARKING:
             setClassificationMarking(new Marking(value));
             return true;
-        case "inputlang":
+        case CoalesceAttributes.ATTRIBUTE_INPUTLANG:
 
             Locale inputLang = LocaleConverter.parseLocale(value);
 
@@ -451,6 +508,9 @@ public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceL
 
             setInputLang(inputLang);
 
+            return true;
+        case ATTRIBUTE_LABEL:
+            setLabel(value);
             return true;
 
         default:
@@ -471,33 +531,34 @@ public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceL
     {
         Map<QName, String> map = super.getAttributes();
 
-        map.put(new QName("entity1key"), _entityLinkage.getEntity1Key());
-        map.put(new QName("entity1name"), _entityLinkage.getEntity1Name());
-        map.put(new QName("entity1source"), _entityLinkage.getEntity1Source());
-        map.put(new QName("entity1version"), _entityLinkage.getEntity1Version());
-        map.put(new QName("linktype"), _entityLinkage.getLinktype());
-        map.put(new QName("entity2key"), _entityLinkage.getEntity2Key());
-        map.put(new QName("entity2name"), _entityLinkage.getEntity2Name());
-        map.put(new QName("entity2source"), _entityLinkage.getEntity2Source());
-        map.put(new QName("entity2version"), _entityLinkage.getEntity2Version());
-        map.put(new QName("classificationmarking"), _entityLinkage.getClassificationmarking());
+        map.put(new QName(ATTRIBUTE_ENTITY1KEY), _entityLinkage.getEntity1Key());
+        map.put(new QName(ATTRIBUTE_ENTITY1NAME), _entityLinkage.getEntity1Name());
+        map.put(new QName(ATTRIBUTE_ENTITY1SOURCE), _entityLinkage.getEntity1Source());
+        map.put(new QName(ATTRIBUTE_ENTITY1VERSION), _entityLinkage.getEntity1Version());
+        map.put(new QName(ATTRIBUTE_LINKTYPE), _entityLinkage.getLinktype());
+        map.put(new QName(ATTRIBUTE_ENTITY2KEY), _entityLinkage.getEntity2Key());
+        map.put(new QName(ATTRIBUTE_ENTITY2NAME), _entityLinkage.getEntity2Name());
+        map.put(new QName(ATTRIBUTE_ENTITY2SOURCE), _entityLinkage.getEntity2Source());
+        map.put(new QName(ATTRIBUTE_ENTITY2VERSION), _entityLinkage.getEntity2Version());
+        map.put(new QName(ATTRIBUTE_LABEL), _entityLinkage.getLabel());
+        map.put(new QName(CoalesceAttributes.ATTRIBUTE_MARKING), _entityLinkage.getClassificationmarking());
 
         if (_entityLinkage.getEntity2Objectversion() == null)
         {
-            map.put(new QName("entity2objectversion"), "0");
+            map.put(new QName(ATTRIBUTE_ENTITY2OBJECTVERSION), "0");
         }
         else
         {
-            map.put(new QName("entity2objectversion"), Integer.toString(_entityLinkage.getEntity2Objectversion()));
+            map.put(new QName(ATTRIBUTE_ENTITY2OBJECTVERSION), Integer.toString(_entityLinkage.getEntity2Objectversion()));
         }
 
         if (_entityLinkage.getInputlang() == null)
         {
-            map.put(new QName("inputlang"), null);
+            map.put(new QName(CoalesceAttributes.ATTRIBUTE_INPUTLANG), null);
         }
         else
         {
-            map.put(new QName("inputlang"), _entityLinkage.getInputlang().toString());
+            map.put(new QName(CoalesceAttributes.ATTRIBUTE_INPUTLANG), _entityLinkage.getInputlang().toString());
         }
 
         return map;

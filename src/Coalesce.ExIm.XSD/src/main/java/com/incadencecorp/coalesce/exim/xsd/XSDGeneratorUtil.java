@@ -20,10 +20,12 @@ package com.incadencecorp.coalesce.exim.xsd;
 import java.io.File;
 import java.io.IOException;
 import java.security.Principal;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Source;
@@ -37,7 +39,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
+import com.incadencecorp.coalesce.api.CoalesceAttributes;
+import com.incadencecorp.coalesce.api.CoalesceErrors;
+import com.incadencecorp.coalesce.common.helpers.XmlHelper;
 import com.incadencecorp.coalesce.framework.EnumerationProviderUtil;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceCircleField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceConstraint;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
@@ -49,19 +55,96 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
 import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
-import com.incadencecorp.coalesce.framework.enumerationprovider.impl.ConstraintEnumerationProviderImpl;
 
 /**
  * This utility class creates a XSD schema from a {@link CoalesceEntityTemplate}
  * . If the template contains {@link ECoalesceFieldDataTypes#ENUMERATION_TYPE}
  * then you must initialize {@link EnumerationProviderUtil}. .
  * 
+ * TODO Common elements should be imported from a common schema
+ * 
  * @author Derek C.
  * @since Coalesce 0.0.16-SNAPSHOT
  */
 public final class XSDGeneratorUtil {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(XSDGeneratorUtil.class);
+    /*--------------------------------------------------------------------------
+    Regular Expressions
+    --------------------------------------------------------------------------*/
+
+    private static final String REGEX_UUID = "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}";
+    private static final String REGEX_AXIS = "([0-9]*\\.)?[0-9]+";
+    private static final String REGEX_COORD = "\\(?" + REGEX_AXIS + " " + REGEX_AXIS + " (" + REGEX_AXIS + ")?\\)?";
+    private static final String REGEX_MULITPLE = " \\((" + REGEX_COORD + "(, )?){0,20}\\)";
+    private static final String REGEX_POINT = "POINT " + REGEX_COORD;
+    private static final String REGEX_MULTIPOINT = "MULTIPOINT" + REGEX_MULITPLE;
+    private static final String REGEX_POLYGON = "POLYGON" + REGEX_MULITPLE;
+    private static final String REGEX_LINESTRING = "LINESTRING" + REGEX_MULITPLE;
+
+    /*--------------------------------------------------------------------------
+    Attribute Names
+    --------------------------------------------------------------------------*/
+
+    private static final String ATTRIBUTE_REF = "ref";
+    private static final String ATTRIBUTE_BASE = "base";
+    private static final String ATTRIBUTE_NAME = "name";
+    private static final String ATTRIBUTE_TYPE = "type";
+    private static final String ATTRIBUTE_VALUE = "value";
+    private static final String ATTRIBUTE_FIXED = "fixed";
+    private static final String ATTRIBUTE_USE = "use";
+    private static final String ATTRIBUTE_DEFAULT = "default";
+    private static final String ATTRIBUTE_MIN_OCCURS = "minOccurs";
+    private static final String ATTRIBUTE_MAX_OCCURS = "maxOccurs";
+
+    /*--------------------------------------------------------------------------
+    Name Spaces
+    --------------------------------------------------------------------------*/
+
+    private static final String NS_TARGET = "tns";
+    private static final String NS_XML = "xs";
+    private static final String NS_XML_URI = "http://www.w3.org/2001/XMLSchema";
+
+    /*--------------------------------------------------------------------------
+    Element Types
+    --------------------------------------------------------------------------*/
+
+    private static final String COMPLEX_TYPE = "complexType";
+    private static final String SIMPLE_TYPE = "simpleType";
+    private static final String ELEMENT_TYPE = "element";
+
+    /*--------------------------------------------------------------------------
+    Data Types
+    --------------------------------------------------------------------------*/
+
+    private static final String CDS_STRING_TYPE = "cdsString";
+    private static final String CDS_STRING_TYPE_NS = NS_TARGET + ":" + CDS_STRING_TYPE;
+
+    private static final String STRING_TYPE = "string";
+    private static final String STRING_TYPE_NS = NS_XML + ":" + STRING_TYPE;
+
+    private static final String LINKAGE_TYPE = CoalesceLinkageSection.NAME;
+    private static final String LINKAGE_TYPE_NS = NS_TARGET + ":" + LINKAGE_TYPE;
+
+    private static final String UUID_TYPE = ECoalesceFieldDataTypes.GUID_TYPE.getLabel();
+    private static final String UUID_TYPE_NS = NS_TARGET + ":" + UUID_TYPE;
+
+    private static final String POINT_TYPE = ECoalesceFieldDataTypes.GEOCOORDINATE_TYPE.getLabel();
+    private static final String POINT_TYPE_NS = NS_TARGET + ":" + POINT_TYPE;
+
+    private static final String MULTIPOINT_TYPE = ECoalesceFieldDataTypes.GEOCOORDINATE_LIST_TYPE.getLabel();
+    private static final String MULTIPOINT_TYPE_NS = NS_TARGET + ":" + MULTIPOINT_TYPE;
+
+    private static final String CIRCLE_TYPE = ECoalesceFieldDataTypes.CIRCLE_TYPE.getLabel();
+    private static final String CIRCLE_TYPE_NS = NS_TARGET + ":" + CIRCLE_TYPE;
+
+    private static final String POLYGON_TYPE = ECoalesceFieldDataTypes.POLYGON_TYPE.getLabel();
+    private static final String POLYGON_TYPE_NS = NS_TARGET + ":" + POLYGON_TYPE;
+
+    private static final String LINESTRING_TYPE = ECoalesceFieldDataTypes.LINE_STRING_TYPE.getLabel();
+    private static final String LINESTRING_TYPE_NS = NS_TARGET + ":" + LINESTRING_TYPE;
+
+    private static final String STATUS_TYPE = ECoalesceObjectStatus.class.getSimpleName();
+    private static final String STATUS_TYPE_NS = NS_TARGET + ":" + STATUS_TYPE;
 
     /*--------------------------------------------------------------------------
     Private Members
@@ -69,32 +152,12 @@ public final class XSDGeneratorUtil {
 
     private static final String UNBOUNDED = Integer.toString(5000);
 
-    private static final String ATTRIBUTE_REF = "ref";
-    private static final String ATTRIBUTE_BASE = "base";
-    private static final String ATTRIBUTE_NAME = "name";
-    private static final String ATTRIBUTE_TYPE = "type";
-    private static final String ATTRIBUTE_VALUE = "value";
-    private static final String ATTRIBUTE_USE = "use";
-    private static final String ATTRIBUTE_DEFAULT = "default";
+    private static final List<String> ATTRIBUTES_TO_OMIT = Arrays.asList(new String[] {
+        CoalesceEntity.ATTRIBUTE_CLASSNAME,
+    });
+    private static final int MAX_STRING_SIZE = 20;
 
-    private static final String NS_TARGET = "tns";
-    private static final String NS_XML = "xs";
-    private static final String NS_XML_URI = "http://www.w3.org/2001/XMLSchema";
-
-    private static final String COMPLEX_TYPE = "complexType";
-    private static final String SIMPLE_TYPE = "simpleType";
-    private static final String ELEMENT_TYPE = "element";
-
-    private static final String CDS_STRING_TYPE = "cdsString";
-    private static final String CDS_STRING_TYPE_NS = NS_TARGET + ":" + CDS_STRING_TYPE;
-
-    private static final String LINKAGE_TYPE_NS = NS_TARGET + ":" + CoalesceLinkageSection.NAME;
-
-    private static final String UUID_TYPE = "uuid";
-    private static final String UUID_TYPE_NS = NS_TARGET + ":" + UUID_TYPE;
-
-    private static final String STATUS_TYPE = ECoalesceObjectStatus.class.getSimpleName();
-    private static final String STATUS_TYPE_NS = NS_TARGET + ":" + STATUS_TYPE;
+    private static final Logger LOGGER = LoggerFactory.getLogger(XSDGeneratorUtil.class);
 
     /*--------------------------------------------------------------------------
     Default Constructor
@@ -143,8 +206,41 @@ public final class XSDGeneratorUtil {
 
         createComplexType(principal, doc, entity);
 
-        return doc;
+        try
+        {
+            // TODO Something with how the Document is created prevents it from
+            // being used as a DOMSource. Serializing it and Deserializing it
+            // appears to resolve the issue at a performance hit. It would be
+            // nice to remove this step.
+            return XmlHelper.loadXmlFrom(XmlHelper.formatXml(doc));
+        }
+        catch (SAXException | IOException e)
+        {
+            throw new ParserConfigurationException(e.getMessage());
+        }
 
+    }
+
+    /**
+     * Validates the XML against a schema and throws an exception on an error.
+     * 
+     * @param xsd
+     * @param xml
+     * @throws IllegalArgumentException if the XML is invalid
+     */
+    public static void validateXMLSchema(Source xsd, Source xml) throws IllegalArgumentException
+    {
+        try
+        {
+            SchemaFactory factory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
+            Schema schema = factory.newSchema(xsd);
+            Validator validator = schema.newValidator();
+            validator.validate(xml);
+        }
+        catch (SAXException | IOException e)
+        {
+            throw new IllegalArgumentException("Invalid Entity XML", e);
+        }
     }
 
     /**
@@ -163,7 +259,7 @@ public final class XSDGeneratorUtil {
             Validator validator = schema.newValidator();
             validator.validate(xml);
         }
-        catch (IOException | SAXException e)
+        catch (SAXException | IOException e)
         {
             throw new IllegalArgumentException("Invalid Entity XML", e);
         }
@@ -234,7 +330,14 @@ public final class XSDGeneratorUtil {
         doc.getFirstChild().appendChild(createEnumeration(doc, ELinkTypes.class));
         doc.getFirstChild().appendChild(createBaseType(doc));
         doc.getFirstChild().appendChild(createBaseStringType(doc));
-        doc.getFirstChild().appendChild(createUUIDType(doc));
+
+        addDataType(doc, UUID_TYPE, REGEX_UUID, 36);
+        addDataType(doc, POINT_TYPE, REGEX_POINT);
+        addDataType(doc, MULTIPOINT_TYPE, REGEX_MULTIPOINT);
+        addDataType(doc, POLYGON_TYPE, REGEX_POLYGON);
+        addDataType(doc, LINESTRING_TYPE, REGEX_LINESTRING);
+        addCircleType(doc);
+
         createComplexTypeLinkage(doc);
     }
 
@@ -246,7 +349,7 @@ public final class XSDGeneratorUtil {
 
         Element restriction = doc.createElementNS(NS_XML_URI, "restriction");
         restriction.setPrefix(NS_XML);
-        restriction.setAttribute(ATTRIBUTE_BASE, NS_XML + ":string");
+        restriction.setAttribute(ATTRIBUTE_BASE, STRING_TYPE_NS);
         element.appendChild(restriction);
 
         for (Iterator<E> it = EnumSet.allOf(clazz).iterator(); it.hasNext();)
@@ -271,7 +374,7 @@ public final class XSDGeneratorUtil {
         // Entity Key
         attribute = doc.createElementNS(NS_XML_URI, "attribute");
         attribute.setPrefix(NS_XML);
-        attribute.setAttribute(ATTRIBUTE_NAME, "key");
+        attribute.setAttribute(ATTRIBUTE_NAME, CoalesceEntity.ATTRIBUTE_KEY);
         attribute.setAttribute(ATTRIBUTE_TYPE, UUID_TYPE_NS);
         attribute.setAttribute(ATTRIBUTE_USE, "required");
         type.appendChild(attribute);
@@ -279,21 +382,21 @@ public final class XSDGeneratorUtil {
         // Date Created
         attribute = doc.createElementNS(NS_XML_URI, "attribute");
         attribute.setPrefix(NS_XML);
-        attribute.setAttribute(ATTRIBUTE_NAME, "datecreated");
+        attribute.setAttribute(ATTRIBUTE_NAME, CoalesceEntity.ATTRIBUTE_DATECREATED);
         attribute.setAttribute(ATTRIBUTE_TYPE, NS_XML + ":dateTime");
         type.appendChild(attribute);
 
         // Last Modified
         attribute = doc.createElementNS(NS_XML_URI, "attribute");
         attribute.setPrefix(NS_XML);
-        attribute.setAttribute(ATTRIBUTE_NAME, "lastmodified");
+        attribute.setAttribute(ATTRIBUTE_NAME, CoalesceEntity.ATTRIBUTE_LASTMODIFIED);
         attribute.setAttribute(ATTRIBUTE_TYPE, NS_XML + ":dateTime");
         type.appendChild(attribute);
 
         // Status
         attribute = doc.createElementNS(NS_XML_URI, "attribute");
         attribute.setPrefix(NS_XML);
-        attribute.setAttribute(ATTRIBUTE_NAME, "status");
+        attribute.setAttribute(ATTRIBUTE_NAME, CoalesceEntity.ATTRIBUTE_STATUS);
         attribute.setAttribute(ATTRIBUTE_TYPE, STATUS_TYPE_NS);
         attribute.setAttribute(ATTRIBUTE_DEFAULT, ECoalesceObjectStatus.ACTIVE.toString());
         type.appendChild(attribute);
@@ -311,42 +414,73 @@ public final class XSDGeneratorUtil {
 
         Element restriction = doc.createElementNS(NS_XML_URI, "restriction");
         restriction.setPrefix(NS_XML);
-        restriction.setAttribute(ATTRIBUTE_BASE, NS_XML + ":string");
+        restriction.setAttribute(ATTRIBUTE_BASE, STRING_TYPE_NS);
         type.appendChild(restriction);
 
         Element pattern = doc.createElementNS(NS_XML_URI, "maxLength");
         pattern.setPrefix(NS_XML);
-        pattern.setAttribute(ATTRIBUTE_VALUE, Integer.toString(20));
+        pattern.setAttribute(ATTRIBUTE_VALUE, Integer.toString(MAX_STRING_SIZE));
 
         restriction.appendChild(pattern);
 
         return type;
     }
 
-    private static Element createUUIDType(Document doc)
+    private static void addDataType(Document doc, String name, String regex)
+    {
+        addDataType(doc, name, regex, 0);
+    }
+
+    private static void addDataType(Document doc, String name, String regex, int maxlength)
     {
         Element type = doc.createElementNS(NS_XML_URI, SIMPLE_TYPE);
         type.setPrefix(NS_XML);
-        type.setAttribute(ATTRIBUTE_NAME, UUID_TYPE);
+        type.setAttribute(ATTRIBUTE_NAME, name);
 
         Element restriction = doc.createElementNS(NS_XML_URI, "restriction");
         restriction.setPrefix(NS_XML);
-        restriction.setAttribute(ATTRIBUTE_BASE, NS_XML + ":string");
+        restriction.setAttribute(ATTRIBUTE_BASE, STRING_TYPE_NS);
 
-        // Element length = doc.createElementNS(NS_XML_URI, "length");
-        // length.setPrefix(NS_XML);
-        // length.setAttribute(ATTRIBUTE_VALUE, Integer.toString(36));
+        createRestrictionRegEx(doc, restriction, regex);
 
-        Element pattern = doc.createElementNS(NS_XML_URI, "pattern");
-        pattern.setPrefix(NS_XML);
-        pattern.setAttribute(ATTRIBUTE_VALUE,
-                             "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[8-9a-bA-B][0-9a-fA-F]{3}-[0-9a-fA-F]{12}");
+        if (maxlength != 0)
+        {
+            Element pattern = doc.createElementNS(NS_XML_URI, "maxLength");
+            pattern.setPrefix(NS_XML);
+            pattern.setAttribute(ATTRIBUTE_VALUE, Integer.toString(maxlength));
 
-        // restriction.appendChild(length);
-        restriction.appendChild(pattern);
+            restriction.appendChild(pattern);
+        }
+
         type.appendChild(restriction);
 
-        return type;
+        doc.getFirstChild().appendChild(type);
+    }
+
+    private static void addCircleType(Document doc)
+    {
+        Element type = doc.createElementNS(NS_XML_URI, COMPLEX_TYPE);
+        type.setPrefix(NS_XML);
+        type.setAttribute(ATTRIBUTE_NAME, CIRCLE_TYPE);
+
+        Element sequence = doc.createElementNS(NS_XML_URI, "sequence");
+        sequence.setPrefix(NS_XML);
+
+        Element center = doc.createElementNS(NS_XML_URI, ELEMENT_TYPE);
+        center.setPrefix(NS_XML);
+        center.setAttribute(ATTRIBUTE_NAME, "center");
+        center.setAttribute(ATTRIBUTE_TYPE, getXSDType(ECoalesceFieldDataTypes.GEOCOORDINATE_TYPE));
+
+        Element radius = doc.createElementNS(NS_XML_URI, ELEMENT_TYPE);
+        radius.setPrefix(NS_XML);
+        radius.setAttribute(ATTRIBUTE_NAME, CoalesceCircleField.ATTRIBUTE_RADIUS);
+        radius.setAttribute(ATTRIBUTE_TYPE, getXSDType(ECoalesceFieldDataTypes.DOUBLE_TYPE));
+
+        sequence.appendChild(center);
+        sequence.appendChild(radius);
+
+        type.appendChild(sequence);
+        doc.getFirstChild().appendChild(type);
     }
 
     private static void createComplexTypeLinkage(Document doc)
@@ -356,30 +490,43 @@ public final class XSDGeneratorUtil {
         Element linkageSequence = createBaseComplexType(doc, sequence, CoalesceLinkage.NAME, "all");
 
         Element linkage = (Element) sequence.getFirstChild();
-        linkage.setAttribute("minOccurs", "0");
-        linkage.setAttribute("maxOccurs", UNBOUNDED);
+        linkage.setAttribute(ATTRIBUTE_MIN_OCCURS, "0");
+        linkage.setAttribute(ATTRIBUTE_MAX_OCCURS, UNBOUNDED);
 
-        createSimpleElement(doc, linkageSequence, "entity1key", UUID_TYPE_NS);
-        createSimpleElement(doc, linkageSequence, "entity1name", CDS_STRING_TYPE_NS);
-        createSimpleElement(doc, linkageSequence, "entity1source", CDS_STRING_TYPE_NS);
-        createSimpleElement(doc, linkageSequence, "entity1version", CDS_STRING_TYPE_NS);
-        createSimpleElement(doc, linkageSequence, "linktype", NS_TARGET + ":" + ELinkTypes.class.getSimpleName());
-        createSimpleElement(doc, linkageSequence, "entity2key", UUID_TYPE_NS);
-        createSimpleElement(doc, linkageSequence, "entity2name", CDS_STRING_TYPE_NS);
-        createSimpleElement(doc, linkageSequence, "entity2source", CDS_STRING_TYPE_NS);
-        createSimpleElement(doc, linkageSequence, "entity2version", CDS_STRING_TYPE_NS);
-        createSimpleElement(doc, linkageSequence, "entity2objectversion", CDS_STRING_TYPE_NS);
-        createSimpleElement(doc, linkageSequence, "classificationmarking", CDS_STRING_TYPE_NS);
-        createSimpleElement(doc, linkageSequence, "label", CDS_STRING_TYPE_NS);
+        createSimpleElement(doc, linkageSequence, CoalesceLinkage.ATTRIBUTE_ENTITY1KEY, UUID_TYPE_NS);
+        createSimpleElement(doc, linkageSequence, CoalesceLinkage.ATTRIBUTE_ENTITY1NAME, CDS_STRING_TYPE_NS, true);
+        createSimpleElement(doc, linkageSequence, CoalesceLinkage.ATTRIBUTE_ENTITY1SOURCE, CDS_STRING_TYPE_NS, true);
+        createSimpleElement(doc, linkageSequence, CoalesceLinkage.ATTRIBUTE_ENTITY1VERSION, CDS_STRING_TYPE_NS, true);
+        createSimpleElement(doc,
+                            linkageSequence,
+                            CoalesceLinkage.ATTRIBUTE_LINKTYPE,
+                            NS_TARGET + ":" + ELinkTypes.class.getSimpleName());
+        createSimpleElement(doc, linkageSequence, CoalesceLinkage.ATTRIBUTE_ENTITY2KEY, UUID_TYPE_NS);
+        createSimpleElement(doc, linkageSequence, CoalesceLinkage.ATTRIBUTE_ENTITY2NAME, CDS_STRING_TYPE_NS, true);
+        createSimpleElement(doc, linkageSequence, CoalesceLinkage.ATTRIBUTE_ENTITY2SOURCE, CDS_STRING_TYPE_NS, true);
+        createSimpleElement(doc, linkageSequence, CoalesceLinkage.ATTRIBUTE_ENTITY2VERSION, CDS_STRING_TYPE_NS, true);
+        createSimpleElement(doc, linkageSequence, CoalesceLinkage.ATTRIBUTE_ENTITY2OBJECTVERSION, NS_XML + ":int");
+        createSimpleElement(doc, linkageSequence, CoalesceAttributes.ATTRIBUTE_MARKING, CDS_STRING_TYPE_NS, true);
+        createSimpleElement(doc, linkageSequence, CoalesceLinkage.ATTRIBUTE_LABEL, CDS_STRING_TYPE_NS, true);
     }
 
     private static void createSimpleElement(Document doc, Element node, String name, String type)
+    {
+        createSimpleElement(doc, node, name, type, false);
+    }
+
+    private static void createSimpleElement(Document doc, Element node, String name, String type, boolean isOptional)
     {
         Element element;
         element = doc.createElementNS(NS_XML_URI, ELEMENT_TYPE);
         element.setPrefix(NS_XML);
         element.setAttribute(ATTRIBUTE_NAME, name);
         element.setAttribute(ATTRIBUTE_TYPE, type);
+
+        if (isOptional)
+        {
+            element.setAttribute(ATTRIBUTE_MIN_OCCURS, "0");
+        }
 
         node.appendChild(element);
     }
@@ -392,7 +539,8 @@ public final class XSDGeneratorUtil {
         Element linkage = doc.createElementNS(NS_XML_URI, ELEMENT_TYPE);
         linkage.setPrefix(NS_XML);
         linkage.setAttribute(ATTRIBUTE_REF, LINKAGE_TYPE_NS);
-        linkage.setAttribute("minOccurs", "0");
+        linkage.setAttribute(ATTRIBUTE_MIN_OCCURS, "0");
+        linkage.setAttribute(ATTRIBUTE_MAX_OCCURS, "1");
 
         sequence.appendChild(linkage);
 
@@ -403,7 +551,8 @@ public final class XSDGeneratorUtil {
             Element reference = doc.createElementNS(NS_XML_URI, ELEMENT_TYPE);
             reference.setPrefix(NS_XML);
             reference.setAttribute(ATTRIBUTE_REF, NS_TARGET + ":" + normalize(section.getName()));
-            reference.setAttribute("minOccurs", "0");
+            reference.setAttribute(ATTRIBUTE_MIN_OCCURS, "0");
+            reference.setAttribute(ATTRIBUTE_MAX_OCCURS, "1");
 
             sequence.appendChild(reference);
 
@@ -415,24 +564,24 @@ public final class XSDGeneratorUtil {
         attribute = doc.createElementNS(NS_XML_URI, "attribute");
         attribute.setPrefix(NS_XML);
         attribute.setAttribute(ATTRIBUTE_NAME, CoalesceEntity.ATTRIBUTE_NAME);
-        attribute.setAttribute(ATTRIBUTE_TYPE, CDS_STRING_TYPE_NS);
-        attribute.setAttribute(ATTRIBUTE_USE, "required");
+        attribute.setAttribute(ATTRIBUTE_TYPE, STRING_TYPE_NS);
+        attribute.setAttribute(ATTRIBUTE_FIXED, entity.getName());
         sequence.getParentNode().appendChild(attribute);
 
         // Source
         attribute = doc.createElementNS(NS_XML_URI, "attribute");
         attribute.setPrefix(NS_XML);
         attribute.setAttribute(ATTRIBUTE_NAME, CoalesceEntity.ATTRIBUTE_SOURCE);
-        attribute.setAttribute(ATTRIBUTE_TYPE, CDS_STRING_TYPE_NS);
-        attribute.setAttribute(ATTRIBUTE_USE, "required");
+        attribute.setAttribute(ATTRIBUTE_TYPE, STRING_TYPE_NS);
+        attribute.setAttribute(ATTRIBUTE_FIXED, entity.getSource());
         sequence.getParentNode().appendChild(attribute);
 
         // Version
         attribute = doc.createElementNS(NS_XML_URI, "attribute");
         attribute.setPrefix(NS_XML);
         attribute.setAttribute(ATTRIBUTE_NAME, CoalesceEntity.ATTRIBUTE_VERSION);
-        attribute.setAttribute(ATTRIBUTE_TYPE, CDS_STRING_TYPE_NS);
-        attribute.setAttribute(ATTRIBUTE_USE, "required");
+        attribute.setAttribute(ATTRIBUTE_TYPE, STRING_TYPE_NS);
+        attribute.setAttribute(ATTRIBUTE_FIXED, entity.getVersion());
         sequence.getParentNode().appendChild(attribute);
 
         // Entity ID
@@ -456,6 +605,19 @@ public final class XSDGeneratorUtil {
         attribute.setAttribute(ATTRIBUTE_TYPE, CDS_STRING_TYPE_NS);
         sequence.getParentNode().appendChild(attribute);
 
+        for (QName qname : entity.getOtherAttributes().keySet())
+        {
+            if (!ATTRIBUTES_TO_OMIT.contains(qname.getLocalPart()))
+            {
+                // Type
+                attribute = doc.createElementNS(NS_XML_URI, "attribute");
+                attribute.setPrefix(NS_XML);
+                attribute.setAttribute(ATTRIBUTE_NAME, qname.getLocalPart());
+                attribute.setAttribute(ATTRIBUTE_TYPE, CDS_STRING_TYPE_NS);
+                sequence.getParentNode().appendChild(attribute);
+            }
+        }
+
         createBaseElements(doc);
     }
 
@@ -466,6 +628,14 @@ public final class XSDGeneratorUtil {
         for (CoalesceSection subSection : section.getSectionsAsList())
         {
             createComplexType(principal, doc, subSection);
+
+            Element reference = doc.createElementNS(NS_XML_URI, ELEMENT_TYPE);
+            reference.setPrefix(NS_XML);
+            reference.setAttribute(ATTRIBUTE_REF, NS_TARGET + ":" + normalize(subSection.getName()));
+            reference.setAttribute(ATTRIBUTE_MIN_OCCURS, "0");
+            reference.setAttribute(ATTRIBUTE_MAX_OCCURS, "1");
+
+            sequence.appendChild(reference);
         }
 
         for (CoalesceRecordset recordset : section.getRecordsetsAsList())
@@ -476,7 +646,8 @@ public final class XSDGeneratorUtil {
             Element reference = doc.createElementNS(NS_XML_URI, ELEMENT_TYPE);
             reference.setPrefix(NS_XML);
             reference.setAttribute(ATTRIBUTE_REF, NS_TARGET + ":" + normalize(recordset.getName()));
-            reference.setAttribute("minOccurs", "0");
+            reference.setAttribute(ATTRIBUTE_MIN_OCCURS, "0");
+            reference.setAttribute(ATTRIBUTE_MAX_OCCURS, "1");
 
             sequence.appendChild(reference);
         }
@@ -490,10 +661,6 @@ public final class XSDGeneratorUtil {
         String recordName = normalize(recordset.getName() + "Record");
 
         Element recordSequence = createBaseComplexType(doc, sequence, recordName, "all");
-        // Element recordRef = doc.createElementNS(NS_XML_URI, ELEMENT_TYPE);
-        // recordRef.setPrefix(NS_XML);
-        // recordRef.setAttribute(ATTRIBUTE_REF, NS_TARGET + ":" + recordName);
-        // sequence.appendChild(recordRef);
 
         for (CoalesceFieldDefinition definition : recordset.getFieldDefinitions())
         {
@@ -502,19 +669,19 @@ public final class XSDGeneratorUtil {
 
         Element record = (Element) sequence.getFirstChild();
 
-        record.setAttribute("minOccurs", Integer.toString(recordset.getMinRecords()));
+        record.setAttribute(ATTRIBUTE_MIN_OCCURS, Integer.toString(recordset.getMinRecords()));
 
         if (recordset.getMinRecords() != 1 || recordset.getMaxRecords() != 1)
         {
-            record.setAttribute("minOccurs", Integer.toString(recordset.getMinRecords()));
+            record.setAttribute(ATTRIBUTE_MIN_OCCURS, Integer.toString(recordset.getMinRecords()));
 
             if (recordset.getMaxRecords() == 0)
             {
-                record.setAttribute("maxOccurs", UNBOUNDED);
+                record.setAttribute(ATTRIBUTE_MAX_OCCURS, UNBOUNDED);
             }
             else
             {
-                record.setAttribute("maxOccurs", Integer.toString(recordset.getMaxRecords()));
+                record.setAttribute(ATTRIBUTE_MAX_OCCURS, Integer.toString(recordset.getMaxRecords()));
             }
         }
     }
@@ -540,15 +707,14 @@ public final class XSDGeneratorUtil {
             values.setPrefix(NS_XML);
             values.setAttribute(ATTRIBUTE_NAME, "values");
             values.setAttribute(ATTRIBUTE_TYPE, getXSDType(definition));
-            values.setAttribute("maxOccurs", UNBOUNDED);
-            values.setAttribute("minOccurs", "0");
+            values.setAttribute(ATTRIBUTE_MAX_OCCURS, UNBOUNDED);
+            values.setAttribute(ATTRIBUTE_MIN_OCCURS, "0");
 
             field.appendChild(type);
             type.appendChild(sequence);
             sequence.appendChild(values);
 
             isMandatory = createRestrictions(principal, doc, definition, values);
-
         }
         else
         {
@@ -558,7 +724,7 @@ public final class XSDGeneratorUtil {
 
         if (!isMandatory)
         {
-            field.setAttribute("minOccurs", "0");
+            field.setAttribute(ATTRIBUTE_MIN_OCCURS, "0");
         }
 
         return field;
@@ -610,12 +776,82 @@ public final class XSDGeneratorUtil {
 
     }
 
+    /**
+     * @param value
+     * @return a normalized value for cross domaining treating it as a
+     *         {@link ECoalesceFieldDataTypes#STRING_TYPE}.
+     */
+    public static String getCDSValue(String value)
+    {
+        return getCDSValue(ECoalesceFieldDataTypes.STRING_TYPE, value);
+    }
+
+    /**
+     * @param type
+     * @param value
+     * @return a normalized value for cross domaining.
+     */
+    public static String getCDSValue(ECoalesceFieldDataTypes type, String value)
+    {
+        String result;
+
+        switch (type) {
+        case BOOLEAN_LIST_TYPE:
+        case BOOLEAN_TYPE:
+        case DATE_TIME_TYPE:
+        case DOUBLE_LIST_TYPE:
+        case DOUBLE_TYPE:
+        case FLOAT_LIST_TYPE:
+        case FLOAT_TYPE:
+        case INTEGER_LIST_TYPE:
+        case INTEGER_TYPE:
+        case ENUMERATION_TYPE:
+        case ENUMERATION_LIST_TYPE:
+        case LONG_LIST_TYPE:
+        case LONG_TYPE:
+        case BINARY_TYPE:
+        case GUID_LIST_TYPE:
+        case GUID_TYPE:
+        case LINE_STRING_TYPE:
+        case CIRCLE_TYPE:
+        case POLYGON_TYPE:
+        case GEOCOORDINATE_LIST_TYPE:
+        case GEOCOORDINATE_TYPE:
+            // Do Nothing
+            result = value;
+            break;
+        case STRING_LIST_TYPE:
+        case STRING_TYPE:
+        case URI_TYPE:
+        case FILE_TYPE:
+        default:
+            if (value != null && value.length() > MAX_STRING_SIZE)
+            {
+                result = value.substring(0, MAX_STRING_SIZE);
+                LOGGER.warn(String.format(CoalesceErrors.INVALID_INPUT_EXCEEDS, "max length", value));
+            }
+            else
+            {
+                result = value;
+            }
+            break;
+
+        }
+
+        return result;
+    }
+
     private static String getXSDType(CoalesceFieldDefinition definition)
+    {
+        return getXSDType(definition.getDataType());
+    }
+
+    private static String getXSDType(ECoalesceFieldDataTypes type)
     {
 
         String result;
 
-        switch (definition.getDataType()) {
+        switch (type) {
         case BOOLEAN_LIST_TYPE:
         case BOOLEAN_TYPE:
             result = NS_XML + ":boolean";
@@ -646,17 +882,27 @@ public final class XSDGeneratorUtil {
             break;
         case GUID_LIST_TYPE:
         case GUID_TYPE:
-            result = NS_TARGET + ":uuid";
+            result = UUID_TYPE_NS;
             break;
         case LINE_STRING_TYPE:
+            result = LINESTRING_TYPE_NS;
+            break;
         case CIRCLE_TYPE:
+            result = CIRCLE_TYPE_NS;
+            break;
         case POLYGON_TYPE:
+            result = POLYGON_TYPE_NS;
+            break;
+        case GEOCOORDINATE_LIST_TYPE:
+            result = MULTIPOINT_TYPE_NS;
+            break;
+        case GEOCOORDINATE_TYPE:
+            result = POINT_TYPE_NS;
+            break;
         case STRING_LIST_TYPE:
         case STRING_TYPE:
         case URI_TYPE:
         case FILE_TYPE:
-        case GEOCOORDINATE_LIST_TYPE:
-        case GEOCOORDINATE_TYPE:
         default:
             result = CDS_STRING_TYPE_NS;
             break;
@@ -673,93 +919,71 @@ public final class XSDGeneratorUtil {
     {
         boolean isMandatory = false;
 
-        if (definition.getConstraints().size() > 0)
+        String name = definition.getName() + "Type";
+
+        // Create a Pattern Facet
+        Element restriction = doc.createElementNS(NS_XML_URI, "restriction");
+        restriction.setPrefix(NS_XML);
+        restriction.setAttribute(ATTRIBUTE_BASE, getXSDType(definition));
+
+        for (CoalesceConstraint constraint : definition.getConstraints())
         {
-            String name = definition.getName() + "Type";
 
-            // Create a Pattern Facet
-            Element statusEnumeration = doc.createElementNS(NS_XML_URI, SIMPLE_TYPE);
-            statusEnumeration.setPrefix(NS_XML);
-            statusEnumeration.setAttribute(ATTRIBUTE_NAME, name);
-            doc.getFirstChild().appendChild(statusEnumeration);
+            switch (constraint.getConstraintType()) {
+            case CUSTOM:
+                // Ignore
+                break;
+            case ENUMERATION:
 
-            Element restriction = doc.createElementNS(NS_XML_URI, "restriction");
-            restriction.setPrefix(NS_XML);
-            restriction.setAttribute(ATTRIBUTE_BASE, getXSDType(definition));
-            statusEnumeration.appendChild(restriction);
-
-            node.setAttribute(ATTRIBUTE_TYPE, NS_TARGET + ":" + name);
-
-            for (CoalesceConstraint constraint : definition.getConstraints())
-            {
-
-                switch (constraint.getConstraintType()) {
-                case CUSTOM:
-                    // Ignore
+                switch (definition.getDataType()) {
+                case ENUMERATION_LIST_TYPE:
+                case ENUMERATION_TYPE:
+                    createRestrictionMin(doc, restriction, true, "0");
                     break;
-                case ENUMERATION:
-
-                    switch (definition.getDataType()) {
-                    case ENUMERATION_LIST_TYPE:
-                    case ENUMERATION_TYPE:
-                        Integer maxValue;
-
-                        ConstraintEnumerationProviderImpl provider = EnumerationProviderUtil.getProvider(ConstraintEnumerationProviderImpl.class);
-                        if (provider != null)
-                        {
-                            provider.add(constraint);
-                        }
-
-                        try
-                        {
-                            maxValue = EnumerationProviderUtil.getValues(principal, constraint.getValue()).size() - 1;
-                        }
-                        catch (IllegalArgumentException e)
-                        {
-                            LOGGER.warn("({}) ({}) ({}): ({})",
-                                        constraint.getEntity().getName(),
-                                        constraint.getEntity().getVersion(),
-                                        definition.getName(),
-                                        e.getMessage());
-                            maxValue = 0;
-                        }
-
-                        createRestrictionMin(doc, restriction, true, "0");
-                        createRestrictionMax(doc, restriction, true, Integer.toString(maxValue));
-
-                        break;
-                    case STRING_TYPE:
-                        List<String> values = CoalesceConstraint.regExToValues(constraint.getValue());
-                        createRestrictionEnumeration(doc, restriction, values.toArray(new String[values.size()]));
-                        break;
-                    default:
-                        // Do Nothing
-                    }
-
-                    break;
-                case MANDATORY:
-                    createRestrictionMandartory(doc, restriction);
-                    isMandatory = true;
-                    break;
-                case MAX:
-                    createRestrictionMax(doc,
-                                         restriction,
-                                         Boolean.parseBoolean(constraint.getAttribute("inclusive")),
-                                         constraint.getValue());
-                    break;
-                case MIN:
-                    createRestrictionMin(doc,
-                                         restriction,
-                                         Boolean.parseBoolean(constraint.getAttribute("inclusive")),
-                                         constraint.getValue());
-                    break;
-                case REGEX:
-                    createRestrictionRegEx(doc, restriction, constraint.getValue());
+                case STRING_TYPE:
+                    List<String> values = CoalesceConstraint.regExToValues(constraint.getValue());
+                    createRestrictionEnumeration(doc, restriction, values.toArray(new String[values.size()]));
                     break;
                 default:
-                    break;
+                    // Do Nothing
                 }
+
+                break;
+            case MANDATORY:
+                createRestrictionMandartory(doc, restriction, Boolean.parseBoolean(constraint.getAttribute("allowEmpty")));
+                isMandatory = true;
+                break;
+            case MAX:
+                createRestrictionMax(doc,
+                                     restriction,
+                                     Boolean.parseBoolean(constraint.getAttribute("inclusive")),
+                                     constraint.getValue());
+                break;
+            case MIN:
+                createRestrictionMin(doc,
+                                     restriction,
+                                     Boolean.parseBoolean(constraint.getAttribute("inclusive")),
+                                     constraint.getValue());
+                break;
+            case REGEX:
+                createRestrictionRegEx(doc, restriction, constraint.getValue());
+                break;
+            default:
+                break;
             }
+        }
+
+        if (restriction.hasChildNodes())
+        {
+            Element statusEnumeration;
+            statusEnumeration = doc.createElementNS(NS_XML_URI, SIMPLE_TYPE);
+            statusEnumeration.setPrefix(NS_XML);
+            statusEnumeration.setAttribute(ATTRIBUTE_NAME, name);
+            statusEnumeration.appendChild(restriction);
+
+            doc.getFirstChild().appendChild(statusEnumeration);
+
+            node.setAttribute(ATTRIBUTE_TYPE, NS_TARGET + ":" + name);
         }
 
         return isMandatory;
@@ -812,23 +1036,21 @@ public final class XSDGeneratorUtil {
 
         pattern.setAttribute(ATTRIBUTE_VALUE, value);
         restriction.appendChild(pattern);
-
     }
 
-    private static void createRestrictionMandartory(Document doc, Element restriction)
+    private static void createRestrictionMandartory(Document doc, Element restriction, boolean allowEmpty)
     {
-        createRestrictionRegEx(doc, restriction, ".*\\S+.*");
+        // ".*\\S+.*"
+        createRestrictionRegEx(doc, restriction, "[ -~]*[!-~]+[ -~]*");
     }
 
     private static void createRestrictionRegEx(Document doc, Element restriction, String regex)
     {
-
         Element pattern = doc.createElementNS(NS_XML_URI, "pattern");
         pattern.setAttribute(ATTRIBUTE_VALUE, regex);
         pattern.setPrefix(NS_XML);
 
         restriction.appendChild(pattern);
-
     }
 
 }

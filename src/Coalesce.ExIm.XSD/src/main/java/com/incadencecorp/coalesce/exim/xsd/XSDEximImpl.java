@@ -18,8 +18,11 @@
 package com.incadencecorp.coalesce.exim.xsd;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
+import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -30,11 +33,13 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
+import com.incadencecorp.coalesce.api.CoalesceAttributes;
 import com.incadencecorp.coalesce.api.CoalesceExim;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.helpers.ArrayHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceCircleField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
@@ -44,6 +49,7 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
+import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
 import com.incadencecorp.coalesce.framework.iterators.CoalesceIterator;
 
@@ -59,8 +65,11 @@ public class XSDEximImpl implements CoalesceExim<Document> {
     Private Members
     --------------------------------------------------------------------------*/
 
-    // private Document doc;
     private static final String NS = "cns";
+    private static final List<String> ATTRIBUTES_TO_OMIT = Arrays.asList(new String[] {
+        CoalesceEntity.ATTRIBUTE_CLASSNAME
+    });
+
     private String namespace;
 
     /*--------------------------------------------------------------------------
@@ -206,12 +215,31 @@ public class XSDEximImpl implements CoalesceExim<Document> {
                                     value = getNextSiblingElement(value);
                                 }
 
-                                field.setAttribute("value", fromArray(values));
+                                field.setAttribute(CoalesceField.ATTRIBUTE_VALUE, fromArray(values));
 
+                            }
+                            else if (field.getDataType() == ECoalesceFieldDataTypes.CIRCLE_TYPE)
+                            {
+                                Element value = getFirstChildElement(fieldElement);
+
+                                do
+                                {
+                                    switch (value.getLocalName()) {
+
+                                    case "center":
+                                        field.setAttribute(CoalesceField.ATTRIBUTE_VALUE, value.getTextContent());
+                                        break;
+                                    case CoalesceCircleField.ATTRIBUTE_RADIUS:
+                                        field.setAttribute(CoalesceCircleField.ATTRIBUTE_RADIUS, value.getTextContent());
+                                        break;
+                                    }
+                                    value = getNextSiblingElement(value);
+                                }
+                                while (value != null);
                             }
                             else
                             {
-                                field.setAttribute("value", fieldElement.getTextContent());
+                                field.setAttribute(CoalesceField.ATTRIBUTE_VALUE, fieldElement.getTextContent());
                             }
                         }
 
@@ -336,9 +364,24 @@ public class XSDEximImpl implements CoalesceExim<Document> {
         element.setAttributeNS(namespace, CoalesceEntity.ATTRIBUTE_NAME, entity.getName());
         element.setAttributeNS(namespace, CoalesceEntity.ATTRIBUTE_SOURCE, entity.getSource());
         element.setAttributeNS(namespace, CoalesceEntity.ATTRIBUTE_VERSION, entity.getVersion());
-        element.setAttributeNS(namespace, CoalesceEntity.ATTRIBUTE_TITLE, entity.getTitle());
-        element.setAttributeNS(namespace, CoalesceEntity.ATTRIBUTE_ENTITYID, entity.getEntityId());
-        element.setAttributeNS(namespace, CoalesceEntity.ATTRIBUTE_ENTITYIDTYPE, entity.getEntityIdType());
+        element.setAttributeNS(namespace, CoalesceEntity.ATTRIBUTE_TITLE, XSDGeneratorUtil.getCDSValue(entity.getTitle()));
+        element.setAttributeNS(namespace,
+                               CoalesceEntity.ATTRIBUTE_ENTITYID,
+                               XSDGeneratorUtil.getCDSValue(entity.getEntityId()));
+        element.setAttributeNS(namespace,
+                               CoalesceEntity.ATTRIBUTE_ENTITYIDTYPE,
+                               XSDGeneratorUtil.getCDSValue(entity.getEntityIdType()));
+
+        for (Map.Entry<QName, String> entry : entity.getOtherAttributes().entrySet())
+        {
+            if (!ATTRIBUTES_TO_OMIT.contains(entry.getKey().getLocalPart()))
+            {
+                element.setAttributeNS(namespace,
+                                       entry.getKey().getLocalPart(),
+                                       XSDGeneratorUtil.getCDSValue(entry.getValue()));
+            }
+        }
+
         element.appendChild(createElement(doc, entity.getLinkageSection()));
 
         for (CoalesceSection section : entity.getSectionsAsList())
@@ -356,28 +399,44 @@ public class XSDEximImpl implements CoalesceExim<Document> {
 
         for (CoalesceLinkage linkage : linkageSection.getLinkages().values())
         {
-            Element link = createBaseElement(doc, linkage);
-
-            link.appendChild(createElement(doc, "entity1key", linkage.getEntity1Key()));
-            link.appendChild(createElement(doc, "entity1name", linkage.getEntity1Name()));
-            link.appendChild(createElement(doc, "entity1source", linkage.getEntity1Source()));
-            link.appendChild(createElement(doc, "entity1version", linkage.getEntity1Version()));
-            link.appendChild(createElement(doc, "linktype", linkage.getLinkType().toString()));
-            link.appendChild(createElement(doc, "entity2key", linkage.getEntity2Key()));
-            link.appendChild(createElement(doc, "entity2name", linkage.getEntity2Name()));
-            link.appendChild(createElement(doc, "entity2source", linkage.getEntity2Source()));
-            link.appendChild(createElement(doc, "entity2version", linkage.getEntity2Version()));
-            link.appendChild(createElement(doc, "entity2objectversion", Integer.toString(linkage.getEntity2ObjectVersion())));
-            link.appendChild(createElement(doc,
-                                           "classificationmarking",
-                                           linkage.getClassificationMarking().toPortionString()));
-            link.appendChild(createElement(doc, "label", linkage.getLabel()));
-
-            element.appendChild(link);
+            element.appendChild(createElement(doc, linkage));
         }
 
         return element;
 
+    }
+
+    private Element createElement(Document doc, CoalesceLinkage linkage)
+    {
+        Element link = createBaseElement(doc, linkage);
+
+        link.appendChild(createElement(doc, linkage, false, CoalesceLinkage.ATTRIBUTE_ENTITY1KEY));
+        link.appendChild(createElement(doc, linkage, true, CoalesceLinkage.ATTRIBUTE_ENTITY1NAME));
+        link.appendChild(createElement(doc, linkage, true, CoalesceLinkage.ATTRIBUTE_ENTITY1SOURCE));
+        link.appendChild(createElement(doc, linkage, true, CoalesceLinkage.ATTRIBUTE_ENTITY1VERSION));
+        link.appendChild(createElement(doc, CoalesceLinkage.ATTRIBUTE_LINKTYPE, linkage.getLinkType().toString()));
+        link.appendChild(createElement(doc, linkage, false, CoalesceLinkage.ATTRIBUTE_ENTITY2KEY));
+        link.appendChild(createElement(doc, linkage, true, CoalesceLinkage.ATTRIBUTE_ENTITY2NAME));
+        link.appendChild(createElement(doc, linkage, true, CoalesceLinkage.ATTRIBUTE_ENTITY2SOURCE));
+        link.appendChild(createElement(doc, linkage, true, CoalesceLinkage.ATTRIBUTE_ENTITY2VERSION));
+        link.appendChild(createElement(doc, linkage, true, CoalesceLinkage.ATTRIBUTE_LABEL));
+        // If Markings exceed the CDS limits it should fail validation
+        link.appendChild(createElement(doc, linkage, false, CoalesceAttributes.ATTRIBUTE_MARKING));
+        link.appendChild(createElement(doc, linkage, false, CoalesceLinkage.ATTRIBUTE_ENTITY2OBJECTVERSION));
+
+        return link;
+    }
+
+    private Element createElement(Document doc, CoalesceObject object, boolean isCDS, String attr)
+    {
+        String value = object.getAttribute(attr);
+
+        if (isCDS)
+        {
+            value = XSDGeneratorUtil.getCDSValue(value);
+        }
+
+        return createElement(doc, attr, value);
     }
 
     private Element createElement(Document doc, String name, String value)
@@ -435,14 +494,27 @@ public class XSDEximImpl implements CoalesceExim<Document> {
                     {
                         Element valueElement = doc.createElementNS(namespace, "values");
                         valueElement.setPrefix(NS);
-                        valueElement.setTextContent(value);
+                        valueElement.setTextContent(XSDGeneratorUtil.getCDSValue(field.getDataType(), value));
 
                         fieldElement.appendChild(valueElement);
                     }
                 }
+                else if (field.getDataType() == ECoalesceFieldDataTypes.CIRCLE_TYPE)
+                {
+                    Element center = doc.createElementNS(namespace, "center");
+                    center.setPrefix(NS);
+                    center.setTextContent(field.getBaseValue());
+
+                    Element radius = doc.createElementNS(namespace, CoalesceCircleField.ATTRIBUTE_RADIUS);
+                    radius.setPrefix(NS);
+                    radius.setTextContent(field.getAttribute(CoalesceCircleField.ATTRIBUTE_RADIUS));
+
+                    fieldElement.appendChild(center);
+                    fieldElement.appendChild(radius);
+                }
                 else
                 {
-                    fieldElement.setTextContent(field.getBaseValue());
+                    fieldElement.setTextContent(XSDGeneratorUtil.getCDSValue(field.getDataType(), field.getBaseValue()));
                 }
 
                 element.appendChild(fieldElement);

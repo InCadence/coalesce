@@ -80,7 +80,7 @@ public enum ECoalesceFieldDataTypes
      */
     public boolean isListType()
     {
-        return _label.endsWith("list");
+        return _label.endsWith("list") && this.compareTo(GEOCOORDINATE_LIST_TYPE) != 0;
     }
 
     /**

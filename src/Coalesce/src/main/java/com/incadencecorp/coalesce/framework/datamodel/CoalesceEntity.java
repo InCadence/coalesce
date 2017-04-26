@@ -79,6 +79,10 @@ public class CoalesceEntity extends CoalesceObjectHistory {
      * Attribute that stores the source of the entity.
      */
     public static final String ATTRIBUTE_SOURCE = "source";
+    /**
+     * Attribute that stores the full name of the class that generated this entity.
+     */
+    public static final String ATTRIBUTE_CLASSNAME = "classname";
 
     private Entity _entity;
 
@@ -255,7 +259,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
         this.setEntityIdType(entityIdType);
         this.setTitle(title);
 
-        this.setAttribute("classname", this.getClass().getName());
+        this.setAttribute(ATTRIBUTE_CLASSNAME, this.getClass().getName());
 
         return true;
     }
@@ -540,7 +544,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
      */
     public String getClassName()
     {
-        return this.getAttribute("classname");
+        return this.getAttribute(ATTRIBUTE_CLASSNAME);
     }
 
     /**
