@@ -1302,21 +1302,25 @@ public class CoalesceFieldTest {
 
     }
 
+    /**
+     * This test ensures that if a date field has either never been set or
+     * nulled out it will return null when attempting to read the value.
+     * 
+     * @throws Exception
+     */
     @Test
-    public void getDataDateTimeTypeNotSetTest()
+    public void getDataDateTimeTypeNotSetTest() throws Exception
     {
-        CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
+        TestEntity entity = new TestEntity();
+        entity.initialize();
 
-        CoalesceRecordset parentRecordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset");
-        CoalesceFieldDefinition fileFieldDef = CoalesceFieldDefinition.create(parentRecordset,
-                                                                              "DateTime",
-                                                                              ECoalesceFieldDataTypes.DATE_TIME_TYPE);
+        TestRecord record = entity.addRecord1();
 
-        CoalesceRecord parentRecord = parentRecordset.getItem(0);
-        CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
+        assertNull(record.getDateField().getValue());
 
-        assertNull(field.getDateTimeValue());
+        record.getDateField().setValue(null);
 
+        assertNull(record.getDateField().getValue());
     }
 
     @Test
@@ -2704,7 +2708,7 @@ public class CoalesceFieldTest {
 
         field.setAttribute("Name", "TestingName");
         field.getFieldDefinition().setName(field.getName());
-        
+
         assertEquals("TestingName", field.getName());
         assertEquals("TestingName", field.getAttribute("Name"));
 
@@ -2724,7 +2728,7 @@ public class CoalesceFieldTest {
 
         field.setAttribute("DataType", "Integer");
         field.getFieldDefinition().setDataType(ECoalesceFieldDataTypes.INTEGER_TYPE);
-        
+
         assertEquals(ECoalesceFieldDataTypes.INTEGER_TYPE, field.getDataType());
 
         field.setAttribute("Classificationmarking", "(TS)");

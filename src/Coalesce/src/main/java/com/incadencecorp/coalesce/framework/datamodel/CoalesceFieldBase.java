@@ -760,7 +760,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
 
             GeometryFactory factory = new GeometryFactory();
             setBaseValue(geometryToWKT(factory.createPoint(value.getCenter())));
-            setAttribute("radius", Double.toString(value.getRadius()));
+            setAttribute(CoalesceCircleField.ATTRIBUTE_RADIUS, Double.toString(value.getRadius()));
 
         }
     }
@@ -1419,7 +1419,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
 
             CoalesceCircle reval = new CoalesceCircle();
             reval.setCenter(point.getCoordinate());
-            reval.setRadius(Double.valueOf(getAttribute("radius")));
+            reval.setRadius(Double.valueOf(getAttribute(CoalesceCircleField.ATTRIBUTE_RADIUS)));
 
             return reval;
 

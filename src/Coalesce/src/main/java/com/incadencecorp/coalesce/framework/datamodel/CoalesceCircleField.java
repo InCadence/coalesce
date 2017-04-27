@@ -27,12 +27,16 @@ import com.vividsolutions.jts.geom.Point;
  */
 public class CoalesceCircleField extends CoalesceField<CoalesceCircle> {
 
+    /**
+     * Attribute used to specify the circle's radius. The center is stored as
+     * the base value.
+     */
+    public static final String ATTRIBUTE_RADIUS = "radius";
+
     @Override
     public CoalesceCircle getValue() throws CoalesceDataFormatException
     {
-        
-        
-        
+
         return getCircleValue();
     }
 

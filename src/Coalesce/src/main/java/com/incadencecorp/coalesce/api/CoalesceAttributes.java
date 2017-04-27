@@ -29,4 +29,14 @@ public final class CoalesceAttributes {
      */
     public static final String ATTR_DATA_TYPE = "datatype";
     
+    /**
+     * Language of the label
+     */
+    public static final String ATTRIBUTE_INPUTLANG = "inputlang";
+
+    /**
+     * Classification of this linkage.
+     */
+    public static final String ATTRIBUTE_MARKING = "classificationmarking";
+
 }

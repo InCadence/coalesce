@@ -47,6 +47,17 @@
 							<repository>target/repository</repository>
 						</configuration>
 					</execution>
+					<execution>
+						<id>generate</id>
+						<phase>package</phase>
+						<goals>
+							<goal>archive</goal>
+						</goals>
+						<configuration>
+							<destDir>${project.build.directory}</destDir>
+							<targetServerDirectory>${project.build.directory}/repository</targetServerDirectory>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 		</plugins>

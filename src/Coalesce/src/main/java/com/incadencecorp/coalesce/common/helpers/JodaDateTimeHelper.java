@@ -161,6 +161,11 @@ public final class JodaDateTimeHelper {
      */
     public static DateTime getPostGresDateTim(String value)
     {
+        if (StringHelper.isNullOrEmpty(value))
+        {
+            return null;
+        }
+
         try
         {
             DateTimeFormatter outputFormatter = ISODateTimeFormat.dateTimeParser().withZone(DateTimeZone.UTC);
@@ -344,7 +349,9 @@ public final class JodaDateTimeHelper {
     public static String toXmlDateTimeUTC(DateTime forDate)
     {
         if (forDate == null)
+        {
             throw new NullArgumentException("forDate");
+        }
 
         DateTimeFormatter formatter = ISODateTimeFormat.dateTime().withZone(DateTimeZone.UTC);
 
@@ -363,15 +370,16 @@ public final class JodaDateTimeHelper {
      */
     public static DateTime fromXmlDateTimeUTC(String xmlDate)
     {
-        if (xmlDate == null)
+        if (StringHelper.isNullOrEmpty(xmlDate))
+        {
             return null;
+        }
 
         try
         {
             DateTimeFormatter formatter = ISODateTimeFormat.dateTime().withZone(DateTimeZone.UTC);
 
             return formatter.parseDateTime(xmlDate);
-
         }
         catch (IllegalArgumentException e)
         {
