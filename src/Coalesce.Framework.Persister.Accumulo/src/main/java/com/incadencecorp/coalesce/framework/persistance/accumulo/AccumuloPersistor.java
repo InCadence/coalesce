@@ -792,25 +792,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 //        feature.getUserData().put("geomesa.indexes.enabled",indexes);
         feature.getUserData().put("geomesa.index.dtg",null);
         
-        // Loop through and add indexes for attributes
-        for (Fielddefinition field : fields)
-        {
-        	Boolean noIndex = field.isNoindex();
-        	// noIndex is true if no indexing is to be done
-        	// it is null by default (index the field)
-        	// it is never false
-        	if (noIndex == null) {
-        		
-        		// Skip additional indexes for time or geometry fields.
-//        		if (((timeField != null) && (field.getName() == timeField)) || (field.getName() == geomField)) continue;
-        		if ( field.getName() == geomField) continue;
-        		
-	        	if (feature.getDescriptor(field.getName()) != null) {
-	        		feature.getDescriptor(field.getName()).getUserData().put("index","full");
-	        		feature.getDescriptor(field.getName()).getUserData().put("cardinality", "high");
-	        	}
-        	}
-        }
+
         
        // Turn of Z3 time indexing due to not allowing dates earlier than the EPOC.
 //        if (null != timeField)
