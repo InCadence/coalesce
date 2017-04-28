@@ -45,12 +45,13 @@ public class Log4jNotifierImpl implements ICoalesceNotifier {
     @Override
     public void sendMetrics(String task, MetricResults<?> results)
     {
-        LOGGER.debug("({}) ({}) Pending ({}) Working ({}) Total ({})",
+        LOGGER.debug("({}) ({}) Pending ({}) Working ({}) Total ({}) {}",
                      results.isSuccessful() ? "SUCCESS" : "FAILED",
                      task,
                      results.getWatch().getPendingLife(),
                      results.getWatch().getWorkLife(),
-                     results.getWatch().getTotalLife());
+                     results.getWatch().getTotalLife(),
+                     results.isSuccessful() ? "" : " Reason: (" + results.getResults().getError() + ")");
 
     }
 
@@ -79,7 +80,7 @@ public class Log4jNotifierImpl implements ICoalesceNotifier {
     public void sendAudit(String task, EAuditCategory category, EAuditLevels level, String message)
     {
         String auditMessage = String.format("Audit-(%s) (%s) (%s)", category.toString(), task, message);
-        
+
         switch (level) {
         case ERROR:
             LOGGER.error(auditMessage);
@@ -89,9 +90,6 @@ public class Log4jNotifierImpl implements ICoalesceNotifier {
             break;
         case WARN:
             LOGGER.warn(auditMessage);
-            break;
-        default:
-            LOGGER.debug(auditMessage);
             break;
         }
     }

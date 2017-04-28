@@ -47,22 +47,11 @@ public class MultipleNotifierImpl implements ICoalesceNotifier {
     --------------------------------------------------------------------------*/
 
     /**
-     * Sets the notifiers for this implementation.
+     * Default Constructor
      * 
      * @param values
      */
-    public void setNotifiers(ICoalesceNotifier... values)
-    {
-        notifiers.clear();
-        addNotifiers(values);
-    }
-
-    /**
-     * Adds additional notifiers to this implementation.
-     * 
-     * @param values
-     */
-    public void addNotifiers(ICoalesceNotifier... values)
+    public MultipleNotifierImpl(ICoalesceNotifier... values)
     {
         for (ICoalesceNotifier value : values)
         {

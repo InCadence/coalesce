@@ -2,6 +2,8 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>notification-adminevent-impl</artifactId>
+	<name>Coalesce Notification AdminEvent Impl</name>
+
 
 	<parent>
 		<groupId>com.incadencecorp.coalesce.notification</groupId>
@@ -20,9 +22,9 @@
 					<instructions>
 						<Bundle-Name>${project.name}</Bundle-Name>
 						<Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
-                        <Import-Package>
-                            org.joda.time*;version="[1.6.2, 3)"
-                        </Import-Package>
+						<Import-Package>
+							org.joda.time*;version="[1.6.2, 3)"
+						</Import-Package>
 					</instructions>
 				</configuration>
 			</plugin>
@@ -40,6 +42,14 @@
 			<groupId>org.apache.felix</groupId>
 			<artifactId>org.apache.felix.eventadmin</artifactId>
 			<version>1.4.8</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.incadencecorp.coalesce</groupId>
+			<artifactId>coalesce-core</artifactId>
+			<version>${project.version}</version>
+			<type>test-jar</type>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 

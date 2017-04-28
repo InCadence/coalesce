@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.incadencecorp.coalesce.api.ICoalesceNotifier;
+import com.incadencecorp.coalesce.common.classification.helpers.StringHelper;
 import com.incadencecorp.coalesce.enums.EAuditCategory;
 import com.incadencecorp.coalesce.enums.EAuditLevels;
 import com.incadencecorp.coalesce.enums.ECrudOperations;
@@ -39,7 +40,8 @@ import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.framework.tasks.MetricResults;
 
 /**
- * This implementation uses AdminEvents to push notifications.
+ * This implementation uses AdminEvents to push notifications and ONLY works
+ * inside of a OSGi environment.
  * 
  * @author Derek Clemenzi
  */
@@ -69,7 +71,7 @@ public class AdminEventNotifierImpl implements ICoalesceNotifier {
             }
             else
             {
-                LOGGER.warn("Bundle Not Found");
+                LOGGER.error("Bundle Context Not Found");
             }
         }
 
@@ -94,6 +96,10 @@ public class AdminEventNotifierImpl implements ICoalesceNotifier {
         properties.put("working", results.getWatch().getWorkLife());
         properties.put("total", results.getWatch().getTotalLife());
         properties.put("successful", results.isSuccessful());
+        if (!results.isSuccessful() && !StringHelper.isNullOrEmpty(results.getResults().getError()))
+        {
+            properties.put("error", results.getResults().getError());
+        }
 
         sendEvent(new Event("com/incadence/metrics", properties));
     }
@@ -146,7 +152,7 @@ public class AdminEventNotifierImpl implements ICoalesceNotifier {
 
         sendEvent(new Event("com/incadence/audit", properties));
     }
-    
+
     @Override
     public void sendJobComplete(AbstractCoalesceJob<?, ?, ?> job)
     {
@@ -164,15 +170,21 @@ public class AdminEventNotifierImpl implements ICoalesceNotifier {
 
     private void sendEvent(Event event)
     {
-        ServiceReference ref = getContext().getServiceReference(EventAdmin.class.getName());
-        if (ref != null)
+        BundleContext context = getContext();
+
+        if (context != null)
         {
-            EventAdmin eventAdmin = (EventAdmin) context.getService(ref);
-            eventAdmin.sendEvent(event);
-        }
-        else
-        {
-            LOGGER.error("Service Reference Not Found");
+            ServiceReference ref = context.getServiceReference(EventAdmin.class.getName());
+
+            if (ref != null)
+            {
+                EventAdmin eventAdmin = (EventAdmin) context.getService(ref);
+                eventAdmin.sendEvent(event);
+            }
+            else
+            {
+                LOGGER.error("Service Reference Not Found");
+            }
         }
     }
 
