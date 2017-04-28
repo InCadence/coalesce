@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
+import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.tasks.AbstractTask;
@@ -91,7 +92,7 @@ public class UpdateDataObjectLinkagesJob extends AbstractFrameworkServiceJob<Dat
             // Action Specified by Client?
             if (linkage.getAction() == null)
             {
-                throw new CoalesceException("No Link Action Specified");
+                throw new CoalesceException(String.format(CoalesceErrors.NOT_SPECIFIED, "Link Action"));
             }
 
             // Reset

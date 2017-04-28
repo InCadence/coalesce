@@ -20,6 +20,7 @@ package com.incadencecorp.coalesce.services.crud.service.tasks;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
@@ -44,7 +45,7 @@ public class UpdateDataObjectStatusTask extends AbstractFrameworkTask<DataObject
         {
             if (task.getAction() == null)
             {
-                throw new CoalesceException("No Link Action Specified");
+                throw new CoalesceException(String.format(CoalesceErrors.NOT_SPECIFIED, "Update Action"));
             }
 
             result.setStatus(EResultStatus.SUCCESS);

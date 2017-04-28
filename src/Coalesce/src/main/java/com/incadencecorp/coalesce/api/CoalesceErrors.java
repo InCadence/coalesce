@@ -157,7 +157,7 @@ public final class CoalesceErrors {
      * Format: {@value #INVALID_OBJECT_VERSION}
      */
     public static final String INVALID_OBJECT_VERSION = "Invalid object version (%s) for (%s)";
-    
+
     /**
      * Error reported when attempting to retrieve an non-existing object.
      * Format: {@value #NOT_FOUND}
@@ -165,8 +165,14 @@ public final class CoalesceErrors {
     public static final String NOT_FOUND = "(%s) Not Found (%s)";
 
     /**
-     * Error reported when an object was unable to be parsed / etc.
-     * Format: {@value #INVALID_OBJECT}
+     * Error reported when a parameter was not specified. Format:
+     * {@value #NOT_SPECIFIED}
+     */
+    public static final String NOT_SPECIFIED = "No %s Specified";
+
+    /**
+     * Error reported when an object was unable to be parsed / etc. Format:
+     * {@value #INVALID_OBJECT}
      */
     public static final String INVALID_OBJECT = "(%s) Not Found (%s)";
 }

@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
+import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.ICoalesceResponseType;
 import com.incadencecorp.coalesce.api.IExceptionHandler;
 import com.incadencecorp.coalesce.api.persistance.ICoalesceExecutorService;
@@ -154,8 +155,6 @@ public class CoalesceFramework implements ICoalesceExecutorService, Closeable {
             LOGGER.info("Authoritative Persistor ({})", persistor.getClass().getName());
         }
     }
-    
- 
 
     /**
      * Sets the secondary persistors which are not blocking.
@@ -254,15 +253,14 @@ public class CoalesceFramework implements ICoalesceExecutorService, Closeable {
      */
     public CoalesceEntity getCoalesceEntity(String key) throws CoalescePersistorException
     {
-        CoalesceEntity result = null;
         CoalesceEntity[] results = getAuthoritativePersistor().getEntity(key);
 
-        if (results != null && results.length == 1)
+        if (results == null || results.length == 0)
         {
-            result = results[0];
+            throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Entity", key));
         }
 
-        return result;
+        return results[0];
 
     }
 

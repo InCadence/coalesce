@@ -95,6 +95,9 @@ public class Neo4JPersistorIT extends AbstractCoalescePersistorTest<Neo4JPersist
 
         // Create Property List
         List<PropertyName> properties = new ArrayList<PropertyName>();
+        properties.add(CoalescePropertyFactory.getName());
+        properties.add(CoalescePropertyFactory.getSource());
+        properties.add(CoalescePropertyFactory.getEntityType());
         properties.add(CoalescePropertyFactory.getEntityTitle());
         properties.add(CoalescePropertyFactory.getFieldProperty(field1));
 
@@ -113,7 +116,7 @@ public class Neo4JPersistorIT extends AbstractCoalescePersistorTest<Neo4JPersist
         // Verify Entity1 was saved
         rowset = persistor.search(query).getResults();
 
-        Assert.assertEquals(6, rowset.getMetaData().getColumnCount());
+        Assert.assertEquals(properties.size() + 1, rowset.getMetaData().getColumnCount());
         Assert.assertEquals(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getEntityKey()),
                             rowset.getMetaData().getColumnName(1));
         Assert.assertEquals(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getName()),

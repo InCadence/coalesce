@@ -72,11 +72,17 @@ public class MockPersister extends CoalescePersistorBase {
     public String[] getEntityXml(String... keys) throws CoalescePersistorException
     {
         String[] results = new String[keys.length];
-        
-        for (int ii=0; ii<keys.length; ii++) {
-            results[ii] = getCacher().retrieveEntity(keys[ii]).toXml();
+
+        for (int ii = 0; ii < keys.length; ii++)
+        {
+            CoalesceEntity entity = getCacher().retrieveEntity(keys[ii]);
+
+            if (entity != null)
+            {
+                results[ii] = entity.toXml();
+            }
         }
-        
+
         return results;
     }
 
