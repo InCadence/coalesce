@@ -23,10 +23,12 @@ import java.util.Map;
 import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
+import com.incadencecorp.coalesce.enums.ECrudOperations;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.tasks.AbstractFrameworkTask;
 import com.incadencecorp.coalesce.framework.tasks.TaskParameters;
+import com.incadencecorp.coalesce.framework.util.CoalesceNotifierUtil;
 import com.incadencecorp.coalesce.framework.validation.CoalesceValidator;
 import com.incadencecorp.coalesce.services.api.common.ResultsType;
 
@@ -55,10 +57,12 @@ public class CreateDataObjectTask extends AbstractFrameworkTask<String[], Result
                 // TODO validator.validate(parameters.getPrincipal(), entity,
                 // CoalesceConstraintCache.getCoalesceConstraints(entity));
 
+                // TODO Check to see if entity exists first.
+
                 if (results.size() != 0)
                 {
                     result.setStatus(EResultStatus.FAILED);
-                    // TODO Create a more meaniful error message
+                    // TODO Create a more meaningful error message
                     result.setResult("Validation Failed");
                     break;
                 }
@@ -73,19 +77,17 @@ public class CreateDataObjectTask extends AbstractFrameworkTask<String[], Result
             }
         }
 
-        if (result.getStatus() != EResultStatus.FAILED)
+        if (result.getStatus() != EResultStatus.FAILED && framework.saveCoalesceEntity(entities))
         {
-            // TODO Check to see if entity exists first.
+            result.setStatus(EResultStatus.SUCCESS);
 
-            if (framework.saveCoalesceEntity(entities))
-            {
-                result.setStatus(EResultStatus.SUCCESS);
-            }
-            else
-            {
-                result.setStatus(EResultStatus.FAILED);
-            }
+            CoalesceNotifierUtil.sendCrud(getName(), ECrudOperations.CREATE, entities);
         }
+        else
+        {
+            result.setStatus(EResultStatus.FAILED);
+        }
+
         return result;
     }
 

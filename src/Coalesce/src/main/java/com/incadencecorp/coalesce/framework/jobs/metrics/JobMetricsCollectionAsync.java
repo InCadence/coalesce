@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.incadencecorp.coalesce.framework.CoalesceThreadFactoryImpl;
 import com.incadencecorp.coalesce.framework.jobs.AbstractCoalesceJob;
+import com.incadencecorp.coalesce.framework.util.CoalesceNotifierUtil;
 
 /**
  * Handles the processing of metrics collected. Every {@link #initialize X
@@ -147,9 +148,9 @@ public class JobMetricsCollectionAsync implements AutoCloseable {
 
                 // Check for additional nodes.
                 node = jobQueue.poll();
-            }
 
-            // TODO Log Metrics
+                CoalesceNotifierUtil.sendMetrics(node.job.getName(), node.job.getTaskMetrics());
+            }
 
             // Reset metrics
             metrics = new JobMetricsCollection();

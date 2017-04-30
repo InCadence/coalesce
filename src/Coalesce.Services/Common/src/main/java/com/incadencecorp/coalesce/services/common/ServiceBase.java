@@ -37,7 +37,6 @@ import com.incadencecorp.coalesce.api.ICoalesceResponseType;
 import com.incadencecorp.coalesce.api.persistance.ICoalesceExecutorService;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.jobs.JobManager;
-import com.incadencecorp.coalesce.framework.jobs.metrics.JobMetricsCollectionAsync;
 import com.incadencecorp.coalesce.services.api.common.BaseRequest;
 import com.incadencecorp.coalesce.services.api.common.BaseResponse;
 import com.incadencecorp.coalesce.services.api.common.JobRequest;
@@ -69,7 +68,6 @@ public abstract class ServiceBase<T> implements ICoalesceExecutorService, AutoCl
 
     private JobManager<AbstractServiceJob<?, ?, ?, T>> jobs;
     private ExecutorService service;
-    private JobMetricsCollectionAsync metrics;
     private T target;
 
     // ----------------------------------------------------------------------//
@@ -87,36 +85,6 @@ public abstract class ServiceBase<T> implements ICoalesceExecutorService, AutoCl
         this.service = service;
         this.jobs = new JobManager<AbstractServiceJob<?, ?, ?, T>>();
         this.target = target;
-    }
-
-    /**
-     * Enables / disables the collection of metrics.
-     *
-     * @param enabled If <code>true</code> enables the collection of metrics. If
-     *            already been enabled nothing happens. If <code>false</code> is
-     *            disables the collection of metrics and any metrics collected
-     *            up to this point are written to the database.
-     * @param interval specifies the frequency (in minutes) in which metrics
-     *            should be persisted.
-     */
-    public final void enableMetricCollection(boolean enabled, int interval)
-    {
-        if (enabled)
-        {
-            if (metrics == null)
-            {
-                metrics = new JobMetricsCollectionAsync(this.getClass().getName());
-                metrics.initialize(interval);
-            }
-        }
-        else
-        {
-            if (metrics != null)
-            {
-                metrics.close();
-                metrics = null;
-            }
-        }
     }
 
     // ----------------------------------------------------------------------//
@@ -188,13 +156,6 @@ public abstract class ServiceBase<T> implements ICoalesceExecutorService, AutoCl
 
                 result.setResult((BaseResponse) job.getResponse());
                 result.setStatus(EResultStatus.SUCCESS);
-
-                if (metrics != null)
-                {
-                    // Add Metrics
-                    metrics.addJob(job);
-                }
-
                 break;
 
             case NEW:
@@ -341,12 +302,6 @@ public abstract class ServiceBase<T> implements ICoalesceExecutorService, AutoCl
                 response.setStatus(EResultStatus.SUCCESS);
                 break;
             }
-
-            if (metrics != null)
-            {
-                // Add Metrics
-                metrics.addJob(job);
-            }
         }
 
         // Remove Expired Jobs
@@ -394,11 +349,6 @@ public abstract class ServiceBase<T> implements ICoalesceExecutorService, AutoCl
                 }
             }
         }
-
-        if (metrics != null)
-        {
-            metrics.close();
-        }
     }
 
     /*--------------------------------------------------------------------------
@@ -424,38 +374,38 @@ public abstract class ServiceBase<T> implements ICoalesceExecutorService, AutoCl
     }
 
     // @Override
-    public <T extends BaseRequest, Y extends ICoalesceResponseType<List<X>>, X extends ICoalesceResponseType<?>> Future<Y> submit(AbstractServiceJob<T, Y, X, T> job)
+    public <REQUEST extends BaseRequest, Y extends ICoalesceResponseType<List<X>>, X extends ICoalesceResponseType<?>> Future<Y> submit(AbstractServiceJob<REQUEST, Y, X, T> job)
             throws CoalescePersistorException
     {
         return service.submit(job);
     }
 
-    public final <T> Future<T> submit(Callable<T> job)
+    public final <TYPE> Future<TYPE> submit(Callable<TYPE> job)
     {
         return service.submit(job);
     }
 
     @Override
-    public final <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks) throws InterruptedException
+    public final <TYPE> List<Future<TYPE>> invokeAll(Collection<? extends Callable<TYPE>> tasks) throws InterruptedException
     {
         return service.invokeAll(tasks);
     }
 
     @Override
-    public final <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
+    public final <TYPE> List<Future<TYPE>> invokeAll(Collection<? extends Callable<TYPE>> tasks, long timeout, TimeUnit unit)
             throws InterruptedException
     {
         return service.invokeAll(tasks, timeout, unit);
     }
 
     @Override
-    public final <T> T invokeAny(Collection<? extends Callable<T>> tasks) throws InterruptedException, ExecutionException
+    public final <TYPE> TYPE invokeAny(Collection<? extends Callable<TYPE>> tasks) throws InterruptedException, ExecutionException
     {
         return service.invokeAny(tasks);
     }
 
     @Override
-    public final <T> T invokeAny(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
+    public final <TYPE> TYPE invokeAny(Collection<? extends Callable<TYPE>> tasks, long timeout, TimeUnit unit)
             throws InterruptedException, ExecutionException, TimeoutException
     {
         return service.invokeAny(tasks, timeout, unit);

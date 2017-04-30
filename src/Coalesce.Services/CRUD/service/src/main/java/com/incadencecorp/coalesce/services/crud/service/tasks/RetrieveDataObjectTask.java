@@ -23,11 +23,13 @@ import java.util.Map;
 import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
+import com.incadencecorp.coalesce.enums.ECrudOperations;
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceIteratorGetVersion;
 import com.incadencecorp.coalesce.framework.tasks.AbstractFrameworkTask;
 import com.incadencecorp.coalesce.framework.tasks.TaskParameters;
+import com.incadencecorp.coalesce.framework.util.CoalesceNotifierUtil;
 import com.incadencecorp.coalesce.services.api.common.ResultsType;
 import com.incadencecorp.coalesce.services.api.crud.DataObjectKeyType;
 
@@ -55,6 +57,8 @@ public class RetrieveDataObjectTask extends AbstractFrameworkTask<DataObjectKeyT
                 it.getVersion(entity, task.getVer());
                 result.setStatus(EResultStatus.SUCCESS);
                 result.setResult(entity.toXml());
+                
+                CoalesceNotifierUtil.sendCrud(getName(), ECrudOperations.READ, entity);
             }
             else
             {

@@ -29,6 +29,7 @@ import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.api.ICoalescePrincipal;
 import com.incadencecorp.coalesce.api.ICoalesceResponseTypeBase;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
+import com.incadencecorp.coalesce.framework.CoalesceComponentImpl;
 import com.incadencecorp.coalesce.framework.jobs.metrics.StopWatch;
 
 /**
@@ -40,7 +41,7 @@ import com.incadencecorp.coalesce.framework.jobs.metrics.StopWatch;
  * @param <OUTPUT>
  * @param <TARGET>
  */
-public abstract class AbstractTask<INPUT, OUTPUT extends ICoalesceResponseTypeBase, TARGET>
+public abstract class AbstractTask<INPUT, OUTPUT extends ICoalesceResponseTypeBase, TARGET> extends CoalesceComponentImpl
         implements Callable<MetricResults<OUTPUT>> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractTask.class);

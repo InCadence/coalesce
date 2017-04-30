@@ -17,9 +17,12 @@
 
 package com.incadencecorp.coalesce.services.crud.api.test;
 
+import java.util.UUID;
+
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
@@ -46,10 +49,14 @@ public abstract class AbstractCrudTests {
      */
     protected static ICrudClient client;
 
+    /**
+     * This test creates and attempts to retrieve the newly created entity.
+     * 
+     * @throws Exception
+     */
     @Test
     public void testRetrieveDataObjects() throws Exception
     {
-
         CoalesceEntity entity = CoalesceEntity.create("Hello", "World", "1", null, null);
 
         assertResult(client.createDataObject(entity), client, entity);
@@ -57,11 +64,28 @@ public abstract class AbstractCrudTests {
         Results<CoalesceEntity>[] results = client.retrieveDataObjects(entity.getKey());
 
         assertResult(results);
-
-        System.out.println(results[0].getResult().toXml());
-
     }
 
+    /**
+     * This test attempts to retrieve a randomly generated UUID that should
+     * fail.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testRetrieveDataObjectsInvalidKey() throws Exception
+    {
+        Results<CoalesceEntity>[] results = client.retrieveDataObjects(UUID.randomUUID().toString());
+
+        Assert.assertEquals(1, results.length);
+        Assert.assertEquals(EResultStatus.FAILED, results[0].getStatus());
+    }
+
+    /**
+     * This test creates a new entity and attemtps to retrieve it.
+     * 
+     * @throws Exception
+     */
     @Test
     public void testUpdateDataObject() throws Exception
     {
@@ -78,9 +102,33 @@ public abstract class AbstractCrudTests {
         assertResult(results);
 
         Assert.assertEquals(entity.getTitle(), results[0].getResult().getTitle());
-
     }
 
+    /**
+     * This test attempts to update an non-existent entity and should fail.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testUpdateDataObjectInvalidKey() throws Exception
+    {
+        CoalesceEntity entity = CoalesceEntity.create("Hello", "World", "1", null, null);
+
+        Assert.assertFalse(client.updateDataObject(entity));
+
+        // Verify Error Message
+        ResultsType[] results = client.getLastResult();
+
+        Assert.assertEquals(1, results.length);
+        Assert.assertEquals(String.format(CoalesceErrors.NOT_FOUND, "Entity", entity.getKey()), results[0].getError());
+    }
+
+    /**
+     * This test attempts to create and update linkages between two entities it
+     * creates.
+     * 
+     * @throws Exception
+     */
     @Test
     public void testUpdateLinkages() throws Exception
     {
@@ -97,17 +145,23 @@ public abstract class AbstractCrudTests {
         task.setLinkType(ELinkTypes.IS_PARENT_OF);
 
         assertResult(client.updateLinkages(task), client);
-        
+
         Results<CoalesceEntity>[] results = client.retrieveDataObjects(entity1.getKey());
-        
+
         Assert.assertEquals(1, results.length);
-        
+
         CoalesceEntity entity = results[0].getResult();
-        
+
         Assert.assertEquals(1, entity.getLinkages().size());
         Assert.assertEquals(entity2.getKey(), entity.getLinkages().values().iterator().next().getEntity2Key());
     }
 
+    /**
+     * This test attempts to link two object without specifying a action would
+     * should result in an error.
+     * 
+     * @throws Exception
+     */
     @Test
     public void testUpdateLinkagesFailure() throws Exception
     {
@@ -125,8 +179,18 @@ public abstract class AbstractCrudTests {
 
         Assert.assertFalse(client.updateLinkages(task));
 
+        ResultsType[] results = client.getLastResult();
+
+        Assert.assertEquals(1, results.length);
+        Assert.assertEquals(String.format(CoalesceErrors.NOT_SPECIFIED, "Link Action"), results[0].getError());
+
     }
 
+    /**
+     * This test attempts to update an entity's status.
+     * 
+     * @throws Exception
+     */
     @Test
     public void testUpdateDataObjectStatus() throws Exception
     {
@@ -158,6 +222,11 @@ public abstract class AbstractCrudTests {
         task.setKey(entity.getKey());
 
         Assert.assertFalse(client.updateDataObjectStatus(task));
+        
+        ResultsType[] results = client.getLastResult();
+
+        Assert.assertEquals(1, results.length);
+        Assert.assertEquals(String.format(CoalesceErrors.NOT_SPECIFIED, "Update Action"), results[0].getError());
     }
 
     // TODO Move these into a common package
@@ -201,7 +270,6 @@ public abstract class AbstractCrudTests {
 
     protected void assertResult(final Results<?>... results)
     {
-
         for (Results<?> result : results)
         {
             if (result.getStatus() == EResultStatus.FAILED)

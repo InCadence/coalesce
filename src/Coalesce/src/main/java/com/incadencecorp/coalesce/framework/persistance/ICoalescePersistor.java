@@ -97,6 +97,8 @@ public interface ICoalescePersistor {
      * @param entityIdType the type of entityId, such as TCN.
      * @return the matching Coalesce entity.
      * @throws CoalescePersistorException
+     * TODO this conflicts with {@link #getEntityXml(String...)} and needs to be removed
+     * @deprecated This should be accomplished via the search API
      */
     String getEntityXml(String entityId, String entityIdType) throws CoalescePersistorException;
 
@@ -108,6 +110,8 @@ public interface ICoalescePersistor {
      * @param entityIdType the type of entityId, such as TCN.
      * @return the matching Coalesce entity.
      * @throws CoalescePersistorException
+     * TODO this conflicts with {@link #getEntityXml(String...)} and needs to be removed
+     * @deprecated This should be accomplished via the search API
      */
     String getEntityXml(String name, String entityId, String entityIdType) throws CoalescePersistorException;
 
