@@ -665,8 +665,8 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 
     private void createLinkageFeature(String featurename)
     {
-        //final String geomesaTimeIndex = "geomesa.index.dtg";
-    	final  String indexes = "z2,records,id,attr";
+        final String geomesaTimeIndex = "geomesa.index.dtg";
+    	final  String indexes = "records,id,attr";
         DataStore gs = connect.getGeoDataStore();
         try {
 			SimpleFeatureType linkschema =  gs.getSchema(featurename);
@@ -695,25 +695,24 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         tb.setDefaultGeometry(DEFAULT_GEO_FIELD_NAME);
        
         SimpleFeatureType feature = tb.buildFeatureType();
-        //feature.getUserData().put(geomesaTimeIndex, LINKAGE_LAST_MODIFIED_COLUMN_NAME);
+        feature.getUserData().put(geomesaTimeIndex, LINKAGE_LAST_MODIFIED_COLUMN_NAME);
 
         // index recordkey, cardinality is high because there is only one record per key.
-        feature.getDescriptor(LINKAGE_KEY_COLUMN_NAME).getUserData().put("index", "full");
-        feature.getDescriptor(LINKAGE_KEY_COLUMN_NAME).getUserData().put("cardinality", "high");
-        feature.getDescriptor(LINKAGE_ENTITY1_KEY_COLUMN_NAME).getUserData().put("index", "full");
+        //feature.getDescriptor(LINKAGE_KEY_COLUMN_NAME).getUserData().put("index", "full");
+        //feature.getDescriptor(LINKAGE_KEY_COLUMN_NAME).getUserData().put("cardinality", "high");
+        feature.getDescriptor(LINKAGE_ENTITY1_KEY_COLUMN_NAME).getUserData().put("index", "join");
         feature.getDescriptor(LINKAGE_ENTITY1_KEY_COLUMN_NAME).getUserData().put("cardinality", "high");
-        feature.getDescriptor(LINKAGE_ENTITY2_KEY_COLUMN_NAME).getUserData().put("index", "full");
+        feature.getDescriptor(LINKAGE_ENTITY2_KEY_COLUMN_NAME).getUserData().put("index", "join");
         feature.getDescriptor(LINKAGE_ENTITY2_KEY_COLUMN_NAME).getUserData().put("cardinality", "high");
-        feature.getDescriptor(LINKAGE_LAST_MODIFIED_COLUMN_NAME).getUserData().put("index", "full");
-        feature.getDescriptor(LINKAGE_LAST_MODIFIED_COLUMN_NAME).getUserData().put("cardinality", "high");
-        feature.getDescriptor(LINKAGE_LABEL_COLUMN_NAME).getUserData().put("index", "full");
+        //feature.getDescriptor(LINKAGE_LAST_MODIFIED_COLUMN_NAME).getUserData().put("index", "join");
+        //feature.getDescriptor(LINKAGE_LAST_MODIFIED_COLUMN_NAME).getUserData().put("cardinality", "high");
+        feature.getDescriptor(LINKAGE_LABEL_COLUMN_NAME).getUserData().put("index", "join");
         feature.getDescriptor(LINKAGE_LABEL_COLUMN_NAME).getUserData().put("cardinality", "low");
-        feature.getDescriptor(LINKAGE_LINK_TYPE_COLUMN_NAME).getUserData().put("index", "full");
+        feature.getDescriptor(LINKAGE_LINK_TYPE_COLUMN_NAME).getUserData().put("index", "join");
         feature.getDescriptor(LINKAGE_LINK_TYPE_COLUMN_NAME).getUserData().put("cardinality", "low");
         feature.getUserData().put( Hints.USE_PROVIDED_FID, true );
-//        feature.getUserData().put("geomesa.indexes.enabled",indexes);
-        feature.getUserData().put("geomesa.index.dtg",null);
-
+        feature.getUserData().put("geomesa.indexes.enabled",indexes);
+        
         try
         {
             LOGGER.debug("Creating Feature for {} ", featurename);
@@ -1051,6 +1050,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 
     private void addFeatures(Map<String, DefaultFeatureCollection> featureCollectionMap)
     {
+    	long startTime = System.currentTimeMillis();
         for (Entry<String, DefaultFeatureCollection> entry : featureCollectionMap.entrySet())
         {
 
@@ -1060,7 +1060,10 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 //				GEOMESA Does not currently support transactions
 //               Transaction transaction = new DefaultTransaction();
 //                featureStore.setTransaction(transaction);
+                long beginTime = System.currentTimeMillis();
                 featureStore.addFeatures(entry.getValue());
+                LOGGER.debug("Feature Add Time: {}: {}",entry.getKey(), System.currentTimeMillis()-beginTime);
+
 //                transaction.commit();
 //                transaction.close();
                
@@ -1072,6 +1075,8 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             }
 
         }
+        LOGGER.debug("Total Feature Add Time:  {}", System.currentTimeMillis()-startTime);
+
     }
 
     @Override
@@ -1098,7 +1103,9 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             // config.setDurability(Durability.DEFAULT); // Requires Accumulo
             // 1.7
             config.setMaxWriteThreads(10);
+            long beginTime = System.currentTimeMillis();
             persisted = persistBaseData(entity, dbConnector, writer) && persistEntityIndex(entity, dbConnector, config);
+            LOGGER.debug("Base Data Persist Time: {}",System.currentTimeMillis()-beginTime);
             persistEntitySearchData(entity, dbConnector, config, featureCollectionMap, allowRemoval);
         }
         catch (CoalescePersistorException ex)
@@ -1200,8 +1207,9 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                         persisted = true;
                     }
                 }
-                // Persist the linkage information for search
+                 // Persist the linkage information for search
                 storeLinkageSearch(geoDataStore, entity, featureCollectionMap);
+ 
             }    
  
         }
@@ -1225,9 +1233,11 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         }
         Map<String,CoalesceLinkage> linkages = entity.getLinkages();
         for (Map.Entry<String,CoalesceLinkage> mlink : linkages.entrySet()) {
-        	CoalesceLinkage link = mlink.getValue();
+        	CoalesceLinkage link = mlink.getValue();              
+        	long beginTime = System.currentTimeMillis();
         	Boolean updated = updateLinkIfExists(LINKAGE_FEATURE_NAME, link);
-        	
+            LOGGER.debug("Linkage Update Time: {}",System.currentTimeMillis()-beginTime);
+       	
         	if (!updated) {
         		SimpleFeatureType featuretype = gds.getSchema(LINKAGE_FEATURE_NAME);
                 SimpleFeature simplefeature = SimpleFeatureBuilder.build(featuretype, new Object[] {}, link.getKey());
@@ -1339,7 +1349,10 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             	// If allowRemoval is true all features have been deleted already
             	updated = false;
             } else {
+            	long beginTime = System.currentTimeMillis();
             	updated = updateFeatureIfExists(featuresetname, record);
+                LOGGER.debug("Linkage Update Time: {}",System.currentTimeMillis()-beginTime);
+
             }
             
 
@@ -1584,7 +1597,16 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         {
  
         	SimpleFeature toModify = writer.next();
+        	
 
+			DateTime lm =  new DateTime(toModify.getAttribute(LINKAGE_LAST_MODIFIED_COLUMN_NAME));
+			// IF the lastModified of this link is less than or equal to the one
+			// stored nothing has changed so don't update but return true so we don't
+			// persist another copy
+			if (!lm.isBefore(link.getLastModified())) {
+				writer.close();
+				return true;
+			}
         	final String linkfields[] = {
         		     LINKAGE_ENTITY1_KEY_COLUMN_NAME,
         		     LINKAGE_ENTITY1_NAME_COLUMN_NAME,
@@ -1617,7 +1639,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         	}
        			
         	writer.write();
-        
+        	updated=true;
 
         } 
         writer.close();
