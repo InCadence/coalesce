@@ -1246,7 +1246,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                 setFeatureAttribute(simplefeature,
     					LINKAGE_ENTITY1_KEY_COLUMN_NAME,
                         ECoalesceFieldDataTypes.STRING_TYPE,
-                        link.getKey());
+                        link.getEntity1Key());
                 setFeatureAttribute(simplefeature,
                 		LINKAGE_ENTITY1_NAME_COLUMN_NAME,
                         ECoalesceFieldDataTypes.STRING_TYPE,
@@ -1719,6 +1719,11 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             String guid = ((UUID) fieldvalue).toString();
             simplefeature.setAttribute(fieldname, guid);
             break;
+            
+        case ENUMERATION_TYPE:
+        	String enumname = fieldvalue.toString();
+        	simplefeature.setAttribute(fieldname,enumname);
+        	break;
 
         case GEOCOORDINATE_LIST_TYPE:
             MultiPoint points = new GeometryFactory().createMultiPoint((Coordinate[]) fieldvalue);
