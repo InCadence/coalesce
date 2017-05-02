@@ -56,7 +56,8 @@
 							${project.groupId}.framework.jobs*,
 							${project.groupId}.framework.tasks,
 							${project.groupId}.framework.populators,
-							${project.groupId}.handlers
+							${project.groupId}.handlers,
+							${project.groupId}.enums
 						</Export-Package>
 						<Import-Package>
 							org.joda.time*;version="[1.6.2, 3)",
