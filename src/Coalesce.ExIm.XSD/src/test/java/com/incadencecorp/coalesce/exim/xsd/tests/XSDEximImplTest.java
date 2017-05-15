@@ -169,7 +169,7 @@ public class XSDEximImplTest {
         record.getCircleField().setValue(circle);
 
         Polygon polygon = GF.createPolygon(new Coordinate[] {
-                new Coordinate(1, 2, 3), new Coordinate(3, 2.2, 1), new Coordinate(2, 3, 3), new Coordinate(1, 2, 3)
+                new Coordinate(1, 2, 3), new Coordinate(-3, -2.2, 1), new Coordinate(2, 3, 3), new Coordinate(1, 2, 3)
         });
 
         record.getPolygonField().setValue(polygon);
@@ -446,6 +446,67 @@ public class XSDEximImplTest {
         }
     }
 
+    /**
+     * This test ensures that there are no issues merging entities that have
+     * been exported and imported.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testMergingEntities() throws Exception
+    {
+        XSDEximImpl exim = new XSDEximImpl();
+
+        // Create Entity
+        TestEntity entity = new TestEntity();
+        entity.initialize();
+
+        TestRecord record = entity.addRecord1();
+        record.getStringField().setValue("Hello World");
+
+        // Export Entity
+        Document doc = exim.exportValues(entity, true);
+
+        // Import Entity
+        TestEntity entity2 = new TestEntity();
+        entity2.initialize();
+
+        exim.importValues(doc, entity2);
+
+        TestRecord entity2Record = new TestRecord(entity2.getRecordset1().getRecords().get(0));
+
+        Assert.assertEquals(record.getStringField().getValue(), entity2Record.getStringField().getValue());
+
+        // Update Entity
+        record.getStringField().setValue("Updated");
+
+        // Export
+        doc = exim.exportValues(entity, true);
+
+        // Import Entity
+        TestEntity entity3 = new TestEntity();
+        entity3.initialize();
+
+        exim.importValues(doc, entity3);
+
+        TestRecord entity3Record = new TestRecord(entity3.getRecordset1().getRecords().get(0));
+
+        Assert.assertNotEquals(record.getStringField().getValue(), entity2Record.getStringField().getValue());
+        Assert.assertEquals(record.getStringField().getValue(), entity3Record.getStringField().getValue());
+
+        // Merge Entities
+        TestEntity merged = new TestEntity();
+        merged.initialize(CoalesceEntity.mergeSyncEntity(entity2, entity3, "test", "localhost"));
+
+        // Verify Value (Field should have been merged)
+        TestRecord mergedRecord = new TestRecord(merged.getRecordset1().getRecords().get(0));
+
+        // Verify Value & Number of Fields
+        Assert.assertEquals(record.getStringField().getValue(), mergedRecord.getStringField().getValue());
+        Assert.assertEquals(record.getFields().size(), mergedRecord.getFields().size());
+
+    }
+
     private static TestEntity createEntity()
     {
         TestEntity entity = new TestEntity();
@@ -487,7 +548,7 @@ public class XSDEximImplTest {
 
         Document xsdDoc = XSDGeneratorUtil.createXsd(null, CoalesceEntityTemplate.create(entity));
 
-        LOGGER.info(formatPretty(xsdDoc));
+        LOGGER.debug(formatPretty(xsdDoc));
 
         File file = new File(XSD_PATH);
         FileWriter writer = new FileWriter(file);

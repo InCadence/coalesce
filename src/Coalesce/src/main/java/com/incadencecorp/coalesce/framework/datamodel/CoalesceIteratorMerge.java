@@ -52,7 +52,7 @@ public class CoalesceIteratorMerge extends CoalesceIterator {
 
     boolean hasNewElements = false;
 
-    private static final List<String> ATTRIBUTES_TO_IIGNORE = Arrays.asList(new String[] {
+    private static final List<String> ATTRIBUTES_TO_IGNORE = Arrays.asList(new String[] {
             "previoushistorykey", "modifiedby", "modifiedbyip", "objectversion", "key"
     });
 
@@ -208,20 +208,49 @@ public class CoalesceIteratorMerge extends CoalesceIterator {
     @Override
     protected boolean visitCoalesceRecordset(CoalesceRecordset recordset)
     {
-        return mergeElement(recordset);
+        CoalesceRecordset originalRecordset = (CoalesceRecordset) original.getCoalesceObjectForKey(recordset.getKey());
+
+        if (mergeElement(originalRecordset, recordset))
+        {
+            // Merge definitions based on the name and not the key since they
+            // can change.
+            for (CoalesceFieldDefinition fd : recordset.getFieldDefinitions())
+            {
+                mergeElement(originalRecordset.getFieldDefinition(fd.getName()), fd);
+            }
+
+            // Process records as normal
+            for (CoalesceRecord record : recordset.getRecords())
+            {
+                CoalesceRecord originalRecord = (CoalesceRecord) originalRecordset.getCoalesceObjectForKey(record.getKey());
+                
+                if (mergeElement(originalRecord, record))
+                {
+                    // Merge fields based on the field name and not the key. When using
+                    // ExIm the field keys are not saved with the data and therefore
+                    // will always be different resulting in duplicate fields to be
+                    // created.
+                    for (CoalesceField<?> field : record.getFields())
+                    {
+                        mergeElement(originalRecord.getFieldByName(field.getName()), field);
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 
     @Override
     protected boolean visitCoalesceRecord(CoalesceRecord record)
     {
-        return mergeElement(record);
+        // Don't visit children
+        return false;
     }
 
     @Override
     protected boolean visitCoalesceField(CoalesceField<?> field)
     {
-        mergeElement(field);
-
         // Don't visit children
         return false;
     }
@@ -229,18 +258,17 @@ public class CoalesceIteratorMerge extends CoalesceIterator {
     @Override
     protected boolean visitCoalesceFieldDefinition(CoalesceFieldDefinition definition)
     {
-        return mergeElement(definition);
+        // Don't visit children
+        return false;
     }
 
-    private boolean mergeElement(CoalesceObject updated)
+    private boolean mergeElement(CoalesceObject orig, CoalesceObject updated)
     {
-        CoalesceObject object = original.getCoalesceObjectForKey(updated.getKey());
-
         // New Element?
-        if (object != null)
+        if (orig != null)
         {
             // No; Merge
-            mergeAttributes((CoalesceObject) object, updated, false);
+            mergeAttributes((CoalesceObject) orig, updated, false);
             return true;
         }
         else
@@ -260,7 +288,11 @@ public class CoalesceIteratorMerge extends CoalesceIterator {
 
             return false;
         }
+    }
 
+    private boolean mergeElement(CoalesceObject updated)
+    {
+        return mergeElement(original.getCoalesceObjectForKey(updated.getKey()), updated);
     }
 
     private void clearHistory(ICoalesceObjectHistory updated)
@@ -283,7 +315,6 @@ public class CoalesceIteratorMerge extends CoalesceIterator {
 
     protected boolean mergeAttributes(CoalesceObject original, CoalesceObject updated, boolean skipHistory)
     {
-
         boolean historyCreated = false;
 
         if (childrenKeys != null)
@@ -294,7 +325,7 @@ public class CoalesceIteratorMerge extends CoalesceIterator {
         Map<QName, String> attributes = updated.getAttributes();
 
         // Remove attributes that should only be modified on an update.
-        for (String attributeToIgnore : ATTRIBUTES_TO_IIGNORE)
+        for (String attributeToIgnore : ATTRIBUTES_TO_IGNORE)
         {
             attributes.remove(new QName(attributeToIgnore));
         }
@@ -316,8 +347,11 @@ public class CoalesceIteratorMerge extends CoalesceIterator {
                     || (originalValue == null && updatedValue != null))
             {
 
-                // Yes; History Already Created?
-                if (!historyCreated && !skipHistory && !attribute.getKey().toString().equalsIgnoreCase("lastmodified"))
+                // Yes; History Already Created? (Exclude last modified and date
+                // created changes, these can change when using ExIm)
+                if (!historyCreated && !skipHistory
+                        && !attribute.getKey().toString().equalsIgnoreCase(CoalesceObject.ATTRIBUTE_LASTMODIFIED)
+                        && !attribute.getKey().toString().equalsIgnoreCase(CoalesceObject.ATTRIBUTE_DATECREATED))
                 {
                     if (original instanceof ICoalesceObjectHistory)
                     {

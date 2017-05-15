@@ -146,6 +146,21 @@ public class CoalesceEntity extends CoalesceObjectHistory {
     }
 
     /**
+     * Creates a new {@link CoalesceEntity} of the name, source and version.
+     * 
+     * @param name String identifying the {@link CoalesceEntity} type to create
+     * @param source String identifying the {@link CoalesceEntity} source
+     * @param version String identifying the {@link CoalesceEntity} version
+     * 
+     * @return {@link CoalesceEntity} resulting from entityXml String parameter,
+     *         null if failed
+     */
+    public static CoalesceEntity create(String name, String source, String version)
+    {
+        return CoalesceEntity.create(name, source, version, null, null, null);
+    }
+    
+    /**
      * Creates a new {@link CoalesceEntity} of the name, source and version
      * specified for the entityId and entityIdType specified.
      * 
