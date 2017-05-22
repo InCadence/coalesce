@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -22,6 +23,9 @@ import java.util.concurrent.TimeUnit;
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
 
+import org.apache.accumulo.core.client.AccumuloException;
+import org.apache.accumulo.core.client.AccumuloSecurityException;
+import org.apache.accumulo.core.client.BatchDeleter;
 import org.apache.accumulo.core.client.BatchWriter;
 import org.apache.accumulo.core.client.BatchWriterConfig;
 import org.apache.accumulo.core.client.Connector;
@@ -29,6 +33,7 @@ import org.apache.accumulo.core.client.IteratorSetting;
 // import org.apache.accumulo.core.client.Durability; // Accumulo 1.7 depenency
 import org.apache.accumulo.core.client.MutationsRejectedException;
 import org.apache.accumulo.core.client.TableNotFoundException;
+import org.apache.accumulo.core.client.admin.TableOperations;
 import org.apache.accumulo.core.data.Key;
 import org.apache.accumulo.core.data.Mutation;
 import org.apache.accumulo.core.data.Range;
@@ -73,6 +78,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
@@ -209,7 +215,25 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         validator = new CoalesceValidator();
         createLinkageFeature(LINKAGE_FEATURE_NAME);
     }
-
+    
+    /**
+     * @return EnumSet of EPersistorCapabilities
+     */
+    @Override
+    public EnumSet<EPersistorCapabilities> getCapabilities()
+    {
+        EnumSet<EPersistorCapabilities> enumSet = EnumSet.of(EPersistorCapabilities.CREATE, 
+        		EPersistorCapabilities.READ,
+        		EPersistorCapabilities.GET_FIELD_VALUE,
+        		EPersistorCapabilities.DELETE,
+        		EPersistorCapabilities.GEOSPATIAL_SEARCH,
+        		EPersistorCapabilities.SEARCH,
+        		EPersistorCapabilities.READ_TEMPLATES,
+        		EPersistorCapabilities.SUPPORTS_BLOB,
+        		EPersistorCapabilities.READ_TEMPLATES);
+        return enumSet;
+    }
+    
     @Override
     public String[] getEntityXml(String... keys) throws CoalescePersistorException
     {
@@ -238,7 +262,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         }
         catch (TableNotFoundException ex)
         {
-            System.err.println(ex.getLocalizedMessage());
+           LOGGER.error(ex.getLocalizedMessage(),ex);
         }
         return results != null ? results.toArray(new String[results.size()]) : null;
     }
@@ -279,7 +303,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         }
         catch (TableNotFoundException ex)
         {
-            System.err.println(ex.getLocalizedMessage());
+        	LOGGER.error(ex.getLocalizedMessage(),ex);
         }
         return xml;
     }
@@ -320,7 +344,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         }
         catch (TableNotFoundException ex)
         {
-            System.err.println(ex.getLocalizedMessage());
+        	LOGGER.error(ex.getLocalizedMessage(),ex);
         }
         return xml;
     }
@@ -363,7 +387,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         }
         catch (TableNotFoundException ex)
         {
-            System.err.println(ex.getLocalizedMessage());
+        	LOGGER.error(ex.getLocalizedMessage(),ex);
         }
         return value;
 
@@ -397,7 +421,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         }
         catch (TableNotFoundException ex)
         {
-            System.err.println(ex.getLocalizedMessage());
+        	LOGGER.error(ex.getLocalizedMessage(),ex);
         }
         return entityKey != null && xpath != null ? new ElementMetaData(entityKey, xpath) : null;
     }
@@ -435,7 +459,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         }
         catch (TableNotFoundException ex)
         {
-            System.err.println(ex.getLocalizedMessage());
+        	LOGGER.error(ex.getLocalizedMessage(),ex);
         }
         return keys;
     }
@@ -481,7 +505,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         }
         catch (TableNotFoundException ex)
         {
-            System.err.println(ex.getLocalizedMessage());
+        	LOGGER.error(ex.getLocalizedMessage(),ex);
         }
         return metadata;
     }
@@ -575,7 +599,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             }
             catch (CoalescePersistorException | MutationsRejectedException | TableNotFoundException ex)
             {
-                System.err.println(ex.getLocalizedMessage());
+            	LOGGER.error(ex.getLocalizedMessage(),ex);
             }
         }
         if (writer != null)
@@ -587,7 +611,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             }
             catch (MutationsRejectedException e)
             {
-                System.err.println(e.getLocalizedMessage());
+            	LOGGER.error(e.getLocalizedMessage(),e);
             }
         }
     }
@@ -896,7 +920,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         }
         catch (TableNotFoundException ex)
         {
-            System.err.println(ex.getLocalizedMessage());
+        	LOGGER.error(ex.getLocalizedMessage(),ex);
 
         }
         return xml;
@@ -930,7 +954,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         }
         catch (TableNotFoundException ex)
         {
-            System.err.println(ex.getLocalizedMessage());
+        	LOGGER.error(ex.getLocalizedMessage(),ex);
         }
         return key;
     }
@@ -1093,8 +1117,11 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             throws SQLException, CoalescePersistorException, SAXException, IOException, CoalesceDataFormatException
     {
         boolean persisted = false;
+        long beginTime;
         try
         {
+        
+        
             Connector dbConnector = connect.getDBConnector();
             BatchWriterConfig config = new BatchWriterConfig();
             config.setMaxLatency(1, TimeUnit.SECONDS);
@@ -1103,14 +1130,73 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             // config.setDurability(Durability.DEFAULT); // Requires Accumulo
             // 1.7
             config.setMaxWriteThreads(10);
-            long beginTime = System.currentTimeMillis();
-            persisted = persistBaseData(entity, dbConnector, writer) && persistEntityIndex(entity, dbConnector, config);
-            LOGGER.debug("Base Data Persist Time: {}",System.currentTimeMillis()-beginTime);
-            persistEntitySearchData(entity, dbConnector, config, featureCollectionMap, allowRemoval);
+            if (entity.getFlatten())
+            {
+                switch (entity.getStatus()) {
+                case READONLY:
+                case ACTIVE:
+                    // Persist Object
+                    beginTime = System.currentTimeMillis();
+                    persisted = persistBaseData(entity, dbConnector, writer) && persistEntityIndex(entity, dbConnector, config);
+                    LOGGER.debug("Base Data Persist Time: {}",System.currentTimeMillis()-beginTime);
+                    persistEntitySearchData(entity, dbConnector, config, featureCollectionMap, allowRemoval);
+                    LOGGER.debug("Total Data Persist Time: {}",System.currentTimeMillis()-beginTime);
+
+                    break;
+
+                case DELETED:
+                    if (allowRemoval)
+                    {
+                    	
+                    	DataStore geoDataStore = connect.getGeoDataStore();
+                    
+                        // Delete Object
+                        persisted = deleteBaseData(entity, dbConnector, config) && 
+                        		deleteEntityIndex(entity, dbConnector, config);
+                        for (CoalesceSection section : entity.getSections().values())
+                        {
+                            // String sectionname = section.getName();
+                            for (CoalesceRecordset recordset : section.getRecordsetsAsList())
+                            {
+                                String recordname = recordset.getName();
+                                String featuresetname = (recordname).replaceAll(" ", "_");
+
+                                // Verify a featureset exists if not skip this
+                                // record
+                                SimpleFeatureType featuretype = geoDataStore.getSchema(featuresetname);
+                                if (featuretype == null)
+                                {
+                                    break;
+                                }
+
+                                deleteRecordset(featuresetname, recordset);
+
+                            }
+                        }
+                        deleteFromLinks(entity);
+                    }
+                    else
+                    {
+                        // Mark Object as Deleted
+                        // Persist Object
+                        beginTime = System.currentTimeMillis();
+                        persisted = persistBaseData(entity, dbConnector, writer) && persistEntityIndex(entity, dbConnector, config);
+                        LOGGER.debug("Base Data Persist Time: {}",System.currentTimeMillis()-beginTime);
+                        persistEntitySearchData(entity, dbConnector, config, featureCollectionMap, allowRemoval);
+                        LOGGER.debug("Total Data Persist Time: {}",System.currentTimeMillis()-beginTime);
+                    }
+
+                    break;
+
+                default:
+                    persisted = false;
+                }
+            }
+
         }
-        catch (CoalescePersistorException ex)
+        catch (CoalescePersistorException | CQLException ex)
         {
-            System.err.println(ex.getLocalizedMessage());
+            LOGGER.error(ex.getLocalizedMessage(),ex);
             persisted = false;
         }
         return persisted;
@@ -1131,7 +1217,30 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         }
         return persisted;
     }
-
+    
+    private boolean deleteBaseData(CoalesceEntity entity, Connector connect, BatchWriterConfig config)
+    {
+        boolean persisted = false;
+        try
+        {
+        	BatchDeleter bd = connect.createBatchDeleter(AccumuloDataConnector.coalesceTable, 
+        			Authorizations.EMPTY, 1, config);
+        	bd.setRanges(Collections.singleton(Range.exact(new Text(
+    				entity.getKey()))));
+        	bd.delete();
+        	bd.close();
+            //TableOperations ops = connect.tableOperations();
+            //Text row = new Text(entity.getKey());
+            //ops.deleteRows(AccumuloDataConnector.coalesceTable,row,row);
+            persisted = true;
+        }
+        catch (TableNotFoundException | AccumuloException e)
+        {
+            persisted = false;
+        }
+        return persisted;
+    }
+    
     private boolean persistEntityIndex(CoalesceEntity entity, Connector dbConnector, BatchWriterConfig config)
     {
         boolean persisted = false;
@@ -1153,7 +1262,30 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         }
         return persisted;
     }
-
+    
+    private boolean deleteEntityIndex(CoalesceEntity entity, Connector connect,BatchWriterConfig config)
+    {
+        boolean persisted = false;
+        try
+        {
+        	BatchDeleter bd = connect.createBatchDeleter(AccumuloDataConnector.coalesceTable, 
+        			Authorizations.EMPTY, 1, config);
+        	bd.setRanges(Collections.singleton(Range.exact(new Text(
+    				entity.getKey()))));
+        	bd.delete();
+        	bd.close();
+            //TableOperations ops = connect.tableOperations();
+            //Text row = new Text(entity.getKey());
+            //ops.deleteRows(AccumuloDataConnector.coalesceTable,row,row);
+            persisted = true;
+        }
+        catch (TableNotFoundException | AccumuloException e)
+        {
+            persisted = false;
+        }
+        return persisted;
+    }
+    
     private boolean persistEntitySearchData(CoalesceEntity entity,
                                             Connector dbConnector,
                                             BatchWriterConfig config,
@@ -1221,6 +1353,18 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         return persisted;
     }
 
+    private void deleteFromLinks(CoalesceEntity entity)
+            throws IOException, CQLException, CoalesceDataFormatException
+    {
+        DataStore store = connect.getGeoDataStore();
+        FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
+        SimpleFeatureStore featureStore = (SimpleFeatureStore) store.getFeatureSource(LINKAGE_FEATURE_NAME);
+        Filter filter =ff.equal(ff.property(LINKAGE_ENTITY1_KEY_COLUMN_NAME),ff.literal(entity.getKey()));
+               
+        featureStore.removeFeatures(filter);
+
+    }
+    
     private void storeLinkageSearch(DataStore gds, CoalesceEntity entity,
     		Map<String, DefaultFeatureCollection> featureCollectionMap) throws CQLException, CoalesceDataFormatException, IOException 
     {
@@ -1892,7 +2036,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         }
         catch (TableNotFoundException ex)
         {
-            System.err.println(ex.getLocalizedMessage());
+            LOGGER.error(ex.getLocalizedMessage(),ex);
         }
         return lastModified;
     }
