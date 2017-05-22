@@ -214,6 +214,9 @@ public class CoalesceEntity extends CoalesceObjectHistory {
      */
     public boolean initialize()
     {
+    	if (this.isInitialized())
+    		return true;
+    	
         _entity = new Entity();
 
         if (!super.initialize(_entity))
@@ -244,6 +247,9 @@ public class CoalesceEntity extends CoalesceObjectHistory {
                                        String entityIdType,
                                        String title)
     {
+    	if (this.isInitialized())
+    		return true;
+    	
         _entity = new Entity();
 
         if (!super.initialize(_entity))
@@ -274,6 +280,9 @@ public class CoalesceEntity extends CoalesceObjectHistory {
      */
     public boolean initialize(String entityXml)
     {
+    	if (this.isInitialized())
+    		return true;
+    	
 
         if (entityXml == null || StringHelper.isNullOrEmpty(entityXml.trim()))
         {
