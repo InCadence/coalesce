@@ -51,7 +51,7 @@
 						<configuration>
 							<defaultOptions>
 								<bindingFiles>
-									<bindingFile>${basedir}/src/main/resources/Binding.xjb</bindingFile>
+									<bindingFile>${basedir}/src/main/resources/binding.xjb</bindingFile>
 								</bindingFiles>
 								<extraargs>
 									<extraarg>-xjc-Xsetters</extraarg>
