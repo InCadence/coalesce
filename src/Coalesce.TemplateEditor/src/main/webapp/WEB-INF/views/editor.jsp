@@ -23,6 +23,14 @@
 
 <spring:url value="/images/grid.gif" var="grid" />
 
+<script src="<c:url value="/js/scripts/enums/CoalesceFieldType.js" />"></script>
+<script src="<c:url value="/js/scripts/enums/CoalesceObjectType.js" />"></script>
+<script src="<c:url value="/js/scripts/model/CoalesceEntityTemplate.js" />"></script>
+<script src="<c:url value="/js/scripts/model/CoalesceField.js" />"></script>
+<script src="<c:url value="/js/scripts/model/CoalesceRecordSet.js" />"></script>
+<script src="<c:url value="/js/scripts/model/CoalesceSection.js" />"></script>
+<script src="<c:url value="/js/scripts/model/CoalesceCell.js" />"></script>
+<script src="<c:url value="/js/scripts/model/CoalesceEditCell.js" />"></script>
 <script src="<c:url value="/js/scripts/dragdropcontroller.js" />"></script>
 
 </head>

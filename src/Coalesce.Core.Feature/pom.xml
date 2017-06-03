@@ -30,8 +30,8 @@
 						<instructions>
 							<Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
 						</instructions>
-						<unpackBundle>true</unpackBundle>
-						<aggregateFeatures>true</aggregateFeatures>
+<!-- 						<unpackBundle>true</unpackBundle> -->
+<!-- 						<aggregateFeatures>true</aggregateFeatures> -->
 					</configuration>
 				</plugin>
 			</plugins>
