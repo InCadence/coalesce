@@ -10,10 +10,28 @@ app.run( function ( $rootScope , $http) {
 
 		var container = $( "#graphbox" )[ 0 ];
 
+		// create a div element for the navigator window for the jstree
 		var content = document.createElement( 'div' );
+		
+		$( content ).attr('id','navtree');
+		
+		//$( content ).jstree();
 
-		$( content ).append( $( '<ul>' ).attr('id','list'));
-
+		//$( content ).append( $( '<ul>' ).attr('id','list').append( $( '<li>' ).attr('id','root').text( "root" )));
+		
+		//$( '#list' ).append( $( '<li>' ).attr('id','root').text( "root" ));
+		
+		$( content ).jstree({
+		    "core": {
+		        "check_callback": true
+		      },
+		      "plugins" : [ "contextmenu" ]
+		    });
+		
+		$( content ).on("select_node.jstree", function (e, data) { alert("node_id: " + data.node.id); });
+		 
+		 console.log(content);
+		
 		mxEvent.disableContextMenu( content );
 
 		var wnd = new mxWindow( 'List', content, 0, 0, 150, 600, true, true );
@@ -85,9 +103,10 @@ app.run( function ( $rootScope , $http) {
 
 			var coalesceCell = new CoalesceCell(evt.properties.cell);
 			coalesceCell.getCoalesceObj().setTemplateName(cellValue);
-
-			$($rootScope.navigatorWnd.content).find('#'+cellid).text(cellValue);
-
+			
+			var node = $( $rootScope.navigatorWnd.content ).jstree('get_node',cellid);
+			
+			$( $rootScope.navigatorWnd.content ).jstree('rename_node', node , cellValue );
 
 		} );
 
@@ -175,11 +194,16 @@ app.run( function ( $rootScope , $http) {
 						// update nav
 						var container = $rootScope.navigator;
 
-						var div = $( container );
+//						var div = $( container );
 
 						var cellID = entityCell.id;
+						
+						$( container ).jstree('create_node',"#",{
+						    "id": cellID,
+						    "text": "New Template"
+						  },"last");
 
-						$( "#list" ).append( $( '<li>' ).attr('id',cellID).text( "New Template" ));
+//						$( "#list" ).append( $( '<li>' ).attr('id',cellID).text( "New Template" ));
 
 					} finally {
 						// Updates the display
@@ -393,7 +417,11 @@ app.run( function ( $rootScope , $http) {
 
 			var cellid = cell.id;
 			
-			$($rootScope.navigatorWnd.content).find('#'+cellid).text(cell.value);
+            var node = $( $rootScope.navigatorWnd.content ).jstree('get_node',cellid);
+			
+			$( $rootScope.navigatorWnd.content ).jstree('rename_node', node , cell.value );
+			
+//			$($rootScope.navigatorWnd.content).find('#'+cellid).text(cell.value);
 
 			} finally {
 				// Updates the display
@@ -673,8 +701,13 @@ app.controller( 'draganddrop', function ( $scope, $rootScope ) {
 		var cellID = cell.id;
 
 		var entityName = $( xmlDoc ).find( 'entity' ).attr( "name" );
+		
+		$( '#navtree' ).jstree('create_node',"#",{
+		    "id": cellID,
+		    "text": entityName
+		  },"last");
+		
 
-		$( "#list" ).append( $( '<li>' ).attr('id',cellID).text( entityName ));
 
 	}
 

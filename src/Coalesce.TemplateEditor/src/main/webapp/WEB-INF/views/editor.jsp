@@ -9,7 +9,11 @@
 <link rel="stylesheet" type="text/css" media="all"
 	href="<c:url value="/css/folding.css" />" />
 
+<link rel="stylesheet" type="text/css" media="all"
+	href="<c:url value="/js/jstree/themes/default/style.css" />" />
+
 <script src="<c:url value="/js/jquery/jquery-3.1.1.js" />"></script>
+<script src="<c:url value="/js/jstree/jstree.js" />"></script>
 
 <!-- Sets the basepath for the library if not in same directory -->
 <script type="text/javascript">
