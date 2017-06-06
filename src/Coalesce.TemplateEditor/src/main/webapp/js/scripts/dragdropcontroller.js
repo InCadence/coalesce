@@ -15,12 +15,6 @@ app.run( function ( $rootScope , $http) {
 		
 		$( content ).attr('id','navtree');
 		
-		//$( content ).jstree();
-
-		//$( content ).append( $( '<ul>' ).attr('id','list').append( $( '<li>' ).attr('id','root').text( "root" )));
-		
-		//$( '#list' ).append( $( '<li>' ).attr('id','root').text( "root" ));
-		
 		$( content ).jstree({
 		    "core": {
 		        "check_callback": true
@@ -194,16 +188,12 @@ app.run( function ( $rootScope , $http) {
 						// update nav
 						var container = $rootScope.navigator;
 
-//						var div = $( container );
-
 						var cellID = entityCell.id;
 						
 						$( container ).jstree('create_node',"#",{
 						    "id": cellID,
 						    "text": "New Template"
 						  },"last");
-
-//						$( "#list" ).append( $( '<li>' ).attr('id',cellID).text( "New Template" ));
 
 					} finally {
 						// Updates the display
@@ -244,14 +234,6 @@ app.run( function ( $rootScope , $http) {
 		var graph = new mxGraph( content );
 
 		var parent = graph.getDefaultParent();
-
-		// var xmlDoc = cell.coalesceDoc;
-
-
-
-		// var sectionName = $( xmlDoc ).find( 'entity' ).find( 'section' ).attr( "name" );
-
-		// var recordsetName = $( xmlDoc ).find( 'entity' ).find( 'section' ).find( 'recordset' ).attr( "name" );
 
 		var wndY = $rootScope.currentMousePos.y - 250/2;
 
@@ -320,8 +302,6 @@ app.run( function ( $rootScope , $http) {
 		};
 
 		// Adds cells to the model
-		// var graph = $rootScope.graph;
-
 		graph.getModel().beginUpdate();
 		try {
 
@@ -398,9 +378,6 @@ app.run( function ( $rootScope , $http) {
 		wnd.addListener( mxEvent.CLOSE, function ( sender, evt ) {
 
 			console.log( "window closed!" );
-			// console.log(entityCell);
-			// console.log( sender );
-			// console.log( evt );
 			cell.isEditorOpen = false;
 
 			coalesceCell.setCoalesceObj(new coalesceEditCellToCoalesceObj(entityCell));
@@ -412,7 +389,6 @@ app.run( function ( $rootScope , $http) {
 
 			cell.value = entityCell.getValue();
 
-			//TODO fire event???
 			graph.fireEvent(new mxEventObject(mxEvent.LABEL_CHANGED));
 
 			var cellid = cell.id;
@@ -421,18 +397,10 @@ app.run( function ( $rootScope , $http) {
 			
 			$( $rootScope.navigatorWnd.content ).jstree('rename_node', node , cell.value );
 			
-//			$($rootScope.navigatorWnd.content).find('#'+cellid).text(cell.value);
-
 			} finally {
 				// Updates the display
 				graph.getModel().endUpdate();
 			}
-
-//			graph.fireEvent(new mxEventObject(mxEvent.LABEL_CHANGED));
-
-			//todo update nav
-			
-
 
 		} );
 
@@ -556,7 +524,7 @@ function coalesceEditCellToCoalesceObj(cell){
 
 function xmlDocToCoalesceObj(xmlDoc){
 
-// we dont need this
+// we dont need the Linkage Section
 $( xmlDoc ).find( 'entity' ).find( 'linkagesection' ).remove();
 
 var templateName = $( xmlDoc ).find( 'entity' ).attr( "name" );
@@ -714,13 +682,7 @@ app.controller( 'draganddrop', function ( $scope, $rootScope ) {
 	// initialize
 	function Init () {
 
-		// var fileselect = $id("fileselect");
 		var filedrag = $id( "graphbox" );
-		// var submitbutton = $id("submitbutton");
-
-		// file select
-		// fileselect.addEventListener("change",
-		// FileSelectHandler, false);
 
 		// is XHR2 available?
 		var xhr = new XMLHttpRequest();
@@ -732,8 +694,6 @@ app.controller( 'draganddrop', function ( $scope, $rootScope ) {
 			filedrag.addEventListener( "drop", FileSelectHandler, false );
 			filedrag.style.display = "block";
 
-			// remove submit button
-			// submitbutton.style.display = "none";
 		}
 
 	}
