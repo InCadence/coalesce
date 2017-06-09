@@ -220,7 +220,7 @@ public class CoalesceIteratorMerge extends CoalesceIterator {
             }
 
             // Process records as normal
-            for (CoalesceRecord record : recordset.getRecords())
+            for (CoalesceRecord record : recordset.getAllRecords())
             {
                 CoalesceRecord originalRecord = (CoalesceRecord) originalRecordset.getCoalesceObjectForKey(record.getKey());
                 

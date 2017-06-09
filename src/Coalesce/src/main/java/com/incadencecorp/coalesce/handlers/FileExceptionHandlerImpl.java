@@ -25,6 +25,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -89,6 +90,17 @@ public class FileExceptionHandlerImpl extends CoalesceComponentImpl implements I
 
     }
 
+    @Override
+    public List<String> getProperties()
+    {
+        List<String> properties = super.getProperties();
+        
+        properties.add(CoalesceParameters.PARAM_DIRECTORY);
+        properties.add(CoalesceParameters.PARAM_SUBDIR_LEN);
+        
+        return properties;
+    }
+    
     @Override
     public boolean handle(String[] keys, ICoalesceComponent caller, Exception e) throws CoalesceException
     {

@@ -380,6 +380,7 @@ public final class JodaDateTimeHelper {
             DateTimeFormatter formatter = ISODateTimeFormat.dateTime().withZone(DateTimeZone.UTC);
 
             return formatter.parseDateTime(xmlDate);
+
         }
         catch (IllegalArgumentException e)
         {

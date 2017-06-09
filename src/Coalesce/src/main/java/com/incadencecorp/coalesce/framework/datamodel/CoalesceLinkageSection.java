@@ -1,6 +1,8 @@
 package com.incadencecorp.coalesce.framework.datamodel;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.NullArgumentException;
@@ -173,7 +175,15 @@ public class CoalesceLinkageSection extends CoalesceObjectHistory {
      */
     public void clearLinkages()
     {
-        _entityLinkageSection.getLinkage().clear();
+        List<String> linkageKeys = new ArrayList<String>();
+        
+        for (Linkage linkage : _entityLinkageSection.getLinkage()) {
+            linkageKeys.add(linkage.getKey());
+        }
+        
+        for (String key : linkageKeys) {
+            pruneCoalesceObject(key);
+        }
     }
 
     // -----------------------------------------------------------------------//

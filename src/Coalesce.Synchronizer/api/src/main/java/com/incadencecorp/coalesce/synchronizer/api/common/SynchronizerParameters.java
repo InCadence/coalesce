@@ -93,4 +93,15 @@ public final class SynchronizerParameters {
      */
     public static final String PARAM_SCANNER_LAST_SUCCESS = SCANNERS + "lastscan";
 
+    /**
+     * (Integer) Number of days since last scanned to confine the scanner to a
+     * time period. If not specified it defaults to
+     * {@value #DEFAULT_SCANNER_DAYS}.
+     */
+    public static final String PARAM_SCANNER_DAYS = SCANNERS + "days";
+
+    /**
+     * {@link #PARAM_SCANNER_DAYS} default value.
+     */
+    public static final int DEFAULT_SCANNER_DAYS = 0;
 }

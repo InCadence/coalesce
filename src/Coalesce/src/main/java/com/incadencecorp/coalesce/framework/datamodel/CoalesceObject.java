@@ -999,7 +999,18 @@ public abstract class CoalesceObject implements ICoalesceObject {
      */
     public final boolean pruneCoalesceObject(CoalesceObject child)
     {
-        _children.remove(child.getKey());
+        return pruneCoalesceObject(child.getKey());
+    }
+
+    /**
+     * Prune an element from the entity.
+     * 
+     * @param key
+     * @return whether is was successful or not.
+     */
+    public final boolean pruneCoalesceObject(String key)
+    {
+        CoalesceObject child = _children.remove(key);
 
         return prune(child._object);
     }
