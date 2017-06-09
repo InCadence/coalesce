@@ -17,6 +17,7 @@
 
 package com.incadencecorp.coalesce.api;
 
+import java.util.List;
 import java.util.Map;
 
 import com.incadencecorp.coalesce.framework.PropertyLoader;
@@ -50,9 +51,13 @@ public interface ICoalesceComponent {
     /**
      * Sets a property loader. Depending on the implementation this is used for
      * loading properties that were not specified by {@link #setProperties(Map)}
-     * .
      * 
      * @param loader
      */
     void setPropertyLoader(PropertyLoader loader);
+
+    /**
+     * @return a list of properties used by this implementation.
+     */
+    List<String> getProperties();
 }

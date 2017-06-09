@@ -103,7 +103,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
                                                          String entityIdType,
                                                          String entityName,
                                                          String entitySource) throws CoalescePersistorException
-                                                         {
+    {
         try
         {
             if (entitySource != null && entitySource != "")
@@ -123,7 +123,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
         {
             throw new CoalescePersistorException("GetCoalesceEntityKeysForEntityId", e);
         }
-                                                         }
+    }
 
     @Override
     public EntityMetaData getCoalesceEntityIdAndTypeForKey(String key) throws CoalescePersistorException
@@ -168,7 +168,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
             byte[] binaryArray = null;
 
             ResultSet results = conn.executeQuery("SELECT BinaryObject FROM " + getSchemaPrefix()
-                                                  + "CoalesceFieldBinaryData WHERE ObjectKey=?", new CoalesceParameter(key, Types.OTHER));
+                    + "CoalesceFieldBinaryData WHERE ObjectKey=?", new CoalesceParameter(key, Types.OTHER));
 
             // Get Results
             if (results != null && results.first())
@@ -240,7 +240,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
             String value = null;
 
             ResultSet results = conn.executeQuery("SELECT value FROM " + getSchemaPrefix()
-                                                  + "CoalesceField WHERE ObjectKey =?", new CoalesceParameter(fieldKey, Types.OTHER));
+                    + "CoalesceField WHERE ObjectKey =?", new CoalesceParameter(fieldKey, Types.OTHER));
 
             while (results.next())
             {
@@ -311,7 +311,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
             String value = null;
 
             ResultSet results = conn.executeQuery("SELECT EntityXml FROM " + getSchemaPrefix()
-                                                  + "CoalesceEntity WHERE EntityId=? AND EntityIdType=?",
+                                                          + "CoalesceEntity WHERE EntityId=? AND EntityIdType=?",
                                                   new CoalesceParameter(entityId),
                                                   new CoalesceParameter(entityIdType));
 
@@ -340,7 +340,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
             String value = null;
 
             ResultSet results = conn.executeQuery("SELECT EntityXml FROM " + getSchemaPrefix()
-                                                  + "CoalesceEntity WHERE Name=? AND EntityId=? AND EntityIdType=?",
+                                                          + "CoalesceEntity WHERE Name=? AND EntityId=? AND EntityIdType=?",
                                                   new CoalesceParameter(name),
                                                   new CoalesceParameter(entityId),
                                                   new CoalesceParameter(entityIdType));
@@ -471,7 +471,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
             String value = null;
 
             ResultSet results = conn.executeQuery("SELECT TemplateKey FROM " + getSchemaPrefix()
-                                                  + "CoalesceEntityTemplate WHERE Name=? and Source=? and Version=?",
+                                                          + "CoalesceEntityTemplate WHERE Name=? and Source=? and Version=?",
                                                   new CoalesceParameter(name),
                                                   new CoalesceParameter(source),
                                                   new CoalesceParameter(version));
@@ -514,7 +514,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
             String value = null;
 
             ResultSet results = conn.executeQuery("SELECT TemplateXml FROM " + getSchemaPrefix()
-                                                  + "CoalesceEntityTemplate WHERE TemplateKey=?", new CoalesceParameter(key, Types.OTHER));
+                    + "CoalesceEntityTemplate WHERE TemplateKey=?", new CoalesceParameter(key, Types.OTHER));
 
             while (results.next())
             {
@@ -541,7 +541,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
             String value = null;
 
             ResultSet results = conn.executeQuery("SELECT TemplateXml FROM " + getSchemaPrefix()
-                                                  + "CoalesceEntityTemplate WHERE Name=? and Source=? and Version=?",
+                                                          + "CoalesceEntityTemplate WHERE Name=? and Source=? and Version=?",
                                                   new CoalesceParameter(name),
                                                   new CoalesceParameter(source),
                                                   new CoalesceParameter(version));
@@ -731,9 +731,9 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
             procedureName = "CoalesceEntityExt_InsertOrUpdate";
         }
 
-        return conn.executeProcedure(procedureName, params.toArray(new CoalesceParameter[params.size()])) && !entity.isMarkedDeleted();
+        return conn.executeProcedure(procedureName, params.toArray(new CoalesceParameter[params.size()]))
+                && !entity.isMarkedDeleted();
     }
-
 
     /*--------------------------------------------------------------------------
     Protected Methods
@@ -982,8 +982,8 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
             return true;
         }
 
-        // TODO Phase out CoalesceLinkage_InsertOrUpdate2 on the next DB wipe. 
-        
+        // TODO Phase out CoalesceLinkage_InsertOrUpdate2 on the next DB wipe.
+
         // Yes; Call Store Procedure
         return conn.executeProcedure("CoalesceLinkage_InsertOrUpdate2",
                                      new CoalesceParameter(linkage.getKey(), Types.OTHER),
@@ -1024,7 +1024,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
 
         // Execute Query
         ResultSet results = conn.executeQuery("SELECT EntityId,EntityIdType,ObjectKey FROM " + getSchemaPrefix()
-                                              + "CoalesceEntity WHERE ObjectKey=?", new CoalesceParameter(key, Types.OTHER));
+                + "CoalesceEntity WHERE ObjectKey=?", new CoalesceParameter(key, Types.OTHER));
         // Get Results
         while (results.next())
         {
@@ -1108,18 +1108,18 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
      */
     private List<String> getCoalesceEntityKeysForEntityId(String entityId, String entityIdType, String entityName)
             throws Exception
-            {
+    {
         List<String> keyList = new ArrayList<String>();
 
         try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings(), getSchemaPrefix()))
         {
             ResultSet results = conn.executeLikeQuery("SELECT ObjectKey FROM "
-                    + getSchemaPrefix()
-                    + "CoalesceEntity WHERE (EntityId like ?) AND (EntityIdType like ?) AND (Name=?)",
-                    2,
-                    new CoalesceParameter(entityId),
-                    new CoalesceParameter(entityIdType),
-                    new CoalesceParameter(entityName));
+                                                              + getSchemaPrefix()
+                                                              + "CoalesceEntity WHERE (EntityId like ?) AND (EntityIdType like ?) AND (Name=?)",
+                                                      2,
+                                                      new CoalesceParameter(entityId),
+                                                      new CoalesceParameter(entityIdType),
+                                                      new CoalesceParameter(entityName));
 
             while (results.next())
             {
@@ -1129,7 +1129,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
             return keyList;
         }
 
-            }
+    }
 
     /**
      * Returns the Coalesce entity keys that matches the given parameters.
@@ -1145,20 +1145,20 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
                                                                    String entityIdType,
                                                                    String entityName,
                                                                    String entitySource) throws Exception
-                                                                   {
+    {
 
         try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings(), getSchemaPrefix()))
         {
             List<String> keyList = new ArrayList<String>();
 
             ResultSet results = conn.executeLikeQuery("SELECT ObjectKey FROM "
-                    + getSchemaPrefix()
-                    + "CoalesceEntity WHERE (EntityId like ? ) AND (EntityIdType like  ? ) AND (Name=?) AND (Source=?)",
-                    2,
-                    new CoalesceParameter(entityId),
-                    new CoalesceParameter(entityIdType),
-                    new CoalesceParameter(entityName),
-                    new CoalesceParameter(entitySource));
+                                                              + getSchemaPrefix()
+                                                              + "CoalesceEntity WHERE (EntityId like ? ) AND (EntityIdType like  ? ) AND (Name=?) AND (Source=?)",
+                                                      2,
+                                                      new CoalesceParameter(entityId),
+                                                      new CoalesceParameter(entityIdType),
+                                                      new CoalesceParameter(entityName),
+                                                      new CoalesceParameter(entitySource));
 
             while (results.next())
             {
@@ -1167,7 +1167,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
 
             return keyList;
         }
-                                                                   }
+    }
 
     /**
      * Sets the active Coalesce field objects matching the parameters given.
@@ -1217,7 +1217,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
                 if (allowRemoval)
                 {
                     // Delete Object
-                    return deleteObject(coalesceObject, conn);
+                    isSuccessful = deleteObject(coalesceObject, conn);
                 }
                 else
                 {
@@ -1254,7 +1254,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
         String dateValue = null;
 
         ResultSet results = conn.executeQuery("SELECT LastModified FROM " + getSchemaPrefix() + tableName
-                                              + " WHERE ObjectKey=?", new CoalesceParameter(key.trim(), Types.OTHER));
+                + " WHERE ObjectKey=?", new CoalesceParameter(key.trim(), Types.OTHER));
         ResultSetMetaData resultsmd = results.getMetaData();
 
         // JODA Function DateTimeFormat will adjust for the Server timezone when

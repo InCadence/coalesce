@@ -22,7 +22,7 @@ import com.incadencecorp.unity.common.IConfigurationsConnector;
 import com.incadencecorp.unity.common.SettingsBase;
 
 /**
- * Configuration properties for the Neo4j persistor implementation.
+ * Configuration properties for Postgres persister implementations.
  * 
  * @author n78554
  */
@@ -32,8 +32,6 @@ public class PostGreSQLSettings {
     Private Member Variables
     --------------------------------------------------------------------------*/
 
-    private static final int SRID = 4326; // Spatial Reference ID, default is WGS84
-
     private static String config_name = "postgres-config.properties";
     private static SettingsBase settings = new SettingsBase(null);
 
@@ -41,22 +39,26 @@ public class PostGreSQLSettings {
     Property Names
     --------------------------------------------------------------------------*/
 
-    private static final String ENTERPRISEDB = "enterprisedb";
-    private static final String DSS_SRID = "omega.dss.srid";
-    private static final String DSS_DB_SERVER_PORT = "omega.dss.dbServerPort";
-    private static final String DSS_DATABASE = "omega.dss.database";
-    private static final String DSS_SCHEMA = "omega.dss.schema";
-    private static final String DSS_DB_PASSWORD = "omega.dss.dbPassword";
-    private static final String DSS_DB_USER = "omega.dss.dbUser";
-    private static final String DSS_DB_SERVER_NAME = "omega.dss.dbServerName";
+    // TODO Update base parameter to be coalesce within the InCadence repo
+    private static final String PARAM_BASE = "omega.dss.";
+    private static final String PARAM_SRID = PARAM_BASE + "srid";
+    private static final String PARAM_PORT = PARAM_BASE + "dbServerPort";
+    private static final String PARAM_DATABASE = PARAM_BASE + "database";
+    private static final String PARAM_SCHEMA = PARAM_BASE + "schema";
+    private static final String PARAM_PASSWORD = PARAM_BASE + "dbPassword";
+    private static final String PARAM_USER = PARAM_BASE + "dbUser";
+    private static final String PARAM_HOST = PARAM_BASE + "dbServerName";
+    private static final String PARAM_USE_FOREIGN_KEYS = PARAM_BASE + "usefk";
 
     /*--------------------------------------------------------------------------
     Default Values
     --------------------------------------------------------------------------*/
 
-    private static final String DEFAULT_USERNAME = ENTERPRISEDB;
-    private static final String DEFAULT_PASSWORD = ENTERPRISEDB;
-    
+    private static final String DEFAULT_USERNAME = "enterprisedb";
+    private static final String DEFAULT_PASSWORD = DEFAULT_USERNAME;
+    private static final boolean DEFAULT_USE_FOREIGN_KEYS = false;
+    private static final int DEFAULT_SRID = 4326; // WGS84
+
     /*--------------------------------------------------------------------------
     Initialization
     --------------------------------------------------------------------------*/
@@ -78,7 +80,7 @@ public class PostGreSQLSettings {
     {
         settings = new SettingsBase(connector);
     }
-    
+
     /**
      * Configures the settings to use a particular connector and property name.
      * 
@@ -97,8 +99,9 @@ public class PostGreSQLSettings {
     /**
      * @return Returns the address of the database.
      */
-    public static String getDatabaseAddress() {
-        return settings.getSetting(config_name, DSS_DB_SERVER_NAME, "10.0.51.90", true);
+    public static String getDatabaseAddress()
+    {
+        return settings.getSetting(config_name, PARAM_HOST, "10.0.51.90", true);
     }
 
     /**
@@ -106,15 +109,17 @@ public class PostGreSQLSettings {
      *
      * @param databaseAddress
      */
-    public static void setDatabaseAddress(String databaseAddress) {
-        settings.setSetting(config_name, DSS_DB_SERVER_NAME, databaseAddress);
+    public static void setDatabaseAddress(String databaseAddress)
+    {
+        settings.setSetting(config_name, PARAM_HOST, databaseAddress);
     }
 
     /**
      * @return Returns the username used for accessing the database.
      */
-    public static String getUserName() {
-        return settings.getSetting(config_name, DSS_DB_USER, DEFAULT_USERNAME, false);
+    public static String getUserName()
+    {
+        return settings.getSetting(config_name, PARAM_USER, DEFAULT_USERNAME, false);
     }
 
     /**
@@ -122,15 +127,17 @@ public class PostGreSQLSettings {
      *
      * @param userName
      */
-    public static void setUserName(String userName) {
-        settings.setSetting(config_name, DSS_DB_USER, userName);
+    public static void setUserName(String userName)
+    {
+        settings.setSetting(config_name, PARAM_USER, userName);
     }
 
     /**
      * @return Returns the password used for accessing the database.
      */
-    public static String getUserPassword() {
-        return settings.getSetting(config_name, DSS_DB_PASSWORD, DEFAULT_PASSWORD, false);
+    public static String getUserPassword()
+    {
+        return settings.getSetting(config_name, PARAM_PASSWORD, DEFAULT_PASSWORD, false);
     }
 
     /**
@@ -138,15 +145,17 @@ public class PostGreSQLSettings {
      *
      * @param userPassword
      */
-    public static void setUserPassword(String userPassword) {
-        settings.setSetting(config_name, DSS_DB_PASSWORD, userPassword);
+    public static void setUserPassword(String userPassword)
+    {
+        settings.setSetting(config_name, PARAM_PASSWORD, userPassword);
     }
 
     /**
      * @return Returns the schema used for the database.
      */
-    public static String getDatabaseSchema() {
-        return settings.getSetting(config_name, DSS_SCHEMA, "coalesce", true);
+    public static String getDatabaseSchema()
+    {
+        return settings.getSetting(config_name, PARAM_SCHEMA, "coalesce", true);
     }
 
     /**
@@ -154,15 +163,17 @@ public class PostGreSQLSettings {
      *
      * @param databaseSchema
      */
-    public static void setDatabaseSchema(String databaseSchema) {
-        settings.setSetting(config_name, DSS_SCHEMA, databaseSchema);
+    public static void setDatabaseSchema(String databaseSchema)
+    {
+        settings.setSetting(config_name, PARAM_SCHEMA, databaseSchema);
     }
 
     /**
      * @return Returns the database name.
      */
-    public static String getDatabaseName() {
-        return settings.getSetting(config_name, DSS_DATABASE, "OMEGA", true);
+    public static String getDatabaseName()
+    {
+        return settings.getSetting(config_name, PARAM_DATABASE, "OMEGA", true);
     }
 
     /**
@@ -170,15 +181,17 @@ public class PostGreSQLSettings {
      *
      * @param databaseName
      */
-    public static void setDatabaseName(String databaseName) {
-        settings.setSetting(config_name, DSS_DATABASE, databaseName);
+    public static void setDatabaseName(String databaseName)
+    {
+        settings.setSetting(config_name, PARAM_DATABASE, databaseName);
     }
 
     /**
      * @return Returns the port used for accessing the database.
      */
-    public static int getDatabasePort() {
-        return settings.getSetting(config_name, DSS_DB_SERVER_PORT, 5444, true);
+    public static int getDatabasePort()
+    {
+        return settings.getSetting(config_name, PARAM_PORT, 5444, true);
     }
 
     /**
@@ -186,14 +199,16 @@ public class PostGreSQLSettings {
      *
      * @param databasePort
      */
-    public static void setDatabasePort(int databasePort) {
-        settings.setSetting(config_name, DSS_DB_SERVER_PORT, databasePort);
+    public static void setDatabasePort(int databasePort)
+    {
+        settings.setSetting(config_name, PARAM_PORT, databasePort);
     }
 
     /**
      * @return Returns database parameters.
      */
-    public static ServerConn getServerConn() {
+    public static ServerConn getServerConn()
+    {
 
         ServerConn serCon = new ServerConn();
 
@@ -207,21 +222,42 @@ public class PostGreSQLSettings {
     }
 
     /**
-     * Gets the Spatial Reference Identifier (SRID)
-     *
-     * @return SRID (Spatial Reference Identifier for geospatial fields)
+     * @return the Spatial Reference Identifier (SRID). Default: {@value #DEFAULT_SRID}.
      */
-    public static int getSRID() {
-        return settings.getSetting(config_name, DSS_SRID, SRID, true);
+    public static int getSRID()
+    {
+        return settings.getSetting(config_name, PARAM_SRID, DEFAULT_SRID, true);
     }
 
     /**
-     * Sets the Spatial Reference Identifier (SRID) - required for geospatial fields
+     * Sets the Spatial Reference Identifier (SRID) - required for geospatial
+     * fields.
      *
      * @param srid
      */
-    public static void setSRID(int srid) {
-        settings.setSetting(config_name, DSS_SRID, srid);
+    public static void setSRID(int srid)
+    {
+        settings.setSetting(config_name, PARAM_SRID, srid);
+    }
+
+    /**
+     * @return whether or not foreign keys should be created when generating
+     *         tables while registering an entity. Default: {@value #DEFAULT_USE_FOREIGN_KEYS}.
+     */
+    public static boolean isUseForeignKeys()
+    {
+        return settings.getSetting(config_name, PARAM_USE_FOREIGN_KEYS, DEFAULT_USE_FOREIGN_KEYS, true);
+    }
+
+    /**
+     * Sets whether or not foreign keys should be created when generating tables
+     * while registering an entity.
+     *
+     * @param value
+     */
+    public static void setUseForeignKeys(boolean value)
+    {
+        settings.setSetting(config_name, PARAM_USE_FOREIGN_KEYS, value);
     }
 
 }

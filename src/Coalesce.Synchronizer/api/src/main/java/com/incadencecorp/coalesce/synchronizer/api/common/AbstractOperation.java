@@ -32,6 +32,7 @@ import javax.sql.rowset.CachedRowSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.incadencecorp.coalesce.api.CoalesceParameters;
 import com.incadencecorp.coalesce.api.IExceptionHandler;
 import com.incadencecorp.coalesce.api.persistance.ICoalesceExecutorService;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
@@ -106,6 +107,16 @@ public abstract class AbstractOperation<T extends AbstractOperationTask> extends
                 throw new IllegalArgumentException("Invalid Window Size: " + window);
             }
         }
+    }
+
+    @Override
+    public List<String> getProperties()
+    {
+        List<String> properties = super.getProperties();
+
+        properties.add(SynchronizerParameters.PARAM_OP_WINDOW_SIZE);
+
+        return properties;
     }
 
     @Override

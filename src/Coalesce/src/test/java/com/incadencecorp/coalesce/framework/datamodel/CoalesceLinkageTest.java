@@ -11,6 +11,7 @@ import java.util.UUID;
 
 import org.apache.commons.lang.NullArgumentException;
 import org.joda.time.DateTime;
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -50,15 +51,40 @@ public class CoalesceLinkageTest {
     private static final Marking UNCLASSIFIED_MARKING = new Marking("(U)");
     private static final Marking TOP_SECRET_MARKING = new Marking("(TS)");
 
-    /*
-     * @BeforeClass public static void setUpBeforeClass() throws Exception { }
+    /**
+     * This test ensures that clearing linkages well remove them from the
+     * children hash map.
      * 
-     * @AfterClass public static void tearDownAfterClass() throws Exception { }
-     * 
-     * @Before public void setUp() throws Exception { }
-     * 
-     * @After public void tearDown() throws Exception { }
+     * @throws Exception
      */
+    @Test
+    public void clearLinkagesTest() throws Exception
+
+    {
+        // Create Entities
+        CoalesceEntity entity1 = new CoalesceEntity();
+        entity1.initialize();
+
+        CoalesceEntity entity2 = new CoalesceEntity();
+        entity2.initialize();
+
+        // Verify No Linkage
+        Assert.assertEquals(0, entity1.getLinkages().size());
+
+        // Link Entities
+        EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, null, null, entity1.getKey(), true, false, false);
+
+        // Verify
+        Assert.assertEquals(1, entity1.getLinkages().size());
+        Assert.assertEquals(entity1.getKey(), entity1.getLinkage(ELinkTypes.CREATED).getLabel());
+
+        // Clear Linkages
+        entity1.getLinkageSection().clearLinkages();
+
+        // Verify
+        Assert.assertEquals(0, entity1.getLinkages().size());
+        Assert.assertNull(entity1.getLinkage(ELinkTypes.CREATED));
+    }
 
     @Test(expected = NullArgumentException.class)
     public void createNullParentTest()

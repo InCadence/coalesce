@@ -39,8 +39,8 @@ import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBas
 import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
 
 /**
- * Registers templates creating tables for flattening record sets to make the
- * searchable.
+ * This iterator implementation generates tables within PostGres for the
+ * specified template's record sets making them searchable.
  * 
  * @author n78554
  *
@@ -66,8 +66,6 @@ public class PostGreSQLRegisterIterator extends CoalesceIterator<CoalesceDataCon
     private static final String CREATE_BITMASK_COLUMNS = "ALTER TABLE %s.coalesceentity ADD COLUMN %s BIT(%s)";
 
     private static final String DROP_BITMASK_COLUMNS = "ALTER TABLE %s.coalesceentity DROP COLUMN IF EXISTS %s";
-
-    private static final String MODIFY_BITMASK_COLUMNS = "ALTER TABLE %s.coalesceentity ADD COLUMN %s BIT(%s)";
 
     private static final String CREATE_BITMASK_PROCEDURE = "CREATE OR REPLACE FUNCTION %s.coalesceentityext_insertorupdate(ivarobjectkey uuid, ivarname text, ivarsource text, ivarversion text, ivarentityid text, ivarentityidtype text, ivarentityxml text, ivardatecreated timestamp with time zone, ivarlastmodified timestamp with time zone, ivartitle text, ivardeleted boolean, ivarscope text, ivarcreator text, ivartype text %s) RETURNS void AS"
             + "\r$BODY$\rBEGIN\r"
@@ -126,8 +124,9 @@ public class PostGreSQLRegisterIterator extends CoalesceIterator<CoalesceDataCon
      * Defines the PostGIS type to use for coordinate types
      */
     private static final String ST_TYPE = "geography";
-    private String schema;
-    private int srid = 4326;
+    private static final boolean CREATE_FK = PostGreSQLSettings.isUseForeignKeys();
+    private String schema = PostGreSQLSettings.getDatabaseSchema();
+    private int srid = PostGreSQLSettings.getSRID();
 
     /**
      * Creates tables based on the record sets.
@@ -178,7 +177,8 @@ public class PostGreSQLRegisterIterator extends CoalesceIterator<CoalesceDataCon
     }
 
     /**
-     * Appends BIT fields onto the CoalesceEntity table for security masks.
+     * Appends BIT fields onto the CoalesceEntity table for Access Control List
+     * (ACL) access restrictions.
      * 
      * @param columns
      * @param conn
@@ -233,7 +233,8 @@ public class PostGreSQLRegisterIterator extends CoalesceIterator<CoalesceDataCon
     }
 
     /**
-     * Sets the schema.
+     * Sets the schema. If not specified it will default to
+     * {@link PostGreSQLSettings#getDatabaseSchema()}.
      * 
      * @param schema
      */
@@ -243,7 +244,8 @@ public class PostGreSQLRegisterIterator extends CoalesceIterator<CoalesceDataCon
     }
 
     /**
-     * Sets the SRID for geo-spatial fields.
+     * Sets the SRID for geo-spatial fields. If not specified it will default to
+     * {@link PostGreSQLSettings#getSRID()}.
      * 
      * @param srid
      */
@@ -295,9 +297,12 @@ public class PostGreSQLRegisterIterator extends CoalesceIterator<CoalesceDataCon
                 }
             }
 
-            sb.append("\tCONSTRAINT " + info.getTableName() + "_pkey PRIMARY KEY (objectkey),\r");
-            sb.append("\tCONSTRAINT " + info.getTableName() + "_fkey FOREIGN KEY (entitykey) REFERENCES " + schema
-                    + ".coalesceentity (objectkey) ON DELETE CASCADE");
+            sb.append("\tCONSTRAINT " + info.getTableName() + "_pkey PRIMARY KEY (objectkey)");
+            if (CREATE_FK)
+            {
+                sb.append(",\r\tCONSTRAINT " + info.getTableName() + "_fkey FOREIGN KEY (entitykey) REFERENCES " + schema
+                        + ".coalesceentity (objectkey) ON DELETE CASCADE");
+            }
 
             String sql = String.format(CREATE_TABLE_FORMAT,
                                        schema,
@@ -413,7 +418,8 @@ public class PostGreSQLRegisterIterator extends CoalesceIterator<CoalesceDataCon
 
                 if (listColumnType != null && fieldDefinition.getFlatten())
                 {
-                    listsBuilder.append(String.format("PERFORM coalesce.%s_insertorupdate (ivarentitykey,ivarobjectkey,'%s',%s);\r",
+                    listsBuilder.append(String.format("PERFORM %s.%s_insertorupdate (ivarentitykey,ivarobjectkey,'%s',%s);\r",
+                                                      schema,
                                                       fieldDefinition.getDataType().getLabel(),
                                                       fieldDefinition.getName(),
                                                       fieldName));
@@ -477,8 +483,12 @@ public class PostGreSQLRegisterIterator extends CoalesceIterator<CoalesceDataCon
         sb.append("\tentitykey uuid NOT NULL,\r");
         sb.append("\tfieldname text NOT NULL,\r");
         sb.append("\tlistorder int NOT NULL,\r");
-        sb.append("\tfieldvalue " + columnType + " NOT NULL,\r"); // Not null?
-        sb.append("\tCONSTRAINT entitykey_fkey FOREIGN KEY (entitykey) REFERENCES " + schema + ".coalesceentity (objectkey) ON DELETE CASCADE");
+        sb.append("\tfieldvalue " + columnType + " NOT NULL"); // Not null?
+        if (CREATE_FK)
+        {
+            sb.append(",\r\tCONSTRAINT entitykey_fkey FOREIGN KEY (entitykey) REFERENCES " + schema
+                    + ".coalesceentity (objectkey) ON DELETE CASCADE");
+        }
 
         String sql = "CREATE TABLE IF NOT EXISTS " + tableName + "(\r" + sb.toString() + "\r);";
 
@@ -518,24 +528,24 @@ public class PostGreSQLRegisterIterator extends CoalesceIterator<CoalesceDataCon
                 + "RETURNS void AS\r"
                 + "$BODY$\r"
                 + "BEGIN\r"
-                + "DELETE FROM coalesce.fieldtable_%2$s\r"
-                + "WHERE recordkey = ivarrecordkey AND fieldname = ivarfieldname;\r"
-                + "INSERT INTO coalesce.fieldtable_%2$s (\r"
-                + "SELECT ivarrecordkey AS recordkey,\r"
-                + "ivarentitykey AS entitykey,\r"
-                + "ivarfieldname AS fieldname,\r"
-                + "ROW_NUMBER() OVER() AS listorder,\r"
-                + "fieldvalue FROM (SELECT %3$s AS fieldvalue) AS foo);\r"
-                + "RETURN;\r"
-                + "END;\r"
-                + "$BODY$\r"
-                + "LANGUAGE plpgsql VOLATILE " + "COST 100;";
+                + "  DELETE FROM %1$s.fieldtable_%2$s\r"
+                + "  WHERE recordkey = ivarrecordkey AND fieldname = ivarfieldname;\r"
+                + "  IF NOT ivarvalues IS NULL THEN\r"
+                + "    INSERT INTO %1$s.fieldtable_%2$s (recordkey, entitykey, fieldname, listorder, fieldvalue) (\r"
+                + "      SELECT ivarrecordkey,\r"
+                + "      ivarrecordkey,\r"
+                + "      ivarfieldname,\r"
+                + "      ROW_NUMBER() OVER(),\r"
+                + "      fieldvalue FROM (SELECT %3$s AS fieldvalue) AS foo\r"
+                + "    );\r"
+                + "  END IF;\rRETURN;\rEND;\r$BODY$\rLANGUAGE plpgsql VOLATILE COST 100;";
 
         String parserFormat;
 
         if (dataType == ECoalesceFieldDataTypes.STRING_LIST_TYPE)
         {
-            parserFormat = "coalesce.unescape(regexp_split_to_table(ivarvalues,',(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))')::text)";
+            parserFormat = schema
+                    + ".unescape(regexp_split_to_table(ivarvalues,',(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))')::text)";
         }
         else
         {
@@ -543,7 +553,6 @@ public class PostGreSQLRegisterIterator extends CoalesceIterator<CoalesceDataCon
         }
 
         conn.executeUpdate(String.format(format, schema, dataType.getLabel(), parserFormat));
-
     }
 
     private String formatBody(final String format, final CoalesceRecordset recordset, final List<String> columns)
@@ -557,7 +566,8 @@ public class PostGreSQLRegisterIterator extends CoalesceIterator<CoalesceDataCon
 
             String columnType = getSQLType(fieldDefinition.getDataType(), srid);
 
-            if (columnType != null && fieldDefinition.getFlatten() && columns.contains(fieldDefinition.getName().toLowerCase()))
+            if (columnType != null && fieldDefinition.getFlatten()
+                    && columns.contains(fieldDefinition.getName().toLowerCase()))
             {
                 sb.append(String.format(format + ",\r", fieldDefinition.getName()));
             }
@@ -588,7 +598,8 @@ public class PostGreSQLRegisterIterator extends CoalesceIterator<CoalesceDataCon
             ECoalesceFieldDataTypes type = fieldDefinition.getDataType();
             String columnType = getSQLType(type, srid);
 
-            if (columnType != null && fieldDefinition.getFlatten() && columns.contains(fieldDefinition.getName().toLowerCase()))
+            if (columnType != null && fieldDefinition.getFlatten()
+                    && columns.contains(fieldDefinition.getName().toLowerCase()))
             {
                 switch (type) {
                 case GEOCOORDINATE_LIST_TYPE:
@@ -620,7 +631,7 @@ public class PostGreSQLRegisterIterator extends CoalesceIterator<CoalesceDataCon
     /**
      * @param type Coalesce Data Type
      * @param srid
-     * @return SQL type
+     * @return SQL type used when tables are being generated.
      */
     public static String getSQLType(final ECoalesceFieldDataTypes type, final int srid)
     {
@@ -682,7 +693,7 @@ public class PostGreSQLRegisterIterator extends CoalesceIterator<CoalesceDataCon
 
     /**
      * @param type Coalesce Data Type
-     * @return SQL type
+     * @return SQL type used as arguments within stored procedures.
      */
     public static String getSQLTypeForArgs(final ECoalesceFieldDataTypes type)
     {

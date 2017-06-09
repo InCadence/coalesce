@@ -17,7 +17,9 @@
 
 package com.incadencecorp.coalesce.framework;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.incadencecorp.coalesce.api.ICoalesceComponent;
@@ -65,6 +67,21 @@ public class CoalesceComponentImpl implements ICoalesceComponent {
     public final void setPropertyLoader(PropertyLoader loader)
     {
         this.loader = loader;
+
+        Map<String, String> propereties = new HashMap<String, String>();
+        
+        for (String property : getProperties())
+        {
+            propereties.put(property, loader.getProperty(property));
+        }
+        
+        setProperties(propereties);
+    }
+
+    @Override
+    public List<String> getProperties()
+    {
+        return new ArrayList<String>();
     }
 
 }

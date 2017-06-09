@@ -25,11 +25,13 @@ import java.util.Map;
 import javax.sql.rowset.CachedRowSet;
 
 import org.geotools.data.Query;
+import org.joda.time.DateTime;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.incadencecorp.coalesce.api.CoalesceParameters;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
@@ -48,6 +50,7 @@ import com.incadencecorp.coalesce.synchronizer.api.common.SynchronizerParameters
  * 
  * @author n78554
  * @see SynchronizerParameters#PARAM_SCANNER_LAST_SUCCESS
+ * @see SynchronizerParameters#PARAM_SCANNER_DAYS
  */
 public class AfterLastModifiedScanImpl extends AbstractScan {
 
@@ -56,6 +59,7 @@ public class AfterLastModifiedScanImpl extends AbstractScan {
 
     private String lastScanned = null;
     private String pendingLastScan = null;
+    private int days = SynchronizerParameters.DEFAULT_SCANNER_DAYS;
 
     @Override
     protected void doSetup()
@@ -70,34 +74,53 @@ public class AfterLastModifiedScanImpl extends AbstractScan {
         return scan(new Query());
     }
 
+    // TODO Instead of using a date time window to constrain the number of
+    // entities being processes in a single query, consider using limits and
+    // determining when to start the next query based on the results. This
+    // version of Coalesce Search API does not fully support sort by preventing
+    // this from being implemented now.
     @Override
     public CachedRowSet doScan(Query query) throws CoalesceException
     {
         List<CoalesceParameter> params = new ArrayList<CoalesceParameter>();
 
-        pendingLastScan = JodaDateTimeHelper.toXmlDateTimeUTC(JodaDateTimeHelper.nowInUtc());
-
-        Filter requiredFilter = FF.after(CoalescePropertyFactory.getLastModified(), FF.literal(lastScanned));
-
-        if (lastScanned != null)
+        // Last Scan Specified?
+        if (lastScanned == null)
         {
-            // Filter Specified?
-            if (query.getFilter() == null || query.getFilter() == Filter.INCLUDE)
-            {
-                // No; Set
-                query.setFilter(requiredFilter);
-            }
-            else
-            {
-                if (LOGGER.isTraceEnabled())
-                {
-                    LOGGER.trace("Filter Specified: {}", query.getFilter().toString());
-                }
+            // No; Go back 10 years
+            lastScanned = JodaDateTimeHelper.toXmlDateTimeUTC(JodaDateTimeHelper.nowInUtc().minusYears(10));
+        }
 
-                // Yes; Append Required Filter
-                query.setFilter(FF.and(query.getFilter(), requiredFilter));
+        DateTime start = JodaDateTimeHelper.fromXmlDateTimeUTC(lastScanned);
+        DateTime end = start.plusDays(days);
+
+        // Days not specified or end of window is in the future?
+        if (days == 0 || end.isAfterNow())
+        {
+            // Set the end of window to now
+            end = JodaDateTimeHelper.nowInUtc();
+        }
+
+        pendingLastScan = JodaDateTimeHelper.toXmlDateTimeUTC(end);// JodaDateTimeHelper.nowInUtc());
+
+        Filter requiredFilter = FF.and(FF.after(CoalescePropertyFactory.getLastModified(), FF.literal(lastScanned)),
+                                       FF.before(CoalescePropertyFactory.getLastModified(), FF.literal(pendingLastScan)));
+
+        // Filter Specified?
+        if (query.getFilter() == null || query.getFilter() == Filter.INCLUDE)
+        {
+            // No; Set
+            query.setFilter(requiredFilter);
+        }
+        else
+        {
+            if (LOGGER.isTraceEnabled())
+            {
+                LOGGER.trace("Filter Specified: {}", query.getFilter().toString());
             }
 
+            // Yes; Append Required Filter
+            query.setFilter(FF.and(query.getFilter(), requiredFilter));
         }
 
         query.setMaxFeatures(0);
@@ -116,12 +139,19 @@ public class AfterLastModifiedScanImpl extends AbstractScan {
         {
             lastScanned = parameters.get(SynchronizerParameters.PARAM_SCANNER_LAST_SUCCESS);
         }
-        else
+        else if (loader != null)
         {
-            if (loader != null)
-            {
-                lastScanned = loader.getProperty(SynchronizerParameters.PARAM_SCANNER_LAST_SUCCESS);
-            }
+            lastScanned = loader.getProperty(SynchronizerParameters.PARAM_SCANNER_LAST_SUCCESS);
+        }
+
+        // Days Configured?
+        if (parameters.containsKey(SynchronizerParameters.PARAM_SCANNER_DAYS))
+        {
+            days = Integer.parseInt(parameters.get(SynchronizerParameters.PARAM_SCANNER_DAYS));
+        }
+        else if (loader != null)
+        {
+            days = Integer.parseInt(loader.getProperty(SynchronizerParameters.PARAM_SCANNER_DAYS));
         }
 
         if (LOGGER.isInfoEnabled())
