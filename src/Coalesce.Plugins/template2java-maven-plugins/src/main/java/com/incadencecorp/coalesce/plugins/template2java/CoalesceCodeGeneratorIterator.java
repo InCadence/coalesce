@@ -21,6 +21,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
@@ -30,19 +33,26 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
-import com.incadencecorp.coalesce.framework.DefaultNormalizer;
-import com.incadencecorp.coalesce.framework.DefaultNormalizer.EParameters;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
 import com.incadencecorp.coalesce.framework.iterators.CoalesceIterator;
 import com.incadencecorp.coalesce.mapper.impl.FieldMapperImpl;
 
-public class CoalesceCodeGeneratorIterator extends CoalesceIterator<Path> {
+/**
+ * TODO Nested Sections not supported
+ * @author Derek Clemenzi
+ *
+ */
+public class CoalesceCodeGeneratorIterator extends CoalesceIterator<List<CoalesceRecordset>> {
 
     private VelocityEngine ve;
+    private Path directory;
+    private Path entityfolder;
+    private Path recordfolder;
+    private String packagename;
 
-    public CoalesceCodeGeneratorIterator()
+    public CoalesceCodeGeneratorIterator(Path directory)
     {
         // Configure Engine to read templates from resources
         Properties p = new Properties();
@@ -51,29 +61,31 @@ public class CoalesceCodeGeneratorIterator extends CoalesceIterator<Path> {
 
         ve = new VelocityEngine();
         ve.init(p);
+
+        this.directory = directory;
     }
 
-    public void generateCode(CoalesceEntityTemplate template, Path directory) throws CoalesceException
+    public void generateCode(CoalesceEntityTemplate template) throws CoalesceException
     {
-        generateCode(template.createNewEntity(), directory);
+        generateCode(template.createNewEntity());
     }
 
-    public void generateCode(CoalesceEntity entity, Path directory) throws CoalesceException
+    public void generateCode(CoalesceEntity entity) throws CoalesceException
     {
-        processAllElements(entity, directory);
-    }
+        packagename = entity.getClassName().substring(0, entity.getClassName().lastIndexOf("."));
+        entityfolder = directory.resolve(Paths.get("generated", packagename.split("[.]")));
+        recordfolder = entityfolder.resolve("records");
+        
+        List<CoalesceRecordset> recordsets = new ArrayList<CoalesceRecordset>();
 
-    @Override
-    protected boolean visitCoalesceRecordset(CoalesceRecordset recordset, Path directory) throws CoalesceException
-    {
+        processAllElements(entity, recordsets);
+
         // Get Template
-        Template t = ve.getTemplate("record.vm");
+        Template t = ve.getTemplate("entity.vm");
 
-        DefaultNormalizer normalizer = new DefaultNormalizer();
-        normalizer.setParameter(EParameters.MAX_LENGTH, "64");
+        ClassNameNormalizer normalizer = new ClassNameNormalizer();
 
-        String normalizedName = normalizer.normalize(recordset.getName());
-        normalizedName = normalizedName.substring(0, 1).toUpperCase() + normalizedName.substring(1);
+        String normalizedName = normalizer.normalize(entity.getName());
 
         if (NumberUtils.isNumber(normalizedName.substring(0, 1)))
         {
@@ -82,9 +94,47 @@ public class CoalesceCodeGeneratorIterator extends CoalesceIterator<Path> {
 
         // Set Parameters
         VelocityContext context = new VelocityContext();
-        context.put("name", normalizedName);
-        context.put("package", recordset.getEntity().getClassName());
-        context.put("definitions", recordset.getFieldDefinitions());
+        context.put("packagename", packagename);
+        context.put("entity", entity);
+        context.put("normalizer", normalizer);
+        context.put("recordsets", recordsets);
+
+        // Populate Template
+        StringWriter writer = new StringWriter();
+        t.merge(context, writer);
+
+        try
+        {
+            FileUtils.writeStringToFile(new File(entityfolder.resolve(normalizedName + "Entity.java").toUri()), writer.toString());
+        }
+        catch (IOException e)
+        {
+            throw new CoalesceException(e);
+        }
+    }
+
+    @Override
+    protected boolean visitCoalesceRecordset(CoalesceRecordset recordset, List<CoalesceRecordset> params) throws CoalesceException
+    {
+        params.add(recordset);
+        
+        // Get Template
+        Template t = ve.getTemplate("record.vm");
+
+        ClassNameNormalizer normalizer = new ClassNameNormalizer();
+
+        String normalizedName = normalizer.normalize(recordset.getName());
+
+        if (NumberUtils.isNumber(normalizedName.substring(0, 1)))
+        {
+            throw new CoalesceException("Recordset names must start with a character");
+        }
+
+        // Set Parameters
+        VelocityContext context = new VelocityContext();
+        context.put("packagename", packagename + ".records");
+        context.put("recordset", recordset);
+        context.put("normalizer", normalizer);
         context.put("fieldmapper", new FieldMapperImpl());
 
         // Populate Template
@@ -93,14 +143,13 @@ public class CoalesceCodeGeneratorIterator extends CoalesceIterator<Path> {
 
         try
         {
-            FileUtils.writeStringToFile(new File(directory.resolve(normalizedName + ".java").toUri()), writer.toString());
+            FileUtils.writeStringToFile(new File(recordfolder.resolve(normalizedName + "Record.java").toUri()), writer.toString());
         }
         catch (IOException e)
         {
             throw new CoalesceException(e);
         }
-        // TODO Save output
-        System.out.println(writer.toString());
+
         return false;
     }
 

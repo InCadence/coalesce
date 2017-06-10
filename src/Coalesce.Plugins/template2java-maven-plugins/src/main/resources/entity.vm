@@ -1,0 +1,146 @@
+/*-----------------------------------------------------------------------------'
+ Copyright 2017 - InCadence Strategic Solutions Inc., All Rights Reserved
+
+ Notwithstanding any contractor copyright notice, the Government has Unlimited
+ Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+ of this work other than as specifically authorized by these DFARS Clauses may
+ violate Government rights in this work.
+
+ DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+ Unlimited Rights. The Government has the right to use, modify, reproduce,
+ perform, display, release or disclose this computer software and to have or
+ authorize others to do so.
+
+ Distribution Statement D. Distribution authorized to the Department of
+ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+ -----------------------------------------------------------------------------*/
+#set ($name = $normalizer.normalize($entity.getName()))
+package $packagename;
+
+#foreach($recordset in $recordsets)
+import ${packagename}.records.$normalizer.normalize($recordset.getName())Record;
+#end
+
+/**
+ * Generated on $entity.getDateCreated() by template2java
+ * 
+ * @author Coalesce
+ */
+public class ${name}Entity extends CoalesceEntity {
+
+    public static final String NAME = "$entity.getName()";
+    public static final String SOURCE = "$entity.getSource()";
+    public static final String VERSION = "$entity.getVersion()";
+
+#foreach($recordset in $recordsets)
+    public static final String RECORDSET_$normalizer.normalize($recordset.getName()).toUpperCase() = "$recordset.getName()";
+#end
+
+#foreach($recordset in $recordsets)
+#if($recordset.getMaxRecords() == 1)
+    private $normalizer.normalize($recordset.getName())Record record_$normalizer.normalize($recordset.getName());
+#else
+    private CoalesceRecordset recordset_$normalizer.normalize($recordset.getName());
+#end
+#end
+
+    /**
+     * Default Constructor
+     */
+    public ${name}Entity()
+    {
+        // Do Nothing
+    }
+
+    @Override
+    public boolean initialize()
+    {
+        boolean isInitialized = false;
+        if (initializeEntity(NAME, SOURCE, VERSION, "", "", ""))
+        {
+            isInitialized = initializeReferences();
+        }
+        return isInitialized;
+    }
+
+    @Override
+    protected boolean initializeEntity(String name,
+                                       String source,
+                                       String version,
+                                       String entityId,
+                                       String entityIdType,
+                                       String title)
+    {
+        boolean isInitialized = false;
+
+        if (super.initializeEntity(name, source, version, entityId, entityIdType, title))
+        {
+        
+#foreach($section in $entity.getSections())
+            // Create Section
+            CoalesceSection section = CoalesceSection.create(this, "$section.getName()");
+
+#foreach($recordset in $section.getRecordsets())
+            recordset_$normalizer.normalize($recordset.getName()) = TestRecord.createCoalesceRecordset(section, RECORDSET_$normalizer.normalize($recordset.getName()).toUpperCase());
+#end
+#end
+            isInitialized = true;
+        }
+
+        return isInitialized;
+    }
+
+    @Override
+    protected boolean initializeReferences()
+    {
+        if (super.initializeReferences())
+        {
+#set($check = "")
+#foreach($recordset in $recordsets)
+#if($recordset.getMaxRecords() == 1)
+#set($varname = "record_$normalizer.normalize($recordset.getName())")
+#set($vartype = "$normalizer.normalize($recordset.getName())Record")
+            if ($varname == null)
+            {
+                $varname = ($vartype) getCoalesceObjectForNamePath($recordset.getNamePath());
+            }
+#else
+#set($varname = "recordset_$normalizer.normalize($recordset.getName())")
+            if ($varname == null)
+            {
+                $varname = (CoalesceRecordset) getCoalesceObjectForNamePath("$recordset.getNamePath()");
+            }
+#end
+#set($check = $check + "$varname != null")
+#if( $foreach.hasNext )
+#set($check = $check + " && ")
+#end
+#end
+        }
+
+        return $check;
+    }
+
+#foreach($recordset in $recordsets)
+#if($recordset.getMaxRecords() == 1)
+    public $normalizer.normalize($recordset.getName())Record get$normalizer.normalize($recordset.getName())Record()
+    {
+        return record_$normalizer.normalize($recordset.getName());
+    }
+#else
+#set($recordset_name = "recordset_$normalizer.normalize($recordset.getName())")
+    public CoalesceRecordset get$normalizer.normalize($recordset.getName())Recordset()
+    {
+        return $recordset_name;
+    }
+
+    public $normalizer.normalize($recordset.getName())Record add$normalizer.normalize($recordset.getName())Record()
+    {
+        return new $normalizer.normalize($recordset.getName())Record(${recordset_name}.addNew());
+    }
+
+#end
+#end
+
+
+}

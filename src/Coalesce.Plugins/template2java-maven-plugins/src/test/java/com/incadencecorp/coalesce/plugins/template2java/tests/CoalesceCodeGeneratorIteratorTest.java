@@ -32,8 +32,8 @@ public class CoalesceCodeGeneratorIteratorTest {
         TestEntity entity = new TestEntity();
         entity.initialize();
         //
-        CoalesceCodeGeneratorIterator it = new CoalesceCodeGeneratorIterator();
-        it.generateCode(entity, Paths.get("src", "test", "resources"));
+        CoalesceCodeGeneratorIterator it = new CoalesceCodeGeneratorIterator(Paths.get("src", "test", "resources"));
+        it.generateCode(entity);
     }
 
 }
