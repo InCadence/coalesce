@@ -16,7 +16,6 @@
  -----------------------------------------------------------------------------*/
 #set ($entity = $recordset.getEntity())
 #set ($definitions = $recordset.getFieldDefinitions())
-#set ($name = $normalizer.normalize($recordset.getName()))
 package $packagename;
 
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
@@ -25,10 +24,17 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.datamodel.IFieldEnum;
-
+## Create Imports
+#set($imports = [])
 #foreach($fd in $definitions)
     #set($fieldtype = $fieldmapper.map($fd.getDataType()).getClass().getSimpleName())
-import com.incadencecorp.coalesce.framework.datamodel.$fieldtype;
+	#set($import = "com.incadencecorp.coalesce.framework.datamodel.${fieldtype}")
+    #if( !$imports.contains( $import ) )
+    	#if( $imports.add($import) ) #end
+    #end
+#end
+#foreach($import in $imports)
+import ${import};
 #end
 
 /**

@@ -38,9 +38,11 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
 import com.incadencecorp.coalesce.framework.iterators.CoalesceIterator;
 import com.incadencecorp.coalesce.mapper.impl.FieldMapperImpl;
+import com.incadencecorp.coalesce.mapper.impl.JavaMapperImpl;
 
 /**
  * TODO Nested Sections not supported
+ * 
  * @author Derek Clemenzi
  *
  */
@@ -49,7 +51,6 @@ public class CoalesceCodeGeneratorIterator extends CoalesceIterator<List<Coalesc
     private VelocityEngine ve;
     private Path directory;
     private Path entityfolder;
-    private Path recordfolder;
     private String packagename;
 
     public CoalesceCodeGeneratorIterator(Path directory)
@@ -74,8 +75,7 @@ public class CoalesceCodeGeneratorIterator extends CoalesceIterator<List<Coalesc
     {
         packagename = entity.getClassName().substring(0, entity.getClassName().lastIndexOf("."));
         entityfolder = directory.resolve(Paths.get("generated", packagename.split("[.]")));
-        recordfolder = entityfolder.resolve("records");
-        
+
         List<CoalesceRecordset> recordsets = new ArrayList<CoalesceRecordset>();
 
         processAllElements(entity, recordsets);
@@ -105,7 +105,8 @@ public class CoalesceCodeGeneratorIterator extends CoalesceIterator<List<Coalesc
 
         try
         {
-            FileUtils.writeStringToFile(new File(entityfolder.resolve(normalizedName + "Entity.java").toUri()), writer.toString());
+            FileUtils.writeStringToFile(new File(entityfolder.resolve(normalizedName + "Entity.java").toUri()),
+                                        writer.toString());
         }
         catch (IOException e)
         {
@@ -114,12 +115,10 @@ public class CoalesceCodeGeneratorIterator extends CoalesceIterator<List<Coalesc
     }
 
     @Override
-    protected boolean visitCoalesceRecordset(CoalesceRecordset recordset, List<CoalesceRecordset> params) throws CoalesceException
+    protected boolean visitCoalesceRecordset(CoalesceRecordset recordset, List<CoalesceRecordset> params)
+            throws CoalesceException
     {
         params.add(recordset);
-        
-        // Get Template
-        Template t = ve.getTemplate("record.vm");
 
         ClassNameNormalizer normalizer = new ClassNameNormalizer();
 
@@ -132,25 +131,36 @@ public class CoalesceCodeGeneratorIterator extends CoalesceIterator<List<Coalesc
 
         // Set Parameters
         VelocityContext context = new VelocityContext();
-        context.put("packagename", packagename + ".records");
+        context.put("name", normalizedName);
         context.put("recordset", recordset);
         context.put("normalizer", normalizer);
         context.put("fieldmapper", new FieldMapperImpl());
+        context.put("typemapper", new JavaMapperImpl());
 
-        // Populate Template
-        StringWriter writer = new StringWriter();
-        t.merge(context, writer);
+        context.put("packagename", packagename + ".api");
+        createFile(ve.getTemplate("record-api.vm"),
+                   context,
+                   entityfolder.resolve("api").resolve("I" + (String) context.get("name") + "Record.java"));
 
-        try
+        context.put("packagename", packagename + ".records");
+        createFile(ve.getTemplate("record-coalesce.vm"),
+                   context,
+                   entityfolder.resolve("records").resolve((String) context.get("name") + "Record.java"));
+
+        return false;
+    }
+
+    private void createFile(Template t, VelocityContext context, Path file) throws CoalesceException
+    {
+        try (StringWriter writer = new StringWriter())
         {
-            FileUtils.writeStringToFile(new File(recordfolder.resolve(normalizedName + "Record.java").toUri()), writer.toString());
+            t.merge(context, writer);
+            FileUtils.writeStringToFile(new File(file.toUri()), writer.toString());
         }
         catch (IOException e)
         {
             throw new CoalesceException(e);
         }
-
-        return false;
     }
 
 }

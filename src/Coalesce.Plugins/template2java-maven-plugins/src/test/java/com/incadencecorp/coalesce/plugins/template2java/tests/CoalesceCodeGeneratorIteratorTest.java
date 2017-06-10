@@ -22,9 +22,7 @@ import java.nio.file.Paths;
 import org.junit.Test;
 
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
-import com.incadencecorp.coalesce.framework.datamodel.GenTestEntity;
 import com.incadencecorp.coalesce.framework.datamodel.TestRecord;
 import com.incadencecorp.coalesce.plugins.template2java.CoalesceCodeGeneratorIterator;
 
