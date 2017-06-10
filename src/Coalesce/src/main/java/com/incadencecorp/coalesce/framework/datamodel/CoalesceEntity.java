@@ -204,20 +204,11 @@ public class CoalesceEntity extends CoalesceObjectHistory {
                                         String entityIdType,
                                         String title)
     {
-
         CoalesceEntity entity = new CoalesceEntity();
-        if (!entity.initialize())
-            return null;
-
-        // Set Default Values
-        entity.setName(name);
-        entity.setSource(source);
-        entity.setVersion(version);
-        entity.setEntityId(entityId);
-        entity.setEntityIdType(entityIdType);
-        if (title != null)
-            entity.setTitle(title);
-
+        if (entity.initializeEntity(name, source, version, entityId, entityIdType, title))
+        {
+            entity.initializeReferences();
+        }
         return entity;
     }
 

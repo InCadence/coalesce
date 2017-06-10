@@ -110,7 +110,7 @@ public class ${name}Record extends CoalesceRecord {
 #foreach($fd in $definitions)
     #set($fieldtype = $fieldmapper.map($fd.getDataType()).getClass().getSimpleName())
     
-    public $fieldtype get$fd.getName()Field()
+    public $fieldtype get$normalizer.normalize($fd.getName())Field()
     {
         return ($fieldtype) getFieldByName("$fd.getName()");
     }

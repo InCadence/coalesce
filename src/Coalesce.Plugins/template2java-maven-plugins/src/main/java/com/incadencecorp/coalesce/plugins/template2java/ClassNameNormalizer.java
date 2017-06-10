@@ -60,7 +60,7 @@ public class ClassNameNormalizer implements ICoalesceNormalizer {
     public String normalize(final String value)
     {
         String camelCased = "";
-        String[] tokens = value.replaceAll(" ", "_").split("_");
+        String[] tokens = value.replaceAll("[- ]", "_").split("_");
         for (int i = 0; i < tokens.length; i++) {
             String token = tokens[i];
             camelCased = camelCased + token.substring(0, 1).toUpperCase() + token.substring(1, token.length()).toLowerCase();

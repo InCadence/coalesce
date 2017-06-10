@@ -81,7 +81,11 @@ public class ${name}Entity extends CoalesceEntity {
             CoalesceSection section = CoalesceSection.create(this, "$section.getName()");
 
 #foreach($recordset in $section.getRecordsets())
+#if($recordset.getMaxRecords() == 1)
+            record_$normalizer.normalize($recordset.getName()) = new $normalizer.normalize($recordset.getName())Record(TestRecord.createCoalesceRecordset(section, RECORDSET_$normalizer.normalize($recordset.getName()).toUpperCase()).addNew());
+#else
             recordset_$normalizer.normalize($recordset.getName()) = TestRecord.createCoalesceRecordset(section, RECORDSET_$normalizer.normalize($recordset.getName()).toUpperCase());
+#end
 #end
 #end
             isInitialized = true;
@@ -102,7 +106,7 @@ public class ${name}Entity extends CoalesceEntity {
 #set($vartype = "$normalizer.normalize($recordset.getName())Record")
             if ($varname == null)
             {
-                $varname = ($vartype) getCoalesceObjectForNamePath($recordset.getNamePath());
+                $varname = ($vartype) getCoalesceObjectForNamePath("$recordset.getNamePath()/$recordset.getName() Record");
             }
 #else
 #set($varname = "recordset_$normalizer.normalize($recordset.getName())")

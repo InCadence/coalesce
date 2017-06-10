@@ -21,19 +21,63 @@ import java.nio.file.Paths;
 
 import org.junit.Test;
 
-import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
+import com.incadencecorp.coalesce.framework.datamodel.GenTestEntity;
+import com.incadencecorp.coalesce.framework.datamodel.TestRecord;
 import com.incadencecorp.coalesce.plugins.template2java.CoalesceCodeGeneratorIterator;
 
+/**
+ * These test ensure the code generator creates useable code.
+ * 
+ * @author Derek Clemenzi
+ */
 public class CoalesceCodeGeneratorIteratorTest {
 
+    /**
+     * This test creates an entity with two record sets of {@link TestRecord}.
+     * The first can only contain a single entry and the second can contain
+     * multiple.
+     * 
+     * @throws Exception
+     */
     @Test
     public void test() throws Exception
     {
-        TestEntity entity = new TestEntity();
+        CoalesceEntity entity = CoalesceEntity.create("gen-test", "A B C", "0.0.25-SNAPSHOT");
         entity.initialize();
+
+        CoalesceSection section = CoalesceSection.create(entity, "my-section");
+        TestRecord.createCoalesceRecordset(section, "test-1").setMaxRecords(1);
+        TestRecord.createCoalesceRecordset(section, "test-2");
+
         //
         CoalesceCodeGeneratorIterator it = new CoalesceCodeGeneratorIterator(Paths.get("src", "test", "resources"));
         it.generateCode(entity);
+    }
+
+    /**
+     * Uses the generated code to verify an entity can be created from what is
+     * generated. Code is commented out by default since it will always fail the
+     * first time as the source has not been generated yet. Once you have ran
+     * these test once you can uncomment this code remember to re-comment it
+     * before committing.
+     * 
+     * TODO Ensure this unit test is commented out before committing.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testGeneratedCode() throws Exception
+    {
+//        GenTestEntity entity = new GenTestEntity();
+//        entity.initialize();
+//
+//        entity.getTest2Recordset().addNew();
+//        entity.getTest1Record().getStringField().setValue("Hello World");
+//
+//        System.out.println(entity.toXml());
     }
 
 }
