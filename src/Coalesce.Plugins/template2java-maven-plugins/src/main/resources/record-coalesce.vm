@@ -24,14 +24,39 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.datamodel.IFieldEnum;
+import com.incadencecorp.coalesce.framework.datamodel.api.I${name}Record;
+
 ## Create Imports
 #set($imports = [])
+#if( $imports.add("com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException") ) #end
 #foreach($fd in $definitions)
     #set($fieldtype = $fieldmapper.map($fd.getDataType()).getClass().getSimpleName())
 	#set($import = "com.incadencecorp.coalesce.framework.datamodel.${fieldtype}")
     #if( !$imports.contains( $import ) )
     	#if( $imports.add($import) ) #end
     #end
+    ## For implementing the interface methods
+	#if($fd.getDataType() == "DATE_TIME_TYPE")
+		#set($import = "java.util.Date")
+        #if( !$imports.contains( "org.joda.time.DateTime" ) ) #if( $imports.add("org.joda.time.DateTime") ) #end #end
+	#elseif($fd.getDataType() == "GUID_TYPE")
+		#set($import = "java.util.UUID")
+	#elseif($fd.getDataType() == "LINE_STRING_TYPE")
+		#set($import = "com.vividsolutions.jts.geom.LineString")
+	#elseif($fd.getDataType() == "GEOCOORDINATE_LIST_TYPE")
+		#set($import = "com.vividsolutions.jts.geom.MultiPoint")
+	#elseif($fd.getDataType() == "GEOCOORDINATE_TYPE")
+		#set($import = "com.vividsolutions.jts.geom.Point")
+	#elseif($fd.getDataType() == "POLYGON_TYPE")
+		#set($import = "com.vividsolutions.jts.geom.Polygon")
+	#elseif($fd.getDataType() == "CIRCLE_TYPE")
+		#set($import = "com.incadencecorp.coalesce.framework.datamodel.CoalesceCircle")
+	#else
+		#set($import = "false")
+	#end
+    #if( ${import} != false && !$imports.contains( $import ) )
+    	#if( $imports.add($import) ) #end
+    #end    
 #end
 #foreach($import in $imports)
 import ${import};
@@ -42,7 +67,7 @@ import ${import};
  * 
  * @author Coalesce
  */
-public class ${name}Record extends CoalesceRecord {
+public class ${name}Record extends CoalesceRecord implements I${name}Record {
 
     public enum Etest1Fields implements IFieldEnum {
 #foreach($fd in $definitions)
@@ -103,6 +128,8 @@ public class ${name}Record extends CoalesceRecord {
         CoalesceRecordset recordset = CoalesceRecordset.create(section, name);
 
 #foreach($fd in $definitions)
+#if(!$fd.getLabel()) $fd.setLabel("") #end
+#if(!$fd.defaultValue()) $fd.setDefaultValue("") #end
         CoalesceFieldDefinition.create(recordset, "$fd.getName()", ECoalesceFieldDataTypes.$fd.getDataType(), "$fd.getLabel()", "$fd.getDefaultClassificationMarking().toString()", "$fd.getDefaultValue()", $fd.getNoIndex(), $fd.isDisableHistory());
 #end
         
@@ -111,8 +138,45 @@ public class ${name}Record extends CoalesceRecord {
     }
 
     /*--------------------------------------------------------------------------
-    Public Getter(s)
+    Public Getter(s) / Setter(s)
     --------------------------------------------------------------------------*/
+#foreach($fd in $definitions)
+	@Override
+    public $typemapper.map($fd.getDataType()) get$normalizer.normalize($fd.getName())() throws CoalesceDataFormatException
+    {
+#if($fd.getDataType() == "GEOCOORDINATE_TYPE")
+        return get$normalizer.normalize($fd.getName())Field().getValueAsPoint();
+#elseif($fd.getDataType() == "GEOCOORDINATE_LIST_TYPE")
+        return get$normalizer.normalize($fd.getName())Field().getValueAsMultiPoint();
+#elseif($fd.getDataType() == "DATE_TIME_TYPE")
+        return new Date(get$normalizer.normalize($fd.getName())Field().getValue().getMillis());
+#else
+        return get$normalizer.normalize($fd.getName())Field().getValue();
+#end 
+    }
+    
+    @Override
+#if($fd.getDataType() == "LINE_STRING_TYPE" || $fd.getDataType() == "GEOCOORDINATE_LIST_TYPE" || $fd.getDataType() == "GEOCOORDINATE_TYPE" || 
+    $fd.getDataType() == "POLYGON_TYPE" || $fd.getDataType() == "CIRCLE_TYPE")
+    public void set$normalizer.normalize($fd.getName())($typemapper.map($fd.getDataType()) value) throws CoalesceDataFormatException
+#else
+    public void set$normalizer.normalize($fd.getName())($typemapper.map($fd.getDataType()) value)
+#end    
+    {
+#if($fd.getDataType() == "FILE_TYPE")
+#elseif($fd.getDataType() == "DATE_TIME_TYPE")
+        get$normalizer.normalize($fd.getName())Field().setValue(new DateTime(value.getTime()));
+#elseif($fd.getDataType() == "BINARY_TYPE")
+#else
+        get$normalizer.normalize($fd.getName())Field().setValue(value);
+#end 
+    }
+#end
+
+    /*--------------------------------------------------------------------------
+    Public Field Getter(s)
+    --------------------------------------------------------------------------*/
+    
 #foreach($fd in $definitions)
     #set($fieldtype = $fieldmapper.map($fd.getDataType()).getClass().getSimpleName())
     

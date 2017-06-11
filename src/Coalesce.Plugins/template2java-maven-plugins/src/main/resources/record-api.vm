@@ -19,10 +19,9 @@
 package $packagename;
 ## Create Imports
 #set($imports = [])
+#if( $imports.add("com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException") ) #end
 #foreach($fd in $definitions)
-	#if($fd.getDataType() == "URI_TYPE")
-		#set($import = "java.net.URI")
-	#elseif($fd.getDataType() == "DATE_TIME_TYPE")
+	#if($fd.getDataType() == "DATE_TIME_TYPE")
 		#set($import = "java.util.Date")
 	#elseif($fd.getDataType() == "GUID_TYPE")
 		#set($import = "java.util.UUID")
@@ -34,11 +33,10 @@ package $packagename;
 		#set($import = "com.vividsolutions.jts.geom.Point")
 	#elseif($fd.getDataType() == "POLYGON_TYPE")
 		#set($import = "com.vividsolutions.jts.geom.Polygon")
+	#elseif($fd.getDataType() == "CIRCLE_TYPE")
+		#set($import = "com.incadencecorp.coalesce.framework.datamodel.CoalesceCircle")
 	#else
 		#set($import = "false")
-	#end
-	#if($fd.getDataType().isListType() && !$imports.contains( "java.util.List" ))
-		#if( $imports.add("java.util.List") ) #end
 	#end
     #if( ${import} != false && !$imports.contains( $import ) )
     	#if( $imports.add($import) ) #end
@@ -56,14 +54,12 @@ import ${import};
 public interface I${name}Record {
 
 #foreach($fd in $definitions)
-#if($fd.getDataType() == "ENUMERATION_TYPE" || $fd.getDataType() == "ENUMERATION_LIST_TYPE")
-	#set($returntype = "Integer")
+    $typemapper.map($fd.getDataType()) get$normalizer.normalize($fd.getName())() throws CoalesceDataFormatException;
+#if($fd.getDataType() == "LINE_STRING_TYPE" || $fd.getDataType() == "GEOCOORDINATE_LIST_TYPE" || $fd.getDataType() == "GEOCOORDINATE_TYPE" || 
+    $fd.getDataType() == "POLYGON_TYPE" || $fd.getDataType() == "CIRCLE_TYPE")
+    void set$normalizer.normalize($fd.getName())($typemapper.map($fd.getDataType()) value) throws CoalesceDataFormatException; 
 #else
-	#set($returntype = $typemapper.map($fd.getDataType()).getSimpleName())
-#end 
-#if($fd.getDataType().isListType())
-	#set($returntype = "List<${returntype}>")
+    void set$normalizer.normalize($fd.getName())($typemapper.map($fd.getDataType()) value); 
 #end
-    $returntype get$normalizer.normalize($fd.getName())();
 #end
 }

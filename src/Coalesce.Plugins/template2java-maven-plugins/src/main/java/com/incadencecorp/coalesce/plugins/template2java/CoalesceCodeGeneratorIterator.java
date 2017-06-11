@@ -38,7 +38,6 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
 import com.incadencecorp.coalesce.framework.iterators.CoalesceIterator;
 import com.incadencecorp.coalesce.mapper.impl.FieldMapperImpl;
-import com.incadencecorp.coalesce.mapper.impl.JavaMapperImpl;
 
 /**
  * TODO Nested Sections not supported
@@ -135,7 +134,7 @@ public class CoalesceCodeGeneratorIterator extends CoalesceIterator<List<Coalesc
         context.put("recordset", recordset);
         context.put("normalizer", normalizer);
         context.put("fieldmapper", new FieldMapperImpl());
-        context.put("typemapper", new JavaMapperImpl());
+        context.put("typemapper", new ReturnTypeMapper());
 
         context.put("packagename", packagename + ".api");
         createFile(ve.getTemplate("record-api.vm"),

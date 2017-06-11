@@ -22,7 +22,10 @@ import java.nio.file.Paths;
 import org.junit.Test;
 
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
+import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.datamodel.TestRecord;
 import com.incadencecorp.coalesce.plugins.template2java.CoalesceCodeGeneratorIterator;
 
@@ -48,7 +51,13 @@ public class CoalesceCodeGeneratorIteratorTest {
 
         CoalesceSection section = CoalesceSection.create(entity, "my-section");
         TestRecord.createCoalesceRecordset(section, "test-1").setMaxRecords(1);
-        TestRecord.createCoalesceRecordset(section, "test-2");
+//        TestRecord.createCoalesceRecordset(section, "test-2");
+
+        CoalesceRecordset recordset = CoalesceRecordset.create(section, "all data types");
+        for (ECoalesceFieldDataTypes type : ECoalesceFieldDataTypes.values())
+        {
+            CoalesceFieldDefinition.create(recordset, type.getLabel() + " field", type);
+        }
 
         //
         CoalesceCodeGeneratorIterator it = new CoalesceCodeGeneratorIterator(Paths.get("src", "test", "resources"));
@@ -69,13 +78,13 @@ public class CoalesceCodeGeneratorIteratorTest {
     @Test
     public void testGeneratedCode() throws Exception
     {
-//        GenTestEntity entity = new GenTestEntity();
-//        entity.initialize();
-//
-//        entity.getTest2Recordset().addNew();
-//        entity.getTest1Record().getStringField().setValue("Hello World");
-//
-//        System.out.println(entity.toXml());
+//         GenTestEntity entity = new GenTestEntity();
+//         entity.initialize();
+//        
+////         entity.addAllDataTypesRecord().set
+//         entity.getTest1Record().getStringField().setValue("Hello World");
+//        
+//         System.out.println(entity.toXml());
     }
 
 }
