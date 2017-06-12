@@ -52,7 +52,7 @@ import ${import};
  * 
  * @author Coalesce
  */
-public interface I${name}Record {
+public interface ${classname} {
 
 #foreach($fd in $definitions)
     /**

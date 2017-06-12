@@ -25,7 +25,7 @@ package $packagename;
 #if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.CoalesceSection") ) #end
 #if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes") ) #end
 #if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.IFieldEnum") ) #end
-#if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.api.I${name}Record") ) #end
+#if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.records.api.I${name}Record") ) #end
 #if( $imports.add("com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException") ) #end
 #if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.CoalesceField") ) #end
 #foreach($fd in $definitions)
@@ -67,7 +67,7 @@ import ${import};
  * 
  * @author Coalesce
  */
-public class ${name}Record extends CoalesceRecord implements I${name}Record {
+public class ${classname} extends CoalesceRecord implements I${name}Record {
 
 	/**
 	* Enumeration of the fields used by this record.
@@ -100,7 +100,7 @@ public class ${name}Record extends CoalesceRecord implements I${name}Record {
     /**
      * Default Constructor
      */
-    public ${name}Record()
+    public ${classname}()
     {
         super();
     }
@@ -110,7 +110,7 @@ public class ${name}Record extends CoalesceRecord implements I${name}Record {
      * 
      * @param record
      */
-    public ${name}Record(CoalesceRecord record)
+    public ${classname}(CoalesceRecord record)
     {
         super(record);
     }

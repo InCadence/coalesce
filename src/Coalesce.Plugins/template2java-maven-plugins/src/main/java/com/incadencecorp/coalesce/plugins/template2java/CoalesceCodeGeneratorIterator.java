@@ -136,26 +136,28 @@ public class CoalesceCodeGeneratorIterator extends CoalesceIterator<List<Coalesc
         context.put("fieldmapper", new FieldMapperImpl());
         context.put("typemapper", new ReturnTypeMapper());
 
-        context.put("packagename", packagename + ".api");
-        createFile(ve.getTemplate("record-api.vm"),
-                   context,
-                   entityfolder.resolve("api").resolve("I" + (String) context.get("name") + "Record.java"));
+        context.put("packagename", packagename + ".records.api");
+        context.put("classname", "I" + normalizedName + "Record");
+        createFile(ve.getTemplate("record-api.vm"), context);
 
-        context.put("packagename", packagename + ".records");
-        createFile(ve.getTemplate("record-coalesce.vm"),
-                   context,
-                   entityfolder.resolve("records").resolve((String) context.get("name") + "Record.java"));
+        context.put("packagename", packagename + ".records.impl.coalesce");
+        context.put("classname", normalizedName + "CoalesceRecord");
+        createFile(ve.getTemplate("record-coalesce.vm"), context);
 
-        context.put("packagename", packagename + ".records");
-        createFile(ve.getTemplate("record-pojo.vm"),
-                   context,
-                   entityfolder.resolve("records").resolve((String) context.get("name") + "PojoRecord.java"));
-        
+        context.put("packagename", packagename + ".records.impl.pojo");
+        context.put("classname", normalizedName + "PojoRecord");
+        createFile(ve.getTemplate("record-pojo.vm"), context);
+
         return false;
     }
 
-    private void createFile(Template t, VelocityContext context, Path file) throws CoalesceException
+    private void createFile(Template t, VelocityContext context) throws CoalesceException
     {
+        String filename = context.get("classname").toString() + ".java";
+        String packagename = context.get("packagename").toString();
+
+        Path file = directory.resolve(Paths.get("generated", packagename.split("[.]"))).resolve(filename);
+
         try (StringWriter writer = new StringWriter())
         {
             t.merge(context, writer);
