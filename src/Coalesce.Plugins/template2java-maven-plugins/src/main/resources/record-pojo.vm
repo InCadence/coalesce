@@ -1,0 +1,112 @@
+/*-----------------------------------------------------------------------------'
+ Copyright 2017 - InCadence Strategic Solutions Inc., All Rights Reserved
+
+ Notwithstanding any contractor copyright notice, the Government has Unlimited
+ Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+ of this work other than as specifically authorized by these DFARS Clauses may
+ violate Government rights in this work.
+
+ DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+ Unlimited Rights. The Government has the right to use, modify, reproduce,
+ perform, display, release or disclose this computer software and to have or
+ authorize others to do so.
+
+ Distribution Statement D. Distribution authorized to the Department of
+ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+ -----------------------------------------------------------------------------*/
+#set ($entity = $recordset.getEntity())
+#set ($definitions = $recordset.getFieldDefinitions())
+package $packagename;
+## Create Imports
+#set($imports = [])
+#if( $imports.add("com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException") ) #end
+#if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.records.api.I${name}Record") ) #end
+#foreach($fd in $definitions)
+	#if($fd.getDataType() == "DATE_TIME_TYPE")
+		#set($import = "java.util.Date")
+	#elseif($fd.getDataType() == "GUID_TYPE")
+		#set($import = "java.util.UUID")
+	#elseif($fd.getDataType() == "LINE_STRING_TYPE")
+		#set($import = "com.vividsolutions.jts.geom.LineString")
+	#elseif($fd.getDataType() == "GEOCOORDINATE_LIST_TYPE")
+		#set($import = "com.vividsolutions.jts.geom.MultiPoint")
+	#elseif($fd.getDataType() == "GEOCOORDINATE_TYPE")
+		#set($import = "com.vividsolutions.jts.geom.Point")
+	#elseif($fd.getDataType() == "POLYGON_TYPE")
+		#set($import = "com.vividsolutions.jts.geom.Polygon")
+	#elseif($fd.getDataType() == "CIRCLE_TYPE")
+		#set($import = "com.incadencecorp.coalesce.framework.datamodel.CoalesceCircle")
+	#else
+		#set($import = "false")
+	#end
+    #if( ${import} != false && !$imports.contains( $import ) )
+    	#if( $imports.add($import) ) #end
+    #end
+#end
+$imports.sort(null)
+#foreach($import in $imports)
+import ${import};
+#end
+
+/**
+ * Generated on $entity.getDateCreated() by template2java
+ * 
+ * @author Coalesce
+ */
+public class ${classname} implements I${name}Record {
+
+#foreach($fd in $definitions)
+    $typemapper.map($fd.getDataType()) $normalizer.normalize($fd.getName())Field;
+#end
+    
+    /*--------------------------------------------------------------------------
+    Constructor(s)
+    --------------------------------------------------------------------------*/
+
+    /**
+     * Default Constructor
+     */
+    public ${classname}()
+    {
+        super();
+    }
+
+    /**
+     * Constructs a new instance from an existing record
+     * 
+     * @param record
+     */
+    public ${classname}(I${name}Record record)
+    {
+    	// TODO Not Implemented
+    }
+
+    /*--------------------------------------------------------------------------
+    Public Getter(s) / Setter(s)
+    --------------------------------------------------------------------------*/
+#foreach($fd in $definitions)
+    /**
+    * Gets $fd.getName() Field
+    */
+    @Override
+    public $typemapper.map($fd.getDataType()) get$normalizer.normalize($fd.getName())() throws CoalesceDataFormatException 
+    {
+    	return $normalizer.normalize($fd.getName())Field;
+    }
+
+    /**
+    * Sets $fd.getName() Field
+    */
+    @Override
+#if($fd.getDataType() == "LINE_STRING_TYPE" || $fd.getDataType() == "GEOCOORDINATE_LIST_TYPE" || $fd.getDataType() == "GEOCOORDINATE_TYPE" || 
+    $fd.getDataType() == "POLYGON_TYPE" || $fd.getDataType() == "CIRCLE_TYPE")
+    public void set$normalizer.normalize($fd.getName())($typemapper.map($fd.getDataType()) value) throws CoalesceDataFormatException 
+#else
+    public void set$normalizer.normalize($fd.getName())($typemapper.map($fd.getDataType()) value)
+#end
+    {
+    	$normalizer.normalize($fd.getName())Field = value;
+    } 
+
+#end
+}
