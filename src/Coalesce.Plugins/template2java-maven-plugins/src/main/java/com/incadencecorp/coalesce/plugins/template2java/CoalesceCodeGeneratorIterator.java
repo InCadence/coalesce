@@ -146,6 +146,11 @@ public class CoalesceCodeGeneratorIterator extends CoalesceIterator<List<Coalesc
                    context,
                    entityfolder.resolve("records").resolve((String) context.get("name") + "Record.java"));
 
+        context.put("packagename", packagename + ".records");
+        createFile(ve.getTemplate("record-pojo.vm"),
+                   context,
+                   entityfolder.resolve("records").resolve((String) context.get("name") + "PojoRecord.java"));
+        
         return false;
     }
 

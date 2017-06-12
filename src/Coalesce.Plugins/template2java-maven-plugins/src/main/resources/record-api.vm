@@ -42,6 +42,7 @@ package $packagename;
     	#if( $imports.add($import) ) #end
     #end
 #end
+$imports.sort(null)
 #foreach($import in $imports)
 import ${import};
 #end
@@ -54,12 +55,20 @@ import ${import};
 public interface I${name}Record {
 
 #foreach($fd in $definitions)
+    /**
+    * Gets $fd.getName() Field
+    */
     $typemapper.map($fd.getDataType()) get$normalizer.normalize($fd.getName())() throws CoalesceDataFormatException;
+
+    /**
+    * Sets $fd.getName() Field
+    */
 #if($fd.getDataType() == "LINE_STRING_TYPE" || $fd.getDataType() == "GEOCOORDINATE_LIST_TYPE" || $fd.getDataType() == "GEOCOORDINATE_TYPE" || 
     $fd.getDataType() == "POLYGON_TYPE" || $fd.getDataType() == "CIRCLE_TYPE")
     void set$normalizer.normalize($fd.getName())($typemapper.map($fd.getDataType()) value) throws CoalesceDataFormatException; 
 #else
     void set$normalizer.normalize($fd.getName())($typemapper.map($fd.getDataType()) value); 
+    
 #end
 #end
 }

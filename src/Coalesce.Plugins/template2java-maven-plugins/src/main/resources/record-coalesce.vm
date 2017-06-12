@@ -17,18 +17,17 @@
 #set ($entity = $recordset.getEntity())
 #set ($definitions = $recordset.getFieldDefinitions())
 package $packagename;
-
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
-import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
-import com.incadencecorp.coalesce.framework.datamodel.IFieldEnum;
-import com.incadencecorp.coalesce.framework.datamodel.api.I${name}Record;
-
 ## Create Imports
 #set($imports = [])
+#if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition") ) #end
+#if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord") ) #end
+#if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset") ) #end
+#if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.CoalesceSection") ) #end
+#if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes") ) #end
+#if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.IFieldEnum") ) #end
+#if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.api.I${name}Record") ) #end
 #if( $imports.add("com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException") ) #end
+#if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.CoalesceField") ) #end
 #foreach($fd in $definitions)
     #set($fieldtype = $fieldmapper.map($fd.getDataType()).getClass().getSimpleName())
 	#set($import = "com.incadencecorp.coalesce.framework.datamodel.${fieldtype}")
@@ -58,6 +57,7 @@ import com.incadencecorp.coalesce.framework.datamodel.api.I${name}Record;
     	#if( $imports.add($import) ) #end
     #end    
 #end
+$imports.sort(null)
 #foreach($import in $imports)
 import ${import};
 #end
@@ -69,7 +69,10 @@ import ${import};
  */
 public class ${name}Record extends CoalesceRecord implements I${name}Record {
 
-    public enum Etest1Fields implements IFieldEnum {
+	/**
+	* Enumeration of the fields used by this record.
+	*/
+    public enum E${name}Fields implements IFieldEnum {
 #foreach($fd in $definitions)
 #if( $foreach.hasNext )
         $fd.getName().toUpperCase().replaceAll(" ", "_")("$fd.getName()"),
@@ -80,7 +83,7 @@ public class ${name}Record extends CoalesceRecord implements I${name}Record {
     
         private String label;
 
-         private Etest1Fields(final String label) {
+         private E${name}Fields(final String label) {
              this.label = label;
         }
 
@@ -124,17 +127,15 @@ public class ${name}Record extends CoalesceRecord implements I${name}Record {
      */
     public static CoalesceRecordset createCoalesceRecordset(CoalesceSection section, String name)
     {
-
         CoalesceRecordset recordset = CoalesceRecordset.create(section, name);
 
 #foreach($fd in $definitions)
 #if(!$fd.getLabel()) $fd.setLabel("") #end
 #if(!$fd.defaultValue()) $fd.setDefaultValue("") #end
-        CoalesceFieldDefinition.create(recordset, "$fd.getName()", ECoalesceFieldDataTypes.$fd.getDataType(), "$fd.getLabel()", "$fd.getDefaultClassificationMarking().toString()", "$fd.getDefaultValue()", $fd.getNoIndex(), $fd.isDisableHistory());
+       CoalesceFieldDefinition.create(recordset, "$fd.getName()", ECoalesceFieldDataTypes.$fd.getDataType(), "$fd.getLabel()", "$fd.getDefaultClassificationMarking().toString()", "$fd.getDefaultValue()", $fd.getNoIndex(), $fd.isDisableHistory());
 #end
         
         return recordset;
-
     }
 
     /*--------------------------------------------------------------------------
@@ -171,18 +172,28 @@ public class ${name}Record extends CoalesceRecord implements I${name}Record {
         get$normalizer.normalize($fd.getName())Field().setValue(value);
 #end 
     }
+    
 #end
-
     /*--------------------------------------------------------------------------
     Public Field Getter(s)
     --------------------------------------------------------------------------*/
-    
 #foreach($fd in $definitions)
-    #set($fieldtype = $fieldmapper.map($fd.getDataType()).getClass().getSimpleName())
+#set($fieldtype = $fieldmapper.map($fd.getDataType()).getClass().getSimpleName())
     
     public $fieldtype get$normalizer.normalize($fd.getName())Field()
     {
-        return ($fieldtype) getFieldByName("$fd.getName()");
+#set($enum = $fd.getName().toUpperCase().replaceAll(" ", "_"))
+        return ($fieldtype) getFieldByName(E${name}Fields.${enum});
     }
 #end
+
+    /*--------------------------------------------------------------------------
+    Private Methods
+    --------------------------------------------------------------------------*/
+
+    private CoalesceField<?> getFieldByName(E${name}Fields field) 
+    {
+        return getFieldByName(field.getFieldName());
+    }
+
 }

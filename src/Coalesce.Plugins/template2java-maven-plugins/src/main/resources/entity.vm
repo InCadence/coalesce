@@ -16,9 +16,13 @@
  -----------------------------------------------------------------------------*/
 #set ($name = $normalizer.normalize($entity.getName()))
 package $packagename;
-
+#set($imports = [])
 #foreach($recordset in $recordsets)
-import ${packagename}.records.$normalizer.normalize($recordset.getName())Record;
+	#if( $imports.add("${packagename}.records.$normalizer.normalize($recordset.getName())Record") ) #end
+#end
+$imports.sort(null)
+#foreach($import in $imports)
+import ${import};
 #end
 
 /**
