@@ -15,10 +15,16 @@
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 #set ($name = $normalizer.normalize($entity.getName()))
-package $packagename;
+package ${packagename_root}.${packagename_sub};
 #set($imports = [])
+#if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity") ) #end
+#if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset") ) #end
+#if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.CoalesceSection") ) #end
+#if( $imports.add("${packagename_root}.api.entity.I${name}Entity") ) #end
 #foreach($recordset in $recordsets)
-	#if( $imports.add("${packagename}.records.impl.coalesce.$normalizer.normalize($recordset.getName())CoalesceRecord") ) #end
+	#if( $imports.add("${packagename_root}.impl.records.coalesce.$normalizer.normalize($recordset.getName())CoalesceRecord") ) #end
+	#if( $imports.add("${packagename_root}.api.records.I$normalizer.normalize($recordset.getName())Record") ) #end
+	#if($recordset.getMaxRecords() != 1 && !$imports.contains( $import ) && $imports.add("java.util.List")) #end
 #end
 $imports.sort(null)
 #foreach($import in $imports)
@@ -30,7 +36,7 @@ import ${import};
  * 
  * @author Coalesce
  */
-public class ${name}Entity extends CoalesceEntity {
+public class ${classname} extends CoalesceEntity implements I${name}Entity {
 
     public static final String NAME = "$entity.getName()";
     public static final String SOURCE = "$entity.getSource()";
@@ -51,7 +57,7 @@ public class ${name}Entity extends CoalesceEntity {
     /**
      * Default Constructor
      */
-    public ${name}Entity()
+    public ${classname}()
     {
         // Do Nothing
     }
@@ -85,10 +91,11 @@ public class ${name}Entity extends CoalesceEntity {
             CoalesceSection section = CoalesceSection.create(this, "$section.getName()");
 
 #foreach($recordset in $section.getRecordsets())
+#set($recordtype = "$normalizer.normalize($recordset.getName())CoalesceRecord")
 #if($recordset.getMaxRecords() == 1)
-            record_$normalizer.normalize($recordset.getName()) = new $normalizer.normalize($recordset.getName())CoalesceRecord(TestRecord.createCoalesceRecordset(section, RECORDSET_$normalizer.normalize($recordset.getName()).toUpperCase()).addNew());
+            record_$normalizer.normalize($recordset.getName()) = new $normalizer.normalize($recordset.getName())CoalesceRecord(${recordtype}.createCoalesceRecordset(section, RECORDSET_$normalizer.normalize($recordset.getName()).toUpperCase()).addNew());
 #else
-            recordset_$normalizer.normalize($recordset.getName()) = TestRecord.createCoalesceRecordset(section, RECORDSET_$normalizer.normalize($recordset.getName()).toUpperCase());
+            recordset_$normalizer.normalize($recordset.getName()) = ${recordtype}.createCoalesceRecordset(section, RECORDSET_$normalizer.normalize($recordset.getName()).toUpperCase());
 #end
 #end
 #end
@@ -135,6 +142,13 @@ public class ${name}Entity extends CoalesceEntity {
     {
         return record_$normalizer.normalize($recordset.getName());
     }
+    
+    @Override
+    public void set$normalizer.normalize($recordset.getName())Record(I$normalizer.normalize($recordset.getName())Record record)
+    {
+        // TODO Not Implemented
+    }
+    
 #else
 #set($recordset_name = "recordset_$normalizer.normalize($recordset.getName())")
     public CoalesceRecordset get$normalizer.normalize($recordset.getName())Recordset()
@@ -142,9 +156,31 @@ public class ${name}Entity extends CoalesceEntity {
         return $recordset_name;
     }
 
+    @Override
     public $normalizer.normalize($recordset.getName())CoalesceRecord add$normalizer.normalize($recordset.getName())Record()
     {
         return new $normalizer.normalize($recordset.getName())CoalesceRecord(${recordset_name}.addNew());
+    }
+    
+    @Override
+    public List<I$normalizer.normalize($recordset.getName())Record> get$normalizer.normalize($recordset.getName())Records()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public int rmv$normalizer.normalize($recordset.getName())Record(I$normalizer.normalize($recordset.getName())Record record)
+    {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public int rmv$normalizer.normalize($recordset.getName())Record(String key)
+    {
+        // TODO Auto-generated method stub
+        return 0;
     }
 
 #end

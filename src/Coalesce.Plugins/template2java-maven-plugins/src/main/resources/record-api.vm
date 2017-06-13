@@ -16,7 +16,7 @@
  -----------------------------------------------------------------------------*/
 #set ($entity = $recordset.getEntity())
 #set ($definitions = $recordset.getFieldDefinitions())
-package $packagename;
+package ${packagename_root}.${packagename_sub};
 ## Create Imports
 #set($imports = [])
 #if( $imports.add("com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException") ) #end
@@ -54,14 +54,24 @@ import ${import};
  */
 public interface ${classname} {
 
+	/**
+	* @return this record's key
+	*/
+	String getKey();
+	
+	/**
+	* Sets this record's key
+	*/
+	void setKey(String value);
+
 #foreach($fd in $definitions)
     /**
-    * Gets $fd.getName() Field
+    * @return the $fd.getName() field's value
     */
     $typemapper.map($fd.getDataType()) get$normalizer.normalize($fd.getName())() throws CoalesceDataFormatException;
 
     /**
-    * Sets $fd.getName() Field
+    * Sets the $fd.getName() field's value
     */
 #if($fd.getDataType() == "LINE_STRING_TYPE" || $fd.getDataType() == "GEOCOORDINATE_LIST_TYPE" || $fd.getDataType() == "GEOCOORDINATE_TYPE" || 
     $fd.getDataType() == "POLYGON_TYPE" || $fd.getDataType() == "CIRCLE_TYPE")

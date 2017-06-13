@@ -79,9 +79,6 @@ public class CoalesceCodeGeneratorIterator extends CoalesceIterator<List<Coalesc
 
         processAllElements(entity, recordsets);
 
-        // Get Template
-        Template t = ve.getTemplate("entity.vm");
-
         ClassNameNormalizer normalizer = new ClassNameNormalizer();
 
         String normalizedName = normalizer.normalize(entity.getName());
@@ -93,24 +90,22 @@ public class CoalesceCodeGeneratorIterator extends CoalesceIterator<List<Coalesc
 
         // Set Parameters
         VelocityContext context = new VelocityContext();
-        context.put("packagename", packagename);
+        context.put("packagename_root", packagename);
         context.put("entity", entity);
         context.put("normalizer", normalizer);
         context.put("recordsets", recordsets);
 
-        // Populate Template
-        StringWriter writer = new StringWriter();
-        t.merge(context, writer);
+        context.put("packagename_sub", "api.entity");
+        context.put("classname", "I" + normalizedName + "Entity");
+        createFile(ve.getTemplate("entity-api.vm"), context);
 
-        try
-        {
-            FileUtils.writeStringToFile(new File(entityfolder.resolve(normalizedName + "Entity.java").toUri()),
-                                        writer.toString());
-        }
-        catch (IOException e)
-        {
-            throw new CoalesceException(e);
-        }
+        context.put("packagename_sub", "impl.entity.coalesce");
+        context.put("classname", normalizedName + "CoalesceEntity");
+        createFile(ve.getTemplate("entity-coalesce.vm"), context);
+
+        context.put("packagename_sub", "impl.entity.pojo");
+        context.put("classname", normalizedName + "PojoEntity");
+        createFile(ve.getTemplate("entity-pojo.vm"), context);
     }
 
     @Override
@@ -130,21 +125,22 @@ public class CoalesceCodeGeneratorIterator extends CoalesceIterator<List<Coalesc
 
         // Set Parameters
         VelocityContext context = new VelocityContext();
+        context.put("packagename_root", packagename);
         context.put("name", normalizedName);
         context.put("recordset", recordset);
         context.put("normalizer", normalizer);
         context.put("fieldmapper", new FieldMapperImpl());
         context.put("typemapper", new ReturnTypeMapper());
 
-        context.put("packagename", packagename + ".records.api");
+        context.put("packagename_sub", "api.records");
         context.put("classname", "I" + normalizedName + "Record");
         createFile(ve.getTemplate("record-api.vm"), context);
 
-        context.put("packagename", packagename + ".records.impl.coalesce");
+        context.put("packagename_sub", "impl.records.coalesce");
         context.put("classname", normalizedName + "CoalesceRecord");
         createFile(ve.getTemplate("record-coalesce.vm"), context);
 
-        context.put("packagename", packagename + ".records.impl.pojo");
+        context.put("packagename_sub", "impl.records.pojo");
         context.put("classname", normalizedName + "PojoRecord");
         createFile(ve.getTemplate("record-pojo.vm"), context);
 
@@ -154,7 +150,7 @@ public class CoalesceCodeGeneratorIterator extends CoalesceIterator<List<Coalesc
     private void createFile(Template t, VelocityContext context) throws CoalesceException
     {
         String filename = context.get("classname").toString() + ".java";
-        String packagename = context.get("packagename").toString();
+        String packagename = context.get("packagename_root").toString() + "." + context.get("packagename_sub").toString();
 
         Path file = directory.resolve(Paths.get("generated", packagename.split("[.]"))).resolve(filename);
 

@@ -16,11 +16,11 @@
  -----------------------------------------------------------------------------*/
 #set ($entity = $recordset.getEntity())
 #set ($definitions = $recordset.getFieldDefinitions())
-package $packagename;
+package ${packagename_root}.${packagename_sub};
 ## Create Imports
 #set($imports = [])
 #if( $imports.add("com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException") ) #end
-#if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.records.api.I${name}Record") ) #end
+#if( $imports.add("${packagename_root}.api.records.I${name}Record") ) #end
 #foreach($fd in $definitions)
 	#if($fd.getDataType() == "DATE_TIME_TYPE")
 		#set($import = "java.util.Date")
@@ -55,6 +55,7 @@ import ${import};
  */
 public class ${classname} implements I${name}Record {
 
+	String key;
 #foreach($fd in $definitions)
     $typemapper.map($fd.getDataType()) $normalizer.normalize($fd.getName())Field;
 #end
@@ -84,6 +85,19 @@ public class ${classname} implements I${name}Record {
     /*--------------------------------------------------------------------------
     Public Getter(s) / Setter(s)
     --------------------------------------------------------------------------*/
+    
+    @Override
+    public String getKey() 
+    {
+    	return key;
+    }
+    
+    @Override
+    public void setKey(String value)
+    {
+    	key = value; 
+    }    
+    
 #foreach($fd in $definitions)
     /**
     * Gets $fd.getName() Field

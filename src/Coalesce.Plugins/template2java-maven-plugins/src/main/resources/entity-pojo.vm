@@ -1,0 +1,105 @@
+/*-----------------------------------------------------------------------------'
+ Copyright 2017 - InCadence Strategic Solutions Inc., All Rights Reserved
+
+ Notwithstanding any contractor copyright notice, the Government has Unlimited
+ Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+ of this work other than as specifically authorized by these DFARS Clauses may
+ violate Government rights in this work.
+
+ DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+ Unlimited Rights. The Government has the right to use, modify, reproduce,
+ perform, display, release or disclose this computer software and to have or
+ authorize others to do so.
+
+ Distribution Statement D. Distribution authorized to the Department of
+ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+ -----------------------------------------------------------------------------*/
+#set ($name = $normalizer.normalize($entity.getName()))
+package ${packagename_root}.${packagename_sub};
+#set($imports = [])
+#if( $imports.add("${packagename_root}.api.entity.I${name}Entity") ) #end
+#foreach($recordset in $recordsets)
+	#if( $imports.add("${packagename_root}.impl.records.pojo.$normalizer.normalize($recordset.getName())PojoRecord") ) #end
+	#if( $imports.add("${packagename_root}.api.records.I$normalizer.normalize($recordset.getName())Record") ) #end
+	#if($recordset.getMaxRecords() != 1 && !$imports.contains( $import ) && $imports.add("java.util.List")) #end
+#end
+$imports.sort(null)
+#foreach($import in $imports)
+import ${import};
+#end
+
+/**
+ * Generated on $entity.getDateCreated() by template2java
+ * 
+ * @author Coalesce
+ */
+public class ${classname} implements I${name}Entity {
+
+    public static final String NAME = "$entity.getName()";
+    public static final String SOURCE = "$entity.getSource()";
+    public static final String VERSION = "$entity.getVersion()";
+
+#foreach($recordset in $recordsets)
+#if($recordset.getMaxRecords() == 1)
+    private $normalizer.normalize($recordset.getName())PojoRecord record_$normalizer.normalize($recordset.getName());
+#else
+    private List<$normalizer.normalize($recordset.getName())PojoRecord> recordset_$normalizer.normalize($recordset.getName());
+#end
+#end
+
+    /**
+     * Default Constructor
+     */
+    public ${classname}()
+    {
+        // Do Nothing
+    }
+
+#foreach($recordset in $recordsets)
+#if($recordset.getMaxRecords() == 1)
+    @Override
+    public $normalizer.normalize($recordset.getName())PojoRecord get$normalizer.normalize($recordset.getName())Record()
+    {
+        return record_$normalizer.normalize($recordset.getName());
+    }
+
+    @Override
+    public void set$normalizer.normalize($recordset.getName())Record(I$normalizer.normalize($recordset.getName())Record record)
+    {
+        // TODO Not Implemented
+    }
+
+#else
+#set($recordset_name = "recordset_$normalizer.normalize($recordset.getName())")
+    @Override
+    public $normalizer.normalize($recordset.getName())PojoRecord add$normalizer.normalize($recordset.getName())Record()
+    {
+        // TODO Not Implemented
+        return new $normalizer.normalize($recordset.getName())PojoRecord();
+    }
+
+    @Override
+    public List<I$normalizer.normalize($recordset.getName())Record> get$normalizer.normalize($recordset.getName())Records()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public int rmv$normalizer.normalize($recordset.getName())Record(I$normalizer.normalize($recordset.getName())Record record)
+    {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public int rmv$normalizer.normalize($recordset.getName())Record(String key)
+    {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+#end
+#end
+
+}

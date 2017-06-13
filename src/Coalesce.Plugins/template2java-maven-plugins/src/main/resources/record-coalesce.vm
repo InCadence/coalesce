@@ -16,7 +16,7 @@
  -----------------------------------------------------------------------------*/
 #set ($entity = $recordset.getEntity())
 #set ($definitions = $recordset.getFieldDefinitions())
-package $packagename;
+package ${packagename_root}.${packagename_sub};
 ## Create Imports
 #set($imports = [])
 #if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition") ) #end
@@ -25,7 +25,7 @@ package $packagename;
 #if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.CoalesceSection") ) #end
 #if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes") ) #end
 #if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.IFieldEnum") ) #end
-#if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.records.api.I${name}Record") ) #end
+#if( $imports.add("${packagename_root}.api.records.I${name}Record") ) #end
 #if( $imports.add("com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException") ) #end
 #if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.CoalesceField") ) #end
 #foreach($fd in $definitions)
@@ -141,6 +141,19 @@ public class ${classname} extends CoalesceRecord implements I${name}Record {
     /*--------------------------------------------------------------------------
     Public Getter(s) / Setter(s)
     --------------------------------------------------------------------------*/
+
+    @Override
+    public String getKey() 
+    {
+    	return super.getKey();
+    }
+    
+    @Override
+    public void setKey(String value)
+    {
+    	super.setKey(value); 
+    }    
+
 #foreach($fd in $definitions)
 	@Override
     public $typemapper.map($fd.getDataType()) get$normalizer.normalize($fd.getName())() throws CoalesceDataFormatException
