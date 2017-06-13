@@ -78,10 +78,8 @@ public class CoalesceCodeGeneratorIteratorTest {
     @Test
     public void testGeneratedCode() throws Exception
     {
-//         GenTestEntity entity = new GenTestEntity();
+//         GenTestCoalesceEntity entity = new GenTestCoalesceEntity();
 //         entity.initialize();
-//        
-////         entity.addAllDataTypesRecord().set
 //         entity.getTest1Record().getStringField().setValue("Hello World");
 //        
 //         System.out.println(entity.toXml());

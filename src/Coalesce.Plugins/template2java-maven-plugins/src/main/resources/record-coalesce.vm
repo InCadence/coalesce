@@ -25,6 +25,7 @@ package ${packagename_root}.${packagename_sub};
 #if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.CoalesceSection") ) #end
 #if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes") ) #end
 #if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.IFieldEnum") ) #end
+#if( $imports.add("com.incadencecorp.coalesce.api.ICoalesceFieldEnumDefinitionFactory ") ) #end
 #if( $imports.add("${packagename_root}.api.records.I${name}Record") ) #end
 #if( $imports.add("com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException") ) #end
 #if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.CoalesceField") ) #end
@@ -63,11 +64,40 @@ import ${import};
 #end
 
 /**
- * Generated on $entity.getDateCreated() by template2java
+ * Coalesce implementation of {@link I${name}Record} generated on $entity.getDateCreated().
  * 
- * @author Coalesce
+ * @author coalesce-plugins-template2java
  */
 public class ${classname} extends CoalesceRecord implements I${name}Record {
+
+	private static final ICoalesceFieldEnumDefinitionFactory<E${name}Fields> FACTORY = new ICoalesceFieldEnumDefinitionFactory<E${name}Fields>() {
+
+		@Override
+        public CoalesceFieldDefinition create(CoalesceRecordset recordset, String name) 
+        {
+            return create(recordset, E${name}Fields.fromLabel(name)); 
+        }
+
+        public CoalesceFieldDefinition create(CoalesceRecordset recordset, E${name}Fields field) 
+        {
+            CoalesceFieldDefinition fd = null;
+
+			if (field != null)
+			{
+	    		switch (field) 
+            	{
+#foreach($fd in $definitions)
+#if(!$fd.getLabel()) $fd.setLabel("") #end
+#if(!$fd.defaultValue()) $fd.setDefaultValue("") #end
+                	case $fd.getName().toUpperCase().replaceAll(" ", "_"):
+                    	 fd = CoalesceFieldDefinition.create(recordset, "$fd.getName()", ECoalesceFieldDataTypes.$fd.getDataType(), "$fd.getLabel()", "$fd.getDefaultClassificationMarking().toString()", "$fd.getDefaultValue()", $fd.getNoIndex(), $fd.isDisableHistory());
+                	break;
+#end
+	            }	
+			}
+            return fd; 
+        }
+    };
 
 	/**
 	* Enumeration of the fields used by this record.
@@ -83,14 +113,29 @@ public class ${classname} extends CoalesceRecord implements I${name}Record {
     
         private String label;
 
-         private E${name}Fields(final String label) {
+        private E${name}Fields(final String label) 
+        {
              this.label = label;
         }
 
-         @Override
-         public String getFieldName() {
+        @Override
+        public String getFieldName()  
+        {
             return label;
         }    
+
+        public static E${name}Fields fromLabel(String label) 
+        {
+	    	for (E${name}Fields field : E${name}Fields.values()) 
+            {
+                if (field.getFieldName().equalsIgnoreCase(label)) 
+                {
+		    		return field;
+                }
+            }
+            
+            return null;
+        }
     }
 
     /*--------------------------------------------------------------------------
@@ -129,13 +174,19 @@ public class ${classname} extends CoalesceRecord implements I${name}Record {
     {
         CoalesceRecordset recordset = CoalesceRecordset.create(section, name);
 
-#foreach($fd in $definitions)
-#if(!$fd.getLabel()) $fd.setLabel("") #end
-#if(!$fd.defaultValue()) $fd.setDefaultValue("") #end
-       CoalesceFieldDefinition.create(recordset, "$fd.getName()", ECoalesceFieldDataTypes.$fd.getDataType(), "$fd.getLabel()", "$fd.getDefaultClassificationMarking().toString()", "$fd.getDefaultValue()", $fd.getNoIndex(), $fd.isDisableHistory());
-#end
+		for (E${name}Fields field : E${name}Fields.values()) 
+		{
+			FACTORY.create(recordset, field);
+		}
         
         return recordset;
+    }
+
+    public void populate(I${name}Record record) throws CoalesceDataFormatException 
+    {
+#foreach($fd in $definitions)
+		set$normalizer.normalize($fd.getName())(record.get$normalizer.normalize($fd.getName())());
+#end
     }
 
     /*--------------------------------------------------------------------------
@@ -206,7 +257,7 @@ public class ${classname} extends CoalesceRecord implements I${name}Record {
 
     private CoalesceField<?> getFieldByName(E${name}Fields field) 
     {
-        return getFieldByName(field.getFieldName());
+        return getFieldByName(field.getFieldName(), FACTORY);
     }
 
 }

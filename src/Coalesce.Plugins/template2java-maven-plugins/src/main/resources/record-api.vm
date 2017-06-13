@@ -48,35 +48,42 @@ import ${import};
 #end
 
 /**
- * Generated on $entity.getDateCreated() by template2java
+ * Generated on $entity.getDateCreated().
  * 
- * @author Coalesce
+ * @author coalesce-plugins-template2java
  */
 public interface ${classname} {
 
 	/**
-	* @return this record's key
+	* @return this record's key.
 	*/
 	String getKey();
 	
 	/**
-	* Sets this record's key
+	* Sets this record's key.
+        *
+        * @param value
 	*/
 	void setKey(String value);
 
 #foreach($fd in $definitions)
     /**
-    * @return the $fd.getName() field's value
+    * @return the $fd.getName() field's value.
+    * @throws CoalesceDataFormatException
     */
     $typemapper.map($fd.getDataType()) get$normalizer.normalize($fd.getName())() throws CoalesceDataFormatException;
 
     /**
-    * Sets the $fd.getName() field's value
-    */
+    * Sets the $fd.getName() field's value.
+    *
+    * @param value
 #if($fd.getDataType() == "LINE_STRING_TYPE" || $fd.getDataType() == "GEOCOORDINATE_LIST_TYPE" || $fd.getDataType() == "GEOCOORDINATE_TYPE" || 
     $fd.getDataType() == "POLYGON_TYPE" || $fd.getDataType() == "CIRCLE_TYPE")
+    * @throws CoalesceDataFormatException;  
+    */
     void set$normalizer.normalize($fd.getName())($typemapper.map($fd.getDataType()) value) throws CoalesceDataFormatException; 
 #else
+    */
     void set$normalizer.normalize($fd.getName())($typemapper.map($fd.getDataType()) value); 
     
 #end

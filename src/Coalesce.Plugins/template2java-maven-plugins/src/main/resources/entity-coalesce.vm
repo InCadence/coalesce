@@ -24,7 +24,12 @@ package ${packagename_root}.${packagename_sub};
 #foreach($recordset in $recordsets)
 	#if( $imports.add("${packagename_root}.impl.records.coalesce.$normalizer.normalize($recordset.getName())CoalesceRecord") ) #end
 	#if( $imports.add("${packagename_root}.api.records.I$normalizer.normalize($recordset.getName())Record") ) #end
-	#if($recordset.getMaxRecords() != 1 && !$imports.contains( $import ) && $imports.add("java.util.List")) #end
+	#if($recordset.getMaxRecords() != 1)
+		#if(!$imports.contains( "java.util.List" ) && $imports.add("java.util.List")) #end
+		#if(!$imports.contains( "com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException" ) && $imports.add("com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException")) #end
+		#if(!$imports.contains( "java.util.ArrayList" ) && $imports.add("java.util.ArrayList")) #end
+		#if(!$imports.contains( "com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord" ) && $imports.add("com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord")) #end
+	#end 
 #end
 $imports.sort(null)
 #foreach($import in $imports)
@@ -32,9 +37,9 @@ import ${import};
 #end
 
 /**
- * Generated on $entity.getDateCreated() by template2java
+ * Coalesce implementation of {@link I${name}Entity} generated on $entity.getDateCreated().
  * 
- * @author Coalesce
+ * @author coalesce-plugins-template2java
  */
 public class ${classname} extends CoalesceEntity implements I${name}Entity {
 
@@ -138,15 +143,17 @@ public class ${classname} extends CoalesceEntity implements I${name}Entity {
 
 #foreach($recordset in $recordsets)
 #if($recordset.getMaxRecords() == 1)
+#set($record_name = "record_$normalizer.normalize($recordset.getName())")
+    @Override
     public $normalizer.normalize($recordset.getName())CoalesceRecord get$normalizer.normalize($recordset.getName())Record()
     {
-        return record_$normalizer.normalize($recordset.getName());
+        return $record_name;
     }
     
     @Override
-    public void set$normalizer.normalize($recordset.getName())Record(I$normalizer.normalize($recordset.getName())Record record)
+    public void set$normalizer.normalize($recordset.getName())Record(I$normalizer.normalize($recordset.getName())Record record) throws CoalesceDataFormatException
     {
-        // TODO Not Implemented
+		${record_name}.populate(record);
     }
     
 #else
@@ -165,26 +172,35 @@ public class ${classname} extends CoalesceEntity implements I${name}Entity {
     @Override
     public List<I$normalizer.normalize($recordset.getName())Record> get$normalizer.normalize($recordset.getName())Records()
     {
-        // TODO Auto-generated method stub
-        return null;
+		List<CoalesceRecord> records = ${recordset_name}.getRecords();
+		List<I$normalizer.normalize($recordset.getName())Record> results = new ArrayList<I$normalizer.normalize($recordset.getName())Record>();
+
+		for (CoalesceRecord record : records) 
+		{
+            results.add(new $normalizer.normalize($recordset.getName())CoalesceRecord(record));
+		}
+
+        return results;
     }
 
     @Override
-    public int rmv$normalizer.normalize($recordset.getName())Record(I$normalizer.normalize($recordset.getName())Record record)
+    public $normalizer.normalize($recordset.getName())CoalesceRecord get$normalizer.normalize($recordset.getName())Record(String key)
     {
-        // TODO Auto-generated method stub
-        return 0;
+		return new $normalizer.normalize($recordset.getName())CoalesceRecord((CoalesceRecord) ${recordset_name}.getChildCoalesceObject(key));
     }
 
     @Override
-    public int rmv$normalizer.normalize($recordset.getName())Record(String key)
+    public void rmv$normalizer.normalize($recordset.getName())Record(I$normalizer.normalize($recordset.getName())Record record)
     {
-        // TODO Auto-generated method stub
-        return 0;
+        rmv$normalizer.normalize($recordset.getName())Record(record.getKey());
+    }
+
+    @Override
+    public void rmv$normalizer.normalize($recordset.getName())Record(String key)
+    {
+        ${recordset_name}.remove(key);
     }
 
 #end
 #end
-
-
 }

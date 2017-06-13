@@ -49,9 +49,9 @@ import ${import};
 #end
 
 /**
- * Generated on $entity.getDateCreated() by template2java
+ * Pojo implementation of {@link I${name}Record} generated on $entity.getDateCreated().
  * 
- * @author Coalesce
+ * @author coalesce-plugins-template2java
  */
 public class ${classname} implements I${name}Record {
 
@@ -77,9 +77,11 @@ public class ${classname} implements I${name}Record {
      * 
      * @param record
      */
-    public ${classname}(I${name}Record record)
+    public ${classname}(I${name}Record record) throws CoalesceDataFormatException
     {
-    	// TODO Not Implemented
+#foreach($fd in $definitions)
+		set$normalizer.normalize($fd.getName())(record.get$normalizer.normalize($fd.getName())());
+#end
     }
 
     /*--------------------------------------------------------------------------

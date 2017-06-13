@@ -21,7 +21,13 @@ package ${packagename_root}.${packagename_sub};
 #foreach($recordset in $recordsets)
 	#if( $imports.add("${packagename_root}.impl.records.pojo.$normalizer.normalize($recordset.getName())PojoRecord") ) #end
 	#if( $imports.add("${packagename_root}.api.records.I$normalizer.normalize($recordset.getName())Record") ) #end
-	#if($recordset.getMaxRecords() != 1 && !$imports.contains( $import ) && $imports.add("java.util.List")) #end
+	#if($recordset.getMaxRecords() != 1)
+		#if(!$imports.contains( "java.util.List" ) && $imports.add("java.util.List")) #end
+		#if(!$imports.contains( "com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException" ) && $imports.add("com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException")) #end
+		#if(!$imports.contains( "java.util.Map" ) && $imports.add("java.util.Map")) #end
+		#if(!$imports.contains( "java.util.HashMap" ) && $imports.add("java.util.HashMap")) #end
+		#if(!$imports.contains( "java.util.ArrayList" ) && $imports.add("java.util.ArrayList")) #end
+	#end
 #end
 $imports.sort(null)
 #foreach($import in $imports)
@@ -29,9 +35,9 @@ import ${import};
 #end
 
 /**
- * Generated on $entity.getDateCreated() by template2java
+ * Pojo implementation of {@link I${name}Entity} generated on $entity.getDateCreated().
  * 
- * @author Coalesce
+ * @author coalesce-plugins-template2java
  */
 public class ${classname} implements I${name}Entity {
 
@@ -43,7 +49,7 @@ public class ${classname} implements I${name}Entity {
 #if($recordset.getMaxRecords() == 1)
     private $normalizer.normalize($recordset.getName())PojoRecord record_$normalizer.normalize($recordset.getName());
 #else
-    private List<$normalizer.normalize($recordset.getName())PojoRecord> recordset_$normalizer.normalize($recordset.getName());
+    private Map<String, $normalizer.normalize($recordset.getName())PojoRecord> recordset_$normalizer.normalize($recordset.getName()) = new HashMap<String, $normalizer.normalize($recordset.getName())PojoRecord>();
 #end
 #end
 
@@ -64,9 +70,9 @@ public class ${classname} implements I${name}Entity {
     }
 
     @Override
-    public void set$normalizer.normalize($recordset.getName())Record(I$normalizer.normalize($recordset.getName())Record record)
+    public void set$normalizer.normalize($recordset.getName())Record(I$normalizer.normalize($recordset.getName())Record record) throws CoalesceDataFormatException
     {
-        // TODO Not Implemented
+        record_$normalizer.normalize($recordset.getName()) = new $normalizer.normalize($recordset.getName())PojoRecord(record);
     }
 
 #else
@@ -74,29 +80,35 @@ public class ${classname} implements I${name}Entity {
     @Override
     public $normalizer.normalize($recordset.getName())PojoRecord add$normalizer.normalize($recordset.getName())Record()
     {
-        // TODO Not Implemented
-        return new $normalizer.normalize($recordset.getName())PojoRecord();
+		$normalizer.normalize($recordset.getName())PojoRecord result = new $normalizer.normalize($recordset.getName())PojoRecord();
+		${recordset_name}.put(result.getKey(), result);
+        return result;
     }
 
     @Override
     public List<I$normalizer.normalize($recordset.getName())Record> get$normalizer.normalize($recordset.getName())Records()
     {
-        // TODO Auto-generated method stub
-        return null;
+		List<I$normalizer.normalize($recordset.getName())Record> result = new ArrayList<I$normalizer.normalize($recordset.getName())Record>();
+		result.addAll(${recordset_name}.values());
+        return result;
     }
 
     @Override
-    public int rmv$normalizer.normalize($recordset.getName())Record(I$normalizer.normalize($recordset.getName())Record record)
+    public $normalizer.normalize($recordset.getName())PojoRecord get$normalizer.normalize($recordset.getName())Record(String key)
     {
-        // TODO Auto-generated method stub
-        return 0;
+		return ${recordset_name}.get(key);
     }
 
     @Override
-    public int rmv$normalizer.normalize($recordset.getName())Record(String key)
+    public void rmv$normalizer.normalize($recordset.getName())Record(I$normalizer.normalize($recordset.getName())Record record)
     {
-        // TODO Auto-generated method stub
-        return 0;
+        rmv$normalizer.normalize($recordset.getName())Record(record.getKey());
+    }
+
+    @Override
+    public void rmv$normalizer.normalize($recordset.getName())Record(String key)
+    {
+		${recordset_name}.remove(key);
     }
 
 #end
