@@ -1,0 +1,68 @@
+/*-----------------------------------------------------------------------------'
+ Copyright 2017 - InCadence Strategic Solutions Inc., All Rights Reserved
+
+ Notwithstanding any contractor copyright notice, the Government has Unlimited
+ Rights in this work as defined by DFARS 252.227-7013 and 252.227-7014.  Use
+ of this work other than as specifically authorized by these DFARS Clauses may
+ violate Government rights in this work.
+
+ DFARS Clause reference: 252.227-7013 (a)(16) and 252.227-7014 (a)(16)
+ Unlimited Rights. The Government has the right to use, modify, reproduce,
+ perform, display, release or disclose this computer software and to have or
+ authorize others to do so.
+
+ Distribution Statement D. Distribution authorized to the Department of
+ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
+ -----------------------------------------------------------------------------*/
+#set ($entity = $recordset.getEntity())
+#set ($name = $normalizer.normalize($recordset.getName()))
+#set ($definitions = $recordset.getFieldDefinitions())
+package ${packagename_root}.${packagename_sub};
+## Create Imports
+#set($imports = [])
+#if( $imports.add("${packagename_root}.impl.coalesce.record.${name}CoalesceRecord.E${name}Fields") ) #end
+#if( $imports.add("${packagename_root}.api.record.I${name}Record") ) #end
+#if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition") ) #end
+#if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset") ) #end
+#if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes") ) #end
+#if( $imports.add("com.incadencecorp.coalesce.api.ICoalesceFieldEnumDefinitionFactory ") ) #end
+
+$imports.sort(null)
+#foreach($import in $imports)
+import ${import};
+#end
+
+/**
+ * Coalesce factory to be used by the Coalesce implementation of {@link I${name}Record} generated on $entity.getDateCreated().
+ * 
+ * @author coalesce-plugins-template2java
+ */
+public final class ${classname} implements ICoalesceFieldEnumDefinitionFactory<E${name}Fields> {
+
+	@Override
+    public CoalesceFieldDefinition create(CoalesceRecordset recordset, String name) 
+    {
+        return create(recordset, E${name}Fields.fromLabel(name)); 
+    }
+
+	@Override
+    public CoalesceFieldDefinition create(CoalesceRecordset recordset, E${name}Fields field) 
+    {
+        CoalesceFieldDefinition fd = null;
+
+		if (field != null)
+		{
+			switch (field) 
+       		{
+#foreach($fd in $definitions)
+#if(!$fd.getLabel())$fd.setLabel("")#end
+#if(!$fd.defaultValue())$fd.setDefaultValue("")#end
+            case $fd.getName().toUpperCase().replaceAll(" ", "_"):
+                fd = CoalesceFieldDefinition.create(recordset, "$fd.getName()", ECoalesceFieldDataTypes.$fd.getDataType(), "$fd.getLabel()", "$fd.getDefaultClassificationMarking().toString()", "$fd.getDefaultValue()", $fd.getNoIndex(), $fd.isDisableHistory());
+                break;
+#end ##
+			}	
+		}
+        return fd; 
+    }
+}

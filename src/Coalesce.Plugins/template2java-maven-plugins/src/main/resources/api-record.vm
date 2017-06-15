@@ -15,12 +15,13 @@
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 #set ($entity = $recordset.getEntity())
+#set ($name = $normalizer.normalize($recordset.getName()))
 #set ($definitions = $recordset.getFieldDefinitions())
 package ${packagename_root}.${packagename_sub};
 ## Create Imports
 #set($imports = [])
 #if( $imports.add("com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException") ) #end
-#if( $imports.add("${packagename_root}.api.records.I${name}Record") ) #end
+#if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus") ) #end
 #foreach($fd in $definitions)
 	#if($fd.getDataType() == "DATE_TIME_TYPE")
 		#set($import = "java.util.Date")
@@ -49,80 +50,54 @@ import ${import};
 #end
 
 /**
- * Pojo implementation of {@link I${name}Record} generated on $entity.getDateCreated().
+ * Generated on $entity.getDateCreated().
  * 
  * @author coalesce-plugins-template2java
  */
-public class ${classname} implements I${name}Record {
+public interface ${classname} {
 
-	String key;
-#foreach($fd in $definitions)
-    $typemapper.map($fd.getDataType()) $normalizer.normalize($fd.getName())Field;
-#end
+	/**
+	* @return this record's key.
+	*/
+	String getKey();
+	
+	/**
+	* Sets this record's key.
+        *
+        * @param value
+	*/
+	void setKey(String value);
+
+	/**
+	* Returns this record's status
+	*/
+    ECoalesceObjectStatus getStatus();
     
-    /*--------------------------------------------------------------------------
-    Constructor(s)
-    --------------------------------------------------------------------------*/
-
-    /**
-     * Default Constructor
-     */
-    public ${classname}()
-    {
-        super();
-    }
-
-    /**
-     * Constructs a new instance from an existing record
-     * 
-     * @param record
-     */
-    public ${classname}(I${name}Record record) throws CoalesceDataFormatException
-    {
-#foreach($fd in $definitions)
-		set$normalizer.normalize($fd.getName())(record.get$normalizer.normalize($fd.getName())());
-#end
-    }
-
-    /*--------------------------------------------------------------------------
-    Public Getter(s) / Setter(s)
-    --------------------------------------------------------------------------*/
-    
-    @Override
-    public String getKey() 
-    {
-    	return key;
-    }
-    
-    @Override
-    public void setKey(String value)
-    {
-    	key = value; 
-    }    
+	/**
+	* Sets this record's status
+	*/
+	void setStatus(ECoalesceObjectStatus value);
     
 #foreach($fd in $definitions)
     /**
-    * Gets $fd.getName() Field
+    * @return the $fd.getName() field's value.
+    * @throws CoalesceDataFormatException
     */
-    @Override
-    public $typemapper.map($fd.getDataType()) get$normalizer.normalize($fd.getName())() throws CoalesceDataFormatException 
-    {
-    	return $normalizer.normalize($fd.getName())Field;
-    }
+    $typemapper.map($fd.getDataType()) get$normalizer.normalize($fd.getName())() throws CoalesceDataFormatException;
 
     /**
-    * Sets $fd.getName() Field
-    */
-    @Override
+    * Sets the $fd.getName() field's value.
+    *
+    * @param value
 #if($fd.getDataType() == "LINE_STRING_TYPE" || $fd.getDataType() == "GEOCOORDINATE_LIST_TYPE" || $fd.getDataType() == "GEOCOORDINATE_TYPE" || 
     $fd.getDataType() == "POLYGON_TYPE" || $fd.getDataType() == "CIRCLE_TYPE")
-    public void set$normalizer.normalize($fd.getName())($typemapper.map($fd.getDataType()) value) throws CoalesceDataFormatException 
+    * @throws CoalesceDataFormatException;  
+    */
+    void set$normalizer.normalize($fd.getName())($typemapper.map($fd.getDataType()) value) throws CoalesceDataFormatException; 
 #else
-    public void set$normalizer.normalize($fd.getName())($typemapper.map($fd.getDataType()) value)
+    */
+    void set$normalizer.normalize($fd.getName())($typemapper.map($fd.getDataType()) value); 
+    
 #end
-    {
-    	$normalizer.normalize($fd.getName())Field = value;
-    } 
-
 #end
 }

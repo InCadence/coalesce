@@ -51,6 +51,14 @@
 		</dependency>
 
 		<dependency>
+			<groupId>com.incadencecorp.coalesce.services.crud</groupId>
+			<artifactId>coalesce-crud-service-data-feature</artifactId>
+			<version>${project.version}</version>
+			<type>xml</type>
+			<classifier>features</classifier>
+		</dependency>
+
+		<dependency>
 			<groupId>com.incadencecorp.coalesce.services.search</groupId>
 			<artifactId>coalesce-search-service-feature</artifactId>
 			<version>${project.version}</version>

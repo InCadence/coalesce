@@ -335,6 +335,11 @@ public class PostGreSQLPersistorExt extends PostGreSQLPersistor implements ICoal
     @Override
     public SearchResults search(Query query) throws CoalescePersistorException
     {
+        if (query.getStartIndex() == null)
+        {
+            query.setStartIndex(1);
+        }
+        
         SearchResults results = new SearchResults();
         results.setPage(query.getStartIndex());
         results.setPageSize(query.getMaxFeatures());

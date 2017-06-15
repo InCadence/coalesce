@@ -1,13 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>coalesce-search-service-data</artifactId>
+	<artifactId>coalesce-crud-service-data-jaxrs</artifactId>
 	<packaging>bundle</packaging>
-	<name>Coalesce Search Data Service</name>
+	<name>Coalesce CRUD Data Service JAXRS</name>
 
 	<parent>
-		<groupId>com.incadencecorp.coalesce.services.search</groupId>
-		<artifactId>coalesce-search-parent</artifactId>
+		<groupId>com.incadencecorp.coalesce.services.crud</groupId>
+		<artifactId>coalesce-crud-parent</artifactId>
 		<version>0.0.25-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
@@ -15,37 +15,32 @@
 	<dependencies>
 
 		<dependency>
-			<groupId>com.incadencecorp.coalesce.services.search</groupId>
-			<artifactId>coalesce-search-api</artifactId>
+			<groupId>com.incadencecorp.coalesce.services.crud</groupId>
+			<artifactId>coalesce-crud-service-data</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 
-		<!-- Test Dependencies -->
 		<dependency>
-			<groupId>com.incadencecorp.coalesce.services.search</groupId>
-			<artifactId>coalesce-search-service</artifactId>
-			<version>${project.version}</version>
-			<scope>test</scope>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-rs-extension-providers</artifactId>
+			<version>3.0.2</version>
 		</dependency>
 		<dependency>
-			<groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
-			<artifactId>persister-memory</artifactId>
-			<version>${project.version}</version>
-			<scope>test</scope>
+			<groupId>javax.ws.rs</groupId>
+			<artifactId>javax.ws.rs-api</artifactId>
+			<version>2.0</version>
 		</dependency>
 		<dependency>
-			<groupId>com.incadencecorp.coalesce</groupId>
-			<artifactId>coalesce-core</artifactId>
-			<version>${project.version}</version>
-			<type>test-jar</type>
-			<scope>test</scope>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-jaxrs</artifactId>
+			<version>1.9.0</version>
 		</dependency>
-
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
 			<version>2.4</version>
 		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -63,9 +58,10 @@
 						<Bundle-Name>${project.name}</Bundle-Name>
 						<Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
 						<Bundle-Version>${project.version}</Bundle-Version>
-						<Import-Package>*; resolution:=optional
+						<Import-Package>
+							*; resolution:=optional
 						</Import-Package>
-						<Export-Package>${project.groupId}.service.data*,!*</Export-Package>
+						<Export-Package>${project.groupId}.service.data.jaxrs*,!*</Export-Package>
 					</instructions>
 				</configuration>
 			</plugin>

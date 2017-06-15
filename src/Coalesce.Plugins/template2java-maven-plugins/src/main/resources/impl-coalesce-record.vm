@@ -15,18 +15,17 @@
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 #set ($entity = $recordset.getEntity())
+#set ($name = $normalizer.normalize($recordset.getName()))
 #set ($definitions = $recordset.getFieldDefinitions())
 package ${packagename_root}.${packagename_sub};
 ## Create Imports
 #set($imports = [])
-#if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition") ) #end
 #if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord") ) #end
 #if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset") ) #end
 #if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.CoalesceSection") ) #end
-#if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes") ) #end
 #if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.IFieldEnum") ) #end
-#if( $imports.add("com.incadencecorp.coalesce.api.ICoalesceFieldEnumDefinitionFactory ") ) #end
-#if( $imports.add("${packagename_root}.api.records.I${name}Record") ) #end
+#if( $imports.add("${packagename_root}.api.record.I${name}Record") ) #end
+#if( $imports.add("${packagename_root}.impl.coalesce.factory.${name}CoalesceFactory") ) #end
 #if( $imports.add("com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException") ) #end
 #if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.CoalesceField") ) #end
 #foreach($fd in $definitions)
@@ -70,34 +69,7 @@ import ${import};
  */
 public class ${classname} extends CoalesceRecord implements I${name}Record {
 
-	private static final ICoalesceFieldEnumDefinitionFactory<E${name}Fields> FACTORY = new ICoalesceFieldEnumDefinitionFactory<E${name}Fields>() {
-
-		@Override
-        public CoalesceFieldDefinition create(CoalesceRecordset recordset, String name) 
-        {
-            return create(recordset, E${name}Fields.fromLabel(name)); 
-        }
-
-        public CoalesceFieldDefinition create(CoalesceRecordset recordset, E${name}Fields field) 
-        {
-            CoalesceFieldDefinition fd = null;
-
-			if (field != null)
-			{
-	    		switch (field) 
-            	{
-#foreach($fd in $definitions)
-#if(!$fd.getLabel()) $fd.setLabel("") #end
-#if(!$fd.defaultValue()) $fd.setDefaultValue("") #end
-                	case $fd.getName().toUpperCase().replaceAll(" ", "_"):
-                    	 fd = CoalesceFieldDefinition.create(recordset, "$fd.getName()", ECoalesceFieldDataTypes.$fd.getDataType(), "$fd.getLabel()", "$fd.getDefaultClassificationMarking().toString()", "$fd.getDefaultValue()", $fd.getNoIndex(), $fd.isDisableHistory());
-                	break;
-#end
-	            }	
-			}
-            return fd; 
-        }
-    };
+	private static final ${name}CoalesceFactory FACTORY = new ${name}CoalesceFactory();
 
 	/**
 	* Enumeration of the fields used by this record.
@@ -178,6 +150,9 @@ public class ${classname} extends CoalesceRecord implements I${name}Record {
 		{
 			FACTORY.create(recordset, field);
 		}
+		
+		recordset.setMaxRecords($recordset.getMaxRecords());
+        recordset.setMinRecords($recordset.getMinRecords());
         
         return recordset;
     }

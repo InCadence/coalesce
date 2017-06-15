@@ -22,8 +22,8 @@ package ${packagename_root}.${packagename_sub};
 #if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.CoalesceSection") ) #end
 #if( $imports.add("${packagename_root}.api.entity.I${name}Entity") ) #end
 #foreach($recordset in $recordsets)
-	#if( $imports.add("${packagename_root}.impl.records.coalesce.$normalizer.normalize($recordset.getName())CoalesceRecord") ) #end
-	#if( $imports.add("${packagename_root}.api.records.I$normalizer.normalize($recordset.getName())Record") ) #end
+	#if( $imports.add("${packagename_root}.impl.coalesce.record.$normalizer.normalize($recordset.getName())CoalesceRecord") ) #end
+	#if( $imports.add("${packagename_root}.api.record.I$normalizer.normalize($recordset.getName())Record") ) #end
 	#if($recordset.getMaxRecords() != 1)
 		#if(!$imports.contains( "java.util.List" ) && $imports.add("java.util.List")) #end
 		#if(!$imports.contains( "com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException" ) && $imports.add("com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException")) #end

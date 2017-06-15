@@ -15,11 +15,14 @@
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 #set ($entity = $recordset.getEntity())
+#set ($name = $normalizer.normalize($recordset.getName()))
 #set ($definitions = $recordset.getFieldDefinitions())
 package ${packagename_root}.${packagename_sub};
 ## Create Imports
 #set($imports = [])
 #if( $imports.add("com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException") ) #end
+#if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus") ) #end
+#if( $imports.add("${packagename_root}.api.record.I${name}Record") ) #end
 #foreach($fd in $definitions)
 	#if($fd.getDataType() == "DATE_TIME_TYPE")
 		#set($import = "java.util.Date")
@@ -48,44 +51,93 @@ import ${import};
 #end
 
 /**
- * Generated on $entity.getDateCreated().
+ * Pojo implementation of {@link I${name}Record} generated on $entity.getDateCreated().
  * 
  * @author coalesce-plugins-template2java
  */
-public interface ${classname} {
+public class ${classname} implements I${name}Record {
 
-	/**
-	* @return this record's key.
-	*/
-	String getKey();
-	
-	/**
-	* Sets this record's key.
-        *
-        * @param value
-	*/
-	void setKey(String value);
+	String key;
+	ECoalesceObjectStatus status;
+#foreach($fd in $definitions)
+    $typemapper.map($fd.getDataType()) $normalizer.normalize($fd.getName())Field;
+#end
+    
+    /*--------------------------------------------------------------------------
+    Constructor(s)
+    --------------------------------------------------------------------------*/
 
+    /**
+     * Default Constructor
+     */
+    public ${classname}()
+    {
+        super();
+    }
+
+    /**
+     * Constructs a new instance from an existing record
+     * 
+     * @param record
+     */
+    public ${classname}(I${name}Record record) throws CoalesceDataFormatException
+    {
+#foreach($fd in $definitions)
+		set$normalizer.normalize($fd.getName())(record.get$normalizer.normalize($fd.getName())());
+#end
+    }
+
+    /*--------------------------------------------------------------------------
+    Public Getter(s) / Setter(s)
+    --------------------------------------------------------------------------*/
+    
+    @Override
+    public String getKey() 
+    {
+    	return key;
+    }
+    
+    @Override
+    public void setKey(String value)
+    {
+    	key = value; 
+    }    
+    
+    @Override
+    public ECoalesceObjectStatus getStatus()
+    {
+    	return status;
+    }
+    
+    @Override
+	public void setStatus(ECoalesceObjectStatus value)
+	{
+		status = value;
+	}
+    
 #foreach($fd in $definitions)
     /**
-    * @return the $fd.getName() field's value.
-    * @throws CoalesceDataFormatException
+    * Gets $fd.getName() Field
     */
-    $typemapper.map($fd.getDataType()) get$normalizer.normalize($fd.getName())() throws CoalesceDataFormatException;
+    @Override
+    public $typemapper.map($fd.getDataType()) get$normalizer.normalize($fd.getName())() throws CoalesceDataFormatException 
+    {
+    	return $normalizer.normalize($fd.getName())Field;
+    }
 
     /**
-    * Sets the $fd.getName() field's value.
-    *
-    * @param value
+    * Sets $fd.getName() Field
+    */
+    @Override
 #if($fd.getDataType() == "LINE_STRING_TYPE" || $fd.getDataType() == "GEOCOORDINATE_LIST_TYPE" || $fd.getDataType() == "GEOCOORDINATE_TYPE" || 
     $fd.getDataType() == "POLYGON_TYPE" || $fd.getDataType() == "CIRCLE_TYPE")
-    * @throws CoalesceDataFormatException;  
-    */
-    void set$normalizer.normalize($fd.getName())($typemapper.map($fd.getDataType()) value) throws CoalesceDataFormatException; 
+    public void set$normalizer.normalize($fd.getName())($typemapper.map($fd.getDataType()) value) throws CoalesceDataFormatException 
 #else
-    */
-    void set$normalizer.normalize($fd.getName())($typemapper.map($fd.getDataType()) value); 
-    
+    public void set$normalizer.normalize($fd.getName())($typemapper.map($fd.getDataType()) value)
 #end
+    {
+    	$normalizer.normalize($fd.getName())Field = value;
+    } 
+
 #end
 }

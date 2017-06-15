@@ -31,10 +31,14 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.runtime.RuntimeConstants;
+import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 
+import com.incadencecorp.coalesce.api.ICoalesceNormalizer;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
 import com.incadencecorp.coalesce.framework.iterators.CoalesceIterator;
 import com.incadencecorp.coalesce.mapper.impl.FieldMapperImpl;
@@ -49,15 +53,25 @@ public class CoalesceCodeGeneratorIterator extends CoalesceIterator<List<Coalesc
 
     private VelocityEngine ve;
     private Path directory;
-    private Path entityfolder;
     private String packagename;
+    private String fileExtention = "java";
+
+    private static final String[] entity_templates = new String[] {
+                                                                    "api-entity.vm", "impl-coalesce-entity.vm",
+                                                                    "impl-pojo-entity.vm"
+    };
+    private static final String[] record_templates = new String[] {
+                                                                    "api-record.vm", "impl-coalesce-factory.vm",
+                                                                    "impl-coalesce-record.vm", "impl-pojo-record.vm"
+    };
 
     public CoalesceCodeGeneratorIterator(Path directory)
     {
         // Configure Engine to read templates from resources
         Properties p = new Properties();
-        p.setProperty("resource.loader", "class");
-        p.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+        p.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
+        p.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
+//        p.setProperty(RuntimeConstants.FILE_RESOURCE_LOADER_PATH, Paths.get("src", "main", "resources").toString());
 
         ve = new VelocityEngine();
         ve.init(p);
@@ -73,39 +87,20 @@ public class CoalesceCodeGeneratorIterator extends CoalesceIterator<List<Coalesc
     public void generateCode(CoalesceEntity entity) throws CoalesceException
     {
         packagename = entity.getClassName().substring(0, entity.getClassName().lastIndexOf("."));
-        entityfolder = directory.resolve(Paths.get("generated", packagename.split("[.]")));
 
         List<CoalesceRecordset> recordsets = new ArrayList<CoalesceRecordset>();
 
         processAllElements(entity, recordsets);
 
-        ClassNameNormalizer normalizer = new ClassNameNormalizer();
-
-        String normalizedName = normalizer.normalize(entity.getName());
-
-        if (NumberUtils.isNumber(normalizedName.substring(0, 1)))
-        {
-            throw new CoalesceException("Recordset names must start with a character");
-        }
-
         // Set Parameters
         VelocityContext context = new VelocityContext();
-        context.put("packagename_root", packagename);
         context.put("entity", entity);
-        context.put("normalizer", normalizer);
         context.put("recordsets", recordsets);
 
-        context.put("packagename_sub", "api.entity");
-        context.put("classname", "I" + normalizedName + "Entity");
-        createFile(ve.getTemplate("entity-api.vm"), context);
-
-        context.put("packagename_sub", "impl.entity.coalesce");
-        context.put("classname", normalizedName + "CoalesceEntity");
-        createFile(ve.getTemplate("entity-coalesce.vm"), context);
-
-        context.put("packagename_sub", "impl.entity.pojo");
-        context.put("classname", normalizedName + "PojoEntity");
-        createFile(ve.getTemplate("entity-pojo.vm"), context);
+        for (String template : entity_templates)
+        {
+            createFile(template, entity, context);
+        }
     }
 
     @Override
@@ -114,42 +109,44 @@ public class CoalesceCodeGeneratorIterator extends CoalesceIterator<List<Coalesc
     {
         params.add(recordset);
 
+        // Set Parameters
+        VelocityContext context = new VelocityContext();
+        context.put("recordset", recordset);
+
+        for (String template : record_templates)
+        {
+            createFile(template, recordset, context);
+        }
+        
+        return false;
+    }
+
+    private void createFile(String filename, CoalesceObject object, VelocityContext context) throws CoalesceException
+    {
         ClassNameNormalizer normalizer = new ClassNameNormalizer();
 
-        String normalizedName = normalizer.normalize(recordset.getName());
+        String normalizedName = normalizer.normalize(object.getName());
 
         if (NumberUtils.isNumber(normalizedName.substring(0, 1)))
         {
             throw new CoalesceException("Recordset names must start with a character");
         }
 
-        // Set Parameters
-        VelocityContext context = new VelocityContext();
+        filename = filename.replaceAll(".vm", "");
+
         context.put("packagename_root", packagename);
-        context.put("name", normalizedName);
-        context.put("recordset", recordset);
         context.put("normalizer", normalizer);
+        context.put("packagename_sub", filename.replaceAll("[-]", "."));
+        context.put("classname", getClassName(filename, normalizedName, normalizer));
         context.put("fieldmapper", new FieldMapperImpl());
         context.put("typemapper", new ReturnTypeMapper());
 
-        context.put("packagename_sub", "api.records");
-        context.put("classname", "I" + normalizedName + "Record");
-        createFile(ve.getTemplate("record-api.vm"), context);
-
-        context.put("packagename_sub", "impl.records.coalesce");
-        context.put("classname", normalizedName + "CoalesceRecord");
-        createFile(ve.getTemplate("record-coalesce.vm"), context);
-
-        context.put("packagename_sub", "impl.records.pojo");
-        context.put("classname", normalizedName + "PojoRecord");
-        createFile(ve.getTemplate("record-pojo.vm"), context);
-
-        return false;
+        createFile(ve.getTemplate(filename + ".vm"), context);
     }
 
     private void createFile(Template t, VelocityContext context) throws CoalesceException
     {
-        String filename = context.get("classname").toString() + ".java";
+        String filename = context.get("classname").toString() + "." + fileExtention;
         String packagename = context.get("packagename_root").toString() + "." + context.get("packagename_sub").toString();
 
         Path file = directory.resolve(Paths.get("generated", packagename.split("[.]"))).resolve(filename);
@@ -165,4 +162,21 @@ public class CoalesceCodeGeneratorIterator extends CoalesceIterator<List<Coalesc
         }
     }
 
+    private String getClassName(String template_name, String object_name, ICoalesceNormalizer normalizer)
+    {
+        String result;
+        String[] parts = template_name.split("[-]");
+
+        if (template_name.startsWith("api"))
+        {
+            result = "I" + object_name + normalizer.normalize(parts[parts.length - 1]);
+        }
+        else
+        {
+            result = object_name + normalizer.normalize(parts[parts.length - 2])
+                    + normalizer.normalize(parts[parts.length - 1]);
+        }
+        
+        return result;
+    }
 }

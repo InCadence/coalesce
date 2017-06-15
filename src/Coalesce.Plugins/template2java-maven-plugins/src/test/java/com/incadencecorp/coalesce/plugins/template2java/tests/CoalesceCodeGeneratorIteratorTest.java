@@ -60,7 +60,7 @@ public class CoalesceCodeGeneratorIteratorTest {
         }
 
         //
-        CoalesceCodeGeneratorIterator it = new CoalesceCodeGeneratorIterator(Paths.get("src", "test", "resources"));
+        CoalesceCodeGeneratorIterator it = new CoalesceCodeGeneratorIterator(Paths.get("target"));
         it.generateCode(entity);
     }
 
@@ -81,7 +81,8 @@ public class CoalesceCodeGeneratorIteratorTest {
 //         GenTestCoalesceEntity entity = new GenTestCoalesceEntity();
 //         entity.initialize();
 //         entity.getTest1Record().getStringField().setValue("Hello World");
-//        
+//         entity.addAllDataTypesRecord().setBooleanField(false);
+//         entity.addAllDataTypesRecord().setBooleanField(true);
 //         System.out.println(entity.toXml());
     }
 

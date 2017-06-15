@@ -17,8 +17,10 @@
 #set ($name = $normalizer.normalize($entity.getName()))
 package ${packagename_root}.${packagename_sub};
 #set($imports = [])
+#if( $imports.add("com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus") ) #end
+#if( $imports.add("org.joda.time.DateTime") ) #end
 #foreach($recordset in $recordsets)
-	#if( $imports.add("${packagename_root}.api.records.I$normalizer.normalize($recordset.getName())Record") ) #end
+	#if( $imports.add("${packagename_root}.api.record.I$normalizer.normalize($recordset.getName())Record") ) #end
 	#if($recordset.getMaxRecords() != 1)
 		#if(!$imports.contains( "java.util.List" ) && $imports.add("java.util.List")) #end
 		#if(!$imports.contains( "com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException" ) && $imports.add("com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException")) #end
@@ -35,6 +37,46 @@ import ${import};
  * @author coalesce-plugins-template2java
  */
 public interface ${classname} {
+
+	/**
+	* Returns the date this object was created.
+	*/
+    DateTime getDateCreated();
+
+	/**
+	* Sets the date this object was created.
+	*/
+    void setDateCreated(DateTime value);
+
+	/**
+	* Returns the date this object was last modified.
+	*/
+    DateTime getLastModified();
+
+	/**
+	* Sets the date this object was created.
+	*/
+    void setLastModified(DateTime value);
+
+	/**
+	* Sets the user ID who last modified this object.
+	*/
+    String getModifiedBy();
+
+	/**
+	* Returns the user ID who last modified this object.
+	*/
+    void setModifiedBy(String value);
+        
+	/**
+	* Returns this entity's status
+	*/
+    ECoalesceObjectStatus getStatus();
+    
+	/**
+	* Sets this entity's status
+	*/
+	void setStatus(ECoalesceObjectStatus value);
 
 #foreach($recordset in $recordsets)
 #if($recordset.getMaxRecords() == 1)
