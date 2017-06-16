@@ -27,6 +27,7 @@ function CoalesceEntityTemplate (name, sections){
 			this.templateName=obj.templateName;
 			this.objType=obj.objType;
 			this.sections=obj.sections;
+			this.className=obj.className;
 			return true;
 		}else{
 			return false;

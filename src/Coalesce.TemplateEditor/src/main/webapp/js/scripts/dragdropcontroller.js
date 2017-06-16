@@ -1,6 +1,11 @@
 var app = angular.module( 'myApp', [] );
 
-app.run( function ( $rootScope , $http) {
+//TODO this is the worst javascript I have ever written. Needs major refactoring...
+
+var xLoc = null;
+var yLoc = null;
+
+app.run( function ( $rootScope , $http, graphUtils, graphHolder) {
 
 	// Checks if the browser is supported
 	if ( !mxClient.isBrowserSupported() ) {
@@ -22,7 +27,7 @@ app.run( function ( $rootScope , $http) {
 		      "plugins" : [ "contextmenu" ]
 		    });
 		
-		$( content ).on("select_node.jstree", function (e, data) { alert("node_id: " + data.node.id); });
+		//$( content ).on("select_node.jstree", function (e, data) { alert("node_id: " + data.node.id); });
 		 
 		 console.log(content);
 		
@@ -42,6 +47,9 @@ app.run( function ( $rootScope , $http) {
 		//
 		// // Creates the graph inside the given container
 		$rootScope.graph = new mxGraph( container );
+		
+		graphHolder.setGraph($rootScope.graph);
+		
 		$rootScope.graph.setPanning( true );
 		$rootScope.graph.setConnectable( true );
 		//
@@ -117,8 +125,12 @@ app.run( function ( $rootScope , $http) {
 		};
 		$( document ).mousemove( function ( event ) {
 			$rootScope.currentMousePos.x = event.pageX;
+			xLoc = event.pageX;
 			$rootScope.currentMousePos.y = event.pageY;
+			yLoc = event.pageY;
 		} );
+		
+		$("#templates").hide();
 
 	}
 
@@ -126,6 +138,11 @@ app.run( function ( $rootScope , $http) {
 	function createPopupMenu ( graph, menu, cell, evt ) {
 		if ( cell != null ) {
 
+//			//TODO this should not be here
+//			if(cell.coalesceObj.className==null){
+//				cell.coalesceObj.className="com.entity.name";
+//			}
+//			
 			menu.addItem( 'Delete', '', function () {
 
 				graph.getModel().beginUpdate();
@@ -156,16 +173,73 @@ app.run( function ( $rootScope , $http) {
 
 			} );
 
-			 menu.addSeparator();
+//			 menu.addSeparator();
 
 			 menu.addItem( 'Download', '', function () {
 
-
-			 url = 'http://localhost:8080/template-creator/data/download/' + JSON.stringify(cell.coalesceObj);
+				var className = cell.coalesceObj.className;
+				
+				cell.coalesceObj.className = className.replace(/\./g, '-');
+				
+var jsonData = JSON.stringify(cell.coalesceObj);
+				 
+			 url = 'http://localhost:8080/template-creator/data/download/' + jsonData;
 			 window.open(url);
 			 } );
+			 
+			 var className = cell.coalesceObj.className;
+			 
+			 cell.coalesceObj.className = className.replace(/-/g, '.');
+			 
+			 menu.addItem( 'save xml', '', function () {
+				 
+				 var root = "http://localhost:8181/cxf/data/";
+				 
+				 var cellData = JSON.stringify(cell.coalesceObj);
+				 
+//				 var xml =    "<?xml version=\"1.0\" encoding=\"UTF-8\"?><entity classname=\"\" datecreated=\"\" entityid=\"\" entityidtype=\"\" key=\"\" lastmodified=\"\" name=\"Student Object\" source=\"DSS\" title=\"\" version=\"1.0\">\r\n" + 
+//			        "    <linkagesection datecreated=\"\" key=\"\" lastmodified=\"\" name=\"Linkages\"/>\r\n" + 
+//			        "    <section datecreated=\"\" key=\"\" lastmodified=\"\" name=\"Section\">\r\n" + 
+//			        "        <recordset datecreated=\"\" key=\"\" lastmodified=\"\" maxrecords=\"\" minrecords=\"\" name=\"Recordset\">\r\n" + 
+//			        "            <fielddefinition datatype=\"string\" datecreated=\"\" defaultclassificationmarking=\"\" key=\"\" lastmodified=\"\" name=\"firstName\"/>\r\n" + 
+//			        "            <fielddefinition datatype=\"string\" datecreated=\"\" defaultclassificationmarking=\"\" key=\"\" lastmodified=\"\" name=\"lastName\"/>\r\n" + 
+//			        "            <fielddefinition datatype=\"double\" datecreated=\"\" defaultclassificationmarking=\"\" key=\"\" lastmodified=\"\" name=\"id\"/>\r\n" + 
+//			        "            <fielddefinition datatype=\"integer\" datecreated=\"\" defaultclassificationmarking=\"\" key=\"\" lastmodified=\"\" name=\"grade\"/>\r\n" + 
+//			        "        </recordset>\r\n" + 
+//			        "    </section>\r\n" + 
+//			        "</entity>";
+				 
+//					$.ajax({
+//						type : "POST",
+//						url : "http://localhost:8080/template-creator/data/template/",
+//						data : JSON.stringify(cell.coalesceObj),
+//						contentType : "application/json; charset=utf-8",
+//						crossDomain : true
+//					}).then(
+//							function(xml) {
+//								
+								$.ajax({
+									type : "POST",
+									url : root + "templates",
+									data : JSON.stringify(cell.coalesceObj),// now data come in this function
+									contentType : "application/json; charset=utf-8",
+									crossDomain : true,
+									success : function(data, status, jqXHR) {
+										mxUtils.alert("Template saved");
+									},
+
+									error : function(jqXHR, status) {
+										// error handler
+										console.log(jqXHR);
+										mxUtils.alert('Template failed to save. Error: ' + status.code);
+									}
+								});
+							 
+								
+//							});
+			 });
 		} else {
-			menu.addItem( 'Create New Template', '', function () {
+			menu.addItem( 'Create new template', '', function () {
 				createNewTemplate( $rootScope.currentMousePos.x, $rootScope.currentMousePos.y );
 
 				function createNewTemplate ( x, y ) {
@@ -203,6 +277,63 @@ app.run( function ( $rootScope , $http) {
 				};
 
 			} );
+			
+			menu.addItem( 'Retrieve template from database', '', function () {
+				
+//				var root = "/template-creator/data/";
+				
+				var root = "http://localhost:8181/cxf/data/";
+				
+				var options = [{"text":"Select template", "value":""}];
+				
+				$.ajax({
+					url : root + "templates",
+				}).then(
+						function(data) {
+
+							data.forEach(function(item) {
+								
+								console.log(item);
+								
+								options.push({"text":item.name, "value":item.key});
+
+							});
+
+							bootbox.prompt({
+							    title: "Retrieve template from database",
+							    inputType: 'select',
+							    inputOptions: options,
+							    callback: function (result) {
+							    	
+							    	if(result){
+							    		
+								    	$.ajax({
+											url : root + "templates/" + result,
+										}).then(
+												function(data) {
+													
+													var x = xLoc;
+													var y =yLoc;
+													
+													console.log(data.coalesceObjectDocument);
+													
+													graphUtils.createEntityNode ( data.coalesceObjectDocument,  graphHolder.getGraph(), x, y );
+													
+												});
+							    		
+							    	}
+							    }
+							});
+						});
+				
+//				bootbox.dialog({
+//				    title: 'A custom dialog with dropdown',
+//				    message: control
+//				});
+//				console.log(options);
+				
+
+			});
 		}
 	}
 	;
@@ -218,6 +349,15 @@ app.run( function ( $rootScope , $http) {
 		coalesceEntityTemplate.initialize(coalesceCell.getCoalesceObj());
 
 		var entityName = coalesceEntityTemplate.getTemplateName();
+		
+		var className = cell.coalesceObj.className;
+		
+		if(entityName == null){
+			entityName = 'New Template';
+		}
+		
+		//remove spaces for id
+		var entityNameNoSpace = entityName.replace(/\s/g, '');
 
 		var content = document.createElement( 'div' );
 
@@ -240,133 +380,74 @@ app.run( function ( $rootScope , $http) {
 		var wndX = $rootScope.currentMousePos.x - 250/2;
 
 		var wnd = new mxWindow( 'Editing ' + entityName, content, wndX, wndY, 250, 250, true, true );
+		
+		$( content ).attr('id',entityNameNoSpace);
+		
+		$( content ).jstree({
+		    "core": {
+		        "check_callback": true
+		      },
+		      "plugins" : [ "contextmenu" ],
+		      'contextmenu': {
+		            'items': editMenu
+		        }
+		    });
+					
+					var entityId = $( '#' + entityNameNoSpace ).jstree('create_node',"#",{
+					    "text": entityName,
+					    "coalesceType": CoalesceObjectType.ENTITY,
+					    "classname": className
+					  },"last");
+		
+					var sections = coalesceEntityTemplate.getSections();
+		
+					for (i = 0; i < sections.length; i++) {
+		
+						var coalesceSection = new CoalesceSection(null,null);
+						coalesceSection.initialize(sections[i]);
+		
+						var sectionName = coalesceSection.getSectionName();
 
-		// Creates the graph inside the given container
-		// $rootScope.graph = new mxGraph( container );
-		graph.setDropEnabled( true );
-
-		// Disables global features
-		graph.collapseToPreferredSize = false;
-		graph.constrainChildren = false;
-		graph.cellsSelectable = false;
-		graph.extendParentsOnAdd = false;
-		graph.extendParents = false;
-		graph.border = 10;
-
-		// Sets global styles
-		var style = graph.getStylesheet().getDefaultEdgeStyle();
-		style[ mxConstants.STYLE_EDGE ] = mxEdgeStyle.EntityRelation;
-		style[ mxConstants.STYLE_ROUNDED ] = true;
-
-		style = graph.getStylesheet().getDefaultVertexStyle();
-		style[ mxConstants.STYLE_FILLCOLOR ] = '#ffffff';
-		style[ mxConstants.STYLE_SHAPE ] = 'swimlane';
-		style[ mxConstants.STYLE_STARTSIZE ] = 30;
-
-		style = [];
-		style[ mxConstants.STYLE_SHAPE ] = mxConstants.SHAPE_RECTANGLE;
-		style[ mxConstants.STYLE_STROKECOLOR ] = 'none';
-		style[ mxConstants.STYLE_FILLCOLOR ] = 'none';
-		style[ mxConstants.STYLE_FOLDABLE ] = false;
-		graph.getStylesheet().putCellStyle( 'column', style );
-
-		// Installs auto layout for all levels
-		var layout = new mxStackLayout( graph, true );
-		layout.border = graph.border;
-		var layoutMgr = new mxLayoutManager( graph );
-		layoutMgr.getLayout = function ( cell ) {
-			if ( !cell.collapsed ) {
-				if ( cell.parent != graph.model.root ) {
-					layout.resizeParent = true;
-					layout.horizontal = false;
-					layout.resizeParentMax = true;
-					// layout.fill = true;
-					layout.spacing = 5;
-				} else {
-					layout.resizeParent = true;
-					layout.horizontal = true;
-					layout.spacing = 40;
-				}
-
-				return layout;
-			}
-
-			return null;
-		};
-
-		// Resizes the container
-		graph.setResizeContainer( false );
-
-		graph.popupMenuHandler.factoryMethod = function ( menu, cell, evt ) {
-			return createPopupEditMenu( graph, menu, cell, evt );
-		};
-
-		// Adds cells to the model
-		graph.getModel().beginUpdate();
-		try {
-
-			var col1 = graph.insertVertex( parent, null, '', 0, 0, 160, 0, 'column' );
-
-			if(entityName == null){
-				entityName = 'New Template';
-			}
-
-			var entityCell = graph.insertVertex( col1, null, entityName, 0, 0, 200, 30 );
-			entityCell.collapsed = true;
-			entityCell.coalesceType = CoalesceObjectType.ENTITY;
-
-			// $( xmlDoc ).find( 'entity' ).find( 'linkagesection' ).remove();
-
-			var sections = coalesceEntityTemplate.getSections();
-
-			for (i = 0; i < sections.length; i++) {
-
-				var coalesceSection = new CoalesceSection(null,null);
-				coalesceSection.initialize(sections[i]);
-
-				var sectionName = coalesceSection.getSectionName();
-
-				var sectionCell = graph.insertVertex( entityCell, null, sectionName, 0, 0, 180, 30 );
-				sectionCell.collapsed = true;
-				sectionCell.coalesceType = CoalesceObjectType.SECTION;
-
-				var recordsets = coalesceSection.getRecordsets();
-
-				for (j = 0; j < recordsets.length; j++) {
-
-					var coalesceRecordSet = new CoalesceRecordSet();
-					coalesceRecordSet.initialize(recordsets[j]);
-
-					var recordsetName = coalesceRecordSet.getRecordsetName();
-
-					var recordsetCell = graph.insertVertex( sectionCell, null, recordsetName, 0, 0, 160, 30 );
-					recordsetCell.collapsed = true;
-					recordsetCell.coalesceType = CoalesceObjectType.RECORDSET;
-
-					var fields = coalesceRecordSet.getFields();
-
-					for (k = 0; k < fields.length; k++) {
-
-						var coalesceField = new CoalesceField();
-						coalesceField.initialize(fields[k]);
-
-						var name = coalesceField.getFieldName();
-						var fieldtype = coalesceField.getFieldType();
-
-						var value = name + ":" + fieldtype;
-
-						var fieldCell = graph.insertVertex( recordsetCell, null, value, 0, 0, 140, 30 );
-
-						fieldCell.fieldType = fieldtype;
+						var sectionId = $( '#' + entityNameNoSpace ).jstree('create_node',entityId,{
+						    "text": sectionName,
+						    "coalesceType": CoalesceObjectType.SECTION
+						  },"last");
+		
+						var recordsets = coalesceSection.getRecordsets();
+		
+						for (j = 0; j < recordsets.length; j++) {
+		
+							var coalesceRecordSet = new CoalesceRecordSet();
+							coalesceRecordSet.initialize(recordsets[j]);
+		
+							var recordsetName = coalesceRecordSet.getRecordsetName();
+							
+							var recordsetId = $( '#' + entityNameNoSpace ).jstree('create_node',sectionId,{
+							    "text": recordsetName,
+							    "coalesceType": CoalesceObjectType.RECORDSET
+							  },"last");
+		
+							var fields = coalesceRecordSet.getFields();
+		
+							for (k = 0; k < fields.length; k++) {
+		
+								var coalesceField = new CoalesceField();
+								coalesceField.initialize(fields[k]);
+		
+								var name = coalesceField.getFieldName();
+								var fieldtype = coalesceField.getFieldType();
+		
+								var value = name + ":" + fieldtype;
+		
+								var fieldId = $( '#' + entityNameNoSpace ).jstree('create_node',recordsetId,{
+								    "text": value,
+								    "fieldType": fieldtype
+								  },"last");
+								
+							}
+		
 					}
-
-			}
-		}
-
-		} finally {
-			// Updates the display
-			graph.getModel().endUpdate();
-		}
+				}
 
 		wnd.setMaximizable( true );
 		wnd.setScrollable( true );
@@ -380,14 +461,24 @@ app.run( function ( $rootScope , $http) {
 			console.log( "window closed!" );
 			cell.isEditorOpen = false;
 
-			coalesceCell.setCoalesceObj(new coalesceEditCellToCoalesceObj(entityCell));
+			var entityNode = $('#' + entityNameNoSpace).jstree(true).get_node(entityId);
+			
+			var className = entityNode.original.classname.replace(/\./g, '-');
+			
+			coalesceCell.setCoalesceObj(new coalesceEditCellToCoalesceObj(content, className));
 
+			//console.log(coalesceCell.getCoalesceObj);
+			
+			//coalesceCell.coalesceObj.classname = entityNode.original.classname;
+			
+			//console.log(coalesceCell.coalesceObj);
+			
 			graph.getModel().beginUpdate();
 			try {
 
-			coalesceCell.value = entityCell.getValue();
-
-			cell.value = entityCell.getValue();
+//			coalesceCell.value = entityCell.getValue();
+//
+//			cell.value = entityCell.getValue();
 
 			graph.fireEvent(new mxEventObject(mxEvent.LABEL_CHANGED));
 
@@ -408,7 +499,107 @@ app.run( function ( $rootScope , $http) {
 
 } );
 
+function editMenu ( node ) {
+	
+	var items = {
+			 "rename": {
+				 "label": "Rename" , //Different label (defined above) will be shown depending on node type
+	                "action": function (data) {
+	                	
+	                	var inst = $.jstree.reference(data.reference),
+						obj = inst.get_node(data.reference);
+					    inst.edit(obj);
+	                }
+			 }
+	};
+	
+	switch ( node.original.coalesceType ) {
+		case CoalesceObjectType.ENTITY:
+			//Add Section
+			items.addNode = {
+				 "label": "Add Section" , //Different label (defined above) will be shown depending on node type
+	                "action": function (obj) {
+	                	addNode (obj, "New Section", CoalesceObjectType.SECTION);
+	                }
+		};
+			items.editClassName = {
+					 "label": "Edit ClassName" , //Different label (defined above) will be shown depending on node type
+		                "action": function (obj) {
+		                	bootbox.prompt({ 
+		                		  size: "small",
+		                		  title: "Edit ClassName",
+		                		  value: node.original.classname,
+		                		  callback: function(result){ 
+		                			  
+		                			  if(result != null){
+		                				  node.original.classname = result
+		                			  }
+		                		  		}
+		                		})
+		                }
+			};
+			break;
+		case CoalesceObjectType.SECTION:
+			///Add RecordSet
+			items.addNode = {
+				 "label": "Add RecordSet" , //Different label (defined above) will be shown depending on node type
+	                "action": function (obj) {
+	                	addNode (obj, "New RecordSet", CoalesceObjectType.RECORDSET);
+	                }
+		};
+			break;
+		case CoalesceObjectType.RECORDSET:
+			//Add Field Definition
+			items.addNode = {
+				 "label": "Add Field Definition" , //Different label (defined above) will be shown depending on node type
+	                "action": function (obj) {
+	                	addNode (obj, "New Field Definition:string", CoalesceObjectType.FIELD_DEF);
+	                }
+		};
+		case CoalesceObjectType.FIELD_DEF:
+			break;
+		default:
+			// do nothing
+	}
+	
+	//add delete option for every type but ENTITY
+	if(node.original.coalesceType != CoalesceObjectType.ENTITY){
+		items.deleteNode = {
+				"label": "Delete" , //Different label (defined above) will be shown depending on node type
+                "action": function (data) {
+					var inst = $.jstree.reference(data.reference),
+					obj = inst.get_node(data.reference);
+				if(inst.is_selected(obj)) {
+					inst.delete_node(inst.get_selected());
+				}
+				else {
+					inst.delete_node(obj);
+				}
+                }
+		}
+		
+	}
+	
+	return items;
+}
 
+function addNode (data, name, type){
+	
+	var inst = $.jstree.reference(data.reference),
+	obj = inst.get_node(data.reference);
+    inst.create_node(obj, name, "last", function (new_node) {
+	try {
+		inst.edit(new_node);
+	} catch (ex) {
+		setTimeout(function () { inst.edit(new_node); },0);
+	}
+	
+	new_node.original.coalesceType = type;
+	
+});
+
+}
+		
 
 function createPopupEditMenu ( graph, menu, cell, evt ) {
 	if ( cell != null ) {
@@ -473,18 +664,38 @@ function addCoalesceCell ( graph, cell, name, type, length, width ) {
 };
 
 
-function coalesceEditCellToCoalesceObj(cell){
-	var templateName = cell.getValue();
+function coalesceEditCellToCoalesceObj(content, className){
+	
+	console.log(content);
+	
+	var rootnode = $( content ).jstree('get_node',"#");
+	
+	//console.log(rootnode);
+	
+//	console.log($( content ).jstree('get_json',rootnode));
+	
+	var tree = $( content ).jstree('get_json',rootnode);
+	
+	console.log(tree);
+	
+	var templateName = tree[0].text;
 
 	var coalesceEntityTemplate = new CoalesceEntityTemplate(templateName,[]);
 
-	var sectionCells = cell.children;
+	if(className != null){
+		coalesceEntityTemplate.className = className;
+	}else{
+		console.log("className is null, defaulting to template name");
+		coalesceEntityTemplate.className = templateName.replace(/\s/g, '');
+	} 
+	
+	var sectionCells = tree[0].children;
 
 	if(sectionCells != null){
 		for(i = 0; i < sectionCells.length; i++)  {
 
 			// sections
-			var sectionName = sectionCells[i].getValue();
+			var sectionName = sectionCells[i].text;
 
 			var section = new CoalesceSection(sectionName, []);
 
@@ -494,7 +705,7 @@ function coalesceEditCellToCoalesceObj(cell){
 
 				for(j = 0; j < recordsetCells.length; j++) {
 				// recordsets
-					var recordsetName = recordsetCells[j].getValue();
+					var recordsetName = recordsetCells[j].text;
 					var recordset = new CoalesceRecordSet(recordsetName, []);
 
 					var fieldDefCells = recordsetCells[j].children;
@@ -502,10 +713,10 @@ function coalesceEditCellToCoalesceObj(cell){
 					if(fieldDefCells != null){
 						for(k = 0; k < fieldDefCells.length; k++) {
 							// fields
-								var coalesceEditCell = new CoalesceEditCell(fieldDefCells[k]);
+								//var coalesceEditCell = new CoalesceEditCell(fieldDefCells[k]);
 
-								var name = coalesceEditCell.getCoalesceName().split(":")[0];
-								var datatype = coalesceEditCell.getCoalesceName().split(":")[1];
+								var name = fieldDefCells[k].text.split(":")[0];
+								var datatype = fieldDefCells[k].text.split(":")[1];
 
 								var field = new CoalesceField(name, datatype)
 
@@ -519,6 +730,8 @@ function coalesceEditCellToCoalesceObj(cell){
 		}
 	}
 
+	console.log(coalesceEntityTemplate);
+	
 	return coalesceEntityTemplate;
 }
 
@@ -529,7 +742,11 @@ $( xmlDoc ).find( 'entity' ).find( 'linkagesection' ).remove();
 
 var templateName = $( xmlDoc ).find( 'entity' ).attr( "name" );
 
+var className = $( xmlDoc ).find( 'entity' ).attr( "classname" );
+
 var coalesceEntityTemplate = new CoalesceEntityTemplate(templateName,[]);
+
+coalesceEntityTemplate.className = className;
 
 if ( $( xmlDoc ).find( 'entity' ).find( 'section' ) != null ) {
 
@@ -568,7 +785,7 @@ function coalesceObjToXmlDoc(obj){
 
 }
 
-app.controller( 'draganddrop', function ( $scope, $rootScope ) {
+app.controller( 'draganddrop', function ( $scope, $rootScope, graphUtils ) {
 
 	// getElementById
 	function $id ( id ) {
@@ -612,59 +829,19 @@ app.controller( 'draganddrop', function ( $scope, $rootScope ) {
 		reader.onload = function ( e ) {
 			// console.log( e.target.result )
 
-			createEntityNode( e.target.result )
+			graphUtils.createEntityNode( e.target.result,  $rootScope.graph ,  xLoc ,  yLoc)
 
 		}
 		reader.readAsText( file );
 
 	}
 
-	function createEntityNode ( xml ) {
 
-		// add a single node to graph
-		var graph = $rootScope.graph;
-
-		var parent = graph.getDefaultParent();
-
-		var parser = new DOMParser();
-
-		var xmlDoc = parser.parseFromString( xml, "text/xml" );
-
-		var entityName = $( xmlDoc ).find( 'entity' ).attr( "name" );
-
-		// Adds cells to the model
-
-		graph.getModel().beginUpdate();
-		try {
-
-			var col1 = graph.insertVertex( parent, null, '', 0, 0, 160, 0, 'column' );
-
-			var cellY = $rootScope.currentMousePos.y
-
-			var cellX = $rootScope.currentMousePos.x
-
-			var entityCell = graph.insertVertex( parent, null, entityName, cellX - 140/2, cellY - 30/2, 140, 30 );
-
-			var coalesceCell = new CoalesceCell(entityCell);
-
-			coalesceCell.setCoalesceObj(new xmlDocToCoalesceObj(xmlDoc));
-
-			coalesceCell.setEditorOpen(false);
-
-			// update the nav tree
-			addEntityToNav(entityCell, xmlDoc );
-
-		} finally {
-			// Updates the display
-			graph.getModel().endUpdate();
-		}
-
-	}
 
 	function addEntityToNav (cell, xmlDoc ) {
-		var container = $rootScope.navigator;
-
-		var div = $( container );
+//		var container = $rootScope.navigator;
+//
+//		var div = $( container );
 
 		var cellID = cell.id;
 
@@ -704,3 +881,140 @@ app.controller( 'draganddrop', function ( $scope, $rootScope ) {
 	}
 
 } );
+
+
+
+app.service('graphUtils', function() {
+    this.createEntityNode = function (xml, graph, x, y) {
+    	// add a single node to graph
+//    	var graph = $rootScope.graph;
+
+    	console.log(x);
+    	
+    	console.log(y);
+    	
+    	var parent = graph.getDefaultParent();
+
+    	var parser = new DOMParser();
+
+    	var xmlDoc = parser.parseFromString( xml, "text/xml" );
+
+    	var entityName = $( xmlDoc ).find( 'entity' ).attr( "name" );
+
+    	// Adds cells to the model
+
+    	graph.getModel().beginUpdate();
+    	try {
+
+    		var col1 = graph.insertVertex( parent, null, '', 0, 0, 160, 0, 'column' );
+
+    		var cellY = y
+
+    		var cellX = x
+
+    		var entityCell = graph.insertVertex( parent, null, entityName, cellX - 140/2, cellY - 30/2, 140, 30 );
+
+    		var coalesceCell = new CoalesceCell(entityCell);
+
+    		coalesceCell.setCoalesceObj(new xmlDocToCoalesceObj(xmlDoc));
+
+    		coalesceCell.setEditorOpen(false);
+
+    		// update the nav tree
+    		
+//    		var cellID = entityCell.id;
+
+//    		var entityName = $( xmlDoc ).find( 'entity' ).attr( "name" );
+    		
+    		$( '#navtree' ).jstree('create_node',"#",{
+    		    "id": entityCell.id,
+    		    "text": entityName
+    		  },"last");
+    		
+    		
+//    		addEntityToNav(entityCell, xmlDoc );
+
+    	} finally {
+    		// Updates the display
+    		graph.getModel().endUpdate();
+    	}
+    }
+    
+    this.x = null;
+    this.y = null;
+    
+    this.getX = function () {
+    	$( document ).mousemove( function ( event ) {
+    		 this.x = event.pageX;
+
+		} );
+    	
+    	return this.x
+    }
+    this.setX = function (x) {
+    	this.x = x;
+    }
+    this.getY = function () {
+    	return this.y;
+    }
+    this.setY = function (y) {
+    	this.y = y ;
+    }
+    
+});
+
+//TODO, this needs to be a service
+//function createEntityNode ( xml,graph ) {
+
+	// add a single node to graph
+//	var graph = $rootScope.graph;
+
+//	var parent = graph.getDefaultParent();
+//
+//	var parser = new DOMParser();
+//
+//	var xmlDoc = parser.parseFromString( xml, "text/xml" );
+//
+//	var entityName = $( xmlDoc ).find( 'entity' ).attr( "name" );
+
+	// Adds cells to the model
+
+//	graph.getModel().beginUpdate();
+//	try {
+//
+//		var col1 = graph.insertVertex( parent, null, '', 0, 0, 160, 0, 'column' );
+//
+//		var cellY = $rootScope.currentMousePos.y
+//
+//		var cellX = $rootScope.currentMousePos.x
+//
+//		var entityCell = graph.insertVertex( parent, null, entityName, cellX - 140/2, cellY - 30/2, 140, 30 );
+//
+//		var coalesceCell = new CoalesceCell(entityCell);
+//
+//		coalesceCell.setCoalesceObj(new xmlDocToCoalesceObj(xmlDoc));
+//
+//		coalesceCell.setEditorOpen(false);
+//
+//		// update the nav tree
+//		addEntityToNav(entityCell, xmlDoc );
+//
+//	} finally {
+//		// Updates the display
+//		graph.getModel().endUpdate();
+//	}
+//
+//}
+
+app.service('graphHolder', function() {
+	
+	this.graph = null;
+	
+	this.getGraph = function () {
+		return this.graph;
+	}
+	
+	this.setGraph = function (graph) {
+		this.graph = graph;
+	}
+});

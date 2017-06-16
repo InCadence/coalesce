@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.opengis.filter.expression.PropertyName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -237,35 +239,126 @@ public class TemplateDataController {
      * @param template
      * @return whether or not it was successfully saved.
      */
-    public CallResult setTemplate(CoalesceEntityTemplate template) throws RemoteException
+    public boolean setTemplate(String xml) throws RemoteException
     {
-        CallResult result = null;
+        boolean result = false;
 
         try
         {
-            if (template != null)
+            if (xml != null)
             {
+                CoalesceEntityTemplate template = CoalesceEntityTemplate.create(xml);
+                LOGGER.info("Saving template {}, Key: {}", template.getName(), template.getKey());
                 persister.saveTemplate(template);
                 templates.put(template.getKey(), new TemplateNode(template));
 
-                result = new CallResult(CallResults.SUCCESS);
+                result = true;
             }
             else
             {
-                result = new CallResult(CallResults.FAILED);
+                result = false;
             }
 
         }
-        catch (CoalescePersistorException e)
+        catch (CoalescePersistorException | SAXException | IOException e)
         {
             error(String.format(CoalesceErrors.NOT_SAVED,
-                                template.getKey(),
+                                "key here",
                                 CoalesceEntityTemplate.class.getSimpleName(),
                                 e.getMessage()),
                   e);
         }
 
         return result;
+    }
+
+    /**
+     * Saves the specified template.
+     * 
+     * @param template
+     * @return whether or not it was successfully saved.
+     */
+    public boolean setTemplateJson(String json) throws RemoteException
+    {
+        boolean result = false;
+
+        try
+        {
+            if (json != null)
+            {
+                CoalesceEntityTemplate template = createTemplate(json);
+                LOGGER.info("Saving template {}, Key: {}", template.getName(), template.getKey());
+                persister.saveTemplate(template);
+                templates.put(template.getKey(), new TemplateNode(template));
+
+                result = true;
+            }
+            else
+            {
+                result = false;
+            }
+
+        }
+        catch (CoalescePersistorException | SAXException | IOException e)
+        {
+            error(String.format(CoalesceErrors.NOT_SAVED,
+                                "key here",
+                                CoalesceEntityTemplate.class.getSimpleName(),
+                                e.getMessage()),
+                  e);
+        }
+
+        return result;
+    }
+
+    private CoalesceEntityTemplate createTemplate(String json) throws SAXException, IOException
+    {
+
+        JSONObject obj = new JSONObject(json);
+        String templateName = obj.getString("templateName");
+        String className = obj.getString("className").replace('-', '.');
+
+        CoalesceEntity entity = new CoalesceEntity();
+        entity.initialize();
+        entity.setName(templateName);
+        entity.setAttribute("classname", className);
+        
+        JSONArray jsonSections = obj.getJSONArray("sections");
+
+        for (int i = 0; i < jsonSections.length(); i++)
+        {
+
+            JSONObject jsonSection = jsonSections.getJSONObject(i);
+            String SectionName = jsonSection.getString("sectionName");
+
+            CoalesceSection section = entity.createSection(SectionName);
+
+            JSONArray jsonRecordSets = jsonSection.getJSONArray("recordsets");
+
+            for (int j = 0; j < jsonRecordSets.length(); j++)
+            {
+
+                JSONObject jsonRecordSet = jsonRecordSets.getJSONObject(j);
+                String recordsetName = jsonRecordSet.getString("recordsetName");
+                CoalesceRecordset recordset = section.createRecordset(recordsetName);
+
+                JSONArray jsonFields = jsonRecordSet.getJSONArray("fields");
+
+                for (int k = 0; k < jsonFields.length(); k++)
+                {
+                    JSONObject jsonField = jsonFields.getJSONObject(k);
+                    String fieldName = jsonField.getString("fieldName");
+                    String fieldType = jsonField.getString("fieldType");
+                    ECoalesceFieldDataTypes type = ECoalesceFieldDataTypes.getTypeForCoalesceType(fieldType);
+
+                    recordset.createFieldDefinition(fieldName, type);
+                }
+
+            }
+        }
+
+        return CoalesceEntityTemplate.create(entity);
+
     }
 
     private FieldData getField(PropertyName property, ECoalesceFieldDataTypes type)
