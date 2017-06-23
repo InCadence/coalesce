@@ -201,6 +201,8 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
     public AccumuloPersistor() throws CoalescePersistorException
     {
         setConnectionSettings(AccumuloSettings.getServerConn());
+        LOGGER.debug("Zookeepers",AccumuloSettings.getServerConn().getServerName());
+        LOGGER.debug("Databasename",AccumuloSettings.getServerConn().getDatabase());
         connect = (AccumuloDataConnector) getDataConnector();
         validator = new CoalesceValidator();
         createLinkageFeature(LINKAGE_FEATURE_NAME);
