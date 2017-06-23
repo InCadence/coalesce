@@ -31,6 +31,7 @@ import java.util.Set;
 
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
+import javax.xml.namespace.QName;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
@@ -112,12 +113,14 @@ public class Neo4JPersistor extends CoalescePersistorBase {
     private static final String CYPHER_DELETE_NODE = "MATCH (n:%s {" + KEY + ": {1}}) OPTIONAL MATCH n-[r]-() DELETE n, r";
 
     private static final String CYPHER_LINK = "MATCH (n1:%s {" + KEY + ": {1}}), (n2:%s {" + KEY
-            + ": {2}}) CREATE UNIQUE (n1)-[:%s {key: {3}}]->(n2)";
+            + ": {2}}) CREATE UNIQUE (n1)-[:%s {key: {3} %s}]->(n2)";
 
     private static final String CYPHER_UNLINK = "OPTIONAL MATCH (n1:%s {" + KEY + ": {1}})-[rel:%s {key: {3}}]->(n2:%s {"
             + KEY + ": {2}}) DELETE rel";
 
     private static final String CYPHER_CONSTRAINT = "CREATE CONSTRAINT ON (n:%s) ASSERT n." + KEY + " IS UNIQUE";
+    
+    private static final String[] linkAttributes = { "linktype", "label", "datecreated", "lastmodified", "modifiedby", "modifiedbyip", "classificationmarking"};
 
     private boolean isIncludeXmlEnabled = false;
 
@@ -508,11 +511,30 @@ public class Neo4JPersistor extends CoalescePersistorBase {
         {
             createPlaceHolder(linkage, conn);
 
+           
+            // Set up the other attributes of the link.  
+            // These are the ones always there.
+            // Wrap them all in quotes so that empty values and values with : will be legal for 
+            // the query
+
+            String attributes = "";
+            
+            for (String attribute: linkAttributes) {
+            	String att = linkage.getAttribute(attribute);
+            	if (att != null)
+            	   attributes += "," + attribute + ": \"" + att + "\"";
+            	else
+            		LOGGER.debug("No value for attribute: "+ attribute);
+            }
+
+            LOGGER.debug("Attributes for linkage: "+ attributes);
+
             // Add / Update Link
+
             query = String.format(CYPHER_LINK,
                                   normalizeName(linkage.getEntity1Name()),
                                   normalizeName(linkage.getEntity2Name()),
-                                  linkage.getLinkType());
+                                  linkage.getLinkType(),attributes);
         }
 
         // Execute Query

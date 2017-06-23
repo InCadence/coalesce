@@ -20,6 +20,7 @@ import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.geotools.data.Query;
 import org.junit.Assert;
@@ -27,6 +28,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opengis.filter.expression.PropertyName;
 
+import com.incadencecorp.coalesce.common.classification.Marking;
 import com.incadencecorp.coalesce.common.helpers.EntityLinkHelper;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceBooleanField;
 import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
@@ -89,7 +91,7 @@ public class Neo4JPersistorIT extends AbstractCoalescePersistorTest<Neo4JPersist
         field2.setValue(true);
 
         // Link Entities
-        EntityLinkHelper.linkEntities(entity1, ELinkTypes.IS_PARENT_OF, entity2);
+        EntityLinkHelper.linkEntities(entity1, ELinkTypes.IS_PARENT_OF, entity2,new Marking("(U)"), "", "", "Test Label", Locale.US, true, false, false);
 
         Neo4jSearchPersister persistor = new Neo4jSearchPersister();
 
