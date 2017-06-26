@@ -18,6 +18,7 @@ package com.incadencecorp.coalesce.framework.persistance.derby;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
+import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -26,6 +27,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import org.apache.derby.jdbc.ClientDriver;
+import org.apache.derby.jdbc.EmbeddedDriver;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -55,8 +58,8 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
     private static final String MEMORY = "memory";
     private static final String CLASSPATH = "classpath";
     private static final String JAR = "jar";
-    private static final String CLIENT_DRIVER = "org.apache.derby.jdbc.ClientDriver";
-    private static final String EMBEDDED_DRIVER = "org.apache.derby.jdbc.EmbeddedDriver";
+//    private static final String CLIENT_DRIVER = "org.apache.derby.jdbc.ClientDriver";
+//    private static final String EMBEDDED_DRIVER = "org.apache.derby.jdbc.EmbeddedDriver";
     private static final Logger LOGGER = LoggerFactory.getLogger(DerbyDataConnector.class);
     private static final String UNSUPPORTED_TYPE = "UNSUPPORTED_TYPE";
     private static final String CREATE_TABLE_FORMAT = "CREATE TABLE %s.%s(\r%s\r)";
@@ -544,7 +547,10 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
             isEmbedded = true;
             setSubSubProtocol(subSubProtocol);
 
-            Class.forName(EMBEDDED_DRIVER);
+            Driver driver = new EmbeddedDriver();
+            DriverManager.registerDriver(driver);
+
+            // Class.forName(EMBEDDED_DRIVER);
 
             // note: if the protocol is memory, the coalesce database needs to
             // be created
@@ -553,7 +559,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
                 this.createTables();
             }
         }
-        catch (ClassNotFoundException | SQLException e)
+        catch (SQLException e)
         {
             throw new CoalescePersistorException("CoalesceDataConnector", e);
         }
@@ -568,7 +574,9 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
             isEmbedded = false;
             setSubSubProtocol(subSubProtocol);
 
-            Class.forName(CLIENT_DRIVER);
+            Driver driver = new ClientDriver();
+            DriverManager.registerDriver(driver);
+            // Class.forName(CLIENT_DRIVER);
 
             // note: if the protocol is memory, the coalesce database needs to
             // be created
@@ -578,7 +586,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
                 this.createTables();
             }
         }
-        catch (ClassNotFoundException | SQLException e)
+        catch (SQLException e)
         {
             throw new CoalescePersistorException("CoalesceDataConnector", e);
         }
