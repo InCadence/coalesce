@@ -1,5 +1,6 @@
 package com.incadencecorp.coalesce.services.crud.service.data.jaxrs;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.Consumes;
@@ -9,7 +10,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
-import org.codehaus.jettison.json.JSONObject;
+import com.incadencecorp.coalesce.services.crud.service.data.model.impl.pojo.entity.EnumerationPojoEntity;
+import com.incadencecorp.coalesce.services.crud.service.data.model.impl.pojo.record.MetadataPojoRecord;
+import com.incadencecorp.coalesce.services.crud.service.data.model.impl.pojo.record.ValuesPojoRecord;
 
 /**
  * JaxRS configuration used on {@link EnumerationDataControllerJaxRS}
@@ -22,16 +25,26 @@ public interface IEnumerationDataControllerJaxRS {
     @GET
     @Path("/")
     @Produces("application/json")
-    Map<String, String> getEnumerationList();
+    Map<String, String> getEnumerations();
 
     @GET
     @Path("/{key}")
-    @Consumes("application/json")
-    JSONObject getEnumeration(@PathParam("key") String key);
+    @Produces("application/json")
+    EnumerationPojoEntity getEnumeration(@PathParam("key") String key);
 
     @POST
-    @Path("/{key}")
+    @Path("/")
+    @Consumes("application/json")
+    void setEnumeration(EnumerationPojoEntity value);
+    
+    @GET
+    @Path("/{key}/values")
     @Produces("application/json")
-    void updateEnumeration(@PathParam("key")String key, JSONObject value);
+    List<ValuesPojoRecord> getEnumerationValues(@PathParam("key") String key);
+
+    @GET
+    @Path("/{key}/values/{valuekey}/associatedvalues")
+    @Produces("application/json")
+    Map<String, String> getEnumerationAssociatedValues(@PathParam("key") String key, @PathParam("valuekey") String valuekey);
 
 }

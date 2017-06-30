@@ -122,7 +122,7 @@ public class ${classname} extends CoalesceEntity implements I${name}Entity {
 #set($vartype = "$normalizer.normalize($recordset.getName())CoalesceRecord")
             if ($varname == null)
             {
-                $varname = ($vartype) getCoalesceObjectForNamePath("$recordset.getNamePath()/$recordset.getName() Record");
+                $varname = new $vartype((CoalesceRecord) getCoalesceObjectForNamePath("$recordset.getNamePath()/$recordset.getName() Record"));
             }
 #else
 #set($varname = "recordset_$normalizer.normalize($recordset.getName())")
@@ -163,6 +163,12 @@ public class ${classname} extends CoalesceEntity implements I${name}Entity {
         return $recordset_name;
     }
 
+    @Override
+    public void add$normalizer.normalize($recordset.getName())Record(List<I$normalizer.normalize($recordset.getName())Record> records) throws CoalesceDataFormatException
+    {
+    	// TODO Not Implemented
+    }
+    
     @Override
     public $normalizer.normalize($recordset.getName())CoalesceRecord add$normalizer.normalize($recordset.getName())Record()
     {

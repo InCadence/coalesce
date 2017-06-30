@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.codehaus.jettison.json.JSONObject;
 import org.geotools.data.Query;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
@@ -31,16 +30,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.incadencecorp.coalesce.api.CoalesceErrors;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
-import com.incadencecorp.coalesce.framework.exim.impl.JsonEximImpl;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.incadencecorp.coalesce.services.api.Results;
 import com.incadencecorp.coalesce.services.api.search.HitType;
 import com.incadencecorp.coalesce.services.api.search.QueryResultsType;
 import com.incadencecorp.coalesce.services.api.search.SearchDataObjectResponse;
 import com.incadencecorp.coalesce.services.crud.api.ICrudClient;
-import com.incadencecorp.coalesce.services.crud.service.data.model.CoalesceEnumeration;
+import com.incadencecorp.coalesce.services.crud.service.data.model.api.record.IValuesRecord;
+import com.incadencecorp.coalesce.services.crud.service.data.model.impl.coalesce.entity.EnumerationCoalesceEntity;
+import com.incadencecorp.coalesce.services.crud.service.data.model.impl.pojo.entity.EnumerationPojoEntity;
+import com.incadencecorp.coalesce.services.crud.service.data.model.impl.pojo.record.MetadataPojoRecord;
+import com.incadencecorp.coalesce.services.crud.service.data.model.impl.pojo.record.ValuesPojoRecord;
 import com.incadencecorp.coalesce.services.search.api.ISearchClient;
 
 /**
@@ -54,8 +57,6 @@ public class EnumerationDataController {
     private ICrudClient crud;
     private ISearchClient search;
 
-    private final JsonEximImpl exim = new JsonEximImpl();
-
     /**
      * Default Constructor
      */
@@ -68,18 +69,18 @@ public class EnumerationDataController {
     /**
      * @return a list of available enumerations.
      */
-    public Map<String, String> getEnumerationList()
+    public Map<String, String> getEnumerations()
     {
         Map<String, String> enumerations = new HashMap<String, String>();
 
         FilterFactory ff = CoalescePropertyFactory.getFilterFactory();
 
         List<Filter> filters = new ArrayList<Filter>();
-        filters.add(ff.equals(CoalescePropertyFactory.getName(), ff.literal(CoalesceEnumeration.NAME)));
-        filters.add(ff.equals(CoalescePropertyFactory.getSource(), ff.literal(CoalesceEnumeration.SOURCE)));
+        filters.add(ff.equals(CoalescePropertyFactory.getName(), ff.literal(EnumerationCoalesceEntity.NAME)));
+        filters.add(ff.equals(CoalescePropertyFactory.getSource(), ff.literal(EnumerationCoalesceEntity.SOURCE)));
 
         List<PropertyName> properties = new ArrayList<PropertyName>();
-        properties.add(CoalescePropertyFactory.getFieldProperty(CoalesceEnumeration.METADATA_RECORDSET, "enumname"));
+        properties.add(CoalescePropertyFactory.getFieldProperty(EnumerationCoalesceEntity.RECORDSET_METADATA, "enumname"));
 
         Query query = new Query();
         query.setFilter(ff.and(filters));
@@ -95,9 +96,16 @@ public class EnumerationDataController {
 
             for (QueryResultsType result : results.getResult())
             {
-                for (HitType hit : result.getResult().getHits())
+                if (result.getResult() != null && result.getResult().getHits() != null)
                 {
-                    enumerations.put(hit.getEntityKey(), hit.getValues().get(0));
+                    for (HitType hit : result.getResult().getHits())
+                    {
+                        enumerations.put(hit.getEntityKey(), hit.getValues().size() > 0 ? hit.getValues().get(0) : "");
+                    }
+                }
+                else
+                {
+                    LOGGER.warn(String.format(CoalesceErrors.NOT_FOUND, "Enumerations", "*"));
                 }
             }
         }
@@ -117,33 +125,37 @@ public class EnumerationDataController {
      * @param key
      * @return an enumeration in JSON format
      */
-    public JSONObject getEnumeration(String key)
+    public EnumerationPojoEntity getEnumeration(String key)
     {
-        JSONObject json = null;
-        
+        EnumerationPojoEntity pojo = new EnumerationPojoEntity();
+
         try
         {
             Results<CoalesceEntity>[] results = crud.retrieveDataObjects(key);
 
             if (results != null && results.length == 1)
             {
-                CoalesceEnumeration enumeration = new CoalesceEnumeration();
-                enumeration.initialize(results[0].getResult());
-                
-                json = exim.exportValues(enumeration, true);
+                EnumerationCoalesceEntity enumeration = new EnumerationCoalesceEntity();
+                if (enumeration.initialize(results[0].getResult()))
+                {
+                    pojo = new EnumerationPojoEntity(enumeration);
+                }
+                else
+                {
+                    LOGGER.info(String.format(CoalesceErrors.INVALID_ENUMERATION, key));
+                }
             }
             else
             {
-                // TODO Log Error
+                LOGGER.info(String.format(CoalesceErrors.INVALID_ENUMERATION, key));
             }
         }
-        catch (RemoteException | CoalesceException e)
+        catch (RemoteException | CoalesceDataFormatException e)
         {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOGGER.error(String.format(CoalesceErrors.INVALID_ENUMERATION, key), e);
         }
 
-        return json;
+        return pojo;
     }
 
     /**
@@ -152,29 +164,98 @@ public class EnumerationDataController {
      * @param key
      * @param value
      */
-    public void updateEnumeration(String key, JSONObject value)
+    public void setEnumeration(EnumerationPojoEntity value)
     {
+        try
+        {
+            Results<CoalesceEntity>[] results = crud.retrieveDataObjects(value.getKey());
+
+            if (results != null && results.length == 1)
+            {
+                EnumerationCoalesceEntity enumeration = new EnumerationCoalesceEntity();
+                enumeration.initialize(results[0].getResult());
+                enumeration.getMetadataRecord().populate(value.getMetadataRecord());
+
+                // TODO Update Values
+            }
+            else
+            {
+                LOGGER.info(String.format(CoalesceErrors.NOT_SAVED,
+                                          value.getKey(),
+                                          "enumeration",
+                                          String.format(CoalesceErrors.INVALID_ENUMERATION, value.getKey())));
+            }
+        }
+        catch (RemoteException | CoalesceDataFormatException e)
+        {
+            LOGGER.error(String.format(CoalesceErrors.NOT_SAVED, value.getKey(), "enumeration", e.getMessage()), e);
+        }
+    }
+
+    public List<ValuesPojoRecord> getEnumerationValues(String key)
+    {
+        List<ValuesPojoRecord> values = new ArrayList<ValuesPojoRecord>();
+
         try
         {
             Results<CoalesceEntity>[] results = crud.retrieveDataObjects(key);
 
             if (results != null && results.length == 1)
             {
-                CoalesceEnumeration enumeration = new CoalesceEnumeration();
+                EnumerationCoalesceEntity enumeration = new EnumerationCoalesceEntity();
                 enumeration.initialize(results[0].getResult());
-                
-                exim.importValues(value, enumeration);
+
+                for (IValuesRecord record : enumeration.getValuesRecords())
+                {
+                    values.add(new ValuesPojoRecord(record));
+                }
             }
             else
             {
-                // TODO Log Error
+                LOGGER.info(String.format(CoalesceErrors.NOT_FOUND, "enumeration", key));
             }
         }
-        catch (RemoteException | CoalesceException e)
+        catch (RemoteException | CoalesceDataFormatException e)
         {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOGGER.error(String.format(CoalesceErrors.NOT_FOUND, "enumeration", key), e);
         }
+
+        return values;
+    }
+
+    public Map<String, String> getEnumerationAssociatedValues(String key, String valuekey)
+    {
+        Map<String, String> values = new HashMap<String, String>();
+
+        try
+        {
+            Results<CoalesceEntity>[] results = crud.retrieveDataObjects(key);
+
+            if (results != null && results.length == 1)
+            {
+                EnumerationCoalesceEntity enumeration = new EnumerationCoalesceEntity();
+                enumeration.initialize(results[0].getResult());
+
+                for (IValuesRecord value : enumeration.getValuesRecords())
+                {
+                    if (value.getValue().equalsIgnoreCase(valuekey))
+                    {
+                        values.putAll(value.getAssociatedValues());
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                LOGGER.info(String.format(CoalesceErrors.NOT_FOUND, "enumeration", key));
+            }
+        }
+        catch (RemoteException | CoalesceDataFormatException e)
+        {
+            LOGGER.error(String.format(CoalesceErrors.NOT_FOUND, "enumeration", key), e);
+        }
+
+        return values;
     }
 
 }

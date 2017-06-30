@@ -39,6 +39,16 @@ import ${import};
 public interface ${classname} {
 
 	/**
+	* Returns this objects key.
+	*/
+    String getKey(); 
+    
+	/**
+	* Sets this objects key.
+	*/
+    void setKey(String value);
+    
+	/**
 	* Returns the date this object was created.
 	*/
     DateTime getDateCreated();
@@ -111,6 +121,11 @@ public interface ${classname} {
 	*/
     I$normalizer.normalize($recordset.getName())Record add$normalizer.normalize($recordset.getName())Record();
     
+	/**
+	* Add the specified record.
+	*/
+    void add$normalizer.normalize($recordset.getName())Record(List<I$normalizer.normalize($recordset.getName())Record> records) throws CoalesceDataFormatException;
+
 	/**
 	* Removes the record.
         *
