@@ -31,7 +31,6 @@ import java.util.Set;
 
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
-import javax.xml.namespace.QName;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
@@ -41,6 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
+import com.incadencecorp.coalesce.common.classification.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
@@ -119,8 +119,14 @@ public class Neo4JPersistor extends CoalescePersistorBase {
             + KEY + ": {2}}) DELETE rel";
 
     private static final String CYPHER_CONSTRAINT = "CREATE CONSTRAINT ON (n:%s) ASSERT n." + KEY + " IS UNIQUE";
-    
-    private static final String[] linkAttributes = { "linktype", "label", "datecreated", "lastmodified", "modifiedby", "modifiedbyip", "classificationmarking"};
+
+    private static final String[] linkAttributes = {
+                                                     CoalesceLinkage.ATTRIBUTE_LINKTYPE, CoalesceLinkage.ATTRIBUTE_LABEL,
+                                                     CoalesceLinkage.ATTRIBUTE_DATECREATED,
+                                                     CoalesceLinkage.ATTRIBUTE_LASTMODIFIED,
+                                                     CoalesceLinkage.ATTRIBUTE_MODIFIEDBY,
+                                                     CoalesceLinkage.ATTRIBUTE_MODIFIEDBYIP, "classificationmarking"
+    };
 
     private boolean isIncludeXmlEnabled = false;
 
@@ -511,30 +517,30 @@ public class Neo4JPersistor extends CoalescePersistorBase {
         {
             createPlaceHolder(linkage, conn);
 
-           
-            // Set up the other attributes of the link.  
-            // These are the ones always there.
-            // Wrap them all in quotes so that empty values and values with : will be legal for 
-            // the query
+            // Set up the other attributes of the link. These are the ones
+            // always there. Wrap them all in quotes so that empty values and
+            // values with : will be legal for the query
+            StringBuilder attributes = new StringBuilder();
 
-            String attributes = "";
-            
-            for (String attribute: linkAttributes) {
-            	String att = linkage.getAttribute(attribute);
-            	if (att != null)
-            	   attributes += "," + attribute + ": \"" + att + "\"";
-            	else
-            		LOGGER.debug("No value for attribute: "+ attribute);
+            for (String attribute : linkAttributes)
+            {
+                String value = linkage.getAttribute(attribute);
+                if (!StringHelper.isNullOrEmpty(value))
+                {
+                    attributes.append(String.format(",%s: \"%s\"", attribute, value));
+                }
+                else
+                {
+                    LOGGER.trace("No value for attribute: {}", attribute);
+                }
             }
 
-            LOGGER.debug("Attributes for linkage: "+ attributes);
-
             // Add / Update Link
-
             query = String.format(CYPHER_LINK,
                                   normalizeName(linkage.getEntity1Name()),
                                   normalizeName(linkage.getEntity2Name()),
-                                  linkage.getLinkType(),attributes);
+                                  linkage.getLinkType(),
+                                  attributes.toString());
         }
 
         // Execute Query
@@ -705,7 +711,7 @@ public class Neo4JPersistor extends CoalescePersistorBase {
     {
         throw new NotImplementedException();
     }
-    
+
     @Override
     public EnumSet<EPersistorCapabilities> getCapabilities()
     {
