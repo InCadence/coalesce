@@ -18,10 +18,14 @@
 package com.incadencecorp.coalesce.framework.persistance;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.joda.time.DateTime;
 
+import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
@@ -37,6 +41,7 @@ public class MockPersister extends CoalescePersistorBase {
     protected List<String> keys = new ArrayList<String>();
 
     private boolean causeError = false;
+    private final Map<String, CoalesceEntityTemplate> templateMap = new HashMap<String, CoalesceEntityTemplate>();
 
     /**
      * Default Constructor; Creates a mock cacher.
@@ -103,7 +108,8 @@ public class MockPersister extends CoalescePersistorBase {
     public List<String> getCoalesceEntityKeysForEntityId(String entityId,
                                                          String entityIdType,
                                                          String entityName,
-                                                         String entitySource) throws CoalescePersistorException
+                                                         String entitySource)
+            throws CoalescePersistorException
     {
         return null;
     }
@@ -123,7 +129,14 @@ public class MockPersister extends CoalescePersistorBase {
     @Override
     public String getEntityTemplateXml(String key) throws CoalescePersistorException
     {
-        return null;
+        if (templateMap.containsKey(key))
+        {
+            return templateMap.get(key).toXml();
+        }
+        else
+        {
+            return null;
+        }
     }
 
     @Override
@@ -141,13 +154,28 @@ public class MockPersister extends CoalescePersistorBase {
     @Override
     public List<ObjectMetaData> getEntityTemplateMetadata() throws CoalescePersistorException
     {
-        return null;
+        List<ObjectMetaData> results = new ArrayList<ObjectMetaData>();
+
+        for (CoalesceEntityTemplate template : templateMap.values())
+        {
+            results.add(new ObjectMetaData(template.getKey(),
+                                           template.getName(),
+                                           template.getSource(),
+                                           template.getVersion()));
+        }
+
+        return results;
     }
 
     @Override
     protected void saveTemplate(CoalesceDataConnectorBase conn, CoalesceEntityTemplate... templates)
             throws CoalescePersistorException
     {
+        for (CoalesceEntityTemplate template : templates)
+        {
+            templateMap.put(template.getKey(), template);
+        }
+
         if (causeError)
         {
             throw new CoalescePersistorException("Hello World", null);
@@ -176,6 +204,24 @@ public class MockPersister extends CoalescePersistorBase {
         }
 
         return true;
+    }
+    
+    @Override
+    public EnumSet<EPersistorCapabilities> getCapabilities()
+    {
+        EnumSet<EPersistorCapabilities> enumSet = super.getCapabilities();
+        EnumSet<EPersistorCapabilities> newCapabilities = EnumSet.of(EPersistorCapabilities.READ_TEMPLATES,
+                                                                     EPersistorCapabilities.UPDATE,
+                                                                     EPersistorCapabilities.DELETE);
+        if (enumSet != null)
+        {
+            enumSet.addAll(newCapabilities);
+        }
+        else
+        {
+            enumSet = newCapabilities;
+        }
+        return enumSet;
     }
 
 }

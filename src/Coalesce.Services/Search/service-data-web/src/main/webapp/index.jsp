@@ -20,7 +20,7 @@
 
 <script>
 	var count = 0;
-	var tempplatekey;
+	var templatekey;
 	var root = "/cxf/data/";
 
 	$(document).ready(function() {
@@ -65,7 +65,7 @@
 
 					$.ajax({
 						type : "GET",
-						url : root + "templates/" + tempplatekey,
+						url : root + "templates/" + templatekey + "/recordsets",
 						async : false,
 						success : function(rsData) {
 							var rsControl = populateRecordsetControl(count,
@@ -73,9 +73,8 @@
 
 							$.ajax({
 								type : "GET",
-								url : root + "templates/"
-										+ tempplatekey + "/"
-										+ rsControl.val(),
+								url : root + "templates/" + templatekey + "/recordsets/"
+										+ rsControl.val() + "/fields",
 								async : false,
 								success : function(fieldData) {
 
@@ -214,8 +213,7 @@
 		control.change(function(event) {
 			$.ajax(
 					{
-						url : root + "templates/" + tempplatekey + "/"
-								+ control.val()
+						url : root + "templates/" + templatekey + "/recordsets/" + control.val() + "/fields"
 					}).then(function(data) {
 				populateFieldControl(idx, data);
 			});
@@ -324,10 +322,10 @@
 
 					createRow(count);
 					
-					tempplatekey = $("#templates").val();
+					templatekey = $("#templates").val();
 					
 					$.ajax({
-						url : root + "templates/" + tempplatekey
+						url : root + "templates/" + templatekey + "/recordsets"
 					}).then(function(data) {
 						populateRecordsetControl(count, data);
 					});
@@ -449,7 +447,7 @@
 			createRow(count);
 
 			$.ajax({
-				url : root + "templates/" + tempplatekey
+				url : root + "templates/" + templatekey + "/recordsets"
 			}).then(function(data) {
 				populateRecordsetControl(count, data);
 			});

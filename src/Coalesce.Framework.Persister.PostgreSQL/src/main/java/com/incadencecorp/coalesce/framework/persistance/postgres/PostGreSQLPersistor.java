@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import org.joda.time.DateTime;
 
@@ -199,7 +198,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
             {
                 // Always persist template
                 conn.executeProcedure("CoalesceEntityTemplate_InsertOrUpdate",
-                                      new CoalesceParameter(UUID.randomUUID().toString(), Types.OTHER),
+                                      new CoalesceParameter(template.getKey(), Types.OTHER),
                                       new CoalesceParameter(template.getName()),
                                       new CoalesceParameter(template.getSource()),
                                       new CoalesceParameter(template.getVersion()),

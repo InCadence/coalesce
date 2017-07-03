@@ -1,13 +1,17 @@
 package com.incadencecorp.coalesce.framework.datamodel;
 
 import java.io.IOException;
+import java.util.UUID;
 
+import org.joda.time.DateTime;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.incadencecorp.coalesce.common.classification.helpers.StringHelper;
+import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
 
 /*-----------------------------------------------------------------------------'
@@ -189,13 +193,41 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
     }
 
     /**
+     * Sets the value of the (EntityNode) Node's key attribute.
+     */
+    public void setKey(String key)
+    {
+        XmlHelper.setAttribute(getCoalesceObjectDocument(), getEntityNode(), CoalesceEntity.ATTRIBUTE_KEY, key);
+    }
+
+    /**
+     * Returns the value of the (EntityNode) Node's key attribute. By default
+     * this is based on a MD5 hash of the name, source, and version.
+     * 
+     * @return String the Node's name attribute
+     */
+    public String getKey()
+    {
+        String result = XmlHelper.getAttribute(getEntityNode(), CoalesceEntity.ATTRIBUTE_KEY);
+
+        if (StringHelper.isNullOrEmpty(result))
+        {
+            result = UUID.nameUUIDFromBytes((getName() + getSource() + getVersion()).getBytes()).toString();
+            setKey(result);
+
+        }
+
+        return result;
+    }
+
+    /**
      * Returns the value of the (EntityNode) Node's name attribute.
      * 
      * @return String the Node's name attribute
      */
     public String getName()
     {
-        return XmlHelper.getAttribute(getEntityNode(), "name");
+        return XmlHelper.getAttribute(getEntityNode(), CoalesceEntity.ATTRIBUTE_NAME);
     }
 
     /**
@@ -205,7 +237,7 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
      */
     public String getSource()
     {
-        return XmlHelper.getAttribute(getEntityNode(), "source");
+        return XmlHelper.getAttribute(getEntityNode(), CoalesceEntity.ATTRIBUTE_SOURCE);
     }
 
     /**
@@ -215,7 +247,26 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
      */
     public String getVersion()
     {
-        return XmlHelper.getAttribute(getEntityNode(), "version");
+        return XmlHelper.getAttribute(getEntityNode(), CoalesceEntity.ATTRIBUTE_VERSION);
+    }
+
+    /**
+     * Returns the value of the DateCreated attribute.
+     * 
+     * @return DateTime of the
+     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
+     *         's DateCreated attribute.
+     */
+    public DateTime getDateCreated()
+    {
+        return JodaDateTimeHelper.fromXmlDateTimeUTC(XmlHelper.getAttribute(getEntityNode(),
+                                                                            CoalesceEntity.ATTRIBUTE_DATECREATED));
+    }
+
+    public DateTime getLastModified()
+    {
+        return JodaDateTimeHelper.fromXmlDateTimeUTC(XmlHelper.getAttribute(getEntityNode(),
+                                                                            CoalesceEntity.ATTRIBUTE_LASTMODIFIED));
     }
 
     /**
@@ -223,7 +274,7 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
      */
     public String getClassName()
     {
-        return XmlHelper.getAttribute(getEntityNode(), "classname");
+        return XmlHelper.getAttribute(getEntityNode(), CoalesceEntity.ATTRIBUTE_CLASSNAME);
     }
 
     // -----------------------------------------------------------------------//

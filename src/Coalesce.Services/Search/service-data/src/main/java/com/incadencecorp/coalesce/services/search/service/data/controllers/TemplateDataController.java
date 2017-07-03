@@ -40,6 +40,8 @@ import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.incadencecorp.coalesce.services.search.service.data.model.FieldData;
 import com.incadencecorp.coalesce.services.search.service.data.model.ObjectData;
+import com.incadencecorp.unity.common.CallResult;
+import com.incadencecorp.unity.common.CallResult.CallResults;
 
 /**
  * Provides details of the registered templates within a Coalesce database.
@@ -48,9 +50,11 @@ import com.incadencecorp.coalesce.services.search.service.data.model.ObjectData;
  */
 public class TemplateDataController {
 
-    private static final Map<String, CoalesceEntity> TEMPLATES = new HashMap<String, CoalesceEntity>();
     private static final Logger LOGGER = LoggerFactory.getLogger(TemplateDataController.class);
     private static final String COALESCEENTITY_KEY = CoalesceEntity.class.getSimpleName();
+
+    private final Map<String, TemplateNode> templates = new HashMap<String, TemplateNode>();
+    private ICoalescePersistor persister;
 
     /**
      * Production Constructor
@@ -67,12 +71,12 @@ public class TemplateDataController {
                 try
                 {
                     template = CoalesceEntityTemplate.create(persister.getEntityTemplateXml(meta.getKey()));
-                    TEMPLATES.put(meta.getKey(), template.createNewEntity());
+                    templates.put(meta.getKey(), new TemplateNode(template));
                 }
                 catch (SAXException | IOException e)
                 {
                     String errorMsg = String.format(CoalesceErrors.INVALID_OBJECT,
-                                                    "Template",
+                                                    CoalesceEntityTemplate.class.getSimpleName(),
                                                     meta.getKey(),
                                                     e.getMessage());
 
@@ -86,6 +90,8 @@ public class TemplateDataController {
                     }
                 }
             }
+
+            this.persister = persister;
         }
         catch (CoalescePersistorException e)
         {
@@ -96,26 +102,28 @@ public class TemplateDataController {
     /**
      * @return a list of templates registered with this service.
      */
-    public List<ObjectMetaData> getTemplates()
+    public List<ObjectMetaData> getEntityTemplateMetadata()
     {
         LOGGER.debug("Retrieving Templates");
 
         List<ObjectMetaData> results = new ArrayList<ObjectMetaData>();
 
-        for (Map.Entry<String, CoalesceEntity> template : TEMPLATES.entrySet())
+        for (TemplateNode node : templates.values())
         {
+            CoalesceEntityTemplate template = node.template;
+
             results.add(new ObjectMetaData(template.getKey(),
-                                           template.getValue().getName(),
-                                           template.getValue().getSource(),
-                                           template.getValue().getVersion(),
-                                           template.getValue().getDateCreated(),
-                                           template.getValue().getLastModified()));
+                                           template.getName(),
+                                           template.getSource(),
+                                           template.getVersion(),
+                                           template.getDateCreated(),
+                                           template.getLastModified()));
 
             LOGGER.trace("Including ({}) ({}) ({}) ({})",
                          template.getKey(),
-                         template.getValue().getName(),
-                         template.getValue().getSource(),
-                         template.getValue().getVersion());
+                         template.getName(),
+                         template.getSource(),
+                         template.getVersion());
 
         }
 
@@ -130,11 +138,11 @@ public class TemplateDataController {
     {
         LOGGER.debug("Retrieving Record Sets [Key: ({})]", key);
 
+        // Also include the key
         List<ObjectData> results = new ArrayList<ObjectData>();
-
         results.add(new ObjectData(COALESCEENTITY_KEY, COALESCEENTITY_KEY));
 
-        CoalesceEntity entity = TEMPLATES.get(key);
+        CoalesceEntity entity = templates.get(key).entity;
 
         if (entity != null)
         {
@@ -173,7 +181,7 @@ public class TemplateDataController {
         }
         else
         {
-            CoalesceEntity entity = TEMPLATES.get(key);
+            CoalesceEntity entity = templates.get(key).entity;
 
             if (entity != null)
             {
@@ -201,6 +209,53 @@ public class TemplateDataController {
         return results;
     }
 
+    /**
+     * @param key
+     * @return the {@link CoalesceEntityTemplate} for the specified key.
+     */
+    public CoalesceEntityTemplate getTemplate(String key)
+    {
+        CoalesceEntityTemplate result = null;
+
+        if (templates.containsKey(key))
+        {
+            result = templates.get(key).template;
+        }
+
+        return result;
+    }
+
+    /**
+     * Saves the specified template.
+     * 
+     * @param key
+     * @param template
+     * @return whether or not it was successfully saved.
+     */
+    public CallResult setTemplate(CoalesceEntityTemplate template)
+    {
+        CallResult result;
+
+        try
+        {
+            persister.saveTemplate(template);
+            templates.put(template.getKey(), new TemplateNode(template));
+
+            result = new CallResult(CallResults.SUCCESS);
+        }
+        catch (CoalescePersistorException e)
+        {
+            LOGGER.error(String.format(CoalesceErrors.NOT_SAVED,
+                                       template.getKey(),
+                                       CoalesceEntityTemplate.class.getSimpleName(),
+                                       e.getMessage()),
+                         e);
+            result = new CallResult(CallResults.FAILED, e);
+        }
+
+        return result;
+    }
+
     private FieldData getField(PropertyName property, ECoalesceFieldDataTypes type)
     {
         return new FieldData(property.getPropertyName(), property.getPropertyName().split("\\.")[1], type);
@@ -221,6 +276,19 @@ public class TemplateDataController {
         }
 
         return results;
+    }
+
+    private class TemplateNode {
+
+        private CoalesceEntity entity;
+        private CoalesceEntityTemplate template;
+
+        public TemplateNode(CoalesceEntityTemplate template)
+        {
+            this.entity = template.createNewEntity();
+            this.template = template;
+        }
+
     }
 
 }

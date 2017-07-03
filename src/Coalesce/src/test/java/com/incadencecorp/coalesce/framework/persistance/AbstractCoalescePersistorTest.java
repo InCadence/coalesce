@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
 import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
 import com.incadencecorp.coalesce.framework.datamodel.TestRecord;
@@ -31,7 +32,7 @@ import com.incadencecorp.coalesce.framework.datamodel.TestRecord;
 
 public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor> {
 
-    protected abstract T createPersister();
+    protected abstract T createPersister() throws Exception;
 
     /**
      * This test attempts to create a entity within the data store.
@@ -148,6 +149,33 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
 
         Assert.assertEquals(1, results.length);
         Assert.assertEquals(entity.getKey(), CoalesceEntity.create(results[0]).getKey());
+    }
+
+    /**
+     * This test attempts to save a template and retrieve it.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testTemplates() throws Exception
+    {
+        T persister = createPersister();
+
+        Assume.assumeTrue(persister.getCapabilities().contains(EPersistorCapabilities.READ_TEMPLATES));
+
+        TestEntity entity = new TestEntity();
+        entity.initialize();
+
+        CoalesceEntityTemplate template1 = CoalesceEntityTemplate.create(entity);
+        entity.setName("HelloWorld");
+        CoalesceEntityTemplate template2 = CoalesceEntityTemplate.create(entity);
+
+        persister.registerTemplate(template1, template2);
+
+        Assert.assertEquals(template1.getKey(),
+                            CoalesceEntityTemplate.create(persister.getEntityTemplateXml(template1.getKey())).getKey());
+        Assert.assertEquals(template2.getKey(),
+                            CoalesceEntityTemplate.create(persister.getEntityTemplateXml(template2.getKey())).getKey());
     }
 
 }

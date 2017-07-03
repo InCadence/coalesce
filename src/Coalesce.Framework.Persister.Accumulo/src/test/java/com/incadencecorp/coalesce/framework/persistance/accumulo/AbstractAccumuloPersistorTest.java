@@ -7,7 +7,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
@@ -21,7 +20,6 @@ import org.geotools.data.DataStore;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.Query;
 import org.geotools.data.simple.SimpleFeatureStore;
-import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.filter.AttributeExpressionImpl;
 import org.geotools.filter.SortByImpl;
@@ -39,12 +37,10 @@ import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
 
 import com.drew.imaging.ImageProcessingException;
 import com.incadencecorp.coalesce.common.CoalesceUnitTestSettings;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceCryptoException;
-import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.DocumentProperties;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
@@ -81,7 +77,6 @@ import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBas
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 import com.incadencecorp.coalesce.framework.persistance.accumulo.testobjects.GDELT_Test_Entity;
 import com.incadencecorp.coalesce.framework.persistance.accumulo.testobjects.NonGeoEntity;
-import com.incadencecorp.coalesce.search.api.SearchResults;
 import com.incadencecorp.coalesce.services.api.search.HitType;
 import com.incadencecorp.coalesce.services.api.search.SearchDataObjectResponse;
 import com.incadencecorp.coalesce.services.crud.api.ICrudClient;
@@ -107,7 +102,8 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
     @Test
     public void testConnection() throws CoalescePersistorException, Exception
     {
-        // AccumuloDataConnector accumuloConnector = new AccumuloDataConnector(getConnection());
+        // AccumuloDataConnector accumuloConnector = new
+        // AccumuloDataConnector(getConnection());
         AccumuloDataConnector accumuloConnector = getAccumuloDataConnector();
         Connector conn = accumuloConnector.getDBConnector();
         Map<String, String> sysconf = conn.instanceOperations().getSystemConfiguration();
@@ -120,8 +116,7 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
     protected abstract ServerConn getConnection();
 
     @Test
-    public void AccumuloDataTypesTest()
-            throws CoalesceDataFormatException, CoalescePersistorException, SAXException, IOException
+    public void AccumuloDataTypesTest() throws Exception
     {
         double CIRCLERADIUS = 5.25;
 
@@ -148,7 +143,9 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
 
         // Create Line
         CoalesceLineStringField linefield = record.getLineField();
-        Coordinate coords[] = { new Coordinate(0, 0), new Coordinate(1, 1), new Coordinate(2, 2) };
+        Coordinate coords[] = {
+                                new Coordinate(0, 0), new Coordinate(1, 1), new Coordinate(2, 2)
+        };
         GeometryFactory gf = new GeometryFactory();
         LineString line = gf.createLineString(coords);
         linefield.setValue(line);
@@ -167,7 +164,9 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
         intfield.setValue(42);
 
         // Check a int list field
-        int intlist[] = { 3, 4, 5, 6 };
+        int intlist[] = {
+                          3, 4, 5, 6
+        };
         CoalesceIntegerListField intlistfield = record.getIntegerListField();
         intlistfield.setValue(intlist);
 
@@ -176,7 +175,9 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
         longfield.setValue((long) 42);
 
         // Check a long list field
-        long longlist[] = { 3, 4, 5, 6 };
+        long longlist[] = {
+                            3, 4, 5, 6
+        };
         CoalesceLongListField longlistfield = record.getLongListField();
         longlistfield.setValue(longlist);
 
@@ -185,7 +186,9 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
         stringfield.setValue("Test String");
 
         // Check a string list field
-        String stringlist[] = { "A", "B", "C" };
+        String stringlist[] = {
+                                "A", "B", "C"
+        };
         CoalesceStringListField stringlistfield = record.getStringListField();
         stringlistfield.setValue(stringlist);
 
@@ -194,7 +197,9 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
         floatfield.setValue((float) 3.145964);
 
         // Check a float list field
-        float floatlist[] = { (float) 3.145964, (float) 7.87856, (float) 10000.000045566 };
+        float floatlist[] = {
+                              (float) 3.145964, (float) 7.87856, (float) 10000.000045566
+        };
         CoalesceFloatListField floatlistfield = record.getFloatListField();
         floatlistfield.setValue(floatlist);
 
@@ -203,7 +208,9 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
         doublefield.setValue(3.145964);
 
         // Check a Double list field
-        double doublelist[] = { 3.145964, 7.87856, 10000.000045566 };
+        double doublelist[] = {
+                                3.145964, 7.87856, 10000.000045566
+        };
         CoalesceDoubleListField doublelistfield = record.getDoubleListField();
         doublelistfield.setValue(doublelist);
 
@@ -317,7 +324,7 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
 
     }
 
-    private CoalesceFramework getFramework()
+    private CoalesceFramework getFramework() throws Exception
     {
 
         if (coalesceFramework == null)
@@ -325,7 +332,7 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
 
             coalesceFramework = new CoalesceFramework();
             persistor = createPersister();
-            
+
             coalesceFramework.setAuthoritativePersistor(persistor);
 
         }
@@ -353,17 +360,16 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
     }
 
     @Test
-    public void testPersistRetrieveSearchEntity()
-            throws CoalescePersistorException, CoalesceDataFormatException, SAXException, IOException, CQLException
+    public void testPersistRetrieveSearchEntity() throws Exception
     {
         GDELT_Test_Entity gdeltEntity = new GDELT_Test_Entity();
 
         // Prerequisite setup
-         getFramework().saveCoalesceEntityTemplate(CoalesceEntityTemplate.create(gdeltEntity));
+        getFramework().saveCoalesceEntityTemplate(CoalesceEntityTemplate.create(gdeltEntity));
         CoalesceObjectFactory.register(GDELT_Test_Entity.class);
 
         // Persist
-        
+
         getFramework().saveCoalesceEntity(false, gdeltEntity);
 
         // Retrieve
@@ -373,7 +379,7 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
 
         // Search
         DataStore geoDataStore = ((AccumuloDataConnector) persistor.getDataConnector()).getGeoDataStore();
-        
+
         // These Quoted names need escaped as they are used in filters
         String geomAttributeName = "Actor1Geo_Location";
         String dateAttributeName = "DateTime";
@@ -401,12 +407,11 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
         assertEquals(562505648, feature.getProperty(idAttributeName).getValue());
         assertEquals("EUROPE", feature.getProperty(actorAttributeName).getValue());
         featureItr.close();
-        //persistor.close();
+        // persistor.close();
     }
 
     @Test
-    public void SearchUpdateEntity()
-            throws CoalescePersistorException, CoalesceDataFormatException, SAXException, IOException, CQLException
+    public void SearchUpdateEntity() throws Exception
     {
 
         NonGeoEntity nonGeoEntity = new NonGeoEntity();
@@ -426,7 +431,7 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
         CoalesceObjectFactory.register(NonGeoEntity.class);
 
         // Persist
-        //AccumuloPersistor persistor = createPersister();
+        // AccumuloPersistor persistor = createPersister();
         getFramework().saveCoalesceEntity(false, nonGeoEntity);
 
         // update
@@ -438,8 +443,7 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
 
         SimpleFeatureStore featureSource = (SimpleFeatureStore) geoDataStore.getFeatureSource(NonGeoEntity.getQueryName());
 
-        String filterstring = "GlobalEventID ="+
-        		expectedInt.toString();
+        String filterstring = "GlobalEventID =" + expectedInt.toString();
         Filter filter = CQL.toFilter(filterstring);
 
         FeatureIterator<?> featureItr = featureSource.getFeatures(filter).features();
@@ -457,13 +461,12 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
             fail("More than one search result returned");
         }
 
-        featureItr.close(); 
-        
+        featureItr.close();
+
     }
 
     @Test
-    public void testSearchNonGeoEntity()
-            throws CoalescePersistorException, CoalesceDataFormatException, SAXException, IOException, CQLException, SQLException
+    public void testSearchNonGeoEntity() throws Exception
     {
 
         NonGeoEntity nonGeoEntity = new NonGeoEntity();
@@ -488,26 +491,24 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
         // Search
         DataStore geoDataStore = ((AccumuloDataConnector) persistor.getDataConnector()).getGeoDataStore();
 
-        //FeatureSource<?, ?> featureSource = geoDataStore.getFeatureSource(NonGeoEntity.getQueryName());
-        
-        String filterstring = "GlobalEventID ="+
-        		expectedInt.toString();
+        // FeatureSource<?, ?> featureSource =
+        // geoDataStore.getFeatureSource(NonGeoEntity.getQueryName());
+
+        String filterstring = "GlobalEventID =" + expectedInt.toString();
         Filter trythis = CQL.toFilter(filterstring);
 
         LOGGER.debug(trythis.toString());
 
         Query query = new Query(NonGeoEntity.getQueryName(), trythis);
         CachedRowSet results = persistor.search(query).getResults();
-        
-        
+
         assertTrue(results.next());
 
         Integer id = results.getInt("GlobalEventID");
         assertEquals(expectedInt, id);
         assertEquals("MERICA", results.getString("Actor1Name"));
 
-        
-        //persistor.close();
+        // persistor.close();
 
     }
 
@@ -515,7 +516,6 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
     @Ignore("Not working yet because ISearchClient is setting the typeName in the query to the search job ID")
     public void searchClientTest() throws Exception
     {
-
 
         ICrudClient crud = new CrudFrameworkClientImpl(getFramework());
         ISearchClient client = new SearchFrameworkClientImpl(persistor);
@@ -542,17 +542,23 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
         // Search
         Filter filter = CQL.toFilter("GlobalEventID =" + expectedInt.toString());
 
-        // TODO: It would be nice if we can pass in a query object instead of a filter for the search client so we can set
+        // TODO: It would be nice if we can pass in a query object instead of a
+        // filter for the search client so we can set
         // the typeName in the query.
 
-        // FIXME: we always need to pass in the recordKey property or else everything will be off by 1
+        // FIXME: we always need to pass in the recordKey property or else
+        // everything will be off by 1
         PropertyName recordKeyProp = new AttributeExpressionImpl("recordKey");
         PropertyName propertyName = new AttributeExpressionImpl("GlobalEventID");
-        PropertyName[] properties = new PropertyName[] { recordKeyProp, propertyName };
+        PropertyName[] properties = new PropertyName[] {
+                                                         recordKeyProp, propertyName
+        };
 
         SortOrder sortOrder = SortOrder.ASCENDING;
         SortBy sortBy = new SortByImpl(propertyName, sortOrder);
-        SortBy[] sortByArray = new SortBy[] { sortBy };
+        SortBy[] sortByArray = new SortBy[] {
+                                              sortBy
+        };
 
         SearchDataObjectResponse results = client.search(filter, 1, properties, sortByArray, false);
 
@@ -575,7 +581,7 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
 
         client.close();
         crud.close();
- 
+
     }
 
     protected abstract CoalesceDataConnectorBase getDataConnector(ServerConn conn) throws CoalescePersistorException;
