@@ -3,8 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.incadencecorp.coalesce.notification</groupId>
 	<artifactId>coalesce-notification-parent</artifactId>
-	<name>Coalesce Bundle Parent</name>
-	<description>Parent POM for creating bundles of third party dependencies that have to be shaded to bring into Karaf.</description>
+	<name>Coalesce Notification Implementation Parent</name>
 	<packaging>pom</packaging>
 
 	<parent>
