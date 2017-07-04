@@ -147,6 +147,12 @@ public final class CoalesceErrors {
     public static final String ERR_HASH_VALUES_ADD = "Updating Hash (%s values added): %s";
 
     /**
+     * Warning reported when saving an object fails.
+     * added. Format: {@value #NOT_SAVED)
+     */
+    public static final String NOT_SAVED = "(FAILED) Saving (%s) of type (%s) because (%s)";
+    
+    /**
      * Error reported when no access flag is set due to an invalid option.
      * Format: {@value #INVALID_HASH_OPTION}
      */
