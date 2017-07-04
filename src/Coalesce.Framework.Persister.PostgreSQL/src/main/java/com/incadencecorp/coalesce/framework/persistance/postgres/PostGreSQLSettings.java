@@ -20,6 +20,7 @@ package com.incadencecorp.coalesce.framework.persistance.postgres;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 import com.incadencecorp.unity.common.IConfigurationsConnector;
 import com.incadencecorp.unity.common.SettingsBase;
+import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
 
 /**
  * Configuration properties for Postgres persister implementations.
@@ -33,7 +34,7 @@ public class PostGreSQLSettings {
     --------------------------------------------------------------------------*/
 
     private static String config_name = "postgres-config.properties";
-    private static SettingsBase settings = new SettingsBase(null);
+    private static SettingsBase settings = new SettingsBase(new FilePropertyConnector(System.getProperty("COALESCE_CONFIG_LOCATION")));
 
     /*--------------------------------------------------------------------------
     Property Names
