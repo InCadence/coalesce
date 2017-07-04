@@ -58,8 +58,10 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
     private static final String MEMORY = "memory";
     private static final String CLASSPATH = "classpath";
     private static final String JAR = "jar";
-//    private static final String CLIENT_DRIVER = "org.apache.derby.jdbc.ClientDriver";
-//    private static final String EMBEDDED_DRIVER = "org.apache.derby.jdbc.EmbeddedDriver";
+    // private static final String CLIENT_DRIVER =
+    // "org.apache.derby.jdbc.ClientDriver";
+    // private static final String EMBEDDED_DRIVER =
+    // "org.apache.derby.jdbc.EmbeddedDriver";
     private static final Logger LOGGER = LoggerFactory.getLogger(DerbyDataConnector.class);
     private static final String UNSUPPORTED_TYPE = "UNSUPPORTED_TYPE";
     private static final String CREATE_TABLE_FORMAT = "CREATE TABLE %s.%s(\r%s\r)";
@@ -140,12 +142,20 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
         // prepare the query
         ResultSet result = null;
 
+        DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+        String dateCreated = fmt.print(linkage.getDateCreated());
+        String lastModified = fmt.print(linkage.getLastModified());
+        
         Statement stmt = conn.createStatement();
         result = stmt.executeQuery("select name from coalesce.coalescelinkage where objectkey='" + linkage.getKey() + "'");
         if (!result.next())
         {
             // insert
-            StringBuilder sql2 = new StringBuilder("insert into coalesce.coalescelinkage (ObjectKey,").append("Name,Entity1Key,Entity1Name,Entity1Source,Entity1Version,LinkType,").append("LinkLabel,LinkStatus,Entity2Key,Entity2Name,Entity2Source,Entity2Version,").append("ClassificationMarking,ModifiedBy,InputLanguage,ParentKey,ParentType,DateCreated,").append("LastModified) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+            StringBuilder sql2 = new StringBuilder("insert into coalesce.coalescelinkage (ObjectKey,");
+            sql2.append("Name,Entity1Key,Entity1Name,Entity1Source,Entity1Version,LinkType,");
+            sql2.append("LinkLabel,LinkStatus,Entity2Key,Entity2Name,Entity2Source,Entity2Version,");
+            sql2.append("ClassificationMarking,ModifiedBy,InputLanguage,ParentKey,ParentType,DateCreated,");
+            sql2.append("LastModified) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
             PreparedStatement stmt2 = conn.prepareStatement(sql2.toString());
             stmt2.setString(1, linkage.getKey());
             stmt2.setString(2, linkage.getName());
@@ -162,16 +172,24 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
             stmt2.setString(13, linkage.getEntity2Version());
             stmt2.setString(14, linkage.getClassificationMarking().toString());
             stmt2.setString(15, linkage.getModifiedBy());
-            stmt2.setString(16, linkage.getParent().getKey());
-            stmt2.setString(17, linkage.getParent().getType());
-            stmt2.setString(18, linkage.getDateCreated().toString());
-            stmt2.setString(19, linkage.getLastModified().toString());
+            stmt2.setString(16, linkage.getInputLang().toString());
+            stmt2.setString(17, linkage.getParent().getKey());
+            stmt2.setString(18, linkage.getParent().getType());
+            stmt2.setString(19, dateCreated);
+            stmt2.setString(20, lastModified);
+            
+            LOGGER.debug(stmt2.toString());
+
             stmt2.executeUpdate();
         }
         else
         {
             // update
-            StringBuilder sql3 = new StringBuilder("update coalesce.coalescelinkage set Name=?,").append("Entity1Key=?,Entity1Name=?,Entity1Source=?,Entity1Version=?,LinkType=?,").append("LinkLabel=?,LinkStatus=?,Entity2Key=?,Entity2Name=?,Entity2Source=?,Entity2Version=?,").append("ClassificationMarking=?,ModifiedBy=?,InputLanguage=?,ParentKey=?,ParentType=?,DateCreated=?,").append("LastModified=? where ObjectKey=?");
+            StringBuilder sql3 = new StringBuilder("update coalesce.coalescelinkage set Name=?,");
+            sql3.append("Entity1Key=?,Entity1Name=?,Entity1Source=?,Entity1Version=?,LinkType=?,");
+            sql3.append("LinkLabel=?,LinkStatus=?,Entity2Key=?,Entity2Name=?,Entity2Source=?,Entity2Version=?,");
+            sql3.append("ClassificationMarking=?,ModifiedBy=?,InputLanguage=?,ParentKey=?,ParentType=?,DateCreated=?,");
+            sql3.append("LastModified=? where ObjectKey=?");
 
             PreparedStatement stmt3 = conn.prepareStatement(sql3.toString());
             stmt3.setString(1, linkage.getName());
@@ -188,11 +206,15 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
             stmt3.setString(12, linkage.getEntity2Version());
             stmt3.setString(13, linkage.getClassificationMarking().toString());
             stmt3.setString(14, linkage.getModifiedBy());
-            stmt3.setString(15, linkage.getParent().getKey());
-            stmt3.setString(16, linkage.getParent().getType());
-            stmt3.setString(17, linkage.getDateCreated().toString());
-            stmt3.setString(18, linkage.getLastModified().toString());
-            stmt3.setString(19, linkage.getKey());
+            stmt3.setString(15, linkage.getInputLang().toString());
+            stmt3.setString(16, linkage.getParent().getKey());
+            stmt3.setString(17, linkage.getParent().getType());
+            stmt3.setString(18, dateCreated);
+            stmt3.setString(19, lastModified);
+            stmt3.setString(20, linkage.getKey());
+            
+            LOGGER.debug(stmt3.toString());
+            
             stmt3.executeUpdate();
         }
 

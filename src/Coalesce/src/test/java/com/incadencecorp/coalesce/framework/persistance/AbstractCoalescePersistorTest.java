@@ -7,9 +7,11 @@ import org.junit.Assume;
 import org.junit.Test;
 
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
+import com.incadencecorp.coalesce.common.helpers.EntityLinkHelper;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
+import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
 import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
 import com.incadencecorp.coalesce.framework.datamodel.TestRecord;
 
@@ -51,11 +53,18 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
 
         Assert.assertTrue(persister.saveEntity(false, entity));
 
+        TestEntity entity2 = new TestEntity();
+        entity2.initialize();
+        
+        EntityLinkHelper.linkEntities(entity, ELinkTypes.IS_PARENT_OF, entity2);
+
+        Assert.assertTrue(persister.saveEntity(true, entity, entity2));
+        
         // Cleanup
         entity.markAsDeleted();
 
         persister.saveEntity(true, entity);
-
+        
     }
 
     /**
