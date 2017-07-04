@@ -12,13 +12,13 @@ import java.util.UUID;
 import javax.xml.namespace.QName;
 
 import org.joda.time.DateTime;
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import com.incadencecorp.coalesce.common.CoalesceTypeInstances;
 import com.incadencecorp.coalesce.common.classification.Marking;
-import com.incadencecorp.coalesce.common.classification.tests.MarkingValueTest;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
@@ -96,8 +96,9 @@ public class CoalesceFieldHistoryTest {
 
     }
 
-    // TODO: replace these unit test with functions that don't require Coalesce.Objects
-    
+    // TODO: replace these unit test with functions that don't require
+    // Coalesce.Objects
+
     @Test
     public void addFieldHistoryWithDefaultValue()
     {
@@ -479,8 +480,8 @@ public class CoalesceFieldHistoryTest {
 
         CoalesceFieldHistory field = getTestMissionNameFieldHistory();
 
-        MarkingValueTest.assertMarkingValue(new Marking().getClassification(),
-                                            field.getClassificationMarking().getClassification());
+        Assert.assertEquals(new Marking().getClassification().getPortion(),
+                            field.getClassificationMarking().getClassification().getPortion());
 
     }
 
@@ -495,8 +496,8 @@ public class CoalesceFieldHistoryTest {
 
         CoalesceFieldHistory savedField = getSavedTestMissionFieldHistory(mission);
 
-        MarkingValueTest.assertMarkingValue(TOPSECRETCLASSIFICATIONMARKING.getClassification(),
-                                            savedField.getClassificationMarking().getClassification());
+        Assert.assertEquals(TOPSECRETCLASSIFICATIONMARKING.getClassification().getPortion(),
+                            savedField.getClassificationMarking().getClassification().getPortion());
 
     }
 
@@ -516,8 +517,8 @@ public class CoalesceFieldHistoryTest {
 
         fh.setClassificationMarking(TOPSECRETCLASSIFICATIONMARKING);
 
-        MarkingValueTest.assertMarkingValue(TOPSECRETCLASSIFICATIONMARKING.getClassification(),
-                                            fh.getClassificationMarking().getClassification());
+        Assert.assertEquals(TOPSECRETCLASSIFICATIONMARKING.getClassification().getPortion(),
+                            fh.getClassificationMarking().getClassification().getPortion());
 
     }
 
@@ -548,7 +549,7 @@ public class CoalesceFieldHistoryTest {
         assertEquals("00000000-0000-0000-0000-000000000000", field.getPreviousHistoryKey());
 
         field.setPreviousHistoryKey("");
-        
+
         assertEquals("00000000-0000-0000-0000-000000000000", field.getPreviousHistoryKey());
 
     }
@@ -685,9 +686,9 @@ public class CoalesceFieldHistoryTest {
         CoalesceFieldHistory desFh = ((CoalesceStringField) desEntity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/ActionNumber")).getHistoryRecord("00BB7A9F-4F37-46E9-85EB-9280ED3619CC");
 
         assertEquals(Locale.UK, desFh.getInputLang());
-  
+
     }
-    
+
     @Test
     public void getDateCreatedExistTest()
     {
@@ -744,7 +745,7 @@ public class CoalesceFieldHistoryTest {
 
     }
 
-//    @Test
+    // @Test
     public void toXmlTest()
     {
 
@@ -1100,10 +1101,10 @@ public class CoalesceFieldHistoryTest {
 
         fh.setAttribute("InputLang", "");
         assertEquals(null, fh.getInputLang());
-        
+
         fh.setAttribute("InputLang", "en-GB");
         assertEquals(Locale.UK, fh.getInputLang());
-        
+
         fh.setAttribute("Status", ECoalesceObjectStatus.UNKNOWN.toString());
         assertEquals(ECoalesceObjectStatus.UNKNOWN, fh.getStatus());
 
@@ -1135,23 +1136,23 @@ public class CoalesceFieldHistoryTest {
     {
         _thrown.expect(IllegalArgumentException.class);
         _thrown.expectMessage("");
-        
+
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
         CoalesceFieldHistory fh = ((CoalesceStringField) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/ActionNumber")).getHistoryRecord("00BB7A9F-4F37-46E9-85EB-9280ED3619CC");
 
         fh.setAttribute("InputLang", "en-gb");
 
     }
-    
+
     @Test
     public void setAttributeInputLangMissingDashTest() throws CoalesceDataFormatException
     {
         _thrown.expect(IllegalArgumentException.class);
         _thrown.expectMessage("");
-        
+
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
         CoalesceFieldHistory fh = ((CoalesceStringField) entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/ActionNumber")).getHistoryRecord("00BB7A9F-4F37-46E9-85EB-9280ED3619CC");
-        
+
         fh.setAttribute("InputLang", "engb");
 
     }

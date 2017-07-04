@@ -175,12 +175,5 @@
 			<version>${felix.scr.annotations.version}</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.incadencecorp.coalesce</groupId>
-			<artifactId>coalesce-classification</artifactId>
-			<version>${project.version}</version>
-			<scope>test</scope>
-			<type>test-jar</type>
-		</dependency>
 	</dependencies>
 </project>

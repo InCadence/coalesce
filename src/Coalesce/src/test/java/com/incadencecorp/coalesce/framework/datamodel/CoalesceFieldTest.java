@@ -22,6 +22,7 @@ import org.jdom2.JDOMException;
 import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -31,7 +32,6 @@ import com.drew.imaging.ImageProcessingException;
 import com.incadencecorp.coalesce.common.CoalesceTypeInstances;
 import com.incadencecorp.coalesce.common.CoalesceUnitTestSettings;
 import com.incadencecorp.coalesce.common.classification.Marking;
-import com.incadencecorp.coalesce.common.classification.tests.MarkingValueTest;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceCryptoException;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.helpers.DocumentProperties;
@@ -388,8 +388,8 @@ public class CoalesceFieldTest {
 
         CoalesceField<?> field = getTestMissionNameField();
 
-        MarkingValueTest.assertMarkingValue(new Marking().getClassification(),
-                                            field.getClassificationMarking().getClassification());
+        Assert.assertEquals(new Marking().getClassification().getPortion(),
+                                            field.getClassificationMarking().getClassification().getPortion());
 
     }
 
@@ -404,8 +404,8 @@ public class CoalesceFieldTest {
 
         CoalesceField<?> savedField = getSavedTestMissionField(mission);
 
-        MarkingValueTest.assertMarkingValue(TOPSECRETCLASSIFICATIONMARKING.getClassification(),
-                                            savedField.getClassificationMarking().getClassification());
+        Assert.assertEquals(TOPSECRETCLASSIFICATIONMARKING.getClassification().getPortion(),
+                                            savedField.getClassificationMarking().getClassification().getPortion());
 
     }
 
@@ -419,9 +419,8 @@ public class CoalesceFieldTest {
 
         field.setClassificationMarking(TOPSECRETCLASSIFICATIONMARKING);
 
-        MarkingValueTest.assertMarkingValue(TOPSECRETCLASSIFICATIONMARKING.getClassification(),
-                                            field.getClassificationMarking().getClassification());
-
+        Assert.assertEquals(TOPSECRETCLASSIFICATIONMARKING.getClassification().getPortion(),
+                            field.getClassificationMarking().getClassification().getPortion());
     }
 
     @Test
@@ -433,9 +432,8 @@ public class CoalesceFieldTest {
 
         field.setClassificationMarking((String) null);
 
-        MarkingValueTest.assertMarkingValue(new Marking("(U)").getClassification(),
-                                            field.getClassificationMarking().getClassification());
-
+        Assert.assertEquals(new Marking("(U)").getClassification().getPortion(),
+                            field.getClassificationMarking().getClassification().getPortion());
     }
 
     @Test
@@ -975,16 +973,16 @@ public class CoalesceFieldTest {
     }
 
     @Test
-    public void getCoalesceFullFilenameTwoSubDirTest() throws NoSuchMethodException, IllegalAccessException,
-            InvocationTargetException
+    public void getCoalesceFullFilenameTwoSubDirTest()
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException
     {
 
         getCoalesceFullFilename();
     }
 
     @Test
-    public void getCoalesceFullFilenameZeroSubDirTest() throws NoSuchMethodException, IllegalAccessException,
-            InvocationTargetException
+    public void getCoalesceFullFilenameZeroSubDirTest()
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException
     {
 
         CoalesceUnitTestSettings.setSubDirectoryLength(0);
@@ -993,8 +991,8 @@ public class CoalesceFieldTest {
     }
 
     @Test
-    public void getCoalesceFullFilenameFiveSubDirTest() throws NoSuchMethodException, IllegalAccessException,
-            InvocationTargetException
+    public void getCoalesceFullFilenameFiveSubDirTest()
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException
     {
 
         CoalesceUnitTestSettings.setSubDirectoryLength(5);
@@ -1022,16 +1020,16 @@ public class CoalesceFieldTest {
     }
 
     @Test
-    public void getCoalesceFullThumbnailFilenameTwoSubDirTest() throws NoSuchMethodException, IllegalAccessException,
-            InvocationTargetException
+    public void getCoalesceFullThumbnailFilenameTwoSubDirTest()
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException
     {
 
         getCoalesceFullThumbnailFilename();
     }
 
     @Test
-    public void getCoalesceFullThumbnailFilenameZeroSubDirTest() throws NoSuchMethodException, IllegalAccessException,
-            InvocationTargetException
+    public void getCoalesceFullThumbnailFilenameZeroSubDirTest()
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException
     {
 
         CoalesceUnitTestSettings.setSubDirectoryLength(0);
@@ -1040,8 +1038,8 @@ public class CoalesceFieldTest {
     }
 
     @Test
-    public void getCoalesceFullThumbnailFilenameFiveSubDirTest() throws NoSuchMethodException, IllegalAccessException,
-            InvocationTargetException
+    public void getCoalesceFullThumbnailFilenameFiveSubDirTest()
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException
     {
 
         CoalesceUnitTestSettings.setSubDirectoryLength(5);
@@ -1050,8 +1048,8 @@ public class CoalesceFieldTest {
 
     }
 
-    private void getCoalesceFullThumbnailFilename() throws NoSuchMethodException, InvocationTargetException,
-            IllegalAccessException
+    private void getCoalesceFullThumbnailFilename()
+            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException
     {
 
         FileTestResult result = getJpgFile();
@@ -1412,8 +1410,8 @@ public class CoalesceFieldTest {
     }
 
     @Test
-    public void setTypedValueFileBytesTest() throws CoalesceDataFormatException, ImageProcessingException, IOException,
-            JDOMException, CoalesceCryptoException
+    public void setTypedValueFileBytesTest()
+            throws CoalesceDataFormatException, ImageProcessingException, IOException, JDOMException, CoalesceCryptoException
     {
         CoalesceFileField field = getFileField();
 
@@ -1427,8 +1425,8 @@ public class CoalesceFieldTest {
     }
 
     @Test
-    public void setTypedValueDocPropsTest() throws IOException, ImageProcessingException, JDOMException,
-            CoalesceDataFormatException, CoalesceCryptoException
+    public void setTypedValueDocPropsTest()
+            throws IOException, ImageProcessingException, JDOMException, CoalesceDataFormatException, CoalesceCryptoException
     {
         CoalesceFileField field = getFileField();
 
@@ -1637,8 +1635,8 @@ public class CoalesceFieldTest {
     }
 
     @Test
-    public void geolocationPointTests() throws ImageProcessingException, CoalesceCryptoException, IOException,
-            JDOMException, CoalesceDataFormatException
+    public void geolocationPointTests()
+            throws ImageProcessingException, CoalesceCryptoException, IOException, JDOMException, CoalesceDataFormatException
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -1856,7 +1854,7 @@ public class CoalesceFieldTest {
 
         // Verify a Coordinate Using Lat / Long
         field.setValue(new Coordinate[] {
-                null, null
+                                          null, null
         });
         MultiPoint point = field.getValueAsMultiPoint();
 
@@ -1887,7 +1885,7 @@ public class CoalesceFieldTest {
 
         // Verify
         field.setValue(new Coordinate[] {
-                new Coordinate(1, 2, 3), new Coordinate(4, 5)
+                                          new Coordinate(1, 2, 3), new Coordinate(4, 5)
         });
         coords = field.getCoordinateListValue();
 
@@ -2290,8 +2288,8 @@ public class CoalesceFieldTest {
     }
 
     @Test
-    public void setTypedValueGeolocationTypeTypeMismatchTest() throws UnsupportedEncodingException,
-            CoalesceDataFormatException
+    public void setTypedValueGeolocationTypeTypeMismatchTest()
+            throws UnsupportedEncodingException, CoalesceDataFormatException
     {
         _thrown.expect(ClassCastException.class);
         _thrown.expectMessage("Type mismatch");
@@ -2303,8 +2301,8 @@ public class CoalesceFieldTest {
     }
 
     @Test
-    public void setTypedValueGeolocationTypeTypeMismatchGeolocationsListTest() throws UnsupportedEncodingException,
-            CoalesceDataFormatException
+    public void setTypedValueGeolocationTypeTypeMismatchGeolocationsListTest()
+            throws UnsupportedEncodingException, CoalesceDataFormatException
     {
         _thrown.expect(ClassCastException.class);
         _thrown.expectMessage("Type mismatch");
@@ -2508,7 +2506,9 @@ public class CoalesceFieldTest {
     // CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
     //
     // CoalesceField<?> field = (CoalesceField<?>)
-    // entity.getCoalesceObjectForNamePath("TREXMission/Mission Information Section/Mission Information Recordset/Mission Information Recordset Record/MissionGeoLocationList");
+    // entity.getCoalesceObjectForNamePath("TREXMission/Mission Information
+    // Section/Mission Information Recordset/Mission Information Recordset
+    // Record/MissionGeoLocationList");
     //
     // field.setBaseValue("MULTIPOINT (0 0)");
     //
@@ -2623,8 +2623,8 @@ public class CoalesceFieldTest {
     }
 
     @Test
-    public void setTypedValueGeolocationListTypeTypeMismatchTest() throws UnsupportedEncodingException,
-            CoalesceDataFormatException
+    public void setTypedValueGeolocationListTypeTypeMismatchTest()
+            throws UnsupportedEncodingException, CoalesceDataFormatException
     {
         _thrown.expect(ClassCastException.class);
         _thrown.expectMessage("Type mismatch");
@@ -2632,14 +2632,14 @@ public class CoalesceFieldTest {
         CoalesceField<?> field = getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
 
         field.setTypedValue(new Coordinate[] {
-            new Coordinate(0, 0)
+                                               new Coordinate(0, 0)
         });
 
     }
 
     @Test
-    public void setTypedValueGeolocationListTypeTypeMismatchGeolocationsTest() throws UnsupportedEncodingException,
-            CoalesceDataFormatException
+    public void setTypedValueGeolocationListTypeTypeMismatchGeolocationsTest()
+            throws UnsupportedEncodingException, CoalesceDataFormatException
     {
         _thrown.expect(ClassCastException.class);
         _thrown.expectMessage("Type mismatch");
@@ -2647,7 +2647,7 @@ public class CoalesceFieldTest {
         CoalesceField<?> field = getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_LOCATION_PATH);
 
         field.setTypedValue(new Coordinate[] {
-            new Coordinate(0, 0)
+                                               new Coordinate(0, 0)
         });
 
     }
@@ -2886,7 +2886,8 @@ public class CoalesceFieldTest {
         // Create Polygon
         GeometryFactory factory = new GeometryFactory();
         LineString line = factory.createLineString(new Coordinate[] {
-                new Coordinate(0, 0), new Coordinate(1, 1), new Coordinate(2, 2)
+                                                                      new Coordinate(0, 0), new Coordinate(1, 1),
+                                                                      new Coordinate(2, 2)
         });
 
         field.setValue(line);
