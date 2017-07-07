@@ -1264,7 +1264,48 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         }
         return persisted;
     }
-    
+
+    /**
+     * Temporary Accumulo Persistor-specific workaround to the fact that the framework does not have the ability to delete
+     * templates. Send in a Coalesce Entity and template will be deleted for that entity
+     * 
+     * @param entity - an entity that belongs (or belonged) to this template
+     * @return boolean did it work or not
+     */
+    public boolean deleteEntityTemplate(String entityTemplateKey)
+    {
+        boolean persisted = false;
+        try
+        {
+            Connector dbConnector = connect.getDBConnector();
+            BatchWriterConfig config = new BatchWriterConfig();
+            config.setMaxLatency(1, TimeUnit.SECONDS);
+            config.setMaxMemory(52428800);
+            config.setTimeout(600, TimeUnit.SECONDS);
+        	
+            BatchDeleter bd = dbConnector.createBatchDeleter(AccumuloDataConnector.coalesceTemplateTable,
+                                                         Authorizations.EMPTY,
+                                                         1,
+                                                         config);
+            if (entityTemplateKey != null && entityTemplateKey != "") {
+	            bd.setRanges(Collections.singleton(Range.exact(new Text())));
+	            
+	            bd.delete();
+            	LOGGER.warn("deletion successful");
+            } else {
+            	LOGGER.warn("no template found!");
+            }
+            bd.close();
+
+            persisted = true;
+        }
+        catch (TableNotFoundException | AccumuloException | CoalescePersistorException e)
+        {
+            persisted = false;
+        }
+        return persisted;
+    }
+
     private boolean deleteEntityIndex(CoalesceEntity entity, Connector connect,BatchWriterConfig config)
     {
         boolean persisted = false;

@@ -110,7 +110,7 @@ public class Neo4JPersistor extends CoalescePersistorBase {
             + ": {1}}), (cls:CLASSIFICATION_LEVEL {name: {2}}) " + "OPTIONAL MATCH n-[r:CLEARED_TO]->() DELETE r "
             + "CREATE UNIQUE n-[:CLEARED_TO]->(cls)";
 
-    private static final String CYPHER_DELETE_NODE = "MATCH (n:%s {" + KEY + ": {1}}) OPTIONAL MATCH n-[r]-() DELETE n, r";
+    private static final String CYPHER_DELETE_NODE = "MATCH (n:%s {" + KEY + ": {1}}) detach delete n";
 
     private static final String CYPHER_LINK = "MATCH (n1:%s {" + KEY + ": {1}}), (n2:%s {" + KEY
             + ": {2}}) CREATE UNIQUE (n1)-[:%s {key: {3} %s}]->(n2)";
