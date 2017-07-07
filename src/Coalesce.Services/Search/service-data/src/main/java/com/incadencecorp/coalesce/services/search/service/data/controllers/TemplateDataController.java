@@ -71,7 +71,7 @@ public class TemplateDataController {
                 try
                 {
                     template = CoalesceEntityTemplate.create(persister.getEntityTemplateXml(meta.getKey()));
-                    templates.put(meta.getKey(), new TemplateNode(template));
+                    templates.put(template.getKey(), new TemplateNode(template));
                 }
                 catch (SAXException | IOException e)
                 {
