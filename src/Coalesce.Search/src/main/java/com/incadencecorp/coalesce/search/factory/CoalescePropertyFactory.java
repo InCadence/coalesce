@@ -22,7 +22,9 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.PropertyName;
 
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
 import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
 
@@ -74,13 +76,13 @@ public class CoalescePropertyFactory {
     {
         return getFilterFactory().property(COALESCE_ENTITY_TABLE + "entityxml");
     }
-    
+
     /**
      * @return the property used for filtering on date created.
      */
     public static PropertyName getDateCreated()
     {
-        return getFilterFactory().property(COALESCE_ENTITY_TABLE + "datecreated");
+        return getFilterFactory().property(COALESCE_ENTITY_TABLE + CoalesceEntity.ATTRIBUTE_DATECREATED);
     }
 
     /**
@@ -88,7 +90,7 @@ public class CoalescePropertyFactory {
      */
     public static PropertyName getLastModified()
     {
-        return getFilterFactory().property(COALESCE_ENTITY_TABLE + "lastmodified");
+        return getFilterFactory().property(COALESCE_ENTITY_TABLE + CoalesceEntity.ATTRIBUTE_LASTMODIFIED);
     }
 
     /**
@@ -96,7 +98,7 @@ public class CoalescePropertyFactory {
      */
     public static PropertyName getVersion()
     {
-        return getFilterFactory().property(COALESCE_ENTITY_TABLE + "version");
+        return getFilterFactory().property(COALESCE_ENTITY_TABLE + CoalesceEntity.ATTRIBUTE_VERSION);
     }
 
     /**
@@ -112,7 +114,7 @@ public class CoalescePropertyFactory {
      */
     public static PropertyName getSource()
     {
-        return getFilterFactory().property(COALESCE_ENTITY_TABLE + "source");
+        return getFilterFactory().property(COALESCE_ENTITY_TABLE + CoalesceEntity.ATTRIBUTE_SOURCE);
     }
 
     /**
@@ -120,7 +122,7 @@ public class CoalescePropertyFactory {
      */
     public static PropertyName getName()
     {
-        return getFilterFactory().property(COALESCE_ENTITY_TABLE + "name");
+        return getFilterFactory().property(COALESCE_ENTITY_TABLE + CoalesceEntity.ATTRIBUTE_NAME);
     }
 
     /**
@@ -145,7 +147,7 @@ public class CoalescePropertyFactory {
      */
     public static PropertyName getEntityTitle()
     {
-        return getFilterFactory().property(COALESCE_ENTITY_TABLE + "title");
+        return getFilterFactory().property(COALESCE_ENTITY_TABLE + CoalesceEntity.ATTRIBUTE_TITLE);
     }
 
     /**
@@ -166,7 +168,7 @@ public class CoalescePropertyFactory {
      */
     public static PropertyName getLinkageEntityKey()
     {
-        return getFilterFactory().property(COALESCE_LINKAGE_TABLE + "entity2key");
+        return getFilterFactory().property(COALESCE_LINKAGE_TABLE + CoalesceLinkage.ATTRIBUTE_ENTITY2KEY);
     }
 
     /**
@@ -183,7 +185,7 @@ public class CoalescePropertyFactory {
      */
     public static PropertyName getLinkageVersion()
     {
-        return getFilterFactory().property(COALESCE_LINKAGE_TABLE + "entity2version");
+        return getFilterFactory().property(COALESCE_LINKAGE_TABLE + CoalesceLinkage.ATTRIBUTE_ENTITY2VERSION);
     }
 
     /**
@@ -191,7 +193,7 @@ public class CoalescePropertyFactory {
      */
     public static PropertyName getLinkageSource()
     {
-        return getFilterFactory().property(COALESCE_LINKAGE_TABLE + "entity2source");
+        return getFilterFactory().property(COALESCE_LINKAGE_TABLE + CoalesceLinkage.ATTRIBUTE_ENTITY2SOURCE);
     }
 
     /**
@@ -200,7 +202,7 @@ public class CoalescePropertyFactory {
      */
     public static PropertyName getLinkageName()
     {
-        return getFilterFactory().property(COALESCE_LINKAGE_TABLE + "entity2name");
+        return getFilterFactory().property(COALESCE_LINKAGE_TABLE + CoalesceLinkage.ATTRIBUTE_ENTITY2NAME);
     }
 
     /**
@@ -208,7 +210,7 @@ public class CoalescePropertyFactory {
      */
     public static PropertyName getLinkageType()
     {
-        return getFilterFactory().property(COALESCE_LINKAGE_TABLE + "linktype");
+        return getFilterFactory().property(COALESCE_LINKAGE_TABLE + CoalesceLinkage.ATTRIBUTE_LINKTYPE);
     }
 
     /**
@@ -225,7 +227,7 @@ public class CoalescePropertyFactory {
      */
     public static PropertyName getLinkageStatus()
     {
-        return getFilterFactory().property(COALESCE_LINKAGE_TABLE + "linkstatus");
+        return getFilterFactory().property(COALESCE_LINKAGE_TABLE + CoalesceLinkage.ATTRIBUTE_STATUS);
     }
 
     /**
@@ -242,9 +244,9 @@ public class CoalescePropertyFactory {
      */
     public static PropertyName getLinkageLabel()
     {
-        return getFilterFactory().property(COALESCE_LINKAGE_TABLE + "linklabel");
+        return getFilterFactory().property(COALESCE_LINKAGE_TABLE + CoalesceLinkage.ATTRIBUTE_LABEL);
     }
-    
+
     /**
      * @return the property used for filtering on the provided field
      */
@@ -254,7 +256,8 @@ public class CoalescePropertyFactory {
     }
 
     /**
-     * @return the property used for filtering on the provided recordset / field name
+     * @return the property used for filtering on the provided recordset / field
+     *         name
      */
     public static PropertyName getFieldProperty(String recordset, String field)
     {

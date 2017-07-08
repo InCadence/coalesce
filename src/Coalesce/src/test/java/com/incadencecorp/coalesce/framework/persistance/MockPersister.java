@@ -173,7 +173,10 @@ public class MockPersister extends CoalescePersistorBase {
     {
         for (CoalesceEntityTemplate template : templates)
         {
-            templateMap.put(template.getKey(), template);
+            if (template != null)
+            {
+                templateMap.put(template.getKey(), template);
+            }
         }
 
         if (causeError)
@@ -205,7 +208,7 @@ public class MockPersister extends CoalescePersistorBase {
 
         return true;
     }
-    
+
     @Override
     public EnumSet<EPersistorCapabilities> getCapabilities()
     {

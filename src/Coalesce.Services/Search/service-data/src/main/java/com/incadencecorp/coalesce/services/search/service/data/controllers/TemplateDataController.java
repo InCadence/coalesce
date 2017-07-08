@@ -71,7 +71,11 @@ public class TemplateDataController {
                 try
                 {
                     template = CoalesceEntityTemplate.create(persister.getEntityTemplateXml(meta.getKey()));
-                    templates.put(template.getKey(), new TemplateNode(template));
+
+                    if (template != null)
+                    {
+                        templates.put(template.getKey(), new TemplateNode(template));
+                    }
                 }
                 catch (SAXException | IOException e)
                 {
@@ -140,13 +144,12 @@ public class TemplateDataController {
 
         // Also include the key
         List<ObjectData> results = new ArrayList<ObjectData>();
-        results.add(new ObjectData(COALESCEENTITY_KEY, COALESCEENTITY_KEY));
 
-        CoalesceEntity entity = templates.get(key).entity;
-
-        if (entity != null)
+        if (templates.containsKey(key))
         {
-            for (CoalesceSection section : entity.getSectionsAsList())
+            results.add(new ObjectData(COALESCEENTITY_KEY, COALESCEENTITY_KEY));
+
+            for (CoalesceSection section : templates.get(key).entity.getSectionsAsList())
             {
                 results.addAll(getRecordsets(section));
             }
@@ -181,11 +184,9 @@ public class TemplateDataController {
         }
         else
         {
-            CoalesceEntity entity = templates.get(key).entity;
-
-            if (entity != null)
+            if (templates.containsKey(key))
             {
-                CoalesceRecordset recordset = (CoalesceRecordset) entity.getCoalesceObjectForKey(recordsetKey);
+                CoalesceRecordset recordset = (CoalesceRecordset) templates.get(key).entity.getCoalesceObjectForKey(recordsetKey);
 
                 if (recordset != null)
                 {
@@ -221,6 +222,10 @@ public class TemplateDataController {
         {
             result = templates.get(key).template;
         }
+        else
+        {
+            LOGGER.warn(String.format(CoalesceErrors.NOT_FOUND, "Template", key));
+        }
 
         return result;
     }
@@ -238,10 +243,18 @@ public class TemplateDataController {
 
         try
         {
-            persister.saveTemplate(template);
-            templates.put(template.getKey(), new TemplateNode(template));
+            if (template != null)
+            {
+                persister.saveTemplate(template);
+                templates.put(template.getKey(), new TemplateNode(template));
 
-            result = new CallResult(CallResults.SUCCESS);
+                result = new CallResult(CallResults.SUCCESS);
+            }
+            else
+            {
+                result = new CallResult(CallResults.FAILED);
+            }
+
         }
         catch (CoalescePersistorException e)
         {

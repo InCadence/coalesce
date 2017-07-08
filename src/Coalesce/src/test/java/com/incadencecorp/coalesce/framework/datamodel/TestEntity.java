@@ -29,7 +29,6 @@ public class TestEntity extends CoalesceEntity {
     public static final String VERSION = "1.0";
 
     public static final String RECORDSET1 = "test1";
-    public static final String RECORDSET2 = "test2";
     public static final String TESTSECTION = "test section";
 
     private CoalesceRecordset recordset1;
@@ -98,14 +97,6 @@ public class TestEntity extends CoalesceEntity {
     public static String getTest1RecordsetName()
     {
         return RECORDSET1;
-    }
-
-    /**
-     * @return the test2 record set name
-     */
-    public static String getTest2RecordsetName()
-    {
-        return RECORDSET2;
     }
 
     public CoalesceRecordset getRecordset1()
