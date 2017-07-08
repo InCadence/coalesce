@@ -8,7 +8,7 @@
 	<name>coalesce.bom</name>
 
 	<properties>
-		<unityVersion>0.0.4</unityVersion>
+		<unityVersion>0.0.5</unityVersion>
 		<maven.bundle.version>3.2.0</maven.bundle.version>
 		<felix.osgi.version>1.4.0</felix.osgi.version>
 		<felix.scr.version>1.8.2</felix.scr.version>

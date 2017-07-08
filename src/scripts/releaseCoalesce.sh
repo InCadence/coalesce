@@ -97,7 +97,7 @@ function release {
 
     path=$1
 
-    echo "Deploying DSS..."
+    echo "Deploying ${name}..."
     mvn clean deploy -Dmaven.test.skip.exec=true -f ${path}
 
     while true; do
@@ -120,9 +120,9 @@ function release {
 }
 
 while true; do
-    read -p "Deploy (coalesce / done)? " doDeploy
+    read -p "Deploy (${tagname} / done)? " doDeploy
     case $doDeploy in
-        coalesce) release ${parentpom};;
+        ${tagname}) release ${parentpom};;
 	exit)  exit 0;;
  	done) break;;
 	* ) echo "Invalid Selction";;
