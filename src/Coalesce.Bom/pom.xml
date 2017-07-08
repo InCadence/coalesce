@@ -15,7 +15,7 @@
 		<felix.scr.annotations.version>1.7.0</felix.scr.annotations.version>
 		<cxf.version>3.0.1</cxf.version>
 		<cxf.xjc.version>3.1.0</cxf.xjc.version>
-		<geotools.version>13.1</geotools.version>
+		<geotools.version>15.1</geotools.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.version>4.2.2.RELEASE</spring.version>
 
