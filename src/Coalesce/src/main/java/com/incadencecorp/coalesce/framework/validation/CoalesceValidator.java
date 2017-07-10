@@ -67,7 +67,7 @@ public class CoalesceValidator extends CoalesceIterator {
     private static final Logger LOGGER = LoggerFactory.getLogger(CoalesceValidator.class);
     
     /**
-     * Wild card used for specifying exclusions. '<record set name>.*' or '*'.  
+     * Wild card used for specifying exclusions. '&lt;record set name&gt;.*' or '*'.  
      */
     public static final String WILD_CARD = "*";
 
@@ -116,7 +116,7 @@ public class CoalesceValidator extends CoalesceIterator {
 
     /**
      * Calls {@link #validate(Principal, CoalesceEntity, Map)} passing
-     * <code>null</coded> as the principle.
+     * <code>null</code> as the principle.
      * 
      * @param entity
      * @param constraints
@@ -178,7 +178,7 @@ public class CoalesceValidator extends CoalesceIterator {
     /**
      * Calls
      * {@link #validate(Principal, CoalesceEntity, CoalesceEntityTemplate)}
-     * passing <code>null</coded> as the principle.
+     * passing <code>null</code> as the principle.
      * 
      * @param entity
      * @param template

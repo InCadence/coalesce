@@ -28,7 +28,7 @@ import com.incadencecorp.coalesce.services.api.common.BaseRequest;
  *
  * @author Derek C.
  * @param <INPUT> Request that this job handles; must extend {@link BaseRequest}.
- * @param <OUTPUT> Response that this job produces; must extend {@link ICoalesceResponseType<List<TASKOUTPUT>>}.
+ * @param <OUTPUT> Response that this job produces; must extend {@link ICoalesceResponseType}.
  * @param <TASKOUTPUT>
  */
 public abstract class AbstractServiceJob<INPUT extends BaseRequest, OUTPUT extends ICoalesceResponseType<List<TASKOUTPUT>>, TASKOUTPUT extends ICoalesceResponseType<?>, TARGET>

@@ -39,8 +39,8 @@ public interface IBaseClient<T extends ICoalesceEvents> extends Closeable {
     boolean cancelJob(String... jobId) throws RemoteException;
 
     /**
-     * Calls {@link IDSSBaseClient#getJobStatus(String...)} with currently
-     * pending job IDs as arguments.
+     * Calls {@link #getJobStatus(String...)} with currently pending job IDs as
+     * arguments.
      * 
      * @return Returns the statuses of the jobs pending. Does not update from
      *         the server.
@@ -57,8 +57,8 @@ public interface IBaseClient<T extends ICoalesceEvents> extends Closeable {
     Map<String, EJobStatus> getJobStatus(String... jobId) throws RemoteException;
 
     /**
-     * Calls {@link IDSSBaseClient#pickupJob(String...)} with currently pending
-     * job IDs as arguments.
+     * Calls {@link #pickupJob(String...)} with currently pending job IDs as
+     * arguments.
      * 
      * @throws RemoteException
      */
@@ -77,7 +77,7 @@ public interface IBaseClient<T extends ICoalesceEvents> extends Closeable {
      * @return Returns the complete results of the last synchronous request.
      *         Asynchronous results are handled by throwing events.
      */
-     ResultsType[] getLastResult();
+    ResultsType[] getLastResult();
 
     /**
      * @return Returns a list of pending job IDs
@@ -88,7 +88,7 @@ public interface IBaseClient<T extends ICoalesceEvents> extends Closeable {
      * @param jobId
      * @return Returns the request for the given job ID.
      */
-     BaseRequest getRequest(String jobId);
+    BaseRequest getRequest(String jobId);
 
     /**
      * @param jobId

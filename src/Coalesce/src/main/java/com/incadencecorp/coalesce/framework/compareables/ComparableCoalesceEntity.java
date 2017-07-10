@@ -19,7 +19,7 @@ package com.incadencecorp.coalesce.framework.compareables;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 
 /**
- * CoalesceEntity that implements {@link Compareable}.
+ * CoalesceEntity that implements {@link Comparable}.
  * 
  * @author n78554
  */

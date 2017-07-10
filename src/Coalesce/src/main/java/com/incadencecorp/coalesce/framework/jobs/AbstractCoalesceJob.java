@@ -43,7 +43,7 @@ import com.incadencecorp.coalesce.framework.util.CoalesceNotifierUtil;
  * 
  * @author Derek
  * @param <INPUT> input parameter type
- * @param <OUTPUT> output type which contains a list of <TASKOUTPUT>.
+ * @param <OUTPUT> output type which contains a list of TASKOUTPUT.
  * @param <TASKOUTPUT> task result type.
  */
 public abstract class AbstractCoalesceJob<INPUT, OUTPUT extends ICoalesceResponseType<List<TASKOUTPUT>>, TASKOUTPUT extends ICoalesceResponseType<?>>

@@ -26,7 +26,7 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
  * data formats.
  * 
  * @author n78554
- * @param <T>
+ * @param <T> Format to be exported / imported.
  */
 public interface CoalesceExim<T> {
 
@@ -34,7 +34,7 @@ public interface CoalesceExim<T> {
      * @param entity to export
      * @param includeEntityType specifies whether to include the name, source,
      *            and version of the entity that the values came from.
-     * @return the values of a {@link CoalesceEntity} in the <T> format.
+     * @return the values of a {@link CoalesceEntity} in the T format.
      * @throws CoalesceException on an error
      */
     T exportValues(CoalesceEntity entity, boolean includeEntityType) throws CoalesceException;

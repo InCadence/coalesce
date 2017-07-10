@@ -69,7 +69,7 @@ public interface ICrudClient extends IBaseClient<ICrudEvents>{
     /**
      * Retrieves data objects from DSS at the specified versions.
      *
-     * @param tasks
+     * @param keys
      * @return Returns a list of objects retrieved from the database.
      * @throws RemoteException
      */
@@ -78,7 +78,7 @@ public interface ICrudClient extends IBaseClient<ICrudEvents>{
     /**
      * Asynchronously retrieves data objects from DSS at the specified versions.
      *
-     * @param tasks
+     * @param keys
      * @return the job ID. Call {@link #pickupJob(String...)} to get the
      *         response.
      * @throws RemoteException

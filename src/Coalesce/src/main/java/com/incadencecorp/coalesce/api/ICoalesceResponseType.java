@@ -32,7 +32,7 @@ public interface ICoalesceResponseType<T> extends ICoalesceResponseTypeBase {
     /**
      * Sets the results
      * 
-     * @param message
+     * @param result
      */
     void setResult(T result);
 

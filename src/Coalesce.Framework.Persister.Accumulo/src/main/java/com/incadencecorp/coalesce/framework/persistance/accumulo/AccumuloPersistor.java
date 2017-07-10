@@ -944,7 +944,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
      * Temporary Accumulo Persistor-specific workaround to the fact that the framework does not have the ability to delete
      * templates. Send in a Coalesce Entity and template will be deleted for that entity
      * 
-     * @param entity - an entity that belongs (or belonged) to this template
+     * @param entityTemplateKey - an entity that belongs (or belonged) to this template
      * @return boolean did it work or not
      */
     public boolean deleteEntityTemplate(String entityTemplateKey)

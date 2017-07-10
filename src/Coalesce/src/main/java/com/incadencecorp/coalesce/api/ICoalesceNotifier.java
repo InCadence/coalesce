@@ -67,16 +67,16 @@ public interface ICoalesceNotifier {
      * Send when an auditable event occurs.
      * 
      * @param task
-     * @param operation
-     * @param severity
+     * @param category
+     * @param level
      * @param message
      */
     void sendAudit(String task, EAuditCategory category, EAuditLevels level, String message);
-    
+
     /**
      * Send when job completes.
      * 
-     * @param AbstractCoalesceJob
+     * @param job
      */
     void sendJobComplete(AbstractCoalesceJob<?, ?, ?> job);
 

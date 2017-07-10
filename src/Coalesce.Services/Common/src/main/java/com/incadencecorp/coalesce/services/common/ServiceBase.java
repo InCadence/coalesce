@@ -77,8 +77,8 @@ public abstract class ServiceBase<T> implements ICoalesceExecutorService, AutoCl
     /**
      * Construct service while specifying the service and framework to use.
      * 
-     * @param pool
-     * @param framework
+     * @param target
+     * @param service
      */
     public ServiceBase(T target, ExecutorService service)
     {
@@ -198,7 +198,7 @@ public abstract class ServiceBase<T> implements ICoalesceExecutorService, AutoCl
      * therefore status for this job will no longer be provided.
      *
      * @param request the request
-     * @return {@link BaseResponse#getJobStatus()} which states if cancel was
+     * @return {@link BaseResponse#getStatus()} which states if cancel was
      *         successful.
      */
     public final StringResponse cancelJob(JobRequest request)
@@ -251,9 +251,8 @@ public abstract class ServiceBase<T> implements ICoalesceExecutorService, AutoCl
      * @param job {@link AbstractServiceJob}
      * @return the response with results if {@link AbstractServiceJob#isAsync}
      *         is false; Otherwise a response with no results and a
-     *         {@link AbstractServiceJob#getJobID() Job ID} that can be used to
+     *         {@link AbstractServiceJob#getJobId()} that can be used to
      *         request the results once the job has completed.
-     * @throws Exception
      */
     public final <REQUEST extends BaseRequest, RESPONSE extends ICoalesceResponseType<List<X>>, X extends ICoalesceResponseType<?>> RESPONSE performJob(AbstractServiceJob<REQUEST, RESPONSE, X, T> job)
     {

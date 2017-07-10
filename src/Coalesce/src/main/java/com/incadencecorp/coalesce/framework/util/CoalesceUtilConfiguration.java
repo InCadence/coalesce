@@ -74,7 +74,6 @@ public final class CoalesceUtilConfiguration {
     /**
      * @see CoalesceTemplateUtil#addTemplates(ICoalescePersistor)
      * @param persistors
-     * @throws CoalescePersistorException
      */
     public static void setTemplates(ICoalescePersistor... persistors)
     {

@@ -31,8 +31,6 @@ public class ClassNameNormalizer implements ICoalesceNormalizer {
 
     /**
      * Default Constructor.
-     * 
-     * @param params
      */
     public ClassNameNormalizer()
     {

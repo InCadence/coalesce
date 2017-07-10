@@ -83,10 +83,10 @@ public final class CoalesceNotifierUtil {
      * Overloaded method that takes {@link CoalesceEntity} instead of
      * {@link ObjectMetaData}
      * 
-     * @see ICoalesceNotifier#sendCrud(String, ECrudOperations, ObjectMetaData)
      * @param task
      * @param operation
-     * @param data
+     * @param entities
+     * @see ICoalesceNotifier#sendCrud(String, ECrudOperations, ObjectMetaData)
      */
     public static final void sendCrud(final String task, final ECrudOperations operation, final CoalesceEntity... entities)
     {

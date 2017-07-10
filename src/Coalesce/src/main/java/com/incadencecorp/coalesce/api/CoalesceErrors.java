@@ -142,13 +142,13 @@ public final class CoalesceErrors {
 
     /**
      * Warning reported when attempting to verify a hash that has had items
-     * added. Format: {@value #ERR_HASH_VALUES_ADD)
+     * added. Format: {@value #ERR_HASH_VALUES_ADD}
      */
     public static final String ERR_HASH_VALUES_ADD = "Updating Hash (%s values added): %s";
 
     /**
      * Warning reported when saving an object fails.
-     * added. Format: {@value #NOT_SAVED)
+     * added. Format: {@value #NOT_SAVED}
      */
     public static final String NOT_SAVED = "(FAILED) Saving (%s) of type (%s) because (%s)";
     

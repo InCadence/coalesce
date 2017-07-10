@@ -554,7 +554,8 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
     /**
      * This constructor is for the Derby Embedded Option
      * 
-     * @param prefix
+     * @param databaseName
+     * @param schema
      * @param subSubProtocol one of "directory", "memory", "classpath", "jar"
      * @throws CoalescePersistorException
      */

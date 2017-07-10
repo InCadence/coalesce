@@ -27,10 +27,6 @@ public class ObjectData {
      * 
      * @param key
      * @param name
-     * @param source
-     * @param version
-     * @param created
-     * @param lastModified
      */
     public ObjectData(String key, String name)
     {

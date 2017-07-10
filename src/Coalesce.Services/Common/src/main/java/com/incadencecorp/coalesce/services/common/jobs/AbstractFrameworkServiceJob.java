@@ -25,7 +25,7 @@ import com.incadencecorp.coalesce.services.api.common.BaseRequest;
 import com.incadencecorp.coalesce.services.api.common.BaseResponse;
 
 /**
- * Abstract base class that extends {@link Abstrac
+ * Abstract base class that extends {@link AbstractServiceJob}
  *
  * @author Derek C.
  * @param <INPUT> Request that this job handles; must extend {@link BaseRequest}.

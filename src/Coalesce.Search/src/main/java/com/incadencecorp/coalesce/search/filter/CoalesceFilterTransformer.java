@@ -88,8 +88,6 @@ import com.vividsolutions.jts.geom.Geometry;
  * An XMLEncoder for Filters and Expressions. (n78554) Derived from
  * {@link FilterTransformer} to add support for matchCase
  *
- * @source $URL$
- * @version $Id$
  * @author Ian Schneider
  * @author n78554
  */

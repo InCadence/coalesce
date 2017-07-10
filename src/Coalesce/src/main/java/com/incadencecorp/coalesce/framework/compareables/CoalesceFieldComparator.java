@@ -77,7 +77,9 @@ public class CoalesceFieldComparator extends CoalesceComparator<CoalesceEntity>
     /**
      * Add addition field to compare against.
      * 
-     * @param fullNamePath
+     * @param section
+     * @param recordset
+     * @param fieldname
      */
     public void addField(String section, String recordset, String fieldname) 
     {

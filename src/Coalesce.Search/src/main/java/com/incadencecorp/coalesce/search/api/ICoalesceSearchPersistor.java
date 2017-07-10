@@ -32,7 +32,6 @@ public interface ICoalesceSearchPersistor {
      * Performs a search.
      * 
      * @param query
-     * @param parameters
      * @return the results of the search
      * @throws CoalescePersistorException
      */

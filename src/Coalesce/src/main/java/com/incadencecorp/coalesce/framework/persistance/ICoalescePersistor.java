@@ -154,7 +154,7 @@ public interface ICoalescePersistor {
      * @param entityIdType of the entity.
      * @param entityName of the entity.
      * @param entitySource of the entity.
-     * @return List<String> of primary keys for the matching Coalesce entity.
+     * @return List$lt;String&gt; of primary keys for the matching Coalesce entity.
      * @throws CoalescePersistorException
      */
     List<String> getCoalesceEntityKeysForEntityId(String entityId,

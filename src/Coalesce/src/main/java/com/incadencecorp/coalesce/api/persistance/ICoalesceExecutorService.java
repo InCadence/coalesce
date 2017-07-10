@@ -59,5 +59,4 @@ public interface ICoalesceExecutorService {
     <T> T invokeAny(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
             throws InterruptedException, ExecutionException, TimeoutException;
 
-    
 }

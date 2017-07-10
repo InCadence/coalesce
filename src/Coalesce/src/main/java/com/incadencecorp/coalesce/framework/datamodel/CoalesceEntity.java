@@ -566,7 +566,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
      * Returns the {@link CoalesceEntity}'s linkages from the
      * {@link CoalesceEntity}'s linkagesection.
      * 
-     * @return Map<String, CoalesceLinkage> CoalesceLinkages of relationships to
+     * @return Map&lt;String, CoalesceLinkage&gt; CoalesceLinkages of relationships to
      *         this CoalesceEntity
      */
     public Map<String, CoalesceLinkage> getLinkages()
@@ -682,7 +682,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}'s
      * sections.
      * 
-     * @return Map<String, CoalesceSection> sections belonging to this
+     * @return Map&lt;String, CoalesceSection&gt; sections belonging to this
      *         CoalesceEntity
      */
     public Map<String, CoalesceSection> getSections()
@@ -727,7 +727,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
      * Returns all linkages when the forEntityName parameter is null.
      * 
      * @param forEntityName String of the Entity Name to return linkages for
-     * @return Map<String, CoalesceLinkage> linkages with matches for the Entity
+     * @return Map&lt;String, CoalesceLinkage&gt; linkages with matches for the Entity
      *         Name parameter
      */
     public Map<String, CoalesceLinkage> getLinkages(String forEntityName)
@@ -762,7 +762,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
      * 
      * @param forLinkType
      * 
-     * @return Map<String, CoalesceLinkage> linkages with matches for the
+     * @return Map&lt;String, CoalesceLinkage&gt; linkages with matches for the
      *         ELinkTypes parameter
      */
     public Map<String, CoalesceLinkage> getLinkages(ELinkTypes forLinkType)
@@ -791,7 +791,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
      *            link to find matching linkages for
      * @param forEntityName String, the Entity name attribute to find matching
      *            linkages for
-     * @return Map<String, CoalesceLinkage> linkages with matches for the Entity
+     * @return Map&lt;String, CoalesceLinkage&gt; linkages with matches for the Entity
      *         Name and ELinkType parameters
      */
     public Map<String, CoalesceLinkage> getLinkages(ELinkTypes forLinkType, String forEntityName)
@@ -823,7 +823,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
      *            linkages for
      * @param forEntitySource String, the Entity source attribute to find
      *            matching linkages for
-     * @return Map<String, CoalesceLinkage> linkages with matches for the
+     * @return Map&lt;String, CoalesceLinkage&gt; linkages with matches for the
      *         parameter criteria
      */
     public Map<String, CoalesceLinkage> getLinkages(ELinkTypes forLinkType, String forEntityName, String forEntitySource)
@@ -895,7 +895,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
      * EntityIdType String.
      * 
      * @param typeParam EntityIdType String to retrieve entityIds for
-     * @return List<String> list of entityIds that match the EntityIdType
+     * @return List&lt;String&gt; list of entityIds that match the EntityIdType
      *         typeParam
      */
     public List<String> getEntityId(String typeParam)

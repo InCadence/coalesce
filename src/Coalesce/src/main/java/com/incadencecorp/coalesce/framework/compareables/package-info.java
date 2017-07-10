@@ -1,4 +1,4 @@
 /**
- * Contains classes for comparing {@link CoalesceEntity}s.  
+ * Contains classes for comparing CoalesceEntities.  
  */
 package com.incadencecorp.coalesce.framework.compareables;

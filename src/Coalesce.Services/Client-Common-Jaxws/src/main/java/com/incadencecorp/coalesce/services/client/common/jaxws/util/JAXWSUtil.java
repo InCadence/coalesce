@@ -196,8 +196,8 @@ public final class JAXWSUtil {
     }
 
     /**
-     * Defaults the user's name to {@link DSSServiceSettings#getRenewer()} and
-     * the password to {@link DSSServiceSettings#getRenewerPassword()}.
+     * Defaults the user's name to {@link #RENEWER_USERNAME} and the password to
+     * {@link #RENEWER_PASSWORD}.
      * 
      * @param token
      * @return {@link #renewToken(SecurityToken, String, String)}
@@ -209,11 +209,10 @@ public final class JAXWSUtil {
     }
 
     /**
-     * If token will expire in
-     * {@link DSSServiceSettings#getTokenExpirationThreshold()} seconds this
-     * method will call
-     * {@link #createOnBehalfOfToken(SecurityToken, String, String)} to create a
-     * new token on behalf of the original; otherwise the original is returned.
+     * If token will expire in {@link #EXPIRATION_THRESHOLD} seconds this method
+     * will call {@link #createOnBehalfOfToken(SecurityToken, String, String)}
+     * to create a new token on behalf of the original; otherwise the original
+     * is returned.
      * 
      * @param token
      * @param username must have permissions to create token on behalf of
@@ -235,8 +234,8 @@ public final class JAXWSUtil {
     }
 
     /**
-     * Defaults the user's name to {@link DSSServiceSettings#getRenewer()} and
-     * the password to {@link DSSServiceSettings#getRenewerPassword()}.
+     * Defaults the user's name to {@link #RENEWER_USERNAME} and the password to
+     * {@link #RENEWER_PASSWORD}.
      * 
      * @param principal
      * @return {@link #renewPrincipal(Principal, String, String)}
@@ -248,11 +247,9 @@ public final class JAXWSUtil {
     }
 
     /**
-     * If token will expire in
-     * {@link DSSServiceSettings#getTokenExpirationThreshold()} seconds this
-     * method will call {@link #renewToken(SecurityToken, String, String)} to
-     * create a new token on behalf of the original; otherwise the original is
-     * returned.
+     * If token will expire in {@link #EXPIRATION_THRESHOLD} seconds this method
+     * will call {@link #renewToken(SecurityToken, String, String)} to create a
+     * new token on behalf of the original; otherwise the original is returned.
      * 
      * @param principal
      * @param username must have permissions to create token on behalf of
@@ -284,8 +281,8 @@ public final class JAXWSUtil {
     }
 
     /**
-     * Defaults the user's name to {@link DSSServiceSettings#getRenewer()} and
-     * the password to {@link DSSServiceSettings#getRenewerPassword()}.
+     * Defaults the user's name to {@link #RENEWER_USERNAME} and the password to
+     * {@link #RENEWER_PASSWORD}.
      * 
      * @param onBehalfOf
      * @return {@link #renewToken(SecurityToken, String, String)}
@@ -315,8 +312,8 @@ public final class JAXWSUtil {
     }
 
     /**
-     * Defaults the user's name to {@link DSSServiceSettings#getRenewer()} and
-     * the password to {@link DSSServiceSettings#getRenewerPassword()}.
+     * Defaults the user's name to {@link #RENEWER_USERNAME} and
+     * the password to {@link #RENEWER_PASSWORD}.
      * 
      * @param onBehalfOf
      * @return {@link #renewToken(SecurityToken, String, String)}
@@ -506,7 +503,7 @@ public final class JAXWSUtil {
     /**
      * Attempts to use dependency injection to load the {@link Bus} from an OSGi
      * container. If running outside of Karaf or a Bus is not provided by the
-     * container it will use the {@link DSSServiceSettings} file to create the
+     * container it will use the XXXXX file to create the
      * Bus from a Spring configuration file.
      *
      * @return <code>null</code> if there is no bus configured otherwise the bus

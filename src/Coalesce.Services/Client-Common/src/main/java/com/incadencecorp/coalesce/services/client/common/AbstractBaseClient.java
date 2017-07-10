@@ -257,7 +257,7 @@ public abstract class AbstractBaseClient<T extends ICoalesceEvents> extends Base
     }
 
     /**
-     * Calls {@link ICoalesceEvents#statusCallback(String, EJobStatus)} on each
+     * Calls {@link ICoalesceEvents#statusCallback(String, EResultStatus)} on each
      * listener.
      *
      * @param response {@link BaseResponse}

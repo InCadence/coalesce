@@ -63,7 +63,6 @@ public class JobMetricsCollectionAsync implements AutoCloseable {
      * interval and persist them within the database.
      *
      * @param interval in minutes.
-     * @param userId
      */
     public void initialize(int interval)
     {

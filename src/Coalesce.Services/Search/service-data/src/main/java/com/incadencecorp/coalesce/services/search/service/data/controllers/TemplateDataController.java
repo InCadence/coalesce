@@ -233,7 +233,6 @@ public class TemplateDataController {
     /**
      * Saves the specified template.
      * 
-     * @param key
      * @param template
      * @return whether or not it was successfully saved.
      */

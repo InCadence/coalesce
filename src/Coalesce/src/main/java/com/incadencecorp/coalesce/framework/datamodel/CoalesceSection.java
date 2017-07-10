@@ -365,7 +365,7 @@ public class CoalesceSection extends CoalesceObjectHistory {
     /**
      * Returns a Recordset List for the Entity Section.
      * 
-     * @return List<Recordset> Section's Recordset list.
+     * @return List&lt;Recordset&gt; Section's Recordset list.
      */
     protected List<Recordset> getEntityRecordSets()
     {

@@ -201,7 +201,7 @@ public class Neo4jFilterToCypher implements FilterVisitor, ExpressionVisitor {
      * Encodes an OGS filter as a cypher expression.
      *
      * @param filter
-     * @throws Exception
+     * @throws CoalesceException
      */
     public void encode(Filter filter) throws CoalesceException
     {
@@ -876,7 +876,7 @@ public class Neo4jFilterToCypher implements FilterVisitor, ExpressionVisitor {
      * Common implementation for BinaryComparisonOperator filters. This way
      * they're all handled centrally. DJB: note, postgis overwrites this
      * implementation because of the way null is handled. This is for
-     * <PropertyIsNull> filters and <PropertyIsEqual> filters are handled. They
+     * &lt;PropertyIsNull&gt; filters and &lt;PropertyIsEqual&gt; filters are handled. They
      * will come here with "property = null".
      *
      * @param filter the comparison to be turned into cypher.

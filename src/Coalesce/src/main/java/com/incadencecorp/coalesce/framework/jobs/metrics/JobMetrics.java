@@ -50,8 +50,9 @@ public class JobMetrics {
 
     /**
      * Creates a JobMetrics object with the requested name.
-     *
-     * @param name
+     * 
+     * @param pJob
+     * @param pMetrics
      */
     public JobMetrics(final AbstractCoalesceJob<?, ?, ?> pJob, MetricResults<?>... pMetrics)
     {

@@ -160,7 +160,7 @@ public class CoalesceRecord extends CoalesceObjectHistory {
      * Returns a list of the {@link CoalesceField}s that belong to this
      * {@link CoalesceRecord}.
      * 
-     * @return List<CoalesceField> list of {@link CoalesceField} s contained by
+     * @return List&lt;CoalesceField&gt; list of {@link CoalesceField} s contained by
      *         this {@link CoalesceRecord} .
      */
     public List<CoalesceField<?>> getFields()
@@ -171,7 +171,7 @@ public class CoalesceRecord extends CoalesceObjectHistory {
     /**
      * Returns a String list of the {@link CoalesceRecord}'s Field's names.
      * 
-     * @return List<String> list of the field names from the
+     * @return List&lt;String&gt; list of the field names from the
      *         {@link CoalesceField} s contained by this {@link CoalesceRecord}
      *         .
      */
@@ -193,7 +193,7 @@ public class CoalesceRecord extends CoalesceObjectHistory {
     /**
      * Returns a String list of the {@link CoalesceRecord}'s Field's keys.
      * 
-     * @return List<String> list of the field keys from the
+     * @return List&lt;String&gt; list of the field keys from the
      *         {@link CoalesceField} s contained by this {@link CoalesceRecord}
      *         .
      */

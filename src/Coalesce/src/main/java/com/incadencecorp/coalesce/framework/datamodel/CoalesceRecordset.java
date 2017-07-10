@@ -573,7 +573,7 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
     /**
      * Returns the Record list contained by the Recordset.
      * 
-     * @return List<Record> the Recordset's record list.
+     * @return List&lt;Record&gt; the Recordset's record list.
      */
     protected List<Record> getEntityRecords()
     {
@@ -583,7 +583,7 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
     /**
      * Returns the Fielddefinition list contained by the Recordset.
      * 
-     * @return List<Fielddefinition> the Recordset's Fielddefinition list.
+     * @return List&lt;Fielddefinition&gt; the Recordset's Fielddefinition list.
      */
     protected List<Fielddefinition> getEntityFieldDefinitions()
     {

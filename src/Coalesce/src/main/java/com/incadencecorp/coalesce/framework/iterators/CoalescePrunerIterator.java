@@ -46,7 +46,7 @@ public class CoalescePrunerIterator extends CoalesceIterator<Map<String, List<St
     }
 
     /**
-     * @param fieldMap Map<RecordSet Name, List<Field Name>>
+     * @param fieldMap Map&lt;RecordSet Name, List&lt;Field Name&gt;&gt;
      * @param entities
      * @return a copy of entities with the specified fields pruned.
      * @throws CoalesceException
@@ -72,7 +72,7 @@ public class CoalescePrunerIterator extends CoalesceIterator<Map<String, List<St
     /**
      * Modified the entities pruning the fields specified.
      * 
-     * @param fieldMap Map<RecordSet Name, List<Field Name>>
+     * @param fieldMap Map&lt;RecordSet Name, List&lt;Field Name&gt;&gt;
      * @param entities
      * @throws CoalesceException
      */

@@ -198,7 +198,7 @@ public final class GraphicsHelper {
     }
 
     /**
-     * Created a new thumbnail image for an {@link CoalesceStringField}.
+     * Created a new thumbnail image for an {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceStringField}.
      * 
      * @param field the field to generate the thumbnail for.
      * @return <code>true</code> if the file is successfully created.

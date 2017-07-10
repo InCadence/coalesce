@@ -34,7 +34,7 @@ import com.incadencecorp.coalesce.api.CoalesceErrors;
 
 /**
  * This implementation will load the values of the enumeration from a property
- * file with the following format "<enumeration name>.values".
+ * file with the following format "&lt;enumeration name&gt;.values".
  * 
  * @author n78554
  */

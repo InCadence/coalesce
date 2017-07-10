@@ -28,7 +28,7 @@ public interface ICoalesceTargetJob<T> extends ICoalesceJob {
     /**
      * Sets the target(s) of this operation.
      * 
-     * @param targets
+     * @param value
      */
     void setTarget(T value);
     

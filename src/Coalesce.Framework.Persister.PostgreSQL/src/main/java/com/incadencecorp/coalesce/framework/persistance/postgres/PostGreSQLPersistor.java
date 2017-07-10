@@ -1074,7 +1074,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     }
 
     /**
-     * Deletes the Coalesce object & CoalesceObjectMap that matches the given
+     * Deletes the Coalesce object and CoalesceObjectMap that matches the given
      * parameters.
      *
      * @param coalesceObject the Coalesce object to be deleted

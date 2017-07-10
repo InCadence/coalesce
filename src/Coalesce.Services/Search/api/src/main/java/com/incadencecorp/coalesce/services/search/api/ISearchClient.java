@@ -42,10 +42,8 @@ public interface ISearchClient extends IBaseClient<ISearchEvents> {
      * @param filter OGC filter defining the constraints that can be checked
      *            against an instance of an object.
      * @param pageNumber sets the offset of the query. Each page is determined
-     *            by {@link #setMaxSearchResults(int)}.
+     *            by {@link #setPageSize(int)}.
      * @return the information about the objects that match the constraints.
-     * @throws TransformerException is thrown when there was an issue with the
-     *             filter.
      * @throws CoalesceException
      */
     SearchDataObjectResponse search(Filter filter, int pageNumber) throws CoalesceException;
@@ -56,7 +54,7 @@ public interface ISearchClient extends IBaseClient<ISearchEvents> {
      * @param filter OGC filter defining the constraints that can be checked
      *            against an instance of an object.
      * @param pageNumber sets the offset of the query. Each page is determined
-     *            by {@link #setMaxSearchResults(int)}.
+     *            by {@link #setPageSize(int)}.
      * @return the job ID
      * @throws CoalesceException
      */
@@ -68,14 +66,14 @@ public interface ISearchClient extends IBaseClient<ISearchEvents> {
      * @param filter OGC filter defining the constraints that can be checked
      *            against an instance of an object.
      * @param pageNumber sets the offset of the query. Each page is determined
-     *            by {@link #setMaxSearchResults(int)}.
+     *            by {@link #setPageSize(int)}.
      * @param properties is the list of properties (fields) that you wish to
      *            return as a part of your query. Property formatting follow the
      *            same rules as the filter "recordset name"."field name"; so if
      *            you wanted to return access scope this would be
      *            'access_control_recordset.accessscope' or for DSS fields you
      *            can use
-     *            {@link com.lmco.omega.dss.client.api.factory.DSSPropertyFactory}
+     *            {@link com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory}
      *            to get the properties.
      * @param sortBy is the list of properties (fields) that you wish to search
      *            on along with the direction. Property formatting follow the
@@ -98,14 +96,14 @@ public interface ISearchClient extends IBaseClient<ISearchEvents> {
      * @param filter OGC filter defining the constraints that can be checked
      *            against an instance of an object.
      * @param pageNumber sets the offset of the query. Each page is determined
-     *            by {@link #setMaxSearchResults(int)}.
+     *            by {@link #setPageSize(int)}.
      * @param properties is the list of properties (fields) that you wish to
      *            return as a part of your query. Property formatting follow the
      *            same rules as the filter "recordset name"."field name"; so if
      *            you wanted to return access scope this would be
      *            'access_control_recordset.accessscope' or for DSS fields you
      *            can use
-     *            {@link com.lmco.omega.dss.client.api.factory.DSSPropertyFactory}
+     *            {@link com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory}
      *            to get the properties.
      * @param sortBy is the list of properties (fields) that you wish to search
      *            on along with the direction. Property formatting follow the

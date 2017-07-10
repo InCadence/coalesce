@@ -17,10 +17,10 @@
 
 package com.incadencecorp.coalesce.framework.persistance;
 
-
 /**
  * Stores meta data about an Coalesce Entity.
- * @see {@link ICoalescePersistor#getCoalesceEntityIdAndTypeForKey(String)}.
+ * 
+ * @see ICoalescePersistor#getCoalesceEntityIdAndTypeForKey(String)
  */
 public class EntityMetaData {
 
@@ -51,8 +51,8 @@ public class EntityMetaData {
     }
 
     /**
-     * @return comma separated value (CSV) list of type identifiers that map
-     *         1 to 1 with _entityId.
+     * @return comma separated value (CSV) list of type identifiers that map 1
+     *         to 1 with _entityId.
      */
     public final String getEntityType()
     {

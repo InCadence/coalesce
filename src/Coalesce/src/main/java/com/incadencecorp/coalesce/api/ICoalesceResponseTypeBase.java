@@ -33,6 +33,8 @@ public interface ICoalesceResponseTypeBase {
 
     /**
      * Sets the status
+     * 
+     * @param value
      */
     void setStatus(EResultStatus value);
 
@@ -43,9 +45,11 @@ public interface ICoalesceResponseTypeBase {
 
     /**
      * Sets the status
+     * 
+     * @param value
      */
     void setError(String value);
-    
+
     /**
      * @return the ID
      */
@@ -53,7 +57,9 @@ public interface ICoalesceResponseTypeBase {
 
     /**
      * Sets the ID
+     * 
+     * @param value
      */
     void setId(String value);
-    
+
 }

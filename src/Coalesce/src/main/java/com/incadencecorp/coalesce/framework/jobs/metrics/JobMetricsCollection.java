@@ -57,8 +57,6 @@ public class JobMetricsCollection {
      *
      * @param job
      *            the job
-     * @param response
-     *            response
      */
     public void addJob(AbstractCoalesceJob<?, ?, ?> job) {
 

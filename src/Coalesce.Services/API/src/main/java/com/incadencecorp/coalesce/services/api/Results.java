@@ -43,9 +43,9 @@ public class Results<T> {
 
     /**
      * Constructs the result from a valid Coalesce object and sets the status to
-     * {@link EResultStatusType#SUCCESS}.
+     * {@link EResultStatus#SUCCESS}.
      * 
-     * @param entity
+     * @param result
      */
     public Results(final T result)
     {
@@ -58,7 +58,7 @@ public class Results<T> {
 
     /**
      * Constructs a result from an error message setting the entity to null and
-     * setting the status to {@link EResultStatusType#FAILED}
+     * setting the status to {@link EResultStatus#FAILED}
      * 
      * @param error
      */
@@ -76,8 +76,8 @@ public class Results<T> {
     --------------------------------------------------------------------------*/
 
     /**
-     * @return {@link EResultStatusType#SUCCESS} if
-     *         {@link EntityResult#getEntity() wont return null}.
+     * @return {@link EResultStatus#SUCCESS} if {@link #getResult()} wont return
+     *         null.
      */
     public EResultStatus getStatus()
     {
@@ -93,8 +93,7 @@ public class Results<T> {
     }
 
     /**
-     * @return an error message if the status is
-     *         {@link EResultStatusType#FAILED}
+     * @return an error message if the status is {@link EResultStatus#FAILED}
      */
     public String getError()
     {
