@@ -18,21 +18,18 @@
 package com.incadencecorp.coalesce.services.crud.service.rest;
 
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
-import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
 
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLPersistorExt;
 import com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLSettings;
 import com.incadencecorp.coalesce.services.crud.service.client.CrudFrameworkClientImpl;
-import com.incadencecorp.coalesce.services.crud.service.data.api.ICoalesceEnumerationValue;
 import com.incadencecorp.coalesce.services.crud.service.data.controllers.EnumerationDataController;
-import com.incadencecorp.coalesce.services.crud.service.data.model.CoalesceEnumeration;
-import com.incadencecorp.coalesce.services.crud.service.data.model.EnumerationValuePojo;
+import com.incadencecorp.coalesce.services.crud.service.data.model.api.record.IValuesRecord;
+import com.incadencecorp.coalesce.services.crud.service.data.model.impl.coalesce.entity.EnumerationCoalesceEntity;
+import com.incadencecorp.coalesce.services.crud.service.data.model.impl.coalesce.record.ValuesCoalesceRecord;
 import com.incadencecorp.coalesce.services.search.service.client.SearchFrameworkClientImpl;
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
 
@@ -55,31 +52,34 @@ public class EnumerationDataControllerTest {
 
         EnumerationDataController controller = new EnumerationDataController(crud, search);
 
-        CoalesceEnumeration entity = new CoalesceEnumeration();
+        EnumerationCoalesceEntity entity = new EnumerationCoalesceEntity();
         entity.initialize();
-        entity.setEnumName("Hello World");
-        
-        List<EnumerationValuePojo> values = new ArrayList<EnumerationValuePojo>();
-        
-        for (int ii=0; ii<5; ii++) {
-            EnumerationValuePojo value = new EnumerationValuePojo();
+        entity.getMetadataRecord().setEnumname("Hello World");
+
+        for (int ii = 0; ii < 5; ii++)
+        {
+            ValuesCoalesceRecord value = entity.addValuesRecord();
             value.setOrdinal(ii);
             value.setValue(String.valueOf(ii));
-            
-            values.add(value);
         }
-        
-//        entity.addValues(values);
 
-//        persister.saveEntity(false, entity);
+        // persister.saveEntity(false, entity);
 
-        for (Map.Entry<String, String> entry : controller.getEnumerationList().entrySet())
+        for (Map.Entry<String, String> entry : controller.getEnumerations().entrySet())
         {
             System.out.println(entry.getValue());
 
-            JSONObject json = controller.getEnumeration(entry.getKey());
-                System.out.println("\t" + json.toString());
+            System.out.println("\t" + controller.getEnumeration(entry.getKey()));
+
+            for (IValuesRecord value : controller.getEnumerationValues(entry.getKey()))
+            {
+                System.out.println(value.getValue());
+            }
         }
+
+        // CoalesceCodeGeneratorIterator iterator = new
+        // CoalesceCodeGeneratorIterator(Paths.get("."));
+        // iterator.generateCode(entity);
 
     }
 

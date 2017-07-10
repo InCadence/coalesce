@@ -54,7 +54,8 @@ public class ${classname} implements I${name}Entity {
     private Map<String, $normalizer.normalize($recordset.getName())PojoRecord> recordset_$normalizer.normalize($recordset.getName()) = new HashMap<String, $normalizer.normalize($recordset.getName())PojoRecord>();
 #end
 #end
-
+	
+	private String key;
 	private DateTime dateCreated; 
 	private DateTime lastModified; 
 	private String lastModifiedBy;
@@ -66,6 +67,35 @@ public class ${classname} implements I${name}Entity {
     public ${classname}()
     {
         // Do Nothing
+    }
+    
+    public ${classname}(I${name}Entity entity) throws CoalesceDataFormatException
+    {
+		setKey(entity.getKey());
+		setDateCreated(entity.getDateCreated());
+		setLastModified(entity.getLastModified());
+		setModifiedBy(entity.getModifiedBy());
+		setStatus(entity.getStatus());    
+		
+#foreach($recordset in $recordsets)
+#if($recordset.getMaxRecords() == 1)
+        set$normalizer.normalize($recordset.getName())Record(entity.get$normalizer.normalize($recordset.getName())Record());
+#else
+        add$normalizer.normalize($recordset.getName())Record(entity.get$normalizer.normalize($recordset.getName())Records());
+#end
+#end
+	}
+
+    @Override
+    public String getKey() 
+    {
+    	return key;
+    }
+    
+    @Override
+    public void setKey(String value)
+    {
+    	key = value; 
     }
 
     @Override
@@ -132,6 +162,16 @@ public class ${classname} implements I${name}Entity {
 
 #else
 #set($recordset_name = "recordset_$normalizer.normalize($recordset.getName())")
+
+    @Override
+    public void add$normalizer.normalize($recordset.getName())Record(List<I$normalizer.normalize($recordset.getName())Record> records) throws CoalesceDataFormatException
+    {
+        for (I$normalizer.normalize($recordset.getName())Record value : records)
+        {
+            ${recordset_name}.put(value.getKey(), new $normalizer.normalize($recordset.getName())PojoRecord(value));
+        }
+	}
+
     @Override
     public $normalizer.normalize($recordset.getName())PojoRecord add$normalizer.normalize($recordset.getName())Record()
     {

@@ -159,6 +159,8 @@ public class ${classname} extends CoalesceRecord implements I${name}Record {
 
     public void populate(I${name}Record record) throws CoalesceDataFormatException 
     {
+        setKey(record.getKey());
+        setStatus(record.getStatus());
 #foreach($fd in $definitions)
 		set$normalizer.normalize($fd.getName())(record.get$normalizer.normalize($fd.getName())());
 #end
@@ -167,18 +169,6 @@ public class ${classname} extends CoalesceRecord implements I${name}Record {
     /*--------------------------------------------------------------------------
     Public Getter(s) / Setter(s)
     --------------------------------------------------------------------------*/
-
-    @Override
-    public String getKey() 
-    {
-    	return super.getKey();
-    }
-    
-    @Override
-    public void setKey(String value)
-    {
-    	super.setKey(value); 
-    }    
 
 #foreach($fd in $definitions)
 	@Override

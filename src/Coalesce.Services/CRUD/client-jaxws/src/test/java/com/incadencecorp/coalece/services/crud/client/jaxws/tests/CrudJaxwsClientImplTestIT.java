@@ -63,5 +63,4 @@ public class CrudJaxwsClientImplTestIT extends AbstractCrudTests {
         }
 
     }
-
 }

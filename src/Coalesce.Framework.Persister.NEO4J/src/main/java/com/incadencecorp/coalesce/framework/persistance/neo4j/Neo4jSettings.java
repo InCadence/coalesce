@@ -17,6 +17,7 @@
 
 package com.incadencecorp.coalesce.framework.persistance.neo4j;
 
+import com.incadencecorp.coalesce.api.CoalesceParameters;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 import com.incadencecorp.unity.common.IConfigurationsConnector;
 import com.incadencecorp.unity.common.SettingsBase;
@@ -34,7 +35,7 @@ public class Neo4jSettings {
     --------------------------------------------------------------------------*/
 
     private static String config_name = "neo4j-config.properties";
-    private static SettingsBase settings = new SettingsBase(new FilePropertyConnector(System.getProperty("COALESCE_CONFIG_LOCATION")));
+    private static SettingsBase settings = new SettingsBase(new FilePropertyConnector(CoalesceParameters.COALESCE_CONFIG_LOCATION));
 
     /*--------------------------------------------------------------------------
     Default Values

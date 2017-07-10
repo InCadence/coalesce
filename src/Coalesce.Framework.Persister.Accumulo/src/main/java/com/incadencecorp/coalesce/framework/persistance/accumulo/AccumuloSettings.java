@@ -20,6 +20,7 @@ package com.incadencecorp.coalesce.framework.persistance.accumulo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.incadencecorp.coalesce.api.CoalesceParameters;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 import com.incadencecorp.unity.common.IConfigurationsConnector;
 import com.incadencecorp.unity.common.SettingsBase;
@@ -37,8 +38,8 @@ public class AccumuloSettings {
     --------------------------------------------------------------------------*/
     private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloSettings.class);
 
-    private static  String config_name = "accumulo-config.properties";
-    private static SettingsBase settings = new SettingsBase(new FilePropertyConnector(System.getProperty("COALESCE_CONFIG_LOCATION")));
+    private static String config_name = "accumulo-config.properties";
+    private static SettingsBase settings = new SettingsBase(new FilePropertyConnector(CoalesceParameters.COALESCE_CONFIG_LOCATION));
 
     /*--------------------------------------------------------------------------
     Property Names

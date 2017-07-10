@@ -17,6 +17,7 @@
 
 package com.incadencecorp.coalesce.framework.persistance.postgres;
 
+import com.incadencecorp.coalesce.api.CoalesceParameters;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 import com.incadencecorp.unity.common.IConfigurationsConnector;
 import com.incadencecorp.unity.common.SettingsBase;
@@ -34,7 +35,7 @@ public class PostGreSQLSettings {
     --------------------------------------------------------------------------*/
 
     private static String config_name = "postgres-config.properties";
-    private static SettingsBase settings = new SettingsBase(new FilePropertyConnector(System.getProperty("COALESCE_CONFIG_LOCATION")));
+    private static SettingsBase settings = new SettingsBase(new FilePropertyConnector(CoalesceParameters.COALESCE_CONFIG_LOCATION));
 
     /*--------------------------------------------------------------------------
     Property Names
@@ -223,7 +224,8 @@ public class PostGreSQLSettings {
     }
 
     /**
-     * @return the Spatial Reference Identifier (SRID). Default: {@value #DEFAULT_SRID}.
+     * @return the Spatial Reference Identifier (SRID). Default:
+     *         {@value #DEFAULT_SRID}.
      */
     public static int getSRID()
     {
@@ -243,7 +245,8 @@ public class PostGreSQLSettings {
 
     /**
      * @return whether or not foreign keys should be created when generating
-     *         tables while registering an entity. Default: {@value #DEFAULT_USE_FOREIGN_KEYS}.
+     *         tables while registering an entity. Default:
+     *         {@value #DEFAULT_USE_FOREIGN_KEYS}.
      */
     public static boolean isUseForeignKeys()
     {

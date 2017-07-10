@@ -34,6 +34,8 @@ public final class CoalesceParameters {
     private static final String COALESCE = INC + "coalesce.";
     private static final String SECURITY = COALESCE + "security.";
 
+    public static final String COALESCE_CONFIG_LOCATION = System.getProperty("COALESCE_CONFIG_LOCATION");
+
     /*--------------------------------------------------------------------------
     General Properties (com.incadencecorp.%)
     --------------------------------------------------------------------------*/
@@ -49,7 +51,7 @@ public final class CoalesceParameters {
      * sub-directory which is based of the first X characters of the UUID.
      */
     public static final String PARAM_SUBDIR_LEN = INC + "subdirlen";
-    
+
     /**
      * (Integer) Sets the number of items to process ina single run.
      */
@@ -65,13 +67,13 @@ public final class CoalesceParameters {
      * (BigInteger) Hash value. Must be formatted with the name of the hash.
      */
     public static final String HASH_VALUE = HASH + "%s.value";
-    
+
     /**
      * (BigInteger) Number of strings that were used to produce the hash. Must
      * be formatted with the name of the hash.
      */
     public static final String HASH_COUNT = HASH + "%s.count";
-    
+
     /**
      * (String) Hash algorithm to use for calculating hashes (ex: SHA1).
      */
