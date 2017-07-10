@@ -57,8 +57,8 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 public class FilePersistorImpl extends CoalesceComponentImpl implements ICoalescePersistor, ICoalesceComponent {
 
     private static final String TEMPLATE_DIRECTORY = "templates";
-    private Path root = Paths.get("db");
-    private int subDirLen = 0;
+    private Path root = FilePersistorSettings.getDirectory();
+    private int subDirLen = FilePersistorSettings.getSubDirectoryLength();
 
     /*--------------------------------------------------------------------------
     Override Methods
