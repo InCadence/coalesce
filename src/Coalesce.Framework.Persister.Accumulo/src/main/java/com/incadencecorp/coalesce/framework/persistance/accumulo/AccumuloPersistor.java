@@ -261,6 +261,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                 String xml = new String(e.getValue().get());
                 results.add(xml);
             }
+            scanner.close();
         }
         catch (TableNotFoundException ex)
         {
@@ -300,8 +301,11 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                     {
                         xml = xmlscanner.iterator().next().getValue().toString();
                     }
+                    xmlscanner.close();
                 }
+                
             }
+            scanner.close();
         }
         catch (TableNotFoundException ex)
         {
@@ -341,8 +345,10 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                     {
                         xml = xmlscanner.iterator().next().getValue().toString();
                     }
+                    xmlscanner.close();
                 }
             }
+            keyscanner.close();
         }
         catch (TableNotFoundException ex)
         {
@@ -384,8 +390,10 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                     {
                         value = valuescanner.iterator().next().getValue().toString();
                     }
+                    valuescanner.close();
                 }
             }
+            keyscanner.close();
         }
         catch (TableNotFoundException ex)
         {
@@ -420,6 +428,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                 xpath = rowKey.getColumnFamily().toString().substring(objectType.length() + 1);
                 entityKey = rowKey.getRow().toString();
             }
+            keyscanner.close();
         }
         catch (TableNotFoundException ex)
         {
@@ -458,6 +467,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             {
                 keys.add(entry.getKey().getRow().toString());
             }
+            keyscanner.close();
         }
         catch (TableNotFoundException ex)
         {
@@ -504,6 +514,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             {
                 metadata = new EntityMetaData(entityid, entityidtype, key);
             }
+            keyscanner.close();
         }
         catch (TableNotFoundException ex)
         {
@@ -919,6 +930,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             {
                 xml = keyscanner.iterator().next().getValue().toString();
             }
+            keyscanner.close();
         }
         catch (TableNotFoundException ex)
         {
@@ -1062,6 +1074,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                     }
                 }
             }
+            writer.close();
 
         }
         catch (MutationsRejectedException | TableNotFoundException e1)
@@ -1257,11 +1270,13 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             writer.addMutation(m);
             writer.flush();
             persisted = true;
+            writer.close();
         }
         catch (MutationsRejectedException | TableNotFoundException e)
         {
             persisted = false;
         }
+        
         return persisted;
     }
 
@@ -1423,7 +1438,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         	CoalesceLinkage link = mlink.getValue();              
         	long beginTime = System.currentTimeMillis();
         	Boolean updated = updateLinkIfExists(LINKAGE_FEATURE_NAME, link);
-            LOGGER.debug("Linkage Update Time: {}",System.currentTimeMillis()-beginTime);
+            LOGGER.debug("Linkage Update Time: {} Updated: {}",System.currentTimeMillis()-beginTime,updated);
        	
         	if (!updated) {
         		SimpleFeatureType featuretype = gds.getSchema(LINKAGE_FEATURE_NAME);
@@ -1538,7 +1553,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             } else {
             	long beginTime = System.currentTimeMillis();
             	updated = updateFeatureIfExists(featuresetname, record);
-                LOGGER.debug("Linkage Update Time: {}",System.currentTimeMillis()-beginTime);
+                LOGGER.debug("Feature Update Time: {}, Updated: {}",System.currentTimeMillis()-beginTime,updated);
 
             }
             
@@ -1622,6 +1637,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                     LOGGER.debug("Found Geo for entity: " + entity.getKey());
                 }
                 
+                LOGGER.debug("Adding Feature to collection: {}",featuretype.getName());
                 featurecollection.add(simplefeature);
 
             }
@@ -1633,6 +1649,8 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
     private void deleteFeatureIfExists(String featuresetname, CoalesceRecord record) throws IOException, CQLException
     {
 //        Transaction transaction = new DefaultTransaction();
+        long beginTime = System.currentTimeMillis();
+
         SimpleFeatureStore store = (SimpleFeatureStore) connect.getGeoDataStore().getFeatureSource(featuresetname);
 //        store.setTransaction(transaction);
 
@@ -1640,6 +1658,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         Filter filter = CQL.toFilter("recordKey='" + record.getKey() + "'");
 
         store.removeFeatures(filter);
+        LOGGER.debug("Feature Delete Time: {}: {}",featuresetname, System.currentTimeMillis()-beginTime);
         
 //        transaction.commit();
 //        transaction.close();
