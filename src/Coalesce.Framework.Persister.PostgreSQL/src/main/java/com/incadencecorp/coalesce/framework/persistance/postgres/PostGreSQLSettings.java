@@ -35,7 +35,7 @@ public class PostGreSQLSettings {
     --------------------------------------------------------------------------*/
 
     private static String config_name = "postgres-config.properties";
-    private static SettingsBase settings = new SettingsBase(new FilePropertyConnector(System.getProperty(CoalesceParameters.COALESCE_CONFIG_LOCATION)));
+    private static SettingsBase settings = new SettingsBase(new FilePropertyConnector(CoalesceParameters.COALESCE_CONFIG_LOCATION));
 
     /*--------------------------------------------------------------------------
     Property Names

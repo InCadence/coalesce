@@ -35,7 +35,7 @@ public class Neo4jSettings {
     --------------------------------------------------------------------------*/
 
     private static String config_name = "neo4j-config.properties";
-    private static SettingsBase settings = new SettingsBase(new FilePropertyConnector(System.getProperty(CoalesceParameters.COALESCE_CONFIG_LOCATION)));
+    private static SettingsBase settings = new SettingsBase(new FilePropertyConnector(CoalesceParameters.COALESCE_CONFIG_LOCATION));
 
     /*--------------------------------------------------------------------------
     Default Values

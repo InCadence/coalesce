@@ -37,7 +37,7 @@ public class DerbySettings {
     private static final int SRID = 4326; // Spatial Reference ID, default is WGS84
 
     private static String config_name = "derby-config.properties";
-    private static SettingsBase settings = new SettingsBase(new FilePropertyConnector(System.getProperty(CoalesceParameters.COALESCE_CONFIG_LOCATION)));
+    private static SettingsBase settings = new SettingsBase(new FilePropertyConnector(CoalesceParameters.COALESCE_CONFIG_LOCATION));
 
     /*--------------------------------------------------------------------------
     Property Names
