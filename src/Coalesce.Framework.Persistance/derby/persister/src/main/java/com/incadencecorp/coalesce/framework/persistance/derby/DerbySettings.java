@@ -17,6 +17,7 @@
 
 package com.incadencecorp.coalesce.framework.persistance.derby;
 
+import com.incadencecorp.coalesce.api.CoalesceParameters;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 import com.incadencecorp.unity.common.IConfigurationsConnector;
 import com.incadencecorp.unity.common.SettingsBase;
@@ -36,7 +37,7 @@ public class DerbySettings {
     private static final int SRID = 4326; // Spatial Reference ID, default is WGS84
 
     private static String config_name = "derby-config.properties";
-    private static SettingsBase settings = new SettingsBase(new FilePropertyConnector(System.getProperty("COALESCE_CONFIG_LOCATION")));
+    private static SettingsBase settings = new SettingsBase(new FilePropertyConnector(System.getProperty(CoalesceParameters.COALESCE_CONFIG_LOCATION)));
 
     /*--------------------------------------------------------------------------
     Property Names
@@ -57,7 +58,7 @@ public class DerbySettings {
 
     private static final String DEFAULT_USERNAME = ENTERPRISEDB;
     private static final String DEFAULT_PASSWORD = ENTERPRISEDB;
-    
+
     /*--------------------------------------------------------------------------
     Initialization
     --------------------------------------------------------------------------*/
@@ -79,7 +80,7 @@ public class DerbySettings {
     {
         settings = new SettingsBase(connector);
     }
-    
+
     /**
      * Configures the settings to use a particular connector and property name.
      * 
@@ -98,7 +99,8 @@ public class DerbySettings {
     /**
      * @return Returns the address of the database.
      */
-    public static String getDatabaseAddress() {
+    public static String getDatabaseAddress()
+    {
         return settings.getSetting(config_name, DSS_DB_SERVER_NAME, "10.0.51.90", true);
     }
 
@@ -107,14 +109,16 @@ public class DerbySettings {
      *
      * @param databaseAddress
      */
-    public static void setDatabaseAddress(String databaseAddress) {
+    public static void setDatabaseAddress(String databaseAddress)
+    {
         settings.setSetting(config_name, DSS_DB_SERVER_NAME, databaseAddress);
     }
 
     /**
      * @return Returns the username used for accessing the database.
      */
-    public static String getUserName() {
+    public static String getUserName()
+    {
         return settings.getSetting(config_name, DSS_DB_USER, DEFAULT_USERNAME, false);
     }
 
@@ -123,14 +127,16 @@ public class DerbySettings {
      *
      * @param userName
      */
-    public static void setUserName(String userName) {
+    public static void setUserName(String userName)
+    {
         settings.setSetting(config_name, DSS_DB_USER, userName);
     }
 
     /**
      * @return Returns the password used for accessing the database.
      */
-    public static String getUserPassword() {
+    public static String getUserPassword()
+    {
         return settings.getSetting(config_name, DSS_DB_PASSWORD, DEFAULT_PASSWORD, false);
     }
 
@@ -139,14 +145,16 @@ public class DerbySettings {
      *
      * @param userPassword
      */
-    public static void setUserPassword(String userPassword) {
+    public static void setUserPassword(String userPassword)
+    {
         settings.setSetting(config_name, DSS_DB_PASSWORD, userPassword);
     }
 
     /**
      * @return Returns the schema used for the database.
      */
-    public static String getDatabaseSchema() {
+    public static String getDatabaseSchema()
+    {
         return settings.getSetting(config_name, DSS_SCHEMA, "coalesce", true);
     }
 
@@ -155,14 +163,16 @@ public class DerbySettings {
      *
      * @param databaseSchema
      */
-    public static void setDatabaseSchema(String databaseSchema) {
+    public static void setDatabaseSchema(String databaseSchema)
+    {
         settings.setSetting(config_name, DSS_SCHEMA, databaseSchema);
     }
 
     /**
      * @return Returns the database name.
      */
-    public static String getDatabaseName() {
+    public static String getDatabaseName()
+    {
         return settings.getSetting(config_name, DSS_DATABASE, "OMEGA", true);
     }
 
@@ -171,14 +181,16 @@ public class DerbySettings {
      *
      * @param databaseName
      */
-    public static void setDatabaseName(String databaseName) {
+    public static void setDatabaseName(String databaseName)
+    {
         settings.setSetting(config_name, DSS_DATABASE, databaseName);
     }
 
     /**
      * @return Returns the port used for accessing the database.
      */
-    public static int getDatabasePort() {
+    public static int getDatabasePort()
+    {
         return settings.getSetting(config_name, DSS_DB_SERVER_PORT, 5444, true);
     }
 
@@ -187,14 +199,16 @@ public class DerbySettings {
      *
      * @param databasePort
      */
-    public static void setDatabasePort(int databasePort) {
+    public static void setDatabasePort(int databasePort)
+    {
         settings.setSetting(config_name, DSS_DB_SERVER_PORT, databasePort);
     }
 
     /**
      * @return Returns database parameters.
      */
-    public static ServerConn getServerConn() {
+    public static ServerConn getServerConn()
+    {
 
         ServerConn serCon = new ServerConn();
 
@@ -212,16 +226,19 @@ public class DerbySettings {
      *
      * @return SRID (Spatial Reference Identifier for geospatial fields)
      */
-    public static int getSRID() {
+    public static int getSRID()
+    {
         return settings.getSetting(config_name, DSS_SRID, SRID, true);
     }
 
     /**
-     * Sets the Spatial Reference Identifier (SRID) - required for geospatial fields
+     * Sets the Spatial Reference Identifier (SRID) - required for geospatial
+     * fields
      *
      * @param srid
      */
-    public static void setSRID(int srid) {
+    public static void setSRID(int srid)
+    {
         settings.setSetting(config_name, DSS_SRID, srid);
     }
 
