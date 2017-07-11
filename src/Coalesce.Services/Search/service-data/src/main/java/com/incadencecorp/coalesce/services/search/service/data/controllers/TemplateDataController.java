@@ -17,6 +17,7 @@
 package com.incadencecorp.coalesce.services.search.service.data.controllers;
 
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -106,7 +107,7 @@ public class TemplateDataController {
     /**
      * @return a list of templates registered with this service.
      */
-    public List<ObjectMetaData> getEntityTemplateMetadata()
+    public List<ObjectMetaData> getEntityTemplateMetadata() throws RemoteException
     {
         LOGGER.debug("Retrieving Templates");
 
@@ -138,7 +139,7 @@ public class TemplateDataController {
      * @param key
      * @return a list of record sets for the provided template key.
      */
-    public List<ObjectData> getRecordSets(String key)
+    public List<ObjectData> getRecordSets(String key) throws RemoteException
     {
         LOGGER.debug("Retrieving Record Sets [Key: ({})]", key);
 
@@ -156,7 +157,7 @@ public class TemplateDataController {
         }
         else
         {
-            LOGGER.warn(String.format(CoalesceErrors.NOT_FOUND, "Template", key));
+            error(String.format(CoalesceErrors.NOT_FOUND, "Template", key));
         }
 
         return results;
@@ -167,7 +168,7 @@ public class TemplateDataController {
      * @param recordsetKey
      * @return a list of fields for the provided record set key.
      */
-    public List<FieldData> getRecordSetFields(String key, String recordsetKey)
+    public List<FieldData> getRecordSetFields(String key, String recordsetKey) throws RemoteException
     {
         LOGGER.debug("Retrieving Fields [Key: ({}) Recordset: ({})]", key, recordsetKey);
 
@@ -197,13 +198,13 @@ public class TemplateDataController {
                 }
                 else
                 {
-                    LOGGER.warn(String.format(CoalesceErrors.NOT_FOUND, "Record Set", recordsetKey));
+                    error(String.format(CoalesceErrors.NOT_FOUND, "Record Set", recordsetKey));
                 }
 
             }
             else
             {
-                LOGGER.warn(String.format(CoalesceErrors.NOT_FOUND, "Template", key));
+                error(String.format(CoalesceErrors.NOT_FOUND, "Template", key));
             }
         }
 
@@ -214,7 +215,7 @@ public class TemplateDataController {
      * @param key
      * @return the {@link CoalesceEntityTemplate} for the specified key.
      */
-    public CoalesceEntityTemplate getTemplate(String key)
+    public CoalesceEntityTemplate getTemplate(String key) throws RemoteException
     {
         CoalesceEntityTemplate result = null;
 
@@ -224,7 +225,7 @@ public class TemplateDataController {
         }
         else
         {
-            LOGGER.warn(String.format(CoalesceErrors.NOT_FOUND, "Template", key));
+            error(String.format(CoalesceErrors.NOT_FOUND, "Template", key));
         }
 
         return result;
@@ -236,9 +237,9 @@ public class TemplateDataController {
      * @param template
      * @return whether or not it was successfully saved.
      */
-    public CallResult setTemplate(CoalesceEntityTemplate template)
+    public CallResult setTemplate(CoalesceEntityTemplate template) throws RemoteException
     {
-        CallResult result;
+        CallResult result = null;
 
         try
         {
@@ -257,12 +258,11 @@ public class TemplateDataController {
         }
         catch (CoalescePersistorException e)
         {
-            LOGGER.error(String.format(CoalesceErrors.NOT_SAVED,
-                                       template.getKey(),
-                                       CoalesceEntityTemplate.class.getSimpleName(),
-                                       e.getMessage()),
-                         e);
-            result = new CallResult(CallResults.FAILED, e);
+            error(String.format(CoalesceErrors.NOT_SAVED,
+                                template.getKey(),
+                                CoalesceEntityTemplate.class.getSimpleName(),
+                                e.getMessage()),
+                  e);
         }
 
         return result;
@@ -303,4 +303,22 @@ public class TemplateDataController {
 
     }
 
+    private void error(String msg) throws RemoteException
+    {
+        error(msg, null);
+    }
+
+    private void error(String msg, Exception e) throws RemoteException
+    {
+        if (e == null)
+        {
+            LOGGER.warn(msg);
+        }
+        else
+        {
+            LOGGER.error(msg, e);
+        }
+
+        throw new RemoteException(msg);
+    }
 }

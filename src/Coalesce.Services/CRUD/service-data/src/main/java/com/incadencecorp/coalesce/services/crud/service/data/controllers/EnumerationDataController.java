@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.incadencecorp.coalesce.api.CoalesceErrors;
+import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
@@ -42,7 +43,6 @@ import com.incadencecorp.coalesce.services.crud.api.ICrudClient;
 import com.incadencecorp.coalesce.services.crud.service.data.model.api.record.IValuesRecord;
 import com.incadencecorp.coalesce.services.crud.service.data.model.impl.coalesce.entity.EnumerationCoalesceEntity;
 import com.incadencecorp.coalesce.services.crud.service.data.model.impl.pojo.entity.EnumerationPojoEntity;
-import com.incadencecorp.coalesce.services.crud.service.data.model.impl.pojo.record.MetadataPojoRecord;
 import com.incadencecorp.coalesce.services.crud.service.data.model.impl.pojo.record.ValuesPojoRecord;
 import com.incadencecorp.coalesce.services.search.api.ISearchClient;
 
@@ -69,7 +69,7 @@ public class EnumerationDataController {
     /**
      * @return a list of available enumerations.
      */
-    public Map<String, String> getEnumerations()
+    public Map<String, String> getEnumerations() throws RemoteException
     {
         Map<String, String> enumerations = new HashMap<String, String>();
 
@@ -105,17 +105,17 @@ public class EnumerationDataController {
                 }
                 else
                 {
-                    LOGGER.warn(String.format(CoalesceErrors.NOT_FOUND, "Enumerations", "*"));
+                    error(String.format(CoalesceErrors.NOT_FOUND, "Enumerations", "*"));
                 }
             }
         }
         catch (CoalesceException e)
         {
-            LOGGER.error(CoalesceErrors.FAILED_TASK,
-                         this.getClass().getSimpleName(),
-                         search.getClass().getSimpleName(),
-                         e.getMessage(),
-                         e);
+            error(String.format(CoalesceErrors.FAILED_TASK,
+                                this.getClass().getSimpleName(),
+                                search.getClass().getSimpleName(),
+                                e.getMessage()),
+                  e);
         }
 
         return enumerations;
@@ -125,7 +125,7 @@ public class EnumerationDataController {
      * @param key
      * @return an enumeration in JSON format
      */
-    public EnumerationPojoEntity getEnumeration(String key)
+    public EnumerationPojoEntity getEnumeration(String key) throws RemoteException
     {
         EnumerationPojoEntity pojo = new EnumerationPojoEntity();
 
@@ -133,7 +133,7 @@ public class EnumerationDataController {
         {
             Results<CoalesceEntity>[] results = crud.retrieveDataObjects(key);
 
-            if (results != null && results.length == 1)
+            if (results != null && results.length == 1 && results[0].getStatus() == EResultStatus.SUCCESS)
             {
                 EnumerationCoalesceEntity enumeration = new EnumerationCoalesceEntity();
                 if (enumeration.initialize(results[0].getResult()))
@@ -142,17 +142,17 @@ public class EnumerationDataController {
                 }
                 else
                 {
-                    LOGGER.info(String.format(CoalesceErrors.INVALID_ENUMERATION, key));
+                    error(String.format(CoalesceErrors.INVALID_ENUMERATION, key));
                 }
             }
             else
             {
-                LOGGER.info(String.format(CoalesceErrors.INVALID_ENUMERATION, key));
+                error(String.format(CoalesceErrors.INVALID_ENUMERATION, key));
             }
         }
         catch (RemoteException | CoalesceDataFormatException e)
         {
-            LOGGER.error(String.format(CoalesceErrors.INVALID_ENUMERATION, key), e);
+            error(String.format(CoalesceErrors.INVALID_ENUMERATION, key), e);
         }
 
         return pojo;
@@ -163,13 +163,13 @@ public class EnumerationDataController {
      * 
      * @param value
      */
-    public void setEnumeration(EnumerationPojoEntity value)
+    public void setEnumeration(EnumerationPojoEntity value) throws RemoteException
     {
         try
         {
             Results<CoalesceEntity>[] results = crud.retrieveDataObjects(value.getKey());
 
-            if (results != null && results.length == 1)
+            if (results != null && results.length == 1 && results[0].getStatus() == EResultStatus.SUCCESS)
             {
                 EnumerationCoalesceEntity enumeration = new EnumerationCoalesceEntity();
                 enumeration.initialize(results[0].getResult());
@@ -179,7 +179,7 @@ public class EnumerationDataController {
             }
             else
             {
-                LOGGER.info(String.format(CoalesceErrors.NOT_SAVED,
+                error(String.format(CoalesceErrors.NOT_SAVED,
                                           value.getKey(),
                                           "enumeration",
                                           String.format(CoalesceErrors.INVALID_ENUMERATION, value.getKey())));
@@ -187,11 +187,11 @@ public class EnumerationDataController {
         }
         catch (RemoteException | CoalesceDataFormatException e)
         {
-            LOGGER.error(String.format(CoalesceErrors.NOT_SAVED, value.getKey(), "enumeration", e.getMessage()), e);
+            error(String.format(CoalesceErrors.NOT_SAVED, value.getKey(), "enumeration", e.getMessage()), e);
         }
     }
 
-    public List<ValuesPojoRecord> getEnumerationValues(String key)
+    public List<ValuesPojoRecord> getEnumerationValues(String key) throws RemoteException
     {
         List<ValuesPojoRecord> values = new ArrayList<ValuesPojoRecord>();
 
@@ -199,7 +199,7 @@ public class EnumerationDataController {
         {
             Results<CoalesceEntity>[] results = crud.retrieveDataObjects(key);
 
-            if (results != null && results.length == 1)
+            if (results != null && results.length == 1 && results[0].getStatus() == EResultStatus.SUCCESS)
             {
                 EnumerationCoalesceEntity enumeration = new EnumerationCoalesceEntity();
                 enumeration.initialize(results[0].getResult());
@@ -211,18 +211,18 @@ public class EnumerationDataController {
             }
             else
             {
-                LOGGER.info(String.format(CoalesceErrors.NOT_FOUND, "enumeration", key));
+                error(String.format(CoalesceErrors.NOT_FOUND, "enumeration", key));
             }
         }
         catch (RemoteException | CoalesceDataFormatException e)
         {
-            LOGGER.error(String.format(CoalesceErrors.NOT_FOUND, "enumeration", key), e);
+            error(String.format(CoalesceErrors.NOT_FOUND, "enumeration", key), e);
         }
 
         return values;
     }
 
-    public Map<String, String> getEnumerationAssociatedValues(String key, String valuekey)
+    public Map<String, String> getEnumerationAssociatedValues(String key, String valuekey) throws RemoteException
     {
         Map<String, String> values = new HashMap<String, String>();
 
@@ -230,7 +230,7 @@ public class EnumerationDataController {
         {
             Results<CoalesceEntity>[] results = crud.retrieveDataObjects(key);
 
-            if (results != null && results.length == 1)
+            if (results != null && results.length == 1 && results[0].getStatus() == EResultStatus.SUCCESS)
             {
                 EnumerationCoalesceEntity enumeration = new EnumerationCoalesceEntity();
                 enumeration.initialize(results[0].getResult());
@@ -246,15 +246,33 @@ public class EnumerationDataController {
             }
             else
             {
-                LOGGER.info(String.format(CoalesceErrors.NOT_FOUND, "enumeration", key));
+                error(String.format(CoalesceErrors.NOT_FOUND, "enumeration", key));
             }
         }
         catch (RemoteException | CoalesceDataFormatException e)
         {
-            LOGGER.error(String.format(CoalesceErrors.NOT_FOUND, "enumeration", key), e);
+            error(String.format(CoalesceErrors.NOT_FOUND, "enumeration", key), e);
         }
 
         return values;
     }
 
+    private void error(String msg) throws RemoteException
+    {
+        error(msg, null);
+    }
+
+    private void error(String msg, Exception e) throws RemoteException
+    {
+        if (e == null)
+        {
+            LOGGER.warn(msg);
+        }
+        else
+        {
+            LOGGER.error(msg, e);
+        }
+
+        throw new RemoteException(msg);
+    }
 }

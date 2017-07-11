@@ -1,5 +1,6 @@
 package com.incadencecorp.coalesce.services.crud.service.data.jaxrs;
 
+import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Map;
 
@@ -11,7 +12,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import com.incadencecorp.coalesce.services.crud.service.data.model.impl.pojo.entity.EnumerationPojoEntity;
-import com.incadencecorp.coalesce.services.crud.service.data.model.impl.pojo.record.MetadataPojoRecord;
 import com.incadencecorp.coalesce.services.crud.service.data.model.impl.pojo.record.ValuesPojoRecord;
 
 /**
@@ -25,26 +25,26 @@ public interface IEnumerationDataControllerJaxRS {
     @GET
     @Path("/")
     @Produces("application/json")
-    Map<String, String> getEnumerations();
+    Map<String, String> getEnumerations() throws RemoteException;
 
     @GET
     @Path("/{key}")
     @Produces("application/json")
-    EnumerationPojoEntity getEnumeration(@PathParam("key") String key);
+    EnumerationPojoEntity getEnumeration(@PathParam("key") String key) throws RemoteException;
 
     @POST
     @Path("/")
     @Consumes("application/json")
-    void setEnumeration(EnumerationPojoEntity value);
+    void setEnumeration(EnumerationPojoEntity value) throws RemoteException;
     
     @GET
     @Path("/{key}/values")
     @Produces("application/json")
-    List<ValuesPojoRecord> getEnumerationValues(@PathParam("key") String key);
+    List<ValuesPojoRecord> getEnumerationValues(@PathParam("key") String key) throws RemoteException;
 
     @GET
     @Path("/{key}/values/{valuekey}/associatedvalues")
     @Produces("application/json")
-    Map<String, String> getEnumerationAssociatedValues(@PathParam("key") String key, @PathParam("valuekey") String valuekey);
+    Map<String, String> getEnumerationAssociatedValues(@PathParam("key") String key, @PathParam("valuekey") String valuekey) throws RemoteException;
 
 }

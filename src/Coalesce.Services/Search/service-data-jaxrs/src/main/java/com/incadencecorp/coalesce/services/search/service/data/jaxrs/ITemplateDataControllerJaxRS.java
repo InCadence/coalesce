@@ -1,5 +1,6 @@
 package com.incadencecorp.coalesce.services.search.service.data.jaxrs;
 
+import java.rmi.RemoteException;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -26,26 +27,27 @@ public interface ITemplateDataControllerJaxRS {
     @GET
     @Path("/")
     @Produces("application/json")
-    List<ObjectMetaData> getEntityTemplateMetadata();
-    
+    List<ObjectMetaData> getEntityTemplateMetadata() throws RemoteException;
+
     @GET
     @Path("/{key}")
     @Produces("application/json")
-    CoalesceEntityTemplate getTemplate(@PathParam("key") String key);
+    CoalesceEntityTemplate getTemplate(@PathParam("key") String key) throws RemoteException;
 
     @POST
     @Path("/")
     @Consumes("application/json")
-    CallResult setTemplate(CoalesceEntityTemplate template);
-    
+    CallResult setTemplate(CoalesceEntityTemplate template) throws RemoteException;
+
     @GET
     @Path("/{key}/recordsets")
     @Produces("application/json")
-    List<ObjectData> getRecordSets(@PathParam("key") String key);
+    List<ObjectData> getRecordSets(@PathParam("key") String key) throws RemoteException;
 
     @GET
     @Path("/{key}/recordsets/{recordsetKey}/fields")
     @Produces("application/json")
-    List<FieldData> getRecordSetFields(@PathParam("key") String key, @PathParam("recordsetKey") String recordsetKey);
+    List<FieldData> getRecordSetFields(@PathParam("key") String key, @PathParam("recordsetKey") String recordsetKey)
+            throws RemoteException;
 
 }
