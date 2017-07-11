@@ -23,6 +23,7 @@ import com.incadencecorp.coalesce.api.CoalesceParameters;
 import com.incadencecorp.coalesce.common.classification.helpers.StringHelper;
 import com.incadencecorp.unity.common.IConfigurationsConnector;
 import com.incadencecorp.unity.common.SettingsBase;
+import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
 
 /**
  * Configuration properties for {@link FilePersistorImpl}.
@@ -35,7 +36,7 @@ public class FilePersistorSettings {
     --------------------------------------------------------------------------*/
 
     private static String config_name = FilePersistorImpl.class.getSimpleName() + ".properties";
-    private static SettingsBase settings = new SettingsBase(null);
+    private static SettingsBase settings = new SettingsBase(new FilePropertyConnector(CoalesceParameters.COALESCE_CONFIG_LOCATION));
 
     /*--------------------------------------------------------------------------
     Initialization
