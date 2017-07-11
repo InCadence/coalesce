@@ -1684,6 +1684,9 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                 //store.modifyFeatures(field.getName(), field.getValue(), filter);
             	String fieldname = field.getName();
             	Object fieldvalue = field.getValue();
+            	// Skip field if value is null
+            	if (fieldvalue == null)
+            		continue;
             	switch (field.getDataType()) {
  
 	                // These types should be able to be handled directly
