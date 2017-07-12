@@ -17,19 +17,20 @@
 
 package com.incadencecorp.coalesce.plugins.template2java;
 
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 
-@Mojo( name = "template2java")
-public class Template2JavaMojo extends AbstractMojo{
+@Mojo( name = "generate",
+defaultPhase = LifecyclePhase.GENERATE_SOURCES,
+threadSafe = true
+)
 
-    @Override
-    public void execute() throws MojoExecutionException, MojoFailureException
-    {
-        // TODO Auto-generated method stub
-        
+public class Template2JavaMojo extends AbstractTemplate2JavaMojo{
+
+    public void execute() throws MojoExecutionException {
+        super.execute();
     }
 
 }

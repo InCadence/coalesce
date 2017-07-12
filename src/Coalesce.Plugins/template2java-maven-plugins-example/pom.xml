@@ -13,11 +13,24 @@
 
 
 	<build>
-
 		<plugins>
-
-		</plugins>
-
+      <plugin>
+        <groupId>com.incadencecorp.coalesce.plugins</groupId>
+        <artifactId>template2java-maven-plugin</artifactId>
+        <version>0.0.25-SNAPSHOT</version>
+        <configuration>
+        <filePersistorName>com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLPersistorExt</filePersistorName>
+        <outputDir>target</outputDir>
+        </configuration>
+        <executions>
+          <execution>
+          <goals>
+              <goal>generate</goal>
+          </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
 	</build>
 
 	<dependencies>
