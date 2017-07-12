@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<features xmlns="http://karaf.apache.org/xmlns/features/v1.2.0" name="aries-rsa-1.10.0">
+
+    <feature name="aries-rsa-core" version="1.10.0">
+        <feature>scr</feature>
+        <bundle>mvn:org.apache.aries.rsa/org.apache.aries.rsa.spi/1.10.0</bundle>
+        <bundle>mvn:org.apache.aries.rsa/org.apache.aries.rsa.core/1.10.0</bundle>
+        <bundle>mvn:org.apache.aries.rsa/org.apache.aries.rsa.topology-manager/1.10.0</bundle>
+        <bundle>mvn:org.apache.aries.rsa.discovery/org.apache.aries.rsa.discovery.command/1.10.0</bundle>
+        <conditional>
+            <condition>eventadmin</condition>
+            <bundle>mvn:org.apache.aries.rsa/org.apache.aries.rsa.eapub/1.10.0</bundle>
+        </conditional>
+    </feature>
+    
+    <feature name="aries-rsa-provider-tcp" version="1.10.0">
+        <feature>aries-rsa-core</feature>
+        <bundle>mvn:org.apache.aries.rsa.provider/org.apache.aries.rsa.provider.tcp/1.10.0</bundle>
+    </feature>
+
+    <feature name="aries-rsa-provider-fastbin" version="1.10.0">
+        <feature>aries-rsa-core</feature>
+        <bundle>mvn:org.fusesource.hawtdispatch/hawtdispatch/1.21</bundle>
+        <bundle>mvn:org.fusesource.hawtbuf/hawtbuf/1.11</bundle>
+        <bundle>mvn:org.apache.aries.rsa.provider/org.apache.aries.rsa.provider.fastbin/1.10.0</bundle>
+    </feature>
+
+    <feature name="aries-rsa-discovery-local" version="1.10.0">
+        <feature>aries-rsa-core</feature>
+        <bundle>mvn:org.apache.aries.rsa.discovery/org.apache.aries.rsa.discovery.local/1.10.0</bundle>
+    </feature>
+
+    <feature name="aries-rsa-discovery-config" version="1.10.0">
+        <feature>aries-rsa-core</feature>
+        <bundle>mvn:org.apache.aries.rsa.discovery/org.apache.aries.rsa.discovery.config/1.10.0</bundle>
+    </feature>
+
+    <feature name="aries-rsa-discovery-zookeeper" version="1.10.0">
+        <feature>aries-rsa-core</feature>
+        <bundle>mvn:org.apache.zookeeper/zookeeper/3.4.7</bundle>
+        <bundle>mvn:org.apache.aries.rsa.discovery/org.apache.aries.rsa.discovery.local/1.10.0</bundle>
+        <bundle>mvn:org.apache.aries.rsa.discovery/org.apache.aries.rsa.discovery.zookeeper/1.10.0</bundle>
+        
+        <!-- Create config with defaults from metatype -->
+        <config name="org.apache.aries.rsa.discovery.zookeeper">
+        </config>
+    </feature>
+    
+    <feature name="aries-rsa-discovery-zookeeper-server" version="1.10.0">
+        <feature>aries-rsa-discovery-zookeeper</feature>
+
+        <!-- Create config with defaults from metatype -->
+        <config name="org.apache.aries.rsa.discovery.zookeeper.server">
+        </config>
+        
+    </feature>
+    
+
+</features>
