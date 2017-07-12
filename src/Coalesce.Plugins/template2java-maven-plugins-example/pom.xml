@@ -1,0 +1,45 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>template2java-maven-plugins-example</artifactId>
+	<name>Coalesce Plugin Template2Java</name>
+
+	<parent>
+		<groupId>com.incadencecorp.coalesce.plugins</groupId>
+		<artifactId>coalesce-plugins-parent</artifactId>
+		<version>0.0.25-SNAPSHOT</version>
+		<relativePath>..</relativePath>
+	</parent>
+
+
+	<build>
+
+		<plugins>
+
+		</plugins>
+
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.incadencecorp.coalesce.plugins</groupId>
+			<artifactId>template2java-maven-plugins</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.incadencecorp.coalesce</groupId>
+			<artifactId>coalesce-framework-persister-postgresql</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<!-- dependencies to annotations -->
+		<dependency>
+			<groupId>org.apache.maven.plugin-tools</groupId>
+			<artifactId>maven-plugin-annotations</artifactId>
+			<version>3.4</version>
+			<scope>provided</scope>
+		</dependency>
+
+	</dependencies>
+
+</project>
