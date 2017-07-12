@@ -43,6 +43,7 @@
 			<groupId>com.incadencecorp.coalesce</groupId>
 			<artifactId>coalesce-framework-persister-postgresql</artifactId>
 			<version>${project.version}</version>
+			<scope>runtime</scope>
 		</dependency>
 
 		<!-- dependencies to annotations -->

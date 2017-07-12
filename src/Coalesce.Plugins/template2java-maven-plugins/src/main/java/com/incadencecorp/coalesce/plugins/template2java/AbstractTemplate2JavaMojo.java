@@ -8,11 +8,15 @@ import java.net.URLClassLoader;
 import java.nio.file.Paths;
 import java.util.List;
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.descriptor.PluginDescriptor;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.xml.sax.SAXException;
 
 import com.incadencecorp.coalesce.api.CoalesceErrors;
@@ -27,6 +31,8 @@ import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 */
 public abstract class AbstractTemplate2JavaMojo extends AbstractMojo {
 	
+//    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractTemplate2JavaMojo.class);
+    
     //Temporary ---- Replace with Template Parameter that contains Template Directory
     @Parameter(defaultValue = "NoName")
     private String filePersistorName;
@@ -34,40 +40,65 @@ public abstract class AbstractTemplate2JavaMojo extends AbstractMojo {
     @Parameter(defaultValue = "target")
     private String outputDir;
     
-    /**
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
-     */
+    @Component
     private MavenProject project;
+    @Component
+    private PluginDescriptor descriptor;
+
+    private void addDependenciesToClasspath(String artifactId) {
+
+        System.out.println(artifactId);
+        
+        for (Object artifact : project.getDependencyArtifacts()) {
+            if (((Artifact) artifact).getArtifactId().equals(artifactId)) {
+                try {
+                    
+                    final URL url = ((Artifact) artifact).getFile().toURI().toURL();
+                    final ClassRealm realm = descriptor.getClassRealm();
+                    realm.addURL(url);
+                }
+                catch (MalformedURLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+    }
     
+   
 	 public void execute() throws MojoExecutionException {
 		 URL[] runtimeUrls = null;
 		 System.out.println("Starting");
-		 try{
-			 List runtimeClasspathElements = project.getRuntimeClasspathElements();
-			 System.out.println("Have classpath Elements");
-			 runtimeUrls = new URL[runtimeClasspathElements.size()];		
-		 	 for (int i = 0; i < runtimeClasspathElements.size(); i++) {
-		 		 String element = (String) runtimeClasspathElements.get(i);
-		 		 runtimeUrls[i] = new File(element).toURI().toURL();
-		 	 }
-		 } catch(MalformedURLException | DependencyResolutionRequiredException e){
-			 System.out.println(e);
-			 return;
-		 }
-		 System.out.println("Trying to get Loader");
-		 URLClassLoader newLoader = new URLClassLoader(runtimeUrls,
-		   Thread.currentThread().getContextClassLoader());
-		 
-		 if(filePersistorName.equals("NoName")){
-			 return;
-		 }
+//		 try{
+//		     
+//		     if (project == null) {
+//		         System.out.println("ERROR");
+//		     }
+//		     
+//			 List runtimeClasspathElements = project.getRuntimeClasspathElements();
+//			 System.out.println("Have classpath Elements");
+//			 runtimeUrls = new URL[runtimeClasspathElements.size()];		
+//		 	 for (int i = 0; i < runtimeClasspathElements.size(); i++) {
+//		 		 String element = (String) runtimeClasspathElements.get(i);
+//		 		 runtimeUrls[i] = new File(element).toURI().toURL();
+//		 	 }
+//		 } catch(MalformedURLException | DependencyResolutionRequiredException e){
+//			 System.out.println(e);
+//			 return;
+//		 }
+//		 System.out.println("Trying to get Loader");
+//		 URLClassLoader newLoader = new URLClassLoader(runtimeUrls,
+//		   Thread.currentThread().getContextClassLoader());
+//		 
+//		 if(filePersistorName.equals("NoName")){
+//			 return;
+//		 }
 		 System.out.println("I'm looking for a persistor " + filePersistorName + " my target is " + outputDir);
 		 ICoalescePersistor persistor;
 		 try
          {
-             Object persister = newLoader.loadClass(filePersistorName).newInstance();
+		     addDependenciesToClasspath(filePersistorName);
+		     
+             Object persister = ClassLoader.getSystemClassLoader().loadClass(filePersistorName).newInstance();
              System.out.println("Loaded Class");
              CoalesceCodeGeneratorIterator it = new CoalesceCodeGeneratorIterator(Paths.get(outputDir));
              if (persister instanceof ICoalescePersistor)
