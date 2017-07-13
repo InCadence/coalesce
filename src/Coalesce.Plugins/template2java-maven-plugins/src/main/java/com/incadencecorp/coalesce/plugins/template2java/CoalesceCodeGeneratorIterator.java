@@ -35,6 +35,7 @@ import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 
 import com.incadencecorp.coalesce.api.ICoalesceNormalizer;
+import com.incadencecorp.coalesce.common.classification.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
@@ -71,7 +72,8 @@ public class CoalesceCodeGeneratorIterator extends CoalesceIterator<List<Coalesc
         Properties p = new Properties();
         p.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
         p.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
-//        p.setProperty(RuntimeConstants.FILE_RESOURCE_LOADER_PATH, Paths.get("src", "main", "resources").toString());
+        // p.setProperty(RuntimeConstants.FILE_RESOURCE_LOADER_PATH,
+        // Paths.get("src", "main", "resources").toString());
 
         ve = new VelocityEngine();
         ve.init(p);
@@ -86,6 +88,12 @@ public class CoalesceCodeGeneratorIterator extends CoalesceIterator<List<Coalesc
 
     public void generateCode(CoalesceEntity entity) throws CoalesceException
     {
+        if (StringHelper.isNullOrEmpty(entity.getClassName()))
+        {
+            entity.setAttribute(CoalesceEntity.ATTRIBUTE_CLASSNAME,
+                                "com.incadencecorp.coalesce." + new ClassNameNormalizer().normalize(entity.getName()));
+        }
+
         packagename = entity.getClassName().substring(0, entity.getClassName().lastIndexOf("."));
 
         List<CoalesceRecordset> recordsets = new ArrayList<CoalesceRecordset>();
@@ -117,7 +125,7 @@ public class CoalesceCodeGeneratorIterator extends CoalesceIterator<List<Coalesc
         {
             createFile(template, recordset, context);
         }
-        
+
         return false;
     }
 
@@ -176,7 +184,7 @@ public class CoalesceCodeGeneratorIterator extends CoalesceIterator<List<Coalesc
             result = object_name + normalizer.normalize(parts[parts.length - 2])
                     + normalizer.normalize(parts[parts.length - 1]);
         }
-        
+
         return result;
     }
 }
