@@ -1411,7 +1411,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         DataStore store = connect.getGeoDataStore();
         FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
         SimpleFeatureStore featureStore = (SimpleFeatureStore) store.getFeatureSource(LINKAGE_FEATURE_NAME);
-        Filter filter =ff.equal(ff.property(LINKAGE_ENTITY1_KEY_COLUMN_NAME),ff.literal(entity.getKey()));
+        Filter filter =ff.equals(ff.property(LINKAGE_ENTITY1_KEY_COLUMN_NAME),ff.literal(entity.getKey()));
                
         featureStore.removeFeatures(filter);
 
