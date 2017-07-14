@@ -2,9 +2,14 @@ package org.springframework.samples.mvc.views;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Paths;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -17,11 +22,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.xml.sax.SAXException;
 
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
+import com.incadencecorp.coalesce.plugins.template2java.CoalesceCodeGeneratorIterator;
 
 @Controller
 @RequestMapping("/data/*")
@@ -34,7 +41,7 @@ public class ResourceController {
         System.out.println(json);
 
         CoalesceEntityTemplate template = createTemplate(json);
-        
+
         String templateName = template.getName();
 
         File file = new File(templateName + ".xml");
@@ -65,6 +72,52 @@ public class ResourceController {
         file.delete();
     }
 
+    @RequestMapping(value = "zip/{json}", method = RequestMethod.GET)
+    public void zip(@PathVariable("json") String json, HttpServletResponse response)
+            throws IOException, SAXException, CoalesceException
+    {
+        CoalesceEntityTemplate template = createTemplate(json);
+        String templateName = template.getName();
+        String templateZipName = templateName+".zip";
+
+        File file = new File(templateName);
+        file.mkdir();
+
+        CoalesceCodeGeneratorIterator it = new CoalesceCodeGeneratorIterator(Paths.get(file.getAbsolutePath()));
+        it.generateCode(template);
+        
+        FileOutputStream fos = new FileOutputStream(templateZipName);
+        ZipOutputStream zos = new ZipOutputStream(fos);
+        zipFile(zos, file, null);
+        zos.flush();
+        fos.flush();
+        zos.close();
+        fos.close();
+        
+        File zipFile = new File(templateZipName);
+        InputStream inputStream = new FileInputStream(zipFile);
+
+        // MIME type of the file
+        response.setContentType("application/octet-stream");
+        // Response header
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + templateZipName + "\"");
+        // Read from the file and write into the response
+        OutputStream outputStream = response.getOutputStream();
+        byte[] buffer = new byte[1024];
+        int len;
+        while ((len = inputStream.read(buffer)) != -1)
+        {
+            outputStream.write(buffer, 0, len);
+        }
+        outputStream.flush();
+        outputStream.close();
+        inputStream.close();
+
+        FileUtils.deleteDirectory(file);
+        zipFile.delete();
+
+    }
+
     @RequestMapping(value = "template/{json}", method = RequestMethod.POST)
     public void jsonToXml(@PathVariable("json") String json, HttpServletResponse response) throws IOException, SAXException
     {
@@ -83,31 +136,14 @@ public class ResourceController {
         }
 
     }
-    
-    @RequestMapping(value = "hello/{json}", method = RequestMethod.GET)
-    public void hello(@PathVariable("json") String json, HttpServletResponse response) throws IOException, SAXException
+
+    private CoalesceEntityTemplate createTemplate(String json) throws SAXException, IOException
     {
 
-        response.setContentType("text/xml;charset=UTF-8");
-        response.setHeader("Cache-Control", "no-cache");
-
-        try
-        {
-            response.getWriter().write(json);
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-
-    }
-    
-    private CoalesceEntityTemplate createTemplate(String json) throws SAXException, IOException{
-        
         JSONObject obj = new JSONObject(json);
         String templateName = obj.getString("templateName");
         String className = obj.getString("className").replace('-', '.');
-        
+
         CoalesceEntity entity = new CoalesceEntity();
         entity.initialize();
         entity.setName(templateName);
@@ -146,10 +182,46 @@ public class ResourceController {
 
             }
         }
-        
-        return  CoalesceEntityTemplate.create(entity);
-        
+
+        return CoalesceEntityTemplate.create(entity);
+
     }
 
+    public void zipFile(ZipOutputStream zos, File fileToZip, String parentDir) throws IOException 
+    {
+        if (fileToZip == null || !fileToZip.exists())
+        {
+            return;
+        }
+
+        String zipEntryName = fileToZip.getName();
+        if (parentDir != null && !parentDir.isEmpty())
+        {
+            zipEntryName = parentDir + "/" + fileToZip.getName();
+        }
+
+        if (fileToZip.isDirectory())
+        {
+            System.out.println("+" + zipEntryName);
+            for (File file : fileToZip.listFiles())
+            {
+                zipFile(zos, file, zipEntryName);
+            }
+        }
+        else
+        {
+            System.out.println("   " + zipEntryName);
+            byte[] buffer = new byte[1024];
+            FileInputStream fis = new FileInputStream(fileToZip);
+            zos.putNextEntry(new ZipEntry(zipEntryName));
+            int length;
+            while ((length = fis.read(buffer)) > 0)
+            {
+                zos.write(buffer, 0, length);
+            }
+            zos.closeEntry();
+            fis.close();
+        }
+    }
 
 }

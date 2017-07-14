@@ -60,6 +60,11 @@
 			<version>1.2.16</version>
 			<scope>runtime</scope>
 		</dependency>
+<dependency>
+    <groupId>commons-logging</groupId>
+    <artifactId>commons-logging</artifactId>
+    <version>1.2</version>
+</dependency>
 
 		<!-- @Inject -->
 		<dependency>
@@ -103,6 +108,11 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+<dependency>
+    <groupId>javax.servlet</groupId>
+    <artifactId>jstl</artifactId>
+    <version>1.2</version>
+</dependency>
 
 		<!-- Jackson JSON Processor -->
 		<dependency>
@@ -168,6 +178,13 @@
             <artifactId>coalesce-core</artifactId>
             <version>0.0.25-SNAPSHOT</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.incadencecorp.coalesce.plugins</groupId>
+            <artifactId>template2java-maven-plugins</artifactId>
+            <version>0.0.25-SNAPSHOT</version>
+        </dependency>
+
 
 		<!-- Test -->
 		<dependency>
