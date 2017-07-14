@@ -47,7 +47,13 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 
+
 @Mojo(name = "generate", defaultPhase = LifecyclePhase.COMPILE, threadSafe = true)
+/**
+ * 
+ * @requiresDependencyResolution test
+ *
+ */
 public class Template2JavaMojo extends AbstractMojo {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Template2JavaMojo.class);

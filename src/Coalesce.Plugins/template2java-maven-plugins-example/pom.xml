@@ -11,19 +11,24 @@
 		<relativePath>..</relativePath>
 	</parent>
 
-
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>com.incadencecorp.coalesce.plugins</groupId>
 				<artifactId>template2java-maven-plugin</artifactId>
 				<version>0.0.25-SNAPSHOT</version>
+				<dependencies>
+					<dependency>
+						<groupId>com.incadencecorp.coalesce</groupId>
+						<artifactId>coalesce-framework-persister-postgresql</artifactId>
+						<version>${project.version}</version>
+					</dependency>
+				</dependencies>
 				<configuration>
 					<filePersistorName>com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLPersistorExt</filePersistorName>
 					<outputDir>target</outputDir>
 				</configuration>
 				<executions>
-
 					<execution>
 						<goals>
 							<goal>generate</goal>
@@ -33,89 +38,5 @@
 			</plugin>
 		</plugins>
 	</build>
-
-	<dependencies>
-		<dependency>
-			<groupId>com.incadencecorp.coalesce.plugins</groupId>
-			<artifactId>template2java-maven-plugins</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.incadencecorp.coalesce</groupId>
-			<artifactId>coalesce-framework-persister-postgresql</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<!-- Internal Dependencies -->
-		<dependency>
-			<groupId>com.incadencecorp.coalesce</groupId>
-			<artifactId>coalesce-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.incadencecorp.coalesce</groupId>
-			<artifactId>coalesce-search</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-
-		<!-- PostGreSQL Dependencies -->
-		<dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<version>9.3-1102-jdbc41</version>
-			<!-- <version>9.4-1201-jdbc41</version> -->
-		</dependency>
-		<dependency>
-			<groupId>org.geotools.jdbc</groupId>
-			<artifactId>gt-jdbc-postgis</artifactId>
-			<version>${geotools.version}</version>
-		</dependency>
-
-		 <dependency>
-            <groupId>com.incadencecorp.coalesce</groupId>
-            <artifactId>coalesce-core</artifactId>
-        </dependency>
-
-        <!-- OGC Dependencies -->
-
-        <dependency>
-            <groupId>org.geotools</groupId>
-            <artifactId>gt-opengis</artifactId>
-            <version>${geotools.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.geotools</groupId>
-            <artifactId>gt-api</artifactId>
-            <version>${geotools.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.geotools.xsd</groupId>
-            <artifactId>gt-xsd-fes</artifactId>
-            <version>${geotools.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.geotools</groupId>
-            <artifactId>gt-jdbc</artifactId>
-            <version>${geotools.version}</version>
-        </dependency>
-
-
-
-        <!-- ResultSet -->
-        <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-mapper-asl</artifactId>
-            <version>1.9.13</version>
-        </dependency>
-        
-        
-		
-		<!-- dependencies to annotations -->
-		<dependency>
-			<groupId>org.apache.maven.plugin-tools</groupId>
-			<artifactId>maven-plugin-annotations</artifactId>
-			<version>3.4</version>
-			<scope>provided</scope>
-		</dependency>
-
-	</dependencies>
 
 </project>
