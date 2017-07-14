@@ -36,8 +36,13 @@ public interface ITemplateDataControllerJaxRS {
 
     @POST
     @Path("/")
+    @Consumes("application/xml")
+    boolean setTemplate(String xml) throws RemoteException;
+    
+    @POST
+    @Path("/")
     @Consumes("application/json")
-    CallResult setTemplate(CoalesceEntityTemplate template) throws RemoteException;
+    boolean setTemplateJson(String json) throws RemoteException;
 
     @GET
     @Path("/{key}/recordsets")

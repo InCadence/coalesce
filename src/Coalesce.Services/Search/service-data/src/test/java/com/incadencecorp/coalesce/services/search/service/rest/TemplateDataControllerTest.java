@@ -56,7 +56,7 @@ public class TemplateDataControllerTest {
 
         CoalesceEntityTemplate template2 = CoalesceEntityTemplate.create(entity);
 
-        Assert.assertEquals(CallResults.SUCCESS, controller.setTemplate(template2).getCallResults());
+        Assert.assertEquals(true, controller.setTemplate(template2.toXml()));
 
         Assert.assertEquals(2, controller.getEntityTemplateMetadata().size());
 
@@ -80,7 +80,7 @@ public class TemplateDataControllerTest {
         Assert.assertEquals(0, controller.getRecordSets(randomKey).size());
         Assert.assertEquals(0, controller.getRecordSetFields(randomKey, randomKey).size());
         Assert.assertEquals(0, controller.getRecordSetFields(key, randomKey).size());
-        Assert.assertEquals(CallResults.FAILED, controller.setTemplate(null).getCallResults());
+        Assert.assertEquals(false, controller.setTemplate(null));
     }
 
     @Test
@@ -96,7 +96,7 @@ public class TemplateDataControllerTest {
         TestRecord.createCoalesceRecordset(section, "rs-2");
 
         CoalesceEntityTemplate template = CoalesceEntityTemplate.create(entity);
-        Assert.assertEquals(CallResults.SUCCESS, controller.setTemplate(template).getCallResults());
+        Assert.assertEquals(true, controller.setTemplate(template.toXml()));
 
         List<ObjectData> results = controller.getRecordSets(template.getKey());
 

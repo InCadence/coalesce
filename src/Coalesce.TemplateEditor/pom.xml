@@ -60,6 +60,11 @@
 			<version>1.2.16</version>
 			<scope>runtime</scope>
 		</dependency>
+<dependency>
+    <groupId>commons-logging</groupId>
+    <artifactId>commons-logging</artifactId>
+    <version>1.2</version>
+</dependency>
 
 		<!-- @Inject -->
 		<dependency>
@@ -103,6 +108,11 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+<dependency>
+    <groupId>javax.servlet</groupId>
+    <artifactId>jstl</artifactId>
+    <version>1.2</version>
+</dependency>
 
 		<!-- Jackson JSON Processor -->
 		<dependency>
@@ -168,6 +178,13 @@
             <artifactId>coalesce-core</artifactId>
             <version>0.0.25-SNAPSHOT</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.incadencecorp.coalesce.plugins</groupId>
+            <artifactId>template2java-maven-plugins</artifactId>
+            <version>0.0.25-SNAPSHOT</version>
+        </dependency>
+
 
 		<!-- Test -->
 		<dependency>
@@ -312,6 +329,58 @@
 					</webApp>
 				</configuration>
 			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<supportedProjectTypes>
+						<supportedProjectType>jar</supportedProjectType>
+						<supportedProjectType>bundle</supportedProjectType>
+						<supportedProjectType>war</supportedProjectType>
+					</supportedProjectTypes>
+					<instructions>
+						<_wab>src/main/webapp</_wab>
+						<Bundle-Name>${project.name}</Bundle-Name>
+						<Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+						<Bundle-Version>${project.version}</Bundle-Version>
+						<Import-Package>
+							*; resolution:=optional
+						</Import-Package>
+<!-- 						<Export-Package>${project.groupId}.service.expert*,!*</Export-Package> -->
+						<Bundle-Classpath>
+							WEB-INF/classes,
+							WEB-INF/lib/aopalliance-1.0.jar,
+							WEB-INF/lib/commons-logging-1.1.1.jar,
+							WEB-INF/lib/spring-aop-${spring.version}.jar,
+							WEB-INF/lib/spring-asm-${spring.version}.jar,
+							WEB-INF/lib/spring-beans-${spring.version}.jar,
+							WEB-INF/lib/spring-context-${spring.version}.jar,
+							WEB-INF/lib/spring-context-support-${spring.version}.jar,
+							WEB-INF/lib/spring-core-${spring.version}.jar,
+							WEB-INF/lib/spring-expression-${spring.version}.jar,
+							WEB-INF/lib/spring-jdbc-${spring.version}.jar,
+							WEB-INF/lib/spring-orm-${spring.version}.jar,
+							WEB-INF/lib/spring-tx-${spring.version}.jar,
+							WEB-INF/lib/spring-web-${spring.version}.jar,
+							WEB-INF/lib/spring-webmvc-${spring.version}.jar
+						</Bundle-Classpath>
+						<Web-ContextPath>views/editor</Web-ContextPath>
+						<Embed-Dependency>*; artifactId=!org.osgi.compendium;
+							scope=compile; type=!pom; inline=true</Embed-Dependency>
+						<Embed-Transitive>true</Embed-Transitive>
+						<_removeheaders>
+							Include-Resource,
+							Private-Package,
+							Embed-Dependency,
+							Embed-Transitive,
+							Ignore-Package
+						</_removeheaders>
+					</instructions>
+				</configuration>
+			</plugin>
+			
 		</plugins>
 	</build>
 	<parent>
