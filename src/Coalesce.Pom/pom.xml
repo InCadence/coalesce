@@ -32,7 +32,7 @@
 		<module>../Coalesce.Feature</module>
 		<module>../Coalesce.Plugins</module>
 		<module>../Coalesce.Core.Feature</module>
-		<module>../Coalesce.Karaf/coalesce-karaf-dist</module>
+		<module>../Coalesce.Dist/coalesce-karaf-dist</module>
 	</modules>
 
 	<build>
