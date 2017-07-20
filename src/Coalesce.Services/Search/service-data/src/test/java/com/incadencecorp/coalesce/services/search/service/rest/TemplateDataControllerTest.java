@@ -17,6 +17,8 @@
 
 package com.incadencecorp.coalesce.services.search.service.rest;
 
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.util.List;
 import java.util.UUID;
 
@@ -65,22 +67,64 @@ public class TemplateDataControllerTest {
         Assert.assertEquals(template2.getKey(), controller.getTemplate(template2.getKey()).getKey());
     }
 
-    @Test
-    public void testInvalidCases() throws Exception
+//    @Test
+//    public void testInvalidCases() throws Exception
+//    {
+//        TemplateDataController controller = createController();
+//
+//        Assert.assertEquals(1, controller.getEntityTemplateMetadata().size());
+//        String key = controller.getEntityTemplateMetadata().get(0).getKey();
+//
+//        String randomKey = UUID.randomUUID().toString();
+//
+//        // Test Invalid Keys
+//        Assert.assertNull(controller.getTemplate(randomKey));
+//        Assert.assertEquals(0, controller.getRecordSets(randomKey).size());
+//        Assert.assertEquals(0, controller.getRecordSetFields(randomKey, randomKey).size());
+//        Assert.assertEquals(0, controller.getRecordSetFields(key, randomKey).size());
+//        Assert.assertEquals(false, controller.setTemplate(null));
+//    }
+
+    @Test(expected = RemoteException.class)
+    public void testInValidTemplate() throws Exception
+    {
+        TemplateDataController controller = createController();
+        controller.getTemplate(UUID.randomUUID().toString());
+    }
+
+    @Test(expected = RemoteException.class)
+    public void testInValidNullTemplate() throws Exception
+    {
+        TemplateDataController controller = createController();
+        controller.getTemplate(null);
+    }
+
+    @Test(expected = RemoteException.class)
+    public void testInValidTemplateRecordset() throws Exception
+    {
+        TemplateDataController controller = createController();
+
+        controller.getRecordSets(UUID.randomUUID().toString());
+    }
+
+    @Test(expected = RemoteException.class)
+    public void testInValidTemplateRecordsetAndFields() throws Exception
+    {
+        TemplateDataController controller = createController();
+
+        String randomKey = UUID.randomUUID().toString();
+        Assert.assertEquals(0, controller.getRecordSetFields(randomKey, randomKey).size());
+    }
+
+    @Test(expected = RemoteException.class)
+    public void testInValidTemplateFields() throws Exception
     {
         TemplateDataController controller = createController();
 
         Assert.assertEquals(1, controller.getEntityTemplateMetadata().size());
         String key = controller.getEntityTemplateMetadata().get(0).getKey();
 
-        String randomKey = UUID.randomUUID().toString();
-
-        // Test Invalid Keys
-        Assert.assertNull(controller.getTemplate(randomKey));
-        Assert.assertEquals(0, controller.getRecordSets(randomKey).size());
-        Assert.assertEquals(0, controller.getRecordSetFields(randomKey, randomKey).size());
-        Assert.assertEquals(0, controller.getRecordSetFields(key, randomKey).size());
-        Assert.assertEquals(false, controller.setTemplate(null));
+        controller.getRecordSetFields(key, UUID.randomUUID().toString());
     }
 
     @Test
@@ -132,9 +176,9 @@ public class TemplateDataControllerTest {
 
     private TemplateDataController createController() throws Exception
     {
-        
+
         ICoalescePersistor persistor = new MockPersister();
-        
+
         TestEntity entity = new TestEntity();
         entity.initialize();
 
