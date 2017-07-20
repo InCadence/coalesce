@@ -100,6 +100,8 @@ import com.vividsolutions.jts.geom.Geometry;
  */
 public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements ICoalesceExpressionVistor {
 
+    private static final DerbyNormalizer NORMALIZER = new DerbyNormalizer();
+
     private static final String ENTITY_KEY_COL_NAME = CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getEntityKey());
 
     private static final String SQL_COLUMNS = "coalesce.coalesceentity.objectkey AS " + ENTITY_KEY_COL_NAME + "%1$s";
@@ -173,10 +175,10 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
      * @param dialect
      */
     public DerbyCoalescePreparedFilter(String schema,
-                                          int pageNumber,
-                                          int pageSize,
-                                          boolean includeDeleted,
-                                          PostGISPSDialect dialect)
+                                       int pageNumber,
+                                       int pageSize,
+                                       boolean includeDeleted,
+                                       PostGISPSDialect dialect)
     {
         super(dialect);
 
@@ -807,7 +809,8 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
 
         if (mode == EFilterEnumerationModes.MIXED)
         {
-            mode = Pattern.matches("^[0-9]+$", (String) expression.getValue()) ? EFilterEnumerationModes.ORDINAL : EFilterEnumerationModes.ENUMVALUE;
+            mode = Pattern.matches("^[0-9]+$",
+                                   (String) expression.getValue()) ? EFilterEnumerationModes.ORDINAL : EFilterEnumerationModes.ENUMVALUE;
         }
 
         if (mode == EFilterEnumerationModes.ENUMVALUE)
@@ -871,8 +874,8 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
                 String stringValue = ((String) expressionValue).trim();
 
                 // Yes; Wrapped in Quotes?
-                if (stringValue.startsWith("'") && stringValue.endsWith("'") || stringValue.startsWith("\"")
-                        && stringValue.endsWith("\""))
+                if (stringValue.startsWith("'") && stringValue.endsWith("'")
+                        || stringValue.startsWith("\"") && stringValue.endsWith("\""))
                 {
 
                     FilterFactory ff = CommonFactoryFinder.getFilterFactory();
@@ -1035,7 +1038,7 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
                 if (name.contains(DOT))
                 {
 
-                    name = normalize(name, true).replaceAll("[.]", "");
+                    name = normalize(name, true).replaceAll("coalesce\\.|[.]", "");
 
                     // if (isEnumeration(name)) {
                     // // Drop the record set
@@ -1192,7 +1195,8 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
             if (StringHelper.isNullOrEmpty(lastTable))
             {
                 // from = currentTable;
-                sb.append(" LEFT JOIN " + currentTable + " ON " + currentTable + "." + column + "=coalesce.coalesceentity.objectkey");
+                sb.append(" LEFT JOIN " + currentTable + " ON " + currentTable + "." + column
+                        + "=coalesce.coalesceentity.objectkey");
 
             }
             else
@@ -1239,15 +1243,15 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
         {
             for (String column : propertyNameList)
             {
-
+                String normalizedColumn = column.replaceAll("coalesce\\.|[.]", "");
+                
                 if (isEnumeration(column))
                 {
-                    column = String.format(getEnumProperty(), enumList.indexOf(column)) + " AS "
-                            + column.replaceAll("[.]", "");
+                    column = String.format(getEnumProperty(), enumList.indexOf(column)) + " AS " + normalizedColumn;
                 }
                 else
                 {
-                    column = column + " AS " + column.replaceAll("[.]", "");
+                    column = column + " AS " + normalizedColumn;
                 }
 
                 sb.append(COMMA_SPACE + column + postfix);
@@ -1302,7 +1306,7 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
 
             // Yes; Get table's name w/o field
             String tablename = CoalesceIndexInfo.getIndexTableName(parts[0]);
-            String tablenameSchema = databaseSchema + DOT + tablename;
+            String tablenameSchema = databaseSchema + DOT + NORMALIZER.normalize(tablename);
             String propertyName = parts[1];
 
             if (!tablename.contains(COALESCEENTITY) && !tableList.contains(tablenameSchema))
@@ -1345,7 +1349,5 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
     {
         return filterFactory;
     }
-
-
 
 }

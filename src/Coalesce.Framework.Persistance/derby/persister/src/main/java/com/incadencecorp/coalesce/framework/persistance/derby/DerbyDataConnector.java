@@ -25,7 +25,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.UUID;
 
 import org.apache.derby.jdbc.ClientDriver;
 import org.apache.derby.jdbc.EmbeddedDriver;
@@ -51,6 +50,8 @@ import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 import com.incadencecorp.coalesce.framework.persistance.postgres.CoalesceIndexInfo;
 
 public class DerbyDataConnector extends CoalesceDataConnectorBase {
+
+    private static final DerbyNormalizer NORMALIZER = new DerbyNormalizer();
 
     private static String protocol = "jdbc";
     private static String databaseDriver = "derby";
@@ -145,7 +146,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
         DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
         String dateCreated = fmt.print(linkage.getDateCreated());
         String lastModified = fmt.print(linkage.getLastModified());
-        
+
         Statement stmt = conn.createStatement();
         result = stmt.executeQuery("select name from coalesce.coalescelinkage where objectkey='" + linkage.getKey() + "'");
         if (!result.next())
@@ -177,7 +178,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
             stmt2.setString(18, linkage.getParent().getType());
             stmt2.setString(19, dateCreated);
             stmt2.setString(20, lastModified);
-            
+
             LOGGER.debug(stmt2.toString());
 
             stmt2.executeUpdate();
@@ -212,9 +213,9 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
             stmt3.setString(18, dateCreated);
             stmt3.setString(19, lastModified);
             stmt3.setString(20, linkage.getKey());
-            
+
             LOGGER.debug(stmt3.toString());
-            
+
             stmt3.executeUpdate();
         }
 
@@ -242,7 +243,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
             StringBuilder sql2 = new StringBuilder("insert into coalesce.coalesceentitytemplate (TemplateKey,").append("Name,Source, Version,TemplateXml,DateCreated,LastModified) values ").append("(?,?,?,?,?,?,?)");
 
             PreparedStatement stmt2 = conn.prepareStatement(sql2.toString());
-            stmt2.setString(1, UUID.randomUUID().toString());
+            stmt2.setString(1, template.getKey());
             stmt2.setString(2, template.getName());
             stmt2.setString(3, template.getSource());
             stmt2.setString(4, template.getVersion());
@@ -299,7 +300,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
     {
         boolean success = false;
 
-        StringBuilder sql = new StringBuilder("insert into ").append(schema).append(".").append(tableName).append(" (");
+        StringBuilder sql = new StringBuilder("insert into ").append(schema).append(".").append(NORMALIZER.normalize(tableName)).append(" (");
         boolean first = true;
         for (CoalesceParameter parameter : parameters)
         {
@@ -363,74 +364,78 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
     {
         try
         {
-
-            // Get Parent's information
             CoalesceIndexInfo info = new CoalesceIndexInfo(recordset);
+            String tablename = NORMALIZER.normalize(info.getTableName());
 
-            // Build SQL Command from Field Definitions
-            StringBuilder sb = new StringBuilder();
-
-            // Add Required Columns
-            sb.append("\tobjectkey varchar(128) NOT NULL,\r");
-            sb.append("\tentitykey varchar(128) NOT NULL,\r");
-            sb.append("\tentityname varchar(256),\r");
-            sb.append("\tentitysource varchar(256),\r");
-            sb.append("\tentitytype varchar(256),\r");
-
-            // Add Columns for Field Definitions
-            for (CoalesceFieldDefinition fieldDefinition : recordset.getFieldDefinitions())
+            if (!tableAlreadyExists(tablename))
             {
+                // Get Parent's information
 
-                ECoalesceFieldDataTypes dataType = fieldDefinition.getDataType();
+                // Build SQL Command from Field Definitions
+                StringBuilder sb = new StringBuilder();
 
-                if (fieldDefinition.getFlatten() && fieldDefinition.isListType())
+                // Add Required Columns
+                sb.append("\tobjectkey varchar(128) NOT NULL,\r");
+                sb.append("\tentitykey varchar(128) NOT NULL,\r");
+                sb.append("\tentityname varchar(256),\r");
+                sb.append("\tentitysource varchar(256),\r");
+                sb.append("\tentitytype varchar(256),\r");
+
+                // Add Columns for Field Definitions
+                for (CoalesceFieldDefinition fieldDefinition : recordset.getFieldDefinitions())
                 {
-                    // createListFieldTable(dataType, conn);
-                    LOGGER.warn("List field types are not currently supported.");
+
+                    ECoalesceFieldDataTypes dataType = fieldDefinition.getDataType();
+
+                    if (fieldDefinition.getFlatten() && fieldDefinition.isListType())
+                    {
+                        // createListFieldTable(dataType, conn);
+                        LOGGER.warn("List field types are not currently supported.");
+                    }
+
+                    String columnType = getSQLType(dataType);
+
+                    if (columnType != null && fieldDefinition.getFlatten()
+                            && !columnType.equalsIgnoreCase(DerbyDataConnector.UNSUPPORTED_TYPE))
+                    {
+                        // sb.append("\t" +
+                        // this.normalizeFieldName(fieldDefinition.getName()) +
+                        // " "
+                        // + columnType + ",\r");
+                        sb.append("\t" + NORMALIZER.normalize(fieldDefinition.getName()) + " " + columnType + ",\r");
+                    }
+                    else
+                    {
+                        LOGGER.info("Not Registering ({})", fieldDefinition.getName());
+                    }
                 }
 
-                String columnType = getSQLType(dataType);
+                sb.append("\tCONSTRAINT " + info.getTableName() + "_pkey PRIMARY KEY (objectkey),\r");
+                sb.append("\tCONSTRAINT " + info.getTableName() + "_fkey FOREIGN KEY (entitykey) REFERENCES " + schema
+                        + ".coalesceentity (objectkey) ON DELETE CASCADE");
 
-                if (columnType != null && fieldDefinition.getFlatten()
-                        && !columnType.equalsIgnoreCase(DerbyDataConnector.UNSUPPORTED_TYPE))
+                if (schema == null || (schema != null && schema.length() == 0))
                 {
-                    // sb.append("\t" +
-                    // this.normalizeFieldName(fieldDefinition.getName()) + " "
-                    // + columnType + ",\r");
-                    sb.append("\t" + fieldDefinition.getName() + " " + columnType + ",\r");
+                    throw new CoalesceException("Schema is null or empty... aborting.");
                 }
-                else
-                {
-                    LOGGER.info("Not Registering ({})", fieldDefinition.getName());
-                }
+
+                String sql = String.format(CREATE_TABLE_FORMAT,
+                                           schema,
+                                           tablename,
+                                           sb.toString(),
+                                           schema,
+                                           tablename,
+                                           JodaDateTimeHelper.toXmlDateTimeUTC(JodaDateTimeHelper.nowInUtc()));
+
+                LOGGER.debug("Register Template for " + info.getTableName());
+                LOGGER.debug(sql);
+
+                // Create Table
+                conn.executeUpdate(sql);
+
+                // Create Stored Procedure for inserting into the table
+                // createStoredProcedure(recordset, conn);
             }
-
-            sb.append("\tCONSTRAINT " + info.getTableName() + "_pkey PRIMARY KEY (objectkey),\r");
-            sb.append("\tCONSTRAINT " + info.getTableName() + "_fkey FOREIGN KEY (entitykey) REFERENCES " + schema
-                    + ".coalesceentity (objectkey) ON DELETE CASCADE");
-
-            if (schema == null || (schema != null && schema.length() == 0))
-            {
-                throw new CoalesceException("Schema is null or empty... aborting.");
-            }
-
-            String sql = String.format(CREATE_TABLE_FORMAT,
-                                       schema,
-                                       info.getTableName(),
-                                       sb.toString(),
-                                       schema,
-                                       info.getTableName(),
-                                       JodaDateTimeHelper.toXmlDateTimeUTC(JodaDateTimeHelper.nowInUtc()));
-
-            LOGGER.debug("Register Template for " + info.getTableName());
-            LOGGER.debug(sql);
-
-            // Create Table
-            conn.executeUpdate(sql);
-
-            // Create Stored Procedure for inserting into the table
-            // createStoredProcedure(recordset, conn);
-
         }
         catch (SQLException e)
         {
@@ -439,41 +444,56 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
         return false;
     }
 
-    public static String normalizeFieldName(String fieldName)
+    private boolean tableAlreadyExists(String tablename) throws SQLException
     {
-        switch (fieldName) {
-        case "boolean":
-        case "double":
-        case "float":
-        case "geocoordinatelist":
-        case "geocoordinate":
-        case "linestring":
-        case "polygon":
-        case "circle":
-        case "enum":
-        case "integer":
-        case "string":
-        case "uri":
-        case "stringlist":
-        case "doublelist":
-        case "enumlist":
-        case "integerlist":
-        case "longlist":
-        case "floatlist":
-        case "guidlist":
-        case "booleanlist":
-        case "guid":
-        case "datetime":
-        case "long":
-        case "file":
-        case "binary":
-        case "int":
-        case "date":
-            return fieldName + "Field";
+        ResultSet tables = _conn.getMetaData().getTables(null, "COALESCE", "%", null);
+
+        while (tables.next())
+        {
+            if (tables.getString(3).equalsIgnoreCase(tablename))
+            {
+                return true;
+            }
         }
 
-        return fieldName;
+        return false;
     }
+
+    // public static String normalizeFieldName(String fieldName)
+    // {
+    // switch (fieldName) {
+    // case "boolean":
+    // case "double":
+    // case "float":
+    // case "geocoordinatelist":
+    // case "geocoordinate":
+    // case "linestring":
+    // case "polygon":
+    // case "circle":
+    // case "enum":
+    // case "integer":
+    // case "string":
+    // case "uri":
+    // case "stringlist":
+    // case "doublelist":
+    // case "enumlist":
+    // case "integerlist":
+    // case "longlist":
+    // case "floatlist":
+    // case "guidlist":
+    // case "booleanlist":
+    // case "guid":
+    // case "datetime":
+    // case "long":
+    // case "file":
+    // case "binary":
+    // case "int":
+    // case "date":
+    // return fieldName + "Field";
+    // }
+    //
+    // return fieldName;
+    // }
 
     public static String getSQLType(final ECoalesceFieldDataTypes type)
     {
