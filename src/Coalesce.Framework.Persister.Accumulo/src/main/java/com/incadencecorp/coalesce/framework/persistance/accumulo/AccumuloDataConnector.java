@@ -17,6 +17,8 @@ import org.apache.accumulo.core.client.ZooKeeperInstance;
 import org.apache.accumulo.core.client.security.tokens.PasswordToken;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
@@ -71,6 +73,7 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase {
 	static final String TABLE_NAME = "tableName";
 
 	protected final ServerConn serverConnection;
+    private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloDataConnector.class);
 
 	public AccumuloDataConnector(ServerConn settings) throws CoalescePersistorException {
 		serverConnection = new ServerConn.Builder().copyOf(settings).build();
@@ -115,7 +118,7 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase {
 
 	@Override
 	public void openConnection(boolean autocommit) {
-		System.err.println("AccumuloDataConnector:OpenConnection: Procedure not implemented");
+		LOGGER.error("AccumuloDataConnector:OpenConnection: Procedure not implemented");
 		throw new UnsupportedOperationException("AccumuloDataConnector:OpenConnection: Procedure not implemented");
 	}
 
@@ -126,7 +129,7 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase {
 
 	@Override
 	public Connection getDBConnection() throws SQLException {
-		System.err.println("AccumuloDataConnector:getDBConnection: Procedure not implemented");
+		LOGGER.error("AccumuloDataConnector:getDBConnection: Procedure not implemented");
 		throw new UnsupportedOperationException("AccumuloDataConnector:getDBConnection: Procedure not implemented");
 	}
 
@@ -153,12 +156,12 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase {
 			throws IOException, InterruptedException, AccumuloException, AccumuloSecurityException {
 		// TODO Add try catch for appropriate exceptions
 		if (connector == null) {
-			System.err.println("AccumuloDataConnector:openDataConnection - connecting to accumulo");
+			LOGGER.info("AccumuloDataConnector:openDataConnection - connecting to accumulo");
 
 			instance = new ZooKeeperInstance(serverConnection.getDatabase(), serverConnection.getServerName());
 			connector = instance.getConnector(serverConnection.getUser(),
 					new PasswordToken(serverConnection.getPassword()));
-			System.err.println("AccumuloDataConnector:openDataConnection - Connector User" + connector.whoami());
+			LOGGER.debug("AccumuloDataConnector:openDataConnection - Connector User: " + connector.whoami());
 
 			createTables(connector, coalesceTable, coalesceTemplateTable, coalesceEntityIndex, coalesceSearchTable);
 

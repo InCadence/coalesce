@@ -1094,6 +1094,8 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                                                                     AccumuloDataConnector.coalesceTable,
                                                                     config))
         {
+            long beginTime = System.currentTimeMillis();
+
 
             for (CoalesceEntity entity : entities)
             {
@@ -1110,6 +1112,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                 }
             }
             writer.close();
+            LOGGER.debug("Batch Entity Persist Time: {}",System.currentTimeMillis()-beginTime);
 
         }
         catch (MutationsRejectedException | TableNotFoundException e1)
@@ -1188,9 +1191,9 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                     // Persist Object
                     beginTime = System.currentTimeMillis();
                     persisted = persistBaseData(entity, dbConnector, writer) && persistEntityIndex(entity, dbConnector, config);
-                    LOGGER.debug("Base Data Persist Time: {}",System.currentTimeMillis()-beginTime);
+                    LOGGER.debug("Entity Base Data Persist Time: {}",System.currentTimeMillis()-beginTime);
                     persistEntitySearchData(entity, dbConnector, config, featureCollectionMap, allowRemoval);
-                    LOGGER.debug("Total Data Persist Time: {}",System.currentTimeMillis()-beginTime);
+                    LOGGER.debug("Entity Total Data Persist Time: {}",System.currentTimeMillis()-beginTime);
 
                     break;
 
