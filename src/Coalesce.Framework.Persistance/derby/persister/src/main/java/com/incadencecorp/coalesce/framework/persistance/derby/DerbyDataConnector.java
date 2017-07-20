@@ -312,7 +312,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
             {
                 first = false;
             }
-            sql.append(parameter.getName());
+            sql.append(NORMALIZER.normalize(parameter.getName()));
         }
         sql.append(") values (");
         first = true;
@@ -501,7 +501,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
         switch (type) {
 
         case BOOLEAN_TYPE:
-            return "smallint";
+            return "boolean";
 
         case DOUBLE_TYPE:
         case FLOAT_TYPE:
