@@ -16,6 +16,7 @@
 			<id>bundles</id>
 			<modules>
 				<module>../Coalesce.Bundles</module>
+		                <module>../Coalesce.Dist/coalesce-karaf-dist</module>
 			</modules>
 		</profile>
 	</profiles>
@@ -32,7 +33,6 @@
 		<module>../Coalesce.Feature</module>
 		<module>../Coalesce.Plugins</module>
 		<module>../Coalesce.Core.Feature</module>
-		<module>../Coalesce.Dist/coalesce-karaf-dist</module>
 	</modules>
 
 	<build>
