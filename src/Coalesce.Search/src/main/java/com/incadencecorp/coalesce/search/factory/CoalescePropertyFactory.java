@@ -27,6 +27,7 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
 import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
+import com.incadencecorp.coalesce.framework.datamodel.IFieldEnum;
 
 /**
  * Defines the properties of a CoalesceEntity.
@@ -100,7 +101,7 @@ public class CoalescePropertyFactory {
     {
         return getFilterFactory().property(COALESCE_ENTITY_TABLE + CoalesceEntity.ATTRIBUTE_VERSION);
     }
-
+    
     /**
      * @return the property used for filtering on version.
      */
@@ -264,6 +265,19 @@ public class CoalescePropertyFactory {
         return getFilterFactory().property(recordset + "." + field);
     }
 
+    /**
+     * @return the property used for filtering on the provided recordset / field
+     *         name
+     */
+    public static PropertyName getFieldProperty(String recordset, IFieldEnum field)
+    {
+        return getFieldProperty(recordset, field.getFieldName());
+    }
+    
+    /**
+     * @param field
+     * @return the normalized name used as the column name in a result set.
+     */
     public static String getColumnName(CoalesceField<?> field)
     {
         return getColumnName(getFieldProperty(field));

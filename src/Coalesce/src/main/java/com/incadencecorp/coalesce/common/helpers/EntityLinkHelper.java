@@ -61,33 +61,35 @@ public final class EntityLinkHelper {
 
     /**
      * Links two entities together with a default Unclassified classification
-     * and {@link Locale#US}. 
+     * and {@link Locale#US}.
      * 
      * @param entity1 the first entity to link
      * @param linkType the type of linkage to create between the two entities.
      * @param entity2 the second entity to link
-     * @throws CoalesceException 
-     * @deprecated this method is an implicit bi-direction link.  Use one of the.
-     * explicit link directions.
-	 *
+     * @throws CoalesceException
+     * @deprecated this method is an implicit bi-direction link. Use one of the.
+     *             explicit link directions.
+     *
      */
     @Deprecated
-    public static void linkEntities(CoalesceEntity entity1, ELinkTypes linkType, CoalesceEntity entity2) throws CoalesceException
+    public static void linkEntities(CoalesceEntity entity1, ELinkTypes linkType, CoalesceEntity entity2)
+            throws CoalesceException
     {
 
         linkEntitiesBiDirectional(entity1, linkType, entity2);
     }
- 
+
     /**
      * Links two entities together with a default Unclassified classification
-     * and {@link Locale#US}. 
+     * and {@link Locale#US}.
      * 
      * @param entity1 the first entity to link
      * @param linkType the type of linkage to create between the two entities.
      * @param entity2 the second entity to link
-     * @throws CoalesceException 
+     * @throws CoalesceException
      */
-    public static void linkEntitiesBiDirectional(CoalesceEntity entity1, ELinkTypes linkType, CoalesceEntity entity2) throws CoalesceException
+    public static void linkEntitiesBiDirectional(CoalesceEntity entity1, ELinkTypes linkType, CoalesceEntity entity2)
+            throws CoalesceException
     {
 
         linkEntitiesBiDirectional(entity1, linkType, entity2, new Marking("(U)"), "", "", "", Locale.US, true, false, false);
@@ -95,17 +97,28 @@ public final class EntityLinkHelper {
 
     /**
      * Links two entities together with a default Unclassified classification
-     * and {@link Locale#US} in a single direction. 
+     * and {@link Locale#US} in a single direction.
      * 
      * @param entity1 the first entity to link
      * @param linkType the type of linkage to create between the two entities.
      * @param entity2 the second entity to link
-     * @throws CoalesceException 
+     * @throws CoalesceException
      */
-    public static void linkEntitiesUniDirectional(CoalesceEntity entity1, ELinkTypes linkType, CoalesceEntity entity2) throws CoalesceException
+    public static void linkEntitiesUniDirectional(CoalesceEntity entity1, ELinkTypes linkType, CoalesceEntity entity2)
+            throws CoalesceException
     {
 
-        linkEntitiesUniDirectional(entity1, linkType, entity2, new Marking("(U)"), "", "", "", Locale.US, true, false, false);
+        linkEntitiesUniDirectional(entity1,
+                                   linkType,
+                                   entity2,
+                                   new Marking("(U)"),
+                                   "",
+                                   "",
+                                   "",
+                                   Locale.US,
+                                   true,
+                                   false,
+                                   false);
     }
 
     /**
@@ -121,19 +134,31 @@ public final class EntityLinkHelper {
      * @param entity2 the second entity to link
      * @param updateExisting whether to update an existing linkage.
      * @return <code>true</code> if successful.
-     * @throws CoalesceException 
-     * @deprecated Implied Bi directional link.  Use an explicit direction version
+     * @throws CoalesceException
+     * @deprecated Implied Bi directional link. Use an explicit direction
+     *             version
      */
     @Deprecated
     public static boolean linkEntities(CoalesceEntity entity1,
                                        ELinkTypes linkType,
                                        CoalesceEntity entity2,
-                                       boolean updateExisting) throws CoalesceException
+                                       boolean updateExisting)
+            throws CoalesceException
     {
 
-            linkEntitiesBiDirectional(entity1, linkType, entity2, new Marking("(U)"), "", "", "", Locale.US, updateExisting, false, false);
+        linkEntitiesBiDirectional(entity1,
+                                  linkType,
+                                  entity2,
+                                  new Marking("(U)"),
+                                  "",
+                                  "",
+                                  "",
+                                  Locale.US,
+                                  updateExisting,
+                                  false,
+                                  false);
 
-            return true;
+        return true;
 
     }
 
@@ -150,17 +175,28 @@ public final class EntityLinkHelper {
      * @param entity2 the second entity to link
      * @param updateExisting whether to update an existing linkage.
      * @return <code>true</code> if successful.
-     * @throws CoalesceException 
+     * @throws CoalesceException
      */
-     public static boolean linkEntitiesBiDirectional(CoalesceEntity entity1,
-                                       ELinkTypes linkType,
-                                       CoalesceEntity entity2,
-                                       boolean updateExisting) throws CoalesceException
+    public static boolean linkEntitiesBiDirectional(CoalesceEntity entity1,
+                                                    ELinkTypes linkType,
+                                                    CoalesceEntity entity2,
+                                                    boolean updateExisting)
+            throws CoalesceException
     {
 
-            linkEntitiesBiDirectional(entity1, linkType, entity2, new Marking("(U)"), "", "", "", Locale.US, updateExisting, false, false);
+        linkEntitiesBiDirectional(entity1,
+                                  linkType,
+                                  entity2,
+                                  new Marking("(U)"),
+                                  "",
+                                  "",
+                                  "",
+                                  Locale.US,
+                                  updateExisting,
+                                  false,
+                                  false);
 
-            return true;
+        return true;
 
     }
 
@@ -184,7 +220,8 @@ public final class EntityLinkHelper {
      * @param canUpdateReadOnly specifies whether the link can be updated if
      *            it's already marked as read only.
      * @throws CoalesceException
-     * @deprecated Implied BiDirectional link use one of the explicit BiDirectional calls
+     * @deprecated Implied BiDirectional link use one of the explicit
+     *             BiDirectional calls
      */
     @Deprecated
     public static void linkEntities(CoalesceEntity entity1,
@@ -195,19 +232,20 @@ public final class EntityLinkHelper {
                                     String label,
                                     boolean updateExisting,
                                     boolean isReadOnly,
-                                    boolean canUpdateReadOnly) throws CoalesceException
+                                    boolean canUpdateReadOnly)
+            throws CoalesceException
     {
         linkEntitiesBiDirectional(entity1,
-                     linkType,
-                     entity2,
-                     new Marking("(U)"),
-                     modifiedBy,
-                     modifiedByIp,
-                     label,
-                     Locale.US,
-                     updateExisting,
-                     isReadOnly,
-                     canUpdateReadOnly);
+                                  linkType,
+                                  entity2,
+                                  new Marking("(U)"),
+                                  modifiedBy,
+                                  modifiedByIp,
+                                  label,
+                                  Locale.US,
+                                  updateExisting,
+                                  isReadOnly,
+                                  canUpdateReadOnly);
     }
 
     /**
@@ -232,26 +270,27 @@ public final class EntityLinkHelper {
      * @throws CoalesceException
      */
     public static void linkEntitiesBiDirectional(CoalesceEntity entity1,
-                                    ELinkTypes linkType,
-                                    CoalesceEntity entity2,
-                                    String modifiedBy,
-                                    String modifiedByIp,
-                                    String label,
-                                    boolean updateExisting,
-                                    boolean isReadOnly,
-                                    boolean canUpdateReadOnly) throws CoalesceException
+                                                 ELinkTypes linkType,
+                                                 CoalesceEntity entity2,
+                                                 String modifiedBy,
+                                                 String modifiedByIp,
+                                                 String label,
+                                                 boolean updateExisting,
+                                                 boolean isReadOnly,
+                                                 boolean canUpdateReadOnly)
+            throws CoalesceException
     {
         linkEntitiesBiDirectional(entity1,
-                     linkType,
-                     entity2,
-                     new Marking("(U)"),
-                     modifiedBy,
-                     modifiedByIp,
-                     label,
-                     Locale.US,
-                     updateExisting,
-                     isReadOnly,
-                     canUpdateReadOnly);
+                                  linkType,
+                                  entity2,
+                                  new Marking("(U)"),
+                                  modifiedBy,
+                                  modifiedByIp,
+                                  label,
+                                  Locale.US,
+                                  updateExisting,
+                                  isReadOnly,
+                                  canUpdateReadOnly);
     }
 
     /**
@@ -272,7 +311,8 @@ public final class EntityLinkHelper {
      * @param inputLang the language to associate with the linkage.
      * @param updateExisting whether to update an existing linkage.
      * @throws CoalesceException
-     * @deprecated Implied bidirectional link. Use an explicit bi or unidirectional call
+     * @deprecated Implied bidirectional link. Use an explicit bi or
+     *             unidirectional call
      */
     @Deprecated
     public static void linkEntities(CoalesceEntity entity1,
@@ -283,19 +323,20 @@ public final class EntityLinkHelper {
                                     String modifiedByIp,
                                     String label,
                                     Locale inputLang,
-                                    boolean updateExisting) throws CoalesceException
+                                    boolean updateExisting)
+            throws CoalesceException
     {
         linkEntitiesBiDirectional(entity1,
-                     linkType,
-                     entity2,
-                     classificationMarking,
-                     modifiedBy,
-                     modifiedByIp,
-                     label,
-                     inputLang,
-                     updateExisting,
-                     false,
-                     false);
+                                  linkType,
+                                  entity2,
+                                  classificationMarking,
+                                  modifiedBy,
+                                  modifiedByIp,
+                                  label,
+                                  inputLang,
+                                  updateExisting,
+                                  false,
+                                  false);
     }
 
     /**
@@ -318,28 +359,81 @@ public final class EntityLinkHelper {
      * @throws CoalesceException
      */
     public static void linkEntitiesBiDirectional(CoalesceEntity entity1,
-                                    ELinkTypes linkType,
-                                    CoalesceEntity entity2,
-                                    Marking classificationMarking,
-                                    String modifiedBy,
-                                    String modifiedByIp,
-                                    String label,
-                                    Locale inputLang,
-                                    boolean updateExisting) throws CoalesceException
+                                                 ELinkTypes linkType,
+                                                 CoalesceEntity entity2,
+                                                 Marking classificationMarking,
+                                                 String modifiedBy,
+                                                 String modifiedByIp,
+                                                 String label,
+                                                 Locale inputLang,
+                                                 boolean updateExisting)
+            throws CoalesceException
     {
         linkEntitiesBiDirectional(entity1,
+                                  linkType,
+                                  entity2,
+                                  classificationMarking,
+                                  modifiedBy,
+                                  modifiedByIp,
+                                  label,
+                                  inputLang,
+                                  updateExisting,
+                                  false,
+                                  false);
+    }
+
+    /**
+     * Links two entities together in one direction from entity1 to entity2. If
+     * <code>updateExisting</code> is <code>true</code> then the first linkage
+     * found between the two entities with the same
+     * {@link com.incadencecorp.coalesce.framework.datamodel.ELinkTypes} will be
+     * updated instead of creating a new linkage.
+     * 
+     * @param entity1 the first entity to link
+     * @param linkType the type of linkage to create between the two entities.
+     * @param entity2 the second entity to link
+     * @param classificationMarking the classification to mark the linkage with.
+     * @param modifiedBy the identifier representing who modified the linkage.
+     * @param modifiedByIP the IP address of the computer used to make the
+     *            modification.
+     * @param label
+     * @param inputLang the language to associate with the linkage.
+     * @param updateExisting whether to update an existing linkage.
+     * @param isReadOnly specifies whether the linkage should be made as read
+     *            only.
+     * @param canUpdateReadOnly specifies whether the link can be updated if
+     *            it's already marked as read only.
+     * @throws CoalesceException
+     */
+    public static void linkEntitiesBiDirectional(CoalesceEntity entity1,
+                                                 ELinkTypes linkType,
+                                                 CoalesceEntity entity2,
+                                                 Marking classificationMarking,
+                                                 String modifiedBy,
+                                                 String modifiedByIP,
+                                                 String label,
+                                                 Locale inputLang,
+                                                 boolean updateExisting,
+                                                 boolean isReadOnly,
+                                                 boolean canUpdateReadOnly)
+            throws CoalesceException
+    {
+
+        linkEntities(entity1,
                      linkType,
                      entity2,
                      classificationMarking,
                      modifiedBy,
-                     modifiedByIp,
+                     modifiedByIP,
                      label,
                      inputLang,
                      updateExisting,
-                     false,
-                     false);
+                     isReadOnly,
+                     canUpdateReadOnly,
+                     true);
+
     }
-    
+
     /**
      * Links two entities together. If <code>updateExisting</code> is
      * <code>true</code> then the first linkage found between the two entities
@@ -362,10 +456,9 @@ public final class EntityLinkHelper {
      * @param canUpdateReadOnly specifies whether the link can be updated if
      *            it's already marked as read only.
      * @throws CoalesceException
-     * @deprecated This is an implicit bidirectional link.  Use one of the explicit link
-     * directions
+     * @deprecated Implied bidirectional link. Use an explicit bi or
+     *             unidirectional call
      */
-    @Deprecated
     public static void linkEntities(CoalesceEntity entity1,
                                     ELinkTypes linkType,
                                     CoalesceEntity entity2,
@@ -376,15 +469,23 @@ public final class EntityLinkHelper {
                                     Locale inputLang,
                                     boolean updateExisting,
                                     boolean isReadOnly,
-                                    boolean canUpdateReadOnly) throws CoalesceException
+                                    boolean canUpdateReadOnly)
+            throws CoalesceException
     {
-
-    	linkEntitiesBiDirectional(entity1, linkType,entity2,classificationMarking,
-    			modifiedBy, modifiedByIP, label, inputLang,
-    			updateExisting, isReadOnly, canUpdateReadOnly);
-
+        linkEntities(entity1,
+                     linkType,
+                     entity2,
+                     classificationMarking,
+                     modifiedBy,
+                     modifiedByIP,
+                     label,
+                     inputLang,
+                     updateExisting,
+                     isReadOnly,
+                     canUpdateReadOnly,
+                     true);
     }
-    
+
     /**
      * Links two entities together. If <code>updateExisting</code> is
      * <code>true</code> then the first linkage found between the two entities
@@ -408,7 +509,7 @@ public final class EntityLinkHelper {
      *            it's already marked as read only.
      * @throws CoalesceException
      */
-    public static void linkEntitiesBiDirectional(CoalesceEntity entity1,
+    public static void linkEntities(CoalesceEntity entity1,
                                     ELinkTypes linkType,
                                     CoalesceEntity entity2,
                                     Marking classificationMarking,
@@ -418,27 +519,29 @@ public final class EntityLinkHelper {
                                     Locale inputLang,
                                     boolean updateExisting,
                                     boolean isReadOnly,
-                                    boolean canUpdateReadOnly) throws CoalesceException
+                                    boolean canUpdateReadOnly,
+                                    boolean isByDirection)
+            throws CoalesceException
     {
-
         if (entity1 == null || entity2 == null)
+        {
             throw new IllegalArgumentException(MODULE_NAME + " : LinkEntities");
+        }
 
         // Don't allow linking to self.
         if (entity1.getKey().equalsIgnoreCase(entity2.getKey()))
+        {
             throw new IllegalArgumentException("Linking an object to itself is not allowed");
+        }
 
         // Get the LinkageSections for each Entity. Create if not found.
 
         // For Entity 1...
         CoalesceLinkageSection linkageSection1 = entity1.getLinkageSection();
         if (linkageSection1 == null)
+        {
             throw new IllegalArgumentException("Missing Linkage Section: " + entity1.getKey());
-
-        // For Entity 2...
-        CoalesceLinkageSection linkageSection2 = entity2.getLinkageSection();
-        if (linkageSection2 == null)
-            throw new IllegalArgumentException("Missing Linkage Section: " + entity1.getKey());
+        }
 
         establishLinkage(linkageSection1,
                          entity1,
@@ -453,19 +556,26 @@ public final class EntityLinkHelper {
                          isReadOnly,
                          canUpdateReadOnly);
 
-        establishLinkage(linkageSection2,
-                         entity2,
-                         linkType.getReciprocalLinkType(),
-                         entity1,
-                         classificationMarking,
-                         modifiedBy,
-                         modifiedByIP,
-                         label,
-                         inputLang,
-                         updateExisting,
-                         isReadOnly,
-                         canUpdateReadOnly);
+        if (isByDirection)
+        {
+            // For Entity 2...
+            CoalesceLinkageSection linkageSection2 = entity2.getLinkageSection();
+            if (linkageSection2 == null)
+                throw new IllegalArgumentException("Missing Linkage Section: " + entity1.getKey());
 
+            establishLinkage(linkageSection2,
+                             entity2,
+                             linkType.getReciprocalLinkType(),
+                             entity1,
+                             classificationMarking,
+                             modifiedBy,
+                             modifiedByIP,
+                             label,
+                             inputLang,
+                             updateExisting,
+                             isReadOnly,
+                             canUpdateReadOnly);
+        }
     }
 
     /**
@@ -524,7 +634,8 @@ public final class EntityLinkHelper {
                                          ELinkTypes linkType,
                                          String modifiedBy,
                                          String modifiedByIP,
-                                         boolean canUpdateReadOnly) throws CoalesceException
+                                         boolean canUpdateReadOnly)
+            throws CoalesceException
 
     {
         if (entity1 == null)
@@ -563,9 +674,10 @@ public final class EntityLinkHelper {
 
         return true;
     }
+
     /**
-     * Links two entities together in one direction with a default Unclassified classification
-     * and {@link Locale#US}. If <code>updateExisting</code> is
+     * Links two entities together in one direction with a default Unclassified
+     * classification and {@link Locale#US}. If <code>updateExisting</code> is
      * <code>true</code> then the first linkage found between the two entities
      * with the same
      * {@link com.incadencecorp.coalesce.framework.datamodel.ELinkTypes} will be
@@ -576,26 +688,35 @@ public final class EntityLinkHelper {
      * @param entity2 the second entity to link
      * @param updateExisting whether to update an existing linkage.
      * @return <code>true</code> if successful.
-     * @throws CoalesceException 
+     * @throws CoalesceException
      */
     public static boolean linkEntitiesUniDirectional(CoalesceEntity entity1,
-                                       ELinkTypes linkType,
-                                       CoalesceEntity entity2,
-                                       boolean updateExisting) throws CoalesceException
+                                                     ELinkTypes linkType,
+                                                     CoalesceEntity entity2,
+                                                     boolean updateExisting)
+            throws CoalesceException
     {
 
-      
-    	linkEntitiesUniDirectional(entity1, linkType, entity2, new Marking("(U)"), "", "", "", Locale.US, updateExisting, false, false);
+        linkEntitiesUniDirectional(entity1,
+                                   linkType,
+                                   entity2,
+                                   new Marking("(U)"),
+                                   "",
+                                   "",
+                                   "",
+                                   Locale.US,
+                                   updateExisting,
+                                   false,
+                                   false);
 
-            return true;
-
+        return true;
 
     }
-    
+
     /**
-     * Links two entities together in one direction. If <code>updateExisting</code> is
-     * <code>true</code> then the first linkage found between the two entities
-     * with the same
+     * Links two entities together in one direction. If
+     * <code>updateExisting</code> is <code>true</code> then the first linkage
+     * found between the two entities with the same
      * {@link com.incadencecorp.coalesce.framework.datamodel.ELinkTypes} will be
      * updated instead of creating a new linkage.
      * 
@@ -614,32 +735,33 @@ public final class EntityLinkHelper {
      * @throws CoalesceException
      */
     public static void linkEntitiesUniDirectional(CoalesceEntity entity1,
-                                    ELinkTypes linkType,
-                                    CoalesceEntity entity2,
-                                    String modifiedBy,
-                                    String modifiedByIp,
-                                    String label,
-                                    boolean updateExisting,
-                                    boolean isReadOnly,
-                                    boolean canUpdateReadOnly) throws CoalesceException
+                                                  ELinkTypes linkType,
+                                                  CoalesceEntity entity2,
+                                                  String modifiedBy,
+                                                  String modifiedByIp,
+                                                  String label,
+                                                  boolean updateExisting,
+                                                  boolean isReadOnly,
+                                                  boolean canUpdateReadOnly)
+            throws CoalesceException
     {
-    	linkEntitiesUniDirectional(entity1,
-                     linkType,
-                     entity2,
-                     new Marking("(U)"),
-                     modifiedBy,
-                     modifiedByIp,
-                     label,
-                     Locale.US,
-                     updateExisting,
-                     isReadOnly,
-                     canUpdateReadOnly);
+        linkEntitiesUniDirectional(entity1,
+                                   linkType,
+                                   entity2,
+                                   new Marking("(U)"),
+                                   modifiedBy,
+                                   modifiedByIp,
+                                   label,
+                                   Locale.US,
+                                   updateExisting,
+                                   isReadOnly,
+                                   canUpdateReadOnly);
     }
-    
+
     /**
-     * Links two entities together in one direction. If <code>updateExisting</code> is
-     * <code>true</code> then the first linkage found between the two entities
-     * with the same
+     * Links two entities together in one direction. If
+     * <code>updateExisting</code> is <code>true</code> then the first linkage
+     * found between the two entities with the same
      * {@link com.incadencecorp.coalesce.framework.datamodel.ELinkTypes} will be
      * updated instead of creating a new linkage.
      * 
@@ -656,96 +778,32 @@ public final class EntityLinkHelper {
      * @throws CoalesceException
      */
     public static void linkEntitiesUniDirectional(CoalesceEntity entity1,
-                                    ELinkTypes linkType,
-                                    CoalesceEntity entity2,
-                                    Marking classificationMarking,
-                                    String modifiedBy,
-                                    String modifiedByIp,
-                                    String label,
-                                    Locale inputLang,
-                                    boolean updateExisting) throws CoalesceException
+                                                  ELinkTypes linkType,
+                                                  CoalesceEntity entity2,
+                                                  Marking classificationMarking,
+                                                  String modifiedBy,
+                                                  String modifiedByIp,
+                                                  String label,
+                                                  Locale inputLang,
+                                                  boolean updateExisting)
+            throws CoalesceException
     {
-    	linkEntitiesUniDirectional(entity1,
-                     linkType,
-                     entity2,
-                     classificationMarking,
-                     modifiedBy,
-                     modifiedByIp,
-                     label,
-                     inputLang,
-                     updateExisting,
-                     false,
-                     false);
+        linkEntitiesUniDirectional(entity1,
+                                   linkType,
+                                   entity2,
+                                   classificationMarking,
+                                   modifiedBy,
+                                   modifiedByIp,
+                                   label,
+                                   inputLang,
+                                   updateExisting,
+                                   false,
+                                   false);
     }
-    
-    
+
     /**
-     * Links two entities together in one direction with a default Unclassified classification
-     * and {@link Locale#US}. If <code>updateExisting</code> is
-     * <code>true</code> then the first linkage found between the two entities
-     * with the same
-     * {@link com.incadencecorp.coalesce.framework.datamodel.ELinkTypes} will be
-     * updated instead of creating a new linkage.
-     * 
-     * @param entity1 the first entity to link
-     * @param linkType the type of linkage to create between the two entities.
-     * @param entity2 the second entity to link
-     * @param label the label to put on the link for display
-     * @param updateExisting whether to update an existing linkage.
-     * @return <code>true</code> if successful.
-     * @throws CoalesceException 
-     */
-    public static boolean linkEntitiesUniDirectional(CoalesceEntity entity1,
-                                       ELinkTypes linkType,
-                                       CoalesceEntity entity2,
-                                       String label,
-                                       boolean updateExisting) throws CoalesceException
-    {
-
-        LOGGER.debug("Creating link: " + entity1.getKey() + " ---> " + entity2.getKey() + " of type " + linkType 
-        		+ " with label " + label);
-    	linkEntitiesUniDirectional(entity1, linkType, entity2, new Marking("(U)"), "", "", label, Locale.US, updateExisting, false, false);
-
-            return true;
-
-
-    }
-    
-    /**
-     * Links two entities together in one direction with a default Unclassified classification
-     * and {@link Locale#US}. If <code>updateExisting</code> is
-     * <code>true</code> then the first linkage found between the two entities
-     * with the same
-     * {@link com.incadencecorp.coalesce.framework.datamodel.ELinkTypes} will be
-     * updated instead of creating a new linkage.
-     * 
-     * @param entity1 the first entity to link
-     * @param linkType the type of linkage to create between the two entities.
-     * @param entity2 the second entity to link
-     * @param label the label to put on the link for display
-     * @param updateExisting whether to update an existing linkage.
-     * @return <code>true</code> if successful.
-     * @throws CoalesceException 
-     */
-    public static boolean linkEntitiesBiDirectional(CoalesceEntity entity1,
-                                       ELinkTypes linkType,
-                                       CoalesceEntity entity2,
-                                       String label,
-                                       boolean updateExisting) throws CoalesceException
-    {
-
-        LOGGER.debug("Creating link: " + entity1.getKey() + " ---> " + entity2.getKey() + " of type " + linkType 
-        		+ " with label " + label);
-    	linkEntitiesBiDirectional(entity1, linkType, entity2, new Marking("(U)"), "", "", label, Locale.US, updateExisting, false, false);
-
-            return true;
-
-
-    }
-    
-    /**
-     * Links two entities together in one direction with a default Unclassified classification
-     * and {@link Locale#US}. If <code>updateExisting</code> is
+     * Links two entities together in one direction with a default Unclassified
+     * classification and {@link Locale#US}. If <code>updateExisting</code> is
      * <code>true</code> then the first linkage found between the two entities
      * with the same
      * {@link com.incadencecorp.coalesce.framework.datamodel.ELinkTypes} will be
@@ -758,29 +816,123 @@ public final class EntityLinkHelper {
      * @param updateExisting whether to update an existing linkage.
      * @return <code>true</code> if successful.
      * @throws CoalesceException
-     * @deprecated Implicit bi-directional link use one of the explicit APIs 
+     */
+    public static boolean linkEntitiesUniDirectional(CoalesceEntity entity1,
+                                                     ELinkTypes linkType,
+                                                     CoalesceEntity entity2,
+                                                     String label,
+                                                     boolean updateExisting)
+            throws CoalesceException
+    {
+
+        LOGGER.debug("Creating link: " + entity1.getKey() + " ---> " + entity2.getKey() + " of type " + linkType
+                + " with label " + label);
+        linkEntitiesUniDirectional(entity1,
+                                   linkType,
+                                   entity2,
+                                   new Marking("(U)"),
+                                   "",
+                                   "",
+                                   label,
+                                   Locale.US,
+                                   updateExisting,
+                                   false,
+                                   false);
+
+        return true;
+
+    }
+
+    /**
+     * Links two entities together in one direction with a default Unclassified
+     * classification and {@link Locale#US}. If <code>updateExisting</code> is
+     * <code>true</code> then the first linkage found between the two entities
+     * with the same
+     * {@link com.incadencecorp.coalesce.framework.datamodel.ELinkTypes} will be
+     * updated instead of creating a new linkage.
+     * 
+     * @param entity1 the first entity to link
+     * @param linkType the type of linkage to create between the two entities.
+     * @param entity2 the second entity to link
+     * @param label the label to put on the link for display
+     * @param updateExisting whether to update an existing linkage.
+     * @return <code>true</code> if successful.
+     * @throws CoalesceException
+     */
+    public static boolean linkEntitiesBiDirectional(CoalesceEntity entity1,
+                                                    ELinkTypes linkType,
+                                                    CoalesceEntity entity2,
+                                                    String label,
+                                                    boolean updateExisting)
+            throws CoalesceException
+    {
+
+        LOGGER.debug("Creating link: " + entity1.getKey() + " ---> " + entity2.getKey() + " of type " + linkType
+                + " with label " + label);
+        linkEntitiesBiDirectional(entity1,
+                                  linkType,
+                                  entity2,
+                                  new Marking("(U)"),
+                                  "",
+                                  "",
+                                  label,
+                                  Locale.US,
+                                  updateExisting,
+                                  false,
+                                  false);
+
+        return true;
+
+    }
+
+    /**
+     * Links two entities together in one direction with a default Unclassified
+     * classification and {@link Locale#US}. If <code>updateExisting</code> is
+     * <code>true</code> then the first linkage found between the two entities
+     * with the same
+     * {@link com.incadencecorp.coalesce.framework.datamodel.ELinkTypes} will be
+     * updated instead of creating a new linkage.
+     * 
+     * @param entity1 the first entity to link
+     * @param linkType the type of linkage to create between the two entities.
+     * @param entity2 the second entity to link
+     * @param label the label to put on the link for display
+     * @param updateExisting whether to update an existing linkage.
+     * @return <code>true</code> if successful.
+     * @throws CoalesceException
+     * @deprecated Implicit bi-directional link use one of the explicit APIs
      */
     @Deprecated
     public static boolean linkEntities(CoalesceEntity entity1,
                                        ELinkTypes linkType,
                                        CoalesceEntity entity2,
                                        String label,
-                                       boolean updateExisting) throws CoalesceException
+                                       boolean updateExisting)
+            throws CoalesceException
     {
 
-        LOGGER.debug("Creating link: " + entity1.getKey() + " ---> " + entity2.getKey() + " of type " + linkType 
-        		+ " with label " + label);
-    	linkEntitiesBiDirectional(entity1, linkType, entity2, new Marking("(U)"), "", "", label, Locale.US, updateExisting, false, false);
+        LOGGER.debug("Creating link: " + entity1.getKey() + " ---> " + entity2.getKey() + " of type " + linkType
+                + " with label " + label);
+        linkEntitiesBiDirectional(entity1,
+                                  linkType,
+                                  entity2,
+                                  new Marking("(U)"),
+                                  "",
+                                  "",
+                                  label,
+                                  Locale.US,
+                                  updateExisting,
+                                  false,
+                                  false);
 
-            return true;
-
+        return true;
 
     }
+
     /**
-     * Links two entities together in one direction from entity1 to entity2. 
-     * If <code>updateExisting</code> is
-     * <code>true</code> then the first linkage found between the two entities
-     * with the same
+     * Links two entities together in one direction from entity1 to entity2. If
+     * <code>updateExisting</code> is <code>true</code> then the first linkage
+     * found between the two entities with the same
      * {@link com.incadencecorp.coalesce.framework.datamodel.ELinkTypes} will be
      * updated instead of creating a new linkage.
      * 
@@ -801,52 +953,33 @@ public final class EntityLinkHelper {
      * @throws CoalesceException
      */
     public static void linkEntitiesUniDirectional(CoalesceEntity entity1,
-                                    ELinkTypes linkType,
-                                    CoalesceEntity entity2,
-                                    Marking classificationMarking,
-                                    String modifiedBy,
-                                    String modifiedByIP,
-                                    String label,
-                                    Locale inputLang,
-                                    boolean updateExisting,
-                                    boolean isReadOnly,
-                                    boolean canUpdateReadOnly) throws CoalesceException
+                                                  ELinkTypes linkType,
+                                                  CoalesceEntity entity2,
+                                                  Marking classificationMarking,
+                                                  String modifiedBy,
+                                                  String modifiedByIP,
+                                                  String label,
+                                                  Locale inputLang,
+                                                  boolean updateExisting,
+                                                  boolean isReadOnly,
+                                                  boolean canUpdateReadOnly)
+            throws CoalesceException
     {
 
-        if (entity1 == null || entity2 == null)
-            throw new IllegalArgumentException(MODULE_NAME + " : LinkEntities");
+        linkEntities(entity1,
+                     linkType,
+                     entity2,
+                     classificationMarking,
+                     modifiedBy,
+                     modifiedByIP,
+                     label,
+                     inputLang,
+                     updateExisting,
+                     isReadOnly,
+                     canUpdateReadOnly,
+                     false);
 
-        // Don't allow linking to self.
-        if (entity1.getKey().equalsIgnoreCase(entity2.getKey()))
-            throw new IllegalArgumentException("Linking an object to itself is not allowed");
-
-        // Get the LinkageSections for each Entity. Create if not found.
-
-        // For Entity 1...
-        CoalesceLinkageSection linkageSection1 = entity1.getLinkageSection();
-        if (linkageSection1 == null)
-            throw new IllegalArgumentException("Missing Linkage Section: " + entity1.getKey());
-
-        // For Entity 2...
-        CoalesceLinkageSection linkageSection2 = entity2.getLinkageSection();
-        if (linkageSection2 == null)
-            throw new IllegalArgumentException("Missing Linkage Section: " + entity1.getKey());
-
-        establishLinkage(linkageSection1,
-                         entity1,
-                         linkType,
-                         entity2,
-                         classificationMarking,
-                         modifiedBy,
-                         modifiedByIP,
-                         label,
-                         inputLang,
-                         updateExisting,
-                         isReadOnly,
-                         canUpdateReadOnly);
-
-        
-    }   
+    }
 
     // -----------------------------------------------------------------------//
     // Private Methods
@@ -863,7 +996,8 @@ public final class EntityLinkHelper {
                                          Locale inputLang,
                                          boolean updateExisting,
                                          boolean isReadOnly,
-                                         boolean canUpdateReadOnly) throws CoalesceException
+                                         boolean canUpdateReadOnly)
+            throws CoalesceException
     {
 
         if (LOGGER.isDebugEnabled())
@@ -950,7 +1084,8 @@ public final class EntityLinkHelper {
                                                 ELinkTypes linkType,
                                                 String modifiedBy,
                                                 String modifiedByIP,
-                                                boolean canUpdateReadOnly) throws CoalesceException
+                                                boolean canUpdateReadOnly)
+            throws CoalesceException
     {
         if (LOGGER.isDebugEnabled())
         {

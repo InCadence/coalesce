@@ -24,8 +24,9 @@ import com.incadencecorp.coalesce.framework.persistance.AbstractCoalescePersisto
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
 
 /**
+ * This implementation execute test against {@link DerbyPersistor}.
+ * 
  * @author mdaconta
- *
  */
 public class DerbyPersistorIT extends AbstractCoalescePersistorTest<DerbyPersistor> {
 

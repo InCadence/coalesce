@@ -150,13 +150,13 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
 
         // 5 Default columns +1 parameter
         Assert.assertEquals(properties.size() + 1, rowset.getMetaData().getColumnCount());
-        Assert.assertEquals(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getEntityKey()),
-                            rowset.getMetaData().getColumnName(1));
+        Assert.assertEquals(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getEntityKey()).toLowerCase(),
+                            rowset.getMetaData().getColumnName(1).toLowerCase());
 
         for (int ii = 0; ii < properties.size(); ii++)
         {
-            Assert.assertEquals(CoalescePropertyFactory.getColumnName(properties.get(ii)),
-                                rowset.getMetaData().getColumnName(ii + 2));
+            Assert.assertEquals(CoalescePropertyFactory.getColumnName(properties.get(ii)).toLowerCase(),
+                                rowset.getMetaData().getColumnName(ii + 2).toLowerCase());
         }
 
         Assert.assertTrue(rowset.next());

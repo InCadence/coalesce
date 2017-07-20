@@ -217,6 +217,7 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
 
     {
         boolean isSuccessful = false;
+        boolean isDeleted = false;
 
         if (coalesceObject.getFlatten())
         {
@@ -232,6 +233,7 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
                 {
                     // Delete Object
                     isSuccessful = deleteObject(coalesceObject, conn);
+                    isDeleted = coalesceObject instanceof CoalesceEntity;
                 }
                 else
                 {
@@ -246,7 +248,7 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
             }
 
             // Successful?
-            if (isSuccessful)
+            if (isSuccessful && !isDeleted)
             {
                 // Yes; Iterate Through Children
                 for (CoalesceObject childObject : coalesceObject.getChildCoalesceObjects().values())
@@ -525,8 +527,8 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
                         }
                         catch (CoalesceException ce)
                         {
-                            LOGGER.error("FAILED to insert Record for " + getSchema() + "." + info.getTableName()
-                                    + ", REASON: " + ce.getCause().getLocalizedMessage());
+                            throw new SQLException("FAILED to insert Record for " + getSchema() + "." + info.getTableName()
+                                    + ", REASON: " + ce.getCause().getLocalizedMessage(), ce);
                         }
 
                     }
