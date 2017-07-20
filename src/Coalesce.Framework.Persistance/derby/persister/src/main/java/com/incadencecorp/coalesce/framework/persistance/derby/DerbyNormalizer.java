@@ -24,7 +24,7 @@ import com.incadencecorp.coalesce.api.IEnumerationProvider;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
-import com.incadencecorp.coalesce.framework.enumerationprovider.impl.PropertyEnumerationProviderImpl;
+import com.incadencecorp.coalesce.framework.enumerationprovider.impl.ResourceEnumerationProviderImpl;
 
 public class DerbyNormalizer implements ICoalesceNormalizer {
 
@@ -32,7 +32,7 @@ public class DerbyNormalizer implements ICoalesceNormalizer {
 
     public DerbyNormalizer()
     {
-        IEnumerationProvider provider = new PropertyEnumerationProviderImpl();
+        IEnumerationProvider provider = new ResourceEnumerationProviderImpl();
         keywords = provider.getValues(null, "keywords");
     }
 
