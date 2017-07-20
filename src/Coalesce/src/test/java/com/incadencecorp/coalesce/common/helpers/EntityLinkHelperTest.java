@@ -52,60 +52,60 @@ public class EntityLinkHelperTest {
      */
 
     @Test(expected = IllegalArgumentException.class)
-    public void linkEntitiesNullFirstDontUpdateAllTypesExistingTest()
+    public void linkEntitiesNullFirstDontUpdateAllTypesExistingTest() throws CoalesceException
     {
         for (ELinkTypes linkType : ELinkTypes.values())
         {
             CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-            EntityLinkHelper.linkEntities(null, linkType, entity, false);
+            EntityLinkHelper.linkEntitiesBiDirectional(null, linkType, entity, false);
         }
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void linkEntitiesNullSecondDontUpdateAllTypesExistingTest()
+    public void linkEntitiesNullSecondDontUpdateAllTypesExistingTest() throws CoalesceException
     {
         for (ELinkTypes linkType : ELinkTypes.values())
         {
             CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-            EntityLinkHelper.linkEntities(entity, linkType, null, false);
+            EntityLinkHelper.linkEntitiesBiDirectional(entity, linkType, null, false);
         }
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void linkEntitiesNullBothDontUpdateAllTypesExistingTest()
+    public void linkEntitiesNullBothDontUpdateAllTypesExistingTest() throws CoalesceException
     {
         for (ELinkTypes linkType : ELinkTypes.values())
         {
-            EntityLinkHelper.linkEntities(null, linkType, null, false);
+            EntityLinkHelper.linkEntitiesBiDirectional(null, linkType, null, false);
         }
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void linkEntitiesNullFirstUpdateAllTypesExistingTest()
-    {
-        for (ELinkTypes linkType : ELinkTypes.values())
-        {
-            CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-            EntityLinkHelper.linkEntities(null, linkType, entity, true);
-        }
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void linkEntitiesNullSecondUpdateAllTypesExistingTest()
+    public void linkEntitiesNullFirstUpdateAllTypesExistingTest() throws CoalesceException
     {
         for (ELinkTypes linkType : ELinkTypes.values())
         {
             CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-            EntityLinkHelper.linkEntities(entity, linkType, null, true);
+            EntityLinkHelper.linkEntitiesBiDirectional(null, linkType, entity, true);
         }
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void linkEntitiesNullBothUpdateAllTypesExistingTest()
+    public void linkEntitiesNullSecondUpdateAllTypesExistingTest() throws CoalesceException
     {
         for (ELinkTypes linkType : ELinkTypes.values())
         {
-            EntityLinkHelper.linkEntities(null, linkType, null, true);
+            CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
+            EntityLinkHelper.linkEntitiesBiDirectional(entity, linkType, null, true);
+        }
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void linkEntitiesNullBothUpdateAllTypesExistingTest() throws CoalesceException
+    {
+        for (ELinkTypes linkType : ELinkTypes.values())
+        {
+            EntityLinkHelper.linkEntitiesBiDirectional(null, linkType, null, true);
         }
     }
 
@@ -117,7 +117,7 @@ public class EntityLinkHelperTest {
         CoalesceEntity entity2 = CoalesceEntity.create("LinkTest", "UnitTest", "1.0", "Unit", "Test", "Entity2");
         entity2.createSection("TestSection");
 
-        EntityLinkHelper.linkEntities(entity1,
+        EntityLinkHelper.linkEntitiesBiDirectional(entity1,
                                       ELinkTypes.IS_PARENT_OF,
                                       entity2,
                                       EntityLinkHelperTest.UNCLASSIFIED_MARKING,
@@ -134,7 +134,7 @@ public class EntityLinkHelperTest {
                        "tester1",
                        Locale.US);
 
-        EntityLinkHelper.linkEntities(entity1,
+        EntityLinkHelper.linkEntitiesBiDirectional(entity1,
                                       ELinkTypes.IS_PARENT_OF,
                                       entity2,
                                       EntityLinkHelperTest.TOP_SECRET_MARKING,
@@ -151,7 +151,7 @@ public class EntityLinkHelperTest {
                        "tester1",
                        Locale.US);
 
-        EntityLinkHelper.linkEntities(entity1,
+        EntityLinkHelper.linkEntitiesBiDirectional(entity1,
                                       ELinkTypes.IS_PARENT_OF,
                                       entity2,
                                       EntityLinkHelperTest.TOP_SECRET_MARKING,
@@ -171,14 +171,14 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void linkEntitiesDontUpdateExistingAllLinkTypesNoExistingTest()
+    public void linkEntitiesDontUpdateExistingAllLinkTypesNoExistingTest() throws CoalesceException
     {
         for (ELinkTypes linkType : ELinkTypes.values())
         {
             CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
             CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
 
-            assertTrue(EntityLinkHelper.linkEntities(entity1, linkType, entity2, false));
+            assertTrue(EntityLinkHelper.linkEntitiesBiDirectional(entity1, linkType, entity2, false));
 
             assertEquals(1, entity1.getLinkageSection().getChildCoalesceObjects().size());
             assertEquals(1, entity2.getLinkageSection().getChildCoalesceObjects().size());
@@ -190,7 +190,7 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void linkEntitiesDontUpdateExistingAllLinkTypesExistingTest()
+    public void linkEntitiesDontUpdateExistingAllLinkTypesExistingTest() throws CoalesceException
     {
         for (ELinkTypes linkType : ELinkTypes.values())
         {
@@ -198,7 +198,7 @@ public class EntityLinkHelperTest {
             CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
             CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
 
-            EntityLinkHelper.linkEntities(entity1, linkType, entity2, false);
+            EntityLinkHelper.linkEntitiesBiDirectional(entity1, linkType, entity2, false);
 
             CoalesceEntity modifiedEntity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
             CoalesceEntity modifiedEntity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
@@ -211,7 +211,7 @@ public class EntityLinkHelperTest {
             modifiedEntity2.setSource("Entity2source");
             modifiedEntity2.setVersion("Entity2version");
 
-            assertTrue(EntityLinkHelper.linkEntities(modifiedEntity1, linkType, modifiedEntity2, false));
+            assertTrue(EntityLinkHelper.linkEntitiesBiDirectional(modifiedEntity1, linkType, modifiedEntity2, false));
 
             assertLinkages(linkType, entity1, entity2);
 
@@ -227,7 +227,7 @@ public class EntityLinkHelperTest {
             mod2Entity2.setVersion("Entity2version");
 
             // Test updating link the other way
-            assertTrue(EntityLinkHelper.linkEntities(mod2Entity2, linkType.getReciprocalLinkType(), mod2Entity1, false));
+            assertTrue(EntityLinkHelper.linkEntitiesBiDirectional(mod2Entity2, linkType.getReciprocalLinkType(), mod2Entity1, false));
 
             assertLinkages(linkType, entity1, entity2);
 
@@ -235,14 +235,14 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void linkEntitiesUpdateExistingAllLinkTypesNoExistingTest()
+    public void linkEntitiesUpdateExistingAllLinkTypesNoExistingTest() throws CoalesceException
     {
         for (ELinkTypes linkType : ELinkTypes.values())
         {
             CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
             CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
 
-            assertTrue(EntityLinkHelper.linkEntities(entity1, linkType, entity2, true));
+            assertTrue(EntityLinkHelper.linkEntitiesBiDirectional(entity1, linkType, entity2, true));
 
             assertEquals(1, entity1.getLinkageSection().getChildCoalesceObjects().size());
             assertEquals(1, entity2.getLinkageSection().getChildCoalesceObjects().size());
@@ -253,14 +253,14 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void linkEntitiesUpdateExistingAllLinkTypesExistingTest()
+    public void linkEntitiesUpdateExistingAllLinkTypesExistingTest() throws CoalesceException
     {
         for (ELinkTypes linkType : ELinkTypes.values())
         {
             CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
             CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
 
-            EntityLinkHelper.linkEntities(entity1, linkType, entity2, true);
+            EntityLinkHelper.linkEntitiesBiDirectional(entity1, linkType, entity2, true);
 
             CoalesceEntity modifiedEntity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
             CoalesceEntity modifiedEntity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
@@ -273,7 +273,7 @@ public class EntityLinkHelperTest {
             modifiedEntity2.setSource("Entity2source");
             modifiedEntity2.setVersion("Entity2version");
 
-            assertTrue(EntityLinkHelper.linkEntities(modifiedEntity1, linkType, modifiedEntity2, true));
+            assertTrue(EntityLinkHelper.linkEntitiesBiDirectional(modifiedEntity1, linkType, modifiedEntity2, true));
 
             assertLinkages(linkType, modifiedEntity1, modifiedEntity2);
 
@@ -289,7 +289,7 @@ public class EntityLinkHelperTest {
             mod2Entity2.setVersion("Entity2version");
 
             // Test updating link the other way
-            assertTrue(EntityLinkHelper.linkEntities(mod2Entity2, linkType.getReciprocalLinkType(), mod2Entity1, true));
+            assertTrue(EntityLinkHelper.linkEntitiesBiDirectional(mod2Entity2, linkType.getReciprocalLinkType(), mod2Entity1, true));
 
             assertLinkages(linkType, mod2Entity1, mod2Entity2);
         }
@@ -299,7 +299,7 @@ public class EntityLinkHelperTest {
     public void linkEntitiesDetailedNullFirstDontUpdateExistingTest() throws CoalesceException
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-        EntityLinkHelper.linkEntities(null,
+        EntityLinkHelper.linkEntitiesBiDirectional(null,
                                       ELinkTypes.HAS_MEMBER,
                                       entity,
                                       EntityLinkHelperTest.TOP_SECRET_MARKING,
@@ -314,7 +314,7 @@ public class EntityLinkHelperTest {
     public void linkEntitiesDetailedNullSecondDontUpdateExistingTest() throws CoalesceException
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-        EntityLinkHelper.linkEntities(entity,
+        EntityLinkHelper.linkEntitiesBiDirectional(entity,
                                       ELinkTypes.HAS_OWNERSHIP_OF,
                                       null,
                                       EntityLinkHelperTest.TOP_SECRET_MARKING,
@@ -328,7 +328,7 @@ public class EntityLinkHelperTest {
     @Test(expected = IllegalArgumentException.class)
     public void linkEntitiesDetailedNullBothDontUpdateExistingTest() throws CoalesceException
     {
-        EntityLinkHelper.linkEntities(null,
+        EntityLinkHelper.linkEntitiesBiDirectional(null,
                                       ELinkTypes.HAS_PARTICIPANT,
                                       null,
                                       EntityLinkHelperTest.TOP_SECRET_MARKING,
@@ -344,7 +344,7 @@ public class EntityLinkHelperTest {
     public void linkEntitiesDetailedNullFirstUpdateExistingTest() throws CoalesceException
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-        EntityLinkHelper.linkEntities(null,
+        EntityLinkHelper.linkEntitiesBiDirectional(null,
                                       ELinkTypes.HAS_USE_OF,
                                       entity,
                                       EntityLinkHelperTest.TOP_SECRET_MARKING,
@@ -359,7 +359,7 @@ public class EntityLinkHelperTest {
     public void linkEntitiesDetailedNullSecondUpdateExistingTest() throws CoalesceException
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
-        EntityLinkHelper.linkEntities(entity,
+        EntityLinkHelper.linkEntitiesBiDirectional(entity,
                                       ELinkTypes.IS_A_MEMBER_OF,
                                       null,
                                       EntityLinkHelperTest.TOP_SECRET_MARKING,
@@ -373,7 +373,7 @@ public class EntityLinkHelperTest {
     @Test(expected = IllegalArgumentException.class)
     public void linkEntitiesDetailedNullBothUpdateExistingTest() throws CoalesceException
     {
-        EntityLinkHelper.linkEntities(null,
+        EntityLinkHelper.linkEntitiesBiDirectional(null,
                                       ELinkTypes.IS_A_PARTICIPANT_OF,
                                       null,
                                       EntityLinkHelperTest.TOP_SECRET_MARKING,
@@ -390,7 +390,7 @@ public class EntityLinkHelperTest {
         CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
         CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
 
-        EntityLinkHelper.linkEntities(entity1,
+        EntityLinkHelper.linkEntitiesBiDirectional(entity1,
                                       ELinkTypes.IS_A_PEER_OF,
                                       entity2,
                                       EntityLinkHelperTest.TOP_SECRET_MARKING,
@@ -417,7 +417,7 @@ public class EntityLinkHelperTest {
     {
         CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
 
-        EntityLinkHelper.linkEntities(entity1,
+        EntityLinkHelper.linkEntitiesBiDirectional(entity1,
                                       ELinkTypes.IS_A_PEER_OF,
                                       entity1,
                                       EntityLinkHelperTest.TOP_SECRET_MARKING,
@@ -434,7 +434,7 @@ public class EntityLinkHelperTest {
         CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
         CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
 
-        EntityLinkHelper.linkEntities(entity1,
+        EntityLinkHelper.linkEntitiesBiDirectional(entity1,
                                       ELinkTypes.IS_BEING_WATCHED_BY,
                                       entity2,
                                       EntityLinkHelperTest.TOP_SECRET_MARKING,
@@ -455,7 +455,7 @@ public class EntityLinkHelperTest {
         modifiedEntity2.setSource("Entity2source");
         modifiedEntity2.setVersion("Entity2version");
 
-        EntityLinkHelper.linkEntities(modifiedEntity1,
+        EntityLinkHelper.linkEntitiesBiDirectional(modifiedEntity1,
                                       ELinkTypes.IS_BEING_WATCHED_BY,
                                       modifiedEntity2,
                                       EntityLinkHelperTest.SECRET_USA_MARKING,
@@ -480,7 +480,7 @@ public class EntityLinkHelperTest {
         CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
         CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
 
-        EntityLinkHelper.linkEntities(entity1,
+        EntityLinkHelper.linkEntitiesBiDirectional(entity1,
                                       ELinkTypes.IS_CHILD_OF,
                                       entity2,
                                       EntityLinkHelperTest.TOP_SECRET_MARKING,
@@ -503,7 +503,7 @@ public class EntityLinkHelperTest {
         CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
         CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
 
-        EntityLinkHelper.linkEntities(entity1,
+        EntityLinkHelper.linkEntitiesBiDirectional(entity1,
                                       ELinkTypes.IS_OWNED_BY,
                                       entity2,
                                       EntityLinkHelperTest.TOP_SECRET_MARKING,
@@ -524,7 +524,7 @@ public class EntityLinkHelperTest {
         modifiedEntity2.setSource("Entity2source");
         modifiedEntity2.setVersion("Entity2version");
 
-        EntityLinkHelper.linkEntities(modifiedEntity1,
+        EntityLinkHelper.linkEntitiesBiDirectional(modifiedEntity1,
                                       ELinkTypes.IS_OWNED_BY,
                                       modifiedEntity2,
                                       EntityLinkHelperTest.SECRET_USA_MARKING,
@@ -650,12 +650,12 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void unlinkEntitiesLinkTypeNullLinkTypeTest()
+    public void unlinkEntitiesLinkTypeNullLinkTypeTest() throws CoalesceException
     {
         CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
         CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
 
-        EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, true);
+        EntityLinkHelper.linkEntitiesBiDirectional(entity1, ELinkTypes.CREATED, entity2, true);
 
         assertTrue(EntityLinkHelper.unLinkEntities(entity1, entity2, null));
         assertEquals(ECoalesceObjectStatus.DELETED,
@@ -666,7 +666,7 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void unlinkEntitiesAllLinkTypesTest()
+    public void unlinkEntitiesAllLinkTypesTest() throws CoalesceException
     {
 
         for (ELinkTypes linkType : ELinkTypes.values())
@@ -675,7 +675,7 @@ public class EntityLinkHelperTest {
             CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
             CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
 
-            EntityLinkHelper.linkEntities(entity1, linkType, entity2, true);
+            EntityLinkHelper.linkEntitiesBiDirectional(entity1, linkType, entity2, true);
 
             assertTrue(EntityLinkHelper.unLinkEntities(entity1, entity2));
             assertEquals(ECoalesceObjectStatus.DELETED,
@@ -700,14 +700,14 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void unlinkEntitiesNotLinkedFirstTest()
+    public void unlinkEntitiesNotLinkedFirstTest() throws CoalesceException
     {
 
         CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
         CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
         CoalesceEntity entity3 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, true);
+        EntityLinkHelper.linkEntitiesBiDirectional(entity1, ELinkTypes.CREATED, entity2, true);
 
         assertTrue(EntityLinkHelper.unLinkEntities(entity1, entity3));
         assertEquals(ECoalesceObjectStatus.ACTIVE,
@@ -723,14 +723,14 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void unlinkEntitiesNotLinkedSecondTest()
+    public void unlinkEntitiesNotLinkedSecondTest() throws CoalesceException
     {
 
         CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
         CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
         CoalesceEntity entity3 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, true);
+        EntityLinkHelper.linkEntitiesBiDirectional(entity1, ELinkTypes.CREATED, entity2, true);
 
         assertTrue(EntityLinkHelper.unLinkEntities(entity3, entity2));
         assertEquals(ECoalesceObjectStatus.ACTIVE,
@@ -746,12 +746,12 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void unlinkEntitiesLinkTypesTest()
+    public void unlinkEntitiesLinkTypesTest() throws CoalesceException
     {
         CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
         CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
 
-        EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, true);
+        EntityLinkHelper.linkEntitiesBiDirectional(entity1, ELinkTypes.CREATED, entity2, true);
 
         assertTrue(EntityLinkHelper.unLinkEntities(entity1, entity2, ELinkTypes.CREATED));
         assertEquals(ECoalesceObjectStatus.DELETED,
@@ -762,12 +762,12 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void unlinkEntitiesLinkTypesMismatchTest()
+    public void unlinkEntitiesLinkTypesMismatchTest() throws CoalesceException
     {
         CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
         CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
 
-        EntityLinkHelper.linkEntities(entity1, ELinkTypes.HAS_PARTICIPANT, entity2, true);
+        EntityLinkHelper.linkEntitiesBiDirectional(entity1, ELinkTypes.HAS_PARTICIPANT, entity2, true);
 
         assertTrue(EntityLinkHelper.unLinkEntities(entity1, entity2, ELinkTypes.HAS_USE_OF));
         assertEquals(ECoalesceObjectStatus.ACTIVE,
@@ -791,14 +791,14 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void unlinkEntitiesLinkageTypeNotLinkedFirstTest()
+    public void unlinkEntitiesLinkageTypeNotLinkedFirstTest() throws CoalesceException
     {
 
         CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
         CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
         CoalesceEntity entity3 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        EntityLinkHelper.linkEntities(entity1, ELinkTypes.HAS_MEMBER, entity2, true);
+        EntityLinkHelper.linkEntitiesBiDirectional(entity1, ELinkTypes.HAS_MEMBER, entity2, true);
 
         assertTrue(EntityLinkHelper.unLinkEntities(entity1, entity3, ELinkTypes.HAS_MEMBER));
         assertEquals(ECoalesceObjectStatus.ACTIVE,
@@ -814,14 +814,14 @@ public class EntityLinkHelperTest {
     }
 
     @Test
-    public void unlinkEntitiesLinkagetypeNotLinkedSecondTest()
+    public void unlinkEntitiesLinkagetypeNotLinkedSecondTest() throws CoalesceException
     {
 
         CoalesceEntity entity1 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_ONE);
         CoalesceEntity entity2 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION_NO_LINKS_TWO);
         CoalesceEntity entity3 = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
-        EntityLinkHelper.linkEntities(entity1, ELinkTypes.HAS_OWNERSHIP_OF, entity2, true);
+        EntityLinkHelper.linkEntitiesBiDirectional(entity1, ELinkTypes.HAS_OWNERSHIP_OF, entity2, true);
 
         assertTrue(EntityLinkHelper.unLinkEntities(entity3, entity2, ELinkTypes.HAS_OWNERSHIP_OF));
         assertEquals(ECoalesceObjectStatus.ACTIVE,

@@ -1264,7 +1264,7 @@ public class CoalesceEntityTest {
     }
 
     @Test
-    public void getLinkagesNewTest()
+    public void getLinkagesNewTest() throws CoalesceException
     {
         CoalesceEntity entity = new CoalesceEntity();
         entity.initialize();
@@ -1275,9 +1275,9 @@ public class CoalesceEntityTest {
         CoalesceEntity entity3 = new CoalesceEntity();
         entity3.initialize();
 
-        assertTrue(EntityLinkHelper.linkEntities(entity, ELinkTypes.HAS_USE_OF, entity2, false));
-        assertTrue(EntityLinkHelper.linkEntities(entity, ELinkTypes.IS_PARENT_OF, entity3, false));
-        assertTrue(EntityLinkHelper.linkEntities(entity2, ELinkTypes.WAS_CREATED_BY, entity, false));
+        assertTrue(EntityLinkHelper.linkEntitiesBiDirectional(entity, ELinkTypes.HAS_USE_OF, entity2, false));
+        assertTrue(EntityLinkHelper.linkEntitiesBiDirectional(entity, ELinkTypes.IS_PARENT_OF, entity3, false));
+        assertTrue(EntityLinkHelper.linkEntitiesBiDirectional(entity2, ELinkTypes.WAS_CREATED_BY, entity, false));
 
         Map<String, CoalesceLinkage> linkages = entity.getLinkages();
 
@@ -1323,7 +1323,7 @@ public class CoalesceEntityTest {
     }
 
     @Test
-    public void getLinkagesIncludingDeletedLinakgeTest()
+    public void getLinkagesIncludingDeletedLinakgeTest() throws CoalesceException
     {
         CoalesceEntity entity1 = CoalesceEntity.create("Test Entity",
                                                        "Unit Test",
@@ -1344,8 +1344,8 @@ public class CoalesceEntityTest {
                                                        "Unit Test",
                                                        "Entity2");
 
-        EntityLinkHelper.linkEntities(entity1, ELinkTypes.IS_PARENT_OF, entity2, true);
-        EntityLinkHelper.linkEntities(entity1, ELinkTypes.IS_PARENT_OF, entity3, true);
+        EntityLinkHelper.linkEntitiesBiDirectional(entity1, ELinkTypes.IS_PARENT_OF, entity2, true);
+        EntityLinkHelper.linkEntitiesBiDirectional(entity1, ELinkTypes.IS_PARENT_OF, entity3, true);
 
         Map<String, CoalesceLinkage> originalLinkages = entity1.getLinkages(ELinkTypes.IS_PARENT_OF);
 
@@ -1633,7 +1633,7 @@ public class CoalesceEntityTest {
     }
 
     @Test
-    public void getLinkagesForEntityNameFoundTest()
+    public void getLinkagesForEntityNameFoundTest() throws CoalesceException
     {
         Entities entities = createEntityLinkages();
 
@@ -1690,7 +1690,7 @@ public class CoalesceEntityTest {
     }
 
     @Test
-    public void getLinkagesForEntityNameNotFoundTest()
+    public void getLinkagesForEntityNameNotFoundTest() throws CoalesceException
     {
 
         Entities entities = createEntityLinkages();
@@ -1702,7 +1702,7 @@ public class CoalesceEntityTest {
     }
 
     @Test
-    public void getLinkagesForLinkTypeEntityNameFoundTest()
+    public void getLinkagesForLinkTypeEntityNameFoundTest() throws CoalesceException
     {
         Entities entities = createEntityLinkages();
 
@@ -1729,7 +1729,7 @@ public class CoalesceEntityTest {
     }
 
     @Test
-    public void getLinkagesForLinkTypeEntityNameNotFoundTest()
+    public void getLinkagesForLinkTypeEntityNameNotFoundTest() throws CoalesceException
     {
 
         Entities entities = createEntityLinkages();
@@ -1741,7 +1741,7 @@ public class CoalesceEntityTest {
     }
 
     @Test
-    public void getLinkagesForLinkTypeFoundTest()
+    public void getLinkagesForLinkTypeFoundTest() throws CoalesceException
     {
         Entities entities = createEntityLinkages();
 
@@ -1768,7 +1768,7 @@ public class CoalesceEntityTest {
     }
 
     @Test
-    public void getLinkagesForLinkTypeNotFoundTest()
+    public void getLinkagesForLinkTypeNotFoundTest() throws CoalesceException
     {
 
         Entities entities = createEntityLinkages();
@@ -1780,7 +1780,7 @@ public class CoalesceEntityTest {
     }
 
     @Test
-    public void getLinkagesForLinkTypeNullTest()
+    public void getLinkagesForLinkTypeNullTest() throws CoalesceException
     {
         Entities entities = createEntityLinkages();
 
@@ -1791,7 +1791,7 @@ public class CoalesceEntityTest {
     }
 
     @Test
-    public void getLinkagesForLinkTypeEntityNameEntitySourceFoundTest()
+    public void getLinkagesForLinkTypeEntityNameEntitySourceFoundTest() throws CoalesceException
     {
         Entities entities = createEntityLinkages();
 
@@ -1818,7 +1818,7 @@ public class CoalesceEntityTest {
     }
 
     @Test
-    public void getLinkagesForLinkTypeEntityNameEntitySourceNotFoundTest()
+    public void getLinkagesForLinkTypeEntityNameEntitySourceNotFoundTest() throws CoalesceException
     {
 
         Entities entities = createEntityLinkages();
@@ -1830,7 +1830,7 @@ public class CoalesceEntityTest {
     }
 
     @Test
-    public void getLinkagesForLinkTypesEntityNameFoundTest()
+    public void getLinkagesForLinkTypesEntityNameFoundTest() throws CoalesceException
     {
         Entities entities = createEntityLinkages();
 
@@ -1864,7 +1864,7 @@ public class CoalesceEntityTest {
     }
 
     @Test
-    public void getLinkagesForLinkTypesEntityNamePartialFoundTest()
+    public void getLinkagesForLinkTypesEntityNamePartialFoundTest() throws CoalesceException
     {
         Entities entities = createEntityLinkages();
 
@@ -1893,7 +1893,7 @@ public class CoalesceEntityTest {
     }
 
     @Test
-    public void getLinkagesForLinkTypesEntityNameNotFoundTest()
+    public void getLinkagesForLinkTypesEntityNameNotFoundTest() throws CoalesceException
     {
 
         Entities entities = createEntityLinkages();
@@ -2724,7 +2724,7 @@ public class CoalesceEntityTest {
 
     }
 
-    private Entities createEntityLinkages()
+    private Entities createEntityLinkages() throws CoalesceException
     {
         Entities entities = new Entities();
 
@@ -2736,10 +2736,10 @@ public class CoalesceEntityTest {
 
         entities._entity4 = CoalesceEntity.create("Operation", "Portal2", "3.4.5.6", "Id4", "Type4");
 
-        assertTrue(EntityLinkHelper.linkEntities(entities._entity, ELinkTypes.HAS_USE_OF, entities._entity2, false));
-        assertTrue(EntityLinkHelper.linkEntities(entities._entity, ELinkTypes.IS_PARENT_OF, entities._entity3, false));
-        assertTrue(EntityLinkHelper.linkEntities(entities._entity2, ELinkTypes.WAS_CREATED_BY, entities._entity, false));
-        assertTrue(EntityLinkHelper.linkEntities(entities._entity4, ELinkTypes.IS_A_MEMBER_OF, entities._entity, false));
+        assertTrue(EntityLinkHelper.linkEntitiesBiDirectional(entities._entity, ELinkTypes.HAS_USE_OF, entities._entity2, false));
+        assertTrue(EntityLinkHelper.linkEntitiesBiDirectional(entities._entity, ELinkTypes.IS_PARENT_OF, entities._entity3, false));
+        assertTrue(EntityLinkHelper.linkEntitiesBiDirectional(entities._entity2, ELinkTypes.WAS_CREATED_BY, entities._entity, false));
+        assertTrue(EntityLinkHelper.linkEntitiesBiDirectional(entities._entity4, ELinkTypes.IS_A_MEMBER_OF, entities._entity, false));
 
         return entities;
 
