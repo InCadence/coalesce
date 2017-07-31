@@ -1,12 +1,10 @@
 package com.incadencecorp.coalesce.framework.persistance.accumulo;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.EnumSet;
@@ -24,7 +22,6 @@ import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
 
 import org.apache.accumulo.core.client.AccumuloException;
-import org.apache.accumulo.core.client.AccumuloSecurityException;
 import org.apache.accumulo.core.client.BatchDeleter;
 import org.apache.accumulo.core.client.BatchWriter;
 import org.apache.accumulo.core.client.BatchWriterConfig;
@@ -33,7 +30,6 @@ import org.apache.accumulo.core.client.IteratorSetting;
 // import org.apache.accumulo.core.client.Durability; // Accumulo 1.7 depenency
 import org.apache.accumulo.core.client.MutationsRejectedException;
 import org.apache.accumulo.core.client.TableNotFoundException;
-import org.apache.accumulo.core.client.admin.TableOperations;
 import org.apache.accumulo.core.data.Key;
 import org.apache.accumulo.core.data.Mutation;
 import org.apache.accumulo.core.data.Range;
@@ -45,28 +41,23 @@ import org.apache.accumulo.core.security.Authorizations;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.io.Text;
 import org.geotools.data.DataStore;
-import org.geotools.data.DefaultTransaction;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.FeatureWriter;
 import org.geotools.data.Query;
 import org.geotools.data.Transaction;
-import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureStore;
-import org.geotools.data.simple.SimpleFeatureWriter;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.factory.Hints;
 import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
-import org.geotools.filter.FilterFactoryImpl;
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.filter.text.cql2.CQLException;
 import org.joda.time.DateTime;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
@@ -230,9 +221,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         		EPersistorCapabilities.DELETE,
         		EPersistorCapabilities.GEOSPATIAL_SEARCH,
         		EPersistorCapabilities.SEARCH,
-        		EPersistorCapabilities.SUPPORTS_BLOB);
-                // TODO Fails the template test and therefore this capability was removed. Needs to be resolved.
-        		//EPersistorCapabilities.READ_TEMPLATES);
+        		EPersistorCapabilities.READ_TEMPLATES);
         return enumSet;
     }
     
@@ -574,9 +563,10 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 
                 if (templateId == null)
                 {
-                    templateId = UUID.randomUUID().toString();
+                    templateId = UUID.nameUUIDFromBytes((name+source+version).getBytes()).toString();
                     newtemplate = true;
                 }
+                template.setKey(templateId);
                 writer = dbConnector.createBatchWriter(AccumuloDataConnector.coalesceTemplateTable, config);
                 Mutation m = new Mutation(templateId);
                 m.put(coalesceTemplateColumnFamily, coalesceTemplateXMLQualifier, new Value(xml.getBytes()));
