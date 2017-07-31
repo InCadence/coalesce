@@ -38,6 +38,7 @@ import org.apache.accumulo.core.iterators.SortedKeyValueIterator;
 import org.apache.accumulo.core.iterators.user.RegExFilter;
 import org.apache.accumulo.core.iterators.user.WholeRowIterator;
 import org.apache.accumulo.core.security.Authorizations;
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.io.Text;
 import org.geotools.data.DataStore;
@@ -162,19 +163,8 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 
     private final AccumuloDataConnector connect;
     private CoalesceValidator validator;
-    /*
-     * private static String entityColumnFamily = "Coalesce:MetaData"; private static String linkageColumnFamily =
-     * "Coalesce:Linkage"; private static String linkColumnFamilyPrefix = "LinkID:"; private static String
-     * sectionColumnFamilyPrefix = "SectionID:"; private static String recordsetColumnFamilyPrefix = "RecordSetID:"; private
-     * static String fielddefinitionColumnFamilyPrefix = "FieldDefinitionID:"; private static String recordColumnFamilyPrefix
-     * = "RecordID:"; private static String entityTypeColumnQualifier = "Coalesce:EntityType"; private static String
-     * entityNameColumnQualifier = "Coalesce:EntityName"; private static String entityVersionColumnQualifier =
-     * "Coalesce:EntityVersion"; private static String entityIdTypeColumnQualifier = "Coalesce:EntityIdType"; private static
-     * String entityTitleColumnQualifier = "Coalesce:EntityTitle"; private static String entitySourceColumnQualifier =
-     * "Coalesce:EntitySource"; private static String entityClassNameColumnQualifier = "Coalesce:EntityClassName"; private
-     * static String entityXMLColumnQualifier = "Coalesce:EntityXML"; private static String entityLastModifiedColumnQualifier
-     * = "Coalesce:EntityLastModified"; private static String entityCreatedColumnQualifier = "Coalesce:EntityCreated";
-     */
+    
+    private boolean batchInProgress = false;
 
     /*--------------------------------------------------------------------------
     Constructor / Initializers
@@ -183,30 +173,45 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
     public AccumuloPersistor(ServerConn svConn) throws CoalescePersistorException
     {
         setConnectionSettings(svConn);
-        connect = (AccumuloDataConnector) getDataConnector();
-        validator = new CoalesceValidator();
-        createLinkageFeature(LINKAGE_FEATURE_NAME);
-
-    }
-
-    public AccumuloPersistor() throws CoalescePersistorException
-    {
-        setConnectionSettings(AccumuloSettings.getServerConn());
         LOGGER.debug("Zookeepers",AccumuloSettings.getServerConn().getServerName());
         LOGGER.debug("Databasename",AccumuloSettings.getServerConn().getDatabase());
         connect = (AccumuloDataConnector) getDataConnector();
         validator = new CoalesceValidator();
         createLinkageFeature(LINKAGE_FEATURE_NAME);
+        
+        
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            public void run() {
+            	boolean inLoop = false;
+            	LOGGER.debug("Shutdown Hook Invoked");
+                while (batchInProgress) {
+                	if (!inLoop) LOGGER.debug("Batch IO in progress waiting");
+                	inLoop=true;
+                	try {
+						sleep(500);
+					} catch (InterruptedException e) {
+						// Can't count on Log4J not terminating
+						e.printStackTrace();
+					}
+                }
+            }
+        });
+        
+
+    }
+
+    public AccumuloPersistor() throws CoalescePersistorException
+    {
+        this(AccumuloSettings.getServerConn());
 
     }
 
     public AccumuloPersistor(ICoalesceCacher cacher, ServerConn svConn) throws CoalescePersistorException
     {
-        setConnectionSettings(svConn);
+        this(svConn);
+
         setCacher(cacher);
-        connect = (AccumuloDataConnector) getDataConnector();
-        validator = new CoalesceValidator();
-        createLinkageFeature(LINKAGE_FEATURE_NAME);
+
     }
     
     /**
@@ -515,8 +520,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
     @Override
     public byte[] getBinaryArray(String binaryFieldKey) throws CoalescePersistorException
     {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
     private static String coalesceTemplateColumnFamily = "Coalesce:Template";
@@ -633,7 +637,6 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         NodeList nodeList = template.getCoalesceObjectDocument().getElementsByTagName("*");
         int numnodes = nodeList.getLength();
 
-        String sectionName = null;
         String recordName = null;
         ArrayList<Fielddefinition> fieldlist = new ArrayList<Fielddefinition>();
 
@@ -645,7 +648,6 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 
             if (nodeName.compareTo("section") == 0)
             {
-                sectionName = node.getAttributes().getNamedItem("name").getNodeValue().replaceAll(" ", "_");
                 if (!fieldlist.isEmpty())
                 {
                     // Now create the geomesa featureset
@@ -699,7 +701,6 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 			SimpleFeatureType linkschema =  gs.getSchema(featurename);
 			if (linkschema != null) return;
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 	           LOGGER.error(e1.getMessage(), e1);
 
 		}
@@ -1086,6 +1087,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         {
             long beginTime = System.currentTimeMillis();
 
+            batchInProgress = true;
 
             for (CoalesceEntity entity : entities)
             {
@@ -1111,7 +1113,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         }
 
         addFeatures(featureCollectionMap);
-
+        batchInProgress = false;
         return isSuccessful;
     }
 
