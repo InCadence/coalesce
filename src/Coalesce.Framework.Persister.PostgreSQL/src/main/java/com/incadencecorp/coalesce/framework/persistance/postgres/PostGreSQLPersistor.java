@@ -1202,7 +1202,8 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
 
     {
         boolean isSuccessful = false;
-
+        boolean isDeleted = false; 
+        
         if (coalesceObject.getFlatten())
         {
             switch (coalesceObject.getStatus()) {
@@ -1217,6 +1218,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
                 {
                     // Delete Object
                     isSuccessful = deleteObject(coalesceObject, conn);
+                    isDeleted = coalesceObject instanceof CoalesceEntity;
                 }
                 else
                 {
@@ -1231,7 +1233,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
             }
 
             // Successful?
-            if (isSuccessful)
+            if (isSuccessful && !isDeleted)
             {
                 // Yes; Iterate Through Children
                 for (CoalesceObject childObject : coalesceObject.getChildCoalesceObjects().values())
