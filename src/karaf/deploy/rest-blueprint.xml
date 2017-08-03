@@ -113,14 +113,14 @@
 <!-- 	</bean> -->
 
 
-	<bean id="framework" class="com.incadencecorp.coalesce.framework.CoalesceFramework">
-		<property name="authoritativePersistor" ref="derby" />
-		<property name="templates">
-			<array>
-				<bean
-					class="com.incadencecorp.coalesce.services.crud.service.data.model.impl.coalesce.entity.EnumerationCoalesceEntity" />
-			</array>
-		</property>
-	</bean>
+<!-- 	<bean id="framework" class="com.incadencecorp.coalesce.framework.CoalesceFramework"> -->
+<!-- 		<property name="authoritativePersistor" ref="derby" /> -->
+<!-- 		<property name="templates"> -->
+<!-- 			<array> -->
+<!-- 				<bean -->
+<!-- 					class="com.incadencecorp.coalesce.services.crud.service.data.model.impl.coalesce.entity.EnumerationCoalesceEntity" /> -->
+<!-- 			</array> -->
+<!-- 		</property> -->
+<!-- 	</bean> -->
 
 </blueprint>
