@@ -555,6 +555,25 @@ public class CoalesceFramework implements ICoalesceExecutorService, Closeable {
         }
     }
 
+    public void setTemplates(CoalesceEntity... templates) throws CoalescePersistorException
+    {
+        for (CoalesceEntity template : templates)
+        {
+            try
+            {
+                if (!template.isInitialized())
+                {
+                    template.initialize();
+                }
+                registerTemplates(CoalesceEntityTemplate.create(template));
+            }
+            catch (SAXException | IOException e)
+            {
+                throw new CoalescePersistorException("(FAILED) Template Registration", e);
+            }
+        }
+    }
+
     /**
      * Save the template as well as updates {@link CoalesceTemplateUtil}.
      * 
