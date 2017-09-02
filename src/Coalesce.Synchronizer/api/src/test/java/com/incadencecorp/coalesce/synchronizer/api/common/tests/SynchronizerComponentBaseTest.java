@@ -27,6 +27,7 @@ import com.incadencecorp.coalesce.framework.CoalesceComponentImpl;
 import com.incadencecorp.coalesce.framework.PropertyLoader;
 import com.incadencecorp.coalesce.synchronizer.api.common.SynchronizerParameters;
 import com.incadencecorp.coalesce.synchronizer.api.common.mocks.MockOperation;
+import com.incadencecorp.unity.common.connectors.ResourcePropertyConnector;
 
 /**
  * These tests exercise the base component.
@@ -123,7 +124,7 @@ public class SynchronizerComponentBaseTest {
 
         Assert.assertNull(component.getPropertyLoader());
 
-        PropertyLoader loader = new PropertyLoader(null, "HelloWorld");
+        PropertyLoader loader = new PropertyLoader(new ResourcePropertyConnector(), "HelloWorld");
 
         component.setPropertyLoader(loader);
 

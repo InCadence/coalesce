@@ -89,7 +89,7 @@ public abstract class AbstractEnumerationProvider implements IEnumerationProvide
 
         if (result == -1)
         {
-            throw new IllegalArgumentException(String.format(CoalesceErrors.INVALID_ENUMERATION_POSITION, value, enumeration));
+            throw new IllegalArgumentException(String.format(CoalesceErrors.INVALID_ENUMERATION_VALUE, value, enumeration));
         }
 
         return result;

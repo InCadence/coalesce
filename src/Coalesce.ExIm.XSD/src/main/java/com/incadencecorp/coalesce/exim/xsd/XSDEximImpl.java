@@ -294,7 +294,12 @@ public class XSDEximImpl implements CoalesceExim<Document> {
                 for (int ii = 0; ii < attrs.getLength(); ii++)
                 {
                     Node attr = attrs.item(ii);
-                    coalesceObject.setAttribute(attr.getLocalName(), attr.getNodeValue());
+
+                    // Skip namespace definitions.
+                    if (!attr.getNodeName().startsWith("xmlns"))
+                    {
+                        coalesceObject.setAttribute(attr.getLocalName(), attr.getNodeValue());
+                    }
                 }
             }
         }

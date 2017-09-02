@@ -110,9 +110,9 @@ public abstract class AbstractOperation<T extends AbstractOperationTask> extends
     }
 
     @Override
-    public List<String> getProperties()
+    public List<String> getPropertyList()
     {
-        List<String> properties = super.getProperties();
+        List<String> properties = super.getPropertyList();
 
         properties.add(SynchronizerParameters.PARAM_OP_WINDOW_SIZE);
 

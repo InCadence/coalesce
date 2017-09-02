@@ -44,9 +44,12 @@ public class Neo4JDataConnector extends CoalesceDataConnectorBase {
     @Override
     public Connection getDBConnection() throws SQLException
     {
-        String url = "jdbc:neo4j://" + getSettings().getServerName() + ":" + getSettings().getPortNumber() + "/";
+        String http = Neo4jSettings.isSSLEnabled() ? "https" : "http";
 
-        return DriverManager.getConnection(url);
+        String url = "jdbc:neo4j:" + http + "://" + getSettings().getServerName() + ":" + getSettings().getPortNumber()
+                + "/";
+
+        return DriverManager.getConnection(url, getSettings().getProperties());
     }
 
     @Override

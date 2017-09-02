@@ -68,18 +68,14 @@ public class CoalesceComponentImpl implements ICoalesceComponent {
     {
         this.loader = loader;
 
-        Map<String, String> propereties = new HashMap<String, String>();
-        
-        for (String property : getProperties())
+        if (loader != null)
         {
-            propereties.put(property, loader.getProperty(property));
+            setProperties(loader.getSettings());
         }
-        
-        setProperties(propereties);
     }
 
     @Override
-    public List<String> getProperties()
+    public List<String> getPropertyList()
     {
         return new ArrayList<String>();
     }

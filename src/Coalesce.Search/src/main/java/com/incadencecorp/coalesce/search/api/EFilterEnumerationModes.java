@@ -21,7 +21,7 @@
  * -------------------------------UNCLASSIFIED---------------------------------
  */
 
-package com.incadencecorp.coalesce.framework.persistance.postgres;
+package com.incadencecorp.coalesce.search.api;
 
 /**
  * Modes for handling enumeration parameters.

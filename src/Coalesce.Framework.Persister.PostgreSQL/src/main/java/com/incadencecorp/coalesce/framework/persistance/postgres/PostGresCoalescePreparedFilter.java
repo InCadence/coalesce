@@ -87,6 +87,7 @@ import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.framework.EnumerationProviderUtil;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
+import com.incadencecorp.coalesce.search.api.EFilterEnumerationModes;
 import com.incadencecorp.coalesce.search.api.ICoalesceExpressionVistor;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.vividsolutions.jts.geom.Geometry;

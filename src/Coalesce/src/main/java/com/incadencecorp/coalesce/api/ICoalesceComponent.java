@@ -59,5 +59,5 @@ public interface ICoalesceComponent {
     /**
      * @return a list of properties used by this implementation.
      */
-    List<String> getProperties();
+    List<String> getPropertyList();
 }

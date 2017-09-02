@@ -32,6 +32,16 @@ public class PostGreSQLDataConnector extends CoalesceDataConnectorBase {
     {
         String url = "jdbc:postgresql://" + getSettings().getServerNameWithPort() + "/" + getSettings().getDatabase();
 
+        if (PostGreSQLSettings.isSSLEnabled())
+        {
+            url += "?ssl=true";
+
+            if (!PostGreSQLSettings.isSSLValidate())
+            {
+                url += "&sslfactory=org.postgresql.ssl.NonValidatingFactory";
+            }
+        }
+
         return DriverManager.getConnection(url, getSettings().getProperties());
     }
 
