@@ -46,20 +46,23 @@ public class Neo4jSettings {
     private static final int DEFAULT_ONERROR_RETRIES = 5;
     private static final int DEFAULT_ONERROR_BACKOFF_INTERVAL = 500;
     private static final boolean DEFAULT_ALLOW_DELETE = false;
+    private static final boolean DEFAULT_SSL_ENABLED = false;
 
     /*--------------------------------------------------------------------------
     Property Names
     --------------------------------------------------------------------------*/
 
-    private static final String PROPERTY_ENABLED = "neo4j.enabled";
-    private static final String PROPERTY_SERVER_NAME = "neo4j.dbServerName";
-    private static final String PROPERTY_USERNAME = "neo4j.dbUser";
-    private static final String PROPERTY_PASSWORD = "neo4j.dbPassword";
-    private static final String PROPERTY_DATABASE_NAME = "neo4j.database";
-    private static final String PROPERTY_PORT = "neo4j.dbServerPort";
-    private static final String PROPERTY_ALLOW_DELETE = "neo4j.allowDelete";
-    private static final String PROPERTY_RETRY_ATTEMPTS = "neo4j.onerror.retryattempts";
-    private static final String PROPERTY_BACKOFF_INTERVAL = "neo4j.onerror.backoffinterval";
+    private static final String PARAM_BASE = "neo4j.";
+    private static final String PROPERTY_ENABLED = PARAM_BASE + "enabled";
+    private static final String PROPERTY_SERVER_NAME = PARAM_BASE + "dbServerName";
+    private static final String PROPERTY_USERNAME = PARAM_BASE + "dbUser";
+    private static final String PROPERTY_PASSWORD = PARAM_BASE + "dbPassword";
+    private static final String PROPERTY_DATABASE_NAME = PARAM_BASE + "database";
+    private static final String PROPERTY_PORT = PARAM_BASE + "dbServerPort";
+    private static final String PROPERTY_ALLOW_DELETE = PARAM_BASE + "allowDelete";
+    private static final String PROPERTY_RETRY_ATTEMPTS = PARAM_BASE + "onerror.retryattempts";
+    private static final String PROPERTY_BACKOFF_INTERVAL = PARAM_BASE + "onerror.backoffinterval";
+    private static final String PARAM_SSL_ENABLED = PARAM_BASE + "ssl.enabled";
 
     /*--------------------------------------------------------------------------
     Initialization
@@ -259,6 +262,25 @@ public class Neo4jSettings {
     public static void setAllowDelete(boolean value)
     {
         settings.setSetting(config_name, PROPERTY_ALLOW_DELETE, value);
+    }
+
+    /**
+     * @return whether or not to use SSL. Default: {@value #DEFAULT_SSL_ENABLED}
+     *         .
+     */
+    public static boolean isSSLEnabled()
+    {
+        return settings.getSetting(config_name, PARAM_SSL_ENABLED, DEFAULT_SSL_ENABLED, true);
+    }
+
+    /**
+     * Sets whether or not to use SSL.
+     *
+     * @param value
+     */
+    public static void setSSLEnabled(boolean value)
+    {
+        settings.setSetting(config_name, PARAM_SSL_ENABLED, value);
     }
 
     /**

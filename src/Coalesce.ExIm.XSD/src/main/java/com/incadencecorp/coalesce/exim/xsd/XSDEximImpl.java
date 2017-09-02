@@ -68,7 +68,7 @@ public class XSDEximImpl implements CoalesceExim<Document> {
 
     private static final String NS = "cns";
     private static final List<String> ATTRIBUTES_TO_OMIT = Arrays.asList(new String[] {
-        CoalesceEntity.ATTRIBUTE_CLASSNAME
+                                                                                        CoalesceEntity.ATTRIBUTE_CLASSNAME
     });
 
     private String namespace;
@@ -303,14 +303,18 @@ public class XSDEximImpl implements CoalesceExim<Document> {
                 for (int ii = 0; ii < attrs.getLength(); ii++)
                 {
                     Node attr = attrs.item(ii);
-                    if (!attr.getLocalName().equalsIgnoreCase(CoalesceObject.ATTRIBUTE_KEY)
-                            || StringHelper.isNullOrEmpty(coalesceObject.getKey()))
+
+                    if (!attr.getNodeName().startsWith("xmlns"))
                     {
-                        coalesceObject.setAttribute(attr.getLocalName(), attr.getNodeValue());
-                    }
-                    else
-                    {
-                        keysToReplace.put(coalesceObject.getKey(), attr.getNodeValue());
+                        if (!attr.getLocalName().equalsIgnoreCase(CoalesceObject.ATTRIBUTE_KEY)
+                                || StringHelper.isNullOrEmpty(coalesceObject.getKey()))
+                        {
+                            coalesceObject.setAttribute(attr.getLocalName(), attr.getNodeValue());
+                        }
+                        else
+                        {
+                            keysToReplace.put(coalesceObject.getKey(), attr.getNodeValue());
+                        }
                     }
                 }
             }

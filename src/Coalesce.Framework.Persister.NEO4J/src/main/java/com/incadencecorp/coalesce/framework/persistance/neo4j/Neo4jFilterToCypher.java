@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.factory.Hints;
@@ -18,6 +19,7 @@ import org.geotools.filter.FunctionImpl;
 import org.geotools.filter.capability.FunctionNameImpl;
 import org.geotools.util.ConverterFactory;
 import org.geotools.util.Converters;
+import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.filter.And;
 import org.opengis.filter.BinaryComparisonOperator;
@@ -83,6 +85,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
+import com.incadencecorp.coalesce.framework.EnumerationProviderUtil;
+import com.incadencecorp.coalesce.search.api.EFilterEnumerationModes;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 
 /**
@@ -100,6 +104,9 @@ public class Neo4jFilterToCypher implements FilterVisitor, ExpressionVisitor {
 
     /** Standard java logger */
     private static final Logger LOGGER = LoggerFactory.getLogger(Neo4jFilterToCypher.class);
+
+    /** */
+    private static final EFilterEnumerationModes MODE = EFilterEnumerationModes.ENUMVALUE;
 
     /** Maps a node label to a node variable name. */
     protected Map<String, String> labelToNode = new HashMap<>();
@@ -120,6 +127,8 @@ public class Neo4jFilterToCypher implements FilterVisitor, ExpressionVisitor {
     private String defaultName = null;
 
     private String entityname = null;
+    private String currentProperty;
+    private SimpleFeatureType featureType;
 
     /**
      * Default constructor.
@@ -157,6 +166,19 @@ public class Neo4jFilterToCypher implements FilterVisitor, ExpressionVisitor {
     public void setInline(boolean inline)
     {
         this.inline = inline;
+    }
+
+    /**
+     * Sets the featuretype the encoder is encoding sql for.
+     * <p>
+     * This is used for context for attribute expressions when encoding to sql.
+     * </p>
+     * 
+     * @param featureType
+     */
+    public void setFeatureType(SimpleFeatureType featureType)
+    {
+        this.featureType = featureType;
     }
 
     /**
@@ -894,20 +916,24 @@ public class Neo4jFilterToCypher implements FilterVisitor, ExpressionVisitor {
         {
             // aha! It's a propertyname, we should get the class and pass it in
             // as context to the tree walker.
-            AttributeDescriptor attType = (AttributeDescriptor) left.evaluate(null);
+            AttributeDescriptor attType = (AttributeDescriptor) left.evaluate(featureType);
             if (attType != null)
             {
                 rightContext = attType.getType().getBinding();
             }
+
+            currentProperty = ((PropertyName) left).getPropertyName();
         }
 
         if (right instanceof PropertyName)
         {
-            AttributeDescriptor attType = (AttributeDescriptor) right.evaluate(null);
+            AttributeDescriptor attType = (AttributeDescriptor) right.evaluate(featureType);
             if (attType != null)
             {
                 leftContext = attType.getType().getBinding();
             }
+
+            currentProperty = ((PropertyName) right).getPropertyName();
         }
 
         // case sensitivity
@@ -1200,6 +1226,43 @@ public class Neo4jFilterToCypher implements FilterVisitor, ExpressionVisitor {
         return filter instanceof During || filter instanceof TContains;
     }
 
+    private Object getLiteralEnumerationValue(EFilterEnumerationModes mode, Literal expression)
+    {
+
+        Object literalValue;
+
+        if (mode == EFilterEnumerationModes.MIXED)
+        {
+            mode = Pattern.matches("^[0-9]+$", (String) expression.getValue()) ? EFilterEnumerationModes.ORDINAL : EFilterEnumerationModes.ENUMVALUE;
+        }
+
+        if (mode == EFilterEnumerationModes.ENUMVALUE)
+        {
+            // Convert to Ordinal
+            int ordinal = EnumerationProviderUtil.toPosition(null, currentProperty, (String) expression.getValue());
+
+            // TODO All types are stored as Strings within Neo4j. Until this is
+            // resolved we need to
+            // convert the ordinal position.
+            literalValue = Integer.toString(ordinal);
+
+            if (LOGGER.isDebugEnabled())
+            {
+                LOGGER.debug("Converted ({}) Value ({}) => ({})",
+                             currentProperty,
+                             (String) expression.getValue(),
+                             literalValue);
+            }
+        }
+        else
+        {
+            literalValue = expression.getValue();
+        }
+
+        return literalValue;
+
+    }
+
     void visitBegin(Period p, Object extraData)
     {
         FF.literal(p.getBeginning().getPosition().getDate()).accept(this, extraData);
@@ -1257,21 +1320,13 @@ public class Neo4jFilterToCypher implements FilterVisitor, ExpressionVisitor {
                     literal = safeConvertToNumber(expression, Number.class);
                 }
             }
+            else if (Enum.class.isAssignableFrom(target))
+            {
+                literal = getLiteralEnumerationValue(MODE, expression);
+            }
             else
             {
                 literal = expression.evaluate(null, target);
-            }
-        }
-
-        // check for conversion to number
-        if (target == null)
-        {
-            // we don't know the target type, check for a conversion to a number
-
-            Number number = safeConvertToNumber(expression, Number.class);
-            if (number != null)
-            {
-                literal = number;
             }
         }
 

@@ -31,7 +31,7 @@ import org.opengis.filter.FilterFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.incadencecorp.coalesce.api.CoalesceParameters;
+import com.incadencecorp.coalesce.common.classification.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
@@ -151,7 +151,12 @@ public class AfterLastModifiedScanImpl extends AbstractScan {
         }
         else if (loader != null)
         {
-            days = Integer.parseInt(loader.getProperty(SynchronizerParameters.PARAM_SCANNER_DAYS));
+            String value = loader.getProperty(SynchronizerParameters.PARAM_SCANNER_DAYS);
+
+            if (!StringHelper.isNullOrEmpty(value))
+            {
+                days = Integer.parseInt(value);
+            }
         }
 
         if (LOGGER.isInfoEnabled())
