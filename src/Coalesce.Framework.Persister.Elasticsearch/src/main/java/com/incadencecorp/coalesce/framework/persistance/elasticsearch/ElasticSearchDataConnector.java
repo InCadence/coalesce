@@ -21,12 +21,12 @@ public class ElasticSearchDataConnector extends CoalesceDataConnectorBase {
     private static final Logger LOGGER = LoggerFactory.getLogger(ElasticSearchDataConnector.class);
     private Client client;
 
-    public ElasticSearchDataConnector(ServerConn settings, String prefix) throws CoalescePersistorException
+    public ElasticSearchDataConnector(String prefix) throws CoalescePersistorException
     {
         try
         {
-            setSettings(settings);
-            _prefix = prefix;
+            //setSettings(settings);
+            //_prefix = prefix;
         }
         catch (Exception e)
         {
@@ -37,10 +37,12 @@ public class ElasticSearchDataConnector extends CoalesceDataConnectorBase {
 	public Client getDBConnector() throws CoalescePersistorException {
 		try {
 
-			LOGGER.info("ElasticSearchDataConnector:openDataConnection - connecting to accumulo");
+			LOGGER.info("ElasticSearchDataConnector:openDataConnection - connecting to ElasticSearch");
+			System.out.println("ElasticSearchDataConnector:openDataConnection - connecting to ElasticSearch");
 			client = TransportClient.builder().build()
 					   .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("localhost"), 9300));
 			LOGGER.debug("ElasticSearchDataConnector:openDataConnection - Connector User: " + client.toString());
+			System.out.println("ElasticSearchDataConnector:openDataConnection - Connector User: " + client.toString());
 
 			//createTables(connector, coalesceTable, coalesceTemplateTable, coalesceEntityIndex, coalesceSearchTable);
 			
@@ -59,6 +61,18 @@ public class ElasticSearchDataConnector extends CoalesceDataConnectorBase {
     protected String getProcedurePrefix()
     {
         return "call " + _prefix;
+    }
+    
+    public static void main(String args[]) {
+    	ElasticSearchDataConnector connector;
+		try {
+			connector = new ElasticSearchDataConnector("");
+			Client client = connector.getDBConnector();
+			
+			System.out.println("Client connected");
+		} catch (CoalescePersistorException e) {
+			e.printStackTrace();
+		}
     }
 
 }
