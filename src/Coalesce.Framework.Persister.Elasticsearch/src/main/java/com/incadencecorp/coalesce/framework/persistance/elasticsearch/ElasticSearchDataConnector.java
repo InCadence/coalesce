@@ -4,16 +4,30 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Date;
 
+import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.common.inject.Injector;
+import org.elasticsearch.common.settings.ImmutableSettings;
+import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.plugins.PluginsService;
+import org.elasticsearch.rest.RestStatus;
+import org.elasticsearch.transport.Transport;
+import org.geotools.coverage.grid.GeneralGridCoordinates.Immutable;
+import org.jboss.netty.handler.ssl.ImmediateExecutor;
+
+import static org.elasticsearch.common.xcontent.XContentFactory.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
+
+import ironhide.client.IronhideClientPlugin;
 
 public class ElasticSearchDataConnector extends CoalesceDataConnectorBase {
 
@@ -39,8 +53,21 @@ public class ElasticSearchDataConnector extends CoalesceDataConnectorBase {
 
 			LOGGER.info("ElasticSearchDataConnector:openDataConnection - connecting to ElasticSearch");
 			System.out.println("ElasticSearchDataConnector:openDataConnection - connecting to ElasticSearch");
+			
+			TransportClient transportClient = null;
+			
+			try {
+				
+			ImmutableSettings settings = Settings.settingsBuilder()
+		    .put("cluster.name", "elasticsearch")
+            .build();
+			
+			transportClient = new TransportClient(settings);
+				
 			client = TransportClient.builder().build()
 					   .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("localhost"), 9300));
+			Settings settings = ImmutableSettings.settingsBuilder().put("cluster.name", "elastictest").build();
+            TransportClient transportClient = new TransportClient(settings);
 			LOGGER.debug("ElasticSearchDataConnector:openDataConnection - Connector User: " + client.toString());
 			System.out.println("ElasticSearchDataConnector:openDataConnection - Connector User: " + client.toString());
 
@@ -70,6 +97,31 @@ public class ElasticSearchDataConnector extends CoalesceDataConnectorBase {
 			Client client = connector.getDBConnector();
 			
 			System.out.println("Client connected");
+			
+			try {
+				IndexResponse response = client.prepareIndex("twitter", "tweet", "1")
+				        .setSource(jsonBuilder()
+				                .startObject()
+				                    .field("user", "kimchy")
+				                    .field("postDate", new Date())
+				                    .field("message", "trying out Elasticsearch")
+				                .endObject()
+				              )
+				    .get();
+				
+				// Index name
+				String _index = response.getIndex();
+				// Type name
+				String _type = response.getType();
+				// Document ID (generated or not)
+				String _id = response.getId();
+				// Version (if it's the first time you index this document, you will get: 1)
+				long _version = response.getVersion();
+				// status has stored current instance statement.
+				//RestStatus status = response.;
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		} catch (CoalescePersistorException e) {
 			e.printStackTrace();
 		}
