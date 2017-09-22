@@ -44,6 +44,7 @@ public class AccumuloPersistorTest extends AbstractAccumuloPersistorTest {
     @AfterClass
     public static void tearDownAfterClass() throws Exception
     {
+    	// TODO - Delete everything from Database?
         CoalesceUnitTestSettings.tearDownAfterClass();
     }
 

@@ -13,14 +13,21 @@
 		<relativePath>..</relativePath>
 	</parent>
 
-	<properties>
-		<com.vividsolutions.jts.version>1.9</com.vividsolutions.jts.version>
-		<org.geotools.version>16.1</org.geotools.version>
-		<org.eclipse.xsd.version>2.6.0</org.eclipse.xsd.version>
-	</properties>
-
 	<build>
 		<plugins>
+			<plugin>
+        			<groupId>org.apache.felix</groupId>
+        			<artifactId>maven-scr-plugin</artifactId>
+        			<version>1.20.0</version>
+     		   		<executions>
+          				<execution>
+            					<id>generate-scr-scrdescriptor</id>
+            					<goals>
+              						<goal>scr</goal>
+            					</goals>
+          				</execution>
+        			</executions>
+      			</plugin>
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
@@ -31,7 +38,8 @@
 						<Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
 						<Bundle-Version>${project.version}</Bundle-Version>
 						<Export-Package>
-							org.apache.accumulo.core*
+							org.apache.accumulo.core.*,
+							org.locationtech.geomesa.*
 						</Export-Package>
 						<Import-Package>
 							*; resolution:=optional
@@ -47,6 +55,12 @@
 	</build>
 
 	<dependencies>
+    		<dependency>
+         		<groupId>org.apache.felix</groupId>
+			<artifactId>org.apache.felix.scr.ds-annotations</artifactId>
+         		<version>1.2.4</version>
+         		<scope>provided</scope>
+    		</dependency>
 		<dependency>
 			<groupId>org.apache.accumulo</groupId>
 			<artifactId>accumulo-core</artifactId>

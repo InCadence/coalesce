@@ -43,14 +43,14 @@ public class SearchJaxwsClientImplTestIT extends AbstractSearchTests {
     {
         try
         {
-            String host = "localhost";
+            String host = "bdpingest.bdpdev.incadencecorp.com";
             URL url = new URL("http", host, 8181, "/cxf/search?wsdl");
 
             LOGGER.info("Metadata Manager WSDL Location: {}", url.toString());
 
             // Host Reachable?
             InetAddress address = InetAddress.getByName(host);
-            Assume.assumeTrue(address.isReachable(5000));
+            //Assume.assumeTrue(address.isReachable(5000));
 
             // Create Client
             crud = new CrudJaxwsClientImpl(new URL("http", host, 8181, "/cxf/crud?wsdl"));

@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.apache.accumulo.core.client.AccumuloException;
@@ -16,6 +18,7 @@ import org.apache.accumulo.core.client.TableExistsException;
 import org.apache.accumulo.core.client.ZooKeeperInstance;
 import org.apache.accumulo.core.client.security.tokens.PasswordToken;
 import org.geotools.data.DataStore;
+import org.geotools.data.DataStoreFactorySpi;
 import org.geotools.data.DataStoreFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,6 +81,7 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase {
 	public AccumuloDataConnector(ServerConn settings) throws CoalescePersistorException {
 		serverConnection = new ServerConn.Builder().copyOf(settings).build();
 
+		LOGGER.debug("Geotools DS conf:  Instance: {}  Zookeepers: {}, User: {}", settings.getDatabase(), settings.getServerName(), settings.getUser());
 		// Build the map for Geotools style connection from the connection information
 		dsConf.put(INSTANCE_ID, settings.getDatabase());
 		dsConf.put(ZOOKEEPERS, settings.getServerName());
@@ -85,6 +89,7 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase {
 		dsConf.put(PASSWORD, settings.getPassword());
 		dsConf.put(TABLE_NAME, coalesceSearchTable);
 		dsConf.put(AUTHS, ""); // Auths will be empty for now
+		
 		
 		// Set system properties for GeomesaBatchWriter
 		Properties props = System.getProperties();
@@ -153,10 +158,11 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase {
 	}
 
 	protected void openDataConnection()
-			throws IOException, InterruptedException, AccumuloException, AccumuloSecurityException {
+			throws IOException, InterruptedException, AccumuloException, AccumuloSecurityException, CoalescePersistorException {
 		// TODO Add try catch for appropriate exceptions
 		if (connector == null) {
 			LOGGER.info("AccumuloDataConnector:openDataConnection - connecting to accumulo");
+			LOGGER.debug("Accumulo DB: {}  Accumulo Zookeepers: {}", serverConnection.getDatabase(), serverConnection.getServerName());
 
 			instance = new ZooKeeperInstance(serverConnection.getDatabase(), serverConnection.getServerName());
 			connector = instance.getConnector(serverConnection.getUser(),
@@ -165,10 +171,26 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase {
 
 			createTables(connector, coalesceTable, coalesceTemplateTable, coalesceEntityIndex, coalesceSearchTable);
 
+			Iterator<DataStoreFactorySpi> availableStores =  DataStoreFinder.getAvailableDataStores();
+			LOGGER.debug("List available Stores: {");
+			            while (availableStores.hasNext()) {
+			                LOGGER.debug(availableStores.next().toString());
+			            }
+			LOGGER.debug("}");
 			// Now set up the GeoMesa connection verify that we can see this
 			// Accumulo destination in a GeoTools manner
 
 			dataStore = DataStoreFinder.getDataStore(dsConf);
+			if (dataStore == null) {
+				LOGGER.error("Geomesa Accumulo Datastore not found in Factory.  Check classpath. DSConf values below");
+				Iterator<Entry<String, String>> it = dsConf.entrySet().iterator();
+			    while (it.hasNext()) {
+			        Map.Entry<String,String> pair = (Map.Entry<String,String>)it.next();
+			        LOGGER.error(pair.getKey() + " = " + pair.getValue());
+			        it.remove(); // avoids a ConcurrentModificationException
+			    }
+				throw new CoalescePersistorException("Geomesa Accumulo Datastore not found in Factory.  Check classpath");
+			}
 		}
 	}
 

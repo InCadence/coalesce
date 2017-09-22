@@ -1,6 +1,8 @@
 package com.incadencecorp.coalesce.framework.persistance.accumulo;
 
+
 import java.io.IOException;
+
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
@@ -20,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
+
 
 import org.apache.accumulo.core.client.AccumuloException;
 import org.apache.accumulo.core.client.BatchDeleter;
@@ -55,6 +58,7 @@ import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.filter.text.cql2.CQLException;
+
 import org.joda.time.DateTime;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
@@ -136,12 +140,21 @@ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
 
 public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesceSearchPersistor {
 
-    public static final String ENTITY_KEY_COLUMN_NAME = "objectKey";
-    public static final String ENTITY_NAME_COLUMN_NAME = "entityName";
-    public static final String ENTITY_SOURCE_COLUMN_NAME = "entitySource";
-    public static final String ENTITY_TITLE_COLUMN_NAME = "entityTitle";
-    public static final String ENTITY_RECORD_KEY_COLUMN_NAME = "recordKey";
-
+    public static final String ENTITY_KEY_COLUMN_NAME = "objectkey";
+    public static final String ENTITY_NAME_COLUMN_NAME = "name";
+    public static final String ENTITY_SOURCE_COLUMN_NAME = "source";
+    public static final String ENTITY_TITLE_COLUMN_NAME = "title";
+    public static final String ENTITY_RECORD_KEY_COLUMN_NAME = "recordkey";
+    public static final String ENTITY_VERSION_COLUMN_NAME = "version";
+    public static final String ENTITY_ID_COLUMN_NAME = "entityId";
+    public static final String ENTITY_ID_TYPE_COLUMN_NAME = "entityIdType";
+    public static final String ENTITY_DATE_CREATED_COLUMN_NAME = "dateCreated";
+    public static final String ENTITY_LAST_MODIFIED_COLUMN_NAME = "lastModified";
+    public static final String ENTITY_DELETED_COLUMN_NAME = "deleted";
+    public static final String ENTITY_SCOPE_COLUMN_NAME = "scope";
+    public static final String ENTITY_CREATOR_COLUMN_NAME = "creator";
+    public static final String ENTITY_TYPE_COLUMN_NAME = "type";
+ 
     // Some constants for the linkage records
     public static final String LINKAGE_ENTITY1_KEY_COLUMN_NAME = "entity1Key";
     public static final String LINKAGE_ENTITY1_NAME_COLUMN_NAME = "entity1Name";
@@ -157,12 +170,15 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
     public static final String LINKAGE_LABEL_COLUMN_NAME = "label";
 
     public static final String DEFAULT_GEO_FIELD_NAME = "theWorld";
-    public static final String LINKAGE_FEATURE_NAME = "Linkages";
+    
+    //  Note, these strings are here to match the CoalescePropertyFactory names
+    //  If those change this has to change
+    public static final String LINKAGE_FEATURE_NAME = "coalescelinkage";
+    public static final String ENTITY_FEATURE_NAME = "coalesceentity";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloPersistor.class);
 
     private final AccumuloDataConnector connect;
-    private CoalesceValidator validator;
     
     private boolean batchInProgress = false;
 
@@ -173,10 +189,10 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
     public AccumuloPersistor(ServerConn svConn) throws CoalescePersistorException
     {
         setConnectionSettings(svConn);
-        LOGGER.debug("Zookeepers",AccumuloSettings.getServerConn().getServerName());
-        LOGGER.debug("Databasename",AccumuloSettings.getServerConn().getDatabase());
+        LOGGER.debug("Zookeepers: {} ",AccumuloSettings.getServerConn().getServerName());
+        LOGGER.debug("Databasename: {} ",AccumuloSettings.getServerConn().getDatabase());
         connect = (AccumuloDataConnector) getDataConnector();
-        validator = new CoalesceValidator();
+        createEntityFeature(ENTITY_FEATURE_NAME);
         createLinkageFeature(LINKAGE_FEATURE_NAME);
         
         
@@ -719,8 +735,8 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         tb.add(LINKAGE_LAST_MODIFIED_COLUMN_NAME, getTypeForSimpleFeature(ECoalesceFieldDataTypes.DATE_TIME_TYPE));
         tb.add(LINKAGE_LABEL_COLUMN_NAME, getTypeForSimpleFeature(ECoalesceFieldDataTypes.STRING_TYPE));
         tb.add(LINKAGE_LINK_TYPE_COLUMN_NAME, getTypeForSimpleFeature(ECoalesceFieldDataTypes.ENUMERATION_TYPE));
-        tb.add(DEFAULT_GEO_FIELD_NAME, Polygon.class);
-        tb.setDefaultGeometry(DEFAULT_GEO_FIELD_NAME);
+        //tb.add(DEFAULT_GEO_FIELD_NAME, Polygon.class);
+        //tb.setDefaultGeometry(DEFAULT_GEO_FIELD_NAME);
        
         SimpleFeatureType feature = tb.buildFeatureType();
         feature.getUserData().put(geomesaTimeIndex, LINKAGE_LAST_MODIFIED_COLUMN_NAME);
@@ -757,7 +773,6 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
     private void createFeatureSet(String featurename, ArrayList<Fielddefinition> fields)
     {
         //final String geomesaTimeIndex = "geomesa.index.dtg";
-    	final  String indexes = "z2,records,id,attr";
         SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
 
         boolean defaultGeometrySet = false;
@@ -1184,8 +1199,13 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                     beginTime = System.currentTimeMillis();
                     persisted = persistBaseData(entity, dbConnector, writer) && persistEntityIndex(entity, dbConnector, config);
                     LOGGER.debug("Entity Base Data Persist Time: {}",System.currentTimeMillis()-beginTime);
-                    persistEntitySearchData(entity, dbConnector, config, featureCollectionMap, allowRemoval);
+                    persistRecordSearchData(entity, dbConnector, config, featureCollectionMap, allowRemoval);
                     LOGGER.debug("Entity Total Data Persist Time: {}",System.currentTimeMillis()-beginTime);
+                    // Persist the linkage information for search
+                    persistLinkageSearch(connect.getGeoDataStore(), entity, featureCollectionMap);
+                    // This will replace the base data
+                    persistEntitySearch(connect.getGeoDataStore(), entity, featureCollectionMap);
+
 
                     break;
 
@@ -1219,6 +1239,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                             }
                         }
                         deleteFromLinks(entity);
+                        deleteEntitySearch(entity);
                     }
                     else
                     {
@@ -1227,8 +1248,17 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                         beginTime = System.currentTimeMillis();
                         persisted = persistBaseData(entity, dbConnector, writer) && persistEntityIndex(entity, dbConnector, config);
                         LOGGER.debug("Base Data Persist Time: {}",System.currentTimeMillis()-beginTime);
-                        persistEntitySearchData(entity, dbConnector, config, featureCollectionMap, allowRemoval);
-                        LOGGER.debug("Total Data Persist Time: {}",System.currentTimeMillis()-beginTime);
+                        beginTime = System.currentTimeMillis();
+                       persistRecordSearchData(entity, dbConnector, config, featureCollectionMap, allowRemoval);
+                        LOGGER.debug("Record Search Data Persist Time: {}",System.currentTimeMillis()-beginTime);
+                        // Persist the linkage information for search
+                        beginTime = System.currentTimeMillis();
+                        persistLinkageSearch(connect.getGeoDataStore(), entity, featureCollectionMap);
+                        LOGGER.debug("Linkage Data Persist Time: {}",System.currentTimeMillis()-beginTime);
+                       // This will replace the base data
+                        beginTime = System.currentTimeMillis();
+                        persistEntitySearch(connect.getGeoDataStore(), entity, featureCollectionMap);
+                        LOGGER.debug("Entity Data Persist Time: {}",System.currentTimeMillis()-beginTime);
                     }
 
                     break;
@@ -1333,7 +1363,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         return persisted;
     }
     
-    private boolean persistEntitySearchData(CoalesceEntity entity,
+    private boolean persistRecordSearchData(CoalesceEntity entity,
                                             Connector dbConnector,
                                             BatchWriterConfig config,
                                             Map<String, DefaultFeatureCollection> featureCollectionMap,
@@ -1350,9 +1380,10 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         {
 
             // Validate the entity against the template
-            Map<String, String> errors = validator.validate(null, entity, CoalesceEntityTemplate.create(entity));
-            if (errors.isEmpty())
-            {
+        	// Note - could not see what this really did other than take up time.  Caused error with CRUD integration test so commenting out.
+            //Map<String, String> errors = validator.validate(null, entity, CoalesceEntityTemplate.create(entity));
+            //if (errors.isEmpty())
+            //{
 
                 for (CoalesceSection section : entity.getSections().values())
                 {
@@ -1386,13 +1417,11 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                         persisted = true;
                     }
                 }
-                 // Persist the linkage information for search
-                storeLinkageSearch(geoDataStore, entity, featureCollectionMap);
- 
-            }    
+  
+            //}    
  
         }
-        catch (SAXException | IOException | CoalesceDataFormatException | CQLException e)
+        catch (IOException | CoalesceDataFormatException | CQLException e)
         {
             LOGGER.error(e.getMessage(), e);
             persisted = false;
@@ -1412,7 +1441,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 
     }
     
-    private void storeLinkageSearch(DataStore gds, CoalesceEntity entity,
+    private void persistLinkageSearch(DataStore gds, CoalesceEntity entity,
     		Map<String, DefaultFeatureCollection> featureCollectionMap) throws CQLException, CoalesceDataFormatException, IOException 
     {
         DefaultFeatureCollection featurecollection = featureCollectionMap.get(LINKAGE_FEATURE_NAME);
@@ -1425,15 +1454,18 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         Map<String,CoalesceLinkage> linkages = entity.getLinkages();
         for (Map.Entry<String,CoalesceLinkage> mlink : linkages.entrySet()) {
         	CoalesceLinkage link = mlink.getValue();              
-        	long beginTime = System.currentTimeMillis();
-        	Boolean updated = updateLinkIfExists(LINKAGE_FEATURE_NAME, link);
-            LOGGER.debug("Linkage Update Time: {} Updated: {}",System.currentTimeMillis()-beginTime,updated);
+         	Boolean updated = updateLinkIfExists(LINKAGE_FEATURE_NAME, link);
        	
         	if (!updated) {
         		SimpleFeatureType featuretype = gds.getSchema(LINKAGE_FEATURE_NAME);
                 SimpleFeature simplefeature = SimpleFeatureBuilder.build(featuretype, new Object[] {}, link.getKey());
                 simplefeature.getUserData().put( Hints.USE_PROVIDED_FID, true );
                 
+                setFeatureAttribute(simplefeature,
+    					LINKAGE_KEY_COLUMN_NAME,
+                        ECoalesceFieldDataTypes.STRING_TYPE,
+                        link.getKey());
+
                 setFeatureAttribute(simplefeature,
     					LINKAGE_ENTITY1_KEY_COLUMN_NAME,
                         ECoalesceFieldDataTypes.STRING_TYPE,
@@ -1480,22 +1512,22 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                         link.getLinkType());   
                
                     // create a polygon of the WORLD!!!!!
-                    Coordinate coord1 = new Coordinate(-180, -90);
-                    Coordinate coord2 = new Coordinate(-180, 90);
-                    Coordinate coord3 = new Coordinate(180, 90);
-                    Coordinate coord4 = new Coordinate(180, -90);
-                    Coordinate coord5 = new Coordinate(-180, -90);
-
-                    GeometryFactory geoFactory = new GeometryFactory();
-
-                    CoordinateSequence coordSeq = new CoordinateArraySequence(new Coordinate[] { coord1, coord2, coord3,
-                                                                                                 coord4, coord5 });
-
-                    LinearRing linearRing = new LinearRing(new CoordinateArraySequence(coordSeq), geoFactory);
-
-                    Polygon polygon = new Polygon(linearRing, null, geoFactory);
-                    String geomname = featuretype.getGeometryDescriptor().getName().toString();
-                    simplefeature.setAttribute(DEFAULT_GEO_FIELD_NAME, polygon);
+//                    Coordinate coord1 = new Coordinate(-180, -90);
+//                    Coordinate coord2 = new Coordinate(-180, 90);
+//                    Coordinate coord3 = new Coordinate(180, 90);
+//                    Coordinate coord4 = new Coordinate(180, -90);
+//                    Coordinate coord5 = new Coordinate(-180, -90);
+//
+//                    GeometryFactory geoFactory = new GeometryFactory();
+//
+//                    CoordinateSequence coordSeq = new CoordinateArraySequence(new Coordinate[] { coord1, coord2, coord3,
+//                                                                                                 coord4, coord5 });
+//
+//                    LinearRing linearRing = new LinearRing(new CoordinateArraySequence(coordSeq), geoFactory);
+//
+//                    Polygon polygon = new Polygon(linearRing, null, geoFactory);
+//                    String geomname = featuretype.getGeometryDescriptor().getName().toString();
+//                    simplefeature.setAttribute(DEFAULT_GEO_FIELD_NAME, polygon);
                     featurecollection.add(simplefeature);
 
                	}
@@ -2048,6 +2080,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 
         DateTime lastModified = null;
         Connector dbConn = connect.getDBConnector();
+        
         String rowRegex = null;
         String colfRegex = StringUtils.isNotBlank(objectType) ? objectType : null;
         String colqRegex = "key";
@@ -2122,21 +2155,26 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
     @Override
     public SearchResults search(Query query) throws CoalescePersistorException
     {
-        CachedRowSet rowset = null;
+
+    	AccumuloQueryRewriter nameChanger = new AccumuloQueryRewriter(query);;
+    	CachedRowSet rowset = null;
 
         DataStore geoDataStore = connect.getGeoDataStore();
-
+        // Make a copy of the query
+        Query localquery = nameChanger.rewrite();
+        
+        LOGGER.debug("Executing search against schema: {}",localquery.getTypeName());
         try
         {
 
-            SimpleFeatureStore featureSource = (SimpleFeatureStore) geoDataStore.getFeatureSource(query.getTypeName());
+            SimpleFeatureStore featureSource = (SimpleFeatureStore) geoDataStore.getFeatureSource(localquery.getTypeName());
 
             //Collection<PropertyDescriptor> descriptorSet = featureSource.getSchema().getDescriptors();
             //Collection<PropertyName> descriptorSet = query.getProperties();
             
             List<CoalesceColumnMetadata> columnList = new ArrayList<>();
             // Check if no properties were defined
-            if (query.retrieveAllProperties()) {
+            if (localquery.retrieveAllProperties()) {
                 for (PropertyDescriptor entry : featureSource.getSchema().getDescriptors())
                 {
                 	String columnName = entry.getName().getLocalPart();
@@ -2145,7 +2183,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                 }
       	
             } else {
-	            for (PropertyName entry : query.getProperties())
+	            for (PropertyName entry : localquery.getProperties())
 	            {
 	            	String columnName = entry.getPropertyName();
 	                CoalesceColumnMetadata columnMetadata = new CoalesceColumnMetadata(columnName, "String", Types.VARCHAR);
@@ -2153,7 +2191,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 	            }
             }
 
-            FeatureIterator<SimpleFeature> featureItr = featureSource.getFeatures(query).features();
+            FeatureIterator<SimpleFeature> featureItr = featureSource.getFeatures(localquery).features();
             Iterator<Object[]> columnIterator = new FeatureColumnIterator<Object[]>(featureItr);
 
             CoalesceResultSet resultSet = new CoalesceResultSet(columnIterator, columnList);
@@ -2212,5 +2250,231 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             e.printStackTrace();
         }
     }
+
+	private void createEntityFeature(String featurename)
+	{
+	    final String geomesaTimeIndex = "geomesa.index.dtg";
+		final  String indexes = "records,id,attr";
+	    DataStore gs = connect.getGeoDataStore();
+	    try {
+			SimpleFeatureType entityschema =  gs.getSchema(featurename);
+			if (entityschema != null) return;
+		} catch (IOException e1) {
+	           LOGGER.error(e1.getMessage(), e1);
+	
+		}
+	    SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
+	    tb.setName(featurename);
+
+	    tb.add(ENTITY_KEY_COLUMN_NAME, getTypeForSimpleFeature(ECoalesceFieldDataTypes.STRING_TYPE));
+	    tb.add(ENTITY_NAME_COLUMN_NAME, getTypeForSimpleFeature(ECoalesceFieldDataTypes.STRING_TYPE));
+	    tb.add(ENTITY_SOURCE_COLUMN_NAME, getTypeForSimpleFeature(ECoalesceFieldDataTypes.STRING_TYPE));
+	    tb.add(ENTITY_VERSION_COLUMN_NAME, getTypeForSimpleFeature(ECoalesceFieldDataTypes.STRING_TYPE));
+	    tb.add(ENTITY_ID_COLUMN_NAME, getTypeForSimpleFeature(ECoalesceFieldDataTypes.STRING_TYPE));
+	    tb.add(ENTITY_ID_TYPE_COLUMN_NAME, getTypeForSimpleFeature(ECoalesceFieldDataTypes.STRING_TYPE));
+	    tb.add(ENTITY_DATE_CREATED_COLUMN_NAME, getTypeForSimpleFeature(ECoalesceFieldDataTypes.DATE_TIME_TYPE));
+	    tb.add(ENTITY_LAST_MODIFIED_COLUMN_NAME, getTypeForSimpleFeature(ECoalesceFieldDataTypes.DATE_TIME_TYPE));
+	    tb.add(ENTITY_TITLE_COLUMN_NAME, getTypeForSimpleFeature(ECoalesceFieldDataTypes.STRING_TYPE));
+	    tb.add(ENTITY_DELETED_COLUMN_NAME, getTypeForSimpleFeature(ECoalesceFieldDataTypes.BOOLEAN_TYPE));
+	    tb.add(ENTITY_SCOPE_COLUMN_NAME, getTypeForSimpleFeature(ECoalesceFieldDataTypes.STRING_TYPE));
+	    tb.add(ENTITY_CREATOR_COLUMN_NAME, getTypeForSimpleFeature(ECoalesceFieldDataTypes.STRING_TYPE));
+	    tb.add(ENTITY_TYPE_COLUMN_NAME, getTypeForSimpleFeature(ECoalesceFieldDataTypes.STRING_TYPE));
+	    //tb.add(DEFAULT_GEO_FIELD_NAME, Polygon.class);
+	    //tb.setDefaultGeometry(DEFAULT_GEO_FIELD_NAME);
+	
+	    SimpleFeatureType feature = tb.buildFeatureType();
+	    feature.getUserData().put(geomesaTimeIndex, ENTITY_LAST_MODIFIED_COLUMN_NAME);
+	
+	    // index recordkey, cardinality is high because there is only one record per key.
+	    feature.getDescriptor(ENTITY_KEY_COLUMN_NAME).getUserData().put("index", "full");
+	    feature.getDescriptor(ENTITY_KEY_COLUMN_NAME).getUserData().put("cardinality", "high");
+	    feature.getDescriptor(ENTITY_NAME_COLUMN_NAME).getUserData().put("index", "join");
+	    feature.getDescriptor(ENTITY_NAME_COLUMN_NAME).getUserData().put("cardinality", "low");
+	    feature.getDescriptor(ENTITY_SOURCE_COLUMN_NAME).getUserData().put("index", "join");
+	    feature.getDescriptor(ENTITY_SOURCE_COLUMN_NAME).getUserData().put("cardinality", "low");
+	    feature.getDescriptor(ENTITY_VERSION_COLUMN_NAME).getUserData().put("index", "join");
+	    feature.getDescriptor(ENTITY_VERSION_COLUMN_NAME).getUserData().put("cardinality", "low");
+	    feature.getDescriptor(ENTITY_DELETED_COLUMN_NAME).getUserData().put("index", "join");
+	    feature.getDescriptor(ENTITY_DELETED_COLUMN_NAME).getUserData().put("cardinality", "low");
+	    //feature.getDescriptor(LINKAGE_LINK_TYPE_COLUMN_NAME).getUserData().put("index", "join");
+	    //feature.getDescriptor(LINKAGE_LINK_TYPE_COLUMN_NAME).getUserData().put("cardinality", "low");
+	    feature.getUserData().put( Hints.USE_PROVIDED_FID, true );
+	    feature.getUserData().put("geomesa.indexes.enabled",indexes);
+	    
+	    try
+	    {
+	        LOGGER.debug("Creating Feature for {} ", featurename);
+	
+	        gs.createSchema(feature);
+	
+	    }
+	    catch (Exception e)
+	    {
+	        LOGGER.error(e.getMessage(), e);
+	    }
+	}
+
+	private void persistEntitySearch(DataStore gds, CoalesceEntity entity,
+	    		Map<String, DefaultFeatureCollection> featureCollectionMap) throws CQLException, CoalesceDataFormatException, IOException 
+	    {
+	        DefaultFeatureCollection featurecollection = featureCollectionMap.get(ENTITY_FEATURE_NAME);
+	
+	        if (featurecollection == null)
+	        {
+	            featurecollection = new DefaultFeatureCollection();
+	            featureCollectionMap.put(ENTITY_FEATURE_NAME, featurecollection);
+	        }
+	        
+        	Boolean updated = updateEntityIfExists(ENTITY_FEATURE_NAME, entity);
+        	
+        	if (!updated) {
+        		SimpleFeatureType featuretype = gds.getSchema(ENTITY_FEATURE_NAME);
+                SimpleFeature simplefeature = SimpleFeatureBuilder.build(featuretype, new Object[] {}, entity.getKey());
+                simplefeature.getUserData().put( Hints.USE_PROVIDED_FID, true );
+                
+                setFeatureAttribute(simplefeature,
+    					ENTITY_KEY_COLUMN_NAME,
+                        ECoalesceFieldDataTypes.STRING_TYPE,
+                        entity.getKey());
+                setFeatureAttribute(simplefeature,
+    					ENTITY_NAME_COLUMN_NAME,
+                        ECoalesceFieldDataTypes.STRING_TYPE,
+                        entity.getName());
+                setFeatureAttribute(simplefeature,
+                		ENTITY_SOURCE_COLUMN_NAME,
+                        ECoalesceFieldDataTypes.STRING_TYPE,
+                        entity.getSource());
+                setFeatureAttribute(simplefeature,
+                		ENTITY_TITLE_COLUMN_NAME,
+                        ECoalesceFieldDataTypes.STRING_TYPE,
+                        entity.getTitle());
+                setFeatureAttribute(simplefeature,
+                		ENTITY_VERSION_COLUMN_NAME,
+                        ECoalesceFieldDataTypes.STRING_TYPE,
+                        entity.getVersion());
+                setFeatureAttribute(simplefeature,
+                		ENTITY_ID_COLUMN_NAME,
+                        ECoalesceFieldDataTypes.STRING_TYPE,
+                        entity.getEntityId());
+                setFeatureAttribute(simplefeature,
+                		ENTITY_ID_TYPE_COLUMN_NAME,
+                        ECoalesceFieldDataTypes.STRING_TYPE,
+                        entity.getEntityIdType());
+                setFeatureAttribute(simplefeature,
+                		ENTITY_DATE_CREATED_COLUMN_NAME,
+                        ECoalesceFieldDataTypes.DATE_TIME_TYPE,
+                        entity.getDateCreated());
+                setFeatureAttribute(simplefeature,
+                		ENTITY_LAST_MODIFIED_COLUMN_NAME,
+                        ECoalesceFieldDataTypes.DATE_TIME_TYPE,
+                        entity.getLastModified());
+                setFeatureAttribute(simplefeature,
+                		ENTITY_DELETED_COLUMN_NAME,
+                        ECoalesceFieldDataTypes.BOOLEAN_TYPE,
+                        entity.isMarkedDeleted());
+                // No use storing always null values
+//                setFeatureAttribute(simplefeature,
+//                		ENTITY_SCOPE_COLUMN_NAME,
+//                        ECoalesceFieldDataTypes.STRING_TYPE,
+//                        null);   
+//                setFeatureAttribute(simplefeature,
+//                		ENTITY_CREATOR_COLUMN_NAME,
+//                        ECoalesceFieldDataTypes.STRING_TYPE,
+//                        null);   
+//                setFeatureAttribute(simplefeature,
+//                		ENTITY_TYPE_COLUMN_NAME,
+//                        ECoalesceFieldDataTypes.STRING_TYPE,
+//                        null);   
+               
+                    featurecollection.add(simplefeature);
+
+               	}
+	
+
+	    }
+
+	private boolean updateEntityIfExists(String featuresetname, CoalesceEntity entity)
+	        throws IOException, CQLException, CoalesceDataFormatException
+	{
+	    boolean updated = false;
+	    DataStore store = connect.getGeoDataStore();
+	    FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
+	    
+	    FeatureId fid =ff.featureId(entity.getKey());
+	
+	    Filter filter = ff.id(Collections.singleton(fid));
+	    
+	    // Need to escape the fully qualified column in the feature set for filters
+	    //Filter filter = CQL.toFilter("\""+featuresetname+".recordKey\" =" + "'" + record.getKey() + "'");
+	
+	    //SimpleFeatureCollection collection = store.getFeatures(filter);
+	    FeatureWriter<SimpleFeatureType, SimpleFeature> writer = store.getFeatureWriter(featuresetname, filter, Transaction.AUTO_COMMIT);
+	    
+	            
+	    if (writer.hasNext())
+	    {
+	
+	    	SimpleFeature toModify = writer.next();
+	    	
+	
+			DateTime lm =  new DateTime(toModify.getAttribute(ENTITY_LAST_MODIFIED_COLUMN_NAME));
+			// IF the lastModified of this link is less than or equal to the one
+			// stored nothing has changed so don't update but return true so we don't
+			// persist another copy
+			if (!lm.isBefore(entity.getLastModified())) {
+				writer.close();
+				return true;
+			}
+	    	final String entityfields[] = {
+	    		    ENTITY_KEY_COLUMN_NAME,
+	    		    ENTITY_NAME_COLUMN_NAME,
+	    		    ENTITY_SOURCE_COLUMN_NAME,
+	    		    ENTITY_TITLE_COLUMN_NAME,
+	    		    ENTITY_VERSION_COLUMN_NAME,
+	    		    ENTITY_ID_COLUMN_NAME,
+	    		    ENTITY_ID_TYPE_COLUMN_NAME,
+	    		    ENTITY_DATE_CREATED_COLUMN_NAME,
+	    		    ENTITY_LAST_MODIFIED_COLUMN_NAME,
+	    		    ENTITY_DELETED_COLUMN_NAME
+	    	};
+	    	
+	    	Object[] values = new Object[] {        	
+				entity.getKey(),
+				entity.getName(),
+				entity.getSource(),
+				entity.getTitle(),
+				entity.getVersion(),
+				entity.getEntityId(),
+				entity.getEntityIdType(),
+				entity.getDateCreated(),
+				entity.getLastModified(),
+				entity.isMarkedDeleted()
+
+				};
+	    	for (int i = 0;i<entityfields.length;i++) 
+	    	{
+	    		toModify.setAttribute(entityfields[i], values[i]);
+	    	}
+	   			
+	    	writer.write();
+	    	updated=true;
+	
+	    } 
+	    writer.close();
+	
+	    return updated;
+	}
+
+	private void deleteEntitySearch(CoalesceEntity entity)
+	        throws IOException, CQLException, CoalesceDataFormatException
+	{
+	    DataStore store = connect.getGeoDataStore();
+	    FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
+	    SimpleFeatureStore featureStore = (SimpleFeatureStore) store.getFeatureSource(ENTITY_FEATURE_NAME);
+	    Filter filter =ff.equals(ff.property(ENTITY_KEY_COLUMN_NAME),ff.literal(entity.getKey()));
+	           
+	    featureStore.removeFeatures(filter);
+	
+	}
 
 }

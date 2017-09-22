@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>coalesce-search-service-data-web</artifactId>
 	<packaging>war</packaging>
-	<name>Coalesce Search Service Web</name>
+	<name>Coalesce_Search_Service_Web</name>
 	<description>Front end service for creating OGC filters.</description>
 
 	<parent>

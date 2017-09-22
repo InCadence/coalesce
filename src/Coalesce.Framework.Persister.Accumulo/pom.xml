@@ -31,7 +31,23 @@
 						<Bundle-Name>${project.name}</Bundle-Name>
 						<Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
 						<Export-Package>
-							${project.groupId}.framework.persistance.accumulo
+							${project.groupId}.framework.persistance.accumulo,
+							org.apache.commons.jxpath*;version=1.3;-split-package:=merge-last,
+							org.apache.commons.configuration*;version=1.6;-split-package:=merge-last,
+							org.apache.commons.collections*;version=3.2.1;-split-package:=merge-last,
+							org.apache.commons.beanutils*;version=1.8.0;-split-package:=merge-last,
+							com.google.common.base*;version=18.0;-split-package:=merge-last,
+							com.google.common.net*;version=18.0;-split-package:=merge-last,
+							com.google.common.primitives*;version=18.0;-split-package:=merge-last,
+							com.google.common.cache*;version=18.0;-split-package:=merge-last,
+							com.google.common.util.concurrent*;version=18.0;-split-package:=merge-last,
+							org.apache.tools*;version=1.8.2;-split-package:=merge-last,
+							org.apache.accumulo*;version=1.7.2;-split-package:=merge-last,
+							org.apache.hadoop*;version=2.2.0;-split-package:=merge-last,
+							org.apache.zookeeper*;version=3.4.6;-split-package:=merge-last,
+							org.apache.jute*;version=3.4.6;-split-package:=merge-last,
+							org.apache.thrift*;version=0.9.1;-split-package:=merge-last,
+							org.apache.htrace*;-split-package:=merge-last,
 						</Export-Package>
 						<Import-Package>
 							org.joda.time*;version="[1.6.2, 3)",
@@ -132,6 +148,11 @@
 			<artifactId>zookeeper</artifactId>
 			<version>3.4.6</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-common</artifactId>
+			<version>2.2.0</version>
+		</dependency>
 		<!-- Test Dependencies -->
 		<dependency>
 			<groupId>com.incadencecorp.coalesce</groupId>
@@ -189,11 +210,61 @@
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
+                <dependency>
+            		<groupId>com.incadencecorp.coalesce</groupId>
+            		<artifactId>coalesce-search</artifactId>
+            		<version>${project.version}</version>
+            		<scope>test</scope>
+            		<type>test-jar</type>
+        	</dependency>
 <!-- 		<dependency> -->
 <!-- 			<groupId>org.eclipse.jdt</groupId> -->
 <!-- 			<artifactId>core</artifactId> -->
 <!-- 			<version>3.1.1</version> -->
 <!-- 		</dependency> -->
+		<dependency>
+			<groupId>commons-configuration</groupId>
+			<artifactId>commons-configuration</artifactId>
+			<version>1.6</version>
+		</dependency>
+		<dependency>
+    			<groupId>commons-collections</groupId>
+    			<artifactId>commons-collections</artifactId>
+    			<version>3.2.1</version>
+		</dependency>
+		<dependency>
+    			<groupId>commons-beanutils</groupId>
+    			<artifactId>commons-beanutils</artifactId>
+    			<version>1.8.0</version>
+		</dependency>
+                <dependency>
+                        <groupId>commons-jxpath</groupId>
+                        <artifactId>commons-jxpath</artifactId>
+                        <version>1.3</version>
+                </dependency>
+		<dependency>
+    			<groupId>com.google.guava</groupId>
+    			<artifactId>guava</artifactId>
+    			<version>18.0</version>
+		</dependency>
+                <dependency>
+                        <groupId>org.apache.ant</groupId>
+                        <artifactId>ant</artifactId>
+                        <version>1.8.2</version>
+                </dependency>
+		<dependency>
+    			<groupId>org.apache.htrace</groupId>
+    			<artifactId>htrace</artifactId>
+    			<version>4.2.0-incubating</version>
+    			<type>pom</type>
+		</dependency>
+		<dependency>
+    			<groupId>org.apache.thrift</groupId>
+    			<artifactId>libthrift</artifactId>
+    			<version>0.9.1</version>
+			<type>pom</type>
+		</dependency>
+
 	</dependencies>
 
 </project>
