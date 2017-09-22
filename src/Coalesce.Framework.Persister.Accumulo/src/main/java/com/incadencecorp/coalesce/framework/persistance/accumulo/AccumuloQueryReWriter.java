@@ -2,6 +2,7 @@ package com.incadencecorp.coalesce.framework.persistance.accumulo;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -78,20 +79,32 @@ class AccumuloQueryRewriter extends DuplicatingFilterVisitor {
           
           
           // Rewrite properties also. Strip any table names off these
-          String[] props = newQuery.getPropertyNames();
-          if (props != null) {
-  	        for (int i=0;i<props.length;i++) {
-  	        	String[] nameParts = props[i].split("[/.]");
+          
+          if (newQuery.getPropertyNames() != null) {
+        	  ArrayList<String> props = new ArrayList<String>(Arrays.asList(newQuery.getPropertyNames()));
+        	  for (int i=0;i<props.size();i++) {
+  	        	String[] nameParts = props.get(i).split("[/.]");
   	        	if (nameParts.length == 2) {
   	        		if (!features.contains(nameParts[0])) {
   	        			features.add(nameParts[0]);
   	        		}
-  	        		props[i] = nameParts[1];
+  	        		props.set(i, nameParts[1]);
   	        	}
   	        }
-
+  	       
+  	        // Make sure objectkey is returned UNLESS the user specifically
+  	        // specified no properties. - Which is done by an empty props array
+        	// objectkey is always the first parameter
+  	        if (props.size() > 0) {
+  	        	props.add(0,AccumuloPersistor.ENTITY_KEY_COLUMN_NAME);
+  	        }
   	        newQuery.setPropertyNames(props);
-          }    
+          } else {
+        	  // Another hack to match Coalesce Behavior
+        	  // Null for properties is supposed to mean all fields but
+        	  // Coalesce expects the objectkey
+        	  newQuery.setPropertyNames(new String[] {AccumuloPersistor.ENTITY_KEY_COLUMN_NAME});
+          }
           
           // Rewrite the any sorts also
           SortBy[] sorts = newQuery.getSortBy();

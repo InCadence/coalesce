@@ -49,10 +49,12 @@ import org.geotools.data.FeatureSource;
 import org.geotools.data.FeatureWriter;
 import org.geotools.data.Query;
 import org.geotools.data.Transaction;
+import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureStore;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.factory.Hints;
 import org.geotools.feature.DefaultFeatureCollection;
+import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
@@ -830,7 +832,10 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         // index recordkey, cardinality is high because there is only one record per key.
         feature.getDescriptor(ENTITY_RECORD_KEY_COLUMN_NAME).getUserData().put("index", "full");
         feature.getDescriptor(ENTITY_RECORD_KEY_COLUMN_NAME).getUserData().put("cardinality", "high");
-        feature.getUserData().put( Hints.USE_PROVIDED_FID, true );
+        // Also index the entity key
+        feature.getDescriptor(ENTITY_KEY_COLUMN_NAME).getUserData().put("index", "full");
+        feature.getDescriptor(ENTITY_KEY_COLUMN_NAME).getUserData().put("cardinality", "high");
+       feature.getUserData().put( Hints.USE_PROVIDED_FID, true );
 //        feature.getUserData().put("geomesa.indexes.enabled",indexes);
         feature.getUserData().put("geomesa.index.dtg",null);
         
@@ -1676,7 +1681,12 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 //        store.setTransaction(transaction);
 
         // Filters need fully qualified column name must be quoted
-        Filter filter = CQL.toFilter("recordKey='" + record.getKey() + "'");
+        FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
+        
+        FeatureId fid =ff.featureId(record.getKey());
+       // TODO Need to add compare of modified time to see if there was an update
+        Filter filter = ff.id(Collections.singleton(fid));
+
 
         store.removeFeatures(filter);
         LOGGER.debug("Feature Delete Time: {}: {}",featuresetname, System.currentTimeMillis()-beginTime);
@@ -2158,7 +2168,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 
     	AccumuloQueryRewriter nameChanger = new AccumuloQueryRewriter(query);;
     	CachedRowSet rowset = null;
-
+    	SimpleFeatureCollection featureCount;
         DataStore geoDataStore = connect.getGeoDataStore();
         // Make a copy of the query
         Query localquery = nameChanger.rewrite();
@@ -2169,28 +2179,38 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 
             SimpleFeatureStore featureSource = (SimpleFeatureStore) geoDataStore.getFeatureSource(localquery.getTypeName());
 
-            //Collection<PropertyDescriptor> descriptorSet = featureSource.getSchema().getDescriptors();
-            //Collection<PropertyName> descriptorSet = query.getProperties();
-            
+             
             List<CoalesceColumnMetadata> columnList = new ArrayList<>();
+            // Not needed as the Coalesce behavior does not support just get all Columns
             // Check if no properties were defined
-            if (localquery.retrieveAllProperties()) {
-                for (PropertyDescriptor entry : featureSource.getSchema().getDescriptors())
-                {
-                	String columnName = entry.getName().getLocalPart();
-                    CoalesceColumnMetadata columnMetadata = new CoalesceColumnMetadata(columnName, "String", Types.VARCHAR);
-                    columnList.add(columnMetadata);
-                }
-      	
-            } else {
-	            for (PropertyName entry : localquery.getProperties())
-	            {
-	            	String columnName = entry.getPropertyName();
-	                CoalesceColumnMetadata columnMetadata = new CoalesceColumnMetadata(columnName, "String", Types.VARCHAR);
-	                columnList.add(columnMetadata);
-	            }
+//            if (localquery.retrieveAllProperties()) {
+//                for (PropertyDescriptor entry : featureSource.getSchema().getDescriptors())
+//                {
+//                	String columnName = entry.getName().getLocalPart();
+//                    CoalesceColumnMetadata columnMetadata = new CoalesceColumnMetadata(columnName, "String", Types.VARCHAR);
+//                    columnList.add(columnMetadata);
+//                }
+//      	
+//            } else {
+            // TODO - Why always String and VARCHAR.  Should these not be the real types
+            // Use the original property names to populate the Rowset 
+            // Make sure the entity key (prefixed by the table) is the first in the list
+            // ALSO NO DOTS SEPARATING THE TABLE FROM COLUMN
+            columnList.add(new CoalesceColumnMetadata(ENTITY_FEATURE_NAME+ENTITY_KEY_COLUMN_NAME,"String",Types.VARCHAR));
+            for (PropertyName entry : query.getProperties())
+            {
+            	String columnName = entry.getPropertyName().replaceAll("[.]", "");
+                CoalesceColumnMetadata columnMetadata = new CoalesceColumnMetadata(columnName, "String", Types.VARCHAR);
+                columnList.add(columnMetadata);
             }
+//            }
 
+            // Need to get a count of the query without limitations to support the paging
+            // Do no properties or sort, just the rewritten filter.
+            Query countQuery = new Query(localquery.getTypeName());
+            countQuery.setFilter(localquery.getFilter());
+            countQuery.setProperties(Query.NO_PROPERTIES);
+            featureCount = featureSource.getFeatures(countQuery);
             FeatureIterator<SimpleFeature> featureItr = featureSource.getFeatures(localquery).features();
             Iterator<Object[]> columnIterator = new FeatureColumnIterator<Object[]>(featureItr);
 
@@ -2206,7 +2226,10 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         }
 
         SearchResults results = new SearchResults();
+        
         results.setResults(rowset);
+        results.setTotal(featureCount.size());
+        
 
         return results;
     }

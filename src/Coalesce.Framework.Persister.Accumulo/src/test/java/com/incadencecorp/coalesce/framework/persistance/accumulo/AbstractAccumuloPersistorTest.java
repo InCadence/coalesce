@@ -396,7 +396,9 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
                                         "2016-12-31T00:00:00.000Z",
                                         null);
         Query query = new Query(GDELT_Test_Entity.getQueryName(), cqlFilter);
-
+        // Set up to return the GlobalEventID and Actor1Name fields
+        String[] props = {idAttributeName, actorAttributeName};
+        query.setPropertyNames(props);
         CachedRowSet results = persistor.search(query).getResults();
         assertTrue(results.size()>0);
         results.next();
@@ -441,6 +443,9 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
         String filterstring = "GlobalEventID =" + expectedInt.toString();
         Filter filter = CQL.toFilter(filterstring);
         Query query = new Query(NonGeoEntity.getQueryName(), filter);
+        // Set up to return the GlobalEventID and Actor1Name fields
+        String[] props = {"GlobalEventID", "Actor1Name"};
+        query.setPropertyNames(props);
         CachedRowSet results = persistor.search(query).getResults();
         // One and only 1 result
         assertTrue(results.size()==1);
@@ -481,7 +486,9 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
         LOGGER.debug(trythis.toString());
 
         Query query = new Query(NonGeoEntity.getQueryName(), trythis);
-        
+        // Set up to return the GlobalEventID and Actor1Name fields
+        String[] props = {"GlobalEventID", "Actor1Name"};
+        query.setPropertyNames(props);
         CachedRowSet results = persistor.search(query).getResults();
 
         assertTrue(results.next());
