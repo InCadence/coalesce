@@ -124,7 +124,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         Filter query2 = CoalescePropertyFactory.getEntityKey(entity2.getKey());
 
         Filter query = FF.or(query1, query2);
-        query = FF.and(FF.equals(CoalescePropertyFactory.getName(), FF.literal(TestEntity.NAME)), query);
+        query = FF.and(FF.equal(CoalescePropertyFactory.getName(), FF.literal(TestEntity.NAME),true), query);
 
         List<PropertyName> properties = new ArrayList<PropertyName>();
         properties.add(CoalescePropertyFactory.getName());

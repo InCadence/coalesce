@@ -2197,13 +2197,14 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             // Make sure the entity key (prefixed by the table) is the first in the list
             // ALSO NO DOTS SEPARATING THE TABLE FROM COLUMN
             columnList.add(new CoalesceColumnMetadata(ENTITY_FEATURE_NAME+ENTITY_KEY_COLUMN_NAME,"String",Types.VARCHAR));
-            for (PropertyName entry : query.getProperties())
-            {
-            	String columnName = entry.getPropertyName().replaceAll("[.]", "");
-                CoalesceColumnMetadata columnMetadata = new CoalesceColumnMetadata(columnName, "String", Types.VARCHAR);
-                columnList.add(columnMetadata);
+            if (query.getProperties() != null) {
+	            for (PropertyName entry : query.getProperties())
+	            {
+	            	String columnName = entry.getPropertyName().replaceAll("[.]", "");
+	                CoalesceColumnMetadata columnMetadata = new CoalesceColumnMetadata(columnName, "String", Types.VARCHAR);
+	                columnList.add(columnMetadata);
+	            }
             }
-//            }
 
             // Need to get a count of the query without limitations to support the paging
             // Do no properties or sort, just the rewritten filter.
