@@ -43,7 +43,6 @@
 		<dependency>
 			<groupId>com.incadencecorp.coalesce</groupId>
 			<artifactId>coalesce-framework-persister-accumulo</artifactId>
-			<version>${project.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.geotools</groupId>
@@ -52,18 +51,6 @@
 				<exclusion>
 					<groupId>org.geotools.xsd</groupId>
 					<artifactId>*</artifactId>
-				</exclusion>
-				<exclusion>
-					<artifactId>xercesImpl</artifactId>
-					<groupId>xerces</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>stax-api</artifactId>
-					<groupId>stax</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>jaxb2-basics</artifactId>
-					<groupId>*</groupId>
 				</exclusion>
 				<exclusion>
 					<groupId>com.incadencecorp.coalesce</groupId>
@@ -75,10 +62,6 @@
 				</exclusion>
 				<exclusion>
 					<groupId>org.locationtech.geomesa</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.zookeeper</groupId>
 					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>

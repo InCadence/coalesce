@@ -1,2 +1,1 @@
 org.geotools.data.postgis.PostgisNGDataStoreFactory
-org.locationtech.geomesa.accumulo.data.AccumuloDataStoreFactory
