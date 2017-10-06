@@ -6,4 +6,8 @@ For the developer, Coalesce saves you time by allowing you to write to different
 
 For the enterprise, Coalesce enables authoritative data, change management, pedigree capture, cross-domain ready data and metadata management.
 
+Here is a 50,000 foot view of the Coalesce System.
+
+https://user-images.githubusercontent.com/3874275/31291316-7e751624-aa9d-11e7-83d6-c24f3b5d3150.png
+
 Interested?  Want proof?  Download our "Out of the Box" Demos!
