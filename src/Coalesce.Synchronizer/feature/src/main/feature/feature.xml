@@ -2,6 +2,7 @@
 <features xmlns="http://karaf.apache.org/xmlns/features/v1.2.0" name="coalesce-synchronizer-feature">
     <feature name="${project.artifactId}">
         <feature>scr</feature>
-        <feature version="${cxf.version}">cxf</feature>
+        <feature prerequisite="false" dependency="true" version="${cxf.version}">cxf</feature>
+        <feature prerequisite="false" dependency="true">coalesce-core-feature</feature>
     </feature>
 </features>
