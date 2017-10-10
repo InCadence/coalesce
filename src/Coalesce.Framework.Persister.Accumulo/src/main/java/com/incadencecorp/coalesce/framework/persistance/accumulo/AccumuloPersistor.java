@@ -929,6 +929,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         Range range = new Range(key);
         String xml = null;
         Connector dbConnector = connect.getDBConnector();
+//        try (Scanner keyscanner = dbConnector.createScanner(AccumuloDataConnector.coalesceTemplateTable, Authorizations.EMPTY))
         try (CloseableScanner keyscanner = new CloseableScanner(dbConnector,
                                                                 AccumuloDataConnector.coalesceTemplateTable,
                                                                 Authorizations.EMPTY))
@@ -1204,7 +1205,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                     beginTime = System.currentTimeMillis();
                     persisted = persistBaseData(entity, dbConnector, writer) && persistEntityIndex(entity, dbConnector, config);
                     LOGGER.debug("Entity Base Data Persist Time: {}",System.currentTimeMillis()-beginTime);
-                    persistRecordSearchData(entity, dbConnector, config, featureCollectionMap, allowRemoval);
+                    persistRecordSearchData(entity, dbConnector, featureCollectionMap, allowRemoval);
                     LOGGER.debug("Entity Total Data Persist Time: {}",System.currentTimeMillis()-beginTime);
                     // Persist the linkage information for search
                     persistLinkageSearch(connect.getGeoDataStore(), entity, featureCollectionMap);
@@ -1254,7 +1255,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                         persisted = persistBaseData(entity, dbConnector, writer) && persistEntityIndex(entity, dbConnector, config);
                         LOGGER.debug("Base Data Persist Time: {}",System.currentTimeMillis()-beginTime);
                         beginTime = System.currentTimeMillis();
-                       persistRecordSearchData(entity, dbConnector, config, featureCollectionMap, allowRemoval);
+                       persistRecordSearchData(entity, dbConnector, featureCollectionMap, allowRemoval);
                         LOGGER.debug("Record Search Data Persist Time: {}",System.currentTimeMillis()-beginTime);
                         // Persist the linkage information for search
                         beginTime = System.currentTimeMillis();
@@ -1370,7 +1371,6 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
     
     private boolean persistRecordSearchData(CoalesceEntity entity,
                                             Connector dbConnector,
-                                            BatchWriterConfig config,
                                             Map<String, DefaultFeatureCollection> featureCollectionMap,
                                             boolean allowRemoval)
     {
