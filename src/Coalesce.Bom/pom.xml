@@ -13,7 +13,7 @@
 		<felix.osgi.version>1.4.0</felix.osgi.version>
 		<felix.scr.version>1.8.2</felix.scr.version>
 		<felix.scr.annotations.version>1.7.0</felix.scr.annotations.version>
-		<cxf.version>3.0.1</cxf.version>
+		<cxf.version>3.1.9</cxf.version>
 		<cxf.xjc.version>3.1.0</cxf.xjc.version>
 		<geotools.version>15.1</geotools.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -132,6 +132,18 @@
 						</execution>
 					</executions>
 				</plugin>
+				<plugin>
+					<groupId>org.apache.karaf.tooling</groupId>
+					<artifactId>karaf-maven-plugin</artifactId>
+					<version>4.0.8</version>
+					<extensions>true</extensions>
+					<configuration>
+						<instructions>
+							<Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+						</instructions>
+						<startLevel>75</startLevel>
+					</configuration>
+				</plugin>				
 			</plugins>
 		</pluginManagement>
 	</build>

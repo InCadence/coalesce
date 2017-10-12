@@ -19,23 +19,6 @@
 				<artifactId>karaf-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.apache.karaf.tooling</groupId>
-					<artifactId>karaf-maven-plugin</artifactId>
-					<version>4.0.8</version>
-					<extensions>true</extensions>
-					<configuration>
-						<instructions>
-							<Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
-						</instructions>
-<!-- 						<unpackBundle>true</unpackBundle> -->
-<!-- 						<aggregateFeatures>true</aggregateFeatures> -->
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
 	</build>
 
 	<dependencies>

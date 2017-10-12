@@ -59,38 +59,41 @@
 	<!-- ========================== -->
 	<!-- Persisters -->
 	<!-- ========================== -->
-	<bean id="postgres"
-		class="com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLPersistorExt">
-		<property name="connectionSettings">
-			<ref component-id="aws" />
-		</property>
-		<property name="schema" value="coalesce" />
-	</bean>
+<!-- 	<bean id="postgres" -->
+<!-- 		class="com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLPersistorExt"> -->
+<!-- 		<property name="connectionSettings"> -->
+<!-- 			<ref component-id="aws" /> -->
+<!-- 		</property> -->
+<!-- 		<property name="schema" value="coalesce" /> -->
+<!-- 	</bean> -->
 
-	<bean id="neo4j"
-		class="com.incadencecorp.coalesce.framework.persistance.neo4j.Neo4jSearchPersister">
-		<property name="connectionSettings">
-			<bean class="com.incadencecorp.coalesce.framework.persistance.ServerConn">
-				<property name="portNumber" value="7474" />
-				<property name="serverName" value="localhost" />
-			</bean>
-		</property>
-		<property name="includeXml" value="true" />
-	</bean>
+<!-- 	<bean id="neo4j" -->
+<!-- 		class="com.incadencecorp.coalesce.framework.persistance.neo4j.Neo4jSearchPersister"> -->
+<!-- 		<property name="connectionSettings"> -->
+<!-- 			<bean class="com.incadencecorp.coalesce.framework.persistance.ServerConn"> -->
+<!-- 				<property name="portNumber" value="7474" /> -->
+<!-- 				<property name="serverName" value="localhost" /> -->
+<!-- 			</bean> -->
+<!-- 		</property> -->
+<!-- 		<property name="includeXml" value="true" /> -->
+<!-- 	</bean> -->
 	
-	<!--
-	<bean id="accumulo"
-		class="com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLPersistorExt">
-		<property name="connectionSettings">
-			<bean class="com.incadencecorp.coalesce.framework.persistance.ServerConn">
-				<property name="database" value="rdk" />
-				<property name="serverName" value="bdpnode4:2181,bdpnode5:2181,bdpnode6:2181" />
-				<property name="user" value="root" />
-				<property name="password" value="cloudbase123" />
-			</bean>
-		</property>
-	</bean>
-	-->
+	<bean id="derby"
+		class="com.incadencecorp.coalesce.framework.persistance.derby.DerbyPersistor">
+	</bean>		
+
+<!-- 	<bean id="accumulo" -->
+<!-- 		class="com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLPersistorExt"> -->
+<!-- 		<property name="connectionSettings"> -->
+<!-- 			<bean class="com.incadencecorp.coalesce.framework.persistance.ServerConn"> -->
+<!-- 				<property name="database" value="rdk" /> -->
+<!-- 				<property name="serverName" value="bdpnode4:2181,bdpnode5:2181,bdpnode6:2181" /> -->
+<!-- 				<property name="user" value="root" /> -->
+<!-- 				<property name="password" value="cloudbase123" /> -->
+<!-- 			</bean> -->
+<!-- 		</property> -->
+<!-- 	</bean> -->
+
 	<!-- ========================== -->
 	<!-- CRUD Configuration -->
 	<!-- ========================== -->
@@ -123,12 +126,12 @@
 	</bean>
 
 	<bean id="framework" class="com.incadencecorp.coalesce.framework.CoalesceFramework">
-		<property name="authoritativePersistor" ref="postgres" />
-		<property name="secondaryPersistors">
-            <array>
-                <ref component-id="neo4j"/>
-            </array>
-		</property>
+		<property name="authoritativePersistor" ref="derby" />
+<!-- 		<property name="secondaryPersistors"> -->
+<!--             <array> -->
+<!--                 <ref component-id="neo4j"/> -->
+<!--             </array> -->
+<!-- 		</property> -->
 	</bean>
 
 	<!-- ========================== -->
@@ -159,7 +162,7 @@
 
 	<bean id="searchservice"
 		class="com.incadencecorp.coalesce.services.search.service.SearchServiceImpl">
-		<argument ref="postgres" />
+		<argument ref="derby" />
 	</bean>
 
 	<!-- ======================== -->
