@@ -11,7 +11,6 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Locale;
@@ -306,31 +305,6 @@ public class CoalesceFieldTest {
     }
 
     @Test
-    public void getSizeDoesNotExistTest()
-    {
-        CoalesceField<?> field = getTestMissionNameField();
-
-        assertEquals(0, field.getSize());
-
-    }
-
-    @Test
-    public void setSizeTest()
-    {
-        CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
-
-        CoalesceField<?> field = getTestMissionNameField(mission);
-        field.setSize(128);
-
-        String serializedMission = mission.toXml();
-        CoalesceEntity savedMission = CoalesceEntity.create(serializedMission);
-
-        CoalesceField<?> savedField = getTestMissionNameField(savedMission);
-        assertEquals(128, savedField.getSize());
-
-    }
-
-    @Test
     public void getModifiedByDoesNotExistTest()
     {
 
@@ -389,7 +363,7 @@ public class CoalesceFieldTest {
         CoalesceField<?> field = getTestMissionNameField();
 
         Assert.assertEquals(new Marking().getClassification().getPortion(),
-                                            field.getClassificationMarking().getClassification().getPortion());
+                            field.getClassificationMarking().getClassification().getPortion());
 
     }
 
@@ -405,7 +379,7 @@ public class CoalesceFieldTest {
         CoalesceField<?> savedField = getSavedTestMissionField(mission);
 
         Assert.assertEquals(TOPSECRETCLASSIFICATIONMARKING.getClassification().getPortion(),
-                                            savedField.getClassificationMarking().getClassification().getPortion());
+                            savedField.getClassificationMarking().getClassification().getPortion());
 
     }
 
@@ -478,122 +452,6 @@ public class CoalesceFieldTest {
 
         assertEquals(fieldKey, field.getKey());
         assertEquals(field.getHistory()[0].getKey(), field.getPreviousHistoryKey());
-
-    }
-
-    @Test
-    public void getFilenameDoesNotExistTest()
-    {
-
-        CoalesceField<?> field = getTestMissionNameField();
-
-        assertEquals("", field.getFilename());
-
-    }
-
-    @Test
-    public void setFilenameTest()
-    {
-
-        CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
-
-        CoalesceField<?> field = getTestMissionNameField(mission);
-
-        field.setFilename("c:/Program Files/java/jre7/bin");
-
-        CoalesceField<?> savedField = getSavedTestMissionField(mission);
-
-        assertEquals("c:/Program Files/java/jre7/bin", savedField.getFilename());
-
-        field.setFilename(null);
-
-        assertEquals("", field.getFilename());
-
-    }
-
-    @Test
-    public void getExtensionDoesNotExistTest()
-    {
-
-        CoalesceField<?> field = getTestMissionNameField();
-
-        assertEquals("", field.getExtension());
-
-    }
-
-    @Test
-    public void setExtensionTest()
-    {
-
-        CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
-
-        CoalesceField<?> field = getTestMissionNameField(mission);
-
-        field.setExtension(".jpeg");
-
-        CoalesceField<?> savedField = getSavedTestMissionField(mission);
-
-        assertEquals("jpeg", savedField.getExtension());
-
-        field.setExtension(null);
-
-        assertEquals("", field.getExtension());
-
-    }
-
-    @Test
-    public void getMimeTypeDoesNotExistTest()
-    {
-
-        CoalesceField<?> field = getTestMissionNameField();
-
-        assertEquals("", field.getMimeType());
-
-    }
-
-    @Test
-    public void setMimeTypeTest()
-    {
-
-        CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
-
-        CoalesceField<?> field = getTestMissionNameField(mission);
-
-        field.setMimeType("application/pdf");
-
-        CoalesceField<?> savedField = getSavedTestMissionField(mission);
-
-        assertEquals("application/pdf", savedField.getMimeType());
-
-    }
-
-    @Test
-    public void getHashDoesNotExistTest()
-    {
-
-        CoalesceField<?> field = getTestMissionNameField();
-
-        assertEquals("", field.getHash());
-
-    }
-
-    @Test
-    public void setHashTest()
-    {
-
-        CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
-
-        CoalesceField<?> field = getTestMissionNameField(mission);
-
-        field.setHash("8743b52063cd84097a65d1633f5c74f5");
-
-        CoalesceField<?> savedField = getSavedTestMissionField(mission);
-
-        assertEquals("8743b52063cd84097a65d1633f5c74f5", savedField.getHash());
-
-        field.setHash(null);
-
-        assertEquals("", field.getHash());
 
     }
 
@@ -798,7 +656,7 @@ public class CoalesceFieldTest {
 
         FileTestResult result = getJpgFile();
 
-        CoalesceField<?> field = result._savedField;
+        CoalesceFileField field = (CoalesceFileField) result._savedField;
         assertEquals(0, field.getHistory().length);
 
         field.setBaseValue("Something");
@@ -965,109 +823,6 @@ public class CoalesceFieldTest {
     }
 
     @Test
-    public void getCoalesceFullFilenameNotFileTest()
-    {
-        CoalesceField<?> field = getTestMissionNameField();
-
-        assertTrue(StringHelper.isNullOrEmpty(field.getCoalesceFullFilename()));
-    }
-
-    @Test
-    public void getCoalesceFullFilenameTwoSubDirTest()
-            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException
-    {
-
-        getCoalesceFullFilename();
-    }
-
-    @Test
-    public void getCoalesceFullFilenameZeroSubDirTest()
-            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException
-    {
-
-        CoalesceUnitTestSettings.setSubDirectoryLength(0);
-
-        getCoalesceFullFilename();
-    }
-
-    @Test
-    public void getCoalesceFullFilenameFiveSubDirTest()
-            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException
-    {
-
-        CoalesceUnitTestSettings.setSubDirectoryLength(5);
-
-        getCoalesceFullFilename();
-
-    }
-
-    private void getCoalesceFullFilename() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException
-    {
-
-        FileTestResult result = getJpgFile();
-
-        assertEquals(CoalesceFieldCommon.callGetBaseFilenameWithFullDirectoryPathForKey(result._field.getKey(), false)
-                + ".jpg", result._savedField.getCoalesceFullFilename());
-
-    }
-
-    @Test
-    public void getCoalesceFullThumbnailFilenameNotFileTest()
-    {
-        CoalesceField<?> field = getTestMissionNameField();
-
-        assertTrue(StringHelper.isNullOrEmpty(field.getCoalesceFullThumbnailFilename()));
-    }
-
-    @Test
-    public void getCoalesceFullThumbnailFilenameTwoSubDirTest()
-            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException
-    {
-
-        getCoalesceFullThumbnailFilename();
-    }
-
-    @Test
-    public void getCoalesceFullThumbnailFilenameZeroSubDirTest()
-            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException
-    {
-
-        CoalesceUnitTestSettings.setSubDirectoryLength(0);
-
-        getCoalesceFullThumbnailFilename();
-    }
-
-    @Test
-    public void getCoalesceFullThumbnailFilenameFiveSubDirTest()
-            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException
-    {
-
-        CoalesceUnitTestSettings.setSubDirectoryLength(5);
-
-        getCoalesceFullThumbnailFilename();
-
-    }
-
-    private void getCoalesceFullThumbnailFilename()
-            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException
-    {
-
-        FileTestResult result = getJpgFile();
-
-        assertEquals(CoalesceFieldCommon.callGetBaseFilenameWithFullDirectoryPathForKey(result._field.getKey(), false)
-                + "_thumb.jpg", result._savedField.getCoalesceFullThumbnailFilename());
-
-    }
-
-    @Test
-    public void getCoalesceFilenameWithLastModifiedTagNotFileTest()
-    {
-        CoalesceField<?> field = getTestMissionNameField();
-
-        assertTrue(StringHelper.isNullOrEmpty(field.getCoalesceFilenameWithLastModifiedTag()));
-    }
-
-    @Test
     public void getCoalesceFilenameWithLastModifiedTagTwoSubDirTest() throws NoSuchMethodException, IllegalAccessException
     {
 
@@ -1097,9 +852,10 @@ public class CoalesceFieldTest {
     {
 
         FileTestResult result = getJpgFile();
+        CoalesceFileField field = (CoalesceFileField) result._field;
 
         // Create file
-        File fieldFile = new File(result._field.getCoalesceFullFilename());
+        File fieldFile = new File(field.getCoalesceFullFilename());
         try
         {
             fieldFile.createNewFile();
@@ -1109,20 +865,11 @@ public class CoalesceFieldTest {
             // Catch
         }
 
-        assertEquals(fieldFile.getName() + "?" + fieldFile.lastModified(),
-                     result._savedField.getCoalesceFilenameWithLastModifiedTag());
+        assertEquals(fieldFile.getName() + "?" + fieldFile.lastModified(), field.getCoalesceFilenameWithLastModifiedTag());
 
         // Delete file
         fieldFile.delete();
 
-    }
-
-    @Test
-    public void getCoalesceThumbnailFilenameWithLastModifiedTagNotFileTest()
-    {
-        CoalesceField<?> field = getTestMissionNameField();
-
-        assertTrue(StringHelper.isNullOrEmpty(field.getCoalesceThumbnailFilenameWithLastModifiedTag()));
     }
 
     @Test
@@ -1152,9 +899,10 @@ public class CoalesceFieldTest {
     private void getCoalesceThumbnailFilenameWithLastModifiedTag() throws NoSuchMethodException
     {
         FileTestResult result = getJpgFile();
+        CoalesceFileField field = (CoalesceFileField) result._field;
 
         // Create file
-        File fieldFile = new File(result._field.getCoalesceFullThumbnailFilename());
+        File fieldFile = new File(field.getCoalesceFullThumbnailFilename());
         try
         {
             fieldFile.createNewFile();
@@ -1165,47 +913,10 @@ public class CoalesceFieldTest {
         }
 
         assertEquals(fieldFile.getName() + "?" + fieldFile.lastModified(),
-                     result._savedField.getCoalesceThumbnailFilenameWithLastModifiedTag());
+                     field.getCoalesceThumbnailFilenameWithLastModifiedTag());
 
         // Delete file
         fieldFile.delete();
-
-    }
-
-    @Test
-    public void getCoalesceFilenameNotFileTest()
-    {
-        CoalesceField<?> field = getTestMissionNameField();
-
-        assertTrue(StringHelper.isNullOrEmpty(field.getCoalesceFilename()));
-    }
-
-    @Test
-    public void getCoalesceFilenameTest()
-    {
-
-        FileTestResult result = getJpgFile();
-
-        assertEquals(GUIDHelper.removeBrackets(result._field.getKey()) + ".jpg", result._savedField.getCoalesceFilename());
-
-    }
-
-    @Test
-    public void getCoalesceThumbnailFilenameNotFileTest()
-    {
-        CoalesceField<?> field = getTestMissionNameField();
-
-        assertTrue(StringHelper.isNullOrEmpty(field.getCoalesceThumbnailFilename()));
-    }
-
-    @Test
-    public void getCoalesceThumbnailFilename()
-    {
-
-        FileTestResult result = getJpgFile();
-
-        assertEquals(GUIDHelper.removeBrackets(result._field.getKey()) + "_thumb.jpg",
-                     result._savedField.getCoalesceThumbnailFilename());
 
     }
 
@@ -1356,7 +1067,7 @@ public class CoalesceFieldTest {
     }
 
     @Test
-    public void getDataBinaryTypeNotSetTest()
+    public void getDataBinaryTypeNotSetTest() throws Exception
     {
         CoalesceEntity entity = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
 
@@ -1366,9 +1077,9 @@ public class CoalesceFieldTest {
                                                                               ECoalesceFieldDataTypes.BINARY_TYPE);
 
         CoalesceRecord parentRecord = parentRecordset.getItem(0);
-        CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
+        CoalesceBinaryField field = (CoalesceBinaryField) CoalesceField.create(parentRecord, fileFieldDef);
 
-        assertNull(field.getBinaryValue());
+        assertNull(field.getValue());
     }
 
     @Test
@@ -1382,30 +1093,18 @@ public class CoalesceFieldTest {
                                                                               ECoalesceFieldDataTypes.BINARY_TYPE);
 
         CoalesceRecord parentRecord = parentRecordset.getItem(0);
-        CoalesceField<?> field = CoalesceField.create(parentRecord, fileFieldDef);
+        CoalesceBinaryField field = (CoalesceBinaryField) CoalesceField.create(parentRecord, fileFieldDef);
 
         String byteString = "Testing String";
         byte[] dataBytes = byteString.getBytes("US-ASCII");
-        field.setTypedValue(dataBytes);
+        field.setValue(dataBytes);
 
         Object data = field.getValue();
 
         assertTrue(data instanceof byte[]);
         assertArrayEquals(dataBytes, (byte[]) data);
-        assertArrayEquals(dataBytes, field.getBinaryValue());
+        assertArrayEquals(dataBytes, field.getValue());
         assertEquals("VGVzdGluZyBTdHJpbmc=", field.getBaseValue());
-
-    }
-
-    @Test(expected = ClassCastException.class)
-    public void setTypedValueBinaryTypeTypeMismatchTest() throws UnsupportedEncodingException
-    {
-
-        CoalesceField<?> field = getTestMissionFieldByName(CoalesceTypeInstances.TEST_MISSION_START_TIME_PATH);
-
-        String byteString = "Testing String";
-        byte[] dataBytes = byteString.getBytes("US-ASCII");
-        field.setTypedValue(dataBytes);
 
     }
 
@@ -1418,7 +1117,7 @@ public class CoalesceFieldTest {
         String filePath = CoalesceUnitTestSettings.getResourceAbsolutePath("TestDocument.docx");
         byte[] dataBytes = Files.readAllBytes(Paths.get(filePath));
 
-        field.setTypedValue(dataBytes, "TestDocument.docx", "docx");
+        field.setValue(dataBytes, "TestDocument.docx", "docx");
 
         assertFileField(field, dataBytes);
 
@@ -1436,7 +1135,7 @@ public class CoalesceFieldTest {
         DocumentProperties docProps = new DocumentProperties();
         docProps.initialize(filePath);
 
-        field.setTypedValue(dataBytes, docProps);
+        field.setValue(dataBytes, docProps);
 
         assertFileField(field, dataBytes);
 
@@ -2997,7 +2696,7 @@ public class CoalesceFieldTest {
                                                                               ECoalesceFieldDataTypes.FILE_TYPE);
 
         CoalesceRecord parentRecord = parentRecordset.getItem(0);
-        CoalesceField<?> fileField = CoalesceField.create(parentRecord, fileFieldDef);
+        CoalesceFileField fileField = (CoalesceFileField) CoalesceField.create(parentRecord, fileFieldDef);
         fileField.setExtension("jpg");
 
         String savedEntity = entity.toXml();
@@ -3046,7 +2745,8 @@ public class CoalesceFieldTest {
 
         byte[] fieldBytes = Base64.decode(field.getBaseValue());
         assertArrayEquals(dataBytes, fieldBytes);
-        assertArrayEquals(dataBytes, field.getBinaryValue());
+        // TODO File fields store thier data externally
+        // assertArrayEquals(dataBytes, field.getBinaryValue());
 
         assertEquals("TestDocument.docx", field.getFilename());
         assertEquals("docx", field.getExtension());

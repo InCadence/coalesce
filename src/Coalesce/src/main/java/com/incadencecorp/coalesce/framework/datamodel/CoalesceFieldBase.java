@@ -18,10 +18,6 @@
 package com.incadencecorp.coalesce.framework.datamodel;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,18 +28,13 @@ import org.apache.commons.lang.NullArgumentException;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.xerces.impl.dv.util.Base64;
-import org.jdom2.JDOMException;
 import org.joda.time.DateTime;
 
-import com.drew.imaging.ImageProcessingException;
 import com.incadencecorp.coalesce.common.classification.Marking;
-import com.incadencecorp.coalesce.common.exceptions.CoalesceCryptoException;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.helpers.ArrayHelper;
-import com.incadencecorp.coalesce.common.helpers.DocumentProperties;
 import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
-import com.incadencecorp.coalesce.common.helpers.MimeHelper;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.framework.CoalesceSettings;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -84,12 +75,6 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
     @Override
     public abstract void setLabel(String value);
 
-    @Override
-    public abstract int getSize();
-
-    @Override
-    public abstract void setSize(int value);
-
     /**
      * Returns the string representation of the classification marking.
      * 
@@ -105,30 +90,6 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
     public abstract void setClassificationMarking(String value);
 
     @Override
-    public abstract String getFilename();
-
-    @Override
-    public abstract void setFilename(String value);
-
-    @Override
-    public abstract String getExtension();
-
-    @Override
-    public abstract void setExtension(String value);
-
-    @Override
-    public abstract String getMimeType();
-
-    @Override
-    public abstract void setMimeType(String value);
-
-    @Override
-    public abstract String getHash();
-
-    @Override
-    public abstract void setHash(String value);
-
-    @Override
     public abstract Locale getInputLang();
 
     @Override
@@ -137,77 +98,6 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
     /*--------------------------------------------------------------------------
     Public Functions
     --------------------------------------------------------------------------*/
-
-    /**
-     * Returns the filename and extension, as stored in coalesce.
-     * 
-     * @return possible object is {@link String }
-     */
-    public String getCoalesceFilename()
-    {
-        if (getDataType() != ECoalesceFieldDataTypes.FILE_TYPE)
-            throw new ClassCastException("Type mismatch");
-
-        return GUIDHelper.removeBrackets(getKey()) + "." + getExtension();
-    }
-
-    /**
-     * Returns the full filename, with directory, and extension, as stored in
-     * coalesce.
-     * 
-     * @return possible object is {@link String }
-     */
-    public String getCoalesceFullFilename()
-    {
-        return getCoalesceFullFilename(getCoalesceFilename());
-    }
-
-    /**
-     * Returns the full filename, with last modified date, and extension,
-     * separated by a question mark.
-     * 
-     * @return possible object is {@link String }
-     */
-    public String getCoalesceFilenameWithLastModifiedTag()
-    {
-        return getCoalesceFilenameWithLastModifiedTag(getCoalesceFullFilename());
-    }
-
-    /**
-     * Returns the thumbnail image full filename, with directory, and extension,
-     * as stored in coalesce.
-     * 
-     * @return possible object is {@link String }
-     */
-    public String getCoalesceThumbnailFilename()
-    {
-        if (getDataType() != ECoalesceFieldDataTypes.FILE_TYPE)
-            throw new ClassCastException("Type mismatch");
-
-        return GUIDHelper.removeBrackets(getKey()) + "_thumb.jpg";
-    }
-
-    /**
-     * Returns the thumbnail image full filename, with directory, and extension,
-     * as stored in coalesce.
-     * 
-     * @return possible object is {@link String }
-     */
-    public String getCoalesceThumbnailFullFilename()
-    {
-        return getCoalesceFullFilename(getCoalesceThumbnailFilename());
-    }
-
-    /**
-     * Returns the thumbnail image full filename, with last modified date, and
-     * extension, separated by a question mark.
-     * 
-     * @return possible object is {@link String }
-     */
-    public String getCoalesceThumbnailFilenameWithLastModifiedTag()
-    {
-        return getCoalesceFilenameWithLastModifiedTag(getCoalesceThumbnailFullFilename());
-    }
 
     /**
      * Returns the field value with the classification marking.
@@ -766,141 +656,6 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
     }
 
     /**
-     * Sets the Field's value by the byte array parameter.
-     * 
-     * @param dataBytes field's value as a byte array.
-     */
-    protected void setTypedValue(byte[] dataBytes)
-    {
-        if (getDataType() != ECoalesceFieldDataTypes.BINARY_TYPE && getDataType() != ECoalesceFieldDataTypes.FILE_TYPE)
-        {
-            throw new ClassCastException("Type mismatch");
-        }
-
-        if (dataBytes != null)
-        {
-            setBaseValue(Base64.encode(dataBytes));
-            setSize(dataBytes.length);
-        }
-        else
-        {
-            setBaseValue(null);
-            setSize(0);
-        }
-    }
-
-    /**
-     * Sets the Field's value by the byte array parameter. Also sets the
-     * filename, extension and mimetype.
-     * 
-     * @param dataBytes field's value as a byte array.
-     * @param filename field's filename.
-     * @param extension field's extension.
-     */
-    protected void setTypedValue(byte[] dataBytes, String filename, String extension)
-    {
-        if (getDataType() != ECoalesceFieldDataTypes.BINARY_TYPE && getDataType() != ECoalesceFieldDataTypes.FILE_TYPE)
-        {
-            throw new ClassCastException("Type mismatch");
-        }
-
-        if (filename == null)
-        {
-            setBaseValue(null);
-            setFilename(null);
-            setExtension(null);
-            setMimeType(null);
-            setSize(0);
-        }
-        else
-        {
-            if (dataBytes == null)
-                throw new NullArgumentException("dataBytes");
-
-            setBaseValue(Base64.encode(dataBytes));
-            setFilename(filename);
-            setExtension(extension);
-            setMimeType(MimeHelper.getMimeTypeForExtension(extension));
-            setSize(dataBytes.length);
-        }
-    }
-
-    /**
-     * Sets the Field's hash value. Also sets the filename, extension and MIME
-     * type.
-     * 
-     * @param filename field's filename.
-     * @param extension field's extension.
-     * @param hash field's hash value.
-     */
-    protected void setTypedValue(String filename, String extension, String hash)
-    {
-        if (getDataType() != ECoalesceFieldDataTypes.FILE_TYPE)
-        {
-            throw new ClassCastException("Type mismatch");
-        }
-
-        setFilename(filename);
-        setExtension(extension);
-        setMimeType(MimeHelper.getMimeTypeForExtension(extension));
-        setHash(hash);
-    }
-
-    /**
-     * Sets the Field's value by the byte array parameter. Also sets the
-     * filename, extension and mimetype by the Document Properties.
-     * 
-     * @param dataBytes file's value as a byte array.
-     * @param docProps file's DocumentProperties.
-     */
-    protected void setTypedValue(byte[] dataBytes, DocumentProperties docProps)
-    {
-        if (getDataType() != ECoalesceFieldDataTypes.FILE_TYPE)
-        {
-            throw new ClassCastException("Type mismatch");
-        }
-
-        if (docProps != null)
-        {
-            setTypedValue(dataBytes, docProps.getFilename(), docProps.getExtension());
-        }
-        else
-        {
-            setTypedValue(dataBytes, null, null);
-        }
-    }
-
-    /**
-     * Sets value, filename, extension, mimetype if the datatype equals the file
-     * type and the file exists.
-     * 
-     * @param docProps file's DocumentProperties.
-     * @throws IOException
-     */
-    protected void setTypedValue(DocumentProperties docProps) throws IOException
-    {
-        if (getDataType() != ECoalesceFieldDataTypes.FILE_TYPE)
-        {
-            throw new ClassCastException("Type mismatch");
-        }
-
-        if (docProps != null)
-        {
-            // Does File Exist?
-            Path path = Paths.get(docProps.getFullFilename());
-            if (Files.exists(path))
-            {
-                setTypedValue(Files.readAllBytes(path), docProps);
-            }
-        }
-        else
-        {
-            setTypedValue(null, null);
-        }
-
-    }
-
-    /**
      * Returns the UUID value of the field.
      * 
      * @return UUID, field's value as a UUID. Null if not a UUID.
@@ -1430,68 +1185,6 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
         }
     }
 
-    /**
-     * Returns the binary value of Field's associated file.
-     * 
-     * @return byte[], field's value as a byte array.
-     */
-    protected byte[] getBinaryValue()
-    {
-        if (getDataType() != ECoalesceFieldDataTypes.BINARY_TYPE && getDataType() != ECoalesceFieldDataTypes.FILE_TYPE)
-        {
-            throw new ClassCastException("Type mismatch");
-        }
-
-        String rawValue = getBaseValue();
-
-        if (rawValue == null)
-            return null;
-
-        if (rawValue != null && rawValue.length() > 0)
-        {
-            byte[] bytes = Base64.decode(rawValue);
-
-            return bytes;
-
-        }
-        else
-        {
-            return new byte[0];
-        }
-    }
-
-    /**
-     * Returns the document properties of a File type.
-     * 
-     * @return DocumentProperties The properties of the file stored within the
-     *         Coalesce Entity.
-     * 
-     * @throws CoalesceDataFormatException
-     */
-    protected DocumentProperties getFileValue() throws CoalesceDataFormatException
-    {
-        if (getDataType() != ECoalesceFieldDataTypes.FILE_TYPE)
-        {
-            throw new ClassCastException("Type mismatch");
-        }
-
-        try
-        {
-            if (StringHelper.isNullOrEmpty(getFilename()))
-                return null;
-
-            // Initialize Properties from Filename
-            DocumentProperties properties = new DocumentProperties();
-            properties.initialize(getFilename());
-
-            return properties;
-        }
-        catch (ImageProcessingException | CoalesceCryptoException | IOException | JDOMException e)
-        {
-            throw new CoalesceDataFormatException("Invalid File");
-        }
-    }
-
     protected String[] getArray()
     {
 
@@ -1555,37 +1248,6 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
     /*--------------------------------------------------------------------------
     Private Functions
     --------------------------------------------------------------------------*/
-
-    private String getCoalesceFullFilename(String fileName)
-    {
-        // Add Sub Directory?
-        if (CoalesceSettings.getSubDirectoryLength() > 0 && CoalesceSettings.getSubDirectoryLength() < fileName.length())
-        {
-            fileName = CoalesceSettings.getBinaryFileStoreBasePath() + File.separator
-                    + fileName.substring(0, CoalesceSettings.getSubDirectoryLength()) + File.separator + fileName;
-        }
-        else
-        {
-            fileName = CoalesceSettings.getBinaryFileStoreBasePath() + File.separator + fileName;
-        }
-
-        return fileName;
-    }
-
-    private String getCoalesceFilenameWithLastModifiedTag(String fileName)
-    {
-        try
-        {
-            File file = new File(getCoalesceFullFilename());
-
-            return fileName + "?" + file.lastModified();
-        }
-        catch (Exception ex)
-        {
-            // Return Now
-            return fileName + "?" + JodaDateTimeHelper.nowInUtc().getMillis();
-        }
-    }
 
     private String geometryToWKT(Geometry geometry)
     {

@@ -197,25 +197,6 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> implements I
     }
 
     @Override
-    public int getSize()
-    {
-        try
-        {
-            return Integer.parseInt(_entityFieldHistory.getSize());
-        }
-        catch (NumberFormatException e)
-        {
-            return 0;
-        }
-    }
-
-    @Override
-    public void setSize(int value)
-    {
-        _entityFieldHistory.setSize(Integer.toString(value));
-    }
-
-    @Override
     public String getClassificationMarkingAsString()
     {
         return _entityFieldHistory.getClassificationmarking();
@@ -226,55 +207,6 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> implements I
     {
         _entityFieldHistory.setClassificationmarking(value);
     }
-
-    @Override
-    public String getFilename()
-    {
-        return getStringElement(_entityFieldHistory.getFilename());
-    }
-
-    @Override
-    public void setFilename(String value)
-    {
-        _entityFieldHistory.setFilename(value);
-    }
-
-    @Override
-    public String getExtension()
-    {
-        return getStringElement(_entityFieldHistory.getExtension());
-    }
-
-    @Override
-    public void setExtension(String value)
-    {
-        _entityFieldHistory.setExtension(value.replace(".", ""));
-    }
-
-    @Override
-    public String getMimeType()
-    {
-        return getStringElement(_entityFieldHistory.getMimetype());
-    }
-
-    @Override
-    public void setMimeType(String value)
-    {
-        _entityFieldHistory.setMimetype(value);
-    }
-
-    @Override
-    public String getHash()
-    {
-        return getStringElement(_entityFieldHistory.getHash());
-    }
-
-    @Override
-    public void setHash(String value)
-    {
-        _entityFieldHistory.setHash(value);
-    }
-
     // -----------------------------------------------------------------------//
     // protected Methods
     // -----------------------------------------------------------------------//
@@ -287,15 +219,10 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> implements I
         _entityFieldHistory.setValue(entityField.getValue());
         _entityFieldHistory.setDatatype(entityField.getDatatype());
         _entityFieldHistory.setLabel(entityField.getLabel());
-        _entityFieldHistory.setSize(entityField.getSize());
         _entityFieldHistory.setModifiedby(entityField.getModifiedby());
         _entityFieldHistory.setModifiedbyip(entityField.getModifiedbyip());
         _entityFieldHistory.setClassificationmarking(entityField.getClassificationmarking());
         _entityFieldHistory.setPrevioushistorykey(entityField.getPrevioushistorykey());
-        _entityFieldHistory.setFilename(entityField.getFilename());
-        _entityFieldHistory.setExtension(entityField.getExtension());
-        _entityFieldHistory.setMimetype(entityField.getMimetype());
-        _entityFieldHistory.setHash(entityField.getHash());
         _entityFieldHistory.setDatecreated(entityField.getDatecreated());
         _entityFieldHistory.setLastmodified(entityField.getLastmodified());
         _entityFieldHistory.setInputlang(entityField.getInputlang());

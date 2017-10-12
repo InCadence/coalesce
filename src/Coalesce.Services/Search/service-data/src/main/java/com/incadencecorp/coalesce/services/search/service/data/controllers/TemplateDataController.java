@@ -43,8 +43,6 @@ import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.incadencecorp.coalesce.services.search.service.data.model.FieldData;
 import com.incadencecorp.coalesce.services.search.service.data.model.ObjectData;
-import com.incadencecorp.unity.common.CallResult;
-import com.incadencecorp.unity.common.CallResult.CallResults;
 
 /**
  * Provides details of the registered templates within a Coalesce database.

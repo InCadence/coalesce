@@ -3,8 +3,9 @@
  */
 package com.incadencecorp.coalesce.framework.datamodel;
 
-import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
+import org.apache.xerces.impl.dv.util.Base64;
 
+import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -24,30 +25,54 @@ import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
  -----------------------------------------------------------------------------*/
 
 /**
- *
+ * This field type stores binary data within the XML. Consider using FILE type instead.
  */
-public class CoalesceBinaryField extends CoalesceField<byte[]> {
+public class CoalesceBinaryField extends CoalesceBinaryFieldBase<byte[]>{
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.incadencecorp.coalesce.framework.datamodel.CoalesceField#getValue()
-     */
     @Override
     public byte[] getValue() throws CoalesceDataFormatException
     {
-        return getBinaryValue();
+        if (getDataType() != ECoalesceFieldDataTypes.BINARY_TYPE && getDataType() != ECoalesceFieldDataTypes.FILE_TYPE)
+        {
+            throw new ClassCastException("Type mismatch");
+        }
+
+        String rawValue = getBaseValue();
+
+        if (rawValue == null)
+            return null;
+
+        if (rawValue != null && rawValue.length() > 0)
+        {
+            byte[] bytes = Base64.decode(rawValue);
+
+            return bytes;
+
+        }
+        else
+        {
+            return new byte[0];
+        }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.incadencecorp.coalesce.framework.datamodel.CoalesceField#setValue(java.lang.Object)
-     */
     @Override
     public void setValue(byte[] value)
     {
-        setTypedValue(value);
+        if (getDataType() != ECoalesceFieldDataTypes.BINARY_TYPE && getDataType() != ECoalesceFieldDataTypes.FILE_TYPE)
+        {
+            throw new ClassCastException("Type mismatch");
+        }
+
+        if (value != null)
+        {
+            setBaseValue(Base64.encode(value));
+            setSize(value.length);
+        }
+        else
+        {
+            setBaseValue(null);
+            setSize(0);
+        }
     }
     
 }

@@ -48,7 +48,7 @@ import com.incadencecorp.coalesce.services.crud.service.data.model.impl.pojo.rec
 import com.incadencecorp.coalesce.services.search.api.ISearchClient;
 
 /**
- * Responsible for storing and retrieving user search options.
+ * Responsible for storing and retrieving enumerations.
  * 
  * @author Derek Clemenzi
  */
