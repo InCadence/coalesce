@@ -7,7 +7,7 @@ import com.incadencecorp.coalesce.common.classification.Marking;
 /**
  * Interface for accessing Linkages of Coalesce Entities.
  */
-public interface ICoalesceLinkage {
+public interface ICoalesceLinkage extends ICoalesceObject {
 
     // Methods
     /**
@@ -109,7 +109,7 @@ public interface ICoalesceLinkage {
      * 
      * @return Marking class of the Linkage's classification marking attribute.
      */
-    Marking getClassificationMarking();
+    String getClassificationMarkingAsString();
 
     /**
      * Return identification of who modified the Linkage's Value attribute.
@@ -242,7 +242,7 @@ public interface ICoalesceLinkage {
      * @param value Marking class to be the Linkage's classification marking
      *            attribute.
      */
-    void setClassificationMarking(Marking value);
+    void setClassificationMarkingAsString(String value);
 
     /**
      * Sets the Key value corresponding to the Linkage's most recent previous

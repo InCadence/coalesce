@@ -203,7 +203,7 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> implements I
     }
 
     @Override
-    public void setClassificationMarking(String value)
+    public void setClassificationMarkingAsString(String value)
     {
         _entityFieldHistory.setClassificationmarking(value);
     }
@@ -250,7 +250,7 @@ public class CoalesceFieldHistory extends CoalesceFieldBase<String> implements I
             setDataType(ECoalesceFieldDataTypes.getTypeForCoalesceType(value));
             return true;
         case "classificationmarking":
-            setClassificationMarking(value);
+            setClassificationMarkingAsString(value);
             return true;
         case "label":
             setLabel(value);

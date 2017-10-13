@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import org.apache.commons.lang.NullArgumentException;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 
@@ -184,6 +185,7 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
     /**
      * @return a list of field definitions that are defined for this recorset.
      */
+    @JsonIgnore
     public List<CoalesceFieldDefinition> getFieldDefinitions()
     {
         return getObjectsAsList(_entityRecordset.getFielddefinition(),
@@ -218,6 +220,7 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
     /**
      * @return a list of active records within this recordset.
      */
+    @JsonIgnore
     public List<CoalesceRecord> getRecords()
     {
         return getObjectsAsList(_entityRecordset.getRecord(), ECoalesceObjectStatus.DELETED);

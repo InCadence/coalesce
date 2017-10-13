@@ -387,7 +387,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
 
                     ECoalesceFieldDataTypes dataType = fieldDefinition.getDataType();
 
-                    if (fieldDefinition.getFlatten() && fieldDefinition.isListType())
+                    if (fieldDefinition.isFlatten() && fieldDefinition.isListType())
                     {
                         // createListFieldTable(dataType, conn);
                         LOGGER.warn("List field types are not currently supported.");
@@ -395,7 +395,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
 
                     String columnType = getSQLType(dataType);
 
-                    if (columnType != null && fieldDefinition.getFlatten()
+                    if (columnType != null && fieldDefinition.isFlatten()
                             && !columnType.equalsIgnoreCase(DerbyDataConnector.UNSUPPORTED_TYPE))
                     {
                         // sb.append("\t" +

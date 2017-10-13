@@ -1204,7 +1204,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
         boolean isSuccessful = false;
         boolean isDeleted = false; 
         
-        if (coalesceObject.getFlatten())
+        if (coalesceObject.isFlatten())
         {
             switch (coalesceObject.getStatus()) {
             case READONLY:

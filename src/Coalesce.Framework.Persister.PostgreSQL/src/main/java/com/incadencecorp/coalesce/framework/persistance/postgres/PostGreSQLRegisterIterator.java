@@ -281,14 +281,14 @@ public class PostGreSQLRegisterIterator extends CoalesceIterator<CoalesceDataCon
 
                 ECoalesceFieldDataTypes dataType = fieldDefinition.getDataType();
 
-                if (fieldDefinition.getFlatten() && fieldDefinition.isListType())
+                if (fieldDefinition.isFlatten() && fieldDefinition.isListType())
                 {
                     createListFieldTable(dataType, conn);
                 }
 
                 String columnType = getSQLType(dataType, srid);
 
-                if (columnType != null && fieldDefinition.getFlatten())
+                if (columnType != null && fieldDefinition.isFlatten())
                 {
                     sb.append("\t" + fieldDefinition.getName() + " " + columnType + ",\r");
                 }
@@ -399,7 +399,7 @@ public class PostGreSQLRegisterIterator extends CoalesceIterator<CoalesceDataCon
                 String columnType = getSQLTypeForArgs(fieldDefinition.getDataType());
 
                 String fieldName = "ivar" + fieldDefinition.getName();
-                if (columnType != null && fieldDefinition.getFlatten())
+                if (columnType != null && fieldDefinition.isFlatten())
                 {
                     sb.append(", " + fieldName + " " + columnType);
 
@@ -417,7 +417,7 @@ public class PostGreSQLRegisterIterator extends CoalesceIterator<CoalesceDataCon
 
                 String listColumnType = getListFieldSQLType(fieldDefinition.getDataType());
 
-                if (listColumnType != null && fieldDefinition.getFlatten())
+                if (listColumnType != null && fieldDefinition.isFlatten())
                 {
                     listsBuilder.append(String.format("PERFORM %s.%s_insertorupdate (ivarentitykey,ivarobjectkey,'%s',%s);\r",
                                                       schema,
@@ -565,7 +565,7 @@ public class PostGreSQLRegisterIterator extends CoalesceIterator<CoalesceDataCon
 
             String columnType = getSQLType(fieldDefinition.getDataType(), srid);
 
-            if (columnType != null && fieldDefinition.getFlatten()
+            if (columnType != null && fieldDefinition.isFlatten()
                     && columns.contains(fieldDefinition.getName().toLowerCase()))
             {
                 sb.append(String.format(format + ",\r", fieldDefinition.getName()));
@@ -597,7 +597,7 @@ public class PostGreSQLRegisterIterator extends CoalesceIterator<CoalesceDataCon
             ECoalesceFieldDataTypes type = fieldDefinition.getDataType();
             String columnType = getSQLType(type, srid);
 
-            if (columnType != null && fieldDefinition.getFlatten()
+            if (columnType != null && fieldDefinition.isFlatten()
                     && columns.contains(fieldDefinition.getName().toLowerCase()))
             {
                 switch (type) {

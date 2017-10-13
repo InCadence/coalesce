@@ -16,6 +16,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.lang.NullArgumentException;
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -343,6 +344,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
     /**
      * @return whether this object has been initialized or not.
      */
+    @JsonIgnore
     public boolean isInitialized()
     {
         return _entity != null;
@@ -569,6 +571,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
      * @return Map&lt;String, CoalesceLinkage&gt; CoalesceLinkages of relationships to
      *         this CoalesceEntity
      */
+    @JsonIgnore
     public Map<String, CoalesceLinkage> getLinkages()
     {
         return getLinkages((String) null);
@@ -685,6 +688,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
      * @return Map&lt;String, CoalesceSection&gt; sections belonging to this
      *         CoalesceEntity
      */
+    @JsonIgnore
     public Map<String, CoalesceSection> getSections()
     {
         return getObjectsAsMap(_entity.getSection());
@@ -1024,6 +1028,7 @@ public class CoalesceEntity extends CoalesceObjectHistory {
      * @throws SAXException
      * @throws IOException
      */
+    @JsonIgnore
     public CoalesceEntitySyncShell getSyncEntity() throws SAXException, IOException
     {
         return CoalesceEntitySyncShell.create(this);

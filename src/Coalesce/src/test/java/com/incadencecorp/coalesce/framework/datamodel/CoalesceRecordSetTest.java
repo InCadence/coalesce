@@ -407,7 +407,7 @@ public class CoalesceRecordSetTest {
 
         CoalesceRecordset recordset = (CoalesceRecordset) entity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
-        assertFalse(recordset.getNoIndex());
+        assertFalse(recordset.isNoIndex());
 
         recordset.setNoIndex(true);
 
@@ -416,13 +416,13 @@ public class CoalesceRecordSetTest {
         CoalesceEntity desEntity = CoalesceEntity.create(entityXml);
         CoalesceRecordset desRecordset = (CoalesceRecordset) desEntity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH);
 
-        assertTrue(desRecordset.getNoIndex());
+        assertTrue(desRecordset.isNoIndex());
 
         CoalesceEntity newEntity = CoalesceEntity.create("Operation", "Portal", "1.2.3.4", "ID", "Type");
         CoalesceSection newSection = CoalesceSection.create(newEntity, "Operation/New Section");
         CoalesceRecordset newRecordset = CoalesceRecordset.create(newSection, "New Recordset");
 
-        assertFalse(newRecordset.getNoIndex());
+        assertFalse(newRecordset.isNoIndex());
 
     }
 
@@ -932,7 +932,7 @@ public class CoalesceRecordSetTest {
         assertEquals("TestingValue", recordset.getAttribute("TestAttribute"));
 
         assertEquals("Mission Information Recordset", recordset.getName());
-        assertEquals(false, recordset.getNoIndex());
+        assertEquals(false, recordset.isNoIndex());
 
         recordset.setAttribute("Name", "TestingName");
         assertEquals("TestingName", recordset.getName());
@@ -956,7 +956,7 @@ public class CoalesceRecordSetTest {
         assertEquals(234, recordset.getMaxRecords());
 
         recordset.setAttribute("NoIndex", "True");
-        assertEquals(true, recordset.getNoIndex());
+        assertEquals(true, recordset.isNoIndex());
 
         recordset.setAttribute("Status", ECoalesceObjectStatus.UNKNOWN.toString());
         assertEquals(ECoalesceObjectStatus.UNKNOWN, recordset.getStatus());
@@ -975,7 +975,7 @@ public class CoalesceRecordSetTest {
         assertEquals(future, desRecordset.getLastModified());
         assertEquals(123, desRecordset.getMinRecords());
         assertEquals(234, desRecordset.getMaxRecords());
-        assertEquals(true, desRecordset.getNoIndex());
+        assertEquals(true, desRecordset.isNoIndex());
         assertEquals(ECoalesceObjectStatus.UNKNOWN, desRecordset.getStatus());
 
     }

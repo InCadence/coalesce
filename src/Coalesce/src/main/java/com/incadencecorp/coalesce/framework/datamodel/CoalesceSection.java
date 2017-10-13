@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.NullArgumentException;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 
@@ -263,6 +264,7 @@ public class CoalesceSection extends CoalesceObjectHistory {
      * @param name of the new {@link CoalesceRecordset} .
      * @return {@link CoalesceRecordset} , the new {@link CoalesceRecordset} .
      */
+    @JsonIgnore
     public CoalesceRecordset createRecordset(String name)
     {
         return CoalesceRecordset.create(this, name);
@@ -288,6 +290,7 @@ public class CoalesceSection extends CoalesceObjectHistory {
      * @since 0.0.7
      * @return map of {@link CoalesceRecordset} s contained by this section.
      */
+    @JsonIgnore
     public Map<String, CoalesceRecordset> getRecordsets()
     {
         return getObjectsAsMap(_entitySection.getRecordset(), ECoalesceObjectStatus.DELETED);
@@ -343,6 +346,7 @@ public class CoalesceSection extends CoalesceObjectHistory {
      * @since 0.0.7
      * @return a map of {@link CoalesceSection} s contained by this section.
      */
+    @JsonIgnore
     public Map<String, CoalesceSection> getSections()
     {
         return getObjectsAsMap(_entitySection.getSection(), ECoalesceObjectStatus.DELETED);

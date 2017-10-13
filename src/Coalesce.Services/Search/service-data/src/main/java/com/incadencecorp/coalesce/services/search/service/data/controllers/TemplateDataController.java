@@ -42,7 +42,7 @@ import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.incadencecorp.coalesce.services.search.service.data.model.FieldData;
-import com.incadencecorp.coalesce.services.search.service.data.model.ObjectData;
+import com.incadencecorp.coalesce.services.search.service.data.model.CoalesceObjectImpl;
 
 /**
  * Provides details of the registered templates within a Coalesce database.
@@ -139,16 +139,16 @@ public class TemplateDataController {
      * @param key
      * @return a list of record sets for the provided template key.
      */
-    public List<ObjectData> getRecordSets(String key) throws RemoteException
+    public List<CoalesceObjectImpl> getRecordSets(String key) throws RemoteException
     {
         LOGGER.debug("Retrieving Record Sets [Key: ({})]", key);
 
         // Also include the key
-        List<ObjectData> results = new ArrayList<ObjectData>();
+        List<CoalesceObjectImpl> results = new ArrayList<CoalesceObjectImpl>();
 
         if (templates.containsKey(key))
         {
-            results.add(new ObjectData(COALESCEENTITY_KEY, COALESCEENTITY_KEY));
+            results.add(new CoalesceObjectImpl(COALESCEENTITY_KEY, COALESCEENTITY_KEY));
 
             for (CoalesceSection section : templates.get(key).entity.getSectionsAsList())
             {
@@ -184,7 +184,7 @@ public class TemplateDataController {
             results.add(getField(CoalescePropertyFactory.getLastModified(), ECoalesceFieldDataTypes.DATE_TIME_TYPE));
         }
         else
-        {
+        { 
             if (templates.containsKey(key))
             {
                 CoalesceRecordset recordset = (CoalesceRecordset) templates.get(key).entity.getCoalesceObjectForKey(recordsetKey);
@@ -364,9 +364,9 @@ public class TemplateDataController {
         return new FieldData(property.getPropertyName(), property.getPropertyName().split("\\.")[1], type);
     }
 
-    private List<ObjectData> getRecordsets(CoalesceSection section)
+    private List<CoalesceObjectImpl> getRecordsets(CoalesceSection section)
     {
-        List<ObjectData> results = new ArrayList<ObjectData>();
+        List<CoalesceObjectImpl> results = new ArrayList<CoalesceObjectImpl>();
 
         for (CoalesceSection childSection : section.getSectionsAsList())
         {
@@ -375,7 +375,7 @@ public class TemplateDataController {
 
         for (CoalesceRecordset recordset : section.getRecordsetsAsList())
         {
-            results.add(new ObjectData(recordset.getKey(), recordset.getName()));
+            results.add(new CoalesceObjectImpl(recordset));
         }
 
         return results;

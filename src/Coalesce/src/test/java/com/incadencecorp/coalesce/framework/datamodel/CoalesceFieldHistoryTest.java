@@ -929,7 +929,7 @@ public class CoalesceFieldHistoryTest {
         assertEquals("TestingValue", fh.getAttribute("TestAttribute"));
 
         assertEquals("ActionNumber", fh.getName());
-        assertEquals(false, fh.getNoIndex());
+        assertEquals(false, fh.isNoIndex());
 
         fh.setAttribute("Name", "TestingName");
         assertEquals("TestingName", fh.getName());
@@ -947,7 +947,7 @@ public class CoalesceFieldHistoryTest {
         assertEquals(now, fh.getDateCreated());
 
         fh.setAttribute("NoIndex", "True");
-        assertEquals(true, fh.getNoIndex());
+        assertEquals(true, fh.isNoIndex());
 
         fh.setAttribute("DataType", "Integer");
         assertEquals(ECoalesceFieldDataTypes.INTEGER_TYPE, fh.getDataType());
@@ -986,7 +986,7 @@ public class CoalesceFieldHistoryTest {
         assertEquals(guid.toString(), desFh.getKey());
         assertEquals(now, desFh.getDateCreated());
         assertEquals(future, desFh.getLastModified());
-        assertEquals(true, desFh.getNoIndex());
+        assertEquals(true, desFh.isNoIndex());
         assertEquals(ECoalesceFieldDataTypes.INTEGER_TYPE, desFh.getDataType());
         assertEquals(new Marking("(TS)"), desFh.getClassificationMarking());
         assertEquals("labelTest", desFh.getLabel());

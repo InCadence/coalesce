@@ -18,7 +18,6 @@ package com.incadencecorp.coalesce.framework.datamodel;
 
 import java.util.Locale;
 
-import com.incadencecorp.coalesce.common.classification.Marking;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 
 /**
@@ -26,15 +25,7 @@ import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
  *
  * @param <T>
  */
-public interface ICoalesceField<T> {
-
-    // Methods
-    /**
-     * Return the value of the Field's Name attribute.
-     * 
-     * @return String of the Field's Name attribute.
-     */
-    String getName();
+public interface ICoalesceField<T> extends ICoalesceObject {
 
     /**
      * Return the value of the Field's Value attribute.
@@ -60,12 +51,11 @@ public interface ICoalesceField<T> {
     ECoalesceFieldDataTypes getDataType();
 
     /**
-     * Return a Marking class value of the Field's ClassificationMarking
-     * attribute.
+     * Returns the string representation of the classification marking.
      * 
-     * @return Marking class of the Field's ClassificationMarking attribute.
+     * @return String, the classification marking.
      */
-    Marking getClassificationMarking();
+    String getClassificationMarkingAsString();
 
     /**
      * Returns the Input Language used when the Field's value was set.
@@ -73,13 +63,6 @@ public interface ICoalesceField<T> {
      * @return Locale of the Field's InputLang attribute.
      */
     Locale getInputLang();
-
-    /**
-     * Sets the value of the Field's Name attribute.
-     * 
-     * @param value String to be the Field's Name attribute.
-     */
-    void setName(String value);
 
     /**
      * Sets the value of the Field's Value attribute.
@@ -97,13 +80,11 @@ public interface ICoalesceField<T> {
     void setLabel(String value);
 
     /**
-     * Sets the Field's ClassificationMarking attribute based on the Marking
-     * class value parameter.
+     * Sets the classification marking to the value of the string parameter.
      * 
-     * @param value Marking class to be the Field's ClassificationMarking
-     *            attribute.
+     * @param value String, the new classification marking.
      */
-    void setClassificationMarking(Marking value);
+    void setClassificationMarkingAsString(String value);
 
     /**
      * Sets the Input Language used as the Field's value is set.

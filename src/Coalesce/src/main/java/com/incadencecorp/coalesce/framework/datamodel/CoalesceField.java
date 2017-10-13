@@ -26,6 +26,7 @@ import java.util.UUID;
 import javax.xml.namespace.QName;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.joda.time.DateTime;
 
 import com.incadencecorp.coalesce.api.CoalesceAttributes;
@@ -118,7 +119,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
 
         newField.setClassificationMarking(fieldDefinition.getDefaultClassificationMarking());
         newField.setLabel(fieldDefinition.getLabel());
-        newField.setNoIndex(fieldDefinition.getNoIndex());
+        newField.setNoIndex(fieldDefinition.isNoIndex());
         newField.setDisableHistory(fieldDefinition.isDisableHistory());
 
         newField.setSuspendHistory(false);
@@ -448,6 +449,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
     // Public Properties
     // -----------------------------------------------------------------------//
 
+    @JsonIgnore
     @Override
     public String getBaseValue()
     {
@@ -488,6 +490,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
     /**
      * @return the field definition that created this field.
      */
+    @JsonIgnore
     public CoalesceFieldDefinition getFieldDefinition()
     {
         return _definition;
@@ -496,10 +499,10 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
     /**
      * @return whether this field is a list type.
      */
+    @JsonIgnore
     public boolean isListType()
     {
-        return getDataType().toString().endsWith(CoalesceSettings.VAR_IS_LIST_TYPE)
-                && getDataType() != ECoalesceFieldDataTypes.GEOCOORDINATE_LIST_TYPE;
+        return getDataType().isListType();
     }
 
     /**
@@ -532,7 +535,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
     }
 
     @Override
-    public void setClassificationMarking(String value)
+    public void setClassificationMarkingAsString(String value)
     {
         // Don't Allow null
         if (value == null)
@@ -542,6 +545,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
         _entityField.setClassificationmarking(value);
     }
 
+    @JsonIgnore
     @Override
     public boolean isDisableHistory()
     {
@@ -564,6 +568,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
 
     }
 
+    @JsonIgnore
     @Override
     public boolean isSuspendHistory()
     {
@@ -579,6 +584,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
         }
     }
 
+    @JsonIgnore
     @Override
     public CoalesceFieldHistory[] getHistory()
     {
@@ -645,6 +651,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
      *         if the field is null, or array of one with the basevalue if its a
      *         non list.
      */
+    @JsonIgnore
     public String[] getBaseValues()
     {
 
@@ -798,7 +805,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
             setDataType(ECoalesceFieldDataTypes.getTypeForCoalesceType(value));
             return true;
         case CoalesceAttributes.ATTRIBUTE_MARKING:
-            setClassificationMarking(value);
+            setClassificationMarkingAsString(value);
             return true;
         case "label":
             setLabel(value);

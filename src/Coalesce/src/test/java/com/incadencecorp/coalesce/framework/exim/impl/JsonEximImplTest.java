@@ -15,7 +15,7 @@
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-package com.incadencecorp.coalesce.framework;
+package com.incadencecorp.coalesce.framework.exim.impl;
 
 import static org.junit.Assert.*;
 

@@ -408,7 +408,7 @@ public class CoalesceRecordTest {
         CoalesceRecord record = recordset.addNew();
         record.setName("New Record");
 
-        assertFalse(record.getNoIndex());
+        assertFalse(record.isNoIndex());
 
         record.setNoIndex(true);
 
@@ -418,14 +418,14 @@ public class CoalesceRecordTest {
         CoalesceRecord desRecord = (CoalesceRecord) desEntity.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_RECORDSET_PATH
                 + "/New Record");
 
-        assertTrue(desRecord.getNoIndex());
+        assertTrue(desRecord.isNoIndex());
 
         CoalesceEntity newEntity = CoalesceEntity.create("Operation", "Portal", "1.2.3.4", "ID", "Type");
         CoalesceSection newSection = CoalesceSection.create(newEntity, "Operation/New Section");
         CoalesceRecordset newRecordset = CoalesceRecordset.create(newSection, "New Recordset");
         CoalesceRecord newRecord = newRecordset.addNew();
 
-        assertFalse(newRecord.getNoIndex());
+        assertFalse(newRecord.isNoIndex());
 
     }
 
@@ -512,7 +512,7 @@ public class CoalesceRecordTest {
         assertEquals("TestingValue", record.getAttribute("TestAttribute"));
 
         assertEquals("Mission Information Recordset Record", record.getName());
-        assertEquals(false, record.getNoIndex());
+        assertEquals(false, record.isNoIndex());
 
         record.setAttribute("Name", "TestingName");
         assertEquals("TestingName", record.getName());
@@ -530,7 +530,7 @@ public class CoalesceRecordTest {
         assertEquals(now, record.getDateCreated());
 
         record.setAttribute("NoIndex", "True");
-        assertEquals(true, record.getNoIndex());
+        assertEquals(true, record.isNoIndex());
 
         record.setAttribute("Status", ECoalesceObjectStatus.UNKNOWN.toString());
         assertEquals(ECoalesceObjectStatus.DELETED, record.getStatus());
@@ -549,7 +549,7 @@ public class CoalesceRecordTest {
         assertEquals(guid.toString(), desRecord.getKey());
         assertEquals(now, desRecord.getDateCreated());
         assertEquals(future, desRecord.getLastModified());
-        assertEquals(true, desRecord.getNoIndex());
+        assertEquals(true, desRecord.isNoIndex());
         assertEquals(ECoalesceObjectStatus.ACTIVE, desRecord.getStatus());
 
     }

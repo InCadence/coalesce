@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.NullArgumentException;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -175,6 +176,7 @@ public class CoalesceRecord extends CoalesceObjectHistory {
      *         {@link CoalesceField} s contained by this {@link CoalesceRecord}
      *         .
      */
+    @JsonIgnore
     public List<String> getFieldNames()
     {
         List<String> fieldNames = new ArrayList<String>();
@@ -197,6 +199,7 @@ public class CoalesceRecord extends CoalesceObjectHistory {
      *         {@link CoalesceField} s contained by this {@link CoalesceRecord}
      *         .
      */
+    @JsonIgnore
     public List<String> getFieldKeys()
     {
         List<String> fieldKeys = new ArrayList<String>();

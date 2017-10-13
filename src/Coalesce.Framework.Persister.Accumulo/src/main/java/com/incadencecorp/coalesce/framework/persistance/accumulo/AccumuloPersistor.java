@@ -1175,7 +1175,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             // config.setDurability(Durability.DEFAULT); // Requires Accumulo
             // 1.7
             config.setMaxWriteThreads(10);
-            if (entity.getFlatten())
+            if (entity.isFlatten())
             {
                 switch (entity.getStatus()) {
                 case READONLY:

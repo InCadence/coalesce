@@ -1,19 +1,9 @@
 package com.incadencecorp.coalesce.framework.datamodel;
 
-import com.incadencecorp.coalesce.common.classification.Marking;
-
 /**
  * Interface for accessing field definitions of Coalesce Entities.
  */
-public interface ICoalesceFieldDefinition {
-
-    // Methods
-    /**
-     * Return the value of the FieldDefinitions's Name attribute.
-     * 
-     * @return String of the FieldDefinition's name attribute.
-     */
-    String getName();
+public interface ICoalesceFieldDefinition extends ICoalesceObject {
 
     /**
      * Return the value of the FieldDefinition's Label attribute.
@@ -41,7 +31,7 @@ public interface ICoalesceFieldDefinition {
      * 
      * @return Marking class of the FieldDefinition's default classification marking attribute.
      */
-    Marking getDefaultClassificationMarking();
+    String getDefaultClassificationMarkingAsString();
 
     /**
      * Return the value of the FieldDefinition's DisableHistory attribute.
@@ -49,12 +39,6 @@ public interface ICoalesceFieldDefinition {
      * @return Boolean of the FieldDefinition's disable history attribute.
      */
     boolean isDisableHistory();
-
-    /**
-     * 
-     * @param value String to be the FieldDefinition's name attribute.
-     */
-    void setName(String value);
 
     /**
      * Sets the value of the FieldDefinitions's Label attribute.
@@ -78,11 +62,12 @@ public interface ICoalesceFieldDefinition {
     void setDefaultValue(String value);
 
     /**
-     * Sets the FieldDefinitions's DefaultClassificationMarking attribute based on the Marking class value parameter.
+     * Sets the Fielddefinition's DefaultClassificationMarking.
      * 
-     * @param value Marking class to be the FieldDefinition's default classification marking attribute.
+     * @param value String, the default classification marking for the field
+     *            type.
      */
-    void setDefaultClassificationMarking(Marking value);
+    void setDefaultClassificationMarkingAsString(String value);
 
     /**
      * Sets the value of the FieldDefinitions's DisableHistory attribute.

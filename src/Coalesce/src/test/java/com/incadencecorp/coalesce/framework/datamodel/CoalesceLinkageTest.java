@@ -525,23 +525,23 @@ public class CoalesceLinkageTest {
 
         CoalesceLinkage linkage = getMissionLinkage(entity);
 
-        assertFalse(linkage.getNoIndex());
+        assertFalse(linkage.isNoIndex());
 
         linkage.setNoIndex(true);
 
-        assertTrue(linkage.getNoIndex());
+        assertTrue(linkage.isNoIndex());
 
         String entityXml = entity.toXml();
 
         CoalesceEntity desEntity = CoalesceEntity.create(entityXml);
         CoalesceLinkage desLinkage = getMissionLinkage(desEntity);
 
-        assertTrue(desLinkage.getNoIndex());
+        assertTrue(desLinkage.isNoIndex());
 
         CoalesceEntity newEntity = CoalesceEntity.create("Operation", "Portal", "1.2.3.4", "ID", "Type");
         CoalesceLinkage newLinkage = newEntity.getLinkageSection().createLinkage();
 
-        assertFalse(newLinkage.getNoIndex());
+        assertFalse(newLinkage.isNoIndex());
 
     }
 
@@ -655,7 +655,7 @@ public class CoalesceLinkageTest {
         assertEquals("TestingValue", linkage.getAttribute("TestAttribute"));
 
         assertEquals("Linkage", linkage.getName());
-        assertEquals(false, linkage.getNoIndex());
+        assertEquals(false, linkage.isNoIndex());
 
         linkage.setAttribute("Name", "TestingName");
         assertEquals("TestingName", linkage.getName());
@@ -711,7 +711,7 @@ public class CoalesceLinkageTest {
         assertEquals(Locale.ENGLISH, linkage.getInputLang());
 
         linkage.setAttribute("NoIndex", "True");
-        assertEquals(true, linkage.getNoIndex());
+        assertEquals(true, linkage.isNoIndex());
 
         linkage.setAttribute("Status", ECoalesceObjectStatus.UNKNOWN.toString());
         assertEquals(ECoalesceObjectStatus.UNKNOWN, linkage.getStatus());
@@ -740,7 +740,7 @@ public class CoalesceLinkageTest {
         assertEquals(new Marking("(TS)"), desLinkage.getClassificationMarking());
         assertEquals("TestingUser", desLinkage.getModifiedBy());
         assertEquals(Locale.ENGLISH, desLinkage.getInputLang());
-        assertEquals(true, desLinkage.getNoIndex());
+        assertEquals(true, desLinkage.isNoIndex());
         assertEquals(ECoalesceObjectStatus.UNKNOWN, desLinkage.getStatus());
 
     }

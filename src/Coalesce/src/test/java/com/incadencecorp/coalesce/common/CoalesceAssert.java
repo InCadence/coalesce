@@ -176,7 +176,7 @@ public class CoalesceAssert {
             assertEquals(expectedFieldDef.getDefaultClassificationMarking(),
                          templateFieldDef.getDefaultClassificationMarking());
             assertEquals(expectedFieldDef.getLabel(), templateFieldDef.getLabel());
-            assertEquals(expectedFieldDef.getNoIndex(), templateFieldDef.getNoIndex());
+            assertEquals(expectedFieldDef.isNoIndex(), templateFieldDef.isNoIndex());
             assertEquals(expectedFieldDef.isDisableHistory(), templateFieldDef.isDisableHistory());
 
         }

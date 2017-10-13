@@ -12,9 +12,8 @@ import javax.ws.rs.Produces;
 
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
+import com.incadencecorp.coalesce.services.search.service.data.model.CoalesceObjectImpl;
 import com.incadencecorp.coalesce.services.search.service.data.model.FieldData;
-import com.incadencecorp.coalesce.services.search.service.data.model.ObjectData;
-import com.incadencecorp.unity.common.CallResult;
 
 /**
  * JaxRs configuration for {@link TemplateDataControllerJaxRS}
@@ -47,7 +46,7 @@ public interface ITemplateDataControllerJaxRS {
     @GET
     @Path("/{key}/recordsets")
     @Produces("application/json")
-    List<ObjectData> getRecordSets(@PathParam("key") String key) throws RemoteException;
+    List<CoalesceObjectImpl> getRecordSets(@PathParam("key") String key) throws RemoteException;
 
     @GET
     @Path("/{key}/recordsets/{recordsetKey}/fields")

@@ -37,7 +37,7 @@ import com.incadencecorp.coalesce.framework.persistance.MockPersister;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.incadencecorp.coalesce.services.search.service.data.controllers.TemplateDataController;
 import com.incadencecorp.coalesce.services.search.service.data.model.FieldData;
-import com.incadencecorp.coalesce.services.search.service.data.model.ObjectData;
+import com.incadencecorp.coalesce.services.search.service.data.model.CoalesceObjectImpl;
 import com.incadencecorp.unity.common.CallResult.CallResults;
 
 public class TemplateDataControllerTest {
@@ -142,7 +142,7 @@ public class TemplateDataControllerTest {
         CoalesceEntityTemplate template = CoalesceEntityTemplate.create(entity);
         Assert.assertEquals(true, controller.setTemplate(template.toXml()));
 
-        List<ObjectData> results = controller.getRecordSets(template.getKey());
+        List<CoalesceObjectImpl> results = controller.getRecordSets(template.getKey());
 
         // Verify Recordsets
         Assert.assertEquals(3, results.size());

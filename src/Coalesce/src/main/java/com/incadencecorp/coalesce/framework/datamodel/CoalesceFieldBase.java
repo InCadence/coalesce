@@ -28,6 +28,7 @@ import org.apache.commons.lang.NullArgumentException;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.xerces.impl.dv.util.Base64;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.joda.time.DateTime;
 
 import com.incadencecorp.coalesce.common.classification.Marking;
@@ -75,19 +76,11 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
     @Override
     public abstract void setLabel(String value);
 
-    /**
-     * Returns the string representation of the classification marking.
-     * 
-     * @return String, the classification marking.
-     */
+
     public abstract String getClassificationMarkingAsString();
 
-    /**
-     * Sets the classification marking to the value of the string parameter.
-     * 
-     * @param value String, the new classification marking.
-     */
-    public abstract void setClassificationMarking(String value);
+
+    public abstract void setClassificationMarkingAsString(String value);
 
     @Override
     public abstract Locale getInputLang();
@@ -104,6 +97,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
      * 
      * @return String, Marking + " " + value.
      */
+    @JsonIgnore
     public String getValueWithMarking()
     {
         String val = getBaseValue();
@@ -117,17 +111,29 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
         return getValueWithMarking();
     }
 
-    @Override
+    /**
+     * Sets the Field's ClassificationMarking attribute based on the Marking
+     * class value parameter.
+     * 
+     * @param value Marking class to be the Field's ClassificationMarking
+     *            attribute.
+     */
     public void setClassificationMarking(Marking value)
     {
-        setClassificationMarking(value.toString());
+        setClassificationMarkingAsString(value.toString());
     }
 
-    @Override
+    /**
+     * Return a Marking class value of the Field's ClassificationMarking
+     * attribute.
+     * 
+     * @return Marking class of the Field's ClassificationMarking attribute.
+     */
+    @JsonIgnore
     public Marking getClassificationMarking()
     {
         return new Marking(getClassificationMarkingAsString());
-    };
+    }
 
     /**
      * Returns the portion marking representation of the full classification

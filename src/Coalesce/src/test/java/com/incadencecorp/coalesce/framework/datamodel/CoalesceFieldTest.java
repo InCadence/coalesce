@@ -404,7 +404,7 @@ public class CoalesceFieldTest {
 
         CoalesceField<?> field = (CoalesceField<?>) mission.getCoalesceObjectForNamePath(CoalesceTypeInstances.TEST_MISSION_NAME_PATH);
 
-        field.setClassificationMarking((String) null);
+        field.setClassificationMarkingAsString((String) null);
 
         Assert.assertEquals(new Marking("(U)").getClassification().getPortion(),
                             field.getClassificationMarking().getClassification().getPortion());
@@ -2403,7 +2403,7 @@ public class CoalesceFieldTest {
         assertEquals("TestingValue", field.getAttribute("TestAttribute"));
 
         assertEquals("MissionName", field.getName());
-        assertEquals(false, field.getNoIndex());
+        assertEquals(false, field.isNoIndex());
 
         field.setAttribute("Name", "TestingName");
         field.getFieldDefinition().setName(field.getName());
@@ -2423,7 +2423,7 @@ public class CoalesceFieldTest {
         assertEquals(now, field.getDateCreated());
 
         field.setAttribute("NoIndex", "True");
-        assertEquals(true, field.getNoIndex());
+        assertEquals(true, field.isNoIndex());
 
         field.setAttribute("DataType", "Integer");
         field.getFieldDefinition().setDataType(ECoalesceFieldDataTypes.INTEGER_TYPE);
@@ -2460,7 +2460,7 @@ public class CoalesceFieldTest {
         assertEquals(guid.toString(), desField.getKey());
         assertEquals(now, desField.getDateCreated());
         assertEquals(future, desField.getLastModified());
-        assertEquals(true, desField.getNoIndex());
+        assertEquals(true, desField.isNoIndex());
         assertEquals(ECoalesceFieldDataTypes.INTEGER_TYPE, desField.getDataType());
         assertEquals(new Marking("(TS)"), desField.getClassificationMarking());
         assertEquals("labelTest", desField.getLabel());
