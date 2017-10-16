@@ -7,8 +7,10 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import org.apache.commons.lang.NullArgumentException;
-import org.codehaus.jackson.annotate.JsonIgnore;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.incadencecorp.coalesce.api.Views;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 
 /*-----------------------------------------------------------------------------'
@@ -33,6 +35,10 @@ import com.incadencecorp.coalesce.common.helpers.StringHelper;
  * @author n78554
  */
 public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesceRecordset {
+
+    public static final String ATTRIBUTE_RECORDS_MIN = "minrecords";
+
+    public static final String ATTRIBUTE_RECORDS_MAX = "maxrecords";
 
     // -----------------------------------------------------------------------//
     // protected Member Variables
@@ -185,7 +191,7 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
     /**
      * @return a list of field definitions that are defined for this recorset.
      */
-    @JsonIgnore
+    @JsonView(Views.Template.class)
     public List<CoalesceFieldDefinition> getFieldDefinitions()
     {
         return getObjectsAsList(_entityRecordset.getFielddefinition(),
@@ -197,6 +203,7 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
      * @return a complete list of all the records within this recordset whether
      *         they are marked as deleted or not.
      */
+    @JsonView(Views.Entity.class)
     public List<CoalesceRecord> getAllRecords()
     {
         List<CoalesceRecord> results = new ArrayList<CoalesceRecord>();
@@ -257,6 +264,7 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
      * @return boolean indication that the {@link CoalesceRecordset} has active
      *         {@link CoalesceRecord} s.
      */
+    @JsonView(Views.Entity.class)
     public boolean getHasActiveRecords()
     {
 
@@ -280,6 +288,7 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
      * @return boolean indication that the {@link CoalesceRecordset} has
      *         {@link CoalesceRecord} s, active or not.
      */
+    @JsonView(Views.Entity.class)
     public boolean getHasRecords()
     {
         return (!_entityRecordset.getRecord().isEmpty());
@@ -431,6 +440,7 @@ public class CoalesceRecordset extends CoalesceObjectHistory implements ICoalesc
      * @return integer of how many {@link CoalesceRecord} s are contained by
      *         this {@link CoalesceRecordset} .
      */
+    @JsonView(Views.Entity.class)
     public int getCount()
     {
         return getRecords().size();

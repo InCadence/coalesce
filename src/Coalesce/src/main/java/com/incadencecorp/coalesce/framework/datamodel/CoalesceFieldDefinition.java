@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.incadencecorp.coalesce.common.classification.Marking;
 import com.incadencecorp.coalesce.framework.CoalesceSettings;
 
@@ -652,6 +653,7 @@ public class CoalesceFieldDefinition extends CoalesceObject implements ICoalesce
         return _entityFieldDefinition.getDefaultclassificationmarking();
     }
     
+    @JsonIgnore
     public Marking getDefaultClassificationMarking()
     {
         return new Marking(getDefaultClassificationMarkingAsString());

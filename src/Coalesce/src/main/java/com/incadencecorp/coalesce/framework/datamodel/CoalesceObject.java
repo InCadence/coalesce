@@ -9,9 +9,9 @@ import java.util.UUID;
 
 import javax.xml.namespace.QName;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.joda.time.DateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
@@ -72,6 +72,16 @@ public abstract class CoalesceObject implements ICoalesceObject {
      * Unique identifier for this object.
      */
     public static final String ATTRIBUTE_KEY = "key";
+    
+    /**
+     * @see ICoalesceObject#isNoIndex()
+     */
+    public static final String ATTRIBUTE_NOINDEX= "noindex";
+    
+    /**
+     * @see ICoalesceObject#isFlatten()
+     */
+    public static final String ATTRIBUTE_FLATTEN= "flatten";
 
     private CoalesceObject _parent;
     private CoalesceObjectType _object;
@@ -118,18 +128,36 @@ public abstract class CoalesceObject implements ICoalesceObject {
         _object.setName(value);
     }
 
+    public final String getDateCreatedAsString()
+    {
+        return JodaDateTimeHelper.toXmlDateTimeUTC(getDateCreated());
+    }
+
+    @JsonIgnore
     @Override
     public final DateTime getDateCreated()
     {
         return _object.getDatecreated();
     }
 
+    public final void setDateCreatedAsString(String value)
+    {
+        setDateCreated(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
+    }
+    
+    @JsonIgnore
     @Override
     public final void setDateCreated(DateTime value)
     {
         _object.setDatecreated(value);
     }
 
+    public final String getLastModifiedAsString()
+    {
+        return JodaDateTimeHelper.toXmlDateTimeUTC(getLastModified());
+    }
+
+    @JsonIgnore
     @Override
     public final DateTime getLastModified()
     {
@@ -423,7 +451,7 @@ public abstract class CoalesceObject implements ICoalesceObject {
     @Override
     public final boolean isFlatten()
     {
-        String value = this.getAttribute("flatten");
+        String value = this.getAttribute(ATTRIBUTE_FLATTEN);
 
         // Default Behavior.
         if (value == null)
@@ -435,9 +463,15 @@ public abstract class CoalesceObject implements ICoalesceObject {
     @Override
     public final void setFlatten(boolean value)
     {
-        this.setAttribute("flatten", Boolean.toString(value));
+        this.setAttribute(ATTRIBUTE_FLATTEN, Boolean.toString(value));
     }
 
+    public final void setLastModifiedAsString(String value)
+    {
+        setLastModified(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
+    }
+
+    @JsonIgnore
     @Override
     public final void setLastModified(DateTime value)
     {

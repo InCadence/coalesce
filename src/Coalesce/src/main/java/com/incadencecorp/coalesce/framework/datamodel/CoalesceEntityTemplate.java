@@ -359,15 +359,16 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
                 {
 
                     Node attribute = attributeList.item(ii);
-                    if (!attribute.getNodeName().equalsIgnoreCase("name")
-                            && !attribute.getNodeName().equalsIgnoreCase("source")
-                            && !attribute.getNodeName().equalsIgnoreCase("version")
-                            && !attribute.getNodeName().equalsIgnoreCase("flatten")
-                            && !attribute.getNodeName().equalsIgnoreCase("noindex")
-                            && !attribute.getNodeName().equalsIgnoreCase("datatype")
-                            && !attribute.getNodeName().equalsIgnoreCase("maxrecords")
-                            && !attribute.getNodeName().equalsIgnoreCase("minrecords")
-                            && !attribute.getNodeName().equalsIgnoreCase("classname"))
+                    if (!attribute.getNodeName().equalsIgnoreCase(CoalesceObject.ATTRIBUTE_NAME)
+                            && !attribute.getNodeName().equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_SOURCE)
+                            && !attribute.getNodeName().equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_VERSION)
+                            && !attribute.getNodeName().equalsIgnoreCase(CoalesceObject.ATTRIBUTE_STATUS)
+                            && !attribute.getNodeName().equalsIgnoreCase(CoalesceObject.ATTRIBUTE_FLATTEN)
+                            && !attribute.getNodeName().equalsIgnoreCase(CoalesceObject.ATTRIBUTE_NOINDEX)
+                            && !attribute.getNodeName().equalsIgnoreCase(CoalesceField.ATTRIBUTE_DATA_TYPE)
+                            && !attribute.getNodeName().equalsIgnoreCase(CoalesceRecordset.ATTRIBUTE_RECORDS_MAX)
+                            && !attribute.getNodeName().equalsIgnoreCase(CoalesceRecordset.ATTRIBUTE_RECORDS_MIN)
+                            && !attribute.getNodeName().equalsIgnoreCase(CoalesceEntity.ATTRIBUTE_CLASSNAME))
                     {
                         attribute.setNodeValue("");
                     }

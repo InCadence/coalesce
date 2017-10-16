@@ -21,6 +21,7 @@ import com.incadencecorp.coalesce.api.ICoalesceFieldEnumDefinitionFactory ;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
+import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
 import com.incadencecorp.coalesce.services.crud.service.data.model.api.record.IValuesRecord;
 import com.incadencecorp.coalesce.services.crud.service.data.model.impl.coalesce.record.ValuesCoalesceRecord.EValuesFields;
 
@@ -51,6 +52,7 @@ public final class ValuesCoalesceFactory implements ICoalesceFieldEnumDefinition
                 break;
             case ORDINAL:
                 fd = CoalesceFieldDefinition.create(recordset, "ordinal", ECoalesceFieldDataTypes.INTEGER_TYPE, "", "UNCLASSIFIED", "", false, false);
+                fd.setStatus(ECoalesceObjectStatus.READONLY);
                 break;
             case DESCRIPTION:
                 fd = CoalesceFieldDefinition.create(recordset, "description", ECoalesceFieldDataTypes.STRING_TYPE, "", "UNCLASSIFIED", "", false, false);

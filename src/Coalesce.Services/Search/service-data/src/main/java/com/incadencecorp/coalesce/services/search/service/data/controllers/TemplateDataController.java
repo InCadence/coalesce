@@ -184,7 +184,7 @@ public class TemplateDataController {
             results.add(getField(CoalescePropertyFactory.getLastModified(), ECoalesceFieldDataTypes.DATE_TIME_TYPE));
         }
         else
-        { 
+        {
             if (templates.containsKey(key))
             {
                 CoalesceRecordset recordset = (CoalesceRecordset) templates.get(key).entity.getCoalesceObjectForKey(recordsetKey);
@@ -211,17 +211,39 @@ public class TemplateDataController {
         return results;
     }
 
+    public CoalesceEntity getTemplate(String name, String source, String version) throws RemoteException
+    {
+        CoalesceEntity result = null;
+
+        for (TemplateNode node : templates.values())
+        {
+            if (name.equalsIgnoreCase(node.template.getName()) && source.equalsIgnoreCase(node.template.getSource())
+                    && version.equalsIgnoreCase(node.template.getVersion()))
+            {
+                result = node.entity;
+            }
+        }
+
+        if (result == null)
+        {
+            error(String.format(CoalesceErrors.NOT_FOUND, "Template", "name=" + name + ", source=" + source + ", version=" + version));
+        }
+
+        return result;
+
+    }
+
     /**
      * @param key
      * @return the {@link CoalesceEntityTemplate} for the specified key.
      */
-    public CoalesceEntityTemplate getTemplate(String key) throws RemoteException
+    public CoalesceEntity getTemplate(String key) throws RemoteException
     {
-        CoalesceEntityTemplate result = null;
+        CoalesceEntity result = null;
 
         if (templates.containsKey(key))
         {
-            result = templates.get(key).template;
+            result = templates.get(key).entity;
         }
         else
         {
@@ -320,7 +342,7 @@ public class TemplateDataController {
         entity.initialize();
         entity.setName(templateName);
         entity.setAttribute("classname", className);
-        
+
         JSONArray jsonSections = obj.getJSONArray("sections");
 
         for (int i = 0; i < jsonSections.length(); i++)

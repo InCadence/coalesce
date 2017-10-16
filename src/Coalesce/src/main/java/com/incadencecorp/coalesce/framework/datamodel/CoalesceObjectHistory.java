@@ -22,8 +22,7 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 
 /**
