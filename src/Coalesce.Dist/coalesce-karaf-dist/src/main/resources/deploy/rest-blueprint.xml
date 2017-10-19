@@ -12,15 +12,16 @@
  				http://cxf.apache.org/blueprint/jaxrs http://cxf.apache.org/schemas/blueprint/jaxrs.xsd                
                 http://cxf.apache.org/blueprint/core http://cxf.apache.org/schemas/blueprint/core.xsd">
 
-	<!--
-	Endpoints
-	-->
-	
+
+	<!-- ========================== -->
+	<!-- Endpoints -->
+	<!-- ========================== -->
 	<jaxrs:server address="/data" id="someRestService">
 		<jaxrs:serviceBeans>
 			<ref component-id="templateServiceImpl" />
 			<ref component-id="optionsServiceImpl" />
 			<ref component-id="searchServiceImpl" />
+			<ref component-id="enumerationImpl" />
 		</jaxrs:serviceBeans>
 		<jaxrs:providers>
 			<bean class="org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider" />
@@ -35,13 +36,28 @@
 		</jaxrs:providers>
 	</jaxrs:server>
 
-	<!--
-	Service Implementations
-	-->
+	<!-- ========================== -->
+	<!-- Service Implementations -->
+	<!-- ========================== -->
+	<bean id="enumerationImpl"
+		class="com.incadencecorp.coalesce.services.crud.service.data.jaxrs.EnumerationDataControllerJaxRS">
+		<argument>
+			<bean
+				class="com.incadencecorp.coalesce.services.crud.service.client.CrudFrameworkClientImpl">
+				<argument ref="framework" />
+			</bean>
+		</argument>
+		<argument>
+			<bean
+				class="com.incadencecorp.coalesce.services.search.service.client.SearchFrameworkClientImpl">
+				<argument ref="persister" />
+			</bean>
+		</argument>
+	</bean>
 
 	<bean id="templateServiceImpl"
 		class="com.incadencecorp.coalesce.services.search.service.data.jaxrs.TemplateDataControllerJaxRS">
-		<argument ref="postgres" />
+		<argument ref="persister" />
 	</bean>
 
 	<bean id="optionsServiceImpl"
@@ -51,54 +67,25 @@
 	<bean id="searchServiceImpl"
 		class="com.incadencecorp.coalesce.services.search.service.data.jaxrs.SearchDataControllerJaxRS">
 		<argument>
-			<bean class="com.incadencecorp.coalesce.services.search.service.client.SearchFrameworkClientImpl">
-				<argument ref="postgres" /> 
+			<bean
+				class="com.incadencecorp.coalesce.services.search.service.client.SearchFrameworkClientImpl">
+				<argument ref="persister" />
 			</bean>
 		</argument>
 	</bean>
 
-	<!--
-	Available Persisters
-	-->
-
-	<bean id="neo4j"
-		class="com.incadencecorp.coalesce.framework.persistance.neo4j.Neo4jSearchPersister">
-		<property name="connectionSettings">
-			<bean class="com.incadencecorp.coalesce.framework.persistance.ServerConn">
-				<property name="portNumber" value="7474" />
-				<property name="serverName" value="localhost" />
-			</bean>
-		</property>
-		<property name="includeXml" value="true" />
+	<!-- ========================== -->
+	<!-- Persisters -->
+	<!-- ========================== -->
+	<bean id="persister"
+		class="com.incadencecorp.coalesce.framework.persistance.derby.DerbyPersistor">
 	</bean>
 
-	<bean id="postgres"
-		class="com.incadencecorp.coalesce.framework.persistance.postgres.PostGreSQLPersistorExt">
-		<property name="connectionSettings">
-			<ref component-id="aws" />
-		</property>
-		<property name="schema" value="coalesce" />
+	<!-- ========================== -->
+	<!-- Framework -->
+	<!-- ========================== -->
+	<bean id="framework" class="com.incadencecorp.coalesce.framework.CoalesceFramework">
+		<property name="authoritativePersistor" ref="persister" />
 	</bean>
-	<!--
-	<bean id="accumulo"
-		class="com.incadencecorp.coalesce.framework.persistance.accumulo.AccumuloPersistor">
-		<property name="connectionSettings">
-			<bean class="com.incadencecorp.coalesce.framework.persistance.ServerConn">
-				<property name="database" value="rdk" />
-				<property name="serverName" value="bdpnode4:2181,bdpnode5:2181,bdpnode6:2181" />
-				<property name="user" value="root" />
-				<property name="password" value="cloudbase123" />
-			</bean>
-		</property>
-	</bean>
-	-->
-	<bean id="aws"
-		class="com.incadencecorp.coalesce.framework.persistance.ServerConn">
-		<property name="database" value="coalesce" />
-		<property name="portNumber" value="5432" />
-		<property name="serverName" value="52.222.74.184" />
-		<property name="user" value="enterprisedb" />
-		<property name="password" value="enterprisedb" />
-	</bean>
-	
+
 </blueprint>

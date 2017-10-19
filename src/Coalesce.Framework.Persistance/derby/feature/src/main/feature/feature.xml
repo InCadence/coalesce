@@ -4,7 +4,7 @@
 	<feature name="${project.artifactId}">
 		<feature prerequisite="false" dependency="true">coalesce-core-feature
 		</feature>
-		<bundle>mvn:com.incadencecorp.coalesce.bundles/bundle-geotools/${project.version}
+		<bundle start-level="75">mvn:com.incadencecorp.coalesce.bundles/bundle-geotools/${project.version}
 		</bundle>
 	</feature>
 </features>

@@ -3,7 +3,6 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>template2java-maven-plugin</artifactId>
 	<name>Coalesce Plugin Template2Java</name>
-	<version>0.0.25-SNAPSHOT</version>
 	<packaging>maven-plugin</packaging>
 
 
@@ -23,7 +22,6 @@
 		<dependency>
 			<groupId>com.incadencecorp.coalesce</groupId>
 			<artifactId>coalesce-core</artifactId>
-			<version>0.0.25-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.incadencecorp.coalesce</groupId>
