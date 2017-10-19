@@ -5,6 +5,21 @@
     <packaging>bundle</packaging>
     <name>Coalesce ElasticSearch Persister</name>
     <description>Persister used by Coalesce to connect to ElasticSearch</description>
+    
+	<properties>
+		<gt.version>16.1</gt.version>
+	</properties>
+
+	<distributionManagement>
+		<repository>
+			<id>nexus</id>
+			<url>http://10.15.0.230:8081/repository/maven-releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>nexus</id>
+			<url>http://10.15.0.230:8081/repository/maven-snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
 
 	<parent>
 		<groupId>com.incadencecorp.coalesce</groupId>
@@ -36,6 +51,25 @@
             </plugin>
         </plugins>
     </build>
+    
+    <repositories>
+		<repository>
+			<id>maven2-repository.dev.java.net</id>
+			<name>Java.net repository</name>
+			<url>http://download.java.net/maven/2</url>
+		</repository>
+		<repository>
+			<id>elasticsearch-releases</id>
+			<url>http://maven.elasticsearch.org/releases</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+
+	</repositories>
 
     <dependencies>
         <!-- Internal Dependencies -->
@@ -73,10 +107,120 @@
         </dependency>
         
 		<dependency>
-		    <groupId>org.elasticsearch</groupId>
-		    <artifactId>elasticsearch</artifactId>
-		    <version>2.1.1</version>
+			<groupId>org.elasticsearch</groupId>
+			<artifactId>elasticsearch</artifactId>
+			<version>1.7.5</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>ironhide</groupId>
+			<artifactId>ironhide-client</artifactId>
+			<version>1.0.6</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-main</artifactId>
+			<version>${gt.version}</version>
+			<exclusions>
+				<exclusion>
+					<!-- excluded due to license issues -->
+					<groupId>javax.media</groupId>
+					<artifactId>jai_core</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-shapefile</artifactId>
+			<version>${gt.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-opengis</artifactId>
+			<version>${gt.version}</version>
+			<exclusions>
+				<exclusion>
+					<!-- excluded due to license issues -->
+					<groupId>javax.media</groupId>
+					<artifactId>jai_core</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-cql</artifactId>
+			<version>${gt.version}</version>
+			<exclusions>
+				<exclusion>
+					<!-- excluded due to license issues -->
+					<groupId>javax.media</groupId>
+					<artifactId>jai_core</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-metadata</artifactId>
+			<version>${gt.version}</version>
+			<exclusions>
+				<exclusion>
+					<!-- excluded due to license issues -->
+					<groupId>javax.media</groupId>
+					<artifactId>jai_core</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-data</artifactId>
+			<version>${gt.version}</version>
+			<exclusions>
+				<exclusion>
+					<!-- excluded due to license issues -->
+					<groupId>javax.media</groupId>
+					<artifactId>jai_core</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-imagemosaic</artifactId>
+			<version>${gt.version}</version>
+			<exclusions>
+				<exclusion>
+					<!-- excluded due to license issues -->
+					<groupId>javax.media</groupId>
+					<artifactId>jai_core</artifactId>
+				</exclusion>
+				<exclusion>
+					<!-- excluded due to license issues -->
+					<groupId>javax.media</groupId>
+					<artifactId>jai_imageio</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-referencing</artifactId>
+			<version>${gt.version}</version>
+			<exclusions>
+				<exclusion>
+					<!-- excluded due to license issues -->
+					<groupId>javax.media</groupId>
+					<artifactId>jai_core</artifactId>
+				</exclusion>
+				<exclusion>
+					<!-- excluded due to license issues -->
+					<groupId>jgridshift</groupId>
+					<artifactId>jgridshift</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.opengis</groupId>
+			<artifactId>geoapi</artifactId>
+			<version>3.0.0</version>
+        </dependency>
 
     </dependencies>
 

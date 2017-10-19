@@ -17,7 +17,6 @@ import org.elasticsearch.plugins.PluginsService;
 import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.transport.Transport;
 import org.geotools.coverage.grid.GeneralGridCoordinates.Immutable;
-import org.jboss.netty.handler.ssl.ImmediateExecutor;
 
 import static org.elasticsearch.common.xcontent.XContentFactory.*;
 import org.slf4j.Logger;
@@ -26,8 +25,6 @@ import org.slf4j.LoggerFactory;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
-
-import ironhide.client.IronhideClientPlugin;
 
 public class ElasticSearchDataConnector extends CoalesceDataConnectorBase {
 
@@ -54,27 +51,19 @@ public class ElasticSearchDataConnector extends CoalesceDataConnectorBase {
 			LOGGER.info("ElasticSearchDataConnector:openDataConnection - connecting to ElasticSearch");
 			System.out.println("ElasticSearchDataConnector:openDataConnection - connecting to ElasticSearch");
 			
-			TransportClient transportClient = null;
-			
-			try {
-				
-			ImmutableSettings settings = Settings.settingsBuilder()
-		    .put("cluster.name", "elasticsearch")
+			Settings settings = ImmutableSettings.settingsBuilder()
+		    .put("localhost", "elastictest")
             .build();
 			
-			transportClient = new TransportClient(settings);
+			client = new TransportClient(settings);
 				
-			client = TransportClient.builder().build()
-					   .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("localhost"), 9300));
-			Settings settings = ImmutableSettings.settingsBuilder().put("cluster.name", "elastictest").build();
-            TransportClient transportClient = new TransportClient(settings);
 			LOGGER.debug("ElasticSearchDataConnector:openDataConnection - Connector User: " + client.toString());
 			System.out.println("ElasticSearchDataConnector:openDataConnection - Connector User: " + client.toString());
 
 			//createTables(connector, coalesceTable, coalesceTemplateTable, coalesceEntityIndex, coalesceSearchTable);
 			
-		} catch (IOException e) {
-			throw new CoalescePersistorException("Error Opening Data Connection - IOException", e);
+		} catch (Exception e) {
+			throw new CoalescePersistorException("Error Opening Data Connection - Exception", e);
 		}
 		return client;
 	}
