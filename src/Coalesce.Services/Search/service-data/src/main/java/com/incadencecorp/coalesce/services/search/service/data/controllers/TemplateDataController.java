@@ -252,6 +252,22 @@ public class TemplateDataController {
 
         return result;
     }
+    
+    public CoalesceEntity getNewEntity(String key) throws RemoteException
+    {
+        CoalesceEntity result = null;
+
+        if (templates.containsKey(key))
+        {
+            result = templates.get(key).template.createNewEntity();
+        }
+        else
+        {
+            error(String.format(CoalesceErrors.NOT_FOUND, "Template", key));
+        }
+
+        return result;
+    }
 
     /**
      * Saves the specified template.

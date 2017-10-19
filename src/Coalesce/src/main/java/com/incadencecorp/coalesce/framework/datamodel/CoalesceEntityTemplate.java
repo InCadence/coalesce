@@ -293,7 +293,29 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
         CoalesceEntity entity = new CoalesceEntity();
         entity.initialize(toXml());
 
+        // Create Singleton Records
+        for (CoalesceSection section : entity.getSectionsAsList())
+        {
+            populateSingletonRecords(section);
+        }
+
         return entity;
+    }
+
+    private void populateSingletonRecords(CoalesceSection section)
+    {
+        for (CoalesceSection subsection : section.getSectionsAsList())
+        {
+            populateSingletonRecords(subsection);
+        }
+
+        for (CoalesceRecordset recordset : section.getRecordsetsAsList())
+        {
+            if (recordset.getMaxRecords() == 1)
+            {
+                recordset.addNew();
+            }
+        }
     }
 
     /**

@@ -17,28 +17,20 @@
 package com.incadencecorp.coalesce.services.crud.service.data.controllers;
 
 import java.rmi.RemoteException;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.incadencecorp.coalesce.api.CoalesceErrors;
-import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceCircle;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceCircleField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
-import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
+import com.incadencecorp.coalesce.services.api.Results;
 import com.incadencecorp.coalesce.services.crud.api.ICrudClient;
-import com.incadencecorp.coalesce.services.crud.service.data.model.impl.coalesce.entity.EnumerationCoalesceEntity;
-import com.incadencecorp.coalesce.services.crud.service.data.model.impl.coalesce.record.ValuesCoalesceRecord;
-import com.vividsolutions.jts.geom.Coordinate;
 
 /**
  * Responsible for storing and retrieving user search options.
@@ -51,7 +43,7 @@ public class EntityDataController {
     private ICrudClient crud;
 
     // TODO Remove this
-    private EnumerationCoalesceEntity entity;
+    private CoalesceEntity entity;
 
     /**
      * Default Constructor
@@ -61,47 +53,50 @@ public class EntityDataController {
         this.crud = crud;
 
         // TODO Remove this test code
-        
-        entity = new EnumerationCoalesceEntity();
-        entity.initialize();
-
-        try
-        {
-            entity.getMetadataRecord().setEnumname("Hello World");
-            entity.getMetadataRecord().setDescription("Example Enumeration");
-            
-            ValuesCoalesceRecord record;
-            
-            for (int ii=0; ii<20; ii++) {
-                
-                Map<String, String> associated = new HashMap<String, String>(); 
-                associated.put("AA", "AA");
-                associated.put("BB", "BB");
-                
-                record = entity.addValuesRecord();
-                record.setValue(Integer.toString(ii));
-                record.setOrdinal(ii);
-                record.setDescription("Testing " + ii);
-                record.setAssociatedValues(associated);
-            }
-            
-            CoalesceRecordset recordset = CoalesceRecordset.create(CoalesceSection.create(entity, "test"), "test rs");
-            CoalesceFieldDefinition.create(recordset, "circle", ECoalesceFieldDataTypes.CIRCLE_TYPE);
-
-            CoalesceCircleField field = (CoalesceCircleField) recordset.addNew().getFieldByName("circle");
-            CoalesceCircle value = new CoalesceCircle();
-            value.setCenter(new Coordinate(1, 1));
-            value.setRadius(5);
-            field.setValue(value);
-            
-            CoalesceRecordset recordset2 = CoalesceRecordset.create(CoalesceSection.create(entity.getCoalesceSectionForNamePath(entity.getName(), "enumeration"), "nested"), "nested rs");
-            CoalesceFieldDefinition.create(recordset2, "circle", ECoalesceFieldDataTypes.CIRCLE_TYPE);
-
-        }
-        catch (CoalesceDataFormatException e)
-        {
-            LOGGER.warn("WARN", e);
-        }
+//        
+//        EnumerationCoalesceEntity enumEntity = new EnumerationCoalesceEntity();
+//        enumEntity.initialize();
+//
+//        try
+//        {
+//            enumEntity.getMetadataRecord().setEnumname("Hello World");
+//            enumEntity.getMetadataRecord().setDescription("Example Enumeration");
+//            
+//            ValuesCoalesceRecord record;
+//            
+//            for (int ii=0; ii<20; ii++) {
+//                
+//                Map<String, String> associated = new HashMap<String, String>(); 
+//                associated.put("AA", "AA");
+//                associated.put("BB", "BB");
+//                
+//                record = enumEntity.addValuesRecord();
+//                record.setValue(Integer.toString(ii));
+//                record.setOrdinal(ii);
+//                record.setDescription("Testing " + ii);
+//                record.setAssociatedValues(associated);
+//            }
+//            
+//            CoalesceRecordset recordset = CoalesceRecordset.create(CoalesceSection.create(enumEntity, "test"), "test rs");
+//            CoalesceFieldDefinition.create(recordset, "circle", ECoalesceFieldDataTypes.CIRCLE_TYPE);
+//
+//            CoalesceCircleField field = (CoalesceCircleField) recordset.addNew().getFieldByName("circle");
+//            CoalesceCircle value = new CoalesceCircle();
+//            value.setCenter(new Coordinate(1, 1));
+//            value.setRadius(5);
+//            field.setValue(value);
+//            
+//            CoalesceRecordset recordset2 = CoalesceRecordset.create(CoalesceSection.create(enumEntity.getCoalesceSectionForNamePath(enumEntity.getName(), "enumeration"), "nested"), "nested rs");
+//            CoalesceFieldDefinition.create(recordset2, "circle", ECoalesceFieldDataTypes.CIRCLE_TYPE);
+//
+//            entity = new CoalesceEntity(); 
+//            entity.initialize(enumEntity);
+//            
+//        }
+//        catch (CoalesceDataFormatException e)
+//        {
+//            LOGGER.warn("WARN", e);
+//        }
     }
 
     public CoalesceEntity getEntity(String entityKey) throws RemoteException
@@ -176,22 +171,22 @@ public class EntityDataController {
     {
         // TODO Remove this test code
 
-        return entity;
+//        return entity;
 
         // TODO Uncomment the following code
 
-//        Results<CoalesceEntity>[] results = crud.retrieveDataObjects(key);
-//
-//        if (results.length == 0)
-//        {
-//            error(String.format(CoalesceErrors.NOT_FOUND, "Entity", key));
-//        }
-//        if (results.length > 1)
-//        {
-//            error(String.format(CoalesceErrors.INVALID_OBJECT, "Entity", key));
-//        }
-//
-//        return results[0].getResult();
+        Results<CoalesceEntity>[] results = crud.retrieveDataObjects(key);
+
+        if (results.length == 0)
+        {
+            error(String.format(CoalesceErrors.NOT_FOUND, "Entity", key));
+        }
+        if (results.length > 1)
+        {
+            error(String.format(CoalesceErrors.INVALID_OBJECT, "Entity", key));
+        }
+
+        return results[0].getResult();
     }
 
     private void error(String msg) throws RemoteException

@@ -41,6 +41,12 @@ public interface ITemplateDataControllerJaxRS {
     @Produces("application/json")
     CoalesceEntity getTemplate(@PathParam("key") String key) throws RemoteException;
 
+    @GET
+    @Path("/{key}/create")
+    @JsonView(Views.Entity.class)
+    @Produces("application/json")
+    CoalesceEntity getNewEntity(@PathParam("key") String key) throws RemoteException;
+
     @POST
     @Path("/")
     @Consumes("application/xml")
@@ -61,5 +67,6 @@ public interface ITemplateDataControllerJaxRS {
     @Produces("application/json")
     List<FieldData> getRecordSetFields(@PathParam("key") String key, @PathParam("recordsetKey") String recordsetKey)
             throws RemoteException;
+
 
 }

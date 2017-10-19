@@ -22,17 +22,10 @@
 			<ref component-id="optionsServiceImpl" />
 			<ref component-id="searchServiceImpl" />
 			<ref component-id="enumerationImpl" />
+			<ref component-id="entityImpl" />
 		</jaxrs:serviceBeans>
 		<jaxrs:providers>
-			<bean class="org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider" />
-			<bean class="org.apache.cxf.jaxrs.provider.RequestDispatcherProvider">
-				<property name="resourcePaths">
-					<map>
-						<entry key="/templates/*" value="/cxf/templates/*" />
-					</map>
-				</property>
-				<property name="beanName" value="data" />
-			</bean>
+			<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider" />
 		</jaxrs:providers>
 	</jaxrs:server>
 
@@ -55,6 +48,16 @@
 		</argument>
 	</bean>
 
+	<bean id="entityImpl"
+		class="com.incadencecorp.coalesce.services.crud.service.data.jaxrs.EntityDataControllerJaxRS">
+		<argument>
+			<bean
+				class="com.incadencecorp.coalesce.services.crud.service.client.CrudFrameworkClientImpl">
+				<argument ref="framework" />
+			</bean>
+		</argument>
+	</bean>
+	
 	<bean id="templateServiceImpl"
 		class="com.incadencecorp.coalesce.services.search.service.data.jaxrs.TemplateDataControllerJaxRS">
 		<argument ref="persister" />

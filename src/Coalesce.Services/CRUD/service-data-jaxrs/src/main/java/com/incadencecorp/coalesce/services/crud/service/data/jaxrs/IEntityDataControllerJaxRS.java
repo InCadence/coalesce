@@ -55,7 +55,7 @@ public interface IEntityDataControllerJaxRS {
     CoalesceRecordset getRecordset(@PathParam("entityKey") String entityKey, @PathParam("key") String key) throws RemoteException;
 
     @GET
-    @Path("/{entityKey}/field/{key}")
+    @Path("/{entityKey}/record/{key}")
     @JsonView(Views.Entity.class)
     @Produces("application/json")
     CoalesceRecord getRecord(@PathParam("entityKey") String entityKey, @PathParam("key") String key) throws RemoteException;

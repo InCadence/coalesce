@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.NullArgumentException;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.incadencecorp.coalesce.api.Views;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
@@ -144,7 +145,7 @@ public class CoalesceLinkageSection extends CoalesceObjectHistory {
      * @return HashMap of this {@link CoalesceLinkageSection} 's
      *         {@link CoalesceLinkage} s.
      */
-    @JsonView(Views.Entity.class)
+    @JsonIgnore
     public Map<String, CoalesceLinkage> getLinkages()
     {
         Map<String, CoalesceLinkage> linkages = new HashMap<String, CoalesceLinkage>();
@@ -160,6 +161,14 @@ public class CoalesceLinkageSection extends CoalesceObjectHistory {
         return linkages;
 
     }
+
+    @JsonView(Views.Entity.class)
+    public List<CoalesceLinkage> getLinkagesAsList()
+    {
+        return getObjectsAsList(_entityLinkageSection.getLinkage());
+    }
+
+
 
     /**
      * Creates an {@link CoalesceLinkage} child for this

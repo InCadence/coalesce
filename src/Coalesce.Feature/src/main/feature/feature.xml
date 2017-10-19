@@ -11,4 +11,7 @@
 		<feature prerequisite="false" dependency="false">coalesce-search-service-feature</feature>
 		<feature prerequisite="false" dependency="false">coalesce-search-service-data-feature</feature>
 	</feature>
+	<feature name="coalesce-entity-editor" description="">
+        <bundle start-level="75">mvn:com.incadencecorp.coalesce.ui/entity-editor/${project.version}/war</bundle>
+	</feature>
 </features>
