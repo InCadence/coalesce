@@ -42,61 +42,12 @@ public class EntityDataController {
     private static final Logger LOGGER = LoggerFactory.getLogger(EntityDataController.class);
     private ICrudClient crud;
 
-    // TODO Remove this
-    private CoalesceEntity entity;
-
     /**
      * Default Constructor
      */
     public EntityDataController(ICrudClient crud)
     {
         this.crud = crud;
-
-        // TODO Remove this test code
-//        
-//        EnumerationCoalesceEntity enumEntity = new EnumerationCoalesceEntity();
-//        enumEntity.initialize();
-//
-//        try
-//        {
-//            enumEntity.getMetadataRecord().setEnumname("Hello World");
-//            enumEntity.getMetadataRecord().setDescription("Example Enumeration");
-//            
-//            ValuesCoalesceRecord record;
-//            
-//            for (int ii=0; ii<20; ii++) {
-//                
-//                Map<String, String> associated = new HashMap<String, String>(); 
-//                associated.put("AA", "AA");
-//                associated.put("BB", "BB");
-//                
-//                record = enumEntity.addValuesRecord();
-//                record.setValue(Integer.toString(ii));
-//                record.setOrdinal(ii);
-//                record.setDescription("Testing " + ii);
-//                record.setAssociatedValues(associated);
-//            }
-//            
-//            CoalesceRecordset recordset = CoalesceRecordset.create(CoalesceSection.create(enumEntity, "test"), "test rs");
-//            CoalesceFieldDefinition.create(recordset, "circle", ECoalesceFieldDataTypes.CIRCLE_TYPE);
-//
-//            CoalesceCircleField field = (CoalesceCircleField) recordset.addNew().getFieldByName("circle");
-//            CoalesceCircle value = new CoalesceCircle();
-//            value.setCenter(new Coordinate(1, 1));
-//            value.setRadius(5);
-//            field.setValue(value);
-//            
-//            CoalesceRecordset recordset2 = CoalesceRecordset.create(CoalesceSection.create(enumEntity.getCoalesceSectionForNamePath(enumEntity.getName(), "enumeration"), "nested"), "nested rs");
-//            CoalesceFieldDefinition.create(recordset2, "circle", ECoalesceFieldDataTypes.CIRCLE_TYPE);
-//
-//            entity = new CoalesceEntity(); 
-//            entity.initialize(enumEntity);
-//            
-//        }
-//        catch (CoalesceDataFormatException e)
-//        {
-//            LOGGER.warn("WARN", e);
-//        }
     }
 
     public CoalesceEntity getEntity(String entityKey) throws RemoteException
@@ -169,12 +120,6 @@ public class EntityDataController {
      */
     private CoalesceEntity retrieveEntity(String key) throws RemoteException
     {
-        // TODO Remove this test code
-
-//        return entity;
-
-        // TODO Uncomment the following code
-
         Results<CoalesceEntity>[] results = crud.retrieveDataObjects(key);
 
         if (results.length == 0)
