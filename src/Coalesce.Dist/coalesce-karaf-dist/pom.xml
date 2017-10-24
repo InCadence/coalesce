@@ -91,7 +91,11 @@
 						<feature>minimal</feature>
 						<feature>cxf</feature>
 						<feature>war</feature>
-						<feature>coalesce-example</feature>
+						<feature>persister-derby-feature</feature>
+						<feature>coalesce-crud-service-feature</feature>
+						<feature>coalesce-crud-service-data-feature</feature>
+						<feature>coalesce-search-service-feature</feature>
+						<feature>coalesce-search-service-data-feature</feature>
 					</bootFeatures>
 					<installedFeatures>
 						<feature>standard</feature>
