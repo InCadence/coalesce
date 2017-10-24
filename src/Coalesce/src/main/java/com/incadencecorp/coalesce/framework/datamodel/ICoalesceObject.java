@@ -17,9 +17,6 @@
 
 package com.incadencecorp.coalesce.framework.datamodel;
 
-import java.util.Map;
-import java.util.UUID;
-
 import org.joda.time.DateTime;
 
 /**
@@ -47,7 +44,14 @@ public interface ICoalesceObject {
      * 
      * @return the object's version that this element was added.
      */
-    int getObjectVersion();
+    Integer getObjectVersion();
+
+    /**
+     * Sets the object's version that this element was added.
+     * 
+     * @param version
+     */
+    void setObjectVersion(Integer version);
 
     /**
      * @return the identification of who modified the Field's Value attribute.
@@ -96,50 +100,6 @@ public interface ICoalesceObject {
      */
     void setStatus(ECoalesceObjectStatus value);
 
-    /**
-     * @return whether this element is marked as deleted.
-     */
-    boolean isMarkedDeleted();
-
-    /**
-     * 
-     * @return whether this element is active or read only.
-     */
-    boolean isActive();
-
-    /**
-     * @return whether this element is readonly only.
-     */
-    boolean isReadOnly();
-
-    // Parent
-    /**
-     * Returns the parent
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject} of
-     * the current
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}.
-     * 
-     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
-     *         the Coalesce object's parent.
-     */
-    CoalesceObject getParent();
-
-    /**
-     * @return the owning CoalesceEntity for this element.
-     */
-    CoalesceEntity getEntity();
-
-    /**
-     * Sets the parent
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject} of
-     * the current
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}.
-     * 
-     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
-     *            of the object.
-     */
-    void setParent(CoalesceObject parent);
-
     // Key
     /**
      * Returns the string value of the
@@ -158,15 +118,6 @@ public interface ICoalesceObject {
      * @param value String to be the Coalesce object's key.
      */
     void setKey(String value);
-
-    /**
-     * Sets the value of the
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s
-     * key by a UUID parameter.
-     * 
-     * @param guid UUID to be the Coalesce object's key.
-     */
-    void setKey(UUID guid);
 
     // Name
     /**
@@ -216,7 +167,7 @@ public interface ICoalesceObject {
      *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
      *         's flatten attribute.
      */
-    boolean getFlatten();
+    boolean isFlatten();
 
     /**
      * Sets the value of the
@@ -285,7 +236,7 @@ public interface ICoalesceObject {
      *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
      *         's NoIndex attribute.
      */
-    boolean getNoIndex();
+    boolean isNoIndex();
 
     /**
      * Sets the value of the
@@ -297,43 +248,7 @@ public interface ICoalesceObject {
      *            's NoIndex attribute.
      */
     void setNoIndex(boolean value);
-
-    /*--------------------------------------------------------------------------
-     Read Only
-    --------------------------------------------------------------------------*/
-
-    /**
-     * Returns the
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s
-     * child
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}s
-     * E.g. an
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}
-     * will have
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}
-     * and
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}
-     * children.
-     * 
-     * @return hashmap of this
-     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
-     *         's child
-     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
-     *         s.
-     */
-    Map<String, CoalesceObject> getChildCoalesceObjects();
-
-    /**
-     * Returns the String
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
-     * type. E.g. field, linkage, section, etc.
-     * 
-     * @return String of the
-     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
-     *         's type attribute.
-     */
-    String getType();
-
+    
     /**
      * Returns the name path of the
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}s

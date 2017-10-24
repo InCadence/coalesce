@@ -15,38 +15,25 @@
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-package com.incadencecorp.coalesce.services.search.service.data.model;
+package com.incadencecorp.coalesce.api;
 
-public class ObjectData {
-
-    private String key;
-    private String name;
+/**
+ * Views available when serializing to JSON.
+ * 
+ * @author Derek Clemenzi
+ */
+public class Views {
 
     /**
-     * Creates a new instance.
-     * 
-     * @param key
-     * @param name
+     * Serializes records.
      */
-    public ObjectData(String key, String name)
-    {
-        this.key = key;
-        this.name = name;
+    public static class Entity {
     }
 
     /**
-     * @return the key
+     * Serializes field definitions used for templates.
      */
-    public String getKey()
-    {
-        return key;
+    public static class Template {
     }
 
-    /**
-     * @return the name
-     */
-    public String getName()
-    {
-        return name;
-    }
 }

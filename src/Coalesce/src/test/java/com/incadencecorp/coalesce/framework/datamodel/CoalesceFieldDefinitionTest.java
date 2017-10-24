@@ -578,7 +578,7 @@ public class CoalesceFieldDefinitionTest {
         assertEquals(CoalesceFieldDefinitionTest.UNCLASS_MARKING.toPortionString(),
                      fieldDefinition.getDefaultClassificationMarking().toPortionString());
 
-        fieldDefinition.setDefaultClassificationMarking(CoalesceFieldDefinitionTest.TS_MARKING.toString());
+        fieldDefinition.setDefaultClassificationMarkingAsString(CoalesceFieldDefinitionTest.TS_MARKING.toString());
 
         assertEquals(CoalesceFieldDefinitionTest.TS_MARKING.toPortionString(),
                      fieldDefinition.getDefaultClassificationMarking().toPortionString());
@@ -593,7 +593,7 @@ public class CoalesceFieldDefinitionTest {
         assertEquals(CoalesceFieldDefinitionTest.UNCLASS_MARKING.toPortionString(),
                      fieldDefinition.getDefaultClassificationMarking().toPortionString());
 
-        fieldDefinition.setDefaultClassificationMarking(CoalesceFieldDefinitionTest.TS_MARKING.toPortionString());
+        fieldDefinition.setDefaultClassificationMarkingAsString(CoalesceFieldDefinitionTest.TS_MARKING.toPortionString());
 
         assertEquals(CoalesceFieldDefinitionTest.TS_MARKING.toString(),
                      fieldDefinition.getDefaultClassificationMarking().toString());
@@ -673,7 +673,7 @@ public class CoalesceFieldDefinitionTest {
         assertEquals(fieldDefinition.getDefaultClassificationMarking().toString(),
                      field.getClassificationMarking().toString());
         assertEquals(fieldDefinition.getDefaultValue(), field.getBaseValue());
-        assertEquals(fieldDefinition.getNoIndex(), field.getNoIndex());
+        assertEquals(fieldDefinition.isNoIndex(), field.isNoIndex());
 
     }
 
@@ -744,7 +744,7 @@ public class CoalesceFieldDefinitionTest {
         assertEquals("TestingValue", fd.getAttribute("TestAttribute"));
 
         assertEquals("ActionNumber", fd.getName());
-        assertEquals(false, fd.getNoIndex());
+        assertEquals(false, fd.isNoIndex());
 
         fd.setAttribute("Name", "TestingName");
         assertEquals("TestingName", fd.getName());
@@ -762,7 +762,7 @@ public class CoalesceFieldDefinitionTest {
         assertEquals(now, fd.getDateCreated());
 
         fd.setAttribute("NoIndex", "True");
-        assertEquals(true, fd.getNoIndex());
+        assertEquals(true, fd.isNoIndex());
 
         fd.setAttribute("DataType", "Integer");
         assertEquals(ECoalesceFieldDataTypes.INTEGER_TYPE, fd.getDataType());
@@ -794,7 +794,7 @@ public class CoalesceFieldDefinitionTest {
         assertEquals(guid.toString(), desFd.getKey());
         assertEquals(now, desFd.getDateCreated());
         assertEquals(future, desFd.getLastModified());
-        assertEquals(true, desFd.getNoIndex());
+        assertEquals(true, desFd.isNoIndex());
         assertEquals(ECoalesceFieldDataTypes.INTEGER_TYPE, desFd.getDataType());
         assertEquals(new Marking("(TS)"), desFd.getDefaultClassificationMarking());
         assertEquals("labelTest", desFd.getLabel());
@@ -878,6 +878,6 @@ public class CoalesceFieldDefinitionTest {
         assertEquals(label, fieldDefinition.getLabel());
         assertEquals(marking.toString(), fieldDefinition.getDefaultClassificationMarking().toString());
         assertEquals(defaultValue, fieldDefinition.getDefaultValue());
-        assertEquals(noIndex, fieldDefinition.getNoIndex());
+        assertEquals(noIndex, fieldDefinition.isNoIndex());
     }
 }

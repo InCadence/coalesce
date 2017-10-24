@@ -22,6 +22,8 @@
 		<dependency.bndlib.version>2.4.0</dependency.bndlib.version>
 		<bundle-plugin.version>3.2.0</bundle-plugin.version>
 
+		<jackson.jaxb.version>2.0.5</jackson.jaxb.version>
+
 		<baseline.version>0.0.24</baseline.version>
 		<changelog.start.tag>coalesce-0.0.24</changelog.start.tag>
 		<changelog.end.tag>HEAD</changelog.end.tag>

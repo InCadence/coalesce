@@ -6,7 +6,7 @@
 		<feature prerequisite="false" dependency="true">spring-dm-web</feature>
 		<feature prerequisite="false" dependency="true">cxf-jaxrs</feature>
 		<feature prerequisite="false" dependency="true">coalesce-search-service-feature</feature>
-        <bundle start-level="75">mvn:org.codehaus.jackson/jackson-jaxrs/1.9.0</bundle>
+        <bundle start-level="75">mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-json-provider/${jackson.jaxb.version}</bundle>
         <bundle start-level="75">mvn:com.incadencecorp.coalesce.services.crud/coalesce-crud-service-data/${project.version}</bundle>
         <bundle start-level="75">mvn:com.incadencecorp.coalesce.services.crud/coalesce-crud-service-data-jaxrs/${project.version}</bundle>
 	</feature>

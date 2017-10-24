@@ -17,7 +17,6 @@
 
 package com.incadencecorp.coalesce.framework.datamodel;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -29,14 +28,12 @@ import javax.xml.namespace.QName;
 import org.apache.commons.lang.NotImplementedException;
 import org.joda.time.DateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.incadencecorp.coalesce.api.CoalesceAttributes;
 import com.incadencecorp.coalesce.common.classification.Marking;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
-import com.incadencecorp.coalesce.common.helpers.FileHelper;
-import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
 import com.incadencecorp.coalesce.common.helpers.LocaleConverter;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
-import com.incadencecorp.coalesce.framework.CoalesceSettings;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Polygon;
@@ -63,7 +60,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
      * Attribute that specifies the raw value of the field
      */
     public static final String ATTRIBUTE_VALUE = "value";
-    
+
     private boolean _suspendHistory = false;
     private Field _entityField;
     private CoalesceFieldDefinition _definition;
@@ -80,7 +77,8 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
      * and ties it to its parent
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}.
      * 
-     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
+     * @param parent
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
      *            that the
      *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}
      *            will belong to.
@@ -120,7 +118,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
 
         newField.setClassificationMarking(fieldDefinition.getDefaultClassificationMarking());
         newField.setLabel(fieldDefinition.getLabel());
-        newField.setNoIndex(fieldDefinition.getNoIndex());
+        newField.setNoIndex(fieldDefinition.isNoIndex());
         newField.setDisableHistory(fieldDefinition.isDisableHistory());
 
         newField.setSuspendHistory(false);
@@ -243,9 +241,9 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
         case DATE_TIME_TYPE:
             return (T) getDateTimeValue();
 
-        case FILE_TYPE:
-        case BINARY_TYPE:
-            return (T) getBinaryValue();
+        // case FILE_TYPE:
+        // case BINARY_TYPE:
+        // return (T) getBinaryValue();
 
         case BOOLEAN_TYPE:
             return (T) getBooleanValue();
@@ -327,10 +325,10 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
             setTypedValue((DateTime) value);
             break;
 
-        case FILE_TYPE:
-        case BINARY_TYPE:
-            setTypedValue((byte[]) value);
-            break;
+        // case FILE_TYPE:
+        // case BINARY_TYPE:
+        // setTypedValue((byte[]) value);
+        // break;
 
         case BOOLEAN_TYPE:
             setTypedValue((Boolean) value);
@@ -401,7 +399,9 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
         case LONG_LIST_TYPE:
             setTypedValue((long[]) value);
             break;
-
+            
+        default:
+            throw new NotImplementedException(getDataType() + " not implemented");
         }
 
     }
@@ -412,7 +412,8 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
      * The field may be new, but field history is tied in, in the event that the
      * field is not new.
      * 
-     * @param parent {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
+     * @param parent
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord}
      *            that the
      *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}
      *            will belong to.
@@ -447,6 +448,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
     // Public Properties
     // -----------------------------------------------------------------------//
 
+    @JsonIgnore
     @Override
     public String getBaseValue()
     {
@@ -487,6 +489,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
     /**
      * @return the field definition that created this field.
      */
+    @JsonIgnore
     public CoalesceFieldDefinition getFieldDefinition()
     {
         return _definition;
@@ -495,10 +498,10 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
     /**
      * @return whether this field is a list type.
      */
+    @JsonIgnore
     public boolean isListType()
     {
-        return getDataType().toString().endsWith(CoalesceSettings.VAR_IS_LIST_TYPE)
-                && getDataType() != ECoalesceFieldDataTypes.GEOCOORDINATE_LIST_TYPE;
+        return getDataType().isListType();
     }
 
     /**
@@ -525,32 +528,13 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
     }
 
     @Override
-    public int getSize()
-    {
-        try
-        {
-            return Integer.parseInt(_entityField.getSize());
-        }
-        catch (NumberFormatException e)
-        {
-            return 0;
-        }
-    }
-
-    @Override
-    public void setSize(int value)
-    {
-        _entityField.setSize(Integer.toString(value));
-    }
-
-    @Override
     public String getClassificationMarkingAsString()
     {
         return _entityField.getClassificationmarking();
     }
 
     @Override
-    public void setClassificationMarking(String value)
+    public void setClassificationMarkingAsString(String value)
     {
         // Don't Allow null
         if (value == null)
@@ -560,69 +544,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
         _entityField.setClassificationmarking(value);
     }
 
-    @Override
-    public String getFilename()
-    {
-        return getStringElement(_entityField.getFilename());
-    }
-
-    @Override
-    public void setFilename(String value)
-    {
-        // Don't Allow null
-        if (value == null)
-            value = "";
-
-        createHistory(_entityField.getFilename(), value);
-        _entityField.setFilename(value);
-    }
-
-    @Override
-    public String getExtension()
-    {
-        return getStringElement(_entityField.getExtension());
-    }
-
-    @Override
-    public void setExtension(String value)
-    {
-        // Don't Allow null
-        if (value == null)
-            value = "";
-
-        createHistory(_entityField.getExtension(), value);
-        _entityField.setExtension(value.replace(".", ""));
-    }
-
-    @Override
-    public String getMimeType()
-    {
-        return getStringElement(_entityField.getMimetype());
-    }
-
-    @Override
-    public void setMimeType(String value)
-    {
-        _entityField.setMimetype(value);
-    }
-
-    @Override
-    public String getHash()
-    {
-        return getStringElement(_entityField.getHash());
-    }
-
-    @Override
-    public void setHash(String value)
-    {
-        // Don't Allow null
-        if (value == null)
-            value = "";
-
-        createHistory(_entityField.getHash(), value);
-        _entityField.setHash(value);
-    }
-
+    @JsonIgnore
     @Override
     public boolean isDisableHistory()
     {
@@ -645,6 +567,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
 
     }
 
+    @JsonIgnore
     @Override
     public boolean isSuspendHistory()
     {
@@ -660,6 +583,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
         }
     }
 
+    @JsonIgnore
     @Override
     public CoalesceFieldHistory[] getHistory()
     {
@@ -698,154 +622,6 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
     }
 
     /**
-     * Returns the filename with directory path and file extension.
-     * <code>NOTE:</code> This method relies on the configuration settings for
-     * both {@link CoalesceSettings#getBinaryFileStoreBasePath()} and
-     * {@link CoalesceSettings#getSubDirectoryLength()} to build the directory
-     * path.
-     * 
-     * @return String, full filename.
-     */
-    public String getCoalesceFullFilename()
-    {
-
-        if (getDataType() != ECoalesceFieldDataTypes.FILE_TYPE)
-        {
-            return "";
-        }
-
-        String baseFilename = FileHelper.getBaseFilenameWithFullDirectoryPathForKey(getKey());
-
-        return baseFilename + "." + getExtension();
-
-    }
-
-    /**
-     * Returns the filename with directory path and file extension for a
-     * thumbnail image. <code>NOTE:</code> This method relies on the
-     * configuration settings for both
-     * {@link CoalesceSettings#getBinaryFileStoreBasePath()} and
-     * {@link CoalesceSettings#getSubDirectoryLength()} to build the directory
-     * path.
-     *
-     * @return String, full thumbnail filename.
-     */
-    public String getCoalesceFullThumbnailFilename()
-    {
-
-        if (getDataType() != ECoalesceFieldDataTypes.FILE_TYPE)
-        {
-            return "";
-        }
-
-        String baseFilename = FileHelper.getBaseFilenameWithFullDirectoryPathForKey(getKey());
-
-        return baseFilename + "_thumb.jpg";
-
-    }
-
-    /**
-     * Returns the filename with a long representation of last modified datetime
-     * (Name?lastmodifiedlong). Returns empty string when filename does not
-     * exist. If an error is encountered, only the filename is returned.
-     * 
-     * @return String, full filename with LastModifiedTag appended.
-     */
-    public String getCoalesceFilenameWithLastModifiedTag()
-    {
-        try
-        {
-            String fullPath = getCoalesceFullFilename();
-            if (StringHelper.isNullOrEmpty(fullPath))
-                return "";
-
-            File theFile = new File(fullPath);
-            long lastModifiedTicks = theFile.lastModified();
-
-            return theFile.getName() + "?" + lastModifiedTicks;
-
-        }
-        catch (Exception ex)
-        {
-            return getCoalesceFilename();
-        }
-    }
-
-    /**
-     * Returns the thumbnail filename with a long representation of last
-     * modified datetime (Name?lastmodifiedlong). Returns empty string when
-     * filename does not exist. If an error is encountered, only the thumbnail
-     * filename is returned.
-     * 
-     * @return String, full thumbnail filename with LastModifiedTag appended.
-     */
-    public String getCoalesceThumbnailFilenameWithLastModifiedTag()
-    {
-        try
-        {
-            String fullThumbPath = getCoalesceFullThumbnailFilename();
-            if (StringHelper.isNullOrEmpty(fullThumbPath))
-                return "";
-
-            File theFile = new File(fullThumbPath);
-            long lastModifiedTicks = theFile.lastModified();
-
-            return theFile.getName() + "?" + lastModifiedTicks;
-
-        }
-        catch (Exception ex)
-        {
-            return getCoalesceThumbnailFilename();
-        }
-    }
-
-    /**
-     * Returns the base filename and extension.
-     * 
-     * @return String, the filename and extension, without the path.
-     */
-    public String getCoalesceFilename()
-    {
-
-        if (getDataType() == ECoalesceFieldDataTypes.FILE_TYPE)
-        {
-
-            String baseFilename = getKey();
-            baseFilename = GUIDHelper.removeBrackets(baseFilename);
-
-            return baseFilename + "." + getExtension();
-
-        }
-        else
-        {
-            return "";
-        }
-    }
-
-    /**
-     * Returns the thumbnail base filename and extension.
-     * 
-     * @return String, the thumbnail's filename and extension, without the path.
-     */
-    public String getCoalesceThumbnailFilename()
-    {
-
-        if (getDataType() == ECoalesceFieldDataTypes.FILE_TYPE)
-        {
-
-            String baseFilename = getKey();
-            baseFilename = GUIDHelper.removeBrackets(baseFilename);
-
-            return baseFilename + "_thumb.jpg";
-
-        }
-        else
-        {
-            return "";
-        }
-    }
-
-    /**
      * Update the value and/or classification marking of the
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceField}.
      * 
@@ -874,6 +650,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
      *         if the field is null, or array of one with the basevalue if its a
      *         non list.
      */
+    @JsonIgnore
     public String[] getBaseValues()
     {
 
@@ -888,7 +665,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
             if (!StringHelper.isNullOrEmpty(getBaseValue()))
             {
                 results = new String[] {
-                    getBaseValue()
+                                         getBaseValue()
                 };
             }
             else
@@ -900,7 +677,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
         return results;
 
     }
-    
+
     // -----------------------------------------------------------------------//
     // Protected Methods
     // -----------------------------------------------------------------------//
@@ -1027,7 +804,7 @@ public class CoalesceField<T> extends CoalesceFieldBase<T> implements ICoalesceO
             setDataType(ECoalesceFieldDataTypes.getTypeForCoalesceType(value));
             return true;
         case CoalesceAttributes.ATTRIBUTE_MARKING:
-            setClassificationMarking(value);
+            setClassificationMarkingAsString(value);
             return true;
         case "label":
             setLabel(value);

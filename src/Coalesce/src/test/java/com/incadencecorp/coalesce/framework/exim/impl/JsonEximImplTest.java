@@ -15,14 +15,22 @@
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-package com.incadencecorp.coalesce.framework;
+package com.incadencecorp.coalesce.framework.exim.impl;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.Test;
 
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationConfig;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
+import com.incadencecorp.coalesce.api.Views;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
@@ -32,7 +40,6 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
 import com.incadencecorp.coalesce.framework.datamodel.TestRecord;
-import com.incadencecorp.coalesce.framework.exim.impl.JsonEximImpl;
 
 /**
  * This unit test covers the {@link JsonEximImpl}
@@ -44,6 +51,28 @@ public class JsonEximImplTest {
 
     private static final String ADDITIONAL_RECORDSET = "Additional Recordset";
     private static final String ADDITIONAL_SECTION = "Additional Section";
+
+    /**
+     * This is an example of how to use the ObjectMapper to perform the same
+     * function as JsonEximImpl
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void objectMapperExample() throws Exception
+    {
+
+        TestEntity entity = new TestEntity();
+        entity.initialize();
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+        mapper.enable(MapperFeature.DEFAULT_VIEW_INCLUSION);
+
+        String result = mapper.writerWithView(Views.Template.class).writeValueAsString(entity);
+
+        System.out.println(result);
+    }
 
     /**
      * This test passes in an invalid JSON Object. Arrays are only used for
@@ -176,10 +205,10 @@ public class JsonEximImplTest {
         assertEquals(2, rs1.length());
 
         CoalesceEntityTemplate template = CoalesceEntityTemplate.create(entity);
-        
-        entity = new TestEntity(); 
+
+        entity = new TestEntity();
         entity.initialize(exim.importValues(json, template));
-        
+
         // Verify Entity
         assertEquals(2, entity.getRecordset1().getCount());
 

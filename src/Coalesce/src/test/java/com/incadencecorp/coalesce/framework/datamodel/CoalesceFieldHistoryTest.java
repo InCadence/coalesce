@@ -182,14 +182,9 @@ public class CoalesceFieldHistoryTest {
         assertEquals(field.getBaseValue(), fieldHistory.getBaseValue());
         assertEquals(field.getDataType(), fieldHistory.getDataType());
         assertEquals(field.getLabel(), fieldHistory.getLabel());
-        assertEquals(field.getSize(), fieldHistory.getSize());
         assertEquals(field.getModifiedBy(), fieldHistory.getModifiedBy());
         assertEquals(field.getModifiedByIP(), fieldHistory.getModifiedByIP());
         assertEquals(field.getClassificationMarking(), fieldHistory.getClassificationMarking());
-        assertEquals(field.getFilename(), fieldHistory.getFilename());
-        assertEquals(field.getExtension(), fieldHistory.getExtension());
-        assertEquals(field.getMimeType(), fieldHistory.getMimeType());
-        assertEquals(field.getHash(), fieldHistory.getHash());
         assertEquals(field.getDateCreated(), fieldHistory.getDateCreated());
         assertEquals(field.getLastModified(), fieldHistory.getLastModified());
         assertEquals(field.getStatus(), fieldHistory.getStatus());
@@ -398,31 +393,6 @@ public class CoalesceFieldHistoryTest {
     }
 
     @Test
-    public void getSizeDoesNotExistTest()
-    {
-        CoalesceFieldHistory field = getTestMissionNameFieldHistory();
-
-        assertEquals(0, field.getSize());
-
-    }
-
-    @Test
-    public void setSizeTest()
-    {
-        CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
-
-        CoalesceFieldHistory field = getTestMissionNameFieldHistory(mission);
-        field.setSize(128);
-
-        String serializedMission = mission.toXml();
-        CoalesceEntity savedMission = CoalesceEntity.create(serializedMission);
-
-        CoalesceFieldHistory savedField = getTestMissionNameFieldHistory(savedMission);
-        assertEquals(128, savedField.getSize());
-
-    }
-
-    @Test
     public void getModifiedByDoesNotExistTest()
     {
 
@@ -561,110 +531,6 @@ public class CoalesceFieldHistoryTest {
         CoalesceFieldHistory field = getTestMissionNameFieldHistory();
 
         assertEquals("00000000-0000-0000-0000-000000000000", field.getPreviousHistoryKey());
-
-    }
-
-    @Test
-    public void getFilenameDoesNotExistTest()
-    {
-
-        CoalesceFieldHistory field = getTestMissionNameFieldHistory();
-
-        assertEquals("", field.getFilename());
-
-    }
-
-    @Test
-    public void setFilenameTest()
-    {
-
-        CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
-
-        CoalesceFieldHistory field = getTestMissionNameFieldHistory(mission);
-
-        field.setFilename("c:/Program Files/java/jre7/bin");
-
-        CoalesceFieldHistory savedField = getSavedTestMissionFieldHistory(mission);
-
-        assertEquals("c:/Program Files/java/jre7/bin", savedField.getFilename());
-
-    }
-
-    @Test
-    public void getExtensionDoesNotExistTest()
-    {
-
-        CoalesceFieldHistory field = getTestMissionNameFieldHistory();
-
-        assertEquals("", field.getExtension());
-
-    }
-
-    @Test
-    public void setExtensionTest()
-    {
-
-        CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
-
-        CoalesceFieldHistory field = getTestMissionNameFieldHistory(mission);
-
-        field.setExtension(".jpeg");
-
-        CoalesceFieldHistory savedField = getSavedTestMissionFieldHistory(mission);
-
-        assertEquals("jpeg", savedField.getExtension());
-
-    }
-
-    @Test
-    public void getMimeTypeDoesNotExistTest()
-    {
-
-        CoalesceFieldHistory field = getTestMissionNameFieldHistory();
-
-        assertEquals("", field.getMimeType());
-
-    }
-
-    @Test
-    public void setMimeTypeTest()
-    {
-
-        CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
-
-        CoalesceFieldHistory field = getTestMissionNameFieldHistory(mission);
-
-        field.setMimeType("application/pdf");
-
-        CoalesceFieldHistory savedField = getSavedTestMissionFieldHistory(mission);
-
-        assertEquals("application/pdf", savedField.getMimeType());
-
-    }
-
-    @Test
-    public void getHashDoesNotExistTest()
-    {
-
-        CoalesceFieldHistory field = getTestMissionNameFieldHistory();
-
-        assertEquals("", field.getHash());
-
-    }
-
-    @Test
-    public void setHashTest()
-    {
-
-        CoalesceEntity mission = CoalesceEntity.create(CoalesceTypeInstances.TEST_MISSION);
-
-        CoalesceFieldHistory field = getTestMissionNameFieldHistory(mission);
-
-        field.setHash("8743b52063cd84097a65d1633f5c74f5");
-
-        CoalesceFieldHistory savedField = getSavedTestMissionFieldHistory(mission);
-
-        assertEquals("8743b52063cd84097a65d1633f5c74f5", savedField.getHash());
 
     }
 
@@ -1063,7 +929,7 @@ public class CoalesceFieldHistoryTest {
         assertEquals("TestingValue", fh.getAttribute("TestAttribute"));
 
         assertEquals("ActionNumber", fh.getName());
-        assertEquals(false, fh.getNoIndex());
+        assertEquals(false, fh.isNoIndex());
 
         fh.setAttribute("Name", "TestingName");
         assertEquals("TestingName", fh.getName());
@@ -1081,7 +947,7 @@ public class CoalesceFieldHistoryTest {
         assertEquals(now, fh.getDateCreated());
 
         fh.setAttribute("NoIndex", "True");
-        assertEquals(true, fh.getNoIndex());
+        assertEquals(true, fh.isNoIndex());
 
         fh.setAttribute("DataType", "Integer");
         assertEquals(ECoalesceFieldDataTypes.INTEGER_TYPE, fh.getDataType());
@@ -1120,7 +986,7 @@ public class CoalesceFieldHistoryTest {
         assertEquals(guid.toString(), desFh.getKey());
         assertEquals(now, desFh.getDateCreated());
         assertEquals(future, desFh.getLastModified());
-        assertEquals(true, desFh.getNoIndex());
+        assertEquals(true, desFh.isNoIndex());
         assertEquals(ECoalesceFieldDataTypes.INTEGER_TYPE, desFh.getDataType());
         assertEquals(new Marking("(TS)"), desFh.getClassificationMarking());
         assertEquals("labelTest", desFh.getLabel());

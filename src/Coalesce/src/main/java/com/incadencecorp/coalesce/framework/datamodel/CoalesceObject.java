@@ -11,6 +11,7 @@ import javax.xml.namespace.QName;
 
 import org.joda.time.DateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
@@ -71,6 +72,16 @@ public abstract class CoalesceObject implements ICoalesceObject {
      * Unique identifier for this object.
      */
     public static final String ATTRIBUTE_KEY = "key";
+    
+    /**
+     * @see ICoalesceObject#isNoIndex()
+     */
+    public static final String ATTRIBUTE_NOINDEX= "noindex";
+    
+    /**
+     * @see ICoalesceObject#isFlatten()
+     */
+    public static final String ATTRIBUTE_FLATTEN= "flatten";
 
     private CoalesceObject _parent;
     private CoalesceObjectType _object;
@@ -117,18 +128,36 @@ public abstract class CoalesceObject implements ICoalesceObject {
         _object.setName(value);
     }
 
+    public final String getDateCreatedAsString()
+    {
+        return JodaDateTimeHelper.toXmlDateTimeUTC(getDateCreated());
+    }
+
+    @JsonIgnore
     @Override
     public final DateTime getDateCreated()
     {
         return _object.getDatecreated();
     }
 
+    public final void setDateCreatedAsString(String value)
+    {
+        setDateCreated(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
+    }
+    
+    @JsonIgnore
     @Override
     public final void setDateCreated(DateTime value)
     {
         _object.setDatecreated(value);
     }
 
+    public final String getLastModifiedAsString()
+    {
+        return JodaDateTimeHelper.toXmlDateTimeUTC(getLastModified());
+    }
+
+    @JsonIgnore
     @Override
     public final DateTime getLastModified()
     {
@@ -136,7 +165,7 @@ public abstract class CoalesceObject implements ICoalesceObject {
     }
 
     @Override
-    public final int getObjectVersion()
+    public final Integer getObjectVersion()
     {
 
         Integer version = _object.getObjectversion();
@@ -149,12 +178,8 @@ public abstract class CoalesceObject implements ICoalesceObject {
         return version;
     }
 
-    /**
-     * Sets the object's version that this element was added.
-     * 
-     * @param version
-     */
-    protected final void setObjectVersion(Integer version)
+    @Override
+    public final void setObjectVersion(Integer version)
     {
         if (version != null && version <= 1)
         {
@@ -167,6 +192,7 @@ public abstract class CoalesceObject implements ICoalesceObject {
     /**
      * @return whether the version was deleted.
      */
+    @JsonIgnore
     public final boolean isObjectVersionDeleted()
     {
         return getObjectVersionStatus() == ECoalesceObjectStatus.DELETED;
@@ -283,13 +309,19 @@ public abstract class CoalesceObject implements ICoalesceObject {
         updateLastModified();
     }
 
-    @Override
+    /**
+     * @return whether this element is marked as deleted.
+     */
+    @JsonIgnore
     public final boolean isMarkedDeleted()
     {
         return getStatus() == ECoalesceObjectStatus.DELETED;
     }
 
-    @Override
+    /**
+     * @return whether this element is active or read only.
+     */
+    @JsonIgnore
     public final boolean isActive()
     {
         switch (getStatus()) {
@@ -301,7 +333,10 @@ public abstract class CoalesceObject implements ICoalesceObject {
         }
     }
 
-    @Override
+    /**
+     * @return whether this element is readonly only.
+     */
+    @JsonIgnore
     public final boolean isReadOnly()
     {
         switch (getStatus()) {
@@ -312,13 +347,25 @@ public abstract class CoalesceObject implements ICoalesceObject {
         }
     }
 
-    @Override
+    /**
+     * Returns the parent
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject} of
+     * the current
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}.
+     * 
+     * @return {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
+     *         the Coalesce object's parent.
+     */
+    @JsonIgnore
     public final CoalesceObject getParent()
     {
         return this._parent;
     }
 
-    @Override
+    /**
+     * @return the owning CoalesceEntity for this element.
+     */
+    @JsonIgnore
     public final CoalesceEntity getEntity()
     {
         CoalesceObject element = this.getParent();
@@ -338,7 +385,16 @@ public abstract class CoalesceObject implements ICoalesceObject {
         }
     }
 
-    @Override
+    /**
+     * Sets the parent
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject} of
+     * the current
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}.
+     * 
+     * @param parent
+     *            {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
+     *            of the object.
+     */
     public final void setParent(CoalesceObject parent)
     {
         this._parent = parent;
@@ -368,7 +424,13 @@ public abstract class CoalesceObject implements ICoalesceObject {
         }
     }
 
-    @Override
+    /**
+     * Sets the value of the
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s
+     * key by a UUID parameter.
+     * 
+     * @param guid UUID to be the Coalesce object's key.
+     */
     public final void setKey(UUID guid)
     {
         setKey(guid.toString());
@@ -387,9 +449,9 @@ public abstract class CoalesceObject implements ICoalesceObject {
     }
 
     @Override
-    public final boolean getFlatten()
+    public final boolean isFlatten()
     {
-        String value = this.getAttribute("flatten");
+        String value = this.getAttribute(ATTRIBUTE_FLATTEN);
 
         // Default Behavior.
         if (value == null)
@@ -401,9 +463,15 @@ public abstract class CoalesceObject implements ICoalesceObject {
     @Override
     public final void setFlatten(boolean value)
     {
-        this.setAttribute("flatten", Boolean.toString(value));
+        this.setAttribute(ATTRIBUTE_FLATTEN, Boolean.toString(value));
     }
 
+    public final void setLastModifiedAsString(String value)
+    {
+        setLastModified(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
+    }
+
+    @JsonIgnore
     @Override
     public final void setLastModified(DateTime value)
     {
@@ -421,7 +489,7 @@ public abstract class CoalesceObject implements ICoalesceObject {
     }
 
     @Override
-    public final boolean getNoIndex()
+    public final boolean isNoIndex()
     {
         Boolean value = _object.isNoindex();
 
@@ -458,7 +526,15 @@ public abstract class CoalesceObject implements ICoalesceObject {
     Public Abstract Functions
     --------------------------------------------------------------------------*/
 
-    @Override
+    /**
+     * Returns the String
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
+     * type. E.g. field, linkage, section, etc.
+     * 
+     * @return String of the
+     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
+     *         's type attribute.
+     */
     public final String getType()
     {
         return _object.getClass().getSimpleName().toLowerCase();
@@ -542,7 +618,26 @@ public abstract class CoalesceObject implements ICoalesceObject {
         }
     }
 
-    @Override
+    /**
+     * Returns the
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s
+     * child
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}s
+     * E.g. an
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity}
+     * will have
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection}
+     * and
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceSection}
+     * children.
+     * 
+     * @return hashmap of this
+     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
+     *         's child
+     *         {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
+     *         s.
+     */
+    @JsonIgnore
     public final HashMap<String, CoalesceObject> getChildCoalesceObjects()
     {
         return this._children;
@@ -650,8 +745,8 @@ public abstract class CoalesceObject implements ICoalesceObject {
      * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}'s
      * other attribute that corresponds to the name; other attributes are those
      * that fall into the
-     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject}
-     * 's XmlAnyAttribute HashMap.
+     * {@link com.incadencecorp.coalesce.framework.datamodel.CoalesceObject} 's
+     * XmlAnyAttribute HashMap.
      * 
      * @param name String XmlAnyAttribute attribute name
      * @param value XmlAnyAttribute attribute value
@@ -1029,7 +1124,7 @@ public abstract class CoalesceObject implements ICoalesceObject {
         map.put(new QName(ATTRIBUTE_LASTMODIFIED), JodaDateTimeHelper.toXmlDateTimeUTC(getLastModified()));
         map.put(new QName(ATTRIBUTE_NAME), getName());
         map.put(new QName(ATTRIBUTE_STATUS), getStatus().toString());
-        map.put(new QName("noindex"), Boolean.toString(getNoIndex()));
+        map.put(new QName("noindex"), Boolean.toString(isNoIndex()));
         map.put(new QName("objectversion"), Integer.toString(getObjectVersion()));
         map.put(new QName("objectversionstatus"), getObjectVersionStatus().toString());
         map.put(new QName("previoushistorykey"), getPreviousHistoryKey());

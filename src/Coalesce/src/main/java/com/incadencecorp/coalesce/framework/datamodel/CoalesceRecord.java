@@ -7,6 +7,7 @@ import org.apache.commons.lang.NullArgumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.incadencecorp.coalesce.api.ICoalesceFieldDefinitionFactory;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 
@@ -175,6 +176,7 @@ public class CoalesceRecord extends CoalesceObjectHistory {
      *         {@link CoalesceField} s contained by this {@link CoalesceRecord}
      *         .
      */
+    @JsonIgnore
     public List<String> getFieldNames()
     {
         List<String> fieldNames = new ArrayList<String>();
@@ -197,6 +199,7 @@ public class CoalesceRecord extends CoalesceObjectHistory {
      *         {@link CoalesceField} s contained by this {@link CoalesceRecord}
      *         .
      */
+    @JsonIgnore
     public List<String> getFieldKeys()
     {
         List<String> fieldKeys = new ArrayList<String>();

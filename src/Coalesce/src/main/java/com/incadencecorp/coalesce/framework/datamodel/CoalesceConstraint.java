@@ -27,6 +27,7 @@ import java.util.Set;
 import org.apache.commons.lang.NullArgumentException;
 import org.apache.commons.lang.StringUtils;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 
@@ -424,6 +425,7 @@ public class CoalesceConstraint extends CoalesceObject implements ICoalesceConst
         _constraint.setValue(value);
     }
 
+    @JsonIgnore
     @Override
     public CoalesceFieldDefinition getFieldDefinition()
     {

@@ -163,7 +163,7 @@ public class PostGreSQLPersistorExt extends PostGreSQLPersistor implements ICoal
                             if (field != null)
                             {
                                 // Can flatten Field?
-                                if (field.getFlatten() && !StringHelper.isNullOrEmpty(field.getBaseValue()))
+                                if (field.isFlatten() && !StringHelper.isNullOrEmpty(field.getBaseValue()))
                                 {
                                     value = field.getBaseValue();
                                 }
@@ -178,7 +178,7 @@ public class PostGreSQLPersistorExt extends PostGreSQLPersistor implements ICoal
                                 switch (field.getDataType()) {
                                 case CIRCLE_TYPE:
                                     // Add Additional Parameter for Radius
-                                    if (field.getFlatten() && !StringHelper.isNullOrEmpty(field.getBaseValue()))
+                                    if (field.isFlatten() && !StringHelper.isNullOrEmpty(field.getBaseValue()))
                                     {
                                         value = field.getAttribute("radius");
                                     }

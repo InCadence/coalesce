@@ -17,4 +17,7 @@
 		<bundle>mvn:org.ow2.asm/asm-all/5.2</bundle>
 		<bundle>mvn:org.apache.aries/org.apache.aries.util/1.1.3</bundle>
 	</feature>	
+	<feature name="coalesce-entity-editor" description="">
+        <bundle start-level="75">mvn:com.incadencecorp.coalesce.ui/entity-editor/${project.version}/war</bundle>
+	</feature>
 </features>
