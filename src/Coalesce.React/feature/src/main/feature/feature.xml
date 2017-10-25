@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<features xmlns="http://karaf.apache.org/xmlns/features/v1.2.0"
+	name="coalesce-services">
+	<feature name="coalesce-entity-editor" description="">
+		<feature prerequisite="false" dependency="false">coalesce-crud-service-data-feature</feature>
+        <bundle start-level="75">mvn:com.incadencecorp.coalesce.react/entity-editor/${project.version}/war</bundle>
+	</feature>
+</features>

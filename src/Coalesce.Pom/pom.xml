@@ -33,6 +33,7 @@
 		<module>../Coalesce.Feature</module>
 		<module>../Coalesce.Plugins</module>
 		<module>../Coalesce.Core.Feature</module>
+		<module>../Coalesce.React</module>
 	</modules>
 
 	<build>

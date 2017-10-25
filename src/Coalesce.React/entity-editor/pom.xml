@@ -1,13 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.incadencecorp.coalesce.ui</groupId>
 	<artifactId>entity-editor</artifactId>
+	<name>Coalesce Entity Editor</name>
 	<packaging>war</packaging>
 
 	<parent>
-		<groupId>com.incadencecorp.coalesce</groupId>
-		<artifactId>coalesce-pom</artifactId>
+		<groupId>com.incadencecorp.coalesce.react</groupId>
+		<artifactId>coalesce-react-parent</artifactId>
 		<version>0.0.25-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>

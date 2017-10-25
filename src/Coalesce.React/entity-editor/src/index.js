@@ -34,6 +34,8 @@ const Default = ({match}) => {
     return React.createElement(EntityView, {entitykey: params['entitykey']});
   } else if (params['templatekey'] != null) {
     return React.createElement(NewEntityView, {templatekey: params['templatekey']});
+  } else {
+    return (<div/>);
   }
 }
 
