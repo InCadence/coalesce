@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactTable from 'react-table'
 import { ReactTableDefaults } from 'react-table'
-import {Accordion} from './accordion.js'
 import {Toggle} from './toggle.js'
 import {Collapse} from 'react-collapse';
 
@@ -71,7 +70,7 @@ export class RecordsetView extends React.Component
             />
           </Collapse>
           <button id="add" class="ui-button ui-widget ui-corner-all ui-button-icon-only" title="Add" onClick={this.createRow.bind(that)}>
-            <span class="ui-icon ui-icon-plusthick"></span>+
+            <span className="ui-icon ui-icon-plusthick"></span>+
           </button>
       </div>
     )

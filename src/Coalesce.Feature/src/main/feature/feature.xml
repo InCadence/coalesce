@@ -10,5 +10,6 @@
 		<feature prerequisite="false" dependency="false">coalesce-crud-service-data-feature</feature>
 		<feature prerequisite="false" dependency="false">coalesce-search-service-feature</feature>
 		<feature prerequisite="false" dependency="false">coalesce-search-service-data-feature</feature>
+		<feature prerequisite="false" dependency="false">coalesce-entity-editor</feature>
 	</feature>
 </features>

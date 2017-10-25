@@ -5,6 +5,8 @@ import {RecordsetView, RecordView} from './recordset.js'
 
 import 'react-table/react-table.css'
 
+var karafRootAddr = 'http://' + window.location.hostname + ':8181';
+
 export class NewEntityView extends React.Component {
 
   constructor(props) {
@@ -14,11 +16,11 @@ export class NewEntityView extends React.Component {
 
   componentDidMount() {
     if (this.props.data == null) {
-      fetch('http://localhost:8181/cxf/data/templates/' + this.props.templatekey)
+      fetch(karafRootAddr + '/cxf/data/templates/' + this.props.templatekey)
         .then(res => res.json())
         .then(template => {
 
-          fetch('http://localhost:8181/cxf/data/templates/' + this.props.templatekey + "/create")
+          fetch(karafRootAddr + '/cxf/data/templates/' + this.props.templatekey + "/create")
             .then(res => res.json())
             .then(data => {
               this.setState({data: data})
@@ -46,11 +48,11 @@ export class EntityView extends React.Component {
 
   componentDidMount() {
     if (this.props.data == null) {
-      fetch('http://localhost:8181/cxf/data/entity/' + this.props.entitykey)
+      fetch(karafRootAddr + '/cxf/data/entity/' + this.props.entitykey)
         .then(res => res.json())
         .then(data => {
 
-          fetch('http://localhost:8181/cxf/data/templates/' + data.name + '/' + data.source + '/' + data.version)
+          fetch(karafRootAddr + '/cxf/data/templates/' + data.name + '/' + data.source + '/' + data.version)
             .then(res => res.json())
             .then(template => {
               this.setState({data: data})

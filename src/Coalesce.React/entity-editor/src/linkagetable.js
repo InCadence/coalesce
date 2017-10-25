@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactTable from 'react-table'
-import {Accordion} from './accordion.js'
 import {Toggle} from './toggle.js'
 import {Collapse} from 'react-collapse';
 
@@ -42,8 +41,6 @@ export class LinkageView extends React.Component
     var data = [];
 
     if (linkages != null) {
-
-      var that = this;
 
       linkages.forEach(function(linkage) {
 
