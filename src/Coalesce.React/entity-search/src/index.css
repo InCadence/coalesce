@@ -1,0 +1,38 @@
+  body {
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 14px;
+  }
+
+.coalesce-accordion.ReactCollapse--colalapse {
+  padding-left: 30px;
+}
+
+#entityview .ui-widget-header {
+  width: 100%;
+  text-align: left;
+}
+
+#entityview .section ui-widget-header {
+  padding-bottom: 0.5em;
+}
+
+#entityview .ReactTable {
+  background-color: white;
+}
+
+#entityview .section {
+  background-color: #e9e9e9;
+  border-width: 1px;
+  border-top: 0px;
+  border-style: solid;
+  border-color: darkgray;
+  margin-bottom: 0.5em;
+  padding: 0.5em;
+}
+
+#entityview .error {
+  background-color: red;
+  text-align: center;
+  font-weight: bold;
+  color: black;
+}

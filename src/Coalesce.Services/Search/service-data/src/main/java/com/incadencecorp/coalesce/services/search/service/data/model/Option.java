@@ -20,11 +20,22 @@ package com.incadencecorp.coalesce.services.search.service.data.model;
 
 public class Option {
 
+    private String key;
     private String recordset;
     private String field;
     private String comparer;
     private String value;
     private boolean matchCase;
+    
+    public String getKey()
+    {
+        return key;
+    }
+    
+    public void setKey(String key)
+    {
+        this.key = recordset;
+    }
     
     public String getRecordset()
     {
