@@ -12,7 +12,7 @@
 
 	<servlet-mapping>
 	<servlet-name>proxy</servlet-name>
-	<url-pattern>/entityeditor*</url-pattern>
+	<url-pattern>/entitysearch*</url-pattern>
 	</servlet-mapping>
 
 <!-- 	<filter> -->

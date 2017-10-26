@@ -8,7 +8,7 @@ export class Menu extends React.Component {
   }
 
   render () {
- 
+
     var items = [];
 
     this.state.items.forEach(function (item) {
@@ -23,7 +23,7 @@ export class Menu extends React.Component {
                 <span className="icon-bar"></span>
                 <span className="icon-bar"></span>
             </button>
-            <img className="navbar-icon" src="logo.png" alt='' /><a id="templateName" className="navbar-brand" href="#">{this.state.title}</a>
+            <img className="navbar-icon" src={process.env.PUBLIC_URL + '/logo.png'} alt='InCadence' /><a id="templateName" className="navbar-brand" href="#">{this.state.title}</a>
         </div>
         <div className="collapse navbar-collapse" id="myNavbar">
           <ul className="nav navbar-nav navbar-right">

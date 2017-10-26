@@ -1,32 +1,16 @@
 import React from 'react';
 import ReactTable from 'react-table'
 import { ReactTableDefaults } from 'react-table'
+import {Toggle} from 'common-components/lib/toggle.js'
+import {Collapse} from 'react-collapse';
 
 import 'react-table/react-table.css'
 
 Object.assign(ReactTableDefaults, {
   defaultPageSize: 5,
   minRows: 3,
-  showPagination: false,
   // etc...
 })
-
-function getRecordsets(section) {
-
-  var results = [];
-
-  section.sectionsAsList.forEach(function(section) {
-    results = results.concat(results, this.processrecordsets(section));
-  });
-
-  // Render Recordsets
-  section.recordsetsAsList.forEach(function(recordset) {
-    results.push({name: recordset.name, definition: recordset.fieldDefinitions});
-  });
-
-  return results;
-}
-
 
 export class FilterCreator extends React.Component {
 
@@ -37,22 +21,16 @@ export class FilterCreator extends React.Component {
   }
 
   componentDidMount() {
-    var data = [];
-
-    this.props.template.sectionsAsList.forEach(function(section) {
-      data = data.concat(data, getRecordsets(section));
-    });
 
     var tabledata = [{
       key: 0,
-      recordset: data[0].name,
-      field: 'boolean', //data[0].definition[0].name,
+      recordset: this.state.recordsets[0].name,
+      field: this.state.recordsets[0].definition[0].name,
       comparer: '=',
-      value: 'false',
+      value: '',
       matchCase: false}];
 
     this.setState({
-      recordsets: data,
       tabledata: tabledata,
       currentkey: 0
     });
@@ -61,17 +39,32 @@ export class FilterCreator extends React.Component {
 
   render() {
 
-    const {recordsets, tabledata} = this.state;
+    const {recordsets, tabledata, isOpened} = this.state;
 
     return (
-      <div>
-        <ReactTable
-          pageSize={this.props.maxRows}
-          data={tabledata}
-          columns={createColumns(this, recordsets)}
-        />
-        <button onClick={this.addRow.bind(this)}>add</button>
-        <button onClick={this.props.onSearch.bind(this, this.state.tabledata)} className='mm-popup__btn mm-popup__btn--success'>search</button>
+      <div className="ui-widget">
+        <Toggle
+          ontext="Search Criteria"
+          offtext="Search Criteria"
+          isToggleOn={true}
+          onToggle={(value) => {
+            this.setState({isOpened: value});
+          }}
+          />
+          <Collapse className="ui-widget-content" isOpened={isOpened}>
+            <div className="section">
+            <ReactTable
+              pageSize={this.props.maxRows}
+              data={tabledata}
+              showPagination={false}
+              columns={createColumns(this, recordsets)}
+            />
+            <div className="form-buttons">
+              <button onClick={this.addRow.bind(this)} className="mm-popup__btn mm-popup__btn--cancel">add</button>
+              <button onClick={this.props.onSearch.bind(this, this.state.tabledata)} className='mm-popup__btn mm-popup__btn--success'>search</button>
+            </div>
+                        </div>
+          </Collapse>
       </div>
     )
   }
@@ -295,5 +288,6 @@ function createColumns(that, recordsets) {
 }
 
 FilterCreator.defaultProps = {
-  maxRows: 10
+  maxRows: 10,
+  isOpened: true
 }

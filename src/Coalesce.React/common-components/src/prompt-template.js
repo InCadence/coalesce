@@ -51,7 +51,7 @@ export class PromptTemplate extends React.Component {
         }
 
         return (
-            <select id="templates" className="form-control" value={this.state.value} onChange={this.onChange}>
+            <select className="form-control" value={this.state.value} onChange={this.onChange}>
               {options}
             </select>
         )
@@ -59,15 +59,15 @@ export class PromptTemplate extends React.Component {
 }
 
 /** Prompt plugin */
-Popup.registerPlugin('promptTemplate', function (buttontext, defaultValue, callback) {
+Popup.registerPlugin('promptTemplate', function (buttontext, title, callback) {
     let promptValue = null;
     let promptChange = function (value) {
         promptValue = value;
     };
 
     this.create({
-        title: "Select Template",
-        content: <PromptTemplate onChange={promptChange} value={defaultValue} />,
+        title: {title},
+        content: <PromptTemplate onChange={promptChange} />,
         buttons: {
             left: ['cancel'],
             right: [{

@@ -3,6 +3,14 @@
 	name="coalesce-services">
 	<feature name="coalesce-entity-editor" description="">
 		<feature prerequisite="false" dependency="false">coalesce-crud-service-data-feature</feature>
-        <bundle start-level="75">mvn:com.incadencecorp.coalesce.react/entity-editor/${project.version}/war</bundle>
+	        <bundle start-level="75">mvn:com.incadencecorp.coalesce.react/entity-editor/${project.version}/war</bundle>
+	</feature>
+	<feature name="coalesce-entity-search" description="">
+		<feature prerequisite="false" dependency="false">coalesce-crud-service-data-feature</feature>
+		<feature prerequisite="false" dependency="false">coalesce-search-service-data-feature</feature>
+	        <bundle start-level="75">mvn:com.incadencecorp.coalesce.react/entity-search/${project.version}/war</bundle>
+	</feature>
+	<feature name="coalesce-map-viewer" description="">
+	        <bundle start-level="75">mvn:com.incadencecorp.coalesce.react/map-viewer/${project.version}/war</bundle>
 	</feature>
 </features>

@@ -5,6 +5,9 @@ import {PromptTemplate} from 'common-components/lib/prompt-template.js'
 import {Menu} from 'common-components/lib/menu.js'
 import {FilterCreator} from './filtercreator.js'
 import ReactTable from 'react-table'
+import {Toggle} from 'common-components/lib/toggle.js'
+import {Collapse} from 'react-collapse';
+
 
 import $ from 'jquery'
 
@@ -12,16 +15,6 @@ import './index.css'
 import 'common-components/css/popup.css'
 
 var karafRootAddr = 'http://' + window.location.hostname + ':8181';
-
-class App extends React.Component {
-
-  render() {
-    return (
-      <button onClick={promptForTemplate}>Hello world</button>
-    )
-  }
-
-}
 
 function promptForTemplate() {
 
@@ -32,21 +25,51 @@ function promptForTemplate() {
 
           ReactDOM.unmountComponentAtNode(document.getElementById('main'));
 
-          ReactDOM.render(
-              <FilterCreator
-                template={template}
-                onSearch={search}
-              />,
-              document.getElementById('main')
-          );
+          fetch(karafRootAddr + '/cxf/data/templates/' + value + '/recordsets/CoalesceEntity/fields')
+              .then(res => res.json())
+              .then(definition => {
+
+                var recordsets = [];
+                recordsets.push({name: 'CoalesceEntity', definition: definition});
+
+                // Get Other Recordsets
+                template.sectionsAsList.forEach(function(section) {
+                  recordsets = recordsets.concat(getRecordsets(section));
+                });
+
+                // Add CoalesceEntity attributes as a recordset
+                ReactDOM.render(
+                    <FilterCreator
+                      recordsets={recordsets}
+                      onSearch={search}
+                    />,
+                    document.getElementById('main')
+                );
+
+              })
 
         })
   });
 
 }
 
+function getRecordsets(section) {
+
+  var results = [];
+
+  section.sectionsAsList.forEach(function(section) {
+    results = results.concat(this.processrecordsets(section));
+  });
+
+  // Render Recordsets
+  section.recordsetsAsList.forEach(function(recordset) {
+    results.push({name: recordset.name, definition: recordset.fieldDefinitions});
+  });
+
+  return results;
+}
+
 function openEditor(key, e) {
-  alert(key);
   window.location.href = karafRootAddr + "/entityeditor/?entitykey=" + key;
 }
 
@@ -94,11 +117,11 @@ function search(data, e) {
               }
 
               ReactDOM.render(
-                  <ReactTable
-                    data={tabledata}
-                    columns={columns}
-                  />,
-                  document.getElementById('results')
+                      <ReactTable
+                        data={tabledata}
+                        columns={columns}
+                      />,
+                document.getElementById('results')
               );
             } else {
               alert(data.result[0].error);
