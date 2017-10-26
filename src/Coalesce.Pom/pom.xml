@@ -19,6 +19,12 @@
 		                <module>../Coalesce.Dist/coalesce-karaf-dist</module>
 			</modules>
 		</profile>
+		<profile>
+			<id>react</id>
+			<modules>
+				<module>../Coalesce.React</module>
+			</modules>
+		</profile>
 	</profiles>
 
 	<modules>
@@ -33,7 +39,6 @@
 		<module>../Coalesce.Feature</module>
 		<module>../Coalesce.Plugins</module>
 		<module>../Coalesce.Core.Feature</module>
-		<module>../Coalesce.React</module>
 	</modules>
 
 	<build>
