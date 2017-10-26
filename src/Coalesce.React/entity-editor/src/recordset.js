@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactTable from 'react-table'
 import { ReactTableDefaults } from 'react-table'
-import {Toggle} from './toggle.js'
+import {Toggle} from 'common-components/lib/toggle.js'
 import {Collapse} from 'react-collapse';
 
 Object.assign(ReactTableDefaults, {

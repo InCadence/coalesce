@@ -4,7 +4,7 @@ import Popup from 'react-popup';
 var karafRootAddr = 'http://' + window.location.hostname + ':8181';
 
 /** The prompt content component */
-export default class PromptTemplate extends React.Component {
+export class PromptTemplate extends React.Component {
     constructor(props) {
         super(props);
 
@@ -39,13 +39,14 @@ export default class PromptTemplate extends React.Component {
     }
 
     render() {
+
         const {data} = this.state;
 
         var options = []
 
         if (data != null) {
           data.forEach(function(option) {
-            options.push(<option value={option.key}>{option.name}</option>);
+            options.push(<option key={option.key} value={option.key}>{option.name}</option>);
           });
         }
 

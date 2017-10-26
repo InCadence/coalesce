@@ -3,12 +3,12 @@ import ReactDOM from 'react-dom';
 import {EntityView, NewEntityView} from './entity.js'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import Popup from 'react-popup';
-import Prompt from './prompt.js'
-import PromptTemplate from './prompt-template.js'
+import Prompt from 'common-components/lib/prompt.js'
+import {PromptTemplate} from 'common-components/lib/prompt-template.js'
 import $ from 'jquery'
 
 import './index.css'
-import './popup.css'
+import 'common-components/css/popup.css'
 
 class App extends React.Component {
   render() {
@@ -143,3 +143,52 @@ function saveChanges(data) {
     }
   });
 }
+
+/** Prompt plugin */
+Popup.registerPlugin('promptTemplate', function (buttontext, defaultValue, callback) {
+    let promptValue = null;
+    let promptChange = function (value) {
+        promptValue = value;
+    };
+
+    this.create({
+        title: "Select Template",
+        content: <PromptTemplate onChange={promptChange} value={defaultValue} />,
+        buttons: {
+            left: ['cancel'],
+            right: [{
+                text: buttontext,
+                className: 'success',
+                action: function () {
+                    callback(promptValue);
+                    Popup.close();
+                }
+
+            }]
+        }
+    });
+});
+
+/** Prompt plugin */
+Popup.registerPlugin('prompt', function (buttontext, title, defaultValue, placeholder, callback) {
+    let promptValue = null;
+    let promptChange = function (value) {
+        promptValue = value;
+    };
+
+    this.create({
+        title: title,
+        content: <Prompt onChange={promptChange} placeholder={placeholder} value={defaultValue} />,
+        buttons: {
+            left: ['cancel'],
+            right: [{
+                text: buttontext,
+                className: 'success',
+                action: function () {
+                    callback(promptValue);
+                    Popup.close();
+                }
+            }]
+        }
+    });
+});

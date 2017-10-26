@@ -1,5 +1,5 @@
 import React from 'react';
-import {Accordion} from './accordion.js'
+import {Accordion} from 'common-components/lib/accordion.js'
 import {LinkageView} from './linkagetable.js'
 import {RecordsetView, RecordView} from './recordset.js'
 
