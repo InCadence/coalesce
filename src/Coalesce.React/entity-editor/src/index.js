@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import Popup from 'react-popup';
 import Prompt from 'common-components/lib/prompt.js'
 import {PromptTemplate} from 'common-components/lib/prompt-template.js'
+import {Menu} from 'common-components/lib/menu.js'
 import $ from 'jquery'
 
 import './index.css'
@@ -51,67 +52,6 @@ const NewEntity = ({match}) => {
   return React.createElement(NewEntityView, {templatekey: match.params.templateKey});
 }
 
-class MenuOptions extends React.Component {
-
-  constructor(props) {
-    super(props);
-    this.state = props;
-
-    this.promptForTemplate = this.promptForTemplate.bind(this);
-    this.promptForEntity = this.promptForEntity.bind(this);
-    this.reset = this.reset.bind(this);
-    this.save = this.save.bind(this);
-  }
-
-  promptForTemplate() {
-
-    Popup.plugins().promptTemplate('create', 'Type your name', function (value) {
-
-      ReactDOM.unmountComponentAtNode(document.getElementById('entityview'));
-
-      ReactDOM.render(
-        React.createElement(NewEntityView, {templatekey: value}),
-        document.getElementById('entityview')
-      );
-
-      //window.location.href = "/entityeditor/" + value + "/new";
-    });
-  }
-
-  promptForEntity() {
-    Popup.plugins().prompt('Load', 'Entity Selection', '', 'Enter Entity Key', function (value) {
-
-      ReactDOM.unmountComponentAtNode(document.getElementById('entityview'));
-
-      ReactDOM.render(
-        React.createElement(EntityView, {entitykey: value}),
-        document.getElementById('entityview')
-      );
-
-      //window.location.href = "/entityeditor/" + value + "/edit";
-    });
-  }
-
-  reset() {
-    alert("TODO: Not Implemented");
-  }
-
-  save() {
-    alert("TODO: Not Implemented (Need to invoke saveChanges(data))");
-  }
-
-  render () {
-    return (
-      <ul className="nav navbar-nav navbar-right">
-          <li><a id="template-form" href="#"><div onClick={this.promptForTemplate}>New</div></a></li>
-          <li><a id="load-form" href="#"><div onClick={this.promptForEntity}>Load</div></a></li>
-          <li><a id="save-form" href="#"><div onClick={this.save}>Save</div></a></li>
-          <li><a id="reset-form" href="#"><div onClick={this.reset}>Reset</div></a></li>
-      </ul>
-    )
-  }
-}
-
 // Default Component
 ReactDOM.render(
   React.createElement(App, {}),
@@ -124,7 +64,50 @@ ReactDOM.render(
 );
 
 ReactDOM.render(
-    <MenuOptions />,
+    <Menu items={[
+      {
+        id: 'new',
+        name: 'New',
+        onClick: () => {
+
+          Popup.plugins().promptTemplate('create', 'Type your name', function (value) {
+
+            ReactDOM.unmountComponentAtNode(document.getElementById('entityview'));
+
+            ReactDOM.render(
+              React.createElement(NewEntityView, {templatekey: value}),
+              document.getElementById('entityview')
+            );
+          });
+        }
+      }, {
+        id: 'load',
+        name: 'Load',
+        onClick: () => {
+          Popup.plugins().prompt('Load', 'Entity Selection', '', 'Enter Entity Key', function (value) {
+
+            ReactDOM.unmountComponentAtNode(document.getElementById('entityview'));
+
+            ReactDOM.render(
+              React.createElement(EntityView, {entitykey: value}),
+              document.getElementById('entityview')
+            );
+          });
+        }
+      }, {
+        id: 'save',
+        name: 'Save',
+        onClick: () => {
+          alert("TODO: Not Implemented");
+        }
+      }, {
+        id: 'reset',
+        name: 'reset',
+        onClick: () => {
+          alert("TODO: Not Implemented");
+        }
+      }
+    ]}/>,
     document.getElementById('myNavbar')
 );
 

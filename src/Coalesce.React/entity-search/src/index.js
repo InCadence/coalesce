@@ -157,23 +157,23 @@ ReactDOM.render(
     <Menu items={[
       {
         id: 'select',
-        name: 'select',
+        name: 'Select',
         onClick: promptForTemplate
       }, {
         id: 'load',
-        name: 'load',
+        name: 'Load',
         onClick: () => {
           alert("TODO: Not Implemented");
         }
       }, {
         id: 'save',
-        name: 'save',
+        name: 'Save',
         onClick: () => {
           alert("TODO: Not Implemented");
         }
       }, {
         id: 'reset',
-        name: 'reset',
+        name: 'Reset',
         onClick: () => {
           alert("TODO: Not Implemented");
         }
