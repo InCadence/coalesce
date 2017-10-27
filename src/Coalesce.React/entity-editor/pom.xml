@@ -13,23 +13,19 @@
 	</parent>
 
 	<build>
+
 		<resources>
 			<resource>
 				<directory>build</directory>
 			</resource>
 		</resources>
-		<!-- <finalName>${project.name}</finalName> -->
+
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
 			</plugin>
 								
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-			</plugin>
-
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
@@ -78,6 +74,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		
 	</build>
 
 
