@@ -5,9 +5,9 @@
   "description": "Common components used in Coalesce applications",
   "private": true,
   "files": [
-      "src/",
-      "css/"
-    ],
+    "src/",
+    "css/"
+  ],
   "dependencies": {
     "jquery": "^3.2.1",
     "react": "^16.0.0",
@@ -21,26 +21,24 @@
     "react-table": "^6.6.0"
   },
   "devDependencies": {
+    "babel-cli": "6.14.0",
     "babel-core": "^6.26.0",
+    "babel-eslint": "6.1.2",
     "babel-loader": "^7.1.2",
     "babel-preset-env": "^1.6.1",
-    "babel-cli": "6.14.0",
-    "babel-eslint": "6.1.2",
     "eslint": "^4.1.1",
     "npm-run-all": "^4.1.1",
-    "react-scripts": "1.0.14",
-    "react": "^16.0.0"
+    "react": "^16.0.0",
+    "react-scripts": "1.0.14"
   },
   "scripts": {
     "build:node": "babel src --out-dir lib --source-maps inline",
     "build": "npm-run-all build:*"
   },
   "babel": {
-      "presets": [
-        "es2015",
-        "stage-2",
-        "react"
-      ]
-    }
-
+    "presets": [
+      "env",
+      "react"
+    ]
+  }
 }

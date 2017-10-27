@@ -1,6 +1,8 @@
 import React from 'react';
 import Popup from 'react-popup';
 
+import '../css/popup.css'
+
 var karafRootAddr = 'http://' + window.location.hostname + ':8181';
 
 /** The prompt content component */
@@ -20,8 +22,10 @@ export class PromptTemplate extends React.Component {
           fetch(karafRootAddr + '/cxf/data/templates')
             .then(res => res.json())
             .then(data => {
-              this.setState({data: data})
-              this.setState({value: data[0].key});
+              this.setState({
+                data: data,
+                value: data[0].key
+              });
             })
       }
     }
