@@ -1,22 +1,22 @@
 function CoalesceField (fieldName,type){
-	this.fieldName=fieldName;
-	this.fieldType=type;
+	this.name=fieldName;
+	this.dataType=type;
 	this.objType=CoalesceObjectType.FIELD_DEF;
 
-	this.getFieldName = function (){
-		return this.fieldName;
+	this.getName = function (){
+		return this.name;
 	}
 
-	this.setFieldName = function (name){
-		this.fieldName = name;
+	this.setName = function (name){
+		this.name = name;
 	}
 
-	this.getFieldType = function (){
-		return this.fieldType;
+	this.getDataType = function (){
+		return this.dataType;
 	}
 
-	this.setFieldType = function (type){
-		this.fieldType = type;
+	this.setDataType = function (type){
+		this.dataType = type;
 	}
 
 	this.getCoalesceType = function(){
@@ -25,8 +25,8 @@ function CoalesceField (fieldName,type){
 
 	this.initialize = function (obj){
 		if(obj.objType == CoalesceObjectType.FIELD_DEF){
-			this.fieldName=obj.fieldName;
-			this.fieldType=obj.fieldType;
+			this.name=obj.name;
+			this.dataType=obj.dataType;
 			this.objType=obj.objType;
 			return true;
 		}else{
