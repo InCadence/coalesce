@@ -36,3 +36,17 @@
   font-weight: bold;
   color: black;
 }
+
+
+#entityview .form-buttons {
+  text-align: right;
+  padding-top: 0.1em;
+  font-weight: bold;
+  color: black;
+}
+
+#entityview .form-buttons button {
+  text-align: center;
+  margin: 0.1em;
+  width: 80px;
+}

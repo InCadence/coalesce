@@ -2,7 +2,9 @@ import React from 'react';
 import {Accordion} from 'common-components/lib/accordion.js'
 import {LinkageView} from './linkagetable.js'
 import {RecordsetView, RecordView} from './recordset.js'
+import $ from 'jquery'
 
+import './index.css'
 import 'react-table/react-table.css'
 
 var karafRootAddr = 'http://' + window.location.hostname + ':8181';
@@ -20,7 +22,7 @@ export class NewEntityView extends React.Component {
         .then(res => res.json())
         .then(template => {
 
-          fetch(karafRootAddr + '/cxf/data/templates/' + this.props.templatekey + "/create")
+          fetch(karafRootAddr + '/cxf/data/templates/' + this.props.templatekey + "/new")
             .then(res => res.json())
             .then(data => {
               this.setState({data: data})
@@ -31,13 +33,27 @@ export class NewEntityView extends React.Component {
     }
   }
 
+  onSave() {
+    const {data, isNew} = this.state;
+
+    postEntity(data, isNew);
+
+    this.setState({
+      isNew: false
+    })
+  }
+
   render() {
     const {data, template} = this.state;
 
-    return renderEntity(template, data);
+    return renderEntity(template, data, this.onSave.bind(this));
   }
 
 };
+
+NewEntityView.defaultProps = {
+  isNew: true
+}
 
 export class EntityView extends React.Component {
 
@@ -62,15 +78,40 @@ export class EntityView extends React.Component {
     }
   }
 
+  onSave() {
+    const {data} = this.state;
+
+    postEntity(data, false);
+  }
+
   render() {
     const {data, template} = this.state;
 
-    return renderEntity(template, data);
+    return renderEntity(template, data, this.onSave.bind(this));
   }
 
 };
 
-function renderEntity(template, data) {
+function postEntity(data, isNew) {
+
+  $.ajax({
+    type : ((isNew) ? "PUT" : "POST"),
+    url: karafRootAddr + '/cxf/data/entity/' + data.key,
+    data : JSON.stringify(data),
+    contentType : "application/json; charset=utf-8",
+    success : function(data, status, jqXHR) {
+      alert('Saved');
+    },
+    error : function(jqXHR, status) {
+      alert('Failed: ' + JSON.stringify(jqXHR));
+      // error handler
+      console.log(jqXHR);
+    }
+  });
+
+}
+
+function renderEntity(template, data, callback) {
   var sections = [];
   var linkages;
 
@@ -107,9 +148,18 @@ function renderEntity(template, data) {
           <label className="col-sm-2 col-form-label">Version</label>
           <div className="col-sm-4">{template != null ? template.version : ''}</div>
         </div>
+        <div className="row">
+          <label className="col-sm-2 col-form-label">Key</label>
+          <div className="col-sm-4">{data != null ? data.key : ''}</div>
+          <label className="col-sm-2 col-form-label">Revision</label>
+          <div className="col-sm-4">{data != null ? data.objectVersion : ''}</div>
+        </div>
       </div>
       {linkages}
       {sections}
+      <div className="form-buttons">
+        <button className='mm-popup__btn mm-popup__btn--success' onClick={callback}>save</button>
+      </div>
     </div>
   )
 }

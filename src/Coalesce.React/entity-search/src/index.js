@@ -70,7 +70,10 @@ function getRecordsets(section) {
 }
 
 function openEditor(key, e) {
-  window.location.href = karafRootAddr + "/entityeditor/?entitykey=" + key;
+  window.open(
+    karafRootAddr + "/entityeditor/?entitykey=" + key,
+    '_blank' // <- This is what makes it open in a new window.
+  );
 }
 
 function search(data, e) {

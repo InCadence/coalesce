@@ -6,7 +6,6 @@ import Popup from 'react-popup';
 import Prompt from 'common-components/lib/prompt.js'
 import {PromptTemplate} from 'common-components/lib/prompt-template.js'
 import {Menu} from 'common-components/lib/menu.js'
-import $ from 'jquery'
 
 import './index.css'
 import 'common-components/css/popup.css'
@@ -94,38 +93,10 @@ ReactDOM.render(
             );
           });
         }
-      }, {
-        id: 'save',
-        name: 'Save',
-        onClick: () => {
-          alert("TODO: Not Implemented");
-        }
-      }, {
-        id: 'reset',
-        name: 'reset',
-        onClick: () => {
-          alert("TODO: Not Implemented");
-        }
       }
     ]}/>,
     document.getElementById('myNavbar')
 );
-
-function saveChanges(data) {
-
-  $.ajax({
-    type : "POST",
-    data : JSON.stringify(data),
-    contentType : "application/json; charset=utf-8",
-    url : 'http://localhost:8181/entity',
-    success : function (data) {
-      alert('success');
-    },
-    error : function (data) {
-      alert('failed');
-    }
-  });
-}
 
 /** Prompt plugin */
 Popup.registerPlugin('promptTemplate', function (buttontext, defaultValue, callback) {

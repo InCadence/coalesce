@@ -170,7 +170,7 @@ export class RecordView extends React.Component {
         <div key={field.key} className="row">
           <label className="col-sm-2 col-form-label">{fd.name}</label>
           <div className="col-sm-6">
-            <input id={field.key} type={fd.name} className="form-control" value={field.value}  onChange={that.handleChange}/>
+            <input id={field.key} className="form-control" value={field.value}  onChange={that.handleChange}/>
           </div>
         </div>
       )
