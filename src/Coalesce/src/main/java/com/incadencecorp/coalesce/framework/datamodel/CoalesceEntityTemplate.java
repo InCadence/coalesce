@@ -292,6 +292,7 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
     {
         CoalesceEntity entity = new CoalesceEntity();
         entity.initialize(toXml());
+        entity.setKey(UUID.randomUUID().toString());
 
         // Create Singleton Records
         for (CoalesceSection section : entity.getSectionsAsList())

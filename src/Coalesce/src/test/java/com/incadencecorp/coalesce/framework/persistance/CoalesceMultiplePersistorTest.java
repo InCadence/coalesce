@@ -208,14 +208,8 @@ public class CoalesceMultiplePersistorTest extends AbstractFileHandlerTests {
             framework.setAuthoritativePersistor(authoritative);
             framework.setSecondaryPersistors(secondary);
             framework.setHandler(handler);
+            framework.setIsAnsyncUpdates(false); // This is to avoid race condition with the secondary persister.
             framework.saveCoalesceEntityTemplate(entity.createNewEntityTemplate());
-
-            // Authoritative Should Succeed
-            Assert.assertFalse(Files.exists(file));
-
-            // Allow enough time for the job to submit the tasks. (This is a
-            // potential race condition)
-            Thread.sleep(2);
         }
 
         // Secondary Should Fail

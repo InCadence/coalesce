@@ -24,6 +24,7 @@ import java.util.UUID;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
@@ -54,7 +55,7 @@ public class TemplateDataControllerTest {
 
         CoalesceEntityTemplate template2 = CoalesceEntityTemplate.create(entity);
 
-        Assert.assertEquals(true, controller.setTemplate(template2.toXml()));
+        Assert.assertEquals(true, controller.setTemplate(template2.getKey(), template2.createNewEntity()));
 
         Assert.assertEquals(2, controller.getEntityTemplateMetadata().size());
 
@@ -138,7 +139,7 @@ public class TemplateDataControllerTest {
         TestRecord.createCoalesceRecordset(section, "rs-2");
 
         CoalesceEntityTemplate template = CoalesceEntityTemplate.create(entity);
-        Assert.assertEquals(true, controller.setTemplate(template.toXml()));
+        Assert.assertEquals(true, controller.setTemplate(template.getKey(), template.createNewEntity()));
 
         List<CoalesceObjectImpl> results = controller.getRecordSets(template.getKey());
 
@@ -174,7 +175,6 @@ public class TemplateDataControllerTest {
 
     private TemplateDataController createController() throws Exception
     {
-
         ICoalescePersistor persistor = new MockPersister();
 
         TestEntity entity = new TestEntity();
@@ -183,7 +183,10 @@ public class TemplateDataControllerTest {
         CoalesceEntityTemplate template = CoalesceEntityTemplate.create(entity);
         persistor.saveTemplate(template, null);
 
-        TemplateDataController controller = new TemplateDataController(persistor);
+        CoalesceFramework framework = new CoalesceFramework();
+        framework.setAuthoritativePersistor(persistor);
+        
+        TemplateDataController controller = new TemplateDataController(framework);
         Assert.assertNotNull(controller.getTemplate(template.getKey()));
 
         return controller;

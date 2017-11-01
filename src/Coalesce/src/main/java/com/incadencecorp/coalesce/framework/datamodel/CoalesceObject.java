@@ -368,7 +368,7 @@ public abstract class CoalesceObject implements ICoalesceObject {
     @JsonIgnore
     public final CoalesceEntity getEntity()
     {
-        CoalesceObject element = this.getParent();
+        CoalesceObject element = this;
 
         while (element.getParent() != null)
         {
@@ -431,10 +431,12 @@ public abstract class CoalesceObject implements ICoalesceObject {
      * 
      * @param guid UUID to be the Coalesce object's key.
      */
+    /*
     public final void setKey(UUID guid)
     {
         setKey(guid.toString());
     }
+    */
 
     @Override
     public final String getTag()

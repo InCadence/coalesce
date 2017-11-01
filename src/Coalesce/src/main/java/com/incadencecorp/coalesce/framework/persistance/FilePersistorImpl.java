@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.joda.time.DateTime;
@@ -307,13 +308,13 @@ public class FilePersistorImpl extends CoalesceComponentImpl implements ICoalesc
     @Override
     public String getEntityTemplateXml(String name, String source, String version) throws CoalescePersistorException
     {
-        throw new NotImplementedException();
+        return getEntityTemplateXml(getEntityTemplateKey(name, source, version));
     }
 
     @Override
     public String getEntityTemplateKey(String name, String source, String version) throws CoalescePersistorException
     {
-        throw new NotImplementedException();
+        return UUID.nameUUIDFromBytes((name + source + version).getBytes()).toString();
     }
 
     @Override
