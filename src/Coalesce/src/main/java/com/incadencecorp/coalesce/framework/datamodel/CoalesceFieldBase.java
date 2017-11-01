@@ -748,7 +748,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
     {
         if (getDataType() != ECoalesceFieldDataTypes.BOOLEAN_TYPE)
         {
-            throw new ClassCastException("Type mismatch");
+            throw new ClassCastException("Type mismatch (" + getDataType() + ")");
         }
 
         if (StringHelper.isNullOrEmpty(getBaseValue()))

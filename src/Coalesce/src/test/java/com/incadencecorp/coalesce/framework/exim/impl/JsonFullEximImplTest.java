@@ -18,18 +18,16 @@
 package com.incadencecorp.coalesce.framework.exim.impl;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.junit.Assert;
 import org.junit.Test;
 
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.incadencecorp.coalesce.api.Views;
-import com.incadencecorp.coalesce.common.helpers.StringHelper;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
+import com.incadencecorp.coalesce.framework.compareables.CoalesceFieldComparator;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
@@ -40,15 +38,60 @@ import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
 import com.incadencecorp.coalesce.framework.datamodel.TestRecord;
 
 /**
- * This unit test covers the {@link JsonEximImpl}
+ * This unit test covers the {@link JsonFullEximImpl}
  * 
  * @author n78554
  *
  */
-public class JsonEximImplTest {
+public class JsonFullEximImplTest {
 
     private static final String ADDITIONAL_RECORDSET = "Additional Recordset";
     private static final String ADDITIONAL_SECTION = "Additional Section";
+
+    /**
+     * This is an example of how to use the ObjectMapper to perform the same
+     * function as JsonFullEximImpl
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void eximTest() throws Exception
+    {
+        JsonFullEximImpl exim = new JsonFullEximImpl();
+        exim.setView(Views.Entity.class);
+
+        TestEntity entity = new TestEntity();
+        entity.initialize();
+        TestRecord record = entity.addRecord1();
+        record.getBooleanField().setValue(true);
+        record.getStringField().setValue("AA");
+        record.getStringListField().setValue(new String[] {
+                                                            "AA","BB"
+        });
+
+        CoalesceEntity entity1 = new CoalesceEntity();
+        entity1.initialize(entity);
+
+        JSONObject result = exim.exportValues(entity, true);
+
+        TestEntity entity2 = new TestEntity();
+        entity2.initialize();
+
+        exim.importValues(result, entity2);
+
+        Assert.assertEquals(entity1.getKey(), entity2.getKey());
+
+        TestRecord record2 = new TestRecord(entity2.getRecordset1().getAllRecords().get(0));
+        
+        Assert.assertEquals(record.getBooleanField().getBaseValue(),
+                            record2.getBooleanField().getBaseValue());
+
+        Assert.assertEquals(record.getStringField().getBaseValue(),
+                            record2.getStringField().getBaseValue());
+
+        Assert.assertEquals(record.getStringListField().getBaseValue(),
+                            record2.getStringListField().getBaseValue());
+    }
 
     /**
      * This test passes in an invalid JSON Object. Arrays are only used for
@@ -61,7 +104,7 @@ public class JsonEximImplTest {
     public void invalidJSONTest() throws Exception
     {
 
-        JsonEximImpl exim = new JsonEximImpl();
+        JsonFullEximImpl exim = new JsonFullEximImpl();
 
         TestEntity entity = new TestEntity();
         entity.initialize();
@@ -85,7 +128,7 @@ public class JsonEximImplTest {
     public void importIntoExpandedEntityTests() throws Exception
     {
 
-        JsonEximImpl exim = new JsonEximImpl();
+        JsonFullEximImpl exim = new JsonFullEximImpl();
 
         // Create Entity
         TestEntity entity = new TestEntity();
@@ -115,6 +158,8 @@ public class JsonEximImplTest {
         assertEquals(1, entity2.getRecordset1().getCount());
 
         TestRecord record2 = new TestRecord(entity2.getRecordset1().getItem(0));
+
+        System.out.println(record2.getParent().toXml());
 
         assertEquals(record.getBooleanField().getValue(), record2.getBooleanField().getValue());
         assertEquals(record.getStringField().getValue(), record2.getStringField().getValue());
@@ -153,32 +198,47 @@ public class JsonEximImplTest {
         // Add Empty Record
         entity.addRecord1();
 
-        JsonEximImpl exim = new JsonEximImpl();
+        JsonFullEximImpl exim = new JsonFullEximImpl();
 
         JSONObject json = exim.exportValues(entity, true);
 
-        assertEquals(entity.getVersion(), json.getString("_version"));
-        assertEquals(entity.getSource(), json.getString("_source"));
-        assertEquals(entity.getClassName(), json.getString("_class"));
-        assertTrue(json.has(entity.getName()));
+        // Verify Metadata
+        assertEquals(entity.getVersion(), json.getString("version"));
+        assertEquals(entity.getSource(), json.getString("source"));
+        assertEquals(entity.getClassName(), json.getString("className"));
+        assertEquals(entity.getName(), json.getString("name"));
+        assertEquals(entity.getName(), json.getString("namePath"));
+        assertEquals(entity.getKey(), json.getString("key"));
 
-        JSONObject entityJSON = json.getJSONObject(entity.getName());
+        // Verify Section
+        assertTrue(json.has("sectionsAsList"));
 
-        // Verify Sections
-        assertEquals(1, entityJSON.length());
-        assertTrue(entityJSON.has(TestEntity.TESTSECTION));
+        JSONArray sections = json.getJSONArray("sectionsAsList");
+        assertEquals(1, sections.length());
 
-        JSONObject sectionJSON = entityJSON.getJSONObject(TestEntity.TESTSECTION);
+        JSONObject sectionJSON = sections.getJSONObject(0);
+        assertEquals(TestEntity.TESTSECTION, sectionJSON.getString("name"));
+
+        assertTrue(sectionJSON.has("sectionsAsList"));
+        assertTrue(sectionJSON.has("recordsetsAsList"));
+        assertEquals(section.getKey(), sectionJSON.getString("key"));
 
         // Verify Record Sets
-        assertEquals(1, sectionJSON.length());
-        assertFalse(sectionJSON.has(ADDITIONAL_RECORDSET));
-        assertTrue(sectionJSON.has(TestEntity.RECORDSET1));
+        JSONArray recordsets = sectionJSON.getJSONArray("recordsetsAsList");
 
-        JSONArray rs1 = sectionJSON.getJSONArray(TestEntity.RECORDSET1);
+        assertEquals(2, recordsets.length());
 
-        // Verify Fields
-        assertEquals(2, rs1.length());
+        JSONObject recordset1 = recordsets.getJSONObject(0);
+        JSONObject recordset2 = recordsets.getJSONObject(1);
+
+        Assert.assertEquals(entity.getRecordset1().getKey(), recordset1.getString("key"));
+        Assert.assertEquals(entity.getRecordset1().getName(), recordset1.getString("name"));
+
+        Assert.assertEquals(recordset.getKey(), recordset2.getString("key"));
+        Assert.assertEquals(recordset.getName(), recordset2.getString("name"));
+
+        Assert.assertTrue(recordset1.has("allRecords"));
+        Assert.assertEquals(3, recordset1.getJSONArray("allRecords").length());
 
         CoalesceEntityTemplate template = CoalesceEntityTemplate.create(entity);
 
@@ -186,19 +246,13 @@ public class JsonEximImplTest {
         entity.initialize(exim.importValues(json, template));
 
         // Verify Entity
-        assertEquals(2, entity.getRecordset1().getCount());
+        assertEquals(3, entity.getRecordset1().getCount());
 
         TestEntity entity4 = new TestEntity();
         entity4.initialize();
 
-        record = entity4.addRecord1();
-        record.getLongField().setValue(5L);
-
-        exim.importValues(json, entity4);
-
-        // Verify Clearing Field
-        assertTrue(StringHelper.isNullOrEmpty(record.getLongField().getBaseValue()));
-
+        CoalesceRecordset.create(entity4.getCoalesceSectionForNamePath(TestEntity.NAME, TestEntity.TESTSECTION),
+                                 ADDITIONAL_RECORDSET);
     }
 
     /**
@@ -207,7 +261,7 @@ public class JsonEximImplTest {
      * 
      * @throws Exception
      */
-    @Test
+    @Test(expected = CoalesceException.class)
     public void invalidObjectTest() throws Exception
     {
 
@@ -225,7 +279,7 @@ public class JsonEximImplTest {
         record = entity.addRecord1();
         record.getIntegerField().setValue(1);
 
-        JsonEximImpl exim = new JsonEximImpl();
+        JsonFullEximImpl exim = new JsonFullEximImpl();
 
         JSONObject json = exim.exportValues(entity, false);
 
@@ -233,10 +287,6 @@ public class JsonEximImplTest {
         entity2.initialize();
 
         exim.importValues(json, entity2);
-
-        // Should fail to import the values into the entity because its missing
-        // the needed sections / record sets.
-        assertEquals(0, entity2.getSectionsAsList().size());
     }
 
 }
