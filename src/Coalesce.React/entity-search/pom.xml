@@ -13,13 +13,12 @@
 	</parent>
 
 	<build>
-	
 		<resources>
 			<resource>
 				<directory>build</directory>
 			</resource>
 		</resources>
-
+		<!-- <finalName>${project.name}</finalName> -->
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -27,17 +26,101 @@
 			</plugin>
 			
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+			</plugin>
+
+			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
 				<configuration>
 					<instructions>
+						<!-- <_wab>build</_wab> -->
+						<_wab>src/main/webapp</_wab>
+						<Bundle-Name>${project.name}</Bundle-Name>
+						<Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+						<Bundle-Version>${project.version}</Bundle-Version>
+						<Bundle-Classpath>
+							WEB-INF/classes,
+							WEB-INF/lib/aopalliance-1.0.jar,
+							WEB-INF/lib/commons-logging-1.1.1.jar,
+							WEB-INF/lib/spring-aop-${spring.version}.jar,
+							WEB-INF/lib/spring-asm-${spring.version}.jar,
+							WEB-INF/lib/spring-beans-${spring.version}.jar,
+							WEB-INF/lib/spring-context-${spring.version}.jar,
+							WEB-INF/lib/spring-context-support-${spring.version}.jar,
+							WEB-INF/lib/spring-core-${spring.version}.jar,
+							WEB-INF/lib/spring-expression-${spring.version}.jar,
+							WEB-INF/lib/spring-jdbc-${spring.version}.jar,
+							WEB-INF/lib/spring-orm-${spring.version}.jar,
+							WEB-INF/lib/spring-tx-${spring.version}.jar,
+							WEB-INF/lib/spring-web-${spring.version}.jar,
+							WEB-INF/lib/spring-webmvc-${spring.version}.jar
+						</Bundle-Classpath>
+						<Import-Package>
+							*; resolution:=optional
+						</Import-Package>
 						<Web-ContextPath>search2</Web-ContextPath>
 						<Webapp-Context>search2</Webapp-Context>
+						<Embed-Dependency>
+							*; artifactId=!org.osgi.compendium;
+							scope=compile; type=!pom; inline=false</Embed-Dependency>
+						<Embed-Transitive>true</Embed-Transitive>
+						<_removeheaders>
+							Include-Resource,
+							Private-Package,
+							Embed-Dependency,
+							Embed-Transitive,
+							Ignore-Package
+						</_removeheaders>
 					</instructions>
 				</configuration>
 			</plugin>
 		</plugins>
-		
 	</build>
 
+
+	<dependencies>
+
+		<!-- Spring core & mvc -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${spring.version}</version>
+			<exclusions>
+				<!-- Exclude Commons Logging in favor of SLF4j -->
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<!-- Servlet Spec -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.4</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet.jsp</groupId>
+			<artifactId>jsp-api</artifactId>
+			<version>2.1</version>
+			<scope>provided</scope>
+		</dependency>
+
+
+	</dependencies>
 </project>

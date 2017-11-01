@@ -1,8 +1,6 @@
 import React from 'react';
 import Popup from 'react-popup';
 
-import '../css/popup.css'
-
 /** The prompt content component */
 export default class Prompt extends React.Component {
     constructor(props) {
