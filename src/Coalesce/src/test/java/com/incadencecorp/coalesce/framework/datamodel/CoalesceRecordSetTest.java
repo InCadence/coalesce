@@ -282,12 +282,6 @@ public class CoalesceRecordSetTest {
 
         assertEquals("7A158E39-B6C4-4912-A712-DF296375A368", recordset.getKey());
 
-        UUID guid = UUID.randomUUID();
-
-        recordset.setKey(guid);
-
-        assertEquals(guid.toString(), recordset.getKey());
-
         UUID guid2 = UUID.randomUUID();
 
         recordset.setKey(guid2.toString());

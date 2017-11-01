@@ -206,7 +206,7 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
      * 
      * @return String the Node's name attribute
      */
-    public String getKey()
+    public String getKey()  
     {
         String result = XmlHelper.getAttribute(getEntityNode(), CoalesceEntity.ATTRIBUTE_KEY);
 

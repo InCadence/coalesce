@@ -194,12 +194,6 @@ public class CoalesceRecordTest {
 
         assertEquals("9A03833C-AC15-47C8-A037-1FFFD13A26E9", record.getKey());
 
-        UUID guid = UUID.randomUUID();
-
-        record.setKey(guid);
-
-        assertEquals(guid.toString(), record.getKey());
-
         UUID guid2 = UUID.randomUUID();
 
         record.setKey(guid2.toString());

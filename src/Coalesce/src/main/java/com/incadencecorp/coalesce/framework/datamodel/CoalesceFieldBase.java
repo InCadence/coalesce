@@ -74,9 +74,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
     @Override
     public abstract void setLabel(String value);
 
-
     public abstract String getClassificationMarkingAsString();
-
 
     public abstract void setClassificationMarkingAsString(String value);
 
@@ -166,6 +164,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
      * 
      * @param value field's value as a String.
      */
+    @JsonIgnore
     protected void setTypedValue(String value)
     {
         ECoalesceFieldDataTypes fieldType = getDataType();
@@ -177,6 +176,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
         setBaseValue(value);
     }
 
+    @JsonIgnore
     protected void setTypedValue(String[] values)
     {
         if (getDataType() != ECoalesceFieldDataTypes.STRING_LIST_TYPE)
@@ -192,6 +192,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
      * 
      * @param value field's value as a UUID.
      */
+    @JsonIgnore
     protected void setTypedValue(UUID value)
     {
         if (getDataType() != ECoalesceFieldDataTypes.GUID_TYPE)
@@ -210,6 +211,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
 
     }
 
+    @JsonIgnore
     protected void setTypedValue(UUID[] values)
     {
         if (getDataType() != ECoalesceFieldDataTypes.GUID_LIST_TYPE)
@@ -241,6 +243,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
      * 
      * @param value field's value as a DateTime.
      */
+    @JsonIgnore
     protected void setTypedValue(DateTime value)
     {
         if (getDataType() != ECoalesceFieldDataTypes.DATE_TIME_TYPE)
@@ -263,6 +266,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
      * 
      * @param value field's value as a boolean.
      */
+    @JsonIgnore
     protected void setTypedValue(Boolean value)
     {
         if (getDataType() != ECoalesceFieldDataTypes.BOOLEAN_TYPE)
@@ -281,6 +285,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
 
     }
 
+    @JsonIgnore
     protected void setTypedValue(boolean[] values)
     {
         if (getDataType() != ECoalesceFieldDataTypes.BOOLEAN_LIST_TYPE)
@@ -296,6 +301,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
      * 
      * @param value field's value as an integer.
      */
+    @JsonIgnore
     protected void setTypedValue(Integer value)
     {
         if (getDataType() != ECoalesceFieldDataTypes.INTEGER_TYPE
@@ -315,6 +321,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
 
     }
 
+    @JsonIgnore
     protected void setTypedValue(int[] values)
     {
         if (getDataType() != ECoalesceFieldDataTypes.INTEGER_LIST_TYPE
@@ -347,6 +354,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
      * 
      * @param value field's value as an integer
      */
+    @JsonIgnore
     protected void setTypedValue(Double value)
     {
         if (getDataType() != ECoalesceFieldDataTypes.DOUBLE_TYPE)
@@ -364,6 +372,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
         }
     }
 
+    @JsonIgnore
     protected void setTypedValue(double[] values)
     {
         if (getDataType() != ECoalesceFieldDataTypes.DOUBLE_LIST_TYPE)
@@ -395,6 +404,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
      * 
      * @param value field's value as an integer.
      */
+    @JsonIgnore
     protected void setTypedValue(Float value)
     {
         if (getDataType() != ECoalesceFieldDataTypes.FLOAT_TYPE)
@@ -412,6 +422,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
         }
     }
 
+    @JsonIgnore
     protected void setTypedValue(float[] values)
     {
         if (getDataType() != ECoalesceFieldDataTypes.FLOAT_LIST_TYPE)
@@ -443,6 +454,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
      * 
      * @param value field's value as an integer.
      */
+    @JsonIgnore
     protected void setTypedValue(Long value)
     {
         if (getDataType() != ECoalesceFieldDataTypes.LONG_TYPE)
@@ -461,6 +473,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
 
     }
 
+    @JsonIgnore
     protected void setTypedValue(long[] values)
     {
         if (getDataType() != ECoalesceFieldDataTypes.LONG_LIST_TYPE)
@@ -493,6 +506,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
      * @param value field's value as a geometry point.
      * @throws CoalesceDataFormatException
      */
+    @JsonIgnore
     protected void setTypedValue(Point value) throws CoalesceDataFormatException
     {
         if (getDataType() != ECoalesceFieldDataTypes.GEOCOORDINATE_TYPE)
@@ -518,6 +532,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
      * @param value field's value as a geometry coordinate.
      * @throws CoalesceDataFormatException
      */
+    @JsonIgnore
     protected void setTypedValue(Coordinate value) throws CoalesceDataFormatException
     {
         if (value == null)
@@ -537,6 +552,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
      * @param multiPoint field's value as a geometry multipoint.
      * @throws CoalesceDataFormatException
      */
+    @JsonIgnore
     protected void setTypedValue(MultiPoint multiPoint) throws CoalesceDataFormatException
     {
 
@@ -564,6 +580,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
      * @param value field's value as a geometry coordinate array.
      * @throws CoalesceDataFormatException
      */
+    @JsonIgnore
     protected void setTypedValue(Coordinate[] value) throws CoalesceDataFormatException
     {
 
@@ -593,6 +610,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
         }
     }
 
+    @JsonIgnore
     protected void setTypedValue(LineString value) throws CoalesceDataFormatException
     {
 
@@ -615,6 +633,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
         }
     }
 
+    @JsonIgnore
     protected void setTypedValue(Polygon value) throws CoalesceDataFormatException
     {
 
@@ -636,6 +655,7 @@ public abstract class CoalesceFieldBase<T> extends CoalesceObject implements ICo
         }
     }
 
+    @JsonIgnore
     protected void setTypedValue(CoalesceCircle value) throws CoalesceDataFormatException
     {
 

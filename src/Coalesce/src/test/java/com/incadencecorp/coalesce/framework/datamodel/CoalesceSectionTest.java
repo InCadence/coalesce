@@ -700,12 +700,6 @@ public class CoalesceSectionTest {
 
         assertEquals("85CB4256-4CC2-4F96-A03D-5EF880989822", liveSection.getKey());
 
-        UUID guid = UUID.randomUUID();
-
-        liveSection.setKey(guid);
-
-        assertEquals(guid.toString(), liveSection.getKey());
-
         UUID guid2 = UUID.randomUUID();
 
         liveSection.setKey(guid2.toString());

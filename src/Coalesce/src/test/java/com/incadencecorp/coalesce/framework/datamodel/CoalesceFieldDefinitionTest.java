@@ -516,7 +516,7 @@ public class CoalesceFieldDefinitionTest {
 
         UUID newGUID = UUID.randomUUID();
 
-        fieldDefinition.setKey(newGUID);
+        fieldDefinition.setKey(newGUID.toString());
 
         assertEquals(newGUID.toString(), fieldDefinition.getKey());
 
