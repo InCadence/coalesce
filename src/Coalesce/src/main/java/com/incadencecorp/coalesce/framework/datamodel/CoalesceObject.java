@@ -5,13 +5,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.xml.namespace.QName;
 
 import org.joda.time.DateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.common.helpers.XmlHelper;
@@ -72,16 +72,16 @@ public abstract class CoalesceObject implements ICoalesceObject {
      * Unique identifier for this object.
      */
     public static final String ATTRIBUTE_KEY = "key";
-    
+
     /**
      * @see ICoalesceObject#isNoIndex()
      */
-    public static final String ATTRIBUTE_NOINDEX= "noindex";
-    
+    public static final String ATTRIBUTE_NOINDEX = "noindex";
+
     /**
      * @see ICoalesceObject#isFlatten()
      */
-    public static final String ATTRIBUTE_FLATTEN= "flatten";
+    public static final String ATTRIBUTE_FLATTEN = "flatten";
 
     private CoalesceObject _parent;
     private CoalesceObjectType _object;
@@ -144,7 +144,7 @@ public abstract class CoalesceObject implements ICoalesceObject {
     {
         setDateCreated(JodaDateTimeHelper.fromXmlDateTimeUTC(value));
     }
-    
+
     @JsonIgnore
     @Override
     public final void setDateCreated(DateTime value)
@@ -409,18 +409,21 @@ public abstract class CoalesceObject implements ICoalesceObject {
     @Override
     public void setKey(String key)
     {
-        CoalesceObject parent = getParent();
-
-        if (parent != null)
+        if (GUIDHelper.isValid(key))
         {
-            parent.removeChildCoalesceObject(this);
-        }
+            CoalesceObject parent = getParent();
 
-        _object.setKey(key);
+            if (parent != null)
+            {
+                parent.removeChildCoalesceObject(this);
+            }
 
-        if (parent != null)
-        {
-            parent.addChildCoalesceObject(this);
+            _object.setKey(key);
+
+            if (parent != null)
+            {
+                parent.addChildCoalesceObject(this);
+            }
         }
     }
 
@@ -432,11 +435,8 @@ public abstract class CoalesceObject implements ICoalesceObject {
      * @param guid UUID to be the Coalesce object's key.
      */
     /*
-    public final void setKey(UUID guid)
-    {
-        setKey(guid.toString());
-    }
-    */
+     * public final void setKey(UUID guid) { setKey(guid.toString()); }
+     */
 
     @Override
     public final String getTag()

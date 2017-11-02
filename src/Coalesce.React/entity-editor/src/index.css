@@ -50,3 +50,7 @@
   margin: 0.1em;
   width: 80px;
 }
+
+.ReactTable select {
+  height: 26px;
+}

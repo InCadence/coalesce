@@ -115,6 +115,7 @@ public class EntityDataController {
         String version = obj.getString(CoalesceEntity.ATTRIBUTE_VERSION);
 
         CoalesceEntity entity = null;
+        CoalesceEntityTemplate template = null;
 
         // Load Template
         try
@@ -128,9 +129,9 @@ public class EntityDataController {
                                     "name=" + name + ", source=" + source + ", version=" + version));
             }
 
-            entity = exim.importValues(obj, CoalesceEntityTemplate.create(xml));
+            template = CoalesceEntityTemplate.create(xml);
         }
-        catch (CoalesceException | JSONException | SAXException | IOException e)
+        catch (CoalesceException | SAXException | IOException e)
         {
             error(String.format(CoalesceErrors.NOT_FOUND,
                                 "Template",
@@ -138,6 +139,15 @@ public class EntityDataController {
                   e);
         }
 
+        try
+        {
+            entity = exim.importValues(obj, template);
+        }
+        catch (CoalesceException e)
+        {
+            error(String.format(CoalesceErrors.NOT_SAVED, "Entity", name, e.getMessage()), e);
+        }
+        
         return entity;
     }
 

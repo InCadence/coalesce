@@ -18,22 +18,27 @@ export class RecordsetView extends React.Component
   }
 
   render() {
-    const {recordset, data, isOpened} = this.state;
+    const {recordset, data, isOpened, showAll} = this.state;
 
     var that = this;
     var columns = [{Header: 'key', accessor: 'key', show: false}];
 
     // Buttons Creation
     var buttons = {};
-    buttons['Header'] = 'Key';
-    buttons['accessor'] = 'entity2Key';
+    buttons['Header'] = 'Status';
+    buttons['accessor'] = 'status';
     buttons['resizable'] = false;
     buttons['sortable'] = false;
-    buttons['Cell'] = (cell) => (
-      <button class="ui-button ui-widget ui-corner-all ui-button-icon-only" title="Delete" onClick={that.deleteRow.bind(that, cell.row.key)}>
-        <span class="ui-icon ui-icon-minusthick"></span>-
-      </button>
-    );
+    buttons['Cell'] = (cell) => {
+      // TODO Pull o  ptions from an enumeration
+      return (
+        <select onChange={that.changeStatus.bind(that, cell.row.key)} value={cell.row.status}>
+          <option value='ACTIVE'>Active</option>
+          <option value='READONLY'>Readonly</option>
+          <option value='DELETED'>Deleted</option>
+        </select>
+      )
+    }
 
     columns.push(buttons);
 
@@ -48,7 +53,9 @@ export class RecordsetView extends React.Component
     if (data != null && data.allRecords != null)
     {
       data.allRecords.forEach(function(record) {
-        tabledata.push(that.createDataRow(record, recordset.fieldDefinitions));
+        if (showAll || record.status !== 'DELETED') {
+          tabledata.push(that.createDataRow(record, recordset.fieldDefinitions));
+        }
       });
     }
 
@@ -69,9 +76,13 @@ export class RecordsetView extends React.Component
               columns={columns}
             />
           </Collapse>
-          <button id="add" class="ui-button ui-widget ui-corner-all ui-button-icon-only" title="Add" onClick={this.createRow.bind(that)}>
-            <span className="ui-icon ui-icon-plusthick"></span>+
-          </button>
+          <div className='form-buttons'>
+            <input type='checkbox'  onClick={this.toggleShowAll.bind(that)} />
+            <label>Show All</label>
+            <button id="add" className="mm-popup__btn mm-popup__btn--success" title="Add" onClick={this.createRow.bind(that)}>
+              Add
+            </button>
+          </div>
       </div>
     )
   }
@@ -92,13 +103,21 @@ export class RecordsetView extends React.Component
   }
 
   createDataRow(record, fieldDefinitions) {
-    var row = {key: record.key};
+    var row = {
+      key: record.key,
+      status: record.status
+    };
 
     fieldDefinitions.forEach(function(fd) {
 
       for (var ii=0; ii<record.fields.length; ii++) {
         if (record.fields[ii].name === fd.name) {
-          row[fd.name] = record.fields[ii].value;
+
+          if (record.fields[ii].value == null) {
+            row[fd.name] = '';
+          } else {
+            row[fd.name] = record.fields[ii].value;
+          }
           break;
         }
       }
@@ -109,11 +128,58 @@ export class RecordsetView extends React.Component
   }
 
   createRow(e) {
-    alert("TODO: Not Implemented");
+
+    const {recordset, data, newIdx} = this.state;
+
+    var fields = [];
+
+    recordset.fieldDefinitions.forEach(function(fd) {
+
+      var field = {};
+
+      field = Object.assign({}, fd);
+
+      field.value = fd.defaultValue;
+      field.key = '';
+
+      fields.push(field);
+    });
+
+    data.allRecords.push({
+      key: newIdx,
+      status: 'ACTIVE',
+      name: recordset.name + ' Record',
+      type: 'record',
+      fields: fields
+    });
+
+    console.log(data.allRecords[data.allRecords.length -1].key);
+
+    this.setState({
+      data: data,
+      newIdx: newIdx + 1,
+      showAll: false
+    });
   }
 
-  deleteRow(recordkey, e) {
-    alert("TODO: Not Implemented (Delete record: " + recordkey + ")");
+  changeStatus(recordkey, e) {
+
+    const {data} = this.state;
+
+    data.allRecords.forEach(function (record) {
+      if (record.key === recordkey) {
+        record.status = e.target.value;
+      }
+    })
+
+    this.setState({
+      data: data
+    })
+
+  }
+
+  toggleShowAll(e) {
+    this.setState({showAll: e.target.checked})
   }
 
   handleChange (recordkey, fieldname, e){
@@ -144,7 +210,8 @@ export class RecordsetView extends React.Component
 }
 
 RecordsetView.defaultProps = {
-  isOpened: true
+  isOpened: true,
+  newIdx: 0
 }
 
 export class RecordView extends React.Component {

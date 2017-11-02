@@ -35,6 +35,7 @@ import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.CoalesceExim;
 import com.incadencecorp.coalesce.api.Views;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
+import com.incadencecorp.coalesce.common.helpers.GUIDHelper;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
@@ -98,7 +99,11 @@ public class JsonFullEximImpl implements CoalesceExim<JSONObject> {
                                                                    "namepath", "sectionsaslist", "otherattributes",
                                                                    "recordsetsaslist", "linkagesection", "tag",
                                                                    "fielddefinitions", "allrecords", "fields",
-                                                                   "linkagesaslist", "datatype"
+                                                                   "linkagesaslist", "datatype", "datecreatedasstring",
+                                                                   "lastmodifiedasstring", "type", "classname",
+                                                                   "portionmarking", "classificationmarkingasstring",
+                                                                   "allowedit", "allownew", "allowremove", "count",
+                                                                   "hasactiverecords", "hasrecords"
     });
 
     @Override
@@ -135,30 +140,31 @@ public class JsonFullEximImpl implements CoalesceExim<JSONObject> {
         CoalesceSection section = parent.getEntity().getCoalesceSectionForNamePath(path);
 
         // Exists?
-        if (section == null)
+        if (section != null)
         {
-            throw new CoalesceException(String.format(CoalesceErrors.INVALID_OBJECT, "Section", path));
+            // Copy Attributes
+            copyAttributes(json, section);
+
+            // Create Nested Sections
+            JSONArray jsonSections = json.getJSONArray("sectionsAsList");
+
+            for (int ii = 0; ii < jsonSections.length(); ii++)
+            {
+                copySection(jsonSections.getJSONObject(ii), section);
+            }
+
+            // Create Record Sets
+            JSONArray jsonRecordSets = json.getJSONArray("recordsetsAsList");
+
+            for (int ii = 0; ii < jsonRecordSets.length(); ii++)
+            {
+                copyRecordset(jsonRecordSets.getJSONObject(ii), section);
+            }
         }
-
-        // Copy Attributes
-        copyAttributes(json, section);
-
-        // Create Nested Sections
-        JSONArray jsonSections = json.getJSONArray("sectionsAsList");
-
-        for (int ii = 0; ii < jsonSections.length(); ii++)
+        else
         {
-            copySection(jsonSections.getJSONObject(ii), section);
+            LOGGER.warn(String.format(CoalesceErrors.INVALID_OBJECT, "Section", path));
         }
-
-        // Create Record Sets
-        JSONArray jsonRecordSets = json.getJSONArray("recordsetsAsList");
-
-        for (int ii = 0; ii < jsonRecordSets.length(); ii++)
-        {
-            copyRecordset(jsonRecordSets.getJSONObject(ii), section);
-        }
-
     }
 
     private void copyRecordset(JSONObject json, CoalesceSection section) throws CoalesceException
@@ -168,25 +174,27 @@ public class JsonFullEximImpl implements CoalesceExim<JSONObject> {
         CoalesceRecordset recordset = section.getEntity().getCoalesceRecordsetForNamePath(path);
 
         // Exists?
-        if (recordset == null)
+        if (recordset != null)
         {
-            throw new CoalesceException(String.format(CoalesceErrors.INVALID_OBJECT, "Recordset", path));
-        }
+            copyAttributes(json, recordset);
 
-        copyAttributes(json, recordset);
+            JSONArray jsonRecords = json.getJSONArray("allRecords");
 
-        JSONArray jsonRecords = json.getJSONArray("allRecords");
-
-        if (recordset.getMaxRecords() == 1)
-        {
-            copyRecord(jsonRecords.getJSONObject(0), recordset.getAllRecords().get(0));
+            if (recordset.getMaxRecords() == 1)
+            {
+                copyRecord(jsonRecords.getJSONObject(0), recordset.getAllRecords().get(0));
+            }
+            else
+            {
+                for (int ii = 0; ii < jsonRecords.length(); ii++)
+                {
+                    copyRecord(jsonRecords.getJSONObject(ii), recordset.addNew());
+                }
+            }
         }
         else
         {
-            for (int ii = 0; ii < jsonRecords.length(); ii++)
-            {
-                copyRecord(jsonRecords.getJSONObject(ii), recordset.addNew());
-            }
+            LOGGER.warn(String.format(CoalesceErrors.INVALID_OBJECT, "Recordset", path));
         }
 
     }
