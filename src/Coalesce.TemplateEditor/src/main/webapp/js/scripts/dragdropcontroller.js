@@ -296,7 +296,7 @@ app.run( function ( $rootScope , $http, graphUtils, graphHolder) {
 
 																		var coalesceCell = new CoalesceCell(entityCell);
 
-																		coalesceCell.setCoalesceObj(new CoalesceEntityTemplate(name,source,"1",classname,[]));
+																		coalesceCell.setCoalesceObj(new CoalesceEntityTemplate("new", name,source,"1",classname,[]));
 
 																		coalesceCell.setEditorOpen(false);
 
@@ -451,7 +451,11 @@ app.run( function ( $rootScope , $http, graphUtils, graphHolder) {
 					    "coalesceType": CoalesceObjectType.ENTITY,
 					    "classname": className,
 							"state": {"opened":true},
-							"data":{"source":template.source, "version":template.version}
+							"data":{
+								"key":template.key,
+								"source":template.source,
+								"version":template.version
+							}
 					  },"last");
 
 					if (template.sectionsAsList != null) {
@@ -469,13 +473,17 @@ app.run( function ( $rootScope , $http, graphUtils, graphHolder) {
 									var recordsetId = $( '#' + entityNameNoSpace ).jstree('create_node',sectionId,{
 									    "text": recordset.name,
 									    "coalesceType": CoalesceObjectType.RECORDSET,
-											"data":{"minRecords":recordset.minRecords,"maxRecords":recordset.maxRecords}
+											"data":{
+												"minRecords":recordset.minRecords,
+												"maxRecords":recordset.maxRecords
+											}
 									  },"last");
 
 									recordset.fieldDefinitions.forEach(function (definition) {
 
 											var fieldId = $( '#' + entityNameNoSpace ).jstree('create_node',recordsetId,{
 											    "text": definition.name + ":" + definition.dataType,
+													"coalesceType": CoalesceObjectType.FIELD_DEF,
 											    "fieldType": definition.dataType
 											  },"last");
 
@@ -654,10 +662,16 @@ function editMenu ( node ) {
 		                		})
 		                }
 			};
-		case CoalesceObjectType.FIELD_DEF:
 			break;
+		case CoalesceObjectType.FIELD_DEF:
+				items.editMaxRecords = {
+				 	"label": "Set as Title" , // Different label (defined above) will be shown depending on node type
+					"action": function (obj) {
+						alert('Not Implemented');
+					}
+				};
+				break;
 		default:
-			// do nothing
 	}
 
 	// add delete option for every type but ENTITY
@@ -787,7 +801,7 @@ function coalesceEditCellToCoalesceObj(content, className){
 		coalesceEntityTemplate.className = templateName.replace(/\s/g, '');
 	}
 
-	var coalesceEntityTemplate = new CoalesceEntityTemplate(templateName, tree[0].data.source, tree[0].data.version, className, []);
+	var coalesceEntityTemplate = new CoalesceEntityTemplate(tree[0].data.key, templateName, tree[0].data.source, tree[0].data.version, className, []);
 
 	var sectionCells = tree[0].children;
 

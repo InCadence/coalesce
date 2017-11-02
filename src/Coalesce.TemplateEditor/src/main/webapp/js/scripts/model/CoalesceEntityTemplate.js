@@ -1,4 +1,5 @@
-function CoalesceEntityTemplate (name, source, version, classname, sections){
+function CoalesceEntityTemplate (key, name, source, version, classname, sections){
+	this.key=key;
 	this.name=name;
 	this.source=source;
 	this.version=version;
@@ -27,6 +28,7 @@ function CoalesceEntityTemplate (name, source, version, classname, sections){
 
 	this.initialize = function (obj){
 		if(obj.objType == CoalesceObjectType.ENTITY){
+			this.key=obj.key;
 			this.name=obj.name;
 			this.source=obj.name;
 			this.version=obj.name;

@@ -5,7 +5,7 @@
   "description": "Generic interface for creating, viewing, and editing Coalesce entities.",
   "main": "index.js",
   "private": true,
-  "homepage": "/search2",
+  "homepage": "/search",
   "dependencies": {
     "jquery": "^3.2.1",
     "react": "^16.0.0",

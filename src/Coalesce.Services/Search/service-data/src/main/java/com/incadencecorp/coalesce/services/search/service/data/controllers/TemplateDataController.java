@@ -235,6 +235,11 @@ public class TemplateDataController {
 
     }
 
+    public String getTemplateXml(String name, String source, String version) throws RemoteException
+    {
+        return getTemplate(name, source, version).toXml();
+    }
+
     /**
      * @param key
      * @return the {@link CoalesceEntityTemplate} for the specified key.

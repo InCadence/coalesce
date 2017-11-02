@@ -33,10 +33,15 @@ public interface ITemplateDataControllerJaxRS {
     List<ObjectMetaData> getEntityTemplateMetadata() throws RemoteException;
 
     @GET
-    @Path("/{name}/{source}/{version}")
+    @Path("/{name}/{source}/{version}{ext:(.json)?}")
     @Produces("application/json")
     CoalesceEntity getTemplate(@PathParam("name") String name, @PathParam("source") String source, @PathParam("version") String version) throws RemoteException;
     
+    @GET
+    @Path("/{name}/{source}/{version}.xml")
+    @Produces("application/xml")
+    String getTemplateXml(@PathParam("name") String name, @PathParam("source") String source, @PathParam("version") String version) throws RemoteException;
+
     @GET
     @Path("/{key:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}}{ext:(.json)?}")
     @JsonView(Views.Template.class)
@@ -50,12 +55,12 @@ public interface ITemplateDataControllerJaxRS {
     String getTemplateXml(@PathParam("key") String key) throws RemoteException;
 
     @POST
-    @Path("/{key:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}}{ext:(.json)?}")
+    @Path("/{key}{ext:(.json)?}")
     @Consumes("application/json")
     boolean setTemplateJson(@PathParam("key") String key, String json) throws RemoteException;
 
     @POST
-    @Path("/{key:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}}.xml")
+    @Path("/{key}.xml")
     @Consumes("application/xml")
     boolean setTemplateXml(@PathParam("key") String key, String xml) throws RemoteException;
     
@@ -81,11 +86,13 @@ public interface ITemplateDataControllerJaxRS {
 
     @GET
     @Path("/{key:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}}/recordsets")
+    @JsonView(Views.Template.class)
     @Produces("application/json")
     List<CoalesceObjectImpl> getRecordSets(@PathParam("key") String key) throws RemoteException;
 
     @GET
-    @Path("/{key:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}}/recordsets/{recordsetKey:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}}/fields")
+    @Path("/{key:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}}/recordsets/{recordsetKey}/fields")
+    @JsonView(Views.Template.class)
     @Produces("application/json")
     List<FieldData> getRecordSetFields(@PathParam("key") String key, @PathParam("recordsetKey") String recordsetKey)
             throws RemoteException;

@@ -22,10 +22,12 @@ export class FilterCreator extends React.Component {
 
   componentDidMount() {
 
+    const {recordsets} = this.state;
+
     var tabledata = [{
       key: 0,
-      recordset: this.state.recordsets[0].name,
-      field: this.state.recordsets[0].definition[0].name,
+      recordset: recordsets[0].name,
+      field: recordsets[0].definition[0].name,
       comparer: '=',
       value: '',
       matchCase: false}];
@@ -53,17 +55,17 @@ export class FilterCreator extends React.Component {
           />
           <Collapse className="ui-widget-content" isOpened={isOpened}>
             <div className="section">
-            <ReactTable
-              pageSize={this.props.maxRows}
-              data={tabledata}
-              showPagination={false}
-              columns={createColumns(this, recordsets)}
-            />
-            <div className="form-buttons">
-              <button onClick={this.addRow.bind(this)} className="mm-popup__btn mm-popup__btn--cancel">add</button>
-              <button onClick={this.props.onSearch.bind(this, this.state.tabledata)} className='mm-popup__btn mm-popup__btn--success'>search</button>
+              <ReactTable
+                pageSize={this.props.maxRows}
+                data={tabledata}
+                showPagination={false}
+                columns={createColumns(this, recordsets)}
+              />
+              <div className="form-buttons">
+                <button onClick={this.addRow.bind(this)} className="mm-popup__btn mm-popup__btn--cancel">add</button>
+                <button onClick={this.props.onSearch.bind(this, this.state.tabledata)} className='mm-popup__btn mm-popup__btn--success'>search</button>
+              </div>
             </div>
-                        </div>
           </Collapse>
       </div>
     )

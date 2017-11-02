@@ -79,7 +79,7 @@ export class RecordsetView extends React.Component
           <div className='form-buttons'>
             <input type='checkbox'  onClick={this.toggleShowAll.bind(that)} />
             <label>Show All</label>
-            <button id="add" className="mm-popup__btn mm-popup__btn--success" title="Add" onClick={this.createRow.bind(that)}>
+            <button id="add" className="mm-popup__btn mm-popup__btn--cancel" title="Add" onClick={this.createRow.bind(that)}>
               Add
             </button>
           </div>

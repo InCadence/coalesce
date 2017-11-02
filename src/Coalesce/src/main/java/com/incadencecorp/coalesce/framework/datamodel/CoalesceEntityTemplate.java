@@ -206,7 +206,7 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
      * 
      * @return String the Node's name attribute
      */
-    public String getKey()  
+    public String getKey()
     {
         String result = XmlHelper.getAttribute(getEntityNode(), CoalesceEntity.ATTRIBUTE_KEY);
 
@@ -297,22 +297,22 @@ public class CoalesceEntityTemplate implements Comparable<CoalesceEntityTemplate
         // Create Singleton Records
         for (CoalesceSection section : entity.getSectionsAsList())
         {
-            populateSingletonRecords(section);
+            populateMinRecords(section);
         }
 
         return entity;
     }
 
-    private void populateSingletonRecords(CoalesceSection section)
+    private void populateMinRecords(CoalesceSection section)
     {
         for (CoalesceSection subsection : section.getSectionsAsList())
         {
-            populateSingletonRecords(subsection);
+            populateMinRecords(subsection);
         }
 
         for (CoalesceRecordset recordset : section.getRecordsetsAsList())
         {
-            if (recordset.getMaxRecords() == 1)
+            for (int ii = 0; ii < recordset.getMinRecords(); ii++)
             {
                 recordset.addNew();
             }

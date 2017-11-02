@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {EntityView, NewEntityView} from './entity.js'
+import {EntityView} from './entity.js'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import Popup from 'react-popup';
 import Prompt from 'common-components/lib/prompt.js'
@@ -31,24 +31,24 @@ const Default = ({match}) => {
   var params={};window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi,function(s,k,v){params[k]=v});
 
   if (params['entitykey'] != null) {
-    return React.createElement(EntityView, {entitykey: params['entitykey']});
+    return React.createElement(EntityView, {objectkey: params['entitykey'], isNew: false});
   } else if (params['templatekey'] != null) {
-    return React.createElement(NewEntityView, {templatekey: params['templatekey']});
+    return React.createElement(EntityView, {objectkey: params['templatekey'], isNew: true});
   } else {
     return (<div/>);
   }
 }
 
 const EditEntity = ({match}) => {
-  return React.createElement(EntityView, {entitykey: match.params.entitykey});
+  return React.createElement(EntityView, {objectkey: match.params.entitykey, isNew: false});
 }
 
 const ViewEntity = ({match}) => {
-  return React.createElement(EntityView, {entitykey: match.params.entitykey});
+  return React.createElement(EntityView, {objectkey: match.params.entitykey, isNew: false});
 }
 
 const NewEntity = ({match}) => {
-  return React.createElement(NewEntityView, {templatekey: match.params.templateKey});
+  return React.createElement(EntityView, {objectkey: match.params.templateKey, isNew: true});
 }
 
 // Default Component
@@ -74,7 +74,7 @@ ReactDOM.render(
             ReactDOM.unmountComponentAtNode(document.getElementById('entityview'));
 
             ReactDOM.render(
-              React.createElement(NewEntityView, {templatekey: value}),
+              React.createElement(EntityView, {objectkey: value, isNew: true}),
               document.getElementById('entityview')
             );
           });
@@ -88,7 +88,7 @@ ReactDOM.render(
             ReactDOM.unmountComponentAtNode(document.getElementById('entityview'));
 
             ReactDOM.render(
-              React.createElement(EntityView, {entitykey: value}),
+              React.createElement(EntityView, {objectkey: value, isNew: false}),
               document.getElementById('entityview')
             );
           });

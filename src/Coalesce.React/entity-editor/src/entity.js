@@ -7,9 +7,7 @@ import $ from 'jquery'
 import './index.css'
 import 'react-table/react-table.css'
 
-var karafRootAddr = 'http://' + window.location.hostname + ':8181';
-
-export class NewEntityView extends React.Component {
+export class EntityView extends React.Component {
 
   constructor(props) {
     super(props);
@@ -17,26 +15,63 @@ export class NewEntityView extends React.Component {
     }
 
   componentDidMount() {
-    if (this.props.data == null) {
-      fetch(karafRootAddr + '/cxf/data/templates/' + this.props.templatekey)
+
+    const {isNew} = this.state;
+    const {objectkey, rootUrl} = this.props;
+
+    if (isNew) {
+      fetch(rootUrl + '/cxf/data/templates/' + objectkey)
         .then(res => res.json())
         .then(template => {
 
-          fetch(karafRootAddr + '/cxf/data/templates/' + this.props.templatekey + "/new")
+          fetch(rootUrl + '/cxf/data/templates/' + objectkey + "/new")
             .then(res => res.json())
             .then(data => {
               this.setState({data: data})
               this.setState({template: template})
-            })
+            }).catch(function(error) {
+              alert('Failed to create new entity (' + objectkey + ')');
+            });
+        }).catch(function(error) {
+            alert('Failed to load template (' + objectkey + ')');
+        });
+    } else {
+      fetch(rootUrl + '/cxf/data/entity/' + objectkey)
+        .then(res => res.json())
+        .then(data => {
 
-        })
+          fetch(rootUrl + '/cxf/data/templates/' + data.name + '/' + data.source + '/' + data.version)
+            .then(res => res.json())
+            .then(template => {
+              this.setState({data: data})
+              this.setState({template: template})
+            }).catch(function(error) {
+              alert('Failed to load template (' + data.name + ', ' + data.source + ', ' + data.version + ')');
+            });
+        }).catch(function(error) {
+          alert('Failed to load entity (' + objectkey + ')');
+        });
     }
   }
 
   onSave() {
     const {data, isNew} = this.state;
+    const {rootUrl} = this.props.objectkey;
 
-    postEntity(data, isNew);
+    $.ajax({
+      type : ((isNew) ? "PUT" : "POST"),
+      url: rootUrl + '/cxf/data/entity/' + data.key,
+      data : JSON.stringify(data),
+      contentType : "application/json; charset=utf-8",
+      success : function(data, status, jqXHR) {
+        alert('Saved');
+      },
+      error : function(jqXHR, status) {
+        alert('Failed: ' + JSON.stringify(jqXHR));
+        // error handler
+        console.log(jqXHR);
+      }
+    });
 
     this.setState({
       isNew: false
@@ -46,122 +81,63 @@ export class NewEntityView extends React.Component {
   render() {
     const {data, template} = this.state;
 
-    return renderEntity(template, data, this.onSave.bind(this));
-  }
+    var sections = [];
+    var linkages;
 
-};
+    if (template != null) {
 
-NewEntityView.defaultProps = {
-  isNew: true
-}
+      // Render Sections
+      template.sectionsAsList.forEach(function(section) {
+        sections.push(renderSection(section, getElement(section.name, data.sectionsAsList)));
+      });
 
-export class EntityView extends React.Component {
-
-  constructor(props) {
-    super(props);
-    this.state = props;
+      if (data != null) {
+        linkages = (<LinkageView linkages={data.linkageSection.linkagesAsList} />);
+      }
     }
 
-  componentDidMount() {
-    if (this.props.data == null) {
-      fetch(karafRootAddr + '/cxf/data/entity/' + this.props.entitykey)
-        .then(res => res.json())
-        .then(data => {
-
-          fetch(karafRootAddr + '/cxf/data/templates/' + data.name + '/' + data.source + '/' + data.version)
-            .then(res => res.json())
-            .then(template => {
-              this.setState({data: data})
-              this.setState({template: template})
-            })
-        })
-    }
-  }
-
-  onSave() {
-    const {data} = this.state;
-
-    postEntity(data, false);
-  }
-
-  render() {
-    const {data, template} = this.state;
-
-    return renderEntity(template, data, this.onSave.bind(this));
-  }
-
-};
-
-function postEntity(data, isNew) {
-
-  $.ajax({
-    type : ((isNew) ? "PUT" : "POST"),
-    url: karafRootAddr + '/cxf/data/entity/' + data.key,
-    data : JSON.stringify(data),
-    contentType : "application/json; charset=utf-8",
-    success : function(data, status, jqXHR) {
-      alert('Saved');
-    },
-    error : function(jqXHR, status) {
-      alert('Failed: ' + JSON.stringify(jqXHR));
-      // error handler
-      console.log(jqXHR);
-    }
-  });
-
-}
-
-function renderEntity(template, data, callback) {
-  var sections = [];
-  var linkages;
-
-  if (template != null) {
-
-    // Render Sections
-    template.sectionsAsList.forEach(function(section) {
-      sections.push(renderSection(section, getElement(section.name, data.sectionsAsList)));
-    });
-
-    if (data != null) {
-      linkages = (<LinkageView linkages={data.linkageSection.linkagesAsList} />);
-    }
-  }
-
-  return (
-    <div>
+    return (
       <div>
-        <div className="row">
-          <label className="col-sm-2 col-form-label">Title</label>
-          <div className="col-sm-4">{data != null ? data.title : ''}</div>
-          <label className="col-sm-2 col-form-label">Name</label>
-          <div className="col-sm-4">{template != null ? template.name : ''}</div>
+        <div>
+          <div className="row">
+            <label className="col-sm-2 col-form-label">Title</label>
+            <div className="col-sm-4">{data != null ? data.title : ''}</div>
+            <label className="col-sm-2 col-form-label">Name</label>
+            <div className="col-sm-4">{template != null ? template.name : ''}</div>
+          </div>
+          <div className="row">
+            <label className="col-sm-2 col-form-label">Created</label>
+            <div className="col-sm-4">{data != null ? data.dateCreatedAsString : ''}</div>
+            <label className="col-sm-2 col-form-label">Source</label>
+            <div className="col-sm-4">{template != null ? template.source : ''}</div>
+          </div>
+          <div className="row">
+            <label className="col-sm-2 col-form-label">Last Modified</label>
+            <div className="col-sm-4">{data != null ? data.lastModifiedAsString : ''}</div>
+            <label className="col-sm-2 col-form-label">Version</label>
+            <div className="col-sm-4">{template != null ? template.version : ''}</div>
+          </div>
+          <div className="row">
+            <label className="col-sm-2 col-form-label">Key</label>
+            <div className="col-sm-4">{data != null ? data.key : ''}</div>
+            <label className="col-sm-2 col-form-label">Revision</label>
+            <div className="col-sm-4">{data != null ? data.objectVersion : ''}</div>
+          </div>
         </div>
-        <div className="row">
-          <label className="col-sm-2 col-form-label">Created</label>
-          <div className="col-sm-4">{data != null ? data.dateCreatedAsString : ''}</div>
-          <label className="col-sm-2 col-form-label">Source</label>
-          <div className="col-sm-4">{template != null ? template.source : ''}</div>
-        </div>
-        <div className="row">
-          <label className="col-sm-2 col-form-label">Last Modified</label>
-          <div className="col-sm-4">{data != null ? data.lastModifiedAsString : ''}</div>
-          <label className="col-sm-2 col-form-label">Version</label>
-          <div className="col-sm-4">{template != null ? template.version : ''}</div>
-        </div>
-        <div className="row">
-          <label className="col-sm-2 col-form-label">Key</label>
-          <div className="col-sm-4">{data != null ? data.key : ''}</div>
-          <label className="col-sm-2 col-form-label">Revision</label>
-          <div className="col-sm-4">{data != null ? data.objectVersion : ''}</div>
+        {linkages}
+        {sections}
+        <div className="form-buttons">
+          <button className='mm-popup__btn mm-popup__btn--success' onClick={this.onSave.bind(this)}>save</button>
         </div>
       </div>
-      {linkages}
-      {sections}
-      <div className="form-buttons">
-        <button className='mm-popup__btn mm-popup__btn--success' onClick={callback}>save</button>
-      </div>
-    </div>
-  )
+    )
+  }
+
+};
+
+EntityView.defaultProps = {
+  isNew: true,
+  rootUrl: 'http://' + window.location.hostname + ':8181'
 }
 
 function getElement(name, data)

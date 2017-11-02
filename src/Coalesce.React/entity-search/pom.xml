@@ -57,8 +57,8 @@
 						<Import-Package>
 							*; resolution:=optional
 						</Import-Package>
-						<Web-ContextPath>search2</Web-ContextPath>
-						<Webapp-Context>search2</Webapp-Context>
+						<Web-ContextPath>search</Web-ContextPath>
+						<Webapp-Context>search</Webapp-Context>
 						<Embed-Dependency>
 							*; artifactId=!org.osgi.compendium;
 							scope=compile; type=!pom; inline=false</Embed-Dependency>
