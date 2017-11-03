@@ -6,8 +6,6 @@ import {MapView} from './map.js'
 
 import './index.css'
 
-import {MultiSelectField} from './multiexample.js'
-
 ReactDOM.render(
   React.createElement(MapView, {
     geoserver: 'http://bdpgeoserver.bdpdev.incadencecorp.com:8181/geoserver',
