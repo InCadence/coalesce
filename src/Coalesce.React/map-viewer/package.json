@@ -8,6 +8,7 @@
   "private": true,
   "homepage": "/map",
   "dependencies": {
+    "jquery": "^3.2.1",    
     "openlayers": "^4.4.2",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
