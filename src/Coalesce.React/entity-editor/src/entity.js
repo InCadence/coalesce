@@ -56,7 +56,7 @@ export class EntityView extends React.Component {
 
   onSave() {
     const {data, isNew} = this.state;
-    const {rootUrl} = this.props.objectkey;
+    const {rootUrl} = this.props;
 
     $.ajax({
       type : ((isNew) ? "PUT" : "POST"),

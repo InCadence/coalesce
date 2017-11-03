@@ -13,4 +13,7 @@
 	<feature name="coalesce-map-viewer" description="">
 	        <bundle start-level="75">mvn:com.incadencecorp.coalesce.react/map-viewer/${project.version}/war</bundle>
 	</feature>
+	<feature name="coalesce-home" description="">
+	        <bundle start-level="75">mvn:com.incadencecorp.coalesce.react/coalesce-home/${project.version}/war</bundle>
+	</feature>
 </features>

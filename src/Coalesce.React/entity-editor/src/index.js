@@ -10,6 +10,8 @@ import {Menu} from 'common-components/lib/menu.js'
 import './index.css'
 import 'common-components/css/popup.css'
 
+var rootUrl = 'http://' + window.location.hostname + ':8181'
+
 class App extends React.Component {
   render() {
     return (
@@ -31,24 +33,44 @@ const Default = ({match}) => {
   var params={};window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi,function(s,k,v){params[k]=v});
 
   if (params['entitykey'] != null) {
-    return React.createElement(EntityView, {objectkey: params['entitykey'], isNew: false});
+    return React.createElement(EntityView, {
+      objectkey: params['entitykey'],
+      isNew: false,
+      rootUrl: rootUrl
+    });
   } else if (params['templatekey'] != null) {
-    return React.createElement(EntityView, {objectkey: params['templatekey'], isNew: true});
+    return React.createElement(EntityView, {
+      objectkey: params['templatekey'],
+      isNew: true,
+      rootUrl: rootUrl
+    });
   } else {
     return (<div/>);
   }
 }
 
 const EditEntity = ({match}) => {
-  return React.createElement(EntityView, {objectkey: match.params.entitykey, isNew: false});
+  return React.createElement(EntityView, {
+    objectkey: match.params.entitykey,
+    isNew: false,
+    rootUrl: rootUrl
+  });
 }
 
 const ViewEntity = ({match}) => {
-  return React.createElement(EntityView, {objectkey: match.params.entitykey, isNew: false});
+  return React.createElement(EntityView, {
+    objectkey: match.params.entitykey,
+    isNew: false,
+    rootUrl: rootUrl
+  });
 }
 
 const NewEntity = ({match}) => {
-  return React.createElement(EntityView, {objectkey: match.params.templateKey, isNew: true});
+  return React.createElement(EntityView, {
+    objectkey: match.params.templateKey,
+    isNew: true,
+    rootUrl: rootUrl
+  });
 }
 
 // Default Component
@@ -74,7 +96,11 @@ ReactDOM.render(
             ReactDOM.unmountComponentAtNode(document.getElementById('entityview'));
 
             ReactDOM.render(
-              React.createElement(EntityView, {objectkey: value, isNew: true}),
+              React.createElement(EntityView, {
+                objectkey: value,
+                isNew: true,
+                rootUrl: rootUrl
+              }),
               document.getElementById('entityview')
             );
           });
@@ -88,7 +114,11 @@ ReactDOM.render(
             ReactDOM.unmountComponentAtNode(document.getElementById('entityview'));
 
             ReactDOM.render(
-              React.createElement(EntityView, {objectkey: value, isNew: false}),
+              React.createElement(EntityView, {
+                objectkey: value,
+                isNew: false,
+                rootUrl: rootUrl
+              }),
               document.getElementById('entityview')
             );
           });

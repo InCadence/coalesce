@@ -19,6 +19,7 @@
 		<module>entity-editor</module>
 		<module>entity-search</module>
 		<module>map-viewer</module>
+		<module>home</module>
 		<module>feature</module>
 	</modules>
 	

@@ -13,5 +13,6 @@
 		<feature prerequisite="false" dependency="false">coalesce-entity-editor</feature>
 		<feature prerequisite="false" dependency="false">coalesce-entity-search</feature>
 		<feature prerequisite="false" dependency="false">coalesce-map-viewer</feature>
+		<feature prerequisite="false" dependency="false">coalesce-home</feature>
 	</feature>
 </features>
