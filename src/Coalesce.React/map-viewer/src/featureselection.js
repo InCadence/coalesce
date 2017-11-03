@@ -5,8 +5,6 @@ import {StyleSelection} from './style.js'
 import * as ol from 'openlayers';
 import $ from 'jquery'
 
-import {MultiSelectField} from './multiexample.js'
-
 var rootUrl = 'http://localhost:8181';
 
 export class FeatureSelection extends React.Component {
@@ -207,7 +205,7 @@ function hexToRgbA(hex, alpha){
     throw new Error('Bad Hex');
 }
 
-/** Prompt plugin */
+/** Prompt plugin
 Popup.registerPlugin('promptMultiFeature', function (data, buttontext, callback) {
     let promptValue = null;
     let promptChange = function (value) {
@@ -231,6 +229,7 @@ Popup.registerPlugin('promptMultiFeature', function (data, buttontext, callback)
         }
     });
 })
+//*/
 
 /** Prompt plugin */
 Popup.registerPlugin('promptFeature2', function (data, styles, callback) {
