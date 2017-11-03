@@ -10,6 +10,6 @@ Here is a 50,000 foot view of the Coalesce System.
 
 <img src="https://user-images.githubusercontent.com/3874275/31291316-7e751624-aa9d-11e7-83d6-c24f3b5d3150.png" />
 
-Interested?  Want proof?  Run our "Out of the Box" Demos!
+Interested?  Want proof?  Run our "Out of the Box" Demos! *** URL TBD ***
 
-For further information and instructions - go to our <a href="https://github.com/InCadence/coalesce/wiki">Wiki page</a> (and beging with Getting Started...)
+For further information and instructions - go to our <a href="https://github.com/InCadence/coalesce/wiki">Wiki page</a> (and begin with the Quick Start...)
