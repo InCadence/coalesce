@@ -12,4 +12,4 @@ Here is a 50,000 foot view of the Coalesce System.
 
 Interested?  Want proof?  Run our "Out of the Box" Demos!
 
-For further information and instructions - go to our <a src="https://github.com/InCadence/coalesce/wiki">Wiki page</a> (and beging with Getting Started...)
+For further information and instructions - go to our <a href="https://github.com/InCadence/coalesce/wiki">Wiki page</a> (and beging with Getting Started...)
