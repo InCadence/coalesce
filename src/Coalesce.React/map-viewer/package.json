@@ -1,0 +1,29 @@
+{
+  "name": "map-viewer",
+  "version": "1.0.0",
+  "description": " This UI is a map visualization of coalesce entities",
+  "main": "index.js",
+  "author": "InCadence",
+  "license": "ISC",
+  "private": true,
+  "homepage": "/map",
+  "dependencies": {
+    "openlayers": "^4.4.2",
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0",
+    "react-openlayers": "^0.2.1",
+    "react-popup": "^0.8.0",
+    "react-select": "^1.0.0-rc.10",
+    "react-select-2": "^2.0.11"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "production": "webpack -p"
+  },
+  "devDependencies": {
+    "react-scripts": "^1.0.14"
+  }
+}
