@@ -1,27 +1,40 @@
 package com.incadencecorp.coalesce.services.search.service.data.jaxrs;
 
+import java.rmi.RemoteException;
 import java.util.List;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
+
+import com.incadencecorp.coalesce.services.api.search.QueryType;
+import com.incadencecorp.coalesce.services.search.service.data.model.SearchCriteria;
 
 import com.incadencecorp.coalesce.services.api.search.SearchDataObjectResponse;
-import com.incadencecorp.coalesce.services.search.service.data.model.Option;
+import com.incadencecorp.coalesce.services.search.service.data.model.SearchQuery;
 
 /**
  * JaxRS configuration for {@link SearchDataControllerJaxRS}.
- * 
+ *
  * @author Derek Clemenzi
  */
-@Path("/")
+@Path("/search")
 public interface ISearchDataControllerJaxRS {
 
     @POST
-    @Path("/search")
+    @Path("/simple")
     @Produces("application/json")
     @Consumes("application/json")
-    SearchDataObjectResponse search(List<Option> options);
+    SearchDataObjectResponse search(List<SearchCriteria> options);
+
+    @POST
+    @Path("/complex")
+    @Produces("application/json")
+    @Consumes("application/json")
+    SearchDataObjectResponse searchComplex(SearchQuery query) throws RemoteException;
+
+    @POST
+    @Path("/ogc")
+    @Produces("application/json")
+    @Consumes("application/json")
+    SearchDataObjectResponse searchOGC(QueryType query) throws RemoteException;
 
 }

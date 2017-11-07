@@ -21,22 +21,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.incadencecorp.coalesce.services.search.service.data.model.SearchCriteria;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.incadencecorp.coalesce.api.CoalesceErrors;
-import com.incadencecorp.coalesce.services.search.service.data.model.Option;
 
 /**
  * Responsible for storing and retrieving user search options.
- * 
+ *
  * @author Derek Clemenzi
  */
 public class OptionsDataController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OptionsDataController.class);
 
-    private static final Map<String, List<Option>> OPTIONS = new HashMap<String, List<Option>>();;
+    private static final Map<String, List<SearchCriteria>> OPTIONS = new HashMap<>();
 
     /**
      * Default Constructor
@@ -50,9 +50,9 @@ public class OptionsDataController {
      * @param key
      * @return a list of selected options that were saved with the provided key.
      */
-    public List<Option> loadOptions(String key)
+    public List<SearchCriteria> loadOptions(String key)
     {
-        List<Option> results = new ArrayList<Option>();
+        List<SearchCriteria> results = new ArrayList<SearchCriteria>();
 
         LOGGER.debug("Loading Options [Key: ({})]", key);
 
@@ -70,11 +70,11 @@ public class OptionsDataController {
 
     /**
      * Saves options selected by a user.
-     * 
+     *
      * @param key
      * @param options
      */
-    public void saveOptions(String key, List<Option> options)
+    public void saveOptions(String key, List<SearchCriteria> options)
     {
         LOGGER.debug("Saving Options [Key: ({})]", key);
 

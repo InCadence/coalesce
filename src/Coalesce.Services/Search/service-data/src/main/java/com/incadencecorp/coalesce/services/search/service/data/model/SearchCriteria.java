@@ -18,7 +18,7 @@
 package com.incadencecorp.coalesce.services.search.service.data.model;
 
 
-public class Option {
+public class SearchCriteria {
 
     private String key;
     private String recordset;

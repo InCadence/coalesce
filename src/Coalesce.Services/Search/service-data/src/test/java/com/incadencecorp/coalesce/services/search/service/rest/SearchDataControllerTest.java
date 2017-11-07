@@ -20,6 +20,7 @@ package com.incadencecorp.coalesce.services.search.service.rest;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.incadencecorp.coalesce.services.search.service.data.model.SearchCriteria;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -28,7 +29,6 @@ import com.incadencecorp.coalesce.framework.persistance.memory.MockSearchPersist
 import com.incadencecorp.coalesce.services.api.search.SearchDataObjectResponse;
 import com.incadencecorp.coalesce.services.search.service.client.SearchFrameworkClientImpl;
 import com.incadencecorp.coalesce.services.search.service.data.controllers.SearchDataController;
-import com.incadencecorp.coalesce.services.search.service.data.model.Option;
 
 public class SearchDataControllerTest {
 
@@ -44,9 +44,9 @@ public class SearchDataControllerTest {
         
         persister.saveEntity(false, entity);
         
-        List<Option> options = new ArrayList<Option>();
-        
-        Option option = new Option(); 
+        List<SearchCriteria> options = new ArrayList<SearchCriteria>();
+
+        SearchCriteria option = new SearchCriteria();
         option.setRecordset(TestEntity.RECORDSET1);
         option.setField("boolean");
         option.setValue("false");

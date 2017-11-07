@@ -9,7 +9,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
-import com.incadencecorp.coalesce.services.search.service.data.model.Option;
+import com.incadencecorp.coalesce.services.search.service.data.model.SearchCriteria;
 
 /**
  * JaxRS configuration used on {@link OptionsDataControllerJaxRS}
@@ -22,12 +22,12 @@ public interface IOptionsDataControllerJaxRS {
     @GET
     @Path("/{key}")
     @Produces("application/json")
-    List<Option> loadOptions(@PathParam("key") String key);
+    List<SearchCriteria> loadOptions(@PathParam("key") String key);
 
     @POST
     @Path("/{key}")
     @Consumes("application/json")
-    void saveOptions(@PathParam("key") String key, List<Option> options);
+    void saveOptions(@PathParam("key") String key, List<SearchCriteria> options);
 
     @GET
     @Path("/")

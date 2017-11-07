@@ -41,7 +41,7 @@ function promptForTemplate() {
                 ReactDOM.render(
                     <FilterCreator
                       recordsets={recordsets}
-                      onSearch={search}
+                      onSearch={searchComplex}
                     />,
                     document.getElementById('main')
                 );
@@ -76,62 +76,104 @@ function openEditor(key, e) {
   );
 }
 
-function search(data, e) {
+
+
+function searchOGC(data, e) {
+
+  var properties = [];
+
+  var body = [
+    "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+    "<ogc:Filter xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\">"
+  ];
+
+  if (data.length > 1) {
+    body.push("<ogc:And>");
+  }
+
+  data.forEach(function (criteria) {
+    switch (criteria.comparer) {
+      case "=":
+        body.push("<ogc:PropertyIsEqualTo matchCase=\"" + criteria.matchCase + "\">");
+        body.push(" <ogc:PropertyName>" + criteria.recordset + "." + criteria.field +  "</ogc:PropertyName>");
+        body.push(" <ogc:Literal>" + criteria.value + "</ogc:Literal>");
+        body.push("</ogc:PropertyIsEqualTo>");
+        break;
+      case "!=":
+        body.push("<ogc:PropertyIsNotEqualTo matchCase=\"" + criteria.matchCase + "\">");
+        body.push(" <ogc:PropertyName>" + criteria.recordset + "." + criteria.field +  "</ogc:PropertyName>");
+        body.push(" <ogc:Literal>" + criteria.value + "</ogc:Literal>");
+        body.push("</ogc:PropertyIsNotEqualTo>");
+        break;
+      default:
+
+    }
+
+    properties.push(criteria.recordset + "." + criteria.field);
+  });
+
+  if (data.length > 1) {
+    body.push("</ogc:And>");
+  }
+
+  body.push("</ogc:Filter>")
+
+  data = {
+    "filter":body.join(""),
+    "pageSize":200,
+    "pageNumber":1,
+    "includeHidden":false,
+    "sortBy":[
+      {
+        "propertyName":"coalesceentity.name",
+        "sortOrder":"ASC"
+      }
+    ],
+    "propertyNames":properties
+  };
+
+  console.log(JSON.stringify(data));
+
+  $.ajax({
+          type : "POST",
+          url : karafRootAddr + '/cxf/data/search/ogc',
+          data : JSON.stringify(data),
+          contentType : "application/json; charset=utf-8",
+          success : function(data, status, jqXHR) {
+            processSearchResults(data, properties);
+          },
+          error : function(jqXHR, status) {
+            // error handler
+            console.log(jqXHR);
+          }
+        });
+}
+
+function searchComplex(data, e) {
+
+  var properties = [];
+    data.forEach(function (criteria) {
+    properties.push(criteria.recordset + "." + criteria.field);
+  });
+
+  var query = {
+    "pageSize": 200,
+    "pageNumber": 1,
+    "propertyNames": properties,
+    "group": {
+      "booleanComparer": "AND",
+      "criteria": data
+    }
+  };
 
   $.ajax({
   				type : "POST",
-  				url : karafRootAddr + '/cxf/data/search',
-  				data : JSON.stringify(data),
+  				url : karafRootAddr + '/cxf/data/search/complex',
+  				data : JSON.stringify(query),
   				contentType : "application/json; charset=utf-8",
   				success : function(data, status, jqXHR) {
-
-            var columns = [
-              {
-                Header: 'Key',
-                accessor: 'entityKey'
-              },
-              {
-                Header: 'Title',
-                accessor: 'title'
-              },
-              {
-                Header: 'Name',
-                accessor: 'name'
-              },
-              {
-                Header: 'Source',
-                accessor: 'source'
-              },
-              {
-                Header: '',
-                accessor: 'button',
-                Cell: (cell) => (
-                  <button className="form-control" title="Delete" onClick={openEditor.bind(this, cell.row.entityKey)}>
-                    View
-                  </button>
-                )
-              },
-            ];
-
-            if (data.result[0].status === "SUCCESS") {
-              var tabledata;
-              if (data.result[0].result.hits != null) {
-                tabledata = data.result[0].result.hits;
-              }
-
-              ReactDOM.render(
-                      <ReactTable
-                        data={tabledata}
-                        columns={columns}
-                      />,
-                document.getElementById('results')
-              );
-            } else {
-              alert(data.result[0].error);
-            }
-
+            processSearchResults(data, properties);
   				},
-
   				error : function(jqXHR, status) {
   					// error handler
   					console.log(jqXHR);
@@ -149,6 +191,64 @@ function search(data, e) {
       alert(JSON.stringify(response));
   });
   */
+}
+
+function processSearchResults(data, properties) {
+
+
+  var columns = [
+    {
+      Header: 'Key',
+      accessor: 'entityKey'
+    }
+  ];
+
+  properties.forEach(function (property) {
+
+    var parts = property.split(".");
+
+    columns.push({
+      Header: parts[1],
+      accessor: parts[1]
+    })
+  });
+
+  columns.push({
+    Header: '',
+    accessor: 'button',
+    Cell: (cell) => (
+      <button className="form-control" title="Delete" onClick={openEditor.bind(this, cell.row.entityKey)}>
+        View
+      </button>
+    )
+  });
+
+
+  if (data.result[0].status === "SUCCESS") {
+    var tabledata;
+    if (data.result[0].result.hits != null) {
+      tabledata = data.result[0].result.hits;
+
+      console.log(JSON.stringify(data.result[0].result));
+
+      tabledata.forEach(function (hit) {
+        for (var ii=1; ii<columns.length - 1; ii++) {
+            hit[columns[ii].accessor] = hit.values[ii-1];
+        }
+      });
+
+    }
+
+    ReactDOM.render(
+            <ReactTable
+              data={tabledata}
+              columns={columns}
+            />,
+      document.getElementById('results')
+    );
+  } else {
+    alert(data.result[0].error);
+  }
 }
 
 ReactDOM.render(
