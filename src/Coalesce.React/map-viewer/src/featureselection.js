@@ -17,6 +17,7 @@ export class FeatureSelection extends React.Component {
 
   componentDidMount() {
 
+    var that = this;
       //this.state.geoserver + '/rest/workspaces/' + this.state.workspace + '/featuretypes.json'
     fetch(this.state.geoserver + '/rest/layers.json')
       .then(res => res.json())
@@ -32,14 +33,77 @@ export class FeatureSelection extends React.Component {
         alert(error);
       })
 
-/*
+      var query = {
+        "pageSize": 200,
+        "pageNumber": 1,
+        "propertyNames": [
+          "meta.stylename",
+          "Fill Style.color",
+          "Fill Style.alpha",
+          "Stroke Style.color",
+          "Stroke Style.width",
+          "Text Style.fontSize",
+          "Text Style.fontType",
+          "Text Style.fontFillColor",
+          "Text Style.fontStrokeColor",
+          "Text Style.fontStrokeWidth",
+        ],
+        "group": {
+          "booleanComparer": "AND",
+          "criteria": [{
+            "recordset": "coalesceentity",
+            "field": "name",
+            "comparer": "=",
+            "value": "Style",
+            "matchCase": "true"
+          }]
+        }
+      };
+
       $.ajax({
         type : 'POST',
-        url: rootUrl + '/cxf/data/search',
-        data : JSON.stringify([{key: 0, recordset: "CoalesceEntity", field: "name", comparer: "=", value: "Style", matchCase: true}]),
+        url: rootUrl + '/cxf/data/search/complex',
+        data: JSON.stringify(query),
+        //data : JSON.stringify([{key: 0, recordset: "CoalesceEntity", field: "name", comparer: "=", value: "Style", matchCase: true}]),
         contentType : "application/json; charset=utf-8",
         success : function(data, status, jqXHR) {
-          console.log(JSON.stringify(data));
+
+          var styles = [];
+
+          if (data.result.length === 1 && data.result[0].status === 'SUCCESS') {
+            data.result[0].result.hits.forEach(function (hit) {
+              styles.push({
+                  "key": hit.values[0],
+                  "name": hit.values[0],
+                  "fill": {
+                    "color": hit.values[1],
+                    "alpha": hit.values[2]
+                  },
+                  "stroke": {
+                    "color": hit.values[3],
+                    "width": hit.values[4]
+                  },
+                  "text": {
+                    "font": {
+                      "size": hit.values[5],
+                      "type": hit.values[6]
+                    },
+                    "fill": {
+                      "color": hit.values[7]
+                    },
+                    "stroke": {
+                      "color": hit.values[8],
+                      "width": hit.values[9]
+                    }
+                  }
+              });
+
+            });
+          }
+
+          that.setState({
+            styles: styles
+          });
         },
         error : function(jqXHR, status) {
           alert('Failed: ' + JSON.stringify(jqXHR));
@@ -47,7 +111,6 @@ export class FeatureSelection extends React.Component {
           console.log(jqXHR);
         }
       });
-*/
   }
 
   onChange(e) {
@@ -89,36 +152,75 @@ export class FeatureSelection extends React.Component {
       }
     });
 
-    Popup.plugins().promptFeature2(featureData, [{key: 'custom', name: 'Custom'}], function (value) {
 
-      Popup.plugins().promptStyle(function(data) {
-        //var {features} = that.state;
 
-        var style = new ol.style.Style({
-                fill: new ol.style.Fill({
-                  color: hexToRgbA(data.fill.color, data.fill.alpha), //'rgba(255, 255, 255, 0.6)'
-                }),
-                stroke: new ol.style.Stroke({
-                  color: data.stroke.color,
-                  width: data.stroke.width
-                }),
-                text: new ol.style.Text({
-                  font: data.text.font.size + 'px ' + data.text.font.type,
+    Popup.plugins().promptFeature2(featureData, styles, function (value) {
+
+      if (value.style === 'Custom') {
+        Popup.plugins().promptStyle(styles, function(style) {
+          //var {features} = that.state;
+
+          var olStyle = new ol.style.Style({
                   fill: new ol.style.Fill({
-                    color: data.text.fill.color
+                    color: hexToRgbA(style.fill.color, style.fill.alpha), //'rgba(255, 255, 255, 0.6)'
                   }),
                   stroke: new ol.style.Stroke({
-                    color: data.text.stroke.color,
-                    width: data.text.stroke.width
+                    color: style.stroke.color,
+                    width: style.stroke.width
+                  }),
+                  text: new ol.style.Text({
+                    font: style.text.font.size + 'px ' + style.text.font.type,
+                    fill: new ol.style.Fill({
+                      color: style.text.fill.color
+                    }),
+                    stroke: new ol.style.Stroke({
+                      color: style.text.stroke.color,
+                      width: style.text.stroke.width
+                    })
+                  })
+                });
+
+          features.push({name: value.layer, style: olStyle});
+
+          that.setState({features: features});
+        });
+
+      } else {
+
+        var olStyle;
+
+        for (var ii=0; ii<styles.length; ii++)
+        {
+          var style = styles[ii];
+
+          if (style.key === value.style) {
+            olStyle = new ol.style.Style({
+                fill: new ol.style.Fill({
+                  color: hexToRgbA(style.fill.color, style.fill.alpha), //'rgba(255, 255, 255, 0.6)'
+                }),
+                stroke: new ol.style.Stroke({
+                  color: style.stroke.color,
+                  width: style.stroke.width
+                }),
+                text: new ol.style.Text({
+                  font: style.text.font.size + 'px ' + style.text.font.type,
+                  fill: new ol.style.Fill({
+                    color: style.text.fill.color
+                  }),
+                  stroke: new ol.style.Stroke({
+                    color: style.text.stroke.color,
+                    width: style.text.stroke.width
                   })
                 })
               });
+          }
+        }
 
-        features.push({name: value.layer, style: style});
+        features.push({name: value.layer, style: olStyle});
 
         that.setState({features: features});
-      })
 
+      }
     });
   }
 
@@ -202,7 +304,7 @@ function hexToRgbA(hex, alpha){
         c= '0x'+c.join('');
         return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+',' + alpha + ')';
     }
-    throw new Error('Bad Hex');
+    console.log('Bad Hex: ' + hex);
 }
 
 /** Prompt plugin
@@ -233,6 +335,12 @@ Popup.registerPlugin('promptMultiFeature', function (data, buttontext, callback)
 
 /** Prompt plugin */
 Popup.registerPlugin('promptFeature2', function (data, styles, callback) {
+
+    var styleOptions = [{
+      'key': 'Custom',
+      'name': 'Custom'
+    }].concat(styles);
+
     let promptValue = {};
     let layerChange = function (value) {
         promptValue.layer = value;
@@ -258,7 +366,7 @@ Popup.registerPlugin('promptFeature2', function (data, styles, callback) {
               {key: 'WPS', name:'WPS'}
             ]}/>
             <label>Style</label>
-            <PromptDropdown onChange={styleChange} data={styles}/>
+            <PromptDropdown onChange={styleChange} data={styleOptions}/>
           </div>
         ),
         buttons: {
@@ -298,7 +406,8 @@ Popup.registerPlugin('promptFeature', function (data, buttontext, callback) {
     });
 })
 
-Popup.registerPlugin('promptStyle', function (callback) {
+Popup.registerPlugin('promptStyle', function (styles, callback) {
+
     let data = null;
     let dataChange = function (value) {
         data = value;
@@ -306,7 +415,7 @@ Popup.registerPlugin('promptStyle', function (callback) {
 
     this.create({
         title: 'Select Style',
-        content: <StyleSelection onChange={dataChange} />,
+        content: <StyleSelection onChange={dataChange} presets={styles} data={styles[0]}/>,
         buttons: {
             left: ['cancel'],
             right: [{

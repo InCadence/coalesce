@@ -176,56 +176,6 @@ export class StyleSelection extends React.Component {
 
 }
 
-const presetBlue = {
-    name: 'Blue',
-    fill: {
-      color: '#0000FF',
-      alpha: '0.1'
-    },
-    stroke: {
-      color: '#319FD3',
-      width: 1
-    },
-    text: {
-      font: {
-        size: '12',
-        type: 'Calibri,sans-serif'
-      },
-      fill: {
-        color: '#0000FF'
-      },
-      stroke: {
-        color: '#FFFFFF',
-        width: 3
-      }
-    }
-}
-
-const presetRed = {
-    name: 'red',
-    fill: {
-      color: '#FF0000',
-      alpha: '0.3'
-    },
-    stroke: {
-      color: '#319FD3',
-      width: 1
-    },
-    text: {
-      font: {
-        size: '12',
-        type: 'Calibri,sans-serif'
-      },
-      fill: {
-        color: '#FF0000'
-      },
-      stroke: {
-        color: '#FFFFFF',
-        width: 3
-      }
-    }
-}
-
 const presetDefault = {
   name: 'Default',
   fill: {
@@ -252,7 +202,7 @@ const presetDefault = {
 }
 
 StyleSelection.defaultProps = {
-  presets: [presetDefault, presetBlue, presetRed],
+  presets: [presetDefault],
   data: presetDefault,
   fonts: [
     'Calibri,sans-serif',
