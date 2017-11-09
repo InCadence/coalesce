@@ -21,9 +21,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.rowset.CachedRowSet;
-
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.incadencecorp.coalesce.framework.CoalesceFramework;
@@ -40,7 +39,7 @@ import com.incadencecorp.coalesce.services.crud.service.data.model.impl.pojo.rec
 import com.incadencecorp.coalesce.services.search.service.client.SearchFrameworkClientImpl;
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
 
-public class EnumerationDataControllerTest {
+public class EnumerationDataControllerIT {
 
     @BeforeClass
     public static void initialize() throws Exception
