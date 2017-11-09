@@ -127,7 +127,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
     @Override
     public EntityMetaData getCoalesceEntityIdAndTypeForKey(String key) throws CoalescePersistorException
     {
-        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector(getConnectionSettings(), getSchemaPrefix()))
+        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector(getSchemaPrefix()))
         {
             return this.getCoalesceEntityIdAndTypeForKey(key, conn);
         }
@@ -144,7 +144,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
     @Override
     public DateTime getCoalesceObjectLastModified(String key, String objectType) throws CoalescePersistorException
     {
-        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector(getConnectionSettings(), getSchemaPrefix()))
+        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector(getSchemaPrefix()))
         {
             return this.getCoalesceObjectLastModified(key, objectType, conn);
         }
@@ -161,7 +161,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
     @Override
     public byte[] getBinaryArray(String key) throws CoalescePersistorException
     {
-        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector(getConnectionSettings(), getSchemaPrefix()))
+        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector(getSchemaPrefix()))
         {
 
             byte[] binaryArray = null;
@@ -217,7 +217,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
     @Override
     public ElementMetaData getXPath(String key, String objectType) throws CoalescePersistorException
     {
-        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector(getConnectionSettings(), getSchemaPrefix()))
+        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector(getSchemaPrefix()))
         {
             return getXPathRecursive(key, objectType, "", conn);
         }
@@ -234,7 +234,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
     @Override
     public String getFieldValue(String fieldKey) throws CoalescePersistorException
     {
-        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector(getConnectionSettings(), getSchemaPrefix()))
+        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector(getSchemaPrefix()))
         {
             String value = null;
 
@@ -261,7 +261,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
     @Override
     public String[] getEntityXml(String... keys) throws CoalescePersistorException
     {
-        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector(getConnectionSettings(), getSchemaPrefix()))
+        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector(getSchemaPrefix()))
         {
             List<String> xmlList = new ArrayList<String>();
             List<CoalesceParameter> parameters = new ArrayList<CoalesceParameter>();
@@ -305,7 +305,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
     @Override
     public String getEntityXml(String entityId, String entityIdType) throws CoalescePersistorException
     {
-        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector(getConnectionSettings(), getSchemaPrefix()))
+        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector(getSchemaPrefix()))
         {
             String value = null;
 
@@ -334,7 +334,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
     @Override
     public String getEntityXml(String name, String entityId, String entityIdType) throws CoalescePersistorException
     {
-        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector(getConnectionSettings(), getSchemaPrefix()))
+        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector(getSchemaPrefix()))
         {
             String value = null;
 
@@ -364,7 +364,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
     @Override
     protected CoalesceDataConnectorBase getDataConnector() throws CoalescePersistorException
     {
-        return new ElasticSearchDataConnector(getConnectionSettings(), getSchemaPrefix());
+        return new ElasticSearchDataConnector(getSchemaPrefix());
     }
 
     /*
@@ -395,7 +395,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
     {
         boolean isSuccessful = true;
 
-        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector(getConnectionSettings(), getSchemaPrefix()))
+        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector(getSchemaPrefix()))
         {
 
             // Create a Database Connection
@@ -433,7 +433,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
         // Create a Database Connection
         try
         {
-            conn = new ElasticSearchDataConnector(getConnectionSettings(), getSchemaPrefix());
+            conn = new ElasticSearchDataConnector(getSchemaPrefix());
             conn.openConnection(false);
 
             for (CoalesceEntity entity : entities)
@@ -465,7 +465,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
     @Override
     public String getEntityTemplateKey(String name, String source, String version) throws CoalescePersistorException
     {
-        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector(getConnectionSettings(), getSchemaPrefix()))
+        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector(getSchemaPrefix()))
         {
             String value = null;
 
@@ -495,7 +495,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
     @Override
     public List<ObjectMetaData> getEntityTemplateMetadata() throws CoalescePersistorException
     {
-        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector(getConnectionSettings(), getSchemaPrefix()))
+        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector(getSchemaPrefix()))
         {
             return conn.getTemplateMetaData("SELECT * FROM " + getSchemaPrefix() + "CoalesceEntityTemplate");
         }
@@ -508,7 +508,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
     @Override
     public String getEntityTemplateXml(String key) throws CoalescePersistorException
     {
-        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector(getConnectionSettings(), getSchemaPrefix()))
+        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector(getSchemaPrefix()))
         {
             String value = null;
 
@@ -535,7 +535,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
     @Override
     public String getEntityTemplateXml(String name, String source, String version) throws CoalescePersistorException
     {
-        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector(getConnectionSettings(), getSchemaPrefix()))
+        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector(getSchemaPrefix()))
         {
             String value = null;
 
@@ -993,7 +993,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
                                      new CoalesceParameter(linkage.getEntity1Version()),
                                      new CoalesceParameter(linkage.getLinkType().getLabel()),
                                      new CoalesceParameter(linkage.getLabel()),
-                                     new CoalesceParameter(linkage.getStatus().toString()),
+                                     //new CoalesceParameter(linkage.getStatus().toString()),
                                      new CoalesceParameter(linkage.getEntity2Key(), Types.OTHER),
                                      new CoalesceParameter(linkage.getEntity2Name()),
                                      new CoalesceParameter(linkage.getEntity2Source()),
@@ -1110,7 +1110,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
     {
         List<String> keyList = new ArrayList<String>();
 
-        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector(getConnectionSettings(), getSchemaPrefix()))
+        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector(getSchemaPrefix()))
         {
             ResultSet results = conn.executeLikeQuery("SELECT ObjectKey FROM "
                                                               + getSchemaPrefix()
@@ -1146,7 +1146,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
                                                                    String entitySource) throws Exception
     {
 
-        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector(getConnectionSettings(), getSchemaPrefix()))
+        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector(getSchemaPrefix()))
         {
             List<String> keyList = new ArrayList<String>();
 
@@ -1205,7 +1205,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
 
         if (coalesceObject.getFlatten())
         {
-            switch (coalesceObject.getStatus()) {
+            /*switch (coalesceObject.getStatus()) {
             case READONLY:
             case ACTIVE:
                 // Persist Object
@@ -1229,6 +1229,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
             default:
                 isSuccessful = false;
             }
+            */
 
             // Successful?
             if (isSuccessful)
