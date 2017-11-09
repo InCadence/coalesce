@@ -16,7 +16,8 @@
     "react-openlayers": "^0.2.1",
     "react-popup": "^0.8.0",
     "react-scripts": "^1.0.16",
-    "react-select": "^1.0.0-rc.10"
+    "react-select": "^1.0.0-rc.10",
+    "react-sliding-pane": "^2.0.1"
   },
   "scripts": {
     "start": "react-scripts start",

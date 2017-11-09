@@ -3,273 +3,148 @@ import Popup from 'react-popup';
 import {PromptDropdown} from 'common-components/lib/prompt-dropdown.js'
 import {StyleSelection} from './style.js'
 import * as ol from 'openlayers';
-import $ from 'jquery'
-
-var rootUrl = 'http://localhost:8181';
+import './index.css'
 
 export class FeatureSelection extends React.Component {
 
   constructor(props) {
     super(props);
-
     this.state = props;
   }
 
-  componentDidMount() {
-
+  onAddClick() {
     var that = this;
-      //this.state.geoserver + '/rest/workspaces/' + this.state.workspace + '/featuretypes.json'
-    fetch(this.state.geoserver + '/rest/layers.json')
-      .then(res => res.json())
-      .then(data => {
 
-        this.setState({
-          layers: data.layers.layer
-          //layers: data.featureTypes.featureType
-        });
+    const {selectedLayers, availableLayers, styles} = this.state;
 
-        console.log('(' + data.layers.layer.length  + ') Layers Loaded');
-      }).catch(function(error) {
-        alert(error);
-      })
+    if (availableLayers.length !== 0 && styles.length !== 0) {
 
-      var query = {
-        "pageSize": 200,
-        "pageNumber": 1,
-        "propertyNames": [
-          "meta.stylename",
-          "Fill Style.color",
-          "Fill Style.alpha",
-          "Stroke Style.color",
-          "Stroke Style.width",
-          "Text Style.fontSize",
-          "Text Style.fontType",
-          "Text Style.fontFillColor",
-          "Text Style.fontStrokeColor",
-          "Text Style.fontStrokeWidth",
-        ],
-        "group": {
-          "booleanComparer": "AND",
-          "criteria": [{
-            "recordset": "coalesceentity",
-            "field": "name",
-            "comparer": "=",
-            "value": "Style",
-            "matchCase": "true"
-          }]
-        }
-      };
+      var filteredLayers = [];
 
-      $.ajax({
-        type : 'POST',
-        url: rootUrl + '/cxf/data/search/complex',
-        data: JSON.stringify(query),
-        //data : JSON.stringify([{key: 0, recordset: "CoalesceEntity", field: "name", comparer: "=", value: "Style", matchCase: true}]),
-        contentType : "application/json; charset=utf-8",
-        success : function(data, status, jqXHR) {
+      // Filter out layers that have alreadt been selected
+      availableLayers.forEach(function (feature) {
 
-          var styles = [];
+        var found = false;
 
-          if (data.result.length === 1 && data.result[0].status === 'SUCCESS') {
-            data.result[0].result.hits.forEach(function (hit) {
-              styles.push({
-                  "key": hit.values[0],
-                  "name": hit.values[0],
-                  "fill": {
-                    "color": hit.values[1],
-                    "alpha": hit.values[2]
-                  },
-                  "stroke": {
-                    "color": hit.values[3],
-                    "width": hit.values[4]
-                  },
-                  "text": {
-                    "font": {
-                      "size": hit.values[5],
-                      "type": hit.values[6]
-                    },
-                    "fill": {
-                      "color": hit.values[7]
-                    },
-                    "stroke": {
-                      "color": hit.values[8],
-                      "width": hit.values[9]
-                    }
-                  }
-              });
-
-            });
+        for (var ii=0; ii<selectedLayers.length; ii++) {
+          if (selectedLayers[ii].name === feature.name) {
+            found = true;
+            break;
           }
+        }
 
-          that.setState({
-            styles: styles
-          });
-        },
-        error : function(jqXHR, status) {
-          alert('Failed: ' + JSON.stringify(jqXHR));
-          // error handler
-          console.log(jqXHR);
+        if (!found) {
+          filteredLayers.push({key: feature.name, name: feature.name});
         }
       });
-  }
 
-  onChange(e) {
-    if (e.target.checked) {
-      const {features} = this.state;
+      // Prompt for layer to add
+      Popup.plugins().promptFeature2(filteredLayers, styles, function (value) {
 
-      for( var ii=0; ii<features.length; ii++) {
-        if (features[ii].name === e.target.id) {
-          this.props.addfeature(e.target.id, features[ii].style);
-          break;
+        if (value.type === "WFS") {
+          // Create client side style
+          if (value.style === 'Custom') {
+            // Prompt for custom style
+            Popup.plugins().promptStyle(styles, function(style) {
+              that.addLayer(value.layer, value.type, createStyle(style));
+            });
+          } else {
+            for (var ii=0; ii<styles.length; ii++)
+            {
+              if (styles[ii].key === value.style) {
+                that.addLayer(value.layer, value.type, createStyle(styles[ii]));
+                break;
+              }
+            }
+          }
+        } else {
+          that.addLayer(value.layer, value.type);
         }
-      }
+
+      });
     } else {
-      this.props.rmvfeature(e.target.id);
+      console.log('Not Initialized');
     }
   }
 
-  addFeature() {
-    var that = this;
+  addLayer(name, type, style) {
 
-    const {features, layers, styles} = this.state;
+    const {selectedLayers} = this.state;
 
-    var featureData = [];
-
-    layers.forEach(function (feature) {
-
-      var found = false;
-
-      for (var ii=0; ii<features.length; ii++) {
-        if (features[ii].name === feature.name) {
-          found = true;
-          break;
-        }
-      }
-
-      if (!found) {
-
-        featureData.push({key: feature.name, name: feature.name});
-      }
+    selectedLayers.push({
+      key: name,
+      name: name,
+      type: type,
+      style: style,
+      checked: false
     });
 
-
-
-    Popup.plugins().promptFeature2(featureData, styles, function (value) {
-
-      if (value.style === 'Custom') {
-        Popup.plugins().promptStyle(styles, function(style) {
-          //var {features} = that.state;
-
-          var olStyle = new ol.style.Style({
-                  fill: new ol.style.Fill({
-                    color: hexToRgbA(style.fill.color, style.fill.alpha), //'rgba(255, 255, 255, 0.6)'
-                  }),
-                  stroke: new ol.style.Stroke({
-                    color: style.stroke.color,
-                    width: style.stroke.width
-                  }),
-                  text: new ol.style.Text({
-                    font: style.text.font.size + 'px ' + style.text.font.type,
-                    fill: new ol.style.Fill({
-                      color: style.text.fill.color
-                    }),
-                    stroke: new ol.style.Stroke({
-                      color: style.text.stroke.color,
-                      width: style.text.stroke.width
-                    })
-                  })
-                });
-
-          features.push({name: value.layer, style: olStyle});
-
-          that.setState({features: features});
-        });
-
-      } else {
-
-        var olStyle;
-
-        for (var ii=0; ii<styles.length; ii++)
-        {
-          var style = styles[ii];
-
-          if (style.key === value.style) {
-            olStyle = new ol.style.Style({
-                fill: new ol.style.Fill({
-                  color: hexToRgbA(style.fill.color, style.fill.alpha), //'rgba(255, 255, 255, 0.6)'
-                }),
-                stroke: new ol.style.Stroke({
-                  color: style.stroke.color,
-                  width: style.stroke.width
-                }),
-                text: new ol.style.Text({
-                  font: style.text.font.size + 'px ' + style.text.font.type,
-                  fill: new ol.style.Fill({
-                    color: style.text.fill.color
-                  }),
-                  stroke: new ol.style.Stroke({
-                    color: style.text.stroke.color,
-                    width: style.text.stroke.width
-                  })
-                })
-              });
-          }
-        }
-
-        features.push({name: value.layer, style: olStyle});
-
-        that.setState({features: features});
-
-      }
+    this.setState({
+      selectedLayers: selectedLayers
     });
   }
 
-  removeFeature() {
+  onRmvClick() {
+
+    const {selectedLayers} = this.state;
 
     var that = this;
 
-    const {features} = this.state;
+    Popup.plugins().promptFeature(selectedLayers, 'Remove', function (value) {
 
-    var featuresData = [];
+      for (var ii=0; ii<selectedLayers.length; ii++) {
 
-    features.forEach(function (feature) {
-      featuresData.push({key: feature.name, name: feature.name});
-    });
-
-    Popup.plugins().promptFeature(featuresData, 'Remove', function (value) {
-
-      for (var ii=0; ii<features.length; ii++) {
-        if (features[ii].name === value) {
-          that.props.rmvfeature(value);
-          features.splice(ii, 1);
+        if (selectedLayers[ii].name === value) {
+          that.props.rmvfeature(selectedLayers[ii]);
+          selectedLayers.splice(ii, 1);
           that.setState({
-            features: features
+            selectedLayers: selectedLayers
           });
           break;
         }
       }
     });
 
+  }
+
+  onChange(feature, e) {
+
+    const {selectedLayers} = this.state;
+
+    if (e.target.checked) {
+      this.props.addfeature(feature);
+    } else {
+      this.props.rmvfeature(feature);
+    }
+
+    feature.checked = e.target.checked;
+
+    this.setState({
+      selectedLayers: selectedLayers
+    })
   }
 
   render() {
 
     var features = [];
 
-    if (this.state.features != null) {
+    console.log("Render Feature Selection");
 
-      for (var ii=0; ii<this.state.features.length; ii++) {
-        var name = this.state.features[ii].name;
+    if (this.state.selectedLayers != null) {
+
+      for (var ii=0; ii<this.state.selectedLayers.length; ii++) {
+        var feature = this.state.selectedLayers[ii];
+
         features.push(
-          <div key={name} className="row">
+          <div key={feature.name} className="row">
             <div className="col-sm-2">
-              <input id={name} type="checkbox" name={name} onChange={this.onChange.bind(this)}/>
+              <input id={feature.name} type="checkbox" onChange={this.onChange.bind(this, feature)} checked={feature.checked} />
             </div>
             <div className="col-sm-6">
-              <label>{name}</label>
+              <label>{feature.name}</label>
             </div>
             <div className="col-sm-4">
-              <button>...</button>
+              <label>{feature.type}</label>
             </div>
           </div>
         )
@@ -280,8 +155,8 @@ export class FeatureSelection extends React.Component {
       <div>
         {features}
         <div className="form-buttons">
-          <button className="mm-popup__btn mm-popup__btn--cancel" onClick={this.removeFeature.bind(this)}>Remove</button>
-          <button className="mm-popup__btn mm-popup__btn--success" onClick={this.addFeature.bind(this)}>Add</button>
+          <button className="mm-popup__btn mm-popup__btn--cancel" onClick={this.onRmvClick.bind(this)}>Remove</button>
+          <button className="mm-popup__btn mm-popup__btn--success" onClick={this.onAddClick.bind(this)}>Add</button>
         </div>
       </div>
     )
@@ -289,9 +164,26 @@ export class FeatureSelection extends React.Component {
 
 }
 
-FeatureSelection.defaultProps = {
-  features: [],
-  layers: []
+function createStyle(styleData) {
+  return new ol.style.Style({
+    fill: new ol.style.Fill({
+      color: hexToRgbA(styleData.fill.color, styleData.fill.alpha), //'rgba(255, 255, 255, 0.6)'
+    }),
+    stroke: new ol.style.Stroke({
+      color: styleData.stroke.color,
+      width: styleData.stroke.width
+    }),
+    text: new ol.style.Text({
+      font: styleData.text.font.size + 'px ' + styleData.text.font.type,
+      fill: new ol.style.Fill({
+        color: styleData.text.fill.color
+      }),
+      stroke: new ol.style.Stroke({
+        color: styleData.text.stroke.color,
+        width: styleData.text.stroke.width
+      })
+    })
+  });
 }
 
 function hexToRgbA(hex, alpha){
@@ -306,32 +198,6 @@ function hexToRgbA(hex, alpha){
     }
     console.log('Bad Hex: ' + hex);
 }
-
-/** Prompt plugin
-Popup.registerPlugin('promptMultiFeature', function (data, buttontext, callback) {
-    let promptValue = null;
-    let promptChange = function (value) {
-      console.log(value);
-        promptValue = value;
-    };
-
-    this.create({
-        title: 'Select Feature',
-        content: <MultiSelectField onChange={promptChange} data={data}/>,
-        buttons: {
-            left: ['cancel'],
-            right: [{
-                text: buttontext,
-                className: 'success',
-                action: function () {
-                    callback(promptValue);
-                    Popup.close();
-                }
-            }]
-        }
-    });
-})
-//*/
 
 /** Prompt plugin */
 Popup.registerPlugin('promptFeature2', function (data, styles, callback) {
@@ -363,10 +229,11 @@ Popup.registerPlugin('promptFeature2', function (data, styles, callback) {
             <PromptDropdown onChange={typeChange} data={[
               {key: 'WFS', name:'WFS'},
               {key: 'WMS', name:'WMS'},
-              {key: 'WPS', name:'WPS'}
+              {key: 'WPS', name:'WPS'},
+              {key: 'HEATMAP', name:'HEATMAP'}
             ]}/>
-            <label>Style</label>
-            <PromptDropdown onChange={styleChange} data={styleOptions}/>
+            <label>Style (WFS Only)</label>
+            <PromptDropdown onChange={styleChange} data={styleOptions} />
           </div>
         ),
         buttons: {

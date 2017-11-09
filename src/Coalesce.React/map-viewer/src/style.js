@@ -9,16 +9,6 @@ export class StyleSelection extends React.Component {
     this.state.onChange(props.data);
 
   }
-/*
-  componentDidMount() {
-    fetch('http://bdpgeoserver.bdpdev.incadencecorp.com:8181/geoserver/rest/fonts.json')
-      .then(res => res.json())
-      .then(data => {
-        this.setState({fonts: data.fonts});
-      });
-
-  }
-*/
 
   fillColorChange(e) {
     const {data} = this.state;

@@ -1,13 +1,17 @@
-
-#main .form-buttons {
+.form-buttons {
   text-align: right;
   padding-top: 0.1em;
   font-weight: bold;
   color: black;
 }
 
-#main .form-buttons button {
+.form-buttons button {
   text-align: center;
   margin: 0.1em;
   width: 80px;
+}
+
+.options-button {
+  top: 65px;
+  left: .5em;
 }
