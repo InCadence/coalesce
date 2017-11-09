@@ -209,6 +209,7 @@ App.defaultProps = {
   karafserver: 'http://localhost:8181',
   availableLayers: [],
   styles: [],
+  // TODO Default layers should be removed for production or load from a saved state.
   selectedLayers: [
     {
       key: 'Ariana All',

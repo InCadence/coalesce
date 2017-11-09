@@ -71,6 +71,13 @@ export class MapView extends React.Component {
       case 'WMS':
         // Single WMS Layer?
         if (this.state.singleWMSLayer.enabled) {
+
+          // If seperate layer exists, remove it
+          if (feature.layer != null) {
+            map.removeLayer(feature.layer);
+            feature.layer = null;
+          }
+
           // Remove Old WMS Layer
           if (singleWMSLayer.layer != null) {
             map.removeLayer(singleWMSLayer.layer);
@@ -82,6 +89,8 @@ export class MapView extends React.Component {
           // Create New Combined WMS Layer
           singleWMSLayer.layer = createBDPWMSLayer(this.props.geoserver, this.props.workspace, singleWMSLayer.layers);
           layer = singleWMSLayer.layer;
+
+          console.log(feature.name + " added to WMS layer");
         } else {
           feature.layer = createBDPWMSLayer(this.props.geoserver, this.props.workspace, [feature.name]);
           layer = feature.layer;
@@ -94,7 +103,6 @@ export class MapView extends React.Component {
       case 'WFS':
       default:
         feature.layer = createBDPWFSLayer(this.props.geoserver, this.props.workspace, feature.name, feature.style);
-
         layer = feature.layer;
         break;
     }
@@ -105,7 +113,7 @@ export class MapView extends React.Component {
   // Callback to handling removing layers from the map
   rmvLayerCallBack(feature) {
     const {map, singleWMSLayer} = this.state;
-    if (singleWMSLayer.enabled && feature.type === 'WMS') {
+    if (feature.type === 'WMS' && feature.layer == null) {
 
       if (singleWMSLayer.layer != null) {
 
@@ -131,10 +139,19 @@ export class MapView extends React.Component {
     } else {
       if (feature.layer != null) {
         map.removeLayer(feature.layer);
-        //feature.layer.setVisible(false);
       }
     }
 
+  }
+
+  onWMSLayerChange(e) {
+    const {singleWMSLayer} = this.state;
+
+    singleWMSLayer.enabled = e.target.checked;
+
+    this.setState({
+      singleWMSLayer: singleWMSLayer
+    });
   }
 
   render(){
@@ -157,6 +174,17 @@ export class MapView extends React.Component {
                 availableLayers={this.state.availableLayers}
                 styles={this.state.styles}
                 selectedLayers={this.state.selectedLayers}/>
+            </div>
+            <div className="ui-widget">
+              <label className="ui-widget-header ui-button">Misc</label>
+              <div className="row">
+                <div className="col-sm-2">
+                  <input type="checkbox" onChange={this.onWMSLayerChange.bind(this)} checked={this.state.singleWMSLayer.enabled} />
+                </div>
+                <div className="col-sm-10">
+                  <label>Single Layer WMS</label>
+                </div>
+              </div>
             </div>
         </SlidingPane>
         <div id="map"> </div>

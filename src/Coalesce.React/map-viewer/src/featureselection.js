@@ -112,9 +112,20 @@ export class FeatureSelection extends React.Component {
     const {selectedLayers} = this.state;
 
     if (e.target.checked) {
-      this.props.addfeature(feature);
+      if (feature.layer != null) {
+        feature.layer.setVisible(true);
+      } else {
+        this.props.addfeature(feature);
+        console.log("Adding: " + feature.name);
+      }
     } else {
-      this.props.rmvfeature(feature);
+      if (feature.layer != null) {
+        feature.layer.setVisible(false);
+      } else {
+        this.props.rmvfeature(feature);
+        console.log("Removing: " + feature.name);
+      }
+
     }
 
     feature.checked = e.target.checked;
