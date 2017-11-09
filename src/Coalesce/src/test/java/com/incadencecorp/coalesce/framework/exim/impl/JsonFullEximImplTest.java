@@ -39,9 +39,8 @@ import com.incadencecorp.coalesce.framework.datamodel.TestRecord;
 
 /**
  * This unit test covers the {@link JsonFullEximImpl}
- * 
- * @author n78554
  *
+ * @author n78554
  */
 public class JsonFullEximImplTest {
 
@@ -51,11 +50,10 @@ public class JsonFullEximImplTest {
     /**
      * This is an example of how to use the ObjectMapper to perform the same
      * function as JsonFullEximImpl
-     * 
+     *
      * @throws Exception
      */
-    @Test
-    public void eximTest() throws Exception
+    @Test public void eximTest() throws Exception
     {
         JsonFullEximImpl exim = new JsonFullEximImpl();
         exim.setView(Views.Entity.class);
@@ -65,8 +63,7 @@ public class JsonFullEximImplTest {
         TestRecord record = entity.addRecord1();
         record.getBooleanField().setValue(true);
         record.getStringField().setValue("AA");
-        record.getStringListField().setValue(new String[] {
-                                                            "AA","BB"
+        record.getStringListField().setValue(new String[] { "AA", "BB"
         });
 
         CoalesceEntity entity1 = new CoalesceEntity();
@@ -82,26 +79,22 @@ public class JsonFullEximImplTest {
         Assert.assertEquals(entity1.getKey(), entity2.getKey());
 
         TestRecord record2 = new TestRecord(entity2.getRecordset1().getAllRecords().get(0));
-        
-        Assert.assertEquals(record.getBooleanField().getBaseValue(),
-                            record2.getBooleanField().getBaseValue());
 
-        Assert.assertEquals(record.getStringField().getBaseValue(),
-                            record2.getStringField().getBaseValue());
+        Assert.assertEquals(record.getBooleanField().getBaseValue(), record2.getBooleanField().getBaseValue());
 
-        Assert.assertEquals(record.getStringListField().getBaseValue(),
-                            record2.getStringListField().getBaseValue());
+        Assert.assertEquals(record.getStringField().getBaseValue(), record2.getStringField().getBaseValue());
+
+        Assert.assertEquals(record.getStringListField().getBaseValue(), record2.getStringListField().getBaseValue());
     }
 
     /**
      * This test passes in an invalid JSON Object. Arrays are only used for
      * Record Sets, passing them in at any other level will throw a runtime
      * exception.
-     * 
+     *
      * @throws Exception
      */
-    @Test(expected = RuntimeException.class)
-    public void invalidJSONTest() throws Exception
+    @Test(expected = RuntimeException.class) public void invalidJSONTest() throws Exception
     {
 
         JsonFullEximImpl exim = new JsonFullEximImpl();
@@ -121,11 +114,10 @@ public class JsonFullEximImplTest {
     /**
      * This test creates an object, exports to JSON, and imports it into another
      * object with an additional record set.
-     * 
+     *
      * @throws Exception
      */
-    @Test
-    public void importIntoExpandedEntityTests() throws Exception
+    @Test public void importIntoExpandedEntityTests() throws Exception
     {
 
         JsonFullEximImpl exim = new JsonFullEximImpl();
@@ -170,11 +162,10 @@ public class JsonFullEximImplTest {
 
     /**
      * This test ensures that you can export and import values.
-     * 
+     *
      * @throws Exception
      */
-    @Test
-    public void importExportTest() throws Exception
+    @Test public void importExportTest() throws Exception
     {
         TestEntity entity = new TestEntity();
         entity.initialize();
@@ -258,11 +249,10 @@ public class JsonFullEximImplTest {
     /**
      * This test creates a {@link TestEntity}, exports its values, and attempts
      * to import into an invalid entity type.
-     * 
+     *
      * @throws Exception
      */
-    @Test(expected = CoalesceException.class)
-    public void invalidObjectTest() throws Exception
+    @Test public void invalidObjectTest() throws Exception
     {
 
         TestEntity entity = new TestEntity();
@@ -287,6 +277,9 @@ public class JsonFullEximImplTest {
         entity2.initialize();
 
         exim.importValues(json, entity2);
+
+        // Since we are importing into a CoalesceEntity the section should not be created because it does not exists within the template.
+        Assert.assertNull(entity2.getCoalesceRecordsetForNamePath(entity.getRecordset1().getNamePath()));
     }
 
 }
