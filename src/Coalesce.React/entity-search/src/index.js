@@ -4,18 +4,17 @@ import Popup from 'react-popup';
 import {PromptTemplate} from 'common-components/lib/prompt-template.js'
 import {Menu} from 'common-components/lib/menu.js'
 import {FilterCreator} from './filtercreator.js'
-import ReactTable from 'react-table'
-import {Toggle} from 'common-components/lib/toggle.js'
-import {Collapse} from 'react-collapse';
-
-
-import $ from 'jquery'
+import {SearchResults} from './results.js'
+import { HashLoader } from 'react-spinners';
 
 import './index.css'
 import 'common-components/css/popup.css'
 
 var karafRootAddr = 'http://' + window.location.hostname + ':8181';
 
+var cache = {};
+
+// Prompt user for template to populate the criteria controls
 function promptForTemplate() {
 
   Popup.plugins().promptTemplate('load', 'Enumeration', function (value) {
@@ -25,40 +24,36 @@ function promptForTemplate() {
 
           ReactDOM.unmountComponentAtNode(document.getElementById('main'));
 
-          fetch(karafRootAddr + '/cxf/data/templates/' + value + '/recordsets/CoalesceEntity/fields')
-              .then(res => res.json())
-              .then(definition => {
+          var recordsets = [];
+          recordsets.push({name: 'CoalesceEntity', definition: cache['CoalesceEntity']});
 
-                var recordsets = [];
-                recordsets.push({name: 'CoalesceEntity', definition: definition});
+          // Get Other Recordsets
+          template.sectionsAsList.forEach(function(section) {
+            recordsets = recordsets.concat(getRecordsets(section));
+          });
 
-                // Get Other Recordsets
-                template.sectionsAsList.forEach(function(section) {
-                  recordsets = recordsets.concat(getRecordsets(section));
-                });
-
-                // Add CoalesceEntity attributes as a recordset
-                ReactDOM.render(
-                    <FilterCreator
-                      recordsets={recordsets}
-                      onSearch={searchComplex}
-                    />,
-                    document.getElementById('main')
-                );
-
-              })
+          // Add CoalesceEntity attributes as a recordset
+          ReactDOM.render(
+              <FilterCreator
+                recordsets={recordsets}
+                onSearch={searchComplex}
+              />,
+              document.getElementById('main')
+          );
 
         })
+
   });
 
 }
 
+// Recursive (nested sections) method to pull recordsets from a section
 function getRecordsets(section) {
 
   var results = [];
 
   section.sectionsAsList.forEach(function(section) {
-    results = results.concat(this.processrecordsets(section));
+    results = results.concat(getRecordsets(section));
   });
 
   // Render Recordsets
@@ -69,15 +64,150 @@ function getRecordsets(section) {
   return results;
 }
 
-function openEditor(key, e) {
-  window.open(
-    karafRootAddr + "/entityeditor/?entitykey=" + key,
-    '_blank' // <- This is what makes it open in a new window.
-  );
+// Submits the user's selected criteria.
+function searchComplex(data, e) {
+
+  // Create Query
+  var query = {
+    "pageSize": 200,
+    "pageNumber": 1,
+    "propertyNames": [],
+    "group": {
+      "booleanComparer": "AND",
+      "criteria": data
+    }
+  };
+
+  // Get additional columns
+  data.forEach(function (criteria) {
+    query.propertyNames.push(criteria.recordset + "." + criteria.field);
+  });
+
+  // Display Spinner
+  Popup.plugins().loader();
+
+  // Submit Query
+  fetch(karafRootAddr + '/cxf/data/search/complex', {
+    method: "POST",
+    body: JSON.stringify(query),
+    headers: new Headers({
+      'content-type': 'application/json; charset=utf-8'
+    }),
+  }).then(res => res.json())
+    .then(response => {
+      renderResults(response, query.propertyNames);
+  }).catch(function(error) {
+      renderError(error);
+  });
 }
 
+function renderError(error) {
+  Popup.close();
+  Popup.create({
+      title: 'Error',
+      content: error,
+      className: 'alert',
+      buttons: {
+          right: ['ok']
+      }
+  }, true);
+}
 
+function renderResults(data, properties) {
+  Popup.close();
+  if (data.result[0].status === "SUCCESS") {
+    ReactDOM.render(
+            <SearchResults
+              data={data.result[0].result}
+              properties={properties}
+            />,
+    document.getElementById('results'));
+  } else {
+    Popup.create({
+        title: 'Error',
+        content: data.result[0].error,
+        className: 'alert',
+        buttons: {
+            right: ['ok']
+        }
+    }, true);
+  }
+}
 
+ReactDOM.render(
+    <Popup />,
+    document.getElementById('popupContainer')
+);
+
+ReactDOM.render(
+    <Menu items={[
+      {
+        id: 'select',
+        name: 'Select',
+        onClick: promptForTemplate
+      }, {
+        id: 'load',
+        name: 'Load',
+        onClick: () => {
+          alert("TODO: Not Implemented");
+        }
+      }, {
+        id: 'save',
+        name: 'Save',
+        onClick: () => {
+          alert("TODO: Not Implemented");
+        }
+      }, {
+        id: 'reset',
+        name: 'Reset',
+        onClick: () => {
+          alert("TODO: Not Implemented");
+        }
+      }
+    ]}/>,
+    document.getElementById('myNavbar')
+);
+
+Popup.registerPlugin('loader', function () {
+
+    this.create({
+        content:
+          <center className='sweet-loading'>
+            <HashLoader
+              color={'#cc6600'}
+              loading={true}
+            />
+          </center>,
+          closeOnOutsideClick: false
+    });
+});
+
+/** Prompt plugin */
+Popup.registerPlugin('promptTemplate', function (buttontext, defaultValue, callback) {
+    let promptValue = null;
+    let promptChange = function (value) {
+        promptValue = value;
+    };
+
+    this.create({
+        title: "Select Template",
+        content: <PromptTemplate onChange={promptChange} value={defaultValue} />,
+        buttons: {
+            left: ['cancel'],
+            right: [{
+                text: buttontext,
+                className: 'success',
+                action: function () {
+                    callback(promptValue);
+                    Popup.close();
+                }
+
+            }]
+        }
+    });
+});
+
+// TODO Remove this code (Its an example of how to submit a OGC filter as XML)
 function searchOGC(data, e) {
 
   var properties = [];
@@ -118,7 +248,7 @@ function searchOGC(data, e) {
 
   body.push("</ogc:Filter>")
 
-  data = {
+  var query = {
     "filter":body.join(""),
     "pageSize":200,
     "pageNumber":1,
@@ -132,182 +262,44 @@ function searchOGC(data, e) {
     "propertyNames":properties
   };
 
-  console.log(JSON.stringify(data));
+  console.log(JSON.stringify(query));
 
-  $.ajax({
-          type : "POST",
-          url : karafRootAddr + '/cxf/data/search/ogc',
-          data : JSON.stringify(data),
-          contentType : "application/json; charset=utf-8",
-          success : function(data, status, jqXHR) {
-            processSearchResults(data, properties);
-          },
-          error : function(jqXHR, status) {
-            // error handler
-            console.log(jqXHR);
-          }
-        });
-}
+  Popup.plugins().loader();
 
-function searchComplex(data, e) {
-
-  var properties = [];
-    data.forEach(function (criteria) {
-    properties.push(criteria.recordset + "." + criteria.field);
-  });
-
-  var query = {
-    "pageSize": 200,
-    "pageNumber": 1,
-    "propertyNames": properties,
-    "group": {
-      "booleanComparer": "AND",
-      "criteria": data
-    }
-  };
-
-  $.ajax({
-  				type : "POST",
-  				url : karafRootAddr + '/cxf/data/search/complex',
-  				data : JSON.stringify(query),
-  				contentType : "application/json; charset=utf-8",
-  				success : function(data, status, jqXHR) {
-            processSearchResults(data, properties);
-  				},
-  				error : function(jqXHR, status) {
-  					// error handler
-  					console.log(jqXHR);
-  				}
-  			});
-
-  /*
-  fetch(karafRootAddr + '/cxf/data/search', {
-    method: 'POST',
-    body: JSON.stringify(data),
-    "Content-Type" : "application/json; charset=utf-8"
-  })
-    .then(res => res.json())
+  fetch(karafRootAddr + '/cxf/data/search/ogc', {
+    method: "POST",
+    body: JSON.stringify(query),
+    headers: new Headers({
+      'content-type': 'application/json; charset=utf-8'
+    }),
+  }).then(res => res.json())
     .then(response => {
-      alert(JSON.stringify(response));
+      renderResults(response, query.propertyNames);
+  }).catch(function(error) {
+      renderError(error);
   });
-  */
 }
 
-function processSearchResults(data, properties) {
+// Populate w/ Base fields that a common to all templates
+// Because its common fields the GUID can be random (or hard coded)
+fetch(karafRootAddr + '/cxf/data/templates/998b040b-2c39-4c98-9a9d-61d565b46e28/recordsets/CoalesceEntity/fields')
+    .then(res => res.json())
+    .then(definition => {
 
+      var recordsets = [];
+      recordsets.push({name: 'CoalesceEntity', definition: definition});
 
-  var columns = [
-    {
-      Header: 'Key',
-      accessor: 'entityKey'
-    }
-  ];
+      cache['CoalesceEntity'] = recordsets;
 
-  properties.forEach(function (property) {
+      console.log(JSON.stringify(cache));
 
-    var parts = property.split(".");
+      // Add CoalesceEntity attributes as a recordset
+      ReactDOM.render(
+          <FilterCreator
+            recordsets={recordsets}
+            onSearch={searchComplex}
+          />,
+          document.getElementById('main')
+      );
 
-    columns.push({
-      Header: parts[1],
-      accessor: parts[1]
     })
-  });
-
-  columns.push({
-    Header: '',
-    accessor: 'button',
-    Cell: (cell) => (
-      <button className="form-control" title="Delete" onClick={openEditor.bind(this, cell.row.entityKey)}>
-        View
-      </button>
-    )
-  });
-
-
-  if (data.result[0].status === "SUCCESS") {
-    var tabledata;
-    if (data.result[0].result.hits != null) {
-      tabledata = data.result[0].result.hits;
-
-      console.log(JSON.stringify(data.result[0].result));
-
-      tabledata.forEach(function (hit) {
-        for (var ii=1; ii<columns.length - 1; ii++) {
-            hit[columns[ii].accessor] = hit.values[ii-1];
-        }
-      });
-
-    }
-
-    ReactDOM.render(
-            <ReactTable
-              data={tabledata}
-              columns={columns}
-            />,
-      document.getElementById('results')
-    );
-  } else {
-    alert(data.result[0].error);
-  }
-}
-
-ReactDOM.render(
-    <Popup />,
-    document.getElementById('popupContainer')
-);
-
-ReactDOM.render(
-    <Menu items={[
-      {
-        id: 'select',
-        name: 'Select',
-        onClick: promptForTemplate
-      }, {
-        id: 'load',
-        name: 'Load',
-        onClick: () => {
-          alert("TODO: Not Implemented");
-        }
-      }, {
-        id: 'save',
-        name: 'Save',
-        onClick: () => {
-          alert("TODO: Not Implemented");
-        }
-      }, {
-        id: 'reset',
-        name: 'Reset',
-        onClick: () => {
-          alert("TODO: Not Implemented");
-        }
-      }
-    ]}/>,
-    document.getElementById('myNavbar')
-);
-
-/** Prompt plugin */
-Popup.registerPlugin('promptTemplate', function (buttontext, defaultValue, callback) {
-    let promptValue = null;
-    let promptChange = function (value) {
-        promptValue = value;
-    };
-
-    this.create({
-        title: "Select Template",
-        content: <PromptTemplate onChange={promptChange} value={defaultValue} />,
-        buttons: {
-            left: ['cancel'],
-            right: [{
-                text: buttontext,
-                className: 'success',
-                action: function () {
-                    callback(promptValue);
-                    Popup.close();
-                }
-
-            }]
-        }
-    });
-});
-
-promptForTemplate();
