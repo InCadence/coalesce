@@ -199,3 +199,27 @@ StyleSelection.defaultProps = {
     'Georgia, serif'
   ]
 }
+
+Popup.registerPlugin('promptStyle', function (styles, callback) {
+
+    let data = null;
+    let dataChange = function (value) {
+        data = value;
+    };
+
+    this.create({
+        title: 'Select Style',
+        content: <StyleSelection onChange={dataChange} presets={styles} data={styles[0]}/>,
+        buttons: {
+            left: ['cancel'],
+            right: [{
+                text: 'OK',
+                className: 'success',
+                action: function () {
+                    callback(data);
+                    Popup.close();
+                }
+            }]
+        }
+    });
+})

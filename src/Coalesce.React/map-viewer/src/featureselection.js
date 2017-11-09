@@ -39,7 +39,7 @@ export class FeatureSelection extends React.Component {
       });
 
       // Prompt for layer to add
-      Popup.plugins().promptFeature2(filteredLayers, styles, function (value) {
+      Popup.plugins().promptAddFeature(filteredLayers, styles, function (value) {
 
         if (value.type === "WFS") {
           // Create client side style
@@ -90,7 +90,7 @@ export class FeatureSelection extends React.Component {
 
     var that = this;
 
-    Popup.plugins().promptFeature(selectedLayers, 'Remove', function (value) {
+    Popup.plugins().promptRemoveFeature(selectedLayers, function (value) {
 
       for (var ii=0; ii<selectedLayers.length; ii++) {
 
@@ -211,7 +211,7 @@ function hexToRgbA(hex, alpha){
 }
 
 /** Prompt plugin */
-Popup.registerPlugin('promptFeature2', function (data, styles, callback) {
+Popup.registerPlugin('promptAddFeature', function (data, styles, callback) {
 
     var styleOptions = [{
       'key': 'Custom',
@@ -261,7 +261,7 @@ Popup.registerPlugin('promptFeature2', function (data, styles, callback) {
     });
 })
 
-Popup.registerPlugin('promptFeature', function (data, buttontext, callback) {
+Popup.registerPlugin('promptRemoveFeature', function (data, buttontext, callback) {
     let promptValue = null;
     let promptChange = function (value) {
         promptValue = value;
@@ -273,34 +273,10 @@ Popup.registerPlugin('promptFeature', function (data, buttontext, callback) {
         buttons: {
             left: ['cancel'],
             right: [{
-                text: buttontext,
+                text: 'Remove',
                 className: 'success',
                 action: function () {
                     callback(promptValue);
-                    Popup.close();
-                }
-            }]
-        }
-    });
-})
-
-Popup.registerPlugin('promptStyle', function (styles, callback) {
-
-    let data = null;
-    let dataChange = function (value) {
-        data = value;
-    };
-
-    this.create({
-        title: 'Select Style',
-        content: <StyleSelection onChange={dataChange} presets={styles} data={styles[0]}/>,
-        buttons: {
-            left: ['cancel'],
-            right: [{
-                text: 'OK',
-                className: 'success',
-                action: function () {
-                    callback(data);
                     Popup.close();
                 }
             }]
