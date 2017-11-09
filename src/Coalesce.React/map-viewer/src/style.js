@@ -1,4 +1,5 @@
 import React from "react";
+import Popup from 'react-popup';
 
 export class StyleSelection extends React.Component {
 
