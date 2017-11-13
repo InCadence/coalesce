@@ -25,8 +25,9 @@ class Main extends React.Component {
   }
 
   renderCard(url, img, title, description) {
+    //target={url !== '#' ? "_blank" : ""} 
     return (
-        <a href={url} target={url !== '#' ? "_blank" : ""} >
+        <a href={url} >
           <div className='card'>
             <div className="row">
               <img src={img} alt={title} height="64"/>

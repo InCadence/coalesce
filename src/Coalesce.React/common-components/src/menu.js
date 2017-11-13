@@ -27,7 +27,7 @@ export class Menu extends React.Component {
                 <span className="icon-bar"></span>
                 <span className="icon-bar"></span>
             </button>
-            <img className="navbar-icon" src={require('common-components/img/logo.ico')} alt='InCadence' /><a id="templateName" className="navbar-brand" href="#">{this.state.title}</a>
+            <a href={this.state.home}><img className="coalesce-img-button enabled" src={require('common-components/img/home.ico')} alt='home' title='Home' /></a><a id="templateName" className="navbar-brand" href="#">{this.state.title}</a>
         </div>
         <div className="collapse navbar-collapse" id="myNavbar">
           <ul className="nav navbar-nav navbar-right">
@@ -37,4 +37,8 @@ export class Menu extends React.Component {
       </div>
     )
   }
+}
+
+Menu.defaultProps = {
+  home: 'http://' + window.location.hostname + ':' + window.location.port
 }

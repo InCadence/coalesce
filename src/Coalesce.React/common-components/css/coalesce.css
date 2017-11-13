@@ -18,14 +18,14 @@ body {
 
 /* Coalesce Button Styles */
 .coalesce-img-button.enabled {
-  background-color:#f7ca4f;
+  background-color:#3d3d3c;
   border:2px solid #FF9900;
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
   color:#fff;
 }
 
 .coalesce-img-button.enabled:hover {
-  background-color:#fBce53;
+  background-color:#686867;
     box-shadow: 0 6px 12px 0 rgba(0,0,0,0.5);
     cursor: pointer;
 }
@@ -71,12 +71,12 @@ body {
 
 .card label {
   /*color: #FFBB00;*/
-  color: #000000;
+  color: #FFFFFF;
 }
 
 .card {
-  color:#000000;
-  background-color:#f7ca4f;
+  color:#e2e2e2;
+  background-color:#3d3d3c;
   border:2px solid #FF9900;
   border-radius:5px;
   margin-right:10px;
@@ -92,7 +92,7 @@ body {
 }
 
 .card:hover {
-  background-color:#fBce53;
+  background-color:#686867;
     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.5);
 }
 
@@ -107,9 +107,9 @@ body {
 
 .ui-widget-header {
   /*FF9900*/
-  color: #5b3700;
+  color: #e2e2e2;
   font-weight: bold;
-  background-color:  #f7ca4f; /*f7ba11;*/
+  background-color:  #3d3d3c; /*f7ba11;*/
   border-width: 0px;
   border-top-left-radius: 3px;
   border-top-right-radius: 3px;
@@ -146,7 +146,7 @@ body {
 }
 
 .slide-pane__header {
-  background-color: #f7ca4f;
+  background-color: #3d3d3c;
   color: #5b3700;
 }
 

@@ -27,14 +27,14 @@ export class SearchResults extends React.PureComponent {
       })
     });
 
-    // {this.openEditor.bind(this, cell.row.entityKey)}
+    //window.open(this.props.url + "/entityeditor/?entitykey=" + cell.row.entityKey, '_blank')
 
     // Add button for viewing entity
     columns.push({
       Header: '',
       accessor: 'button',
       Cell: (cell) => (
-        <img id={cell.row.key} src={require('common-components/img/view.ico')} alt="view" title="View Linked Entity" className="coalesce-img-button small enabled" onClick={() => window.open(this.props.url + "/entityeditor/?entitykey=" + cell.row.entityKey, '_blank')}/>
+        <img id={cell.row.key} src={require('common-components/img/view.ico')} alt="view" title="View Entity" className="coalesce-img-button small enabled" onClick={() => window.open(this.props.url + "/entityeditor/?entitykey=" + cell.row.entityKey)}/>
       )
     });
 

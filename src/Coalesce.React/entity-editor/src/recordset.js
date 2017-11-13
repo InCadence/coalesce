@@ -264,7 +264,7 @@ export class RecordView extends React.Component {
     var label = record.name.toProperCase();
 
     return (
-      <Accordion key={record.key} objectkey={record.key} label={record.name}>
+      <Accordion key={record.key} objectkey={record.key} label={label}>
         {fields}
       </Accordion>
     );
