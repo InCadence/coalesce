@@ -1,7 +1,4 @@
 import React from 'react';
-import Popup from 'react-popup';
-
-import '../css/popup.css'
 
 var karafRootAddr = 'http://' + window.location.hostname + ':8181';
 

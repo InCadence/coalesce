@@ -3,11 +3,11 @@ import ReactDOM from 'react-dom';
 import {EntityView} from './entity.js'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import Popup from 'react-popup';
-import Prompt from 'common-components/lib/prompt.js'
-import {PromptTemplate} from 'common-components/lib/prompt-template.js'
 import {Menu} from 'common-components/lib/menu.js'
+import {registerLoader, registerPrompt, registerTemplatePrompt} from 'common-components/lib/register.js'
 
 import './index.css'
+import 'common-components/css/coalesce.css'
 import 'common-components/css/popup.css'
 
 var rootUrl = 'http://' + window.location.hostname + ':8181'
@@ -33,20 +33,12 @@ const Default = ({match}) => {
   var params={};window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi,function(s,k,v){params[k]=v});
 
   if (params['entitykey'] != null) {
-    return React.createElement(EntityView, {
-      objectkey: params['entitykey'],
-      isNew: false,
-      rootUrl: rootUrl
-    });
+    renderEntity(params['entitykey']);
   } else if (params['templatekey'] != null) {
-    return React.createElement(EntityView, {
-      objectkey: params['templatekey'],
-      isNew: true,
-      rootUrl: rootUrl
-    });
-  } else {
-    return (<div/>);
+    renderNewEntity(params['templatekey']);
   }
+
+  return (<div/>);
 }
 
 const EditEntity = ({match}) => {
@@ -73,12 +65,93 @@ const NewEntity = ({match}) => {
   });
 }
 
-// Default Component
-ReactDOM.render(
-  React.createElement(App, {}),
-  document.getElementById('entityview')
-);
+function saveEntity(entity, isNew) {
 
+  Popup.plugins().loader('Saving...');
+
+  fetch(rootUrl + '/cxf/data/entity/' + entity.key, {
+    method: ((isNew) ? "PUT" : "POST"),
+    body: JSON.stringify(entity),
+    headers: new Headers({
+      'content-type': 'application/json; charset=utf-8'
+    }),
+  }).then(res => {
+      Popup.close();
+  }).catch(function(error) {
+      renderError("Saving: " + error);
+  });
+}
+
+function renderEntity(key) {
+  ReactDOM.unmountComponentAtNode(document.getElementById('entityview'));
+
+  Popup.plugins().loader('Loading Entity...');
+
+  fetch(rootUrl + '/cxf/data/entity/' + key)
+    .then(res => res.json())
+    .then(data => {
+
+      fetch(rootUrl + '/cxf/data/templates/' + data.name + '/' + data.source + '/' + data.version)
+        .then(res => res.json())
+        .then(template => {
+
+
+          ReactDOM.render(
+            React.createElement(EntityView, {
+              data: data,
+              template: template,
+              isNew: false,
+              saveEntity: saveEntity,
+              rootUrl: rootUrl
+            }),
+            document.getElementById('entityview')
+          );
+
+          Popup.close();
+
+        }).catch(function(error) {
+          renderError('Failed to load template (' + data.name + ', ' + data.source + ', ' + data.version + ')');
+        });
+    }).catch(function(error) {
+      renderError('Failed to load entity (' + key + ')');
+    });
+}
+
+function renderNewEntity(key) {
+  ReactDOM.unmountComponentAtNode(document.getElementById('entityview'));
+
+  Popup.plugins().loader('Creating Entity...');
+
+  fetch(rootUrl + '/cxf/data/templates/' + key)
+    .then(res => res.json())
+    .then(template => {
+
+      fetch(rootUrl + '/cxf/data/templates/' + key + "/new")
+        .then(res => res.json())
+        .then(data => {
+
+
+          ReactDOM.render(
+            React.createElement(EntityView, {
+              data: data,
+              template: template,
+              isNew: true,
+              saveEntity: saveEntity,
+              url: rootUrl
+            }),
+            document.getElementById('entityview')
+          );
+
+          Popup.close();
+        }).catch(function(error) {
+          renderError('Failed to create new entity (' + key + ')');
+        });
+    }).catch(function(error) {
+      renderError('Failed to load template (' + key + ')');
+    });
+}
+
+// Default Component
 ReactDOM.render(
     <Popup />,
     document.getElementById('popupContainer')
@@ -89,38 +162,22 @@ ReactDOM.render(
       {
         id: 'new',
         name: 'New',
+        img: require('common-components/img/new.ico'),
+        title: 'Create New Entity',
         onClick: () => {
 
-          Popup.plugins().promptTemplate('create', 'Type your name', function (value) {
-
-            ReactDOM.unmountComponentAtNode(document.getElementById('entityview'));
-
-            ReactDOM.render(
-              React.createElement(EntityView, {
-                objectkey: value,
-                isNew: true,
-                rootUrl: rootUrl
-              }),
-              document.getElementById('entityview')
-            );
+          Popup.plugins().promptTemplate('create', 'Type your name', function (key) {
+            renderNewEntity(key);
           });
         }
       }, {
         id: 'load',
         name: 'Load',
+        img: require('common-components/img/load.ico'),
+        title: 'Load Entity',
         onClick: () => {
-          Popup.plugins().prompt('Load', 'Entity Selection', '', 'Enter Entity Key', function (value) {
-
-            ReactDOM.unmountComponentAtNode(document.getElementById('entityview'));
-
-            ReactDOM.render(
-              React.createElement(EntityView, {
-                objectkey: value,
-                isNew: false,
-                rootUrl: rootUrl
-              }),
-              document.getElementById('entityview')
-            );
+          Popup.plugins().prompt('Load', 'Entity Selection', '', 'Enter Entity Key', function (key) {
+            renderEntity(key);
           });
         }
       }
@@ -129,50 +186,31 @@ ReactDOM.render(
 );
 
 /** Prompt plugin */
-Popup.registerPlugin('promptTemplate', function (buttontext, defaultValue, callback) {
-    let promptValue = null;
-    let promptChange = function (value) {
-        promptValue = value;
-    };
+fetch(rootUrl + '/cxf/data/templates')
+  .then(res => res.json())
+  .then(data => {
+      registerTemplatePrompt(Popup, rootUrl, data);
 
-    this.create({
-        title: "Select Template",
-        content: <PromptTemplate onChange={promptChange} value={defaultValue} />,
-        buttons: {
-            left: ['cancel'],
-            right: [{
-                text: buttontext,
-                className: 'success',
-                action: function () {
-                    callback(promptValue);
-                    Popup.close();
-                }
-
-            }]
-        }
-    });
+}).catch(function(error) {
+    renderError("Loading Templates: " + error);
 });
 
-/** Prompt plugin */
-Popup.registerPlugin('prompt', function (buttontext, title, defaultValue, placeholder, callback) {
-    let promptValue = null;
-    let promptChange = function (value) {
-        promptValue = value;
-    };
+registerLoader(Popup);
+registerPrompt(Popup);
 
-    this.create({
-        title: title,
-        content: <Prompt onChange={promptChange} placeholder={placeholder} value={defaultValue} />,
-        buttons: {
-            left: ['cancel'],
-            right: [{
-                text: buttontext,
-                className: 'success',
-                action: function () {
-                    callback(promptValue);
-                    Popup.close();
-                }
-            }]
-        }
-    });
-});
+function renderError(error) {
+  Popup.close();
+  Popup.create({
+      title: 'Error',
+      content: error,
+      className: 'alert',
+      buttons: {
+          right: ['ok']
+      }
+  }, true);
+}
+
+ReactDOM.render(
+  React.createElement(App, {}),
+  document.getElementById('entityview')
+);

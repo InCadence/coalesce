@@ -94,20 +94,39 @@ export class MapView extends React.Component {
         } else {
           feature.layer = createBDPWMSLayer(this.props.geoserver, this.props.workspace, [feature.name]);
           layer = feature.layer;
+          layer.setVisible(feature.checked);
         }
         break;
       case 'HEATMAP':
         feature.layer = createBDPHeatmapLayer(this.props.geoserver, this.props.workspace, feature.name);
         layer = feature.layer;
+        layer.setVisible(feature.checked);
         break;
       case 'WFS':
       default:
         feature.layer = createBDPWFSLayer(this.props.geoserver, this.props.workspace, feature.name, feature.style);
         layer = feature.layer;
+        layer.setVisible(feature.checked);
         break;
     }
 
     map.addLayer(layer);
+  }
+
+  moveLayerCallBack(feature, up, idx) {
+
+    const {map} = this.state;
+
+    map.removeLayer(feature.layer);
+
+    // Map starts at 1 due to map layer
+    if (up) {
+      idx = idx+1-1;
+    } else {
+      idx = idx+1+1;
+    }
+
+    map.getLayers().insertAt(idx, feature.layer);
   }
 
   // Callback to handling removing layers from the map
@@ -164,25 +183,27 @@ export class MapView extends React.Component {
           isOpen={ this.state.isOptionsOpen }
           title='Options'
           from='left'
-          width='300px'
+          width='350px'
           onRequestClose={ () => this.setState({ isOptionsOpen: false }) }>
+            <FeatureSelection
+              addfeature={(feature) => this.addLayerCallBack(feature)}
+              rmvfeature={(feature) => this.rmvLayerCallBack(feature)}
+              moveLayer={(feature, up, idx) => this.moveLayerCallBack(feature, up, idx)}
+              availableLayers={this.state.availableLayers}
+              styles={this.state.styles}
+              selectedLayers={this.state.selectedLayers}/>
             <div className="ui-widget">
-              <label className="ui-widget-header ui-button">Layers</label>
-              <FeatureSelection
-                addfeature={(feature) => this.addLayerCallBack(feature)}
-                rmvfeature={(feature) => this.rmvLayerCallBack(feature)}
-                availableLayers={this.state.availableLayers}
-                styles={this.state.styles}
-                selectedLayers={this.state.selectedLayers}/>
-            </div>
-            <div className="ui-widget">
-              <label className="ui-widget-header ui-button">Misc</label>
-              <div className="row">
-                <div className="col-sm-2">
-                  <input type="checkbox" onChange={this.onWMSLayerChange.bind(this)} checked={this.state.singleWMSLayer.enabled} />
-                </div>
-                <div className="col-sm-10">
-                  <label>Single Layer WMS</label>
+              <div className="ui-widget-header">
+                <label>Misc</label>
+              </div>
+              <div className="ui-widget-content">
+                <div className="row">
+                  <div className="col-sm-2">
+                    <input type="checkbox" onChange={this.onWMSLayerChange.bind(this)} checked={this.state.singleWMSLayer.enabled} disabled/>
+                  </div>
+                  <div className="col-sm-10">
+                    <label>Single WMS Layer</label>
+                  </div>
                 </div>
               </div>
             </div>
@@ -210,7 +231,7 @@ var createOptionControl = function(view, opt_options) {
   button.addEventListener('touchstart', handleRotateNorth, false);
 
   var element = document.createElement('div');
-  element.className = 'options-button ol-unselectable ol-control';
+  element.className = 'map-control-65px ol-unselectable ol-control';
   element.appendChild(button);
 
   ol.control.Control.call(this, {

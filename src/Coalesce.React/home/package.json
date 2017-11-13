@@ -9,7 +9,8 @@
   "homepage": "/",
   "dependencies": {
     "react": "^16.0.0",
-    "react-dom": "^16.0.0"
+    "react-dom": "^16.0.0",
+    "react-popup": "^0.8.0"
   },
   "scripts": {
     "start": "react-scripts start",

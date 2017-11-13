@@ -15,7 +15,7 @@
     "react-popup": "^0.8.0",
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
-    "react-spinners": "^0.2.1",
+    "react-sliding-pane": "^2.0.1",
     "react-table": "^6.6.0"
   },
   "devDependencies": {

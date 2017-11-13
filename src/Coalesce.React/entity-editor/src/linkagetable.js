@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactTable from 'react-table'
 import {Toggle} from 'common-components/lib/toggle.js'
+import {Accordion} from 'common-components/lib/accordion.js'
 import {Collapse} from 'react-collapse';
 
 export class LinkageView extends React.Component
@@ -30,10 +31,10 @@ export class LinkageView extends React.Component
     ];
 
     var buttons = {};
-    buttons['Header'] = 'Key';
+    buttons['Header'] = '';
     buttons['accessor'] = 'entity2Key';
     buttons['Cell'] = (cell) => (
-      <button id={cell.row.key} style={{width:'90%'}} onClick={this.handleEntity2KeyClick.bind(this, cell.row.entity2Key)}>=></button>
+      <img id={cell.row.key} src={require('common-components/img/view.ico')} alt="view" title="View Linked Entity" className="coalesce-img-button small enabled" onClick={this.handleEntity2KeyClick.bind(this, cell.row.entity2Key)}/>
     );
 
     columns.push(buttons);
@@ -60,30 +61,30 @@ export class LinkageView extends React.Component
     }
 
     return (
-      <div className="ui-widget">
-        <Toggle
-          ontext="Linkage Section"
-          offtext="Linkage Section"
-          isToggleOn={isOpened}
-          onToggle={(value) => {
-            this.setState({isOpened: value});
-          }}
-          />
-          <Collapse className="ui-widget-content" isOpened={isOpened}>
-            <div className="section">
-              <ReactTable columns={columns} data={data} />
-            </div>
-          </Collapse>
-      </div>
+      <Accordion id="linkages" key="linkages" label="Linkage Section" isOpened={false}>
+        <div className="section">
+          <ReactTable columns={columns} data={data} />
+        </div>
+      </Accordion>
     )
   }
 }
 /*
-<Accordion label="Linkage Section" isOpened={false}>
-  <div className="section">
-    <ReactTable columns={columns} data={data} />
-  </div>
-</Accordion>
+<div className="ui-widget">
+  <Toggle
+    ontext="Linkage Section"
+    offtext="Linkage Section"
+    isToggleOn={isOpened}
+    onToggle={(value) => {
+      this.setState({isOpened: value});
+    }}
+    />
+    <Collapse className="ui-widget-content" isOpened={isOpened}>
+      <div className="section">
+        <ReactTable columns={columns} data={data} />
+      </div>
+    </Collapse>
+</div>
 */
 LinkageView.defaultProps = {
   isOpened: false

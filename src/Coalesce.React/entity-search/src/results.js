@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactTable from 'react-table'
 
-export class SearchResults extends React.Component {
+export class SearchResults extends React.PureComponent {
 
   render() {
 
@@ -34,9 +34,7 @@ export class SearchResults extends React.Component {
       Header: '',
       accessor: 'button',
       Cell: (cell) => (
-        <button className="form-control" title="Delete" onClick={() => window.open(this.props.url + "/entityeditor/?entitykey=" + cell.row.entityKey, '_blank')}>
-          View
-        </button>
+        <img id={cell.row.key} src={require('common-components/img/view.ico')} alt="view" title="View Linked Entity" className="coalesce-img-button small enabled" onClick={() => window.open(this.props.url + "/entityeditor/?entitykey=" + cell.row.entityKey, '_blank')}/>
       )
     });
 
@@ -56,10 +54,12 @@ export class SearchResults extends React.Component {
     }
 
     return (
-      <ReactTable
-        data={tabledata}
-        columns={columns}
-      />
+      <div className="ui-widget-content">
+        <ReactTable
+          data={tabledata}
+          columns={columns}
+        />
+      </div>
     )
 
   }

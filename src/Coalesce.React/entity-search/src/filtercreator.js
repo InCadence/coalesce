@@ -53,8 +53,8 @@ export class FilterCreator extends React.Component {
             this.setState({isOpened: value});
           }}
           />
-          <Collapse className="ui-widget-content" isOpened={isOpened}>
-            <div className="section">
+          <Collapse isOpened={isOpened}>
+            <div className="ui-widget-content">
               <ReactTable
                 pageSize={this.props.maxRows}
                 data={tabledata}
@@ -62,8 +62,8 @@ export class FilterCreator extends React.Component {
                 columns={createColumns(this, recordsets)}
               />
               <div className="form-buttons">
-                <button onClick={this.addRow.bind(this)} className="mm-popup__btn mm-popup__btn--cancel">add</button>
-                <button onClick={this.props.onSearch.bind(this, this.state.tabledata)} className='mm-popup__btn mm-popup__btn--success'>search</button>
+                <img src={require('common-components/img/add.ico')} alt="Add" title="Add Criteria" className="coalesce-img-button enabled" onClick={this.addRow.bind(this)}/>
+                <img src={require('common-components/img/search2.ico')} alt="Search" title="Execute Query" className="coalesce-img-button enabled" onClick={this.props.onSearch.bind(this, this.state.tabledata)}/>
               </div>
             </div>
           </Collapse>
@@ -200,9 +200,7 @@ function createColumns(that, recordsets) {
       sortable: false,
       width: 50,
       Cell: (cell) => (
-        <button className="form-control" title="Delete" onClick={that.deleteRow.bind(that, cell.row.key)}>
-          -
-        </button>
+        <img src={require('common-components/img/remove.ico')} alt="Add" title="Remove Criteria" className="coalesce-img-button enabled" onClick={that.deleteRow.bind(that, cell.row.key)}/>
       )
     });
 

@@ -5,7 +5,8 @@ import {MapView} from './map.js'
 import $ from 'jquery'
 
 import './index.css'
-
+import 'common-components/css/coalesce.css'
+import 'common-components/css/popup.css'
 
 class App extends React.Component {
 
@@ -215,7 +216,7 @@ App.defaultProps = {
       key: 'Ariana All',
       name: 'Ariana All',
       type: 'WMS',
-      checked: false
+      checked: true
     }, {
       key: 'Ariana Cities',
       name: 'Ariana Cities',

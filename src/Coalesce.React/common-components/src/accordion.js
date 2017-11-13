@@ -2,7 +2,7 @@ import React from 'react';
 import {Collapse} from 'react-collapse';
 import {Toggle} from './toggle.js'
 
-export class Accordion extends React.PureComponent  {
+export class Accordion extends React.Component  {
 
   constructor(props) {
     super(props);
@@ -22,8 +22,10 @@ export class Accordion extends React.PureComponent  {
             this.setState({isOpened: value});
           }}
           />
-        <Collapse className="ui-widget-content" isOpened={isOpened}>
-        {children}
+        <Collapse isOpened={isOpened}>
+          <div className="ui-widget-content">
+            {children}
+          </div>
         </Collapse>
       </div>
     );

@@ -1,25 +1,29 @@
 import React from 'react';
-import Popup from 'react-popup';
-
-import '../css/popup.css'
-
-var karafRootAddr = 'http://' + window.location.hostname + ':8181';
 
 /** The prompt content component */
 export class PromptTemplate extends React.Component {
     constructor(props) {
         super(props);
 
+        var defaultValue;
+
+        if (this.props.defaultValue != null) {
+          defaultValue = this.props.defaultValue;
+        } else if (this.props.data != null) {
+          defaultValue = this.props.data[0].key;
+        }
+
         this.state = {
-            value: this.props.defaultValue
+            data: this.props.data,
+            value: defaultValue
         };
 
-        this.onChange = (e) => this._onChange(e);
+        this.props.onChange(this.state.value);
     }
 
     componentDidMount() {
       if (this.state.data == null) {
-          fetch(karafRootAddr + '/cxf/data/templates')
+          fetch(this.props.url + '/cxf/data/templates')
             .then(res => res.json())
             .then(data => {
               this.setState({
@@ -36,12 +40,6 @@ export class PromptTemplate extends React.Component {
         }
     }
 
-    _onChange(e) {
-        let value = e.target.value;
-
-        this.setState({value: value});
-    }
-
     render() {
 
         const {data} = this.state;
@@ -55,34 +53,9 @@ export class PromptTemplate extends React.Component {
         }
 
         return (
-            <select className="form-control" value={this.state.value} onChange={this.onChange}>
+            <select className="form-control" value={this.state.value} onChange={(e) => this.setState({ value: e.target.value })}>
               {options}
             </select>
         )
     }
 }
-
-/** Prompt plugin */
-Popup.registerPlugin('promptTemplate', function (buttontext, title, callback) {
-    let promptValue = null;
-    let promptChange = function (value) {
-        promptValue = value;
-    };
-
-    this.create({
-        title: {title},
-        content: <PromptTemplate onChange={promptChange} />,
-        buttons: {
-            left: ['cancel'],
-            right: [{
-                text: buttontext,
-                className: 'success',
-                action: function () {
-                    callback(promptValue);
-                    Popup.close();
-                }
-
-            }]
-        }
-    });
-});

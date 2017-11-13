@@ -2,7 +2,6 @@ import React from 'react';
 import {Accordion} from 'common-components/lib/accordion.js'
 import {LinkageView} from './linkagetable.js'
 import {RecordsetView, RecordView} from './recordset.js'
-import $ from 'jquery'
 
 import './index.css'
 import 'react-table/react-table.css'
@@ -14,64 +13,10 @@ export class EntityView extends React.Component {
     this.state = props;
     }
 
-  componentDidMount() {
-
-    const {isNew} = this.state;
-    const {objectkey, rootUrl} = this.props;
-
-    if (isNew) {
-      fetch(rootUrl + '/cxf/data/templates/' + objectkey)
-        .then(res => res.json())
-        .then(template => {
-
-          fetch(rootUrl + '/cxf/data/templates/' + objectkey + "/new")
-            .then(res => res.json())
-            .then(data => {
-              this.setState({data: data})
-              this.setState({template: template})
-            }).catch(function(error) {
-              alert('Failed to create new entity (' + objectkey + ')');
-            });
-        }).catch(function(error) {
-            alert('Failed to load template (' + objectkey + ')');
-        });
-    } else {
-      fetch(rootUrl + '/cxf/data/entity/' + objectkey)
-        .then(res => res.json())
-        .then(data => {
-
-          fetch(rootUrl + '/cxf/data/templates/' + data.name + '/' + data.source + '/' + data.version)
-            .then(res => res.json())
-            .then(template => {
-              this.setState({data: data})
-              this.setState({template: template})
-            }).catch(function(error) {
-              alert('Failed to load template (' + data.name + ', ' + data.source + ', ' + data.version + ')');
-            });
-        }).catch(function(error) {
-          alert('Failed to load entity (' + objectkey + ')');
-        });
-    }
-  }
-
   onSave() {
     const {data, isNew} = this.state;
-    const {rootUrl} = this.props;
 
-    $.ajax({
-      type : ((isNew) ? "PUT" : "POST"),
-      url: rootUrl + '/cxf/data/entity/' + data.key,
-      data : JSON.stringify(data),
-      contentType : "application/json; charset=utf-8",
-      success : function(data, status, jqXHR) {
-        alert('Saved');
-      },
-      error : function(jqXHR, status) {
-        alert('Failed: ' + JSON.stringify(jqXHR));
-        // error handler
-        console.log(jqXHR);
-      }
-    });
+    this.props.saveEntity(data, isNew);
 
     this.setState({
       isNew: false
@@ -127,7 +72,7 @@ export class EntityView extends React.Component {
         {linkages}
         {sections}
         <div className="form-buttons">
-          <button className='mm-popup__btn mm-popup__btn--success' onClick={this.onSave.bind(this)}>save</button>
+          <img src={require('common-components/img/save.ico')} alt="Save" title="Save Changes" className="coalesce-img-button enabled" onClick={this.onSave.bind(this)}/>
         </div>
       </div>
     )
@@ -136,8 +81,7 @@ export class EntityView extends React.Component {
 };
 
 EntityView.defaultProps = {
-  isNew: true,
-  rootUrl: 'http://' + window.location.hostname + ':8181'
+  isNew: true
 }
 
 function getElement(name, data)
@@ -206,10 +150,8 @@ function renderSection(section, data) {
 
     return (
       <Accordion key={section.key} objectkey={section.key} label={label}>
-        <div className="section">
-          <div>{sections}</div>
-          <div>{recordsets}</div>
-        </div>
+        <div>{sections}</div>
+        <div>{recordsets}</div>
       </Accordion>
     )
 }

@@ -1,17 +1,4 @@
-.form-buttons {
-  text-align: right;
-  padding-top: 0.1em;
-  font-weight: bold;
-  color: black;
-}
-
-.form-buttons button {
-  text-align: center;
-  margin: 0.1em;
-  width: 80px;
-}
-
-.options-button {
+.map-control-65px {
   top: 65px;
   left: .5em;
 }

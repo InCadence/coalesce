@@ -2,6 +2,7 @@ import React from 'react';
 import ReactTable from 'react-table'
 import { ReactTableDefaults } from 'react-table'
 import {Toggle} from 'common-components/lib/toggle.js'
+import {Accordion} from 'common-components/lib/accordion.js'
 import {Collapse} from 'react-collapse';
 
 Object.assign(ReactTableDefaults, {
@@ -15,6 +16,8 @@ export class RecordsetView extends React.Component
   constructor(props) {
     super(props);
     this.state = props;
+    this.createRow = this.createRow.bind(this);
+    this.toggleShowAll = this.toggleShowAll.bind(this);
   }
 
   render() {
@@ -32,7 +35,7 @@ export class RecordsetView extends React.Component
     buttons['Cell'] = (cell) => {
       // TODO Pull o  ptions from an enumeration
       return (
-        <select onChange={that.changeStatus.bind(that, cell.row.key)} value={cell.row.status}>
+        <select className="form-control" onChange={that.changeStatus.bind(that, cell.row.key)} value={cell.row.status}>
           <option value='ACTIVE'>Active</option>
           <option value='READONLY'>Readonly</option>
           <option value='DELETED'>Deleted</option>
@@ -59,6 +62,20 @@ export class RecordsetView extends React.Component
       });
     }
 
+/*
+<Accordion id={recordset.key} key={recordset.key} label={label}>
+  <ReactTable
+    data={tabledata}
+    columns={columns}
+  />
+  <div className='form-buttons'>
+    <input type='checkbox'  onClick={this.toggleShowAll} />
+    <label>Show All</label>
+    <img src={require('common-components/img/add.ico')} alt="Add" title="Add Row" className="coalesce-img-button enabled" onClick={this.createRow}/>
+  </div>
+</Accordion>
+*/
+
     var label = recordset.name.toProperCase() + " Recordset";
     return (
       <div id={recordset.key} key={recordset.key} className="ui-widget">
@@ -70,19 +87,19 @@ export class RecordsetView extends React.Component
             this.setState({isOpened: value});
           }}
           />
-          <Collapse className="ui-widget-content" isOpened={isOpened}>
-            <ReactTable
-              data={tabledata}
-              columns={columns}
-            />
+          <Collapse isOpened={isOpened}>
+            <div className="ui-widget-content">
+              <ReactTable
+                data={tabledata}
+                columns={columns}
+              />
+              <div className='form-buttons'>
+                <input type='checkbox'  onClick={this.toggleShowAll} />
+                <label>Show All</label>
+                <img src={require('common-components/img/add.ico')} alt="Add" title="Add Row" className="coalesce-img-button enabled" onClick={this.createRow}/>
+              </div>
+            </div>
           </Collapse>
-          <div className='form-buttons'>
-            <input type='checkbox'  onClick={this.toggleShowAll.bind(that)} />
-            <label>Show All</label>
-            <button id="add" className="mm-popup__btn mm-popup__btn--cancel" title="Add" onClick={this.createRow.bind(that)}>
-              Add
-            </button>
-          </div>
       </div>
     )
   }
@@ -95,7 +112,7 @@ export class RecordsetView extends React.Component
 
     if (definition.status !== "READONLY") {
       col['Cell'] = (cell) => (
-          <input style={{width:'100%'}} value={cell.value} onChange={that.handleChange.bind(that, cell.row.key, cell.column.Header)}/>
+          <input className="form-control" value={cell.value} onChange={that.handleChange.bind(that, cell.row.key, cell.column.Header)}/>
       );
     }
 
@@ -235,7 +252,7 @@ export class RecordView extends React.Component {
 
       fields.push(
         <div key={field.key} className="row">
-          <label className="col-sm-2 col-form-label">{fd.name}</label>
+          <label className="col-sm-2">{fd.name}</label>
           <div className="col-sm-6">
             <input id={field.key} className="form-control" value={field.value}  onChange={that.handleChange}/>
           </div>
@@ -244,20 +261,12 @@ export class RecordView extends React.Component {
 
     });
 
+    var label = record.name.toProperCase();
+
     return (
-      <div id={record.key} key={record.key} className="ui-widget">
-        <Toggle
-          ontext={record.name}
-          offtext={record.name}
-          isToggleOn={isOpened}
-          onToggle={(value) => {
-            this.setState({isOpened: value});
-          }}
-          />
-          <Collapse className="ui-widget-content" isOpened={isOpened}>
-          {fields}
-          </Collapse>
-      </div>
+      <Accordion key={record.key} objectkey={record.key} label={record.name}>
+        {fields}
+      </Accordion>
     );
 
   }

@@ -7,7 +7,7 @@
     z-index: 1000;
     overflow: auto;
     display: none;
-    background: rgba(0, 0, 0, .1);
+    background: rgba(0, 0, 0, .2);
 }
 
 .mm-popup--visible {
@@ -88,18 +88,18 @@
         top: 10%;
         left: 50%;
         margin-left: -175px;
-        background: #fff;
+        background: #f7f4ef;
         box-shadow: 0px 5px 20px 0px rgba(126,137,140,0.20);
         border-radius: 5px;
-        border: 1px solid #B8C8CC;
+        border: 1px solid #FF9900;
         overflow: hidden;
         z-index: 100;
     }
 
         .mm-popup__box__header {
             padding: 15px 20px;
-            background: #EDF5F7;
-            color: #454B4D;
+            background: #f7ca4f;
+            color: #5b3700;
         }
 
             .mm-popup__box__header__title {
@@ -114,7 +114,7 @@
             line-height: 1.4;
             font-size: 14px;
             color: #454B4D;
-            background: #fff;
+            background: #f7f4ef;
             position: relative;
             z-index: 2;
         }

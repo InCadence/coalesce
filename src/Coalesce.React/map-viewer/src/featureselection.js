@@ -3,13 +3,19 @@ import Popup from 'react-popup';
 import {PromptDropdown} from 'common-components/lib/prompt-dropdown.js'
 import {StyleSelection} from './style.js'
 import * as ol from 'openlayers';
-import './index.css'
 
 export class FeatureSelection extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = props;
+
+    props.selectedLayers.forEach( function(feature) {
+      if (feature.layer == null)
+      {
+        props.addfeature(feature);
+      }
+    });
   }
 
   onAddClick() {
@@ -71,13 +77,17 @@ export class FeatureSelection extends React.Component {
 
     const {selectedLayers} = this.state;
 
-    selectedLayers.push({
+    var feature = {
       key: name,
       name: name,
       type: type,
       style: style,
       checked: false
-    });
+    };
+
+    selectedLayers.push(feature);
+
+    this.props.addfeature(feature);
 
     this.setState({
       selectedLayers: selectedLayers
@@ -90,7 +100,7 @@ export class FeatureSelection extends React.Component {
 
     var that = this;
 
-    Popup.plugins().promptRemoveFeature(selectedLayers, function (value) {
+    Popup.plugins().promptRemoveFeature(selectedLayers, 'Remove', function (value) {
 
       for (var ii=0; ii<selectedLayers.length; ii++) {
 
@@ -125,7 +135,6 @@ export class FeatureSelection extends React.Component {
         this.props.rmvfeature(feature);
         console.log("Removing: " + feature.name);
       }
-
     }
 
     feature.checked = e.target.checked;
@@ -133,6 +142,36 @@ export class FeatureSelection extends React.Component {
     this.setState({
       selectedLayers: selectedLayers
     })
+  }
+
+  moveLayer(feature, up, e) {
+
+    const {selectedLayers, moveLayer} = this.state;
+
+    var idx = selectedLayers.indexOf(feature);
+
+    if (idx != -1) {
+
+      var newIdx = idx;
+
+      if (up && idx - 1 >= 0) {
+        newIdx = idx - 1;
+      } else if(!up && idx + 1 < selectedLayers.length) {
+        newIdx = idx + 1;
+      }
+
+      if (idx !== newIdx) {
+        // Swap Positions
+        selectedLayers[idx] = selectedLayers[newIdx];
+        selectedLayers[newIdx] = feature;
+
+        this.setState({
+          selectedLayers: selectedLayers
+        });
+
+        moveLayer(feature, up, idx);
+      }
+    }
   }
 
   render() {
@@ -146,16 +185,27 @@ export class FeatureSelection extends React.Component {
       for (var ii=0; ii<this.state.selectedLayers.length; ii++) {
         var feature = this.state.selectedLayers[ii];
 
+        var isFirst = ii===0;
+        var isLast = ii===this.state.selectedLayers.length - 1;
+
+        var buttons;
+
         features.push(
           <div key={feature.name} className="row">
             <div className="col-sm-2">
               <input id={feature.name} type="checkbox" onChange={this.onChange.bind(this, feature)} checked={feature.checked} />
             </div>
-            <div className="col-sm-6">
+            <div className="col-sm-4">
               <label>{feature.name}</label>
             </div>
-            <div className="col-sm-4">
+            <div className="col-sm-2">
               <label>{feature.type}</label>
+            </div>
+            <div className="col-sm-4">
+              <div className="form-buttons">
+                <img src={require('common-components/img/up.ico')} alt="Up" className={isFirst ? "coalesce-img-button small disabled" : "coalesce-img-button small enabled"} onClick={this.moveLayer.bind(this, feature, true)} />
+                <img src={require('common-components/img/down.ico')} alt="Down" className={isLast ? "coalesce-img-button small disabled" : "coalesce-img-button small enabled"} onClick={this.moveLayer.bind(this, feature, false)}/>
+              </div>
             </div>
           </div>
         )
@@ -163,11 +213,23 @@ export class FeatureSelection extends React.Component {
     }
 
     return (
-      <div>
-        {features}
-        <div className="form-buttons">
-          <button className="mm-popup__btn mm-popup__btn--cancel" onClick={this.onRmvClick.bind(this)}>Remove</button>
-          <button className="mm-popup__btn mm-popup__btn--success" onClick={this.onAddClick.bind(this)}>Add</button>
+      <div className="ui-widget">
+        <div className="ui-widget-header">
+          <div className="row">
+            <div className="col-sm-6">
+              <label>Layers</label>
+            </div>
+            <div className="col-sm-6">
+              <label>Source</label>
+            </div>
+          </div>
+        </div>
+        <div className="ui-widget-content">
+          {features}
+          <div className="form-buttons">
+            <img src={require('common-components/img/remove.ico')} alt="Remove" title="Remove Layer" className="coalesce-img-button enabled" onClick={this.onRmvClick.bind(this)}/>
+            <img src={require('common-components/img/add.ico')} alt="Add" title="Add Layer" className="coalesce-img-button enabled" onClick={this.onAddClick.bind(this)}/>
+          </div>
         </div>
       </div>
     )
@@ -277,6 +339,30 @@ Popup.registerPlugin('promptRemoveFeature', function (data, buttontext, callback
                 className: 'success',
                 action: function () {
                     callback(promptValue);
+                    Popup.close();
+                }
+            }]
+        }
+    });
+})
+
+Popup.registerPlugin('promptStyle', function (styles, callback) {
+
+    let data = null;
+    let dataChange = function (value) {
+        data = value;
+    };
+
+    this.create({
+        title: 'Select Style',
+        content: <StyleSelection onChange={dataChange} presets={styles} data={styles[0]}/>,
+        buttons: {
+            left: ['cancel'],
+            right: [{
+                text: 'OK',
+                className: 'success',
+                action: function () {
+                    callback(data);
                     Popup.close();
                 }
             }]

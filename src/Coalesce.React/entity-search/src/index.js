@@ -1,51 +1,110 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Popup from 'react-popup';
-import {PromptTemplate} from 'common-components/lib/prompt-template.js'
 import {Menu} from 'common-components/lib/menu.js'
 import {FilterCreator} from './filtercreator.js'
 import {SearchResults} from './results.js'
-import { HashLoader } from 'react-spinners';
+import {registerLoader, registerTemplatePrompt} from 'common-components/lib/register.js'
 
 import './index.css'
+import 'common-components/css/coalesce.css'
 import 'common-components/css/popup.css'
 
 var karafRootAddr = 'http://' + window.location.hostname + ':8181';
 
 var cache = {};
+var template = 'CoalesceEntity';
 
 // Prompt user for template to populate the criteria controls
 function promptForTemplate() {
 
   Popup.plugins().promptTemplate('load', 'Enumeration', function (value) {
-    fetch(karafRootAddr + '/cxf/data/templates/' + value)
-        .then(res => res.json())
-        .then(template => {
 
-          ReactDOM.unmountComponentAtNode(document.getElementById('main'));
+    ReactDOM.unmountComponentAtNode(document.getElementById('main'));
 
-          var recordsets = [];
-          recordsets.push({name: 'CoalesceEntity', definition: cache['CoalesceEntity']});
+    if (cache[value] == null)
+    {
+      fetch(karafRootAddr + '/cxf/data/templates/' + value)
+          .then(res => res.json())
+          .then(template => {
 
-          // Get Other Recordsets
-          template.sectionsAsList.forEach(function(section) {
-            recordsets = recordsets.concat(getRecordsets(section));
-          });
+            var recordsets = [].concat(cache['CoalesceEntity']);
 
-          // Add CoalesceEntity attributes as a recordset
-          ReactDOM.render(
-              <FilterCreator
-                recordsets={recordsets}
-                onSearch={searchComplex}
-              />,
-              document.getElementById('main')
-          );
+            // Get Other Recordsets
+            template.sectionsAsList.forEach(function(section) {
+              recordsets = recordsets.concat(getRecordsets(section));
+            });
 
-        })
+            cache[value] = recordsets;
+            console.log('Size of client cache: ' + memorySizeOf(cache));
+
+            // Add CoalesceEntity attributes as a recordset
+            ReactDOM.render(
+                <FilterCreator
+                  recordsets={recordsets}
+                  onSearch={searchComplex}
+                />,
+                document.getElementById('main')
+            );
+
+          })
+    } else {
+      ReactDOM.render(
+          <FilterCreator
+            recordsets={cache[value]}
+            onSearch={searchComplex}
+          />,
+          document.getElementById('main')
+      );
+    }
+
+    template = value;
 
   });
 
 }
+
+// TODO This is test code for logging the size of an object
+function memorySizeOf(obj) {
+    var bytes = 0;
+
+    function sizeOf(obj) {
+        if(obj !== null && obj !== undefined) {
+            switch(typeof obj) {
+            case 'number':
+                bytes += 8;
+                break;
+            case 'string':
+                bytes += obj.length * 2;
+                break;
+            case 'boolean':
+                bytes += 4;
+                break;
+            case 'object':
+                var objClass = Object.prototype.toString.call(obj).slice(8, -1);
+                if(objClass === 'Object' || objClass === 'Array') {
+                    for(var key in obj) {
+                        if(!obj.hasOwnProperty(key)) continue;
+                        sizeOf(obj[key]);
+                    }
+                } else bytes += obj.toString().length * 2;
+                break;
+              default:
+              // Do Nothing
+            }
+        }
+        return bytes;
+    };
+
+    function formatByteSize(bytes) {
+        if(bytes < 1024) return bytes + " bytes";
+        else if(bytes < 1048576) return(bytes / 1024).toFixed(3) + " KiB";
+        else if(bytes < 1073741824) return(bytes / 1048576).toFixed(3) + " MiB";
+        else return(bytes / 1073741824).toFixed(3) + " GiB";
+    };
+
+    return formatByteSize(sizeOf(obj));
+};
 
 // Recursive (nested sections) method to pull recordsets from a section
 function getRecordsets(section) {
@@ -84,7 +143,7 @@ function searchComplex(data, e) {
   });
 
   // Display Spinner
-  Popup.plugins().loader();
+  Popup.plugins().loader('Searching...');
 
   // Submit Query
   fetch(karafRootAddr + '/cxf/data/search/complex', {
@@ -97,7 +156,7 @@ function searchComplex(data, e) {
     .then(response => {
       renderResults(response, query.propertyNames);
   }).catch(function(error) {
-      renderError(error);
+      renderError("Executing Search: " + error);
   });
 }
 
@@ -144,67 +203,78 @@ ReactDOM.render(
       {
         id: 'select',
         name: 'Select',
+        img: require('common-components/img/template.ico'),
+        title: 'Select Template',
         onClick: promptForTemplate
       }, {
         id: 'load',
         name: 'Load',
+        img: require('common-components/img/load.ico'),
+        title: 'Load Saved Criteria Selection',
         onClick: () => {
-          alert("TODO: Not Implemented");
+          renderError("(Comming Soon!!!) This will allow you to load previously saved criteria.")
         }
       }, {
         id: 'save',
         name: 'Save',
+        img: require('common-components/img/save.ico'),
+        title: 'Save Criteria Selection',
         onClick: () => {
-          alert("TODO: Not Implemented");
+          renderError("(Comming Soon!!!) This will allow you to save criteria.")
         }
       }, {
         id: 'reset',
         name: 'Reset',
+        img: require('common-components/img/erase.ico'),
+        title: 'Reset Criteria',
         onClick: () => {
-          alert("TODO: Not Implemented");
+
+          ReactDOM.unmountComponentAtNode(document.getElementById('main'));
+
+          ReactDOM.render(
+              <FilterCreator
+                recordsets={cache[template]}
+                onSearch={searchComplex}
+                />,
+              document.getElementById('main')
+          );
         }
       }
     ]}/>,
     document.getElementById('myNavbar')
 );
 
-Popup.registerPlugin('loader', function () {
+registerLoader(Popup);
 
-    this.create({
-        content:
-          <center className='sweet-loading'>
-            <HashLoader
-              color={'#cc6600'}
-              loading={true}
-            />
-          </center>,
-          closeOnOutsideClick: false
-    });
+fetch(karafRootAddr + '/cxf/data/templates')
+  .then(res => res.json())
+  .then(data => {
+    registerTemplatePrompt(Popup, karafRootAddr, data);
+}).catch(function(error) {
+    renderError("Loading Templates: " + error);
 });
 
-/** Prompt plugin */
-Popup.registerPlugin('promptTemplate', function (buttontext, defaultValue, callback) {
-    let promptValue = null;
-    let promptChange = function (value) {
-        promptValue = value;
-    };
+// Populate w/ Base fields that a common to all templates
+// Because its common fields the GUID can be random (or hard coded)
+fetch(karafRootAddr + '/cxf/data/templates/998b040b-2c39-4c98-9a9d-61d565b46e28/recordsets/CoalesceEntity/fields')
+  .then(res => res.json())
+  .then(definition => {
 
-    this.create({
-        title: "Select Template",
-        content: <PromptTemplate onChange={promptChange} value={defaultValue} />,
-        buttons: {
-            left: ['cancel'],
-            right: [{
-                text: buttontext,
-                className: 'success',
-                action: function () {
-                    callback(promptValue);
-                    Popup.close();
-                }
+    var recordsets = [];
+    recordsets.push({name: 'CoalesceEntity', definition: definition});
 
-            }]
-        }
-    });
+    cache['CoalesceEntity'] = recordsets;
+
+    ReactDOM.render(
+        <FilterCreator
+          recordsets={recordsets}
+          onSearch={searchComplex}
+          />,
+        document.getElementById('main')
+    );
+
+}).catch(function(error) {
+    renderError("Loading Common Fields: " + error);
 });
 
 // TODO Remove this code (Its an example of how to submit a OGC filter as XML)
@@ -264,7 +334,7 @@ function searchOGC(data, e) {
 
   console.log(JSON.stringify(query));
 
-  Popup.plugins().loader();
+  Popup.plugins().loader('Searching...');
 
   fetch(karafRootAddr + '/cxf/data/search/ogc', {
     method: "POST",
@@ -276,30 +346,6 @@ function searchOGC(data, e) {
     .then(response => {
       renderResults(response, query.propertyNames);
   }).catch(function(error) {
-      renderError(error);
+      renderError("Executing Search: " + error);
   });
 }
-
-// Populate w/ Base fields that a common to all templates
-// Because its common fields the GUID can be random (or hard coded)
-fetch(karafRootAddr + '/cxf/data/templates/998b040b-2c39-4c98-9a9d-61d565b46e28/recordsets/CoalesceEntity/fields')
-    .then(res => res.json())
-    .then(definition => {
-
-      var recordsets = [];
-      recordsets.push({name: 'CoalesceEntity', definition: definition});
-
-      cache['CoalesceEntity'] = recordsets;
-
-      console.log(JSON.stringify(cache));
-
-      // Add CoalesceEntity attributes as a recordset
-      ReactDOM.render(
-          <FilterCreator
-            recordsets={recordsets}
-            onSearch={searchComplex}
-          />,
-          document.getElementById('main')
-      );
-
-    })
