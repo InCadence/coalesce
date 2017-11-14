@@ -163,41 +163,46 @@ ReactDOM.render(
     document.getElementById('popupContainer')
 );
 
-ReactDOM.render(
-    <Menu items={[
-      {
-        id: 'new',
-        name: 'New',
-        img: require('common-components/img/new.ico'),
-        title: 'Create New Entity',
-        onClick: () => {
-
-          Popup.plugins().promptTemplate('create', 'Type your name', function (key) {
-            renderNewEntity(key);
-          });
-        }
-      }, {
-        id: 'load',
-        name: 'Load',
-        img: require('common-components/img/load.ico'),
-        title: 'Load Entity',
-        onClick: () => {
-          Popup.plugins().prompt('Load', 'Entity Selection', '', 'Enter Entity Key', function (key) {
-            renderEntity(key);
-          });
-        }
-      }
-    ]}/>,
-    document.getElementById('myNavbar')
-);
-
 /** Prompt plugin */
 fetch(rootUrl + '/cxf/data/templates')
   .then(res => res.json())
   .then(data => {
       registerTemplatePrompt(Popup, rootUrl, data);
 
+      ReactDOM.render(
+          <Menu items={[
+            {
+              id: 'new',
+              name: 'New',
+              img: require('common-components/img/new.ico'),
+              title: 'Create New Entity',
+              onClick: () => {
+
+                Popup.plugins().promptTemplate('create', 'Type your name', function (key) {
+                  renderNewEntity(key);
+                });
+              }
+            }, {
+              id: 'load',
+              name: 'Load',
+              img: require('common-components/img/load.ico'),
+              title: 'Load Entity',
+              onClick: () => {
+                Popup.plugins().prompt('Load', 'Entity Selection', '', 'Enter Entity Key', function (key) {
+                  renderEntity(key);
+                });
+              }
+            }
+          ]}/>,
+          document.getElementById('myNavbar')
+      );
+
 }).catch(function(error) {
+    ReactDOM.render(
+        <Menu items={[]}/>,
+        document.getElementById('myNavbar')
+    );
+
     renderError("Loading Templates: " + error);
 });
 

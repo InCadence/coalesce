@@ -17,26 +17,37 @@ export class FilterCreator extends React.Component {
   constructor(props) {
     super(props);
 
+    if (props.tabledata != null) {
+      for (var ii=0; ii<props.tabledata.length; ii++) {
+        props.tabledata[ii].key = ii;
+      }
+    }
+
     this.state = props;
   }
 
   componentDidMount() {
 
-    const {recordsets} = this.state;
+    const {recordsets, tabledata} = this.state;
 
-    var tabledata = [{
-      key: 0,
-      recordset: recordsets[0].name,
-      field: recordsets[0].definition[0].name,
-      comparer: '=',
-      value: '',
-      matchCase: false}];
+    if (tabledata.length == 0 && recordsets.length > 0) {
+
+      tabledata.push({
+        key: 0,
+        recordset: recordsets[0].name,
+        field: recordsets[0].definition[0].name,
+        comparer: '=',
+        value: '',
+        matchCase: false});
+
+      this.setState({
+        tabledata: tabledata,
+      });
+    }
 
     this.setState({
-      tabledata: tabledata,
-      currentkey: 0
-    });
-
+      currentkey: (tabledata.length - 1)
+    })
   }
 
   render() {
@@ -289,5 +300,7 @@ function createColumns(that, recordsets) {
 
 FilterCreator.defaultProps = {
   maxRows: 10,
-  isOpened: true
+  isOpened: true,
+  tabledata: [],
+  currentkey: 0
 }
