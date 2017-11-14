@@ -27,9 +27,7 @@ import org.junit.Test;
 
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationConfig;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 import com.incadencecorp.coalesce.api.Views;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
@@ -51,28 +49,6 @@ public class JsonEximImplTest {
 
     private static final String ADDITIONAL_RECORDSET = "Additional Recordset";
     private static final String ADDITIONAL_SECTION = "Additional Section";
-
-    /**
-     * This is an example of how to use the ObjectMapper to perform the same
-     * function as JsonEximImpl
-     * 
-     * @throws Exception
-     */
-    @Test
-    public void objectMapperExample() throws Exception
-    {
-
-        TestEntity entity = new TestEntity();
-        entity.initialize();
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
-        mapper.enable(MapperFeature.DEFAULT_VIEW_INCLUSION);
-
-        String result = mapper.writerWithView(Views.Template.class).writeValueAsString(entity);
-
-        System.out.println(result);
-    }
 
     /**
      * This test passes in an invalid JSON Object. Arrays are only used for

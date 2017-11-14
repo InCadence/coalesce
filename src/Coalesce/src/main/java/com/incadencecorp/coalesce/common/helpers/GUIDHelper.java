@@ -1,6 +1,7 @@
 package com.incadencecorp.coalesce.common.helpers;
 
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -28,6 +29,10 @@ import java.util.UUID;
  */
 public final class GUIDHelper {
 
+    private static final String REGEX_UUID = "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}";
+    private static final String REGEX_UUID_BRACES = REGEX_UUID + "|\\{" + REGEX_UUID + "\\}";
+    private static final Pattern REGEX_PATTERN = Pattern.compile(REGEX_UUID_BRACES);
+
     private GUIDHelper()
     {
         // Do Nothing
@@ -46,21 +51,7 @@ public final class GUIDHelper {
      */
     public static boolean isValid(String value)
     {
-        try
-        {
-            if (value == null) return false;
-
-            if (GUIDHelper.hasSurroundingBrackets(value)) value = value.replaceAll("[{}]", "");
-
-            UUID.fromString(value);
-
-            return value.replaceAll("[-]", "").length() == 32;
-        }
-        catch (IllegalArgumentException ex)
-        {
-            // Invalid UUID
-            return false;
-        }
+        return value != null && REGEX_PATTERN.matcher(value).matches();
     }
 
     /**
@@ -71,9 +62,7 @@ public final class GUIDHelper {
      */
     public static boolean hasBrackets(String value)
     {
-        if (!GUIDHelper.isValid(value)) return false;
-
-        return GUIDHelper.hasSurroundingBrackets(value);
+        return GUIDHelper.isValid(value) && GUIDHelper.hasSurroundingBrackets(value);
     }
 
     /**
@@ -211,8 +200,6 @@ public final class GUIDHelper {
 
     private static boolean hasSurroundingBrackets(String value)
     {
-        if (value == null) return false;
-
         return (value.startsWith("{") && value.endsWith("}"));
     }
 

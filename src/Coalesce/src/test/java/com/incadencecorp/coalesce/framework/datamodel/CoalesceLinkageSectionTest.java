@@ -115,12 +115,6 @@ public class CoalesceLinkageSectionTest {
 
         assertEquals("F4F126AF-4658-4D7F-A67F-4833F7EADDC3", linkageSection.getKey());
 
-        UUID guid = UUID.randomUUID();
-
-        linkageSection.setKey(guid);
-
-        assertEquals(guid.toString(), linkageSection.getKey());
-
         UUID guid2 = UUID.randomUUID();
 
         linkageSection.setKey(guid2.toString());

@@ -9,6 +9,5 @@
         <bundle start-level="75">mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-json-provider/${jackson.jaxb.version}</bundle>
         <bundle start-level="75">mvn:com.incadencecorp.coalesce.services.search/coalesce-search-service-data/${project.version}</bundle>
         <bundle start-level="75">mvn:com.incadencecorp.coalesce.services.search/coalesce-search-service-data-jaxrs/${project.version}</bundle>
-        <bundle start-level="75">mvn:com.incadencecorp.coalesce.services.search/coalesce-search-service-data-web/${project.version}/war</bundle>
 	</feature>
 </features>

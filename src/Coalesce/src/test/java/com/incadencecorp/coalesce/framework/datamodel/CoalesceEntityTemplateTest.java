@@ -98,9 +98,10 @@ public class CoalesceEntityTemplateTest {
                             && !attribute.getNodeName().equalsIgnoreCase("datatype")
                             && !attribute.getNodeName().equalsIgnoreCase("maxrecords")
                             && !attribute.getNodeName().equalsIgnoreCase("minrecords")
+                            && !attribute.getNodeName().equalsIgnoreCase("status")
                             && !attribute.getNodeName().equalsIgnoreCase("classname"))
                     {
-                        assertTrue(StringHelper.isNullOrEmpty(attribute.getNodeValue()));
+                        assertTrue(attribute.getNodeName(), StringHelper.isNullOrEmpty(attribute.getNodeValue()));
                     }
                     else
                     {

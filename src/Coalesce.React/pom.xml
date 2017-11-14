@@ -1,0 +1,66 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.incadencecorp.coalesce.react</groupId>
+	<artifactId>coalesce-react-parent</artifactId>
+	<name>Coalesce React Components</name>
+	<description>Parent POM for Coalesce React components</description>
+	<packaging>pom</packaging>
+
+	<parent>
+		<groupId>com.incadencecorp.coalesce</groupId>
+		<artifactId>coalesce-pom</artifactId>
+		<version>0.0.25-SNAPSHOT</version>
+		<relativePath>../Coalesce.Pom</relativePath>
+	</parent>
+
+	<modules>
+		<module>common-components</module>
+		<module>entity-editor</module>
+		<module>entity-search</module>
+		<module>map-viewer</module>
+		<module>home</module>
+		<module>feature</module>
+	</modules>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>exec-maven-plugin</artifactId>
+					<version>1.3.2</version>
+					<executions>
+						<execution>
+							<id>npm install (initialize)</id>
+							<goals>
+								<goal>exec</goal>
+							</goals>
+							<phase>initialize</phase>
+							<configuration>
+								<executable>npm</executable>
+								<arguments>
+									<argument>install</argument>
+								</arguments>
+							</configuration>
+						</execution>
+						<execution>
+							<id>npm run build (compile)</id>
+							<goals>
+								<goal>exec</goal>
+							</goals>
+							<phase>compile</phase>
+							<configuration>
+								<executable>npm</executable>
+								<arguments>
+									<argument>run</argument>
+									<argument>build</argument>
+								</arguments>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+</project>

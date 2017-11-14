@@ -55,21 +55,13 @@ public class SearchDataObjectTask extends AbstractTask<QueryType, QueryResultsTy
     {
         QueryResultsType result;
 
-        StopWatch watch = new StopWatch();
-
         try
         {
-            watch.start();
-
             List<String> properties = new ArrayList<String>();
             properties.add(CoalescePropertyFactory.getName().getPropertyName());
             properties.add(CoalescePropertyFactory.getSource().getPropertyName());
             properties.add(CoalescePropertyFactory.getEntityTitle().getPropertyName());
             properties.addAll(parameters.getParams().getPropertyNames());
-
-            watch.finish();
-            System.out.println(watch.getWorkLife());
-            watch.start();
 
             SortBy[] sortby = new SortBy[parameters.getParams().getSortBy().size()];
 
@@ -94,15 +86,7 @@ public class SearchDataObjectTask extends AbstractTask<QueryType, QueryResultsTy
             query.setMaxFeatures(parameters.getParams().getPageSize());
             query.setSortBy(sortby);
 
-            watch.finish();
-            System.out.println(watch.getWorkLife());
-            watch.start();
-
             CachedRowSet rowset = parameters.getTarget().search(query).getResults();
-
-            watch.finish();
-            System.out.println(watch.getWorkLife());
-            watch.start();
 
             QueryResultType results = new QueryResultType();
 
@@ -131,9 +115,6 @@ public class SearchDataObjectTask extends AbstractTask<QueryType, QueryResultsTy
                 }
                 while (rowset.next());
             }
-
-            watch.finish();
-            System.out.println(watch.getWorkLife());
 
             // TODO Set Total results
 

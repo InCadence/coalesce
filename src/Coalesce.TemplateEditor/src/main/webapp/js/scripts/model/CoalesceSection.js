@@ -1,21 +1,21 @@
 function CoalesceSection (name, recordsets){
-	this.sectionName=name;
-	this.recordsets=recordsets;
+	this.name=name;
+	this.recordsetsAsList=recordsets;
 	this.objType=CoalesceObjectType.SECTION;
 
 	this.addRecordset = function (recordset){
 		recordsets.push(recordset);
 	}
-	this.getSectionName = function (){
-		return this.sectionName;
+	this.getName = function (){
+		return this.name;
 	}
 
-	this.setSectionName = function (name){
-		this.sectionName = name;
+	this.setName = function (name){
+		this.name = name;
 	}
 
-	this.getRecordsets = function (){
-		return this.recordsets;
+	this.getRecordsetsAsList = function (){
+		return this.recordsetsAsList;
 	}
 
 	this.getCoalesceType = function(){
@@ -24,9 +24,9 @@ function CoalesceSection (name, recordsets){
 
 	this.initialize = function (obj){
 		if(obj.objType == CoalesceObjectType.SECTION){
-			this.sectionName=obj.sectionName;
+			this.name=obj.name;
 			this.objType=obj.objType;
-			this.recordsets=obj.recordsets;
+			this.recordsetsAsList=obj.recordsetsAsList;
 			return true;
 		}else{
 			return false;

@@ -1,6 +1,6 @@
 package com.incadencecorp.coalesce.services.search.service.data.jaxrs;
 
-import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
+import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.services.search.service.data.controllers.TemplateDataController;
 
 /**
@@ -13,10 +13,10 @@ public class TemplateDataControllerJaxRS extends TemplateDataController implemen
     /**
      * Production Constructor
      * 
-     * @param persister
+     * @param framework
      */
-    public TemplateDataControllerJaxRS(ICoalescePersistor persister) {
-        super(persister);
+    public TemplateDataControllerJaxRS(CoalesceFramework framework) {
+        super(framework);
     }
-    
+
 }

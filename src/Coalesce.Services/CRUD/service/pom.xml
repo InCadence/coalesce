@@ -42,7 +42,7 @@
 
 		<dependency>
 			<groupId>com.incadencecorp.coalesce.framework.persistance</groupId>
-			<artifactId>persister-memory</artifactId>
+			<artifactId>persister-derby</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
