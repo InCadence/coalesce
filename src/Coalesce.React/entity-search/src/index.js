@@ -185,6 +185,7 @@ function renderResults(data, properties) {
             <SearchResults
               data={data.result[0].result}
               properties={properties}
+              url={karafRootAddr}
             />,
     document.getElementById('results'));
   } else {

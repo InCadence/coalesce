@@ -68,7 +68,7 @@ export class SearchResults extends React.PureComponent {
 }
 
 SearchResults.defaultProps = {
-  url: 'http://' + window.location.hostname + ':8181',
+  url: 'http://' + window.location.hostname + ':' + window.location.port,
   data: [],
   properties: []
 }
