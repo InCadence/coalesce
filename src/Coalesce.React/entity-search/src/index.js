@@ -4,7 +4,7 @@ import Popup from 'react-popup';
 import {Menu} from 'common-components/lib/menu.js'
 import {FilterCreator} from './filtercreator.js'
 import {SearchResults} from './results.js'
-import {registerLoader, registerTemplatePrompt} from 'common-components/lib/register.js'
+import {registerLoader, registerTemplatePrompt, registerErrorPrompt} from 'common-components/lib/register.js'
 
 import './index.css'
 import 'common-components/css/coalesce.css'
@@ -17,6 +17,8 @@ if (window.location.port == 3000) {
 } else {
   karafRootAddr  = 'http://' + window.location.hostname + ':' + window.location.port;
 }
+
+registerErrorPrompt(Popup);
 
 var cache = {};
 var template = 'CoalesceEntity';
@@ -177,20 +179,8 @@ function searchComplex(data, e) {
     .then(response => {
       renderResults(response, query.propertyNames);
   }).catch(function(error) {
-      renderError("Executing Search: " + error);
+      Popup.plugins().promptError("Executing Search: " + error);
   });
-}
-
-function renderError(error) {
-  Popup.close();
-  Popup.create({
-      title: 'Error',
-      content: error,
-      className: 'alert',
-      buttons: {
-          right: ['ok']
-      }
-  }, true);
 }
 
 function renderResults(data, properties) {
@@ -241,7 +231,7 @@ fetch(karafRootAddr + '/cxf/data/templates')
             img: require('common-components/img/load.ico'),
             title: 'Load Saved Criteria Selection',
             onClick: () => {
-              renderError("(Comming Soon!!!) This will allow you to load previously saved criteria.")
+              Popup.plugins().promptError("(Comming Soon!!!) This will allow you to load previously saved criteria.")
             }
           }, {
             id: 'save',
@@ -249,7 +239,7 @@ fetch(karafRootAddr + '/cxf/data/templates')
             img: require('common-components/img/save.ico'),
             title: 'Save Criteria Selection',
             onClick: () => {
-              renderError("(Comming Soon!!!) This will allow you to save criteria.")
+              Popup.plugins().promptError("(Comming Soon!!!) This will allow you to save criteria.")
             }
           }, {
             id: 'reset',
@@ -279,7 +269,7 @@ fetch(karafRootAddr + '/cxf/data/templates')
         document.getElementById('myNavbar')
     );
 
-    renderError("Loading Templates: " + error);
+    Popup.plugins().promptError("Loading Templates: " + error);
 });
 
 // Populate w/ Base fields that a common to all templates
@@ -302,7 +292,7 @@ fetch(karafRootAddr + '/cxf/data/templates/998b040b-2c39-4c98-9a9d-61d565b46e28/
     );
 
 }).catch(function(error) {
-    renderError("Loading Common Fields: " + error);
+    Popup.plugins().promptError("Loading Common Fields: " + error);
 });
 
 // TODO Remove this code (Its an example of how to submit a OGC filter as XML)
@@ -374,6 +364,6 @@ function searchOGC(data, e) {
     .then(response => {
       renderResults(response, query.propertyNames);
   }).catch(function(error) {
-      renderError("Executing Search: " + error);
+      Popup.plugins().promptError("Executing Search: " + error);
   });
 }

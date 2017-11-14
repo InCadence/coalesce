@@ -73,3 +73,17 @@ export function registerTemplatePrompt(popup, url, data) {
     });
   });
 }
+
+export function registerErrorPrompt(popup) {
+  popup.registerPlugin('promptError', function (error) {
+    popup.close();
+    popup.create({
+        title: 'Error',
+        content: error,
+        className: 'alert',
+        buttons: {
+            right: ['ok']
+        }
+    }, true);
+  });
+}

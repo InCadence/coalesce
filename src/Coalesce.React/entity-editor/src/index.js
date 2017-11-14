@@ -4,7 +4,7 @@ import {EntityView} from './entity.js'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import Popup from 'react-popup';
 import {Menu} from 'common-components/lib/menu.js'
-import {registerLoader, registerPrompt, registerTemplatePrompt} from 'common-components/lib/register.js'
+import {registerLoader, registerPrompt, registerTemplatePrompt, registerErrorPrompt} from 'common-components/lib/register.js'
 
 import './index.css'
 import 'common-components/css/coalesce.css'
@@ -17,6 +17,8 @@ if (window.location.port == 3000) {
 } else {
   rootUrl  = 'http://' + window.location.hostname + ':' + window.location.port;
 }
+
+registerErrorPrompt(Popup);
 
 class App extends React.Component {
   render() {
@@ -84,7 +86,7 @@ function saveEntity(entity, isNew) {
   }).then(res => {
       Popup.close();
   }).catch(function(error) {
-      renderError("Saving: " + error);
+      Popup.plugins().promptError("Saving: " + error);
   });
 }
 
@@ -116,10 +118,10 @@ function renderEntity(key) {
           Popup.close();
 
         }).catch(function(error) {
-          renderError('Failed to load template (' + data.name + ', ' + data.source + ', ' + data.version + ')');
+          Popup.plugins().promptError('Failed to load template (' + data.name + ', ' + data.source + ', ' + data.version + ')');
         });
     }).catch(function(error) {
-      renderError('Failed to load entity (' + key + ')');
+      Popup.plugins().promptError('Failed to load entity (' + key + ')');
     });
 }
 
@@ -150,10 +152,10 @@ function renderNewEntity(key) {
 
           Popup.close();
         }).catch(function(error) {
-          renderError('Failed to create new entity (' + key + ')');
+          Popup.plugins().promptError('Failed to create new entity (' + key + ')');
         });
     }).catch(function(error) {
-      renderError('Failed to load template (' + key + ')');
+      Popup.plugins().promptError('Failed to load template (' + key + ')');
     });
 }
 
@@ -203,23 +205,11 @@ fetch(rootUrl + '/cxf/data/templates')
         document.getElementById('myNavbar')
     );
 
-    renderError("Loading Templates: " + error);
+    Popup.plugins().promptError("Loading Templates: " + error);
 });
 
 registerLoader(Popup);
 registerPrompt(Popup);
-
-function renderError(error) {
-  Popup.close();
-  Popup.create({
-      title: 'Error',
-      content: error,
-      className: 'alert',
-      buttons: {
-          right: ['ok']
-      }
-  }, true);
-}
 
 ReactDOM.render(
   React.createElement(App, {}),

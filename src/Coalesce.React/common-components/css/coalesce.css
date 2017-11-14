@@ -16,6 +16,10 @@ body {
   width: 80px;
 }
 
+.coalesce-img-button.disabled {
+  background-color:inherit;
+}
+
 /* Coalesce Button Styles */
 .coalesce-img-button.enabled {
   background-color:#3d3d3c;
@@ -25,18 +29,17 @@ body {
 }
 
 .coalesce-img-button.enabled:hover {
-  background-color:#686867;
+    background-color:#686867;
     box-shadow: 0 6px 12px 0 rgba(0,0,0,0.5);
     cursor: pointer;
 }
 
 .coalesce-img-button {
-  margin-right:10px;
   padding: 2px;
   text-align: center;
   vertical-align: middle;
   display: inline-block;
-  margin: 5px;
+  margin: 2px;
   transition: 0.3s;
   border-radius: 5px;
   width: 32px;
@@ -46,12 +49,6 @@ body {
 .coalesce-img-button.small {
   width: 24px;
   height: 24px;
-}
-
-.coalesce-img-button.disabled {
-  text-indent:-9999px;
-  object-position: -99999px 99999px;
-  display: none;
 }
 
 /* Navbar Styles */
@@ -150,6 +147,13 @@ body {
   color: #e2e2e2;
 }
 
+.slide-pane__content .col-sm-1,.col-sm-2,.col-sm-3,.col-sm-5 {
+  padding-right: 10px;
+  padding-left: 10px;
+  word-break:break-all;
+}
+
 .slide-pane__content {
   background-color: #d7d6d6;
+  padding: 8px 8px 8px 8px;
 }

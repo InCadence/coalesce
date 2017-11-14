@@ -1,6 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import Popup from 'react-popup';
+import {registerErrorPrompt} from 'common-components/lib/register.js'
 
 import 'common-components/css/coalesce.css'
 import 'common-components/css/popup.css'
@@ -12,6 +13,8 @@ if (window.location.port == 3000) {
 } else {
   rootUrl  = 'http://' + window.location.hostname + ':' + window.location.port;
 }
+
+registerErrorPrompt(Popup);
 
 class Main extends React.Component {
 
@@ -87,17 +90,5 @@ fetch(rootUrl + '/cxf/data/property/templatecreator.url')
       document.getElementById('main')
     );
 }).catch(function(error) {
-  renderError("Saving: " + error);
+  Popup.plugins().promptError("Saving: " + error);
 });
-
-function renderError(error) {
-  Popup.close();
-  Popup.create({
-      title: 'Error',
-      content: error,
-      className: 'alert',
-      buttons: {
-          right: ['ok']
-      }
-  }, true);
-}
