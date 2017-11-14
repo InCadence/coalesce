@@ -10,7 +10,13 @@ import './index.css'
 import 'common-components/css/coalesce.css'
 import 'common-components/css/popup.css'
 
-var rootUrl = 'http://' + window.location.hostname + ':8181'
+var rootUrl;
+
+if (window.location.port == 3000) {
+  rootUrl  = 'http://' + window.location.hostname + ':8181';
+} else {
+  rootUrl  = 'http://' + window.location.hostname + ':' + window.location.port;
+}
 
 class App extends React.Component {
   render() {

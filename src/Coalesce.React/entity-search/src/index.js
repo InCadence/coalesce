@@ -10,7 +10,13 @@ import './index.css'
 import 'common-components/css/coalesce.css'
 import 'common-components/css/popup.css'
 
-var karafRootAddr = 'http://' + window.location.hostname + ':8181';
+var karafRootAddr;
+
+if (window.location.port == 3000) {
+  karafRootAddr  = 'http://' + window.location.hostname + ':8181';
+} else {
+  karafRootAddr  = 'http://' + window.location.hostname + ':' + window.location.port;
+}
 
 var cache = {};
 var template = 'CoalesceEntity';

@@ -8,6 +8,14 @@ import './index.css'
 import 'common-components/css/coalesce.css'
 import 'common-components/css/popup.css'
 
+var rootUrl;
+
+if (window.location.port == 3000) {
+  rootUrl  = 'http://' + window.location.hostname + ':8181';
+} else {
+  rootUrl  = 'http://' + window.location.hostname + ':' + window.location.port;
+}
+
 class App extends React.Component {
 
   constructor(props) {
@@ -207,7 +215,7 @@ fetchCapabilities(url) {
 App.defaultProps = {
   geoserver: 'http://bdpgeoserver.bdpdev.incadencecorp.com:8181/geoserver',
   workspace: 'OE_Repository',
-  karafserver: 'http://localhost:8181',
+  karafserver: rootUrl,
   availableLayers: [],
   styles: [],
   // TODO Default layers should be removed for production or load from a saved state.
@@ -230,17 +238,28 @@ App.defaultProps = {
     }]
 }
 
-ReactDOM.render(
-  <App />,
-  /*
-  React.createElement(MapView, {
-    geoserver: 'http://bdpgeoserver.bdpdev.incadencecorp.com:8181/geoserver',
-    karakserver: 'http://localhost:8181',
-    workspace: 'OE_Repository'
-  }),
-  */
-  document.getElementById('main')
-);
+fetch(rootUrl + '/cxf/data/property/geoserver.url')
+  .then(res => res.text())
+  .then(data => {
+    ReactDOM.render(
+      <App geoserver={data}/>,
+      document.getElementById('main')
+    );
+}).catch(function(error) {
+  renderError("Saving: " + error);
+});
+
+function renderError(error) {
+  Popup.close();
+  Popup.create({
+      title: 'Error',
+      content: error,
+      className: 'alert',
+      buttons: {
+          right: ['ok']
+      }
+  }, true);
+}
 
 ReactDOM.render(
   <Popup />,

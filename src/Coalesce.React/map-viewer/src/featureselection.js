@@ -23,7 +23,7 @@ export class FeatureSelection extends React.Component {
 
     const {selectedLayers, availableLayers, styles} = this.state;
 
-    if (availableLayers.length !== 0 && styles.length !== 0) {
+    if (availableLayers.length !== 0) {
 
       var filteredLayers = [];
 

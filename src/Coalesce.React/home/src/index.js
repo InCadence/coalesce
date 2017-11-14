@@ -5,11 +5,20 @@ import Popup from 'react-popup';
 import 'common-components/css/coalesce.css'
 import 'common-components/css/popup.css'
 
+var rootUrl;
+
+if (window.location.port == 3000) {
+  rootUrl  = 'http://' + window.location.hostname + ':8181';
+} else {
+  rootUrl  = 'http://' + window.location.hostname + ':' + window.location.port;
+}
+
 class Main extends React.Component {
 
   constructor(props) {
       super(props);
 
+      this.state = props;
       this.promptNotAvailable = this.promptNotAvailable.bind(this);
   }
 
@@ -25,7 +34,7 @@ class Main extends React.Component {
   }
 
   renderCard(url, img, title, description) {
-    //target={url !== '#' ? "_blank" : ""} 
+    //target={url !== '#' ? "_blank" : ""}
     return (
         <a href={url} >
           <div className='card'>
@@ -54,7 +63,7 @@ class Main extends React.Component {
           {this.renderCard('search', require('common-components/img/search2.ico'), 'Search', 'Find Coalesce entities matching your criteria.')}
           {this.renderCard('entityeditor', require('common-components/img/edit.ico'), 'Editor', 'Edit or create new Coalesce entities.')}
           {this.renderCard('#', require('common-components/img/enum.ico'), 'Enumerations', '(Comming Soon!!!) Create and edit enumerations used by Coalesce.)')}
-          {this.renderCard('http://localhost:8080/template-creator/views/editor', require('common-components/img/template.ico'), 'Templates', 'Editor or create new templates for Coalesce entities.')}
+          {this.renderCard(this.state.templatecreator_url, require('common-components/img/template.ico'), 'Templates', 'Editor or create new templates for Coalesce entities.')}
           {this.renderCard('map', require('common-components/img/map.ico'), 'Map', 'Visualize different layers provided by a Geo Server fed from a Coalesce database.')}
           {this.renderCard('#', require('common-components/img/manager.ico'), 'Manager', '(Comming Soon!!!) Connect services and databases.')}
         </div>
@@ -70,11 +79,25 @@ class Main extends React.Component {
   }
 }
 
+fetch(rootUrl + '/cxf/data/property/templatecreator.url')
+  .then(res => res.text())
+  .then(data => {
+    ReactDOM.render(
+      <Main templatecreator_url={data} />,
+      document.getElementById('main')
+    );
+}).catch(function(error) {
+  renderError("Saving: " + error);
+});
 
-
-
-
-ReactDOM.render(
-  <Main />,
-  document.getElementById('main')
-);
+function renderError(error) {
+  Popup.close();
+  Popup.create({
+      title: 'Error',
+      content: error,
+      className: 'alert',
+      buttons: {
+          right: ['ok']
+      }
+  }, true);
+}
