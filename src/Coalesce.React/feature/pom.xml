@@ -26,6 +26,30 @@
 	</build>
 
 	<dependencies>
+		<dependency>
+			<groupId>com.incadencecorp.coalesce.react</groupId>
+			<artifactId>entity-editor</artifactId>
+			<version>${project.version}</version>
+			<type>war</type>
+		</dependency>
+		<dependency>
+			<groupId>com.incadencecorp.coalesce.react</groupId>
+			<artifactId>entity-search</artifactId>
+			<version>${project.version}</version>
+			<type>war</type>
+		</dependency>
+		<dependency>
+			<groupId>com.incadencecorp.coalesce.react</groupId>
+			<artifactId>map-viewer</artifactId>
+			<version>${project.version}</version>
+			<type>war</type>
+		</dependency>
+		<dependency>
+			<groupId>com.incadencecorp.coalesce.react</groupId>
+			<artifactId>coalesce-home</artifactId>
+			<version>${project.version}</version>
+			<type>war</type>
+		</dependency>
 	</dependencies>
 
 </project>

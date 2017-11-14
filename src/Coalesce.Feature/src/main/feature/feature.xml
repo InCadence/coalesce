@@ -21,8 +21,5 @@
 		<feature prerequisite="false" dependency="false">coalesce-entity-search</feature>
 		<feature prerequisite="false" dependency="false">coalesce-map-viewer</feature>
 		<feature prerequisite="false" dependency="false">coalesce-home</feature>
-        <bundle start-level="75">mvn:com.incadencecorp.coalesce.services/coalesce-services-common/${project.version}</bundle>
-        <bundle start-level="75">mvn:com.incadencecorp.coalesce.services/coalesce-services-common-jaxrs/${project.version}</bundle>
-        <bundle start-level="75">mvn:com.incadencecorp.coalesce.services/coalesce-services-api/${project.version}</bundle>
 	</feature>
 </features>

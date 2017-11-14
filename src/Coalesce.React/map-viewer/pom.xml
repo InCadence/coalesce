@@ -57,4 +57,11 @@
 
 	</build>
 
+        <dependencies>
+                <dependency>
+                        <groupId>com.incadencecorp.coalesce.react</groupId>
+                        <artifactId>common-components</artifactId>
+                        <version>${project.version}</version>
+                </dependency>
+        </dependencies>
 </project>
