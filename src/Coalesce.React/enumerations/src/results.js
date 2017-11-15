@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactTable from 'react-table'
 
+import 'react-table/react-table.css'
+
 export class SearchResults extends React.PureComponent {
 
   render() {
@@ -13,21 +15,32 @@ export class SearchResults extends React.PureComponent {
     var columns = [
       {
         Header: 'Key',
-        accessor: 'entityKey'
+        accessor: 'entityKey',
+        show: false
       }
     ];
 
     // Add additional columns
     properties.forEach(function (property) {
       var parts = property.split(".");
+      var name;
+
+      switch(parts.length) {
+        case 0:
+          /* Should never get here */
+          break;
+        case 1:
+          name = parts[0];
+          break;
+        default:
+          name = parts[1];
+      }
 
       columns.push({
-        Header: parts[1],
-        accessor: parts[1]
+        Header: name,
+        accessor: name
       })
     });
-
-    //window.open(this.props.url + "/entityeditor/?entitykey=" + cell.row.entityKey, '_blank')
 
     // Add button for viewing entity
     columns.push({
@@ -35,7 +48,7 @@ export class SearchResults extends React.PureComponent {
       accessor: 'button',
       Cell: (cell) => (
         <div className="form-buttons">
-          <img id={cell.row.key} src={require('common-components/img/view.ico')} alt="view" title="View Entity" className="coalesce-img-button small enabled" onClick={() => window.open(this.props.url + "/entityeditor/?entitykey=" + cell.row.entityKey)}/>
+          {this.props.createButtons(cell.row)}
         </div>
       )
     });
@@ -70,7 +83,6 @@ export class SearchResults extends React.PureComponent {
 }
 
 SearchResults.defaultProps = {
-  url: 'http://' + window.location.hostname + ':' + window.location.port,
   data: [],
   properties: []
 }
