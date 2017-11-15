@@ -63,7 +63,7 @@ public class MutationWrapperFactory extends CoalesceIterator {
     protected boolean visitCoalesceEntity(CoalesceEntity entity)
     {
         // If the entity is marked not to be flattened do not persist it or any children
-        if (!entity.getFlatten()) return false;
+        if (!entity.isFlatten()) return false;
 
         addRow(entity);
         String entity_xml = entity.toXml();
@@ -82,7 +82,7 @@ public class MutationWrapperFactory extends CoalesceIterator {
     protected boolean visitCoalesceLinkageSection(CoalesceLinkageSection section)
     {
         // If the section is marked not to be flattened then do not persist it or any children
-        if (!section.getFlatten()) return false;
+        if (!section.isFlatten()) return false;
 
         addRow(section);
 
@@ -94,7 +94,7 @@ public class MutationWrapperFactory extends CoalesceIterator {
     protected boolean visitCoalesceLinkage(CoalesceLinkage linkage)
     {
         // If the linkage is marked not to be flattened then do not persist it or any children
-        if (!linkage.getFlatten()) return false;
+        if (!linkage.isFlatten()) return false;
 
         addRow(linkage);
 
@@ -105,7 +105,7 @@ public class MutationWrapperFactory extends CoalesceIterator {
     protected boolean visitCoalesceSection(CoalesceSection section)
     {
         // If the section is marked not to be flattened then do not persist it or any children
-        if (!section.getFlatten()) return false;
+        if (!section.isFlatten()) return false;
 
         if (AccumuloSettings.getPersistSectionAttr())
         {
@@ -120,7 +120,7 @@ public class MutationWrapperFactory extends CoalesceIterator {
     protected boolean visitCoalesceRecordset(CoalesceRecordset recordset)
     {
         // If the recordset is marked not to be flattened then do not persist it or any children
-        if (!recordset.getFlatten()) return false;
+        if (!recordset.isFlatten()) return false;
 
         if (AccumuloSettings.getPersistRecordsetAttr())
         {
@@ -134,7 +134,7 @@ public class MutationWrapperFactory extends CoalesceIterator {
     protected boolean visitCoalesceRecord(CoalesceRecord record)
     {
         // If the record is marked not to be flattened then do not persist it or any children
-        if (!record.getFlatten()) return false;
+        if (!record.isFlatten()) return false;
 
         if (AccumuloSettings.getPersistRecordAttr())
         {
@@ -148,7 +148,7 @@ public class MutationWrapperFactory extends CoalesceIterator {
     protected boolean visitCoalesceField(CoalesceField<?> field)
     {
         // If the field is marked not to be flattened then do not persist it or any children
-        if (!field.getFlatten()) return false;
+        if (!field.isFlatten()) return false;
 
         if (AccumuloSettings.getPersistFieldAttr())
         {
@@ -163,7 +163,7 @@ public class MutationWrapperFactory extends CoalesceIterator {
     protected boolean visitCoalesceFieldDefinition(CoalesceFieldDefinition definition)
     {
         // If the definition is marked not to be flattened then do not persist it or any children
-        if (!definition.getFlatten()) return false;
+        if (!definition.isFlatten()) return false;
 
         if (AccumuloSettings.getPersistFieldDefAttr())
         {

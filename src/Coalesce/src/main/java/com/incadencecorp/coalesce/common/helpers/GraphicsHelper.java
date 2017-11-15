@@ -10,7 +10,7 @@ import org.apache.commons.lang.NullArgumentException;
 import org.imgscalr.Scalr;
 
 import com.incadencecorp.coalesce.framework.CoalesceSettings;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceFileField;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -205,7 +205,7 @@ public final class GraphicsHelper {
      * @throws IOException
      * @see GraphicsHelper#createFieldThumbnail(String)
      */
-    public static boolean createFieldThumbnail(CoalesceField<?> field) throws IOException
+    public static boolean createFieldThumbnail(CoalesceFileField field) throws IOException
     {
         return GraphicsHelper.createFieldThumbnail(field.getCoalesceFullFilename());
     }

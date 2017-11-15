@@ -49,7 +49,7 @@ public class CoalesceSectionTest {
         // Verify Section Creation
         assertNotNull(GUIDHelper.isValid(section1.getKey()));
         assertEquals(section1, entity.getSection("TREXOperation/section 1"));
-        assertFalse(section1.getNoIndex());
+        assertFalse(section1.isNoIndex());
 
         // Create Nested Sections
         CoalesceSection section1_1 = CoalesceSection.create(section1, "section 1.1");
@@ -98,7 +98,7 @@ public class CoalesceSectionTest {
         assertNotNull(newSection);
         assertNotNull(GUIDHelper.isValid(newSection.getKey()));
         assertEquals(newSection, entity.getSection("TREXMission/A New Section"));
-        assertFalse(newSection.getNoIndex());
+        assertFalse(newSection.isNoIndex());
 
     }
 
@@ -272,13 +272,13 @@ public class CoalesceSectionTest {
 
         CoalesceSection liveSection = CoalesceSection.create(entity, "Live Status Section", true);
         assertEquals(liveSection, entity.getSection("TREXOperation/Live Status Section"));
-        assertTrue(liveSection.getNoIndex());
+        assertTrue(liveSection.isNoIndex());
 
         CoalesceSection liveSection2 = CoalesceSection.create(entity, "Live Status Section");
         assertEquals(liveSection2, entity.getSection("TREXOperation/Live Status Section"));
         assertEquals(liveSection, liveSection2);
-        assertFalse(liveSection.getNoIndex());
-        assertFalse(liveSection2.getNoIndex());
+        assertFalse(liveSection.isNoIndex());
+        assertFalse(liveSection2.isNoIndex());
 
     }
 
@@ -306,8 +306,8 @@ public class CoalesceSectionTest {
         CoalesceSection liveSubSection2 = CoalesceSection.create(liveSection, "Live Status Sub Section");
         assertEquals(liveSubSection2, liveSection.getSection("Live Status Section/Live Status Sub Section"));
         assertEquals(liveSubSection, liveSubSection2);
-        assertFalse(liveSubSection.getNoIndex());
-        assertFalse(liveSubSection2.getNoIndex());
+        assertFalse(liveSubSection.isNoIndex());
+        assertFalse(liveSubSection2.isNoIndex());
     }
 
     @Test
@@ -323,7 +323,7 @@ public class CoalesceSectionTest {
 
         CoalesceSection liveSection = CoalesceSection.create(entity, "Live Status Section", false);
         assertEquals(liveSection, entity.getSection("TREXOperation/Live Status Section"));
-        assertFalse(liveSection.getNoIndex());
+        assertFalse(liveSection.isNoIndex());
     }
 
     @Test
@@ -339,7 +339,7 @@ public class CoalesceSectionTest {
 
         CoalesceSection liveSection = CoalesceSection.create(entity, "Live Status Section", true);
         assertEquals(liveSection, entity.getSection("TREXOperation/Live Status Section"));
-        assertTrue(liveSection.getNoIndex());
+        assertTrue(liveSection.isNoIndex());
 
     }
 
@@ -355,11 +355,11 @@ public class CoalesceSectionTest {
                                                       "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         CoalesceSection liveSection = CoalesceSection.create(entity, "Live Status Section", false);
-        assertFalse(liveSection.getNoIndex());
+        assertFalse(liveSection.isNoIndex());
 
         CoalesceSection liveSubSection = CoalesceSection.create(liveSection, "Live Status Sub Section", false);
         assertEquals(liveSubSection, liveSection.getSection("Live Status Section/Live Status Sub Section"));
-        assertFalse(liveSubSection.getNoIndex());
+        assertFalse(liveSubSection.isNoIndex());
     }
 
     @Test
@@ -374,11 +374,11 @@ public class CoalesceSectionTest {
                                                       "TREXOperation/Operation Information Section/Operation Information Recordset/Operation Information Recordset Record/OperationName");
 
         CoalesceSection liveSection = CoalesceSection.create(entity, "Live Status Section", true);
-        assertTrue(liveSection.getNoIndex());
+        assertTrue(liveSection.isNoIndex());
 
         CoalesceSection liveSubSection = CoalesceSection.create(liveSection, "Live Status Sub Section", true);
         assertEquals(liveSubSection, liveSection.getSection("Live Status Section/Live Status Sub Section"));
-        assertTrue(liveSubSection.getNoIndex());
+        assertTrue(liveSubSection.isNoIndex());
     }
 
     @Test
@@ -394,16 +394,16 @@ public class CoalesceSectionTest {
 
         CoalesceSection liveSection = CoalesceSection.create(entity, "Live Status Section", false);
         assertEquals(liveSection, entity.getSection("TREXOperation/Live Status Section"));
-        assertFalse(liveSection.getNoIndex());
+        assertFalse(liveSection.isNoIndex());
 
         CoalesceSection liveSubSection = CoalesceSection.create(liveSection, "Live Status Sub Section", false);
-        assertFalse(liveSubSection.getNoIndex());
+        assertFalse(liveSubSection.isNoIndex());
 
         CoalesceSection liveSubSection2 = CoalesceSection.create(liveSection, "Live Status Sub Section", true);
         assertEquals(liveSubSection2, liveSection.getSection("Live Status Section/Live Status Sub Section"));
         assertEquals(liveSubSection, liveSubSection2);
-        assertTrue(liveSubSection.getNoIndex());
-        assertTrue(liveSubSection2.getNoIndex());
+        assertTrue(liveSubSection.isNoIndex());
+        assertTrue(liveSubSection2.isNoIndex());
 
     }
 
@@ -420,13 +420,13 @@ public class CoalesceSectionTest {
 
         CoalesceSection liveSection = CoalesceSection.create(entity, "Live Status Section", false);
         assertEquals(liveSection, entity.getSection("TREXOperation/Live Status Section"));
-        assertFalse(liveSection.getNoIndex());
+        assertFalse(liveSection.isNoIndex());
 
         CoalesceSection liveSection2 = CoalesceSection.create(entity, "Live Status Section", true);
         assertEquals(liveSection2, entity.getSection("TREXOperation/Live Status Section"));
         assertEquals(liveSection, liveSection2);
-        assertTrue(liveSection.getNoIndex());
-        assertTrue(liveSection2.getNoIndex());
+        assertTrue(liveSection.isNoIndex());
+        assertTrue(liveSection2.isNoIndex());
 
     }
 
@@ -442,7 +442,7 @@ public class CoalesceSectionTest {
 
         assertNotNull(newSection);
         assertEquals(newSection, entity.getSection("TREXMission/A New Section"));
-        assertTrue(newSection.getNoIndex());
+        assertTrue(newSection.isNoIndex());
 
         String entityXml = entity.toXml();
 
@@ -451,7 +451,7 @@ public class CoalesceSectionTest {
         CoalesceSection desSection = desEntity.getSection("TREXMission/A New Section");
         assertEquals(newSection.getKey(), desSection.getKey());
         assertEquals(newSection.getName(), desSection.getName());
-        assertEquals(newSection.getNoIndex(), desSection.getNoIndex());
+        assertEquals(newSection.isNoIndex(), desSection.isNoIndex());
     }
 
     @Test
@@ -466,13 +466,13 @@ public class CoalesceSectionTest {
 
         assertNotNull(newSection);
         assertEquals(newSection, entity.getSection("TREXMission/A New Section"));
-        assertTrue(newSection.getNoIndex());
+        assertTrue(newSection.isNoIndex());
 
         CoalesceSection newSubSection = CoalesceSection.create(newSection, "A New Sub Section", true);
 
         assertNotNull(newSubSection);
         assertEquals(newSubSection, newSection.getSection("A New Section/A New Sub Section"));
-        assertTrue(newSubSection.getNoIndex());
+        assertTrue(newSubSection.isNoIndex());
 
         String entityXml = entity.toXml();
 
@@ -482,7 +482,7 @@ public class CoalesceSectionTest {
         CoalesceSection desSubSection = desSection.getSection("A New Section/A New Sub Section");
         assertEquals(newSubSection.getKey(), desSubSection.getKey());
         assertEquals(newSubSection.getName(), desSubSection.getName());
-        assertEquals(newSubSection.getNoIndex(), desSubSection.getNoIndex());
+        assertEquals(newSubSection.isNoIndex(), desSubSection.isNoIndex());
     }
 
     @Test(expected = NullArgumentException.class)
@@ -700,12 +700,6 @@ public class CoalesceSectionTest {
 
         assertEquals("85CB4256-4CC2-4F96-A03D-5EF880989822", liveSection.getKey());
 
-        UUID guid = UUID.randomUUID();
-
-        liveSection.setKey(guid);
-
-        assertEquals(guid.toString(), liveSection.getKey());
-
         UUID guid2 = UUID.randomUUID();
 
         liveSection.setKey(guid2.toString());
@@ -898,7 +892,7 @@ public class CoalesceSectionTest {
 
         CoalesceSection liveSection = entity.getSection(CoalesceTypeInstances.TEST_MISSION_LIVE_SECTION_PATH);
 
-        assertTrue(liveSection.getNoIndex());
+        assertTrue(liveSection.isNoIndex());
 
         liveSection.setNoIndex(false);
 
@@ -907,16 +901,16 @@ public class CoalesceSectionTest {
         CoalesceEntity desEntity = CoalesceEntity.create(entityXml);
         CoalesceSection desLiveSection = desEntity.getSection(CoalesceTypeInstances.TEST_MISSION_LIVE_SECTION_PATH);
 
-        assertFalse(desLiveSection.getNoIndex());
+        assertFalse(desLiveSection.isNoIndex());
 
         CoalesceSection informationSection = entity.getSection(CoalesceTypeInstances.TEST_MISSION_INFO_SECTION_PATH);
 
-        assertFalse(informationSection.getNoIndex());
+        assertFalse(informationSection.isNoIndex());
 
         CoalesceEntity newEntity = CoalesceEntity.create("Operation", "Portal", "1.2.3.4", "ID", "Type");
         CoalesceSection newSection = CoalesceSection.create(newEntity, "Operation/New Section");
 
-        assertFalse(newSection.getNoIndex());
+        assertFalse(newSection.isNoIndex());
 
     }
 
@@ -1005,7 +999,7 @@ public class CoalesceSectionTest {
         assertEquals("TestingValue", section.getAttribute("TestAttribute"));
 
         assertEquals("Mission Information Section", section.getName());
-        assertEquals(false, section.getNoIndex());
+        assertEquals(false, section.isNoIndex());
 
         section.setAttribute("Name", "TestingName");
         assertEquals("TestingName", section.getName());
@@ -1023,7 +1017,7 @@ public class CoalesceSectionTest {
         assertEquals(now, section.getDateCreated());
 
         section.setAttribute("NoIndex", "True");
-        assertEquals(true, section.getNoIndex());
+        assertEquals(true, section.isNoIndex());
 
         section.setAttribute("Status", ECoalesceObjectStatus.UNKNOWN.toString());
         assertEquals(ECoalesceObjectStatus.UNKNOWN, section.getStatus());
@@ -1040,7 +1034,7 @@ public class CoalesceSectionTest {
         assertEquals(guid.toString(), desSection.getKey());
         assertEquals(now, desSection.getDateCreated());
         assertEquals(future, desSection.getLastModified());
-        assertEquals(true, desSection.getNoIndex());
+        assertEquals(true, desSection.isNoIndex());
         assertEquals(ECoalesceObjectStatus.UNKNOWN, desSection.getStatus());
 
     }

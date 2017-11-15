@@ -53,7 +53,14 @@
 			<version>${project.version}</version>
 			<type>xml</type>
 			<classifier>features</classifier>
-		</dependency>		
+		</dependency>	
+		<dependency>
+			<groupId>com.incadencecorp.coalesce.react</groupId>
+			<artifactId>coalesce-react-feature</artifactId>
+			<version>${project.version}</version>
+			<type>xml</type>
+			<classifier>features</classifier>
+		</dependency>				
 	</dependencies>
 
 </project>

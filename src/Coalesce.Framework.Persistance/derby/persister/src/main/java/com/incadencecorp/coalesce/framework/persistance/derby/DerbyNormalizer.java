@@ -32,7 +32,7 @@ public class DerbyNormalizer implements ICoalesceNormalizer {
 
     public DerbyNormalizer()
     {
-        IEnumerationProvider provider = new ResourceEnumerationProviderImpl();
+        IEnumerationProvider provider = new ResourceEnumerationProviderImpl(this.getClass());
         keywords = provider.getValues(null, "keywords");
     }
 

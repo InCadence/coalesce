@@ -219,7 +219,7 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
         boolean isSuccessful = false;
         boolean isDeleted = false;
 
-        if (coalesceObject.getFlatten())
+        if (coalesceObject.isFlatten())
         {
             switch (coalesceObject.getStatus()) {
             case READONLY:
@@ -486,7 +486,7 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
                             if (field != null)
                             {
                                 // Can flatten Field?
-                                if (field.getFlatten() && !StringHelper.isNullOrEmpty(field.getBaseValue()))
+                                if (field.isFlatten() && !StringHelper.isNullOrEmpty(field.getBaseValue()))
                                 {
                                     value = field.getBaseValue();
                                 }

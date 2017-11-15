@@ -17,7 +17,6 @@
 
 package com.incadencecorp.coalesce.services.search.service.rest;
 
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.UUID;
@@ -25,20 +24,18 @@ import java.util.UUID;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
 import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
 import com.incadencecorp.coalesce.framework.datamodel.TestRecord;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import com.incadencecorp.coalesce.framework.persistance.MockPersister;
-import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.incadencecorp.coalesce.services.search.service.data.controllers.TemplateDataController;
+import com.incadencecorp.coalesce.services.search.service.data.model.CoalesceObjectImpl;
 import com.incadencecorp.coalesce.services.search.service.data.model.FieldData;
-import com.incadencecorp.coalesce.services.search.service.data.model.ObjectData;
-import com.incadencecorp.unity.common.CallResult.CallResults;
 
 public class TemplateDataControllerTest {
 
@@ -50,15 +47,15 @@ public class TemplateDataControllerTest {
         Assert.assertEquals(1, controller.getEntityTemplateMetadata().size());
         String key = controller.getEntityTemplateMetadata().get(0).getKey();
 
-        CoalesceEntityTemplate template1 = controller.getTemplate(key);
+        CoalesceEntity template1 = controller.getTemplate(key);
 
         TestEntity entity = new TestEntity();
-        entity.initialize(template1.createNewEntity());
+        entity.initialize(template1);
         entity.setName("HelloWorld");
 
         CoalesceEntityTemplate template2 = CoalesceEntityTemplate.create(entity);
 
-        Assert.assertEquals(true, controller.setTemplate(template2.toXml()));
+        Assert.assertEquals(true, controller.setTemplate(template2.getKey(), template2.createNewEntity()));
 
         Assert.assertEquals(2, controller.getEntityTemplateMetadata().size());
 
@@ -67,23 +64,25 @@ public class TemplateDataControllerTest {
         Assert.assertEquals(template2.getKey(), controller.getTemplate(template2.getKey()).getKey());
     }
 
-//    @Test
-//    public void testInvalidCases() throws Exception
-//    {
-//        TemplateDataController controller = createController();
-//
-//        Assert.assertEquals(1, controller.getEntityTemplateMetadata().size());
-//        String key = controller.getEntityTemplateMetadata().get(0).getKey();
-//
-//        String randomKey = UUID.randomUUID().toString();
-//
-//        // Test Invalid Keys
-//        Assert.assertNull(controller.getTemplate(randomKey));
-//        Assert.assertEquals(0, controller.getRecordSets(randomKey).size());
-//        Assert.assertEquals(0, controller.getRecordSetFields(randomKey, randomKey).size());
-//        Assert.assertEquals(0, controller.getRecordSetFields(key, randomKey).size());
-//        Assert.assertEquals(false, controller.setTemplate(null));
-//    }
+    // @Test
+    // public void testInvalidCases() throws Exception
+    // {
+    // TemplateDataController controller = createController();
+    //
+    // Assert.assertEquals(1, controller.getEntityTemplateMetadata().size());
+    // String key = controller.getEntityTemplateMetadata().get(0).getKey();
+    //
+    // String randomKey = UUID.randomUUID().toString();
+    //
+    // // Test Invalid Keys
+    // Assert.assertNull(controller.getTemplate(randomKey));
+    // Assert.assertEquals(0, controller.getRecordSets(randomKey).size());
+    // Assert.assertEquals(0, controller.getRecordSetFields(randomKey,
+    // randomKey).size());
+    // Assert.assertEquals(0, controller.getRecordSetFields(key,
+    // randomKey).size());
+    // Assert.assertEquals(false, controller.setTemplate(null));
+    // }
 
     @Test(expected = RemoteException.class)
     public void testInValidTemplate() throws Exception
@@ -140,9 +139,9 @@ public class TemplateDataControllerTest {
         TestRecord.createCoalesceRecordset(section, "rs-2");
 
         CoalesceEntityTemplate template = CoalesceEntityTemplate.create(entity);
-        Assert.assertEquals(true, controller.setTemplate(template.toXml()));
+        Assert.assertEquals(true, controller.setTemplate(template.getKey(), template.createNewEntity()));
 
-        List<ObjectData> results = controller.getRecordSets(template.getKey());
+        List<CoalesceObjectImpl> results = controller.getRecordSets(template.getKey());
 
         // Verify Recordsets
         Assert.assertEquals(3, results.size());
@@ -176,7 +175,6 @@ public class TemplateDataControllerTest {
 
     private TemplateDataController createController() throws Exception
     {
-
         ICoalescePersistor persistor = new MockPersister();
 
         TestEntity entity = new TestEntity();
@@ -185,7 +183,10 @@ public class TemplateDataControllerTest {
         CoalesceEntityTemplate template = CoalesceEntityTemplate.create(entity);
         persistor.saveTemplate(template, null);
 
-        TemplateDataController controller = new TemplateDataController(persistor);
+        CoalesceFramework framework = new CoalesceFramework();
+        framework.setAuthoritativePersistor(persistor);
+        
+        TemplateDataController controller = new TemplateDataController(framework);
         Assert.assertNotNull(controller.getTemplate(template.getKey()));
 
         return controller;

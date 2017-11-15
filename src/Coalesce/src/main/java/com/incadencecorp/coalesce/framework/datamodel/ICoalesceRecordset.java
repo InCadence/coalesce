@@ -18,47 +18,37 @@ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
 -----------------------------------------------------------------------------*/
 
 /**
- * Interface for access record sets of Coalesce Entities. 
+ * Interface for access record sets of Coalesce Entities.
  */
-public interface ICoalesceRecordset {
+public interface ICoalesceRecordset extends ICoalesceObject {
 
     /**
-     * Return the value of the RecordSet's Name attribute.
-     * 
-     * @return String of the RecordSet's name attribute.
-     */
-    String getName();
-
-    /**
-     * Return the value corresponding to the minimum number of records the RecordSet must contain.
+     * Return the value corresponding to the minimum number of records the
+     * RecordSet must contain.
      * 
      * @return integer of the RecordSet's min records attribute.
      */
     int getMinRecords();
 
     /**
-     * Return the value corresponding to the maximum number of records the RecordSet must contain.
+     * Return the value corresponding to the maximum number of records the
+     * RecordSet must contain.
      * 
      * @return integer of the RecordSet's max records attribute.
      */
     int getMaxRecords();
 
     /**
-     * Sets the value of the RecordSet's Name attribute.
-     * 
-     * @param value String to be the RecordSet's name attribute.
-     */
-    void setName(String value);
-
-    /**
-     * Sets the value corresponding to the minimum number of records the RecordSet must contain.
+     * Sets the value corresponding to the minimum number of records the
+     * RecordSet must contain.
      * 
      * @param value integer to be the RecordSet's min records attribute.
      */
     void setMinRecords(int value);
 
     /**
-     * Sets the value corresponding to the maximum number of records the RecordSet must contain.
+     * Sets the value corresponding to the maximum number of records the
+     * RecordSet must contain.
      * 
      * @param value integer to be the RecordSet's max records attribute.
      */

@@ -25,6 +25,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.derby.jdbc.ClientDriver;
 import org.apache.derby.jdbc.EmbeddedDriver;
@@ -223,73 +224,77 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
     }
 
     public boolean coalesceEntityTemplate_InsertOrUpdate(CoalesceEntityTemplate template)
-            throws SQLException, CoalesceException
+            throws CoalesceException
     {
-        // get connection, insert or update
-        Connection conn = this.getConnection();
-        DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-        String dateCreated = fmt.print(new DateTime());
-        String lastModified = fmt.print(new DateTime());
-
-        // prepare the query
-        ResultSet result = null;
-
-        Statement stmt = conn.createStatement();
-        result = stmt.executeQuery("select name from coalesce.coalesceentitytemplate where name='" + template.getName()
-                + "' and source='" + template.getSource() + "' and version='" + template.getVersion() + "'");
-        if (!result.next())
+        try
         {
-            // insert
-            StringBuilder sql2 = new StringBuilder("insert into coalesce.coalesceentitytemplate (TemplateKey,").append("Name,Source, Version,TemplateXml,DateCreated,LastModified) values ").append("(?,?,?,?,?,?,?)");
+            // get connection, insert or update
+            Connection conn = this.getConnection();
 
-            PreparedStatement stmt2 = conn.prepareStatement(sql2.toString());
-            stmt2.setString(1, template.getKey());
-            stmt2.setString(2, template.getName());
-            stmt2.setString(3, template.getSource());
-            stmt2.setString(4, template.getVersion());
-            stmt2.setString(5, template.toXml());
-            stmt2.setString(6, dateCreated);
-            stmt2.setString(7, lastModified);
-            stmt2.executeUpdate();
+            DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+            String dateCreated = fmt.print(new DateTime());
+            String lastModified = fmt.print(new DateTime());
+
+            // prepare the query
+            ResultSet result = null;
+
+            Statement stmt = conn.createStatement();
+            result = stmt.executeQuery("select name from coalesce.coalesceentitytemplate where name='" + template.getName()
+                    + "' and source='" + template.getSource() + "' and version='" + template.getVersion() + "'");
+            if (!result.next())
+            {
+                // insert
+                StringBuilder sql2 = new StringBuilder("insert into coalesce.coalesceentitytemplate (TemplateKey,").append("Name,Source, Version,TemplateXml,DateCreated,LastModified) values ").append("(?,?,?,?,?,?,?)");
+
+                PreparedStatement stmt2 = conn.prepareStatement(sql2.toString());
+                stmt2.setString(1, template.getKey());
+                stmt2.setString(2, template.getName());
+                stmt2.setString(3, template.getSource());
+                stmt2.setString(4, template.getVersion());
+                stmt2.setString(5, template.toXml());
+                stmt2.setString(6, dateCreated);
+                stmt2.setString(7, lastModified);
+                stmt2.executeUpdate();
+            }
+            else
+            {
+                // update
+                StringBuilder sql3 = new StringBuilder("update coalesce.coalesceentitytemplate set Name=?,").append("Source=?,Version=?,TemplateXml=?,DateCreated=?,LastModified=?").append(" where Name=? and Source=? and Version=?");
+
+                PreparedStatement stmt3 = conn.prepareStatement(sql3.toString());
+                stmt3.setString(1, template.getName());
+                stmt3.setString(2, template.getSource());
+                stmt3.setString(3, template.getVersion());
+                stmt3.setString(4, template.toXml());
+                stmt3.setString(5, dateCreated);
+                stmt3.setString(6, lastModified);
+                stmt3.setString(7, template.getName());
+                stmt3.setString(8, template.getSource());
+                stmt3.setString(9, template.getVersion());
+                stmt3.executeUpdate();
+            }
 
             // create a blank entity to iterate through the recordsets
             CoalesceEntity entity = template.createNewEntity();
 
             // get the recordsets
-            ArrayList<CoalesceRecordset> recordSetList = new ArrayList<CoalesceRecordset>();
-            java.util.List<CoalesceSection> sections = entity.getSectionsAsList();
+            ArrayList<CoalesceRecordset> allRecordsets = new ArrayList<CoalesceRecordset>();
+            List<CoalesceSection> sections = entity.getSectionsAsList();
             for (CoalesceSection section : sections)
             {
-                java.util.List<CoalesceRecordset> records = section.getRecordsetsAsList();
-                recordSetList.addAll(records);
+                List<CoalesceRecordset> recordsets = section.getRecordsetsAsList();
+                allRecordsets.addAll(recordsets);
             }
 
             // now create the recordset tables
-            for (CoalesceRecordset recordset : recordSetList)
+            for (CoalesceRecordset recordset : allRecordsets)
             {
                 visitCoalesceRecordset(recordset, this);
             }
-
         }
-        else
+        catch (SQLException e)
         {
-            // update
-            StringBuilder sql3 = new StringBuilder("update coalesce.coalesceentitytemplate set Name=?,").append("Source=?,Version=?,TemplateXml=?,DateCreated=?,LastModified=?").append(" where Name=? and Source=? and Version=?");
-
-            PreparedStatement stmt3 = conn.prepareStatement(sql3.toString());
-            stmt3.setString(1, template.getName());
-            stmt3.setString(2, template.getSource());
-            stmt3.setString(3, template.getVersion());
-            stmt3.setString(4, template.toXml());
-            stmt3.setString(5, dateCreated);
-            stmt3.setString(6, lastModified);
-            stmt3.setString(7, template.getName());
-            stmt3.setString(8, template.getSource());
-            stmt3.setString(9, template.getVersion());
-            stmt3.executeUpdate();
-
-            // drop and recreate the recordset tables
-
+            throw new CoalesceException(e);
         }
 
         return true;
@@ -375,11 +380,11 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
                 StringBuilder sb = new StringBuilder();
 
                 // Add Required Columns
-                sb.append("\tobjectkey varchar(128) NOT NULL,\r");
-                sb.append("\tentitykey varchar(128) NOT NULL,\r");
-                sb.append("\tentityname varchar(256),\r");
-                sb.append("\tentitysource varchar(256),\r");
-                sb.append("\tentitytype varchar(256),\r");
+                sb.append("\tobjectkey varchar(128) NOT NULL,\r\n");
+                sb.append("\tentitykey varchar(128) NOT NULL,\r\n");
+                sb.append("\tentityname varchar(256),\r\n");
+                sb.append("\tentitysource varchar(256),\r\n");
+                sb.append("\tentitytype varchar(256),\r\n");
 
                 // Add Columns for Field Definitions
                 for (CoalesceFieldDefinition fieldDefinition : recordset.getFieldDefinitions())
@@ -387,7 +392,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
 
                     ECoalesceFieldDataTypes dataType = fieldDefinition.getDataType();
 
-                    if (fieldDefinition.getFlatten() && fieldDefinition.isListType())
+                    if (fieldDefinition.isFlatten() && fieldDefinition.isListType())
                     {
                         // createListFieldTable(dataType, conn);
                         LOGGER.warn("List field types are not currently supported.");
@@ -395,14 +400,14 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
 
                     String columnType = getSQLType(dataType);
 
-                    if (columnType != null && fieldDefinition.getFlatten()
+                    if (columnType != null && fieldDefinition.isFlatten()
                             && !columnType.equalsIgnoreCase(DerbyDataConnector.UNSUPPORTED_TYPE))
                     {
                         // sb.append("\t" +
                         // this.normalizeFieldName(fieldDefinition.getName()) +
                         // " "
                         // + columnType + ",\r");
-                        sb.append("\t" + NORMALIZER.normalize(fieldDefinition.getName()) + " " + columnType + ",\r");
+                        sb.append("\t" + NORMALIZER.normalize(fieldDefinition.getName()) + " " + columnType + ",\r\n");
                     }
                     else
                     {
@@ -410,9 +415,9 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
                     }
                 }
 
-                sb.append("\tCONSTRAINT " + info.getTableName() + "_pkey PRIMARY KEY (objectkey),\r");
+                sb.append("\tCONSTRAINT " + info.getTableName() + "_pkey PRIMARY KEY (objectkey),\r\n");
                 sb.append("\tCONSTRAINT " + info.getTableName() + "_fkey FOREIGN KEY (entitykey) REFERENCES " + schema
-                        + ".coalesceentity (objectkey) ON DELETE CASCADE");
+                        + ".coalesceentity (objectkey) ON DELETE CASCADE\r\n");
 
                 if (schema == null || (schema != null && schema.length() == 0))
                 {
@@ -450,7 +455,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
 
         while (tables.next())
         {
-            if (tables.getString(3).equalsIgnoreCase(tablename))
+            if (tables.getString(3).equalsIgnoreCase(tablename.replaceAll("\"", "")))
             {
                 return true;
             }
@@ -702,7 +707,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
         {
             String retTableName = rs.getString(3);
             LOGGER.trace("Table name is: " + retTableName);
-            if (retTableName.equalsIgnoreCase(tableName))
+            if (retTableName.equalsIgnoreCase(tableName.replaceAll("\"", "")))
             {
                 exists = true;
                 break;

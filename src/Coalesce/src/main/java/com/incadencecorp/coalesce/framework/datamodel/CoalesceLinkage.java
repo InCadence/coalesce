@@ -7,6 +7,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.commons.lang.NullArgumentException;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.incadencecorp.coalesce.api.CoalesceAttributes;
 import com.incadencecorp.coalesce.common.classification.Marking;
 import com.incadencecorp.coalesce.common.helpers.LocaleConverter;
@@ -155,18 +156,30 @@ public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceL
     // -----------------------------------------------------------------------//
 
     @Override
+    public String getClassificationMarkingAsString() {
+        return _entityLinkage.getClassificationmarking();
+    }
+
+    @JsonIgnore
     public Marking getClassificationMarking()
     {
-        return new Marking(_entityLinkage.getClassificationmarking());
+        return new Marking(getClassificationMarkingAsString());
     }
 
     @Override
-    public void setClassificationMarking(Marking value)
+    public void setClassificationMarkingAsString(String value)
     {
-        _entityLinkage.setClassificationmarking(value.toPortionString());
+        _entityLinkage.setClassificationmarking(value);
         updateLastModified();
     }
+    
+    @JsonIgnore
+    public void setClassificationMarking(Marking value)
+    {
+        setClassificationMarkingAsString(value.toPortionString());
+    }
 
+    @JsonIgnore
     @Override
     public String getEntity1Key()
     {
@@ -180,6 +193,7 @@ public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceL
         updateLastModified();
     }
 
+    @JsonIgnore
     @Override
     public String getEntity1Name()
     {
@@ -193,6 +207,7 @@ public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceL
         updateLastModified();
     }
 
+    @JsonIgnore
     @Override
     public String getEntity1Source()
     {
