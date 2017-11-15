@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.incadencecorp.coalesce.react</groupId>
 	<artifactId>coalesce-react-parent</artifactId>
-	<name>Coalesce React Components</name>
+	<name>Coalesce React Parent</name>
 	<description>Parent POM for Coalesce React components</description>
 	<packaging>pom</packaging>
 
@@ -19,6 +19,9 @@
 		<module>entity-editor</module>
 		<module>entity-search</module>
 		<module>map-viewer</module>
+		<module>settings</module>
+		<module>enumerations</module>
+		<module>manager</module>
 		<module>home</module>
 		<module>feature</module>
 	</modules>

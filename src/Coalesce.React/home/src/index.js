@@ -65,10 +65,11 @@ class Main extends React.Component {
         <div>
           {this.renderCard('search', require('common-components/img/search2.ico'), 'Search', 'Find Coalesce entities matching your criteria.')}
           {this.renderCard('entityeditor', require('common-components/img/edit.ico'), 'Editor', 'Edit or create new Coalesce entities.')}
-          {this.renderCard('#', require('common-components/img/enum.ico'), 'Enumerations', '(Comming Soon!!!) Create and edit enumerations used by Coalesce.)')}
+          {this.renderCard('enumerations', require('common-components/img/enum.ico'), 'Enumerations', 'Create and edit enumerations used by Coalesce.)')}
           {this.renderCard(this.state.templatecreator_url, require('common-components/img/template.ico'), 'Templates', 'Editor or create new templates for Coalesce entities.')}
           {this.renderCard('map', require('common-components/img/map.ico'), 'Map', 'Visualize different layers provided by a Geo Server fed from a Coalesce database.')}
-          {this.renderCard('#', require('common-components/img/manager.ico'), 'Manager', '(Comming Soon!!!) Connect services and databases.')}
+          {this.renderCard('settings', require('common-components/img/settings.ico'), 'Settings', 'Configure server defined client properties.')}
+          {this.renderCard('manager', require('common-components/img/manager.ico'), 'Manager', 'Connect services and databases.')}
         </div>
         <h1>Documentation</h1>
         <div>

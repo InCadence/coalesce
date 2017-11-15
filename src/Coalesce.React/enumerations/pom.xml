@@ -1,8 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>coalesce-react-home</artifactId>
-	<name>Coalesce React Home</name>
+	<artifactId>coalesce-react-enumerations</artifactId>
+	<name>Coalesce React Enumerations</name>
 	<packaging>war</packaging>
 
 	<parent>
@@ -42,13 +42,14 @@
 				</executions>
 			</plugin>
 
+
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
 				<configuration>
 					<instructions>
-						<Web-ContextPath>/</Web-ContextPath>
-						<Webapp-Context>/</Webapp-Context>
+						<Web-ContextPath>enumerations</Web-ContextPath>
+						<Webapp-Context>enumerations</Webapp-Context>
 					</instructions>
 				</configuration>
 			</plugin>
@@ -56,11 +57,12 @@
 
 	</build>
 
-        <dependencies>
-                <dependency>
-                        <groupId>com.incadencecorp.coalesce.react</groupId>
-                        <artifactId>common-components</artifactId>
-                        <version>${project.version}</version>
-                </dependency>
-        </dependencies>
+	<dependencies>
+					<dependency>
+									<groupId>com.incadencecorp.coalesce.react</groupId>
+									<artifactId>common-components</artifactId>
+									<version>${project.version}</version>
+					</dependency>
+	</dependencies>
+	
 </project>
