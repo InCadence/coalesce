@@ -52,19 +52,19 @@ export class FeatureSelection extends React.Component {
           if (value.style === 'Custom') {
             // Prompt for custom style
             Popup.plugins().promptStyle(styles, function(style) {
-              that.addLayer(value.layer, value.type, createStyle(style));
+              that.addLayer(value.layer, value.type, value.tiled, createStyle(style));
             });
           } else {
             for (var ii=0; ii<styles.length; ii++)
             {
               if (styles[ii].key === value.style) {
-                that.addLayer(value.layer, value.type, createStyle(styles[ii]));
+                that.addLayer(value.layer, value.type, value.tiled, createStyle(styles[ii]));
                 break;
               }
             }
           }
         } else {
-          that.addLayer(value.layer, value.type);
+          that.addLayer(value.layer, value.type, value.tiled);
         }
 
       });
@@ -73,7 +73,7 @@ export class FeatureSelection extends React.Component {
     }
   }
 
-  addLayer(name, type, style) {
+  addLayer(name, type, tiled, style) {
 
     const {selectedLayers} = this.state;
 
@@ -82,7 +82,8 @@ export class FeatureSelection extends React.Component {
       name: name,
       type: type,
       style: style,
-      checked: false
+      checked: false,
+      tiled: tiled,
     };
 
     selectedLayers.push(feature);
@@ -278,7 +279,7 @@ Popup.registerPlugin('promptAddFeature', function (data, styles, callback) {
       'name': 'Custom'
     }].concat(styles);
 
-    let promptValue = {};
+    let promptValue = {tiled: false};
     let layerChange = function (value) {
         promptValue.layer = value;
     };
@@ -290,6 +291,11 @@ Popup.registerPlugin('promptAddFeature', function (data, styles, callback) {
     let styleChange = function (value) {
         promptValue.style = value;
     };
+
+    let tileChange = function (value) {
+        promptValue.tiled = value.target.checked;
+    };
+
     this.create({
         title: 'Select Feature',
         content: (
@@ -305,6 +311,12 @@ Popup.registerPlugin('promptAddFeature', function (data, styles, callback) {
             ]}/>
             <label>Style (WFS Only)</label>
             <PromptDropdown onChange={styleChange} data={styleOptions} />
+            <label>Tiled (WMS Only)</label>
+            <div className="row">
+              <div className="col-sm-2">
+                <input type="checkbox" className="form-control" onChange={tileChange} />
+              </div>
+            </div>
           </div>
         ),
         buttons: {
@@ -312,7 +324,8 @@ Popup.registerPlugin('promptAddFeature', function (data, styles, callback) {
             right: [{
                 text: 'Add',
                 className: 'success',
-                action: function () {                     callback(promptValue);
+                action: function () {
+                    callback(promptValue);
                     Popup.close();
                 }
             }]

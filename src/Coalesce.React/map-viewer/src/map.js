@@ -112,12 +112,12 @@ export class MapView extends React.Component {
             singleWMSLayer.layers.push(feature.name);
 
             // Create New Combined WMS Layer
-            singleWMSLayer.layer = createBDPWMSLayer(this.props.geoserver, this.props.workspace, singleWMSLayer.layers);
+            singleWMSLayer.layer = createBDPWMSLayer(this.props.geoserver, this.props.workspace, singleWMSLayer.layers, singleWMSLayer.tiled);
             layer = singleWMSLayer.layer;
 
             console.log(feature.name + " added to WMS layer");
           } else {
-            feature.layer = createBDPWMSLayer(this.props.geoserver, this.props.workspace, [feature.name]);
+            feature.layer = createBDPWMSLayer(this.props.geoserver, this.props.workspace, [feature.name], feature.tiled);
             layer = feature.layer;
             layer.setVisible(feature.checked);
           }
@@ -175,7 +175,7 @@ export class MapView extends React.Component {
           // Additional Layers?
           if (singleWMSLayer.layers.length >= 1) {
             // Yes; Create WMS Layer
-            singleWMSLayer.layer = createBDPWMSLayer(this.props.geoserver, this.props.workspace, singleWMSLayer.layers);
+            singleWMSLayer.layer = createBDPWMSLayer(this.props.geoserver, this.props.workspace, singleWMSLayer.layers, singleWMSLayer.tiled);
             map.addLayer(singleWMSLayer.layer);
           }
         }
@@ -288,7 +288,7 @@ function createBDPHeatmapLayer(url, workspace, layer) {
   });
 }
 
-function createBDPWMSLayer(url, workspace, layers) {
+function createBDPWMSLayer(url, workspace, layers, tiled) {
 
   var workingLayers = layers.slice();
 
@@ -296,18 +296,33 @@ function createBDPWMSLayer(url, workspace, layers) {
       workingLayers[ii] = workspace + ":" + layers[ii];
   }
 
-  return new ol.layer.Tile({
-    source: new ol.source.TileWMS({
-      params: {
-        LAYERS: workingLayers.join(","),
-        //TILED: true,
-        //STYLES: 'heatmap'
-      },
-      serverType: 'geoserver',
-      url:  url + '/wms',
-      strategy: ol.loadingstrategy.bbox
-    }),
-  });
+  var layer;
+
+  if (tiled != null && tiled == true) {
+    layer = new ol.layer.Tile({
+      source: new ol.source.TileWMS({
+        params: {
+          LAYERS: workingLayers.join(","),
+          //TILED: tiled,
+          //STYLES: 'heatmap'
+        },
+        serverType: 'geoserver',
+        url:  url + '/wms',
+        strategy: ol.loadingstrategy.bbox
+      }),
+    });
+  } else {
+    layer = new ol.layer.Image({
+          source: new ol.source.ImageWMS({
+            url: url + '/wms',
+            params: {'LAYERS': workingLayers.join(",")},
+            ratio: 1,
+            serverType: 'geoserver'
+          })
+        });
+  }
+
+  return layer;
 }
 
 function createBDPWFSLayer(url, workspace, feature, style) {
@@ -320,11 +335,11 @@ function createBDPWFSLayer(url, workspace, feature, style) {
         }
       }),
       url: function(extent) {
-        var coords = ol.proj.transform(extent, 'EPSG:3857', 'EPSG:4326');
-        alert(JSON.stringify(coords));
+        //var coords = ol.proj.transform(extent, 'EPSG:3857', 'EPSG:4326');
+        //alert(JSON.stringify(coords));
         return url + '/wfs?service=WFS&' +
             'version=2.0.0&request=GetFeature&typename=' + workspace + ':' + feature + '&' +
-            'outputFormat=application/json&srsname=EPSG:4326' + '&bbox=' + extent.join(',');
+            'outputFormat=application/json&srsname=EPSG:4326';// + '&bbox=' + extent.join(',');
       },
       strategy: ol.loadingstrategy.bbox
     }),
@@ -336,6 +351,7 @@ MapView.defaultProps = {
   isOptionsOpen: true,
   singleWMSLayer: {
     enabled: false,
+    tiled: false,
     layers: []
   }
 
