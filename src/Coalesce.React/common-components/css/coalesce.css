@@ -157,3 +157,11 @@ body {
   background-color: #d7d6d6;
   padding: 8px 8px 8px 8px;
 }
+
+#graph-id-graph-wrapper svg {
+  border-style: solid;
+  border-width: 1px;
+  border-color: #FF9900;
+  border-radius: 5px;
+  background-color: #FFFFFF;
+}

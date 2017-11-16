@@ -1,11 +1,13 @@
 package com.incadencecorp.coalesce.services.common.jaxrs;
 
+import com.incadencecorp.coalesce.services.common.controllers.PropertyController;
+
 import javax.ws.rs.*;
 import java.rmi.RemoteException;
 import java.util.Map;
 
 /**
- * JaxRS annotations used on {@link com.incadencecorp.coalesce.services.common.controllers.PropertyController}
+ * JaxRS annotations used on {@link PropertyController}
  *
  * @author Derek Clemenzi
  */
