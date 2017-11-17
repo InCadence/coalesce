@@ -1,12 +1,15 @@
 package com.incadencecorp.coalesce.framework;
 
-import java.util.Map;
-
-import org.apache.commons.io.FilenameUtils;
-
+import com.incadencecorp.coalesce.api.CoalesceParameters;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.unity.common.IConfigurationsConnector;
 import com.incadencecorp.unity.common.SettingsBase;
+import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
+import org.apache.commons.io.FilenameUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Map;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -33,14 +36,16 @@ import com.incadencecorp.unity.common.SettingsBase;
  */
 public class CoalesceSettings {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(CoalesceSettings.class);
+
     /*--------------------------------------------------------------------------
-    	Private Member Variables
+        Private Member Variables
     --------------------------------------------------------------------------*/
 
     private static String _defaultApplicationName;
     private static String _defaultApplicationRoot;
 
-    protected static SettingsBase settings = new SettingsBase(null);
+    protected static SettingsBase settings = new SettingsBase(new FilePropertyConnector(CoalesceParameters.COALESCE_CONFIG_LOCATION));
 
     /*--------------------------------------------------------------------------
     Parameter Groups
@@ -133,10 +138,15 @@ public class CoalesceSettings {
 
     /**
      * Configures the settings to use a particular connector.
-     * 
+     *
      * @param connector
      */
-    public static void initialize(final IConfigurationsConnector connector)
+    /**
+     * Configures the settings to use a particular connector.
+     *
+     * @param connector
+     */
+    public static void setConnector(final IConfigurationsConnector connector)
     {
         settings = new SettingsBase(connector);
     }
@@ -147,20 +157,22 @@ public class CoalesceSettings {
 
     public static String getConfigurationFileName()
     {
-
         if (_defaultApplicationName == null)
         {
-            return "Coalesce.config";
+            return "coalesce.properties";
         }
         else
         {
-            return _defaultApplicationName + ".Coalesce.config";
+            return _defaultApplicationName + ".coalesce.properties";
         }
     }
 
     public static boolean getUseBinaryFileStore()
     {
-        return settings.getSetting(getConfigurationFileName(), PARAM_FILE_STORE_USE_FILE_STORE, DEFAULT_USE_FILE_STORE, true);
+        return settings.getSetting(getConfigurationFileName(),
+                                   PARAM_FILE_STORE_USE_FILE_STORE,
+                                   DEFAULT_USE_FILE_STORE,
+                                   true);
     }
 
     public static boolean setUseBinaryFileStore(boolean value)
@@ -190,10 +202,14 @@ public class CoalesceSettings {
 
     public static String getBinaryFileStoreBasePath()
     {
-        return settings.getSetting(getConfigurationFileName(),
-                                   PARAM_FILE_STORE_BASE_PATH,
-                                   FilenameUtils.concat(getDefaultApplicationRoot(), "..\\images\\uploads\\"),
-                                   true);
+        String defaultValue = FilenameUtils.concat(getDefaultApplicationRoot(), "files");
+
+        if (defaultValue == null)
+        {
+            defaultValue = "files";
+        }
+
+        return settings.getSetting(getConfigurationFileName(), PARAM_FILE_STORE_BASE_PATH, defaultValue, true);
     }
 
     public static boolean setBinaryFileStoreBasePath(String value)
@@ -234,7 +250,8 @@ public class CoalesceSettings {
                     }
                     catch (ClassNotFoundException cnfe)
                     {
-                        _defaultApplicationRoot = null;
+                        LOGGER.warn("(FAILED) Determining Root Path");
+                        _defaultApplicationRoot = "";
                     }
 
                     break;
@@ -298,7 +315,7 @@ public class CoalesceSettings {
 
     /**
      * Sets the default value of the z-axis if one was not specified.
-     * 
+     *
      * @param value
      */
     public static void setDefaultZValue(double value)
@@ -316,7 +333,7 @@ public class CoalesceSettings {
 
     /**
      * Sets the number of decimal places for coordinates.
-     * 
+     *
      * @param value
      */
     public static void setNumDecimalsForCoordinates(int value)
@@ -339,21 +356,24 @@ public class CoalesceSettings {
     /**
      * @return the max threads per core * core
      */
-    public static int getMaxThreads() {
+    public static int getMaxThreads()
+    {
         return getNumberOfCores() * getMaxThreadsPerCore();
     }
 
     /**
      * @return the min threads per core * core
      */
-    public static int getMinThreads() {
+    public static int getMinThreads()
+    {
         return getNumberOfCores() * getMinThreadsPerCore();
     }
 
     /**
      * @return the number of available cores
      */
-    public static int getNumberOfCores() {
+    public static int getNumberOfCores()
+    {
         return settings.getSetting(getConfigurationFileName(), PARAM_CORE_COUNT, DEFAULT_CORE_COUNT, true);
     }
 
@@ -362,14 +382,16 @@ public class CoalesceSettings {
      *
      * @param value
      */
-    public static void setNumberOfCores(int value) {
+    public static void setNumberOfCores(int value)
+    {
         settings.setSetting(getConfigurationFileName(), PARAM_CORE_COUNT, value);
     }
 
     /**
      * @return the minimum number of threads per core
      */
-    public static int getMinThreadsPerCore() {
+    public static int getMinThreadsPerCore()
+    {
         return settings.getSetting(getConfigurationFileName(), PARAM_MIN_THREADS, DEFAULT_MIN_THREADS, true);
     }
 
@@ -378,14 +400,16 @@ public class CoalesceSettings {
      *
      * @param value
      */
-    public static void setMinThreadsPerCore(int value) {
+    public static void setMinThreadsPerCore(int value)
+    {
         settings.setSetting(getConfigurationFileName(), PARAM_MIN_THREADS, value);
     }
 
     /**
      * @return the maximum number of threads per core
      */
-    public static int getMaxThreadsPerCore() {
+    public static int getMaxThreadsPerCore()
+    {
         return settings.getSetting(getConfigurationFileName(), PARAM_MAX_THREADS, DEFAULT_MAX_THREADS, true);
     }
 
@@ -394,14 +418,16 @@ public class CoalesceSettings {
      *
      * @param value
      */
-    public static void setMaxThreadsPerCore(int value) {
+    public static void setMaxThreadsPerCore(int value)
+    {
         settings.setSetting(getConfigurationFileName(), PARAM_MAX_THREADS, value);
     }
-    
+
     /**
      * @return the time to keep the thread alive.
      */
-    public static int getKeepAliveTime() {
+    public static int getKeepAliveTime()
+    {
         return settings.getSetting(getConfigurationFileName(), PARAM_KEEP_ALIVE_TIME, DEFAULT_KEEP_ALIVE_TIME, true);
     }
 
@@ -410,7 +436,8 @@ public class CoalesceSettings {
      *
      * @param value
      */
-    public static void setKeepAliveTime(int value) {
+    public static void setKeepAliveTime(int value)
+    {
         settings.setSetting(getConfigurationFileName(), PARAM_KEEP_ALIVE_TIME, value);
     }
     /*--------------------------------------------------------------------------
@@ -419,12 +446,10 @@ public class CoalesceSettings {
 
     /**
      * Settings for coordinate axis.
-     * 
-     * @author n78554
      *
+     * @author n78554
      */
-    public enum EAxis
-    {
+    public enum EAxis {
         /**
          * The default is restricted to the range (-180 to 180).
          */
@@ -459,7 +484,7 @@ public class CoalesceSettings {
 
         /**
          * Sets whether the axis should be restricted.
-         * 
+         *
          * @param value
          */
         public void setRestricted(boolean value)
@@ -477,7 +502,7 @@ public class CoalesceSettings {
 
         /**
          * Sets the max value allowed for this axis.
-         * 
+         *
          * @param value
          */
         public void setMax(double value)
@@ -495,7 +520,7 @@ public class CoalesceSettings {
 
         /**
          * Sets the min value allowed for this axis.
-         * 
+         *
          * @param value
          */
         public void setMin(double value)

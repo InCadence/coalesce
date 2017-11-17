@@ -339,7 +339,7 @@ public final class FileHelper {
                                                                      boolean createIfDoesNotExist)
     {
 
-        if (key == null || StringHelper.isNullOrEmpty(key.trim()))
+        if (key == null || StringHelper.isNullOrEmpty(key.trim()) || binaryFileStoreBasePath == null)
             return null;
 
         String baseFilename = GUIDHelper.removeBrackets(key);
