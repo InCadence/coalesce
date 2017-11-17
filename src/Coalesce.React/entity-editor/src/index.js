@@ -85,6 +85,10 @@ function saveEntity(entity, isNew) {
     }),
   }).then(res => {
       Popup.close();
+
+      if (!res.ok) {
+        throw Error(res.statusText);
+      }
   }).catch(function(error) {
       Popup.plugins().promptError("Saving: " + error);
   });
@@ -210,6 +214,9 @@ fetch(rootUrl + '/cxf/data/templates')
 
 registerLoader(Popup);
 registerPrompt(Popup);
+
+// TODO Uncomment this line for debugging. 
+//renderNewEntity('086f6440-997e-30a4-90a4-d134076e1587');
 
 ReactDOM.render(
   React.createElement(App, {}),

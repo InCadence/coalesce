@@ -3,6 +3,19 @@ body {
   color: #000000;
 }
 
+.coalesce-banner {
+  font-weight: bold;
+  font-family: tohoma;
+  font-size: 64px;
+  color: #e68a00;
+  background-color: #3d3d3c;
+  width: 100%;
+  border-color: #FF9900;
+  border-width: 2px;
+  border-style: solid;
+  padding: 5px;
+}
+
 .form-buttons {
   text-align: right;
   padding-top: 0.1em;

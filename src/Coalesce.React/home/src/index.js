@@ -61,7 +61,8 @@ class Main extends React.Component {
 
     return (
       <center>
-        <h1>Applications</h1>
+        <h1 className="coalesce-banner">Coalesce Enterprise Data Broker</h1>
+        <h2>Applications</h2>
         <div>
           {this.renderCard('search', require('common-components/img/search2.ico'), 'Search', 'Find Coalesce entities matching your criteria.')}
           {this.renderCard('entityeditor', require('common-components/img/edit.ico'), 'Editor', 'Edit or create new Coalesce entities.')}
@@ -71,7 +72,7 @@ class Main extends React.Component {
           {this.renderCard('settings', require('common-components/img/settings.ico'), 'Settings', 'Configure server defined client properties.')}
           {this.renderCard('manager', require('common-components/img/manager.ico'), 'Manager', 'Visualize how the services within this container are wired together.')}
         </div>
-        <h1>Documentation</h1>
+        <h2>Documentation</h2>
         <div>
           {this.renderCard('https://github.com/InCadence/coalesce/wiki/REST-API', require('common-components/img/api.ico'), 'REST API', "View Coalesce's REST API to integrate your applications.")}
           {this.renderCard('https://github.com/InCadence/coalesce/wiki/Karaf-Distribution', require('common-components/img/deploy.ico'), 'Deployment', 'View how to deploy and run a Coalesce server.')}
