@@ -2,6 +2,7 @@ import React from 'react';
 import { HashLoader } from 'react-spinners';
 import {Prompt} from './prompt.js';
 import {PromptTemplate} from './prompt-template.js';
+import {PromptDropdown} from './prompt-dropdown.js';
 
 export function registerLoader(popup) {
 
@@ -19,6 +20,33 @@ export function registerLoader(popup) {
       });
   });
 
+}
+
+export function registerPromptDropdown(popup) {
+  popup.registerPlugin('promptDropdown', function (buttontext, title, defaultValue, data, callback) {
+  /** Prompt plugin */
+    let promptValue = null;
+    let promptChange = function (value) {``
+        promptValue = value;
+    };
+
+    this.create({
+        title: title,
+        content: <PromptDropdown onChange={promptChange} value={defaultValue} data={data}/>,
+        buttons: {
+            left: ['cancel'],
+            right: [{
+                text: buttontext,
+                className: 'success',
+                action: function () {
+                    callback(promptValue);
+                    popup.close();
+                }
+
+            }]
+        }
+    });
+  });
 }
 
 export function registerPrompt(popup) {
@@ -71,5 +99,19 @@ export function registerTemplatePrompt(popup, url, data) {
             }]
         }
     });
+  });
+}
+
+export function registerErrorPrompt(popup) {
+  popup.registerPlugin('promptError', function (error) {
+    popup.close();
+    popup.create({
+        title: 'Error',
+        content: error,
+        className: 'alert',
+        buttons: {
+            right: ['ok']
+        }
+    }, true);
   });
 }

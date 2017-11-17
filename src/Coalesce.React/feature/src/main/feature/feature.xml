@@ -4,26 +4,40 @@
 	<feature name="coalesce-react-feature" description="">
 		<feature prerequisite="false" dependency="false">coalesce-crud-service-data-feature</feature>
 		<feature prerequisite="false" dependency="false">coalesce-search-service-data-feature</feature>
-	    <bundle start-level="75">mvn:com.incadencecorp.coalesce.services/coalesce-services-common-jaxrs/0.0.25-SNAPSHOT</bundle>
+		<bundle start-level="75">mvn:com.incadencecorp.coalesce.services/coalesce-services-common-jaxrs/0.0.25-SNAPSHOT</bundle>
 	</feature>
-	<feature name="coalesce-entity-editor" description="">
+	<feature name="coalesce-react-editor-feature" description="" version="${project.version}">
 		<feature prerequisite="false" dependency="false">coalesce-crud-service-data-feature</feature>
-	    <bundle start-level="75">mvn:com.incadencecorp.coalesce.react/entity-editor/${project.version}/war</bundle>
-	    <bundle start-level="75">mvn:com.incadencecorp.coalesce.services/coalesce-services-common-jaxrs/0.0.25-SNAPSHOT</bundle>
+	  <bundle start-level="75">mvn:com.incadencecorp.coalesce.react/coalesce-react-editor/${project.version}/war</bundle>
+	  <bundle start-level="75">mvn:com.incadencecorp.coalesce.services/coalesce-services-common-jaxrs/0.0.25-SNAPSHOT</bundle>
 	</feature>
-	<feature name="coalesce-entity-search" description="">
+	<feature name="coalesce-react-search-feature" description="" version="${project.version}">
 		<feature prerequisite="false" dependency="false">coalesce-crud-service-data-feature</feature>
 		<feature prerequisite="false" dependency="false">coalesce-search-service-data-feature</feature>
-	    <bundle start-level="75">mvn:com.incadencecorp.coalesce.react/entity-search/${project.version}/war</bundle>
-	    <bundle start-level="75">mvn:com.incadencecorp.coalesce.services/coalesce-services-common-jaxrs/0.0.25-SNAPSHOT</bundle>
+	  <bundle start-level="75">mvn:com.incadencecorp.coalesce.react/coalesce-react-search/${project.version}/war</bundle>
+	  <bundle start-level="75">mvn:com.incadencecorp.coalesce.services/coalesce-services-common-jaxrs/0.0.25-SNAPSHOT</bundle>
 	</feature>
-	<feature name="coalesce-map-viewer" description="">
+	<feature name="coalesce-react-map-feature" description="" version="${project.version}">
 		<feature prerequisite="false" dependency="false">coalesce-search-service-data-feature</feature>
-        <bundle start-level="75">mvn:com.incadencecorp.coalesce.react/map-viewer/${project.version}/war</bundle>
-	    <bundle start-level="75">mvn:com.incadencecorp.coalesce.services/coalesce-services-common-jaxrs/0.0.25-SNAPSHOT</bundle>
+    <bundle start-level="75">mvn:com.incadencecorp.coalesce.react/coalesce-react-map/${project.version}/war</bundle>
+	  <bundle start-level="75">mvn:com.incadencecorp.coalesce.services/coalesce-services-common-jaxrs/0.0.25-SNAPSHOT</bundle>
 	</feature>
-	<feature name="coalesce-home" description="">
-        <bundle start-level="75">mvn:com.incadencecorp.coalesce.react/coalesce-home/${project.version}/war</bundle>
-	    <bundle start-level="75">mvn:com.incadencecorp.coalesce.services/coalesce-services-common-jaxrs/0.0.25-SNAPSHOT</bundle>
+	<feature name="coalesce-react-home-feature" description="" version="${project.version}">
+    <bundle start-level="75">mvn:com.incadencecorp.coalesce.react/coalesce-react-home/${project.version}/war</bundle>
+	  <bundle start-level="75">mvn:com.incadencecorp.coalesce.services/coalesce-services-common-jaxrs/0.0.25-SNAPSHOT</bundle>
+	</feature>
+	<feature name="coalesce-react-settings-feature" description="" version="${project.version}">
+    <bundle start-level="75">mvn:com.incadencecorp.coalesce.react/coalesce-react-settings/${project.version}/war</bundle>
+	  <bundle start-level="75">mvn:com.incadencecorp.coalesce.services/coalesce-services-common-jaxrs/0.0.25-SNAPSHOT</bundle>
+	</feature>
+	<feature name="coalesce-react-enumerations-feature" description="" version="${project.version}">
+		<feature prerequisite="false" dependency="false">coalesce-crud-service-data-feature</feature>
+		<feature prerequisite="false" dependency="false">coalesce-search-service-data-feature</feature>
+    <bundle start-level="75">mvn:com.incadencecorp.coalesce.react/coalesce-react-enumerations/${project.version}/war</bundle>
+	  <bundle start-level="75">mvn:com.incadencecorp.coalesce.services/coalesce-services-common-jaxrs/0.0.25-SNAPSHOT</bundle>
+	</feature>
+	<feature name="coalesce-react-manager-feature" description="" version="${project.version}">
+    <bundle start-level="75">mvn:com.incadencecorp.coalesce.react/coalesce-react-manager/${project.version}/war</bundle>
+	  <bundle start-level="75">mvn:com.incadencecorp.coalesce.services/coalesce-services-common-jaxrs/0.0.25-SNAPSHOT</bundle>
 	</feature>
 </features>

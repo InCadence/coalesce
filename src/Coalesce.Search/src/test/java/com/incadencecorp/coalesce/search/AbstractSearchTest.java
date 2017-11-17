@@ -17,13 +17,14 @@
 
 package com.incadencecorp.coalesce.search;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
-import javax.sql.rowset.CachedRowSet;
-
+import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceStringField;
+import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
+import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
+import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
+import com.incadencecorp.coalesce.search.api.SearchResults;
+import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import org.geotools.data.Query;
 import org.junit.Assert;
 import org.junit.Before;
@@ -37,24 +38,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
-import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceStringField;
-import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
-import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
-import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
-import com.incadencecorp.coalesce.search.api.SearchResults;
-import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
+import javax.sql.rowset.CachedRowSet;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * This abstract test suite provides generic testing against persisters that
  * have implemented {@link ICoalesceSearchPersistor} to ensure basic
  * functionality. The {@link TestEntity} must have already been resgistered
  * before running these test.
- * 
- * @author n78554
  *
  * @param <T>
+ * @author n78554
  */
 public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesceSearchPersistor> {
 
@@ -67,8 +64,6 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
 
     /**
      * Registers the entities used by these tests.
-     * 
-     * @param persister
      */
     @Before
     public void registerEntities()
@@ -95,7 +90,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
      * Execute a search with one parameter and specifying the search order.
      * Verifies the default columns are returned along with the specified
      * property and that the persister respecting the sort ordering.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -191,7 +186,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
     /**
      * Executes a search with an invalid entity key to ensure that the persister
      * can handle no results.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -217,6 +212,47 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         // 5 Default columns
         Assert.assertEquals(1, rowset.getMetaData().getColumnCount());
         Assert.assertFalse(rowset.next());
+    }
+
+    /**
+     * Verifies that the number of requested properties submitted are returned even
+     * if they are duplicate. This test was created to reveal an issue with Neo4j
+     * and duplicate properties.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testSearchDuplicateProperties() throws Exception
+    {
+        TestEntity entity = new TestEntity();
+        entity.initialize();
+
+        T persister = createPersister();
+        persister.saveEntity(false, entity);
+
+        List<PropertyName> properties = new ArrayList<>();
+        properties.add(CoalescePropertyFactory.getName());
+        properties.add(CoalescePropertyFactory.getName());
+
+        Query searchQuery = new Query();
+        searchQuery.setStartIndex(1);
+        searchQuery.setMaxFeatures(200);
+        searchQuery.setFilter(CoalescePropertyFactory.getEntityKey(entity.getKey()));
+        searchQuery.setProperties(properties);
+
+        SearchResults results = persister.search(searchQuery);
+
+        Assert.assertEquals(1, results.getTotal());
+
+        CachedRowSet rowset = results.getResults();
+
+        // Verify EntityKey and two requested columns
+        Assert.assertEquals(3, rowset.getMetaData().getColumnCount());
+        Assert.assertTrue(rowset.next());
+
+        entity.markAsDeleted();
+
+        persister.saveEntity(true, entity);
     }
 
 }

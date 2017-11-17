@@ -23,9 +23,6 @@
 		<feature prerequisite="false" dependency="false">coalesce-crud-service-data-feature</feature>
 		<feature prerequisite="false" dependency="false">coalesce-search-service-feature</feature>
 		<feature prerequisite="false" dependency="false">coalesce-search-service-data-feature</feature>
-		<feature prerequisite="false" dependency="false">coalesce-entity-editor</feature>
-		<feature prerequisite="false" dependency="false">coalesce-entity-search</feature>
-		<feature prerequisite="false" dependency="false">coalesce-map-viewer</feature>
-		<feature prerequisite="false" dependency="false">coalesce-home</feature>
+		<feature prerequisite="false" dependency="false">coalesce-react-feature</feature>
 	</feature>
 </features>

@@ -34,7 +34,9 @@ export class SearchResults extends React.PureComponent {
       Header: '',
       accessor: 'button',
       Cell: (cell) => (
-        <img id={cell.row.key} src={require('common-components/img/view.ico')} alt="view" title="View Entity" className="coalesce-img-button small enabled" onClick={() => window.open(this.props.url + "/entityeditor/?entitykey=" + cell.row.entityKey)}/>
+        <div className="form-buttons">
+          <img id={cell.row.key} src={require('common-components/img/view.ico')} alt="view" title="View Entity" className="coalesce-img-button small enabled" onClick={() => window.open(this.props.url + "/entityeditor/?entitykey=" + cell.row.entityKey)}/>
+        </div>
       )
     });
 
@@ -68,7 +70,7 @@ export class SearchResults extends React.PureComponent {
 }
 
 SearchResults.defaultProps = {
-  url: 'http://' + window.location.hostname + ':8181',
+  url: 'http://' + window.location.hostname + ':' + window.location.port,
   data: [],
   properties: []
 }

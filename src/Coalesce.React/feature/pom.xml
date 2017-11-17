@@ -28,25 +28,43 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.incadencecorp.coalesce.react</groupId>
-			<artifactId>entity-editor</artifactId>
+			<artifactId>coalesce-react-editor</artifactId>
 			<version>${project.version}</version>
 			<type>war</type>
 		</dependency>
 		<dependency>
 			<groupId>com.incadencecorp.coalesce.react</groupId>
-			<artifactId>entity-search</artifactId>
+			<artifactId>coalesce-react-search</artifactId>
 			<version>${project.version}</version>
 			<type>war</type>
 		</dependency>
 		<dependency>
 			<groupId>com.incadencecorp.coalesce.react</groupId>
-			<artifactId>map-viewer</artifactId>
+			<artifactId>coalesce-react-map</artifactId>
 			<version>${project.version}</version>
 			<type>war</type>
 		</dependency>
 		<dependency>
 			<groupId>com.incadencecorp.coalesce.react</groupId>
-			<artifactId>coalesce-home</artifactId>
+			<artifactId>coalesce-react-home</artifactId>
+			<version>${project.version}</version>
+			<type>war</type>
+		</dependency>
+		<dependency>
+			<groupId>com.incadencecorp.coalesce.react</groupId>
+			<artifactId>coalesce-react-settings</artifactId>
+			<version>${project.version}</version>
+			<type>war</type>
+		</dependency>
+		<dependency>
+			<groupId>com.incadencecorp.coalesce.react</groupId>
+			<artifactId>coalesce-react-enumerations</artifactId>
+			<version>${project.version}</version>
+			<type>war</type>
+		</dependency>
+		<dependency>
+			<groupId>com.incadencecorp.coalesce.react</groupId>
+			<artifactId>coalesce-react-manager</artifactId>
 			<version>${project.version}</version>
 			<type>war</type>
 		</dependency>

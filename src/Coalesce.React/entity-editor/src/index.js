@@ -4,7 +4,7 @@ import {EntityView} from './entity.js'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import Popup from 'react-popup';
 import {Menu} from 'common-components/lib/menu.js'
-import {registerLoader, registerPrompt, registerTemplatePrompt} from 'common-components/lib/register.js'
+import {registerLoader, registerPrompt, registerTemplatePrompt, registerErrorPrompt} from 'common-components/lib/register.js'
 
 import './index.css'
 import 'common-components/css/coalesce.css'
@@ -17,6 +17,8 @@ if (window.location.port == 3000) {
 } else {
   rootUrl  = 'http://' + window.location.hostname + ':' + window.location.port;
 }
+
+registerErrorPrompt(Popup);
 
 class App extends React.Component {
   render() {
@@ -83,8 +85,12 @@ function saveEntity(entity, isNew) {
     }),
   }).then(res => {
       Popup.close();
+
+      if (!res.ok) {
+        throw Error(res.statusText);
+      }
   }).catch(function(error) {
-      renderError("Saving: " + error);
+      Popup.plugins().promptError("Saving: " + error);
   });
 }
 
@@ -116,10 +122,10 @@ function renderEntity(key) {
           Popup.close();
 
         }).catch(function(error) {
-          renderError('Failed to load template (' + data.name + ', ' + data.source + ', ' + data.version + ')');
+          Popup.plugins().promptError('Failed to load template (' + data.name + ', ' + data.source + ', ' + data.version + ')');
         });
     }).catch(function(error) {
-      renderError('Failed to load entity (' + key + ')');
+      Popup.plugins().promptError('Failed to load entity (' + key + ')');
     });
 }
 
@@ -150,10 +156,10 @@ function renderNewEntity(key) {
 
           Popup.close();
         }).catch(function(error) {
-          renderError('Failed to create new entity (' + key + ')');
+          Popup.plugins().promptError('Failed to create new entity (' + key + ')');
         });
     }).catch(function(error) {
-      renderError('Failed to load template (' + key + ')');
+      Popup.plugins().promptError('Failed to load template (' + key + ')');
     });
 }
 
@@ -163,58 +169,54 @@ ReactDOM.render(
     document.getElementById('popupContainer')
 );
 
-ReactDOM.render(
-    <Menu items={[
-      {
-        id: 'new',
-        name: 'New',
-        img: require('common-components/img/new.ico'),
-        title: 'Create New Entity',
-        onClick: () => {
-
-          Popup.plugins().promptTemplate('create', 'Type your name', function (key) {
-            renderNewEntity(key);
-          });
-        }
-      }, {
-        id: 'load',
-        name: 'Load',
-        img: require('common-components/img/load.ico'),
-        title: 'Load Entity',
-        onClick: () => {
-          Popup.plugins().prompt('Load', 'Entity Selection', '', 'Enter Entity Key', function (key) {
-            renderEntity(key);
-          });
-        }
-      }
-    ]}/>,
-    document.getElementById('myNavbar')
-);
-
 /** Prompt plugin */
 fetch(rootUrl + '/cxf/data/templates')
   .then(res => res.json())
   .then(data => {
       registerTemplatePrompt(Popup, rootUrl, data);
 
+      ReactDOM.render(
+          <Menu items={[
+            {
+              id: 'new',
+              name: 'New',
+              img: require('common-components/img/new.ico'),
+              title: 'Create New Entity',
+              onClick: () => {
+
+                Popup.plugins().promptTemplate('create', 'Type your name', function (key) {
+                  renderNewEntity(key);
+                });
+              }
+            }, {
+              id: 'load',
+              name: 'Load',
+              img: require('common-components/img/load.ico'),
+              title: 'Load Entity',
+              onClick: () => {
+                Popup.plugins().prompt('Load', 'Entity Selection', '', 'Enter Entity Key', function (key) {
+                  renderEntity(key);
+                });
+              }
+            }
+          ]}/>,
+          document.getElementById('myNavbar')
+      );
+
 }).catch(function(error) {
-    renderError("Loading Templates: " + error);
+    ReactDOM.render(
+        <Menu items={[]}/>,
+        document.getElementById('myNavbar')
+    );
+
+    Popup.plugins().promptError("Loading Templates: " + error);
 });
 
 registerLoader(Popup);
 registerPrompt(Popup);
 
-function renderError(error) {
-  Popup.close();
-  Popup.create({
-      title: 'Error',
-      content: error,
-      className: 'alert',
-      buttons: {
-          right: ['ok']
-      }
-  }, true);
-}
+// TODO Uncomment this line for debugging. 
+//renderNewEntity('086f6440-997e-30a4-90a4-d134076e1587');
 
 ReactDOM.render(
   React.createElement(App, {}),

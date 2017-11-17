@@ -52,28 +52,28 @@ export class FeatureSelection extends React.Component {
           if (value.style === 'Custom') {
             // Prompt for custom style
             Popup.plugins().promptStyle(styles, function(style) {
-              that.addLayer(value.layer, value.type, createStyle(style));
+              that.addLayer(value.layer, value.type, value.tiled, createStyle(style));
             });
           } else {
             for (var ii=0; ii<styles.length; ii++)
             {
               if (styles[ii].key === value.style) {
-                that.addLayer(value.layer, value.type, createStyle(styles[ii]));
+                that.addLayer(value.layer, value.type, value.tiled, createStyle(styles[ii]));
                 break;
               }
             }
           }
         } else {
-          that.addLayer(value.layer, value.type);
+          that.addLayer(value.layer, value.type, value.tiled);
         }
 
       });
     } else {
-      console.log('Not Initialized');
+      Popup.plugins().promptError('No available layers');
     }
   }
 
-  addLayer(name, type, style) {
+  addLayer(name, type, tiled, style) {
 
     const {selectedLayers} = this.state;
 
@@ -82,7 +82,8 @@ export class FeatureSelection extends React.Component {
       name: name,
       type: type,
       style: style,
-      checked: false
+      checked: false,
+      tiled: tiled,
     };
 
     selectedLayers.push(feature);
@@ -165,11 +166,11 @@ export class FeatureSelection extends React.Component {
         selectedLayers[idx] = selectedLayers[newIdx];
         selectedLayers[newIdx] = feature;
 
+        moveLayer(feature, up, idx);
+
         this.setState({
           selectedLayers: selectedLayers
         });
-
-        moveLayer(feature, up, idx);
       }
     }
   }
@@ -188,23 +189,21 @@ export class FeatureSelection extends React.Component {
         var isFirst = ii===0;
         var isLast = ii===this.state.selectedLayers.length - 1;
 
-        var buttons;
-
         features.push(
           <div key={feature.name} className="row">
             <div className="col-sm-2">
-              <input id={feature.name} type="checkbox" onChange={this.onChange.bind(this, feature)} checked={feature.checked} />
+              <input id={feature.name} className="form-control" type="checkbox" onChange={this.onChange.bind(this, feature)} checked={feature.checked} />
             </div>
-            <div className="col-sm-4">
+            <div className="col-sm-5">
               <label>{feature.name}</label>
             </div>
             <div className="col-sm-2">
               <label>{feature.type}</label>
             </div>
-            <div className="col-sm-4">
+            <div className="col-sm-3">
               <div className="form-buttons">
-                <img src={require('common-components/img/up.ico')} alt="Up" className={isFirst ? "coalesce-img-button small disabled" : "coalesce-img-button small enabled"} onClick={this.moveLayer.bind(this, feature, true)} />
-                <img src={require('common-components/img/down.ico')} alt="Down" className={isLast ? "coalesce-img-button small disabled" : "coalesce-img-button small enabled"} onClick={this.moveLayer.bind(this, feature, false)}/>
+                <img src={isFirst ? '' : require('common-components/img/up.ico')} alt={isFirst ? '' : "Up"}  className={isFirst ? "coalesce-img-button small disabled" : "coalesce-img-button small enabled"} onClick={this.moveLayer.bind(this, feature, true)} />
+                <img src={isLast ? '' : require('common-components/img/down.ico')} alt={isLast ? '' : "Down"} className={isLast ? "coalesce-img-button small disabled" : "coalesce-img-button small enabled"} onClick={this.moveLayer.bind(this, feature, false)}/>
               </div>
             </div>
           </div>
@@ -216,10 +215,10 @@ export class FeatureSelection extends React.Component {
       <div className="ui-widget">
         <div className="ui-widget-header">
           <div className="row">
-            <div className="col-sm-6">
+            <div className="col-sm-7">
               <label>Layers</label>
             </div>
-            <div className="col-sm-6">
+            <div className="col-sm-5">
               <label>Source</label>
             </div>
           </div>
@@ -280,7 +279,7 @@ Popup.registerPlugin('promptAddFeature', function (data, styles, callback) {
       'name': 'Custom'
     }].concat(styles);
 
-    let promptValue = {};
+    let promptValue = {tiled: false};
     let layerChange = function (value) {
         promptValue.layer = value;
     };
@@ -292,6 +291,11 @@ Popup.registerPlugin('promptAddFeature', function (data, styles, callback) {
     let styleChange = function (value) {
         promptValue.style = value;
     };
+
+    let tileChange = function (value) {
+        promptValue.tiled = value.target.checked;
+    };
+
     this.create({
         title: 'Select Feature',
         content: (
@@ -300,13 +304,19 @@ Popup.registerPlugin('promptAddFeature', function (data, styles, callback) {
             <PromptDropdown onChange={layerChange} data={data}/>
             <label>Type</label>
             <PromptDropdown onChange={typeChange} data={[
-              {key: 'WFS', name:'WFS'},
               {key: 'WMS', name:'WMS'},
+              {key: 'WFS', name:'WFS'},
               {key: 'WPS', name:'WPS'},
               {key: 'HEATMAP', name:'HEATMAP'}
             ]}/>
             <label>Style (WFS Only)</label>
             <PromptDropdown onChange={styleChange} data={styleOptions} />
+            <label>Tiled (WMS Only)</label>
+            <div className="row">
+              <div className="col-sm-2">
+                <input type="checkbox" className="form-control" onChange={tileChange} />
+              </div>
+            </div>
           </div>
         ),
         buttons: {
