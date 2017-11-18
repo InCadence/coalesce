@@ -169,18 +169,7 @@ public class UpdateVersionOperationImpl extends AbstractOperation<AbstractOperat
                         if (meta.getName().equalsIgnoreCase(entity.getName())
                                 && meta.getSource().equalsIgnoreCase(entity.getSource()))
                         {
-                            String xml = source.getEntityTemplateXml(meta.getKey());
-                            try
-                            {
-                                ITERATORS.put(key, new CoalesceUpdaterIterator(CoalesceEntityTemplate.create(xml)));
-                            }
-                            catch (SAXException | IOException e)
-                            {
-                                throw new CoalescePersistorException(String.format(CoalesceErrors.TEMPLATE_LOAD,
-                                                                                   meta.getName(),
-                                                                                   meta.getSource(),
-                                                                                   meta.getVersion()), e);
-                            }
+                            ITERATORS.put(key, new CoalesceUpdaterIterator(source.getEntityTemplate(meta.getKey())));
                             break;
                         }
                     }

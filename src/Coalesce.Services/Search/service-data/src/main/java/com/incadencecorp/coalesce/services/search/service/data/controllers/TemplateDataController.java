@@ -60,7 +60,7 @@ public class TemplateDataController {
     /**
      * Production Constructor
      * 
-     * @param persister
+     * @param framework
      */
     public TemplateDataController(CoalesceFramework framework)
     {
@@ -71,14 +71,14 @@ public class TemplateDataController {
                 CoalesceEntityTemplate template;
                 try
                 {
-                    template = CoalesceEntityTemplate.create(framework.getCoalesceEntityTemplateXml(meta.getKey()));
+                    template = framework.getCoalesceEntityTemplate(meta.getKey());
 
                     if (template != null)
                     {
                         templates.put(template.getKey(), new TemplateNode(template));
                     }
                 }
-                catch (SAXException | IOException e)
+                catch (CoalescePersistorException e)
                 {
                     String errorMsg = String.format(CoalesceErrors.INVALID_OBJECT,
                                                     CoalesceEntityTemplate.class.getSimpleName(),
@@ -289,7 +289,7 @@ public class TemplateDataController {
     /**
      * Saves the specified template.
      * 
-     * @param template
+     * @param entity
      * @return whether or not it was successfully saved.
      */
     public boolean setTemplate(String key, CoalesceEntity entity) throws RemoteException
@@ -324,7 +324,8 @@ public class TemplateDataController {
     /**
      * Saves the specified template.
      * 
-     * @param template
+     * @param key
+     * @param json
      * @return whether or not it was successfully saved.
      */
     public boolean setTemplateJson(String key, String json) throws RemoteException
@@ -376,10 +377,9 @@ public class TemplateDataController {
         String xml;
         try
         {
-            xml = framework.getCoalesceEntityTemplateXml(key);
-            framework.registerTemplates(CoalesceEntityTemplate.create(xml));
+            framework.registerTemplates(framework.getCoalesceEntityTemplate(key));
         }
-        catch (CoalescePersistorException | SAXException | IOException e)
+        catch (CoalescePersistorException e)
         {
             // TODO Use CoalesceErrors
             error("Registeration Failed", e);

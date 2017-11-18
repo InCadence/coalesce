@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
 
+import com.incadencecorp.coalesce.api.CoalesceErrors;
 import org.apache.accumulo.core.client.AccumuloException;
 import org.apache.accumulo.core.client.BatchDeleter;
 import org.apache.accumulo.core.client.BatchWriter;
@@ -891,12 +892,12 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
     }
 
     @Override
-    public String getEntityTemplateXml(String key) throws CoalescePersistorException
+    public CoalesceEntityTemplate getEntityTemplate(String key) throws CoalescePersistorException
     {
     	if (key == null) return null;
     	
         Range range = new Range(key);
-        String xml = null;
+        CoalesceEntityTemplate template = null;
         Connector dbConnector = connect.getDBConnector();
         try (CloseableScanner keyscanner = new CloseableScanner(dbConnector,
                                                                 AccumuloDataConnector.coalesceTemplateTable,
@@ -908,16 +909,16 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             // TODO Add error handling if more than one row returned.
             if (keyscanner.iterator().hasNext())
             {
-                xml = keyscanner.iterator().next().getValue().toString();
+                template = CoalesceEntityTemplate.create(keyscanner.iterator().next().getValue().toString());
             }
             keyscanner.close();
         }
-        catch (TableNotFoundException ex)
+        catch (TableNotFoundException | SAXException | IOException ex)
         {
-        	LOGGER.error(ex.getLocalizedMessage(),ex);
-
+            throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", key), ex);
         }
-        return xml;
+
+        return template;
     }
 
     /**
@@ -955,10 +956,10 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
     }
 
     @Override
-    public String getEntityTemplateXml(String name, String source, String version) throws CoalescePersistorException
+    public CoalesceEntityTemplate getEntityTemplate(String name, String source, String version) throws CoalescePersistorException
     {
         // TODO This can be optimized to not search twice
-        return getEntityTemplateXml(getEntityTemplateKey(name, source, version));
+        return getEntityTemplate(getEntityTemplateKey(name, source, version));
     }
 
     @Override

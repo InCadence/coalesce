@@ -565,7 +565,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     }
 
     @Override
-    public String getEntityTemplateXml(String key) throws CoalescePersistorException
+    public CoalesceEntityTemplate getEntityTemplate(String key) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings(), getSchemaPrefix()))
         {
@@ -579,7 +579,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
                 value = results.getString("TemplateXml");
             }
 
-            return value;
+            return CoalesceEntityTemplate.create(value);
         }
         catch (SQLException e)
         {
@@ -592,7 +592,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     }
 
     @Override
-    public String getEntityTemplateXml(String name, String source, String version) throws CoalescePersistorException
+    public CoalesceEntityTemplate getEntityTemplate(String name, String source, String version) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings(), getSchemaPrefix()))
         {
@@ -609,7 +609,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
                 value = results.getString("TemplateXml");
             }
 
-            return value;
+            return CoalesceEntityTemplate.create(value);
         }
         catch (SQLException e)
         {

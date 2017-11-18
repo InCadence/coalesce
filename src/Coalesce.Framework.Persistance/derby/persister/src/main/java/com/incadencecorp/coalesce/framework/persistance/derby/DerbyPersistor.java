@@ -1114,21 +1114,21 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
     }
 
     @Override
-    public String getEntityTemplateXml(String key) throws CoalescePersistorException
+    public CoalesceEntityTemplate getEntityTemplate(String key) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = this.getDataConnector())
         {
-            String value = null;
+            CoalesceEntityTemplate template = null;
 
             ResultSet results = conn.executeQuery("SELECT TemplateXml FROM " + getSchemaPrefix()
                     + "CoalesceEntityTemplate WHERE TemplateKey=?", new CoalesceParameter(key, Types.CHAR));
 
-            while (results.next())
+            if (results.next())
             {
-                value = results.getString("TemplateXml");
+                template = CoalesceEntityTemplate.create(results.getString("TemplateXml"));
             }
 
-            return value;
+            return template;
         }
         catch (SQLException e)
         {
@@ -1141,11 +1141,11 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
     }
 
     @Override
-    public String getEntityTemplateXml(String name, String source, String version) throws CoalescePersistorException
+    public CoalesceEntityTemplate getEntityTemplate(String name, String source, String version) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = this.getDataConnector())
         {
-            String value = null;
+            CoalesceEntityTemplate template = null;
 
             ResultSet results = conn.executeQuery("SELECT TemplateXml FROM " + getSchemaPrefix()
                     + "CoalesceEntityTemplate WHERE Name=? and Source=? and Version=?",
@@ -1153,12 +1153,12 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
                                                   new CoalesceParameter(source),
                                                   new CoalesceParameter(version));
 
-            while (results.next())
+            if (results.next())
             {
-                value = results.getString("TemplateXml");
+                template = CoalesceEntityTemplate.create(results.getString("TemplateXml"));
             }
 
-            return value;
+            return template;
         }
         catch (SQLException e)
         {

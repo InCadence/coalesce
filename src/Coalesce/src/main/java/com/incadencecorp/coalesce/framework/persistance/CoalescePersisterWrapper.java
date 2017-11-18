@@ -179,15 +179,15 @@ public class CoalescePersisterWrapper implements ICoalescePersistor {
     }
 
     @Override
-    public String getEntityTemplateXml(String key) throws CoalescePersistorException
+    public CoalesceEntityTemplate getEntityTemplate(String key) throws CoalescePersistorException
     {
-        return persister.getEntityTemplateXml(key);
+        return persister.getEntityTemplate(key);
     }
 
     @Override
-    public String getEntityTemplateXml(String name, String source, String version) throws CoalescePersistorException
+    public CoalesceEntityTemplate getEntityTemplate(String name, String source, String version) throws CoalescePersistorException
     {
-        return persister.getEntityTemplateXml(name, source, version);
+        return persister.getEntityTemplate(name, source, version);
     }
 
     @Override

@@ -68,11 +68,11 @@ public class MockPersister extends CoalescePersistorBase {
     }
 
     @Override
-    public String getEntityTemplateXml(String key) throws CoalescePersistorException
+    public CoalesceEntityTemplate getEntityTemplate(String key) throws CoalescePersistorException
     {
         if (templateMap.containsKey(key))
         {
-            return templateMap.get(key).toXml();
+            return templateMap.get(key);
         }
         else
         {
@@ -81,7 +81,7 @@ public class MockPersister extends CoalescePersistorBase {
     }
 
     @Override
-    public String getEntityTemplateXml(String name, String source, String version) throws CoalescePersistorException
+    public CoalesceEntityTemplate getEntityTemplate(String name, String source, String version) throws CoalescePersistorException
     {
         return null;
     }

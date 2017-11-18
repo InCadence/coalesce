@@ -274,9 +274,9 @@ public class FilePersistorImpl extends CoalesceComponentImpl implements ICoalesc
     }
 
     @Override
-    public String getEntityTemplateXml(String key) throws CoalescePersistorException
+    public CoalesceEntityTemplate getEntityTemplate(String key) throws CoalescePersistorException
     {
-        String result = null;
+        CoalesceEntityTemplate result = null;
 
         Path sub = root.resolve(TEMPLATE_DIRECTORY);
         Path filename = sub.resolve(key);
@@ -294,9 +294,9 @@ public class FilePersistorImpl extends CoalesceComponentImpl implements ICoalesc
                     line = br.readLine();
                 }
 
-                result = sb.toString();
+                result = CoalesceEntityTemplate.create(sb.toString());
             }
-            catch (IOException e)
+            catch (IOException | SAXException e)
             {
                 throw new CoalescePersistorException("(FAILED) Reading Entity", e);
             }
@@ -306,9 +306,9 @@ public class FilePersistorImpl extends CoalesceComponentImpl implements ICoalesc
     }
 
     @Override
-    public String getEntityTemplateXml(String name, String source, String version) throws CoalescePersistorException
+    public CoalesceEntityTemplate getEntityTemplate(String name, String source, String version) throws CoalescePersistorException
     {
-        return getEntityTemplateXml(getEntityTemplateKey(name, source, version));
+        return getEntityTemplate(getEntityTemplateKey(name, source, version));
     }
 
     @Override

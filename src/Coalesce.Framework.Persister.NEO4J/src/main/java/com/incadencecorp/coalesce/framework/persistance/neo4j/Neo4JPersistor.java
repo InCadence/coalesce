@@ -629,13 +629,13 @@ public class Neo4JPersistor extends CoalescePersistorBase {
     --------------------------------------------------------------------------*/
 
     @Override
-    public String getEntityTemplateXml(String key) throws CoalescePersistorException
+    public CoalesceEntityTemplate getEntityTemplate(String key) throws CoalescePersistorException
     {
         throw new NotImplementedException();
     }
 
     @Override
-    public String getEntityTemplateXml(String name, String source, String version) throws CoalescePersistorException
+    public CoalesceEntityTemplate getEntityTemplate(String name, String source, String version) throws CoalescePersistorException
     {
         throw new NotImplementedException();
     }

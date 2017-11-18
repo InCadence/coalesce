@@ -217,10 +217,10 @@ public abstract class CoalescePersistorBase implements ICoalescePersistor {
     public abstract String[] getEntityXml(String... keys) throws CoalescePersistorException;
 
     @Override
-    public abstract String getEntityTemplateXml(String key) throws CoalescePersistorException;
+    public abstract CoalesceEntityTemplate getEntityTemplate(String key) throws CoalescePersistorException;
 
     @Override
-    public abstract String getEntityTemplateXml(String name, String source, String version)
+    public abstract CoalesceEntityTemplate getEntityTemplate(String name, String source, String version)
             throws CoalescePersistorException;
 
     @Override

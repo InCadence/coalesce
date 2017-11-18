@@ -52,7 +52,7 @@ public interface ICoalesceTemplatePersister {
      * @return the matching Coalesce entity's XML.
      * @throws CoalescePersistorException on error
      */
-    String getEntityTemplateXml(String key) throws CoalescePersistorException;
+    CoalesceEntityTemplate getEntityTemplate(String key) throws CoalescePersistorException;
 
     /**
      * Returns the Coalesce entity template XML that matches the given
@@ -64,7 +64,7 @@ public interface ICoalesceTemplatePersister {
      * @return the matching Coalesce entity's XML.
      * @throws CoalescePersistorException on error
      */
-    String getEntityTemplateXml(String name, String source, String version) throws CoalescePersistorException;
+    CoalesceEntityTemplate getEntityTemplate(String name, String source, String version) throws CoalescePersistorException;
 
     /**
      * Returns the Coalesce entity template key that matches the given

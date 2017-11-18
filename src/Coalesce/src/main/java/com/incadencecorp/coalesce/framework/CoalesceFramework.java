@@ -411,43 +411,14 @@ public class CoalesceFramework implements ICoalesceExecutorService, Closeable {
         }
     }
 
-    /**
-     * @param name
-     * @param source
-     * @param version
-     * @return <code>null</code> is the template is not found.
-     * @throws SAXException
-     * @throws IOException
-     * @throws CoalescePersistorException
-     */
-    public CoalesceEntityTemplate getCoalesceEntityTemplate(String name, String source, String version)
-            throws SAXException, IOException, CoalescePersistorException
+    public CoalesceEntityTemplate getCoalesceEntityTemplate(String key) throws CoalescePersistorException
     {
-
-        CoalesceEntityTemplate template = null;
-
-        // Retrieve Template
-        String xml = this.getCoalesceEntityTemplateXml(name, source, version);
-
-        if (xml != null)
-        {
-            // Initialize Template
-            template = new CoalesceEntityTemplate();
-            template.initialize(xml);
-        }
-
-        return template;
-
+        return getAuthoritativePersistor().getEntityTemplate(key);
     }
 
-    public String getCoalesceEntityTemplateXml(String key) throws CoalescePersistorException
+    public CoalesceEntityTemplate getCoalesceEntityTemplate(String name, String source, String version) throws CoalescePersistorException
     {
-        return getAuthoritativePersistor().getEntityTemplateXml(key);
-    }
-
-    public String getCoalesceEntityTemplateXml(String name, String source, String version) throws CoalescePersistorException
-    {
-        return getAuthoritativePersistor().getEntityTemplateXml(name, source, version);
+        return getAuthoritativePersistor().getEntityTemplate(name, source, version);
     }
 
     public String getCoalesceEntityTemplateKey(String name, String source, String version) throws CoalescePersistorException
@@ -464,12 +435,9 @@ public class CoalesceFramework implements ICoalesceExecutorService, Closeable {
             throws CoalescePersistorException
     {
 
-        String xml = this.getCoalesceEntityTemplateXml(name, source, version);
+        CoalesceEntityTemplate template = this.getCoalesceEntityTemplate(name, source, version);
 
-        CoalesceEntity entity = new CoalesceEntity();
-        entity.initialize(xml);
-
-        return entity;
+        return template.createNewEntity();
 
     }
 
