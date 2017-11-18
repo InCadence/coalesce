@@ -17,49 +17,32 @@
 
 package com.incadencecorp.coalesce.framework.persistance.neo4j;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Random;
-import java.util.Set;
-
-import javax.sql.rowset.CachedRowSet;
-import javax.sql.rowset.RowSetProvider;
-
+import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
+import com.incadencecorp.coalesce.common.classification.helpers.StringHelper;
+import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.framework.datamodel.*;
+import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
+import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
+import com.incadencecorp.coalesce.framework.persistance.CoalescePersistorBase;
+import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
+import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
-import org.joda.time.DateTime;
 import org.opengis.filter.expression.PropertyName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
-import com.incadencecorp.coalesce.common.classification.helpers.StringHelper;
-import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
-import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
-import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
-import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
-import com.incadencecorp.coalesce.framework.persistance.CoalescePersistorBase;
-import com.incadencecorp.coalesce.framework.persistance.ElementMetaData;
-import com.incadencecorp.coalesce.framework.persistance.EntityMetaData;
-import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
-import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
+import javax.sql.rowset.CachedRowSet;
+import javax.sql.rowset.RowSetProvider;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * Neo4j Implementation. Extend and override {@link #getGroups(CoalesceEntity)}
  * and {@link #getClassification(CoalesceEntity)} to add security handling.
- * 
+ *
  * @author n78554
  */
 public class Neo4JPersistor extends CoalescePersistorBase {
@@ -99,29 +82,30 @@ public class Neo4JPersistor extends CoalescePersistorBase {
      */
     public static final String ENTITYXML = getName(CoalescePropertyFactory.getEntityXml());
 
-    private static final String CYPHER_MERGE = "MERGE (Entity:%1$s {" + KEY + ": {2}})"
-            + " ON CREATE SET Entity.deleted=%3$s, Entity.groups = %4$s, Entity." + NAME + " = {1}," + " Entity." + KEY
-            + " = {2}%2$s" + " ON MATCH SET Entity.deleted=%3$s, Entity.groups = %4$s%2$s";
+    private static final String CYPHER_MERGE =
+            "MERGE (Entity:%1$s {" + KEY + ": {2}})" + " ON CREATE SET Entity.deleted=%3$s, Entity.groups = %4$s, Entity."
+                    + NAME + " = {1}," + " Entity." + KEY + " = {2}%2$s"
+                    + " ON MATCH SET Entity.deleted=%3$s, Entity.groups = %4$s%2$s";
 
-    private static final String CYPHER_CREATE_PLACEHOLDER = "MERGE (Entity:%1$s {" + KEY + ": {2}})"
-            + " ON CREATE SET Entity." + NAME + " = {1}," + " Entity." + KEY + " = {2}," + " Entity." + SOURCE + " = {3}";
+    private static final String CYPHER_CREATE_PLACEHOLDER =
+            "MERGE (Entity:%1$s {" + KEY + ": {2}})" + " ON CREATE SET Entity." + NAME + " = {1}," + " Entity." + KEY
+                    + " = {2}," + " Entity." + SOURCE + " = {3}";
 
-    private static final String CYPHER_LINK_CLASSIFICATION = "MATCH (n:%s {" + KEY
-            + ": {1}}), (cls:CLASSIFICATION_LEVEL {name: {2}}) " + "OPTIONAL MATCH n-[r:CLEARED_TO]->() DELETE r "
-            + "CREATE UNIQUE n-[:CLEARED_TO]->(cls)";
+    private static final String CYPHER_LINK_CLASSIFICATION =
+            "MATCH (n:%s {" + KEY + ": {1}}), (cls:CLASSIFICATION_LEVEL {name: {2}}) "
+                    + "OPTIONAL MATCH n-[r:CLEARED_TO]->() DELETE r " + "CREATE UNIQUE n-[:CLEARED_TO]->(cls)";
 
     private static final String CYPHER_DELETE_NODE = "MATCH (n:%s {" + KEY + ": {1}}) detach delete n";
 
-    private static final String CYPHER_LINK = "MATCH (n1:%s {" + KEY + ": {1}}), (n2:%s {" + KEY
-            + ": {2}}) CREATE UNIQUE (n1)-[:%s {key: {3} %s}]->(n2)";
+    private static final String CYPHER_LINK =
+            "MATCH (n1:%s {" + KEY + ": {1}}), (n2:%s {" + KEY + ": {2}}) CREATE UNIQUE (n1)-[:%s {key: {3} %s}]->(n2)";
 
-    private static final String CYPHER_UNLINK = "OPTIONAL MATCH (n1:%s {" + KEY + ": {1}})-[rel:%s {key: {3}}]->(n2:%s {"
-            + KEY + ": {2}}) DELETE rel";
+    private static final String CYPHER_UNLINK =
+            "OPTIONAL MATCH (n1:%s {" + KEY + ": {1}})-[rel:%s {key: {3}}]->(n2:%s {" + KEY + ": {2}}) DELETE rel";
 
     private static final String CYPHER_CONSTRAINT = "CREATE CONSTRAINT ON (n:%s) ASSERT n." + KEY + " IS UNIQUE";
 
-    private static final String[] linkAttributes = {
-                                                     CoalesceLinkage.ATTRIBUTE_LINKTYPE, CoalesceLinkage.ATTRIBUTE_LABEL,
+    private static final String[] linkAttributes = { CoalesceLinkage.ATTRIBUTE_LINKTYPE, CoalesceLinkage.ATTRIBUTE_LABEL,
                                                      CoalesceLinkage.ATTRIBUTE_DATECREATED,
                                                      CoalesceLinkage.ATTRIBUTE_LASTMODIFIED,
                                                      CoalesceLinkage.ATTRIBUTE_MODIFIEDBY,
@@ -233,8 +217,8 @@ public class Neo4JPersistor extends CoalescePersistorBase {
 
                     // Randomize Back Off Interval (Prevents threads from
                     // awakening in sync)
-                    int millis = new Random().nextInt(Neo4jSettings.getBackoffInterval())
-                            + Neo4jSettings.getBackoffInterval();
+                    int millis =
+                            new Random().nextInt(Neo4jSettings.getBackoffInterval()) + Neo4jSettings.getBackoffInterval();
 
                     if (LOGGER.isDebugEnabled())
                     {
@@ -316,8 +300,8 @@ public class Neo4JPersistor extends CoalescePersistorBase {
 
                     // Randomize Back Off Interval (Prevents threads from
                     // awakening in sync)
-                    int millis = new Random().nextInt(Neo4jSettings.getBackoffInterval())
-                            + Neo4jSettings.getBackoffInterval();
+                    int millis =
+                            new Random().nextInt(Neo4jSettings.getBackoffInterval()) + Neo4jSettings.getBackoffInterval();
 
                     LOGGER.debug("Sleeping ({}) for {} ms", Thread.currentThread().getId(), millis);
 
@@ -612,7 +596,8 @@ public class Neo4JPersistor extends CoalescePersistorBase {
                 // Yes; Check Data Type
                 CoalesceField<?> field = (CoalesceField<?>) coalesceObject;
 
-                switch (field.getDataType()) {
+                switch (field.getDataType())
+                {
                 case BINARY_TYPE:
                 case FILE_TYPE:
                     // Ignore these types.
@@ -632,61 +617,16 @@ public class Neo4JPersistor extends CoalescePersistorBase {
         }
     }
 
+    @Override
+    public EnumSet<EPersistorCapabilities> getCapabilities()
+    {
+        EnumSet<EPersistorCapabilities> enumSet = EnumSet.of(EPersistorCapabilities.CREATE);
+        return enumSet;
+    }
+
     /*--------------------------------------------------------------------------
     Not Implemented
     --------------------------------------------------------------------------*/
-
-    @Override
-    public DateTime getCoalesceObjectLastModified(String key, String objectType) throws CoalescePersistorException
-    {
-        throw new NotImplementedException();
-    }
-
-    @Override
-    public String getEntityXml(String entityId, String entityIdType) throws CoalescePersistorException
-    {
-        throw new NotImplementedException();
-    }
-
-    @Override
-    public String getEntityXml(String name, String entityId, String entityIdType) throws CoalescePersistorException
-    {
-        throw new NotImplementedException();
-    }
-
-    @Override
-    public Object getFieldValue(String fieldKey) throws CoalescePersistorException
-    {
-        throw new NotImplementedException();
-    }
-
-    @Override
-    public ElementMetaData getXPath(String key, String objectType) throws CoalescePersistorException
-    {
-        throw new NotImplementedException();
-    }
-
-    @Override
-    public List<String> getCoalesceEntityKeysForEntityId(String entityId,
-                                                         String entityIdType,
-                                                         String entityName,
-                                                         String entitySource)
-            throws CoalescePersistorException
-    {
-        throw new NotImplementedException();
-    }
-
-    @Override
-    public EntityMetaData getCoalesceEntityIdAndTypeForKey(String key) throws CoalescePersistorException
-    {
-        throw new NotImplementedException();
-    }
-
-    @Override
-    public byte[] getBinaryArray(String binaryFieldKey) throws CoalescePersistorException
-    {
-        throw new NotImplementedException();
-    }
 
     @Override
     public String getEntityTemplateXml(String key) throws CoalescePersistorException
@@ -711,12 +651,4 @@ public class Neo4JPersistor extends CoalescePersistorBase {
     {
         throw new NotImplementedException();
     }
-
-    @Override
-    public EnumSet<EPersistorCapabilities> getCapabilities()
-    {
-        EnumSet<EPersistorCapabilities> enumSet = EnumSet.of(EPersistorCapabilities.CREATE);
-        return enumSet;
-    }
-
 }

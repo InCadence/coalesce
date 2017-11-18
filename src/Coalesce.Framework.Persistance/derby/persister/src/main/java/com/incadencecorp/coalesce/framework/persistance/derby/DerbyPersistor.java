@@ -140,24 +140,6 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
     }
 
     @Override
-    public List<String> getCoalesceEntityKeysForEntityId(String entityId,
-                                                         String entityIdType,
-                                                         String entityName,
-                                                         String entitySource)
-            throws CoalescePersistorException
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public EntityMetaData getCoalesceEntityIdAndTypeForKey(String key) throws CoalescePersistorException
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     protected boolean flattenObject(boolean allowRemoval, CoalesceEntity... entities) throws CoalescePersistorException
     {
         boolean isSuccessful = true;
@@ -760,7 +742,6 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
         return isSuccessful;
     }
 
-    @Override
     public DateTime getCoalesceObjectLastModified(String key, String objectType) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = this.getDataConnector())
@@ -777,7 +758,6 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
         }
     }
 
-    @Override
     public byte[] getBinaryArray(String key) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = this.getDataConnector())
@@ -825,7 +805,6 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
 
     }
 
-    @Override
     public ElementMetaData getXPath(String key, String objectType) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = this.getDataConnector())
@@ -842,7 +821,6 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
         }
     }
 
-    @Override
     public String getFieldValue(String fieldKey) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = this.getDataConnector())
@@ -913,7 +891,6 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
         }
     }
 
-    @Override
     public String getEntityXml(String entityId, String entityIdType) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = this.getDataConnector())
@@ -942,7 +919,6 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
         }
     }
 
-    @Override
     public String getEntityXml(String name, String entityId, String entityIdType) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = this.getDataConnector())

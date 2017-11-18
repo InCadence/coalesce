@@ -264,7 +264,6 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         return results != null ? results.toArray(new String[results.size()]) : null;
     }
 
-    @Override
     public String getEntityXml(String entityId, String entityIdType) throws CoalescePersistorException
     {
         // Use are sharded term index to find the merged keys
@@ -308,7 +307,6 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         return xml;
     }
 
-    @Override
     public String getEntityXml(String name, String entityId, String entityIdType) throws CoalescePersistorException
     {
         // Use are EWntityIndex to find the merged keys
@@ -351,7 +349,6 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         return xml;
     }
 
-    @Override
     public Object getFieldValue(String fieldKey) throws CoalescePersistorException
     {
         // TODO We will want to create a a table of just field values by key for
@@ -397,7 +394,6 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 
     }
 
-    @Override
     public ElementMetaData getXPath(String key, String objectType) throws CoalescePersistorException
     {
         Connector dbConnector = connect.getDBConnector();
@@ -431,7 +427,6 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         return entityKey != null && xpath != null ? new ElementMetaData(entityKey, xpath) : null;
     }
 
-    @Override
     public List<String> getCoalesceEntityKeysForEntityId(String entityId,
                                                          String entityIdType,
                                                          String entityName,
@@ -470,7 +465,6 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         return keys;
     }
 
-    @Override
     public EntityMetaData getCoalesceEntityIdAndTypeForKey(String key) throws CoalescePersistorException
     {
         EntityMetaData metadata = null;
@@ -517,11 +511,6 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         return metadata;
     }
 
-    @Override
-    public byte[] getBinaryArray(String binaryFieldKey) throws CoalescePersistorException
-    {
-        throw new NotImplementedException();
-    }
 
     private static String coalesceTemplateColumnFamily = "Coalesce:Template";
     private static String coalesceTemplateNameQualifier = "name";
@@ -935,7 +924,6 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
      * Temporary Accumulo Persistor-specific workaround to the fact that the framework does not have the ability to delete
      * templates. Send in a Coalesce Entity and template will be deleted for that entity
      * 
-     * @param entity - an entity that belongs (or belonged) to this template
      * @return boolean did it work or not
      */
     public boolean deleteEntityTemplate(String entityTemplateKey, Connector connect, BatchWriterConfig config)
@@ -2102,7 +2090,6 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         return false;
     }
 
-    @Override
     public DateTime getCoalesceObjectLastModified(String key, String objectType) throws CoalescePersistorException
     {
         try

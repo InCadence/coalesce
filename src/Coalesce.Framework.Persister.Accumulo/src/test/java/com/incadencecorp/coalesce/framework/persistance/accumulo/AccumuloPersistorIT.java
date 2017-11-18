@@ -10,8 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
-import com.incadencecorp.coalesce.framework.persistance.CoalescePersistorBaseTest;
-import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 
 public class AccumuloPersistorIT extends AbstractAccumuloPersistorTest {
@@ -76,7 +74,6 @@ public class AccumuloPersistorIT extends AbstractAccumuloPersistorTest {
     @Override
     protected AccumuloDataConnector getAccumuloDataConnector() throws CoalescePersistorException
     {
-        // TODO Auto-generated method stub
         return new AccumuloDataConnector(getConnection());
     }
 

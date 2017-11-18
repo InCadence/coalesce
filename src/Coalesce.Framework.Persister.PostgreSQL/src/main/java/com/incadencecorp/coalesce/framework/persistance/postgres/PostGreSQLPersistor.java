@@ -97,7 +97,16 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
         return _schema;
     }
 
-    @Override
+    /**
+     * Returns the Coalesce entity keys that matches the given parameters.
+     *
+     * @param entityId of the entity.
+     * @param entityIdType of the entity.
+     * @param entityName of the entity.
+     * @param entitySource of the entity.
+     * @return List$lt;String&gt; of primary keys for the matching Coalesce entity.
+     * @throws CoalescePersistorException
+     */
     public List<String> getCoalesceEntityKeysForEntityId(String entityId,
                                                          String entityIdType,
                                                          String entityName,
@@ -124,7 +133,13 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
         }
     }
 
-    @Override
+    /**
+     * Returns the Coalesce entity meta data that matches the given parameters.
+     *
+     * @param key the primary key of the entity.
+     * @return EntityMetaData for the matching Coalesce entity.
+     * @throws CoalescePersistorException
+     */
     public EntityMetaData getCoalesceEntityIdAndTypeForKey(String key) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings(), getSchemaPrefix()))
@@ -141,7 +156,16 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
         }
     }
 
-    @Override
+    /**
+     * Returns the last modified date for the Coalesce object (entity, field,
+     * record, linkage, etc.) that matches the given parameters.
+     *
+     * @param key the primary key of the Coalesce object.
+     * @param objectType is the Coalesce object to retrieve the information for.
+     * @return DateTime containing the last modified date for the Coalesce
+     *         object matching the values.
+     * @throws CoalescePersistorException
+     */
     public DateTime getCoalesceObjectLastModified(String key, String objectType) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings(), getSchemaPrefix()))
@@ -158,7 +182,13 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
         }
     }
 
-    @Override
+    /**
+     * Returns the Coalesce field binary data that matches the given parameters.
+     *
+     * @param binaryFieldKey the primary key of the Coalesce field.
+     * @return byte[] the binary data of the Coalesce field matching the value.
+     * @throws CoalescePersistorException
+     */
     public byte[] getBinaryArray(String key) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings(), getSchemaPrefix()))
@@ -214,7 +244,15 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
 
     }
 
-    @Override
+    /**
+     * Returns the ElementMetaData for the Coalesce object that matches the
+     * given parameters.
+     *
+     * @param key the Coalesce object primary key
+     * @param objectType the Coalesce object type specification.
+     * @return ElementMetaData
+     * @throws CoalescePersistorException
+     */
     public ElementMetaData getXPath(String key, String objectType) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings(), getSchemaPrefix()))
@@ -231,7 +269,13 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
         }
     }
 
-    @Override
+    /**
+     * Returns the value of the specified Coalesce field.
+     *
+     * @param fieldKey the primary key of the field.
+     * @return returns the value of the matching field.
+     * @throws CoalescePersistorException
+     */
     public String getFieldValue(String fieldKey) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings(), getSchemaPrefix()))
@@ -302,7 +346,14 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
         }
     }
 
-    @Override
+    /**
+     * Returns the Coalesce entity that matches the given parameters.
+     *
+     * @param entityId the unique identifier, such as a TCN number for an EFT.
+     * @param entityIdType the type of entityId, such as TCN.
+     * @return the matching Coalesce entity.
+     * @throws CoalescePersistorException
+     */
     public String getEntityXml(String entityId, String entityIdType) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings(), getSchemaPrefix()))
@@ -331,7 +382,15 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
         }
     }
 
-    @Override
+    /**
+     * Returns the Coalesce entity that matches the given parameters.
+     *
+     * @param name the name of the entity.
+     * @param entityId the unique identifier, such as a TCN number for an EFT.
+     * @param entityIdType the type of entityId, such as TCN.
+     * @return the matching Coalesce entity.
+     * @throws CoalescePersistorException
+     */
     public String getEntityXml(String name, String entityId, String entityIdType) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings(), getSchemaPrefix()))

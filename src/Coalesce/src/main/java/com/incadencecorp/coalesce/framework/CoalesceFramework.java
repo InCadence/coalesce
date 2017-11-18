@@ -1,24 +1,5 @@
 package com.incadencecorp.coalesce.framework;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
-
 import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.ICoalesceResponseType;
 import com.incadencecorp.coalesce.api.IExceptionHandler;
@@ -27,18 +8,19 @@ import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceStringField;
-import com.incadencecorp.coalesce.framework.jobs.AbstractCoalesceJob;
-import com.incadencecorp.coalesce.framework.jobs.CoalesceRegisterTemplateJob;
-import com.incadencecorp.coalesce.framework.jobs.CoalesceSaveEntityJob;
-import com.incadencecorp.coalesce.framework.jobs.CoalesceSaveEntityProperties;
-import com.incadencecorp.coalesce.framework.jobs.CoalesceSaveTemplateJob;
-import com.incadencecorp.coalesce.framework.persistance.ElementMetaData;
-import com.incadencecorp.coalesce.framework.persistance.EntityMetaData;
+import com.incadencecorp.coalesce.framework.jobs.*;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
+
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.*;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -66,7 +48,7 @@ public class CoalesceFramework implements ICoalesceExecutorService, Closeable {
     private static final Logger LOGGER = LoggerFactory.getLogger(CoalesceFramework.class);
 
     /*--------------------------------------------------------------------------
-    	Private Member Variables
+        Private Member Variables
     --------------------------------------------------------------------------*/
 
     private ICoalescePersistor _persistors[];
@@ -105,7 +87,7 @@ public class CoalesceFramework implements ICoalesceExecutorService, Closeable {
 
     /**
      * Creates this framework with the provided executor service.
-     * 
+     *
      * @param service
      */
     public CoalesceFramework(ExecutorService service)
@@ -143,7 +125,7 @@ public class CoalesceFramework implements ICoalesceExecutorService, Closeable {
 
     /**
      * Sets the authoritative persistor which is blocking.
-     * 
+     *
      * @param persistor
      */
     public void setAuthoritativePersistor(ICoalescePersistor persistor)
@@ -158,7 +140,7 @@ public class CoalesceFramework implements ICoalesceExecutorService, Closeable {
 
     /**
      * Sets the secondary persistors which are not blocking.
-     * 
+     *
      * @param persistors
      */
     public void setSecondaryPersistors(ICoalescePersistor... persistors)
@@ -179,7 +161,7 @@ public class CoalesceFramework implements ICoalesceExecutorService, Closeable {
 
     /**
      * Sets the handler in the event of an error.
-     * 
+     *
      * @param handler
      */
     public void setHandler(IExceptionHandler handler)
@@ -195,7 +177,7 @@ public class CoalesceFramework implements ICoalesceExecutorService, Closeable {
     /**
      * Sets whether updates to secondary persistors should be performed
      * asynchronously.
-     * 
+     *
      * @param value
      */
     public void setIsAnsyncUpdates(boolean value)
@@ -265,31 +247,6 @@ public class CoalesceFramework implements ICoalesceExecutorService, Closeable {
     }
 
     /**
-     * @see ICoalescePersistor#getEntity(String, String)
-     * @param entityId
-     * @param entityIdType
-     * @return {@link ICoalescePersistor#getEntity(String, String)}
-     * @throws CoalescePersistorException
-     */
-    public CoalesceEntity getEntity(String entityId, String entityIdType) throws CoalescePersistorException
-    {
-        return getAuthoritativePersistor().getEntity(entityId, entityIdType);
-    }
-
-    /**
-     * @see ICoalescePersistor#getEntity(String, String, String)
-     * @param name
-     * @param entityId
-     * @param entityIdType
-     * @return {@link ICoalescePersistor#getEntity(String, String, String)}
-     * @throws CoalescePersistorException
-     */
-    public CoalesceEntity getEntity(String name, String entityId, String entityIdType) throws CoalescePersistorException
-    {
-        return getAuthoritativePersistor().getEntity(name, entityId, entityIdType);
-    }
-
-    /**
      * @param key
      * @return an Array of Coalesce Entity's XML
      * @throws CoalescePersistorException
@@ -317,117 +274,14 @@ public class CoalesceFramework implements ICoalesceExecutorService, Closeable {
         return result;
     }
 
-    /**
-     * @see ICoalescePersistor#getEntityXml(String, String)
-     * @param entityId
-     * @param entityIdType
-     * @return {@link ICoalescePersistor#getEntityXml(String, String)}
-     * @throws CoalescePersistorException
-     */
-    public String getEntityXml(String entityId, String entityIdType) throws CoalescePersistorException
-    {
-        return getAuthoritativePersistor().getEntityXml(entityId, entityIdType);
-    }
-
-    /**
-     * @see ICoalescePersistor#getEntityXml(String, String, String)
-     * @param name
-     * @param entityId
-     * @param entityIdType
-     * @return {@link ICoalescePersistor#getEntityXml(String, String, String)}
-     * @throws CoalescePersistorException
-     */
-    public String getEntityXml(String name, String entityId, String entityIdType) throws CoalescePersistorException
-    {
-        return getAuthoritativePersistor().getEntityXml(name, entityId, entityIdType);
-    }
-
-    /*--------------------------------------------------------------------------
-    	EntityID Functions
-    --------------------------------------------------------------------------*/
-
-    public String getCoalesceEntityKeyForEntityId(String entityId, String entityIdType, String entityName)
-            throws CoalescePersistorException
-    {
-        return this.getCoalesceEntityKeyForEntityId(entityId, entityIdType, entityName, null);
-    }
-
-    public String getCoalesceEntityKeyForEntityId(String entityId,
-                                                  String entityIdType,
-                                                  String entityName,
-                                                  String entitySource)
-            throws CoalescePersistorException
-    {
-
-        String entityKey = null;
-
-        List<String> list = this.getCoalesceEntityKeysForEntityId(entityId, entityIdType, entityName, entitySource);
-
-        if (!list.isEmpty())
-        {
-
-            entityKey = list.get(0);
-
-        }
-
-        return entityKey;
-    }
-
-    public List<String> getCoalesceEntityKeysForEntityId(String entityId, String entityIdType, String entityName)
-            throws CoalescePersistorException
-    {
-        return this.getCoalesceEntityKeysForEntityId(entityId, entityIdType, entityName, null);
-    }
-
-    public List<String> getCoalesceEntityKeysForEntityId(String entityId,
-                                                         String entityIdType,
-                                                         String entityName,
-                                                         String entitySource)
-            throws CoalescePersistorException
-    {
-
-        List<String> list = new ArrayList<String>();
-
-        String[] entityIdList = entityId.split(",");
-        String[] entityIdTypeList = entityIdType.split(",");
-
-        if (entityIdList.length == entityIdTypeList.length)
-        {
-
-            for (int i = 0; i < entityIdTypeList.length; i++)
-            {
-
-                list.addAll(getAuthoritativePersistor().getCoalesceEntityKeysForEntityId(entityIdList[i],
-                                                                                         entityIdTypeList[i],
-                                                                                         entityName,
-                                                                                         entitySource));
-
-            }
-
-        }
-
-        return list;
-
-    }
-
-    public EntityMetaData getCoalesceEntityIdAndTypeForKey(String key) throws CoalescePersistorException
-    {
-        return getAuthoritativePersistor().getCoalesceEntityIdAndTypeForKey(key);
-    }
-
     /*--------------------------------------------------------------------------
     	Other Entity Functions
     --------------------------------------------------------------------------*/
 
-    public DateTime getCoalesceEntityLastModified(String key, String objectType) throws CoalescePersistorException
-    {
-        return getAuthoritativePersistor().getCoalesceObjectLastModified(key, objectType);
-    }
-
     /**
      * Calls {@link #saveCoalesceEntity(boolean, CoalesceEntity...)} passing
      * <code>false</code> for allowRemoval.
-     * 
+     *
      * @param entities
      * @return whether the authoritative was updated successfully.
      * @throws CoalescePersistorException
@@ -440,7 +294,7 @@ public class CoalesceFramework implements ICoalesceExecutorService, Closeable {
     /**
      * Updates the persistors with the provided entities blocking on the
      * authoritative persistor.
-     * 
+     *
      * @param allowRemoval
      * @param entities
      * @return whether the authoritative was updated successfully.
@@ -476,63 +330,17 @@ public class CoalesceFramework implements ICoalesceExecutorService, Closeable {
         return isSuccessful;
     }
 
-    public String getCoalesceFieldValue(String fieldKey) throws CoalescePersistorException
-    {
-        return (String) getAuthoritativePersistor().getFieldValue(fieldKey);
-    }
-
-    public CoalesceRecord getCoalesceRecord(String key) throws CoalescePersistorException
-    {
-        CoalesceRecord record = null;
-
-        ElementMetaData metaData = getAuthoritativePersistor().getXPath(key, "record");
-        if (metaData != null)
-        {
-
-            CoalesceEntity[] results = getAuthoritativePersistor().getEntity(metaData.getEntityKey());
-
-            if (results != null && results.length == 1 && results[0] != null)
-            {
-                record = (CoalesceRecord) results[0].getCoalesceObjectForNamePath(metaData.getElementXPath());
-            }
-
-        }
-
-        return record;
-    }
-
-    public CoalesceStringField getCoalesceFieldByFieldKey(String key) throws CoalescePersistorException
-    {
-        CoalesceStringField field = null;
-
-        ElementMetaData metaData = getAuthoritativePersistor().getXPath(key, "field");
-
-        if (metaData != null)
-        {
-
-            CoalesceEntity[] results = getAuthoritativePersistor().getEntity(metaData.getEntityKey());
-
-            if (results != null && results.length == 1 && results[0] != null)
-            {
-                field = (CoalesceStringField) results[0].getCoalesceObjectForKey(key);
-            }
-
-        }
-
-        return field;
-    }
-
     /*--------------------------------------------------------------------------
     	Template Functions
     --------------------------------------------------------------------------*/
 
     /**
      * Save the template as well as updates {@link CoalesceTemplateUtil}.
-     * 
-     * @see ICoalescePersistor#saveTemplate(CoalesceEntityTemplate...)
-     * @see CoalesceTemplateUtil#addTemplates(CoalesceEntityTemplate...)
+     *
      * @param templates
      * @throws CoalescePersistorException
+     * @see ICoalescePersistor#saveTemplate(CoalesceEntityTemplate...)
+     * @see CoalesceTemplateUtil#addTemplates(CoalesceEntityTemplate...)
      */
     public void saveCoalesceEntityTemplate(CoalesceEntityTemplate... templates) throws CoalescePersistorException
     {
@@ -576,11 +384,11 @@ public class CoalesceFramework implements ICoalesceExecutorService, Closeable {
 
     /**
      * Save the template as well as updates {@link CoalesceTemplateUtil}.
-     * 
-     * @see ICoalescePersistor#saveTemplate(CoalesceEntityTemplate...)
-     * @see CoalesceTemplateUtil#addTemplates(CoalesceEntityTemplate...)
+     *
      * @param templates
      * @throws CoalescePersistorException
+     * @see ICoalescePersistor#saveTemplate(CoalesceEntityTemplate...)
+     * @see CoalesceTemplateUtil#addTemplates(CoalesceEntityTemplate...)
      */
     public void registerTemplates(CoalesceEntityTemplate... templates) throws CoalescePersistorException
     {
@@ -703,8 +511,8 @@ public class CoalesceFramework implements ICoalesceExecutorService, Closeable {
         return _pool.submit(task);
     }
 
-    public <T, Y extends ICoalesceResponseType<List<X>>, X extends ICoalesceResponseType<?>> Future<Y> submit(AbstractCoalesceJob<T, Y, X> job)
-            throws CoalescePersistorException
+    public <T, Y extends ICoalesceResponseType<List<X>>, X extends ICoalesceResponseType<?>> Future<Y> submit(
+            AbstractCoalesceJob<T, Y, X> job) throws CoalescePersistorException
     {
 
         Future<Y> result = null;
