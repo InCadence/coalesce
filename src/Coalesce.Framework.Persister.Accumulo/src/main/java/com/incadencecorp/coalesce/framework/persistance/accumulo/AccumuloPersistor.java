@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
 
-
+import com.incadencecorp.coalesce.api.CoalesceErrors;
 import org.apache.accumulo.core.client.AccumuloException;
 import org.apache.accumulo.core.client.BatchDeleter;
 import org.apache.accumulo.core.client.BatchWriter;
@@ -282,7 +282,6 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         return results != null ? results.toArray(new String[results.size()]) : null;
     }
 
-    @Override
     public String getEntityXml(String entityId, String entityIdType) throws CoalescePersistorException
     {
         // Use are sharded term index to find the merged keys
@@ -326,7 +325,6 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         return xml;
     }
 
-    @Override
     public String getEntityXml(String name, String entityId, String entityIdType) throws CoalescePersistorException
     {
         // Use are EWntityIndex to find the merged keys
@@ -369,7 +367,6 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         return xml;
     }
 
-    @Override
     public Object getFieldValue(String fieldKey) throws CoalescePersistorException
     {
         // TODO We will want to create a a table of just field values by key for
@@ -415,7 +412,6 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
 
     }
 
-    @Override
     public ElementMetaData getXPath(String key, String objectType) throws CoalescePersistorException
     {
         Connector dbConnector = connect.getDBConnector();
@@ -449,7 +445,6 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         return entityKey != null && xpath != null ? new ElementMetaData(entityKey, xpath) : null;
     }
 
-    @Override
     public List<String> getCoalesceEntityKeysForEntityId(String entityId,
                                                          String entityIdType,
                                                          String entityName,
@@ -488,7 +483,6 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         return keys;
     }
 
-    @Override
     public EntityMetaData getCoalesceEntityIdAndTypeForKey(String key) throws CoalescePersistorException
     {
         EntityMetaData metadata = null;
@@ -535,11 +529,6 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         return metadata;
     }
 
-    @Override
-    public byte[] getBinaryArray(String binaryFieldKey) throws CoalescePersistorException
-    {
-        throw new NotImplementedException();
-    }
 
     private static String coalesceTemplateColumnFamily = "Coalesce:Template";
     private static String coalesceTemplateNameQualifier = "name";
@@ -922,18 +911,23 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
     }
 
     @Override
-    public String getEntityTemplateXml(String key) throws CoalescePersistorException
+    public CoalesceEntityTemplate getEntityTemplate(String key) throws CoalescePersistorException
     {
-    	if (key == null) return null;
-    	
+    	if (key == null)
+    	{
+            throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", key));
+        }
+
         Range range = new Range(key);
-        String xml = null;
+        CoalesceEntityTemplate template = null;
         Connector dbConnector = connect.getDBConnector();
 //        try (Scanner keyscanner = dbConnector.createScanner(AccumuloDataConnector.coalesceTemplateTable, Authorizations.EMPTY))
         try (CloseableScanner keyscanner = new CloseableScanner(dbConnector,
                                                                 AccumuloDataConnector.coalesceTemplateTable,
                                                                 Authorizations.EMPTY))
         {
+            String xml = null;
+
             keyscanner.setRange(range);
             keyscanner.fetchColumn(new Text(coalesceTemplateColumnFamily), new Text(coalesceTemplateXMLQualifier));
 
@@ -943,20 +937,26 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                 xml = keyscanner.iterator().next().getValue().toString();
             }
             keyscanner.close();
-        }
-        catch (TableNotFoundException ex)
-        {
-        	LOGGER.error(ex.getLocalizedMessage(),ex);
 
+            if (xml == null)
+            {
+                throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", key));
+            }
+
+            template = CoalesceEntityTemplate.create(xml);
         }
-        return xml;
+        catch (TableNotFoundException | SAXException | IOException ex)
+        {
+            throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", key), ex);
+        }
+
+        return template;
     }
 
     /**
      * Temporary Accumulo Persistor-specific workaround to the fact that the framework does not have the ability to delete
      * templates. Send in a Coalesce Entity and template will be deleted for that entity
      * 
-     * @param entity - an entity that belongs (or belonged) to this template
      * @return boolean did it work or not
      */
     public boolean deleteEntityTemplate(String entityTemplateKey, Connector connect, BatchWriterConfig config)
@@ -988,10 +988,17 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
     }
 
     @Override
-    public String getEntityTemplateXml(String name, String source, String version) throws CoalescePersistorException
+    public CoalesceEntityTemplate getEntityTemplate(String name, String source, String version) throws CoalescePersistorException
     {
         // TODO This can be optimized to not search twice
-        return getEntityTemplateXml(getEntityTemplateKey(name, source, version));
+        try
+        {
+            return getEntityTemplate(getEntityTemplateKey(name, source, version));
+        }
+        catch (CoalescePersistorException e)
+        {
+            throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", "Name: " + name + " Source: " + source + " Version: " + version), e);
+        }
     }
 
     @Override
@@ -1015,7 +1022,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         }
         catch (TableNotFoundException ex)
         {
-        	LOGGER.error(ex.getLocalizedMessage(),ex);
+            throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", "Name: " + name + " Source: " + source + " Version: " + version), ex);
         }
         return key;
     }
@@ -2145,7 +2152,6 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         return false;
     }
 
-    @Override
     public DateTime getCoalesceObjectLastModified(String key, String objectType) throws CoalescePersistorException
     {
         try

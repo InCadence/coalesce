@@ -16,6 +16,7 @@
  -----------------------------------------------------------------------------*/
 package com.incadencecorp.coalesce.framework.persistance.derby;
 
+import java.io.IOException;
 import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -30,6 +31,7 @@ import java.util.Map;
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
 
+import com.incadencecorp.coalesce.api.CoalesceErrors;
 import org.geotools.data.Query;
 import org.geotools.data.jdbc.FilterToSQLException;
 import org.joda.time.DateTime;
@@ -65,6 +67,7 @@ import com.incadencecorp.coalesce.framework.persistance.postgres.CoalesceIndexIn
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 import com.incadencecorp.coalesce.search.api.SearchResults;
 import com.incadencecorp.coalesce.search.factory.CoalesceFeatureTypeFactory;
+import org.xml.sax.SAXException;
 
 public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSearchPersistor {
 
@@ -137,24 +140,6 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
         // }
         // TODO Re-look this.
         return new DerbyDataConnector(getConnectionSettings().getDatabase(), this.getSchema(), "memory");
-    }
-
-    @Override
-    public List<String> getCoalesceEntityKeysForEntityId(String entityId,
-                                                         String entityIdType,
-                                                         String entityName,
-                                                         String entitySource)
-            throws CoalescePersistorException
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public EntityMetaData getCoalesceEntityIdAndTypeForKey(String key) throws CoalescePersistorException
-    {
-        // TODO Auto-generated method stub
-        return null;
     }
 
     @Override
@@ -760,7 +745,6 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
         return isSuccessful;
     }
 
-    @Override
     public DateTime getCoalesceObjectLastModified(String key, String objectType) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = this.getDataConnector())
@@ -777,7 +761,6 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
         }
     }
 
-    @Override
     public byte[] getBinaryArray(String key) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = this.getDataConnector())
@@ -825,7 +808,6 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
 
     }
 
-    @Override
     public ElementMetaData getXPath(String key, String objectType) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = this.getDataConnector())
@@ -842,7 +824,6 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
         }
     }
 
-    @Override
     public String getFieldValue(String fieldKey) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = this.getDataConnector())
@@ -913,7 +894,6 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
         }
     }
 
-    @Override
     public String getEntityXml(String entityId, String entityIdType) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = this.getDataConnector())
@@ -942,7 +922,6 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
         }
     }
 
-    @Override
     public String getEntityXml(String name, String entityId, String entityIdType) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = this.getDataConnector())
@@ -1138,38 +1117,39 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
     }
 
     @Override
-    public String getEntityTemplateXml(String key) throws CoalescePersistorException
+    public CoalesceEntityTemplate getEntityTemplate(String key) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = this.getDataConnector())
         {
-            String value = null;
+            String xml = null;
 
             ResultSet results = conn.executeQuery("SELECT TemplateXml FROM " + getSchemaPrefix()
                     + "CoalesceEntityTemplate WHERE TemplateKey=?", new CoalesceParameter(key, Types.CHAR));
 
-            while (results.next())
+            if (results.next())
             {
-                value = results.getString("TemplateXml");
+                xml = results.getString("TemplateXml");
             }
 
-            return value;
+            if (xml == null)
+            {
+                throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", key));
+            }
+
+            return CoalesceEntityTemplate.create(xml);
         }
-        catch (SQLException e)
+        catch (SQLException | SAXException | IOException e)
         {
-            throw new CoalescePersistorException("GetEntityTemplateXml", e);
-        }
-        catch (Exception e)
-        {
-            throw new CoalescePersistorException("GetEntityTemplateXml", e);
+            throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", key), e);
         }
     }
 
     @Override
-    public String getEntityTemplateXml(String name, String source, String version) throws CoalescePersistorException
+    public CoalesceEntityTemplate getEntityTemplate(String name, String source, String version) throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = this.getDataConnector())
         {
-            String value = null;
+            String xml = null;
 
             ResultSet results = conn.executeQuery("SELECT TemplateXml FROM " + getSchemaPrefix()
                     + "CoalesceEntityTemplate WHERE Name=? and Source=? and Version=?",
@@ -1177,20 +1157,21 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
                                                   new CoalesceParameter(source),
                                                   new CoalesceParameter(version));
 
-            while (results.next())
+            if (results.next())
             {
-                value = results.getString("TemplateXml");
+                xml = results.getString("TemplateXml");
             }
 
-            return value;
+            if (xml == null)
+            {
+                throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", "Name: " + name + " Source: " + source + " Version: " + version));
+            }
+
+            return CoalesceEntityTemplate.create(xml);
         }
-        catch (SQLException e)
+        catch (SQLException | SAXException | IOException e)
         {
-            throw new CoalescePersistorException("GetEntityTemplateXml", e);
-        }
-        catch (Exception e)
-        {
-            throw new CoalescePersistorException("GetEntityTemplateXml", e);
+            throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", "Name: " + name + " Source: " + source + " Version: " + version), e);
         }
     }
 

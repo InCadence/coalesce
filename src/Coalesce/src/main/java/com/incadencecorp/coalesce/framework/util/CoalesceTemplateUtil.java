@@ -136,7 +136,7 @@ public final class CoalesceTemplateUtil {
 
             try
             {
-                templates.add(CoalesceEntityTemplate.create(peristor.getEntityTemplateXml(metadata.getKey())));
+                templates.add(peristor.getEntityTemplate(metadata.getKey()));
 
                 if (StringHelper.isNullOrEmpty(metadata.getName()) || StringHelper.isNullOrEmpty(metadata.getSource())
                         || StringHelper.isNullOrEmpty(metadata.getVersion()))
@@ -148,7 +148,7 @@ public final class CoalesceTemplateUtil {
                                               metadata.getVersion()));
                 }
             }
-            catch (SAXException | IOException e)
+            catch (CoalescePersistorException e)
             {
                 LOGGER.error(String.format(CoalesceErrors.TEMPLATE_LOAD,
                                            metadata.getName(),

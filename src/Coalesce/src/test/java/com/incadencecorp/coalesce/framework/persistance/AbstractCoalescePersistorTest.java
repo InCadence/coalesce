@@ -1,19 +1,15 @@
 package com.incadencecorp.coalesce.framework.persistance;
 
-import java.util.UUID;
-
+import com.incadencecorp.coalesce.api.CoalesceErrors;
+import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
+import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.common.helpers.EntityLinkHelper;
+import com.incadencecorp.coalesce.framework.datamodel.*;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Test;
 
-import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
-import com.incadencecorp.coalesce.common.helpers.EntityLinkHelper;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
-import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
-import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
-import com.incadencecorp.coalesce.framework.datamodel.TestRecord;
+import java.util.UUID;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -38,7 +34,7 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
 
     /**
      * This test attempts to create a entity within the data store.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -55,22 +51,22 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
 
         TestEntity entity2 = new TestEntity();
         entity2.initialize();
-        
+
         EntityLinkHelper.linkEntities(entity, ELinkTypes.IS_PARENT_OF, entity2);
 
         Assert.assertTrue(persister.saveEntity(true, entity, entity2));
-        
+
         // Cleanup
         entity.markAsDeleted();
 
         persister.saveEntity(true, entity);
-        
+
     }
 
     /**
      * This test attempts to create and then update a entity within the data
      * store.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -109,7 +105,7 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
     /**
      * This test attempts to mark an entity as deleted as well as remove it
      * Completely.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -130,12 +126,11 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
 
         Assert.assertTrue(persister.saveEntity(true, entity));
         Assert.assertEquals(0, persister.getEntityXml(entity.getKey()).length);
-
     }
 
     /**
      * This test attempts to retrieve an invalid entity key and should fail.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -162,7 +157,7 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
 
     /**
      * This test attempts to save a template and retrieve it.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -181,10 +176,43 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
 
         persister.registerTemplate(template1, template2);
 
-        Assert.assertEquals(template1.getKey(),
-                            CoalesceEntityTemplate.create(persister.getEntityTemplateXml(template1.getKey())).getKey());
-        Assert.assertEquals(template2.getKey(),
-                            CoalesceEntityTemplate.create(persister.getEntityTemplateXml(template2.getKey())).getKey());
+        Assert.assertEquals(template1.getKey(), persister.getEntityTemplate(template1.getKey()).getKey());
+        Assert.assertEquals(template2.getKey(), persister.getEntityTemplate(template2.getKey()).getKey());
+    }
+
+    /**
+     * This test verifies that an exception is thrown when attempting to retrieve an invalid template with a key.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testTemplatesInvalid() throws Exception
+    {
+        T persister = createPersister();
+
+        Assume.assumeTrue(persister.getCapabilities().contains(EPersistorCapabilities.READ_TEMPLATES));
+
+        String key = UUID.randomUUID().toString();
+
+        try
+        {
+            persister.getEntityTemplate(key);
+            Assert.fail("Expected an Exception");
+        }
+        catch (CoalescePersistorException e)
+        {
+            Assert.assertEquals(String.format(CoalesceErrors.NOT_FOUND, "Template", key), e.getMessage());
+        }
+
+        try
+        {
+            persister.getEntityTemplate(key, key, key);
+            Assert.fail("Expected an Exception");
+        }
+        catch (CoalescePersistorException e)
+        {
+            Assert.assertEquals(String.format(CoalesceErrors.NOT_FOUND, "Template", "Name: " + key + " Source: " + key + " Version: " + key), e.getMessage());
+        }
     }
 
 }

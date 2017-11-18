@@ -250,15 +250,15 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
         getFramework().saveCoalesceEntity(entity);
 
         // Get Persisted Values
-        String cvalue = getFramework().getCoalesceFieldValue(circlefield.getKey());
-        String pvalue = getFramework().getCoalesceFieldValue(polygonfield.getKey());
-        String lvalue = getFramework().getCoalesceFieldValue(linefield.getKey());
-        float fvalue = Float.valueOf(getFramework().getCoalesceFieldValue(floatfield.getKey()));
-        String flistvalue[] = getFramework().getCoalesceFieldValue(floatlistfield.getKey()).split(",");
-        double dvalue = Double.valueOf(getFramework().getCoalesceFieldValue(doublefield.getKey()));
-        String dlistvalue[] = getFramework().getCoalesceFieldValue(doublelistfield.getKey()).split(",");
-        boolean bvalue = Boolean.valueOf(getFramework().getCoalesceFieldValue(booleanfield.getKey()));
-        String mydate = getFramework().getCoalesceFieldValue(datetimefield.getKey());
+        String cvalue = (String) persistor.getFieldValue(circlefield.getKey());
+        String pvalue = (String) persistor.getFieldValue(polygonfield.getKey());
+        String lvalue = (String) persistor.getFieldValue(linefield.getKey());
+        float fvalue = Float.valueOf((String) persistor.getFieldValue(floatfield.getKey()));
+        String flistvalue[] = ((String) persistor.getFieldValue(floatlistfield.getKey())).split(",");
+        double dvalue = Double.valueOf((String) persistor.getFieldValue(doublefield.getKey()));
+        String dlistvalue[] = ((String) persistor.getFieldValue(doublelistfield.getKey())).split(",");
+        boolean bvalue = Boolean.valueOf((String) persistor.getFieldValue(booleanfield.getKey()));
+        String mydate = (String) persistor.getFieldValue(datetimefield.getKey());
         DateTime datevalue = JodaDateTimeHelper.fromXmlDateTimeUTC(mydate);
         CoalesceEntity filefieldentity = getFramework().getCoalesceEntity(entity.getKey());
         CoalesceFileField filefieldvalue = (CoalesceFileField) filefieldentity.getCoalesceObjectForKey(filefield.getKey());
