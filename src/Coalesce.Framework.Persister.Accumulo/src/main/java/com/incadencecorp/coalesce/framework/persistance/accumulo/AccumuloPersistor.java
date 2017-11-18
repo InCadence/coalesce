@@ -894,8 +894,11 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
     @Override
     public CoalesceEntityTemplate getEntityTemplate(String key) throws CoalescePersistorException
     {
-    	if (key == null) return null;
-    	
+    	if (key == null)
+    	{
+            throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", key));
+        }
+
         Range range = new Range(key);
         CoalesceEntityTemplate template = null;
         Connector dbConnector = connect.getDBConnector();
@@ -903,15 +906,24 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                                                                 AccumuloDataConnector.coalesceTemplateTable,
                                                                 Authorizations.EMPTY))
         {
+            String xml = null;
+
             keyscanner.setRange(range);
             keyscanner.fetchColumn(new Text(coalesceTemplateColumnFamily), new Text(coalesceTemplateXMLQualifier));
 
             // TODO Add error handling if more than one row returned.
             if (keyscanner.iterator().hasNext())
             {
-                template = CoalesceEntityTemplate.create(keyscanner.iterator().next().getValue().toString());
+                xml = keyscanner.iterator().next().getValue().toString();
             }
             keyscanner.close();
+
+            if (xml == null)
+            {
+                throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", key));
+            }
+
+            template = CoalesceEntityTemplate.create(xml);
         }
         catch (TableNotFoundException | SAXException | IOException ex)
         {
@@ -959,7 +971,14 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
     public CoalesceEntityTemplate getEntityTemplate(String name, String source, String version) throws CoalescePersistorException
     {
         // TODO This can be optimized to not search twice
-        return getEntityTemplate(getEntityTemplateKey(name, source, version));
+        try
+        {
+            return getEntityTemplate(getEntityTemplateKey(name, source, version));
+        }
+        catch (CoalescePersistorException e)
+        {
+            throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", "Name: " + name + " Source: " + source + " Version: " + version), e);
+        }
     }
 
     @Override
@@ -983,7 +1002,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         }
         catch (TableNotFoundException ex)
         {
-        	LOGGER.error(ex.getLocalizedMessage(),ex);
+            throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", "Name: " + name + " Source: " + source + " Version: " + version), ex);
         }
         return key;
     }
