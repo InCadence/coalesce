@@ -16,6 +16,7 @@
  -----------------------------------------------------------------------------*/
 package com.incadencecorp.coalesce.framework.persistance.derby;
 
+import java.io.IOException;
 import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -30,6 +31,7 @@ import java.util.Map;
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
 
+import com.incadencecorp.coalesce.api.CoalesceErrors;
 import org.geotools.data.Query;
 import org.geotools.data.jdbc.FilterToSQLException;
 import org.joda.time.DateTime;
@@ -65,6 +67,7 @@ import com.incadencecorp.coalesce.framework.persistance.postgres.CoalesceIndexIn
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 import com.incadencecorp.coalesce.search.api.SearchResults;
 import com.incadencecorp.coalesce.search.factory.CoalesceFeatureTypeFactory;
+import org.xml.sax.SAXException;
 
 public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSearchPersistor {
 
@@ -1118,25 +1121,26 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
     {
         try (CoalesceDataConnectorBase conn = this.getDataConnector())
         {
-            CoalesceEntityTemplate template = null;
+            String xml = null;
 
             ResultSet results = conn.executeQuery("SELECT TemplateXml FROM " + getSchemaPrefix()
                     + "CoalesceEntityTemplate WHERE TemplateKey=?", new CoalesceParameter(key, Types.CHAR));
 
             if (results.next())
             {
-                template = CoalesceEntityTemplate.create(results.getString("TemplateXml"));
+                xml = results.getString("TemplateXml");
             }
 
-            return template;
+            if (xml == null)
+            {
+                throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", key));
+            }
+
+            return CoalesceEntityTemplate.create(xml);
         }
-        catch (SQLException e)
+        catch (SQLException | SAXException | IOException e)
         {
-            throw new CoalescePersistorException("GetEntityTemplateXml", e);
-        }
-        catch (Exception e)
-        {
-            throw new CoalescePersistorException("GetEntityTemplateXml", e);
+            throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", key), e);
         }
     }
 
@@ -1145,7 +1149,7 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
     {
         try (CoalesceDataConnectorBase conn = this.getDataConnector())
         {
-            CoalesceEntityTemplate template = null;
+            String xml = null;
 
             ResultSet results = conn.executeQuery("SELECT TemplateXml FROM " + getSchemaPrefix()
                     + "CoalesceEntityTemplate WHERE Name=? and Source=? and Version=?",
@@ -1155,18 +1159,19 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
 
             if (results.next())
             {
-                template = CoalesceEntityTemplate.create(results.getString("TemplateXml"));
+                xml = results.getString("TemplateXml");
             }
 
-            return template;
+            if (xml == null)
+            {
+                throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", "Name: " + name + " Source: " + source + " Version: " + version));
+            }
+
+            return CoalesceEntityTemplate.create(xml);
         }
-        catch (SQLException e)
+        catch (SQLException | SAXException | IOException e)
         {
-            throw new CoalescePersistorException("GetEntityTemplateXml", e);
-        }
-        catch (Exception e)
-        {
-            throw new CoalescePersistorException("GetEntityTemplateXml", e);
+            throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", "Name: " + name + " Source: " + source + " Version: " + version), e);
         }
     }
 

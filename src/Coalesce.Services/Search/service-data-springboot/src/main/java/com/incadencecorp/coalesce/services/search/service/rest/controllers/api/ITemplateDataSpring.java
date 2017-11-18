@@ -1,5 +1,6 @@
 package com.incadencecorp.coalesce.services.search.service.rest.controllers.api;
 
+import java.rmi.RemoteException;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.PathVariable;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.services.search.service.data.model.FieldData;
 import com.incadencecorp.coalesce.services.search.service.data.model.ObjectData;
@@ -16,12 +18,22 @@ import com.incadencecorp.coalesce.services.search.service.data.model.ObjectData;
 public interface ITemplateDataSpring {
 
     @RequestMapping("/templates")
-    List<ObjectMetaData> templates();
+    @ResponseBody List<ObjectMetaData> getEntityTemplateMetadata() throws RemoteException;
 
-    @RequestMapping(value = "/templates/{key}", method = RequestMethod.GET)
-    @ResponseBody List<ObjectData> getRecordSets(@PathVariable String key);
+    @RequestMapping(value = "/{key}", method = RequestMethod.GET)
+    @ResponseBody CoalesceEntityTemplate getTemplate(@PathVariable String key) throws RemoteException;
 
-    @RequestMapping(value = "/templates/{key}/{recordsetKey}", method = RequestMethod.GET)
-    @ResponseBody List<FieldData> getRecordSetFields(@PathVariable String key, @PathVariable String recordsetKey);
+    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @ResponseBody boolean setTemplate(String xml) throws RemoteException;
+    
+    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @ResponseBody boolean setTemplateJson(String json) throws RemoteException;
 
+    @RequestMapping(value = "/{key}/recordsets", method = RequestMethod.GET)
+    @ResponseBody List<ObjectData> getRecordSets(@PathVariable String key) throws RemoteException;
+
+    @RequestMapping(value = "/{key}/recordsets/{recordsetKey}/fields", method = RequestMethod.GET)
+    @ResponseBody List<FieldData> getRecordSetFields(@PathVariable("key") String key, @PathVariable("recordsetKey") String recordsetKey)
+            throws RemoteException;
+    
 }

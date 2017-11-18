@@ -620,7 +620,13 @@ public class Neo4JPersistor extends CoalescePersistorBase {
     @Override
     public EnumSet<EPersistorCapabilities> getCapabilities()
     {
-        EnumSet<EPersistorCapabilities> enumSet = EnumSet.of(EPersistorCapabilities.CREATE);
+        EnumSet<EPersistorCapabilities> enumSet = EnumSet.of(EPersistorCapabilities.CREATE, EPersistorCapabilities.DELETE, EPersistorCapabilities.UPDATE);
+
+        if (isIncludeXmlEnabled)
+        {
+            enumSet.add(EPersistorCapabilities.READ);
+        }
+
         return enumSet;
     }
 

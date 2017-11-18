@@ -1,6 +1,8 @@
 package com.incadencecorp.coalesce.framework.persistance;
 
+import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
+import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.EntityLinkHelper;
 import com.incadencecorp.coalesce.framework.datamodel.*;
 import org.junit.Assert;
@@ -124,7 +126,6 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
 
         Assert.assertTrue(persister.saveEntity(true, entity));
         Assert.assertEquals(0, persister.getEntityXml(entity.getKey()).length);
-
     }
 
     /**
@@ -177,6 +178,41 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
 
         Assert.assertEquals(template1.getKey(), persister.getEntityTemplate(template1.getKey()).getKey());
         Assert.assertEquals(template2.getKey(), persister.getEntityTemplate(template2.getKey()).getKey());
+    }
+
+    /**
+     * This test verifies that an exception is thrown when attempting to retrieve an invalid template with a key.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testTemplatesInvalid() throws Exception
+    {
+        T persister = createPersister();
+
+        Assume.assumeTrue(persister.getCapabilities().contains(EPersistorCapabilities.READ_TEMPLATES));
+
+        String key = UUID.randomUUID().toString();
+
+        try
+        {
+            persister.getEntityTemplate(key);
+            Assert.fail("Expected an Exception");
+        }
+        catch (CoalescePersistorException e)
+        {
+            Assert.assertEquals(String.format(CoalesceErrors.NOT_FOUND, "Template", key), e.getMessage());
+        }
+
+        try
+        {
+            persister.getEntityTemplate(key, key, key);
+            Assert.fail("Expected an Exception");
+        }
+        catch (CoalescePersistorException e)
+        {
+            Assert.assertEquals(String.format(CoalesceErrors.NOT_FOUND, "Template", "Name: " + key + " Source: " + key + " Version: " + key), e.getMessage());
+        }
     }
 
 }

@@ -1,5 +1,6 @@
 package com.incadencecorp.coalesce.framework.persistance.postgres;
 
+import java.io.IOException;
 import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -10,6 +11,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 
+import com.incadencecorp.coalesce.api.CoalesceErrors;
 import org.joda.time.DateTime;
 
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
@@ -35,6 +37,7 @@ import com.incadencecorp.coalesce.framework.persistance.CoalescePersistorBase;
 import com.incadencecorp.coalesce.framework.persistance.ElementMetaData;
 import com.incadencecorp.coalesce.framework.persistance.EntityMetaData;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
+import org.xml.sax.SAXException;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -185,7 +188,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     /**
      * Returns the Coalesce field binary data that matches the given parameters.
      *
-     * @param binaryFieldKey the primary key of the Coalesce field.
+     * @param key the primary key of the Coalesce field.
      * @return byte[] the binary data of the Coalesce field matching the value.
      * @throws CoalescePersistorException
      */
@@ -569,26 +572,28 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     {
         try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings(), getSchemaPrefix()))
         {
-            String value = null;
+            String xml = null;
 
             ResultSet results = conn.executeQuery("SELECT TemplateXml FROM " + getSchemaPrefix()
                     + "CoalesceEntityTemplate WHERE TemplateKey=?", new CoalesceParameter(key, Types.OTHER));
 
-            while (results.next())
+            if (results.next())
             {
-                value = results.getString("TemplateXml");
+                xml = results.getString("TemplateXml");
             }
 
-            return CoalesceEntityTemplate.create(value);
+            if (xml == null)
+            {
+                throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", key));
+            }
+
+            return CoalesceEntityTemplate.create(xml);
         }
-        catch (SQLException e)
+        catch (SQLException | SAXException | IOException e)
         {
-            throw new CoalescePersistorException("GetEntityTemplateXml", e);
+            throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", key), e);
         }
-        catch (Exception e)
-        {
-            throw new CoalescePersistorException("GetEntityTemplateXml", e);
-        }
+
     }
 
     @Override
@@ -596,7 +601,7 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     {
         try (CoalesceDataConnectorBase conn = new PostGreSQLDataConnector(getConnectionSettings(), getSchemaPrefix()))
         {
-            String value = null;
+            String xml = null;
 
             ResultSet results = conn.executeQuery("SELECT TemplateXml FROM " + getSchemaPrefix()
                                                           + "CoalesceEntityTemplate WHERE Name=? and Source=? and Version=?",
@@ -604,20 +609,21 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
                                                   new CoalesceParameter(source),
                                                   new CoalesceParameter(version));
 
-            while (results.next())
+            if (results.next())
             {
-                value = results.getString("TemplateXml");
+                xml = results.getString("TemplateXml");
             }
 
-            return CoalesceEntityTemplate.create(value);
+            if (xml == null)
+            {
+                throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", "Name: " + name + " Source: " + source + " Version: " + version));
+            }
+
+            return CoalesceEntityTemplate.create(xml);
         }
-        catch (SQLException e)
+        catch (SQLException | SAXException | IOException e)
         {
-            throw new CoalescePersistorException("GetEntityTemplateXml", e);
-        }
-        catch (Exception e)
-        {
-            throw new CoalescePersistorException("GetEntityTemplateXml", e);
+            throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", "Name: " + name + " Source: " + source + " Version: " + version), e);
         }
     }
 
