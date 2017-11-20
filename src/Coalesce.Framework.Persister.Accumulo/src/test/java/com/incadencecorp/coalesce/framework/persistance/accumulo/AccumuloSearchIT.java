@@ -1,35 +1,26 @@
 package com.incadencecorp.coalesce.framework.persistance.accumulo;
 
-import java.io.InputStream;
-import java.util.Properties;
-
+import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.search.AbstractSearchTest;
+import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
 import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-
-import com.incadencecorp.coalesce.framework.persistance.ServerConn;
-import com.incadencecorp.coalesce.search.AbstractSearchTest;
+import java.nio.file.Paths;
 
 public class AccumuloSearchIT extends AbstractSearchTest<AccumuloPersistor> {
 
-    private static ServerConn conn;
     private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloSearchIT.class);
 
     @BeforeClass
     public static void setupBeforeClass() throws Exception
     {
-        InputStream in = AccumuloDataConnectorIT.class.getClassLoader().getResourceAsStream("accumuloConnectionInfo.properties");
-        Properties props = new Properties();
-        props.load(in);
-        in.close();
-        String dbName = props.getProperty("database");
-        String zookeepers = props.getProperty("zookeepers");
-        String user = props.getProperty("userid");
-        String password = props.getProperty("password");
-        conn = new ServerConn.Builder().db(dbName).serverName(zookeepers).user(user).password(password).build();
+        FilePropertyConnector connector = new FilePropertyConnector(Paths.get("src", "test", "resources"));
+        connector.setReadOnly(true);
+
+        AccumuloSettings.setConnector(connector);
 
         AccumuloSettings.setPersistFieldDefAttr(false);
         AccumuloSettings.setPersistSectionAttr(true);
@@ -47,13 +38,12 @@ public class AccumuloSearchIT extends AbstractSearchTest<AccumuloPersistor> {
         }
     }
 
-   
     @Override
-    protected AccumuloPersistor  createPersister()
+    protected AccumuloPersistor createPersister()
     {
         try
         {
-            return new AccumuloPersistor(conn);
+            return new AccumuloPersistor();
         }
         catch (CoalescePersistorException e)
         {
@@ -61,5 +51,4 @@ public class AccumuloSearchIT extends AbstractSearchTest<AccumuloPersistor> {
         }
     }
 
-   
 }

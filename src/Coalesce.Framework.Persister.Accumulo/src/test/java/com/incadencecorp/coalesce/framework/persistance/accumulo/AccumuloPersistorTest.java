@@ -1,15 +1,19 @@
 package com.incadencecorp.coalesce.framework.persistance.accumulo;
 
+import com.incadencecorp.coalesce.common.CoalesceUnitTestSettings;
+import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
+import com.incadencecorp.coalesce.framework.persistance.ServerConn;
+import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
 import org.junit.AfterClass;
 import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.incadencecorp.coalesce.common.CoalesceUnitTestSettings;
-import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
-import com.incadencecorp.coalesce.framework.persistance.ServerConn;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AccumuloPersistorTest extends AbstractAccumuloPersistorTest {
 
@@ -18,9 +22,13 @@ public class AccumuloPersistorTest extends AbstractAccumuloPersistorTest {
     @BeforeClass
     public static void setupBeforeClass() throws Exception
     {
+        FilePropertyConnector connector = new FilePropertyConnector(Paths.get("src", "test", "resources"));
+        connector.setReadOnly(true);
+
+        AccumuloSettings.setConnector(connector);
 
         CoalesceUnitTestSettings.initialize();
-        
+
         AccumuloSettings.setPersistFieldDefAttr(true);
         AccumuloSettings.setPersistSectionAttr(true);
         AccumuloSettings.setPersistRecordsetAttr(true);
@@ -30,67 +38,31 @@ public class AccumuloPersistorTest extends AbstractAccumuloPersistorTest {
 
         if (!version.contains("1.8"))
         {
-            LOGGER.warn("JRE {} Detected. These unit tests require JRE 1.8", version);
-            LOGGER.warn("Skipping unit tests");
             // skip these tests
-            Assume.assumeTrue(false);
+            Assume.assumeTrue(String.format("JRE %s Detected. These unit tests require JRE 1.8", version), false);
         }
-
     }
 
     @AfterClass
     public static void tearDownAfterClass() throws Exception
     {
-    	// TODO - Delete everything from Database?
+        // TODO - Delete everything from Database?
         CoalesceUnitTestSettings.tearDownAfterClass();
     }
 
     @Override
-    protected AccumuloPersistor createPersister()
+    protected AccumuloPersistor createPersister() throws Exception
     {
-        
-       
-        ServerConn serverConn = getConnection();
-        
-        try
-        {
-            //override to mockout AccumuloDataConnector
-            return new AccumuloPersistor(serverConn) {
+        //override to mockout AccumuloDataConnector
+        return new AccumuloPersistor() {
 
-                @Override
-                protected CoalesceDataConnectorBase getDataConnector() throws CoalescePersistorException
-                {
-                    return new MockAccumuloDataConnector(getConnectionSettings());
-                }
+            @Override
+            protected CoalesceDataConnectorBase getDataConnector() throws CoalescePersistorException
+            {
+                return new MockAccumuloDataConnector(getConnectionSettings());
+            }
 
-            };
-        }
-        catch (CoalescePersistorException e)
-        {
-            LOGGER.error(e.getMessage(),e);
-            return null;
-        }
+        };
     }
 
-    @Override
-    protected CoalesceDataConnectorBase getDataConnector(ServerConn conn) throws CoalescePersistorException
-    {
-        return new MockAccumuloDataConnector(conn);
-    }
-
-    @Override
-    protected ServerConn getConnection()
-    {
-        String name = "shouldnot";
-        String zookeepers = "matter";
-        
-        return new ServerConn.Builder().db(name).serverName(zookeepers).user("unittest").password("password").build();
-    }
-
-    @Override
-    protected AccumuloDataConnector getAccumuloDataConnector() throws CoalescePersistorException
-    {
-        // TODO Auto-generated method stub
-        return new MockAccumuloDataConnector(getConnection());
-    }
 }
