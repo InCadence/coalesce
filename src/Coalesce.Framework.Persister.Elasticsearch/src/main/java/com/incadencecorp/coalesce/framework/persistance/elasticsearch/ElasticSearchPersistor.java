@@ -1,5 +1,7 @@
 package com.incadencecorp.coalesce.framework.persistance.elasticsearch;
 
+import java.io.IOException;
+import java.io.StringReader;
 import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -7,12 +9,26 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.client.transport.TransportClient;
 import org.joda.time.DateTime;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.type.MapType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.CoalesceTableHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
@@ -29,6 +45,7 @@ import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
+import com.incadencecorp.coalesce.framework.exim.impl.JsonFullEximImpl;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
 import com.incadencecorp.coalesce.framework.persistance.CoalescePersistorBase;
@@ -96,6 +113,11 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
     {
         return _schema;
     }
+    
+    public class Views {
+        public class Entity {
+        }
+    }
 
     @Override
     public List<String> getCoalesceEntityKeysForEntityId(String entityId,
@@ -144,9 +166,9 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
     @Override
     public DateTime getCoalesceObjectLastModified(String key, String objectType) throws CoalescePersistorException
     {
-        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector(getSchemaPrefix()))
+        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector(getSchemaPrefix()))
         {
-            return this.getCoalesceObjectLastModified(key, objectType, conn);
+            return this.getCoalesceObjectLastModified(key, objectType, conn.getDBConnector());
         }
         catch (SQLException e)
         {
@@ -395,18 +417,18 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
     {
         boolean isSuccessful = true;
 
-        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector(getSchemaPrefix()))
+        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector(getSchemaPrefix()))
         {
 
             // Create a Database Connection
             try
             {
-                conn.openConnection(false);
+               TransportClient client = conn.getDBConnector();
 
                 for (CoalesceEntity entity : entities)
                 {
                     // Persist (Recursively)
-                    isSuccessful &= updateCoalesceObject(entity, conn, allowRemoval);
+                    isSuccessful &= updateCoalesceObject(entity, client, allowRemoval);
                 }
 
                 conn.commit();
@@ -428,7 +450,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
     {
         boolean isSuccessful = false;
 
-        CoalesceDataConnectorBase conn = null;
+        ElasticSearchDataConnector conn = null;
 
         // Create a Database Connection
         try
@@ -438,10 +460,10 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
 
             for (CoalesceEntity entity : entities)
             {
-                if (persistEntityObject(entity, conn))
+                if (persistEntityObject(entity, conn.getDBConnector()))
                 {
 
-                    isSuccessful = updateFileContent(entity, conn);
+                    isSuccessful = updateFileContent(entity, conn.getDBConnector());
 
                 }
             }
@@ -573,7 +595,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
      * @return isSuccessful = True = Successful add/update operation.
      * @throws SQLException
      */
-    protected boolean persistObject(CoalesceObject coalesceObject, CoalesceDataConnectorBase conn) throws SQLException
+    protected boolean persistObject(CoalesceObject coalesceObject, TransportClient conn) throws SQLException
     {
         boolean isSuccessful = true;
 
@@ -663,7 +685,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
      * @return True if successfully added/updated.
      * @throws SQLException
      */
-    protected boolean persistMapTableEntry(CoalesceObject coalesceObject, CoalesceDataConnectorBase conn)
+    protected boolean persistMapTableEntry(CoalesceObject coalesceObject, TransportClient conn)
             throws SQLException
     {
         return true;
@@ -696,42 +718,41 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
      * @return True = No Update required.
      * @throws SQLException
      */
-    protected boolean persistEntityObject(CoalesceEntity entity, CoalesceDataConnectorBase conn) throws SQLException
+    protected boolean persistEntityObject(CoalesceEntity entity, TransportClient conn) throws SQLException
     {
-        String procedureName = "CoalesceEntity_InsertOrUpdate";
-
         // Return true if no update is required.
-        if (!checkLastModified(entity, conn))
-        {
-            return true;
-        }
+    	//Worry about this later. Just gotta get this working
+//        if (!checkLastModified(entity, conn))
+//        {
+//            return true;
+//        }
 
-        List<CoalesceParameter> params = new ArrayList<CoalesceParameter>();
-        params.add(new CoalesceParameter(entity.getKey(), Types.OTHER));
-        params.add(new CoalesceParameter(entity.getName()));
-        params.add(new CoalesceParameter(entity.getSource()));
-        params.add(new CoalesceParameter(entity.getVersion()));
-        params.add(new CoalesceParameter(entity.getEntityId()));
-        params.add(new CoalesceParameter(entity.getEntityIdType()));
-        params.add(new CoalesceParameter(entity.toXml()));
-        params.add(new CoalesceParameter(entity.getDateCreated().toString(), Types.OTHER));
-        params.add(new CoalesceParameter(entity.getLastModified().toString(), Types.OTHER));
-        params.add(new CoalesceParameter(entity.getTitle()));
-        params.add(new CoalesceParameter(Boolean.toString(entity.isMarkedDeleted()), Types.BOOLEAN));
-        params.add(new CoalesceParameter(getScope(entity)));
-        params.add(new CoalesceParameter(getCreator(entity)));
-        params.add(new CoalesceParameter(getType(entity)));
+        JsonFullEximImpl converter = new JsonFullEximImpl();
+ 
+        IndexResponse response;
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			TypeFactory typeFactory = mapper.getTypeFactory();
+			MapType mapType = typeFactory.constructMapType(HashMap.class, String.class, Object.class);
+			HashMap<String, Object> map = mapper.readValue(converter.exportValues(entity, true).toString(), mapType);
 
-        List<CoalesceParameter> securityColumns = getExtendedParameters(entity);
-
-        if (securityColumns.size() > 0)
-        {
-            params.addAll(securityColumns);
-            procedureName = "CoalesceEntityExt_InsertOrUpdate";
-        }
-
-        return conn.executeProcedure(procedureName, params.toArray(new CoalesceParameter[params.size()]))
-                && !entity.isMarkedDeleted();
+			// convert JSON string to Map
+			response = conn.prepareIndex(entity.getName(), entity.getType(), "1").setSource(map).get();
+ 
+			System.out.println(response.toString());
+		} catch (CoalesceException e) {
+			e.printStackTrace();
+			return  false;
+		} catch (JsonParseException e) {
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		//If the index response is returned and no exception was thrown, the index operation was successful
+        return true;
     }
 
     /*--------------------------------------------------------------------------
@@ -771,7 +792,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
      * @return True = No Update required.
      * @throws SQLException
      */
-    protected boolean persistSectionObject(CoalesceSection section, CoalesceDataConnectorBase conn) throws SQLException
+    protected boolean persistSectionObject(CoalesceSection section, TransportClient conn) throws SQLException
     {
         // Return true if no update is required.
         if (!checkLastModified(section, conn))
@@ -779,14 +800,16 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
             return true;
         }
 
-        // Yes; Call Store Procedure
+        /*
+         * // Yes; Call Store Procedure
         return conn.executeProcedure("CoalesceSection_InsertOrUpdate",
                                      new CoalesceParameter(section.getKey(), Types.OTHER),
                                      new CoalesceParameter(section.getName()),
                                      new CoalesceParameter(section.getParent().getKey(), Types.OTHER),
                                      new CoalesceParameter(section.getParent().getType()),
                                      new CoalesceParameter(section.getDateCreated().toString(), Types.OTHER),
-                                     new CoalesceParameter(section.getLastModified().toString(), Types.OTHER));
+                                     new CoalesceParameter(section.getLastModified().toString(), Types.OTHER));*/
+        return false;
     }
 
     /**
@@ -797,7 +820,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
      * @return True = No Update required.
      * @throws SQLException
      */
-    protected boolean persistRecordsetObject(CoalesceRecordset recordset, CoalesceDataConnectorBase conn)
+    protected boolean persistRecordsetObject(CoalesceRecordset recordset, TransportClient conn)
             throws SQLException
     {
         // Return true if no update is required.
@@ -805,7 +828,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
         {
             return true;
         }
-
+/*
         // Yes; Call Store Procedure
         return conn.executeProcedure("CoalesceRecordset_InsertOrUpdate",
                                      new CoalesceParameter(recordset.getKey(), Types.OTHER),
@@ -813,7 +836,8 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
                                      new CoalesceParameter(recordset.getParent().getKey(), Types.OTHER),
                                      new CoalesceParameter(recordset.getParent().getType()),
                                      new CoalesceParameter(recordset.getDateCreated().toString(), Types.OTHER),
-                                     new CoalesceParameter(recordset.getLastModified().toString(), Types.OTHER));
+                                     new CoalesceParameter(recordset.getLastModified().toString(), Types.OTHER));*/
+        return false;
     }
 
     /**
@@ -825,7 +849,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
      * @return True = No Update required.
      * @throws SQLException
      */
-    protected boolean persistFieldDefinitionObject(CoalesceFieldDefinition fieldDefinition, CoalesceDataConnectorBase conn)
+    protected boolean persistFieldDefinitionObject(CoalesceFieldDefinition fieldDefinition, TransportClient conn)
             throws SQLException
     {
 
@@ -834,7 +858,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
         {
             return true;
         }
-
+/*
         // Yes; Call Store Procedure
         return conn.executeProcedure("CoalesceFieldDefinition_InsertOrUpdate",
                                      new CoalesceParameter(fieldDefinition.getKey(), Types.OTHER),
@@ -842,7 +866,8 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
                                      new CoalesceParameter(fieldDefinition.getParent().getKey(), Types.OTHER),
                                      new CoalesceParameter(fieldDefinition.getParent().getType()),
                                      new CoalesceParameter(fieldDefinition.getDateCreated().toString(), Types.OTHER),
-                                     new CoalesceParameter(fieldDefinition.getLastModified().toString(), Types.OTHER));
+                                     new CoalesceParameter(fieldDefinition.getLastModified().toString(), Types.OTHER));*/
+    return false;
     }
 
     /**
@@ -853,14 +878,14 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
      * @return True = No Update required.
      * @throws SQLException
      */
-    protected boolean persistRecordObject(CoalesceRecord record, CoalesceDataConnectorBase conn) throws SQLException
+    protected boolean persistRecordObject(CoalesceRecord record, TransportClient conn) throws SQLException
     {
         // Return true if no update is required.
         if (!checkLastModified(record, conn))
         {
             return true;
         }
-
+/*
         // Yes; Call Store Procedure
         return conn.executeProcedure("CoalesceRecord_InsertOrUpdate",
                                      new CoalesceParameter(record.getKey(), Types.OTHER),
@@ -868,7 +893,8 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
                                      new CoalesceParameter(record.getParent().getKey(), Types.OTHER),
                                      new CoalesceParameter(record.getParent().getType()),
                                      new CoalesceParameter(record.getDateCreated().toString(), Types.OTHER),
-                                     new CoalesceParameter(record.getLastModified().toString(), Types.OTHER));
+                                     new CoalesceParameter(record.getLastModified().toString(), Types.OTHER));*/
+        return false;
     }
 
     /**
@@ -879,14 +905,14 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
      * @return True = No Update required.
      * @throws SQLException
      */
-    protected boolean persistFieldObject(CoalesceField<?> field, CoalesceDataConnectorBase conn) throws SQLException
+    protected boolean persistFieldObject(CoalesceField<?> field, TransportClient conn) throws SQLException
     {
         // Return true if no update is required.
         if (!checkLastModified(field, conn))
         {
             return true;
         }
-
+/*
         // Yes; Call Store Procedure
         return conn.executeProcedure("CoalesceField_InsertOrUpdate",
                                      new CoalesceParameter(field.getKey(), Types.OTHER),
@@ -900,7 +926,8 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
                                      new CoalesceParameter(field.getParent().getType()),
                                      new CoalesceParameter(field.getDateCreated().toString(), Types.OTHER),
                                      new CoalesceParameter(field.getLastModified().toString(), Types.OTHER),
-                                     new CoalesceParameter(field.getPreviousHistoryKey(), Types.OTHER));
+                                     new CoalesceParameter(field.getPreviousHistoryKey(), Types.OTHER));*/
+        return false;
     }
 
     /**
@@ -912,7 +939,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
      * @return True = No Update required.
      * @throws SQLException
      */
-    protected boolean persistFieldHistoryObject(CoalesceFieldHistory fieldHistory, CoalesceDataConnectorBase conn)
+    protected boolean persistFieldHistoryObject(CoalesceFieldHistory fieldHistory, TransportClient conn)
             throws SQLException
     {
         // Return true if no update is required.
@@ -920,7 +947,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
         {
             return true;
         }
-
+/*
         // Yes; Call Store Procedure
         return conn.executeProcedure("CoalesceFieldHistory_InsertOrUpdate",
                                      new CoalesceParameter(fieldHistory.getKey(), Types.OTHER),
@@ -934,7 +961,8 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
                                      new CoalesceParameter(fieldHistory.getParent().getType()),
                                      new CoalesceParameter(fieldHistory.getDateCreated().toString(), Types.OTHER),
                                      new CoalesceParameter(fieldHistory.getLastModified().toString(), Types.OTHER),
-                                     new CoalesceParameter(fieldHistory.getPreviousHistoryKey(), Types.OTHER));
+                                     new CoalesceParameter(fieldHistory.getPreviousHistoryKey(), Types.OTHER));*/
+        return false;
     }
 
     /**
@@ -946,7 +974,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
      * @return True = No Update required.
      * @throws SQLException
      */
-    protected boolean persistLinkageSectionObject(CoalesceLinkageSection linkageSection, CoalesceDataConnectorBase conn)
+    protected boolean persistLinkageSectionObject(CoalesceLinkageSection linkageSection, TransportClient conn)
             throws SQLException
     {
         // Return true if no update is required.
@@ -954,7 +982,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
         {
             return true;
         }
-
+/*
         // Yes; Call Store Procedure
         return conn.executeProcedure("CoalesceLinkageSection_InsertOrUpdate",
                                      new CoalesceParameter(linkageSection.getKey(), Types.OTHER),
@@ -962,7 +990,8 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
                                      new CoalesceParameter(linkageSection.getParent().getKey(), Types.OTHER),
                                      new CoalesceParameter(linkageSection.getParent().getType()),
                                      new CoalesceParameter(linkageSection.getDateCreated().toString(), Types.OTHER),
-                                     new CoalesceParameter(linkageSection.getLastModified().toString(), Types.OTHER));
+                                     new CoalesceParameter(linkageSection.getLastModified().toString(), Types.OTHER));*/
+        return false;
     }
 
     /**
@@ -973,7 +1002,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
      * @return True = No Update required.
      * @throws SQLException
      */
-    protected boolean persistLinkageObject(CoalesceLinkage linkage, CoalesceDataConnectorBase conn) throws SQLException
+    protected boolean persistLinkageObject(CoalesceLinkage linkage, TransportClient conn) throws SQLException
     {
         // Return true if no update is required.
         if (!checkLastModified(linkage, conn))
@@ -982,7 +1011,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
         }
 
         // TODO Phase out CoalesceLinkage_InsertOrUpdate2 on the next DB wipe.
-
+/*
         // Yes; Call Store Procedure
         return conn.executeProcedure("CoalesceLinkage_InsertOrUpdate2",
                                      new CoalesceParameter(linkage.getKey(), Types.OTHER),
@@ -1004,7 +1033,8 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
                                      new CoalesceParameter(linkage.getParent().getKey(), Types.OTHER),
                                      new CoalesceParameter(linkage.getParent().getType()),
                                      new CoalesceParameter(linkage.getDateCreated().toString(), Types.OTHER),
-                                     new CoalesceParameter(linkage.getLastModified().toString(), Types.OTHER));
+                                     new CoalesceParameter(linkage.getLastModified().toString(), Types.OTHER));*/
+        return false;
     }
 
     /**
@@ -1045,7 +1075,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
      * @return False = Out of Date
      * @throws SQLException
      */
-    protected boolean checkLastModified(CoalesceObject coalesceObject, CoalesceDataConnectorBase conn) throws SQLException
+    protected boolean checkLastModified(CoalesceObject coalesceObject, TransportClient conn) throws SQLException
     {
         boolean isOutOfDate = true;
 
@@ -1175,7 +1205,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
      * @param conn is the PostGresDataConnector database connection
      * @throws SQLException ,Exception,CoalescePersistorException
      */
-    protected boolean updateFileContent(CoalesceObject coalesceObject, CoalesceDataConnectorBase conn) throws SQLException
+    protected boolean updateFileContent(CoalesceObject coalesceObject, TransportClient conn) throws SQLException
     {
         boolean isSuccessful = false;
 
@@ -1197,39 +1227,15 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
         return isSuccessful;
     }
 
-    private boolean updateCoalesceObject(CoalesceObject coalesceObject, CoalesceDataConnectorBase conn, boolean allowRemoval)
+    private boolean updateCoalesceObject(CoalesceObject coalesceObject, TransportClient conn, boolean allowRemoval)
             throws SQLException
 
     {
         boolean isSuccessful = false;
 
-        if (coalesceObject.getFlatten())
+        if (coalesceObject.isFlatten())
         {
-            /*switch (coalesceObject.getStatus()) {
-            case READONLY:
-            case ACTIVE:
-                // Persist Object
-                isSuccessful = persistObject(coalesceObject, conn);
-                break;
-
-            case DELETED:
-                if (allowRemoval)
-                {
-                    // Delete Object
-                    isSuccessful = deleteObject(coalesceObject, conn);
-                }
-                else
-                {
-                    // Mark Object as Deleted
-                    isSuccessful = persistObject(coalesceObject, conn);
-                }
-
-                break;
-
-            default:
-                isSuccessful = false;
-            }
-            */
+            isSuccessful = persistObject(coalesceObject, conn);
 
             // Successful?
             if (isSuccessful)
@@ -1244,11 +1250,13 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
         return isSuccessful;
     }
 
-    private DateTime getCoalesceObjectLastModified(String key, String objectType, CoalesceDataConnectorBase conn)
+    private DateTime getCoalesceObjectLastModified(String key, String objectType, TransportClient conn)
             throws SQLException
     {
         DateTime lastModified = null;
 
+        //TODO: Figure out how to do this query in ElasticSearch
+        /*
         // Determine the Table Name
         String tableName = CoalesceTableHelper.getTableNameForObjectType(objectType);
         String dateValue = null;
@@ -1270,7 +1278,8 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
                 }
             }
         }
-        return lastModified;
+        */
+        return JodaDateTimeHelper.nowInUtc();
 
     }
 

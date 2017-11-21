@@ -1,34 +1,23 @@
 package com.incadencecorp.coalesce.framework.persistance;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.InputStream;
 import java.util.Properties;
 import java.util.Random;
 
-import org.geotools.data.DataStore;
-import org.geotools.data.FeatureSource;
-import org.geotools.data.Query;
-import org.geotools.data.simple.SimpleFeatureStore;
-import org.geotools.feature.FeatureIterator;
-import org.geotools.filter.text.cql2.CQL;
-import org.joda.time.DateTime;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.opengis.feature.Feature;
-import org.opengis.filter.Filter;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.CoalesceObjectFactory;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceDateTimeField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
+import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
 import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchDataConnector;
 import com.incadencecorp.coalesce.framework.persistance.elasticsearch.ElasticSearchPersistor;
 import com.incadencecorp.coalesce.framework.persistance.testobjects.GDELT_Test_Entity;
+import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 
 public class ElasticSearchPersistorIT extends CoalescePersistorBaseTest {
 
@@ -117,6 +106,72 @@ public class ElasticSearchPersistorIT extends CoalescePersistorBaseTest {
         // update
         nonGeoEntity.setStringField(eventRecord, "Actor1Name", "TEXAS");
         getFramework().saveCoalesceEntity(false, nonGeoEntity);
+        */
+
+    }
+    
+    /**
+     * This unit test ensures that when creating linkages within Neo4j place
+     * holders are created to preserve link information. Once the place holder's
+     * entity is saved its filled out.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testSaveEntity() throws Exception
+    {
+        // Create Entities
+        TestEntity entity1 = new TestEntity();
+        entity1.initialize();
+        
+        //ElasticSearch requires names be lowercase
+        entity1.setName(entity1.getName().toLowerCase());
+
+        ElasticSearchPersistor persistor = new ElasticSearchPersistor();
+
+        // Save Entity1 (Should create a place holder for entity2)
+        persistor.saveEntity(true, entity1);
+
+        // Verify Entity1 was saved
+        /*rowset = persistor.search(query).getResults();
+
+        Assert.assertEquals(properties.size() + 1, rowset.getMetaData().getColumnCount());
+        Assert.assertEquals(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getEntityKey()),
+                            rowset.getMetaData().getColumnName(1));
+        Assert.assertEquals(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getName()),
+                            rowset.getMetaData().getColumnName(2));
+        Assert.assertEquals(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getSource()),
+                            rowset.getMetaData().getColumnName(3));
+        Assert.assertEquals(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getEntityType()),
+                            rowset.getMetaData().getColumnName(4));
+        Assert.assertEquals(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getEntityTitle()),
+                            rowset.getMetaData().getColumnName(5));
+        Assert.assertEquals(CoalescePropertyFactory.getColumnName(field1), rowset.getMetaData().getColumnName(6));
+
+        // Create Query for Entity2
+        query.setFilter(CoalescePropertyFactory.getEntityKey(entity2.getKey()));
+
+        // Verify Entity2 place holder was created
+        rowset = persistor.search(query).getResults();
+
+        Assert.assertTrue(rowset.next());
+        Assert.assertEquals(entity2.getKey(), rowset.getString(1));
+        Assert.assertEquals(entity2.getName(), rowset.getString(2));
+        Assert.assertEquals(entity2.getSource(), rowset.getString(3));
+        Assert.assertNull(rowset.getString(4));
+        Assert.assertNull(rowset.getString(5));
+        Assert.assertNull(rowset.getString(6));
+
+        // Save Entity2
+        persistor.saveEntity(false, entity2);
+
+        // Verify Entity2 was saved
+        rowset = persistor.search(query).getResults();
+
+        Assert.assertTrue(rowset.next());
+        Assert.assertEquals(entity2.getKey(), rowset.getString(1));
+        Assert.assertEquals(entity2.getTitle(), rowset.getString(5));
+        Assert.assertEquals(Boolean.toString(field2.getValue()), rowset.getString(6));
         */
 
     }

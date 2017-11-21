@@ -83,6 +83,24 @@ public class JsonFullEximImpl implements CoalesceExim<JSONObject> {
             throw new CoalesceException(e);
         }
     }
+    
+    public JSONObject exportValuesAsBytes(CoalesceEntity entity, boolean includeEntityType) throws CoalesceException
+    {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+        mapper.enable(MapperFeature.DEFAULT_VIEW_INCLUSION);
+        
+        System.out.println("Doing the bytes one");
+
+        try
+        {
+            return new JSONObject(mapper.writerWithView(view).writeValueAsBytes(entity));
+        }
+        catch (IOException e)
+        {
+            throw new CoalesceException(e);
+        }
+    }
 
     @Override
     public CoalesceEntity importValues(JSONObject values, CoalesceEntityTemplate template) throws CoalesceException
