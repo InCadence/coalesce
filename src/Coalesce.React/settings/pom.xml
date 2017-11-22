@@ -1,0 +1,66 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>coalesce-react-settings</artifactId>
+	<name>Coalesce React Settings</name>
+	<packaging>war</packaging>
+
+	<parent>
+		<groupId>com.incadencecorp.coalesce.react</groupId>
+		<artifactId>coalesce-react-parent</artifactId>
+		<version>0.0.25-SNAPSHOT</version>
+		<relativePath>..</relativePath>
+	</parent>
+
+	<build>
+
+		<resources>
+			<resource>
+				<directory>build</directory>
+			</resource>
+		</resources>
+
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>npm link (initialize)</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>initialize</phase>
+						<configuration>
+							<executable>npm</executable>
+							<arguments>
+								<argument>link</argument>
+								<argument>common-components</argument>
+							</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<configuration>
+					<instructions>
+						<Web-ContextPath>settings</Web-ContextPath>
+						<Webapp-Context>settings</Webapp-Context>
+					</instructions>
+				</configuration>
+			</plugin>
+		</plugins>
+
+	</build>
+
+        <dependencies>
+                <dependency>
+                        <groupId>com.incadencecorp.coalesce.react</groupId>
+                        <artifactId>common-components</artifactId>
+                        <version>${project.version}</version>
+                </dependency>
+        </dependencies>
+</project>

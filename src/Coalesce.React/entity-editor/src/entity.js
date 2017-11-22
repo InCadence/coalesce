@@ -119,7 +119,7 @@ function renderSection(section, data) {
       var view;
       var recordsetdata = getElement(recordset.name, data.recordsetsAsList);
 
-      if (recordset.maxRecords === 1)
+      if (recordset.minRecords === 1 && recordset.maxRecords === 1)
       {
         var record;
 

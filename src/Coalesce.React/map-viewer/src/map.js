@@ -21,24 +21,42 @@ export class MapView extends React.Component {
     // This is required to be able to add the control
     ol.inherits(createOptionControl, ol.control.Control);
 
+    var controls = [new createOptionControl(this),
+                    new ol.control.ScaleLine(),
+                    //new ol.control.OverviewMap(),
+                    new ol.control.Zoom(),
+                    new ol.control.Rotate(),
+                    new ol.control.Attribution({
+                        attributionOptions: {
+                          collapsible: false
+                          }
+                        }),
+                  ];
+
+    //controls.push(new ol.control.ScaleLine());
+
+/*
+    ol.control.defaults({
+        attributionOptions:
+          collapsible: false
+        })
+      }).extend([
+        new createOptionControl(this)
+      ])
+      */
+
     //Creates Map
     let map = new ol.Map({
       target: 'map',
       view: new ol.View({
-        center: [5451297.56868106,4897413.82890589],
-        zoom: 4
+        center: [0,0],
+        zoom: 6
       }),
-      controls: ol.control.defaults({
-          attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
-            collapsible: false
-          })
-        }).extend([
-          new createOptionControl(this)
-        ]),
+      controls: controls,
     });
 
-    // Add Map Layer
-    map.addLayer(this.state.mapLayer);
+
+    map.getView().setCenter(ol.proj.transform(['127', '40'], 'EPSG:4326', 'EPSG:3857'));
 
     // Saves State
     this.setState({
@@ -48,7 +66,7 @@ export class MapView extends React.Component {
 
   // Changes the base maps
   changeMapLayerCallback(source) {
-
+/*
     const {map, mapLayer} = this.state;
 
     map.removeLayer(mapLayer);
@@ -57,7 +75,7 @@ export class MapView extends React.Component {
     this.setState({
       mapLayer: source
     })
-
+*/
   }
 
   // Callback to handling adding layers to the map
@@ -67,47 +85,55 @@ export class MapView extends React.Component {
 
     var layer;
 
-    switch(feature.type) {
-      case 'WMS':
-        // Single WMS Layer?
-        if (this.state.singleWMSLayer.enabled) {
+    if (feature.name === 'OSM') {
+      feature.layer = new ol.layer.Tile({
+          source: new ol.source.OSM()
+        });
+      layer = feature.layer;
+      layer.setVisible(feature.checked);
+    } else {
+      switch(feature.type) {
+        case 'WMS':
+          // Single WMS Layer?
+          if (this.state.singleWMSLayer.enabled) {
 
-          // If seperate layer exists, remove it
-          if (feature.layer != null) {
-            map.removeLayer(feature.layer);
-            feature.layer = null;
+            // If seperate layer exists, remove it
+            if (feature.layer != null) {
+              map.removeLayer(feature.layer);
+              feature.layer = null;
+            }
+
+            // Remove Old WMS Layer
+            if (singleWMSLayer.layer != null) {
+              map.removeLayer(singleWMSLayer.layer);
+            }
+
+            // Add Layer
+            singleWMSLayer.layers.push(feature.name);
+
+            // Create New Combined WMS Layer
+            singleWMSLayer.layer = createBDPWMSLayer(this.props.geoserver, this.props.workspace, singleWMSLayer.layers, singleWMSLayer.tiled);
+            layer = singleWMSLayer.layer;
+
+            console.log(feature.name + " added to WMS layer");
+          } else {
+            feature.layer = createBDPWMSLayer(this.props.geoserver, this.props.workspace, [feature.name], feature.tiled);
+            layer = feature.layer;
+            layer.setVisible(feature.checked);
           }
-
-          // Remove Old WMS Layer
-          if (singleWMSLayer.layer != null) {
-            map.removeLayer(singleWMSLayer.layer);
-          }
-
-          // Add Layer
-          singleWMSLayer.layers.push(feature.name);
-
-          // Create New Combined WMS Layer
-          singleWMSLayer.layer = createBDPWMSLayer(this.props.geoserver, this.props.workspace, singleWMSLayer.layers);
-          layer = singleWMSLayer.layer;
-
-          console.log(feature.name + " added to WMS layer");
-        } else {
-          feature.layer = createBDPWMSLayer(this.props.geoserver, this.props.workspace, [feature.name]);
+          break;
+        case 'HEATMAP':
+          feature.layer = createBDPHeatmapLayer(this.props.geoserver, this.props.workspace, feature.name);
           layer = feature.layer;
           layer.setVisible(feature.checked);
-        }
-        break;
-      case 'HEATMAP':
-        feature.layer = createBDPHeatmapLayer(this.props.geoserver, this.props.workspace, feature.name);
-        layer = feature.layer;
-        layer.setVisible(feature.checked);
-        break;
-      case 'WFS':
-      default:
-        feature.layer = createBDPWFSLayer(this.props.geoserver, this.props.workspace, feature.name, feature.style);
-        layer = feature.layer;
-        layer.setVisible(feature.checked);
-        break;
+          break;
+        case 'WFS':
+        default:
+          feature.layer = createBDPWFSLayer(this.props.geoserver, this.props.workspace, feature.name, feature.style);
+          layer = feature.layer;
+          layer.setVisible(feature.checked);
+          break;
+      }
     }
 
     map.addLayer(layer);
@@ -121,9 +147,9 @@ export class MapView extends React.Component {
 
     // Map starts at 1 due to map layer
     if (up) {
-      idx = idx+1-1;
+      idx = idx-1;
     } else {
-      idx = idx+1+1;
+      idx = idx+1;
     }
 
     map.getLayers().insertAt(idx, feature.layer);
@@ -149,7 +175,7 @@ export class MapView extends React.Component {
           // Additional Layers?
           if (singleWMSLayer.layers.length >= 1) {
             // Yes; Create WMS Layer
-            singleWMSLayer.layer = createBDPWMSLayer(this.props.geoserver, this.props.workspace, singleWMSLayer.layers);
+            singleWMSLayer.layer = createBDPWMSLayer(this.props.geoserver, this.props.workspace, singleWMSLayer.layers, singleWMSLayer.tiled);
             map.addLayer(singleWMSLayer.layer);
           }
         }
@@ -199,7 +225,7 @@ export class MapView extends React.Component {
               <div className="ui-widget-content">
                 <div className="row">
                   <div className="col-sm-2">
-                    <input type="checkbox" onChange={this.onWMSLayerChange.bind(this)} checked={this.state.singleWMSLayer.enabled} disabled/>
+                    <input type="checkbox" className="form-control"  onChange={this.onWMSLayerChange.bind(this)} checked={this.state.singleWMSLayer.enabled} disabled/>
                   </div>
                   <div className="col-sm-10">
                     <label>Single WMS Layer</label>
@@ -253,7 +279,7 @@ function createBDPHeatmapLayer(url, workspace, layer) {
       url: function(extent) {
         return url + '/wfs?service=WFS&' +
             'version=2.0.0&request=GetFeature&typename=' + workspace + ':' + layer + '&' +
-            'outputFormat=application/json&srsname=EPSG:3857';// +
+            'outputFormat=application/json&srsname=EPSG:4326';// +
             //'&bbox=' + extent.join(',');
       },
       strategy: ol.loadingstrategy.bbox
@@ -262,7 +288,7 @@ function createBDPHeatmapLayer(url, workspace, layer) {
   });
 }
 
-function createBDPWMSLayer(url, workspace, layers) {
+function createBDPWMSLayer(url, workspace, layers, tiled) {
 
   var workingLayers = layers.slice();
 
@@ -270,18 +296,33 @@ function createBDPWMSLayer(url, workspace, layers) {
       workingLayers[ii] = workspace + ":" + layers[ii];
   }
 
-  return new ol.layer.Tile({
-    source: new ol.source.TileWMS({
-      params: {
-        LAYERS: workingLayers.join(","),
-        //TILED: true,
-        //STYLES: 'heatmap'
-      },
-      serverType: 'geoserver',
-      url:  url + '/wms',
-      strategy: ol.loadingstrategy.bbox
-    }),
-  });
+  var layer;
+
+  if (tiled != null && tiled == true) {
+    layer = new ol.layer.Tile({
+      source: new ol.source.TileWMS({
+        params: {
+          LAYERS: workingLayers.join(","),
+          //TILED: tiled,
+          //STYLES: 'heatmap'
+        },
+        serverType: 'geoserver',
+        url:  url + '/wms',
+        strategy: ol.loadingstrategy.bbox
+      }),
+    });
+  } else {
+    layer = new ol.layer.Image({
+          source: new ol.source.ImageWMS({
+            url: url + '/wms',
+            params: {'LAYERS': workingLayers.join(",")},
+            ratio: 1,
+            serverType: 'geoserver'
+          })
+        });
+  }
+
+  return layer;
 }
 
 function createBDPWFSLayer(url, workspace, feature, style) {
@@ -294,6 +335,8 @@ function createBDPWFSLayer(url, workspace, feature, style) {
         }
       }),
       url: function(extent) {
+        //var coords = ol.proj.transform(extent, 'EPSG:3857', 'EPSG:4326');
+        //alert(JSON.stringify(coords));
         return url + '/wfs?service=WFS&' +
             'version=2.0.0&request=GetFeature&typename=' + workspace + ':' + feature + '&' +
             'outputFormat=application/json&srsname=EPSG:4326';// + '&bbox=' + extent.join(',');
@@ -308,10 +351,8 @@ MapView.defaultProps = {
   isOptionsOpen: true,
   singleWMSLayer: {
     enabled: false,
+    tiled: false,
     layers: []
-  },
-  mapLayer: new ol.layer.Tile({
-      source: new ol.source.OSM()
-    })
+  }
 
 }

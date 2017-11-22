@@ -17,6 +17,10 @@
 
 package com.incadencecorp.coalesce.framework.datamodel;
 
+import com.incadencecorp.coalesce.api.CoalesceErrors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,6 +63,7 @@ public enum ECoalesceFieldDataTypes
     ENUMERATION_TYPE("enum"),
     ENUMERATION_LIST_TYPE("enumlist");
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ECoalesceFieldDataTypes.class);
     private String _label;
 
     /**
@@ -97,7 +102,17 @@ public enum ECoalesceFieldDataTypes
         ECoalesceFieldDataTypes value = getMapping().get(coalesceType.trim().toLowerCase());
 
         if (value == null)
-            value = ECoalesceFieldDataTypes.STRING_TYPE;
+        {
+            try
+            {
+                value = valueOf(coalesceType);
+            }
+            catch (Exception e)
+            {
+                LOGGER.warn(String.format(CoalesceErrors.INVALID_INPUT_REASON, coalesceType, e.getMessage()));
+                value = ECoalesceFieldDataTypes.STRING_TYPE;
+            }
+        }
 
         return value;
     }

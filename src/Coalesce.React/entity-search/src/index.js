@@ -4,7 +4,7 @@ import Popup from 'react-popup';
 import {Menu} from 'common-components/lib/menu.js'
 import {FilterCreator} from './filtercreator.js'
 import {SearchResults} from './results.js'
-import {registerLoader, registerTemplatePrompt} from 'common-components/lib/register.js'
+import {registerLoader, registerTemplatePrompt, registerErrorPrompt} from 'common-components/lib/register.js'
 
 import './index.css'
 import 'common-components/css/coalesce.css'
@@ -17,6 +17,8 @@ if (window.location.port == 3000) {
 } else {
   karafRootAddr  = 'http://' + window.location.hostname + ':' + window.location.port;
 }
+
+registerErrorPrompt(Popup);
 
 var cache = {};
 var template = 'CoalesceEntity';
@@ -44,11 +46,26 @@ function promptForTemplate() {
             cache[value] = recordsets;
             console.log('Size of client cache: ' + memorySizeOf(cache));
 
+            var criteria = [];
+
+            // Populate Default Criteria
+            if (recordsets.length > 0)
+            {
+              criteria.push({
+                recordset: 'CoalesceEntity',
+                field: 'name',
+                comparer: '=',
+                value: template.name,
+                matchCase: true
+              });
+            }
+
             // Add CoalesceEntity attributes as a recordset
             ReactDOM.render(
                 <FilterCreator
                   recordsets={recordsets}
                   onSearch={searchComplex}
+                  tabledata={criteria}
                 />,
                 document.getElementById('main')
             );
@@ -162,20 +179,8 @@ function searchComplex(data, e) {
     .then(response => {
       renderResults(response, query.propertyNames);
   }).catch(function(error) {
-      renderError("Executing Search: " + error);
+      Popup.plugins().promptError("Executing Search: " + error);
   });
-}
-
-function renderError(error) {
-  Popup.close();
-  Popup.create({
-      title: 'Error',
-      content: error,
-      className: 'alert',
-      buttons: {
-          right: ['ok']
-      }
-  }, true);
 }
 
 function renderResults(data, properties) {
@@ -185,6 +190,7 @@ function renderResults(data, properties) {
             <SearchResults
               data={data.result[0].result}
               properties={properties}
+              url={karafRootAddr}
             />,
     document.getElementById('results'));
   } else {
@@ -204,60 +210,66 @@ ReactDOM.render(
     document.getElementById('popupContainer')
 );
 
-ReactDOM.render(
-    <Menu items={[
-      {
-        id: 'select',
-        name: 'Select',
-        img: require('common-components/img/template.ico'),
-        title: 'Select Template',
-        onClick: promptForTemplate
-      }, {
-        id: 'load',
-        name: 'Load',
-        img: require('common-components/img/load.ico'),
-        title: 'Load Saved Criteria Selection',
-        onClick: () => {
-          renderError("(Comming Soon!!!) This will allow you to load previously saved criteria.")
-        }
-      }, {
-        id: 'save',
-        name: 'Save',
-        img: require('common-components/img/save.ico'),
-        title: 'Save Criteria Selection',
-        onClick: () => {
-          renderError("(Comming Soon!!!) This will allow you to save criteria.")
-        }
-      }, {
-        id: 'reset',
-        name: 'Reset',
-        img: require('common-components/img/erase.ico'),
-        title: 'Reset Criteria',
-        onClick: () => {
-
-          ReactDOM.unmountComponentAtNode(document.getElementById('main'));
-
-          ReactDOM.render(
-              <FilterCreator
-                recordsets={cache[template]}
-                onSearch={searchComplex}
-                />,
-              document.getElementById('main')
-          );
-        }
-      }
-    ]}/>,
-    document.getElementById('myNavbar')
-);
-
 registerLoader(Popup);
 
 fetch(karafRootAddr + '/cxf/data/templates')
   .then(res => res.json())
   .then(data => {
     registerTemplatePrompt(Popup, karafRootAddr, data);
+
+    ReactDOM.render(
+        <Menu items={[
+          {
+            id: 'select',
+            name: 'Select',
+            img: require('common-components/img/template.ico'),
+            title: 'Select Template',
+            onClick: promptForTemplate
+          }, {
+            id: 'load',
+            name: 'Load',
+            img: require('common-components/img/load.ico'),
+            title: 'Load Saved Criteria Selection',
+            onClick: () => {
+              Popup.plugins().promptError("(Comming Soon!!!) This will allow you to load previously saved criteria.")
+            }
+          }, {
+            id: 'save',
+            name: 'Save',
+            img: require('common-components/img/save.ico'),
+            title: 'Save Criteria Selection',
+            onClick: () => {
+              Popup.plugins().promptError("(Comming Soon!!!) This will allow you to save criteria.")
+            }
+          }, {
+            id: 'reset',
+            name: 'Reset',
+            img: require('common-components/img/erase.ico'),
+            title: 'Reset Criteria',
+            onClick: () => {
+
+              ReactDOM.unmountComponentAtNode(document.getElementById('main'));
+
+              ReactDOM.render(
+                  <FilterCreator
+                    recordsets={cache[template]}
+                    onSearch={searchComplex}
+                    />,
+                  document.getElementById('main')
+              );
+            }
+          }
+        ]}/>,
+        document.getElementById('myNavbar')
+    );
+
 }).catch(function(error) {
-    renderError("Loading Templates: " + error);
+    ReactDOM.render(
+        <Menu items={[]}/>,
+        document.getElementById('myNavbar')
+    );
+
+    Popup.plugins().promptError("Loading Templates: " + error);
 });
 
 // Populate w/ Base fields that a common to all templates
@@ -280,7 +292,7 @@ fetch(karafRootAddr + '/cxf/data/templates/998b040b-2c39-4c98-9a9d-61d565b46e28/
     );
 
 }).catch(function(error) {
-    renderError("Loading Common Fields: " + error);
+    Popup.plugins().promptError("Loading Common Fields: " + error);
 });
 
 // TODO Remove this code (Its an example of how to submit a OGC filter as XML)
@@ -352,6 +364,6 @@ function searchOGC(data, e) {
     .then(response => {
       renderResults(response, query.propertyNames);
   }).catch(function(error) {
-      renderError("Executing Search: " + error);
+      Popup.plugins().promptError("Executing Search: " + error);
   });
 }

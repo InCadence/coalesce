@@ -1,6 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import Popup from 'react-popup';
+import {registerErrorPrompt} from 'common-components/lib/register.js'
 
 import 'common-components/css/coalesce.css'
 import 'common-components/css/popup.css'
@@ -12,6 +13,8 @@ if (window.location.port == 3000) {
 } else {
   rootUrl  = 'http://' + window.location.hostname + ':' + window.location.port;
 }
+
+registerErrorPrompt(Popup);
 
 class Main extends React.Component {
 
@@ -58,16 +61,18 @@ class Main extends React.Component {
 
     return (
       <center>
-        <h1>Applications</h1>
+        <h1 className="coalesce-banner">Coalesce Enterprise Data Broker</h1>
+        <h2>Applications</h2>
         <div>
           {this.renderCard('search', require('common-components/img/search2.ico'), 'Search', 'Find Coalesce entities matching your criteria.')}
           {this.renderCard('entityeditor', require('common-components/img/edit.ico'), 'Editor', 'Edit or create new Coalesce entities.')}
-          {this.renderCard('#', require('common-components/img/enum.ico'), 'Enumerations', '(Comming Soon!!!) Create and edit enumerations used by Coalesce.)')}
+          {this.renderCard('enumerations', require('common-components/img/enum.ico'), 'Enumerations', 'Create and edit enumerations used by Coalesce.')}
           {this.renderCard(this.state.templatecreator_url, require('common-components/img/template.ico'), 'Templates', 'Editor or create new templates for Coalesce entities.')}
           {this.renderCard('map', require('common-components/img/map.ico'), 'Map', 'Visualize different layers provided by a Geo Server fed from a Coalesce database.')}
-          {this.renderCard('#', require('common-components/img/manager.ico'), 'Manager', '(Comming Soon!!!) Connect services and databases.')}
+          {this.renderCard('settings', require('common-components/img/settings.ico'), 'Settings', 'Configure server defined client properties.')}
+          {this.renderCard('manager', require('common-components/img/manager.ico'), 'Manager', 'Visualize how the services within this container are wired together.')}
         </div>
-        <h1>Documentation</h1>
+        <h2>Documentation</h2>
         <div>
           {this.renderCard('https://github.com/InCadence/coalesce/wiki/REST-API', require('common-components/img/api.ico'), 'REST API', "View Coalesce's REST API to integrate your applications.")}
           {this.renderCard('https://github.com/InCadence/coalesce/wiki/Karaf-Distribution', require('common-components/img/deploy.ico'), 'Deployment', 'View how to deploy and run a Coalesce server.')}
@@ -87,17 +92,5 @@ fetch(rootUrl + '/cxf/data/property/templatecreator.url')
       document.getElementById('main')
     );
 }).catch(function(error) {
-  renderError("Saving: " + error);
+  Popup.plugins().promptError("Saving: " + error);
 });
-
-function renderError(error) {
-  Popup.close();
-  Popup.create({
-      title: 'Error',
-      content: error,
-      className: 'alert',
-      buttons: {
-          right: ['ok']
-      }
-  }, true);
-}
