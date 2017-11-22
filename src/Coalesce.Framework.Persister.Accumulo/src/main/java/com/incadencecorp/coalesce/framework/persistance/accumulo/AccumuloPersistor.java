@@ -3,6 +3,7 @@ package com.incadencecorp.coalesce.framework.persistance.accumulo;
 import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.framework.datamodel.*;
@@ -40,6 +41,7 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.PropertyName;
@@ -205,7 +207,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         }
 
         try (CloseableBatchScanner scanner = new CloseableBatchScanner(connect.getDBConnector(),
-                                                                       AccumuloDataConnector.coalesceTable,
+                                                                       AccumuloDataConnector.COALESCE_ENTITY_TABLE,
                                                                        Authorizations.EMPTY,
                                                                        4))
         {
@@ -235,7 +237,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         String indexcf = entityIdType + "\0" + entityId + ".*";
         Connector dbConnector = connect.getDBConnector();
         try (CloseableScanner scanner = new CloseableScanner(dbConnector,
-                                                             AccumuloDataConnector.coalesceEntityIndex,
+                                                             AccumuloDataConnector.COALESCE_ENTITY_IDX_TABLE,
                                                              Authorizations.EMPTY))
         {
             // Set up an IntersectingIterator for the values
@@ -249,7 +251,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                 String key = rowKey.getRow().toString();
                 Text cf = new Text("entity:" + rowKey.getColumnQualifier().toString());
                 try (CloseableScanner xmlscanner = new CloseableScanner(dbConnector,
-                                                                        AccumuloDataConnector.coalesceTable,
+                                                                        AccumuloDataConnector.COALESCE_ENTITY_TABLE,
                                                                         Authorizations.EMPTY))
                 {
                     xmlscanner.setRange(new Range(key));
@@ -278,7 +280,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         String xml = null;
         Connector dbConnector = connect.getDBConnector();
         try (CloseableScanner keyscanner = new CloseableScanner(dbConnector,
-                                                                AccumuloDataConnector.coalesceEntityIndex,
+                                                                AccumuloDataConnector.COALESCE_ENTITY_IDX_TABLE,
                                                                 Authorizations.EMPTY))
         {
             // Set up an IntersectingIterator for the values
@@ -292,7 +294,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                 String key = rowKey.getRow().toString();
                 Text cf = new Text("entity:" + rowKey.getColumnQualifier().toString());
                 try (CloseableScanner xmlscanner = new CloseableScanner(dbConnector,
-                                                                        AccumuloDataConnector.coalesceTable,
+                                                                        AccumuloDataConnector.COALESCE_ENTITY_TABLE,
                                                                         Authorizations.EMPTY))
                 {
                     xmlscanner.setRange(new Range(key));
@@ -320,7 +322,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         Object value = null;
         Connector dbConnector = connect.getDBConnector();
         try (CloseableScanner keyscanner = new CloseableScanner(dbConnector,
-                                                                AccumuloDataConnector.coalesceTable,
+                                                                AccumuloDataConnector.COALESCE_ENTITY_TABLE,
                                                                 Authorizations.EMPTY))
         {
             // Set up an RegEx Iterator to get the row with a field with the key
@@ -336,7 +338,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                 String key = rowKey.getRow().toString();
                 Text cf = rowKey.getColumnFamily();
                 try (CloseableScanner valuescanner = new CloseableScanner(dbConnector,
-                                                                          AccumuloDataConnector.coalesceTable,
+                                                                          AccumuloDataConnector.COALESCE_ENTITY_TABLE,
                                                                           Authorizations.EMPTY))
                 {
                     valuescanner.setRange(new Range(key));
@@ -365,7 +367,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         String xpath = null;
         String entityKey = null;
         try (CloseableScanner keyscanner = new CloseableScanner(dbConnector,
-                                                                AccumuloDataConnector.coalesceTable,
+                                                                AccumuloDataConnector.COALESCE_ENTITY_TABLE,
                                                                 Authorizations.EMPTY))
         {
             // Set up an RegEx Iterator to get the row with a field with the key
@@ -405,7 +407,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         indexcf = indexcf.concat(entitySource != null ? "\0" + entitySource : ".*");
         Connector dbConnector = connect.getDBConnector();
         try (CloseableScanner keyscanner = new CloseableScanner(dbConnector,
-                                                                AccumuloDataConnector.coalesceEntityIndex,
+                                                                AccumuloDataConnector.COALESCE_ENTITY_IDX_TABLE,
                                                                 Authorizations.EMPTY))
         {
             // Set up an RegEx Iterator to get the row with a field with the key
@@ -433,7 +435,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         EntityMetaData metadata = null;
         Connector dbConnector = connect.getDBConnector();
         try (CloseableScanner keyscanner = new CloseableScanner(dbConnector,
-                                                                AccumuloDataConnector.coalesceTable,
+                                                                AccumuloDataConnector.COALESCE_ENTITY_TABLE,
                                                                 Authorizations.EMPTY))
         {
             // Set up an RegEx Iterator to get the row with a field with the key
@@ -522,7 +524,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                     newtemplate = true;
                 }
                 template.setKey(templateId);
-                writer = dbConnector.createBatchWriter(AccumuloDataConnector.coalesceTemplateTable, config);
+                writer = dbConnector.createBatchWriter(AccumuloDataConnector.COALESCE_TEMPLATE_TABLE, config);
                 Mutation m = new Mutation(templateId);
                 m.put(coalesceTemplateColumnFamily, coalesceTemplateXMLQualifier, new Value(xml.getBytes()));
                 m.put(coalesceTemplateColumnFamily, coalesceTemplateDateModifiedQualifier, new Value(time.getBytes()));
@@ -869,7 +871,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         Connector dbConnector = connect.getDBConnector();
         //        try (Scanner keyscanner = dbConnector.createScanner(AccumuloDataConnector.coalesceTemplateTable, Authorizations.EMPTY))
         try (CloseableScanner keyscanner = new CloseableScanner(dbConnector,
-                                                                AccumuloDataConnector.coalesceTemplateTable,
+                                                                AccumuloDataConnector.COALESCE_TEMPLATE_TABLE,
                                                                 Authorizations.EMPTY))
         {
             String xml = null;
@@ -910,7 +912,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         boolean persisted = false;
         try
         {
-            BatchDeleter bd = connect.createBatchDeleter(AccumuloDataConnector.coalesceTemplateTable,
+            BatchDeleter bd = connect.createBatchDeleter(AccumuloDataConnector.COALESCE_TEMPLATE_TABLE,
                                                          Authorizations.EMPTY,
                                                          1,
                                                          config);
@@ -960,7 +962,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         String key = null;
         Connector dbConnector = connect.getDBConnector();
         try (CloseableScanner keyscanner = new CloseableScanner(dbConnector,
-                                                                AccumuloDataConnector.coalesceTemplateTable,
+                                                                AccumuloDataConnector.COALESCE_TEMPLATE_TABLE,
                                                                 Authorizations.EMPTY))
         {
             // Uses special columnqualifier that is a concat of
@@ -1005,7 +1007,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         Connector dbConnector = connect.getDBConnector();
 
         try (CloseableScanner scanner = new CloseableScanner(dbConnector,
-                                                             AccumuloDataConnector.coalesceTemplateTable,
+                                                             AccumuloDataConnector.COALESCE_TEMPLATE_TABLE,
                                                              Authorizations.EMPTY))
         {
             Text templateColumnFamily = new Text(coalesceTemplateColumnFamily);
@@ -1066,7 +1068,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         Map<String, DefaultFeatureCollection> featureCollectionMap = new HashMap<>();
 
         try (CloseableBatchWriter writer = new CloseableBatchWriter(dbConnector,
-                                                                    AccumuloDataConnector.coalesceTable,
+                                                                    AccumuloDataConnector.COALESCE_ENTITY_TABLE,
                                                                     config))
         {
             long beginTime = System.currentTimeMillis();
@@ -1149,7 +1151,6 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         long beginTime;
         try
         {
-
             Connector dbConnector = connect.getDBConnector();
             BatchWriterConfig config = new BatchWriterConfig();
             config.setMaxLatency(1, TimeUnit.SECONDS);
@@ -1241,7 +1242,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             }
 
         }
-        catch (CoalescePersistorException | CQLException ex)
+        catch (CoalesceException | CQLException ex)
         {
             LOGGER.error(ex.getLocalizedMessage(), ex);
             persisted = false;
@@ -1249,7 +1250,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         return persisted;
     }
 
-    private boolean persistBaseData(CoalesceEntity entity, Connector connect, CloseableBatchWriter writer)
+    private boolean persistBaseData(CoalesceEntity entity, Connector connect, CloseableBatchWriter writer) throws CoalesceException
     {
         boolean persisted = false;
         try
@@ -1270,7 +1271,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         boolean persisted = false;
         try
         {
-            BatchDeleter bd = connect.createBatchDeleter(AccumuloDataConnector.coalesceTable,
+            BatchDeleter bd = connect.createBatchDeleter(AccumuloDataConnector.COALESCE_ENTITY_TABLE,
                                                          Authorizations.EMPTY,
                                                          1,
                                                          config);
@@ -1293,7 +1294,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
     {
         boolean persisted = false;
         try (CloseableBatchWriter writer = new CloseableBatchWriter(dbConnector,
-                                                                    AccumuloDataConnector.coalesceEntityIndex,
+                                                                    AccumuloDataConnector.COALESCE_ENTITY_IDX_TABLE,
                                                                     config))
         {
             Mutation m = new Mutation(entity.getKey());
@@ -1318,7 +1319,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         boolean persisted = false;
         try
         {
-            BatchDeleter bd = connect.createBatchDeleter(AccumuloDataConnector.coalesceTable,
+            BatchDeleter bd = connect.createBatchDeleter(AccumuloDataConnector.COALESCE_ENTITY_TABLE,
                                                          Authorizations.EMPTY,
                                                          1,
                                                          config);
@@ -2003,7 +2004,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
          */
     }
 
-    private Mutation createMutation(CoalesceEntity entity)
+    private Mutation createMutation(CoalesceEntity entity) throws CoalesceException
     {
         MutationWrapperFactory mfactory = new MutationWrapperFactory();
         MutationWrapper mutationGuy = mfactory.createMutationGuy(entity);
@@ -2082,7 +2083,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         IteratorSetting iter = new IteratorSetting(1, "modifiedFilter", RegExFilter.class);
         RegExFilter.setRegexs(iter, rowRegex, colfRegex, colqRegex, valueRegex, false, true);
         try (CloseableScanner scanner = new CloseableScanner(dbConn,
-                                                             AccumuloDataConnector.coalesceTable,
+                                                             AccumuloDataConnector.COALESCE_ENTITY_TABLE,
                                                              Authorizations.EMPTY))
         {
             scanner.addScanIterator(iter);
@@ -2097,7 +2098,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
                 objectcf = rowKey.getColumnFamily();
                 // Get the lastmodified for that row and columnFamily
                 try (CloseableScanner keyscanner = new CloseableScanner(dbConn,
-                                                                        AccumuloDataConnector.coalesceTable,
+                                                                        AccumuloDataConnector.COALESCE_ENTITY_TABLE,
                                                                         Authorizations.EMPTY))
                 {
                     keyscanner.setRange(new Range(objectkey));
@@ -2147,7 +2148,6 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
     {
 
         AccumuloQueryRewriter nameChanger = new AccumuloQueryRewriter(query);
-        ;
         CachedRowSet rowset = null;
         SimpleFeatureCollection featureCount;
         DataStore geoDataStore = connect.getGeoDataStore();

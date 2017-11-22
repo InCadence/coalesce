@@ -2,7 +2,6 @@ package com.incadencecorp.coalesce.framework.persistance.accumulo;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
-import org.apache.accumulo.core.client.Instance;
 import org.apache.accumulo.core.client.mock.MockInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +16,11 @@ public class MockAccumuloDataConnector extends AccumuloDataConnector {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloDataConnector.class);
 
+    public MockAccumuloDataConnector(Map<String, String> params) throws CoalescePersistorException
+    {
+        super(params);
+    }
+
     /**
      * Default Constructor.
      *
@@ -29,7 +33,7 @@ public class MockAccumuloDataConnector extends AccumuloDataConnector {
 
         try
         {
-            createTables(coalesceTable, coalesceTemplateTable, coalesceEntityIndex, coalesceSearchTable);
+            createTables(COALESCE_ENTITY_TABLE, COALESCE_TEMPLATE_TABLE, COALESCE_ENTITY_IDX_TABLE, COALESCE_SEARCH_TABLE);
         }
         catch (Exception e)
         {
@@ -51,7 +55,7 @@ public class MockAccumuloDataConnector extends AccumuloDataConnector {
         parameters.put(ZOOKEEPERS, settings.getServerName());
         parameters.put(USER, settings.getUser());
         parameters.put(PASSWORD, settings.getPassword());
-        parameters.put(TABLE_NAME, coalesceSearchTable);
+        parameters.put(TABLE_NAME, COALESCE_SEARCH_TABLE);
         parameters.put(QUERY_THREADS, "1");
         parameters.put(RECORD_THREADS, "1");
         parameters.put(WRITE_THREADS, "1");

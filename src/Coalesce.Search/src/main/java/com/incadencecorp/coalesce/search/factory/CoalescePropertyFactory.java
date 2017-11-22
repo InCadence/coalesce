@@ -144,7 +144,7 @@ public class CoalescePropertyFactory {
     }
 
     /**
-     * @return the property used for filtering on the entity title.
+     * @return the property used for filtering on the entity's title.
      */
     public static PropertyName getEntityTitle()
     {
@@ -152,11 +152,51 @@ public class CoalescePropertyFactory {
     }
 
     /**
-     * @return the property used for filtering on the entity type.
+     * @return the property used for filtering on the entity's type.
      */
     public static PropertyName getEntityType()
     {
         return getFilterFactory().property(COALESCE_ENTITY_TABLE + "type");
+    }
+
+    /**
+     * @return the property used for filtering on the entity's id.
+     */
+    public static PropertyName getEntityId()
+    {
+        return getFilterFactory().property(COALESCE_ENTITY_TABLE + "entityidtype");
+    }
+
+    /**
+     * @return the property used for filtering on the entity's id type.
+     */
+    public static PropertyName getEntityIdType()
+    {
+        return getFilterFactory().property(COALESCE_ENTITY_TABLE + "entityid");
+    }
+
+    /**
+     * @return the property used for filtering on the entity's status.
+     */
+    public static PropertyName getEntityStatus()
+    {
+        return getFilterFactory().property(COALESCE_ENTITY_TABLE + "status");
+    }
+
+    /**
+     * @return the property used for filtering on the entity's scope.
+     */
+    public static PropertyName getEntityScope()
+    {
+        return getFilterFactory().property(COALESCE_ENTITY_TABLE + "scope");
+    }
+
+    /**
+     * @return the property used for filtering on the entity's access scope.
+     */
+    public static PropertyName getEntityCreator()
+    {
+        return getFilterFactory().property(COALESCE_ENTITY_TABLE + "creator");
     }
 
     /*--------------------------------------------------------------------------

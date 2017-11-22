@@ -20,9 +20,7 @@ import com.vividsolutions.jts.util.GeometricShapeFactory;
 import org.apache.accumulo.core.client.Connector;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.xerces.impl.dv.util.Base64;
-import org.geotools.data.DataStore;
 import org.geotools.data.Query;
-import org.geotools.data.simple.SimpleFeatureStore;
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.filter.text.cql2.CQLException;
 import org.jdom2.JDOMException;
@@ -48,7 +46,6 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
     @Test
     public void testConnection() throws Exception
     {
-        AccumuloPersistor persistor = createPersister();
         AccumuloDataConnector accumuloConnector = (AccumuloDataConnector) createPersister().getDataConnector();
         Connector conn = accumuloConnector.getDBConnector();
         Map<String, String> sysconf = conn.instanceOperations().getSystemConfiguration();
@@ -299,8 +296,6 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
         assertEquals(gdeltEntity.getKey(), entities[0].getKey());
 
         // Search
-        //DataStore geoDataStore = ((AccumuloDataConnector) persistor.getDataConnector()).getGeoDataStore();
-
         // These Quoted names need escaped as they are used in filters
         String geomAttributeName = GDELT_Test_Entity.getQueryName() + ".Actor1Geo_Location";
         String dateAttributeName = GDELT_Test_Entity.getQueryName() + ".DateTime";
@@ -358,10 +353,6 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
         persistor.saveEntity(false, nonGeoEntity);
 
         // Search
-        DataStore geoDataStore = ((AccumuloDataConnector) persistor.getDataConnector()).getGeoDataStore();
-
-        SimpleFeatureStore featureSource = (SimpleFeatureStore) geoDataStore.getFeatureSource(NonGeoEntity.getQueryName());
-
         String filterstring = "GlobalEventID =" + expectedInt.toString();
         Filter filter = CQL.toFilter(filterstring);
         Query query = new Query(NonGeoEntity.getQueryName(), filter);

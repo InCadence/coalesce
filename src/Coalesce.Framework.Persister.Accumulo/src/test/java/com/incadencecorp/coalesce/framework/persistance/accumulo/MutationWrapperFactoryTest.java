@@ -9,7 +9,7 @@ import com.incadencecorp.coalesce.framework.persistance.accumulo.testobjects.Mis
 public class MutationWrapperFactoryTest {
 
     @Test
-    public void test()
+    public void test() throws Exception
     {
         MissionEntity entity = new MissionEntity();
         entity.initialize();

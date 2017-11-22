@@ -1,24 +1,15 @@
 package com.incadencecorp.coalesce.framework.persistance.accumulo;
 
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
+import com.incadencecorp.coalesce.framework.datamodel.*;
+import com.incadencecorp.coalesce.framework.iterators.CoalesceIterator;
+import org.apache.accumulo.core.data.Mutation;
+
+import javax.xml.namespace.QName;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.xml.namespace.QName;
-
-import org.apache.accumulo.core.data.Mutation;
-
-import com.incadencecorp.coalesce.common.helpers.CoalesceIterator;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
 
 /*-----------------------------------------------------------------------------'
 Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -36,80 +27,87 @@ authorize others to do so.
 Distribution Statement D. Distribution authorized to the Department of
 Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
 -----------------------------------------------------------------------------*/
+
 /**
  * @author Matt Defazio May 13, 2016
  */
-public class MutationWrapperFactory extends CoalesceIterator {
+public class MutationWrapperFactory extends CoalesceIterator<MutationWrapper> {
 
-    private MutationWrapper MutationGuy;
-
-    public MutationWrapperFactory()
-    {
-    };
-
-    public MutationWrapper createMutationGuy(CoalesceEntity entity)
+    public MutationWrapper createMutationGuy(CoalesceEntity entity) throws CoalesceException
     {
 
         Mutation m = new Mutation(entity.getKey());
 
-        MutationGuy = new MutationWrapper(m);
+        MutationWrapper MutationGuy = new MutationWrapper(m);
 
-        processAllElements(entity);
+        processAllElements(entity, MutationGuy);
 
         return MutationGuy;
     }
 
     @Override
-    protected boolean visitCoalesceEntity(CoalesceEntity entity)
+    protected boolean visitCoalesceEntity(CoalesceEntity entity, MutationWrapper param)
     {
         // If the entity is marked not to be flattened do not persist it or any children
-        if (!entity.isFlatten()) return false;
+        if (!entity.isFlatten())
+        {
+            return false;
+        }
 
-        addRow(entity);
+        addRow(entity, param);
         String entity_xml = entity.toXml();
         // add the entity xml
         MutationRow row = new MutationRow(entity.getType() + ":" + entity.getNamePath(),
                                           "entityxml",
                                           entity_xml.getBytes(),
                                           entity.getNamePath());
-        MutationGuy.addRow(row);
+        param.addRow(row);
 
         // Process Children
         return true;
     }
 
     @Override
-    protected boolean visitCoalesceLinkageSection(CoalesceLinkageSection section)
+    protected boolean visitCoalesceLinkageSection(CoalesceLinkageSection section, MutationWrapper param)
     {
         // If the section is marked not to be flattened then do not persist it or any children
-        if (!section.isFlatten()) return false;
+        if (!section.isFlatten())
+        {
+            return false;
+        }
 
-        addRow(section);
+        addRow(section, param);
 
         // skip
         return true;
     }
 
     @Override
-    protected boolean visitCoalesceLinkage(CoalesceLinkage linkage)
+    protected boolean visitCoalesceLinkage(CoalesceLinkage linkage, MutationWrapper param)
     {
         // If the linkage is marked not to be flattened then do not persist it or any children
-        if (!linkage.isFlatten()) return false;
+        if (!linkage.isFlatten())
+        {
+            return false;
+        }
 
-        addRow(linkage);
+        addRow(linkage, param);
 
         return true;
     }
 
     @Override
-    protected boolean visitCoalesceSection(CoalesceSection section)
+    protected boolean visitCoalesceSection(CoalesceSection section, MutationWrapper param)
     {
         // If the section is marked not to be flattened then do not persist it or any children
-        if (!section.isFlatten()) return false;
+        if (!section.isFlatten())
+        {
+            return false;
+        }
 
         if (AccumuloSettings.getPersistSectionAttr())
         {
-            addRow(section);
+            addRow(section, param);
         }
 
         return true;
@@ -117,42 +115,49 @@ public class MutationWrapperFactory extends CoalesceIterator {
     }
 
     @Override
-    protected boolean visitCoalesceRecordset(CoalesceRecordset recordset)
+    protected boolean visitCoalesceRecordset(CoalesceRecordset recordset, MutationWrapper param)
     {
         // If the recordset is marked not to be flattened then do not persist it or any children
-        if (!recordset.isFlatten()) return false;
+        if (!recordset.isFlatten())
+        {
+            return false;
+        }
 
         if (AccumuloSettings.getPersistRecordsetAttr())
         {
-            addRow(recordset);
+            addRow(recordset, param);
         }
 
         return true;
     }
 
     @Override
-    protected boolean visitCoalesceRecord(CoalesceRecord record)
+    protected boolean visitCoalesceRecord(CoalesceRecord record, MutationWrapper param)
     {
         // If the record is marked not to be flattened then do not persist it or any children
-        if (!record.isFlatten()) return false;
+        if (!record.isFlatten())
+        {
+            return false;
+        }
 
         if (AccumuloSettings.getPersistRecordAttr())
         {
-            addRow(record);
+            addRow(record, param);
         }
 
         return true;
     }
 
     @Override
-    protected boolean visitCoalesceField(CoalesceField<?> field)
+    protected boolean visitCoalesceField(CoalesceField<?> field, MutationWrapper param)
     {
         // If the field is marked not to be flattened then do not persist it or any children
-        if (!field.isFlatten()) return false;
+        if (!field.isFlatten())
+            return false;
 
         if (AccumuloSettings.getPersistFieldAttr())
         {
-            addRow(field);
+            addRow(field, param);
         }
 
         // Don't visit children
@@ -160,20 +165,23 @@ public class MutationWrapperFactory extends CoalesceIterator {
     }
 
     @Override
-    protected boolean visitCoalesceFieldDefinition(CoalesceFieldDefinition definition)
+    protected boolean visitCoalesceFieldDefinition(CoalesceFieldDefinition definition, MutationWrapper param)
     {
         // If the definition is marked not to be flattened then do not persist it or any children
-        if (!definition.isFlatten()) return false;
+        if (!definition.isFlatten())
+        {
+            return false;
+        }
 
         if (AccumuloSettings.getPersistFieldDefAttr())
         {
-            addRow(definition);
+            addRow(definition, param);
         }
 
         return true;
     }
 
-    private void addRow(CoalesceObject object)
+    private void addRow(CoalesceObject object, MutationWrapper param)
     {
         Map<QName, String> attributes = getAttributes(object);
         String type = object.getType() + ":";
@@ -197,7 +205,7 @@ public class MutationWrapperFactory extends CoalesceIterator {
                                                   attrName,
                                                   value.getBytes(),
                                                   object.getNamePath());
-                MutationGuy.addRow(row);
+                param.addRow(row);
 
             }
             else
@@ -213,25 +221,26 @@ public class MutationWrapperFactory extends CoalesceIterator {
                                           "Other Attributes",
                                           stringBuilder.toString().replaceAll(",$", "").getBytes(),
                                           object.getNamePath());
-        MutationGuy.addRow(row);
+        param.addRow(row);
     }
 
     private boolean persistAttr(String attrName)
     {
-
         String[] attrFieldsArray = AccumuloSettings.getAttributeFields().split(",");
 
         for (String attrField : attrFieldsArray)
         {
-            if (attrName.equals(attrField)) return true;
+            if (attrName.equals(attrField))
+            {
+                return true;
+            }
         }
-        
+
         return false;
     }
 
     private Map<QName, String> getAttributes(CoalesceObject object)
     {
-
         Map<QName, String> attributeMap = null;
 
         try
@@ -241,8 +250,7 @@ public class MutationWrapperFactory extends CoalesceIterator {
             attributeMap = (Map<QName, String>) method.invoke(object, null);
 
         }
-        catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException |
-               InvocationTargetException e)
+        catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e)
         {
             // do nothing
         }

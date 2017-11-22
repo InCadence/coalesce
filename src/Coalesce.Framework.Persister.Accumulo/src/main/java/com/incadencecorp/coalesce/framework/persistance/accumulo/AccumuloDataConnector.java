@@ -46,22 +46,17 @@ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  * @author David Boyd
  * May 13, 2016
  */
-public class AccumuloDataConnector extends CoalesceDataConnectorBase {
+public class AccumuloDataConnector extends CoalesceDataConnectorBase implements AutoCloseable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloDataConnector.class);
 
-    private static Instance instance;
-    private static Connector connector;
-
     // TODO These need to move to a constants or other common location
-    public static final String coalesceTable = "Coalesce";
-    public static final String coalesceTemplateTable = "CoalesceTemplates";
-    public static final String coalesceEntityIndex = "CoalesceEntityIndex";
-    public static final String coalesceSearchTable = "CoalesceSearch";
-
-    // These variables are for connecting to GeoMesa for the search
-    private static Map<String, String> dsConf = new HashMap<String, String>();
-    private static DataStore dataStore;
+    public static final String COALESCE_ENTITY_TABLE = "Coalesce";
+    public static final String COALESCE_TEMPLATE_TABLE = "CoalesceTemplates";
+    public static final String COALESCE_ENTITY_IDX_TABLE = "CoalesceEntityIndex";
+    public static final String COALESCE_SEARCH_TABLE = "CoalesceSearch";
+    public static final String LINKAGE_FEATURE_NAME = "coalescelinkage";
+    public static final String ENTITY_FEATURE_NAME = "coalesceentity";
 
     // Datastore Properties
     public static final String INSTANCE_ID = "instanceId";
@@ -78,6 +73,26 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase {
     public static final String LOOSE_B_BOX = "looseBBox";
     public static final String USE_MOCK = "useMock";
     public static final String AUTHS = "auths";
+
+    // These variables are for connecting to GeoMesa for the search
+    private Map<String, String> dsConf = new HashMap<String, String>();
+    private DataStore dataStore;
+    private Instance instance;
+    private Connector connector;
+
+    public AccumuloDataConnector(Map<String, String> params) throws CoalescePersistorException
+    {
+        dsConf.putAll(params);
+
+        // Set system properties for GeomesaBatchWriter
+        Properties props = System.getProperties();
+        props.setProperty("geomesa.batchwriter.latency.millis", "1000");
+        props.setProperty("geomesa.batchwriter.maxthreads", "10");
+        props.setProperty("geomesa.batchwriter.memory", "52428800");
+
+        //populate datastore and Connector fields
+        getDBConnector();
+    }
 
     /**
      * @param settings spec
@@ -109,7 +124,7 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase {
             dsConf.put(ZOOKEEPERS, settings.getServerName());
             dsConf.put(USER, settings.getUser());
             dsConf.put(PASSWORD, settings.getPassword());
-            dsConf.put(TABLE_NAME, coalesceSearchTable);
+            dsConf.put(TABLE_NAME, COALESCE_SEARCH_TABLE);
             dsConf.put(AUTHS, ""); // Auths will be empty for now
         }
 
@@ -193,8 +208,7 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase {
         {
             try
             {
-                LOGGER.info("AccumuloDataConnector:openDataConnection - connecting to accumulo");
-                LOGGER.debug("Accumulo DB: {}  Accumulo Zookeepers: {}", dsConf.get(INSTANCE_ID), dsConf.get(ZOOKEEPERS));
+                LOGGER.info("Connecting: Instance: {}  Zookeepers: {}", dsConf.get(INSTANCE_ID), dsConf.get(ZOOKEEPERS));
 
                 // Use a Mock Instance?
                 if (Boolean.parseBoolean(dsConf.get(USE_MOCK)))
@@ -208,20 +222,21 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase {
                 }
 
                 connector = instance.getConnector(dsConf.get(USER), new PasswordToken(dsConf.get(PASSWORD)));
-                LOGGER.debug("AccumuloDataConnector:openDataConnection - Connector User: " + connector.whoami());
 
-                createTables(coalesceTable, coalesceTemplateTable, coalesceEntityIndex, coalesceSearchTable);
+                createTables(COALESCE_ENTITY_TABLE,
+                             COALESCE_TEMPLATE_TABLE,
+                             COALESCE_ENTITY_IDX_TABLE,
+                             COALESCE_SEARCH_TABLE);
 
                 Iterator<DataStoreFactorySpi> availableStores = DataStoreFinder.getAvailableDataStores();
 
                 if (LOGGER.isDebugEnabled())
                 {
-                    LOGGER.debug("List available Stores: {");
+                    LOGGER.debug("List Available Stores:");
                     while (availableStores.hasNext())
                     {
-                        LOGGER.debug(availableStores.next().toString());
+                        LOGGER.debug("\t{}", availableStores.next().toString());
                     }
-                    LOGGER.debug("}");
                 }
 
                 // Now set up the GeoMesa connection verify that we can see this

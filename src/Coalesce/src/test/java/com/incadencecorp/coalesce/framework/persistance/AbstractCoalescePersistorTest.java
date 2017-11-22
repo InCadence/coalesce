@@ -174,7 +174,7 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
         entity.setName("HelloWorld");
         CoalesceEntityTemplate template2 = CoalesceEntityTemplate.create(entity);
 
-        persister.registerTemplate(template1, template2);
+        persister.saveTemplate(template1, template2);
 
         Assert.assertEquals(template1.getKey(), persister.getEntityTemplate(template1.getKey()).getKey());
         Assert.assertEquals(template2.getKey(), persister.getEntityTemplate(template2.getKey()).getKey());

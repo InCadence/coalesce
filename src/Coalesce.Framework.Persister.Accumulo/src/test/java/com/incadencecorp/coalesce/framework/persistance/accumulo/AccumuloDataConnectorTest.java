@@ -16,11 +16,13 @@ public class AccumuloDataConnectorTest {
 
     private static final String ZOOKEEPERS = "zookeepers";
     private static final String NAME = "name";
+    private static final String USERNAME = "unittest";
+    private static final String PASSWORD = "unittest";
 
     @Test(expected = UnsupportedOperationException.class)
     public void testGetDBConnection() throws CoalescePersistorException, SQLException
     {
-        ServerConn serverConnection = new ServerConn.Builder().db(NAME).serverName(ZOOKEEPERS).user("root").password("").build();
+        ServerConn serverConnection = new ServerConn.Builder().db(NAME).serverName(ZOOKEEPERS).user(USERNAME).password(PASSWORD).build();
         MockAccumuloDataConnector accumuloDataConnector = new MockAccumuloDataConnector(serverConnection);
         accumuloDataConnector.getDBConnection();
         accumuloDataConnector.close();
@@ -29,7 +31,7 @@ public class AccumuloDataConnectorTest {
     @Test
     public void testGetProcedurePrefix() throws CoalescePersistorException
     {
-        ServerConn serverConnection = new ServerConn.Builder().db(NAME).serverName(ZOOKEEPERS).user("root").password("password").build();
+        ServerConn serverConnection = new ServerConn.Builder().db(NAME).serverName(ZOOKEEPERS).user(USERNAME).password(PASSWORD).build();
         MockAccumuloDataConnector accumuloDataConnector = new MockAccumuloDataConnector(serverConnection);
         assertEquals("", accumuloDataConnector.getProcedurePrefix());
         accumuloDataConnector.close();
@@ -38,7 +40,7 @@ public class AccumuloDataConnectorTest {
     @Test(expected = UnsupportedOperationException.class)
     public void testOpenConnection() throws CoalescePersistorException
     {
-        ServerConn serverConnection = new ServerConn.Builder().db(NAME).serverName(ZOOKEEPERS).user("root").password("password").build();
+        ServerConn serverConnection = new ServerConn.Builder().db(NAME).serverName(ZOOKEEPERS).user(USERNAME).password(PASSWORD).build();
         MockAccumuloDataConnector accumuloDataConnector = new MockAccumuloDataConnector(serverConnection);
         accumuloDataConnector.openConnection(true);
         accumuloDataConnector.close();
@@ -47,7 +49,7 @@ public class AccumuloDataConnectorTest {
     @Test
     public void testGetDBConnector() throws CoalescePersistorException
     {
-        ServerConn serverConnection = new ServerConn.Builder().db(NAME).serverName(ZOOKEEPERS).user("root").password("password").build();
+        ServerConn serverConnection = new ServerConn.Builder().db(NAME).serverName(ZOOKEEPERS).user(USERNAME).password(PASSWORD).build();
         MockAccumuloDataConnector accumuloDataConnector = new MockAccumuloDataConnector(serverConnection);
         Connector dbConnector = accumuloDataConnector.getDBConnector();
         assertNotNull(dbConnector);
@@ -57,7 +59,7 @@ public class AccumuloDataConnectorTest {
     @Test
     public void testGetGeoDataStore() throws CoalescePersistorException
     {
-        ServerConn serverConnection = new ServerConn.Builder().db(NAME).serverName(ZOOKEEPERS).user("root").password("password").build();
+        ServerConn serverConnection = new ServerConn.Builder().db(NAME).serverName(ZOOKEEPERS).user(USERNAME).password(PASSWORD).build();
         MockAccumuloDataConnector accumuloDataConnector = new MockAccumuloDataConnector(serverConnection);
         DataStore dataStore = accumuloDataConnector.getGeoDataStore();
         assertNotNull(dataStore);
