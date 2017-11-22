@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.transport.TransportClient;
 import org.joda.time.DateTime;
@@ -462,9 +463,7 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
             {
                 if (persistEntityObject(entity, conn.getDBConnector()))
                 {
-
-                    isSuccessful = updateFileContent(entity, conn.getDBConnector());
-
+                    isSuccessful = true;
                 }
             }
 
@@ -606,64 +605,6 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
             isSuccessful = persistEntityObject((CoalesceEntity) coalesceObject, conn);
             break;
 
-        case "section":
-            if (CoalesceSettings.getUseIndexing())
-            {
-                isSuccessful = persistSectionObject((CoalesceSection) coalesceObject, conn);
-            }
-            break;
-
-        case "recordset":
-            if (CoalesceSettings.getUseIndexing())
-            {
-                isSuccessful = persistRecordsetObject((CoalesceRecordset) coalesceObject, conn);
-            }
-            break;
-        case "fielddefinition":
-            // if (CoalesceSettings.getUseIndexing())
-            // {
-            // Removed Field Definition Persisting
-            // isSuccessful =
-            // PersistFieldDefinitionObject((CoalesceFieldDefinition)
-            // coalesceObject, conn);
-            // }
-            break;
-
-        case "record":
-            if (CoalesceSettings.getUseIndexing())
-            {
-                isSuccessful = persistRecordObject((CoalesceRecord) coalesceObject, conn);
-            }
-            break;
-
-        case "field":// Not testing the type to ascertain if it is BINARY now.
-            if (CoalesceSettings.getUseIndexing())
-            {
-                isSuccessful = persistFieldObject((CoalesceField<?>) coalesceObject, conn);
-            }
-            break;
-
-        case "fieldhistory":
-            if (CoalesceSettings.getUseIndexing())
-            {
-                isSuccessful = persistFieldHistoryObject((CoalesceFieldHistory) coalesceObject, conn);
-            }
-            break;
-
-        case "linkagesection":
-            if (CoalesceSettings.getUseIndexing())
-            {
-                isSuccessful = persistLinkageSectionObject((CoalesceLinkageSection) coalesceObject, conn);
-            }
-            break;
-
-        case "linkage":
-            if (CoalesceSettings.getUseIndexing())
-            {
-                isSuccessful = persistLinkageObject((CoalesceLinkage) coalesceObject, conn);
-            }
-            break;
-
         default:
             isSuccessful = false;
         }
@@ -785,259 +726,6 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
     }
 
     /**
-     * Adds or Updates a Coalesce section that matches the given parameters.
-     *
-     * @param section the XsdSection to be added or updated
-     * @param conn is the PostGresDataConnector database connection
-     * @return True = No Update required.
-     * @throws SQLException
-     */
-    protected boolean persistSectionObject(CoalesceSection section, TransportClient conn) throws SQLException
-    {
-        // Return true if no update is required.
-        if (!checkLastModified(section, conn))
-        {
-            return true;
-        }
-
-        /*
-         * // Yes; Call Store Procedure
-        return conn.executeProcedure("CoalesceSection_InsertOrUpdate",
-                                     new CoalesceParameter(section.getKey(), Types.OTHER),
-                                     new CoalesceParameter(section.getName()),
-                                     new CoalesceParameter(section.getParent().getKey(), Types.OTHER),
-                                     new CoalesceParameter(section.getParent().getType()),
-                                     new CoalesceParameter(section.getDateCreated().toString(), Types.OTHER),
-                                     new CoalesceParameter(section.getLastModified().toString(), Types.OTHER));*/
-        return false;
-    }
-
-    /**
-     * Adds or Updates a Coalesce recordset that matches the given parameters.
-     *
-     * @param recordset the XsdRecordset to be added or updated
-     * @param conn is the PostGresDataConnector database connection
-     * @return True = No Update required.
-     * @throws SQLException
-     */
-    protected boolean persistRecordsetObject(CoalesceRecordset recordset, TransportClient conn)
-            throws SQLException
-    {
-        // Return true if no update is required.
-        if (!checkLastModified(recordset, conn))
-        {
-            return true;
-        }
-/*
-        // Yes; Call Store Procedure
-        return conn.executeProcedure("CoalesceRecordset_InsertOrUpdate",
-                                     new CoalesceParameter(recordset.getKey(), Types.OTHER),
-                                     new CoalesceParameter(recordset.getName()),
-                                     new CoalesceParameter(recordset.getParent().getKey(), Types.OTHER),
-                                     new CoalesceParameter(recordset.getParent().getType()),
-                                     new CoalesceParameter(recordset.getDateCreated().toString(), Types.OTHER),
-                                     new CoalesceParameter(recordset.getLastModified().toString(), Types.OTHER));*/
-        return false;
-    }
-
-    /**
-     * Adds or Updates a Coalesce field definition that matches the given
-     * parameters.
-     *
-     * @param fieldDefinition the XsdFieldDefinition to be added or updated
-     * @param conn is the PostGresDataConnector database connection
-     * @return True = No Update required.
-     * @throws SQLException
-     */
-    protected boolean persistFieldDefinitionObject(CoalesceFieldDefinition fieldDefinition, TransportClient conn)
-            throws SQLException
-    {
-
-        // Return true if no update is required.
-        if (!checkLastModified(fieldDefinition, conn))
-        {
-            return true;
-        }
-/*
-        // Yes; Call Store Procedure
-        return conn.executeProcedure("CoalesceFieldDefinition_InsertOrUpdate",
-                                     new CoalesceParameter(fieldDefinition.getKey(), Types.OTHER),
-                                     new CoalesceParameter(fieldDefinition.getName()),
-                                     new CoalesceParameter(fieldDefinition.getParent().getKey(), Types.OTHER),
-                                     new CoalesceParameter(fieldDefinition.getParent().getType()),
-                                     new CoalesceParameter(fieldDefinition.getDateCreated().toString(), Types.OTHER),
-                                     new CoalesceParameter(fieldDefinition.getLastModified().toString(), Types.OTHER));*/
-    return false;
-    }
-
-    /**
-     * Adds or Updates a Coalesce record that matches the given parameters.
-     *
-     * @param record the XsdRecord to be added or updated
-     * @param conn is the PostGresDataConnector database connection
-     * @return True = No Update required.
-     * @throws SQLException
-     */
-    protected boolean persistRecordObject(CoalesceRecord record, TransportClient conn) throws SQLException
-    {
-        // Return true if no update is required.
-        if (!checkLastModified(record, conn))
-        {
-            return true;
-        }
-/*
-        // Yes; Call Store Procedure
-        return conn.executeProcedure("CoalesceRecord_InsertOrUpdate",
-                                     new CoalesceParameter(record.getKey(), Types.OTHER),
-                                     new CoalesceParameter(record.getName()),
-                                     new CoalesceParameter(record.getParent().getKey(), Types.OTHER),
-                                     new CoalesceParameter(record.getParent().getType()),
-                                     new CoalesceParameter(record.getDateCreated().toString(), Types.OTHER),
-                                     new CoalesceParameter(record.getLastModified().toString(), Types.OTHER));*/
-        return false;
-    }
-
-    /**
-     * Adds or Updates a Coalesce field that matches the given parameters.
-     *
-     * @param field the XsdField to be added or updated
-     * @param conn is the PostGresDataConnector database connection
-     * @return True = No Update required.
-     * @throws SQLException
-     */
-    protected boolean persistFieldObject(CoalesceField<?> field, TransportClient conn) throws SQLException
-    {
-        // Return true if no update is required.
-        if (!checkLastModified(field, conn))
-        {
-            return true;
-        }
-/*
-        // Yes; Call Store Procedure
-        return conn.executeProcedure("CoalesceField_InsertOrUpdate",
-                                     new CoalesceParameter(field.getKey(), Types.OTHER),
-                                     new CoalesceParameter(field.getName()),
-                                     new CoalesceParameter(field.getBaseValue()),
-                                     new CoalesceParameter(field.getDataType().getLabel()),
-                                     new CoalesceParameter(""),
-                                     new CoalesceParameter(field.getClassificationMarkingAsString()),
-                                     new CoalesceParameter(field.getModifiedBy()),
-                                     new CoalesceParameter(field.getParent().getKey(), Types.OTHER),
-                                     new CoalesceParameter(field.getParent().getType()),
-                                     new CoalesceParameter(field.getDateCreated().toString(), Types.OTHER),
-                                     new CoalesceParameter(field.getLastModified().toString(), Types.OTHER),
-                                     new CoalesceParameter(field.getPreviousHistoryKey(), Types.OTHER));*/
-        return false;
-    }
-
-    /**
-     * Adds or Updates a Coalesce field history that matches the given
-     * parameters.
-     *
-     * @param fieldHistory the XsdFieldHistory to be added or updated
-     * @param conn is the PostGresDataConnector database connection
-     * @return True = No Update required.
-     * @throws SQLException
-     */
-    protected boolean persistFieldHistoryObject(CoalesceFieldHistory fieldHistory, TransportClient conn)
-            throws SQLException
-    {
-        // Return true if no update is required.
-        if (!checkLastModified(fieldHistory, conn))
-        {
-            return true;
-        }
-/*
-        // Yes; Call Store Procedure
-        return conn.executeProcedure("CoalesceFieldHistory_InsertOrUpdate",
-                                     new CoalesceParameter(fieldHistory.getKey(), Types.OTHER),
-                                     new CoalesceParameter(fieldHistory.getName()),
-                                     new CoalesceParameter(fieldHistory.getValue()),
-                                     new CoalesceParameter(fieldHistory.getDataType().getLabel()),
-                                     new CoalesceParameter(""),
-                                     new CoalesceParameter(fieldHistory.getClassificationMarkingAsString()),
-                                     new CoalesceParameter(fieldHistory.getModifiedBy()),
-                                     new CoalesceParameter(fieldHistory.getParent().getKey(), Types.OTHER),
-                                     new CoalesceParameter(fieldHistory.getParent().getType()),
-                                     new CoalesceParameter(fieldHistory.getDateCreated().toString(), Types.OTHER),
-                                     new CoalesceParameter(fieldHistory.getLastModified().toString(), Types.OTHER),
-                                     new CoalesceParameter(fieldHistory.getPreviousHistoryKey(), Types.OTHER));*/
-        return false;
-    }
-
-    /**
-     * Adds or Updates a Coalesce linkage section that matches the given
-     * parameters.
-     *
-     * @param linkageSection the XsdLinkageSection to be added or updated
-     * @param conn is the PostGresDataConnector database connection
-     * @return True = No Update required.
-     * @throws SQLException
-     */
-    protected boolean persistLinkageSectionObject(CoalesceLinkageSection linkageSection, TransportClient conn)
-            throws SQLException
-    {
-        // Return true if no update is required.
-        if (!checkLastModified(linkageSection, conn))
-        {
-            return true;
-        }
-/*
-        // Yes; Call Store Procedure
-        return conn.executeProcedure("CoalesceLinkageSection_InsertOrUpdate",
-                                     new CoalesceParameter(linkageSection.getKey(), Types.OTHER),
-                                     new CoalesceParameter(linkageSection.getName()),
-                                     new CoalesceParameter(linkageSection.getParent().getKey(), Types.OTHER),
-                                     new CoalesceParameter(linkageSection.getParent().getType()),
-                                     new CoalesceParameter(linkageSection.getDateCreated().toString(), Types.OTHER),
-                                     new CoalesceParameter(linkageSection.getLastModified().toString(), Types.OTHER));*/
-        return false;
-    }
-
-    /**
-     * Adds or Updates a Coalesce linkage that matches the given parameters.
-     *
-     * @param linkage the XsdLinkage to be added or updated
-     * @param conn is the PostGresDataConnector database connection
-     * @return True = No Update required.
-     * @throws SQLException
-     */
-    protected boolean persistLinkageObject(CoalesceLinkage linkage, TransportClient conn) throws SQLException
-    {
-        // Return true if no update is required.
-        if (!checkLastModified(linkage, conn))
-        {
-            return true;
-        }
-
-        // TODO Phase out CoalesceLinkage_InsertOrUpdate2 on the next DB wipe.
-/*
-        // Yes; Call Store Procedure
-        return conn.executeProcedure("CoalesceLinkage_InsertOrUpdate2",
-                                     new CoalesceParameter(linkage.getKey(), Types.OTHER),
-                                     new CoalesceParameter(linkage.getName()),
-                                     new CoalesceParameter(linkage.getEntity1Key(), Types.OTHER),
-                                     new CoalesceParameter(linkage.getEntity1Name()),
-                                     new CoalesceParameter(linkage.getEntity1Source()),
-                                     new CoalesceParameter(linkage.getEntity1Version()),
-                                     new CoalesceParameter(linkage.getLinkType().getLabel()),
-                                     new CoalesceParameter(linkage.getLabel()),
-                                     //new CoalesceParameter(linkage.getStatus().toString()),
-                                     new CoalesceParameter(linkage.getEntity2Key(), Types.OTHER),
-                                     new CoalesceParameter(linkage.getEntity2Name()),
-                                     new CoalesceParameter(linkage.getEntity2Source()),
-                                     new CoalesceParameter(linkage.getEntity2Version()),
-                                     new CoalesceParameter(""), // FIXME linkage.getClassificationMarking().toPortionString()),
-                                     new CoalesceParameter(linkage.getModifiedBy()),
-                                     new CoalesceParameter(""),
-                                     new CoalesceParameter(linkage.getParent().getKey(), Types.OTHER),
-                                     new CoalesceParameter(linkage.getParent().getType()),
-                                     new CoalesceParameter(linkage.getDateCreated().toString(), Types.OTHER),
-                                     new CoalesceParameter(linkage.getLastModified().toString(), Types.OTHER));*/
-        return false;
-    }
-
-    /**
      * Returns the EntityMetaData for the Coalesce entity that matches the given
      * parameters.
      *
@@ -1140,20 +828,12 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
     {
         List<String> keyList = new ArrayList<String>();
 
-        try (CoalesceDataConnectorBase conn = new ElasticSearchDataConnector(getSchemaPrefix()))
+        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector(getSchemaPrefix()))
         {
-            ResultSet results = conn.executeLikeQuery("SELECT ObjectKey FROM "
-                                                              + getSchemaPrefix()
-                                                              + "CoalesceEntity WHERE (EntityId like ?) AND (EntityIdType like ?) AND (Name=?)",
-                                                      2,
-                                                      new CoalesceParameter(entityId),
-                                                      new CoalesceParameter(entityIdType),
-                                                      new CoalesceParameter(entityName));
-
-            while (results.next())
-            {
-                keyList.add(results.getString("ObjectKey"));
-            }
+        	TransportClient client = conn.getDBConnector();
+        	GetResponse response = client.prepareGet(entityId, entityIdType, entityName).get();
+        	
+        	keyList.add(response.getId());
 
             return keyList;
         }
@@ -1196,35 +876,6 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
 
             return keyList;
         }
-    }
-
-    /**
-     * Sets the active Coalesce field objects matching the parameters given.
-     *
-     * @param coalesceObject the Coalesce field object.
-     * @param conn is the PostGresDataConnector database connection
-     * @throws SQLException ,Exception,CoalescePersistorException
-     */
-    protected boolean updateFileContent(CoalesceObject coalesceObject, TransportClient conn) throws SQLException
-    {
-        boolean isSuccessful = false;
-
-        if (!coalesceObject.isMarkedDeleted())
-        {
-            if (coalesceObject.getType().toLowerCase() == "field")
-            {
-                if (((CoalesceField<?>) coalesceObject).getDataType() == ECoalesceFieldDataTypes.FILE_TYPE)
-                {
-                    isSuccessful = persistFieldObject((CoalesceField<?>) coalesceObject, conn);
-                }
-            }
-
-            for (Map.Entry<String, CoalesceObject> s : coalesceObject.getChildCoalesceObjects().entrySet())
-            {
-                isSuccessful = updateFileContent(s.getValue(), conn);
-            }
-        }
-        return isSuccessful;
     }
 
     private boolean updateCoalesceObject(CoalesceObject coalesceObject, TransportClient conn, boolean allowRemoval)

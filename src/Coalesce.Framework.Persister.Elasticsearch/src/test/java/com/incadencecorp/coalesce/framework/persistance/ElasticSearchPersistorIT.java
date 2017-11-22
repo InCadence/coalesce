@@ -3,6 +3,7 @@ package com.incadencecorp.coalesce.framework.persistance;
 import static org.junit.Assert.assertEquals;
 
 import java.io.InputStream;
+import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 
@@ -174,6 +175,14 @@ public class ElasticSearchPersistorIT extends CoalescePersistorBaseTest {
         Assert.assertEquals(Boolean.toString(field2.getValue()), rowset.getString(6));
         */
 
+    }
+    
+    @Test
+    public void testGet() throws Exception {
+    	ElasticSearchPersistor persistor = new ElasticSearchPersistor();
+    	List<String> keys = persistor.getCoalesceEntityKeysForEntityId("twitter", "tweet", "1", null);
+    	
+    	System.out.println(keys.toString());
     }
 
 }
