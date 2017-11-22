@@ -25,7 +25,7 @@ import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
 
 /**
  * Configuration properties for the Accumulo persistor implementation.
- * 
+ *
  * @author Matthew DeFazio
  */
 public class AccumuloSettings {
@@ -51,7 +51,10 @@ public class AccumuloSettings {
     private static final String PARAM_USER = PARAM_BASE + "userid";
     private static final String PARAM_ZOOKEEPERS = PARAM_BASE + "zookeepers";
     private static final String PARAM_DATABASE_NAME = PARAM_BASE + "database";
-    
+
+    private static final String PARAM_FEATURES = PARAM_BASE + "features.";
+    private static final String PARAM_OVERRIDE_FEATURES = PARAM_FEATURES + "features.override";
+
     /*--------------------------------------------------------------------------
     Default Values
     --------------------------------------------------------------------------*/
@@ -84,7 +87,7 @@ public class AccumuloSettings {
 
     /**
      * Configures the settings to use a particular connector and property name.
-     * 
+     *
      * @param connector
      * @param name
      */
@@ -97,10 +100,12 @@ public class AccumuloSettings {
     /*--------------------------------------------------------------------------
     Settings
     --------------------------------------------------------------------------*/
+
     /**
      * @return Returns the address of the database.
      */
-    public static String getZookeepers() {
+    public static String getZookeepers()
+    {
         return settings.getSetting(config_name, PARAM_ZOOKEEPERS, "localhost", true);
     }
 
@@ -109,15 +114,17 @@ public class AccumuloSettings {
      *
      * @param databaseAddress
      */
-    public static void setZookeepers(String databaseAddress) {
-    	// Not sure about this
+    public static void setZookeepers(String databaseAddress)
+    {
+        // Not sure about this
         settings.setSetting(config_name, PARAM_ZOOKEEPERS, databaseAddress);
     }
 
     /**
      * @return Returns the username used for accessing the database.
      */
-    public static String getUserName() {
+    public static String getUserName()
+    {
         return settings.getSetting(config_name, PARAM_USER, DEFAULT_USERNAME, false);
     }
 
@@ -126,14 +133,16 @@ public class AccumuloSettings {
      *
      * @param userName
      */
-    public static void setUserName(String userName) {
+    public static void setUserName(String userName)
+    {
         settings.setSetting(config_name, PARAM_USER, userName);
     }
 
     /**
      * @return Returns the password used for accessing the database.
      */
-    public static String getUserPassword() {
+    public static String getUserPassword()
+    {
         return settings.getSetting(config_name, PARAM_PASSWORD, DEFAULT_PASSWORD, false);
     }
 
@@ -142,14 +151,16 @@ public class AccumuloSettings {
      *
      * @param userPassword
      */
-    public static void setUserPassword(String userPassword) {
+    public static void setUserPassword(String userPassword)
+    {
         settings.setSetting(config_name, PARAM_PASSWORD, userPassword);
     }
 
     /**
      * @return Returns the database name.
      */
-    public static String getDatabaseName() {
+    public static String getDatabaseName()
+    {
         return settings.getSetting(config_name, PARAM_DATABASE_NAME, "accumulo", true);
     }
 
@@ -158,15 +169,16 @@ public class AccumuloSettings {
      *
      * @param databaseName
      */
-    public static void setDatabaseName(String databaseName) {
+    public static void setDatabaseName(String databaseName)
+    {
         settings.setSetting(config_name, PARAM_DATABASE_NAME, databaseName);
     }
 
-    
     /**
      * @return Returns the address of the database.
      */
-    public static String getAttributeFields() {
+    public static String getAttributeFields()
+    {
         return settings.getSetting(config_name, PARAM_ATTRIBUTE_ROWS, DEFAULT_ATTRIBUTE_ROWS, true);
     }
 
@@ -175,7 +187,8 @@ public class AccumuloSettings {
      *
      * @param databaseAddress
      */
-    public static void setAttributeFields(String databaseAddress) {
+    public static void setAttributeFields(String databaseAddress)
+    {
         settings.setSetting(config_name, PARAM_ATTRIBUTE_ROWS, databaseAddress);
     }
 
@@ -229,17 +242,35 @@ public class AccumuloSettings {
         settings.setSetting(config_name, PARAM_PERSIST_FIELD_ATTR, persistFieldAttr);
     }
 
-    public static ServerConn getServerConn() {
+    /**
+     * @return whether or not a check should be made before creating a new feature type. If true registered features will be overridden.
+     */
+    public static boolean overrideFeatures()
+    {
+        return settings.getSetting(config_name, PARAM_OVERRIDE_FEATURES, false, true);
+    }
+
+    /**
+     * Sets whether or not a check should be made before creating a new feature type. If true registered features will be overridden.
+     *
+     * @param value
+     */
+    public static void setOverrideFeatures(boolean value)
+    {
+        settings.setSetting(config_name, PARAM_OVERRIDE_FEATURES, value);
+    }
+
+    public static ServerConn getServerConn()
+    {
 
         ServerConn serCon = new ServerConn();
-        
+
         serCon.setServerName(getZookeepers());
         serCon.setDatabase(getDatabaseName());
         serCon.setUser(getUserName());
         serCon.setPassword(getUserPassword());
-        
+
         return serCon;
     }
-  
 
 }

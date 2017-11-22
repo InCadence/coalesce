@@ -76,7 +76,7 @@ public class CoalesceFeatureTypeFactory {
 
                 if (LOGGER.isTraceEnabled())
                 {
-                    LOGGER.trace(entry.getKey() + "=>" + mappedType.getName());
+                    LOGGER.trace(entry.getKey() + " => " + mappedType.getName());
                 }
 
                 if (!hasGeometry && Geometry.class.isAssignableFrom(mappedType))
