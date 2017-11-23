@@ -19,11 +19,17 @@ package com.incadencecorp.coalesce.framework.persistance.accumulo;
 
 import com.google.common.base.Stopwatch;
 import com.incadencecorp.coalesce.api.CoalesceErrors;
+import com.incadencecorp.coalesce.api.ICoalesceResponseType;
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
+import com.incadencecorp.coalesce.framework.CoalesceExecutorServiceImpl;
+import com.incadencecorp.coalesce.framework.CoalesceSettings;
+import com.incadencecorp.coalesce.framework.CoalesceThreadFactoryImpl;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
+import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
+import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceStringResponseType;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import org.apache.accumulo.core.client.*;
 import org.apache.accumulo.core.data.Key;
@@ -35,12 +41,17 @@ import org.apache.accumulo.core.security.Authorizations;
 import org.apache.hadoop.io.Text;
 import org.geotools.data.DataStore;
 import org.geotools.data.simple.SimpleFeatureStore;
-import org.geotools.feature.DefaultFeatureCollection;
+import org.geotools.factory.CommonFactoryFinder;
+import org.opengis.filter.FilterFactory2;
+import org.opengis.filter.identity.FeatureId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -49,6 +60,8 @@ import java.util.concurrent.TimeUnit;
 public class AccumuloPersister2 extends AccumuloTemplatePersister implements ICoalescePersistor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloPersister2.class);
+    private static final FilterFactory2 FF = CommonFactoryFinder.getFilterFactory2();
+    private static final CoalesceExecutorServiceImpl SERVICE = new CoalesceExecutorServiceImpl(null);
 
     private BatchWriterConfig config;
     private AccumuloFeatureIterator iterator = null;
@@ -79,27 +92,36 @@ public class AccumuloPersister2 extends AccumuloTemplatePersister implements ICo
 
         List<Mutation> entityMutations = new ArrayList<>();
         List<Mutation> indexMutations = new ArrayList<>();
-        Map<String, DefaultFeatureCollection> features = new HashMap<>();
+        List<String> keysToDelete = new ArrayList<>();
+
+        Map<String, AccumuloFeatureIterator.FeatureCollections> features = new HashMap<>();
 
         // Create Mutations & Features
         for (CoalesceEntity entity : entities)
         {
             try
             {
-                // Persist XML
-                MutationWrapperFactory mfactory = new MutationWrapperFactory();
-                MutationWrapper mutationGuy = mfactory.createMutationGuy(entity);
+                if (!allowRemoval || entity.getStatus() != ECoalesceObjectStatus.DELETED)
+                {
+                    // Persist XML
+                    MutationWrapperFactory mfactory = new MutationWrapperFactory();
+                    MutationWrapper mutationGuy = mfactory.createMutationGuy(entity);
 
-                entityMutations.add(mutationGuy.getMutation());
+                    entityMutations.add(mutationGuy.getMutation());
 
-                // Persist Index
-                Mutation mutation = new Mutation(entity.getKey());
-                Text columnFamily = new Text(
-                        entity.getEntityIdType() + "\0" + entity.getEntityId() + "\0" + entity.getName() + "\0"
-                                + entity.getSource());
-                mutation.put(columnFamily, new Text(entity.getNamePath()), new Value(new byte[0]));
+                    // Persist Index
+                    Mutation mutation = new Mutation(entity.getKey());
+                    Text columnFamily = new Text(
+                            entity.getEntityIdType() + "\0" + entity.getEntityId() + "\0" + entity.getName() + "\0"
+                                    + entity.getSource());
+                    mutation.put(columnFamily, new Text(entity.getNamePath()), new Value(new byte[0]));
 
-                indexMutations.add(mutation);
+                    indexMutations.add(mutation);
+                }
+                else
+                {
+                    keysToDelete.add(entity.getKey());
+                }
 
                 // Create Features
                 getIterator().iterate(entity, features);
@@ -123,6 +145,12 @@ public class AccumuloPersister2 extends AccumuloTemplatePersister implements ICo
         writeMutation(connector, AccumuloDataConnector.COALESCE_ENTITY_TABLE, config, entityMutations);
         writeMutation(connector, AccumuloDataConnector.COALESCE_ENTITY_IDX_TABLE, config, indexMutations);
 
+        if (keysToDelete.size() > 0)
+        {
+            deleteMutation(AccumuloDataConnector.COALESCE_ENTITY_TABLE, keysToDelete);
+            deleteMutation(AccumuloDataConnector.COALESCE_ENTITY_IDX_TABLE, keysToDelete);
+        }
+
         LOGGER.debug("Saved Mutations:  {} ms", watch.elapsed(TimeUnit.MILLISECONDS));
         watch.reset();
 
@@ -130,36 +158,87 @@ public class AccumuloPersister2 extends AccumuloTemplatePersister implements ICo
         DataStore datastore = connector.getGeoDataStore();
 
         // TODO Check if it exists
+        //*
+        AccumuloJob job = new AccumuloJob(datastore, features);
+        job.setExecutor(SERVICE);
+        ICoalesceResponseType<List<CoalesceStringResponseType>> results = job.call();
 
-        for (Map.Entry<String, DefaultFeatureCollection> entry : features.entrySet())
+        LOGGER.debug(results.getStatus().toString());
+        //*/
+/*
+        for (Map.Entry<String, AccumuloFeatureIterator.FeatureCollections> entry : features.entrySet())
         {
             try
             {
                 watch.start();
                 SimpleFeatureStore featureStore = (SimpleFeatureStore) datastore.getFeatureSource(entry.getKey());
 
-                //				GEOMESA Does not currently support transactions
-                //               Transaction transaction = new DefaultTransaction();
-                //                featureStore.setTransaction(transaction);
-                featureStore.addFeatures(entry.getValue());
+                if (featureStore != null)
+                {
+                    //				GEOMESA Does not currently support transactions
+                    //               Transaction transaction = new DefaultTransaction();
+                    //                featureStore.setTransaction(transaction);
+                    featureStore.addFeatures(entry.getValue().featureToAdd);
 
-                //                transaction.commit();
-                //                transaction.close();
+                    if (LOGGER.isDebugEnabled())
+                    {
+                        LOGGER.debug(String.format("Deleting (%s) from (%s)",
+                                                   entry.getValue().keysToDelete.toString(),
+                                                   featureStore.getName()));
+                    }
 
+                    featureStore.removeFeatures(FF.id(entry.getValue().keysToDelete.toArray(new FeatureId[entry.getValue().keysToDelete.size()])));
+
+                    //                transaction.commit();
+                    //                transaction.close();
+                }
             }
             catch (IOException | IllegalArgumentException e)
             {
-                LOGGER.error("(FAILED) Saving Feature: ({})", entry.getKey(), e);
+                throw new CoalescePersistorException(String.format("(FAILED) Saving Feature: (%s)", entry.getKey()), e);
             }
             finally
             {
                 LOGGER.debug("Saved Feature ({}):  {} ms", entry.getKey(), watch.elapsed(TimeUnit.MILLISECONDS));
                 watch.reset();
             }
-
         }
+//*/
 
         return true;
+}
+
+    private void deleteMutation(String tablename, List<String> keys) throws CoalescePersistorException
+    {
+        if (LOGGER.isDebugEnabled())
+        {
+            LOGGER.debug(String.format("Deleting (%s) from (%s)", keys.toString(), tablename));
+        }
+
+        try
+        {
+            BatchDeleter bd = getDataConnector().getDBConnector().createBatchDeleter(tablename,
+                                                                                     Authorizations.EMPTY,
+                                                                                     1,
+                                                                                     config);
+
+            List<Range> ranges = new ArrayList<>();
+
+            for (String key : keys)
+            {
+                ranges.add(Range.exact(new Text(key)));
+            }
+
+            bd.setRanges(ranges);
+            bd.delete();
+            bd.close();
+        }
+        catch (TableNotFoundException | AccumuloException e)
+        {
+            throw new CoalescePersistorException(String.format("(FAILED) Deleting (%s) from (%s)",
+                                                               keys.toString(),
+                                                               tablename), e);
+        }
     }
 
     @Override
