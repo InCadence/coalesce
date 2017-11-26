@@ -7,8 +7,13 @@ import com.incadencecorp.coalesce.common.helpers.EntityLinkHelper;
 import com.incadencecorp.coalesce.framework.datamodel.*;
 import org.junit.Assert;
 import org.junit.Assume;
+import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
+import java.io.IOException;
 import java.util.UUID;
 
 /*-----------------------------------------------------------------------------'
@@ -30,7 +35,34 @@ import java.util.UUID;
 
 public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor> {
 
-    protected abstract T createPersister() throws Exception;
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCoalescePersistorTest.class);
+
+    protected abstract T createPersister() throws CoalescePersistorException;
+
+    private static boolean isInitialized = false;
+
+    @Before
+    public void registerEntities()
+    {
+        if (!isInitialized)
+        {
+            LOGGER.warn("Registering Entities");
+
+            TestEntity entity = new TestEntity();
+            entity.initialize();
+
+            try
+            {
+                createPersister().registerTemplate(CoalesceEntityTemplate.create(entity));
+            }
+            catch (CoalescePersistorException | SAXException | IOException e)
+            {
+                LOGGER.warn("Failed to register templates");
+            }
+
+            isInitialized = true;
+        }
+    }
 
     /**
      * This test attempts to create a entity within the data store.
@@ -211,7 +243,9 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
         }
         catch (CoalescePersistorException e)
         {
-            Assert.assertEquals(String.format(CoalesceErrors.NOT_FOUND, "Template", "Name: " + key + " Source: " + key + " Version: " + key), e.getMessage());
+            Assert.assertEquals(String.format(CoalesceErrors.NOT_FOUND,
+                                              "Template",
+                                              "Name: " + key + " Source: " + key + " Version: " + key), e.getMessage());
         }
     }
 

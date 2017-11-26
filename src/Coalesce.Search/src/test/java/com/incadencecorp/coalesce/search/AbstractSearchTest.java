@@ -17,6 +17,7 @@
 
 package com.incadencecorp.coalesce.search;
 
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceStringField;
@@ -60,7 +61,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
 
     private boolean isInitialized = false;
 
-    protected abstract T createPersister();
+    protected abstract T createPersister() throws CoalescePersistorException;
 
     /**
      * Registers the entities used by these tests.

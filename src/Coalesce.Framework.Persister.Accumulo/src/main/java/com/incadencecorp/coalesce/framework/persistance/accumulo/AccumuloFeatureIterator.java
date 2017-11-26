@@ -529,7 +529,8 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
         }
         catch (IllegalAttributeException e)
         {
-            LOGGER.warn(String.format(CoalesceErrors.INVALID_INPUT_REASON, fieldName, e.getMessage()));
+
+            LOGGER.warn("{} => {}", feature.getName(), String.format(CoalesceErrors.INVALID_INPUT_REASON, fieldName, e.getMessage()));
             isGeoField = false;
         }
 

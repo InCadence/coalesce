@@ -113,7 +113,7 @@ public class FilePersisterImplTest extends AbstractCoalescePersistorTest<FilePer
     }
 
     @Override
-    protected FilePersistorImpl createPersister() throws Exception
+    protected FilePersistorImpl createPersister()
     {
         MemoryConnector connector = new MemoryConnector();
         connector.setSetting("test", CoalesceParameters.PARAM_DIRECTORY, DB.toUri().toString(), SettingType.ST_STRING);

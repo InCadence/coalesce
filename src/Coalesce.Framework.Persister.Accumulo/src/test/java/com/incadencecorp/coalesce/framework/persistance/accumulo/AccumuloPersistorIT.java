@@ -36,7 +36,7 @@ public class AccumuloPersistorIT extends AbstractAccumuloPersistorTest {
     }
 
     @Override
-    protected AccumuloPersistor createPersister() throws Exception
+    protected AccumuloPersistor createPersister() throws CoalescePersistorException
     {
         return new AccumuloPersistor();
     }

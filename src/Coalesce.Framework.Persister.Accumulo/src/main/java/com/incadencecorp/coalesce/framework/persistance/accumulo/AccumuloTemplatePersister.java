@@ -19,14 +19,16 @@ package com.incadencecorp.coalesce.framework.persistance.accumulo;
 
 import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.ICoalesceNormalizer;
+import com.incadencecorp.coalesce.api.ICoalesceResponseType;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
+import com.incadencecorp.coalesce.framework.CoalesceExecutorServiceImpl;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
+import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceStringResponseType;
 import com.incadencecorp.coalesce.framework.persistance.ICoalesceTemplatePersister;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
-import org.apache.accumulo.core.client.BatchWriter;
 import org.apache.accumulo.core.client.BatchWriterConfig;
 import org.apache.accumulo.core.client.MutationsRejectedException;
 import org.apache.accumulo.core.client.TableNotFoundException;
@@ -35,20 +37,24 @@ import org.apache.accumulo.core.data.Range;
 import org.apache.accumulo.core.data.Value;
 import org.apache.accumulo.core.security.Authorizations;
 import org.apache.hadoop.io.Text;
+import org.geotools.data.DataStore;
+import org.opengis.feature.simple.SimpleFeatureType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
  * @author Derek Clemenzi
  */
-public class AccumuloTemplatePersister implements ICoalesceTemplatePersister {
+public class AccumuloTemplatePersister extends CoalesceExecutorServiceImpl implements ICoalesceTemplatePersister {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloPersistor.class);
 
@@ -60,8 +66,26 @@ public class AccumuloTemplatePersister implements ICoalesceTemplatePersister {
     private static String coalesceTemplateColumnFamily = "Coalesce:Template";
     private static String coalesceTemplateXMLQualifier = "xml";
 
+    /**
+     * Default Constructor
+     *
+     * @param params
+     */
     public AccumuloTemplatePersister(Map<String, String> params)
     {
+        this(null, params);
+    }
+
+    /**
+     * Specify an external {@link ExecutorService} to use for internal threads.
+     *
+     * @param service
+     * @param params
+     */
+    public AccumuloTemplatePersister(ExecutorService service, Map<String, String> params)
+    {
+        super(service);
+
         this.params = params;
         LOGGER.debug("Zookeepers: {} ", params.get(AccumuloDataConnector.ZOOKEEPERS));
         LOGGER.debug("Instance: {} ", params.get(AccumuloDataConnector.INSTANCE_ID));
@@ -92,6 +116,11 @@ public class AccumuloTemplatePersister implements ICoalesceTemplatePersister {
         });
     }
 
+    /**
+     * Set the {@link ICoalesceNormalizer} to use when generating features.
+     *
+     * @param normalizer
+     */
     public void setNormalizer(ICoalesceNormalizer normalizer)
     {
         this.normalizer = normalizer;
@@ -100,18 +129,18 @@ public class AccumuloTemplatePersister implements ICoalesceTemplatePersister {
     @Override
     public void saveTemplate(CoalesceEntityTemplate... templates) throws CoalescePersistorException
     {
-        for (CoalesceEntityTemplate template : templates)
+        BatchWriterConfig config = new BatchWriterConfig();
+        config.setMaxLatency(1, TimeUnit.SECONDS);
+        config.setMaxMemory(10240);
+        // config.setDurability(Durability.DEFAULT); // Requires Accumulo 1.7
+        config.setMaxWriteThreads(10);
+
+        try (CloseableBatchWriter writer = new CloseableBatchWriter(getDataConnector().getDBConnector(),
+                                                                    AccumuloDataConnector.COALESCE_TEMPLATE_TABLE,
+                                                                    config))
         {
-            BatchWriter writer = null;
-
-            try
+            for (CoalesceEntityTemplate template : templates)
             {
-                BatchWriterConfig config = new BatchWriterConfig();
-                config.setMaxLatency(1, TimeUnit.SECONDS);
-                config.setMaxMemory(10240);
-                // config.setDurability(Durability.DEFAULT); // Requires Accumulo 1.7
-                config.setMaxWriteThreads(10);
-
                 /*
                  * SQL we are eumulating return conn.executeProcedure( "CoalesceEntityTemplate_InsertOrUpdate", new
                  * CoalesceParameter(UUID.randomUUID().toString(), Types.OTHER), new CoalesceParameter(template.getName()),
@@ -138,8 +167,6 @@ public class AccumuloTemplatePersister implements ICoalesceTemplatePersister {
 
                 template.setKey(templateId);
 
-                writer = getDataConnector().getDBConnector().createBatchWriter(AccumuloDataConnector.COALESCE_TEMPLATE_TABLE,
-                                                                               config);
                 Mutation m = new Mutation(templateId);
                 m.put(coalesceTemplateColumnFamily, coalesceTemplateXMLQualifier, new Value(xml.getBytes()));
                 m.put(coalesceTemplateColumnFamily, CoalesceEntity.ATTRIBUTE_LASTMODIFIED, new Value(time.getBytes()));
@@ -157,36 +184,27 @@ public class AccumuloTemplatePersister implements ICoalesceTemplatePersister {
                           new Value(templateId.getBytes()));
                 }
 
-                writer.addMutation(m);
-                writer.flush();
-                // Create the associated search features for this template if it is new
-                // TODO: Figure out what to do for updates to templates. What to do with the data?
-                //if (newTemplate)
+                try
                 {
-                    registerTemplate(template);
+                    writer.addMutation(m);
+                    writer.flush();
+                }
+                catch (MutationsRejectedException e)
+                {
+                    throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_SAVED,
+                                                                       "Template",
+                                                                       template.getName(),
+                                                                       e.getMessage()), e);
                 }
             }
-            catch (MutationsRejectedException | TableNotFoundException e)
-            {
-                throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_SAVED,
-                                                                   "Template",
-                                                                   template.getName(),
-                                                                   e.getMessage()), e);
-            }
-            finally
-            {
-                if (writer != null)
-                {
-                    try
-                    {
-                        writer.close();
-                    }
-                    catch (MutationsRejectedException e)
-                    {
-                        throw new CoalescePersistorException("(FAILED) Closing Writer", e);
-                    }
-                }
-            }
+        }
+        catch (TableNotFoundException | MutationsRejectedException e)
+        {
+            throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND,
+                                                               "Table",
+                                                               AccumuloDataConnector.COALESCE_TEMPLATE_TABLE,
+                                                               e.getMessage()), e);
+
         }
     }
 
@@ -195,11 +213,13 @@ public class AccumuloTemplatePersister implements ICoalesceTemplatePersister {
     {
         AccumuloRegisterIterator iterator = new AccumuloRegisterIterator(getNormalizer());
 
+        List<SimpleFeatureType> features = new ArrayList<>();
+
         for (CoalesceEntityTemplate template : templates)
         {
             try
             {
-                iterator.register(template, getDataConnector());
+                iterator.register(template, features);
             }
             catch (CoalesceException e)
             {
@@ -210,6 +230,41 @@ public class AccumuloTemplatePersister implements ICoalesceTemplatePersister {
             }
         }
 
+        DataStore datastore = getDataConnector().getGeoDataStore();
+        //*
+
+        AccumuloRegisterJob job = new AccumuloRegisterJob(datastore, features);
+        job.setExecutor(this);
+        ICoalesceResponseType<List<CoalesceStringResponseType>> results = job.call();
+
+        LOGGER.debug(results.getStatus().toString());
+        //*/
+/*
+        for (SimpleFeatureType feature : features)
+        {
+            try
+            {
+                if (AccumuloSettings.overrideFeatures() || datastore.getSchema(feature.getName()) == null)
+                {
+                    datastore.createSchema(feature);
+                    LOGGER.info("Created Schema: {}", feature.getName());
+
+                    if (LOGGER.isTraceEnabled())
+                    {
+                        for (AttributeType attr : feature.getTypes())
+                        {
+                            LOGGER.trace("\t{}", attr.getName());
+                        }
+                    }
+
+                }
+            }
+            catch (IOException e)
+            {
+                throw new CoalescePersistorException("(FAILED) Registering Feature: " + feature.getName(), e);
+            }
+        }
+//*/
     }
 
     @Override

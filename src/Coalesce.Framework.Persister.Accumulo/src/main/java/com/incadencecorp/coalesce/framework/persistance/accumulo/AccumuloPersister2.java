@@ -61,7 +61,6 @@ public class AccumuloPersister2 extends AccumuloTemplatePersister implements ICo
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloPersister2.class);
     private static final FilterFactory2 FF = CommonFactoryFinder.getFilterFactory2();
-    private static final CoalesceExecutorServiceImpl SERVICE = new CoalesceExecutorServiceImpl(null);
 
     private BatchWriterConfig config;
     private AccumuloFeatureIterator iterator = null;
@@ -160,7 +159,7 @@ public class AccumuloPersister2 extends AccumuloTemplatePersister implements ICo
         // TODO Check if it exists
         //*
         AccumuloJob job = new AccumuloJob(datastore, features);
-        job.setExecutor(SERVICE);
+        job.setExecutor(this);
         ICoalesceResponseType<List<CoalesceStringResponseType>> results = job.call();
 
         LOGGER.debug(results.getStatus().toString());

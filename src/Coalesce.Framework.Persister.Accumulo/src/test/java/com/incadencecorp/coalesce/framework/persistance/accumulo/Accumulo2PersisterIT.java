@@ -17,9 +17,7 @@
 
 package com.incadencecorp.coalesce.framework.persistance.accumulo;
 
-import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.persistance.AbstractCoalescePersistorTest;
-import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 
 import java.util.HashMap;
@@ -30,31 +28,28 @@ import java.util.Map;
  */
 public class Accumulo2PersisterIT extends AbstractCoalescePersistorTest<ICoalescePersistor> {
 
-    private AccumuloPersister2 persistor = null;
+    private boolean useMock = true;
 
     @Override
-    protected ICoalescePersistor createPersister() throws Exception
+    protected ICoalescePersistor createPersister()
     {
-        //if (persistor == null)
-        {
-            Map<String, String> parameters = new HashMap<>();
-            parameters.put(AccumuloDataConnector.INSTANCE_ID, AccumuloSettings.getDatabaseName());
-            parameters.put(AccumuloDataConnector.ZOOKEEPERS, AccumuloSettings.getZookeepers());
-            parameters.put(AccumuloDataConnector.USER, AccumuloSettings.getUserName());
-            parameters.put(AccumuloDataConnector.PASSWORD, AccumuloSettings.getUserPassword());
-            parameters.put(AccumuloDataConnector.TABLE_NAME, AccumuloDataConnector.COALESCE_SEARCH_TABLE);
-            parameters.put(AccumuloDataConnector.QUERY_THREADS, "1");
-            parameters.put(AccumuloDataConnector.RECORD_THREADS, "1");
-            parameters.put(AccumuloDataConnector.WRITE_THREADS, "1");
-            parameters.put(AccumuloDataConnector.GENERATE_STATS, "false");
-            parameters.put(AccumuloDataConnector.COLLECT_USAGE_STATS, "false");
-            parameters.put(AccumuloDataConnector.CACHING, "false");
-            parameters.put(AccumuloDataConnector.LOOSE_B_BOX, "false");
-            parameters.put(AccumuloDataConnector.USE_MOCK, "false");
+        AccumuloSettings.setOverrideFeatures(true);
 
-            persistor = new AccumuloPersister2(parameters);
-        }
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put(AccumuloDataConnector.INSTANCE_ID, AccumuloSettings.getDatabaseName());
+        parameters.put(AccumuloDataConnector.ZOOKEEPERS, AccumuloSettings.getZookeepers());
+        parameters.put(AccumuloDataConnector.USER, (useMock) ? "aa" : AccumuloSettings.getUserName());
+        parameters.put(AccumuloDataConnector.PASSWORD, AccumuloSettings.getUserPassword());
+        parameters.put(AccumuloDataConnector.TABLE_NAME, AccumuloDataConnector.COALESCE_SEARCH_TABLE);
+        parameters.put(AccumuloDataConnector.QUERY_THREADS, "1");
+        parameters.put(AccumuloDataConnector.RECORD_THREADS, "1");
+        parameters.put(AccumuloDataConnector.WRITE_THREADS, "1");
+        parameters.put(AccumuloDataConnector.GENERATE_STATS, "false");
+        parameters.put(AccumuloDataConnector.COLLECT_USAGE_STATS, "false");
+        parameters.put(AccumuloDataConnector.CACHING, "false");
+        parameters.put(AccumuloDataConnector.LOOSE_B_BOX, "false");
+        parameters.put(AccumuloDataConnector.USE_MOCK, Boolean.toString(useMock));
 
-        return persistor;
+        return new AccumuloPersister2(parameters);
     }
 }

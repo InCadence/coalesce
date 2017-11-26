@@ -51,7 +51,7 @@ public class AccumuloPersistorTest extends AbstractAccumuloPersistorTest {
     }
 
     @Override
-    protected AccumuloPersistor createPersister() throws Exception
+    protected AccumuloPersistor createPersister() throws CoalescePersistorException
     {
         //override to mockout AccumuloDataConnector
         return new AccumuloPersistor() {
