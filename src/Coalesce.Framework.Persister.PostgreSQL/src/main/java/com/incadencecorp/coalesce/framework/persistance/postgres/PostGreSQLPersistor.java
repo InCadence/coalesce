@@ -1410,13 +1410,13 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
     public EnumSet<EPersistorCapabilities> getCapabilities()
     {
         EnumSet<EPersistorCapabilities> enumSet = super.getCapabilities();
-        EnumSet<EPersistorCapabilities> newCapabilities = EnumSet.of(EPersistorCapabilities.GET_FIELD_VALUE,
-                                                                     EPersistorCapabilities.READ_TEMPLATES,
+        EnumSet<EPersistorCapabilities> newCapabilities = EnumSet.of(EPersistorCapabilities.READ_TEMPLATES,
                                                                      EPersistorCapabilities.UPDATE,
                                                                      EPersistorCapabilities.DELETE,
                                                                      EPersistorCapabilities.SEARCH,
                                                                      EPersistorCapabilities.SUPPORTS_BLOB,
                                                                      EPersistorCapabilities.GEOSPATIAL_SEARCH,
+                                                                     EPersistorCapabilities.TEMPORAL_SEARCH,
                                                                      EPersistorCapabilities.INDEX_FIELDS);
         if (enumSet != null)
         {

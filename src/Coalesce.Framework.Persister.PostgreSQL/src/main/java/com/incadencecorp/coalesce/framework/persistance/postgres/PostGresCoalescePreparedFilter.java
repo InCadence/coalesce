@@ -266,7 +266,8 @@ public class PostGresCoalescePreparedFilter extends PostgisPSFilterToSql impleme
             throw new FilterToSQLException("Can't encode to a null writer.");
         }
 
-        if (capability.fullySupports(filter))
+        // TODO Cannot add Temporal support to capabilities therefore this check has been commented out.
+        if (true)//capability.fullySupports(filter))
         {
             try
             {
