@@ -17,14 +17,14 @@
 
 package com.incadencecorp.coalesce.framework.persistance.derby;
 
-import java.util.List;
-
 import com.incadencecorp.coalesce.api.ICoalesceNormalizer;
 import com.incadencecorp.coalesce.api.IEnumerationProvider;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
 import com.incadencecorp.coalesce.framework.enumerationprovider.impl.ResourceEnumerationProviderImpl;
+
+import java.util.List;
 
 public class DerbyNormalizer implements ICoalesceNormalizer {
 
@@ -57,7 +57,7 @@ public class DerbyNormalizer implements ICoalesceNormalizer {
     @Override
     public String normalize(String name)
     {
-        return keywords.contains(name.toUpperCase())? "\"" + name + "\"": name;
+        return keywords.contains(name.toUpperCase()) ? "\"" + name + "\"" : name;
     }
 
 }

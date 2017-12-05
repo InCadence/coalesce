@@ -16,28 +16,7 @@
  -----------------------------------------------------------------------------*/
 package com.incadencecorp.coalesce.framework.persistance.derby;
 
-import java.io.IOException;
-import java.sql.Blob;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Types;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
-
-import javax.sql.rowset.CachedRowSet;
-import javax.sql.rowset.RowSetProvider;
-
 import com.incadencecorp.coalesce.api.CoalesceErrors;
-import org.geotools.data.Query;
-import org.geotools.data.jdbc.FilterToSQLException;
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
@@ -45,29 +24,29 @@ import com.incadencecorp.coalesce.common.helpers.CoalesceTableHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.framework.CoalesceSettings;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldHistory;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkageSection;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceObject;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecord;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
-import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
-import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
-import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
-import com.incadencecorp.coalesce.framework.persistance.CoalescePersistorBase;
-import com.incadencecorp.coalesce.framework.persistance.ElementMetaData;
-import com.incadencecorp.coalesce.framework.persistance.EntityMetaData;
-import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
+import com.incadencecorp.coalesce.framework.datamodel.*;
+import com.incadencecorp.coalesce.framework.persistance.*;
 import com.incadencecorp.coalesce.framework.persistance.postgres.CoalesceIndexInfo;
+import com.incadencecorp.coalesce.framework.persistance.postgres.mappers.StoredProcedureArgumentMapper;
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 import com.incadencecorp.coalesce.search.api.SearchResults;
 import com.incadencecorp.coalesce.search.factory.CoalesceFeatureTypeFactory;
+import org.geotools.data.Query;
+import org.geotools.data.jdbc.FilterToSQLException;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
+
+import javax.sql.rowset.CachedRowSet;
+import javax.sql.rowset.RowSetProvider;
+import java.io.IOException;
+import java.sql.*;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Map;
 
 public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSearchPersistor {
 
@@ -181,7 +160,7 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
      * parameters.
      *
      * @param coalesceObject the Coalesce object to be deleted
-     * @param conn is the PostGresDataConnector database connection
+     * @param conn           is the PostGresDataConnector database connection
      * @return True = Successful delete
      * @throws SQLException
      */
@@ -206,7 +185,8 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
 
         if (coalesceObject.isFlatten())
         {
-            switch (coalesceObject.getStatus()) {
+            switch (coalesceObject.getStatus())
+            {
             case READONLY:
             case ACTIVE:
                 // Persist Object
@@ -249,7 +229,7 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
      * Adds or Updates a Coalesce object that matches the given parameters.
      *
      * @param coalesceObject the Coalesce object to be added or updated
-     * @param conn is the PostGresDataConnector database connection
+     * @param conn           is the PostGresDataConnector database connection
      * @return isSuccessful = True = Successful add/update operation.
      * @throws SQLException
      */
@@ -257,7 +237,8 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
     {
         boolean isSuccessful = true;
 
-        switch (coalesceObject.getType()) {
+        switch (coalesceObject.getType())
+        {
         case "entity":
 
             // isSuccessful = checkLastModified(coalesceObject, conn);
@@ -333,7 +314,7 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
      * Adds or updates map table entry for a given element.
      *
      * @param coalesceObject the Coalesce object to be added or updated
-     * @param conn is the SQLServerDataConnector database connection
+     * @param conn           is the SQLServerDataConnector database connection
      * @return True if successfully added/updated.
      * @throws SQLException
      */
@@ -365,7 +346,7 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
      * Adds or Updates a Coalesce entity that matches the given parameters.
      *
      * @param entity the XsdEntity to be added or updated
-     * @param conn is the PostGresDataConnector database connection
+     * @param conn   is the PostGresDataConnector database connection
      * @return True = No Update required.
      * @throws SQLException
      */
@@ -392,7 +373,7 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
      * Adds or Updates a Coalesce section that matches the given parameters.
      *
      * @param section the XsdSection to be added or updated
-     * @param conn is the PostGresDataConnector database connection
+     * @param conn    is the PostGresDataConnector database connection
      * @return True = No Update required.
      * @throws SQLException
      */
@@ -406,7 +387,7 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
      * Adds or Updates a Coalesce recordset that matches the given parameters.
      *
      * @param recordset the XsdRecordset to be added or updated
-     * @param conn is the PostGresDataConnector database connection
+     * @param conn      is the PostGresDataConnector database connection
      * @return True = No Update required.
      * @throws SQLException
      */
@@ -439,26 +420,18 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
                         List<CoalesceParameter> parameters = new ArrayList<CoalesceParameter>();
 
                         // Add required columns
-                        parameters.add(new CoalesceParameter("objectkey",
-                                                             record.getKey(),
-                                                             ECoalesceFieldDataTypes.STRING_TYPE.ordinal()));
-                        parameters.add(new CoalesceParameter("entitykey",
-                                                             info.getEntity().getKey(),
-                                                             ECoalesceFieldDataTypes.STRING_TYPE.ordinal()));
-                        parameters.add(new CoalesceParameter("entityname",
-                                                             info.getEntity().getName(),
-                                                             ECoalesceFieldDataTypes.STRING_TYPE.ordinal()));
-                        parameters.add(new CoalesceParameter("entitysource",
-                                                             info.getEntity().getSource(),
-                                                             ECoalesceFieldDataTypes.STRING_TYPE.ordinal()));
-                        parameters.add(new CoalesceParameter("entitytype",
-                                                             info.getEntity().getVersion(),
-                                                             ECoalesceFieldDataTypes.STRING_TYPE.ordinal()));
+                        parameters.add(new CoalesceParameter("objectkey", record.getKey(), Types.OTHER));
+                        parameters.add(new CoalesceParameter("entitykey", info.getEntity().getKey(), Types.OTHER));
+                        parameters.add(new CoalesceParameter("entityname", info.getEntity().getName(), Types.CHAR));
+                        parameters.add(new CoalesceParameter("entitysource", info.getEntity().getSource(), Types.CHAR));
+                        parameters.add(new CoalesceParameter("entitytype", info.getEntity().getVersion(), Types.CHAR));
 
                         // Get Table's Columns (Field order cannot be guaranteed
                         // because the
                         // entities could potentially be modified outside of
                         // Coalesce)
+
+                        StoredProcedureArgumentMapper mapper = new StoredProcedureArgumentMapper();
 
                         for (String column : derbyConn.getColumnNames(getSchema(), info.getTableName()))
                         {
@@ -474,6 +447,12 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
                                 if (field.isFlatten() && !StringHelper.isNullOrEmpty(field.getBaseValue()))
                                 {
                                     value = field.getBaseValue();
+
+                                    if (field.getDataType() == ECoalesceFieldDataTypes.DATE_TIME_TYPE)
+                                    {
+                                        value = JodaDateTimeHelper.toMySQLDateTime(JodaDateTimeHelper.fromXmlDateTimeUTC(
+                                                value));
+                                    }
                                 }
                                 else
                                 {
@@ -483,7 +462,7 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
 
                                 if (value != null)
                                 {
-                                    parameters.add(new CoalesceParameter(column, value, field.getDataType().ordinal()));
+                                    parameters.add(new CoalesceParameter(column, value, mapper.map(field.getDataType())));
                                 }
 
                             }
@@ -499,7 +478,7 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
 
                             for (CoalesceParameter param : parameters)
                             {
-                                LOGGER.debug(param.getValue());
+                                LOGGER.debug("{} : {}", param.getValue(), param.getType());
                             }
                         }
 
@@ -512,8 +491,9 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
                         }
                         catch (CoalesceException ce)
                         {
-                            throw new SQLException("FAILED to insert Record for " + getSchema() + "." + info.getTableName()
-                                    + ", REASON: " + ce.getCause().getLocalizedMessage(), ce);
+                            throw new SQLException(
+                                    "FAILED to insert Record for " + getSchema() + "." + info.getTableName() + ", REASON: "
+                                            + ce.getCause().getLocalizedMessage(), ce);
                         }
 
                     }
@@ -544,7 +524,7 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
      * parameters.
      *
      * @param fieldDefinition the XsdFieldDefinition to be added or updated
-     * @param conn is the PostGresDataConnector database connection
+     * @param conn            is the PostGresDataConnector database connection
      * @return True = No Update required.
      * @throws SQLException
      */
@@ -558,7 +538,7 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
      * Adds or Updates a Coalesce record that matches the given parameters.
      *
      * @param record the XsdRecord to be added or updated
-     * @param conn is the PostGresDataConnector database connection
+     * @param conn   is the PostGresDataConnector database connection
      * @return True = No Update required.
      * @throws SQLException
      */
@@ -572,7 +552,7 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
      * Adds or Updates a Coalesce field that matches the given parameters.
      *
      * @param field the XsdField to be added or updated
-     * @param conn is the PostGresDataConnector database connection
+     * @param conn  is the PostGresDataConnector database connection
      * @return True = No Update required.
      * @throws SQLException
      */
@@ -587,7 +567,7 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
      * parameters.
      *
      * @param fieldHistory the XsdFieldHistory to be added or updated
-     * @param conn is the PostGresDataConnector database connection
+     * @param conn         is the PostGresDataConnector database connection
      * @return True = No Update required.
      * @throws SQLException
      */
@@ -603,7 +583,7 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
      * parameters.
      *
      * @param linkageSection the XsdLinkageSection to be added or updated
-     * @param conn is the PostGresDataConnector database connection
+     * @param conn           is the PostGresDataConnector database connection
      * @return True = No Update required.
      * @throws SQLException
      */
@@ -618,7 +598,7 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
      * Adds or Updates a Coalesce linkage that matches the given parameters.
      *
      * @param linkage the XsdLinkage to be added or updated
-     * @param conn is the PostGresDataConnector database connection
+     * @param conn    is the PostGresDataConnector database connection
      * @return True = No Update required.
      * @throws SQLException
      */
@@ -638,7 +618,7 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
      * Returns the EntityMetaData for the Coalesce entity that matches the given
      * parameters.
      *
-     * @param key primary key of the Coalesce entity
+     * @param key  primary key of the Coalesce entity
      * @param conn is the PostGresDataConnector database connection
      * @return metaData the EntityMetaData for the Coalesce entity.
      * @throws SQLException
@@ -648,8 +628,9 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
         EntityMetaData metaData = null;
 
         // Execute Query
-        ResultSet results = conn.executeQuery("SELECT EntityId,EntityIdType,ObjectKey FROM " + getSchemaPrefix()
-                + "CoalesceEntity WHERE ObjectKey=?", new CoalesceParameter(key, Types.CHAR));
+        ResultSet results = conn.executeQuery(
+                "SELECT EntityId,EntityIdType,ObjectKey FROM " + getSchemaPrefix() + "CoalesceEntity WHERE ObjectKey=?",
+                new CoalesceParameter(key, Types.CHAR));
         // Get Results
         while (results.next())
         {
@@ -673,8 +654,8 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
      * the same objects value in the database.
      *
      * @param coalesceObject the Coalesce object to have it's last modified date
-     *            checked.
-     * @param conn is the PostGresDataConnector database connection
+     *                       checked.
+     * @param conn           is the PostGresDataConnector database connection
      * @return False = Out of Date
      * @throws SQLException
      */
@@ -768,8 +749,9 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
 
             byte[] binaryArray = null;
 
-            ResultSet results = conn.executeQuery("SELECT BinaryObject FROM " + getSchemaPrefix()
-                    + "CoalesceFieldBinaryData WHERE ObjectKey=?", new CoalesceParameter(key, Types.CHAR));
+            ResultSet results = conn.executeQuery(
+                    "SELECT BinaryObject FROM " + getSchemaPrefix() + "CoalesceFieldBinaryData WHERE ObjectKey=?",
+                    new CoalesceParameter(key, Types.CHAR));
 
             // Get Results
             if (results != null && results.first())
@@ -830,8 +812,9 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
         {
             String value = null;
 
-            ResultSet results = conn.executeQuery("SELECT value FROM " + getSchemaPrefix()
-                    + "CoalesceField WHERE ObjectKey =?", new CoalesceParameter(fieldKey, Types.CHAR));
+            ResultSet results = conn.executeQuery(
+                    "SELECT value FROM " + getSchemaPrefix() + "CoalesceField WHERE ObjectKey =?",
+                    new CoalesceParameter(fieldKey, Types.CHAR));
 
             while (results.next())
             {
@@ -900,10 +883,10 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
         {
             String value = null;
 
-            ResultSet results = conn.executeQuery("SELECT EntityXml FROM " + getSchemaPrefix()
-                    + "CoalesceEntity WHERE EntityId=? AND EntityIdType=?",
-                                                  new CoalesceParameter(entityId),
-                                                  new CoalesceParameter(entityIdType));
+            ResultSet results = conn.executeQuery(
+                    "SELECT EntityXml FROM " + getSchemaPrefix() + "CoalesceEntity WHERE EntityId=? AND EntityIdType=?",
+                    new CoalesceParameter(entityId),
+                    new CoalesceParameter(entityIdType));
 
             while (results.next())
             {
@@ -929,7 +912,7 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
             String value = null;
 
             ResultSet results = conn.executeQuery("SELECT EntityXml FROM " + getSchemaPrefix()
-                    + "CoalesceEntity WHERE Name=? AND EntityId=? AND EntityIdType=?",
+                                                          + "CoalesceEntity WHERE Name=? AND EntityId=? AND EntityIdType=?",
                                                   new CoalesceParameter(name),
                                                   new CoalesceParameter(entityId),
                                                   new CoalesceParameter(entityIdType));
@@ -960,8 +943,9 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
         String tableName = CoalesceTableHelper.getTableNameForObjectType(objectType);
         String dateValue = null;
 
-        ResultSet results = conn.executeQuery("SELECT LastModified FROM " + getSchemaPrefix() + tableName
-                + " WHERE ObjectKey=?", new CoalesceParameter(key.trim(), Types.VARCHAR));
+        ResultSet results = conn.executeQuery(
+                "SELECT LastModified FROM " + getSchemaPrefix() + tableName + " WHERE ObjectKey=?",
+                new CoalesceParameter(key.trim(), Types.VARCHAR));
         ResultSetMetaData resultsmd = results.getMetaData();
 
         // JODA Function DateTimeFormat will adjust for the Server timezone when
@@ -985,7 +969,7 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
      * Sets the active Coalesce field objects matching the parameters given.
      *
      * @param coalesceObject the Coalesce field object.
-     * @param conn is the PostGresDataConnector database connection
+     * @param conn           is the PostGresDataConnector database connection
      * @throws SQLException ,Exception,CoalescePersistorException
      */
     protected boolean updateFileContent(CoalesceObject coalesceObject, CoalesceDataConnectorBase conn) throws SQLException
@@ -1034,7 +1018,8 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
         }
         else
         {
-            sql = "SELECT name, ParentKey, ParentType FROM ".concat(getSchemaPrefix()).concat(tableName).concat(" WHERE ObjectKey=?");
+            sql = "SELECT name, ParentKey, ParentType FROM ".concat(getSchemaPrefix()).concat(tableName).concat(
+                    " WHERE ObjectKey=?");
         }
 
         ResultSet results = conn.executeQuery(sql, new CoalesceParameter(key.trim(), Types.CHAR));
@@ -1081,7 +1066,7 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
             String value = null;
 
             ResultSet results = conn.executeQuery("SELECT TemplateKey FROM " + getSchemaPrefix()
-                    + "CoalesceEntityTemplate WHERE Name=? and Source=? and Version=?",
+                                                          + "CoalesceEntityTemplate WHERE Name=? and Source=? and Version=?",
                                                   new CoalesceParameter(name),
                                                   new CoalesceParameter(source),
                                                   new CoalesceParameter(version));
@@ -1123,8 +1108,9 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
         {
             String xml = null;
 
-            ResultSet results = conn.executeQuery("SELECT TemplateXml FROM " + getSchemaPrefix()
-                    + "CoalesceEntityTemplate WHERE TemplateKey=?", new CoalesceParameter(key, Types.CHAR));
+            ResultSet results = conn.executeQuery(
+                    "SELECT TemplateXml FROM " + getSchemaPrefix() + "CoalesceEntityTemplate WHERE TemplateKey=?",
+                    new CoalesceParameter(key, Types.CHAR));
 
             if (results.next())
             {
@@ -1145,14 +1131,15 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
     }
 
     @Override
-    public CoalesceEntityTemplate getEntityTemplate(String name, String source, String version) throws CoalescePersistorException
+    public CoalesceEntityTemplate getEntityTemplate(String name, String source, String version)
+            throws CoalescePersistorException
     {
         try (CoalesceDataConnectorBase conn = this.getDataConnector())
         {
             String xml = null;
 
             ResultSet results = conn.executeQuery("SELECT TemplateXml FROM " + getSchemaPrefix()
-                    + "CoalesceEntityTemplate WHERE Name=? and Source=? and Version=?",
+                                                          + "CoalesceEntityTemplate WHERE Name=? and Source=? and Version=?",
                                                   new CoalesceParameter(name),
                                                   new CoalesceParameter(source),
                                                   new CoalesceParameter(version));
@@ -1164,20 +1151,31 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
 
             if (xml == null)
             {
-                throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", "Name: " + name + " Source: " + source + " Version: " + version));
+                throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND,
+                                                                   "Template",
+                                                                   "Name: " + name + " Source: " + source + " Version: "
+                                                                           + version));
             }
 
             return CoalesceEntityTemplate.create(xml);
         }
         catch (SQLException | SAXException | IOException e)
         {
-            throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", "Name: " + name + " Source: " + source + " Version: " + version), e);
+            throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND,
+                                                               "Template",
+                                                               "Name: " + name + " Source: " + source + " Version: "
+                                                                       + version), e);
         }
     }
 
     @Override
     public SearchResults search(Query query) throws CoalescePersistorException
     {
+        if (query.getStartIndex() == null)
+        {
+            query.setStartIndex(1);
+        }
+
         SearchResults results = new SearchResults();
         results.setPage(query.getStartIndex());
         results.setPageSize(query.getMaxFeatures());
@@ -1274,7 +1272,6 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
 
     private List<CoalesceParameter> getParameters(DerbyCoalescePreparedFilter filter) throws ParseException
     {
-
         List<CoalesceParameter> parameters = new ArrayList<CoalesceParameter>();
 
         // Add Parameters
@@ -1283,20 +1280,7 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
             parameters.add(new CoalesceParameter(value.toString(), Types.VARCHAR));
         }
 
-        // if (!filter.isIgnoreSecurity())
-        // {
-        //
-        // for (EMasks mask : EMasks.values())
-        // {
-        // parameters.add(new
-        // CoalesceParameter(SecurityBitmaskHelper.toString(code.getMask(mask))));
-        // }
-        //
-        // parameters.add(new CoalesceParameter(userId, Types.CHAR));
-        // }
-
         return parameters;
-
     }
 
 }

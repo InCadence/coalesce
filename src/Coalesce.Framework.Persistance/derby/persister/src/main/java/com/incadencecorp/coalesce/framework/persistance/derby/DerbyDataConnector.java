@@ -16,14 +16,7 @@
  -----------------------------------------------------------------------------*/
 package com.incadencecorp.coalesce.framework.persistance.derby;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -304,50 +297,92 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
             throws CoalesceException
     {
         boolean success = false;
-
-        StringBuilder sql = new StringBuilder("insert into ").append(schema).append(".").append(NORMALIZER.normalize(tableName)).append(" (");
         boolean first = true;
-        for (CoalesceParameter parameter : parameters)
-        {
-            if (!first)
-            {
-                sql.append(",");
-            }
-            else
-            {
-                first = false;
-            }
-            sql.append(NORMALIZER.normalize(parameter.getName()));
-        }
-        sql.append(") values (");
-        first = true;
-        for (CoalesceParameter parameter : parameters)
-        {
-            if (!first)
-            {
-                sql.append(",");
-            }
-            else
-            {
-                first = false;
-            }
-            if (parameter.getType() == ECoalesceFieldDataTypes.STRING_TYPE.ordinal()
-                    || parameter.getType() == ECoalesceFieldDataTypes.GUID_TYPE.ordinal())
-            {
-                sql.append(quote(parameter.getValue()));
-            }
-            else
-            {
-                sql.append(parameter.getValue());
-            }
-        }
-        sql.append(")");
-
         try
         {
+
+        Connection conn = this.getConnection();
+        Statement stmt = conn.createStatement();
+        ResultSet result = null;
+        result = stmt.executeQuery("select objectkey from " + schema + "." + NORMALIZER.normalize(tableName) + " where objectkey='" + parameters.get(0).getValue() + "'");
+
+        StringBuilder sql = new StringBuilder();
+
+        if (!result.next())
+        {
+            // insert
+            sql.append("insert into ").append(schema).append(".").append(NORMALIZER.normalize(tableName)).append(" (");
+            first = true;
+            for (CoalesceParameter parameter : parameters)
+            {
+                if (!first)
+                {
+                    sql.append(",");
+                }
+                else
+                {
+                    first = false;
+                }
+                sql.append(NORMALIZER.normalize(parameter.getName()));
+            }
+            sql.append(") values (");
+            first = true;
+            for (CoalesceParameter parameter : parameters)
+            {
+                if (!first)
+                {
+                    sql.append(",");
+                }
+                else
+                {
+                    first = false;
+                }
+                if (parameter.getType() == Types.OTHER
+                        || parameter.getType() == Types.VARCHAR || parameter.getType() == Types.CHAR )
+                {
+                    sql.append(quote(parameter.getValue()));
+                }
+                else
+                {
+                    sql.append(parameter.getValue());
+                }
+            }
+            sql.append(")");
+        }
+        else
+        {
+            // update
+            sql.append("update ").append(schema).append(".").append(NORMALIZER.normalize(tableName)).append(" set ");
+            for (CoalesceParameter parameter : parameters)
+            {
+                if (!first)
+                {
+                    sql.append(",");
+                }
+                else
+                {
+                    first = false;
+                }
+                sql.append(NORMALIZER.normalize(parameter.getName())).append(" = ");
+
+                if (parameter.getType() == Types.OTHER
+                        || parameter.getType() == Types.VARCHAR || parameter.getType() == Types.CHAR )
+                {
+                    sql.append(quote(parameter.getValue()));
+                }
+                else
+                {
+                    sql.append(parameter.getValue());
+                }
+            }
+
+            sql.append(" WHERE objectkey = ").append(quote(parameters.get(0).getValue()));
+        }
+
+        //*/
+
             LOGGER.trace("Insert Record SQL: " + sql);
-            Connection conn = this.getConnection();
-            Statement stmt = conn.createStatement();
+            stmt = conn.createStatement();
             stmt.executeUpdate(sql.toString());
             success = true;
         }

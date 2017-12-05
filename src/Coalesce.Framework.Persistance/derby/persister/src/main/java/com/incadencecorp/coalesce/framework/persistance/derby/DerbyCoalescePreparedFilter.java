@@ -610,36 +610,16 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
     @Override
     protected void visitBinaryComparisonOperator(BinaryComparisonOperator filter, Object extraData) throws RuntimeException
     {
-
         Expression left = filter.getExpression1();
         Expression right = filter.getExpression2();
         Class<?> leftContext = null, rightContext = null;
 
         if (left instanceof PropertyName)
         {
-
-            left = filterFactory.property(normalize(((PropertyName) left).getPropertyName(), true));
-
-            AttributeDescriptor attType = (AttributeDescriptor) left.evaluate(featureType);
-            if (attType != null)
-            {
-                rightContext = attType.getType().getBinding();
-            }
-
             currentProperty = ((PropertyName) left).getPropertyName();
+            rightContext = getPropertyContext((PropertyName) left);
 
-            if (rightContext != null)
-            {
-                if (LOGGER.isDebugEnabled())
-                {
-                    LOGGER.debug("Property ({}) Context ({})", currentProperty, rightContext.toString());
-                }
-            }
-            else
-            {
-                LOGGER.warn("Property ({}) Context (UNKNOWN)", currentProperty);
-            }
-
+            left = filterFactory.property(normalize(((PropertyName) left).getPropertyName(), false));
         }
         else if (left instanceof Function)
         {
@@ -653,29 +633,10 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
 
         if (right instanceof PropertyName)
         {
+            currentProperty = ((PropertyName) right).getPropertyName();
+            rightContext = getPropertyContext((PropertyName) right);
 
             right = filterFactory.property(normalize(((PropertyName) right).getPropertyName(), true));
-
-            AttributeDescriptor attType = (AttributeDescriptor) right.evaluate(featureType);
-            if (attType != null)
-            {
-                leftContext = attType.getType().getBinding();
-            }
-
-            currentProperty = ((PropertyName) right).getPropertyName();
-
-            if (leftContext != null)
-            {
-                if (LOGGER.isDebugEnabled())
-                {
-                    LOGGER.debug("Property ({}) Context ({})", currentProperty, leftContext.toString());
-                }
-            }
-            else
-            {
-                LOGGER.warn("Property ({}) Context (UNKNOWN)", currentProperty);
-            }
-
         }
         else if (right instanceof Function)
         {
@@ -754,6 +715,31 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
         {
             throw new RuntimeException(IO_ERROR, ioe);
         }
+    }
+
+    private Class<?> getPropertyContext(PropertyName name) {
+
+        AttributeDescriptor attType = (AttributeDescriptor) filterFactory.property(NORMALIZER.normalize(name.getPropertyName())).evaluate(featureType);
+        Class<?> context = null;
+
+        if (attType != null)
+        {
+            context = attType.getType().getBinding();
+        }
+
+        if (context != null)
+        {
+            if (LOGGER.isDebugEnabled())
+            {
+                LOGGER.debug("Property ({}) Context ({})", attType.getLocalName(), context.toString());
+            }
+        }
+        else
+        {
+            LOGGER.warn("Property ({}) Context (UNKNOWN)", name.getPropertyName());
+        }
+
+        return context;
     }
 
     /**
@@ -914,7 +900,7 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
 
             if (LOGGER.isTraceEnabled())
             {
-                LOGGER.trace("Checking Literal Value Class: ({})", literalValue.getClass());
+                LOGGER.trace("Checking Literal Value ({}) Class: ({})", literalValue, literalValue.getClass());
             }
 
             if (String.class.isAssignableFrom(literalValue.getClass()))
@@ -1243,7 +1229,7 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
         {
             for (String column : propertyNameList)
             {
-                String normalizedColumn = column.replaceAll("coalesce\\.|[.]", "");
+                String normalizedColumn = column.replaceAll("coalesce\\.|[.\"]", "");
                 
                 if (isEnumeration(column))
                 {
@@ -1320,7 +1306,7 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
                 tablename = tablenameSchema;
             }
 
-            name = tablename + DOT + propertyName.toLowerCase();
+            name = tablename + DOT + NORMALIZER.normalize(propertyName);
 
         }
 
