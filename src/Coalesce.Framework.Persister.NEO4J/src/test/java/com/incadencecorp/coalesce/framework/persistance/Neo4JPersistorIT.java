@@ -63,7 +63,7 @@ public class Neo4JPersistorIT extends AbstractCoalescePersistorTest<Neo4JPersist
     @Override
     protected Neo4JPersistor createPersister()
     {
-        Neo4jSearchPersister persister = new Neo4jSearchPersister();
+        Neo4JPersistor persister = new Neo4JPersistor();
         persister.setIncludeXml(true);
         return persister;
     }
