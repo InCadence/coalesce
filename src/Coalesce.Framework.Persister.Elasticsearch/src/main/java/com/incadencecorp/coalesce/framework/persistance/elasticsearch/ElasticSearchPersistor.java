@@ -15,7 +15,10 @@ import java.util.Map;
 
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.joda.time.DateTime;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -117,6 +120,37 @@ public class ElasticSearchPersistor extends CoalescePersistorBase {
     
     public class Views {
         public class Entity {
+        }
+    }
+    
+    public void searchAll() {
+
+        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector(getSchemaPrefix()))
+        {
+	    	TransportClient client = conn.getDBConnector();
+	    	SearchResponse response = client.prepareSearch().get();
+	    	System.out.println(response.toString());
+        } catch (Exception e) {
+        	e.printStackTrace();
+        }
+    }
+    
+    public void searchSpecific() {
+    	
+        try (ElasticSearchDataConnector conn = new ElasticSearchDataConnector(getSchemaPrefix()))
+        {
+	    	TransportClient client = conn.getDBConnector();
+	    	SearchResponse response = client.prepareSearch("twitter4")
+	    	        .setTypes("tweet")
+	    	        //.setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
+	    	        //.setQuery(QueryBuilders.termQuery("multi", "test"))                 // Query
+	    	        //.setPostFilter(QueryBuilders.rangeQuery("age").from(12).to(18))     // Filter
+	    	        //.setFrom(0).setSize(60).setExplain(true)
+	    	        .get();
+
+	    	System.out.println(response.toString());
+        } catch (Exception e) {
+        	e.printStackTrace();
         }
     }
 

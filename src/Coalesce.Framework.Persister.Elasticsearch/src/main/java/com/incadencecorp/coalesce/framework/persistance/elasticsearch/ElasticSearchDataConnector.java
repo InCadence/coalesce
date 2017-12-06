@@ -131,10 +131,10 @@ public class ElasticSearchDataConnector extends CoalesceDataConnectorBase {
 	        mapper.enable(MapperFeature.DEFAULT_VIEW_INCLUSION);
 			
 			try {
-				IndexResponse response = client.prepareIndex("twitter", "tweet", "1")
+				IndexResponse response = client.prepareIndex("twitter4", "tweet", "1")
 				        .setSource(jsonBuilder()
 				                .startObject()
-				                    .field("user", "kimchy")
+				                    .field("user", "kimchyDude")
 				                    .field("postDate", new Date())
 				                    .field("message", "trying out Elasticsearch")
 				                .endObject()

@@ -180,9 +180,21 @@ public class ElasticSearchPersistorIT extends CoalescePersistorBaseTest {
     @Test
     public void testGet() throws Exception {
     	ElasticSearchPersistor persistor = new ElasticSearchPersistor();
-    	List<String> keys = persistor.getCoalesceEntityKeysForEntityId("twitter", "tweet", "1", null);
+    	List<String> keys = persistor.getCoalesceEntityKeysForEntityId("twitter4", "tweet", "1", null);
     	
     	System.out.println(keys.toString());
+    }
+    
+    @Test
+    public void testSearchAll() throws Exception {
+    	ElasticSearchPersistor persistor = new ElasticSearchPersistor();
+    	persistor.searchAll();
+    }
+    
+    @Test
+    public void testSearchSpecific() throws Exception {
+    	ElasticSearchPersistor persistor = new ElasticSearchPersistor();
+    	persistor.searchSpecific();
     }
 
 }
