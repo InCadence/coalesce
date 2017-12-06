@@ -17,6 +17,7 @@
 
 package com.incadencecorp.coalesce.framework.persistance.accumulo;
 
+import com.drew.lang.StringUtil;
 import com.incadencecorp.coalesce.api.ICoalesceNormalizer;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.datamodel.*;
@@ -28,8 +29,6 @@ import org.geotools.factory.Hints;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.filter.expression.PropertyName;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.List;
@@ -40,41 +39,35 @@ import java.util.Map;
  */
 public class AccumuloRegisterIterator extends CoalesceIterator<List<SimpleFeatureType>> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloRegisterIterator.class);
+    private final String ENTITY_KEY_COLUMN_NAME;
+    private final String ENTITY_NAME_COLUMN_NAME;
+    private final String ENTITY_SOURCE_COLUMN_NAME;
+    private final String ENTITY_VERSION_COLUMN_NAME;
+    private final String ENTITY_ID_COLUMN_NAME;
+    private final String ENTITY_ID_TYPE_COLUMN_NAME;
+    private final String ENTITY_DATE_CREATED_COLUMN_NAME;
+    private final String ENTITY_LAST_MODIFIED_COLUMN_NAME;
+    private final String ENTITY_TITLE_COLUMN_NAME;
+    private final String ENTITY_STATUS_COLUMN_NAME;
+    private final String ENTITY_SCOPE_COLUMN_NAME;
+    private final String ENTITY_CREATOR_COLUMN_NAME;
+    private final String ENTITY_TYPE_COLUMN_NAME;
 
-    public static final String ENTITY_KEY_COLUMN_NAME = normalize(CoalescePropertyFactory.getEntityKey());
-    public static final String ENTITY_NAME_COLUMN_NAME = normalize(CoalescePropertyFactory.getName());
-    public static final String ENTITY_SOURCE_COLUMN_NAME = normalize(CoalescePropertyFactory.getSource());
-    public static final String ENTITY_VERSION_COLUMN_NAME = normalize(CoalescePropertyFactory.getVersion());
-    public static final String ENTITY_ID_COLUMN_NAME = normalize(CoalescePropertyFactory.getEntityId());
-    public static final String ENTITY_ID_TYPE_COLUMN_NAME = normalize(CoalescePropertyFactory.getEntityIdType());
-    public static final String ENTITY_DATE_CREATED_COLUMN_NAME = normalize(CoalescePropertyFactory.getDateCreated());
-    public static final String ENTITY_LAST_MODIFIED_COLUMN_NAME = normalize(CoalescePropertyFactory.getLastModified());
-    public static final String ENTITY_TITLE_COLUMN_NAME = normalize(CoalescePropertyFactory.getEntityTitle());
-    public static final String ENTITY_STATUS_COLUMN_NAME = normalize(CoalescePropertyFactory.getEntityStatus());
-    public static final String ENTITY_SCOPE_COLUMN_NAME = normalize(CoalescePropertyFactory.getEntityScope());
-    public static final String ENTITY_CREATOR_COLUMN_NAME = normalize(CoalescePropertyFactory.getEntityCreator());
-    public static final String ENTITY_TYPE_COLUMN_NAME = normalize(CoalescePropertyFactory.getEntityType());
-
-    public static final String LINKAGE_KEY_COLUMN_NAME = normalize(CoalescePropertyFactory.getEntityKey());
-    public static final String LINKAGE_ENTITY1_KEY_COLUMN_NAME = normalize(CoalescePropertyFactory.getEntityKey());
-    public static final String LINKAGE_ENTITY1_NAME_COLUMN_NAME = normalize(CoalescePropertyFactory.getName());
-    public static final String LINKAGE_ENTITY1_SOURCE_COLUMN_NAME = normalize(CoalescePropertyFactory.getSource());
-    public static final String LINKAGE_ENTITY1_VERSION_COLUMN_NAME = normalize(CoalescePropertyFactory.getVersion());
-    public static final String LINKAGE_ENTITY2_KEY_COLUMN_NAME = normalize(CoalescePropertyFactory.getLinkageEntityKey());
-    public static final String LINKAGE_ENTITY2_NAME_COLUMN_NAME = normalize(CoalescePropertyFactory.getLinkageName());
-    public static final String LINKAGE_ENTITY2_SOURCE_COLUMN_NAME = normalize(CoalescePropertyFactory.getLinkageSource());
-    public static final String LINKAGE_ENTITY2_VERSION_COLUMN_NAME = normalize(CoalescePropertyFactory.getLinkageVersion());
-    public static final String LINKAGE_LAST_MODIFIED_COLUMN_NAME = normalize(CoalescePropertyFactory.getLastModified());
-    public static final String LINKAGE_LABEL_COLUMN_NAME = normalize(CoalescePropertyFactory.getLinkageLabel());
-    public static final String LINKAGE_LINK_TYPE_COLUMN_NAME = normalize(CoalescePropertyFactory.getLinkageType());
+    private final String LINKAGE_KEY_COLUMN_NAME;
+    private final String LINKAGE_ENTITY1_KEY_COLUMN_NAME;
+    private final String LINKAGE_ENTITY1_NAME_COLUMN_NAME;
+    private final String LINKAGE_ENTITY1_SOURCE_COLUMN_NAME;
+    private final String LINKAGE_ENTITY1_VERSION_COLUMN_NAME;
+    private final String LINKAGE_ENTITY2_KEY_COLUMN_NAME;
+    private final String LINKAGE_ENTITY2_NAME_COLUMN_NAME;
+    private final String LINKAGE_ENTITY2_SOURCE_COLUMN_NAME;
+    private final String LINKAGE_ENTITY2_VERSION_COLUMN_NAME;
+    private final String LINKAGE_LAST_MODIFIED_COLUMN_NAME;
+    private final String LINKAGE_LABEL_COLUMN_NAME;
+    private final String LINKAGE_LINK_TYPE_COLUMN_NAME;
 
     public static final String DTG_INDEX = "geomesa.index.dtg";
-
-    private static String normalize(PropertyName name)
-    {
-        return CoalescePropertyFactory.getColumnName(name);
-    }
+    public static final String INDEXES = "geomesa.indexes.enabled";
 
     private final ICoalesceNormalizer normalizer;
     private final CoalesceIteratorDataTypes iterator;
@@ -83,6 +76,39 @@ public class AccumuloRegisterIterator extends CoalesceIterator<List<SimpleFeatur
     {
         this.normalizer = normalizer;
         this.iterator = new CoalesceIteratorDataTypes(normalizer);
+
+        ENTITY_KEY_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getEntityKey());
+        ENTITY_NAME_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getName());
+        ENTITY_SOURCE_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getSource());
+        ENTITY_VERSION_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getVersion());
+        ENTITY_ID_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getEntityId());
+        ENTITY_ID_TYPE_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getEntityIdType());
+        ENTITY_DATE_CREATED_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getDateCreated());
+        ENTITY_LAST_MODIFIED_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getLastModified());
+        ENTITY_TITLE_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getEntityTitle());
+        ENTITY_STATUS_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getEntityStatus());
+        ENTITY_SCOPE_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getEntityScope());
+        ENTITY_CREATOR_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getEntityCreator());
+        ENTITY_TYPE_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getEntityType());
+
+        LINKAGE_KEY_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getEntityKey());
+        LINKAGE_ENTITY1_KEY_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getEntityKey());
+        LINKAGE_ENTITY1_NAME_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getName());
+        LINKAGE_ENTITY1_SOURCE_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getSource());
+        LINKAGE_ENTITY1_VERSION_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getVersion());
+        LINKAGE_ENTITY2_KEY_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getLinkageEntityKey());
+        LINKAGE_ENTITY2_NAME_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getLinkageName());
+        LINKAGE_ENTITY2_SOURCE_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getLinkageSource());
+        LINKAGE_ENTITY2_VERSION_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getLinkageVersion());
+        LINKAGE_LAST_MODIFIED_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getLastModified());
+        LINKAGE_LABEL_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getLinkageLabel());
+        LINKAGE_LINK_TYPE_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getLinkageType());
+
+    }
+
+    private String getColumnName(PropertyName name)
+    {
+        return CoalescePropertyFactory.getColumnName(normalizer, name);
     }
 
     public void register(CoalesceEntityTemplate template, List<SimpleFeatureType> features) throws CoalesceException
@@ -128,7 +154,7 @@ public class AccumuloRegisterIterator extends CoalesceIterator<List<SimpleFeatur
     @Override
     protected boolean visitCoalesceEntity(CoalesceEntity entity, List<SimpleFeatureType> features) throws CoalesceException
     {
-        final String indexes = "records,id,attr";
+        final String[] indexes = { "records", "attr" };
 
         // Get Feature Fields
         Map<String, ECoalesceFieldDataTypes> fields = new HashMap<>();
@@ -162,7 +188,7 @@ public class AccumuloRegisterIterator extends CoalesceIterator<List<SimpleFeatur
         createIndex(feature, ENTITY_STATUS_COLUMN_NAME, EIndex.JOIN, ECardinality.LOW);
 
         feature.getUserData().put(Hints.USE_PROVIDED_FID, true);
-        feature.getUserData().put("geomesa.indexes.enabled", indexes);
+        feature.getUserData().put(INDEXES, StringUtil.join(indexes, ","));
 
         features.add(feature);
 
@@ -173,7 +199,7 @@ public class AccumuloRegisterIterator extends CoalesceIterator<List<SimpleFeatur
     protected boolean visitCoalesceLinkageSection(CoalesceLinkageSection section, List<SimpleFeatureType> features)
             throws CoalesceException
     {
-        final String indexes = "records,id,attr";
+        final String[] indexes = { "records", "attr" };
 
         // Get Feature Fields
         Map<String, ECoalesceFieldDataTypes> fields = new HashMap<>();
@@ -202,7 +228,7 @@ public class AccumuloRegisterIterator extends CoalesceIterator<List<SimpleFeatur
         createIndex(feature, LINKAGE_LINK_TYPE_COLUMN_NAME, EIndex.JOIN, ECardinality.LOW);
 
         feature.getUserData().put(Hints.USE_PROVIDED_FID, true);
-        feature.getUserData().put("geomesa.indexes.enabled", indexes);
+        feature.getUserData().put(INDEXES, StringUtil.join(indexes, ","));
 
         features.add(feature);
 

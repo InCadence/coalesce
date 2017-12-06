@@ -24,9 +24,6 @@ import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
-import com.incadencecorp.coalesce.framework.CoalesceExecutorServiceImpl;
-import com.incadencecorp.coalesce.framework.CoalesceSettings;
-import com.incadencecorp.coalesce.framework.CoalesceThreadFactoryImpl;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
 import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceStringResponseType;
@@ -40,26 +37,21 @@ import org.apache.accumulo.core.iterators.user.RegExFilter;
 import org.apache.accumulo.core.security.Authorizations;
 import org.apache.hadoop.io.Text;
 import org.geotools.data.DataStore;
-import org.geotools.data.simple.SimpleFeatureStore;
 import org.geotools.factory.CommonFactoryFinder;
 import org.opengis.filter.FilterFactory2;
-import org.opengis.filter.identity.FeatureId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
  * @author Derek Clemenzi
  */
-public class AccumuloPersister2 extends AccumuloTemplatePersister implements ICoalescePersistor {
+public class AccumuloPersistor2 extends AccumuloTemplatePersistor implements ICoalescePersistor {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloPersister2.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloPersistor2.class);
     private static final FilterFactory2 FF = CommonFactoryFinder.getFilterFactory2();
 
     private BatchWriterConfig config;
@@ -71,9 +63,21 @@ public class AccumuloPersister2 extends AccumuloTemplatePersister implements ICo
      * @param params
      * @throws CoalescePersistorException
      */
-    public AccumuloPersister2(Map<String, String> params)
+    public AccumuloPersistor2(Map<String, String> params)
     {
-        super(params);
+        this(null, params);
+
+    }
+
+    /**
+     * Specify an external {@link ExecutorService} to use for internal threads.
+     *
+     * @param service
+     * @param params
+     */
+    public AccumuloPersistor2(ExecutorService service, Map<String, String> params)
+    {
+        super(service, params);
 
         config = new BatchWriterConfig();
         config.setMaxLatency(1, TimeUnit.SECONDS);
@@ -205,39 +209,6 @@ public class AccumuloPersister2 extends AccumuloTemplatePersister implements ICo
 //*/
 
         return true;
-}
-
-    private void deleteMutation(String tablename, List<String> keys) throws CoalescePersistorException
-    {
-        if (LOGGER.isDebugEnabled())
-        {
-            LOGGER.debug(String.format("Deleting (%s) from (%s)", keys.toString(), tablename));
-        }
-
-        try
-        {
-            BatchDeleter bd = getDataConnector().getDBConnector().createBatchDeleter(tablename,
-                                                                                     Authorizations.EMPTY,
-                                                                                     1,
-                                                                                     config);
-
-            List<Range> ranges = new ArrayList<>();
-
-            for (String key : keys)
-            {
-                ranges.add(Range.exact(new Text(key)));
-            }
-
-            bd.setRanges(ranges);
-            bd.delete();
-            bd.close();
-        }
-        catch (TableNotFoundException | AccumuloException e)
-        {
-            throw new CoalescePersistorException(String.format("(FAILED) Deleting (%s) from (%s)",
-                                                               keys.toString(),
-                                                               tablename), e);
-        }
     }
 
     @Override
@@ -301,26 +272,8 @@ public class AccumuloPersister2 extends AccumuloTemplatePersister implements ICo
                           EPersistorCapabilities.READ,
                           EPersistorCapabilities.DELETE,
                           EPersistorCapabilities.UPDATE,
-                          EPersistorCapabilities.READ_TEMPLATES);
-    }
-
-    private void writeMutation(AccumuloDataConnector connector,
-                               String table,
-                               BatchWriterConfig config,
-                               List<Mutation> mutations) throws CoalescePersistorException
-    {
-        try (CloseableBatchWriter writer = new CloseableBatchWriter(connector.getDBConnector(), table, config))
-        {
-            for (Mutation mutation : mutations)
-            {
-                writer.addMutation(mutation);
-                writer.flush();
-            }
-        }
-        catch (MutationsRejectedException | TableNotFoundException e)
-        {
-            throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_SAVED, table, table, e.getMessage()), e);
-        }
+                          EPersistorCapabilities.READ_TEMPLATES,
+                          EPersistorCapabilities.GET_FIELD_VALUE);
     }
 
     public Object getFieldValue(String fieldKey) throws CoalescePersistorException
@@ -366,6 +319,58 @@ public class AccumuloPersister2 extends AccumuloTemplatePersister implements ICo
         }
         return value;
 
+    }
+
+    private void deleteMutation(String tablename, List<String> keys) throws CoalescePersistorException
+    {
+        if (LOGGER.isDebugEnabled())
+        {
+            LOGGER.debug(String.format("Deleting (%s) from (%s)", keys.toString(), tablename));
+        }
+
+        try
+        {
+            BatchDeleter bd = getDataConnector().getDBConnector().createBatchDeleter(tablename,
+                                                                                     Authorizations.EMPTY,
+                                                                                     1,
+                                                                                     config);
+
+            List<Range> ranges = new ArrayList<>();
+
+            for (String key : keys)
+            {
+                ranges.add(Range.exact(new Text(key)));
+            }
+
+            bd.setRanges(ranges);
+            bd.delete();
+            bd.close();
+        }
+        catch (TableNotFoundException | AccumuloException e)
+        {
+            throw new CoalescePersistorException(String.format("(FAILED) Deleting (%s) from (%s)",
+                                                               keys.toString(),
+                                                               tablename), e);
+        }
+    }
+
+    private void writeMutation(AccumuloDataConnector connector,
+                               String table,
+                               BatchWriterConfig config,
+                               List<Mutation> mutations) throws CoalescePersistorException
+    {
+        try (CloseableBatchWriter writer = new CloseableBatchWriter(connector.getDBConnector(), table, config))
+        {
+            for (Mutation mutation : mutations)
+            {
+                writer.addMutation(mutation);
+                writer.flush();
+            }
+        }
+        catch (MutationsRejectedException | TableNotFoundException e)
+        {
+            throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_SAVED, table, table, e.getMessage()), e);
+        }
     }
 
     private AccumuloFeatureIterator getIterator() throws CoalesceException

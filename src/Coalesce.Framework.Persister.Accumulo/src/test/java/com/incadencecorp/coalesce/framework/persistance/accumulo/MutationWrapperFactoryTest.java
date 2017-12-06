@@ -1,17 +1,16 @@
 package com.incadencecorp.coalesce.framework.persistance.accumulo;
 
-import static org.junit.Assert.assertNotNull;
-
+import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
 import org.junit.Test;
 
-import com.incadencecorp.coalesce.framework.persistance.accumulo.testobjects.MissionEntity;
+import static org.junit.Assert.assertNotNull;
 
 public class MutationWrapperFactoryTest {
 
     @Test
     public void test() throws Exception
     {
-        MissionEntity entity = new MissionEntity();
+        TestEntity entity = new TestEntity();
         entity.initialize();
 
         // System.out.println(entity.toXml());

@@ -90,7 +90,7 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
         {
             LOGGER.trace("Executing: {}", sql);
         }
-        
+
         PreparedStatement stmt = _conn.prepareStatement(sql);
 
         if (parameters != null)
@@ -114,7 +114,7 @@ public abstract class CoalesceDataConnectorBase implements AutoCloseable {
 
         if (LOGGER.isTraceEnabled())
         {
-            LOGGER.trace("Prepared Statement is: " + stmt.toString());
+            LOGGER.trace("Prepared Statement: " + stmt.toString());
         }
 
         results = stmt.executeQuery();

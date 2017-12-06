@@ -17,32 +17,49 @@
 
 package com.incadencecorp.coalesce.framework.persistance.accumulo;
 
+import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
+import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
+import com.incadencecorp.coalesce.framework.persistance.accumulo.testobjects.GDELT_Test_Entity;
+import com.incadencecorp.coalesce.framework.persistance.accumulo.testobjects.NonGeoEntity;
 import com.incadencecorp.coalesce.search.AbstractSearchTest;
-import com.incadencecorp.coalesce.services.search.api.test.AbstractSearchTests;
+import org.junit.Assume;
+import org.junit.Before;
 import org.junit.BeforeClass;
+import org.xml.sax.SAXException;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * @author Derek Clemenzi
  */
-public class Accumulo2SearchIT extends AbstractSearchTest<AccumuloSearchPersister> {
+public class Accumulo2SearchIT extends AbstractSearchTest<AccumuloSearchPersistor> {
+
+    private boolean useMock = true;
 
     @BeforeClass
-    public static void startup() throws Exception {
-        System.out.println("A");
+    public static void initialize()
+    {
+        String version = System.getProperty("java.version");
+
+        if (!version.contains("1.8"))
+        {
+            // skip these tests
+            Assume.assumeTrue(String.format("JRE %s Detected. These unit tests require JRE 1.8", version), false);
+        }
     }
 
     @Override
-    protected AccumuloSearchPersister createPersister()
+    protected AccumuloSearchPersistor createPersister()
     {
 
         Map<String, String> parameters = new HashMap<>();
-        parameters.put(AccumuloDataConnector.INSTANCE_ID, "aa");
-        parameters.put(AccumuloDataConnector.ZOOKEEPERS, "aa");
-        parameters.put(AccumuloDataConnector.USER, "aa");
-        parameters.put(AccumuloDataConnector.PASSWORD, "aa");
+        parameters.put(AccumuloDataConnector.INSTANCE_ID, AccumuloSettings.getDatabaseName());
+        parameters.put(AccumuloDataConnector.ZOOKEEPERS, AccumuloSettings.getZookeepers());
+        parameters.put(AccumuloDataConnector.USER, (useMock) ? "aa" : AccumuloSettings.getUserName());
+        parameters.put(AccumuloDataConnector.PASSWORD, AccumuloSettings.getUserPassword());
         parameters.put(AccumuloDataConnector.TABLE_NAME, AccumuloDataConnector.COALESCE_SEARCH_TABLE);
         parameters.put(AccumuloDataConnector.QUERY_THREADS, "1");
         parameters.put(AccumuloDataConnector.RECORD_THREADS, "1");
@@ -51,8 +68,10 @@ public class Accumulo2SearchIT extends AbstractSearchTest<AccumuloSearchPersiste
         parameters.put(AccumuloDataConnector.COLLECT_USAGE_STATS, "false");
         parameters.put(AccumuloDataConnector.CACHING, "false");
         parameters.put(AccumuloDataConnector.LOOSE_B_BOX, "false");
-        parameters.put(AccumuloDataConnector.USE_MOCK, "true");
+        parameters.put(AccumuloDataConnector.USE_MOCK, Boolean.toString(useMock));
 
-        return new AccumuloSearchPersister(parameters);
+
+        return new AccumuloSearchPersistor(parameters);
     }
+
 }

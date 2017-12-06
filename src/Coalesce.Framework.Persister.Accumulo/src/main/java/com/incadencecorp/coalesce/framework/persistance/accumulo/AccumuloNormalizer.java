@@ -28,7 +28,7 @@ public class AccumuloNormalizer extends DefaultNormalizer {
     @Override
     public String normalize(String recordsetname, String fieldname)
     {
-        //return normalize(fieldname);
-        return normalize(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getFieldProperty(recordsetname, fieldname)));
+        return normalize(fieldname);
+        //return normalize(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getFieldProperty(recordsetname, fieldname)));
     }
 }

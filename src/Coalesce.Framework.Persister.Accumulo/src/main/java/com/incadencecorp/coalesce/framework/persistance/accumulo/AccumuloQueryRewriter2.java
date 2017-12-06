@@ -2,6 +2,7 @@ package com.incadencecorp.coalesce.framework.persistance.accumulo;
 
 import com.incadencecorp.coalesce.api.ICoalesceNormalizer;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import org.geotools.data.Query;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.filter.visitor.DuplicatingFilterVisitor;
@@ -12,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 import java.util.function.Predicate;
 
 /**
@@ -21,7 +22,7 @@ import java.util.function.Predicate;
 class AccumuloQueryRewriter2 extends DuplicatingFilterVisitor {
 
     private final ArrayList<String> features = new ArrayList<String>();
-    private ICoalesceNormalizer normalizer;
+    private final ICoalesceNormalizer normalizer;
 
     /**
      * Standard java logger
@@ -48,7 +49,7 @@ class AccumuloQueryRewriter2 extends DuplicatingFilterVisitor {
         //create a new filter with the rewritten property names
         Query newQuery = new Query(original);
 
-        // See if a valid featurename was set in the query.  If
+        // See if a valid feature name was set in the query.  If
         // so make sure it is the first in the list
         if ((newQuery.getTypeName() != null) && (!newQuery.getTypeName().equalsIgnoreCase("coalesce")))
         {
@@ -62,30 +63,32 @@ class AccumuloQueryRewriter2 extends DuplicatingFilterVisitor {
         // Rewrite the filter
         newQuery.setFilter((Filter) f.accept(this, null));
 
-        // Rewrite properties also. Strip any table names off these
-
+        // Rewrite properties
         if (newQuery.getPropertyNames() != null)
         {
-            ArrayList<String> props = new ArrayList<String>(Arrays.asList(newQuery.getPropertyNames()));
+            List<String> properties = new ArrayList<>();
 
-            for (int i = 0; i < props.size(); i++)
+            properties.add(getNormalizedPropertyName(CoalescePropertyFactory.getEntityKey()));
+
+            // Normalize properties and remove any duplicates
+            for (String property : newQuery.getPropertyNames())
             {
-                props.set(i, getNormalizedPropertyName(props.get(i)));
+                String normalized = getNormalizedPropertyName(property);
+
+                if (!properties.contains(normalized))
+                {
+                    properties.add(normalized);
+                }
             }
 
-            if (props.size() > 0)
-            {
-                props.add(0, AccumuloRegisterIterator.ENTITY_KEY_COLUMN_NAME);
-            }
-
-            newQuery.setPropertyNames(props);
+            newQuery.setPropertyNames(properties);
         }
         else
         {
             // Another hack to match Coalesce Behavior
             // Null for properties is supposed to mean all fields but
             // Coalesce expects the objectkey
-            newQuery.setPropertyNames(new String[] { AccumuloRegisterIterator.ENTITY_KEY_COLUMN_NAME });
+            newQuery.setPropertyNames(new String[] { getNormalizedPropertyName(CoalescePropertyFactory.getEntityKey()) });
         }
 
         // Rewrite the any sorts also
@@ -122,6 +125,11 @@ class AccumuloQueryRewriter2 extends DuplicatingFilterVisitor {
             // Now if there is more than one feature throw an exception
             if (features.size() > 1)
             {
+                LOGGER.debug("Features:");
+                for (String feature : features)
+                {
+                    LOGGER.debug("\t{}", feature);
+                }
                 throw new CoalescePersistorException("Multiple featuretypes in query is not supported");
             }
             newQuery.setTypeName(normalizer.normalize(features.get(0)));
@@ -131,7 +139,6 @@ class AccumuloQueryRewriter2 extends DuplicatingFilterVisitor {
 
         return newQuery;
     }
-
 
     private String getNormalizedPropertyName(String name)
     {
@@ -158,4 +165,10 @@ class AccumuloQueryRewriter2 extends DuplicatingFilterVisitor {
 
         return normalized;
     }
+
+    private String getNormalizedPropertyName(PropertyName name)
+    {
+        return getNormalizedPropertyName(name.getPropertyName());
+    }
+
 }

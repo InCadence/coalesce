@@ -17,8 +17,11 @@
 
 package com.incadencecorp.coalesce.framework.persistance.accumulo;
 
+import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.persistance.AbstractCoalescePersistorTest;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
+import org.junit.Assume;
+import org.junit.BeforeClass;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,12 +29,24 @@ import java.util.Map;
 /**
  * @author Derek Clemenzi
  */
-public class Accumulo2PersisterIT extends AbstractCoalescePersistorTest<ICoalescePersistor> {
+public class Accumulo2PersisterIT extends AbstractCoalescePersistorTest<AccumuloPersistor2> {
 
     private boolean useMock = true;
 
+    @BeforeClass
+    public static void initialize()
+    {
+        String version = System.getProperty("java.version");
+
+        if (!version.contains("1.8"))
+        {
+            // skip these tests
+            Assume.assumeTrue(String.format("JRE %s Detected. These unit tests require JRE 1.8", version), false);
+        }
+    }
+
     @Override
-    protected ICoalescePersistor createPersister()
+    protected AccumuloPersistor2 createPersister()
     {
         AccumuloSettings.setOverrideFeatures(true);
 
@@ -50,6 +65,13 @@ public class Accumulo2PersisterIT extends AbstractCoalescePersistorTest<ICoalesc
         parameters.put(AccumuloDataConnector.LOOSE_B_BOX, "false");
         parameters.put(AccumuloDataConnector.USE_MOCK, Boolean.toString(useMock));
 
-        return new AccumuloPersister2(parameters);
+        return new AccumuloPersistor2(parameters);
+    }
+
+
+    @Override
+    public String getFieldValue(String key) throws CoalescePersistorException
+    {
+        return (String) createPersister().getFieldValue(key);
     }
 }

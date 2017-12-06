@@ -17,10 +17,10 @@
 
 package com.incadencecorp.coalesce.framework.persistance.accumulo;
 
+import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 import com.incadencecorp.coalesce.search.api.SearchResults;
-import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.incadencecorp.coalesce.search.resultset.CoalesceColumnMetadata;
 import com.incadencecorp.coalesce.search.resultset.CoalesceResultSet;
 import org.geotools.data.DataStore;
@@ -39,17 +39,35 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
 
 /**
  * @author Derek Clemenzi
  */
-public class AccumuloSearchPersister extends AccumuloPersister2 implements ICoalesceSearchPersistor {
+public class AccumuloSearchPersistor extends AccumuloPersistor2 implements ICoalesceSearchPersistor {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloSearchPersister.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloSearchPersistor.class);
 
-    public AccumuloSearchPersister(Map<String, String> params)
+    /**
+     * Default Constructor
+     *
+     * @param params
+     */
+    public AccumuloSearchPersistor(Map<String, String> params)
     {
         super(params);
+
+    }
+
+    /**
+     * Specify an external {@link ExecutorService} to use for internal threads.
+     *
+     * @param service
+     * @param params
+     */
+    public AccumuloSearchPersistor(ExecutorService service, Map<String, String> params)
+    {
+        super(service, params);
     }
 
     @Override
@@ -126,5 +144,16 @@ public class AccumuloSearchPersister extends AccumuloPersister2 implements ICoal
         results.setTotal(featureCount.size());
 
         return results;
+    }
+
+    @Override
+    public EnumSet<EPersistorCapabilities> getCapabilities()
+    {
+        EnumSet<EPersistorCapabilities> capabilities = super.getCapabilities();
+        capabilities.addAll(EnumSet.of(EPersistorCapabilities.GEOSPATIAL_SEARCH,
+                                  EPersistorCapabilities.TEMPORAL_SEARCH,
+                                  EPersistorCapabilities.SEARCH));
+
+        return capabilities;
     }
 }

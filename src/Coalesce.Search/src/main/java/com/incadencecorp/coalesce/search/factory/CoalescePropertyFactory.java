@@ -17,21 +17,17 @@
 
 package com.incadencecorp.coalesce.search.factory;
 
+import com.incadencecorp.coalesce.api.CoalesceErrors;
+import com.incadencecorp.coalesce.api.ICoalesceNormalizer;
+import com.incadencecorp.coalesce.framework.datamodel.*;
 import org.geotools.factory.CommonFactoryFinder;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.PropertyName;
 
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceField;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage;
-import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
-import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
-import com.incadencecorp.coalesce.framework.datamodel.IFieldEnum;
-
 /**
  * Defines the properties of a CoalesceEntity.
- * 
+ *
  * @author n78554
  */
 public class CoalescePropertyFactory {
@@ -101,7 +97,7 @@ public class CoalescePropertyFactory {
     {
         return getFilterFactory().property(COALESCE_ENTITY_TABLE + CoalesceEntity.ATTRIBUTE_VERSION);
     }
-    
+
     /**
      * @return the property used for filtering on version.
      */
@@ -205,7 +201,7 @@ public class CoalescePropertyFactory {
 
     /**
      * @return the property used for filtering on the entity key of linked
-     *         entities.
+     * entities.
      */
     public static PropertyName getLinkageEntityKey()
     {
@@ -239,7 +235,7 @@ public class CoalescePropertyFactory {
 
     /**
      * @return the property used for filtering on entity names of linked
-     *         entities.
+     * entities.
      */
     public static PropertyName getLinkageName()
     {
@@ -298,7 +294,7 @@ public class CoalescePropertyFactory {
 
     /**
      * @return the property used for filtering on the provided recordset / field
-     *         name
+     * name
      */
     public static PropertyName getFieldProperty(String recordset, String field)
     {
@@ -307,13 +303,13 @@ public class CoalescePropertyFactory {
 
     /**
      * @return the property used for filtering on the provided recordset / field
-     *         name
+     * name
      */
     public static PropertyName getFieldProperty(String recordset, IFieldEnum field)
     {
         return getFieldProperty(recordset, field.getFieldName());
     }
-    
+
     /**
      * @param field
      * @return the normalized name used as the column name in a result set.
@@ -330,5 +326,26 @@ public class CoalescePropertyFactory {
     public static String getColumnName(PropertyName property)
     {
         return property.getPropertyName().replaceAll("[.]", "");
+    }
+
+    /**
+     * @param property
+     * @return the normalized name used for storing the property
+     */
+    public static String getColumnName(ICoalesceNormalizer normalizer, PropertyName property)
+    {
+        String[] parts = property.getPropertyName().split("[.]");
+
+        switch (parts.length)
+        {
+        case 1:
+            return normalizer.normalize(parts[0]);
+
+        case 2:
+            return normalizer.normalize(parts[0], parts[1]);
+
+        default:
+            throw new IllegalArgumentException(String.format(CoalesceErrors.INVALID_INPUT, property.getPropertyName()));
+        }
     }
 }

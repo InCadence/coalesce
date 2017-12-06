@@ -54,7 +54,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author Derek Clemenzi
  */
-public class AccumuloTemplatePersister extends CoalesceExecutorServiceImpl implements ICoalesceTemplatePersister {
+public class AccumuloTemplatePersistor extends CoalesceExecutorServiceImpl implements ICoalesceTemplatePersister {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloPersistor.class);
 
@@ -71,7 +71,7 @@ public class AccumuloTemplatePersister extends CoalesceExecutorServiceImpl imple
      *
      * @param params
      */
-    public AccumuloTemplatePersister(Map<String, String> params)
+    public AccumuloTemplatePersistor(Map<String, String> params)
     {
         this(null, params);
     }
@@ -82,7 +82,7 @@ public class AccumuloTemplatePersister extends CoalesceExecutorServiceImpl imple
      * @param service
      * @param params
      */
-    public AccumuloTemplatePersister(ExecutorService service, Map<String, String> params)
+    public AccumuloTemplatePersistor(ExecutorService service, Map<String, String> params)
     {
         super(service);
 

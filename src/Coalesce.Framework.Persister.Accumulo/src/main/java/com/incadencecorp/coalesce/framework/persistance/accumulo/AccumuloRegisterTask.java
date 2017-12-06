@@ -52,7 +52,7 @@ public class AccumuloRegisterTask extends AbstractTask<SimpleFeatureType, Coales
 
         try
         {
-            SimpleFeatureType original = datastore.getSchema(feature.getTypeName());
+            SimpleFeatureType original = datastore.getSchema(feature.getName());
 
             if (AccumuloSettings.overrideFeatures() || original == null)
             {

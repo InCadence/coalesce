@@ -59,7 +59,7 @@ public class AccumuloTask extends
                 //				GEOMESA Does not currently support transactions
                 //               Transaction transaction = new DefaultTransaction();
                 //                featureStore.setTransaction(transaction);
-                featureStore.addFeatures(parameters.getParams().getValue().featureToAdd);
+                featureStore.addFeatures(parameters.getParams().getValue().featuresToAdd);
 
                 if (LOGGER.isDebugEnabled())
                 {
