@@ -1,6 +1,7 @@
 package com.incadencecorp.coalesce.framework.persistance.accumulo;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.framework.persistance.AbstractCoalescePersistorTest;
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
 import org.junit.Assume;
 import org.junit.BeforeClass;
@@ -9,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.file.Paths;
 
-public class AccumuloPersistorIT extends AbstractAccumuloPersistorTest {
+public class AccumuloPersistorIT extends AbstractCoalescePersistorTest<AccumuloPersistor> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloPersistorIT.class);
 
@@ -39,5 +40,11 @@ public class AccumuloPersistorIT extends AbstractAccumuloPersistorTest {
     protected AccumuloPersistor createPersister() throws CoalescePersistorException
     {
         return new AccumuloPersistor();
+    }
+
+    @Override
+    public String getFieldValue(String key) throws CoalescePersistorException
+    {
+        return (String) createPersister().getFieldValue(key);
     }
 }

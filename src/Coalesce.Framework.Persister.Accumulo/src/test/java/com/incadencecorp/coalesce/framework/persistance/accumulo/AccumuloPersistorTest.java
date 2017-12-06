@@ -2,6 +2,7 @@ package com.incadencecorp.coalesce.framework.persistance.accumulo;
 
 import com.incadencecorp.coalesce.common.CoalesceUnitTestSettings;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.framework.persistance.AbstractCoalescePersistorTest;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
@@ -15,9 +16,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AccumuloPersistorTest extends AbstractAccumuloPersistorTest {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloPersistorTest.class);
+public class AccumuloPersistorTest extends AbstractCoalescePersistorTest<AccumuloPersistor> {
 
     @BeforeClass
     public static void setupBeforeClass() throws Exception
@@ -65,4 +64,10 @@ public class AccumuloPersistorTest extends AbstractAccumuloPersistorTest {
         };
     }
 
+
+    @Override
+    public String getFieldValue(String key) throws CoalescePersistorException
+    {
+        return (String) createPersister().getFieldValue(key);
+    }
 }

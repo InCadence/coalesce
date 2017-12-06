@@ -41,7 +41,6 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AttributeType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.PropertyName;
@@ -79,6 +78,7 @@ authorize others to do so.
 Distribution Statement D. Distribution authorized to the Department of
 Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
 -----------------------------------------------------------------------------*/
+
 /**
  * @author Dave Boyd May 13, 2016
  */
@@ -576,6 +576,15 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         }
     }
 
+    @Override
+    public void registerTemplate(CoalesceEntityTemplate... templates) throws CoalescePersistorException
+    {
+        for (CoalesceEntityTemplate template : templates)
+        {
+            createSearchTables(template);
+        }
+    }
+
     private boolean createSearchTables(CoalesceEntityTemplate template) throws CoalescePersistorException
     {
         // Feature set name will be the recordset name.
@@ -647,7 +656,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
     private void createLinkageFeature(String featurename)
     {
         final String geomesaTimeIndex = "geomesa.index.dtg";
-        final String indexes = "records,id,attr";
+        final String indexes = "records,attr";
         DataStore gs = connect.getGeoDataStore();
         try
         {
@@ -1250,7 +1259,8 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
         return persisted;
     }
 
-    private boolean persistBaseData(CoalesceEntity entity, Connector connect, CloseableBatchWriter writer) throws CoalesceException
+    private boolean persistBaseData(CoalesceEntity entity, Connector connect, CloseableBatchWriter writer)
+            throws CoalesceException
     {
         boolean persisted = false;
         try
@@ -2260,7 +2270,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
     private void createEntityFeature(String featurename)
     {
         final String geomesaTimeIndex = "geomesa.index.dtg";
-        final String indexes = "records,id,attr";
+        final String indexes = "records,attr";
         DataStore gs = connect.getGeoDataStore();
         try
         {
