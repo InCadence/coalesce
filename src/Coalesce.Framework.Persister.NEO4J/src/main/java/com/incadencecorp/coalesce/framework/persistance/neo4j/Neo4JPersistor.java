@@ -19,6 +19,7 @@ package com.incadencecorp.coalesce.framework.persistance.neo4j;
 
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
 import com.incadencecorp.coalesce.common.classification.helpers.StringHelper;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.datamodel.*;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
@@ -36,6 +37,7 @@ import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -48,6 +50,7 @@ import java.util.Map.Entry;
 public class Neo4JPersistor extends CoalescePersistorBase {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Neo4JPersistor.class);
+    private static final Neo4jTypeMapper MAPPER = new Neo4jTypeMapper();
 
     /**
      * @see CoalescePropertyFactory#getEntityKey()
@@ -425,14 +428,16 @@ public class Neo4JPersistor extends CoalescePersistorBase {
         Map<String, CoalesceParameter> fieldValues = new HashMap<String, CoalesceParameter>();
 
         // Add Coalesce Entity's Fields
-        fieldValues.put(TITLE, new CoalesceParameter(entity.getTitle()));
-        fieldValues.put(SOURCE, new CoalesceParameter(entity.getSource()));
-        fieldValues.put(LASTMODIFIED, new CoalesceParameter(entity.getAttribute(CoalesceObject.ATTRIBUTE_LASTMODIFIED)));
-        fieldValues.put(DATECREATED, new CoalesceParameter(entity.getAttribute(CoalesceObject.ATTRIBUTE_DATECREATED)));
+        fieldValues.put(TITLE, new CoalesceParameter(entity.getTitle(), Types.CHAR));
+        fieldValues.put(SOURCE, new CoalesceParameter(entity.getSource(), Types.CHAR));
+        fieldValues.put(LASTMODIFIED,
+                        new CoalesceParameter(entity.getAttribute(CoalesceObject.ATTRIBUTE_LASTMODIFIED), Types.OTHER));
+        fieldValues.put(DATECREATED,
+                        new CoalesceParameter(entity.getAttribute(CoalesceObject.ATTRIBUTE_DATECREATED), Types.OTHER));
 
         if (isIncludeXmlEnabled)
         {
-            fieldValues.put(ENTITYXML, new CoalesceParameter(entity.toXml()));
+            fieldValues.put(ENTITYXML, new CoalesceParameter(entity.toXml(), Types.CHAR));
         }
 
         getFieldValues(entity, fieldValues);
@@ -450,8 +455,8 @@ public class Neo4JPersistor extends CoalescePersistorBase {
 
         int idx = 0;
 
-        parameters[idx++] = new CoalesceParameter(entity.getName());
-        parameters[idx++] = new CoalesceParameter(entity.getKey());
+        parameters[idx++] = new CoalesceParameter(entity.getName(), Types.CHAR);
+        parameters[idx++] = new CoalesceParameter(entity.getKey(), Types.CHAR);
 
         StringBuilder sb = new StringBuilder("");
 
@@ -596,16 +601,21 @@ public class Neo4JPersistor extends CoalescePersistorBase {
                 // Yes; Check Data Type
                 CoalesceField<?> field = (CoalesceField<?>) coalesceObject;
 
-                switch (field.getDataType())
+                if (field.getBaseValue() != null)
                 {
-                case BINARY_TYPE:
-                case FILE_TYPE:
-                    // Ignore these types.
-                    break;
-                default:
-                    // Add field value to results
-                    results.put(field.getName().replace(" ", ""), new CoalesceParameter(field.getBaseValue()));
-                    break;
+                    String name = normalizeName(field.getName());
+
+                    switch (field.getDataType())
+                    {
+                    case BINARY_TYPE:
+                    case FILE_TYPE:
+                        // Ignore these types.
+                        break;
+                    default:
+                        // Add field value to results
+                        results.put(name, new CoalesceParameter(field.getBaseValue(), MAPPER.map(field.getDataType())));
+                        break;
+                    }
                 }
             }
 
@@ -620,7 +630,9 @@ public class Neo4JPersistor extends CoalescePersistorBase {
     @Override
     public EnumSet<EPersistorCapabilities> getCapabilities()
     {
-        EnumSet<EPersistorCapabilities> enumSet = EnumSet.of(EPersistorCapabilities.CREATE, EPersistorCapabilities.DELETE, EPersistorCapabilities.UPDATE);
+        EnumSet<EPersistorCapabilities> enumSet = EnumSet.of(EPersistorCapabilities.CREATE,
+                                                             EPersistorCapabilities.DELETE,
+                                                             EPersistorCapabilities.UPDATE);
 
         if (isIncludeXmlEnabled)
         {
@@ -641,7 +653,8 @@ public class Neo4JPersistor extends CoalescePersistorBase {
     }
 
     @Override
-    public CoalesceEntityTemplate getEntityTemplate(String name, String source, String version) throws CoalescePersistorException
+    public CoalesceEntityTemplate getEntityTemplate(String name, String source, String version)
+            throws CoalescePersistorException
     {
         throw new NotImplementedException();
     }
