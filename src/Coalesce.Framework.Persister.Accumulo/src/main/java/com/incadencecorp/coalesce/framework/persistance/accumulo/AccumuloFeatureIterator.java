@@ -23,6 +23,7 @@ import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.datamodel.*;
 import com.incadencecorp.coalesce.framework.iterators.CoalesceIterator;
+import com.incadencecorp.coalesce.framework.jobs.metrics.StopWatch;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
@@ -201,23 +202,32 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
 
                 CoalesceEntity entity = section.getEntity();
 
-                for (CoalesceLinkage linkage : section.getLinkagesAsList())
+                if (entity != null)
                 {
-                    if (linkage.getStatus() != ECoalesceObjectStatus.DELETED
-                            && linkage.getEntity().getStatus() != ECoalesceObjectStatus.DELETED)
+                    for (CoalesceLinkage linkage : section.getLinkagesAsList())
                     {
-                        SimpleFeature feature = SimpleFeatureBuilder.build(featureType, new Object[] {}, linkage.getKey());
-                        feature.getUserData().put(Hints.USE_PROVIDED_FID, true);
+                        if (linkage.getStatus() != ECoalesceObjectStatus.DELETED
+                                && entity.getStatus() != ECoalesceObjectStatus.DELETED)
+                        {
+                            SimpleFeature feature = SimpleFeatureBuilder.build(featureType,
+                                                                               new Object[] {},
+                                                                               linkage.getKey());
+                            feature.getUserData().put(Hints.USE_PROVIDED_FID, true);
 
-                        populateFeature(feature, entity, linkage);
-                        ensureDefaultGeometry(featureType, feature);
+                            populateFeature(feature, linkage);
+                            ensureDefaultGeometry(featureType, feature);
 
-                        collection.featuresToAdd.add(feature);
+                            collection.featuresToAdd.add(feature);
+                        }
+                        else
+                        {
+                            collection.keysToDelete.add(FF.featureId(linkage.getKey()));
+                        }
                     }
-                    else
-                    {
-                        collection.keysToDelete.add(FF.featureId(linkage.getKey()));
-                    }
+                }
+                else
+                {
+                    throw new CoalesceException(String.format(CoalesceErrors.INVALID_INPUT, "Linkage's Entity is Null"));
                 }
             }
         }
@@ -253,25 +263,34 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
 
                 CoalesceEntity entity = recordset.getEntity();
 
-                for (CoalesceRecord record : recordset.getAllRecords())
+                if (entity != null)
                 {
-                    if (record.getStatus() != ECoalesceObjectStatus.DELETED
-                            && recordset.getEntity().getStatus() != ECoalesceObjectStatus.DELETED)
+                    for (CoalesceRecord record : recordset.getAllRecords())
                     {
-                        // TODO Check if update is needed
-                        SimpleFeature feature = SimpleFeatureBuilder.build(featureType, new Object[] {}, record.getKey());
-                        feature.getUserData().put(Hints.USE_PROVIDED_FID, true);
-                        feature.getUserData().put(AccumuloRegisterIterator.DTG_INDEX, null);
+                        if (record.getStatus() != ECoalesceObjectStatus.DELETED
+                                && entity.getStatus() != ECoalesceObjectStatus.DELETED)
+                        {
+                            // TODO Check if update is needed
+                            SimpleFeature feature = SimpleFeatureBuilder.build(featureType,
+                                                                               new Object[] {},
+                                                                               record.getKey());
+                            feature.getUserData().put(Hints.USE_PROVIDED_FID, true);
+                            feature.getUserData().put(AccumuloRegisterIterator.DTG_INDEX, null);
 
-                        populateFeature(feature, entity, record);
-                        ensureDefaultGeometry(featureType, feature);
+                            populateFeature(feature, entity, record);
+                            ensureDefaultGeometry(featureType, feature);
 
-                        collection.featuresToAdd.add(feature);
+                            collection.featuresToAdd.add(feature);
+                        }
+                        else
+                        {
+                            collection.keysToDelete.add(FF.featureId(record.getKey()));
+                        }
                     }
-                    else
-                    {
-                        collection.keysToDelete.add(FF.featureId(record.getKey()));
-                    }
+                }
+                else
+                {
+                    throw new CoalesceException(String.format(CoalesceErrors.INVALID_INPUT, "Recordset's Entity is Null"));
                 }
             }
             else
@@ -292,8 +311,8 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
     /**
      * If the default geometry field is null; then default it to the world polygon.
      *
-     * @param featureType
-     * @param feature
+     * @param featureType Feature Definition
+     * @param feature     Feature to check for geometry field
      */
     private void ensureDefaultGeometry(FeatureType featureType, SimpleFeature feature)
     {
@@ -345,8 +364,7 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
         setFeatureAttribute(feature, ENTITY_STATUS_COLUMN_NAME, ECoalesceFieldDataTypes.BOOLEAN_TYPE, entity.getStatus());
     }
 
-    private void populateFeature(SimpleFeature feature, CoalesceEntity entity, CoalesceLinkage linkage)
-            throws CoalesceException, IOException
+    private void populateFeature(SimpleFeature feature, CoalesceLinkage linkage) throws CoalesceException, IOException
     {
         setFeatureAttribute(feature, LINKAGE_KEY_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE, linkage.getKey());
 
@@ -411,13 +429,15 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
         {
             String fieldName = normalizer.normalize(recordsetName, field.getName());
             ECoalesceFieldDataTypes dataType = field.getDataType();
-            Object fieldValue = field.getValue();
 
             // If there is not a value do not set the attribute.
-            if (fieldValue != null)
+            if (field.getBaseValue() != null)
             {
-                LOGGER.trace("Setting FeatureAttribute {}, is type {}", fieldName, dataType);
-                setFeatureAttribute(feature, fieldName, dataType, fieldValue);
+                if (LOGGER.isTraceEnabled())
+                {
+                    LOGGER.trace("Setting FeatureAttribute {} ({}) = {}", fieldName, dataType, field.getBaseValue());
+                }
+                setFeatureAttribute(feature, fieldName, dataType, field.getValue());
             }
         }
     }
@@ -429,11 +449,10 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
         Coordinate coord2 = new Coordinate(-180, 90);
         Coordinate coord3 = new Coordinate(180, 90);
         Coordinate coord4 = new Coordinate(180, -90);
-        Coordinate coord5 = new Coordinate(-180, -90);
 
         GeometryFactory geoFactory = new GeometryFactory();
 
-        CoordinateSequence coordSeq = new CoordinateArraySequence(new Coordinate[] { coord1, coord2, coord3, coord4, coord5
+        CoordinateSequence coordSeq = new CoordinateArraySequence(new Coordinate[] { coord1, coord2, coord3, coord4, coord1
         });
 
         LinearRing linearRing = new LinearRing(new CoordinateArraySequence(coordSeq), geoFactory);
@@ -441,15 +460,11 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
         return new Polygon(linearRing, null, geoFactory);
     }
 
-    private boolean setFeatureAttribute(SimpleFeature feature,
-                                        String fieldName,
-                                        ECoalesceFieldDataTypes dataType,
-                                        Object fieldValue) throws CoalesceDataFormatException
+    private void setFeatureAttribute(SimpleFeature feature,
+                                     String fieldName,
+                                     ECoalesceFieldDataTypes dataType,
+                                     Object fieldValue) throws CoalesceDataFormatException
     {
-        String liststring;
-
-        boolean isGeoField = false;
-
         try
         {
             switch (dataType)
@@ -467,37 +482,29 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
                 break;
 
             case STRING_LIST_TYPE:
-                liststring = Arrays.toString((String[]) fieldValue);
-                feature.setAttribute(fieldName, liststring);
+                feature.setAttribute(fieldName, Arrays.toString((String[]) fieldValue));
                 break;
             case DOUBLE_LIST_TYPE:
-                liststring = Arrays.toString((double[]) fieldValue);
-                feature.setAttribute(fieldName, liststring);
+                feature.setAttribute(fieldName, Arrays.toString((double[]) fieldValue));
                 break;
             case INTEGER_LIST_TYPE:
-                liststring = Arrays.toString((int[]) fieldValue);
-                feature.setAttribute(fieldName, liststring);
+                feature.setAttribute(fieldName, Arrays.toString((int[]) fieldValue));
                 break;
             case LONG_LIST_TYPE:
-                liststring = Arrays.toString((long[]) fieldValue);
-                feature.setAttribute(fieldName, liststring);
+                feature.setAttribute(fieldName, Arrays.toString((long[]) fieldValue));
                 break;
             case FLOAT_LIST_TYPE:
-                liststring = Arrays.toString((float[]) fieldValue);
-                feature.setAttribute(fieldName, liststring);
+                feature.setAttribute(fieldName, Arrays.toString((float[]) fieldValue));
                 break;
             case GUID_LIST_TYPE:
-                liststring = Arrays.toString((UUID[]) fieldValue);
-                feature.setAttribute(fieldName, liststring);
+                feature.setAttribute(fieldName, Arrays.toString((UUID[]) fieldValue));
                 break;
             case BOOLEAN_LIST_TYPE:
-
-                liststring = Arrays.toString((boolean[]) fieldValue);
-                feature.setAttribute(fieldName, liststring);
+                feature.setAttribute(fieldName, Arrays.toString((boolean[]) fieldValue));
                 break;
 
             case GUID_TYPE:
-                String guid = ((UUID) fieldValue).toString();
+                String guid = fieldValue.toString();
                 feature.setAttribute(fieldName, guid);
                 break;
 
@@ -509,23 +516,19 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
             case GEOCOORDINATE_LIST_TYPE:
                 MultiPoint points = new GeometryFactory().createMultiPoint((Coordinate[]) fieldValue);
                 feature.setAttribute(fieldName, points);
-                isGeoField = true;
                 break;
 
             case GEOCOORDINATE_TYPE:
                 Point point = new GeometryFactory().createPoint((Coordinate) fieldValue);
                 feature.setAttribute(fieldName, point);
-                isGeoField = true;
                 break;
 
             case LINE_STRING_TYPE:
                 feature.setAttribute(fieldName, fieldValue);
-                isGeoField = true;
                 break;
 
             case POLYGON_TYPE:
                 feature.setAttribute(fieldName, fieldValue);
-                isGeoField = true;
                 break;
 
             // Circles will be converted to polygons
@@ -539,7 +542,6 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
                 factory.setCentre(circle.getCenter());
                 Polygon shape = factory.createCircle();
                 feature.setAttribute(fieldName, shape);
-                isGeoField = true;
                 break;
 
             case DATE_TIME_TYPE:
@@ -557,22 +559,7 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
             LOGGER.warn("{} => {}",
                         feature.getName(),
                         String.format(CoalesceErrors.INVALID_INPUT_REASON, fieldName, e.getMessage()));
-            isGeoField = false;
         }
-
-        return isGeoField;
-        /*
-         *
-         * // accumulate this new feature in the collection featureCollection.add(simpleFeature); }
-         *
-         * return featureCollection; }
-         *
-         * static void insertFeatures(String simpleFeatureTypeName, DataStore dataStore, FeatureCollection featureCollection)
-         * throws IOException {
-         *
-         * FeatureStore featureStore = (SimpleFeatureStore) dataStore.getFeatureSource(simpleFeatureTypeName);
-         * featureStore.addFeatures(featureCollection); }
-         */
     }
 
     public class FeatureCollections {
