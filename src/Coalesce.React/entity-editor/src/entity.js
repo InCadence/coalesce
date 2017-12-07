@@ -13,14 +13,14 @@ export class EntityView extends React.Component {
     this.state = props;
     }
 
-  onSave() {
-    const {data, isNew} = this.state;
-
-    this.props.saveEntity(data, isNew);
-
+  setIsNew(isNew) {
     this.setState({
-      isNew: false
+      isNew: isNew
     })
+  }
+
+  onSave() {
+    this.props.saveEntity(this.state.data, this.state.isNew, this);
   }
 
   render() {
