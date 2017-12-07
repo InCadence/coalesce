@@ -337,9 +337,21 @@ export class  RecordView extends React.Component {
     var label = record.name.toProperCase();
 
     return (
-      <Accordion key={record.key} objectkey={record.key} label={label}>
-        {fields}
-      </Accordion>
+      <div id={record.key} key={record.key} className="ui-widget">
+        <Toggle
+          ontext={label}
+          offtext={label}
+          isToggleOn={isOpened}
+          onToggle={(value) => {
+            this.setState({isOpened: value});
+          }}
+          />
+          <Collapse isOpened={isOpened}>
+            <div className="ui-widget-content">
+              {fields}
+            </div>
+          </Collapse>
+      </div>
     );
 
   }
@@ -376,7 +388,9 @@ export class  RecordView extends React.Component {
     const field = this.getFieldByKey(record, e.target.id)
 
     field.value = value;
-    this.setState({record: record});
+    this.setState({
+      record: record
+    });
   }
 }
 

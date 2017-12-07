@@ -116,8 +116,7 @@ function renderEntity(key) {
               data: data,
               template: template,
               isNew: false,
-              saveEntity: saveEntity,
-              rootUrl: rootUrl
+              saveEntity: saveEntity
             }),
             document.getElementById('entityview')
           );
@@ -151,8 +150,7 @@ function renderNewEntity(key) {
               data: data,
               template: template,
               isNew: true,
-              saveEntity: saveEntity,
-              url: rootUrl
+              saveEntity: saveEntity
             }),
             document.getElementById('entityview')
           );
