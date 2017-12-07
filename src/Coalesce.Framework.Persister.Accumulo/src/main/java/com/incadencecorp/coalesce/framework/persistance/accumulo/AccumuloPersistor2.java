@@ -17,17 +17,16 @@
 
 package com.incadencecorp.coalesce.framework.persistance.accumulo;
 
-import com.google.common.base.Stopwatch;
 import com.incadencecorp.coalesce.api.CoalesceErrors;
-import com.incadencecorp.coalesce.api.ICoalesceResponseType;
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.StringHelper;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
-import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceStringResponseType;
+import com.incadencecorp.coalesce.framework.jobs.metrics.StopWatch;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
+import com.incadencecorp.coalesce.framework.persistance.accumulo.jobs.AccumuloFeatureJob;
 import org.apache.accumulo.core.client.*;
 import org.apache.accumulo.core.data.Key;
 import org.apache.accumulo.core.data.Mutation;
@@ -58,10 +57,9 @@ public class AccumuloPersistor2 extends AccumuloTemplatePersistor implements ICo
     private AccumuloFeatureIterator iterator = null;
 
     /**
-     * Default Constructor
+     * Default Constructor using a default {@link ExecutorService}
      *
-     * @param params
-     * @throws CoalescePersistorException
+     * @param params Configuration parameters
      */
     public AccumuloPersistor2(Map<String, String> params)
     {
@@ -72,8 +70,8 @@ public class AccumuloPersistor2 extends AccumuloTemplatePersistor implements ICo
     /**
      * Specify an external {@link ExecutorService} to use for internal threads.
      *
-     * @param service
-     * @param params
+     * @param service Service pool used for executing internal task in parallel.
+     * @param params  Configuration parameters
      */
     public AccumuloPersistor2(ExecutorService service, Map<String, String> params)
     {
@@ -89,7 +87,7 @@ public class AccumuloPersistor2 extends AccumuloTemplatePersistor implements ICo
     @Override
     public boolean saveEntity(boolean allowRemoval, CoalesceEntity... entities) throws CoalescePersistorException
     {
-        Stopwatch watch = new Stopwatch();
+        StopWatch watch = new StopWatch();
 
         watch.start();
 
@@ -138,7 +136,8 @@ public class AccumuloPersistor2 extends AccumuloTemplatePersistor implements ICo
             }
         }
 
-        LOGGER.debug("Creating Mutations & Features:  {} ms", watch.elapsed(TimeUnit.MILLISECONDS));
+        watch.finish();
+        LOGGER.debug("Creating Mutations & Features:  {} ms", watch.getWorkLife());
         watch.reset();
         watch.start();
 
@@ -154,59 +153,22 @@ public class AccumuloPersistor2 extends AccumuloTemplatePersistor implements ICo
             deleteMutation(AccumuloDataConnector.COALESCE_ENTITY_IDX_TABLE, keysToDelete);
         }
 
-        LOGGER.debug("Saved Mutations:  {} ms", watch.elapsed(TimeUnit.MILLISECONDS));
+        watch.finish();
+        LOGGER.debug("Saved Mutations:  {} ms", watch.getWorkLife());
         watch.reset();
+        watch.start();
 
         // Write Features
         DataStore datastore = connector.getGeoDataStore();
 
-        // TODO Check if it exists
-        //*
-        AccumuloJob job = new AccumuloJob(datastore, features);
+        AccumuloFeatureJob job = new AccumuloFeatureJob(datastore, features);
         job.setExecutor(this);
-        ICoalesceResponseType<List<CoalesceStringResponseType>> results = job.call();
+        checkResults(job.call());
 
-        LOGGER.debug(results.getStatus().toString());
-        //*/
-/*
-        for (Map.Entry<String, AccumuloFeatureIterator.FeatureCollections> entry : features.entrySet())
-        {
-            try
-            {
-                watch.start();
-                SimpleFeatureStore featureStore = (SimpleFeatureStore) datastore.getFeatureSource(entry.getKey());
-
-                if (featureStore != null)
-                {
-                    //				GEOMESA Does not currently support transactions
-                    //               Transaction transaction = new DefaultTransaction();
-                    //                featureStore.setTransaction(transaction);
-                    featureStore.addFeatures(entry.getValue().featureToAdd);
-
-                    if (LOGGER.isDebugEnabled())
-                    {
-                        LOGGER.debug(String.format("Deleting (%s) from (%s)",
-                                                   entry.getValue().keysToDelete.toString(),
-                                                   featureStore.getName()));
-                    }
-
-                    featureStore.removeFeatures(FF.id(entry.getValue().keysToDelete.toArray(new FeatureId[entry.getValue().keysToDelete.size()])));
-
-                    //                transaction.commit();
-                    //                transaction.close();
-                }
-            }
-            catch (IOException | IllegalArgumentException e)
-            {
-                throw new CoalescePersistorException(String.format("(FAILED) Saving Feature: (%s)", entry.getKey()), e);
-            }
-            finally
-            {
-                LOGGER.debug("Saved Feature ({}):  {} ms", entry.getKey(), watch.elapsed(TimeUnit.MILLISECONDS));
-                watch.reset();
-            }
-        }
-//*/
+        watch.finish();
+        LOGGER.debug("Saved Features:  {} ms", watch.getWorkLife());
+        watch.reset();
+        watch.start();
 
         return true;
     }
@@ -215,7 +177,7 @@ public class AccumuloPersistor2 extends AccumuloTemplatePersistor implements ICo
     public CoalesceEntity[] getEntity(String... keys) throws CoalescePersistorException
     {
 
-        List<CoalesceEntity> results = new ArrayList<CoalesceEntity>();
+        List<CoalesceEntity> results = new ArrayList<>();
 
         for (String xml : getEntityXml(keys))
         {
@@ -235,8 +197,8 @@ public class AccumuloPersistor2 extends AccumuloTemplatePersistor implements ICo
     @Override
     public String[] getEntityXml(String... keys) throws CoalescePersistorException
     {
-        List<String> results = new ArrayList<String>();
-        ArrayList<Range> ranges = new ArrayList<Range>();
+        List<String> results = new ArrayList<>();
+        ArrayList<Range> ranges = new ArrayList<>();
         for (String key : keys)
         {
             ranges.add(new Range(key));
@@ -248,9 +210,9 @@ public class AccumuloPersistor2 extends AccumuloTemplatePersistor implements ICo
                                                                        4))
         {
             scanner.setRanges(ranges);
-            IteratorSetting iter = new IteratorSetting(1, "modifiedFilter", RegExFilter.class);
-            RegExFilter.setRegexs(iter, null, "entity:*", "entityxml", null, false, true);
-            scanner.addScanIterator(iter);
+            IteratorSetting iterator = new IteratorSetting(1, "modifiedFilter", RegExFilter.class);
+            RegExFilter.setRegexs(iterator, null, "entity:*", "entityxml", null, false, true);
+            scanner.addScanIterator(iterator);
 
             for (Map.Entry<Key, Value> e : scanner)
             {
@@ -262,7 +224,7 @@ public class AccumuloPersistor2 extends AccumuloTemplatePersistor implements ICo
         {
             LOGGER.error(ex.getLocalizedMessage(), ex);
         }
-        return results != null ? results.toArray(new String[results.size()]) : null;
+        return results.toArray(new String[results.size()]);
     }
 
     @Override

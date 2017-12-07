@@ -18,17 +18,20 @@
 package com.incadencecorp.coalesce.framework.persistance.accumulo;
 
 import com.incadencecorp.coalesce.api.CoalesceErrors;
+import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.api.ICoalesceNormalizer;
 import com.incadencecorp.coalesce.api.ICoalesceResponseType;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.framework.CoalesceExecutorServiceImpl;
+import com.incadencecorp.coalesce.framework.CoalesceThreadFactoryImpl;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
 import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceStringResponseType;
 import com.incadencecorp.coalesce.framework.persistance.ICoalesceTemplatePersister;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
+import com.incadencecorp.coalesce.framework.persistance.accumulo.jobs.AccumuloCreateSchemaJob;
 import org.apache.accumulo.core.client.BatchWriterConfig;
 import org.apache.accumulo.core.client.MutationsRejectedException;
 import org.apache.accumulo.core.client.TableNotFoundException;
@@ -37,7 +40,6 @@ import org.apache.accumulo.core.data.Range;
 import org.apache.accumulo.core.data.Value;
 import org.apache.accumulo.core.security.Authorizations;
 import org.apache.hadoop.io.Text;
-import org.geotools.data.DataStore;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +59,7 @@ import java.util.concurrent.TimeUnit;
 public class AccumuloTemplatePersistor extends CoalesceExecutorServiceImpl implements ICoalesceTemplatePersister {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloPersistor.class);
+    private static final CoalesceThreadFactoryImpl THREAD_FACTORY = new CoalesceThreadFactoryImpl();
 
     private Map<String, String> params;
     private boolean batchInProgress = false;
@@ -67,9 +70,9 @@ public class AccumuloTemplatePersistor extends CoalesceExecutorServiceImpl imple
     private static String coalesceTemplateXMLQualifier = "xml";
 
     /**
-     * Default Constructor
+     * Default Constructor using a default {@link ExecutorService}
      *
-     * @param params
+     * @param params Configuration parameters
      */
     public AccumuloTemplatePersistor(Map<String, String> params)
     {
@@ -79,8 +82,8 @@ public class AccumuloTemplatePersistor extends CoalesceExecutorServiceImpl imple
     /**
      * Specify an external {@link ExecutorService} to use for internal threads.
      *
-     * @param service
-     * @param params
+     * @param service Service pool used for executing internal task in parallel.
+     * @param params  Configuration parameters
      */
     public AccumuloTemplatePersistor(ExecutorService service, Map<String, String> params)
     {
@@ -92,8 +95,9 @@ public class AccumuloTemplatePersistor extends CoalesceExecutorServiceImpl imple
         LOGGER.debug("User: {} ", params.get(AccumuloDataConnector.USER));
         LOGGER.debug("Mock: {} ", params.get(AccumuloDataConnector.USE_MOCK));
 
-        Runtime.getRuntime().addShutdownHook(new Thread() {
+        Thread shutdownThread = THREAD_FACTORY.newThread(new Runnable() {
 
+            @Override
             public void run()
             {
                 boolean inLoop = false;
@@ -105,7 +109,7 @@ public class AccumuloTemplatePersistor extends CoalesceExecutorServiceImpl imple
                     inLoop = true;
                     try
                     {
-                        sleep(500);
+                        Thread.sleep(500);
                     }
                     catch (InterruptedException e)
                     {
@@ -114,12 +118,14 @@ public class AccumuloTemplatePersistor extends CoalesceExecutorServiceImpl imple
                 }
             }
         });
+
+        Runtime.getRuntime().addShutdownHook(shutdownThread);
     }
 
     /**
      * Set the {@link ICoalesceNormalizer} to use when generating features.
      *
-     * @param normalizer
+     * @param normalizer Used for formatting features / schema.
      */
     public void setNormalizer(ICoalesceNormalizer normalizer)
     {
@@ -201,7 +207,6 @@ public class AccumuloTemplatePersistor extends CoalesceExecutorServiceImpl imple
         catch (TableNotFoundException | MutationsRejectedException e)
         {
             throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND,
-                                                               "Table",
                                                                AccumuloDataConnector.COALESCE_TEMPLATE_TABLE,
                                                                e.getMessage()), e);
 
@@ -230,41 +235,26 @@ public class AccumuloTemplatePersistor extends CoalesceExecutorServiceImpl imple
             }
         }
 
-        DataStore datastore = getDataConnector().getGeoDataStore();
-        //*
-
-        AccumuloRegisterJob job = new AccumuloRegisterJob(datastore, features);
+        AccumuloCreateSchemaJob job = new AccumuloCreateSchemaJob(getDataConnector().getGeoDataStore(), features);
         job.setExecutor(this);
-        ICoalesceResponseType<List<CoalesceStringResponseType>> results = job.call();
+        checkResults(job.call());
+    }
 
-        LOGGER.debug(results.getStatus().toString());
-        //*/
-/*
-        for (SimpleFeatureType feature : features)
+    protected void checkResults(ICoalesceResponseType<List<CoalesceStringResponseType>> results)
+            throws CoalescePersistorException
+    {
+        if (results.getStatus() != EResultStatus.SUCCESS)
         {
-            try
-            {
-                if (AccumuloSettings.overrideFeatures() || datastore.getSchema(feature.getName()) == null)
-                {
-                    datastore.createSchema(feature);
-                    LOGGER.info("Created Schema: {}", feature.getName());
+            throw new CoalescePersistorException(results.getError());
+        }
 
-                    if (LOGGER.isTraceEnabled())
-                    {
-                        for (AttributeType attr : feature.getTypes())
-                        {
-                            LOGGER.trace("\t{}", attr.getName());
-                        }
-                    }
-
-                }
-            }
-            catch (IOException e)
+        for (CoalesceStringResponseType result : results.getResult())
+        {
+            if (result.getStatus() != EResultStatus.SUCCESS)
             {
-                throw new CoalescePersistorException("(FAILED) Registering Feature: " + feature.getName(), e);
+                throw new CoalescePersistorException(result.getError());
             }
         }
-//*/
     }
 
     @Override
@@ -272,10 +262,10 @@ public class AccumuloTemplatePersistor extends CoalesceExecutorServiceImpl imple
     {
         if (key == null)
         {
-            throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", key));
+            throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_FOUND, "Template", "Null"));
         }
 
-        CoalesceEntityTemplate template = null;
+        CoalesceEntityTemplate template;
 
         try (CloseableScanner scanner = new CloseableScanner(getDataConnector().getDBConnector(),
                                                              AccumuloDataConnector.COALESCE_TEMPLATE_TABLE,

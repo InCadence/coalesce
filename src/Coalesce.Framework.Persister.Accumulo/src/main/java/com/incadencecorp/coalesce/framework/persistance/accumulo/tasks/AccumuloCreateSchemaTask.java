@@ -15,18 +15,18 @@
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-package com.incadencecorp.coalesce.framework.persistance.accumulo;
+package com.incadencecorp.coalesce.framework.persistance.accumulo.tasks;
 
 import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceStringResponseType;
+import com.incadencecorp.coalesce.framework.persistance.accumulo.AccumuloSettings;
 import com.incadencecorp.coalesce.framework.tasks.AbstractTask;
 import com.incadencecorp.coalesce.framework.tasks.TaskParameters;
 import org.geotools.data.DataStore;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeType;
-import org.opengis.feature.type.GeometryDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,11 +35,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * This task will create the schema on the provided datastore if it does not exists. If {@link AccumuloSettings#overrideFeatures()}
+ * is true then it will attempt to update a schema if it already exists.
+ *
  * @author Derek Clemenzi
  */
-public class AccumuloRegisterTask extends AbstractTask<SimpleFeatureType, CoalesceStringResponseType, DataStore> {
+public class AccumuloCreateSchemaTask extends AbstractTask<SimpleFeatureType, CoalesceStringResponseType, DataStore> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloTask.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloFeatureTask.class);
 
     @Override
     protected CoalesceStringResponseType doWork(TaskParameters<DataStore, SimpleFeatureType> parameters)
@@ -67,7 +70,6 @@ public class AccumuloRegisterTask extends AbstractTask<SimpleFeatureType, Coales
                 {
                     result.setStatus(EResultStatus.FAILED);
                     result.setError(String.format("(FAILED) Updating Schema: %s (Not Supported)", feature.getName()));
-
                 }
 
                 if (result.isSuccessful() && LOGGER.isTraceEnabled())

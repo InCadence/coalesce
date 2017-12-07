@@ -48,7 +48,7 @@ public class CoalesceExecutorServiceImpl implements ICoalesceExecutorService, Au
                                              CoalesceSettings.getMaxThreads(),
                                              CoalesceSettings.getKeepAliveTime(),
                                              TimeUnit.SECONDS,
-                                             new SynchronousQueue<Runnable>(),
+                                             new SynchronousQueue<>(),
                                              new CoalesceThreadFactoryImpl(),
                                              new ThreadPoolExecutor.CallerRunsPolicy());
         }
@@ -90,15 +90,12 @@ public class CoalesceExecutorServiceImpl implements ICoalesceExecutorService, Au
     {
         if (LOGGER.isTraceEnabled())
         {
-            LOGGER.trace("Invoking Tasks");
+            LOGGER.trace("Invoking ({}) Tasks", tasks.size());
         }
 
         if (_pool.isShutdown())
         {
-            if (LOGGER.isDebugEnabled())
-            {
-                LOGGER.debug("Pool is Shutdown");
-            }
+            LOGGER.warn("(FAILED) Invoking Tasks: Pool is Shutdown");
             return null;
         }
         else

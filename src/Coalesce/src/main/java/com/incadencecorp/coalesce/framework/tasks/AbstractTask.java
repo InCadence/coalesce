@@ -17,13 +17,6 @@
 
 package com.incadencecorp.coalesce.framework.tasks;
 
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.Callable;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.api.ICoalescePrincipal;
@@ -31,15 +24,20 @@ import com.incadencecorp.coalesce.api.ICoalesceResponseTypeBase;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.CoalesceComponentImpl;
 import com.incadencecorp.coalesce.framework.jobs.metrics.StopWatch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.Callable;
 
 /**
  * Abstract base for persister tasks in Coalesce.
- * 
- * @author Derek
  *
  * @param <INPUT>
  * @param <OUTPUT>
  * @param <TARGET>
+ * @author Derek
  */
 public abstract class AbstractTask<INPUT, OUTPUT extends ICoalesceResponseTypeBase, TARGET> extends CoalesceComponentImpl
         implements Callable<MetricResults<OUTPUT>> {
@@ -66,7 +64,7 @@ public abstract class AbstractTask<INPUT, OUTPUT extends ICoalesceResponseTypeBa
 
     /**
      * Sets the framework
-     * 
+     *
      * @param value
      */
     public final void setTarget(TARGET value)
@@ -76,7 +74,7 @@ public abstract class AbstractTask<INPUT, OUTPUT extends ICoalesceResponseTypeBa
 
     /**
      * Sets the principal of the user running this task.
-     * 
+     *
      * @param value
      */
     public final void setPrincipal(ICoalescePrincipal value)
@@ -86,7 +84,7 @@ public abstract class AbstractTask<INPUT, OUTPUT extends ICoalesceResponseTypeBa
 
     /**
      * Sets the parameters.
-     * 
+     *
      * @param value
      */
     public final void setParams(INPUT value)
@@ -132,49 +130,14 @@ public abstract class AbstractTask<INPUT, OUTPUT extends ICoalesceResponseTypeBa
         try
         {
             result.setResults(doWork(parameters));
-
-            if (!result.isSuccessful())
-            {
-                LOGGER.error(String.format(CoalesceErrors.FAILED_TASK,
-                                           this.getClass().getName(),
-                                           parameters.getTarget().getClass().getName(),
-                                           result.getResults().getError()));
-
-                logParameters();
-            }
         }
         catch (CoalesceException e)
         {
-            LOGGER.error(String.format(CoalesceErrors.FAILED_TASK,
-                                       this.getClass().getName(),
-                                       parameters.getTarget().getClass().getName(),
-                                       "Exception"),
-                         e);
+            LOGGER.error(e.getMessage(), e);
 
             result.setResults(createResult());
             result.getResults().setStatus(EResultStatus.FAILED);
             result.getResults().setError(e.getMessage());
-
-            // String reason = e.getMessage();
-            //
-            // if (StringHelper.isNullOrEmpty(reason))
-            // {
-            // reason = e.getClass().getSimpleName();
-            // }
-            //
-            // LOGGER.error(String.format(CoalesceErrors.FAILED_TASK,
-            // this.getClass().getName(),
-            // target.getClass().getName(),
-            // reason));
-            // if (LOGGER.isDebugEnabled())
-            // {
-            // LOGGER.debug("Stack Trace", e);
-            // }
-            //
-            // logParameters();
-            //
-            // // Re-throw
-            // throw e;
         }
         finally
         {
@@ -182,6 +145,30 @@ public abstract class AbstractTask<INPUT, OUTPUT extends ICoalesceResponseTypeBa
         }
 
         result.setWatch(watch);
+
+        if (!result.isSuccessful())
+        {
+            LOGGER.error("({}) ({}) Pending ({}) Working ({}) Total ({}) {}",
+                         result.isSuccessful() ? "SUCCESS" : "FAILED",
+                         getName(),
+                         result.getWatch().getPendingLife(),
+                         result.getWatch().getWorkLife(),
+                         result.getWatch().getTotalLife(),
+                         result.isSuccessful() ? "" : " Reason: (" + result.getResults().getError() + ")");
+
+            logParameters();
+        }
+        else if (LOGGER.isDebugEnabled())
+        {
+            LOGGER.debug("({}) ({}) Pending ({}) Working ({}) Total ({})",
+                         result.isSuccessful() ? "SUCCESS" : "FAILED",
+                         getName(),
+                         result.getWatch().getPendingLife(),
+                         result.getWatch().getWorkLife(),
+                         result.getWatch().getTotalLife(),
+                         result.isSuccessful() ? "" : " Reason: (" + result.getResults().getError() + ")");
+        }
+
         return result;
     }
 

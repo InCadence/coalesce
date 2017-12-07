@@ -11,6 +11,7 @@ import java.util.Map;
 
 /**
  * This implementation uses a {@link MockInstance}.
+ * @deprecated
  */
 public class MockAccumuloDataConnector extends AccumuloDataConnector {
 
@@ -29,17 +30,7 @@ public class MockAccumuloDataConnector extends AccumuloDataConnector {
      */
     public MockAccumuloDataConnector(ServerConn settings) throws CoalescePersistorException
     {
-        super(settings, getParameters(settings));
-
-        try
-        {
-            createTables(COALESCE_ENTITY_TABLE, COALESCE_TEMPLATE_TABLE, COALESCE_ENTITY_IDX_TABLE, COALESCE_SEARCH_TABLE);
-        }
-        catch (Exception e)
-        {
-            throw new CoalescePersistorException(e.getMessage(), e);
-        }
-
+        super(getParameters(settings));
     }
 
     private static Map<String, String> getParameters(ServerConn settings)

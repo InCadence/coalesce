@@ -23,6 +23,8 @@ import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 
 /**
  * Walks through a Filter, re-writing any property names removing the tablename from the property along with the /
+ * @deprecated
+ * @see AccumuloQueryRewriter2
  */
 class AccumuloQueryRewriter extends DuplicatingFilterVisitor {
     ArrayList<String> features = new ArrayList<String>();

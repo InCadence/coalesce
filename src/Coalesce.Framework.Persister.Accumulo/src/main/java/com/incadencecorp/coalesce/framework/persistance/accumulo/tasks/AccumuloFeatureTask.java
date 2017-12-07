@@ -15,12 +15,13 @@
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-package com.incadencecorp.coalesce.framework.persistance.accumulo;
+package com.incadencecorp.coalesce.framework.persistance.accumulo.tasks;
 
 import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceStringResponseType;
+import com.incadencecorp.coalesce.framework.persistance.accumulo.AccumuloFeatureIterator;
 import com.incadencecorp.coalesce.framework.tasks.AbstractTask;
 import com.incadencecorp.coalesce.framework.tasks.TaskParameters;
 import org.geotools.data.DataStore;
@@ -36,13 +37,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * This task adds and removes features from the specified datastore based on its parameters.
+ *
  * @author Derek Clemenzi
  */
-public class AccumuloTask extends
+public class AccumuloFeatureTask extends
         AbstractTask<Map.Entry<String, AccumuloFeatureIterator.FeatureCollections>, CoalesceStringResponseType, DataStore> {
 
     private static final FilterFactory2 FF = CommonFactoryFinder.getFilterFactory2();
-    private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloTask.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloFeatureTask.class);
 
     @Override
     protected CoalesceStringResponseType doWork(TaskParameters<DataStore, Map.Entry<String, AccumuloFeatureIterator.FeatureCollections>> parameters)
@@ -56,30 +59,32 @@ public class AccumuloTask extends
 
             if (featureStore != null)
             {
-                //				GEOMESA Does not currently support transactions
-                //               Transaction transaction = new DefaultTransaction();
-                //                featureStore.setTransaction(transaction);
-                featureStore.addFeatures(parameters.getParams().getValue().featuresToAdd);
+                LOGGER.debug(String.format("Updating (%s)", featureStore.getName()));
 
-                if (LOGGER.isDebugEnabled())
+                if (parameters.getParams().getValue().featuresToAdd.size() > 0)
                 {
-                    LOGGER.debug(String.format("Deleting (%s) from (%s)",
-                                               parameters.getParams().getValue().keysToDelete.toString(),
-                                               featureStore.getName()));
+                    featureStore.addFeatures(parameters.getParams().getValue().featuresToAdd);
                 }
 
-                featureStore.removeFeatures(FF.id(parameters.getParams().getValue().keysToDelete.toArray(new FeatureId[parameters.getParams().getValue().keysToDelete.size()])));
+                if (parameters.getParams().getValue().keysToDelete.size() > 0)
+                {
+                    if (LOGGER.isDebugEnabled())
+                    {
+                        LOGGER.debug(String.format("Deleting (%s) from (%s)",
+                                                   parameters.getParams().getValue().keysToDelete.toString(),
+                                                   featureStore.getName()));
+                    }
+
+                    featureStore.removeFeatures(FF.id(parameters.getParams().getValue().keysToDelete.toArray(new FeatureId[parameters.getParams().getValue().keysToDelete.size()])));
+                }
 
                 result.setStatus(EResultStatus.SUCCESS);
-
-                //                transaction.commit();
-                //                transaction.close();
             }
         }
         catch (IOException | IllegalArgumentException e)
         {
-            throw new CoalescePersistorException(String.format("(FAILED) Saving Feature: (%s)",
-                                                               parameters.getParams().getKey()), e);
+            throw new CoalescePersistorException(String.format("(FAILED) Updating: (%s)", parameters.getParams().getKey()),
+                                                 e);
         }
 
         return result;
@@ -89,7 +94,7 @@ public class AccumuloTask extends
     protected Map<String, String> getParameters(Map.Entry<String, AccumuloFeatureIterator.FeatureCollections> params,
                                                 boolean isTrace)
     {
-        return new HashMap<String, String>();
+        return new HashMap<>();
     }
 
     @Override

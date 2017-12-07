@@ -49,9 +49,9 @@ public class AccumuloSearchPersistor extends AccumuloPersistor2 implements ICoal
     private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloSearchPersistor.class);
 
     /**
-     * Default Constructor
+     * Default Constructor using a default {@link ExecutorService}
      *
-     * @param params
+     * @param params Configuration parameters
      */
     public AccumuloSearchPersistor(Map<String, String> params)
     {
@@ -62,8 +62,8 @@ public class AccumuloSearchPersistor extends AccumuloPersistor2 implements ICoal
     /**
      * Specify an external {@link ExecutorService} to use for internal threads.
      *
-     * @param service
-     * @param params
+     * @param service Service pool used for executing internal task in parallel.
+     * @param params Configuration parameters
      */
     public AccumuloSearchPersistor(ExecutorService service, Map<String, String> params)
     {
@@ -125,7 +125,7 @@ public class AccumuloSearchPersistor extends AccumuloPersistor2 implements ICoal
 
             featureCount = featureSource.getFeatures(countQuery);
             FeatureIterator<SimpleFeature> featureItr = featureSource.getFeatures(localquery).features();
-            Iterator<Object[]> columnIterator = new FeatureColumnIterator<Object[]>(featureItr);
+            Iterator<Object[]> columnIterator = new FeatureColumnIterator<>(featureItr);
 
             CoalesceResultSet resultSet = new CoalesceResultSet(columnIterator, columnList);
 

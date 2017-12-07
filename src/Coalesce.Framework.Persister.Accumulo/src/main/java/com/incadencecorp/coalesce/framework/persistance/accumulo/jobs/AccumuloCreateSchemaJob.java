@@ -15,7 +15,7 @@
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-package com.incadencecorp.coalesce.framework.persistance.accumulo;
+package com.incadencecorp.coalesce.framework.persistance.accumulo.jobs;
 
 import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.api.ICoalescePrincipal;
@@ -24,56 +24,57 @@ import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.jobs.AbstractCoalesceJob;
 import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceResponseType;
 import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceStringResponseType;
+import com.incadencecorp.coalesce.framework.persistance.accumulo.tasks.AccumuloCreateSchemaTask;
 import com.incadencecorp.coalesce.framework.tasks.MetricResults;
 import org.geotools.data.DataStore;
+import org.opengis.feature.simple.SimpleFeatureType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 /**
+ * This job creates {@link AccumuloCreateSchemaTask} tasks.
+ *
  * @author Derek Clemenzi
  */
-public class AccumuloJob extends
-        AbstractCoalesceJob<Map<String, AccumuloFeatureIterator.FeatureCollections>, ICoalesceResponseType<List<CoalesceStringResponseType>>, CoalesceStringResponseType> {
+public class AccumuloCreateSchemaJob extends
+        AbstractCoalesceJob<List<SimpleFeatureType>, ICoalesceResponseType<List<CoalesceStringResponseType>>, CoalesceStringResponseType> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloJob.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloFeatureJob.class);
     private DataStore datastore;
 
-    public AccumuloJob(DataStore datastore, Map<String, AccumuloFeatureIterator.FeatureCollections> params)
+    public AccumuloCreateSchemaJob(DataStore datastore, List<SimpleFeatureType> features)
     {
-        super(params);
+        super(features);
 
         this.datastore = datastore;
     }
 
     @Override
     protected ICoalesceResponseType<List<CoalesceStringResponseType>> doWork(ICoalescePrincipal principal,
-                                                                             Map<String, AccumuloFeatureIterator.FeatureCollections> params)
+                                                                             List<SimpleFeatureType> features)
             throws CoalesceException
     {
-        List<CoalesceStringResponseType> results = new ArrayList<CoalesceStringResponseType>();
+        List<CoalesceStringResponseType> results = new ArrayList<>();
 
         try
         {
-            List<AccumuloTask> tasks = new ArrayList<>();
+            List<AccumuloCreateSchemaTask> tasks = new ArrayList<>();
 
             // Create Tasks
-            for (Map.Entry<String, AccumuloFeatureIterator.FeatureCollections> entry : params.entrySet())
+            for (SimpleFeatureType feature : features)
             {
-                AccumuloTask task = new AccumuloTask();
-                task.setParams(entry);
+                AccumuloCreateSchemaTask task = new AccumuloCreateSchemaTask();
+                task.setParams(feature);
                 task.setTarget(datastore);
                 task.setPrincipal(principal);
 
                 tasks.add(task);
             }
-
-            int ii = 0;
 
             // Execute Tasks
             for (Future<MetricResults<CoalesceStringResponseType>> future : getService().invokeAll(tasks))
@@ -93,7 +94,7 @@ public class AccumuloJob extends
                     task.setError(e.getMessage());
                     task.setStatus(EResultStatus.FAILED);
 
-                    metrics = new MetricResults<CoalesceStringResponseType>();
+                    metrics = new MetricResults<>();
                     metrics.setResults(task);
                     metrics.getResults().setStatus(EResultStatus.FAILED);
                 }
@@ -101,8 +102,6 @@ public class AccumuloJob extends
                 addResult(metrics);
 
                 results.add(metrics.getResults());
-
-                ii++;
             }
         }
         catch (InterruptedException e)
@@ -110,7 +109,7 @@ public class AccumuloJob extends
             throw new CoalesceException("Job Interrupted", e);
         }
 
-        CoalesceResponseType<List<CoalesceStringResponseType>> result = new CoalesceResponseType<List<CoalesceStringResponseType>>();
+        CoalesceResponseType<List<CoalesceStringResponseType>> result = new CoalesceResponseType<>();
         result.setResult(results);
         result.setStatus(EResultStatus.SUCCESS);
 
@@ -120,7 +119,7 @@ public class AccumuloJob extends
     @Override
     protected ICoalesceResponseType<List<CoalesceStringResponseType>> createResponse()
     {
-        return new CoalesceResponseType<List<CoalesceStringResponseType>>();
+        return new CoalesceResponseType<>();
     }
 
     @Override
@@ -128,4 +127,5 @@ public class AccumuloJob extends
     {
         return new CoalesceStringResponseType();
     }
+
 }

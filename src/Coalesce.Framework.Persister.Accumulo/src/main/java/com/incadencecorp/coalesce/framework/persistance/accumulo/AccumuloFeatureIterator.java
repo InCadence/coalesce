@@ -306,18 +306,19 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
             if (feature.getAttribute(descriptor.getLocalName()) == null)
             {
                 feature.setAttribute(descriptor.getLocalName(), createWorldPolygon());
-                LOGGER.debug("Default Geometry ({}) = (World)", descriptor.getLocalName());
+                LOGGER.debug("({}) Default Geometry ({}) = (World)", featureType.getName(), descriptor.getLocalName());
             }
             else
             {
-                LOGGER.debug("Default Geometry ({}) = ({})",
+                LOGGER.debug("({}) Default Geometry ({}) = ({})",
+                             featureType.getName(),
                              descriptor.getLocalName(),
                              feature.getAttribute(descriptor.getLocalName()).toString());
             }
         }
         else
         {
-            LOGGER.debug("Default Geometry (None)");
+            LOGGER.debug("({}) Default Geometry (None)", featureType.getName());
         }
     }
 
@@ -574,10 +575,10 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
          */
     }
 
-    protected class FeatureCollections {
+    public class FeatureCollections {
 
-        protected DefaultFeatureCollection featuresToAdd = new DefaultFeatureCollection();
-        protected  List<FeatureId> keysToDelete = new ArrayList<>();
+        public DefaultFeatureCollection featuresToAdd = new DefaultFeatureCollection();
+        public List<FeatureId> keysToDelete = new ArrayList<>();
 
     }
 

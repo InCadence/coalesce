@@ -21,7 +21,7 @@ import java.util.function.Predicate;
  */
 class AccumuloQueryRewriter2 extends DuplicatingFilterVisitor {
 
-    private final ArrayList<String> features = new ArrayList<String>();
+    private final ArrayList<String> features = new ArrayList<>();
     private final ICoalesceNormalizer normalizer;
 
     /**
@@ -151,9 +151,11 @@ class AccumuloQueryRewriter2 extends DuplicatingFilterVisitor {
         }
         else if (parts.length == 2)
         {
-            if (!features.contains(parts[0]))
+            String feature = parts[0].toLowerCase();
+
+            if (!features.contains(feature))
             {
-                features.add(parts[0]);
+                features.add(feature);
             }
 
             normalized = normalizer.normalize(parts[0], parts[1]);

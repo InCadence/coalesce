@@ -260,6 +260,10 @@ public class AccumuloSettings {
         settings.setSetting(config_name, PARAM_OVERRIDE_FEATURES, value);
     }
 
+    /**
+     * @deprecated
+     * @return Server Connection Properties
+     */
     public static ServerConn getServerConn()
     {
 

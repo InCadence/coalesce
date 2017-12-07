@@ -75,11 +75,16 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase implements 
     public static final String AUTHS = "auths";
 
     // These variables are for connecting to GeoMesa for the search
-    private Map<String, String> dsConf = new HashMap<String, String>();
+    private Map<String, String> dsConf = new HashMap<>();
     private DataStore dataStore;
     private Instance instance;
     private Connector connector;
 
+    /**
+     *
+     * @param params Configuration Parameters
+     * @throws CoalescePersistorException on error
+     */
     public AccumuloDataConnector(Map<String, String> params) throws CoalescePersistorException
     {
         dsConf.putAll(params);
@@ -95,52 +100,25 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase implements 
     }
 
     /**
-     * @param settings spec
+     * @param settings Configuration Settings
      * @throws CoalescePersistorException on error
+     * @deprecated
+     * @see #AccumuloDataConnector(Map)
      */
     public AccumuloDataConnector(ServerConn settings) throws CoalescePersistorException
     {
-        this(settings, null);
+        this(getParameters(settings));
     }
 
-    /**
-     * @param settings spec
-     * @param params   additional parameters to creating the datastore.
-     * @throws CoalescePersistorException on error
-     */
-    public AccumuloDataConnector(ServerConn settings, Map<String, String> params) throws CoalescePersistorException
+    private static Map<String, String> getParameters(ServerConn settings)
     {
-        if (params != null)
-        {
-            dsConf.putAll(params);
-            dsConf.put(INSTANCE_ID, settings.getDatabase());
-            dsConf.put(ZOOKEEPERS, settings.getServerName());
-            dsConf.put(USER, settings.getUser());
-            dsConf.put(PASSWORD, settings.getPassword());
-        }
-        else
-        {
-            dsConf.put(INSTANCE_ID, settings.getDatabase());
-            dsConf.put(ZOOKEEPERS, settings.getServerName());
-            dsConf.put(USER, settings.getUser());
-            dsConf.put(PASSWORD, settings.getPassword());
-            dsConf.put(TABLE_NAME, COALESCE_SEARCH_TABLE);
-            dsConf.put(AUTHS, ""); // Auths will be empty for now
-        }
+        Map<String, String> params = new HashMap<>();
+        params.put(INSTANCE_ID, settings.getDatabase());
+        params.put(ZOOKEEPERS, settings.getServerName());
+        params.put(USER, settings.getUser());
+        params.put(PASSWORD, settings.getPassword());
 
-        LOGGER.debug("Geotools DS conf:  Instance: {}  Zookeepers: {}, User: {}",
-                     settings.getDatabase(),
-                     settings.getServerName(),
-                     settings.getUser());
-
-        // Set system properties for GeomesaBatchWriter
-        Properties props = System.getProperties();
-        props.setProperty("geomesa.batchwriter.latency.millis", "1000");
-        props.setProperty("geomesa.batchwriter.maxthreads", "10");
-        props.setProperty("geomesa.batchwriter.memory", "52428800");
-
-        //populate datastore and Connector fields
-        getDBConnector();
+        return params;
     }
 
     protected Connector getDBConnector() throws CoalescePersistorException
@@ -181,7 +159,7 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase implements 
     Private Functions
 	-----------------------------------------------------------------------------*/
 
-    protected void createTables(String... tableNames) throws AccumuloException, AccumuloSecurityException
+    private void createTables(String... tableNames) throws AccumuloException, AccumuloSecurityException
     {
         if (connector != null)
         {
@@ -249,7 +227,7 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase implements 
                     Iterator<Entry<String, String>> it = dsConf.entrySet().iterator();
                     while (it.hasNext())
                     {
-                        Map.Entry<String, String> pair = (Map.Entry<String, String>) it.next();
+                        Map.Entry<String, String> pair = it.next();
                         LOGGER.error(pair.getKey() + " = " + pair.getValue());
                         it.remove(); // avoids a ConcurrentModificationException
                     }

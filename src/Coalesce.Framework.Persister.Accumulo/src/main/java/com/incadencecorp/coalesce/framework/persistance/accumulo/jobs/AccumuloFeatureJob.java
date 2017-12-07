@@ -15,7 +15,7 @@
  Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  -----------------------------------------------------------------------------*/
 
-package com.incadencecorp.coalesce.framework.persistance.accumulo;
+package com.incadencecorp.coalesce.framework.persistance.accumulo.jobs;
 
 import com.incadencecorp.coalesce.api.EResultStatus;
 import com.incadencecorp.coalesce.api.ICoalescePrincipal;
@@ -24,49 +24,52 @@ import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.jobs.AbstractCoalesceJob;
 import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceResponseType;
 import com.incadencecorp.coalesce.framework.jobs.responses.CoalesceStringResponseType;
+import com.incadencecorp.coalesce.framework.persistance.accumulo.AccumuloFeatureIterator;
+import com.incadencecorp.coalesce.framework.persistance.accumulo.tasks.AccumuloFeatureTask;
 import com.incadencecorp.coalesce.framework.tasks.MetricResults;
 import org.geotools.data.DataStore;
-import org.opengis.feature.simple.SimpleFeatureType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 /**
+ * This job creates {@link AccumuloFeatureTask} tasks.
+ *
  * @author Derek Clemenzi
- */
-public class AccumuloRegisterJob extends
-        AbstractCoalesceJob<List<SimpleFeatureType>, ICoalesceResponseType<List<CoalesceStringResponseType>>, CoalesceStringResponseType> {
+ */public class AccumuloFeatureJob extends
+        AbstractCoalesceJob<Map<String, AccumuloFeatureIterator.FeatureCollections>, ICoalesceResponseType<List<CoalesceStringResponseType>>, CoalesceStringResponseType> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloJob.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloFeatureJob.class);
     private DataStore datastore;
 
-    public AccumuloRegisterJob(DataStore datastore, List<SimpleFeatureType> features)
+    public AccumuloFeatureJob(DataStore datastore, Map<String, AccumuloFeatureIterator.FeatureCollections> params)
     {
-        super(features);
+        super(params);
 
         this.datastore = datastore;
     }
 
     @Override
     protected ICoalesceResponseType<List<CoalesceStringResponseType>> doWork(ICoalescePrincipal principal,
-                                                                             List<SimpleFeatureType> features)
+                                                                             Map<String, AccumuloFeatureIterator.FeatureCollections> params)
             throws CoalesceException
     {
-        List<CoalesceStringResponseType> results = new ArrayList<CoalesceStringResponseType>();
+        List<CoalesceStringResponseType> results = new ArrayList<>();
 
         try
         {
-            List<AccumuloRegisterTask> tasks = new ArrayList<>();
+            List<AccumuloFeatureTask> tasks = new ArrayList<>();
 
             // Create Tasks
-            for (SimpleFeatureType feature : features)
+            for (Map.Entry<String, AccumuloFeatureIterator.FeatureCollections> entry : params.entrySet())
             {
-                AccumuloRegisterTask task = new AccumuloRegisterTask();
-                task.setParams(feature);
+                AccumuloFeatureTask task = new AccumuloFeatureTask();
+                task.setParams(entry);
                 task.setTarget(datastore);
                 task.setPrincipal(principal);
 
@@ -91,7 +94,7 @@ public class AccumuloRegisterJob extends
                     task.setError(e.getMessage());
                     task.setStatus(EResultStatus.FAILED);
 
-                    metrics = new MetricResults<CoalesceStringResponseType>();
+                    metrics = new MetricResults<>();
                     metrics.setResults(task);
                     metrics.getResults().setStatus(EResultStatus.FAILED);
                 }
@@ -106,7 +109,7 @@ public class AccumuloRegisterJob extends
             throw new CoalesceException("Job Interrupted", e);
         }
 
-        CoalesceResponseType<List<CoalesceStringResponseType>> result = new CoalesceResponseType<List<CoalesceStringResponseType>>();
+        CoalesceResponseType<List<CoalesceStringResponseType>> result = new CoalesceResponseType<>();
         result.setResult(results);
         result.setStatus(EResultStatus.SUCCESS);
 
@@ -116,7 +119,7 @@ public class AccumuloRegisterJob extends
     @Override
     protected ICoalesceResponseType<List<CoalesceStringResponseType>> createResponse()
     {
-        return new CoalesceResponseType<List<CoalesceStringResponseType>>();
+        return new CoalesceResponseType<>();
     }
 
     @Override
@@ -124,5 +127,4 @@ public class AccumuloRegisterJob extends
     {
         return new CoalesceStringResponseType();
     }
-
 }
