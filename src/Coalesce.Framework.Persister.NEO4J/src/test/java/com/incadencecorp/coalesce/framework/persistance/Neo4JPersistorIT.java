@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
 import org.geotools.data.Query;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -93,7 +94,7 @@ public class Neo4JPersistorIT extends AbstractCoalescePersistorTest<Neo4JPersist
         field2.setValue(true);
 
         // Link Entities
-        EntityLinkHelper.linkEntities(entity1, ELinkTypes.IS_PARENT_OF, entity2,new Marking("(U)"), "", "", "Test Label", Locale.US, true, false, false);
+        EntityLinkHelper.linkEntities(entity1, ELinkTypes.IS_PARENT_OF, entity2, new Marking("(U)"), "", "", "Test Label", Locale.US, true, ECoalesceObjectStatus.ACTIVE, false);
 
         Neo4jSearchPersister persistor = new Neo4jSearchPersister();
 

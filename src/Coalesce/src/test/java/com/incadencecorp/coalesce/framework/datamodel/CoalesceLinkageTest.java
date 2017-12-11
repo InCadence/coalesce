@@ -72,7 +72,7 @@ public class CoalesceLinkageTest {
         Assert.assertEquals(0, entity1.getLinkages().size());
 
         // Link Entities
-        EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, null, null, entity1.getKey(), true, false, false);
+        EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, null, null, entity1.getKey(), true, ECoalesceObjectStatus.ACTIVE, false);
 
         // Verify
         Assert.assertEquals(1, entity1.getLinkages().size());
@@ -225,7 +225,7 @@ public class CoalesceLinkageTest {
         CoalesceEntity entity2 = new CoalesceEntity();
         entity2.initialize();
 
-        EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, "Derek", "127.0.0.1", "", true, true, false);
+        EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, "Derek", "127.0.0.1", "", true, ECoalesceObjectStatus.READONLY, false);
         EntityLinkHelper.unLinkEntities(entity1, entity2, ELinkTypes.CREATED, "Derek", "127.0.0.1", false);
 
     }
@@ -244,8 +244,8 @@ public class CoalesceLinkageTest {
         CoalesceEntity entity2 = new CoalesceEntity();
         entity2.initialize();
 
-        EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, "Derek", "127.0.0.1", "", true, true, false);
-        EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, "Derek", "127.0.0.1", "", true, true, false);
+        EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, "Derek", "127.0.0.1", "", true, ECoalesceObjectStatus.READONLY, false);
+        EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, "Derek", "127.0.0.1", "", true, ECoalesceObjectStatus.READONLY, false);
 
     }
 
@@ -264,8 +264,8 @@ public class CoalesceLinkageTest {
         CoalesceEntity entity2 = new CoalesceEntity();
         entity2.initialize();
 
-        EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, "Derek", "127.0.0.1", "", true, true, false);
-        EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, "Derek", "127.0.0.1", "", true, true, true);
+        EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, "Derek", "127.0.0.1", "", true, ECoalesceObjectStatus.READONLY, false);
+        EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, "Derek", "127.0.0.1", "", true, ECoalesceObjectStatus.READONLY, true);
 
         assertTrue(verifyLinkage(entity1, entity2, ELinkTypes.CREATED));
 
@@ -292,10 +292,10 @@ public class CoalesceLinkageTest {
         entity2.initialize();
 
         // Create History
-        EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, "Derek1", "127.0.0.1", "", true, false, true);
-        EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, "Derek2", "127.0.0.1", "", true, true, true);
+        EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, "Derek1", "127.0.0.1", "", true, ECoalesceObjectStatus.ACTIVE, true);
+        EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, "Derek2", "127.0.0.1", "", true, ECoalesceObjectStatus.READONLY, true);
         EntityLinkHelper.unLinkEntities(entity1, entity2, ELinkTypes.CREATED, "Derek3", "127.0.0.1", true);
-        EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, "Derek4", "127.0.0.1", "", true, false, true);
+        EntityLinkHelper.linkEntities(entity1, ELinkTypes.CREATED, entity2, "Derek4", "127.0.0.1", "", true, ECoalesceObjectStatus.ACTIVE, true);
 
         // Get Linkages
         Map<String, CoalesceLinkage> linkages = entity1.getLinkageSection().getLinkages();

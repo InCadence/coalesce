@@ -18,12 +18,13 @@
 package com.incadencecorp.coalesce.framework.persistance.accumulo;
 
 import com.incadencecorp.coalesce.api.CoalesceErrors;
+import com.incadencecorp.coalesce.api.ICoalesceFilter;
 import com.incadencecorp.coalesce.api.ICoalesceNormalizer;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.datamodel.*;
+import com.incadencecorp.coalesce.framework.filter.CoalesceVersionFilter;
 import com.incadencecorp.coalesce.framework.iterators.CoalesceIterator;
-import com.incadencecorp.coalesce.framework.jobs.metrics.StopWatch;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
@@ -85,6 +86,7 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
 
     private DataStore datastore;
     private ICoalesceNormalizer normalizer;
+    private ICoalesceFilter filter = new CoalesceVersionFilter();
 
     public AccumuloFeatureIterator(DataStore datastore, ICoalesceNormalizer normalizer)
     {
@@ -119,6 +121,16 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
         LINKAGE_LINK_TYPE_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getLinkageType());
     }
 
+    /**
+     * Set a filter to use when determining which features to include.
+     *
+     * @param filter used to filter features.
+     */
+    public void setFilter(ICoalesceFilter filter)
+    {
+        this.filter = filter;
+    }
+
     private String getColumnName(PropertyName name)
     {
         return CoalescePropertyFactory.getColumnName(normalizer, name);
@@ -143,21 +155,15 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
 
             if (featureType != null)
             {
-                //SimpleFeatureStore store = (SimpleFeatureStore) datastore.getFeatureSource(featureName);
-                FeatureCollections collection = features.get(featureName);
+                FeatureCollections collection = getCollection(features, featureName);
 
-                if (collection == null)
-                {
-                    collection = new FeatureCollections();
-                    features.put(featureName, collection);
-                }
-
-                if (entity.getStatus() != ECoalesceObjectStatus.DELETED)
+                if (!entity.isMarkedDeleted())
                 {
                     SimpleFeature feature = SimpleFeatureBuilder.build(featureType, new Object[] {}, entity.getKey());
                     feature.getUserData().put(Hints.USE_PROVIDED_FID, true);
 
-                    populateFeature(feature, entity);
+                    populateEntityFeature(feature, entity);
+
                     ensureDefaultGeometry(featureType, feature);
 
                     collection.featuresToAdd.add(feature);
@@ -178,6 +184,19 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
         return true;
     }
 
+    private FeatureCollections getCollection(Map<String, AccumuloFeatureIterator.FeatureCollections> features, String name)
+    {
+        FeatureCollections collection = features.get(name);
+
+        if (collection == null)
+        {
+            collection = new FeatureCollections();
+            features.put(name, collection);
+        }
+
+        return collection;
+    }
+
     @Override
     protected boolean visitCoalesceLinkageSection(CoalesceLinkageSection section,
                                                   Map<String, AccumuloFeatureIterator.FeatureCollections> features)
@@ -191,37 +210,35 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
 
             if (featureType != null)
             {
-                //SimpleFeatureStore store = (SimpleFeatureStore) datastore.getFeatureSource(featureName);
-                FeatureCollections collection = features.get(featureName);
-
-                if (collection == null)
-                {
-                    collection = new FeatureCollections();
-                    features.put(featureName, collection);
-                }
-
+                FeatureCollections collection = getCollection(features, featureName);
                 CoalesceEntity entity = section.getEntity();
 
                 if (entity != null)
                 {
+                    SimpleFeatureBuilder builder = new SimpleFeatureBuilder(featureType);
+
                     for (CoalesceLinkage linkage : section.getLinkagesAsList())
                     {
-                        if (linkage.getStatus() != ECoalesceObjectStatus.DELETED
-                                && entity.getStatus() != ECoalesceObjectStatus.DELETED)
+                        if (filter.filter(linkage))
                         {
-                            SimpleFeature feature = SimpleFeatureBuilder.build(featureType,
-                                                                               new Object[] {},
-                                                                               linkage.getKey());
-                            feature.getUserData().put(Hints.USE_PROVIDED_FID, true);
+                            String id = linkage.getKey();
 
-                            populateFeature(feature, linkage);
-                            ensureDefaultGeometry(featureType, feature);
+                            if (!linkage.isMarkedDeleted() && !entity.isMarkedDeleted())
+                            {
+                                SimpleFeature feature = builder.buildFeature(id);
+                                feature.getUserData().put(Hints.USE_PROVIDED_FID, true);
 
-                            collection.featuresToAdd.add(feature);
-                        }
-                        else
-                        {
-                            collection.keysToDelete.add(FF.featureId(linkage.getKey()));
+                                populateCommon(feature, entity);
+                                populateLinkageFeature(feature, linkage);
+
+                                ensureDefaultGeometry(featureType, feature);
+
+                                collection.featuresToAdd.add(feature);
+                            }
+                            else
+                            {
+                                collection.keysToDelete.add(FF.featureId(id));
+                            }
                         }
                     }
                 }
@@ -252,39 +269,37 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
 
             if (featureType != null)
             {
-                //SimpleFeatureStore store = (SimpleFeatureStore) datastore.getFeatureSource(featureName);
-                FeatureCollections collection = features.get(featureName);
-
-                if (collection == null)
-                {
-                    collection = new FeatureCollections();
-                    features.put(featureName, collection);
-                }
+                FeatureCollections collection = getCollection(features, featureName);
 
                 CoalesceEntity entity = recordset.getEntity();
 
                 if (entity != null)
                 {
+                    SimpleFeatureBuilder builder = new SimpleFeatureBuilder(featureType);
+
                     for (CoalesceRecord record : recordset.getAllRecords())
                     {
-                        if (record.getStatus() != ECoalesceObjectStatus.DELETED
-                                && entity.getStatus() != ECoalesceObjectStatus.DELETED)
-                        {
-                            // TODO Check if update is needed
-                            SimpleFeature feature = SimpleFeatureBuilder.build(featureType,
-                                                                               new Object[] {},
-                                                                               record.getKey());
-                            feature.getUserData().put(Hints.USE_PROVIDED_FID, true);
-                            feature.getUserData().put(AccumuloRegisterIterator.DTG_INDEX, null);
+                        String id = record.getKey();
 
-                            populateFeature(feature, entity, record);
-                            ensureDefaultGeometry(featureType, feature);
-
-                            collection.featuresToAdd.add(feature);
-                        }
-                        else
+                        if (filter.filter(record))
                         {
-                            collection.keysToDelete.add(FF.featureId(record.getKey()));
+                            if (!record.isMarkedDeleted() && !entity.isMarkedDeleted())
+                            {
+                                SimpleFeature feature = builder.buildFeature(id);
+                                feature.getUserData().put(Hints.USE_PROVIDED_FID, true);
+                                feature.getUserData().put(AccumuloRegisterIterator.DTG_INDEX, null);
+
+                                populateCommon(feature, entity);
+                                populateFeature(feature, record);
+
+                                ensureDefaultGeometry(featureType, feature);
+
+                                collection.featuresToAdd.add(feature);
+                            }
+                            else
+                            {
+                                collection.keysToDelete.add(FF.featureId(id));
+                            }
                         }
                     }
                 }
@@ -337,53 +352,30 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
         }
         else
         {
-            LOGGER.debug("({}) Default Geometry (None)", featureType.getName());
+            LOGGER.trace("({}) Default Geometry (None)", featureType.getName());
         }
     }
 
-    private void populateFeature(SimpleFeature feature, CoalesceEntity entity) throws CoalesceException, IOException
+    private void populateEntityFeature(SimpleFeature feature, CoalesceEntity entity) throws CoalesceException, IOException
     {
-        setFeatureAttribute(feature, ENTITY_KEY_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE, entity.getKey());
-        setFeatureAttribute(feature, ENTITY_NAME_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE, entity.getName());
-        setFeatureAttribute(feature, ENTITY_SOURCE_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE, entity.getSource());
-        setFeatureAttribute(feature, ENTITY_TITLE_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE, entity.getTitle());
-        setFeatureAttribute(feature, ENTITY_VERSION_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE, entity.getVersion());
+        populateCommon(feature, entity);
+
         setFeatureAttribute(feature, ENTITY_ID_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE, entity.getEntityId());
         setFeatureAttribute(feature,
                             ENTITY_ID_TYPE_COLUMN_NAME,
                             ECoalesceFieldDataTypes.STRING_TYPE,
                             entity.getEntityIdType());
         setFeatureAttribute(feature,
-                            ENTITY_DATE_CREATED_COLUMN_NAME,
-                            ECoalesceFieldDataTypes.DATE_TIME_TYPE,
-                            entity.getDateCreated());
-        setFeatureAttribute(feature,
-                            ENTITY_LAST_MODIFIED_COLUMN_NAME,
-                            ECoalesceFieldDataTypes.DATE_TIME_TYPE,
-                            entity.getLastModified());
-        setFeatureAttribute(feature, ENTITY_STATUS_COLUMN_NAME, ECoalesceFieldDataTypes.BOOLEAN_TYPE, entity.getStatus());
+                            ENTITY_STATUS_COLUMN_NAME,
+                            ECoalesceFieldDataTypes.ENUMERATION_TYPE,
+                            entity.getStatus().ordinal());
     }
 
-    private void populateFeature(SimpleFeature feature, CoalesceLinkage linkage) throws CoalesceException, IOException
+    private void populateLinkageFeature(SimpleFeature feature, CoalesceLinkage linkage) throws CoalesceException, IOException
     {
-        setFeatureAttribute(feature, LINKAGE_KEY_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE, linkage.getKey());
+        // TODO Is this needed since the FID is the linkage key?
+        //setFeatureAttribute(feature, LINKAGE_KEY_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE, linkage.getKey());
 
-        setFeatureAttribute(feature,
-                            LINKAGE_ENTITY1_KEY_COLUMN_NAME,
-                            ECoalesceFieldDataTypes.STRING_TYPE,
-                            linkage.getEntity1Key());
-        setFeatureAttribute(feature,
-                            LINKAGE_ENTITY1_NAME_COLUMN_NAME,
-                            ECoalesceFieldDataTypes.STRING_TYPE,
-                            linkage.getEntity1Name());
-        setFeatureAttribute(feature,
-                            LINKAGE_ENTITY1_SOURCE_COLUMN_NAME,
-                            ECoalesceFieldDataTypes.STRING_TYPE,
-                            linkage.getEntity1Source());
-        setFeatureAttribute(feature,
-                            LINKAGE_ENTITY1_VERSION_COLUMN_NAME,
-                            ECoalesceFieldDataTypes.STRING_TYPE,
-                            linkage.getEntity1Version());
         setFeatureAttribute(feature,
                             LINKAGE_ENTITY2_KEY_COLUMN_NAME,
                             ECoalesceFieldDataTypes.STRING_TYPE,
@@ -408,23 +400,19 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
         setFeatureAttribute(feature,
                             LINKAGE_LINK_TYPE_COLUMN_NAME,
                             ECoalesceFieldDataTypes.ENUMERATION_TYPE,
-                            linkage.getLinkType());
+                            linkage.getLinkType().ordinal());
     }
 
-    private void populateFeature(SimpleFeature feature, CoalesceEntity entity, CoalesceRecord record)
-            throws CoalesceException, IOException
+    private void populateFeature(SimpleFeature feature, CoalesceRecord record) throws CoalesceException, IOException
     {
         String recordsetName = record.getParent().getName();
 
-        setFeatureAttribute(feature, ENTITY_KEY_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE, entity.getKey());
-        setFeatureAttribute(feature, ENTITY_NAME_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE, entity.getName());
-        setFeatureAttribute(feature, ENTITY_SOURCE_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE, entity.getSource());
-        setFeatureAttribute(feature, ENTITY_TITLE_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE, entity.getTitle());
+        /* TODO Is this needed if the record key is already set to the FID
         setFeatureAttribute(feature,
                             normalizer.normalize(recordsetName, "recordkey"),
                             ECoalesceFieldDataTypes.STRING_TYPE,
                             record.getKey());
-
+        */
         for (CoalesceField<?> field : record.getFields())
         {
             String fieldName = normalizer.normalize(recordsetName, field.getName());
@@ -440,6 +428,23 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
                 setFeatureAttribute(feature, fieldName, dataType, field.getValue());
             }
         }
+    }
+
+    private void populateCommon(SimpleFeature feature, CoalesceEntity entity) throws CoalesceException, IOException
+    {
+        setFeatureAttribute(feature, ENTITY_KEY_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE, entity.getKey());
+        setFeatureAttribute(feature, ENTITY_NAME_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE, entity.getName());
+        setFeatureAttribute(feature, ENTITY_SOURCE_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE, entity.getSource());
+        setFeatureAttribute(feature, ENTITY_VERSION_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE, entity.getVersion());
+        setFeatureAttribute(feature,
+                            ENTITY_DATE_CREATED_COLUMN_NAME,
+                            ECoalesceFieldDataTypes.DATE_TIME_TYPE,
+                            entity.getDateCreated());
+        setFeatureAttribute(feature,
+                            ENTITY_LAST_MODIFIED_COLUMN_NAME,
+                            ECoalesceFieldDataTypes.DATE_TIME_TYPE,
+                            entity.getLastModified());
+        setFeatureAttribute(feature, ENTITY_TITLE_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE, entity.getTitle());
     }
 
     private Polygon createWorldPolygon()
@@ -471,6 +476,7 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
             {
 
             // These types should be able to be handled directly
+            case ENUMERATION_TYPE:
             case BOOLEAN_TYPE:
             case DOUBLE_TYPE:
             case FLOAT_TYPE:
@@ -506,11 +512,6 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
             case GUID_TYPE:
                 String guid = fieldValue.toString();
                 feature.setAttribute(fieldName, guid);
-                break;
-
-            case ENUMERATION_TYPE:
-                String enumname = fieldValue.toString();
-                feature.setAttribute(fieldName, enumname);
                 break;
 
             case GEOCOORDINATE_LIST_TYPE:
@@ -551,6 +552,11 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
             case BINARY_TYPE:
             default:
                 break;
+            }
+
+            if (LOGGER.isTraceEnabled())
+            {
+                LOGGER.trace("Set Feature ({}) = ({})", fieldName, feature.getAttribute(fieldName));
             }
         }
         catch (IllegalAttributeException e)

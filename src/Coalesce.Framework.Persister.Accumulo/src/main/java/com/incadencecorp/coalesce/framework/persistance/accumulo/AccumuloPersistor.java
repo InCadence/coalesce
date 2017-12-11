@@ -189,7 +189,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
     {
         EnumSet<EPersistorCapabilities> enumSet = EnumSet.of(EPersistorCapabilities.CREATE,
                                                              EPersistorCapabilities.READ,
-                                                             EPersistorCapabilities.GET_FIELD_VALUE,
+                                                             //EPersistorCapabilities.GET_FIELD_VALUE,
                                                              EPersistorCapabilities.DELETE,
                                                              EPersistorCapabilities.UPDATE,
                                                              EPersistorCapabilities.GEOSPATIAL_SEARCH,

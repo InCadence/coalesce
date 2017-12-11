@@ -18,26 +18,17 @@
 package com.incadencecorp.coalesce.framework.persistance.accumulo;
 
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
-import com.incadencecorp.coalesce.framework.datamodel.TestEntity;
-import com.incadencecorp.coalesce.framework.persistance.accumulo.testobjects.GDELT_Test_Entity;
-import com.incadencecorp.coalesce.framework.persistance.accumulo.testobjects.NonGeoEntity;
-import com.incadencecorp.coalesce.search.AbstractSearchTest;
+import com.incadencecorp.coalesce.framework.persistance.AbstractCoalescePersistorTest;
 import org.junit.Assume;
-import org.junit.Before;
 import org.junit.BeforeClass;
-import org.xml.sax.SAXException;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * @author Derek Clemenzi
  */
-public class Accumulo2SearchIT extends AbstractSearchTest<AccumuloSearchPersistor> {
-
-    private boolean useMock = true;
+public class Accumulo2PersisterTest extends AbstractCoalescePersistorTest<AccumuloPersistor2> {
 
     @BeforeClass
     public static void initialize()
@@ -52,26 +43,35 @@ public class Accumulo2SearchIT extends AbstractSearchTest<AccumuloSearchPersisto
     }
 
     @Override
-    protected AccumuloSearchPersistor createPersister()
+    protected AccumuloPersistor2 createPersister()
     {
+        return new AccumuloPersistor2(getParameters());
+    }
 
+    @Override
+    public String getFieldValue(String key) throws CoalescePersistorException
+    {
+        return (String) createPersister().getFieldValue(key);
+    }
+
+    protected Map<String, String> getParameters()
+    {
         Map<String, String> parameters = new HashMap<>();
-        parameters.put(AccumuloDataConnector.INSTANCE_ID, AccumuloSettings.getDatabaseName());
-        parameters.put(AccumuloDataConnector.ZOOKEEPERS, AccumuloSettings.getZookeepers());
-        parameters.put(AccumuloDataConnector.USER, (useMock) ? "aa" : AccumuloSettings.getUserName());
-        parameters.put(AccumuloDataConnector.PASSWORD, AccumuloSettings.getUserPassword());
+        parameters.put(AccumuloDataConnector.INSTANCE_ID, "unit_test");
+        parameters.put(AccumuloDataConnector.ZOOKEEPERS, "unit_test");
+        parameters.put(AccumuloDataConnector.USER, "unit_test");
+        parameters.put(AccumuloDataConnector.PASSWORD, "unit_test");
         parameters.put(AccumuloDataConnector.TABLE_NAME, AccumuloDataConnector.COALESCE_SEARCH_TABLE);
-        parameters.put(AccumuloDataConnector.QUERY_THREADS, "1");
-        parameters.put(AccumuloDataConnector.RECORD_THREADS, "1");
-        parameters.put(AccumuloDataConnector.WRITE_THREADS, "1");
+        parameters.put(AccumuloDataConnector.QUERY_THREADS, Integer.toString(AccumuloSettings.getQueryThreads()));
+        parameters.put(AccumuloDataConnector.RECORD_THREADS, Integer.toString(AccumuloSettings.getRecordThreads()));
+        parameters.put(AccumuloDataConnector.WRITE_THREADS, Integer.toString(AccumuloSettings.getWriteThreads()));
         parameters.put(AccumuloDataConnector.GENERATE_STATS, "false");
         parameters.put(AccumuloDataConnector.COLLECT_USAGE_STATS, "false");
         parameters.put(AccumuloDataConnector.CACHING, "false");
         parameters.put(AccumuloDataConnector.LOOSE_B_BOX, "false");
-        parameters.put(AccumuloDataConnector.USE_MOCK, Boolean.toString(useMock));
+        parameters.put(AccumuloDataConnector.USE_MOCK, "true");
 
-
-        return new AccumuloSearchPersistor(parameters);
+        return parameters;
     }
 
 }

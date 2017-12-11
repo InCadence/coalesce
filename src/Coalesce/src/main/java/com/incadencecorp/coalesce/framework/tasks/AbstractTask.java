@@ -123,7 +123,7 @@ public abstract class AbstractTask<INPUT, OUTPUT extends ICoalesceResponseTypeBa
     @Override
     public MetricResults<OUTPUT> call() throws CoalesceException
     {
-        MetricResults<OUTPUT> result = new MetricResults<OUTPUT>();
+        MetricResults<OUTPUT> result = new MetricResults<OUTPUT>(this.getName());
 
         watch.start();
 

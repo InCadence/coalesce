@@ -325,7 +325,16 @@ public class CoalescePropertyFactory {
      */
     public static String getColumnName(PropertyName property)
     {
-        return property.getPropertyName().replaceAll("[.]", "");
+        return getColumnName(property.getPropertyName());
+    }
+
+    /**
+     * @param property
+     * @return the normalized name used as the column name in a result set.
+     */
+    public static String getColumnName(String property)
+    {
+        return property.replaceAll("[.]", "");
     }
 
     /**

@@ -21,6 +21,7 @@ import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 import com.incadencecorp.coalesce.search.api.SearchResults;
+import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.incadencecorp.coalesce.search.resultset.CoalesceColumnMetadata;
 import com.incadencecorp.coalesce.search.resultset.CoalesceResultSet;
 import org.geotools.data.DataStore;
@@ -63,7 +64,7 @@ public class AccumuloSearchPersistor extends AccumuloPersistor2 implements ICoal
      * Specify an external {@link ExecutorService} to use for internal threads.
      *
      * @param service Service pool used for executing internal task in parallel.
-     * @param params Configuration parameters
+     * @param params  Configuration parameters
      */
     public AccumuloSearchPersistor(ExecutorService service, Map<String, String> params)
     {
@@ -105,15 +106,18 @@ public class AccumuloSearchPersistor extends AccumuloPersistor2 implements ICoal
             // TODO - Why always String and VARCHAR.  Should these not be the real types
             // Use the original property names to populate the Rowset
             // ALSO NO DOTS SEPARATING THE TABLE FROM COLUMN
-            if (localquery.getProperties() != null)
+            columnList.add(new CoalesceColumnMetadata(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getEntityKey()),
+                                                      "String",
+                                                      Types.VARCHAR));
+
+            if (query.getProperties() != null)
             {
-                for (PropertyName entry : localquery.getProperties())
+                for (PropertyName entry : query.getProperties())
                 {
                     //String columnName = entry.getPropertyName().replaceAll("[.]", "");
-                    CoalesceColumnMetadata columnMetadata = new CoalesceColumnMetadata(entry.getPropertyName(),
-                                                                                       "String",
-                                                                                       Types.VARCHAR);
-                    columnList.add(columnMetadata);
+                    columnList.add(new CoalesceColumnMetadata(CoalescePropertyFactory.getColumnName(entry.getPropertyName()),
+                                                              "String",
+                                                              Types.VARCHAR));
                 }
             }
 
@@ -151,8 +155,8 @@ public class AccumuloSearchPersistor extends AccumuloPersistor2 implements ICoal
     {
         EnumSet<EPersistorCapabilities> capabilities = super.getCapabilities();
         capabilities.addAll(EnumSet.of(EPersistorCapabilities.GEOSPATIAL_SEARCH,
-                                  EPersistorCapabilities.TEMPORAL_SEARCH,
-                                  EPersistorCapabilities.SEARCH));
+                                       EPersistorCapabilities.TEMPORAL_SEARCH,
+                                       EPersistorCapabilities.SEARCH));
 
         return capabilities;
     }

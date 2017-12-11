@@ -17,9 +17,6 @@
 
 package com.incadencecorp.coalesce.notification.impl;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.incadencecorp.coalesce.api.ICoalesceNotifier;
 import com.incadencecorp.coalesce.enums.EAuditCategory;
 import com.incadencecorp.coalesce.enums.EAuditLevels;
@@ -28,10 +25,12 @@ import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
 import com.incadencecorp.coalesce.framework.jobs.AbstractCoalesceJob;
 import com.incadencecorp.coalesce.framework.persistance.ObjectMetaData;
 import com.incadencecorp.coalesce.framework.tasks.MetricResults;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This implementation send notifications to log4j.
- * 
+ *
  * @author Derek Clemenzi
  */
 public class Log4jNotifierImpl implements ICoalesceNotifier {
@@ -47,7 +46,7 @@ public class Log4jNotifierImpl implements ICoalesceNotifier {
     {
         LOGGER.debug("({}) ({}) Pending ({}) Working ({}) Total ({}) {}",
                      results.isSuccessful() ? "SUCCESS" : "FAILED",
-                     task,
+                     results.getName(),
                      results.getWatch().getPendingLife(),
                      results.getWatch().getWorkLife(),
                      results.getWatch().getTotalLife(),
@@ -81,7 +80,8 @@ public class Log4jNotifierImpl implements ICoalesceNotifier {
     {
         String auditMessage = String.format("Audit-(%s) (%s) (%s)", category.toString(), task, message);
 
-        switch (level) {
+        switch (level)
+        {
         case ERROR:
             LOGGER.error(auditMessage);
             break;
@@ -97,7 +97,13 @@ public class Log4jNotifierImpl implements ICoalesceNotifier {
     @Override
     public void sendJobComplete(AbstractCoalesceJob<?, ?, ?> job)
     {
-        LOGGER.info("({}) Job ({}) Completed [ID = ({})]", job.getJobStatus().toString(), job.getName(), job.getJobId());
+        LOGGER.info("({}) Job ({}) Completed [ID = ({})] Pending ({}) Working ({}) Total ({})",
+                    job.getJobStatus().toString(),
+                    job.getName(),
+                    job.getJobId(),
+                    job.getMetrics().getPendingLife(),
+                    job.getMetrics().getWorkLife(),
+                    job.getMetrics().getTotalLife());
     }
 
     /*--------------------------------------------------------------------------

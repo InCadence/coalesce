@@ -125,12 +125,8 @@ public class AccumuloRegisterIterator extends CoalesceIterator<List<SimpleFeatur
         String recordKeyCol = normalizer.normalize(recordset.getName(), "recordkey");
 
         // Get Feature Fields
-        Map<String, ECoalesceFieldDataTypes> fields = new HashMap<>();
-        fields.put(ENTITY_KEY_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE);
-        fields.put(ENTITY_NAME_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE);
-        fields.put(ENTITY_SOURCE_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE);
-        fields.put(ENTITY_TITLE_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE);
-        fields.put(recordKeyCol, ECoalesceFieldDataTypes.BOOLEAN_TYPE);
+        Map<String, ECoalesceFieldDataTypes> fields = getCommonFields();
+        //fields.put(recordKeyCol, ECoalesceFieldDataTypes.STRING_TYPE);
         fields.putAll(iterator.getDataTypes(recordset));
 
         // Create Feature
@@ -140,7 +136,7 @@ public class AccumuloRegisterIterator extends CoalesceIterator<List<SimpleFeatur
 
         // Create Indexes
         // TODO Do we need a full index on the record key?
-        createIndex(feature, recordKeyCol, EIndex.FULL, ECardinality.HIGH);
+        //createIndex(feature, recordKeyCol, EIndex.FULL, ECardinality.HIGH);
         createIndex(feature, ENTITY_KEY_COLUMN_NAME, EIndex.FULL, ECardinality.HIGH);
 
         feature.getUserData().put(Hints.USE_PROVIDED_FID, true);
@@ -157,21 +153,13 @@ public class AccumuloRegisterIterator extends CoalesceIterator<List<SimpleFeatur
         final String[] indexes = { "records", "attr" };
 
         // Get Feature Fields
-        Map<String, ECoalesceFieldDataTypes> fields = new HashMap<>();
-        fields.put(ENTITY_KEY_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE);
-        fields.put(ENTITY_NAME_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE);
-        fields.put(ENTITY_SOURCE_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE);
-        fields.put(ENTITY_VERSION_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE);
-        fields.put(ENTITY_DATE_CREATED_COLUMN_NAME, ECoalesceFieldDataTypes.DATE_TIME_TYPE);
-        fields.put(ENTITY_LAST_MODIFIED_COLUMN_NAME, ECoalesceFieldDataTypes.DATE_TIME_TYPE);
-        fields.put(ENTITY_TITLE_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE);
-
+        Map<String, ECoalesceFieldDataTypes> fields = getCommonFields();
         fields.put(ENTITY_ID_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE);
         fields.put(ENTITY_ID_TYPE_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE);
-        fields.put(ENTITY_SCOPE_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE);
+        fields.put(ENTITY_SCOPE_COLUMN_NAME, ECoalesceFieldDataTypes.ENUMERATION_TYPE);
         fields.put(ENTITY_CREATOR_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE);
         fields.put(ENTITY_TYPE_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE);
-        fields.put(ENTITY_STATUS_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE);
+        fields.put(ENTITY_STATUS_COLUMN_NAME, ECoalesceFieldDataTypes.ENUMERATION_TYPE);
 
         // Create Feature
         SimpleFeatureType feature = CoalesceFeatureTypeFactory.createSimpleFeatureType(AccumuloDataConnector.ENTITY_FEATURE_NAME,
@@ -202,13 +190,9 @@ public class AccumuloRegisterIterator extends CoalesceIterator<List<SimpleFeatur
         final String[] indexes = { "records", "attr" };
 
         // Get Feature Fields
-        Map<String, ECoalesceFieldDataTypes> fields = new HashMap<>();
-        fields.put(LINKAGE_ENTITY1_KEY_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE);
-        fields.put(LINKAGE_ENTITY1_NAME_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE);
-        fields.put(LINKAGE_ENTITY1_SOURCE_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE);
-        fields.put(LINKAGE_ENTITY1_VERSION_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE);
-        fields.put(LINKAGE_ENTITY2_KEY_COLUMN_NAME, ECoalesceFieldDataTypes.DATE_TIME_TYPE);
-        fields.put(LINKAGE_ENTITY2_NAME_COLUMN_NAME, ECoalesceFieldDataTypes.DATE_TIME_TYPE);
+        Map<String, ECoalesceFieldDataTypes> fields = getCommonFields();
+        fields.put(LINKAGE_ENTITY2_KEY_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE);
+        fields.put(LINKAGE_ENTITY2_NAME_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE);
         fields.put(LINKAGE_ENTITY2_SOURCE_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE);
         fields.put(LINKAGE_ENTITY2_VERSION_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE);
         fields.put(LINKAGE_LAST_MODIFIED_COLUMN_NAME, ECoalesceFieldDataTypes.DATE_TIME_TYPE);
@@ -222,7 +206,7 @@ public class AccumuloRegisterIterator extends CoalesceIterator<List<SimpleFeatur
 
         feature.getUserData().put(DTG_INDEX, LINKAGE_LAST_MODIFIED_COLUMN_NAME);
 
-        createIndex(feature, LINKAGE_ENTITY1_KEY_COLUMN_NAME, EIndex.JOIN, ECardinality.HIGH);
+        //createIndex(feature, LINKAGE_ENTITY1_KEY_COLUMN_NAME, EIndex.JOIN, ECardinality.HIGH);
         createIndex(feature, LINKAGE_ENTITY2_KEY_COLUMN_NAME, EIndex.JOIN, ECardinality.HIGH);
         createIndex(feature, LINKAGE_LABEL_COLUMN_NAME, EIndex.JOIN, ECardinality.LOW);
         createIndex(feature, LINKAGE_LINK_TYPE_COLUMN_NAME, EIndex.JOIN, ECardinality.LOW);
@@ -233,6 +217,20 @@ public class AccumuloRegisterIterator extends CoalesceIterator<List<SimpleFeatur
         features.add(feature);
 
         return false;
+    }
+
+    private Map<String, ECoalesceFieldDataTypes> getCommonFields()
+    {
+        Map<String, ECoalesceFieldDataTypes> fields = new HashMap<>();
+        fields.put(ENTITY_KEY_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE);
+        fields.put(ENTITY_NAME_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE);
+        fields.put(ENTITY_SOURCE_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE);
+        fields.put(ENTITY_VERSION_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE);
+        fields.put(ENTITY_DATE_CREATED_COLUMN_NAME, ECoalesceFieldDataTypes.DATE_TIME_TYPE);
+        fields.put(ENTITY_LAST_MODIFIED_COLUMN_NAME, ECoalesceFieldDataTypes.DATE_TIME_TYPE);
+        fields.put(ENTITY_TITLE_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE);
+
+        return fields;
     }
 
     private void createIndex(SimpleFeatureType feature, String property, EIndex index, ECardinality cardinality)

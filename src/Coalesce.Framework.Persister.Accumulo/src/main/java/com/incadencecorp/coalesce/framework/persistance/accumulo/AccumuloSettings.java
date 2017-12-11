@@ -22,6 +22,10 @@ import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 import com.incadencecorp.unity.common.IConfigurationsConnector;
 import com.incadencecorp.unity.common.SettingsBase;
 import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Configuration properties for the Accumulo persistor implementation.
@@ -47,13 +51,20 @@ public class AccumuloSettings {
     private static final String PARAM_PERSIST_FIELD_DEF_ATTR = "persistFieldDefAttr";
     private static final String PARAM_PERSIST_RECORD_ATTR = "persistRecordAttr";
     private static final String PARAM_PERSIST_FIELD_ATTR = "persistFieldAttr";
+    private static final String PARAM_PERSIST_LINKAGE_ATTR = "persistLinkageAttr";
     private static final String PARAM_PASSWORD = PARAM_BASE + "password";
     private static final String PARAM_USER = PARAM_BASE + "userid";
     private static final String PARAM_ZOOKEEPERS = PARAM_BASE + "zookeepers";
     private static final String PARAM_DATABASE_NAME = PARAM_BASE + "database";
 
+    private static final String PARAM_THREADS = PARAM_BASE + "threads.";
+    private static final String PARAM_THREADS_QUERY = PARAM_THREADS + "query";
+    private static final String PARAM_THREADS_RECORD = PARAM_THREADS + "record";
+    private static final String PARAM_THREADS_WRITE = PARAM_THREADS + "write";
+
     private static final String PARAM_FEATURES = PARAM_BASE + "features.";
-    private static final String PARAM_OVERRIDE_FEATURES = PARAM_FEATURES + "features.override";
+    private static final String PARAM_OVERRIDE_FEATURES = PARAM_FEATURES + "override";
+    private static final String PARAM_USER_FEATURE_WRITTER = PARAM_FEATURES + "useFeatureWritter";
 
     /*--------------------------------------------------------------------------
     Default Values
@@ -62,6 +73,7 @@ public class AccumuloSettings {
     private static final String DEFAULT_ATTRIBUTE_ROWS = "entityid,entityidtype,value,key,lastmodified,name,datatype";
     private static final String DEFAULT_USERNAME = "root";
     private static final String DEFAULT_PASSWORD = "secret";
+    private static final int DEFAULT_THREAD_COUNT = 1;
     
     /*--------------------------------------------------------------------------
     Initialization
@@ -177,24 +189,36 @@ public class AccumuloSettings {
     /**
      * @return Returns the address of the database.
      */
-    public static String getAttributeFields()
+    public static List<String> getAttributeFields()
     {
-        return settings.getSetting(config_name, PARAM_ATTRIBUTE_ROWS, DEFAULT_ATTRIBUTE_ROWS, true);
+        String csv = settings.getSetting(config_name, PARAM_ATTRIBUTE_ROWS, DEFAULT_ATTRIBUTE_ROWS, true);
+
+        return Arrays.asList(StringUtils.split(csv, ","));
     }
 
     /**
      * Sets the address of the database.
      *
-     * @param databaseAddress
+     * @param value
      */
-    public static void setAttributeFields(String databaseAddress)
+    public static void setAttributeFields(List<String> value)
     {
-        settings.setSetting(config_name, PARAM_ATTRIBUTE_ROWS, databaseAddress);
+        settings.setSetting(config_name, PARAM_ATTRIBUTE_ROWS, String.join(",", value.toArray(new String[value.size()])));
+    }
+
+    public static boolean getPersistLinkageAttr()
+    {
+        return settings.getSetting(config_name, PARAM_PERSIST_LINKAGE_ATTR, false, true);
+    }
+
+    public static void setPersistLinkageAttr(boolean value)
+    {
+        settings.setSetting(config_name, PARAM_PERSIST_LINKAGE_ATTR, value);
     }
 
     public static boolean getPersistSectionAttr()
     {
-        return settings.getSetting(config_name, PARAM_PERSIST_SECTION_ATTR, true, true);
+        return settings.getSetting(config_name, PARAM_PERSIST_SECTION_ATTR, false, true);
     }
 
     public static void setPersistSectionAttr(boolean pERSIST_SECTION_ATTR)
@@ -204,7 +228,7 @@ public class AccumuloSettings {
 
     public static boolean getPersistRecordsetAttr()
     {
-        return settings.getSetting(config_name, PARAM_PERSIST_RECORDSET_ATTR, true, true);
+        return settings.getSetting(config_name, PARAM_PERSIST_RECORDSET_ATTR, false, true);
     }
 
     public static void setPersistRecordsetAttr(boolean persistRecordsetAttr)
@@ -214,7 +238,7 @@ public class AccumuloSettings {
 
     public static boolean getPersistFieldDefAttr()
     {
-        return settings.getSetting(config_name, PARAM_PERSIST_FIELD_DEF_ATTR, true, true);
+        return settings.getSetting(config_name, PARAM_PERSIST_FIELD_DEF_ATTR, false, true);
     }
 
     public static void setPersistFieldDefAttr(boolean persistFieldDefAttr)
@@ -224,7 +248,7 @@ public class AccumuloSettings {
 
     public static boolean getPersistRecordAttr()
     {
-        return settings.getSetting(config_name, PARAM_PERSIST_RECORD_ATTR, true, true);
+        return settings.getSetting(config_name, PARAM_PERSIST_RECORD_ATTR, false, true);
     }
 
     public static void setPersistRecordAttr(boolean persistRecordAttr)
@@ -234,7 +258,7 @@ public class AccumuloSettings {
 
     public static boolean getPersistFieldAttr()
     {
-        return settings.getSetting(config_name, PARAM_PERSIST_FIELD_ATTR, true, true);
+        return settings.getSetting(config_name, PARAM_PERSIST_FIELD_ATTR, false, true);
     }
 
     public static void setPersistFieldAttr(boolean persistFieldAttr)
@@ -261,8 +285,80 @@ public class AccumuloSettings {
     }
 
     /**
-     * @deprecated
+     * @return whether or not the feature writer should be used when updating features.
+     */
+    public static boolean useFeatureWritter()
+    {
+        return settings.getSetting(config_name, PARAM_USER_FEATURE_WRITTER, false, true);
+    }
+
+    /**
+     * Sets whether or not the feature writer should be used when updating features.
+     *
+     * @param value
+     */
+    public static void setUseFeatureWritter(boolean value)
+    {
+        settings.setSetting(config_name, PARAM_USER_FEATURE_WRITTER, value);
+    }
+
+    /**
+     * @return the number of query threads
+     */
+    public static int getQueryThreads()
+    {
+        return settings.getSetting(config_name, PARAM_THREADS_QUERY, DEFAULT_THREAD_COUNT, true);
+    }
+
+    /**
+     * Sets the number of query threads
+     *
+     * @param value
+     */
+    public static void setQueryThreads(int value)
+    {
+        settings.setSetting(config_name, PARAM_THREADS_QUERY, value);
+    }
+
+    /**
+     * @return the number of record threads
+     */
+    public static int getRecordThreads()
+    {
+        return settings.getSetting(config_name, PARAM_THREADS_RECORD, DEFAULT_THREAD_COUNT, true);
+    }
+
+    /**
+     * Sets the number of record threads
+     *
+     * @param value
+     */
+    public static void setRecordThreads(int value)
+    {
+        settings.setSetting(config_name, PARAM_THREADS_RECORD, value);
+    }
+
+    /**
+     * @return the number of write threads
+     */
+    public static int getWriteThreads()
+    {
+        return settings.getSetting(config_name, PARAM_THREADS_WRITE, DEFAULT_THREAD_COUNT, true);
+    }
+
+    /**
+     * Sets the number of write threads
+     *
+     * @param value
+     */
+    public static void setWriteThreads(int value)
+    {
+        settings.setSetting(config_name, PARAM_THREADS_WRITE, value);
+    }
+
+    /**
      * @return Server Connection Properties
+     * @deprecated
      */
     public static ServerConn getServerConn()
     {

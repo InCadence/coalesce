@@ -94,7 +94,7 @@ public class AccumuloCreateSchemaJob extends
                     task.setError(e.getMessage());
                     task.setStatus(EResultStatus.FAILED);
 
-                    metrics = new MetricResults<>();
+                    metrics = new MetricResults<>(getName());
                     metrics.setResults(task);
                     metrics.getResults().setStatus(EResultStatus.FAILED);
                 }

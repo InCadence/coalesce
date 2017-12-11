@@ -4,6 +4,8 @@ import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.datamodel.*;
 import com.incadencecorp.coalesce.framework.iterators.CoalesceIterator;
 import org.apache.accumulo.core.data.Mutation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.namespace.QName;
 import java.lang.reflect.InvocationTargetException;
@@ -33,6 +35,10 @@ Defense and U.S. DoD contractors only in support of U.S. DoD efforts.
  */
 public class MutationWrapperFactory extends CoalesceIterator<MutationWrapper> {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(MutationWrapperFactory.class);
+
+    private int rowCount = 0;
+
     public MutationWrapper createMutationGuy(CoalesceEntity entity) throws CoalesceException
     {
 
@@ -41,6 +47,8 @@ public class MutationWrapperFactory extends CoalesceIterator<MutationWrapper> {
         MutationWrapper MutationGuy = new MutationWrapper(m);
 
         processAllElements(entity, MutationGuy);
+
+        LOGGER.trace("Total Mutation Rows: ({})", rowCount);
 
         return MutationGuy;
     }
@@ -76,10 +84,13 @@ public class MutationWrapperFactory extends CoalesceIterator<MutationWrapper> {
             return false;
         }
 
-        addRow(section, param);
+        if (AccumuloSettings.getPersistLinkageAttr())
+        {
+            addRow(section, param);
+        }
 
         // skip
-        return true;
+        return AccumuloSettings.getPersistLinkageAttr();
     }
 
     @Override
@@ -91,9 +102,12 @@ public class MutationWrapperFactory extends CoalesceIterator<MutationWrapper> {
             return false;
         }
 
-        addRow(linkage, param);
+        if (AccumuloSettings.getPersistLinkageAttr())
+        {
+            addRow(linkage, param);
+        }
 
-        return true;
+        return false;
     }
 
     @Override
@@ -183,6 +197,8 @@ public class MutationWrapperFactory extends CoalesceIterator<MutationWrapper> {
 
     private void addRow(CoalesceObject object, MutationWrapper param)
     {
+        LOGGER.trace("Add Row: ({})", object.getName());
+
         Map<QName, String> attributes = getAttributes(object);
         String type = object.getType() + ":";
 
@@ -222,21 +238,13 @@ public class MutationWrapperFactory extends CoalesceIterator<MutationWrapper> {
                                           stringBuilder.toString().replaceAll(",$", "").getBytes(),
                                           object.getNamePath());
         param.addRow(row);
+
+        rowCount++;
     }
 
     private boolean persistAttr(String attrName)
     {
-        String[] attrFieldsArray = AccumuloSettings.getAttributeFields().split(",");
-
-        for (String attrField : attrFieldsArray)
-        {
-            if (attrName.equals(attrField))
-            {
-                return true;
-            }
-        }
-
-        return false;
+        return AccumuloSettings.getAttributeFields().contains(attrName);
     }
 
     private Map<QName, String> getAttributes(CoalesceObject object)

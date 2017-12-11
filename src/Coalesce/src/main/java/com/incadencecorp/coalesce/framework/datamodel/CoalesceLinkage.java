@@ -1,16 +1,14 @@
 package com.incadencecorp.coalesce.framework.datamodel;
 
-import java.util.Locale;
-import java.util.Map;
-
-import javax.xml.namespace.QName;
-
-import org.apache.commons.lang.NullArgumentException;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.incadencecorp.coalesce.api.CoalesceAttributes;
 import com.incadencecorp.coalesce.common.classification.Marking;
 import com.incadencecorp.coalesce.common.helpers.LocaleConverter;
+import org.apache.commons.lang.NullArgumentException;
+
+import javax.xml.namespace.QName;
+import java.util.Locale;
+import java.util.Map;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -31,7 +29,7 @@ import com.incadencecorp.coalesce.common.helpers.LocaleConverter;
 
 /**
  * This class represents the association between two Coalesce Entities.
- * 
+ *
  * @author Derek C.
  */
 public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceLinkage {
@@ -101,11 +99,11 @@ public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceL
     /**
      * Creates an {@link CoalesceLinkage} and ties it to its parent
      * {@link CoalesceLinkageSection} .
-     * 
+     *
      * @param parent {@link CoalesceLinkageSection} , the linkage section that
-     *            this new linkage will belong to
+     *               this new linkage will belong to
      * @return {@link CoalesceLinkage} , the new linkage to describe a
-     *         relationship between two classes
+     * relationship between two classes
      */
     public static CoalesceLinkage create(CoalesceLinkageSection parent)
     {
@@ -131,11 +129,11 @@ public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceL
     /**
      * Initializes a previously new {@link CoalesceLinkage} and ties it to its
      * parent {@link CoalesceLinkageSection} .
-     * 
-     * @param parent {@link CoalesceLinkageSection} , the linkage section that
-     *            this new linkage will belong to
+     *
+     * @param parent  {@link CoalesceLinkageSection} , the linkage section that
+     *                this new linkage will belong to
      * @param linkage Linkage, the linkage describing a relationship between two
-     *            classes
+     *                classes
      * @return boolean indicator of success/failure
      */
     protected boolean initialize(CoalesceLinkageSection parent, Linkage linkage)
@@ -156,7 +154,8 @@ public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceL
     // -----------------------------------------------------------------------//
 
     @Override
-    public String getClassificationMarkingAsString() {
+    public String getClassificationMarkingAsString()
+    {
         return _entityLinkage.getClassificationmarking();
     }
 
@@ -172,7 +171,7 @@ public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceL
         _entityLinkage.setClassificationmarking(value);
         updateLastModified();
     }
-    
+
     @JsonIgnore
     public void setClassificationMarking(Marking value)
     {
@@ -344,34 +343,31 @@ public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceL
      * Sets the two entities key, name, source and version as well as the link
      * type, classification, modified by, input language, dates created and
      * modified and active status.
-     * 
-     * @param entity1 {@link CoalesceEntity} belonging to the first entity.
-     *            Provides the entity's key, name, source and version
-     * @param linkType ELinkTypes value for the relationship type identification
-     *            between the entities
-     * @param entity2 {@link CoalesceEntity} belonging to the second entity.
-     *            Provides the entity's key, name, source and version
+     *
+     * @param linkType              ELinkTypes value for the relationship type identification
+     *                              between the entities
+     * @param entity2               {@link CoalesceEntity} belonging to the second entity.
+     *                              Provides the entity's key, name, source and version
      * @param classificationMarking Marking of the classification of the
-     *            relationship
-     * @param modifiedBy identification of who entered the relationship
+     *                              relationship
+     * @param modifiedBy            identification of who entered the relationship
      * @param modifiedByIP
      * @param label
-     * @param inputLang language that the relationship was created in
-     * @param isReadOnly
+     * @param inputLang             language that the relationship was created in
+     * @param status
      */
-    public void establishLinkage(CoalesceEntity entity1,
-                                 ELinkTypes linkType,
+    public void establishLinkage(ELinkTypes linkType,
+                                 ECoalesceObjectStatus status,
                                  CoalesceEntity entity2,
                                  Marking classificationMarking,
                                  String modifiedBy,
                                  String modifiedByIP,
                                  String label,
-                                 Locale inputLang,
-                                 boolean isReadOnly)
+                                 Locale inputLang)
     {
 
-        establishLinkage(entity1,
-                         linkType,
+        establishLinkage(linkType,
+                         status,
                          entity2.getKey(),
                          entity2.getName(),
                          entity2.getSource(),
@@ -381,15 +377,13 @@ public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceL
                          modifiedBy,
                          modifiedByIP,
                          label,
-                         inputLang,
-                         isReadOnly);
+                         inputLang);
 
     }
 
     /**
      * Creates a link between entity1 and entity2
-     * 
-     * @param entity1
+     *
      * @param linkType
      * @param entity2Key
      * @param entity2Name
@@ -401,10 +395,10 @@ public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceL
      * @param modifiedByIP
      * @param label
      * @param inputLang
-     * @param isReadOnly
+     * @param status
      */
-    public void establishLinkage(CoalesceEntity entity1,
-                                 ELinkTypes linkType,
+    public void establishLinkage(ELinkTypes linkType,
+                                 ECoalesceObjectStatus status,
                                  String entity2Key,
                                  String entity2Name,
                                  String entity2Source,
@@ -414,23 +408,16 @@ public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceL
                                  String modifiedBy,
                                  String modifiedByIP,
                                  String label,
-                                 Locale inputLang,
-                                 boolean isReadOnly)
+                                 Locale inputLang)
     {
-        createHistory(modifiedBy, modifiedByIP, null);
+        CoalesceEntity entity1 = getEntity();
 
-        if (isReadOnly)
-        {
-            setStatus(ECoalesceObjectStatus.READONLY);
-        }
-        else
-        {
-            setStatus(ECoalesceObjectStatus.ACTIVE);
-        }
+        createHistory(modifiedBy, modifiedByIP, null);
 
         // Set Values
         setObjectVersion(entity1.getObjectVersion());
         setLabel(label);
+        setStatus(status);
 
         setEntity1Key(entity1.getKey());
         setEntity1Name(entity1.getName());
@@ -473,7 +460,8 @@ public class CoalesceLinkage extends CoalesceObjectHistory implements ICoalesceL
     @Override
     protected boolean setExtendedAttributes(String name, String value)
     {
-        switch (name.toLowerCase()) {
+        switch (name.toLowerCase())
+        {
         case ATTRIBUTE_ENTITY1KEY:
             setEntity1Key(value);
             return true;

@@ -242,7 +242,7 @@ public class XSDEximImplTest {
                                       "01234567890123456789AA",
                                       null,
                                       true,
-                                      false,
+                                      com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus.ACTIVE,
                                       true);
         doc = exim.exportValues(entity, false);
 

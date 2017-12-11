@@ -1,10 +1,19 @@
 package com.incadencecorp.coalesce.framework.persistance.accumulo;
 
-public class AccumuloDataConnectorIT extends AbstractAccumuloDataConnectorTest {
+import java.util.Map;
 
-    public AccumuloDataConnectorIT()
+public class AccumuloDataConnectorIT extends AccumuloDataConnectorTest {
+
+    @Override
+    protected Map<String, String> getParameters()
     {
-        super(false);
-    }
+        Map<String, String> parameters = super.getParameters();
+        parameters.put(AccumuloDataConnector.INSTANCE_ID, AccumuloSettings.getDatabaseName());
+        parameters.put(AccumuloDataConnector.ZOOKEEPERS, AccumuloSettings.getZookeepers());
+        parameters.put(AccumuloDataConnector.USER, AccumuloSettings.getUserName());
+        parameters.put(AccumuloDataConnector.PASSWORD, AccumuloSettings.getUserPassword());
+        parameters.put(AccumuloDataConnector.USE_MOCK, "false");
 
+        return parameters;
+    }
 }

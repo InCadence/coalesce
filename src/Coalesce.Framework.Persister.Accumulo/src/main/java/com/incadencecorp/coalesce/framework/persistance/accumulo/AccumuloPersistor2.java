@@ -27,20 +27,29 @@ import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
 import com.incadencecorp.coalesce.framework.jobs.metrics.StopWatch;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import com.incadencecorp.coalesce.framework.persistance.accumulo.jobs.AccumuloFeatureJob;
-import org.apache.accumulo.core.client.*;
+import org.apache.accumulo.core.client.BatchWriterConfig;
+import org.apache.accumulo.core.client.Connector;
+import org.apache.accumulo.core.client.IteratorSetting;
+import org.apache.accumulo.core.client.TableNotFoundException;
 import org.apache.accumulo.core.data.Key;
 import org.apache.accumulo.core.data.Mutation;
 import org.apache.accumulo.core.data.Range;
 import org.apache.accumulo.core.data.Value;
 import org.apache.accumulo.core.iterators.user.RegExFilter;
 import org.apache.accumulo.core.security.Authorizations;
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.hadoop.io.Text;
-import org.geotools.data.DataStore;
+import org.geotools.data.*;
 import org.geotools.factory.CommonFactoryFinder;
+import org.omg.CORBA.TRANSACTION_MODE;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -51,7 +60,6 @@ import java.util.concurrent.TimeUnit;
 public class AccumuloPersistor2 extends AccumuloTemplatePersistor implements ICoalescePersistor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloPersistor2.class);
-    private static final FilterFactory2 FF = CommonFactoryFinder.getFilterFactory2();
 
     private BatchWriterConfig config;
     private AccumuloFeatureIterator iterator = null;
@@ -81,14 +89,13 @@ public class AccumuloPersistor2 extends AccumuloTemplatePersistor implements ICo
         config.setMaxLatency(1, TimeUnit.SECONDS);
         config.setMaxMemory(52428800);
         config.setTimeout(600, TimeUnit.SECONDS);
-        config.setMaxWriteThreads(10);
+        config.setMaxWriteThreads(AccumuloSettings.getWriteThreads());
     }
 
     @Override
     public boolean saveEntity(boolean allowRemoval, CoalesceEntity... entities) throws CoalescePersistorException
     {
         StopWatch watch = new StopWatch();
-
         watch.start();
 
         List<Mutation> entityMutations = new ArrayList<>();
@@ -116,7 +123,6 @@ public class AccumuloPersistor2 extends AccumuloTemplatePersistor implements ICo
                             entity.getEntityIdType() + "\0" + entity.getEntityId() + "\0" + entity.getName() + "\0"
                                     + entity.getSource());
                     mutation.put(columnFamily, new Text(entity.getNamePath()), new Value(new byte[0]));
-
                     indexMutations.add(mutation);
                 }
                 else
@@ -141,32 +147,16 @@ public class AccumuloPersistor2 extends AccumuloTemplatePersistor implements ICo
         watch.reset();
         watch.start();
 
-        AccumuloDataConnector connector = getDataConnector();
-
-        // Write Mutations
-        writeMutation(connector, AccumuloDataConnector.COALESCE_ENTITY_TABLE, config, entityMutations);
-        writeMutation(connector, AccumuloDataConnector.COALESCE_ENTITY_IDX_TABLE, config, indexMutations);
-
-        if (keysToDelete.size() > 0)
-        {
-            deleteMutation(AccumuloDataConnector.COALESCE_ENTITY_TABLE, keysToDelete);
-            deleteMutation(AccumuloDataConnector.COALESCE_ENTITY_IDX_TABLE, keysToDelete);
-        }
-
-        watch.finish();
-        LOGGER.debug("Saved Mutations:  {} ms", watch.getWorkLife());
-        watch.reset();
-        watch.start();
-
-        // Write Features
-        DataStore datastore = connector.getGeoDataStore();
-
-        AccumuloFeatureJob job = new AccumuloFeatureJob(datastore, features);
+        AccumuloFeatureJob job = new AccumuloFeatureJob(getDataConnector());
+        job.setFeatures(features);
+        job.setConfig(config);
+        job.setMutations(entityMutations, indexMutations);
+        job.setKeysToDelete(keysToDelete);
         job.setExecutor(this);
         checkResults(job.call());
 
         watch.finish();
-        LOGGER.debug("Saved Features:  {} ms", watch.getWorkLife());
+        LOGGER.trace("Saved Features:  {} ms", watch.getWorkLife());
         watch.reset();
         watch.start();
 
@@ -234,15 +224,16 @@ public class AccumuloPersistor2 extends AccumuloTemplatePersistor implements ICo
                           EPersistorCapabilities.READ,
                           EPersistorCapabilities.DELETE,
                           EPersistorCapabilities.UPDATE,
-                          EPersistorCapabilities.READ_TEMPLATES,
-                          EPersistorCapabilities.GET_FIELD_VALUE);
+                          EPersistorCapabilities.READ_TEMPLATES);
     }
 
     public Object getFieldValue(String fieldKey) throws CoalescePersistorException
     {
+        /*
+        Object value = null;
+
         // TODO We will want to create a a table of just field values by key for
         // now we will scan the main table
-        Object value = null;
         Connector dbConnector = getDataConnector().getDBConnector();
         try (CloseableScanner keyscanner = new CloseableScanner(dbConnector,
                                                                 AccumuloDataConnector.COALESCE_ENTITY_TABLE,
@@ -279,60 +270,10 @@ public class AccumuloPersistor2 extends AccumuloTemplatePersistor implements ICo
         {
             LOGGER.error(ex.getLocalizedMessage(), ex);
         }
+
         return value;
-
-    }
-
-    private void deleteMutation(String tablename, List<String> keys) throws CoalescePersistorException
-    {
-        if (LOGGER.isDebugEnabled())
-        {
-            LOGGER.debug(String.format("Deleting (%s) from (%s)", keys.toString(), tablename));
-        }
-
-        try
-        {
-            BatchDeleter bd = getDataConnector().getDBConnector().createBatchDeleter(tablename,
-                                                                                     Authorizations.EMPTY,
-                                                                                     1,
-                                                                                     config);
-
-            List<Range> ranges = new ArrayList<>();
-
-            for (String key : keys)
-            {
-                ranges.add(Range.exact(new Text(key)));
-            }
-
-            bd.setRanges(ranges);
-            bd.delete();
-            bd.close();
-        }
-        catch (TableNotFoundException | AccumuloException e)
-        {
-            throw new CoalescePersistorException(String.format("(FAILED) Deleting (%s) from (%s)",
-                                                               keys.toString(),
-                                                               tablename), e);
-        }
-    }
-
-    private void writeMutation(AccumuloDataConnector connector,
-                               String table,
-                               BatchWriterConfig config,
-                               List<Mutation> mutations) throws CoalescePersistorException
-    {
-        try (CloseableBatchWriter writer = new CloseableBatchWriter(connector.getDBConnector(), table, config))
-        {
-            for (Mutation mutation : mutations)
-            {
-                writer.addMutation(mutation);
-                writer.flush();
-            }
-        }
-        catch (MutationsRejectedException | TableNotFoundException e)
-        {
-            throw new CoalescePersistorException(String.format(CoalesceErrors.NOT_SAVED, table, table, e.getMessage()), e);
-        }
+        */
+        throw new NotImplementedException("Not Implemented");
     }
 
     private AccumuloFeatureIterator getIterator() throws CoalesceException

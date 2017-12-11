@@ -7,27 +7,27 @@ import com.incadencecorp.coalesce.common.CoalesceUnitTestSettings;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceCryptoException;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.common.helpers.DocumentProperties;
-import com.incadencecorp.coalesce.common.helpers.EntityLinkHelper;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.MimeHelper;
 import com.incadencecorp.coalesce.framework.CoalesceSettings;
 import com.incadencecorp.coalesce.framework.datamodel.*;
+import com.incadencecorp.coalesce.framework.jobs.metrics.StopWatch;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.io.WKTWriter;
 import com.vividsolutions.jts.util.GeometricShapeFactory;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.xerces.impl.dv.util.Base64;
 import org.jdom2.JDOMException;
 import org.joda.time.DateTime;
-import org.junit.Assert;
-import org.junit.Assume;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
@@ -101,7 +101,7 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
         TestEntity entity2 = new TestEntity();
         entity2.initialize();
 
-        EntityLinkHelper.linkEntities(entity, ELinkTypes.IS_PARENT_OF, entity2);
+        //EntityLinkHelper.linkEntities(entity, ELinkTypes.IS_PARENT_OF, entity2);
 
         Assert.assertTrue(persister.saveEntity(true, entity, entity2));
 
@@ -129,10 +129,15 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
 
         TestEntity entity = new TestEntity();
         entity.initialize();
+        entity.addRecord1();
+        entity.addRecord1();
+        TestRecord record1 = entity.addRecord1();
+        record1.getBooleanField().setValue(false);
+        record1.getGeoField().setValue(new Coordinate(1, 1));
+        record1.getGeoListField().setValue(new Coordinate[] { new Coordinate(1, 1) });
 
         Assert.assertTrue(persister.saveEntity(false, entity));
 
-        TestRecord record1 = entity.addRecord1();
         record1.getBooleanField().setValue(true);
 
         Assert.assertTrue(persister.saveEntity(false, entity));
@@ -149,6 +154,7 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
         entity.markAsDeleted();
 
         persister.saveEntity(true, entity);
+
     }
 
     /**
@@ -269,7 +275,6 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
         }
     }
 
-
     @Test
     public void testAllDataTypes() throws Exception
     {
@@ -288,100 +293,81 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
         TestRecord record = entity.addRecord1();
 
         // Create Circle
-        CoalesceCircleField circlefield = record.getCircleField();
         Point center = new GeometryFactory().createPoint(new Coordinate(0, 0));
-        circlefield.setValue(center, CIRCLERADIUS);
+        record.getCircleField().setValue(center, CIRCLERADIUS);
 
         // Create Polygon
-        CoalescePolygonField polygonfield = record.getPolygonField();
         GeometricShapeFactory gsf = new GeometricShapeFactory();
         gsf.setSize(10);
         gsf.setNumPoints(20);
         gsf.setCentre(new Coordinate(0, 0));
         Polygon shape = gsf.createCircle();
-        polygonfield.setValue(shape);
+        record.getPolygonField().setValue(shape);
 
         // Create Line
-        CoalesceLineStringField linefield = record.getLineField();
         Coordinate coords[] = { new Coordinate(0, 0), new Coordinate(1, 1), new Coordinate(2, 2)
         };
         GeometryFactory gf = new GeometryFactory();
         LineString line = gf.createLineString(coords);
-        linefield.setValue(line);
+        record.getLineField().setValue(line);
 
         // Create a geo list
-        CoalesceCoordinateListField geolistfield = record.getGeoListField();
         MultiPoint geolist = new GeometryFactory().createMultiPoint(coords);
-        geolistfield.setValue(geolist);
+        record.getGeoListField().setValue(geolist);
 
         // Create a point value
-        CoalesceCoordinateField coordfield = record.getGeoField();
-        coordfield.setValue(new Coordinate(10, 10));
+        record.getGeoField().setValue(new Coordinate(10, 10));
 
         // Int
-        CoalesceIntegerField intfield = record.getIntegerField();
-        intfield.setValue(42);
+        record.getIntegerField().setValue(42);
 
         // Check a int list field
         int intlist[] = { 3, 4, 5, 6
         };
-        CoalesceIntegerListField intlistfield = record.getIntegerListField();
-        intlistfield.setValue(intlist);
+        record.getIntegerListField().setValue(intlist);
 
         // Long
-        CoalesceLongField longfield = record.getLongField();
-        longfield.setValue((long) 42);
+        record.getLongField().setValue((long) 42);
 
         // Check a long list field
         long longlist[] = { 3, 4, 5, 6
         };
-        CoalesceLongListField longlistfield = record.getLongListField();
-        longlistfield.setValue(longlist);
+        record.getLongListField().setValue(longlist);
 
         // String
-        CoalesceStringField stringfield = record.getStringField();
-        stringfield.setValue("Test String");
+        record.getStringField().setValue("Test String");
 
         // Check a string list field
         String stringlist[] = { "A", "B", "C"
         };
-        CoalesceStringListField stringlistfield = record.getStringListField();
-        stringlistfield.setValue(stringlist);
+        record.getStringListField().setValue(stringlist);
 
         // Float
-        CoalesceFloatField floatfield = record.getFloatField();
-        floatfield.setValue((float) 3.145964);
+        record.getFloatField().setValue(3.145964f);
 
         // Check a float list field
         float floatlist[] = { (float) 3.145964, (float) 7.87856, (float) 10000.000045566
         };
-        CoalesceFloatListField floatlistfield = record.getFloatListField();
-        floatlistfield.setValue(floatlist);
+        record.getFloatListField().setValue(floatlist);
 
         // Double
-        CoalesceDoubleField doublefield = record.getDoubleField();
-        doublefield.setValue(3.145964);
+        record.getDoubleField().setValue(3.145964);
 
         // Check a Double list field
         double doublelist[] = { 3.145964, 7.87856, 10000.000045566
         };
-        CoalesceDoubleListField doublelistfield = record.getDoubleListField();
-        doublelistfield.setValue(doublelist);
+        record.getDoubleListField().setValue(doublelist);
 
         // Boolean
-        CoalesceBooleanField booleanfield = record.getBooleanField();
-        booleanfield.setValue(true);
+        record.getBooleanField().setValue(true);
 
         // Date
-        CoalesceDateTimeField datetimefield = record.getDateField();
-        datetimefield.setValue(JodaDateTimeHelper.nowInUtc());
+        record.getDateField().setValue(JodaDateTimeHelper.nowInUtc());
 
         // UUID
-        CoalesceGUIDField guidfield = record.getGuidField();
-        guidfield.setValue(UUID.randomUUID());
+        record.getGuidField().setValue(UUID.randomUUID());
 
         // File
-        CoalesceFileField filefield = record.getFileField();
         String fileName = CoalesceUnitTestSettings.getResourceAbsolutePath(filename);
 
         try
@@ -389,7 +375,7 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
             DocumentProperties properties = new DocumentProperties();
             if (properties.initialize(fileName, CoalesceSettings.getUseEncryption()))
             {
-                filefield.setValue(properties);
+                record.getFileField().setValue(properties);
             }
         }
         catch (ImageProcessingException | CoalesceCryptoException | IOException | JDOMException e)
@@ -404,35 +390,35 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
         persistor.saveEntity(false, entity);
 
         // Get Persisted Values
-        String cvalue = getFieldValue(circlefield.getKey());
-        String pvalue = getFieldValue(polygonfield.getKey());
-        String lvalue = getFieldValue(linefield.getKey());
-        float fvalue = Float.valueOf(getFieldValue(floatfield.getKey()));
-        String flistvalue[] = (getFieldValue(floatlistfield.getKey())).split(",");
-        double dvalue = Double.valueOf(getFieldValue(doublefield.getKey()));
-        String dlistvalue[] = (getFieldValue(doublelistfield.getKey())).split(",");
-        boolean bvalue = Boolean.valueOf(getFieldValue(booleanfield.getKey()));
-        String mydate = getFieldValue(datetimefield.getKey());
+        String cvalue = getFieldValue(record.getCircleField().getKey());
+        String pvalue = getFieldValue(record.getPolygonField().getKey());
+        String lvalue = getFieldValue(record.getLineField().getKey());
+        float fvalue = Float.valueOf(getFieldValue(record.getFloatField().getKey()));
+        String flistvalue[] = (getFieldValue(record.getFloatListField().getKey())).split(",");
+        double dvalue = Double.valueOf(getFieldValue(record.getDoubleField().getKey()));
+        String dlistvalue[] = (getFieldValue(record.getDoubleListField().getKey())).split(",");
+        boolean bvalue = Boolean.valueOf(getFieldValue(record.getBooleanField().getKey()));
+        String mydate = getFieldValue(record.getDateField().getKey());
         DateTime datevalue = JodaDateTimeHelper.fromXmlDateTimeUTC(mydate);
         CoalesceEntity filefieldentity = persistor.getEntity(entity.getKey())[0];
-        CoalesceFileField filefieldvalue = (CoalesceFileField) filefieldentity.getCoalesceObjectForKey(filefield.getKey());
+        CoalesceFileField filefieldvalue = (CoalesceFileField) filefieldentity.getCoalesceObjectForKey(record.getFileField().getKey());
         byte[] filefieldbytesvalue = Base64.decode(filefieldvalue.getBaseValue());
 
         // Create test values
         String ctest = new WKTWriter(3).write(center);
         String ptest = new WKTWriter(3).write(shape);
         String ltest = new WKTWriter(3).write(line);
-        float ftest = floatfield.getValue();
-        float flisttest[] = floatlistfield.getValue();
-        double dtest = doublefield.getValue();
-        double dlisttest[] = doublelistfield.getValue();
-        boolean btest = booleanfield.getValue();
-        DateTime datetest = datetimefield.getValue();
-        byte[] fileFieldBytestest = Base64.decode(filefield.getBaseValue());
+        float ftest = record.getFloatField().getValue();
+        float flisttest[] = record.getFloatListField().getValue();
+        double dtest = record.getDoubleField().getValue();
+        double dlisttest[] = record.getDoubleListField().getValue();
+        boolean btest = record.getBooleanField().getValue();
+        DateTime datetest = record.getDateField().getValue();
+        byte[] fileFieldBytestest = Base64.decode(record.getFileField().getBaseValue());
 
         // Verify Circle
         Assert.assertEquals(ctest, cvalue);
-        Assert.assertEquals(CIRCLERADIUS, Double.valueOf(circlefield.getAttribute("radius")), 0);
+        Assert.assertEquals(CIRCLERADIUS, Double.valueOf(record.getCircleField().getAttribute("radius")), 0);
 
         // Verify Polygon
         Assert.assertEquals(ptest, pvalue);
@@ -474,7 +460,7 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
         Assert.assertEquals(FilenameUtils.getExtension(filename), filefieldvalue.getExtension());
         Assert.assertEquals(MimeHelper.getMimeTypeForExtension(FilenameUtils.getExtension(filename)),
                             filefieldvalue.getMimeType());
-        Assert.assertEquals(filefieldbytesvalue.length, filefield.getSize());
+        Assert.assertEquals(filefieldbytesvalue.length, record.getFileField().getSize());
 
     }
 
