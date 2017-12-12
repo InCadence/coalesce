@@ -32,9 +32,12 @@
 						</Export-Package>
 						<Import-Package>
 							org.joda.time*;version="[1.6.2, 3)",
-							*;
-							resolution:=optional
+							*;resolution:=optional
 						</Import-Package>
+						<Embed-Dependency>
+							neo4j-jdbc;inline=false,
+							neo4j-jdbc-driver;inline=false,
+						</Embed-Dependency>
 					</instructions>
 				</configuration>
 			</plugin>
