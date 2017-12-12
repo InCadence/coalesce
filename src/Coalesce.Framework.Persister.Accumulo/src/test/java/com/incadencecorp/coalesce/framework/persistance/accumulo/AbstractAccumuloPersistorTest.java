@@ -1,13 +1,10 @@
 package com.incadencecorp.coalesce.framework.persistance.accumulo;
 
-import com.drew.imaging.ImageProcessingException;
 import com.incadencecorp.coalesce.common.CoalesceUnitTestSettings;
-import com.incadencecorp.coalesce.common.exceptions.CoalesceCryptoException;
-import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.common.helpers.DocumentProperties;
 import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.common.helpers.MimeHelper;
-import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.CoalesceObjectFactory;
 import com.incadencecorp.coalesce.framework.CoalesceSettings;
 import com.incadencecorp.coalesce.framework.datamodel.*;
@@ -23,7 +20,6 @@ import org.apache.xerces.impl.dv.util.Base64;
 import org.geotools.data.Query;
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.filter.text.cql2.CQLException;
-import org.jdom2.JDOMException;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.opengis.filter.Filter;
@@ -171,7 +167,7 @@ public abstract class AbstractAccumuloPersistorTest extends AbstractCoalescePers
                 filefield.setValue(properties);
             }
         }
-        catch (ImageProcessingException | CoalesceCryptoException | IOException | JDOMException e)
+        catch (CoalesceException e)
         {
             fail("Error processing image file: " + e.getMessage());
         }

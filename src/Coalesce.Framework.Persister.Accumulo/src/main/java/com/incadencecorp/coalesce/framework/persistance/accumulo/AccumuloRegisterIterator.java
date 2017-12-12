@@ -17,7 +17,6 @@
 
 package com.incadencecorp.coalesce.framework.persistance.accumulo;
 
-import com.drew.lang.StringUtil;
 import com.incadencecorp.coalesce.api.ICoalesceNormalizer;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
 import com.incadencecorp.coalesce.framework.datamodel.*;
@@ -25,6 +24,7 @@ import com.incadencecorp.coalesce.framework.iterators.CoalesceIterator;
 import com.incadencecorp.coalesce.framework.iterators.CoalesceIteratorDataTypes;
 import com.incadencecorp.coalesce.search.factory.CoalesceFeatureTypeFactory;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
+import org.apache.commons.lang.StringUtils;
 import org.geotools.factory.Hints;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -176,7 +176,7 @@ public class AccumuloRegisterIterator extends CoalesceIterator<List<SimpleFeatur
         createIndex(feature, ENTITY_STATUS_COLUMN_NAME, EIndex.JOIN, ECardinality.LOW);
 
         feature.getUserData().put(Hints.USE_PROVIDED_FID, true);
-        feature.getUserData().put(INDEXES, StringUtil.join(indexes, ","));
+        feature.getUserData().put(INDEXES, StringUtils.join(indexes, ","));
 
         features.add(feature);
 
@@ -212,7 +212,7 @@ public class AccumuloRegisterIterator extends CoalesceIterator<List<SimpleFeatur
         createIndex(feature, LINKAGE_LINK_TYPE_COLUMN_NAME, EIndex.JOIN, ECardinality.LOW);
 
         feature.getUserData().put(Hints.USE_PROVIDED_FID, true);
-        feature.getUserData().put(INDEXES, StringUtil.join(indexes, ","));
+        feature.getUserData().put(INDEXES, StringUtils.join(indexes, ","));
 
         features.add(feature);
 

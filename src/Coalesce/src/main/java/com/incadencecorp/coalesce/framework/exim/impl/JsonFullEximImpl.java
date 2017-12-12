@@ -22,12 +22,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.drew.lang.StringUtil;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -263,8 +263,8 @@ public class JsonFullEximImpl implements CoalesceExim<JSONObject> {
                     }
 
                     ((CoalesceField<?>) node).setAttribute(CoalesceField.ATTRIBUTE_VALUE,
-                                                           StringUtil.join(baseValue.toArray(new String[baseValue.size()]),
-                                                                           ","));
+                                                           StringUtils.join(baseValue.toArray(new String[baseValue.size()]),
+                                                                            ","));
                 }
                 else
                 {
