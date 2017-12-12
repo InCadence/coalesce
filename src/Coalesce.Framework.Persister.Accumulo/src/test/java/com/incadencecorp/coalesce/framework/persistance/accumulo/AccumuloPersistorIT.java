@@ -10,9 +10,10 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.file.Paths;
 
+/**
+ * @deprecated
+ */
 public class AccumuloPersistorIT extends AbstractCoalescePersistorTest<AccumuloPersistor> {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloPersistorIT.class);
 
     @BeforeClass
     public static void setupBeforeClass() throws Exception

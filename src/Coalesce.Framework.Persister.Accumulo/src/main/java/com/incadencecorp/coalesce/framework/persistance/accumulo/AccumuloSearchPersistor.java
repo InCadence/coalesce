@@ -19,6 +19,7 @@ package com.incadencecorp.coalesce.framework.persistance.accumulo;
 
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.framework.jobs.metrics.StopWatch;
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 import com.incadencecorp.coalesce.search.api.SearchResults;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
@@ -26,7 +27,6 @@ import com.incadencecorp.coalesce.search.resultset.CoalesceColumnMetadata;
 import com.incadencecorp.coalesce.search.resultset.CoalesceResultSet;
 import org.geotools.data.DataStore;
 import org.geotools.data.Query;
-import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureStore;
 import org.geotools.feature.FeatureIterator;
 import org.opengis.feature.simple.SimpleFeature;
@@ -57,7 +57,6 @@ public class AccumuloSearchPersistor extends AccumuloPersistor2 implements ICoal
     public AccumuloSearchPersistor(Map<String, String> params)
     {
         super(params);
-
     }
 
     /**
@@ -74,78 +73,89 @@ public class AccumuloSearchPersistor extends AccumuloPersistor2 implements ICoal
     @Override
     public SearchResults search(Query query) throws CoalescePersistorException
     {
-        // Make sure objectkey is returned UNLESS the user specifically
-        // specified no properties. - Which is done by an empty props array
-        // objectkey is always the first parameter
-        AccumuloQueryRewriter2 nameChanger = new AccumuloQueryRewriter2(getNormalizer());
+        // Ensure Entity Key is the first parameter
+        List<PropertyName> properties = new ArrayList<>();
+
+        if (query.getProperties() != null)
+        {
+            properties.addAll(query.getProperties());
+        }
+
+        if (properties.size() == 0
+                || !properties.get(0).getPropertyName().equalsIgnoreCase(CoalescePropertyFactory.getEntityKey().getPropertyName()))
+        {
+            properties.add(0, CoalescePropertyFactory.getEntityKey());
+        }
+
+        query.setProperties(properties);
 
         CachedRowSet rowset = null;
-        SimpleFeatureCollection featureCount;
-        DataStore geoDataStore = getDataConnector().getGeoDataStore();
-        // Make a copy of the query
+        int total = 0;
+
+        // Re-write query parameters
+        AccumuloQueryRewriter2 nameChanger = new AccumuloQueryRewriter2(getNormalizer());
         Query localquery = nameChanger.rewrite(query);
 
         LOGGER.debug("Executing search against schema: {}", localquery.getTypeName());
+
         try
         {
-
+            // Get Feature Store
+            DataStore geoDataStore = getDataConnector().getGeoDataStore();
             SimpleFeatureStore featureSource = (SimpleFeatureStore) geoDataStore.getFeatureSource(localquery.getTypeName());
 
+            // Normalize Column Headers
             List<CoalesceColumnMetadata> columnList = new ArrayList<>();
-            // Not needed as the Coalesce behavior does not support just get all Columns
-            // Check if no properties were defined
-            //            if (localquery.retrieveAllProperties()) {
-            //                for (PropertyDescriptor entry : featureSource.getSchema().getDescriptors())
-            //                {
-            //                	String columnName = entry.getName().getLocalPart();
-            //                    CoalesceColumnMetadata columnMetadata = new CoalesceColumnMetadata(columnName, "String", Types.VARCHAR);
-            //                    columnList.add(columnMetadata);
-            //                }
-            //
-            //            } else {
-            // TODO - Why always String and VARCHAR.  Should these not be the real types
-            // Use the original property names to populate the Rowset
-            // ALSO NO DOTS SEPARATING THE TABLE FROM COLUMN
-            columnList.add(new CoalesceColumnMetadata(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getEntityKey()),
-                                                      "String",
-                                                      Types.VARCHAR));
-
-            if (query.getProperties() != null)
+            for (PropertyName entry : properties)
             {
-                for (PropertyName entry : query.getProperties())
-                {
-                    //String columnName = entry.getPropertyName().replaceAll("[.]", "");
-                    columnList.add(new CoalesceColumnMetadata(CoalescePropertyFactory.getColumnName(entry.getPropertyName()),
-                                                              "String",
-                                                              Types.VARCHAR));
-                }
+                // TODO - Why always String and VARCHAR.  Should these not be the real types
+                columnList.add(new CoalesceColumnMetadata(CoalescePropertyFactory.getColumnName(entry.getPropertyName()),
+                                                          "String",
+                                                          Types.VARCHAR));
             }
 
-            // Need to get a count of the query without limitations to support the paging
-            // Do no properties or sort, just the rewritten filter.
-            Query countQuery = new Query(localquery.getTypeName());
-            countQuery.setFilter(localquery.getFilter());
-            countQuery.setProperties(Query.NO_PROPERTIES);
+            // Execute Query
+            try (FeatureIterator<SimpleFeature> featureItr = featureSource.getFeatures(localquery).features())
+            {
+                Iterator<Object[]> columnIterator = new FeatureColumnIterator(featureItr, properties);
+                CoalesceResultSet resultSet = new CoalesceResultSet(columnIterator, columnList);
+                rowset = RowSetProvider.newFactory().createCachedRowSet();
+                rowset.populate(resultSet);
 
-            featureCount = featureSource.getFeatures(countQuery);
-            FeatureIterator<SimpleFeature> featureItr = featureSource.getFeatures(localquery).features();
-            Iterator<Object[]> columnIterator = new FeatureColumnIterator<>(featureItr);
+                total = rowset.size();
+            }
+            catch (SQLException e)
+            {
+                throw new CoalescePersistorException(e.getMessage(), e);
+            }
 
-            CoalesceResultSet resultSet = new CoalesceResultSet(columnIterator, columnList);
+            // Results > Page Size; Determine total size
+            if (total >= query.getMaxFeatures())
+            {
+                localquery.setMaxFeatures(Query.DEFAULT_MAX);
+                localquery.setProperties(Query.NO_PROPERTIES);
 
-            rowset = RowSetProvider.newFactory().createCachedRowSet();
-            rowset.populate(resultSet);
-            featureItr.close();
+                try (FeatureIterator<SimpleFeature> featureItr = featureSource.getFeatures(localquery).features())
+                {
+                    total = 0;
+
+                    while (featureItr.hasNext())
+                    {
+                        total++;
+                        featureItr.next();
+                    }
+                }
+            }
         }
-        catch (IOException | SQLException e)
+        catch (IOException e)
         {
             throw new CoalescePersistorException(e.getMessage(), e);
         }
 
+        // Create Results
         SearchResults results = new SearchResults();
-
         results.setResults(rowset);
-        results.setTotal(featureCount.size());
+        results.setTotal(total);
 
         return results;
     }

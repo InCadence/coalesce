@@ -2,6 +2,7 @@ package com.incadencecorp.coalesce.framework.persistance.accumulo;
 
 import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.framework.jobs.metrics.StopWatch;
 import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
 import com.incadencecorp.coalesce.framework.persistance.ServerConn;
 import org.apache.accumulo.core.client.*;
@@ -68,7 +69,7 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase implements 
     public static final String RECORD_THREADS = "recordThreads";
     public static final String WRITE_THREADS = "writeThreads";
     public static final String GENERATE_STATS = "generateStats";
-    public static final String COLLECT_USAGE_STATS = "collectUsageStats";
+    public static final String COLLECT_USAGE_STATS = "collectStats";//"collectUsageStats";
     public static final String CACHING = "caching";
     public static final String LOOSE_B_BOX = "looseBBox";
     public static final String USE_MOCK = "useMock";
@@ -117,11 +118,20 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase implements 
         params.put(ZOOKEEPERS, settings.getServerName());
         params.put(USER, settings.getUser());
         params.put(PASSWORD, settings.getPassword());
+        params.put(TABLE_NAME, COALESCE_SEARCH_TABLE);
+        params.put(QUERY_THREADS, Integer.toString(AccumuloSettings.getQueryThreads()));
+        params.put(RECORD_THREADS, Integer.toString(AccumuloSettings.getRecordThreads()));
+        params.put(WRITE_THREADS, Integer.toString(AccumuloSettings.getWriteThreads()));
+        params.put(GENERATE_STATS, "false");
+        params.put(COLLECT_USAGE_STATS, "false");
+        params.put(CACHING, "false");
+        params.put(LOOSE_B_BOX, "false");
+        params.put(USE_MOCK, "false");
 
         return params;
     }
 
-    protected Connector getDBConnector() throws CoalescePersistorException
+    public Connector getDBConnector() throws CoalescePersistorException
     {
         openDataConnection();
         return connector;
@@ -186,6 +196,9 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase implements 
         {
             try
             {
+                StopWatch watch = new StopWatch();
+                watch.start();
+
                 LOGGER.info("Connecting: Instance: {}  Zookeepers: {}", dsConf.get(INSTANCE_ID), dsConf.get(ZOOKEEPERS));
 
                 // Use a Mock Instance?
@@ -199,12 +212,28 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase implements 
                     instance = new ZooKeeperInstance(dsConf.get(INSTANCE_ID), dsConf.get(ZOOKEEPERS));
                 }
 
+                watch.finish();
+                LOGGER.debug("Got Instance {}", watch.getTotalLife());
+                watch.reset();
+                watch.start();
+
                 connector = instance.getConnector(dsConf.get(USER), new PasswordToken(dsConf.get(PASSWORD)));
 
+                watch.finish();
+                LOGGER.debug("Got Connector {}", watch.getTotalLife());
+                watch.reset();
+                watch.start();
+
+                // TODO This should not be done on connetion
                 createTables(COALESCE_ENTITY_TABLE,
                              COALESCE_TEMPLATE_TABLE,
                              COALESCE_ENTITY_IDX_TABLE,
                              COALESCE_SEARCH_TABLE);
+
+                watch.finish();
+                LOGGER.debug("Created Tables {}", watch.getTotalLife());
+                watch.reset();
+                watch.start();
 
                 Iterator<DataStoreFactorySpi> availableStores = DataStoreFinder.getAvailableDataStores();
 
@@ -216,6 +245,12 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase implements 
                         LOGGER.debug("\t{}", availableStores.next().toString());
                     }
                 }
+
+                watch.finish();
+                LOGGER.debug("List Stores {}", watch.getTotalLife());
+                watch.reset();
+                watch.start();
+
 
                 // Now set up the GeoMesa connection verify that we can see this
                 // Accumulo destination in a GeoTools manner
@@ -233,6 +268,12 @@ public class AccumuloDataConnector extends CoalesceDataConnectorBase implements 
                     }
                     throw new CoalescePersistorException("Geomesa Accumulo Datastore not found in Factory.  Check classpath");
                 }
+
+                watch.finish();
+                LOGGER.debug("Got Datastore {}", watch.getTotalLife());
+                watch.reset();
+                watch.start();
+
             }
             catch (IOException | AccumuloException | AccumuloSecurityException e)
             {

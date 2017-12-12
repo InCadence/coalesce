@@ -2,7 +2,6 @@ package com.incadencecorp.coalesce.framework.persistance.accumulo;
 
 import com.incadencecorp.coalesce.api.ICoalesceNormalizer;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import org.geotools.data.Query;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.filter.visitor.DuplicatingFilterVisitor;
@@ -63,33 +62,20 @@ class AccumuloQueryRewriter2 extends DuplicatingFilterVisitor {
         // Rewrite the filter
         newQuery.setFilter((Filter) f.accept(this, null));
 
-        // Rewrite properties
-        if (newQuery.getPropertyNames() != null)
+        List<String> properties = new ArrayList<>();
+
+        // Normalize properties and remove any duplicates
+        for (String property : newQuery.getPropertyNames())
         {
-            List<String> properties = new ArrayList<>();
+            String normalized = getNormalizedPropertyName(property);
 
-            properties.add(getNormalizedPropertyName(CoalescePropertyFactory.getEntityKey()));
-
-            // Normalize properties and remove any duplicates
-            for (String property : newQuery.getPropertyNames())
+            if (!properties.contains(normalized))
             {
-                String normalized = getNormalizedPropertyName(property);
-
-                if (!properties.contains(normalized))
-                {
-                    properties.add(normalized);
-                }
+                properties.add(normalized);
             }
+        }
 
-            newQuery.setPropertyNames(properties);
-        }
-        else
-        {
-            // Another hack to match Coalesce Behavior
-            // Null for properties is supposed to mean all fields but
-            // Coalesce expects the objectkey
-            newQuery.setPropertyNames(new String[] { getNormalizedPropertyName(CoalescePropertyFactory.getEntityKey()) });
-        }
+        newQuery.setPropertyNames(properties);
 
         // Rewrite the any sorts also
         SortBy[] sorts = newQuery.getSortBy();

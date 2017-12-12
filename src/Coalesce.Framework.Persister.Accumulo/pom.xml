@@ -2,10 +2,10 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>coalesce-framework-persister-accumulo</artifactId>
-
 	<packaging>bundle</packaging>
 	<name>Coalesce Accumulo Persister</name>
 	<description>Persister used by Coalesce to connect to a Accumulo database.</description>
+
 	<parent>
 		<groupId>com.incadencecorp.coalesce</groupId>
 		<artifactId>coalesce-pom</artifactId>
@@ -23,6 +23,7 @@
 					<instructions>
 						<Bundle-Name>${project.name}</Bundle-Name>
 						<Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+						<Bundle-Version>${project.version}</Bundle-Version>
 						<Export-Package>
 							${project.groupId}.framework.persistance.accumulo,
 						</Export-Package>
@@ -30,7 +31,6 @@
 							org.joda.time*;version="[1.6.2, 3)",
 							org.apache.accumulo.core.*,
 							org.apache.hadoop*,
-							org.locationtech.geomesa.*,
 							*;resolution:=optional
 						</Import-Package>
 					</instructions>

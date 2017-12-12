@@ -2208,7 +2208,7 @@ public class AccumuloPersistor extends CoalescePersistorBase implements ICoalesc
             countQuery.setProperties(Query.NO_PROPERTIES);
             featureCount = featureSource.getFeatures(countQuery);
             FeatureIterator<SimpleFeature> featureItr = featureSource.getFeatures(localquery).features();
-            Iterator<Object[]> columnIterator = new FeatureColumnIterator<Object[]>(featureItr);
+            Iterator<Object[]> columnIterator = new FeatureColumnIterator(featureItr, query.getProperties());
 
             CoalesceResultSet resultSet = new CoalesceResultSet(columnIterator, columnList);
 

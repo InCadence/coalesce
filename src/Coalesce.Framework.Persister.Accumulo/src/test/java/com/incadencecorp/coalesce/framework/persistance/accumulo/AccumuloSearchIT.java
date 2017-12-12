@@ -10,6 +10,9 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.file.Paths;
 
+/**
+ * @deprecated
+ */
 public class AccumuloSearchIT extends AbstractSearchTest<AccumuloPersistor> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloSearchIT.class);

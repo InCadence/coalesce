@@ -132,7 +132,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         Filter query = FF.or(query1, query2);
         query = FF.and(FF.equal(CoalescePropertyFactory.getName(), FF.literal(TestEntity.NAME), true), query);
 
-        List<PropertyName> properties = new ArrayList<PropertyName>();
+        List<PropertyName> properties = new ArrayList<>();
         properties.add(CoalescePropertyFactory.getName());
         properties.add(CoalescePropertyFactory.getSource());
         properties.add(CoalescePropertyFactory.getEntityTitle());
@@ -154,7 +154,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
 
         CachedRowSet rowset = results.getResults();
 
-        // 5 Default columns +1 parameter
+        // 4 Default columns +1 parameter
         Assert.assertEquals(properties.size() + 1, rowset.getMetaData().getColumnCount());
         Assert.assertEquals(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getEntityKey()).toLowerCase(),
                             rowset.getMetaData().getColumnName(1).toLowerCase());
@@ -178,6 +178,17 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         results = persister.search(searchQuery);
 
         rowset = results.getResults();
+
+        // 4 Default columns +1 parameter
+        Assert.assertEquals(properties.size() + 1, rowset.getMetaData().getColumnCount());
+        Assert.assertEquals(CoalescePropertyFactory.getColumnName(CoalescePropertyFactory.getEntityKey()).toLowerCase(),
+                            rowset.getMetaData().getColumnName(1).toLowerCase());
+
+        for (int ii = 0; ii < properties.size(); ii++)
+        {
+            Assert.assertEquals(CoalescePropertyFactory.getColumnName(properties.get(ii)).toLowerCase(),
+                                rowset.getMetaData().getColumnName(ii + 2).toLowerCase());
+        }
 
         Assert.assertTrue(rowset.next());
         Assert.assertEquals(entity2.getKey(), rowset.getString(1));

@@ -16,6 +16,9 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @deprecated
+ */
 public class AccumuloPersistorTest extends AbstractCoalescePersistorTest<AccumuloPersistor> {
 
     @BeforeClass
