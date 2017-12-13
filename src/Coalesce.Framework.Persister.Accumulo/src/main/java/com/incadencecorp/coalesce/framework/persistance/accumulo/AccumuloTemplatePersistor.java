@@ -58,7 +58,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class AccumuloTemplatePersistor extends CoalesceExecutorServiceImpl implements ICoalesceTemplatePersister {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloPersistor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloTemplatePersistor.class);
     private static final CoalesceThreadFactoryImpl THREAD_FACTORY = new CoalesceThreadFactoryImpl();
 
     private Map<String, String> params;
@@ -68,6 +68,16 @@ public class AccumuloTemplatePersistor extends CoalesceExecutorServiceImpl imple
 
     private static String coalesceTemplateColumnFamily = "Coalesce:Template";
     private static String coalesceTemplateXMLQualifier = "xml";
+
+    /**
+     * Default constructor using {@link AccumuloSettings} for configuration
+     *
+     * @throws CoalescePersistorException
+     */
+    public AccumuloTemplatePersistor() throws CoalescePersistorException
+    {
+        this(AccumuloSettings.getParameters());
+    }
 
     /**
      * Default Constructor using a default {@link ExecutorService}

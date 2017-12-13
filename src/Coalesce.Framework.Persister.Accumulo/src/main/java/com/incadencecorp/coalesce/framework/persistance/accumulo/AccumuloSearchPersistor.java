@@ -50,6 +50,16 @@ public class AccumuloSearchPersistor extends AccumuloPersistor2 implements ICoal
     private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloSearchPersistor.class);
 
     /**
+     * Default constructor using {@link AccumuloSettings} for configuration
+     *
+     * @throws CoalescePersistorException
+     */
+    public AccumuloSearchPersistor() throws CoalescePersistorException
+    {
+        super(AccumuloSettings.getParameters());
+    }
+
+    /**
      * Default Constructor using a default {@link ExecutorService}
      *
      * @param params Configuration parameters

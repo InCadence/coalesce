@@ -25,7 +25,9 @@ import com.incadencecorp.unity.common.connectors.FilePropertyConnector;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Configuration properties for the Accumulo persistor implementation.
@@ -56,6 +58,7 @@ public class AccumuloSettings {
     private static final String PARAM_USER = PARAM_BASE + "userid";
     private static final String PARAM_ZOOKEEPERS = PARAM_BASE + "zookeepers";
     private static final String PARAM_DATABASE_NAME = PARAM_BASE + "database";
+    private static final String PARAM_USE_MOCK = PARAM_BASE + "useMock";
 
     private static final String PARAM_THREADS = PARAM_BASE + "threads.";
     private static final String PARAM_THREADS_QUERY = PARAM_THREADS + "query";
@@ -357,6 +360,24 @@ public class AccumuloSettings {
     }
 
     /**
+     * @return the number of write threads
+     */
+    public static boolean isMockMode()
+    {
+        return settings.getSetting(config_name, PARAM_USE_MOCK, false, true);
+    }
+
+    /**
+     * Sets the number of write threads
+     *
+     * @param value
+     */
+    public static void setIsMockMode(boolean value)
+    {
+        settings.setSetting(config_name, PARAM_USE_MOCK, value);
+    }
+
+    /**
      * @return Server Connection Properties
      * @deprecated
      */
@@ -371,6 +392,26 @@ public class AccumuloSettings {
         serCon.setPassword(getUserPassword());
 
         return serCon;
+    }
+
+    public static Map<String, String> getParameters()
+    {
+        Map<String, String> params = new HashMap<>();
+        params.put(AccumuloDataConnector.INSTANCE_ID, AccumuloSettings.getDatabaseName());
+        params.put(AccumuloDataConnector.ZOOKEEPERS, AccumuloSettings.getZookeepers());
+        params.put(AccumuloDataConnector.USER, AccumuloSettings.getUserName());
+        params.put(AccumuloDataConnector.PASSWORD, AccumuloSettings.getUserPassword());
+        params.put(AccumuloDataConnector.TABLE_NAME, AccumuloDataConnector.COALESCE_SEARCH_TABLE);
+        params.put(AccumuloDataConnector.QUERY_THREADS, Integer.toString(AccumuloSettings.getQueryThreads()));
+        params.put(AccumuloDataConnector.RECORD_THREADS, Integer.toString(AccumuloSettings.getRecordThreads()));
+        params.put(AccumuloDataConnector.WRITE_THREADS, Integer.toString(AccumuloSettings.getWriteThreads()));
+        params.put(AccumuloDataConnector.GENERATE_STATS, "false");
+        params.put(AccumuloDataConnector.COLLECT_USAGE_STATS, "false");
+        params.put(AccumuloDataConnector.CACHING, "false");
+        params.put(AccumuloDataConnector.LOOSE_B_BOX, "false");
+        params.put(AccumuloDataConnector.USE_MOCK, Boolean.toString(AccumuloSettings.isMockMode()));
+
+        return params;
     }
 
 }

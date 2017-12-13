@@ -65,6 +65,16 @@ public class AccumuloPersistor2 extends AccumuloTemplatePersistor implements ICo
     private AccumuloFeatureIterator iterator = null;
 
     /**
+     * Default constructor using {@link AccumuloSettings} for configuration
+     *
+     * @throws CoalescePersistorException
+     */
+    public AccumuloPersistor2() throws CoalescePersistorException
+    {
+        this(AccumuloSettings.getParameters());
+    }
+
+    /**
      * Default Constructor using a default {@link ExecutorService}
      *
      * @param params Configuration parameters
