@@ -12,6 +12,7 @@
 		<feature prerequisite="false" dependency="false">coalesce-search-service-feature</feature>
 		<feature prerequisite="false" dependency="false">coalesce-search-service-data-feature</feature>
 		<feature prerequisite="false" dependency="false">coalesce-frontend</feature>
+		<feature prerequisite="false" dependency="false">coalesce-javadocs</feature>
 	</feature>
 	<feature name="spifly" start-level="99">
 		<bundle>mvn:org.apache.aries.spifly/org.apache.aries.spifly.dynamic.bundle/1.0.8</bundle>
@@ -24,5 +25,8 @@
 		<feature prerequisite="false" dependency="false">coalesce-search-service-feature</feature>
 		<feature prerequisite="false" dependency="false">coalesce-search-service-data-feature</feature>
 		<feature prerequisite="false" dependency="false">coalesce-react-feature</feature>
+	</feature>
+	<feature name="coalesce-javadocs" start-level="75">
+		<bundle>mvn:com.incadencecorp.coalesce.dist/coalesce-javadocs/${project.version}/war</bundle>
 	</feature>
 </features>
