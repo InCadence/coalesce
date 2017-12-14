@@ -3,7 +3,6 @@ package com.incadencecorp.coalesce.framework;
 import com.incadencecorp.coalesce.api.CoalesceErrors;
 import com.incadencecorp.coalesce.api.ICoalesceResponseType;
 import com.incadencecorp.coalesce.api.IExceptionHandler;
-import com.incadencecorp.coalesce.api.persistance.ICoalesceExecutorService;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
 import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntitySyncShell;
@@ -16,11 +15,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 /*-----------------------------------------------------------------------------'
  Copyright 2014 - InCadence Strategic Solutions Inc., All Rights Reserved
@@ -43,7 +44,7 @@ import java.util.concurrent.*;
  * Application using Coalesce should access the persistor (database) through
  * CoalesceFramework.
  */
-public class CoalesceFramework implements ICoalesceExecutorService, Closeable {
+public class CoalesceFramework extends CoalesceExecutorServiceImpl {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CoalesceFramework.class);
 
@@ -73,7 +74,7 @@ public class CoalesceFramework implements ICoalesceExecutorService, Closeable {
     }
 
     /*--------------------------------------------------------------------------
-    	Initialization Functions  
+        Initialization Functions
     --------------------------------------------------------------------------*/
 
     /**
@@ -92,27 +93,7 @@ public class CoalesceFramework implements ICoalesceExecutorService, Closeable {
      */
     public CoalesceFramework(ExecutorService service)
     {
-        if (service == null)
-        {
-            LOGGER.info("Using Default ExecutorService; Cores: {} Max Threads / Core: {}",
-                        CoalesceSettings.getNumberOfCores(),
-                        CoalesceSettings.getMaxThreadsPerCore());
-
-            service = new ThreadPoolExecutor(CoalesceSettings.getMinThreads(),
-                                             CoalesceSettings.getMaxThreads(),
-                                             CoalesceSettings.getKeepAliveTime(),
-                                             TimeUnit.SECONDS,
-                                             new SynchronousQueue<Runnable>(),
-                                             new CoalesceThreadFactoryImpl(),
-                                             new ThreadPoolExecutor.CallerRunsPolicy());
-        }
-
-        _pool = service;
-
-        if (LOGGER.isInfoEnabled())
-        {
-            LOGGER.info("Executor Service ({})", service.getClass().getName());
-        }
+        super(service);
     }
 
     /**
@@ -416,7 +397,8 @@ public class CoalesceFramework implements ICoalesceExecutorService, Closeable {
         return getAuthoritativePersistor().getEntityTemplate(key);
     }
 
-    public CoalesceEntityTemplate getCoalesceEntityTemplate(String name, String source, String version) throws CoalescePersistorException
+    public CoalesceEntityTemplate getCoalesceEntityTemplate(String name, String source, String version)
+            throws CoalescePersistorException
     {
         return getAuthoritativePersistor().getEntityTemplate(name, source, version);
     }
@@ -507,44 +489,6 @@ public class CoalesceFramework implements ICoalesceExecutorService, Closeable {
         }
 
         return result;
-    }
-
-    @Override
-    public final void execute(Runnable command)
-    {
-        _pool.execute(command);
-    }
-
-    @Override
-    public final boolean isShutdown()
-    {
-        return _pool.isShutdown();
-    }
-
-    @Override
-    public final boolean isTerminated()
-    {
-        return _pool.isTerminated();
-    }
-
-    @Override
-    public final <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
-            throws InterruptedException
-    {
-        return _pool.invokeAll(tasks, timeout, unit);
-    }
-
-    @Override
-    public final <T> T invokeAny(Collection<? extends Callable<T>> tasks) throws InterruptedException, ExecutionException
-    {
-        return _pool.invokeAny(tasks);
-    }
-
-    @Override
-    public final <T> T invokeAny(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
-            throws InterruptedException, ExecutionException, TimeoutException
-    {
-        return _pool.invokeAny(tasks, timeout, unit);
     }
 
     @Override

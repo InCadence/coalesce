@@ -17,6 +17,7 @@
 
 package com.incadencecorp.coalesce.framework;
 
+import com.incadencecorp.coalesce.api.ICoalesceComponent;
 import com.incadencecorp.coalesce.api.persistance.ICoalesceExecutorService;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
 import com.incadencecorp.coalesce.framework.jobs.AbstractCoalesceJob;
@@ -28,6 +29,8 @@ import java.util.List;
 import java.util.concurrent.*;
 
 /**
+ * This base implementation manages the {@link ExecutorService} used by extending classes.
+ *
  * @author Derek Clemenzi
  */
 public class CoalesceExecutorServiceImpl implements ICoalesceExecutorService, AutoCloseable {
@@ -59,6 +62,8 @@ public class CoalesceExecutorServiceImpl implements ICoalesceExecutorService, Au
         {
             LOGGER.info("Executor Service ({})", service.getClass().getName());
         }
+
+        ShutdownAutoCloseable.createShutdownHook(this);
     }
 
     @Override
@@ -127,50 +132,63 @@ public class CoalesceExecutorServiceImpl implements ICoalesceExecutorService, Au
     @Override
     public void close() throws Exception
     {
-        if (LOGGER.isDebugEnabled())
+        if (!_pool.isShutdown())
         {
-            LOGGER.debug("Closing Framework");
-        }
-
-        try
-        {
-            // Graceful shutdown (Allow 1 minute for jobs to finish)
-            _pool.shutdown();
-
-            if (!_pool.awaitTermination(1, TimeUnit.MINUTES))
+            if (LOGGER.isDebugEnabled())
             {
+                LOGGER.debug("Closing {}", this.getClass().getSimpleName());
+            }
 
-                LOGGER.warn("(FAILED) Graceful Pool Termination");
-
-                // TODO Log Failed Jobs
-                logFailedJobs(_pool.shutdownNow());
+            try
+            {
+                // Graceful shutdown (Allow 1 minute for jobs to finish)
+                _pool.shutdown();
 
                 if (!_pool.awaitTermination(1, TimeUnit.MINUTES))
                 {
-                    LOGGER.error(" (FAILED) Pool Terminate");
+
+                    LOGGER.warn("(FAILED) Graceful Pool Termination");
+
+                    logFailedJobs(_pool.shutdownNow());
+
+                    if (!_pool.awaitTermination(1, TimeUnit.MINUTES))
+                    {
+                        LOGGER.error(" (FAILED) Pool Terminate");
+                    }
                 }
             }
-        }
-        catch (InterruptedException e)
-        {
+            catch (InterruptedException e)
+            {
 
-            LOGGER.warn("(FAILED) Graceful Pool Termination", e);
+                LOGGER.warn("(FAILED) Graceful Pool Termination", e);
 
-            logFailedJobs(_pool.shutdownNow());
+                logFailedJobs(_pool.shutdownNow());
 
-            // Preserve Interrupt Status
-            Thread.currentThread().interrupt();
+                // Preserve Interrupt Status
+                Thread.currentThread().interrupt();
+            }
         }
     }
 
     private void logFailedJobs(List<Runnable> jobList)
     {
-        for (Runnable job : jobList)
+        for (Runnable runnable : jobList)
         {
-            if (job instanceof AbstractCoalesceJob<?, ?, ?>)
+            if (runnable instanceof AbstractCoalesceJob<?, ?, ?>)
             {
-                LOGGER.warn("Job Failed {}", job.getClass().getName());
+                LOGGER.warn("Job ({}) Expired ({})",
+                            ((AbstractCoalesceJob) runnable).getName(),
+                            ((AbstractCoalesceJob) runnable).getJobId());
+            }
+            else if (runnable instanceof ICoalesceComponent)
+            {
+                LOGGER.warn("Component Expired ({})", ((ICoalesceComponent) runnable).getName());
+            }
+            else
+            {
+                LOGGER.warn("Runnable Expired ({})", runnable.getClass().getName());
             }
         }
     }
+
 }

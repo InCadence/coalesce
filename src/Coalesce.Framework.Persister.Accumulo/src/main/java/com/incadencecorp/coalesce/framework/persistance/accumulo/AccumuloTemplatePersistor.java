@@ -59,10 +59,8 @@ import java.util.concurrent.TimeUnit;
 public class AccumuloTemplatePersistor extends CoalesceExecutorServiceImpl implements ICoalesceTemplatePersister {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AccumuloTemplatePersistor.class);
-    private static final CoalesceThreadFactoryImpl THREAD_FACTORY = new CoalesceThreadFactoryImpl();
 
     private Map<String, String> params;
-    private boolean batchInProgress = false;
     private AccumuloDataConnector connector;
     private ICoalesceNormalizer normalizer;
 
@@ -104,32 +102,6 @@ public class AccumuloTemplatePersistor extends CoalesceExecutorServiceImpl imple
         LOGGER.debug("Instance: {} ", params.get(AccumuloDataConnector.INSTANCE_ID));
         LOGGER.debug("User: {} ", params.get(AccumuloDataConnector.USER));
         LOGGER.debug("Mock: {} ", params.get(AccumuloDataConnector.USE_MOCK));
-
-        Thread shutdownThread = THREAD_FACTORY.newThread(new Runnable() {
-
-            @Override
-            public void run()
-            {
-                boolean inLoop = false;
-                LOGGER.debug("Shutdown Hook Invoked");
-                while (batchInProgress)
-                {
-                    if (!inLoop)
-                        LOGGER.debug("Batch IO in progress waiting");
-                    inLoop = true;
-                    try
-                    {
-                        Thread.sleep(500);
-                    }
-                    catch (InterruptedException e)
-                    {
-                        LOGGER.warn(e.getMessage());
-                    }
-                }
-            }
-        });
-
-        Runtime.getRuntime().addShutdownHook(shutdownThread);
     }
 
     /**

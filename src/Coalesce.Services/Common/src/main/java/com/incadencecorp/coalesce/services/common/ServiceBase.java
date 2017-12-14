@@ -27,6 +27,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import com.incadencecorp.coalesce.framework.CoalesceExecutorServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +56,7 @@ import com.incadencecorp.coalesce.services.common.jobs.AbstractServiceJob;
  * 
  * @author Derek C.
  */
-public abstract class ServiceBase<T> implements ICoalesceExecutorService, AutoCloseable {
+public abstract class ServiceBase<T> extends CoalesceExecutorServiceImpl {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceBase.class);
 
@@ -67,7 +68,6 @@ public abstract class ServiceBase<T> implements ICoalesceExecutorService, AutoCl
     private static final int TIME_TO_LIVE = 10;
 
     private JobManager<AbstractServiceJob<?, ?, ?, T>> jobs;
-    private ExecutorService service;
     private T target;
 
     // ----------------------------------------------------------------------//
@@ -82,7 +82,8 @@ public abstract class ServiceBase<T> implements ICoalesceExecutorService, AutoCl
      */
     public ServiceBase(T target, ExecutorService service)
     {
-        this.service = service;
+        super(service);
+
         this.jobs = new JobManager<AbstractServiceJob<?, ?, ?, T>>();
         this.target = target;
     }
@@ -272,10 +273,10 @@ public abstract class ServiceBase<T> implements ICoalesceExecutorService, AutoCl
             jobs.addJob(job);
 
             // Thread Pool Shutdown?
-            if (!service.isShutdown())
+            if (!isShutdown())
             {
                 // No; Add Job
-                job.setFuture(service.submit(job));
+                job.setFuture(submit(job));
             }
             else
             {
@@ -322,92 +323,18 @@ public abstract class ServiceBase<T> implements ICoalesceExecutorService, AutoCl
         return jobs.removeOldJobs(minutes);
     }
 
-    @Override
-    public final void close()
-    {
-        try
-        {
-            service.shutdown();
-            service.awaitTermination(1, TimeUnit.MINUTES);
-        }
-        catch (InterruptedException e)
-        {
-            // Force shutdown
-            List<Runnable> jobList = service.shutdownNow();
-
-            // Iterate through each failed job
-            for (Runnable runnable : jobList)
-            {
-                if (runnable instanceof AbstractServiceJob<?, ?, ?, ?>)
-                {
-                    LOGGER.warn("Job ({}) expired", ((AbstractServiceJob<?, ?, ?, ?>) runnable).getJobId());
-                }
-                else if (runnable instanceof ICoalesceComponent)
-                {
-                    LOGGER.warn("Runnable Expired ({})", ((ICoalesceComponent) runnable).getName());
-                }
-            }
-        }
-    }
-
     /*--------------------------------------------------------------------------
     ICoalesceExecutorService Implementation
     --------------------------------------------------------------------------*/
 
-    @Override
-    public final void execute(Runnable command)
-    {
-        service.execute(command);
-    }
-
-    @Override
-    public final boolean isShutdown()
-    {
-        return service.isShutdown();
-    }
-
-    @Override
-    public final boolean isTerminated()
-    {
-        return service.isTerminated();
-    }
-
-    // @Override
     public <REQUEST extends BaseRequest, Y extends ICoalesceResponseType<List<X>>, X extends ICoalesceResponseType<?>> Future<Y> submit(AbstractServiceJob<REQUEST, Y, X, T> job)
-            throws CoalescePersistorException
     {
-        return service.submit(job);
+        return submit(job);
     }
 
     public final <TYPE> Future<TYPE> submit(Callable<TYPE> job)
     {
-        return service.submit(job);
-    }
-
-    @Override
-    public final <TYPE> List<Future<TYPE>> invokeAll(Collection<? extends Callable<TYPE>> tasks) throws InterruptedException
-    {
-        return service.invokeAll(tasks);
-    }
-
-    @Override
-    public final <TYPE> List<Future<TYPE>> invokeAll(Collection<? extends Callable<TYPE>> tasks, long timeout, TimeUnit unit)
-            throws InterruptedException
-    {
-        return service.invokeAll(tasks, timeout, unit);
-    }
-
-    @Override
-    public final <TYPE> TYPE invokeAny(Collection<? extends Callable<TYPE>> tasks) throws InterruptedException, ExecutionException
-    {
-        return service.invokeAny(tasks);
-    }
-
-    @Override
-    public final <TYPE> TYPE invokeAny(Collection<? extends Callable<TYPE>> tasks, long timeout, TimeUnit unit)
-            throws InterruptedException, ExecutionException, TimeoutException
-    {
-        return service.invokeAny(tasks, timeout, unit);
+        return submit(job);
     }
 
     /*--------------------------------------------------------------------------
