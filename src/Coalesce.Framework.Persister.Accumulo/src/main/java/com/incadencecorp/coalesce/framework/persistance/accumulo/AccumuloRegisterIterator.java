@@ -53,11 +53,6 @@ public class AccumuloRegisterIterator extends CoalesceIterator<List<SimpleFeatur
     private final String ENTITY_CREATOR_COLUMN_NAME;
     private final String ENTITY_TYPE_COLUMN_NAME;
 
-    private final String LINKAGE_KEY_COLUMN_NAME;
-    private final String LINKAGE_ENTITY1_KEY_COLUMN_NAME;
-    private final String LINKAGE_ENTITY1_NAME_COLUMN_NAME;
-    private final String LINKAGE_ENTITY1_SOURCE_COLUMN_NAME;
-    private final String LINKAGE_ENTITY1_VERSION_COLUMN_NAME;
     private final String LINKAGE_ENTITY2_KEY_COLUMN_NAME;
     private final String LINKAGE_ENTITY2_NAME_COLUMN_NAME;
     private final String LINKAGE_ENTITY2_SOURCE_COLUMN_NAME;
@@ -65,6 +60,7 @@ public class AccumuloRegisterIterator extends CoalesceIterator<List<SimpleFeatur
     private final String LINKAGE_LAST_MODIFIED_COLUMN_NAME;
     private final String LINKAGE_LABEL_COLUMN_NAME;
     private final String LINKAGE_LINK_TYPE_COLUMN_NAME;
+    private final String LINKAGE_LINK_STATUS_COLUMN_NAME;
 
     public static final String DTG_INDEX = "geomesa.index.dtg";
     public static final String INDEXES = "geomesa.indexes.enabled";
@@ -91,11 +87,6 @@ public class AccumuloRegisterIterator extends CoalesceIterator<List<SimpleFeatur
         ENTITY_CREATOR_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getEntityCreator());
         ENTITY_TYPE_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getEntityType());
 
-        LINKAGE_KEY_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getEntityKey());
-        LINKAGE_ENTITY1_KEY_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getEntityKey());
-        LINKAGE_ENTITY1_NAME_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getName());
-        LINKAGE_ENTITY1_SOURCE_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getSource());
-        LINKAGE_ENTITY1_VERSION_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getVersion());
         LINKAGE_ENTITY2_KEY_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getLinkageEntityKey());
         LINKAGE_ENTITY2_NAME_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getLinkageName());
         LINKAGE_ENTITY2_SOURCE_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getLinkageSource());
@@ -103,6 +94,7 @@ public class AccumuloRegisterIterator extends CoalesceIterator<List<SimpleFeatur
         LINKAGE_LAST_MODIFIED_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getLastModified());
         LINKAGE_LABEL_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getLinkageLabel());
         LINKAGE_LINK_TYPE_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getLinkageType());
+        LINKAGE_LINK_STATUS_COLUMN_NAME =  getColumnName(CoalescePropertyFactory.getLinkageStatus());
 
     }
 
@@ -122,11 +114,9 @@ public class AccumuloRegisterIterator extends CoalesceIterator<List<SimpleFeatur
     {
         String featureName = normalizer.normalize(recordset.getName());
 
-        String recordKeyCol = normalizer.normalize(recordset.getName(), "recordkey");
-
         // Get Feature Fields
         Map<String, ECoalesceFieldDataTypes> fields = getCommonFields();
-        //fields.put(recordKeyCol, ECoalesceFieldDataTypes.STRING_TYPE);
+        fields.put(normalizer.normalize(recordset.getName(), "status"), ECoalesceFieldDataTypes.ENUMERATION_TYPE);
         fields.putAll(iterator.getDataTypes(recordset));
 
         // Create Feature
@@ -135,8 +125,6 @@ public class AccumuloRegisterIterator extends CoalesceIterator<List<SimpleFeatur
                                                                                        new AccumuloMapperImpl());
 
         // Create Indexes
-        // TODO Do we need a full index on the record key?
-        //createIndex(feature, recordKeyCol, EIndex.FULL, ECardinality.HIGH);
         createIndex(feature, ENTITY_KEY_COLUMN_NAME, EIndex.FULL, ECardinality.HIGH);
 
         feature.getUserData().put(Hints.USE_PROVIDED_FID, true);
@@ -198,6 +186,7 @@ public class AccumuloRegisterIterator extends CoalesceIterator<List<SimpleFeatur
         fields.put(LINKAGE_LAST_MODIFIED_COLUMN_NAME, ECoalesceFieldDataTypes.DATE_TIME_TYPE);
         fields.put(LINKAGE_LABEL_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE);
         fields.put(LINKAGE_LINK_TYPE_COLUMN_NAME, ECoalesceFieldDataTypes.ENUMERATION_TYPE);
+        fields.put(LINKAGE_LINK_STATUS_COLUMN_NAME, ECoalesceFieldDataTypes.ENUMERATION_TYPE);
 
         // Create Feature
         SimpleFeatureType feature = CoalesceFeatureTypeFactory.createSimpleFeatureType(AccumuloDataConnector.LINKAGE_FEATURE_NAME,

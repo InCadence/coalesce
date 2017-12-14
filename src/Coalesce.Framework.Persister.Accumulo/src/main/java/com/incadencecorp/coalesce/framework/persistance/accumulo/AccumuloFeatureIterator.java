@@ -71,11 +71,6 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
     private final String ENTITY_CREATOR_COLUMN_NAME;
     private final String ENTITY_TYPE_COLUMN_NAME;
 
-    private final String LINKAGE_KEY_COLUMN_NAME;
-    private final String LINKAGE_ENTITY1_KEY_COLUMN_NAME;
-    private final String LINKAGE_ENTITY1_NAME_COLUMN_NAME;
-    private final String LINKAGE_ENTITY1_SOURCE_COLUMN_NAME;
-    private final String LINKAGE_ENTITY1_VERSION_COLUMN_NAME;
     private final String LINKAGE_ENTITY2_KEY_COLUMN_NAME;
     private final String LINKAGE_ENTITY2_NAME_COLUMN_NAME;
     private final String LINKAGE_ENTITY2_SOURCE_COLUMN_NAME;
@@ -83,6 +78,7 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
     private final String LINKAGE_LAST_MODIFIED_COLUMN_NAME;
     private final String LINKAGE_LABEL_COLUMN_NAME;
     private final String LINKAGE_LINK_TYPE_COLUMN_NAME;
+    private final String LINKAGE_LINK_STATUS_COLUMN_NAME;
 
     private DataStore datastore;
     private ICoalesceNormalizer normalizer;
@@ -107,11 +103,6 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
         ENTITY_CREATOR_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getEntityCreator());
         ENTITY_TYPE_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getEntityType());
 
-        LINKAGE_KEY_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getEntityKey());
-        LINKAGE_ENTITY1_KEY_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getEntityKey());
-        LINKAGE_ENTITY1_NAME_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getName());
-        LINKAGE_ENTITY1_SOURCE_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getSource());
-        LINKAGE_ENTITY1_VERSION_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getVersion());
         LINKAGE_ENTITY2_KEY_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getLinkageEntityKey());
         LINKAGE_ENTITY2_NAME_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getLinkageName());
         LINKAGE_ENTITY2_SOURCE_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getLinkageSource());
@@ -119,6 +110,7 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
         LINKAGE_LAST_MODIFIED_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getLastModified());
         LINKAGE_LABEL_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getLinkageLabel());
         LINKAGE_LINK_TYPE_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getLinkageType());
+        LINKAGE_LINK_STATUS_COLUMN_NAME = getColumnName(CoalescePropertyFactory.getLinkageStatus());
     }
 
     /**
@@ -162,7 +154,7 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
                     SimpleFeature feature = SimpleFeatureBuilder.build(featureType, new Object[] {}, entity.getKey());
                     feature.getUserData().put(Hints.USE_PROVIDED_FID, true);
 
-                    populateEntityFeature(feature, entity);
+                    populateFeature(feature, entity);
 
                     ensureDefaultGeometry(featureType, feature);
 
@@ -229,7 +221,7 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
                                 feature.getUserData().put(Hints.USE_PROVIDED_FID, true);
 
                                 populateCommon(feature, entity);
-                                populateLinkageFeature(feature, linkage);
+                                populateFeature(feature, linkage);
 
                                 ensureDefaultGeometry(featureType, feature);
 
@@ -356,7 +348,7 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
         }
     }
 
-    private void populateEntityFeature(SimpleFeature feature, CoalesceEntity entity) throws CoalesceException, IOException
+    private void populateFeature(SimpleFeature feature, CoalesceEntity entity) throws CoalesceException, IOException
     {
         populateCommon(feature, entity);
 
@@ -371,7 +363,7 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
                             entity.getStatus().ordinal());
     }
 
-    private void populateLinkageFeature(SimpleFeature feature, CoalesceLinkage linkage) throws CoalesceException, IOException
+    private void populateFeature(SimpleFeature feature, CoalesceLinkage linkage) throws CoalesceException, IOException
     {
         // TODO Is this needed since the FID is the linkage key?
         //setFeatureAttribute(feature, LINKAGE_KEY_COLUMN_NAME, ECoalesceFieldDataTypes.STRING_TYPE, linkage.getKey());
@@ -401,12 +393,17 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
                             LINKAGE_LINK_TYPE_COLUMN_NAME,
                             ECoalesceFieldDataTypes.ENUMERATION_TYPE,
                             linkage.getLinkType().ordinal());
+        setFeatureAttribute(feature,
+                            LINKAGE_LINK_STATUS_COLUMN_NAME,
+                            ECoalesceFieldDataTypes.ENUMERATION_TYPE,
+                            linkage.getStatus().ordinal());
+
     }
 
     private void populateFeature(SimpleFeature feature, CoalesceRecord record) throws CoalesceException, IOException
     {
         String recordsetName = record.getParent().getName();
-
+        String statusAttr = normalizer.normalize(recordsetName, "status");
         /* TODO Is this needed if the record key is already set to the FID
         setFeatureAttribute(feature,
                             normalizer.normalize(recordsetName, "recordkey"),
@@ -427,6 +424,8 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
                 }
                 setFeatureAttribute(feature, fieldName, dataType, field.getValue());
             }
+
+            setFeatureAttribute(feature, statusAttr, ECoalesceFieldDataTypes.ENUMERATION_TYPE, record.getStatus().ordinal());
         }
     }
 
