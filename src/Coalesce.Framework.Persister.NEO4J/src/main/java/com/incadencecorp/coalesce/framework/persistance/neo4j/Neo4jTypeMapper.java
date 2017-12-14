@@ -33,6 +33,7 @@ public class Neo4jTypeMapper implements ICoalesceMapper<Integer> {
         switch (type) {
 
         case DATE_TIME_TYPE:
+            return Types.DATE;
         case GUID_TYPE:
             return Types.OTHER;
         case GEOCOORDINATE_LIST_TYPE:

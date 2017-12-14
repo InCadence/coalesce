@@ -431,9 +431,9 @@ public class Neo4JPersistor extends CoalescePersistorBase {
         fieldValues.put(TITLE, new CoalesceParameter(entity.getTitle(), Types.CHAR));
         fieldValues.put(SOURCE, new CoalesceParameter(entity.getSource(), Types.CHAR));
         fieldValues.put(LASTMODIFIED,
-                        new CoalesceParameter(entity.getAttribute(CoalesceObject.ATTRIBUTE_LASTMODIFIED), Types.OTHER));
+                        new CoalesceParameter(entity.getAttribute(CoalesceObject.ATTRIBUTE_LASTMODIFIED), Types.DATE));
         fieldValues.put(DATECREATED,
-                        new CoalesceParameter(entity.getAttribute(CoalesceObject.ATTRIBUTE_DATECREATED), Types.OTHER));
+                        new CoalesceParameter(entity.getAttribute(CoalesceObject.ATTRIBUTE_DATECREATED), Types.DATE));
 
         if (isIncludeXmlEnabled)
         {
