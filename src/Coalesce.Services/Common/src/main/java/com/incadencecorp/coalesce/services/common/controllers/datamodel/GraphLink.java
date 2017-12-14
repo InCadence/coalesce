@@ -17,6 +17,7 @@
 
 package com.incadencecorp.coalesce.services.common.controllers.datamodel;
 
+import com.incadencecorp.coalesce.framework.datamodel.ECoalesceObjectStatus;
 import com.incadencecorp.coalesce.framework.datamodel.ELinkTypes;
 
 public class GraphLink {
@@ -25,6 +26,7 @@ public class GraphLink {
     private String target;
     private String label;
     private ELinkTypes type;
+    private ECoalesceObjectStatus status;
     private boolean isByDirectional;
 
     public String getSource()
@@ -65,6 +67,16 @@ public class GraphLink {
     public void setType(ELinkTypes type)
     {
         this.type = type;
+    }
+
+    public ECoalesceObjectStatus getStatus()
+    {
+        return status;
+    }
+
+    public void setStatus(ECoalesceObjectStatus status)
+    {
+        this.status = status;
     }
 
     public boolean isByDirectional()
