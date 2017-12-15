@@ -19,12 +19,13 @@ package com.incadencecorp.coalesce.search;
 
 import com.incadencecorp.coalesce.api.persistance.EPersistorCapabilities;
 import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.common.helpers.EntityLinkHelper;
+import com.incadencecorp.coalesce.framework.CoalesceFramework;
 import com.incadencecorp.coalesce.framework.datamodel.*;
 import com.incadencecorp.coalesce.framework.persistance.ICoalescePersistor;
 import com.incadencecorp.coalesce.framework.util.CoalesceTemplateUtil;
 import com.incadencecorp.coalesce.search.api.ICoalesceSearchPersistor;
 import com.incadencecorp.coalesce.search.api.SearchResults;
-import com.incadencecorp.coalesce.search.factory.CoalesceFeatureTypeFactory;
 import com.incadencecorp.coalesce.search.factory.CoalescePropertyFactory;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -66,7 +67,7 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
     private static final FilterFactory FF = CoalescePropertyFactory.getFilterFactory();
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSearchTest.class);
 
-    private boolean isInitialized = false;
+    private Boolean isInitialized = false;
 
     protected abstract T createPersister() throws CoalescePersistorException;
 
@@ -76,25 +77,66 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
     @Before
     public void registerEntities()
     {
-        if (!isInitialized)
+        synchronized (isInitialized)
         {
-            TestEntity entity = new TestEntity();
-            entity.initialize();
-
-            try
+            if (!isInitialized)
             {
-                CoalesceEntityTemplate template = CoalesceEntityTemplate.create(entity);
+                TestEntity entity = new TestEntity();
+                entity.initialize();
 
-                createPersister().registerTemplate(template);
-                CoalesceTemplateUtil.addTemplates(template);
-            }
-            catch (CoalescePersistorException | SAXException | IOException e)
-            {
-                LOGGER.warn("Failed to register templates");
-            }
+                try
+                {
+                    CoalesceEntityTemplate template = CoalesceEntityTemplate.create(entity);
 
-            isInitialized = true;
+                    createPersister().registerTemplate(template);
+                    CoalesceTemplateUtil.addTemplates(template);
+                }
+                catch (CoalescePersistorException | SAXException | IOException e)
+                {
+                    LOGGER.warn("Failed to register templates");
+                }
+
+                isInitialized = true;
+            }
         }
+    }
+
+    /**
+     * This test persist an entity that contains linkages and verifies that they linkages can be retrieved doing a search.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void searchLinkages() throws Exception
+    {
+        T persister = createPersister();
+
+        // Create Entity
+        TestEntity entity1 = new TestEntity();
+        entity1.initialize();
+
+        TestEntity entity2 = new TestEntity();
+        entity2.initialize();
+
+        // Link Entities
+        EntityLinkHelper.linkEntitiesBiDirectional(entity1, ELinkTypes.IS_PARENT_OF, entity2);
+        EntityLinkHelper.linkEntitiesBiDirectional(entity1, ELinkTypes.HAS_MEMBER, entity2);
+
+        // Save Entity
+        persister.saveEntity(false, entity1);
+
+        List<PropertyName> properties = new ArrayList<>();
+        properties.add(CoalescePropertyFactory.getLinkageLabel());
+        properties.add(CoalescePropertyFactory.getLinkageStatus());
+        properties.add(CoalescePropertyFactory.getLinkageType());
+
+        Query query = new Query();
+        query.setFilter(CoalescePropertyFactory.getLinkageEntityKey(entity2.getKey()));
+        query.setProperties(properties);
+
+        SearchResults results = persister.search(query);
+
+        Assert.assertEquals(2, results.getTotal());
     }
 
     /**
@@ -424,7 +466,6 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         String cql = "\"" + CoalescePropertyFactory.getFieldProperty(record.getIntegerField()).getPropertyName() + "\"="
                 + record.getIntegerField().getValue();
 
-
         // Set up to return the GlobalEventID and Actor1Name fields
         List<PropertyName> props = new ArrayList<>();
         props.add(CoalescePropertyFactory.getFieldProperty(record.getIntegerField()));
@@ -458,4 +499,5 @@ public abstract class AbstractSearchTest<T extends ICoalescePersistor & ICoalesc
         String cql = cqlGeometry + " AND " + cqlDates + " AND " + cqlAttributes;
         return CQL.toFilter(cql);
     }
+
 }

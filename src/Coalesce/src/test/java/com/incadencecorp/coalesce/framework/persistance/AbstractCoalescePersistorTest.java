@@ -53,28 +53,31 @@ public abstract class AbstractCoalescePersistorTest<T extends ICoalescePersistor
 
     protected abstract T createPersister() throws CoalescePersistorException;
 
-    private static boolean isInitialized = false;
+    private static Boolean isInitialized = false;
 
     @Before
     public void registerEntities()
     {
-        if (!isInitialized)
+        synchronized (isInitialized)
         {
-            LOGGER.warn("Registering Entities");
-
-            TestEntity entity = new TestEntity();
-            entity.initialize();
-
-            try
+            if (!isInitialized)
             {
-                createPersister().registerTemplate(CoalesceEntityTemplate.create(entity));
-            }
-            catch (CoalescePersistorException | SAXException | IOException e)
-            {
-                LOGGER.warn("Failed to register templates");
-            }
+                LOGGER.warn("Registering Entities");
 
-            isInitialized = true;
+                TestEntity entity = new TestEntity();
+                entity.initialize();
+
+                try
+                {
+                    createPersister().registerTemplate(CoalesceEntityTemplate.create(entity));
+                }
+                catch (CoalescePersistorException | SAXException | IOException e)
+                {
+                    LOGGER.warn("Failed to register templates");
+                }
+
+                isInitialized = true;
+            }
         }
     }
 

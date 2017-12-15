@@ -264,7 +264,7 @@ public class CoalescePropertyFactory {
      */
     public static PropertyName getLinkageStatus()
     {
-        return getFilterFactory().property(COALESCE_LINKAGE_TABLE + CoalesceLinkage.ATTRIBUTE_STATUS);
+        return getFilterFactory().property(COALESCE_LINKAGE_TABLE + "link" + CoalesceLinkage.ATTRIBUTE_STATUS);
     }
 
     /**
@@ -281,7 +281,7 @@ public class CoalescePropertyFactory {
      */
     public static PropertyName getLinkageLabel()
     {
-        return getFilterFactory().property(COALESCE_LINKAGE_TABLE + CoalesceLinkage.ATTRIBUTE_LABEL);
+        return getFilterFactory().property(COALESCE_LINKAGE_TABLE + "link" + CoalesceLinkage.ATTRIBUTE_LABEL);
     }
 
     /**

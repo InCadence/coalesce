@@ -18,6 +18,7 @@
 package com.incadencecorp.coalesce.services.search.service.tasks;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,7 @@ import java.util.Map;
 import javax.sql.rowset.CachedRowSet;
 import javax.xml.parsers.ParserConfigurationException;
 
+import com.incadencecorp.coalesce.search.api.SearchResults;
 import org.geotools.data.Query;
 import org.geotools.filter.SortByImpl;
 import org.opengis.filter.expression.PropertyName;
@@ -85,9 +87,11 @@ public class SearchDataObjectTask extends AbstractTask<QueryType, QueryResultsTy
             query.setMaxFeatures(parameters.getParams().getPageSize());
             query.setSortBy(sortby);
 
-            CachedRowSet rowset = parameters.getTarget().search(query).getResults();
+            SearchResults searchResults = parameters.getTarget().search(query);
+            CachedRowSet rowset = searchResults.getResults();
 
             QueryResultType results = new QueryResultType();
+            results.setTotal(BigInteger.valueOf(searchResults.getTotal()));
 
             if (rowset.first())
             {
@@ -115,12 +119,9 @@ public class SearchDataObjectTask extends AbstractTask<QueryType, QueryResultsTy
                 while (rowset.next());
             }
 
-            // TODO Set Total results
-
             result = new QueryResultsType();
             result.setStatus(EResultStatus.SUCCESS);
             result.setResult(results);
-
         }
         catch (SAXException | IOException | ParserConfigurationException | SQLException e)
         {

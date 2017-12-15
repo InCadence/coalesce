@@ -1170,13 +1170,6 @@ public class DerbyCoalescePreparedFilter extends PostgisPSFilterToSql implements
 
             String column = "entitykey";
 
-            // Joining Linkage Table?
-            if (currentTable.toLowerCase().contains("coalescelinkage"))
-            {
-                // Yes; Use Entity1Key instead.
-                column = "entity1key";
-            }
-
             // First Table
             if (StringHelper.isNullOrEmpty(lastTable))
             {

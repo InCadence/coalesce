@@ -16,10 +16,14 @@
  -----------------------------------------------------------------------------*/
 package com.incadencecorp.coalesce.framework.persistance.derby;
 
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
+import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
+import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
+import com.incadencecorp.coalesce.framework.datamodel.*;
+import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
+import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
+import com.incadencecorp.coalesce.framework.persistance.ServerConn;
+import com.incadencecorp.coalesce.framework.persistance.postgres.CoalesceIndexInfo;
 import org.apache.derby.jdbc.ClientDriver;
 import org.apache.derby.jdbc.EmbeddedDriver;
 import org.joda.time.DateTime;
@@ -28,24 +32,14 @@ import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
-import com.incadencecorp.coalesce.common.exceptions.CoalescePersistorException;
-import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntity;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceEntityTemplate;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceFieldDefinition;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceLinkage;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceRecordset;
-import com.incadencecorp.coalesce.framework.datamodel.CoalesceSection;
-import com.incadencecorp.coalesce.framework.datamodel.ECoalesceFieldDataTypes;
-import com.incadencecorp.coalesce.framework.persistance.CoalesceDataConnectorBase;
-import com.incadencecorp.coalesce.framework.persistance.CoalesceParameter;
-import com.incadencecorp.coalesce.framework.persistance.ServerConn;
-import com.incadencecorp.coalesce.framework.persistance.postgres.CoalesceIndexInfo;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DerbyDataConnector extends CoalesceDataConnectorBase {
 
     private static final DerbyNormalizer NORMALIZER = new DerbyNormalizer();
+    private static final CommonColumnNames COLUMNS = new CommonColumnNames(NORMALIZER);
 
     private static String protocol = "jdbc";
     private static String databaseDriver = "derby";
@@ -71,10 +65,10 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
     /**
      * Note: Derby stored procedures cannot handle long XML types. So, we will
      * NOT use stored procedures in the derby persistor for the base tables.
-     * 
+     * <p>
      * I will keep this here temporarily as an example for template registration
      * creation of stored procedures.
-     * 
+     *
      * @param ivarobjectkey
      * @param ivarname
      * @param ivarsource
@@ -94,8 +88,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
                                                  String ivarentityidtype,
                                                  String ivarentityxml,
                                                  DateTime ivardatecreated,
-                                                 DateTime ivarlastmodified)
-            throws SQLException
+                                                 DateTime ivarlastmodified) throws SQLException
     {
 
         DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
@@ -108,19 +101,52 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
         // prepare the query
         Statement stmt = conn.createStatement();
         ResultSet result = null;
-        result = stmt.executeQuery("select name from coalesce.coalesceentity where objectkey='" + ivarobjectkey + "'");
+        result = stmt.executeQuery(
+                "select " + COLUMNS.getName() + " from " + schema + ".coalesceentity where " + COLUMNS.getKey() + "='"
+                        + ivarobjectkey + "'");
         if (!result.next())
         {
             // insert
             Statement stmt2 = conn.createStatement();
-            StringBuilder sql = new StringBuilder("insert into coalesce.coalesceentity (objectkey, name, source, version, entityid,").append("entityidtype, entityxml, datecreated, lastmodified) values ('").append(ivarobjectkey).append("','").append(ivarname).append("','").append(ivarsource).append("','").append(ivarversion).append("','").append(ivarentityid).append("','").append(ivarentityidtype).append("','").append(ivarentityxml).append("','").append(dateCreated).append("','").append(lastModified).append("')");
+            StringBuilder sql = new StringBuilder("insert into " + schema + ".coalesceentity (");
+            sql.append(COLUMNS.getKey() + ", ");
+            sql.append(COLUMNS.getName() + ", ");
+            sql.append(COLUMNS.getSource() + ", ");
+            sql.append(COLUMNS.getVersion() + ", ");
+            sql.append(COLUMNS.getEntityId() + ",");
+            sql.append(COLUMNS.getEntityIdType() + ", ");
+            sql.append(COLUMNS.getXml() + ", ");
+            sql.append(COLUMNS.getDateCreated() + ", ");
+            sql.append(COLUMNS.getLastModified());
+            sql.append(") values ('");
+            sql.append(ivarobjectkey).append("','");
+            sql.append(ivarname).append("','");
+            sql.append(ivarsource).append("','");
+            sql.append(ivarversion).append("','");
+            sql.append(ivarentityid).append("','");
+            sql.append(ivarentityidtype).append("','");
+            sql.append(ivarentityxml).append("','");
+            sql.append(dateCreated).append("','");
+            sql.append(lastModified);
+            sql.append("')");
+
             stmt2.executeUpdate(sql.toString());
         }
         else
         {
+            String format = "%s='%s', ";
             // update
             Statement stmt3 = conn.createStatement();
-            StringBuilder sql = new StringBuilder("update coalesce.coalesceentity set name = '").append(ivarname).append("', source = '").append(ivarsource).append("', version = '").append(ivarversion).append("', entityid = '").append(ivarentityid).append("',").append("entityidtype = '").append(ivarentityidtype).append("', entityxml='").append(ivarentityxml).append("', datecreated = '").append(dateCreated).append("', lastmodified='").append(lastModified).append("' where objectkey='").append(ivarobjectkey).append("'");
+            StringBuilder sql = new StringBuilder("update " + schema + ".coalesceentity set ");
+            sql.append(String.format(format, COLUMNS.getName(), ivarname));
+            sql.append(String.format(format, COLUMNS.getSource(), ivarsource));
+            sql.append(String.format(format, COLUMNS.getVersion(), ivarversion));
+            sql.append(String.format(format, COLUMNS.getEntityId(), ivarentityid));
+            sql.append(String.format(format, COLUMNS.getEntityIdType(), ivarentityidtype));
+            sql.append(String.format(format, COLUMNS.getXml(), ivarentityxml));
+            sql.append(String.format(format, COLUMNS.getDateCreated(), dateCreated));
+            sql.append(COLUMNS.getLastModified() + "='" + lastModified + "'");
+            sql.append(" where " + COLUMNS.getKey() + "='" + ivarobjectkey + "'");
 
             LOGGER.debug(sql.toString());
 
@@ -146,32 +172,46 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
         if (!result.next())
         {
             // insert
-            StringBuilder sql2 = new StringBuilder("insert into coalesce.coalescelinkage (ObjectKey,");
-            sql2.append("Name,Entity1Key,Entity1Name,Entity1Source,Entity1Version,LinkType,");
-            sql2.append("LinkLabel,LinkStatus,Entity2Key,Entity2Name,Entity2Source,Entity2Version,");
-            sql2.append("ClassificationMarking,ModifiedBy,InputLanguage,ParentKey,ParentType,DateCreated,");
-            sql2.append("LastModified) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+            StringBuilder sql2 = new StringBuilder("insert into " + schema + ".coalescelinkage (");
+            sql2.append(COLUMNS.getKey() + ",");
+            sql2.append("entitykey,");
+            sql2.append(COLUMNS.getName() + ",");
+            sql2.append(COLUMNS.getSource() + ",");
+            sql2.append(COLUMNS.getVersion() + ",");
+            sql2.append(COLUMNS.getLinkageType() + ",");
+            sql2.append(COLUMNS.getLinkageLabel() + ",");
+            sql2.append(COLUMNS.getLinkageStatus() + ",");
+            sql2.append(COLUMNS.getEntity2Key() + ",");
+            sql2.append(COLUMNS.getEntity2Name() + ",");
+            sql2.append(COLUMNS.getEntity2Source() + ",");
+            sql2.append(COLUMNS.getEntity2Version() + ",");
+            sql2.append("ClassificationMarking,");
+            sql2.append("ModifiedBy,");
+            sql2.append("InputLanguage,");
+            sql2.append(COLUMNS.getDateCreated() + ",");
+            sql2.append(COLUMNS.getLastModified());
+            sql2.append(") values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+
+            int ii=1;
+
             PreparedStatement stmt2 = conn.prepareStatement(sql2.toString());
-            stmt2.setString(1, linkage.getKey());
-            stmt2.setString(2, linkage.getName());
-            stmt2.setString(3, linkage.getEntity1Key());
-            stmt2.setString(4, linkage.getEntity1Name());
-            stmt2.setString(5, linkage.getEntity1Source());
-            stmt2.setString(6, linkage.getEntity1Version());
-            stmt2.setString(7, linkage.getLinkType().getLabel());
-            stmt2.setString(8, linkage.getLabel());
-            stmt2.setString(9, linkage.getStatus().toString());
-            stmt2.setString(10, linkage.getEntity2Key());
-            stmt2.setString(11, linkage.getEntity2Name());
-            stmt2.setString(12, linkage.getEntity2Source());
-            stmt2.setString(13, linkage.getEntity2Version());
-            stmt2.setString(14, linkage.getClassificationMarking().toString());
-            stmt2.setString(15, linkage.getModifiedBy());
-            stmt2.setString(16, linkage.getInputLang().toString());
-            stmt2.setString(17, linkage.getParent().getKey());
-            stmt2.setString(18, linkage.getParent().getType());
-            stmt2.setString(19, dateCreated);
-            stmt2.setString(20, lastModified);
+            stmt2.setString(ii++, linkage.getKey());
+            stmt2.setString(ii++, linkage.getEntity1Key());
+            stmt2.setString(ii++, linkage.getEntity1Name());
+            stmt2.setString(ii++, linkage.getEntity1Source());
+            stmt2.setString(ii++, linkage.getEntity1Version());
+            stmt2.setString(ii++, linkage.getLinkType().getLabel());
+            stmt2.setString(ii++, linkage.getLabel());
+            stmt2.setString(ii++, linkage.getStatus().toString());
+            stmt2.setString(ii++, linkage.getEntity2Key());
+            stmt2.setString(ii++, linkage.getEntity2Name());
+            stmt2.setString(ii++, linkage.getEntity2Source());
+            stmt2.setString(ii++, linkage.getEntity2Version());
+            stmt2.setString(ii++, linkage.getClassificationMarking().toString());
+            stmt2.setString(ii++, linkage.getModifiedBy());
+            stmt2.setString(ii++, linkage.getInputLang().toString());
+            stmt2.setString(ii++, dateCreated);
+            stmt2.setString(ii++, lastModified);
 
             LOGGER.debug(stmt2.toString());
 
@@ -180,33 +220,49 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
         else
         {
             // update
-            StringBuilder sql3 = new StringBuilder("update coalesce.coalescelinkage set Name=?,");
-            sql3.append("Entity1Key=?,Entity1Name=?,Entity1Source=?,Entity1Version=?,LinkType=?,");
-            sql3.append("LinkLabel=?,LinkStatus=?,Entity2Key=?,Entity2Name=?,Entity2Source=?,Entity2Version=?,");
-            sql3.append("ClassificationMarking=?,ModifiedBy=?,InputLanguage=?,ParentKey=?,ParentType=?,DateCreated=?,");
-            sql3.append("LastModified=? where ObjectKey=?");
+            StringBuilder sql3 = new StringBuilder("update " + schema + ".coalescelinkage set ");
+            sql3.append("entitykey=?,");
+            sql3.append(COLUMNS.getName() + "=?,");
+            sql3.append(COLUMNS.getSource() + "=?,");
+            sql3.append(COLUMNS.getVersion() + "=?,");
+            sql3.append(COLUMNS.getLinkageType() + "=?,");
+            sql3.append(COLUMNS.getLinkageLabel() + "=?,");
+            sql3.append(COLUMNS.getLinkageStatus() + "=?,");
+            sql3.append(COLUMNS.getEntity2Key() + "=?,");
+            sql3.append(COLUMNS.getEntity2Name() + "=?,");
+            sql3.append(COLUMNS.getEntity2Source() + "=?,");
+            sql3.append(COLUMNS.getEntity2Version() + "=?,");
+            sql3.append("ClassificationMarking=?,");
+            sql3.append("ModifiedBy=?,");
+            sql3.append("InputLanguage=?,");
+            sql3.append("ParentKey=?,");
+            sql3.append("ParentType=?,");
+            sql3.append(COLUMNS.getDateCreated() + "=?,");
+            sql3.append(COLUMNS.getLastModified() + "=? ");
+            sql3.append("where " + COLUMNS.getKey() + "=?");
+
+            int ii=1;
 
             PreparedStatement stmt3 = conn.prepareStatement(sql3.toString());
-            stmt3.setString(1, linkage.getName());
-            stmt3.setString(2, linkage.getEntity1Key());
-            stmt3.setString(3, linkage.getEntity1Name());
-            stmt3.setString(4, linkage.getEntity1Source());
-            stmt3.setString(5, linkage.getEntity1Version());
-            stmt3.setString(6, linkage.getLinkType().getLabel());
-            stmt3.setString(7, linkage.getLabel());
-            stmt3.setString(8, linkage.getStatus().toString());
-            stmt3.setString(9, linkage.getEntity2Key());
-            stmt3.setString(10, linkage.getEntity2Name());
-            stmt3.setString(11, linkage.getEntity2Source());
-            stmt3.setString(12, linkage.getEntity2Version());
-            stmt3.setString(13, linkage.getClassificationMarking().toString());
-            stmt3.setString(14, linkage.getModifiedBy());
-            stmt3.setString(15, linkage.getInputLang().toString());
-            stmt3.setString(16, linkage.getParent().getKey());
-            stmt3.setString(17, linkage.getParent().getType());
-            stmt3.setString(18, dateCreated);
-            stmt3.setString(19, lastModified);
-            stmt3.setString(20, linkage.getKey());
+            stmt3.setString(ii++, linkage.getEntity1Key());
+            stmt3.setString(ii++, linkage.getEntity1Name());
+            stmt3.setString(ii++, linkage.getEntity1Source());
+            stmt3.setString(ii++, linkage.getEntity1Version());
+            stmt3.setString(ii++, linkage.getLinkType().getLabel());
+            stmt3.setString(ii++, linkage.getLabel());
+            stmt3.setString(ii++, linkage.getStatus().toString());
+            stmt3.setString(ii++, linkage.getEntity2Key());
+            stmt3.setString(ii++, linkage.getEntity2Name());
+            stmt3.setString(ii++, linkage.getEntity2Source());
+            stmt3.setString(ii++, linkage.getEntity2Version());
+            stmt3.setString(ii++, linkage.getClassificationMarking().toString());
+            stmt3.setString(ii++, linkage.getModifiedBy());
+            stmt3.setString(ii++, linkage.getInputLang().toString());
+            stmt3.setString(ii++, linkage.getParent().getKey());
+            stmt3.setString(ii++, linkage.getParent().getType());
+            stmt3.setString(ii++, dateCreated);
+            stmt3.setString(ii++, lastModified);
+            stmt3.setString(ii++, linkage.getKey());
 
             LOGGER.debug(stmt3.toString());
 
@@ -216,8 +272,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
         return true;
     }
 
-    public boolean coalesceEntityTemplate_InsertOrUpdate(CoalesceEntityTemplate template)
-            throws CoalesceException
+    public boolean coalesceEntityTemplate_InsertOrUpdate(CoalesceEntityTemplate template) throws CoalesceException
     {
         try
         {
@@ -232,12 +287,22 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
             ResultSet result = null;
 
             Statement stmt = conn.createStatement();
-            result = stmt.executeQuery("select name from coalesce.coalesceentitytemplate where name='" + template.getName()
-                    + "' and source='" + template.getSource() + "' and version='" + template.getVersion() + "'");
+            result = stmt.executeQuery(
+                    "select " + COLUMNS.getName() + " from " + schema + ".coalesceentitytemplate where " + COLUMNS.getName() + "='"
+                            + template.getName() + "' and " + COLUMNS.getSource() + "='" + template.getSource() + "' and "
+                            + COLUMNS.getVersion() + "='" + template.getVersion() + "'");
             if (!result.next())
             {
                 // insert
-                StringBuilder sql2 = new StringBuilder("insert into coalesce.coalesceentitytemplate (TemplateKey,").append("Name,Source, Version,TemplateXml,DateCreated,LastModified) values ").append("(?,?,?,?,?,?,?)");
+                StringBuilder sql2 = new StringBuilder("insert into " + schema + ".coalesceentitytemplate (");
+                sql2.append(COLUMNS.getKey() + ",");
+                sql2.append(COLUMNS.getName() + ",");
+                sql2.append(COLUMNS.getSource() + ",");
+                sql2.append(COLUMNS.getVersion() + ",");
+                sql2.append(COLUMNS.getXml() + ",");
+                sql2.append(COLUMNS.getDateCreated() + ",");
+                sql2.append(COLUMNS.getLinkageLastModified());
+                sql2.append(") values (?,?,?,?,?,?,?)");
 
                 PreparedStatement stmt2 = conn.prepareStatement(sql2.toString());
                 stmt2.setString(1, template.getKey());
@@ -252,7 +317,17 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
             else
             {
                 // update
-                StringBuilder sql3 = new StringBuilder("update coalesce.coalesceentitytemplate set Name=?,").append("Source=?,Version=?,TemplateXml=?,DateCreated=?,LastModified=?").append(" where Name=? and Source=? and Version=?");
+                StringBuilder sql3 = new StringBuilder("update " + schema + ".coalesceentitytemplate set ");
+                sql3.append(COLUMNS.getName() + "=?,");
+                sql3.append(COLUMNS.getSource() + "=?,");
+                sql3.append(COLUMNS.getVersion() + "=?,");
+                sql3.append(COLUMNS.getXml() + "=?,");
+                sql3.append(COLUMNS.getDateCreated() + "=?,");
+                sql3.append(COLUMNS.getLastModified() + "=?");
+                sql3.append(" where ");
+                sql3.append(COLUMNS.getName() + "=? and ");
+                sql3.append(COLUMNS.getSource() + "=? and ");
+                sql3.append(COLUMNS.getVersion() + "=?");
 
                 PreparedStatement stmt3 = conn.prepareStatement(sql3.toString());
                 stmt3.setString(1, template.getName());
@@ -301,85 +376,87 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
         try
         {
 
-        Connection conn = this.getConnection();
-        Statement stmt = conn.createStatement();
-        ResultSet result = null;
-        result = stmt.executeQuery("select objectkey from " + schema + "." + NORMALIZER.normalize(tableName) + " where objectkey='" + parameters.get(0).getValue() + "'");
+            Connection conn = this.getConnection();
+            Statement stmt = conn.createStatement();
+            ResultSet result = null;
+            result = stmt.executeQuery(
+                    "select " + COLUMNS.getKey() + " from " + schema + "." + NORMALIZER.normalize(tableName) + " where "
+                            + COLUMNS.getKey() + "='" + parameters.get(0).getValue() + "'");
 
-        StringBuilder sql = new StringBuilder();
+            StringBuilder sql = new StringBuilder();
 
-        if (!result.next())
-        {
-            // insert
-            sql.append("insert into ").append(schema).append(".").append(NORMALIZER.normalize(tableName)).append(" (");
-            first = true;
-            for (CoalesceParameter parameter : parameters)
+            if (!result.next())
             {
-                if (!first)
+                // insert
+                sql.append("insert into ").append(schema).append(".").append(NORMALIZER.normalize(tableName)).append(" (");
+                first = true;
+                for (CoalesceParameter parameter : parameters)
                 {
-                    sql.append(",");
+                    if (!first)
+                    {
+                        sql.append(",");
+                    }
+                    else
+                    {
+                        first = false;
+                    }
+                    sql.append(NORMALIZER.normalize(parameter.getName()));
                 }
-                else
+                sql.append(") values (");
+                first = true;
+                for (CoalesceParameter parameter : parameters)
                 {
-                    first = false;
+                    if (!first)
+                    {
+                        sql.append(",");
+                    }
+                    else
+                    {
+                        first = false;
+                    }
+                    if (parameter.getType() == Types.OTHER || parameter.getType() == Types.VARCHAR
+                            || parameter.getType() == Types.CHAR)
+                    {
+                        sql.append(quote(parameter.getValue()));
+                    }
+                    else
+                    {
+                        sql.append(parameter.getValue());
+                    }
                 }
-                sql.append(NORMALIZER.normalize(parameter.getName()));
+                sql.append(")");
             }
-            sql.append(") values (");
-            first = true;
-            for (CoalesceParameter parameter : parameters)
+            else
             {
-                if (!first)
+                // update
+                sql.append("update ").append(schema).append(".").append(NORMALIZER.normalize(tableName)).append(" set ");
+                for (CoalesceParameter parameter : parameters)
                 {
-                    sql.append(",");
-                }
-                else
-                {
-                    first = false;
-                }
-                if (parameter.getType() == Types.OTHER
-                        || parameter.getType() == Types.VARCHAR || parameter.getType() == Types.CHAR )
-                {
-                    sql.append(quote(parameter.getValue()));
-                }
-                else
-                {
-                    sql.append(parameter.getValue());
-                }
-            }
-            sql.append(")");
-        }
-        else
-        {
-            // update
-            sql.append("update ").append(schema).append(".").append(NORMALIZER.normalize(tableName)).append(" set ");
-            for (CoalesceParameter parameter : parameters)
-            {
-                if (!first)
-                {
-                    sql.append(",");
-                }
-                else
-                {
-                    first = false;
-                }
-                sql.append(NORMALIZER.normalize(parameter.getName())).append(" = ");
+                    if (!first)
+                    {
+                        sql.append(",");
+                    }
+                    else
+                    {
+                        first = false;
+                    }
+                    sql.append(NORMALIZER.normalize(parameter.getName())).append(" = ");
 
-                if (parameter.getType() == Types.OTHER
-                        || parameter.getType() == Types.VARCHAR || parameter.getType() == Types.CHAR )
-                {
-                    sql.append(quote(parameter.getValue()));
+                    if (parameter.getType() == Types.OTHER || parameter.getType() == Types.VARCHAR
+                            || parameter.getType() == Types.CHAR)
+                    {
+                        sql.append(quote(parameter.getValue()));
+                    }
+                    else
+                    {
+                        sql.append(parameter.getValue());
+                    }
                 }
-                else
-                {
-                    sql.append(parameter.getValue());
-                }
+
+                sql.append(" WHERE " + COLUMNS.getKey() + "=").append(quote(parameters.get(0).getValue()));
             }
 
-            sql.append(" WHERE objectkey = ").append(quote(parameters.get(0).getValue()));
-        }
-
-        //*/
+            //*/
 
             LOGGER.trace("Insert Record SQL: " + sql);
             stmt = conn.createStatement();
@@ -415,11 +492,11 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
                 StringBuilder sb = new StringBuilder();
 
                 // Add Required Columns
-                sb.append("\tobjectkey varchar(128) NOT NULL,\r\n");
+                sb.append("\t" + COLUMNS.getKey() + " varchar(128) NOT NULL,\r\n");
                 sb.append("\tentitykey varchar(128) NOT NULL,\r\n");
-                sb.append("\tentityname varchar(256),\r\n");
-                sb.append("\tentitysource varchar(256),\r\n");
-                sb.append("\tentitytype varchar(256),\r\n");
+                sb.append("\t" + COLUMNS.getName() + " varchar(256),\r\n");
+                sb.append("\t" + COLUMNS.getSource() + " varchar(256),\r\n");
+                sb.append("\t" + COLUMNS.getType() + " varchar(256),\r\n");
 
                 // Add Columns for Field Definitions
                 for (CoalesceFieldDefinition fieldDefinition : recordset.getFieldDefinitions())
@@ -450,9 +527,9 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
                     }
                 }
 
-                sb.append("\tCONSTRAINT " + info.getTableName() + "_pkey PRIMARY KEY (objectkey),\r\n");
+                sb.append("\tCONSTRAINT " + info.getTableName() + "_pkey PRIMARY KEY (" + COLUMNS.getKey() + "),\r\n");
                 sb.append("\tCONSTRAINT " + info.getTableName() + "_fkey FOREIGN KEY (entitykey) REFERENCES " + schema
-                        + ".coalesceentity (objectkey) ON DELETE CASCADE\r\n");
+                                  + ".coalesceentity (" + COLUMNS.getKey() + ") ON DELETE CASCADE\r\n");
 
                 if (schema == null || (schema != null && schema.length() == 0))
                 {
@@ -538,7 +615,8 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
     public static String getSQLType(final ECoalesceFieldDataTypes type)
     {
 
-        switch (type) {
+        switch (type)
+        {
 
         case BOOLEAN_TYPE:
             return "boolean";
@@ -613,7 +691,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
 
     /**
      * This constructor is for the Derby Embedded Option
-     * 
+     *
      * @param databaseName
      * @param schema
      * @param subSubProtocol one of "directory", "memory", "classpath", "jar"
@@ -678,11 +756,13 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
 
     private void setSubSubProtocol(String subSubProtocol) throws CoalescePersistorException
     {
-        switch (subSubProtocol) {
+        switch (subSubProtocol)
+        {
         case DIRECTORY:
         case MEMORY:
         case CLASSPATH:
-        case JAR: {
+        case JAR:
+        {
             this.subSubProtocol = subSubProtocol;
             break;
         }
@@ -735,8 +815,7 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
         // get tables
         // ResultSet rs = metaData.getTables(null, schema, "%", new String[]
         // {"TABLE"});
-        ResultSet rs = metaData.getTables(null, null, null, new String[] {
-                                                                           "TABLE"
+        ResultSet rs = metaData.getTables(null, null, null, new String[] { "TABLE"
         });
         while (rs.next())
         {
@@ -781,17 +860,29 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
 
         // need to create the database and tables
         Connection conn = this.getDBConnection();
+        StringBuilder sb;
+
         try
         {
-            Statement stmt = null;
-            stmt = conn.createStatement();
-            stmt.execute("CREATE TABLE coalesce.CoalesceEntity" + "( ObjectKey VARCHAR(128) NOT NULL,"
-                    + " Name VARCHAR(256)," + " Source VARCHAR(256), " + " Version VARCHAR(256)," + " EntityId VARCHAR(256),"
-                    + " EntityIdType VARCHAR(256)," + " EntityXml LONG VARCHAR," + " DateCreated timestamp,"
-                    + " LastModified timestamp," + " title VARCHAR(256)," + " deleted boolean DEFAULT false,"
-                    + " securitylow bigint DEFAULT 0," + " securityhigh bigint DEFAULT 0," + " scope VARCHAR(256),"
-                    + " creator VARCHAR(256)," + " type VARCHAR(256),"
-                    + " CONSTRAINT CoalesceEntity_pkey PRIMARY KEY (ObjectKey)" + ")");
+            sb = new StringBuilder("CREATE TABLE coalesce.CoalesceEntity" + "(");
+            sb.append(COLUMNS.getKey() + " VARCHAR(128) NOT NULL,");
+            sb.append(COLUMNS.getName() + " VARCHAR(256),");
+            sb.append(COLUMNS.getSource() + " VARCHAR(256), ");
+            sb.append(COLUMNS.getVersion() + " VARCHAR(256),");
+            sb.append(COLUMNS.getEntityId() + " VARCHAR(256),");
+            sb.append(COLUMNS.getEntityIdType() + " VARCHAR(256),");
+            sb.append(COLUMNS.getXml() + " LONG VARCHAR,");
+            sb.append(COLUMNS.getDateCreated() + " timestamp,");
+            sb.append(COLUMNS.getLastModified() + " timestamp,");
+            sb.append(COLUMNS.getTitle() + " VARCHAR(256),");
+            sb.append(COLUMNS.getStatus() + " NUMERIC,");
+            sb.append(COLUMNS.getScope() + " VARCHAR(256),");
+            sb.append(COLUMNS.getType() + " VARCHAR(256),");
+            sb.append("CONSTRAINT CoalesceEntity_pkey PRIMARY KEY (" + COLUMNS.getKey() + ")");
+            sb.append(")");
+
+            Statement stmt = conn.createStatement();
+            stmt.execute(sb.toString());
 
             LOGGER.debug("CoalesceEntity Table created");
             stmt.close();
@@ -806,11 +897,20 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
 
         try
         {
+            sb = new StringBuilder("CREATE TABLE coalesce.CoalesceEntityTemplate ( ");
+            sb.append(COLUMNS.getKey() + " VARCHAR(128) NOT NULL, ");
+            sb.append(COLUMNS.getName() + " VARCHAR(128), ");
+            sb.append(COLUMNS.getSource() + " VARCHAR(128), ");
+            sb.append(COLUMNS.getVersion() + " VARCHAR(128), ");
+            sb.append(COLUMNS.getXml() + " LONG VARCHAR, ");
+            sb.append(COLUMNS.getDateCreated() + " timestamp, ");
+            sb.append(COLUMNS.getLastModified() + " timestamp, ");
+            sb.append("CONSTRAINT CoalesceEntityTemplate_pkey PRIMARY KEY (" + COLUMNS.getKey() + ") ");
+            sb.append(")");
+
             Statement stmt = conn.createStatement();
-            stmt.execute("CREATE TABLE coalesce.CoalesceEntityTemplate " + "( " + " TemplateKey VARCHAR(128) NOT NULL, "
-                    + " Name VARCHAR(128), " + " Source VARCHAR(128), " + " Version VARCHAR(128), "
-                    + " TemplateXml LONG VARCHAR, " + " DateCreated timestamp, " + " LastModified timestamp, "
-                    + "  CONSTRAINT CoalesceEntityTemplate_pkey PRIMARY KEY (TemplateKey) " + ")");
+            stmt.execute(sb.toString());
+
             LOGGER.debug("Coalesce Entity Template Table created");
             stmt.close();
         }
@@ -823,15 +923,29 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
         }
         try
         {
+            sb = new StringBuilder("CREATE TABLE coalesce.CoalesceLinkage ( ");
+            sb.append(COLUMNS.getKey() + " VARCHAR(128) NOT NULL,");
+            sb.append(" entitykey VARCHAR(128), ");
+            sb.append(COLUMNS.getName() + " VARCHAR(256),");
+            sb.append(COLUMNS.getSource() + " VARCHAR(128),");
+            sb.append(COLUMNS.getVersion() + " VARCHAR(64),");
+            sb.append(COLUMNS.getLinkageType() + " VARCHAR(128),");
+            sb.append(COLUMNS.getLinkageLabel() + " VARCHAR(256),");
+            sb.append(COLUMNS.getLinkageStatus() + " VARCHAR(128),");
+            sb.append(COLUMNS.getEntity2Key() + " VARCHAR(128),");
+            sb.append(COLUMNS.getEntity2Name() + " VARCHAR(128),");
+            sb.append(COLUMNS.getEntity2Source() + " VARCHAR(128),");
+            sb.append(COLUMNS.getEntity2Version() + " VARCHAR(64),");
+            sb.append(" ClassificationMarking VARCHAR(128),");
+            sb.append(" ModifiedBy VARCHAR(128),");
+            sb.append(" InputLanguage VARCHAR(128),");
+            sb.append(COLUMNS.getDateCreated() + " timestamp,");
+            sb.append(COLUMNS.getLastModified() + " timestamp,");
+            sb.append("CONSTRAINT CoalesceLinkage_pkey PRIMARY KEY (" + COLUMNS.getKey() + ")");
+            sb.append(")");
+
             Statement stmt = conn.createStatement();
-            stmt.execute("CREATE TABLE coalesce.CoalesceLinkage " + "( " + " ObjectKey VARCHAR(128) NOT NULL,"
-                    + " Name VARCHAR(256)," + " Entity1Key VARCHAR(128), " + " Entity1Name VARCHAR(256),"
-                    + " Entity1Source VARCHAR(128)," + " Entity1Version VARCHAR(64)," + " LinkType VARCHAR(128),"
-                    + " LinkLabel VARCHAR(256)," + " LinkStatus VARCHAR(128)," + " Entity2Key VARCHAR(128),"
-                    + " Entity2Name VARCHAR(128)," + " Entity2Source VARCHAR(128)," + " Entity2Version VARCHAR(64),"
-                    + " ClassificationMarking VARCHAR(128)," + " ModifiedBy VARCHAR(128)," + " InputLanguage VARCHAR(128),"
-                    + " ParentKey VARCHAR(128)," + " ParentType VARCHAR(64)," + " DateCreated timestamp,"
-                    + " LastModified timestamp," + " CONSTRAINT CoalesceLinkage_pkey PRIMARY KEY (ObjectKey)" + ")");
+            stmt.execute(sb.toString());
             LOGGER.debug("Coalesce Linkage Table created");
             stmt.close();
 
