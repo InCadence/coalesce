@@ -1050,16 +1050,17 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
         try (CoalesceDataConnectorBase conn = this.getDataConnector())
         {
             String value = null;
+            String sql = "SELECT " + COLUMNS.getKey() + " FROM " + getSchemaPrefix() + "CoalesceEntityTemplate WHERE "
+                    + COLUMNS.getName() + "=? and " + COLUMNS.getSource() + "=? and " + COLUMNS.getVersion() + "=?";
 
-            ResultSet results = conn.executeQuery("SELECT TemplateKey FROM " + getSchemaPrefix()
-                                                          + "CoalesceEntityTemplate WHERE Name=? and Source=? and Version=?",
+            ResultSet results = conn.executeQuery(sql,
                                                   new CoalesceParameter(name),
                                                   new CoalesceParameter(source),
                                                   new CoalesceParameter(version));
 
             while (results.next())
             {
-                value = results.getString("TemplateKey");
+                value = results.getString(COLUMNS.getKey());
             }
 
             return value;
@@ -1093,10 +1094,10 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
         try (CoalesceDataConnectorBase conn = this.getDataConnector())
         {
             String xml = null;
+            String sql = "SELECT " + COLUMNS.getXml() + " FROM " + getSchemaPrefix() + "CoalesceEntityTemplate WHERE "
+                    + COLUMNS.getKey() + "=?";
 
-            ResultSet results = conn.executeQuery(
-                    "SELECT " + COLUMNS.getXml() + " FROM " + getSchemaPrefix() + "CoalesceEntityTemplate WHERE " + COLUMNS.getKey() + "=?",
-                    new CoalesceParameter(key, Types.CHAR));
+            ResultSet results = conn.executeQuery(sql, new CoalesceParameter(key, Types.CHAR));
 
             if (results.next())
             {
@@ -1123,16 +1124,17 @@ public class DerbyPersistor extends CoalescePersistorBase implements ICoalesceSe
         try (CoalesceDataConnectorBase conn = this.getDataConnector())
         {
             String xml = null;
+            String sql = "SELECT " + COLUMNS.getXml() + " FROM " + getSchemaPrefix() + "CoalesceEntityTemplate WHERE "
+                    + COLUMNS.getName() + "=? and " + COLUMNS.getSource() + "=? and " + COLUMNS.getVersion() + "=?";
 
-            ResultSet results = conn.executeQuery("SELECT TemplateXml FROM " + getSchemaPrefix()
-                                                          + "CoalesceEntityTemplate WHERE Name=? and Source=? and Version=?",
+            ResultSet results = conn.executeQuery(sql,
                                                   new CoalesceParameter(name),
                                                   new CoalesceParameter(source),
                                                   new CoalesceParameter(version));
 
             if (results.next())
             {
-                xml = results.getString("TemplateXml");
+                xml = results.getString(COLUMNS.getXml());
             }
 
             if (xml == null)

@@ -576,42 +576,6 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
         return false;
     }
 
-    // public static String normalizeFieldName(String fieldName)
-    // {
-    // switch (fieldName) {
-    // case "boolean":
-    // case "double":
-    // case "float":
-    // case "geocoordinatelist":
-    // case "geocoordinate":
-    // case "linestring":
-    // case "polygon":
-    // case "circle":
-    // case "enum":
-    // case "integer":
-    // case "string":
-    // case "uri":
-    // case "stringlist":
-    // case "doublelist":
-    // case "enumlist":
-    // case "integerlist":
-    // case "longlist":
-    // case "floatlist":
-    // case "guidlist":
-    // case "booleanlist":
-    // case "guid":
-    // case "datetime":
-    // case "long":
-    // case "file":
-    // case "binary":
-    // case "int":
-    // case "date":
-    // return fieldName + "Field";
-    // }
-    //
-    // return fieldName;
-    // }
-
     public static String getSQLType(final ECoalesceFieldDataTypes type)
     {
 
@@ -662,17 +626,6 @@ public class DerbyDataConnector extends CoalesceDataConnectorBase {
         default:
             return null;
         }
-    }
-
-    public static ServerConn getServerConnection()
-    {
-        ServerConn serCon = new ServerConn();
-        // InCadence Settings
-        serCon.setServerName("127.0.0.1");
-        serCon.setDatabase("CoalesceDatabase");
-        serCon.setUser("CoalesceUser");
-        serCon.setPassword("Passw0rd");
-        return serCon;
     }
 
     private static boolean tableAlreadyExists(SQLException sqlException)
