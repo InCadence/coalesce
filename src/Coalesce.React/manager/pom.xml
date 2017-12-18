@@ -26,11 +26,11 @@
 				<artifactId>exec-maven-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>npm link (initialize)</id>
+						<id>npm link (process-sources)</id>
 						<goals>
 							<goal>exec</goal>
 						</goals>
-						<phase>initialize</phase>
+						<phase>process-sources</phase>
 						<configuration>
 							<executable>npm</executable>
 							<arguments>
