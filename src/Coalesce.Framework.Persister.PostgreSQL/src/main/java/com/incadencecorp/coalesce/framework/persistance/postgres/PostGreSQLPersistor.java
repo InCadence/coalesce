@@ -1046,10 +1046,8 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
             return true;
         }
 
-        // TODO Phase out CoalesceLinkage_InsertOrUpdate2 on the next DB wipe.
-
         // Yes; Call Store Procedure
-        return conn.executeProcedure("CoalesceLinkage_InsertOrUpdate2",
+        return conn.executeProcedure("CoalesceLinkage_InsertOrUpdate",
                                      new CoalesceParameter(linkage.getKey(), Types.OTHER),
                                      new CoalesceParameter(linkage.getName()),
                                      new CoalesceParameter(linkage.getEntity1Key(), Types.OTHER),
@@ -1063,9 +1061,9 @@ public class PostGreSQLPersistor extends CoalescePersistorBase {
                                      new CoalesceParameter(linkage.getEntity2Name()),
                                      new CoalesceParameter(linkage.getEntity2Source()),
                                      new CoalesceParameter(linkage.getEntity2Version()),
-                                     new CoalesceParameter(""), // FIXME linkage.getClassificationMarking().toPortionString()),
+                                     new CoalesceParameter(linkage.getClassificationMarking().toPortionString()),
                                      new CoalesceParameter(linkage.getModifiedBy()),
-                                     new CoalesceParameter(""),
+                                     new CoalesceParameter(linkage.getInputLang().getDisplayName()),
                                      new CoalesceParameter(linkage.getParent().getKey(), Types.OTHER),
                                      new CoalesceParameter(linkage.getParent().getType()),
                                      new CoalesceParameter(linkage.getDateCreated().toString(), Types.OTHER),
