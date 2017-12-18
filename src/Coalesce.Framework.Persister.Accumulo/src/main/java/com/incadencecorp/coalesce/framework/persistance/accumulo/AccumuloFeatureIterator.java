@@ -22,6 +22,7 @@ import com.incadencecorp.coalesce.api.ICoalesceFilter;
 import com.incadencecorp.coalesce.api.ICoalesceNormalizer;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceDataFormatException;
 import com.incadencecorp.coalesce.common.exceptions.CoalesceException;
+import com.incadencecorp.coalesce.common.helpers.JodaDateTimeHelper;
 import com.incadencecorp.coalesce.framework.datamodel.*;
 import com.incadencecorp.coalesce.framework.filter.CoalesceVersionFilter;
 import com.incadencecorp.coalesce.framework.iterators.CoalesceIterator;
@@ -47,7 +48,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Derek Clemenzi
@@ -404,12 +407,8 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
     {
         String recordsetName = record.getParent().getName();
         String statusAttr = normalizer.normalize(recordsetName, "status");
-        /* TODO Is this needed if the record key is already set to the FID
-        setFeatureAttribute(feature,
-                            normalizer.normalize(recordsetName, "recordkey"),
-                            ECoalesceFieldDataTypes.STRING_TYPE,
-                            record.getKey());
-        */
+        setFeatureAttribute(feature, statusAttr, ECoalesceFieldDataTypes.ENUMERATION_TYPE, record.getStatus().ordinal());
+
         for (CoalesceField<?> field : record.getFields())
         {
             String fieldName = normalizer.normalize(recordsetName, field.getName());
@@ -418,14 +417,15 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
             // If there is not a value do not set the attribute.
             if (field.getBaseValue() != null)
             {
-                if (LOGGER.isTraceEnabled())
+                if (field.isListType())
                 {
-                    LOGGER.trace("Setting FeatureAttribute {} ({}) = {}", fieldName, dataType, field.getBaseValue());
+                    setFeatureAttribute(feature, fieldName, dataType, field.getBaseValue());
                 }
-                setFeatureAttribute(feature, fieldName, dataType, field.getValue());
+                else
+                {
+                    setFeatureAttribute(feature, fieldName, dataType, field.getValue());
+                }
             }
-
-            setFeatureAttribute(feature, statusAttr, ECoalesceFieldDataTypes.ENUMERATION_TYPE, record.getStatus().ordinal());
         }
     }
 
@@ -487,25 +487,14 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
                 break;
 
             case STRING_LIST_TYPE:
-                feature.setAttribute(fieldName, Arrays.toString((String[]) fieldValue));
-                break;
             case DOUBLE_LIST_TYPE:
-                feature.setAttribute(fieldName, Arrays.toString((double[]) fieldValue));
-                break;
             case INTEGER_LIST_TYPE:
-                feature.setAttribute(fieldName, Arrays.toString((int[]) fieldValue));
-                break;
             case LONG_LIST_TYPE:
-                feature.setAttribute(fieldName, Arrays.toString((long[]) fieldValue));
-                break;
             case FLOAT_LIST_TYPE:
-                feature.setAttribute(fieldName, Arrays.toString((float[]) fieldValue));
-                break;
             case GUID_LIST_TYPE:
-                feature.setAttribute(fieldName, Arrays.toString((UUID[]) fieldValue));
-                break;
             case BOOLEAN_LIST_TYPE:
-                feature.setAttribute(fieldName, Arrays.toString((boolean[]) fieldValue));
+            case ENUMERATION_LIST_TYPE:
+                feature.setAttribute(fieldName, fieldValue);
                 break;
 
             case GUID_TYPE:
@@ -545,7 +534,7 @@ public class AccumuloFeatureIterator extends CoalesceIterator<Map<String, Accumu
                 break;
 
             case DATE_TIME_TYPE:
-                feature.setAttribute(fieldName, ((DateTime) fieldValue).toDate());
+                feature.setAttribute(fieldName, JodaDateTimeHelper.toXmlDateTimeUTC((DateTime) fieldValue));
                 break;
             case FILE_TYPE:
             case BINARY_TYPE:
