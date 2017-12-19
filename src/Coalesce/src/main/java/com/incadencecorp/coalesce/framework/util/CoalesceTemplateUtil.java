@@ -51,7 +51,8 @@ public final class CoalesceTemplateUtil {
      */
     private static final Map<String, Set<String>> RECORDSETS = new HashMap<>();
 
-    private static CoalesceIteratorDataTypes iterator = new CoalesceIteratorDataTypes(new DefaultNormalizer());
+    private static ICoalesceNormalizer normalizer = new DefaultNormalizer();
+    private static CoalesceIteratorDataTypes iterator = new CoalesceIteratorDataTypes(normalizer);
 
     private CoalesceTemplateUtil()
     {
@@ -65,7 +66,8 @@ public final class CoalesceTemplateUtil {
      */
     public static void setNormalizer(ICoalesceNormalizer value)
     {
-        iterator = new CoalesceIteratorDataTypes(value);
+        normalizer = value;
+        iterator = new CoalesceIteratorDataTypes(normalizer);
     }
 
     /**
@@ -204,9 +206,26 @@ public final class CoalesceTemplateUtil {
     {
         Map<String, ECoalesceFieldDataTypes> results = new HashMap<>();
 
-        for (String recordset : RECORDSETS.get(key))
+        for (String recordset : getRecordsets(key))
         {
             results.putAll(TYPES.get(recordset));
+        }
+
+        return results;
+    }
+
+    /**
+     * @param key Template's key
+     * @return a map of all the fields of the specified template and their data types.
+     */
+    public static List<String> getRecordsets(String key)
+    {
+        List<String> results = new ArrayList<>();
+        Set<String> recordsets = RECORDSETS.get(key);
+
+        if (recordsets != null)
+        {
+            results.addAll(recordsets);
         }
 
         return results;
@@ -219,7 +238,12 @@ public final class CoalesceTemplateUtil {
     public static Map<String, ECoalesceFieldDataTypes> getRecordsetDataTypes(String name)
     {
         Map<String, ECoalesceFieldDataTypes> results = new HashMap<>();
-        results.putAll(TYPES.get(name));
+        Map<String, ECoalesceFieldDataTypes> types = TYPES.get(normalizer.normalize(name));
+
+        if (types != null)
+        {
+            results.putAll(types);
+        }
 
         return results;
     }
@@ -231,10 +255,11 @@ public final class CoalesceTemplateUtil {
     public static List<String> getTemplateKey(String name)
     {
         List<String> results = new ArrayList<>();
+        String normalizedName = normalizer.normalize(name);
 
         for (Map.Entry<String, Set<String>> entry : RECORDSETS.entrySet())
         {
-            if (entry.getValue().contains(name))
+            if (entry.getValue().contains(normalizedName))
             {
                 results.add(entry.getKey());
             }
