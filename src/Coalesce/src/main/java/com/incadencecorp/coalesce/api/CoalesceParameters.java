@@ -19,9 +19,8 @@ package com.incadencecorp.coalesce.api;
 
 /**
  * Common Parameters
- * 
- * @author n78554
  *
+ * @author n78554
  */
 public final class CoalesceParameters {
 
@@ -34,7 +33,10 @@ public final class CoalesceParameters {
     private static final String COALESCE = INC + "coalesce.";
     private static final String SECURITY = COALESCE + "security.";
 
-    public static final String COALESCE_CONFIG_LOCATION = System.getProperty("COALESCE_CONFIG_LOCATION") == null ? "config" : System.getProperty("COALESCE_CONFIG_LOCATION");
+    public static final String COALESCE_CONFIG_LOCATION_PROPERTY = "COALESCE_CONFIG_LOCATION";
+    public static final String COALESCE_CONFIG_LOCATION =
+            System.getProperty(COALESCE_CONFIG_LOCATION_PROPERTY) == null ? "config" : System.getProperty(
+                    "COALESCE_CONFIG_LOCATION");
 
     /*--------------------------------------------------------------------------
     General Properties (com.incadencecorp.%)
